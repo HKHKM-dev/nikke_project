@@ -1,5 +1,5 @@
 // 予測（plan/design-records-automation.md 3.2 節）: records/predictions/V-NNNN.json の手書きの部分（編成・仮説・比べる指標）
-// から sim（calc）を回し、predicted（仮説 × 指標の値、日付、commit）を書き込む。手書きの部分は触らない。
+// から sim を回し、predicted（仮説 × 指標の値、日付、commit）を書き込む。手書きの部分は触らない。
 // 使い方: npm run records:predict -- V-NNNN [--date YYYY-MM-DD]
 // 予測は任意の道具で、確定の条件ではない（plan/design-investigation-review.md 1 節）。撮影計画で、その録画で仮説を見分けられるかを
 // 確かめるのに使う。

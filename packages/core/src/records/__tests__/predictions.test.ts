@@ -73,7 +73,7 @@ describe('records/predictions', () => {
       hypotheses: [{ id: 'H1' }, { id: 'H1' }],
       targets: [
         { id: 't', model: 'sim', metric: 'nope', setup: SETUP },
-        { id: 't', model: 'calc', metric: 'shotCount', setup: SETUP },
+        { id: 't', model: 'calc' as never, metric: 'shotCount', setup: SETUP },
       ],
       predicted: { at: '2026-10-02', commit: 'abc1234', values: { H9: { t: 1 } } },
     });
@@ -84,7 +84,7 @@ describe('records/predictions', () => {
         '予測 V-9999: 仮説の id が空か重複している: H1',
         '予測 V-9999: 指標の id が空か重複している: t',
         '予測 V-9999: 指標 t の metric nope が語彙に無い',
-        '予測 V-9999: 指標 t の shotCount は calc の出力に無い',
+        '予測 V-9999: 指標 t の model は sim だけ（calc は 2026-10-27 の一本化で消した）',
         '予測 V-9999: 指標 t に引数 slot が要る',
         '予測 V-9999: predicted に無い仮説 H9 がある',
         '予測 V-9999: predicted に H1 の t が無い（records:predict で出し直す）',

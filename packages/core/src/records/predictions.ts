@@ -1,11 +1,10 @@
 // 予測（plan/design-records-automation.md 3.2 節）。検証記録ごとに records/predictions/V-NNNN.json を置き、
-// 手書きの部分（編成・仮説・比べる指標）から `npm run records:predict -- V-NNNN` が sim（calc）を回して predicted を書き込む。
+// 手書きの部分（編成・仮説・比べる指標）から `npm run records:predict -- V-NNNN` が sim を回して predicted を書き込む。
 // records:check は、同じ検証記録を source にする観測値と突き合わせて、仮説ごとに合うかを plan/verifications.md に出す（3.5 節）。
 // 予測は任意の道具で、確定の条件ではない。撮る前の順番も問わない（plan/design-investigation-review.md 1 節。2026-10-10 の
 // オーナーの決定）。撮影計画で、その録画で仮説を見分けられるかを確かめるのに使う。
-import { simTeamResult } from '../sim/teamResult.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import type { TeamInput, TeamResult } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import {
   buildTeamInput,
   compareValue,
@@ -138,9 +137,9 @@ export function validatePredictions(
       const metric = METRICS[t.metric];
       if (metric === undefined) errors.push(`${at}: 指標 ${t.id} の metric ${t.metric} が語彙に無い`);
       else {
-        if (t.model !== 'sim' && t.model !== 'calc') errors.push(`${at}: 指標 ${t.id} の model は sim か calc`);
-        if (t.model === 'calc' && metric.calc === undefined)
-          errors.push(`${at}: 指標 ${t.id} の ${t.metric} は calc の出力に無い`);
+        // 一本化の段 A-3: calc の経路は消した（2026-10-27）
+        if (t.model !== 'sim')
+          errors.push(`${at}: 指標 ${t.id} の model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
         for (const a of metric.args) {
           if (t.args?.[a] === undefined) errors.push(`${at}: 指標 ${t.id} に引数 ${a} が要る`);
         }
@@ -278,7 +277,7 @@ export function runPredictions(
     if (t.team !== undefined) return asRecording(file, t.team, t.fixedSpec ?? file.fixedSpec, `:${t.id}`);
     return asRecording(file);
   };
-  const cache = new Map<string, { input: TeamInput; sim?: SimResult; calc?: TeamResult }>();
+  const cache = new Map<string, { input: TeamInput; sim?: SimResult }>();
   const values: Predicted['values'] = {};
   for (const h of file.hypotheses) {
     values[h.id] = {};
@@ -294,15 +293,8 @@ export function runPredictions(
         cache.set(key, run);
       }
       const ctx = { args: t.args ?? {}, input: run.input };
-      if (t.model === 'sim') {
-        run.sim ??= runSimulation(run.input);
-        values[h.id]![t.id] = metric.sim(run.sim, ctx);
-      } else {
-        if (metric.calc === undefined) throw new Error(`${t.metric} は calc の出力に無い`);
-        // 一本化の段 A-2: calc の指標も同じ runSimulation の結果を画面の形にして読む（段 A-3 で 'calc' の経路ごと消す候補）
-        run.calc ??= simTeamResult(run.input, (run.sim ??= runSimulation(run.input)));
-        values[h.id]![t.id] = metric.calc(run.calc, ctx);
-      }
+      run.sim ??= runSimulation(run.input);
+      values[h.id]![t.id] = metric.sim(run.sim, ctx);
     }
   }
   return values;

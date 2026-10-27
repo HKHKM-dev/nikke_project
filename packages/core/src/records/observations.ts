@@ -13,7 +13,6 @@ import {
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
-import { simTeamResult } from '../sim/teamResult.ts';
 import { reloadFirstShotFrames } from '../cadence.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
@@ -39,7 +38,7 @@ import {
   type SkillEntry,
   type SkillSlot,
 } from '../skills/types.ts';
-import type { TeamInput, TeamResult, TeamSlotInput } from '../team.ts';
+import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
 import { CLAIM_TOPICS } from './claims.ts';
@@ -274,7 +273,11 @@ export function landingFixed(
 export type Tolerance = { rel: number } | { abs: number };
 
 export type CompareSpec = {
-  model: 'sim' | 'calc';
+  /**
+   * モデル。sim だけ（一本化の段 A-3。plan/design-unify-sim-calc.md 8 節）。2026-10-27 までは calc も書けた（使う指定は無かった）。
+   * 観測値・予測の全件が "sim" を書いているので、欄は残し、ほかの値は検査で落とす
+   */
+  model: 'sim';
   metric: string;
   args: Record<string, number | string | boolean>;
   tolerance: Tolerance;
@@ -381,7 +384,6 @@ type Metric = {
   /** 必須の引数 */
   args: readonly string[];
   sim: (result: SimResult, ctx: MetricContext) => number | number[];
-  calc?: (result: TeamResult, ctx: MetricContext) => number | number[];
 };
 
 function slotIndexOf(ctx: MetricContext): number {
@@ -1107,11 +1109,10 @@ function perShotHitDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 export const METRICS: Readonly<Record<string, Metric>> = {
-  teamTotalDamage: { args: [], sim: (r) => r.totalDamage, calc: (r) => r.totalDamage },
+  teamTotalDamage: { args: [], sim: (r) => r.totalDamage },
   slotTotalDamage: {
     args: ['slot'],
     sim: (r, c) => slotOf(r.slots, c).totalDamage,
-    calc: (r, c) => slotOf(r.slots, c).totalDamage,
   },
   rangeDamage: {
     args: ['fromSec', 'toSec'],
@@ -1123,7 +1124,6 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   fullBurstCount: {
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.length ?? 0,
-    calc: (r) => r.schedule?.fullBurstWindows.length ?? 0,
   },
   /**
    * アニス：スター編（V-0122）: 録画の動画のフレームで数えた、フルバーストの入りどうしの間隔（最初の n 個）。入りの止まり
@@ -1132,33 +1132,27 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   fullBurstStartIntervals: {
     args: ['n'],
     sim: (r, c) => fullBurstStartIntervals(r, c),
-    calc: (r, c) => fullBurstStartIntervals(r, c),
   },
   /** アニス：スター編（V-0121）: バーストを撃った枠（1 始まり）の並び（最初の n 回。チェーンが切れた単独の発動も入る） */
   burstActivationSlots: {
     args: ['n'],
     sim: (r, c) => burstActivationSlots(r, c),
-    calc: (r, c) => burstActivationSlots(r, c),
   },
   burstActivationVideoFrames: {
     args: ['n'],
     sim: (r, c) => burstActivationVideoFrames(r, c),
-    calc: (r, c) => burstActivationVideoFrames(r, c),
   },
   fullBurstToNextActivation: {
     args: ['n'],
     sim: (r, c) => fullBurstToNextActivation(r, c),
-    calc: (r, c) => fullBurstToNextActivation(r, c),
   },
   fullBurstToGaugeFull: {
     args: ['n'],
     sim: (r, c) => fullBurstToGaugeFull(r, c),
-    calc: (r, c) => fullBurstToGaugeFull(r, c),
   },
   gaugeFullToActivation: {
     args: ['n'],
     sim: (r, c) => gaugeFullToActivation(r, c),
-    calc: (r, c) => gaugeFullToActivation(r, c),
   },
   /** V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける） */
   cooldownCutFrames: {
@@ -1168,7 +1162,6 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   fullBurstStarts: {
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
-    calc: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
   },
   // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 4 節）: 枠の 1 発目から n 回目（0 始まり）のフルバーストの入りまでのフレーム数。
   // 録画では、即着弾の枠（SR）の 1 発目の増分から、III のタイマーの 00.00 までの動画のフレーム（間に入りの止まりが無い 1 回目に使う）。
@@ -1190,12 +1183,10 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   videoFramesBetween: {
     args: ['fromSec', 'toSec'],
     sim: (r, c) => videoFramesBetween(r.schedule, c),
-    calc: (r, c) => videoFramesBetween(r.schedule, c),
   },
   gaugeFullFrame: {
     args: ['n'],
     sim: (r, c) => gaugeFull(r.schedule?.gaugeFullFrames, c),
-    calc: (r, c) => gaugeFull(r.schedule?.gaugeFullFrames, c),
   },
   // 録画 0045・0046・0082 の「n 回目に BURST バーが消えた発の番号」（V-0085）。モデルは全発が当たるので、外れた発のある録画では
   // 当たった発の番号と比べる。満タンが来なければ 0
@@ -1222,7 +1213,6 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstCount: {
     args: ['slot'],
     sim: (r, c) => slotOf(r.slots, c).burst.activations.length,
-    calc: (r, c) => slotOf(r.slots, c).burst.activations.length,
   },
   // ニヒリスター編: skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
   skillHitCount: {
@@ -1231,10 +1221,6 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       c.args.skill === undefined
         ? slotOf(r.slots, c).skillHits.frames.length
         : r.skillHits.filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill).length,
-    calc: (r, c) =>
-      slotOf(r.slots, c).skillHits.activations.filter(
-        (a) => c.args.skill === undefined || a.effect.source.skill === c.args.skill,
-      ).length,
   },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   healHitCounts: { args: ['slot'], sim: healHitCounts },
@@ -1357,12 +1343,10 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   ctEndToFullBurstStart: {
     args: ['slot', 'n'],
     sim: (r, c) => ctEndToFullBurstStart(r, c),
-    calc: (r, c) => ctEndToFullBurstStart(r, c),
   },
   chainStepIntervals: {
     args: ['n'],
     sim: (r, c) => chainStepIntervals(r, c),
-    calc: (r, c) => chainStepIntervals(r, c),
   },
 };
 
@@ -1770,7 +1754,8 @@ export function validateObservations(
     }
     for (const name of metric.args)
       if (c.args[name] === undefined) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
-    if (c.model === 'calc' && metric.calc === undefined) errors.push(`${at}: ${c.metric} は calc の出力に無い`);
+    // 一本化の段 A-3: calc の経路は消した（2026-10-27）
+    if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
     const preset = enemies.enemies.find((e) => e.id === c.setup.enemy);
     if (preset === undefined) errors.push(`${at}: 敵のプリセット ${c.setup.enemy} が無い`);
     for (const set of c.setup.events ?? []) {
@@ -2174,7 +2159,7 @@ export function runObservations(
   recordings: ReadonlyMap<string, RecordingEntry>,
   data: RecordsData,
 ): Residual[] {
-  const cache = new Map<string, { input: TeamInput; sim?: SimResult; calc?: TeamResult }>();
+  const cache = new Map<string, { input: TeamInput; sim?: SimResult }>();
   const residuals: Residual[] = [];
   for (const o of observations) {
     const c = o.compare;
@@ -2195,16 +2180,8 @@ export function runObservations(
         cache.set(key, run);
       }
       const ctx: MetricContext = { args: c.args, input: run.input };
-      let predicted: number | number[];
-      if (c.model === 'sim') {
-        run.sim ??= runSimulation(run.input);
-        predicted = metric.sim(run.sim, ctx);
-      } else {
-        if (metric.calc === undefined) throw new Error(`${c.metric} は calc の出力に無い`);
-        // 一本化の段 A-2: calc の指標も同じ runSimulation の結果を画面の形にして読む（段 A-3 で 'calc' の経路ごと消す候補）
-        run.calc ??= simTeamResult(run.input, (run.sim ??= runSimulation(run.input)));
-        predicted = metric.calc(run.calc, ctx);
-      }
+      run.sim ??= runSimulation(run.input);
+      const predicted = metric.sim(run.sim, ctx);
       const { diff, ok } = compareValue(o.value, predicted, c.tolerance);
       residuals.push({ observation: o, status: ok ? 'ok' : 'outside', predicted, diff });
     } catch (e) {

@@ -47,7 +47,7 @@
 - 1 行の形: 題名（起票日）→ 状態・設計書（あれば）・残りの行き先（backlog の行）。題名は変えない（検証記録・設計書が題名で指す）。
 - 2026-10-25 までに閉じた課題（完了・打ち切り）は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。
 
-- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。段 A-1（calc は全グループを射撃の列から数える）・A-2（2 パス目を二分探索の集計に、calc/model.ts と画面の切り替えを廃止）は実装した。残りは backlog 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
+- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。(A) 一本化は完了（2026-10-27。段 A-1〜A-3）。残りの (B) レスポンスは backlog 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
 - 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 完了（2026-10-27。フォルクヴァンの回復の定義は backlog 6 節）: [design-skill-unrecorded.md](design-skill-unrecorded.md)
 - エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）・段 2（バースト）・段 3 の S2（ブームインストール中の攻撃力▲）は実装した。S1 の分配ダメージは値の式が分からず未対応（別の検証で乗数を分ける）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)

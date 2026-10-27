@@ -560,7 +560,7 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 3 })).toThrow('3 回目の発動が無い');
   });
 
-  it('reports unknown metrics, missing args, calc-less metrics and unknown presets', () => {
+  it('reports unknown metrics, missing args, a model other than sim and unknown presets', () => {
     const base = observations.find((o) => o.id === '0047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '0047-99'): Observation => ({
       ...base,
@@ -571,7 +571,8 @@ describe('照合の部品', () => {
       [
         broken({ metric: 'nope' }, '0047-91'),
         broken({ args: {} }, '0047-92'),
-        broken({ metric: 'shotCount', model: 'calc' }, '0047-93'),
+        // 一本化の段 A-3: calc は型から消えたので、書かれた JSON を真似て型を外す
+        broken({ metric: 'shotCount', model: 'calc' as never }, '0047-93'),
         broken({ setup: { enemy: 'nope' } }, '0047-94'),
         broken({ setup: { enemy: 'range-bigarms-fire', events: ['nope'] } }, '0047-95'),
         { ...base, id: '999-01', recording: '999' },
@@ -585,7 +586,7 @@ describe('照合の部品', () => {
     expect(errors).toEqual([
       '0047-91: metric が語彙に無い: nope',
       '0047-92: slotTotalDamage の引数 slot が無い',
-      '0047-93: shotCount は calc の出力に無い',
+      '0047-93: model は sim だけ（calc は 2026-10-27 の一本化で消した）',
       '0047-94: 敵のプリセット nope が無い',
       '0047-95: 出来事のセット nope は range-bigarms-fire に無い',
       '999-01: 録画 999 が records/recordings/ に無い',

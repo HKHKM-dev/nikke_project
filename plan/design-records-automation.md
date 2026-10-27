@@ -88,7 +88,7 @@
 }
 ```
 
-- コマンドは `team`・`setup` から sim（と calc）を回し、`predicted` に仮説 × 指標の値を、日付と `git rev-parse HEAD` と一緒に書き込む。手書きの部分（`hypotheses`・`targets`）は触らない。
+- コマンドは `team`・`setup` から sim（2026-10-27 の一本化の段 A-3 までは calc も）を回し、`predicted` に仮説 × 指標の値を、日付と `git rev-parse HEAD` と一緒に書き込む。手書きの部分（`hypotheses`・`targets`）は触らない。
 - `predicted` が入ったファイルを、録画を取り込む前にコミットする。「撮る前に書いた」は、予測の commit の日付と観測値の `readAt`・録画の `date` の前後で検査する（3.7 節）。既存の録画の読み直しでは「読む前」でよく、`predicted.seen`（予測の時点で既にあった観測値の控え）と git の順で確かめる（2026-10-04。[design-reread-prediction.md](design-reread-prediction.md)）。
 - 検証記録の「予測」の節には、仮説ごとの見え方と見分け方（人の文）を書き、数値はこのファイルを ID で指す。数値を 2 か所に書かないのは「1 つの事実は 1 か所」の規則どおり。
 - `override` で書けるのは `setup` の項目と、`--skill-levels`・`--near`・`--mid-far` など `sim-run.ts` の引数に対応するもの。モデルのコードや定義を仮説ごとに切り替える必要があるときは、このコマンドの範囲外で、検証記録に手で書く。
