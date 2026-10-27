@@ -198,7 +198,7 @@
 | `hitDamage`          | その時点の区間のバフで 1 トリガーの式を**パターンごとに組み直す**                          | `slot`、`frame`、`source`（normal・burst・skill）、`core`・`crit`・`distance`（真偽） | 数  | ×    |
 
 - `hitDamage` は通常攻撃の 1 ヒットの値（SG は 1 ペレット。1 トリガーの値を `shotCount` で割る）。`hitDamage` だけは、モデルの出力をそのまま取り出せない。モデルは会心・コアを期待値（率 × 倍率）で持っているので、「コアかつ会心」の 1 発の値は、区間のバフ（`segments[].buffs`）と `damage.ts` の式からパターンを固定して組み直す。取り出し関数は 19-B で作り、Stage 2-A の 4 パターンの実測で確かめる。
-- calc 欄が × の値は、calc の出力（`TeamResult`）に無い。`compare.model` に `calc` を書けるのは ○・△ の値だけ。△ の `burstCount` は、calc ではダメージを持たないバーストの発動が列に入らない（`SlotBurstResult.activations` は倍率ダメージの無いバーストでは空）ので、そのキャラでは使えない。
+- calc 欄が × の値は、calc の出力（`TeamResult`）に無い。`compare.model` に `calc` を書けるのは ○・△ の値だけ。△ の `burstCount` は、calc ではダメージを持たないバーストの発動が列に入らない（`SlotBurstResult.activations` は倍率ダメージの無いバーストでは空）ので、そのキャラでは使えない。2026-10-27 の一本化の段 A-3 で calc の欄と `model: "calc"` は消え、`model` は `sim` だけになった（[design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節）。
 
 ### 2.4 結論（`plan/claims.md`）
 

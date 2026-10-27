@@ -7,7 +7,7 @@ NIKKE のダメージ計算ツール。
 - **共通のフレームループ（1 パス目）**: 射撃の列・バーストの時刻表・バフの区間・倍率ダメージの発動を作るフレームループ（`packages/core/src/frame/`）。
 - **2 パス目**: 1 パス目の結果から、区間ごとの発数（射撃の列を二分探索で数える）とダメージ・1 秒ごとのダメージを集計する部分（`packages/core/src/sim/engine.ts`）。フレームループは出来事の列（`trace`）を作るときだけ回す。
 - **sim**: 1 パス目と 2 パス目を回す計算の入口（`runSimulation`。`packages/core/src/sim/`）。画面・CLI・records 層はこの 1 本を使い、画面の形には `simTeamResult` でする。
-- **calc**: 2026-10-27 まであった区間期待値のモデル（`calc/model.ts` の `computeTeamDamage`）と、画面のその表示。一本化で消した（`plan/design-unify-sim-calc.md`）。古い文書・検証記録・結論の「calc」はこれを指す。
+- **calc**: 2026-10-27 まであった区間期待値のモデル（`calc/model.ts` の `computeTeamDamage`）と、画面のその表示・records 層の `model: "calc"` の経路。一本化で消した（`plan/design-unify-sim-calc.md`）。古い文書・検証記録・結論の「calc」はこれを指す。
 - **オーナー**: リポジトリの仕様決定者・承認者・指示者。
 - **ユーザー / 利用者**: ダメージ計算ツールの利用者。
 
