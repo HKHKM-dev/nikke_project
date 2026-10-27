@@ -1,0 +1,318 @@
+[
+  {
+    "id": "0711-01",
+    "recording": "0711",
+    "kind": "timing",
+    "use": "record",
+    "value": [860, 3238, 5615, 7993, 10371],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・0・0・6f"
+    },
+    "source": "V-0524",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0711-02",
+    "recording": "0711",
+    "kind": "timing",
+    "use": "record",
+    "value": [889, 3267, 5644, 8022, 10400],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・0・0・0f"
+    },
+    "source": "V-0524",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0711-03",
+    "recording": "0711",
+    "kind": "timing",
+    "use": "record",
+    "value": [918, 3296, 5673, 8051, 10429],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0524",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0711-04",
+    "recording": "0711",
+    "kind": "timing",
+    "use": "record",
+    "value": [3231, 5609, 7987, 10365],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f4447"
+    },
+    "source": "V-0524",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0711-05",
+    "recording": "0711",
+    "kind": "timing",
+    "use": "record",
+    "value": [3289, 5667, 8045, 10423],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0524",
+    "readAt": "2026-10-26"
+  },
+  {
+    "id": "0711-06",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "timing",
+    "value": [940, 3318, 5695, 8073, 10451],
+    "unit": "f",
+    "description": "ブームインストールの始まり s_w（エレグのバーストスキルダメージのヒット。II → III の替わり目の 51f 後。C-0689・C-0690）",
+    "method": {
+      "tool": "recipe:burst-panel@1 の II → III の替わり目に 51 を足した",
+      "note": "替わり目は `0711-02`"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0711-07",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "count",
+    "value": [8, 1207, 2400, 3600, 4800],
+    "description": "窓ごとの c_w（s_w より前のエレグの発の数。戦闘開始からの通算）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
+      "note": "照準の左の残弾（最大 300）の減りをマガジンをまたいで足した。1 桁の読み違い（前後の読みと食い違う値）は落とし、表示の 0 は読めないので最後の読みの後の連続フレームに置いた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0711-08",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "timing",
+    "value": [1061, 1161, 1454, 3447, 3547, 3851, 5819, 5924, 6024, 8304, 8404, 8504, 10696, 11004],
+    "unit": "f",
+    "description": "S1 の分配ダメージの組の頭（1 つ目のヒットが総ダメージに足されたフレーム）。どれもブームインストールの窓の中の発で起き、窓の外には無い",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
+      "note": "組は同じ値の 3 ヒットで、頭から 24f・36f 後に 2・3 つ目が出る（どの組も同じ間隔）。HUD の読めない区間に頭が入った組は、2・3 つ目から頭を出した"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0711-09",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "count",
+    "value": [1, 2, 19, 39, 40],
+    "description": "K1（命中を戦闘中ずっと数え、100 の倍数に届いた時に状態を見る）で読んだ、窓ごとの「撃った発の数 − 命中の数」（S1 の組の頭の 8f 前の発の通算を 100 で割った余り）。窓の中で一定で、窓を追うごとに増えるだけ",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
+      "note": "遅れ 8f は S2 の▲の切れ目（窓 1 の後）から外れの数に依らずに決めた。リロード明けの最初の発の後に 1〜数発増える所がある。ジャンプの間（約 2 秒どこにも増分の無い区間）にはエレグは撃っていない（0〜1 発）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0711-10",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "timing",
+    "value": [1015, 3400, 5813, 8297, 10690],
+    "unit": "f",
+    "description": "S2 の攻撃力▲の付き始め（窓ごと）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
+      "note": "窓ごとに、エレグのコアの 1 ヒットが ×1.131 の段に上がった最初のフレーム（前の段の最後: f1013・3399・5811・8294〜8295・10686）。f1013（発 61）・f3399（発 1262）・f5811（発 2419）・f8296（発 3639）・f10688（発 4840）が、通算の命中 60 の倍数（外れを引いた）に届いた発"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0711-11",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "interval",
+    "value": [296],
+    "unit": "f",
+    "description": "S2 の攻撃力▲の切れ目: 窓の中の最後の S2 の発火の発から、▲の無い最初のエレグのコアのヒットまで（窓 1 の後）。窓の外の通算の命中 360 では発火していない",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
+      "note": "窓 1 の後。f1528 のフルバーストの終わり（×1.25 下がる）・f1618 の鈴原サクラの▲（×1.1718 上がる）の後、f1741 までエレグのコア 14,738、f1742 から 13,031（÷1.131）。窓の中の最後の S2 の発火は、リロード明けの発 302（f1446。通算の命中 300）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0711-12",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "interval",
+    "value": [8],
+    "unit": "f",
+    "description": "S1 の遅れ: 届いた発（窓 1 の 3 つ目の組。S2 の▲の切れ目から決めた発）から、組の頭まで",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・hud.ts --mode jumps（scratchpad の解析）",
+      "note": "発 f1446、組の頭 f1454。ほかの組も、外れの数を窓ごとに一定とすれば同じ 8f でそろう（7〜9f の範囲。10f 以上は 1 回目の窓で余りが負になる）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0711-13",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "use": "record",
+    "kind": "hit",
+    "value": [140921, 143623, 140585],
+    "description": "S1 の組の 1 ヒットの値（窓 1 の 1〜3 回目の組の頭。同じ組の 3 ヒットは同じ値）。値の比べは、S2 の▲を定義に入れてから（plan/design-elegg-s3.md 7 節の論点 4）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "組の頭のフレームの増分をそのまま書いた（ほかの 1 ヒットとの重なりは分けていない。値は 138,184〜143,623 で揃っていない）。比べる前に、組の 2・3 つ目と重なりを読み分ける"
+    }
+  },
+  {
+    "id": "0711-14",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13906,
+    "description": "エレグのコアの 1 ヒット（距離ボーナス・会心なし・フルバースト・防御力▼）。1 回目の窓の、S2 の▲の前",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f953〜1013 の増分で繰り返す値（f1013 は通算の命中 60 の発で、▲はその後）。比べるフレームはゲーム内の 140（モデルのブームインストールの始まり 87 と S2 の▲の始まり 161 の間）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 140,
+        "core": true,
+        "distance": false,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0711-15",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15727,
+    "description": "エレグのコアの 1 ヒット（距離ボーナス・会心なし・フルバースト・防御力▼・S2 の攻撃力▲）。1 回目の窓の、S2 の▲の後",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1015〜1060 の増分で繰り返す値。▲の前の 13,906 の 1.131 倍。比べるフレームはゲーム内の 200（モデルの S2 の▲の始まり 161 と鈴原サクラの受けるダメージ▲ 305 の間）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 200,
+        "core": true,
+        "distance": false,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0711-16",
+    "recording": "0711",
+    "source": "V-0524",
+    "readAt": "2026-10-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 20640,
+    "description": "エレグのコアの 1 ヒット（距離ボーナスあり・会心なし・フルバースト・防御力▼・S2 の攻撃力▲・鈴原サクラの受けるダメージ▲）。3 回目の窓",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f5813〜6043 の増分で繰り返す値（▲の前の f5790〜5811 は 18,250）。比べるフレームはゲーム内の 4900（モデルの 3 回目の窓で、▲と鈴原サクラの▲が両方付いている区間 4879〜4980）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4900,
+        "core": true,
+        "distance": true,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

@@ -680,7 +680,8 @@ export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd', 'reloadEnd'] as con
  * inFullBurst = 発火の瞬間がフルバーストタイムの中なら（防御力無視ダメージ編。plan/design-true-damage-element.md 3.4 節。
  * 1 パス目で窓を追う stat には書けない。damage ではクルミ S2 編の fullBurst を改めた。窓 [start, end) の中）。
  * enemyState = 敵（1 体の前提）にその状態が付いているなら（クルミ S2 編の targetStatus を改めた。damage。付いている区間は
- * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。
+ * 同じ状態の dot の最初の発火から最後の tick まで。編成のどの枠の dot でもよい）。エレグの段 3（plan/design-elegg-s3.md 3.2 節）で
+ * timed・付与にも書けるようにし、敵に付く状態の付与（エレグのブームインストール）の窓も見る（damage も同じ。そのフレームに付いた件も入れる）。
  * selfState = 自分（効果を出した枠）にその状態が付いているか（2 段目の段 1。plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
  * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除。フルバーストの開始・終了のきっかけだけ。
  * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
@@ -2141,8 +2142,8 @@ function parseTimedFields(
 
 /** 名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）: 効果の種類ごとに受ける条件の鍵 */
 const CONDITION_KEYS_OF = {
-  // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）
-  timed: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst', 'selfCounter'],
+  // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）。エレグの段 3（plan/design-elegg-s3.md 3.2 節）: enemyState
+  timed: ['selfBuffed', 'inFullBurst', 'enemyState', 'selfState', 'usedBurst', 'selfCounter'],
   damage: ['inFullBurst', 'enemyState', 'selfState'],
   // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst
   removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],

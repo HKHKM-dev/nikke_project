@@ -86,7 +86,7 @@
     "description": "1 回目のチェーンの I → II・II → III の六角形の替わり目と III のタイマーの 00.00 の、戦闘開始（残り時間の 02:59 が出たフレーム）からの動画のフレーム",
     "method": {
       "tool": "recipe:burst-panel@1 の 1 つ目の値から戦闘開始のフレームを引いた",
-      "note": "戦闘開始は f887（timer.ts --mode changes の 3 つ目の変わり目。V-0504 の `0665-07` と同じ読み方）。替わり目は `0693-01`〜`0693-03` の 1 つ目"
+      "note": "戦闘開始は f887（timer.ts --mode changes の 3 つ目の変わり目。V-0504 の `0665-07` と同じ読み方）。替わり目は `0693-01`〜`0693-03` の 1 つ目。比べるモデルからエレグの S2 の攻撃力▲（C-0696）を落とす（この録画のエレグは撃たず、命中の回数で起きる S2 は起きない。モデルには撃たない枠が無い）"
     },
     "compare": {
       "model": "sim",
@@ -99,7 +99,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
       }
     }
   },
@@ -114,7 +121,7 @@
     "description": "雪子のバーストの分配ダメージのヒット（会心なし）。1 回目の発動",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "f974 の単独の増分（II → III の替わり目 f946 の 28f 後）。2 回目以降（5,523,438・3,272,772・4,909,158）は記録にとどめる"
+      "note": "f974 の単独の増分（II → III の替わり目 f946 の 28f 後）。2 回目以降（5,523,438・3,272,772・4,909,158）は記録にとどめる。比べるモデルからエレグの S2 の攻撃力▲（C-0696）を落とす（この録画のエレグは撃たず、命中の回数で起きる S2 は起きない。モデルには撃たない枠が無い）"
     },
     "compare": {
       "model": "sim",
@@ -129,7 +136,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
       }
     }
   },

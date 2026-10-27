@@ -1,0 +1,15 @@
+{
+  "id": "C-0696",
+  "text": "エレグの S2 の「通常攻撃が 60 回命中した時、対象がブームインストール状態なら味方全体にスキル発動者基準で攻撃力 X%▲（5 秒）」は、エレグのバフ前攻撃力 × 説明文の値（Lv10 で 13.09%）の固定加算で味方に乗る（エレグ自身の通常攻撃の 1 ヒットで、▲の前後がモデルの値と端数まで合う）。窓の中で何度起きても重ならない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0711-14`・`0711-15`・`0712-14`・`0712-15`（1 回目の窓の、▲の前後のエレグのコアの 1 ヒット。13,906 → 15,727 で、モデルの 13,905.6・15,727.0 と 1 未満の差）、`0711-16`（3 回目の窓の、▲と鈴原サクラの▲が両方付いた 1 ヒット 20,640。モデル 20,640.3）。窓の中で S2 は約 60 発ごとに起きるが、エレグのコアの 1 ヒットは▲1 つ分の段のまま（V-0524「分かったこと」の U4）。V-0524",
+  "model": "`data/skills/500.json` の skill2 の effects[1]（`timed`・`{ count: normalHit, everyRef: 1 }`・条件 `enemyState: boomInstall`・`allies`・`attack`・`casterAttack`・`ref: 2`・`durationRef: 3`）。条件 `enemyState` を timed に開き、敵に付く状態の付与の件も見る（`skills/holders.ts` の `enemyStateAt`、`skills/types.ts` の `CONDITION_KEYS_OF`。plan/design-elegg-s3.md 3.2 節）。付き直しは同じ効果の窓の和集合（重ねない）",
+  "replaces": [],
+  "updated": "2026-10-27",
+  "subject": {
+    "places": ["data/skills/500.json の skill2 の effects[1]"]
+  },
+  "decidedOn": []
+}

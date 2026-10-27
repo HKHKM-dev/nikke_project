@@ -48,7 +48,7 @@ import {
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
 import { counterMax, type CounterId } from './counters.ts';
 import { stackItems, STACK_REFRESH, type StackDecrease } from './stacks.ts';
-import { statesMatching, type NamedStateId } from './states.ts';
+import { stateMatches, statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
   createTriggerTracker,
@@ -1041,6 +1041,19 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return level;
   };
 
+  // エレグの段 3（plan/design-elegg-s3.md 3.2 節）: 条件 enemyState が見る、敵の状態の件の列（付与で付いた状態と、持続ダメージの状態）。
+  // damage の enemyState（frame/plan.ts の damageConditionHolds）と同じく、そのフレームに付いた件も入れる
+  const enemyStateTracks = tracks.filter(
+    (t) => t.holder === ENEMY && (t.origin.kind === 'state' || t.origin.kind === 'enemyState'),
+  );
+  const enemyStateAt = (state: NamedStateId, frame: number): boolean =>
+    enemyStateTracks.some(
+      (t) =>
+        (t.origin.kind === 'state' || t.origin.kind === 'enemyState') &&
+        stateMatches(state, t.origin.state) &&
+        activeAt(t, frame).length > 0,
+    );
+
   // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（2 段目の段 1。plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
 
@@ -1078,6 +1091,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (condition.inFullBurst === true) {
       if (!options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end)) return false;
     }
+    if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値（前のフレームの終わりの値）
     if (condition.selfCounter !== undefined) {
       const { counter, atLeast, below } = condition.selfCounter;
