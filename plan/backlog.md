@@ -76,7 +76,7 @@
 <!-- prettier-ignore -->
 | # | 課題 | 残り | 出どころ |
 | --- | --- | --- | --- |
-| 5-6 | 画面のレスポンス（`useDeferredValue` → Web Worker。1 パス目のキャッシュは 5-7 の後に判断） | B-1 → B-2。B-3 は保留 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 6・8 節 |
+| 5-6 | 画面のレスポンス（`useDeferredValue` → Web Worker。1 パス目のキャッシュは 5-7 の後に判断） | B-1 は済み（2026-10-28）。次は B-2。B-3 は保留 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 6・8 節 |
 | 5-7 | 1 パス目の最適化（件の一覧の読み直し `readItems`・`closedStateItems`・`stackItems` が重い） | 着手は未定。優先は 5-6 の B-3 より上 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 3.4・9 節 |
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
