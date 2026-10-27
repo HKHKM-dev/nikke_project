@@ -78,6 +78,15 @@ describe('シンデレラ（511）のバースト', () => {
         expect(h.hit.boost.fullBurst).toBe(0.5);
       }
     });
+    // C-0657（V-0527）: 追加ダメージの攻撃力はヒットの時の値。1 回目のバーストの途中で美しさが増えた後のヒットだけ、攻撃力が上がる
+    // （掛ける数はバーストを使った時のまま）
+    const first = additional.slice(0, 10);
+    const before = first.filter((h) => stacksAt(h.frame) === first[0]!.stacks);
+    const after = first.filter((h) => stacksAt(h.frame) > first[0]!.stacks!);
+    expect(before.length).toBeGreaterThan(0);
+    expect(after.length).toBeGreaterThan(0);
+    for (const h of before) expect(h.hit.baseHit).toBe(before[0]!.hit.baseHit);
+    for (const h of after) expect(h.hit.baseHit).toBeGreaterThan(before[0]!.hit.baseHit);
   });
 
   it('rejects perCount without the trigger burstUse or with an unknown field', () => {

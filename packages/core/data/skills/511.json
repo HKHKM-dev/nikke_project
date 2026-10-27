@@ -142,24 +142,11 @@
             "state": "beauty"
           },
           "assumes": {
-            "ja": "美しさスタックコピーは、バーストを使った時の美しさのスタック数を倍率に掛け、10 回のヒットのそれぞれに 1 回ずつ出す",
-            "en": "Beauty stack copy multiplies the value by the Beauty stacks at Burst use, once on each of the 10 hits"
+            "ja": "美しさスタックコピーは、バーストを使った時の美しさのスタック数を倍率に掛け、10 回のヒットのそれぞれに 1 回ずつ出す。攻撃力はヒットの時の値（S1 の攻撃力▲はヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時の値のまま）",
+            "en": "Beauty stack copy multiplies the value by the Beauty stacks at Burst use, once on each of the 10 hits. ATK is the value at each hit (the S1 ATK up re-reads the final max HP at the hit; the burst hits keep the value at activation)"
           },
           "claims": [
-            "C-0656"
-          ]
-        }
-      ],
-      "notes": [
-        {
-          "ja": "追加ダメージの攻撃力は、ヒットの時の最終最大HP で S1 の攻撃力▲を読み直す（バーストのヒットは発動の時の値のまま）。モデルは発動の時の値で固定する（未実装。1 回目のバーストの途中で美しさが増えた後のヒットだけが違う）",
-          "en": "The additional damage re-reads the S1 ATK up with the final max HP at each hit (the burst hits keep the value at activation). The model fixes it at activation (not modeled; only the hits after Beauty grows during the first Burst differ)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "burstUse"
-          },
-          "claims": [
+            "C-0656",
             "C-0657"
           ]
         }
