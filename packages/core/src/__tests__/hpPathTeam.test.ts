@@ -8,6 +8,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { applyResolvedEffect, ZERO_BUFFS } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
