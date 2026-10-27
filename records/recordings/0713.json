@@ -1,0 +1,47 @@
+{
+  "id": "0713",
+  "date": "2026-10-27",
+  "folder": "range",
+  "file": "20261027-0713_sg+ar+ar_fa+sun+tove_autofire-off-after.mp4",
+  "original": "2026-10-27_21-58-57.mp4",
+  "durationSec": 78.4,
+  "frames": 4704,
+  "fps": 60,
+  "sizeMB": 95.1,
+  "sha256": "83c2e71e3f61",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 192,
+      "name": "トーブ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0525 の撮り方 A（1 本目）。ソルジャーF.A.・I-DOLL・サン・トーブ（宝物の段階 3・操作）・オートバースト ON。トーブのバーストの直後にオート射撃を約 10 秒 OFF にする操作を 2 回。途中で止めた",
+  "backup": {
+    "at": "2026-10-27T22:17+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
