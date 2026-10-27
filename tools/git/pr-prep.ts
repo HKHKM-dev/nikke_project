@@ -99,9 +99,17 @@ while (rebasing()) {
     conflictedSoFar.push(...generated);
   }
   if (tryGit(['rebase', '--continue'], NO_EDITOR) !== 0 && rebasing()) {
-    const stillConflicted = git(['diff', '--name-only', '--diff-filter=U']) !== '';
+    // 次のコミットが衝突したなら、次の回で解く
+    if (git(['diff', '--name-only', '--diff-filter=U']) !== '') continue;
     // 生成物だけのコミットは、main の版を取ると空になる。そのコミットは飛ばす
-    if (!stillConflicted && tryGit(['diff', '--cached', '--quiet']) === 0) tryGit(['rebase', '--skip'], NO_EDITOR);
+    if (tryGit(['diff', '--cached', '--quiet']) !== 0)
+      fail('git rebase --continue が衝突のほかの理由で落ちた（リベースの途中のまま）');
+    if (
+      tryGit(['rebase', '--skip'], NO_EDITOR) !== 0 &&
+      rebasing() &&
+      git(['diff', '--name-only', '--diff-filter=U']) === ''
+    )
+      fail('git rebase --skip が落ちた（リベースの途中のまま）');
   }
 }
 
