@@ -4,7 +4,7 @@
 - 出どころ: 公式の告知画像（2026-10-28 公表。Drive の「マイ コンピュータ/record」の `HVtF8xnbkAAOpzG.jpg`・`HVtF8xoaoAA-PJo.jpg`（マリアン：クイーン）、`HVtMNI7bEAAA1vi.jpg`・`HVtMNJMbcAAxwPE.jpg`（ラプンツェル：サンクチュアリ）、`HVtQufQaQAAOEMK.jpg`・`HVtQuhHbMAAIAfm.jpg`（紅蓮：神殺））。値はスキル Lv10。画像の注記どおり、実装までに変わりうる
 - 関連: [skills-guide.md](skills-guide.md)（定義の手順）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（句の分類）、[design-named-state.md](design-named-state.md)（名前の付いた状態）、[design-skill-stage5.md](design-skill-stage5.md) 1.2 節（状態の家族）、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲）、[design-skill-stage11.md](design-skill-stage11.md)（使用武器の変更）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）
 - 作成日: 2026-10-28
-- 状態: 承認（2026-10-28。オーナーが 3 体とも定義すると決め、論点 B〜I を推奨どおり、J を「1 パス目に入れる」に決めた。7 節）。語彙（5 節）から実装する。3 体とも 2026-10-28 の時点で Blablalink の CDN（`nikke_list_ja_v2.json`）に無い（`fetch-data` で取れない）
+- 状態: 承認（2026-10-28。オーナーが 3 体とも定義すると決め、論点 B〜I を推奨どおり、J を「1 パス目に入れる」に決めた。7 節）。語彙（5 節）は実装した（8 節）。定義は CDN に載ってから。3 体とも 2026-10-28 の時点で Blablalink の CDN（`nikke_list_ja_v2.json`）に無い（`fetch-data` で取れない）
 
 ## 0. 仮実装の範囲
 
@@ -191,6 +191,22 @@
 - **I. 立ち上げ速度▲の効き方**: 5.6 節。録画で読む（推奨）。
 - **J. クリティカル命中の回数（5.7 節）を 1 パス目に入れるか**: 入れないなら紅蓮：神殺の S2 の弾丸チャージは未対応の notes（S2 は partial）になり、マガジンの長さを大きく見誤る。入れるなら、1 パス目でクリティカル率を引ける形を別の設計書にする。
 
+## 8. 実装した語彙（2026-10-28）
+
+CDN に載る前に、5 節の語彙だけを入れた（使い手の定義は無い）。どれも仮のキャラの編成のテスト（`__tests__/newChars1029Team.test.ts`・`skills/__tests__/newChars1029.test.ts`）で出方を見ており、既存のテストの数値は変わらない。
+
+<!-- prettier-ignore -->
+| 節 | 書き方 | 決まり |
+| --- | --- | --- |
+| 5.1 | timed・付与の `targetState` + `includeSelf: true` | `targetState` は家族の根を指せば家族のどの状態にも当たる（`skills/composition.ts` の `fixedTargetsOf`）。見るのは枠の静的な状態だけ（ペルソナ編と同じ）。臨戦の 3 体はどれも戦闘開始時の持続の臨戦を持つので足りる。臨戦の家族（`StateFamily`）と状態の id は、英語名が出てから `skills/states.ts` に足す |
+| 5.2 | damage の `hitsRef`・`hitIntervalFrames` | N ヒットを `hitIntervalFrames` ごとに出し、どのヒットも ref の値。間の省略は 0（同じフレーム）。射撃の回数のきっかけ・`perBurstHit` とは組み合わせない |
+| 5.3 | damage の `periodShorten: { state, slot, ref }` | 時間の周期のきっかけだけ。前の発動のフレーム（初めは戦闘開始）に自分が state なら、次の発動までを縮める（`skills/timeline.ts` の `shortenedTimerFrames`）。値は別のスロットの説明文から引ける（S2 の値で S1 の周期を縮める）。状態の見え方は条件 selfState と同じ（付いたフレームの次から） |
+| 5.4 | damage の `coreHit: true` | コアの項を割合 1 で足す（自動攻撃の core と同じ置き方。コアダメージ▲も入る）。射撃ごとに畳み込む効果には書けない |
+| 5.5 | stat `sequentialAttackDamage` | `hitsRef` のヒットにだけ別枠の乗数 (1 + Σ)（分配ダメージ▲と同じ置き方。仮説） |
+| 5.6 | stat `spinUpSpeed` | MG の 1 発ごとのレートの上がり幅に (1 + Σ)。最高レート・初弾の遅れは変えない（論点 I の仮説）。射撃に効く stat |
+| 5.7 | 回数の種類 `critHit` と、回数のきっかけの `firesOutside: "weaponChange"` | 1 パス目が発ごとに「命中の期待値 × その発の通常攻撃の会心率（基礎 + 常時 + 時間で変わる会心率▲・通常攻撃のクリティカル確率▲。上限 1）」を `ShotLog.critHits` に書き、累計で数える。`firesOutside` は、変更の発で届いた回を発火させない（紅蓮：神殺の S2 の「満開状態でなければ」。数えるのは変更の発も、を仮説にする） |
+
 ## 経過
 
 - 2026-10-28: 起案（告知画像から分解。CDN には未掲載）。同日承認（7 節）。
+- 2026-10-28: 5 節の語彙を実装した（定義はまだ。8 節）。
