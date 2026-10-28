@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 294（根拠あり 287）・notes 195（根拠あり 69）
+件数: キャラ 61・効果 295（根拠あり 288）・notes 194（根拠あり 69）
 
-notes の種類: 未対応 77・前提の外 27・計算に無関係 32・補足 12・間接 47
+notes の種類: 未対応 76・前提の外 27・計算に無関係 32・補足 12・間接 47
 
-スロット: supported 118・partial 13・unsupported 33・noEffect 34
+スロット: supported 119・partial 12・unsupported 33・noEffect 34
 
 ## 10 ラピ
 
@@ -234,10 +234,10 @@ notes の種類: 未対応 77・前提の外 27・計算に無関係 32・補足
   - effects[6] passive・overEnergyStage 3 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
   - effects[7] passive・overEnergyStage 4 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
   - notes[0] 間接（HP）: 最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。モデルは HP の割合を読む効果（自分の HP の割合の条件・HP の割合の低い味方を対象にする効果）に、枠の HP の割合の想定のまま渡す（下がる分は未実装）: 根拠なし
-- **burst**: partial
+- **burst**: supported
   - effects[0] timed・burstUse・attack: C-0682（確定）
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）
-  - notes[0] 未対応: オーバーエネルギーの段階に応じた、照準線に最も近い敵 1 機への追加ダメージは未対応（オーバーエネルギー（S2）が未対応。段 11 以降の使用武器の変更と一緒に扱う）: 根拠なし
+  - effects[2] damage・burstUse・additional: C-0707（確定）
 
 ## 121 エヌ : ミラクルフェアリー
 

@@ -866,9 +866,11 @@ export type DamageEffect = {
   /**
    * 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 数。「〈名前〉スタックコピー」は、倍率に、効果の発火のフレームの自分のその
    * 状態のスタック数（発火のフレームより前に付いた件。条件 selfState と同じ見え方）を掛ける。0 なら出さない。trigger が burstUse の
-   * ときだけ書ける（シンデレラのバーストの追加ダメージ。V-0502）
+   * ときだけ書ける（シンデレラのバーストの追加ダメージ。V-0502）。2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: { counter } は
+   * 発火のフレームの自分のそのカウンタの値（前のフレームの終わりの値。条件 selfCounter と同じ見え方）を掛ける（ラプラス：アルティメット
+   * ヒーローのバーストの追加ダメージ。V-0532）
    */
-  perCount?: { state: NamedStateId };
+  perCount?: { state: NamedStateId } | { counter: CounterId };
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -2238,7 +2240,8 @@ function parseTimedFields(
 const CONDITION_KEYS_OF = {
   // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）。エレグの段 3（plan/design-elegg-s3.md 3.2 節）: enemyState
   timed: ['selfBuffed', 'inFullBurst', 'enemyState', 'selfState', 'usedBurst', 'selfCounter'],
-  damage: ['inFullBurst', 'enemyState', 'selfState'],
+  // 2 段目の段 11 の PR 5: damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
+  damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter'],
   // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst
   removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
   // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 常時の効果は、自分の HP の割合の条件だけ（編成の段で決まる）
@@ -2880,12 +2883,19 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     effect.perBurstHit = true;
   }
   if (v.perCount !== undefined) {
-    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 状態のスタック数。使い手（シンデレラ）のいるバースト使用時だけ
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 状態のスタック数。使い手（シンデレラ）のいるバースト使用時だけ。
+    // 段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 値 × カウンタの値（ラプラス：アルティメットヒーロー）
     const per = v.perCount;
     if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
     if (trigger !== 'burstUse') fail(`${path}.perCount`, 'perCount needs the trigger "burstUse"');
-    for (const key of Object.keys(per)) if (key !== 'state') fail(`${path}.perCount.${key}`, 'unknown field');
-    effect.perCount = { state: parseNamedStateId(per.state, `${path}.perCount.state`, 'ally') };
+    for (const key of Object.keys(per))
+      if (key !== 'state' && key !== 'counter') fail(`${path}.perCount.${key}`, 'unknown field');
+    if ((per.state === undefined) === (per.counter === undefined))
+      fail(`${path}.perCount`, 'expected exactly one of state and counter');
+    effect.perCount =
+      per.state !== undefined
+        ? { state: parseNamedStateId(per.state, `${path}.perCount.state`, 'ally') }
+        : { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

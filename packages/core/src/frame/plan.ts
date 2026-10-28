@@ -56,6 +56,7 @@ import {
   type ValuePiece,
 } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
+import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, type NamedStateId } from '../skills/states.ts';
 import {
   isEnemyHeldStat,
@@ -260,9 +261,10 @@ export function planSkillHits(
   timeline: BuffTimeline,
   /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節・段 D の 2）: 1 パス目の履歴。条件 enemyState は敵の状態の件、
-   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る
+   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。段 11 の PR 5: 条件 selfCounter と
+   * perCount の { counter } はカウンタの記録を見る
    */
-  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications'>,
+  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications' | 'counters'>,
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
@@ -317,6 +319,14 @@ export function planSkillHits(
         if (i.start < frame && frame < i.end) level = Math.max(level, i.stack ?? 1);
       }
       return level;
+    };
+    // 2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 条件 selfCounter と perCount の { counter } が読む、自分のカウンタの
+    // 発火のフレームの値（前のフレームの終わりの値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 の記録）
+    const ownCounters = history.counters.filter((r) => r.slotIndex === slotIndex);
+    const counterAt = (counter: CounterId, frame: number): number => {
+      let value = 0;
+      for (const r of ownCounters) if (r.counter === counter && r.frame < frame) value = r.value;
+      return value;
     };
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);
@@ -394,10 +404,17 @@ export function planSkillHits(
         ? appliedFrames(history, effect.trigger.applied, slotIndex)
         : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds)) continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
         // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
-        // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502）
-        const copied = effect.perCount === undefined ? undefined : selfStackCount(effect.perCount.state, frame);
+        // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502）。段 11 の PR 5: 「× オーバー
+        // エネルギー段階」は発火のフレームのカウンタの値（V-0532）
+        const per = effect.perCount;
+        const copied =
+          per === undefined
+            ? undefined
+            : 'state' in per
+              ? selfStackCount(per.state, frame)
+              : counterAt(per.counter, frame);
         if (copied === 0) continue;
         if (effect.perBurstHit === true) {
           // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: 条件は発火のフレームで 1 回判定し（C-0566）、
@@ -471,9 +488,16 @@ function damageConditionHolds(
   schedule: BurstSchedule | null,
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
   selfStateHolds: (self: SelfStateCondition, frame: number) => boolean,
+  counterAt: (counter: CounterId, frame: number) => number,
 ): boolean {
   if (condition === undefined) return true;
   if (condition.selfState !== undefined && !selfStateHolds(condition.selfState, frame)) return false;
+  if (condition.selfCounter !== undefined) {
+    const { counter, atLeast, below } = condition.selfCounter;
+    const value = counterAt(counter, frame);
+    if (atLeast !== undefined && value < atLeast) return false;
+    if (below !== undefined && value >= below) return false;
+  }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
   if (condition.enemyState !== undefined) {
     const spans = enemySpans.get(condition.enemyState) ?? [];

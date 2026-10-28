@@ -242,17 +242,29 @@
             "C-0682",
             "C-0683"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "オーバーエネルギーの段階に応じた、照準線に最も近い敵 1 機への追加ダメージは未対応（オーバーエネルギー（S2）が未対応。段 11 以降の使用武器の変更と一緒に扱う）",
-          "en": "The additional damage to the enemy nearest the crosshair scaled by the Over Energy stage is not modeled (Over Energy (S2) is not modeled; handled with the weapon change in stage 11 or later)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "burstUse"
-          }
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 4,
+          "damageType": "additional",
+          "delayFrames": 12,
+          "condition": {
+            "selfCounter": {
+              "counter": "overEnergyStage",
+              "atLeast": 1
+            }
+          },
+          "perCount": {
+            "counter": "overEnergyStage"
+          },
+          "assumes": {
+            "ja": "対象「照準線に最も近い敵 1 機」は単体ボス。値はバーストを使った時のオーバーエネルギーの段階を倍率に掛けた 1 ヒットで、発動の 12f 後（バーストのヒットの 6f 後。フルバーストの入りの止まりの後）に、その時のバフとフルバースト補正で出る",
+            "en": "The target (the enemy nearest the crosshair) is the lone boss. One hit with the value multiplied by the Over Energy stage at Burst use, 12 frames after activation (6 frames after the burst hit, after the Full Burst entry stop), with the buffs and Full Burst bonus at that frame"
+          },
+          "claims": [
+            "C-0707"
+          ]
         }
       ]
     }
