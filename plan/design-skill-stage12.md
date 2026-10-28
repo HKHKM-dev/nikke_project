@@ -6,7 +6,7 @@
 - 前提: [design-anis-star-s1.md](design-anis-star-s1.md) 2.1 節（編成の条件 `burstStepMix`）、[design-anis-star-rest.md](design-anis-star-rest.md) 3 節（`burstReentry`。持つ枠のバーストの段を差し替える形）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.2・9.3 節（`autoAttack` と発射体爆発ダメージ▲）、[design-stage11-scarlet-bs.md](design-stage11-scarlet-bs.md) 7 節（間隔の変更 `cycleEvery`）、[design-skill-stage10.md](design-skill-stage10.md) 2.1・2.3 節（`perCount`・カウンタ）、[design-stage10.md](design-stage10.md) 4 節（`cooldownReduction`）
 - いまの未対応: [skills.md](skills.md)（生成）の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）
 - 作成日: 2026-10-28
-- 状態: 起案（2026-10-28。オーナーの指示）。論点 1〜9 はオーナーの判断待ち
+- 状態: 決定（2026-10-28。オーナーが論点 1〜9 を推奨どおりに決めた）。PR 1 に着手する
 
 ## 0. 範囲の選び方
 
@@ -173,6 +173,8 @@
 
 ## 6. 論点
 
+決定（2026-10-28、オーナー）: 論点 1〜9 は推奨どおり。論点の文は諮った時のまま。
+
 1. **段 12 の対象**（0.3 節）
    - 推奨: ラピ：レッドフードの全スロット（と PR 4 のモランの宝物版の S2）。いまのモデルとの差がいちばん大きく、戦闘補助でない側（ふだんの編成の側）は既存の録画 0116・0117 で撮影を待たずに確かめられる。
    - 代わりの案: ミハラ：ボンディングチェーンとスノーホワイト：ヘビーアームズ（段 11 の 4 節の 3。カウンタの数だけ出る攻撃を共有し、ミハラ：ボンディングチェーンの S1 は既存の録画 0119・0490・0492 で確かめられる）。定義の無い使い手につながる語彙（カウンタ・自動攻撃）は多いが、効きはラピ：レッドフードより小さく、スノーホワイト：ヘビーアームズはほとんどが撮影。
@@ -204,3 +206,4 @@
 ## 経過
 
 - 2026-10-28: 起案（オーナーの指示: 段 12 を起案する）。#741 の後の main で、[skills.md](skills.md) の未対応の notes を [design-skill-stages.md](design-skill-stages.md) 3 節の家族ごとに分け直し（棚卸し [design-skill-stage12-inventory.md](design-skill-stage12-inventory.md)）、効き・確かめやすさ・土台で、段 12 をラピ：レッドフードの全スロット（バースト段階の変更と粘着榴弾）にした。戦闘補助でない側は、既存の録画 0116・0117 で最初の PR が撮影を待たない。段 11 の 4 節の見込み（ミハラ：ボンディングチェーン・スノーホワイト：ヘビーアームズに `{ counterFull }` が使える）は、どちらの説明文にも当たらないことを確かめた（棚卸し 0.1 節）。段 11 の閉じ残り（一覧の区分の表）を見つけた。論点 1〜9 はオーナーの判断待ち。
+- 2026-10-28: オーナーが論点 1〜9 を推奨どおりに決めた。PR 1（戦闘補助でない側の S1 とバーストの III の追加ダメージ。録画 0116・0117 の読み直し。段 11 の閉じ残りの区分の表も）に着手する。
