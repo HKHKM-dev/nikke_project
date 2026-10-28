@@ -13588,6 +13588,634 @@
       "effective": true,
       "minus": -684.2800107000021,
       "plus": null
+    },
+    {
+      "observation": "0727-07",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "4ccfd509827a9c9c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-07",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "4ccfd509827a9c9c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-07",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "4ccfd509827a9c9c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-07",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "4ccfd509827a9c9c",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0727-08",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "50a56723deca68d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-08",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "50a56723deca68d6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-08",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "50a56723deca68d6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-08",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "50a56723deca68d6",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0727-09",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "f4a4f0bfc6e08db2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-09",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "f4a4f0bfc6e08db2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-09",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "f4a4f0bfc6e08db2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-09",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "f4a4f0bfc6e08db2",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0727-10",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "1a164dbc7c1ee1ef",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-10",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "1a164dbc7c1ee1ef",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-10",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "1a164dbc7c1ee1ef",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-10",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "1a164dbc7c1ee1ef",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0727-11",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "a920504175d08ae4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-11",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "a920504175d08ae4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-11",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "a920504175d08ae4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-11",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "a920504175d08ae4",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0727-12",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "c5317a59eda1f658",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 11 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0727-12",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "c5317a59eda1f658",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-12",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "c5317a59eda1f658",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-12",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "c5317a59eda1f658",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-07",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "094d477a10053bd5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0728-07",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "094d477a10053bd5",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-07",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "094d477a10053bd5",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-07",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "094d477a10053bd5",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-08",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "08839ed3bf642a36",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0728-08",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "08839ed3bf642a36",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-08",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "08839ed3bf642a36",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-08",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "08839ed3bf642a36",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-09",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "6854b532ff74ee5d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0728-09",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "6854b532ff74ee5d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-09",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "6854b532ff74ee5d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-09",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "6854b532ff74ee5d",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-10",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "0da3a71de988c000",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 9 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0728-10",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "0da3a71de988c000",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-10",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "0da3a71de988c000",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-10",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "0da3a71de988c000",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-11",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "23dcede7d267c290",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 10 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0728-11",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "23dcede7d267c290",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-11",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "23dcede7d267c290",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-11",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "23dcede7d267c290",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-12",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "cc4b430447f69f2d",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 11 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0728-12",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "cc4b430447f69f2d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-12",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "cc4b430447f69f2d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-12",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "cc4b430447f69f2d",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": 0
+    },
+    {
+      "observation": "0728-13",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "b99064c7b28dfffc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0728-13",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "b99064c7b28dfffc",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-13",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "b99064c7b28dfffc",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-13",
+      "element": "ミハラ skill1.effects[0]",
+      "key": "b99064c7b28dfffc",
+      "effective": false,
+      "minus": 5.820766091346741e-11,
+      "plus": 0
     }
   ]
 }

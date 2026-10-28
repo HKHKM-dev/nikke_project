@@ -272,7 +272,7 @@ notes の種類: 未対応 64・前提の外 27・計算に無関係 33・補足
   - effects[1] state・burstUse・highwayToHell2（critRate）: C-0566（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0563（確定）、C-0564（確定）、C-0575（確定）
-  - effects[1] damage・burstUse・additional: C-0566（確定）、C-0565（確定）
+  - effects[1] damage・burstUse・additional: C-0566（確定）、C-0565（確定）、C-0714（確定）
   - notes[0] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
   - notes[1] 補足: バーストスキルダメージの 3 ヒットは会心がそろう（1 回の発動で 3 ヒットとも会心か、3 ヒットとも会心なし）。モデルは期待値なので、値には効かない: C-0564（確定）
 
