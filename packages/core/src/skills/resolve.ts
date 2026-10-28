@@ -261,6 +261,8 @@ export type ResolvedEffect = {
   excludeSelf?: ExcludeSelf;
   /** ペルソナ編: 「〈名前〉状態の」（名前の付いた状態の語彙編: 目録の id）。定義に無ければキーごと無い */
   targetState?: NamedStateId;
+  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 「自分と〈状態〉の味方」。定義に無ければキーごと無い */
+  includeSelf?: true;
   /** ペルソナ編: 「基本バースト段階が N の」。定義に無ければキーごと無い */
   targetBurstStep?: BasicBurstStep;
   /** 2 段目の段 7: 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
@@ -567,6 +569,7 @@ function resolveItemFields(
   if (effect.targetSquad) r.targetSquad = effect.targetSquad;
   if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
   if (effect.targetState) r.targetState = effect.targetState;
+  if (effect.includeSelf) r.includeSelf = true;
   if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
   if (effect.targetDefense) r.targetDefense = effect.targetDefense;
   if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
@@ -690,6 +693,7 @@ export function resolveStateContents(
         if (grant.targetSquad) r.targetSquad = grant.targetSquad;
         if (grant.excludeSelf) r.excludeSelf = grant.excludeSelf;
         if (grant.targetState) r.targetState = grant.targetState;
+        if (grant.includeSelf) r.includeSelf = true;
         if (grant.targetBurstStep) r.targetBurstStep = grant.targetBurstStep;
         if (grant.fixedTargets) r.fixedTargets = grant.fixedTargets;
         if (grant.maxStacks !== undefined) r.maxStacks = grant.maxStacks;

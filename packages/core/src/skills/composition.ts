@@ -169,13 +169,17 @@ export function fixedTargetsOf(
   if (!self) throw new Error(`no character in slot ${selfIndex}`);
   const windowed = effect.kind === 'timed' || effect.kind === 'state';
   const state = windowed ? effect.targetState : undefined;
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 家族の根なら家族のどの状態でも当たる。「自分と」は自分の枠を足す
+  const matching = state === undefined ? [] : statesMatching(state);
+  const withSelf = windowed && effect.includeSelf === true;
   const step = windowed ? effect.targetBurstStep : undefined;
   const excludeSelf = windowed && effect.target === 'allies' && effect.excludeSelf !== undefined;
   const candidates: number[] = [];
   characters.forEach((c, i) => {
     if (c === null) return;
     if (squad && c.squad !== self.squad) return;
-    if (state !== undefined && !(states[i] ?? []).includes(state)) return;
+    const own = withSelf && i === selfIndex;
+    if (state !== undefined && !own && !matching.some((s) => (states[i] ?? []).includes(s))) return;
     if (step !== undefined && !countsAsBurstStep(c, step)) return;
     if (excludeSelf && i === selfIndex) return;
     if (!matchesTargetFilter(effect, fullCharacter(c, i))) return;

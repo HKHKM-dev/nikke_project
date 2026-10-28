@@ -61,6 +61,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   chargeDamage: 'チャージダメージ',
   chargeDamageMultiplier: 'チャージダメージ倍率',
   distributedDamage: '分配ダメージ',
+  sequentialAttackDamage: '順番攻撃ダメージ',
   damageTaken: '敵の受けるダメージ',
   enemyDefenseDown: '敵の防御力',
   projectileExplosionDamage: '発射体爆発ダメージ',
@@ -478,7 +479,10 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
   const squad = effect.targetSquad === 'same' ? '同じ部隊の' : '';
   // ペルソナ編: 「基本バースト段階 III のペルソナ状態の味方」（状態の名前は目録の name）
   const step = effect.targetBurstStep ? `基本バースト段階 ${BURST_STEP_ROMAN[effect.targetBurstStep]} の` : '';
-  const state = effect.targetState ? `${stateLabel(effect.targetState)}状態の` : '';
+  // 2026-10-29 のキャラの編: 「自分と〈状態〉の味方」
+  const state = effect.targetState
+    ? `${effect.includeSelf ? '自分と' : ''}${stateLabel(effect.targetState)}状態の`
+    : '';
   const weapon = `${squad}${step}${state}${nikkeClass}${element}${effect.targetWeapon ? `${effect.targetWeapon} の` : ''}`;
   const exclude =
     effect.excludeSelf === 'always'

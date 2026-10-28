@@ -74,6 +74,10 @@ export type ResolvedSkillDamage = {
   sustained?: true;
   /** コアの経路編: コアに当たりうるヒット（自動攻撃の core）。plan/design-anis-star-core-path.md 3.1 節 */
   core?: true;
+  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージ（core と組み、コアに当たる割合を 1 にする） */
+  coreHit?: true;
+  /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
+  sequential?: true;
   assumes?: LocalizedText;
 };
 
@@ -95,6 +99,9 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   delayFrames?: number;
   /** ミハラのバースト編: バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
   perBurstHit?: true;
+  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 1 回の発動のヒット数と、ヒットの間（フレーム） */
+  hits?: number;
+  hitIntervalFrames?: number;
   /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
   perCount?: { state: NamedStateId } | { counter: CounterId };
   /**
@@ -171,6 +178,10 @@ export function resolveDamageEffects(
       if (isPerShotTrigger(trigger) && effect.delayFrames !== undefined) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot have delayFrames`);
       }
+      // 2026-10-29 のキャラの編: 畳み込む効果はコアの補正を持てない（resolvePerShotDamage が読まない）
+      if (isPerShotTrigger(trigger) && effect.condition === undefined && effect.coreHit === true) {
+        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
+      }
       if (isPerShotTrigger(trigger) && effect.condition === undefined) return;
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -183,6 +194,18 @@ export function resolveDamageEffects(
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.perBurstHit === true) r.perBurstHit = true;
       if (effect.perCount !== undefined) r.perCount = effect.perCount;
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2・5.4 節）
+      if (effect.hitsRef !== undefined) {
+        const hits = skillValue(skill, effect.hitsRef, levels[slot]);
+        if (!Number.isInteger(hits) || hits < 1) throw new RangeError(`skill ${skill.id}: hits must be a positive integer`);
+        r.hits = hits;
+        r.hitIntervalFrames = effect.hitIntervalFrames ?? 0;
+        r.sequential = true;
+      }
+      if (effect.coreHit === true) {
+        r.core = true;
+        r.coreHit = true;
+      }
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -433,6 +456,8 @@ export type BurstHitInput = {
   fullBurstBonus?: boolean;
   /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ掛ける。省略 1 */
   distributedDamageMultiplier?: number;
+  /** 2026-10-29 のキャラの編: 1 + Σ sequentialAttackDamage（sequential の効果にだけ掛かる。省略は 1） */
+  sequentialAttackDamageMultiplier?: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
   /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
@@ -474,6 +499,8 @@ export type BurstHitResult = {
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
   distributedDamageMultiplier: number;
+  /** 2026-10-29 のキャラの編: 1 + Σ sequentialAttackDamage（sequential の効果にだけ掛かる） */
+  sequentialAttackDamageMultiplier: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（すべての効果に掛かる） */
   damageTakenMultiplier: number;
   /** 持続ダメージ▲編: sustained の効果に掛けた乗数（置き場所によらず、▲なしに対する比）。sustained の効果が無ければ 1 */
@@ -489,6 +516,7 @@ export type SkillHitResult = BurstHitResult;
 export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const fullBurstBonus = input.fullBurstBonus ?? BURST_SKILL_FULL_BURST_BONUS;
   const distributed = input.distributedDamageMultiplier ?? 1;
+  const sequential = input.sequentialAttackDamageMultiplier ?? 1;
   const damageTaken = input.damageTakenMultiplier ?? 1;
   const explosion = input.projectileExplosionMultiplier ?? 1;
   const baseHit = Math.max(1, input.attack - input.enemy.defence);
@@ -511,6 +539,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       (effect.core === true ? boostTotal : boostBase) *
       effect.multiplier *
       (effect.damageType === 'distributed' ? distributed : 1) *
+      (effect.sequential === true ? sequential : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
       (effect.sustained === true ? sustained : 1),
   }));
@@ -535,6 +564,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
     attackDamageMultiplier: input.attackDamageMultiplier,
     elementMultiplier: input.elementMultiplier,
     distributedDamageMultiplier: distributed,
+    sequentialAttackDamageMultiplier: sequential,
     damageTakenMultiplier: damageTaken,
     sustainedDamageMultiplier: hasSustained ? sustained : 1,
     perEffect,
@@ -618,6 +648,7 @@ export function computeSkillHit(
     effects,
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
+    sequentialAttackDamageMultiplier: 1 + buffs.sequentialAttackDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
     sustainedDamage: buffs.sustainedDamage,

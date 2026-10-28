@@ -377,8 +377,13 @@ export function planSkillHits(
       // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
       // コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: core の自動攻撃は、ヒットのフレームの着地点の行の割合
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージは割合 1
       const coreRate =
-        effect.core === true ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame) : 0;
+        effect.coreHit === true
+          ? 1
+          : effect.core === true
+            ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame)
+            : 0;
       const hit = computeSkillHit(
         [scaled],
         slot.character,
@@ -427,8 +432,14 @@ export function planSkillHits(
           }
           continue;
         }
-        if (frame + delay >= frames) continue;
-        push(frame + delay, effect, pre, copied);
+        // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す
+        const hits = effect.hits ?? 1;
+        const interval = effect.hitIntervalFrames ?? 0;
+        for (let k = 0; k < hits; k++) {
+          const at = frame + delay + k * interval;
+          if (at >= frames) break;
+          push(at, effect, pre, copied);
+        }
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
