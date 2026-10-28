@@ -22,6 +22,8 @@ export type ChangedWeapon = {
    * （WeaponChangeEffect.firstShotDelayFrames）。省略は weaponChangeShooter の待ち
    */
   firstShotDelayFrames?: number;
+  /** 2 段目の段 11 の PR 4: 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
+  infiniteAmmo?: true;
   /**
    * 同: 的の表の変更後の武器の行の鍵（`<resourceId>:<スロット>`。coreHitRate.weaponChanges）。即着弾に替えた変更
    * （instantFire）だけが持ち、通常攻撃のコア命中率をこの行から引く（行が無ければ基礎の武器の行のまま）

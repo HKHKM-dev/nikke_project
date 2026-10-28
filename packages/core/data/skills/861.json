@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 861,
-  "checkedAt": "2026-10-26",
+  "checkedAt": "2026-10-28",
   "skills": {
     "skill1": {
       "effects": [
@@ -15,71 +15,151 @@
           "claims": [
             "C-0658"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "フルバーストの窓の終わり（III のタイマーが切れたフレーム）から 5 秒。戦闘開始時の分（effects[0]）と同じ値で、窓が重なる場面は無い",
+            "en": "5 s from the end of the full burst window. Same value as the start-of-combat part (effects[0]); the two windows never overlap"
+          },
+          "claims": [
+            "C-0711"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "防御力無視ダメージ▲は防御力無視ダメージの発（バーストの使用武器の変更の発）にだけ乗り、S2 の防御力無視ダメージ▲と 1 つの和（1 + 和）で、コア・会心・フルバーストの和とも受けるダメージ▲とも別の乗数で掛かる。15 秒のうち使用武器の変更の窓（10 秒）の後は乗る発が無い",
+            "en": "True Damage up applies only to true damage shots (the burst weapon change). It is summed with S2's True Damage up into one multiplier (1 + sum), separate from the core/crit/full burst sum and from Damage Taken up. After the 10 s weapon change window no shot takes it for the rest of the 15 s"
+          },
+          "claims": [
+            "C-0710"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "敵 1 体。説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 15 秒（883 ティック）ごとに発動する（C-0418・C-0502 の周期。1 回目も 883 ティック目に置く。単騎の録画 0308 の帯は戦闘開始から 890f）。受けるダメージ▲は、バーストの受けるダメージ▲と 1 つの和（1 + 和）で、ほかのどの群とも別の乗数で味方の与ダメージに掛かる",
+            "en": "One enemy. The description gives no trigger. It is an active skill on a cooldown, activating every 15 s (883 ticks) from the start of combat (period from C-0418 and C-0502; the first activation is also put at tick 883; in solo recording 308 the banner appears 890 frames after the start). Damage Taken up is summed with the burst's Damage Taken up into one multiplier (1 + sum) on allies' damage, separate from every other group"
+          },
+          "claims": [
+            "C-0712",
+            "C-0418",
+            "C-0502"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "target": "allies",
+          "stat": "trueDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 15 秒（883 ティック）ごとに発動する（C-0418・C-0502 の周期。1 回目も 883 ティック目に置く。単騎の録画 0308 の帯は戦闘開始から 890f）。防御力無視ダメージ▲は防御力無視ダメージの発（たきなのバーストの使用武器の変更）にだけ乗る",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 15 s (883 ticks) from the start of combat (period from C-0418 and C-0502; the first activation is also put at tick 883; in solo recording 308 the banner appears 890 frames after the start). True Damage up only applies to true damage shots (Takina's burst weapon change)"
+          },
+          "claims": [
+            "C-0712",
+            "C-0418",
+            "C-0502"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "フルバーストタイム終了時の自分の攻撃力▲（5 秒）は未対応（撮っていない。戦闘開始時の分は effects[0]）",
-          "en": "The attack increase on self when Full Burst ends (5 s) is not modeled (not recorded; the start-of-combat part is effects[0])",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "fullBurstEnd"
-          }
-        },
-        {
-          "ja": "フルバーストタイムの発動時の自分の防御力無視ダメージ▲（15 秒）は未対応",
-          "en": "The true damage increase on self when Full Burst starts (15 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "trueDamage",
-            "target": "self",
-            "trigger": "fullBurstStart"
-          }
-        }
-      ]
-    },
-    "skill2": {
-      "effects": [],
-      "notes": [
-        {
-          "ja": "敵全体の受けるダメージ▲（5 秒）と気絶は未対応（説明文にきっかけが無い。発動してもバーストゲージは溜めない。C-0418）",
-          "en": "The damage-taken increase (5 s) and stun on all enemies are not modeled (the description gives no trigger; activating it does not charge the burst gauge; C-0418)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "damageTaken",
-            "target": "allies",
-            "trigger": "unknown"
-          }
-        },
-        {
-          "ja": "味方全体の防御力無視ダメージ▲（10 秒）は未対応（説明文にきっかけが無い）",
-          "en": "The true damage increase on all allies (10 s) is not modeled (the description gives no trigger)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "trueDamage",
-            "target": "allies",
-            "trigger": "unknown"
-          }
+          "ja": "敵全体の気絶はダメージに関係しない",
+          "en": "The stun on all enemies does not affect damage",
+          "kind": "noDamage",
+          "claims": [
+            "C-0712"
+          ]
         }
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationRef": 2,
+          "trueDamage": true,
+          "instantFire": true,
+          "firstShotDelayFrames": 12,
+          "infiniteAmmo": true,
+          "assumes": {
+            "ja": "変更後の武器はチャージしない即着弾の連射で、発射レートは CDN の 150rpm（23・24f ごと）。最初の発は II の発動の替わり目の 8f 後（窓が射手に見えてから 12f）。10 秒の維持の間リロードしない（説明文に装弾数無限の行は無く、録画で読んだ）。1 発は最終攻撃力 × X% の防御力無視ダメージ（防御力を引かない）で、フルチャージ倍率は乗らず、コア・会心・距離ボーナス・フルバーストの和に、防御力無視ダメージ▲の和と受けるダメージ▲の和がそれぞれ別の乗数で掛かる。射撃場の的でコアに当たる割合は的の表の行（coreHitRate.weaponChanges の 861:burst）。発がときどき総ダメージに出ない回がある（モデルは弾丸命中率 1）。終わると基礎の SR に満タンのマガジンで戻り、リロードの後の 1 発目と同じ待ちで撃つ",
+            "en": "The changed weapon is a hitscan rapid fire without charging, at the CDN rate of 150 rpm (every 23-24 frames). The first shot comes 8 frames after the Burst II hexagon change (12 frames after the window becomes visible to the shooter). It does not reload during the 10 s (the description has no unlimited ammo line; read from recordings). One shot is true damage of final ATK × X% (no defence subtracted) without the full charge multiplier; the core/crit/range bonus/full burst sum is multiplied by the True Damage up sum and the Damage Taken up sum as separate multipliers. On the range target the share of core hits is the target table row (coreHitRate.weaponChanges 861:burst). Some shots now and then do not show in the total damage (the model uses a bullet hit rate of 1). Afterwards the base SR comes back with a full magazine and fires after the same wait as the first shot after a reload"
+          },
+          "claims": [
+            "C-0708"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "weaponChangeShot"
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "敵 1 体。変更後の武器の発を撃った次のフレームから 5 秒（撃つたびに付き直す）で、その発自身には乗らない（ウンファ：タクティカル・アップの徹甲炸裂弾と同じ形）。S2 の受けるダメージ▲と 1 つの和（1 + 和）で、ほかのどの群とも別の乗数で味方の与ダメージに掛かる",
+            "en": "One enemy. 5 s from the frame after each changed weapon shot (refreshed on every shot); the shot itself does not get it (same shape as Eunhwa: Tactical Upgrade's armor-piercing explosive round). Summed with S2's Damage Taken up into one multiplier (1 + sum) on allies' damage, separate from every other group"
+          },
+          "claims": [
+            "C-0709",
+            "C-0312"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "使用武器変更（10 秒。通常攻撃を防御力無視ダメージに変更し、命中した敵に受けるダメージ▲）は未対応",
-          "en": "The weapon change (10 s; normal attacks become true damage and hit enemies take more damage) is not modeled",
+          "ja": "射撃場の的で変更後の武器の発がコアに当たる割合は、的の表の行（coreHitRate.weaponChanges の 861:burst。帯ごとの値）で持つ",
+          "en": "On the range target, the share of changed-weapon shots hitting the core is held in the target table row (coreHitRate.weaponChanges 861:burst; one value per band)",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-0713"
+          ]
+        },
+        {
+          "ja": "変更後の武器の発が総ダメージに出ない回（V-0531。2 本とも 5 回目のバーストの替わり目の 430〜478f 後に 1 発）は未対応（モデルは弾丸命中率 1）",
+          "en": "Changed-weapon shots that do not show in the total damage (V-0531; in both recordings one shot 430-478 frames after the fifth burst's hexagon change) are not modeled (the model uses a bullet hit rate of 1)",
           "kind": "unimplemented",
           "effect": {
             "kind": "weaponChange",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0708"
+          ]
         }
       ]
     }

@@ -1,0 +1,23 @@
+{
+  "id": "C-0711",
+  "text": "たきなの S1 の「フルバーストタイムが終了した時、自分に攻撃力 X%▲（5 秒）」は、フルバーストの終わりの後の基礎の SR の発に、戦闘開始時の分（C-0658）と同じ攻撃力▲として乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0721-22`・`0722-23`（フルバーストの終わりの後の基礎の SR の 1・2 発目が、▲の乗ったモデルの値と合う。▲の無い基礎の SR のコアは `0308-08` と同じ値）。値は説明文から計算し、合わせ込みの定数は無い。V-0531",
+  "model": "`data/skills/861.json` の skill1 の effects[1]（`timed`・`fullBurstEnd`・`self`・`attack`・ref 1・durationRef 2）",
+  "replaces": [],
+  "updated": "2026-10-28",
+  "subject": {
+    "places": ["data/skills/861.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "たきな burst.effects[0]",
+      "reason": "burst.effects[0] の未確定の部分は、的の表の変更後の武器のコアに当たる割合（C-0713。補足の notes[0]）だけで、変更の窓の後の基礎の SR の発には効かない。比べる値はコアを指定した 1 ヒット（hitDamage）",
+      "decided": "2026-10-28"
+    }
+  ]
+}

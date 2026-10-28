@@ -1,0 +1,925 @@
+[
+  {
+    "id": "0722-01",
+    "recording": "0722",
+    "kind": "total",
+    "use": "record",
+    "value": 350589770,
+    "description": "リター・I-DOLL・サン・たきな の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11549。増分は 4034 個"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-02",
+    "recording": "0722",
+    "kind": "count",
+    "use": "record",
+    "value": 218,
+    "unit": "トリガー",
+    "description": "リター・I-DOLL・サン・たきな のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 4034 個。前の増分から 30f 未満の増分（4008 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 47f）から発の数を決めた（2 発になった組 19 個）"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-03",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": [1180, 2244, 3423, 4415, 5594, 6586, 7765, 8757, 9936, 10928],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・6・26・0・26・0・26・0・26・0f"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-04",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": [1209, 2273, 3452, 4444, 5623, 6615, 7794, 8786, 9965, 10957],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・0・25・0・25・0f"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-05",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": [1239, 3481, 5652, 7823, 9994],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-06",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": [2237, 3416, 5587, 7759, 9930],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-07",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": [2266, 3445, 5617, 7788, 9959],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-08",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": [3475],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0722-09",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "timing",
+    "use": "compare",
+    "value": 8,
+    "unit": "f",
+    "description": "リター・I-DOLL・サン・たきな（操作）の、たきなのバーストの使用武器の変更で、II の替わり目から変更後の武器の最初の発（総ダメージの増分）までの動画のフレーム（1 回目のバースト）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "10 回のバーストのすべてで 8f（替わり目は `0722-04`）。比べるモデルは 1 回目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0722-10",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "count",
+    "use": "compare",
+    "value": 25,
+    "unit": "発",
+    "description": "同じ編成の、たきなの 3 回目のバースト（フルバーストの回）の使用武器の変更（10 秒）の変更後の武器の発の数",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 8f 後から 595f 後まで 25 発。リロードの間は無い。フルバーストの回の 5 回は 25・25・24・25・25 発（1 回目は替わり目の 430f 後の発が読めない 20f の中にあり、444f 後の増分に合わさっている。3 回目（5 回目のバースト）は 0721 と同じく替わり目の 430f 後と 478f 後の間に発が 1 つ総ダメージに出ない）。比べるモデルの範囲は 3 回目の発動から 620f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 2,
+        "from": 0,
+        "to": 620
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0722-11",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "interval",
+    "use": "compare",
+    "value": 23.5789,
+    "unit": "f",
+    "description": "同じ編成の、たきなの 8 回目のバースト（フルバーストでない回）の変更後の武器の発と発の間の平均（的のジャンプの前の 20 発）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 8f 後から 456f 後まで 20 発（(456 − 8) ÷ 19）。間はどれも 23・24f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 3,
+        "burst": 7,
+        "from": 10,
+        "to": 460
+      },
+      "tolerance": {
+        "abs": 0.15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0722-12",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "interval",
+    "use": "compare",
+    "value": [93],
+    "unit": "f",
+    "description": "同じ編成の、たきなの 3 回目のバーストの変更後の武器の最後の発から、基礎の SR の次の発までの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "最後の発は替わり目の 595f 後、基礎の SR の発は 688f 後。基礎の SR の最初の発は、替わり目から 1〜9 回目で 689・666・688・666・688・666・688・666・688f 後（10 回目の後は戦闘が終わる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 2,
+        "from": 570,
+        "to": 700
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0722-13",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "count",
+    "use": "record",
+    "value": [11, 34, 34, 80, 8, 43, 3, 56],
+    "unit": "発",
+    "description": "同じ編成の、たきなの変更後の武器の発のうちコアに当たった発の数と、コアか胴体かを 1 ヒットの値で決められた発の数（[中近のコア, 中近の発, 近のコア, 近の発, 中遠のコア, 中遠の発, 遠のコア, 遠の発]。全 10 回のバースト）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "読み方は `0721-13` と同じ。的のジャンプは f2540〜2688・f4721〜4845・f7072〜7197・f9242〜9363・f11219〜11353。距離ボーナスは遠の発だけに乗る（遠の 56 発すべて）"
+    }
+  },
+  {
+    "id": "0722-14",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 665627,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 1 回目のバーストの変更後の武器の最初の発（替わり目の 8f 後。コア・会心なし。フルバースト・防御力無視ダメージ▲・受けるダメージ▲の窓の前。リターのバーストの攻撃力▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "`0721-14` と同じ時点のコアの値。比べるモデルのフレームは変更後の武器の最初の発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 380,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-15",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 430673,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 1 回目のバースト（フルバーストの回）の変更後の武器の発（胴体・会心なし）。S1 の防御力無視ダメージ▲とバーストの受けるダメージ▲の中、S2 の窓の外",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 454f 後。比べるモデルのフレームは `0721-15` と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-16",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 717788,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 1 回目のバーストの変更後の武器の発（コア・会心なし）。`0722-15` と同じ窓",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 501f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-17",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 962303,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 1 回目のバーストの変更後の武器の発（胴体・会心なし）。`0722-15` の窓に、S2 の防御力無視ダメージ▲と受けるダメージ▲が足された後",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 572・595f 後。525f 後の会心の発（574,230）は S2 の前の値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 922,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-18",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1603839,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 1 回目のバーストの変更後の武器の発（コア・会心なし）。`0722-17` と同じ窓",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 548f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 922,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-19",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 352916,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバースト（フルバーストでない回）の変更後の武器の発（胴体・会心なし）。バーストの受けるダメージ▲の中、S1 の防御力無視ダメージ▲と S2 の窓の外",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 78・149・197・244f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1608,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-20",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 705831,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバーストの変更後の武器の発（コア・会心なし）。`0722-19` と同じ窓",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 103・125f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1608,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-21",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1119858,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバーストの変更後の武器の発（コア・会心なし）。バーストの受けるダメージ▲と S2 の防御力無視ダメージ▲・受けるダメージ▲の中",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "的のジャンプの後の替わり目の 438f 後。会心の 839,894 が 556f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1887,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-22",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 664663,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 4 回目のバースト（フルバーストでない回）の、的のジャンプの後（遠）の変更後の武器の発（胴体・会心なし・距離ボーナスあり）。バーストの受けるダメージ▲と S2 の防御力無視ダメージ▲の中、S2 の受けるダメージ▲の切れた後",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 425・449・496f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 4004,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-23",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 901005,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 1 回目のフルバーストの終わりの後の、基礎の SR の 2 発目（コア・会心。S1 のフルバースト終了時の攻撃力▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 770f 後。688f 後の 1 発目の増分（739,021）は、`0721-22` の値にほかの枠の 1 ヒット（18,217）が合わさったもの"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1119,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-24",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 18814,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバーストの最初の変更後の発より前の、リターの 1 ヒット（胴体・会心なし・距離ボーナスあり。受けるダメージ▲の窓の外）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 12f 前から 3f 後までのリターの発がこの値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1411,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-25",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 19950,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバーストの最初の変更後の発の後の、リターの 1 ヒット（胴体・会心なし・距離ボーナスあり。バーストの受けるダメージ▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 13f 後からの発がこの値（12f 後の増分はほかの枠と合わさっている）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1461,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-26",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13157,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバーストの後半の、リターの 1 ヒット（胴体・会心なし・距離ボーナスあり。バーストの受けるダメージ▲と S2 の受けるダメージ▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "的のジャンプの後の替わり目の 441・446・452f 後など。替わり目の 650f 後まで続く"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1887,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-27",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 12013,
+    "unit": "ダメージ",
+    "description": "同じ編成の、たきなの 2 回目のバーストの後の、リターの 1 ヒット（胴体・会心なし・距離ボーナスあり。バーストの受けるダメージ▲の中、S2 の受けるダメージ▲の切れた後）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@1 の II の替わり目（`0722-04`）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0531「読み方」）",
+      "note": "替わり目の 652f 後からの発がこの値。S2 の受けるダメージ▲は替わり目の 650f 後と 652f 後の間に切れる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2100,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-28",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": 8.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 4,
+      "high": 13
+    },
+    "description": "バーストの受けるダメージ▲（リター → リター▲）が リター の 1 発で替わるまでの時刻の幅（1 番目の事象 f2273 から数えた動画のフレーム）。リターの最後の発は 3f、リター▲の最初の発は 13f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@2",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の hitDamage の格子に ±1.5 で当てた。格子は リター: 枠 1（リター）のモデルの f1411、リター▲: 枠 1（リター）のモデルの f1461。境は リター → リター▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -20〜30f。リター 4・リター▲ 5・区別できない 0・外れ 12・食い違い（リター▲の最初の発より後のリターの発） 0"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-29",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": 8.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 4,
+      "high": 13
+    },
+    "description": "バーストの受けるダメージ▲（リター → リター▲）が リター の 1 発で替わるまでの時刻の幅の、1 回の事象（f2273）の共通部分（事象から数えた動画のフレーム）。リターの最後の発の最も遅いものは 3f、リター▲の最初の発の最も早いものは 13f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@2",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の hitDamage の格子に ±1.5 で当てた。格子は リター: 枠 1（リター）のモデルの f1411、リター▲: 枠 1（リター）のモデルの f1461。境は リター → リター▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -20〜30f。リター 4・リター▲ 5・区別できない 0・外れ 12・食い違い（リター▲の最初の発より後のリターの発） 0"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-30",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": 651.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 651,
+      "high": 652
+    },
+    "description": "S2 の受けるダメージ▲の切れ目（リターS2▲ → リター）が リター の 1 発で替わるまでの時刻の幅（1 番目の事象 f2273 から数えた動画のフレーム）。リターS2▲の最後の発は 650f、リターの最初の発は 652f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@2",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の hitDamage の格子に ±1.5 で当てた。格子は リターS2▲: 枠 1（リター）のモデルの f1887、リター: 枠 1（リター）のモデルの f2100。境は リターS2▲ → リター（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜720f。リターS2▲ 20・リター 21・区別できない 0・外れ 21・食い違い（リターの最初の発より後のリターS2▲の発） 0"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-31",
+    "recording": "0722",
+    "kind": "timing",
+    "use": "record",
+    "value": 651.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 651,
+      "high": 652
+    },
+    "description": "S2 の受けるダメージ▲の切れ目（リターS2▲ → リター）が リター の 1 発で替わるまでの時刻の幅の、1 回の事象（f2273）の共通部分（事象から数えた動画のフレーム）。リターS2▲の最後の発の最も遅いものは 650f、リターの最初の発の最も早いものは 652f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@2",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の hitDamage の格子に ±1.5 で当てた。格子は リターS2▲: 枠 1（リター）のモデルの f1887、リター: 枠 1（リター）のモデルの f2100。境は リターS2▲ → リター（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜720f。リターS2▲ 20・リター 21・区別できない 0・外れ 21・食い違い（リターの最初の発より後のリターS2▲の発） 0"
+    },
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0722-32",
+    "recording": "0722",
+    "source": "V-0531",
+    "readAt": "2026-10-28",
+    "kind": "total",
+    "use": "record",
+    "value": [53292340, 35126019, 262171411],
+    "unit": "ダメージ",
+    "description": "戦闘履歴のパネルの枠ごとの与ダメージ総計（[リター, I-DOLL・サン, たきな]）",
+    "method": {
+      "tool": "tools/captures/probe-result.ts（戦闘履歴のパネルの切り出し）を目で読んだ",
+      "note": "パネルは f11989〜12056。3 つの和は HUD の総ダメージの最後の値（`0722-01`）と同じ"
+    }
+  }
+]
