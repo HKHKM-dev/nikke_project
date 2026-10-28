@@ -1312,6 +1312,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
   skillHitShotDelay: { args: ['slot', 'skill'], sim: skillHitShotDelay },
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
+  // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
+  skillHitFromBurstHit: { args: ['slot', 'skill', 'count'], sim: skillHitFromBurstHit },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
@@ -1551,6 +1553,27 @@ function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
   }
   if (counts.size === 0) throw new Error('発動が無い');
   return [...counts].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0]![0];
+}
+
+/**
+ * 2 段目の段 11 の PR 5（V-0532）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回の、その前の最後の自分の
+ * バーストのヒット（分かれたヒットは 1 ヒット目）からの動画のフレーム数（フルバーストの入りの止まりを含む）。録画では、バーストのヒットの
+ * HUD の増分から倍率ダメージの増分までのフレーム数と比べる（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
+ */
+function skillHitFromBurstHit(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const burstHits = schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => hitFrameOf(a));
+  const hits = result.skillHits.filter(
+    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+  );
+  const offsets = hits.map((h) => {
+    const burst = burstHits.filter((f) => f <= h.frame).at(-1);
+    if (burst === undefined) throw new Error(`フレーム ${h.frame} の倍率ダメージの前にバーストのヒットが無い`);
+    return videoFrameOf(schedule, h.frame) - videoFrameOf(schedule, burst);
+  });
+  return firstCount(offsets, ctx, '倍率ダメージ');
 }
 
 /**

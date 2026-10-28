@@ -134,3 +134,4 @@
 - 2026-10-27: オーナーが段 11 の論点 1〜7 を推奨どおりに決めた（[design-skill-stage11.md](design-skill-stage11.md)）。PR 1（ラプラス：アルティメットヒーローの S1）に着手した。
 - 2026-10-27: 段 11 の PR 1 を出した（ラプラス：アルティメットヒーローの S1。状態のフルスタックで起こす使用武器の変更・変更後の武器の形の即値・残弾数減少 `ammoDecrease` と `{ weaponChangeEnd }` を足し、録画 0121・0130・0131 の読み直しで確かめた。V-0528、C-0698〜C-0701。[design-skill-stage11.md](design-skill-stage11.md)）。次は PR 2（S2 のオーバーエネルギー）。
 - 2026-10-27: 段 11 の PR 2 を出した（ラプラス：アルティメットヒーローの S2。カウンタの `{ counterFull }`・`while: { selfCounter }`・`maxHpOnly` を足し、同じ録画の読み直しで確かめた。V-0529、C-0702・C-0577 を確定。[design-skill-stage11.md](design-skill-stage11.md)）。次は PR 3〜5（撮影）。
+- 2026-10-28: 段 11 の PR 5 を出した（ラプラス：アルティメットヒーローのバーストの追加ダメージ。段 10 の `perCount` を `{ counter }` に開き、damage の条件 selfCounter を足して、撮影で確かめた。V-0532、C-0707。[design-skill-stage11.md](design-skill-stage11.md)）。段 11 の残りは PR 3（モラン）と PR 4（たきな）。

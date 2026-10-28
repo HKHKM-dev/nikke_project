@@ -10,6 +10,7 @@ import { defenceAfterDown, explosionHitMultiplier, FULL_BURST_BOOST, skillElemen
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
+import type { CounterId } from './counters.ts';
 import {
   isShotCountTrigger,
   isTimerTrigger,
@@ -94,8 +95,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   delayFrames?: number;
   /** ミハラのバースト編: バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
   perBurstHit?: true;
-  /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数（frame/plan.ts の planSkillHits） */
-  perCount?: { state: NamedStateId };
+  /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
+  perCount?: { state: NamedStateId } | { counter: CounterId };
   /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
