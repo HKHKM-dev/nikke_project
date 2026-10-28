@@ -197,7 +197,8 @@ export function resolveDamageEffects(
       // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2・5.4 節）
       if (effect.hitsRef !== undefined) {
         const hits = skillValue(skill, effect.hitsRef, levels[slot]);
-        if (!Number.isInteger(hits) || hits < 1) throw new RangeError(`skill ${skill.id}: hits must be a positive integer`);
+        if (!Number.isInteger(hits) || hits < 1)
+          throw new RangeError(`skill ${skill.id}: hits must be a positive integer`);
         r.hits = hits;
         r.hitIntervalFrames = effect.hitIntervalFrames ?? 0;
         r.sequential = true;
