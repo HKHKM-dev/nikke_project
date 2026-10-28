@@ -1,7 +1,7 @@
 // V-0534: 射撃の止まり（shotPause）。ラピ：レッドフード（16）の S2 の粘着榴弾は、通常攻撃 120 回ごとに次のフレームの通常攻撃を止め
 // （C-0717）、120 回目の発がマガジンの最後の弾丸ならリロードの始まりを 4f 遅らせる（C-0718）。語彙の検証と、録画 0725 の編成の発の列を見る
 import { describe, expect, it } from 'vitest';
-import { buildTeamInput, METRICS } from '../records/observations.ts';
+import { buildTeamInput, METRICS, type CompareSetup } from '../records/observations.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -38,7 +38,7 @@ describe('語彙の検証', () => {
 describe('録画 0725 の編成（ラピ：レッドフード単騎）', () => {
   const file = loadRecordingsFile();
   const recording = recordingMap(file).get('0725')!;
-  const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' } as const;
+  const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' };
   const input = buildTeamInput(recording, setup, loadRecordsData(file));
   const result = runSimulation(input);
   const ctx = (args: Record<string, number>) => ({ args: { slot: 1, ...args }, input });
