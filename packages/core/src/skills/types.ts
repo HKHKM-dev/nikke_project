@@ -1689,7 +1689,10 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
   if (scaling === 'flat' && stat !== 'maxAmmo' && stat !== 'chargeSpeed' && stat !== 'burstCooldown') {
-    fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo", "chargeSpeed" or "burstCooldown", got "${stat}"`);
+    fail(
+      `${path}.scaling`,
+      `flat is only allowed with stat "maxAmmo", "chargeSpeed" or "burstCooldown", got "${stat}"`,
+    );
   }
   if (stat === 'burstCooldown' && scaling !== 'flat') {
     fail(`${path}.scaling`, 'burstCooldown needs scaling "flat" (the value is seconds)');
@@ -1704,10 +1707,7 @@ function validateFlatChargeTime(
   path: string,
 ) {
   if ((stat === 'chargeSpeed' || stat === 'burstCooldown') && scaling === 'flat' && v.decrease !== undefined) {
-    fail(
-      `${path}.decrease`,
-      `${stat} with scaling "flat" is already a reduction in seconds (do not write decrease)`,
-    );
+    fail(`${path}.decrease`, `${stat} with scaling "flat" is already a reduction in seconds (do not write decrease)`);
   }
 }
 

@@ -71,7 +71,9 @@ describe('firesDuring: "weaponChange"（発火の窓）', () => {
     const trigger = { count: 'normalHit', everyRef: 3, firesDuring: 'weaponChange' };
     expect(parseSkillDefinition(withSkill1(damage(trigger))).skills.skill1.effects[0]).toMatchObject({ trigger });
     expect(() =>
-      parseSkillDefinition(withSkill1(damage({ count: 'normalHit', every: 3, during: 'weaponChange', reset: 'never' }))),
+      parseSkillDefinition(
+        withSkill1(damage({ count: 'normalHit', every: 3, during: 'weaponChange', reset: 'never' })),
+      ),
     ).toThrow(/during/);
   });
 });
