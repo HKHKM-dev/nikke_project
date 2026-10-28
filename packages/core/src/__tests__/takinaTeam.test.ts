@@ -62,7 +62,7 @@ describe('たきなの定義', () => {
     ]);
     // 変更後の武器の発が総ダメージに出ない回（V-0531）だけが未対応の notes
     expect(def.skills.burst.support).toBe('partial');
-    expect(def.skills.burst.notes.filter((n) => n.kind === 'unimplemented')).toHaveLength(1);
+    expect((def.skills.burst.notes ?? []).filter((n) => n.kind === 'unimplemented')).toHaveLength(1);
     expect(def.skills.burst.effects[0]).toMatchObject({
       kind: 'weaponChange',
       trueDamage: true,
