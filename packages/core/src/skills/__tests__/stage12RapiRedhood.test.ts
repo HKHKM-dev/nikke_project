@@ -100,7 +100,10 @@ describe('ラピ：レッドフードの S1 の攻撃力▲とバースト III �
     additional.forEach((h, k) => {
       expect(h.frame).toBe(effectFrameOf(bursts[k]!) + 11);
       expect(isInFullBurst(schedule, h.frame)).toBe(true);
-      expect(h.hit.multiplier).toBeCloseTo(skillValue(character(RAPI_RH).skills.burst, 5, MAX_SKILL_LEVELS.burst) / 100, 9);
+      expect(h.hit.multiplier).toBeCloseTo(
+        skillValue(character(RAPI_RH).skills.burst, 5, MAX_SKILL_LEVELS.burst) / 100,
+        9,
+      );
       expect(h.hit.boost.fullBurst).toBe(0.5);
     });
   });

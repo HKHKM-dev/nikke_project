@@ -3329,7 +3329,8 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
       );
     }
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
-    else effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
+    // damage の squad は上で弾いてある
+    else if (effect.kind !== 'damage') effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
   }
   // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage。名前の付いた状態の語彙編: 付与も）
   for (const key of ['withCharacter', 'enemyElement'] as const) {
