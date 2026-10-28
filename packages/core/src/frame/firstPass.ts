@@ -68,7 +68,13 @@ import {
   type BurstControllerState,
   type BurstTiming,
 } from '../burst/controller.ts';
-import { SG_PELLET_GAUGE_HIT_RATE, burstUnitOf, energyPerTrigger, partialGaugeRatio } from '../burst/dynamic.ts';
+import {
+  SG_PELLET_GAUGE_HIT_RATE,
+  burstUnitOf,
+  energyPerTrigger,
+  fullChargeGaugeOf,
+  partialGaugeRatio,
+} from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import {
   resolveDamageGauges,
@@ -415,15 +421,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const pelletRate = pellets[i] && span?.measured !== true ? SG_PELLET_GAUGE_HIT_RATE : 1;
     return energy * (spanValueAt(i, f)?.hitRate ?? 1) * pelletRate;
   };
+  /** 枠 i の 1 発のゲージに乗るフルチャージ倍率（C-0007。操作キャラのチャージ武器だけ。energyPerTrigger が掛ける値） */
+  const chargeGaugeOf = (i: number): number => fullChargeGaugeOf(slots[i]!.character.shot, i === controlledSlot);
   /**
    * アニス：スター S1 の味方のゲージ編: 枠 i の 1 発のゲージ（energyAt の値）が、ゲージ何回ぶんか（弾のヒットの期待値。SG は当たった
    * ペレットの数）。1 回のゲージ（targetBurstEnergyPerShot × フルチャージ倍率 × いまのゲージ速度）で割る
    */
-  /** 枠 i の 1 発のゲージに乗るフルチャージ倍率（C-0007。操作キャラのチャージ武器だけ。energyPerTrigger と同じ） */
-  const chargeGaugeOf = (i: number): number => {
-    const shot = slots[i]!.character.shot;
-    return i === controlledSlot && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
-  };
   const gaugeHitsOf = (i: number, shotEnergy: number): number => {
     const unit = targetEnergies[i]! * chargeGaugeOf(i) * (timedGauge[i] ? gaugeScale[i]! : 1 + gaugeSpeed[i]!);
     return unit > 0 ? shotEnergy / unit : 0;
@@ -450,10 +453,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const obstacles = slots.map(() => new Map<number, number>());
   for (const b of options.obstacleBreaks ?? []) obstacles[b.slotIndex]?.set(b.shot, b.count);
   const obstacleBases = slots.map((slot, i) =>
-    slot === null
-      ? 0
-      : slot.character.shot.burstEnergyPerShot *
-        (i === controlledSlot && slot.character.shot.chargeTime > 0 ? slot.character.shot.fullChargeBurstEnergy : 1),
+    slot === null ? 0 : slot.character.shot.burstEnergyPerShot * chargeGaugeOf(i),
   );
   const obstacleEnergies = obstacleBases.map((e, i) => e * (1 + gaugeSpeed[i]!));
   const obstacleEnergyAt = (i: number): number =>
