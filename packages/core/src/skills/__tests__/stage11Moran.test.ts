@@ -148,14 +148,13 @@ describe('モランのバースト・S1（V-0530）', () => {
     expect(activations.slice(1).some((f, i) => f - activations[i]! < cooldown)).toBe(true);
     expect(activations.length).toBeGreaterThan(base.length);
     // 熱血を外すと（S1 の state を消すと）基礎の CT のまま
+    const s1 = definition.treasureSkills?.skill1;
+    if (s1 === undefined) throw new Error('宝物版の S1 が無い');
     const withoutFervor = {
       ...definition,
       treasureSkills: {
-        ...definition.treasureSkills!,
-        skill1: {
-          ...definition.treasureSkills!.skill1,
-          effects: definition.treasureSkills!.skill1.effects.filter((e) => e.kind !== 'state'),
-        },
+        ...definition.treasureSkills,
+        skill1: { ...s1, effects: s1.effects.filter((e) => e.kind !== 'state') },
       },
     } as SkillDefinition;
     expect(run(3, withoutFervor).schedule!.activations.length).toBe(base.length);
