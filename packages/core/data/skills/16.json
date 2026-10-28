@@ -4,7 +4,27 @@
   "checkedAt": "2026-10-08",
   "skills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "assumes": {
+            "ja": "戦闘補助でない ⇔ 基本バースト段階 I の味方がいる（戦闘補助は編成だけで決まり、戦闘中に付き外れしない）",
+            "en": "Not in Combat Assist ⇔ an ally with base burst stage I is present (Combat Assist depends only on the squad and does not change during battle)"
+          },
+          "claims": [
+            "C-0715"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "部隊構成による戦闘補助（基本バースト段階が I の味方がいなければ、自分をバースト I に変更）は未対応",
@@ -32,17 +52,6 @@
             "kind": "timed",
             "stat": "attackDamage",
             "target": "allies",
-            "trigger": "fullBurstStart"
-          }
-        },
-        {
-          "ja": "フルバーストタイムの発動時、戦闘補助状態でなければ自分の攻撃力▲（10 秒）は未対応",
-          "en": "The attack increase on self when Full Burst starts, while not in Combat Support (10 s), is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
             "trigger": "fullBurstStart"
           }
         },
@@ -105,7 +114,26 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 5,
+          "damageType": "additional",
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "delayFrames": 11,
+          "assumes": {
+            "ja": "使った段は編成で決まる（基本バースト段階 I の味方がいれば戦闘補助でなく、バーストは III のまま）。対象「照準線に最も近い敵 1 機」は、敵 1 体の前提ではその敵。フルバーストの入りの止まりの後の最初のフレーム（発動の 11f 後）に、その時のバフとフルバースト補正で出る",
+            "en": "The stage used is fixed by the squad (with a base burst stage I ally she is not in Combat Assist and stays burst III). The target (the enemy nearest the crosshair) is that enemy under the single-enemy assumption. Lands on the first frame after the Full Burst entry stop (11 frames after activation), with the buffs and Full Burst bonus at that frame"
+          },
+          "claims": [
+            "C-0716"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "バースト I で使った時の、自分のバーストスキルクールタイム▼は未対応",
@@ -125,15 +153,6 @@
             "kind": "timed",
             "stat": "attack",
             "target": "allies",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "バースト III で使った時の、照準線に最も近い敵 1 機への追加ダメージは未対応",
-          "en": "The additional damage on the enemy nearest the crosshair when used as burst III is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
             "trigger": "burstUse"
           }
         },
