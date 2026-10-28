@@ -1,5 +1,5 @@
-// モラン（281）の定義（plan/skills-guide.md）。ダメージに効く効果は無く、S2 の挑発を付けたときのゲージだけを入れる
-// （burstGaugeHit の射撃の回数のトリガー。plan/design-moran.md、C-0480）。ほかの行は notes。
+// モラン（281）の定義（plan/skills-guide.md）。S2 の挑発を付けたときのゲージ（burstGaugeHit の射撃の回数のトリガー。
+// plan/design-moran.md、C-0480）。バースト・S1・宝物版の熱血は 2 段目の段 11 の PR 3（V-0530。stage11Moran.test.ts）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
@@ -48,10 +48,8 @@ function solo(definition: SkillDefinition): TeamInput {
 }
 
 describe('モラン（281）', () => {
-  it('models only the S2 gauge, in both the base and the treasure S2', () => {
-    expect(def.skills.skill1).toMatchObject({ support: 'unsupported', effects: [] });
+  it('models the S2 gauge in both the base and the treasure S2', () => {
     expect(def.skills.skill2).toMatchObject({ support: 'supported', effects: [expect.objectContaining(GAUGE)] });
-    expect(def.skills.burst).toMatchObject({ support: 'unsupported', effects: [] });
     expect(def.treasureSkills?.skill2).toMatchObject({ support: 'partial', effects: [expect.objectContaining(GAUGE)] });
     // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 撃った 6f 後に溜まる（C-0480）
     expect(resolveShotGauges(def, moran, MAX_SKILL_LEVELS)).toEqual([{ count: 'lastShot', every: 1, delayFrames: 6 }]);
