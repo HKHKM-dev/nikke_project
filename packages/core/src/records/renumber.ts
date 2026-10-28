@@ -1,12 +1,11 @@
 // 番号の振り直し（plan/design-investigation-review.md 4.3・5 節）。npm run records:renumber の純粋な部分。
 // 検証記録（V-NNNN）・結論（C-NNNN）・観測値（<録画>-NN）・録画（NNN。plan/design-recording-renumber.md）の番号を、文書とデータの中の
 // 参照ごと置き換える。
+import { C_ID, V_ID } from './ids.ts';
 import { compressIds } from './relevance.ts';
 
 export type RenumberKind = 'verification' | 'claim' | 'observation' | 'recording';
 
-const V_ID = /^V-\d{4,}$/;
-const C_ID = /^C-\d{4,}$/;
 const OBS_ID = /^((?:\d{3,}|L-[A-Z]{1,3}))-(\d{2,})$/;
 /** 録画の番号（3〜4 桁。L- の旧の録画は振り直さない。plan/design-recording-renumber.md 3 節） */
 const REC_ID = /^\d{3,4}$/;

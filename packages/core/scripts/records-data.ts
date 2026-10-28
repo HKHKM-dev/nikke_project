@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
 import { MASTER_FILES } from '../src/load.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
+import { V_ID } from '../src/records/ids.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
 import type { SensitivityEntry } from '../src/records/relevance.ts';
@@ -122,7 +123,7 @@ export function recordingIdsInBranches(): { ids: string[]; note: string } {
 export function loadPredictions(): PredictionFile[] {
   if (!existsSync(PREDICTIONS_DIR)) return [];
   return readdirSync(PREDICTIONS_DIR)
-    .filter((name) => /^V-\d{4,}\.json$/.test(name))
+    .filter((name) => name.endsWith('.json') && V_ID.test(name.slice(0, -'.json'.length)))
     .sort()
     .map((name) => readJson<PredictionFile>(`${PREDICTIONS_DIR}${name}`));
 }

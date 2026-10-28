@@ -27,6 +27,7 @@
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import { ELEMENTS } from '../element.ts';
+import { C_ID } from '../records/ids.ts';
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
 import { COUNTER_IDS, counterMax, type CounterId } from './counters.ts';
@@ -1583,13 +1584,10 @@ function parseLocalizedText(v: Json, path: string): LocalizedText {
   return { ja: v.ja, en: v.en };
 }
 
-/** 結論の ID の形（records/claims.ts の CLAIM_ID と同じ）。実在は records/skills.ts で見る */
-const CLAIM_REF = /^C-\d{4,}$/;
-
 function parseClaimRefs(v: Json, path: string): string[] {
   if (!Array.isArray(v) || v.length === 0) fail(path, 'expected a non-empty array of claim IDs');
   return v.map((id, i) => {
-    if (typeof id !== 'string' || !CLAIM_REF.test(id))
+    if (typeof id !== 'string' || !C_ID.test(id))
       fail(`${path}[${i}]`, `expected C-<4+ digits>, got ${JSON.stringify(id)}`);
     if (v.indexOf(id) !== i) fail(`${path}[${i}]`, `duplicate claim ID ${id}`);
     return id;

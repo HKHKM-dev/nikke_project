@@ -8,13 +8,14 @@ import {
   type ClaimTopic,
   type DecidedOn,
 } from './claims.ts';
+import { ID_DIGITS } from './ids.ts';
 import { summarizeWarnings, type PairWarning } from './relevance.ts';
 import type { Observation } from './observations.ts';
 import type { PredictionComparison } from './predictions.ts';
 
 /** 既存の ID（V-0012・C-0159 など）から、同じ接頭辞の次の空き番号 */
 export function nextId(prefix: 'V' | 'C', existing: readonly string[]): string {
-  const re = new RegExp(`^${prefix}-(\\d{4,})$`);
+  const re = new RegExp(`^${prefix}-(${ID_DIGITS})$`);
   let max = 0;
   let width = 4;
   for (const id of existing) {
@@ -26,6 +27,10 @@ export function nextId(prefix: 'V' | 'C', existing: readonly string[]): string {
   return `${prefix}-${String(max + 1).padStart(width, '0')}`;
 }
 
+const ID_PATH = new RegExp(
+  String.raw`(?:^|\/)records\/(?:verifications\/(V-${ID_DIGITS})-[^/]*\.md|claims\/(C-${ID_DIGITS})\.json)$`,
+);
+
 /**
  * git の出力のファイル名の並び（records/verifications/V-NNNN-….md・records/claims/C-NNNN.json）から、検証記録と結論の ID を取り出す
  * （重複なし・出てきた順）。ほかのブランチが使っている番号を records:new の空き番号から除くのに使う（V-0378 の振り直し）
@@ -33,7 +38,7 @@ export function nextId(prefix: 'V' | 'C', existing: readonly string[]): string {
 export function idsInPaths(text: string): string[] {
   const ids = new Set<string>();
   for (const line of text.split('\n')) {
-    const m = /(?:^|\/)records\/(?:verifications\/(V-\d{4,})-[^/]*\.md|claims\/(C-\d{4,})\.json)$/.exec(line.trim());
+    const m = ID_PATH.exec(line.trim());
     if (m !== null) ids.add((m[1] ?? m[2])!);
   }
   return [...ids];
