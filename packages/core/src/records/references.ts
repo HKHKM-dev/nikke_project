@@ -4,15 +4,19 @@
 // - 頭に記号の付かない ID（録画の 064、観測値の 064-01）は、散文からは拾わない（番号やファイル名の一部を誤って拾うため）
 // - コードブロックの中は見ない
 
+import { ID_DIGITS } from './ids.ts';
+
 export type IdReference = {
   kind: 'claim' | 'verification' | 'recording' | 'observation';
   id: string;
 };
 
+const CV_REFERENCE = new RegExp(`(?<![A-Za-z0-9_-])([CV])-(${ID_DIGITS})(?![0-9A-Za-z_-])`, 'g');
+
 export function idReferencesIn(markdown: string): IdReference[] {
   const text = markdown.replace(/^```[\s\S]*?^```/gm, '');
   const refs: IdReference[] = [];
-  for (const m of text.matchAll(/(?<![A-Za-z0-9_-])([CV])-(\d{4,})(?![0-9A-Za-z_-])/g)) {
+  for (const m of text.matchAll(CV_REFERENCE)) {
     refs.push({ kind: m[1] === 'C' ? 'claim' : 'verification', id: `${m[1]}-${m[2]}` });
   }
   for (const m of text.matchAll(/`(L-[A-Z]{1,3})(-\d{2,})?`/g)) {

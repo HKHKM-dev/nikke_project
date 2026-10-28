@@ -3,6 +3,7 @@
 // 根拠の観測値は「根拠」の文にバッククォートで書いた ID から拾う（書くのは 1 か所だけ）。
 // Stage 20-A: ID の桁を決め打ちしない（録画 3 桁以上・連番 2 桁以上・結論 4 桁以上）。通し番号の抜けは許す。
 import { ELEMENTS } from '../element.ts';
+import { ID_DIGITS } from './ids.ts';
 import { BUFF_STATS, type BuffStat } from '../skills/types.ts';
 import type { BurstStep, Element, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
@@ -297,7 +298,7 @@ export type Claim = ClaimFile & {
 
 const OBSERVATION_ID = /`((?:\d{3,}|L-[A-Z]{1,3})-\d{2,})`/g;
 const OBSERVATION_RANGE = /`((?:\d{3,}|L-[A-Z]{1,3}))-(\d{2,})`\s*〜\s*`\1-(\d{2,})`/g;
-const CLAIM_ID = /^C-(\d{4,})$/;
+const CLAIM_ID = new RegExp(`^C-(${ID_DIGITS})$`);
 
 /** 根拠の文から、バッククォートで囲んだ観測値の ID を拾う。「`0012-01`〜`0012-04`」は 0012-01〜0012-04 に展開する */
 export function observationIdsIn(text: string): string[] {

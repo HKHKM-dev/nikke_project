@@ -2,6 +2,7 @@
 // burst スロットの sequential の検証。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { C_ID } from '../../records/ids.ts';
 import {
   burstDelaysFieldOf,
   burstDelaysOf,
@@ -44,7 +45,7 @@ describe('遅れの表', () => {
     expect(burstDelaysOf(character(ISABEL))).toEqual({ hitFrames: 134, effectFrames: 134 });
     expect(burstDelaysOf(withTreasure(352))).toEqual({ hitFrames: 59, effectFrames: 0 });
     expect(burstDelaysOf(character(862))).toEqual({ hitFrames: 0, effectFrames: 0 });
-    for (const row of MEASURED_BURST_DELAYS) expect(row.claim).toMatch(/^C-\d{4}$/);
+    for (const row of MEASURED_BURST_DELAYS) expect(row.claim).toMatch(C_ID);
   });
 
   it('adds delays only for characters in the table', () => {

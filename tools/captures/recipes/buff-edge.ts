@@ -20,6 +20,7 @@ import {
   type CompareSetup,
   type Observation,
 } from '../../../packages/core/src/records/observations.ts';
+import { V_ID } from '../../../packages/core/src/records/ids.ts';
 import type { PredictionFile } from '../../../packages/core/src/records/predictions.ts';
 import type { RecordingEntry } from '../../../packages/core/src/records/recordings.ts';
 import { runSimulation } from '../../../packages/core/src/sim/engine.ts';
@@ -182,7 +183,7 @@ function resolveSetup(text: string | undefined, source: string): CompareSetup {
     return c.setup;
   }
   const [v, target] = (text ?? source).split(':');
-  if (!v || !/^V-\d{4,}$/.test(v)) throw new Error('--opt setup=<観測値の ID|V-NNNN:<指標 id>> が要る');
+  if (!v || !V_ID.test(v)) throw new Error('--opt setup=<観測値の ID|V-NNNN:<指標 id>> が要る');
   const file = loadPrediction(v);
   const t = target === undefined ? file.targets[0] : file.targets.find((x) => x.id === target);
   if (t === undefined) throw new Error(`予測 ${v} に指標 ${target ?? '（最初）'} が無い`);

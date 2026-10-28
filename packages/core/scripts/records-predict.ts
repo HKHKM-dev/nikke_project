@@ -6,6 +6,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
+import { V_ID } from '../src/records/ids.ts';
 import {
   indistinguishableTargets,
   predictionRids,
@@ -20,7 +21,7 @@ const { values, positionals } = parseArgs({
   options: { date: { type: 'string' } },
 });
 const id = positionals[0];
-if (!id || !/^V-\d{4,}$/.test(id)) {
+if (!id || !V_ID.test(id)) {
   console.error('usage: npm run records:predict -- V-NNNN [--date YYYY-MM-DD]');
   process.exit(1);
 }

@@ -5,6 +5,7 @@
 // オーナーの決定）。撮影計画で、その録画で仮説を見分けられるかを確かめるのに使う。
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
+import { V_ID } from './ids.ts';
 import {
   buildTeamInput,
   compareValue,
@@ -92,8 +93,6 @@ export type PredictionFile = {
   /** records:predict が書き込む。無ければまだ予測を出していない */
   predicted: Predicted | null;
 };
-
-const V_ID = /^V-\d{4,}$/;
 
 /** 今日（手元の時刻。YYYY-MM-DD） */
 export function todayLocal(now = new Date()): string {

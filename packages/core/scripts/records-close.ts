@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { gradeCandidate, type ClaimGrade } from '../src/records/claims.ts';
 import { closeChecks, markState, prTitle } from '../src/records/close.ts';
+import { V_ID } from '../src/records/ids.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
@@ -37,7 +38,7 @@ const { values, positionals } = parseArgs({
   },
 });
 const id = positionals[0];
-if (!id || !/^V-\d{4,}$/.test(id)) {
+if (!id || !V_ID.test(id)) {
   console.error('usage: npm run records:close -- V-NNNN [--mark] [--ci]');
   process.exit(1);
 }

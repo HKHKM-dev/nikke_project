@@ -2,6 +2,7 @@
 // plan/design-stage20.md 3.2・3.2.1 節。1 回の検証（1 つの問い）を 1 ファイルにする。冒頭の箇条書きは書式を厳密に決め、
 // 合わない行は黙って読み飛ばさずに問題として返す。ID の結び付きは片側だけに書き、逆向きは一覧の生成で引く。
 import { CLAIM_TOPICS, type Claim } from './claims.ts';
+import { ID_DIGITS, V_ID, V_ID_IN_TEXT } from './ids.ts';
 import type { Observation } from './observations.ts';
 
 export const VERIFICATION_STATES = ['調査中', '保留', '完了', '打ち切り'] as const;
@@ -62,8 +63,8 @@ export type Verification = {
   problems: string[];
 };
 
-const FILE_NAME = /^(V-\d{4,})-[a-z0-9][a-z0-9-]*\.md$/;
-const V_ID = /^V-\d{4,}$/;
+const FILE_NAME = new RegExp(String.raw`^(V-${ID_DIGITS})-[a-z0-9][a-z0-9-]*\.md$`);
+const TITLE = new RegExp(`^# (V-${ID_DIGITS}): (.+)$`);
 
 /** 「`0064`〜`0069`、`0071`」のような ID の並びを読む。範囲（〜）は ranges が true のときだけ許す */
 function parseIdList(value: string, ranges: boolean): string[] | undefined {
@@ -88,7 +89,7 @@ export function parseVerification(file: string, markdown: string): Verification 
   const lines = markdown.split('\n');
   const fileId = FILE_NAME.exec(file)?.[1];
   if (fileId === undefined) problems.push(`${file}: ファイル名は V-<4 桁以上の数字>-<英小文字・数字・->.md`);
-  const title = /^# (V-\d{4,}): (.+)$/.exec(lines[0] ?? '');
+  const title = TITLE.exec(lines[0] ?? '');
   if (title === null) problems.push(`${file}: 1 行目は「# V-NNNN: 題名」`);
   const id = title?.[1] ?? fileId ?? file;
   if (title && fileId && title[1] !== fileId) problems.push(`${id}: ファイル名の ID と 1 行目の ID が違う`);
@@ -341,7 +342,7 @@ export function unlistedConfirmedClaims(
   const errors: string[] = [];
   for (const c of claims) {
     if (c.state !== '確定' || listed.has(c.id)) continue;
-    const fromVerification = c.observations.some((o) => V_ID.test(sourceOf.get(o) ?? '')) || /V-\d{4,}/.test(c.basis);
+    const fromVerification = c.observations.some((o) => V_ID.test(sourceOf.get(o) ?? '')) || V_ID_IN_TEXT.test(c.basis);
     if (fromVerification)
       errors.push(
         `${c.id}: 確定の結論が、どの完了の検証記録の「結論」にも挙がっていない（根拠の検証記録の「結論」に足して records:close を通す）`,
