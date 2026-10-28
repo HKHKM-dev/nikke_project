@@ -1,0 +1,335 @@
+{
+  "verification": "V-0533",
+  "note": "撮影の依頼の編成（アニス：スター（I）+ デルタ（II）+ ミハラ（III・操作・AUTO 射撃 ON）、オートバースト ON・風圧のタブ・スペック固定 ON）の予測。H-a はいまのモデル。H-b（発動の時点で固定）はモデルを切り替える欄が無いので、アニス：スターの S2 のフルバーストの始まりの攻撃力▲・攻撃ダメージ▲の対象を自分だけに替えて、ミハラの追加ダメージに乗らない値を出す近似。frame/plan.ts の planSkillHits で 161 だけ shooterAtHit を false にした版（commit しない試算）と、全部の指標で同じ値になることを確かめた",
+  "team": [
+    {
+      "rid": 17,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 161,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-a",
+      "note": "ヒットの時点。追加ダメージは、ヒットのフレームの撃つ側のバフで出る（いまの main。C-0657 のシンデレラと同じ扱い）。フルバーストの始まりに付くアニス：スターの攻撃力▲・攻撃ダメージ▲が乗る"
+    },
+    {
+      "id": "H-b",
+      "note": "発動の時点。追加ダメージは、撃つ側のバフを発動のフレームで固定して出す（plan/design-mihara-burst-hits.md 7 節の扱い）。アニス：スターの▲は発動の後に付くので乗らない。近似: アニス：スターの S2 の effects[0]・effects[2] の対象を self に替える（ミハラ以外の値は比べない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 17,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1,
+              "durationRef": 2,
+              "condition": {
+                "selfState": "myOwnStar"
+              }
+            }
+          },
+          {
+            "rid": 17,
+            "skill": "skill2",
+            "replace": 2,
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "self",
+              "stat": "attackDamage",
+              "ref": 6,
+              "durationRef": 7
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "mihara-additional-1",
+      "note": "ミハラの追加ダメージの 1 回目（モデルでは 3 回目のバーストの 1 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-2",
+      "note": "ミハラの追加ダメージの 2 回目（モデルでは 3 回目のバーストの 2 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-3",
+      "note": "ミハラの追加ダメージの 3 回目（モデルでは 3 回目のバーストの 3 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-4",
+      "note": "ミハラの追加ダメージの 4 回目（モデルでは 4 回目のバーストの 1 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-5",
+      "note": "ミハラの追加ダメージの 5 回目（モデルでは 4 回目のバーストの 2 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-6",
+      "note": "ミハラの追加ダメージの 6 回目（モデルでは 4 回目のバーストの 3 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-7",
+      "note": "ミハラの追加ダメージの 7 回目（モデルでは 5 回目のバーストの 1 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 6,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-8",
+      "note": "ミハラの追加ダメージの 8 回目（モデルでは 5 回目のバーストの 2 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 7,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-9",
+      "note": "ミハラの追加ダメージの 9 回目（モデルでは 5 回目のバーストの 3 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 8,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-10",
+      "note": "ミハラの追加ダメージの 10 回目（モデルでは 6 回目のバーストの 1 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 9,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-11",
+      "note": "ミハラの追加ダメージの 11 回目（モデルでは 6 回目のバーストの 2 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 10,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-additional-12",
+      "note": "ミハラの追加ダメージの 12 回目（モデルでは 6 回目のバーストの 3 ヒット目。会心なし）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 11,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "mihara-burst-2",
+      "note": "副次。2 回目のバーストスキルダメージ（3 ヒットの和。会心なし）。追加ダメージを引くときに使う 1 ヒットの 3 倍。発動の直前のバフで出る（C-0563）ので、H-a と H-b で同じ",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-28",
+    "commit": "57073ee1c089f8ae1af1b998ebd686b413ae3c56",
+    "values": {
+      "H-a": {
+        "mihara-additional-1": 738394.1467200001,
+        "mihara-additional-2": 738394.1467200001,
+        "mihara-additional-3": 738394.1467200001,
+        "mihara-additional-4": 738394.1467200001,
+        "mihara-additional-5": 738394.1467200001,
+        "mihara-additional-6": 738394.1467200001,
+        "mihara-additional-7": 738394.1467200001,
+        "mihara-additional-8": 738394.1467200001,
+        "mihara-additional-9": 738394.1467200001,
+        "mihara-additional-10": 738394.1467200001,
+        "mihara-additional-11": 738394.1467200001,
+        "mihara-additional-12": 738394.1467200001,
+        "mihara-burst-2": 438441.12
+      },
+      "H-b": {
+        "mihara-additional-1": 438441.11999999994,
+        "mihara-additional-2": 438441.11999999994,
+        "mihara-additional-3": 438441.11999999994,
+        "mihara-additional-4": 438441.11999999994,
+        "mihara-additional-5": 438441.11999999994,
+        "mihara-additional-6": 438441.11999999994,
+        "mihara-additional-7": 438441.11999999994,
+        "mihara-additional-8": 438441.11999999994,
+        "mihara-additional-9": 438441.11999999994,
+        "mihara-additional-10": 438441.11999999994,
+        "mihara-additional-11": 438441.11999999994,
+        "mihara-additional-12": 438441.11999999994,
+        "mihara-burst-2": 438441.12
+      }
+    }
+  }
+}
