@@ -115,11 +115,9 @@
 - スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜10 を閉じた。段 11（使用武器の変更の形）に着手: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
-- ヘルムの残り（2026-09-28 起票）→ 一部完了: [design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。行（2-12）は閉じた
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1
 - 命中率▲が弾丸命中率に効く式（2026-10-03 起票）→ 一部完了: [design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)。残りは 2-1
 - バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。残りは 2-4
-- 検証の自動化（2026-10-01 起票）→ 一部完了: [design-records-automation.md](design-records-automation.md) 8 節。行（4-1）は閉じた
 - アニス：スター（17）の S1（2026-10-03）→ 一部完了: [design-anis-star-s1.md](design-anis-star-s1.md)・[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md)・[design-anis-star-ally-gauge.md](design-anis-star-ally-gauge.md)。残りは 6 節
 - 防御力無視ダメージ・有利コードの攻撃ダメージ等の語彙（2026-10-05）→ 一部完了: [design-true-damage-element.md](design-true-damage-element.md)・[design-delayed-skill-hit.md](design-delayed-skill-hit.md)。残りは 6 節
 - 対象の語彙（2026-10-05）→ 一部完了: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)。残りは 6 節
@@ -127,7 +125,6 @@
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - エーテルの S2 の防御力▼（2026-10-07）→ 一部完了（設計書なし）。残りは 1.3 節
 - ミハラ：ボンディングチェーン（162）の S1（2026-10-07）→ 一部完了（設計書なし。定義は未）。残りは 1.3 節
-- 射撃場の SMG の中近の弾丸命中率（2026-10-05 起票）→ 一部完了: [design-far-landings.md](design-far-landings.md)。行（2-25）は閉じた
 - 点検で仮説にした結論の再現（2-33。2026-10-11）→ 一部完了。残りは 2-33・1.2 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
@@ -137,3 +134,6 @@
 - クラウド環境（2026-10-23 起票）→ 実装済み（2026-10-23）: [design-cloud-environment.md](design-cloud-environment.md)・手引き [cloud-guide.md](cloud-guide.md)
 - 効果を持ち主ごとの一覧で持つ組み直し（2026-10-15 起票）→ 段 A〜E 実装済み（2026-10-15）: [design-holder-effects.md](design-holder-effects.md)
 - calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 完了（2026-10-27。全グループを射撃の列から数える形に一本化。[design-unify-sim-calc.md](design-unify-sim-calc.md)）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節
+- ヘルムの残り（2026-09-28 起票）→ 閉じた（2026-10-28 のオーナーの判断。残りの行は閉じていた）: [design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。行（2-12）は閉じた
+- 検証の自動化（2026-10-01 起票）→ 閉じた（2026-10-28 のオーナーの判断。残りの行は閉じていた）: [design-records-automation.md](design-records-automation.md) 8 節。行（4-1）は閉じた
+- 射撃場の SMG の中近の弾丸命中率（2026-10-05 起票）→ 閉じた（2026-10-28 のオーナーの判断。残りの行は閉じていた）: [design-far-landings.md](design-far-landings.md)。行（2-25）は閉じた
