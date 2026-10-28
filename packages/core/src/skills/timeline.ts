@@ -197,6 +197,8 @@ const BUFF_FIELDS = [
   'chargeSpeed',
   // 2 段目の段 9 の PR 2: 攻撃速度▲（射撃が変わるので鍵に入れる）
   'attackSpeed',
+  // 2026-10-29 のキャラの編: 立ち上げ速度▲（射撃が変わるので鍵に入れる）
+  'spinUpSpeed',
   'chargeTimeFlat',
   'fixedChargeTime',
   // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す
@@ -316,6 +318,30 @@ export function timerFrames(everySeconds: number, frames: number): number[] {
   for (let k = 1; ; k++) {
     const seconds = k * everySeconds;
     const frame = k * gameSecondsToFirstFrame(everySeconds);
+    if (frame >= frames || seconds > lastFrameSeconds) return fires;
+    fires.push(frame);
+  }
+}
+
+/**
+ * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期の発火フレーム。前の発動（初めは戦闘開始）の
+ * フレームで shortened(frame) なら次の発動までを everySeconds − shortenSeconds 秒、でなければ everySeconds 秒にし、どちらも timerFrames と
+ * 同じく N 秒に達した最初のフレームを数え直す（端数を持ち越さない）。縮めない間は timerFrames と同じ列になる
+ */
+export function shortenedTimerFrames(
+  everySeconds: number,
+  shortenSeconds: number,
+  frames: number,
+  shortened: (frame: number) => boolean,
+): number[] {
+  const fires: number[] = [];
+  const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
+  let frame = 0;
+  let seconds = 0;
+  for (;;) {
+    const period = shortened(frame) ? everySeconds - shortenSeconds : everySeconds;
+    frame += gameSecondsToFirstFrame(period);
+    seconds += period;
     if (frame >= frames || seconds > lastFrameSeconds) return fires;
     fires.push(frame);
   }

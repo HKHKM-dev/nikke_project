@@ -108,7 +108,8 @@ export type BuffStat =
   | 'defense'
   | 'attackSpeed'
   | 'burstCooldown'
-  | 'sequentialAttackDamage';
+  | 'sequentialAttackDamage'
+  | 'spinUpSpeed';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -152,6 +153,9 @@ export const BUFF_STATS = [
   // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.5 節）: 順番攻撃ダメージ▲（比率）。「N 回順番に攻撃」の倍率ダメージ
   // （damage の hitsRef）にだけ、別枠の乗数 (1 + Σ) で掛ける（分配ダメージ▲と同じ置き方。仮説。skills/burstDamage.ts の computeBurstHit）
   'sequentialAttackDamage',
+  // 同 5.6 節: マシンガン立ち上げ速度▲（比率）。MG のレートの上がり方（1 発ごとの rateOfFireChangePerShot）に (1 + Σ) を掛ける
+  // （読みは仮説。論点 I。cadence.ts の rateAfterShots）。スピンアップの無い武器には効かない。射撃に効く
+  'spinUpSpeed',
 ] as const satisfies readonly BuffStat[];
 
 /**
@@ -165,6 +169,7 @@ export const FIRING_STATS = [
   'infiniteAmmo',
   'fixedChargeTime',
   'attackSpeed',
+  'spinUpSpeed',
 ] as const satisfies readonly BuffStat[];
 
 /** 射撃に効くか。Stage 11 モダニア: 解決後の使用武器の変更（stat 'weapon'。skills/resolve.ts の EffectStat）も射撃に効く */
@@ -913,6 +918,12 @@ export type DamageEffect = {
    * 無ければ足さない）。射撃ごとに畳み込む効果（毎回の回数のきっかけで条件なし）には書けない
    */
   coreHit?: true;
+  /**
+   * 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」。時間の周期のきっかけ（{ everySeconds }）の damage にだけ書ける。前の発動のフレームに自分が
+   * state（家族の根なら家族のどれか）なら、次の発動までを everySeconds − N 秒にする（数え方は仮説。論点 E）。N は slot のスロットの
+   * description_value_NN（ref）。縮めた周期が 0 秒以下になる値は解決で落とす
+   */
+  periodShorten?: { state: NamedStateId; slot: SkillSlot; ref: number };
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -3004,6 +3015,20 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       fail(`${path}.hitIntervalFrames`, `expected an integer >= 0, got ${JSON.stringify(n)}`);
     }
     effect.hitIntervalFrames = n;
+  }
+  // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
+  if (v.periodShorten !== undefined) {
+    const p = v.periodShorten;
+    if (!isTimerTrigger(trigger))
+      fail(`${path}.periodShorten`, 'periodShorten needs a timer trigger ({ everySeconds })');
+    if (!isRecord(p)) fail(`${path}.periodShorten`, 'expected an object');
+    for (const key of Object.keys(p))
+      if (!['state', 'slot', 'ref'].includes(key)) fail(`${path}.periodShorten.${key}`, 'unknown field');
+    effect.periodShorten = {
+      state: parseNamedStateId(p.state, `${path}.periodShorten.state`, 'ally'),
+      slot: oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`),
+      ref: parseRef(p.ref, `${path}.periodShorten.ref`),
+    };
   }
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) {
