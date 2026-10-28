@@ -10,6 +10,7 @@ import {
   resolveDotEffects,
   resolvePerShotDamage,
   resolveShotGauges,
+  resolveShotPauses,
   resolveTimerGauges,
 } from '../burstDamage.ts';
 import {
@@ -212,6 +213,8 @@ describe('data/skills', () => {
       const instant10 = resolveInstant(def, character, MAX_SKILL_LEVELS);
       // モラン編: ゲージだけを溜める効果（burstGaugeHit）だけの定義もある
       const gauges10 = resolveShotGauges(def, character, MAX_SKILL_LEVELS).length + resolveTimerGauges(def).length;
+      // V-0534: 射撃の止まり（shotPause）だけの定義もある（ラピ：レッドフード）
+      const pauses10 = resolveShotPauses(def, character, MAX_SKILL_LEVELS).length;
       // 2 段目の段 3: 時間で変わる状態の中身（ソーダ：トゥインクルバニーのゴールデンチップ）とスタック量の増加だけの定義もある
       const states10 =
         resolveStateContents(def, character, MAX_SKILL_LEVELS).length +
@@ -229,6 +232,7 @@ describe('data/skills', () => {
           dot10.length +
           instant10.length +
           gauges10 +
+          pauses10 +
           states10 +
           perShot10;
         expect(count).toBeGreaterThan(0);

@@ -38,7 +38,7 @@ describe('語彙の検証', () => {
 describe('録画 0725 の編成（ラピ：レッドフード単騎）', () => {
   const file = loadRecordingsFile();
   const recording = recordingMap(file).get('0725')!;
-  const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], condition: 'auto' };
+  const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'] };
   const input = buildTeamInput(recording, setup, loadRecordsData(file));
   const result = runSimulation(input);
   const ctx = (args: Record<string, number>) => ({ args: { slot: 1, ...args }, input });
