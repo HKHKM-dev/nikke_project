@@ -897,6 +897,27 @@ function gaugeFullToActivation(result: { schedule: BurstSchedule | null }, ctx: 
 }
 
 /**
+ * 2 段目の段 11 の PR 3（V-0530）: n 回目（0 始まり）にゲージが満タンになった（BURST バーが消えた）フレームから、その後の枠の最初の
+ * 使用武器の変更の発（変更後の武器の発）までの動画のフレーム数。n はカンマ区切りの並び（"0,1,3"）も書け、そのときは回ごとの列。
+ * 単騎の I で満タンの直後に使うバーストの、変更後の武器の最初の発の待ち（firstShotDelayFrames）を、HUD の最初の増分で比べる
+ */
+function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const changed = slotOf(result.shots, ctx).weaponChangeShotFrames ?? [];
+  const at = (n: number): number => {
+    const full = schedule.gaugeFullFrames[n];
+    if (full === undefined) throw new Error(`${n} 回目の満タンが無い`);
+    const shot = changed.find((f) => f >= full);
+    if (shot === undefined) throw new Error(`${n} 回目の満タンの後に変更後の武器の発が無い`);
+    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, full);
+  };
+  const n = ctx.args.n;
+  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
+  return at(Number(n));
+}
+
+/**
  * V-0359（リターの S1 の CT▼）: n 回目（0 始まり）のフルバーストの入りのフレームに、枠の残りのバーストスキル CT が縮んだフレーム数
  * （その枠が受けた即時効果の CT▼ の、実際に縮んだ量の和。CT が明けていた枠は 0。burst/controller.ts の reduceCooldown）。
  * n はカンマ区切りの並び（"0,2,3"）も書け、そのときは回ごとの列。録画では、右のバースト欄の CT の残り秒の切り替わりから読んだ
@@ -1154,6 +1175,15 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   gaugeFullToActivation: {
     args: ['n'],
     sim: (r, c) => gaugeFullToActivation(r, c),
+  },
+  gaugeFullToWeaponChangeShot: { args: ['slot', 'n'], sim: gaugeFullToWeaponChangeShot },
+  // 2 段目の段 11 の PR 3（V-0530）: 枠のバーストの発動の回数（時刻表。burstCount は倍率ダメージのバーストの回数）
+  burstActivationCount: {
+    args: ['slot'],
+    sim: (r, c) => {
+      if (r.schedule === null) throw new Error('バーストの時刻表が無い');
+      return activationFramesOfSlot(r.schedule, slotIndexOf(c)).length;
+    },
   },
   /** V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける） */
   cooldownCutFrames: {

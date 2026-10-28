@@ -65,6 +65,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   projectileExplosionDamage: '発射体爆発ダメージ',
   sustainedDamage: '持続ダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
+  burstCooldown: 'バーストスキルのクールタイム',
   maxAmmo: '最大装弾数',
   reloadSpeed: 'リロード速度',
   chargeSpeed: 'チャージ速度',
@@ -136,6 +137,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
     }
     // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけフルバースト中
     if (trigger.firesDuring === 'fullBurst') return `${base}（フルバーストの外も数え、付くのはフルバースト中だけ）`;
+    // 2 段目の段 11（V-0530）: 戦闘中ずっと数え、発火だけ使用武器の変更の発
+    if (trigger.firesDuring === 'weaponChange') return `${base}（変更の外も数え、出るのは使用武器の変更の発だけ）`;
     return base;
   }
   const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
@@ -382,6 +385,9 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   // 対象の語彙編: 「チャージ時間 X 秒▼」（chargeSpeed の flat）は秒数でチャージ時間から引く
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed')
     return `チャージ時間 −${formatNumber(effect.appliedAmount, 2)} 秒`;
+  // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。維持の付いた形）は、その間のバーストの CT から引く秒
+  if (effect.scaling === 'flat' && effect.stat === 'burstCooldown')
+    return `バーストスキルのクールタイム −${formatNumber(effect.appliedAmount, 2)} 秒`;
   if (effect.scaling === 'flat') return `${stat} ${sign}${formatNumber(amount)} 発`;
   // Stage 11 アリス編: 発動者基準のチャージ速度は秒数でチャージ時間から引く
   if (effect.scaling === 'casterChargeTime')

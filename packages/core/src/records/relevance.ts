@@ -59,6 +59,8 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   chargeDamage: 'damageValue',
   distributedDamage: 'damageValue',
   burstGaugeSpeed: 'burstTiming',
+  // 2 段目の段 11 の PR 3: バーストスキルのクールタイム▼（維持の付いた形）。バーストの時刻を変える
+  burstCooldown: 'burstTiming',
   maxAmmo: 'firing',
   reloadSpeed: 'firing',
   chargeSpeed: 'firing',

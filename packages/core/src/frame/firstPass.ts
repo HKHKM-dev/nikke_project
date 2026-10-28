@@ -918,7 +918,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
-    if (controller !== null) stepBurstController(controller, f, gauge, blocked);
+    if (controller !== null) {
+      const before = controller.activations.length;
+      stepBurstController(controller, f, gauge, blocked);
+      // 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節。V-0530）: バーストスキルのクールタイム▼ の維持の付いた形（T4。
+      // 「その間スキル自体のクールタイムを変える」）。このフレームに発動した枠に効いている秒（f − 1 までに付いた件）だけ、その発動の
+      // CT を短くする（明けるのは発動のフレームより前にしない）。常時（戦闘開始から持続の静的な状態の中身も）と時間で変わる件の和。
+      // 即時の CT▼（reduceCooldown）とは別で、cooldownReductions に残さない
+      for (const a of controller.activations.slice(before)) {
+        const seconds = (passive[a.slotIndex]?.buffs.burstCooldown ?? 0) + lists.burstCooldownAt(a.slotIndex, f);
+        if (seconds <= 0) continue;
+        const end = controller.cooldownEnd[a.slotIndex]!;
+        controller.cooldownEnd[a.slotIndex] = Math.max(f, end - gameSecondsToFrames(seconds));
+      }
+    }
     // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）
     if (!trackEvents && !trackDotBurstUse) {
       countCycles(f);

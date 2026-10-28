@@ -116,6 +116,11 @@ export const NAMED_STATES = {
    * 時にチャージ速度▲のスタック。フルスタックで外して使用武器の変更）
    */
   warmUp: { name: { ja: 'ウォームアップ', en: 'Warm Up' }, holder: 'ally' },
+  /**
+   * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節。V-0530）: 熱血（モランの宝物版の S1。ラプチャーが出現した時・持続・
+   * バーストスキルのクールタイム▼。宝物版の S2 の「熱血状態なら」）
+   */
+  fervor: { name: { ja: '熱血', en: 'Fervor' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

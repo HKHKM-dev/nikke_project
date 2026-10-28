@@ -316,6 +316,11 @@ export type HolderLists = {
   /** 時間で変わるバーストゲージのチャージ速度の件の列を持ちうるか */
   hasGaugeSpeedTracks(holder: number): boolean;
   /**
+   * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節）: 枠 holder にフレーム frame に効いている、バーストスキルの
+   * クールタイム▼ の秒の和（burstCooldown。timed・状態の中身）。発動したフレームに呼ぶ（frame/firstPass.ts）
+   */
+  burstCooldownAt(holder: number, frame: number): number;
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
@@ -1100,6 +1105,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（2 段目の段 1。plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
+  // 2 段目の段 11 の PR 3: バーストスキルのクールタイム▼ の維持の付いた形（T4）の件
+  const cooldownViews = viewsOf((_, e) => e.stat === 'burstCooldown');
 
   const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
     if (condition.selfState !== undefined) {
@@ -1756,6 +1763,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return sum;
     },
     hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
+    burstCooldownAt(holder, frame) {
+      let sum = 0;
+      for (const v of cooldownViews[holder] ?? []) {
+        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
+      }
+      return sum;
+    },
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];
       for (const { holder, state } of consuming) {

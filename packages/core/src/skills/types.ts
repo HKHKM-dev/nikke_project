@@ -105,7 +105,8 @@ export type BuffStat =
   | 'maxHp'
   | 'maxHpOnly'
   | 'defense'
-  | 'attackSpeed';
+  | 'attackSpeed'
+  | 'burstCooldown';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -142,6 +143,10 @@ export const BUFF_STATS = [
   'defense',
   // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度▲（比率）。射手のレートの蓄積に (1 + Σ) を掛ける（frame/firing.ts）
   'attackSpeed',
+  // 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節。V-0530）: バーストスキルのクールタイム X 秒▼ の維持の付いた形（T4。
+  // 「その間スキル自体のクールタイムを変える」）。scaling 'flat' だけで、値は縮める秒（正の値）。効いている間にバーストを使うと、
+  // その発動の CT が X 秒短い（frame/firstPass.ts。0 秒より短くしない）。与ダメージの式は読まない
+  'burstCooldown',
 ] as const satisfies readonly BuffStat[];
 
 /**
@@ -464,9 +469,11 @@ export type ShotCountTrigger = {
   /**
    * ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 'fullBurst' なら、射撃は窓の外も含めて戦闘中ずっと数え、N の倍数に届いた発が
    * フルバーストの窓（[start, end)）の中のときだけ発火する（窓の外で届いた回は発火せずに過ぎる）。during・reset・stacksRef・
-   * chance とは組み合わせない。書ける効果は during と同じ（damage・timed・付与）
+   * chance とは組み合わせない。書ける効果は during と同じ（damage・timed・付与）。
+   * 2 段目の段 11（plan/design-skill-stage11.md 2.3 節の H1。V-0530）: 'weaponChange' なら、N の倍数に届いた発が使用武器の変更で
+   * 持ち替えた武器の発のときだけ発火する（モラン S1「自分が武器変更状態の場合、通常攻撃が N 回命中した時」）
    */
-  firesDuring?: ShotCountWindow;
+  firesDuring?: FiringWindow;
   /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
@@ -489,6 +496,9 @@ export function isChanceTrigger(t: EffectTrigger): t is ShotCountTrigger {
 /** クルミ S2 編: 回数トリガーの数える窓と、数え直し（plan/design-kurumi-s2.md 2.1 節） */
 export type ShotCountWindow = 'fullBurst';
 export const SHOT_COUNT_WINDOWS = ['fullBurst'] as const satisfies readonly ShotCountWindow[];
+/** 2 段目の段 11: 回数トリガーの発火の窓（firesDuring）。数える窓（during）はフルバーストだけ */
+export type FiringWindow = ShotCountWindow | 'weaponChange';
+export const FIRING_WINDOWS = ['fullBurst', 'weaponChange'] as const satisfies readonly FiringWindow[];
 export type ShotCountReset = 'fullBurstStart' | 'never';
 export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies readonly ShotCountReset[];
 
@@ -787,6 +797,7 @@ export function isFirstPassTrackedStat(stat: BuffStat): boolean {
     isMaxHpStat(stat) ||
     stat === 'defense' ||
     stat === 'burstGaugeSpeed' ||
+    stat === 'burstCooldown' ||
     isFiringStat(stat) ||
     isStateStat(stat)
   );
@@ -1663,7 +1674,10 @@ function parseNoteEffect(v: Json, path: string): NoteEffect {
   return effect;
 }
 
-/** casterAttack は attack だけ、flat（Stage 10）は maxAmmo（発数）と chargeSpeed（対象の語彙編。「チャージ時間 X 秒▼」の秒） */
+/**
+ * casterAttack は attack だけ、flat（Stage 10）は maxAmmo（発数）と chargeSpeed（対象の語彙編。「チャージ時間 X 秒▼」の秒）と
+ * burstCooldown（段 11 の PR 3。「バーストスキルクールタイム X 秒▼」の秒。burstCooldown は flat だけ）
+ */
 function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
   if (scaling === 'casterAttack' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
@@ -1674,22 +1688,25 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
-  if (scaling === 'flat' && stat !== 'maxAmmo' && stat !== 'chargeSpeed') {
-    fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo" or "chargeSpeed", got "${stat}"`);
+  if (scaling === 'flat' && stat !== 'maxAmmo' && stat !== 'chargeSpeed' && stat !== 'burstCooldown') {
+    fail(`${path}.scaling`, `flat is only allowed with stat "maxAmmo", "chargeSpeed" or "burstCooldown", got "${stat}"`);
+  }
+  if (stat === 'burstCooldown' && scaling !== 'flat') {
+    fail(`${path}.scaling`, 'burstCooldown needs scaling "flat" (the value is seconds)');
   }
 }
 
-/** 対象の語彙編: chargeSpeed の flat は「チャージ時間 X 秒▼」で、正の値が縮める秒数。▼（decrease）は書かない */
+/** 対象の語彙編: chargeSpeed の flat は「チャージ時間 X 秒▼」で、正の値が縮める秒数。▼（decrease）は書かない（burstCooldown も同じ） */
 function validateFlatChargeTime(
   stat: BuffStat,
   scaling: BuffScaling | undefined,
   v: Record<string, Json>,
   path: string,
 ) {
-  if (stat === 'chargeSpeed' && scaling === 'flat' && v.decrease !== undefined) {
+  if ((stat === 'chargeSpeed' || stat === 'burstCooldown') && scaling === 'flat' && v.decrease !== undefined) {
     fail(
       `${path}.decrease`,
-      'chargeSpeed with scaling "flat" is already a reduction in seconds (do not write decrease)',
+      `${stat} with scaling "flat" is already a reduction in seconds (do not write decrease)`,
     );
   }
 }
@@ -2028,7 +2045,7 @@ function parseTrigger(
         fail(`${path}.firesDuring`, 'a firing window (firesDuring) is only allowed in damage, timed and state');
       }
       if (v.during !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with during');
-      trigger.firesDuring = oneOf(SHOT_COUNT_WINDOWS, v.firesDuring, `${path}.firesDuring`);
+      trigger.firesDuring = oneOf(FIRING_WINDOWS, v.firesDuring, `${path}.firesDuring`);
       if (trigger.stacksRef !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with stacksRef');
       if (trigger.count === 'lastShot') fail(`${path}.firesDuring`, 'firesDuring cannot be used with lastShot');
       if (trigger.count === 'weaponChangeShot') {
