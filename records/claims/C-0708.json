@@ -1,0 +1,20 @@
+{
+  "id": "C-0708",
+  "text": "たきなのバーストの「使用武器変更」（最終攻撃力の X% のダメージ・維持時間 10 秒・通常攻撃を防御力無視ダメージに変更）の変更後の武器は、チャージせず CDN の変更後の発射レート 150rpm（23・24f ごと）で撃つ即着弾の連射で、最初の発は II の発動の替わり目の 8f 後に撃ち、10 秒の維持の間リロードせずに撃ち続ける（フルバーストの回で 25 発）。変更の窓が終わると基礎の SR に戻り、窓の終わりの約 82f 後に次の発を撃つ（リロードの後の 1 発目と同じ待ち）。1 ヒットは最終攻撃力 × 説明文の値の防御力無視ダメージ（防御力を引かない）で、フルチャージの倍率は乗らず、コア・会心・距離ボーナス・フルバーストの和が掛かる",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0721-09`・`0721-10`・`0721-11`・`0721-12`・`0721-14`・`0722-09`・`0722-10`・`0722-11`・`0722-12`・`0722-14`（最初の発の待ちとリロードしないことは 0721 の 1 回目のバーストで決め（モデルの firstShotDelayFrames 12・infiniteAmmo）、0721 の 2〜10 回目と 0722 の 10 回で同じ。発の数・間の平均・基礎の SR に戻るまで・受けるダメージ▲と防御力無視ダメージ▲の前の最初の発の 1 ヒットは、説明文と CDN の値から出したモデルと合う。発がときどき総ダメージに出ない回がある（`0721-10`・`0722-10` の注記。モデルは弾丸命中率 1））。V-0531",
+  "model": "`data/skills/861.json` の burst の effects[0]（`weaponChange`・`burstUse`・damageRef 1・durationRef 2・trueDamage・instantFire・firstShotDelayFrames 12・infiniteAmmo）。レートは CDN（burstSkill.changeWeapon）、変更後の武器の形は `skills/resolve.ts` の changedWeaponShot（instantFire）、リロードしない変更は `frame/firing.ts` の firingParams（ChangedWeapon.infiniteAmmo）、最初の発の待ちは `frame/firstPass.ts`。射撃場の的でコアに当たる割合は C-0713",
+  "replaces": [],
+  "updated": "2026-10-28",
+  "subject": {
+    "places": ["data/skills/861.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0721",
+      "role": "値を合わせた"
+    }
+  ]
+}

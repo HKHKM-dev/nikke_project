@@ -1033,6 +1033,7 @@ function resolveWeaponChange(
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
       ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
+      ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
       ...(effect.instantFire ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),

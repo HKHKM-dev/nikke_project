@@ -169,7 +169,8 @@ export function firingParams(
     // 2 段目の段 9 の PR 2: 攻撃速度▲は AR・SMG・SG にだけ書ける（skills/types.ts の validateAttackSpeed）。チャージ武器は発と発の間を
     // チャージで決めるので掛けない
     rateScale: isChargeWeapon(shot) ? 1 : Math.max(0, 1 + buffs.attackSpeed),
-    infiniteAmmo: buffs.infiniteAmmo > 0,
+    // 2 段目の段 11 の PR 4: 変更後の武器そのものが残弾を減らさない変更（WeaponChangeEffect.infiniteAmmo。たきなのバースト）
+    infiniteAmmo: buffs.infiniteAmmo > 0 || buffs.weapon?.infiniteAmmo === true,
     weapon: buffs.weapon,
   };
 }

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 303（根拠あり 296）・notes 186（根拠あり 69）
+件数: キャラ 61・効果 309（根拠あり 302）・notes 184（根拠あり 72）
 
-notes の種類: 未対応 68・前提の外 27・計算に無関係 32・補足 12・間接 47
+notes の種類: 未対応 64・前提の外 27・計算に無関係 33・補足 13・間接 47
 
-スロット: supported 123・partial 12・unsupported 29・noEffect 34
+スロット: supported 125・partial 12・unsupported 27・noEffect 34
 
 ## 10 ラピ
 
@@ -825,15 +825,19 @@ notes の種類: 未対応 68・前提の外 27・計算に無関係 32・補足
 
 ## 861 たきな
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・battleStart・attack: C-0658（確定）
-  - notes[0] 未対応: フルバーストタイム終了時の自分の攻撃力▲（5 秒）は未対応（撮っていない。戦闘開始時の分は effects[0]）: 根拠なし
-  - notes[1] 未対応: フルバーストタイムの発動時の自分の防御力無視ダメージ▲（15 秒）は未対応: 根拠なし
-- **skill2**: unsupported
-  - notes[0] 未対応: 敵全体の受けるダメージ▲（5 秒）と気絶は未対応（説明文にきっかけが無い。発動してもバーストゲージは溜めない。C-0418）: 根拠なし
-  - notes[1] 未対応: 味方全体の防御力無視ダメージ▲（10 秒）は未対応（説明文にきっかけが無い）: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: 使用武器変更（10 秒。通常攻撃を防御力無視ダメージに変更し、命中した敵に受けるダメージ▲）は未対応: 根拠なし
+  - effects[1] timed・fullBurstEnd・attack: C-0711（確定）
+  - effects[2] timed・fullBurstStart・trueDamage: C-0710（確定）
+- **skill2**: supported
+  - effects[0] timed・15 秒ごと・damageTaken: C-0712（確定）、C-0418（確定）、C-0502（確定）
+  - effects[1] timed・15 秒ごと・trueDamage: C-0712（確定）、C-0418（確定）、C-0502（確定）
+  - notes[0] 計算に無関係: 敵全体の気絶はダメージに関係しない: C-0712（確定）
+- **burst**: partial
+  - effects[0] weaponChange・burstUse: C-0708（確定）
+  - effects[1] timed・weaponChangeShot・damageTaken: C-0709（確定）、C-0312（確定）
+  - notes[0] 補足: 射撃場の的で変更後の武器の発がコアに当たる割合は、的の表の行（coreHitRate.weaponChanges の 861:burst。帯ごとの値）で持つ: C-0713（仮説）
+  - notes[1] 未対応: 変更後の武器の発が総ダメージに出ない回（V-0531。2 本とも 5 回目のバーストの替わり目の 430〜478f 後に 1 発）は未対応（モデルは弾丸命中率 1）: C-0708（確定）
 
 ## 862 クルミ
 

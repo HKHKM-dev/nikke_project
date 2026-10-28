@@ -126,6 +126,7 @@ describe('data/skills', () => {
                 // Stage 11 紅蓮BS: バーストの攻撃力 115.12%・チャージダメージ 169.63% は 100% を超える（上限は 200% で見る）
                 // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ。ヘルム: チャージダメージ倍率 158.4% も同じ
                 // I-DOLL・サン: バーストの最大装弾数▲は Lv10 で 787.5%（C-0364。上限は 1000% で見る）
+                // たきな: S2 の防御力無視ダメージ▲は Lv10 で 140.49%（上限は 200% で見る）
                 const stat =
                   effect.kind === 'timed'
                     ? effect.stat
@@ -136,7 +137,14 @@ describe('data/skills', () => {
                   stat === 'maxAmmo'
                     ? 1000
                     : stat !== undefined &&
-                        ['attack', 'chargeDamage', 'chargeDamageMultiplier', 'attackDamage', 'hitRate'].includes(stat)
+                        [
+                          'attack',
+                          'chargeDamage',
+                          'chargeDamageMultiplier',
+                          'attackDamage',
+                          'hitRate',
+                          'trueDamage',
+                        ].includes(stat)
                       ? 200
                       : 100;
                 expect(v).toBeLessThanOrEqual(limit);

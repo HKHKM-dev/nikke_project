@@ -1058,6 +1058,11 @@ export type WeaponChangeEffect = {
    * 録画で読む）。省略はいままでどおり（skills/../frame/shooter.ts の weaponChangeShooter の待ち）
    */
   firstShotDelayFrames?: number;
+  /**
+   * 2 段目の段 11 の PR 4（plan/design-skill-stage11.md 3.4 節）: 変更後の武器は撃っても残弾を減らさない（維持の間リロードしない）。
+   * 説明文に「装弾数無限」の行が無い変更で、録画で読む（たきなのバースト。C-0708）。維持の欄（durationRef・durationSeconds）の変更にだけ書ける
+   */
+  infiniteAmmo?: true;
   assumes?: LocalizedText;
 };
 
@@ -2707,6 +2712,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'rateOfFire',
         'instantFire',
         'firstShotDelayFrames',
+        'infiniteAmmo',
         'assumes',
         'claims',
       ].includes(key)
@@ -2759,6 +2765,11 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
       fail(`${path}.firstShotDelayFrames`, `expected a non-negative integer, got ${JSON.stringify(n)}`);
     }
     effect.firstShotDelayFrames = n;
+  }
+  if (v.infiniteAmmo !== undefined) {
+    if (v.infiniteAmmo !== true) fail(`${path}.infiniteAmmo`, `expected true, got ${JSON.stringify(v.infiniteAmmo)}`);
+    if (untilEmpty) fail(`${path}.infiniteAmmo`, 'infiniteAmmo cannot be combined with maxAmmoRef');
+    effect.infiniteAmmo = true;
   }
   if (v.trueDamage !== undefined) {
     if (v.trueDamage !== true) fail(`${path}.trueDamage`, `expected true, got ${JSON.stringify(v.trueDamage)}`);

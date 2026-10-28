@@ -13308,6 +13308,286 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0721-09",
+      "element": "たきな burst.effects[0]",
+      "key": "e99ba3584a858dd9",
+      "effective": true,
+      "minus": 18,
+      "plus": null
+    },
+    {
+      "observation": "0721-10",
+      "element": "たきな burst.effects[0]",
+      "key": "a31711d2e36e0179",
+      "effective": true,
+      "minus": -19,
+      "plus": null
+    },
+    {
+      "observation": "0721-11",
+      "element": "たきな burst.effects[0]",
+      "key": "3bf7dc31d358a0b8",
+      "effective": true,
+      "minus": 58.46666666666667,
+      "plus": null
+    },
+    {
+      "observation": "0721-12",
+      "element": "たきな burst.effects[0]",
+      "key": "baf422e04fa75459",
+      "effective": true,
+      "minus": null,
+      "plus": null
+    },
+    {
+      "observation": "0721-14",
+      "element": "たきな burst.effects[0]",
+      "key": "65047fddc95d9420",
+      "effective": true,
+      "minus": -70026.34560000006,
+      "plus": null
+    },
+    {
+      "observation": "0721-15",
+      "element": "たきな burst.effects[0]",
+      "key": "aa130e6aee27635b",
+      "effective": true,
+      "minus": -172225.67550645603,
+      "plus": null
+    },
+    {
+      "observation": "0721-16",
+      "element": "たきな burst.effects[0]",
+      "key": "4c1094d58cefe95c",
+      "effective": true,
+      "minus": -287042.79251076,
+      "plus": null
+    },
+    {
+      "observation": "0721-17",
+      "element": "たきな burst.effects[0]",
+      "key": "63c65f8804c9dd15",
+      "effective": true,
+      "minus": -677779.1692030657,
+      "plus": null
+    },
+    {
+      "observation": "0721-18",
+      "element": "たきな burst.effects[0]",
+      "key": "076e34cb428f1ec2",
+      "effective": true,
+      "minus": -1129631.9486717763,
+      "plus": null
+    },
+    {
+      "observation": "0721-19",
+      "element": "たきな burst.effects[0]",
+      "key": "9068781ead7b947f",
+      "effective": true,
+      "minus": -66786.17222656007,
+      "plus": null
+    },
+    {
+      "observation": "0721-20",
+      "element": "たきな burst.effects[0]",
+      "key": "262da3e5e7c276f2",
+      "effective": true,
+      "minus": -370246.3973773224,
+      "plus": null
+    },
+    {
+      "observation": "0721-21",
+      "element": "たきな burst.effects[0]",
+      "key": "ae914542f3b324bf",
+      "effective": true,
+      "minus": -440676.07264920097,
+      "plus": null
+    },
+    {
+      "observation": "0721-22",
+      "element": "たきな burst.effects[0]",
+      "key": "0799938defc4a1c6",
+      "effective": true,
+      "minus": -37489.486343999975,
+      "plus": null
+    },
+    {
+      "observation": "0721-23",
+      "element": "たきな burst.effects[0]",
+      "key": "a486efb5e2f5a198",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0721-24",
+      "element": "たきな burst.effects[0]",
+      "key": "ffef7f8c3e467053",
+      "effective": true,
+      "minus": -1136.3606616959987,
+      "plus": null
+    },
+    {
+      "observation": "0721-25",
+      "element": "たきな burst.effects[0]",
+      "key": "02774abc0e981727",
+      "effective": true,
+      "minus": -684.2800107000003,
+      "plus": null
+    },
+    {
+      "observation": "0721-26",
+      "element": "たきな burst.effects[0]",
+      "key": "971ea063dcd3ef3e",
+      "effective": true,
+      "minus": -684.2800107000021,
+      "plus": null
+    },
+    {
+      "observation": "0722-09",
+      "element": "たきな burst.effects[0]",
+      "key": "288ada59b90fac92",
+      "effective": true,
+      "minus": 18,
+      "plus": null
+    },
+    {
+      "observation": "0722-10",
+      "element": "たきな burst.effects[0]",
+      "key": "f5f2779b8ce045fc",
+      "effective": true,
+      "minus": -18,
+      "plus": null
+    },
+    {
+      "observation": "0722-11",
+      "element": "たきな burst.effects[0]",
+      "key": "dd3fd0e2b10b1247",
+      "effective": true,
+      "minus": 58.44444444444444,
+      "plus": null
+    },
+    {
+      "observation": "0722-12",
+      "element": "たきな burst.effects[0]",
+      "key": "3d34a96102b0927c",
+      "effective": true,
+      "minus": -10,
+      "plus": null
+    },
+    {
+      "observation": "0722-14",
+      "element": "たきな burst.effects[0]",
+      "key": "8bfb48266bd97b0f",
+      "effective": true,
+      "minus": -93368.46080000012,
+      "plus": null
+    },
+    {
+      "observation": "0722-15",
+      "element": "たきな burst.effects[0]",
+      "key": "e8495c8f3b653430",
+      "effective": true,
+      "minus": -172225.67550645603,
+      "plus": null
+    },
+    {
+      "observation": "0722-16",
+      "element": "たきな burst.effects[0]",
+      "key": "95ab325ab6f32c7b",
+      "effective": true,
+      "minus": -287042.79251076,
+      "plus": null
+    },
+    {
+      "observation": "0722-17",
+      "element": "たきな burst.effects[0]",
+      "key": "0427cccd0ac67ea6",
+      "effective": true,
+      "minus": -677779.1692030657,
+      "plus": null
+    },
+    {
+      "observation": "0722-18",
+      "element": "たきな burst.effects[0]",
+      "key": "c43b6b084b5a7865",
+      "effective": true,
+      "minus": -1129631.9486717763,
+      "plus": null
+    },
+    {
+      "observation": "0722-19",
+      "element": "たきな burst.effects[0]",
+      "key": "3bc98f51e9acd3e0",
+      "effective": true,
+      "minus": -66786.17222656007,
+      "plus": null
+    },
+    {
+      "observation": "0722-20",
+      "element": "たきな burst.effects[0]",
+      "key": "9abc56f43ebed62b",
+      "effective": true,
+      "minus": -133572.34445312014,
+      "plus": null
+    },
+    {
+      "observation": "0722-21",
+      "element": "たきな burst.effects[0]",
+      "key": "f98ebfc51675050a",
+      "effective": true,
+      "minus": -740492.7947546449,
+      "plus": null
+    },
+    {
+      "observation": "0722-22",
+      "element": "たきな burst.effects[0]",
+      "key": "86a9a243a3ba1f64",
+      "effective": true,
+      "minus": -440676.07264920097,
+      "plus": null
+    },
+    {
+      "observation": "0722-23",
+      "element": "たきな burst.effects[0]",
+      "key": "805bf8648458a4db",
+      "effective": true,
+      "minus": -46861.85793000006,
+      "plus": null
+    },
+    {
+      "observation": "0722-24",
+      "element": "たきな burst.effects[0]",
+      "key": "ad082d903086d8eb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0722-25",
+      "element": "たきな burst.effects[0]",
+      "key": "804b53715e8b7370",
+      "effective": true,
+      "minus": -1136.3606616959987,
+      "plus": null
+    },
+    {
+      "observation": "0722-26",
+      "element": "たきな burst.effects[0]",
+      "key": "80b8896d6d2bbd6c",
+      "effective": true,
+      "minus": -684.2800107000003,
+      "plus": null
+    },
+    {
+      "observation": "0722-27",
+      "element": "たきな burst.effects[0]",
+      "key": "73352e8aba01170d",
+      "effective": true,
+      "minus": -684.2800107000021,
+      "plus": null
     }
   ]
 }
