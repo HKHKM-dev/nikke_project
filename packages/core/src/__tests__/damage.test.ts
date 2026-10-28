@@ -123,6 +123,7 @@ describe('computeDamage', () => {
       reloadSpeed: 0,
       chargeSpeed: 0,
       attackSpeed: 0,
+      spinUpSpeed: 0,
       chargeTimeFlat: 0,
       fixedChargeTime: 0,
       hitRate: 0,

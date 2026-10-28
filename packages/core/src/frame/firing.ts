@@ -10,6 +10,7 @@ import type { ShotParams } from '../types.ts';
 import {
   chargeSecondsToFrames,
   DEFAULT_WEAPON_MODEL,
+  hasSpinUp,
   isChargeWeapon,
   reloadSecondsToFrames,
   type WeaponModel,
@@ -23,6 +24,7 @@ export type FiringBuffs = Pick<
   | 'reloadSpeed'
   | 'chargeSpeed'
   | 'attackSpeed'
+  | 'spinUpSpeed'
   | 'chargeTimeFlat'
   | 'fixedChargeTime'
   | 'infiniteAmmo'
@@ -35,6 +37,7 @@ export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   reloadSpeed: 0,
   chargeSpeed: 0,
   attackSpeed: 0,
+  spinUpSpeed: 0,
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
   infiniteAmmo: 0,
@@ -72,6 +75,11 @@ export type FiringParams = {
    * マガジンの中の発と発の間だけを縮め、リロード・リロード明けの待ち・構えは変えない（V-0458 の録画 0510〜0512。C-0600）
    */
   rateScale: number;
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.6 節）: MG のレートの上がり方（rateOfFireChangePerShot）に掛ける倍率
+   * 1 + 立ち上げ速度（スピンアップの無い武器は 1）。最高レート（endRateOfFire）と初弾の遅れは変えない（読みは仮説。論点 I）
+   */
+  spinUpScale: number;
   /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
   infiniteAmmo: boolean;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（frame/firstPass.ts） */
@@ -100,6 +108,7 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
     buffs.reloadSpeed === 0 &&
     buffs.chargeSpeed === 0 &&
     buffs.attackSpeed === 0 &&
+    buffs.spinUpSpeed === 0 &&
     buffs.chargeTimeFlat === 0 &&
     buffs.fixedChargeTime === 0 &&
     buffs.infiniteAmmo === 0 &&
@@ -169,6 +178,7 @@ export function firingParams(
     // 2 段目の段 9 の PR 2: 攻撃速度▲は AR・SMG・SG にだけ書ける（skills/types.ts の validateAttackSpeed）。チャージ武器は発と発の間を
     // チャージで決めるので掛けない
     rateScale: isChargeWeapon(shot) ? 1 : Math.max(0, 1 + buffs.attackSpeed),
+    spinUpScale: hasSpinUp(shot) ? Math.max(0, 1 + buffs.spinUpSpeed) : 1,
     // 2 段目の段 11 の PR 4: 変更後の武器そのものが残弾を減らさない変更（WeaponChangeEffect.infiniteAmmo。たきなのバースト）
     infiniteAmmo: buffs.infiniteAmmo > 0 || buffs.weapon?.infiniteAmmo === true,
     weapon: buffs.weapon,

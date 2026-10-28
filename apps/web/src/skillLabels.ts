@@ -62,6 +62,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   chargeDamageMultiplier: 'チャージダメージ倍率',
   distributedDamage: '分配ダメージ',
   sequentialAttackDamage: '順番攻撃ダメージ',
+  spinUpSpeed: 'マシンガン立ち上げ速度',
   damageTaken: '敵の受けるダメージ',
   enemyDefenseDown: '敵の防御力',
   projectileExplosionDamage: '発射体爆発ダメージ',

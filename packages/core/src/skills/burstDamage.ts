@@ -23,6 +23,7 @@ import {
 } from './types.ts';
 import {
   isResolvedShotCount,
+  isResolvedTimer,
   resolveCondition,
   resolveTrigger,
   skillValue,
@@ -102,6 +103,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 1 回の発動のヒット数と、ヒットの間（フレーム） */
   hits?: number;
   hitIntervalFrames?: number;
+  /** 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames） */
+  periodShorten?: { state: NamedStateId; seconds: number };
   /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
   perCount?: { state: NamedStateId } | { counter: CounterId };
   /**
@@ -202,6 +205,16 @@ export function resolveDamageEffects(
         r.hits = hits;
         r.hitIntervalFrames = effect.hitIntervalFrames ?? 0;
         r.sequential = true;
+      }
+      if (effect.periodShorten !== undefined && isResolvedTimer(trigger)) {
+        const { state, slot: from, ref } = effect.periodShorten;
+        const seconds = skillValue(character.skills[from], ref, levels[from]);
+        if (!(seconds > 0 && seconds < trigger.everySeconds)) {
+          throw new RangeError(
+            `skill ${skill.id}: the shortened period must stay positive (${trigger.everySeconds} − ${seconds})`,
+          );
+        }
+        r.periodShorten = { state, seconds };
       }
       if (effect.coreHit === true) {
         r.core = true;
