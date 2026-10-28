@@ -7,7 +7,10 @@ import { compressIds } from './relevance.ts';
 export type RenumberKind = 'verification' | 'claim' | 'observation' | 'recording';
 
 const OBS_ID = /^((?:\d{3,}|L-[A-Z]{1,3}))-(\d{2,})$/;
-/** 録画の番号（3〜4 桁。L- の旧の録画は振り直さない。plan/design-recording-renumber.md 3 節） */
+/**
+ * 録画の番号（3〜4 桁。L- の旧の録画は振り直さない。plan/design-recording-renumber.md 3 節）。古い番号は古い文を読むため 3 桁も受ける。
+ * 新しい番号の 4 桁は records-renumber.ts が ids.ts の RECORDING_ID で見る（plan/design-recording-id-4digit.md 6 節）
+ */
 const REC_ID = /^\d{3,4}$/;
 
 /** ID の種類（形が合わなければ undefined） */

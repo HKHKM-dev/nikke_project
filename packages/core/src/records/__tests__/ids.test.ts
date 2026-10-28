@@ -1,6 +1,6 @@
-// 検証記録・結論の ID の形。例の ID は実在の番号と重ならない 9 千番台にする（renumber.test.ts の冒頭と同じ理由）
+// 検証記録・結論・録画の ID の形。例の ID は実在の番号と重ならない 9 千番台にする（renumber.test.ts の冒頭と同じ理由）
 import { describe, expect, it } from 'vitest';
-import { C_ID, V_ID, V_ID_IN_TEXT } from '../ids.ts';
+import { C_ID, RECORDING_ID, V_ID, V_ID_IN_TEXT } from '../ids.ts';
 
 describe('records/ids', () => {
   it('accepts 4 or more digits and nothing else', () => {
@@ -13,6 +13,13 @@ describe('records/ids', () => {
     expect(C_ID.test('C-95300')).toBe(true);
     expect(C_ID.test('C-953')).toBe(false);
     expect(C_ID.test('V-9530')).toBe(false);
+  });
+
+  it('takes recording numbers of exactly 4 digits', () => {
+    expect(RECORDING_ID.test('0942')).toBe(true);
+    expect(RECORDING_ID.test('9420')).toBe(true);
+    expect(RECORDING_ID.test('942')).toBe(false);
+    expect(RECORDING_ID.test('94200')).toBe(false);
   });
 
   it('finds a verification ID inside text', () => {

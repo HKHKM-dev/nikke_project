@@ -49,6 +49,7 @@ import {
   renameCommand,
   renumberedName,
 } from '../../../tools/captures/renumber-files.ts';
+import { RECORDING_ID } from '../src/records/ids.ts';
 import { ROOT, idsInBranches, observationIdsInBranches, recordingIdsInBranches } from './records-data.ts';
 
 const { values, positionals } = parseArgs({
@@ -74,7 +75,7 @@ const problems = renumberProblems(oldId, newId);
 if (problems.length > 0) fail(problems.join('\n'));
 const kind = renumberKind(oldId)!;
 // 録画の番号は 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）。古い番号は古い文を読むため 3 桁も受ける
-if (kind === 'recording' && !/^\d{4}$/.test(newId)) fail('録画の新しい番号は 4 桁（0001〜9999）');
+if (kind === 'recording' && !RECORDING_ID.test(newId)) fail('録画の新しい番号は 4 桁（0001〜9999）');
 const dryRun = values['dry-run'];
 
 for (const p of ['rebase-merge', 'rebase-apply', 'MERGE_HEAD', 'CHERRY_PICK_HEAD']) {
