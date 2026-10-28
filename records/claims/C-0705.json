@@ -1,0 +1,23 @@
+{
+  "id": "C-0705",
+  "text": "モランの S1 の「自分が武器変更状態の場合、通常攻撃が 5 回命中した時、対象に最終攻撃力の X% の追加ダメージ」は、通常攻撃の命中を戦闘中ずっと（変更前の武器の発も）数え、5 の倍数に届いた発が使用武器の変更の発のときだけ出る（設計書 2.3 節の H1。変更後の武器の発だけを数える H2 は外れる）。追加ダメージ（Lv10 で 47.18%）にはコア・距離ボーナスが乗らず、会心は乗る。基礎版も説明文が同じなので同じ読み",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0719-05`・`0719-06`・`0719-07`・`0719-11`・`0720-05`・`0720-06`・`0720-07`・`0720-11`（数え方は 0719 の 1 回目の窓で読み、0720 の 1 回目の窓で同じ（どちらも窓の前の 201 発の後の、変更後の武器の 4 発目）。H2 なら 5 発目で、モデルで 206 発目になる。2 回目以降の窓の最初の追加ダメージの発も、窓ごとに数え直す読みとは合わない）。V-0530",
+  "model": "`data/skills/281.json` の skill1・treasureSkills.skill1 の effects[0]（`damage`・additional・ref 2・`{ count: normalHit, everyRef: 3, firesDuring: weaponChange }`）。発火の窓は `skills/triggers.ts` の createTriggerTracker（変更後の武器の発でだけ発火し、数えるのは基礎の武器の発も）",
+  "replaces": [],
+  "updated": "2026-10-28",
+  "subject": {
+    "places": [
+      "data/skills/281.json の skill1 の effects[0]",
+      "data/skills/281.json の treasureSkills.skill1 の effects[0]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0719",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

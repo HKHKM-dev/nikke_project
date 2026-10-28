@@ -153,7 +153,7 @@ describe('チャージ時間 X 秒▼（chargeSpeed の flat）', () => {
       /do not write decrease/,
     );
     expect(() => parse({ ...timed, target: 'self', stat: 'reloadSpeed', scaling: 'flat' })).toThrow(
-      /flat is only allowed with stat "maxAmmo" or "chargeSpeed"/,
+      /flat is only allowed with stat "maxAmmo", "chargeSpeed" or "burstCooldown"/,
     );
   });
 });

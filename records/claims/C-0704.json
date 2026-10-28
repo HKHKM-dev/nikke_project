@@ -1,0 +1,15 @@
+{
+  "id": "C-0704",
+  "text": "モランの宝物版のバーストの味方全体への発動者基準の攻撃力▲（Lv10 で 42.57%）は自分にも付き、発動者のバフ前攻撃力 × 値の固定加算で、使用武器の変更の変更後の武器の 1 ヒットに乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0719-02`・`0719-03`・`0719-04`・`0720-02`・`0720-03`・`0720-04`（攻撃力▲の固定加算の乗った変更後の武器の 1 ヒットが、説明文の値から出したモデルと差 1 未満。乗らなければ 1 ヒットは 1.4252 分の 1）。V-0530",
+  "model": "`data/skills/281.json` の treasureSkills.burst の effects[2]（`timed`・burstUse・allies・attack・casterAttack・ref 9・durationRef 10）",
+  "replaces": [],
+  "updated": "2026-10-28",
+  "subject": {
+    "places": ["data/skills/281.json の treasureSkills.burst の effects[2]"]
+  },
+  "decidedOn": []
+}

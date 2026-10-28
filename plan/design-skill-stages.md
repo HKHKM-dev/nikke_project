@@ -135,3 +135,4 @@
 - 2026-10-27: 段 11 の PR 1 を出した（ラプラス：アルティメットヒーローの S1。状態のフルスタックで起こす使用武器の変更・変更後の武器の形の即値・残弾数減少 `ammoDecrease` と `{ weaponChangeEnd }` を足し、録画 0121・0130・0131 の読み直しで確かめた。V-0528、C-0698〜C-0701。[design-skill-stage11.md](design-skill-stage11.md)）。次は PR 2（S2 のオーバーエネルギー）。
 - 2026-10-27: 段 11 の PR 2 を出した（ラプラス：アルティメットヒーローの S2。カウンタの `{ counterFull }`・`while: { selfCounter }`・`maxHpOnly` を足し、同じ録画の読み直しで確かめた。V-0529、C-0702・C-0577 を確定。[design-skill-stage11.md](design-skill-stage11.md)）。次は PR 3〜5（撮影）。
 - 2026-10-28: 段 11 の PR 5 を出した（ラプラス：アルティメットヒーローのバーストの追加ダメージ。段 10 の `perCount` を `{ counter }` に開き、damage の条件 selfCounter を足して、撮影で確かめた。V-0532、C-0707。[design-skill-stage11.md](design-skill-stage11.md)）。段 11 の残りは PR 3（モラン）と PR 4（たきな）。
+- 2026-10-28: 段 11 の PR 3 を出した（モランのバースト・S1・宝物版の熱血。回数のきっかけの発火の窓 `firesDuring: "weaponChange"` と、T4 の stat `burstCooldown`（状態 `fervor` の中身）を足し、単騎の撮影（録画 0719・0720）で確かめた。V-0530、C-0703〜C-0706。[design-skill-stage11.md](design-skill-stage11.md)）。段 11 の残りは PR 4（たきな）。

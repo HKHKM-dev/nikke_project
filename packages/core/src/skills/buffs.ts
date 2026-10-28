@@ -96,6 +96,11 @@ export type BuffTotals = {
   sustainedDamage: number;
   /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
+  /**
+   * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節）: バーストスキルのクールタイム▼ の秒（維持の付いた形。T4。scaling 'flat'）。
+   * 1 パス目が発動のフレームに件の一覧から読む（frame/firstPass.ts）。区間の合計は表示だけで、ダメージの式は読まない
+   */
+  burstCooldown: number;
   /** Stage 10: 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
   maxAmmoRatio: number;
   /**
@@ -167,6 +172,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   projectileExplosionDamage: 0,
   sustainedDamage: 0,
   burstGaugeSpeed: 0,
+  burstCooldown: 0,
   maxAmmoRatio: 0,
   maxHpRatio: 0,
   defenseRatio: 0,
@@ -202,6 +208,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   sustainedDamage: 'sustainedDamage',
   fixedChargeTime: 'fixedChargeTime',
   burstGaugeSpeed: 'burstGaugeSpeed',
+  burstCooldown: 'burstCooldown',
   maxAmmo: 'maxAmmoRatio',
   maxHp: 'maxHpRatio',
   // 2 段目の段 11 の PR 2: 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
@@ -298,6 +305,10 @@ export function applyResolvedEffect(
   // 対象の語彙編: 「チャージ時間 X 秒▼」（chargeSpeed の flat。値は秒）は、発動者基準のチャージ速度と同じく秒数を引く
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed') {
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
+  }
+  // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）
+  if (effect.scaling === 'flat' && effect.stat === 'burstCooldown') {
+    return { totals: { ...totals, burstCooldown: totals.burstCooldown + effect.value }, appliedAmount: effect.value };
   }
   if (effect.scaling === 'flat') {
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };

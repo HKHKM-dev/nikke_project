@@ -78,6 +78,8 @@
     | 〈名前〉のスタック量 N 個▲ | `kind: "stackChange"` | — | [design-skill-stage3.md](design-skill-stage3.md) 1.1 節 |
     | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | 例: ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
     | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | 例: クラウンの S2 | 同 1.3 節 |
+    | 自分が武器変更状態の場合、通常攻撃が N 回命中した時 | 回数のきっかけの `firesDuring: "weaponChange"` | 命中は変更の外の発も数え、出るのは使用武器の変更の発だけ（H1）。例: モランの S1 | [design-skill-stage11.md](design-skill-stage11.md) 2.3・3.3 節 |
+    | 〈名前〉：バーストスキルクールタイム X 秒▼（持続・維持の付いた形。T4） | 状態の中身（か timed）の `stat: "burstCooldown"`・`scaling: "flat"` | 値は縮める秒で、効いている間に使ったバーストの CT を縮める。即時の CT▼ は `cooldownReduction`。例: モランの宝物版 S1 の熱血 | 同 3.3 節 |
     | 〈名前〉が適用される時・適用された時／〈名前〉：弾丸チャージ X% | トリガー `{ "applied": "<id>" }`／即時効果と、維持 0 秒の付与 | 例: トーブの宝物版 S1 | [design-skill-stage4.md](design-skill-stage4.md) 1.1・1.2 節 |
     | 自分がバリア適用状態なら／バリア・共用バリア | `condition.selfState: "barrier"`／付与の `state: "barrier"` | 例: ラムのバースト・アスカの S2 | [design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節 |
 

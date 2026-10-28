@@ -1,25 +1,34 @@
 {
   "formatVersion": 1,
   "resourceId": 281,
-  "checkedAt": "2026-10-09",
+  "checkedAt": "2026-10-28",
   "skills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 3,
+            "firesDuring": "weaponChange"
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "通常攻撃の命中は戦闘中ずっと（変更前の武器の発も）数え、5 の倍数に届いた発が使用武器の変更の発のときだけ出る（firesDuring weaponChange。V-0530 の H1）。変更前の武器の発で届いた回は出ずに過ぎる。追加ダメージにはコア・距離ボーナスが乗らず、会心は乗る。対象は的（敵 1 体）",
+            "en": "Normal-attack hits are counted throughout the battle (base-weapon shots included), and the damage is dealt only when a multiple of 5 is reached on a weapon-change shot (firesDuring weaponChange; H1 of V-0530). A multiple reached on a base-weapon shot passes without damage. The additional damage gets no core or range bonus but can crit. The target is the range target (one enemy)"
+          },
+          "claims": [
+            "C-0705"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
           "en": "The DEF increase on self by HP lost (from the start of battle) does not change damage by itself (it matters only with an effect reading DEF in the team)",
           "kind": "indirect",
           "path": "defense"
-        },
-        {
-          "ja": "武器変更状態で通常攻撃が 5 回命中した時の、対象への追加ダメージ（最終攻撃力の X%）は未対応（撮っていない。武器変更の中の命中を数えるトリガーが無い）",
-          "en": "The additional damage (X% of final ATK) on the target after landing 5 normal attacks while the weapon is changed is not modeled (not recorded; no trigger counts hits during the weapon change)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "weaponChangeShot"
-          }
         }
       ]
     },
@@ -55,28 +64,33 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationSeconds": 10,
+          "firstShotDelayFrames": 12,
+          "assumes": {
+            "ja": "変更後の武器は CDN の burstSkill.changeWeapon のレート（1440rpm）の AR で、即着弾。1 ヒットは最終攻撃力 × 説明文の値で、コア・会心・距離ボーナスは基礎の AR と同じに乗る。最初の発は、窓が射手に見える次のフレームから 12f 待つ（発動の 13f 後・ゲージの満タンから 37f。録画 0719 の 1 回目で決めた。V-0530）。10 秒の間は装弾数無限（effects[1]）でリロードしない。終わると変更前の AR を満タンで込め直して戻る（モダニア由来の決まり。録画 0719・0720 で照準の横の残弾が 60 から減る）。窓の最初の発から最後の発までは、録画がモデルより 1〜4f 長い（未解明）",
+            "en": "The changed weapon is an AR at the CDN rate of burstSkill.changeWeapon (1440 rpm) with instant hits. One hit is final ATK × the description value, with the core, crit and range bonus applied as for the base AR. The first shot waits 12 frames from the frame after the window becomes visible to the shooter (13 frames after the activation, 37 frames after the gauge is full; set on the first window of recording 0719, V-0530). There is no reload during the 10 s thanks to unlimited ammo (effects[1]). At the end the base AR comes back with a full magazine (the rule from Modernia; in recordings 0719 and 0720 the reticle ammo counts down from 60). The span from the first to the last shot of a window is 1-4 frames longer in the recordings than in the model (unexplained)"
+          },
+          "claims": [
+            "C-0703"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 4,
+          "claims": [
+            "C-0703"
+          ]
+        }
+      ],
       "notes": [
-        {
-          "ja": "使用武器の変更（最終攻撃力の X% のダメージ・10 秒）は未対応（撮っていない）",
-          "en": "The weapon change (X% of final ATK per shot, 10 s) is not modeled (not recorded)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "weaponChange",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "自分への装弾数無限（10 秒）は未対応（使用武器の変更と合わせて撮っていない）",
-          "en": "Unlimited ammo on self (10 s) is not modeled (not recorded, together with the weapon change)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "infiniteAmmo",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
         {
           "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、モランに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
           "en": "The lifesteal on self (restore X% of attack damage, 10 s) does not affect damage (it applies only to self, and Moran has no effects that trigger on being healed, so it never changes any ally's skill activation)",
@@ -98,32 +112,52 @@
   },
   "treasureSkills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 3,
+            "firesDuring": "weaponChange"
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "通常攻撃の命中は戦闘中ずっと（変更前の武器の発も）数え、5 の倍数に届いた発が使用武器の変更の発のときだけ出る（firesDuring weaponChange。V-0530 の H1）。変更前の武器の発で届いた回は出ずに過ぎる。追加ダメージにはコア・距離ボーナスが乗らず、会心は乗る。対象は的（敵 1 体）",
+            "en": "Normal-attack hits are counted throughout the battle (base-weapon shots included), and the damage is dealt only when a multiple of 5 is reached on a weapon-change shot (firesDuring weaponChange; H1 of V-0530). A multiple reached on a base-weapon shot passes without damage. The additional damage gets no core or range bonus but can crit. The target is the range target (one enemy)"
+          },
+          "claims": [
+            "C-0705"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "fervor",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "burstCooldown",
+              "scaling": "flat",
+              "ref": 4
+            }
+          ],
+          "assumes": {
+            "ja": "「ラプチャーが出現した時」は、射撃場では戦闘開始時（的が出る）とみる（V-0530: 180 秒に 5 回バーストを使い、どの回もゲージの満タンの直後に使う。基礎の CT 40 秒なら 4 回）。熱血は自分に付き、持続。中身のクールタイム▼は、効いている間に使ったバーストの CT を 20 秒短くする（T4。その間スキル自体のクールタイムを変える）。録画で見えるのは縮んだこと（7 秒以上）までで、20 秒は説明文の値",
+            "en": "\"When Raptures appear\" is taken as the start of battle on the shooting range (the target appears; V-0530: 5 bursts in 180 s, each used right after the gauge is full, while a 40 s cooldown would allow only 4). Fervor applies to self and is continuous. Its cooldown reduction shortens the cooldown of each burst used while it is active by 20 s (T4: it changes the skill's own cooldown while active). The recordings show only that the cooldown is shorter (by 7 s or more); 20 s is the description value"
+          },
+          "claims": [
+            "C-0706"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "戦闘開始時の、自分の失った HP に応じた防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
           "en": "The DEF increase on self by HP lost (from the start of battle) does not change damage by itself (it matters only with an effect reading DEF in the team)",
           "kind": "indirect",
           "path": "defense"
-        },
-        {
-          "ja": "武器変更状態で通常攻撃が 5 回命中した時の、対象への追加ダメージ（最終攻撃力の X%）は未対応（撮っていない。武器変更の中の命中を数えるトリガーが無い）",
-          "en": "The additional damage (X% of final ATK) on the target after landing 5 normal attacks while the weapon is changed is not modeled (not recorded; no trigger counts hits during the weapon change)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "weaponChangeShot"
-          }
-        },
-        {
-          "ja": "ラプチャーが出現した時の、自分への熱血（バーストスキルのクールタイム 20 秒▼・持続）は未対応（持続するクールタイム▼の語彙が無い。撮っていない）",
-          "en": "Fervor on self when Raptures appear (Burst Skill cooldown -20 s, continuous) is not modeled (no vocabulary for a continuous cooldown reduction; not recorded)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "self",
-            "trigger": "battleStart"
-          }
         }
       ]
     },
@@ -157,8 +191,8 @@
           "path": "hp"
         },
         {
-          "ja": "フルバーストタイムの発動時、熱血状態なら味方全体のバーストスキルクールタイム▼は未対応（撮っていない）",
-          "en": "The Burst Skill cooldown reduction on all allies when Full Burst starts while in Fervor is not modeled (not recorded)",
+          "ja": "フルバーストタイムの発動時、熱血状態なら味方全体のバーストスキルクールタイム▼は未対応（単騎の録画ではフルバーストにならず、見えていない。V-0530）",
+          "en": "The Burst Skill cooldown reduction on all allies when Full Burst starts while in Fervor is not modeled (solo recordings never reach Full Burst, so it has not been seen; V-0530)",
           "kind": "unimplemented",
           "effect": {
             "kind": "cooldownReduction",
@@ -169,28 +203,49 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationSeconds": 10,
+          "firstShotDelayFrames": 12,
+          "assumes": {
+            "ja": "変更後の武器は CDN の burstSkill.changeWeapon のレート（1440rpm）の AR で、即着弾。1 ヒットは最終攻撃力 × 説明文の値で、コア・会心・距離ボーナスは基礎の AR と同じに乗る。最初の発は、窓が射手に見える次のフレームから 12f 待つ（発動の 13f 後・ゲージの満タンから 37f。録画 0719 の 1 回目で決めた。V-0530）。10 秒の間は装弾数無限（effects[1]）でリロードしない。終わると変更前の AR を満タンで込め直して戻る（モダニア由来の決まり。録画 0719・0720 で照準の横の残弾が 60 から減る）。窓の最初の発から最後の発までは、録画がモデルより 1〜4f 長い（未解明）",
+            "en": "The changed weapon is an AR at the CDN rate of burstSkill.changeWeapon (1440 rpm) with instant hits. One hit is final ATK × the description value, with the core, crit and range bonus applied as for the base AR. The first shot waits 12 frames from the frame after the window becomes visible to the shooter (13 frames after the activation, 37 frames after the gauge is full; set on the first window of recording 0719, V-0530). There is no reload during the 10 s thanks to unlimited ammo (effects[1]). At the end the base AR comes back with a full magazine (the rule from Modernia; in recordings 0719 and 0720 the reticle ammo counts down from 60). The span from the first to the last shot of a window is 1-4 frames longer in the recordings than in the model (unexplained)"
+          },
+          "claims": [
+            "C-0703"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 4,
+          "claims": [
+            "C-0703"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 9,
+          "durationRef": 10,
+          "assumes": {
+            "ja": "発動者基準（発動者のバフ前攻撃力 × 説明文の値）の固定加算で、自分にも付く（単騎の録画で、変更後の武器の 1 ヒットに乗る。V-0530）",
+            "en": "A flat addition based on the caster (the caster's pre-buff ATK × the description value), which also applies to self (on solo recordings it is on the weapon-change hits; V-0530)"
+          },
+          "claims": [
+            "C-0704"
+          ]
+        }
+      ],
       "notes": [
-        {
-          "ja": "使用武器の変更（最終攻撃力の X% のダメージ・10 秒）は未対応（撮っていない）",
-          "en": "The weapon change (X% of final ATK per shot, 10 s) is not modeled (not recorded)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "weaponChange",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "自分への装弾数無限（10 秒）は未対応（使用武器の変更と合わせて撮っていない）",
-          "en": "Unlimited ammo on self (10 s) is not modeled (not recorded, together with the weapon change)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "infiniteAmmo",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
         {
           "ja": "自分の吸収回復（攻撃ダメージの X% 回復・10 秒）は、ダメージに関係しない（自分にだけ付き、モランに回復を受けた時の効果は無いので、どの味方のスキルの発動も変えない）",
           "en": "The lifesteal on self (restore X% of attack damage, 10 s) does not affect damage (it applies only to self, and Moran has no effects that trigger on being healed, so it never changes any ally's skill activation)",
@@ -200,17 +255,6 @@
           "ja": "敵全体への挑発（ヘイト）と、味方全体への受けるダメージ▼はダメージに関係しない",
           "en": "The taunt on all enemies (Hate) and the damage taken decrease on all allies do not affect damage",
           "kind": "noDamage"
-        },
-        {
-          "ja": "味方全体への発動者基準の攻撃力▲（10 秒）は未対応（撮っていない）",
-          "en": "The caster-based ATK increase on all allies (10 s) is not modeled (not recorded)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
         },
         {
           "ja": "味方全体への発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",

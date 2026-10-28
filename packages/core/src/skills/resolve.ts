@@ -45,6 +45,7 @@ import {
   type InstantKind,
   type ShotCountKind,
   type ShotCountReset,
+  type FiringWindow,
   type ShotCountWindow,
   type SkillDefinition,
   type SkillSlot,
@@ -105,7 +106,7 @@ export type ResolvedShotCountTrigger = {
   during?: ShotCountWindow;
   reset?: ShotCountReset;
   /** ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけこの窓の中に限る */
-  firesDuring?: ShotCountWindow;
+  firesDuring?: FiringWindow;
   /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの確率（比率。0 より大きく 1 以下）。有れば every は 1 で、
    * 回数の量が正の射撃のたびに発火する（skills/triggers.ts）。窓の値は skills/chance.ts が期待値にする

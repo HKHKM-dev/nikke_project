@@ -183,6 +183,8 @@ export function createTriggerTracker(
       count = next.count;
       // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 窓の外の発も数え、窓の外で届いた回は発火せずに過ぎる
       if (t.firesDuring === 'fullBurst' && !inFullBurst) return false;
+      // 2 段目の段 11（V-0530）: 使用武器の変更で持ち替えた武器の発のときだけ発火する（数えるのは基礎の武器の発も）
+      if (t.firesDuring === 'weaponChange' && shot.weaponChange !== true) return false;
       return next.fired;
     };
   }
