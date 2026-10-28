@@ -1,6 +1,6 @@
 // 名前の付いた状態の語彙編（plan/design-named-state.md・plan/design-named-state-impl.md 2 節）: 状態の付与（kind: 'state'）の検証、
 // 同じ状態の中身の窓を付与をまたいで和集合にすること、条件つき・順位の対象の付与と「〈状態名〉が適用された時」、1 パス目の順位、
-// calc の射撃の数え方（中身の窓の shotCount）。定義は data/skills のもの（ウンファ：TU・クイーン（真）・雪子）と、それを書き換えたもの
+// calc の射撃の数え方。定義は data/skills のもの（ウンファ：TU・クイーン（真）・雪子）と、それを書き換えたもの
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { runTeam } from './runTeam.ts';

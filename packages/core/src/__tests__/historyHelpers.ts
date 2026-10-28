@@ -39,7 +39,6 @@ export type StateItem = {
   start: number;
   end: number;
   stack?: number;
-  shotCount?: true;
 };
 
 const STAGE_RANK: Record<number, number> = { 1: 0, 1.5: 1, 2: 2, 2.5: 3 };
@@ -59,7 +58,6 @@ export function stateItemsOf(result: WithHistory): StateItem[] {
         end: it.end,
       };
       if (it.stack !== undefined) item.stack = it.stack;
-      if (track.shotCount) item.shotCount = true;
       const key = [
         it.start,
         STAGE_RANK[track.stage] ?? 0,

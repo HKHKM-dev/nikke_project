@@ -31,7 +31,7 @@
 - **連鎖させない**: `{ applied }` の付与で付いた記録は、`timed`・付与の `{ applied }` を起こさない（1 段だけ。論点 4）。同じ定義の中で、`{ applied }` の付与が付ける状態をほかの `{ applied }` が見ることは、検証で落とす。編成の別の枠の定義をまたぐ連鎖は追わない（使い手がいない）。`damage` の `{ applied }` はいまのまま、どの付与の記録でも発火する（ダメージは記録を作らないので閉じる）。
 - **書けない欄**: 条件（`condition`）、順位の対象（`topAttack`）、強化（`amplifies`）。どれも使い手がいないので、足す時にその段の規則を決める（論点 6）。付与は、自分の付ける状態を `{ applied }` で見ない（循環の禁止。[design-named-state.md](design-named-state.md) 8.5 節）。
 - 発火の文脈（`burstUsers` など）は持たない。対象「直前にバーストスキルを使用した味方」は書けない（いまの検証のまま）。
-- **calc の射撃の数え方**: 自分の射撃の回数で開く件を持つ枠は、calc が全グループを射撃の列から数える（[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.5 節。`hasOwnShotCountItem`）。`{ applied }` の件は、出どころの枠の射撃の回数のきっかけで付いた記録（トーブの代用弾丸）から発火したとき、射撃の回数で開く件に数える（件の列の `shotCount`）。数えないと、窓の外の平均レートが発数を外し、sim と calc がずれる。
+- **calc の射撃の数え方**: 自分の射撃の回数で開く件を持つ枠は、calc が全グループを射撃の列から数える（[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.5 節。`hasOwnShotCountItem`）。`{ applied }` の件は、出どころの枠の射撃の回数のきっかけで付いた記録（トーブの代用弾丸）から発火したとき、射撃の回数で開く件に数える（件の列の `shotCount`）。数えないと、窓の外の平均レートが発数を外し、sim と calc がずれる。2026-10-28 に、一本化（[design-unify-sim-calc.md](design-unify-sim-calc.md)）で読み手が無くなった `hasOwnShotCountItem` と件の列の `shotCount` を消した（どの枠も射撃の列から数えるので要らない）。
 
 ### 1.2 名前の付いた即時効果: 維持 0 秒の中身なし付与
 
