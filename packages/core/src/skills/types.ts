@@ -19,6 +19,7 @@
 // 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
 // フラワー編で、周期でゲージだけを溜める効果（burstGaugeHit）を足した（plan/design-flower-s2-gauge.md 2 節）。
 // モラン編で、burstGaugeHit に射撃の回数のトリガーを書けるようにした（plan/design-moran.md 2 節）。
+// V-0534 で、射撃の回数のきっかけで自分の射撃を止める効果（shotPause。ラピ：レッドフード S2 の粘着榴弾）を足した。
 // ソルジャーE.G. 編で、確率のきっかけ（回数トリガーの chance / chanceRef。期待値の窓）を足し、時間の周期のトリガーを 1 パス目で
 // 窓を追う stat の timed にも書けるようにした（plan/design-soldier-eg.md 3.1・3.2 節）。
 // 名前の付いた状態の語彙編で、状態の付与（state。値を持たない持続効果と、状態の間だけ効く中身 contents）を足し、状態の名前を
@@ -1231,6 +1232,22 @@ export type BurstGaugeHitEffect = {
 };
 
 /**
+ * V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717）: 射撃の回数のトリガーが発火した射撃の次のフレームから frames フレームの間、
+ * 自分の射手を進めない（撃たず、待ち・リロードも進めない。残弾・スピンアップ・レートの蓄積はそのまま持ち越す）。ダメージは出さない。
+ * 発火した射撃で残弾が 0 になった（その発からリロードに入る）ときは、frames の代わりに framesOnLastShot フレーム止める
+ * （リロードがその分遅れる。C-0718）。止めている間のフレームは射撃の回数に入らない
+ */
+export type ShotPauseEffect = {
+  kind: 'shotPause';
+  trigger: ShotCountTrigger;
+  /** 止めるフレーム数（1 以上の整数。録画で読む） */
+  frames: number;
+  /** 発火した射撃がマガジンの最後の弾丸のときに止めるフレーム数（1 以上の整数。省略は frames） */
+  framesOnLastShot?: number;
+  assumes?: LocalizedText;
+};
+
+/**
  * アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 2 節）: 「味方全体のバーストゲージのチャージ速度 N%▲」の味方の分。
  * 持つ枠のほかの枠のゲージ 1 回（通常攻撃の弾のヒットと、射撃ごとの倍率ダメージのゲージのヒット）ごとに、持つ枠の 1 発のゲージ × N%
  * （ref）を足す。持つ枠の 1 発のゲージは、持つ枠の最初の発が着弾する前は burstEnergyPerShot、着弾から targetBurstEnergyPerShot
@@ -1447,6 +1464,7 @@ export type SkillEffect = (
   | DotEffect
   | AutoAttackEffect
   | BurstGaugeHitEffect
+  | ShotPauseEffect
   | BurstReentryEffect
   | AllyGaugeAddEffect
   | StateGrantEffect
@@ -1479,6 +1497,7 @@ export const SKILL_EFFECT_KINDS = [
   'dot',
   'autoAttack',
   'burstGaugeHit',
+  'shotPause',
   'burstReentry',
   'allyGaugeAdd',
   'state',
@@ -3092,6 +3111,31 @@ function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttac
   return effect;
 }
 
+/** V-0534: 射撃の止まり（shotPause）。きっかけは射撃の回数だけ（during・firesDuring・stacksRef・確率は書けない） */
+function parseShotPauseEffect(v: Record<string, Json>, path: string): ShotPauseEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'frames', 'framesOnLastShot', 'assumes', 'claims'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'shotPause needs a shot count trigger ({ count })');
+  for (const key of ['stacksRef', 'firesDuring'] as const) {
+    if (trigger[key] !== undefined) fail(`${path}.trigger.${key}`, `${key} cannot be used in shotPause`);
+  }
+  const positive = (x: Json, at: string): number => {
+    if (typeof x !== 'number' || !Number.isInteger(x) || x < 1)
+      fail(at, `expected a positive integer, got ${JSON.stringify(x)}`);
+    return x;
+  };
+  const effect: ShotPauseEffect = { kind: 'shotPause', trigger, frames: positive(v.frames, `${path}.frames`) };
+  if (v.framesOnLastShot !== undefined) {
+    effect.framesOnLastShot = positive(v.framesOnLastShot, `${path}.framesOnLastShot`);
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstGaugeHitEffect {
   for (const key of Object.keys(v)) {
     if (!['kind', 'trigger', 'delayFrames', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -3254,7 +3298,7 @@ function parseRef(v: Json, path: string): number {
 
 /**
  * passive は skill1 / skill2 にだけ、burstDamage は burst にだけ、timed・damage・即時効果・weaponChange・cycle・cycleEvery・dot・
- * burstGaugeHit はどのスロットにも書ける
+ * burstGaugeHit・shotPause はどのスロットにも書ける
  */
 function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
   if (!isRecord(v)) fail(path, 'expected an object');
@@ -3356,6 +3400,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'dot') return parseDotEffect(v, path);
   if (v.kind === 'autoAttack') return parseAutoAttackEffect(v, path);
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
+  if (v.kind === 'shotPause') return parseShotPauseEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
   if (v.kind === 'allyGaugeAdd') return parseAllyGaugeAddEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
@@ -3364,7 +3409,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "burstReentry", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 

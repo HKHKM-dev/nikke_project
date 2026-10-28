@@ -254,6 +254,27 @@ export function resolveShotGauges(
 }
 
 /**
+ * V-0534（ラピ：レッドフード S2 の粘着榴弾）: 射撃の止まり（shotPause）の、Lv の数値に解決したトリガーと止めるフレーム数（効果ごとに 1 つ）。
+ * unsupported なら空。発火した射撃の次のフレームから止める（frame/firstPass.ts）
+ */
+export function resolveShotPauses(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number })[] {
+  const out: (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number })[] = [];
+  for (const slot of SKILL_SLOTS) {
+    for (const effect of def.skills[slot].effects) {
+      if (effect.kind !== 'shotPause') continue;
+      const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
+      if (!isResolvedShotCount(trigger)) throw new RangeError('shotPause needs a shot count trigger');
+      out.push({ ...trigger, frames: effect.frames, framesOnLastShot: effect.framesOnLastShot ?? effect.frames });
+    }
+  }
+  return out;
+}
+
+/**
  * アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 2 節）: 定義の allyGaugeAdd の割合（説明文の % を 100 で割った値）。
  * 無ければ null（parseSkillDefinition が 1 つまでに限っている）
  */

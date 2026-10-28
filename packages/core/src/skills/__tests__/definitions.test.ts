@@ -10,6 +10,7 @@ import {
   resolveDotEffects,
   resolvePerShotDamage,
   resolveShotGauges,
+  resolveShotPauses,
   resolveTimerGauges,
 } from '../burstDamage.ts';
 import {
@@ -84,7 +85,7 @@ describe('data/skills', () => {
           // Stage 11 紅蓮BS: 循環は段ごとの ref、間隔の変更は ref を持たない（維持時間は下のテスト）
           // フラワー編: 周期のゲージ（burstGaugeHit）は ref を持たない。アニス：スター編: バースト再突入（burstReentry）も
           // 名前の付いた状態の語彙編: 付与は値を持たず、中身の項目が ref を持つ（上限は中身の stat で見る）
-          // 2 段目の段 1: 解除（removeState）も値を持たない
+          // 2 段目の段 1: 解除（removeState）も値を持たない。V-0534: 射撃の止まり（shotPause）も
           const refs =
             effect.kind === 'weaponChange'
               ? [effect.damageRef, ...(effect.maxAmmoRef === undefined ? [] : [effect.maxAmmoRef])]
@@ -99,6 +100,7 @@ describe('data/skills', () => {
                       : [effect.amountRef]
                     : effect.kind === 'cycleEvery' ||
                         effect.kind === 'burstGaugeHit' ||
+                        effect.kind === 'shotPause' ||
                         effect.kind === 'burstReentry' ||
                         effect.kind === 'removeState' ||
                         effect.ref === undefined
@@ -211,6 +213,8 @@ describe('data/skills', () => {
       const instant10 = resolveInstant(def, character, MAX_SKILL_LEVELS);
       // モラン編: ゲージだけを溜める効果（burstGaugeHit）だけの定義もある
       const gauges10 = resolveShotGauges(def, character, MAX_SKILL_LEVELS).length + resolveTimerGauges(def).length;
+      // V-0534: 射撃の止まり（shotPause）だけの定義もある（ラピ：レッドフード）
+      const pauses10 = resolveShotPauses(def, character, MAX_SKILL_LEVELS).length;
       // 2 段目の段 3: 時間で変わる状態の中身（ソーダ：トゥインクルバニーのゴールデンチップ）とスタック量の増加だけの定義もある
       const states10 =
         resolveStateContents(def, character, MAX_SKILL_LEVELS).length +
@@ -228,6 +232,7 @@ describe('data/skills', () => {
           dot10.length +
           instant10.length +
           gauges10 +
+          pauses10 +
           states10 +
           perShot10;
         expect(count).toBeGreaterThan(0);
