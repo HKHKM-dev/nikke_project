@@ -4,7 +4,7 @@
 - 出どころ: 公式の告知画像（2026-10-28 公表。Drive の「マイ コンピュータ/record」の `HVtF8xnbkAAOpzG.jpg`・`HVtF8xoaoAA-PJo.jpg`（マリアン：クイーン）、`HVtMNI7bEAAA1vi.jpg`・`HVtMNJMbcAAxwPE.jpg`（ラプンツェル：サンクチュアリ）、`HVtQufQaQAAOEMK.jpg`・`HVtQuhHbMAAIAfm.jpg`（紅蓮：神殺））。値はスキル Lv10。画像の注記どおり、実装までに変わりうる
 - 関連: [skills-guide.md](skills-guide.md)（定義の手順）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（句の分類）、[design-named-state.md](design-named-state.md)（名前の付いた状態）、[design-skill-stage5.md](design-skill-stage5.md) 1.2 節（状態の家族）、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲）、[design-skill-stage11.md](design-skill-stage11.md)（使用武器の変更）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）
 - 作成日: 2026-10-28
-- 状態: 起案（オーナーの承認待ち）。3 体とも 2026-10-28 の時点で Blablalink の CDN（`nikke_list_ja_v2.json`）に無い（`fetch-data` で取れない）
+- 状態: 承認（2026-10-28。オーナーが 3 体とも定義すると決め、論点 B〜I を推奨どおり、J を「1 パス目に入れる」に決めた。7 節）。語彙（5 節）から実装する。3 体とも 2026-10-28 の時点で Blablalink の CDN（`nikke_list_ja_v2.json`）に無い（`fetch-data` で取れない）
 
 ## 0. 仮実装の範囲
 
@@ -176,7 +176,9 @@
   3. **マリアン：クイーン**: 5.1〜5.6 節。単騎で撮れる。
 - 撮影までの段取り: CDN に載ったら `npm run fetch-data` → 定義の下書き（効果は `claims` なしの段で単体テストと編成のテストを通す）→ 撮影計画（`records:new`・`records:predict`）。PR は撮影の結論が出てから。
 
-## 7. 論点（オーナーに決めてもらう）
+## 7. 論点（2026-10-28 に決めた）
+
+- 決定: A は 3 体とも定義する。B〜I は推奨どおり。J は 1 パス目に入れる（5.7 節）。
 
 - **A. 範囲**: 3 体とも定義するか（所持・撮影の見込みのあるキャラだけにするか）。
 - **B. 弱点露出の付き始め**: 槍の最初のヒットの後の発から乗る、を仮説にして撮る（推奨）。
@@ -191,4 +193,4 @@
 
 ## 経過
 
-- 2026-10-28: 起案（告知画像から分解。CDN には未掲載）。
+- 2026-10-28: 起案（告知画像から分解。CDN には未掲載）。同日承認（7 節）。
