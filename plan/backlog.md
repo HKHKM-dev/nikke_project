@@ -113,7 +113,7 @@
 - sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。(A) 一本化は完了（2026-10-27。段 A-1〜A-3）。残りの (B) レスポンスは 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
 - エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）・段 2（バースト）・段 3 の S2（ブームインストール中の攻撃力▲）は実装した。S1 の分配ダメージは値の式が分からず未対応（別の検証で乗数を分ける）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 第 1 段（ナガ・ミサト・モラン）と第 2 段（プリバティ・ドレイク・紅蓮BS・レイヴン）は実装した（[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)）。残りは 2-38
-- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜10 を閉じた。段 11（使用武器の変更の形）に着手: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
+- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜11 を閉じた（段 11 は 2026-10-28）。段 12 は [design-skill-stage11.md](design-skill-stage11.md) 4 節の候補から決める: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1

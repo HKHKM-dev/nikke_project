@@ -137,3 +137,4 @@
 - 2026-10-28: 段 11 の PR 5 を出した（ラプラス：アルティメットヒーローのバーストの追加ダメージ。段 10 の `perCount` を `{ counter }` に開き、damage の条件 selfCounter を足して、撮影で確かめた。V-0532、C-0707。[design-skill-stage11.md](design-skill-stage11.md)）。段 11 の残りは PR 3（モラン）と PR 4（たきな）。
 - 2026-10-28: 段 11 の PR 3 を出した（モランのバースト・S1・宝物版の熱血。回数のきっかけの発火の窓 `firesDuring: "weaponChange"` と、T4 の stat `burstCooldown`（状態 `fervor` の中身）を足し、単騎の撮影（録画 0719・0720）で確かめた。V-0530、C-0703〜C-0706。[design-skill-stage11.md](design-skill-stage11.md)）。段 11 の残りは PR 4（たきな）。
 - 2026-10-28: 段 11 の PR 4 を出した（たきなのバースト・S1・S2。いまの語彙と PR 1 の欄で書き、変更後の武器がリロードしない印 `infiniteAmmo` を足し、撮影した録画 0721・0722 で確かめた。V-0531、C-0708〜C-0713。[design-skill-stage11.md](design-skill-stage11.md)）。段 11 の PR 1〜5 がそろった（段を閉じる作業は残り）。
+- 2026-10-28: 段 11 を閉じた（オーナーの指示。[design-skill-stage11.md](design-skill-stage11.md)）。仮説のまま残したのは C-0701・C-0713（射撃場の的での変更後の武器のコアに当たる割合）。段 12 以降は [design-skill-stage11.md](design-skill-stage11.md) 4 節の候補から決める。
