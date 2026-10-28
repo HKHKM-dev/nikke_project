@@ -1,0 +1,46 @@
+{
+  "id": "0728",
+  "date": "2026-10-28",
+  "folder": "range",
+  "file": "20261028-0728_ar_mihara-additional_anis-star-2.mp4",
+  "original": "2026-10-28_21-42-35.mp4",
+  "durationSec": 201.4,
+  "frames": 12081,
+  "fps": 60,
+  "sizeMB": 244,
+  "sha256": "6b2d24d1b54c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 161,
+      "name": "ミハラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0533（アニス：スター・デルタ・ミハラ（操作））2 本目",
+  "backup": {
+    "at": "2026-10-28T21:51+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
