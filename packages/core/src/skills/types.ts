@@ -3124,7 +3124,8 @@ function parseShotPauseEffect(v: Record<string, Json>, path: string): ShotPauseE
     if (trigger[key] !== undefined) fail(`${path}.trigger.${key}`, `${key} cannot be used in shotPause`);
   }
   const positive = (x: Json, at: string): number => {
-    if (typeof x !== 'number' || !Number.isInteger(x) || x < 1) fail(at, `expected a positive integer, got ${JSON.stringify(x)}`);
+    if (typeof x !== 'number' || !Number.isInteger(x) || x < 1)
+      fail(at, `expected a positive integer, got ${JSON.stringify(x)}`);
     return x;
   };
   const effect: ShotPauseEffect = { kind: 'shotPause', trigger, frames: positive(v.frames, `${path}.frames`) };
