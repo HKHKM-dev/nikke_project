@@ -37,10 +37,13 @@ describe('records/recordings', () => {
     expect(validateRecordings(file, knownRids)).toEqual([]);
   });
 
-  it('allows gaps and more than 4 digits, but not duplicates (Stage 20-A・plan/design-recording-id-4digit.md)', () => {
-    expect(validateRecordings({ recordings: [first, numbered('0003'), numbered('10000')] }, knownRids)).toEqual([]);
+  it('allows gaps but not other than 4 digits nor duplicates (Stage 20-A・plan/design-recording-id-4digit.md)', () => {
+    expect(validateRecordings({ recordings: [first, numbered('0003'), numbered('9999')] }, knownRids)).toEqual([]);
     expect(validateRecordings({ recordings: [numbered('123')] }, knownRids)).toContainEqual(
-      '123: id は 4 桁以上の数字',
+      '123: id は 4 桁の数字（0001〜9999）',
+    );
+    expect(validateRecordings({ recordings: [numbered('10000')] }, knownRids)).toContainEqual(
+      '10000: id は 4 桁の数字（0001〜9999）',
     );
     expect(validateRecordings({ recordings: [first, numbered('0001')] }, knownRids)).toContainEqual(
       '0001: id が重複している',

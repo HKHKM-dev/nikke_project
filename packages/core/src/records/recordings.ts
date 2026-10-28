@@ -4,6 +4,7 @@
 import type { CollectionInput, CubeInput, OverloadLine } from '../build.ts';
 import type { SkillLevels } from '../skills/resolve.ts';
 import type { CharacterData, Element, GearPart } from '../types.ts';
+import { RECORDING_ID } from './ids.ts';
 
 /** 録画を置く種別フォルダ（plan/captures/storage.md「置き場所」の語彙） */
 export const RECORDING_FOLDERS = ['range', 'interception', 'raid', 'skill', 'burst', 'ui'] as const;
@@ -170,8 +171,8 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     if (isLegacy(entry)) {
       if (!/^L-[A-Z]{1,3}$/.test(entry.id)) errors.push(`${at}: 旧の録画の id は L-<旧のタグ>`);
     } else {
-      // Stage 20-A・20-C: 抜けは許す（plan/design-stage20.md 3.5・3.6 節）。桁は 4 桁以上（plan/design-recording-id-4digit.md）
-      if (!/^\d{4,}$/.test(entry.id)) errors.push(`${at}: id は 4 桁以上の数字`);
+      // Stage 20-A・20-C: 抜けは許す（plan/design-stage20.md 3.5・3.6 節）。桁は 4 桁（plan/design-recording-id-4digit.md 6 節）
+      if (!RECORDING_ID.test(entry.id)) errors.push(`${at}: id は 4 桁の数字（0001〜9999）`);
       const number = Number(entry.id);
       if (!RECORDING_FOLDERS.includes(entry.folder)) errors.push(`${at}: folder が語彙に無い: ${entry.folder}`);
       const m = /^(\d{4})(\d{2})(\d{2})-(\d{2,})_/.exec(entry.file);
