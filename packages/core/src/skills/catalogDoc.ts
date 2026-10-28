@@ -145,8 +145,8 @@ const KIND_INFO: Record<string, Info> = {
   // ツールチップ「クールタイム」（T4）: 維持やスタックの付いた増減は、その間スキル自体のクールタイムを変える。即時の増減とは別の効果
   'sustained:cooldown': [
     'クールタイムの増減（維持の付いた形。その間スキル自体のクールタイムを変える。T4）',
-    'gap',
-    'なし',
+    'check',
+    '状態の中身の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血。2 段目の段 11・C-0706）だけ',
   ],
   'instant:forceSkill': ['スキルの強制使用', 'gap', 'なし'],
   'cycle:every': ['回数条件の変更', 'check', 'cycleEvery（cycle だけ）'],
@@ -210,7 +210,11 @@ const TRIG_INFO: Record<string, Info> = {
     'ok',
     'トリガー { fullStack }（回復と使用武器の変更。2 段目の段 3・段 11）',
   ],
-  resourceEvent: ['固有のカウンタの出来事', 'gap'],
+  resourceEvent: [
+    '固有のカウンタの出来事',
+    'check',
+    'カウンタが最大になった時の { counterFull }（counterChange のきっかけ。2 段目の段 11）だけ',
+  ],
   skillEvent: ['ほかのスキルの発動・命中', 'gap'],
   limited: ['戦闘中 N 回', 'gap'],
   damaged: ['攻撃を受けた時', 'damaged'],
@@ -256,7 +260,11 @@ const COND_INFO: Record<string, Info> = {
   inFullBurst: ['フルバーストタイム中なら', 'ok', 'inFullBurst'],
   enemyCount: ['敵が N 機以上', 'premise', '敵 1 体'],
   alive: ['生存している限り', 'premise', '倒れない'],
-  selfWeaponChanged: ['武器変更状態なら', 'gap', 'なし'],
+  selfWeaponChanged: [
+    '武器変更状態なら',
+    'check',
+    '回数のきっかけの発火の窓 firesDuring: "weaponChange"（2 段目の段 11・C-0705）だけ',
+  ],
   enemyIsTarget: ['対象がターゲットなら', 'check', '射撃場の的をターゲットとみなす読み（18 の assumes）'],
   range: ['適正射程距離内なら', 'check', '距離の帯'],
   enemyType: ['ラプチャーなら', 'premise', '的はラプチャー'],

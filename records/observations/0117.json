@@ -136,5 +136,321 @@
         "burst": false
       }
     }
+  },
+  {
+    "id": "0117-08",
+    "recording": "0117",
+    "kind": "timing",
+    "use": "record",
+    "value": [1394, 2661, 3877, 5212, 6450, 7812, 9730],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・0・5f"
+    },
+    "source": "V-0535",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0117-09",
+    "recording": "0117",
+    "kind": "timing",
+    "use": "record",
+    "value": [1423, 3906, 6479, 8374, 10269],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・26・26・0・6f"
+    },
+    "source": "V-0535",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0117-10",
+    "recording": "0117",
+    "kind": "timing",
+    "use": "record",
+    "value": [1452, 3935, 6508, 8403, 10298],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0535",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0117-11",
+    "recording": "0117",
+    "kind": "timing",
+    "use": "record",
+    "value": [8368, 10262],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0535",
+    "readAt": "2026-10-28"
+  },
+  {
+    "id": "0117-12",
+    "recording": "0117",
+    "kind": "timing",
+    "use": "record",
+    "value": [8397, 10292],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0535",
+    "readAt": "2026-10-28"
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-13",
+    "kind": "count",
+    "use": "record",
+    "value": [1, 1, 1, 1, 1],
+    "unit": "枠",
+    "description": "III のバーストを使った枠（1〜5 回目のフルバースト）。1 枠目はラピ：レッドフード",
+    "method": {
+      "tool": "ffmpeg の 1 コマ（左のスキルの帯）・recipe:burst-panel@1",
+      "note": "00.00（`0117-10`）の 4f 後の左の帯の 3 段目（III）が、どの回も「継承される力」（ラピ：レッドフード）。4・5 回目はリターの帯が無く（I の発動から 591f・568f）、III の顔の CT の明け（`0117-12`）の後に使った"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13266116,
+    "unit": "ダメージ",
+    "description": "ラピ：レッドフードのバースト（III）の追加ダメージ（会心でない）。1 回目のフルバースト（リターのバーストの攻撃力▲と S1 の使用 1 回目の段の中）。`0116-14` と同じ値",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "00.00（f1452）の 27f 後の f1479 の増分 14,212,848 から、同じフレームの爆発 1 つ（835,031 = 同じ回の f1485 の単独の増分）とラピ：レッドフードの胴体 26,315・リターの 26,050 × 2・33,286 を引いた値。爆発は粘着榴弾の発射体爆発ダメージ（PR 2 の範囲。同じ回のほかのフレームに同じ値の増分が出る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-15",
+    "kind": "hit",
+    "use": "compare",
+    "value": 13999172,
+    "unit": "ダメージ",
+    "description": "同じ追加ダメージ（会心でない）。2 回目のフルバースト（リターのバーストの攻撃力▲と S1 の使用 3 回目以上の段の中）。`0116-15` と同じ値",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "f3962 の増分 14,976,305 から、同じフレームの爆発 1 つ（881,173 = 同じ回の f4015 の単独の増分）とラピ：レッドフードの会心の胴体 39,332・リターの 28,314 × 2 を引いた値。爆発は粘着榴弾の発射体爆発ダメージ（PR 2 の範囲。同じ回のほかのフレームに同じ値の増分が出る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-16",
+    "kind": "timing",
+    "use": "compare",
+    "value": [27, 27, 27, 27, 27],
+    "unit": "f",
+    "description": "追加ダメージの、III のタイマーの 00.00 からの動画のフレーム数（1〜5 回目。間にフルバーストの入りの止まりを挟む）",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "00.00 は `0117-10`。追加ダメージは、どの回もフルバーストの入りの止まりの後の最初の増分（`0117-02`）に入る。起点は `0116-17` と同じく III の 00.00"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFromBurstHit",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-17",
+    "kind": "hit",
+    "use": "record",
+    "value": [16113888, 10970674, 10833001],
+    "unit": "ダメージ",
+    "description": "3〜5 回目のフルバーストの、00.00 の 27f 後の増分（どの回も III はラピ：レッドフード）。追加ダメージと爆発と小さなヒットに一意に分けられない",
+    "method": {
+      "tool": "hud.ts --mode jumps・recipe:burst-panel@1",
+      "note": "3 回目（リターの▲の中）は、モデルの会心でない追加ダメージ 13,999,172 と爆発 2 つ（会心でない 881,173・距離ボーナスあり 1,057,408）と小さなヒット 4 つの和で ±2 に 2 通り割り切れ、分け方が決まらない。4・5 回目（リターのバーストの▲が切れている）は、モデルの追加ダメージ（S1 の▲だけ。会心でない 9,910,9xx・会心 13,214,5xx）と同じ回の爆発（623,840 ほか）を引いても、格子の 4 つまでの和に ±2 で割り切れない（`0116-18` と同じ）。付着のヒットなど、粘着榴弾の発（PR 2）が合わさっている見込み（確かめていない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-18",
+    "kind": "hit",
+    "use": "compare",
+    "value": 32766,
+    "unit": "ダメージ",
+    "description": "ラピ：レッドフード（MG）の通常攻撃 1 ヒット（コア・会心でない・距離ボーナスなし）。フルバーストの窓の中で、S1 の攻撃力▲だけが乗った時。`0116-20` と同じ値",
+    "method": {
+      "tool": "recipe:buff-edge@2（--opt grid）",
+      "note": "HUD の増分をモデルの格子（`0116-19` の method の格子と同じ）に ±1.5 で当てた。フルバーストの窓（`0117-02` から 589f）ごとのこの値の数: 1〜5 回目に 47・29・0・146・191（3 回目は距離ボーナスのある区間で、コア + 距離 36,698 が 102）。窓の中のラピ：レッドフードの発は、どの回も S1 の▲の乗った格子（リターのバーストの▲の有無で 2 つ）に入る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-19",
+    "kind": "hit",
+    "use": "compare",
+    "value": 43858,
+    "unit": "ダメージ",
+    "description": "同じ 1 ヒット（コア）。1 回目のフルバーストの窓の始めの、S1 の攻撃力▲とリターのバーストの攻撃力▲が両方乗った時。`0116-21` と同じ値",
+    "method": {
+      "tool": "recipe:buff-edge@2（--opt grid）",
+      "note": "HUD の増分をモデルの格子（`0116-19` の method の格子と同じ）に ±1.5 で当てた。フルバーストの窓（`0117-02` から 589f）ごとのこの値の数: 1 回目に 116。窓の中のラピ：レッドフードの発は、どの回も S1 の▲の乗った格子（リターのバーストの▲の有無で 2 つ）に入る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 500,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "recording": "0117",
+    "source": "V-0535",
+    "readAt": "2026-10-28",
+    "id": "0117-20",
+    "kind": "timing",
+    "use": "record",
+    "value": [-7, -7, -7.5, 0],
+    "unit": "f",
+    "description": "ラピ：レッドフードの S1 の攻撃力▲の切れ目を、▲の乗った最後の発と▲の無い最初の発で挟んだ幅の真ん中（フルバーストの窓の終わり = `0117-02` の 589f 後から数えた動画のフレーム。両側の発のある 1・2・3・5 回目）",
+    "method": {
+      "tool": "recipe:buff-edge@2（--opt grid・pair）",
+      "note": "格子と当て方は `0116-19` と同じ。幅は 1 回目 -9〜-5、2 回目 -9〜-5、3 回目 -8〜-7、5 回目 -5〜4 で、全回の共通部分は無い（窓の終わりを `0117-02` の 589f 後と置いた読みのずれと、動画とゲーム内の時刻のずれの幅）。4 回目は窓の終わりの 25f 前から発が無い。どの回も、窓の終わりの前後 80f に「S1 の▲だけ（フルバーストの外）」の値（胴体 13,101・コア 26,202 など）の増分は無い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]

@@ -165,17 +165,12 @@ describe('バースト段階の構成の条件（burstStepMix）', () => {
 
   it('rejects burstStepMix on other effect kinds and malformed conditions', () => {
     const base = { kind: 'passive', target: 'allies', stat: 'burstGaugeSpeed', ref: 5 };
-    expect(() =>
-      parseSkillDefinition(
-        withFirstEffect({
-          kind: 'damage',
-          trigger: { count: 'fullChargeShot' },
-          damageType: 'additional',
-          ref: 4,
-          burstStepMix: absent,
-        }),
-      ),
-    ).toThrow(/burstStepMix: only allowed in passive, timed, state, cooldownReduction, heal and burstReentry/);
+    // 2 段目の段 12: damage には開いた（plan/design-skill-stage12.md 2.1 節）。欄を自分で調べない種類（burstDamage）で見る
+    const withBurstDamage = structuredClone(raw) as { skills: { burst: { effects: Record<string, unknown>[] } } };
+    withBurstDamage.skills.burst.effects.push({ kind: 'burstDamage', ref: 1, damageType: 'skill', burstStepMix: absent });
+    expect(() => parseSkillDefinition(withBurstDamage)).toThrow(
+      /burstStepMix: only allowed in passive, timed, state, cooldownReduction, heal and burstReentry \(burstStepMix also in damage\)/,
+    );
     expect(() =>
       parseSkillDefinition(withFirstEffect({ ...base, burstStepMix: { otherBurstStep: 'AllStep', present: false } })),
     ).toThrow(/otherBurstStep/);

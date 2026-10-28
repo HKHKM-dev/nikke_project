@@ -856,6 +856,11 @@ export type DamageEffect = {
   /** 防御力無視ダメージ編: 敵の属性の条件（クイーン（真）S1 の「1more が適用された時」） */
   enemyElement?: Element;
   /**
+   * 2 段目の段 12（plan/design-skill-stage12.md 2.1 節）: バースト段階の構成の条件（ラピ：レッドフードのバーストの「バーストⅢで
+   * 使用した時」。戦闘補助でない ⇔ 基本バースト段階 I の味方がいる）
+   */
+  burstStepMix?: BurstStepMixCondition;
+  /**
    * クルミ S2 編（plan/design-kurumi-s2.md 2.2〜2.4 節）: 発火の条件（gaugeHits とは組み合わせない）。キーは inFullBurst・enemyState
    * （名前の付いた状態の語彙編で fullBurst・targetStatus を改めた）。カウンタは条件によらず数える
    */
@@ -3314,11 +3319,13 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
       effect.kind !== 'state' &&
       effect.kind !== 'cooldownReduction' &&
       effect.kind !== 'heal' &&
-      effect.kind !== 'burstReentry'
+      effect.kind !== 'burstReentry' &&
+      // 2 段目の段 12（plan/design-skill-stage12.md 2.1 節）: damage は burstStepMix だけ
+      !(effect.kind === 'damage' && key === 'burstStepMix')
     ) {
       fail(
         `${path}.${key}`,
-        `only allowed in passive, timed, state, cooldownReduction, heal and burstReentry, found in ${effect.kind}`,
+        `only allowed in passive, timed, state, cooldownReduction, heal and burstReentry (burstStepMix also in damage), found in ${effect.kind}`,
       );
     }
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
