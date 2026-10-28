@@ -241,9 +241,8 @@ export function parseGrids(text: string): GridSpec[] {
       if (m === null)
         throw new Error(`--opt grid の形が違う（<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]）: ${t}`);
       const parts = m[4]!.split('/').filter((x) => x !== '');
-      const pelletParts = parts.filter((x) => x.startsWith('x'));
-      if (pelletParts.length > 1) throw new Error(`--opt grid のペレット数が 2 つある: ${t}`);
-      const pellets = pelletParts[0];
+      const [pellets, ...morePellets] = parts.filter((x) => x.startsWith('x'));
+      if (morePellets.length > 0) throw new Error(`--opt grid のペレット数が 2 つある: ${t}`);
       const scales = parts.filter((x) => x.startsWith('*')).flatMap((x) => parseNumbers(x.slice(1), 'grid の倍率'));
       return {
         name: m[1]!.trim(),

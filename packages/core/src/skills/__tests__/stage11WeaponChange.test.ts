@@ -141,7 +141,7 @@ describe('ラプラス：アルティメットヒーローの S1（V-0528）', (
   });
 
   it('gives a changed shot the gauge of one base shot without the full-charge multiplier (2026-10-27 owner decision)', () => {
-    const gaugeAt = new Map(r.shotGauges.filter((g) => g.slotIndex === 0).map((g) => [g.shotFrame, g.energy]));
+    const gaugeAt = new Map(r.shotGauges.map((g) => [g.shotFrame, g.energy]));
     const base = log.frames.find((f) => !changed.has(f))!;
     const changedShot = log.weaponChangeShotFrames![0]!;
     expect(c.shot.fullChargeBurstEnergy).toBeGreaterThan(1);

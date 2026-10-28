@@ -29,6 +29,11 @@ import type { BurstSchedule } from './schedule.ts';
  */
 export const SG_PELLET_GAUGE_HIT_RATE = 0.75;
 
+/** 1 発のゲージに乗るフルチャージ倍率（fullChargeBurstEnergy）。操作キャラのチャージ武器にだけ乗る（C-0007）。ほかの枠は 1 */
+export function fullChargeGaugeOf(shot: ShotParams, controlled: boolean): number {
+  return controlled && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
+}
+
 /**
  * 1 トリガーで溜まるゲージ量。1 発は CDN の targetBurstEnergyPerShot そのまま（C-0083。Stage 7 の ×1.2 は
  * BURST バーの表示の縮尺を読んだものだった。V-0028）。targetBurstEnergyPerShot は 1 ペレットあたりなので
@@ -42,10 +47,9 @@ export function energyPerTrigger(
   hitRate = 1,
   pelletGaugeRate = SG_PELLET_GAUGE_HIT_RATE,
 ): number {
-  const charge = controlled && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
   const pellets = shot.shotCount > 1 ? shot.shotCount * pelletGaugeRate : shot.shotCount;
   // Stage 15: 命中率（射撃場 = 1 の相対値）。外れた弾はゲージにならない
-  return shot.targetBurstEnergyPerShot * pellets * charge * hitRate;
+  return shot.targetBurstEnergyPerShot * pellets * fullChargeGaugeOf(shot, controlled) * hitRate;
 }
 
 /**
@@ -54,7 +58,7 @@ export function energyPerTrigger(
  * （部分チャージの発のゲージは未確認。design-stage22.md 0.2 節・6 節の 3）
  */
 export function partialGaugeRatio(shot: ShotParams, controlled: boolean, progress: number): number {
-  const full = controlled && shot.chargeTime > 0 ? shot.fullChargeBurstEnergy : 1;
+  const full = fullChargeGaugeOf(shot, controlled);
   if (full <= 1) return 1;
   return (1 + (full - 1) * Math.min(1, Math.max(0, progress))) / full;
 }

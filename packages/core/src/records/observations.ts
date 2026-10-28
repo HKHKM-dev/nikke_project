@@ -43,6 +43,7 @@ import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
 import { CLAIM_TOPICS } from './claims.ts';
 import type { RecordingBuild, RecordingEntry } from './recordings.ts';
+import type { SkillRoot } from './skills.ts';
 
 /** 何を読んだか（人と検索のため）。Stage 20-E: 大きさ（照準円の半径など）・位置（着地点の y など）・ゲージを足した */
 export const OBSERVATION_KINDS = [
@@ -1943,16 +1944,17 @@ export function withoutEffects(
   const out: SkillDefinition = { ...definition, skills: { ...definition.skills } };
   if (definition.treasureSkills !== undefined) out.treasureSkills = { ...definition.treasureSkills };
   for (const d of drops) {
-    const group = d.treasure === true ? out.treasureSkills : out.skills;
-    const entry = group?.[d.skill];
+    const root: SkillRoot = d.treasure === true ? 'treasureSkills' : 'skills';
     // 番号は落とす前の定義で引く（同じスロットから 2 件以上落とすとき、落とした後の写しの番号はずれる）
-    const original = (d.treasure === true ? definition.treasureSkills : definition.skills)?.[d.skill]?.effects[d.index];
-    if (group === undefined || entry === undefined || original === undefined) {
+    const original = definition[root]?.[d.skill]?.effects[d.index];
+    if (original === undefined) {
       throw new Error(
         `dropEffects: rid ${d.rid} の ${d.treasure === true ? '宝物版の ' : ''}${d.skill} に ${d.index} 番目の効果が無い`,
       );
     }
-    group[d.skill] = { ...entry, effects: entry.effects.filter((e) => e !== original) };
+    // 元の定義にあるスロットは写しにもある
+    const entry = out[root]![d.skill]!;
+    out[root]![d.skill] = { ...entry, effects: entry.effects.filter((e) => e !== original) };
   }
   return out;
 }
