@@ -1,0 +1,46 @@
+{
+  "id": "0724",
+  "date": "2026-10-28",
+  "folder": "range",
+  "file": "20261028-0724_lud-bel-lap-burst-add.mp4",
+  "original": "2026-10-28_18-57-30.mp4",
+  "durationSec": 206.8,
+  "frames": 12410,
+  "fps": 60,
+  "sizeMB": 250.6,
+  "sha256": "90ab6695304f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 60,
+      "name": "ベロータ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 103,
+      "name": "ラプラス：アルティメットヒーロー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0532 の撮り方。ルドミラ（1 枠目・AI）+ ベロータ（2 枠目・AI）+ ラプラス：アルティメットヒーロー（3 枠目・操作・オート射撃で撃つ）。オートバースト ON・オート射撃 ON。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた",
+  "backup": {
+    "at": "2026-10-28T19:08+09:00",
+    "via": "drive-copy",
+    "matched": "sha256"
+  }
+}
