@@ -48,7 +48,7 @@ function team(slots: TeamSlotInput[], controlledSlot: number, burst: boolean): T
 describe('たきなの定義', () => {
   const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${TAKINA}.json`));
 
-  it('defines every damage-relevant line of S1, S2 and the burst', () => {
+  it('defines every damage-relevant line of S1, S2 and the burst (only the unexplained missing shots stay in notes)', () => {
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill1.effects).toEqual([
       expect.objectContaining({ kind: 'timed', trigger: 'battleStart', target: 'self', stat: 'attack', ref: 1 }),
@@ -60,7 +60,9 @@ describe('たきなの定義', () => {
       expect.objectContaining({ trigger: { everySeconds: 15 }, target: 'allies', stat: 'damageTaken', ref: 1 }),
       expect.objectContaining({ trigger: { everySeconds: 15 }, target: 'allies', stat: 'trueDamage', ref: 4 }),
     ]);
-    expect(def.skills.burst.support).toBe('supported');
+    // 変更後の武器の発が総ダメージに出ない回（V-0531）だけが未対応の notes
+    expect(def.skills.burst.support).toBe('partial');
+    expect(def.skills.burst.notes.filter((n) => n.kind === 'unimplemented')).toHaveLength(1);
     expect(def.skills.burst.effects[0]).toMatchObject({
       kind: 'weaponChange',
       trueDamage: true,
