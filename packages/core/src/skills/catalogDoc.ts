@@ -200,7 +200,7 @@ const TRIG_INFO: Record<string, Info> = {
   chance: ['確率', 'check'],
   stateApplied: ['〈状態〉が適用された時', 'check'],
   stateEnded: ['〈状態〉が終了した時', 'gap'],
-  critHit: ['クリティカル命中した時', 'gap'],
+  critHit: ['クリティカル命中した時', 'ok'],
   chargeHold: ['フルチャージを N 秒以上維持した時', 'gap'],
   partialChargeShot: ['フルチャージでない通常攻撃', 'gap'],
   reloadComplete: ['リロード完了時', 'gap'],

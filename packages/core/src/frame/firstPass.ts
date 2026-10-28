@@ -92,7 +92,7 @@ import {
   type BurstSchedule,
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
-import { ZERO_BUFFS } from '../skills/buffs.ts';
+import { capCritRate, ZERO_BUFFS } from '../skills/buffs.ts';
 import { isResolvedShotCount, isResolvedTimer, resolveInstant, type ResolvedInstantEffect } from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory } from '../skills/holders.ts';
@@ -337,6 +337,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           lastShotFrames: [],
           hits: [],
           coreHits: [],
+          critHits: [],
           pelletHits: [],
         },
   );
@@ -826,12 +827,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const pelletCount = pelletsAt(i, f, shotCounts[i]!, hits);
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 発のクリティカルの命中の期待値。会心率は基礎 + 常時の▲ +
+      // 時間で変わる▲（f − 1 までに付いた件）で、通常攻撃のクリティカル確率▲も足す（上限 1）
+      const critRate = capCritRate(
+        slot.character.crit.rate + passiveFiring[i]!.critRate + passiveFiring[i]!.normalCritRate + lists.critUpAt(i, f),
+      );
+      const critHits = hits * critRate;
+      log.critHits!.push(critHits);
       log.pelletHits!.push(pelletCount);
       shotEvents[i] = {
         lastShot: state.lastShot,
         fullCharge: log.fullCharge && !isPartial && !uncharged,
         hits,
         coreHits,
+        critHits,
         pellets: pelletCount,
       };
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
