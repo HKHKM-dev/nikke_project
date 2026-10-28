@@ -161,11 +161,6 @@ export type HeldTrack = {
    * N 段を次のフレームで切る（skills/stacks.ts）。スタックする状態のほかは空
    */
   decreases: StackDecrease[];
-  /**
-   * 状態: 射撃の回数のきっかけの付与が発火を足したか（hasOwnShotCountItem が読む。2026-10-27 の一本化の後は、履歴の形を確かめるテストだけ）。2 段目の段 4
-   * （plan/design-skill-stage4.md 1.1 節）: timed・状態の { applied } が、出どころの枠の射撃の回数のきっかけで付いた記録から発火を足したか
-   */
-  shotCount: boolean;
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
@@ -658,7 +653,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       closes: [],
       consumes: [],
       decreases: [],
-      shotCount: false,
       opportunities,
       items: [],
       seen: [-1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -1222,13 +1216,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
 
   // ---- 登録 ----
-  /** 2 段目の段 4: 出どころの枠の射撃の回数のきっかけで付いた記録（{ applied } の件の shotCount に使う） */
-  const shotCountApplications = new Set<AppliedRecord>();
-  /**
-   * timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す。byShots は、2 段目の段 4 の { applied } が出どころの枠の
-   * 射撃の回数のきっかけで付いた記録から発火したか（件の shotCount）
-   */
-  const fireTimed = (src: TimedSource, start: number, context: FireContext, byShots = false): number[] => {
+  /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
+  const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
     if (start >= frames) return [];
     const targets: number[] = [];
     slots.forEach((target, holder) => {
@@ -1237,7 +1226,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       // 段 C: 敵の件の効果は、対象の味方があれば敵の件の列に 1 回だけ足す
       if (src.enemy !== null) {
         if (targets.length === 0) insertSorted(src.enemy.starts, start);
-        if (byShots) src.enemy.shotCount = true;
         targets.push(holder);
         return;
       }
@@ -1245,13 +1233,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!track)
         throw new Error(`no track for ${src.effect.source.skill}[${src.effect.effectIndex}] on slot ${holder}`);
       insertSorted(track.starts, start);
-      if (byShots) track.shotCount = true;
       targets.push(holder);
     });
     return targets;
   };
-  /** 状態の付与の発火 1 つを、対象の持ち主の状態の件の列と、付いた記録に足す。byShots は fireTimed と同じ */
-  const fireGrant = (g: GrantSource, start: number, context: FireContext, byShots = false): number[] => {
+  /** 状態の付与の発火 1 つを、対象の持ち主の状態の件の列と、付いた記録に足す */
+  const fireGrant = (g: GrantSource, start: number, context: FireContext): number[] => {
     if (start >= frames) return [];
     const group = g.group;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。発火のフレームの
@@ -1265,7 +1252,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           : stackLevelAt(group.sourceSlotIndex, from.state, start);
     if (count <= 0) return [];
     const targets: number[] = [];
-    const shots = isResolvedShotCount(g.grant.trigger);
     // エレグのバースト編: 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
     // 語彙は味方の状態だけ）
     if (group.enemy !== null) {
@@ -1273,10 +1259,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         (target, holder) =>
           target !== null && isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context),
       );
-      if (on) {
-        for (let k = 0; k < count; k++) insertSorted(group.enemy.starts, start);
-        if (shots || byShots) group.enemy.shotCount = true;
-      }
+      if (on) for (let k = 0; k < count; k++) insertSorted(group.enemy.starts, start);
       return targets;
     }
     slots.forEach((target, holder) => {
@@ -1285,7 +1268,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const track = group.tracks[holder];
       if (!track) throw new Error(`no state track for ${group.state} on slot ${holder}`);
       for (let k = 0; k < count; k++) insertSorted(track.starts, start);
-      if (shots || byShots) track.shotCount = true;
       const record: AppliedRecord = {
         frame: start,
         state: group.state,
@@ -1293,7 +1275,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         slotIndex: holder,
       };
       applications.push(record);
-      if (shots) shotCountApplications.add(record);
       targets.push(holder);
     });
     return targets;
@@ -1333,10 +1314,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       slotIndex: src.sourceSlotIndex,
     };
     applications.push(record);
-    if (isResolvedShotCount(src.effect.trigger)) {
-      src.track.shotCount = true;
-      shotCountApplications.add(record);
-    }
   };
 
   // ---- 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する） ----
@@ -1346,7 +1323,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     stage: HeldStage;
     /** 最後に発火したフレーム。記録のフレームは呼び出しの順に減らないので、前の呼び出しと同じフレームの 2 回目を落とす */
     last: number;
-    fire: (start: number, byShots: boolean) => void;
+    fire: (start: number) => void;
   };
   /** { applied } の付与で付いた記録（timed・付与の { applied } を起こさない。連鎖させない） */
   const chainedApplications = new Set<AppliedRecord>();
@@ -1360,9 +1337,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         sourceSlotIndex: group.sourceSlotIndex,
         stage: g.stage,
         last: -1,
-        fire: (start, byShots) => {
+        fire: (start) => {
           const before = applications.length;
-          fireGrant(g, start, null, byShots);
+          fireGrant(g, start, null);
           for (let k = before; k < applications.length; k++) chainedApplications.add(applications[k]!);
         },
       });
@@ -1376,8 +1353,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       sourceSlotIndex: src.sourceSlotIndex,
       stage: src.stage,
       last: -1,
-      fire: (start, byShots) => {
-        fireTimed(src, start, null, byShots);
+      fire: (start) => {
+        fireTimed(src, start, null);
       },
     });
   }
@@ -1388,18 +1365,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const dispatchApplied = (stage: HeldStage, from: number): void => {
     for (const a of appliedSources) {
       if (a.stage !== stage) continue;
-      /** フレーム → 出どころの枠の射撃の回数のきっかけで付いた記録があるか */
-      const fires = new Map<number, boolean>();
+      const fires = new Set<number>();
       for (let k = from; k < applications.length; k++) {
         const r = applications[k]!;
         if (r.state !== a.state || r.slotIndex !== a.sourceSlotIndex || chainedApplications.has(r)) continue;
-        const byShots = r.sourceSlotIndex === a.sourceSlotIndex && shotCountApplications.has(r);
-        fires.set(r.frame, (fires.get(r.frame) ?? false) || byShots);
+        fires.add(r.frame);
       }
-      for (const [frame, byShots] of [...fires].sort((x, y) => x[0] - y[0])) {
+      for (const frame of [...fires].sort((x, y) => x - y)) {
         if (frame <= a.last) continue;
         a.last = frame;
-        a.fire(frame, byShots);
+        a.fire(frame);
       }
     }
   };
@@ -1895,59 +1870,6 @@ export function activeItemsAt(
   filter: HeldItemFilter = {},
 ): HeldItemView[] {
   return itemsOf(history, { ...filter, holder }).filter((i) => i.start <= frame && frame < i.end);
-}
-
-/**
- * 段 D の 3（ルドミラ：ウィンターオーナー編。plan/design-ludmilla-wo.md 2.5 節）: 枠 slotIndex に、枠自身の射撃の回数で開いた件があるか
- * （2026-10-27 までの calc の射撃の数え方が読んだ。一本化の段 A-1 で calc は全グループを射撃の列から数えるようになり、いまは履歴の
- * 形を確かめるテストだけが使う）。timed（強化を含む）は自分の射撃の回数のトリガー、状態は自分の射撃の回数のトリガーの付与が
- * 発火を足した件（shotCount）。区間に足す件だけを見る（状態だけの stat は除く）。敵の件は、効果の対象の味方の枠の件として見る
- */
-export function hasOwnShotCountItem(
-  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots'>,
-  slotIndex: number,
-): boolean {
-  const onSlot = (holder: number, effect: ResolvedTimedEffect): boolean =>
-    holder === slotIndex || (holder === ENEMY && alliesOf(effect, slotIndex, history.slots).includes(slotIndex));
-  const timed = history.tracks.some((track) => {
-    if (track.sourceSlotIndex !== slotIndex || !track.items.some((i) => i.start < i.end)) return false;
-    const o = track.origin;
-    if (o.kind === 'timed') {
-      // 2 段目の段 4: { applied } の件は、出どころの枠の射撃の回数のきっかけで付いた記録から発火した時（shotCount）
-      return (
-        !isStateStat(o.effect.stat) &&
-        (isResolvedShotCount(o.effect.trigger) || track.shotCount) &&
-        onSlot(track.holder, o.effect)
-      );
-    }
-    if (o.kind === 'state') {
-      return track.holder === slotIndex && track.shotCount && o.contents.some((c) => !isStateStat(c.stat));
-    }
-    // 2 段目の段 9 の PR 2: while の件は、出どころの枠のその状態の件が、自分の射撃の回数のきっかけで付いた時（状態の件の列の shotCount）
-    if (o.kind === 'while') {
-      // 2 段目の段 11 の PR 2: カウンタの while は数えない（この関数を読むのはテストだけで、使い手の定義に射撃の回数の見る側がいない）
-      if (isCounterWhileEffect(o.effect)) return false;
-      const family = statesMatching(o.effect.whileState);
-      return (
-        track.holder === slotIndex &&
-        !isStateStat(o.effect.stat) &&
-        history.tracks.some(
-          (t) => t.holder === slotIndex && t.origin.kind === 'state' && family.includes(t.origin.state) && t.shotCount,
-        )
-      );
-    }
-    return false;
-  });
-  return (
-    timed ||
-    history.amplified.some(
-      (p) =>
-        p.sourceSlotIndex === slotIndex &&
-        p.start < p.end &&
-        isResolvedShotCount(p.effect.trigger) &&
-        onSlot(p.holder, p.effect),
-    )
-  );
 }
 
 // ---- 値の小片と区間（plan/design-holder-effects.md 2.6・2.9 節） ----

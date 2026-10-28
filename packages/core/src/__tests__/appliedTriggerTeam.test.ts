@@ -7,7 +7,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { hasOwnShotCountItem, itemsOf, valuePiecesOf } from '../skills/holders.ts';
+import { itemsOf, valuePiecesOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../skills/types.ts';
@@ -214,14 +214,6 @@ describe('{ applied } の発火（timed・付与）', () => {
     const attack2 = plan2.history.tracks.find((t) => t.origin.kind === 'timed' && t.origin.effect.stat === 'attack')!;
     expect(attack2.stage).toBe(1.5);
   });
-
-  it('counts the shots of the slot in calc only when the record came from its own shot count', () => {
-    const byShots = planTeamRun(teamOf([slotOf(TORB, defOf(TORB, [marker(5), onApplied('attack', 1)]))], false));
-    expect(hasOwnShotCountItem(byShots.history, 0)).toBe(true);
-    const atStart = { ...marker(5), trigger: 'battleStart' };
-    const once = planTeamRun(teamOf([slotOf(TORB, defOf(TORB, [atStart, onApplied('attack', 1)]))], false));
-    expect(hasOwnShotCountItem(once.history, 0)).toBe(false);
-  });
 });
 
 describe('トーブの宝物版 S1（代用弾丸・応急改造）', () => {
@@ -256,10 +248,6 @@ describe('トーブの宝物版 S1（代用弾丸・応急改造）', () => {
       (p) => p.slotIndex === 0 && p.effect.stat === 'maxAmmo' && p.start <= full.start && full.start < p.end,
     );
     expect(ammo.reduce((sum, p) => sum + p.effect.value, 0)).toBe(6);
-  });
-
-  it('counts the shots of Torb in calc (the windows open on its own shot count)', () => {
-    expect(hasOwnShotCountItem(run().history, 0)).toBe(true);
   });
 
   it('rounds each refill with the max ammo raised by the same shot (V-0435: 3, 3, 4, … and magazines of 94 and 110)', () => {
