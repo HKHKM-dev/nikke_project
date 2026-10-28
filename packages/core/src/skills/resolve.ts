@@ -107,6 +107,8 @@ export type ResolvedShotCountTrigger = {
   reset?: ShotCountReset;
   /** ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけこの窓の中に限る */
   firesDuring?: FiringWindow;
+  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の発では発火しない */
+  firesOutside?: 'weaponChange';
   /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの確率（比率。0 より大きく 1 以下）。有れば every は 1 で、
    * 回数の量が正の射撃のたびに発火する（skills/triggers.ts）。窓の値は skills/chance.ts が期待値にする
@@ -150,6 +152,7 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (trigger.during !== undefined)
     return { count: trigger.count, every, during: trigger.during, reset: trigger.reset! };
   if (trigger.firesDuring !== undefined) return { count: trigger.count, every, firesDuring: trigger.firesDuring };
+  if (trigger.firesOutside !== undefined) return { count: trigger.count, every, firesOutside: trigger.firesOutside };
   if (trigger.stacksRef === undefined) return { count: trigger.count, every };
   const stacks = skillValue(skill, trigger.stacksRef, level);
   if (!Number.isInteger(stacks) || stacks < 1) {

@@ -6,6 +6,7 @@ import { firingParams } from '../frame/firing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { rateAfterShots } from '../cadence.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
+import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../skills/triggers.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput } from '../team.ts';
@@ -15,7 +16,7 @@ import { makeCharacter } from './fixtures.ts';
 
 const values = (v: string) => Array.from({ length: 10 }, () => v);
 
-/** skill1 の値: 1 = 1 ヒットの倍率（%）、2 = ヒット数、3 = 順番攻撃ダメージ▲（%）、4 = 周期を縮める秒 */
+/** skill1 の値: 1 = 1 ヒットの倍率（%）、2 = ヒット数、3 = 順番攻撃ダメージ▲（%）、4 = 周期を縮める秒、5 = 弾丸チャージの発数、6 = 通常攻撃のクリティカル確率▲（%） */
 function character(): CharacterData {
   const c = makeCharacter();
   const skill = (vs: string[]) => ({
@@ -24,7 +25,7 @@ function character(): CharacterData {
     description: { ja: '', en: '' },
     values: vs.map(values),
   });
-  return { ...c, skills: { skill1: skill(['100', '7', '50', '2']), skill2: skill([]), burst: skill([]) } };
+  return { ...c, skills: { skill1: skill(['100', '7', '50', '2', '1', '35']), skill2: skill([]), burst: skill([]) } };
 }
 
 const empty = { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] };
@@ -187,5 +188,88 @@ describe('5.6 マシンガン立ち上げ速度▲（spinUpSpeed）', () => {
     const plain = run([{ ...spinUp, stat: 'attack' }], true, mg).shots[0]!.frames.length;
     const up = run([spinUp], true, mg).shots[0]!.frames.length;
     expect(up).toBeGreaterThan(plain);
+  });
+});
+
+describe('5.7 クリティカル命中の回数（critHit）と、変更の外でだけの発火（firesOutside）', () => {
+  // AR の装弾数 9（紅蓮：神殺の形）
+  const ar = { maxAmmo: 9 };
+  const refill = {
+    kind: 'ammoRefill',
+    trigger: { count: 'critHit', every: 2 },
+    target: 'self',
+    ref: 5,
+    scaling: 'flat',
+  };
+  const critUp = {
+    kind: 'timed',
+    trigger: 'battleStart',
+    target: 'self',
+    stat: 'normalCritRate',
+    ref: 6,
+    durationUntil: 'battleEnd',
+  };
+
+  it('writes the expected critical hits of each shot (hit × crit rate, with the time-varying ▲)', () => {
+    const log = run([critUp], true, ar).shots[0]!;
+    // 基礎 15% + 35%（戦闘開始の件は 1 発目から効く）
+    expect(new Set(log.critHits)).toEqual(new Set([0.5]));
+  });
+
+  it('refills one bullet every two expected critical hits, so the magazine lasts longer', () => {
+    const reloads = (effects: Record<string, unknown>[]) => run(effects, true, ar).shots[0]!.lastShotFrames!.length;
+    const plain = reloads([critUp]);
+    const refilled = reloads([critUp, refill]);
+    // 4 発に 1 発戻るので、マガジンは 9 → 12 発程度に延びる
+    expect(refilled).toBeLessThan(plain);
+  });
+
+  const shot = (weaponChange: boolean): ShotEvent => ({
+    lastShot: false,
+    fullCharge: false,
+    hits: 1,
+    coreHits: 0,
+    critHits: 1,
+    ...(weaponChange ? { weaponChange: true } : {}),
+  });
+  const events = (s: ShotEvent): FrameEvents =>
+    ({
+      frame: 0,
+      shots: [s],
+      activations: [],
+      burstEffects: [],
+      fullBurstStart: false,
+      fullBurstEnd: false,
+      gaugeFull: false,
+      fullBurstStartUsers: [],
+      fullBurstEndUsers: [],
+      healed: [false],
+    }) as unknown as FrameEvents;
+
+  it('counts the shots of a changed weapon but does not fire on them with firesOutside', () => {
+    const track = createTriggerTracker({ count: 'critHit', every: 2, firesOutside: 'weaponChange' }, 0, null);
+    expect([shot(false), shot(true), shot(true), shot(false)].map((s) => track(events(s)))).toEqual([
+      false,
+      false,
+      false,
+      true,
+    ]);
+  });
+
+  it('rejects firesOutside with a firing window and on weaponChangeShot', () => {
+    const def = (trigger: Record<string, unknown>) =>
+      parseSkillDefinition({
+        formatVersion: 1,
+        resourceId: 1,
+        checkedAt: '2026-10-28',
+        skills: { skill1: { effects: [{ ...refill, trigger }] }, skill2: empty, burst: empty },
+      });
+    expect(def({ count: 'critHit', every: 2, firesOutside: 'weaponChange' }).skills.skill1.effects[0]).toMatchObject({
+      trigger: { firesOutside: 'weaponChange' },
+    });
+    expect(() => def({ count: 'critHit', every: 2, firesOutside: 'fullBurst' })).toThrow(/firesOutside: expected/);
+    expect(() => def({ count: 'weaponChangeShot', firesOutside: 'weaponChange' })).toThrow(
+      /firesOutside cannot be used with weaponChangeShot/,
+    );
   });
 });

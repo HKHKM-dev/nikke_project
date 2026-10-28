@@ -304,6 +304,11 @@ export type HolderLists = {
   hitUpAt(holder: number, frame: number): number;
   /** 当たりの stat の件の列があるか */
   readonly hasHitTracks: boolean;
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 枠 holder にフレーム frame に効いている、時間で変わる会心率▲と
+   * 通常攻撃のクリティカル確率▲の和（timed・状態の中身。常時の値は含まない）。critHit の回数の量に使う
+   */
+  critUpAt(holder: number, frame: number): number;
   /** 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ） */
   rankContext(
     e: Parameters<typeof dependsOnRank>[0] & Parameters<typeof attackRankFor>[0],
@@ -1067,6 +1072,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (track, e) =>
       isHitStateStat(e.stat) && (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
   );
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件）
+  const critViews = viewsOf(
+    (track, e) =>
+      (e.stat === 'critRate' || e.stat === 'normalCritRate') &&
+      (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
+  );
   // 条件 selfBuffed: 段 1 の件（段 A までの 1.5 段目の判定に入る窓）
   const conditionViews = viewsOf((track) => track.stage === 1);
   // 順位: 段 1・1.5 の攻撃力の件（段 A までの 2 段目の材料）
@@ -1738,6 +1749,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return sum;
     },
     hasHitTracks: hitViews.some((views) => views.length > 0),
+    critUpAt(holder, frame) {
+      let sum = 0;
+      for (const v of critViews[holder] ?? []) {
+        for (let k = activeAt(v.track, frame).length; k > 0; k--) sum += v.effect.value;
+      }
+      return sum;
+    },
     rankContext,
     applyHeal(effect, sourceSlotIndex, holder, frame) {
       const track = healTracks.get(healKey(sourceSlotIndex, effect))?.[holder] ?? null;

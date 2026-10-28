@@ -42,6 +42,11 @@ export type ShotEvent = {
   /** 同 2.2 節: この射撃のコアの命中の期待値（弾丸命中率 × コア命中率。敵にコアが無ければ 0）。coreHit の回数に足す */
   coreHits: number;
   /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: この射撃のクリティカルの命中の期待値（命中の期待値 × その発の
+   * 通常攻撃の会心率。上限 1）。critHit の回数に足す。省略は 0
+   */
+  critHits?: number;
+  /**
    * ペレットの命中編（plan/design-pellet-hit.md 2 節）: この射撃で的に当たったペレットの数（期待値か、録画で数えた入力）。
    * pelletHit の回数に足す。省略は hits（1 ペレットの武器）
    */
@@ -62,6 +67,8 @@ export function shotCountWeight(kind: ShotCountKind, shot: ShotEvent): number {
       return shot.hits;
     case 'coreHit':
       return shot.coreHits;
+    case 'critHit':
+      return shot.critHits ?? 0;
     case 'fullChargeShot':
       return shot.fullCharge ? 1 : 0;
     case 'lastShot':
@@ -185,6 +192,8 @@ export function createTriggerTracker(
       if (t.firesDuring === 'fullBurst' && !inFullBurst) return false;
       // 2 段目の段 11（V-0530）: 使用武器の変更で持ち替えた武器の発のときだけ発火する（数えるのは基礎の武器の発も）
       if (t.firesDuring === 'weaponChange' && shot.weaponChange !== true) return false;
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 変更の発で届いた回は発火せずに過ぎる
+      if (t.firesOutside === 'weaponChange' && shot.weaponChange === true) return false;
       return next.fired;
     };
   }
@@ -295,6 +304,8 @@ export function replayEvents(
         hits: log.hits?.[k] ?? 1,
         coreHits: log.coreHits?.[k] ?? 0,
       };
+      const critHits = log.critHits?.[k];
+      if (critHits !== undefined) shot.critHits = critHits;
       const pellets = log.pelletHits?.[k];
       if (pellets !== undefined) shot.pellets = pellets;
       if (changed.has(f)) shot.weaponChange = true;

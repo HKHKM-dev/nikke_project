@@ -447,7 +447,7 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * 1 発の量が N を超えてはいけないので every か everyRef が要り、循環には書けない
  */
 export type ShotCountKind =
-  'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot' | 'pelletHit';
+  'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot' | 'pelletHit' | 'critHit';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
@@ -456,6 +456,10 @@ export const SHOT_COUNT_KINDS = [
   'lastShot',
   'weaponChangeShot',
   'pelletHit',
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: critHit = クリティカルの命中の期待値（1 発ごとに命中の期待値 ×
+  // その発の通常攻撃の会心率。frame/firstPass.ts）を足し、累計が N の倍数を越えた発で発火する（coreHit と同じ持ち越し）。乱数の
+  // きっかけを期待値で持つ（ソルジャーE.G. 編と同じ考え方）
+  'critHit',
 ] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
@@ -484,6 +488,12 @@ export type ShotCountTrigger = {
    * 持ち替えた武器の発のときだけ発火する（モラン S1「自分が武器変更状態の場合、通常攻撃が N 回命中した時」）
    */
   firesDuring?: FiringWindow;
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 'weaponChange' なら、N の倍数に届いた発が使用武器の変更で持ち替えた
+   * 武器の発のときは発火しない（数えるのは変更の発も。紅蓮：神殺の S2「自分が花無十一日紅・満開状態でなければ」）。firesDuring・
+   * during・chance・stacksRef とは組み合わせない。どの効果にも書ける
+   */
+  firesOutside?: 'weaponChange';
   /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
@@ -2090,9 +2100,18 @@ function parseTrigger(
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
       if (
-        !['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset', 'firesDuring', 'chance', 'chanceRef'].includes(
-          key,
-        )
+        ![
+          'count',
+          'every',
+          'everyRef',
+          'stacksRef',
+          'during',
+          'reset',
+          'firesDuring',
+          'firesOutside',
+          'chance',
+          'chanceRef',
+        ].includes(key)
       ) {
         fail(`${path}.${key}`, 'unknown field');
       }
@@ -2129,6 +2148,19 @@ function parseTrigger(
       if (trigger.count === 'weaponChangeShot') {
         fail(`${path}.firesDuring`, 'firesDuring cannot be used with weaponChangeShot');
       }
+    }
+    // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の外でだけ発火する
+    if (v.firesOutside !== undefined) {
+      if (v.firesOutside !== 'weaponChange') {
+        fail(`${path}.firesOutside`, `expected "weaponChange", got ${JSON.stringify(v.firesOutside)}`);
+      }
+      for (const key of ['during', 'firesDuring', 'stacksRef', 'chance', 'chanceRef'] as const) {
+        if (v[key] !== undefined) fail(`${path}.firesOutside`, `firesOutside cannot be used with ${key}`);
+      }
+      if (trigger.count === 'weaponChangeShot') {
+        fail(`${path}.firesOutside`, 'firesOutside cannot be used with weaponChangeShot');
+      }
+      trigger.firesOutside = 'weaponChange';
     }
     // ソルジャーE.G. 編: 確率のきっかけ（plan/design-soldier-eg.md 3.1 節）
     if (v.chance !== undefined || v.chanceRef !== undefined) {
