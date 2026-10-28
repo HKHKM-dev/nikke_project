@@ -19,6 +19,7 @@
     "build": "npm run build -w @nikke/web",
     "ci": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run build",
     "preview": "npm run preview -w @nikke/web",
+    "artifact:build": "node tools/artifact/build.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
