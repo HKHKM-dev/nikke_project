@@ -99,6 +99,7 @@ const KIND_CLASS: Record<string, ElementClass> = {
   cooldownReduction: 'burstTiming',
   burstGauge: 'burstTiming',
   burstGaugeHit: 'burstTiming',
+  shotPause: 'firing',
   burstReentry: 'burstTiming',
   allyGaugeAdd: 'burstTiming',
   ammoRefill: 'firing',

@@ -84,7 +84,7 @@ describe('data/skills', () => {
           // Stage 11 紅蓮BS: 循環は段ごとの ref、間隔の変更は ref を持たない（維持時間は下のテスト）
           // フラワー編: 周期のゲージ（burstGaugeHit）は ref を持たない。アニス：スター編: バースト再突入（burstReentry）も
           // 名前の付いた状態の語彙編: 付与は値を持たず、中身の項目が ref を持つ（上限は中身の stat で見る）
-          // 2 段目の段 1: 解除（removeState）も値を持たない
+          // 2 段目の段 1: 解除（removeState）も値を持たない。V-0534: 射撃の止まり（shotPause）も
           const refs =
             effect.kind === 'weaponChange'
               ? [effect.damageRef, ...(effect.maxAmmoRef === undefined ? [] : [effect.maxAmmoRef])]
@@ -99,6 +99,7 @@ describe('data/skills', () => {
                       : [effect.amountRef]
                     : effect.kind === 'cycleEvery' ||
                         effect.kind === 'burstGaugeHit' ||
+                        effect.kind === 'shotPause' ||
                         effect.kind === 'burstReentry' ||
                         effect.kind === 'removeState' ||
                         effect.ref === undefined

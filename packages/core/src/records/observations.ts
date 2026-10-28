@@ -13,7 +13,7 @@ import {
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
-import { reloadFirstShotFrames } from '../cadence.ts';
+import { rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
 import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
@@ -39,7 +39,7 @@ import {
   type SkillSlot,
 } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, MAX_RPM } from '../weapons.ts';
 import type { BuildMasters, CharacterData, EnemyPresetMaster } from '../types.ts';
 import { CLAIM_TOPICS } from './claims.ts';
 import type { RecordingBuild, RecordingEntry } from './recordings.ts';
@@ -420,6 +420,62 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
     const shots = last - first + 1;
     first = last + 1;
     return shots;
+  });
+}
+
+/**
+ * V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717）: 1 フレーム 1 発で撃っている区間の、射撃の止まり（前後の発と発の間が 1f で、そこだけ
+ * 2f の所）から次の止まりまでの発の数（間の発と発の間がすべて 1f の組だけ）。スピンアップが 1 フレーム 1 発に届く前の発の 2f は数えない。
+ * どの組も同じならその数、違えば違う数の並び（昇順）。録画では、HUD の総ダメージが 1 フレームだけ増えなかったフレームから次のその
+ * フレームまでの通常攻撃のヒットを数える
+ */
+function steadyPauseShots(result: SimResult, ctx: MetricContext): number | number[] {
+  const frames = slotOf(result.shots, ctx).frames;
+  const shot = slotOf(ctx.input.slots, ctx).character.shot;
+  // 撃ち始め（リロード・的のジャンプの後。前の発との間が 2f より長い発）から何発目で 1 フレーム 1 発に届くか
+  let spun = 0;
+  while (rateAfterShots(shot, spun) < MAX_RPM) spun += 1;
+  const gap = (k: number): number => frames[k]! - frames[k - 1]!;
+  const counts = new Set<number>();
+  let runStart = 0;
+  let last: number | null = null;
+  for (let k = 1; k + 1 < frames.length; k++) {
+    if (gap(k) > 2) {
+      runStart = k;
+      last = null;
+    }
+    if (k - runStart <= spun || gap(k) !== 2 || gap(k - 1) !== 1 || gap(k + 1) !== 1) continue;
+    if (last !== null) {
+      let steady = true;
+      for (let q = last + 1; q < k; q++) if (gap(q) !== 1) steady = false;
+      if (steady) counts.add(k - last);
+    }
+    last = k;
+  }
+  const values = [...counts].sort((a, b) => a - b);
+  if (values.length === 0) throw new Error(`枠 ${String(ctx.args.slot)} に 1 フレーム 1 発の区間の止まりの組が無い`);
+  return values.length === 1 ? values[0]! : values;
+}
+
+/**
+ * V-0534（C-0718）: 枠のマガジンの最後の弾丸から次の発までのフレーム数の中央値を、最後の弾丸が戦闘の始めから数えて every 発の倍数の発
+ * だったマガジンと、そうでないマガジンに分けて [倍数, ほか] で返す（的のジャンプに掛かったリロードの外れは中央値で落とす）
+ */
+function lastShotGapMedians(result: SimResult, ctx: MetricContext): number[] {
+  const log = slotOf(result.shots, ctx);
+  const every = Number(ctx.args.every);
+  const groups: [number[], number[]] = [[], []];
+  for (const end of log.lastShotFrames ?? []) {
+    const k = log.frames.indexOf(end);
+    const next = log.frames[k + 1];
+    if (next === undefined) continue;
+    groups[(k + 1) % every === 0 ? 0 : 1].push(next - end);
+  }
+  return groups.map((g, i) => {
+    if (g.length === 0) throw new Error(`枠 ${String(ctx.args.slot)} の${i === 0 ? '倍数の' : 'ほかの'}マガジンが無い`);
+    const sorted = [...g].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 1 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
   });
 }
 
@@ -1280,6 +1336,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
   // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },
+  steadyPauseShots: { args: ['slot'], sim: steadyPauseShots },
+  lastShotGapMedians: { args: ['slot', 'every'], sim: lastShotGapMedians },
   fullBurstMagazineShots: { args: ['slot'], sim: fullBurstMagazineShots },
   cycleWindowResidues: { args: ['slot', 'every'], sim: cycleWindowResidues },
   shotIntervals: {

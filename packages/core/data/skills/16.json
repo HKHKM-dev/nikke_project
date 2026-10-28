@@ -63,7 +63,25 @@
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "shotPause",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "frames": 1,
+          "framesOnLastShot": 4,
+          "assumes": {
+            "ja": "粘着榴弾を撃つたびに、通常攻撃を 1 フレーム撃たない（120 回に届いた発の次のフレーム。残弾・スピンアップはそのまま）。120 回に届いた発がマガジンの最後の弾丸なら、4 フレーム止めてからリロードに入る。榴弾自体は 120 回にも装弾数にも数えない。榴弾のダメージは出さない（notes[1]）",
+            "en": "Each time she fires a sticky grenade, her normal attack skips one frame (the frame after the shot that reaches 120; ammo and spin-up are kept). If that shot is the last round of the magazine, she pauses 4 frames before reloading. The grenade itself counts neither toward the 120 attacks nor toward ammo. The grenade deals no damage in the model (notes[1])"
+          },
+          "claims": [
+            "C-0717",
+            "C-0718"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "電撃コードの敵への有利コード、発射体付着ダメージ▲・発射体爆発ダメージ▲（持続）は未対応",
@@ -76,8 +94,8 @@
           }
         },
         {
-          "ja": "通常攻撃 120 回ごとの粘着榴弾（付着と起爆のダメージ）は未対応",
-          "en": "The sticky grenade (attach and detonation damage) every 120 normal attacks is not modeled",
+          "ja": "通常攻撃 120 回ごとの粘着榴弾の付着と起爆のダメージは未対応（撃つたびの射撃の止まりは effects[0]）",
+          "en": "The sticky grenade attach and detonation damage every 120 normal attacks is not modeled (the firing pause on each grenade is effects[0])",
           "kind": "unimplemented",
           "effect": {
             "kind": "damage",

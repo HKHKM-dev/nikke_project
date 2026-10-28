@@ -81,6 +81,7 @@ import {
   resolveAllyGaugeAdd,
   resolveDotEffects,
   resolveShotGauges,
+  resolveShotPauses,
   resolveTimerGauges,
 } from '../skills/burstDamage.ts';
 import {
@@ -564,6 +565,24 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       });
     }
   });
+  // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
+  // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
+  const shotPauseTrackers: {
+    slotIndex: number;
+    count: ShotCountKind;
+    every: number;
+    frames: number;
+    framesOnLastShot: number;
+    n: number;
+  }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    for (const t of resolveShotPauses(slot.definition, slot.character, slot.levels)) {
+      if (t.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
+      shotPauseTrackers.push({ slotIndex: i, ...t, n: 0 });
+    }
+  });
+  const pauseLeft = slots.map(() => 0);
   // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
@@ -777,6 +796,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const partial = hideNow ? partialChargeShot(state, shot, model, params) : null;
       if (hideNow) hideShooter(state, shot, model, params);
       if (unhideNow) unhideShooter(state, shot, block!.end - block!.start, model, params);
+      // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
+      if (pauseLeft[i]! > 0) {
+        pauseLeft[i]! -= 1;
+        return;
+      }
       const reloading = state.phase === 'reloading';
       const fired = stepShooter(state, shot, model, params, blocked);
       const log = logs[i]!;
@@ -845,6 +869,14 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       else if (f + t.delayFrames < frames) {
         pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
       }
+    }
+    // V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める
+    for (const t of shotPauseTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
+      t.n = counted.count;
+      if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
     }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
