@@ -1,12 +1,18 @@
 {
   "id": "C-0744",
   "text": "ShiftyPad（Blablalink）の GetUserCharacterDetails の favorite_item_lv（宝物の favorite_item_tid が 2xxxxx のとき）は、Lv 1 が宝物の段階 2、Lv 2 が段階 3（段階 = Lv + 1）。Lv 0 の段階は画面で見ていない",
-  "state": "仮説",
+  "state": "確定",
   "topic": "育成・ステータス",
-  "grade": "推論",
-  "basis": "V-0544",
+  "grade": "反復実測",
+  "basis": "V-0544: Lv 1 = 段階 2 はロザンナ・ファントムの 2 体（2026-10-29 の取得の Lv 1 と、2026-10-30 のゲーム内のスクショの ★ の数・宝ものスキルの解放済みの段階）、Lv 2 = 段階 3 はドレイク・ヘルム・ミランダ・トーブ・モランの 5 体（取得の Lv 2 と、録画の台帳の treasurePhase 3）。2 体のキャラ画面の攻撃力もスナップショットから出したモデルの値と端数まで合う",
   "model": "`shiftypad.ts` の `treasurePhaseOfLevel`（取り込みのスナップショットの `treasure.phase`）と、`sim-run.ts --build` の `--treasure` の無い枠の段階。Lv 0 は未確定（`phase: null`。`--treasure` で指定する）",
   "replaces": [],
   "updated": "2026-10-30",
-  "decidedOn": []
+  "decidedOn": [],
+  "gradeReason": "Lv 1 = 段階 2 は 2 体で別々に、Lv 2 = 段階 3 は 5 体で合い、値を合わせ込む定数を持たない（Lv + 1）",
+  "judgment": {
+    "decided": "2026-10-30",
+    "overrides": ["指標なし"],
+    "reason": "録画の観測値ではなく、育成データの取得の値とゲーム内の画面（スクショ・録画の台帳の段階）の突き合わせなので、モデルと比べる指定を書けない（2026-10-30 のオーナーの判断。V-0544）"
+  }
 }
