@@ -1,0 +1,170 @@
+{
+  "formatVersion": 1,
+  "resourceId": 472,
+  "checkedAt": "2026-10-29",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "intoTheFraySereneMind",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd"
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "normalCritRate",
+          "ref": 1,
+          "durationUntil": "battleEnd"
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "居合は通常攻撃の発ごとに 1 回（全弾命中の前提）。使用武器の変更（花無十一日紅・満開）の発でも出ると読む（plan/design-new-chars-1029.md 論点 H）。ヒットのフレームとゲージは確かめていない（発と同じフレーム）",
+            "en": "Iai fires once per normal attack shot (every shot is assumed to hit), read as also firing on the shots of the weapon change (Beyond the Fade: Full Bloom; plan/design-new-chars-1029.md issue H). The hit frame and gauge are unchecked (same frame as the shot)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "condition": {
+            "selfState": "intoTheFrayAtOneWithTheSword"
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "S2 の臨戦：身剣合一の効果 3「居合の追加ダメージ倍率が 100% 効果量に対し増加」を、身剣合一の間だけ居合と同じ値の追加ダメージがもう 1 つ出る（倍率 2 倍）と読む（値は S1 の居合。plan/design-new-chars-1029.md 論点 G）",
+            "en": "S2's Into the Fray: At One With the Sword Effect 3 ('Iai's additional damage is scaled by 100%') is read as one more additional damage of the Iai value while At One With the Sword lasts (twice the multiplier; the value is S1's Iai. plan/design-new-chars-1029.md issue G)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "臨戦：明鏡止水の貫通特化は、それ自体は与ダメージを変えない（貫通を読む効果のある編成でだけ効く）",
+          "en": "Pierce from Into the Fray: Serene Mind does not change damage by itself (it matters only with an effect reading pierce)",
+          "kind": "indirect",
+          "path": "pierce",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "通常攻撃が広範囲の攻撃になることは、敵 1 体の前提では的の数を変えない（要件 5.2 節）。射撃場の的でコアに当たる割合が変わるかは録画で読む",
+          "en": "Normal attacks becoming wide-range attacks does not change the number of targets under the single-enemy premise (requirements 5.2). Whether the core hit rate on the range target changes is to be read from recordings",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "ammoRefill",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 1,
+            "firesOutside": "weaponChange"
+          },
+          "target": "self",
+          "scaling": "flat",
+          "ref": 2,
+          "assumes": {
+            "ja": "クリティカル命中は、発ごとに命中の期待値 × その発の通常攻撃の会心率を足して数える（乱数を期待値で持つ）。花無十一日紅・満開（使用武器の変更）の発も数え、変更の発で届いた回は弾丸チャージしない（plan/design-new-chars-1029.md 5.7 節）",
+            "en": "Critical hits are counted by adding, per shot, the expected hits times that shot's normal attack critical rate (the randomness is kept as an expectation). Shots of Beyond the Fade: Full Bloom (the weapon change) are counted too, and a count reached on such a shot does not reload (plan/design-new-chars-1029.md 5.7)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "intoTheFrayAtOneWithTheSword",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationRef": 4,
+          "undispellable": true,
+          "contents": [
+            {
+              "stat": "normalCritRate",
+              "ref": 3
+            },
+            {
+              "stat": "attackDamage",
+              "ref": 5
+            }
+          ],
+          "assumes": {
+            "ja": "効果 1・2・3 の維持（description_value_04・06・07）はどれも 10 秒なので、状態の維持にそろえた。効果 3（居合の倍率の増加）は S1 の効果（身剣合一の間の居合）に書いた",
+            "en": "The durations of Effects 1, 2 and 3 (description_value_04, 06 and 07) are all 10 s, so they follow the state's duration. Effect 3 (the Iai multiplier increase) is written in S1 (Iai while At One With the Sword lasts)"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "変更後の武器のレートは CDN の changeWeapon（90rpm）。1 発のヒット数・最初の発までの待ち・コアに当たる割合は録画で読む（いまは基礎の武器と同じ扱い）",
+            "en": "The changed weapon's rate is the CDN changeWeapon (90 rpm). Hits per shot, the wait before the first shot and the core hit rate are to be read from recordings (treated like the base weapon for now)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "additional",
+          "ref": 7,
+          "assumes": {
+            "ja": "照準線に最も近い敵 1 機（敵 1 体の前提で的）に 1 回。ヒットのフレームは確かめていない（発動のフレーム）",
+            "en": "Once on the 1 enemy nearest to the crosshair (the target under the single-enemy premise). The hit frame is unchecked (the activation frame)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃の範囲 100%▲ は、敵 1 体の前提では的の数を変えない（要件 5.2 節）",
+          "en": "Normal Attack Range ▲ 100% does not change the number of targets under the single-enemy premise (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
