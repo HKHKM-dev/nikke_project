@@ -1,0 +1,34 @@
+{
+  "id": "0733",
+  "date": "2026-10-29",
+  "folder": "range",
+  "file": "20261029-0733_mg_rapi-redhood_electric.mp4",
+  "original": "2026-10-29_18-52-23.mp4",
+  "durationSec": 198,
+  "frames": 11877,
+  "fps": 60,
+  "sizeMB": 239.9,
+  "sha256": "53149346ce28",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "段 12 の撮影 B（plan/design-skill-stage12.md 3.5 節）。ラピ：レッドフード単騎（操作）・電撃の的",
+  "backup": {
+    "at": "2026-10-29T19:30+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
