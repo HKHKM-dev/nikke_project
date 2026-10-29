@@ -11,19 +11,5 @@
   "subject": {
     "places": ["data/skills/192.json の treasureSkills.skill1 の effects[3]"]
   },
-  "decidedOn": [],
-  "minimal": [
-    {
-      "observations": ["0467-04", "0467-05", "0468-04", "0468-05"],
-      "element": "トーブ treasureSkills.skill2.notes[1]",
-      "reason": "ショットガンを所持する味方だけの攻撃速度▲で、AR のトーブには付かない（単騎）",
-      "decided": "2026-10-17"
-    },
-    {
-      "observations": ["0467-04", "0467-05", "0468-04", "0468-05"],
-      "element": "トーブ treasureSkills.skill2.notes[0]",
-      "reason": "クリティカル確率▲は会心の割合を変えるだけで、弾丸チャージ・マガジンの発数・最大装弾数・会心と会心しない 1 ヒットの比には効かない",
-      "decided": "2026-10-17"
-    }
-  ]
+  "decidedOn": []
 }

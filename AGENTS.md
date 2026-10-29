@@ -21,6 +21,7 @@ NIKKE のダメージ計算ツール。
 - PR の単位は**実装・検証が完了した時点**（動作するコード・確定した結論・テストが揃った状態）。設計起案や撮影待ちの段階では PR を出さない。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
 - 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
+- コード（`packages/`・`apps/`・`tools/`）を変えた PR は、出す前に（テストが通った後に）差分を整理の観点（再利用・簡素化・効率・深さ。バグは見ない）で見直し、直しを同じ PR に入れる。Claude Code では `/simplify`。マージの後に回すと、直しに別の PR が要り、main との衝突も増える。文書・記録・データだけの PR と、数行の直しでは要らない。
 - PR を出す手順:
   1. commit してから `npm run pr:prep -- --push`: main をリベースで取り込み（マージはしない）、生成物の衝突は main の版を取って最後に 1 回だけ作り直し、CI と同じ確認（`npm run ci`）を通して push する（`tools/git/pr-prep.ts` の冒頭）。止まったら、道具が出す直し方に従う: 生成物でないファイルの衝突は直して `git add` し、もう一度回す。自分のブランチで足した ID が main と重なっていたら、出たコマンド（`npm run records:renumber -- <古い ID> <新しい ID>`。`plan/design-stage20.md` 3.6 節。録画の番号も同じ道具で、E: と Google Drive のファイル名ごと振り直す。`plan/design-recording-renumber.md`）で振り直して commit し、もう一度回す
   2. `gh pr create`
@@ -91,4 +92,4 @@ NIKKE のダメージ計算ツール。
 
 検証の流れ（起案 → 撮影計画（予測は任意）→ 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/verification-guide.md`）。
 
-最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす。
+最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節。入力の変わった観測値だけを計算する。全部は `-- --all`）。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす。

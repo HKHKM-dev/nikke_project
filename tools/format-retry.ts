@@ -4,6 +4,8 @@
 // Windows では、書いた直後のファイルを別のプロセス（ウイルス対策・索引など）が一時的に開いていて、prettier が
 // 「UNKNOWN: unknown error, open」で書けないことがある。records:check などは生成物を書いてから prettier で整えるので、
 // そこで止まると整形されていない生成物が残る（2026-10-07 に何度か起きた）。そのための繰り返し。
+// --cache で、前に整えてから中身の変わっていないファイルを飛ばす（手書きの検証記録を毎回整え直すと 20 秒近くかかる。
+// plan/design-workflow-simplification-5.md 7.3 節）。キャッシュは node_modules/.cache/prettier に置かれ、追跡しない。
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 
@@ -12,7 +14,9 @@ const args = process.argv.slice(2);
 const attempts = 3;
 
 for (let attempt = 1; ; attempt++) {
-  const result = spawnSync(process.execPath, [prettier, '--write', ...args], { stdio: 'inherit' });
+  const result = spawnSync(process.execPath, [prettier, '--write', '--cache', '--cache-strategy', 'content', ...args], {
+    stdio: 'inherit',
+  });
   if (result.status === 0) process.exit(0);
   if (attempt >= attempts) process.exit(result.status ?? 1);
   console.error(`prettier が失敗した（${attempt} 回目）。1 秒おいて繰り返す`);

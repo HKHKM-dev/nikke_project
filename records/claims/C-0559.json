@@ -11,13 +11,5 @@
   "subject": {
     "places": ["data/skills/192.json の treasureSkills.skill1 の effects[2]"]
   },
-  "decidedOn": [],
-  "minimal": [
-    {
-      "observations": ["0467-03", "0468-03"],
-      "element": "トーブ treasureSkills.skill2.notes[1]",
-      "reason": "ショットガンを所持する味方だけの攻撃速度▲で、AR のトーブには付かない（単騎）",
-      "decided": "2026-10-17"
-    }
-  ]
+  "decidedOn": []
 }

@@ -166,9 +166,15 @@ export const EDGE_LIMIT = 30;
 
 /**
  * 人の判断の印（plan/design-minimal-relevance.md 4.3 節）。observations はこの結論の根拠の観測値の ID（'*' は全部の組）、
- * element は判定の要素の名前（「イサベル skill2.notes[0]」など）、reason は効かないとみなした理由、decided はオーナーが決めた日
+ * element は判定の要素の名前（「イサベル skill2.notes[0]」など。同じ理由の要素は並びにまとめてよい。plan/design-workflow-simplification-5.md 1 節の (e)）、
+ * reason は効かないとみなした理由、decided はオーナーが決めた日
  */
-export type MinimalMark = { observations: string[] | '*'; element: string; reason: string; decided: string };
+export type MinimalMark = { observations: string[] | '*'; element: string | string[]; reason: string; decided: string };
+
+/** 印の要素の名前の並び */
+export function markElements(m: Pick<MinimalMark, 'element'>): string[] {
+  return typeof m.element === 'string' ? [m.element] : m.element;
+}
 
 const BURST_STAGES: readonly BurstStep[] = ['Step1', 'Step2', 'Step3', 'AllStep'];
 const isDate = (d: unknown) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d);
@@ -274,7 +280,10 @@ export function validateMinimalFields(c: Claim): string[] {
               if (!c.observations.includes(o as string))
                 errors.push(`${p}.observations の ${String(o)} はこの結論の根拠に無い`);
         }
-        if (typeof m.element !== 'string' || m.element.trim() === '') errors.push(`${p}.element が空`);
+        const names = typeof m.element === 'string' ? [m.element] : Array.isArray(m.element) ? m.element : [undefined];
+        if (names.length === 0 || names.some((n) => typeof n !== 'string' || n.trim() === ''))
+          errors.push(`${p}.element が空（要素の名前か、その並び）`);
+        else if (new Set(names).size !== names.length) errors.push(`${p}.element に同じ要素が 2 回ある`);
         if (typeof m.reason !== 'string' || m.reason.trim() === '') errors.push(`${p}.reason が空`);
         if (!isDate(m.decided)) errors.push(`${p}.decided は YYYY-MM-DD`);
       });

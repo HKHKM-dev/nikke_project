@@ -36,6 +36,7 @@
     "records:renumber": "node packages/core/scripts/records-renumber.ts",
     "pr:prep": "node tools/git/pr-prep.ts",
     "build:import": "node tools/builds/import.ts",
+    "build:fetch": "node tools/builds/fetch.ts",
     "drive:sync": "node tools/drive/sync.ts",
     "drive:conflicts": "node tools/drive/sync.ts --conflicts",
     "drive:gateway-check": "node tools/drive/gateway-check.ts"
@@ -47,6 +48,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.12.0",
+    "playwright-core": "^1.64.1",
     "prettier": "^3.9.8",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.0",

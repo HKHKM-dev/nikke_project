@@ -32,7 +32,7 @@
 - 結論の下書き（`records:new -- claim`）が `確定` にするのは、次が全部そろうとき（欠ければ `仮説` と理由を出す。人は理由を確かめて書き換えてよい）:
   - 等級の候補（機械）が厳密一致か反復実測。反復実測なら `decidedOn` がある（無ければ `[]` と書く）
   - 結論の対象（`subject`）がある
-  - 最小構成の警告（効きうる未確定の要素が残った組）が無い。効かない理由がはっきりしていれば、結論の `minimal` に印として書く。窓の端（付き始め・切れ目）の数 f だけを決める仮説は、印の代わりに仮説の結論に `edge`（端のずれうる範囲）を書けば、sim と比べる組は感度で自動で外れる（[design-minimal-edge.md](design-minimal-edge.md)）
+  - 最小構成の警告（効きうる未確定の要素が残った組）が無い。効かない理由がはっきりしていれば、結論の `minimal` に印として書く（同じ理由の要素は `element` に並べて 1 つの印にする）。スキル定義の notes が並び替わると、`records:check` が印の notes の添字を文の一致で付け替え、対応先の無い notes や今の編成に無い要素を指す印は誤りにする（直すか外す。何も抑えていない印は [minimal.md](minimal.md) の「使われていない印」に出るが、消さなくてよい。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 1 節）。窓の端（付き始め・切れ目）の数 f だけを決める仮説は、印の代わりに仮説の結論に `edge`（端のずれうる範囲）を書けば、sim と比べる組は感度で自動で外れる（[design-minimal-edge.md](design-minimal-edge.md)）
   - `compare` の無い根拠の観測値に `scope` がある
   - 失効・許容外の観測値が無い
   - 予測ファイルを使ったなら、合う仮説が 2 つ以上でない
@@ -69,7 +69,7 @@
 
 - `npm run records:check` で、生成物を全部作り直す: 録画の一覧（[captures/recordings.md](captures/recordings.md)）・スキルの効果の分類（[skill-catalog.md](skill-catalog.md)）・残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。
 - 残差の一覧には見る行（許容外・比べられない・失効）しか載らない。自分の観測値の残差は `npm run records:residual -- V-NNNN`（録画 id・観測値 ID でも引ける。許容内の行も同じ列で出す）。
-- 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す（[AGENTS.md](../AGENTS.md) の最小構成の検査の段落）。
+- 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す（[AGENTS.md](../AGENTS.md) の最小構成の検査の段落）。既定は、鍵（スキル定義・録画の台帳・比べる指定）の変わった観測値だけを計算し直す（数秒）。鍵はモデルのコードを含まないので、モデルを大きく組み直す PR と、定期の見直しでは `npm run records:minimal -- --all` で全部を計算し直し、差が出ないことを見る（差が出たら鍵に足りない入力を足す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 7.2 節）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
 
 ## 8. 結論

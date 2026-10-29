@@ -8,7 +8,7 @@ import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
 import { sortRecordings, type RecordingEntry, type RecordingsFile } from '../src/records/recordings.ts';
-import type { SensitivityEntry } from '../src/records/relevance.ts';
+import { sensitivityId, type SensitivityEntry } from '../src/records/relevance.ts';
 import type { DefinedCharacter } from '../src/records/skills.ts';
 import type { PredictionFile } from '../src/records/predictions.ts';
 import { idsInPaths } from '../src/records/drafts.ts';
@@ -19,7 +19,7 @@ import type { BuildMasters, CharacterData } from '../src/types.ts';
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 const DATA = `${ROOT}packages/core/data/`;
 const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
-const CLAIMS_DIR = `${ROOT}records/claims/`;
+export const CLAIMS_DIR = `${ROOT}records/claims/`;
 const RECORDINGS_DIR = `${ROOT}records/recordings/`;
 /** 録画の一覧（生成物。Stage 20-C） */
 export const RECORDINGS_DOC_PATH = `${ROOT}plan/captures/recordings.md`;
@@ -242,7 +242,7 @@ export function loadSkillDefinitions(): DefinedCharacter[] {
   }));
 }
 
-function claimFileNames(): string[] {
+export function claimFileNames(): string[] {
   return readdirSync(CLAIMS_DIR).filter((name) => name.endsWith('.json'));
 }
 
@@ -266,5 +266,5 @@ export type SensitivityFile = { version: number; entries: SensitivityEntry[] };
 export function loadSensitivity(): Map<string, SensitivityEntry> {
   if (!existsSync(SENSITIVITY_PATH)) return new Map();
   const file = readJson<SensitivityFile>(SENSITIVITY_PATH);
-  return new Map(file.entries.map((e) => [`${e.observation}|${e.element}`, e]));
+  return new Map(file.entries.map((e) => [sensitivityId(e.observation, e.element), e]));
 }

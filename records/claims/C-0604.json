@@ -11,13 +11,5 @@
   "subject": {
     "places": ["data/skills/511.json の skill1 の effects[0]"]
   },
-  "decidedOn": [],
-  "minimal": [
-    {
-      "observations": ["0480-12", "0481-12"],
-      "element": "シンデレラ burst.notes[0]",
-      "reason": "シンデレラの burst の notes[0]（追加ダメージのヒットの時の最終最大HP の読み直し。未実装）は、バーストの追加ダメージの値だけを変え、この観測量に効かない",
-      "decided": "2026-10-26"
-    }
-  ]
+  "decidedOn": []
 }

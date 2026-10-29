@@ -64,7 +64,8 @@ const PAIRS: PairDef[] = [
     name: 'private',
     local: join(main, 'private'),
     remote: `${driveSync()}/private`,
-    filterText: '# サービスアカウントの鍵（*.json）は同期しない（設計書 4.1 節）\n- *.json\n',
+    // 直下の *.json（サービスアカウントの鍵と、build:fetch の手元のパスの設定）だけを外す。builds/ の *.json は上げる
+    filterText: '# 直下の *.json は同期しない（設計書 4.1 節）\n- /*.json\n',
     // ファイルが owner.md だけなので、目印が無いとクラウドで追記するたびに全部が変わったと見なして止まる（設計書 4.2 節）
     checkAccess: true,
   },
