@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { jstDate, previousName, snapshotName, sortNames } from './import-lib.ts';
+import {
+  jstDate,
+  parseSnapshotAnswer,
+  previousName,
+  snapshotForRecording,
+  snapshotName,
+  sortNames,
+} from './import-lib.ts';
 
 describe('jstDate', () => {
   it('uses the Japanese date', () => {
@@ -32,5 +39,37 @@ describe('sortNames and previousName', () => {
     expect(previousName(['2026-10-06', '2026-10-24'], '2026-10-24-2')).toBe('2026-10-24');
     expect(previousName(['2026-10-06', '2026-10-24'], '2026-10-06')).toBeNull();
     expect(previousName([], '2026-10-06')).toBeNull();
+  });
+});
+
+describe('snapshotForRecording', () => {
+  const names = ['2026-10-24-2', '2026-10-06', '2026-10-24'];
+  it('defaults to the latest snapshot on or before the recording date', () => {
+    expect(snapshotForRecording(names, '2026-10-24')).toEqual({ name: '2026-10-24-2', notice: null });
+  });
+  it('notices that the recording date has no snapshot', () => {
+    expect(snapshotForRecording(names, '2026-10-29')).toEqual({
+      name: '2026-10-24-2',
+      notice: '撮った日（2026-10-29）の育成が無い（最新は 2026-10-24-2）',
+    });
+    expect(snapshotForRecording(names, '2026-10-10')).toEqual({
+      name: '2026-10-06',
+      notice: '撮った日（2026-10-10）の育成が無い（最新は 2026-10-06）',
+    });
+    expect(snapshotForRecording(names, '2026-10-01')).toEqual({
+      name: null,
+      notice: '撮った日（2026-10-01）の育成が無い（その日以前のスナップショットが無い）',
+    });
+    expect(snapshotForRecording([], '2026-10-24').name).toBeNull();
+  });
+});
+
+describe('parseSnapshotAnswer', () => {
+  it('takes the default for an empty answer, null for -, and only snapshot names otherwise', () => {
+    expect(parseSnapshotAnswer('', '2026-10-24')).toBe('2026-10-24');
+    expect(parseSnapshotAnswer('  ', null)).toBeNull();
+    expect(parseSnapshotAnswer('-', '2026-10-24')).toBeNull();
+    expect(parseSnapshotAnswer(' 2026-10-06-2 ', '2026-10-24')).toBe('2026-10-06-2');
+    expect(parseSnapshotAnswer('10-06', '2026-10-24')).toBeUndefined();
   });
 });

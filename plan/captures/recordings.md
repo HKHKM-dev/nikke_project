@@ -1,7 +1,7 @@
 # 録画の一覧
 
 - **このファイルは生成する（手で書かない）**。録画は `records/recordings/<録画 id>.json` に 1 本 1 ファイルで置き、`npm run records:check` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。素性（尺・フレーム数・fps・サイズ・sha256）は録画の JSON にだけある。
-- 武器・属性・レアはキャラのデータから引く。`—` は記録が無い値。
+- 武器・属性・レアはキャラのデータから引く。`—` は記録が無い値。「スペック固定」の列の（育成 YYYY-MM-DD）は、読むのに使う育成のスナップショット（`buildSnapshot`。[../design-build-snapshot.md](../design-build-snapshot.md) 6 節）。
 - 録画ごとの条件・写っているもの・注意（的・フレーム落ちなど）は、その録画の JSON の `conditionNote`（下の表の「条件」の列）。命名規約は [index.md](index.md)、撮影の手順は [protocol.md](protocol.md)、置き場所は [storage.md](storage.md)。
 
 ## 録画

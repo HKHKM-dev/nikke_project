@@ -4,7 +4,7 @@
 import type { CollectionInput, CubeInput, OverloadLine } from '../build.ts';
 import type { SkillLevels } from '../skills/resolve.ts';
 import type { CharacterData, Element, GearPart } from '../types.ts';
-import { RECORDING_ID } from './ids.ts';
+import { RECORDING_ID, SNAPSHOT_NAME } from './ids.ts';
 
 /** 録画を置く種別フォルダ（plan/captures/storage.md「置き場所」の語彙） */
 export const RECORDING_FOLDERS = ['range', 'interception', 'raid', 'skill', 'burst', 'ui'] as const;
@@ -119,6 +119,11 @@ export type ProjectRecording = RecordingConditions & {
   /** sha256 の先頭 12 桁 */
   sha256: string;
   /**
+   * 読むのに使う育成のスナップショット（private/builds/<名前>.json。例: 2026-10-24、2026-10-24-2）。スペック固定 OFF の実ビルドの
+   * 録画にだけ書く（2026-10-29 から。それより前の録画は conditionNote の自由文のまま。plan/design-build-snapshot.md 6 節）
+   */
+  buildSnapshot?: string;
+  /**
    * Drive に置いた記録（2026-10-25 から intake.ts が書く）。無ければ intake.ts は置けたと確かめていない（それより前の録画と手で
    * 同期した録画は plan/captures/backup-log.md・backup-log-old2.md・backup-log-old.md）
    */
@@ -183,6 +188,12 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
       }
       if (!/^[0-9a-f]{12}$/.test(entry.sha256)) errors.push(`${at}: sha256 は先頭 12 桁の 16 進`);
       if (entry.backup !== undefined) errors.push(...validateBackup(entry.backup, at));
+      // 形だけ見る（実体は private/ にあり CI から見えない。plan/design-build-snapshot.md 6 節）
+      if (entry.buildSnapshot !== undefined) {
+        if (!SNAPSHOT_NAME.test(entry.buildSnapshot))
+          errors.push(`${at}: buildSnapshot は YYYY-MM-DD か YYYY-MM-DD-<枝番>: ${entry.buildSnapshot}`);
+        if (entry.fixedSpec === true) errors.push(`${at}: buildSnapshot はスペック固定 OFF の録画にだけ書く`);
+      }
     }
     if (entry.mode !== null && !RECORDING_MODES.includes(entry.mode))
       errors.push(`${at}: mode が語彙に無い: ${entry.mode}`);
@@ -262,14 +273,14 @@ function targetText(entry: RecordingEntry): string {
 /** 録画の一覧（条件） */
 export function renderRecordingTable(file: RecordingsFile, characters: ReadonlyMap<number, CharacterData>): string {
   const rows = file.recordings
-    .filter((e) => !isLegacy(e))
+    .filter((e): e is ProjectRecording => !isLegacy(e))
     .map((e) => [
       e.id,
-      `\`${(e as ProjectRecording).file}\``,
+      `\`${e.file}\``,
       teamText(e, characters),
       targetText(e),
       e.mode === null ? '—' : MODE_JA[e.mode],
-      flag(e.fixedSpec, 'ON', 'OFF'),
+      flag(e.fixedSpec, 'ON', 'OFF') + (e.buildSnapshot === undefined ? '' : `（育成 ${e.buildSnapshot}）`),
       `${flag(e.autoFire, 'ON', 'OFF')} / ${flag(e.autoBurst, 'ON', 'OFF')}`,
       e.conditionNote,
     ]);
@@ -318,7 +329,7 @@ export function extractGeneratedSection(doc: string, name: string): string {
 const RECORDINGS_DOC_HEADER = `# 録画の一覧
 
 - **このファイルは生成する（手で書かない）**。録画は \`records/recordings/<録画 id>.json\` に 1 本 1 ファイルで置き、\`npm run records:check\` で作り直す（[design-stage20.md](../design-stage20.md) 3.5 節）。素性（尺・フレーム数・fps・サイズ・sha256）は録画の JSON にだけある。
-- 武器・属性・レアはキャラのデータから引く。\`—\` は記録が無い値。
+- 武器・属性・レアはキャラのデータから引く。\`—\` は記録が無い値。「スペック固定」の列の（育成 YYYY-MM-DD）は、読むのに使う育成のスナップショット（\`buildSnapshot\`。[../design-build-snapshot.md](../design-build-snapshot.md) 6 節）。
 - 録画ごとの条件・写っているもの・注意（的・フレーム落ちなど）は、その録画の JSON の \`conditionNote\`（下の表の「条件」の列）。命名規約は [index.md](index.md)、撮影の手順は [protocol.md](protocol.md)、置き場所は [storage.md](storage.md)。`;
 
 /** plan/captures/recordings.md の全文（録画の一覧・旧プロジェクトの録画の 2 つの表。素性は録画の JSON にだけ置く） */

@@ -1,7 +1,7 @@
 # 育成データの取得のルーティン化 設計書
 
 - 対象: ShiftyPad（Blablalink）からのオーナーの育成データの取得（[design-stage12.md](design-stage12.md) 11.1 節の手順）、`--build` の育成入力（`packages/core/scripts/sim-run.ts`・`packages/core/src/build.ts`）、録画の台帳（`records/recordings/`）、`private/`
-- 状態: **承認（2026-10-29。12 節の推奨のとおり）**。段 1・2 は実装済み（13・14 節）。段 3 は未着手
+- 状態: **承認（2026-10-29。12 節の推奨のとおり）**。段 1〜3 は実装済み（13〜15 節）
 - 関連: [design-stage12.md](design-stage12.md) 11.1 節（API とフィールドの写し方）、[captures/guide.md](captures/guide.md)「実ビルド」の行、[captures/protocol.md](captures/protocol.md)、[design-cloud-environment.md](design-cloud-environment.md)（`private/` の同期）、[references.md](references.md)（ExiaInvasion の規約の注意）、V-0462・V-0486
 - 作成日: 2026-10-29
 - 調べた時点: main の 12dce19（#747）。取得済みのデータとその変換の跡（`scratch/blablalink/`）は、起案の後に Drive から取り寄せて見た（13 節）
@@ -155,3 +155,17 @@
   - 写せない値は 0 件。2026-10-24 との差は、所持の増え・シンクロ Lv と研究の Lv の上がり・好感度・凸・コア・キューブの付け替えで、妥当だった。
   - 初回はログインを挟んだので、ページの読み込みだけでヘッダを拾えるか（ニケを 1 体開く操作が要るか）は分からないまま。ツールは 20 秒拾えなければ、ニケを 1 体開くよう案内する。
 - 既存の 3 回分（`scratch/blablalink/`）は、5 節のとおり `build:import` で `private/builds/` に置いた。
+
+## 15. 段 3 の実装（2026-10-29）
+
+- 録画の台帳に任意の欄 `buildSnapshot` を足した（`ProjectRecording`。`packages/core/src/records/recordings.ts`）。名前の形 `SNAPSHOT_NAME` は `packages/core/src/records/ids.ts` に移し、`tools/builds/` と台帳の検査で同じものを使う。既存の録画は書き直していない（`conditionNote` の自由文のまま）。
+- `records:check`（`validateRecordings`）は形だけを見る（実体の有無は見ない）。スペック固定 ON（`fixedSpec` が `true`）の録画に書いてあれば落とす。6 節の「`fixedSpec` が `true` でない」に合わせ、`null`（記録に無い）は通す（育成の `build` は `false` だけを通すが、`buildSnapshot` は 6 節の文のとおりにした）。
+- 録画の一覧（`plan/captures/recordings.md`）は、「スペック固定」の列に `OFF（育成 2026-10-24）` の形で出す（列は足さない）。
+- `tools/captures/intake.ts`:
+  - `--build-snapshot <名前>` で書く（`-` は書かない）。スペック固定 ON（`--fixed-spec on`）で名前を渡すと止める。`private/builds/` にその名前が無ければ注意だけ出す。
+  - 渡さず `--fixed-spec off` なら、撮った日以前でいちばん新しいスナップショットを既定にして聞く（Enter で既定、`-` で書かない）。撮った日に取ったものが無ければ「撮った日（YYYY-MM-DD）の育成が無い（最新は YYYY-MM-DD）」と知らせる。選び方と知らせは `tools/builds/import-lib.ts` の `snapshotForRecording`・`parseSnapshotAnswer`（純関数。テストは `import-lib.test.ts`）。
+  - まとめて取り込むとき（1 回の撮影の録画）は、初めの録画で決めたものを残りにも書く（聞くのは 1 回）。
+  - 標準入力が端末でなければ（エージェントが回すとき）、聞かずに既定を書いて、そう出す。
+  - `private/builds/` が無い環境（クラウドで始めのフックが `private/` を取れなかったときなど）では聞かずに進み、「人が埋める項目」に `buildSnapshot` を出す。
+  - 置き場所（`private/builds/`・スナップショットの名前の一覧）は `tools/builds/dirs.ts` に切り出し、`store.ts`・`fetch.ts` と共有した。メインのチェックアウトを探す処理は `tools/git/main-checkout.ts` に 1 つにし、`tools/drive/sync.ts` も使う。
+- 読み取りのレシピ・残差でこの欄を使う部分は作っていない（6 節。要る検証が出たときに足す）。

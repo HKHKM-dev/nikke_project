@@ -19,3 +19,9 @@ export const V_ID_IN_TEXT = new RegExp(`V-${ID_DIGITS}`);
  * 古い文の 2〜3 桁の番号を読む所（renumber.ts の REC_ID など）はこれより広い
  */
 export const RECORDING_ID = /^(?!0000)\d{4}$/;
+
+/**
+ * 育成のスナップショットの名前（取得の日（日本時間）。同じ日の 2 回目からは <日付>-2、-3 …。plan/design-build-snapshot.md 5 節）。
+ * private/builds/ のファイル名（tools/builds/）と、録画の台帳の buildSnapshot（同 6 節）の形。捕まえるのは日付と枝番
+ */
+export const SNAPSHOT_NAME = /^(\d{4}-\d{2}-\d{2})(?:-(\d+))?$/;

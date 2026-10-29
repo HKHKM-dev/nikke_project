@@ -111,6 +111,23 @@ describe('records/recordings', () => {
     expect(errors).toContainEqual('0002 枠 1: build.skillLevels の skill3 はスロットでない');
   });
 
+  it('checks only the shape of buildSnapshot and accepts it unless fixed-spec ON (plan/design-build-snapshot.md 6 節)', () => {
+    const at = (fixedSpec: boolean | null, buildSnapshot: string) => ({ ...first, fixedSpec, buildSnapshot });
+    // 実体（private/builds/）の有無は見ない
+    for (const ok of [at(false, '2026-10-24'), at(null, '2099-01-01-2')])
+      expect(validateRecordings({ recordings: [ok] }, knownRids)).toEqual([]);
+    expect(validateRecordings({ recordings: [at(true, '2026-10-24')] }, knownRids)).toEqual([
+      `${first.id}: buildSnapshot はスペック固定 OFF の録画にだけ書く`,
+    ]);
+    for (const bad of ['2026-10-24-', '20261024', '2026-10-24.json', 'latest'])
+      expect(validateRecordings({ recordings: [at(false, bad)] }, knownRids)).toEqual([
+        `${first.id}: buildSnapshot は YYYY-MM-DD か YYYY-MM-DD-<枝番>: ${bad}`,
+      ]);
+    expect(renderRecordingsDoc({ recordings: [at(false, '2026-10-24-2')] }, characters)).toContain(
+      '| OFF（育成 2026-10-24-2） |',
+    );
+  });
+
   it('checks the shape of the Drive backup record (plan/design-workflow-simplification.md 2 節)', () => {
     const placed = {
       ...first,
