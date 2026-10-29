@@ -159,7 +159,7 @@
 ## 15. 段 3 の実装（2026-10-29）
 
 - 録画の台帳に任意の欄 `buildSnapshot` を足した（`ProjectRecording`。`packages/core/src/records/recordings.ts`）。名前の形 `SNAPSHOT_NAME` は `packages/core/src/records/ids.ts` に移し、`tools/builds/` と台帳の検査で同じものを使う。既存の録画は書き直していない（`conditionNote` の自由文のまま）。
-- `records:check`（`validateRecordings`）は形だけを見る（実体の有無は見ない）。スペック固定 ON（`fixedSpec` が `true`）の録画に書いてあれば落とす。6 節の「`fixedSpec` が `true` でない」に合わせ、`null`（記録に無い）は通す。枠の育成（`build`）も同じ条件に揃えた（2026-10-29。前は `false` だけを通した。照合ランナーは `fixedSpec` が `null` の録画を比べないので、モデルの入力は変わらない）。
+- `records:check`（`validateRecordings`）は形だけを見る（実体の有無は見ない）。スペック固定 ON（`fixedSpec` が `true`）の録画に書いてあれば落とす。6 節の「`fixedSpec` が `true` でない」に合わせ、`null`（記録に無い）は通す。枠の育成（`build`）も、録画の台帳と予測（`predictions.ts`）の両方で同じ条件に揃えた（2026-10-29。前は `false` だけを通した。照合ランナーは `fixedSpec` が `null` の録画を比べず、予測の `fixedSpec` は `true` か `false` しか通らないので、モデルの入力は変わらない）。
 - 録画の一覧（`plan/captures/recordings.md`）は、「スペック固定」の列に `OFF（育成 2026-10-24）` の形で出す（列は足さない）。
 - `tools/captures/intake.ts`:
   - `--build-snapshot <名前>` で書く（`-` は書かない）。スペック固定 ON（`--fixed-spec on`）で名前を渡すと止める。`private/builds/` にその名前が無ければ注意だけ出す。
