@@ -1114,6 +1114,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     lists.registerFrame(ev);
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
+      // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（いまは cooldownReduction の selfState だけ）
+      if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
       // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
       if (src.effect.kind === 'burstGauge') {
         if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない

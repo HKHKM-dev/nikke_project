@@ -1080,6 +1080,8 @@ export type ResolvedInstantEffect = {
   delayFrames?: number;
   /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
   scaling?: 'flat';
+  /** 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある） */
+  condition?: EffectCondition;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -1133,6 +1135,8 @@ export function resolveInstant(
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }
       if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
+      if (effect.kind === 'cooldownReduction' && effect.condition !== undefined)
+        r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

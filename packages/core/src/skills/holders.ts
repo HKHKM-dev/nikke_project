@@ -341,6 +341,12 @@ export type HolderLists = {
    */
   burstCooldownAt(holder: number, frame: number): number;
   /**
+   * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 即時効果 effect の発火の条件（cooldownReduction の selfState）が、
+   * 出どころの枠 sourceSlotIndex でフレーム frame に満たされるか。timed の段 1.5 の条件と同じ件を見る。満たさなければ条件で出なかった
+   * 記録を残す。手順 3 の後に呼ぶ
+   */
+  instantConditionHolds(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): boolean;
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
@@ -1826,6 +1832,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
       }
       return sum;
+    },
+    instantConditionHolds(effect, sourceSlotIndex, frame) {
+      if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
+      skipEffect(sourceSlotIndex, effect, frame);
+      return false;
     },
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];

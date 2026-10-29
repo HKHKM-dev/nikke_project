@@ -50,7 +50,11 @@ function solo(definition: SkillDefinition): TeamInput {
 describe('モラン（281）', () => {
   it('models the S2 gauge in both the base and the treasure S2', () => {
     expect(def.skills.skill2).toMatchObject({ support: 'supported', effects: [expect.objectContaining(GAUGE)] });
-    expect(def.treasureSkills?.skill2).toMatchObject({ support: 'partial', effects: [expect.objectContaining(GAUGE)] });
+    // 2 段目の段 12 の PR 4（V-0540）: 宝物版の S2 は、熱血状態のクールタイム▼（effects[1]）を足して supported
+    expect(def.treasureSkills?.skill2).toMatchObject({
+      support: 'supported',
+      effects: [expect.objectContaining(GAUGE), expect.objectContaining({ kind: 'cooldownReduction' })],
+    });
     // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 撃った 6f 後に溜まる（C-0480）
     expect(resolveShotGauges(def, moran, MAX_SKILL_LEVELS)).toEqual([{ count: 'lastShot', every: 1, delayFrames: 6 }]);
     expect(resolveTimerGauges(def)).toEqual([]);

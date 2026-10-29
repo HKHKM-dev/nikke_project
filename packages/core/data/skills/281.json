@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 281,
-  "checkedAt": "2026-10-28",
+  "checkedAt": "2026-10-29",
   "skills": {
     "skill1": {
       "effects": [
@@ -176,6 +176,22 @@
           "claims": [
             "C-0480"
           ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "ref": 10,
+          "condition": {
+            "selfState": "fervor"
+          },
+          "assumes": {
+            "ja": "熱血（宝物版の S1。射撃場では戦闘開始時から持続。C-0706）が付いていれば、フルバーストの始まりのたびに自分を含む味方全体の残りの CT を縮める（V-0540: デルタの縮んだ量は説明文の値どおり。サンとモランは下限）。条件は発火のフレームに、timed の条件と同じ件を見る。熱血でない時に出ないことは録画で見ていない（説明文どおり）",
+            "en": "With Fervor on (treasure S1; from the start of battle and continuous on the shooting range; C-0706), each Full Burst start shortens the remaining cooldown of all allies including self (V-0540: the cut on Delta matches the description value; for Sun and Moran only lower bounds are seen). The condition looks at the same items as a timed condition at the firing frame. That it does not fire without Fervor is not seen in the recordings (as described)"
+          },
+          "claims": [
+            "C-0728"
+          ]
         }
       ],
       "notes": [
@@ -189,16 +205,6 @@
           "en": "The max HP increases on self by number of uses when HP falls to 20% or below does not change damage by itself (it matters only with an effect reading HP in the team)",
           "kind": "indirect",
           "path": "hp"
-        },
-        {
-          "ja": "フルバーストタイムの発動時、熱血状態なら味方全体のバーストスキルクールタイム▼は未対応（単騎の録画ではフルバーストにならず、見えていない。V-0530）",
-          "en": "The Burst Skill cooldown reduction on all allies when Full Burst starts while in Fervor is not modeled (solo recordings never reach Full Burst, so it has not been seen; V-0530)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "allies",
-            "trigger": "fullBurstStart"
-          }
         }
       ]
     },
