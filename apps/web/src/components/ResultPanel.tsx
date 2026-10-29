@@ -24,6 +24,7 @@ import {
   formatBuildEffectSource,
   formatDamageCondition,
   formatEffectSource,
+  formatBurstStepMode,
   formatInstant,
   formatConditionSuffix,
   formatInstantTarget,
@@ -288,7 +289,8 @@ export function ResultPanel({
                   {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
                   {slotNames[x.instant.sourceSlotIndex] ?? ''}
                   {formatInstantTarget(x.instant.effect)}
-                  {formatConditionSuffix(x.instant.effect.condition)}・{x.count} 回
+                  {formatConditionSuffix(x.instant.effect.condition)}
+                  {formatBurstStepMode(x.instant.effect.burstStepMode)}・{x.count} 回
                   {x.instant.effect.kind === 'cooldownReduction'
                     ? `（計 ${formatNumber(framesToGameSeconds(x.total), 2)} 秒）`
                     : x.instant.effect.kind === 'ammoRefill'

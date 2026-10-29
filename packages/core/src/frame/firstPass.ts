@@ -56,7 +56,7 @@
 // （射撃に効く窓・当たりの窓・攻撃力の窓・状態の付与・吸収回復の窓・段の循環の窓）。手順 3 の順は
 // 回復 → 段 1 → 段 1.5 → 段 2 → 強化（貯めるだけ）→ 即時効果 で、上の順と同じ結果になる（同 2.4 節）。段の循環のゲージ（V-0030）は、
 // このフレームに付いた間隔の変更の件も見るように、手順 3 の後で数える（ゲージは先のフレームに予約するので、数える位置で値は変わらない）。
-import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
+import { burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import {
@@ -70,6 +70,7 @@ import {
 } from '../burst/controller.ts';
 import {
   SG_PELLET_GAUGE_HIT_RATE,
+  burstCandidateOf,
   burstUnitOf,
   energyPerTrigger,
   fullChargeGaugeOf,
@@ -279,9 +280,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (options.manualBursts !== undefined) throw new RangeError('manualBursts needs the dynamic burst model');
       if (options.noBurstSlots !== undefined) throw new RangeError('noBurstSlots needs the dynamic burst model');
       fixed = planFixedCycle(
-        slots.map((s) =>
-          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
-        ),
+        slots.map((s) => (s === null ? null : burstCandidateOf(s.character, s.definition))),
         frames,
       );
     } else {

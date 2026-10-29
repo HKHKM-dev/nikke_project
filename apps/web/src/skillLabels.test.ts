@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   formatAppliedAmount,
+  formatBurstStepMode,
   formatCounterChange,
   formatEffectSource,
   formatConditionSuffix,
@@ -186,5 +187,26 @@ describe('カウンタの増減の表示', () => {
       'オーバーエネルギーが最大になった時に オーバーエネルギー −100（上限 100）',
     );
     expect(formatCounterChange(stage!, 1)).toMatch(/^オーバーエネルギーが最大になった時に .+ \+1（上限 4）$/);
+  });
+});
+
+// 2 段目の段 12 の PR 3（plan/design-skill-stage12.md 2.5 節）: 名前の付いたバースト段階の変更のどちらの側の効果か
+describe('戦闘補助の側の表示', () => {
+  it('writes the side of Combat Assist after the source', () => {
+    const effect: AppliedEffect = {
+      source: { resourceId: 16, skill: 'skill1', name: { ja: 'S1', en: 'S1' } },
+      target: 'allies',
+      stat: 'attackDamage',
+      scaling: 'ratio',
+      value: 0.0802,
+      burstStepMode: { name: { ja: '戦闘補助', en: 'Combat Assist' }, changed: true },
+      sourceSlotIndex: 2,
+      appliedAmount: 0.0802,
+    };
+    expect(formatEffectSource(effect, 'ラピ：レッドフード')).toBe('枠 3 ラピ：レッドフード スキル 1（戦闘補助）');
+    expect(formatBurstStepMode({ name: { ja: '戦闘補助', en: 'Combat Assist' }, changed: false })).toBe(
+      '（戦闘補助でない時）',
+    );
+    expect(formatBurstStepMode(undefined)).toBe('');
   });
 });

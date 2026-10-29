@@ -1,0 +1,25 @@
+{
+  "id": "C-0730",
+  "text": "ラピ：レッドフードの S1「フルバーストタイムが発動した時、自分が戦闘補助状態なら、味方全体にバーストスキルクールタイム 7.48 秒▼」は、戦闘補助の編成で、フルバーストの始まりに味方全体（自分も）の残りの CT を 7.48 秒縮める。同じフレームに始まった III（I-DOLL・サン）の CT も縮む",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0731-07`・`0732-07`（フルバーストの入りどうしの間隔。2 回目からはデルタ（II）の CT の明けを待つ）。間隔は 2 本の 10 回とも 1,937〜1,938f で、CT 40 秒から 7.48 秒を引いたモデル（1,936f）と 2f 以内（入りの止まりの長さの回ごとの差。C-0069）。▼が無ければ CT は 2,353f で、間隔は 2,380f ほどになる（モデルで▼を外すとチェーンが切れる）。I-DOLL・サンの CT の明けも、デルタと同じくフルバーストの 00.00 から 1,931f。V-0541",
+  "model": "`data/skills/16.json` の skill1 の effects[2]（cooldownReduction・fullBurstStart・allies・ref 2・burstStepMix { otherBurstStep: Step1, present: false }）。縮め方はいまの即時の CT▼（`burst/controller.ts` の reduceCooldown。plan/design-stage10.md 4 節）",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/16.json の skill1 の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（S1 の description_value_02 = 7.48 秒・07 = 8.02%・08 = 10 秒、バーストの description_value_03 = 18.01%・04 = 10 秒と直書きの 20 秒）と、確定の結論の式（攻撃力▲の加算・攻撃ダメージ▲の枠・フルバースト補正・即時の CT▼（plan/design-stage10.md 4 節））だけから決めた（合わせ込みの定数なし）",
+  "gradeReason": "値と式は説明文と確定の結論だけから決め（合わせ込みの定数なし）、2 本の 10 回の間隔がモデルと 2f 以内で合う",
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "ラピ：レッドフード burst.notes[0]",
+      "reason": "爆発範囲▲はダメージの式に無く、ラピ：レッドフードは撃たない（粘着榴弾も出ない）ので、範囲が広がってもバーストを撃った枠・フルバーストの時刻・味方の 1 ヒットは変わらない",
+      "decided": "2026-10-29"
+    }
+  ]
+}

@@ -23,38 +23,64 @@
           "claims": [
             "C-0715"
           ]
+        },
+        {
+          "kind": "burstStepChange",
+          "step": "Step1",
+          "name": {
+            "ja": "戦闘補助",
+            "en": "Combat Assist"
+          },
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "基本バースト段階 I の味方がいなければ、戦闘補助としてバースト I に変わる（戦闘開始時とフルバーストタイムの終了時の付け直しは、編成が変わらないので同じ結果）。バースト I を使った後は II に進む。差し替えた段はバーストのチェーン（どの枠が I を使うか）にだけ効き、ほかのキャラの「基本バースト段階が〜の味方」は差し替える前の III で数える（確かめていない）",
+            "en": "With no base burst stage I ally she switches to burst I as Combat Assist (re-applying it at battle start and at the end of Full Burst gives the same result, since the squad does not change). After her burst I the chain moves to II. The changed stage only affects the burst chain (which slot uses I); other characters' \"allies with base burst stage ...\" still count her as III (not verified)"
+          },
+          "claims": [
+            "C-0729"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "ref": 2,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "戦闘補助 ⇔ 基本バースト段階 I の味方がいない（戦闘補助は編成だけで決まり、戦闘中に付き外れしない）",
+            "en": "In Combat Assist ⇔ no ally with base burst stage I is present (Combat Assist depends only on the squad and does not change during battle)"
+          },
+          "claims": [
+            "C-0730"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 7,
+          "durationRef": 8,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "戦闘補助 ⇔ 基本バースト段階 I の味方がいない（戦闘補助は編成だけで決まり、戦闘中に付き外れしない）",
+            "en": "In Combat Assist ⇔ no ally with base burst stage I is present (Combat Assist depends only on the squad and does not change during battle)"
+          },
+          "claims": [
+            "C-0731"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "部隊構成による戦闘補助（基本バースト段階が I の味方がいなければ、自分をバースト I に変更）は未対応",
-          "en": "Combat Support by squad composition (if no ally has base burst stage I, she becomes burst I) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "unknown"
-          }
-        },
-        {
-          "ja": "フルバーストタイムの発動時、戦闘補助状態なら味方全体のバーストスキルクールタイム▼は未対応",
-          "en": "The burst skill cooldown reduction on all allies when Full Burst starts, while in Combat Support, is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "allies",
-            "trigger": "fullBurstStart"
-          }
-        },
-        {
-          "ja": "フルバーストタイムの発動時、戦闘補助状態なら味方全体の攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on all allies when Full Burst starts, while in Combat Support (10 s), is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "allies",
-            "trigger": "fullBurstStart"
-          }
-        },
         {
           "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）",
           "en": "The damage increase against blocking parts does not affect damage, since the range enemy has no blocking parts (requirements 5.2)",
@@ -288,30 +314,46 @@
           "claims": [
             "C-0727"
           ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "burstUse",
+          "target": "self",
+          "seconds": 20,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "使った段は編成で決まる（基本バースト段階 I の味方がいなければ戦闘補助で、バーストは I）。同じフレームに始まった自分のバーストの CT（40 秒）を 20 秒縮める",
+            "en": "The stage used is fixed by the squad (with no base burst stage I ally she is in Combat Assist and uses burst I). Shortens her own burst cooldown (40 s) that started on the same frame by 20 s"
+          },
+          "claims": [
+            "C-0732"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "使った段は編成で決まる（基本バースト段階 I の味方がいなければ戦闘補助で、バーストは I）。値は発動者（ラピ：レッドフード）のバフ前攻撃力の割合",
+            "en": "The stage used is fixed by the squad (with no base burst stage I ally she is in Combat Assist and uses burst I). The value is a share of the caster's (Rapi: Red Hood) pre-buff ATK"
+          },
+          "claims": [
+            "C-0733"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "バースト I で使った時の、自分のバーストスキルクールタイム▼は未対応",
-          "en": "The burst skill cooldown reduction on self when used as burst I is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "バースト I で使った時の、味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応",
-          "en": "The caster-based attack increase on all allies when used as burst I (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
-        },
         {
           "ja": "爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い）",
           "en": "The explosion range increase (10 s) is not modeled (explosion range is not in the damage formula)",

@@ -289,6 +289,7 @@ export function App() {
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   hpRatioTargeted={hpRatioTargeted}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
+                  teamCharacters={teamCharacters}
                   dispatch={dispatch}
                 />
               );

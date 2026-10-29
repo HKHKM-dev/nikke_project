@@ -163,7 +163,12 @@ const KIND_INFO: Record<string, Info> = {
   'fullBurst:extend': ['フルバーストタイム延長', 'gap', 'なし'],
   'fullBurst:shorten': ['フルバーストタイム短縮', 'gap', 'なし'],
   'burst:reentry': ['バースト再突入', 'ok', 'burstReentry'],
-  'burst:changeStep': ['バースト段階の変更', 'gap', 'なし'],
+  // 2 段目の段 12 の PR 3: 編成で決まる静的な形（ラピ：レッドフードの戦闘補助）
+  'burst:changeStep': [
+    'バースト段階の変更',
+    'ok',
+    'burstStepChange（編成の条件 burstStepMix で付く静的な形。差し替えた段はチェーンにだけ効く）',
+  ],
   weaponChange: ['使用武器変更', 'ok', 'weaponChange（項目による）'],
   'weaponChange:pierce': ['貫通特化', 'indirect', '貫通ダメージ▲を読む側にする状態（ツールチップ T2）'],
   autoAttack: ['自動攻撃・召喚・独自の弾', 'check', 'autoAttack（形による）'],

@@ -6,8 +6,8 @@
 // Stage 8: 射手は frame/shots.ts の planShots で 1 回だけ回し、その射撃の列からゲージを溜める（回数トリガーと共有する）。
 // 常時のゲージ速度（burstGaugeSpeed。マナ S2）は枠ごとの 1 トリガーのゲージに (1 + 速度) を掛ける。
 import { planShots, type ShotLog } from '../frame/shots.ts';
-import type { CharacterData, ShotParams } from '../types.ts';
-import { burstReentryStepOf, type SkillDefinition } from '../skills/types.ts';
+import type { BurstStep, CharacterData, ShotParams } from '../types.ts';
+import { burstReentryStepOf, burstStepChangeOf, type SkillDefinition } from '../skills/types.ts';
 import { DEFAULT_WEAPON_MODEL, type WeaponModel } from '../weapons.ts';
 import {
   DEFAULT_BURST_TIMING,
@@ -18,6 +18,7 @@ import {
   type BurstUnit,
 } from './controller.ts';
 import { burstDelaysFieldOf } from './landing.ts';
+import type { BurstCandidate } from './fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { BurstSchedule } from './schedule.ts';
 
@@ -64,15 +65,30 @@ export function partialGaugeRatio(shot: ShotParams, controlled: boolean, progres
 }
 
 /**
- * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。編成の条件で外した後）があれば、次の段階をそれに差し替える
+ * 枠のバーストの段。2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 定義にバースト段階の変更（burstStepChange。編成の条件で
+ * 外した後）があれば、その段。チェーンを組む所（動的・固定サイクル）だけが使い、「基本バースト段階」は CharacterData.burstStep のまま
+ */
+export function burstStepOf(character: CharacterData, definition: SkillDefinition | null = null): BurstStep {
+  return burstStepChangeOf(definition) ?? character.burstStep;
+}
+
+/** 固定サイクルの枠の候補（段と遅れ）。段は burstStepOf（バースト段階の変更の後） */
+export function burstCandidateOf(character: CharacterData, definition: SkillDefinition | null = null): BurstCandidate {
+  return { burstStep: burstStepOf(character, definition), ...burstDelaysFieldOf(character) };
+}
+
+/**
+ * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。編成の条件で外した後）があれば、次の段階をそれに差し替える。
+ * 2 段目の段 12: バースト段階の変更（burstStepChange）があれば段を差し替え、次の段階は段の順のまま（NextStep。再突入があればそれ）
  */
 export function burstUnitOf(
   character: CharacterData,
   definition: SkillDefinition | null = null,
 ): NonNullable<BurstUnit> {
+  const changed = burstStepChangeOf(definition);
   return {
-    burstStep: character.burstStep,
-    nextStep: burstReentryStepOf(definition) ?? character.burstSkill.nextStep,
+    burstStep: changed ?? character.burstStep,
+    nextStep: burstReentryStepOf(definition) ?? (changed !== null ? 'NextStep' : character.burstSkill.nextStep),
     cooldownFrames: gameSecondsToFrames(character.burstSkill.cooldownSeconds),
     // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
     fullBurstFrames: gameSecondsToFrames(character.burstSkill.durationSeconds),

@@ -6,10 +6,10 @@
 // Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
 // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
-import { burstDelaysFieldOf, burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
+import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
-import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
+import { burstCandidateOf, planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
   hitFramesOf,
@@ -133,7 +133,7 @@ export function planTeamSchedule(
   if (!burst) return null;
   if (burstModel === 'fixed') {
     return planFixedCycle(
-      slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) })),
+      slots.map((s) => (s === null ? null : burstCandidateOf(s.character, s.skills?.definition ?? null))),
       frames,
     );
   }
