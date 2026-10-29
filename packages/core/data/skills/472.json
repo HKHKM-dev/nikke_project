@@ -67,7 +67,10 @@
             "stat": "unknown",
             "target": "self",
             "trigger": "battleStart"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "通常攻撃が広範囲の攻撃になることは、敵 1 体の前提では的の数を変えない（要件 5.2 節）。射撃場の的でコアに当たる割合が変わるかは録画で読む",
@@ -75,7 +78,10 @@
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -162,7 +168,10 @@
             "stat": "unknown",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }
