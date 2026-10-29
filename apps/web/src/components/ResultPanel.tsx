@@ -25,6 +25,7 @@ import {
   formatDamageCondition,
   formatEffectSource,
   formatInstant,
+  formatInstantCondition,
   formatInstantTarget,
   formatItemDuration,
   formatItemTrigger,
@@ -286,7 +287,8 @@ export function ResultPanel({
                 <small className="sub">
                   {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
                   {slotNames[x.instant.sourceSlotIndex] ?? ''}
-                  {formatInstantTarget(x.instant.effect)}・{x.count} 回
+                  {formatInstantTarget(x.instant.effect)}
+                  {formatInstantCondition(x.instant.effect)}・{x.count} 回
                   {x.instant.effect.kind === 'cooldownReduction'
                     ? `（計 ${formatNumber(framesToGameSeconds(x.total), 2)} 秒）`
                     : x.instant.effect.kind === 'ammoRefill'

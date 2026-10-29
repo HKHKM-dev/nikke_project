@@ -470,6 +470,12 @@ export function formatInstantTarget(effect: ResolvedInstantEffect): string {
   return effect.targetClass ? `（${CLASS_LABEL[effect.targetClass]}の味方）` : '';
 }
 
+/** 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 即時効果の発火の条件。「（自分が熱血状態なら）」。無ければ空文字 */
+export function formatInstantCondition(effect: ResolvedInstantEffect): string {
+  const conditions = formatGrantCondition(effect.condition);
+  return conditions === '' ? '' : `（${conditions}）`;
+}
+
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */
 export function formatEffectSource(effect: AppliedEffect, characterName: string | undefined): string {
   const who =

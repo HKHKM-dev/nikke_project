@@ -1122,6 +1122,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         pendingGaugeCharges.set(f + 1, list);
         continue;
       }
+      // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（cooldownReduction の selfState）
+      if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
       const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         if (src.effect.kind === 'cooldownReduction') {

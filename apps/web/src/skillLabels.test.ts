@@ -13,6 +13,7 @@ import {
   formatAppliedAmount,
   formatCounterChange,
   formatEffectSource,
+  formatInstantCondition,
   formatInstantTarget,
   formatRemoveState,
   formatStateGrant,
@@ -127,6 +128,24 @@ describe('HP の割合で選ぶ回復の表示', () => {
     };
     expect(formatInstantTarget(heal)).toBe('（残りの HP の割合が最も低い味方 1 機）');
     expect(formatInstantTarget({ ...heal, target: 'allies' })).toBe('');
+  });
+});
+
+// 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 条件つきのクールタイム▼（モランの宝物版の S2）
+describe('即時効果の条件の表示', () => {
+  it('writes the self state condition of a cooldown reduction', () => {
+    const cut: ResolvedInstantEffect = {
+      source: { resourceId: 281, skill: 'skill2', name: { ja: 'S2', en: 'S2' } },
+      kind: 'cooldownReduction',
+      trigger: 'fullBurstStart',
+      target: 'allies',
+      condition: { selfState: { state: 'fervor', present: true } },
+      value: 7.48,
+      effectIndex: 1,
+    };
+    expect(formatInstantCondition(cut)).toBe('（自分が熱血状態なら）');
+    const { condition: _condition, ...plain } = cut;
+    expect(formatInstantCondition(plain)).toBe('');
   });
 });
 

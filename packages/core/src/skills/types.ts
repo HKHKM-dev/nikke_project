@@ -1009,6 +1009,11 @@ export type CooldownReductionEffect = TargetCountFields & {
   burstStepMix?: BurstStepMixCondition;
   /** ラム編: 同じ部隊の味方の条件 */
   squad?: SquadCondition;
+  /**
+   * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件。鍵は selfState だけ（モランの宝物版の S2「自分が熱血状態なら」）。
+   * 発火のフレームに、timed の段 1.5 の条件と同じ件を見る（skills/holders.ts の conditionHoldsAt）
+   */
+  condition?: EffectCondition;
   assumes?: LocalizedText;
 };
 
@@ -2446,6 +2451,8 @@ const CONDITION_KEYS_OF = {
   passive: ['selfHp'],
   // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減は、自分の状態とカウンタの値。段 12 の PR 2: フルバーストの中か外か
   counterChange: ['selfState', 'selfCounter', 'inFullBurst'],
+  // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: クールタイム▼は自分の状態だけ
+  cooldownReduction: ['selfState'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
@@ -3438,6 +3445,8 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         ? ['burstStepMix', 'squad', 'withCharacter']
         : [];
   const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : [];
+  // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件は cooldownReduction だけ
+  const conditionKeys = kind === 'cooldownReduction' ? ['condition'] : [];
   for (const key of Object.keys(v)) {
     if (
       ![
@@ -3453,6 +3462,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         ...durationKeys,
         ...compositionKeys,
         ...scalingKeys,
+        ...conditionKeys,
         'assumes',
         'claims',
       ].includes(key)
@@ -3522,6 +3532,14 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   // 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: heal だけ（欄の一覧で弾いてある）
   if (v.delayFrames !== undefined) {
     (effect as HealEffect).delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+  }
+  // 2 段目の段 12 の PR 4: 欄の一覧で cooldownReduction だけに限ってある
+  if (v.condition !== undefined) {
+    (effect as CooldownReductionEffect).condition = parseCondition(
+      v.condition,
+      `${path}.condition`,
+      CONDITION_KEYS_OF.cooldownReduction,
+    );
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
