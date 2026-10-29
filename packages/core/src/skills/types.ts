@@ -623,7 +623,9 @@ export type EffectTrigger =
   | TimerTrigger
   | AppliedTrigger
   | FullStackTrigger
-  | WeaponChangeEndTrigger;
+  | WeaponChangeEndTrigger
+  // 2 段目の段 13 の PR 1: { counterFull }（damage・dot・counterChange だけが受ける。parseCounterFullTrigger）
+  | CounterFullTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
@@ -633,7 +635,7 @@ export function isTimerTrigger(t: unknown): t is TimerTrigger {
   return typeof t === 'object' && t !== null && 'everySeconds' in t;
 }
 
-export function isShotCountTrigger(t: EffectTrigger | CounterFullTrigger): t is ShotCountTrigger {
+export function isShotCountTrigger(t: EffectTrigger): t is ShotCountTrigger {
   return typeof t === 'object' && 'count' in t && (SHOT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
@@ -907,7 +909,7 @@ export type DamageEffect = {
    * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } は、自分のそのカウンタが上限に届いた次のフレーム
    * （counterChange の { counterFull } と同じ）。perCount の { counter } と組む（ミハラ：ボンディングチェーンのキャプチャーチェーンの攻撃）
    */
-  trigger: EffectTrigger | CounterFullTrigger;
+  trigger: EffectTrigger;
   /** description_value_NN の NN（1 始まり）。値は % 表記 */
   ref: number;
   damageType: SkillDamageType;
@@ -1276,7 +1278,7 @@ export const DOT_FIRST_TICKS = [
 export type DotEffect = {
   kind: 'dot';
   /** 2 段目の段 13 の PR 1: { counterFull } も（damage と同じ。perCount の { counter } と組む） */
-  trigger: EffectTrigger | CounterFullTrigger;
+  trigger: EffectTrigger;
   /** 1 tick の倍率（%）の description_value_NN */
   ref: number;
   /** tick の間隔（秒の即値。説明文の「1秒間隔」は直書き）。維持時間以下 */
@@ -2206,7 +2208,7 @@ function parsePositiveInt(v: Json, path: string): number {
  * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: timed・heal の delayFrames。射撃の回数のきっかけ
  * （確率のきっかけを除く）だけに書ける
  */
-function parseShotCountDelay(v: Json, trigger: EffectTrigger | CounterFullTrigger, path: string): number {
+function parseShotCountDelay(v: Json, trigger: EffectTrigger, path: string): number {
   if (!isShotCountTrigger(trigger) || isChanceTrigger(trigger)) {
     fail(path, 'delayFrames needs a shot count trigger ({ count }) without a chance');
   }
@@ -3324,7 +3326,7 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
  * ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ。
  * 2 段目の段 13 の PR 1: { counterFull: カウンタ } も（dot も同じ）
  */
-function parseDamageTrigger(v: Json, path: string): EffectTrigger | CounterFullTrigger {
+function parseDamageTrigger(v: Json, path: string): EffectTrigger {
   return parseCounterFullTrigger(v, path) ?? parseAppliedTrigger(v, path) ?? parseTrigger(v, path, true, true);
 }
 
@@ -3336,7 +3338,7 @@ function parseCounterFullTrigger(v: Json, path: string): CounterFullTrigger | un
 }
 
 /** クルミ S2 編: 回数トリガーに数える窓（during）か、発火の窓（firesDuring。V-0443）があるか */
-export function hasCountingWindow(trigger: EffectTrigger | CounterFullTrigger): boolean {
+export function hasCountingWindow(trigger: EffectTrigger): boolean {
   return (
     typeof trigger === 'object' &&
     'count' in trigger &&

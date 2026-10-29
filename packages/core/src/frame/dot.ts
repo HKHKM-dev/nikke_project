@@ -4,7 +4,7 @@
 import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { DotFirstTick } from '../skills/types.ts';
-import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
+import { FRAMES_PER_GAME_SECOND, gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 
 /**
  * クルミ編: dot を状態（state。名前の付いた状態の目録の id）ごとにまとめる（state の無い効果はそれぞれ 1 つ）。同じ state の効果は、
@@ -86,7 +86,11 @@ export function dotTicks(
   frames: number,
   firstTick: DotFirstTick = 'atApplication',
   maxStacks = 1,
+  /** 2 段目の段 13 の PR 1: halfAfterLatest の間隔の実測（ゲーム内のティック）。省略は intervalSeconds */
+  tickIntervalFrames?: number,
 ): DotTick[] {
+  if (firstTick === 'halfAfterLatest')
+    return latestDotTicks(fires, frames, maxStacks, tickIntervalFrames ?? intervalSeconds * FRAMES_PER_GAME_SECOND);
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, frames, firstTick);
   const out: DotTick[] = [];
   let groupFires: number[] = [];

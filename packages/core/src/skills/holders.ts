@@ -76,7 +76,6 @@ import {
   isStateStat,
   staticStatesOf,
   type BuffStat,
-  type CounterFullTrigger,
   type EdgeShift,
   type EffectCondition,
 } from './types.ts';
@@ -235,7 +234,7 @@ export function counterEffectiveFrom(record: CounterRecord): number {
 export function counterFullFrames(records: readonly CounterRecord[], slotIndex: number, counter: CounterId): number[] {
   return records
     .filter((r) => r.slotIndex === slotIndex && r.counter === counter && r.value === counterMax(counter))
-    .map((r) => (r.battleStart === true ? 0 : r.frame) + 1);
+    .map((r) => r.frame + 1);
 }
 
 export type HolderListsOptions = {
@@ -378,7 +377,7 @@ export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames
 }
 
 /** 戦闘開始時の窓（ループの前に登録する）か */
-function atBattleStart(t: ResolvedTrigger | CounterFullTrigger): boolean {
+function atBattleStart(t: ResolvedTrigger): boolean {
   return t === 'battleStart' || (isResolvedTimer(t) && 'atStart' in t && t.atStart === true);
 }
 
@@ -704,10 +703,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     tracks.push(track);
     return track;
   };
+  const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
+  /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
+  const counterFullAt = new Map<string, number>();
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
   const firesOf = (trigger: ResolvedTrigger, slotIndex: number, everyAt?: ShotCountEveryAt): TriggerTracker => {
     // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
+    // 2 段目の段 11 の PR 2・段 13 の PR 1: カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
+    if (isCounterFullTrigger(trigger)) {
+      const key = counterKey(slotIndex, trigger.counterFull);
+      return (ev) => counterFullAt.get(key) === ev.frame;
+    }
     if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel, everyAt);
     const at = new Set(timerFramesOf(trigger, frames));
     return (ev) => at.has(ev.frame);
@@ -888,22 +895,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       counterSources.push({
         sourceSlotIndex,
         effect,
-        fires:
-          isEndedTrigger(effect.trigger) || isCounterFullTrigger(effect.trigger)
-            ? null
-            : firesOf(effect.trigger, sourceSlotIndex, shotCountEveryOf(sourceSlotIndex, effect.source.skill)),
+        fires: isEndedTrigger(effect.trigger)
+          ? null
+          : firesOf(effect.trigger, sourceSlotIndex, shotCountEveryOf(sourceSlotIndex, effect.source.skill)),
       });
     }
   });
-  const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
   const counterValues = new Map<string, number>();
   const counterRecords: CounterRecord[] = [];
   /** 枠のカウンタの、いまの値（そのフレームの増減は、すべての判定の後に足すので、前のフレームの終わりの値） */
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
-  /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
-  const counterFullAt = new Map<string, number>();
-
   // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ）。
   // 段 11（plan/design-skill-stage11.md 2.1 節）: 使用武器の変更のきっかけ { fullStack } の状態も ----
   const consuming: { holder: number; state: NamedStateId }[] = [];
@@ -948,14 +950,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const state = group[0]!.dot!.state;
       if (state === undefined) continue;
       enemyStateSources.push({
-        effects: group.map((effect) => {
-          const t = effect.trigger;
-          // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレームに発火し、最初の付与は delayFrames 後（plan/design-skill-stage13.md 2.3 節）
-          const fires: TriggerTracker = isCounterFullTrigger(t)
-            ? (ev) => counterFullAt.get(counterKey(sourceSlotIndex, t.counterFull)) === ev.frame
-            : firesOf(t, sourceSlotIndex);
-          return { effect, fires };
-        }),
+        effects: group.map((effect) => ({ effect, fires: firesOf(effect.trigger, sourceSlotIndex) })),
         track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
       });
     }
@@ -1555,8 +1550,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const t = src.effect.trigger;
       let fired: boolean;
       if (isEndedTrigger(t)) fired = !battleStartOnly && endedAt(src.sourceSlotIndex, t.ended, f);
-      else if (isCounterFullTrigger(t))
-        fired = !battleStartOnly && counterFullAt.get(counterKey(src.sourceSlotIndex, t.counterFull)) === f;
       else if (battleStartOnly) fired = atBattleStart(t);
       else fired = t !== 'battleStart' && src.fires!(ev);
       if (!fired) continue;
@@ -1588,7 +1581,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
     const from = appliedFrom;
-    const take = (trigger: ResolvedTrigger | CounterFullTrigger): boolean =>
+    const take = (trigger: ResolvedTrigger): boolean =>
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {

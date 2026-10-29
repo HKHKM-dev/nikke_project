@@ -8,7 +8,7 @@
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { battleSecondsToFrames, GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { burstCandidateOf, planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
@@ -68,7 +68,6 @@ import {
   isEnemyHeldStat,
   isStateStat,
   staticStatesOf,
-  type CounterFullTrigger,
   type EffectCondition,
   type SelfStateCondition,
 } from '../skills/types.ts';
@@ -86,7 +85,7 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { dotTicks, groupDotsByState, latestDotTicks } from './dot.ts';
+import { dotTicks, groupDotsByState } from './dot.ts';
 export {
   DOT_LATER_TICK_DELAY_SECONDS,
   dotTickFrames,
@@ -121,7 +120,29 @@ export type SkillHitEvent = {
   hit: SkillHitResult;
   /** レイヴン編: スタックする持続ダメージ（dot の maxStacks > 1）の tick なら、その tick の時点のスタックの数。hit はこの数倍の値 */
   stacks?: number;
+  /** 2 段目の段 13 の PR 1: 持続ダメージの、付けた時の 1 スタックぶんのヒット（dot の hitOnApply）。tick ではない */
+  onApply?: true;
 };
+
+/**
+ * 2 段目の段 12・13: perCount の数だけのヒット（付与）の、発火 frame からのフレーム。k 個目（0 始まり）は、秒の間隔なら
+ * floor(k × 間隔 ÷ 0.017) 後（端数を持ち越す。粘着榴弾の起爆。C-0726）、フレーム数の間隔なら delay + k × 間隔の後（キャプチャーチェーン。
+ * C-0745）。戦闘の終わり（end）より前だけ
+ */
+function perCountFrames(
+  frame: number,
+  count: number,
+  step: { seconds?: number; frames?: number; delay?: number },
+  end: number,
+): number[] {
+  const out: number[] = [];
+  for (let k = 0; k < count; k++) {
+    const offset =
+      step.seconds !== undefined ? gameSecondsToFrames(k * step.seconds) : (step.delay ?? 0) + k * step.frames!;
+    if (frame + offset < end) out.push(frame + offset);
+  }
+  return out;
+}
 
 /** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
 export function planTeamSchedule(
@@ -255,7 +276,7 @@ export function perShotDamageOf(slot: TeamSlotInput): ResolvedSkillDamage[] {
 }
 
 /** バースト系のトリガー（burstDamage と同じく発動直前のバフで計算する）か */
-function isBurstUseTrigger(trigger: ResolvedTrigger | CounterFullTrigger): boolean {
+function isBurstUseTrigger(trigger: ResolvedTrigger): boolean {
   return trigger === 'burstUse' || (isResolvedEventCount(trigger) && trigger.count === 'burstUse');
 }
 
@@ -343,18 +364,16 @@ export function planSkillHits(
       return value;
     };
     // 持続ダメージの付くフレーム。2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: { counterFull } の perCount は、発火の
-    // delayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
+    // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
     const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
       const t = effect.trigger;
       if (!isCounterFullTrigger(t)) return triggerFrames(t, schedule, slotIndex, frames, shots);
       const per = effect.perCount;
       if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
         throw new RangeError('a dot with { counterFull } needs perCount { counter } and perCountIntervalFrames');
-      return counterFullFrames(history.counters, slotIndex, t.counterFull).flatMap((f) =>
-        Array.from(
-          { length: counterAt(per.counter, f) },
-          (_, k) => f + (effect.delayFrames ?? 0) + k * effect.perCountIntervalFrames!,
-        ).filter((at) => at < frames),
+      const step = { frames: effect.perCountIntervalFrames, delay: effect.dot!.applyDelayFrames };
+      return counterFullFrames(ownCounters, slotIndex, t.counterFull).flatMap((f) =>
+        perCountFrames(f, counterAt(per.counter, f), step, frames),
       );
     };
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
@@ -454,7 +473,7 @@ export function planSkillHits(
       // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } はカウンタが上限に届いた次のフレーム（1 パス目の記録）
       const t = effect.trigger;
       const fires = isCounterFullTrigger(t)
-        ? counterFullFrames(history.counters, slotIndex, t.counterFull)
+        ? counterFullFrames(ownCounters, slotIndex, t.counterFull)
         : isResolvedApplied(t)
           ? appliedFrames(history, t.applied, slotIndex)
           : shorten !== undefined && isResolvedTimer(t)
@@ -476,21 +495,13 @@ export function planSkillHits(
               : counterAt(per.counter, frame);
         if (copied === 0) continue;
         // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
-        // （粘着榴弾の起爆。k 個目は floor(k × 間隔 ÷ 0.017) フレーム後で端数を持ち越す。C-0726。それぞれのフレームのバフとフルバースト
-        // 補正。戦闘の終わりを越えるヒットは出さない）
-        if (effect.perCountIntervalSeconds !== undefined && copied !== undefined) {
-          for (let k = 0; k < copied; k++) {
-            const at = frame + gameSecondsToFrames(k * effect.perCountIntervalSeconds);
-            if (at < frames) push(at, effect, pre);
-          }
-          continue;
-        }
-        // 2 段目の段 13 の PR 1（同 2.2 節）: 決まったフレーム数ごと（キャプチャーチェーンの攻撃。k 個目は delayFrames + k × 間隔の後）
-        if (effect.perCountIntervalFrames !== undefined && copied !== undefined) {
-          for (let k = 0; k < copied; k++) {
-            const at = frame + delay + k * effect.perCountIntervalFrames;
-            if (at < frames) push(at, effect, pre);
-          }
+        // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正）
+        if (
+          (effect.perCountIntervalSeconds !== undefined || effect.perCountIntervalFrames !== undefined) &&
+          copied !== undefined
+        ) {
+          const step = { seconds: effect.perCountIntervalSeconds, frames: effect.perCountIntervalFrames, delay };
+          for (const at of perCountFrames(frame, copied, step, frames)) push(at, effect, pre);
           continue;
         }
         if (effect.perBurstHit === true) {
@@ -524,23 +535,21 @@ export function planSkillHits(
       const dot = group[0]!.dot!;
       const { maxStacks } = dot;
       // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: 付けるたびに、付けた 1 スタックぶんの 1 ヒット（C-0411）
-      if (dot.hitOnApply === true) for (const { f, effect } of fires) push(f, effect, false);
-      const ticks =
-        dot.firstTick === 'halfAfterLatest'
-          ? latestDotTicks(
-              fires.map((x) => x.f),
-              frames,
-              maxStacks,
-              dot.tickIntervalFrames ?? dot.intervalSeconds / GAME_SECONDS_PER_FRAME,
-            )
-          : dotTicks(
-              fires.map((x) => x.f),
-              dot.intervalSeconds,
-              dot.durationSeconds,
-              frames,
-              dot.firstTick,
-              maxStacks,
-            );
+      if (dot.hitOnApply === true) {
+        for (const { f, effect } of fires) {
+          push(f, effect, false);
+          hits[hits.length - 1]!.onApply = true;
+        }
+      }
+      const ticks = dotTicks(
+        fires.map((x) => x.f),
+        dot.intervalSeconds,
+        dot.durationSeconds,
+        frames,
+        dot.firstTick,
+        maxStacks,
+        dot.tickIntervalFrames,
+      );
       let last = 0;
       for (const tick of ticks) {
         while (last + 1 < fires.length && fires[last + 1]!.f <= tick.frame) last += 1;

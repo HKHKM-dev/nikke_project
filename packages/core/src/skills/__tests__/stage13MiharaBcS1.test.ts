@@ -81,7 +81,7 @@ describe('戦闘開始時の攻撃とチェーンバインド（単騎・バー�
     growth: fixed.growth,
     attackOverride: fixed.attack,
     hpOverride: computeFixedSpecHp(mihara),
-    condition: { coreHitRate: 1, distanceBonus: false, hitRate: 0 },
+    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
     skills: { definition: parseSkillDefinition(raw), levels: MAX_SKILL_LEVELS },
   };
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };

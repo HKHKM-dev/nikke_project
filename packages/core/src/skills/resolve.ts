@@ -73,20 +73,23 @@ export type ResolvedTrigger =
   | TimerTrigger
   | AppliedTrigger
   | FullStackTrigger
-  | WeaponChangeEndTrigger;
+  | WeaponChangeEndTrigger
+  // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレーム。damage・dot・counterChange だけ。1 パス目のカウンタの記録で決まる
+  // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
+  | CounterFullTrigger;
 
 /** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
-export function isResolvedWeaponChangeEnd(t: ResolvedTrigger | CounterFullTrigger): t is WeaponChangeEndTrigger {
+export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {
   return typeof t === 'object' && 'weaponChangeEnd' in t;
 }
 
 /** 2 段目の段 3: フルスタックの消費のきっかけ（{ fullStack }）か */
-export function isResolvedFullStack(t: ResolvedTrigger | CounterFullTrigger): t is FullStackTrigger {
+export function isResolvedFullStack(t: ResolvedTrigger): t is FullStackTrigger {
   return typeof t === 'object' && 'fullStack' in t;
 }
 
 /** ペルソナ編: 効果名のトリガー（{ applied }）か */
-export function isResolvedApplied(t: ResolvedTrigger | CounterFullTrigger): t is AppliedTrigger {
+export function isResolvedApplied(t: ResolvedTrigger): t is AppliedTrigger {
   return typeof t === 'object' && 'applied' in t;
 }
 
@@ -119,37 +122,21 @@ export type ResolvedShotCountTrigger = {
 };
 
 /** ソルジャーE.G. 編: 確率のきっかけ（解決済み）か */
-export function isResolvedChance(
-  t: ResolvedTrigger | CounterFullTrigger,
-): t is ResolvedShotCountTrigger & { chance: number } {
+export function isResolvedChance(t: ResolvedTrigger): t is ResolvedShotCountTrigger & { chance: number } {
   return isResolvedShotCount(t) && t.chance !== undefined;
 }
 
-export function isResolvedShotCount(t: ResolvedTrigger | CounterFullTrigger): t is ResolvedShotCountTrigger {
+export function isResolvedShotCount(t: ResolvedTrigger): t is ResolvedShotCountTrigger {
   return typeof t === 'object' && 'every' in t;
 }
 
-export function isResolvedEventCount(
-  t: ResolvedTrigger | CounterFullTrigger,
-): t is { count: EventCountKind; atLeast: number } {
+export function isResolvedEventCount(t: ResolvedTrigger): t is { count: EventCountKind; atLeast: number } {
   return typeof t === 'object' && 'atLeast' in t;
 }
 
 /** ニヒリスター編: 時間の周期のトリガーか */
-export function isResolvedTimer(t: ResolvedTrigger | CounterFullTrigger): t is TimerTrigger {
+export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
   return typeof t === 'object' && 'everySeconds' in t;
-}
-
-/**
- * 2 段目の段 13 の PR 1: damage・dot のきっかけ。{ counterFull }（カウンタが上限に届いた次のフレーム。発火は 1 パス目のカウンタの記録で
- * 決まる。skills/holders.ts の counterFullFrames）はそのまま、ほかは resolveTrigger
- */
-export function resolveEffectTrigger(
-  trigger: EffectTrigger | CounterFullTrigger,
-  skill: SkillRaw,
-  level: number,
-): ResolvedTrigger | CounterFullTrigger {
-  return isCounterFullTrigger(trigger) ? { ...trigger } : resolveTrigger(trigger, skill, level);
 }
 
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */

@@ -25,7 +25,7 @@ import {
   type ResolvedTrigger,
 } from './resolve.ts';
 import type { FireContext } from './targets.ts';
-import type { ShotCountKind } from './types.ts';
+import { isCounterFullTrigger, type ShotCountKind } from './types.ts';
 import type { NamedStateId } from './states.ts';
 
 /** 1 枠の 1 回の射撃 */
@@ -233,6 +233,10 @@ export function createTriggerTracker(
   // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
+  }
+  // 2 段目の段 13 の PR 1: カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf・counterFullFrames）
+  if (isCounterFullTrigger(t)) {
+    throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
   }
   if (isResolvedEventCount(t)) {
     return (ev) => {

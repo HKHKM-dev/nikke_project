@@ -71,7 +71,7 @@ import {
 import { itemsOf } from '../src/skills/holders.ts';
 import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
-import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex, type CounterFullTrigger } from '../src/skills/types.ts';
+import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
 import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
@@ -81,7 +81,7 @@ const DATA_DIR = join(import.meta.dirname, '../data');
 const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observations');
 
 /** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
-function triggerLabel(t: ResolvedTrigger | CounterFullTrigger): string {
+function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
   // 2 段目の段 13 の PR 1: カウンタが上限に届いた時（counterFull:restraintChains）
   if ('counterFull' in t) return `counterFull:${t.counterFull}`;
@@ -654,10 +654,7 @@ for (const [i, slot] of slots.entries()) {
 
 /** 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md）: delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値 */
 function printDelayedHits(c: NonNullable<(typeof result.slots)[number]>): void {
-  // 持続ダメージの delayFrames（2 段目の段 13 の PR 1: 付けるまでの遅れ）は持続ダメージの内訳（printDots）に出す
-  const delayed = c.skillHits.activations.filter(
-    (a) => a.effect.delayFrames !== undefined && a.effect.dot === undefined,
-  );
+  const delayed = c.skillHits.activations.filter((a) => a.effect.delayFrames !== undefined);
   if (delayed.length === 0) return;
   const byEffect = new Map<string, typeof delayed>();
   for (const a of delayed) {
