@@ -7,13 +7,13 @@
 // 初回は --resync --dry-run で送られるものを見てから --resync（4.3 節）。フィルタを変えたら、その対だけ --resync する。
 // 記録は NIKKE_SYNC_STATE_DIR（無ければホームの下の .nikke-sync。追跡しない）の sync.log に 1 回 1 行、rclone の出力は
 // last-<対>.log に残す。
-import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir, uptime } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { capturesDir } from '../captures/dirs.ts';
+import { mainCheckout } from '../git/main-checkout.ts';
 import { driveCaptures, driveSync, driveUnavailable, lsjson, rclone } from './rclone.ts';
 import {
   bisyncArgs,
@@ -40,12 +40,6 @@ const { values } = parseArgs({
 });
 const hook = values.hook;
 
-/** メインのチェックアウト（git worktree list の先頭）。private/・scratch/ はここにだけある */
-function mainCheckout(): string {
-  const r = spawnSync('git', ['worktree', 'list', '--porcelain'], { cwd: ROOT, encoding: 'utf8' });
-  const m = /^worktree (.+)$/m.exec(r.stdout ?? '');
-  return m?.[1] ?? ROOT;
-}
 const main = mainCheckout();
 const claudeDir = process.env['CLAUDE_CONFIG_DIR'] ?? join(homedir(), '.claude');
 

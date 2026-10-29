@@ -164,7 +164,8 @@
 - `tools/captures/intake.ts`:
   - `--build-snapshot <名前>` で書く（`-` は書かない）。スペック固定 ON（`--fixed-spec on`）で名前を渡すと止める。`private/builds/` にその名前が無ければ注意だけ出す。
   - 渡さず `--fixed-spec off` なら、撮った日以前でいちばん新しいスナップショットを既定にして聞く（Enter で既定、`-` で書かない）。撮った日に取ったものが無ければ「撮った日（YYYY-MM-DD）の育成が無い（最新は YYYY-MM-DD）」と知らせる。選び方と知らせは `tools/builds/import-lib.ts` の `snapshotForRecording`・`parseSnapshotAnswer`（純関数。テストは `import-lib.test.ts`）。
+  - まとめて取り込むとき（1 回の撮影の録画）は、初めの録画で決めたものを残りにも書く（聞くのは 1 回）。
   - 標準入力が端末でなければ（エージェントが回すとき）、聞かずに既定を書いて、そう出す。
   - `private/builds/` が無い環境（クラウドで始めのフックが `private/` を取れなかったときなど）では聞かずに進み、「人が埋める項目」に `buildSnapshot` を出す。
-  - 置き場所（`private/builds/`・スナップショットの名前の一覧）は `tools/builds/dirs.ts` に切り出し、`store.ts`・`fetch.ts` と共有した。
+  - 置き場所（`private/builds/`・スナップショットの名前の一覧）は `tools/builds/dirs.ts` に切り出し、`store.ts`・`fetch.ts` と共有した。メインのチェックアウトを探す処理は `tools/git/main-checkout.ts` に 1 つにし、`tools/drive/sync.ts` も使う。
 - 読み取りのレシピ・残差でこの欄を使う部分は作っていない（6 節。要る検証が出たときに足す）。

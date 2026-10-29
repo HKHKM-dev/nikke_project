@@ -6,7 +6,7 @@
 //   private/builds/<名前>.diff.md   直前のスナップショットとの差
 //   private/roster.md               所持の一覧（いちばん新しいスナップショットから）
 // <名前> は取得の日（日本時間）。同じ日に別の取得があれば <日付>-2、-3 …（import-lib.ts）。
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { computeCombatAttack, validateBuild } from '../../packages/core/src/build.ts';
 import { MASTER_FILES } from '../../packages/core/src/load.ts';
@@ -21,12 +21,13 @@ import {
   type SnapshotLabels,
 } from '../../packages/core/src/shiftypad.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, CubeMaster } from '../../packages/core/src/types.ts';
-import { SNAPSHOT_NAME } from '../../packages/core/src/records/ids.ts';
-import { BUILDS_DIR as DIR, PRIVATE } from './dirs.ts';
+import { buildsDir, namesIn, privateDir } from './dirs.ts';
 import { previousName, snapshotName, sortNames } from './import-lib.ts';
 
 const ROOT = join(import.meta.dirname, '../..');
 const DATA = join(ROOT, 'packages/core/data');
+const PRIVATE = privateDir();
+const DIR = buildsDir();
 
 const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8')) as T;
 const index = readJson<CharacterIndex>(join(DATA, 'characters/index.json')).characters;
@@ -61,12 +62,7 @@ function attackOf(id: number, c: SnapshotCharacter): number | null {
 /** 既存の生のデータ（名前 → fetchedAt） */
 function existingRaws(): Map<string, string> {
   mkdirSync(DIR, { recursive: true });
-  const out = new Map<string, string>();
-  for (const f of readdirSync(DIR)) {
-    const m = /^(.+)\.raw\.json$/.exec(f);
-    if (m !== null && SNAPSHOT_NAME.test(m[1]!)) out.set(m[1]!, readJson<ShiftyPadRaw>(join(DIR, f)).fetchedAt);
-  }
-  return out;
+  return new Map(namesIn('.raw.json')!.map((n) => [n, readJson<ShiftyPadRaw>(join(DIR, `${n}.raw.json`)).fetchedAt]));
 }
 
 /** 1 回分を写して書く。写せなかった値と、育成入力として通らない値を返す */

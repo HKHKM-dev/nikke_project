@@ -11,7 +11,7 @@
 // --treasure は宝物ありの枠と段階（<枠>:<段階>,...。段階はオーナーに確かめた値。plan/captures/protocol.md「撮った後」）。
 // スペック固定 OFF（--fixed-spec off）の録画は、読むのに使う育成のスナップショット（private/builds/<名前>.json）を台帳の buildSnapshot に
 // 書く（plan/design-build-snapshot.md 6 節）。--build-snapshot が無ければ、撮った日以前でいちばん新しいものを既定にして聞く（端末でなければ
-// 聞かずに既定を書く。- は書かない）。撮った日に取ったものが無ければ知らせる。private/builds/ が無い環境では聞かない（人が埋める）。
+// 聞かずに既定を書く。- は書かない。まとめて取り込むときは、初めの録画で決めたものを残りにも書く）。撮った日に取ったものが無ければ知らせる。private/builds/ が無い環境では聞かない（人が埋める）。
 // 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 4 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
 // 最後に、移した録画を Google Drive の nikke_project_captures の同じ種別フォルダに置き、Drive の SHA256 を台帳の sha256 と突き合わせる
@@ -57,7 +57,7 @@ import { RECORDING_ID } from '../../packages/core/src/records/ids.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
 import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import { reserve } from '../../packages/core/scripts/reserve.ts';
-import { BUILDS_DIR, snapshotNames } from '../builds/dirs.ts';
+import { buildsDir, snapshotNames } from '../builds/dirs.ts';
 import { parseSnapshotAnswer, snapshotForRecording } from '../builds/import-lib.ts';
 import { gatewayUrl, move } from '../drive/gateway.ts';
 import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
@@ -172,11 +172,12 @@ if (!values.child) {
     ['--element', values.element],
     ['--mode', values.mode],
     ['--fixed-spec', values['fixed-spec']],
-    ['--build-snapshot', values['build-snapshot']],
     ['--auto-fire', values['auto-fire']],
     ['--auto-burst', values['auto-burst']],
   ];
   const flags = [...(values.copy ? ['--copy'] : []), ...(values['no-backup'] ? ['--no-backup'] : [])];
+  // 育成のスナップショットは 1 回の撮影で同じなので、初めの録画で決めたものを残りに渡す（聞くのは 1 回）
+  let snapshot = values['build-snapshot'];
   const written: string[] = [];
   let status = 0;
   for (const [i, src] of positionals.entries()) {
@@ -194,7 +195,7 @@ if (!values.child) {
         '--name',
         names[i]!,
         ...(note !== undefined ? ['--note', note] : []),
-        ...shared.flatMap(([k, v]) => (v === undefined ? [] : [k, v])),
+        ...[...shared, ['--build-snapshot', snapshot] as const].flatMap(([k, v]) => (v === undefined ? [] : [k, v])),
         ...flags,
       ],
       { stdio: 'inherit' },
@@ -207,6 +208,8 @@ if (!values.child) {
       if (rest.length > 0) console.error(`ここで止めた。取り込んでいない元ファイル: ${rest.join(' ')}`);
       break;
     }
+    if (snapshot === undefined && values['fixed-spec'] === 'off' && snapshotNames() !== null)
+      snapshot = (JSON.parse(readFileSync(recordPathOf(ids[i]!), 'utf8')) as ProjectRecording).buildSnapshot ?? '-';
   }
   if (written.length > 0) {
     const table = spawnSync('npm run records:table', { cwd: ROOT, stdio: 'inherit', shell: true });
@@ -329,13 +332,13 @@ async function chooseSnapshot(): Promise<string | null | undefined> {
     if (name === undefined) fail('--build-snapshot は YYYY-MM-DD か YYYY-MM-DD-<枝番>（書かないなら -）');
     if (name !== null && fixedSpec === true) fail('--build-snapshot はスペック固定 OFF の録画にだけ書く');
     if (name !== null && snapshotNames()?.includes(name) === false)
-      console.log(`注意: ${BUILDS_DIR} に ${name}.json が無い`);
+      console.log(`注意: ${buildsDir()} に ${name}.json が無い`);
     return name;
   }
   if (fixedSpec !== false) return null;
   const names = snapshotNames();
   if (names === null) {
-    console.log(`${BUILDS_DIR} が無いので、育成のスナップショットを聞かない（--build-snapshot で書ける）`);
+    console.log(`${buildsDir()} が無いので、育成のスナップショットを聞かない（--build-snapshot で書ける）`);
     return undefined;
   }
   const { name, notice } = snapshotForRecording(names, date);

@@ -190,7 +190,7 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
       if (entry.backup !== undefined) errors.push(...validateBackup(entry.backup, at));
       // 形だけ見る（実体は private/ にあり CI から見えない。plan/design-build-snapshot.md 6 節）
       if (entry.buildSnapshot !== undefined) {
-        if (typeof entry.buildSnapshot !== 'string' || !SNAPSHOT_NAME.test(entry.buildSnapshot))
+        if (!SNAPSHOT_NAME.test(entry.buildSnapshot))
           errors.push(`${at}: buildSnapshot は YYYY-MM-DD か YYYY-MM-DD-<枝番>: ${entry.buildSnapshot}`);
         if (entry.fixedSpec === true) errors.push(`${at}: buildSnapshot はスペック固定 OFF の録画にだけ書く`);
       }

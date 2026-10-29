@@ -23,7 +23,7 @@ export function snapshotName(fetchedAt: string, existing: ReadonlyMap<string, st
 }
 
 function nameKey(name: string): [string, number] {
-  const m = /^(\d{4}-\d{2}-\d{2})(?:-(\d+))?$/.exec(name);
+  const m = SNAPSHOT_NAME.exec(name);
   if (m === null) throw new Error(`スナップショットの名前でない: ${name}`);
   return [m[1]!, Number(m[2] ?? 1)];
 }

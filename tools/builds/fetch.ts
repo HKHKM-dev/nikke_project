@@ -27,11 +27,12 @@ import {
   captureRequest,
   type Captured,
 } from './fetch-lib.ts';
-import { PRIVATE } from './dirs.ts';
+import { privateDir } from './dirs.ts';
 import { importRaw } from './store.ts';
 
 const ROOT = join(import.meta.dirname, '../..');
 const URL = 'https://www.blablalink.com/shiftyspad';
+const PRIVATE = privateDir();
 const CONFIG = join(PRIVATE, 'build-fetch.json');
 /** 拾えるまで待つ長さ（ログインを含む） */
 const WAIT_MS = 15 * 60e3;
