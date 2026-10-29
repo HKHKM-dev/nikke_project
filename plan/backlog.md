@@ -79,6 +79,7 @@
 | --- | --- | --- | --- |
 | 5-6 | 画面のレスポンス（`useDeferredValue` → Web Worker。1 パス目のキャッシュは 5-7 の後に判断） | B-1・B-2 は済み（2026-10-28）。B-3 は 5-7 の後に判断 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 6・8 節 |
 | 5-7 | 1 パス目の最適化（件の一覧の読み直し `readItems`・`closedStateItems`・`stackItems` が重い） | 着手は未定。優先は 5-6 の B-3 より上 | [design-unify-sim-calc.md](design-unify-sim-calc.md) 3.4・9 節 |
+| 5-13 | レシピ `burst-panel` が、画面が赤みがかったチェーンの替わり目と 00.00 を取りこぼす（録画 0735 の 3 回目） | 直していない（読みは手で補った） | V-0540、[design-skill-stage12.md](design-skill-stage12.md) 3.4 節 |
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
@@ -111,7 +112,7 @@
 - sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 承認（2026-10-27）。(A) 一本化は完了（2026-10-27。段 A-1〜A-3）。残りの (B) レスポンスは 5 節: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節
 - エレグ（500）の定義（2026-10-26 起票）→ 段 1（S2 のターゲット出現時のゲージ 100%）・段 2（バースト）・段 3 の S2（ブームインストール中の攻撃力▲）は実装した。S1 の分配ダメージは値の式が分からず未対応（別の検証で乗数を分ける）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 第 1 段（ナガ・ミサト・モラン）と第 2 段（プリバティ・ドレイク・紅蓮BS・レイヴン）は実装した（[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)）。残りは 2-38
-- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜11 を閉じた（段 11 は 2026-10-28）。段 12（バースト段階の変更と粘着榴弾）は PR 1〜4 を実装した（段を閉じるのが残る）（[design-skill-stage12.md](design-skill-stage12.md)）。段 13（カウンタの数だけ出る攻撃と、敵に付くスタックの持続ダメージ。ミハラ：ボンディングチェーン）を起案した（論点はオーナーの判断待ち）（[design-skill-stage13.md](design-skill-stage13.md)）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
+- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 段 1〜12 を閉じた（段 12 は 2026-10-30）。段 13（カウンタの数だけ出る攻撃と、敵に付くスタックの持続ダメージ。ミハラ：ボンディングチェーン）は決定（2026-10-30）。PR 1 に着手した（[design-skill-stage13.md](design-skill-stage13.md)）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの設計書はそこから）
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1
