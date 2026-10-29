@@ -281,5 +281,585 @@
       "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
       "note": "(215,318 − 100) × 1346.4% × 1.7814 × 1.0505 = 5,422,634（自分のバーストの攻撃力▲・攻撃ダメージ▲と弱点露出が乗り、フルバースト補正と会心は無い）に、同じフレームのほかの発（ソルジャーF.A. のペレット 18,857 など）が足された値。3 回目からのバーストの増分（6,507,418 など）はこれより 0.6〜1.4M 大きく、録画ごと・回ごとにばらつく（バーストがコンテナにも当たり、爆発が同じフレームに足されたとみる）"
     }
+  },
+  {
+    "id": "0741-19",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 758238,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓 1 の 1 回目の槍の発動の 1 ヒット目（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "f1389（0741-10・0741-12）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 18,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-20",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 758238,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓 1 の最後の槍の発動の 7 ヒット目（会心なし）。フルバーストの明けた後のヒットも発動の時点のバフ",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-14"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 200,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-21",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 441633,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サンの窓 1（2 回目のフルバースト）の 1 回目の槍の発動の 1 ヒット目（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-11・0741-13"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 215,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-22",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 155520,
+    "unit": "ダメージ",
+    "description": "窓 1 の最初のコア命中ダメージ（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-16"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 7,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-23",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 61611,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓 1 の通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-15"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0741-24",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14113,
+    "unit": "ダメージ",
+    "description": "窓 1 の後（バーストの効果の切れた後）の通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）。弱点露出は 1 件",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-15 の注記"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0741-25",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5422632,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストのバーストスキルダメージ（会心なし）。0741-18 の増分から、同じフレームのソルジャーF.A. のペレット 18,857 を引いた値",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-18"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0741-26",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "interval",
+    "value": [14, 8, 5, 4, 4, 2, 3],
+    "unit": "f",
+    "description": "窓 1 の中のリロードの明けの立ち上げの、最初の 8 発の間（立ち上げ速度▲あり）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "0741-17"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 930,
+        "to": 978
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0741-27",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "interval",
+    "value": [24, 12, 10, 8, 6, 5],
+    "unit": "f",
+    "description": "窓の外のリロードの明けの立ち上げの、最初の 7 発の間（立ち上げ速度▲なし）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series",
+      "note": "0741-17"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 1445,
+        "to": 1519
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0741-28",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 514,
+    "unit": "f",
+    "description": "マリアン：クイーンの窓 1 のまわりの 2 回目の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（窓の前の発動から 4 秒 + 入りの止まり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-10 の 1 つ目の並び"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 7
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-29",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 631,
+    "unit": "f",
+    "description": "マリアン：クイーンの窓 1 のまわりの 3 回目の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（窓の中で前の発動から 2 秒）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-10 の 1 つ目の並び"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 14
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-30",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 748,
+    "unit": "f",
+    "description": "マリアン：クイーンの窓 1 のまわりの 4 回目の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（窓の中で前の発動から 2 秒）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-10 の 1 つ目の並び"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 21
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-31",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 866,
+    "unit": "f",
+    "description": "マリアン：クイーンの窓 1 のまわりの 5 回目の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（窓の中で前の発動から 2 秒）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-10 の 1 つ目の並び"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 28
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-32",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 984,
+    "unit": "f",
+    "description": "マリアン：クイーンの窓 1 のまわりの 6 回目の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（窓の中で前の発動から 2 秒）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-10 の 1 つ目の並び"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 35
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-33",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 1219,
+    "unit": "f",
+    "description": "マリアン：クイーンの窓 1 のまわりの 7 回目の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（窓の最後の発動から 4 秒。周期が戻る）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "0741-10 の 1 つ目の並び"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 42
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0741-34",
+    "recording": "0741",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "kind": "count",
+    "use": "compare",
+    "value": [300],
+    "unit": "発",
+    "description": "1 回目のバースト（マリアン：クイーン）の弾丸チャージで足された弾の数。リロードの途中（残弾 0）からバーストを撃ち、残弾が 300 になった",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode mags",
+      "note": "f1192 に残弾 0（リロードに入る）、f1288（III の 00.00）に 300"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "ammoRefillAmounts",
+      "args": {
+        "slot": 3,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
   }
 ]

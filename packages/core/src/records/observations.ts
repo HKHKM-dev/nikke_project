@@ -1582,13 +1582,17 @@ function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
- * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す
+ * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。core はコアに当たる効果（コア命中ダメージなど）の
+ * コアの項を入れる（V-0538）
  */
 function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   const hits = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined);
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
-  return oneHitValue(hit.hit, ctx.args.crit === true);
+  if (ctx.args.core === true && hit.effect.core !== true && hit.effect.coreHit !== true) {
+    throw new Error('コアに当たらない効果の倍率ダメージに core: true');
+  }
+  return oneHitValue(hit.hit, ctx.args.crit === true, ctx.args.core === true);
 }
 
 /**

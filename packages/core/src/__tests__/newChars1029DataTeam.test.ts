@@ -87,21 +87,31 @@ describe('マリアン：クイーン（19）', () => {
       (h) => h.slotIndex === marian && h.effect.source.skill === skill && h.effect.effectIndex === effectIndex,
     );
 
-  it('fires 7 spear hits every 4 s, and every 2 s after a fire while Penetrant Wish is on', () => {
+  it('fires 7 spear hits every 4 s (fraction carried over), and every 2 s while Penetrant Wish lasts', () => {
     const spear = hits(1, 'skill1');
     expect(spear.length % 7).toBe(0);
-    const fires = spear.filter((_, i) => i % 7 === 0).map((h) => h.frame);
-    const four = gameSecondsToFrames(4) + 1;
-    const two = gameSecondsToFrames(2) + 1;
-    expect(fires[0]).toBe(four);
+    // 発動の 19f 後から 12f おきに 7 ヒット（plan/design-new-chars-1029.md 10.2 節の b・c。V-0538）
+    spear.forEach((h, i) => expect(h.frame - spear[i - (i % 7)]!.frame).toBe((i % 7) * 12));
+    const fires = spear.filter((_, i) => i % 7 === 0).map((h) => h.frame - 19);
+    expect(fires[0]).toBe(gameSecondsToFrames(4) + 1);
     const wish = stateItemsOf(plan).filter((s) => s.state === 'intoTheFrayPenetrantWish');
     expect(wish.length).toBe(uses(marian).length);
+    const on = (f: number) => wish.some((w) => w.start < f && f < w.end);
     fires.slice(1).forEach((f, k) => {
       const prev = fires[k]!;
-      const on = wish.some((w) => w.start < prev && prev < w.end);
-      expect(f - prev).toBe(on ? two : four);
+      // 2 秒（117〜118f）か 4 秒（235〜236f。端数の持ち越し）。縮めた次の発動まで状態が続くときだけ 2 秒（10.2 節の f）
+      const short = on(prev) && on(prev + 118);
+      expect([short ? 117 : 235, short ? 118 : 236]).toContain(f - prev);
     });
-    expect(fires.some((f, k) => k > 0 && f - fires[k - 1]! === two)).toBe(true);
+    expect(fires.some((f, k) => k > 0 && f - fires[k - 1]! < 200)).toBe(true);
+  });
+
+  it('gives the 7 hits of an activation the same value (the buffs at the activation)', () => {
+    const spear = hits(1, 'skill1');
+    for (let i = 0; i < spear.length; i += 7) {
+      const head = spear[i]!.hit.perActivation;
+      spear.slice(i, i + 7).forEach((h) => expect(h.hit.perActivation).toBeCloseTo(head, 6));
+    }
   });
 
   it('keeps Open Wounds (damage taken up) on the enemy from the first spear to the end', () => {
@@ -109,7 +119,8 @@ describe('マリアン：クイーン（19）', () => {
       (i) => i.origin.kind === 'state' && i.origin.state === 'openWounds',
     );
     expect(wounds).toHaveLength(1);
-    expect(wounds[0]!.start).toBe(gameSecondsToFrames(4) + 1);
+    // 1 回目の槍の 1 ヒット目（発動の 19f 後）に付く（10.2 節の e）
+    expect(wounds[0]!.start).toBe(gameSecondsToFrames(4) + 1 + 19);
     expect(wounds[0]!.end).toBe(plan.frames);
     const holders = new Set(
       piecesOf(plan)

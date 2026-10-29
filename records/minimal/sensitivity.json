@@ -14408,6 +14408,374 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0738-06",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "a39aa9afd43f4500",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0738-07",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "d3e017521591e8db",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0738-10",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "c2fba31fd740e2a4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0738-11",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "4f50a3b8199503f5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0738-12",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "a14dad2620abecdf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0738-13",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "f528ff04107bc743",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0738-14",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "06c798baf09ff2c5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-06",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "d5fa7e4d51211c5e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-07",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "877c433c779b3c0d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-09",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "f0c46db5a86decfa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-10",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "79255912fdbd7363",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-11",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "a40649ab70a5b2c8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-12",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "3456f0e6c83eb54d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0739-13",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "33cd1a08f53070ab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-19",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "7d68377ca8cad611",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-20",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "eb9e1a7f64fe19ee",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-21",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "1993695198e644c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-22",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "ef084d83f62d486c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-23",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "8b341e648c7828df",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-24",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "054c2a4e98b38beb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-25",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "46e9bf975c7a41e8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-26",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "c25a8a789d8b52b9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-27",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "8fb34798602ea3e5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-28",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "2da69f93ecebb7d6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-29",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "72c3c8fbb422b9a4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-30",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "c91e77630d4d0a56",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-31",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "0d10d2465cd830e7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-32",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "f62e7df42cf24317",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-33",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "caf6c8ae6db5592b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0740-34",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "d62a5d8f76edde14",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-19",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "f52d8c562c13dcef",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-20",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "ac8868d18bf03100",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-21",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "d953163bff362a30",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-22",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "a93be049f169803a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-23",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "6ad8607e2fd78d09",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-24",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "d8fd375493c9dc85",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-25",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "bb2670552993f80e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-26",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "644990a672a2b8b7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-27",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "27f37deecd42edcb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-28",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "8207d74d4d639928",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-29",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "a6fbed150299c682",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-30",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "698b5521deb41b48",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-31",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "b83fdf0c2c1730b9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-32",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "f663d4ba0a9a73b1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-33",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "9dc47994921277d5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0741-34",
+      "element": "マリアン：クイーン skill1.effects[0]",
+      "key": "7e4873858556de62",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

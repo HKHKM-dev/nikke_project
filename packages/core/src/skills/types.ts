@@ -549,6 +549,11 @@ export type TimerTrigger = {
    * （「戦闘開始時、… 再発動周期 N 秒」）。timed にだけ書ける（1 パス目で窓を追う stat は、戦闘開始時と同じくループの前に登録する）
    */
   atStart?: true;
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 10.2 節の a）: 端数を持ち越す。k 回目を k × everySeconds 秒に達した最初の
+   * フレームにする（省略は発動のたびに数え直す。C-0502）。「再発動周期」のマリアン：クイーンの S1 の槍（V-0538）
+   */
+  carry?: true;
 };
 
 /**
@@ -930,7 +935,8 @@ export type DamageEffect = {
   coreHit?: true;
   /**
    * 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」。時間の周期のきっかけ（{ everySeconds }）の damage にだけ書ける。前の発動のフレームに自分が
-   * state（家族の根なら家族のどれか）なら、次の発動までを everySeconds − N 秒にする（数え方は仮説。論点 E）。N は slot のスロットの
+   * state（家族の根なら家族のどれか）で、縮めた次の発動のフレームでも state なら、次の発動までを everySeconds − N 秒にする（同 10.2 節の f。
+   * C-0738）。N は slot のスロットの
    * description_value_NN（ref）。縮めた周期が 0 秒以下になる値は解決で落とす
    */
   periodShorten?: { state: NamedStateId; slot: SkillSlot; ref: number };
@@ -2087,15 +2093,22 @@ function parseTrigger(
         path,
         'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed and heal',
       );
-    const keys = allowTimer === 'withStart' ? ['everySeconds', 'atStart'] : ['everySeconds'];
-    for (const key of Object.keys(v)) if (!keys.includes(key)) fail(`${path}.${key}`, 'unknown field');
+    const flags = allowTimer === 'withStart' ? (['atStart', 'carry'] as const) : (['carry'] as const);
+    for (const key of Object.keys(v)) {
+      if (key !== 'everySeconds' && !(flags as readonly string[]).includes(key))
+        fail(`${path}.${key}`, 'unknown field');
+    }
     const seconds = v.everySeconds;
     if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
       fail(`${path}.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
     }
-    if (v.atStart === undefined) return { everySeconds: seconds };
-    if (v.atStart !== true) fail(`${path}.atStart`, `expected true, got ${JSON.stringify(v.atStart)}`);
-    return { everySeconds: seconds, atStart: true };
+    const timer: TimerTrigger = { everySeconds: seconds };
+    for (const flag of flags) {
+      if (v[flag] === undefined) continue;
+      if (v[flag] !== true) fail(`${path}.${flag}`, `expected true, got ${JSON.stringify(v[flag])}`);
+      timer[flag] = true;
+    }
+    return timer;
   }
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
@@ -2350,10 +2363,14 @@ function parseTimedFields(
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
-  // 回数トリガーの遅れ編: 付与（stat が undefined）には書けない（付与の欄の一覧に無い）。確率のきっかけの検査より先に見る
+  // 回数トリガーの遅れ編: 確率のきっかけの検査より先に見る。2026-10-29 のキャラの編（plan/design-new-chars-1029.md 10.2 節の e）:
+  // 付与（stat が undefined）は時間の周期のきっかけのときだけ書け、周期の発火の delayFrames 後のフレームに付ける（マリアン：クイーンの
+  // 槍の命中で付く弱点露出。V-0538）
   if (v.delayFrames !== undefined) {
-    if (stat === undefined) fail(`${path}.delayFrames`, 'delayFrames cannot be used in a state grant');
-    effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+    if (stat === undefined) {
+      if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames in a state grant needs a timer trigger');
+      effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+    } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }
   if (stat !== undefined) {
     validateFixedChargeTime({ kind: 'timed', ...effect, stat }, path);
@@ -2618,6 +2635,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'squad',
   'withCharacter',
   'enemyElement',
+  'delayFrames',
   'assumes',
   'claims',
 ];
@@ -2655,7 +2673,16 @@ function parseStateContentItem(
 
 /** 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節） */
 function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>): Record<string, Json> {
-  const { kind: _kind, state: _state, contents: _contents, claims: _claims, undispellable: _u, ...fields } = grant;
+  // 付与の delayFrames（周期の付与の遅れ）は付与の発火の欄なので、中身の規則には渡さない
+  const {
+    kind: _kind,
+    state: _state,
+    contents: _contents,
+    claims: _claims,
+    undispellable: _u,
+    delayFrames: _delay,
+    ...fields
+  } = grant;
   const { claims: _itemClaims, ...value } = item;
   return { ...fields, ...value, kind: 'timed' };
 }

@@ -6,6 +6,7 @@ import { firingParams } from '../frame/firing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { rateAfterShots } from '../cadence.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
+import { ENEMY, itemsOf } from '../skills/holders.ts';
 import { createTriggerTracker, type FrameEvents, type ShotEvent } from '../skills/triggers.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -88,6 +89,59 @@ describe('5.2 「N 回順番に攻撃」（damage の hitsRef・hitIntervalFrame
     const hits = run([sameFrame]).skillHits;
     expect(hits.slice(0, 7).every((h) => h.frame === hits[0]!.frame)).toBe(true);
   });
+
+  it('gives all N hits the buffs at the activation, even after a delay (10.2 節の d。V-0538)', () => {
+    const delayed = { ...spear, delayFrames: 19 };
+    // 攻撃力▲が 1 回目の発動（236f）の直後に切れる。遅れて出る 7 ヒット（255f〜）も、発動の時点の▲のまま
+    const attackUp = {
+      kind: 'timed',
+      trigger: 'battleStart',
+      target: 'self',
+      stat: 'attack',
+      ref: 3,
+      durationSeconds: 4.05,
+    };
+    const hits = run([delayed, attackUp]).skillHits;
+    expect(hits[0]!.frame).toBe(236 + 19);
+    const plain = run([delayed]).skillHits;
+    for (let k = 0; k < 7; k++) {
+      expect(hits[k]!.hit.perActivation).toBeCloseTo(hits[0]!.hit.perActivation, 9);
+      expect(hits[k]!.hit.perActivation).toBeGreaterThan(plain[k]!.hit.perActivation);
+    }
+    // 2 回目の発動（▲が切れた後）は▲なし
+    expect(hits[7]!.hit.perActivation).toBeCloseTo(plain[7]!.hit.perActivation, 9);
+  });
+});
+
+describe('10.2 節の e: 周期の付与の delayFrames', () => {
+  const wound = {
+    kind: 'state',
+    state: 'openWounds',
+    trigger: { everySeconds: 4 },
+    target: 'enemy',
+    durationUntil: 'battleEnd',
+    contents: [{ stat: 'damageTaken', ref: 3 }],
+  };
+
+  it('applies the grant delayFrames after each timer fire', () => {
+    const startOf = (effect: Record<string, unknown>) =>
+      itemsOf(run([effect]).history, { holder: ENEMY }).filter((i) => i.origin.kind === 'state')[0]!.start;
+    expect(startOf(wound)).toBe(236);
+    expect(startOf({ ...wound, delayFrames: 19 })).toBe(236 + 19);
+  });
+
+  it('needs a timer trigger in a state grant', () => {
+    const def = (effect: Record<string, unknown>) =>
+      parseSkillDefinition({
+        formatVersion: 1,
+        resourceId: 1,
+        checkedAt: '2026-10-29',
+        skills: { skill1: { effects: [effect] }, skill2: empty, burst: empty },
+      });
+    expect(() => def({ ...wound, trigger: 'burstUse', delayFrames: 19 })).toThrow(
+      /delayFrames in a state grant needs a timer trigger/,
+    );
+  });
 });
 
 describe('5.5 順番攻撃ダメージ▲（sequentialAttackDamage）', () => {
@@ -135,10 +189,18 @@ describe('5.3 状態の間だけ縮む周期（damage の periodShorten）', () 
     const gaps = frames.map((f, i) => f - (i === 0 ? 0 : frames[i - 1]!));
     const four = gameSecondsToFrames(4) + 1;
     const two = gameSecondsToFrames(2) + 1;
-    // 戦闘開始のフレームの状態は見えない（付いた件はその次のフレームから）ので 1 回目は 4 秒。10 秒までの発動の後は 2 秒、その後は 4 秒
-    expect(gaps[0]).toBe(four);
-    expect(gaps.slice(1, 4)).toEqual([two, two, two]);
+    // 戦闘開始のフレームの状態は見えない（付いた件はその次のフレームから）ので 1 回目は 4 秒。状態の間の発動の後は 2 秒。
+    // 3 回目（8 秒）の後は縮めた次の発動（10 秒の後）の時点で状態が切れているので 4 秒に戻る（10.2 節の f。V-0538）
+    expect(gaps.slice(0, 4)).toEqual([four, two, two, four]);
     expect(gaps.at(-1)).toBe(four);
+  });
+
+  it('counts the period by game seconds with the fraction carried over (carry)', () => {
+    const carried = run([{ ...single, trigger: { everySeconds: 4, carry: true } }]).skillHits.map((h) => h.frame);
+    // 4 秒 = 235.29 フレーム。k 回目は ceil(k × 235.29)（端数を持ち越さないと 236 × k）
+    expect(carried.slice(0, 4)).toEqual([236, 471, 706, 942]);
+    const plain = run([single]).skillHits.map((h) => h.frame);
+    expect(plain.slice(0, 4)).toEqual([236, 472, 708, 944]);
   });
 
   it('needs a timer trigger', () => {

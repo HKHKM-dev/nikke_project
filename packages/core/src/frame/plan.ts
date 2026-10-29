@@ -347,6 +347,7 @@ export function planSkillHits(
       stacks?: number,
       activationFrame = frame - delays.effectFrames,
       shooterAtHit = false,
+      valueFrame = frame,
     ): void => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
       // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）。
@@ -355,7 +356,7 @@ export function planSkillHits(
       const atHit =
         pre && !shooterAtHit
           ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre)
-          : burstSnapshotState(timeline, frame, slotIndex, pre).buffs;
+          : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
       const skill = effect.source.skill;
@@ -375,7 +376,7 @@ export function planSkillHits(
         condition: { ...slot.condition, fullBurst: false },
       });
       // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
-      const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, frame);
+      const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, valueFrame);
       // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
       // コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: core の自動攻撃は、ヒットのフレームの着地点の行の割合
@@ -414,7 +415,7 @@ export function planSkillHits(
       const fires = isResolvedApplied(effect.trigger)
         ? appliedFrames(history, effect.trigger.applied, slotIndex)
         : shorten !== undefined && isResolvedTimer(effect.trigger)
-          ? shortenedTimerFrames(effect.trigger.everySeconds, shorten.seconds, frames, (f) =>
+          ? shortenedTimerFrames(effect.trigger, shorten.seconds, frames, (f) =>
               selfStateHolds({ state: shorten.state, present: true }, f),
             )
           : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
@@ -441,13 +442,13 @@ export function planSkillHits(
           }
           continue;
         }
-        // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す
-        const hits = effect.hits ?? 1;
-        const interval = effect.hitIntervalFrames ?? 0;
-        for (let k = 0; k < hits; k++) {
-          const at = frame + delay + k * interval;
+        // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す。
+        // 同 10.2 節の d: N ヒットとも発動（発火）のフレームのバフとフルバースト補正で出す（遅れ・間の後のヒットも。C-0735）。
+        // N 回でない倍率ダメージは、遅れがあればヒットのフレームのバフ（遅れて出る倍率ダメージ編）
+        for (let k = 0; k < (effect.hits ?? 1); k++) {
+          const at = frame + delay + k * (effect.hitIntervalFrames ?? 0);
           if (at >= frames) break;
-          push(at, effect, pre, copied);
+          push(at, effect, pre, copied, undefined, false, effect.hits === undefined ? at : frame);
         }
       }
     }

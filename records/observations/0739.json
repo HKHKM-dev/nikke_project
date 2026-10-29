@@ -83,13 +83,34 @@
     "source": "V-0538",
     "readAt": "2026-10-29",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 151358,
     "unit": "ダメージ",
     "description": "1 回目の槍の発動の 7 ヒットの、槍の 1 ヒット（会心なし）。弱点露出の受けるダメージ▲が乗らない（151,357.5 = (120,694 − 100) × 125.51%）",
     "method": {
       "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
       "note": "7 ヒットとも、増分から同じフレームの通常攻撃（弱点露出の乗った 14,113・17,641 など）を引くと 151,357〜151,358。2 回目の発動からは 159,001（下の観測値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -98,13 +119,34 @@
     "source": "V-0538",
     "readAt": "2026-10-29",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 159001,
     "unit": "ダメージ",
     "description": "2 回目からの槍の発動のヒット（会心なし）。弱点露出の受けるダメージ 5.05%▲が乗る（151,357.5 × 1.0505）",
     "method": {
       "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
-      "note": "会心は 238,502（× 1.5）。同じフレームの通常攻撃と重なった増分（173,114 = 159,001 + 14,113 など）を含め、2 回目からのどの発動でも同じ"
+      "note": "会心は 238,502（× 1.5）。同じフレームの通常攻撃と重なった増分（173,114 = 159,001 + 14,113 など）を含め、2 回目からのどの発動でも同じ。比べるのは 2 回目の発動の 1 ヒット目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 7,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -114,12 +156,196 @@
     "readAt": "2026-10-29",
     "kind": "timing",
     "use": "record",
-    "value": [1039, 1040],
+    "value": [1039, 1039],
     "unit": "f",
-    "description": "1 回目の槍の最初のヒットのフレームと、通常攻撃に弱点露出（× 1.0505）が乗った最初のフレーム",
+    "description": "1 回目の槍の最初のヒットのフレームと、通常攻撃に弱点露出（× 1.0505）が乗った最初のフレーム（同じフレーム。槍のヒット自身には乗らない）",
     "method": {
       "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
-      "note": "その前の通常攻撃はコア 13,434・コア + 会心 16,793（弱点露出なし）、その後は 14,113・17,641（弱点露出あり）"
+      "note": "f1039 の増分 244,677 = 槍の会心 227,036（弱点露出なし）+ 通常攻撃のコア + 会心 17,641（弱点露出あり）。その前の通常攻撃は 13,434・16,793（弱点露出なし）"
+    }
+  },
+  {
+    "id": "0739-09",
+    "recording": "0739",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 254,
+    "unit": "f",
+    "description": "1 回目の槍の発動の最初のヒットの、戦闘開始（0739-03）からの動画のフレーム数",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "f1039"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0739-10",
+    "recording": "0739",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 525,
+    "unit": "f",
+    "description": "2 回目の槍の発動の 4 ヒット目の、戦闘開始からの動画のフレーム数（発動の中のヒットの間）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "2 回目の発動の頭 f1274 の 36f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 10
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0739-11",
+    "recording": "0739",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "timing",
+    "value": 10372,
+    "unit": "f",
+    "description": "44 回目（戦闘の最後）の槍の発動の最初のヒットの、戦闘開始からの動画のフレーム数（周期の端数の持ち越し）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "f11157。1 回目の頭から 43 周期"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrame",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 301
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0739-12",
+    "recording": "0739",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14113,
+    "unit": "ダメージ",
+    "description": "1 回目の槍の最初のヒットと同じフレームの通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）。弱点露出が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "f1039（0739-08）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 255,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0739-13",
+    "recording": "0739",
+    "source": "V-0538",
+    "readAt": "2026-10-29",
+    "use": "compare",
+    "kind": "hit",
+    "value": 13434,
+    "unit": "ダメージ",
+    "description": "1 回目の槍の最初のヒットの 2f 前の通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）。弱点露出が乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0538「読み方」）",
+      "note": "f1037 の前後の通常攻撃（0739-08）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 253,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
     }
   }
 ]
