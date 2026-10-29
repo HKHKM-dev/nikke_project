@@ -46,6 +46,7 @@
 - 大きさは 50KB を目安にする。実測値は書かず、検証記録と観測値を ID で指す。
 - 語彙が足りているなら設計書は作らず、検証記録だけで進める。
 - 設計書の「経過」には、設計か実装が変わったときだけ 1 行書く。モデルを変えずに仮説を確定にしただけ（再現の撮影など）なら書かない（結論の状態と根拠は [claims.md](claims.md)・[verifications.md](verifications.md) が持つ。[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 4 節）。
+- 段に分けた設計書（2 段目の段 N など）では、段の中の PR ごとの経過は段の設計書だけに「PR N を実装した（V-NNNN、C-…）。次は …」の 1 行で書き、段の一覧（[design-skill-stages.md](design-skill-stages.md)）の経過には段の出来事（起案・決定・閉じた）だけを書く。設計書の「読んで分かったこと」には、次の PR や論点に効く判断だけを書き、結論の中身は ID で指す（[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 2 節）。
 
 ### 1.5 実装する
 

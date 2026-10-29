@@ -4,19 +4,20 @@
 // 確定の反復実測の結論に decidedOn がある・最小構成の警告・指標なし・許容外・合う仮説が 2 つ以上は人の判断（judgment）で上書き・
 // 確定の結論の根拠の観測値のうち compare の無いものに scope がある・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
 // 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:minimal（感度を計算し直し、records:check も回る）と
-// PR の題名の案を出す。CI と同じ確認（npm run ci）は --ci のときだけ回す（ふつうは PR の前の npm run pr:prep が回す。
+// PR の題名の案と本文の骨組み（plan/design-workflow-simplification-5.md 2 節）を出す。CI と同じ確認（npm run ci）は --ci のときだけ回す（ふつうは PR の前の npm run pr:prep が回す。
 // plan/design-workflow-simplification-4.md 2 節。--no-ci は前の既定の名残で、何もしない）。backlog.md の更新と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { gradeCandidate, type ClaimGrade } from '../src/records/claims.ts';
-import { closeChecks, markState, prTitle } from '../src/records/close.ts';
+import { closeChecks, markState, prBody, prTitle, residualCounts } from '../src/records/close.ts';
 import { V_ID } from '../src/records/ids.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
 import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
 import { comparePredictions } from '../src/records/predictions.ts';
 import {
+  RESIDUALS_PATH,
   ROOT,
   loadClaims,
   loadObservations,
@@ -127,6 +128,20 @@ const run = (cmd: string): void => {
 run('npm run records:minimal');
 if (values.ci) run('npm run ci');
 console.log(`PR の題名の案: ${prTitle(verification)}`);
+// 本文の骨組み（plan/design-workflow-simplification-5.md 2 節）。残差の件数は records:minimal が作り直した一覧と origin/main の一覧から読む
+const before = spawnSync('git', ['show', `origin/main:${RESIDUALS_PATH.slice(ROOT.length)}`], {
+  cwd: ROOT,
+  encoding: 'utf8',
+});
+const afterClaims = loadClaims();
+console.log(
+  `PR の本文の骨組み:\n\n${prBody(
+    verification,
+    afterClaims,
+    residualCounts(readFileSync(RESIDUALS_PATH, 'utf8')),
+    before.status === 0 ? residualCounts(before.stdout) : undefined,
+  )}\n`,
+);
 console.log(
   '残り: 課題の状態が変わったら plan/backlog.md の行を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
 );
