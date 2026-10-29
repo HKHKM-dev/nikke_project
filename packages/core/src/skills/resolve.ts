@@ -107,6 +107,8 @@ export type ResolvedShotCountTrigger = {
   reset?: ShotCountReset;
   /** ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけこの窓の中に限る */
   firesDuring?: FiringWindow;
+  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の発では発火しない */
+  firesOutside?: 'weaponChange';
   /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの確率（比率。0 より大きく 1 以下）。有れば every は 1 で、
    * 回数の量が正の射撃のたびに発火する（skills/triggers.ts）。窓の値は skills/chance.ts が期待値にする
@@ -150,6 +152,7 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (trigger.during !== undefined)
     return { count: trigger.count, every, during: trigger.during, reset: trigger.reset! };
   if (trigger.firesDuring !== undefined) return { count: trigger.count, every, firesDuring: trigger.firesDuring };
+  if (trigger.firesOutside !== undefined) return { count: trigger.count, every, firesOutside: trigger.firesOutside };
   if (trigger.stacksRef === undefined) return { count: trigger.count, every };
   const stacks = skillValue(skill, trigger.stacksRef, level);
   if (!Number.isInteger(stacks) || stacks < 1) {
@@ -261,6 +264,8 @@ export type ResolvedEffect = {
   excludeSelf?: ExcludeSelf;
   /** ペルソナ編: 「〈名前〉状態の」（名前の付いた状態の語彙編: 目録の id）。定義に無ければキーごと無い */
   targetState?: NamedStateId;
+  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 「自分と〈状態〉の味方」。定義に無ければキーごと無い */
+  includeSelf?: true;
   /** ペルソナ編: 「基本バースト段階が N の」。定義に無ければキーごと無い */
   targetBurstStep?: BasicBurstStep;
   /** 2 段目の段 7: 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
@@ -567,6 +572,7 @@ function resolveItemFields(
   if (effect.targetSquad) r.targetSquad = effect.targetSquad;
   if (effect.excludeSelf) r.excludeSelf = effect.excludeSelf;
   if (effect.targetState) r.targetState = effect.targetState;
+  if (effect.includeSelf) r.includeSelf = true;
   if (effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
   if (effect.targetDefense) r.targetDefense = effect.targetDefense;
   if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
@@ -690,6 +696,7 @@ export function resolveStateContents(
         if (grant.targetSquad) r.targetSquad = grant.targetSquad;
         if (grant.excludeSelf) r.excludeSelf = grant.excludeSelf;
         if (grant.targetState) r.targetState = grant.targetState;
+        if (grant.includeSelf) r.includeSelf = true;
         if (grant.targetBurstStep) r.targetBurstStep = grant.targetBurstStep;
         if (grant.fixedTargets) r.fixedTargets = grant.fixedTargets;
         if (grant.maxStacks !== undefined) r.maxStacks = grant.maxStacks;

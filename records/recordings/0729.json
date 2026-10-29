@@ -1,0 +1,46 @@
+{
+  "id": "0729",
+  "date": "2026-10-29",
+  "folder": "range",
+  "file": "20261029-0729_rl_rapunzel-sanctuary.mp4",
+  "original": "2026-10-29_18-26-15.mp4",
+  "durationSec": 201,
+  "frames": 12061,
+  "fps": 60,
+  "sizeMB": 243.5,
+  "sha256": "3f0f10c816d6",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 473,
+      "name": "ラプンツェル：サンクチュアリ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0536 の 1 本目。リター・I-DOLL・サン・ラプンツェル：サンクチュアリ（操作）・AUTO 射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-10-29T18:36+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

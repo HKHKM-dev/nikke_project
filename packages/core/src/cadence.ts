@@ -46,9 +46,10 @@ export function reloadChunks(shot: Pick<ShotParams, 'maxAmmo' | 'reloadBullet'>)
  * i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（MAX_RPM）で頭打ち。
  * 2 段目の段 9 の PR 2: rateScale（攻撃速度▲の 1 + Σ。frame/firing.ts の FiringParams）を掛けてから頭打ちにする（C-0600）
  */
-export function rateAfterShots(shot: ShotParams, shotsFired: number, rateScale = 1): number {
+export function rateAfterShots(shot: ShotParams, shotsFired: number, rateScale = 1, spinUpScale = 1): number {
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.6 節）: 立ち上げ速度▲は 1 発ごとの上がり幅に掛ける
   const rpm = hasSpinUp(shot)
-    ? Math.min(shot.endRateOfFire, shot.rateOfFire + shotsFired * shot.rateOfFireChangePerShot)
+    ? Math.min(shot.endRateOfFire, shot.rateOfFire + shotsFired * shot.rateOfFireChangePerShot * spinUpScale)
     : shot.rateOfFire;
   return Math.min(MAX_RPM, rpm * rateScale);
 }
@@ -101,7 +102,7 @@ export function simulateShotFrames(
   let t = 0;
   while (frames.length < params.maxAmmo) {
     t += 1;
-    acc += rateAfterShots(shot, frames.length, params.rateScale) / MAX_RPM;
+    acc += rateAfterShots(shot, frames.length, params.rateScale, params.spinUpScale) / MAX_RPM;
     if (acc >= 1 - ACC_EPSILON) {
       acc -= 1;
       frames.push(t);

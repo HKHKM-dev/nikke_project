@@ -1,0 +1,167 @@
+{
+  "formatVersion": 1,
+  "resourceId": 473,
+  "checkedAt": "2026-10-29",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "ref": 1
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetState": "intoTheFray",
+          "includeSelf": true,
+          "stat": "attackDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "「臨戦状態の味方」は、枠の定義の静的な臨戦（戦闘開始時に付いて持続するもの。マリアン：クイーン・紅蓮：神殺）を持つ枠と読む（バースト使用時に付く 10 秒の臨戦だけの枠は無い）",
+            "en": "\"Allies in the Into the Fray state\" are read as slots whose definition has a static Into the Fray (applied at the start of battle and lasting: Marian: Queen and Scarlet: Goddeath); no slot has only the 10 s Into the Fray applied on burst use"
+          },
+          "claims": [
+            "C-0719"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ナノ粒子投与（バーストの、戦闘不能の味方が 3 機以上の分岐）を使用した時の、バーストスキルのクールタイム▲とナノ粒子消耗：防御力▲は、味方が倒れない前提では起きない（要件 5.2 節）",
+          "en": "The Burst Skill cooldown increase and Nanoparticle Consumption (DEF up) on using Nanoparticle Injection (the burst branch for 3 or more incapacitated allies) never happen, since allies are assumed not to fall (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "burstCooldown",
+            "target": "self",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        },
+        {
+          "ja": "フルチャージした時からの、自分へのチャージ速度▲▼の無効（持続）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。plan/design-new-chars-1029.md 論点 F）",
+          "en": "The immunity to charge speed increases and decreases on self from a full charge on (continuous) is not modeled (no vocabulary for effect immunity; it matters only with an ally giving her charge speed changes. plan/design-new-chars-1029.md issue F)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "chargeSpeed",
+            "target": "self",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetState": "intoTheFray",
+          "includeSelf": true,
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "「臨戦状態の味方」の読みは S1 のフルバーストの攻撃ダメージ▲と同じ",
+            "en": "\"Allies in the Into the Fray state\" are read as for the S1 Full Burst attack damage increase"
+          },
+          "claims": [
+            "C-0719"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "additional",
+          "ref": 7,
+          "gaugeHits": [
+            0,
+            0
+          ],
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。発射のフレームに出る（ロケットの命中はその 8f 後。V-0536）。バーストゲージを、フルチャージ倍率の無い 1 ヒット（target_burst_energy_pershot）の 2 回分溜める（操作枠で測った。操作枠でないときの量は確かめていない）",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). It lands on the firing frame (the rocket hits 8 frames later; V-0536). It charges the Burst Gauge by two unmultiplied hits (target_burst_energy_pershot) (measured on the controlled slot; the amount when not controlled is unchecked)"
+          },
+          "claims": [
+            "C-0720",
+            "C-0721"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルチャージ状態を 1 秒以上維持した時の自分への共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。きっかけ「フルチャージ状態を N 秒以上維持した時」は語彙に無い）",
+          "en": "The shared barrier on self when Full Charge is held for 1 s or more does not change damage by itself (it matters only with an effect reading barriers; the trigger 'Full Charge held for N s or more' is not in the vocabulary)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "unknown"
+          }
+        },
+        {
+          "ja": "フルチャージ状態を 1 秒以上維持した時の味方全体のゴッデスブレッシング（発動者基準の防御力▲）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。きっかけは上と同じく語彙に無い）",
+          "en": "Goddess Blessing (DEF up based on the caster) on all allies when Full Charge is held for 1 s or more does not change damage by itself (it matters only with an effect reading DEF; the trigger is not in the vocabulary, as above)",
+          "kind": "indirect",
+          "path": "defense",
+          "effect": {
+            "kind": "timed",
+            "stat": "defense",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 6,
+          "durationRef": 7,
+          "assumes": {
+            "ja": "味方が倒れない前提なので、いつも「戦闘不能状態の味方が 2 機以下」の分岐（ナノ粒子消耗状態の分岐も同じ値・対象）",
+            "en": "Allies are assumed not to fall, so the branch for 2 or fewer incapacitated allies always applies (the Nanoparticle Consumption branch has the same value and targets)"
+          },
+          "claims": [
+            "C-0722"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘不能状態の味方が 3 機以上の分岐（ナノ粒子投与の復活と、発動者基準の攻撃力▲・防御力▲。戦闘中 1 回）は、味方が倒れない前提では起きない（要件 5.2 節）",
+          "en": "The branch for 3 or more incapacitated allies (revival by Nanoparticle Injection with ATK and DEF up based on the caster, once per battle) never happens, since allies are assumed not to fall (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    }
+  }
+}

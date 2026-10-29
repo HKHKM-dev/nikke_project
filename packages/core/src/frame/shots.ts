@@ -52,6 +52,11 @@ export type ShotLog = {
   hits?: number[];
   coreHits?: number[];
   /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: frames と同じ並びの、発ごとのクリティカルの命中の期待値
+   * （命中の期待値 × その発の通常攻撃の会心率。1 パス目が書く）。省略は 0
+   */
+  critHits?: number[];
+  /**
    * ペレットの命中編（plan/design-pellet-hit.md 2 節）: frames と同じ並びの、発ごとに的に当たったペレットの数（期待値か、録画で
    * 数えた入力。1 パス目が書く）。省略は hits
    */

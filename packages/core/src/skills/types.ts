@@ -107,7 +107,9 @@ export type BuffStat =
   | 'maxHpOnly'
   | 'defense'
   | 'attackSpeed'
-  | 'burstCooldown';
+  | 'burstCooldown'
+  | 'sequentialAttackDamage'
+  | 'spinUpSpeed';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -148,6 +150,12 @@ export const BUFF_STATS = [
   // 「その間スキル自体のクールタイムを変える」）。scaling 'flat' だけで、値は縮める秒（正の値）。効いている間にバーストを使うと、
   // その発動の CT が X 秒短い（frame/firstPass.ts。0 秒より短くしない）。与ダメージの式は読まない
   'burstCooldown',
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.5 節）: 順番攻撃ダメージ▲（比率）。「N 回順番に攻撃」の倍率ダメージ
+  // （damage の hitsRef）にだけ、別枠の乗数 (1 + Σ) で掛ける（分配ダメージ▲と同じ置き方。仮説。skills/burstDamage.ts の computeBurstHit）
+  'sequentialAttackDamage',
+  // 同 5.6 節: マシンガン立ち上げ速度▲（比率）。MG のレートの上がり方（1 発ごとの rateOfFireChangePerShot）に (1 + Σ) を掛ける
+  // （読みは仮説。論点 I。cadence.ts の rateAfterShots）。スピンアップの無い武器には効かない。射撃に効く
+  'spinUpSpeed',
 ] as const satisfies readonly BuffStat[];
 
 /**
@@ -161,6 +169,7 @@ export const FIRING_STATS = [
   'infiniteAmmo',
   'fixedChargeTime',
   'attackSpeed',
+  'spinUpSpeed',
 ] as const satisfies readonly BuffStat[];
 
 /** 射撃に効くか。Stage 11 モダニア: 解決後の使用武器の変更（stat 'weapon'。skills/resolve.ts の EffectStat）も射撃に効く */
@@ -438,7 +447,7 @@ export const BURST_USERS_TRIGGERS = ['fullBurstStart', 'fullBurstEnd'] as const 
  * 1 発の量が N を超えてはいけないので every か everyRef が要り、循環には書けない
  */
 export type ShotCountKind =
-  'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot' | 'pelletHit';
+  'normalShot' | 'normalHit' | 'coreHit' | 'fullChargeShot' | 'lastShot' | 'weaponChangeShot' | 'pelletHit' | 'critHit';
 export const SHOT_COUNT_KINDS = [
   'normalShot',
   'normalHit',
@@ -447,6 +456,10 @@ export const SHOT_COUNT_KINDS = [
   'lastShot',
   'weaponChangeShot',
   'pelletHit',
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: critHit = クリティカルの命中の期待値（1 発ごとに命中の期待値 ×
+  // その発の通常攻撃の会心率。frame/firstPass.ts）を足し、累計が N の倍数を越えた発で発火する（coreHit と同じ持ち越し）。乱数の
+  // きっかけを期待値で持つ（ソルジャーE.G. 編と同じ考え方）
+  'critHit',
 ] as const satisfies readonly ShotCountKind[];
 
 export type ShotCountTrigger = {
@@ -475,6 +488,12 @@ export type ShotCountTrigger = {
    * 持ち替えた武器の発のときだけ発火する（モラン S1「自分が武器変更状態の場合、通常攻撃が N 回命中した時」）
    */
   firesDuring?: FiringWindow;
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 'weaponChange' なら、N の倍数に届いた発が使用武器の変更で持ち替えた
+   * 武器の発のときは発火しない（数えるのは変更の発も。紅蓮：神殺の S2「自分が花無十一日紅・満開状態でなければ」）。firesDuring・
+   * during・chance・stacksRef とは組み合わせない。どの効果にも書ける
+   */
+  firesOutside?: 'weaponChange';
   /**
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
@@ -609,6 +628,11 @@ export type TimedEffect = TargetCountFields &
      * 静的な状態。staticStatesOf）を持つ枠だけ。target が 'allies' のときだけ書ける
      */
     targetState?: NamedStateId;
+    /**
+     * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 「自分と〈状態〉の味方」。targetState に当たる枠に、自分の枠を
+     * 足す（自分がその状態を持たなくても付く）。targetState と組むときだけ書ける（値は true だけ）
+     */
+    includeSelf?: true;
     /** ペルソナ編: 「基本バースト段階が N の」。対象の枠の CharacterData.burstStep が N の枠だけ。target が 'allies' のときだけ書ける */
     targetBurstStep?: BasicBurstStep;
     /**
@@ -888,6 +912,28 @@ export type DamageEffect = {
    * ヒーローのバーストの追加ダメージ。V-0532）
    */
   perCount?: { state: NamedStateId } | { counter: CounterId };
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」の回数の description_value_NN。1 回の発動を
+   * N ヒットに分け、どのヒットも ref の値で出す（バーストの hitsRef と同じく、ref は 1 ヒットの値）。順番攻撃ダメージ▲（sequentialAttackDamage）
+   * はこのヒットにだけ乗る。射撃の回数のきっかけ・perBurstHit とは組み合わせない
+   */
+  hitsRef?: number;
+  /**
+   * 同 5.2 節: ヒットとヒットの間（フレーム。0 以上の整数）。省略は 0（N ヒットが同じフレーム）。測った値を即値で書き、根拠の結論を
+   * claims に結ぶ。hitsRef と組むときだけ
+   */
+  hitIntervalFrames?: number;
+  /**
+   * 同 5.4 節: 「コア命中ダメージ」。コアに当たったヒットとして、コアの項（コア倍率 − 1 + コアダメージ▲）を足す（割合 1。敵にコアが
+   * 無ければ足さない）。射撃ごとに畳み込む効果（毎回の回数のきっかけで条件なし）には書けない
+   */
+  coreHit?: true;
+  /**
+   * 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」。時間の周期のきっかけ（{ everySeconds }）の damage にだけ書ける。前の発動のフレームに自分が
+   * state（家族の根なら家族のどれか）なら、次の発動までを everySeconds − N 秒にする（数え方は仮説。論点 E）。N は slot のスロットの
+   * description_value_NN（ref）。縮めた周期が 0 秒以下になる値は解決で落とす
+   */
+  periodShorten?: { state: NamedStateId; slot: SkillSlot; ref: number };
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -1753,9 +1799,15 @@ function parsePersonaTargetFields(
   v: Record<string, Json>,
   target: BuffTarget,
   path: string,
-): { targetState?: NamedStateId; targetBurstStep?: BasicBurstStep } {
-  const out: { targetState?: NamedStateId; targetBurstStep?: BasicBurstStep } = {};
+): { targetState?: NamedStateId; includeSelf?: true; targetBurstStep?: BasicBurstStep } {
+  const out: { targetState?: NamedStateId; includeSelf?: true; targetBurstStep?: BasicBurstStep } = {};
   if (v.targetState !== undefined) out.targetState = parseNamedStateId(v.targetState, `${path}.targetState`, 'ally');
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 「自分と〈状態〉の味方」
+  if (v.includeSelf !== undefined) {
+    if (v.includeSelf !== true) fail(`${path}.includeSelf`, 'must be true');
+    if (out.targetState === undefined) fail(`${path}.includeSelf`, 'only allowed with targetState');
+    out.includeSelf = true;
+  }
   if (v.targetBurstStep !== undefined) {
     out.targetBurstStep = oneOf(BASIC_BURST_STEPS, v.targetBurstStep, `${path}.targetBurstStep`);
   }
@@ -1795,7 +1847,14 @@ function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<strin
     v.targetSquad !== undefined
   )
     fail(path, `${stat} cannot narrow its target by weapon, element, class or squad (an enemy debuff)`);
-  for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'durationShots', 'durationShotsRef'] as const) {
+  for (const key of [
+    'excludeSelf',
+    'targetState',
+    'includeSelf',
+    'targetBurstStep',
+    'durationShots',
+    'durationShotsRef',
+  ] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${stat} is held by the enemy, so it cannot have ${key}`);
   }
 }
@@ -1885,7 +1944,7 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
   // 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない
   if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
-  for (const key of ['targetState', 'targetBurstStep'] as const) {
+  for (const key of ['targetState', 'includeSelf', 'targetBurstStep'] as const) {
     if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
   }
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
@@ -2041,9 +2100,18 @@ function parseTrigger(
   if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
       if (
-        !['count', 'every', 'everyRef', 'stacksRef', 'during', 'reset', 'firesDuring', 'chance', 'chanceRef'].includes(
-          key,
-        )
+        ![
+          'count',
+          'every',
+          'everyRef',
+          'stacksRef',
+          'during',
+          'reset',
+          'firesDuring',
+          'firesOutside',
+          'chance',
+          'chanceRef',
+        ].includes(key)
       ) {
         fail(`${path}.${key}`, 'unknown field');
       }
@@ -2080,6 +2148,19 @@ function parseTrigger(
       if (trigger.count === 'weaponChangeShot') {
         fail(`${path}.firesDuring`, 'firesDuring cannot be used with weaponChangeShot');
       }
+    }
+    // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の外でだけ発火する
+    if (v.firesOutside !== undefined) {
+      if (v.firesOutside !== 'weaponChange') {
+        fail(`${path}.firesOutside`, `expected "weaponChange", got ${JSON.stringify(v.firesOutside)}`);
+      }
+      for (const key of ['during', 'firesDuring', 'stacksRef', 'chance', 'chanceRef'] as const) {
+        if (v[key] !== undefined) fail(`${path}.firesOutside`, `firesOutside cannot be used with ${key}`);
+      }
+      if (trigger.count === 'weaponChangeShot') {
+        fail(`${path}.firesOutside`, 'firesOutside cannot be used with weaponChangeShot');
+      }
+      trigger.firesOutside = 'weaponChange';
     }
     // ソルジャーE.G. 編: 確率のきっかけ（plan/design-soldier-eg.md 3.1 節）
     if (v.chance !== undefined || v.chanceRef !== undefined) {
@@ -2412,6 +2493,7 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
       'targetClass',
       'targetSquad',
       'targetState',
+      'includeSelf',
       'targetBurstStep',
       'targetDefense',
       'excludeSelf',
@@ -2437,7 +2519,9 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   }
   // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
   // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
-  if (fields.targetState === state) fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
+  if (fields.targetState !== undefined && stateMatches(fields.targetState, state)) {
+    fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
+  }
   // 2 段目の段 5: 家族の根を見る条件も、家族の状態の付与には書けない
   if (fields.condition?.selfState !== undefined && stateMatches(fields.condition.selfState.state, state)) {
     fail(`${path}.condition.selfState`, `a grant of "${state}" cannot look at its own state`);
@@ -2446,8 +2530,7 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   if (onEnemy) {
     if (isAppliedTrigger(fields.trigger))
       fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
-    if (v.contents === undefined)
-      fail(`${path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
+    // 中身の有無は定義の単位で見る（validateStateGrants。2026-10-29 のキャラの編: 同じ敵の状態を 2 つのきっかけで付ける）
     effect.enemy = true;
   }
   // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
@@ -2520,6 +2603,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'targetCountRef',
   'excludeSelf',
   'targetState',
+  'includeSelf',
   'targetBurstStep',
   'durationRef',
   'durationSeconds',
@@ -2948,6 +3032,39 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       per.state !== undefined
         ? { state: parseNamedStateId(per.state, `${path}.perCount.state`, 'ally') }
         : { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
+  }
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」
+  if (v.hitsRef !== undefined) {
+    if (isShotCountTrigger(trigger)) fail(`${path}.hitsRef`, 'hitsRef cannot be used with a shot count trigger');
+    if (effect.perBurstHit === true) fail(`${path}.hitsRef`, 'hitsRef cannot be used with perBurstHit');
+    effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
+  }
+  if (v.hitIntervalFrames !== undefined) {
+    if (effect.hitsRef === undefined) fail(`${path}.hitIntervalFrames`, 'hitIntervalFrames needs hitsRef');
+    const n = v.hitIntervalFrames;
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+      fail(`${path}.hitIntervalFrames`, `expected an integer >= 0, got ${JSON.stringify(n)}`);
+    }
+    effect.hitIntervalFrames = n;
+  }
+  // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
+  if (v.periodShorten !== undefined) {
+    const p = v.periodShorten;
+    if (!isTimerTrigger(trigger))
+      fail(`${path}.periodShorten`, 'periodShorten needs a timer trigger ({ everySeconds })');
+    if (!isRecord(p)) fail(`${path}.periodShorten`, 'expected an object');
+    for (const key of Object.keys(p))
+      if (!['state', 'slot', 'ref'].includes(key)) fail(`${path}.periodShorten.${key}`, 'unknown field');
+    effect.periodShorten = {
+      state: parseNamedStateId(p.state, `${path}.periodShorten.state`, 'ally'),
+      slot: oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`),
+      ref: parseRef(p.ref, `${path}.periodShorten.ref`),
+    };
+  }
+  // 同 5.4 節: 「コア命中ダメージ」
+  if (v.coreHit !== undefined) {
+    if (v.coreHit !== true) fail(`${path}.coreHit`, `expected true, got ${JSON.stringify(v.coreHit)}`);
+    effect.coreHit = true;
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
@@ -3759,6 +3876,12 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
   }
   for (const [state, grants] of byState) {
     const bearers = grants.filter((g) => g.effect.contents !== undefined);
+    // 敵に付く状態は、中身を読む側がまだ無いので、どれかの付与が中身を持つ（2026-10-29 のキャラの編（plan/design-new-chars-1029.md
+    // 9 節）: 同じ状態のほかの付与は中身を共有する。マリアン：クイーンの S1 の弱点露出は、槍とバースト使用時の 2 つで付く）
+    const enemyGrant = grants.find((g) => g.effect.enemy === true);
+    if (enemyGrant !== undefined && bearers.length === 0) {
+      fail(`${enemyGrant.path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
+    }
     if (bearers.length > 1) {
       fail(`${bearers[1]!.path}.contents`, `only one grant of "${state}" in a definition may have contents`);
     }

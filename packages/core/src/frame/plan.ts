@@ -33,6 +33,7 @@ import { cycleFires, cycleShotFrames, resolveCycles } from '../skills/cycles.ts'
 import {
   MAX_SKILL_LEVELS,
   isResolvedApplied,
+  isResolvedTimer,
   isResolvedEventCount,
   isResolvedShotCount,
   type ResolvedTrigger,
@@ -40,6 +41,7 @@ import {
 import {
   EMPTY_BUFF_STATE,
   appliedFrames,
+  shortenedTimerFrames,
   resolvePassiveStates,
   segmentIndexAt,
   triggerFrames,
@@ -377,8 +379,13 @@ export function planSkillHits(
       // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
       // コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: core の自動攻撃は、ヒットのフレームの着地点の行の割合
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージは割合 1
       const coreRate =
-        effect.core === true ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame) : 0;
+        effect.coreHit === true
+          ? 1
+          : effect.core === true
+            ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame)
+            : 0;
       const hit = computeSkillHit(
         [scaled],
         slot.character,
@@ -401,9 +408,16 @@ export function planSkillHits(
         throw new RangeError('a sequential burst cannot have perBurstHit damage');
       // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
       // （名前の付いた状態の語彙編: 時刻表の applications。plan/design-named-state.md 5.3 節）
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
+      // 次の発動までの秒を決めて並べる
+      const shorten = effect.periodShorten;
       const fires = isResolvedApplied(effect.trigger)
         ? appliedFrames(history, effect.trigger.applied, slotIndex)
-        : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
+        : shorten !== undefined && isResolvedTimer(effect.trigger)
+          ? shortenedTimerFrames(effect.trigger.everySeconds, shorten.seconds, frames, (f) =>
+              selfStateHolds({ state: shorten.state, present: true }, f),
+            )
+          : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
         // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
@@ -427,8 +441,14 @@ export function planSkillHits(
           }
           continue;
         }
-        if (frame + delay >= frames) continue;
-        push(frame + delay, effect, pre, copied);
+        // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す
+        const hits = effect.hits ?? 1;
+        const interval = effect.hitIntervalFrames ?? 0;
+        for (let k = 0; k < hits; k++) {
+          const at = frame + delay + k * interval;
+          if (at >= frames) break;
+          push(at, effect, pre, copied);
+        }
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
