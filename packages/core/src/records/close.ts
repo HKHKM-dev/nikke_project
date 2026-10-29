@@ -127,3 +127,48 @@ export function markState(markdown: string, state: '完了'): string {
 export function prTitle(v: Pick<Verification, 'id' | 'title' | 'claims'>): string {
   return `${v.title}（${[v.id, ...v.claims].join('、')}）`;
 }
+
+/** 残差の一覧（plan/residuals.md）の件数の行（「比べた観測値 N 件: 許容内 a・許容外 b・…」）から読む件数 */
+export type ResidualCounts = { compared: number; outside: number };
+
+export function residualCounts(markdown: string): ResidualCounts | undefined {
+  const m = /比べた観測値 (\d+) 件: 許容内 \d+・許容外 (\d+)/.exec(markdown);
+  return m === null ? undefined : { compared: Number(m[1]), outside: Number(m[2]) };
+}
+
+/**
+ * PR の本文の骨組み（plan/design-workflow-simplification-5.md 2 節）。「変更」は人が書く。
+ * 値と読み方は検証記録にあるので書き写さず、結論は ID・状態・等級だけを並べる。before は origin/main の残差の件数
+ */
+export function prBody(
+  v: Pick<Verification, 'id' | 'claims'>,
+  claims: readonly Pick<Claim, 'id' | 'state' | 'grade'>[],
+  after: ResidualCounts | undefined,
+  before?: ResidualCounts,
+): string {
+  const byId = new Map(claims.map((c) => [c.id, c]));
+  const claimLines = v.claims.map((id) => {
+    const c = byId.get(id);
+    return c === undefined ? `- ${id}: （結論が無い）` : `- ${id}: ${c.state}・${c.grade ?? '等級なし'}`;
+  });
+  const residual =
+    after === undefined
+      ? '- （plan/residuals.md の件数の行が読めなかった。許容外の件数の前後を書く）'
+      : before === undefined
+        ? `- 許容外 ${after.outside} 件（比べた観測値 ${after.compared} 件）`
+        : `- 許容外 ${before.outside} → ${after.outside} 件（比べた観測値 ${before.compared} → ${after.compared} 件。origin/main と比べた）`;
+  return [
+    '## 変更',
+    '- （コード・データの変更を書く）',
+    '',
+    `## 確かめ（${v.id}。値と読み方は検証記録）`,
+    ...claimLines,
+    '',
+    '## 既存の残差',
+    residual,
+    '- （許容外の行が増えた・減ったら、観測値の ID と理由を書く。変わらなければこの行を消す）',
+    '',
+    '## そのほか',
+    '- （なければ節ごと消す）',
+  ].join('\n');
+}

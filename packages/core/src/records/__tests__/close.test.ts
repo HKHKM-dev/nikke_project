@@ -1,7 +1,7 @@
 // 閉じる前の検査（plan/design-records-automation.md 3.7 節）
 import { describe, expect, it } from 'vitest';
 import type { Claim } from '../claims.ts';
-import { closeChecks, markState, prTitle, type CloseInput } from '../close.ts';
+import { closeChecks, markState, prBody, prTitle, residualCounts, type CloseInput } from '../close.ts';
 import type { Observation } from '../observations.ts';
 import { parseVerification } from '../verifications.ts';
 
@@ -231,5 +231,36 @@ describe('markState・prTitle', () => {
     expect(prTitle({ id: 'V-0099', title: '題名', claims: ['C-0001', 'C-0002'] })).toBe(
       '題名（V-0099、C-0001、C-0002）',
     );
+  });
+});
+
+describe('prBody', () => {
+  const v = { id: 'V-0099', claims: ['C-0001', 'C-0002'] };
+  const claims = [
+    { id: 'C-0001', state: '確定', grade: '厳密一致' },
+    { id: 'C-0002', state: '仮説', grade: undefined },
+  ] as const;
+
+  it('残差の一覧の件数の行を読む', () => {
+    expect(residualCounts('比べた観測値 1653 件: 許容内 1587・許容外 47・比べられない 0・失効 19。')).toEqual({
+      compared: 1653,
+      outside: 47,
+    });
+    expect(residualCounts('# 残差の一覧\n')).toBeUndefined();
+  });
+
+  it('結論は ID・状態・等級だけを並べ、残差は origin/main との前後を出す', () => {
+    const body = prBody(v, claims, { compared: 1660, outside: 47 }, { compared: 1653, outside: 47 });
+    expect(body).toContain(
+      '## 確かめ（V-0099。値と読み方は検証記録）\n- C-0001: 確定・厳密一致\n- C-0002: 仮説・等級なし',
+    );
+    expect(body).toContain('- 許容外 47 → 47 件（比べた観測値 1653 → 1660 件。origin/main と比べた）');
+    expect(body.startsWith('## 変更\n')).toBe(true);
+  });
+
+  it('前の件数が無ければ今の件数だけ、読めなければ書く旨を出す', () => {
+    expect(prBody(v, claims, { compared: 1660, outside: 47 })).toContain('- 許容外 47 件（比べた観測値 1660 件）');
+    expect(prBody(v, [], undefined)).toContain('件数の行が読めなかった');
+    expect(prBody(v, [], undefined)).toContain('- C-0001: （結論が無い）');
   });
 });
