@@ -8,7 +8,7 @@
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
 import { burstDelaysFieldOf, burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { battleSecondsToFrames, GAME_SECONDS_PER_FRAME } from '../time.ts';
+import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
@@ -410,15 +410,15 @@ export function planSkillHits(
       );
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
     };
-    // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 射撃の回数のきっかけの間隔の変更の件（cycleEvery の shotCounts。
-    // 持ち主はその枠）。スロットごとに、窓の中の間隔を渡す
-    const countWindows = itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
-      i.origin.kind === 'cycleEvery' && i.origin.effect.target === 'shotCounts'
-        ? [{ start: i.start, end: i.end, every: i.origin.effect.every, skill: i.origin.effect.targetSkill }]
-        : [],
-    );
-    const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined =>
-      everyAtOf(countWindows.filter((w) => w.skill === skill));
+    // 段 D の 2: 間隔の変更の件（持ち主はその枠。時刻の順）。2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 窓が効く先
+    // （段の循環か、射撃の回数のきっかけか）とスロットで絞る
+    const everyWindows = (target: 'cycle' | 'shotCounts', skill: SkillSlot) =>
+      itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
+        i.origin.kind === 'cycleEvery' && i.origin.effect.target === target && i.origin.effect.targetSkill === skill
+          ? [{ start: i.start, end: i.end, every: i.origin.effect.every }]
+          : [],
+      );
+    const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
       // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
@@ -465,7 +465,7 @@ export function planSkillHits(
         // 補正。戦闘の終わりを越えるヒットは出さない）
         if (effect.perCountIntervalSeconds !== undefined && copied !== undefined) {
           for (let k = 0; k < copied; k++) {
-            const at = frame + Math.floor((k * effect.perCountIntervalSeconds) / GAME_SECONDS_PER_FRAME + 1e-9);
+            const at = frame + gameSecondsToFrames(k * effect.perCountIntervalSeconds);
             if (at < frames) push(at, effect, pre);
           }
           continue;
@@ -517,12 +517,7 @@ export function planSkillHits(
     // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
     // 値は射撃の回数トリガーの倍率ダメージと同じく、ヒットのフレームのバフ（段の delayFrames があれば射撃の d 後）
     for (const cycle of resolveCycles(definition, slot.character, levels)) {
-      // 段 D の 2: 間隔の変更の件（持ち主はその枠。時刻の順）
-      const windows = itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
-        i.origin.kind === 'cycleEvery' && i.origin.effect.targetSkill === cycle.source.skill
-          ? [{ start: i.start, end: i.end, every: i.origin.effect.every }]
-          : [],
-      );
+      const windows = everyWindows('cycle', cycle.source.skill);
       const shotFrames = cycleShotFrames(shots[slotIndex], cycle.trigger);
       for (const fire of cycleFires(cycle.trigger.every, cycle.steps.length, shotFrames, windows)) {
         // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 段の delayFrames があれば、射撃の d 後に

@@ -2010,7 +2010,8 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   }
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
-  if ((isFlagStat(stat) && !isPassiveFlagStat(stat)) || stat === 'fixedChargeTime')
+  const passiveFlag = isPassiveFlagStat(stat);
+  if ((isFlagStat(stat) && !passiveFlag) || stat === 'fixedChargeTime')
     fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
@@ -2020,14 +2021,14 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, v, path);
   // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 有利コードのダメージ適用は値を持たないフラグで、自分だけ
-  if (isPassiveFlagStat(stat)) {
+  if (passiveFlag) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value`);
     if (target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
     if (v.while !== undefined) fail(`${path}.while`, `${stat} cannot have while`);
   }
   const effect: PassiveEffect = { kind: 'passive', target, stat };
-  if (!isPassiveFlagStat(stat)) effect.ref = parseRef(v.ref, `${path}.ref`);
+  if (!passiveFlag) effect.ref = parseRef(v.ref, `${path}.ref`);
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetClass !== undefined) effect.targetClass = targetClass;

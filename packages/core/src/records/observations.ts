@@ -10,6 +10,7 @@ import {
   hexagonFrameOf,
   hitFrameOf,
   hitFramesOf,
+  isInFullBurst,
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
@@ -433,8 +434,8 @@ function steadyPauseShots(result: SimResult, ctx: MetricContext): number | numbe
   const frames = slotOf(result.shots, ctx).frames;
   // 2 段目の段 12 の PR 2（V-0537）: 省略できる引数 fullBurst が true なら、両端の止まりがどちらもフルバーストの窓の中の組だけ、false なら
   // どちらも外の組だけを数える（バースト III の回数条件▼の窓はフルバーストの窓とほぼ重なる）
-  const windows = result.schedule?.fullBurstWindows ?? [];
-  const inWindow = (f: number): boolean => windows.some((w) => w.start <= f && f < w.end);
+  const schedule = result.schedule;
+  const inWindow = (f: number): boolean => schedule !== null && isInFullBurst(schedule, f);
   const side = ctx.args.fullBurst === undefined ? null : ctx.args.fullBurst === true;
   const shot = slotOf(ctx.input.slots, ctx).character.shot;
   // 撃ち始め（リロード・的のジャンプの後。前の発との間が 2f より長い発）から何発目で 1 フレーム 1 発に届くか

@@ -69,9 +69,16 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
  * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 0162-12）で使う
  */
 export function explosionHitMultiplier(buffs: BuffTotals): number {
-  const up = buffs.projectileExplosionDamage;
-  if (up === 0 || PROJECTILE_EXPLOSION_BUCKET === 'none') return 1;
-  if (PROJECTILE_EXPLOSION_BUCKET === 'separate') return 1 + up;
+  return projectileHitMultiplier(buffs.projectileExplosionDamage, PROJECTILE_EXPLOSION_BUCKET, buffs);
+}
+
+/**
+ * 発射体の▲ up の、置き場所 bucket での乗数（攻撃ダメージ▲の乗数とは別に掛ける形）。attackDamage は
+ * (1 + Σ攻撃ダメージ + up) ÷ (1 + Σ攻撃ダメージ)、separate は 1 + up、none と▲の無いときは 1
+ */
+function projectileHitMultiplier(up: number, bucket: 'attackDamage' | 'separate' | 'none', buffs: BuffTotals): number {
+  if (up === 0 || bucket === 'none') return 1;
+  if (bucket === 'separate') return 1 + up;
   const attackDamage = applyAttackDamageBuffs(buffs);
   return (attackDamage + up) / attackDamage;
 }
@@ -88,11 +95,7 @@ export const PROJECTILE_STICK_BUCKET: 'attackDamage' | 'separate' = 'attackDamag
  * 発射体の付着のヒット 1 つに掛ける、発射体付着ダメージ▲の乗数（damage の projectileStick。粘着榴弾の付着）。形は explosionHitMultiplier と同じ
  */
 export function stickHitMultiplier(buffs: BuffTotals): number {
-  const up = buffs.projectileStickDamage;
-  if (up === 0) return 1;
-  if (PROJECTILE_STICK_BUCKET === 'separate') return 1 + up;
-  const attackDamage = applyAttackDamageBuffs(buffs);
-  return (attackDamage + up) / attackDamage;
+  return projectileHitMultiplier(buffs.projectileStickDamage, PROJECTILE_STICK_BUCKET, buffs);
 }
 
 /**

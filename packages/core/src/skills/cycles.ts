@@ -20,7 +20,14 @@ import {
   type ResolvedTrigger,
   type SkillLevels,
 } from './resolve.ts';
-import { SKILL_SLOTS, type CycleEffect, type EffectTrigger, type SkillDefinition, type SkillSlot } from './types.ts';
+import {
+  SKILL_SLOTS,
+  isShotCountTrigger,
+  type CycleEffect,
+  type EffectTrigger,
+  type SkillDefinition,
+  type SkillSlot,
+} from './types.ts';
 
 /** 解決済みの循環。steps は段ごとの倍率ダメージ（ResolvedDamageEffect.cycle に段の番号が入る） */
 export type ResolvedCycle = {
@@ -169,8 +176,7 @@ function shotCountTriggerOf(
   slot: SkillSlot,
 ): ResolvedShotCountTrigger | null {
   for (const effect of def.skills[slot].effects) {
-    if (!('trigger' in effect)) continue;
-    if (typeof effect.trigger !== 'object' || effect.trigger === null || !('count' in effect.trigger)) continue;
+    if (!('trigger' in effect) || !isShotCountTrigger(effect.trigger as EffectTrigger)) continue;
     const trigger = resolveTrigger(effect.trigger as EffectTrigger, character.skills[slot], levels[slot]);
     if (isResolvedShotCount(trigger)) return trigger;
   }

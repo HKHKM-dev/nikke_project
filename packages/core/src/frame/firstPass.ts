@@ -103,6 +103,7 @@ import {
   createTriggerTracker,
   fireContextOf,
   type FrameEvents,
+  type ShotCountEveryAt,
   type ShotEvent,
   shotCountWeight,
   type TriggerTracker,
@@ -572,7 +573,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // 間隔の倍数に届いた発で止める（C-0727）。窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
   const shotPauseTrackers: {
     slotIndex: number;
-    skill: SkillSlot;
+    everyAt: ShotCountEveryAt | undefined;
     count: ShotCountKind;
     every: number;
     frames: number;
@@ -583,7 +584,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (slot === null || slot.definition === null) return;
     for (const t of resolveShotPauses(slot.definition, slot.character, slot.levels)) {
       if (t.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-      shotPauseTrackers.push({ slotIndex: i, ...t, n: 0 });
+      const { skill, ...rest } = t;
+      shotPauseTrackers.push({ slotIndex: i, ...rest, everyAt: lists.shotCountEveryOf(i, skill), n: 0 });
     }
   });
   const pauseLeft = slots.map(() => 0);
@@ -742,8 +744,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     for (const t of shotPauseTrackers) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
-      const every = lists.shotCountEveryAt(t.slotIndex, t.skill, f) ?? t.every;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), every);
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.everyAt?.(f) ?? t.every);
       t.n = counted.count;
       if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
     }
