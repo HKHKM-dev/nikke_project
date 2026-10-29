@@ -1,0 +1,19 @@
+{
+  "id": "C-0741",
+  "text": "マリアン：クイーンが自分でバーストを撃った回は、フルバーストの開始の時点で臨戦：胸を刺す願い状態とみなされ、コアダメージ 24.64%▲が付く。バーストの攻撃力 78.4%▲・攻撃ダメージ 78.14%▲（10 秒）は自分の通常攻撃と槍に乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0740-19`・`0740-23`・`0741-19`・`0741-23`（窓 1 の通常攻撃のコア 61,611（コアダメージ▲の無い値 56,083 は出ない）と、窓の中の槍 758,238）。仮説は撮る前に決めていた（plan/design-new-chars-1029.md 7 節の論点 D）。V-0538",
+  "model": "`data/skills/19.json` の skill2 の effects[3]・burst の effects[2]・effects[3]",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": [
+      "data/skills/19.json の skill2 の effects[3]",
+      "data/skills/19.json の burst の effects[2]",
+      "data/skills/19.json の burst の effects[3]"
+    ]
+  },
+  "decidedOn": []
+}

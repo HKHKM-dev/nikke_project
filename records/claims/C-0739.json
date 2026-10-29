@@ -1,0 +1,15 @@
+{
+  "id": "C-0739",
+  "text": "マリアン：クイーンの S2 の「通常攻撃で 2 回攻撃した時」のコア命中ダメージ（最終攻撃力の 14.06%）は、通常攻撃 2 発に 1 回、その発と同じフレームに出て、コア（コア倍率 − 1）・コアダメージ▲・フルバースト補正・会心が乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0740-22`・`0741-22`（窓 1 の最初のコア命中ダメージ 155,520。会心は 183,834）。仮説は撮る前に決めていた（plan/design-new-chars-1029.md 5.4 節）。V-0538",
+  "model": "`data/skills/19.json` の skill2 の effects[1] の `coreHit`（`frame/plan.ts` の `planSkillHits`）",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/19.json の skill2 の effects[1]"]
+  },
+  "decidedOn": []
+}

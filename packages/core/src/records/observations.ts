@@ -1605,7 +1605,7 @@ function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
  * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
  * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。
  * 2 段目の段 12 の PR 2（V-0537）: 省略できる引数で数える発動を絞る（hitMatches）。frame（と fullBurst。frameArgOf）= そのフレーム以降の
- * 発動だけを数える。core・distance が true なら、コアに当たった・距離ボーナスの付いたヒットの値（core・distance の効果のヒットだけ）
+ * 発動だけを数える。core・distance が true なら、コアに当たった・距離ボーナスの付いたヒットの値（core・distance の効果のヒットだけ。core はコア命中ダメージ（coreHit）にも。V-0538）
  */
 function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
@@ -1618,7 +1618,8 @@ function skillHitDamage(result: SimResult, ctx: MetricContext): number {
   );
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
-  if (ctx.args.core === true && hit.effect.core !== true) throw new Error('コアに当たらない効果のヒットに core: true');
+  if (ctx.args.core === true && hit.effect.core !== true && hit.effect.coreHit !== true)
+    throw new Error('コアに当たらない効果のヒットに core: true');
   if (ctx.args.distance === true && hit.effect.distance !== true)
     throw new Error('距離ボーナスの付かない効果のヒットに distance: true');
   return oneHitValue(hit.hit, ctx.args.crit === true, ctx.args.core === true, ctx.args.distance === true);

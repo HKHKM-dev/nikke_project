@@ -1,0 +1,15 @@
+{
+  "id": "C-0737",
+  "text": "マリアン：クイーンのバースト使用時の弱点露出は、槍で付いた弱点露出と重ならない（受けるダメージ▲は 5.05% の 1 件のまま）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0740-24`・`0741-24`（1 回目のバーストの窓の後の通常攻撃のコア 14,113。2 件なら 14,791）。仮説は撮る前に決めていた（plan/design-new-chars-1029.md 7 節の論点 C）。V-0538",
+  "model": "`data/skills/19.json` の skill1 の effects[3]（中身の無い同じ状態の付与。`skills/types.ts` の `validateStateGrants`）",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/19.json の skill1 の effects[3]"]
+  },
+  "decidedOn": []
+}

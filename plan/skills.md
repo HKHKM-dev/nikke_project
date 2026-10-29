@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 64・効果 356（根拠あり 325）・notes 183（根拠あり 77）
+件数: キャラ 64・効果 356（根拠あり 337）・notes 183（根拠あり 77）
 
 notes の種類: 未対応 56・前提の外 31・計算に無関係 33・補足 13・間接 50
 
@@ -105,20 +105,20 @@ notes の種類: 未対応 56・前提の外 31・計算に無関係 33・補足
 
 - **skill1**: supported
   - effects[0] state・battleStart・intoTheFraySharpenedResolve: 根拠なし
-  - effects[1] damage・4 秒ごと・skill: 根拠なし
-  - effects[2] state・4 秒ごと・openWounds（damageTaken）: 根拠なし
-  - effects[3] state・burstUse・openWounds: 根拠なし
+  - effects[1] damage・4 秒ごと・skill: C-0734（確定）、C-0735（確定）、C-0738（確定）
+  - effects[2] state・4 秒ごと・openWounds（damageTaken）: C-0736（確定）
+  - effects[3] state・burstUse・openWounds: C-0737（確定）
 - **skill2**: supported
-  - effects[0] state・burstUse・intoTheFrayPenetrantWish: 根拠なし
-  - effects[1] damage・normalShot・skill: 根拠なし
-  - effects[2] timed・fullBurstStart・sequentialAttackDamage: 根拠なし
-  - effects[3] timed・fullBurstStart・coreDamage: 根拠なし
+  - effects[0] state・burstUse・intoTheFrayPenetrantWish: C-0738（確定）
+  - effects[1] damage・normalShot・skill: C-0739（確定）
+  - effects[2] timed・fullBurstStart・sequentialAttackDamage: C-0740（確定）
+  - effects[3] timed・fullBurstStart・coreDamage: C-0741（確定）
 - **burst**: supported
-  - effects[0] ammoRefill・burstUse: 根拠なし
-  - effects[1] timed・burstUse・spinUpSpeed: 根拠なし
-  - effects[2] timed・burstUse・attack: 根拠なし
-  - effects[3] timed・burstUse・attackDamage: 根拠なし
-  - effects[4] burstDamage・skill: 根拠なし
+  - effects[0] ammoRefill・burstUse: C-0743（確定）
+  - effects[1] timed・burstUse・spinUpSpeed: C-0743（確定）
+  - effects[2] timed・burstUse・attack: C-0741（確定）
+  - effects[3] timed・burstUse・attackDamage: C-0741（確定）
+  - effects[4] burstDamage・skill: C-0742（確定）
 
 ## 20 デルタ
 

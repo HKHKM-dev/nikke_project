@@ -112,7 +112,7 @@ import {
 import { hasReloadEndEffect, type ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
-import { timerFrames, type FrameRange } from '../skills/timeline.ts';
+import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
   hideShooter,
@@ -694,8 +694,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
-    for (const { everySeconds, delayFrames } of resolveTimerGauges(slot.definition)) {
-      for (const fire of timerFrames(everySeconds, frames)) {
+    for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
+      for (const fire of timerFramesOf(timer, frames)) {
         const at = fire + delayFrames;
         if (at >= frames) continue;
         if (timedGauge[i])

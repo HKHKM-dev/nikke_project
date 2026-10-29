@@ -46,6 +46,7 @@ import {
   type ItemEffect,
 } from './resolve.ts';
 import type { RankSlot } from './ranking.ts';
+import type { TimerTrigger } from './types.ts';
 import { stackItems } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import {
@@ -312,7 +313,7 @@ export function triggerFires(
   // ニヒリスター編: 時間の周期のトリガーは、出来事の列を使わずに戦闘開始から k × N 秒のフレームを並べる
   // 防御力無視ダメージ編: atStart なら戦闘開始時（フレーム 0）にも発火する
   if (isResolvedTimer(trigger)) {
-    const timer = timerFrames(trigger.everySeconds, frames);
+    const timer = timerFramesOf(trigger, frames);
     const all = 'atStart' in trigger && trigger.atStart === true && frames > 0 ? [0, ...timer] : timer;
     return all.map((frame) => ({ frame, context: null }));
   }
@@ -322,39 +323,52 @@ export function triggerFires(
 /**
  * ニヒリスター編: 時間の周期のトリガーの発火フレーム。戦闘開始から k × ceil(N ÷ 0.017) フレーム（k = 1, 2, …）で、
  * 戦闘の終わり（frames）より前だけ（plan/design-nihilister.md 8.1 節。C-0091）。発動のたびに N 秒に達した最初のフレームを数え直し、
- * 端数を持ち越さない（C-0502。plan/design-timer-ceil.md）
+ * 端数を持ち越さない（C-0502。plan/design-timer-ceil.md）。
+ * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 10.2 節の a）: carry なら端数を持ち越し、k 回目を k × N 秒に達した最初の
+ * フレーム（ceil(k × N ÷ 0.017)）にする（マリアン：クイーンの S1 の槍。V-0538）
  */
-export function timerFrames(everySeconds: number, frames: number): number[] {
+export function timerFrames(everySeconds: number, frames: number, carry = false): number[] {
   const fires: number[] = [];
   // V-0086: 戦闘の最後のフレーム（180 秒の戦闘では 179.996 秒）より後の時刻（180 秒ちょうどの発火など）は、戦闘の終わりで起きない
   const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
   for (let k = 1; ; k++) {
     const seconds = k * everySeconds;
-    const frame = k * gameSecondsToFirstFrame(everySeconds);
+    const frame = carry ? gameSecondsToFirstFrame(seconds) : k * gameSecondsToFirstFrame(everySeconds);
     if (frame >= frames || seconds > lastFrameSeconds) return fires;
     fires.push(frame);
   }
 }
 
+/** 時間の周期のトリガーの発火フレーム（carry を見る timerFrames） */
+export function timerFramesOf(trigger: TimerTrigger, frames: number): number[] {
+  return timerFrames(trigger.everySeconds, frames, trigger.carry === true);
+}
+
 /**
- * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期の発火フレーム。前の発動（初めは戦闘開始）の
- * フレームで shortened(frame) なら次の発動までを everySeconds − shortenSeconds 秒、でなければ everySeconds 秒にし、どちらも timerFrames と
- * 同じく N 秒に達した最初のフレームを数え直す（端数を持ち越さない）。縮めない間は timerFrames と同じ列になる
+ * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節・10.2 節の f）: 状態の間だけ縮む周期の発火フレーム。前の発動
+ * （初めは戦闘開始）のフレームで shortened(frame) なら次の発動までを everySeconds − shortenSeconds 秒にする。ただし縮めた次の発動の
+ * フレームでもう shortened でなければ（縮めた周期の間に状態が切れた）、縮めない周期に戻す（V-0538）。どちらも timerFrames と
+ * 同じく N 秒に達した最初のフレームを数え直し（carry なら端数を持ち越して秒で足す）、縮めない間は timerFrames と同じ列になる
  */
 export function shortenedTimerFrames(
-  everySeconds: number,
+  trigger: TimerTrigger,
   shortenSeconds: number,
   frames: number,
   shortened: (frame: number) => boolean,
 ): number[] {
+  const { everySeconds } = trigger;
+  const short = everySeconds - shortenSeconds;
   const fires: number[] = [];
   const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
   let frame = 0;
   let seconds = 0;
+  const after = (period: number) =>
+    trigger.carry === true ? gameSecondsToFirstFrame(seconds + period) : frame + gameSecondsToFirstFrame(period);
   for (;;) {
-    const period = shortened(frame) ? everySeconds - shortenSeconds : everySeconds;
-    frame += gameSecondsToFirstFrame(period);
-    seconds += period;
+    const shortFrame = shortened(frame) ? after(short) : undefined;
+    const isShort = shortFrame !== undefined && shortened(shortFrame);
+    frame = isShort ? shortFrame : after(everySeconds);
+    seconds += isShort ? short : everySeconds;
     if (frame >= frames || seconds > lastFrameSeconds) return fires;
     fires.push(frame);
   }

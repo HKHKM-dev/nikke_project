@@ -15,27 +15,37 @@
         {
           "kind": "damage",
           "trigger": {
-            "everySeconds": 4
+            "everySeconds": 4,
+            "carry": true
           },
+          "delayFrames": 19,
           "damageType": "skill",
           "ref": 1,
           "hitsRef": 2,
+          "hitIntervalFrames": 12,
           "periodShorten": {
             "state": "intoTheFrayPenetrantWish",
             "slot": "skill2",
             "ref": 3
           },
           "assumes": {
-            "ja": "ダークマターの槍。再発動周期（description_value_04 の 4 秒）ごとに、ランダムな敵（敵 1 体の前提で的）に 7 回順番に攻撃する。戦闘開始時の発動の有無・ヒットの間・ゲージは確かめていない（戦闘開始から 4 秒後が最初・7 ヒットが同じフレーム・溜めない扱い）。S2 の臨戦：胸を刺す願いの間は周期が 2 秒縮む（前の発動の時点で状態なら。plan/design-new-chars-1029.md 論点 E）",
-            "en": "Dark Matter Spear. Every recurring interval (description_value_04, 4 s), it attacks a random enemy (the target under the single-enemy premise) sequentially 7 times. Whether it fires at the start of battle, the gap between hits and the gauge are unchecked (first 4 s after the start, all 7 hits on the same frame, no gauge). During S2's Into the Fray: Penetrant Wish the interval is 2 s shorter (if the state is on at the previous activation. plan/design-new-chars-1029.md issue E)"
-          }
+            "ja": "ダークマターの槍。再発動周期（description_value_04 の 4 秒）ごとに、ランダムな敵（敵 1 体の前提で的）に 7 回順番に攻撃する。周期は端数を持ち越して数え、発動の 19f 後に 1 ヒット目、12f おきに 7 ヒット。7 ヒットとも発動の時点のバフで出す。射撃場ではコンテナに向かうヒットがある（前提の外）。ゲージを溜めるかは確かめていない（溜めない扱い）。S2 の臨戦：胸を刺す願いの間は周期が 2 秒縮む（前の発動の時点で状態で、縮めた次の発動まで状態が続くとき）",
+            "en": "Dark Matter Spear. Every recurring interval (description_value_04, 4 s) it attacks a random enemy (the target under the single-enemy premise) sequentially 7 times. The interval carries its fraction over; the first hit comes 19 f after the activation and the 7 hits are 12 f apart. All 7 hits use the buffs at the activation. On the shooting range some hits go to containers (outside the premise). Whether it charges the burst gauge is unchecked (treated as not). During S2's Into the Fray: Penetrant Wish the interval is 2 s shorter (when the state is on at the previous activation and lasts until the shortened next activation)"
+          },
+          "claims": [
+            "C-0734",
+            "C-0735",
+            "C-0738"
+          ]
         },
         {
           "kind": "state",
           "state": "openWounds",
           "trigger": {
-            "everySeconds": 4
+            "everySeconds": 4,
+            "carry": true
           },
+          "delayFrames": 19,
           "target": "enemy",
           "durationUntil": "battleEnd",
           "contents": [
@@ -45,9 +55,12 @@
             }
           ],
           "assumes": {
-            "ja": "ダークマターの槍が命中した時に付く。持続なので、最初の槍の発動で付いたまま続く（周期の短縮は付き始めを変えない）。槍のヒットのうち、付けたヒット自身に乗るかは確かめていない（plan/design-new-chars-1029.md 論点 B）",
-            "en": "Applied when a Dark Matter Spear hits. It is continuous, so it lasts from the first spear activation (the shortened interval does not change when it starts). Whether it applies to the hit that applies it is unchecked (plan/design-new-chars-1029.md issue B)"
-          }
+            "ja": "ダークマターの槍が命中した時に付く。持続なので、最初の槍の 1 ヒット目（発動の 19f 後）で付いたまま続く。付けた発動の槍のヒットには乗らない（槍は発動の時点のバフで出す）",
+            "en": "Applied when a Dark Matter Spear hits. It is continuous, so it lasts from the first hit of the first spear (19 f after the activation). It does not apply to the spear hits of the activation that applied it (the spear uses the buffs at the activation)"
+          },
+          "claims": [
+            "C-0736"
+          ]
         },
         {
           "kind": "state",
@@ -58,7 +71,10 @@
           "assumes": {
             "ja": "槍で付く弱点露出と同じ状態（中身は槍の付与に書いたもの）なので、重ならず 1 件（上書き）とみなす（plan/design-new-chars-1029.md 論点 C）",
             "en": "The same state as the Open Wounds from the spear (its contents are written on the spear's grant), so it is assumed not to stack (one instance, refreshed. plan/design-new-chars-1029.md issue C)"
-          }
+          },
+          "claims": [
+            "C-0737"
+          ]
         }
       ],
       "notes": []
@@ -70,7 +86,10 @@
           "state": "intoTheFrayPenetrantWish",
           "trigger": "burstUse",
           "target": "self",
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-0738"
+          ]
         },
         {
           "kind": "damage",
@@ -88,7 +107,10 @@
           "assumes": {
             "ja": "臨戦：胸を刺す願いの間、通常攻撃 2 発ごと（戦闘中ずっと通算で数える）に、弱点露出状態の敵（的）にコアに当たったものとして出す。ヒットのフレームとゲージは確かめていない（発と同じフレーム・溜めない扱い）",
             "en": "While Into the Fray: Penetrant Wish lasts, every 2 normal attack shots (counted throughout the battle) it deals damage as a core hit to the enemy in Open Wounds (the target). The hit frame and gauge are unchecked (same frame as the shot, no gauge)"
-          }
+          },
+          "claims": [
+            "C-0739"
+          ]
         },
         {
           "kind": "timed",
@@ -102,7 +124,10 @@
           "target": "self",
           "stat": "sequentialAttackDamage",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-0740"
+          ]
         },
         {
           "kind": "timed",
@@ -117,7 +142,10 @@
           "assumes": {
             "ja": "自分がバーストを撃った回は、バースト使用時に付いた臨戦：胸を刺す願いがフルバーストの開始に見える（plan/design-new-chars-1029.md 論点 D）",
             "en": "When she used the burst herself, the Into the Fray: Penetrant Wish applied on burst use is visible at the start of Full Burst (plan/design-new-chars-1029.md issue D)"
-          }
+          },
+          "claims": [
+            "C-0741"
+          ]
         }
       ],
       "notes": []
@@ -128,7 +156,10 @@
           "kind": "ammoRefill",
           "trigger": "burstUse",
           "target": "self",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0743"
+          ]
         },
         {
           "kind": "timed",
@@ -140,7 +171,10 @@
           "assumes": {
             "ja": "マシンガン立ち上げ速度▲は、1 発ごとのレートの上がり幅に (1 + 値) を掛けると読む（plan/design-new-chars-1029.md 論点 I）",
             "en": "Machine Gun Ramp-Up Speed ▲ is read as multiplying the rate increase per shot by (1 + value) (plan/design-new-chars-1029.md issue I)"
-          }
+          },
+          "claims": [
+            "C-0743"
+          ]
         },
         {
           "kind": "timed",
@@ -148,7 +182,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0741"
+          ]
         },
         {
           "kind": "timed",
@@ -156,12 +193,18 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 6,
-          "durationRef": 7
+          "durationRef": 7,
+          "claims": [
+            "C-0741"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 8,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": [
+            "C-0742"
+          ]
         }
       ],
       "notes": []

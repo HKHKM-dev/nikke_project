@@ -132,7 +132,7 @@ export function isResolvedEventCount(t: ResolvedTrigger): t is { count: EventCou
 }
 
 /** ニヒリスター編: 時間の周期のトリガーか */
-export function isResolvedTimer(t: ResolvedTrigger): t is { everySeconds: number } {
+export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
   return typeof t === 'object' && 'everySeconds' in t;
 }
 
@@ -640,6 +640,7 @@ export function resolveStateGrants(
       if (effect.undispellable) grant.undispellable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
       if (effect.enemy) grant.enemy = true;
+      if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       untrimmed.push(grant);
     });
   }

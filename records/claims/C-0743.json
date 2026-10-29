@@ -1,0 +1,15 @@
+{
+  "id": "C-0743",
+  "text": "マリアン：クイーンのバーストは残弾を満タン（弾丸チャージ 100%）にし、マシンガン立ち上げ速度 100%▲（10 秒）は、MG の 1 発ごとのレートの上がり幅を (1 + 100%) 倍にする（最高レート・初弾は変えない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0740-26`・`0740-27`・`0740-34`・`0741-26`・`0741-27`・`0741-34`（窓の中と外のリロードの明けの立ち上げの発の間と、リロードの途中から撃ったバーストで残弾が 300 になったこと）。立ち上げ速度▲の読みは撮る前に決めていた（plan/design-new-chars-1029.md 7 節の論点 I）。V-0538",
+  "model": "`data/skills/19.json` の burst の effects[0]・effects[1]（stat `spinUpSpeed`。`frame/shooter.ts`）",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/19.json の burst の effects[0]", "data/skills/19.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}

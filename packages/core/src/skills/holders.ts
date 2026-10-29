@@ -86,7 +86,7 @@ import {
   rankSlotsOf,
   resolvePassiveStates,
   shotCountItems,
-  timerFrames,
+  timerFramesOf,
   unionItems,
   untilNextEndItems,
   weaponStartTrim,
@@ -357,9 +357,11 @@ export type HolderLists = {
 
 /**
  * 窓の始まり。射撃の回数のきっかけは次のフレームから。回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）:
- * timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。C-0593・C-0653）
+ * timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。C-0593・C-0653）。2026-10-29 のキャラの編
+ * （plan/design-new-chars-1029.md 10.2 節の e）: 時間の周期のきっかけの付与の delayFrames は、周期の発火の delayFrames 後から（C-0736）
  */
 export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames?: number): number {
+  if (isResolvedTimer(trigger)) return frame + (delayFrames ?? 0);
   if (!isResolvedShotCount(trigger)) return frame;
   return frame + (delayFrames ?? 1);
 }
@@ -696,7 +698,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
     if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel, everyAt);
-    const at = new Set(timerFrames(trigger.everySeconds, frames));
+    const at = new Set(timerFramesOf(trigger, frames));
     return (ev) => at.has(ev.frame);
   };
 
@@ -1577,7 +1579,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipGrant(g, f);
         continue;
       }
-      fireGrant(g, battleStartOnly ? 0 : startOfFire(g.grant.trigger, f), fireContextOf(g.grant.trigger, ev));
+      fireGrant(
+        g,
+        battleStartOnly ? 0 : startOfFire(g.grant.trigger, f, g.grant.delayFrames),
+        fireContextOf(g.grant.trigger, ev),
+      );
     }
     for (const src of stage1Timed) {
       if (src.chance) {
@@ -1650,7 +1656,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipGrant(g, f);
         continue;
       }
-      fireGrant(g, battleStartOnly ? 0 : startOfFire(g.grant.trigger, f), fireContextOf(g.grant.trigger, ev));
+      fireGrant(
+        g,
+        battleStartOnly ? 0 : startOfFire(g.grant.trigger, f, g.grant.delayFrames),
+        fireContextOf(g.grant.trigger, ev),
+      );
     }
     for (const src of stage15Timed) {
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
@@ -1693,7 +1703,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 段 2: 順位の対象。発火のフレームの順位（段 1・1.5 の攻撃力の件。同じフレームに付いたものも入れる）
     for (const g of stage2Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
-      const start = battleStartOnly ? 0 : startOfFire(g.grant.trigger, f);
+      const start = battleStartOnly ? 0 : startOfFire(g.grant.trigger, f, g.grant.delayFrames);
       if (start >= frames) continue;
       const finalAttacks = finalAttacksAtFrame(f);
       const attackRank = attackRankFor(g.grant, rankSlots, finalAttacks, g.group.sourceSlotIndex);
