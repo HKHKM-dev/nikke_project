@@ -1,0 +1,563 @@
+[
+  {
+    "id": "0730-01",
+    "recording": "0730",
+    "kind": "timing",
+    "use": "record",
+    "value": [1198, 2280, 3459, 4479, 5658, 6781, 7960, 8973, 10152, 11278],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・24・0・25・0・25・6・24・6f"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-02",
+    "recording": "0730",
+    "kind": "timing",
+    "use": "record",
+    "value": [1227, 2309, 3488, 4508, 5687, 6810, 7989, 9002, 10181, 11307],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・24・0・25・0・25・6・13・0f"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-03",
+    "recording": "0730",
+    "kind": "timing",
+    "use": "record",
+    "value": [1257, 3517, 5716, 8019, 10210],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-04",
+    "recording": "0730",
+    "kind": "timing",
+    "use": "record",
+    "value": [3452, 5652, 7954, 10145],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-05",
+    "recording": "0730",
+    "kind": "timing",
+    "use": "record",
+    "value": [3482, 5681, 7983, 10174],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-06",
+    "recording": "0730",
+    "kind": "total",
+    "use": "record",
+    "value": 195547911,
+    "description": "リター・I-DOLL・サン・ラプンツェル：サンクチュアリ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11439。増分は 3926 個"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-07",
+    "recording": "0730",
+    "kind": "count",
+    "use": "record",
+    "value": 208,
+    "unit": "トリガー",
+    "description": "リター・I-DOLL・サン・ラプンツェル：サンクチュアリ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3926 個。前の増分から 30f 未満の増分（3899 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 49f）から発の数を決めた（2 発になった組 23 個）"
+    },
+    "source": "V-0536",
+    "readAt": "2026-10-29"
+  },
+  {
+    "id": "0730-08",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 221781,
+    "unit": "ダメージ",
+    "description": "リター・I-DOLL・サン・ラプンツェル：サンクチュアリ（操作）の、ラプンツェル：サンクチュアリの S2 のフルチャージ攻撃の追加ダメージ（会心なし）。▲の無い窓（1 回目のバーストの前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f997 の増分（2 発目。1 発目の f915 は会心の 332,672）。追加ダメージは発射のフレームに出て、ロケットの命中はその 8f 後。比べるモデルのフレームは 1 回目のバーストの前"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0730-09",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 308002,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリのフルチャージの発の 1 ヒット（コア・会心なし）。▲の無い窓",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1087 の増分（f1079 の追加ダメージの 8f 後。1・2 発目のロケットは会心か、ほかの枠の発と重なった）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0730-10",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 445648,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリの追加ダメージ（会心なし）。1 回目のバーストの後・フルバーストの前（リターのバーストの攻撃力▲と、ラプンツェル：サンクチュアリのバーストの発動者基準の攻撃力▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1245 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 380,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0730-11",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1301026,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリの追加ダメージ（会心）。1 回目のフルバーストの頭（リターのバーストの▲・自分のバーストの▲・S1 の攻撃ダメージ▲・S2 の発動者基準の攻撃力▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1349 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0730-12",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1129260,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリのフルチャージの発の 1 ヒット（コア・会心なし）。1 回目のフルバーストの頭（前の行と同じ窓）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1358 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0730-13",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 695659,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリの追加ダメージ（会心なし）。1 回目のフルバーストの後半（リターのバーストの▲が切れた後。自分のバーストの▲・S1・S2 の▲の中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1549 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0730-14",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 805087,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリのフルチャージの発の 1 ヒット（コア・会心なし）。前の行と同じ窓",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1640 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0730-15",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 207709,
+    "unit": "ダメージ",
+    "description": "同じ編成の、ラプンツェル：サンクチュアリのフルチャージの発の 1 ヒット（胴体・会心なし）。2 回目のバースト（フルバーストにならない回）の後で、リターのバーストの▲が切れた後（自分のバーストの発動者基準の攻撃力▲だけ）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f2783 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0730-16",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 31557,
+    "unit": "ダメージ",
+    "description": "同じ編成の、1 回目のフルバーストの頭のリターの 1 ヒット（胴体・会心なし・距離ボーナスあり）。リターは臨戦でないので、ラプンツェル：サンクチュアリの S1・S2 のフルバーストの▲が乗らない（リターのバーストの▲とラプンツェル：サンクチュアリのバーストの▲だけ）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f1288 の増分（フルバーストの窓の中のリターの発はこの値が多い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0730-17",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 15307,
+    "unit": "ダメージ",
+    "description": "同じ編成の、2 回目のバースト（フルバーストにならない回）の後のリターの 1 ヒット（胴体・会心なし・距離ボーナスあり）。ラプンツェル：サンクチュアリのバーストの発動者基準の攻撃力▲だけの中（▲が無ければ 11,329）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトでモデルの 1 ヒットの格子に当てた（V-0536「読み方」）",
+      "note": "f2626 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2000,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0730-18",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "count",
+    "use": "compare",
+    "value": 4,
+    "unit": "発",
+    "description": "同じ編成の、1 回目にバーストゲージが満タンになるまでに、ラプンツェル：サンクチュアリが撃ったフルチャージの発の数（満タンの発を含む）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events（バーの満タン）と recipe:hud-jumps@3 の増分（追加ダメージの増分が発射のフレーム）を突き合わせた（V-0536「読み方」）",
+      "note": "満タンは f1161（4 発目の追加ダメージのフレーム）。発射のフレームは追加ダメージの増分（6 発ごとのリロードで 200f 空く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0730-19",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "count",
+    "use": "compare",
+    "value": 14,
+    "unit": "発",
+    "description": "同じ編成の、2 回目にバーストゲージが満タンになるまでに、ラプンツェル：サンクチュアリが撃ったフルチャージの発の数（満タンの発を含む）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events（バーの満タン）と recipe:hud-jumps@3 の増分（追加ダメージの増分が発射のフレーム）を突き合わせた（V-0536「読み方」）",
+      "note": "満タンは f2280（I → II の替わり目）。発射のフレームは追加ダメージの増分（6 発ごとのリロードで 200f 空く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0730-20",
+    "recording": "0730",
+    "source": "V-0536",
+    "readAt": "2026-10-29",
+    "kind": "gauge",
+    "use": "record",
+    "value": [7.56, 9.41],
+    "unit": "px",
+    "description": "同じ編成の、バーストゲージのバーの、ラプンツェル：サンクチュアリの追加ダメージのフレームの増え（1 つ目）と、ロケットの命中のフレームの増え（2 つ目）の中央値（バーが見えている間の発）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel と recipe:hud-jumps@3 の増分（追加ダメージの増分と、その 8〜10f 後のロケットの増分の組）を、使い捨てのスクリプトで突き合わせた（V-0536「読み方」）",
+      "note": "そのフレームと前のフレームのバーの px の差。追加ダメージ [6.9, 7.5, 7.6, 7.7, 7.7]、ロケット [5.0, 9.1, 9.3, 9.5, 9.6, 9.7]（小さい値は同じフレームのほかの読みの揺れ）。バーの 1px は本当のゲージの約 0.74%（C-0084）で、ロケット（操作枠のフルチャージ。28,000 × 2.5 = 70,000）は 9.5px にあたる。追加ダメージはロケットの約 0.8 倍で、56,000（28,000 の 2 回分）は 7.6px にあたる"
+    }
+  }
+]
