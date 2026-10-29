@@ -1,0 +1,159 @@
+{
+  "verification": "V-0545",
+  "note": "撮影の依頼の B（ココア（I）+ ラプンツェル：サンクチュアリ（II）+ マリアン：クイーン（III・操作・AUTO 射撃 ON）+ I-DOLL・サン（III）、オートバースト ON・射撃場 BigArms 灼熱・スペック固定 ON）の予測。比べるのはマリアン：クイーンの値だけ（仮説は、ラプンツェル：サンクチュアリの S1 の攻撃ダメージ▲・S2 の攻撃力▲を外して作るので、ラプンツェル：サンクチュアリ自身の値も変わる）。槍のゲージは溜めない定義のまま（A で決める）",
+  "team": [
+    {
+      "rid": 311,
+      "controlled": false
+    },
+    {
+      "rid": 473,
+      "controlled": false
+    },
+    {
+      "rid": 19,
+      "controlled": true
+    },
+    {
+      "rid": 308,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-a",
+      "note": "S1・S2 とも臨戦：意思の鋭槍を持つマリアン：クイーンに乗る（いまの定義。473.json の assumes）"
+    },
+    {
+      "id": "H-b",
+      "note": "S1・S2 ともマリアン：クイーンに乗らない（臨戦の味方を、静的な臨戦の枠と読まない場合）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 473,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 473,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-c",
+      "note": "S1 の攻撃ダメージ▲だけが乗る",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 473,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-d",
+      "note": "S2 の攻撃力▲だけが乗る",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 473,
+            "skill": "skill1",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "sun-window-normal-core",
+      "note": "I-DOLL・サンがバーストを撃った窓（モデルでは 2 回目のフルバースト）の、マリアン：クイーンの通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "sun-window-spear",
+      "note": "同じ窓の 1 回目の槍の発動の 1 ヒット目（会心なし。窓の始まりの後に発動した回）",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 245,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    {
+      "id": "marian-window-normal-core",
+      "note": "マリアン：クイーンがバーストを撃った窓（1 回目のフルバースト）の、通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-29",
+    "commit": "e9c85e85c37ebbf150406a2dd729f9e624ed7462",
+    "values": {
+      "H-a": {
+        "sun-window-normal-core": 34487.40927958288,
+        "sun-window-spear": 863387.1534952873,
+        "marian-window-normal-core": 92376.92795857166
+      },
+      "H-b": {
+        "sun-window-normal-core": 22767.349935,
+        "sun-window-spear": 569977.2138189592,
+        "marian-window-normal-core": 71643.18288724739
+      },
+      "H-c": {
+        "sun-window-normal-core": 29016.987492157496,
+        "sun-window-spear": 726435.9590122635,
+        "marian-window-normal-core": 82682.84478381716
+      },
+      "H-d": {
+        "sun-window-normal-core": 27059.560046750004,
+        "sun-window-spear": 677432.054527491,
+        "marian-window-normal-core": 80042.92984357195
+      }
+    }
+  }
+}
