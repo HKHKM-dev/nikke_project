@@ -1,0 +1,12 @@
+{
+  "id": "C-0744",
+  "text": "ShiftyPad（Blablalink）の GetUserCharacterDetails の favorite_item_lv（宝物の favorite_item_tid が 2xxxxx のとき）は、Lv 1 が宝物の段階 2、Lv 2 が段階 3（段階 = Lv + 1）。Lv 0 の段階は画面で見ていない",
+  "state": "仮説",
+  "topic": "育成・ステータス",
+  "grade": "推論",
+  "basis": "V-0544",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-10-30",
+  "decidedOn": []
+}
