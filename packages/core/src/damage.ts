@@ -79,7 +79,7 @@ export function explosionHitMultiplier(buffs: BuffTotals): number {
 /**
  * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3 節）: 発射体付着ダメージ▲（projectileStickDamage）の式の中の置き場所。
  * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体付着ダメージ)、separate = 別の乗数 (1 + Σ発射体付着ダメージ)。
- * S2 の常時の▲とバースト III の▲は 1 つの和 (1 + Σ) で掛かる（C-9902）。攻撃ダメージ▲と同じ枠か別の乗数かは見分けていない（読んだ録画に
+ * S2 の常時の▲とバースト III の▲は 1 つの和 (1 + Σ) で掛かる（C-0724）。攻撃ダメージ▲と同じ枠か別の乗数かは見分けていない（読んだ録画に
  * 攻撃ダメージ▲の乗った付着が無い）ので、発射体爆発ダメージ▲（C-0205）にそろえて attackDamage にした（仮定）
  */
 export const PROJECTILE_STICK_BUCKET: 'attackDamage' | 'separate' = 'attackDamage';

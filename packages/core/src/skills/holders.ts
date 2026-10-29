@@ -850,11 +850,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return (frame) => {
       let every: number | undefined;
       for (const c of own) {
-        if (activeAt(c.track, frame).length > 0) every = every === undefined ? c.effect.every : Math.min(every, c.effect.every);
+        if (activeAt(c.track, frame).length > 0)
+          every = every === undefined ? c.effect.every : Math.min(every, c.effect.every);
       }
       return every;
     };
   };
+
+  /** shotCountEveryAt の、枠とスロットごとの shotCountEveryOf（窓の無い組は undefined） */
+  const shotCountEvery = new Map<string, ShotCountEveryAt | undefined>();
 
   // ---- 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ） ----
   const counterSources: CounterSource[] = [];
@@ -1812,7 +1816,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         .flatMap((c) => activeAt(c.track, frame).map(() => c.effect.every));
     },
     shotCountEveryAt(slotIndex, skill, frame) {
-      return shotCountEveryOf(slotIndex, skill)?.(frame);
+      const key = `${slotIndex}:${skill}`;
+      if (!shotCountEvery.has(key)) shotCountEvery.set(key, shotCountEveryOf(slotIndex, skill));
+      return shotCountEvery.get(key)?.(frame);
     },
     gaugeSpeedAt(holder, frame) {
       let sum = 0;

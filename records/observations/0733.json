@@ -109,10 +109,10 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 3,
         "n": 0,
         "crit": false,
-        "core": true
+        "core": true,
+        "projectile": "stick"
       },
       "tolerance": {
         "abs": 1
@@ -148,12 +148,12 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 3,
         "frame": 4300,
         "n": 0,
         "crit": false,
         "core": true,
-        "distance": true
+        "distance": true,
+        "projectile": "stick"
       },
       "tolerance": {
         "abs": 1
@@ -189,10 +189,10 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 3,
         "n": 0,
         "crit": true,
-        "core": true
+        "core": true,
+        "projectile": "stick"
       },
       "tolerance": {
         "abs": 1

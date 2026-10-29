@@ -164,7 +164,9 @@ export type TriggerTracker = (ev: FrameEvents) => boolean;
 export type ShotCountEveryAt = (frame: number) => number | undefined;
 
 /** 2 段目の段 12 の PR 2: 間隔の変更の窓（[start, end)・窓の中の間隔）の列から ShotCountEveryAt を作る。重なった窓は小さいほうの間隔 */
-export function everyAtOf(windows: readonly { start: number; end: number; every: number }[]): ShotCountEveryAt | undefined {
+export function everyAtOf(
+  windows: readonly { start: number; end: number; every: number }[],
+): ShotCountEveryAt | undefined {
   if (windows.length === 0) return undefined;
   return (frame) => {
     let every: number | undefined;
@@ -179,7 +181,7 @@ export function everyAtOf(windows: readonly { start: number; end: number; every:
  * 1 つのトリガー（ある枠の 1 つの効果）の発火を追う。回数トリガーの数は閉包の中に持つ。
  * scheduleModel は「バースト 1 段階突入時」の意味だけに使う（固定サイクルはフルバースト開始、動的サイクルはゲージ満タン）。
  * everyAt は 2 段目の段 12 の PR 2: 射撃の回数のきっかけの間隔の変更（窓の中は通算の回数がその間隔の倍数に届いた発で発火する。
- * 段の循環の cycleEvery と同じ数え方。C-9906）
+ * 段の循環の cycleEvery と同じ数え方。C-0727）
  */
 export function createTriggerTracker(
   trigger: ResolvedTrigger,

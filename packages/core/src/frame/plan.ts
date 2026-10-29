@@ -461,7 +461,7 @@ export function planSkillHits(
               : counterAt(per.counter, frame);
         if (copied === 0) continue;
         // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
-        // （粘着榴弾の起爆。k 個目は floor(k × 間隔 ÷ 0.017) フレーム後で端数を持ち越す。C-9905。それぞれのフレームのバフとフルバースト
+        // （粘着榴弾の起爆。k 個目は floor(k × 間隔 ÷ 0.017) フレーム後で端数を持ち越す。C-0726。それぞれのフレームのバフとフルバースト
         // 補正。戦闘の終わりを越えるヒットは出さない）
         if (effect.perCountIntervalSeconds !== undefined && copied !== undefined) {
           for (let k = 0; k < copied; k++) {

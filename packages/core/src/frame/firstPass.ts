@@ -569,7 +569,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
   // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
   // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
-  // 間隔の倍数に届いた発で止める（C-9906）。窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
+  // 間隔の倍数に届いた発で止める（C-0727）。窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
   const shotPauseTrackers: {
     slotIndex: number;
     skill: SkillSlot;

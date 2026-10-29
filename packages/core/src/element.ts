@@ -30,7 +30,7 @@ export function isAdvantage(attacker: Element, enemy: Element | null): boolean {
  * 属性の乗数。有利なら 1.1 + bonus、それ以外は 1（Stage 13: bonus は有利コードの攻撃ダメージ▲の合計 elementDamage。
  * 非有利では乗らない。要件 5.1 節の「属性有利 (1.1 + 属性ダメバフ)」）。
  * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: forced は「〈コード〉コードの敵に有利コードのダメージ適用」が効いているか
- * （buffs.elementAdvantage > 0。効果の enemyElement でそのコードの敵に限ってある）。効いていれば組によらず有利と同じ乗数（C-9901）
+ * （buffs.elementAdvantage > 0。効果の enemyElement でそのコードの敵に限ってある）。効いていれば組によらず有利と同じ乗数（C-0723）
  */
 export function elementMultiplier(attacker: Element, enemy: Element | null, bonus = 0, forced = false): number {
   return (enemy !== null && forced) || isAdvantage(attacker, enemy) ? ELEMENT_ADVANTAGE_MULTIPLIER + bonus : 1;

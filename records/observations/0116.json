@@ -546,10 +546,11 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 6,
         "fullBurst": 2,
         "skip": 1,
-        "count": 5
+        "count": 5,
+        "projectile": "explosion",
+        "trigger": "fullBurstStart"
       },
       "tolerance": {
         "abs": 1
@@ -585,11 +586,12 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 6,
         "fullBurst": 0,
         "frame": 0,
         "n": 1,
-        "crit": false
+        "crit": false,
+        "projectile": "explosion",
+        "trigger": "fullBurstStart"
       },
       "tolerance": {
         "abs": 1
@@ -625,11 +627,12 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 6,
         "fullBurst": 1,
         "frame": 0,
         "n": 4,
-        "crit": false
+        "crit": false,
+        "projectile": "explosion",
+        "trigger": "fullBurstStart"
       },
       "tolerance": {
         "abs": 1
@@ -665,11 +668,12 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 4,
         "fullBurst": 0,
         "frame": 250,
         "n": 0,
-        "crit": false
+        "crit": false,
+        "projectile": "explosion",
+        "trigger": "shotCount"
       },
       "tolerance": {
         "abs": 1
@@ -705,12 +709,13 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 4,
         "fullBurst": 2,
         "frame": 300,
         "n": 0,
         "crit": false,
-        "distance": true
+        "distance": true,
+        "projectile": "explosion",
+        "trigger": "shotCount"
       },
       "tolerance": {
         "abs": 1
@@ -746,11 +751,12 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 4,
         "fullBurst": 0,
         "frame": 250,
         "n": 0,
-        "crit": true
+        "crit": true,
+        "projectile": "explosion",
+        "trigger": "shotCount"
       },
       "tolerance": {
         "abs": 1
@@ -786,12 +792,12 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 3,
         "fullBurst": 0,
         "frame": 250,
         "n": 0,
         "crit": false,
-        "core": true
+        "core": true,
+        "projectile": "stick"
       },
       "tolerance": {
         "abs": 2
@@ -827,13 +833,13 @@
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "effect": 3,
         "fullBurst": 2,
         "frame": 300,
         "n": 0,
         "crit": false,
         "core": true,
-        "distance": true
+        "distance": true,
+        "projectile": "stick"
       },
       "tolerance": {
         "abs": 2

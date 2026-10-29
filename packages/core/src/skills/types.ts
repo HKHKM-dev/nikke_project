@@ -970,7 +970,7 @@ export type DamageEffect = {
   /**
    * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: perCount の数だけのヒットを、倍率を掛けずに 1 つずつ、発火のフレームから
    * この間隔（秒・即値。録画で読む）で出す。k 個目（0 始まり）は発火の floor(k × 間隔 ÷ 0.017) フレーム後（端数を持ち越す。ラピ：
-   * レッドフードの粘着榴弾の起爆は 0.2 秒ごと。C-9905）。perCount の { counter } のときだけ書ける
+   * レッドフードの粘着榴弾の起爆は 0.2 秒ごと。C-0726）。perCount の { counter } のときだけ書ける
    */
   perCountIntervalSeconds?: number;
   /**
@@ -1212,7 +1212,7 @@ export type CycleEffect = {
  * 対象は常に自分。件は持ち主ごとの一覧の履歴（cycleEvery の件）に置き、区間には入れない。
  * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: slot に cycle が無ければ、そのスロットの射撃の回数のきっかけ（{ count }）
  * のすべてを、窓の間 every 回ごと（通算の回数の every の倍数。cycle と同じ数え方）に発火させる（「スキル2粘着榴弾発動回数条件 N 回▼」。
- * C-9906）。decreaseRef は「N 回▼」の N の description_value_NN で、窓の中の間隔はきっかけの回数 − N（every とちょうど片方）
+ * C-0727）。decreaseRef は「N 回▼」の N の description_value_NN で、窓の中の間隔はきっかけの回数 − N（every とちょうど片方）
  */
 export type CycleEveryEffect = {
   kind: 'cycleEvery';

@@ -96,7 +96,7 @@
           "stat": "projectileStickDamage",
           "ref": 5,
           "claims": [
-            "C-9902"
+            "C-0724"
           ]
         },
         {
@@ -105,7 +105,7 @@
           "stat": "projectileExplosionDamage",
           "ref": 6,
           "claims": [
-            "C-9903"
+            "C-0725"
           ]
         },
         {
@@ -125,8 +125,7 @@
             "en": "The sticky grenade attaches. One hit 5 frames after the 120th shot (1 frame of firing pause plus 4 frames from the pause to the attach, the middle of 2–8 by distance band). On the range target it always hits the core; crit, distance bonus and the Full Burst bonus apply. It does not charge the burst gauge (notes[0])"
           },
           "claims": [
-            "C-9904",
-            "C-9902"
+            "C-0724"
           ]
         },
         {
@@ -148,8 +147,8 @@
             "en": "A grenade fired during Full Burst detonates on the frame it attaches (no core bonus; crit, distance bonus and the Full Burst bonus apply)"
           },
           "claims": [
-            "C-9905",
-            "C-9903"
+            "C-0726",
+            "C-0725"
           ]
         },
         {
@@ -169,7 +168,7 @@
             "en": "Grenades fired outside Full Burst stay attached and accumulate (the cap is not read)"
           },
           "claims": [
-            "C-9905"
+            "C-0726"
           ]
         },
         {
@@ -188,8 +187,8 @@
             "en": "At the start of Full Burst, the attached grenades detonate one at a time, 0.2 s apart (the first at the start)"
           },
           "claims": [
-            "C-9905",
-            "C-9903"
+            "C-0726",
+            "C-0725"
           ]
         },
         {
@@ -204,7 +203,7 @@
             "en": "Detonated grenades are no longer attached"
           },
           "claims": [
-            "C-9905"
+            "C-0726"
           ]
         },
         {
@@ -217,7 +216,7 @@
             "en": "Electric Code enemies are treated as weak to her code (Fire): both normal attacks and skill hits get the 1.1 advantage multiplier, and Elemental Advantage damage buffs apply as for an advantage"
           },
           "claims": [
-            "C-9901"
+            "C-0723"
           ]
         }
       ],
@@ -227,7 +226,7 @@
           "en": "The burst gauge gained from a sticky grenade attach hit (about 20 normal attacks' worth each in solo recordings 0733 and 0734) is not modeled (the source of the amount is unknown)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "damage",
+            "kind": "burstGaugeHit",
             "trigger": "normalShot"
           }
         }
@@ -269,7 +268,7 @@
             "en": "The stage used is fixed by the squad (with a base burst stage I ally she is not in Combat Assist and stays burst III). Adds to the permanent S2 increase in one sum"
           },
           "claims": [
-            "C-9902"
+            "C-0724"
           ]
         },
         {
@@ -287,7 +286,7 @@
             "en": "The stage used is fixed by the squad (as above). During the window the S2 count of 120 becomes 60 (she fires a grenade on shots whose running count is a multiple of 60; the count is not reset at the window start)"
           },
           "claims": [
-            "C-9906"
+            "C-0727"
           ]
         }
       ],
