@@ -1,7 +1,7 @@
 # 育成データの取得のルーティン化 設計書
 
 - 対象: ShiftyPad（Blablalink）からのオーナーの育成データの取得（[design-stage12.md](design-stage12.md) 11.1 節の手順）、`--build` の育成入力（`packages/core/scripts/sim-run.ts`・`packages/core/src/build.ts`）、録画の台帳（`records/recordings/`）、`private/`
-- 状態: **承認（2026-10-29。12 節の推奨のとおり）**。段 1 は実装済み（13 節）。段 2・3 は未着手
+- 状態: **承認（2026-10-29。12 節の推奨のとおり）**。段 1・2 は実装済み（13・14 節）。段 3 は未着手
 - 関連: [design-stage12.md](design-stage12.md) 11.1 節（API とフィールドの写し方）、[captures/guide.md](captures/guide.md)「実ビルド」の行、[captures/protocol.md](captures/protocol.md)、[design-cloud-environment.md](design-cloud-environment.md)（`private/` の同期）、[references.md](references.md)（ExiaInvasion の規約の注意）、V-0462・V-0486
 - 作成日: 2026-10-29
 - 調べた時点: main の 12dce19（#747）。取得済みのデータとその変換の跡（`scratch/blablalink/`）は、起案の後に Drive から取り寄せて見た（13 節）
@@ -113,11 +113,11 @@
 | 3   | 6 節の台帳の欄・`intake.ts`・`records:check`（`protocol.md` の 1 行は段 1 で足した）                                      | どこでも                       | テスト                                                                                       |
 
 - PR は段ごと（実装とテストがそろった時点）。この設計書は段 1 の PR に含める。
-- 段 2 までの取り方は、今のコンソールのスクリプト（Context の 1）のまま。
+- 段 2 までの取り方は、今のコンソールのスクリプト（Context の 1）のまま。段 2 の後は `npm run build:fetch`（14 節）。
 
 ## 11. 分からないこと
 
-- ShiftyPad が自動操作のブラウザ（Playwright の Chrome）でのログインを拒むか。段 2 の最初にデスクトップで試す。拒まれたら案 B に切り替える。
+- ShiftyPad が自動操作のブラウザ（Playwright の Chrome）でのログインを拒むか → 拒まなかった（2026-10-29。14 節）。
 - 宝物の Lv と段階の対応（11.1 節。この設計では決めない）。
 
 ## 12. 決めたこと（2026-10-29。オーナーが推奨のとおりに決めた）
@@ -140,3 +140,18 @@
   - 2026-10-24 のスナップショットを Lv200 にして出した A1 は、V-0486 に値が書いてある 4 体（ソルジャーE.G.・ココア・I-DOLL・フラワー・リター）で、そこに書いてある値と端数まで同じだった。`sim-run.ts --build` で出したリターの戦闘中の攻撃力も、V-0486 のキャラ画面の値と同じだった。
   - 2026-10-06 → 10-24 の差に、リサイクルルームの研究の Lv の上がりが出る（V-0486 の見落とし）。
 - 道具がクラウドで書いた `private/builds/` は Drive に戻していない（このセッションは始めのフックで `private/` を取れておらず、応答の終わりの同期は動かない）。デスクトップで 5 節のとおり取り込み直す。
+
+## 14. 段 2 の実装（2026-10-29）
+
+- `npm run build:fetch`（`tools/builds/fetch.ts`）。案 A の流れ（2.2 節）のとおり。依存に `playwright-core` を足した（ブラウザは落とさない）。
+  - 専用のユーザーデータのフォルダのパスは `private/build-fetch.json` の `userDataDir`。無ければ、ホームの下の既定のパスで作る。リポジトリの中のパスは拒む。
+  - ヘッダは `context.on('request')` で拾う（ログインの窓や別のタブで送られても拾えるよう、ページでなくコンテキストで聞く）。`request.headers()` は Cookie などの security に関わるヘッダを返さないので、ツールは Cookie の値を見ない（`allHeaders()` は使わない）。ページの `fetch` / XHR は包まない。
+  - 3 つの API は、リクエストを送ったページの文脈で `page.evaluate` から呼び、応答の JSON を戻り値で Node 側へ受け取る（`exposeBinding` は要らなかった）。応答の `code` が 0 でなければ失敗にする。
+  - 生のデータの形はコンソールのスクリプトと同じ（`{ fetchedAt, source, outpost, characters, details, stateEffects }`）。応答から配列・オブジェクトを深さ優先で探す処理とヘッダの選び方は `tools/builds/fetch-lib.ts`（純関数。テストは `fetch-lib.test.ts`）。
+  - 取り込み（名前・写す・差・所持の一覧）は `tools/builds/store.ts` に切り出し、`build:import` と共有した。
+- デスクトップで、オーナーのもとで 1 回取った（2026-10-29。スナップショット `2026-10-29`）。
+  - ShiftyPad は、自動操作の Chrome でのログインを拒まなかった（11 節の分からないこと）。ページの `debugger` 文でも止まらなかった（開発者ツールを開かないため）。
+  - 生のデータは、コンソールのスクリプトで取った 2026-10-24 の生のデータと、各欄の名前（`outpost`・`characters`・`details` の各欄）が同じだった。アカウントの欄とヘッダの値は入っていない。
+  - 写せない値は 0 件。2026-10-24 との差は、所持の増え・シンクロ Lv と研究の Lv の上がり・好感度・凸・コア・キューブの付け替えで、妥当だった。
+  - 初回はログインを挟んだので、ページの読み込みだけでヘッダを拾えるか（ニケを 1 体開く操作が要るか）は分からないまま。ツールは 20 秒拾えなければ、ニケを 1 体開くよう案内する。
+- 既存の 3 回分（`scratch/blablalink/`）は、5 節のとおり `build:import` で `private/builds/` に置いた。
