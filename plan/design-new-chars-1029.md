@@ -4,7 +4,7 @@
 - 出どころ: 公式の告知画像（2026-10-28 公表。Drive の「マイ コンピュータ/record」の `HVtF8xnbkAAOpzG.jpg`・`HVtF8xoaoAA-PJo.jpg`（マリアン：クイーン）、`HVtMNI7bEAAA1vi.jpg`・`HVtMNJMbcAAxwPE.jpg`（ラプンツェル：サンクチュアリ）、`HVtQufQaQAAOEMK.jpg`・`HVtQuhHbMAAIAfm.jpg`（紅蓮：神殺））。値はスキル Lv10。画像の注記どおり、実装までに変わりうる
 - 関連: [skills-guide.md](skills-guide.md)（定義の手順）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（句の分類）、[design-named-state.md](design-named-state.md)（名前の付いた状態）、[design-skill-stage5.md](design-skill-stage5.md) 1.2 節（状態の家族）、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲）、[design-skill-stage11.md](design-skill-stage11.md)（使用武器の変更）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）
 - 作成日: 2026-10-28
-- 状態: 承認（2026-10-28。オーナーが 3 体とも定義すると決め、論点 B〜I を推奨どおり、J を「1 パス目に入れる」に決めた。7 節）。語彙（5 節）は実装した（8 節）。定義は CDN に載ってから。3 体とも 2026-10-28 の時点で Blablalink の CDN（`nikke_list_ja_v2.json`）に無い（`fetch-data` で取れない）
+- 状態: 承認（2026-10-28。オーナーが 3 体とも定義すると決め、論点 B〜I を推奨どおり、J を「1 パス目に入れる」に決めた。7 節）。語彙（5 節）は実装した（8 節）。定義も書いた（9 節。CDN には 2026-10-29 に載った）。撮影待ち
 
 ## 0. 仮実装の範囲
 
@@ -207,7 +207,22 @@ CDN に載る前に、5 節の語彙だけを入れた（使い手の定義は�
 | 5.6 | stat `spinUpSpeed` | MG の 1 発ごとのレートの上がり幅に (1 + Σ)。最高レート・初弾の遅れは変えない（論点 I の仮説）。射撃に効く stat |
 | 5.7 | 回数の種類 `critHit` と、回数のきっかけの `firesOutside: "weaponChange"` | 1 パス目が発ごとに「命中の期待値 × その発の通常攻撃の会心率（基礎 + 常時 + 時間で変わる会心率▲・通常攻撃のクリティカル確率▲。上限 1）」を `ShotLog.critHits` に書き、累計で数える。`firesOutside` は、変更の発で届いた回を発火させない（紅蓮：神殺の S2 の「満開状態でなければ」。数えるのは変更の発も、を仮説にする） |
 
+## 9. 定義（2026-10-29）
+
+CDN に 2026-10-29 11:13 JST に載った（resourceId はマリアン：クイーン 19・紅蓮：神殺 472・ラプンツェル：サンクチュアリ 473。3 体とも説明文の値は告知画像と同じ）。`npm run fetch-data` で取り込み、2〜4 節の表を `data/skills/19.json`・`472.json`・`473.json` に写した。効果の `claims` は撮影の後に書く（いまは [skills.md](skills.md) に「根拠なし」と出る）。編成のテストは `__tests__/newChars1029DataTeam.test.ts`。
+
+- **状態の id**: 臨戦（Into the Fray）の家族 `intoTheFray` と、`intoTheFraySharpenedResolve`（意思の鋭槍）・`intoTheFrayPenetrantWish`（胸を刺す願い）・`intoTheFraySereneMind`（明鏡止水）・`intoTheFrayAtOneWithTheSword`（身剣合一）、敵の弱点露出 `openWounds`（Open Wounds）。
+- **弱点露出を 2 つのきっかけで付ける**: 敵に付く状態の付与は中身が要り、中身は定義に 1 つだけ、という決まりのため、敵の付与の中身の検査を定義の単位にした（どれかの付与が中身を持てばよい。中身は状態の窓に効くので、中身の無い付与の窓でも効く。`skills/types.ts` の `validateStateGrants`）。槍の付与は周期のきっかけ（4 秒）で書いた（持続なので最初の発動だけが効く。周期の短縮は付き始めを変えない）。
+- **居合の倍率の増加（論点 G）**: S2 の効果 3 の値は S1 の居合の値なので、S1 に「身剣合一の間だけ居合と同じ値の追加ダメージをもう 1 つ」として書いた（スロットの表示は S1 になる）。
+- **ラプンツェル：サンクチュアリの「臨戦状態の味方」**: 対象は枠の静的な状態で決まる（8 節）。マリアン：クイーン・紅蓮：神殺はどちらも戦闘開始時の持続の臨戦を持つので、編成にいれば必ず対象になる。
+- **取り込みで直したもの**（ダメージの式は変えない）:
+  - CDN の `uptype_fire_timing` が `fire_timing` に改名された。正規化で両方を読む（改名の前後で 203 体の値はすべて同じ）。
+  - 紅蓮：神殺の AR の `fireType` が新しい値 `InstantBox`（弾速・半径・爆発の範囲とも 0）。即着弾として扱い、発射体の値を持たない（着地点の弾の種類の行を引かない）。
+  - 新しいキューブ（レリックベゼル。フルバースト時の最大 HP のみ▲）は、ビガーと同じくダメージに無関係として対応表に足した。
+- **撮影で確かめること**（7 節の論点のほか）: 紅蓮：神殺の変更後の武器（1 発のヒット数・最初の発までの待ち・コアに当たる割合）、槍・コア命中ダメージ・居合・追加ダメージのヒットのフレームとゲージ。
+
 ## 経過
 
 - 2026-10-28: 起案（告知画像から分解。CDN には未掲載）。同日承認（7 節）。
 - 2026-10-28: 5 節の語彙を実装した（定義はまだ。8 節）。
+- 2026-10-29: CDN に載ったので取り込み、3 体を定義した（9 節）。
