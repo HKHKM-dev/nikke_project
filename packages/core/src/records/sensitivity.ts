@@ -3,7 +3,8 @@
 // P− か P+ が P0 から許容（compare.tolerance）を超えて動けば「効きうる」とする。E のきっかけと維持時間は信じない（6c）。
 // ほかの要素はモデルの窓のまま。1 つずつ変える（未確定どうしの重なりは見ない。8 節の限界）。
 // 端だけ未確定の要素（plan/design-minimal-edge.md 3.2 節）は、P−・P+ の代わりに、窓の端を仮説の範囲の両端まで広げる・縮める 2 通りを回す。
-// 計算は数分かかるので records:minimal で回し、結果を records/minimal/sensitivity.json に置く。records:check はそれを読む。
+// 計算は全部で 1 分ほどかかるので records:minimal で回し（既定は入力の変わった観測値だけ。reusedSensitivity）、結果を
+// records/minimal/sensitivity.json に置く。records:check はそれを読む。
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { EdgeShift, SkillDefinition, SkillEffect } from '../skills/types.ts';
 import { METRICS, buildTeamInput, compareValue, type Observation, type RecordsData } from './observations.ts';
@@ -12,6 +13,7 @@ import {
   edgeRangeOf,
   elementsOf,
   impossibleReason,
+  sameEdgeRange,
   sensitivityKey,
   unconfirmedReason,
   usesSensitivity,
@@ -213,6 +215,33 @@ export function sensitivityOf(
       }
     }
     out.push(entry);
+  }
+  return out;
+}
+
+/**
+ * 前の結果を使い回せるなら、その観測値の組を返す（plan/design-workflow-simplification-5.md 7.2 節）。sensitivityOf が出す要素の
+ * どれにも、鍵と端の範囲が今と同じ前の組があるときだけ使い回す。1 つでも無ければ undefined（その観測値を計算し直す）。
+ * 鍵はモデルのコードを含まないので、全部を計算し直す records:minimal -- --all をときどき回して差が無いことを見る
+ */
+export function reusedSensitivity(
+  o: Observation,
+  ctx: SensitivityContext,
+  previous: ReadonlyMap<string, SensitivityEntry>,
+): SensitivityEntry[] | undefined {
+  if (!usesSensitivity(o)) return [];
+  const recording = ctx.recordings.get(o.recording);
+  if (recording === undefined) return [];
+  const key = sensitivityKey(o, recording, ctx);
+  const out: SensitivityEntry[] = [];
+  for (const e of elementsOf(recording, ctx)) {
+    if (e.type !== 'effect' || e.effectRef === undefined) continue;
+    if (unconfirmedReason(e, recording, ctx) === undefined) continue;
+    if (impossibleReason(e, recording) !== undefined) continue;
+    const p = previous.get(`${o.id}|${e.name}`);
+    if (p === undefined || p.key !== key || !sameEdgeRange(p.edge?.range, edgeRangeOf(e, recording, ctx)))
+      return undefined;
+    out.push(p);
   }
   return out;
 }
