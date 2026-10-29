@@ -17,6 +17,7 @@ import {
 } from '@nikke/core';
 import type {
   BasicBurstStep,
+  BurstStepMode,
   AppliedEffect,
   BuildEffect,
   BuildEffectSource,
@@ -516,7 +517,13 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
           : weapon !== '' || exclude !== '' || defense !== ''
             ? `（${exclude}${defense}${weapon}味方）`
             : '';
-  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
+  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}${formatBurstStepMode(effect.burstStepMode)}`;
+}
+
+/** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か。「（戦闘補助）」「（戦闘補助でない時）」。無ければ空文字 */
+export function formatBurstStepMode(mode: BurstStepMode | undefined): string {
+  if (mode === undefined) return '';
+  return mode.changed ? `（${mode.name.ja}）` : `（${mode.name.ja}でない時）`;
 }
 
 /** Stage 9: 宝物の段階の選択肢のラベル。「1 段階（スキル 1）」「2 段階（+スキル 2）」 */

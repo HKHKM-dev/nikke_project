@@ -161,6 +161,12 @@ export type CompareSetup = {
    * 手で撃たなかった枠。TeamInput.noBurstSlots）。burst が true のときだけ。省略は全員使う
    */
   noBurstSlots?: number[];
+  /**
+   * 2 段目の段 12 の PR 3（V-0541）: 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠）。モデルには撃たない枠が無いので、
+   * 弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す。
+   * 条件が auto（射撃場の表）のときは書かない。省略は全員撃つ
+   */
+  noFireSlots?: number[];
 };
 
 /** CompareSetup.burstDelays の 1 件 */
@@ -210,7 +216,7 @@ export type AddedEffect = {
 };
 
 /**
- * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support は読み込みで決まる欄なので、JSON に戻すときに外す。
+ * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support・burstStepMode は読み込みで決まる欄なので、JSON に戻すときに外す。
  * エレグのバースト編: 敵に付く状態の付与は、読み込みで target を "allies" に読み替えて enemy の印を付けるので、JSON の形
  * （target: "enemy"）に戻す
  */
@@ -224,6 +230,8 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
     for (const slot of SKILL_SLOTS) {
       delete group[slot]?.support;
       for (const effect of (group[slot]?.effects ?? []) as Record<string, unknown>[]) {
+        // 2 段目の段 12: バースト段階の変更の側（burstStepMode）も読み込みで書く欄
+        delete effect.burstStepMode;
         if (effect.kind !== 'state' || effect.enemy !== true) continue;
         delete effect.enemy;
         effect.target = 'enemy';
@@ -2027,6 +2035,13 @@ export function validateObservations(
         if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
           errors.push(`${at}: noBurstSlots の枠 ${String(s)} が編成の外`);
     }
+    if (c.setup.noFireSlots !== undefined) {
+      if (c.setup.condition === 'auto') errors.push(`${at}: noFireSlots は condition が auto のときには書かない`);
+      const size = recordings.get(o.recording)?.team.length;
+      for (const s of c.setup.noFireSlots)
+        if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
+          errors.push(`${at}: noFireSlots の枠 ${String(s)} が編成の外`);
+    }
     if (c.setup.manualBursts !== undefined) {
       if (c.setup.burst === false) errors.push(`${at}: manualBursts は burst が false のときには書かない`);
       const ref = observations.find((x) => x.id === c.setup.manualBursts);
@@ -2196,7 +2211,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     fullCharge: true,
     hitRate: setup.hitRate ?? 1,
   };
-  const slots: TeamSlotInput[] = recording.team.map((member) => {
+  const slots: TeamSlotInput[] = recording.team.map((member, index) => {
     const base = data.characters.get(member.rid);
     if (base === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
     const delayOverrides = (setup.burstDelays ?? []).filter((d) => d.rid === member.rid);
@@ -2232,7 +2247,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     return {
       character,
       growth: fixedSpecGrowth(character),
-      condition,
+      condition: setup.noFireSlots?.includes(index + 1) === true ? { ...condition, hitRate: 0 } : condition,
       ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: build === undefined ? computeFixedSpecAttack(character).attack : build.attack,
       ...(build === undefined
@@ -2410,6 +2425,7 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.farLanding !== undefined) entries.push(['far', setup.farLanding.join('・')]);
   if (setup?.manualBursts !== undefined) entries.push(['manualBursts', setup.manualBursts]);
   if (setup?.noBurstSlots !== undefined) entries.push(['noBurstSlots', setup.noBurstSlots.join('・')]);
+  if (setup?.noFireSlots !== undefined) entries.push(['noFireSlots', setup.noFireSlots.join('・')]);
   for (const d of setup?.burstDelays ?? []) {
     const r = d.row;
     const row =

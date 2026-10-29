@@ -102,6 +102,7 @@ describe('data/skills', () => {
                         effect.kind === 'burstGaugeHit' ||
                         effect.kind === 'shotPause' ||
                         effect.kind === 'burstReentry' ||
+                        effect.kind === 'burstStepChange' ||
                         effect.kind === 'removeState' ||
                         effect.ref === undefined
                       ? []

@@ -70,6 +70,7 @@ import {
 } from '../burst/controller.ts';
 import {
   SG_PELLET_GAUGE_HIT_RATE,
+  burstStepOf,
   burstUnitOf,
   energyPerTrigger,
   fullChargeGaugeOf,
@@ -280,7 +281,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (options.noBurstSlots !== undefined) throw new RangeError('noBurstSlots needs the dynamic burst model');
       fixed = planFixedCycle(
         slots.map((s) =>
-          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
+          s === null ? null : { burstStep: burstStepOf(s.character, s.definition), ...burstDelaysFieldOf(s.character) },
         ),
         frames,
       );

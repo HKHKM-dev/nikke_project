@@ -1003,8 +1003,6 @@ export type CooldownReductionEffect = TargetCountFields & {
   targetWeapon?: WeaponType;
   targetElement?: Element;
   targetClass?: NikkeClass;
-  /** 秒数の description_value_NN */
-  ref: number;
   /** アニス：スター編: バースト段階の構成の条件 */
   burstStepMix?: BurstStepMixCondition;
   /** ラム編: 同じ部隊の味方の条件 */
@@ -1015,7 +1013,18 @@ export type CooldownReductionEffect = TargetCountFields & {
    */
   condition?: EffectCondition;
   assumes?: LocalizedText;
-};
+} & (
+    | {
+        /** 秒数の description_value_NN */
+        ref: number;
+        seconds?: never;
+      }
+    | {
+        /** 2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 説明文に直書きの秒数（「クールタイム 20 秒▼」）。ref とちょうど片方 */
+        seconds: number;
+        ref?: never;
+      }
+  );
 
 /**
  * Stage 10: 「弾丸チャージ X%」。発火の瞬間に対象の残弾へ 最大装弾数 × X% を足す（最大で止める。即時効果）。
@@ -1390,6 +1399,22 @@ export type BurstReentryEffect = {
 };
 
 /**
+ * 2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 「戦闘補助：バースト N に変更」。持つ枠のバーストの段（BurstUnit.burstStep）を、
+ * バーストのチェーンを組む前に step に差し替える（次の段階は段の順のまま。burstReentry があればそれ）。差し替えた段はチェーンにだけ効き、
+ * ほかのキャラの burstStepMix・targetBurstStep（「基本バースト段階が N の」）は差し替える前の段で数える。編成で決まる静的な効果で、
+ * 編成の条件（burstStepMix・squad）を付けられる。どのスロットにも書けるが、1 つの定義に 1 つまで
+ */
+export type BurstStepChangeEffect = {
+  kind: 'burstStepChange';
+  step: BasicBurstStep;
+  /** 変更の名前（説明文の「戦闘補助」）。書けば、同じ定義の編成の条件の付いた効果に burstStepMode を付ける */
+  name?: LocalizedText;
+  burstStepMix?: BurstStepMixCondition;
+  squad?: SquadCondition;
+  assumes?: LocalizedText;
+};
+
+/**
  * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 状態の中身の 1 項目。状態の窓の間だけ持ち主に効く stat の▲▼。
  * 欄の意味は timed の値の欄と同じ。ref は付与のあるスロットの説明文の値（そのスロットの Lv で解く）。項目に kind が無ければ
  * stat の▲▼と読む（ほかの種類は後の拡張で kind を持つ項目として足す。同 8.4 節）
@@ -1569,6 +1594,14 @@ export type ClaimRefs = { claims?: string[] };
 /** 分類の設計書の論点 7（plan/design-indirect-notes.md 1.2 節）: 読む側の印。その経路の値や有無で、値・対象・条件・きっかけ・維持が決まる */
 export type IndirectReads = { reads?: IndirectPath[] };
 
+/**
+ * 2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 効果が、名前の付いたバースト段階の変更（burstStepChange の name）のどちらの側か。
+ * parseSkillDefinition が、編成の条件 burstStepMix が変更と同じ効果に changed true、逆の効果に false を書く（JSON には書かない）。
+ * 計算は読まず、画面の出どころの表示（「（戦闘補助）」「（戦闘補助でない時）」）だけが読む
+ */
+export type BurstStepMode = { name: LocalizedText; changed: boolean };
+export type BurstStepModeField = { burstStepMode?: BurstStepMode };
+
 export type SkillEffect = (
   | PassiveEffect
   | BurstDamageEffect
@@ -1583,6 +1616,7 @@ export type SkillEffect = (
   | BurstGaugeHitEffect
   | ShotPauseEffect
   | BurstReentryEffect
+  | BurstStepChangeEffect
   | AllyGaugeAddEffect
   | StateGrantEffect
   | RemoveStateEffect
@@ -1590,13 +1624,23 @@ export type SkillEffect = (
   | CounterChangeEffect
 ) &
   ClaimRefs &
-  IndirectReads;
+  IndirectReads &
+  BurstStepModeField;
 
 /** アニス：スター編: 定義のバースト再突入の段階（編成の条件で外した後の定義を渡す）。無ければ null */
 export function burstReentryStepOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
   if (!definition) return null;
   for (const slot of SKILL_SLOTS) {
     for (const e of definition.skills[slot].effects) if (e.kind === 'burstReentry') return e.step;
+  }
+  return null;
+}
+
+/** 2 段目の段 12: 定義のバースト段階の変更の段（編成の条件で外した後の定義を渡す）。無ければ null */
+export function burstStepChangeOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
+  if (!definition) return null;
+  for (const slot of SKILL_SLOTS) {
+    for (const e of definition.skills[slot].effects) if (e.kind === 'burstStepChange') return e.step;
   }
   return null;
 }
@@ -1616,6 +1660,7 @@ export const SKILL_EFFECT_KINDS = [
   'burstGaugeHit',
   'shotPause',
   'burstReentry',
+  'burstStepChange',
   'allyGaugeAdd',
   'state',
   'removeState',
@@ -3421,6 +3466,21 @@ function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstRe
   return effect;
 }
 
+function parseBurstStepChangeEffect(v: Record<string, Json>, path: string): BurstStepChangeEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'step', 'name', 'burstStepMix', 'squad', 'assumes', 'claims'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const effect: BurstStepChangeEffect = {
+    kind: 'burstStepChange',
+    step: oneOf(BASIC_BURST_STEPS, v.step, `${path}.step`),
+  };
+  if (v.name !== undefined) effect.name = parseLocalizedText(v.name, `${path}.name`);
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
 function parseAllyGaugeAddEffect(v: Record<string, Json>, path: string): AllyGaugeAddEffect {
   for (const key of Object.keys(v)) {
     if (!['kind', 'ref', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
@@ -3444,7 +3504,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
       : kind === 'heal'
         ? ['burstStepMix', 'squad', 'withCharacter']
         : [];
-  const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : [];
+  const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : kind === 'cooldownReduction' ? ['seconds'] : [];
   // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件は cooldownReduction だけ
   const conditionKeys = kind === 'cooldownReduction' ? ['condition'] : [];
   for (const key of Object.keys(v)) {
@@ -3518,7 +3578,19 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   const targetClass = parseTargetClass(v, target, path);
   const count = parseTargetCount(v, target, path);
   // burstGauge は上で対象を allies に限り、絞り込みの欄も弾いてある
-  const effect = { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) } as InstantEffect;
+  // 2 段目の段 12: cooldownReduction は直書きの秒数（seconds）も書ける（ref とちょうど片方）
+  const seconds = v.seconds;
+  if (seconds !== undefined) {
+    if (v.ref !== undefined) fail(path, 'exactly one of ref and seconds is required');
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      fail(`${path}.seconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+    }
+  }
+  const effect = (
+    seconds !== undefined
+      ? { kind, trigger, target, seconds }
+      : { kind, trigger, target, ref: parseRef(v.ref, `${path}.ref`) }
+  ) as InstantEffect;
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetClass !== undefined) effect.targetClass = targetClass;
@@ -3571,12 +3643,13 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
       effect.kind !== 'cooldownReduction' &&
       effect.kind !== 'heal' &&
       effect.kind !== 'burstReentry' &&
+      effect.kind !== 'burstStepChange' &&
       // 2 段目の段 12（plan/design-skill-stage12.md 2.1 節）: damage は burstStepMix だけ。PR 2（2.4 節）: cycleEvery も
       !((effect.kind === 'damage' || effect.kind === 'cycleEvery') && key === 'burstStepMix')
     ) {
       fail(
         `${path}.${key}`,
-        `only allowed in passive, timed, state, cooldownReduction, heal and burstReentry (burstStepMix also in damage and cycleEvery), found in ${effect.kind}`,
+        `only allowed in passive, timed, state, cooldownReduction, heal, burstReentry and burstStepChange (burstStepMix also in damage and cycleEvery), found in ${effect.kind}`,
       );
     }
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
@@ -3612,6 +3685,23 @@ function parseWithCharacterCondition(v: Json, path: string): WithCharacterCondit
   const rid = parsePositiveInt(v.rid, `${path}.rid`);
   if (typeof v.present !== 'boolean') fail(`${path}.present`, `expected a boolean, got ${JSON.stringify(v.present)}`);
   return { rid, present: v.present };
+}
+
+/** 2 段目の段 12: 名前の付いたバースト段階の変更と同じ（か逆の）編成の条件 burstStepMix の効果に、どちらの側かを書く（BurstStepMode） */
+function markBurstStepModes(skills: Record<SkillSlot, SkillEntry>, change: BurstStepChangeEffect | undefined): void {
+  const mix = change?.burstStepMix;
+  if (change?.name === undefined || mix === undefined) return;
+  for (const slot of SKILL_SLOTS) {
+    for (const e of skills[slot].effects) {
+      if (
+        e.kind === 'burstStepChange' ||
+        !('burstStepMix' in e) ||
+        e.burstStepMix?.otherBurstStep !== mix.otherBurstStep
+      )
+        continue;
+      e.burstStepMode = { name: change.name, changed: e.burstStepMix.present === mix.present };
+    }
+  }
 }
 
 /** アニス：スター編: バースト段階の構成の条件 */
@@ -3662,6 +3752,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   if (v.kind === 'shotPause') return parseShotPauseEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
+  if (v.kind === 'burstStepChange') return parseBurstStepChangeEffect(v, path);
   if (v.kind === 'allyGaugeAdd') return parseAllyGaugeAddEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
   if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
@@ -3669,7 +3760,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -4119,6 +4210,10 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'burstReentry').length > 1) {
     fail('skills', 'at most one burstReentry effect per definition');
   }
+  // 2 段目の段 12: バースト段階の変更も 1 つの定義に 1 つまで（持つ枠の段は 1 つしか持てない）
+  const stepChanges = SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'burstStepChange');
+  if (stepChanges.length > 1) fail('skills', 'at most one burstStepChange effect per definition');
+  markBurstStepModes(skills, stepChanges[0]);
   if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'allyGaugeAdd').length > 1) {
     fail('skills', 'at most one allyGaugeAdd effect per definition');
   }

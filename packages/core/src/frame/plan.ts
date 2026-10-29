@@ -9,7 +9,7 @@
 import { burstDelaysFieldOf, burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
-import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
+import { burstStepOf, planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
   hitFramesOf,
@@ -133,7 +133,11 @@ export function planTeamSchedule(
   if (!burst) return null;
   if (burstModel === 'fixed') {
     return planFixedCycle(
-      slots.map((s) => (s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) })),
+      slots.map((s) =>
+        s === null
+          ? null
+          : { burstStep: burstStepOf(s.character, s.skills?.definition ?? null), ...burstDelaysFieldOf(s.character) },
+      ),
       frames,
     );
   }

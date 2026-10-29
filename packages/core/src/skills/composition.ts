@@ -15,7 +15,7 @@
 // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件（selfHp）も、枠の HP の割合の想定（TeamSlotInput.hpRatio。
 // 戦闘中一定）で、ここで決める（applyCompositionToTeam の枠ごとの段。最小構成の検査など、枠の入力の無い所は想定の既定（満タン）とみなす）。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData, Element } from '../types.ts';
+import type { BurstStep, CharacterData, Element } from '../types.ts';
 import { skillValue, type SkillLevels } from './resolve.ts';
 import { statesMatching, type NamedStateId } from './states.ts';
 import { matchesTargetFilter } from './targets.ts';
@@ -70,6 +70,24 @@ export function burstStepMixAllows(
   if (mix === undefined) return true;
   const present = characters.some((c, i) => i !== selfIndex && c !== null && countsAsBurstStep(c, mix.otherBurstStep));
   return present === mix.present;
+}
+
+/**
+ * 2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 編成でのバーストの段。定義のバースト段階の変更（burstStepChange）が編成の条件を
+ * 満たせばその段、無ければ基本バースト段階（画面の表示用。計算は編成の条件で外した後の定義から burst/dynamic.ts の burstStepOf で取る）
+ */
+export function burstStepInTeam(
+  character: CharacterData,
+  definition: SkillDefinition | null,
+  characters: readonly (CompositionCharacter | null)[],
+  selfIndex: number,
+): BurstStep {
+  for (const slot of SKILL_SLOTS) {
+    for (const e of definition?.skills[slot].effects ?? []) {
+      if (e.kind === 'burstStepChange' && compositionAllows(e, characters, selfIndex)) return e.step;
+    }
+  }
+  return character.burstStep;
 }
 
 /** 自分（selfIndex）を除く空でない枠に、部隊が自分と同じキャラがいるかを squad.present と比べる */

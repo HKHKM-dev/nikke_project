@@ -14408,6 +14408,118 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0731-06",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "fa878fa71adc9a8a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0731-07",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "22620fb1c4524740",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0731-25",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "a296f552916f513b",
+      "effective": true,
+      "minus": -3197.512700000001,
+      "plus": null
+    },
+    {
+      "observation": "0731-26",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "eeb45abcf477743b",
+      "effective": true,
+      "minus": -71677.7575,
+      "plus": null
+    },
+    {
+      "observation": "0731-27",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "8834e883366ad176",
+      "effective": true,
+      "minus": 5180.929827810003,
+      "plus": null
+    },
+    {
+      "observation": "0731-28",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "5db2b8f300f7f41a",
+      "effective": true,
+      "minus": 96782.89206437499,
+      "plus": null
+    },
+    {
+      "observation": "0731-29",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "8a6d6f2b340c348a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0732-06",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "4ced3f6143572ca0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0732-07",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "73c7780f3a88e752",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0732-25",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "d95861c6e8274195",
+      "effective": true,
+      "minus": -3197.512700000001,
+      "plus": null
+    },
+    {
+      "observation": "0732-26",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "320c0c526d4f48a1",
+      "effective": true,
+      "minus": -71677.7575,
+      "plus": null
+    },
+    {
+      "observation": "0732-27",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "b0aee75f95862380",
+      "effective": true,
+      "minus": 5180.929827810003,
+      "plus": null
+    },
+    {
+      "observation": "0732-28",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "d940976914373288",
+      "effective": true,
+      "minus": 96782.89206437499,
+      "plus": null
+    },
+    {
+      "observation": "0732-29",
+      "element": "ラピ：レッドフード burst.effects[3]",
+      "key": "e222d2c9299c8018",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
