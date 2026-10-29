@@ -1,0 +1,69 @@
+[
+  {
+    "recording": "0737",
+    "use": "compare",
+    "source": "V-0534",
+    "readAt": "2026-10-29",
+    "id": "0737-01",
+    "kind": "count",
+    "unit": "発",
+    "value": 120,
+    "description": "ラピ：レッドフード単騎の、粘着榴弾の付着の前に HUD の総ダメージが 1 フレームだけ増えなかったフレーム（止まり。1 フレーム 1 発で撃っている途中の 29 回）から、次の止まりまでの通常攻撃のヒットの数（間のフレームがすべて読めた 13 組。どの組も 120 発）。どの止まりも直後の 3 フレームは 1 ヒットずつ（29/29）、止まりのフレームで照準の左の残弾は減らない（読めた 25 回の全部）。間は 121f（間にもう 1 つ増えないフレームのある組は 122f）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series・tools/captures/reticle-ammo.ts --mode series・tools/captures/dups.ts --mode list",
+      "note": "0725-03・0725-04 と同じ読み方。止まりのフレーム: 1019,1140,1518,1639,2764,2885,3387,3508,3886,4007,4509,4631,5840,5961,6339,6460,7291,7669,7790,8292,8413,8791,8913,9437,9558,9937,10058,10560,10681"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "steadyPauseShots",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "recording": "0737",
+    "use": "compare",
+    "source": "V-0534",
+    "readAt": "2026-10-29",
+    "id": "0737-02",
+    "kind": "interval",
+    "unit": "f",
+    "value": [175, 171],
+    "description": "マガジンの最後の通常攻撃のヒットから次のマガジンの最初のヒットまでの中央値を、120 発の倍数で撃ち切ったマガジン（最後の発のすぐ後に粘着榴弾が付着）と、ほかのマガジンに分けて [榴弾のマガジン, ほか]。榴弾のマガジン: 3002・4124・6578・7907・10175・11059 の 6 回とも 175f。1756（198f）・5455（197f）・9030（197f）は的のジャンプに掛かった回で、ジャンプに掛かったほかのマガジン（3565・6018・7348 の 194f）より 3〜4f 長い。ほか: 1197・2321・4896・8470・9616・10738 の 6 回とも 171f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "0725-08 と同じ読み方。7907 の回は付着の前後が読めなかったが、120 発の倍数の撃ち切り（2 本おきのマガジン）の並びに入る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "lastShotGapMedians",
+      "args": {
+        "slot": 1,
+        "every": 120
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  }
+]
