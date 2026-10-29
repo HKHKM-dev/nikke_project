@@ -152,3 +152,4 @@
 - 2026-10-30: 段 12 の PR 3 で仮説に残したバースト I の自分のクールタイム▼（C-0732）を、追加の撮影（録画 0744・0745）で確定にした（V-0543）。
 - 2026-10-30: オーナーが段 13 の論点 1〜9 を推奨どおりに決めた（[design-skill-stage13.md](design-skill-stage13.md)）。論点 9 のとおり、段 12 を閉じる作業を段 13 の PR 1 に入れる。PR 1（ミハラ：ボンディングチェーンの S1 の戦闘開始時の分。録画 0119・0490・0492 の読み直し）に着手した。
 - 2026-10-30: 段 12 を閉じた（オーナーの指示。[design-skill-stage12.md](design-skill-stage12.md)）。段 12 の結論はどれも確定。残りは付着のゲージの量・爆発範囲▲（未対応の notes）と、レシピ `burst-panel` の取りこぼし（[backlog.md](backlog.md) 5 節）。
+- 2026-10-30: 段 13 の PR 1（ミハラ：ボンディングチェーンの S1 の戦闘開始時の分。damage・dot の `{ counterFull }` と `perCount: { counter }`・`perCountIntervalFrames`、付けるたびに刻みを付け直す持続の dot（`firstTick: halfAfterLatest`・`tickIntervalFrames`・`hitOnApply`）。V-0546、C-0411 を確定に、C-0745）を実装した。録画 0119・0490・0492 の読み直し。tick の間隔は実測の 59.25 ティック（[design-skill-stage13.md](design-skill-stage13.md) 論点 10 でオーナーに諮る）。段 13 の残りは PR 2・3（撮影待ち）。

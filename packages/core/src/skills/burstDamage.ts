@@ -435,7 +435,9 @@ export function resolveDotEffects(
             : {}),
           ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
           ...(auto ? { autoAttack: true as const } : {}),
-          ...(!auto && effect.tickIntervalFrames !== undefined ? { tickIntervalFrames: effect.tickIntervalFrames } : {}),
+          ...(!auto && effect.tickIntervalFrames !== undefined
+            ? { tickIntervalFrames: effect.tickIntervalFrames }
+            : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
         },
       };

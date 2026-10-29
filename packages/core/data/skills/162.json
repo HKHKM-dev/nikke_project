@@ -14,7 +14,10 @@
           "assumes": {
             "ja": "戦闘開始時にキャプチャーチェーンを 10 回チャージする（上限 10）",
             "en": "Charges 10 Restraint Chains at the start of battle (up to 10)"
-          }
+          },
+          "claims": [
+            "C-0411"
+          ]
         },
         {
           "kind": "damage",
@@ -31,7 +34,11 @@
           "assumes": {
             "ja": "「特定のタイミング」（ツールチップ T5: 敵の出現・フルバースト終了後・バースト 3 段階突入時）を、チェーンが上限に届いた次のフレームとして書いた。前提（敵 1 体・敵の破壊なし）では、チェーンが増えるのはチャージの時だけで、どのチャージも上限に届くので、同じ列になる。攻撃はその 4f 後から 15f ごとに、チェーンの数だけ出る（ランダムな敵は的）。バーストゲージは確かめていない（溜めない）",
             "en": "The 'specific timing' (tooltip T5: enemy appears, after Full Burst ends, entering Burst Stage 3) is written as the frame after the chains reach the cap. Under the premise (one enemy, none destroyed) chains only grow by charging, and every charge reaches the cap, so the frames are the same. The attacks start 4 frames later and repeat every 15 frames, once per chain (the random enemy is the target). The burst gauge is not checked (no gauge)"
-          }
+          },
+          "claims": [
+            "C-0411",
+            "C-0745"
+          ]
         },
         {
           "kind": "counterChange",
@@ -45,7 +52,10 @@
           "assumes": {
             "ja": "攻撃 1 回ごとに 1 回減るのを、攻撃の始まりにまとめて 0 に戻す形で書いた（チェーンの数を読むほかの効果は無い）",
             "en": "Each attack uses one chain; written as resetting to 0 when the attacks start (nothing else reads the count)"
-          }
+          },
+          "claims": [
+            "C-0411"
+          ]
         },
         {
           "kind": "dot",
@@ -68,7 +78,11 @@
           "assumes": {
             "ja": "チェーンバインド。攻撃ごとに、その 2f 前に 1 スタック付き、付けた 1 スタックぶんの 1 ヒットが出る。付けるたびに刻みを付け直し、最後に付けた時から 0.5 間隔後と、その後 1 間隔ごとに全スタックの tick（1 tick の全スタックが一緒に会心する）。間隔はゲーム内のティックで 59.25（説明文の 1 秒より長い。3 本の録画で同じ）。持続（戦闘の終わりまで）・解除不可。バーストゲージは確かめていない（溜めない）",
             "en": "Ensnaring Chains. One stack is applied 2 frames before each attack, with a hit worth the one new stack. Each application restarts the ticks: all stacks tick 0.5 interval after the latest application and every interval after that (the whole tick crits together). The interval is 59.25 game ticks (longer than the 1 s in the description; the same in three recordings). Lasts until the end of battle and cannot be removed. The burst gauge is not checked (no gauge)"
-          }
+          },
+          "claims": [
+            "C-0411",
+            "C-0745"
+          ]
         }
       ],
       "notes": []

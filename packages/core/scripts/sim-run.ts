@@ -654,7 +654,10 @@ for (const [i, slot] of slots.entries()) {
 
 /** 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md）: delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値 */
 function printDelayedHits(c: NonNullable<(typeof result.slots)[number]>): void {
-  const delayed = c.skillHits.activations.filter((a) => a.effect.delayFrames !== undefined);
+  // 持続ダメージの delayFrames（2 段目の段 13 の PR 1: 付けるまでの遅れ）は持続ダメージの内訳（printDots）に出す
+  const delayed = c.skillHits.activations.filter(
+    (a) => a.effect.delayFrames !== undefined && a.effect.dot === undefined,
+  );
   if (delayed.length === 0) return;
   const byEffect = new Map<string, typeof delayed>();
   for (const a of delayed) {

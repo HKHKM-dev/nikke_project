@@ -3437,7 +3437,8 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
     if (v.perCountIntervalFrames === undefined) fail(`${path}.perCount`, 'perCount needs perCountIntervalFrames');
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.perCountIntervalFrames`);
   } else if (v.perCountIntervalFrames !== undefined) fail(`${path}.perCountIntervalFrames`, 'needs perCount');
-  if (counterFull !== undefined && effect.perCount === undefined) fail(`${path}.trigger`, '{ counterFull } needs perCount');
+  if (counterFull !== undefined && effect.perCount === undefined)
+    fail(`${path}.trigger`, '{ counterFull } needs perCount');
   if (v.delayFrames !== undefined) {
     if (counterFull === undefined) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);

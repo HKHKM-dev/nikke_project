@@ -1899,7 +1899,9 @@ function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
   return result.skillHits
     .filter(
       (h) =>
-        h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && (h.stacks === undefined) === (kind === 'apply'),
+        h.slotIndex === slotIndexOf(ctx) &&
+        h.effect.dot !== undefined &&
+        (h.stacks === undefined) === (kind === 'apply'),
     )
     .slice(0, Number(ctx.args.count))
     .map((h) => videoFrameOf(result.schedule, h.frame));

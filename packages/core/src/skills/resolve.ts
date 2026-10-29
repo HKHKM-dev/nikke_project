@@ -119,7 +119,9 @@ export type ResolvedShotCountTrigger = {
 };
 
 /** ソルジャーE.G. 編: 確率のきっかけ（解決済み）か */
-export function isResolvedChance(t: ResolvedTrigger | CounterFullTrigger): t is ResolvedShotCountTrigger & { chance: number } {
+export function isResolvedChance(
+  t: ResolvedTrigger | CounterFullTrigger,
+): t is ResolvedShotCountTrigger & { chance: number } {
   return isResolvedShotCount(t) && t.chance !== undefined;
 }
 
@@ -127,7 +129,9 @@ export function isResolvedShotCount(t: ResolvedTrigger | CounterFullTrigger): t 
   return typeof t === 'object' && 'every' in t;
 }
 
-export function isResolvedEventCount(t: ResolvedTrigger | CounterFullTrigger): t is { count: EventCountKind; atLeast: number } {
+export function isResolvedEventCount(
+  t: ResolvedTrigger | CounterFullTrigger,
+): t is { count: EventCountKind; atLeast: number } {
   return typeof t === 'object' && 'atLeast' in t;
 }
 

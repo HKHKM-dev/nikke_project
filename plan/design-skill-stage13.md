@@ -6,7 +6,7 @@
 - 前提: [design-raven-s1.md](design-raven-s1.md) 2.1 節（スタックの付く持続ダメージ `dot` の `maxStacksRef`）、[design-kurumi.md](design-kurumi.md) 2.1・2.2 節（`dot` の `firstTick`・`state`（元は `status`））、[design-timer-ceil.md](design-timer-ceil.md)（tick の刻み。C-0454）、[design-kurumi-s2.md](design-kurumi-s2.md) 2.1 節（回数のきっかけの数える窓 `during`）、[design-skill-stage3.md](design-skill-stage3.md) 1.1 節（`stackChange`）、[design-skill-stage10.md](design-skill-stage10.md) 2.1・2.3 節（カウンタ・`stacksFrom`）、[design-skill-stage11.md](design-skill-stage11.md) 2.4 節（`{ counterFull }`）、[design-skill-stage1.md](design-skill-stage1.md) 1.5 節（条件 `usedBurst`）
 - いまの未対応: [skills.md](skills.md)（生成）の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）
 - 作成日: 2026-10-29
-- 状態: 決定（2026-10-30。オーナーが論点 1〜9 を推奨どおりに決めた）。PR 1 に着手した
+- 状態: 決定（2026-10-30。オーナーが論点 1〜9 を推奨どおりに決めた）。PR 1 を実装した（V-0546、C-0411・C-0745。tick の間隔は論点 4 のどちらの形でもなく、実測の 59.25 ティックで書いた。3.1 節）。PR 2・3 は撮影待ち（V-0546 の「次に撮るもの」で頼んだ）
 
 ## 0. 範囲の選び方
 
@@ -49,14 +49,14 @@
 ### 2.1 キャプチャーチェーン（PR 1・2）
 
 - 説明文（S1）: 「戦闘開始時、自分に「キャプチャーチェーン N 回チャージ」「最大 10 回」」「フルバーストタイムが終了した時、直前に自分がバーストスキルを使用していれば、自分に「キャプチャーチェーン N 回チャージ」「最大 10 回」」。N は Lv によらず 10（`description_value_01`）。
-- **語彙**: カウンタ `captureChain`（上限 10）を目録（`skills/counters.ts`）に足し、`counterChange`（`battleStart`・`amountRef` 1）と `counterChange`（`fullBurstEnd`・`amountRef` 1・条件 `usedBurst`）で書く。`usedBurst` はいま timed・付与・解除にだけ開いている（フルバーストの開始・終了のきっかけだけ）ので、`counterChange` にも開く（PR 2）。
+- **語彙**: カウンタ `restraintChains`（上限 10。id は英語版の名前 Restraint Chains から。チェーンバインドは Ensnaring Chains、プリング・チェーンは Dragging Chain）を目録（`skills/counters.ts`）に足し、`counterChange`（`battleStart`・`amountRef` 1）と `counterChange`（`fullBurstEnd`・`amountRef` 1・条件 `usedBurst`）で書く。`usedBurst` はいま timed・付与・解除にだけ開いている（フルバーストの開始・終了のきっかけだけ）ので、`counterChange` にも開く（PR 2）。
 - 敵の破壊で増える分（S2）は前提の外のまま（C-0443）。
 
 ### 2.2 チェーンの回数分の攻撃と「特定のタイミング」（PR 1・2）
 
 - 説明文（S1）: 「特定のタイミングでランダムな敵に「最終攻撃力の X% のダメージ」「キャプチャーチェーンの回数分だけ攻撃」「攻撃 1 回ごとにキャプチャーチェーン 1 回▼」」。ツールチップ T5 では、特定のタイミングは「敵の出現・フルバースト終了後・バースト 3 段階突入時」。
 - **前提の中の発火の列**: 敵 1 体・敵の破壊なしの前提では、チェーンは戦闘開始時とフルバースト終了時のチャージでだけ増え、どちらも 10 を足して上限 10 に届く。攻撃はチェーンの数だけ出て 0 にするので、バースト 3 段階突入時にはチェーンが 0（攻撃が出ない）。敵の出現は戦闘開始。そこで、攻撃が出るのは「チャージでチェーンが上限に届いた後」と同じ列になる。
-- **語彙（論点 2）**: 段 11 の `{ counterFull: "captureChain" }`（上限に届いた次のフレームに発火）を `damage` のきっかけに開き、`perCount: { counter: "captureChain" }` と `perCountIntervalSeconds`（段 12。数だけのヒットを一定の間隔で 1 つずつ出す。間隔は読む）で書く。減らすのは、同じきっかけの `counterChange`（減らす。数は最後のヒットの後に 0 になる）。`perCount` はいま `burstUse`・`fullBurstStart` のきっかけだけなので、`{ counterFull }` に開く。`assumes` に、T5 の 3 つのタイミングと、前提の中ではチャージの後と同じ列になることを書く。
+- **語彙（論点 2）**: 段 11 の `{ counterFull: "restraintChains" }`（上限に届いた次のフレームに発火）を `damage` のきっかけに開き、`perCount: { counter: "restraintChains" }` と `perCountIntervalSeconds`（段 12。数だけのヒットを一定の間隔で 1 つずつ出す。間隔は読む）で書く。減らすのは、同じきっかけの `counterChange`（減らす。数は最後のヒットの後に 0 になる）。`perCount` はいま `burstUse`・`fullBurstStart` のきっかけだけなので、`{ counterFull }` に開く。`assumes` に、T5 の 3 つのタイミングと、前提の中ではチャージの後と同じ列になることを書く。
 - 0119 の読み（V-0281。`0119-05`）: 攻撃は戦闘開始の直後から動画で 15f おきに 10 回。間隔（0.25 秒の端数の持ち越しか、決まったフレームか）と、戦闘開始から最初の攻撃までの遅れ（`delayFrames`）は、ゲーム内のティックに直して決める（`timer.ts --mode ticks`）。
 - ランダムな敵は、敵 1 体の前提ではその敵（`assumes`）。攻撃の 1 ヒットは倍率ダメージの式で端数まで合う（C-0411）。ゲージを溜めるかは読む（`gaugeHits`）。
 
@@ -65,7 +65,7 @@
 - 説明文（S1）: 「同じ敵に「チェーンバインド：最終攻撃力の X% の持続ダメージ」「1 秒間隔」「N スタック」「持続」「解除不可」」（N は 20）。
 - 0119 の読み（C-0411）: 攻撃 1 回ごとに 1 スタック付き、付けるたびに 1 スタックぶんの 1 ヒットが攻撃の 1f 前（1 回は 2f 前）に出る。その後は 10 スタックぶんの tick が約 1 秒ごとに出続け、1 tick の全スタックは一緒に会心する。10 スタックの tick の最初は、最後の付与の約 0.5 秒後で、最初の付与からは約 2.8 秒後（`0119-05`・`0119-06`。読みの見立てで、起点は PR 1 で決める）。
 - **語彙（論点 3）**: いまの `dot`（`state`・`maxStacksRef`。レイヴン・クルミ）を広げる。
-  - `state: "chainBind"`（敵の状態。目録 `skills/states.ts` に足す）・`maxStacksRef` 4・`intervalSeconds` 1。
+  - `state: "ensnaringChains"`（敵の状態。目録 `skills/states.ts` に足す）・`maxStacksRef` 4・`intervalSeconds` 1。
   - **付け方**: 2.2 節の攻撃と同じきっかけ・`perCount`・`perCountIntervalSeconds` を `dot` に開き、1 ヒットごとに 1 スタック付ける（攻撃と付与の 1f の前後は `delayFrames` で書くか、同じフレームにするかを読みで決める）。
   - **持続**: `dot` に `durationUntil: "battleEnd"` を開く（いまは `durationRef`・`durationSeconds` だけ）。解除不可は付与の `undispellable` と同じ印を `dot` に足す（読むのは 2.5 節の消去と画面だけ）。
   - **付けた時の 1 ヒット**: 付けるたびに、付けた 1 スタックぶんの 1 ヒットを出す印（`hitOnApply`）。いまの `firstTick: atApplication`（付いた瞬間と 1.5 秒後から）は `maxStacksRef` と組めず、値も全スタックの tick なので、別の印にする。
@@ -81,7 +81,7 @@
 
 - 説明文（バースト）: 「チェーンバインド状態の対象に「プリング・チェーン：最終攻撃力の X% の持続ダメージ」「1 秒間隔」「個別対象ごとにチェーンバインドスタックコピー」「N 秒間維持」「解除不可」「効果適用後、チェーンバインド消去」」（X は 50.05、N は 10）。
 - **語彙**:
-  - `dot`（`burstUse`・`state: "pullingChain"`（敵）・`ref` 3・`durationRef` 4・`intervalSeconds` 1）に、付けた時のスタック数を敵のチェーンバインドのスタック数にする欄を開く。段 10 の付与の `stacksFrom: { state }`（自分の状態）を、敵の状態（`{ enemyState: "chainBind" }`）に広げる。1 tick は 1 スタックの値 × 写したスタック数。後でチェーンバインドが増えても、写した数は変わらない見込み（トーブの宝物版のバーストの V-0523 と同じ読み。撮影で確かめる）。
+  - `dot`（`burstUse`・`state: "draggingChain"`（敵）・`ref` 3・`durationRef` 4・`intervalSeconds` 1）に、付けた時のスタック数を敵のチェーンバインドのスタック数にする欄を開く。段 10 の付与の `stacksFrom: { state }`（自分の状態）を、敵の状態（`{ enemyState: "ensnaringChains" }`）に広げる。1 tick は 1 スタックの値 × 写したスタック数。後でチェーンバインドが増えても、写した数は変わらない見込み（トーブの宝物版のバーストの V-0523 と同じ読み。撮影で確かめる）。
   - チェーンバインド状態でない時は付かない（条件 `enemyState`）。
   - **消去（論点 7）**: 効果 `cancelState`（「〈名前〉消去」。解除不可の件も閉じる）を足す。分類の設計書の論点 8（解除と消去は別に実装する）で、使い手を定義する時に足すとしたもの。敵の状態（`dot` の `state`）を指せる形にし、発火のフレームの判定（写す数）の後に閉じる。
 - 1 ヒットの式は持続ダメージ（C-0411 の形）で、S2 の持続ダメージ▲が乗る（2.6 節）。プリング・チェーンの最初の tick がバーストの何 f 後か（`firstTick`）は読む。
@@ -91,7 +91,7 @@
 - **バースト 3 段階突入時の持続ダメージ▲**（PR 2）: `timed`（`burstStage3Enter`・`self`・`sustainedDamage`・`ref` 7・`durationRef` 8）。語彙はある（マナ・レイヴンの持続ダメージ▲）。窓（10 秒）は、バーストの使用より前に始まるので、窓の中のチェーンバインドの tick（▲だけが未確定）と、窓の後のプリング・チェーンの tick（コピーだけが未確定）で分けて読める（3.2 節）。
 - **スタック量▲**（PR 3）: 説明文「フルバーストタイムの持続中、通常攻撃が N 回命中した時、対象がチェーンバインド状態なら、対象に「チェーンバインドのスタック量 M 個▲」」（N は 40、M は 1）。
   - きっかけ: 回数のきっかけ `{ count: "normalHit", everyRef: 1, during: "fullBurst" }`（クルミの S2 の数える窓。窓ごとに数え直すかは `reset` で書き、読む）。
-  - 効果: 段 3 の `stackChange`（いまは自分の状態だけ）を、敵の `dot` の `state`（`chainBind`）に開く。上限は `maxStacksRef`（20）。条件は `enemyState: "chainBind"`。
+  - 効果: 段 3 の `stackChange`（いまは自分の状態だけ）を、敵の `dot` の `state`（`ensnaringChains`）に開く。上限は `maxStacksRef`（20）。条件は `enemyState: "ensnaringChains"`。
 - 自分が戦闘不能になった時のスタック量▲と、敵の破壊のチェーン▲は、前提の外のまま（C-0443）。
 
 ## 3. 使い手と確かめ方
@@ -101,9 +101,9 @@
 <!-- prettier-ignore -->
 | 説明文の行（スキル Lv10） | 書き方 |
 | --- | --- |
-| S1: 戦闘開始時、キャプチャーチェーン 10 回チャージ（最大 10 回） | `counterChange`（`battleStart`・`captureChain`・`amountRef` 1） |
-| S1: 特定のタイミングで、ランダムな敵にチェーンの回数分の攻撃（1 回ごとにチェーン 1 回▼） | `damage`（`{ counterFull: "captureChain" }`・`skill`・`ref` 2・`perCount: { counter }`・`perCountIntervalSeconds`（読む））と `counterChange`（同じきっかけ・減らす） |
-| S1: 同じ敵にチェーンバインド（持続ダメージ・1 秒間隔・20 スタック・持続・解除不可） | `dot`（同じきっかけ・`perCount`・`state: "chainBind"`・`ref` 3・`maxStacksRef` 4・`durationUntil: "battleEnd"`・`hitOnApply`・tick の刻み（読む）） |
+| S1: 戦闘開始時、キャプチャーチェーン 10 回チャージ（最大 10 回） | `counterChange`（`battleStart`・`restraintChains`・`amountRef` 1） |
+| S1: 特定のタイミングで、ランダムな敵にチェーンの回数分の攻撃（1 回ごとにチェーン 1 回▼） | `damage`（`{ counterFull: "restraintChains" }`・`skill`・`ref` 2・`perCount: { counter }`・`perCountIntervalSeconds`（読む））と `counterChange`（同じきっかけ・減らす） |
+| S1: 同じ敵にチェーンバインド（持続ダメージ・1 秒間隔・20 スタック・持続・解除不可） | `dot`（同じきっかけ・`perCount`・`state: "ensnaringChains"`・`ref` 3・`maxStacksRef` 4・`durationUntil: "battleEnd"`・`hitOnApply`・tick の刻み（読む）） |
 
 - **確かめ方: 既存の録画の読み直し**（論点 5）。
   - 0119（単騎・操作・バーストなし。V-0281・V-0326）で、攻撃の間隔と遅れ、付けた時の 1 ヒットの前後、定期の tick の起点を、ゲーム内のティックで決める（決めた録画は再現に数えない。[verification-guide.md](verification-guide.md) 2.2 節）。値とフレームは読んである（`0119-05`〜`0119-07`）。
@@ -111,6 +111,12 @@
   - 予測は `records:predict` で出してよい（tick の数え方の 2 つの形を `setup` の上書きにし、0490・0492 の tick のフレームの列を比べる）。
 - 外れたとき: 攻撃の値が合わなければ攻撃力（スペック固定の値）を先に見る。tick の列がどちらの形とも合わなければ、合わない tick を記録し、残差を係数で埋めない（AGENTS.md）。C-0454 の残り（チェーンバインドがこの形に入るか）は、合った形で C-0454 か新しい結論に書く。
 - クラウドで読むときは、録画を Google Drive から取り寄せる（[captures/storage.md](captures/storage.md)「クラウド環境での取り寄せ」。3 本とも Drive にある）。
+- **読んで分かったこと**（2026-10-30。V-0546）:
+  - 攻撃は 3 本とも、戦闘開始の 5〜6f 後から 15f おきに 10 回で、ゲーム内のティックでも 15 ずつ（0.25 秒の端数を持ち越さない）。そこで間隔を秒の `perCountIntervalSeconds` でなく、フレーム数の即値 `perCountIntervalFrames`（15）で書いた（`hitIntervalFrames` と同じく、録画で読んだ値）。最初の攻撃は `{ counterFull }`（戦闘開始の次のフレーム）の 4f 後（`delayFrames`）。
+  - チェーンバインドの 1 スタックの付与は、攻撃の 1〜2f 前（モデルは 2f 前）。付けるたびに付けた 1 スタックぶんの 1 ヒット（`hitOnApply`）。
+  - 10 スタックの tick は、最後の付与の 0.5 間隔後（29 ティック後）から出て、それまでの付与の間には出ない。付けるたびに刻みを付け直す形（`firstTick: halfAfterLatest`）にした。
+  - tick の間隔は、ゲーム内のティックで 59.25（2 本の 176 回ずつの tick が round((k + 0.5) × 59.25) と ±1.5 で合う）。論点 4 の 2 つの形（端数を持ち越す 58.82・数え直す 59）のどちらとも合わず、180 秒で 43〜74 ティックずれる。3 本で同じ値なので、実測の間隔（`tickIntervalFrames: 59.25`）を定義に書いた（C-0745。出どころは分からない）。これは論点 4 の推奨の前提（2 つの形のどちらか）の外なので、オーナーに諮る（6 節の論点 10）。
+  - 0490 の編成で、モデルのミハラ：ボンディングチェーンの与ダメージは戦闘履歴のパネル（`0490-04`）と 0.1% の差（V-0546 の結果）。
 
 ### 3.2 PR 2: ミハラ：ボンディングチェーンがバーストを使う回
 
@@ -118,8 +124,8 @@
 | 説明文の行（スキル Lv10） | 書き方 |
 | --- | --- |
 | S1: フルバーストタイムが終了した時、直前に自分がバーストを使っていれば、キャプチャーチェーン 10 回チャージ | `counterChange`（`fullBurstEnd`・`amountRef` 1・`condition: { usedBurst: true }`） |
-| バースト: チェーンバインド状態の対象にプリング・チェーン（持続ダメージ・1 秒間隔・スタックコピー・10 秒・解除不可） | `dot`（`burstUse`・`state: "pullingChain"`・`ref` 3・`durationRef` 4・`stacksFrom: { enemyState: "chainBind" }`・条件 `enemyState`） |
-| バースト: 効果適用後、チェーンバインド消去 | `cancelState`（`burstUse`・`chainBind`。写した後に閉じる） |
+| バースト: チェーンバインド状態の対象にプリング・チェーン（持続ダメージ・1 秒間隔・スタックコピー・10 秒・解除不可） | `dot`（`burstUse`・`state: "draggingChain"`・`ref` 3・`durationRef` 4・`stacksFrom: { enemyState: "ensnaringChains" }`・条件 `enemyState`） |
+| バースト: 効果適用後、チェーンバインド消去 | `cancelState`（`burstUse`・`ensnaringChains`。写した後に閉じる） |
 | S2: バースト 3 段階突入時、自分に持続ダメージ▲（10 秒） | `timed`（`burstStage3Enter`・`self`・`sustainedDamage`・`ref` 7・`durationRef` 8） |
 
 - **確かめ方: 撮影 A**（3.4 節。ミハラ：ボンディングチェーンを唯一の III にし、毎回のフルバーストで自分がバーストを使う）。
@@ -134,7 +140,7 @@
 <!-- prettier-ignore -->
 | 説明文の行（スキル Lv10） | 書き方 |
 | --- | --- |
-| S2: フルバーストの持続中、通常攻撃が 40 回命中した時、対象がチェーンバインド状態なら、チェーンバインドのスタック量 1 個▲ | `stackChange`（`{ count: "normalHit", everyRef: 1, during: "fullBurst" }`・`chainBind`（敵）・`amountRef` 2・条件 `enemyState`） |
+| S2: フルバーストの持続中、通常攻撃が 40 回命中した時、対象がチェーンバインド状態なら、チェーンバインドのスタック量 1 個▲ | `stackChange`（`{ count: "normalHit", everyRef: 1, during: "fullBurst" }`・`ensnaringChains`（敵）・`amountRef` 2・条件 `enemyState`） |
 
 - **確かめ方: 撮影 B**（3.4 節。III を 2 体にし、ミハラ：ボンディングチェーンより左の枠の III がバーストを使う回を作る）。その回は、チェーンバインドが消去されずにフルバーストになり、フルバーストの持続中のミハラ：ボンディングチェーンの通常攻撃の命中 40 回ごとに、tick の値が 1 スタックぶん増える見込み。
   - 読むもの: フルバーストの中の tick の値の増え（何スタックになったか）と、増えた tick のフレーム（命中の数の数え方。窓の始まりで数え直すか）。命中の数は、ミハラ：ボンディングチェーンの通常攻撃の 1 ヒット（`0119-02`〜`0119-04` の値）の列を数える。
@@ -168,22 +174,22 @@
 
 ## 5. 実装の置き場所
 
-- `skills/types.ts`（`damage`・`dot` のきっかけ `{ counterFull }`、`perCount` を `{ counterFull }` に、`dot` の `perCount`・`perCountIntervalSeconds`・`durationUntil`・`hitOnApply`・解除不可の印・tick の刻みの印・`stacksFrom: { enemyState }`、`counterChange` の条件 `usedBurst`、`stackChange` を敵の `dot` の状態に、`cancelState`）。
-- `skills/counters.ts`（`captureChain`）、`skills/states.ts`（`chainBind`・`pullingChain`。持ち主は敵）、`skills/holders.ts`（`{ counterFull }` を damage・dot に、消去で閉じる件）、`frame/dot.ts`（付与ごとのスタックの増え、途中のスタック量▲、写した数、消去での打ち切り、tick の刻みの形）、`frame/plan.ts`（tick の値をその時点のスタック数で）。
+- `skills/types.ts`（`damage`・`dot` のきっかけ `{ counterFull }`、`perCount` を `{ counterFull }` に、`damage`・`dot` の `perCountIntervalFrames`、`dot` の `perCount`・`durationUntil`・`hitOnApply`・解除不可の印・tick の刻みの印（`firstTick: halfAfterLatest`・`tickIntervalFrames`）・`stacksFrom: { enemyState }`、`counterChange` の条件 `usedBurst`、`stackChange` を敵の `dot` の状態に、`cancelState`）。
+- `skills/counters.ts`（`restraintChains`）、`skills/states.ts`（`ensnaringChains`・`draggingChain`。持ち主は敵）、`skills/holders.ts`（`{ counterFull }` を damage・dot に、消去で閉じる件）、`frame/dot.ts`（付与ごとのスタックの増え、途中のスタック量▲、写した数、消去での打ち切り、tick の刻みの形）、`frame/plan.ts`（tick の値をその時点のスタック数で）。
 - `records/relevance.ts`（最小構成の検査: 持続ダメージのスタックの出どころ・消去）、`apps/web/src/skillLabels.ts`（表示。チェーンの回数、チェーンバインドのスタック数）。
 - `data/skills/162.json`（ミハラ：ボンディングチェーン）。
 - 段 13 を閉じる時に、一覧の区分の表（`packages/core/src/skills/catalogDoc.ts`）の「きっかけ: 特定のタイミング」「効果: スタックのコピー」「効果: 状態の消去」「効果: キャラ固有のカウンタ」を、語彙ができた所から直す（語彙ありか、形の一部だけなら要確認。[design-skill-stages.md](design-skill-stages.md) 4 節の 4）。「効果: 自動攻撃・召喚・独自の弾」（要確認）はそのまま。棚卸し 0.4 節のマリアン：クイーンの 2 行（`hitsRef`・`periodShorten`）も、同じ時に直すかを見る。
 
 ## 6. 論点
 
-決定（2026-10-30、オーナー）: 論点 1〜9 は推奨どおり。論点の文は諮った時のまま。
+決定（2026-10-30、オーナー）: 論点 1〜9 は推奨どおり。論点の文は諮った時のまま。論点 10 は PR 1 の読みの後に足した（オーナーの判断待ち）。
 
 1. **段 13 の対象**（0.3 節）
    - 推奨: ミハラ：ボンディングチェーンの全スロット。いまのモデルとの差が大きく、S1 の戦闘開始時の分は既存の録画 0119・0490・0492 で撮影を待たずに確かめられ、段 10〜12 の語彙の組み合わせで書ける。
    - 代わりの案 A: スノーホワイト：ヘビーアームズも段 13 に入れる（撮影の依頼に単騎の撮影を足し、PR 4・5 にする）。オートファイアは同じ `perCount: { counter }` で書けるが、チャージ中の周期のきっかけ・使用回数・ロックオンが別に要り、ほとんど撮影。
    - 代わりの案 B: スノーホワイト：ヘビーアームズだけにする（差の比はミハラ：ボンディングチェーンより大きい見込みだが、最初の PR から撮影を待つ）。
 2. **「特定のタイミング」の書き方**（2.2 節）
-   - 推奨: 段 11 の `{ counterFull: "captureChain" }` を `damage`・`dot` のきっかけに開き、`assumes` に T5 の 3 つのタイミングを書く。前提の中では、チャージで上限に届いた後と同じ列で、語彙が増えない（`perCount` を開くだけ）。
+   - 推奨: 段 11 の `{ counterFull: "restraintChains" }` を `damage`・`dot` のきっかけに開き、`assumes` に T5 の 3 つのタイミングを書く。前提の中では、チャージで上限に届いた後と同じ列で、語彙が増えない（`perCount` を開くだけ）。
    - 代わりの案: T5 どおりに、`battleStart`・`fullBurstEnd`・`burstStage3Enter` の 3 つのきっかけで書く。同じフレームのチャージ（`counterChange`）の後の値を `perCount` が読めるよう、読む順の決まり（段 10 の「前のフレームの終わりの値」）を変える必要がある。
 3. **チェーンバインドの持ち方**（2.3・2.5・2.6 節）
    - 推奨: いまの `dot`（`state`・`maxStacksRef`）を広げ、S2 のスタック量▲・バーストのコピー・消去を、`dot` の `state` を指す操作として足す。レイヴン・クルミで確かめた tick の刻みと会心の掛かり方（1 tick の全スタックが一緒に会心する。C-0182・C-0411）がそのまま使える。
@@ -207,7 +213,13 @@
    - 推奨: 段 13 の PR 1 に入れる。段 12 の設計書の「状態」と「経過」、[design-skill-stages.md](design-skill-stages.md) の経過、[backlog.md](backlog.md) 8.1 節の行は、この起案でも同じ行を直すので、別の PR にすると衝突する。段 12 で決着していないもの（棚卸し 0.4 節。C-0732 は V-0543 で確定にしたので 3 つ）は、段 12 の設計書の残りとして書く。
    - 代わりの案: 段 11 の前例（#740）と同じく、段 12 を閉じる小さな PR を先に出し、このブランチをその後の main にそろえる。
 
+10. **チェーンバインドの tick の間隔**（3.1 節の「読んで分かったこと」。論点 4 の後）
+    - 推奨: 実測の 59.25 ティック（`tickIntervalFrames`）で書く（PR 1 の実装）。3 本の録画（0119 の 33 回・0490 と 0492 の 176 回ずつ）で同じ値で、59.2・59.3 でも合わないほど鋭く決まる。チェーンバインドの刻みそのものを測った値で、ほかの残差を埋める係数ではない。出どころ（4 回で 237 ティック）は分からないので、C-0745 の文と定義の `assumes` に「説明文の 1 秒より長い」と書いた。
+    - 代わりの案 A: 論点 4 の代わりの案のとおり、C-0454 の形（説明文の 1 秒。端数を持ち越す 58.82 ティック）で書き、刻みの差は残差として残す（180 秒で tick が 1 回多くなり、チェーンバインドの与ダメージが 0.6% ほど大きくなる。tick のフレームは終わりで 1 秒ほど早い）。
+    - 代わりの案 B: 1 回ごとに数え直す 59 ティック（C-0502 の周期のスキルの形）で書く（180 秒で 43 ティックずれる。tick の数は録画と同じ）。
+
 ## 経過
 
 - 2026-10-29: 起案（オーナーの指示: 段 13 を起案する）。#761 の後の main で、[skills.md](skills.md) の未対応の notes を [design-skill-stages.md](design-skill-stages.md) 3 節の家族ごとに分け直し（棚卸し [design-skill-stage13-inventory.md](design-skill-stage13-inventory.md)）、段 12 の 4 節の候補 1〜5 を比べて、段 13 をミハラ：ボンディングチェーンの全スロット（カウンタの数だけ出る攻撃と、敵に付くスタックの持続ダメージ）にした。S1 の戦闘開始時の分は、既存の録画 0119・0490・0492 で最初の PR が撮影を待たない。段 12 の棚卸しの見立て（`{ counterFull }` はミハラ：ボンディングチェーンにそのまま当たらない）は、前提の中の発火の列としては当たると直した（棚卸し 0.1 節）。段 12 は main で閉じていない（論点 9）。論点 1〜9 はオーナーの判断待ち。
 - 2026-10-30: オーナーが論点 1〜9 を推奨どおりに決めた。論点 9 のとおり、段 12 を閉じる作業をこの PR 1 に入れる（その前に main の #762 で C-0732 が確定になったので、段 12 の残りは 3 つになった）。PR 1（S1 の戦闘開始時の分。録画 0119・0490・0492 の読み直し）に着手し、論点 8 のとおり撮影 A・B を頼む。
+- 2026-10-30: PR 1 を実装した（V-0546、C-0411 を確定に、C-0745）。語彙は、damage・dot の `{ counterFull }` と `perCount: { counter }`、`perCountIntervalFrames`、dot の `durationUntil: battleEnd`・`firstTick: halfAfterLatest`・`tickIntervalFrames`・`hitOnApply`、カウンタ `restraintChains`、敵の状態 `ensnaringChains`。tick の間隔は実測の 59.25 ティック（論点 10 で諮る）。段 12 を閉じる作業も同じ PR に入れた（論点 9）。
