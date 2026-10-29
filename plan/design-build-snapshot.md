@@ -72,7 +72,7 @@
 
 ## 5. 置き場所
 
-- `private/builds/`（AGENTS.md「記録の置き場所」で、育成状況は `private/`）。生のスナップショットは 1 回で数百 KB 以下の見込みで、クラウドの始めのフックが中身まで取る 1 ファイルの上限（`tools/drive/cloud-sync.ts` の 5MB）に収まる。クラウドのセッションも、始めのフックで降りてきたものを読める。
+- `private/builds/`（AGENTS.md「記録の置き場所」で、育成状況は `private/`）。生のスナップショットは 1 回で数百 KB 以下の見込みで、クラウドの始めのフックが中身まで取る 1 ファイルの上限（`tools/drive/cloud-sync.ts` の 5MB）に収まる。クラウドのセッションも、始めのフックで降りてきたものを読める。`drive:sync` の `private` の対は 2026-10-29 まで `*.json` をすべて外していて、`builds/` のスナップショットが Drive に上がっていなかったので、外すのを直下の `*.json`（鍵と `build-fetch.json`）に絞った。
 - 名前は取得の日（日本時間）。同じ日に別の取得があれば `<日付>-2`、`-3` …（撮影の合間に育成を変えた日のため。`tools/builds/import-lib.ts`）。同じ取得をもう一度取り込むと、同じ名前に書き直す。
 - 今ある取得済みのデータ（`scratch/blablalink/` の 2026-09-24・10-06・10-24 の 3 回分）は、どれも生のデータの形のまま取り込める（13 節）。デスクトップで `npm run build:import` に 1 回ずつ渡して `private/builds/` に置く。`scratch/blablalink/` はそのまま残す。
 

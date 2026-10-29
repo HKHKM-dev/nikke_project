@@ -133,12 +133,12 @@
 
 ### 4.1 対と除外
 
-| 対         | ローカル（Path1）           | Drive（Path2）                   | 除外・対象                                                                                         |
-| ---------- | --------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `captures` | `E:/nikke_project_captures` | `nikke_project_captures`（既存） | `desktop.ini`・`derived/` を外す                                                                   |
-| `private`  | `D:/nikke_project/private`  | `nikke_sync/private`             | `*.json`（サービスアカウントの鍵）を外す                                                           |
-| `scratch`  | `D:/nikke_project/scratch`  | `nikke_sync/scratch`             | —                                                                                                  |
-| `claude`   | `D:/home/claude`            | `nikke_sync/claude`              | 全体の `CLAUDE.md` と、このプロジェクトのメモリ（`projects/D--nikke-project/memory/`）だけを含める |
+| 対         | ローカル（Path1）           | Drive（Path2）                   | 除外・対象                                                                                                 |
+| ---------- | --------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `captures` | `E:/nikke_project_captures` | `nikke_project_captures`（既存） | `desktop.ini`・`derived/` を外す                                                                           |
+| `private`  | `D:/nikke_project/private`  | `nikke_sync/private`             | 直下の `*.json`（サービスアカウントの鍵と `build-fetch.json`）を外す。`builds/` の下は含める（2026-10-29） |
+| `scratch`  | `D:/nikke_project/scratch`  | `nikke_sync/scratch`             | —                                                                                                          |
+| `claude`   | `D:/home/claude`            | `nikke_sync/claude`              | 全体の `CLAUDE.md` と、このプロジェクトのメモリ（`projects/D--nikke-project/memory/`）だけを含める         |
 
 - `H:/record` は対にせず、今の Drive for desktop の同期のままにする（2.9 節）。
 - `old_nikkecalc`（E: と Drive）は対にせず、今の手の robocopy のままにする（範囲外）。
