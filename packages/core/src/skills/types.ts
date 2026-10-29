@@ -1627,22 +1627,26 @@ export type SkillEffect = (
   IndirectReads &
   BurstStepModeField;
 
-/** アニス：スター編: 定義のバースト再突入の段階（編成の条件で外した後の定義を渡す）。無ければ null */
-export function burstReentryStepOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
+/** 定義の、段を持つ静的な効果（burstReentry・burstStepChange。どちらも 1 つの定義に 1 つまで）の段。無ければ null */
+function stepEffectOf(
+  definition: SkillDefinition | null | undefined,
+  kind: 'burstReentry' | 'burstStepChange',
+): BasicBurstStep | null {
   if (!definition) return null;
   for (const slot of SKILL_SLOTS) {
-    for (const e of definition.skills[slot].effects) if (e.kind === 'burstReentry') return e.step;
+    for (const e of definition.skills[slot].effects) if (e.kind === kind) return e.step;
   }
   return null;
 }
 
+/** アニス：スター編: 定義のバースト再突入の段階（編成の条件で外した後の定義を渡す）。無ければ null */
+export function burstReentryStepOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
+  return stepEffectOf(definition, 'burstReentry');
+}
+
 /** 2 段目の段 12: 定義のバースト段階の変更の段（編成の条件で外した後の定義を渡す）。無ければ null */
 export function burstStepChangeOf(definition: SkillDefinition | null | undefined): BasicBurstStep | null {
-  if (!definition) return null;
-  for (const slot of SKILL_SLOTS) {
-    for (const e of definition.skills[slot].effects) if (e.kind === 'burstStepChange') return e.step;
-  }
-  return null;
+  return stepEffectOf(definition, 'burstStepChange');
 }
 
 /** 効果の種類（SkillEffect の kind の全部） */
@@ -3504,9 +3508,9 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
       : kind === 'heal'
         ? ['burstStepMix', 'squad', 'withCharacter']
         : [];
-  const scalingKeys = kind === 'ammoRefill' ? ['scaling'] : kind === 'cooldownReduction' ? ['seconds'] : [];
-  // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件は cooldownReduction だけ
-  const conditionKeys = kind === 'cooldownReduction' ? ['condition'] : [];
+  // 種類ごとの欄: 弾丸チャージの発数（scaling）。2 段目の段 12: cooldownReduction の直書きの秒数（seconds。PR 3）と発火の条件
+  // （condition。PR 4。plan/design-skill-stage12.md 2.6 節）
+  const kindKeys = kind === 'ammoRefill' ? ['scaling'] : kind === 'cooldownReduction' ? ['seconds', 'condition'] : [];
   for (const key of Object.keys(v)) {
     if (
       ![
@@ -3521,8 +3525,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         'ref',
         ...durationKeys,
         ...compositionKeys,
-        ...scalingKeys,
-        ...conditionKeys,
+        ...kindKeys,
         'assumes',
         'claims',
       ].includes(key)
@@ -4206,17 +4209,16 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   }
   const skills = {} as Record<SkillSlot, SkillEntry>;
   for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
-  // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）
-  if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'burstReentry').length > 1) {
-    fail('skills', 'at most one burstReentry effect per definition');
+  // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）。2 段目の段 12: バースト段階の変更も
+  // （持つ枠の段は 1 つしか持てない）
+  const effects = SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects);
+  for (const kind of ['burstReentry', 'burstStepChange', 'allyGaugeAdd'] as const) {
+    if (effects.filter((e) => e.kind === kind).length > 1) fail('skills', `at most one ${kind} effect per definition`);
   }
-  // 2 段目の段 12: バースト段階の変更も 1 つの定義に 1 つまで（持つ枠の段は 1 つしか持てない）
-  const stepChanges = SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'burstStepChange');
-  if (stepChanges.length > 1) fail('skills', 'at most one burstStepChange effect per definition');
-  markBurstStepModes(skills, stepChanges[0]);
-  if (SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects).filter((e) => e.kind === 'allyGaugeAdd').length > 1) {
-    fail('skills', 'at most one allyGaugeAdd effect per definition');
-  }
+  markBurstStepModes(
+    skills,
+    effects.find((e): e is BurstStepChangeEffect & ClaimRefs => e.kind === 'burstStepChange'),
+  );
   validateCycles(skills, 'skills');
   validateFixedChargeTimeCount(skills, 'skills');
   validateStateGrants(skills, 'skills');

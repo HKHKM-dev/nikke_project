@@ -163,7 +163,8 @@ export type CompareSetup = {
   noBurstSlots?: number[];
   /**
    * 2 段目の段 12 の PR 3（V-0541）: 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠）。モデルには撃たない枠が無いので、
-   * 弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す。
+   * 代わりに弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す
+   * （撃たない枠をモデルに足せば要らなくなる）。
    * 条件が auto（射撃場の表）のときは書かない。省略は全員撃つ
    */
   noFireSlots?: number[];
@@ -2028,20 +2029,15 @@ export function validateObservations(
           errors.push(`${at}: burstDelays の hitOffsets は 0 から始まる昇順の整数`);
       }
     }
-    if (c.setup.noBurstSlots !== undefined) {
-      if (c.setup.burst !== true) errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
-      const size = recordings.get(o.recording)?.team.length;
-      for (const s of c.setup.noBurstSlots)
+    const size = recordings.get(o.recording)?.team.length;
+    for (const key of ['noBurstSlots', 'noFireSlots'] as const)
+      for (const s of c.setup[key] ?? [])
         if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
-          errors.push(`${at}: noBurstSlots の枠 ${String(s)} が編成の外`);
-    }
-    if (c.setup.noFireSlots !== undefined) {
-      if (c.setup.condition === 'auto') errors.push(`${at}: noFireSlots は condition が auto のときには書かない`);
-      const size = recordings.get(o.recording)?.team.length;
-      for (const s of c.setup.noFireSlots)
-        if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
-          errors.push(`${at}: noFireSlots の枠 ${String(s)} が編成の外`);
-    }
+          errors.push(`${at}: ${key} の枠 ${String(s)} が編成の外`);
+    if (c.setup.noBurstSlots !== undefined && c.setup.burst !== true)
+      errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
+    if (c.setup.noFireSlots !== undefined && c.setup.condition === 'auto')
+      errors.push(`${at}: noFireSlots は condition が auto のときには書かない`);
     if (c.setup.manualBursts !== undefined) {
       if (c.setup.burst === false) errors.push(`${at}: manualBursts は burst が false のときには書かない`);
       const ref = observations.find((x) => x.id === c.setup.manualBursts);

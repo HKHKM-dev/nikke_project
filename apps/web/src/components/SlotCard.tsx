@@ -1,6 +1,7 @@
 import {
   ELEMENT_LABEL,
   WEAPON_LABEL,
+  applyTreasure,
   burstStepInTeam,
   growthLimits,
   isChargeWeapon,
@@ -67,17 +68,19 @@ export function SlotCard({
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
-  // 2 段目の段 12: バースト段階の変更（戦闘補助）が編成で効けば、差し替えた段を出す
+
+  const condition = slot.condition;
+  const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
+  // 2 段目の段 12: バースト段階の変更（戦闘補助）が編成で効けば、差し替えた段を出す（宝物の版を当てた定義で見る）
   const burstStep = character
     ? burstStepInTeam(
         character,
-        skillsStatus.kind === 'ready' ? skillsStatus.definition : null,
-        teamCharacters.map((c, i) => (i === slotIndex ? character : c)),
+        applyTreasure(character, skillsStatus.kind === 'ready' ? skillsStatus.definition : null, treasurePhase)
+          .definition,
+        teamCharacters,
         slotIndex,
       )
     : null;
-  const condition = slot.condition;
-  const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
   const showHpRatio =
     hpRatioTargeted || (character !== undefined && hasSelfHpCondition(character, skillsStatus, treasurePhase));
 

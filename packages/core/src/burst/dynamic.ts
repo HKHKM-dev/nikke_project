@@ -18,6 +18,7 @@ import {
   type BurstUnit,
 } from './controller.ts';
 import { burstDelaysFieldOf } from './landing.ts';
+import type { BurstCandidate } from './fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { BurstSchedule } from './schedule.ts';
 
@@ -71,6 +72,11 @@ export function burstStepOf(character: CharacterData, definition: SkillDefinitio
   return burstStepChangeOf(definition) ?? character.burstStep;
 }
 
+/** 固定サイクルの枠の候補（段と遅れ）。段は burstStepOf（バースト段階の変更の後） */
+export function burstCandidateOf(character: CharacterData, definition: SkillDefinition | null = null): BurstCandidate {
+  return { burstStep: burstStepOf(character, definition), ...burstDelaysFieldOf(character) };
+}
+
 /**
  * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。編成の条件で外した後）があれば、次の段階をそれに差し替える。
  * 2 段目の段 12: バースト段階の変更（burstStepChange）があれば段を差し替え、次の段階は段の順のまま（NextStep。再突入があればそれ）
@@ -79,10 +85,10 @@ export function burstUnitOf(
   character: CharacterData,
   definition: SkillDefinition | null = null,
 ): NonNullable<BurstUnit> {
-  const changed = burstStepChangeOf(definition) !== null;
+  const changed = burstStepChangeOf(definition);
   return {
-    burstStep: burstStepOf(character, definition),
-    nextStep: burstReentryStepOf(definition) ?? (changed ? 'NextStep' : character.burstSkill.nextStep),
+    burstStep: changed ?? character.burstStep,
+    nextStep: burstReentryStepOf(definition) ?? (changed !== null ? 'NextStep' : character.burstSkill.nextStep),
     cooldownFrames: gameSecondsToFrames(character.burstSkill.cooldownSeconds),
     // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
     fullBurstFrames: gameSecondsToFrames(character.burstSkill.durationSeconds),

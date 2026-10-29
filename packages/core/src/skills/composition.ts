@@ -21,6 +21,7 @@ import { statesMatching, type NamedStateId } from './states.ts';
 import { matchesTargetFilter } from './targets.ts';
 import {
   SKILL_SLOTS,
+  burstStepChangeOf,
   isStacksCondition,
   staticStatesOf,
   type BurstStepMixCondition,
@@ -73,8 +74,8 @@ export function burstStepMixAllows(
 }
 
 /**
- * 2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 編成でのバーストの段。定義のバースト段階の変更（burstStepChange）が編成の条件を
- * 満たせばその段、無ければ基本バースト段階（画面の表示用。計算は編成の条件で外した後の定義から burst/dynamic.ts の burstStepOf で取る）
+ * 2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 編成でのバーストの段（画面の表示用）。計算と同じく、編成の条件で外した後の定義の
+ * バースト段階の変更（burstStepChange）の段、無ければ基本バースト段階
  */
 export function burstStepInTeam(
   character: CharacterData,
@@ -82,12 +83,8 @@ export function burstStepInTeam(
   characters: readonly (CompositionCharacter | null)[],
   selfIndex: number,
 ): BurstStep {
-  for (const slot of SKILL_SLOTS) {
-    for (const e of definition?.skills[slot].effects ?? []) {
-      if (e.kind === 'burstStepChange' && compositionAllows(e, characters, selfIndex)) return e.step;
-    }
-  }
-  return character.burstStep;
+  const composed = definition && filterComposition(definition, characters, selfIndex, null);
+  return burstStepChangeOf(composed) ?? character.burstStep;
 }
 
 /** 自分（selfIndex）を除く空でない枠に、部隊が自分と同じキャラがいるかを squad.present と比べる */

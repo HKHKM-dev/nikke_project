@@ -1119,10 +1119,7 @@ export function resolveInstant(
       )
         return;
       // 2 段目の段 12: cooldownReduction の直書きの秒数（seconds）は Lv に依らない
-      const raw =
-        effect.kind === 'cooldownReduction' && effect.seconds !== undefined
-          ? effect.seconds
-          : skillValue(skill, effect.ref!, levels[slot]);
+      const raw = effect.ref === undefined ? effect.seconds : skillValue(skill, effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
       const r: ResolvedInstantEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
