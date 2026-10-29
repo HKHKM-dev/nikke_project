@@ -27,12 +27,14 @@ import {
   type SkillDamageType,
   type SkillDefinition,
   type SkillSlot,
+  type CounterFullTrigger,
   type TimerTrigger,
 } from './types.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,
   resolveCondition,
+  resolveEffectTrigger,
   resolveTrigger,
   skillValue,
   type ResolvedShotCountTrigger,
@@ -101,7 +103,8 @@ export type ResolvedBurstDamage = ResolvedSkillDamage;
 
 /** Stage 8: トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
 export type ResolvedDamageEffect = ResolvedSkillDamage & {
-  trigger: ResolvedTrigger;
+  /** 2 段目の段 13 の PR 1: { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders.ts の counterFullFrames） */
+  trigger: ResolvedTrigger | CounterFullTrigger;
   /** 同じスロットの何番目の効果か（表示・識別用） */
   effectIndex: number;
   /**
@@ -125,6 +128,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   /** 2 段目の段 12 の PR 2: perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
   perCountIntervalSeconds?: number;
   /**
+   * 2 段目の段 13 の PR 1: perCount の数だけ、delayFrames 後からこのフレーム数ごとに出す（damage）か付ける（dot）（frame/plan.ts の
+   * planSkillHits）
+   */
+  perCountIntervalFrames?: number;
+  /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
    */
@@ -143,6 +151,9 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     gaugeOnTick?: true;
     /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
     autoAttack?: true;
+    /** 2 段目の段 13 の PR 1: firstTick halfAfterLatest の tick の間隔（ゲーム内のティック。実測）と、付けた時の 1 スタックのヒット */
+    tickIntervalFrames?: number;
+    hitOnApply?: true;
   };
 };
 
@@ -190,7 +201,7 @@ export function resolveDamageEffects(
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'damage') return;
-      const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
+      const trigger = resolveEffectTrigger(effect.trigger, skill, levels[slot]);
       // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
       // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 条件つきは、
       // 射撃ごとの発動として 1 件ずつ出す（ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
@@ -238,6 +249,7 @@ export function resolveDamageEffects(
         r.coreHit = true;
       }
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
+      if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
       // 2 段目の段 12 の PR 2: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
       if (effect.core === true) r.core = true;
       if (effect.distance === true) r.distance = true;
@@ -264,7 +276,7 @@ export function resolveDamageGauges(
     const entry = def.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage' || effect.gaugeHits === undefined) continue;
-      const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
+      const trigger = resolveEffectTrigger(effect.trigger, character.skills[slot], levels[slot]);
       if (!isResolvedShotCount(trigger)) throw new RangeError('gaugeHits needs a shot count trigger');
       out.push({ trigger, gaugeHits: effect.gaugeHits });
     }
@@ -380,7 +392,11 @@ export function resolveDotEffects(
       if (effect.kind !== 'dot' && effect.kind !== 'autoAttack') return;
       const auto = effect.kind === 'autoAttack';
       const gaugeOnTick = auto ? effect.gaugePerHit === true : effect.gaugeOnTick === true;
-      const durationSeconds = effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]);
+      // 2 段目の段 13 の PR 1: 「持続」（durationUntil: battleEnd）は終わりが無い
+      const durationSeconds =
+        !auto && effect.durationUntil === 'battleEnd'
+          ? Number.POSITIVE_INFINITY
+          : (effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]));
       if (durationSeconds < effect.intervalSeconds) {
         throw new RangeError(
           `skill ${skill.id}: dot interval ${effect.intervalSeconds} s exceeds the duration ${durationSeconds} s`,
@@ -405,7 +421,7 @@ export function resolveDotEffects(
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: 'skill',
         multiplier: skillValue(skill, effect.ref, levels[slot]) / 100,
-        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        trigger: resolveEffectTrigger(effect.trigger, skill, levels[slot]),
         effectIndex,
         dot: {
           intervalSeconds: effect.intervalSeconds,
@@ -419,8 +435,15 @@ export function resolveDotEffects(
             : {}),
           ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
           ...(auto ? { autoAttack: true as const } : {}),
+          ...(!auto && effect.tickIntervalFrames !== undefined ? { tickIntervalFrames: effect.tickIntervalFrames } : {}),
+          ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
         },
       };
+      if (!auto && effect.perCount !== undefined) {
+        r.perCount = effect.perCount;
+        r.perCountIntervalFrames = effect.perCountIntervalFrames!;
+      }
+      if (!auto && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
       // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）
       if (!auto) r.sustained = true;
@@ -436,7 +459,7 @@ export function resolveDotEffects(
  * Stage 11 モダニア: 射撃ごとに発火するトリガーか（射撃の回数トリガーの every = 1。最後の弾丸は除く）。
  * 「通常攻撃が命中した時」の倍率ダメージは射撃と 1 対 1 で、同じ区間では毎回同じ値なので、1 トリガーの値に畳み込む
  */
-export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
+export function isPerShotTrigger(trigger: ResolvedTrigger | CounterFullTrigger): boolean {
   return (
     typeof trigger === 'object' &&
     'every' in trigger &&
@@ -465,7 +488,7 @@ export function resolvePerShotDamage(
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage') continue;
-      if (!isPerShotTrigger(resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
+      if (!isPerShotTrigger(resolveEffectTrigger(effect.trigger, skill, levels[slot]))) continue;
       // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）
       if (effect.condition !== undefined) continue;
       if (character.weaponType === 'SG') {

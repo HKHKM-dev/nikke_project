@@ -8,7 +8,7 @@
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
 import { burstCandidateOf, planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
@@ -52,6 +52,7 @@ import {
   ENEMY,
   buffTimelineOf,
   counterEffectiveFrom,
+  counterFullFrames,
   itemsOf,
   stacksHold,
   valuePiecesOf,
@@ -63,9 +64,11 @@ import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, type NamedStateId } from '../skills/states.ts';
 import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
+  isCounterFullTrigger,
   isEnemyHeldStat,
   isStateStat,
   staticStatesOf,
+  type CounterFullTrigger,
   type EffectCondition,
   type SelfStateCondition,
 } from '../skills/types.ts';
@@ -83,7 +86,7 @@ import {
 import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
-import { dotTicks, groupDotsByState } from './dot.ts';
+import { dotTicks, groupDotsByState, latestDotTicks } from './dot.ts';
 export {
   DOT_LATER_TICK_DELAY_SECONDS,
   dotTickFrames,
@@ -252,7 +255,7 @@ export function perShotDamageOf(slot: TeamSlotInput): ResolvedSkillDamage[] {
 }
 
 /** バースト系のトリガー（burstDamage と同じく発動直前のバフで計算する）か */
-function isBurstUseTrigger(trigger: ResolvedTrigger): boolean {
+function isBurstUseTrigger(trigger: ResolvedTrigger | CounterFullTrigger): boolean {
   return trigger === 'burstUse' || (isResolvedEventCount(trigger) && trigger.count === 'burstUse');
 }
 
@@ -338,6 +341,21 @@ export function planSkillHits(
       let value = 0;
       for (const r of ownCounters) if (r.counter === counter && counterEffectiveFrom(r) <= frame) value = r.value;
       return value;
+    };
+    // 持続ダメージの付くフレーム。2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: { counterFull } の perCount は、発火の
+    // delayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
+    const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
+      const t = effect.trigger;
+      if (!isCounterFullTrigger(t)) return triggerFrames(t, schedule, slotIndex, frames, shots);
+      const per = effect.perCount;
+      if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
+        throw new RangeError('a dot with { counterFull } needs perCount { counter } and perCountIntervalFrames');
+      return counterFullFrames(history.counters, slotIndex, t.counterFull).flatMap((f) =>
+        Array.from(
+          { length: counterAt(per.counter, f) },
+          (_, k) => f + (effect.delayFrames ?? 0) + k * effect.perCountIntervalFrames!,
+        ).filter((at) => at < frames),
+      );
     };
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);
@@ -433,21 +451,17 @@ export function planSkillHits(
       // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
       // 次の発動までの秒を決めて並べる
       const shorten = effect.periodShorten;
-      const fires = isResolvedApplied(effect.trigger)
-        ? appliedFrames(history, effect.trigger.applied, slotIndex)
-        : shorten !== undefined && isResolvedTimer(effect.trigger)
-          ? shortenedTimerFrames(effect.trigger, shorten.seconds, frames, (f) =>
-              selfStateHolds({ state: shorten.state, present: true }, f),
-            )
-          : triggerFrames(
-              effect.trigger,
-              schedule,
-              slotIndex,
-              frames,
-              shots,
-              undefined,
-              everyAtFor(effect.source.skill),
-            );
+      // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } はカウンタが上限に届いた次のフレーム（1 パス目の記録）
+      const t = effect.trigger;
+      const fires = isCounterFullTrigger(t)
+        ? counterFullFrames(history.counters, slotIndex, t.counterFull)
+        : isResolvedApplied(t)
+          ? appliedFrames(history, t.applied, slotIndex)
+          : shorten !== undefined && isResolvedTimer(t)
+            ? shortenedTimerFrames(t, shorten.seconds, frames, (f) =>
+                selfStateHolds({ state: shorten.state, present: true }, f),
+              )
+            : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
         // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
@@ -467,6 +481,14 @@ export function planSkillHits(
         if (effect.perCountIntervalSeconds !== undefined && copied !== undefined) {
           for (let k = 0; k < copied; k++) {
             const at = frame + gameSecondsToFrames(k * effect.perCountIntervalSeconds);
+            if (at < frames) push(at, effect, pre);
+          }
+          continue;
+        }
+        // 2 段目の段 13 の PR 1（同 2.2 節）: 決まったフレーム数ごと（キャプチャーチェーンの攻撃。k 個目は delayFrames + k × 間隔の後）
+        if (effect.perCountIntervalFrames !== undefined && copied !== undefined) {
+          for (let k = 0; k < copied; k++) {
+            const at = frame + delay + k * effect.perCountIntervalFrames;
             if (at < frames) push(at, effect, pre);
           }
           continue;
@@ -497,20 +519,30 @@ export function planSkillHits(
     // レイヴン編: スタックする持続ダメージ（maxStacks > 1）は、tick の時点のスタックの数を倍率に掛ける（dotTicks。C-0182）
     for (const group of groupDotsByState(resolveDotEffects(definition, slot.character, levels))) {
       const fires = group
-        .flatMap((effect) =>
-          triggerFrames(effect.trigger, schedule, slotIndex, frames, shots).map((f) => ({ f, effect })),
-        )
+        .flatMap((effect) => dotApplicationFrames(effect).map((f) => ({ f, effect })))
         .sort((a, b) => a.f - b.f);
-      const { intervalSeconds, durationSeconds, firstTick, maxStacks } = group[0]!.dot!;
+      const dot = group[0]!.dot!;
+      const { maxStacks } = dot;
+      // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: 付けるたびに、付けた 1 スタックぶんの 1 ヒット（C-0411）
+      if (dot.hitOnApply === true) for (const { f, effect } of fires) push(f, effect, false);
+      const ticks =
+        dot.firstTick === 'halfAfterLatest'
+          ? latestDotTicks(
+              fires.map((x) => x.f),
+              frames,
+              maxStacks,
+              dot.tickIntervalFrames ?? dot.intervalSeconds / GAME_SECONDS_PER_FRAME,
+            )
+          : dotTicks(
+              fires.map((x) => x.f),
+              dot.intervalSeconds,
+              dot.durationSeconds,
+              frames,
+              dot.firstTick,
+              maxStacks,
+            );
       let last = 0;
-      for (const tick of dotTicks(
-        fires.map((x) => x.f),
-        intervalSeconds,
-        durationSeconds,
-        frames,
-        firstTick,
-        maxStacks,
-      )) {
+      for (const tick of ticks) {
         while (last + 1 < fires.length && fires[last + 1]!.f <= tick.frame) last += 1;
         push(tick.frame, fires[last]!.effect, false, maxStacks > 1 ? tick.stacks : undefined);
       }

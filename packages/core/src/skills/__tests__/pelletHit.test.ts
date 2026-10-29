@@ -6,7 +6,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpe
 import { planTeamRun } from '../../frame/plan.ts';
 import type { PelletHits, TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
-import { MAX_SKILL_LEVELS, resolveTrigger } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveEffectTrigger } from '../resolve.ts';
 import { advanceShotCount, shotCountWeight } from '../triggers.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
@@ -100,7 +100,7 @@ describe('プリバティ：アンカインド・メイド（313）の S1', () =
     ]);
     const effect = def.skills.skill1.effects[0]!;
     if (effect.kind !== 'damage') throw new Error('expected a damage effect');
-    expect(resolveTrigger(effect.trigger, privaty.skills.skill1, 10)).toEqual({ count: 'pelletHit', every: 30 });
+    expect(resolveEffectTrigger(effect.trigger, privaty.skills.skill1, 10)).toEqual({ count: 'pelletHit', every: 30 });
   });
 
   it('counts the expected pellets: 10 × hit rate × 0.75 for manual input (7.5 per shot → every 4th shot)', () => {

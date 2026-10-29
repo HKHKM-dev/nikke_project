@@ -76,6 +76,7 @@ import {
   isStateStat,
   staticStatesOf,
   type BuffStat,
+  type CounterFullTrigger,
   type EdgeShift,
   type EffectCondition,
 } from './types.ts';
@@ -227,6 +228,16 @@ export function counterEffectiveFrom(record: CounterRecord): number {
   return record.battleStart === true ? 0 : record.frame + 1;
 }
 
+/**
+ * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: 枠のカウンタの { counterFull } が発火するフレーム（上限に届いた記録の次の
+ * フレーム。戦闘開始時の記録は 1。createHolderLists の counterFullAt と同じ）。damage・dot の { counterFull } が読む
+ */
+export function counterFullFrames(records: readonly CounterRecord[], slotIndex: number, counter: CounterId): number[] {
+  return records
+    .filter((r) => r.slotIndex === slotIndex && r.counter === counter && r.value === counterMax(counter))
+    .map((r) => (r.battleStart === true ? 0 : r.frame) + 1);
+}
+
 export type HolderListsOptions = {
   frames: number;
   /** トリガーの判定に使う（バースト 1 段階突入時の意味） */
@@ -367,7 +378,7 @@ export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames
 }
 
 /** 戦闘開始時の窓（ループの前に登録する）か */
-function atBattleStart(t: ResolvedTrigger): boolean {
+function atBattleStart(t: ResolvedTrigger | CounterFullTrigger): boolean {
   return t === 'battleStart' || (isResolvedTimer(t) && 'atStart' in t && t.atStart === true);
 }
 
@@ -937,7 +948,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const state = group[0]!.dot!.state;
       if (state === undefined) continue;
       enemyStateSources.push({
-        effects: group.map((effect) => ({ effect, fires: firesOf(effect.trigger, sourceSlotIndex) })),
+        effects: group.map((effect) => {
+          const t = effect.trigger;
+          // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレームに発火し、最初の付与は delayFrames 後（plan/design-skill-stage13.md 2.3 節）
+          const fires: TriggerTracker = isCounterFullTrigger(t)
+            ? (ev) => counterFullAt.get(counterKey(sourceSlotIndex, t.counterFull)) === ev.frame
+            : firesOf(t, sourceSlotIndex);
+          return { effect, fires };
+        }),
         track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
       });
     }
@@ -1570,7 +1588,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
     const from = appliedFrom;
-    const take = (trigger: ResolvedTrigger): boolean =>
+    const take = (trigger: ResolvedTrigger | CounterFullTrigger): boolean =>
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {
@@ -1633,7 +1651,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
         if (!take(effect.trigger) || !(battleStartOnly || fires(ev))) continue;
-        const at = battleStartOnly ? 0 : f;
+        const at = battleStartOnly ? 0 : f + (effect.delayFrames ?? 0);
         if (at < frames) insertSorted(e.track.starts, at);
       }
     }
