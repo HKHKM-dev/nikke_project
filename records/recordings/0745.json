@@ -1,0 +1,52 @@
+{
+  "id": "0745",
+  "date": "2026-10-30",
+  "folder": "range",
+  "file": "20261030-0745_rapi-redhood_self-ct.mp4",
+  "original": "2026-10-30_00-06-01.mp4",
+  "durationSec": 200.5,
+  "frames": 12032,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "77461a9cc0f1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 101,
+      "name": "ドレイク",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0543（ラピ：レッドフードのバースト I の自分のクールタイム▼の値）の撮影。ノワール・ドレイク・◎ラピ：レッドフード・I-DOLL・サン。I・II・全段階の味方がいないので、ラピ：レッドフードは戦闘補助で I を使い、チェーンは II の候補が無く切れる",
+  "backup": {
+    "at": "2026-10-30T00:14+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
