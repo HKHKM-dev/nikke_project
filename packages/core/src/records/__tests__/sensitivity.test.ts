@@ -18,7 +18,7 @@ import {
   usesSensitivity,
   type SensitivityEntry,
 } from '../relevance.ts';
-import { sensitivityOf, variantDefinition } from '../sensitivity.ts';
+import { reusedSensitivity, sensitivityOf, variantDefinition } from '../sensitivity.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -78,6 +78,23 @@ describe('観測値ごとの感度', () => {
     expect(sensitivityKey(o, rec, { skills: new Map([...data.skills, [231, def]]) })).toBe(base);
     def.skills.burst.effects.pop();
     expect(sensitivityKey(o, rec, { skills: new Map([...data.skills, [231, def]]) })).not.toBe(base);
+  });
+  // 差分の計算（plan/design-workflow-simplification-5.md 7.2 節）
+  it('reuses the previous entries only when every element has one with the same key', () => {
+    const entries = sensitivityOf(o, ctx);
+    expect(entries.length).toBeGreaterThan(0);
+    const previous = new Map(entries.map((e) => [`${e.observation}|${e.element}`, e]));
+    expect(reusedSensitivity(o, ctx, previous)).toEqual(entries);
+    // 鍵が古い組・欠けた組が 1 つでもあれば、その観測値は計算し直す
+    const [first, ...rest] = entries;
+    expect(
+      reusedSensitivity(
+        o,
+        ctx,
+        new Map([...previous, [`${first!.observation}|${first!.element}`, { ...first!, key: 'old' }]]),
+      ),
+    ).toBeUndefined();
+    expect(reusedSensitivity(o, ctx, new Map(rest.map((e) => [`${e.observation}|${e.element}`, e])))).toBeUndefined();
   });
 });
 

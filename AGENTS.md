@@ -92,4 +92,4 @@ NIKKE のダメージ計算ツール。
 
 検証の流れ（起案 → 撮影計画（予測は任意）→ 撮る → 取り込み → レシピで読む → 比べる → 結論の下書き → 閉じる）の道具は `npm run records:new`・`records:predict`・`records:read`・`records:check`・`records:close` と `tools/captures/intake.ts`（`plan/design-records-automation.md` 2 節。手順は `plan/verification-guide.md`）。
 
-最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節）。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす。
+最小構成の検査（確定の結論 × 根拠の観測値の組に、効きうる未確定の要素を出す）は `plan/minimal.md`（生成）。スキル定義・録画の台帳・観測値の比べる指定（と、結論の状態・`edge`）を変えたら `npm run records:minimal` で感度を計算し直す（`plan/design-minimal-relevance.md` 10.6 節。入力の変わった観測値だけを計算する。全部は `-- --all`）。検証の PR は `records:close` が回し、回し忘れは `npm test` が落とす。

@@ -14,6 +14,7 @@ import {
   type ClaimGrade,
 } from '../src/records/claims.ts';
 import { openStaleness, openVerificationIds, verificationExtraLines } from '../src/records/extras.ts';
+import { danglingMarks } from '../src/records/marks.ts';
 import { relevanceCounts, relevanceOf, renderMinimal } from '../src/records/relevance.ts';
 import {
   comparePredictions,
@@ -57,6 +58,7 @@ import {
   recordingMap,
   verificationPath,
 } from './records-data.ts';
+import { renumberMarksFromGit } from './records-marks.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -65,10 +67,15 @@ const data = loadRecordsData(
   file,
   predictions.flatMap((p) => predictionRids(p)),
 );
+// 印の notes の添字を、このブランチでの定義の変更に合わせて付け替える（plan/design-workflow-simplification-5.md 1 節の (a)）
+const renumbered = renumberMarksFromGit();
+for (const line of renumbered.changes) console.log(`印を付け替えた: ${line}`);
 const observations = loadObservations();
 const claims = loadClaims();
 const verifications = loadVerifications();
 const skills = loadSkillDefinitions();
+// 最小構成の検査の文脈（行き先の無い印の検査と、警告の判定）
+const relevanceCtx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
 // Stage 20-E: 失効した観測値は照合と結論の根拠から外す
 const invalidReasons = invalidReasonsOf(observations);
 const errors = [
@@ -79,6 +86,12 @@ const errors = [
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
   ...unlistedConfirmedClaims(claims, verifications, observations),
   ...validateSkillClaims(skills, claims),
+  ...renumbered.problems,
+  // 行き先の無い印（同 (b)）
+  ...danglingMarks(claims, observations, relevanceCtx).map(
+    ({ claim, element }) =>
+      `${claim}: 印の要素 ${element} が根拠の観測値の録画の編成に無い（定義が変わった？ 印を今の要素に直すか外す）`,
+  ),
   ...misplacedPredictions(),
   ...validatePredictions(predictions, {
     verificationIds: new Set(verifications.map((v) => v.id)),
@@ -119,18 +132,7 @@ for (const c of claims) {
   if (g !== undefined) gradeCandidates.set(c.id, g);
 }
 // 最小構成の検査（plan/design-minimal-relevance.md。確定の結論 × 根拠の観測値の組に、効きうる未確定の要素）
-const relevance = relevanceOf(
-  claims,
-  observations,
-  {
-    recordings,
-    characters: data.characters,
-    skills: data.skills,
-    enemies: data.enemies,
-    claims,
-  },
-  loadSensitivity(),
-);
+const relevance = relevanceOf(claims, observations, relevanceCtx, loadSensitivity());
 writeFileSync(MINIMAL_PATH, renderMinimal(relevance, claims));
 writeFileSync(
   CLAIMS_PATH,

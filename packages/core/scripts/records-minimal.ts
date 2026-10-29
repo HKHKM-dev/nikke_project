@@ -1,10 +1,14 @@
 // 最小構成の検査の感度（plan/design-minimal-relevance.md 4.1 節・10.6 節）を計算し、records/minimal/sensitivity.json を書き直す。
-// 対象は、確定の結論の根拠で sim と比べる観測値と、その録画の、根拠が確定でない定義の効果の組。数分かかる。
-// 結果は records:check が読んで plan/minimal.md と claims.md に重ねる。使い方: npm run records:minimal（ルート。records:check まで回す）
+// 対象は、確定の結論の根拠で sim と比べる観測値と、その録画の、根拠が確定でない定義の効果の組。
+// 既定は、前の結果の組を鍵と端の範囲が今と同じなら使い回し、違う組のある観測値だけ計算し直す（数秒。
+// plan/design-workflow-simplification-5.md 7.2 節）。--all で全部を計算し直す（1 分ほど）。鍵はモデルのコードを含まないので、
+// 定期の見直しとモデルを大きく組み直す PR では --all を回し、差が無いことを見る。
+// 結果は records:check が読んで plan/minimal.md と claims.md に重ねる。使い方: npm run records:minimal [-- --all]（ルート。records:check まで回す）
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { SENSITIVITY_VERSION, type SensitivityEntry } from '../src/records/relevance.ts';
-import { sensitivityOf, sensitivityTargets } from '../src/records/sensitivity.ts';
+import { parseArgs } from 'node:util';
+import { SENSITIVITY_VERSION, type SensitivityEntry, type SensitivityIndex } from '../src/records/relevance.ts';
+import { reusedSensitivity, sensitivityOf, sensitivityTargets } from '../src/records/sensitivity.ts';
 import type { SimResult } from '../src/sim/engine.ts';
 import {
   SENSITIVITY_PATH,
@@ -13,10 +17,12 @@ import {
   loadPredictions,
   loadRecordingsFile,
   loadRecordsData,
+  loadSensitivity,
   recordingMap,
   type SensitivityFile,
 } from './records-data.ts';
 
+const { values } = parseArgs({ options: { all: { type: 'boolean', default: false } } });
 const started = Date.now();
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -28,15 +34,23 @@ const claims = loadClaims();
 const observations = loadObservations();
 const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims, data };
 const targets = sensitivityTargets(observations, ctx);
+const previous: SensitivityIndex = values.all ? new Map() : loadSensitivity();
 const entries: SensitivityEntry[] = [];
+let recomputed = 0;
 // 同じ録画の観測値は続けて回し、sim の結果を使い回す（録画が変わったら捨てる）
 let cache = new Map<string, SimResult>();
 let current = '';
 for (const o of [...targets].sort((a, b) => a.recording.localeCompare(b.recording) || a.id.localeCompare(b.id))) {
+  const reused = reusedSensitivity(o, ctx, previous);
+  if (reused !== undefined) {
+    entries.push(...reused);
+    continue;
+  }
   if (o.recording !== current) {
     cache = new Map();
     current = o.recording;
   }
+  recomputed++;
   entries.push(...sensitivityOf(o, ctx, cache));
 }
 entries.sort((a, b) => a.observation.localeCompare(b.observation) || a.element.localeCompare(b.element));
@@ -46,5 +60,5 @@ writeFileSync(SENSITIVITY_PATH, `${JSON.stringify(out, null, 2)}\n`);
 const effective = entries.filter((e) => e.effective).length;
 const errors = entries.filter((e) => e.error !== undefined).length;
 console.log(
-  `感度: 観測値 ${targets.length}・組（観測値 × 効果）${entries.length}。効きうる ${effective}（うち計算できない ${errors}）。${((Date.now() - started) / 1000).toFixed(0)} 秒`,
+  `感度: 観測値 ${targets.length}（計算し直した ${recomputed}）・組（観測値 × 効果）${entries.length}。効きうる ${effective}（うち計算できない ${errors}）。${((Date.now() - started) / 1000).toFixed(0)} 秒`,
 );
