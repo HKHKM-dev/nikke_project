@@ -31,6 +31,8 @@ import {
   type FullStackTrigger,
   type WeaponChangeEndTrigger,
   type BasicBurstStep,
+  type BurstStepMode,
+  type BurstStepModeField,
   type BuffTrigger,
   type Amplifies,
   type EdgeShift,
@@ -282,6 +284,8 @@ export type ResolvedEffect = {
   value: number;
   /** Stage 11 モダニア: stat が 'weapon' のときの変更後の武器 */
   weapon?: ChangedWeapon;
+  /** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示）。定義に無ければキーごと無い */
+  burstStepMode?: BurstStepMode;
   assumes?: LocalizedText;
 };
 
@@ -319,7 +323,7 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
 
 /** 常時の効果 1 つを Lv の数値に解く（対象・値・仮定） */
 function passiveValueOf(
-  effect: PassiveEffect,
+  effect: PassiveEffect & BurstStepModeField,
   character: CharacterData,
   slot: SkillSlot,
   level: number,
@@ -330,13 +334,18 @@ function passiveValueOf(
     target: effect.target,
     stat: effect.stat,
     scaling: effect.scaling ?? 'ratio',
-    value: scaledValue(skillValue(skill, effect.ref, level), effect.stat, effect.scaling, character, effect.decrease),
+    // 2 段目の段 12 の PR 2: passive のフラグの stat（有利コードのダメージ適用）は値 1
+    value:
+      effect.ref === undefined
+        ? 1
+        : scaledValue(skillValue(skill, effect.ref, level), effect.stat, effect.scaling, character, effect.decrease),
   };
   if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
   if (effect.targetElement) r.targetElement = effect.targetElement;
   if (effect.targetClass) r.targetClass = effect.targetClass;
   if (effect.targetSquad) r.targetSquad = effect.targetSquad;
   if (effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
+  if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }
@@ -550,7 +559,7 @@ type ResolvedItemFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value'
  * Lv の数値に解く。付与は「値を持たない持続効果」なので、件の欄は timed と同じ関数で解く
  */
 function resolveItemFields(
-  effect: TimedEffect | StateGrantEffect,
+  effect: (TimedEffect | StateGrantEffect) & BurstStepModeField,
   character: CharacterData,
   slot: SkillSlot,
   level: number,
@@ -583,6 +592,7 @@ function resolveItemFields(
   if (effect.condition) r.condition = resolveCondition(effect.condition, skill, level);
   if (shots !== undefined) r.durationShots = shots;
   if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
+  if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }
@@ -1077,9 +1087,13 @@ export type ResolvedInstantEffect = {
   delayFrames?: number;
   /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
   scaling?: 'flat';
+  /** 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある） */
+  condition?: EffectCondition;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
+  /** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示） */
+  burstStepMode?: BurstStepMode;
   assumes?: LocalizedText;
 };
 
@@ -1105,7 +1119,8 @@ export function resolveInstant(
         effect.kind !== 'ammoDecrease'
       )
         return;
-      const raw = skillValue(skill, effect.ref, levels[slot]);
+      // 2 段目の段 12: cooldownReduction の直書きの秒数（seconds）は Lv に依らない
+      const raw = effect.ref === undefined ? effect.seconds : skillValue(skill, effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
       const r: ResolvedInstantEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1130,6 +1145,9 @@ export function resolveInstant(
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }
       if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
+      if (effect.kind === 'cooldownReduction' && effect.condition !== undefined)
+        r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });

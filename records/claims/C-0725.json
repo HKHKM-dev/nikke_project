@@ -1,0 +1,34 @@
+{
+  "id": "C-0725",
+  "text": "ラピ：レッドフードの S2 の粘着榴弾の爆発の 1 ヒットは、最終攻撃力 × 88.11%（説明文の爆発ダメージ）×（1 + 発射体爆発ダメージ▲ 100.6%）×（1 + 会心 + 距離ボーナス + フルバースト補正）。コアの補正と発射体付着ダメージ▲は乗らない。フルバーストの始まりの起爆も、フルバーストの中で撃った榴弾の爆発も同じ式",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0116-25`〜`0116-29`・`0117-24`・`0117-25`（フルバーストの始まりの起爆の単独の増分。S1 の攻撃力▲とリターのバーストの▲の段ごと、会心・距離ボーナスの有無ごと）。フルバーストの中で撃った榴弾の爆発は、付着との和の増分（`0116-30`・`0117-27`）が同じ値の爆発で分かれる。V-0535 の 0116・0117 の読みで式を立て、説明文の値とモデルの倍率グループだけで決まる（合わせ込みの定数なし）。V-0537",
+  "model": "`data/skills/16.json` の skill2 の effects[2]（passive・projectileExplosionDamage・ref 6）・effects[4]（フルバーストの中で撃った榴弾の爆発。damage・ref 3・condition inFullBurst・distance・projectileExplosion・delayFrames 5）・effects[6]（フルバーストの始まりの起爆。damage・fullBurstStart・ref 3・perCount { counter: stickyGrenade }・perCountIntervalSeconds 0.2・distance・projectileExplosion）。爆発▲は `damage.ts` の explosionHitMultiplier（C-0205 の置き場所）、距離ボーナスは C-0724 と同じ。plan/design-skill-stage12.md 2.2・2.3 節",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": [
+      "data/skills/16.json の skill2 の effects[2]",
+      "data/skills/16.json の skill2 の effects[4]",
+      "data/skills/16.json の skill2 の effects[6]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0116",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "gradeReason": "値は説明文の値とモデルの倍率グループ（合わせ込みの定数なし）で差 1 未満",
+  "parameterFree": "説明文の爆発ダメージ 88.11%・発射体爆発ダメージ▲ 100.6% と、倍率ダメージの倍率グループ（会心・フルバースト補正。距離ボーナスは通常攻撃と同じ着地点の条件）。爆発▲の置き場所は C-0205",
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "ラピ：レッドフード burst.notes[0]",
+      "reason": "爆発範囲▲はダメージの式に無い。敵 1 体の前提で、付着はどの帯でもコアに当たり（C-0724）、爆発はコアに乗らないので、爆発の範囲が広がってもこの観測値（1 ヒットの値・付着と起爆の数・窓の中の発の数・00.00 からのフレーム）は変わらない",
+      "decided": "2026-10-29"
+    }
+  ]
+}

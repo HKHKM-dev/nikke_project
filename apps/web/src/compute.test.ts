@@ -16,7 +16,14 @@ import {
 } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LatestComputeQueue, compute, type ComputeRequest, type Computed } from './compute.ts';
+import {
+  LatestComputeQueue,
+  compute,
+  respond,
+  type ComputeRequest,
+  type ComputeResponse,
+  type Computed,
+} from './compute.ts';
 import { DEFAULT_SLOT_CONDITION } from './team.ts';
 
 function readJson<T>(path: string): T {
@@ -75,6 +82,21 @@ describe('compute (B-2)', () => {
     const computed = compute(bad);
     expect(computed.ok).toBe(false);
     expect(computed.ok ? '' : computed.error).toContain('more than one slot');
+  });
+
+  it('answers the request with an error when the result cannot be posted, instead of throwing out of the worker', () => {
+    const posted: ComputeResponse[] = [];
+    respond({ seq: 7, input: MAIN }, (response) => {
+      if (response.computed.ok) throw new DOMException('could not be cloned', 'DataCloneError');
+      posted.push(response);
+    });
+    expect(posted).toEqual([
+      { seq: 7, computed: { ok: false, error: '計算の結果を送れませんでした: could not be cloned' } },
+    ]);
+
+    const sent: ComputeResponse[] = [];
+    respond({ seq: 8, input: MAIN }, (response) => sent.push(response));
+    expect(sent).toEqual([{ seq: 8, computed: direct }]);
   });
 });
 

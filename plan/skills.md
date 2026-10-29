@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 64・効果 340（根拠あり 321）・notes 190（根拠あり 77）
+件数: キャラ 64・効果 356（根拠あり 337）・notes 183（根拠あり 77）
 
-notes の種類: 未対応 63・前提の外 31・計算に無関係 33・補足 13・間接 50
+notes の種類: 未対応 56・前提の外 31・計算に無関係 33・補足 13・間接 50
 
-スロット: supported 133・partial 16・unsupported 24・noEffect 34
+スロット: supported 135・partial 14・unsupported 24・noEffect 34
 
 ## 10 ラピ
 
@@ -26,21 +26,30 @@ notes の種類: 未対応 63・前提の外 31・計算に無関係 33・補足
 
 ## 16 ラピ：レッドフード
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・fullBurstStart・attack: C-0715（確定）
-  - notes[0] 未対応: 部隊構成による戦闘補助（基本バースト段階が I の味方がいなければ、自分をバースト I に変更）は未対応: 根拠なし
-  - notes[1] 未対応: フルバーストタイムの発動時、戦闘補助状態なら味方全体のバーストスキルクールタイム▼は未対応: 根拠なし
-  - notes[2] 未対応: フルバーストタイムの発動時、戦闘補助状態なら味方全体の攻撃ダメージ▲（10 秒）は未対応: 根拠なし
-  - notes[3] 前提の外: 阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+  - effects[1] burstStepChange: C-0729（確定）
+  - effects[2] cooldownReduction・fullBurstStart: C-0730（確定）
+  - effects[3] timed・fullBurstStart・attackDamage: C-0731（確定）
+  - notes[0] 前提の外: 阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
 - **skill2**: partial
   - effects[0] shotPause・normalShot: C-0717（確定）、C-0718（確定）
-  - notes[0] 未対応: 電撃コードの敵への有利コード、発射体付着ダメージ▲・発射体爆発ダメージ▲（持続）は未対応: 根拠なし
-  - notes[1] 未対応: 通常攻撃 120 回ごとの粘着榴弾の付着と起爆のダメージは未対応（撃つたびの射撃の止まりは effects[0]）: 根拠なし
+  - effects[1] passive・projectileStickDamage: C-0724（確定）
+  - effects[2] passive・projectileExplosionDamage: C-0725（確定）
+  - effects[3] damage・normalShot・skill: C-0724（確定）
+  - effects[4] damage・normalShot・skill: C-0726（確定）、C-0725（確定）
+  - effects[5] counterChange・normalShot・stickyGrenade: C-0726（確定）
+  - effects[6] damage・fullBurstStart・skill: C-0726（確定）、C-0725（確定）
+  - effects[7] counterChange・fullBurstStart・stickyGrenade（減少）: C-0726（確定）
+  - effects[8] passive・elementAdvantage: C-0723（確定）
+  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734 で 1 回に通常攻撃の 20 発ほど）のは未対応（溜まる量の出どころが分からない）: 根拠なし
 - **burst**: partial
   - effects[0] damage・burstUse・additional: C-0716（確定）
-  - notes[0] 未対応: バースト I で使った時の、自分のバーストスキルクールタイム▼は未対応: 根拠なし
-  - notes[1] 未対応: バースト I で使った時の、味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応: 根拠なし
-  - notes[2] 未対応: 爆発範囲▲・発射体付着ダメージ▲・粘着榴弾の回数条件▼（10 秒）は未対応（爆発範囲はダメージの式に無い）: 根拠なし
+  - effects[1] timed・burstUse・projectileStickDamage: C-0724（確定）
+  - effects[2] cycleEvery・burstUse: C-0727（確定）
+  - effects[3] cooldownReduction・burstUse: C-0732（仮説）
+  - effects[4] timed・burstUse・attack: C-0733（確定）
+  - notes[0] 未対応: 爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い）: 根拠なし
 
 ## 17 アニス：スター
 
@@ -507,11 +516,11 @@ notes の種類: 未対応 63・前提の外 31・計算に無関係 33・補足
   - effects[0] damage・normalHit・additional: C-0705（確定）
   - effects[1] state・battleStart・fervor（burstCooldown）: C-0706（確定）
   - notes[0] 間接（防御力）: 戦闘開始時の、自分の失った HP に応じた防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
-- **宝物版 skill2**: partial
+- **宝物版 skill2**: supported
   - effects[0] burstGaugeHit・lastShot: C-0480（確定）
+  - effects[1] cooldownReduction・fullBurstStart: C-0728（確定）
   - notes[0] 計算に無関係: 最後の弾丸で攻撃した時の、最終攻撃力が最も高い敵 3 機への挑発（4 秒）そのものはダメージに関係しない（ゲージは effects[0]）: 根拠なし
   - notes[1] 間接（HP）: HP 20% 以下の時の、自分への使用回数別の最大 HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
-  - notes[2] 未対応: フルバーストタイムの発動時、熱血状態なら味方全体のバーストスキルクールタイム▼は未対応（単騎の録画ではフルバーストにならず、見えていない。V-0530）: 根拠なし
 - **宝物版 burst**: supported
   - effects[0] weaponChange・burstUse: C-0703（確定）
   - effects[1] timed・burstUse・infiniteAmmo: C-0703（確定）

@@ -69,14 +69,17 @@ describe('戦闘補助でない側の効果は、基本バースト段階 I の�
     const input: TeamInput = { slots: [slotOf(LITER), slotOf(DELTA), slotOf(RAPI_RH)], enemy, durationSeconds: 180 };
     const { skill1, burst } = effectsOf(input, 2);
     expect(skill1.map((e) => e.kind)).toEqual(['timed']);
-    expect(burst.map((e) => e.kind)).toEqual(['damage']);
+    // PR 2: バースト III の付着▲（timed）と回数条件▼（cycleEvery）も同じ条件
+    expect(burst.map((e) => e.kind)).toEqual(['damage', 'timed', 'cycleEvery']);
   });
 
   it('drops both without an ally of base burst stage I (Combat Assist)', () => {
     const input: TeamInput = { slots: [slotOf(DELTA), slotOf(RAPI_RH)], enemy, durationSeconds: 180 };
     const { skill1, burst } = effectsOf(input, 1);
-    expect(skill1).toEqual([]);
-    expect(burst).toEqual([]);
+    // PR 3: 残るのは戦闘補助の側（段の変更・味方全体のクールタイム▼・攻撃ダメージ▲、バースト I のクールタイム▼・攻撃力▲）だけ
+    expect(skill1.map((e) => e.kind)).toEqual(['burstStepChange', 'cooldownReduction', 'timed']);
+    expect(burst.map((e) => e.kind)).toEqual(['cooldownReduction', 'timed']);
+    expect([...skill1, ...burst].every((e) => 'burstStepMix' in e && e.burstStepMix?.present === false)).toBe(true);
   });
 });
 

@@ -1,0 +1,47 @@
+{
+  "id": "0736",
+  "date": "2026-10-29",
+  "folder": "range",
+  "file": "20261029-0736_sr+ar+ar_delta+sun+moran_fervor.mp4",
+  "original": "2026-10-29_19-03-03.mp4",
+  "durationSec": 200.6,
+  "frames": 12036,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "7a60f922773a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 281,
+      "name": "モラン",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "段 12 の撮影 C（plan/design-skill-stage12.md 3.5 節）。モランは宝物版（段階 3。前日の 0719・0720 と同じ値で、オーナーに確かめる）",
+  "backup": {
+    "at": "2026-10-29T19:31+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

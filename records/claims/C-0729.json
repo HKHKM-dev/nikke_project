@@ -1,0 +1,37 @@
+{
+  "id": "C-0729",
+  "text": "ラピ：レッドフードの S1「基本バースト段階が I の味方がいない場合、自分に戦闘補助：バースト I に変更」は、基本バースト段階 I の味方のいない編成（デルタ（II）・I-DOLL・サン（III））で、ラピ：レッドフードのバーストの段を I に変える。チェーンはラピ：レッドフードの I から II・III へ進んでフルバーストに入る（I の後は II。基本の III から StepFull に進まない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0731-06`・`0732-06`（バーストを撃った枠の並び。6 回のチェーンとも I → II → III = ラピ：レッドフード → デルタ → I-DOLL・サン）。編成の基本バースト段階は II と III だけで、I を撃てるのはバーストを I に変えたラピ：レッドフードだけ。1 回目のチェーンの左のスキルの帯で撃った順（継承される力・リメンバーミー・サンセット）を確かめた。録画 0731 の 1 回目のチェーンで読み方を決め、0731 の 2〜6 回目と 0732 の 6 回で再現した。V-0541",
+  "model": "`data/skills/16.json` の skill1 の effects[1]（burstStepChange・step Step1・name 戦闘補助・burstStepMix { otherBurstStep: Step1, present: false }）。編成の条件を満たさなければ `skills/composition.ts` が最上位で外し、満たせば `burst/dynamic.ts` の burstStepOf・burstUnitOf が枠のバーストの段を I（次の段階は NextStep）に差し替える（動的・固定サイクルとも）。ほかのキャラの「基本バースト段階が〜の味方」（burstStepMix・targetBurstStep）は差し替える前の段で数える（確かめていない）。plan/design-skill-stage12.md 2.5 節",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/16.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0731",
+      "role": "読み方を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "0731",
+      "decided": "1 回目のチェーン",
+      "reproduced": "2〜6 回目のチェーン",
+      "observations": ["0731-06"]
+    }
+  ],
+  "gradeReason": "撃った枠の並びは、録画とモデルが 2 本の 18 回とも一致する（厳密一致）。録画 0731 の 1 回目のチェーンで読み方（バースト欄とスキルの帯）を決め、0731 の 2〜6 回目と 0732 で再現した",
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "ラピ：レッドフード burst.notes[0]",
+      "reason": "爆発範囲▲はダメージの式に無く、ラピ：レッドフードは撃たない（粘着榴弾も出ない）ので、範囲が広がってもバーストを撃った枠・フルバーストの時刻・味方の 1 ヒットは変わらない",
+      "decided": "2026-10-29"
+    }
+  ]
+}

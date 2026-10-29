@@ -1,0 +1,28 @@
+{
+  "id": "C-0728",
+  "text": "モランの宝物版の S2 の「フルバーストタイムが発動した時、自分が熱血状態なら、味方全体にバーストスキルクールタイム X 秒▼」は、フルバーストの始まりのたびに、自分を含む味方全体の残りの CT を説明文の値（Lv10 で 7.48 秒）だけ縮める（デルタ（II）の縮んだ量を 2 本 × 4 回で読んで 7.46〜7.49 秒。サンとモランは間隔からの下限）。熱血は射撃場では戦闘開始から付くので、熱血でない時に出ないことは見ていない（条件は説明文どおり）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0735-05`・`0736-05`（デルタの CT の縮んだ量。どのフルバーストの始まりでも 7.46〜7.49 秒で、モデルの 440f と 2f 以内）、`0735-06`・`0736-06`（サンとモランの CT の縮んだ量の下限。段の替わり目の間隔が CT より短い回が 4 回のうち 3 回）。V-0540",
+  "model": "`data/skills/281.json` の treasureSkills.skill2 の effects[1]（`cooldownReduction`・fullBurstStart・allies・ref 10・condition selfState fervor）。条件は `frame/firstPass.ts` の即時効果の発火で、`skills/holders.ts` の instantConditionHolds（timed の段 1.5 の条件と同じ件を見る）。熱血を付けうる枠が無ければ、編成の段（`skills/composition.ts` の resolveSelfState）で効果ごと落ちる",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/281.json の treasureSkills.skill2 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0735",
+      "role": "読み方を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "0735",
+      "decided": "1 回目のフルバースト",
+      "reproduced": "2〜4 回目のフルバースト",
+      "observations": ["0735-05"]
+    }
+  ]
+}

@@ -11,8 +11,10 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   formatAppliedAmount,
+  formatBurstStepMode,
   formatCounterChange,
   formatEffectSource,
+  formatConditionSuffix,
   formatInstantTarget,
   formatRemoveState,
   formatStateGrant,
@@ -130,6 +132,23 @@ describe('HP の割合で選ぶ回復の表示', () => {
   });
 });
 
+// 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 条件つきのクールタイム▼（モランの宝物版の S2）
+describe('即時効果の条件の表示', () => {
+  it('writes the self state condition of a cooldown reduction', () => {
+    const cut: ResolvedInstantEffect = {
+      source: { resourceId: 281, skill: 'skill2', name: { ja: 'S2', en: 'S2' } },
+      kind: 'cooldownReduction',
+      trigger: 'fullBurstStart',
+      target: 'allies',
+      condition: { selfState: { state: 'fervor', present: true } },
+      value: 7.48,
+      effectIndex: 1,
+    };
+    expect(formatConditionSuffix(cut.condition)).toBe('（自分が熱血状態なら）');
+    expect(formatConditionSuffix(undefined)).toBe('');
+  });
+});
+
 // 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 対象の絞り込み「〈クラス〉型の味方」
 describe('クラスで絞る効果の表示', () => {
   it('writes the class filter on a timed effect and on a heal', () => {
@@ -168,5 +187,26 @@ describe('カウンタの増減の表示', () => {
       'オーバーエネルギーが最大になった時に オーバーエネルギー −100（上限 100）',
     );
     expect(formatCounterChange(stage!, 1)).toMatch(/^オーバーエネルギーが最大になった時に .+ \+1（上限 4）$/);
+  });
+});
+
+// 2 段目の段 12 の PR 3（plan/design-skill-stage12.md 2.5 節）: 名前の付いたバースト段階の変更のどちらの側の効果か
+describe('戦闘補助の側の表示', () => {
+  it('writes the side of Combat Assist after the source', () => {
+    const effect: AppliedEffect = {
+      source: { resourceId: 16, skill: 'skill1', name: { ja: 'S1', en: 'S1' } },
+      target: 'allies',
+      stat: 'attackDamage',
+      scaling: 'ratio',
+      value: 0.0802,
+      burstStepMode: { name: { ja: '戦闘補助', en: 'Combat Assist' }, changed: true },
+      sourceSlotIndex: 2,
+      appliedAmount: 0.0802,
+    };
+    expect(formatEffectSource(effect, 'ラピ：レッドフード')).toBe('枠 3 ラピ：レッドフード スキル 1（戦闘補助）');
+    expect(formatBurstStepMode({ name: { ja: '戦闘補助', en: 'Combat Assist' }, changed: false })).toBe(
+      '（戦闘補助でない時）',
+    );
+    expect(formatBurstStepMode(undefined)).toBe('');
   });
 });

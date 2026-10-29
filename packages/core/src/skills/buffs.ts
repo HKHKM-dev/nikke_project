@@ -92,6 +92,16 @@ export type BuffTotals = {
    */
   projectileExplosionDamage: number;
   /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3 節）: 発射体付着ダメージの加算。projectileStick の印の付いた倍率ダメージ
+   * （粘着榴弾の付着）にだけ掛ける（式の中の置き場所は damage.ts の PROJECTILE_STICK_BUCKET）
+   */
+  projectileStickDamage: number;
+  /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 「有利コードのダメージ適用」の窓の数（> 0 なら、敵のコードが自分の
+   * コードの有利でなくても有利として扱う。効果の enemyElement でそのコードの敵に限ってある。element.ts）
+   */
+  elementAdvantage: number;
+  /**
    * 持続ダメージ▲編: 持続ダメージの加算。その枠の持続ダメージ（dot）の tick にだけ掛ける（式の中の置き場所は skills/burstDamage.ts の
    * SUSTAINED_DAMAGE_PLACEMENT。plan/design-sustained-damage-up.md 3 節）
    */
@@ -182,6 +192,8 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   damageTaken: 0,
   enemyDefenseDown: 0,
   projectileExplosionDamage: 0,
+  projectileStickDamage: 0,
+  elementAdvantage: 0,
   sustainedDamage: 0,
   burstGaugeSpeed: 0,
   sequentialAttackDamage: 0,
@@ -219,6 +231,8 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   damageTaken: 'damageTaken',
   enemyDefenseDown: 'enemyDefenseDown',
   projectileExplosionDamage: 'projectileExplosionDamage',
+  projectileStickDamage: 'projectileStickDamage',
+  elementAdvantage: 'elementAdvantage',
   sustainedDamage: 'sustainedDamage',
   sequentialAttackDamage: 'sequentialAttackDamage',
   fixedChargeTime: 'fixedChargeTime',

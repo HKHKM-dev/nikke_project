@@ -61,6 +61,7 @@ import {
   type FrameEvents,
   type FullStackEvent,
   type HealRecord,
+  type ShotCountEveryAt,
   type TriggerTracker,
 } from './triggers.ts';
 import {
@@ -323,6 +324,11 @@ export type HolderLists = {
   /** 枠 slotIndex の、段の循環 targetSkill に効く間隔の変更の件のうち、フレーム frame に効いているものの間隔 */
   cycleEveryAt(slotIndex: number, targetSkill: string, frame: number): number[];
   /**
+   * 2 段目の段 12 の PR 2: 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔（cycleEvery の shotCounts の窓の
+   * 中ならその間隔、外なら undefined。窓の無い組は undefined）。窓の件はそのフレームに付いたものも見るので、手順 3 の後に呼ぶ
+   */
+  shotCountEveryOf(slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined;
+  /**
    * 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 枠 holder にフレーム frame に効いている、時間で変わるバーストゲージの
    * チャージ速度の和（timed・状態の中身。常時の値は含まない）。ゲージを足す手順 2 で呼べば f − 1 までに付いた件になる
    */
@@ -334,6 +340,12 @@ export type HolderLists = {
    * クールタイム▼ の秒の和（burstCooldown。timed・状態の中身）。発動したフレームに呼ぶ（frame/firstPass.ts）
    */
   burstCooldownAt(holder: number, frame: number): number;
+  /**
+   * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 即時効果 effect の発火の条件（cooldownReduction の selfState）が、
+   * 出どころの枠 sourceSlotIndex でフレーム frame に満たされるか。timed の段 1.5 の条件と同じ件を見る。満たさなければ条件で出なかった
+   * 記録を残す。手順 3 の後に呼ぶ
+   */
+  instantConditionHolds(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): boolean;
   /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
@@ -682,10 +694,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return track;
   };
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
-  const firesOf = (trigger: ResolvedTrigger, slotIndex: number): TriggerTracker => {
+  const firesOf = (trigger: ResolvedTrigger, slotIndex: number, everyAt?: ShotCountEveryAt): TriggerTracker => {
     // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
-    if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel);
+    if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel, everyAt);
     const at = new Set(timerFramesOf(trigger, frames));
     return (ev) => at.has(ev.frame);
   };
@@ -834,6 +846,29 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  /** フレーム frame がフルバーストの窓 [start, end) の中か（条件 inFullBurst） */
+  const inFullBurstAt = (frame: number): boolean =>
+    options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
+
+  /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔
+   * （cycleEvery の shotCounts の窓の中ならその間隔。重なれば小さいほう）。窓の件はそのフレームに付いたものも見る
+   */
+  const shotCountEveryOf = (slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined => {
+    const own = cycleSources.filter(
+      (c) => c.slotIndex === slotIndex && c.effect.target === 'shotCounts' && c.effect.targetSkill === skill,
+    );
+    if (own.length === 0) return undefined;
+    return (frame) => {
+      let every: number | undefined;
+      for (const c of own) {
+        if (readItems(c.track).some((it) => it.start <= frame && frame < it.end))
+          every = every === undefined ? c.effect.every : Math.min(every, c.effect.every);
+      }
+      return every;
+    };
+  };
+
   // ---- 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ） ----
   const counterSources: CounterSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -845,7 +880,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         fires:
           isEndedTrigger(effect.trigger) || isCounterFullTrigger(effect.trigger)
             ? null
-            : firesOf(effect.trigger, sourceSlotIndex),
+            : firesOf(effect.trigger, sourceSlotIndex, shotCountEveryOf(sourceSlotIndex, effect.source.skill)),
       });
     }
   });
@@ -1159,9 +1194,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         );
       if (!buffed) return false;
     }
-    if (condition.inFullBurst === true) {
-      if (!options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end)) return false;
-    }
+    if (condition.inFullBurst === true && !inFullBurstAt(frame)) return false;
     if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値（前のフレームの終わりの値）
     if (condition.selfCounter !== undefined) {
@@ -1481,6 +1514,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 同じフレームの付与も入れてよい）。selfCounter は前のフレームの終わりの値
    */
   const counterConditionHolds = (condition: EffectCondition, slotIndex: number, frame: number): boolean => {
+    // 2 段目の段 12 の PR 2: フルバーストの中か外か（そのフレームの窓。[start, end)）
+    if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
     if (condition.selfState !== undefined) {
       const { state, present } = condition.selfState;
       const own = tracks.filter(
@@ -1789,9 +1824,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     cycleEveryAt(slotIndex, targetSkill, frame) {
       return cycleSources
-        .filter((c) => c.slotIndex === slotIndex && c.effect.targetSkill === targetSkill)
+        .filter((c) => c.slotIndex === slotIndex && c.effect.target === 'cycle' && c.effect.targetSkill === targetSkill)
         .flatMap((c) => activeAt(c.track, frame).map(() => c.effect.every));
     },
+    shotCountEveryOf,
     gaugeSpeedAt(holder, frame) {
       let sum = 0;
       for (const v of gaugeViews[holder] ?? []) {
@@ -1806,6 +1842,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
       }
       return sum;
+    },
+    instantConditionHolds(effect, sourceSlotIndex, frame) {
+      if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
+      skipEffect(sourceSlotIndex, effect, frame);
+      return false;
     },
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];

@@ -56,7 +56,7 @@
 // （射撃に効く窓・当たりの窓・攻撃力の窓・状態の付与・吸収回復の窓・段の循環の窓）。手順 3 の順は
 // 回復 → 段 1 → 段 1.5 → 段 2 → 強化（貯めるだけ）→ 即時効果 で、上の順と同じ結果になる（同 2.4 節）。段の循環のゲージ（V-0030）は、
 // このフレームに付いた間隔の変更の件も見るように、手順 3 の後で数える（ゲージは先のフレームに予約するので、数える位置で値は変わらない）。
-import { burstDelaysFieldOf, burstDelaysOf } from '../burst/landing.ts';
+import { burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import {
@@ -70,6 +70,7 @@ import {
 } from '../burst/controller.ts';
 import {
   SG_PELLET_GAUGE_HIT_RATE,
+  burstCandidateOf,
   burstUnitOf,
   energyPerTrigger,
   fullChargeGaugeOf,
@@ -103,6 +104,7 @@ import {
   createTriggerTracker,
   fireContextOf,
   type FrameEvents,
+  type ShotCountEveryAt,
   type ShotEvent,
   shotCountWeight,
   type TriggerTracker,
@@ -278,9 +280,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (options.manualBursts !== undefined) throw new RangeError('manualBursts needs the dynamic burst model');
       if (options.noBurstSlots !== undefined) throw new RangeError('noBurstSlots needs the dynamic burst model');
       fixed = planFixedCycle(
-        slots.map((s) =>
-          s === null ? null : { burstStep: s.character.burstStep, ...burstDelaysFieldOf(s.character) },
-        ),
+        slots.map((s) => (s === null ? null : burstCandidateOf(s.character, s.definition))),
         frames,
       );
     } else {
@@ -568,8 +568,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   });
   // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
   // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
+  // 間隔の倍数に届いた発で止める（C-0727）。窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
   const shotPauseTrackers: {
     slotIndex: number;
+    everyAt: ShotCountEveryAt | undefined;
     count: ShotCountKind;
     every: number;
     frames: number;
@@ -580,7 +583,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (slot === null || slot.definition === null) return;
     for (const t of resolveShotPauses(slot.definition, slot.character, slot.levels)) {
       if (t.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-      shotPauseTrackers.push({ slotIndex: i, ...t, n: 0 });
+      const { skill, ...rest } = t;
+      shotPauseTrackers.push({ slotIndex: i, ...rest, everyAt: lists.shotCountEveryOf(i, skill), n: 0 });
     }
   });
   const pauseLeft = slots.map(() => 0);
@@ -728,6 +732,20 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         if (at < frames) pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
       }
       t.step = (t.step + 1) % t.gaugeHits.length;
+    }
+  };
+
+  /**
+   * V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める。2 段目の段 12 の PR 2: 回数の間隔の変更の窓を
+   * このフレームに付いたものも見るので、手順 3 の後に呼ぶ（止まりは次のフレームからなので、数える位置で射撃は変わらない）
+   */
+  const countShotPauses = (f: number): void => {
+    for (const t of shotPauseTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.everyAt?.(f) ?? t.every);
+      t.n = counted.count;
+      if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
     }
   };
 
@@ -879,14 +897,6 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
       }
     }
-    // V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める
-    for (const t of shotPauseTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
-      t.n = counted.count;
-      if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
-    }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
     for (const t of dotGaugeTrackers) {
@@ -978,6 +988,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）
     if (!trackEvents && !trackDotBurstUse) {
       countCycles(f);
+      countShotPauses(f);
       continue;
     }
 
@@ -1102,6 +1113,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     lists.registerFrame(ev);
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
+      // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（いまは cooldownReduction の selfState だけ）
+      if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
       // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
       if (src.effect.kind === 'burstGauge') {
         if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない
@@ -1168,6 +1181,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
     countCycles(f);
+    countShotPauses(f);
   }
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;

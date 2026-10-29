@@ -1,0 +1,17 @@
+{
+  "id": "C-0732",
+  "text": "ラピ：レッドフードのバースト「バーストⅠで使用した時、自分にバーストスキルクールタイム 20 秒▼」は、同じフレームに始まった自分のバーストの CT（40 秒）を縮める。録画で確かめたのは 6.4 秒以上縮むことまでで、20 秒は説明文の値",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0731-30`・`0732-30`（2 回目のチェーンの I → II・II → III。ラピ：レッドフードの I は前の I の 1,535 ティック（約 26.1 秒）後で、デルタの CT の明けを 400f 余り待つ）。自分の▼が無ければ CT は 32.52 秒（味方全体の▼ 7.48 秒だけ）で、I は約 50f 前まで遅れ、I → II は 30f ほどになる（モデルで▼を外して確かめた）。2 回目の I は前の I から 378f 早いので、▼は 6.4 秒以上。I の CT の明けはゲージを溜めている間（右のバースト欄が出ていない）なので、明けの時刻は読めない。V-0541",
+  "model": "`data/skills/16.json` の burst の effects[3]（cooldownReduction・burstUse・self・seconds 20・burstStepMix { otherBurstStep: Step1, present: false }）。cooldownReduction に直書きの秒数 seconds を足した（`skills/types.ts`・`skills/resolve.ts`）。同じフレームの発動の後に当てる（plan/design-stage10.md 4 節の規則のまま）",
+  "replaces": [],
+  "updated": "2026-10-29",
+  "subject": {
+    "places": ["data/skills/16.json の burst の effects[3]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（S1 の description_value_02 = 7.48 秒・07 = 8.02%・08 = 10 秒、バーストの description_value_03 = 18.01%・04 = 10 秒と直書きの 20 秒）と、確定の結論の式（攻撃力▲の加算・攻撃ダメージ▲の枠・フルバースト補正・即時の CT▼（plan/design-stage10.md 4 節））だけから決めた（合わせ込みの定数なし）",
+  "gradeReason": "値は説明文の直書きの 20 秒。録画は▼が同じフレームに始まった自分の CT に効き、6.4 秒以上縮むことを 2 本で示す（I → II のモデルとの差は、モデルの 2 回目の I がゲージで 8f 遅れる分と止まりの差）"
+}

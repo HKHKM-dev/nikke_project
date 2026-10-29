@@ -23,38 +23,64 @@
           "claims": [
             "C-0715"
           ]
+        },
+        {
+          "kind": "burstStepChange",
+          "step": "Step1",
+          "name": {
+            "ja": "戦闘補助",
+            "en": "Combat Assist"
+          },
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "基本バースト段階 I の味方がいなければ、戦闘補助としてバースト I に変わる（戦闘開始時とフルバーストタイムの終了時の付け直しは、編成が変わらないので同じ結果）。バースト I を使った後は II に進む。差し替えた段はバーストのチェーン（どの枠が I を使うか）にだけ効き、ほかのキャラの「基本バースト段階が〜の味方」は差し替える前の III で数える（確かめていない）",
+            "en": "With no base burst stage I ally she switches to burst I as Combat Assist (re-applying it at battle start and at the end of Full Burst gives the same result, since the squad does not change). After her burst I the chain moves to II. The changed stage only affects the burst chain (which slot uses I); other characters' \"allies with base burst stage ...\" still count her as III (not verified)"
+          },
+          "claims": [
+            "C-0729"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "ref": 2,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "戦闘補助 ⇔ 基本バースト段階 I の味方がいない（戦闘補助は編成だけで決まり、戦闘中に付き外れしない）",
+            "en": "In Combat Assist ⇔ no ally with base burst stage I is present (Combat Assist depends only on the squad and does not change during battle)"
+          },
+          "claims": [
+            "C-0730"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 7,
+          "durationRef": 8,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "戦闘補助 ⇔ 基本バースト段階 I の味方がいない（戦闘補助は編成だけで決まり、戦闘中に付き外れしない）",
+            "en": "In Combat Assist ⇔ no ally with base burst stage I is present (Combat Assist depends only on the squad and does not change during battle)"
+          },
+          "claims": [
+            "C-0731"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "部隊構成による戦闘補助（基本バースト段階が I の味方がいなければ、自分をバースト I に変更）は未対応",
-          "en": "Combat Support by squad composition (if no ally has base burst stage I, she becomes burst I) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "unknown"
-          }
-        },
-        {
-          "ja": "フルバーストタイムの発動時、戦闘補助状態なら味方全体のバーストスキルクールタイム▼は未対応",
-          "en": "The burst skill cooldown reduction on all allies when Full Burst starts, while in Combat Support, is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "allies",
-            "trigger": "fullBurstStart"
-          }
-        },
-        {
-          "ja": "フルバーストタイムの発動時、戦闘補助状態なら味方全体の攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on all allies when Full Burst starts, while in Combat Support (10 s), is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "allies",
-            "trigger": "fullBurstStart"
-          }
-        },
         {
           "ja": "阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）",
           "en": "The damage increase against blocking parts does not affect damage, since the range enemy has no blocking parts (requirements 5.2)",
@@ -89,25 +115,144 @@
             "C-0717",
             "C-0718"
           ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "projectileStickDamage",
+          "ref": 5,
+          "claims": [
+            "C-0724"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "projectileExplosionDamage",
+          "ref": 6,
+          "claims": [
+            "C-0725"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "core": true,
+          "distance": true,
+          "projectileStick": true,
+          "delayFrames": 5,
+          "assumes": {
+            "ja": "粘着榴弾の付着。射撃の止まり（effects[0]）と同じ 120 回目の発の 5f 後（止まりの 1f と、止まりから付着までの 4f。区間で 2〜8f の真ん中）に 1 ヒット。射撃場の的ではどの区間もコアに付き、会心・距離ボーナス・フルバースト補正も乗る。バーストゲージは溜めない（notes[0]）",
+            "en": "The sticky grenade attaches. One hit 5 frames after the 120th shot (1 frame of firing pause plus 4 frames from the pause to the attach, the middle of 2–8 by distance band). On the range target it always hits the core; crit, distance bonus and the Full Burst bonus apply. It does not charge the burst gauge (notes[0])"
+          },
+          "claims": [
+            "C-0724"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "ref": 3,
+          "damageType": "skill",
+          "condition": {
+            "inFullBurst": true
+          },
+          "distance": true,
+          "projectileExplosion": true,
+          "delayFrames": 5,
+          "assumes": {
+            "ja": "フルバーストの中で撃った粘着榴弾は、付着と同じフレームに起爆する（コアに乗らない。会心・距離ボーナス・フルバースト補正は乗る）",
+            "en": "A grenade fired during Full Burst detonates on the frame it attaches (no core bonus; crit, distance bonus and the Full Burst bonus apply)"
+          },
+          "claims": [
+            "C-0726",
+            "C-0725"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "stickyGrenade",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "amount": 1,
+          "condition": {
+            "inFullBurst": false
+          },
+          "assumes": {
+            "ja": "フルバーストの外で撃った粘着榴弾は付着したまま溜まる（上限は読んでいない）",
+            "en": "Grenades fired outside Full Burst stay attached and accumulate (the cap is not read)"
+          },
+          "claims": [
+            "C-0726"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "fullBurstStart",
+          "ref": 3,
+          "damageType": "skill",
+          "perCount": {
+            "counter": "stickyGrenade"
+          },
+          "perCountIntervalSeconds": 0.2,
+          "distance": true,
+          "projectileExplosion": true,
+          "assumes": {
+            "ja": "フルバーストの始まりに、付着している粘着榴弾が 0.2 秒ごとに 1 つずつ起爆する（1 つ目はフルバーストの始まり）",
+            "en": "At the start of Full Burst, the attached grenades detonate one at a time, 0.2 s apart (the first at the start)"
+          },
+          "claims": [
+            "C-0726",
+            "C-0725"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "stickyGrenade",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "amount": 99,
+          "decrease": true,
+          "assumes": {
+            "ja": "起爆した粘着榴弾は付着している数から外れる",
+            "en": "Detonated grenades are no longer attached"
+          },
+          "claims": [
+            "C-0726"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "elementAdvantage",
+          "enemyElement": "Electronic",
+          "assumes": {
+            "ja": "電撃コードの敵を、自分のコード（灼熱）の有利として扱う（通常攻撃も倍率ダメージも有利の 1.1 倍。有利コードの攻撃ダメージ▲も有利の時と同じに乗る）",
+            "en": "Electric Code enemies are treated as weak to her code (Fire): both normal attacks and skill hits get the 1.1 advantage multiplier, and Elemental Advantage damage buffs apply as for an advantage"
+          },
+          "claims": [
+            "C-0723"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "電撃コードの敵への有利コード、発射体付着ダメージ▲・発射体爆発ダメージ▲（持続）は未対応",
-          "en": "The advantage against Electric enemies and the attached-projectile and projectile-explosion damage increases (permanent) are not modeled",
+          "ja": "粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734 で 1 回に通常攻撃の 20 発ほど）のは未対応（溜まる量の出どころが分からない）",
+          "en": "The burst gauge gained from a sticky grenade attach hit (about 20 normal attacks' worth each in solo recordings 0733 and 0734) is not modeled (the source of the amount is unknown)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "passive",
-            "stat": "unknown",
-            "target": "self"
-          }
-        },
-        {
-          "ja": "通常攻撃 120 回ごとの粘着榴弾の付着と起爆のダメージは未対応（撃つたびの射撃の止まりは effects[0]）",
-          "en": "The sticky grenade attach and detonation damage every 120 normal attacks is not modeled (the firing pause on each grenade is effects[0])",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
+            "kind": "burstGaugeHit",
             "trigger": "normalShot"
           }
         }
@@ -132,33 +277,86 @@
           "claims": [
             "C-0716"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "projectileStickDamage",
+          "ref": 6,
+          "durationRef": 7,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "assumes": {
+            "ja": "使った段は編成で決まる（基本バースト段階 I の味方がいれば戦闘補助でなく、バーストは III のまま）。S2 の常時の▲と 1 つの和で掛かる",
+            "en": "The stage used is fixed by the squad (with a base burst stage I ally she is not in Combat Assist and stays burst III). Adds to the permanent S2 increase in one sum"
+          },
+          "claims": [
+            "C-0724"
+          ]
+        },
+        {
+          "kind": "cycleEvery",
+          "trigger": "burstUse",
+          "slot": "skill2",
+          "decreaseRef": 8,
+          "durationRef": 9,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": true
+          },
+          "assumes": {
+            "ja": "使った段は編成で決まる（同上）。窓の間は、S2 の 120 回が 60 回になる（通算の回数の 60 の倍数の発で粘着榴弾を撃つ。窓の始まりで数え直さない）",
+            "en": "The stage used is fixed by the squad (as above). During the window the S2 count of 120 becomes 60 (she fires a grenade on shots whose running count is a multiple of 60; the count is not reset at the window start)"
+          },
+          "claims": [
+            "C-0727"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "burstUse",
+          "target": "self",
+          "seconds": 20,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "使った段は編成で決まる（基本バースト段階 I の味方がいなければ戦闘補助で、バーストは I）。同じフレームに始まった自分のバーストの CT（40 秒）を 20 秒縮める",
+            "en": "The stage used is fixed by the squad (with no base burst stage I ally she is in Combat Assist and uses burst I). Shortens her own burst cooldown (40 s) that started on the same frame by 20 s"
+          },
+          "claims": [
+            "C-0732"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "burstStepMix": {
+            "otherBurstStep": "Step1",
+            "present": false
+          },
+          "assumes": {
+            "ja": "使った段は編成で決まる（基本バースト段階 I の味方がいなければ戦闘補助で、バーストは I）。値は発動者（ラピ：レッドフード）のバフ前攻撃力の割合",
+            "en": "The stage used is fixed by the squad (with no base burst stage I ally she is in Combat Assist and uses burst I). The value is a share of the caster's (Rapi: Red Hood) pre-buff ATK"
+          },
+          "claims": [
+            "C-0733"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "バースト I で使った時の、自分のバーストスキルクールタイム▼は未対応",
-          "en": "The burst skill cooldown reduction on self when used as burst I is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "cooldownReduction",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "バースト I で使った時の、味方全体のスキル発動者基準の攻撃力▲（10 秒）は未対応",
-          "en": "The caster-based attack increase on all allies when used as burst I (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "allies",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "爆発範囲▲・発射体付着ダメージ▲・粘着榴弾の回数条件▼（10 秒）は未対応（爆発範囲はダメージの式に無い）",
-          "en": "The explosion range increase, attached-projectile damage increase and sticky-grenade count reduction (10 s) are not modeled (explosion range is not in the damage formula)",
+          "ja": "爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い）",
+          "en": "The explosion range increase (10 s) is not modeled (explosion range is not in the damage formula)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",

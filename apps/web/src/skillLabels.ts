@@ -17,6 +17,7 @@ import {
 } from '@nikke/core';
 import type {
   BasicBurstStep,
+  BurstStepMode,
   AppliedEffect,
   BuildEffect,
   BuildEffectSource,
@@ -66,6 +67,8 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   damageTaken: '敵の受けるダメージ',
   enemyDefenseDown: '敵の防御力',
   projectileExplosionDamage: '発射体爆発ダメージ',
+  projectileStickDamage: '発射体付着ダメージ',
+  elementAdvantage: '有利コードのダメージ適用',
   sustainedDamage: '持続ダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
   burstCooldown: 'バーストスキルのクールタイム',
@@ -223,10 +226,9 @@ export function formatItemDuration(effect: AppliedTimedEffect): string {
 export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefinition | null): string {
   const name = stateLabel(effect.state);
   const isStatic = staticStatesOf(definition).includes(effect.state);
-  const conditions = formatGrantCondition(effect.condition);
   const head = isStatic
     ? `${name}状態（戦闘の始めから終わりまで）`
-    : `${name}を付与${conditions === '' ? '' : `（${conditions}）`}`;
+    : `${name}を付与${formatConditionSuffix(effect.condition)}`;
   const contents = effect.contents ?? stateContentsOf(definition, effect.state);
   // 2 段目の段 4（plan/design-skill-stage4.md 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけ
   const contentText =
@@ -248,8 +250,7 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 定義の解除。「マターシグマを解除（自分がマターシグマ状態なら）」 */
 export function formatRemoveState(effect: RemoveStateEffect): string {
-  const conditions = formatGrantCondition(effect.condition);
-  return `${stateLabel(effect.state)}を解除${conditions === '' ? '' : `（${conditions}）`}`;
+  return `${stateLabel(effect.state)}を解除${formatConditionSuffix(effect.condition)}`;
 }
 
 /**
@@ -261,9 +262,8 @@ export function formatStackChange(
   amount: number,
   stacksOf?: (ref: number) => number,
 ): string {
-  const conditions = formatGrantCondition(effect.condition, stacksOf);
   const change = effect.decrease ? `−${formatNumber(amount)}（次のフレームに上の段から）` : `+${formatNumber(amount)}`;
-  return `${stateLabel(effect.state)}のスタック量 ${change}${conditions === '' ? '' : `（${conditions}）`}`;
+  return `${stateLabel(effect.state)}のスタック量 ${change}${formatConditionSuffix(effect.condition, stacksOf)}`;
 }
 
 /** 定義のその状態の中身（同じ状態の付与のどれかが持つもの。無ければ undefined） */
@@ -277,11 +277,25 @@ function stateContentsOf(definition: SkillDefinition | null, state: NamedStateId
 }
 
 /** 付与・解除の条件（「自分が〈状態〉なら」「直前に自分がバーストを使用していれば」など）。無ければ空文字 */
+/**
+ * 付与・解除・スタック量・カウンタの増減と、即時効果（2 段目の段 12 の PR 4。plan/design-skill-stage12.md 2.6 節）の発火の条件を括弧に
+ * 包んだ文。「（自分が熱血状態なら）」。無ければ空文字
+ */
+export function formatConditionSuffix(
+  condition: EffectCondition | undefined,
+  stacksOf?: (ref: number) => number,
+): string {
+  const conditions = formatGrantCondition(condition, stacksOf);
+  return conditions === '' ? '' : `（${conditions}）`;
+}
+
 function formatGrantCondition(condition: EffectCondition | undefined, stacksOf?: (ref: number) => number): string {
   if (condition === undefined) return '';
   const parts: string[] = [];
   if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
   if (condition.inFullBurst === true) parts.push('フルバーストタイムなら');
+  // 2 段目の段 12 の PR 2: カウンタの増減の「フルバーストタイムでなければ」（粘着榴弾の付着している数）
+  if (condition.inFullBurst === false) parts.push('フルバーストタイムでなければ');
   if (condition.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ', stacksOf));
   if (condition.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
   if (condition.selfCounter !== undefined) parts.push(selfCounterText(condition.selfCounter));
@@ -302,14 +316,13 @@ function selfCounterText(c: SelfCounterCondition): string {
  * 増減はそのフレームのすべての判定の後に足す
  */
 export function formatCounterChange(effect: CounterChangeEffect, amount: number): string {
-  const conditions = formatGrantCondition(effect.condition);
   const trigger = isEndedTrigger(effect.trigger)
     ? `${stateLabel(effect.trigger.ended)}が終了した時に `
     : isCounterFullTrigger(effect.trigger)
       ? `${counterName(effect.trigger.counterFull).ja}が最大になった時に `
       : '';
   const change = `${effect.decrease ? '−' : '+'}${formatNumber(amount)}`;
-  return `${trigger}${counterName(effect.counter).ja} ${change}（上限 ${formatNumber(counterMax(effect.counter))}）${conditions === '' ? '' : `（${conditions}）`}`;
+  return `${trigger}${counterName(effect.counter).ja} ${change}（上限 ${formatNumber(counterMax(effect.counter))}）${formatConditionSuffix(effect.condition)}`;
 }
 
 /** バーストスロットの倍率ダメージ（burstDamage）の種別 */
@@ -504,7 +517,13 @@ export function formatEffectSource(effect: AppliedEffect, characterName: string 
           : weapon !== '' || exclude !== '' || defense !== ''
             ? `（${exclude}${defense}${weapon}味方）`
             : '';
-  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}`;
+  return `${who} ${SKILL_SLOT_LABEL[effect.source.skill]}${only}${formatBurstStepMode(effect.burstStepMode)}`;
+}
+
+/** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か。「（戦闘補助）」「（戦闘補助でない時）」。無ければ空文字 */
+export function formatBurstStepMode(mode: BurstStepMode | undefined): string {
+  if (mode === undefined) return '';
+  return mode.changed ? `（${mode.name.ja}）` : `（${mode.name.ja}でない時）`;
 }
 
 /** Stage 9: 宝物の段階の選択肢のラベル。「1 段階（スキル 1）」「2 段階（+スキル 2）」 */

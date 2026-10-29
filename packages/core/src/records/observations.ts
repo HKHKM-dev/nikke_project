@@ -10,6 +10,7 @@ import {
   hexagonFrameOf,
   hitFrameOf,
   hitFramesOf,
+  isInFullBurst,
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
@@ -26,7 +27,7 @@ import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buff
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount, resolveTimed } from '../skills/resolve.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
@@ -160,6 +161,13 @@ export type CompareSetup = {
    * 手で撃たなかった枠。TeamInput.noBurstSlots）。burst が true のときだけ。省略は全員使う
    */
   noBurstSlots?: number[];
+  /**
+   * 2 段目の段 12 の PR 3（V-0541）: 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠）。モデルには撃たない枠が無いので、
+   * 代わりに弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す
+   * （撃たない枠をモデルに足せば要らなくなる）。
+   * 条件が auto（射撃場の表）のときは書かない。省略は全員撃つ
+   */
+  noFireSlots?: number[];
 };
 
 /** CompareSetup.burstDelays の 1 件 */
@@ -209,7 +217,7 @@ export type AddedEffect = {
 };
 
 /**
- * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support は読み込みで決まる欄なので、JSON に戻すときに外す。
+ * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support・burstStepMode は読み込みで決まる欄なので、JSON に戻すときに外す。
  * エレグのバースト編: 敵に付く状態の付与は、読み込みで target を "allies" に読み替えて enemy の印を付けるので、JSON の形
  * （target: "enemy"）に戻す
  */
@@ -223,6 +231,8 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
     for (const slot of SKILL_SLOTS) {
       delete group[slot]?.support;
       for (const effect of (group[slot]?.effects ?? []) as Record<string, unknown>[]) {
+        // 2 段目の段 12: バースト段階の変更の側（burstStepMode）も読み込みで書く欄
+        delete effect.burstStepMode;
         if (effect.kind !== 'state' || effect.enemy !== true) continue;
         delete effect.enemy;
         effect.target = 'enemy';
@@ -431,6 +441,11 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
  */
 function steadyPauseShots(result: SimResult, ctx: MetricContext): number | number[] {
   const frames = slotOf(result.shots, ctx).frames;
+  // 2 段目の段 12 の PR 2（V-0537）: 省略できる引数 fullBurst が true なら、両端の止まりがどちらもフルバーストの窓の中の組だけ、false なら
+  // どちらも外の組だけを数える（バースト III の回数条件▼の窓はフルバーストの窓とほぼ重なる）
+  const schedule = result.schedule;
+  const inWindow = (f: number): boolean => schedule !== null && isInFullBurst(schedule, f);
+  const side = ctx.args.fullBurst === undefined ? null : ctx.args.fullBurst === true;
   const shot = slotOf(ctx.input.slots, ctx).character.shot;
   // 撃ち始め（リロード・的のジャンプの後。前の発との間が 2f より長い発）から何発目で 1 フレーム 1 発に届くか
   let spun = 0;
@@ -453,7 +468,8 @@ function steadyPauseShots(result: SimResult, ctx: MetricContext): number | numbe
     if (last !== null) {
       let steady = true;
       for (let q = last + 1; q < k; q++) if (gap(q) !== 1) steady = false;
-      if (steady) counts.add(k - last);
+      const sideOk = side === null || (inWindow(frames[last]!) === side && inWindow(frames[k]!) === side);
+      if (steady && sideOk) counts.add(k - last);
     }
     last = k;
   }
@@ -1407,6 +1423,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
   skillHitFromBurstHit: { args: ['slot', 'skill', 'count'], sim: skillHitFromBurstHit },
+  // 2 段目の段 12 の PR 2（V-0537）: 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数
+  skillHitFramesFromFullBurst: {
+    args: ['slot', 'skill', 'fullBurst', 'count'],
+    sim: skillHitFramesFromFullBurst,
+  },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
@@ -1582,17 +1603,26 @@ function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
- * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。core はコアに当たる効果（コア命中ダメージなど）の
- * コアの項を入れる（V-0538）
+ * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。
+ * 2 段目の段 12 の PR 2（V-0537）: 省略できる引数で数える発動を絞る（hitMatches）。frame（と fullBurst。frameArgOf）= そのフレーム以降の
+ * 発動だけを数える。core・distance が true なら、コアに当たった・距離ボーナスの付いたヒットの値（core・distance の効果のヒットだけ。core はコア命中ダメージ（coreHit）にも。V-0538）
  */
 function skillHitDamage(result: SimResult, ctx: MetricContext): number {
-  const hits = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined);
+  const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
+  const hits = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot === undefined &&
+      hitMatches(h, ctx) &&
+      (from === null || h.frame >= from),
+  );
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
-  if (ctx.args.core === true && hit.effect.core !== true && hit.effect.coreHit !== true) {
-    throw new Error('コアに当たらない効果の倍率ダメージに core: true');
-  }
-  return oneHitValue(hit.hit, ctx.args.crit === true, ctx.args.core === true);
+  if (ctx.args.core === true && hit.effect.core !== true && hit.effect.coreHit !== true)
+    throw new Error('コアに当たらない効果のヒットに core: true');
+  if (ctx.args.distance === true && hit.effect.distance !== true)
+    throw new Error('距離ボーナスの付かない効果のヒットに distance: true');
+  return oneHitValue(hit.hit, ctx.args.crit === true, ctx.args.core === true, ctx.args.distance === true);
 }
 
 /**
@@ -1617,6 +1647,45 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
       (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
     )
     .map((h) => videoFrameOf(result.schedule, h.frame));
+}
+
+/**
+ * 2 段目の段 12 の PR 2（V-0537）: 倍率ダメージの発動を、省略できる引数で絞る。skill = スロット、projectile = 発射体の付着（stick）か
+ * 爆発（explosion）のヒット、trigger = きっかけがフルバーストの始まり（fullBurstStart）か射撃の回数（shotCount）。効果の番号では
+ * 絞らない（編成の条件と最小構成の検査が効果を外すと、番号がずれる）
+ */
+function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): boolean {
+  if (ctx.args.skill !== undefined && h.effect.source.skill !== ctx.args.skill) return false;
+  if (ctx.args.projectile === 'stick' && h.effect.projectileStick !== true) return false;
+  if (ctx.args.projectile === 'explosion' && h.effect.projectileExplosion !== true) return false;
+  if (ctx.args.trigger === 'fullBurstStart' && h.effect.trigger !== 'fullBurstStart') return false;
+  if (ctx.args.trigger === 'shotCount' && !isResolvedShotCount(h.effect.trigger)) return false;
+  return true;
+}
+
+/**
+ * 2 段目の段 12 の PR 2（V-0537）: 枠の倍率ダメージ（hitMatches の絞り。skill は要る）のうち、fullBurst 回目（0 始まり）の
+ * フルバーストの窓の中のものの、窓の始まり（III のタイマーの 00.00）からの動画のフレーム数（入りの止まりを挟む）の列。省略できる引数
+ * skip の数だけ先頭を飛ばし、count 個を返す（録画では、入りの止まりの後の最初の増分に合わさるヒットは時刻が読めないので飛ばす）
+ */
+function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  const window = schedule?.fullBurstWindows[Number(ctx.args.fullBurst)];
+  if (schedule === null || window === undefined)
+    throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
+  const start = videoFrameOf(schedule, window.start);
+  const hits = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot === undefined &&
+      hitMatches(h, ctx) &&
+      window.start <= h.frame &&
+      h.frame < window.end,
+  );
+  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
+  const count = Number(ctx.args.count);
+  if (hits.length < skip + count) throw new Error(`窓の中の発動が ${hits.length} 回しかない`);
+  return hits.slice(skip, skip + count).map((h) => videoFrameOf(schedule, h.frame) - start);
 }
 
 /**
@@ -1961,13 +2030,15 @@ export function validateObservations(
           errors.push(`${at}: burstDelays の hitOffsets は 0 から始まる昇順の整数`);
       }
     }
-    if (c.setup.noBurstSlots !== undefined) {
-      if (c.setup.burst !== true) errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
-      const size = recordings.get(o.recording)?.team.length;
-      for (const s of c.setup.noBurstSlots)
+    const size = recordings.get(o.recording)?.team.length;
+    for (const key of ['noBurstSlots', 'noFireSlots'] as const)
+      for (const s of c.setup[key] ?? [])
         if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
-          errors.push(`${at}: noBurstSlots の枠 ${String(s)} が編成の外`);
-    }
+          errors.push(`${at}: ${key} の枠 ${String(s)} が編成の外`);
+    if (c.setup.noBurstSlots !== undefined && c.setup.burst !== true)
+      errors.push(`${at}: noBurstSlots は burst が true のときだけ書く`);
+    if (c.setup.noFireSlots !== undefined && c.setup.condition === 'auto')
+      errors.push(`${at}: noFireSlots は condition が auto のときには書かない`);
     if (c.setup.manualBursts !== undefined) {
       if (c.setup.burst === false) errors.push(`${at}: manualBursts は burst が false のときには書かない`);
       const ref = observations.find((x) => x.id === c.setup.manualBursts);
@@ -2137,7 +2208,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     fullCharge: true,
     hitRate: setup.hitRate ?? 1,
   };
-  const slots: TeamSlotInput[] = recording.team.map((member) => {
+  const slots: TeamSlotInput[] = recording.team.map((member, index) => {
     const base = data.characters.get(member.rid);
     if (base === undefined) throw new Error(`rid ${member.rid} のデータが無い`);
     const delayOverrides = (setup.burstDelays ?? []).filter((d) => d.rid === member.rid);
@@ -2173,7 +2244,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     return {
       character,
       growth: fixedSpecGrowth(character),
-      condition,
+      condition: setup.noFireSlots?.includes(index + 1) === true ? { ...condition, hitRate: 0 } : condition,
       ...(auto ? { conditionMode: 'auto' as const } : {}),
       attackOverride: build === undefined ? computeFixedSpecAttack(character).attack : build.attack,
       ...(build === undefined
@@ -2351,6 +2422,7 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.farLanding !== undefined) entries.push(['far', setup.farLanding.join('・')]);
   if (setup?.manualBursts !== undefined) entries.push(['manualBursts', setup.manualBursts]);
   if (setup?.noBurstSlots !== undefined) entries.push(['noBurstSlots', setup.noBurstSlots.join('・')]);
+  if (setup?.noFireSlots !== undefined) entries.push(['noFireSlots', setup.noFireSlots.join('・')]);
   for (const d of setup?.burstDelays ?? []) {
     const r = d.row;
     const row =

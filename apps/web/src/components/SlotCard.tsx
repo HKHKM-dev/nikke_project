@@ -1,6 +1,8 @@
 import {
   ELEMENT_LABEL,
   WEAPON_LABEL,
+  applyTreasure,
+  burstStepInTeam,
   growthLimits,
   isChargeWeapon,
   type BurstStep,
@@ -40,6 +42,8 @@ type Props = {
   skillsStatus: SlotSkillsStatus;
   hpRatioTargeted: boolean;
   slotResult: TeamSlotResult | null;
+  /** 2 段目の段 12: 編成の枠のキャラ（バースト段階の変更の編成の条件を見る） */
+  teamCharacters: readonly (CharacterData | null)[];
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -60,11 +64,23 @@ export function SlotCard({
   skillsStatus,
   hpRatioTargeted,
   slotResult,
+  teamCharacters,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
+
   const condition = slot.condition;
   const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
+  // 2 段目の段 12: バースト段階の変更（戦闘補助）が編成で効けば、差し替えた段を出す（宝物の版を当てた定義で見る）
+  const burstStep = character
+    ? burstStepInTeam(
+        character,
+        applyTreasure(character, skillsStatus.kind === 'ready' ? skillsStatus.definition : null, treasurePhase)
+          .definition,
+        teamCharacters,
+        slotIndex,
+      )
+    : null;
   const showHpRatio =
     hpRatioTargeted || (character !== undefined && hasSelfHpCondition(character, skillsStatus, treasurePhase));
 
@@ -163,7 +179,10 @@ export function SlotCard({
           <div className="slot-settings-body">
             <p className="meta" title={WEAPON_LABEL[character.weaponType].ja}>
               {character.weaponType} / {ELEMENT_LABEL[character.element].ja} / {CLASS_LABEL[character.class]} / B
-              {BURST_LABEL[character.burstStep]}（CT {character.burstSkill.cooldownSeconds}s）
+              {burstStep !== null && burstStep !== character.burstStep
+                ? `${BURST_LABEL[burstStep]}（基本は ${BURST_LABEL[character.burstStep]}）`
+                : BURST_LABEL[character.burstStep]}
+              （CT {character.burstSkill.cooldownSeconds}s）
             </p>
             <div className="growth-row">
               {growthField('level', 'Lv', 1, limits.levelMax)}
