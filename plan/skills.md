@@ -47,7 +47,7 @@ notes の種類: 未対応 56・前提の外 31・計算に無関係 33・補足
   - effects[0] damage・burstUse・additional: C-0716（確定）
   - effects[1] timed・burstUse・projectileStickDamage: C-0724（確定）
   - effects[2] cycleEvery・burstUse: C-0727（確定）
-  - effects[3] cooldownReduction・burstUse: C-0732（仮説）
+  - effects[3] cooldownReduction・burstUse: C-0732（確定）
   - effects[4] timed・burstUse・attack: C-0733（確定）
   - notes[0] 未対応: 爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い）: 根拠なし
 

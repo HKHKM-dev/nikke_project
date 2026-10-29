@@ -1461,6 +1461,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: ['slot', 'n'],
     sim: (r, c) => ctEndToFullBurstStart(r, c),
   },
+  // 2 段目の段 12（V-0543）: 枠の n 回目の発動の印から、その発動の CT の明けまでの動画のフレーム
+  activationToCtEnd: {
+    args: ['slot', 'n'],
+    sim: (r, c) => activationToCtEnd(r, c),
+  },
   chainStepIntervals: {
     args: ['n'],
     sim: (r, c) => chainStepIntervals(r, c),
@@ -1496,6 +1501,34 @@ function ctEndToFullBurstStart(result: { schedule: BurstSchedule | null }, ctx: 
       if (ctEnd !== activation.frame)
         throw new Error(`${s} 回目はモデルで CT が律速でない（CT の明け ${ctEnd}・発動 ${activation.frame}）`);
       return activationVideoFrameOf(schedule, activation) - videoFrameOf(schedule, ctEnd);
+    });
+}
+
+/**
+ * 2 段目の段 12（V-0543）: 枠の n 回目（0 始まり。カンマ区切りの並びも書ける）の発動の印（I・II は六角形の替わり目、III は 00.00。
+ * activationVideoFrameOf）から、その発動の CT の明け（発動 + CT − 維持の CT▼ で縮めた分 − 次の発動までに即時の CT▼ で縮んだ分）までの
+ * 動画のフレーム数の列。録画では、次の回の右のバースト欄の顔の CT の秒の表示が消えたフレームから、この回の替わり目を引いた値
+ */
+function activationToCtEnd(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const character = ctx.input.slots[slotIndex]?.character;
+  if (character === undefined) throw new Error(`枠 ${String(ctx.args.slot)} が無い`);
+  const cooldown = gameSecondsToFrames(character.burstSkill.cooldownSeconds);
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex);
+  return String(ctx.args.n)
+    .split(',')
+    .map((s) => {
+      const k = Number(s);
+      const activation = mine[k];
+      if (activation === undefined) throw new Error(`${s} 回目の発動が無い`);
+      const until = mine[k + 1]?.frame ?? Infinity;
+      const cut = schedule.cooldownReductions
+        .filter((r) => r.slotIndex === slotIndex && r.frame >= activation.frame && r.frame < until)
+        .reduce((sum, r) => sum + r.applied, 0);
+      const ctEnd = activation.frame + cooldown - (activation.cooldownShortenedFrames ?? 0) - cut;
+      return videoFrameOf(schedule, ctEnd) - activationVideoFrameOf(schedule, activation);
     });
 }
 
