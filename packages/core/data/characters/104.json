@@ -85,7 +85,7 @@
       },
       "description": {
         "ja": "■フルバーストタイムが発動した時、自分に\n<color=#00AEFF>「使用武器変更：\nオーバーオーバードライブ」：\nチャージ時間：1.5秒に固定\nダメージ：<word_group=10025>最終</word_group>攻撃力の{description_value_01}％のダメージ\n<word_group=10038>ペレット</word_group>数：15個\nフルチャージダメージ：300％\n最大装弾数：{description_value_02}発</color>\n■オーバーオーバードライブ状態が終了した時、自分に\n<color=#00AEFF>「残弾数{description_value_03}％低下」</color>",
-        "en": "■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Changes the weapon in use: Super Duper Overdrive\nCharge Time: Fixed at 1.5 sec\nDamage: {description_value_01}% of <word_group=10025>final</word_group> ATK\n<word_group=10038>Pellet</word_group> Count: 15\nFull Charge Damage: 300%\nMax Ammunition Capacity: {description_value_02}</color>\n■ Activates when Super Duper Overdrive ends. Affects self.\n<color=#00AEFF>Removes {description_value_03}% of ammo.</color>"
+        "en": "■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Changes the weapon in use: Super Duper Overdrive\nCharge Time: Fixed at 1.5 sec\nDamage: {description_value_01}% of <word_group=10025>final</word_group> ATK\n<word_group=10038>Pellet</word_group> Count: 15\nFull Charge Damage: 300% of damage\nMax Ammunition Capacity: {description_value_02}</color>\n■ Activates when Super Duper Overdrive ends. Affects self.\n<color=#00AEFF>Removes {description_value_03}% of ammo.</color>"
       },
       "values": [
         ["121.88", "135.42", "148.96", "162.5", "176.04", "189.58", "203.12", "216.66", "230.2", "243.75"],

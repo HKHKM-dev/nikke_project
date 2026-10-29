@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■通常攻撃1回で<word_group=10038>ペレット</word_group>が{description_value_01}個以上命中した時、自分に\n<color=#00AEFF>「リロード速度{description_value_02}％▲」「{description_value_03}秒間維持」</color>\n■フルバーストタイムの持続時間中、\n<word_group=10038>ペレット</word_group>が{description_value_04}回命中した時、自分に\n<color=#00AEFF>「弾丸チャージ{description_value_05}発」</color>\n<color=#00AEFF>「攻撃力{description_value_06}％▲」「{description_value_07}スタック」「{description_value_08}秒間維持」</color>",
-        "en": "■ Activates when {description_value_01} or more <word_group=10038>pellets</word_group> hit with a single normal attack. Affects self.\n<color=#00AEFF>Reload Speed ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Activates when hitting {description_value_04} times with <word_group=10038>pellets</word_group> during Full Burst. Affects self.\n<color=#00AEFF>Reload {description_value_05} round(s).</color>\n<color=#00AEFF>ATK ▲ {description_value_06}%. Stacks up to {description_value_07} times and lasts for {description_value_08} sec.</color>"
+        "en": "■ Activates when {description_value_01} or more <word_group=10038>pellets</word_group> hit with a single normal attack. Affects self.\n<color=#00AEFF>Reload Speed ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Activates when hitting {description_value_04} times with <word_group=10038>pellets</word_group> during Full Burst. Affects self.\n<color=#00AEFF>Reloads {description_value_05} round(s).</color>\n<color=#00AEFF>ATK ▲ {description_value_06}%. Stacks up to {description_value_07} times and lasts for {description_value_08} sec.</color>"
       },
       "values": [
         ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],

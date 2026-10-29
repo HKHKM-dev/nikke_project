@@ -136,7 +136,7 @@
       },
       "description": {
         "ja": "■自分の<word_group=10109>右隣の</word_group>味方1機に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_01}％▲」\n「{description_value_02}秒間維持」\n「持続ダメージ{description_value_03}％▲」「{description_value_04}秒間維持」\n</color>",
-        "en": "■ Affects the ally <word_group=10109>to the right</word_group> of this unit.\n<color=#00AEFF> ATK ▲ {description_value_01}% of the skill user's ATK for {description_value_02} sec.\nSustained Damage ▲ {description_value_03}% for {description_value_04} sec.</color>"
+        "en": "■ Affects the ally <word_group=10109>to the right</word_group> of this unit.\n<color=#00AEFF>ATK ▲ {description_value_01}% of the skill user's ATK for {description_value_02} sec.\nSustained Damage ▲ {description_value_03}% for {description_value_04} sec.</color>"
       },
       "values": [
         ["28.08", "30.24", "32.4", "34.56", "36.72", "38.88", "41.04", "43.2", "45.36", "47.52"],

@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■<word_group=10105>ターゲット</word_group>が出現している場合、味方全体に\n<color=#00AEFF>「<word_group=10015>バーストゲージのチャージ</word_group> {description_value_01}％」「戦闘中{description_value_02}回発動」\n「<word_group=10010>気絶免疫</word_group>」「{description_value_03}秒間維持」</color>\n■<word_group=10105>ターゲット</word_group>が出現している場合、自分に\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_04}％▲」「{description_value_05}秒間維持」</color>",
-        "en": "■ Activates when the <word_group=10105>stage target</word_group> appears. Affects all allies.\n<color=#00AEFF><word_group=10015>Fills Burst Gauge</word_group> by {description_value_01}%. Activates {description_value_02} time(s) per battle.\nGains <word_group=10010>immunity to Stun</word_group> for {description_value_03} sec.</color>\n■ Activates when the <word_group=10105>stage target</word_group> appears. Affects self.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_04}% for {description_value_05} sec.</color>"
+        "en": "■ Activates when the <word_group=10105>stage target</word_group> appears. Affects all allies.\n<color=#00AEFF><word_group=10015>Fills Burst Gauge</word_group> by {description_value_01}%. Activates {description_value_02} time(s) per battle.\nGrants <word_group=10010>immunity to stun</word_group> for {description_value_03} sec.</color>\n■ Activates when the <word_group=10105>stage target</word_group> appears. Affects self.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_04}% for {description_value_05} sec.</color>"
       },
       "values": [
         ["73.21", "76.03", "78.84", "81.66", "84.48", "87.29", "90.11", "92.92", "95.74", "98.56"],
@@ -133,7 +133,7 @@
       },
       "description": {
         "ja": "■敵全体に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_01}％のバーストスキルダメージ」</color>\n■火力型の味方全体に\n<color=#00AEFF>「<word_group=10011>パーツダメージ</word_group> {description_value_02}％▲」「{description_value_03}秒間維持」</color>\n■自分が<word_group=10010>気絶免疫</word_group>状態なら、味方全体に\n<color=#00AEFF>「フルバーストタイム{description_value_04}秒▲」</color>",
-        "en": "■ Affects all enemies.\n<color=#00AEFF> Deals {description_value_01}% of <word_group=10025>final</word_group> ATK as Burst Skill damage.</color>\n■ Affects all Attacker allies.\n<color=#00AEFF><word_group=10011>Damage to Parts</word_group> ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Affects all allies if the skill user has <word_group=10010>immunity to Stun</word_group>.\n<color=#00AEFF>Full Burst Duration ▲ {description_value_04} sec.</color>"
+        "en": "■ Affects all enemies.\n<color=#00AEFF> Deals {description_value_01}% of <word_group=10025>final</word_group> ATK as Burst Skill damage.</color>\n■ Affects all Attacker allies.\n<color=#00AEFF><word_group=10011>Damage to Parts</word_group> ▲ {description_value_02}% for {description_value_03} sec.</color>\n■ Affects all allies if the skill user has <word_group=10010>immunity to stun</word_group>.\n<color=#00AEFF>Full Burst Duration ▲ {description_value_04} sec.</color>"
       },
       "values": [
         ["138.52", "170.49", "202.46", "234.43", "266.4", "298.36", "330.33", "362.3", "394.27", "426.24"],

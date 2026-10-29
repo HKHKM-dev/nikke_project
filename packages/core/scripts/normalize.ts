@@ -87,7 +87,8 @@ export type RawRoleData = {
     core_damage_rate: number;
     penetration: number;
     maintain_fire_stance: number;
-    uptype_fire_timing: number;
+    /** 満ちてから撃つまで（1e-4 単位）。2026-10-29 に確かめた CDN では uptype_fire_timing から改名されていた（値は全キャラ同じ） */
+    fire_timing: number;
     burst_energy_pershot: number;
     target_burst_energy_pershot: number;
     full_charge_burst_energy: number;
@@ -141,6 +142,27 @@ const INPUT_TYPES: readonly ShotInputType[] = ['DOWN', 'UP', 'DOWN_Charge'];
 function oneOf<T extends string>(allowed: readonly T[], value: string, field: string): T {
   if ((allowed as readonly string[]).includes(value)) return value as T;
   throw new Error(`unexpected ${field}: ${JSON.stringify(value)} (allowed: ${allowed.join(', ')})`);
+}
+
+/**
+ * 正規化の結果に、CDN の項目が無いせいでできた穴（undefined か、数でない数）が無いことを確かめる。あれば穴の場所の一覧で Error。
+ * CDN の項目の改名（2026-10-29 の uptype_fire_timing → fire_timing）は、読む側の型を直さないと undefined になり、
+ * JSON に書くとその項目が黙って消える（NaN は null になる）ので、書く前にここで止める。null は「無い」と決めた値なので通す
+ */
+export function assertComplete(value: unknown, what: string): void {
+  const holes: string[] = [];
+  const walk = (v: unknown, at: string): void => {
+    if (v === undefined) holes.push(`${at}: undefined`);
+    else if (typeof v === 'number' && !Number.isFinite(v)) holes.push(`${at}: ${v}`);
+    else if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${at}[${i}]`));
+    else if (v !== null && typeof v === 'object') {
+      for (const [key, x] of Object.entries(v as Record<string, unknown>)) walk(x, at === '' ? key : `${at}.${key}`);
+    }
+  };
+  walk(value, '');
+  if (holes.length > 0) {
+    throw new Error(`${what}: missing CDN fields (the CDN schema may have changed):\n  ${holes.join('\n  ')}`);
+  }
 }
 
 function toSkill(en: RawSkillDetail, ja: RawSkillDetail): SkillRaw {
@@ -222,7 +244,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
   const shot = en.shot_detail;
   const enhance = en.stat_enhance_detail;
   const hasBonusRange = en.bonusrange_max > 0;
-  return {
+  const data: CharacterData = {
     resourceId: en.resource_id,
     name: NAME_OVERRIDES[en.resource_id] ?? { ja: ja.name_localkey, en: en.name_localkey },
     rarity: oneOf(RARITIES, en.original_rare, 'original_rare'),
@@ -268,7 +290,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
       fireType: shot.fire_type,
       penetration: shot.penetration,
       maintainFireStance: shot.maintain_fire_stance,
-      uptypeFireTiming: shot.uptype_fire_timing,
+      uptypeFireTiming: shot.fire_timing,
       targetBurstEnergyPerShot: shot.target_burst_energy_pershot,
       burstEnergyPerShot: shot.burst_energy_pershot,
       // チャージなし武器は 0 が入っているので 1 にする（式に分岐を持ち込まない）
@@ -309,6 +331,8 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
     },
     treasure,
   };
+  assertComplete(data, `resource ${en.resource_id}`);
+  return data;
 }
 
 /**
@@ -479,13 +503,15 @@ export function toCubeData(en: RawCube, ja: RawCube): CubeData {
   for (const list of [en.atk, en.hp, en.def, ...stageLists]) {
     if (list.length !== 15) throw new Error(`cube ${en.id}: expected 15 levels, got ${list.length}`);
   }
-  return {
+  const data: CubeData = {
     id: en.id,
     name: { ja: ja.name_localkey, en: en.name_localkey },
     stats: { attack: en.atk, hp: en.hp, defence: en.def },
     skillStages: stageLists,
     skills,
   };
+  assertComplete(data, `cube ${en.id}`);
+  return data;
 }
 
 export function toCollectionData(en: RawCollection, ja: RawCollection): CollectionData {
@@ -498,7 +524,7 @@ export function toCollectionData(en: RawCollection, ja: RawCollection): Collecti
   for (const list of [en.atk, en.hp, en.def, ...stageLists]) {
     if (list.length !== 16) throw new Error(`favorite ${en.id}: expected Lv0..15 (16 values), got ${list.length}`);
   }
-  return {
+  const data: CollectionData = {
     id: en.id,
     rarity: en.favorite_rare,
     weaponType: oneOf(WEAPON_TYPES, en.weapon_type, 'weapon_type'),
@@ -507,6 +533,8 @@ export function toCollectionData(en: RawCollection, ja: RawCollection): Collecti
     skillStages: stageLists,
     skills,
   };
+  assertComplete(data, `favorite ${en.id}`);
+  return data;
 }
 
 /** SSR（宝物）のステータス。段階 1..3 で同じ値でなければ Error */

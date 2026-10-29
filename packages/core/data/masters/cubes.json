@@ -223,7 +223,7 @@
           },
           "description": {
             "ja": "■{description_value_01}発射撃した時\n<color=#00AEFF>「弾丸チャージ{description_value_02}発▲」</color>",
-            "en": "■ Activates when firing {description_value_01} round(s).\n<color=#00AEFF>Reload ▲ {description_value_02} round(s).</color>"
+            "en": "■ Activates when firing {description_value_01} round(s).\n<color=#00AEFF>Reloads ▲ {description_value_02} round(s).</color>"
           },
           "values": [
             ["10", "10", "10", "10", "10", "10", "10", "10", "10", "10"],
@@ -1099,6 +1099,72 @@
         },
         {
           "id": 4023012,
+          "name": {
+            "ja": "アンチコードHC",
+            "en": "Anti Code HC"
+          },
+          "description": {
+            "ja": "■戦闘開始時\n<color=#00AEFF>「<word_group=10009>有利コードの攻撃ダメージ</word_group> {description_value_01}％▲」</color>",
+            "en": "■ Activates at the start of battle.\n<color=#00AEFF><word_group=10009>Elemental Advantage Attack Damage</word_group> ▲ {description_value_01}%.</color>"
+          },
+          "values": [
+            ["8.48", "10.6", "12.72", "14.84", "16.96", "19.09", "21.21", "23.33", "25.45", "27.57"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1000318,
+      "name": {
+        "ja": "レリックベゼルキューブ",
+        "en": "Bezel Cube"
+      },
+      "stats": {
+        "attack": [390, 450, 520, 600, 690, 790, 910, 1050, 1200, 1380, 1590, 1830, 2100, 2420, 2780],
+        "hp": [11800, 13600, 15600, 17900, 20600, 23700, 27300, 31400, 36100, 41500, 47700, 54900, 63100, 72500, 83400],
+        "defence": [78, 90, 103, 119, 136, 157, 180, 207, 239, 274, 316, 363, 417, 480, 552]
+      },
+      "skillStages": [
+        [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 4, 5, 5, 6]
+      ],
+      "skills": [
+        {
+          "id": 4024011,
+          "name": {
+            "ja": "ボディバイタルアップHC",
+            "en": "Body Vitals Up HC"
+          },
+          "description": {
+            "ja": "■フルバーストタイムが発動した時、\n<color=#00AEFF>「スキル発動者基準で最大HPのみ{description_value_01}％▲」「{description_value_02}スタック」</color>",
+            "en": "■ Activates when entering Full Burst.\n<color=#00AEFF>Max HP ▲ {description_value_01}% of the skill user's max HP (without restoring HP). Stacks up to {description_value_02} times.</color>"
+          },
+          "values": [
+            ["4.01", "6.01", "8.02", "15.36", "22.7", "30.04", "37.38", "44.72", "52.06", "59.4"],
+            ["3", "3", "3", "3", "3", "3", "3", "3", "3", "3"],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "id": 4024012,
           "name": {
             "ja": "アンチコードHC",
             "en": "Anti Code HC"

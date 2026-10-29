@@ -106,6 +106,19 @@
       "burstStep": "Step3"
     },
     {
+      "resourceId": 19,
+      "name": {
+        "ja": "マリアン：クイーン",
+        "en": "Marian: Queen"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Fire",
+      "weaponType": "MG",
+      "burstStep": "Step3"
+    },
+    {
       "resourceId": 20,
       "name": {
         "ja": "デルタ",
@@ -2002,6 +2015,32 @@
       "element": "Water",
       "weaponType": "SR",
       "burstStep": "Step3"
+    },
+    {
+      "resourceId": 472,
+      "name": {
+        "ja": "紅蓮：神殺",
+        "en": "Scarlet: Goddeath"
+      },
+      "rarity": "SSR",
+      "class": "Attacker",
+      "corporation": "PILGRIM",
+      "element": "Fire",
+      "weaponType": "AR",
+      "burstStep": "Step3"
+    },
+    {
+      "resourceId": 473,
+      "name": {
+        "ja": "ラプンツェル：サンクチュアリ",
+        "en": "Rapunzel: Sanctuary"
+      },
+      "rarity": "SSR",
+      "class": "Supporter",
+      "corporation": "PILGRIM",
+      "element": "Fire",
+      "weaponType": "RL",
+      "burstStep": "Step2"
     },
     {
       "resourceId": 500,

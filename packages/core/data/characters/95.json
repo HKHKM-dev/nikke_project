@@ -137,7 +137,7 @@
       },
       "description": {
         "ja": "■自分に\n<color=#00AEFF>「使用武器変更」：\nチャージ時間：0.3秒\nダメージ：<word_group=10025>最終</word_group>攻撃力の{description_value_01}％の\n防御力無視ダメージ\nフルチャージダメージ：300％\n最大装弾数：{description_value_02}発\n特記事項：炸裂弾を発射して\n広範囲を攻撃する\n追加効果\n対象：命中した敵に\n効果：「徹甲炸裂弾：\n受けるダメージ{description_value_03}％▲」\n「{description_value_04}秒間維持」</color>",
-        "en": "■ Affects self.\n<color=#00AEFF>Changes the weapon in use.\nCharge Time: 0.3 sec\nDamage: {description_value_01}% of <word_group=10025>final</word_group> ATK as true damage\nFull Charge Damage: 300%\nMax Ammunition Capacity: {description_value_02}\nNote: Fires an Exploding Bullet dealing area-of-effect damage. \nAdditional Effect:\nAffects the targets hit.\nExplosive Round: Damage Taken ▲ {description_value_03}% for {description_value_04} sec.</color>"
+        "en": "■ Affects self.\n<color=#00AEFF>Changes the weapon in use.\nCharge Time: 0.3 sec\nDamage: {description_value_01}% of <word_group=10025>final</word_group> ATK as true damage\nFull Charge Damage: 300% of damage\nMax Ammunition Capacity: {description_value_02}\nNote: Fires an Exploding Bullet dealing area-of-effect damage. \nAdditional Effect:\nAffects the targets hit.\nExplosive Round: Damage Taken ▲ {description_value_03}% for {description_value_04} sec.</color>"
       },
       "values": [
         ["62.4", "67.2", "72", "76.8", "81.6", "86.4", "91.19", "95.99", "100.8", "105.6"],

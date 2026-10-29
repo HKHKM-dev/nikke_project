@@ -85,7 +85,7 @@
       },
       "description": {
         "ja": "■フルチャージで{description_value_01}回攻撃した時、味方全体に\n<color=#00AEFF>「スキル発動者基準で最大HPのみ\n{description_value_02}％▲」「{description_value_03}秒間維持]</color>\n<color=#00AEFF>「バーストスキル<word_group=10031>クールタイム</word_group>{description_value_04}秒▼」</color>",
-        "en": "■ Activates after performing {description_value_01} Full Charge attacks. Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_02}% of the skill user's max HP (without restoring HP). Lasts for {description_value_03} sec.</color>\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Burst Skill ▼ {description_value_04} sec.</color>"
+        "en": "■ Activates after performing {description_value_01} Full Charge attacks. Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_02}% of the skill user's max HP (without restoring HP) for {description_value_03} sec.</color>\n<color=#00AEFF><word_group=10031>Cooldown</word_group> of Burst Skill ▼ {description_value_04} sec.</color>"
       },
       "values": [
         ["8", "8", "8", "8", "8", "8", "8", "8", "8", "8"],

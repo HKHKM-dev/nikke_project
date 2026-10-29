@@ -280,6 +280,9 @@ export function baseDefenceOf(input: {
   return input.defenceOverride ?? computeStat(input.character, 'defence', input.growth);
 }
 
+/** 弾の種類（CDN の fire_type）のうち、モデルが知っているもの（types.ts の ShotParams.fireType） */
+const KNOWN_FIRE_TYPES: readonly string[] = ['Instant', 'ProjectileDirect', 'HomingProjectile', 'ProjectileCurve'];
+
 export function modelNotes(shot: ShotParams): ModelNote[] {
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {
@@ -306,6 +309,13 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
     );
   if (shot.fireType === 'ProjectileCurve')
     unsupported('projectile-curve', '曲射型の弾は未対応', 'Curved projectiles not modeled');
+  // 2026-10-29 に紅蓮：神殺（AR）の InstantBox が増えた（plan/design-cdn-refresh.md 5 節）。中身は分かっていないので、知らない種類は注記だけ出す
+  if (!KNOWN_FIRE_TYPES.includes(shot.fireType))
+    unsupported(
+      'fire-type-unknown',
+      `弾の種類 ${shot.fireType} は未対応（即着弾の弾と同じに計算した）`,
+      `Fire type ${shot.fireType} not modeled (computed as an instant-hit shot)`,
+    );
   if (shot.penetration > 0) unsupported('penetration', '貫通は未対応', 'Penetration not modeled');
   if (shot.reloadBullet < 1)
     approx(

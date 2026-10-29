@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■フルバーストタイムが発動した時、味方全体に\n<color=#00AEFF>「最大装弾数{description_value_01}発▲」「{description_value_02}秒間維持」\n「弾丸チャージ{description_value_03}％」</color>",
-        "en": "■ Activates when entering Full Burst. Affects all allies.\n<color=#00AEFF>Max Ammunition Capacity ▲ {description_value_01} round(s) for {description_value_02} sec.\nReload {description_value_03}% magazine(s).</color>"
+        "en": "■ Activates when entering Full Burst. Affects all allies.\n<color=#00AEFF>Max Ammunition Capacity ▲ {description_value_01} round(s) for {description_value_02} sec.\nReloads {description_value_03}% of ammo.</color>"
       },
       "values": [
         ["3", "3", "3", "3", "4", "4", "4", "4", "5", "5"],

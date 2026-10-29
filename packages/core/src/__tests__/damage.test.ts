@@ -246,4 +246,12 @@ describe('modelNotes', () => {
   it('is empty for a plain AR', () => {
     expect(modelNotes(makeCharacter().shot)).toEqual([]);
   });
+
+  // 2026-10-29: 紅蓮：神殺の InstantBox（plan/design-cdn-refresh.md 5 節）
+  it('flags a fire type the model does not know, and not the known ones', () => {
+    const codes = (fireType: string) => modelNotes(makeCharacter({ fireType }).shot).map((n) => n.code);
+    expect(codes('InstantBox')).toEqual(['fire-type-unknown']);
+    expect(codes('HomingProjectile')).toEqual([]);
+    expect(codes('ProjectileDirect')).toEqual([]);
+  });
 });

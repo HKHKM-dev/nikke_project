@@ -69,7 +69,7 @@ export type ShotParams = {
   /** コアヒット倍率（通常 2.0） */
   coreDamageRate: number;
   inputType: ShotInputType;
-  /** 弾の種類（CDN の fire_type）。Instant（即着弾。RL 以外の全武器）・ProjectileDirect（直進弾）・HomingProjectile（誘導弾）・ProjectileCurve（曲射） */
+  /** 弾の種類（CDN の fire_type）。Instant（即着弾。RL 以外の全武器）・ProjectileDirect（直進弾）・HomingProjectile（誘導弾）・ProjectileCurve（曲射）。2026-10-29 に InstantBox（紅蓮：神殺の AR。中身は未確認・未対応）が増えた */
   fireType: string;
   penetration: number;
   maintainFireStance: number;

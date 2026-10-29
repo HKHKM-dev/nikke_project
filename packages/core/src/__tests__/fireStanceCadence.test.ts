@@ -6,7 +6,7 @@ import { firingParams, stanceFrames } from '../frame/firing.ts';
 import { hideShooter, initialShooter, partialChargeShot, stepShooter, unhideShooter } from '../frame/shooter.ts';
 import { planShots } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
 
 const character = (id: number) =>
   JSON.parse(readFileSync(new URL(`../../data/characters/${id}.json`, import.meta.url), 'utf8')) as CharacterData;
@@ -112,7 +112,7 @@ describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', (
     expect(fromWindowEnd(822)).toBe(70);
   });
 
-  it('identifies the RL by a projectile fireType (all 42 RL and no other weapon)', () => {
+  it('identifies the RL by a projectile fireType (every RL and no other weapon)', () => {
     const all = readdirSync(new URL('../../data/characters/', import.meta.url))
       .filter((f) => /^\d+\.json$/.test(f))
       .map(
@@ -120,7 +120,12 @@ describe('敵のジャンプの明けからの 1 発目（C-0229。V-0143）', (
           JSON.parse(readFileSync(new URL(`../../data/characters/${f}`, import.meta.url), 'utf8')) as CharacterData,
       );
     expect(all.length).toBeGreaterThan(200);
-    const projectile = all.filter((c) => c.shot.fireType !== 'Instant');
+    // 2026-10-29 の取り込みで増えた紅蓮：神殺（472。AR）の InstantBox は飛ぶ弾ではない（弾速 0。damage.ts が未対応の注記を出す）。
+    // チャージ武器でないので、入力が UP のチャージ武器を fireType で見分けるところ（weapons.ts）には掛からない
+    const instantBox = all.filter((c) => c.shot.fireType === 'InstantBox');
+    expect(instantBox.map((c) => c.resourceId)).toEqual([472]);
+    expect(instantBox.some((c) => isChargeWeapon(c.shot))).toBe(false);
+    const projectile = all.filter((c) => c.shot.fireType !== 'Instant' && c.shot.fireType !== 'InstantBox');
     expect(projectile.every((c) => c.weaponType === 'RL')).toBe(true);
     expect(projectile.length).toBe(all.filter((c) => c.weaponType === 'RL').length);
   });

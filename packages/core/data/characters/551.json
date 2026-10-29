@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■バースト1段階突入時、味方全体に\n<color=#00AEFF>「<word_group=10039>デバフ効果免疫</word_group>{description_value_01}個」「{description_value_03}秒間維持」</color>\n■自分がヴィクトリークライ状態の時に限り、味方全体に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_02}％▲」「持続」</color>",
-        "en": "■ Activates when entering Burst Stage 1. Affects all allies.\n<color=#00AEFF>Gains <word_group=10039>debuff immunity</word_group> to {description_value_01} debuff(s) for {description_value_03} sec.</color>\n■ Activates only when in the Victorious Battle Cry state. Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_02}% of the skill user's ATK continuously.</color>"
+        "en": "■ Activates when entering Burst Stage 1. Affects all allies.\n<color=#00AEFF>Grants <word_group=10039>debuff immunity</word_group> to {description_value_01} debuff(s) for {description_value_03} sec.</color>\n■ Activates only when in the Victorious Battle Cry state. Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_02}% of the skill user's ATK continuously.</color>"
       },
       "values": [
         ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
