@@ -14216,6 +14216,198 @@
       "effective": false,
       "minus": 5.820766091346741e-11,
       "plus": 0
+    },
+    {
+      "observation": "0729-08",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "1a68d4cfd3bb20e0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-09",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "8e3ec3691e1d0880",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-10",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "e279fa57fcb33a08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-11",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "6a948fa286cd0bcd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-12",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "45f4329eb43bbb81",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-13",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "31bc3e15c947e86a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-14",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "ec3f752374d199c2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-15",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "36e30bc359a633f2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-16",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "8fbfd0328e4952ef",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-17",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "1db8df2e09fd0acf",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-18",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "f4eaaafe6021e60b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0729-19",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "33379e29614cc5d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-08",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "f7b497f3ab096c0c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-09",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "097c9d65784188f4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-10",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "767fbdab270e13f4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-11",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "ca989a9b2564c3a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-12",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "5a3ab652e330ed9d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-13",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "2b0f3c499cc15006",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-14",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "d9215b9f0ce7fed6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-15",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "57a7c4df3eb67c46",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-16",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "161fae1608a156db",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-17",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "16b6ae020fd90ae3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-18",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "9ef3ccda8f2f3617",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0730-19",
+      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
+      "key": "411d93b5d82ddd02",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
