@@ -23,6 +23,19 @@ export type ComputeRequest = { seq: number; input: TeamInput };
 export type ComputeResponse = { seq: number; computed: Computed };
 
 /**
+ * Worker が 1 件の要求に答える（worker.ts）。結果を送れなかったとき（構造化複製できない結果など）は、その要求にエラーの答えを返す。
+ * Worker の error にしないので、画面が error を受けるのは Worker が本当に止まったとき（読み込みの失敗など）だけになる（LatestComputeQueue.stop）
+ */
+export function respond(request: ComputeRequest, post: (response: ComputeResponse) => void): void {
+  const computed = compute(request.input);
+  try {
+    post({ seq: request.seq, computed });
+  } catch (e) {
+    post({ seq: request.seq, computed: { ok: false, error: `計算の結果を送れませんでした: ${errorMessage(e)}` } });
+  }
+}
+
+/**
  * Worker に出す要求の順番を決める。Worker に渡すのは同時に 1 件だけで、計算中に来た入力は最後の 1 件だけを残す。
  * 計算中に新しい入力が来ていたら、届いた結果は古いので捨て、残した入力を出す（連打の間の値は計算しない）
  */
