@@ -20,7 +20,7 @@
 | 見たいこと | 結論 | 撮り方の案の所 | 行 |
 | --- | --- | --- | --- |
 | 命中率▲が弾丸命中率に効く式（SMG の中遠 C・AR の遠・SG の中近・遠） | C-0519・C-0527 | V-0401「次に撮るもの」の 1〜2、V-0493「結果」（SG の中近・遠） | 2-1（保留） |
-| フルバーストで配られる持続の命中率▲の N が宝物版の値か | C-0641 | [design-c0641-n-version.md](design-c0641-n-version.md)（2026-10-28 に起案。承認待ち） | 2-33 |
+| フルバーストで配られる持続の命中率▲の N が宝物版の値か | C-0641 | V-0539「次に撮るもの」（設計は [design-c0641-n-version.md](design-c0641-n-version.md)。承認待ち） | 2-33 |
 | 持続の命中率▲が 2 つ以上重なったときに和で効くか | C-0486 | V-0354「次の候補」（単一の▲の C-0640 は確定） | — |
 
 ### 1.3 案だけ（撮るとは決めていない）
@@ -50,7 +50,7 @@
 | --- | --- | --- | --- | --- |
 | 2-1 | 命中率▲が弾丸命中率に効く式（SMG の遠のほか） | SMG の遠と中遠 B・C は H2（C-0192・C-0519）。モデルは AR・SMG・MG のどの帯にも同じ式を当てる（[design-hit-rate-up-bullet-h2.md](design-hit-rate-up-bullet-h2.md)）。SG は近だけ H2 で（C-0631）、中近・遠は H2 ほど上がらない（C-0527。仮説・未反映）。ほかの帯・武器種は手元の録画では見分けられない（V-0401「条件」）。最小構成の案は V-0401「次に撮るもの」 | 保留（2026-10-08 のオーナー判断） | 判断 |
 | 2-4 | バーストの着弾の遅れ（ほかのキャラ） | まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」（キャラごとの結論の一覧）。付き始めはキャラごとに違う（C-0540）。付き始めはモデルを直さない（案 C。チャージの途中の速度▲だけ入れた。[design-charge-carryover.md](design-charge-carryover.md)） | 読み直しで測れる候補は済んだ（ノワールは測り方が無いので後回し）。アリスの再現は V-0407（録画 0407。C-0523 を繰り返し、確定（2026-10-10 のオーナーの判断））。チャージの途中の速度▲はモデルに入れた（2026-10-10 のオーナーの判断。plan/design-charge-carryover.md の案 1-A。付き始めは案 C のまま） | 撮影・読み直し |
-| 2-33 | 既存の確定の点検で仮説にした結論 | 残りは C-0641（N は宝物版の値か）と C-0642（撮り足さない。オーナーの決定） | C-0641 は、撮り方を設計し直した（[design-c0641-n-version.md](design-c0641-n-version.md)。2026-10-28 に起案。オーナーの承認待ち） | 判断・撮影 |
+| 2-33 | 既存の確定の点検で仮説にした結論 | 残りは C-0641（N は宝物版の値か）と C-0642（撮り足さない。オーナーの決定） | C-0641 は、撮り方を設計し直した（[design-c0641-n-version.md](design-c0641-n-version.md)・V-0539。オーナーの承認待ち） | 判断・撮影 |
 
 ## 3. 許容外の残差（結論には結び付けない注記つき）
 
@@ -111,3 +111,17 @@
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - エーテルの S2 の防御力▼（2026-10-07）→ 一部完了（設計書なし）。残りは 1.3 節
 - 点検で仮説にした結論の再現（2-33。2026-10-11）→ 一部完了。残りは 2-33・1.2 節
+- ミハラ：ボンディングチェーン（162）の S1（2026-10-07）→ 一部完了（設計書なし。定義は未）。残りは 1.3 節
+- 点検で仮説にした結論の再現（2-33。2026-10-11）→ 一部完了。C-0641 の撮り方は起案（2026-10-29。承認待ち）: [design-c0641-n-version.md](design-c0641-n-version.md)。残りは 2-33・1.2 節
+
+### 8.2 閉じた課題（2026-10-26 から）
+
+- ミハラ（161）の追加ダメージの撃つ側のバフの時点（2026-10-27 起票）→ 完了（2026-10-28。ヒットの時点のまま。モデルは変えない）: [design-mihara-burst-hits.md](design-mihara-burst-hits.md) 8 節
+- 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 完了（2026-10-27。フォルクヴァンの回復の定義は 6 節）: [design-skill-unrecorded.md](design-skill-unrecorded.md)
+- 録画の番号を 4 桁にそろえる（2026-10-25 起票）→ 完了（2026-10-25）: [design-recording-id-4digit.md](design-recording-id-4digit.md)
+- クラウド環境（2026-10-23 起票）→ 実装済み（2026-10-23）: [design-cloud-environment.md](design-cloud-environment.md)・手引き [cloud-guide.md](cloud-guide.md)
+- 効果を持ち主ごとの一覧で持つ組み直し（2026-10-15 起票）→ 段 A〜E 実装済み（2026-10-15）: [design-holder-effects.md](design-holder-effects.md)
+- calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 完了（2026-10-27。全グループを射撃の列から数える形に一本化。[design-unify-sim-calc.md](design-unify-sim-calc.md)）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節
+- ヘルムの残り（2026-09-28 起票）→ 閉じた（2026-10-28 のオーナーの判断。残りの行は閉じていた）: [design-helm.md](design-helm.md)・[design-heal-vocabulary.md](design-heal-vocabulary.md)。行（2-12）は閉じた
+- 検証の自動化（2026-10-01 起票）→ 閉じた（2026-10-28 のオーナーの判断。残りの行は閉じていた）: [design-records-automation.md](design-records-automation.md) 8 節。行（4-1）は閉じた
+- 射撃場の SMG の中近の弾丸命中率（2026-10-05 起票）→ 閉じた（2026-10-28 のオーナーの判断。残りの行は閉じていた）: [design-far-landings.md](design-far-landings.md)。行（2-25）は閉じた
