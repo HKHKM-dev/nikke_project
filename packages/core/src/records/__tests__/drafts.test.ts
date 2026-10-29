@@ -243,6 +243,76 @@ describe('validateClaims: 確定の等級', () => {
       'C-9999: judgment.reason が空',
     ]);
   });
+
+  it('録画の中の反復（runs）の形を見る（plan/design-grade-runs.md 2 節）', () => {
+    const withRuns = (decidedOn: ClaimFile['decidedOn'], runs: unknown) =>
+      ({ ...claim('確定', '反復実測'), basis: '`0101-01`・`0102-01`', decidedOn, runs }) as ClaimFile;
+    const obs = new Set(['0101-01', '0102-01']);
+    const decided: ClaimFile['decidedOn'] = [{ recording: '0101', role: '値を合わせた' }];
+    expect(
+      validateClaims(
+        toClaims([
+          withRuns(decided, [
+            { recording: '0101', decided: '1 回目', reproduced: '2 回目', observations: ['0101-01'] },
+          ]),
+        ]),
+        obs,
+      ),
+    ).toEqual([]);
+    expect(
+      validateClaims(
+        toClaims([
+          withRuns(decided, [
+            { recording: '0101', reproduced: '', observations: ['0102-01'] },
+            { recording: '0102', decided: '1 回目', reproduced: '2 回目', observations: ['0102-09'] },
+          ]),
+        ]),
+        obs,
+      ),
+    ).toEqual([
+      'C-9999: runs[0].decided が要る（録画 0101 は decidedOn にある。決めた回を書く）',
+      'C-9999: runs[0].reproduced が空',
+      'C-9999: runs[0].observations の 0102-01 は録画 0101 の観測値でない',
+      'C-9999: runs[1].decided は書かない（録画 0102 は decidedOn に無い。決めた回があるなら decidedOn に書く）',
+      'C-9999: runs[1].observations の 0102-09 はこの結論の根拠に無い',
+    ]);
+    expect(
+      validateClaims(
+        toClaims([withRuns(undefined, [{ recording: '0101', reproduced: '2 回目', observations: ['0101-01'] }])]),
+        obs,
+      ),
+    ).toEqual(['C-9999: runs を書くなら decidedOn も書く（無ければ []）']);
+  });
+
+  it('合わせ込みの定数なし（parameterFree）の形を見る（同 3 節）', () => {
+    const other = { ...claim('確定', '厳密一致'), id: 'C-0001' };
+    const draft = { ...claim('仮説', '単独実測'), id: 'C-0002' };
+    const withFree = (parameterFree: string, decidedOn: ClaimFile['decidedOn']): ClaimFile => ({
+      ...claim('確定', '反復実測'),
+      parameterFree,
+      ...(decidedOn === undefined ? {} : { decidedOn }),
+    });
+    expect(
+      validateClaims(
+        toClaims([other, withFree('説明文の 10% と C-0001', [{ recording: '0101', role: '仮説の出どころ' }])]),
+        new Set(),
+      ),
+    ).toEqual([]);
+    expect(
+      validateClaims(
+        toClaims([other, draft, withFree('C-0002・C-0003・C-9999', [{ recording: '0101', role: '値を合わせた' }])]),
+        new Set(),
+      ),
+    ).toEqual([
+      'C-9999: parameterFree は、値を合わせた録画（decidedOn の 0101）のある結論には書けない',
+      'C-9999: parameterFree の C-0002 が確定でない（仮説）',
+      'C-9999: parameterFree の C-0003 が無い',
+      'C-9999: parameterFree に自分（C-9999）を書いている',
+    ]);
+    expect(validateClaims(toClaims([withFree('説明文', undefined)]), new Set())).toEqual([
+      'C-9999: parameterFree を書くなら decidedOn も書く（無ければ []）',
+    ]);
+  });
 });
 
 describe('最小構成の警告', () => {

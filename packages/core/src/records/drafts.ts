@@ -7,6 +7,7 @@ import {
   type ClaimSubject,
   type ClaimTopic,
   type DecidedOn,
+  type RunRepeat,
 } from './claims.ts';
 import { ID_DIGITS } from './ids.ts';
 import { summarizeWarnings, type PairWarning } from './relevance.ts';
@@ -128,6 +129,10 @@ export type ClaimDraftInput = {
   prediction: PredictionComparison | undefined;
   /** 仮説・値・読み方を決めるのに使った録画（records:new の --decided-on。plan/design-investigation-review.md 1.3 節）。無ければ undefined */
   decidedOn?: DecidedOn[];
+  /** 1 本の録画の中の反復（records:new の --run。plan/design-grade-runs.md 2 節）。無ければ undefined */
+  runs?: RunRepeat[];
+  /** 合わせ込みの定数を持たない仮説の、式と定数の出どころ（records:new の --parameter-free。同 3 節）。無ければ undefined */
+  parameterFree?: string;
 };
 
 export type ClaimDraft = { file: ClaimFile; reasons: string[] };
@@ -180,6 +185,8 @@ export function claimDraft(input: ClaimDraftInput): ClaimDraft {
     updated: input.today,
     ...(input.subject === undefined ? {} : { subject: input.subject }),
     ...(input.decidedOn === undefined ? {} : { decidedOn: input.decidedOn }),
+    ...(input.runs === undefined ? {} : { runs: input.runs }),
+    ...(input.parameterFree === undefined ? {} : { parameterFree: input.parameterFree }),
   };
   return { file, reasons };
 }
