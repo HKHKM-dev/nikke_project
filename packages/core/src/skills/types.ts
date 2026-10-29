@@ -66,7 +66,13 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 通常攻撃・倍率ダメージ・持続ダメージに共通。Σ は 0〜1 に収める）
  * アニス：スター S2・バースト編（plan/design-anis-star-s2-burst.md 2.1・2.3 節）:
  * projectileExplosionDamage = 発射体爆発ダメージ▲。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
- * damage.ts の PROJECTILE_EXPLOSION_BUCKET）。
+ * damage.ts の PROJECTILE_EXPLOSION_BUCKET）。2 段目の段 12 の PR 2 で、projectileExplosion の印の付いた damage（粘着榴弾の起爆）にも掛ける。
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3・2.4 節）:
+ * projectileStickDamage = 発射体付着ダメージ▲。projectileStick の印の付いた damage（粘着榴弾の付着）にだけ掛ける（式の中の置き場所は
+ * damage.ts の PROJECTILE_STICK_BUCKET）。
+ * elementAdvantage = 「〈コード〉コードの敵に有利コードのダメージ適用」。値を持たないフラグ（ref を書かない。passive の self だけ）。
+ * 効いていれば、敵のコードが自分のコードの有利でなくても有利として扱う（element.ts の elementMultiplier。有利コードの攻撃ダメージ▲の
+ * 掛かり方も同じ）。どのコードの敵かは効果の enemyElement で書く。
  * fixedChargeTime = 「チャージ時間 N 秒に固定」。射撃に効く。値は秒（100 で割らない）。timed の self だけ
  * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.1 節）:
  * trueDamage = 防御力無視ダメージ▲。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃と、trueDamage の使用武器の変更）
@@ -99,6 +105,8 @@ export type BuffStat =
   | 'damageTaken'
   | 'enemyDefenseDown'
   | 'projectileExplosionDamage'
+  | 'projectileStickDamage'
+  | 'elementAdvantage'
   | 'fixedChargeTime'
   | 'trueDamage'
   | 'trueDamageConversion'
@@ -131,6 +139,10 @@ export const BUFF_STATS = [
   'damageTaken',
   'enemyDefenseDown',
   'projectileExplosionDamage',
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3 節）: 発射体付着ダメージ▲（粘着榴弾の付着のヒットにだけ掛ける）
+  'projectileStickDamage',
+  // 同 2.4 節: 「〈コード〉コードの敵に有利コードのダメージ適用」（フラグ。passive の self だけ。enemyElement でそのコードの敵に限る）
+  'elementAdvantage',
   'fixedChargeTime',
   'trueDamage',
   'trueDamageConversion',
@@ -197,8 +209,22 @@ export function isHitStateStat(stat: BuffStat | 'weapon'): boolean {
   return (HIT_STATE_STATS as readonly string[]).includes(stat);
 }
 
-/** Stage 11 モダニア: 値を持たないフラグの stat（ref を書かない）。防御力無視ダメージ編で trueDamageConversion を足した */
-export const FLAG_STATS = ['infiniteAmmo', 'trueDamageConversion'] as const satisfies readonly BuffStat[];
+/**
+ * Stage 11 モダニア: 値を持たないフラグの stat（ref を書かない）。防御力無視ダメージ編で trueDamageConversion を、2 段目の段 12 の PR 2 で
+ * elementAdvantage（passive だけ）を足した
+ */
+export const FLAG_STATS = [
+  'infiniteAmmo',
+  'trueDamageConversion',
+  'elementAdvantage',
+] as const satisfies readonly BuffStat[];
+
+/** 2 段目の段 12 の PR 2: passive に書けるフラグの stat（ref を書かない。値 1） */
+export const PASSIVE_FLAG_STATS = ['elementAdvantage'] as const satisfies readonly BuffStat[];
+
+export function isPassiveFlagStat(stat: BuffStat): boolean {
+  return (PASSIVE_FLAG_STATS as readonly string[]).includes(stat);
+}
 
 export function isFlagStat(stat: BuffStat): boolean {
   return (FLAG_STATS as readonly string[]).includes(stat);
@@ -358,8 +384,11 @@ export type PassiveEffect = FixedTargetFields & {
   stat: BuffStat;
   /** 省略時 'ratio'。'casterAttack' は stat が 'attack' のときだけ許す */
   scaling?: BuffScaling;
-  /** description_value_NN の NN（1 始まり）。値は % 表記（"20.1"）。100 で割るのは resolvePassives の責務 */
-  ref: number;
+  /**
+   * description_value_NN の NN（1 始まり）。値は % 表記（"20.1"）。100 で割るのは resolvePassives の責務。
+   * 2 段目の段 12 の PR 2: passive のフラグの stat（PASSIVE_FLAG_STATS）だけは書かない（値 1）
+   */
+  ref?: number;
   /** Stage 11 モダニア: 「▼」。値の符号を反転する（scaling が ratio / flat のときだけ） */
   decrease?: true;
   /** アニス：スター編: バースト段階の構成の条件 */
@@ -749,7 +778,11 @@ export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd', 'reloadEnd'] as con
  */
 export type EffectCondition = {
   selfBuffed?: BuffStat;
-  inFullBurst?: true;
+  /**
+   * true = 発火の瞬間がフルバーストタイムの中なら。2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: false = フルバーストタイムの
+   * 外なら（counterChange だけ。粘着榴弾の付着している数は、フルバーストの外で付いたものだけを数える）
+   */
+  inFullBurst?: boolean;
   enemyState?: NamedStateId;
   selfState?: SelfStateCondition;
   usedBurst?: true;
@@ -934,6 +967,27 @@ export type DamageEffect = {
    * description_value_NN（ref）。縮めた周期が 0 秒以下になる値は解決で落とす
    */
   periodShorten?: { state: NamedStateId; slot: SkillSlot; ref: number };
+  /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: perCount の数だけのヒットを、倍率を掛けずに 1 つずつ、発火のフレームから
+   * この間隔（秒・即値。録画で読む）で出す。k 個目（0 始まり）は発火の floor(k × 間隔 ÷ 0.017) フレーム後（端数を持ち越す。ラピ：
+   * レッドフードの粘着榴弾の起爆は 0.2 秒ごと。C-9905）。perCount の { counter } のときだけ書ける
+   */
+  perCountIntervalSeconds?: number;
+  /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: ヒットがコアに当たりうるか。当たる割合は的の表の coreHitRate.autoAttacks の
+   * `<resourceId>:<スロット>` の行（無ければ 0）で、当たったヒットは倍率グループに (コア倍率 − 1) を足す（autoAttack の core と同じ。
+   * 粘着榴弾の付着）
+   */
+  core?: true;
+  /**
+   * 同: ヒットに、撃った枠の通常攻撃と同じ距離ボーナス（着地点の条件。条件が手入力の枠はその値）を倍率グループに足す（粘着榴弾の付着と
+   * 爆発）
+   */
+  distance?: true;
+  /** 同 2.3 節: ヒットが発射体の爆発か。発射体爆発ダメージ▲を掛ける（autoAttack の projectileExplosion と同じ。粘着榴弾の起爆） */
+  projectileExplosion?: true;
+  /** 同: ヒットが発射体の付着か。発射体付着ダメージ▲（projectileStickDamage）を掛ける（damage.ts の stickHitMultiplier。粘着榴弾の付着） */
+  projectileStick?: true;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
@@ -1155,15 +1209,22 @@ export type CycleEffect = {
 /**
  * Stage 11 紅蓮BS: 「スキル N の（フルチャージ）攻撃回数の条件が … に変更」。維持時間のあいだ、自分のスロット slot の cycle を
  * every 回ごとに進める（通算カウンタの every の倍数。1 なら毎回）。カウンタ自体は変えない（録画 0047 の 5 回の FB で確認）。
- * 対象は常に自分。件は持ち主ごとの一覧の履歴（cycleEvery の件）に置き、区間には入れない
+ * 対象は常に自分。件は持ち主ごとの一覧の履歴（cycleEvery の件）に置き、区間には入れない。
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: slot に cycle が無ければ、そのスロットの射撃の回数のきっかけ（{ count }）
+ * のすべてを、窓の間 every 回ごと（通算の回数の every の倍数。cycle と同じ数え方）に発火させる（「スキル2粘着榴弾発動回数条件 N 回▼」。
+ * C-9906）。decreaseRef は「N 回▼」の N の description_value_NN で、窓の中の間隔はきっかけの回数 − N（every とちょうど片方）
  */
 export type CycleEveryEffect = {
   kind: 'cycleEvery';
   trigger: EffectTrigger;
-  /** 対象の cycle を持つ自分のスロット */
+  /** 対象の cycle（か射撃の回数のきっかけ）を持つ自分のスロット */
   slot: SkillSlot;
-  /** 変更後の段の間隔（即値。説明文の「1 回 / 2 回 / 3 回」は 1） */
-  every: number;
+  /** 変更後の段の間隔（即値。説明文の「1 回 / 2 回 / 3 回」は 1）。decreaseRef とちょうど片方 */
+  every?: number;
+  /** 2 段目の段 12 の PR 2: 「回数条件 N 回▼」の N の description_value_NN（対象のきっかけの回数から引く） */
+  decreaseRef?: number;
+  /** 2 段目の段 12 の PR 2: バースト段階の構成の条件（ラピ：レッドフードの「バーストⅢで使用した時」） */
+  burstStepMix?: BurstStepMixCondition;
   /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
   durationRef?: number;
   durationSeconds?: number;
@@ -1949,7 +2010,8 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   }
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
-  if (isFlagStat(stat) || stat === 'fixedChargeTime') fail(`${path}.stat`, `${stat} is only allowed in timed`);
+  if ((isFlagStat(stat) && !isPassiveFlagStat(stat)) || stat === 'fixedChargeTime')
+    fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
   validateFlatChargeTime(stat, scaling, v, path);
@@ -1957,7 +2019,15 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, v, path);
-  const effect: PassiveEffect = { kind: 'passive', target, stat, ref: parseRef(v.ref, `${path}.ref`) };
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 有利コードのダメージ適用は値を持たないフラグで、自分だけ
+  if (isPassiveFlagStat(stat)) {
+    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value`);
+    if (target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+    if (v.while !== undefined) fail(`${path}.while`, `${stat} cannot have while`);
+  }
+  const effect: PassiveEffect = { kind: 'passive', target, stat };
+  if (!isPassiveFlagStat(stat)) effect.ref = parseRef(v.ref, `${path}.ref`);
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetClass !== undefined) effect.targetClass = targetClass;
@@ -2373,8 +2443,8 @@ const CONDITION_KEYS_OF = {
   removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
   // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 常時の効果は、自分の HP の割合の条件だけ（編成の段で決まる）
   passive: ['selfHp'],
-  // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減は、自分の状態とカウンタの値
-  counterChange: ['selfState', 'selfCounter'],
+  // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減は、自分の状態とカウンタの値。段 12 の PR 2: フルバーストの中か外か
+  counterChange: ['selfState', 'selfCounter', 'inFullBurst'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
@@ -2391,7 +2461,13 @@ function validateUsedBurst(condition: EffectCondition, trigger: EffectTrigger, p
  * 発火の条件（timed・付与・damage で 1 つの型）。キーは allowed のうち 1 つ以上で、どれも満たすときだけ発火する（AND）。
  * 効果の種類ごとの規則（1 パス目で窓を追う stat には inFullBurst を書けない など）は呼ぶ側で見る
  */
-function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[]): EffectCondition {
+function parseCondition(
+  c: Json,
+  path: string,
+  allowed: readonly ConditionKey[],
+  /** 2 段目の段 12 の PR 2: inFullBurst に false（フルバーストタイムの外なら）を書けるか（counterChange だけ） */
+  outsideFullBurst = false,
+): EffectCondition {
   if (!isRecord(c)) fail(path, `expected an object with ${allowed.join(' / ')}`);
   for (const key of Object.keys(c)) {
     if (!(allowed as readonly string[]).includes(key))
@@ -2406,8 +2482,9 @@ function parseCondition(c: Json, path: string, allowed: readonly ConditionKey[])
     condition.selfBuffed = selfBuffed;
   }
   if (c.inFullBurst !== undefined) {
-    if (c.inFullBurst !== true) fail(`${path}.inFullBurst`, 'expected true');
-    condition.inFullBurst = true;
+    if (c.inFullBurst !== true && !(outsideFullBurst && c.inFullBurst === false))
+      fail(`${path}.inFullBurst`, outsideFullBurst ? 'expected a boolean' : 'expected true');
+    condition.inFullBurst = c.inFullBurst;
   }
   if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
   if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);
@@ -2948,18 +3025,35 @@ function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
 /** Stage 11 紅蓮BS: 循環の間隔の変更。slot に cycle がちょうど 1 つあるかは定義全体で見る（validateCycles） */
 function parseCycleEveryEffect(v: Record<string, Json>, path: string): CycleEveryEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'slot', 'every', 'durationRef', 'durationSeconds', 'assumes', 'claims'].includes(key)) {
+    if (
+      ![
+        'kind',
+        'trigger',
+        'slot',
+        'every',
+        'decreaseRef',
+        'burstStepMix',
+        'durationRef',
+        'durationSeconds',
+        'assumes',
+        'claims',
+      ].includes(key)
+    ) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
   // 自分の射撃で自分の循環を速めると判定が循環するので、射撃の回数トリガーは書けない（plan/design-stage11-scarlet-bs.md 2.2 節）
   if (isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'cycleEvery cannot be triggered by a shot count');
+  if ((v.every === undefined) === (v.decreaseRef === undefined))
+    fail(path, 'expected exactly one of every and decreaseRef');
   const effect: CycleEveryEffect = {
     kind: 'cycleEvery',
     trigger,
     slot: oneOf(SKILL_SLOTS, v.slot, `${path}.slot`),
-    every: parsePositiveInt(v.every, `${path}.every`),
+    ...(v.every !== undefined
+      ? { every: parsePositiveInt(v.every, `${path}.every`) }
+      : { decreaseRef: parseRef(v.decreaseRef, `${path}.decreaseRef`) }),
     ...parseDuration(v, path),
   };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
@@ -3020,10 +3114,12 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   }
   if (v.perCount !== undefined) {
     // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 状態のスタック数。使い手（シンデレラ）のいるバースト使用時だけ。
-    // 段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 値 × カウンタの値（ラプラス：アルティメットヒーロー）
+    // 段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 値 × カウンタの値（ラプラス：アルティメットヒーロー）。
+    // 段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: フルバーストの始まり（ラピ：レッドフードの粘着榴弾の起爆）も
     const per = v.perCount;
     if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
-    if (trigger !== 'burstUse') fail(`${path}.perCount`, 'perCount needs the trigger "burstUse"');
+    if (trigger !== 'burstUse' && trigger !== 'fullBurstStart')
+      fail(`${path}.perCount`, 'perCount needs the trigger "burstUse" or "fullBurstStart"');
     for (const key of Object.keys(per))
       if (key !== 'state' && key !== 'counter') fail(`${path}.perCount.${key}`, 'unknown field');
     if ((per.state === undefined) === (per.counter === undefined))
@@ -3066,6 +3162,25 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (v.coreHit !== true) fail(`${path}.coreHit`, `expected true, got ${JSON.stringify(v.coreHit)}`);
     effect.coreHit = true;
   }
+  if (v.perCountIntervalSeconds !== undefined) {
+    const key = 'perCountIntervalSeconds';
+    if (effect.perCount === undefined || !('counter' in effect.perCount))
+      fail(`${path}.${key}`, `${key} needs perCount { counter }`);
+    if (effect.delayFrames !== undefined || effect.perBurstHit !== undefined)
+      fail(`${path}.${key}`, `${key} cannot be used with delayFrames or perBurstHit`);
+    const seconds = v.perCountIntervalSeconds;
+    if (typeof seconds !== 'number' || !(seconds > 0))
+      fail(`${path}.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
+    effect.perCountIntervalSeconds = seconds;
+  }
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2・2.3 節）: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
+  for (const key of ['core', 'distance', 'projectileExplosion', 'projectileStick'] as const) {
+    if (v[key] === undefined) continue;
+    if (v[key] !== true) fail(`${path}.${key}`, `expected true, got ${JSON.stringify(v[key])}`);
+    effect[key] = true;
+  }
+  if (effect.projectileExplosion === true && effect.projectileStick === true)
+    fail(path, 'projectileExplosion and projectileStick cannot be used together');
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -3437,17 +3552,18 @@ function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect {
       effect.kind !== 'cooldownReduction' &&
       effect.kind !== 'heal' &&
       effect.kind !== 'burstReentry' &&
-      // 2 段目の段 12（plan/design-skill-stage12.md 2.1 節）: damage は burstStepMix だけ
-      !(effect.kind === 'damage' && key === 'burstStepMix')
+      // 2 段目の段 12（plan/design-skill-stage12.md 2.1 節）: damage は burstStepMix だけ。PR 2（2.4 節）: cycleEvery も
+      !((effect.kind === 'damage' || effect.kind === 'cycleEvery') && key === 'burstStepMix')
     ) {
       fail(
         `${path}.${key}`,
-        `only allowed in passive, timed, state, cooldownReduction, heal and burstReentry (burstStepMix also in damage), found in ${effect.kind}`,
+        `only allowed in passive, timed, state, cooldownReduction, heal and burstReentry (burstStepMix also in damage and cycleEvery), found in ${effect.kind}`,
       );
     }
     if (key === 'burstStepMix') effect.burstStepMix = parseBurstStepMixCondition(v[key], `${path}.${key}`);
-    // damage の squad は上で弾いてある
-    else if (effect.kind !== 'damage') effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
+    // damage・cycleEvery の squad は上で弾いてある
+    else if (effect.kind !== 'damage' && effect.kind !== 'cycleEvery')
+      effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
   }
   // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage。名前の付いた状態の語彙編: 付与も）
   for (const key of ['withCharacter', 'enemyElement'] as const) {
@@ -3581,7 +3697,7 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
     effect.decrease = true;
   }
   if (v.condition !== undefined)
-    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange);
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -3731,11 +3847,50 @@ function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: s
       if (e.kind !== 'cycleEvery') return;
       const path = `${root}.${slot}.effects[${i}]`;
       const target = entries[e.slot]?.effects.find((x): x is CycleEffect => x.kind === 'cycle');
-      if (target === undefined) fail(`${path}.slot`, `${e.slot} has no cycle`);
+      if (target === undefined) {
+        validateCountTriggersEvery(entries[e.slot]?.effects ?? [], e, path);
+        return;
+      }
+      if (e.every === undefined) fail(`${path}.decreaseRef`, 'decreaseRef is only allowed for a slot without a cycle');
       if (target.trigger.every !== undefined && e.every >= target.trigger.every) {
         fail(`${path}.every`, `must be less than the cycle's every (${target.trigger.every})`);
       }
     });
+  }
+}
+
+/**
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: cycle の無いスロットへの cycleEvery（射撃の回数のきっかけの間隔の変更）。
+ * 窓の間隔は解決時に「きっかけの回数 − decreaseRef の値」にするので、対象のスロットの射撃の回数のきっかけは 1 つ以上あり、どれも同じ
+ * 回数の種類と同じ N（everyRef か every）で、窓を見るのは damage（gaugeHits なし）・shotPause・counterChange だけ（ほかの効果の数え方は
+ * 窓を見ないので、書けば窓の中で食い違う）
+ */
+function validateCountTriggersEvery(effects: readonly SkillEffect[], e: CycleEveryEffect, path: string): void {
+  if (e.decreaseRef === undefined)
+    fail(`${path}.every`, `${e.slot} has no cycle (use decreaseRef for its shot counts)`);
+  const counted = effects.filter(
+    (x) => 'trigger' in x && isShotCountTrigger(x.trigger as EffectTrigger),
+  ) as (SkillEffect & { trigger: ShotCountTrigger })[];
+  if (counted.length === 0) fail(`${path}.slot`, `${e.slot} has neither a cycle nor a shot count trigger`);
+  const first = counted[0]!.trigger;
+  for (const x of counted) {
+    if (x.kind !== 'damage' && x.kind !== 'shotPause' && x.kind !== 'counterChange')
+      fail(`${path}.slot`, `a shot count trigger of ${x.kind} in ${e.slot} does not follow cycleEvery`);
+    if (x.kind === 'damage' && x.gaugeHits !== undefined)
+      fail(`${path}.slot`, `a damage with gaugeHits in ${e.slot} does not follow cycleEvery`);
+    const t = x.trigger;
+    if (
+      t.count !== first.count ||
+      t.every !== first.every ||
+      t.everyRef !== first.everyRef ||
+      t.stacksRef !== undefined ||
+      t.during !== undefined ||
+      t.firesDuring !== undefined ||
+      t.chance !== undefined ||
+      t.chanceRef !== undefined
+    ) {
+      fail(`${path}.slot`, `the shot count triggers in ${e.slot} must be the same plain { count, every(Ref) }`);
+    }
   }
 }
 

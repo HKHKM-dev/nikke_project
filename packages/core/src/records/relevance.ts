@@ -78,6 +78,9 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   damageTaken: 'damageValue',
   enemyDefenseDown: 'damageValue',
   projectileExplosionDamage: 'damageValue',
+  // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲（付着のヒットの値）と有利コードのダメージ適用（電撃コードの敵の 1 ヒットの値）
+  projectileStickDamage: 'damageValue',
+  elementAdvantage: 'damageValue',
   fixedChargeTime: 'firing',
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',

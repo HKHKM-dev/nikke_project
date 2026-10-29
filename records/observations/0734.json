@@ -1,0 +1,249 @@
+[
+  {
+    "id": "0734-01",
+    "recording": "0734",
+    "kind": "total",
+    "use": "record",
+    "value": 108416116,
+    "description": "ラピ：レッドフード の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11441。増分は 4888 個"
+    },
+    "source": "V-0537",
+    "readAt": "2026-10-29"
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-02",
+    "kind": "hit",
+    "use": "compare",
+    "value": 7389,
+    "unit": "ダメージ",
+    "description": "ラピ：レッドフード単騎（電撃の的）の通常攻撃 1 ヒット（胴体・会心でない・距離ボーナスなし）。灼熱の的の 6,717（`0116-06`）の 1.1 倍（S2 の電撃コードの敵への有利コード）。110 回（距離ボーナスのある胴体 9,605 も 61 回）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "hud.ts --mode series の全フレームの値の、前のフレームから 1f の増分を、モデルの格子（灼熱の的の値 × 有利の 1.1。胴体 7,389・コア 14,778・会心・距離ボーナス の組）に差 0 で当てた。最初の区間（f862〜1250）にも後の区間にも同じ値で出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-03",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14778,
+    "unit": "ダメージ",
+    "description": "同じ 1 ヒットのコア。2,678 回（コア + 会心 18,472 も 524 回）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "hud.ts --mode series の全フレームの値の、前のフレームから 1f の増分を、モデルの格子（灼熱の的の値 × 有利の 1.1。胴体 7,389・コア 14,778・会心・距離ボーナス の組）に差 0 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 0,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-04",
+    "kind": "hit",
+    "use": "compare",
+    "value": 586088,
+    "unit": "ダメージ",
+    "description": "S2 の粘着榴弾の付着の 1 ヒット（コア・会心でない・距離ボーナスなし・バーストの▲なし）。灼熱の的のコアの付着 532,807（`0116-07` の note）の 1.1 倍。単独で 4 回（f1817・4183・9187・10310）、同じフレームの通常攻撃のコアとの和 600,866 で 15 回",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "増分のうち 450,000 以上で、付着の値（コア 586,088 × 1・コア + 距離 1.15・コア + 会心 1.25・コア + 会心 + 距離 1.4）と通常攻撃の格子の 1 ヒット（か 0）の和に差 0 で分かれるものを付着とした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 3,
+        "n": 0,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-05",
+    "kind": "hit",
+    "use": "compare",
+    "value": 674001,
+    "unit": "ダメージ",
+    "description": "同じ付着のコア + 距離ボーナス（遠・中遠の区間）。単独で 2 回（f5516・7019）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "`0734-04` と同じ分け方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 3,
+        "frame": 4300,
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 732610,
+    "unit": "ダメージ",
+    "description": "同じ付着のコア + 会心。単独で 1 回（f7965）（コア + 会心 + 距離ボーナス 820,523 も単独で 1 回（f6638））",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "`0734-04` と同じ分け方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 3,
+        "n": 0,
+        "crit": true,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-07",
+    "kind": "count",
+    "use": "record",
+    "value": [42, 42],
+    "unit": "回",
+    "description": "付着のうちコアの値のもの・付着の全部（[コア, 全部]）。胴体の付着（293,044 = 586,088 ÷ 2。距離ボーナスで 380,957）と通常攻撃の和に分かれる増分は無い。内訳はコア 25・コア + 距離ボーナス 10・コア + 会心 5・コア + 会心 + 距離ボーナス 2（同じフレームの通常攻撃 2 ヒットとの和 615,644・765,860 も入れた）（距離ボーナスのある付着は遠・中遠の区間だけ）。フルバーストにならないので、爆発（`0116-27` などの値の系列）に当たる増分も無い",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "`0734-04` と同じ分け方。的のジャンプを跨いで読めない増分（前の読めたフレームから 18〜21f）は数えていない（f1644・3076・5824・6545・7953・8265・9181・10612 の 8 つ）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0734-08",
+    "kind": "gauge",
+    "use": "record",
+    "value": [3.29, 3.52, 3.47, 3.07, 3.28, 3.71],
+    "unit": "px",
+    "description": "バーストゲージのバーの、付着のフレームの跳ね（前のフレームからの px。ゲージが満タンになる前の付着の全部）。通常攻撃 1 発は約 0.17px で、付着 1 回は通常攻撃の約 20 発分。モデルの付着はゲージを溜めない（S2 の notes[0]。溜まる量の出どころが分からない）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "f900〜3200 を読んだ。前のフレームから 1.5px 以上増えたフレームが付着のフレームと一致した（f1076・1197・1575・1696・1817・2199）。満タンは f2281。最初の跳ねはバーが本当のゲージの 12.6% 付近より下（0px 付近）で読みが小さい（C-0084）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  }
+]

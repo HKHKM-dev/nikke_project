@@ -82,6 +82,8 @@ describe('computeBurstHit', () => {
       fullBurst: 0,
       core: 0,
       coreDamage: 0,
+      distance: 0,
+      distanceBonus: 0,
       total: 1.2,
       sustained: 0,
     });

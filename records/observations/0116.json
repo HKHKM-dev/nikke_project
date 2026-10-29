@@ -240,6 +240,7 @@
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
+        "skill": "burst",
         "slot": 1,
         "n": 0,
         "crit": false
@@ -276,6 +277,7 @@
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
+        "skill": "burst",
         "slot": 1,
         "n": 1,
         "crit": false
@@ -312,6 +314,7 @@
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
+        "skill": "burst",
         "slot": 1,
         "n": 2,
         "crit": true
@@ -483,6 +486,440 @@
     "scope": {
       "slot": 1,
       "source": "normal"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-22",
+    "kind": "count",
+    "use": "record",
+    "value": [2, 7, 8, 6, 5],
+    "unit": "個",
+    "description": "フルバーストの始まりに起爆した粘着榴弾の数（1〜5 回目のフルバースト）。どの回も、その前のフルバーストの終わりから始まりまでに付着した数（`0116-23`）と同じ（K1）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "フルバーストの入りの止まりの後の最初の増分（`0116-02`）と、その 6・18・30・42・53・65・77・89f 後の大きな増分（爆発の値（`0116-26`・`0116-27` など）とほかの 1 ヒットの和）を、止まりの後の最初の増分から続く起爆の列として数えた。列の次の位置に爆発の値の増分が無くなった所で列は終わる。1 回目は f1623（止まりの後の最初の増分に合わさる 1 つ目）・1629、2 回目は f4103・4109・4121・4133・4145・4156・4168、3 回目は f6698・6704・6716・6728・6740・6751・6763・6775、4 回目は f8591・8597・8609・8621・8633・8644、5 回目は f10486・10492・10504・10516・10528"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-23",
+    "kind": "count",
+    "use": "record",
+    "value": [2, 7, 8, 6, 5],
+    "unit": "個",
+    "description": "フルバーストの外で付着した粘着榴弾の数（戦闘の始まりか前のフルバーストの終わりから、1〜5 回目のフルバーストの始まりまで）。どの付着もコアの値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "増分のうち、フルバーストの窓（`0116-11` の 00.00 の 27f 前から 589f）の外で 450,000 以上の増分を、デルタの SR（82f ごと）の刻みに乗るもの（前後のデルタの発から 82f 前後）を除いて、ラピ：レッドフードの付着とした。どれもコアの付着の値（532,807・距離ボーナス 612,728・会心 666,009・リターのバーストの攻撃力▲の中は 961,645 など）とほかの 1 ヒットの和で、胴体の付着（266,403 など）に当たる増分は無い（デルタの胴体の値と近いものは、デルタの刻みで分けた）。1 回目の前は f1202・1323、2 回目の前は f2471・2592・3158・3279・3400・3780・3901、3 回目の前は f4924・5046・5379・5760・5880・6002・6379・6500、4 回目の前は f7669・7791・7912・8291・8412・8535、5 回目の前は f9432・9555・9881・10259・10379"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-24",
+    "kind": "timing",
+    "use": "compare",
+    "value": [33, 45, 57, 69, 80],
+    "unit": "f",
+    "description": "3 回目のフルバーストの起爆の 2〜6 個目の、III のタイマーの 00.00（`0116-11`）からの動画のフレーム数（間にフルバーストの入りの止まりを挟む）。7・8 個目は 92・104f。2・4・5 回目も、ある所までは同じ並び（33・45・57・69・80・92）。0.2 秒 × k をゲームのフレーム（0.017 秒）に切り捨てた 11・23・35・47・58・70・82 に止まりの 22f を足した値で、一律の 12f ごと（34・46・58・70・82）とは 5 個目（80f）で分かれる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "`0116-22` の起爆の列の、2 個目からのフレーム。1 個目は止まりの後の最初の増分に合わさるので時刻が読めない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 6,
+        "fullBurst": 2,
+        "skip": 1,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-25",
+    "kind": "hit",
+    "use": "compare",
+    "value": 835031,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの 2 個目の起爆の 1 ヒット（会心でない・距離ボーナスなし）。S1 の攻撃力▲とリターのバーストの攻撃力▲（使用 1 回目の段）の中。最終攻撃力 × 88.11% ×（1 + 発射体爆発ダメージ▲ 100.6%）× フルバースト補正。コアの補正は乗らない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "f1629 の単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 6,
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-26",
+    "kind": "hit",
+    "use": "compare",
+    "value": 881173,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの 5・6 個目の起爆の 1 ヒット（会心でない・距離ボーナスなし）。リターのバーストの攻撃力▲が使用 3 回目以上の段の時",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "f4145・4156 の単独の増分（2〜4 個目は 909,487・925,217 = この値 + ほかの 1 ヒット）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 6,
+        "fullBurst": 1,
+        "frame": 0,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-27",
+    "kind": "hit",
+    "use": "compare",
+    "value": 623840,
+    "unit": "ダメージ",
+    "description": "5 回目のフルバーストの 4 個目の起爆の 1 ヒット（会心でない・距離ボーナスなし）。リターのバーストの▲が切れて S1 の攻撃力▲だけの時。フルバーストの中で撃った粘着榴弾の爆発（モデルの skill2 の effects[4]。同じ式）と比べる",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "f10516 の単独の増分。2・3 個目は 864,552・656,606（会心 831,786・この値 + ラピ：レッドフードのコア 32,766）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 4,
+        "fullBurst": 0,
+        "frame": 250,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-28",
+    "kind": "hit",
+    "use": "compare",
+    "value": 748608,
+    "unit": "ダメージ",
+    "description": "4 回目のフルバースト（III は I-DOLL・サン）の 6 個目の起爆の 1 ヒット（距離ボーナスあり・会心でない）。S1 の攻撃力▲だけ。1〜5 個目は 761,680（この値 + ほかの 1 ヒット 13,072）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "f8644 の単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 4,
+        "fullBurst": 2,
+        "frame": 300,
+        "n": 0,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-29",
+    "kind": "hit",
+    "use": "compare",
+    "value": 831786,
+    "unit": "ダメージ",
+    "description": "5 回目のフルバーストの 5 個目の起爆の 1 ヒット（会心・距離ボーナスなし）。S1 の攻撃力▲だけ",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "f10528 の単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 4,
+        "fullBurst": 0,
+        "frame": 250,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-30",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3482638,
+    "unit": "ダメージ",
+    "description": "フルバーストの中で撃った粘着榴弾の付着の 1 ヒット（コア・会心でない・距離ボーナスなし）。S1 の攻撃力▲とバースト III の発射体付着ダメージ▲の中（リターの▲の後）。最終攻撃力 × 88.11% ×（1 + 150.72% + 421.2%）× (コア 1 + 1 + フルバースト補正 0.5)。付着と同じフレームの爆発 623,840（`0116-27`）とラピ：レッドフードのコアの 1 ヒット 32,766（`0116-20`）との和 4,139,244 を引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "2 回目のフルバーストの f4363・4424・4546・4607 と 5 回目の f10842・10903・11026 の増分が、どれも 4,139,244"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 3,
+        "fullBurst": 0,
+        "frame": 250,
+        "n": 0,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3900555,
+    "unit": "ダメージ",
+    "description": "同じ付着のコア + 距離ボーナス（3 回目のフルバースト）。同じフレームの爆発（距離ボーナス 748,608）とコア + 距離ボーナスの 1 ヒット 36,698 との和 4,685,861 を引いた値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "f7085・7146 の増分が 4,685,861"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "effect": 3,
+        "fullBurst": 2,
+        "frame": 300,
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-32",
+    "kind": "count",
+    "use": "compare",
+    "value": 60,
+    "unit": "発",
+    "description": "ラピ：レッドフードが III を使ったフルバーストの窓の中で、続けて撃った粘着榴弾の間の通常攻撃の数（1 フレーム 1 発で撃っている区間の付着から付着まで 61f = 60 発 + 射撃の止まり 1f）。窓の外の 120 発（C-0717）が 60 発になる（回数条件 60 回▼）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "フルバーストの窓の中で、付着と爆発の和の大きな増分（`0116-30`・`0116-31`）のフレームの間。1 回目は f1726・1788・1849・1909・1970・2031・2093（62・61・60・61・61・62f）、2 回目は f4302・4363・4424・4485・4546・4607（61f × 5）、3 回目は f6902・6963・7024・7085・7146・7207（61f × 5）、5 回目は f10760・10842・10903・10964・11026（82・61・61・62f。82f の間は射撃の止まりが続く）。間のラピ：レッドフードの発は毎フレーム（1 回目の f1659〜1800 はコアの 43,858 などが毎フレーム）。60f・62f の間は、付着までの遅れの区間による違い（C-0717 の 2〜8f）とみる。4 回目（III は I-DOLL・サン）は窓の中の付着が f8935・9056 の 121f で、60 発にならない（`0116-34`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "steadyPauseShots",
+      "args": {
+        "slot": 1,
+        "fullBurst": true
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-33",
+    "kind": "timing",
+    "use": "record",
+    "value": [1726, 4302],
+    "unit": "f",
+    "description": "1・2 回目のフルバーストの窓の中の最初の付着。1 回目は、戦闘の始めから 300 発目（マガジンの最後の弾丸。60 の倍数）で窓の前にリロードに入り、窓の中で撃ち始めてから 60 発目の発の後。2 回目は、窓の前の最後の付着（f3901。120 の倍数の発）の後 86 発でリロードに入り、窓の中で撃ち始めてから 34 発目ほど（通算で前の付着から 120 発目 = 60 の倍数）の発の後。窓の始まりで数え直す読み（2 回目も撃ち始めから 60 発目）と、前の榴弾から 60 発以上なら次の発で撃つ読み（2 回目は撃ち始めの最初の発）は 2 回目と合わない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "撃ち始めは、リロードの後のラピ：レッドフードの最初の発（1 回目は f1632 ごろ、2 回目は f4205 ごろ。スピンアップの間は数 f おき）。2 回目の窓の前は f3901〜3987 に毎フレーム発があり、f3988 からリロード"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "recording": "0116",
+    "source": "V-0537",
+    "readAt": "2026-10-29",
+    "id": "0116-34",
+    "kind": "hit",
+    "use": "record",
+    "value": [2253830, 2240758],
+    "unit": "ダメージ",
+    "description": "4 回目のフルバースト（III は I-DOLL・サン。ラピ：レッドフードはバーストを使っていない）の窓の中の付着と爆発の和の増分（f8935・9056。121f の間）。付着は S2 の常時の▲だけ（最終攻撃力 × 88.11% ×（1 + 150.72%）× (2 + 0.5 + 距離ボーナス 0.3) = 1,455,449）と距離ボーナスの爆発 748,608 と 1 ヒット（36,698・13,072）の和で、バースト III の付着▲・回数条件▼は付かない",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode series",
+      "note": "2,240,758 = 1,455,449 + 748,608 + 36,698（差 3）、2,253,830 = 1,455,449 + 748,608 + 49,773（= 36,698 + 13,072 + 3）。差 3 は丸めの範囲（読み方は `0116-30` と同じ）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   }
 ]

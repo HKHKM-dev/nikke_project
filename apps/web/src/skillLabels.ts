@@ -66,6 +66,8 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   damageTaken: '敵の受けるダメージ',
   enemyDefenseDown: '敵の防御力',
   projectileExplosionDamage: '発射体爆発ダメージ',
+  projectileStickDamage: '発射体付着ダメージ',
+  elementAdvantage: '有利コードのダメージ適用',
   sustainedDamage: '持続ダメージ',
   burstGaugeSpeed: 'バーストゲージのチャージ速度',
   burstCooldown: 'バーストスキルのクールタイム',
@@ -282,6 +284,8 @@ function formatGrantCondition(condition: EffectCondition | undefined, stacksOf?:
   const parts: string[] = [];
   if (condition.selfBuffed !== undefined) parts.push(`自分が${BUFF_STAT_LABEL[condition.selfBuffed]}増加状態なら`);
   if (condition.inFullBurst === true) parts.push('フルバーストタイムなら');
+  // 2 段目の段 12 の PR 2: カウンタの増減の「フルバーストタイムでなければ」（粘着榴弾の付着している数）
+  if (condition.inFullBurst === false) parts.push('フルバーストタイムでなければ');
   if (condition.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ', stacksOf));
   if (condition.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
   if (condition.selfCounter !== undefined) parts.push(selfCounterText(condition.selfCounter));

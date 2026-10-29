@@ -77,6 +77,25 @@ export function explosionHitMultiplier(buffs: BuffTotals): number {
 }
 
 /**
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3 節）: 発射体付着ダメージ▲（projectileStickDamage）の式の中の置き場所。
+ * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体付着ダメージ)、separate = 別の乗数 (1 + Σ発射体付着ダメージ)。
+ * S2 の常時の▲とバースト III の▲は 1 つの和 (1 + Σ) で掛かる（C-9902）。攻撃ダメージ▲と同じ枠か別の乗数かは見分けていない（読んだ録画に
+ * 攻撃ダメージ▲の乗った付着が無い）ので、発射体爆発ダメージ▲（C-0205）にそろえて attackDamage にした（仮定）
+ */
+export const PROJECTILE_STICK_BUCKET: 'attackDamage' | 'separate' = 'attackDamage';
+
+/**
+ * 発射体の付着のヒット 1 つに掛ける、発射体付着ダメージ▲の乗数（damage の projectileStick。粘着榴弾の付着）。形は explosionHitMultiplier と同じ
+ */
+export function stickHitMultiplier(buffs: BuffTotals): number {
+  const up = buffs.projectileStickDamage;
+  if (up === 0) return 1;
+  if (PROJECTILE_STICK_BUCKET === 'separate') return 1 + up;
+  const attackDamage = applyAttackDamageBuffs(buffs);
+  return (attackDamage + up) / attackDamage;
+}
+
+/**
  * 防御力無視ダメージ編: 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
  * separate = 別の乗数 (1 + Σ防御力無視ダメージ)、attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)。
  * **attackDamage**: 炸裂弾では発射体爆発ダメージ▲と 1 つの和 (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ) で掛かり（C-0376）、
@@ -121,6 +140,7 @@ export function skillElementMultiplier(character: CharacterData, enemy: EnemyInp
     character.element,
     enemy.element,
     ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE ? buffs.elementDamage : 0,
+    buffs.elementAdvantage > 0,
   );
 }
 
@@ -420,7 +440,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const normalBaseHit = trueDamage ? Math.max(1, attack) : baseHit;
   const trueMultiplier = trueDamageMultiplier(shot, buffs);
 
-  const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage);
+  const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage, buffs.elementAdvantage > 0);
   const hitsPerShot = hitsPerShotOf(condition);
   const normal =
     hitRate *

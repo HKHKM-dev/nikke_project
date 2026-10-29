@@ -568,8 +568,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   });
   // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
   // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
+  // 間隔の倍数に届いた発で止める（C-9906）。窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
   const shotPauseTrackers: {
     slotIndex: number;
+    skill: SkillSlot;
     count: ShotCountKind;
     every: number;
     frames: number;
@@ -731,6 +734,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
   };
 
+  /**
+   * V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める。2 段目の段 12 の PR 2: 回数の間隔の変更の窓を
+   * このフレームに付いたものも見るので、手順 3 の後に呼ぶ（止まりは次のフレームからなので、数える位置で射撃は変わらない）
+   */
+  const countShotPauses = (f: number): void => {
+    for (const t of shotPauseTrackers) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      const every = lists.shotCountEveryAt(t.slotIndex, t.skill, f) ?? t.every;
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), every);
+      t.n = counted.count;
+      if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
+    }
+  };
+
   let nextActivation = 0;
   let nextWindowStart = 0;
   let nextWindowEnd = 0;
@@ -879,14 +897,6 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
       }
     }
-    // V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める
-    for (const t of shotPauseTrackers) {
-      const shot = shotEvents[t.slotIndex];
-      if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
-      t.n = counted.count;
-      if (counted.fired) pauseLeft[t.slotIndex] = shot.lastShot ? t.framesOnLastShot : t.frames;
-    }
     // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
     for (const t of dotGaugeTrackers) {
@@ -978,6 +988,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）
     if (!trackEvents && !trackDotBurstUse) {
       countCycles(f);
+      countShotPauses(f);
       continue;
     }
 
@@ -1168,6 +1179,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
     countCycles(f);
+    countShotPauses(f);
   }
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;

@@ -107,8 +107,11 @@ describe('自動攻撃の core（plan/design-anis-star-core-path.md 3.1 節）',
 
 describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
   it('has the Shooting Star row of C-0466 in the data', () => {
-    expect(profile.coreHitRate.autoAttacks).toEqual({
-      '17:burst': { near: 0.9467, midNear: 0.8442, far: 0.5667, midFar: 0.7266 },
+    expect(profile.coreHitRate.autoAttacks?.['17:burst']).toEqual({
+      near: 0.9467,
+      midNear: 0.8442,
+      far: 0.5667,
+      midFar: 0.7266,
     });
   });
 

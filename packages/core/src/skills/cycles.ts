@@ -13,13 +13,14 @@ import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData, LocalizedText, SkillRaw } from '../types.ts';
 import type { ResolvedDamageEffect } from './burstDamage.ts';
 import {
+  isResolvedShotCount,
   resolveTrigger,
   skillValue,
   type ResolvedShotCountTrigger,
   type ResolvedTrigger,
   type SkillLevels,
 } from './resolve.ts';
-import { SKILL_SLOTS, type CycleEffect, type SkillDefinition, type SkillSlot } from './types.ts';
+import { SKILL_SLOTS, type CycleEffect, type EffectTrigger, type SkillDefinition, type SkillSlot } from './types.ts';
 
 /** 解決済みの循環。steps は段ごとの倍率ダメージ（ResolvedDamageEffect.cycle に段の番号が入る） */
 export type ResolvedCycle = {
@@ -38,7 +39,12 @@ export type ResolvedCycleEvery = {
   effectIndex: number;
   /** 対象の cycle を持つ自分のスロット */
   targetSkill: SkillSlot;
-  /** 窓の中の段の間隔 */
+  /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 窓が効く先。cycle = そのスロットの段の循環、shotCounts = cycle の無い
+   * スロットの射撃の回数のきっかけ（damage・shotPause・counterChange。skills/triggers.ts の everyAt）
+   */
+  target: 'cycle' | 'shotCounts';
+  /** 窓の中の段の間隔（shotCounts なら、窓の中のきっかけの回数） */
   every: number;
   trigger: ResolvedTrigger;
   /** gameSecondsToFrames(維持秒数)。0 なら効果なし */
@@ -115,11 +121,24 @@ export function resolveCycleEvery(
     entry.effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'cycleEvery') return;
       const target = cycles.find((c) => c.source.skill === effect.slot);
-      if (target === undefined) return;
-      if (effect.every >= target.trigger.every) {
-        throw new RangeError(
-          `skill ${skill.id}: cycleEvery ${effect.every} must be less than the cycle's every (${target.trigger.every})`,
-        );
+      let every: number;
+      if (target !== undefined) {
+        every = effect.every!;
+        if (every >= target.trigger.every) {
+          throw new RangeError(
+            `skill ${skill.id}: cycleEvery ${every} must be less than the cycle's every (${target.trigger.every})`,
+          );
+        }
+      } else {
+        // 2 段目の段 12 の PR 2: cycle の無いスロットは、射撃の回数のきっかけの N（どれも同じ。skills/types.ts の validateCountTriggersEvery）
+        // から decreaseRef の値を引く。対象のスロットが unsupported なら効果が無いので出さない
+        if (effect.decreaseRef === undefined) return;
+        const counted = shotCountTriggerOf(def, character, levels, effect.slot);
+        if (counted === null) return;
+        every = counted.every - Math.round(skillValue(skill, effect.decreaseRef, levels[slot]));
+        if (every < 1 || every >= counted.every) {
+          throw new RangeError(`skill ${skill.id}: cycleEvery makes the shot count ${every} (from ${counted.every})`);
+        }
       }
       const seconds =
         effect.durationRef === undefined
@@ -130,7 +149,8 @@ export function resolveCycleEvery(
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,
         targetSkill: effect.slot,
-        every: effect.every,
+        target: target === undefined ? 'shotCounts' : 'cycle',
+        every,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         durationFrames: gameSecondsToFrames(seconds),
       };
@@ -139,6 +159,22 @@ export function resolveCycleEvery(
     });
   }
   return resolved;
+}
+
+/** 2 段目の段 12 の PR 2: スロットの最初の射撃の回数のきっかけ（Lv の数値に解いたもの）。無ければ null */
+function shotCountTriggerOf(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+  slot: SkillSlot,
+): ResolvedShotCountTrigger | null {
+  for (const effect of def.skills[slot].effects) {
+    if (!('trigger' in effect)) continue;
+    if (typeof effect.trigger !== 'object' || effect.trigger === null || !('count' in effect.trigger)) continue;
+    const trigger = resolveTrigger(effect.trigger as EffectTrigger, character.skills[slot], levels[slot]);
+    if (isResolvedShotCount(trigger)) return trigger;
+  }
+  return null;
 }
 
 /** 循環が数える射撃の列（trigger の count。フルチャージはチャージ武器だけ） */

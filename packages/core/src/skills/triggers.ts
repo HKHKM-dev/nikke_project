@@ -158,13 +158,34 @@ const STAGE_OF: Record<'burstStage1Enter' | 'burstStage2Enter' | 'burstStage3Ent
 export type TriggerTracker = (ev: FrameEvents) => boolean;
 
 /**
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 射撃の回数のきっかけの、フレームごとの間隔（N）。回数の間隔の変更
+ * （cycleEvery の shotCounts）の窓の中ならその間隔、外なら undefined（きっかけの N のまま）。通算の回数は変えない
+ */
+export type ShotCountEveryAt = (frame: number) => number | undefined;
+
+/** 2 段目の段 12 の PR 2: 間隔の変更の窓（[start, end)・窓の中の間隔）の列から ShotCountEveryAt を作る。重なった窓は小さいほうの間隔 */
+export function everyAtOf(windows: readonly { start: number; end: number; every: number }[]): ShotCountEveryAt | undefined {
+  if (windows.length === 0) return undefined;
+  return (frame) => {
+    let every: number | undefined;
+    for (const w of windows) {
+      if (w.start <= frame && frame < w.end) every = every === undefined ? w.every : Math.min(every, w.every);
+    }
+    return every;
+  };
+}
+
+/**
  * 1 つのトリガー（ある枠の 1 つの効果）の発火を追う。回数トリガーの数は閉包の中に持つ。
- * scheduleModel は「バースト 1 段階突入時」の意味だけに使う（固定サイクルはフルバースト開始、動的サイクルはゲージ満タン）
+ * scheduleModel は「バースト 1 段階突入時」の意味だけに使う（固定サイクルはフルバースト開始、動的サイクルはゲージ満タン）。
+ * everyAt は 2 段目の段 12 の PR 2: 射撃の回数のきっかけの間隔の変更（窓の中は通算の回数がその間隔の倍数に届いた発で発火する。
+ * 段の循環の cycleEvery と同じ数え方。C-9906）
  */
 export function createTriggerTracker(
   trigger: ResolvedTrigger,
   slotIndex: number,
   scheduleModel: BurstScheduleModel | null,
+  everyAt?: ShotCountEveryAt,
 ): TriggerTracker {
   let count = 0;
   const t = trigger;
@@ -186,7 +207,7 @@ export function createTriggerTracker(
       if (!shot) return false;
       // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts）
       if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
-      const next = advanceShotCount(count, shotCountWeight(t.count, shot), t.every);
+      const next = advanceShotCount(count, shotCountWeight(t.count, shot), everyAt?.(ev.frame) ?? t.every);
       count = next.count;
       // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 窓の外の発も数え、窓の外で届いた回は発火せずに過ぎる
       if (t.firesDuring === 'fullBurst' && !inFullBurst) return false;
@@ -364,8 +385,9 @@ export function trackTriggerFires(
   slotIndex: number,
   schedule: BurstSchedule | null,
   events: readonly FrameEvents[],
+  everyAt?: ShotCountEveryAt,
 ): TriggerFire[] {
-  const fires = createTriggerTracker(trigger, slotIndex, schedule?.model ?? null);
+  const fires = createTriggerTracker(trigger, slotIndex, schedule?.model ?? null, everyAt);
   const fired: TriggerFire[] = [];
   for (const ev of events) if (fires(ev)) fired.push({ frame: ev.frame, context: fireContextOf(trigger, ev) });
   return fired;

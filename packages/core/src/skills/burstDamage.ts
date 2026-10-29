@@ -6,7 +6,14 @@
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 0021 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 // 持続ダメージ▲編: 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
-import { defenceAfterDown, explosionHitMultiplier, FULL_BURST_BOOST, skillElementMultiplier } from '../damage.ts';
+import {
+  defenceAfterDown,
+  DISTANCE_BONUS,
+  explosionHitMultiplier,
+  FULL_BURST_BOOST,
+  skillElementMultiplier,
+  stickHitMultiplier,
+} from '../damage.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
@@ -73,12 +80,19 @@ export type ResolvedSkillDamage = {
   projectileExplosion?: true;
   /** 持続ダメージ▲編: 持続ダメージ（dot。autoAttack は除く）の tick。持続ダメージ▲（sustainedDamage）を掛ける */
   sustained?: true;
-  /** コアの経路編: コアに当たりうるヒット（自動攻撃の core）。plan/design-anis-star-core-path.md 3.1 節 */
+  /**
+   * コアの経路編: コアに当たりうるヒット（自動攻撃の core）。plan/design-anis-star-core-path.md 3.1 節。2 段目の段 12 の PR 2: damage の
+   * core（粘着榴弾の付着）も
+   */
   core?: true;
   /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージ（core と組み、コアに当たる割合を 1 にする） */
   coreHit?: true;
   /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
   sequential?: true;
+  /** 2 段目の段 12 の PR 2: 撃った枠の通常攻撃と同じ距離ボーナスを倍率グループに足すヒット（damage の distance。粘着榴弾の付着と爆発） */
+  distance?: true;
+  /** 2 段目の段 12 の PR 2: 発射体の付着のヒット（damage の projectileStick）。発射体付着ダメージ▲を掛ける */
+  projectileStick?: true;
   assumes?: LocalizedText;
 };
 
@@ -107,6 +121,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   periodShorten?: { state: NamedStateId; seconds: number };
   /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
   perCount?: { state: NamedStateId } | { counter: CounterId };
+  /** 2 段目の段 12 の PR 2: perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
+  perCountIntervalSeconds?: number;
   /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
@@ -220,6 +236,12 @@ export function resolveDamageEffects(
         r.core = true;
         r.coreHit = true;
       }
+      if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
+      // 2 段目の段 12 の PR 2: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
+      if (effect.core === true) r.core = true;
+      if (effect.distance === true) r.distance = true;
+      if (effect.projectileExplosion === true) r.projectileExplosion = true;
+      if (effect.projectileStick === true) r.projectileStick = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
     });
@@ -298,14 +320,19 @@ export function resolveShotPauses(
   def: SkillDefinition,
   character: CharacterData,
   levels: SkillLevels,
-): (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number })[] {
-  const out: (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number })[] = [];
+): (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number; skill: SkillSlot })[] {
+  const out: (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number; skill: SkillSlot })[] = [];
   for (const slot of SKILL_SLOTS) {
     for (const effect of def.skills[slot].effects) {
       if (effect.kind !== 'shotPause') continue;
       const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
       if (!isResolvedShotCount(trigger)) throw new RangeError('shotPause needs a shot count trigger');
-      out.push({ ...trigger, frames: effect.frames, framesOnLastShot: effect.framesOnLastShot ?? effect.frames });
+      out.push({
+        ...trigger,
+        frames: effect.frames,
+        framesOnLastShot: effect.framesOnLastShot ?? effect.frames,
+        skill: slot,
+      });
     }
   }
   return out;
@@ -476,6 +503,13 @@ export type BurstHitInput = {
   damageTakenMultiplier?: number;
   /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
   projectileExplosionMultiplier?: number;
+  /** 2 段目の段 12 の PR 2: 発射体付着ダメージ▲の乗数（damage.ts の stickHitMultiplier）。projectileStick の効果にだけ掛ける。省略 1 */
+  projectileStickMultiplier?: number;
+  /**
+   * 2 段目の段 12 の PR 2: distance の効果の距離ボーナス。rate は距離ボーナスの付く割合（撃った枠の通常攻撃と同じ着地点の条件）、bonus は
+   * 付いたときに倍率グループに足す値（DISTANCE_BONUS。距離ボーナスの範囲の無い武器は 0）。省略はなし
+   */
+  distance?: { rate: number; bonus: number };
   /** 持続ダメージ▲編: Σ sustainedDamage。sustained の効果にだけ、sustainedDamagePlacement の置き場所で掛ける。省略 0 */
   sustainedDamage?: number;
   /** 持続ダメージ▲編: 省略は SUSTAINED_DAMAGE_PLACEMENT */
@@ -498,7 +532,9 @@ export type BurstHitResult = {
    * core はコアの経路編: コアの期待値（割合 × coreDamage）、coreDamage はコアに当たったときに足す値（コア倍率 − 1）。どちらも core の
    * 効果があるときだけで、無ければ 0（core の効果と無い効果を 1 回の結果に混ぜる定義は無い）。
    * sustained は持続ダメージ▲編: 置き場所が boost のとき sustained の効果の倍率グループに足した Σ sustainedDamage（ほかは 0。
-   * total には入れない。持続ダメージの tick は効果 1 つずつ計算するので、1 回の結果に sustained の効果とほかの効果は混ざらない）
+   * total には入れない。持続ダメージの tick は効果 1 つずつ計算するので、1 回の結果に sustained の効果とほかの効果は混ざらない）。
+   * distance は 2 段目の段 12 の PR 2: 距離ボーナスの期待値（割合 × distanceBonus）、distanceBonus は付いたときに足す値。どちらも
+   * distance の効果があるときだけで、無ければ 0（core と同じく、distance の効果と無い効果を 1 回の結果に混ぜる定義は無い）
    */
   boost: {
     crit: number;
@@ -506,6 +542,8 @@ export type BurstHitResult = {
     fullBurst: number;
     core: number;
     coreDamage: number;
+    distance: number;
+    distanceBonus: number;
     total: number;
     sustained: number;
   };
@@ -533,6 +571,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const sequential = input.sequentialAttackDamageMultiplier ?? 1;
   const damageTaken = input.damageTakenMultiplier ?? 1;
   const explosion = input.projectileExplosionMultiplier ?? 1;
+  const stick = input.projectileStickMultiplier ?? 1;
   const baseHit = Math.max(1, input.attack - input.enemy.defence);
   const boostCrit = input.crit.rate * (input.crit.damage - 1);
   const boostFullBurst = fullBurstBonus ? FULL_BURST_BOOST : 0;
@@ -540,7 +579,13 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const anyCore = input.core !== undefined && input.effects.some((e) => e.core === true);
   const coreDamage = anyCore ? input.core!.damage : 0;
   const boostCore = anyCore ? input.core!.rate * input.core!.damage : 0;
-  const boostTotal = boostBase + boostCore;
+  // 2 段目の段 12 の PR 2: 距離ボーナスはコアと同じ倍率グループの加算（distance の効果だけ）
+  const anyDistance = input.distance !== undefined && input.effects.some((e) => e.distance === true);
+  const distanceBonus = anyDistance ? input.distance!.bonus : 0;
+  const boostDistance = anyDistance ? input.distance!.rate * input.distance!.bonus : 0;
+  const boostTotal = boostBase + boostCore + boostDistance;
+  const groupOf = (effect: ResolvedSkillDamage): number =>
+    boostBase + (effect.core === true ? boostCore : 0) + (effect.distance === true ? boostDistance : 0);
   const common = baseHit * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
   // 持続ダメージ▲は持続ダメージ（自動攻撃を除く）にだけ掛かり、コアは自動攻撃にだけ掛かるので、持続ダメージ▲の倍率グループはコアなし
   const placement = input.sustainedDamagePlacement ?? SUSTAINED_DAMAGE_PLACEMENT;
@@ -550,11 +595,12 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
     effect,
     expected:
       common *
-      (effect.core === true ? boostTotal : boostBase) *
+      groupOf(effect) *
       effect.multiplier *
       (effect.damageType === 'distributed' ? distributed : 1) *
       (effect.sequential === true ? sequential : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
+      (effect.projectileStick === true ? stick : 1) *
       (effect.sustained === true ? sustained : 1),
   }));
   let multiplier = 0;
@@ -572,6 +618,8 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       fullBurst: boostFullBurst,
       core: boostCore,
       coreDamage,
+      distance: boostDistance,
+      distanceBonus,
       total: boostTotal,
       sustained: hasSustained && placement === 'boost' ? (input.sustainedDamage ?? 0) : 0,
     },
@@ -605,14 +653,19 @@ export function sustainedMultiplier(
 /**
  * 1 回の結果を、会心の期待値を外して会心したか（crit）で組み直した 1 ヒットの値（観測値と比べる指標が使う）。
  * 持続ダメージ▲が倍率グループにある（boost.sustained > 0）ときは、それも倍率グループに入れて組み直す。
- * core はコアの経路編: コアに当たったヒットの値（plan/design-anis-star-core-path.md 3.1 節）
+ * core はコアの経路編: コアに当たったヒットの値（plan/design-anis-star-core-path.md 3.1 節）。
+ * distance は 2 段目の段 12 の PR 2: 距離ボーナスの付いたヒットの値（distance の効果。コアと同じく期待値を外して組み直す）
  */
-export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false): number {
+export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false, distance = false): number {
   const critTerm = crit ? hit.boost.critDamage - 1 : 0;
   // コアの経路編: total はコアの期待値を含むので、割ってから、コアに当たったとき（core）だけ coreDamage を足して組み直す
   const coreTerm = core ? hit.boost.coreDamage : 0;
+  const distanceTerm = distance ? hit.boost.distanceBonus : 0;
   const expectedGroup = hit.boost.total + hit.boost.sustained;
-  return (hit.perActivation / expectedGroup) * (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained + coreTerm);
+  return (
+    (hit.perActivation / expectedGroup) *
+    (1 + critTerm + hit.boost.fullBurst + hit.boost.sustained + coreTerm + distanceTerm)
+  );
 }
 
 /**
@@ -651,6 +704,8 @@ export function computeSkillHit(
   fullBurstBonus: boolean,
   sustainedDamagePlacement: SustainedDamagePlacement = SUSTAINED_DAMAGE_PLACEMENT,
   coreHitRate = 0,
+  /** 2 段目の段 12 の PR 2: distance の効果の距離ボーナスの付く割合（撃った枠の通常攻撃と同じ。省略 0） */
+  distanceRate = 0,
 ): SkillHitResult {
   return computeBurstHit({
     attack: trigger.attack,
@@ -665,8 +720,10 @@ export function computeSkillHit(
     sequentialAttackDamageMultiplier: 1 + buffs.sequentialAttackDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
+    projectileStickMultiplier: stickHitMultiplier(buffs),
     sustainedDamage: buffs.sustainedDamage,
     sustainedDamagePlacement,
+    distance: { rate: distanceRate, bonus: character.bonusRange === null ? 0 : DISTANCE_BONUS },
     // コアの経路編（plan/design-anis-star-core-path.md 3.1 節・11.3 節）: コアダメージ▲（buffs.coreDamage）は、通常攻撃と同じく
     // コアの項に足す（論点 4。アニス：スターのシューティングスター。C-0594）
     core: { rate: enemy.hasCore ? coreHitRate : 0, damage: character.shot.coreDamageRate - 1 + buffs.coreDamage },

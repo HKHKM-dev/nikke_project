@@ -431,6 +431,11 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
  */
 function steadyPauseShots(result: SimResult, ctx: MetricContext): number | number[] {
   const frames = slotOf(result.shots, ctx).frames;
+  // 2 段目の段 12 の PR 2（V-0537）: 省略できる引数 fullBurst が true なら、両端の止まりがどちらもフルバーストの窓の中の組だけ、false なら
+  // どちらも外の組だけを数える（バースト III の回数条件▼の窓はフルバーストの窓とほぼ重なる）
+  const windows = result.schedule?.fullBurstWindows ?? [];
+  const inWindow = (f: number): boolean => windows.some((w) => w.start <= f && f < w.end);
+  const side = ctx.args.fullBurst === undefined ? null : ctx.args.fullBurst === true;
   const shot = slotOf(ctx.input.slots, ctx).character.shot;
   // 撃ち始め（リロード・的のジャンプの後。前の発との間が 2f より長い発）から何発目で 1 フレーム 1 発に届くか
   let spun = 0;
@@ -453,7 +458,8 @@ function steadyPauseShots(result: SimResult, ctx: MetricContext): number | numbe
     if (last !== null) {
       let steady = true;
       for (let q = last + 1; q < k; q++) if (gap(q) !== 1) steady = false;
-      if (steady) counts.add(k - last);
+      const sideOk = side === null || (inWindow(frames[last]!) === side && inWindow(frames[k]!) === side);
+      if (steady && sideOk) counts.add(k - last);
     }
     last = k;
   }
@@ -1407,6 +1413,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
   skillHitFromBurstHit: { args: ['slot', 'skill', 'count'], sim: skillHitFromBurstHit },
+  // 2 段目の段 12 の PR 2（V-0537）: 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数
+  skillHitFramesFromFullBurst: {
+    args: ['slot', 'skill', 'effect', 'fullBurst', 'count'],
+    sim: skillHitFramesFromFullBurst,
+  },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
@@ -1582,13 +1593,27 @@ function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
- * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す
+ * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。
+ * 2 段目の段 12 の PR 2（V-0537）: 省略できる引数で数える発動を絞る。skill = スロット、effect = スロットの何番目の効果か（effects の番号）、
+ * frame（と fullBurst。frameArgOf）= そのフレーム以降の発動だけを数える。core・distance が true なら、コアに当たった・距離ボーナスの付いた
+ * ヒットの値（core・distance の効果のヒットだけ）
  */
 function skillHitDamage(result: SimResult, ctx: MetricContext): number {
-  const hits = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined);
+  const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
+  const hits = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot === undefined &&
+      (ctx.args.skill === undefined || h.effect.source.skill === ctx.args.skill) &&
+      (ctx.args.effect === undefined || h.effect.effectIndex === Number(ctx.args.effect)) &&
+      (from === null || h.frame >= from),
+  );
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
-  return oneHitValue(hit.hit, ctx.args.crit === true);
+  if (ctx.args.core === true && hit.effect.core !== true) throw new Error('コアに当たらない効果のヒットに core: true');
+  if (ctx.args.distance === true && hit.effect.distance !== true)
+    throw new Error('距離ボーナスの付かない効果のヒットに distance: true');
+  return oneHitValue(hit.hit, ctx.args.crit === true, ctx.args.core === true, ctx.args.distance === true);
 }
 
 /**
@@ -1613,6 +1638,30 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
       (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
     )
     .map((h) => videoFrameOf(result.schedule, h.frame));
+}
+
+/**
+ * 2 段目の段 12 の PR 2（V-0537）: 枠のスロット skill の効果 effect（effects の番号）の倍率ダメージのうち、fullBurst 回目（0 始まり）の
+ * フルバーストの窓の中のものの、窓の始まり（III のタイマーの 00.00）からの動画のフレーム数（入りの止まりを挟む）の列。省略できる引数
+ * skip の数だけ先頭を飛ばし、count 個を返す（録画では、入りの止まりの後の最初の増分に合わさるヒットは時刻が読めないので飛ばす）
+ */
+function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  const window = schedule?.fullBurstWindows[Number(ctx.args.fullBurst)];
+  if (schedule === null || window === undefined) throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
+  const start = videoFrameOf(schedule, window.start);
+  const hits = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.source.skill === ctx.args.skill &&
+      h.effect.effectIndex === Number(ctx.args.effect) &&
+      window.start <= h.frame &&
+      h.frame < window.end,
+  );
+  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
+  const count = Number(ctx.args.count);
+  if (hits.length < skip + count) throw new Error(`窓の中の発動が ${hits.length} 回しかない`);
+  return hits.slice(skip, skip + count).map((h) => videoFrameOf(schedule, h.frame) - start);
 }
 
 /**

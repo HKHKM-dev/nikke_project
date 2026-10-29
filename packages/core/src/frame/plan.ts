@@ -8,7 +8,7 @@
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
 import { burstDelaysFieldOf, burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { battleSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames, GAME_SECONDS_PER_FRAME } from '../time.ts';
 import { planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
@@ -61,6 +61,7 @@ import {
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, type NamedStateId } from '../skills/states.ts';
+import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isEnemyHeldStat,
   isStateStat,
@@ -99,6 +100,7 @@ import {
   hitRateSpansOf,
   planLandings,
   slotAutoAttackCoreRatesOf,
+  slotDistanceRatesOf,
   slotFlightsOf,
   slotWeaponChangeFirstHitsOf,
   type FlightFrameSpan,
@@ -223,6 +225,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     input.sustainedDamagePlacement,
     slotAutoAttackCoreRatesOf(slots, enemy, frames),
     input.attackRounding,
+    slotDistanceRatesOf(landing, slots, frames),
   );
   return {
     frames,
@@ -276,6 +279,11 @@ export function planSkillHits(
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
   /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略はいまのモデル */
   attackRounding?: AttackRounding,
+  /**
+   * 2 段目の段 12 の PR 2: 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（frame/landing.ts の slotDistanceRatesOf）。damage の distance の
+   * ヒットが読む。省略は距離ボーナスなし
+   */
+  distanceRates: readonly (FlightFrameSpan[] | null)[] = [],
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
   // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）
@@ -379,13 +387,16 @@ export function planSkillHits(
       // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
       // コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: core の自動攻撃は、ヒットのフレームの着地点の行の割合
-      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージは割合 1
+      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージは割合 1。2 段目の段 12 の PR 2: damage の core も
+      // 自動攻撃と同じ行
       const coreRate =
         effect.coreHit === true
           ? 1
           : effect.core === true
             ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame)
             : 0;
+      // 2 段目の段 12 の PR 2: distance のヒットは、ヒットのフレームの撃った枠の通常攻撃と同じ距離ボーナスの割合
+      const distanceRate = effect.distance === true ? flightFramesAt(distanceRates[slotIndex], frame) : 0;
       const hit = computeSkillHit(
         [scaled],
         slot.character,
@@ -395,9 +406,19 @@ export function planSkillHits(
         fullBurst,
         sustainedDamagePlacement,
         coreRate,
+        distanceRate,
       );
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
     };
+    // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 射撃の回数のきっかけの間隔の変更の件（cycleEvery の shotCounts。
+    // 持ち主はその枠）。スロットごとに、窓の中の間隔を渡す
+    const countWindows = itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
+      i.origin.kind === 'cycleEvery' && i.origin.effect.target === 'shotCounts'
+        ? [{ start: i.start, end: i.end, every: i.origin.effect.every, skill: i.origin.effect.targetSkill }]
+        : [],
+    );
+    const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined =>
+      everyAtOf(countWindows.filter((w) => w.skill === skill));
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
       // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
@@ -417,7 +438,15 @@ export function planSkillHits(
           ? shortenedTimerFrames(effect.trigger.everySeconds, shorten.seconds, frames, (f) =>
               selfStateHolds({ state: shorten.state, present: true }, f),
             )
-          : triggerFrames(effect.trigger, schedule, slotIndex, frames, shots);
+          : triggerFrames(
+              effect.trigger,
+              schedule,
+              slotIndex,
+              frames,
+              shots,
+              undefined,
+              everyAtFor(effect.source.skill),
+            );
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
         // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
@@ -431,6 +460,16 @@ export function planSkillHits(
               ? selfStackCount(per.state, frame)
               : counterAt(per.counter, frame);
         if (copied === 0) continue;
+        // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
+        // （粘着榴弾の起爆。k 個目は floor(k × 間隔 ÷ 0.017) フレーム後で端数を持ち越す。C-9905。それぞれのフレームのバフとフルバースト
+        // 補正。戦闘の終わりを越えるヒットは出さない）
+        if (effect.perCountIntervalSeconds !== undefined && copied !== undefined) {
+          for (let k = 0; k < copied; k++) {
+            const at = frame + Math.floor((k * effect.perCountIntervalSeconds) / GAME_SECONDS_PER_FRAME + 1e-9);
+            if (at < frames) push(at, effect, pre);
+          }
+          continue;
+        }
         if (effect.perBurstHit === true) {
           // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: 条件は発火のフレームで 1 回判定し（C-0566）、
           // その発動のバーストの倍率ダメージのヒットのそれぞれに、等分しない倍率で出す（C-0565）

@@ -61,6 +61,7 @@ import {
   type FrameEvents,
   type FullStackEvent,
   type HealRecord,
+  type ShotCountEveryAt,
   type TriggerTracker,
 } from './triggers.ts';
 import {
@@ -322,6 +323,11 @@ export type HolderLists = {
   openWeaponChange(holder: number, weaponId: string, end: number): boolean;
   /** 枠 slotIndex の、段の循環 targetSkill に効く間隔の変更の件のうち、フレーム frame に効いているものの間隔 */
   cycleEveryAt(slotIndex: number, targetSkill: string, frame: number): number[];
+  /**
+   * 2 段目の段 12 の PR 2: 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレーム frame の間隔（cycleEvery の shotCounts の窓の
+   * 中ならその間隔、外なら undefined）。窓の件はそのフレームに付いたものも見るので、手順 3 の後に呼ぶ
+   */
+  shotCountEveryAt(slotIndex: number, skill: SkillSlot, frame: number): number | undefined;
   /**
    * 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 枠 holder にフレーム frame に効いている、時間で変わるバーストゲージの
    * チャージ速度の和（timed・状態の中身。常時の値は含まない）。ゲージを足す手順 2 で呼べば f − 1 までに付いた件になる
@@ -680,10 +686,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return track;
   };
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
-  const firesOf = (trigger: ResolvedTrigger, slotIndex: number): TriggerTracker => {
+  const firesOf = (trigger: ResolvedTrigger, slotIndex: number, everyAt?: ShotCountEveryAt): TriggerTracker => {
     // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
-    if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel);
+    if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel, everyAt);
     const at = new Set(timerFrames(trigger.everySeconds, frames));
     return (ev) => at.has(ev.frame);
   };
@@ -832,6 +838,24 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  /**
+   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔
+   * （cycleEvery の shotCounts の窓の中ならその間隔。重なれば小さいほう）。窓の件はそのフレームに付いたものも見る
+   */
+  const shotCountEveryOf = (slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined => {
+    const own = cycleSources.filter(
+      (c) => c.slotIndex === slotIndex && c.effect.target === 'shotCounts' && c.effect.targetSkill === skill,
+    );
+    if (own.length === 0) return undefined;
+    return (frame) => {
+      let every: number | undefined;
+      for (const c of own) {
+        if (activeAt(c.track, frame).length > 0) every = every === undefined ? c.effect.every : Math.min(every, c.effect.every);
+      }
+      return every;
+    };
+  };
+
   // ---- 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ） ----
   const counterSources: CounterSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -843,7 +867,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         fires:
           isEndedTrigger(effect.trigger) || isCounterFullTrigger(effect.trigger)
             ? null
-            : firesOf(effect.trigger, sourceSlotIndex),
+            : firesOf(effect.trigger, sourceSlotIndex, shotCountEveryOf(sourceSlotIndex, effect.source.skill)),
       });
     }
   });
@@ -1479,6 +1503,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 同じフレームの付与も入れてよい）。selfCounter は前のフレームの終わりの値
    */
   const counterConditionHolds = (condition: EffectCondition, slotIndex: number, frame: number): boolean => {
+    // 2 段目の段 12 の PR 2: フルバーストの中か外か（そのフレームの窓。[start, end)）
+    if (condition.inFullBurst !== undefined) {
+      const inside = options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
+      if (inside !== condition.inFullBurst) return false;
+    }
     if (condition.selfState !== undefined) {
       const { state, present } = condition.selfState;
       const own = tracks.filter(
@@ -1779,8 +1808,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     cycleEveryAt(slotIndex, targetSkill, frame) {
       return cycleSources
-        .filter((c) => c.slotIndex === slotIndex && c.effect.targetSkill === targetSkill)
+        .filter((c) => c.slotIndex === slotIndex && c.effect.target === 'cycle' && c.effect.targetSkill === targetSkill)
         .flatMap((c) => activeAt(c.track, frame).map(() => c.effect.every));
+    },
+    shotCountEveryAt(slotIndex, skill, frame) {
+      return shotCountEveryOf(slotIndex, skill)?.(frame);
     },
     gaugeSpeedAt(holder, frame) {
       let sum = 0;

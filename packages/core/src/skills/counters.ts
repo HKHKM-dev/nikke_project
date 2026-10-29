@@ -23,6 +23,12 @@ export const COUNTERS = {
   overEnergy: { name: { ja: 'オーバーエネルギー', en: 'Over Energy' }, max: 100 },
   /** オーバーエネルギーの段階（同じ S2）。オーバーエネルギーが 100 になるたびに 1 上がる。上限 4（説明文の 1〜4 段階。V-0529） */
   overEnergyStage: { name: { ja: 'オーバーエネルギーの段階', en: 'Over Energy stage' }, max: 4 },
+  /**
+   * 粘着榴弾の付着している数（ラピ：レッドフードの S2。2 段目の段 12 の PR 2。plan/design-skill-stage12.md 2.2 節）。フルバーストの外で
+   * 撃った榴弾ごとに 1、フルバーストの始まりに起爆して 0（C-9905）。上限は説明文に無く、読んでいない（0116 では 8 まで溜まった。上限に
+   * 届かない大きさにした）
+   */
+  stickyGrenade: { name: { ja: '付着している粘着榴弾', en: 'Attached sticky grenades' }, max: 99 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

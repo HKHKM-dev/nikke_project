@@ -48,7 +48,14 @@ import {
 import type { RankSlot } from './ranking.ts';
 import { stackItems } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
-import { replayEvents, trackTriggerFires, type FrameEvents, type HealRecord, type TriggerFire } from './triggers.ts';
+import {
+  replayEvents,
+  trackTriggerFires,
+  type FrameEvents,
+  type HealRecord,
+  type ShotCountEveryAt,
+  type TriggerFire,
+} from './triggers.ts';
 import type { NamedStateId } from './states.ts';
 import { SKILL_SLOTS, isMaxHpStat, isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
 
@@ -188,6 +195,9 @@ const BUFF_FIELDS = [
   'enemyDefenseDown',
   // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
   'projectileExplosionDamage',
+  // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲と有利コードのダメージ適用
+  'projectileStickDamage',
+  'elementAdvantage',
   // 持続ダメージ▲編
   'sustainedDamage',
   'burstGaugeSpeed',
@@ -283,8 +293,10 @@ export function triggerFrames(
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
   heals: readonly HealRecord[] = NO_HEALS,
+  /** 2 段目の段 12 の PR 2: 射撃の回数のきっかけの間隔の変更（skills/triggers.ts の everyAtOf） */
+  everyAt?: ShotCountEveryAt,
 ): number[] {
-  return triggerFires(trigger, schedule, slotIndex, frames, shots, heals).map((f) => f.frame);
+  return triggerFires(trigger, schedule, slotIndex, frames, shots, heals, everyAt).map((f) => f.frame);
 }
 
 /** Stage 11: triggerFrames の文脈つき版（対象 burstUsers の判定に使う）。heals は healed の出来事（1 パス目の履歴の heals） */
@@ -295,6 +307,7 @@ export function triggerFires(
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
   heals: readonly HealRecord[] = NO_HEALS,
+  everyAt?: ShotCountEveryAt,
 ): TriggerFire[] {
   // ニヒリスター編: 時間の周期のトリガーは、出来事の列を使わずに戦闘開始から k × N 秒のフレームを並べる
   // 防御力無視ダメージ編: atStart なら戦闘開始時（フレーム 0）にも発火する
@@ -303,7 +316,7 @@ export function triggerFires(
     const all = 'atStart' in trigger && trigger.atStart === true && frames > 0 ? [0, ...timer] : timer;
     return all.map((frame) => ({ frame, context: null }));
   }
-  return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals));
+  return trackTriggerFires(trigger, slotIndex, schedule, eventsOf(schedule, shots, frames, heals), everyAt);
 }
 
 /**
