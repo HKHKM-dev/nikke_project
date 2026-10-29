@@ -14,6 +14,7 @@ import {
   type ClaimGrade,
 } from '../src/records/claims.ts';
 import { openStaleness, openVerificationIds, verificationExtraLines } from '../src/records/extras.ts';
+import { danglingMarks } from '../src/records/marks.ts';
 import { relevanceCounts, relevanceOf, renderMinimal } from '../src/records/relevance.ts';
 import {
   comparePredictions,
@@ -57,6 +58,7 @@ import {
   recordingMap,
   verificationPath,
 } from './records-data.ts';
+import { renumberMarksFromGit } from './records-marks.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -65,6 +67,9 @@ const data = loadRecordsData(
   file,
   predictions.flatMap((p) => predictionRids(p)),
 );
+// 印の notes の添字を、このブランチでの定義の変更に合わせて付け替える（plan/design-workflow-simplification-5.md 1 節の (a)）
+const renumbered = renumberMarksFromGit(data.characters);
+for (const line of renumbered.changes) console.log(`印を付け替えた: ${line}`);
 const observations = loadObservations();
 const claims = loadClaims();
 const verifications = loadVerifications();
@@ -79,6 +84,18 @@ const errors = [
   ...validateVerifications(verifications, { claims, recordingIds: new Set(recordings.keys()), observations }),
   ...unlistedConfirmedClaims(claims, verifications, observations),
   ...validateSkillClaims(skills, claims),
+  ...renumbered.problems,
+  // 行き先の無い印（同 (b)）
+  ...danglingMarks(claims, observations, {
+    recordings,
+    characters: data.characters,
+    skills: data.skills,
+    enemies: data.enemies,
+    claims,
+  }).map(
+    ({ claim, element }) =>
+      `${claim}: 印の要素 ${element} が根拠の観測値の録画の編成に無い（定義が変わった？ 印を今の要素に直すか外す）`,
+  ),
   ...misplacedPredictions(),
   ...validatePredictions(predictions, {
     verificationIds: new Set(verifications.map((v) => v.id)),

@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 5 回（2026-10-28 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-29 にオーナーが 2・3 を推奨どおりに承認し、実施した（6 節）。1 は後で検討し直す（判断待ち）。2026-10-29 に、最小構成の検査の手間を測って案 4・5 を足した（7 節。判断待ち）。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-29 にオーナーが 2・3 を推奨どおりに承認し、実施した（6 節）。1 は後で検討し直す（判断待ち）。2026-10-29 に、最小構成の検査の手間を測って案 4・5 を足した（7 節）。同日、オーナーが 1・4・5 を推奨どおりに承認し、実施した（6 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24）・[-2](design-workflow-simplification-2.md)（2026-10-25）・[-3](design-workflow-simplification-3.md)（2026-10-26）・[-4](design-workflow-simplification-4.md)（2026-10-27。どれも実施済み）。そこで扱ったものは繰り返さない。
 - 調べた範囲: 第 4 回の実施（#729）の後の 15 件のコミットが触るファイル、結論の JSON の `minimal`（最小構成の印）、段の設計書（[design-skill-stages.md](design-skill-stages.md)・[design-skill-stage11.md](design-skill-stage11.md)・[design-skill-stage12.md](design-skill-stage12.md)）の経過、PR の本文（スカッシュのコミットの本文）、Claude Code のメモリ。
 - 調べ方: origin/main（134be16）で、`relevanceOf` と `elementsOf`（`records/relevance.ts`）をそのまま呼ぶ使い捨てのスクリプトで、印ごとに「いまの警告を抑えているか」「要素がいまの録画の編成にあるか」を数えた（スクリプトはコミットしない）。
@@ -85,7 +85,7 @@
 
 - PR 1: 1 の (a)〜(c)・(e) の道具とテスト、(d) の掃除。
 - PR 2: 2 の書き方の 2 行と、`records:close` の本文の骨組み。
-- 2026-10-29: 2 を先に実施した（6 節）。1 は判断待ち。
+- 2026-10-29: 2 を先に実施した（6 節）。1・4・5 は同日に 1 つの PR で実施した。
 
 ## 5. メモリの直し（第 3 回の 4 の入れ漏れ）
 
@@ -95,10 +95,14 @@
 
 ## 6. 判断と実施
 
-**判断（2026-10-29）**: 2・3 は推奨どおりに進める。1 は後から検討し直す（判断待ちのまま）。
+**判断（2026-10-29）**: 2・3 は推奨どおりに進める。1 は後から検討し直す。同日の 2 度目の判断で、1・4・5 も推奨どおりに進める（1 の掃除は行き先の無い印だけ）。
 
 - 2: 案のとおり。[skills-guide.md](skills-guide.md) 1.4 節に、段の中の PR の経過は段の設計書だけに 1 行、段の一覧の経過は段の出来事だけ、「読んで分かったこと」は結論を ID で指す、の 1 項目を足した。[design-skill-stages.md](design-skill-stages.md)「経過」の冒頭にも同じ決まりを 1 行置いた（前の行は直さない）。[verification-guide.md](verification-guide.md) 9 節に、本文は骨組みに「変更」を足し、値と読み方を書き写さない、を足した。`records:close` は題名の案の後に本文の骨組み（`records/close.ts` の `prBody`）を出す。残差の件数は、`records:minimal` が作り直した [residuals.md](residuals.md) と `origin/main` の版の件数の行から読む（V-0535 で回し、「許容外 47 → 47 件」と出ることを確かめた）。
 - 3: 5 節のとおり、案を出したセッションで入れた。
+- 1: (a) `records:check` が、分かれ目（`git merge-base HEAD origin/main`）と今の作業ツリーで変わったスキル定義の notes を文の一致で対応づけ、分かれ目の版の結論にそのままある印の添字を付け替える（`records/marks.ts` の `renumberMarks`、`scripts/records-marks.ts`）。対応先の無い notes を指す印は誤りにする（直すか、`decided` を直して判断し直すまで出る）。ラピ：レッドフードの S1 の notes を 1 つ消して試し、3 件を付け替え、2 件を名指しし、2 回目は何も変えないことを確かめた（0.6 秒。試しの変更は戻した）。(b) 行き先の無い印は `records:check` の誤りと `npm test`（`marks.test.ts`）で落とす。(c) [minimal.md](minimal.md) の末尾に「使われていない印」（82 件）を出す。(d) 行き先の無い印を消した。案の時点の 52 件から、main の進みで 44 件（35 の結論。確定 42・棄却 1 の結論の印）になっていた。警告の数（組 213・結論 68）は変わらない。(e) 印の `element` に要素の並びを書けるようにした（既存の印はまとめ直していない。新しく書く印から）。
+- 4: `records:minimal` の既定を差分の計算にした（`sensitivity.ts` の `reusedSensitivity`）。全部は `-- --all`。今の main で 3 秒、4 件前の版の sensitivity.json から 6 秒、`--all` で 52 秒。どれも結果はコミット済みのものと同じ。
+- 5: `format-retry.ts` の prettier に `--cache --cache-strategy content` を付けた。変えた検証記録 1 本だけを整え直すことを確かめた（2.3 秒）。
+- 合わせて、`records:minimal`（`records:check` まで）が 133 秒から 79 秒になった（クラウドの 4 コア。キャッシュのある 2 回目）。
 
 ## 7. 最小構成の検査の手間を測った（2026-10-29 の追記）
 

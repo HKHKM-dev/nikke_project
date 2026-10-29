@@ -69,7 +69,7 @@
 
 ## 4. オーナーの判断待ち
 
-- 最小構成の印の手入れを道具にする案（notes の添字の付け替えの自動化・行き先の無い印の検査・一度きりの掃除）。オーナーが後から検討し直す（2026-10-29）: [design-workflow-simplification-5.md](design-workflow-simplification-5.md) 1 節
+（なし）
 
 ## 5. 道具・記録の整備
 

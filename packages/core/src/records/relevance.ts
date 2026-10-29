@@ -20,7 +20,7 @@ import {
 import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { CharacterData, EnemyPresetMaster, SkillSlot } from '../types.ts';
-import type { Claim, ClaimState, ClaimWhen } from './claims.ts';
+import { markElements, type Claim, type ClaimState, type ClaimWhen } from './claims.ts';
 import { normalConditionMeasured } from './minimal.ts';
 import type { Observation, ObservationKind, ObservationSource } from './observations.ts';
 import type { RecordingEntry } from './recordings.ts';
@@ -687,7 +687,9 @@ export function relevanceOf(
       const elements: { name: string; reason: string }[] = [];
       const marked: string[] = [];
       const markedFor = (name: string) =>
-        (c.minimal ?? []).some((m) => m.element === name && (m.observations === '*' || m.observations.includes(o.id)));
+        (c.minimal ?? []).some(
+          (m) => markElements(m).includes(name) && (m.observations === '*' || m.observations.includes(o.id)),
+        );
       for (const rec of recs) {
         // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素の読む側のうち、印か感度でこの観測値に効かないもの
         const readerExcluded = (r: MinimalElement): boolean => {
@@ -826,7 +828,34 @@ export function renderMinimal(results: readonly ClaimRelevance[], claims: readon
     for (const [key, os] of byElement) lines.push(`- ${key}: ${ids(os)}`);
     for (const [name, os] of marks) lines.push(`- 印 ${name}: ${ids(os)}`);
   }
+  // 何も抑えていない印（plan/design-workflow-simplification-5.md 1 節の (c)）。消さない（結論が仮説に戻るとまた要る）
+  const unused = unusedMarks(results, claims);
+  if (unused.length > 0) {
+    lines.push(
+      '',
+      `## 使われていない印（${unused.length}）`,
+      '',
+      'どの組の警告も抑えていない印（要素が確定の結論に結び付いた・感度で効かないと決まったなど）。',
+      '',
+    );
+    for (const u of unused) lines.push(`- ${u.claim}: ${u.element}`);
+  }
   return `${lines.join('\n')}\n`;
+}
+
+/** 印の指す先（結論と要素の名前） */
+export type MarkRef = { claim: string; element: string };
+
+/** 何も抑えていない印（確定の結論の印で、どの組の警告の「印」にも出ないもの）。結論が仮説に戻るとまた要るので、消さずに一覧に出す */
+export function unusedMarks(results: readonly ClaimRelevance[], claims: readonly Claim[]): MarkRef[] {
+  const byId = new Map(claims.map((c) => [c.id, c]));
+  const out: MarkRef[] = [];
+  for (const r of results) {
+    const used = new Set(r.warnings.flatMap((w) => w.marked));
+    for (const m of byId.get(r.claim)?.minimal ?? [])
+      for (const element of markElements(m)) if (!used.has(element)) out.push({ claim: r.claim, element });
+  }
+  return out;
 }
 
 /** 警告のある組を「要素（観測値…）」の 1 行にまとめる（records:new・records:close の理由と注意） */
