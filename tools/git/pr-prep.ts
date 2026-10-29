@@ -11,7 +11,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../packages/core/scripts/records-data.ts';
-import { collisions, regenerateScript, splitConflicts } from './pr-prep-lib.ts';
+import { collisions, rebaseOutcome, regenerateScript, splitConflicts } from './pr-prep-lib.ts';
 
 const { values } = parseArgs({
   options: { push: { type: 'boolean', default: false }, 'no-ci': { type: 'boolean', default: false } },
@@ -79,7 +79,12 @@ if (!rebasing()) {
   const behind = git(['rev-list', '--count', 'HEAD..origin/main']);
   if (behind !== '0') {
     console.log(`origin/main が ${behind} 件進んでいる。リベースする`);
-    if (tryGit(['rebase', 'origin/main'], NO_EDITOR) === 0) console.log('衝突なしで取り込んだ');
+    const outcome = rebaseOutcome(tryGit(['rebase', 'origin/main'], NO_EDITOR), rebasing());
+    if (outcome === 'clean') console.log('衝突なしで取り込んだ');
+    else if (outcome === 'notStarted')
+      fail(
+        'git rebase origin/main が始まらなかった（追跡していないファイルが main のファイルと重なったなど。上の git の出力を見る）',
+      );
   } else console.log('origin/main は取り込み済み');
 }
 

@@ -1,13 +1,13 @@
 {
   "id": "C-0703",
-  "text": "モランのバーストの使用武器の変更（10 秒）は、変更後の武器が CDN のレート（burstSkill.changeWeapon の 1440rpm）の即着弾の AR で、1 ヒットは最終攻撃力 × 説明文の値（Lv10 で 14.70%）にコア・会心・距離ボーナスが基礎の AR と同じに乗る。最初の発はゲージの満タン（BURST バーの消失）の 37f 後（発動の約 14f 後）で、10 秒の間は装弾数無限でリロードせず、終わると変更前の AR が満タンで戻る。基礎版も説明文が同じなので同じ読み",
+  "text": "モランのバーストの使用武器の変更（10 秒）は、変更後の武器が CDN のレート（burstSkill.changeWeapon の 1440rpm）の即着弾の AR で、1 ヒットは最終攻撃力 × 説明文の値（Lv10 で 14.70%）にコア・会心・距離ボーナスが基礎の AR と同じに乗る。最初の発はゲージの満タン（BURST バーの消失）の 37f 後（満タンから発動までの約 23f（C-0285）を引くと、発動の約 14f 後。モデルの定義では発動の 13f 後で、満タンからの 37f は合う）で、10 秒の間は装弾数無限でリロードせず、終わると変更前の AR が満タンで戻る。基礎版も説明文が同じなので同じ読み",
   "state": "確定",
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`0719-02`・`0719-03`・`0719-04`・`0719-08`・`0719-09`・`0719-12`・`0720-02`・`0720-03`・`0720-04`・`0720-08`・`0720-09`・`0720-12`（1 ヒットは説明文の値と CDN の値から出したモデルと差 1 未満。最初の発の待ちは 0719 の 1 回目の窓で決め（モデルの firstShotDelayFrames）、0719 の 2〜5 回目と 0720 の 5 回で同じ（0720 の 3 回目は最初の発が的に当たっていないとみて比べない）。窓の中にリロードは無く、窓の後の照準の横の残弾は 60 から減る）。V-0530",
   "model": "`data/skills/281.json` の burst・treasureSkills.burst の effects[0]（`weaponChange`・burstUse・damageRef 1・durationSeconds 10・firstShotDelayFrames 12。レートは CDN の burstSkill.changeWeapon）と effects[1]（`timed`・infiniteAmmo・durationRef 4）。変更後の武器の形は `skills/resolve.ts` の changedWeaponShot、最初の発の待ちは `frame/firstPass.ts`",
   "replaces": [],
-  "updated": "2026-10-28",
+  "updated": "2026-10-29",
   "subject": {
     "places": [
       "data/skills/281.json の burst の effects[0]",

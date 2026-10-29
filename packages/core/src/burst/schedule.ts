@@ -46,6 +46,11 @@ export type BurstActivation = {
    * 省略は [0]（1 ヒット）。倍率は等分する
    */
   hitOffsets?: readonly number[];
+  /**
+   * 2 段目の段 11 の PR 3（V-0530）: この発動の CT を、維持の付いたバーストスキルのクールタイム▼（モランの宝物版の熱血など。
+   * frame/firstPass.ts の手順 2）で縮めたフレーム数。即時の CT▼（BurstSchedule の cooldownReductions）とは別。省略は 0
+   */
+  cooldownShortenedFrames?: number;
 };
 
 /**

@@ -18,4 +18,4 @@ export const V_ID_IN_TEXT = new RegExp(`V-${ID_DIGITS}`);
  * 録画の番号（4 桁。0001〜9999。plan/design-recording-id-4digit.md 6 節）。台帳と、新しく付ける番号（intake・records:renumber）の形。
  * 古い文の 2〜3 桁の番号を読む所（renumber.ts の REC_ID など）はこれより広い
  */
-export const RECORDING_ID = /^\d{4}$/;
+export const RECORDING_ID = /^(?!0000)\d{4}$/;

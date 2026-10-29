@@ -3,7 +3,7 @@
 - 別紙: [design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)（ゲーム内の用語のツールチップとの突き合わせ。以下「ツールチップの別紙」。食い違いは T1〜T6）
 - 関連: [design-named-state.md](design-named-state.md)（8 節: 状態の後の拡張）、[design-heal-vocabulary.md](design-heal-vocabulary.md)（3 節: 回復の撮影待ち）、[design-skill-note-kinds.md](design-skill-note-kinds.md)（notes の種類）、[design-range-enemy-attacks.md](design-range-enemy-attacks.md)（被弾）、[design-minimal-relevance.md](design-minimal-relevance.md)（最小構成の検査）、[skills-guide.md](skills-guide.md)、[backlog.md](backlog.md) 6 節、[requirements.md](requirements.md) 5 節
 - 作成日: 2026-10-14
-- 状態: 決定（論点 7 は 2026-10-16 に推奨どおりに決め、[design-indirect-notes.md](design-indirect-notes.md) で実装した）。2026-10-14 にオーナーの指摘（解除不可の整理・防御と HP を間接に効くものとして整理・バリアをダメージに効くものとして扱う・HP は減りうるものとして扱う・ツールチップとの突き合わせ）と、改善提案書への判断（11 節）を入れた（経過）。2026-10-15 にオーナーが論点 1・2・3・5・9・10・11・12 を推奨どおりに、論点 4 を代わりの案（参照されない名前も目録に入れる）に、論点 8 を「解除と消去は別に実装する」に決めた（11 の直しは別のセッションに依頼）。2026-10-16 に論点 6 を推奨どおり（案 A）に決めた。分類の一覧は生成物にした（論点 2。`npm run skills:catalog`）。段階の計画（2 段目）は [design-skill-stages.md](design-skill-stages.md)（2026-10-16 決定）
+- 状態: 決定（論点 7 は 2026-10-16 に推奨どおりに決め、[design-indirect-notes.md](design-indirect-notes.md) で実装した）。2026-10-14 にオーナーの指摘（解除不可の整理・防御と HP を間接に効くものとして整理・バリアをダメージに効くものとして扱う・HP は減りうるものとして扱う・ツールチップとの突き合わせ）と、改善提案書への判断（11 節）を入れた（経過）。2026-10-15 にオーナーが論点 1・2・3・5・9・10・11・12 を推奨どおりに、論点 4 を代わりの案（参照されない名前も目録に入れる）に、論点 8 を「解除と消去は別に実装する」に決めた（11 の直しは別のセッションに依頼）。2026-10-16 に論点 6 を推奨どおり（案 A）に決めた。分類の一覧は生成物にした（論点 2。いまは `npm run records:check` が作り直す）。段階の計画（2 段目）は [design-skill-stages.md](design-skill-stages.md)（2026-10-16 決定）
 
 ## 0. 目的と進め方
 
@@ -22,7 +22,7 @@
   - 「N 秒間維持」「持続」「N スタック」「解除不可」などの修飾は、直前の効果に付ける。
   - バーストのスロットできっかけの書かれていない行はバースト使用時、スキルのスロットできっかけの書かれていない行は、持続なら常時、そうでなければ CT ごとのアクティブと読む。
 - 読み取りは正規表現による機械的なもの。分け損ないが混ざるので、件数は目安にとどめる。
-- 件数とキャラの一覧は生成物 [skill-catalog.md](skill-catalog.md) に置き、この設計書には書かない（AGENTS.md「事実と記録」）。道具は `packages/core/src/skills/catalog.ts`（読み）と `catalogDoc.ts`（区分の表と一覧）、作り直しは `npm run skills:catalog`、最新かは `npm test` が確かめる（論点 2）。読み違いは道具の表（説明文の書き損じの表・句の読み方の表）で直す。
+- 件数とキャラの一覧は生成物 [skill-catalog.md](skill-catalog.md) に置き、この設計書には書かない（AGENTS.md「事実と記録」）。道具は `packages/core/src/skills/catalog.ts`（読み）と `catalogDoc.ts`（区分の表と一覧）、作り直しは `npm run records:check`、最新かは `npm test` が確かめる（論点 2）。読み違いは道具の表（説明文の書き損じの表・句の読み方の表）で直す。
 - 各分類に、効き方の区分を 1 つ付ける。notes の種類（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.1 節）をもとに、「間接に効く」「前提で決まる」「要確認」を足し、前提の外を被弾と構造に分けた（論点 3・7・9）。読みはゲーム内の用語のツールチップと突き合わせた（ツールチップの別紙）。
 
 - **語彙あり**: 前提の中で与ダメージに効き、いまの語彙で書ける。

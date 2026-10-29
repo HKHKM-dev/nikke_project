@@ -76,7 +76,7 @@
 1. 段の設計を書く: 語彙の形（[design-named-state.md](design-named-state.md) 8 節）、一覧の操作（組み直しの設計書 2.3・6 節）、件の段の印、検証の規則、最初の使い手と確かめ方。大きければ段ごとの設計書にし、小さければこの設計書の節に足す。
 2. 最初の PR: 語彙と、最初の使い手（書き直しか新しい定義）と、確かめ（退化か撮影）を 1 本にする（[skills-guide.md](skills-guide.md) 0 節の「1 体 1 PR」）。
 3. 同じ家族のほかのキャラは、1 体ずつ撮影して足す。
-4. 段を閉じる時に、一覧（`npm run skills:catalog`）の区分の表（`packages/core/src/skills/catalogDoc.ts`）を、語彙ができた家族から「語彙あり」に直す。
+4. 段を閉じる時に、一覧（`plan/skill-catalog.md`。`npm run records:check` が作り直す）の区分の表（`packages/core/src/skills/catalogDoc.ts`）を、語彙ができた家族から「語彙あり」に直す。
 
 ## 5. 論点
 

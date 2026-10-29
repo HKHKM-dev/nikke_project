@@ -54,6 +54,15 @@ describe('録画 0725 の編成（ラピ：レッドフード単騎）', () => {
     expect(METRICS.steadyPauseShots!.sim(result, ctx({}))).toBe(120);
   });
 
+  it('throws instead of looping forever when the weapon never reaches one shot per frame', () => {
+    const slot = input.slots[0]!;
+    const shot = { ...slot.character.shot, rateOfFireChangePerShot: 0 };
+    const flat = { ...input, slots: [{ ...slot, character: { ...slot.character, shot } }, ...input.slots.slice(1)] };
+    expect(() => METRICS.steadyPauseShots!.sim(result, { args: { slot: 1 }, input: flat })).toThrow(
+      /1 フレーム 1 発に届かない/,
+    );
+  });
+
   it('delays the reload by 4 frames when the 120th shot empties the magazine (C-0718)', () => {
     expect(METRICS.lastShotGapMedians!.sim(result, ctx({ every: 120 }))).toEqual([175, 171]);
   });
