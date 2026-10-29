@@ -2530,8 +2530,7 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   if (onEnemy) {
     if (isAppliedTrigger(fields.trigger))
       fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
-    if (v.contents === undefined)
-      fail(`${path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
+    // 中身の有無は定義の単位で見る（validateStateGrants。2026-10-29 のキャラの編: 同じ敵の状態を 2 つのきっかけで付ける）
     effect.enemy = true;
   }
   // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
@@ -3877,6 +3876,12 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
   }
   for (const [state, grants] of byState) {
     const bearers = grants.filter((g) => g.effect.contents !== undefined);
+    // 敵に付く状態は、中身を読む側がまだ無いので、どれかの付与が中身を持つ（2026-10-29 のキャラの編（plan/design-new-chars-1029.md
+    // 9 節）: 同じ状態のほかの付与は中身を共有する。マリアン：クイーンの S1 の弱点露出は、槍とバースト使用時の 2 つで付く）
+    const enemyGrant = grants.find((g) => g.effect.enemy === true);
+    if (enemyGrant !== undefined && bearers.length === 0) {
+      fail(`${enemyGrant.path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
+    }
     if (bearers.length > 1) {
       fail(`${bearers[1]!.path}.contents`, `only one grant of "${state}" in a definition may have contents`);
     }

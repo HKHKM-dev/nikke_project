@@ -11,7 +11,7 @@ export type StateHolder = 'ally' | 'enemy';
  * 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 状態の家族。条件・きっかけが家族の根（id が家族の名前と同じ状態）を指したら、
  * 家族のどの状態でも当たる（「バリア適用状態なら」は、名前の無いバリアにも名前の付いたバリアにも当たる）
  */
-export type StateFamily = 'barrier';
+export type StateFamily = 'barrier' | 'intoTheFray';
 
 export type NamedStateInfo = {
   /** 画面と CLI の名前（日本語は説明文の状態名） */
@@ -121,6 +121,37 @@ export const NAMED_STATES = {
    * バーストスキルのクールタイム▼。宝物版の S2 の「熱血状態なら」）
    */
   fervor: { name: { ja: '熱血', en: 'Fervor' }, holder: 'ally' },
+  /**
+   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 臨戦の家族。根（「臨戦状態の味方」が指す）と、マリアン：クイーン（19）・
+   * 紅蓮：神殺（472）の臨戦。ラプンツェル：サンクチュアリ（473）の「自分と臨戦状態の味方」が根を指す
+   */
+  intoTheFray: { name: { ja: '臨戦', en: 'Into the Fray' }, holder: 'ally', family: 'intoTheFray' },
+  /** 同: 臨戦：意思の鋭槍（マリアン：クイーンの S1。戦闘開始時・持続） */
+  intoTheFraySharpenedResolve: {
+    name: { ja: '臨戦：意思の鋭槍', en: 'Into the Fray: Sharpened Resolve' },
+    holder: 'ally',
+    family: 'intoTheFray',
+  },
+  /** 同: 臨戦：胸を刺す願い（マリアン：クイーンの S2。バースト使用時・10 秒） */
+  intoTheFrayPenetrantWish: {
+    name: { ja: '臨戦：胸を刺す願い', en: 'Into the Fray: Penetrant Wish' },
+    holder: 'ally',
+    family: 'intoTheFray',
+  },
+  /** 同: 臨戦：明鏡止水（紅蓮：神殺の S1。戦闘開始時・持続） */
+  intoTheFraySereneMind: {
+    name: { ja: '臨戦：明鏡止水', en: 'Into the Fray: Serene Mind' },
+    holder: 'ally',
+    family: 'intoTheFray',
+  },
+  /** 同: 臨戦：身剣合一（紅蓮：神殺の S2。バースト使用時・10 秒） */
+  intoTheFrayAtOneWithTheSword: {
+    name: { ja: '臨戦：身剣合一', en: 'Into the Fray: At One With the Sword' },
+    holder: 'ally',
+    family: 'intoTheFray',
+  },
+  /** 同: 弱点露出（マリアン：クイーンの S1。敵に付く。中身は受けるダメージ▲） */
+  openWounds: { name: { ja: '弱点露出', en: 'Open Wounds' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
