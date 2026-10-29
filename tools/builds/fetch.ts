@@ -27,7 +27,8 @@ import {
   captureRequest,
   type Captured,
 } from './fetch-lib.ts';
-import { importRaw, PRIVATE } from './store.ts';
+import { PRIVATE } from './dirs.ts';
+import { importRaw } from './store.ts';
 
 const ROOT = join(import.meta.dirname, '../..');
 const URL = 'https://www.blablalink.com/shiftyspad';

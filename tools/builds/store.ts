@@ -6,7 +6,6 @@
 //   private/builds/<名前>.diff.md   直前のスナップショットとの差
 //   private/roster.md               所持の一覧（いちばん新しいスナップショットから）
 // <名前> は取得の日（日本時間）。同じ日に別の取得があれば <日付>-2、-3 …（import-lib.ts）。
-import { spawnSync } from 'node:child_process';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { computeCombatAttack, validateBuild } from '../../packages/core/src/build.ts';
@@ -22,18 +21,12 @@ import {
   type SnapshotLabels,
 } from '../../packages/core/src/shiftypad.ts';
 import type { BuildMasters, CharacterData, CharacterIndex, CubeMaster } from '../../packages/core/src/types.ts';
-import { previousName, SNAPSHOT_NAME, snapshotName, sortNames } from './import-lib.ts';
+import { SNAPSHOT_NAME } from '../../packages/core/src/records/ids.ts';
+import { BUILDS_DIR as DIR, PRIVATE } from './dirs.ts';
+import { previousName, snapshotName, sortNames } from './import-lib.ts';
 
 const ROOT = join(import.meta.dirname, '../..');
 const DATA = join(ROOT, 'packages/core/data');
-
-/** メインのチェックアウト（git worktree list の先頭）。private/ はここにだけある */
-function mainCheckout(): string {
-  const r = spawnSync('git', ['worktree', 'list', '--porcelain'], { cwd: ROOT, encoding: 'utf8' });
-  return /^worktree (.+)$/m.exec(r.stdout ?? '')?.[1] ?? ROOT;
-}
-export const PRIVATE = join(mainCheckout(), 'private');
-const DIR = join(PRIVATE, 'builds');
 
 const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8')) as T;
 const index = readJson<CharacterIndex>(join(DATA, 'characters/index.json')).characters;

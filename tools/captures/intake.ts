@@ -2,12 +2,16 @@
 // 大きさ・sha256）を取り、records/recordings/<録画 id>.json を書く。編成・的・条件は引数で受け、無ければ空で出す（人が埋める）。
 //   node tools/captures/intake.ts <元ファイル>... --name <識別子>[,<識別子>...] [--id NNNN] [--folder range] [--date YYYY-MM-DD]
 //        [--rid 271,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire] [--mode range-3min]
-//        [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."]... [--copy] [--no-backup] [--no-push]
+//        [--fixed-spec on|off] [--build-snapshot <名前>|-] [--auto-fire on|off] [--auto-burst on|off] [--note "..."]... [--copy]
+//        [--no-backup] [--no-push]
 // 1 回の撮影の録画をまとめて取り込む（plan/design-workflow-simplification-2.md 1 節）。--name は元ファイルと同じ数を , で並べ、--note は
 // 1 つ（全部に同じ）か元ファイルと同じ数を繰り返す。ほかの引数は全部の録画に同じものを使う。番号は --id から順に、--id が無ければ
 // どのブランチも使っていない次の番号から順に取る。1 本ずつ子のプロセスで取り込み、失敗したらそこで止める。終わりに npm run records:table
 // を回し、書いた録画の JSON と一覧だけを commit して push する（番号を押さえる。packages/core/scripts/reserve.ts。--no-push でしない）。
 // --treasure は宝物ありの枠と段階（<枠>:<段階>,...。段階はオーナーに確かめた値。plan/captures/protocol.md「撮った後」）。
+// スペック固定 OFF（--fixed-spec off）の録画は、読むのに使う育成のスナップショット（private/builds/<名前>.json）を台帳の buildSnapshot に
+// 書く（plan/design-build-snapshot.md 6 節）。--build-snapshot が無ければ、撮った日以前でいちばん新しいものを既定にして聞く（端末でなければ
+// 聞かずに既定を書く。- は書かない）。撮った日に取ったものが無ければ知らせる。private/builds/ が無い環境では聞かない（人が埋める）。
 // 命名規約は plan/captures/index.md「命名規約」（<YYYYMMDD>-<番号 4 桁>_<識別子>.mp4。識別子は英小文字・数字・-・_・+）。
 // 日付は --date、無ければ元のファイル名の YYYY-MM-DD、無ければファイルの更新日時。既定は移動（--copy で元を残す）。
 // 最後に、移した録画を Google Drive の nikke_project_captures の同じ種別フォルダに置き、Drive の SHA256 を台帳の sha256 と突き合わせる
@@ -38,6 +42,7 @@ import {
 } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createInterface } from 'node:readline/promises';
 import { parseArgs } from 'node:util';
 import {
   type BackupVia,
@@ -52,6 +57,8 @@ import { RECORDING_ID } from '../../packages/core/src/records/ids.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
 import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import { reserve } from '../../packages/core/scripts/reserve.ts';
+import { BUILDS_DIR, snapshotNames } from '../builds/dirs.ts';
+import { parseSnapshotAnswer, snapshotForRecording } from '../builds/import-lib.ts';
 import { gatewayUrl, move } from '../drive/gateway.ts';
 import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
 import { relUnder, splitRel } from '../drive/sync-lib.ts';
@@ -75,6 +82,7 @@ const { values, positionals } = parseArgs({
     element: { type: 'string' },
     mode: { type: 'string' },
     'fixed-spec': { type: 'string' },
+    'build-snapshot': { type: 'string' },
     'auto-fire': { type: 'string' },
     'auto-burst': { type: 'string' },
     treasure: { type: 'string' },
@@ -91,8 +99,8 @@ const { values, positionals } = parseArgs({
 const USAGE =
   'usage: node tools/captures/intake.ts <元ファイル | drive:<record の中のパス>>... --name <識別子>[,<識別子>...] [--id NNNN]\n' +
   '       [--folder range] [--date YYYY-MM-DD] [--rid 271,870] [--controlled 1] [--treasure 2:3] [--target BigArms --element Fire]\n' +
-  '       [--mode range-3min] [--fixed-spec on|off] [--auto-fire on|off] [--auto-burst on|off] [--note "..."]... [--copy]\n' +
-  '       [--no-backup] [--no-push]\n' +
+  '       [--mode range-3min] [--fixed-spec on|off] [--build-snapshot <名前>|-] [--auto-fire on|off] [--auto-burst on|off]\n' +
+  '       [--note "..."]... [--copy] [--no-backup] [--no-push]\n' +
   '       node tools/captures/intake.ts --list-record（Drive の record の一覧）';
 
 function fail(message: string): never {
@@ -164,6 +172,7 @@ if (!values.child) {
     ['--element', values.element],
     ['--mode', values.mode],
     ['--fixed-spec', values['fixed-spec']],
+    ['--build-snapshot', values['build-snapshot']],
     ['--auto-fire', values['auto-fire']],
     ['--auto-burst', values['auto-burst']],
   ];
@@ -307,6 +316,48 @@ function characterOf(rid: number): CharacterData {
 const characterName = (rid: number): string => characterOf(rid).name.ja;
 
 const date = dateOf();
+const fixedSpec = onOff(values['fixed-spec'], '--fixed-spec');
+const buildSnapshot = await chooseSnapshot();
+
+/**
+ * 台帳の buildSnapshot（冒頭の説明）。録画を動かす前に決める。書かないなら null、private/builds/ が無くて聞けなければ undefined
+ */
+async function chooseSnapshot(): Promise<string | null | undefined> {
+  const given = values['build-snapshot'];
+  if (given !== undefined) {
+    const name = parseSnapshotAnswer(given, null);
+    if (name === undefined) fail('--build-snapshot は YYYY-MM-DD か YYYY-MM-DD-<枝番>（書かないなら -）');
+    if (name !== null && fixedSpec === true) fail('--build-snapshot はスペック固定 OFF の録画にだけ書く');
+    if (name !== null && snapshotNames()?.includes(name) === false)
+      console.log(`注意: ${BUILDS_DIR} に ${name}.json が無い`);
+    return name;
+  }
+  if (fixedSpec !== false) return null;
+  const names = snapshotNames();
+  if (names === null) {
+    console.log(`${BUILDS_DIR} が無いので、育成のスナップショットを聞かない（--build-snapshot で書ける）`);
+    return undefined;
+  }
+  const { name, notice } = snapshotForRecording(names, date);
+  if (notice !== null) console.log(`注意: ${notice}`);
+  if (!process.stdin.isTTY) {
+    console.log(`育成のスナップショット: ${name ?? 'なし'}（既定。端末でないので聞かない。違えば --build-snapshot）`);
+    return name;
+  }
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    for (;;) {
+      const answer = parseSnapshotAnswer(
+        await rl.question(`育成のスナップショット（Enter で ${name ?? '書かない'}、書かないなら -）: `),
+        name,
+      );
+      if (answer !== undefined) return answer;
+      console.log('YYYY-MM-DD か YYYY-MM-DD-<枝番> で答える');
+    }
+  } finally {
+    rl.close();
+  }
+}
 const file = `${date.replace(/-/g, '')}-${values.id}_${values.name}.mp4`;
 const dir = join(capturesDir(), folder);
 const dest = join(dir, file);
@@ -391,7 +442,8 @@ const entry: ProjectRecording = {
   })),
   target: { name: values.target ?? '', element: (values.element as Element | undefined) ?? null },
   mode: (values.mode as RecordingMode | undefined) ?? null,
-  fixedSpec: onOff(values['fixed-spec'], '--fixed-spec'),
+  fixedSpec,
+  ...(typeof buildSnapshot === 'string' ? { buildSnapshot } : {}),
   autoFire: onOff(values['auto-fire'], '--auto-fire'),
   autoBurst: onOff(values['auto-burst'], '--auto-burst'),
   conditionNote: values.note[0] ?? '',
@@ -406,6 +458,7 @@ const missing = [
   ...(values.element === undefined ? ['target.element（--element）'] : []),
   ...(values.mode === undefined ? ['mode'] : []),
   ...(values['fixed-spec'] === undefined ? ['fixedSpec'] : []),
+  ...(buildSnapshot === undefined ? ['buildSnapshot（--build-snapshot）'] : []),
   ...(values['auto-fire'] === undefined ? ['autoFire'] : []),
   ...(values['auto-burst'] === undefined ? ['autoBurst'] : []),
   ...(values.note.length === 0 ? ['conditionNote'] : []),
