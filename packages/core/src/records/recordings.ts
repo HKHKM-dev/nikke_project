@@ -208,7 +208,7 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
         if (member[key] !== undefined && typeof member[key] !== 'boolean')
           errors.push(`${at}: 枠 ${member.slot} の ${key} は true か false（分からなければ書かない）`);
       if (member.build !== undefined) {
-        if (entry.fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の録画にだけ書く`);
+        if (entry.fixedSpec === true) errors.push(`${at}: 育成（build）はスペック固定 OFF の録画にだけ書く`);
         errors.push(...validateRecordingBuild(member.build, `${at} 枠 ${member.slot}`));
       }
     });

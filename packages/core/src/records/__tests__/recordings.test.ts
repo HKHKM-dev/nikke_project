@@ -83,7 +83,7 @@ describe('records/recordings', () => {
     expect(errors).toContainEqual('0001: 操作した枠が 2 つ以上ある');
   });
 
-  it('accepts a build only on fixed-spec OFF recordings and checks its shape (Stage 13 の残り)', () => {
+  it('accepts a build unless fixed-spec ON and checks its shape (Stage 13 の残り)', () => {
     const member = { slot: 1, rid: 290, name: 'マナ', controlled: true };
     const off = {
       ...first,
@@ -91,6 +91,8 @@ describe('records/recordings', () => {
       team: [{ ...member, build: { attack: 400000, skillLevels: { skill1: 7 } } }],
     };
     expect(validateRecordings({ recordings: [off] }, knownRids)).toEqual([]);
+    // fixedSpec が true でなければ通す（buildSnapshot と同じ。plan/design-build-snapshot.md 15 節）
+    expect(validateRecordings({ recordings: [{ ...off, fixedSpec: null }] }, knownRids)).toEqual([]);
     const errors = validateRecordings(
       {
         recordings: [
