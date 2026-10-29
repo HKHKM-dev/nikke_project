@@ -13,7 +13,7 @@ import {
   formatAppliedAmount,
   formatCounterChange,
   formatEffectSource,
-  formatInstantCondition,
+  formatConditionSuffix,
   formatInstantTarget,
   formatRemoveState,
   formatStateGrant,
@@ -143,9 +143,8 @@ describe('即時効果の条件の表示', () => {
       value: 7.48,
       effectIndex: 1,
     };
-    expect(formatInstantCondition(cut)).toBe('（自分が熱血状態なら）');
-    const { condition: _condition, ...plain } = cut;
-    expect(formatInstantCondition(plain)).toBe('');
+    expect(formatConditionSuffix(cut.condition)).toBe('（自分が熱血状態なら）');
+    expect(formatConditionSuffix(undefined)).toBe('');
   });
 });
 

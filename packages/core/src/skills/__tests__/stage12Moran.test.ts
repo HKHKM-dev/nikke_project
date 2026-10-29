@@ -90,7 +90,9 @@ describe('モランの宝物版の S2（熱血状態のフルバースト発動�
   it('is dropped with the team when nobody can grant Fervor', () => {
     // 熱血の付与（宝物版の S1）を外すと、編成の段（skills/composition.ts の resolveSelfState）で効果ごと落ちる
     const noFervor = structuredClone(definitions[2]!);
-    noFervor.treasureSkills!.skill1.effects = noFervor.treasureSkills!.skill1.effects.filter((e) => e.kind !== 'state');
+    noFervor.treasureSkills!.skill1!.effects = noFervor.treasureSkills!.skill1!.effects.filter(
+      (e) => e.kind !== 'state',
+    );
     const result = run(noFervor);
     expect(result.schedule!.fullBurstWindows.length).toBeGreaterThan(0);
     expect(result.instants.filter((x) => x.effect.kind === 'cooldownReduction')).toEqual([]);
@@ -99,7 +101,7 @@ describe('モランの宝物版の S2（熱血状態のフルバースト発動�
   it('looks at the state at the firing frame, and records the skipped firing', () => {
     // 熱血を 1 回目のフルバーストの終わりから付ける（時間で変わる状態）。1 回目の始まりは条件を満たさず、2 回目からは縮む
     const late = structuredClone(definitions[2]!);
-    for (const e of late.treasureSkills!.skill1.effects) if (e.kind === 'state') e.trigger = 'fullBurstEnd';
+    for (const e of late.treasureSkills!.skill1!.effects) if (e.kind === 'state') e.trigger = 'fullBurstEnd';
     const result = run(late);
     const starts = result.schedule!.fullBurstWindows.map((w) => w.start);
     const cutFrames = new Set(result.instants.filter((x) => x.effect.kind === 'cooldownReduction').map((x) => x.frame));

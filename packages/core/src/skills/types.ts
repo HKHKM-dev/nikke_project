@@ -1011,7 +1011,7 @@ export type CooldownReductionEffect = TargetCountFields & {
   squad?: SquadCondition;
   /**
    * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件。鍵は selfState だけ（モランの宝物版の S2「自分が熱血状態なら」）。
-   * 発火のフレームに、timed の段 1.5 の条件と同じ件を見る（skills/holders.ts の conditionHoldsAt）
+   * 発火のフレームに、timed の段 1.5 の条件と同じ件を見る（skills/holders.ts の instantConditionHolds）
    */
   condition?: EffectCondition;
   assumes?: LocalizedText;
