@@ -6,6 +6,8 @@
 // 育成値は既定 Lv200・3 凸・コア 0。条件は 18-C2 から既定が自動（射撃場の表。画面の既定と同じ）で、手入力はコア命中率 1・距離ボーナスあり・フルチャージ。
 // スキル定義は data/skills/ にあるものを読む（無ければ定義なし = 通常攻撃のみ、味方のバフは受ける）。
 // Stage 12: --build は resourceId → 育成入力（BuildInput の各項目と任意の growth）の JSON。--fixed-spec のときは使わない。
+// 育成データのスナップショット（npm run build:import が private/builds/ に書くもの）もそのまま渡せる。1 件に skillLevels が
+// あればスキル Lv の既定にする（--skill-levels が優先。plan/design-build-snapshot.md 3 節）。
 // Stage 15: --hit-rate（命中率。射撃場 = 1）と --enemy（data/enemies.json のプリセット）。
 // Stage 16-B: --events range-3min-jump（data/enemies.json の出来事のセット。カンマ区切り）。--enemy のプリセットが持つものだけ効く。
 // Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
@@ -29,6 +31,7 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
+import { buildEntriesOf, type SnapshotTreasure } from '../src/shiftypad.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -149,8 +152,8 @@ for (const entry of values.treasure?.split(',') ?? []) {
   treasurePhases.set(id!, phase!);
 }
 
-// スキル Lv（省略した枠・スロットは Lv10。範囲は runSimulation が検証する）
-const skillLevelsById = new Map<number, SkillLevels>();
+// スキル Lv（省略した枠・スロットは --build の skillLevels、それも無ければ Lv10。範囲は runSimulation が検証する）
+const skillLevelsById = new Map<number, Partial<SkillLevels>>();
 for (const entry of values['skill-levels']?.split(',') ?? []) {
   const m = /^\s*(\d+):(skill1|skill2|burst)=(\d+)\s*$/.exec(entry);
   if (m === null || !ids.includes(Number(m[1]))) {
@@ -160,7 +163,7 @@ for (const entry of values['skill-levels']?.split(',') ?? []) {
     process.exit(2);
   }
   const id = Number(m[1]);
-  const levels = skillLevelsById.get(id) ?? { ...MAX_SKILL_LEVELS };
+  const levels = skillLevelsById.get(id) ?? {};
   levels[m[2] as keyof SkillLevels] = Number(m[3]);
   skillLevelsById.set(id, levels);
 }
@@ -172,8 +175,13 @@ const skillIndex = parseSkillIndex(readJson(join(DATA_DIR, 'skills/index.json'))
 const fixedSpec = values['fixed-spec'];
 
 // Stage 12: 育成入力。ファイルは { "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }
-type BuildFile = Record<string, Partial<BuildInput> & { growth?: GrowthInput }>;
-const buildFile: BuildFile = values.build === undefined ? {} : (readJson(values.build) as BuildFile);
+// か、育成データのスナップショット（npm run build:import が書く。characters の 1 件は skillLevels と treasure も持つ。
+// plan/design-build-snapshot.md 3 節）
+type BuildFile = Record<
+  string,
+  Partial<BuildInput> & { growth?: GrowthInput; skillLevels?: SkillLevels; treasure?: SnapshotTreasure | null }
+>;
+const buildFile = (values.build === undefined ? {} : buildEntriesOf(readJson(values.build))) as BuildFile;
 if (values.build !== undefined && fixedSpec) console.warn('--build is ignored under --fixed-spec');
 const masters = Object.fromEntries(
   Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),
@@ -228,7 +236,11 @@ const slots: TeamSlotInput[] = ids.map((id) => {
   // 段階の範囲・宝物の有無は runSimulation が検証する（RangeError）
   const skills = {
     definition,
-    levels: skillLevelsById.get(id) ?? MAX_SKILL_LEVELS,
+    levels: {
+      ...MAX_SKILL_LEVELS,
+      ...(fixedSpec ? {} : buildFile[String(id)]?.skillLevels),
+      ...skillLevelsById.get(id),
+    },
     treasurePhase: (treasurePhases.get(id) ?? 0) as TreasurePhase,
   };
   return fixedSpec
@@ -259,7 +271,11 @@ function withBuild(
 ): TeamSlotInput {
   const growth = entry?.growth ?? DEFAULT_GROWTH;
   if (entry === undefined) return { character, growth, condition, skills };
-  const { growth: _growth, ...rest } = entry;
+  const { growth: _growth, skillLevels: _skillLevels, treasure, ...rest } = entry;
+  if (treasure != null && !treasurePhases.has(character.resourceId))
+    console.warn(
+      `build ${character.name.ja}: 宝物 Lv${treasure.level} の段階は未確定（API の Lv と段階の対応が分からない）。--treasure で指定する`,
+    );
   // 書かれていない項目・部位は空の育成で埋める（Stage 14: calc の育成の JSON の取り込みと同じ）
   const empty = emptyBuild();
   const build: BuildInput = { ...empty, ...rest, gear: { ...empty.gear, ...rest.gear } };

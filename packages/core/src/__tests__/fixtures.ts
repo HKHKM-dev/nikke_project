@@ -13,6 +13,7 @@ export function makeCharacter(shot: Partial<ShotParams> = {}, overrides: Partial
   const skill = { id: 0, name: { ja: '', en: '' }, description: { ja: '', en: '' }, values: [] };
   return {
     resourceId: 1,
+    nameCode: 1,
     name: { ja: 'テスト', en: 'Test' },
     rarity: 'SSR',
     class: 'Attacker',

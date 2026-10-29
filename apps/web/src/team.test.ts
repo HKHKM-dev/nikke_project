@@ -24,6 +24,7 @@ import {
 function entry(resourceId: number): CharacterIndexEntry {
   return {
     resourceId,
+    nameCode: resourceId,
     name: { ja: `ニケ${resourceId}`, en: `Nikke ${resourceId}` },
     rarity: 'SSR',
     class: 'Attacker',

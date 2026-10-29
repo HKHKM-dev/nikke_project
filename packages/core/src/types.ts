@@ -19,6 +19,8 @@ export type SkillSlot = 'skill1' | 'skill2' | 'burst';
 
 export type CharacterIndexEntry = {
   resourceId: number;
+  /** CDN の name_code（キャラの識別番号）。宝物・ShiftyPad の育成データ（shiftypad.ts）はこれでキャラを指す */
+  nameCode: number;
   name: LocalizedText;
   rarity: Rarity;
   class: NikkeClass;

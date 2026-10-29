@@ -3,6 +3,7 @@
   "characters": [
     {
       "resourceId": 10,
+      "nameCode": 3001,
       "name": {
         "ja": "ラピ",
         "en": "Rapi"
@@ -16,6 +17,7 @@
     },
     {
       "resourceId": 11,
+      "nameCode": 3002,
       "name": {
         "ja": "ネオン",
         "en": "Neon"
@@ -29,6 +31,7 @@
     },
     {
       "resourceId": 12,
+      "nameCode": 3005,
       "name": {
         "ja": "アニス",
         "en": "Anis"
@@ -42,6 +45,7 @@
     },
     {
       "resourceId": 14,
+      "nameCode": 5071,
       "name": {
         "ja": "ネオン：ブルーオーシャン",
         "en": "Neon: Blue Ocean"
@@ -55,6 +59,7 @@
     },
     {
       "resourceId": 15,
+      "nameCode": 5097,
       "name": {
         "ja": "アニス：スパークリングサマー",
         "en": "Anis: Sparkling Summer"
@@ -68,6 +73,7 @@
     },
     {
       "resourceId": 16,
+      "nameCode": 5129,
       "name": {
         "ja": "ラピ：レッドフード",
         "en": "Rapi: Red Hood"
@@ -81,6 +87,7 @@
     },
     {
       "resourceId": 17,
+      "nameCode": 5169,
       "name": {
         "ja": "アニス：スター",
         "en": "Anis: Star"
@@ -94,6 +101,7 @@
     },
     {
       "resourceId": 18,
+      "nameCode": 5170,
       "name": {
         "ja": "ネオン：ビジョン・アイ",
         "en": "Neon: Vision Eye"
@@ -107,6 +115,7 @@
     },
     {
       "resourceId": 19,
+      "nameCode": 5185,
       "name": {
         "ja": "マリアン：クイーン",
         "en": "Marian: Queen"
@@ -120,6 +129,7 @@
     },
     {
       "resourceId": 20,
+      "nameCode": 3003,
       "name": {
         "ja": "デルタ",
         "en": "Delta"
@@ -133,6 +143,7 @@
     },
     {
       "resourceId": 22,
+      "nameCode": 5015,
       "name": {
         "ja": "シグナル",
         "en": "Signal"
@@ -146,6 +157,7 @@
     },
     {
       "resourceId": 23,
+      "nameCode": 5154,
       "name": {
         "ja": "デルタ：ニンジャシーフ",
         "en": "Delta: Ninja Thief"
@@ -159,6 +171,7 @@
     },
     {
       "resourceId": 30,
+      "nameCode": 5016,
       "name": {
         "ja": "ポリ",
         "en": "Poli"
@@ -172,6 +185,7 @@
     },
     {
       "resourceId": 32,
+      "nameCode": 5017,
       "name": {
         "ja": "ミランダ",
         "en": "Miranda"
@@ -185,6 +199,7 @@
     },
     {
       "resourceId": 33,
+      "nameCode": 5082,
       "name": {
         "ja": "キリ",
         "en": "Quiry"
@@ -198,6 +213,7 @@
     },
     {
       "resourceId": 40,
+      "nameCode": 1007,
       "name": {
         "ja": "D",
         "en": "D"
@@ -211,6 +227,7 @@
     },
     {
       "resourceId": 41,
+      "nameCode": 5141,
       "name": {
         "ja": "K",
         "en": "K"
@@ -224,6 +241,7 @@
     },
     {
       "resourceId": 43,
+      "nameCode": 5110,
       "name": {
         "ja": "D：キラーワイフ",
         "en": "D: Killer Wife"
@@ -237,6 +255,7 @@
     },
     {
       "resourceId": 60,
+      "nameCode": 3007,
       "name": {
         "ja": "ベロータ",
         "en": "Belorta"
@@ -250,6 +269,7 @@
     },
     {
       "resourceId": 61,
+      "nameCode": 3008,
       "name": {
         "ja": "ミカ",
         "en": "Mica"
@@ -263,6 +283,7 @@
     },
     {
       "resourceId": 62,
+      "nameCode": 5104,
       "name": {
         "ja": "ミカ：スノーバディ",
         "en": "Mica: Snow Buddy"
@@ -276,6 +297,7 @@
     },
     {
       "resourceId": 63,
+      "nameCode": 5184,
       "name": {
         "ja": "ベロータ：パンプキンウィッチ",
         "en": "Belorta: Pumpkin Witch"
@@ -289,6 +311,7 @@
     },
     {
       "resourceId": 70,
+      "nameCode": 5018,
       "name": {
         "ja": "ブリッド",
         "en": "Brid"
@@ -302,6 +325,7 @@
     },
     {
       "resourceId": 71,
+      "nameCode": 5019,
       "name": {
         "ja": "ソリン",
         "en": "Soline"
@@ -315,6 +339,7 @@
     },
     {
       "resourceId": 72,
+      "nameCode": 5020,
       "name": {
         "ja": "ディーゼル",
         "en": "Diesel"
@@ -328,6 +353,7 @@
     },
     {
       "resourceId": 73,
+      "nameCode": 5160,
       "name": {
         "ja": "ブリッド：サイレントトラック",
         "en": "Brid: Silent Track"
@@ -341,6 +367,7 @@
     },
     {
       "resourceId": 74,
+      "nameCode": 5158,
       "name": {
         "ja": "ソリン：フロストチケット",
         "en": "Soline: Frost Ticket"
@@ -354,6 +381,7 @@
     },
     {
       "resourceId": 75,
+      "nameCode": 5159,
       "name": {
         "ja": "ディーゼル：ウィンタースイーツ",
         "en": "Diesel: Winter Sweets"
@@ -367,6 +395,7 @@
     },
     {
       "resourceId": 80,
+      "nameCode": 5021,
       "name": {
         "ja": "センチ",
         "en": "Centi"
@@ -380,6 +409,7 @@
     },
     {
       "resourceId": 82,
+      "nameCode": 5011,
       "name": {
         "ja": "リター",
         "en": "Liter"
@@ -393,6 +423,7 @@
     },
     {
       "resourceId": 90,
+      "nameCode": 5005,
       "name": {
         "ja": "エマ",
         "en": "Emma"
@@ -406,6 +437,7 @@
     },
     {
       "resourceId": 91,
+      "nameCode": 5022,
       "name": {
         "ja": "ベスティー",
         "en": "Vesti"
@@ -419,6 +451,7 @@
     },
     {
       "resourceId": 92,
+      "nameCode": 5023,
       "name": {
         "ja": "ウンファ",
         "en": "Eunhwa"
@@ -432,6 +465,7 @@
     },
     {
       "resourceId": 93,
+      "nameCode": 5147,
       "name": {
         "ja": "エマ：タクティカル・アップ",
         "en": "Emma: Tactical Upgrade"
@@ -445,6 +479,7 @@
     },
     {
       "resourceId": 94,
+      "nameCode": 5148,
       "name": {
         "ja": "ベスティー：タクティカル・アップ",
         "en": "Vesti: Tactical Upgrade"
@@ -458,6 +493,7 @@
     },
     {
       "resourceId": 95,
+      "nameCode": 5149,
       "name": {
         "ja": "ウンファ：タクティカル・アップ",
         "en": "Eunhwa: Tactical Upgrade"
@@ -471,6 +507,7 @@
     },
     {
       "resourceId": 100,
+      "nameCode": 1010,
       "name": {
         "ja": "ラプラス",
         "en": "Laplace"
@@ -484,6 +521,7 @@
     },
     {
       "resourceId": 101,
+      "nameCode": 5024,
       "name": {
         "ja": "ドレイク",
         "en": "Drake"
@@ -497,6 +535,7 @@
     },
     {
       "resourceId": 102,
+      "nameCode": 5001,
       "name": {
         "ja": "マクスウェル",
         "en": "Maxwell"
@@ -510,6 +549,7 @@
     },
     {
       "resourceId": 103,
+      "nameCode": 5177,
       "name": {
         "ja": "ラプラス：アルティメットヒーロー",
         "en": "Laplace: Ultimate Hero"
@@ -523,6 +563,7 @@
     },
     {
       "resourceId": 104,
+      "nameCode": 5181,
       "name": {
         "ja": "ドレイク：グレイトヴィラン",
         "en": "Drake: Great Villain"
@@ -536,6 +577,7 @@
     },
     {
       "resourceId": 105,
+      "nameCode": 5178,
       "name": {
         "ja": "マクスウェル：オーディナリーメカニック",
         "en": "Maxwell: Ordinary Mechanic"
@@ -549,6 +591,7 @@
     },
     {
       "resourceId": 110,
+      "nameCode": 5025,
       "name": {
         "ja": "クロウ",
         "en": "Crow"
@@ -562,6 +605,7 @@
     },
     {
       "resourceId": 111,
+      "nameCode": 1020,
       "name": {
         "ja": "ジャッカル",
         "en": "Jackal"
@@ -575,6 +619,7 @@
     },
     {
       "resourceId": 112,
+      "nameCode": 1022,
       "name": {
         "ja": "バイパー",
         "en": "Viper"
@@ -588,6 +633,7 @@
     },
     {
       "resourceId": 113,
+      "nameCode": 5166,
       "name": {
         "ja": "E.H.",
         "en": "E.H."
@@ -601,6 +647,7 @@
     },
     {
       "resourceId": 120,
+      "nameCode": 3009,
       "name": {
         "ja": "N102",
         "en": "N102"
@@ -614,6 +661,7 @@
     },
     {
       "resourceId": 121,
+      "nameCode": 5085,
       "name": {
         "ja": "エヌ : ミラクルフェアリー",
         "en": "Anne: Miracle Fairy"
@@ -627,6 +675,7 @@
     },
     {
       "resourceId": 130,
+      "nameCode": 5026,
       "name": {
         "ja": "メアリー",
         "en": "Mary"
@@ -640,6 +689,7 @@
     },
     {
       "resourceId": 131,
+      "nameCode": 5027,
       "name": {
         "ja": "ペッパー",
         "en": "Pepper"
@@ -653,6 +703,7 @@
     },
     {
       "resourceId": 132,
+      "nameCode": 5064,
       "name": {
         "ja": "メアリー：ベイゴッデス",
         "en": "Mary: Bay Goddess"
@@ -666,6 +717,7 @@
     },
     {
       "resourceId": 140,
+      "nameCode": 5002,
       "name": {
         "ja": "シュガー",
         "en": "Sugar"
@@ -679,6 +731,7 @@
     },
     {
       "resourceId": 141,
+      "nameCode": 5028,
       "name": {
         "ja": "ミルク",
         "en": "Milk"
@@ -692,6 +745,7 @@
     },
     {
       "resourceId": 142,
+      "nameCode": 5010,
       "name": {
         "ja": "プリム",
         "en": "Frima"
@@ -705,6 +759,7 @@
     },
     {
       "resourceId": 143,
+      "nameCode": 5150,
       "name": {
         "ja": "ミルク：ブルーミングバニー",
         "en": "Milk: Blooming Bunny"
@@ -718,6 +773,7 @@
     },
     {
       "resourceId": 150,
+      "nameCode": 5014,
       "name": {
         "ja": "ジュリア",
         "en": "Julia"
@@ -731,6 +787,7 @@
     },
     {
       "resourceId": 160,
+      "nameCode": 5006,
       "name": {
         "ja": "ユニ",
         "en": "Yuni"
@@ -744,6 +801,7 @@
     },
     {
       "resourceId": 161,
+      "nameCode": 3006,
       "name": {
         "ja": "ミハラ",
         "en": "Mihara"
@@ -757,6 +815,7 @@
     },
     {
       "resourceId": 162,
+      "nameCode": 5138,
       "name": {
         "ja": "ミハラ：ボンディングチェーン",
         "en": "Mihara: Bonding Chain"
@@ -770,6 +829,7 @@
     },
     {
       "resourceId": 170,
+      "nameCode": 5007,
       "name": {
         "ja": "プリバティ",
         "en": "Privaty"
@@ -783,6 +843,7 @@
     },
     {
       "resourceId": 171,
+      "nameCode": 5029,
       "name": {
         "ja": "ユルハ",
         "en": "Yulha"
@@ -796,6 +857,7 @@
     },
     {
       "resourceId": 172,
+      "nameCode": 5030,
       "name": {
         "ja": "アドミ",
         "en": "Admi"
@@ -809,6 +871,7 @@
     },
     {
       "resourceId": 180,
+      "nameCode": 5031,
       "name": {
         "ja": "ギロチン",
         "en": "Guillotine"
@@ -822,6 +885,7 @@
     },
     {
       "resourceId": 181,
+      "nameCode": 5032,
       "name": {
         "ja": "メイデン",
         "en": "Maiden"
@@ -835,6 +899,7 @@
     },
     {
       "resourceId": 182,
+      "nameCode": 5128,
       "name": {
         "ja": "ギロチン：ウィンタースレイヤー",
         "en": "Guillotine: Winter Slayer"
@@ -848,6 +913,7 @@
     },
     {
       "resourceId": 183,
+      "nameCode": 5127,
       "name": {
         "ja": "メイデン：アイスローズ",
         "en": "Maiden: Ice Rose"
@@ -861,6 +927,7 @@
     },
     {
       "resourceId": 190,
+      "nameCode": 5033,
       "name": {
         "ja": "ルドミラ",
         "en": "Ludmilla"
@@ -874,6 +941,7 @@
     },
     {
       "resourceId": 191,
+      "nameCode": 5004,
       "name": {
         "ja": "アリス",
         "en": "Alice"
@@ -887,6 +955,7 @@
     },
     {
       "resourceId": 192,
+      "nameCode": 5081,
       "name": {
         "ja": "トーブ",
         "en": "Tove"
@@ -900,6 +969,7 @@
     },
     {
       "resourceId": 193,
+      "nameCode": 3011,
       "name": {
         "ja": "ネヴェ",
         "en": "Neve"
@@ -913,6 +983,7 @@
     },
     {
       "resourceId": 194,
+      "nameCode": 5103,
       "name": {
         "ja": "ルドミラ：ウィンターオーナー",
         "en": "Ludmilla: Winter Owner"
@@ -926,6 +997,7 @@
     },
     {
       "resourceId": 195,
+      "nameCode": 5114,
       "name": {
         "ja": "アリス：ワンダーランドバニー",
         "en": "Alice: Wonderland Bunny"
@@ -939,6 +1011,7 @@
     },
     {
       "resourceId": 200,
+      "nameCode": 5034,
       "name": {
         "ja": "ルピー",
         "en": "Rupee"
@@ -952,6 +1025,7 @@
     },
     {
       "resourceId": 201,
+      "nameCode": 5035,
       "name": {
         "ja": "ヤン",
         "en": "Yan"
@@ -965,6 +1039,7 @@
     },
     {
       "resourceId": 202,
+      "nameCode": 5036,
       "name": {
         "ja": "ドラー",
         "en": "Dolla"
@@ -978,6 +1053,7 @@
     },
     {
       "resourceId": 203,
+      "nameCode": 5087,
       "name": {
         "ja": "ルピー：ウィンターショッパー",
         "en": "Rupee: Winter Shopper"
@@ -991,6 +1067,7 @@
     },
     {
       "resourceId": 210,
+      "nameCode": 5003,
       "name": {
         "ja": "エクシア",
         "en": "Exia"
@@ -1004,6 +1081,7 @@
     },
     {
       "resourceId": 212,
+      "nameCode": 5037,
       "name": {
         "ja": "ノベル",
         "en": "Novel"
@@ -1017,6 +1095,7 @@
     },
     {
       "resourceId": 220,
+      "nameCode": 5012,
       "name": {
         "ja": "スノーホワイト",
         "en": "Snow White"
@@ -1030,6 +1109,7 @@
     },
     {
       "resourceId": 221,
+      "nameCode": 5040,
       "name": {
         "ja": "ラプンツェル",
         "en": "Rapunzel"
@@ -1043,6 +1123,7 @@
     },
     {
       "resourceId": 222,
+      "nameCode": 5041,
       "name": {
         "ja": "紅蓮",
         "en": "Scarlet"
@@ -1056,6 +1137,7 @@
     },
     {
       "resourceId": 223,
+      "nameCode": 5155,
       "name": {
         "ja": "ナユタ",
         "en": "Nayuta"
@@ -1069,6 +1151,7 @@
     },
     {
       "resourceId": 224,
+      "nameCode": 5102,
       "name": {
         "ja": "スノーホワイト：イノセントデイズ",
         "en": "Snow White: Innocent Days"
@@ -1082,6 +1165,7 @@
     },
     {
       "resourceId": 225,
+      "nameCode": 5105,
       "name": {
         "ja": "紅蓮：ブラックシャドウ",
         "en": "Scarlet: Black Shadow"
@@ -1095,6 +1179,7 @@
     },
     {
       "resourceId": 226,
+      "nameCode": 5123,
       "name": {
         "ja": "ラプンツェル：ピュアグレイス",
         "en": "Rapunzel: Pure Grace"
@@ -1108,6 +1193,7 @@
     },
     {
       "resourceId": 230,
+      "nameCode": 5042,
       "name": {
         "ja": "ハラン",
         "en": "Harran"
@@ -1121,6 +1207,7 @@
     },
     {
       "resourceId": 231,
+      "nameCode": 5013,
       "name": {
         "ja": "イサベル",
         "en": "Isabel"
@@ -1134,6 +1221,7 @@
     },
     {
       "resourceId": 232,
+      "nameCode": 5043,
       "name": {
         "ja": "ノア",
         "en": "Noah"
@@ -1147,6 +1235,7 @@
     },
     {
       "resourceId": 233,
+      "nameCode": 5061,
       "name": {
         "ja": "ドロシー",
         "en": "Dorothy"
@@ -1160,6 +1249,7 @@
     },
     {
       "resourceId": 234,
+      "nameCode": 5145,
       "name": {
         "ja": "ドロシー：セレンディピティ",
         "en": "Dorothy: Serendipity"
@@ -1173,6 +1263,7 @@
     },
     {
       "resourceId": 240,
+      "nameCode": 3004,
       "name": {
         "ja": "ルマニ",
         "en": "Rumani"
@@ -1186,6 +1277,7 @@
     },
     {
       "resourceId": 241,
+      "nameCode": 5038,
       "name": {
         "ja": "エピネル",
         "en": "Epinel"
@@ -1199,6 +1291,7 @@
     },
     {
       "resourceId": 242,
+      "nameCode": 5039,
       "name": {
         "ja": "フォルクヴァン",
         "en": "Folkwang"
@@ -1212,6 +1305,7 @@
     },
     {
       "resourceId": 260,
+      "nameCode": 5044,
       "name": {
         "ja": "モダニア",
         "en": "Modernia"
@@ -1225,6 +1319,7 @@
     },
     {
       "resourceId": 261,
+      "nameCode": 5056,
       "name": {
         "ja": "ニヒリスター",
         "en": "Nihilister"
@@ -1238,6 +1333,7 @@
     },
     {
       "resourceId": 262,
+      "nameCode": 5156,
       "name": {
         "ja": "リバーレリオ",
         "en": "Liberalio"
@@ -1251,6 +1347,7 @@
     },
     {
       "resourceId": 270,
+      "nameCode": 5008,
       "name": {
         "ja": "ブラン",
         "en": "Blanc"
@@ -1264,6 +1361,7 @@
     },
     {
       "resourceId": 271,
+      "nameCode": 5009,
       "name": {
         "ja": "ノワール",
         "en": "Noir"
@@ -1277,6 +1375,7 @@
     },
     {
       "resourceId": 272,
+      "nameCode": 5049,
       "name": {
         "ja": "ルージュ",
         "en": "Rouge"
@@ -1290,6 +1389,7 @@
     },
     {
       "resourceId": 280,
+      "nameCode": 5045,
       "name": {
         "ja": "ロザンナ",
         "en": "Rosanna"
@@ -1303,6 +1403,7 @@
     },
     {
       "resourceId": 281,
+      "nameCode": 1021,
       "name": {
         "ja": "モラン",
         "en": "Moran"
@@ -1316,6 +1417,7 @@
     },
     {
       "resourceId": 282,
+      "nameCode": 1012,
       "name": {
         "ja": "サクラ",
         "en": "Sakura"
@@ -1329,6 +1431,7 @@
     },
     {
       "resourceId": 283,
+      "nameCode": 5116,
       "name": {
         "ja": "ロザンナ：シックオーシャン",
         "en": "Rosanna: Chic Ocean"
@@ -1342,6 +1445,7 @@
     },
     {
       "resourceId": 284,
+      "nameCode": 5117,
       "name": {
         "ja": "サクラ：ブルーム・イン・サマー",
         "en": "Sakura: Bloom in Summer"
@@ -1355,6 +1459,7 @@
     },
     {
       "resourceId": 290,
+      "nameCode": 1019,
       "name": {
         "ja": "マナ",
         "en": "Mana"
@@ -1368,6 +1473,7 @@
     },
     {
       "resourceId": 291,
+      "nameCode": 3010,
       "name": {
         "ja": "エーテル",
         "en": "Ether"
@@ -1381,6 +1487,7 @@
     },
     {
       "resourceId": 300,
+      "nameCode": 1013,
       "name": {
         "ja": "ソルジャーE.G.",
         "en": "Soldier EG"
@@ -1394,6 +1501,7 @@
     },
     {
       "resourceId": 301,
+      "nameCode": 1014,
       "name": {
         "ja": "ソルジャーF.A.",
         "en": "Soldier FA"
@@ -1407,6 +1515,7 @@
     },
     {
       "resourceId": 302,
+      "nameCode": 1015,
       "name": {
         "ja": "プロダクト08",
         "en": "Product 08"
@@ -1420,6 +1529,7 @@
     },
     {
       "resourceId": 303,
+      "nameCode": 1016,
       "name": {
         "ja": "プロダクト12",
         "en": "Product 12"
@@ -1433,6 +1543,7 @@
     },
     {
       "resourceId": 304,
+      "nameCode": 1017,
       "name": {
         "ja": "I-DOLL・フラワー",
         "en": "iDoll Flower"
@@ -1446,6 +1557,7 @@
     },
     {
       "resourceId": 305,
+      "nameCode": 1018,
       "name": {
         "ja": "I-DOLL・オーシャン",
         "en": "iDoll Ocean"
@@ -1459,6 +1571,7 @@
     },
     {
       "resourceId": 306,
+      "nameCode": 1025,
       "name": {
         "ja": "ソルジャーO.W.",
         "en": "Soldier OW"
@@ -1472,6 +1585,7 @@
     },
     {
       "resourceId": 307,
+      "nameCode": 1024,
       "name": {
         "ja": "プロダクト23",
         "en": "Product 23"
@@ -1485,6 +1599,7 @@
     },
     {
       "resourceId": 308,
+      "nameCode": 1023,
       "name": {
         "ja": "I-DOLL・サン",
         "en": "iDoll Sun"
@@ -1498,6 +1613,7 @@
     },
     {
       "resourceId": 310,
+      "nameCode": 5046,
       "name": {
         "ja": "エード",
         "en": "Ade"
@@ -1511,6 +1627,7 @@
     },
     {
       "resourceId": 311,
+      "nameCode": 5050,
       "name": {
         "ja": "ココア",
         "en": "Cocoa"
@@ -1524,6 +1641,7 @@
     },
     {
       "resourceId": 312,
+      "nameCode": 5051,
       "name": {
         "ja": "ソーダ",
         "en": "Soda"
@@ -1537,6 +1655,7 @@
     },
     {
       "resourceId": 313,
+      "nameCode": 5106,
       "name": {
         "ja": "プリバティ：アンカインド・メイド",
         "en": "Privaty: Unkind Maid"
@@ -1550,6 +1669,7 @@
     },
     {
       "resourceId": 314,
+      "nameCode": 5113,
       "name": {
         "ja": "ソーダ：トゥインクルバニー",
         "en": "Soda: Twinkling Bunny"
@@ -1563,6 +1683,7 @@
     },
     {
       "resourceId": 315,
+      "nameCode": 5151,
       "name": {
         "ja": "エード：エージェントバニー",
         "en": "Ade: Agent Bunny"
@@ -1576,6 +1697,7 @@
     },
     {
       "resourceId": 316,
+      "nameCode": 5163,
       "name": {
         "ja": "ベルベット",
         "en": "Velvet"
@@ -1589,6 +1711,7 @@
     },
     {
       "resourceId": 321,
+      "nameCode": 5048,
       "name": {
         "ja": "マルチャーナ",
         "en": "Marciana"
@@ -1602,6 +1725,7 @@
     },
     {
       "resourceId": 322,
+      "nameCode": 5176,
       "name": {
         "ja": "マルチャーナ：マリンスタディ",
         "en": "Marciana: Marine Study"
@@ -1615,6 +1739,7 @@
     },
     {
       "resourceId": 330,
+      "nameCode": 5065,
       "name": {
         "ja": "クラウン",
         "en": "Crown"
@@ -1628,6 +1753,7 @@
     },
     {
       "resourceId": 331,
+      "nameCode": 5157,
       "name": {
         "ja": "チャイム",
         "en": "Chime"
@@ -1641,6 +1767,7 @@
     },
     {
       "resourceId": 350,
+      "nameCode": 5079,
       "name": {
         "ja": "マスト",
         "en": "Mast"
@@ -1654,6 +1781,7 @@
     },
     {
       "resourceId": 351,
+      "nameCode": 5063,
       "name": {
         "ja": "アンカー",
         "en": "Anchor"
@@ -1667,6 +1795,7 @@
     },
     {
       "resourceId": 352,
+      "nameCode": 5066,
       "name": {
         "ja": "ヘルム",
         "en": "Helm"
@@ -1680,6 +1809,7 @@
     },
     {
       "resourceId": 353,
+      "nameCode": 5098,
       "name": {
         "ja": "ヘルム：アクアマリン",
         "en": "Helm: Aquamarine"
@@ -1693,6 +1823,7 @@
     },
     {
       "resourceId": 354,
+      "nameCode": 5130,
       "name": {
         "ja": "マスト：ロマンチックメイド",
         "en": "Mast: Romantic Maid"
@@ -1706,6 +1837,7 @@
     },
     {
       "resourceId": 355,
+      "nameCode": 5131,
       "name": {
         "ja": "アンカー：イノセントメイド",
         "en": "Anchor: Innocent Maid"
@@ -1719,6 +1851,7 @@
     },
     {
       "resourceId": 361,
+      "nameCode": 5053,
       "name": {
         "ja": "キロ",
         "en": "Kilo"
@@ -1732,6 +1865,7 @@
     },
     {
       "resourceId": 380,
+      "nameCode": 5068,
       "name": {
         "ja": "ネロ",
         "en": "Nero"
@@ -1745,6 +1879,7 @@
     },
     {
       "resourceId": 381,
+      "nameCode": 5054,
       "name": {
         "ja": "ビスケット",
         "en": "Biscuit"
@@ -1758,6 +1893,7 @@
     },
     {
       "resourceId": 382,
+      "nameCode": 5092,
       "name": {
         "ja": "レオナ",
         "en": "Leona"
@@ -1771,6 +1907,7 @@
     },
     {
       "resourceId": 390,
+      "nameCode": 5088,
       "name": {
         "ja": "ツバイ",
         "en": "Zwei"
@@ -1784,6 +1921,7 @@
     },
     {
       "resourceId": 391,
+      "nameCode": 5077,
       "name": {
         "ja": "アイン",
         "en": "Ein"
@@ -1797,6 +1935,7 @@
     },
     {
       "resourceId": 392,
+      "nameCode": 5069,
       "name": {
         "ja": "ライ",
         "en": "Rei"
@@ -1810,6 +1949,7 @@
     },
     {
       "resourceId": 400,
+      "nameCode": 5055,
       "name": {
         "ja": "ギルティ",
         "en": "Guilty"
@@ -1823,6 +1963,7 @@
     },
     {
       "resourceId": 401,
+      "nameCode": 5059,
       "name": {
         "ja": "シン",
         "en": "Sin"
@@ -1836,6 +1977,7 @@
     },
     {
       "resourceId": 402,
+      "nameCode": 5078,
       "name": {
         "ja": "クエンシー",
         "en": "Quency"
@@ -1849,6 +1991,7 @@
     },
     {
       "resourceId": 403,
+      "nameCode": 5121,
       "name": {
         "ja": "クエンシー：エスケープクイーン",
         "en": "Quency: Escape Queen"
@@ -1862,6 +2005,7 @@
     },
     {
       "resourceId": 404,
+      "nameCode": 5182,
       "name": {
         "ja": "ギルティ：マイティバニー",
         "en": "Guilty: Mighty Bunny"
@@ -1875,6 +2019,7 @@
     },
     {
       "resourceId": 405,
+      "nameCode": 5183,
       "name": {
         "ja": "シン：スウィフトバニー",
         "en": "Sin: Swift Bunny"
@@ -1888,6 +2033,7 @@
     },
     {
       "resourceId": 411,
+      "nameCode": 5126,
       "name": {
         "ja": "フローラ",
         "en": "Flora"
@@ -1901,6 +2047,7 @@
     },
     {
       "resourceId": 412,
+      "nameCode": 5134,
       "name": {
         "ja": "トリナ",
         "en": "Trina"
@@ -1914,6 +2061,7 @@
     },
     {
       "resourceId": 430,
+      "nameCode": 5074,
       "name": {
         "ja": "ノイズ",
         "en": "Noise"
@@ -1927,6 +2075,7 @@
     },
     {
       "resourceId": 431,
+      "nameCode": 5075,
       "name": {
         "ja": "ボリューム",
         "en": "Volume"
@@ -1940,6 +2089,7 @@
     },
     {
       "resourceId": 432,
+      "nameCode": 5070,
       "name": {
         "ja": "アリア",
         "en": "Aria"
@@ -1953,6 +2103,7 @@
     },
     {
       "resourceId": 441,
+      "nameCode": 5171,
       "name": {
         "ja": "アビスタ",
         "en": "Avistar"
@@ -1966,6 +2117,7 @@
     },
     {
       "resourceId": 450,
+      "nameCode": 5099,
       "name": {
         "ja": "ナガ",
         "en": "Naga"
@@ -1979,6 +2131,7 @@
     },
     {
       "resourceId": 451,
+      "nameCode": 5100,
       "name": {
         "ja": "ティア",
         "en": "Tia"
@@ -1992,6 +2145,7 @@
     },
     {
       "resourceId": 470,
+      "nameCode": 5101,
       "name": {
         "ja": "レッドフード",
         "en": "Red Hood"
@@ -2005,6 +2159,7 @@
     },
     {
       "resourceId": 471,
+      "nameCode": 5161,
       "name": {
         "ja": "スノーホワイト：ヘビーアームズ",
         "en": "Snow White: Heavy Arms"
@@ -2018,6 +2173,7 @@
     },
     {
       "resourceId": 472,
+      "nameCode": 5186,
       "name": {
         "ja": "紅蓮：神殺",
         "en": "Scarlet: Goddeath"
@@ -2031,6 +2187,7 @@
     },
     {
       "resourceId": 473,
+      "nameCode": 5187,
       "name": {
         "ja": "ラプンツェル：サンクチュアリ",
         "en": "Rapunzel: Sanctuary"
@@ -2044,6 +2201,7 @@
     },
     {
       "resourceId": 500,
+      "nameCode": 5107,
       "name": {
         "ja": "エレグ",
         "en": "Elegg"
@@ -2057,6 +2215,7 @@
     },
     {
       "resourceId": 501,
+      "nameCode": 5112,
       "name": {
         "ja": "トロニー",
         "en": "Trony"
@@ -2070,6 +2229,7 @@
     },
     {
       "resourceId": 502,
+      "nameCode": 5146,
       "name": {
         "ja": "エレグ：ブーム・アンド・ショック",
         "en": "Elegg: Boom and Shock"
@@ -2083,6 +2243,7 @@
     },
     {
       "resourceId": 511,
+      "nameCode": 5124,
       "name": {
         "ja": "シンデレラ",
         "en": "Cinderella"
@@ -2096,6 +2257,7 @@
     },
     {
       "resourceId": 513,
+      "nameCode": 5137,
       "name": {
         "ja": "リトルマーメイド",
         "en": "Little Mermaid"
@@ -2109,6 +2271,7 @@
     },
     {
       "resourceId": 514,
+      "nameCode": 5125,
       "name": {
         "ja": "グレイブ",
         "en": "Grave"
@@ -2122,6 +2285,7 @@
     },
     {
       "resourceId": 515,
+      "nameCode": 5175,
       "name": {
         "ja": "シンデレラ：クリスタルウェーブ",
         "en": "Cinderella: Crystal Wave"
@@ -2135,6 +2299,7 @@
     },
     {
       "resourceId": 520,
+      "nameCode": 5135,
       "name": {
         "ja": "ブレッディ",
         "en": "Bready"
@@ -2148,6 +2313,7 @@
     },
     {
       "resourceId": 521,
+      "nameCode": 5136,
       "name": {
         "ja": "クラスト",
         "en": "Crust"
@@ -2161,6 +2327,7 @@
     },
     {
       "resourceId": 532,
+      "nameCode": 5144,
       "name": {
         "ja": "ソラ",
         "en": "Sora"
@@ -2174,6 +2341,7 @@
     },
     {
       "resourceId": 550,
+      "nameCode": 5111,
       "name": {
         "ja": "ベイ",
         "en": "Bay"
@@ -2187,6 +2355,7 @@
     },
     {
       "resourceId": 551,
+      "nameCode": 5115,
       "name": {
         "ja": "クレイ",
         "en": "Clay"
@@ -2200,6 +2369,7 @@
     },
     {
       "resourceId": 570,
+      "nameCode": 5174,
       "name": {
         "ja": "アークレンジャー・ブラック",
         "en": "Ark Ranger Black"
@@ -2213,6 +2383,7 @@
     },
     {
       "resourceId": 580,
+      "nameCode": 5122,
       "name": {
         "ja": "ファントム",
         "en": "Phantom"
@@ -2226,6 +2397,7 @@
     },
     {
       "resourceId": 581,
+      "nameCode": 5140,
       "name": {
         "ja": "アルカナ",
         "en": "Arcana"
@@ -2239,6 +2411,7 @@
     },
     {
       "resourceId": 582,
+      "nameCode": 5162,
       "name": {
         "ja": "レーベル",
         "en": "Label"
@@ -2252,6 +2425,7 @@
     },
     {
       "resourceId": 583,
+      "nameCode": 5167,
       "name": {
         "ja": "アルカナ：フォーチュンメイト",
         "en": "Arcana: Fortune Mate"
@@ -2265,6 +2439,7 @@
     },
     {
       "resourceId": 590,
+      "nameCode": 5139,
       "name": {
         "ja": "モリー",
         "en": "Mori"
@@ -2278,6 +2453,7 @@
     },
     {
       "resourceId": 600,
+      "nameCode": 5172,
       "name": {
         "ja": "ミント",
         "en": "Mint"
@@ -2291,6 +2467,7 @@
     },
     {
       "resourceId": 601,
+      "nameCode": 5173,
       "name": {
         "ja": "プリカ",
         "en": "Prika"
@@ -2304,6 +2481,7 @@
     },
     {
       "resourceId": 620,
+      "nameCode": 5168,
       "name": {
         "ja": "シラツル",
         "en": "Snow Crane"
@@ -2317,6 +2495,7 @@
     },
     {
       "resourceId": 800,
+      "nameCode": 5089,
       "name": {
         "ja": "マキマ",
         "en": "Makima"
@@ -2330,6 +2509,7 @@
     },
     {
       "resourceId": 801,
+      "nameCode": 5090,
       "name": {
         "ja": "パワー",
         "en": "Power"
@@ -2343,6 +2523,7 @@
     },
     {
       "resourceId": 802,
+      "nameCode": 3012,
       "name": {
         "ja": "姫野",
         "en": "Himeno"
@@ -2356,6 +2537,7 @@
     },
     {
       "resourceId": 810,
+      "nameCode": 5094,
       "name": {
         "ja": "2B",
         "en": "2B"
@@ -2369,6 +2551,7 @@
     },
     {
       "resourceId": 811,
+      "nameCode": 5095,
       "name": {
         "ja": "A2",
         "en": "A2"
@@ -2382,6 +2565,7 @@
     },
     {
       "resourceId": 812,
+      "nameCode": 5096,
       "name": {
         "ja": "パスカル",
         "en": "Pascal"
@@ -2395,6 +2579,7 @@
     },
     {
       "resourceId": 820,
+      "nameCode": 5108,
       "name": {
         "ja": "レム",
         "en": "Rem"
@@ -2408,6 +2593,7 @@
     },
     {
       "resourceId": 821,
+      "nameCode": 5109,
       "name": {
         "ja": "エミリア",
         "en": "Emilia"
@@ -2421,6 +2607,7 @@
     },
     {
       "resourceId": 822,
+      "nameCode": 3013,
       "name": {
         "ja": "ラム",
         "en": "Ram"
@@ -2434,6 +2621,7 @@
     },
     {
       "resourceId": 830,
+      "nameCode": 5118,
       "name": {
         "ja": "アスカ",
         "en": "Asuka"
@@ -2447,6 +2635,7 @@
     },
     {
       "resourceId": 831,
+      "nameCode": 5119,
       "name": {
         "ja": "レイ",
         "en": "Rei"
@@ -2460,6 +2649,7 @@
     },
     {
       "resourceId": 832,
+      "nameCode": 5120,
       "name": {
         "ja": "マリ",
         "en": "Mari"
@@ -2473,6 +2663,7 @@
     },
     {
       "resourceId": 833,
+      "nameCode": 3014,
       "name": {
         "ja": "ミサト",
         "en": "Misato"
@@ -2486,6 +2677,7 @@
     },
     {
       "resourceId": 834,
+      "nameCode": 5132,
       "name": {
         "ja": "レイ（仮称）",
         "en": "Rei (Tentative Name)"
@@ -2499,6 +2691,7 @@
     },
     {
       "resourceId": 835,
+      "nameCode": 5133,
       "name": {
         "ja": "アスカ：WILLE",
         "en": "Asuka: WILLE"
@@ -2512,6 +2705,7 @@
     },
     {
       "resourceId": 836,
+      "nameCode": 3015,
       "name": {
         "ja": "鈴原サクラ",
         "en": "Sakura Suzuhara"
@@ -2525,6 +2719,7 @@
     },
     {
       "resourceId": 840,
+      "nameCode": 5152,
       "name": {
         "ja": "エイダ",
         "en": "Ada"
@@ -2538,6 +2733,7 @@
     },
     {
       "resourceId": 841,
+      "nameCode": 5153,
       "name": {
         "ja": "ジル",
         "en": "Jill"
@@ -2551,6 +2747,7 @@
     },
     {
       "resourceId": 842,
+      "nameCode": 3017,
       "name": {
         "ja": "クレア",
         "en": "Claire"
@@ -2564,6 +2761,7 @@
     },
     {
       "resourceId": 850,
+      "nameCode": 5142,
       "name": {
         "ja": "イヴ",
         "en": "EVE"
@@ -2577,6 +2775,7 @@
     },
     {
       "resourceId": 851,
+      "nameCode": 5143,
       "name": {
         "ja": "レイヴン",
         "en": "Raven"
@@ -2590,6 +2789,7 @@
     },
     {
       "resourceId": 852,
+      "nameCode": 3016,
       "name": {
         "ja": "リリー",
         "en": "Lily"
@@ -2603,6 +2803,7 @@
     },
     {
       "resourceId": 860,
+      "nameCode": 5164,
       "name": {
         "ja": "千束",
         "en": "Chisato"
@@ -2616,6 +2817,7 @@
     },
     {
       "resourceId": 861,
+      "nameCode": 5165,
       "name": {
         "ja": "たきな",
         "en": "Takina"
@@ -2629,6 +2831,7 @@
     },
     {
       "resourceId": 862,
+      "nameCode": 3018,
       "name": {
         "ja": "クルミ",
         "en": "Kurumi"
@@ -2642,6 +2845,7 @@
     },
     {
       "resourceId": 870,
+      "nameCode": 5179,
       "name": {
         "ja": "クイーン（真）",
         "en": "Queen (Makoto)"
@@ -2655,6 +2859,7 @@
     },
     {
       "resourceId": 871,
+      "nameCode": 5180,
       "name": {
         "ja": "雪子",
         "en": "Yukiko"
@@ -2668,6 +2873,7 @@
     },
     {
       "resourceId": 872,
+      "nameCode": 3019,
       "name": {
         "ja": "アイギス",
         "en": "Aigis"
