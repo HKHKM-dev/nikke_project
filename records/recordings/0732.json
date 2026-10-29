@@ -1,0 +1,46 @@
+{
+  "id": "0732",
+  "date": "2026-10-29",
+  "folder": "range",
+  "file": "20261029-0732_sr+ar+mg_delta+sun+rapi-redhood_assist.mp4",
+  "original": "2026-10-29_18-48-32.mp4",
+  "durationSec": 201.8,
+  "frames": 12107,
+  "fps": 60,
+  "sizeMB": 244.4,
+  "sha256": "24405096f517",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "段 12 の撮影 A（plan/design-skill-stage12.md 3.5 節）。I の味方のいない編成で、ラピ：レッドフード（操作）はオート射撃 OFF で撃たない（戦闘補助）",
+  "backup": {
+    "at": "2026-10-29T19:30+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
