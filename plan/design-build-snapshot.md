@@ -57,7 +57,7 @@
   - OL のオプション ID は 7 桁の `700GGLL`（11.1 節の `70GGLL` は書き誤り）。
 - スナップショット（`private/builds/<名前>.json`）の形: `formatVersion`・`fetchedAt`・`synchroLevel`・`recycleRoom`（tid → Lv）・`characters`（resourceId → 1 体分）・`unmapped`。1 体分は `growth` と `BuildInput` の項目に `skillLevels`・`treasure` を足したもので、`--build` の 1 件と同じ形。
 - `sim-run.ts` の `--build` は、スナップショットをそのまま読む（`buildEntriesOf`）。1 件の `skillLevels` をスキル Lv の既定にし、`--skill-levels` が指定されていればその枠はそちらを優先する。
-- 宝物の段階: API の `favorite_item_lv` と段階の対応は分かっていない（11.1 節「分からないまま残るもの」）。写し方では決めず、`treasure: { tid, level, phase: null }` とし、所持の一覧と `sim-run.ts` に「宝物の段階は未確定（`--treasure` で指定する）」と出す（AGENTS.md のプレースホルダーの規則）。`convert.ts` の「Lv 0〜2 = 段階 1〜3」の仮定は採らない。
+- 宝物の段階: API の `favorite_item_lv` から決める（`treasurePhaseOfLevel`。Lv 1・2 = 段階 2・3。C-0744、2026-10-30 に追記）。Lv 0 は画面で見ていないので決めず `phase: null` とし、所持の一覧と `sim-run.ts` に「段階は未確定（`--treasure` で指定する）」と出す（AGENTS.md のプレースホルダーの規則）。`sim-run.ts --build` は、`--treasure` の無い枠にスナップショットの段階を使う（スキル Lv と同じく、スペック固定では使わない）。写し方を直す前のスナップショットは `npm run build:import -- --rebuild` で写し直す。
 - 写せない値（データに無いキャラ、T9 / OL でない装備、知らないオプション ID、R / SR / 宝物でないコレクション）は、黙って捨てずに `unmapped` に出す。取り込みの道具は、育成入力として通らない値（`validateBuild`）も合わせて出す。
 - テスト（`packages/core/src/__tests__/shiftypad.test.ts`）: 作った生のデータ（3 体。OL・オプションの空き・T9・企業装備・キューブ・R / SR のコレクション・宝物・好感度 0）で、写した結果・`validateBuild`・写せない値・アカウントの欄の除去・差・所持の一覧を固定する。
 
@@ -118,7 +118,7 @@
 ## 11. 分からないこと
 
 - ShiftyPad が自動操作のブラウザ（Playwright の Chrome）でのログインを拒むか → 拒まなかった（2026-10-29。14 節）。
-- 宝物の Lv と段階の対応（11.1 節。この設計では決めない）。
+- 宝物の Lv と段階の対応（11.1 節）→ Lv 1・2 は段階 2・3（C-0744。2026-10-30）。Lv 0 は未確定。
 
 ## 12. 決めたこと（2026-10-29。オーナーが推奨のとおりに決めた）
 

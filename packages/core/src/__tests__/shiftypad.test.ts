@@ -9,6 +9,7 @@ import {
   rosterMarkdown,
   stripAccountFields,
   toBuildSnapshot,
+  treasurePhaseOfLevel,
   type ShiftyPadDetail,
   type ShiftyPadRaw,
 } from '../shiftypad.ts';
@@ -177,12 +178,16 @@ describe('toBuildSnapshot', () => {
     expect(c.recycleRoom).toEqual({ personal: 340, class: 223, corporation: 198 });
   });
 
-  it('keeps a treasure with its level and leaves the phase undecided', () => {
+  it('keeps a treasure with its level and the phase from the level (C-0744)', () => {
     const c = snap.characters['30']!;
-    expect(c.treasure).toEqual({ tid: 200301, level: 1, phase: null });
+    expect(c.treasure).toEqual({ tid: 200301, level: 1, phase: 2 });
     expect(c.collection).toBeNull();
     // 支援型・テトラ
     expect(c.recycleRoom).toEqual({ personal: 340, class: 198, corporation: 195 });
+  });
+
+  it('maps treasure levels 1 and 2 to phases 2 and 3 and leaves level 0 undecided (C-0744)', () => {
+    expect([0, 1, 2, 3].map(treasurePhaseOfLevel)).toEqual([null, 2, 3, null]);
   });
 
   it('produces builds that pass validateBuild', () => {
@@ -290,7 +295,7 @@ describe('diffSnapshots and rosterMarkdown', () => {
   it('renders the roster table', () => {
     const rows = rosterMarkdown(prev, labels);
     expect(rows[2]).toBe('| 10 | ニケ10 | 2 | 0 | 10/10/10 | - | R Lv3 |');
-    expect(rows[3]).toBe('| 30 | ニケ30 | 3 | 2 | 10/10/10 | - | 宝物 Lv1 |');
+    expect(rows[3]).toBe('| 30 | ニケ30 | 3 | 2 | 10/10/10 | - | 宝物 Lv1（段階 2） |');
     expect(rows[4]).toBe('| 82 | ニケ82 | 3 | 7 | 10/4/7 | Bキューブ Lv15 | SR Lv15 |');
   });
 });

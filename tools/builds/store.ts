@@ -116,7 +116,7 @@ function writeRoster(name: string, by: string): void {
     '# 所持の一覧',
     '',
     `- 生成: ${by}（plan/design-build-snapshot.md 8 節）。手で直さない。元は private/builds/${name}.json（取得 ${snap.fetchedAt}・シンクロ Lv ${snap.synchroLevel}）`,
-    '- 列: 凸（0〜3）・コア（0〜7）・スキル（スキル 1 / スキル 2 / バースト の Lv）・キューブ・コレクション（R / SR / 宝物 と Lv。宝物の Lv と段階の対応は未確定）',
+    '- 列: 凸（0〜3）・コア（0〜7）・スキル（スキル 1 / スキル 2 / バースト の Lv）・キューブ・コレクション（R / SR / 宝物 と Lv。宝物は段階も。Lv 0 の段階は未確定。C-0744）',
     '',
     ...rosterMarkdown(snap, labels),
   ];

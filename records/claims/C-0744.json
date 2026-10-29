@@ -5,7 +5,7 @@
   "topic": "育成・ステータス",
   "grade": "推論",
   "basis": "V-0544",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "`shiftypad.ts` の `treasurePhaseOfLevel`（取り込みのスナップショットの `treasure.phase`）と、`sim-run.ts --build` の `--treasure` の無い枠の段階。Lv 0 は未確定（`phase: null`。`--treasure` で指定する）",
   "replaces": [],
   "updated": "2026-10-30",
   "decidedOn": []

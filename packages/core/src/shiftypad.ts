@@ -6,10 +6,12 @@
 //   - キャラ: name_code → CDN の nameCode（data/characters/index.json）。Lv はシンクロ Lv（GetUserCharacters の lv）
 //   - 装備: <部位>_equip_tier が 9 なら T9（<部位>_equip_corporation_type が 0 でなければ企業装備）、10 なら OL。
 //     部位は欄の名前（head・torso・arm・leg）。OL のオプション ID は 700GGLL（GG = 05〜13 が OVERLOAD_OPTIONS の順、LL = Lv）
-//   - コレクション: favorite_item_tid が 1xxx01 = R・1xxx02 = SR、2xxxxx = 宝物。宝物の favorite_item_lv と段階の対応は未確定
+//   - コレクション: favorite_item_tid が 1xxx01 = R・1xxx02 = SR、2xxxxx = 宝物。宝物の favorite_item_lv 1・2 は段階 2・3（C-0744）。
+//     Lv 0 の段階は未確定
 //   - リサイクルルーム: tid 1001 = 共通、1101〜1103 = クラス、1201〜1205 = 企業
 import { emptyBuild, OVERLOAD_OPTIONS, type BuildInput, type GearInput, type OverloadLine } from './build.ts';
 import type { SkillLevels } from './skills/resolve.ts';
+import type { TreasurePhase } from './skills/treasure.ts';
 import type { GrowthInput } from './stats.ts';
 import type { CharacterIndexEntry, GearPart, NikkeClass } from './types.ts';
 
@@ -24,8 +26,15 @@ export type ShiftyPadRaw = {
   details: ShiftyPadDetail[];
 };
 
-/** 宝物（SSR のコレクション）。段階は API の Lv との対応が分からないので決めない（null） */
-export type SnapshotTreasure = { tid: number; level: number; phase: null };
+/** 宝物（SSR のコレクション）。段階は API の Lv から決める（treasurePhaseOfLevel。決まらない Lv は null） */
+export type SnapshotTreasure = { tid: number; level: number; phase: Exclude<TreasurePhase, 0> | null };
+
+/** 宝物の favorite_item_lv → 段階。Lv 1 = 段階 2、Lv 2 = 段階 3（C-0744）。Lv 0 は画面で見ていないので未確定（null） */
+export function treasurePhaseOfLevel(level: number): Exclude<TreasurePhase, 0> | null {
+  if (level === 1) return 2;
+  if (level === 2) return 3;
+  return null;
+}
 
 /** 1 体分。growth と BuildInput の項目は sim-run.ts の --build の 1 件と同じ形 */
 export type SnapshotCharacter = BuildInput & {
@@ -136,7 +145,7 @@ export function toBuildSnapshot(raw: ShiftyPadRaw, index: readonly CharacterInde
     const favLevel = d['favorite_item_lv'] ?? 0;
     let collection: BuildInput['collection'] = null;
     let treasure: SnapshotTreasure | null = null;
-    if (fav >= 200000) treasure = { tid: fav, level: favLevel, phase: null };
+    if (fav >= 200000) treasure = { tid: fav, level: favLevel, phase: treasurePhaseOfLevel(favLevel) };
     else if (fav % 100 === 1) collection = { rarity: 'R', level: favLevel };
     else if (fav % 100 === 2) collection = { rarity: 'SR', level: favLevel };
     else if (fav !== 0) unmapped.push(`${where}: コレクション ${fav}（R・SR・宝物のどれでもない。無しにした）`);
@@ -218,7 +227,8 @@ function cubeLabel(c: SnapshotCharacter, labels: SnapshotLabels): string {
   return c.cube === null ? '-' : `${labels.cubeName?.(c.cube.id) ?? c.cube.id} Lv${c.cube.level}`;
 }
 function favoriteLabel(c: SnapshotCharacter): string {
-  if (c.treasure !== null) return `宝物 Lv${c.treasure.level}`;
+  if (c.treasure !== null)
+    return `宝物 Lv${c.treasure.level}（${c.treasure.phase === null ? '段階は未確定' : `段階 ${c.treasure.phase}`}）`;
   return c.collection === null ? '-' : `${c.collection.rarity} Lv${c.collection.level}`;
 }
 function skillLabel(c: SnapshotCharacter): string {
