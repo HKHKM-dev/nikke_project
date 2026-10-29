@@ -67,7 +67,7 @@ const none = (...notes: NonNullable<BuildSkillMapping['notes']>): BuildSkillMapp
 /** 全キューブ共通の 2 つ目のスキル「アンチコード」（有利コードの攻撃ダメージ▲）のスキル ID */
 const ANTI_CODE_SKILL_IDS = [
   4007012, 4008012, 4009012, 4010012, 4011012, 4012012, 4013012, 40140102, 4015012, 4016012, 4017012, 4018012, 4019012,
-  4020012, 4021012, 4022012, 4023012,
+  4020012, 4021012, 4022012, 4023012, 4024012,
 ];
 
 /** キューブのスキル ID → 効果（data/masters/cubes.json の説明文から起こした） */
@@ -89,6 +89,7 @@ export const CUBE_SKILL_EFFECTS: Readonly<Record<number, BuildSkillMapping>> = {
   4021011: none(unsupported('防御力無視ダメージ▲は未対応', 'True damage is not modeled')), // クラッシュ
   4022011: none(ignored('遮蔽物最大 HP▲（ダメージに無関係）', 'Cover max HP (no effect on damage)')), // カバー
   4023011: only('distributedDamage'), // ディバイド: 分配ダメージ▲
+  4024011: none(ignored('フルバースト時の最大 HP▲（ダメージに無関係）', 'Max HP on Full Burst (no effect on damage)')), // レリックベゼル
   ...Object.fromEntries(ANTI_CODE_SKILL_IDS.map((id) => [id, only('elementDamage')])),
 };
 

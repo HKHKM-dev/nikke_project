@@ -112,7 +112,7 @@
       },
       "description": {
         "ja": "■通常攻撃で{description_value_01}回攻撃した時、\n自分が血の魔人のフルスタック状態なら、\n自分に\n<color=#00AEFF>「爆発範囲{description_value_02}％▲」「{description_value_03}秒間維持」\n「弾丸チャージ{description_value_04}％」「戦闘中{description_value_05}回発動」</color>",
-        "en": "■ Activates after performing {description_value_01} normal attacks if Blood Fiend is at max stacks. Affects self.\n<color=#00AEFF>Explosion Radius ▲ {description_value_02}% for {description_value_03} sec.\nReloads {description_value_04}% of the magazine. Activates {description_value_05} time(s) per battle.</color>"
+        "en": "■ Activates after performing {description_value_01} normal attacks if Blood Fiend is at max stacks. Affects self.\n<color=#00AEFF>Explosion Radius ▲ {description_value_02}% for {description_value_03} sec.\nReloads {description_value_04}% of ammo. Activates {description_value_05} time(s) per battle.</color>"
       },
       "values": [
         ["18", "18", "18", "18", "18", "18", "18", "18", "18", "18"],

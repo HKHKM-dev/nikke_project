@@ -4,6 +4,8 @@
 // Stage 13: 手書きの OL の表（data/masters/overload.json）のオプションが CDN の equip_option_table_v2 と一致することを確かめる。
 //   node scripts/fetch-data.ts [--limit N] [--refresh] [--concurrency N]
 // 生 JSON は .cache/ に保存し、--refresh を付けない限りキャッシュを優先する。
+// CDN の項目が無いと（改名など）正規化が止める（normalize.ts の assertComplete）。取り直した後の手順は plan/design-cdn-refresh.md 4 節
+// （差分は npm run fetch-data:diff で分けて出す）。
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -233,6 +235,7 @@ async function main(): Promise<void> {
   // Stage 12: 育成のマスタ
   await fetchMasters(rareMap);
   console.log(`written: masters -> ${MASTERS_DIR}`);
+  console.log('diff: npm run fetch-data:diff (plan/design-cdn-refresh.md 4 節)');
 
   if (failures.length > 0) {
     console.error(`failed: ${failures.length}`);

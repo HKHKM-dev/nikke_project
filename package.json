@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "fetch-data": "npm run fetch-data -w @nikke/core --",
+    "fetch-data:diff": "node packages/core/scripts/data-diff.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "npm run typecheck --workspaces --if-present && tsc -p tools/tsconfig.json",

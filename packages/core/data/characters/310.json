@@ -85,7 +85,7 @@
       },
       "description": {
         "ja": "■戦闘開始時、味方全体に\n<color=#00AEFF>「完璧なメイド：<word_group=10039>デバフ効果免疫</word_group>{description_value_01}個」「{description_value_05}スタック」「持続」</color>\n■自分のHPが{description_value_02}％以下の時、味方全体に\n<color=#00AEFF>「スキル発動者基準で攻撃力{description_value_03}％▲」「{description_value_04}秒間維持」</color>",
-        "en": "■ Activates at the start of battle. Affects all allies.\n<color=#00AEFF>Perfect Maid: Gain <word_group=10039>debuff immunity</word_group> to {description_value_01} debuff(s), stacking up to {description_value_05} time(s) continuously.</color>\n■ Activates when own HP falls below {description_value_02}%. Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_03}% of the skill user's ATK for {description_value_04} sec.</color>"
+        "en": "■ Activates at the start of battle. Affects all allies.\n<color=#00AEFF>Perfect Maid: Grants <word_group=10039>debuff immunity</word_group> to {description_value_01} debuff(s). Stacks up to {description_value_05} times. This effect is continuous.</color>\n■ Activates when this unit's HP falls below {description_value_02}%. Affects all allies.\n<color=#00AEFF>ATK ▲ {description_value_03}% of the skill user's ATK for {description_value_04} sec.</color>"
       },
       "values": [
         ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■通常攻撃で{description_value_01}回攻撃した時、味方全体に\n<color=#00AEFF>「完璧なメイド：<word_group=10039>デバフ効果免疫</word_group>{description_value_02}個」「{description_value_06}スタック」「持続」</color>\n■通常攻撃で{description_value_03}回攻撃した時、味方全体に\n<color=#00AEFF>「スキル発動者基準で最大HPのみ{description_value_04}％▲」「{description_value_05}秒間維持」</color>",
-        "en": "■ Activates after performing {description_value_01} normal attacks. Affects all allies.\n<color=#00AEFF>Perfect Maid: Gain <word_group=10039>debuff immunity</word_group> to {description_value_02} debuff(s). Stacks up to {description_value_06} times. This effect is continuous.</color>\n■ Activates after performing {description_value_03} normal attacks. Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_04}% of the skill user's max HP (without restoring HP). Lasts for {description_value_05} sec.</color>"
+        "en": "■ Activates after performing {description_value_01} normal attacks. Affects all allies.\n<color=#00AEFF>Perfect Maid: Grants <word_group=10039>debuff immunity</word_group> to {description_value_02} debuff(s). Stacks up to {description_value_06} times. This effect is continuous.</color>\n■ Activates after performing {description_value_03} normal attacks. Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_04}% of the skill user's max HP (without restoring HP) for {description_value_05} sec.</color>"
       },
       "values": [
         ["420", "420", "420", "420", "420", "420", "420", "420", "420", "420"],
@@ -133,7 +133,7 @@
       },
       "description": {
         "ja": "■味方全体に\n<color=#00AEFF>｢スキル発動者基準で最大HPのみ{description_value_01}％▲｣｢{description_value_02}秒間維持｣\n｢スキル発動者基準で攻撃力{description_value_03}％▲｣\n｢{description_value_04}秒間維持｣</color>",
-        "en": "■ Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_01}% of the skill user's max HP without restoring HP, lasts for {description_value_02} sec. \nATK ▲ {description_value_03}% of the skill user's ATK for {description_value_04} sec.</color>"
+        "en": "■ Affects all allies.\n<color=#00AEFF>Max HP ▲ {description_value_01}% of the skill user's max HP (without restoring HP) for {description_value_02} sec. \nATK ▲ {description_value_03}% of the skill user's ATK for {description_value_04} sec.</color>"
       },
       "values": [
         ["16.88", "17.8", "18.72", "19.64", "20.56", "21.47", "22.39", "23.31", "24.23", "25.15"],

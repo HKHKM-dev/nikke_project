@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■フルバーストタイムが発動した時、自分に\n<color=#00AEFF>「貫通特化」「{description_value_01}発間維持」\n「攻撃力{description_value_02}％▲」「{description_value_03}発間維持」</color>",
-        "en": "■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Gain Pierce for {description_value_01} round(s).\nATK ▲ {description_value_02}% for {description_value_03} round(s).</color>"
+        "en": "■ Activates when entering Full Burst. Affects self.\n<color=#00AEFF>Gains Pierce for {description_value_01} round(s).\nATK ▲ {description_value_02}% for {description_value_03} round(s).</color>"
       },
       "values": [
         ["2", "2", "2", "2", "2", "2", "2", "2", "2", "2"],

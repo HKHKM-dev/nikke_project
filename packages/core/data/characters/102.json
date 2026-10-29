@@ -137,7 +137,7 @@
       },
       "description": {
         "ja": "■自分に\n<color=#00AEFF>「使用武器を変更」：\nチャージ時間：2秒\nダメージ：<word_group=10025>最終</word_group>攻撃力の{description_value_01}％\nフルチャージダメージ：300％のダメージ\n最大装弾数：{description_value_02}発\n追加効果：貫通特化</color>",
-        "en": "■ Affects self. \n<color=#00AEFF>Changes thes weapon in use.\nCharge Time: 2 sec\nDamage: {description_value_01}% of <word_group=10025>final</word_group> ATK \nFull Charge Damage: 300% of damage \nMax Ammunition Capacity: {description_value_02}\nAdditional Effect: Gains Pierce</color>"
+        "en": "■ Affects self. \n<color=#00AEFF>Changes thes weapon in use.\nCharge Time: 2 sec\nDamage: {description_value_01}% of <word_group=10025>final</word_group> ATK \nFull Charge Damage: 300% of damage\nMax Ammunition Capacity: {description_value_02}\nAdditional Effect: Gains Pierce</color>"
       },
       "values": [
         ["144.85", "219.14", "293.42", "367.71", "442", "516.28", "590.57", "664.85", "739.14", "813.42"],

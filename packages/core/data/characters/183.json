@@ -87,7 +87,7 @@
         "en": "Meditation"
       },
       "description": {
-        "ja": "■バースト1段階突入時、自分のMPが0なら\n自分に\n<color=#00AEFF>「MP{description_value_01}回復」「最大12まで蓄積可能」\n「バーストスキルを使用した時、\n蓄積したすべてのMPが消滅」</color>\n■フルバーストタイムが発動した時、自分の\nMPが1以上なら自分に\n<color=#00AEFF>「MP{description_value_02}チャージ」「最大12まで蓄積可能」\n「バーストスキルを使用した時、\n蓄積したすべてのMPが消滅」</color>\n■フルチャージ攻撃で{description_value_06}回攻撃した時、自分に\n<color=#00AEFF>「最大HPのみ{description_value_03}％▲」「{description_value_04}スタック」「{description_value_05}秒間維持」</color>",
+        "ja": "■バースト1段階突入時、自分のMPが0なら\n自分に\n<color=#00AEFF>「MP{description_value_01}回復」「最大12まで蓄積可能」\n「バーストスキルを使用した時、\n蓄積したすべてのMPが消滅」</color>\n■フルバーストタイムが発動した時、自分の\nMPが1以上なら自分に\n<color=#00AEFF>「MP{description_value_02}チャージ」「最大12まで蓄積可能」\n「バーストスキルを使用した時、\n蓄積したすべてのMPが消滅」</color>\n■フルチャージ攻撃で{description_value_06}回攻撃した時、自分に\n<color=#00AEFF>「最大HPのみ{description_value_03}％▲」「{description_value_04}スタック」\n「{description_value_05}秒間維持」</color>",
         "en": "■ Activates when entering Burst Stage 1 if this unit has no MP. Affects self.\n<color=#00AEFF>Restores {description_value_01} MP, up to a maximum of 12. All MP is removed when using Burst Skill.</color>\n■ Activates when entering Full Burst when this unit has 1 or more MP. Affects self.\n<color=#00AEFF>Replenishes {description_value_02} MP, up to a maximum of 12. All MP is removed when using Burst Skill.</color>\n■ Activates after performing {description_value_06} Full Charge attacks. Affects self.\n<color=#00AEFF>Max HP ▲ {description_value_03}% (without restoring HP) for {description_value_05} sec. Stacks up to {description_value_04} times.</color>"
       },
       "values": [

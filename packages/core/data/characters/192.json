@@ -85,7 +85,7 @@
       },
       "description": {
         "ja": "■攻撃した時、{description_value_01}％の確率で自分に\n<color=#00AEFF>「代用弾丸：弾丸チャージ{description_value_02}％」</color>\n■「代用弾丸」が適用される時、味方全体に\n<color=#00AEFF>「応急改造：最大装弾数{description_value_03}発▲」\n「{description_value_04}スタック」「{description_value_05}秒間維持」\n「クリティカルダメージ{description_value_06}％▲」\n「{description_value_07}秒間維持」</color>",
-        "en": "■ There is a {description_value_01}% chance of activating when attacking. Affects self.\n<color=#00AEFF>Emergency-Crafted Bullets: Reload {description_value_02}% of the magazine(s).</color>\n■ Activates during Emergency-Crafted Bullets. Affects all allies.\n<color=#00AEFF>Temporary Modification: Max Ammunition Capacity ▲ {description_value_03}, stacks up to {description_value_04} time(s) and lasts for {description_value_05} sec.\nCritical Damage ▲ {description_value_06}% for {description_value_07} sec.</color>"
+        "en": "■ There is a {description_value_01}% chance of activating when attacking. Affects self.\n<color=#00AEFF>Emergency-Crafted Bullets: Reloads {description_value_02}% of ammo.</color>\n■ Activates during Emergency-Crafted Bullets. Affects all allies.\n<color=#00AEFF>Temporary Modification: Max Ammunition Capacity ▲ {description_value_03}. Stacks up to {description_value_04} times and lasts for {description_value_05} sec.\nCritical Damage ▲ {description_value_06}% for {description_value_07} sec.</color>"
       },
       "values": [
         ["2", "2", "3", "3", "3", "4", "4", "4", "5", "5"],
@@ -166,7 +166,7 @@
         },
         "description": {
           "ja": "■通常攻撃を{description_value_01}回行った時、自分に\n<color=#00AEFF>「代用弾丸：弾丸チャージ{description_value_02}％」</color>\n■代用弾丸が適用される時、味方全体に\n<color=#00AEFF>「応急改造：最大装弾数{description_value_03}発▲」\n「{description_value_04}スタック」「{description_value_05}秒間維持」\n「クリティカルダメージ{description_value_06}％▲」\n「{description_value_07}秒間維持」</color>",
-          "en": "■ Activates after performing {description_value_01} normal attacks. Affects self.\n<color=#00AEFF>Emergency-Crafted Bullets: Reloads {description_value_02}% of the magazine.</color>\n■ Activates during Emergency-Crafted Bullets. Affects all allies.\n<color=#00AEFF>Temporary Modification: Max Ammunition Capacity ▲ {description_value_03}. Stacks up to {description_value_04} time(s) and lasts for {description_value_05} sec.\nCritical Damage ▲ {description_value_06}% for {description_value_07} sec.</color>"
+          "en": "■ Activates after performing {description_value_01} normal attacks. Affects self.\n<color=#00AEFF>Emergency-Crafted Bullets: Reloads {description_value_02}% of ammo.</color>\n■ Activates during Emergency-Crafted Bullets. Affects all allies.\n<color=#00AEFF>Temporary Modification: Max Ammunition Capacity ▲ {description_value_03}. Stacks up to {description_value_04} times and lasts for {description_value_05} sec.\nCritical Damage ▲ {description_value_06}% for {description_value_07} sec.</color>"
         },
         "values": [
           ["25", "25", "20", "20", "20", "15", "15", "15", "10", "10"],

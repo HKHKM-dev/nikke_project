@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■自分に\n<color=#00AEFF>「最大HPのみ{description_value_01}％▲」「{description_value_02}秒間維持」</color>\n■残りのHPの数値が最も低い味方{description_value_03}機に\n<color=#00AEFF>「スキル発動者基準での防御力{description_value_04}％▲」「{description_value_05}秒間維持」</color>",
-        "en": "■ Affects self.\n<color=#00AEFF>Max HP ▲ {description_value_01}% without restoring HP for {description_value_02} sec.</color>\n■ Affects {description_value_03} ally unit(s) with the lowest remaining HP.\n<color=#00AEFF>DEF ▲ {description_value_04}% of the skill user's DEF for {description_value_05} sec.</color>"
+        "en": "■ Affects self.\n<color=#00AEFF>Max HP ▲ {description_value_01}% (without restoring HP) for {description_value_02} sec.</color>\n■ Affects the {description_value_03} ally unit(s) with the lowest remaining HP.\n<color=#00AEFF>DEF ▲ {description_value_04}% of the skill user's DEF for {description_value_05} sec.</color>"
       },
       "values": [
         ["20.36", "22.62", "24.88", "27.15", "29.41", "31.67", "33.93", "36.2", "38.46", "40.72"],

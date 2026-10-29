@@ -70,7 +70,7 @@ function emma(locale: 'en' | 'ja'): RawRoleData {
       core_damage_rate: 20000,
       penetration: 0,
       maintain_fire_stance: 0,
-      uptype_fire_timing: 0,
+      fire_timing: 0,
       burst_energy_pershot: 500,
       target_burst_energy_pershot: 1000,
       full_charge_burst_energy: 0,
@@ -220,6 +220,19 @@ describe('toCharacterData', () => {
     const bad = emma('en');
     bad.shot_detail.weapon_type = 'LASER';
     expect(() => toCharacterData(bad, emma('ja'))).toThrow(/weapon_type/);
+  });
+
+  // 2026-10-29: CDN が uptype_fire_timing を fire_timing に改名していた。読む側が古い名前のままだと項目が黙って消えていた
+  it('rejects a missing CDN field instead of writing a hole', () => {
+    const renamed = emma('en');
+    const { fire_timing: _, ...shot } = renamed.shot_detail;
+    const old = { ...renamed, shot_detail: { ...shot, uptype_fire_timing: 0 } } as unknown as RawRoleData;
+    expect(() => toCharacterData(old, emma('ja'))).toThrow(
+      /resource 90: missing CDN fields[\s\S]*shot\.uptypeFireTiming: undefined/,
+    );
+    const noReload = emma('en');
+    delete (noReload.shot_detail as Partial<RawRoleData['shot_detail']>).reload_time;
+    expect(() => toCharacterData(noReload, emma('ja'))).toThrow(/shot\.reloadTime: NaN/);
   });
 
   it('keeps corporation_sub_type (OVERSPEC)', () => {

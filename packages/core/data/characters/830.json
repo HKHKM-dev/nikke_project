@@ -133,7 +133,7 @@
       },
       "description": {
         "ja": "■自分に\n<color=#00AEFF>「貫通特化」「{description_value_01}秒間維持」</color>\n<color=#00AEFF>「攻撃ダメージ{description_value_02}％▲」「{description_value_03}秒間維持」</color>\n<color=#00AEFF>「攻撃ダメージの{description_value_04}％回復」\n「{description_value_05}秒間維持」</color>\n<color=#00AEFF>「命中率{description_value_06}％▲」「{description_value_07}秒間維持」</color>",
-        "en": "■ Affects self.\n<color=#00AEFF>Gain Pierce for {description_value_01} sec.</color>\n<color=#00AEFF>Attack damage ▲ {description_value_02}% for {description_value_03} sec.</color>\n<color=#00AEFF>Restores HP equal to {description_value_04}% of attack damage. Lasts for {description_value_05} sec.</color>\n<color=#00AEFF>Hit Rate ▲ {description_value_06}% for {description_value_07} sec.</color>"
+        "en": "■ Affects self.\n<color=#00AEFF>Gains Pierce for {description_value_01} sec.</color>\n<color=#00AEFF>Attack damage ▲ {description_value_02}% for {description_value_03} sec.</color>\n<color=#00AEFF>Restores HP equal to {description_value_04}% of attack damage. Lasts for {description_value_05} sec.</color>\n<color=#00AEFF>Hit Rate ▲ {description_value_06}% for {description_value_07} sec.</color>"
       },
       "values": [
         ["15", "15", "15", "20", "20", "20", "25", "25", "25", "25"],

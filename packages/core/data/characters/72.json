@@ -109,7 +109,7 @@
       },
       "description": {
         "ja": "■通常攻撃が{description_value_01}回命中した時、自分に\n<color=#00AEFF>「イチゴキャンディ：\n最大装弾数{description_value_02}％▲」\n「{description_value_04}スタック」「{description_value_03}秒間維持」</color>\n■自分がイチゴキャンディのフルスタック状態ならスタック解除後、味方全体に\n<color=#00AEFF>「弾丸チャージ{description_value_05}％」</color>",
-        "en": "■ Activates after landing {description_value_01} normal attacks. Affects self. \n<color=#00AEFF>Strawberry Candy: Max Ammunition Capacity ▲ {description_value_02}%. Stacks up to {description_value_04} times and lasts for {description_value_03} sec.</color> \n■ Activates when Strawberry Candy is at max stacks. Removes all stacks and affects all allies.\n<color=#00AEFF>Reloads {description_value_05}% of the magazine.</color>"
+        "en": "■ Activates after landing {description_value_01} normal attacks. Affects self. \n<color=#00AEFF>Strawberry Candy: Max Ammunition Capacity ▲ {description_value_02}%. Stacks up to {description_value_04} times and lasts for {description_value_03} sec.</color> \n■ Activates when Strawberry Candy is at max stacks. Removes all stacks and affects all allies.\n<color=#00AEFF>Reloads {description_value_05}% of ammo.</color>"
       },
       "values": [
         ["100", "100", "100", "100", "100", "100", "100", "100", "100", "100"],
@@ -166,7 +166,7 @@
         },
         "description": {
           "ja": "■通常攻撃が{description_value_01}回命中した時、自分に\n<color=#00AEFF>「イチゴキャンディ：最大装弾数{description_value_02}％▲」「{description_value_03}スタック」「{description_value_04}秒間維持」</color>\n■自分がイチゴキャンディのフルスタック状態ならスタック解除後、味方全体に\n<color=#00AEFF>「弾丸チャージ{description_value_05}％」</color>\n<color=#00AEFF>「<word_group=10042>貫通ダメージ</word_group>{description_value_06}％▲」「{description_value_07}秒間維持」</color>",
-          "en": "■ Activates after landing {description_value_01} normal attacks. Affects self. \n<color=#00AEFF>Strawberry Candy: Max Ammunition Capacity ▲ {description_value_02}%. Stacks up to {description_value_03} times and lasts for {description_value_04} sec.</color> \n■ Affects all allies when the skill user reaches max stacks of Strawberry Candy. Activates after stacks are removed.\n<color=#00AEFF>Reload {description_value_05}% of the magazine.</color>\n<color=#00AEFF><word_group=10042>Pierce Damage</word_group> ▲ {description_value_06}% for {description_value_07} sec.</color>"
+          "en": "■ Activates after landing {description_value_01} normal attacks. Affects self. \n<color=#00AEFF>Strawberry Candy: Max Ammunition Capacity ▲ {description_value_02}%. Stacks up to {description_value_03} times and lasts for {description_value_04} sec.</color> \n■ Affects all allies when the skill user reaches max stacks of Strawberry Candy. Activates after stacks are removed.\n<color=#00AEFF>Reloads {description_value_05}% of ammo.</color>\n<color=#00AEFF><word_group=10042>Pierce Damage</word_group> ▲ {description_value_06}% for {description_value_07} sec.</color>"
         },
         "values": [
           ["70", "70", "70", "70", "70", "70", "70", "70", "70", "70"],
@@ -190,7 +190,7 @@
         },
         "description": {
           "ja": "■<word_group=10025>最終</word_group>攻撃力が最も高い敵{description_value_01}機に\n<color=#00AEFF>「<word_group=10025>最終</word_group>攻撃力の{description_value_02}％のダメージ」</color>\n■自分に\n<color=#00AEFF>「最大HPのみ{description_value_03}％▲」「{description_value_04}秒間維持」</color>\n<color=#00AEFF>「ヘイト：敵全体を挑発」「{description_value_05}秒間維持」</color>",
-          "en": "■ Affects {description_value_01} enemy unit(s) with the highest <word_group=10025>final</word_group> ATK.\n<color=#00AEFF>Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as damage.</color>\n■ Affects self.\n<color=#00AEFF>Max HP ▲ {description_value_03}% without restoring HP for {description_value_04} sec.</color>\n<color=#00AEFF>Attract: Taunt all enemies for {description_value_05} sec.</color>"
+          "en": "■ Affects the {description_value_01} enemy unit(s) with the highest <word_group=10025>final</word_group> ATK.\n<color=#00AEFF>Deals {description_value_02}% of <word_group=10025>final</word_group> ATK as damage.</color>\n■ Affects self.\n<color=#00AEFF>Max HP ▲ {description_value_03}% (without restoring HP) for {description_value_04} sec.</color>\n<color=#00AEFF>Attract: Taunts all enemies for {description_value_05} sec.</color>"
         },
         "values": [
           ["5", "5", "5", "5", "5", "5", "5", "5", "5", "5"],
