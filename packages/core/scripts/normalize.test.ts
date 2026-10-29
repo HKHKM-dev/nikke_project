@@ -248,6 +248,7 @@ describe('toCharacterData', () => {
   it('builds a compact index entry', () => {
     expect(toIndexEntry(data)).toEqual({
       resourceId: 90,
+      nameCode: 5001,
       name: { ja: 'エマ', en: 'Emma' },
       rarity: 'SSR',
       class: 'Supporter',

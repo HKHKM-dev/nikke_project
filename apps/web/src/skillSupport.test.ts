@@ -21,6 +21,7 @@ describe('skillSupport', () => {
   it('formats characterLabel with or without (未)', () => {
     const dummy: CharacterIndexEntry = {
       resourceId: 10,
+      nameCode: 10,
       name: { ja: 'ラピ', en: 'Rapi' },
       rarity: 'SR',
       class: 'Attacker',

@@ -10,6 +10,7 @@ export default defineConfig({
       'cloud/**/*.test.ts',
       'git/**/*.test.ts',
       'artifact/**/*.test.ts',
+      'builds/**/*.test.ts',
     ],
   },
 });

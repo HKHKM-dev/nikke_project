@@ -246,6 +246,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
   const hasBonusRange = en.bonusrange_max > 0;
   const data: CharacterData = {
     resourceId: en.resource_id,
+    nameCode: en.name_code,
     name: NAME_OVERRIDES[en.resource_id] ?? { ja: ja.name_localkey, en: en.name_localkey },
     rarity: oneOf(RARITIES, en.original_rare, 'original_rare'),
     class: oneOf(CLASSES, en.class, 'class'),
@@ -357,6 +358,7 @@ export function changeWeaponOf(
 export function toIndexEntry(data: CharacterData): CharacterIndexEntry {
   return {
     resourceId: data.resourceId,
+    nameCode: data.nameCode,
     name: data.name,
     rarity: data.rarity,
     class: data.class,
