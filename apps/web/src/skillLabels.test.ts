@@ -162,7 +162,9 @@ describe('カウンタの増減の表示', () => {
     const [drain, stage] = definitionOf(103).skills.skill2.effects.filter(
       (e) => e.kind === 'counterChange' && 'counterFull' in e.trigger,
     );
-    expect(formatCounterChange(drain!, 100)).toBe('オーバーエネルギーが最大になった時に オーバーエネルギー −100（上限 100）');
+    expect(formatCounterChange(drain!, 100)).toBe(
+      'オーバーエネルギーが最大になった時に オーバーエネルギー −100（上限 100）',
+    );
     expect(formatCounterChange(stage!, 1)).toMatch(/^オーバーエネルギーが最大になった時に .+ \+1（上限 4）$/);
   });
 });

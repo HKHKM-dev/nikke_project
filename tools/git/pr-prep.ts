@@ -82,7 +82,9 @@ if (!rebasing()) {
     const outcome = rebaseOutcome(tryGit(['rebase', 'origin/main'], NO_EDITOR), rebasing());
     if (outcome === 'clean') console.log('衝突なしで取り込んだ');
     else if (outcome === 'notStarted')
-      fail('git rebase origin/main が始まらなかった（追跡していないファイルが main のファイルと重なったなど。上の git の出力を見る）');
+      fail(
+        'git rebase origin/main が始まらなかった（追跡していないファイルが main のファイルと重なったなど。上の git の出力を見る）',
+      );
   } else console.log('origin/main は取り込み済み');
 }
 
