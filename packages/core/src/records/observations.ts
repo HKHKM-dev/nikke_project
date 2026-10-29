@@ -10,6 +10,7 @@ import {
   hexagonFrameOf,
   hitFrameOf,
   hitFramesOf,
+  isInFullBurst,
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
@@ -26,7 +27,7 @@ import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buff
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
-import { MAX_SKILL_LEVELS, isResolvedChance, resolveTimed } from '../skills/resolve.ts';
+import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount, resolveTimed } from '../skills/resolve.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
@@ -431,6 +432,11 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
  */
 function steadyPauseShots(result: SimResult, ctx: MetricContext): number | number[] {
   const frames = slotOf(result.shots, ctx).frames;
+  // 2 段目の段 12 の PR 2（V-0537）: 省略できる引数 fullBurst が true なら、両端の止まりがどちらもフルバーストの窓の中の組だけ、false なら
+  // どちらも外の組だけを数える（バースト III の回数条件▼の窓はフルバーストの窓とほぼ重なる）
+  const schedule = result.schedule;
+  const inWindow = (f: number): boolean => schedule !== null && isInFullBurst(schedule, f);
+  const side = ctx.args.fullBurst === undefined ? null : ctx.args.fullBurst === true;
   const shot = slotOf(ctx.input.slots, ctx).character.shot;
   // 撃ち始め（リロード・的のジャンプの後。前の発との間が 2f より長い発）から何発目で 1 フレーム 1 発に届くか
   let spun = 0;
@@ -453,7 +459,8 @@ function steadyPauseShots(result: SimResult, ctx: MetricContext): number | numbe
     if (last !== null) {
       let steady = true;
       for (let q = last + 1; q < k; q++) if (gap(q) !== 1) steady = false;
-      if (steady) counts.add(k - last);
+      const sideOk = side === null || (inWindow(frames[last]!) === side && inWindow(frames[k]!) === side);
+      if (steady && sideOk) counts.add(k - last);
     }
     last = k;
   }
@@ -1407,6 +1414,11 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
   skillHitFromBurstHit: { args: ['slot', 'skill', 'count'], sim: skillHitFromBurstHit },
+  // 2 段目の段 12 の PR 2（V-0537）: 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数
+  skillHitFramesFromFullBurst: {
+    args: ['slot', 'skill', 'fullBurst', 'count'],
+    sim: skillHitFramesFromFullBurst,
+  },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
@@ -1582,13 +1594,25 @@ function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
 
 /**
  * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
- * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す
+ * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。
+ * 2 段目の段 12 の PR 2（V-0537）: 省略できる引数で数える発動を絞る（hitMatches）。frame（と fullBurst。frameArgOf）= そのフレーム以降の
+ * 発動だけを数える。core・distance が true なら、コアに当たった・距離ボーナスの付いたヒットの値（core・distance の効果のヒットだけ）
  */
 function skillHitDamage(result: SimResult, ctx: MetricContext): number {
-  const hits = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined);
+  const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
+  const hits = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot === undefined &&
+      hitMatches(h, ctx) &&
+      (from === null || h.frame >= from),
+  );
   const hit = hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目の倍率ダメージが無い`);
-  return oneHitValue(hit.hit, ctx.args.crit === true);
+  if (ctx.args.core === true && hit.effect.core !== true) throw new Error('コアに当たらない効果のヒットに core: true');
+  if (ctx.args.distance === true && hit.effect.distance !== true)
+    throw new Error('距離ボーナスの付かない効果のヒットに distance: true');
+  return oneHitValue(hit.hit, ctx.args.crit === true, ctx.args.core === true, ctx.args.distance === true);
 }
 
 /**
@@ -1613,6 +1637,45 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
       (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
     )
     .map((h) => videoFrameOf(result.schedule, h.frame));
+}
+
+/**
+ * 2 段目の段 12 の PR 2（V-0537）: 倍率ダメージの発動を、省略できる引数で絞る。skill = スロット、projectile = 発射体の付着（stick）か
+ * 爆発（explosion）のヒット、trigger = きっかけがフルバーストの始まり（fullBurstStart）か射撃の回数（shotCount）。効果の番号では
+ * 絞らない（編成の条件と最小構成の検査が効果を外すと、番号がずれる）
+ */
+function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): boolean {
+  if (ctx.args.skill !== undefined && h.effect.source.skill !== ctx.args.skill) return false;
+  if (ctx.args.projectile === 'stick' && h.effect.projectileStick !== true) return false;
+  if (ctx.args.projectile === 'explosion' && h.effect.projectileExplosion !== true) return false;
+  if (ctx.args.trigger === 'fullBurstStart' && h.effect.trigger !== 'fullBurstStart') return false;
+  if (ctx.args.trigger === 'shotCount' && !isResolvedShotCount(h.effect.trigger)) return false;
+  return true;
+}
+
+/**
+ * 2 段目の段 12 の PR 2（V-0537）: 枠の倍率ダメージ（hitMatches の絞り。skill は要る）のうち、fullBurst 回目（0 始まり）の
+ * フルバーストの窓の中のものの、窓の始まり（III のタイマーの 00.00）からの動画のフレーム数（入りの止まりを挟む）の列。省略できる引数
+ * skip の数だけ先頭を飛ばし、count 個を返す（録画では、入りの止まりの後の最初の増分に合わさるヒットは時刻が読めないので飛ばす）
+ */
+function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  const window = schedule?.fullBurstWindows[Number(ctx.args.fullBurst)];
+  if (schedule === null || window === undefined)
+    throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
+  const start = videoFrameOf(schedule, window.start);
+  const hits = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot === undefined &&
+      hitMatches(h, ctx) &&
+      window.start <= h.frame &&
+      h.frame < window.end,
+  );
+  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
+  const count = Number(ctx.args.count);
+  if (hits.length < skip + count) throw new Error(`窓の中の発動が ${hits.length} 回しかない`);
+  return hits.slice(skip, skip + count).map((h) => videoFrameOf(schedule, h.frame) - start);
 }
 
 /**

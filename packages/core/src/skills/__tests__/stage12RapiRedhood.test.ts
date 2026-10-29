@@ -69,7 +69,8 @@ describe('戦闘補助でない側の効果は、基本バースト段階 I の�
     const input: TeamInput = { slots: [slotOf(LITER), slotOf(DELTA), slotOf(RAPI_RH)], enemy, durationSeconds: 180 };
     const { skill1, burst } = effectsOf(input, 2);
     expect(skill1.map((e) => e.kind)).toEqual(['timed']);
-    expect(burst.map((e) => e.kind)).toEqual(['damage']);
+    // PR 2: バースト III の付着▲（timed）と回数条件▼（cycleEvery）も同じ条件
+    expect(burst.map((e) => e.kind)).toEqual(['damage', 'timed', 'cycleEvery']);
   });
 
   it('drops both without an ally of base burst stage I (Combat Assist)', () => {

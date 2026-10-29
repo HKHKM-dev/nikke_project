@@ -129,14 +129,15 @@ describe('data/skills', () => {
                 // アスカ: バーストの攻撃ダメージ 150.04%・命中率 101.37% も同じ。ヘルム: チャージダメージ倍率 158.4% も同じ
                 // I-DOLL・サン: バーストの最大装弾数▲は Lv10 で 787.5%（C-0364。上限は 1000% で見る）
                 // たきな: S2 の防御力無視ダメージ▲は Lv10 で 140.49%（上限は 200% で見る）
+                // ラピ：レッドフード: S2 の発射体付着ダメージ▲は Lv10 で 150.72%・爆発▲は 100.6%、バースト III の付着▲は 421.2%（上限は 1000% で見る）
                 const stat =
-                  effect.kind === 'timed'
+                  effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat
                     : effect.kind === 'state'
                       ? effect.contents?.find((c) => c.ref === ref)?.stat
                       : undefined;
                 const limit =
-                  stat === 'maxAmmo'
+                  stat === 'maxAmmo' || stat === 'projectileStickDamage' || stat === 'projectileExplosionDamage'
                     ? 1000
                     : stat !== undefined &&
                         [

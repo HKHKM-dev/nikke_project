@@ -330,7 +330,11 @@ function passiveValueOf(
     target: effect.target,
     stat: effect.stat,
     scaling: effect.scaling ?? 'ratio',
-    value: scaledValue(skillValue(skill, effect.ref, level), effect.stat, effect.scaling, character, effect.decrease),
+    // 2 段目の段 12 の PR 2: passive のフラグの stat（有利コードのダメージ適用）は値 1
+    value:
+      effect.ref === undefined
+        ? 1
+        : scaledValue(skillValue(skill, effect.ref, level), effect.stat, effect.scaling, character, effect.decrease),
   };
   if (effect.targetWeapon) r.targetWeapon = effect.targetWeapon;
   if (effect.targetElement) r.targetElement = effect.targetElement;

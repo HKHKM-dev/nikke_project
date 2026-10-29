@@ -702,6 +702,12 @@
 | 0728 | `20261028-0728_ar_mihara-additional_anis-star-2.mp4` | アニス：スター（17、RL・電撃・SSR） + デルタ（20、SR・風圧・SR） + ◎ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON | V-0533（アニス：スター・デルタ・ミハラ（操作））2 本目 |
 | 0729 | `20261029-0729_rl_rapunzel-sanctuary.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ラプンツェル：サンクチュアリ（473、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0536 の 1 本目。リター・I-DOLL・サン・ラプンツェル：サンクチュアリ（操作）・AUTO 射撃 ON・オートバースト ON |
 | 0730 | `20261029-0730_rl_rapunzel-sanctuary.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ラプンツェル：サンクチュアリ（473、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0536 の 2 本目。リター・I-DOLL・サン・ラプンツェル：サンクチュアリ（操作）・AUTO 射撃 ON・オートバースト ON |
+| 0731 | `20261029-0731_sr+ar+mg_delta+sun+rapi-redhood_assist.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | 段 12 の撮影 A（plan/design-skill-stage12.md 3.5 節）。I の味方のいない編成で、ラピ：レッドフード（操作）はオート射撃 OFF で撃たない（戦闘補助） |
+| 0732 | `20261029-0732_sr+ar+mg_delta+sun+rapi-redhood_assist.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | 段 12 の撮影 A（plan/design-skill-stage12.md 3.5 節）。I の味方のいない編成で、ラピ：レッドフード（操作）はオート射撃 OFF で撃たない（戦闘補助） |
+| 0733 | `20261029-0733_mg_rapi-redhood_electric.mp4` | ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF | 段 12 の撮影 B（plan/design-skill-stage12.md 3.5 節）。ラピ：レッドフード単騎（操作）・電撃の的 |
+| 0734 | `20261029-0734_mg_rapi-redhood_electric.mp4` | ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF | 段 12 の撮影 B（plan/design-skill-stage12.md 3.5 節）。ラピ：レッドフード単騎（操作）・電撃の的 |
+| 0735 | `20261029-0735_sr+ar+ar_delta+sun+moran_fervor.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎モラン（281、AR・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 段 12 の撮影 C（plan/design-skill-stage12.md 3.5 節）。モランは宝物版（段階 3。前日の 0719・0720 と同じ値で、オーナーに確かめる） |
+| 0736 | `20261029-0736_sr+ar+ar_delta+sun+moran_fervor.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎モラン（281、AR・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 段 12 の撮影 C（plan/design-skill-stage12.md 3.5 節）。モランは宝物版（段階 3。前日の 0719・0720 と同じ値で、オーナーに確かめる） |
 | 0737 | `20261029-0737_mg_rapi-redhood_fire-autoburst.mp4` | ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 段 12 の撮影の回に、依頼の外で撮られた 1 本（ラピ：レッドフード単騎・灼熱の的・オートバースト ON） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）

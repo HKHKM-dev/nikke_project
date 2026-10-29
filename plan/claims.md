@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 475・仮説 83・棄却 113・範囲外 2（計 673）
+件数: 確定 480・仮説 83・棄却 113・範囲外 2（計 678）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -4194,6 +4194,45 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0536
   - 定義: `data/skills/473.json` の burst の effects[0]
+- **C-0723** ラピ：レッドフードの S2「戦闘開始時、電撃コードの敵に有利コードのダメージ適用（持続・解除不可）」は、電撃コードの敵への通常攻撃と粘着榴弾の付着の 1 ヒットを、属性有利の時と同じ 1.1 倍にする（灼熱の的の値の 1.1 倍）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-29
+  - 根拠: `0733-02`〜`0733-04`・`0734-02`〜`0734-04`（電撃の的の通常攻撃の胴体・コアと付着のコアの 1 ヒット）。単騎・オートバースト OFF の 2 本で、灼熱の的の同じ 1 ヒット（0116-06・0117-07 と、0116-07 の note のコアの付着）の 1.1 倍の値が、どの区間にも同じに出る。有利の乗数 1.1 は説明文とモデルの定数で決まり、合わせ込みの定数は無い。V-0537
+  - モデル側: `data/skills/16.json` の skill2 の effects[8]（passive・self・stat elementAdvantage（値を持たないフラグ）・enemyElement Electronic）。`element.ts` の elementMultiplier が、効いていれば組によらず有利と同じ乗数にする（通常攻撃の `damage.ts` と倍率ダメージの skillElementMultiplier。有利コードの攻撃ダメージ▲の掛かり方も同じ）。plan/design-skill-stage12.md 2.4 節
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の「有利コードのダメージ適用」と、属性有利の乗数 1.1（element.ts の ELEMENT_ADVANTAGE_MULTIPLIER。要件 5.1 節）
+  - 検証記録: V-0537
+  - 定義: `data/skills/16.json` の skill2 の effects[8]
+- **C-0724** ラピ：レッドフードの S2 の粘着榴弾の付着の 1 ヒットは、最終攻撃力 × 88.11%（説明文の付着ダメージ）×（1 + 発射体付着ダメージ▲）×（1 + コア 1 + 会心 + 距離ボーナス + フルバースト補正）。S2 の常時の付着▲ 150.72% とバーストⅢで使った時の付着▲ 421.2%（10 秒）は 1 つの和で掛かり、発射体爆発ダメージ▲は乗らない。射撃場の BigArms では、付着はどの距離帯でもコアに当たる
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-29
+  - 根拠: `0733-04`〜`0733-07`・`0734-04`〜`0734-07`（単騎の付着の 1 ヒットと、付着が全部コアの値）・`0116-30`・`0116-31`・`0117-26`・`0117-27`（フルバーストの窓の中の付着。同じフレームの爆発と 1 ヒットを、同じ回に単独で出る値で引いた）・`0116-23`・`0117-22`（4 人の録画のフルバーストの外の付着が全部コアの値）・`0116-34`（I-DOLL・サンが III を使った回は、付着に S2 の常時の▲だけが乗る）。付着▲が別の乗数（積）なら窓の中の値は約 2 倍になり合わない。コアの割合 1 は 0733 の付着で決め、0734 と 0116・0117 で再現した。V-0537
+  - モデル側: `data/skills/16.json` の skill2 の effects[1]（passive・projectileStickDamage・ref 5）・effects[3]（damage・{ count: normalShot, everyRef: 1 }・skill・ref 2・core・distance・projectileStick・delayFrames 5）と burst の effects[1]（timed・burstUse・self・projectileStickDamage・ref 6・durationRef 7・burstStepMix { otherBurstStep: Step1, present: true }）。付着▲は `damage.ts` の stickHitMultiplier（置き場所 PROJECTILE_STICK_BUCKET は attackDamage。攻撃ダメージ▲と同じ枠かは確かめていない仮定）、コアは `data/enemies.json` の coreHitRate.autoAttacks の 16:skill2（どの帯も 1）、距離ボーナスは `frame/landing.ts` の slotDistanceRatesOf（通常攻撃と同じ着地点の条件）。付着のヒットのゲージはモデルに入れていない（未対応として書いた）。plan/design-skill-stage12.md 2.2・2.3 節
+  - 決めるのに使った録画: 0733（値を合わせた）、0116（仮説の出どころ）
+  - 検証記録: V-0537
+  - 定義: `data/skills/16.json` の skill2 の effects[1]、`data/skills/16.json` の skill2 の effects[3]、`data/skills/16.json` の burst の effects[1]
+- **C-0725** ラピ：レッドフードの S2 の粘着榴弾の爆発の 1 ヒットは、最終攻撃力 × 88.11%（説明文の爆発ダメージ）×（1 + 発射体爆発ダメージ▲ 100.6%）×（1 + 会心 + 距離ボーナス + フルバースト補正）。コアの補正と発射体付着ダメージ▲は乗らない。フルバーストの始まりの起爆も、フルバーストの中で撃った榴弾の爆発も同じ式
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-29
+  - 根拠: `0116-25`〜`0116-29`・`0117-24`・`0117-25`（フルバーストの始まりの起爆の単独の増分。S1 の攻撃力▲とリターのバーストの▲の段ごと、会心・距離ボーナスの有無ごと）。フルバーストの中で撃った榴弾の爆発は、付着との和の増分（`0116-30`・`0117-27`）が同じ値の爆発で分かれる。V-0535 の 0116・0117 の読みで式を立て、説明文の値とモデルの倍率グループだけで決まる（合わせ込みの定数なし）。V-0537
+  - モデル側: `data/skills/16.json` の skill2 の effects[2]（passive・projectileExplosionDamage・ref 6）・effects[4]（フルバーストの中で撃った榴弾の爆発。damage・ref 3・condition inFullBurst・distance・projectileExplosion・delayFrames 5）・effects[6]（フルバーストの始まりの起爆。damage・fullBurstStart・ref 3・perCount { counter: stickyGrenade }・perCountIntervalSeconds 0.2・distance・projectileExplosion）。爆発▲は `damage.ts` の explosionHitMultiplier（C-0205 の置き場所）、距離ボーナスは C-0724 と同じ。plan/design-skill-stage12.md 2.2・2.3 節
+  - 決めるのに使った録画: 0116（仮説の出どころ）
+  - 合わせ込みの定数なし: 説明文の爆発ダメージ 88.11%・発射体爆発ダメージ▲ 100.6% と、倍率ダメージの倍率グループ（会心・フルバースト補正。距離ボーナスは通常攻撃と同じ着地点の条件）。爆発▲の置き場所は C-0205
+  - 検証記録: V-0537
+  - 定義: `data/skills/16.json` の skill2 の effects[2]、`data/skills/16.json` の skill2 の effects[4]、`data/skills/16.json` の skill2 の effects[6]
+- **C-0726** ラピ：レッドフードの S2 の粘着榴弾は、フルバーストの外で撃ったものは付着したまま溜まり（0116・0117 で最大 9 個。上限は読んでいない）、フルバーストの始まりに 1 つずつ起爆する。k 個目（0 始まり）の起爆は、フルバーストの始まり（III のタイマーの 00.00）から floor(k × 0.2 秒 ÷ 0.017 秒) フレーム後（0.2 秒ごと。端数は持ち越す）。フルバーストの中で撃ったものは、付着と同じフレームに起爆し、溜まらない。付着していられるのが 1 つだけ（K2）ではない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-29
+  - 根拠: `0116-22`・`0116-23`・`0117-21`・`0117-22`（起爆の数は 10 回のフルバーストのどれも、その前のフルバーストの外の付着の数と同じ）・`0116-24`・`0117-23`（起爆の 00.00 からのフレームは 22 + floor(k × 0.2 ÷ 0.017)。一律の 12f ごとと 5 個目で分かれる）・`0116-30`・`0117-27`（フルバーストの中の付着は、同じフレームの爆発との和）・`0733-07`・`0734-07`（フルバーストの無い単騎では爆発が出ない）。0116 の 1・2 回目で K1・K2 を見分けて間隔を決め、0116 の 3〜5 回目と 0117 の 1〜5 回目で再現した。V-0537
+  - モデル側: `data/skills/16.json` の skill2 の effects[4]（フルバーストの中で撃った榴弾の爆発。付着と同じ delayFrames 5）・effects[5]（counterChange・stickyGrenade +1・同じ回数のきっかけ・condition inFullBurst: false）・effects[6]（damage・fullBurstStart・perCount { counter: stickyGrenade }・perCountIntervalSeconds 0.2）・effects[7]（counterChange・fullBurstStart・stickyGrenade を 0 に戻す）。カウンタは `skills/counters.ts` の stickyGrenade（上限 99）、起爆の列は `frame/plan.ts` の planSkillHits。plan/design-skill-stage12.md 2.2 節（K1。論点 4 の語彙の組み合わせ）
+  - 決めるのに使った録画: 0116（値を合わせた）
+  - 録画の中の反復: 0116（1・2 回目のフルバーストで決め、3〜5 回目のフルバーストで再現。0116-24）
+  - 検証記録: V-0537
+  - 定義: `data/skills/16.json` の skill2 の effects[4]、`data/skills/16.json` の skill2 の effects[5]、`data/skills/16.json` の skill2 の effects[6]、`data/skills/16.json` の skill2 の effects[7]
+- **C-0727** ラピ：レッドフードのバースト「バーストⅢで使用した時、自分にスキル2粘着榴弾発動回数条件 60 回▼（10 秒間維持）」は、窓の間、S2 の通常攻撃 120 回を 60 回にし、戦闘の始めからの通算の射撃の回数が 60 の倍数の発で粘着榴弾を撃つ（窓の始まりで数え直さない。前の榴弾から 60 回以上たっていても、すぐには撃たない）。撃つたびの射撃の止まり（C-0717）も同じ発。I-DOLL・サンが III を使った回には付かない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-29
+  - 根拠: `0116-32`・`0117-28`（窓の中の付着から付着まで 61f = 60 発 + 射撃の止まり 1f）・`0116-33`・`0117-29`（窓の中の最初の榴弾の位置。0116 の 2 回目と 0117 の 4・5 回目で、窓の始まりで数え直す読みと、前の榴弾から 60 回以上なら次の発で撃つ読みが外れる）・`0116-34`（I-DOLL・サンが III を使った回は、窓の中も 121f）。0116 の 1・2 回目で数え方を決め、0116 の 3・5 回目と 0117 の 1〜5 回目で再現した。V-0537
+  - モデル側: `data/skills/16.json` の burst の effects[2]（cycleEvery・burstUse・slot skill2・decreaseRef 8・durationRef 9・burstStepMix { otherBurstStep: Step1, present: true }）。cycle の無いスロットへの cycleEvery は、そのスロットの射撃の回数のきっかけ（射撃の止まり・付着・窓の中の爆発・付着している数のカウンタ）の N を窓の間 120 − 60 にする（`skills/cycles.ts` の resolveCycleEvery、`skills/triggers.ts` の everyAt、`frame/firstPass.ts` の countShotPauses、`skills/holders.ts` の shotCountEveryOf、`frame/plan.ts` の planSkillHits）。数え方は段の循環の間隔の変更（紅蓮：ブラックシャドウ。通算の回数の倍数）と同じ。plan/design-skill-stage12.md 2.4 節
+  - 決めるのに使った録画: 0116（読み方を合わせた）
+  - 録画の中の反復: 0116（1・2 回目のフルバーストで決め、3・5 回目のフルバーストで再現。0116-32）
+  - 検証記録: V-0537
+  - 定義: `data/skills/16.json` の burst の effects[2]
 
 ## 敵・的・場面
 

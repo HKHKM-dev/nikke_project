@@ -25,6 +25,8 @@ export type SlotCycleSummary = {
   source: { skill: SkillSlot };
   effectIndex: number;
   targetSkill: SkillSlot;
+  /** 2 段目の段 12 の PR 2: 段の循環（cycle）か、射撃の回数のきっかけ（shotCounts。skills/cycles.ts の ResolvedCycleEvery.target） */
+  target: 'cycle' | 'shotCounts';
   every: number;
   /** 最初の件 [start, end)（維持の長さの表示に使う） */
   start: number;
@@ -56,6 +58,7 @@ export type SummaryCycle = {
   source: { skill: SkillSlot };
   effectIndex: number;
   targetSkill: SkillSlot;
+  target: 'cycle' | 'shotCounts';
   every: number;
   start: number;
   end: number;
@@ -116,6 +119,7 @@ export function slotCycleSummaries(cycles: readonly SummaryCycle[], slotIndex: n
         source: { skill: w.source.skill },
         effectIndex: w.effectIndex,
         targetSkill: w.targetSkill,
+        target: w.target,
         every: w.every,
         start: w.start,
         end: w.end,
@@ -147,6 +151,7 @@ export function cycleSummariesOf(history: HolderHistory, slotIndex: number): Slo
               source: { skill: i.origin.effect.source.skill },
               effectIndex: i.origin.effect.effectIndex,
               targetSkill: i.origin.effect.targetSkill,
+              target: i.origin.effect.target,
               every: i.origin.effect.every,
               start: i.start,
               end: i.end,

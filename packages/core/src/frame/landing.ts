@@ -890,6 +890,32 @@ export function slotAutoAttackCoreRatesOf(
 }
 
 /**
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（倍率ダメージの distance の
+ * ヒットが読む。値は frames に入れる）。条件が自動の枠は着地点の計画の配分（autoConditionSummary と同じ足し方）、手入力の枠は条件の
+ * distanceBonus で、[0, frames) を覆う 1 つの区間。距離ボーナスの範囲の無い武器は 0
+ */
+export function slotDistanceRatesOf(
+  plan: LandingPlan | null,
+  slots: readonly (Pick<TeamSlotInput, 'condition' | 'character'> | null)[],
+  frames: number,
+): (FlightFrameSpan[] | null)[] {
+  return slots.map((slot, slotIndex) => {
+    if (slot === null || slot.character.bonusRange === null) return null;
+    if (plan === null || !plan.autoSlots[slotIndex]) {
+      return slot.condition.distanceBonus ? [{ start: 0, end: frames, frames: 1 }] : null;
+    }
+    return plan.spans.map((span) => ({
+      start: span.start,
+      end: span.end,
+      frames: landingPartsOf(plan, slot, slotIndex, span.landing).reduce(
+        (sum, p) => sum + p.weight * (p.condition.distanceBonus ? 1 : 0),
+        0,
+      ),
+    }));
+  });
+}
+
+/**
  * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: 枠ごと・スキルのスロットごとの、使用武器変更の最初の発の、発動の印
  * （hexagonFrameOf）から着弾までのフレームの区間。的の表の weaponChangeFirstHitFrames と着地点の時間割りで決まる（飛ぶ時間と同じ引き方）。
  * 行の無いスロットは省き、どこにも無ければ null（チャージ武器の最初の発の待ち）

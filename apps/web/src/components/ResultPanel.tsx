@@ -308,7 +308,9 @@ export function ResultPanel({
             {cycleSummary.map(({ count, ...w }) => (
               <li key={`cycle-${w.source.skill}-${w.effectIndex}`}>
                 <span className="amount">
-                  {SKILL_SLOT_LABEL[w.targetSkill]} の段を{w.every === 1 ? '毎回' : ` ${w.every} 回ごとに`}進める
+                  {w.target === 'shotCounts'
+                    ? `${SKILL_SLOT_LABEL[w.targetSkill]} の回数のきっかけを ${w.every} 回ごとにする`
+                    : `${SKILL_SLOT_LABEL[w.targetSkill]} の段を${w.every === 1 ? '毎回' : ` ${w.every} 回ごとに`}進める`}
                 </span>
                 <small className="sub">
                   {SKILL_SLOT_LABEL[w.source.skill]}・{formatNumber(framesToGameSeconds(w.end - w.start), 0)} 秒 ×{' '}

@@ -54,7 +54,12 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   partsDamage: ['パーツダメージ', 'oos', 'なし（パーツの無い的）'],
   interruptPartDamage: ['阻止部位の攻撃ダメージ', 'oos', 'なし（阻止部位の無い的）'],
   attackSpeed: ['攻撃速度', 'ok', 'attackSpeed（AR・SMG・SG の発と発の間。2 段目の段 9 の PR 2）'],
-  projectileStickDamage: ['発射体付着ダメージ', 'gap', 'なし'],
+  // 2 段目の段 12 の PR 2: 付着のヒット（damage の projectileStick。ラピ：レッドフードの粘着榴弾）にだけ掛ける
+  projectileStickDamage: [
+    '発射体付着ダメージ',
+    'ok',
+    'projectileStickDamage（damage の projectileStick のヒットにだけ）',
+  ],
   sequentialAttackDamage: ['順番攻撃ダメージ', 'ok', 'sequentialAttackDamage'],
   pelletCount: [
     'ペレット数',
@@ -149,7 +154,12 @@ const KIND_INFO: Record<string, Info> = {
     '状態の中身の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血。2 段目の段 11・C-0706）だけ',
   ],
   'instant:forceSkill': ['スキルの強制使用', 'gap', 'なし'],
-  'cycle:every': ['回数条件の変更', 'check', 'cycleEvery（cycle だけ）'],
+  // 2 段目の段 12 の PR 2: cycle の無いスロットの射撃の回数のきっかけの N▼（decreaseRef。ラピ：レッドフードのバースト III）も
+  'cycle:every': [
+    '回数条件の変更',
+    'ok',
+    'cycleEvery（段の循環の間隔は every、cycle の無いスロットの射撃の回数のきっかけの N▼ は decreaseRef）',
+  ],
   'fullBurst:extend': ['フルバーストタイム延長', 'gap', 'なし'],
   'fullBurst:shorten': ['フルバーストタイム短縮', 'gap', 'なし'],
   'burst:reentry': ['バースト再突入', 'ok', 'burstReentry'],
@@ -158,7 +168,12 @@ const KIND_INFO: Record<string, Info> = {
   'weaponChange:pierce': ['貫通特化', 'indirect', '貫通ダメージ▲を読む側にする状態（ツールチップ T2）'],
   autoAttack: ['自動攻撃・召喚・独自の弾', 'check', 'autoAttack（形による）'],
   'flag:trueDamageConversion': ['通常攻撃を防御力無視ダメージに', 'ok', 'trueDamageConversion'],
-  'flag:elementAdvantage': ['有利コードのダメージを適用', 'gap', 'なし'],
+  // 2 段目の段 12 の PR 2: 自分に付く常時の形（ラピ：レッドフードの S2・シュガーの宝物版の S1）
+  'flag:elementAdvantage': [
+    '有利コードのダメージを適用',
+    'ok',
+    'passive の stat elementAdvantage（自分。どのコードの敵かは enemyElement）',
+  ],
   'flag:infiniteAmmo': ['装弾数無限', 'ok', 'infiniteAmmo'],
   'stat:fixed': ['値の固定（〜に固定）', 'check', 'チャージ時間は fixedChargeTime。ほかはなし'],
   'stat:overflowConvert': ['超過した値の変換', 'gap', 'なし'],
