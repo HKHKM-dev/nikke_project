@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 484・打ち切り 22（計 506）
+件数: 調査中 0・保留 0・完了 485・打ち切り 22（計 507）
 
 ## 開いている検証
 
@@ -4977,3 +4977,7 @@
   - 観測値: 0744-01、0744-02、0744-03、0745-01、0745-02、0745-03
   - 結論: C-0732
   - 派生元: V-0541
+- **[V-0544](../records/verifications/V-0544-treasure-phase-lv.md)** 宝物の段階は、ShiftyPad の favorite_item_lv から決まるか
+  - 問い: ShiftyPad（Blablalink）の GetUserCharacterDetails の favorite_item_lv（0〜2）は、ゲーム内の宝物の段階（1〜3）とどう対応するか
+  - 話題: 育成・ステータス・日付: 2026-10-30・状態: 完了・Stage: plan/design-build-snapshot.md 3 節（宝物の段階）・plan/design-stage12.md 11.1 節「分からないまま残るもの」
+  - 結論: C-0744

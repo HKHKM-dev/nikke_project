@@ -110,7 +110,7 @@ const { values } = parseArgs({
     defence: { type: 'string', default: '100' },
     element: { type: 'string' },
     'core-hit-rate': { type: 'string' },
-    // Stage 9: 宝物の段階（resourceId:段階 をカンマ区切り。省略は全員 0）
+    // Stage 9: 宝物の段階（resourceId:段階 をカンマ区切り。省略は --build のスナップショットの段階、それも無ければ 0）
     treasure: { type: 'string' },
     // Stage 12: 育成入力の JSON ファイル
     build: { type: 'string' },
@@ -241,7 +241,10 @@ const slots: TeamSlotInput[] = ids.map((id) => {
       ...(fixedSpec ? {} : buildFile[String(id)]?.skillLevels),
       ...skillLevelsById.get(id),
     },
-    treasurePhase: (treasurePhases.get(id) ?? 0) as TreasurePhase,
+    // --treasure が無ければ、育成データのスナップショットの段階（API の Lv から決めたもの。C-0744）
+    treasurePhase: (treasurePhases.get(id) ??
+      (fixedSpec ? undefined : buildFile[String(id)]?.treasure?.phase) ??
+      0) as TreasurePhase,
   };
   return fixedSpec
     ? {
@@ -272,9 +275,9 @@ function withBuild(
   const growth = entry?.growth ?? DEFAULT_GROWTH;
   if (entry === undefined) return { character, growth, condition, skills };
   const { growth: _growth, skillLevels: _skillLevels, treasure, ...rest } = entry;
-  if (treasure != null && !treasurePhases.has(character.resourceId))
+  if (treasure != null && treasure.phase === null && !treasurePhases.has(character.resourceId))
     console.warn(
-      `build ${character.name.ja}: 宝物 Lv${treasure.level} の段階は未確定（API の Lv と段階の対応が分からない）。--treasure で指定する`,
+      `build ${character.name.ja}: 宝物 Lv${treasure.level} の段階は未確定（API の Lv 1・2 だけが段階 2・3 と分かっている。C-0744）。--treasure で指定する`,
     );
   // 書かれていない項目・部位は空の育成で埋める（Stage 14: calc の育成の JSON の取り込みと同じ）
   const empty = emptyBuild();
