@@ -282,7 +282,7 @@ export function validateMinimalFields(c: Claim): string[] {
         }
         const names = typeof m.element === 'string' ? [m.element] : Array.isArray(m.element) ? m.element : [undefined];
         if (names.length === 0 || names.some((n) => typeof n !== 'string' || n.trim() === ''))
-          errors.push(`${p}.element は要素の名前か、その並び（空でない）`);
+          errors.push(`${p}.element が空（要素の名前か、その並び）`);
         else if (new Set(names).size !== names.length) errors.push(`${p}.element に同じ要素が 2 回ある`);
         if (typeof m.reason !== 'string' || m.reason.trim() === '') errors.push(`${p}.reason が空`);
         if (!isDate(m.decided)) errors.push(`${p}.decided は YYYY-MM-DD`);
