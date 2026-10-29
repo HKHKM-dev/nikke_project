@@ -9,6 +9,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   formatAppliedAmount,
+  formatCounterChange,
   formatEffectSource,
   formatInstantTarget,
   formatRemoveState,
@@ -153,5 +154,15 @@ describe('クラスで絞る効果の表示', () => {
       effectIndex: 0,
     };
     expect(formatInstantTarget(heal)).toBe('（支援型の味方）');
+  });
+});
+
+describe('カウンタの増減の表示', () => {
+  it('writes the counter full trigger (Laplace: Ultimate Hero S2)', () => {
+    const [drain, stage] = definitionOf(103).skills.skill2.effects.filter(
+      (e) => e.kind === 'counterChange' && 'counterFull' in e.trigger,
+    );
+    expect(formatCounterChange(drain!, 100)).toBe('オーバーエネルギーが最大になった時に オーバーエネルギー −100（上限 100）');
+    expect(formatCounterChange(stage!, 1)).toMatch(/^オーバーエネルギーが最大になった時に .+ \+1（上限 4）$/);
   });
 });

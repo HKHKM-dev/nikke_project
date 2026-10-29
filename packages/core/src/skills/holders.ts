@@ -215,7 +215,16 @@ export type HolderHistory = {
 };
 
 /** 2 段目の段 10: カウンタの値が変わった記録 1 つ */
-export type CounterRecord = { frame: number; slotIndex: number; counter: CounterId; value: number };
+/**
+ * カウンタの増減の記録。値はそのフレームのすべての判定の後に足したものなので、読む側には次のフレームから効く。battleStart は戦闘開始時の
+ * 増減（フレーム 0 の記録で、フレーム 0 から効く）。効き始めは counterEffectiveFrom
+ */
+export type CounterRecord = { frame: number; slotIndex: number; counter: CounterId; value: number; battleStart?: true };
+
+/** カウンタの記録が効き始めるフレーム（戦闘開始時の記録は 0、ほかは記録の次のフレーム） */
+export function counterEffectiveFrom(record: CounterRecord): number {
+  return record.battleStart === true ? 0 : record.frame + 1;
+}
 
 export type HolderListsOptions = {
   frames: number;
@@ -836,8 +845,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
   const counterValues = new Map<string, number>();
   const counterRecords: CounterRecord[] = [];
-  /** 戦闘開始時の増減の記録（フレーム 0 から効く。段 11 の PR 2 のカウンタの while） */
-  const battleStartCounterRecords = new Set<CounterRecord>();
   /** 枠のカウンタの、いまの値（そのフレームの増減は、すべての判定の後に足すので、前のフレームの終わりの値） */
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
@@ -1019,7 +1026,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     let open: number | null = null;
     for (const r of counterRecords) {
       if (r.slotIndex !== track.sourceSlotIndex || r.counter !== counter) continue;
-      const from = battleStartCounterRecords.has(r) ? 0 : r.frame + 1;
+      const from = counterEffectiveFrom(r);
       if (r.value >= atLeast) open ??= from;
       else if (open !== null) {
         if (open < from) items.push({ start: open, end: Math.min(from, frames) });
@@ -1502,9 +1509,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const after = Math.max(0, Math.min(counterMax(counter), before + delta));
       if (after === before) continue;
       counterValues.set(key, after);
-      const record: CounterRecord = { frame: battleStartOnly ? 0 : f, slotIndex, counter, value: after };
-      counterRecords.push(record);
-      if (battleStartOnly) battleStartCounterRecords.add(record);
+      counterRecords.push(
+        battleStartOnly
+          ? { frame: 0, slotIndex, counter, value: after, battleStart: true }
+          : { frame: f, slotIndex, counter, value: after },
+      );
       if (after === counterMax(counter)) counterFullAt.set(key, (battleStartOnly ? 0 : f) + 1);
     }
   };

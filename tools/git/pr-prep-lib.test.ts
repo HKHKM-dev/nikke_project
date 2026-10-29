@@ -1,6 +1,6 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git は呼ばない。
 import { describe, expect, it } from 'vitest';
-import { collisions, regenerateScript, splitConflicts } from './pr-prep-lib.ts';
+import { collisions, rebaseOutcome, regenerateScript, splitConflicts } from './pr-prep-lib.ts';
 
 const GENERATED = ['plan/claims.md', 'plan/residuals.md', 'records/minimal/sensitivity.json'];
 const SENSITIVITY = 'records/minimal/sensitivity.json';
@@ -20,6 +20,14 @@ describe('regenerateScript', () => {
     expect(regenerateScript([SENSITIVITY, 'plan/claims.md'], [], SENSITIVITY)).toBe('records:minimal');
     expect(regenerateScript([], [SENSITIVITY], SENSITIVITY)).toBe('records:minimal');
     expect(regenerateScript(['plan/claims.md'], ['plan/claims.md'], SENSITIVITY)).toBe('records:check');
+  });
+});
+
+describe('rebaseOutcome', () => {
+  it('stops when the rebase did not start, instead of going on without main', () => {
+    expect(rebaseOutcome(0, false)).toBe('clean');
+    expect(rebaseOutcome(1, true)).toBe('conflicted');
+    expect(rebaseOutcome(1, false)).toBe('notStarted');
   });
 });
 

@@ -434,7 +434,12 @@ function steadyPauseShots(result: SimResult, ctx: MetricContext): number | numbe
   const shot = slotOf(ctx.input.slots, ctx).character.shot;
   // 撃ち始め（リロード・的のジャンプの後。前の発との間が 2f より長い発）から何発目で 1 フレーム 1 発に届くか
   let spun = 0;
-  while (rateAfterShots(shot, spun) < MAX_RPM) spun += 1;
+  while (rateAfterShots(shot, spun) < MAX_RPM) {
+    // レートは発ごとに上がるか止まるかだけなので、上がらなくなったら 1 フレーム 1 発には届かない（スピンアップの無い武器など）
+    if (rateAfterShots(shot, spun + 1) <= rateAfterShots(shot, spun))
+      throw new Error(`枠 ${String(ctx.args.slot)} の武器は 1 フレーム 1 発に届かない`);
+    spun += 1;
+  }
   const gap = (k: number): number => frames[k]! - frames[k - 1]!;
   const counts = new Set<number>();
   let runStart = 0;
@@ -1443,8 +1448,9 @@ export const METRICS: Readonly<Record<string, Metric>> = {
 
 /**
  * 比べる設定の拡張（plan/design-compare-setup-extension.md 5 節。C-0512）: 枠の n 回目（0 始まり。カンマ区切りの並びも書ける）の
- * 発動の、その枠の CT の明け（前の発動 + CT − その間に縮んだ分）から発動の印（III はタイマーの 00.00。hexagonFrameOf）までの
- * 動画のフレーム数の列。モデルでその回が CT の明けで撃っていなければ（ゲージや前の段が律速）比べられない
+ * 発動の、その枠の CT の明け（前の発動 + CT − 前の発動の CT を維持の CT▼ で縮めた分 − その間に即時の CT▼ で縮んだ分）から
+ * 発動の印（III はタイマーの 00.00。hexagonFrameOf）までの動画のフレーム数の列。モデルでその回が CT の明けで撃っていなければ
+ * （ゲージや前の段が律速）比べられない
  */
 function ctEndToFullBurstStart(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
   const schedule = result.schedule;
@@ -1465,7 +1471,7 @@ function ctEndToFullBurstStart(result: { schedule: BurstSchedule | null }, ctx: 
       const cut = schedule.cooldownReductions
         .filter((r) => r.slotIndex === slotIndex && r.frame >= previous.frame && r.frame < activation.frame)
         .reduce((sum, r) => sum + r.applied, 0);
-      const ctEnd = previous.frame + cooldown - cut;
+      const ctEnd = previous.frame + cooldown - (previous.cooldownShortenedFrames ?? 0) - cut;
       if (ctEnd !== activation.frame)
         throw new Error(`${s} 回目はモデルで CT が律速でない（CT の明け ${ctEnd}・発動 ${activation.frame}）`);
       return activationVideoFrameOf(schedule, activation) - videoFrameOf(schedule, ctEnd);

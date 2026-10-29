@@ -6,6 +6,7 @@ import {
   counterMax,
   counterName,
   framesToGameSeconds,
+  isCounterFullTrigger,
   isCounterWhileEffect,
   isEndedTrigger,
   isStateContent,
@@ -294,11 +295,16 @@ function selfCounterText(c: SelfCounterCondition): string {
 
 /**
  * 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: 定義のカウンタの増減。「火力ゲージ +2（自分が火力チャージ状態なら）」
- * 「火力ゲージ −100」。amount は解いた値（amountRef は Lv の説明文の値）。増減はそのフレームのすべての判定の後に足す
+ * 「火力ゲージ −100」「オーバーエネルギーが最大になった時に オーバーエネルギー −100」。amount は解いた値（amountRef は Lv の説明文の値）。
+ * 増減はそのフレームのすべての判定の後に足す
  */
 export function formatCounterChange(effect: CounterChangeEffect, amount: number): string {
   const conditions = formatGrantCondition(effect.condition);
-  const trigger = isEndedTrigger(effect.trigger) ? `${stateLabel(effect.trigger.ended)}が終了した時に ` : '';
+  const trigger = isEndedTrigger(effect.trigger)
+    ? `${stateLabel(effect.trigger.ended)}が終了した時に `
+    : isCounterFullTrigger(effect.trigger)
+      ? `${counterName(effect.trigger.counterFull).ja}が最大になった時に `
+      : '';
   const change = `${effect.decrease ? '−' : '+'}${formatNumber(amount)}`;
   return `${trigger}${counterName(effect.counter).ja} ${change}（上限 ${formatNumber(counterMax(effect.counter))}）${conditions === '' ? '' : `（${conditions}）`}`;
 }

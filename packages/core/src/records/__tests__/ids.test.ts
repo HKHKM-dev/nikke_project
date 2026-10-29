@@ -20,6 +20,8 @@ describe('records/ids', () => {
     expect(RECORDING_ID.test('9420')).toBe(true);
     expect(RECORDING_ID.test('942')).toBe(false);
     expect(RECORDING_ID.test('94200')).toBe(false);
+    expect(RECORDING_ID.test('0001')).toBe(true);
+    expect(RECORDING_ID.test('0000')).toBe(false);
   });
 
   it('finds a verification ID inside text', () => {

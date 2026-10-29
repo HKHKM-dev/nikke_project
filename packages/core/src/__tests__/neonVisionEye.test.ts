@@ -57,7 +57,7 @@ describe('ネオン：ビジョン・アイ（18）の火力ゲージ', () => {
     expect(bursts.length).toBeGreaterThanOrEqual(4);
     const records = plan.history.counters.filter((c) => c.slotIndex === m && c.counter === 'firepowerGauge');
     const valueBefore = (frame: number) => records.filter((c) => c.frame < frame).at(-1)?.value ?? 0;
-    expect(records[0]).toEqual({ frame: 0, slotIndex: m, counter: 'firepowerGauge', value: 100 });
+    expect(records[0]).toEqual({ frame: 0, slotIndex: m, counter: 'firepowerGauge', value: 100, battleStart: true });
     // 1 回目は 100 で超火力（0 になる）。2 回目は 0 から火力チャージ（+1・その間の通常攻撃の発ごとに +2・終わりに +45）。上限は 100
     const charge = itemsOf(plan.history, { holder: m, state: 'firepowerCharge' })[0]!;
     const shots = plan.shots[m]!.frames.filter((f) => charge.start <= f && f < charge.end).length;

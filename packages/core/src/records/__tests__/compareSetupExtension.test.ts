@@ -131,6 +131,13 @@ describe('表示の時刻の指標', () => {
     const r = run('0222');
     expect(metric('ctEndToFullBurstStart', r, { slot: 3, n: '1,2,3' })).toEqual([6, 6, 6]);
     expect(() => metric('ctEndToFullBurstStart', r, { slot: 3, n: 0 })).toThrow(/CT が律速でない/);
+    // 前の発動の CT を維持の CT▼（熱血など）で縮めた分も CT の明けから引く（cooldownShortenedFrames）。縮めた分だけ明けが早まると、
+    // その回は CT の明けで撃っていないことになる
+    const result = structuredClone(r.result);
+    result.schedule!.activations.filter((a) => a.slotIndex === 2)[0]!.cooldownShortenedFrames = 100;
+    expect(() =>
+      METRICS.ctEndToFullBurstStart!.sim(result, { args: { slot: 3, n: 1 }, input: r.input as TeamInput }),
+    ).toThrow(/CT の明け \d+・発動/);
   });
 
   it('chainStepIntervals is 29 video frames between the true activations', () => {

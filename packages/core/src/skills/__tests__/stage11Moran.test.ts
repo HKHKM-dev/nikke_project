@@ -147,6 +147,10 @@ describe('モランのバースト・S1（V-0530）', () => {
     for (let i = 1; i < base.length; i++) expect(base[i]! - base[i - 1]!).toBeGreaterThanOrEqual(cooldown);
     expect(activations.slice(1).some((f, i) => f - activations[i]! < cooldown)).toBe(true);
     expect(activations.length).toBeGreaterThan(base.length);
+    // 縮めた長さ（20 秒）は発動に残る（CT の明けを読む指標が使う。この編成はゲージが律速）
+    const shortened = treasure.schedule!.activations.map((a) => a.cooldownShortenedFrames);
+    expect(new Set(shortened)).toEqual(new Set([gameSecondsToFrames(20)]));
+    expect(run(0).schedule!.activations.every((a) => a.cooldownShortenedFrames === undefined)).toBe(true);
     // 熱血を外すと（S1 の state を消すと）基礎の CT のまま
     const s1 = definition.treasureSkills?.skill1;
     if (s1 === undefined) throw new Error('宝物版の S1 が無い');

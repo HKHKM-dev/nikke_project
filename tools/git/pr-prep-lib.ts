@@ -27,6 +27,15 @@ export function regenerateScript(
     : 'records:check';
 }
 
+/**
+ * git rebase origin/main の後の様子。0 以外で終わってもリベースの途中なら衝突で止まっただけ（続きはループで解く）。途中でもなければ、
+ * リベースは始まらなかった（追跡していないファイルが main のファイルと重なったなど）ので、取り込まずに先へ進んではいけない
+ */
+export function rebaseOutcome(status: number, rebasing: boolean): 'clean' | 'conflicted' | 'notStarted' {
+  if (status === 0) return 'clean';
+  return rebasing ? 'conflicted' : 'notStarted';
+}
+
 export type Collision = { id: string; suggestion?: string };
 
 /**

@@ -49,6 +49,7 @@ import {
 import {
   ENEMY,
   buffTimelineOf,
+  counterEffectiveFrom,
   itemsOf,
   stacksHold,
   valuePiecesOf,
@@ -321,11 +322,11 @@ export function planSkillHits(
       return level;
     };
     // 2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 条件 selfCounter と perCount の { counter } が読む、自分のカウンタの
-    // 発火のフレームの値（前のフレームの終わりの値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 の記録）
+    // 発火のフレームの値（前のフレームの終わりの値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 から。counterEffectiveFrom）
     const ownCounters = history.counters.filter((r) => r.slotIndex === slotIndex);
     const counterAt = (counter: CounterId, frame: number): number => {
       let value = 0;
-      for (const r of ownCounters) if (r.counter === counter && r.frame < frame) value = r.value;
+      for (const r of ownCounters) if (r.counter === counter && counterEffectiveFrom(r) <= frame) value = r.value;
       return value;
     };
     // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）

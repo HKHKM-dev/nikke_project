@@ -1,7 +1,7 @@
 // 持続の命中率▲をコア命中率に効かせる（C-0170。plan/design-sustained-hit-rate-core.md）。
 // V-0074 の 3 本目（録画 0118）と同じ編成（モダニア + ドレイク（操作）+ デルタ + リター、条件は自動、BigArms Fire の 3 分モード）で、
 //   1. 区間の状態の buffs.hitRate に持続の▲が入り、2 つの▲は和になる
-//   2. sim・calc の 1 トリガーの値が、その区間の N で出し直したコア命中率を使う
+//   2. 1 トリガーの値が、その区間の N で出し直したコア命中率を使う
 //   3. 手入力の枠と、持続の▲の無い区間は今までと同じ
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
