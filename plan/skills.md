@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 61・効果 312（根拠あり 305）・notes 182（根拠あり 72）
+件数: キャラ 64・効果 340（根拠あり 309）・notes 190（根拠あり 77）
 
-notes の種類: 未対応 62・前提の外 27・計算に無関係 33・補足 13・間接 47
+notes の種類: 未対応 63・前提の外 31・計算に無関係 33・補足 13・間接 50
 
-スロット: supported 125・partial 15・unsupported 24・noEffect 34
+スロット: supported 133・partial 16・unsupported 24・noEffect 34
 
 ## 10 ラピ
 
@@ -91,6 +91,25 @@ notes の種類: 未対応 62・前提の外 27・計算に無関係 33・補足
   - effects[3] state・burstUse・superFirepower（attackDamage）: C-0667（確定）、C-0665（確定）
   - effects[4] counterChange・burstUse・firepowerGauge（減少）: C-0667（確定）
   - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い）: 根拠なし
+
+## 19 マリアン：クイーン
+
+- **skill1**: supported
+  - effects[0] state・battleStart・intoTheFraySharpenedResolve: 根拠なし
+  - effects[1] damage・4 秒ごと・skill: 根拠なし
+  - effects[2] state・4 秒ごと・openWounds（damageTaken）: 根拠なし
+  - effects[3] state・burstUse・openWounds: 根拠なし
+- **skill2**: supported
+  - effects[0] state・burstUse・intoTheFrayPenetrantWish: 根拠なし
+  - effects[1] damage・normalShot・skill: 根拠なし
+  - effects[2] timed・fullBurstStart・sequentialAttackDamage: 根拠なし
+  - effects[3] timed・fullBurstStart・coreDamage: 根拠なし
+- **burst**: supported
+  - effects[0] ammoRefill・burstUse: 根拠なし
+  - effects[1] timed・burstUse・spinUpSpeed: 根拠なし
+  - effects[2] timed・burstUse・attack: 根拠なし
+  - effects[3] timed・burstUse・attackDamage: 根拠なし
+  - effects[4] burstDamage・skill: 根拠なし
 
 ## 20 デルタ
 
@@ -714,6 +733,41 @@ notes の種類: 未対応 62・前提の外 27・計算に無関係 33・補足
   - notes[0] 未対応: 自分の攻撃ダメージ▲（10 秒）は未対応: 根拠なし
   - notes[1] 未対応: セブンスドワーフ・フルアクティブ（チャージ時間 3.2 秒の固定、ロックオン対象数とオートファイア準備の装填数▲、使用回数 2 回）は未対応: 根拠なし
   - notes[2] 前提の外: 破壊可能な発射体全体へのダメージは、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+
+## 472 紅蓮：神殺
+
+- **skill1**: supported
+  - effects[0] state・battleStart・intoTheFraySereneMind: 根拠なし
+  - effects[1] timed・battleStart・normalCritRate: 根拠なし
+  - effects[2] damage・normalShot・additional: 根拠なし
+  - effects[3] damage・normalShot・additional: 根拠なし
+  - effects[4] timed・fullBurstStart・critDamage: 根拠なし
+  - notes[0] 間接（貫通）: 臨戦：明鏡止水の貫通特化は、それ自体は与ダメージを変えない（貫通を読む効果のある編成でだけ効く）: C-0443（範囲外）
+  - notes[1] 前提の外: 通常攻撃が広範囲の攻撃になることは、敵 1 体の前提では的の数を変えない（要件 5.2 節）。射撃場の的でコアに当たる割合が変わるかは録画で読む: C-0443（範囲外）
+- **skill2**: supported
+  - effects[0] ammoRefill・critHit: 根拠なし
+  - effects[1] state・burstUse・intoTheFrayAtOneWithTheSword（normalCritRate・attackDamage）: 根拠なし
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: 根拠なし
+  - effects[1] timed・burstUse・attack: 根拠なし
+  - effects[2] damage・burstUse・additional: 根拠なし
+  - notes[0] 前提の外: 通常攻撃の範囲 100%▲ は、敵 1 体の前提では的の数を変えない（要件 5.2 節）: C-0443（範囲外）
+
+## 473 ラプンツェル：サンクチュアリ
+
+- **skill1**: partial
+  - effects[0] heal・fullChargeShot: 根拠なし
+  - effects[1] timed・fullBurstStart・attackDamage: C-0719（確定）
+  - notes[0] 前提の外: ナノ粒子投与（バーストの、戦闘不能の味方が 3 機以上の分岐）を使用した時の、バーストスキルのクールタイム▲とナノ粒子消耗：防御力▲は、味方が倒れない前提では起きない（要件 5.2 節）: C-0443（範囲外）
+  - notes[1] 未対応: フルチャージした時からの、自分へのチャージ速度▲▼の無効（持続）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。plan/design-new-chars-1029.md 論点 F）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・attack: C-0719（確定）
+  - effects[1] damage・fullChargeShot・additional: C-0720（確定）、C-0721（確定）
+  - notes[0] 間接（バリア）: フルチャージ状態を 1 秒以上維持した時の自分への共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。きっかけ「フルチャージ状態を N 秒以上維持した時」は語彙に無い）: 根拠なし
+  - notes[1] 間接（防御力）: フルチャージ状態を 1 秒以上維持した時の味方全体のゴッデスブレッシング（発動者基準の防御力▲）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。きっかけは上と同じく語彙に無い）: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-0722（確定）
+  - notes[0] 前提の外: 戦闘不能状態の味方が 3 機以上の分岐（ナノ粒子投与の復活と、発動者基準の攻撃力▲・防御力▲。戦闘中 1 回）は、味方が倒れない前提では起きない（要件 5.2 節）: C-0443（範囲外）
 
 ## 500 エレグ
 
