@@ -1,0 +1,52 @@
+{
+  "id": "0740",
+  "date": "2026-10-29",
+  "folder": "range",
+  "file": "20261029-0740_sr+sg+mg+ar_cocoa+soldier-fa+marian-queen+idoll-sun.mp4",
+  "original": "2026-10-29_21-13-42.mp4",
+  "durationSec": 203.4,
+  "frames": 12205,
+  "fps": 60,
+  "sizeMB": 246.7,
+  "sha256": "19be6461972f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 19,
+      "name": "マリアン：クイーン",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0538 の撮り方 B（ココア・ソルジャーF.A.・マリアン：クイーン（操作）・I-DOLL・サン・手動操作なし）。左上のボタンでオート射撃 ON・オートバースト ON、戦闘履歴のパネルで枠順・名前と Lv.400・交戦時間 03:00 を確かめた",
+  "backup": {
+    "at": "2026-10-29T21:39+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
