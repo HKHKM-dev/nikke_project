@@ -198,7 +198,7 @@ function validateTeam(
   for (const m of team) if (!knownRids.has(m.rid)) errors.push(`${at}: rid ${m.rid} のキャラのデータが無い`);
   team.forEach((m, i) => {
     if (m.build === undefined) return;
-    if (fixedSpec !== false) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
+    if (fixedSpec === true) errors.push(`${at}: 育成（build）はスペック固定 OFF の予測にだけ書く`);
     errors.push(...validateRecordingBuild(m.build, `${at} 枠 ${i + 1}`));
   });
   if (team.filter((m) => m.controlled === true).length > 1) errors.push(`${at}: 操作した枠が 2 つ以上ある`);

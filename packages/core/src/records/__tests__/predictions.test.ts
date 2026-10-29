@@ -92,6 +92,18 @@ describe('records/predictions', () => {
     );
   });
 
+  it('rejects a build only under fixed-spec ON (録画の台帳と同じ。plan/design-build-snapshot.md 15 節)', () => {
+    const team = [{ rid: 307, controlled: true, build: { attack: 400000 } }];
+    expect(validatePredictions([file({ team, fixedSpec: false })], ctx)).toEqual([]);
+    expect(validatePredictions([file({ team })], ctx)).toEqual([
+      '予測 V-0063: 育成（build）はスペック固定 OFF の予測にだけ書く',
+    ]);
+    // 型の外の値（JSON から読んだ壊れた予測）は fixedSpec の形の誤りだけを出す
+    expect(validatePredictions([file({ team, fixedSpec: null as unknown as boolean })], ctx)).toEqual([
+      '予測 V-0063: fixedSpec は true か false',
+    ]);
+  });
+
   it('runs the model per hypothesis and target, applying the override to the setup', () => {
     const f = file();
     const values = runPredictions(f, data);
