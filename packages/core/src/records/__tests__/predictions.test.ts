@@ -319,6 +319,44 @@ describe('gradeCandidate（等級の候補）', () => {
     // 空の並びは、決めるのに使った録画が無い（今までどおり）
     expect(gradeCandidate(decided('`0101-01`・`0102-09`', []), residuals)).toBe('反復実測');
   });
+  it('counts later runs within one recording (runs。plan/design-grade-runs.md 2 節)', () => {
+    const base: Claim = { ...claim('`0101-01`'), decidedOn: [{ recording: '0101', role: '値を合わせた' }] };
+    expect(gradeCandidate(base, residuals)).toBe('単独実測');
+    // 決めた回より後の回が合えば、1 本でも反復実測
+    const later = { recording: '0101', decided: '1 回目', reproduced: '2〜4 回目', observations: ['0101-01'] };
+    expect(gradeCandidate({ ...base, runs: [later] }, residuals)).toBe('反復実測');
+    // 決めた録画が無い 1 本の中の反復も数える
+    const none = { recording: '0101', reproduced: '1〜10 回目', observations: ['0101-01'] };
+    expect(gradeCandidate({ ...claim('`0101-01`'), decidedOn: [], runs: [none] }, residuals)).toBe('反復実測');
+    // 載せた観測値が許容外か比べていなければ数えない
+    const outside: Claim = {
+      ...claim('`0074-08`・`0101-01`'),
+      decidedOn: [{ recording: '0101', role: '値を合わせた' }],
+    };
+    const run074 = { recording: '0074', reproduced: '2 回目', observations: ['0074-08'] };
+    expect(gradeCandidate({ ...outside, runs: [run074] }, residuals)).toBe('単独実測');
+  });
+  it('counts recordings the hypothesis came from when it has no fitted constants (parameterFree。同 3 節)', () => {
+    const fromBoth: Claim = {
+      ...claim('`0101-01`・`0102-09`'),
+      decidedOn: [
+        { recording: '0101', role: '仮説の出どころ' },
+        { recording: '0102', role: '仮説の出どころ' },
+      ],
+    };
+    expect(gradeCandidate(fromBoth, residuals)).toBe('単独実測');
+    expect(gradeCandidate({ ...fromBoth, parameterFree: '説明文の 10%' }, residuals)).toBe('反復実測');
+    // 読み方を合わせた録画は数えないまま
+    const reading: Claim = {
+      ...fromBoth,
+      parameterFree: '説明文の 10%',
+      decidedOn: [
+        { recording: '0101', role: '読み方を合わせた' },
+        { recording: '0102', role: '読み方を合わせた' },
+      ],
+    };
+    expect(gradeCandidate(reading, residuals)).toBe('単独実測');
+  });
   it('an observation is a dummy for the type', () => {
     const o: Observation = observations[0]!;
     expect(o.id).toBeTruthy();

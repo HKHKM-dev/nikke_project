@@ -73,6 +73,16 @@ export type ClaimFile = {
    */
   decidedOn?: DecidedOn[];
   /**
+   * 1 本の録画の中の反復（回で数える。plan/design-investigation-review.md 1.4.2 節の 1・plan/design-grade-runs.md 2 節）。書いた録画は、
+   * 載せた観測値が許容内なら 2 回と数え、決めた回より後の回を再現に数える
+   */
+  runs?: RunRepeat[];
+  /**
+   * 合わせ込みの定数を持たない仮説の、式と定数の出どころ（説明文・データ・確定の結論。plan/design-grade-runs.md 3 節）。書いた結論は、
+   * 反復実測の再現に仮説の出どころの録画も数える。値を合わせた録画（decidedOn）とは両立しない
+   */
+  parameterFree?: string;
+  /**
    * 人の判断で確定にしたとき、機械の確定の条件のうち上書きしたもの（plan/design-investigation-review.md 3 節）。records:close は、
    * 確定の結論に残った条件がここで上書きされていなければ止める。等級を機械の候補より上にした理由は gradeReason、最小構成の要素ごとの
    * 効かない理由は minimal に書く
@@ -109,6 +119,11 @@ export function validateJudgment(c: Pick<ClaimFile, 'id' | 'judgment'>): string[
 export const DECIDED_ROLES = ['仮説の出どころ', '値を合わせた', '読み方を合わせた'] as const;
 export type DecidedRole = (typeof DECIDED_ROLES)[number];
 export type DecidedOn = { recording: string; role: DecidedRole };
+/**
+ * 1 本の録画の中の反復（plan/design-grade-runs.md 2 節）。decided は仮説・値・読み方を決めた回（その録画が decidedOn にあるときだけ書く）、
+ * reproduced はそれより後に合った回（決めた回が無ければ、合った回）、observations はその回を載せた観測値（根拠のうちその録画のもの）
+ */
+export type RunRepeat = { recording: string; decided?: string; reproduced: string; observations: string[] };
 
 /**
  * 定義に結び付かない結論の機構の名前（plan/design-minimal-relevance.md 3.2 節）。観測量の出どころ（records/observations.ts の
@@ -291,6 +306,80 @@ export function validateDecidedOn(c: Pick<ClaimFile, 'id' | 'decidedOn'>): strin
   return errors;
 }
 
+const RUN_KEYS = ['recording', 'decided', 'reproduced', 'observations'];
+
+/**
+ * runs の形の検査（plan/design-grade-runs.md 2 節）。観測値は根拠にあるその録画のもの。decided は、その録画が decidedOn にあるときに要り、
+ * 無いときは書かない（決めるのに使った回があるなら、その録画を decidedOn に書く）
+ */
+export function validateRuns(c: Pick<Claim, 'id' | 'runs' | 'decidedOn' | 'observations'>): string[] {
+  if (c.runs === undefined) return [];
+  const at = `${c.id}: runs`;
+  if (!Array.isArray(c.runs) || c.runs.length === 0)
+    return [`${at} は { recording, decided?, reproduced, observations } の並び（1 つ以上）`];
+  if (c.decidedOn === undefined) return [`${at} を書くなら decidedOn も書く（無ければ []）`];
+  const decided = new Set(c.decidedOn.map((d) => d.recording));
+  const errors: string[] = [];
+  const recordings = new Set<string>();
+  c.runs.forEach((r: unknown, i) => {
+    const p = `${at}[${i}]`;
+    if (!isRecord(r) || unknownKeys(r, RUN_KEYS).length > 0) {
+      errors.push(`${p} は { recording, decided?, reproduced, observations }`);
+      return;
+    }
+    if (typeof r.recording !== 'string' || !RECORDING_ID.test(r.recording)) {
+      errors.push(`${p}.recording は録画の id（3 桁以上の数字か L-…）: ${String(r.recording)}`);
+      return;
+    }
+    if (recordings.has(r.recording)) errors.push(`${at} に録画 ${r.recording} が 2 回ある`);
+    recordings.add(r.recording);
+    if (decided.has(r.recording)) {
+      if (typeof r.decided !== 'string' || r.decided.trim() === '')
+        errors.push(`${p}.decided が要る（録画 ${r.recording} は decidedOn にある。決めた回を書く）`);
+    } else if (r.decided !== undefined)
+      errors.push(
+        `${p}.decided は書かない（録画 ${r.recording} は decidedOn に無い。決めた回があるなら decidedOn に書く）`,
+      );
+    if (typeof r.reproduced !== 'string' || r.reproduced.trim() === '') errors.push(`${p}.reproduced が空`);
+    if (!Array.isArray(r.observations) || r.observations.length === 0)
+      errors.push(`${p}.observations は合った回を載せた観測値の並び（1 つ以上）`);
+    else
+      for (const o of r.observations) {
+        if (typeof o !== 'string' || o.replace(/-\d+$/, '') !== r.recording)
+          errors.push(`${p}.observations の ${String(o)} は録画 ${r.recording} の観測値でない`);
+        else if (!c.observations.includes(o)) errors.push(`${p}.observations の ${o} はこの結論の根拠に無い`);
+      }
+  });
+  return errors;
+}
+
+/**
+ * parameterFree の形の検査（plan/design-grade-runs.md 3 節）。値を合わせた録画があれば合わせ込みの定数を持つので両立しない。
+ * 出どころに書いた結論は、確定のもの（自分のほかの）
+ */
+export function validateParameterFree(
+  c: Pick<ClaimFile, 'id' | 'parameterFree' | 'decidedOn'>,
+  byId: ReadonlyMap<string, Pick<ClaimFile, 'state'>>,
+): string[] {
+  if (c.parameterFree === undefined) return [];
+  const at = `${c.id}: parameterFree`;
+  if (typeof c.parameterFree !== 'string' || c.parameterFree.trim() === '')
+    return [`${at} は式と定数の出どころ（説明文・データ・確定の結論）の文`];
+  const errors: string[] = [];
+  if (c.decidedOn === undefined) errors.push(`${at} を書くなら decidedOn も書く（無ければ []）`);
+  const fitted = (c.decidedOn ?? []).filter((d) => d.role === '値を合わせた').map((d) => d.recording);
+  if (fitted.length > 0)
+    errors.push(`${at} は、値を合わせた録画（decidedOn の ${fitted.join('・')}）のある結論には書けない`);
+  for (const m of c.parameterFree.matchAll(/C-\d{4,}/g)) {
+    const ref = m[0];
+    const other = byId.get(ref);
+    if (ref === c.id) errors.push(`${at} に自分（${ref}）を書いている`);
+    else if (other === undefined) errors.push(`${at} の ${ref} が無い`);
+    else if (other.state !== '確定') errors.push(`${at} の ${ref} が確定でない（${other.state}）`);
+  }
+  return errors;
+}
+
 export type Claim = ClaimFile & {
   /** 根拠の文から拾った観測値の ID */
   observations: string[];
@@ -360,6 +449,8 @@ export function validateClaims(
       errors.push(`${c.id}: 確定の結論の根拠の観測値が、すべて失効している`);
     errors.push(...validateMinimalFields(c));
     errors.push(...validateDecidedOn(c));
+    errors.push(...validateRuns(c));
+    errors.push(...validateParameterFree(c, byId));
     errors.push(...validateJudgment(c));
     for (const r of c.replaces) {
       const old = byId.get(r);
@@ -399,9 +490,12 @@ export function gatedObservations(claims: readonly Claim[], invalidIds: Readonly
  * 機械で出す。上から順に当てはめる。根拠にモデルと比べた観測値が無い（記録だけの観測値や、旧の文書を指す根拠）ときは
  * 機械では決められないので undefined。データ明記は人が決めるので機械では出さない。
  *   厳密一致: 整数の観測値で、許容内かつ差が 0 のものがある（値か読み方を合わせた録画（decidedOn）のものは数えない）
- *   反復実測: 許容内の観測値が 2 本以上の録画にあり、そのうち 1 本以上が仮説・値・読み方を決めるのに使っていない録画（decidedOn に無い）
+ *   反復実測: 許容内の観測値が 2 回以上あり、そのうち 1 回以上が仮説・値・読み方を決めるのに使っていない回。回は録画で数え、runs に書いた
+ *     録画は、載せた観測値が許容内なら 2 回（決めた回と後の回）と数えて、後の回を再現にする。決めるのに使っていない回は、decidedOn に
+ *     無い録画と runs の後の回。parameterFree の結論は、仮説の出どころの録画も数える
  *   単独実測: 上のどちらでもない
- * decidedOn は plan/design-investigation-review.md 1.3 節（2026-10-10 のオーナーの決定。仮説を立てるのに使った録画は再現に数えない）
+ * decidedOn は plan/design-investigation-review.md 1.3 節（2026-10-10 のオーナーの決定。仮説を立てるのに使った録画は再現に数えない）。
+ * runs と parameterFree は plan/design-grade-runs.md（2026-10-29 のオーナーの指示）
  */
 /**
  * 1 ヒットの値の指標。モデルは端数を持ち、ゲームは途中の丸めで整数を出す（丸め方は四捨五入でも切り捨てでも揃わない）ので、
@@ -441,7 +535,15 @@ export function gradeCandidate(
   };
   if (ok.some((r) => exact(r) && !fitted(r.id))) return '厳密一致';
   const recordings = new Set(ok.map((r) => recordingOf(r.id)));
-  if (recordings.size >= 2 && [...recordings].some((r) => !decided.has(r))) return '反復実測';
+  const okIds = new Set(ok.map((r) => r.id));
+  // 録画の中の後の回（runs）。載せた観測値のどれかが許容内なら、その録画を 2 回と数え、後の回を再現にする
+  const repeated = new Set(
+    (claim.runs ?? []).filter((r) => r.observations.some((o) => okIds.has(o))).map((r) => r.recording),
+  );
+  const counted = (r: string) =>
+    !decided.has(r) || (claim.parameterFree !== undefined && decided.get(r) === '仮説の出どころ');
+  const runs = recordings.size + repeated.size;
+  if (runs >= 2 && ([...recordings].some(counted) || repeated.size > 0)) return '反復実測';
   return '単独実測';
 }
 
@@ -461,7 +563,7 @@ const CLAIMS_HEADER = `# 結論の台帳
 - 状態は \`確定\`・\`仮説\`・\`棄却\`・\`範囲外\` のどれか。\`範囲外\` は、モデルで扱わないものと、観測できないモデルの約束（単位など）。\`確定\` の結論の根拠の観測値は、\`npm test\` でモデルと比べ、許容幅の外なら落ちる。
 - 根拠の等級は、上から順に問い、最初に当てはまったもの（[design-stage20.md](design-stage20.md) 3.3 節）。新しく \`確定\` にするのは 1〜3 のとき。
   1. \`厳密一致\`: 合わせ込みの定数を持たない式やデータから計算した値と、実測が端数まで一致した
-  2. \`反復実測\`: 値を決めるのに使っていない実測でも再現した（仮説・値・読み方を決めるのに使った録画のほかに、別の録画で 1 回以上）
+  2. \`反復実測\`: 値を決めるのに使っていない実測でも再現した（仮説・値・読み方を決めるのに使った録画のほかに、別の録画で 1 回以上。1 本の録画の中でも、決めた回より後の回は数える（結論の \`runs\`）。合わせ込みの定数を持たない仮説（結論の \`parameterFree\`）は、仮説の出どころの録画も数える。[design-grade-runs.md](design-grade-runs.md)）
   3. \`データ明記\`: ゲームのデータ（CDN の数値・説明文・ゲーム内の用語のツールチップ）に、解釈の余地なく一意に書かれている。ツールチップは 2026-10-15 のオーナーの決定で足した。モデルの値が変わる結論は、撮影か既存の録画で 1 度確かめてから確定にする
   4. \`単独実測\`: 実測はあるが、1 回だけか、値をその実測に合わせて決めただけ
   5. \`推論\`: 上のどれでもない（解釈の余地のある読み・推論・推定・外部資料・観測できない約束）
@@ -520,6 +622,11 @@ export function renderClaims(
         lines.push(
           `  - 決めるのに使った録画: ${c.decidedOn.length === 0 ? 'なし' : c.decidedOn.map((d) => `${d.recording}（${d.role}）`).join('、')}`,
         );
+      if (c.runs !== undefined)
+        lines.push(
+          `  - 録画の中の反復: ${c.runs.map((r) => `${r.recording}（${r.decided === undefined ? '' : `${r.decided}で決め、`}${r.reproduced}${r.decided === undefined ? 'が合う' : 'で再現'}。${r.observations.join('・')}）`).join('、')}`,
+        );
+      if (c.parameterFree !== undefined) lines.push(`  - 合わせ込みの定数なし: ${c.parameterFree}`);
       if (c.replaces.length > 0) lines.push(`  - 置き換え: ${c.replaces.join('、')}`);
       const by = replacedBy.get(c.id);
       if (by !== undefined) lines.push(`  - 置き換えた結論: ${by.join('、')}`);
