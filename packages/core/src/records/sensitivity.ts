@@ -20,7 +20,9 @@ import {
   type EdgeRange,
   type MinimalElement,
   type RelevanceContext,
+  sensitivityId,
   type SensitivityEntry,
+  type SensitivityIndex,
 } from './relevance.ts';
 
 type Variant = 'minus' | 'plus';
@@ -143,6 +145,25 @@ export type SensitivityContext = RelevanceContext & { data: RecordsData };
  * 観測値の感度の結果。対象は、根拠が確定でなく、その録画で起きうる定義の効果（結論の対象かどうかは結論ごとに違うので問わない）。
  * 基準の予測が出せない観測値は空（静的な判定に戻る）
  */
+type EffectRef = NonNullable<MinimalElement['effectRef']>;
+const hasEffectRef = (e: MinimalElement): e is MinimalElement & { effectRef: EffectRef } => e.effectRef !== undefined;
+
+/** 感度を出す要素（根拠が確定でなく、その録画で起きうる定義の効果）と端の範囲。sensitivityOf と reusedSensitivity が同じものを選ぶ */
+function sensitivityElements(
+  recording: RecordingEntry,
+  ctx: RelevanceContext,
+): { element: MinimalElement & { effectRef: EffectRef }; edge: EdgeRange | undefined }[] {
+  const byId = new Map(ctx.claims.map((c) => [c.id, c]));
+  return elementsOf(recording, ctx).flatMap((e) =>
+    e.type === 'effect' &&
+    hasEffectRef(e) &&
+    unconfirmedReason(e, recording, ctx, byId) !== undefined &&
+    impossibleReason(e, recording) === undefined
+      ? [{ element: e, edge: edgeRangeOf(e, recording, ctx, byId) }]
+      : [],
+  );
+}
+
 export function sensitivityOf(
   o: Observation,
   ctx: SensitivityContext,
@@ -161,10 +182,7 @@ export function sensitivityOf(
   const key = sensitivityKey(o, recording, ctx);
   const battleSeconds = o.compare!.setup.durationSeconds ?? 180;
   const out: SensitivityEntry[] = [];
-  for (const e of elementsOf(recording, ctx)) {
-    if (e.type !== 'effect' || e.effectRef === undefined) continue;
-    if (unconfirmedReason(e, recording, ctx) === undefined) continue;
-    if (impossibleReason(e, recording) !== undefined) continue;
+  for (const { element: e, edge } of sensitivityElements(recording, ctx)) {
     const entry: SensitivityEntry = {
       observation: o.id,
       element: e.name,
@@ -174,7 +192,6 @@ export function sensitivityOf(
       plus: null,
     };
     const base = ctx.data.skills.get(e.effectRef.rid);
-    const edge = edgeRangeOf(e, recording, ctx);
     if (edge !== undefined) {
       entry.edge = { range: edge, widen: null, narrow: null };
       for (const variant of ['widen', 'narrow'] as const) {
@@ -227,20 +244,16 @@ export function sensitivityOf(
 export function reusedSensitivity(
   o: Observation,
   ctx: SensitivityContext,
-  previous: ReadonlyMap<string, SensitivityEntry>,
+  previous: SensitivityIndex,
 ): SensitivityEntry[] | undefined {
   if (!usesSensitivity(o)) return [];
   const recording = ctx.recordings.get(o.recording);
   if (recording === undefined) return [];
   const key = sensitivityKey(o, recording, ctx);
   const out: SensitivityEntry[] = [];
-  for (const e of elementsOf(recording, ctx)) {
-    if (e.type !== 'effect' || e.effectRef === undefined) continue;
-    if (unconfirmedReason(e, recording, ctx) === undefined) continue;
-    if (impossibleReason(e, recording) !== undefined) continue;
-    const p = previous.get(`${o.id}|${e.name}`);
-    if (p === undefined || p.key !== key || !sameEdgeRange(p.edge?.range, edgeRangeOf(e, recording, ctx)))
-      return undefined;
+  for (const { element, edge } of sensitivityElements(recording, ctx)) {
+    const p = previous.get(sensitivityId(o.id, element.name));
+    if (p === undefined || p.key !== key || !sameEdgeRange(p.edge?.range, edge)) return undefined;
     out.push(p);
   }
   return out;
@@ -256,11 +269,11 @@ export function sensitivityTargets(observations: readonly Observation[], ctx: Re
 export function withFreshSensitivity(
   observations: readonly Observation[],
   ctx: SensitivityContext,
-  loaded: ReadonlyMap<string, SensitivityEntry>,
+  loaded: SensitivityIndex,
 ): Map<string, SensitivityEntry> {
   const out = new Map(loaded);
   const cache = new Map<string, SimResult>();
   for (const o of observations)
-    for (const e of sensitivityOf(o, ctx, cache)) out.set(`${e.observation}|${e.element}`, e);
+    for (const e of sensitivityOf(o, ctx, cache)) out.set(sensitivityId(e.observation, e.element), e);
   return out;
 }

@@ -624,6 +624,11 @@ export type SensitivityEntry = {
 /** 観測値 ID|要素の名前 → 結果 */
 export type SensitivityIndex = ReadonlyMap<string, SensitivityEntry>;
 
+/** 感度の結果の索引の鍵（観測値 × 要素） */
+export function sensitivityId(observation: string, element: string): string {
+  return `${observation}|${element}`;
+}
+
 /** 感度の計算の仕方を変えたら上げる（鍵が変わり、結果は古いとみなされる） */
 export const SENSITIVITY_VERSION = 2;
 
@@ -698,7 +703,7 @@ export function relevanceOf(
           const cacheKey = `${o.id}|${rec.id}`;
           const key = keys.get(cacheKey) ?? sensitivityKey(o, rec, ctx);
           keys.set(cacheKey, key);
-          const s = sensitivity.get(`${o.id}|${r.name}`);
+          const s = sensitivity.get(sensitivityId(o.id, r.name));
           return (
             s !== undefined &&
             s.key === key &&
@@ -717,7 +722,7 @@ export function relevanceOf(
             const cacheKey = `${o.id}|${rec.id}`;
             const key = keys.get(cacheKey) ?? sensitivityKey(o, rec, ctx);
             keys.set(cacheKey, key);
-            const s = sensitivity.get(`${o.id}|${e.name}`);
+            const s = sensitivity.get(sensitivityId(o.id, e.name));
             const edge = edgeRangeOf(e, rec, ctx, byId);
             if (s !== undefined && s.key === key && sameEdgeRange(s.edge?.range, edge)) {
               if (!s.effective) continue;
@@ -829,7 +834,7 @@ export function renderMinimal(results: readonly ClaimRelevance[], claims: readon
     for (const [name, os] of marks) lines.push(`- 印 ${name}: ${ids(os)}`);
   }
   // 何も抑えていない印（plan/design-workflow-simplification-5.md 1 節の (c)）。消さない（結論が仮説に戻るとまた要る）
-  const unused = unusedMarks(results, claims);
+  const unused = unusedMarks(results, byId);
   if (unused.length > 0) {
     lines.push(
       '',
@@ -847,8 +852,7 @@ export function renderMinimal(results: readonly ClaimRelevance[], claims: readon
 export type MarkRef = { claim: string; element: string };
 
 /** 何も抑えていない印（確定の結論の印で、どの組の警告の「印」にも出ないもの）。結論が仮説に戻るとまた要るので、消さずに一覧に出す */
-export function unusedMarks(results: readonly ClaimRelevance[], claims: readonly Claim[]): MarkRef[] {
-  const byId = new Map(claims.map((c) => [c.id, c]));
+function unusedMarks(results: readonly ClaimRelevance[], byId: ReadonlyMap<string, Claim>): MarkRef[] {
   const out: MarkRef[] = [];
   for (const r of results) {
     const used = new Set(r.warnings.flatMap((w) => w.marked));

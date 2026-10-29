@@ -2,15 +2,13 @@
 // 分かれ目（git merge-base HEAD origin/main）の版と今の作業ツリーで変わったスキル定義について、分かれ目の版の結論にそのままある印の
 // notes の添字を、文の一致で今の番号に書き替える。origin/main が無い・git が無いときは何もしない。
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import type { ClaimFile } from '../src/records/claims.ts';
-import { renumberMarks } from '../src/records/marks.ts';
+import { noteMoves, renumberMarks, type NoteMoves } from '../src/records/marks.ts';
 import type { SkillDefinition } from '../src/skills/types.ts';
-import type { CharacterData } from '../src/types.ts';
-import { ROOT } from './records-data.ts';
+import { CLAIMS_DIR, ROOT, claimFileNames, loadSkillDefinitions } from './records-data.ts';
 
-const SKILLS_DIR = 'packages/core/data/skills/';
-const CLAIMS_DIR = 'records/claims/';
+const SKILLS = 'packages/core/data/skills/';
 
 function git(args: readonly string[]): string | undefined {
   try {
@@ -26,43 +24,39 @@ function git(args: readonly string[]): string | undefined {
 }
 
 /** 付け替えた印と、付け替えられない印（対応先の無い notes を指す。records:check の誤り） */
-export function renumberMarksFromGit(characters: ReadonlyMap<number, CharacterData>): {
-  changes: string[];
-  problems: string[];
-} {
-  const base = git(['merge-base', 'HEAD', 'origin/main'])?.trim();
-  if (!base) return { changes: [], problems: [] };
-  const changed = (git(['diff', '--name-only', base, '--', SKILLS_DIR]) ?? '')
-    .split('\n')
-    .filter((p) => /\/\d+\.json$/.test(p));
-  const defs = new Map<string, { before: SkillDefinition; after: SkillDefinition }>();
-  for (const path of changed) {
-    const before = git(['show', `${base}:${path}`]);
-    const name = characters.get(Number(path.slice(SKILLS_DIR.length, -'.json'.length)))?.name.ja;
-    let after: string;
-    try {
-      after = readFileSync(`${ROOT}${path}`, 'utf8');
-    } catch {
-      continue; // 消した定義
-    }
-    if (before === undefined || name === undefined) continue;
-    defs.set(name, { before: JSON.parse(before) as SkillDefinition, after: JSON.parse(after) as SkillDefinition });
-  }
+export function renumberMarksFromGit(): { changes: string[]; problems: string[] } {
   const changes: string[] = [];
   const problems: string[] = [];
-  if (defs.size === 0) return { changes, problems };
-  for (const name of readdirSync(`${ROOT}${CLAIMS_DIR}`).filter((n) => n.endsWith('.json'))) {
-    const path = `${ROOT}${CLAIMS_DIR}${name}`;
-    const text = readFileSync(path, 'utf8');
+  const base = git(['merge-base', 'HEAD', 'origin/main'])?.trim();
+  if (!base) return { changes, problems };
+  const changed = (git(['diff', '--name-only', base, '--', SKILLS]) ?? '')
+    .split('\n')
+    .filter((p) => /\/\d+\.json$/.test(p));
+  if (changed.length === 0) return { changes, problems };
+  // 今の版は読み込みの検査を通した定義（消した定義・index.json に無い定義は付け替えない）
+  const defined = new Map(loadSkillDefinitions().map((d) => [d.definition.resourceId, d]));
+  const moves = new Map<string, NoteMoves>();
+  for (const path of changed) {
+    const now = defined.get(Number(path.slice(SKILLS.length, -'.json'.length)));
+    const before = git(['show', `${base}:${path}`]);
+    // 前の版は今の形の検査を通らないことがあるので、notes だけを読む
+    if (now !== undefined && before !== undefined)
+      moves.set(now.name.ja, noteMoves(JSON.parse(before) as SkillDefinition, now.definition));
+  }
+  const claimsDir = CLAIMS_DIR.slice(ROOT.length);
+  for (const name of claimFileNames()) {
+    const text = readFileSync(`${CLAIMS_DIR}${name}`, 'utf8');
     // 変わった定義のキャラの印を持つ結論だけ見る（git show を全部の結論に回すと遅い）
-    if (![...defs.keys()].some((who) => text.includes(`"${who} `))) continue;
-    const file = JSON.parse(text) as ClaimFile;
-    if (file.minimal === undefined) continue;
-    const baseText = git(['show', `${base}:${CLAIMS_DIR}${name}`]);
-    const r = renumberMarks(file, baseText === undefined ? undefined : (JSON.parse(baseText) as ClaimFile), defs);
+    if (![...moves.keys()].some((who) => text.includes(`"${who} `))) continue;
+    const baseText = git(['show', `${base}:${claimsDir}${name}`]);
+    const r = renumberMarks(
+      JSON.parse(text) as ClaimFile,
+      baseText === undefined ? undefined : (JSON.parse(baseText) as ClaimFile),
+      moves,
+    );
     changes.push(...r.changes);
     problems.push(...r.problems);
-    if (r.changes.length > 0) writeFileSync(path, `${JSON.stringify(r.file, null, 2)}\n`);
+    if (r.changes.length > 0) writeFileSync(`${CLAIMS_DIR}${name}`, `${JSON.stringify(r.file, null, 2)}\n`);
   }
   return { changes, problems };
 }

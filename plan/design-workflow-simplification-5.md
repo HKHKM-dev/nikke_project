@@ -100,7 +100,7 @@
 - 2: 案のとおり。[skills-guide.md](skills-guide.md) 1.4 節に、段の中の PR の経過は段の設計書だけに 1 行、段の一覧の経過は段の出来事だけ、「読んで分かったこと」は結論を ID で指す、の 1 項目を足した。[design-skill-stages.md](design-skill-stages.md)「経過」の冒頭にも同じ決まりを 1 行置いた（前の行は直さない）。[verification-guide.md](verification-guide.md) 9 節に、本文は骨組みに「変更」を足し、値と読み方を書き写さない、を足した。`records:close` は題名の案の後に本文の骨組み（`records/close.ts` の `prBody`）を出す。残差の件数は、`records:minimal` が作り直した [residuals.md](residuals.md) と `origin/main` の版の件数の行から読む（V-0535 で回し、「許容外 47 → 47 件」と出ることを確かめた）。
 - 3: 5 節のとおり、案を出したセッションで入れた。
 - 1: (a) `records:check` が、分かれ目（`git merge-base HEAD origin/main`）と今の作業ツリーで変わったスキル定義の notes を文の一致で対応づけ、分かれ目の版の結論にそのままある印の添字を付け替える（`records/marks.ts` の `renumberMarks`、`scripts/records-marks.ts`）。対応先の無い notes を指す印は誤りにする（直すか、`decided` を直して判断し直すまで出る）。ラピ：レッドフードの S1 の notes を 1 つ消して試し、3 件を付け替え、2 件を名指しし、2 回目は何も変えないことを確かめた（0.6 秒。試しの変更は戻した）。(b) 行き先の無い印は `records:check` の誤りと `npm test`（`marks.test.ts`）で落とす。(c) [minimal.md](minimal.md) の末尾に「使われていない印」（82 件）を出す。(d) 行き先の無い印を消した。案の時点の 52 件から、main の進みで 44 件（35 の結論。確定 42・棄却 1 の結論の印）になっていた。警告の数（組 213・結論 68）は変わらない。(e) 印の `element` に要素の並びを書けるようにした（既存の印はまとめ直していない。新しく書く印から）。
-- 4: `records:minimal` の既定を差分の計算にした（`sensitivity.ts` の `reusedSensitivity`）。全部は `-- --all`。今の main で 3 秒、4 件前の版の sensitivity.json から 6 秒、`--all` で 52 秒。どれも結果はコミット済みのものと同じ。
+- 4: `records:minimal` の既定を差分の計算にした（`sensitivity.ts` の `reusedSensitivity`）。全部は `-- --all`。今の main で 1 秒、4 件前の版の sensitivity.json から 4 秒（整理の見直しの後）、`--all` で 52 秒。どれも結果はコミット済みのものと同じ。
 - 5: `format-retry.ts` の prettier に `--cache --cache-strategy content` を付けた。変えた検証記録 1 本だけを整え直すことを確かめた（2.3 秒）。
 - 合わせて、`records:minimal`（`records:check` まで）が 133 秒から 79 秒になった（クラウドの 4 コア。キャッシュのある 2 回目）。
 

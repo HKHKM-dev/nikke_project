@@ -9,7 +9,7 @@ import {
 } from '../../../scripts/records-data.ts';
 import type { SkillDefinition, SkillNote } from '../../skills/types.ts';
 import { validateMinimalFields, type Claim, type ClaimFile, type MinimalMark } from '../claims.ts';
-import { danglingMarks, noteIndexMap, renumberMarks } from '../marks.ts';
+import { danglingMarks, noteIndexMap, noteMoves, renumberMarks } from '../marks.ts';
 
 const note = (ja: string): SkillNote =>
   ({ ja, en: ja, kind: 'unimplemented', effect: { kind: 'unknown' } }) as SkillNote;
@@ -52,7 +52,7 @@ describe('noteIndexMap', () => {
 
 describe('renumberMarks', () => {
   // バーストの notes の b が効果になって消え、c・d が 1 つずつ前に詰まった
-  const defs = new Map([['キャラ', { before: def(['a', 'b', 'c', 'd']), after: def(['a', 'c', 'd']) }]]);
+  const defs = new Map([['キャラ', noteMoves(def(['a', 'b', 'c', 'd']), def(['a', 'c', 'd']))]]);
 
   it('renumbers only the marks that are unchanged from the base version', () => {
     const base = claim([mark('キャラ burst.notes[2]'), mark(['キャラ burst.notes[0]', 'キャラ burst.notes[3]'], 'r2')]);

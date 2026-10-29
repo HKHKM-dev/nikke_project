@@ -7,7 +7,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { parseArgs } from 'node:util';
-import { SENSITIVITY_VERSION, type SensitivityEntry } from '../src/records/relevance.ts';
+import { SENSITIVITY_VERSION, type SensitivityEntry, type SensitivityIndex } from '../src/records/relevance.ts';
 import { reusedSensitivity, sensitivityOf, sensitivityTargets } from '../src/records/sensitivity.ts';
 import type { SimResult } from '../src/sim/engine.ts';
 import {
@@ -34,7 +34,7 @@ const claims = loadClaims();
 const observations = loadObservations();
 const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims, data };
 const targets = sensitivityTargets(observations, ctx);
-const previous: ReadonlyMap<string, SensitivityEntry> = values.all ? new Map() : loadSensitivity();
+const previous: SensitivityIndex = values.all ? new Map() : loadSensitivity();
 const entries: SensitivityEntry[] = [];
 let recomputed = 0;
 // 同じ録画の観測値は続けて回し、sim の結果を使い回す（録画が変わったら捨てる）
