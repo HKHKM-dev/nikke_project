@@ -1,7 +1,9 @@
 // 2 段目の段 1（plan/design-skill-stage1.md 1.2・1.4 節）: スキルの欄の付与と解除の表示。定義は data/skills のもの（マナ・アニス：スター）
 import {
+  isCounterFullTrigger,
   parseSkillDefinition,
   type AppliedEffect,
+  type CounterChangeEffect,
   type ResolvedInstantEffect,
   type SkillDefinition,
 } from '@nikke/core';
@@ -159,9 +161,9 @@ describe('クラスで絞る効果の表示', () => {
 
 describe('カウンタの増減の表示', () => {
   it('writes the counter full trigger (Laplace: Ultimate Hero S2)', () => {
-    const [drain, stage] = definitionOf(103).skills.skill2.effects.filter(
-      (e) => e.kind === 'counterChange' && 'counterFull' in e.trigger,
-    );
+    const [drain, stage] = definitionOf(103)
+      .skills.skill2.effects.filter((e): e is CounterChangeEffect => e.kind === 'counterChange')
+      .filter((e) => isCounterFullTrigger(e.trigger));
     expect(formatCounterChange(drain!, 100)).toBe(
       'オーバーエネルギーが最大になった時に オーバーエネルギー −100（上限 100）',
     );
