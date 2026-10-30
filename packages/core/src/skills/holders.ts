@@ -51,6 +51,7 @@ import {
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
 import { counterMax, type CounterId } from './counters.ts';
+import { createSpanMemo } from './spanMemo.ts';
 import { stackItems, STACK_REFRESH, type StackDecrease } from './stacks.ts';
 import { stateMatches, statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
@@ -1850,6 +1851,28 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   });
 
   const hasFiring = slots.map((_, i) => (firingViews[i] ?? []).length > 0);
+  /**
+   * 射手の実効値（持ち主ごと）。毎フレーム × 枠で読まれるので、効いている件の組が変わらない間（件の境目まで）は前の値を使い回す
+   * （plan/design-first-pass-perf.md 3.2 節）
+   */
+  const firingBuffs = firingViews.map((views) =>
+    createSpanMemo(
+      views.length,
+      (i) => readItems(views[i]!.track),
+      (frame, base: BuffTotals): BuffTotals | null => {
+        let buffs = base;
+        let changed = false;
+        for (const v of views) {
+          // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
+          for (let k = activeAt(v.track, frame).length; k > 0; k--) {
+            buffs = applyResolvedEffect(buffs, v.effect, v.track.casterBaseAttack, v.track.casterMaxHp).totals;
+            changed = true;
+          }
+        }
+        return changed ? buffs : null;
+      },
+    ),
+  );
 
   // 毎フレーム読むので、消費する状態の持ち主の件の列は前もって引く（件の列はここまでに作り終わる。plan/design-first-pass-perf.md 3.1 節）
   const consumingTracks = consuming.map(({ holder, state }) => ({
@@ -1879,17 +1902,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (options.verifyItems === true) for (const track of tracks) readItems(track);
     },
     firingBuffsAt(holder, frame, base) {
-      if (!hasFiring[holder]) return null;
-      let buffs = base;
-      let changed = false;
-      for (const v of firingViews[holder]!) {
-        // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
-        for (let k = activeAt(v.track, frame).length; k > 0; k--) {
-          buffs = applyResolvedEffect(buffs, v.effect, v.track.casterBaseAttack, v.track.casterMaxHp).totals;
-          changed = true;
-        }
-      }
-      return changed ? buffs : null;
+      return hasFiring[holder] ? firingBuffs[holder]!(frame, base) : null;
     },
     hasFiringTracks: (holder) => hasFiring[holder] === true,
     hitUpAt(holder, frame) {
