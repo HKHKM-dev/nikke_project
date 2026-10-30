@@ -47,7 +47,9 @@ import {
   type RawRecycleTable,
   type RawRoleData,
 } from './normalize.ts';
+import { MASTER_FILES } from '../src/load.ts';
 import type {
+  BuildMasters,
   CharacterData,
   CharacterIndex,
   CollectionMaster,
@@ -110,11 +112,11 @@ async function writeData(dir: string, name: string, value: unknown): Promise<voi
   await writeFile(path.join(dir, name), `${formatJson(value)}\n`, 'utf8');
 }
 
-/** 書く前の育成のマスタ（data/masters のファイル名と中身） */
-type MasterFile = { name: string; value: unknown };
+/** CDN から作る育成のマスタ（装備・OL の表は手書きで、突き合わせるだけ） */
+type FetchedMasters = Pick<BuildMasters, 'affection' | 'recycleRoom' | 'cubes' | 'collections'>;
 
 /** 育成のマスタを取って正規化する（書くのは呼ぶ側。キャラと合わせて、どれかが失敗したら何も書かない） */
-async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<MasterFile[]> {
+async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<FetchedMasters> {
   // 装備: 手書きのマスタの Lv0 を CDN と突き合わせる（Lv1〜5 は CDN に無い）
   const gear = JSON.parse(await readFile(path.join(MASTERS_DIR, 'gear.json'), 'utf8')) as GearMaster;
   const equipTable = await cachedJson<RawEquipTable>('ItemEquipTable-ja.json', itemEquipTablePath('ja'));
@@ -171,12 +173,7 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<MasterFile[]> 
   const ssr = await cachedJson<RawCollection>(`en/favorite-${ssrId}.json`, favoritePath(ssrId, 'en'));
   const master: CollectionMaster = { formatVersion: 1, collections, treasureStats: toTreasureStats(ssr) };
   console.log(`collections: ${collections.length} (R ${rareMap.R?.length ?? 0}, SR ${rareMap.SR?.length ?? 0})`);
-  return [
-    { name: 'affection.json', value: affection },
-    { name: 'recycleRoom.json', value: recycleRoom },
-    { name: 'cubes.json', value: cubes },
-    { name: 'collections.json', value: master },
-  ];
+  return { affection, recycleRoom, cubes, collections: master };
 }
 
 async function main(): Promise<void> {
@@ -236,7 +233,7 @@ async function main(): Promise<void> {
   }
 
   // Stage 12: 育成のマスタ
-  let masters: MasterFile[] = [];
+  let masters: FetchedMasters | undefined;
   try {
     masters = await fetchMasters(rareMap);
   } catch (error) {
@@ -251,11 +248,15 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  for (const data of characters) await writeData(DATA_DIR, `${data.resourceId}.json`, data);
   const index: CharacterIndex = { formatVersion: 1, characters: characters.map(toIndexEntry) };
-  await writeData(DATA_DIR, 'index.json', index);
+  await Promise.all([
+    ...characters.map((data) => writeData(DATA_DIR, `${data.resourceId}.json`, data)),
+    writeData(DATA_DIR, 'index.json', index),
+    ...Object.entries(masters!).map(([name, value]) =>
+      writeData(MASTERS_DIR, MASTER_FILES[name as keyof FetchedMasters], value),
+    ),
+  ]);
   console.log(`written: ${characters.length} characters + index.json -> ${DATA_DIR}`);
-  for (const m of masters) await writeData(MASTERS_DIR, m.name, m.value);
   console.log(`written: masters -> ${MASTERS_DIR}`);
   console.log('diff: npm run fetch-data:diff (plan/design-cdn-refresh.md 4 節)');
 }

@@ -81,18 +81,20 @@ export function noteMoves(before: SkillDefinition, after: SkillDefinition): Note
 
 export type RenumberResult = { file: ClaimFile; changes: string[]; problems: string[] };
 
-/** 印の要素の形（notes の添字を除いた名前）。付け替えの前後で同じ */
-const shapeOf = (m: MinimalMark): string =>
-  JSON.stringify([
-    typeof m.element,
-    markElements(m).map((e) => {
-      const n = NOTE_ELEMENT.exec(e);
-      return n === null ? e : `${n[1]} ${n[2]}.notes`;
-    }),
-  ]);
-
-/** 印の素性（要素を除いた欄）。付け替えでは変わらず、人が直したら decided が変わる */
-const identityOf = (m: MinimalMark): string => JSON.stringify({ ...m, element: undefined });
+/**
+ * 付け替えで変わらない印の鍵: 素性（要素を除いた欄。人が直したら decided が変わる）と、要素の形（notes の添字を除いた名前）
+ */
+const unnumberedOf = (m: MinimalMark): string =>
+  JSON.stringify({
+    ...m,
+    element: [
+      typeof m.element,
+      markElements(m).map((e) => {
+        const n = NOTE_ELEMENT.exec(e);
+        return n === null ? e : `${n[1]} ${n[2]}.notes`;
+      }),
+    ],
+  });
 
 /**
  * 結論の印の notes の添字を、定義の前後の対応（キャラの名前 → noteMoves。分かれ目の版 → 今）で付け替える。
@@ -108,12 +110,12 @@ export function renumberMarks(
   const changes: string[] = [];
   const problems: string[] = [];
   if (file.minimal === undefined || base?.minimal === undefined) return { file, changes, problems };
-  const baseMinimal = base.minimal;
+  const baseMarks = base.minimal.map((b) => ({ mark: b, text: JSON.stringify(b), key: unnumberedOf(b) }));
   const sourceOf = (m: MinimalMark): MinimalMark | undefined => {
-    const same = baseMinimal.find((b) => JSON.stringify(b) === JSON.stringify(m));
-    if (same !== undefined) return same;
-    const candidates = baseMinimal.filter((b) => identityOf(b) === identityOf(m) && shapeOf(b) === shapeOf(m));
-    return candidates.length === 1 ? candidates[0] : undefined;
+    const key = unnumberedOf(m);
+    const candidates = baseMarks.filter((b) => b.key === key);
+    const text = JSON.stringify(m);
+    return (candidates.find((b) => b.text === text) ?? (candidates.length === 1 ? candidates[0] : undefined))?.mark;
   };
   const rename = (element: string): string => {
     const m = NOTE_ELEMENT.exec(element);
@@ -135,12 +137,12 @@ export function renumberMarks(
     const source = sourceOf(m);
     if (source === undefined) return m;
     const element = typeof source.element === 'string' ? rename(source.element) : source.element.map(rename);
+    const out = { ...m, element };
     const now = markElements(m);
-    const next = typeof element === 'string' ? [element] : element;
-    next.forEach((e, k) => {
+    markElements(out).forEach((e, k) => {
       if (e !== now[k]) changes.push(`${file.id}: 印 ${now[k]} → ${e}`);
     });
-    return { ...m, element };
+    return out;
   });
   return { file: changes.length === 0 ? file : { ...file, minimal }, changes, problems };
 }

@@ -19,7 +19,7 @@ import {
 } from '../skills/types.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import type { CharacterData, EnemyPresetMaster, SkillSlot } from '../types.ts';
+import type { SkillSlot } from '../types.ts';
 import { markElements, type Claim, type ClaimState, type ClaimWhen } from './claims.ts';
 import { normalConditionMeasured } from './minimal.ts';
 import type { Observation, ObservationKind, ObservationSource, RecordsData } from './observations.ts';
@@ -222,15 +222,10 @@ function shapeOfNote(e: NoteEffect | undefined): MinimalElement['shape'] {
   return { ...e };
 }
 
-export type RelevanceContext = {
+/** 録画の台帳・結論と、sim の入力のデータ（感度の鍵と予測が同じものを読む） */
+export type RelevanceContext = RecordsData & {
   recordings: ReadonlyMap<string, RecordingEntry>;
-  characters: ReadonlyMap<number, CharacterData>;
-  skills: ReadonlyMap<number, SkillDefinition>;
-  enemies: EnemyPresetMaster;
   claims: readonly Claim[];
-  /** 感度の鍵に入れる（比べる指定が名前で指す観測値の値と、スペック固定 OFF の録画の育成のマスタ）。組むときは RecordsData を広げる */
-  observationValues?: RecordsData['observationValues'];
-  buildMasters?: RecordsData['buildMasters'];
 };
 
 /** 録画の編成の全枠の要素（宝物の段階と編成の条件を当てる。計算に無関係の notes は数えない。9 節の 4） */
@@ -661,7 +656,7 @@ function hash(text: string): string {
 /** 計算に効かない欄（根拠・notes・表示の文）を除く */
 const keyReplacer = (k: string, v: unknown) => (['claims', 'notes', 'ja', 'en', 'reads'].includes(k) ? undefined : v);
 
-/** 大きい入力（的の表・育成のマスタ）の要約。同じものを何度も JSON にしない */
+/** 大きい入力（キャラのデータ・的の表・育成のマスタ）の要約。同じオブジェクトを何度も JSON にしない（読み込んだデータは書き換えない前提） */
 const digests = new WeakMap<object, string>();
 function digestOf(value: object): string {
   let d = digests.get(value);
@@ -682,11 +677,16 @@ export function sensitivityKey(
   ctx: Pick<RelevanceContext, 'skills' | 'characters' | 'enemies' | 'observationValues' | 'buildMasters'>,
 ): string {
   const defs = recording.team.map((m) => ctx.skills.get(m.rid) ?? null);
-  const characters = recording.team.map((m) => ctx.characters.get(m.rid) ?? null);
+  // キャラのデータは大きいので、オブジェクトごとに 1 回だけ要約する（定義はテストが同じオブジェクトを書き換えて比べるので丸ごと）
+  const characters = recording.team.map((m) => {
+    const c = ctx.characters.get(m.rid);
+    return c === undefined ? null : digestOf(c);
+  });
   // 比べる指定が観測値の id で指す値（jumpWindows・manualBursts・obstacles・pelletHits など）
   const values: Record<string, unknown> = {};
   JSON.stringify(o.compare?.setup ?? null, (_k, v: unknown) => {
-    if (typeof v === 'string' && ctx.observationValues?.has(v) === true) values[v] = ctx.observationValues.get(v);
+    const value = typeof v === 'string' ? ctx.observationValues?.get(v) : undefined;
+    if (value !== undefined) values[v as string] = value;
     return v;
   });
   const masters = recording.fixedSpec === false && ctx.buildMasters !== undefined ? digestOf(ctx.buildMasters) : null;

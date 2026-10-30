@@ -25,7 +25,7 @@ const recordings = recordingMap(file);
 const data = loadRecordsData(file);
 const claims = loadClaims();
 const observations = loadObservations();
-const ctx = { recordings, ...data, claims, data };
+const ctx = { recordings, ...data, claims };
 
 describe('定義の変え方', () => {
   const def = data.skills.get(17)!;

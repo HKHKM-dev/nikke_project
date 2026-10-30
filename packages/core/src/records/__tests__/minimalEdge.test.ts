@@ -20,7 +20,7 @@ const recordings = recordingMap(file);
 const data = loadRecordsData(file);
 const claims = loadClaims();
 const observations = loadObservations();
-const ctx = { recordings, ...data, claims, data };
+const ctx = { recordings, ...data, claims };
 
 const claim = (patch: Partial<Claim>): Claim => ({
   id: 'C-9001',
