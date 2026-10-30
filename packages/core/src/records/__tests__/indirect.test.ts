@@ -74,13 +74,7 @@ const file = loadRecordingsFile();
 const recordings = recordingMap(file);
 const data = loadRecordsData(file);
 const claims = loadClaims();
-const ctx: RelevanceContext = {
-  recordings,
-  characters: data.characters,
-  skills: data.skills,
-  enemies: data.enemies,
-  claims,
-};
+const ctx: RelevanceContext = { recordings, ...data, claims };
 const rec = (id: string) => recordings.get(id)!;
 const named = (r: RecordingEntry, name: string, c: RelevanceContext = ctx) =>
   elementsOf(r, c).find((e) => e.name === name)!;

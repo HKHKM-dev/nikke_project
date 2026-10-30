@@ -252,7 +252,7 @@ O に `compare` が無いとき（`scope` を使う）と、E がモデルに無
 ### 10.6 PR 4: 感度（2026-10-08）
 
 - **置き場所と分担**（2026-10-08、オーナー決定）: 感度は `npm run records:minimal`（`packages/core/scripts/records-minimal.ts`、計算は `src/records/sensitivity.ts`）が計算し、結果を追跡するファイル `records/minimal/sensitivity.json` に書く（4.1 節の「キャッシュは追跡しない」から変えた）。`records:check` はそれを読んで静的な判定に重ね、[minimal.md](minimal.md) と [claims.md](claims.md) を作る。CI とテストは感度を回さないので速いまま、生成物は一致する。
-- **結果の 1 件**: 観測値 × 要素ごとに、効きうるか・P− と P+ の基準との差・入力の鍵。鍵は、版（`SENSITIVITY_VERSION`）・録画の台帳・比べる指定・編成の定義（根拠の `claims` と notes を除く）から作る。鍵が今の入力と合わない結果は使わず、静的な判定に戻して、minimal.md の冒頭に「感度の結果が無いか古い要素」の数を出す。根拠の結論を書き足しただけでは鍵は変わらない。
+- **結果の 1 件**: 観測値 × 要素ごとに、効きうるか・P− と P+ の基準との差・入力の鍵。鍵は、版（`SENSITIVITY_VERSION`）・録画の台帳・比べる指定・編成の定義（根拠の `claims` と notes を除く）から作る（2026-10-30 から、sim が読むデータ（編成のキャラのデータ・的の表・比べる指定が id で指す観測値の値・スペック固定 OFF の録画の育成のマスタ）も入れる。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 8 節）。鍵が今の入力と合わない結果は使わず、静的な判定に戻して、minimal.md の冒頭に「感度の結果が無いか古い要素」の数を出す。根拠の結論を書き足しただけでは鍵は変わらない。
 - **対象**: 確定の結論の根拠で sim と比べる観測値と、その録画の、根拠が確定でなく録画で起きうる定義の効果の組（結論の対象かどうかは結論ごとに違うので問わない）。notes・定義の無いキャラ・通常攻撃の条件は、静的な判定のまま。
 - **P+**: timed の効果のきっかけを `battleStart`、維持を比べる指定の戦闘の長さ（`durationSeconds`、省略は 180 秒）にし、ほかの維持の欄（`durationRef`・`durationShots` など）と `condition` を外す。passive は P− だけ（もともと常に効く）。
 - **計算できない形**: 外すと観測量そのものが無くなるもの（持続ダメージの tick やバーストのヒットを数える観測値で、その効果を外したとき）は、効きうるとみる（結果に `error` を残す）。

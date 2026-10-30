@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { COLLECTION_SKILL_EFFECTS, CUBE_SKILL_EFFECTS } from '../src/buildEffects.ts';
-import type { CharacterData, CollectionMaster, CubeMaster } from '../src/types.ts';
+import type { CharacterData, CharacterIndex, CollectionMaster, CubeMaster } from '../src/types.ts';
 import { diffCharacters, diffJson, renderReport, type UnmappedSkill } from './data-diff/compare.ts';
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -37,11 +37,11 @@ function readJson(file: string, ref?: string): unknown {
   return JSON.parse(text) as unknown;
 }
 
+/** index.json に載っているキャラ（画面が読むのは index.json の分だけ。載っていないファイルは古い残りなので比べない） */
 function characters(ref?: string): Map<number, CharacterData> {
   const map = new Map<number, CharacterData>();
-  for (const name of jsonFiles(CHARACTERS, ref)) {
-    const data = readJson(`${CHARACTERS}/${name}`, ref) as CharacterData;
-    map.set(data.resourceId, data);
+  for (const { resourceId } of (readJson(`${CHARACTERS}/index.json`, ref) as CharacterIndex).characters) {
+    map.set(resourceId, readJson(`${CHARACTERS}/${resourceId}.json`, ref) as CharacterData);
   }
   return map;
 }

@@ -375,7 +375,7 @@ describe('最小構成の警告', () => {
   });
 
   it('編成の条件で外れる効果は見ない（録画 0192 のラムの S1 の CT▼。同じ部隊の味方がいない）', () => {
-    const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
+    const ctx = { recordings, ...data, claims };
     const names = elementsOf(recordings.get('0192')!, ctx).map((e) => e.name);
     expect(names.some((n) => n.startsWith('ラム skill1.effects['))).toBe(false);
     // 外さずに見ると、CT▼ の根拠の C-0235（仮説）でラムが未確定になる

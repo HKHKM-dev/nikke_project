@@ -78,6 +78,38 @@ describe('renumberMarks', () => {
     expect(r.problems[0]).toContain('「b」');
     expect(renumberMarks(base, undefined, defs).problems).toEqual([]);
   });
+
+  it('keeps reporting a listed mark whose part has no counterpart when run again', () => {
+    const base = claim([mark(['キャラ burst.notes[1]', 'キャラ burst.notes[3]'])]);
+    const r1 = renumberMarks(base, base, defs);
+    expect(r1.file.minimal![0]!.element).toEqual(['キャラ burst.notes[1]', 'キャラ burst.notes[2]']);
+    expect(r1.problems).toHaveLength(1);
+    // 2 回目（pr:prep がまた records:check を回す）も同じ印で、知らせも消えない
+    const r2 = renumberMarks(r1.file, base, defs);
+    expect(r2.changes).toEqual([]);
+    expect(r2.file.minimal).toEqual(r1.file.minimal);
+    expect(r2.problems).toHaveLength(1);
+  });
+
+  it('recomputes from the base version when the definition changes again on the branch', () => {
+    // a b c d e で印は d。b を消して回し、さらに a も消して回す
+    const base = claim([mark('キャラ burst.notes[3]')]);
+    const step1 = new Map([['キャラ', noteMoves(def(['a', 'b', 'c', 'd', 'e']), def(['a', 'c', 'd', 'e']))]]);
+    const r1 = renumberMarks(base, base, step1);
+    expect(r1.file.minimal![0]!.element).toBe('キャラ burst.notes[2]');
+    const step2 = new Map([['キャラ', noteMoves(def(['a', 'b', 'c', 'd', 'e']), def(['c', 'd', 'e']))]]);
+    const r2 = renumberMarks(r1.file, base, step2);
+    expect(r2.file.minimal![0]!.element).toBe('キャラ burst.notes[1]');
+    expect(r2.changes).toEqual(['C-0001: 印 キャラ burst.notes[2] → キャラ burst.notes[1]']);
+  });
+
+  it('leaves a mark fixed by hand (decided changed) alone', () => {
+    const base = claim([mark('キャラ burst.notes[1]')]);
+    const fixed = claim([{ ...mark('キャラ burst.notes[0]'), decided: '2026-10-30' }]);
+    const r = renumberMarks(fixed, base, defs);
+    expect(r.changes).toEqual([]);
+    expect(r.problems).toEqual([]);
+  });
 });
 
 describe('印の形', () => {
@@ -96,7 +128,7 @@ describe('行き先の無い印（実データ）', () => {
     const recordings = recordingMap(file);
     const data = loadRecordsData(file);
     const claims = loadClaims();
-    const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
+    const ctx = { recordings, ...data, claims };
     expect(danglingMarks(claims, loadObservations(), ctx)).toEqual([]);
   });
 });

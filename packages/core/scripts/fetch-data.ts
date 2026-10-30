@@ -4,7 +4,8 @@
 // Stage 13: 手書きの OL の表（data/masters/overload.json）のオプションが CDN の equip_option_table_v2 と一致することを確かめる。
 //   node scripts/fetch-data.ts [--limit N] [--refresh] [--concurrency N]
 // 生 JSON は .cache/ に保存し、--refresh を付けない限りキャッシュを優先する。
-// CDN の項目が無いと（改名など）正規化が止める（normalize.ts の assertComplete）。取り直した後の手順は plan/design-cdn-refresh.md 4 節
+// CDN の項目が無いと（改名など）正規化が止める（normalize.ts の assertComplete）。取得・正規化が 1 つでも失敗したら、data/ には何も書かない。
+// 取り直した後の手順は plan/design-cdn-refresh.md 4 節
 // （差分は npm run fetch-data:diff で分けて出す）。
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -47,8 +48,8 @@ import {
   type RawRoleData,
 } from './normalize.ts';
 import type {
+  CharacterData,
   CharacterIndex,
-  CharacterIndexEntry,
   CollectionMaster,
   CubeMaster,
   GearMaster,
@@ -109,7 +110,11 @@ async function writeData(dir: string, name: string, value: unknown): Promise<voi
   await writeFile(path.join(dir, name), `${formatJson(value)}\n`, 'utf8');
 }
 
-async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<void> {
+/** 書く前の育成のマスタ（data/masters のファイル名と中身） */
+type MasterFile = { name: string; value: unknown };
+
+/** 育成のマスタを取って正規化する（書くのは呼ぶ側。キャラと合わせて、どれかが失敗したら何も書かない） */
+async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<MasterFile[]> {
   // 装備: 手書きのマスタの Lv0 を CDN と突き合わせる（Lv1〜5 は CDN に無い）
   const gear = JSON.parse(await readFile(path.join(MASTERS_DIR, 'gear.json'), 'utf8')) as GearMaster;
   const equipTable = await cachedJson<RawEquipTable>('ItemEquipTable-ja.json', itemEquipTablePath('ja'));
@@ -133,13 +138,11 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<void> {
   const affection = toAffectionMaster(
     await cachedJson<RawAttractiveTable>('AttractiveLevelTable.json', attractiveLevelTablePath()),
   );
-  await writeData(MASTERS_DIR, 'affection.json', affection);
   console.log(`affection: ${affection.ranks.length} ranks`);
 
   const recycleRoom = toRecycleRoomMaster(
     await cachedJson<RawRecycleTable>('RecycleResearchStatTable.json', recycleResearchStatTablePath()),
   );
-  await writeData(MASTERS_DIR, 'recycleRoom.json', recycleRoom);
   console.log(`recycle room: ${Object.keys(recycleRoom.corporation).length} corporations`);
 
   const cubes: CubeMaster = { formatVersion: 1, cubes: [] };
@@ -155,7 +158,6 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<void> {
     cubes.cubes.push(toCubeData(en, ja));
   }
   if (cubes.cubes.length === 0) throw new Error('no cubes found');
-  await writeData(MASTERS_DIR, 'cubes.json', cubes);
   console.log(`cubes: ${cubes.cubes.length}`);
 
   const collectionIds = [...(rareMap.R ?? []), ...(rareMap.SR ?? [])];
@@ -168,8 +170,13 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<void> {
   if (ssrId === undefined) throw new Error('no SSR favorite for treasure stats');
   const ssr = await cachedJson<RawCollection>(`en/favorite-${ssrId}.json`, favoritePath(ssrId, 'en'));
   const master: CollectionMaster = { formatVersion: 1, collections, treasureStats: toTreasureStats(ssr) };
-  await writeData(MASTERS_DIR, 'collections.json', master);
   console.log(`collections: ${collections.length} (R ${rareMap.R?.length ?? 0}, SR ${rareMap.SR?.length ?? 0})`);
+  return [
+    { name: 'affection.json', value: affection },
+    { name: 'recycleRoom.json', value: recycleRoom },
+    { name: 'cubes.json', value: cubes },
+    { name: 'collections.json', value: master },
+  ];
 }
 
 async function main(): Promise<void> {
@@ -180,14 +187,14 @@ async function main(): Promise<void> {
   const targets = limit === undefined ? ids : ids.slice(0, limit);
   console.log(`characters: ${targets.length} (of ${ids.length}), concurrency ${concurrency}`);
 
-  const failures: { id: number; error: string }[] = [];
+  const failures: { id: number | string; error: string }[] = [];
   const roles = await mapWithConcurrency(targets, concurrency, async (id) => {
     try {
       const en = await cachedJson<RawRoleData>(`en/roledata-${id}.json`, roleDataPath(id, 'en'));
       const ja = await cachedJson<RawRoleData>(`ja/roledata-${id}.json`, roleDataPath(id, 'ja'));
       return { id, en, ja };
     } catch (error) {
-      failures.push({ id, error: error instanceof Error ? error.message : String(error) });
+      failures.push({ id, error: messageOf(error) });
       return null;
     }
   });
@@ -197,51 +204,64 @@ async function main(): Promise<void> {
   const rareMap = await cachedJson<RawFavoriteRareMap>('favorite_rare_map.json', favoriteRareMapPath());
   const favoriteIds = rareMap.SSR ?? [];
   const treasures = new Map<number, TreasureData>();
-  await mapWithConcurrency(favoriteIds, concurrency, async (favoriteId) => {
-    const en = await cachedJson<RawFavorite>(`en/favorite-${favoriteId}.json`, favoritePath(favoriteId, 'en'));
-    const ja = await cachedJson<RawFavorite>(`ja/favorite-${favoriteId}.json`, favoritePath(favoriteId, 'ja'));
-    const owner = findTreasureOwner(
-      en,
-      loaded.map((r) => r.en),
-    );
-    if (owner === null) {
-      console.warn(
-        `  favorite ${favoriteId} (${ja.name_localkey}): no character with name_code ${en.name_code}, skipped`,
+  try {
+    await mapWithConcurrency(favoriteIds, concurrency, async (favoriteId) => {
+      const en = await cachedJson<RawFavorite>(`en/favorite-${favoriteId}.json`, favoritePath(favoriteId, 'en'));
+      const ja = await cachedJson<RawFavorite>(`ja/favorite-${favoriteId}.json`, favoritePath(favoriteId, 'ja'));
+      const owner = findTreasureOwner(
+        en,
+        loaded.map((r) => r.en),
       );
-      return;
-    }
-    if (treasures.has(owner.resource_id)) throw new Error(`character ${owner.resource_id} has several treasures`);
-    treasures.set(owner.resource_id, toTreasureData(en, ja, owner));
-  });
-  console.log(`treasures: ${treasures.size} (of ${favoriteIds.length} SSR favorites)`);
+      if (owner === null) {
+        console.warn(
+          `  favorite ${favoriteId} (${ja.name_localkey}): no character with name_code ${en.name_code}, skipped`,
+        );
+        return;
+      }
+      if (treasures.has(owner.resource_id)) throw new Error(`character ${owner.resource_id} has several treasures`);
+      treasures.set(owner.resource_id, toTreasureData(en, ja, owner));
+    });
+    console.log(`treasures: ${treasures.size} (of ${favoriteIds.length} SSR favorites)`);
+  } catch (error) {
+    failures.push({ id: 'treasures', error: messageOf(error) });
+  }
 
-  const entries = await mapWithConcurrency(loaded, concurrency, async ({ id, en, ja }) => {
+  const characters: CharacterData[] = [];
+  for (const { id, en, ja } of loaded) {
     try {
-      const data = toCharacterData(en, ja, treasures.get(id) ?? null);
-      await writeFile(path.join(DATA_DIR, `${id}.json`), `${formatJson(data)}\n`, 'utf8');
-      return toIndexEntry(data);
+      characters.push(toCharacterData(en, ja, treasures.get(id) ?? null));
     } catch (error) {
-      failures.push({ id, error: error instanceof Error ? error.message : String(error) });
-      return null;
+      failures.push({ id, error: messageOf(error) });
     }
-  });
-
-  const characters = entries.filter((e): e is CharacterIndexEntry => e !== null);
-  const index: CharacterIndex = { formatVersion: 1, characters };
-  await writeFile(path.join(DATA_DIR, 'index.json'), `${formatJson(index)}\n`, 'utf8');
-
-  console.log(`written: ${characters.length} characters + index.json -> ${DATA_DIR}`);
+  }
 
   // Stage 12: 育成のマスタ
-  await fetchMasters(rareMap);
-  console.log(`written: masters -> ${MASTERS_DIR}`);
-  console.log('diff: npm run fetch-data:diff (plan/design-cdn-refresh.md 4 節)');
+  let masters: MasterFile[] = [];
+  try {
+    masters = await fetchMasters(rareMap);
+  } catch (error) {
+    failures.push({ id: 'masters', error: messageOf(error) });
+  }
 
+  // 1 つでも失敗したら何も書かない（失敗したキャラが index.json から抜けて、キャラのファイルと食い違うのを防ぐ。
+  // plan/design-cdn-refresh.md 3.1 節）
   if (failures.length > 0) {
-    console.error(`failed: ${failures.length}`);
+    console.error(`failed: ${failures.length} (nothing written)`);
     for (const f of failures) console.error(`  ${f.id}: ${f.error}`);
     process.exitCode = 1;
+    return;
   }
+  for (const data of characters) await writeData(DATA_DIR, `${data.resourceId}.json`, data);
+  const index: CharacterIndex = { formatVersion: 1, characters: characters.map(toIndexEntry) };
+  await writeData(DATA_DIR, 'index.json', index);
+  console.log(`written: ${characters.length} characters + index.json -> ${DATA_DIR}`);
+  for (const m of masters) await writeData(MASTERS_DIR, m.name, m.value);
+  console.log(`written: masters -> ${MASTERS_DIR}`);
+  console.log('diff: npm run fetch-data:diff (plan/design-cdn-refresh.md 4 節)');
+}
+
+function messageOf(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 main().catch((error) => {
