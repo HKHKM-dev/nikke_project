@@ -820,6 +820,26 @@ export function resolveRemoveStates(
 }
 
 /**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 解決した消去（cancelState）。消す状態は、同じ定義の firstTick halfAfterLatest
+ * の dot の state（定義の読みで見る。types.ts の validateDotStateRefs）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む
+ */
+export type ResolvedDotCancel = { state: NamedStateId; trigger: ResolvedTrigger };
+
+export function resolveDotCancels(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedDotCancel[] {
+  return SKILL_SLOTS.flatMap((slot) =>
+    def.skills[slot].effects.flatMap((effect) =>
+      effect.kind === 'cancelState'
+        ? [{ state: effect.state, trigger: resolveTrigger(effect.trigger, character.skills[slot], levels[slot]) }]
+        : [],
+    ),
+  );
+}
+
+/**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: 解決したスタック量の増減（stackChange）。対象は自分。amount は足す
  * （decrease なら減らす）スタックの数（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
  */

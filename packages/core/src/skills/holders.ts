@@ -24,6 +24,7 @@ import {
   isResolvedTimer,
   isStateContent,
   resolveCounterChanges,
+  resolveDotCancels,
   resolveInstant,
   resolvePassives,
   resolveRemoveStates,
@@ -77,6 +78,7 @@ import {
   isStateStat,
   staticStatesOf,
   type BuffStat,
+  type EndedTrigger,
   type EdgeShift,
   type EffectCondition,
 } from './types.ts';
@@ -656,10 +658,13 @@ function buildTrackItems(
     case 'healWindow':
       return healWindowItems(track.starts, o.effect.durationFrames, frames);
     case 'enemyState': {
-      // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）
+      // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）。
+      // 2 段目の段 13 の PR 2: 消去（cancelState）は、解除と同じく c + 1 で切り、後の付与から付き直す
       const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
-      return itemsOfPairs(
-        dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
+      return closedStateItems(track.starts, track.closes, (starts) =>
+        itemsOfPairs(
+          dotActiveSpans(starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
+        ),
       );
     }
     case 'while':
@@ -1057,6 +1062,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   // ---- 段 C: 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵） ----
   const enemyStateSources: EnemyStateSource[] = [];
+  const dotCancelSources: { track: HeldTrack; fires: TriggerTracker }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
@@ -1066,6 +1072,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         effects: group.map((effect) => ({ effect, fires: firesOf(effect.trigger, sourceSlotIndex) })),
         track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
       });
+    }
+    // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる
+    for (const cancel of resolveDotCancels(slot.definition, slot.character, slot.levels)) {
+      const source = enemyStateSources.find(
+        ({ track }) =>
+          track.sourceSlotIndex === sourceSlotIndex &&
+          track.origin.kind === 'enemyState' &&
+          track.origin.state === cancel.state,
+      )!;
+      dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
     }
   });
 
@@ -1312,7 +1328,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    */
   const usedBurstHolds = (
     condition: EffectCondition | undefined,
-    trigger: ResolvedTrigger,
+    trigger: ResolvedTrigger | EndedTrigger,
     ev: FrameEvents,
     sourceSlotIndex: number,
   ): boolean =>
@@ -1641,7 +1657,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       else fired = t !== 'battleStart' && src.fires!(ev);
       if (!fired) continue;
       const condition = src.effect.condition;
-      if (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f)) {
+      if (
+        !usedBurstHolds(condition, t, ev, src.sourceSlotIndex) ||
+        (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f))
+      ) {
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }
@@ -1731,10 +1750,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
         if (!take(effect.trigger) || !(battleStartOnly || fires(ev))) continue;
-        const at = battleStartOnly ? 0 : f + (effect.delayFrames ?? 0);
+        const at = battleStartOnly ? 0 : f + (effect.dot!.applyDelayFrames ?? 0);
         if (at < frames) insertSorted(e.track.starts, at);
       }
     }
+    // 2 段目の段 13 の PR 2: 消去（f の判定には付いている。dotActiveSpans が f + 1 で切る）
+    if (!battleStartOnly) for (const c of dotCancelSources) if (c.fires(ev)) insertSorted(c.track.closes, f);
     if (!battleStartOnly) {
       // 循環の間隔の変更はループの中でしか読まないので、戦闘開始時もフレーム 0 の出来事で登録する
       for (const c of cycleSources) {

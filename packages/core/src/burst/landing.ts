@@ -106,6 +106,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ソルジャーE.G. の 1 ヒットで挟んだ 20〜21f のうち 21f（止まりより前なので動画のフレームと同じ）。窓は遅れた始まりから数える。
   // 回復（burst の effects[0]）も同じフレームに置く（見ていない）。バーストの倍率ダメージは無い（V-0457）
   { resourceIds: [121], delays: { hitFrames: 0, effectFrames: 21 }, claim: 'C-0596' },
+  // ミハラ：ボンディングチェーン: 効果（プリング・チェーンの付与と 1 回目の tick・チェーンバインドの消去）は III のタイマーの 00.00 の 1f 前
+  // （動画でも 1f 前。1 回目の tick にフルバースト補正が乗らない）。バーストの倍率ダメージは無い（V-0547）
+  { resourceIds: [162], delays: { hitFrames: 0, effectFrames: -1 }, claim: 'C-0746' },
   // 雪子: III のタイマーの 00.00（hitFrameOf）にヒット（動画では 00.00 の 1f 前。フルバーストの入りの止まりの前）。
   // 効果（1more の攻撃力▲・真紅の華の分配ダメージ▲）の遅れは未測定。表に無いときの既定と同じ値で、測った値として置く
   { resourceIds: [871], delays: { hitFrames: 0, effectFrames: 0 }, claim: 'C-0419' },

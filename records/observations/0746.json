@@ -1,0 +1,502 @@
+[
+  {
+    "id": "0746-01",
+    "recording": "0746",
+    "kind": "timing",
+    "use": "record",
+    "value": [1427, 2834, 4061, 5504, 6828, 8183, 9966, 11183],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・0・0・25f"
+    },
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "id": "0746-02",
+    "recording": "0746",
+    "kind": "timing",
+    "use": "record",
+    "value": [1456, 4090, 6857, 8752, 11298],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・14・0・25f"
+    },
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "id": "0746-03",
+    "recording": "0746",
+    "kind": "timing",
+    "use": "record",
+    "value": [1486, 4119, 6886, 8781, 11327],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "id": "0746-04",
+    "recording": "0746",
+    "kind": "timing",
+    "use": "record",
+    "value": [8746],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "id": "0746-05",
+    "recording": "0746",
+    "kind": "timing",
+    "use": "record",
+    "value": [8775],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [-1, 107, 167, 225, 283, 342, 401, 460, 518, 577],
+    "unit": "f",
+    "description": "1 回目のフルバースト（ミハラ：ボンディングチェーンの 1 回目のバースト）の、プリング・チェーンの 10 回の tick の、III のタイマーの 00.00（f1486。`0746-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-07",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [-1, 108, 167, 225, 284, 343, 402, 461, 519, 578],
+    "unit": "f",
+    "description": "2 回目のフルバースト（ミハラ：ボンディングチェーンの 2 回目のバースト）の、プリング・チェーンの 10 回の tick の、III のタイマーの 00.00（f4119。`0746-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-08",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [-1, 108, 167, 225, 284, 343, 402, 461, 519, 578],
+    "unit": "f",
+    "description": "3 回目のフルバースト（ミハラ：ボンディングチェーンの 3 回目のバースト）の、プリング・チェーンの 10 回の tick の、III のタイマーの 00.00（f6886。`0746-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-09",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [-1, 108, 167, 225, 284, 344, 402, 460, 519, 579],
+    "unit": "f",
+    "description": "4 回目のフルバースト（ミハラ：ボンディングチェーンの 4 回目のバースト）の、プリング・チェーンの 10 回の tick の、III のタイマーの 00.00（f8781。`0746-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotTickOffsets",
+      "args": {
+        "slot": 3,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-10",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 1603417,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストのプリング・チェーンの 1 回目の tick（10 スタック・会心なし）。1 回目は 00.00 の 1f 前でフルバースト補正が乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 1,622,231 から、同じフレームのリターの SMG の 1 ヒット 18,814を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-11",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 1448394,
+    "unit": "ダメージ",
+    "description": "1 回目のバーストのプリング・チェーンの 5 回目の tick（10 スタック・会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 1,465,187 から、同じフレームのミハラ：ボンディングチェーンの MG の 1 ヒット（コア・会心）16,793を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-12",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 2614157,
+    "unit": "ダメージ",
+    "description": "2 回目のバーストのプリング・チェーンの 2 回目の tick（10 スタック・会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分 2,614,157"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 11,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-13",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [615, 630, 645, 660, 675, 690, 705, 720],
+    "unit": "f",
+    "description": "2 回目のフルバーストの終わりの後の、キャプチャーチェーンの攻撃（60,369）の、そのフルバーストの III のタイマーの 00.00（f4119）からの動画のフレーム数（頭の 8 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）。読めた回だけを頭から並べた（後ろの回はほかの発の大きな増分に重なった）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "fullBurst": 1,
+        "count": 8,
+        "after": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "id": "0746-14",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [613, 628, 643, 658, 673, 688, 703, 718, 733, 748],
+    "unit": "f",
+    "description": "3 回目のフルバーストの終わりの後の、チェーンバインドの付与の 1 スタックぶんの 1 ヒット（30,245）の、そのフルバーストの III のタイマーの 00.00（f6886）からの動画のフレーム数（頭の 10 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "fullBurst": 2,
+        "count": 10,
+        "after": true,
+        "kind": "apply"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-15",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [777],
+    "unit": "f",
+    "description": "2 回目のフルバーストの終わりの後の、チェーンバインドの 10 スタックの最初の tick（302,450）の、そのフルバーストの III のタイマーの 00.00（f4119）からの動画のフレーム数（頭の 1 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "fullBurst": 1,
+        "count": 1,
+        "after": true,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-16",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "kind": "timing",
+    "use": "compare",
+    "value": [777],
+    "unit": "f",
+    "description": "3 回目のフルバーストの終わりの後の、チェーンバインドの 10 スタックの最初の tick（302,450）の、そのフルバーストの III のタイマーの 00.00（f6886）からの動画のフレーム数（頭の 1 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、プリング・チェーンの 10 スタックの tick（モデルの値）・キャプチャーチェーンの攻撃 60,369・チェーンバインドの 1 スタック 30,245（会心は 1.5 倍）と、同じフレームのミハラ：ボンディングチェーンの MG・リターの SMG の 1 ヒットの和に当てた（V-0547「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "fullBurst": 2,
+        "count": 1,
+        "after": true,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "id": "0746-17",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30"
+  },
+  {
+    "id": "0746-18",
+    "recording": "0746",
+    "source": "V-0547",
+    "readAt": "2026-10-30",
+    "kind": "count",
+    "use": "record",
+    "value": 4,
+    "unit": "回",
+    "description": "1〜4 回目のフルバーストの、プリング・チェーンの 10 回目の tick（III のタイマーの 00.00 から 577〜579f）のうち、S2 の持続ダメージ▲（59.98%）が乗っていた回の数（4 回のうち）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "10 回目の tick の値は、どの回も 1,448,394（▲あり。▲が無ければ 905,359）か、それと同じフレームの通常攻撃の 1 ヒットの和。モデル（▲の窓はバースト 3 段階突入（II の本当の発動）から 588f）では、10 回目の tick は窓が切れた後に出る。II → III の替わり目（`0746-02`）から 10 回目の tick まで、timer.ts --mode ticks で 606〜607 ティック（0746）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    }
+  }
+]

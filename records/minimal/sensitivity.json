@@ -11029,7 +11029,7 @@
     {
       "observation": "0490-03",
       "element": "アスカ burst.effects[0]",
-      "key": "50a2706ddddb5bb2",
+      "key": "7f480665dad1e614",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11045,7 +11045,15 @@
     {
       "observation": "0490-03",
       "element": "アスカ burst.effects[2]",
-      "key": "50a2706ddddb5bb2",
+      "key": "7f480665dad1e614",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-03",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "7f480665dad1e614",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11053,7 +11061,7 @@
     {
       "observation": "0490-06",
       "element": "アスカ burst.effects[0]",
-      "key": "9befe0556ab436b2",
+      "key": "038fad8d7ecd2514",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11069,7 +11077,15 @@
     {
       "observation": "0490-06",
       "element": "アスカ burst.effects[2]",
-      "key": "9befe0556ab436b2",
+      "key": "038fad8d7ecd2514",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-06",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "038fad8d7ecd2514",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11077,7 +11093,7 @@
     {
       "observation": "0490-07",
       "element": "アスカ burst.effects[0]",
-      "key": "08229715f5fc66e0",
+      "key": "f8a185cd80f6b20e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11093,7 +11109,15 @@
     {
       "observation": "0490-07",
       "element": "アスカ burst.effects[2]",
-      "key": "08229715f5fc66e0",
+      "key": "f8a185cd80f6b20e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-07",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "f8a185cd80f6b20e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11101,7 +11125,7 @@
     {
       "observation": "0490-08",
       "element": "アスカ burst.effects[0]",
-      "key": "c96ca75e0b8fc285",
+      "key": "10ce4fb0c1c934af",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11117,7 +11141,15 @@
     {
       "observation": "0490-08",
       "element": "アスカ burst.effects[2]",
-      "key": "c96ca75e0b8fc285",
+      "key": "10ce4fb0c1c934af",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-08",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "10ce4fb0c1c934af",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11125,7 +11157,7 @@
     {
       "observation": "0490-09",
       "element": "アスカ burst.effects[0]",
-      "key": "78cb1e00209da653",
+      "key": "5cc5365ab4039809",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11141,7 +11173,15 @@
     {
       "observation": "0490-09",
       "element": "アスカ burst.effects[2]",
-      "key": "78cb1e00209da653",
+      "key": "5cc5365ab4039809",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-09",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "5cc5365ab4039809",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11149,7 +11189,7 @@
     {
       "observation": "0490-10",
       "element": "アスカ burst.effects[0]",
-      "key": "5af3c0be4d6ea3dd",
+      "key": "79e6389021326fb7",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11165,15 +11205,23 @@
     {
       "observation": "0490-10",
       "element": "アスカ burst.effects[2]",
-      "key": "5af3c0be4d6ea3dd",
+      "key": "79e6389021326fb7",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "0490-10",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "79e6389021326fb7",
+      "effective": true,
+      "minus": 0,
+      "plus": 27211.404187439985
+    },
+    {
       "observation": "0490-11",
       "element": "アスカ burst.effects[0]",
-      "key": "2547f132770b9293",
+      "key": "8b8fbe44b0e61249",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11189,10 +11237,18 @@
     {
       "observation": "0490-11",
       "element": "アスカ burst.effects[2]",
-      "key": "2547f132770b9293",
+      "key": "8b8fbe44b0e61249",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0490-11",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "8b8fbe44b0e61249",
+      "effective": true,
+      "minus": 0,
+      "plus": 181409.3612496
     },
     {
       "observation": "0491-05",
@@ -11221,7 +11277,7 @@
     {
       "observation": "0492-03",
       "element": "アスカ burst.effects[0]",
-      "key": "05b944d514c5710e",
+      "key": "59e0ff0d6997d798",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11237,7 +11293,15 @@
     {
       "observation": "0492-03",
       "element": "アスカ burst.effects[2]",
-      "key": "05b944d514c5710e",
+      "key": "59e0ff0d6997d798",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-03",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "59e0ff0d6997d798",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11245,7 +11309,7 @@
     {
       "observation": "0492-06",
       "element": "アスカ burst.effects[0]",
-      "key": "555e398d92c64c36",
+      "key": "5936ec05562e10f0",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11261,7 +11325,15 @@
     {
       "observation": "0492-06",
       "element": "アスカ burst.effects[2]",
-      "key": "555e398d92c64c36",
+      "key": "5936ec05562e10f0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-06",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "5936ec05562e10f0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11269,7 +11341,7 @@
     {
       "observation": "0492-07",
       "element": "アスカ burst.effects[0]",
-      "key": "5cac19ddfd149bf4",
+      "key": "1c5251d537c8683a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11285,7 +11357,15 @@
     {
       "observation": "0492-07",
       "element": "アスカ burst.effects[2]",
-      "key": "5cac19ddfd149bf4",
+      "key": "1c5251d537c8683a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-07",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "1c5251d537c8683a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11293,7 +11373,7 @@
     {
       "observation": "0492-08",
       "element": "アスカ burst.effects[0]",
-      "key": "ff529446fdcfcd19",
+      "key": "60eb3c383ff6544b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11309,7 +11389,15 @@
     {
       "observation": "0492-08",
       "element": "アスカ burst.effects[2]",
-      "key": "ff529446fdcfcd19",
+      "key": "60eb3c383ff6544b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-08",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "60eb3c383ff6544b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11317,7 +11405,7 @@
     {
       "observation": "0492-09",
       "element": "アスカ burst.effects[0]",
-      "key": "d63df04d1c2b172c",
+      "key": "c28b8d4510c4a4c2",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11333,7 +11421,15 @@
     {
       "observation": "0492-09",
       "element": "アスカ burst.effects[2]",
-      "key": "d63df04d1c2b172c",
+      "key": "c28b8d4510c4a4c2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-09",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "c28b8d4510c4a4c2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11341,7 +11437,7 @@
     {
       "observation": "0492-10",
       "element": "アスカ burst.effects[0]",
-      "key": "1aec1d26c5d616d9",
+      "key": "747fd098ab61530b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11357,15 +11453,23 @@
     {
       "observation": "0492-10",
       "element": "アスカ burst.effects[2]",
-      "key": "1aec1d26c5d616d9",
+      "key": "747fd098ab61530b",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "0492-10",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "747fd098ab61530b",
+      "effective": true,
+      "minus": 0,
+      "plus": 27211.404187439985
+    },
+    {
       "observation": "0492-11",
       "element": "アスカ burst.effects[0]",
-      "key": "47d699ea154f3fbf",
+      "key": "034240bc5d9d256d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11381,10 +11485,18 @@
     {
       "observation": "0492-11",
       "element": "アスカ burst.effects[2]",
-      "key": "47d699ea154f3fbf",
+      "key": "034240bc5d9d256d",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0492-11",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "034240bc5d9d256d",
+      "effective": true,
+      "minus": 0,
+      "plus": 181409.3612496
     },
     {
       "observation": "0493-03",
@@ -15157,6 +15269,174 @@
       "observation": "0745-03",
       "element": "ノワール burst.effects[1]",
       "key": "4463be5211036883",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-07",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "84546139af492a2c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-08",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "b8916fdc10cae6ed",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-09",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "010c51dfc666585e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-10",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "3b5c39da4aff1c7f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-11",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "cfe48925e9ca1b6c",
+      "effective": true,
+      "minus": -601156.303748,
+      "plus": 0
+    },
+    {
+      "observation": "0746-12",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "3455caf16ed2c838",
+      "effective": true,
+      "minus": -543034.6011089999,
+      "plus": 0
+    },
+    {
+      "observation": "0746-13",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "407de4173b873d0c",
+      "effective": true,
+      "minus": -980104.6415159993,
+      "plus": 0
+    },
+    {
+      "observation": "0746-14",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "daff450c350b5b61",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-15",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "2458e29a9a093795",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-16",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "6678af4ec5c7110b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0746-17",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "604c2347c47c758c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-05",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "2524b49538541370",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-06",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "6f336abb7ec6d402",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-07",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "99e85aa6bad06503",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-08",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "b6d17073004a7d2e",
+      "effective": true,
+      "minus": -653403.0943440001,
+      "plus": 0
+    },
+    {
+      "observation": "0747-09",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "e8c610a67e5e51e9",
+      "effective": true,
+      "minus": -980104.6415159993,
+      "plus": 0
+    },
+    {
+      "observation": "0747-10",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "a614f73691e542ef",
+      "effective": true,
+      "minus": -362023.067406,
+      "plus": 0
+    },
+    {
+      "observation": "0747-11",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "fcffc3f845168ebf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-12",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "7adfa98680eac81b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-13",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "fc3a4d3bac147950",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0747-14",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
+      "key": "8f41d9a4427387d5",
       "effective": false,
       "minus": 0,
       "plus": 0

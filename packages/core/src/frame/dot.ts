@@ -88,9 +88,17 @@ export function dotTicks(
   maxStacks = 1,
   /** 2 段目の段 13 の PR 1: halfAfterLatest の間隔の実測（ゲーム内のティック）。省略は intervalSeconds */
   tickIntervalFrames?: number,
+  /** 2 段目の段 13 の PR 2: 消去のフレーム（halfAfterLatest のときだけ） */
+  cancels: readonly number[] = [],
 ): DotTick[] {
   if (firstTick === 'halfAfterLatest')
-    return latestDotTicks(fires, frames, maxStacks, tickIntervalFrames ?? intervalSeconds * FRAMES_PER_GAME_SECOND);
+    return latestDotTicks(
+      fires,
+      frames,
+      maxStacks,
+      tickIntervalFrames ?? intervalSeconds * FRAMES_PER_GAME_SECOND,
+      cancels,
+    );
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, frames, firstTick);
   const out: DotTick[] = [];
   let groupFires: number[] = [];
@@ -129,7 +137,8 @@ export function dotActiveSpans(
   durationSeconds: number,
   firstTick: DotFirstTick = 'atApplication',
 ): { start: number; end: number }[] {
-  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド）は、最初に付いた時から終わりまで
+  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド）は、最初に付いた時から終わりまで（消去は skills/holders.ts の
+  // closedStateItems が切る）
   if (firstTick === 'halfAfterLatest')
     return fires.length === 0 ? [] : [{ start: fires[0]!, end: Number.POSITIVE_INFINITY }];
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, Number.POSITIVE_INFINITY, firstTick);
@@ -153,11 +162,16 @@ export function latestDotTicks(
   frames: number,
   maxStacks: number,
   intervalFrames: number,
+  cancels: readonly number[] = [],
 ): DotTick[] {
   const out: DotTick[] = [];
+  // 2 段目の段 13 の PR 2: 消去のフレームから後の tick は出ず、消去の後に付けた時は 1 スタックから（c は anchor 以後の最初の消去）
+  let c = 0;
+  let stacks = 0;
   fires.forEach((anchor, i) => {
-    const next = fires[i + 1] ?? frames;
-    const stacks = Math.min(i + 1, maxStacks);
+    for (; c < cancels.length && cancels[c]! < anchor; c++) stacks = 0;
+    stacks = Math.min(stacks + 1, maxStacks);
+    const next = Math.min(fires[i + 1] ?? frames, cancels[c] ?? frames);
     for (let k = 0; ; k++) {
       const frame = anchor + Math.round((k + 0.5) * intervalFrames);
       if (frame >= next || frame >= frames) break;
@@ -165,6 +179,20 @@ export function latestDotTicks(
     }
   });
   return out;
+}
+
+/**
+ * 2 段目の段 13 の PR 2: フレーム frame の判定で敵に付いているスタックの数（frame より前の最後の消去 c の後（c より後）で、frame より前に
+ * 付けた数。maxStacks で止める）。消去は、そのフレームの判定（stacksFrom の dot が写す数）の後に閉じるので、frame と同じフレームの消去は見ない
+ */
+export function dotStacksAt(
+  fires: readonly number[],
+  cancels: readonly number[],
+  maxStacks: number,
+  frame: number,
+): number {
+  const since = Math.max(...cancels.filter((c) => c < frame));
+  return Math.min(fires.filter((f) => f > since && f < frame).length, maxStacks);
 }
 
 /** レイヴン編: 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */

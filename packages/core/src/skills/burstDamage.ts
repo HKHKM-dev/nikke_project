@@ -154,6 +154,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     hitOnApply?: true;
     /** 同: { counterFull } の perCount の最初の付与の、発火からの遅れ（フレーム） */
     applyDelayFrames?: number;
+    /** 2 段目の段 13 の PR 2: tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン） */
+    stacksFrom?: NamedStateId;
   };
 };
 
@@ -440,6 +442,7 @@ export function resolveDotEffects(
             : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
+          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
         },
       };
       if (!auto && effect.perCount !== undefined) {

@@ -25,7 +25,7 @@ import {
   type ResolvedTrigger,
 } from './resolve.ts';
 import type { FireContext } from './targets.ts';
-import { isCounterFullTrigger, type ShotCountKind } from './types.ts';
+import { isCounterFullTrigger, type EndedTrigger, type ShotCountKind } from './types.ts';
 import type { NamedStateId } from './states.ts';
 
 /** 1 枠の 1 回の射撃 */
@@ -275,7 +275,7 @@ export function createTriggerTracker(
 }
 
 /** Stage 11: 発火したトリガーの文脈（対象 burstUsers の判定に使う）。フルバーストの開始・終了だけが枠の列を持つ */
-export function fireContextOf(trigger: ResolvedTrigger, ev: FrameEvents): FireContext {
+export function fireContextOf(trigger: ResolvedTrigger | EndedTrigger, ev: FrameEvents): FireContext {
   if (trigger === 'fullBurstStart') return { burstUsers: ev.fullBurstStartUsers };
   if (trigger === 'fullBurstEnd') return { burstUsers: ev.fullBurstEndUsers };
   return null;

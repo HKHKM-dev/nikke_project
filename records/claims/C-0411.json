@@ -5,15 +5,15 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`0119-05`（攻撃 10 回と 1 スタックの持続ダメージ 10 回のフレーム）・`0119-06`（10 スタックの持続ダメージ 33 回）。値はモデルの攻撃力 120,694 から端数まで一致。探索（予測なし）で、録画は 55.7 秒の 1 本だけ。説明文の「特定のタイミング」が戦闘開始なのか（チェーンが溜まった時か）は、この録画では分けられない。V-0281。2026-10-08 の探索（V-0326）: チェーンバインドの tick の間隔は、止まりを除いたゲーム内のティックで平均 59.25（`0119-07`。32 間隔）。端数を持ち越す 1 秒（58.82）より長く、1 回ごとに数え直す形（59）に近い（レイヴン・クルミの持続ダメージの刻み C-0454 とは違う形かもしれない）。2026-10-30（V-0546）: 0119 の読みを比べる観測値にした（`0119-08`〜`0119-13`。攻撃・付与・tick のフレームと 1 ヒットの値）。鈴原サクラ・アスカ（撃たない）と組んだ 180 秒の録画 0490・0492 で再現した（`0490-06`〜`0490-11`・`0492-06`〜`0492-11`。攻撃・付与の 10 回のフレームと値、176 回の 10 スタックの tick が戦闘の終わりまで続くこと、tick の値と会心）。文を広げた（「単騎・バーストなしでは」を、フルバーストにならない間に。「少なくとも約 32 秒は消えない」を、戦闘の終わりまで）。tick の刻みは C-0745",
-  "model": "`data/skills/162.json` の skill1 の effects[0]〜[3]（counterChange でキャプチャーチェーン 10 回、{ counterFull } のきっかけの damage（チェーンの数だけの攻撃）・counterChange（0 に戻す）・dot（チェーンバインド。maxStacksRef 4・持続・付けた時の 1 スタックのヒット）。plan/design-skill-stage13.md 2.1〜2.3 節）",
+  "model": "`data/skills/162.json` の skill1 の effects[0]・effects[2]〜[4]（counterChange でキャプチャーチェーン 10 回、{ counterFull } のきっかけの damage（チェーンの数だけの攻撃）・counterChange（0 に戻す）・dot（チェーンバインド。maxStacksRef 4・持続・付けた時の 1 スタックのヒット）。plan/design-skill-stage13.md 2.1〜2.3 節）",
   "replaces": [],
   "updated": "2026-10-30",
   "subject": {
     "places": [
       "data/skills/162.json の skill1 の effects[0]",
-      "data/skills/162.json の skill1 の effects[1]",
       "data/skills/162.json の skill1 の effects[2]",
-      "data/skills/162.json の skill1 の effects[3]"
+      "data/skills/162.json の skill1 の effects[3]",
+      "data/skills/162.json の skill1 の effects[4]"
     ]
   },
   "decidedOn": [
@@ -32,13 +32,19 @@
     },
     {
       "observations": "*",
-      "element": "ミハラ：ボンディングチェーン skill2.notes[2]",
+      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
       "reason": "バースト 3 段階突入時の持続ダメージ▲は、この 3 本の録画ではバーストが III に届かないので起きない",
       "decided": "2026-10-30"
     },
     {
       "observations": "*",
-      "element": "ミハラ：ボンディングチェーン burst.notes[0]",
+      "element": "ミハラ：ボンディングチェーン burst.effects[0]",
+      "reason": "プリング・チェーンは、この 3 本の録画ではミハラ：ボンディングチェーンがバーストを使わない（III に届かない）ので起きない",
+      "decided": "2026-10-30"
+    },
+    {
+      "observations": "*",
+      "element": "ミハラ：ボンディングチェーン burst.effects[1]",
       "reason": "プリング・チェーンは、この 3 本の録画ではミハラ：ボンディングチェーンがバーストを使わない（III に届かない）ので起きない",
       "decided": "2026-10-30"
     }

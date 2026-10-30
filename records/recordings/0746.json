@@ -1,0 +1,46 @@
+{
+  "id": "0746",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0746_smg+sr+mg_liter+delta+mihara-bc.mp4",
+  "original": "2026-10-31_00-41-49.mp4",
+  "durationSec": 200.9,
+  "frames": 12054,
+  "fps": 60,
+  "sizeMB": 243.5,
+  "sha256": "fce6c75c00e1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 162,
+      "name": "ミハラ：ボンディングチェーン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0547 の撮影 A（V-0546 の「次に撮るもの」）。リター（1 枠目・AI）+ デルタ（2 枠目・AI）+ ミハラ：ボンディングチェーン（3 枠目・操作・AUTO 射撃 ON）。オートバースト ON・宝物なし",
+  "backup": {
+    "at": "2026-10-31T00:50+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

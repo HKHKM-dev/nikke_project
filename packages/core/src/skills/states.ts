@@ -157,6 +157,11 @@ export const NAMED_STATES = {
    * キャプチャーチェーンの攻撃 1 回ごとに 1 スタック・20 スタック・持続・解除不可。V-0546）
    */
   ensnaringChains: { name: { ja: 'チェーンバインド', en: 'Ensnaring Chains' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: プリング・チェーン（ミハラ：ボンディングチェーンのバーストの持続ダメージ。敵に付く。
+   * チェーンバインドのスタック数を写す・10 秒・解除不可。付けた後にチェーンバインドを消去する。V-0547）
+   */
+  draggingChain: { name: { ja: 'プリング・チェーン', en: 'Dragging Chain' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

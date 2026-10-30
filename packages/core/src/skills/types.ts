@@ -1315,6 +1315,12 @@ export type DotEffect = {
   perCountIntervalFrames?: number;
   delayFrames?: number;
   /**
+   * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 「個別対象ごとに〈名前〉スタックコピー」。付けた時の tick のスタックの数を、
+   * 発火のフレームに敵に付いている、同じ枠の別の dot（その state）のスタックの数にする（0 なら付かない。後で元が増減しても変わらない）。
+   * tick の値は 1 スタックの倍率 × その数（ミハラ：ボンディングチェーンのプリング・チェーン）
+   */
+  stacksFrom?: { enemyState: NamedStateId };
+  /**
    * クルミ編: 状態異常の名前（「ハッキング」など）。同じキャラの同じ state の dot は 1 つの持続ダメージとして扱い、
    * 発火をまとめて tick を出す（どれで付いても付き直しと同じ。C-0136）。間隔・維持・firstTick・倍率は同じであること。
    * 省略は効果ごとに別の持続ダメージ。名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: status を改め、目録の id
@@ -1523,6 +1529,20 @@ export type RemoveStateEffect = {
 };
 
 /**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 「〈名前〉消去」（Cancels）。発火のフレーム f の効果の判定（同じ発動の dot の
+ * stacksFrom が写す数）の後に、敵に付いたその持続ダメージ（同じ定義の dot の state。解除不可も）を閉じる。f より後の tick は出ず、次に付けた時は
+ * 1 スタックから。分類の設計書の論点 8 の「消去」（解除とは別）
+ */
+export type CancelStateEffect = {
+  kind: 'cancelState';
+  /** 目録の id（持ち主が敵の状態。同じ定義の dot の state） */
+  state: NamedStateId;
+  trigger: EffectTrigger;
+  target: 'enemy';
+  assumes?: LocalizedText;
+};
+
+/**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: 「〈名前〉のスタック量 N 個▲」。発火のフレーム（射撃の回数のきっかけは次のフレーム）に、
  * 持ち主（自分）のその状態に N スタックを足す。上限・維持・中身は、同じ定義のその状態の付与（スタックを持つ。対象は自分）のもの。
  * 2 段目の段 3（同 1.5 節）: decrease は「〈名前〉のスタック量 N 個▼」。発火のフレームに効いている段の上から N 段を、次のフレームで
@@ -1665,6 +1685,7 @@ export type SkillEffect = (
   | AllyGaugeAddEffect
   | StateGrantEffect
   | RemoveStateEffect
+  | CancelStateEffect
   | StackChangeEffect
   | CounterChangeEffect
 ) &
@@ -1713,6 +1734,7 @@ export const SKILL_EFFECT_KINDS = [
   'allyGaugeAdd',
   'state',
   'removeState',
+  'cancelState',
   'stackChange',
   'counterChange',
 ] as const satisfies readonly SkillEffect['kind'][];
@@ -2555,13 +2577,14 @@ const CONDITION_KEYS_OF = {
   // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 常時の効果は、自分の HP の割合の条件だけ（編成の段で決まる）
   passive: ['selfHp'],
   // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減は、自分の状態とカウンタの値。段 12 の PR 2: フルバーストの中か外か
-  counterChange: ['selfState', 'selfCounter', 'inFullBurst'],
+  // 2 段目の段 13 の PR 2: usedBurst（ミハラ：ボンディングチェーンのフルバースト終了時のキャプチャーチェーンのチャージ）
+  counterChange: ['selfState', 'selfCounter', 'inFullBurst', 'usedBurst'],
   // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: クールタイム▼は自分の状態だけ
   cooldownReduction: ['selfState'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
-function validateUsedBurst(condition: EffectCondition, trigger: EffectTrigger, path: string): void {
+function validateUsedBurst(condition: EffectCondition, trigger: CounterChangeEffect['trigger'], path: string): void {
   if (condition.usedBurst === undefined) return;
   if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
   fail(
@@ -3373,6 +3396,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'perCount',
         'perCountIntervalFrames',
         'delayFrames',
+        'stacksFrom',
         'assumes',
         'claims',
       ].includes(key)
@@ -3444,6 +3468,14 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   if (v.delayFrames !== undefined) {
     if (counterFull === undefined) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+  }
+  if (v.stacksFrom !== undefined) {
+    const from = v.stacksFrom;
+    if (!isRecord(from) || from.enemyState === undefined || Object.keys(from).length !== 1)
+      fail(`${path}.stacksFrom`, 'expected { enemyState }');
+    if (effect.maxStacksRef !== undefined || effect.perCount !== undefined)
+      fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with maxStacksRef or perCount');
+    effect.stacksFrom = { enemyState: parseNamedStateId(from.enemyState, `${path}.stacksFrom.enemyState`, 'enemy') };
   }
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
@@ -3894,6 +3926,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'allyGaugeAdd') return parseAllyGaugeAddEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
   if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
+  if (v.kind === 'cancelState') return parseCancelStateEffect(v, path);
   if (v.kind === 'stackChange') return parseStackChangeEffect(v, path);
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
@@ -3942,8 +3975,10 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
     if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
     effect.decrease = true;
   }
-  if (v.condition !== undefined)
+  if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
+    validateUsedBurst(effect.condition, trigger, `${path}.condition`);
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -4023,6 +4058,23 @@ function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveSt
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去。いまは敵の持続ダメージの状態（同じ定義の dot の state）だけで、
+ * 対象は敵。解除不可の件も閉じる
+ */
+function parseCancelStateEffect(v: Record<string, Json>, path: string): CancelStateEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'state', 'trigger', 'target', 'assumes', 'claims'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
+  }
+  const state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (v.target !== 'enemy') fail(`${path}.target`, `expected "enemy", got ${JSON.stringify(v.target)}`);
+  const effect: CancelStateEffect = { kind: 'cancelState', state, trigger, target: 'enemy' };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -4223,6 +4275,32 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）は、同じ定義の firstTick halfAfterLatest の dot の
+ * state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
+ * enemyState も、同じ定義の dot の state を指す
+ */
+function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind === 'cancelState' && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `cancelState of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
+        );
+      const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
+      if (from !== undefined && !dots.some((d) => d.state === from))
+        fail(
+          `${root}.${slot}.effects[${i}].stacksFrom`,
+          `stacksFrom needs a dot of the state "${from}" in the definition`,
+        );
+    });
+  }
+}
+
+/**
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
  * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
  */
@@ -4359,6 +4437,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateFullStackTriggers(skills, 'skills');
   validateAppliedTriggers(skills, 'skills');
   validateWhileEffects(skills, 'skills');
+  validateDotStateRefs(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -4380,6 +4459,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateDotStateRefs({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;
