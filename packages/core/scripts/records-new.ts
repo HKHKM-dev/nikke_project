@@ -242,14 +242,7 @@ if (kind === 'verification') {
     observations: own.filter((o) => o.invalid === undefined).map((o) => o.id),
     ...(subject === undefined ? {} : { subject }),
   };
-  const relevanceCtx = {
-    recordings,
-    characters: data.characters,
-    skills: data.skills,
-    enemies: data.enemies,
-    claims: [...claims, asConfirmed],
-    data,
-  };
+  const relevanceCtx = { recordings, ...data, claims: [...claims, asConfirmed] };
   const sensitivity = withFreshSensitivity(own, relevanceCtx, loadSensitivity());
   const minimal = relevanceOf([asConfirmed], observations, relevanceCtx, sensitivity)[0]?.warnings ?? [];
   const prediction = predictions.find((p) => p.verification === from);

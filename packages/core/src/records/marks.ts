@@ -2,7 +2,7 @@
 // - 行き先の無い印（要素が根拠の観測値のどの録画の要素にも無い）を出す（records:check の誤り）
 // - 何も抑えていない印は relevance.ts の unusedMarks（plan/minimal.md の「使われていない印」）
 // - スキル定義の notes が並び替わったときに、印の notes の添字を付け替える（records:check が git の差から回す。
-//   文の一致で対応づけ、分かれ目の版のままの印だけを書き替える）
+//   文の一致で対応づけ、分かれ目の版の印からいつも計算し直す）
 import type { SkillDefinition, SkillNote } from '../skills/types.ts';
 import { markElements, type Claim, type ClaimFile, type MinimalMark } from './claims.ts';
 import type { Observation } from './observations.ts';
@@ -82,8 +82,25 @@ export function noteMoves(before: SkillDefinition, after: SkillDefinition): Note
 export type RenumberResult = { file: ClaimFile; changes: string[]; problems: string[] };
 
 /**
- * 結論の印の notes の添字を、定義の前後の対応（キャラの名前 → noteMoves）で付け替える。書き替えるのは、分かれ目の版の結論（base）に
- * そのままある印だけ（このブランチで書いた・直した印は、もう今の番号で書いてあるとみる）。前の notes に今の対応先が無い印は problems に出す
+ * 付け替えで変わらない印の鍵: 素性（要素を除いた欄。人が直したら decided が変わる）と、要素の形（notes の添字を除いた名前）
+ */
+const unnumberedOf = (m: MinimalMark): string =>
+  JSON.stringify({
+    ...m,
+    element: [
+      typeof m.element,
+      markElements(m).map((e) => {
+        const n = NOTE_ELEMENT.exec(e);
+        return n === null ? e : `${n[1]} ${n[2]}.notes`;
+      }),
+    ],
+  });
+
+/**
+ * 結論の印の notes の添字を、定義の前後の対応（キャラの名前 → noteMoves。分かれ目の版 → 今）で付け替える。
+ * 付け替えは、いつも分かれ目の版の結論（base）の印から計算し直す（2 回回しても、同じブランチで定義を 2 回変えても同じ結果になる）。
+ * 今の印の元は、base にそのままある印か、素性と要素の形が同じ base の印がちょうど 1 つあるとき、その印。どちらでもない印（このブランチで
+ * 書いた・直した印）は、もう今の番号で書いてあるとみて触らない。前の notes に今の対応先が無い要素は、回すたびに problems に出す
  */
 export function renumberMarks(
   file: ClaimFile,
@@ -93,7 +110,13 @@ export function renumberMarks(
   const changes: string[] = [];
   const problems: string[] = [];
   if (file.minimal === undefined || base?.minimal === undefined) return { file, changes, problems };
-  const baseMarks = new Set(base.minimal.map((m) => JSON.stringify(m)));
+  const baseMarks = base.minimal.map((b) => ({ mark: b, text: JSON.stringify(b), key: unnumberedOf(b) }));
+  const sourceOf = (m: MinimalMark): MinimalMark | undefined => {
+    const key = unnumberedOf(m);
+    const candidates = baseMarks.filter((b) => b.key === key);
+    const text = JSON.stringify(m);
+    return (candidates.find((b) => b.text === text) ?? (candidates.length === 1 ? candidates[0] : undefined))?.mark;
+  };
   const rename = (element: string): string => {
     const m = NOTE_ELEMENT.exec(element);
     if (m === null) return element;
@@ -104,19 +127,22 @@ export function renumberMarks(
     const j = move.index[i];
     if (j === undefined) {
       problems.push(
-        `${file.id}: 印 ${element} の notes（「${move.before[i]!.ja}」）が今の定義に無い。印を今の要素に直すか外す（直したら decided を今日に）`,
+        `${file.id}: 印 ${element}（分かれ目の版の番号）の notes（「${move.before[i]!.ja}」）が今の定義に無い。印を今の要素に直すか外す（直したら decided を今日に）`,
       );
       return element;
     }
-    if (j === i) return element;
-    const next = `${who} ${slot}.notes[${j}]`;
-    changes.push(`${file.id}: 印 ${element} → ${next}`);
-    return next;
+    return `${who} ${slot}.notes[${j}]`;
   };
   const minimal: MinimalMark[] = file.minimal.map((m) => {
-    if (!baseMarks.has(JSON.stringify(m))) return m;
-    const element = typeof m.element === 'string' ? rename(m.element) : m.element.map(rename);
-    return { ...m, element };
+    const source = sourceOf(m);
+    if (source === undefined) return m;
+    const element = typeof source.element === 'string' ? rename(source.element) : source.element.map(rename);
+    const out = { ...m, element };
+    const now = markElements(m);
+    markElements(out).forEach((e, k) => {
+      if (e !== now[k]) changes.push(`${file.id}: 印 ${now[k]} → ${e}`);
+    });
+    return out;
   });
   return { file: changes.length === 0 ? file : { ...file, minimal }, changes, problems };
 }

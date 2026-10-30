@@ -19,10 +19,10 @@ import {
 } from '../skills/types.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
-import type { CharacterData, EnemyPresetMaster, SkillSlot } from '../types.ts';
+import type { SkillSlot } from '../types.ts';
 import { markElements, type Claim, type ClaimState, type ClaimWhen } from './claims.ts';
 import { normalConditionMeasured } from './minimal.ts';
-import type { Observation, ObservationKind, ObservationSource } from './observations.ts';
+import type { Observation, ObservationKind, ObservationSource, RecordsData } from './observations.ts';
 import type { RecordingEntry } from './recordings.ts';
 import type { SkillRoot } from './skills.ts';
 
@@ -222,11 +222,9 @@ function shapeOfNote(e: NoteEffect | undefined): MinimalElement['shape'] {
   return { ...e };
 }
 
-export type RelevanceContext = {
+/** 録画の台帳・結論と、sim の入力のデータ（感度の鍵と予測が同じものを読む） */
+export type RelevanceContext = RecordsData & {
   recordings: ReadonlyMap<string, RecordingEntry>;
-  characters: ReadonlyMap<number, CharacterData>;
-  skills: ReadonlyMap<number, SkillDefinition>;
-  enemies: EnemyPresetMaster;
   claims: readonly Claim[];
 };
 
@@ -636,7 +634,7 @@ export function sensitivityId(observation: string, element: string): string {
 }
 
 /** 感度の計算の仕方を変えたら上げる（鍵が変わり、結果は古いとみなされる） */
-export const SENSITIVITY_VERSION = 2;
+export const SENSITIVITY_VERSION = 3;
 
 /** 感度を使う観測値（sim と比べるもの） */
 export function usesSensitivity(o: Observation): boolean {
@@ -658,14 +656,55 @@ function hash(text: string): string {
 /** 計算に効かない欄（根拠・notes・表示の文）を除く */
 const keyReplacer = (k: string, v: unknown) => (['claims', 'notes', 'ja', 'en', 'reads'].includes(k) ? undefined : v);
 
-/** 感度の入力の鍵: 版・録画の台帳・比べる指定・編成の定義（根拠と notes を除く） */
+/** 大きい入力（キャラのデータ・的の表・育成のマスタ）の要約。同じオブジェクトを何度も JSON にしない（読み込んだデータは書き換えない前提） */
+const digests = new WeakMap<object, string>();
+function digestOf(value: object): string {
+  let d = digests.get(value);
+  if (d === undefined) {
+    d = hash(JSON.stringify(value, keyReplacer));
+    digests.set(value, d);
+  }
+  return d;
+}
+
+/**
+ * 感度の入力の鍵: 版・録画の台帳・比べる指定・編成の定義とキャラのデータ・的の表・比べる指定が名前で指す観測値の値・
+ * スペック固定 OFF の録画の育成のマスタ（根拠と notes を除く）。sim が読むデータを全部入れる（モデルのコードは入れない）
+ */
 export function sensitivityKey(
   o: Observation,
   recording: RecordingEntry,
-  ctx: Pick<RelevanceContext, 'skills'>,
+  ctx: Pick<RelevanceContext, 'skills' | 'characters' | 'enemies' | 'observationValues' | 'buildMasters'>,
 ): string {
   const defs = recording.team.map((m) => ctx.skills.get(m.rid) ?? null);
-  return hash(JSON.stringify({ v: SENSITIVITY_VERSION, recording, compare: o.compare, defs }, keyReplacer));
+  // キャラのデータは大きいので、オブジェクトごとに 1 回だけ要約する（定義はテストが同じオブジェクトを書き換えて比べるので丸ごと）
+  const characters = recording.team.map((m) => {
+    const c = ctx.characters.get(m.rid);
+    return c === undefined ? null : digestOf(c);
+  });
+  // 比べる指定が観測値の id で指す値（jumpWindows・manualBursts・obstacles・pelletHits など）
+  const values: Record<string, unknown> = {};
+  JSON.stringify(o.compare?.setup ?? null, (_k, v: unknown) => {
+    const value = typeof v === 'string' ? ctx.observationValues?.get(v) : undefined;
+    if (value !== undefined) values[v as string] = value;
+    return v;
+  });
+  const masters = recording.fixedSpec === false && ctx.buildMasters !== undefined ? digestOf(ctx.buildMasters) : null;
+  return hash(
+    JSON.stringify(
+      {
+        v: SENSITIVITY_VERSION,
+        recording,
+        compare: o.compare,
+        defs,
+        characters,
+        enemies: digestOf(ctx.enemies),
+        values,
+        masters,
+      },
+      keyReplacer,
+    ),
+  );
 }
 
 /** 確定の結論ごとの組の判定（2 節）。失効した観測値と、録画の台帳に無い観測値は数えない */

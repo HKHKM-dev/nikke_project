@@ -7,11 +7,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { COLLECTION_SKILL_EFFECTS, CUBE_SKILL_EFFECTS } from '../src/buildEffects.ts';
-import type { CharacterData, CollectionMaster, CubeMaster } from '../src/types.ts';
+import { characterDataPath, characterIndexPath } from '../src/load.ts';
+import type { CharacterData, CharacterIndex, CollectionMaster, CubeMaster } from '../src/types.ts';
 import { diffCharacters, diffJson, renderReport, type UnmappedSkill } from './data-diff/compare.ts';
 
 const PACKAGE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const CHARACTERS = 'data/characters';
 const MASTERS = 'data/masters';
 
 const { values: args } = parseArgs({ options: { base: { type: 'string', default: 'HEAD' } } });
@@ -20,7 +20,7 @@ const base = args.base;
 const git = (...gitArgs: string[]): string =>
   execFileSync('git', gitArgs, { cwd: PACKAGE_ROOT, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 
-/** dir の JSON のファイル名（index.json を除く）。ref を渡すと git の版、無ければ作業ツリー */
+/** dir の JSON のファイル名。ref を渡すと git の版、無ければ作業ツリー */
 function jsonFiles(dir: string, ref?: string): string[] {
   const names =
     ref === undefined
@@ -28,7 +28,7 @@ function jsonFiles(dir: string, ref?: string): string[] {
       : git('ls-tree', '--name-only', ref, `${dir}/`)
           .split('\n')
           .map((p) => path.basename(p));
-  return names.filter((n) => n.endsWith('.json') && n !== 'index.json').sort();
+  return names.filter((n) => n.endsWith('.json')).sort();
 }
 
 function readJson(file: string, ref?: string): unknown {
@@ -37,11 +37,11 @@ function readJson(file: string, ref?: string): unknown {
   return JSON.parse(text) as unknown;
 }
 
+/** index.json に載っているキャラ（画面が読むのは index.json の分だけ。載っていないファイルは古い残りなので比べない） */
 function characters(ref?: string): Map<number, CharacterData> {
   const map = new Map<number, CharacterData>();
-  for (const name of jsonFiles(CHARACTERS, ref)) {
-    const data = readJson(`${CHARACTERS}/${name}`, ref) as CharacterData;
-    map.set(data.resourceId, data);
+  for (const { resourceId } of (readJson(`data/${characterIndexPath()}`, ref) as CharacterIndex).characters) {
+    map.set(resourceId, readJson(`data/${characterDataPath(resourceId)}`, ref) as CharacterData);
   }
   return map;
 }

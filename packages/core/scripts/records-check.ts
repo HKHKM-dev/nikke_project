@@ -75,7 +75,7 @@ const claims = loadClaims();
 const verifications = loadVerifications();
 const skills = loadSkillDefinitions();
 // 最小構成の検査の文脈（行き先の無い印の検査と、警告の判定）
-const relevanceCtx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims };
+const relevanceCtx = { recordings, ...data, claims };
 // Stage 20-E: 失効した観測値は照合と結論の根拠から外す
 const invalidReasons = invalidReasonsOf(observations);
 const errors = [

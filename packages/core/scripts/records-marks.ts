@@ -1,6 +1,6 @@
 // 印の notes の添字の付け替え（plan/design-workflow-simplification-5.md 1 節の (a)）を、git の差から回す（records:check が呼ぶ）。
-// 分かれ目（git merge-base HEAD origin/main）の版と今の作業ツリーで変わったスキル定義について、分かれ目の版の結論にそのままある印の
-// notes の添字を、文の一致で今の番号に書き替える。origin/main が無い・git が無いときは何もしない。
+// 分かれ目（git merge-base HEAD origin/main）の版と今の作業ツリーで変わったスキル定義について、分かれ目の版の結論の印から、
+// notes の添字を文の一致で今の番号に計算し直して書く（marks.ts の renumberMarks）。origin/main が無い・git が無いときは何もしない。
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import type { ClaimFile } from '../src/records/claims.ts';

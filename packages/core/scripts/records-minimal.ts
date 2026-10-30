@@ -32,7 +32,7 @@ const data = loadRecordsData(
 );
 const claims = loadClaims();
 const observations = loadObservations();
-const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims, data };
+const ctx = { recordings, ...data, claims };
 const targets = sensitivityTargets(observations, ctx);
 const previous: SensitivityIndex = values.all ? new Map() : loadSensitivity();
 const entries: SensitivityEntry[] = [];

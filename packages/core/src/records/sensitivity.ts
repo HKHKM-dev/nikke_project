@@ -139,7 +139,7 @@ function predict(
   return metric.sim(sim, { args: c.args, input });
 }
 
-export type SensitivityContext = RelevanceContext & { data: RecordsData };
+export type SensitivityContext = RelevanceContext;
 
 /**
  * 観測値の感度の結果。対象は、根拠が確定でなく、その録画で起きうる定義の効果（結論の対象かどうかは結論ごとに違うので問わない）。
@@ -175,7 +175,7 @@ export function sensitivityOf(
   const setupKey = `${o.recording}:${JSON.stringify(o.compare!.setup)}`;
   let p0: number | number[];
   try {
-    p0 = predict(o, recording, ctx.data, cache, setupKey);
+    p0 = predict(o, recording, ctx, cache, setupKey);
   } catch {
     return [];
   }
@@ -191,7 +191,7 @@ export function sensitivityOf(
       minus: null,
       plus: null,
     };
-    const base = ctx.data.skills.get(e.effectRef.rid);
+    const base = ctx.skills.get(e.effectRef.rid);
     if (edge !== undefined) {
       entry.edge = { range: edge, widen: null, narrow: null };
       for (const variant of ['widen', 'narrow'] as const) {
@@ -200,9 +200,9 @@ export function sensitivityOf(
         try {
           const def = edgeDefinition(base, e.effectRef, shift);
           if (def === undefined) throw new Error('timed でない効果');
-          const skills = new Map(ctx.data.skills);
+          const skills = new Map(ctx.skills);
           skills.set(e.effectRef.rid, def);
-          const pv = predict(o, recording, { ...ctx.data, skills }, cache, `${setupKey}|${e.name}|${variant}`);
+          const pv = predict(o, recording, { ...ctx, skills }, cache, `${setupKey}|${e.name}|${variant}`);
           const { diff, ok } = compareValue(p0, pv, o.compare!.tolerance);
           entry.edge[variant] = Number.isFinite(diff) ? diff : null;
           if (!ok) entry.effective = true;
@@ -219,9 +219,9 @@ export function sensitivityOf(
       const def = variantDefinition(base, e.effectRef, variant, battleSeconds);
       if (def === undefined) continue;
       try {
-        const skills = new Map(ctx.data.skills);
+        const skills = new Map(ctx.skills);
         skills.set(e.effectRef.rid, def);
-        const pv = predict(o, recording, { ...ctx.data, skills }, cache, `${setupKey}|${e.name}|${variant}`);
+        const pv = predict(o, recording, { ...ctx, skills }, cache, `${setupKey}|${e.name}|${variant}`);
         const { diff, ok } = compareValue(p0, pv, o.compare!.tolerance);
         entry[variant] = Number.isFinite(diff) ? diff : null;
         if (!ok) entry.effective = true;

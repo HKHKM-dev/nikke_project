@@ -76,14 +76,7 @@ for (const c of ownClaims) {
   if (g !== undefined) gradeCandidates.set(c.id, g);
 }
 // 最小構成の検査（plan/design-minimal-relevance.md 5 節）: この記録の結論の組。根拠の観測値の感度はその場で計算して重ねる
-const relevanceCtx = {
-  recordings,
-  characters: data.characters,
-  skills: data.skills,
-  enemies: data.enemies,
-  claims,
-  data,
-};
+const relevanceCtx = { recordings, ...data, claims };
 const sensitivity = withFreshSensitivity(basisObs, relevanceCtx, loadSensitivity());
 const minimal = new Map(
   relevanceOf(ownClaims, observations, relevanceCtx, sensitivity).map((r) => [r.claim, r.warnings]),

@@ -120,20 +120,7 @@ describe('records/claims・plan/claims.md', () => {
         invalidReasons,
         definitionPlacesByClaim(loadSkillDefinitions()),
         gradeCandidates,
-        relevanceCounts(
-          relevanceOf(
-            claims,
-            observations,
-            {
-              recordings,
-              characters: data.characters,
-              skills: data.skills,
-              enemies: data.enemies,
-              claims,
-            },
-            loadSensitivity(),
-          ),
-        ),
+        relevanceCounts(relevanceOf(claims, observations, { recordings, ...data, claims }, loadSensitivity())),
       ),
     );
   });

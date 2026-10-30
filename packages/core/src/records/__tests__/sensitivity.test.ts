@@ -25,7 +25,7 @@ const recordings = recordingMap(file);
 const data = loadRecordsData(file);
 const claims = loadClaims();
 const observations = loadObservations();
-const ctx = { recordings, characters: data.characters, skills: data.skills, enemies: data.enemies, claims, data };
+const ctx = { recordings, ...data, claims };
 
 describe('定義の変え方', () => {
   const def = data.skills.get(17)!;
@@ -75,9 +75,40 @@ describe('観測値ごとの感度', () => {
     const base = sensitivityKey(o, rec, ctx);
     const def = structuredClone(data.skills.get(231)!) as SkillDefinition;
     def.skills.burst.effects[0]!.claims = ['C-0001'];
-    expect(sensitivityKey(o, rec, { skills: new Map([...data.skills, [231, def]]) })).toBe(base);
+    expect(sensitivityKey(o, rec, { ...ctx, skills: new Map([...data.skills, [231, def]]) })).toBe(base);
     def.skills.burst.effects.pop();
-    expect(sensitivityKey(o, rec, { skills: new Map([...data.skills, [231, def]]) })).not.toBe(base);
+    expect(sensitivityKey(o, rec, { ...ctx, skills: new Map([...data.skills, [231, def]]) })).not.toBe(base);
+  });
+
+  // sim が読むデータ（キャラ・的の表・指す観測値の値・育成のマスタ）も鍵に入る（2026-10-30 のデイリーレビューの指摘）
+  it('changes the key when the data the sim reads changes', () => {
+    const base = sensitivityKey(o, rec, ctx);
+    const rid = rec.team[0]!.rid;
+    const character = structuredClone(data.characters.get(rid)!);
+    character.shot.maxAmmo += 1;
+    expect(sensitivityKey(o, rec, { ...ctx, characters: new Map([...data.characters, [rid, character]]) })).not.toBe(
+      base,
+    );
+    const enemies = structuredClone(data.enemies);
+    enemies.enemies[0]!.id = `${enemies.enemies[0]!.id}-x`;
+    expect(sensitivityKey(o, rec, { ...ctx, enemies })).not.toBe(base);
+
+    // 比べる指定が観測値の id で指す値
+    const withRef = { ...o, compare: { ...o.compare!, setup: { ...o.compare!.setup, jumpWindows: '9999-01' } } };
+    const keyOf = (value: number[]) =>
+      sensitivityKey(withRef, rec, { ...ctx, observationValues: new Map([['9999-01', value]]) });
+    expect(keyOf([1, 2])).toBe(keyOf([1, 2]));
+    expect(keyOf([1, 2])).not.toBe(keyOf([1, 3]));
+
+    // 育成のマスタは、スペック固定 OFF の録画だけ
+    const masters = structuredClone(data.buildMasters!);
+    expect(sensitivityKey(o, rec, { ...ctx, buildMasters: masters })).toBe(base);
+    const off = { ...rec, fixedSpec: false };
+    expect(sensitivityKey(o, off, { ...ctx, buildMasters: masters })).toBe(sensitivityKey(o, off, ctx));
+    // 要約はオブジェクトごとに覚えるので、変えたマスタは別のオブジェクトにする（読み込んだデータは書き換えない）
+    const changed = structuredClone(masters);
+    changed.affection.ranks.pop();
+    expect(sensitivityKey(o, off, { ...ctx, buildMasters: changed })).not.toBe(sensitivityKey(o, off, ctx));
   });
   // 差分の計算（plan/design-workflow-simplification-5.md 7.2 節）
   it('reuses the previous entries only when every element has one with the same key', () => {
