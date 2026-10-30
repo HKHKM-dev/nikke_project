@@ -1,6 +1,8 @@
 // 1 パス目の最適化の段 2（plan/design-first-pass-perf.md 3.2 節）: 効いている件の組で決まる値を、件の境目まで使い回す。
 // 射手の実効値（holders.ts の firingBuffsAt）は毎フレーム × 枠で読まれるが、効いている件の組は件の始まり・終わりでしか変わらない。
-import type { HeldItem } from './holders.ts';
+
+/** 件の始まり・終わり（holders.ts の HeldItem のうち、ここで読む欄） */
+type Span = { start: number; end: number };
 
 /**
  * count 本の件の列（itemsAt(i)。作り直すと別の配列になる）で決まる値 compute(frame, base) を使い回す関数を作る。
@@ -10,11 +12,11 @@ import type { HeldItem } from './holders.ts';
  */
 export function createSpanMemo<B, T>(
   count: number,
-  itemsAt: (i: number) => readonly HeldItem[],
+  itemsAt: (i: number) => readonly Span[],
   compute: (frame: number, base: B) => T,
 ): (frame: number, base: B) => T {
   /** 前に計算した時の件の列ごとの件（同じ配列か見る） */
-  const items: (readonly HeldItem[] | null)[] = Array.from({ length: count }, () => null);
+  const items: (readonly Span[] | null)[] = Array.from({ length: count }, () => null);
   let from = 0;
   let until = -1;
   let lastBase: B | undefined;
