@@ -2584,7 +2584,7 @@ const CONDITION_KEYS_OF = {
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
-function validateUsedBurst(condition: EffectCondition, trigger: EffectTrigger, path: string): void {
+function validateUsedBurst(condition: EffectCondition, trigger: CounterChangeEffect['trigger'], path: string): void {
   if (condition.usedBurst === undefined) return;
   if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
   fail(
@@ -3977,9 +3977,7 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
   }
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
-    if (!isEndedTrigger(trigger)) validateUsedBurst(effect.condition, trigger, `${path}.condition`);
-    else if (effect.condition.usedBurst !== undefined)
-      fail(`${path}.condition.usedBurst`, 'usedBurst needs fullBurstStart or fullBurstEnd');
+    validateUsedBurst(effect.condition, trigger, `${path}.condition`);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
@@ -4277,6 +4275,32 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）は、同じ定義の firstTick halfAfterLatest の dot の
+ * state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
+ * enemyState も、同じ定義の dot の state を指す
+ */
+function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind === 'cancelState' && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `cancelState of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
+        );
+      const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
+      if (from !== undefined && !dots.some((d) => d.state === from))
+        fail(
+          `${root}.${slot}.effects[${i}].stacksFrom`,
+          `stacksFrom needs a dot of the state "${from}" in the definition`,
+        );
+    });
+  }
+}
+
+/**
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
  * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
  */
@@ -4413,6 +4437,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateFullStackTriggers(skills, 'skills');
   validateAppliedTriggers(skills, 'skills');
   validateWhileEffects(skills, 'skills');
+  validateDotStateRefs(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -4434,6 +4459,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateDotStateRefs({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

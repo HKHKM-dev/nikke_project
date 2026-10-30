@@ -44,6 +44,16 @@ describe('語彙の検証', () => {
     expect(withBurst(cancel, { extra: 1 })).toThrow(/unknown field/);
   });
 
+  it('needs the cancelled and copied states on dots of the same definition', () => {
+    expect(withBurst(cancel, { state: 'draggingChain' })).toThrow(
+      /needs a dot of the same state with firstTick halfAfterLatest/,
+    );
+    const copy = structuredClone(raw);
+    copy.skills.skill1.effects = copy.skills.skill1.effects.filter((e) => e.kind !== 'dot');
+    copy.skills.burst.effects = copy.skills.burst.effects.filter((e) => e.kind !== 'cancelState');
+    expect(() => parseSkillDefinition(copy)).toThrow(/stacksFrom needs a dot of the state "ensnaringChains"/);
+  });
+
   it('allows usedBurst on counterChange only with the Full Burst start or end', () => {
     const copy = structuredClone(raw);
     const charge = copy.skills.skill1.effects.findIndex((e) => e.kind === 'counterChange' && e.condition);

@@ -382,7 +382,7 @@
         "fullBurst": 2,
         "count": 10,
         "after": true,
-        "dot": "apply"
+        "kind": "apply"
       },
       "tolerance": {
         "abs": 2
@@ -421,7 +421,7 @@
         "fullBurst": 1,
         "count": 1,
         "after": true,
-        "dot": "tick"
+        "kind": "tick"
       },
       "tolerance": {
         "abs": 2
@@ -460,7 +460,7 @@
         "fullBurst": 2,
         "count": 1,
         "after": true,
-        "dot": "tick"
+        "kind": "tick"
       },
       "tolerance": {
         "abs": 2

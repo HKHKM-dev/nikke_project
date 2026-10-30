@@ -22,7 +22,6 @@ import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
   resolveDamageEffects,
-  resolveDotCancels,
   resolveDotEffects,
   resolvePerShotDamage,
   type ResolvedDamageEffect,
@@ -37,6 +36,7 @@ import {
   isResolvedTimer,
   isResolvedEventCount,
   isResolvedShotCount,
+  resolveDotCancels,
   type ResolvedTrigger,
 } from '../skills/resolve.ts';
 import {
@@ -532,6 +532,7 @@ export function planSkillHits(
     // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）のフレームと、ほかの dot が写す元の付いたフレーム
     const dotGroups = groupDotsByState(resolveDotEffects(definition, slot.character, levels)).map((group) => ({
       group,
+      dot: group[0]!.dot!,
       fires: group
         .flatMap((effect) => dotApplicationFrames(effect).map((f) => ({ f, effect })))
         .sort((a, b) => a.f - b.f),
@@ -544,19 +545,17 @@ export function planSkillHits(
             .filter((c) => c.state === state)
             .flatMap((c) => triggerFrames(c.trigger, schedule, slotIndex, frames, shots))
             .sort((a, b) => a - b);
-    for (const { group, fires } of dotGroups) {
-      const dot = group[0]!.dot!;
+    for (const { dot, fires } of dotGroups) {
       const { maxStacks } = dot;
       // 2 段目の段 13 の PR 2: スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
       const from = dot.stacksFrom;
       if (from !== undefined) {
-        const source = dotGroups.find((g) => g.group[0]!.dot!.state === from);
-        if (source === undefined)
-          throw new RangeError(`stacksFrom needs a dot with the state ${from} on the same slot`);
+        // 元は同じ定義の dot（skills/types.ts の validateDotStateRefs）
+        const source = dotGroups.find((g) => g.dot.state === from)!;
         const sourceFires = source.fires.map((x) => x.f);
         const sourceCancels = cancelsOf(from);
         for (const { f, effect } of fires) {
-          const copied = dotStacksAt(sourceFires, sourceCancels, source.group[0]!.dot!.maxStacks, f);
+          const copied = dotStacksAt(sourceFires, sourceCancels, source.dot.maxStacks, f);
           if (copied === 0) continue;
           for (const tick of dotTicks([f], dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick))
             push(tick.frame, effect, false, copied);

@@ -12,7 +12,7 @@
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
 import type { ShotLog } from '../frame/shots.ts';
-import { resolveDotCancels, resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
+import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
@@ -24,6 +24,7 @@ import {
   isResolvedTimer,
   isStateContent,
   resolveCounterChanges,
+  resolveDotCancels,
   resolveInstant,
   resolvePassives,
   resolveRemoveStates,
@@ -77,6 +78,7 @@ import {
   isStateStat,
   staticStatesOf,
   type BuffStat,
+  type EndedTrigger,
   type EdgeShift,
   type EffectCondition,
 } from './types.ts';
@@ -656,13 +658,13 @@ function buildTrackItems(
     case 'healWindow':
       return healWindowItems(track.starts, o.effect.durationFrames, frames);
     case 'enemyState': {
-      // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）
+      // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）。
+      // 2 段目の段 13 の PR 2: 消去（cancelState）は、解除と同じく c + 1 で切り、後の付与から付き直す
       const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
-      return itemsOfPairs(
-        dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick, track.closes).map((sp) => [
-          sp.start,
-          sp.end,
-        ]),
+      return closedStateItems(track.starts, track.closes, (starts) =>
+        itemsOfPairs(
+          dotActiveSpans(starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
+        ),
       );
     }
     case 'while':
@@ -1074,13 +1076,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる
     for (const cancel of resolveDotCancels(slot.definition, slot.character, slot.levels)) {
       const source = enemyStateSources.find(
-        (e) =>
-          e.track.sourceSlotIndex === sourceSlotIndex &&
-          e.track.origin.kind === 'enemyState' &&
-          e.track.origin.state === cancel.state,
-      );
-      if (source !== undefined)
-        dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
+        ({ track }) =>
+          track.sourceSlotIndex === sourceSlotIndex &&
+          track.origin.kind === 'enemyState' &&
+          track.origin.state === cancel.state,
+      )!;
+      dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
     }
   });
 
@@ -1327,7 +1328,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    */
   const usedBurstHolds = (
     condition: EffectCondition | undefined,
-    trigger: ResolvedTrigger,
+    trigger: ResolvedTrigger | EndedTrigger,
     ev: FrameEvents,
     sourceSlotIndex: number,
   ): boolean =>
@@ -1657,7 +1658,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!fired) continue;
       const condition = src.effect.condition;
       if (
-        (!isEndedTrigger(t) && !usedBurstHolds(condition, t, ev, src.sourceSlotIndex)) ||
+        !usedBurstHolds(condition, t, ev, src.sourceSlotIndex) ||
         (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f))
       ) {
         skipEffect(src.sourceSlotIndex, src.effect, f);

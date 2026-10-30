@@ -136,19 +136,11 @@ export function dotActiveSpans(
   intervalSeconds: number,
   durationSeconds: number,
   firstTick: DotFirstTick = 'atApplication',
-  /** 2 段目の段 13 の PR 2: 消去のフレーム（halfAfterLatest のときだけ。その次のフレームで切る） */
-  cancels: readonly number[] = [],
 ): { start: number; end: number }[] {
-  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド）は、付いた時から終わりまで。PR 2: 消去の次のフレームで切る
-  if (firstTick === 'halfAfterLatest') {
-    const spans: { start: number; end: number }[] = [];
-    for (const f of fires) {
-      if (spans.length > 0 && f < spans[spans.length - 1]!.end) continue;
-      const cancel = cancels.find((c) => c >= f);
-      spans.push({ start: f, end: cancel === undefined ? Number.POSITIVE_INFINITY : cancel + 1 });
-    }
-    return spans;
-  }
+  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド）は、最初に付いた時から終わりまで（消去は skills/holders.ts の
+  // closedStateItems が切る）
+  if (firstTick === 'halfAfterLatest')
+    return fires.length === 0 ? [] : [{ start: fires[0]!, end: Number.POSITIVE_INFINITY }];
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, Number.POSITIVE_INFINITY, firstTick);
   const spans: { start: number; end: number }[] = [];
   for (const f of fires) {
@@ -173,11 +165,13 @@ export function latestDotTicks(
   cancels: readonly number[] = [],
 ): DotTick[] {
   const out: DotTick[] = [];
+  // 2 段目の段 13 の PR 2: 消去のフレームから後の tick は出ず、消去の後に付けた時は 1 スタックから（c は anchor 以後の最初の消去）
+  let c = 0;
+  let stacks = 0;
   fires.forEach((anchor, i) => {
-    // 2 段目の段 13 の PR 2: 消去のフレームから後の tick は出ず、消去の後に付けた時は 1 スタックから
-    const cancel = cancels.find((c) => c >= anchor) ?? frames;
-    const next = Math.min(fires[i + 1] ?? frames, cancel);
-    const stacks = dotStacksAt(fires, cancels, maxStacks, anchor + 1);
+    for (; c < cancels.length && cancels[c]! < anchor; c++) stacks = 0;
+    stacks = Math.min(stacks + 1, maxStacks);
+    const next = Math.min(fires[i + 1] ?? frames, cancels[c] ?? frames);
     for (let k = 0; ; k++) {
       const frame = anchor + Math.round((k + 0.5) * intervalFrames);
       if (frame >= next || frame >= frames) break;
@@ -197,7 +191,7 @@ export function dotStacksAt(
   maxStacks: number,
   frame: number,
 ): number {
-  const since = Math.max(Number.NEGATIVE_INFINITY, ...cancels.filter((c) => c < frame));
+  const since = Math.max(...cancels.filter((c) => c < frame));
   return Math.min(fires.filter((f) => f > since && f < frame).length, maxStacks);
 }
 

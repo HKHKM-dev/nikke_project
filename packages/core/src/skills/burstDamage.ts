@@ -460,41 +460,6 @@ export function resolveDotEffects(
   return resolved;
 }
 
-/** 2 段目の段 13 の PR 2: 解決した消去（敵の持続ダメージの状態）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む */
-export type ResolvedDotCancel = {
-  source: ResolvedSkillDamage['source'];
-  state: NamedStateId;
-  trigger: ResolvedTrigger;
-};
-
-/** 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 定義の消去（cancelState）。消す状態は同じ定義の dot の state であること */
-export function resolveDotCancels(
-  def: SkillDefinition,
-  character: CharacterData,
-  levels: SkillLevels,
-): ResolvedDotCancel[] {
-  const dotStates = new Set(
-    SKILL_SLOTS.flatMap((slot) =>
-      def.skills[slot].effects.flatMap((e) => (e.kind === 'dot' && e.state ? [e.state] : [])),
-    ),
-  );
-  const out: ResolvedDotCancel[] = [];
-  for (const slot of SKILL_SLOTS) {
-    const skill = character.skills[slot];
-    for (const effect of def.skills[slot].effects) {
-      if (effect.kind !== 'cancelState') continue;
-      if (!dotStates.has(effect.state))
-        throw new RangeError(`skill ${skill.id}: cancelState needs a dot with the state ${effect.state}`);
-      out.push({
-        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
-        state: effect.state,
-        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
-      });
-    }
-  }
-  return out;
-}
-
 /**
  * Stage 11 モダニア: 射撃ごとに発火するトリガーか（射撃の回数トリガーの every = 1。最後の弾丸は除く）。
  * 「通常攻撃が命中した時」の倍率ダメージは射撃と 1 対 1 で、同じ区間では毎回同じ値なので、1 トリガーの値に畳み込む

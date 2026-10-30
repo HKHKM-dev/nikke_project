@@ -1620,12 +1620,9 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
  * （boost に コア倍率 − 1 を足す）。core の効果でないヒットに core: true は拒否する
  */
 function dotHitDamage(result: SimResult, ctx: MetricContext): number {
-  // 2 段目の段 13 の PR 2（V-0547）: 省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）
+  // 2 段目の段 13 の PR 2（V-0547）: hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）
   const ticks = result.skillHits.filter(
-    (h) =>
-      h.slotIndex === slotIndexOf(ctx) &&
-      h.effect.dot !== undefined &&
-      (ctx.args.skill === undefined || h.effect.source.skill === ctx.args.skill),
+    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && hitMatches(h, ctx),
   );
   const tick = ticks[Number(ctx.args.n)];
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
@@ -1722,19 +1719,17 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
   if (schedule === null || window === undefined)
     throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
   const start = videoFrameOf(schedule, window.start);
-  // 2 段目の段 13 の PR 2（V-0547）: after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット。dot が apply・tick なら、
+  // 2 段目の段 13 の PR 2（V-0547）: after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット。kind が apply・tick なら、
   // 倍率ダメージの代わりに持続ダメージの付けた時のヒット・tick（フルバーストの終わりのキャプチャーチェーンの攻撃とチェーンバインド）
   const [from, to] =
     ctx.args.after === true
       ? [window.end, schedule.fullBurstWindows[n + 1]?.start ?? Number.POSITIVE_INFINITY]
       : [window.start, window.end];
-  const dot = ctx.args.dot;
+  const kind = ctx.args.kind === undefined ? undefined : dotKindOf(ctx);
   const hits = result.skillHits.filter(
     (h) =>
       h.slotIndex === slotIndexOf(ctx) &&
-      (dot === undefined
-        ? h.effect.dot === undefined
-        : h.effect.dot !== undefined && (h.onApply === true) === (dot === 'apply')) &&
+      (kind === undefined ? h.effect.dot === undefined : dotKindMatches(h, kind)) &&
       hitMatches(h, ctx) &&
       from <= h.frame &&
       h.frame < to,
@@ -1904,15 +1899,22 @@ function burstEffectDelay(result: SimResult, ctx: MetricContext): number {
   return effectFrameOf(activation) - hexagonFrameOf(activation);
 }
 
-/** 2 段目の段 13 の PR 1（V-0546）: dotHitVideoFrames。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
-function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
+/** 2 段目の段 13 の PR 1・2: 引数 kind（持続ダメージの付けた時のヒット apply か tick）と、ヒットがそれか */
+function dotKindOf(ctx: MetricContext): 'apply' | 'tick' {
   const kind = ctx.args.kind;
   if (kind !== 'apply' && kind !== 'tick') throw new Error(`kind は apply か tick（${String(kind)}）`);
+  return kind;
+}
+
+function dotKindMatches(h: SimResult['skillHits'][number], kind: 'apply' | 'tick'): boolean {
+  return h.effect.dot !== undefined && (h.onApply === true) === (kind === 'apply');
+}
+
+/** 2 段目の段 13 の PR 1（V-0546）: dotHitVideoFrames。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
+function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
+  const kind = dotKindOf(ctx);
   return result.skillHits
-    .filter(
-      (h) =>
-        h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && (h.onApply === true) === (kind === 'apply'),
-    )
+    .filter((h) => h.slotIndex === slotIndexOf(ctx) && dotKindMatches(h, kind))
     .slice(0, Number(ctx.args.count))
     .map((h) => videoFrameOf(result.schedule, h.frame));
 }
