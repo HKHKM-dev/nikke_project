@@ -9,7 +9,7 @@
 | もの                                     | 正の置き場所                                        | デスクトップ                                        | クラウドのセッション                                                                                          |
 | ---------------------------------------- | --------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | コード・記録・設計書                     | GitHub                                              | worktree                                            | `/home/user/nikke_project`                                                                                    |
-| `private/`・`scratch/`                   | Drive の `nikke_sync/private`・`scratch`            | メインのチェックアウト（`D:/nikke_project/`）の直下 | リポジトリの直下（セッションの始めに置かれる）                                                                |
+| `private/`・`scratch/`                   | Drive の `nikke_sync/private`・`scratch`            | メインのチェックアウト（`D:/nikke_project/`）の直下 | リポジトリの直下（`private/` はセッションの始めに、`scratch/` はその後に裏で置かれる）                        |
 | Claude のメモリと全体の指示（CLAUDE.md） | Drive の `nikke_sync/claude/`                       | Claude Code の設定のフォルダ（自動メモリ）          | `~/.claude/CLAUDE.md` に、全体の指示とメモリの索引・書き方が置かれる。本文は `~/.claude/projects/…/memory/`   |
 | 録画・スクショ・証拠フレーム・参照資料   | E: と Drive の `nikke_project_captures/`            | `E:/nikke_project_captures/`                        | 録画は `node tools/captures/fetch.ts <録画 id>` で取り寄せる。切り出した証拠フレームは応答の終わりに Drive へ |
 | 取り込む前の録画                         | `H:/record` と Drive の「マイ コンピュータ/record」 | Drive for desktop が上げる                          | Drive から取り込む（下の「クラウドで録画を取り込む」）                                                        |
@@ -17,7 +17,7 @@
 ## クラウドのセッションの始め方
 
 1. スマホか MacBook の Claude アプリ（または claude.ai/code）で、このリポジトリのクラウドのセッションを始める（環境は「デフォルト」）。
-2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・`scratch/`・メモリ・全体の CLAUDE.md を取って置く。最初の応答はこれを待つ。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
+2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・メモリ・全体の CLAUDE.md を取って置く（十数秒。最初の応答はこれを待つ）。`scratch/` は、フックが裏で起こす `--pull-rest` が新しいものから取って置く（数分。最初の応答は待たない。取り終えたか・取れなかったものは `~/.cache/nikke-sync/pull-rest.log` の最後の行）。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
 3. 応答の終わりのフック（`--push`）が、直したもの・増やしたもの・消したものを Drive に戻す（衝突は下）。デスクトップには、次のデスクトップのセッションの始めの同期で届く。
 
 クラウドでは自動メモリが使えないので、メモリは `~/.claude/CLAUDE.md` に書かれた決まりで読み書きする（同じ形式。設計書 6.1 節）。
@@ -60,7 +60,13 @@ PC が使えないときに撮った録画は、Drive for desktop が「マイ �
 ## 困ったとき
 
 - デスクトップの同期の重大なエラー（終了コード 7）・同名の複製: [captures/storage.md](captures/storage.md)「バックアップ」。
-- クラウドで「Drive との往復に失敗した」と出る: 受け口の URL・合言葉・通信の許可を確かめる。デスクトップで `npm run drive:gateway-check` が通るかを見る。
+- クラウドで「Drive との往復に失敗した」「〜を取れなかった」と出る: 知らせの続きが、確かめることを示す。
+  - 「受け口に届かなかった」: 受け口の URL（環境変数 `NIKKE_DRIVE_GATEWAY_URL`）と、環境の通信の許可（`script.google.com`・`script.googleusercontent.com`）
+  - 「受け口の応答が JSON でない」: 受け口の URL と、デプロイの「アクセスできるユーザー: 全員」
+  - 「合言葉が違う」: 環境変数 `NIKKE_DRIVE_GATEWAY_KEY` と、受け口のスクリプト プロパティの `KEY`
+  - 「〜秒たっても答えなかった」: 受け口（Apps Script）が止まっているか、遅い。デスクトップで `npm run drive:gateway-check` が通るかを見る。受け口は中身を 1 件あたり約 1 秒で読むので、件数の多いフォルダを中身ごと一度に取ると 1 回の実行（6 分まで）で終わらない（2026-10-30 に `scratch/` で起きた。[design-cloud-environment-log.md](design-cloud-environment-log.md) 12.2 節）
+  - 取れなかったものは、セッションの中で `node tools/drive/cloud-sync.ts --pull` で取り直せる
+- `scratch/` のファイルが無い: 裏の取り寄せが終わっていないか、取れなかった。`~/.cache/nikke-sync/pull-rest.log` の最後の行を見る。残りは `node tools/drive/cloud-sync.ts --pull-rest` で取る（裏で回っている途中なら、そう答えて何もしない）。
 - クラウドで Claude が自分で打つ curl などは、auto mode の判定で止まることがある。同期はフックで行うので、この判定は受けない。
 - クラウドでは `gh` のトークンが使えない（2026-10-23 の通しの試験）。PR は GitHub の MCP の道具で出す（作成と自動マージの予約）。
 - クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。CI と同じ確認は 22 でも通る（`npm ci` の EBADENGINE の警告は出る）。

@@ -1,6 +1,16 @@
 // クラウドのセッションと Drive の nikke_sync の往復の決まりごと（plan/design-cloud-environment.md 6.1・6.2 節）。受け口は呼ばない。
 import { describe, expect, it } from 'vitest';
-import { cloudClaudeMd, diffAgainstBase, localPathOf, settlePut, shouldPut, trackedRoots } from './cloud-lib.ts';
+import {
+  cloudClaudeMd,
+  diffAgainstBase,
+  localPathOf,
+  planPull,
+  runUntil,
+  settlePut,
+  shouldOverwrite,
+  shouldPut,
+  trackedRoots,
+} from './cloud-lib.ts';
 
 const places = {
   repo: '/home/user/nikke_project',
@@ -74,6 +84,94 @@ describe('drive/cloud-lib', () => {
     settlePut(base, conflicts, 'private/owner.md', 'c', { md5: 'c' });
     expect(base).toEqual({ 'private/owner.md': 'c' });
     expect(conflicts).toEqual({});
+  });
+
+  it('Drive の版で上書きするのは、手元に無い・前に取った版のまま・衝突として送った版・Drive と同じとき', () => {
+    expect(shouldOverwrite(undefined, undefined, undefined, 'd')).toBe(true);
+    expect(shouldOverwrite('a', 'a', undefined, 'd')).toBe(true);
+    expect(shouldOverwrite('x', 'a', 'x', 'd')).toBe(true);
+    expect(shouldOverwrite('d', 'a', undefined, 'd')).toBe(true);
+    // まだ送っていない手元の変更（新しく作ったものを含む）は残す
+    expect(shouldOverwrite('x', 'a', undefined, 'd')).toBe(false);
+    expect(shouldOverwrite('x', undefined, undefined, 'd')).toBe(false);
+  });
+
+  it('取り直し: 取れたものは決まりで上書きか残すかを決め、取れていないものは前の基準を引き継ぐ', () => {
+    const p = planPull(
+      ['scratch/a.md', 'scratch/b.md', 'scratch/c.md', 'scratch/d.md', 'scratch/e.md'],
+      new Map([
+        ['scratch/a.md', 'A1'],
+        ['scratch/b.md', 'B1'],
+        ['scratch/c.md', 'C1'],
+      ]),
+      new Map([
+        ['scratch/a.md', 'A0'],
+        ['scratch/b.md', 'X'],
+        ['scratch/c.md', 'Y'],
+        ['scratch/d.md', 'D0'],
+      ]),
+      {
+        files: { 'scratch/a.md': 'A0', 'scratch/b.md': 'B0', 'scratch/c.md': 'C0', 'scratch/d.md': 'D0' },
+        conflicts: { 'scratch/c.md': 'Y' },
+      },
+    );
+    // a は前のまま → 上書き。b は手元の変更 → 残す（基準は前のまま）。c は衝突として送った版 → 上書きして衝突の記憶を消す
+    expect(p.write).toEqual(['scratch/a.md', 'scratch/c.md']);
+    expect(p.keep).toEqual(['scratch/b.md']);
+    // d・e はまだ取っていない（あとで取る）。d は前の基準を引き継ぎ、e（手元にも基準にも無い）は何もしない
+    expect(p.files).toEqual({ 'scratch/a.md': 'A1', 'scratch/b.md': 'B0', 'scratch/c.md': 'C1', 'scratch/d.md': 'D0' });
+    expect(p.conflicts).toEqual({});
+    expect(p.remove).toEqual([]);
+  });
+
+  it('取り直し: Drive で消えたものは、手元が前のままなら消し、変わっていれば残して戻す', () => {
+    const p = planPull(
+      [],
+      new Map(),
+      new Map([
+        ['private/gone.md', 'G0'],
+        ['private/edited.md', 'E1'],
+        ['private/new.md', 'N'],
+      ]),
+      { files: { 'private/gone.md': 'G0', 'private/edited.md': 'E0' }, conflicts: {} },
+    );
+    expect(p.remove).toEqual(['private/gone.md']);
+    // edited は前の基準のまま（応答の終わりに前の md5 を添えて送る）。new は基準が無いまま（新しいものとして送る）
+    expect(p.files).toEqual({ 'private/edited.md': 'E0' });
+  });
+
+  it('並べて回し、期限を過ぎたら新しく始めない（始めなかったもの・期限の後に失敗したものは rest）', async () => {
+    let t = 0;
+    let running = 0;
+    let peak = 0;
+    const started: number[] = [];
+    const r = await runUntil(
+      [1, 2, 3, 4, 5, 6],
+      2,
+      25,
+      async (i) => {
+        started.push(i);
+        running++;
+        peak = Math.max(peak, running);
+        await Promise.resolve();
+        t += 10;
+        running--;
+        if (i === 2) throw new Error('受け口が断った');
+        if (i === 4) throw new Error('時間切れ');
+      },
+      () => t,
+    );
+    expect(peak).toBe(2);
+    expect(started).toEqual([1, 2, 3, 4]);
+    expect(r.failed.map((f) => f.item)).toEqual([2]);
+    expect(r.rest).toEqual([4, 5, 6]);
+  });
+
+  it('並べる数より少なくても、空でも回る', async () => {
+    const seen: number[] = [];
+    expect(await runUntil([7], 8, Infinity, async (i) => void seen.push(i))).toEqual({ rest: [], failed: [] });
+    expect(seen).toEqual([7]);
+    expect(await runUntil([], 8, Infinity, async () => {})).toEqual({ rest: [], failed: [] });
   });
 
   it('クラウドの CLAUDE.md は、全体の指示・メモリの置き場所と書き方・索引を持つ', () => {

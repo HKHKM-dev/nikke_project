@@ -64,6 +64,99 @@ export function diffAgainstBase(
   return { put, trash };
 }
 
+/**
+ * Drive の版で手元のファイルを上書きしてよいか。手元に無い・前に取った（戻した）版のまま・衝突として送った版・Drive と同じ中身なら
+ * 上書きする。それ以外は Drive にまだ送っていない手元の変更なので残し、応答の終わりに送る（Drive 側も変わっていれば衝突になる）
+ */
+export function shouldOverwrite(
+  local: string | undefined,
+  base: string | undefined,
+  conflicted: string | undefined,
+  drive: string,
+): boolean {
+  return local === undefined || local === base || local === conflicted || local === drive;
+}
+
+/**
+ * 1 つの根（private・scratch・メモリ）を Drive から取り直すときの決まり。listed は Drive にあるパスの全部、fetched はそのうち中身を
+ * 取れたもの（パス → md5）、local は手元（パス → md5）。上書きするもの・手元の変更なので残すもの・Drive で消えたので手元からも消すものと、
+ * この根の新しい基準・衝突の記憶を返す。中身をまだ取っていないもの（大きすぎる・あとで取る）は、前の基準と衝突の記憶を引き継ぐ
+ */
+export function planPull(
+  listed: Iterable<string>,
+  fetched: ReadonlyMap<string, string>,
+  local: ReadonlyMap<string, string>,
+  old: { files: Readonly<Record<string, string>>; conflicts: Readonly<Record<string, string>> },
+): {
+  write: string[];
+  keep: string[];
+  remove: string[];
+  files: Record<string, string>;
+  conflicts: Record<string, string>;
+} {
+  const out = {
+    write: [] as string[],
+    keep: [] as string[],
+    remove: [] as string[],
+    files: {} as Record<string, string>,
+    conflicts: {} as Record<string, string>,
+  };
+  const carry = (path: string) => {
+    const base = old.files[path];
+    const conflicted = old.conflicts[path];
+    if (base !== undefined) out.files[path] = base;
+    if (conflicted !== undefined) out.conflicts[path] = conflicted;
+  };
+  const onDrive = new Set(listed);
+  for (const path of onDrive) {
+    const drive = fetched.get(path);
+    if (drive === undefined) carry(path);
+    else if (shouldOverwrite(local.get(path), old.files[path], old.conflicts[path], drive)) {
+      out.write.push(path);
+      out.files[path] = drive;
+    } else {
+      out.keep.push(path);
+      carry(path);
+    }
+  }
+  // Drive で消えたもの: 手元が前に取ったときのままなら手元からも消す。手元で変わっていれば残し、応答の終わりに戻す
+  for (const [path, md5] of local) {
+    if (onDrive.has(path)) continue;
+    if (md5 === old.files[path]) out.remove.push(path);
+    else carry(path);
+  }
+  return out;
+}
+
+/**
+ * items を n 本ずつ並べて fn に渡す。now() が until を過ぎたら新しく始めない。始めなかったものと、until を過ぎてから失敗したもの
+ * （時間切れで打ち切ったもの）は rest に、それより前に失敗したものは failed に入れて返す
+ */
+export async function runUntil<T>(
+  items: readonly T[],
+  n: number,
+  until: number,
+  fn: (item: T) => Promise<void>,
+  now: () => number = Date.now,
+): Promise<{ rest: T[]; failed: { item: T; error: unknown }[] }> {
+  const rest: T[] = [];
+  const failed: { item: T; error: unknown }[] = [];
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length && now() < until) {
+      const item = items[next++]!;
+      try {
+        await fn(item);
+      } catch (error) {
+        if (now() >= until) rest.push(item);
+        else failed.push({ item, error });
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: Math.max(0, Math.min(n, items.length)) }, worker));
+  return { rest: [...rest, ...items.slice(next)], failed };
+}
+
 /** クラウドの ~/.claude/CLAUDE.md の中身（全体の指示と、自動メモリの代わりの節。設計書 6.1 節） */
 export function cloudClaudeMd(globalMd: string, memoryIndex: string, memoryDir: string): string {
   return [
