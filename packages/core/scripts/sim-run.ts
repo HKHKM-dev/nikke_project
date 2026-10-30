@@ -83,6 +83,8 @@ const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observation
 /** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
 function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
+  // 2 段目の段 13 の PR 1: カウンタが上限に届いた時（counterFull:restraintChains）
+  if ('counterFull' in t) return `counterFull:${t.counterFull}`;
   // ニヒリスター編: 時間の周期のトリガー（every10s）
   if ('everySeconds' in t) return `every${t.everySeconds}s`;
   // ペルソナ編: 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）

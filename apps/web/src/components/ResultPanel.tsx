@@ -80,6 +80,12 @@ function dotTriggerText(e: NonNullable<TeamSlotResult['skillHits']['activations'
     const hitGauge = d.gaugeOnTick ? '。ヒットごとに射手の 1 ヒットぶんのゲージ' : '';
     return `${formatTrigger(e.trigger)}から ${d.durationSeconds} 秒間、${d.intervalSeconds} 秒ごとに自動攻撃。回数はヒットの数${hitGauge}`;
   }
+  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド。付けるたびに刻みを付け直す）
+  if (d.firstTick === 'halfAfterLatest') {
+    const interval =
+      d.tickIntervalFrames === undefined ? `${d.intervalSeconds} 秒` : `${d.tickIntervalFrames} ティック`;
+    return `${formatTrigger(e.trigger)}に付き（1 回で 1 スタック・最大 ${d.maxStacks}${d.hitOnApply ? '・付けた時に 1 スタックぶんの 1 ヒット' : ''}）、最後に付けた時から ${interval}ごとに戦闘の終わりまで。回数は tick の数${gaugeText}`;
+  }
   return `${formatTrigger(e.trigger)}に付き${stacks}、${d.intervalSeconds} 秒ごとに ${d.durationSeconds} 秒間。回数は tick の数${gaugeText}`;
 }
 

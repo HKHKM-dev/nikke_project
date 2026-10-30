@@ -11029,7 +11029,7 @@
     {
       "observation": "0490-03",
       "element": "アスカ burst.effects[0]",
-      "key": "b914d0a027b4e161",
+      "key": "40cdecc681c6bb17",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11045,7 +11045,151 @@
     {
       "observation": "0490-03",
       "element": "アスカ burst.effects[2]",
-      "key": "b914d0a027b4e161",
+      "key": "40cdecc681c6bb17",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-06",
+      "element": "アスカ burst.effects[0]",
+      "key": "bfc8286c60c9903b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-06",
+      "element": "アスカ burst.effects[2]",
+      "key": "bfc8286c60c9903b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "0bf090921acc2745",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-07",
+      "element": "アスカ burst.effects[2]",
+      "key": "0bf090921acc2745",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "99013eedfd8a9758",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-08",
+      "element": "アスカ burst.effects[2]",
+      "key": "99013eedfd8a9758",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "ad84b8453d80fa22",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-09",
+      "element": "アスカ burst.effects[2]",
+      "key": "ad84b8453d80fa22",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-10",
+      "element": "アスカ burst.effects[0]",
+      "key": "a9f85703af252aa4",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-10",
+      "element": "アスカ burst.effects[2]",
+      "key": "a9f85703af252aa4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0490-11",
+      "element": "アスカ burst.effects[0]",
+      "key": "65d3be073e28cb4a",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0490-11",
+      "element": "アスカ burst.effects[2]",
+      "key": "65d3be073e28cb4a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11077,7 +11221,7 @@
     {
       "observation": "0492-03",
       "element": "アスカ burst.effects[0]",
-      "key": "04eea4b00e312aed",
+      "key": "d9198976fa6e1933",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11093,7 +11237,151 @@
     {
       "observation": "0492-03",
       "element": "アスカ burst.effects[2]",
-      "key": "04eea4b00e312aed",
+      "key": "d9198976fa6e1933",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-06",
+      "element": "アスカ burst.effects[0]",
+      "key": "7860865c6d198eaf",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-06",
+      "element": "アスカ burst.effects[2]",
+      "key": "7860865c6d198eaf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-07",
+      "element": "アスカ burst.effects[0]",
+      "key": "8319f382d4fddb89",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-07",
+      "element": "アスカ burst.effects[2]",
+      "key": "8319f382d4fddb89",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "e59e573df91078ec",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-08",
+      "element": "アスカ burst.effects[2]",
+      "key": "e59e573df91078ec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "7706352a94162d31",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-09",
+      "element": "アスカ burst.effects[2]",
+      "key": "7706352a94162d31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-10",
+      "element": "アスカ burst.effects[0]",
+      "key": "05ca8b53318ca7f0",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-10",
+      "element": "アスカ burst.effects[2]",
+      "key": "05ca8b53318ca7f0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0492-11",
+      "element": "アスカ burst.effects[0]",
+      "key": "6a0390b746a8beb6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0492-11",
+      "element": "アスカ burst.effects[2]",
+      "key": "6a0390b746a8beb6",
       "effective": false,
       "minus": 0,
       "plus": 0

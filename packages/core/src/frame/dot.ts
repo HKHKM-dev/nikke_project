@@ -4,7 +4,7 @@
 import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { DotFirstTick } from '../skills/types.ts';
-import { gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
+import { FRAMES_PER_GAME_SECOND, gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 
 /**
  * クルミ編: dot を状態（state。名前の付いた状態の目録の id）ごとにまとめる（state の無い効果はそれぞれ 1 つ）。同じ state の効果は、
@@ -86,7 +86,11 @@ export function dotTicks(
   frames: number,
   firstTick: DotFirstTick = 'atApplication',
   maxStacks = 1,
+  /** 2 段目の段 13 の PR 1: halfAfterLatest の間隔の実測（ゲーム内のティック）。省略は intervalSeconds */
+  tickIntervalFrames?: number,
 ): DotTick[] {
+  if (firstTick === 'halfAfterLatest')
+    return latestDotTicks(fires, frames, maxStacks, tickIntervalFrames ?? intervalSeconds * FRAMES_PER_GAME_SECOND);
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, frames, firstTick);
   const out: DotTick[] = [];
   let groupFires: number[] = [];
@@ -125,6 +129,9 @@ export function dotActiveSpans(
   durationSeconds: number,
   firstTick: DotFirstTick = 'atApplication',
 ): { start: number; end: number }[] {
+  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド）は、最初に付いた時から終わりまで
+  if (firstTick === 'halfAfterLatest')
+    return fires.length === 0 ? [] : [{ start: fires[0]!, end: Number.POSITIVE_INFINITY }];
   const tracker = dotTickTracker(intervalSeconds, durationSeconds, Number.POSITIVE_INFINITY, firstTick);
   const spans: { start: number; end: number }[] = [];
   for (const f of fires) {
@@ -134,6 +141,30 @@ export function dotActiveSpans(
     span.end = Math.max(span.end, f + 1, ...r.ticks.map((t) => t + 1));
   }
   return spans;
+}
+
+/**
+ * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: firstTick halfAfterLatest の tick（チェーンバインド。維持は戦闘の終わりまで）。
+ * 付けるたびに刻みを付け直し、最後に付けたフレーム a から、k 回目（0 始まり）を a + round((k + 0.5) × 間隔) に出す（間隔はゲーム内の
+ * ティック。V-0546 で 59.25）。次の付与より前の tick だけが出る。スタックの数は、その tick までの付与の数（maxStacks で止める）。fires は昇順
+ */
+export function latestDotTicks(
+  fires: readonly number[],
+  frames: number,
+  maxStacks: number,
+  intervalFrames: number,
+): DotTick[] {
+  const out: DotTick[] = [];
+  fires.forEach((anchor, i) => {
+    const next = fires[i + 1] ?? frames;
+    const stacks = Math.min(i + 1, maxStacks);
+    for (let k = 0; ; k++) {
+      const frame = anchor + Math.round((k + 0.5) * intervalFrames);
+      if (frame >= next || frame >= frames) break;
+      out.push({ frame, stacks });
+    }
+  });
+  return out;
 }
 
 /** レイヴン編: 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */

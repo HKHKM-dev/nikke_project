@@ -73,7 +73,10 @@ export type ResolvedTrigger =
   | TimerTrigger
   | AppliedTrigger
   | FullStackTrigger
-  | WeaponChangeEndTrigger;
+  | WeaponChangeEndTrigger
+  // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレーム。damage・dot・counterChange だけ。1 パス目のカウンタの記録で決まる
+  // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
+  | CounterFullTrigger;
 
 /** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
 export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {

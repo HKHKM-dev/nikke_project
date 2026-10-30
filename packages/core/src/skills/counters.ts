@@ -29,6 +29,11 @@ export const COUNTERS = {
    * 届かない大きさにした）
    */
   stickyGrenade: { name: { ja: '付着している粘着榴弾', en: 'Attached sticky grenades' }, max: 99 },
+  /**
+   * キャプチャーチェーン（ミハラ：ボンディングチェーンの S1。2 段目の段 13 の PR 1。plan/design-skill-stage13.md 2.1 節）。戦闘開始時に 10、
+   * 上限に届いた次のフレームからチェーンの数だけ攻撃して 0 に戻す（V-0546）。上限 10（説明文の「最大10回」）
+   */
+  restraintChains: { name: { ja: 'キャプチャーチェーン', en: 'Restraint Chains' }, max: 10 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

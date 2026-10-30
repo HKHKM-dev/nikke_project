@@ -152,6 +152,11 @@ export const NAMED_STATES = {
   },
   /** 同: 弱点露出（マリアン：クイーンの S1。敵に付く。中身は受けるダメージ▲） */
   openWounds: { name: { ja: '弱点露出', en: 'Open Wounds' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: チェーンバインド（ミハラ：ボンディングチェーンの S1 の持続ダメージ。敵に付く。
+   * キャプチャーチェーンの攻撃 1 回ごとに 1 スタック・20 スタック・持続・解除不可。V-0546）
+   */
+  ensnaringChains: { name: { ja: 'チェーンバインド', en: 'Ensnaring Chains' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

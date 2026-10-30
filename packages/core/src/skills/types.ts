@@ -623,7 +623,9 @@ export type EffectTrigger =
   | TimerTrigger
   | AppliedTrigger
   | FullStackTrigger
-  | WeaponChangeEndTrigger;
+  | WeaponChangeEndTrigger
+  // 2 段目の段 13 の PR 1: { counterFull }（damage・dot・counterChange だけが受ける。parseCounterFullTrigger）
+  | CounterFullTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
@@ -903,6 +905,10 @@ export const SKILL_DAMAGE_TYPES = ['skill', 'distributed', 'additional'] as cons
  */
 export type DamageEffect = {
   kind: 'damage';
+  /**
+   * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } は、自分のそのカウンタが上限に届いた次のフレーム
+   * （counterChange の { counterFull } と同じ）。perCount の { counter } と組む（ミハラ：ボンディングチェーンのキャプチャーチェーンの攻撃）
+   */
   trigger: EffectTrigger;
   /** description_value_NN の NN（1 始まり）。値は % 表記 */
   ref: number;
@@ -979,6 +985,12 @@ export type DamageEffect = {
    * レッドフードの粘着榴弾の起爆は 0.2 秒ごと。C-0726）。perCount の { counter } のときだけ書ける
    */
   perCountIntervalSeconds?: number;
+  /**
+   * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: 同じく 1 つずつ、決まったフレーム数（録画で読んだ即値）ごとに出す。k 個目は
+   * 発火の delayFrames + k × この値のフレーム後（ミハラ：ボンディングチェーンのチェーンの攻撃は 15。V-0546）。perCountIntervalSeconds と
+   * どちらか 1 つ
+   */
+  perCountIntervalFrames?: number;
   /**
    * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: ヒットがコアに当たりうるか。当たる割合は的の表の coreHitRate.autoAttacks の
    * `<resourceId>:<スロット>` の行（無ければ 0）で、当たったヒットは倍率グループに (コア倍率 − 1) を足す（autoAttack の core と同じ。
@@ -1256,25 +1268,52 @@ export type CycleEveryEffect = {
  * 倍率ダメージを 1 tick ずつ与える（1 tick の式は damage と同じ。plan/design-nihilister.md 2.1 節）。対象は敵（1 体の前提）。
  * tick の時刻は firstTick で決まる。持続中の再発火は、tick の刻みを変えずに終わりを延ばす（C-0129。frame/plan.ts の dotTickFrames）
  */
-export type DotFirstTick = 'atApplication' | 'afterInterval';
-export const DOT_FIRST_TICKS = ['atApplication', 'afterInterval'] as const satisfies readonly DotFirstTick[];
+export type DotFirstTick = 'atApplication' | 'afterInterval' | 'halfAfterLatest';
+export const DOT_FIRST_TICKS = [
+  'atApplication',
+  'afterInterval',
+  'halfAfterLatest',
+] as const satisfies readonly DotFirstTick[];
 
 export type DotEffect = {
   kind: 'dot';
+  /** 2 段目の段 13 の PR 1: { counterFull } も（damage と同じ。perCount の { counter } と組む） */
   trigger: EffectTrigger;
   /** 1 tick の倍率（%）の description_value_NN */
   ref: number;
   /** tick の間隔（秒の即値。説明文の「1秒間隔」は直書き）。維持時間以下 */
   intervalSeconds: number;
-  /** 維持秒数の description_value_NN。durationSeconds とちょうど片方 */
+  /** 維持秒数の description_value_NN。durationSeconds・durationUntil とちょうど 1 つ */
   durationRef?: number;
   durationSeconds?: number;
+  /** 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: 「持続」（battleEnd だけ。firstTick: halfAfterLatest のときだけ） */
+  durationUntil?: 'battleEnd';
   /**
    * クルミ編: tick の時刻の形（plan/design-kurumi.md 2.1 節）。省略は atApplication。
    * atApplication = 付いた瞬間と、1.5 秒後から間隔ごと（ニヒリスターの火傷。C-0101）、
-   * afterInterval = 付いた 1 間隔後から間隔ごと（クルミのハッキング。C-0130）
+   * afterInterval = 付いた 1 間隔後から間隔ごと（クルミのハッキング。C-0130）。
+   * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: halfAfterLatest = 付けるたびに刻みを付け直し、最後に付けた 0.5 間隔後から
+   * 間隔ごと（ミハラ：ボンディングチェーンのチェーンバインド。V-0546）。k 回目（0 始まり）は最後の付与の round((k + 0.5) × tickIntervalFrames)
+   * フレーム後（tickIntervalFrames が無ければ (k + 0.5) × 間隔の秒に達した最初のフレーム）。durationUntil: battleEnd・maxStacksRef と組む
    */
   firstTick?: DotFirstTick;
+  /**
+   * 同: tick の間隔の実測（ゲーム内のティック。端数を持ち越す）。チェーンバインドの 59.25 は、説明文の「1秒間隔」（58.82 ティック）より長い
+   * （V-0326・V-0546）。firstTick: halfAfterLatest のときだけ書ける
+   */
+  tickIntervalFrames?: number;
+  /**
+   * 同: 付けるたびに、付けた 1 スタックぶんの 1 ヒットを付けたフレームに出す（tick の刻みは変えない。C-0411）。firstTick: halfAfterLatest の
+   * ときだけ書ける
+   */
+  hitOnApply?: true;
+  /**
+   * 同 2.2・2.3 節: { counter } の数だけ、発火のフレームから perCountIntervalFrames ごとに 1 スタックずつ付ける（damage の perCount と同じ
+   * 見え方。トリガーは { counterFull } だけ）。delayFrames は最初の付与の発火からの遅れ
+   */
+  perCount?: { counter: CounterId };
+  perCountIntervalFrames?: number;
+  delayFrames?: number;
   /**
    * クルミ編: 状態異常の名前（「ハッキング」など）。同じキャラの同じ state の dot は 1 つの持続ダメージとして扱い、
    * 発火をまとめて tick を出す（どれで付いても付き直しと同じ。C-0136）。間隔・維持・firstTick・倍率は同じであること。
@@ -3180,10 +3219,15 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       // ゲージのヒットのフレームは測っていない（ゲージは 1 パス目で射撃から数える）
       if (effect.gaugeHits !== undefined) fail(`${path}.delayFrames`, 'delayFrames cannot be used with gaugeHits');
     } else {
-      if (trigger !== 'burstUse' && !isAppliedTrigger(trigger) && !isTimerTrigger(trigger)) {
+      if (
+        trigger !== 'burstUse' &&
+        !isAppliedTrigger(trigger) &&
+        !isTimerTrigger(trigger) &&
+        !isCounterFullTrigger(trigger)
+      ) {
         fail(
           `${path}.delayFrames`,
-          'delayFrames needs the trigger "burstUse", { applied }, { everySeconds } or a shot count trigger',
+          'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull } or a shot count trigger',
         );
       }
       effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
@@ -3202,8 +3246,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     // 段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: フルバーストの始まり（ラピ：レッドフードの粘着榴弾の起爆）も
     const per = v.perCount;
     if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
-    if (trigger !== 'burstUse' && trigger !== 'fullBurstStart')
-      fail(`${path}.perCount`, 'perCount needs the trigger "burstUse" or "fullBurstStart"');
+    // 段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: カウンタが上限に届いた時（ミハラ：ボンディングチェーンのチェーンの数だけの攻撃）も
+    if (trigger !== 'burstUse' && trigger !== 'fullBurstStart' && !isCounterFullTrigger(trigger))
+      fail(`${path}.perCount`, 'perCount needs the trigger "burstUse", "fullBurstStart" or { counterFull }');
     for (const key of Object.keys(per))
       if (key !== 'state' && key !== 'counter') fail(`${path}.perCount.${key}`, 'unknown field');
     if ((per.state === undefined) === (per.counter === undefined))
@@ -3257,6 +3302,14 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       fail(`${path}.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
     effect.perCountIntervalSeconds = seconds;
   }
+  if (v.perCountIntervalFrames !== undefined) {
+    const key = 'perCountIntervalFrames';
+    if (effect.perCount === undefined || !('counter' in effect.perCount))
+      fail(`${path}.${key}`, `${key} needs perCount { counter }`);
+    if (effect.perCountIntervalSeconds !== undefined || effect.perBurstHit !== undefined)
+      fail(`${path}.${key}`, `${key} cannot be used with perCountIntervalSeconds or perBurstHit`);
+    effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.${key}`);
+  }
   // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2・2.3 節）: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
   for (const key of ['core', 'distance', 'projectileExplosion', 'projectileStick'] as const) {
     if (v[key] === undefined) continue;
@@ -3269,9 +3322,19 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   return effect;
 }
 
-/** ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ */
+/**
+ * ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ。
+ * 2 段目の段 13 の PR 1: { counterFull: カウンタ } も（dot も同じ）
+ */
 function parseDamageTrigger(v: Json, path: string): EffectTrigger {
-  return parseAppliedTrigger(v, path) ?? parseTrigger(v, path, true, true);
+  return parseCounterFullTrigger(v, path) ?? parseAppliedTrigger(v, path) ?? parseTrigger(v, path, true, true);
+}
+
+/** 2 段目の段 11 の PR 2・段 13 の PR 1: { counterFull: カウンタ }。それ以外の形なら undefined */
+function parseCounterFullTrigger(v: Json, path: string): CounterFullTrigger | undefined {
+  if (!isRecord(v) || v.counterFull === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'counterFull') fail(`${path}.${key}`, 'unknown field');
+  return { counterFull: oneOf(COUNTER_IDS, v.counterFull, `${path}.counterFull`) };
 }
 
 /** クルミ S2 編: 回数トリガーに数える窓（during）か、発火の窓（firesDuring。V-0443）があるか */
@@ -3304,6 +3367,12 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'gaugeOnApply',
         'gaugeOnApplyDelayFrames',
         'gaugeOnTick',
+        'durationUntil',
+        'tickIntervalFrames',
+        'hitOnApply',
+        'perCount',
+        'perCountIntervalFrames',
+        'delayFrames',
         'assumes',
         'claims',
       ].includes(key)
@@ -3315,12 +3384,20 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
     fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
   }
+  const counterFull = parseCounterFullTrigger(v.trigger, `${path}.trigger`);
+  // 2 段目の段 13 の PR 1: 「持続」は durationUntil: battleEnd
+  const untilBattleEnd = v.durationUntil !== undefined;
+  if (untilBattleEnd) {
+    if (v.durationUntil !== 'battleEnd') fail(`${path}.durationUntil`, 'expected "battleEnd"');
+    if (v.durationRef !== undefined || v.durationSeconds !== undefined)
+      fail(path, 'durationUntil cannot be combined with another duration');
+  }
   const effect: DotEffect = {
     kind: 'dot',
-    trigger: parseTrigger(v.trigger, `${path}.trigger`, true),
+    trigger: counterFull ?? parseTrigger(v.trigger, `${path}.trigger`, true),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
-    ...parseDuration(v, path),
+    ...(untilBattleEnd ? { durationUntil: 'battleEnd' as const } : parseDuration(v, path)),
   };
   if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
     fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
@@ -3335,7 +3412,38 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   if (v.maxStacksRef !== undefined) {
     effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
-    if (effect.firstTick !== 'afterInterval') fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval');
+    if (effect.firstTick !== 'afterInterval' && effect.firstTick !== 'halfAfterLatest')
+      fail(`${path}.maxStacksRef`, 'needs firstTick afterInterval or halfAfterLatest');
+  }
+  // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: チェーンバインドの形（付けるたびに刻みを付け直す持続）
+  const latest = effect.firstTick === 'halfAfterLatest';
+  if (latest !== untilBattleEnd) fail(`${path}.firstTick`, 'halfAfterLatest goes with durationUntil "battleEnd"');
+  if (v.tickIntervalFrames !== undefined) {
+    const n = v.tickIntervalFrames;
+    if (!latest) fail(`${path}.tickIntervalFrames`, 'needs firstTick halfAfterLatest');
+    if (typeof n !== 'number' || !Number.isFinite(n) || n <= 0)
+      fail(`${path}.tickIntervalFrames`, `expected a positive number, got ${JSON.stringify(n)}`);
+    effect.tickIntervalFrames = n;
+  }
+  if (v.hitOnApply !== undefined) {
+    if (v.hitOnApply !== true) fail(`${path}.hitOnApply`, 'expected true');
+    if (!latest) fail(`${path}.hitOnApply`, 'needs firstTick halfAfterLatest');
+    effect.hitOnApply = true;
+  }
+  if (v.perCount !== undefined) {
+    const per = v.perCount;
+    if (counterFull === undefined) fail(`${path}.perCount`, 'perCount needs the trigger { counterFull }');
+    if (!isRecord(per) || per.counter === undefined || Object.keys(per).length !== 1)
+      fail(`${path}.perCount`, 'expected { counter }');
+    effect.perCount = { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
+    if (v.perCountIntervalFrames === undefined) fail(`${path}.perCount`, 'perCount needs perCountIntervalFrames');
+    effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.perCountIntervalFrames`);
+  } else if (v.perCountIntervalFrames !== undefined) fail(`${path}.perCountIntervalFrames`, 'needs perCount');
+  if (counterFull !== undefined && effect.perCount === undefined)
+    fail(`${path}.trigger`, '{ counterFull } needs perCount');
+  if (v.delayFrames !== undefined) {
+    if (counterFull === undefined) fail(`${path}.delayFrames`, 'delayFrames needs the trigger { counterFull }');
+    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   }
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
@@ -3820,9 +3928,7 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
     for (const key of Object.keys(v.trigger)) if (key !== 'ended') fail(`${path}.trigger.${key}`, 'unknown field');
     trigger = { ended: parseNamedStateId(v.trigger.ended, `${path}.trigger.ended`, 'ally') };
   } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
-    for (const key of Object.keys(v.trigger))
-      if (key !== 'counterFull') fail(`${path}.trigger.${key}`, 'unknown field');
-    trigger = { counterFull: oneOf(COUNTER_IDS, v.trigger.counterFull, `${path}.trigger.counterFull`) };
+    trigger = parseCounterFullTrigger(v.trigger, `${path}.trigger`)!;
   } else {
     trigger = parseTrigger(v.trigger, `${path}.trigger`);
   }

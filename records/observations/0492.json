@@ -74,5 +74,272 @@
       "tool": "目視",
       "note": "戦闘履歴のパネルを目で読んだ（盾の欄が被ダメージだけかは確かめていない。V-0438「条件」）"
     }
+  },
+  {
+    "id": "0492-05",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "timing",
+    "use": "record",
+    "value": 842,
+    "unit": "f",
+    "description": "戦闘開始（残り時間 02:59 が出たフレーム）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes",
+      "note": "最初の 250f 以上の間隔（+319f）の次の変わり目（C-0078）"
+    }
+  },
+  {
+    "id": "0492-06",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "timing",
+    "use": "compare",
+    "value": [5, 20, 35, 50, 65, 80, 95, 110, 125, 140],
+    "unit": "f",
+    "description": "S1 のキャプチャーチェーンの攻撃（60,369。会心は 90,554）が出た動画のフレーム（戦闘開始から。10 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで 1 ヒットの格子（ミハラ：ボンディングチェーンの MG・鈴原サクラの SMG の胴体・コア・会心・距離ボーナス × 受けるダメージ▲の有無）と、S1 の値（攻撃 60,369・1 スタック 30,245・10 スタック 302,450。会心は 1.5 倍）の和に当てた（V-0546「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "count": 10
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0492-07",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "timing",
+    "use": "compare",
+    "value": [4, 19, 34, 49, 63, 78, 93, 109, 124, 138],
+    "unit": "f",
+    "description": "チェーンバインドの 1 スタックぶんの 1 ヒット（30,245。会心は 45,367）が単独で出た動画のフレーム（戦闘開始から。10 回。どれも攻撃の 1〜2f 前）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで 1 ヒットの格子（ミハラ：ボンディングチェーンの MG・鈴原サクラの SMG の胴体・コア・会心・距離ボーナス × 受けるダメージ▲の有無）と、S1 の値（攻撃 60,369・1 スタック 30,245・10 スタック 302,450。会心は 1.5 倍）の和に当てた（V-0546「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitVideoFrames",
+      "args": {
+        "slot": 2,
+        "kind": "apply",
+        "count": 10
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0492-08",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "timing",
+    "use": "compare",
+    "value": [
+      167, 226, 286, 345, 405, 463, 524, 582, 641, 700, 760, 819, 879, 939, 999, 1058, 1117, 1176, 1236, 1295, 1354,
+      1413, 1473, 1532, 1591, 1650, 1710, 1769, 1828, 1887, 1947, 2006, 2065, 2124, 2184, 2243, 2302, 2362, 2421, 2480,
+      2539, 2599, 2658, 2717, 2776, 2836, 2895, 2954, 3013, 3073, 3132, 3192, 3251, 3311, 3370, 3429, 3488, 3548, 3607,
+      3666, 3725, 3785, 3844, 3903, 3963, 4022, 4081, 4140, 4200, 4259, 4318, 4377, 4437, 4496, 4555, 4614, 4674, 4733,
+      4792, 4851, 4911, 4970, 5029, 5088, 5148, 5207, 5266, 5325, 5385, 5444, 5503, 5564, 5623, 5682, 5741, 5800, 5860,
+      5919, 5978, 6037, 6097, 6156, 6215, 6274, 6334, 6393, 6452, 6511, 6571, 6630, 6689, 6749, 6808, 6867, 6926, 6986,
+      7045, 7104, 7163, 7223, 7282, 7341, 7400, 7460, 7519, 7578, 7637, 7697, 7756, 7815, 7874, 7935, 7995, 8054, 8113,
+      8172, 8232, 8291, 8350, 8409, 8469, 8528, 8587, 8646, 8706, 8765, 8824, 8883, 8943, 9002, 9061, 9121, 9180, 9239,
+      9298, 9358, 9417, 9476, 9535, 9595, 9654, 9713, 9772, 9832, 9891, 9950, 10009, 10069, 10128, 10187, 10246, 10307,
+      10366, 10425, 10484, 10544
+    ],
+    "unit": "f",
+    "description": "チェーンバインド 10 スタックぶんの tick（302,450。会心は 453,675。受けるダメージ▲の窓は × 1.1718）が出た動画のフレーム（戦闘開始から。176 回。録画の終わりまで。スタックは 10 のまま）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで 1 ヒットの格子（ミハラ：ボンディングチェーンの MG・鈴原サクラの SMG の胴体・コア・会心・距離ボーナス × 受けるダメージ▲の有無）と、S1 の値（攻撃 60,369・1 スタック 30,245・10 スタック 302,450。会心は 1.5 倍）の和に当てた（V-0546「読み方」）。tick の値はどれも 10 スタックで、抜けた tick は無い。モデルとの差は戦闘の終わりに向けて 0 から +3f まで増える（ゲーム内のティックに直した列はモデルの形と ±1.5 で合う。下の間隔の観測値）ので、動画のフレームの差は、モデルに無い小さな止まりの分とみて、許容を 3 にした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitVideoFrames",
+      "args": {
+        "slot": 2,
+        "kind": "tick",
+        "count": 176
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0492-09",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "hit",
+    "use": "compare",
+    "value": 60369,
+    "unit": "ダメージ",
+    "description": "S1 のキャプチャーチェーンの 1 回目の攻撃（f847。会心なし）。(120,694 − 100) × 50.06%",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0492-10",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "hit",
+    "use": "compare",
+    "value": 45367,
+    "unit": "ダメージ",
+    "description": "チェーンバインドの 1 回目の付与の、1 スタックぶんの 1 ヒット（f846。会心）。(120,694 − 100) × 25.08% × 1.5",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0492-11",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "hit",
+    "use": "compare",
+    "value": 302450,
+    "unit": "ダメージ",
+    "description": "チェーンバインドの 10 スタックの最初の tick（f1009。会心なし）。1 スタックの 10 倍",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 319,243 から、同じフレームのミハラ：ボンディングチェーンの MG の 1 ヒット（コア・会心 16,793）を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 10,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0492-12",
+    "recording": "0492",
+    "source": "V-0546",
+    "readAt": "2026-10-30",
+    "kind": "interval",
+    "use": "record",
+    "value": 59.25,
+    "unit": "f",
+    "description": "チェーンバインド 10 スタックの tick（175 回）の間隔の平均を、ゲーム内のティック（止まりを除く）で数えたもの",
+    "method": {
+      "tool": "timer.ts --mode ticks（戦闘開始 f842）",
+      "note": "最後の付与（ゲーム内の 137.5）から k 回目（0 始まり）の tick を round((k + 0.5) × 59.25) と比べた差は、平均 +0.22・最小 -1.1・最大 +1.4（読みの幅は 1 つあたり ± 0.7）。間隔を 59.2 か 59.3 にすると、差の平均が ±4 を超える。端数を持ち越す 1 秒（58.82）なら終わりで +74、1 回ごとに数え直す 59 なら +43 ずれる"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
   }
 ]

@@ -112,6 +112,8 @@ export const BUFF_TRIGGER_LABEL: Record<BuffTrigger, string> = {
 /** Stage 8: 「通常攻撃 10 回ごと」「バースト使用 2 回目以降」。文字列のトリガーは BUFF_TRIGGER_LABEL */
 export function formatTrigger(trigger: ResolvedTrigger): string {
   if (typeof trigger === 'string') return BUFF_TRIGGER_LABEL[trigger];
+  // 2 段目の段 13 の PR 1: 「キャプチャーチェーンが最大になった時」（ミハラ：ボンディングチェーンの攻撃・チェーンバインド）
+  if ('counterFull' in trigger) return `${counterName(trigger.counterFull).ja}が最大になった時`;
   // ニヒリスター編: 時間の周期のトリガー（CT ごとに発動するアクティブ型のスキル）
   if ('everySeconds' in trigger) return `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`;
   // ペルソナ編: 「追撃が適用された時」

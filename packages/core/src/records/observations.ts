@@ -1411,11 +1411,19 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
+  // 2 段目の段 13 の PR 1（V-0546）: 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
+  // 動画のフレーム（戦闘開始から）の頭の count 個
+  dotHitVideoFrames: { args: ['slot', 'kind', 'count'], sim: dotHitVideoFrames },
   dotStackTickDamage: { args: ['slot', 'frame', 'stacks', 'crit'], sim: dotStackTickDamage },
   skillHitDamage: { args: ['slot', 'n', 'crit'], sim: skillHitDamage },
   skillHitVideoFrame: {
     args: ['slot', 'skill', 'n'],
     sim: (r, c) => skillHitVideoFrames(r, c)[Number(c.args.n)] ?? NaN,
+  },
+  // 2 段目の段 13 の PR 1（V-0546）: skillHitVideoFrame の頭の count 個の列（キャプチャーチェーンの 10 回の攻撃）
+  skillHitVideoFrameList: {
+    args: ['slot', 'skill', 'count'],
+    sim: (r, c) => skillHitVideoFrames(r, c).slice(0, Number(c.args.count)),
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
@@ -1878,6 +1886,19 @@ function burstEffectDelay(result: SimResult, ctx: MetricContext): number {
   const activation = mine[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
   return effectFrameOf(activation) - hexagonFrameOf(activation);
+}
+
+/** 2 段目の段 13 の PR 1（V-0546）: dotHitVideoFrames。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
+function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
+  const kind = ctx.args.kind;
+  if (kind !== 'apply' && kind !== 'tick') throw new Error(`kind は apply か tick（${String(kind)}）`);
+  return result.skillHits
+    .filter(
+      (h) =>
+        h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && (h.onApply === true) === (kind === 'apply'),
+    )
+    .slice(0, Number(ctx.args.count))
+    .map((h) => videoFrameOf(result.schedule, h.frame));
 }
 
 /**

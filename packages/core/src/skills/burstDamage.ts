@@ -101,6 +101,7 @@ export type ResolvedBurstDamage = ResolvedSkillDamage;
 
 /** Stage 8: トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
 export type ResolvedDamageEffect = ResolvedSkillDamage & {
+  /** 2 段目の段 13 の PR 1: { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders.ts の counterFullFrames） */
   trigger: ResolvedTrigger;
   /** 同じスロットの何番目の効果か（表示・識別用） */
   effectIndex: number;
@@ -125,6 +126,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   /** 2 段目の段 12 の PR 2: perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
   perCountIntervalSeconds?: number;
   /**
+   * 2 段目の段 13 の PR 1: perCount の数だけ、delayFrames 後からこのフレーム数ごとに出す（damage）か付ける（dot）（frame/plan.ts の
+   * planSkillHits）
+   */
+  perCountIntervalFrames?: number;
+  /**
    * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
    */
@@ -143,6 +149,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     gaugeOnTick?: true;
     /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
     autoAttack?: true;
+    /** 2 段目の段 13 の PR 1: firstTick halfAfterLatest の tick の間隔（ゲーム内のティック。実測）と、付けた時の 1 スタックのヒット */
+    tickIntervalFrames?: number;
+    hitOnApply?: true;
+    /** 同: { counterFull } の perCount の最初の付与の、発火からの遅れ（フレーム） */
+    applyDelayFrames?: number;
   };
 };
 
@@ -238,6 +249,7 @@ export function resolveDamageEffects(
         r.coreHit = true;
       }
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
+      if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
       // 2 段目の段 12 の PR 2: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
       if (effect.core === true) r.core = true;
       if (effect.distance === true) r.distance = true;
@@ -380,7 +392,11 @@ export function resolveDotEffects(
       if (effect.kind !== 'dot' && effect.kind !== 'autoAttack') return;
       const auto = effect.kind === 'autoAttack';
       const gaugeOnTick = auto ? effect.gaugePerHit === true : effect.gaugeOnTick === true;
-      const durationSeconds = effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]);
+      // 2 段目の段 13 の PR 1: 「持続」（durationUntil: battleEnd）は終わりが無い
+      const durationSeconds =
+        !auto && effect.durationUntil === 'battleEnd'
+          ? Number.POSITIVE_INFINITY
+          : (effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]));
       if (durationSeconds < effect.intervalSeconds) {
         throw new RangeError(
           `skill ${skill.id}: dot interval ${effect.intervalSeconds} s exceeds the duration ${durationSeconds} s`,
@@ -419,8 +435,17 @@ export function resolveDotEffects(
             : {}),
           ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
           ...(auto ? { autoAttack: true as const } : {}),
+          ...(!auto && effect.tickIntervalFrames !== undefined
+            ? { tickIntervalFrames: effect.tickIntervalFrames }
+            : {}),
+          ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
+          ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
         },
       };
+      if (!auto && effect.perCount !== undefined) {
+        r.perCount = effect.perCount;
+        r.perCountIntervalFrames = effect.perCountIntervalFrames!;
+      }
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
       // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）
       if (!auto) r.sustained = true;

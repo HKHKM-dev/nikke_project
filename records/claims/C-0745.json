@@ -1,0 +1,41 @@
+{
+  "id": "C-0745",
+  "text": "ミハラ：ボンディングチェーンの S1 のチェーンバインドの tick は、付けるたびに刻みが付け直され、最後に付けた時から k 回目（0 始まり）がゲーム内のティックで round((k + 0.5) × 59.25) 後に出る（間隔 59.25 ティックは、説明文の「1秒間隔」の 58.82 ティックより長い）。付けるたびに、付けた 1 スタックぶんの 1 ヒットが、キャプチャーチェーンの攻撃の 1〜2f 前に出る。キャプチャーチェーンの 10 回の攻撃は、戦闘開始の 5f 後から 15f おき（動画のフレーム。端数を持ち越さない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0119-08`〜`0119-10`（単騎・バーストなしの録画 0119 で、攻撃・付与・10 スタックの tick の動画のフレーム。V-0326 の `0119-07`（tick の間隔の平均 59.25 ティック）とともに、間隔の値・付け直しの起点・攻撃の 15f おきを決めた）、`0490-06`〜`0490-08`・`0490-12`・`0492-06`〜`0492-08`・`0492-12`（鈴原サクラ・アスカ（撃たない）と組んだ 180 秒の 2 本で再現。攻撃と付与のフレームはモデルと ±1f、176 回の tick は 0f から終わりの +3f まで（動画のフレーム）。ゲーム内のティックに直した tick は round((k + 0.5) × 59.25) と平均 +0.1〜+0.2・最大 ±1.5 で合い、間隔を 59.2・59.3 にすると平均が ±4 を超える）。最初の 10 スタックの tick は、3 本とも最後の付与の 29 ティック後で、それまでの付与の間（15f おき）には 1 スタックぶんの 1 ヒットしか出ない（付けるたびに刻みが付け直される）。V-0546",
+  "model": "`data/skills/162.json` の skill1 の effects[1]（damage・{ counterFull: restraintChains }・perCount { counter }・perCountIntervalFrames 15・delayFrames 4）と effects[3]（dot・同じきっかけ・perCountIntervalFrames 15・delayFrames 2・firstTick halfAfterLatest・tickIntervalFrames 59.25・hitOnApply・durationUntil battleEnd・maxStacksRef 4）。刻みは `frame/dot.ts` の latestDotTicks、付けるフレームは `frame/plan.ts` の planSkillHits（dotApplicationFrames）。59.25 は 3 本の録画で読んだ値（説明文の 1 秒ではない。plan/design-skill-stage13.md 6 節の論点 10。2026-10-30 にオーナーが決めた）",
+  "replaces": [],
+  "updated": "2026-10-30",
+  "subject": {
+    "places": ["data/skills/162.json の skill1 の effects[1]", "data/skills/162.json の skill1 の effects[3]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0119",
+      "role": "値を合わせた"
+    }
+  ],
+  "gradeReason": "録画 0119 で値と起点を決め、0490・0492 の 176 回ずつの tick と 10 回ずつの攻撃・付与で再現した",
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "ミハラ：ボンディングチェーン skill2.notes[0]",
+      "reason": "フルバーストの持続中の通常攻撃 40 回命中ごとのスタック量▲は、この 3 本の録画ではフルバーストにならない（0119 はバーストなし、0490・0492 はバーストが I の後で止まる。`0490-01`・`0492-01`）ので起きない",
+      "decided": "2026-10-30"
+    },
+    {
+      "observations": "*",
+      "element": "ミハラ：ボンディングチェーン skill2.notes[2]",
+      "reason": "バースト 3 段階突入時の持続ダメージ▲は、この 3 本の録画ではバーストが III に届かないので起きない",
+      "decided": "2026-10-30"
+    },
+    {
+      "observations": "*",
+      "element": "ミハラ：ボンディングチェーン burst.notes[0]",
+      "reason": "プリング・チェーンは、この 3 本の録画ではミハラ：ボンディングチェーンがバーストを使わない（III に届かない）ので起きない",
+      "decided": "2026-10-30"
+    }
+  ]
+}
