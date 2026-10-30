@@ -37,7 +37,7 @@ const LEVEL_CLASS: Record<Item['level'], string> = {
   assumed: 'approx',
 };
 
-/** 編成によらずモデル全体で扱わないもの・確かめていないもの（README の「未対応」と同じ） */
+/** 編成によらずモデル全体で扱わないもの・確かめていないもの（README の「精度と未対応」はここを指す） */
 const MODEL_WIDE: Item[] = [
   {
     level: 'assumed',

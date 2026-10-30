@@ -195,3 +195,5 @@
 ## 経過
 
 → [design-records-automation-log.md](design-records-automation-log.md) の「経過」。
+
+- 2026-10-28: 課題「検証の自動化」を閉じた（オーナーの判断。残りの backlog の行（4-1）は閉じていた）。

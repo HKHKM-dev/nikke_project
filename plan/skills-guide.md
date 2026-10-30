@@ -2,7 +2,7 @@
 
 - キャラ 1 体のスキルを `packages/core/data/skills/{resourceId}.json` に定義し、撮影で確かめるまでの手順。方針は 0 節。
 - DSL の語彙と検証の規則は `packages/core/src/skills/types.ts`、原則は [design-stage4.md](design-stage4.md) 2 節。
-- **検証の共通の流れ（起案・撮影計画・撮る・読む・比べる・結論・閉じる）と、確定にできる条件は [verification-guide.md](verification-guide.md)**。ここに残すのは、スキル定義に固有の手順（0・1.1・1.2・1.4・1.5・3・4 節）。抜けた番号の節（1.3・1.6〜1.9・2 節）は verification-guide.md にある（見出しは、閉じた記録が節の番号で指しているので残す）。
+- **検証の共通の流れ（起案・撮影計画・撮る・読む・比べる・結論・閉じる・PR）と、確定にできる条件は [verification-guide.md](verification-guide.md)**。ここには、スキル定義に固有の手順だけを書く。
 
 ## 0. 方針
 
@@ -13,7 +13,7 @@
 - **完了条件**
   - そのキャラの撮影と、定義の予測が合う。
   - そのキャラを含む実戦的な編成のテストで、そのキャラの効果（窓・発動・付与）が意図どおりに出る。
-- **既存の定義（Stage 11 までの 15 体）** には、凍結の記録（`plan/verification.md`）から結論を写さない。結論を作るのは、最小構成の録画の読み直し（2 節）か、新しい撮影のときだけ（2026-10-05 の決定。[design-skill-claims-5-2.md](design-skill-claims-5-2.md) 3 節）。機構の結論（stat の効き方）は、根拠の録画にそのキャラの効果が出ていなければ結び付けない。
+- **Stage 11 までに定義した 15 体**には、凍結の記録（`plan/verification.md`）から結論を写さない。結論を作るのは、最小構成の録画の読み直し（2 節）か、新しい撮影のときだけ（[design-skill-claims-5-2.md](design-skill-claims-5-2.md) 3 節）。機構の結論（stat の効き方）は、根拠の録画にそのキャラの効果が出ていなければ結び付けない。
 
 ## 1. 手順
 
@@ -28,27 +28,21 @@
   - **語彙にある**: そのまま定義に書ける
   - **語彙を足す**: 足す語彙の案を書く
   - **ダメージに関係しない**（`noDamage`）: どの編成・敵でも与ダメージを変えない（敵の攻撃力▼・不屈・無敵など）。挑発は、付けたときにゲージを溜めることがある（C-0422・C-0480・C-0506。自分にヘイト：敵全体を挑発のティアの S2 は溜めない C-0505。キャラごとに確かめる）（[design-skill-claims-5-2.md](design-skill-claims-5-2.md) 7.2 節）
-  - **前提の外**（`outOfScope`）: モデルの前提（静止単体ボス・被弾なし・味方が倒れない・パーツ／阻止部位／バリアなし。[requirements.md](requirements.md) 5.2 節）では起きない・効かない（被弾トリガー・パーツ・阻止部位・敵のバリアなど）
+  - **前提の外**（`outOfScope`）: モデルの前提（静止単体ボス・被弾なし・味方が倒れない・パーツ／阻止部位／バリアなし。[requirements.md](requirements.md) 4.2 節）では起きない・効かない（被弾トリガー・パーツ・阻止部位・敵のバリアなど）
   - **間接に効く**（`indirect`）: それ自体は与ダメージを変えないが、経路（`path`。`hp`・`defense`・`barrier`・`decoy`・`cover`・`pierce`・`pellet`）の値や有無を動かし、その経路を読む効果のある編成でだけ効く（防御力▲・最大HP▲・受ける HP 回復量▲・味方へのバリア・デコイ・遮蔽物の回復・貫通特化など）。読む側（経路の値や有無で値・対象・条件・きっかけが決まる効果と、未対応・前提の外・補足の notes）には `reads` を書く。読む側が同じ定義にある未対応の動かす側は、未対応のまま（[design-indirect-notes.md](design-indirect-notes.md)）
   - **未対応**（`unimplemented`）: 前提の中でダメージに効く（効きうる）のに、今回は定義しないもの。理由（語彙が無い・撮っていない・きっかけが説明文に無い など）を添える。味方の回復は、「回復を受けた時」の効果を持つ味方の発動を変えるので、`heal` で定義しないならここ
   - 扱い方の補足（`modeling`）: 扱っていない効果ではなく、どこから入っているか・近似などの説明
   - 未対応・前提の外の notes には、効いたとしたらどんな効果かを `effect`（`kind`・`stat`・`target`・`trigger`。語彙で書けない欄は `"unknown"`。被弾のきっかけは `damaged`。計算の語彙に無い敵の防御力▼は stat `enemyDefenseDown`・対象 `enemy`、最大HP▲は stat `maxHp`）で書く。補足は、指す効果を `refers`（`"effects[0]"` など）で書き、指す効果が無ければ `effect` を書く。計算は読まず、最小構成の検査が使う（[design-minimal-relevance.md](design-minimal-relevance.md) 3.3 節）
-- 語彙に無い効果の見込みは [design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）と [requirements.md](requirements.md)（スコープ外）にもある。
+- 語彙に無い効果の見込みは [design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）と [requirements.md](requirements.md) 4.2 節（前提）にもある。
 
-### 1.3 検証記録を起こす
-
-- → [verification-guide.md](verification-guide.md) 1・3 節。スキルの検証では、話題を `スキル・キャラ固有` にし、問いを「<キャラ> のスキルを <解釈> と読んで、モデルは実測と合うか」にする（解釈が割れる行ごとに仮説を分ける）。
-
-### 1.4 設計書（語彙を足すときだけ）
+### 1.3 設計書（語彙を足すときだけ）
 
 - `plan/design-<短い名前>.md` を起案する。書くのは、足す語彙・既存の語彙との関係・退化の見込み・リスク。
 - オーナーの承認は対話で得てから実装する（設計書だけの PR は出さない）。
-- 大きさは 50KB を目安にする。実測値は書かず、検証記録と観測値を ID で指す。
 - 語彙が足りているなら設計書は作らず、検証記録だけで進める。
-- 設計書の「経過」には、設計か実装が変わったときだけ 1 行書く。モデルを変えずに仮説を確定にしただけ（再現の撮影など）なら書かない（結論の状態と根拠は [claims.md](claims.md)・[verifications.md](verifications.md) が持つ。[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 4 節）。
-- 段に分けた設計書（2 段目の段 N など）では、段の中の PR ごとの経過は段の設計書だけに「PR N を実装した（V-NNNN、C-…）。次は …」の 1 行で書き、段の一覧（[design-skill-stages.md](design-skill-stages.md)）の経過には段の出来事（起案・決定・閉じた）だけを書く。設計書の「読んで分かったこと」には、次の PR や論点に効く判断だけを書き、結論の中身は ID で指す（[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 2 節）。
+- 段に分けた設計書（2 段目の段 N など）では、段の中の PR ごとの経過は段の設計書だけに「PR N を実装した（V-NNNN、C-…）。次は …」の 1 行で書き、段の一覧（[design-skill-stages.md](design-skill-stages.md)）の経過には、段ごとに 1 行（起案・決定・閉じた日と段の設計書）を書き、段の出来事のときだけ直す。設計書の「読んで分かったこと」には、次の PR や論点に効く判断だけを書き、結論の中身は ID で指す。設計書の経過の書き方は AGENTS.md「文書の書き方」。
 
-### 1.5 実装する
+### 1.4 実装する
 
 - **語彙を足すとき**。1 段ごとに `npm test` を通す。
   1. `skills/types.ts` の型と `parseSkillDefinition` の検証、その単体テスト。
@@ -95,37 +89,24 @@
   - `checkedAt` は説明文を読んだ日。
 - **テスト**
   - DSL の単体テストは `skills/__tests__/<名前>.test.ts`。定義の検証エラーと、Lv ごとの解決値を見る。
-  - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、そのキャラの効果（窓・発動・付与）と、射撃の列がどのグループにも 1 回ずつ入ること（`partitions every shot`）を見る（`describe.each`。例は `deltaTeam.test.ts`）。2026-10-27 までの「sim と calc の一致」は、一本化で同じ計算どうしの比べになったので書かない。
+  - 編成のテストは `__tests__/<名前>Team.test.ts`。そのキャラを含む実戦的な編成で、そのキャラの効果（窓・発動・付与）と、射撃の列がどのグループにも 1 回ずつ入ること（`partitions every shot`）を見る（`describe.each`。例は `deltaTeam.test.ts`）。
   - **テストに実測値を直書きしない**。実測との比較は観測値と照合ランナーで行う（[verification-guide.md](verification-guide.md) 6・7 節）。
 - **キャラ固有の分岐をコアに置かない**。実測でしか決まらない値（紅蓮BS の射撃の較正の `MEASURED_CHARGE_CADENCE` など）は、表の 1 行にして結論の ID を添える。
 
-### 1.6 撮影計画を立てる（予測は任意）
+## 2. 検証の流れ（スキル定義に固有のこと）
 
-- → [verification-guide.md](verification-guide.md) 4 節。
-
-### 1.7 撮って読む
-
-- → [verification-guide.md](verification-guide.md) 5・6 節。
-
-### 1.8 比べて結論を出す
-
-- → [verification-guide.md](verification-guide.md) 7・8 節（確定にできる条件は 2.2 節）。スキルの効果が合わなかったときは、根拠のある別の解釈で定義を直すか、未解明のまま効果を定義から外す・スロットを `partial` にして notes に書く。
-
-### 1.9 PR を出す
-
-- → [verification-guide.md](verification-guide.md) 9 節。題名は `スキル: <キャラ名>（V-NNNN、C-NNNN）`（`records:close` が案を出す）。
-
-## 2. 撮影が先に済んでいるとき
-
-- → [verification-guide.md](verification-guide.md) 2 節（読み直しも確定にできる）。既存の録画で確かめられるときは、1.5 の実装 → 既に読んだ観測値か読み直した観測値と比べ、合わない点だけを追加で撮る（紅蓮BS の例は [design-stage11-scarlet-bs.md](design-stage11-scarlet-bs.md) 1 節）。
+- 起案から PR までは [verification-guide.md](verification-guide.md) のとおり。スキルの検証では、話題を `スキル・キャラ固有` にし、問いを「<キャラ> のスキルを <解釈> と読んで、モデルは実測と合うか」にする（解釈が割れる行ごとに仮説を分ける）。
+- 既存の録画で確かめられるときは、1.4 の実装の後、既に読んだ観測値か読み直した観測値と比べ、合わない点だけを追加で撮る（読み直しでも確定にできる。紅蓮BS の例は [design-stage11-scarlet-bs.md](design-stage11-scarlet-bs.md) 1 節）。
+- 効果が合わなかったときは、根拠のある別の解釈で定義を直すか、未解明のまま効果を定義から外す・スロットを `partial` にして notes に書く。
+- PR の題名は `スキル: <キャラ名>（V-NNNN、C-NNNN）`（`records:close` が案を出す）。
 
 ## 3. 結論の書き方
 
 - 結論は `records/claims/C-NNNN.json`。話題は `スキル・キャラ固有` にする。
 - 1 件に書く解釈は 1 つ（例: 「クラウンの S2 の回復は、HP が満タンでも適用されたことになる」）。1 件で同じスロットの複数の効果を指してよい。
-- **効果との対応は定義の側に書く**（2026-09-28 に決めた）。効果と notes の `claims` に、根拠の結論の ID を並べる（例: `"claims": ["C-0413", "C-0461"]`）。
+- **効果との対応は定義の側に書く**。効果と notes の `claims` に、根拠の結論の ID を並べる（例: `"claims": ["C-0413", "C-0461"]`）。
   - 正は定義の `claims`。効果を並べ替えたり足したりしても、ID は効果と一緒に動くので古くならない。結論の側からは生成物で引く: [claims.md](claims.md) の「定義」の行と、キャラ × スロットの一覧 [skills.md](skills.md)（どちらも `npm run records:check` で作り直す）。
-  - 結論の `model` には、定義のファイル（`data/skills/830.json`）と、定義の外の置き場所（コード・定数）を書く。効果の場所（`skill1 の effects[0]`）は書かなくてよい。2026-09-28 より前の結論のように書いたときは、下の検査で突き合わせる。
+  - 結論の `model` には、定義のファイル（`data/skills/830.json`）と、定義の外の置き場所（コード・定数）を書く。効果の場所（`skill1 の effects[0]`）は書かなくてよい（書いたときは、下の検査で突き合わせる）。
   - notes にも `claims` を書ける（「ダメージに関係しない」「同じ部隊の味方がいない編成では起きない」などの判断の根拠）。`assumes` は効果の `claims` で指す。
   - 1 つの効果を複数の結論が裏付けてよい（1 tick の値の結論と、tick の時刻の結論など）。
   - notes・assumes の文には、説明に要るとき（値の出どころなど）のほかは ID を書かない。結び付きは `claims` で持つ。
@@ -134,7 +115,6 @@
   - 指した結論が無い・`棄却` なら落ちる。棄却したら、置き換えた結論の ID に差し替える。
   - `棄却` でない結論の `model` が定義の場所（`skill1 の effects[0]`・`treasureSkills.burst の effects[1]`・`skill1 の notes`・`全スロットの notes`）を書いていれば、その場所が定義にあり、その `claims` がその結論を指していないと落ちる。ファイルだけを書いていれば、そのファイルのどこかの `claims` が指していないと落ちる。
   - `claims` の無い効果は落とさない（Stage 11 までの定義。0 節）。skills.md に「根拠なし」と出る。
-  - skills.md は丸ごと生成するファイル。リベースで衝突したら、ほかの生成物と同じく main の版に戻して作り直す（[design-stage20.md](design-stage20.md) 3.6 節）。
 - 説明文をそのまま読んだだけの効果（倍率・秒数・トリガー・対象が一意なもの）は、1 件にまとめてよい（例: 「<キャラ> の burst の効果は説明文どおり」）。この場合も撮影で確かめてから `確定` にする（0 節）。
 
 ## 4. PR の前の確かめ
