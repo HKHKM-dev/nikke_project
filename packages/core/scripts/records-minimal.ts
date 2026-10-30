@@ -4,8 +4,8 @@
 // plan/design-workflow-simplification-5.md 7.2 節）。--all で全部を計算し直す（1 分ほど）。鍵はモデルのコードを含まないので、
 // 定期の見直しとモデルを大きく組み直す PR では --all を回し、差が無いことを見る。
 // 結果は records:check が読んで plan/minimal.md と claims.md に重ねる。使い方: npm run records:minimal [-- --all]（ルート）。
-// 書いた後の整形と records:check もここで回す（package.json に && で続けると、npm が -- の後の引数を最後のコマンドに足し、
-// --all がここに届かない）。
+// 書いた後に records:check（整形も含む）もここで回す（package.json に && で続けると、npm が -- の後の引数を最後のコマンドに
+// 足し、--all がここに届かない）。
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -66,6 +66,4 @@ const errors = entries.filter((e) => e.error !== undefined).length;
 console.log(
   `感度: 観測値 ${targets.length}（計算し直した ${recomputed}）・組（観測値 × 効果）${entries.length}。効きうる ${effective}（うち計算できない ${errors}）。${((Date.now() - started) / 1000).toFixed(0)} 秒`,
 );
-for (const cmd of ['node tools/format-retry.ts records/minimal', 'npm run records:check']) {
-  if (spawnSync(cmd, { cwd: ROOT, stdio: 'inherit', shell: true }).status !== 0) process.exit(1);
-}
+process.exit(spawnSync('npm run records:check', { cwd: ROOT, stdio: 'inherit', shell: true }).status ?? 1);
