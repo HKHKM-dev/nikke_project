@@ -9,6 +9,7 @@ import {
   settlePut,
   shouldOverwrite,
   shouldPut,
+  stampOf,
   trackedRoots,
 } from './cloud-lib.ts';
 
@@ -29,11 +30,11 @@ describe('drive/cloud-lib', () => {
     expect(localPathOf('claude/projects/other/memory/x.md', places)).toBeNull();
   });
 
-  it('手元の置き場所と Drive の頭', () => {
-    expect(trackedRoots(places).map((r) => r.drive)).toEqual([
-      'private',
-      'scratch',
-      'claude/projects/D--nikke-project/memory',
+  it('手元の置き場所と Drive の頭・知らせでの呼び名', () => {
+    expect(trackedRoots(places).map((r) => [r.drive, r.label])).toEqual([
+      ['private', 'private/'],
+      ['scratch', 'scratch/'],
+      ['claude/projects/D--nikke-project/memory', 'メモリ'],
     ]);
   });
 
@@ -96,48 +97,45 @@ describe('drive/cloud-lib', () => {
     expect(shouldOverwrite('x', undefined, undefined, 'd')).toBe(false);
   });
 
-  it('取り直し: 取れたものは決まりで上書きか残すかを決め、取れていないものは前の基準を引き継ぐ', () => {
+  it('取り直し: 一覧の大きさと更新時刻が置いたときと違うもの・まだ置いていないものだけを取り、置くまで前の基準を引き継ぐ', () => {
+    const stamp = (size: number) => stampOf({ size, modified: '2026-10-30T00:00:00.000Z' });
     const p = planPull(
-      ['scratch/a.md', 'scratch/b.md', 'scratch/c.md', 'scratch/d.md', 'scratch/e.md'],
       new Map([
-        ['scratch/a.md', 'A1'],
-        ['scratch/b.md', 'B1'],
-        ['scratch/c.md', 'C1'],
+        ['scratch/same.md', stamp(1)],
+        ['scratch/changed.md', stamp(3)],
+        ['scratch/new.md', stamp(1)],
       ]),
       new Map([
-        ['scratch/a.md', 'A0'],
-        ['scratch/b.md', 'X'],
-        ['scratch/c.md', 'Y'],
-        ['scratch/d.md', 'D0'],
+        ['scratch/same.md', 'S'],
+        ['scratch/changed.md', 'C0'],
       ]),
       {
-        files: { 'scratch/a.md': 'A0', 'scratch/b.md': 'B0', 'scratch/c.md': 'C0', 'scratch/d.md': 'D0' },
-        conflicts: { 'scratch/c.md': 'Y' },
+        files: { 'scratch/same.md': 'S', 'scratch/changed.md': 'C0' },
+        conflicts: { 'scratch/changed.md': 'X' },
+        seen: { 'scratch/same.md': stamp(1), 'scratch/changed.md': stamp(2) },
       },
     );
-    // a は前のまま → 上書き。b は手元の変更 → 残す（基準は前のまま）。c は衝突として送った版 → 上書きして衝突の記憶を消す
-    expect(p.write).toEqual(['scratch/a.md', 'scratch/c.md']);
-    expect(p.keep).toEqual(['scratch/b.md']);
-    // d・e はまだ取っていない（あとで取る）。d は前の基準を引き継ぎ、e（手元にも基準にも無い）は何もしない
-    expect(p.files).toEqual({ 'scratch/a.md': 'A1', 'scratch/b.md': 'B0', 'scratch/c.md': 'C1', 'scratch/d.md': 'D0' });
-    expect(p.conflicts).toEqual({});
+    expect(p.fetch).toEqual(['scratch/changed.md', 'scratch/new.md']);
+    expect(p.files).toEqual({ 'scratch/same.md': 'S', 'scratch/changed.md': 'C0' });
+    expect(p.conflicts).toEqual({ 'scratch/changed.md': 'X' });
+    expect(p.seen).toEqual({ 'scratch/same.md': stamp(1), 'scratch/changed.md': stamp(2) });
     expect(p.remove).toEqual([]);
   });
 
   it('取り直し: Drive で消えたものは、手元が前のままなら消し、変わっていれば残して戻す', () => {
     const p = planPull(
-      [],
       new Map(),
       new Map([
         ['private/gone.md', 'G0'],
         ['private/edited.md', 'E1'],
         ['private/new.md', 'N'],
       ]),
-      { files: { 'private/gone.md': 'G0', 'private/edited.md': 'E0' }, conflicts: {} },
+      { files: { 'private/gone.md': 'G0', 'private/edited.md': 'E0' }, conflicts: {}, seen: {} },
     );
     expect(p.remove).toEqual(['private/gone.md']);
     // edited は前の基準のまま（応答の終わりに前の md5 を添えて送る）。new は基準が無いまま（新しいものとして送る）
     expect(p.files).toEqual({ 'private/edited.md': 'E0' });
+    expect(p.fetch).toEqual([]);
   });
 
   it('並べて回し、期限を過ぎたら新しく始めない（始めなかったもの・期限の後に失敗したものは rest）', async () => {

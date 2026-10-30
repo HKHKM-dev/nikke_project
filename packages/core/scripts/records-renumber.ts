@@ -209,7 +209,7 @@ if (kind === 'recording') {
     const names = new Set<string>();
     for (const d of new Set(wanted.flatMap((r) => [splitRel(r.from).dir, splitRel(r.to).dir]))) {
       try {
-        for (const f of (await snapshot('captures', d, 0)).files) names.add(f.path);
+        for (const f of (await snapshot('captures', d)).files) names.add(f.path);
       } catch (e) {
         fail(`Drive の ${d === '' ? '根' : d} の一覧を受け口で取れなかった: ${(e as Error).message}`);
       }

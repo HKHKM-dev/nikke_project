@@ -17,7 +17,7 @@
 ## クラウドのセッションの始め方
 
 1. スマホか MacBook の Claude アプリ（または claude.ai/code）で、このリポジトリのクラウドのセッションを始める（環境は「デフォルト」）。
-2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・メモリ・全体の CLAUDE.md を取って置く（十数秒。最初の応答はこれを待つ）。`scratch/` は、フックが裏で起こす `--pull-rest` が新しいものから取って置く（数分。最初の応答は待たない。取り終えたか・取れなかったものは `~/.cache/nikke-sync/pull-rest.log` の最後の行）。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
+2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・メモリ・全体の CLAUDE.md を取って置く（十数秒。最初の応答はこれを待つ）。`scratch/` は、フックが裏で起こす `--pull-rest` が新しいものから取って置く（新しい VM では数分。最初の応答は待たない。取り終えたか・取れなかったものは `~/.cache/nikke-sync/pull-rest.log` の最後の行）。前に置いたときから Drive で変わっていないものは取り直さない。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
 3. 応答の終わりのフック（`--push`）が、直したもの・増やしたもの・消したものを Drive に戻す（衝突は下）。デスクトップには、次のデスクトップのセッションの始めの同期で届く。
 
 クラウドでは自動メモリが使えないので、メモリは `~/.claude/CLAUDE.md` に書かれた決まりで読み書きする（同じ形式。設計書 6.1 節）。
