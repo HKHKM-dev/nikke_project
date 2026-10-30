@@ -1641,7 +1641,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       else fired = t !== 'battleStart' && src.fires!(ev);
       if (!fired) continue;
       const condition = src.effect.condition;
-      if (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f)) {
+      if (
+        (!isEndedTrigger(t) && !usedBurstHolds(condition, t, ev, src.sourceSlotIndex)) ||
+        (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f))
+      ) {
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }

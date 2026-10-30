@@ -154,6 +154,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     hitOnApply?: true;
     /** 同: { counterFull } の perCount の最初の付与の、発火からの遅れ（フレーム） */
     applyDelayFrames?: number;
+    /** 2 段目の段 13 の PR 2: tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン） */
+    stacksFrom?: NamedStateId;
   };
 };
 
@@ -440,6 +442,7 @@ export function resolveDotEffects(
             : {}),
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
+          ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
         },
       };
       if (!auto && effect.perCount !== undefined) {
@@ -455,6 +458,35 @@ export function resolveDotEffects(
     });
   }
   return resolved;
+}
+
+/** 2 段目の段 13 の PR 2: 解決した消去（敵の持続ダメージの状態）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む */
+export type ResolvedDotCancel = { source: ResolvedSkillDamage['source']; state: NamedStateId; trigger: ResolvedTrigger };
+
+/** 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 定義の消去（cancelState）。消す状態は同じ定義の dot の state であること */
+export function resolveDotCancels(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedDotCancel[] {
+  const dotStates = new Set(
+    SKILL_SLOTS.flatMap((slot) => def.skills[slot].effects.flatMap((e) => (e.kind === 'dot' && e.state ? [e.state] : []))),
+  );
+  const out: ResolvedDotCancel[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    for (const effect of def.skills[slot].effects) {
+      if (effect.kind !== 'cancelState') continue;
+      if (!dotStates.has(effect.state))
+        throw new RangeError(`skill ${skill.id}: cancelState needs a dot with the state ${effect.state}`);
+      out.push({
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        state: effect.state,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+      });
+    }
+  }
+  return out;
 }
 
 /**
