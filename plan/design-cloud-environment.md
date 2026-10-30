@@ -1,7 +1,7 @@
 # クラウド環境 設計書（PC が使えないときも、クラウドのセッションで続ける）
 
 - 対象: Google Drive との同期（新しい `tools/drive/`。デスクトップの rclone の双方向同期と、Apps Script の受け口）、クラウドのセッションのフック（`.claude/settings.json`）、録画の道具の Drive への書き方（`tools/captures/intake.ts`・`dirs.ts`、`packages/core/scripts/records-renumber.ts`）、文書（[captures/storage.md](captures/storage.md)・[captures/tools.md](captures/tools.md)・AGENTS.md・新しい手引き）
-- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ①〜③ と通しの試験を 2026-10-23 に終えた（実施の記録の 12 節）**
+- 状態: **項目 1〜11 は 2026-10-23 に決まった（11.1 節）。段 ①〜③ と通しの試験を 2026-10-23 に終えた（実施の記録の 12 節）**。2026-10-30 にクラウドの始めのフックの取り方を変えた（6.1・6.2 節。実施の記録 12.2 節）
 - 関連: [design-cloud-environment-notes.md](design-cloud-environment-notes.md)（調べたことの根拠と出典）、[captures/storage.md](captures/storage.md)「バックアップ」「クラウド環境での取り寄せ」、[design-records-automation.md](design-records-automation.md) 3.3 節（`intake.ts`）、[design-recording-renumber.md](design-recording-renumber.md) 5 節（Drive 側の名前の変え方）
 - 作成日: 2026-10-23
 - 調べた時点: main の 3e052720（#642）。件数・容量は 2026-10-23 の手元とクラウドの調べで、判断の材料。以後は書き直さない
@@ -208,13 +208,15 @@
 
 `tools/drive/cloud-pull.ts`（`CLAUDE_CODE_REMOTE=true` のときだけ動く）:
 
-1. 受け口の `snapshot` で `nikke_sync/` の `private`・`scratch`・`claude` を取り、次に置く。
+1. 受け口の `snapshot` で `nikke_sync/` の `private`・`scratch`・`claude` の一覧（中身なし）を取り、前に置いたときから大きさか更新時刻が変わったもの（まだ置いていないものを含む）の中身を 1 件ずつ `get` で並べて取って、次に置く（2026-10-30 に変えた。受け口が中身を 1 件あたり約 1 秒で読むため、件数の多い `scratch/` の中身つきの `snapshot` は 1 回の実行で終わらない。実施の記録 12.2 節）。
+   - `private/`・メモリ・全体の CLAUDE.md はフックの中で取る。`scratch/` と、フックが取り切れなかったものは、フックが切り離して起こす `--pull-rest` が新しいものから取る（最初の応答を待たせない。1 つだけ動かす。取り終えたか・取れなかったものは `~/.cache/nikke-sync/pull-rest.log`）
+   - フックは 100 秒、受け口の 1 回の呼び出しは 45 秒で打ち切り、取れなかったものと確かめることを知らせる（フックの timeout の 120 秒で打ち切られると、知らせも消える）。フックは始め・再開・分岐（`startup|resume|fork`）のときだけ回す（`clear`・`compact` は同じ VM の中なので取り直さない）
    - `private/`・`scratch/` → リポジトリの `private/`・`scratch/`（デスクトップのメインのチェックアウトと同じ相対パス。どちらも `.gitignore` 済み）
    - メモリ → `~/.claude/projects/-home-user-nikke-project/memory/`（ローカルと同じ名前の付け方で決めた場所。今は読まれないが、自動メモリが入ればそのまま使える見込み）
    - 全体の CLAUDE.md → 下の 2 で使う
-   - Drive に無いファイルは手元からも消す（使い回された VM に古いものを残さない）。ただし、前の応答で戻せなかった手元の変更（前に取った md5 と違うもの）は消さず、先に 6.2 節の手順で戻す。
+   - Drive に無いファイルは手元からも消す（使い回された VM に古いものを残さない）。ただし、前の応答で戻せなかった手元の変更（前に取った md5 と違うもの）は消さず、先に 6.2 節の手順で戻す。戻しきれなかった手元の変更は、Drive の版で上書きせずに残す。一覧を取れなかった根は、手元も基準もそのままにする。裏の `--pull-rest` が取っている間に、応答の終わりの `--push` がそのファイルの基準を進めたら置かない（次に回すときに決め直す）
 2. `~/.claude/CLAUDE.md` を上書きで書く。中身は、全体の CLAUDE.md と「メモリ（クラウド）」の節（`MEMORY.md` の索引、本文の置き場所、デスクトップの自動メモリと同じ形式で書くこと、書いたものは応答の終わりに Drive へ戻ること）。
-3. 取ったファイルの md5 を、手元の基準として残す（`~/.cache/nikke-sync/base.json`）。
+3. 取ったファイルの md5 と一覧の大きさ・更新時刻を、手元の基準として残す（`~/.cache/nikke-sync/base.json`）。
 
 全体の CLAUDE.md は、デスクトップからクラウドへの一方向にする（クラウドの `~/.claude/CLAUDE.md` は組み立てたものなので戻さない）。
 
@@ -226,7 +228,8 @@
 - 証拠フレーム: クラウドの録画の置き場所（`~/nikke_project_captures/frames/`）に新しくできたものを `put` する（同じ名前があり中身が違えば衝突）。
 - 衝突があれば、フックの出力でどのファイルかを知らせる。
 - 衝突を返された手元の版は、基準を動かさずにその md5 を別に覚え（`base.json` の `conflicts`）、手元が同じ版のままなら次の応答の終わり（と始めのフックの先の戻し）で送り直さない。送り直すと、受け口が同じ中身の衝突ファイルを次の番号（`.conflict-cloud1`・`2`…）で作り続ける。手元がさらに変われば送る（Drive 側は変わったままなので、新しい版も衝突として置く）。始めのフックで Drive の版に上書きしたファイルの分は捨てる。
-- 失敗しても応答は止めず、次の応答の終わりにやり直す。
+- 失敗しても応答は止めず、次の応答の終わりにやり直す。受け口は並べて呼び、フックの timeout より前に打ち切る（回らなかったものも次にやり直す）。
+- 裏の `--pull-rest`（6.1 節）と同時に動くので、基準と手元のファイルを書き換える間は lock（`~/.cache/nikke-sync/lock`）を持つ。
 
 ### 6.3 クラウドでの取り込み（段 ③）
 

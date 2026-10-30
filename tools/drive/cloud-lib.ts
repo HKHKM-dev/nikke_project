@@ -12,14 +12,18 @@ export function localPathOf(
   return null;
 }
 
-/** 手元の置き場所（private・scratch・メモリ）と、その Drive の nikke_sync の下の頭 */
+/** 手元の置き場所（private・scratch・メモリ）と、その Drive の nikke_sync の下の頭・知らせでの呼び名 */
 export function trackedRoots(places: { repo: string; memoryDir: string; memoryProject: string }) {
   return [
-    { local: `${places.repo}/private`, drive: 'private' },
-    { local: `${places.repo}/scratch`, drive: 'scratch' },
-    { local: places.memoryDir, drive: `claude/projects/${places.memoryProject}/memory` },
+    { local: `${places.repo}/private`, drive: 'private', label: 'private/' },
+    { local: `${places.repo}/scratch`, drive: 'scratch', label: 'scratch/' },
+    { local: places.memoryDir, drive: `claude/projects/${places.memoryProject}/memory`, label: 'メモリ' },
   ];
 }
+export type TrackedRoot = ReturnType<typeof trackedRoots>[number];
+
+/** クラウドの往復で、受け口を 1 回呼んで待つ長さ（ふだんは一覧が 10 秒、1 件が 3 秒ほど。止まっていたら、フックの終わりより前に知らせる） */
+export const CALL_MS = 45_000;
 
 /**
  * 手元の版を受け口へ送るか。基準（前に取った・戻した版）と同じか、前に衝突を返された版のままなら送らない
@@ -64,6 +68,99 @@ export function diffAgainstBase(
   return { put, trash };
 }
 
+/**
+ * Drive の版で手元のファイルを上書きしてよいか。手元に無いか、応答の終わりに送らないもの（shouldPut の逆。前に取った・戻した版のまま、
+ * 衝突として送った版のまま）か、Drive と同じ中身なら上書きする。それ以外は Drive にまだ送っていない手元の変更なので残し、応答の終わりに
+ * 送る（Drive 側も変わっていれば衝突になる）
+ */
+export function shouldOverwrite(
+  local: string | undefined,
+  base: string | undefined,
+  conflicted: string | undefined,
+  drive: string,
+): boolean {
+  return local === undefined || local === drive || !shouldPut(local, base, conflicted);
+}
+
+/** Drive の一覧の 1 件の大きさと更新時刻（前に置いたときと同じなら取り直さない。デスクトップの rclone と同じ比べ方） */
+export const stampOf = (f: { size: number; modified: string }) => `${f.size} ${f.modified}`;
+
+/** 取り直しの計画（1 つの根の分） */
+export type PullPlan = {
+  /** 前に置いたときから Drive で変わったか、まだ置いていないので、中身を取るもの */
+  fetch: string[];
+  /** Drive で消えて、手元は前に取ったときのままなので、手元からも消すもの */
+  remove: string[];
+  /** この根の新しい基準・衝突の記憶・置いたときの一覧の値（取るものは、置くまで前のものを引き継ぐ） */
+  files: Record<string, string>;
+  conflicts: Record<string, string>;
+  seen: Record<string, string>;
+};
+
+/**
+ * 1 つの根（private・scratch・メモリ）を Drive に合わせる計画。listed は Drive の一覧（パス → stampOf）、local は手元（パス → md5）、
+ * old は前の基準・衝突の記憶・置いたときの一覧の値。Drive の一覧の値が置いたときと同じものは取らない
+ */
+export function planPull(
+  listed: ReadonlyMap<string, string>,
+  local: ReadonlyMap<string, string>,
+  old: {
+    files: Readonly<Record<string, string>>;
+    conflicts: Readonly<Record<string, string>>;
+    seen: Readonly<Record<string, string>>;
+  },
+): PullPlan {
+  const out: PullPlan = { fetch: [], remove: [], files: {}, conflicts: {}, seen: {} };
+  const carry = (path: string) => {
+    for (const [from, to] of [
+      [old.files, out.files],
+      [old.conflicts, out.conflicts],
+      [old.seen, out.seen],
+    ] as const)
+      if (from[path] !== undefined) to[path] = from[path];
+  };
+  for (const [path, stamp] of listed) {
+    carry(path);
+    if (old.seen[path] !== stamp) out.fetch.push(path);
+  }
+  // Drive で消えたもの: 手元が前に取ったときのままなら手元からも消す。手元で変わっていれば残し、応答の終わりに戻す
+  for (const [path, md5] of local) {
+    if (listed.has(path)) continue;
+    if (md5 === old.files[path]) out.remove.push(path);
+    else carry(path);
+  }
+  return out;
+}
+
+/**
+ * items を n 本ずつ並べて fn に渡す。now() が until を過ぎたら新しく始めない。始めなかったものと、until を過ぎてから失敗したもの
+ * （時間切れで打ち切ったもの）は rest に、それより前に失敗したものは failed に入れて返す
+ */
+export async function runUntil<T>(
+  items: readonly T[],
+  n: number,
+  until: number,
+  fn: (item: T) => Promise<void>,
+  now: () => number = Date.now,
+): Promise<{ rest: T[]; failed: { item: T; error: unknown }[] }> {
+  const rest: T[] = [];
+  const failed: { item: T; error: unknown }[] = [];
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length && now() < until) {
+      const item = items[next++]!;
+      try {
+        await fn(item);
+      } catch (error) {
+        if (now() >= until) rest.push(item);
+        else failed.push({ item, error });
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, worker));
+  return { rest: [...rest, ...items.slice(next)], failed };
+}
+
 /** クラウドの ~/.claude/CLAUDE.md の中身（全体の指示と、自動メモリの代わりの節。設計書 6.1 節） */
 export function cloudClaudeMd(globalMd: string, memoryIndex: string, memoryDir: string): string {
   return [
@@ -76,7 +173,7 @@ export function cloudClaudeMd(globalMd: string, memoryIndex: string, memoryDir: 
     `- 本文は \`${memoryDir}\` にある（1 件 1 ファイル）。要るものは Read で読む。`,
     '- 新しく覚えることは、デスクトップの自動メモリと同じ形式（frontmatter に name・description・metadata.type、本文、[[name]] のリンク）で、そのフォルダに 1 件 1 ファイルで書き、下の索引（MEMORY.md）にも 1 行足す。古くなったものは直すか消す。',
     '- 書いたものは、応答の終わりのフックが Drive に戻し、デスクトップのメモリにも届く。',
-    '- `private/`（owner.md）と `scratch/` は、リポジトリの直下に置いた（デスクトップのメインのチェックアウトと同じ相対パス）。直したものも応答の終わりに戻る。',
+    '- `private/`（owner.md）と `scratch/` は、リポジトリの直下に置く（デスクトップのメインのチェックアウトと同じ相対パス）。`scratch/` は始めのフックの後に裏で置くので、数分は揃っていないことがある（plan/cloud-guide.md「困ったとき」）。直したものも応答の終わりに戻る。',
     '',
     '## 索引（MEMORY.md）',
     '',
