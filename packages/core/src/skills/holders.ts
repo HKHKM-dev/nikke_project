@@ -12,7 +12,7 @@
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
 import type { ShotLog } from '../frame/shots.ts';
-import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
+import { resolveDotCancels, resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
 import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
@@ -659,7 +659,10 @@ function buildTrackItems(
       // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）
       const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
       return itemsOfPairs(
-        dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
+        dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick, track.closes).map((sp) => [
+          sp.start,
+          sp.end,
+        ]),
       );
     }
     case 'while':
@@ -1057,6 +1060,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   // ---- 段 C: 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵） ----
   const enemyStateSources: EnemyStateSource[] = [];
+  const dotCancelSources: { track: HeldTrack; fires: TriggerTracker }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const group of groupDotsByState(resolveDotEffects(slot.definition, slot.character, slot.levels))) {
@@ -1066,6 +1070,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         effects: group.map((effect) => ({ effect, fires: firesOf(effect.trigger, sourceSlotIndex) })),
         track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
       });
+    }
+    // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる
+    for (const cancel of resolveDotCancels(slot.definition, slot.character, slot.levels)) {
+      const source = enemyStateSources.find(
+        (e) => e.track.sourceSlotIndex === sourceSlotIndex && e.track.origin.kind === 'enemyState' && e.track.origin.state === cancel.state,
+      );
+      if (source !== undefined) dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
     }
   });
 
@@ -1734,10 +1745,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
         if (!take(effect.trigger) || !(battleStartOnly || fires(ev))) continue;
-        const at = battleStartOnly ? 0 : f + (effect.delayFrames ?? 0);
+        const at = battleStartOnly ? 0 : f + (effect.dot!.applyDelayFrames ?? 0);
         if (at < frames) insertSorted(e.track.starts, at);
       }
     }
+    // 2 段目の段 13 の PR 2: 消去（f の判定には付いている。dotActiveSpans が f + 1 で切る）
+    if (!battleStartOnly) for (const c of dotCancelSources) if (c.fires(ev)) insertSorted(c.track.closes, f);
     if (!battleStartOnly) {
       // 循環の間隔の変更はループの中でしか読まないので、戦闘開始時もフレーム 0 の出来事で登録する
       for (const c of cycleSources) {

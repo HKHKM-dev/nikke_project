@@ -20,6 +20,20 @@
           ]
         },
         {
+          "kind": "counterChange",
+          "counter": "restraintChains",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "amountRef": 1,
+          "condition": {
+            "usedBurst": true
+          },
+          "assumes": {
+            "ja": "フルバーストタイムが終了した時、直前に自分がバーストを使っていれば、キャプチャーチェーンを 10 回チャージする（上限 10）。チャージで上限に届くので、その後の攻撃とチェーンバインドの付与は戦闘開始時と同じ形で出る",
+            "en": "When Full Burst ends, if she has just used her Burst, charges 10 Restraint Chains (up to 10). The charge reaches the cap, so the attacks and Ensnaring Chains that follow come out as at the start of battle"
+          }
+        },
+        {
           "kind": "damage",
           "trigger": {
             "counterFull": "restraintChains"
@@ -88,7 +102,20 @@
       "notes": []
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "stat": "sustainedDamage",
+          "ref": 7,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "バースト 3 段階突入時、自分に持続ダメージ▲（10 秒）。チェーンバインドとプリング・チェーンの tick に乗る",
+            "en": "On entering Burst Stage 3, Sustained Damage ▲ on self (10 s). Applies to the Ensnaring Chains and Dragging Chain ticks"
+          }
+        }
+      ],
       "notes": [
         {
           "ja": "フルバーストタイム中の通常攻撃 40 回命中ごとの、チェーンバインドのスタック量▲は未対応",
@@ -109,33 +136,38 @@
           "claims": [
             "C-0443"
           ]
-        },
-        {
-          "ja": "バースト 3 段階突入時の自分の持続ダメージ▲（10 秒）は未対応",
-          "en": "The damage-over-time increase on self on entering burst stage 3 (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "sustainedDamage",
-            "target": "self",
-            "trigger": "burstStage3Enter"
-          }
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "チェーンバインド状態の対象への持続ダメージ（プリング・チェーン）は未対応",
-          "en": "The damage over time (Pulling Chain) on Chain-Bound targets is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "dot",
-            "trigger": "burstUse"
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 3,
+          "intervalSeconds": 1,
+          "durationRef": 4,
+          "state": "draggingChain",
+          "stacksFrom": {
+            "enemyState": "ensnaringChains"
+          },
+          "assumes": {
+            "ja": "プリング・チェーン。使った時に、敵に付いたチェーンバインドのスタックの数を写し（敵 1 体の前提）、付いた瞬間と 1.5 秒後から 1 秒ごとに 10 回、写した数 × 1 スタックの値の tick を出す（1 tick の全スタックが一緒に会心する）。チェーンバインドが付いていなければ付かない。解除不可",
+            "en": "Dragging Chain. On use it copies the Ensnaring Chains stack count on the enemy (one enemy) and ticks 10 times — on application and every second from 1.5 s — for the copied count × one stack's value (the whole tick crits together). Not applied when Ensnaring Chains is absent. Cannot be removed"
+          }
+        },
+        {
+          "kind": "cancelState",
+          "trigger": "burstUse",
+          "state": "ensnaringChains",
+          "target": "enemy",
+          "assumes": {
+            "ja": "効果適用後、チェーンバインド消去（解除不可でも外れる）。プリング・チェーンが写した後に外れ、次に付けた時は 1 スタックから",
+            "en": "After the effect applies, Ensnaring Chains is cancelled (even though it cannot be removed). It goes after Dragging Chain copies it; the next application starts from one stack"
           }
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

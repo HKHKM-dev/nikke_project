@@ -1620,7 +1620,13 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
  * （boost に コア倍率 − 1 を足す）。core の効果でないヒットに core: true は拒否する
  */
 function dotHitDamage(result: SimResult, ctx: MetricContext): number {
-  const ticks = result.skillHits.filter((h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined);
+  // 2 段目の段 13 の PR 2（V-0547）: 省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）
+  const ticks = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot !== undefined &&
+      (ctx.args.skill === undefined || h.effect.source.skill === ctx.args.skill),
+  );
   const tick = ticks[Number(ctx.args.n)];
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
   if (ctx.args.core === true && tick.effect.core !== true) throw new Error('コアに当たらない効果の tick に core: true');
@@ -1711,17 +1717,27 @@ function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): bool
  */
 function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
   const schedule = result.schedule;
-  const window = schedule?.fullBurstWindows[Number(ctx.args.fullBurst)];
+  const n = Number(ctx.args.fullBurst);
+  const window = schedule?.fullBurstWindows[n];
   if (schedule === null || window === undefined)
     throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
   const start = videoFrameOf(schedule, window.start);
+  // 2 段目の段 13 の PR 2（V-0547）: after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット。dot が apply・tick なら、
+  // 倍率ダメージの代わりに持続ダメージの付けた時のヒット・tick（フルバーストの終わりのキャプチャーチェーンの攻撃とチェーンバインド）
+  const [from, to] =
+    ctx.args.after === true
+      ? [window.end, schedule.fullBurstWindows[n + 1]?.start ?? Number.POSITIVE_INFINITY]
+      : [window.start, window.end];
+  const dot = ctx.args.dot;
   const hits = result.skillHits.filter(
     (h) =>
       h.slotIndex === slotIndexOf(ctx) &&
-      h.effect.dot === undefined &&
+      (dot === undefined
+        ? h.effect.dot === undefined
+        : h.effect.dot !== undefined && (h.onApply === true) === (dot === 'apply')) &&
       hitMatches(h, ctx) &&
-      window.start <= h.frame &&
-      h.frame < window.end,
+      from <= h.frame &&
+      h.frame < to,
   );
   const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
   const count = Number(ctx.args.count);
