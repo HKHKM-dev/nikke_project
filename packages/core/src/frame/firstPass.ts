@@ -170,6 +170,8 @@ export type FirstPassOptions = {
   weaponChangeFirstHits?: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
   obstacleBreaks?: readonly ObstacleBreak[];
+  /** テスト用: 件の列を読むたびに作り直した件と比べる（skills/holders.ts の HolderListsOptions.verifyItems） */
+  verifyItems?: boolean;
   /**
    * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 枠ごとの、発ごとに的に当たったペレットの数（録画で数えた入力）。
    * 有る発は pelletHit の回数に期待値の代わりにこの数を足す。省略は無し（期待値）
@@ -344,7 +346,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // シンデレラ S1 編: リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）を持つ枠だけが書く
   const writesReloadEnds = slots.map((slot) => slot?.definition != null && hasReloadEndEffect(slot.definition));
   // 持ち主ごとの件の一覧（plan/design-holder-effects.md 段 A）。スキルの効果をすべて、受ける枠ごとの件の列で持つ
-  const lists = createHolderLists(slots, { frames, scheduleModel, logs, fullBurstWindows: windowsOf });
+  const lists = createHolderLists(slots, {
+    frames,
+    scheduleModel,
+    logs,
+    fullBurstWindows: windowsOf,
+    verifyItems: options.verifyItems,
+  });
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
   lists.registerBattleStart();
