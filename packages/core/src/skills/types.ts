@@ -3978,7 +3978,8 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
     if (!isEndedTrigger(trigger)) validateUsedBurst(effect.condition, trigger, `${path}.condition`);
-    else if (effect.condition.usedBurst !== undefined) fail(`${path}.condition.usedBurst`, 'usedBurst needs fullBurstStart or fullBurstEnd');
+    else if (effect.condition.usedBurst !== undefined)
+      fail(`${path}.condition.usedBurst`, 'usedBurst needs fullBurstStart or fullBurstEnd');
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
@@ -4069,7 +4070,8 @@ function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveSt
  */
 function parseCancelStateEffect(v: Record<string, Json>, path: string): CancelStateEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'state', 'trigger', 'target', 'assumes', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    if (!['kind', 'state', 'trigger', 'target', 'assumes', 'claims'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
   }
   const state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);

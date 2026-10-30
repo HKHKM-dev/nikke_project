@@ -461,7 +461,11 @@ export function resolveDotEffects(
 }
 
 /** 2 段目の段 13 の PR 2: 解決した消去（敵の持続ダメージの状態）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む */
-export type ResolvedDotCancel = { source: ResolvedSkillDamage['source']; state: NamedStateId; trigger: ResolvedTrigger };
+export type ResolvedDotCancel = {
+  source: ResolvedSkillDamage['source'];
+  state: NamedStateId;
+  trigger: ResolvedTrigger;
+};
 
 /** 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 定義の消去（cancelState）。消す状態は同じ定義の dot の state であること */
 export function resolveDotCancels(
@@ -470,7 +474,9 @@ export function resolveDotCancels(
   levels: SkillLevels,
 ): ResolvedDotCancel[] {
   const dotStates = new Set(
-    SKILL_SLOTS.flatMap((slot) => def.skills[slot].effects.flatMap((e) => (e.kind === 'dot' && e.state ? [e.state] : []))),
+    SKILL_SLOTS.flatMap((slot) =>
+      def.skills[slot].effects.flatMap((e) => (e.kind === 'dot' && e.state ? [e.state] : [])),
+    ),
   );
   const out: ResolvedDotCancel[] = [];
   for (const slot of SKILL_SLOTS) {

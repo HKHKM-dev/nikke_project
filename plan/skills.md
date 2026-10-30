@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 64・効果 360（根拠あり 341）・notes 181（根拠あり 77）
+件数: キャラ 64・効果 364（根拠あり 345）・notes 179（根拠あり 77）
 
-notes の種類: 未対応 54・前提の外 31・計算に無関係 33・補足 13・間接 50
+notes の種類: 未対応 52・前提の外 31・計算に無関係 33・補足 13・間接 50
 
-スロット: supported 136・partial 14・unsupported 23・noEffect 34
+スロット: supported 137・partial 15・unsupported 21・noEffect 34
 
 ## 10 ラピ
 
@@ -309,15 +309,17 @@ notes の種類: 未対応 54・前提の外 31・計算に無関係 33・補足
 
 - **skill1**: supported
   - effects[0] counterChange・battleStart・restraintChains: C-0411（確定）
-  - effects[1] damage・restraintChains が最大になった時・skill: C-0411（確定）、C-0745（確定）
-  - effects[2] counterChange・restraintChains が最大になった時・restraintChains（減少）: C-0411（確定）
-  - effects[3] dot・restraintChains が最大になった時: C-0411（確定）、C-0745（確定）
-- **skill2**: unsupported
+  - effects[1] counterChange・fullBurstEnd・restraintChains: C-0747（確定）
+  - effects[2] damage・restraintChains が最大になった時・skill: C-0411（確定）、C-0745（確定）、C-0747（確定）
+  - effects[3] counterChange・restraintChains が最大になった時・restraintChains（減少）: C-0411（確定）
+  - effects[4] dot・restraintChains が最大になった時: C-0411（確定）、C-0745（確定）、C-0747（確定）
+- **skill2**: partial
+  - effects[0] timed・burstStage3Enter・sustainedDamage: C-0748（確定）、C-0749（仮説）
   - notes[0] 未対応: フルバーストタイム中の通常攻撃 40 回命中ごとの、チェーンバインドのスタック量▲は未対応: 根拠なし
   - notes[1] 前提の外: 自分が戦闘不能になった時のスタック量▲と、敵が破壊された時のキャプチャーチェーン▲は、前提（味方が倒れない・敵 1 体）の外（要件 5.2 節）: C-0443（範囲外）
-  - notes[2] 未対応: バースト 3 段階突入時の自分の持続ダメージ▲（10 秒）は未対応: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: チェーンバインド状態の対象への持続ダメージ（プリング・チェーン）は未対応: 根拠なし
+- **burst**: supported
+  - effects[0] dot・burstUse: C-0746（確定）
+  - effects[1] cancelState・burstUse: C-0746（確定）
 
 ## 172 アドミ
 

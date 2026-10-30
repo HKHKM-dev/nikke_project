@@ -551,7 +551,8 @@ export function planSkillHits(
       const from = dot.stacksFrom;
       if (from !== undefined) {
         const source = dotGroups.find((g) => g.group[0]!.dot!.state === from);
-        if (source === undefined) throw new RangeError(`stacksFrom needs a dot with the state ${from} on the same slot`);
+        if (source === undefined)
+          throw new RangeError(`stacksFrom needs a dot with the state ${from} on the same slot`);
         const sourceFires = source.fires.map((x) => x.f);
         const sourceCancels = cancelsOf(from);
         for (const { f, effect } of fires) {

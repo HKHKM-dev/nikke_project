@@ -1074,9 +1074,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる
     for (const cancel of resolveDotCancels(slot.definition, slot.character, slot.levels)) {
       const source = enemyStateSources.find(
-        (e) => e.track.sourceSlotIndex === sourceSlotIndex && e.track.origin.kind === 'enemyState' && e.track.origin.state === cancel.state,
+        (e) =>
+          e.track.sourceSlotIndex === sourceSlotIndex &&
+          e.track.origin.kind === 'enemyState' &&
+          e.track.origin.state === cancel.state,
       );
-      if (source !== undefined) dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
+      if (source !== undefined)
+        dotCancelSources.push({ track: source.track, fires: firesOf(cancel.trigger, sourceSlotIndex) });
     }
   });
 
