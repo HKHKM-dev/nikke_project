@@ -75,22 +75,25 @@ function kindsOf(track: HeldTrack): string[] {
   return kinds;
 }
 
+/** frame/plan.ts の planTeamRun と同じ入力の 1 パス目（条件は手入力なので、着地点の区間は無い） */
+function firstPassOf(input: TeamInput, verifyItems: boolean) {
+  const { slots } = applyCompositionToTeam(applyTreasureToTeam(input));
+  return runFirstPass(toTimelineSlots(slots), {
+    frames: battleSecondsToFrames(input.durationSeconds),
+    burst: true,
+    controlledSlot: input.controlledSlot ?? null,
+    verifyItems,
+  });
+}
+
 describe('件の列は、件を作る関数が読む入力が変わったときに作り直す（plan/design-first-pass-perf.md 3.1 節）', () => {
-  const seen = new Set<string>();
   it.each(TEAMS)('%s: ループの中で読む件 = いまの入力から作り直した件', (_, input) => {
-    // frame/plan.ts の planTeamRun と同じ入力（条件は手入力なので、着地点の区間は無い）
-    const { slots } = applyCompositionToTeam(applyTreasureToTeam(input));
-    const { history } = runFirstPass(toTimelineSlots(slots), {
-      frames: battleSecondsToFrames(input.durationSeconds),
-      burst: true,
-      controlledSlot: input.controlledSlot ?? null,
-      verifyItems: true,
-    });
-    for (const track of history.tracks) for (const kind of kindsOf(track)) seen.add(kind);
+    expect(() => firstPassOf(input, true)).not.toThrow();
   });
 
   it('編成が 3.1 節の表の種類と分かれ道をそろえる', () => {
-    expect([...seen].sort()).toEqual(
+    const kinds = TEAMS.flatMap(([, input]) => firstPassOf(input, false).history.tracks.flatMap(kindsOf));
+    expect(kinds).toEqual(
       expect.arrayContaining([
         'chance',
         'closes',

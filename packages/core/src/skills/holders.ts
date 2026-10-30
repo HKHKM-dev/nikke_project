@@ -571,33 +571,54 @@ type TrackReads = { shots: boolean; weaponChangeEnds: boolean; reloadEnds: boole
 
 function trackReadsOf(origin: HeldOrigin): TrackReads {
   const reads = { shots: false, weaponChangeEnds: false, reloadEnds: false, fullBurstWindows: false };
-  if (origin.kind === 'timed') {
-    const { durationShots, durationUntil } = origin.effect;
-    if (durationShots !== undefined) reads.shots = true;
-    else {
-      reads.weaponChangeEnds = durationUntil === 'ammoSpent';
-      reads.reloadEnds = durationUntil === 'reloadEnd';
-      reads.fullBurstWindows = durationUntil === 'fullBurstEnd';
+  if (origin.kind !== 'timed' && origin.kind !== 'state') return reads;
+  const { durationShots, durationUntil } = origin.kind === 'timed' ? origin.effect : origin.grant;
+  if (durationShots !== undefined) {
+    reads.shots = true;
+    return reads;
+  }
+  // 尽くす（durationUntil が足されたら型検査で落ちる）。状態の件は fullBurstEnd のほかを読まない（stateItems）
+  switch (durationUntil) {
+    case 'ammoSpent':
+      reads.weaponChangeEnds = true;
+      break;
+    case 'reloadEnd':
+      reads.reloadEnds = origin.kind === 'timed';
+      break;
+    case 'fullBurstEnd':
+      reads.fullBurstWindows = true;
+      break;
+    case 'battleEnd':
+    case undefined:
+      break;
+    default: {
+      const never: never = durationUntil;
+      throw new Error(`unknown durationUntil: ${String(never)}`);
     }
-  } else if (origin.kind === 'state') {
-    const { durationShots, durationUntil } = origin.grant;
-    if (durationShots !== undefined) reads.shots = true;
-    else reads.fullBurstWindows = durationUntil === 'fullBurstEnd';
   }
   return reads;
+}
+
+/** テスト用（verifyItems）: 件を作る関数が読まない入力も見る */
+const ALL_READS: TrackReads = { shots: true, weaponChangeEnds: true, reloadEnds: true, fullBurstWindows: true };
+
+/** lengths[i] を n にし、前と違えば true */
+function setLength(lengths: number[], i: number, n: number): boolean {
+  if (lengths[i] === n) return false;
+  lengths[i] = n;
+  return true;
 }
 
 /**
  * 件の列（while のほか）の件を、いまの入力から作る。log は持ち主の射撃の記録（敵の件の列は null）。
  * 件は入力（追記・挿入だけで伸びる）と frames だけで決まるので、ループの後の件は、最後の入力から作り直した件と同じになる
  */
-export function buildTrackItems(
+function buildTrackItems(
   track: HeldTrack,
   log: ShotLog | null | undefined,
   fullBurstWindows: readonly FullBurstWindow[],
   frames: number,
 ): HeldItem[] {
-  const fullBurstEnds = (): number[] => fullBurstWindows.map((w) => w.end);
   const o = track.origin;
   switch (o.kind) {
     case 'passive':
@@ -610,11 +631,17 @@ export function buildTrackItems(
               end: p.end,
               scale: p.scale,
             }))
-          : timedItems(o.effect, track.starts, log, fullBurstEnds(), frames);
+          : timedItems(
+              o.effect,
+              track.starts,
+              log,
+              fullBurstWindows.map((w) => w.end),
+              frames,
+            );
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
     case 'state': {
-      const ends = fullBurstEnds();
+      const ends = fullBurstWindows.map((w) => w.end);
       return closedStateItems(
         track.starts,
         track.closes,
@@ -761,7 +788,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 件の列ごとの、件を作る関数が読む入力（trackReadsOf）と、件を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・
    * リロードの込め終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少。読まない入力は 0。updateLengths）
    */
-  const itemsSeen = new Map<HeldTrack, { reads: TrackReads; lengths: number[] }>();
+  const itemsSeen = new Map<HeldTrack, { reads: TrackReads; lengths: number[]; verified: number[] }>();
   const newTrack = (
     holder: number,
     sourceSlotIndex: number,
@@ -784,7 +811,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       items: [],
     };
     tracks.push(track);
-    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: [] });
+    // verified はテスト用（verifyItems）: 確かめた時の入力の長さ（件を作る関数が読まない入力も含む）
+    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: new Array<number>(9).fill(-1), verified: [] });
     return track;
   };
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
@@ -1051,34 +1079,25 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   // ---- 件を作る ----
   /**
-   * 件の列の入力の長さを lengths に書き、前に書いた長さと違えば true。reads が null なら件を作る関数が読まない入力も見る（verifyItems）。
+   * 件の列の、件を作る関数が読む入力（reads）の長さを lengths に書き、前に書いた長さと違えば true（読まない入力は 0）。
    * 毎フレーム読まれるので、配列を作らずに比べる（plan/design-first-pass-perf.md 3.1 節）
    */
   const updateLengths = (
     track: HeldTrack,
     log: ShotLog | null | undefined,
-    reads: TrackReads | null,
+    reads: TrackReads,
     lengths: number[],
   ): boolean => {
-    let changed = false;
-    const put = (i: number, n: number): void => {
-      if (lengths[i] === n) return;
-      lengths[i] = n;
-      changed = true;
-    };
-    put(0, track.starts.length);
-    put(1, track.opportunities?.length ?? 0);
-    put(2, reads === null || reads.shots ? (log?.frames.length ?? 0) : 0);
-    put(3, reads === null || reads.weaponChangeEnds ? (log?.weaponChangeEnds?.length ?? 0) : 0);
-    put(4, reads === null || reads.reloadEnds ? (log?.reloadEnds?.length ?? 0) : 0);
-    put(5, reads === null || reads.fullBurstWindows ? options.fullBurstWindows().length : 0);
-    put(6, track.closes.length);
-    put(7, track.consumes.length);
-    put(8, track.decreases.length);
-    return changed;
+    let changed = setLength(lengths, 0, track.starts.length);
+    changed = setLength(lengths, 1, track.opportunities?.length ?? 0) || changed;
+    changed = setLength(lengths, 2, reads.shots ? (log?.frames.length ?? 0) : 0) || changed;
+    changed = setLength(lengths, 3, reads.weaponChangeEnds ? (log?.weaponChangeEnds?.length ?? 0) : 0) || changed;
+    changed = setLength(lengths, 4, reads.reloadEnds ? (log?.reloadEnds?.length ?? 0) : 0) || changed;
+    changed = setLength(lengths, 5, reads.fullBurstWindows ? options.fullBurstWindows().length : 0) || changed;
+    changed = setLength(lengths, 6, track.closes.length) || changed;
+    changed = setLength(lengths, 7, track.consumes.length) || changed;
+    return setLength(lengths, 8, track.decreases.length) || changed;
   };
-  /** テスト用（verifyItems）: 件の列ごとの、確かめた時の入力の長さ（件を作る関数が読まない入力も含む） */
-  const verified = new Map<HeldTrack, number[]>();
   /** 件の列の件（件を作る関数が読む入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
     // 2 段目の段 9 の PR 2: while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
@@ -1087,15 +1106,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return isCounterWhileEffect(effect) ? readCounterWhileItems(track, effect) : readWhileItems(track, effect);
     }
     const log = track.holder === ENEMY ? null : logs[track.holder];
-    const { reads, lengths } = itemsSeen.get(track)!;
+    const { reads, lengths, verified } = itemsSeen.get(track)!;
     if (updateLengths(track, log, reads, lengths)) {
       track.items = buildTrackItems(track, log, options.fullBurstWindows(), frames);
     } else if (options.verifyItems === true) {
       // 作り直さずに返す件が、いまの入力から作り直した件と同じか（入力のどれも変わっていなければ確かめ直さない）
-      let all = verified.get(track);
-      if (all === undefined) verified.set(track, (all = []));
       if (
-        updateLengths(track, log, null, all) &&
+        updateLengths(track, log, ALL_READS, verified) &&
         JSON.stringify(track.items) !== JSON.stringify(buildTrackItems(track, log, options.fullBurstWindows(), frames))
       )
         throw new Error(`stale items: track ${tracks.indexOf(track)}`);

@@ -351,7 +351,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     scheduleModel,
     logs,
     fullBurstWindows: windowsOf,
-    ...(options.verifyItems === true ? { verifyItems: true } : {}),
+    verifyItems: options.verifyItems,
   });
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
