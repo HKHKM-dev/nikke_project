@@ -166,8 +166,6 @@ export type HeldTrack = {
   opportunities: ChanceOpportunity[] | null;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
-  /** items を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・リロードの込め終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少） */
-  seen: [number, number, number, number, number, number, number, number, number];
 };
 
 /** 強化（amplifies）の出どころ。受け付けと値は、ループの後に履歴を閉じる時に決める（amplify） */
@@ -245,6 +243,11 @@ export type HolderListsOptions = {
   logs: readonly (ShotLog | null)[];
   /** いま分かっているフルバーストの窓（始まりの順） */
   fullBurstWindows: () => readonly FullBurstWindow[];
+  /**
+   * テスト用（plan/design-first-pass-perf.md 4 節）: 件の列を読むたびに、いまの入力から作り直した件と比べ、違えば投げる。
+   * 作り直す判定（readItems）が、件を作る関数の読む入力を落としていないことを確かめる。フレームごとに全部の件の列を読む
+   */
+  verifyItems?: boolean;
 };
 
 /** 1 つの出どころ（timed の効果） */
@@ -549,7 +552,7 @@ function timedItems(
     return itemsOfPairs(untilNextEndItems(starts, fullBurstEnds, frames));
   }
   // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 持ち主のリロードの込め終わりまで。まだ込め終わっていない件は
-  // 戦闘の終わりまで開き、1 パス目が込め終わりを書いたら閉じる（読み直しの seen が reloadEnds の長さを見る）
+  // 戦闘の終わりまで開き、1 パス目が込め終わりを書いたら閉じる（読み直しが reloadEnds の長さを見る。trackReadsOf）
   if (effect.durationUntil === 'reloadEnd') {
     return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
   }
@@ -558,6 +561,82 @@ function timedItems(
     if (w.stack !== undefined) item.stack = w.stack;
     return item;
   });
+}
+
+/**
+ * 1 パス目の最適化の段 1（plan/design-first-pass-perf.md 3.1 節）: 件の列の件を作る関数（buildTrackItems）が、始まり・確率の機会・
+ * 閉じるフレーム・消費のフレーム・減少のほかに読む入力。分かれ道は timedItems・stateItems と同じ。読まない入力の変化では作り直さない
+ */
+type TrackReads = { shots: boolean; weaponChangeEnds: boolean; reloadEnds: boolean; fullBurstWindows: boolean };
+
+function trackReadsOf(origin: HeldOrigin): TrackReads {
+  const reads = { shots: false, weaponChangeEnds: false, reloadEnds: false, fullBurstWindows: false };
+  if (origin.kind === 'timed') {
+    const { durationShots, durationUntil } = origin.effect;
+    if (durationShots !== undefined) reads.shots = true;
+    else {
+      reads.weaponChangeEnds = durationUntil === 'ammoSpent';
+      reads.reloadEnds = durationUntil === 'reloadEnd';
+      reads.fullBurstWindows = durationUntil === 'fullBurstEnd';
+    }
+  } else if (origin.kind === 'state') {
+    const { durationShots, durationUntil } = origin.grant;
+    if (durationShots !== undefined) reads.shots = true;
+    else reads.fullBurstWindows = durationUntil === 'fullBurstEnd';
+  }
+  return reads;
+}
+
+/**
+ * 件の列（while のほか）の件を、いまの入力から作る。log は持ち主の射撃の記録（敵の件の列は null）。
+ * 件は入力（追記・挿入だけで伸びる）と frames だけで決まるので、ループの後の件は、最後の入力から作り直した件と同じになる
+ */
+export function buildTrackItems(
+  track: HeldTrack,
+  log: ShotLog | null | undefined,
+  fullBurstWindows: readonly FullBurstWindow[],
+  frames: number,
+): HeldItem[] {
+  const fullBurstEnds = (): number[] => fullBurstWindows.map((w) => w.end);
+  const o = track.origin;
+  switch (o.kind) {
+    case 'passive':
+      return track.starts.length > 0 ? [{ start: 0, end: frames }] : [];
+    case 'timed': {
+      const items =
+        track.opportunities !== null
+          ? chancePieces(track.opportunities, o.effect.durationFrames, frames).map((p) => ({
+              start: p.start,
+              end: p.end,
+              scale: p.scale,
+            }))
+          : timedItems(o.effect, track.starts, log, fullBurstEnds(), frames);
+      return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
+    }
+    case 'state': {
+      const ends = fullBurstEnds();
+      return closedStateItems(
+        track.starts,
+        track.closes,
+        (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases),
+        track.consumes,
+        track.decreases,
+      );
+    }
+    case 'cycleEvery':
+      return itemsOfPairs(unionItems(track.starts, o.effect.durationFrames, frames));
+    case 'healWindow':
+      return healWindowItems(track.starts, o.effect.durationFrames, frames);
+    case 'enemyState': {
+      // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）
+      const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
+      return itemsOfPairs(
+        dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
+      );
+    }
+    case 'while':
+      throw new Error('while items are built from the state items (readWhileItems)');
+  }
 }
 
 /** 昇順の列 xs に x を入れる（同じ値は後ろ） */
@@ -678,6 +757,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const heals: HealRecord[] = [];
   const amplifiers: AmplifierSource[] = [];
 
+  /**
+   * 件の列ごとの、件を作る関数が読む入力（trackReadsOf）と、件を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・
+   * リロードの込め終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少。読まない入力は 0。updateLengths）
+   */
+  const itemsSeen = new Map<HeldTrack, { reads: TrackReads; lengths: number[] }>();
   const newTrack = (
     holder: number,
     sourceSlotIndex: number,
@@ -698,9 +782,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       decreases: [],
       opportunities,
       items: [],
-      seen: [-1, -1, -1, -1, -1, -1, -1, -1, -1],
     };
     tracks.push(track);
+    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: [] });
     return track;
   };
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
@@ -966,8 +1050,36 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   }
 
   // ---- 件を作る ----
-  const fullBurstEnds = (): number[] => options.fullBurstWindows().map((w) => w.end);
-  /** 件の列の件（入力が変わったときだけ作り直す） */
+  /**
+   * 件の列の入力の長さを lengths に書き、前に書いた長さと違えば true。reads が null なら件を作る関数が読まない入力も見る（verifyItems）。
+   * 毎フレーム読まれるので、配列を作らずに比べる（plan/design-first-pass-perf.md 3.1 節）
+   */
+  const updateLengths = (
+    track: HeldTrack,
+    log: ShotLog | null | undefined,
+    reads: TrackReads | null,
+    lengths: number[],
+  ): boolean => {
+    let changed = false;
+    const put = (i: number, n: number): void => {
+      if (lengths[i] === n) return;
+      lengths[i] = n;
+      changed = true;
+    };
+    put(0, track.starts.length);
+    put(1, track.opportunities?.length ?? 0);
+    put(2, reads === null || reads.shots ? (log?.frames.length ?? 0) : 0);
+    put(3, reads === null || reads.weaponChangeEnds ? (log?.weaponChangeEnds?.length ?? 0) : 0);
+    put(4, reads === null || reads.reloadEnds ? (log?.reloadEnds?.length ?? 0) : 0);
+    put(5, reads === null || reads.fullBurstWindows ? options.fullBurstWindows().length : 0);
+    put(6, track.closes.length);
+    put(7, track.consumes.length);
+    put(8, track.decreases.length);
+    return changed;
+  };
+  /** テスト用（verifyItems）: 件の列ごとの、確かめた時の入力の長さ（件を作る関数が読まない入力も含む） */
+  const verified = new Map<HeldTrack, number[]>();
+  /** 件の列の件（件を作る関数が読む入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
     // 2 段目の段 9 の PR 2: while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
     if (track.origin.kind === 'while') {
@@ -975,61 +1087,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return isCounterWhileEffect(effect) ? readCounterWhileItems(track, effect) : readWhileItems(track, effect);
     }
     const log = track.holder === ENEMY ? null : logs[track.holder];
-    const windows = options.fullBurstWindows();
-    const seen: HeldTrack['seen'] = [
-      track.starts.length,
-      track.opportunities?.length ?? 0,
-      log?.frames.length ?? 0,
-      log?.weaponChangeEnds?.length ?? 0,
-      log?.reloadEnds?.length ?? 0,
-      windows.length,
-      track.closes.length,
-      track.consumes.length,
-      track.decreases.length,
-    ];
-    if (seen.every((v, i) => v === track.seen[i])) return track.items;
-    track.seen = seen;
-    const o = track.origin;
-    switch (o.kind) {
-      case 'passive':
-        track.items = track.starts.length > 0 ? [{ start: 0, end: frames }] : [];
-        break;
-      case 'timed':
-        track.items =
-          track.opportunities !== null
-            ? chancePieces(track.opportunities, o.effect.durationFrames, frames).map((p) => ({
-                start: p.start,
-                end: p.end,
-                scale: p.scale,
-              }))
-            : timedItems(o.effect, track.starts, log, fullBurstEnds(), frames);
-        if (o.effect.edgeShift !== undefined) track.items = shiftEdges(track.items, o.effect.edgeShift, frames);
-        break;
-      case 'state': {
-        const ends = fullBurstEnds();
-        track.items = closedStateItems(
-          track.starts,
-          track.closes,
-          (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases),
-          track.consumes,
-          track.decreases,
-        );
-        break;
-      }
-      case 'cycleEvery':
-        track.items = itemsOfPairs(unionItems(track.starts, o.effect.durationFrames, frames));
-        break;
-      case 'healWindow':
-        track.items = healWindowItems(track.starts, o.effect.durationFrames, frames);
-        break;
-      case 'enemyState': {
-        // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）
-        const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
-        track.items = itemsOfPairs(
-          dotActiveSpans(track.starts, intervalSeconds, durationSeconds, firstTick).map((sp) => [sp.start, sp.end]),
-        );
-        break;
-      }
+    const { reads, lengths } = itemsSeen.get(track)!;
+    if (updateLengths(track, log, reads, lengths)) {
+      track.items = buildTrackItems(track, log, options.fullBurstWindows(), frames);
+    } else if (options.verifyItems === true) {
+      // 作り直さずに返す件が、いまの入力から作り直した件と同じか（入力のどれも変わっていなければ確かめ直さない）
+      let all = verified.get(track);
+      if (all === undefined) verified.set(track, (all = []));
+      if (
+        updateLengths(track, log, null, all) &&
+        JSON.stringify(track.items) !== JSON.stringify(buildTrackItems(track, log, options.fullBurstWindows(), frames))
+      )
+        throw new Error(`stale items: track ${tracks.indexOf(track)}`);
     }
     return track.items;
   };
@@ -1765,6 +1834,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   const hasFiring = slots.map((_, i) => (firingViews[i] ?? []).length > 0);
 
+  // 毎フレーム読むので、消費する状態の持ち主の件の列は前もって引く（件の列はここまでに作り終わる。plan/design-first-pass-perf.md 3.1 節）
+  const consumingTracks = consuming.map(({ holder, state }) => ({
+    holder,
+    state,
+    own: tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state),
+  }));
+
   return {
     hasSources:
       timedSources.length > 0 ||
@@ -1782,6 +1858,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     registerFrame(ev) {
       register(ev, false);
+      // テスト用: ループの中で読まれない件の列も、毎フレーム読んで確かめる（いまは読まない列を、後の定義が読んでも落とし漏れが分かる）
+      if (options.verifyItems === true) for (const track of tracks) readItems(track);
     },
     firingBuffsAt(holder, frame, base) {
       if (!hasFiring[holder]) return null;
@@ -1861,8 +1939,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];
-      for (const { holder, state } of consuming) {
-        const own = tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state);
+      for (const { holder, state, own } of consumingTracks) {
         const full = own.some((t) => {
           const max = t.origin.kind === 'state' ? t.origin.grant.maxStacks : undefined;
           return max !== undefined && readItems(t).some((it) => it.stack === max && it.start === frame);
