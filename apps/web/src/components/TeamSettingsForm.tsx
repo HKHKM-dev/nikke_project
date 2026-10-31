@@ -18,13 +18,13 @@ export function TeamSettingsForm({ element, fixedSpec, dispatch }: Props) {
       <fieldset className="panel settings" aria-label="敵条件">
         <div className="settings-simple">
           <label className="field">
-            <span>敵名</span>
+            <span>敵</span>
             <select defaultValue="range-bigarms">
               <option value="range-bigarms">射撃場BigArms</option>
             </select>
           </label>
           <label className="field">
-            <span>敵属性</span>
+            <span>属性</span>
             <select
               value={element ?? ''}
               onChange={(e) =>
