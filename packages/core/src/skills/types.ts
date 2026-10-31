@@ -1841,6 +1841,13 @@ export type SkillIndex = {
   resourceIds: number[];
 };
 
+/** スキル定義の対応状況の索引（data/skills/support.json。生成物。skills/support.ts） */
+export type SkillSupportIndex = {
+  formatVersion: 1;
+  /** すべてのスロットに未実装が無いキャラ（昇順） */
+  fullySupported: number[];
+};
+
 // ---- 検証 ----
 
 type Json = unknown;
@@ -4506,4 +4513,15 @@ export function parseSkillIndex(raw: Json): SkillIndex {
     fail('index.resourceIds', 'expected an array of positive integers');
   }
   return { formatVersion: 1, resourceIds: raw.resourceIds as number[] };
+}
+
+/** 対応状況の索引（生成物。skills/support.ts）。不正なら Error */
+export function parseSkillSupportIndex(raw: Json): SkillSupportIndex {
+  if (!isRecord(raw)) fail('support', 'expected an object');
+  if (raw.formatVersion !== 1) fail('support.formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
+  const ids = raw.fullySupported;
+  if (!Array.isArray(ids) || !ids.every((id) => Number.isInteger(id) && (id as number) > 0)) {
+    fail('support.fullySupported', 'expected an array of positive integers');
+  }
+  return { formatVersion: 1, fullySupported: ids as number[] };
 }

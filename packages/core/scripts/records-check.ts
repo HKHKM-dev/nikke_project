@@ -1,7 +1,8 @@
 // Stage 19-B: 観測値をモデルと比べ、残差の一覧（plan/residuals.md）を作り直す。
 // Stage 20-B: 結論の一覧（plan/claims.md）も records/claims/ から作り直す（前の中身は読まない）。
 // Stage 20-D: 検証記録の一覧（plan/verifications.md）も records/verifications/ から作り直す（前の中身は読まない）。
-// スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）も作り直す。
+// スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）と、画面が読む
+// 対応状況の索引（packages/core/data/skills/support.json。skills/support.ts）も作り直す。
 // 使い方: npm run records:check（ルート。整形まで行う）
 import { readFileSync, writeFileSync } from 'node:fs';
 import {
@@ -31,6 +32,7 @@ import {
 } from '../src/records/observations.ts';
 import { replaceGeneratedSection } from '../src/records/recordings.ts';
 import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../src/records/skills.ts';
+import { renderSkillSupportIndex } from '../src/skills/support.ts';
 import {
   renderVerifications,
   unlistedConfirmedClaims,
@@ -42,6 +44,7 @@ import {
   MINIMAL_PATH,
   RESIDUALS_PATH,
   SKILLS_DOC_PATH,
+  SKILL_SUPPORT_PATH,
   VERIFICATIONS_PATH,
   loadClaims,
   loadSensitivity,
@@ -56,6 +59,7 @@ import {
   misplacedObservations,
   misplacedPredictions,
   recordingMap,
+  skillSupportIndexOfData,
   verificationPath,
 } from './records-data.ts';
 import { renumberMarksFromGit } from './records-marks.ts';
@@ -165,6 +169,7 @@ writeFileSync(
   renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, staleness)),
 );
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
+writeFileSync(SKILL_SUPPORT_PATH, renderSkillSupportIndex(skillSupportIndexOfData()));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
 for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'invalid')) {
   const mark = gated.has(r.observation.id) ? '（確定の結論の根拠。npm test が落ちる）' : '';

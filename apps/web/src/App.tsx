@@ -277,6 +277,7 @@ export function App() {
                   slot={slot}
                   index={index}
                   excludeIds={takenResourceIds(team, i)}
+                  fullySupported={skills.fullySupported}
                   character={character}
                   loading={slot.resourceId !== null && character === undefined && !cache.errors.has(slot.resourceId)}
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
