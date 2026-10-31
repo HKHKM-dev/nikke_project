@@ -1,0 +1,214 @@
+[
+  {
+    "id": "0804-01",
+    "recording": "0804",
+    "kind": "timing",
+    "use": "record",
+    "value": [1418, 3796, 6173, 8551, 10928],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・5・0f"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0804-02",
+    "recording": "0804",
+    "kind": "timing",
+    "use": "record",
+    "value": [1447, 3825, 6203, 8580, 10957],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・6・6・0f"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0804-03",
+    "recording": "0804",
+    "kind": "timing",
+    "use": "record",
+    "value": [1476, 3854, 6231, 8609, 10986],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0804-04",
+    "recording": "0804",
+    "kind": "timing",
+    "use": "record",
+    "value": [3790, 6167, 8544, 10922],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0804-05",
+    "recording": "0804",
+    "kind": "timing",
+    "use": "record",
+    "value": [3819, 6196, 8573, 10951],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0804-06",
+    "recording": "0804",
+    "kind": "timing",
+    "use": "record",
+    "value": [3848, 6225, 8602, 10980],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0804-07",
+    "recording": "0804",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "hit",
+    "value": [7158040, 5163728, 4735556, 5163728, 5163728],
+    "description": "クイーン（真）の S1 の 1more の分配ダメージの 1 ヒット（チェーン 1〜5。動画の f1526・3904・6281・8659・11036）。同じフレームに重なったほかの 1 ヒットは引いた",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "引いた重なり（鈴原サクラの 1 ヒット）: 0・13,514・9,611・0・0"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0804-08",
+    "recording": "0804",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "hit",
+    "value": [1, 1, 0, 1, 1],
+    "description": "チェーン 1〜5 の 1more のヒットの時に、鈴原サクラの受けるダメージ▲が付いていたか（1 = あり）。1more の値を見ずに、ヒットの前後の鈴原サクラの 1 ヒットの段で決めた",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "チェーン 2 は 1more の 5f 後に▲が切れる（11,533）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0804-09",
+    "recording": "0804",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "hit",
+    "value": [5669474, 5199366, 5669473],
+    "description": "クイーン（真）のバーストの分配ダメージの 1 ヒット（チェーン 2〜4。止まりの後の増分 5,696,501・5,199,366・5,725,031 から、止まりの中に重なった鈴原サクラの 1 ヒットの和を引いた値）。発動の直前の鈴原サクラの▲は、あり・なし・あり。チェーン 1（6,557,013 + 2,017,268）と 5（6,023,108）は重なりを分けられない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "引いた重なり: 27,027（13,514 × 2）・0・55,558（13,514 + 21,022 × 2）。組み合わせは一意でない（▲ありの HS 6,092,617 は、どの増分よりも大きい）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0804-10",
+    "recording": "0804",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5163728,
+    "description": "クイーン（真）の S1 の 1more の分配ダメージの 1 ヒット（分配ダメージ▲・鈴原サクラの受けるダメージ▲あり）。チェーン 4（f8659。重なりなし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0804-07` の値。モデルの 4 回目の 1more も、鈴原サクラの▲が付いている"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0804-11",
+    "recording": "0804",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5163728,
+    "description": "クイーン（真）の S1 の 1more の分配ダメージの 1 ヒット（分配ダメージ▲・鈴原サクラの受けるダメージ▲あり）。チェーン 5（f11036。重なりなし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0804-07` の値。モデルの 5 回目の 1more も、鈴原サクラの▲が付いている"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]
