@@ -7,7 +7,7 @@
 - 前提: [design-skill-stage1.md](design-skill-stage1.md)（自分の状態の条件と外れ方。`removeState`）、[design-skill-stage3.md](design-skill-stage3.md) 1.1 節（`stackChange`）、[design-skill-stage10.md](design-skill-stage10.md) 2.1 節（`perCount: { state }`）、[design-skill-stage12.md](design-skill-stage12.md) 2.2 節（`perCount` の数だけのヒットを 1 つずつ出す）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.3 節（`fixedChargeTime`）、[design-helm.md](design-helm.md) 2 節（`durationShots`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.2 節（`sequentialAttackDamage`）
 - いまの未対応: [skills.md](skills.md)（生成）の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）
 - 作成日: 2026-10-31
-- 状態: 起案（論点 1〜9 はオーナーの判断待ち）
+- 状態: 決定（2026-10-31。オーナーが論点 1〜9 を推奨どおりに決めた）
 
 ## 0. 範囲の選び方
 
@@ -191,6 +191,8 @@
 
 ## 6. 論点
 
+決定（2026-10-31、オーナー）: 論点 1〜9 は推奨どおり。論点の文は諮った時のまま。
+
 1. **段 14 の対象**（0.3 節）
    - 推奨: スノーホワイト：ヘビーアームズの全スロット（と、論点 2 の C-0749）。候補のうち定義のあるキャラでいまのモデルとの差があるのはこれだけで、差も大きく、単騎と機構が確定したキャラとのチェーンで撮れる。
    - 代わりの案 A: T4 の残りのうち、ミルクの宝物版の S1 だけを先に定義する（`burstCooldown` を timed に開く。語彙は小さいが、ミルクの宝物版のほかのスロットも撮って定義することになり、定義のあるキャラのモデルの差は縮まない）。
@@ -223,3 +225,4 @@
 ## 経過
 
 - 2026-10-31: 起案（オーナーの指示: 段 14 を起案する）。#774 の後の main で、[skills.md](skills.md) の未対応の notes を [design-skill-stages.md](design-skill-stages.md) 3 節の家族ごとに分け直し（棚卸し [design-skill-stage14-inventory.md](design-skill-stage14-inventory.md)）、段 13 の 4 節の候補 1〜5 と段 13 の 2 つの仮説を比べて、段 14 をスノーホワイト：ヘビーアームズの全スロット（チャージ中に溜める順番の攻撃と、使用回数のある状態）と C-0749 の読み直しにした。論点 1〜9 はオーナーの判断待ち。
+- 2026-10-31: オーナーが論点 1〜9 を推奨どおりに決めた。PR 1（C-0749 の読み直し）に着手し、論点 8 のとおり撮影 A・B・C を、PR 1 の検証記録の「次に撮るもの」で頼む。
