@@ -47,7 +47,7 @@ export function TeamSettingsForm({ element, fixedSpec, dispatch }: Props) {
           </label>
         </div>
       </fieldset>
-      <div className="settings-options">
+      <div className="panel settings-options">
         <label className="field checkbox">
           <input
             type="checkbox"

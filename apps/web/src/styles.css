@@ -84,7 +84,7 @@ header h1 {
   flex-wrap: wrap;
   gap: 6px 20px;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 .settings-options .field.checkbox {
   margin: 0;
