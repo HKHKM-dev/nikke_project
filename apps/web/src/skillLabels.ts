@@ -509,8 +509,8 @@ export function formatInstantTarget(effect: ResolvedInstantEffect): string {
 export function formatEffectSource(effect: AppliedEffect, characterName: string | undefined): string {
   const who =
     characterName === undefined
-      ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
-      : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
+      ? `スロット ${effect.sourceSlotIndex + 1}（読み込み中）`
+      : `スロット ${effect.sourceSlotIndex + 1} ${characterName}`;
   // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」「最終攻撃力が最も高い味方 N 機」
   // アスカ: 「〈コード〉コードの味方」（「灼熱コードの SG の味方」のように武器種と並べる）
   const element = effect.targetElement ? `${ELEMENT_LABEL[effect.targetElement].ja}コードの` : '';

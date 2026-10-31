@@ -594,7 +594,7 @@ export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]
   }
   const state = parseTeamFields(raw, index);
   return state === null
-    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 枠など）' }
+    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 スロットなど）' }
     : { ok: true, value: state };
 }
 

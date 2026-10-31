@@ -140,7 +140,7 @@ export function TeamSettingsForm({
                 >
                   {Array.from({ length: TEAM_SIZE }, (_, i) => (
                     <option key={i} value={i}>
-                      {i + 1}: {slotNames[i] ?? 'なし'}
+                      スロット {i + 1}: {slotNames[i] ?? 'なし'}
                     </option>
                   ))}
                 </select>

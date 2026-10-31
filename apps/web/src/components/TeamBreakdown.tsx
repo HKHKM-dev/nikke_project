@@ -76,9 +76,9 @@ export function TeamBreakdown({
         r.targets
           .map((i) => {
             const s = filled.find((f) => f.index === i);
-            return `${s ? s.character.name.ja : `枠 ${i + 1}`} ${formatNumber(r.finalAttacks[i] ?? 0)}`;
+            return `${s ? s.character.name.ja : `スロット ${i + 1}`} ${formatNumber(r.finalAttacks[i] ?? 0)}`;
           })
-          .join(' / ') + (r.tied ? '（同値は枠の順と仮定）' : '');
+          .join(' / ') + (r.tied ? '（同値はスロットの順と仮定）' : '');
       if (seen.has(label)) continue;
       seen.add(label);
       parts.push(label);
@@ -116,8 +116,8 @@ export function TeamBreakdown({
         <span className="team-total-val">{formatNumber(result.totalDamage)}</span>
       </div>
 
-      {loadingCount > 0 && <p className="hint">読み込み中の枠: {loadingCount}</p>}
-      {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中の枠: {skillsLoadingCount}</p>}
+      {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
+      {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
 
       {detailed && filled.length > 0 && (
         <details className="segments">
@@ -145,7 +145,7 @@ export function TeamBreakdown({
             <table className="team-table">
               <thead>
                 <tr>
-                  <th>枠</th>
+                  <th>スロット</th>
                   <th>ニケ</th>
                   <th>通常攻撃</th>
                   <th>バーストスキル</th>
@@ -196,7 +196,7 @@ export function TeamBreakdown({
             {filled.map((s) => (
               <details key={s.index} className="slot-detail">
                 <summary>
-                  枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
+                  スロット {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
                   {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
                 </summary>
                 <ResultPanel
@@ -224,7 +224,7 @@ export function TeamBreakdown({
           <summary>検証用の詳細</summary>
           {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
           {filled.length > 0 && landingsLabel !== '' && (
-            <p className="hint">的の着地点（条件が自動の枠に効く）: {landingsLabel} 秒</p>
+            <p className="hint">的の着地点（条件が自動のスロットに効く）: {landingsLabel} 秒</p>
           )}
           {filled.length > 0 && (
             <>
@@ -233,7 +233,7 @@ export function TeamBreakdown({
                 <table className="team-table">
                   <thead>
                     <tr>
-                      <th>枠</th>
+                      <th>スロット</th>
                       <th>ニケ</th>
                       <th>{attackLabel}</th>
                       <th>攻撃力（バフ後）</th>
@@ -274,7 +274,7 @@ export function TeamBreakdown({
                 {BURST_STEP_KEYS.map((step) => {
                   const names = (byStep?.[step] ?? []).map((i) => {
                     const s = filled.find((f) => f.index === i);
-                    return s ? `枠 ${i + 1} ${s.character.name.ja}` : `枠 ${i + 1}`;
+                    return s ? `スロット ${i + 1} ${s.character.name.ja}` : `スロット ${i + 1}`;
                   });
                   return `${STEP_LABEL[step]}: ${names.length > 0 ? names.join('・') : '—'}`;
                 }).join(' / ')}
@@ -303,7 +303,9 @@ export function TeamBreakdown({
                         <tr key={k}>
                           <td>{formatNumber(framesToGameSeconds(a.frame), 2)}s</td>
                           <td>{STEP_LABEL[a.step]}</td>
-                          <td>{s ? `枠 ${a.slotIndex + 1} ${s.character.name.ja}` : `枠 ${a.slotIndex + 1}`}</td>
+                          <td>
+                            {s ? `スロット ${a.slotIndex + 1} ${s.character.name.ja}` : `スロット ${a.slotIndex + 1}`}
+                          </td>
                           <td>{hit ? formatNumber(hit.perActivation) : '—'}</td>
                           <td>
                             {window

@@ -288,7 +288,7 @@ export function ResultPanel({
               <li key={`instant-${i}`}>
                 <span className="amount">{formatInstant(x.instant.effect)}</span>
                 <small className="sub">
-                  {formatTimedTrigger(x.instant.effect.trigger)} 枠 {x.instant.sourceSlotIndex + 1}{' '}
+                  {formatTimedTrigger(x.instant.effect.trigger)} スロット {x.instant.sourceSlotIndex + 1}{' '}
                   {slotNames[x.instant.sourceSlotIndex] ?? ''}
                   {formatInstantTarget(x.instant.effect)}
                   {formatConditionSuffix(x.instant.effect.condition)}
@@ -305,7 +305,7 @@ export function ResultPanel({
               <li key={`state-${x.sourceSlotIndex}-${x.state}`}>
                 <span className="amount">状態: {stateLabel(x.state)}</span>
                 <small className="sub">
-                  枠 {x.sourceSlotIndex + 1} {slotNames[x.sourceSlotIndex] ?? ''}・
+                  スロット {x.sourceSlotIndex + 1} {slotNames[x.sourceSlotIndex] ?? ''}・
                   {x.isStatic ? '常時' : `${x.count} 回`}
                   {x.undispellable ? '・解除不可' : ''}
                 </small>
