@@ -106,10 +106,10 @@ describe('damage の delayFrames（射撃の回数のきっかけ）', () => {
     expect(() => parseSkillDefinition(withPrivatyS1({}, true))).toThrow(/a sequential skill cannot have a delayed/);
   });
 
-  it('does not fold a delayed per-shot damage (every 1) into the shot; it is a separate hit per shot', () => {
+  it('does not fold a delayed per-shot damage (every 1) into the shot, and rejects it for SG', () => {
+    // 遅れつきの射撃ごとの倍率ダメージは畳み込まない（別のヒット）。SG はペレットごとか 1 回の射撃ごとかが決まっていないので拒否する
     const def = parseSkillDefinition(withPrivatyS1({ trigger: { count: 'normalShot', every: 1 } }));
-    const s1 = resolveDamageEffects(def, privaty, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1');
-    expect(s1.map((e) => [e.trigger, e.delayFrames])).toEqual([[{ count: 'normalShot', every: 1 }, 6]]);
+    expect(() => resolveDamageEffects(def, privaty, MAX_SKILL_LEVELS)).toThrow(/not supported for SG/);
     expect(resolvePerShotDamage(def, privaty, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1')).toEqual([]);
   });
 
