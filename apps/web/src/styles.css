@@ -291,7 +291,6 @@ header h1 {
 .slot-settings > summary {
   cursor: pointer;
   font-size: 0.8rem;
-  opacity: 0.75;
 }
 .slot-settings > summary .badge {
   margin-left: 6px;
