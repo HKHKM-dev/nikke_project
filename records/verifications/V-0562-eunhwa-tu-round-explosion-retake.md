@@ -82,15 +82,15 @@
 
 予測は 2026-10-31（commit 5d70de5）に出した。
 
-| 指標                             | 実測         | 予測 Rs       |
-| -------------------------------- | ------------ | ------------- |
-| eun-round-core（hitDamage）      | （実測なし） | 2,746,328.784 |
-| eun-round-core-dist（hitDamage） | （実測なし） | 3,158,278.102 |
-| eun-round-core-crit（hitDamage） | （実測なし） | 3,755,741.929 |
-| flower-core-pre（hitDamage）     | （実測なし） | 222,727.856   |
-| eun-pre-core（hitDamage）        | （実測なし） | 713,539.504   |
-| eun-camo-core（hitDamage）       | （実測なし） | 1,848,787.317 |
-| eun-taken-core（hitDamage）      | （実測なし） | 904,938.406   |
+| 指標                             | 実測                   | 予測 Rs                         |
+| -------------------------------- | ---------------------- | ------------------------------- |
+| eun-round-core（hitDamage）      | 2,746,329（`0796-05`） | 2,746,328.784（-0.216、許容内） |
+| eun-round-core-dist（hitDamage） | 3,158,278（`0796-06`） | 3,158,278.102（+0.102、許容内） |
+| eun-round-core-crit（hitDamage） | （実測なし）           | 3,755,741.929                   |
+| flower-core-pre（hitDamage）     | 222,728（`0796-03`）   | 222,727.856（-0.144、許容内）   |
+| eun-pre-core（hitDamage）        | 713,539（`0796-04`）   | 713,539.504（+0.504、許容内）   |
+| eun-camo-core（hitDamage）       | 1,848,787（`0796-07`） | 1,848,787.317（+0.317、許容内） |
+| eun-taken-core（hitDamage）      | 904,938（`0796-08`）   | 904,938.406（+0.406、許容内）   |
 
 <!-- records:predictions:end -->
 
