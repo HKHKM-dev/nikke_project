@@ -2,7 +2,7 @@
 // 複数の録画にまたがる値なので、レシピ（1 本ずつ読む）の外に置く。観測値への書き込みは人がする（値と σ をそのまま写す）。
 //   node tools/captures/fb-window-k.ts --a 0434,0435,0436 --b 0437,0438,0439 [--source V-0492] [--landings 中近,近A,近B]
 // --a は▲ありの録画、--b は対照。各録画の records/observations/<録画>.json の、method.tool が recipe:fb-window-cores の
-// 観測値（--source を付ければ、その検証記録のもの）の最後の 1 つを使う。--landings は K・K_out・R_B・R_A に使う着地点
+// 観測値（--source を付ければ、その検証記録のもの。invalid の付いたものは除く）の最後の 1 つを使う。--landings は K・K_out・R_B・R_A に使う着地点
 // （省くと 6 つ全部。V-0542 は中近・近A・近B）。着地点ごとの数の表は、使わない着地点も出す。
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
@@ -19,7 +19,7 @@ if (values.a === undefined || values.b === undefined) {
   process.exit(1);
 }
 
-type Obs = { id: string; source: string; value: number | number[]; method: { tool: string } };
+type Obs = { id: string; source: string; value: number | number[]; method: { tool: string }; invalid?: unknown };
 
 function load(id: string): RecordingCounts & { obs: string } {
   const all = JSON.parse(
@@ -27,6 +27,7 @@ function load(id: string): RecordingCounts & { obs: string } {
   ) as Obs[];
   const hits = all.filter(
     (o) =>
+      o.invalid === undefined &&
       o.method.tool.startsWith('recipe:fb-window-cores@') &&
       (values.source === undefined || o.source === values.source),
   );

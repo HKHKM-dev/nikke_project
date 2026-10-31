@@ -12,7 +12,7 @@
 //   含まないものを使い、5 つでなければ止める（ジャンプがフルバーストの入りと重なった回は途切れで見分けられない。V-0424）。
 //   4 回目のジャンプが遅く、5 回目が戦闘の終わりより後になる録画（0633）は、--opt jumps で 4 つ渡す（帯は 5 つ）。
 // - 着地点: 中近・近 A・近 B・遠（3 つ目と 6 つ目の帯）・中遠 A・中遠 B/C（4 つ目の帯の距離ボーナスの多数決）。近の 2 つの帯の
-//   A・B は --opt near で渡す（レシピ fb-near-width で読む。V-0542）。
+//   A・B は --opt near で渡す（レシピ fb-near-width で読む。V-0542）。決まらない帯は - で渡し、その帯のヒットは数えない。
 import { loadHudJumps } from './hud-jumps.ts';
 import type { HudRow } from './triggers.ts';
 import { observation, type Recipe, type RecipeContext } from './types.ts';
@@ -93,6 +93,9 @@ export function detectJumps(rows: readonly HudRow[], entries: readonly Entry[], 
   return out;
 }
 
+/** 近の帯の着地点（- は決まらない。その帯のヒットは数えない） */
+export type Near = 'A' | 'B' | '-';
+
 export type LandingCount = { inCores: number; inHits: number; outCores: number; outHits: number };
 export type FbTally = {
   counts: Record<Landing, LandingCount>;
@@ -107,6 +110,8 @@ export type FbTally = {
   gapped: number;
   unfit: number;
   ambiguous: number;
+  /** 近の着地点が決まらない帯（--opt near の -）のヒット */
+  nearUndecided: number;
   /** 窓の中で攻撃力▲の段が決まったヒットの [なし, あり] */
   atkInWindow: [number, number];
 };
@@ -137,7 +142,7 @@ export function tallyFbWindows(
   g: FbGrid,
   entries: readonly Entry[],
   jumps: readonly number[],
-  near: readonly ['A' | 'B', 'A' | 'B'],
+  near: readonly [Near, Near],
   hitMax: number,
   tol: number,
 ): FbTally {
@@ -157,6 +162,7 @@ export function tallyFbWindows(
     gapped: 0,
     unfit: 0,
     ambiguous: 0,
+    nearUndecided: 0,
     atkInWindow: [0, 0],
   };
   type Hit = { band: number; win: boolean; core: 0 | 1; dist: 0 | 1 | undefined };
@@ -200,10 +206,16 @@ export function tallyFbWindows(
   }
   const mf = hits.filter((h) => h.band === 3 && h.dist !== undefined);
   t.midFar = mf.filter((h) => h.dist === 1).length * 2 > mf.length ? '中遠A' : '中遠BC';
-  const landingOf = (band: number): Landing =>
-    band === 0 ? '中近' : band === 1 ? `近${near[0]}` : band === 4 ? `近${near[1]}` : band === 3 ? t.midFar : '遠';
+  const nearOf = (n: Near): Landing | undefined => (n === '-' ? undefined : `近${n}`);
+  const landingOf = (band: number): Landing | undefined =>
+    band === 0 ? '中近' : band === 1 ? nearOf(near[0]) : band === 4 ? nearOf(near[1]) : band === 3 ? t.midFar : '遠';
   for (const h of hits) {
-    const c = t.counts[landingOf(h.band)];
+    const l = landingOf(h.band);
+    if (l === undefined) {
+      t.nearUndecided++;
+      continue;
+    }
+    const c = t.counts[l];
     if (h.win) {
       c.inHits++;
       c.inCores += h.core;
@@ -277,13 +289,14 @@ export const fbWindowCores: Recipe = {
     'AI の SMG の、フルバーストの入りから 589f の窓の中と外の、着地点（中近・近 A・近 B・遠・中遠 A・中遠 B/C）ごとのコアのヒットの数とヒットの数（count。V-0492）',
   options: {
     ...FB_OPTIONS,
-    near: '2 つ目と 5 つ目の帯の近の着地点（例: B,A。fb-near-width で読む）',
+    near: '2 つ目と 5 つ目の帯の近の着地点（例: B,A。fb-near-width で読む。決まらない帯は -）',
   },
   async run(ctx) {
     const near = (ctx.options.near ?? '').split(',');
-    if (near.length !== 2 || near.some((n) => n !== 'A' && n !== 'B')) throw new Error('--opt near=<A|B>,<A|B> が要る');
+    if (near.length !== 2 || near.some((n) => n !== 'A' && n !== 'B' && n !== '-'))
+      throw new Error('--opt near=<A|B|->,<A|B|-> が要る');
     const { g, hitMax, tol, rows, entries, jumps, given } = await fbSetup(ctx);
-    const t = tallyFbWindows(rows, g, entries, jumps, near as ['A' | 'B', 'A' | 'B'], hitMax, tol);
+    const t = tallyFbWindows(rows, g, entries, jumps, near as [Near, Near], hitMax, tol);
     const who = ctx.recording.team.map((m) => m.name).join('・');
     const role =
       g.atk.length > 0
@@ -302,7 +315,9 @@ export const fbWindowCores: Recipe = {
       `（${given.length > 0 ? '--opt jumps' : 'ヒットの途切れ'}）、帯の最初と最後のヒットは ${t.bands.map(([a, b]) => `f${a}〜${b}`).join('・')}。` +
       `近の着地点は ${near.join('・')}（--opt near）、中遠は ${t.midFar === '中遠A' ? '中遠 A（距離ボーナスあり）' : '中遠 B/C（距離ボーナスなし）'}。` +
       `数えなかった増分: 端と窓の中のジャンプの先 ${t.excluded}、前のフレームが読めていない ${t.gapped}、格子に合わない ${t.unfit}、` +
-      `コアの有無が決まらない ${t.ambiguous}。` +
+      `コアの有無が決まらない ${t.ambiguous}` +
+      (near.includes('-') ? `、近の着地点が決まらない帯 ${t.nearUndecided}` : '') +
+      '。' +
       (g.atk.length > 0
         ? `窓の中で攻撃力▲の有無が決まったヒットは、なし ${t.atkInWindow[0]}・あり ${t.atkInWindow[1]}`
         : '');

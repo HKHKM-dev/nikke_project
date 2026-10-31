@@ -58,6 +58,18 @@ describe('detectEntries（録画 0434 の 1 回目のフルバーストの前後
     expect(t.atkInWindow[0]).toBe(0);
     expect(t.unfit + t.ambiguous).toBe(0);
   });
+
+  it('近の着地点が決まらない帯（-）のヒットは数えない', () => {
+    const entries = detectEntries(rows, drake, 100000, 3);
+    const extra = [3000, 4000, 5000, 6000, 7000].map((f) => row(f, v(drake, { dist: 1 })));
+    const all = [...rows, ...extra];
+    const jumps = [2500, 3500, 4500, 5500, 6500];
+    const known = tallyFbWindows(all, drake, entries, jumps, ['B', 'A'], 100000, 3);
+    const t = tallyFbWindows(all, drake, entries, jumps, ['-', 'A'], 100000, 3);
+    expect(t.counts['近B']).toEqual({ inCores: 0, inHits: 0, outCores: 0, outHits: 0 });
+    expect(t.nearUndecided).toBe(known.counts['近B'].outHits + known.counts['近B'].inHits);
+    expect(t.counts['近A']).toEqual(known.counts['近A']);
+  });
 });
 
 describe('detectJumps', () => {
