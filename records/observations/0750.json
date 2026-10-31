@@ -1,0 +1,74 @@
+[
+  {
+    "id": "0750-01",
+    "recording": "0750",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": 785,
+    "unit": "f",
+    "description": "戦闘開始（残り時間 02:59 が出たフレーム）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes",
+      "note": "最初の 250f 以上の間隔（+320f 前後）の次の変わり目（C-0078）"
+    }
+  },
+  {
+    "id": "0750-02",
+    "recording": "0750",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "count",
+    "use": "record",
+    "value": [44, 308],
+    "unit": "回・ヒット",
+    "description": "マリアン：クイーン単騎・撃たない（オート射撃 OFF）の、ダークマターの槍の発動の数と、総ダメージに出たヒットの数（全部が的に当たった）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "撃たないので総ダメージの増分は槍だけ。増分は 308 個で、100f より空いた所で分けると 44 組・どれも 7 個（コンテナに向かったヒットは無い）。最初の組の頭は戦闘開始から 254f。最後の総ダメージは 52,257,849"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0750-03",
+    "recording": "0750",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "gauge",
+    "use": "record",
+    "value": [1.54, 42.28],
+    "unit": "px",
+    "description": "左の BURST バーの長さ（サブピクセル）の、戦闘開始から 1 回目の槍までと、最後の槍の後（44 回・308 ヒットの後）の中央値",
+    "method": {
+      "tool": "tools/captures/gauge.ts --side left --mode series --subpixel",
+      "note": "バーストの欄を左に出した録画。撃たないので、バーを動かすのは槍だけ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0750-04",
+    "recording": "0750",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "gauge",
+    "use": "record",
+    "value": 0.13475,
+    "unit": "px/ヒット",
+    "description": "左の BURST バーの長さの、槍のヒット 1 つあたりの伸び（フレームごとの長さを、そのフレームまでの槍のヒットの数に直線で当てはめた傾き）。0367 の縮尺（`0367-01`。ゲージ 0〜320,000 の範囲で 1px = 7,339）に直すと、槍 1 ヒットのゲージは約 989",
+    "method": {
+      "tool": "tools/captures/gauge.ts --side left --mode series --subpixel・tools/captures/hud.ts --mode jumps と、使い捨てのスクリプト（V-0545「読み方」）",
+      "note": "戦闘開始の 5f 後から 180 秒まで。当てはめから 1px より離れたフレーム（背景の揺れ）を外して当て直した（切片 1.4px・残差の二乗平均 0.381px）。切片は 0367 の同じ範囲の当てはめ（1.23px）と近い。0367 の縮尺は区間で 7,100〜7,570 と揺れるので、槍 1 ヒットは約 950〜1,020 の幅"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  }
+]

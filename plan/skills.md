@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 64・効果 364（根拠あり 345）・notes 179（根拠あり 77）
+件数: キャラ 64・効果 364（根拠あり 346）・notes 179（根拠あり 77）
 
 notes の種類: 未対応 52・前提の外 31・計算に無関係 33・補足 13・間接 50
 
@@ -104,14 +104,14 @@ notes の種類: 未対応 52・前提の外 31・計算に無関係 33・補足
 ## 19 マリアン：クイーン
 
 - **skill1**: supported
-  - effects[0] state・battleStart・intoTheFraySharpenedResolve: 根拠なし
-  - effects[1] damage・4 秒ごと・skill: C-0734（確定）、C-0735（確定）、C-0738（確定）
+  - effects[0] state・battleStart・intoTheFraySharpenedResolve: C-0750（確定）
+  - effects[1] damage・4 秒ごと・skill: C-0734（確定）、C-0735（確定）、C-0738（確定）、C-0753（確定）
   - effects[2] state・4 秒ごと・openWounds（damageTaken）: C-0736（確定）
   - effects[3] state・burstUse・openWounds: C-0737（確定）
 - **skill2**: supported
   - effects[0] state・burstUse・intoTheFrayPenetrantWish: C-0738（確定）
   - effects[1] damage・normalShot・skill: C-0739（確定）
-  - effects[2] timed・fullBurstStart・sequentialAttackDamage: C-0740（確定）
+  - effects[2] timed・fullBurstStart・sequentialAttackDamage: C-0752（確定）
   - effects[3] timed・fullBurstStart・coreDamage: C-0741（確定）
 - **burst**: supported
   - effects[0] ammoRefill・burstUse: C-0743（確定）
@@ -770,11 +770,11 @@ notes の種類: 未対応 52・前提の外 31・計算に無関係 33・補足
 
 - **skill1**: partial
   - effects[0] heal・fullChargeShot: 根拠なし
-  - effects[1] timed・fullBurstStart・attackDamage: C-0719（確定）
+  - effects[1] timed・fullBurstStart・attackDamage: C-0719（確定）、C-0750（確定）
   - notes[0] 前提の外: ナノ粒子投与（バーストの、戦闘不能の味方が 3 機以上の分岐）を使用した時の、バーストスキルのクールタイム▲とナノ粒子消耗：防御力▲は、味方が倒れない前提では起きない（要件 5.2 節）: C-0443（範囲外）
   - notes[1] 未対応: フルチャージした時からの、自分へのチャージ速度▲▼の無効（持続）は未対応（効果の無効の語彙が無い。自分にチャージ速度▲▼を付ける味方のいる編成でだけ効く。plan/design-new-chars-1029.md 論点 F）: 根拠なし
 - **skill2**: supported
-  - effects[0] timed・fullBurstStart・attack: C-0719（確定）
+  - effects[0] timed・fullBurstStart・attack: C-0719（確定）、C-0750（確定）
   - effects[1] damage・fullChargeShot・additional: C-0720（確定）、C-0721（確定）
   - notes[0] 間接（バリア）: フルチャージ状態を 1 秒以上維持した時の自分への共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。きっかけ「フルチャージ状態を N 秒以上維持した時」は語彙に無い）: 根拠なし
   - notes[1] 間接（防御力）: フルチャージ状態を 1 秒以上維持した時の味方全体のゴッデスブレッシング（発動者基準の防御力▲）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。きっかけは上と同じく語彙に無い）: 根拠なし

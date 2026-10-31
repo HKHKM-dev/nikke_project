@@ -155,6 +155,15 @@ describe('5.5 順番攻撃ダメージ▲（sequentialAttackDamage）', () => {
     const other = run([single, sequentialUp]).skillHits[0]!.hit.perActivation;
     expect(other).toBeCloseTo(run([single]).skillHits[0]!.hit.perActivation, 6);
   });
+
+  it('adds to the attack damage sum, not a separate multiplier (V-0545)', () => {
+    const attackDamageUp = { ...sequentialUp, stat: 'attackDamage', ref: 6 };
+    const plain = run([spear, attackDamageUp]).skillHits[0]!.hit;
+    const up = run([spear, attackDamageUp, sequentialUp]).skillHits[0]!.hit;
+    expect(plain.attackDamageMultiplier).toBeCloseTo(1.35, 12);
+    expect(up.sequentialAttackDamageMultiplier).toBeCloseTo((1.35 + 0.5) / 1.35, 12);
+    expect(up.perActivation).toBeCloseTo((plain.perActivation * (1.35 + 0.5)) / 1.35, 6);
+  });
 });
 
 describe('5.4 コア命中ダメージ（damage の coreHit）', () => {
@@ -215,6 +224,43 @@ describe('5.3 状態の間だけ縮む周期（damage の periodShorten）', () 
     expect(() => def({ ...shortened, periodShorten: { state: 'followUp', slot: 'skill1', ref: 4, x: 1 } })).toThrow(
       /unknown field/,
     );
+  });
+});
+
+describe('11.2 の b 周期の倍率ダメージのヒットごとのゲージ（damage の gaugePerHit。V-0545）', () => {
+  const grant = { kind: 'state', state: 'followUp', trigger: 'battleStart', target: 'self', durationSeconds: 10 };
+  const gauged = {
+    ...spear,
+    delayFrames: 3,
+    gaugePerHit: true,
+    periodShorten: { state: 'followUp', slot: 'skill1', ref: 4 },
+  };
+
+  it('charges one hit of the shooter at every hit frame, with the same (shortened) fires as the hits', () => {
+    const plan = run([gauged, grant]);
+    const hits = plan.skillHits.map((h) => h.frame);
+    expect(hits.length).toBeGreaterThan(7);
+    expect(plan.timerGauges.map((g) => g.frame)).toEqual(hits);
+    expect(new Set(plan.timerGauges.map((g) => g.energy))).toEqual(
+      new Set([character().shot.targetBurstEnergyPerShot]),
+    );
+    // 状態の間に縮んだ周期も、2 パス目のヒットと同じ発火で追う
+    const fires = [...new Set(plan.timerGauges.map((g) => g.fireFrame))];
+    expect(fires[2]! - fires[1]!).toBe(gameSecondsToFrames(2) + 1);
+  });
+
+  it('needs a timer trigger and delayFrames', () => {
+    const def = (effect: Record<string, unknown>) =>
+      parseSkillDefinition({
+        formatVersion: 1,
+        resourceId: 1,
+        checkedAt: '2026-10-28',
+        skills: { skill1: { effects: [effect] }, skill2: empty, burst: empty },
+      });
+    const { periodShorten: _p, ...plain } = gauged;
+    expect(() => def({ ...plain, trigger: 'burstUse' })).toThrow(/gaugePerHit needs a timer trigger/);
+    const { delayFrames: _d, ...undelayed } = plain;
+    expect(() => def(undelayed)).toThrow(/gaugePerHit needs delayFrames/);
   });
 });
 

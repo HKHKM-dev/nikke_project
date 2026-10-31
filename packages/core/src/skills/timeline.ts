@@ -356,22 +356,47 @@ export function shortenedTimerFrames(
   frames: number,
   shortened: (frame: number) => boolean,
 ): number[] {
+  const fires = shortenedTimer(trigger, shortenSeconds, frames, shortened);
+  const out: number[] = [];
+  for (let f = 0; f < frames; f++) if (fires(f)) out.push(f);
+  return out;
+}
+
+/**
+ * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: shortenedTimerFrames の規則を、フレームの順に決める形にしたもの。返す関数は
+ * 0 から frames − 1 まで順に呼び、そのフレームに発動すれば true。shortened は戦闘開始・発動のフレームと、縮めた次の発動のフレームに
+ * だけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった状態で周期のゲージを追うのに使う
+ */
+export function shortenedTimer(
+  trigger: TimerTrigger,
+  shortenSeconds: number,
+  frames: number,
+  shortened: (frame: number) => boolean,
+): (frame: number) => boolean {
   const { everySeconds } = trigger;
   const short = everySeconds - shortenSeconds;
-  const fires: number[] = [];
   const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
   let frame = 0;
   let seconds = 0;
+  let shortFrame: number | undefined;
+  let longFrame = 0;
   const after = (period: number) =>
     trigger.carry === true ? gameSecondsToFirstFrame(seconds + period) : frame + gameSecondsToFirstFrame(period);
-  for (;;) {
-    const shortFrame = shortened(frame) ? after(short) : undefined;
-    const isShort = shortFrame !== undefined && shortened(shortFrame);
-    frame = isShort ? shortFrame : after(everySeconds);
-    seconds += isShort ? short : everySeconds;
-    if (frame >= frames || seconds > lastFrameSeconds) return fires;
-    fires.push(frame);
-  }
+  const plan = () => {
+    shortFrame = shortened(frame) ? after(short) : undefined;
+    longFrame = after(everySeconds);
+  };
+  plan();
+  return (f) => {
+    // 縮めた次の発動のフレームでもう状態でなければ、縮めない周期の発動を待つ。秒が戦闘の終わりを越えた発動は出さず、その後は
+    // 予定のフレームがどれも過ぎているので発動しない
+    const period = shortFrame === f && shortened(f) ? short : longFrame === f ? everySeconds : undefined;
+    if (period === undefined || seconds + period > lastFrameSeconds) return false;
+    seconds += period;
+    frame = f;
+    plan();
+    return true;
+  };
 }
 
 /**

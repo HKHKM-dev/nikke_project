@@ -10,7 +10,10 @@
           "state": "intoTheFraySharpenedResolve",
           "trigger": "battleStart",
           "target": "self",
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-0750"
+          ]
         },
         {
           "kind": "damage",
@@ -23,19 +26,21 @@
           "ref": 1,
           "hitsRef": 2,
           "hitIntervalFrames": 12,
+          "gaugePerHit": true,
           "periodShorten": {
             "state": "intoTheFrayPenetrantWish",
             "slot": "skill2",
             "ref": 3
           },
           "assumes": {
-            "ja": "ダークマターの槍。再発動周期（description_value_04 の 4 秒）ごとに、ランダムな敵（敵 1 体の前提で的）に 7 回順番に攻撃する。周期は端数を持ち越して数え、発動の 19f 後に 1 ヒット目、12f おきに 7 ヒット。7 ヒットとも発動の時点のバフで出す。射撃場ではコンテナに向かうヒットがある（前提の外）。ゲージを溜めるかは確かめていない（溜めない扱い）。S2 の臨戦：胸を刺す願いの間は周期が 2 秒縮む（前の発動の時点で状態で、縮めた次の発動まで状態が続くとき）",
-            "en": "Dark Matter Spear. Every recurring interval (description_value_04, 4 s) it attacks a random enemy (the target under the single-enemy premise) sequentially 7 times. The interval carries its fraction over; the first hit comes 19 f after the activation and the 7 hits are 12 f apart. All 7 hits use the buffs at the activation. On the shooting range some hits go to containers (outside the premise). Whether it charges the burst gauge is unchecked (treated as not). During S2's Into the Fray: Penetrant Wish the interval is 2 s shorter (when the state is on at the previous activation and lasts until the shortened next activation)"
+            "ja": "ダークマターの槍。再発動周期（description_value_04 の 4 秒）ごとに、ランダムな敵（敵 1 体の前提で的）に 7 回順番に攻撃する。周期は端数を持ち越して数え、発動の 19f 後に 1 ヒット目、12f おきに 7 ヒット。7 ヒットとも発動の時点のバフで出す。射撃場ではコンテナに向かうヒットがある（前提の外）。どのヒットも射手の 1 ヒットぶん（target_burst_energy_pershot）のゲージを溜める（コンテナに向かったヒットが溜めるかは確かめていない）。S2 の臨戦：胸を刺す願いの間は周期が 2 秒縮む（前の発動の時点で状態で、縮めた次の発動まで状態が続くとき）",
+            "en": "Dark Matter Spear. Every recurring interval (description_value_04, 4 s) it attacks a random enemy (the target under the single-enemy premise) sequentially 7 times. The interval carries its fraction over; the first hit comes 19 f after the activation and the 7 hits are 12 f apart. All 7 hits use the buffs at the activation. On the shooting range some hits go to containers (outside the premise). Every hit charges the burst gauge by one hit of the shooter (target_burst_energy_pershot); whether hits that go to containers charge it is unchecked. During S2's Into the Fray: Penetrant Wish the interval is 2 s shorter (when the state is on at the previous activation and lasts until the shortened next activation)"
           },
           "claims": [
             "C-0734",
             "C-0735",
-            "C-0738"
+            "C-0738",
+            "C-0753"
           ]
         },
         {
@@ -126,7 +131,7 @@
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0740"
+            "C-0752"
           ]
         },
         {

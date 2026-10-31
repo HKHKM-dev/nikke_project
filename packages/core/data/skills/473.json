@@ -23,11 +23,12 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "「臨戦状態の味方」は、枠の定義の静的な臨戦（戦闘開始時に付いて持続するもの。マリアン：クイーン・紅蓮：神殺）を持つ枠と読む（バースト使用時に付く 10 秒の臨戦だけの枠は無い）",
-            "en": "\"Allies in the Into the Fray state\" are read as slots whose definition has a static Into the Fray (applied at the start of battle and lasting: Marian: Queen and Scarlet: Goddeath); no slot has only the 10 s Into the Fray applied on burst use"
+            "ja": "「臨戦状態の味方」は、枠の定義の静的な臨戦（戦闘開始時に付いて持続するもの。マリアン：クイーン・紅蓮：神殺）を持つ枠と読む（バースト使用時に付く 10 秒の臨戦だけの枠は無い。マリアン：クイーンで確かめ、紅蓮：神殺は確かめていない）",
+            "en": "\"Allies in the Into the Fray state\" are read as slots whose definition has a static Into the Fray (applied at the start of battle and lasting: Marian: Queen and Scarlet: Goddeath; checked with Marian: Queen, not yet with Scarlet: Goddeath); no slot has only the 10 s Into the Fray applied on burst use"
           },
           "claims": [
-            "C-0719"
+            "C-0719",
+            "C-0750"
           ]
         }
       ],
@@ -76,7 +77,8 @@
             "en": "\"Allies in the Into the Fray state\" are read as for the S1 Full Burst attack damage increase"
           },
           "claims": [
-            "C-0719"
+            "C-0719",
+            "C-0750"
           ]
         },
         {

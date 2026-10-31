@@ -1,0 +1,280 @@
+[
+  {
+    "id": "0753-01",
+    "recording": "0753",
+    "kind": "total",
+    "use": "record",
+    "value": 1007430763,
+    "description": "ココア・ラプンツェル：サンクチュアリ・マリアン：クイーン・I-DOLL・サン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11653。増分は 6356 個"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-02",
+    "recording": "0753",
+    "kind": "count",
+    "use": "record",
+    "value": 252,
+    "unit": "トリガー",
+    "description": "ココア・ラプンツェル：サンクチュアリ・マリアン：クイーン・I-DOLL・サン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 6356 個。前の増分から 30f 未満の増分（6341 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 42f）から発の数を決めた（2 発になった組 15 個）"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-03",
+    "recording": "0753",
+    "kind": "timing",
+    "use": "record",
+    "value": [1202, 2403, 3605, 4878, 6079, 7281, 8482, 9683, 10884],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・6・0・0・0・0・0・0f"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-04",
+    "recording": "0753",
+    "kind": "timing",
+    "use": "record",
+    "value": [1231, 2432, 3634, 4907, 6109, 7310, 8511, 9712, 10913],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・6・0・0・0・0f"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-05",
+    "recording": "0753",
+    "kind": "timing",
+    "use": "record",
+    "value": [1260, 2461, 3663, 4936, 6138, 7339, 8540, 9742, 10942],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-06",
+    "recording": "0753",
+    "kind": "timing",
+    "use": "record",
+    "value": [2397, 3598, 6073, 7275, 8476, 9677, 10878],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f4800"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-07",
+    "recording": "0753",
+    "kind": "timing",
+    "use": "record",
+    "value": [2426, 6102, 7303, 8505, 9706, 10907],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-08",
+    "recording": "0753",
+    "kind": "timing",
+    "use": "record",
+    "value": [3656, 8533, 10936],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0545",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0753-09",
+    "recording": "0753",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": 856,
+    "unit": "f",
+    "description": "戦闘開始（残り時間 02:59 が出たフレーム）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes",
+      "note": "最初の 250f 以上の間隔（+320f 前後）の次の変わり目（C-0078）"
+    }
+  },
+  {
+    "id": "0753-10",
+    "recording": "0753",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 34487,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サンがバーストを撃った窓の、マリアン：クイーンの通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）。ラプンツェル：サンクチュアリの S1 の攻撃ダメージ▲・S2 の攻撃力▲とバーストの攻撃力▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0545「読み方」）",
+      "note": "2 回目のフルバースト（I-DOLL・サンの窓）の始まり（戦闘開始から約 1634f）から増分にこの値が出る。録画の全部で 287 回（I-DOLL・サンの窓の中だけ）。窓の前のラプンツェル：サンクチュアリのバーストの後は 18,214（その会心 22,767）。S1 だけ・S2 だけの値（29,017・27,060）は 1 回も出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1800,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0753-11",
+    "recording": "0753",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 92377,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンがバーストを撃った窓（1 回目のフルバースト）の、通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし）。自分のバーストの▲・S2 のコアダメージ▲に、ラプンツェル：サンクチュアリの S1・S2・バーストの▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0545「読み方」）",
+      "note": "録画の全部で 303 回（マリアン：クイーンの窓の中だけ）。S1 だけ・S2 だけの値（82,683・80,043）は 1 回も出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0753-12",
+    "recording": "0753",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 777856,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サンの窓の始まりの後に発動した槍の 1 ヒット（会心なし）。ラプンツェル：サンクチュアリの S1・S2・バーストの▲と、マリアン：クイーンの S2 の順番攻撃ダメージ▲（攻撃ダメージ▲と同じ和）が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0545「読み方」）",
+      "note": "12f おきに並ぶ増分の組で拾った。同じフレームに通常攻撃のない回は 777,856 のまま（20 回）、通常攻撃のコア 34,487 と重なった回は 812,343（6 回）。順番攻撃ダメージ▲を別の乗数にした値（863,387。C-0740 の読み）は 1 回も出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 245,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0753-13",
+    "recording": "0753",
+    "source": "V-0545",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1136879,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓の中に発動した槍の 1 ヒット（会心なし）。自分のバーストの攻撃力▲・攻撃ダメージ▲に、ラプンツェル：サンクチュアリの S1・S2・バーストの▲が乗る（順番攻撃ダメージ▲は付かない回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの格子に当てた（V-0545「読み方」）",
+      "note": "録画の全部で 41 回（マリアン：クイーンの窓の中だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 53,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

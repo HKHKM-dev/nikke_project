@@ -919,6 +919,12 @@ export type DamageEffect = {
    * 射撃の回数トリガーのときだけ書ける。省略は溜めない
    */
   gaugeHits?: number[];
+  /**
+   * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 時間の周期のきっかけの倍率ダメージの、どのヒット（hitsRef の N ヒット）も射手の
+   * 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ倍率なし）をヒットのフレームに溜める。1 パス目
+   * （frame/firstPass.ts）が周期の発火（periodShorten の短縮も）を追って予約する。delayFrames と組み、condition とは組み合わせない
+   */
+  gaugePerHit?: true;
   /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
   withCharacter?: WithCharacterCondition;
   /** 防御力無視ダメージ編: 敵の属性の条件（クイーン（真）S1 の「1more が適用された時」） */
@@ -3308,6 +3314,15 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       slot: oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`),
       ref: parseRef(p.ref, `${path}.periodShorten.ref`),
     };
+  }
+  // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ
+  if (v.gaugePerHit !== undefined) {
+    if (v.gaugePerHit !== true) fail(`${path}.gaugePerHit`, `expected true, got ${JSON.stringify(v.gaugePerHit)}`);
+    if (!isTimerTrigger(trigger)) fail(`${path}.gaugePerHit`, 'gaugePerHit needs a timer trigger ({ everySeconds })');
+    // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない
+    if (effect.delayFrames === undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit needs delayFrames');
+    if (effect.condition !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a condition');
+    effect.gaugePerHit = true;
   }
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) {

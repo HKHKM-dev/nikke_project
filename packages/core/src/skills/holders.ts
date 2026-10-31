@@ -363,6 +363,12 @@ export type HolderLists = {
    */
   instantConditionHolds(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): boolean;
   /**
+   * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 枠 holder が自分の状態 state（家族の根なら家族のどれか）をフレーム frame に
+   * 持つか。frame/plan.ts の damage の selfState と同じく、静的な状態か、frame より前に付いて frame に続いている件を見る。1 パス目が
+   * 周期の短縮（periodShorten）を追うのに、frame までに登録した件で呼ぶ
+   */
+  selfStateAt(holder: number, state: NamedStateId, frame: number): boolean;
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
@@ -1982,6 +1988,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
       }
       return sum;
+    },
+    selfStateAt(holder, state, frame) {
+      // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）
+      return statesMatching(state).some(
+        (s) =>
+          staticStates[holder]?.has(s) === true ||
+          (stateTracks[holder]?.get(s) ?? []).some((t) => activeAt(t, frame).some((it) => it.start < frame)),
+      );
     },
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
