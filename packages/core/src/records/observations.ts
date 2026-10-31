@@ -15,7 +15,13 @@ import {
   type BurstSchedule,
 } from '../burst/schedule.ts';
 import { rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
-import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS, type BurstHitEnemyDebuffs, type DefenceRounding } from '../damage.ts';
+import {
+  DISTANCE_BONUS,
+  PER_SHOT_DAMAGE_CORE,
+  SKILL_HIT_FULL_BURST_BONUS,
+  type BurstHitEnemyDebuffs,
+  type DefenceRounding,
+} from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
