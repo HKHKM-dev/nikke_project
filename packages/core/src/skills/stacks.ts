@@ -17,10 +17,10 @@ export type StackItem = { stack: number; start: number; end: number };
 /**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少。フレーム frame に効いている段の上から amount 段を、
  * 次のフレーム（frame + 1）で切る。最後の 1 段は残す（付いている段より多く減らしても 1 段になる。V-0437 の録画 0463・0471）。
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: closes なら最後の 1 段も切る（0 になったら件を閉じる。使用回数を使い切った時）。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: closesAtZero なら最後の 1 段も切る（0 になったら件を閉じる。使用回数を使い切った時）。
  * 後の始まりは段 1 から数え直す
  */
-export type StackDecrease = { frame: number; amount: number; closes?: true };
+export type StackDecrease = { frame: number; amount: number; closesAtZero?: true };
 
 /**
  * 2 段目の段 14 の PR 3（同 2.7 節。論点 5）: スタックの上限。数か、始まりのフレームごとの上限（最大スタック数▲の中身の状態が付いている間だけ
@@ -65,14 +65,14 @@ function refreshAll(
   const cuts = decreases.filter((d) => d.frame < frames).sort((a, b) => a.frame - b.frame);
   let next = 0;
   /**
-   * フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す。段 14 の PR 3: closes なら最後の 1 段も切って
+   * フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す。段 14 の PR 3: closesAtZero なら最後の 1 段も切って
    * チェーンを閉じる）、後の始まりは減った段から数える
    */
   const cutBefore = (limit: number): void => {
     while (next < cuts.length && cuts[next]!.frame < limit) {
-      const { frame, amount, closes } = cuts[next++]!;
+      const { frame, amount, closesAtZero } = cuts[next++]!;
       if (chain.length === 0 || frame >= chainEnd) continue;
-      for (const w of chain.splice(Math.max(closes === true ? 0 : 1, chain.length - amount))) w.end = frame + 1;
+      for (const w of chain.splice(Math.max(closesAtZero === true ? 0 : 1, chain.length - amount))) w.end = frame + 1;
       if (chain.length === 0) chainEnd = -1;
     }
   };

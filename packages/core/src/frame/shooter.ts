@@ -234,7 +234,7 @@ export function stepShooter(
     // チャージ武器: 前の発（押下チャージ型のリロードの後は、込め終えてから解放の分の後）からの経過と、このフレームのチャージ時間で
     // 待ちを決め直す（C-0541・C-0542・C-0523）
     state.chargeElapsed += 1;
-    state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - state.chargeElapsed);
+    state.wait = chargeWaitFrames(params, model, state.chargeElapsed);
   }
   // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.2 節）: 押下チャージ型のマガジンの 2 発目以降は、AR・SMG・SG と同じく前の発の
   // 翌フレームから発射レートを蓄積し、1 発分たまるまで撃たない（チャージ 0 秒のシンデレラは 180rpm の 20・20・19f）。チャージを待つ間は
@@ -362,13 +362,20 @@ export function resumeShooter(
 export function chargeProgressFrames(
   state: ShooterState,
   params: FiringParams,
-  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'> = DEFAULT_WEAPON_MODEL,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
 ): number {
   const wait =
-    state.chargeElapsed === undefined
-      ? state.wait
-      : Math.max(0, chargeShotIntervalFrames(params, model) - (state.chargeElapsed + 1));
+    state.chargeElapsed === undefined ? state.wait : chargeWaitFrames(params, model, state.chargeElapsed + 1);
   return params.chargeFrames + (params.stance?.holdFrames ?? 1) - wait;
+}
+
+/** チャージ武器の、前の発からの経過 elapsed のときの次の発までの待ち（そのフレームのチャージ時間で決める。C-0541・C-0542・C-0523） */
+function chargeWaitFrames(
+  params: FiringParams,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
+  elapsed: number,
+): number {
+  return Math.max(0, chargeShotIntervalFrames(params, model) - elapsed);
 }
 
 /**

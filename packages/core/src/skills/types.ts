@@ -74,7 +74,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 効いていれば、敵のコードが自分のコードの有利でなくても有利として扱う（element.ts の elementMultiplier。有利コードの攻撃ダメージ▲の
  * 掛かり方も同じ）。どのコードの敵かは効果の enemyElement で書く。
  * fixedChargeTime = 「チャージ時間 N 秒に固定」。射撃に効く。値は秒（100 で割らない）。timed の self だけ。2 段目の段 14 の PR 3: 自分に付く
- * 状態の中身にも書け、付いている間は timed の固定より勝つ（skills/holders.ts の firingBuffs。plan/design-skill-stage14.md 2.7 節）
+ * 状態の中身にも書け、付いている間は timed の固定より勝つ（skills/buffs.ts の applyResolvedEffect。plan/design-skill-stage14.md 2.7 節）
  * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.1 節）:
  * trueDamage = 防御力無視ダメージ▲。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃と、trueDamage の使用武器の変更）
  * にだけ乗る（式の中の置き場所は damage.ts の TRUE_DAMAGE_BUCKET）。
@@ -3068,7 +3068,7 @@ function parseMaxStacksUpItem(
 /**
  * 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節）。
  * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: チャージ時間の固定（fixedChargeTime）の中身は、状態のスタック（使用回数）に
- * よらず 1 回だけ効く（固定の秒は足し合わせない。skills/holders.ts の firingBuffs）ので、付与のスタックの欄を渡さない
+ * よらず 1 回だけ効く（固定の秒は足し合わせない。skills/buffs.ts の applyResolvedEffect）ので、付与のスタックの欄を渡さない
  */
 function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>): Record<string, Json> {
   // 付与の delayFrames（周期の付与の遅れ）は付与の発火の欄なので、中身の規則には渡さない
@@ -4455,12 +4455,30 @@ function validateCountTriggersEvery(effects: readonly SkillEffect[], e: CycleEve
   }
 }
 
-/** アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる） */
+/**
+ * アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる）。2 段目の段 14 の PR 3
+ * （plan/design-skill-stage14.md 2.7 節）: 状態の中身の固定も 1 つまで（状態どうしの勝ち負けを決めていない。timed の固定との兼ね合いは
+ * skills/buffs.ts の applyResolvedEffect）
+ */
 function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  const count = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
-    (e) => e.kind === 'timed' && e.stat === 'fixedChargeTime',
-  ).length;
-  if (count > 1) fail(root, 'at most one fixedChargeTime effect per definition');
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  const timed = effects.filter((e) => e.kind === 'timed' && e.stat === 'fixedChargeTime').length;
+  if (timed > 1) fail(root, 'at most one fixedChargeTime effect per definition');
+  const contents = effects
+    .flatMap((e) => (e.kind === 'state' ? statContentsOf(e.contents) : []))
+    .filter((c) => c.stat === 'fixedChargeTime').length;
+  if (contents > 1) fail(root, 'at most one fixedChargeTime state content per definition');
+}
+
+/** 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先） */
+function hasSelfStackingGrant(entries: Partial<Record<SkillSlot, SkillEntry>>, state: NamedStateId): boolean {
+  return SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).some(
+    (g) =>
+      g.kind === 'state' &&
+      g.state === state &&
+      g.target === 'self' &&
+      (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+  );
 }
 
 /**
@@ -4476,10 +4494,7 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
       if (!('trigger' in e) || !isFullStackTrigger(e.trigger)) return;
       const state = e.trigger.fullStack;
       const own = grants.filter((g) => g.state === state);
-      const stacking = own.some(
-        (g) => g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
-      );
-      if (!stacking || !own.every((g) => isShotCountTrigger(g.trigger))) {
+      if (!hasSelfStackingGrant(entries, state) || !own.every((g) => isShotCountTrigger(g.trigger))) {
         fail(
           `${root}.${slot}.effects[${i}].trigger`,
           `a full-stack trigger of "${state}" needs grants of the same state on self with maxStacks and shot count triggers in the definition`,
@@ -4517,17 +4532,10 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
  * 要る（上限・維持・中身は付与のもの）
  */
 function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
-    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
-  );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'stackChange' || e.target === 'enemy') return;
-      const stacking = grants.some(
-        (g) =>
-          g.state === e.state && g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
-      );
-      if (!stacking) {
+      if (!hasSelfStackingGrant(entries, e.state)) {
         fail(
           `${root}.${slot}.effects[${i}]`,
           `stackChange of "${e.state}" needs a grant of the same state on self with maxStacks in the definition`,
@@ -4539,32 +4547,18 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 
 /**
  * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の「〈状態〉の最大スタック数 N▲」は、同じ定義にその状態を自分に
- * スタックで付ける付与が要る（足す先の上限）。状態の中身のチャージ時間の固定は 1 つの定義に 1 つまで（状態どうしの勝ち負けを決めていない。
- * timed の固定との兼ね合いは skills/holders.ts の firingBuffs）
+ * スタックで付ける付与が要る（足す先の上限）
  */
 function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
-    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
-  );
-  let fixedCharge = 0;
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'state') return;
       e.contents?.forEach((item, j) => {
-        const path = `${root}.${slot}.effects[${i}].contents[${j}]`;
-        if (isStatContent(item)) {
-          if (item.stat === 'fixedChargeTime' && ++fixedCharge > 1)
-            fail(path, 'at most one fixedChargeTime state content per definition');
-          return;
-        }
+        if (isStatContent(item)) return;
         const target = item.maxStacksUp.state;
-        const stacking = grants.some(
-          (g) =>
-            g.state === target && g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
-        );
-        if (!stacking)
+        if (!hasSelfStackingGrant(entries, target))
           fail(
-            path,
+            `${root}.${slot}.effects[${i}].contents[${j}]`,
             `maxStacksUp of "${target}" needs a grant of the same state on self with maxStacks in the definition`,
           );
       });

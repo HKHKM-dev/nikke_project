@@ -656,7 +656,7 @@ export function resolveStateGrants(
       if (effect.undispellable) grant.undispellable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
       if (effect.stacksPerFireRef !== undefined) {
-        const n = Math.round(skillValue(character.skills[slot], effect.stacksPerFireRef, levels[slot]));
+        const n = amountOf({ amountRef: effect.stacksPerFireRef }, character.skills[slot], levels[slot]);
         if (n < 1 || n > (window.maxStacks ?? 1))
           throw new RangeError(
             `character ${character.resourceId}: ${slot} effects[${effectIndex}] stacksPerFireRef resolves to ${n} (needs 1 to the max stacks ${window.maxStacks})`,
@@ -716,9 +716,8 @@ export function resolveMaxStacksUps(
       if (effect.kind !== 'state' || statics.has(effect.state)) continue;
       for (const item of effect.contents ?? []) {
         if (isStatContent(item)) continue;
-        const { state, amountRef } = item.maxStacksUp;
-        const amount = Math.round(skillValue(character.skills[slot], amountRef, levels[slot]));
-        out.push({ whileState: effect.state, state, amount });
+        const amount = amountOf(item.maxStacksUp, character.skills[slot], levels[slot]);
+        out.push({ whileState: effect.state, state: item.maxStacksUp.state, amount });
       }
     }
   }

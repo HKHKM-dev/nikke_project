@@ -306,6 +306,8 @@ export function applyResolvedEffect(
     weapon?: ChangedWeapon;
     source?: ResolvedEffect['source'];
     target?: ResolvedEffect['target'];
+    /** 状態の中身（isStateContent）なら付いている状態。チャージ時間の固定の勝ち負けに使う */
+    whileState?: string;
   },
   casterBaseAttack: number,
   casterMaxHp?: number,
@@ -342,7 +344,8 @@ export function applyResolvedEffect(
   // 自分にだけ付き、1 つの定義に 1 つずつまで（skills/types.ts）なので、当てる順によらず「状態が付いている間は状態の秒」になる。
   // 状態のスタック（使用回数）の段の数だけ当てても同じ値
   if (effect.stat === 'fixedChargeTime') {
-    const fixed = 'whileState' in effect || totals.fixedChargeTime === 0 ? effect.value : totals.fixedChargeTime;
+    const fixed =
+      effect.whileState !== undefined || totals.fixedChargeTime === 0 ? effect.value : totals.fixedChargeTime;
     return { totals: { ...totals, fixedChargeTime: fixed }, appliedAmount: effect.value };
   }
   // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）

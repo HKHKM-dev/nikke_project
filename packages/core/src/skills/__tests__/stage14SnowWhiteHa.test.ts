@@ -321,8 +321,8 @@ describe('語彙の検証（PR 3）', () => {
 describe('stackItems（PR 3: 0 で閉じる減少と、始まりごとの上限）', () => {
   it('closes the last stack on a closing decrease, and later starts count from 1', () => {
     const items = stackItems([0, 0, 50], 1000, 1000, 2, 'all', [
-      { frame: 10, amount: 1, closes: true },
-      { frame: 20, amount: 1, closes: true },
+      { frame: 10, amount: 1, closesAtZero: true },
+      { frame: 20, amount: 1, closesAtZero: true },
     ]);
     expect(items.map((w) => [w.stack, w.start, w.end])).toEqual([
       [1, 0, 21],

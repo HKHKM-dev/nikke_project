@@ -1123,7 +1123,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   // ---- 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 状態の中身の最大スタック数▲ ----
   // 上限が上がる件の列（持ち主のその状態の、スタックする件の列）→ 上げる状態の件の列（同じ持ち主に、中身を持つ定義の枠が付けたもの）と量
-  const capRaisers = new Map<HeldTrack, { track: HeldTrack; amount: number }[]>();
+  const capRaisers = new Map<HeldTrack, { base: number; raisers: { track: HeldTrack; amount: number }[] }>();
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const up of resolveMaxStacksUps(slot.definition, slot.character, slot.levels)) {
@@ -1134,23 +1134,25 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           const t = target.origin;
           if (target.holder !== raiser.holder || t.kind !== 'state' || t.state !== up.state) continue;
           if (t.grant.maxStacks === undefined) continue;
-          capRaisers.set(target, [...(capRaisers.get(target) ?? []), { track: raiser, amount: up.amount }]);
+          const entry = capRaisers.get(target) ?? { base: t.grant.maxStacks, raisers: [] };
+          entry.raisers.push({ track: raiser, amount: up.amount });
+          capRaisers.set(target, entry);
         }
       }
     }
   });
   /**
    * 件の列の、始まりのフレームごとの上限（上げる状態の件がそのフレームに付いていれば量を足す。上げる状態のスタック数によらず 1 回）。
-   * 上げる件の列が無ければ undefined（付与の上限のまま）
+   * 上げる件の列が無ければ undefined（付与の上限のまま）。上げる件の列の件は、件を作る直前に 1 回だけ読む（その入力が変われば updateLengths
+   * が作り直させる）
    */
   const maxStacksAtOf = (track: HeldTrack): MaxStacksAt | undefined => {
-    const raisers = capRaisers.get(track);
-    const o = track.origin;
-    if (raisers === undefined || o.kind !== 'state' || o.grant.maxStacks === undefined) return undefined;
-    const base = o.grant.maxStacks;
+    const entry = capRaisers.get(track);
+    if (entry === undefined) return undefined;
+    const raisers = entry.raisers.map((r) => ({ items: readItems(r.track), amount: r.amount }));
     return (frame) => {
-      let cap = base;
-      for (const r of raisers) if (activeAt(r.track, frame).length > 0) cap += r.amount;
+      let cap = entry.base;
+      for (const r of raisers) if (r.items.some((it) => it.start <= frame && frame < it.end)) cap += r.amount;
       return cap;
     };
   };
@@ -1176,8 +1178,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     changed = setLength(lengths, 7, track.consumes.length) || changed;
     changed = setLength(lengths, 8, track.decreases.length) || changed;
     // 2 段目の段 14 の PR 3: 上限を上げる状態の件の列の入力（始まり・閉じる・消費・減少。その件の列は持続の付与で、ほかの入力を読まない）
+    const raisers = capRaisers.get(track)?.raisers;
+    if (raisers === undefined) return changed;
     let raised = 0;
-    for (const r of capRaisers.get(track) ?? [])
+    for (const r of raisers)
       raised += r.track.starts.length + r.track.closes.length + r.track.consumes.length + r.track.decreases.length;
     return setLength(lengths, 9, raised) || changed;
   };
@@ -1552,7 +1556,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       decreases.splice(i, 0, {
         frame: start,
         amount: src.effect.amount,
-        ...(src.effect.closesAtZero === true ? { closes: true as const } : {}),
+        ...(src.effect.closesAtZero === true ? { closesAtZero: true as const } : {}),
       });
       return;
     }

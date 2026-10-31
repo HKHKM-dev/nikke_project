@@ -1756,20 +1756,22 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
   if (anchor === 'start' || anchor === 'prevBurstHit' || anchor === 'prevShot') {
     if (within !== undefined) throw new Error(`anchor ${anchor} に within は使えない`);
     if (anchor === 'start') offsets = points.map((p) => p.video);
-    else if (anchor === 'prevShot') {
-      const shots = slotOf(result.shots, ctx).frames;
+    else {
+      // 出来事ごとに、その前の最後の基準のフレーム（自分の発か、自分のバーストの 1 ヒット目）からの差
+      let bases: readonly number[];
+      let label: string;
+      if (anchor === 'prevShot') {
+        bases = slotOf(result.shots, ctx).frames;
+        label = '発';
+      } else {
+        if (schedule === null) throw new Error('バーストの時刻表が無い');
+        bases = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx)).map((a) => hitFrameOf(a));
+        label = 'バーストのヒット';
+      }
       offsets = points.map((p) => {
-        const shot = shots.filter((f) => f <= p.frame).at(-1);
-        if (shot === undefined) throw new Error(`フレーム ${p.frame} の出来事の前に発が無い`);
-        return p.video - videoFrameOf(schedule, shot);
-      });
-    } else {
-      if (schedule === null) throw new Error('バーストの時刻表が無い');
-      const burstHits = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx)).map((a) => hitFrameOf(a));
-      offsets = points.map((p) => {
-        const burst = burstHits.filter((f) => f <= p.frame).at(-1);
-        if (burst === undefined) throw new Error(`フレーム ${p.frame} の出来事の前にバーストのヒットが無い`);
-        return p.video - videoFrameOf(schedule, burst);
+        const base = bases.filter((f) => f <= p.frame).at(-1);
+        if (base === undefined) throw new Error(`フレーム ${p.frame} の出来事の前に${label}が無い`);
+        return p.video - videoFrameOf(schedule, base);
       });
     }
   } else {
