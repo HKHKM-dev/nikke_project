@@ -55,9 +55,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -88,9 +86,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -121,9 +117,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -134,14 +128,7 @@
     "readAt": "2026-10-31",
     "kind": "hit",
     "use": "record",
-    "value": [
-      23,
-      4,
-      6,
-      1,
-      29,
-      51
-    ],
+    "value": [23, 4, 6, 1, 29, 51],
     "description": "レイヴンの tick（1 スタックの値の整数倍。同じフレームの鈴原サクラの 1 ヒットとの和も含む）を、鈴原サクラの▲の有無で分けた数: [窓の中・▲あり・会心なし、同・会心、窓の中・▲なし・会心なし、同・会心、窓の外・▲なし、窓の外・▲あり]",
     "method": {
       "tool": "hud-jumps（hud.ts --mode jumps）",

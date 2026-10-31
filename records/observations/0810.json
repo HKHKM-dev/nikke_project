@@ -58,9 +58,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -99,9 +97,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       }
     },
@@ -117,11 +113,7 @@
     "readAt": "2026-10-31",
     "kind": "hit",
     "use": "record",
-    "value": [
-      10,
-      7,
-      2
-    ],
+    "value": [10, 7, 2],
     "description": "フルバーストの外の付着の 1 ヒット（会心・距離ボーナスの組と、同じフレームの通常攻撃・鈴原サクラとの和を含む）を、鈴原サクラの▲の有無で分けた数: [▲あり、▲なし、決まらない]",
     "method": {
       "tool": "hud-jumps（hud.ts --mode jumps）",
