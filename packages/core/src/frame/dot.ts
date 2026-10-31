@@ -165,13 +165,14 @@ export function latestDotTicks(
   cancels: readonly number[] = [],
 ): DotTick[] {
   const out: DotTick[] = [];
-  // 2 段目の段 13 の PR 2: 消去のフレームから後の tick は出ず、消去の後に付けた時は 1 スタックから（c は anchor 以後の最初の消去）
+  // 2 段目の段 13 の PR 2: 消去のフレームより後の tick は出ず、消去の後に付けた時は 1 スタックから（c は anchor 以後の最初の消去）。
+  // 消去はそのフレームの判定の後に閉じるので、消去のフレームちょうどの tick は出る（plan/design-skill-stage13.md の論点 13）
   let c = 0;
   let stacks = 0;
   fires.forEach((anchor, i) => {
     for (; c < cancels.length && cancels[c]! < anchor; c++) stacks = 0;
     stacks = Math.min(stacks + 1, maxStacks);
-    const next = Math.min(fires[i + 1] ?? frames, cancels[c] ?? frames);
+    const next = Math.min(fires[i + 1] ?? frames, c < cancels.length ? cancels[c]! + 1 : frames);
     for (let k = 0; ; k++) {
       const frame = anchor + Math.round((k + 0.5) * intervalFrames);
       if (frame >= next || frame >= frames) break;
