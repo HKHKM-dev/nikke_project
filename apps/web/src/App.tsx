@@ -187,10 +187,11 @@ export function App() {
       slots: slotInputs,
       enemy: enemyForCalc(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
       durationSeconds: team.durationSeconds,
-      burst: team.burst,
+      // 2026-10-31: オーナーの指示で詳細設定の「バースト」の欄を消し、バーストは常に使う
+      burst: true,
       controlledSlot: team.controlledSlot,
     }),
-    [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds, team.burst, team.controlledSlot],
+    [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds, team.controlledSlot],
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
@@ -233,18 +234,10 @@ export function App() {
     [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
   );
 
-  const slotNames = team.slots.map((s) =>
-    s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
-  );
   const teamCharacters = team.slots.map((s) =>
     s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
   );
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
-  const allTreasurePhases = team.slots.map((s) => {
-    const character = s.resourceId === null ? undefined : cache.characters.get(s.resourceId);
-    return character ? effectiveTreasurePhase(s, character) : 0;
-  });
-  const allHpRatios = team.slots.map((s) => s.hpRatio);
 
   return (
     <main className="app">
@@ -262,7 +255,6 @@ export function App() {
             enemyEventSets={team.enemyEventSets}
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
-            burst={team.burst}
             controlledSlot={team.controlledSlot}
             dispatch={dispatch}
           />
@@ -306,15 +298,6 @@ export function App() {
               computing={computing}
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
-              fixedSpec={team.fixedSpec}
-              slotNames={slotNames}
-              teamCharacters={teamCharacters}
-              enemyElement={team.enemy.element}
-              effectiveSkillLevels={allEffectiveSkillLevels}
-              treasurePhases={allTreasurePhases}
-              skillsStatuses={skillsStatuses}
-              hpRatios={allHpRatios}
-              dispatch={dispatch}
             />
           ) : (
             <p className="error">

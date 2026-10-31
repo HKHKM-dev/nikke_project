@@ -272,10 +272,6 @@ header h1 {
   font-weight: 400;
   opacity: 0.7;
 }
-.burst-headline {
-  margin: 0;
-  font-size: 0.85rem;
-}
 .summary {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
@@ -462,45 +458,6 @@ header h1 {
 }
 .skill-levels-row {
   margin: 4px 0 0;
-}
-.skill-row {
-  display: grid;
-  gap: 8px;
-  margin-top: 6px;
-}
-.skill-detail-item {
-  padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-  border-radius: 6px;
-}
-.skill-detail-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  font-size: 0.88rem;
-}
-.skill-name {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.skill-desc {
-  white-space: pre-wrap;
-  font: inherit;
-  font-size: 0.78rem;
-  opacity: 0.85;
-  margin: 4px 0 0;
-  padding: 5px 8px;
-  border-radius: 4px;
-  background: color-mix(in srgb, currentColor 6%, transparent);
-}
-.dev-notes-details {
-  margin-top: 6px;
-  font-size: 0.8rem;
-}
-.dev-notes-details > summary {
-  cursor: pointer;
-  opacity: 0.75;
 }
 .badge.supported {
   background: #2e7d32;

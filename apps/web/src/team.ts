@@ -56,8 +56,6 @@ export const DEFAULT_SLOT_CONDITION: SlotCondition = {
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
-/** バーストの既定。ON */
-export const DEFAULT_BURST = true;
 /**
  * Stage 18-C2: 条件の決め方の既定。自動 = 射撃場の的の表と着地点の時間割り（plan/design-stage18.md 12.9 節の 5）。
  * 操作キャラの枠も自動（AUTO で撃つ前提）。人が狙う操作は手入力にしてもらう
@@ -96,8 +94,6 @@ export type TeamState = {
   durationSeconds: number;
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
-  /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル） */
-  burst: boolean;
   /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ */
   controlledSlot: number;
   /**
@@ -120,7 +116,6 @@ export type TeamAction =
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
-  | { type: 'setBurst'; burst: boolean }
   | { type: 'setControlledSlot'; controlledSlot: number }
   | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
   | { type: 'replace'; state: TeamState };
@@ -147,7 +142,6 @@ export function initialTeamState(): TeamState {
     enemy: { ...SHOOTING_RANGE_ENEMY },
     durationSeconds: DEFAULT_DURATION_SECONDS,
     fixedSpec: false,
-    burst: DEFAULT_BURST,
     controlledSlot: DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: [],
   };
@@ -210,8 +204,6 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return action.fixedSpec
         ? { ...state, fixedSpec: true, enemy: { ...state.enemy, defence: FIXED_SPEC_ENEMY_DEFENCE } }
         : { ...state, fixedSpec: false };
-    case 'setBurst':
-      return { ...state, burst: action.burst };
     case 'setControlledSlot':
       return { ...state, controlledSlot: action.controlledSlot };
     case 'setEnemyEventSets':
@@ -537,8 +529,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   if (enemy === null) return null;
   if (!isFinite_(raw.durationSeconds) || raw.durationSeconds < 0) return null;
   if (!isBool(raw.fixedSpec)) return null;
-  // Stage 4 までの保存データには無いので、欠落は既定値（ON）
-  if (raw.burst !== undefined && !isBool(raw.burst)) return null;
+  // 2026-10-31 までの保存データにはバーストを回すか（burst）があった。欄を消し、バーストは常に使うので読まない
   // Stage 6 までの保存データには無い。欠落と旧仕様の null（全員 AI）は既定の枠にする
   const controlled = raw.controlledSlot;
   if (
@@ -559,7 +550,6 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     enemy,
     durationSeconds: raw.durationSeconds,
     fixedSpec: raw.fixedSpec,
-    burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
     controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
   };

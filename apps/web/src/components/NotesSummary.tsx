@@ -80,7 +80,7 @@ function slotItems(slot: NotesSummarySlot): Item[] {
       const entry = definition?.skills[s];
       if (!entry) continue;
       const name = `${SKILL_SLOT_LABEL[s]}「${character.skills[s].name.ja}」`;
-      // notes の種類で分ける（plan/design-skill-note-kinds.md 2.3 節）。計算に無関係・補足はスキル欄だけに出す
+      // notes の種類で分ける（plan/design-skill-note-kinds.md 2.3 節）。計算に無関係・補足は画面に出さない（出していたスキル欄は 2026-10-31 に消した）
       const notes = entry.notes ?? [];
       if (entry.support === 'partial' || entry.support === 'unsupported') {
         const what = entry.support === 'partial' ? '一部対応' : '未対応';

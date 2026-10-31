@@ -22,7 +22,6 @@ type Props = {
   enemyEventSets: readonly string[];
   durationSeconds: number;
   fixedSpec: boolean;
-  burst: boolean;
   controlledSlot: number;
   dispatch: Dispatch<TeamAction>;
 };
@@ -35,7 +34,6 @@ export function TeamSettingsForm({
   enemyEventSets,
   durationSeconds,
   fixedSpec,
-  burst,
   controlledSlot,
   dispatch,
 }: Props) {
@@ -116,7 +114,6 @@ export function TeamSettingsForm({
               <span>操作キャラ</span>
               <select
                 value={controlledSlot}
-                disabled={!burst}
                 onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
               >
                 {Array.from({ length: TEAM_SIZE }, (_, i) => (
@@ -146,14 +143,6 @@ export function TeamSettingsForm({
             </label>
           </div>
           <div className="settings-options">
-            <label className="field checkbox">
-              <input
-                type="checkbox"
-                checked={burst}
-                onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
-              />
-              <span>バースト</span>
-            </label>
             <label className="field checkbox">
               <input
                 type="checkbox"
