@@ -91,12 +91,15 @@ describe('ティア（V-0566）', () => {
     expect(shortened.slice(0, 4).every((f) => f > 0)).toBe(true);
   });
 
+  // S1 の▼の 1 スタックの秒（値 01。Lv10 で 13 秒）
+  const STACK_SECONDS = Number(character.skills.skill1.values[0]![9]);
+
   // 単騎の発動の間隔（30 秒あまり）は維持 12 秒より長いので、どの発動の▼も、その発動から付いた 1 スタック（発動の後に付いた件を縮める
   // 処理。frame/firstPass.ts の burstCooldownStartedAt）だけ
   it('shortens each cooldown by 13 s from the stack its own activation applies', () => {
     const shortened = run(definition).schedule!.activations.map((a) => a.cooldownShortenedFrames ?? 0);
     expect(shortened.length).toBeGreaterThan(2);
-    for (const f of shortened) expect(f).toBe(gameSecondsToFrames(13));
+    for (const f of shortened) expect(f).toBe(gameSecondsToFrames(STACK_SECONDS));
   });
 
   // 2 スタック（スタック数 × 13 秒。plan/design-skill-stage15.md 2.2 節）: 維持を 60 秒に延ばした定義で、前の発動の▼が残っている間に次の
@@ -109,7 +112,7 @@ describe('ティア（V-0566）', () => {
     s1.durationSeconds = 60;
     const shortened = run(parseSkillDefinition(json)).schedule!.activations.map((a) => a.cooldownShortenedFrames ?? 0);
     expect(shortened.length).toBeGreaterThan(3);
-    expect(shortened.slice(0, 2)).toEqual([gameSecondsToFrames(13), 2 * gameSecondsToFrames(13)]);
-    for (const f of shortened.slice(2)) expect(f).toBe(gameSecondsToFrames(26));
+    expect(shortened.slice(0, 2)).toEqual([gameSecondsToFrames(STACK_SECONDS), 2 * gameSecondsToFrames(STACK_SECONDS)]);
+    for (const f of shortened.slice(2)) expect(f).toBe(gameSecondsToFrames(2 * STACK_SECONDS));
   });
 });

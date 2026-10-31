@@ -1,12 +1,19 @@
 // エイダ（840）を含む編成（2 段目の段 15 の PR 3。plan/design-skill-stage15.md 2.3 節。V-0569）。語彙と単騎の動きは
 // skills/__tests__/stage15Ada.test.ts。ここでは味方と組んだ時に:
 // S1: フルバーストの始まりに、直前にバーストを使った III（エイダ自身とは限らない）に攻撃力▲・防御力無視ダメージ▲（10 秒。C-0784）。
-// S2: 閃光手榴弾投擲はフルバーストの中だけ（周期 2 秒。自分のバーストの後の 10 秒は 1 秒。C-0787・C-0788）。ヒットは周期の 6f 後。
+// S2: 閃光手榴弾投擲はフルバーストの中だけ（周期 2 秒。自分のバーストの後の 10 秒は 1 秒。C-0787・C-0788）。ヒットは周期の遅れの後。
 // 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
-import { gameSecondsToFrames } from '../time.ts';
-import { effectWindows, expectEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { GAME_SECONDS_PER_FRAME } from '../time.ts';
+import {
+  describeEveryShotInOneGroup,
+  effectWindows,
+  fixedTeam,
+  rawDefinition,
+  skillValueOf,
+  windowsFrom,
+} from './teamHelpers.ts';
 
 const ADA = 840;
 const SWHA = 471;
@@ -26,24 +33,37 @@ const TEAMS = {
 
 type Plan = ReturnType<typeof planTeamRun>;
 const s1Windows = (plan: Plan, slot: number, stat: string) =>
-  effectWindows(
-    plan,
-    slot,
-    (p) => p.effect.source.resourceId === ADA && p.effect.source.skill === 'skill1' && p.effect.stat === stat,
-  );
+  effectWindows(plan, slot, { resourceId: ADA, skill: 'skill1', stat });
 const fromFullBurstStarts = (plan: Plan) =>
-  plan.schedule!.fullBurstWindows.map((w) => ({
-    start: w.start,
-    end: Math.min(w.start + gameSecondsToFrames(10), plan.frames),
-  }));
-/** S2 のヒットの、周期のフレーム（ヒットの 6f 前）のフルバーストの窓ごとの並び */
+  windowsFrom(
+    plan.schedule!.fullBurstWindows.map((w) => w.start),
+    10,
+    plan.frames,
+  );
+// S2 の周期の効果（周期の秒・ヒットの遅れ）
+const s2 = rawDefinition<{
+  skills: { skill2: { effects: { trigger: { everySeconds: number }; delayFrames: number }[] } };
+}>(ADA).skills.skill2.effects[0]!;
+/** 周期 seconds 秒の刻みの間隔（端数を持ち越すので、切り捨てか切り上げのフレーム数） */
+const stepsOf = (seconds: number) => [
+  Math.floor(seconds / GAME_SECONDS_PER_FRAME),
+  Math.ceil(seconds / GAME_SECONDS_PER_FRAME),
+];
+const s2Hits = (plan: Plan) =>
+  plan.skillHits.filter((h) => h.effect.source.resourceId === ADA && h.effect.source.skill === 'skill2');
+/** S2 のヒットの、周期のフレーム（ヒットの遅れの前）のフルバーストの窓ごとの並び */
 const s2TicksByWindow = (plan: Plan) =>
   plan.schedule!.fullBurstWindows.map((w) =>
-    plan.skillHits
-      .filter((h) => h.effect.source.resourceId === ADA && h.effect.source.skill === 'skill2')
-      .map((h) => h.frame - 6)
+    s2Hits(plan)
+      .map((h) => h.frame - s2.delayFrames)
       .filter((f) => w.start <= f && f < w.end),
   );
+const expectSteps = (plan: Plan, seconds: number) => {
+  for (const window of s2TicksByWindow(plan)) {
+    expect(window.length).toBeGreaterThan(1);
+    for (let k = 1; k < window.length; k++) expect(stepsOf(seconds)).toContain(window[k]! - window[k - 1]!);
+  }
+};
 
 describe('リター + デルタ + エイダ', () => {
   const plan = planTeamRun(TEAMS['リター + デルタ + エイダ']);
@@ -58,13 +78,9 @@ describe('リター + デルタ + エイダ', () => {
   );
 
   it('throws Flash Grenades only inside Full Burst, every 1 s after her own burst', () => {
-    const hits = plan.skillHits.filter((h) => h.effect.source.resourceId === ADA && h.effect.source.skill === 'skill2');
-    const ticks = s2TicksByWindow(plan);
-    expect(ticks.flat()).toHaveLength(hits.length);
-    for (const window of ticks) {
-      expect(window.length).toBeGreaterThan(1);
-      for (let k = 1; k < window.length; k++) expect([58, 59]).toContain(window[k]! - window[k - 1]!);
-    }
+    expect(s2TicksByWindow(plan).flat()).toHaveLength(s2Hits(plan).length);
+    // フルバースト（10 秒）は、どれも自分のバーストの後の短縮の窓（10 秒）の中。短縮の秒は S2 の値 03
+    expectSteps(plan, s2.trigger.everySeconds - skillValueOf(ADA, 'skill2', 3));
   });
 });
 
@@ -79,15 +95,8 @@ describe('リター + デルタ + エイダ + スノーホワイト：ヘビー�
   });
 
   it('throws Flash Grenades every 2 s inside Full Burst without her own burst', () => {
-    for (const window of s2TicksByWindow(plan)) {
-      expect(window.length).toBeGreaterThan(1);
-      for (let k = 1; k < window.length; k++) expect([117, 118]).toContain(window[k]! - window[k - 1]!);
-    }
+    expectSteps(plan, s2.trigger.everySeconds);
   });
 });
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    expectEveryShotInOneGroup(input, planTeamRun(input));
-  });
-});
+describeEveryShotInOneGroup(TEAMS);

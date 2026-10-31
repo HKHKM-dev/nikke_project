@@ -4,9 +4,9 @@
 // バースト: 再突入で、ティアの後のバースト段階は I に戻る（キャラのデータの nextStep が Step1。定義の burstReentry も同じ段）。
 // 射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
+import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { gameSecondsToFrames } from '../time.ts';
-import { effectWindows, expectEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const TIA = 451;
 
@@ -17,52 +17,36 @@ const TEAMS = {
 };
 
 describe.each([
-  ['ティア + デルタ + スノーホワイト：ヘビーアームズ', 3],
-  ['ティア + ミルク + デルタ + スノーホワイト：ヘビーアームズ', 4],
-] as const)('%s', (name, size) => {
+  'ティア + デルタ + スノーホワイト：ヘビーアームズ',
+  'ティア + ミルク + デルタ + スノーホワイト：ヘビーアームズ',
+] as const)('%s', (name) => {
   const input = TEAMS[name];
   const plan = planTeamRun(input);
-  const activations = plan.schedule!.activations;
-  const uses = activations.filter((a) => a.slotIndex === 0);
+  const { activations } = plan.schedule!;
+  const uses = activationFramesOfSlot(plan.schedule!, 0);
 
   it('raises the attack damage of every ally for 10 s from every burst use (S1 via the S2 cover heal)', () => {
     expect(uses.length).toBeGreaterThan(2);
-    const expected = uses.map((a) => ({
-      start: a.frame,
-      end: Math.min(a.frame + gameSecondsToFrames(10), plan.frames),
-    }));
-    for (let slot = 0; slot < size; slot++) {
-      expect(
-        effectWindows(
-          plan,
-          slot,
-          (p) =>
-            p.effect.source.resourceId === TIA &&
-            p.effect.source.skill === 'skill1' &&
-            p.effect.stat === 'attackDamage',
-        ),
-      ).toEqual(expected);
-    }
+    input.slots.forEach((_, slot) => {
+      expect(effectWindows(plan, slot, { resourceId: TIA, skill: 'skill1', stat: 'attackDamage' })).toEqual(
+        windowsFrom(uses, 10, plan.frames),
+      );
+    });
   });
 
   it('goes back to burst stage I after her burst (re-entry): the next use is always another I', () => {
-    for (const a of uses) {
-      const next = activations.find((b) => b.frame > a.frame);
+    for (const frame of uses) {
+      const next = activations.find((b) => b.frame > frame);
       if (next !== undefined) expect(input.slots[next.slotIndex]!.character.burstStep).toBe('Step1');
     }
   });
+
+  if (name === 'ティア + デルタ + スノーホワイト：ヘビーアームズ') {
+    it('never reaches stage II when Tia is the only I, so there is no Full Burst', () => {
+      expect(activations.every((a) => a.slotIndex === 0)).toBe(true);
+      expect(plan.schedule!.fullBurstWindows).toEqual([]);
+    });
+  }
 });
 
-describe('ティア + デルタ + スノーホワイト：ヘビーアームズ（I がティアだけ）', () => {
-  it('never reaches stage II, so there is no Full Burst', () => {
-    const plan = planTeamRun(TEAMS['ティア + デルタ + スノーホワイト：ヘビーアームズ']);
-    expect(plan.schedule!.activations.every((a) => a.slotIndex === 0)).toBe(true);
-    expect(plan.schedule!.fullBurstWindows).toEqual([]);
-  });
-});
-
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    expectEveryShotInOneGroup(input, planTeamRun(input));
-  });
-});
+describeEveryShotInOneGroup(TEAMS);

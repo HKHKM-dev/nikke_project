@@ -3,7 +3,7 @@
 // S2: フルチャージの発ごとの防御力無視ダメージ（C-0805）と、戦場コントロール・徹甲炸裂弾の間の▲（C-0809）。バースト: 防御力無視の
 // バーストスキルダメージと、そのヒットに乗る同じ発動の防御力無視ダメージ▲（C-0807・C-0808）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
-import { hitFrameOf } from '../burst/schedule.ts';
+import { burstHitsOfSlot } from '../burst/schedule.ts';
 import { computeTriggerDamage } from '../damage.ts';
 import { slotBurstHit } from '../skills/burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -13,17 +13,17 @@ import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { slotPieces, stateItemsOf } from './historyHelpers.ts';
 import {
+  describeEveryShotInOneGroup,
   effectWindows,
-  expectEveryShotInOneGroup,
   fixedSlot,
   fixedTeam,
   rawDefinition,
   SHOOTING_RANGE_ENEMY as enemy,
+  skillValueOf,
 } from './teamHelpers.ts';
 
 const BESTIE = 94;
 const raw = () => rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(BESTIE);
-const bestieSlot = (json: unknown = raw()) => fixedSlot(BESTIE, json);
 
 describe('ベスティー：タクティカル・アップの定義', () => {
   const def = parseSkillDefinition(raw());
@@ -52,8 +52,7 @@ describe('ベスティー：タクティカル・アップの定義', () => {
 });
 
 describe('ベスティー：タクティカル・アップ単騎（バーストなし）', () => {
-  const input: TeamInput = { slots: [bestieSlot()], enemy, durationSeconds: 180, burst: false, controlledSlot: 0 };
-  const plan = planTeamRun(input);
+  const plan = planTeamRun(fixedTeam([BESTIE], 0, { burst: false }));
   const frames = plan.shots[0]!.frames;
   const guide = slotPieces(plan, 0).filter(
     (p) => p.effect.source.skill === 'skill1' && p.effect.stat === 'chargeDamage',
@@ -85,7 +84,7 @@ describe('ベスティー：タクティカル・アップ + ユニ（最大装�
   function run(withRemoval: boolean) {
     const json = raw();
     if (!withRemoval) json.skills.skill1.effects.splice(1, 1);
-    const input: TeamInput = { ...withYuni, slots: [bestieSlot(json), fixedSlot(YUNI)] };
+    const input: TeamInput = { ...withYuni, slots: [fixedSlot(BESTIE, json), fixedSlot(YUNI)] };
     const plan = planTeamRun(input);
     const guide = slotPieces(plan, 0).filter(
       (p) => p.effect.source.skill === 'skill1' && p.effect.stat === 'chargeDamage',
@@ -94,8 +93,10 @@ describe('ベスティー：タクティカル・アップ + ユニ（最大装�
     return { plan, guide, pattern: pattern.join('') };
   }
 
+  const withRemoval = run(true);
+
   it('writes the reload ends for the removal alone, and removes the guide on each reload end', () => {
-    const { plan, guide } = run(true);
+    const { plan, guide } = withRemoval;
     const log = plan.shots[0]!;
     // 定義に durationUntil: reloadEnd は無く、込め終わりのフレームを書くのは解除（hasReloadEndEffect の removeState）のため
     expect(log.reloadEnds?.length).toBeGreaterThan(1);
@@ -112,7 +113,7 @@ describe('ベスティー：タクティカル・アップ + ユニ（最大装�
   });
 
   it('starts every 9-shot magazine with a charged shot (the guide from the last shot is removed on the reload)', () => {
-    const { pattern } = run(true);
+    const { pattern } = withRemoval;
     // 1 本目は 8 発（溜める・ガイド 3 の 2 組）、2 本目から 9 発（2 組の後に溜める 1 発）
     expect(pattern.slice(0, 8 + 9 * 3)).toBe('NGGGNGGG' + 'NGGGNGGGN'.repeat(3));
     // 解除が無ければ、最後の発で付いたガイドの 3 発が次のマガジンの頭に残る
@@ -130,12 +131,7 @@ describe('エマ：タクティカル・アップ + ウンファ：タクティ�
   const shots = plan.shots[BESTIE_SLOT]!.frames;
   const states = stateItemsOf(plan);
   /** ベスティーの S2 の stat の窓 */
-  const windows = (stat: string) =>
-    effectWindows(
-      plan,
-      BESTIE_SLOT,
-      (p) => p.effect.source.resourceId === BESTIE && p.effect.source.skill === 'skill2' && p.effect.stat === stat,
-    );
+  const windows = (stat: string) => effectWindows(plan, BESTIE_SLOT, { resourceId: BESTIE, skill: 'skill2', stat });
 
   it.each([
     ['attack', 'battlefieldFormation', BESTIE_SLOT],
@@ -161,17 +157,15 @@ describe('エマ：タクティカル・アップ + ウンファ：タクティ�
     const bestie = tacticalUp.slots[BESTIE_SLOT]!;
     const same = sameActivationPiecesOf(plan.history, bestie.character);
     expect(same).toBeDefined();
-    const activations = plan.schedule!.activations.filter(
-      (a) => a.slotIndex === BESTIE_SLOT && hitFrameOf(a) < plan.frames,
-    );
+    const landed = burstHitsOfSlot(plan.schedule!, BESTIE_SLOT, plan.frames);
     const hits = runSimulation(tacticalUp).slots[BESTIE_SLOT]!.burst.hits;
-    expect(activations.length).toBeGreaterThan(1);
-    expect(hits).toHaveLength(activations.length);
-    activations.forEach((a, k) => {
-      const atUse = burstHitBuffs(plan.timeline, a.frame, hitFrameOf(a), BESTIE_SLOT, true);
-      const buffs = burstHitBuffs(plan.timeline, a.frame, hitFrameOf(a), BESTIE_SLOT, true, same);
-      // バーストの防御力無視ダメージ▲（Lv10 の 60%。C-0808）
-      expect(buffs.trueDamage).toBeCloseTo(atUse.trueDamage + 0.6, 12);
+    expect(landed.length).toBeGreaterThan(1);
+    expect(hits).toHaveLength(landed.length);
+    landed.forEach((h, k) => {
+      const atUse = burstHitBuffs(plan.timeline, h.activationFrame, h.frame, BESTIE_SLOT, true);
+      const buffs = burstHitBuffs(plan.timeline, h.activationFrame, h.frame, BESTIE_SLOT, true, same);
+      // バーストの防御力無視ダメージ▲（値 03。C-0808）
+      expect(buffs.trueDamage).toBeCloseTo(atUse.trueDamage + skillValueOf(BESTIE, 'burst', 3) / 100, 12);
       const trigger = computeTriggerDamage({
         ...bestie,
         enemy,
@@ -191,14 +185,10 @@ describe('エマ：タクティカル・アップ + ウンファ：タクティ�
   });
 });
 
-const TEAMS: Record<string, TeamInput> = {
+const TEAMS = {
   '単騎（バーストなし）': fixedTeam([BESTIE], 0, { burst: false }),
   'ベスティー：タクティカル・アップ + ユニ': withYuni,
   'エマ：タクティカル・アップ + ウンファ：タクティカル・アップ + ベスティー：タクティカル・アップ': tacticalUp,
 };
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    expectEveryShotInOneGroup(input, planTeamRun(input));
-  });
-});
+describeEveryShotInOneGroup(TEAMS);

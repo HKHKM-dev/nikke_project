@@ -3,21 +3,12 @@
 // 編成は、ルドミラ（I。ヒットは I の発動から遅れる。C-0675）・ブラン（II。使った時から付く受けるダメージ▲。C-0692）・
 // プリバティ：アンカインド・メイド（III）。ブランの▲は、II まで進んだ回は毎回ルドミラの発動の後・ヒットの前に付く。
 // 防御力▼の側は、ブランをエレグ（II。バーストのヒットから敵に付くブームインストールの防御力▼。C-0690）に替えた編成で見る
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { hitFrameOf } from '../burst/schedule.ts';
 import { computeTriggerDamage, defenceAfterDown } from '../damage.ts';
-import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { burstHitBuffs, burstSnapshotState, planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
-import type { CharacterData } from '../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
+import { fixedTeam, skillValueOf } from './teamHelpers.ts';
 
 const LUDMILLA = 0;
 const BLANC = 1;
@@ -25,29 +16,7 @@ const PRIVATY = 2;
 // ブランのバーストの受けるダメージ▲（Lv10。C-0692）
 const BLANC_DAMAGE_TAKEN = 0.3926;
 
-function slotOf(id: number): TeamSlotInput {
-  const c = readJson<CharacterData>(`../../data/characters/${id}.json`);
-  const fixed = computeFixedSpecAttack(c);
-  return {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
-    skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
-      levels: MAX_SKILL_LEVELS,
-    },
-  };
-}
-
-const input: TeamInput = {
-  slots: [slotOf(190), slotOf(270), slotOf(313)],
-  enemy: { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true },
-  durationSeconds: 180,
-  burst: true,
-  burstModel: 'dynamic',
-  controlledSlot: LUDMILLA,
-};
+const input = fixedTeam([190, 270, 313], LUDMILLA, { burstModel: 'dynamic' });
 
 describe('バーストのヒットが敵の側のデバフを見る時点（C-0795）', () => {
   const plan = planTeamRun(input);
@@ -80,11 +49,12 @@ describe('バーストのヒットが敵の側のデバフを見る時点（C-07
 // 防御力▼の側（enemyDefenseDown）: エレグ（II）のヒット（II の発動の 35f 後）は、毎回ルドミラ（I）の発動の後・ヒットの前に来る
 describe('バーストのヒットが敵の防御力▼を見る時点（C-0795）', () => {
   const ELEGG = 1;
-  // ブームインストールの防御力▼（Lv10。C-0690）
-  const BOOM_DEFENSE_DOWN = 0.3564;
-  const withElegg: TeamInput = { ...input, slots: [slotOf(190), slotOf(500), slotOf(313)] };
-  const plan = planTeamRun(withElegg);
-  const activations = plan.schedule!.activations;
+  // ブームインストールの防御力▼（エレグのバーストの値 04。C-0690）
+  const BOOM_DEFENSE_DOWN = skillValueOf(500, 'burst', 4) / 100;
+  const withElegg = fixedTeam([190, 500, 313], LUDMILLA, { burstModel: 'dynamic' });
+  // 計画（時刻表・区間）もバーストのヒットも、1 回の sim から読む
+  const sim = runSimulation(withElegg);
+  const activations = sim.schedule!.activations;
   const ludmilla = activations.filter((a) => a.slotIndex === LUDMILLA);
 
   it("uses the defense decrease at the use: Elegg's ▼ from her hit is on at Ludmilla's hit but not used", () => {
@@ -92,21 +62,21 @@ describe('バーストのヒットが敵の防御力▼を見る時点（C-0795�
     for (const a of ludmilla) {
       const elegg = activations.find((b) => b.slotIndex === ELEGG && b.frame > a.frame)!;
       expect(a.frame < hitFrameOf(elegg) && hitFrameOf(elegg) < hitFrameOf(a)).toBe(true);
-      const atHit = burstSnapshotState(plan.timeline, hitFrameOf(a), LUDMILLA, true).buffs;
-      const atUse = burstSnapshotState(plan.timeline, a.frame, LUDMILLA, true).buffs;
+      const atHit = burstSnapshotState(sim.timeline, hitFrameOf(a), LUDMILLA, true).buffs;
+      const atUse = burstSnapshotState(sim.timeline, a.frame, LUDMILLA, true).buffs;
       expect(atHit.enemyDefenseDown).toBeCloseTo(atUse.enemyDefenseDown + BOOM_DEFENSE_DOWN, 12);
-      expect(burstHitBuffs(plan.timeline, a.frame, hitFrameOf(a), LUDMILLA, true)).toEqual(atUse);
+      expect(burstHitBuffs(sim.timeline, a.frame, hitFrameOf(a), LUDMILLA, true)).toEqual(atUse);
     }
   });
 
   it("subtracts the enemy's defense at the use from Ludmilla's burst hits", () => {
-    const hits = runSimulation(withElegg).slots[LUDMILLA]!.burst.hits;
+    const hits = sim.slots[LUDMILLA]!.burst.hits;
     expect(hits).toHaveLength(ludmilla.length);
     const slot = withElegg.slots[LUDMILLA]!;
     hits.forEach((h, k) => {
       const a = ludmilla[k]!;
-      const atUse = burstSnapshotState(plan.timeline, a.frame, LUDMILLA, true).buffs;
-      const atHit = burstSnapshotState(plan.timeline, hitFrameOf(a), LUDMILLA, true).buffs;
+      const atUse = burstSnapshotState(sim.timeline, a.frame, LUDMILLA, true).buffs;
+      const atHit = burstSnapshotState(sim.timeline, hitFrameOf(a), LUDMILLA, true).buffs;
       const { attack } = computeTriggerDamage({
         ...slot,
         enemy: withElegg.enemy,

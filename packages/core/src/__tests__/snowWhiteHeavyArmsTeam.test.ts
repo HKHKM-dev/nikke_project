@@ -3,9 +3,9 @@
 // S1: チャージの 0.2 秒ごとに付く受けるダメージ▲は敵の件なので、どの味方の区間にも乗る（C-0758）。
 // バースト: 自分の攻撃ダメージ▲（10 秒）は、使うたびに付く（C-0762）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
+import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
-import { gameSecondsToFrames } from '../time.ts';
-import { effectWindows, expectEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const SWHA = 471;
 
@@ -17,35 +17,25 @@ const TEAMS = {
 
 describe('ミルク + デルタ + スノーホワイト：ヘビーアームズ', () => {
   const plan = planTeamRun(TEAMS['ミルク + デルタ + スノーホワイト：ヘビーアームズ']);
-  const fromSwha = (skill: string, stat: string) => (slot: number) =>
-    effectWindows(
-      plan,
-      slot,
-      (p) => p.effect.source.resourceId === SWHA && p.effect.source.skill === skill && p.effect.stat === stat,
-    );
+  const fromSwha = (slot: number, skill: string, stat: string) =>
+    effectWindows(plan, slot, { resourceId: SWHA, skill, stat });
 
   it('puts the S1 damage taken increase on every ally, from the first charge tick to the end of the battle', () => {
-    const own = fromSwha('skill1', 'damageTaken')(2);
+    const own = fromSwha(2, 'skill1', 'damageTaken');
     expect(own).toHaveLength(1);
     // 最初のチャージの刻み（最初の発より前）から、チャージが続くかぎり切れない
     expect(own[0]!.start).toBeGreaterThan(0);
     expect(own[0]!.start).toBeLessThan(plan.shots[2]!.frames[0]!);
     expect(own[0]!.end).toBe(plan.frames);
-    for (const slot of [0, 1]) expect(fromSwha('skill1', 'damageTaken')(slot)).toEqual(own);
+    for (const slot of [0, 1]) expect(fromSwha(slot, 'skill1', 'damageTaken')).toEqual(own);
   });
 
   it('raises her own attack damage for 10 s from every burst use, and not the allies', () => {
-    const uses = plan.schedule!.activations.filter((a) => a.slotIndex === 2);
+    const uses = activationFramesOfSlot(plan.schedule!, 2);
     expect(uses.length).toBeGreaterThan(2);
-    expect(fromSwha('burst', 'attackDamage')(2)).toEqual(
-      uses.map((a) => ({ start: a.frame, end: Math.min(a.frame + gameSecondsToFrames(10), plan.frames) })),
-    );
-    for (const slot of [0, 1]) expect(fromSwha('burst', 'attackDamage')(slot)).toEqual([]);
+    expect(fromSwha(2, 'burst', 'attackDamage')).toEqual(windowsFrom(uses, 10, plan.frames));
+    for (const slot of [0, 1]) expect(fromSwha(slot, 'burst', 'attackDamage')).toEqual([]);
   });
 });
 
-describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    expectEveryShotInOneGroup(input, planTeamRun(input));
-  });
-});
+describeEveryShotInOneGroup(TEAMS);
