@@ -1,5 +1,7 @@
 :root {
   color-scheme: light dark;
+  /* スクロールバーの分の幅を常に空けておき、ページが縦長になってスクロールバーが出ても表示が横に動かないようにする */
+  scrollbar-gutter: stable;
   font-family:
     system-ui,
     -apple-system,
