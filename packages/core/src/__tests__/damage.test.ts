@@ -7,7 +7,7 @@ import {
   modelNotes,
   type DamageInput,
 } from '../damage.ts';
-import { ZERO_BUFFS } from '../skills/buffs.ts';
+import { ZERO_BUFFS, type BuffTotals } from '../skills/buffs.ts';
 import { makeCharacter } from './fixtures.ts';
 import { framesToGameSeconds } from '../time.ts';
 
@@ -236,6 +236,21 @@ describe('computeTriggerDamage', () => {
       }),
     );
     expect(explicit).toEqual(omitted);
+  });
+
+  // 射撃ごとの倍率ダメージ（perShot）の分配ダメージ: 分配ダメージ▲は受けるダメージ▲と 1 つの和（damage.ts の distributedHitMultiplier。C-0767）
+  it('puts the distributed damage and damage taken increases in one sum on per-shot distributed damage (C-0767)', () => {
+    const perShot = (damageType: 'additional' | 'distributed', buffs: Partial<BuffTotals>) =>
+      computeTriggerDamage(
+        input({ buffs: { ...ZERO_BUFFS, ...buffs }, perShot: [{ multiplier: 0.3, damageType }] as never }),
+      ).perShot;
+    const base = perShot('additional', {});
+    expect(base).toBeGreaterThan(0);
+    expect(perShot('distributed', {})).toBeCloseTo(base, 9);
+    expect(perShot('distributed', { distributedDamage: 0.5 }) / base).toBeCloseTo(1.5, 12);
+    expect(perShot('additional', { distributedDamage: 0.5, damageTaken: 0.2 }) / base).toBeCloseTo(1.2, 12);
+    // 1 + 0.5 + 0.2（別の乗数なら 1.5 × 1.2 = 1.8）
+    expect(perShot('distributed', { distributedDamage: 0.5, damageTaken: 0.2 }) / base).toBeCloseTo(1.7, 12);
   });
 });
 
