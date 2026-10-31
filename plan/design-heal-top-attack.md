@@ -3,7 +3,7 @@
 - 関連: [backlog.md](backlog.md) 6 節の「語彙（回復の対象に最終攻撃力の順位…）」の行、[design-stage11.md](design-stage11.md) 18・19 節（`topAttack`・順位の決め方・1 パス目の手順 3 の順番）、[design-heal-vocabulary.md](design-heal-vocabulary.md)（回復の語彙）、[design-heal-window.md](design-heal-window.md)（吸収回復の窓）、[design-skill-unrecorded.md](design-skill-unrecorded.md) 1 節（H の行）、[skills-guide.md](skills-guide.md)
 - 作成日: 2026-10-31
 - 根拠: C-0695（フォルクヴァンのバーストの吸収回復はアスカに届き、使った時に 1 回だけ回復を受けた時の効果を起こす。仮説・単独実測。V-0517）、C-0082（吸収回復は付いていない状態から付いた時だけ回復を受けた時の効果を起こす。確定）
-- 状態: **承認（2026-10-31。7 節の論点はすべて推奨どおり）**。4 節を実装し、6 節の読み直しを行った（V-0555）
+- 状態: **承認（2026-10-31。7 節の論点はすべて推奨どおり）**。4 節を実装し、6 節の読み直しを行った（経過）
 
 ## 1. 何が困っているか
 
