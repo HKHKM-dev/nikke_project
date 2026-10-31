@@ -690,11 +690,11 @@ export function burstSnapshotState(
 }
 
 /**
- * 着弾編（2026-10-02 オーナー決定。plan/design-burst-landing.md 8 節、C-0163・C-0167）: バーストのヒットが見るバフ。
- * 撃つ側のバフは発動のフレーム activationFrame の時点（preActivation なら直前）で固定し、敵の側のデバフ（damageTaken。2 段目の段 2 の
- * enemyDefenseDown も）だけ
- * ヒットのフレーム hitFrame の時点の値を使う。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで
- * 付く S2 の攻撃ダメージ▲は乗らない（`0079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ。
+ * 着弾編（plan/design-burst-landing.md 9 節・11 節、C-0167・C-0795）: バーストのヒットが見るバフ。
+ * 撃つ側のバフも敵の側のデバフ（受けるダメージ▲・防御力▼）も、発動のフレーム activationFrame の時点（preActivation なら直前）で
+ * 固定する。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで付く S2 の攻撃ダメージ▲は乗らない
+ * （`0079-07`）。ノワールのヒットには、III の発動の後・ヒットの前に付いた鈴原サクラの受けるダメージ▲は乗らず、発動の時に付いていて
+ * ヒットの前に切れた▲は乗る（C-0795）。hitFrame は、sameActivation の小片がヒットまで続いているかを見るのにだけ使う。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
  * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）
  */
@@ -706,12 +706,7 @@ export function burstHitBuffs(
   preActivation: boolean,
   sameActivation?: readonly ValuePiece[],
 ): BuffTotals {
-  const atActivation = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
-  let buffs = atActivation;
-  if (hitFrame !== activationFrame) {
-    const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
-    buffs = { ...atActivation, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
-  }
+  const buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
   if (sameActivation === undefined) return buffs;
   return withSameActivationEffects(
     sameActivation,
@@ -733,8 +728,8 @@ export function sameActivationPiecesOf(
 /**
  * 同じ発動の▲がヒットに乗るキャラ（plan/design-burst-landing.md 10 節の案 1）: この枠が自分に付けた burst スロットの値の小片のうち、
  * 発動のフレーム以後に始まり、ヒットが見るフレーム at に続いているものを足す。遅れは CT（20 秒以上）より短いので、発動のフレーム
- * 以後に始まる burst スロットの小片は、この発動のものだけ。敵が持つ stat（受けるダメージ▲・防御力▼）は、もうヒットの時点の値で
- * 入っているので足さない
+ * 以後に始まる burst スロットの小片は、この発動のものだけ。敵が持つ stat（受けるダメージ▲・防御力▼）は、発動の時点の値で見る
+ * ので足さない（C-0795）
  */
 function withSameActivationEffects(
   pieces: readonly ValuePiece[],

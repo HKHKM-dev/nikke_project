@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`0305-05`〜`0305-09`・`0306-05`〜`0306-09`（ルドミラ単騎・スペック固定 OFF の 2 本。X は台帳の S1 のスキル Lv の説明文の値。1 本目のマガジン（▼なし）と 2 本目から（▼あり）の通常攻撃の 1 ヒットが、どの種類（胴体・会心・コア × 距離の有無）も、防御力 100 × (1 − X) を引くモデルと 1 未満。▼で「攻撃力 − 防御」が増える量は、説明文の Lv10 の値（8.4）やエーテルの S2 の後の増え（C-0412）の比を当てた量とは合わない）、`0305-10`・`0306-10`（▼は最後の弾丸の命中から 10 秒で切れる。305 では命中の 586f 後のヒットが▼あり、589f 後が▼なしで、モデルの窓（命中の次のフレームから 588f）とフレームまで合う。間に最後の弾丸の命中の無いマガジンがあっても付き直していない）。防御力 × (1 − X) の端数を丸めるかは、この 2 本では見分けられない（丸めると 1 ヒットの値が 0.2 未満変わる）。読み直し（予測なし）。V-0433",
-  "model": "`data/skills/190.json` の skill1 の effects[0]（`timed`・`lastShot`・`target: \"allies\"`・`enemyDefenseDown`）。式は `damage.ts` の `defenceAfterDown`（通常攻撃と、`skills/burstDamage.ts` の `computeSkillHit` の倍率ダメージ・持続ダメージ。端数は四捨五入で整数にする。C-0790）。敵が持つ効果（`skills/holders.ts` の `isEnemyEffect`）で、バーストのヒットはヒットの時点の値（`frame/plan.ts` の `burstHitBuffs`）。最後の弾丸が外れた時に付かないのは入れていない（効果の `assumes`）",
+  "model": "`data/skills/190.json` の skill1 の effects[0]（`timed`・`lastShot`・`target: \"allies\"`・`enemyDefenseDown`）。式は `damage.ts` の `defenceAfterDown`（通常攻撃と、`skills/burstDamage.ts` の `computeSkillHit` の倍率ダメージ・持続ダメージ。端数は四捨五入で整数にする。C-0790）。敵が持つ効果（`skills/holders.ts` の `isEnemyEffect`）で、バーストのヒットは発動の時点の値（`frame/plan.ts` の `burstHitBuffs`。C-0795）。最後の弾丸が外れた時に付かないのは入れていない（効果の `assumes`）",
   "replaces": [],
   "updated": "2026-10-31",
   "subject": {

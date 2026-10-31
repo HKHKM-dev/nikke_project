@@ -888,7 +888,7 @@ export function computeSkillHit(
 ): SkillHitResult {
   return computeBurstHit({
     attack: trigger.attack,
-    // 2 段目の段 2: 敵の防御力▼は、ヒットの時点の敵の側のバフ（buffs）で防御力を下げる
+    // 2 段目の段 2: 敵の防御力▼は、ヒットが見る敵の側のバフ（buffs。バーストのヒットは発動の時点の値。C-0795）で防御力を下げる
     enemy: { ...enemy, defence: defenceAfterDown(enemy, buffs) },
     crit: applyCritBuffs(character.crit, buffs),
     attackDamageMultiplier: trigger.attackDamageMultiplier,
