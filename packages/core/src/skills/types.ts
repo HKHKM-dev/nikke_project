@@ -1557,10 +1557,15 @@ export type CancelStateEffect = {
  */
 export type StackChangeEffect = {
   kind: 'stackChange';
-  /** 目録の id（持ち主が味方の状態） */
+  /** 目録の id（持ち主が味方の状態。target が enemy なら敵の状態） */
   state: NamedStateId;
   trigger: EffectTrigger;
-  target: 'self';
+  /**
+   * 2 段目の段 13 の PR 3（plan/design-skill-stage13.md 2.6 節）: enemy なら、同じ定義の firstTick halfAfterLatest の dot（敵に付く
+   * スタックの持続ダメージ）のスタック量▲。付与と同じく、1 スタックぶんのヒットと刻みの付け直しを伴う（frame/plan.ts の planSkillHits。
+   * V-0548）。条件は { enemyState: state } だけで、減少（decrease）は書けない
+   */
+  target: 'self' | 'enemy';
   /** 足す（減らす）スタックの数（即値）。amountRef とどちらか 1 つ */
   amount?: number;
   /** 足す（減らす）スタックの数の description_value_NN */
@@ -4021,15 +4026,17 @@ function parseStackChangeEffect(v: Record<string, Json>, path: string): StackCha
       fail(`${path}.${key}`, 'unknown field');
     }
   }
-  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  if (v.target !== 'self') {
+  if (v.target !== 'self' && v.target !== 'enemy') {
     fail(
       `${path}.target`,
-      `expected "self" (changing the stacks of an ally is not supported), got ${JSON.stringify(v.target)}`,
+      `expected "self" or "enemy" (changing the stacks of an ally is not supported), got ${JSON.stringify(v.target)}`,
     );
   }
-  const effect: StackChangeEffect = { kind: 'stackChange', state, trigger, target: 'self' };
+  const target = v.target;
+  const state = parseNamedStateId(v.state, `${path}.state`, target === 'enemy' ? 'enemy' : 'ally');
+  // 2 段目の段 13 の PR 3: 敵の持続ダメージのスタック量▲は、フルバーストの中の命中を数える（during）
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, false, target === 'enemy');
+  const effect: StackChangeEffect = { kind: 'stackChange', state, trigger, target };
   if ((v.amount === undefined) === (v.amountRef === undefined))
     fail(path, 'expected exactly one of amount and amountRef');
   if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
@@ -4039,7 +4046,14 @@ function parseStackChangeEffect(v: Record<string, Json>, path: string): StackCha
     if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
     effect.decrease = true;
   }
-  if (v.condition !== undefined) {
+  if (target === 'enemy') {
+    if (effect.decrease) fail(`${path}.decrease`, 'decrease is not allowed with target enemy');
+    const condition =
+      v.condition === undefined ? undefined : parseCondition(v.condition, `${path}.condition`, ['enemyState']);
+    if (condition?.enemyState !== state)
+      fail(`${path}.condition`, `target enemy needs the condition { enemyState: "${state}" }`);
+    effect.condition = condition;
+  } else if (v.condition !== undefined) {
     const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
@@ -4274,7 +4288,7 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      if (e.kind !== 'stackChange') return;
+      if (e.kind !== 'stackChange' || e.target === 'enemy') return;
       const stacking = grants.some(
         (g) =>
           g.state === e.state && g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
@@ -4290,8 +4304,8 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
- * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）は、同じ定義の firstTick halfAfterLatest の dot の
- * state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）と、PR 3: 敵のスタック量▲（stackChange の target
+ * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
  * enemyState も、同じ定義の dot の state を指す
  */
 function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -4300,10 +4314,11 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      if (e.kind === 'cancelState' && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
+      const onDot = e.kind === 'cancelState' || (e.kind === 'stackChange' && e.target === 'enemy');
+      if (onDot && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
         fail(
           `${root}.${slot}.effects[${i}]`,
-          `cancelState of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
+          `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
         );
       const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
       if (from !== undefined && !dots.some((d) => d.state === from))

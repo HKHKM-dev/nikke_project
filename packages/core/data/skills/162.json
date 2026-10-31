@@ -123,18 +123,31 @@
             "C-0748",
             "C-0749"
           ]
+        },
+        {
+          "kind": "stackChange",
+          "state": "ensnaringChains",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1,
+            "firesDuring": "fullBurst"
+          },
+          "target": "enemy",
+          "amountRef": 2,
+          "condition": {
+            "enemyState": "ensnaringChains"
+          },
+          "assumes": {
+            "ja": "フルバーストの持続中、通常攻撃が 40 回命中した時、対象がチェーンバインド状態なら、チェーンバインドのスタック量 1 個▲（上限 20）。付与と同じく、1 スタックぶんのヒットを出し、tick の刻みを付け直す。命中は戦闘の始めからフルバーストの外も通して数え、40 の倍数の命中がフルバーストの中のときだけ付く（仮説）",
+            "en": "During Full Burst, every 40 normal attack hits, if the target is in Ensnaring Chains, its stacks ▲ 1 (up to 20). Like an application, it deals one stack's hit and restarts the tick timing. Hits are counted from the start of battle, outside Full Burst too, and only a multiple of 40 landing during Full Burst adds a stack (hypothesis)"
+          },
+          "claims": [
+            "C-0754",
+            "C-0751"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "フルバーストタイム中の通常攻撃 40 回命中ごとの、チェーンバインドのスタック量▲は未対応",
-          "en": "The Chain Bind stack increase every 40 normal attack hits during Full Burst is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "dot",
-            "trigger": "normalHit"
-          }
-        },
         {
           "ja": "自分が戦闘不能になった時のスタック量▲と、敵が破壊された時のキャプチャーチェーン▲は、前提（味方が倒れない・敵 1 体）の外（要件 5.2 節）",
           "en": "The stack increase when she is defeated and the Capture Chain increase when an enemy is destroyed are outside the assumptions (allies are not defeated, a single enemy; requirements 5.2)",

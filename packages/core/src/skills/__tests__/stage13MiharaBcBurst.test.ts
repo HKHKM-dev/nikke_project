@@ -17,7 +17,9 @@ function readJson<T>(path: string): T {
 
 type Effects = { effects: Record<string, unknown>[] };
 const MIHARA_BC = 162;
-const raw = readJson<{ skills: { skill1: Effects; burst: Effects } }>(`../../../data/skills/${MIHARA_BC}.json`);
+const raw = readJson<{ skills: { skill1: Effects; skill2: Effects; burst: Effects } }>(
+  `../../../data/skills/${MIHARA_BC}.json`,
+);
 
 describe('語彙の検証', () => {
   const withBurst = (index: number, patch: Record<string, unknown>) => {
@@ -51,6 +53,7 @@ describe('語彙の検証', () => {
     const copy = structuredClone(raw);
     copy.skills.skill1.effects = copy.skills.skill1.effects.filter((e) => e.kind !== 'dot');
     copy.skills.burst.effects = copy.skills.burst.effects.filter((e) => e.kind !== 'cancelState');
+    copy.skills.skill2.effects = copy.skills.skill2.effects.filter((e) => e.kind !== 'stackChange');
     expect(() => parseSkillDefinition(copy)).toThrow(/stacksFrom needs a dot of the state "ensnaringChains"/);
   });
 

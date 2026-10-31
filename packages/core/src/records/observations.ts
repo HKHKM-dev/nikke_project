@@ -1737,7 +1737,9 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
   const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
   const count = Number(ctx.args.count);
   if (hits.length < skip + count) throw new Error(`窓の中の発動が ${hits.length} 回しかない`);
-  return hits.slice(skip, skip + count).map((h) => videoFrameOf(schedule, h.frame) - start);
+  const picked = hits.slice(skip, skip + count).map((h) => videoFrameOf(schedule, h.frame) - start);
+  // 2 段目の段 13 の PR 3（V-0548）: relative が true なら、返す最初のヒットからのフレーム数（S2 のスタック量▲の間隔。数え始めの位相に依らない）
+  return ctx.args.relative === true ? picked.map((f) => f - picked[0]!) : picked;
 }
 
 /**
