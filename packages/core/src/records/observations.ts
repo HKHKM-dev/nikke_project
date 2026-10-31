@@ -15,7 +15,7 @@ import {
   type BurstSchedule,
 } from '../burst/schedule.ts';
 import { rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
-import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
+import { DISTANCE_BONUS, PER_SHOT_DAMAGE_CORE, SKILL_HIT_FULL_BURST_BONUS, type DefenceRounding } from '../damage.ts';
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
@@ -123,6 +123,11 @@ export type CompareSetup = {
    * 予測の仮説の override に使う
    */
   attackRounding?: AttackRounding;
+  /**
+   * 防御力▼の後の防御力の丸めの向き（EnemyInput.defenceRounding。C-0688・V-0561）。省略はいまのモデル（丸めない）。
+   * 予測の仮説の override に使う
+   */
+  defenceRounding?: DefenceRounding;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
   /**
@@ -2458,6 +2463,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     enemy: {
       ...enemyInputOf(preset),
       events: enemyEventsOf(data.enemies, setup.events ?? [], durationSeconds, windows),
+      ...(setup.defenceRounding === undefined ? {} : { defenceRounding: setup.defenceRounding }),
       ...(target === undefined
         ? {}
         : {
