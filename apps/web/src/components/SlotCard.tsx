@@ -13,10 +13,9 @@ import {
 import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
-import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
-import { SkillSection, skillSupportBadge } from './SkillSection.tsx';
+import { SkillSection } from './SkillSection.tsx';
 
 type Props = {
   slotIndex: number;
@@ -34,7 +33,6 @@ type Props = {
   effectiveBuild: BuildInput;
   masters: BuildMasters | null;
   mastersError: string | null;
-  skillsStatus: SlotSkillsStatus;
   slotResult: TeamSlotResult | null;
   dispatch: Dispatch<TeamAction>;
 };
@@ -54,14 +52,12 @@ export function SlotCard({
   effectiveBuild,
   masters,
   mastersError,
-  skillsStatus,
   slotResult,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
 
   const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
-  const badge = character ? skillSupportBadge(character, skillsStatus, treasurePhase) : null;
   // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
   // 折りたたみ 1 つにまとめた
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
@@ -104,10 +100,9 @@ export function SlotCard({
       )}
       {character && limits && (
         <details className="slot-settings">
-          <summary>
-            育成
-            {badge && <span className={`badge ${badge.className}`}>{badge.label}</span>}
-          </summary>
+          {/* 2026-10-31: オーナーの指示で、見出しの横の対応状況の印（対応・一部対応・未対応・未定義）は出さない。未対応はキャラ名の
+              「（未）」と「未対応・近似・仮定の一覧」に出る */}
+          <summary>育成</summary>
           <div className="slot-settings-body">
             <div className="growth-row">
               <label className="field">

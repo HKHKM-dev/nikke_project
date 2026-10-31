@@ -303,9 +303,6 @@ header h1 {
   cursor: pointer;
   font-size: 0.8rem;
 }
-.slot-settings > summary .badge {
-  margin-left: 6px;
-}
 .slot-settings-body {
   margin-top: 6px;
 }

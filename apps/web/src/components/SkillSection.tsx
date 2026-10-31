@@ -1,17 +1,6 @@
-import {
-  SKILL_LEVEL_MAX,
-  SKILL_LEVEL_MIN,
-  SKILL_SLOTS,
-  applyTreasure,
-  type CharacterData,
-  type SkillLevels,
-  type SkillSlot,
-  type TreasurePhase,
-} from '@nikke/core';
+import { SKILL_LEVEL_MAX, SKILL_LEVEL_MIN, SKILL_SLOTS, type SkillLevels, type SkillSlot } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
-import { SUPPORT_BADGE } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
-import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
 const SHORT_SKILL_LABEL: Record<SkillSlot, string> = {
   skill1: 'スキル1LV',
@@ -73,38 +62,6 @@ type InputProps = {
   disabled: boolean;
   dispatch: Dispatch<TeamAction>;
 };
-
-/** スキル定義の対応状況の印（枠の「育成」の見出しに出す）。定義なしは出さない */
-export function skillSupportBadge(
-  character: CharacterData,
-  status: SlotSkillsStatus,
-  treasurePhase: TreasurePhase,
-): { label: string; className: string } {
-  const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
-  const allUnsupported =
-    status.kind === 'ready' &&
-    SKILL_SLOTS.every((s) => {
-      const sup = shown.definition?.skills[s]?.support;
-      return sup === 'unsupported' || sup === 'noEffect';
-    });
-  const hasUnsupported =
-    status.kind === 'ready' &&
-    SKILL_SLOTS.some((s) => {
-      const sup = shown.definition?.skills[s]?.support;
-      return sup === 'unsupported' || sup === 'partial';
-    });
-  return status.kind === 'undefined'
-    ? SUPPORT_BADGE.undefined
-    : status.kind === 'loading'
-      ? SUPPORT_BADGE.loading
-      : status.kind === 'error'
-        ? SUPPORT_BADGE.error
-        : allUnsupported
-          ? SUPPORT_BADGE.unsupported
-          : hasUnsupported
-            ? SUPPORT_BADGE.partial
-            : SUPPORT_BADGE.supported;
-}
 
 /** 枠の「育成」の中のスキル LV の入力（スキル 1・スキル 2・バースト） */
 export function SkillSection({ slotIndex, levels, disabled, dispatch }: InputProps) {

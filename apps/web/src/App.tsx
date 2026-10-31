@@ -291,7 +291,6 @@ export function App() {
                   masters={masters}
                   mastersError={mastersError}
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
-                  skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
                   dispatch={dispatch}
                 />
