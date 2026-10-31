@@ -221,5 +221,237 @@
       "slot": "all",
       "source": "burstChain"
     }
+  },
+  {
+    "id": "0249-11",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": [1209, 3587, 5964, 8343, 10720],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・0・5・0f"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0249-12",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": [1238, 3616, 5993, 8371, 10749],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・0・0・0f"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0249-13",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": [1267, 3645, 6023, 8401, 10778],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0249-14",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": [3580, 5958, 8336, 10714],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0249-15",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": [3609, 5987, 8365, 10743],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0249-16",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": [3638, 6016, 8394, 10772],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0249-17",
+    "recording": "0249",
+    "kind": "hit",
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "value": 563180,
+    "unit": "ダメージ",
+    "description": "4 回目のチェーンのノワールのバーストのヒット（会心でない）。鈴原サクラの受けるダメージ▲は III の発動の前から付いていて、ヒットに乗っている（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "III のタイマーの 00.00（`0249-13` の f8401）の 93f 後の f8494 の増分 563,180。鈴原サクラの 1 ヒットは、00.00 の 128f 前からヒットまでどれも▲あり。モデル（鈴原サクラの▲あり）は 563,179.973"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0249-18",
+    "recording": "0249",
+    "kind": "hit",
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "value": 563180,
+    "unit": "ダメージ",
+    "description": "5 回目のチェーンのノワールのバーストのヒット（会心でない）。鈴原サクラの受けるダメージ▲は III の発動の時に付いていて、ヒットの前に切れたが、ヒットに乗っている",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "III のタイマーの 00.00（`0249-13` の f10778）の 94f 後の f10872 の増分 563,180。鈴原サクラの 1 ヒットは f10865（00.00 の 87f）まで▲ありで、f10868（90f）から▲なしの 28,222、ヒットの前の f10870 まで▲なし（▲の境は `0249-20`）。III の発動は 00.00 の約 6f 前（III の CT の明けは `0249-16` の f10772）。比べる指定はいまのモデル（この回は、モデルの鈴原サクラの▲の窓でもヒットに▲あり）（563,179.973）。いまのモデル（敵の側のデバフをヒットの時点で見る）を実機の▲の窓に当てると、ヒットは▲なしの 480,611.003。モデルの鈴原サクラの▲の窓は実機と違う"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 4,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0249-19",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": 89,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 88,
+      "high": 90
+    },
+    "description": "鈴原サクラの S1 の受けるダメージ▲（サクラ▲ → サクラ）が 鈴原サクラ の 1 発で替わるまでの時刻の幅（1 番目の事象 f10778 から数えた動画のフレーム）。サクラ▲の最後の発は 87f、サクラの最初の発は 90f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は サクラ: 枠 1（鈴原サクラ）のモデルの f200・620、サクラ▲: 枠 1（鈴原サクラ）のモデルの f310・400。境は サクラ▲ → サクラ（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜94f。サクラ▲ 46・サクラ 2・区別できない 0・外れ 5・食い違い（サクラの最初の発より後のサクラ▲の発） 0"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0249-20",
+    "recording": "0249",
+    "kind": "timing",
+    "use": "record",
+    "value": 89,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 88,
+      "high": 90
+    },
+    "description": "鈴原サクラの S1 の受けるダメージ▲（サクラ▲ → サクラ）が 鈴原サクラ の 1 発で替わるまでの時刻の幅の、1 回の事象（f10778）の共通部分（事象から数えた動画のフレーム）。サクラ▲の最後の発の最も遅いものは 87f、サクラの最初の発の最も早いものは 90f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は サクラ: 枠 1（鈴原サクラ）のモデルの f200・620、サクラ▲: 枠 1（鈴原サクラ）のモデルの f310・400。境は サクラ▲ → サクラ（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜94f。サクラ▲ 46・サクラ 2・区別できない 0・外れ 5・食い違い（サクラの最初の発より後のサクラ▲の発） 0"
+    },
+    "source": "V-0576",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]
