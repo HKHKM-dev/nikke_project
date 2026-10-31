@@ -208,25 +208,18 @@ function model(recording: RecordingEntry, setup: CompareSetup): Model {
   const data = loadRecordsData(loadRecordingsFile());
   const input = buildTeamInput(recording, setup, data);
   const sim = runSimulation(input);
-  const hit = (slot: number, frame: number, core: boolean, crit: boolean, distance: boolean) =>
-    METRICS.hitDamage!.sim(sim, { args: { slot, frame, core, crit, distance }, input }) as number;
   const value = (name: string, args: CompareSpec['args']) => METRICS[name]!.sim(sim, { args, input }) as number;
+  const hit = (slot: number, frame: number, core: boolean, crit: boolean, distance: boolean) =>
+    value('hitDamage', { slot, frame, core, crit, distance });
   return {
     hits({ kind, slot, frame, skill, stacks }) {
       const named: CompareSpec['args'] = skill === undefined ? {} : { skill };
       const out: number[] = [];
       for (const crit of [false, true]) {
-        if (kind === 'skill') out.push(value('skillHitDamage', { slot, n: 0, frame, crit, ...named }));
-        else if (stacks.length > 0)
-          for (const k of stacks) out.push(value('dotStackTickDamage', { slot, frame, stacks: k, crit }));
-        else {
-          const n = sim.skillHits
-            .filter((h) => h.slotIndex === slot - 1 && h.effect.dot !== undefined)
-            .filter((h) => skill === undefined || h.effect.source.skill === skill)
-            .findIndex((h) => h.frame >= frame);
-          if (n < 0) throw new Error(`枠 ${slot} の f${frame} 以降に持続ダメージの tick が無い`);
-          out.push(value('dotHitDamage', { slot, n, crit, ...named }));
-        }
+        if (stacks.length > 0)
+          for (const k of stacks) out.push(value('dotStackTickDamage', { slot, frame, stacks: k, crit, ...named }));
+        else
+          out.push(value(kind === 'skill' ? 'skillHitDamage' : 'dotHitDamage', { slot, n: 0, frame, crit, ...named }));
       }
       return out;
     },
@@ -256,11 +249,7 @@ function model(recording: RecordingEntry, setup: CompareSetup): Model {
 
 const distinct = (values: readonly number[]) => [...new Set(values)];
 
-/**
- * 格子の指定（--opt grid の 1 つ）。通常攻撃は <名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>[,<倍率>...]]、
- * 倍率ダメージ・持続ダメージの tick は <名前>=<枠>@skill@<f>[:<スキル>] と <名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>,...]、
- * 2 つの格子の和は <名前>=<格子>+<格子>（どれも /*<倍率> を付けられる）
- */
+/** 格子の指定（--opt grid の 1 つ）。書き方は GRID_FORMS */
 export type NormalGridSpec = {
   kind: 'normal';
   name: string;
@@ -291,8 +280,8 @@ export function parseGrids(text: string): GridSpec[] {
     .map((t) => t.trim())
     .filter((t) => t !== '')
     .map((t): GridSpec => {
-      const [, name, body, tail] = /^([^=]+)=([^/]+)((?:\/[xs*][\d.,]+)*)$/.exec(t) ?? [];
-      if (name === undefined || body === undefined) throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
+      const [, rawName, body, tail] = /^([^=]+)=([^/]+)((?:\/[xs*][\d.,]+)*)$/.exec(t) ?? [];
+      if (rawName === undefined || body === undefined) throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
       const mods = tail!.split('/').filter((x) => x !== '');
       const take = (c: string) => mods.filter((x) => x.startsWith(c)).map((x) => x.slice(1));
       const [pellets, ...morePellets] = take('x');
@@ -305,12 +294,13 @@ export function parseGrids(text: string): GridSpec[] {
       const normal = /^(\d+)@(\d+(?:\+\d+)*)$/.exec(body);
       const hit = /^(\d+)@(skill|dot)@(\d+)(?::(.+))?$/.exec(body);
       const sum = /^([^@+]+)\+([^@+]+)$/.exec(body);
+      const name = rawName.trim();
+      only(stacks.length === 0 || hit?.[2] === 'dot', '/s は dot の格子だけ');
       if (normal !== null) {
-        only(stacks.length === 0, '/s は dot の格子だけ');
         const frames = normal[2]!.split('+').map(Number);
         return {
           kind: 'normal',
-          name: name.trim(),
+          name,
           slot: Number(normal[1]),
           frames,
           pellets: Number(pellets ?? 1),
@@ -320,17 +310,11 @@ export function parseGrids(text: string): GridSpec[] {
       only(pellets === undefined, '/x は通常攻撃の格子だけ');
       if (hit !== null) {
         const kind = hit[2] as 'skill' | 'dot';
-        only(kind === 'dot' || stacks.length === 0, '/s は dot の格子だけ');
-        only(
-          stacks.length === 0 || hit[4] === undefined,
-          '/s とスキルは一緒に書けない（スタック数の tick はスキルで絞らない）',
-        );
         const skill = hit[4] === undefined ? {} : { skill: hit[4] };
-        return { kind, name: name.trim(), slot: Number(hit[1]), frame: Number(hit[3]), ...skill, stacks, scales };
+        return { kind, name, slot: Number(hit[1]), frame: Number(hit[3]), ...skill, stacks, scales };
       }
       if (sum !== null) {
-        only(stacks.length === 0, '/s は dot の格子だけ');
-        return { kind: 'sum', name: name.trim(), parts: [sum[1]!.trim(), sum[2]!.trim()], scales };
+        return { kind: 'sum', name, parts: [sum[1]!.trim(), sum[2]!.trim()], scales };
       }
       throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
     });
@@ -394,13 +378,10 @@ export function gridsOf(specs: readonly GridSpec[], m: Pick<Model, 'cells' | 'hi
 
 /** 格子が当てる枠（和はその 2 つの枠） */
 function slotsOf(g: Grid, grids: readonly Grid[]): number[] {
-  if (g.kind !== 'sum') return [g.slot];
-  return g.parts.flatMap((p) =>
-    slotsOf(
-      grids.find((h) => h.name === p)!,
-      grids,
-    ),
-  );
+  // 和の中に和は入らない（parseGrids）
+  return g.kind === 'sum'
+    ? g.parts.map((p) => (grids.find((h) => h.name === p) as NormalGridSpec | HitGridSpec).slot)
+    : [g.slot];
 }
 
 const fmt = (n: number) => roundTo(n, 2).toLocaleString('en-US');
@@ -491,8 +472,7 @@ export const buffEdge: Recipe = {
     off: '▲の無い格子を取るモデルのフレーム（カンマ区切り）。省くと枠の区間の一覧を出して止まる',
     on: '▲の乗った格子を取るモデルのフレーム（カンマ区切り）',
     grid:
-      '格子の並び（; 区切り）: 通常攻撃 <名前>=<枠>@<モデルのフレーム>[+<f>...][/x<ペレット数>]、倍率ダメージ <名前>=<枠>@skill@<f>[:<スキル>]、' +
-      '持続ダメージの tick <名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>,...]、2 つの格子の和 <名前>=<格子>+<格子>。どれも /*<倍率> を付けられる。' +
+      `格子の並び（; 区切り）: ${GRID_FORMS}（/x は同じフレームの数ヒットまでの和、/s は持続ダメージのスタック数、/* は倍率の版）。` +
       '例 サン=2@1300;サン▲=2@380;ナガ=1@1300/x10;槍=1@skill@1000:skill1;槍+通常=槍+サン。slot・off・on の代わり',
     pair: '境を挟む格子の組: <前の格子>[,...]><後の格子>[,...]（付き始めなら ▲なし>▲あり、切れ目なら ▲あり>▲なし。何人かの発で挟むなら , で並べる）。省くと増分ごとの当て方だけを出す',
     segments: '区間の一覧を出して止まる枠（カンマ区切り。grid のフレームを選ぶため）',

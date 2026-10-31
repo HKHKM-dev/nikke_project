@@ -119,10 +119,10 @@ describe('parseGrids', () => {
 describe('parseGrids（版 3）', () => {
   it('倍率ダメージ・tick・和の格子を読む', () => {
     expect(
-      parseGrids('槍=1@skill@1000:skill1;鎖=1@dot@1200/s1,10;攻撃=2@skill@0;通常=1@900;槍+通常=槍+通常/*1.2'),
+      parseGrids('槍=1@skill@1000:skill1;鎖=1@dot@1200:burst/s1,10;攻撃=2@skill@0;通常=1@900;槍+通常=槍+通常/*1.2'),
     ).toEqual([
       { kind: 'skill', name: '槍', slot: 1, frame: 1000, skill: 'skill1', stacks: [], scales: [] },
-      { kind: 'dot', name: '鎖', slot: 1, frame: 1200, stacks: [1, 10], scales: [] },
+      { kind: 'dot', name: '鎖', slot: 1, frame: 1200, skill: 'burst', stacks: [1, 10], scales: [] },
       { kind: 'skill', name: '攻撃', slot: 2, frame: 0, stacks: [], scales: [] },
       { kind: 'normal', name: '通常', slot: 1, frames: [900], pellets: 1, scales: [] },
       { kind: 'sum', name: '槍+通常', parts: ['槍', '通常'], scales: [1.2] },
@@ -132,7 +132,6 @@ describe('parseGrids（版 3）', () => {
   it('形に合わない付け足しと、無い格子・和の和を受けない', () => {
     expect(() => parseGrids('a=1@skill@10/x3')).toThrow(/\/x は通常攻撃の格子だけ/);
     expect(() => parseGrids('a=1@skill@10/s2')).toThrow(/\/s は dot の格子だけ/);
-    expect(() => parseGrids('a=1@dot@10:burst/s2')).toThrow(/一緒に書けない/);
     expect(() => parseGrids('a=1@10;b=a+c')).toThrow(/c が格子に無い/);
     expect(() => parseGrids('a=1@10;b=a+a;c=b+a')).toThrow(/和に和は入れない/);
   });

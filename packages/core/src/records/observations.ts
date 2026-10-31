@@ -1036,12 +1036,12 @@ function burstActivationVideoFrames(result: { schedule: BurstSchedule | null }, 
   return schedule.activations.slice(0, n).map((a) => activationVideoFrameOf(schedule, a));
 }
 
-/** 結果を最初の count 個に切る（count が無ければそのまま。足りなければ誤り） */
+/** 結果の頭の skip 個（省略は 0）を飛ばし、count 個に切る（count が無ければ残り全部。足りなければ誤り） */
 function firstCount(values: number[], ctx: MetricContext, what: string): number[] {
-  if (ctx.args.count === undefined) return values;
-  const count = Number(ctx.args.count);
-  if (values.length < count) throw new Error(`${what}が ${values.length} 回しか無い`);
-  return values.slice(0, count);
+  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
+  const count = ctx.args.count === undefined ? values.length - skip : Number(ctx.args.count);
+  if (values.length < skip + count) throw new Error(`${what}が ${values.length} 回しか無い`);
+  return values.slice(skip, skip + count);
 }
 
 /** 2 段目の段 3: 枠 slotIndex のフレーム frame の、状態 state のスタックの段の最大（付いていなければ 0） */
@@ -1623,9 +1623,15 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
  * （boost に コア倍率 − 1 を足す）。core の効果でないヒットに core: true は拒否する
  */
 function dotHitDamage(result: SimResult, ctx: MetricContext): number {
-  // 2 段目の段 13 の PR 2（V-0547）: hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）
+  // 2 段目の段 13 の PR 2（V-0547）: hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）。
+  // 簡素化・第 7 回の案 1: 省略できる引数 frame（と fullBurst。frameArgOf）で、そのフレーム以降の tick だけを数える（skillHitDamage と同じ）
+  const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
   const ticks = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && hitMatches(h, ctx),
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot !== undefined &&
+      hitMatches(h, ctx) &&
+      (from === null || h.frame >= from),
   );
   const tick = ticks[Number(ctx.args.n)];
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
@@ -1640,8 +1646,9 @@ function dotHitDamage(result: SimResult, ctx: MetricContext): number {
  */
 function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
   const frame = Number(ctx.args.frame);
+  // 簡素化・第 7 回の案 1: 省略できる引数 skill（hitMatches）で、そのスロットの持続ダメージだけを見る
   const tick = result.skillHits.find(
-    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && h.frame >= frame,
+    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && hitMatches(h, ctx) && h.frame >= frame,
   );
   if (tick === undefined) throw new Error(`フレーム ${frame} 以降に持続ダメージの tick が無い`);
   if (tick.stacks === undefined) throw new Error('スタックしない持続ダメージの tick');
@@ -1758,11 +1765,7 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
     const span = spanOf(result, ctx, anchor, within);
     offsets = points.filter((p) => span.from <= p.frame && p.frame < span.to).map((p) => p.video - span.base);
   }
-  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
-  const count = ctx.args.count === undefined ? offsets.length - skip : Number(ctx.args.count);
-  if (offsets.length < skip + count)
-    throw new Error(`出来事（${String(ctx.args.event)}）が ${offsets.length} 回しか無い`);
-  return offsets.slice(skip, skip + count);
+  return firstCount(offsets, ctx, `出来事（${String(ctx.args.event)}）`);
 }
 
 /** eventFrames の基準（fullBurst:<n>・activation:<n>）の、動画のフレームと、数える範囲（モデルのフレーム） */
@@ -1828,7 +1831,7 @@ function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): bool
 function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
   // 2 段目の段 13 の PR 2（V-0547）: after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット。kind が apply・tick なら、
   // 倍率ダメージの代わりに持続ダメージの付けた時のヒット・tick（フルバーストの終わりのキャプチャーチェーンの攻撃とチェーンバインド）
-  const event = ctx.args.kind === undefined ? 'skillHit' : dotKindOf(ctx) === 'apply' ? 'dotApply' : 'dotTick';
+  const event = ctx.args.kind === undefined ? 'skillHit' : dotEventOf(ctx);
   const picked = eventFrames(
     result,
     withArgs(ctx, {
@@ -1995,13 +1998,16 @@ function dotKindOf(ctx: MetricContext): 'apply' | 'tick' {
   return kind;
 }
 
+/** 引数 kind に当たる eventFrames の event */
+const dotEventOf = (ctx: MetricContext) => (dotKindOf(ctx) === 'apply' ? 'dotApply' : 'dotTick');
+
 function dotKindMatches(h: SimResult['skillHits'][number], kind: 'apply' | 'tick'): boolean {
   return h.effect.dot !== undefined && (h.onApply === true) === (kind === 'apply');
 }
 
 /** 2 段目の段 13 の PR 1（V-0546）: dotHitVideoFrames。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
 function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
-  return eventFrames(result, withArgs(ctx, { event: dotKindOf(ctx) === 'apply' ? 'dotApply' : 'dotTick' }));
+  return eventFrames(result, withArgs(ctx, { event: dotEventOf(ctx) }));
 }
 
 /**

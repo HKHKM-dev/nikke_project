@@ -11,7 +11,6 @@
 // 基準（前に取ったときの md5 と一覧の値）は ~/.cache/nikke-sync/base.json。使い回された VM でも同じ結果になるよう、上書きで書く。
 // --pull-rest と --push は同時に動くので、基準と手元のファイルを書き換える間は lock を持つ。
 import { spawn } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import {
   appendFileSync,
   closeSync,
@@ -34,7 +33,9 @@ import {
   cloudClaudeMd,
   diffAgainstBase,
   localPathOf,
+  md5,
   planPull,
+  reason,
   runUntil,
   settlePut,
   shouldOverwrite,
@@ -97,9 +98,7 @@ type Listing = { root: TrackedRoot; files: SnapshotFile[] } | { root: TrackedRoo
 /** lock を持って、いまの基準で fn を回す（持てなければ null） */
 type Locked = <T>(fn: (base: Base) => T) => Promise<T | null>;
 
-const md5 = (buf: Buffer) => createHash('md5').update(buf).digest('hex');
 const call = (until: number) => Math.min(CALL_MS, until - Date.now());
-const reason = (e: unknown) => (e instanceof Error ? e.message : String(e));
 const keptNote = (path: string) => `手元で変わっているので Drive の版で上書きしていない: ${path}（応答の終わりに戻す）`;
 
 function logRest(text: string): void {
