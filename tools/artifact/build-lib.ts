@@ -29,12 +29,12 @@ export function pageHtml(assets: EntryAssets): string {
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="${assets.css}">
 <style>
-  /* アーティファクトの表示枠向け: 閲覧側のテーマ切り替えに追従し、背景を明示する */
+  /* アーティファクトの表示枠向け: 閲覧側のテーマ切り替えに追従し、背景を明示する（色は Web 版のテーマの変数。読み込む前は Canvas） */
   :root[data-theme="light"] { color-scheme: light; }
   :root[data-theme="dark"] { color-scheme: dark; }
   body {
-    background: Canvas;
-    color: CanvasText;
+    background: var(--app-bg, Canvas);
+    color: var(--app-fg, CanvasText);
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }

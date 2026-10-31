@@ -1,6 +1,7 @@
 // 画面のテーマ（ライト・ダーク・システム）。右上の設定のメニューで切り替え、ブラウザに保存する。
-// ルート要素の data-app-theme（styles.css）と、ルート要素の style の color-scheme（!important）の両方で決める。アーティファクトの
-// 表示枠は閲覧側のテーマをルート要素に強く当てるので、スタイルシートの規則だけでは負ける（ライトに切り替わらなかった）。
+// 画面の色はルート要素の data-app-theme で決まるテーマの変数（styles.css の --app-bg・--app-fg）で決め、入力欄などの部品の色は
+// ルート要素の style の color-scheme（!important）で決める。アーティファクトの表示枠は閲覧側のテーマをルート要素に強く当てるので、
+// スタイルシートの color-scheme だけでは負ける（ライトに切り替わらなかった）。
 // システムは両方を外し、OS（表示枠では閲覧側のテーマ）に従う。data-theme は表示枠が使うので、ぶつからないように別の名前にした
 import { useEffect, useState } from 'react';
 import { readStorage, writeStorage } from './storage.ts';
