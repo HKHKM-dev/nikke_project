@@ -1,0 +1,182 @@
+{
+  "verification": "V-0562",
+  "note": "録画 0287（V-0249）と同じ編成: I-DOLL・フラワー（304・RL・バースト I・枠 1・AI）+ ウンファ：TU（95・SR・バースト II・枠 2・AI）+ エマ：TU（93・MG・バースト I・枠 3・操作・撃たない）・AUTO 射撃 OFF・オートバースト ON（ゲージが溜まるのに 10 秒以上かかり、I は毎回フラワーが撃つ。エマのバーストは起きない。0287 はオートバースト OFF・手押し）・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。III がいないのでフルバーストは起きず、チェーンは II で切れる。比べる設定は 0287 の観測値（0287-01〜0287-07）と同じ（モデルは自動のバーストで、同じ段の候補は枠の若い順なので毎回フラワー I → ウンファ II。操作のエマも撃つのでバーストの時刻は録画とずれるが、比べるのはバーストからの相対の時刻で決まる 1 発の値なので、時刻のずれは値に効かない）。フレームはモデルの 2 回目のバーストの炸裂弾の発（0287-05 と同じ 2285f）",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    },
+    {
+      "rid": 93,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Rs",
+      "note": "いまのモデル（C-0376・C-0525）。炸裂弾は発射体の爆発を持ち（95.json の burst の effects[1] の projectileExplosion）、防御力無視ダメージ▲（カモフラージュ 42.24% + フォーメーション 30.97% × 2 = 104.18%）と発射体爆発ダメージ▲（2.32 + 3.09 + 5.11 = 10.52%）が 1 つの和 (1 + 1.0418 + 0.1052) で掛かる（TRUE_DAMAGE_BUCKET = attackDamage。この編成に攻撃ダメージ▲は無い）。override は無い。対立する R0（乗らない）と R1（別の乗数）は、語彙の切り替え（projectileExplosion を外す・置き場所を別にする）が要るので検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "eun-round-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2285,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "本命。炸裂弾（使用武器変更の 1 発）のコア（会心・距離ボーナスなし）。0287-05 と同じ指定"
+    },
+    {
+      "id": "eun-round-core-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2285,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ発の距離ボーナス付き（的の着地点で決まる。0287 の 3 回目）"
+    },
+    {
+      "id": "eun-round-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2285,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ発の会心（0287 の 5 回目）"
+    },
+    {
+      "id": "flower-core-pre",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。徹甲炸裂弾の外のフラワーのコアの 1 ヒット（0287-01 と同じ指定）。発射体爆発ダメージ▲の合計（10.52%）が効いていることを見る。どの読みでも同じ"
+    },
+    {
+      "id": "eun-pre-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。カモフラージュと徹甲炸裂弾の外のウンファのコア（0287-04 と同じ指定）。どの読みでも同じ"
+    },
+    {
+      "id": "eun-camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 875,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。カモフラージュの中のウンファのコア（0287-06 と同じ指定）。防御力無視ダメージ▲の合計（104.18%）が効いていることと、カモフラージュが外れていないことを見る。SR の通常攻撃には発射体の爆発が無いので、どの読みでも同じ"
+    },
+    {
+      "id": "eun-taken-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1235,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。カモフラージュの後・徹甲炸裂弾の中のウンファのコア（0287-07 と同じ指定）。どの読みでも同じ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "5d70de5f97c779788e1a84bf5b87061d8e329a61",
+    "values": {
+      "Rs": {
+        "eun-round-core": 2746328.784488979,
+        "eun-round-core-dist": 3158278.1021623253,
+        "eun-round-core-crit": 3755741.929227903,
+        "flower-core-pre": 222727.85635211715,
+        "eun-pre-core": 713539.5038357567,
+        "eun-camo-core": 1848787.3165063574,
+        "eun-taken-core": 904938.406356474
+      }
+    }
+  }
+}
