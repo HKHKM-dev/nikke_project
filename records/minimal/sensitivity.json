@@ -11124,14 +11124,6 @@
     },
     {
       "observation": "0490-03",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "e07b745fdae41854",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0490-03",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "e07b745fdae41854",
       "effective": false,
@@ -11164,14 +11156,6 @@
     },
     {
       "observation": "0490-06",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "088c1d17e53eeb54",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0490-06",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "088c1d17e53eeb54",
       "effective": false,
@@ -11204,14 +11188,6 @@
     },
     {
       "observation": "0490-07",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "39bff057d8f11596",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0490-07",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "39bff057d8f11596",
       "effective": false,
@@ -11244,14 +11220,6 @@
     },
     {
       "observation": "0490-08",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "400266004b11b623",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0490-08",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "400266004b11b623",
       "effective": false,
@@ -11284,14 +11252,6 @@
     },
     {
       "observation": "0490-09",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "07650fd6b0d4eb55",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0490-09",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "07650fd6b0d4eb55",
       "effective": false,
@@ -11324,14 +11284,6 @@
     },
     {
       "observation": "0490-10",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "a5e53520eaa173ab",
-      "effective": true,
-      "minus": 0,
-      "plus": 27211.404187439985
-    },
-    {
-      "observation": "0490-10",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "a5e53520eaa173ab",
       "effective": false,
@@ -11361,14 +11313,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0490-11",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "0df286ac9c144d15",
-      "effective": true,
-      "minus": 0,
-      "plus": 181409.3612496
     },
     {
       "observation": "0490-11",
@@ -11428,14 +11372,6 @@
     },
     {
       "observation": "0492-03",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "11521d97348659a8",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0492-03",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "11521d97348659a8",
       "effective": false,
@@ -11468,14 +11404,6 @@
     },
     {
       "observation": "0492-06",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "7d9c9a3f109b76a0",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0492-06",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "7d9c9a3f109b76a0",
       "effective": false,
@@ -11508,14 +11436,6 @@
     },
     {
       "observation": "0492-07",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "fb23dc8fb66ba612",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0492-07",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "fb23dc8fb66ba612",
       "effective": false,
@@ -11548,14 +11468,6 @@
     },
     {
       "observation": "0492-08",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "281a839818a3193f",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0492-08",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "281a839818a3193f",
       "effective": false,
@@ -11588,14 +11500,6 @@
     },
     {
       "observation": "0492-09",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "4225d27fadee707a",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0492-09",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "4225d27fadee707a",
       "effective": false,
@@ -11628,14 +11532,6 @@
     },
     {
       "observation": "0492-10",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "2c1d9db82507bc7f",
-      "effective": true,
-      "minus": 0,
-      "plus": 27211.404187439985
-    },
-    {
-      "observation": "0492-10",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "2c1d9db82507bc7f",
       "effective": false,
@@ -11665,14 +11561,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0492-11",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "c08554b42b8b8759",
-      "effective": true,
-      "minus": 0,
-      "plus": 181409.3612496
     },
     {
       "observation": "0492-11",
@@ -15091,27 +14979,11 @@
     },
     {
       "observation": "0746-07",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "337a724ffb8ef704",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0746-07",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "337a724ffb8ef704",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0746-08",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "a02e1deca51462a1",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0746-08",
@@ -15123,27 +14995,11 @@
     },
     {
       "observation": "0746-09",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "0ba3dff9ef527e8e",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0746-09",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "0ba3dff9ef527e8e",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0746-10",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "06639c76ab8deb2b",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0746-10",
@@ -15155,27 +15011,11 @@
     },
     {
       "observation": "0746-11",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "fdc65ef34ad3a5c4",
-      "effective": true,
-      "minus": -601156.303748,
-      "plus": 0
-    },
-    {
-      "observation": "0746-11",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "fdc65ef34ad3a5c4",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0746-12",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "a847a5f7f9c01b60",
-      "effective": true,
-      "minus": -543034.6011089999,
-      "plus": 0
     },
     {
       "observation": "0746-12",
@@ -15187,27 +15027,11 @@
     },
     {
       "observation": "0746-13",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "1a15a861e3e09464",
-      "effective": true,
-      "minus": -980104.6415159993,
-      "plus": 0
-    },
-    {
-      "observation": "0746-13",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "1a15a861e3e09464",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0746-14",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "a23c545c6e151bf5",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0746-14",
@@ -15219,27 +15043,11 @@
     },
     {
       "observation": "0746-15",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "11be4c3689a40e09",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0746-15",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "11be4c3689a40e09",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0746-16",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "645aecb231d960b7",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0746-16",
@@ -15251,27 +15059,11 @@
     },
     {
       "observation": "0746-17",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "ce17a551964122e4",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0746-17",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "ce17a551964122e4",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0747-05",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "78997be3d2d96318",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0747-05",
@@ -15283,27 +15075,11 @@
     },
     {
       "observation": "0747-06",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "0f878dcded662522",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0747-06",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "0f878dcded662522",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0747-07",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "e075221a76d98fef",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0747-07",
@@ -15315,27 +15091,11 @@
     },
     {
       "observation": "0747-08",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "e957f0b5ad60d8fe",
-      "effective": true,
-      "minus": -653403.0943440001,
-      "plus": 0
-    },
-    {
-      "observation": "0747-08",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "e957f0b5ad60d8fe",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0747-09",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "a949f41a5ed967dd",
-      "effective": true,
-      "minus": -980104.6415159993,
-      "plus": 0
     },
     {
       "observation": "0747-09",
@@ -15347,27 +15107,11 @@
     },
     {
       "observation": "0747-10",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "e3061dea533da0fb",
-      "effective": true,
-      "minus": -362023.067406,
-      "plus": 0
-    },
-    {
-      "observation": "0747-10",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "e3061dea533da0fb",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0747-11",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "b06b8db0a473bfeb",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0747-11",
@@ -15379,14 +15123,6 @@
     },
     {
       "observation": "0747-12",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "22c9c33ad0f61027",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0747-12",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "22c9c33ad0f61027",
       "effective": false,
@@ -15395,27 +15131,11 @@
     },
     {
       "observation": "0747-13",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "370fc94d28d32278",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0747-13",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "370fc94d28d32278",
       "effective": false,
       "minus": 0,
       "plus": null
-    },
-    {
-      "observation": "0747-14",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "95ebca449fc059c9",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0747-14",
@@ -15499,14 +15219,6 @@
     },
     {
       "observation": "0754-08",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
-      "key": "e08bc772fe74f81d",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0754-08",
       "element": "ミハラ：ボンディングチェーン skill2.effects[1]",
       "key": "e08bc772fe74f81d",
       "effective": true,
@@ -15517,14 +15229,6 @@
     {
       "observation": "0755-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "bce1f95495af0507",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0755-08",
-      "element": "ミハラ：ボンディングチェーン skill2.effects[0]",
       "key": "bce1f95495af0507",
       "effective": false,
       "minus": 0,

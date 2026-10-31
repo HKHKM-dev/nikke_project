@@ -14,7 +14,7 @@ import {
 import { planDynamicSchedule } from '../dynamic.ts';
 import { FIXED_BURST_CYCLE, planFixedCycle } from '../fixedCycle.ts';
 import { gameSecondsToFrames } from '../../time.ts';
-import { stageEnterFrames, type BurstSchedule } from '../schedule.ts';
+import { HEXAGON_AFTER_ACTIVATION_FRAMES, stageEnterFrames, type BurstSchedule } from '../schedule.ts';
 
 const NEXT: Record<BurstStep, BurstNextStep> = {
   Step1: 'Step2',
@@ -73,10 +73,10 @@ describe('enteredStep and stageEnterFrames', () => {
       [51, 'Step2', 'Step3'],
       [79, 'Step3', null],
     ]);
-    // 段階 1 はゲージ満タン、2 / 3 は I / II の発動フレーム
+    // 段階 1 はゲージ満タン、2 は I の発動フレーム、3 は II の発動の六角形の替わり目（段 14 の PR 1。V-0549）
     expect(stageEnterFrames(s, 'Step1')).toEqual([0]);
     expect(stageEnterFrames(s, 'Step2')).toEqual([23]);
-    expect(stageEnterFrames(s, 'Step3')).toEqual([51]);
+    expect(stageEnterFrames(s, 'Step3')).toEqual([51 + HEXAGON_AFTER_ACTIVATION_FRAMES]);
   });
 
   it('counts a re-entry (Step1 → Step1) as entering stage 1 again', () => {

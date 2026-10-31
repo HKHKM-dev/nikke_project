@@ -132,12 +132,27 @@ export function burstHitsOfSlot(
 }
 
 /**
+ * 2 段目の段 14 の PR 1（plan/design-skill-stage14.md 2.8 節）: 発動 a でその段階に進んだ「バースト N 段階突入時」の発火フレーム。
+ * 段階 3（II の発動）は六角形の替わり目（hexagonFrameOf。本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後）。雪子の S2 の▲が
+ * 替わり目から 588f 乗る（V-0549）。段階 1・2 と、固定サイクル（I・II・III が同じフレームに発動する）は発動のフレームのまま
+ * （段階 2 の使い手はいない）
+ */
+export function stageEnterFrameOf(
+  a: Pick<BurstActivation, 'frame' | 'startsFullBurst' | 'fullBurstStart' | 'enteredStep'>,
+  model: BurstScheduleModel,
+): number {
+  return model === 'dynamic' && a.enteredStep === 'Step3' ? hexagonFrameOf(a) : a.frame;
+}
+
+/**
  * Stage 8: 「バースト N 段階突入時」の発火フレーム（昇順・重複なし）。
- * 段階 2 / 3 は発動の結果その段階に進んだフレーム。段階 1 はゲージ満タンのフレームとリエントリーの発動
+ * 段階 2 / 3 は発動の結果その段階に進んだフレーム（stageEnterFrameOf）。段階 1 はゲージ満タンのフレームとリエントリーの発動
  * （固定サイクルは満タンがないので、各サイクルのフルバースト開始 = 発動フレーム）。
  */
 export function stageEnterFrames(schedule: BurstSchedule, step: BurstStepKey): number[] {
-  const frames = schedule.activations.filter((a) => a.enteredStep === step).map((a) => a.frame);
+  const frames = schedule.activations
+    .filter((a) => a.enteredStep === step)
+    .map((a) => stageEnterFrameOf(a, schedule.model));
   if (step === 'Step1') {
     frames.push(
       ...(schedule.model === 'fixed' ? schedule.fullBurstWindows.map((w) => w.start) : schedule.gaugeFullFrames),

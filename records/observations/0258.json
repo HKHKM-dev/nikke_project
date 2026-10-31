@@ -681,5 +681,132 @@
       "source": "skill",
       "frames": [1568, 11409]
     }
+  },
+  {
+    "id": "0258-27",
+    "recording": "0258",
+    "source": "V-0549",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": -29,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -29,
+      "high": -29
+    },
+    "description": "ラム + デルタ + 雪子（風圧）の 1〜5 回目のフルバーストで、雪子の S2 のバースト 3 段階突入時の有利コードの攻撃ダメージ▲が、雪子の 1 発に乗り始めるまでの、III のタイマーの 00.00 からの動画のフレーム数（5 回の共通部分。FB2 で無の最後の発 −30f・有の最初の発 −29f（4・5 回目も矛盾なし））。モデルの II → III の替わり目は動画で −29f、II の本当の発動は −35f",
+    "method": {
+      "tool": "recipe:buff-edge@2",
+      "note": "HUD の増分（recipe:hud-jumps）を、モデル（setup {\"enemy\":\"range-bigarms-wind\",\"events\":[\"range-3min-jump\"]}）の雪子（枠 3）の hitDamage の格子に ±1.5 で当てた（recipe:buff-edge@2。--opt setup=0258）。格子は 無: モデルの f3040（▲なし）、有: f3065（▲だけ）。事象は III のタイマーの 00.00（`0258-12`）、範囲は事象の −60〜−7f"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0258-28",
+    "recording": "0258",
+    "source": "V-0549",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": 580,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 580,
+      "high": 580
+    },
+    "description": "同じ録画の 1〜4 回目のフルバーストで、同じ▲が雪子の 1 発に乗らなくなる（▲の無い最初の発の）、III のタイマーの 00.00 からの動画のフレーム数（共通部分。1・2 回目で有の最後の発 579f・無の最初の発 580f（3 回目は 575f / 583f で矛盾なし））。入りの止まりを含む",
+    "method": {
+      "tool": "recipe:buff-edge@2",
+      "note": "HUD の増分（recipe:hud-jumps）を、モデル（setup {\"enemy\":\"range-bigarms-wind\",\"events\":[\"range-3min-jump\"]}）の雪子（枠 3）の hitDamage の格子に ±1.5 で当てた（recipe:buff-edge@2。--opt setup=0258）。格子は 有: モデルの f3300（▲・1more・補正）、無: f3650（1more・補正）。事象は III のタイマーの 00.00（`0258-12`）、範囲は事象の 540〜625f"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0258-29",
+    "recording": "0258",
+    "source": "V-0549",
+    "readAt": "2026-10-31",
+    "kind": "interval",
+    "use": "compare",
+    "value": -29.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -30,
+      "high": -29
+    },
+    "description": "同じ録画の 1 回目のフルバーストの終わりで、雪子の S2 のバースト 3 段階突入時の有利コードの攻撃ダメージ▲の窓の終わり − フルバースト補正の窓の終わり（止まりは跨がない）。1 回目: ▲の無い最初の発 f2154（00.00 の f1574 から 580f）、補正の切れ目 f2183 か f2184（`0258-14`）",
+    "method": {
+      "tool": "recipe:buff-edge@2 の切れ目と、1more の読みの補正の切れ目",
+      "note": "▲の切れ目は同じ録画の▲の無い最初の発（buff-edge の有 → 無の境）。補正の切れ目は 1more の読み（V-0393・V-0475）の値を使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 0,
+        "before": 40
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0258-30",
+    "recording": "0258",
+    "source": "V-0549",
+    "readAt": "2026-10-31",
+    "kind": "interval",
+    "use": "compare",
+    "value": -29,
+    "unit": "f",
+    "description": "同じ録画の 2 回目のフルバーストの終わりで、雪子の S2 のバースト 3 段階突入時の有利コードの攻撃ダメージ▲の窓の終わり − フルバースト補正の窓の終わり（止まりは跨がない）。2 回目: ▲の無い最初の発 f4531（f3951 から 580f）、補正の切れ目 f4560（`0258-15`）",
+    "method": {
+      "tool": "recipe:buff-edge@2 の切れ目と、1more の読みの補正の切れ目",
+      "note": "▲の切れ目は同じ録画の▲の無い最初の発（buff-edge の有 → 無の境）。補正の切れ目は 1more の読み（V-0393・V-0475）の値を使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEndFromFullBurstEnd",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "elementDamage",
+        "n": 1,
+        "before": 40
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]
