@@ -22,6 +22,7 @@ import {
   isResolvedFullStack,
   isResolvedTimer,
   isResolvedWeaponChangeEnd,
+  isResolvedReloadEnd,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from './resolve.ts';
@@ -144,6 +145,11 @@ export type FrameEvents = {
    */
   weaponChangeEnds?: readonly number[];
   /**
+   * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: このフレームに基礎の武器のリロードを込め終えた枠（ShotLog.reloadEnds。
+   * 込め終えたフレームの次のフレーム）。トリガー { reloadEnd } が見る。省略は無し
+   */
+  reloadEnds?: readonly number[];
+  /**
    * 2 段目の段 14 の PR 1（plan/design-skill-stage14.md 2.8 節）: このフレームに発動の結果進んだ段階（burst/schedule.ts の
    * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目）。トリガー burstStage{N}Enter が見る。省略は無し
    */
@@ -252,6 +258,8 @@ export function createTriggerTracker(
   }
   // 2 段目の段 11: 使用武器の変更の終わり（1 パス目の撃ち切りの終わりの列）
   if (isResolvedWeaponChangeEnd(t)) return (ev) => (ev.weaponChangeEnds ?? []).includes(slotIndex);
+  // 2 段目の段 16 の PR 2: リロードの込め終わり（1 パス目の込め終わりの列）
+  if (isResolvedReloadEnd(t)) return (ev) => (ev.reloadEnds ?? []).includes(slotIndex);
   // 2 段目の段 14 の PR 2: 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
   if (isChargeTickTrigger(t)) {
     const every = t.chargeTick.everySeconds;
@@ -371,6 +379,12 @@ export function replayEvents(
       if (f >= frames) continue;
       const ev = at(f);
       ev.weaponChangeEnds = [...(ev.weaponChangeEnds ?? []), slotIndex];
+    }
+    // 2 段目の段 16 の PR 2: リロードの込め終わり（トリガー { reloadEnd }）
+    for (const f of log.reloadEnds ?? []) {
+      if (f >= frames) continue;
+      const ev = at(f);
+      ev.reloadEnds = [...(ev.reloadEnds ?? []), slotIndex];
     }
     // 2 段目の段 14 の PR 2: 溜めの周期（{ chargeTick }）と溜めが満ちた時（{ chargeFull }）
     for (const { everySeconds, frames: ticks } of log.chargeTicks ?? []) {

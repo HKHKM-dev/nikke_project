@@ -93,7 +93,12 @@ const KIND_INFO: Record<string, Info> = {
     'ok',
     'damage の damageType true（エイダの S2）・weaponChange の trueDamage',
   ],
-  'damage:burstTrue': ['防御力無視のバーストスキルダメージ', 'gap', 'なし'],
+  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節。C-0807）
+  'damage:burstTrue': [
+    '防御力無視のバーストスキルダメージ',
+    'ok',
+    'burstDamage の damageType true（ベスティー：タクティカル・アップ）',
+  ],
   'damage:core': ['コア命中ダメージ', 'ok', 'damage の coreHit'],
   'damage:fixed': ['固定ダメージ', 'gap', 'なし'],
   'damage:hpScaled': ['最大HP を足した倍率ダメージ', 'gap', 'なし'],
@@ -247,7 +252,11 @@ const TRIG_INFO: Record<string, Info> = {
   critHit: ['クリティカル命中した時', 'ok'],
   chargeHold: ['フルチャージを N 秒以上維持した時', 'gap'],
   partialChargeShot: ['フルチャージでない通常攻撃', 'gap'],
-  reloadComplete: ['リロード完了時', 'gap'],
+  reloadComplete: [
+    'リロード完了時',
+    'check',
+    'removeState の { reloadEnd }（最大弾数のリロード完了で状態を外す。2 段目の段 16）だけ',
+  ],
   teamAmmo: ['味方の消費した弾の合計', 'gap'],
   fullStackConsume: [
     'フルスタックでスタック解除後',

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 68・効果 411（根拠あり 384）・notes 174（根拠あり 78）
+件数: キャラ 69・効果 418（根拠あり 390）・notes 175（根拠あり 78）
 
-notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足 13・間接 53
+notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足 13・間接 53
 
-スロット: supported 158・partial 13・unsupported 17・noEffect 34
+スロット: supported 160・partial 14・unsupported 17・noEffect 34
 
 ## 10 ラピ
 
@@ -201,9 +201,23 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）、C-0306（確定）
   - notes[0] 計算に無関係: フォーメーションAS 適用中の陽動発動不可はダメージに関係しない: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・attack: C-0337（確定）、C-0497（確定）
+  - effects[0] state・burstUse・battlefieldFormation（attack）: C-0337（確定）、C-0497（確定）
   - effects[1] timed・burstUse・damageTaken: C-0335（確定）、C-0336（仮説）、C-0379（仮説）、C-0619（仮説）
   - notes[0] 間接（HP）: 味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 94 ベスティー：タクティカル・アップ
+
+- **skill1**: supported
+  - effects[0] state・fullChargeShot・missileGuide（chargeSpeed・chargeDamage）: C-0804（確定）
+  - effects[1] removeState・最大弾数のリロードが完了した時・missileGuide: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・fullChargeShot・true: C-0805（確定）、C-0806（仮説）
+  - effects[1] timed・fullChargeShot・attack: C-0809（確定）
+  - effects[2] timed・fullChargeShot・projectileExplosionDamage: C-0809（確定）
+- **burst**: partial
+  - effects[0] timed・burstUse・trueDamage: C-0808（確定）
+  - effects[1] burstDamage・true: C-0807（確定）
+  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 
 ## 95 ウンファ：タクティカル・アップ
 
@@ -218,7 +232,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）
   - effects[4] passive・trueDamage: C-0375（確定）
 - **burst**: supported
-  - effects[0] timed・weaponChangeShot・damageTaken: C-0312（確定）、C-0138（確定）
+  - effects[0] state・weaponChangeShot・explosiveRound（damageTaken）: C-0312（確定）、C-0138（確定）
   - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（確定）
   - notes[0] 補足: II の直後に III が来たとき、炸裂弾は III のタイマーの 00.00（フルバーストの窓の始まり）より前に着き、フルバースト補正が乗らない（0233-10）。モデルもフルバーストの窓を III の発動の 6f 後の 00.00 から始める（II の替わり目の 29f 後。C-0516）ので、炸裂弾（替わり目の 22〜28f 後）に補正は乗らない: C-0509（確定）、C-0516（確定）
 

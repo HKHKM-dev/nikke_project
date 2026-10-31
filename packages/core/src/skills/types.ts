@@ -618,6 +618,17 @@ export function isWeaponChangeEndTrigger(t: unknown): t is WeaponChangeEndTrigge
 }
 
 /**
+ * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節。論点 3）: 「最大弾数のリロードが完了した時」。自分の基礎の武器のリロードを
+ * 込め終えたフレームの次のフレーム（1 パス目の ShotLog.reloadEnds。durationUntil: "reloadEnd" の窓の終わりと同じフレーム）に発火する。
+ * 解除（removeState）にだけ書ける
+ */
+export type ReloadEndTrigger = { reloadEnd: true };
+
+export function isReloadEndTrigger(t: unknown): t is ReloadEndTrigger {
+  return typeof t === 'object' && t !== null && 'reloadEnd' in t;
+}
+
+/**
  * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1 節。論点 3）: 「チャージ中の時、N 秒ごとに」。自分のチャージ武器の溜めの中で、
  * 溜め始めから k × everySeconds 秒（k = 1, 2, …）に発火する。k 回目は溜め始めの floor(k × everySeconds ÷ 0.017) フレーム後（端数を
  * 持ち越す。damage の perCountIntervalSeconds と同じ刻み）。溜めの進み（溜め始めからのフレーム）は、部分チャージの進みと同じ式
@@ -653,6 +664,8 @@ export type EffectTrigger =
   | AppliedTrigger
   | FullStackTrigger
   | WeaponChangeEndTrigger
+  // 2 段目の段 16 の PR 2: { reloadEnd }（removeState だけが受ける）
+  | ReloadEndTrigger
   // 2 段目の段 14 の PR 2: { chargeTick }・{ chargeFull }（timed・状態の付与だけが受ける。parseChargeTrigger）
   | ChargeTickTrigger
   | ChargeFullTrigger
@@ -920,10 +933,12 @@ export function isMaxHpStat(stat: BuffStat | 'weapon' | undefined): boolean {
 
 /**
  * バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ
- * （射撃場の的 1 体では全額が当たる。C-0391 など。対象と周囲の敵の分配ダメージは、等分したヒットで合計が全額になる。C-0766）
+ * （射撃場の的 1 体では全額が当たる。C-0391 など。対象と周囲の敵の分配ダメージは、等分したヒットで合計が全額になる。C-0766）。
+ * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節。論点 5）: true = 防御力無視のバーストスキルダメージ（damage の true と同じ式。
+ * skills/burstDamage.ts の computeBurstHit）
  */
-export type BurstDamageType = 'skill' | 'distributed';
-export const BURST_DAMAGE_TYPES = ['skill', 'distributed'] as const satisfies readonly BurstDamageType[];
+export type BurstDamageType = 'skill' | 'distributed' | 'true';
+export const BURST_DAMAGE_TYPES = ['skill', 'distributed', 'true'] as const satisfies readonly BurstDamageType[];
 
 /** Stage 5: 「最終攻撃力の X％の（バーストスキル）ダメージ」。burst スロットにだけ書ける */
 export type BurstDamageEffect = {
@@ -1831,11 +1846,15 @@ export function chargeTriggersOf(definition: SkillDefinition): { tickSeconds: nu
 
 /**
  * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 定義に、リロードの込め終わりで終わる効果（durationUntil: reloadEnd。
- * timed の自分だけ）があるか（宝物版・編成の条件を当てた後の定義を渡す）。1 パス目が、その枠の込め終わりのフレームを書くかを決める
+ * timed の自分だけ）か、込め終わりのきっかけ（{ reloadEnd }。2 段目の段 16 の PR 2）の解除があるか（宝物版・編成の条件を当てた後の定義を渡す）。1 パス目が、その枠の込め終わりのフレームを書くかを決める
  */
 export function hasReloadEndEffect(definition: SkillDefinition): boolean {
   return SKILL_SLOTS.some((slot) =>
-    definition.skills[slot].effects.some((e) => e.kind === 'timed' && e.durationUntil === 'reloadEnd'),
+    definition.skills[slot].effects.some(
+      (e) =>
+        (e.kind === 'timed' && e.durationUntil === 'reloadEnd') ||
+        (e.kind === 'removeState' && isReloadEndTrigger(e.trigger)),
+    ),
   );
 }
 
@@ -2456,6 +2475,7 @@ function parseTrigger(
   allowChance = false,
   allowFullStack = false,
   allowWeaponChangeEnd = false,
+  allowReloadEnd = false,
 ): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
@@ -2483,6 +2503,13 @@ function parseTrigger(
       fail(`${path}.weaponChangeEnd`, `expected true, got ${JSON.stringify(v.weaponChangeEnd)}`);
     }
     return { weaponChangeEnd: true };
+  }
+  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: リロードの込め終わりのきっかけは removeState だけ
+  if (v.reloadEnd !== undefined) {
+    if (!allowReloadEnd) fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState');
+    for (const key of Object.keys(v)) if (key !== 'reloadEnd') fail(`${path}.${key}`, 'unknown field');
+    if (v.reloadEnd !== true) fail(`${path}.reloadEnd`, `expected true, got ${JSON.stringify(v.reloadEnd)}`);
+    return { reloadEnd: true };
   }
   if (v.everySeconds !== undefined) {
     if (!allowTimer)
@@ -2963,8 +2990,14 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   if (fields.targetState !== undefined && stateMatches(fields.targetState, state)) {
     fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
   }
-  // 2 段目の段 5: 家族の根を見る条件も、家族の状態の付与には書けない
-  if (fields.condition?.selfState !== undefined && stateMatches(fields.condition.selfState.state, state)) {
+  // 2 段目の段 5: 家族の根を見る条件も、家族の状態の付与には書けない。
+  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: 「〈状態〉でなければ」（present: false）だけは書ける。付いている間の
+  // 再発火を止めるだけで連鎖しない（段 1.5 の selfState は前のフレームまでに付いた件を見るので、同じフレームの自分の付与は見ない）
+  if (
+    fields.condition?.selfState !== undefined &&
+    stateMatches(fields.condition.selfState.state, state) &&
+    fields.condition.selfState.present !== false
+  ) {
     fail(`${path}.condition.selfState`, `a grant of "${state}" cannot look at its own state`);
   }
   const effect: StateGrantEffect = { kind: 'state', state, ...fields };
@@ -4550,7 +4583,7 @@ function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveSt
     }
   }
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, false, false, false, false, false, true);
   if (v.target !== 'self') {
     fail(
       `${path}.target`,

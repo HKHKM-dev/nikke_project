@@ -1,0 +1,37 @@
+[
+  {
+    "id": "0816-01",
+    "recording": "0816",
+    "source": "normal",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [20, 20, 19, 117, 20, 20, 20, 260],
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "HUD の増分のフレーム（着弾）の差。1f の揺れがある"
+    },
+    "description": "ベスティー：タクティカル・アップの 1 発目から 9 発目までのヒットの間隔（動画のフレーム）。1 マガジン 8 発が「溜める 1 発・ガイドの 3 発」の 2 組で、4 発目と 5 発目の間が次の溜め（2 秒チャージ）、8 発目と 9 発目の間がリロードを挟む",
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 0,
+        "to": 630
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

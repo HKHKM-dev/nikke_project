@@ -139,21 +139,26 @@
     "burst": {
       "effects": [
         {
-          "kind": "timed",
+          "kind": "state",
+          "state": "explosiveRound",
           "trigger": {
             "count": "weaponChangeShot"
           },
-          "target": "allies",
-          "stat": "damageTaken",
-          "ref": 3,
+          "target": "enemy",
           "durationRef": 4,
+          "contents": [
+            {
+              "stat": "damageTaken",
+              "ref": 3
+            }
+          ],
           "claims": [
             "C-0312",
             "C-0138"
           ],
           "assumes": {
-            "ja": "敵 1 体。ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない。実機の窓は炸裂弾の着弾から 10 秒。モデルの炸裂弾は撃ったフレームに着くとみなす（射撃場の的では着弾の時刻に撃つ。effects[1] の assumes・C-0509）",
-            "en": "One enemy. Multiplies allies' damage as a separate multiplier (1 + 27.87%). It starts on the frame after the Explosive Round (the weapon-change shot) is fired and lasts 10 s, so the round itself does not get it. In game the window is 10 s from the round's hit. The model takes the round to hit on the frame it is fired (on the shooting range target it is fired at the hit time; see effects[1] and C-0509)"
+            "ja": "徹甲炸裂弾（敵 1 体）。中身の受けるダメージ▲は、ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない。実機の窓は炸裂弾の着弾から 10 秒。モデルの炸裂弾は撃ったフレームに着くとみなす（射撃場の的では着弾の時刻に撃つ。effects[1] の assumes・C-0509）",
+            "en": "Explosive Round (one enemy). Its Damage Taken ▲ multiplies allies' damage as a separate multiplier (1 + 27.87%). It starts on the frame after the Explosive Round (the weapon-change shot) is fired and lasts 10 s, so the round itself does not get it. In game the window is 10 s from the round's hit. The model takes the round to hit on the frame it is fired (on the shooting range target it is fired at the hit time; see effects[1] and C-0509)"
           }
         },
         {

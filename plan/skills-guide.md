@@ -82,7 +82,7 @@
     | N 回順番に攻撃（バースト以外）／順番攻撃ダメージ X%▲ | damage の `hitsRef`・`hitIntervalFrames`／stat `sequentialAttackDamage` | 例: マリアン：クイーンの S1・S2 | 同 5.2・5.5 節 |
     | 〈状態〉再発動周期 N 秒▼／バーストを使用した時、〈スキル〉の発動間隔 N 秒▼（N 秒間維持） | 周期の damage の `periodShorten`（`state`／名前の無い窓 `window: { "trigger": "burstUse", "durationRef": N }`） | 状態は、前の発動の時点で状態があり、縮めた次の発動まで続くときだけ縮む。窓は、縮めた次の発動が窓の中なら縮む（前の発動は見ない。`gaugePerHit` とは組めない）。例: マリアン：クイーンの S2・エイダの S2 | 同 5.3 節・10.2 節の f・[design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
     | フルバーストタイム発動中、N 秒ごとに | 周期のきっかけ（`everySeconds`）の damage と `condition.inFullBurst: true` | 周期は戦闘開始から数え続け、窓の中の回だけ出る（窓ごとに数え直さない）。例: エイダの S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
-    | 最終攻撃力の X% の防御力無視ダメージ（倍率ダメージ） | damage の `damageType: "true"` | 防御力を引かず、防御力無視ダメージ▲を攻撃ダメージ▲と同じ和に足す。射撃ごとに畳み込む damage には書けない。例: エイダの S2 | 同上 |
+    | 最終攻撃力の X% の防御力無視ダメージ（倍率ダメージ） | damage の `damageType: "true"` | 防御力を引かず、防御力無視ダメージ▲を攻撃ダメージ▲と同じ和に足す。射撃ごとの damage（フルチャージごとなど）は通常攻撃に畳み込まず、倍率ダメージのヒットとして出す。例: エイダの S2・ベスティー：タクティカル・アップの S2 | 同上 |
     | 直前にバーストスキルを使用した基本バースト段階が N の味方全体 | `target: "burstUsers"` と `targetBurstStep`（timed・付与・heal） | 例: エイダの S1 | 同上 |
     | 「〈名前〉」：N 発間維持のチャージ速度▼ | 付与の `durationShotsRef` と中身の `stat: "chargeSpeed"` | 射撃に効く stat のうち、発数の維持はチャージ速度だけ書ける。溜めの途中で付いても、それまでに溜めたフレームは残る。例: エイダの特殊改造 | 同上 |
     | 再発動周期 N 秒（端数を持ち越す）／命中した時に付く（周期の付与の遅れ） | 周期のきっかけの `carry: true`／周期の付与の `delayFrames` | `hitsRef` の damage は N ヒットとも発動の時点のバフ。例: マリアン：クイーンの S1 の槍と弱点露出 | 同 10.2 節の a・d・e |
@@ -90,6 +90,8 @@
     | マシンガン立ち上げ速度 X%▲ | stat `spinUpSpeed` | 例: マリアン：クイーンのバースト | 同 5.6 節 |
     | 通常攻撃が N 回クリティカル命中した時／自分が使用武器変更状態でなければ | 回数の種類 `critHit`／回数のきっかけの `firesOutside: "weaponChange"` | 例: 紅蓮：神殺の S2 | 同 5.7 節 |
     | N 秒ごとに〈カウンタ〉N%▼／〈カウンタ〉の N% 以上の時（下位効果のスタック適用） | `counterChange` の時間の周期のきっかけ（`{ "everySeconds": N, "carry": true }`・`decrease`）／`passive` の `while.selfCounter`（閾値ごとに 1 つ） | 周期は戦闘開始から数える。閾値ごとに別々に付くので、高い段階では下位の効果も乗る。例: 千束の S1 の超感覚 | [design-skill-stage16.md](design-skill-stage16.md) 2.1 節 |
+    | 防御力無視バーストスキルダメージ | burstDamage の `damageType: "true"` | 式は倍率ダメージの防御力無視ダメージと同じ。同じ発動の防御力無視ダメージ▲が乗るかは、着地点の表（`burst/landing.ts`）の `sameActivationBuffsOnHit`。例: ベスティー：タクティカル・アップのバースト | [design-skill-stage16.md](design-skill-stage16.md) 2.2 節 |
+    | 最大弾数のリロードが完了した時、〈状態〉解除／自分が〈状態〉でない時（その状態の付与の条件） | `removeState` のきっかけ `{ "reloadEnd": true }`（removeState にだけ書ける）／付与の `condition.selfState: { "state": 〈状態〉, "present": false }`（自分の状態を見る付与は `present: false` だけ） | 例: ベスティー：タクティカル・アップの S1 のミサイルガイド | 同上 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

@@ -172,17 +172,26 @@
     "burst": {
       "effects": [
         {
-          "kind": "timed",
+          "kind": "state",
+          "state": "battlefieldFormation",
           "trigger": "burstUse",
           "target": "allies",
-          "stat": "attack",
-          "scaling": "casterAttack",
-          "ref": 1,
           "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1
+            }
+          ],
           "claims": [
             "C-0337",
             "C-0497"
-          ]
+          ],
+          "assumes": {
+            "ja": "戦場コントロール。中身はスキル発動者基準の攻撃力▲（ベスティー：タクティカル・アップの S2 の「自分が戦場コントロール状態なら」が見る）",
+            "en": "Battle Formation. Its content is ATK ▲ based on the caster (Vesti: Tactical Upgrade S2 reads \"while in the Battle Formation state\")"
+          }
         },
         {
           "kind": "timed",

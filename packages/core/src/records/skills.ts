@@ -254,6 +254,7 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('fullStack' in t) return `${t.fullStack} のフルスタック`;
   if ('ended' in t) return `${t.ended} が終了した時`;
   if ('weaponChangeEnd' in t) return '使用武器の変更が終了した時';
+  if ('reloadEnd' in t) return '最大弾数のリロードが完了した時';
   if ('counterFull' in t) return `${t.counterFull} が最大になった時`;
   // 2 段目の段 14 の PR 2
   if ('chargeTick' in t) return `チャージ中の ${t.chargeTick.everySeconds} 秒ごと`;
