@@ -719,6 +719,10 @@
 | 0747 | `20261031-0747_smg+sr+mg_liter+delta+mihara-bc.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ミハラ：ボンディングチェーン（162、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0547 の撮影 A（V-0546 の「次に撮るもの」）。リター（1 枠目・AI）+ デルタ（2 枠目・AI）+ ミハラ：ボンディングチェーン（3 枠目・操作・AUTO 射撃 ON）。オートバースト ON・宝物なし |
 | 0748 | `20261031-0748_smg+ar+mg+sr_liter+idoll-sun+mihara-bc+delta.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ミハラ：ボンディングチェーン（162、MG・灼熱・SSR） + デルタ（20、SR・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0548 の撮影 B（V-0546 の「次に撮るもの」）。リター（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ ミハラ：ボンディングチェーン（3 枠目・操作・AUTO 射撃 ON）+ デルタ（4 枠目・AI）。オートバースト ON・宝物なし |
 | 0749 | `20261031-0749_smg+ar+mg+sr_liter+idoll-sun+mihara-bc+delta.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ミハラ：ボンディングチェーン（162、MG・灼熱・SSR） + デルタ（20、SR・風圧・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0548 の撮影 B（V-0546 の「次に撮るもの」）。リター（1 枠目・AI）+ I-DOLL・サン（2 枠目・AI）+ ミハラ：ボンディングチェーン（3 枠目・操作・AUTO 射撃 ON）+ デルタ（4 枠目・AI）。オートバースト ON・宝物なし |
+| 0750 | `20261031-0750_mg_marian-queen_solo-nofire_burst-left.mp4` | ◎マリアン：クイーン（19、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0545 の撮り方 A（マリアン：クイーン単騎・操作・オート射撃 OFF で撃たない・手動操作なし）。バーストゲージの表示を左にした録画（ゲームのオプション。普段は右） |
+| 0751 | `20261031-0751_mg_marian-queen_solo-nofire_burst-left.mp4` | ◎マリアン：クイーン（19、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0545 の撮り方 A（マリアン：クイーン単騎・操作・オート射撃 OFF で撃たない・手動操作なし）。バーストゲージの表示を左にした録画（ゲームのオプション。普段は右） |
+| 0752 | `20261031-0752_sr+rl+mg+ar_cocoa+rapunzel-sanctuary+marian-queen+idoll-sun.mp4` | ココア（311、SR・灼熱・SSR） + ラプンツェル：サンクチュアリ（473、RL・灼熱・SSR） + ◎マリアン：クイーン（19、MG・灼熱・SSR） + I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0545 の撮り方 B（ココア（I）+ ラプンツェル：サンクチュアリ（II）+ マリアン：クイーン（III・操作）+ I-DOLL・サン（III）・手動操作なし） |
+| 0753 | `20261031-0753_sr+rl+mg+ar_cocoa+rapunzel-sanctuary+marian-queen+idoll-sun.mp4` | ココア（311、SR・灼熱・SSR） + ラプンツェル：サンクチュアリ（473、RL・灼熱・SSR） + ◎マリアン：クイーン（19、MG・灼熱・SSR） + I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0545 の撮り方 B（ココア（I）+ ラプンツェル：サンクチュアリ（II）+ マリアン：クイーン（III・操作）+ I-DOLL・サン（III）・手動操作なし） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
