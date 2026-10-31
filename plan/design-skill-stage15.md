@@ -7,7 +7,7 @@
 - 前提: [design-skill-stage11.md](design-skill-stage11.md) 3.3 節（T4 の `burstCooldown`。モランの熱血）、[design-stage10.md](design-stage10.md) 4 節（即時のクールタイム▼ `cooldownReduction`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.3 節（周期の短縮 `periodShorten`。C-0738）、[design-skill-stage3.md](design-skill-stage3.md)（timed のスタック）、[design-skill-stage6.md](design-skill-stage6.md) 1.4 節（`selfHp`）、[design-indirect-notes.md](design-indirect-notes.md)（間接の notes と読む側）、[design-heal-vocabulary.md](design-heal-vocabulary.md)（吸収回復）
 - いまの未対応: [skills.md](skills.md)（生成）の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）
 - 作成日: 2026-10-31
-- 状態: 起案（論点 1〜11 はオーナーの判断待ち）
+- 状態: 決定（2026-10-31。論点 1〜11 はオーナーが推奨どおりに決めた）。撮影待ち
 
 ## 0. 範囲の選び方
 
@@ -181,6 +181,8 @@
 
 ## 6. 論点
 
+決定（2026-10-31、オーナー）: 論点 1〜11 は推奨どおり。論点の文は諮った時のまま。
+
 1. **段 15 の対象**（0.3 節）
    - 推奨: ミルクの宝物版・ティア・エイダの全スロット。T4 のほかに要る語彙がこの段の中で閉じ、ほかの定義の無いキャラに頼らずに、単騎と機構が確定したキャラとのチェーンで撮れる。T4 の付いたフレームの決まり（いまは確かめた録画が無い）も、ミルクの宝物版とティアで両方の場合が見える。
    - 代わりの案 A: ミルクの宝物版とティアだけにし、エイダは段 16 で防御力無視の倍率ダメージの使い手（4 節の 2）とまとめる。撮影は 6 本で済む。
@@ -219,3 +221,4 @@
 ## 経過
 
 - 2026-10-31: 起案（オーナーの指示: 段 15 を起案する）。#797 の後の main で、段 14 の 4 節の候補 1・2・3・6 の使い手を棚卸しし（[design-skill-stage15-inventory.md](design-skill-stage15-inventory.md)）、段 15 を T4 の残りのうちミルクの宝物版・ティア・エイダの全スロットにした。論点 1〜11 はオーナーの判断待ち。
+- 2026-10-31: オーナーが論点 1〜11 を推奨どおりに決めた。論点 11 のとおり、撮影 A1・A2・B・C・D を PR 1 の撮影計画（検証記録）の「次に撮るもの」で 1 回で頼んだ。撮る前の数値の予測は出さず（定義を書く前のため）、見分ける形（3.1・3.2 節の 2 つの形）を検証記録の「予測」に書いた。
