@@ -54,10 +54,20 @@ export function formatPlace(p: SkillPlace): string {
   return `\`data/skills/${p.resourceId}.json\` の ${slot} の ${part}`;
 }
 
-export function entriesOf(def: SkillDefinition): { root: SkillRoot; slot: SkillSlot; entry: SkillEntry }[] {
+/**
+ * 定義のスロット（基礎版 → 宝物版、それぞれスロットの順）。treasureSlots（宝物版になるスロット）を渡すと、宝物版の定義が無いスロットを、
+ * 計算と同じ unsupported の項目（skills/treasure.ts の UNDEFINED_TREASURE_ENTRY）で入れる
+ */
+export function entriesOf(
+  def: SkillDefinition,
+  treasureSlots: readonly SkillSlot[] = [],
+): { root: SkillRoot; slot: SkillSlot; entry: SkillEntry }[] {
   return SKILL_ROOTS.flatMap((root) =>
     SKILL_SLOTS.flatMap((slot) => {
-      const entry = root === 'skills' ? def.skills[slot] : def.treasureSkills?.[slot];
+      const entry =
+        root === 'skills'
+          ? def.skills[slot]
+          : (def.treasureSkills?.[slot] ?? (treasureSlots.includes(slot) ? UNDEFINED_TREASURE_ENTRY : undefined));
       return entry === undefined ? [] : [{ root, slot, entry }];
     }),
   );
@@ -314,19 +324,7 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
   const body: string[] = [];
   for (const { definition, name, treasureSlots = [] } of characters) {
     body.push('', `## ${definition.resourceId} ${name.ja}`, '');
-    // 宝物版の定義が無いスロット（宝物版になるスロットのうち）は、計算と同じ unsupported の項目で出す
-    const missing = SKILL_SLOTS.filter(
-      (slot) => treasureSlots.includes(slot) && definition.treasureSkills?.[slot] === undefined,
-    );
-    const rows = [
-      ...entriesOf(definition),
-      ...missing.map((slot) => ({ root: 'treasureSkills' as const, slot, entry: UNDEFINED_TREASURE_ENTRY })),
-    ].sort(
-      (a, b) =>
-        SKILL_ROOTS.indexOf(a.root) - SKILL_ROOTS.indexOf(b.root) ||
-        SKILL_SLOTS.indexOf(a.slot) - SKILL_SLOTS.indexOf(b.slot),
-    );
-    for (const { root, slot, entry } of rows) {
+    for (const { root, slot, entry } of entriesOf(definition, treasureSlots)) {
       body.push(`- **${root === 'skills' ? slot : `宝物版 ${slot}`}**: ${entry.support}`);
       supports.set(entry.support, (supports.get(entry.support) ?? 0) + 1);
       entry.effects.forEach((e, i) => {
