@@ -1,0 +1,40 @@
+{
+  "id": "0781",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0781_ar+smg_asuka+ocean_asuka-late-fire-2.mp4",
+  "original": "2026-10-31_18-07-13.mp4",
+  "durationSec": 30.4,
+  "frames": 1823,
+  "fps": 60,
+  "sizeMB": 36.8,
+  "sha256": "f69e4e97ec37",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0558。アスカ（1 枠目・操作）→ I-DOLL・オーシャン（2 枠目・AI）。アスカのオート射撃を OFF で始め、戦闘開始から約 1 秒後に ON にした。戦闘開始から約 10 秒で止めた",
+  "backup": {
+    "at": "2026-10-31T18:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

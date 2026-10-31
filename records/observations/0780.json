@@ -1,0 +1,190 @@
+[
+  {
+    "id": "0780-01",
+    "recording": "0780",
+    "kind": "timing",
+    "use": "record",
+    "value": 7,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 5,
+      "high": 9
+    },
+    "description": "アスカの S1（回復効果が適用された時の攻撃力▲）（アスカ → アスカ▲）が アスカ の 1 発で替わるまでの時刻の幅（1 番目の事象 f1127 から数えた動画のフレーム）。アスカの最後の発は 4f、アスカ▲の最初の発は 9f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は アスカ: 枠 1（アスカ）のモデルの f302、アスカ▲: 枠 1（アスカ）のモデルの f312、オーシャン: 枠 2（I-DOLL・オーシャン）のモデルの f300、オーシャン2: オーシャン と オーシャン の和、アスカ+オーシャン: アスカ と オーシャン の和、アスカ▲+オーシャン: アスカ▲ と オーシャン の和。境は アスカ → アスカ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -30〜30f。アスカ 7・アスカ▲ 5・区別できない 0・外れ 13・食い違い（アスカ▲の最初の発より後のアスカの発） 0"
+    },
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0780-02",
+    "recording": "0780",
+    "kind": "timing",
+    "use": "record",
+    "value": 7,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 5,
+      "high": 9
+    },
+    "description": "アスカの S1（回復効果が適用された時の攻撃力▲）（アスカ → アスカ▲）が アスカ の 1 発で替わるまでの時刻の幅の、1 回の事象（f1127）の共通部分（事象から数えた動画のフレーム）。アスカの最後の発の最も遅いものは 4f、アスカ▲の最初の発の最も早いものは 9f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は アスカ: 枠 1（アスカ）のモデルの f302、アスカ▲: 枠 1（アスカ）のモデルの f312、オーシャン: 枠 2（I-DOLL・オーシャン）のモデルの f300、オーシャン2: オーシャン と オーシャン の和、アスカ+オーシャン: アスカ と オーシャン の和、アスカ▲+オーシャン: アスカ▲ と オーシャン の和。境は アスカ → アスカ▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -30〜30f。アスカ 7・アスカ▲ 5・区別できない 0・外れ 13・食い違い（アスカ▲の最初の発より後のアスカの発） 0"
+    },
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0780-03",
+    "recording": "0780",
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": [1127, 1133],
+    "unit": "f",
+    "description": "アスカ（1 枠目・操作。オート射撃を遅らせて ON）+ I-DOLL・オーシャン（2 枠目・AI）で、オーシャンの 1 本目のマガジンの最後の弾丸の命中のフレーム t と、アスカの S1（回復効果が適用された時の攻撃力▲）のアイコンが出た最初のフレーム。差 6f",
+    "method": {
+      "tool": "hud.ts --mode jumps・ffmpeg の切り出し（オーシャンの顔の上の残弾の表示）・アイコンの並びの青の画素の割合（使い捨てのスクリプト）",
+      "note": "オーシャンの 1 本目のマガジンのヒットは 117 個で、最後のヒットが f1127（その後 100f ほどオーシャンのヒットが無い）。オーシャンの顔の上の残弾（x 1040〜1160・y 900〜930）は f1127 に 1/120 から 0/120 に替わり、最後のヒットが 120 発目と同じフレーム。アイコンは、戦闘の初めからある 1 つめのアイコンの右の位置（x 930〜947・y 1044〜1061）を 1f ごとに読み、青の画素の割合が出る前 0.00・出た後 0.44 で 1f で替わった。出たのは攻撃力▲の形（切り出しの画で確かめた）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0780-04",
+    "recording": "0780",
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": [1127, 1131, 1136],
+    "unit": "f",
+    "description": "オーシャンの 1 本目のマガジンの最後の弾丸の命中 t・判定の発（[t + 1, t + 5] のアスカの発。t + 4。S1 なし）・アスカの S1 ありの最初の 1 発（t + 9）の動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、アスカの S1 なし（22,474 × 1・1.3・1.5・1.8・2・2.3・2.5・2.8）・S1 あり（44,287 × 同じ倍率）の 1 発以下と、オーシャンの 1 発（`0193-01`〜`0193-04` の 8,463・11,719・14,974・18,229）0〜2 発の和に分けた（±3。`0659-02` と同じ読み方）。分け方が 1 通りでない増分は無い（合わなかったのは、HUD が 20f 読めなかった後の 1 つの増分だけ）。戦闘の最初の増分（オーシャン）は f835、アスカの最初の発は f915（80f 遅らせて撃ち始めた）。レシピ buff-edge の読み（`0780-01`）と同じ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0780-05",
+    "recording": "0780",
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29216,
+    "description": "t の前のアスカの発（f1121。コア・会心なし、距離ボーナスあり。S1 なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 29,216（単独。S1 なしの組の倍率 1.3）。t の 6f 前のアスカの発（f1121）。t の 1f 前の発（f1126）は会心かコアの倍率 1.8 で、指定の組でないので、その前の倍率 1.3 の発を取った"
+    },
+    "note": "予測ファイルの asuka-hit-before と同じ指定（モデル 29,215.848）。HN・HD とも S1 なし",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 302,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0780-06",
+    "recording": "0780",
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 29216,
+    "description": "判定の発: オーシャンの 1 本目のマガジンの最後の弾丸の命中 t の 4f 後のアスカの発（f1131。コア・会心なし、距離ボーナスあり）。S1 なしの値",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 29,216（単独）"
+    },
+    "note": "予測ファイルの asuka-hit-judge と同じ指定（モデルではオーシャンの最後の発が 304f、回復が 310f（delayFrames 6）で、307f のアスカの発は S1 なし）。HN（遅れを入れる前のモデル）は S1 ありの 57,572.995 で合わなかった",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 307,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0780-07",
+    "recording": "0780",
+    "source": "V-0558",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 57573,
+    "description": "アスカの S1 ありの最初の発（f1136 = t + 9。コア・会心なし、距離ボーナスあり）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分 57,573（単独。S1 ありの組の倍率 1.3）"
+    },
+    "note": "予測ファイルの asuka-hit-after と同じ指定（モデル 57,572.995）。HN・HD とも S1 あり",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 312,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]

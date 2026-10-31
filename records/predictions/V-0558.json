@@ -1,0 +1,106 @@
+{
+  "verification": "V-0558",
+  "note": "撮る前の予測（plan/design-shot-count-trigger-frame.md 6.7 節。backlog 2-38）。◎アスカ（1 枠目・操作）→ I-DOLL・オーシャン（2 枠目・AI）。どちらもバーストは撃たない（オートバースト OFF。setup の burst: false）。録画ではアスカのオート射撃を戦闘開始から約 1 秒遅らせて ON にするが、モデルのアスカは戦闘開始から撃つ（指標は区間の値なので、アスカがそのフレームに撃つかに依らない）。見るのは、オーシャンの 1 本目のマガジンの最後の弾丸の命中の後、アスカのどの発から S1（回復効果が適用された時、攻撃力▲）が乗るか。このファイルで出せるのはいまのモデル（HN）だけで、約 6f 遅れる仮説（HD）の値は検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 830,
+      "controlled": true
+    },
+    {
+      "rid": 305,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "HN",
+      "note": "いまのモデル: オーシャン S1 の回復（最後の弾丸。delayFrames なし）は、受ける枠が撃った枠より前なら、きっかけの発の次のフレームに入る（C-0628 の規則。skills/heals.ts の healFrameOf）。アスカの S1 はオーシャンの 1 本目のマガジンの最後の発の次のフレームから付く"
+    }
+  ],
+  "targets": [
+    {
+      "id": "asuka-s1-start",
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "モデルの確かめ（録画とは比べない）。アスカの S1 の最初の窓の始まり（モデルのフレーム。オーシャンの 1 本目のマガジンの最後の発の次のフレーム）"
+    },
+    {
+      "id": "asuka-hit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 302,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "オーシャンの 1 本目のマガジンの最後の発 t の前のアスカの発（モデルの 302f）。どの仮説でも S1 なし（読みの基準）"
+    },
+    {
+      "id": "asuka-hit-judge",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 307,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "判定の指標。t の後の最初のアスカの発（モデルの 307f）。録画では、t の後 1〜5f にあるアスカの発。HN は S1 あり、HD（約 6f 後。検証記録に手で書く）は S1 なし（asuka-hit-before と同じ値）"
+    },
+    {
+      "id": "asuka-hit-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 312,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "その次のアスカの発（モデルの 312f）。HN・HD とも S1 あり。録画で判定の発が t + 1 のとき、次の発は t + 6 で、HD では決まらない（その録画では、この指標は t + 7 以後の発で読む）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "2cad3df4686c00cfa8efd0ab982f243817b41371",
+    "values": {
+      "HN": {
+        "asuka-s1-start": [305],
+        "asuka-hit-before": 29215.84848,
+        "asuka-hit-judge": 57572.99547999999,
+        "asuka-hit-after": 57572.99547999999
+      }
+    }
+  }
+}
