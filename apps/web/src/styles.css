@@ -2,6 +2,9 @@
   color-scheme: light dark;
   /* スクロールバーの分の幅を常に空けておき、ページが縦長になってスクロールバーが出ても表示が横に動かないようにする */
   scrollbar-gutter: stable;
+  /* スクロールバーとその幅の部分（右端）もテーマの色にする。既定の色はテーマを切り替えても追従しないことがある */
+  background: Canvas;
+  scrollbar-color: color-mix(in srgb, CanvasText 35%, Canvas) Canvas;
   font-family:
     system-ui,
     -apple-system,
