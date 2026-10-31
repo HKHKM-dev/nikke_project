@@ -177,7 +177,8 @@ export function resolveBurstDamage(
   for (const effect of entry.effects) {
     if (effect.kind !== 'burstDamage') continue;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.2 節）: 「N 回順番に攻撃」は、1 回の発動の倍率を回数倍にする（遅れの表の分かれた
-    // ヒットで等分すると、各ヒットが説明文の値になる。回数と分かれたヒットの数がそろうかは burstDelaysOf の側で確かめる）
+    // ヒットで等分すると、各ヒットが説明文の値になる。回数と分かれたヒットの数（burstDelaysOf の hitOffsets）がそろうかは、
+    // 定義のテスト（skills/__tests__/definitions.test.ts）が確かめる）
     const hits = effect.hitsRef === undefined ? 1 : skillValue(skill, effect.hitsRef, levels.burst);
     const r: ResolvedBurstDamage = {
       source: { resourceId: character.resourceId, skill: 'burst', name: skill.name },
@@ -237,6 +238,12 @@ export function resolveDamageEffects(
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
       if (isPerShotTrigger(trigger) && effect.condition === undefined) return;
+      // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）
+      if (isPerShotTrigger(trigger) && character.weaponType === 'SG') {
+        throw new RangeError(
+          `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
+        );
+      }
       const r: ResolvedDamageEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: effect.damageType,

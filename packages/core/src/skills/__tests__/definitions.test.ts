@@ -3,6 +3,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { burstDelaysOf } from '../../burst/landing.ts';
 import type { CharacterData } from '../../types.ts';
 import {
   resolveBurstDamage,
@@ -177,6 +178,21 @@ describe('data/skills', () => {
           // 2 段目の段 3: クラウンの S2（リラックスの付与）の回数は Lv で変わる（Lv1 で 65 回 → Lv10 で 43 回。Lv ごとに読む）。
           // それまで回復（この検査の外）に書いていたので見えていなかった。付与のほかは、どの Lv も同じ回数
           if (effect.kind !== 'state') expect(new Set(counts).size, `${slot} everyRef ${t.everyRef}`).toBe(1);
+        }
+      }
+    });
+
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.2 節）: バーストの「N 回順番に攻撃」は倍率を回数倍にし、遅れの表の分かれたヒットで
+    // 等分する。回数とヒットの数がずれると、総量は合ったまま各ヒットが説明文の値から外れる
+    it('burst hitsRef matches the split hits of the burst delay table at every level', () => {
+      for (const effect of def.skills.burst.effects) {
+        if (effect.kind !== 'burstDamage' || effect.hitsRef === undefined) continue;
+        const splits = burstDelaysOf(character).hitOffsets?.length ?? 1;
+        for (let lv = 1; lv <= SKILL_LEVEL_MAX; lv++) {
+          expect(
+            skillValue(character.skills.burst, effect.hitsRef, lv),
+            `burst hitsRef ${effect.hitsRef} Lv${lv}`,
+          ).toBe(splits);
         }
       }
     });
