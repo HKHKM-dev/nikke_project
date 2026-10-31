@@ -43,11 +43,11 @@
 
 予測は 2026-10-09（commit b3ecbae）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| effect-delay-1（burstEffectDelay） | -2.5（`0402-01`） | 0（+2.5、許容内） |
+| 指標                               | 実測              | 予測 H0               |
+| ---------------------------------- | ----------------- | --------------------- |
+| effect-delay-1（burstEffectDelay） | -2.5（`0402-01`） | 0（+2.5、許容内）     |
 | effect-delay-2（burstEffectDelay） | -7.5（`0402-02`） | 0（+7.5、**許容外**） |
-| effect-delay-3（burstEffectDelay） | -7（`0402-03`） | 0（+7、**許容外**） |
+| effect-delay-3（burstEffectDelay） | -7（`0402-03`）   | 0（+7、**許容外**）   |
 | effect-delay-4（burstEffectDelay） | -5.5（`0402-04`） | 0（+5.5、**許容外**） |
 
 <!-- records:predictions:end -->

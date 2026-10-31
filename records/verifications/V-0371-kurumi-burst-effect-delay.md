@@ -40,8 +40,8 @@
 
 予測は 2026-10-09（commit debecf5）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
+| 指標                                   | 実測           | 予測 H0         |
+| -------------------------------------- | -------------- | --------------- |
 | buffed-first-1（burstEffectFirstShot） | 0（`0100-06`） | 0（+0、許容内） |
 | buffed-first-2（burstEffectFirstShot） | 0（`0100-07`） | 0（+0、許容内） |
 | buffed-first-3（burstEffectFirstShot） | 0（`0100-08`） | 0（+0、許容内） |

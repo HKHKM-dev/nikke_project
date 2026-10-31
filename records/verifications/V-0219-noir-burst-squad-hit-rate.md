@@ -86,17 +86,17 @@
 
 予測は 2026-10-06（commit 29df156）に出した。
 
-| 指標 | 実測 | 予測 H0 | 予測 H1 |
-| --- | --- | --- | --- |
+| 指標                                        | 実測               | 予測 H0                 | 予測 H1                     |
+| ------------------------------------------- | ------------------ | ----------------------- | --------------------------- |
 | sakura-midnear-core-diff（coreHitRateDiff） | 0.085（`0246-19`） | 0（-0.085、**許容外**） | 0.033（-0.052、**許容外**） |
-| sakura-near1-core-diff（coreHitRateDiff） | 0.061（`0246-04`） | 0（-0.061、許容内） | 0.074（+0.013、許容内） |
-| sakura-far-core-diff（coreHitRateDiff） | -0.01（`0246-05`） | 0（+0.01、許容内） | 0.01（+0.02、許容内） |
-| sakura-midfar-core-diff（coreHitRateDiff） | 0.043（`0246-20`） | 0（-0.043、**許容外**） | 0.014（-0.029、**許容外**） |
-| sakura-near2-core-diff（coreHitRateDiff） | 0.039（`0246-21`） | 0（-0.039、許容内） | 0.074（+0.035、許容内） |
-| sakura-far-core-in（coreHitRate） | （実測なし） | 0.034 | 0.044 |
-| sakura-far-bullet-in（bulletHitRate） | （実測なし） | 0.76 | 0.839 |
-| sakura-far-bullet-out（bulletHitRate） | （実測なし） | 0.76 | 0.76 |
-| sakura-body-hit（hitDamage） | （実測なし） | 8,551.996 | 8,551.996 |
+| sakura-near1-core-diff（coreHitRateDiff）   | 0.061（`0246-04`） | 0（-0.061、許容内）     | 0.074（+0.013、許容内）     |
+| sakura-far-core-diff（coreHitRateDiff）     | -0.01（`0246-05`） | 0（+0.01、許容内）      | 0.01（+0.02、許容内）       |
+| sakura-midfar-core-diff（coreHitRateDiff）  | 0.043（`0246-20`） | 0（-0.043、**許容外**） | 0.014（-0.029、**許容外**） |
+| sakura-near2-core-diff（coreHitRateDiff）   | 0.039（`0246-21`） | 0（-0.039、許容内）     | 0.074（+0.035、許容内）     |
+| sakura-far-core-in（coreHitRate）           | （実測なし）       | 0.034                   | 0.044                       |
+| sakura-far-bullet-in（bulletHitRate）       | （実測なし）       | 0.76                    | 0.839                       |
+| sakura-far-bullet-out（bulletHitRate）      | （実測なし）       | 0.76                    | 0.76                        |
+| sakura-body-hit（hitDamage）                | （実測なし）       | 8,551.996               | 8,551.996                   |
 
 <!-- records:predictions:end -->
 

@@ -44,11 +44,11 @@
 
 予測は 2026-10-05（commit dca8800）に出した。
 
-| 指標 | 実測 | 予測 D0-D2 |
-| --- | --- | --- |
+| 指標                               | 実測               | 予測 D0-D2              |
+| ---------------------------------- | ------------------ | ----------------------- |
 | window-core-midnear（coreHitRate） | 0.875（`0164-26`） | 0（-0.875、**許容外**） |
-| window-core-near（coreHitRate） | 1（`0164-25`） | 0（-1、**許容外**） |
-| window-core-far（coreHitRate） | 0.818（`0164-27`） | 0（-0.818、**許容外**） |
+| window-core-near（coreHitRate）    | 1（`0164-25`）     | 0（-1、**許容外**）     |
+| window-core-far（coreHitRate）     | 0.818（`0164-27`） | 0（-0.818、**許容外**） |
 
 <!-- records:predictions:end -->
 

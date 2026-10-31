@@ -94,12 +94,12 @@
 
 予測は 2026-10-04（commit b757b7e）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
+| 指標                                 | 実測             | 予測 H0                |
+| ------------------------------------ | ---------------- | ---------------------- |
 | gauge-full-1（fullBurstToGaugeFull） | 536（`0165-13`） | 493（-43、**許容外**） |
-| gauge-full-2（fullBurstToGaugeFull） | （実測なし） | 490 |
-| gauge-full-3（fullBurstToGaugeFull） | （実測なし） | 482 |
-| gauge-full-4（fullBurstToGaugeFull） | （実測なし） | 581 |
+| gauge-full-2（fullBurstToGaugeFull） | （実測なし）     | 490                    |
+| gauge-full-3（fullBurstToGaugeFull） | （実測なし）     | 482                    |
+| gauge-full-4（fullBurstToGaugeFull） | （実測なし）     | 581                    |
 
 <!-- records:predictions:end -->
 

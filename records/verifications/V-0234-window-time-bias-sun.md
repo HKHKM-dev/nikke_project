@@ -67,14 +67,14 @@
 
 予測は 2026-10-06（commit c1adaf2）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| sakura-midnear-core-diff（coreHitRateDiff） | 0.049（`0254-10`） | 0（-0.049、**許容外**） |
-| sakura-near1-core-diff（coreHitRateDiff） | -0.025（`0254-07`） | 0（+0.025、許容内） |
-| sakura-far-core-diff（coreHitRateDiff） | -0.007（`0255-06`） | 0（+0.007、許容内） |
-| sakura-midfar-core-diff（coreHitRateDiff） | -0.015（`0255-07`） | 0（+0.015、許容内） |
-| sakura-near2-core-diff（coreHitRateDiff） | -0.102（`0255-08`） | 0（+0.102、**許容外**） |
-| sakura-body-hit（hitDamage） | （実測なし） | 7,047.899 |
+| 指標                                        | 実測                | 予測 H0                 |
+| ------------------------------------------- | ------------------- | ----------------------- |
+| sakura-midnear-core-diff（coreHitRateDiff） | 0.049（`0254-10`）  | 0（-0.049、**許容外**） |
+| sakura-near1-core-diff（coreHitRateDiff）   | -0.025（`0254-07`） | 0（+0.025、許容内）     |
+| sakura-far-core-diff（coreHitRateDiff）     | -0.007（`0255-06`） | 0（+0.007、許容内）     |
+| sakura-midfar-core-diff（coreHitRateDiff）  | -0.015（`0255-07`） | 0（+0.015、許容内）     |
+| sakura-near2-core-diff（coreHitRateDiff）   | -0.102（`0255-08`） | 0（+0.102、**許容外**） |
+| sakura-body-hit（hitDamage）                | （実測なし）        | 7,047.899               |
 
 <!-- records:predictions:end -->
 

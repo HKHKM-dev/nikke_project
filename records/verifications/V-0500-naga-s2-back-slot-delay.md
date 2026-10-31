@@ -52,12 +52,12 @@ V-0489「読み方」と同じ（エマの格子・ナガの発の格子、使�
 
 予測は 2026-10-26（commit 58b7b8a）に出した。
 
-| 指標 | 実測 | 予測 HN |
-| --- | --- | --- |
-| s2-first-start（buffWindowStarts） | （実測なし） | [170] |
-| emma-body（hitDamage） | （実測なし） | 5,560.253 |
-| emma-core-early（hitDamage） | （実測なし） | 11,120.505 |
-| emma-core-on（hitDamage） | （実測なし） | 13,348.498 |
+| 指標                               | 実測         | 予測 HN    |
+| ---------------------------------- | ------------ | ---------- |
+| s2-first-start（buffWindowStarts） | （実測なし） | [170]      |
+| emma-body（hitDamage）             | （実測なし） | 5,560.253  |
+| emma-core-early（hitDamage）       | （実測なし） | 11,120.505 |
+| emma-core-on（hitDamage）          | （実測なし） | 13,348.498 |
 
 <!-- records:predictions:end -->
 

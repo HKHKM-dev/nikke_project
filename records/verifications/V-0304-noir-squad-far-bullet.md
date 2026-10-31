@@ -100,11 +100,11 @@
 
 予測は 2026-10-07（commit a7c1ba9）に出した。
 
-| 指標 | 実測 | 予測 H0 | 予測 H1 |
-| --- | --- | --- | --- |
-| sakura-far-bullet-in（bulletHitRate） | 0.85（`0310-02`） | 0.76（-0.09、**許容外**） | 0.839（-0.01、許容内） |
-| sakura-far-bullet-out（bulletHitRate） | （実測なし） | 0.76 | 0.76 |
-| sakura-body-hit（hitDamage） | （実測なし） | 8,551.996 | 8,551.996 |
+| 指標                                   | 実測              | 予測 H0                   | 予測 H1                |
+| -------------------------------------- | ----------------- | ------------------------- | ---------------------- |
+| sakura-far-bullet-in（bulletHitRate）  | 0.85（`0310-02`） | 0.76（-0.09、**許容外**） | 0.839（-0.01、許容内） |
+| sakura-far-bullet-out（bulletHitRate） | （実測なし）      | 0.76                      | 0.76                   |
+| sakura-body-hit（hitDamage）           | （実測なし）      | 8,551.996                 | 8,551.996              |
 
 <!-- records:predictions:end -->
 

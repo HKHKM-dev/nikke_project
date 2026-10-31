@@ -36,13 +36,13 @@
 
 予測は 2026-10-02（commit 3446345）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| hit-body（hitDamage） | （実測なし） | 202,604.985 |
-| hit-body-crit（hitDamage） | （実測なし） | 303,907.478 |
-| hit-core（hitDamage） | （実測なし） | 405,209.97 |
-| hit-core-crit（hitDamage） | （実測なし） | 506,512.463 |
-| shots（shotCount） | 75（`0123-05`） | 108（+33、**許容外**） |
+| 指標                       | 実測            | 予測 H0                |
+| -------------------------- | --------------- | ---------------------- |
+| hit-body（hitDamage）      | （実測なし）    | 202,604.985            |
+| hit-body-crit（hitDamage） | （実測なし）    | 303,907.478            |
+| hit-core（hitDamage）      | （実測なし）    | 405,209.97             |
+| hit-core-crit（hitDamage） | （実測なし）    | 506,512.463            |
+| shots（shotCount）         | 75（`0123-05`） | 108（+33、**許容外**） |
 
 <!-- records:predictions:end -->
 

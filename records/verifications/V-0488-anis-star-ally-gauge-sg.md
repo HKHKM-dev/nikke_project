@@ -83,11 +83,11 @@
 
 予測は 2026-10-24（commit d5145a7）に出した。
 
-| 指標 | 実測 | 予測 P |
-| --- | --- | --- |
-| gauge-full-frame-0（gaugeFullFrame） | （実測なし） | 616 |
-| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 14 |
-| solo-gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 33 |
+| 指標                                         | 実測         | 予測 P |
+| -------------------------------------------- | ------------ | ------ |
+| gauge-full-frame-0（gaugeFullFrame）         | （実測なし） | 616    |
+| gauge-full-shot-0（gaugeFullShotIndex）      | （実測なし） | 14     |
+| solo-gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 33     |
 
 <!-- records:predictions:end -->
 
