@@ -1,0 +1,46 @@
+{
+  "id": "0796",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0796_rl+sr+mg_flower+eunhwa-tu+emma-tu_round-explosion.mp4",
+  "original": "2026-10-31_20-05-51.mp4",
+  "durationSec": 200.4,
+  "frames": 12025,
+  "fps": 60,
+  "sizeMB": 243,
+  "sha256": "cc3fb5b3ae71",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-10-31T20:10+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
