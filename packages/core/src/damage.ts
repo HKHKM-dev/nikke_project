@@ -272,7 +272,7 @@ export type TriggerDamage = {
   boost: { core: number; crit: number; distance: number; fullBurst: number; total: number };
   /** 攻撃ダメージバフの乗数 1 + Σ attackDamage（倍率グループとは別枠。射撃場の実測で確認） */
   attackDamageMultiplier: number;
-  /** 受けるダメージ編: 敵の受けるダメージ▲の乗数 1 + Σ damageTaken（ほかのどの群とも別枠。C-0138） */
+  /** 受けるダメージ編: 敵の受けるダメージ▲の乗数 1 + Σ damageTaken（ほかのどの群とも別枠。C-0138。発射体爆発ダメージ▲とも別の乗数。C-0789） */
   damageTakenMultiplier: number;
   /** アニス：スター S2・バースト編: 発射体爆発ダメージ▲の乗数（通常攻撃だけ。projectileExplosionMultiplier） */
   projectileExplosionMultiplier: number;
