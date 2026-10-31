@@ -60,7 +60,7 @@
     | 言い回し | 書き方 | 決まり・例 | 設計書 |
     | --- | --- | --- | --- |
     | スキル発動者の最終最大HP の X% 分の攻撃力▲ | `scaling: "casterFinalMaxHp"` | 例: ラプラス：アルティメットヒーローの S1 | [design-skill-stage6.md](design-skill-stage6.md) |
-    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }` | HP は被弾で減りうるので `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。例: ノワールの S1 | 同上 |
+    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }`（説明文に即値で書かれた X は `{ "atLeast": X }`） | HP は被弾で減りうるので `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。例: ノワールの S1 | 同上 |
     | 最大HP▲ | `stat: "maxHp"` | 「最大HP のみ▲」は形を足すまで notes のまま（`definitions.test.ts` が見張る）。例: シンデレラの美しさ | 同上 |
     | デコイ・デコイが存在する時 | 目録の `decoy`・`condition.selfState: "decoy"` | — | 同上 |
     | 自分と自分より最終防御力が低い味方 | `target: "allies"` と `targetDefense: "lowerThanSelf"` | 読む側の印 `reads: ["defense"]` も書く。例: アニス：スターの S2 | [design-skill-stage7.md](design-skill-stage7.md) |

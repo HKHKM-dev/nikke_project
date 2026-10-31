@@ -837,9 +837,16 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
 
 /**
  * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件。atLeastRef = 「自分の HP が X% 以上なら」の X の
- * description_value の番号（値は % 表記）。「以下」「未満」「最大の時のみ」は使い手を定義する時に足す
+ * description_value の番号（値は % 表記）。「以下」「未満」「最大の時のみ」は使い手を定義する時に足す。
+ * 2 段目の段 15 の PR 1（plan/design-skill-stage15.md 2.1 節）: atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
+ * 「自分の HP が 80% 以上の時のみ」）。atLeastRef とちょうど 1 つ
  */
-export type SelfHpCondition = { atLeastRef: number };
+export type SelfHpCondition = { atLeastRef: number; atLeast?: never } | { atLeast: number; atLeastRef?: never };
+
+/** 2 段目の段 15: selfHp の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
+export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => number): number {
+  return (hp.atLeast ?? valueOf(hp.atLeastRef!)) / 100;
+}
 
 /**
  * 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件が、件を見る鍵（selfBuffed・inFullBurst・selfState・enemyState）を持つか。
@@ -2800,10 +2807,18 @@ function parseSelfCounterCondition(v: Json, path: string): SelfCounterCondition 
   return { counter, [key]: n };
 }
 
-/** 2 段目の段 6: 自分の HP の割合の条件。{ atLeastRef }（「自分の HP が X% 以上なら」） */
+/** 2 段目の段 6: 自分の HP の割合の条件。{ atLeastRef }（「自分の HP が X% 以上なら」）。段 15: { atLeast }（即値の %） */
 function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
-  if (!isRecord(v)) fail(path, 'expected { atLeastRef }');
-  for (const key of Object.keys(v)) if (key !== 'atLeastRef') fail(`${path}.${key}`, 'unknown field');
+  if (!isRecord(v)) fail(path, 'expected { atLeastRef } or { atLeast }');
+  for (const key of Object.keys(v))
+    if (key !== 'atLeastRef' && key !== 'atLeast') fail(`${path}.${key}`, 'unknown field');
+  if ((v.atLeastRef === undefined) === (v.atLeast === undefined))
+    fail(path, 'write exactly one of atLeastRef and atLeast');
+  if (v.atLeast !== undefined) {
+    if (typeof v.atLeast !== 'number' || !(v.atLeast > 0 && v.atLeast <= 100))
+      fail(`${path}.atLeast`, 'expected a percent in (0, 100]');
+    return { atLeast: v.atLeast };
+  }
   return { atLeastRef: parseRef(v.atLeastRef, `${path}.atLeastRef`) };
 }
 

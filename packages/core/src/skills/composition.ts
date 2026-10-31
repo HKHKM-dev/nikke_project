@@ -23,8 +23,10 @@ import {
   SKILL_SLOTS,
   burstStepChangeOf,
   isStacksCondition,
+  selfHpThreshold,
   staticStatesOf,
   type BurstStepMixCondition,
+  type SelfHpCondition,
   type SkillDefinition,
   type SkillEffect,
   type SquadCondition,
@@ -269,12 +271,12 @@ export function resolveSelfState<E extends SkillEffect>(effect: E, lookup: SelfS
 export function resolveSelfHp<E extends SkillEffect>(
   effect: E,
   hpRatio: number,
-  threshold: (ref: number) => number,
+  threshold: (hp: SelfHpCondition) => number,
 ): E | null {
   const condition = 'condition' in effect ? effect.condition : undefined;
   const hp = condition?.selfHp;
   if (condition === undefined || hp === undefined) return effect;
-  if (hpRatio < threshold(hp.atLeastRef)) return null;
+  if (hpRatio < threshold(hp)) return null;
   const { selfHp: _selfHp, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };
   return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
@@ -294,7 +296,8 @@ export function applySelfHp(
   const skills = { ...definition.skills };
   for (const slot of SKILL_SLOTS) {
     const entry = definition.skills[slot];
-    const threshold = (ref: number) => skillValue(character.skills[slot], ref, levels[slot]) / 100;
+    const threshold = (hp: SelfHpCondition) =>
+      selfHpThreshold(hp, (ref) => skillValue(character.skills[slot], ref, levels[slot]));
     let slotChanged = false;
     const effects = entry.effects
       .map((e) => {

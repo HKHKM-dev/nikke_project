@@ -1,0 +1,347 @@
+[
+  {
+    "id": "0782-01",
+    "recording": "0782",
+    "kind": "timing",
+    "use": "record",
+    "value": [1599, 3030, 4416, 5865, 7339, 8724, 10056],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・24・15・25・25・15f"
+    },
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "timing",
+    "use": "record",
+    "value": [792, 2223, 3609, 5058, 6532, 7917, 9249],
+    "unit": "f",
+    "description": "ミルク単騎のバーストの発動（I → II の六角形の替わり目）の、戦闘開始（残り時間の 02:59 が出たフレーム）からの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@2 の値から戦闘開始のフレームを引いた",
+      "note": "戦闘開始は f807（timer.ts --mode changes の +320f 前後の次の変わり目。C-0078）。値は `0782-01`。モデル（ゲージで決まる発動の時刻）とは、CT で決まる発動のほかで数十 f ずれ、結論に結び付けないので比べない（V-0559 の結果）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "id": "0782-02",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "count",
+    "use": "compare",
+    "value": 7,
+    "unit": "回",
+    "description": "ミルクのバーストの発動の回数（180 秒）。S1 のバーストスキルクールタイム 20 秒▼が効かなければ（CT 40 秒）5 回",
+    "method": {
+      "tool": "`0782-01` の値の数"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-03",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 454889,
+    "description": "ミルクのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。動画の f1899（戦闘開始からゲーム内の 1090）。宝物版 S1 の攻撃力▲（20 秒ごと・10 秒）の1 回目の窓の前（付いていない最後の発）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "ゲーム内のフレームは timer.ts --mode ticks（戦闘開始からの止まりを除いたティック）を丸めた。▲なしは 454,889、▲ありは 599,802（×1.3183）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1090,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-04",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 599802,
+    "description": "ミルクのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。動画の f2099（戦闘開始からゲーム内の 1290）。宝物版 S1 の攻撃力▲（20 秒ごと・10 秒）の1 回目の窓の中（付いた最初の発）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "ゲーム内のフレームは timer.ts --mode ticks（戦闘開始からの止まりを除いたティック）を丸めた。▲なしは 454,889、▲ありは 599,802（×1.3183）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1290,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-05",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 599802,
+    "description": "ミルクのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。動画の f2555（戦闘開始からゲーム内の 1746）。宝物版 S1 の攻撃力▲（20 秒ごと・10 秒）の1 回目の窓の中（付いた最後の発）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "ゲーム内のフレームは timer.ts --mode ticks（戦闘開始からの止まりを除いたティック）を丸めた。▲なしは 454,889、▲ありは 599,802（×1.3183）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1746,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-06",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 454889,
+    "description": "ミルクのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。動画の f2755（戦闘開始からゲーム内の 1946）。宝物版 S1 の攻撃力▲（20 秒ごと・10 秒）の1 回目の窓の後（切れた最初の発）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "ゲーム内のフレームは timer.ts --mode ticks（戦闘開始からの止まりを除いたティック）を丸めた。▲なしは 454,889、▲ありは 599,802（×1.3183）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1946,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-07",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 599802,
+    "description": "ミルクのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。動画の f3694（戦闘開始からゲーム内の 2884）。宝物版 S1 の攻撃力▲（20 秒ごと・10 秒）の2 回目の窓の中（付いた最後の発）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "ゲーム内のフレームは timer.ts --mode ticks（戦闘開始からの止まりを除いたティック）を丸めた。▲なしは 454,889、▲ありは 599,802（×1.3183）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2884,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-08",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 454889,
+    "description": "ミルクのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。動画の f3776（戦闘開始からゲーム内の 2966）。宝物版 S1 の攻撃力▲（20 秒ごと・10 秒）の2 回目の窓の後（切れた最初の発）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "ゲーム内のフレームは timer.ts --mode ticks（戦闘開始からの止まりを除いたティック）を丸めた。▲なしは 454,889、▲ありは 599,802（×1.3183）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2966,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-09",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 593926,
+    "description": "ミルクのフルチャージの 1 発（コア・会心・距離ボーナスなし）の増分。動画の f1042（S1 の攻撃力▲の付く前）。会心に宝物版 S2 のクリティカルダメージ▲（HP 80% 以上・持続）が乗る",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-10",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 484064,
+    "description": "ミルクの宝物版のバーストスキルダメージ（1 回目の発動。動画の f1603）。S1 の攻撃力▲の窓の外",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "発動（`0782-01`）の 4f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-11",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  },
+  {
+    "kind": "hit",
+    "use": "compare",
+    "value": 638271,
+    "description": "ミルクの宝物版のバーストスキルダメージ（3 回目の発動。動画の f4420）。S1 の攻撃力▲の窓の中",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "発動（`0782-01`）の 4f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "id": "0782-12",
+    "recording": "0782",
+    "source": "V-0559",
+    "readAt": "2026-10-31"
+  }
+]
