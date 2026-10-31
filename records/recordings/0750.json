@@ -1,0 +1,36 @@
+{
+  "id": "0750",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0750_mg_marian-queen_solo-nofire_burst-left.mp4",
+  "original": "2026-10-31_09-50-35.mp4",
+  "durationSec": 210.5,
+  "frames": 12628,
+  "fps": 60,
+  "sizeMB": 254.2,
+  "sha256": "5fa35471162f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 19,
+      "name": "マリアン：クイーン",
+      "controlled": true,
+      "fires": false,
+      "note": "操作・オート射撃 OFF で撃たない（通常攻撃なし）"
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0545 の撮り方 A（マリアン：クイーン単騎・操作・オート射撃 OFF で撃たない・手動操作なし）。バーストゲージの表示を左にした録画（ゲームのオプション。普段は右）",
+  "backup": {
+    "at": "2026-10-31T10:01+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
