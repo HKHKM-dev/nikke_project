@@ -499,8 +499,17 @@ function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
   for (const line of v as Json[]) {
     if (!isRecord(line) || !(OVERLOAD_OPTIONS as readonly string[]).includes(String(line.option))) return undefined;
     if (!isInt(line.level, OVERLOAD_LEVEL_MIN) || line.level > OVERLOAD_LEVEL_MAX) return undefined;
-    lines.push({ option: line.option as OverloadOption, level: line.level });
+    // 2026-10-31 までの保存データには無いので、欠落は配列の並び
+    if (line.position !== undefined && !(isInt(line.position, 0) && line.position < OVERLOAD_LINE_MAX))
+      return undefined;
+    lines.push({
+      option: line.option as OverloadOption,
+      level: line.level,
+      ...(line.position === undefined ? {} : { position: line.position }),
+    });
   }
+  const positions = lines.map((line, i) => line.position ?? i);
+  if (new Set(positions).size !== positions.length) return undefined;
   return lines;
 }
 

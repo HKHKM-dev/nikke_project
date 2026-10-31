@@ -53,8 +53,11 @@ export const OVERLOAD_OPTIONS: readonly OverloadOption[] = [
   'defence',
 ];
 
-/** Stage 13: OL 装備のオプション 1 行（効果は buildEffects.ts） */
-export type OverloadLine = { option: OverloadOption; level: number };
+/**
+ * Stage 13: OL 装備のオプション 1 行（効果は buildEffects.ts）。position は画面の何行目か（0 始まり。2 行目を空けて 3 行目に
+ * 入れるとき用。2026-10-31）。計算には効かない。省略は配列の並び
+ */
+export type OverloadLine = { option: OverloadOption; level: number; position?: number };
 /** overload は OL 装備だけ（最大 3 行。省略・空 = オプションなし）。ステータス層（攻撃力）には効かない */
 export type GearInput = { type: GearType; level: number; overload?: OverloadLine[] } | null;
 export type CubeInput = { id: number; level: number } | null;
@@ -195,7 +198,14 @@ export function validateBuild(
         throw new RangeError(`gear.${part}.overload[${i}]: unknown option ${String(line.option)}`);
       }
       assertInt(`gear.${part}.overload[${i}].level`, line.level, OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX);
+      if (line.position !== undefined) {
+        assertInt(`gear.${part}.overload[${i}].position`, line.position, 0, OVERLOAD_LINE_MAX - 1);
+      }
     });
+    const positions = lines.map((line, i) => line.position ?? i);
+    if (new Set(positions).size !== positions.length) {
+      throw new RangeError(`gear.${part}: overload lines share a position`);
+    }
   }
   if (build.cube !== null) {
     if (findCube(masters, build.cube.id) === undefined)

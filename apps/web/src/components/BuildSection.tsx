@@ -33,11 +33,19 @@ import type { TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
-/** Stage 13: i 行目を line にした OL の行（null は削除。後ろの行は詰める） */
-function withOverloadLine(lines: readonly OverloadLine[], i: number, line: OverloadLine | null): OverloadLine[] {
-  const next: (OverloadLine | null)[] = [...lines];
-  next[i] = line;
-  return next.filter((l): l is OverloadLine => l !== null && l !== undefined);
+/** OL の行の位置（0 始まり）。position の無い保存データは配列の並び */
+function overloadPosition(line: OverloadLine, index: number): number {
+  return line.position ?? index;
+}
+
+/**
+ * Stage 13: 位置 p の行を line にした OL の行（null は削除）。2026-10-31: オーナーの指示で、間の行を空けたまま後ろの行に
+ * 入れられるように、行は詰めずに位置（position）を持たせる
+ */
+function withOverloadLine(lines: readonly OverloadLine[], p: number, line: OverloadLine | null): OverloadLine[] {
+  const rest = lines.map((l, i) => ({ ...l, position: overloadPosition(l, i) })).filter((l) => l.position !== p);
+  const next = line === null ? rest : [...rest, { ...line, position: p }];
+  return next.sort((a, b) => a.position - b.position);
 }
 
 type Props = {
@@ -143,8 +151,7 @@ export function BuildSection({
                 <span className="ol-lines">
                   {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
                     const lines = gear.overload ?? [];
-                    const line = lines[i];
-                    if (i > lines.length) return null;
+                    const line = lines.find((l, j) => overloadPosition(l, j) === i);
                     return (
                       <span className="gear-inputs" key={i}>
                         <select
@@ -167,11 +174,9 @@ export function BuildSection({
                             </option>
                           ))}
                         </select>
-                        <input
-                          type="number"
-                          min={OVERLOAD_LEVEL_MIN}
-                          max={OVERLOAD_LEVEL_MAX}
-                          step={1}
+                        {/* 2026-10-31: オーナーの指示で、OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
+                        <select
+                          aria-label={`オプション ${i + 1} の上昇値`}
                           value={line?.level ?? OVERLOAD_LEVEL_MIN}
                           disabled={disabled || line === undefined}
                           onChange={(e) =>
@@ -181,7 +186,18 @@ export function BuildSection({
                               level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX),
                             })
                           }
-                        />
+                        >
+                          {(() => {
+                            const values =
+                              line && masters?.overload.options.find((o) => o.option === line.option)?.values;
+                            if (!values) return <option value={OVERLOAD_LEVEL_MIN}>—</option>;
+                            return values.map((v, lv) => (
+                              <option key={lv} value={lv + OVERLOAD_LEVEL_MIN}>
+                                {v.toFixed(2)}%
+                              </option>
+                            ));
+                          })()}
+                        </select>
                       </span>
                     );
                   })}

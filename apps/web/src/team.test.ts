@@ -387,7 +387,7 @@ describe('OL lines (Stage 13)', () => {
           level: 5,
           overload: [
             { option: 'attack' as const, level: 15 },
-            { option: 'elementDamage' as const, level: 11 },
+            { option: 'elementDamage' as const, level: 11, position: 2 },
           ],
         },
       },
@@ -400,7 +400,7 @@ describe('OL lines (Stage 13)', () => {
     });
   });
 
-  it('rejects lines on non-OL gear, more than 3 lines, unknown options and levels out of 1..15', () => {
+  it('rejects lines on non-OL gear, more than 3 lines, unknown options, levels out of 1..15 and bad positions', () => {
     const line = (option: string, level: number) => ({ option, level });
     const bad = [
       { type: 'T9', level: 5, overload: [line('attack', 1)] },
@@ -409,6 +409,8 @@ describe('OL lines (Stage 13)', () => {
       { type: 'OL', level: 5, overload: [line('attack', 0)] },
       { type: 'OL', level: 5, overload: [line('attack', 16)] },
       { type: 'OL', level: 5, overload: 'attack' },
+      { type: 'OL', level: 5, overload: [{ ...line('attack', 1), position: 3 }] },
+      { type: 'OL', level: 5, overload: [line('attack', 1), { ...line('hitRate', 1), position: 0 }] },
     ];
     for (const head of bad) expect(parseTeamState(withGear(head), index), JSON.stringify(head)).toBeNull();
   });

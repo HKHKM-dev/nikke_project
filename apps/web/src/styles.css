@@ -498,6 +498,10 @@ header h1 {
   gap: 2px;
   margin-top: 2px;
 }
+/* OL の行の上昇値（%）の選択は、Lv の欄より広くする */
+.ol-lines .gear-inputs {
+  grid-template-columns: minmax(0, 1fr) 5.8em;
+}
 
 /* Stage 14: JSON の書き出し / 取り込み、未対応の一覧 */
 .notes-summary,
