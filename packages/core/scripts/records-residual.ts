@@ -3,8 +3,9 @@
 // 引いた観測値のうち比べるものはモデルと比べて residuals.md と同じ列で、比べないものは値を出す。
 import { claimsByObservation } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
-import { renderOtherRows, renderResidualRows, runObservations, type Observation } from '../src/records/observations.ts';
+import { renderOtherRows, renderResidualRows, type Observation } from '../src/records/observations.ts';
 import { loadClaims, loadObservations, loadRecordsData, loadRecordingsFile, recordingMap } from './records-data.ts';
+import { runObservationsCached } from './residual-cache.ts';
 
 const keys = process.argv
   .slice(2)
@@ -28,7 +29,7 @@ for (const k of keys) {
 }
 if (missing.length > 0) console.error(`当たる観測値が無い: ${missing.join('、')}`);
 const file = loadRecordingsFile();
-const residuals = runObservations(picked, recordingMap(file), loadRecordsData(file));
+const residuals = runObservationsCached(picked, recordingMap(file), loadRecordsData(file));
 const claimsOf = claimsByObservation(loadClaims());
 const others = picked.filter((o) => o.use !== 'compare');
 if (residuals.length > 0)

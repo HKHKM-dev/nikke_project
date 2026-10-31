@@ -14,7 +14,7 @@ import { closeChecks, markState, prBody, prTitle, residualCounts } from '../src/
 import { V_ID } from '../src/records/ids.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
-import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
+import { invalidReasonsOf } from '../src/records/observations.ts';
 import { comparePredictions } from '../src/records/predictions.ts';
 import {
   RESIDUALS_PATH,
@@ -29,6 +29,7 @@ import {
   recordingMap,
   verificationPath,
 } from './records-data.ts';
+import { runObservationsCached } from './residual-cache.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -62,7 +63,7 @@ const own = observations.filter((o) => o.source === id);
 const ownClaims = claims.filter((c) => verification.claims.includes(c.id));
 // 等級の候補は、その結論の根拠の観測値をモデルと比べて出す
 const basisObs = observations.filter((o) => ownClaims.some((c) => c.observations.includes(o.id)));
-const residuals = runObservations(basisObs, recordings, data);
+const residuals = runObservationsCached(basisObs, recordings, data);
 const residualOf = new Map(
   residuals.map((r) => [
     r.observation.id,

@@ -118,3 +118,31 @@ export function progressCopies(path: string, text: string, added: ReadonlySet<nu
   });
   return out;
 }
+
+/** 書式と lint の結果を、変えていないファイルでも変えうる設定（これを変えたブランチは全部のファイルを見る） */
+export const FULL_CHECK_PATHS = [
+  '.prettierrc.json',
+  '.prettierignore',
+  'eslint.config.js',
+  'package.json',
+  'package-lock.json',
+];
+/** eslint が見る拡張子（eslint.config.js） */
+const LINT_FILE = /\.(?:[cm]?js|tsx?)$/;
+/** これより多く変えたら全部を見る（コマンドラインの長さの上限を避ける。Windows は約 32,000 字） */
+export const MAX_CHANGED_FILES = 300;
+
+export type ChangedChecks = { full: true; reason: string } | { full: false; format: string[]; lint: string[] };
+
+/**
+ * pr:prep の書式（prettier）と lint（eslint）で見るファイル（plan/design-workflow-simplification-8.md 1 節）。main は CI を通っていて、
+ * 書式と lint はファイルごとに決まる（eslint は型を使う規則を入れていない）ので、ブランチで変えた（消していない）ファイルだけを見る。
+ * 設定を変えたか、変えたファイルが多すぎるときは全部を見る
+ */
+export function changedChecks(changed: readonly string[], exists: (path: string) => boolean): ChangedChecks {
+  const config = changed.find((p) => FULL_CHECK_PATHS.includes(p));
+  if (config !== undefined) return { full: true, reason: `${config} を変えた` };
+  const format = changed.filter(exists);
+  if (format.length > MAX_CHANGED_FILES) return { full: true, reason: `変えたファイルが ${format.length} 件ある` };
+  return { full: false, format, lint: format.filter((p) => LINT_FILE.test(p)) };
+}

@@ -17,6 +17,7 @@ import {
   misplacedObservations,
   recordingMap,
 } from '../../../scripts/records-data.ts';
+import { runObservationsCached } from '../../../scripts/residual-cache.ts';
 import {
   CLAIM_TOPICS,
   claimsByObservation,
@@ -57,7 +58,8 @@ const file = loadRecordingsFile();
 const recordings = recordingMap(file);
 const data = loadRecordsData(file);
 const observations = loadObservations();
-const residuals = runObservations(observations, recordings, data);
+// 覚え（scripts/residual-cache.ts）を使う。GitHub の CI には覚えが無いので、全部を回す
+const residuals = runObservationsCached(observations, recordings, data);
 const claims = loadClaims();
 const invalidReasons = invalidReasonsOf(observations);
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
