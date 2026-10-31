@@ -615,7 +615,7 @@ describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () =
     expect(s.slots[0]!.conditionMode).toBe('manual');
   });
 
-  it('uses the defaults for the team settings and the shooting-range enemy with the saved element only', () => {
+  it('uses the shooting-range enemy with the saved element only, and keeps the advanced settings', () => {
     let s = teamReducer(initialTeamState(), {
       type: 'setEnemy',
       enemy: { defence: 140, element: 'Fire', hasCore: false },
@@ -623,23 +623,31 @@ describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () =
     s = teamReducer(s, { type: 'setDuration', durationSeconds: 60 });
     s = teamReducer(s, { type: 'setBurst', burst: false });
     s = teamReducer(s, { type: 'setControlledSlot', controlledSlot: 0 });
-    const initial = initialTeamState();
     const calc = teamStateForCalc(s);
     expect(calc.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
-    expect(calc.durationSeconds).toBe(initial.durationSeconds);
-    expect(calc.burst).toBe(initial.burst);
-    expect(calc.controlledSlot).toBe(initial.controlledSlot);
+    expect(calc.durationSeconds).toBe(60);
+    expect(calc.burst).toBe(false);
+    expect(calc.controlledSlot).toBe(0);
     expect(s.enemy.defence).toBe(140);
   });
 });
 
-describe('event sets for the calculation (3-minute mode removed from the screen on 2026-10-31)', () => {
-  it('always uses the event sets of the shooting-range presets', () => {
+describe('event sets for the calculation (3-minute mode in the advanced settings, 2026-10-31)', () => {
+  it('uses the event sets of the shooting-range presets while the jump is on', () => {
     const master = parseEnemyPresets(
       JSON.parse(readFileSync(new URL('../../../packages/core/data/enemies.json', import.meta.url), 'utf8')) as unknown,
     );
-    expect(eventSetsForCalc(null)).toEqual([]);
-    expect(eventSetsForCalc(master)).toEqual(['range-3min-jump']);
+    expect(eventSetsForCalc(null, true)).toEqual([]);
+    expect(eventSetsForCalc(master, true)).toEqual(['range-3min-jump']);
+    expect(eventSetsForCalc(master, false)).toEqual([]);
+  });
+
+  it('round-trips the jump setting, and reads saved data without it as on', () => {
+    const s = teamReducer(initialTeamState(), { type: 'setRangeJump', rangeJump: false });
+    expect(parseTeamState(serializeTeamState(s), index)?.rangeJump).toBe(false);
+    const old = JSON.parse(serializeTeamState(initialTeamState())) as Record<string, unknown>;
+    delete old.rangeJump;
+    expect(parseTeamState(JSON.stringify(old), index)?.rangeJump).toBe(true);
   });
 });
 

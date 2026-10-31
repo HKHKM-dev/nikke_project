@@ -39,45 +39,41 @@ header h1 {
   gap: 12px;
 }
 
-/* 右上の設定のメニュー */
-.settings-menu {
+/* ボタンで開くポップアップ（Popover.tsx。右上の設定・敵の詳細設定） */
+.popover {
   position: relative;
 }
-/* 開いている間に画面を暗くする幕（即座に出す）。ボタンとパネルはその手前に出す */
-.settings-menu-backdrop {
+/* 開いている間に画面を暗くする幕（即座に出す）。ボタンとポップアップはその手前に出す */
+.popover-backdrop {
   position: fixed;
   inset: 0;
   z-index: 19;
   background: rgb(0 0 0 / 0.5);
 }
-.settings-menu-button {
+.popover-button {
   position: relative;
   z-index: 20;
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 6px;
   background: Canvas;
   color: inherit;
   cursor: pointer;
 }
-.settings-menu-button:hover,
-.settings-menu-button[aria-expanded='true'] {
+.popover-button:hover,
+.popover-button[aria-expanded='true'] {
   background: color-mix(in srgb, CanvasText 10%, Canvas);
 }
-.settings-menu-button:focus-visible {
+.popover-button:focus-visible {
   outline: 2px solid Highlight;
   outline-offset: 2px;
 }
-.settings-menu-panel {
+.popover-panel {
   position: absolute;
   top: calc(100% + 6px);
-  right: 0;
   z-index: 20;
   min-width: 12em;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
   padding: 10px 12px;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 8px;
@@ -85,23 +81,51 @@ header h1 {
   color: CanvasText;
   box-shadow: 0 4px 16px color-mix(in srgb, CanvasText 18%, transparent);
 }
-.settings-menu-group {
+.popover-panel-left {
+  left: 0;
+}
+.popover-panel-right {
+  right: 0;
+}
+.popover-group {
   margin: 0;
   padding: 0;
   border: none;
 }
-.settings-menu-group > legend {
+.popover-group > legend {
   padding: 0;
   margin-bottom: 4px;
   font-size: 0.8rem;
   opacity: 0.75;
 }
-.settings-menu-option {
+.popover-option {
   display: flex;
   gap: 6px;
   align-items: center;
   padding: 3px 0;
   cursor: pointer;
+}
+.settings-menu-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+/* 敵の詳細設定 */
+.advanced-settings-button {
+  padding: 3px 10px;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.advanced-settings {
+  width: 20em;
+}
+.advanced-settings .field {
+  grid-template-columns: 8em minmax(0, 1fr);
+}
+.advanced-settings .field.checkbox {
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 /* 共通のパネルとフォーム */
@@ -150,6 +174,7 @@ header h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 24px;
+  align-items: center;
 }
 .settings-simple .field {
   margin: 2px 0;

@@ -1,4 +1,4 @@
-import { ELEMENTS, ELEMENT_LABEL, type Element } from '@nikke/core';
+import { ELEMENTS, ELEMENT_LABEL, TEAM_SIZE, type Element } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { CLASS_LABEL } from '../skillLabels.ts';
 import {
@@ -9,6 +9,7 @@ import {
   type ConsoleInput,
   type TeamAction,
 } from '../team.ts';
+import { Popover } from './Popover.tsx';
 
 const CORPORATION_LABEL: Record<ConsoleCorporation, string> = {
   ELYSION: 'エリシオン',
@@ -25,15 +26,34 @@ type Props = {
   consoleInput: ConsoleInput;
   /** 2026-10-31: シンクロレベル（編成共通）。スペック固定の間は使わない */
   synchroLevel: number;
+  /** 2026-10-31: 詳細設定（ポップアップ）の欄 */
+  durationSeconds: number;
+  burst: boolean;
+  controlledSlot: number;
+  rangeJump: boolean;
+  /** 枠ごとのキャラ名（操作キャラの選択肢に出す）。空の枠は null */
+  slotNames: readonly (string | null)[];
   dispatch: Dispatch<TeamAction>;
 };
 
 /**
  * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（射撃場スペック固定・シンクロレベル・リサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
- * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）
+ * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）。
+ * 属性の右の「詳細設定」のポップアップで、3 分モード（的のジャンプ）・戦闘時間・バースト・操作キャラを設定する
  */
-export function TeamSettingsForm({ element, fixedSpec, consoleInput, synchroLevel, dispatch }: Props) {
+export function TeamSettingsForm({
+  element,
+  fixedSpec,
+  consoleInput,
+  synchroLevel,
+  durationSeconds,
+  burst,
+  controlledSlot,
+  rangeJump,
+  slotNames,
+  dispatch,
+}: Props) {
   const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
   const level = (raw: string) => Math.max(0, Math.floor(Number(raw) || 0));
   const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void) => (
@@ -81,6 +101,52 @@ export function TeamSettingsForm({ element, fixedSpec, consoleInput, synchroLeve
               ))}
             </select>
           </label>
+          <Popover button="詳細設定" buttonClassName="advanced-settings-button" label="詳細設定" align="left">
+            <div className="advanced-settings">
+              <label className="field checkbox">
+                <input
+                  type="checkbox"
+                  checked={rangeJump}
+                  onChange={(e) => dispatch({ type: 'setRangeJump', rangeJump: e.target.checked })}
+                />
+                <span>3 分モード（的のジャンプ）</span>
+              </label>
+              <label className="field">
+                <span>戦闘時間（秒）</span>
+                <input
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={durationSeconds}
+                  onChange={(e) =>
+                    dispatch({ type: 'setDuration', durationSeconds: Math.max(0, Number(e.target.value) || 0) })
+                  }
+                />
+              </label>
+              <label className="field checkbox">
+                <input
+                  type="checkbox"
+                  checked={burst}
+                  onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
+                />
+                <span>バースト</span>
+              </label>
+              <label className="field">
+                <span>操作キャラ</span>
+                <select
+                  value={controlledSlot}
+                  disabled={!burst}
+                  onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
+                >
+                  {Array.from({ length: TEAM_SIZE }, (_, i) => (
+                    <option key={i} value={i}>
+                      {i + 1}: {slotNames[i] ?? 'なし'}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </Popover>
         </div>
       </fieldset>
       <details className="panel common-growth">

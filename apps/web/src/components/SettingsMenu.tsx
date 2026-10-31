@@ -1,6 +1,6 @@
 // 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く。いまはテーマの切り替えだけ
-import { useEffect, useRef, useState } from 'react';
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
+import { Popover } from './Popover.tsx';
 
 const THEMES: readonly Theme[] = ['light', 'dark', 'system'];
 
@@ -16,54 +16,18 @@ function GridIcon() {
 }
 
 export function SettingsMenu() {
-  const [open, setOpen] = useState(false);
   const [theme, setTheme] = useTheme();
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  // 外側のクリックと Esc で閉じる
-  useEffect(() => {
-    if (!open) return;
-    const onPointer = (e: PointerEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('pointerdown', onPointer);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('pointerdown', onPointer);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, [open]);
-
   return (
-    <div className="settings-menu" ref={rootRef}>
-      <button
-        type="button"
-        className="settings-menu-button"
-        aria-label="設定"
-        aria-haspopup="true"
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <GridIcon />
-      </button>
-      {/* 開いている間は画面を少し暗くする（幕を押しても閉じる） */}
-      {open && <div className="settings-menu-backdrop" aria-hidden="true" onPointerDown={() => setOpen(false)} />}
-      {open && (
-        <div className="settings-menu-panel" role="dialog" aria-label="設定">
-          <fieldset className="settings-menu-group">
-            <legend>テーマ</legend>
-            {THEMES.map((t) => (
-              <label key={t} className="settings-menu-option">
-                <input type="radio" name="theme" value={t} checked={theme === t} onChange={() => setTheme(t)} />
-                <span>{THEME_LABEL[t]}</span>
-              </label>
-            ))}
-          </fieldset>
-        </div>
-      )}
-    </div>
+    <Popover button={<GridIcon />} buttonClassName="settings-menu-button" label="設定" align="right">
+      <fieldset className="popover-group">
+        <legend>テーマ</legend>
+        {THEMES.map((t) => (
+          <label key={t} className="popover-option">
+            <input type="radio" name="theme" value={t} checked={theme === t} onChange={() => setTheme(t)} />
+            <span>{THEME_LABEL[t]}</span>
+          </label>
+        ))}
+      </fieldset>
+    </Popover>
   );
 }

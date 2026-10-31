@@ -113,6 +113,11 @@ export type TeamState = {
   console: ConsoleInput;
   /** 2026-10-31: シンクロレベル。編成共通で、枠ごとの Lv の代わりに使う（キャラの上限で収める） */
   synchroLevel: number;
+  /**
+   * 2026-10-31: 射撃場 3 分モード（的のジャンプ）を入れるか。既定は ON。詳細設定の欄で切り替え、enemyEventSets の代わりに使う
+   * （eventSetsForCalc）
+   */
+  rangeJump: boolean;
 };
 
 /** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
@@ -165,6 +170,7 @@ export type TeamAction =
   | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
   | { type: 'setConsole'; console: ConsoleInput }
   | { type: 'setSynchroLevel'; synchroLevel: number }
+  | { type: 'setRangeJump'; rangeJump: boolean }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -194,6 +200,7 @@ export function initialTeamState(): TeamState {
     enemyEventSets: [],
     console: emptyConsole(),
     synchroLevel: DEFAULT_GROWTH.level,
+    rangeJump: true,
   };
 }
 
@@ -264,6 +271,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return { ...state, console: action.console };
     case 'setSynchroLevel':
       return { ...state, synchroLevel: action.synchroLevel };
+    case 'setRangeJump':
+      return { ...state, rangeJump: action.rangeJump };
     case 'replace':
       return action.state;
   }
@@ -349,7 +358,8 @@ export function effectiveBuild(
  * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
  * （欄が無いので直せないため）。計算と画面はこの編成を読む
  * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算。Lv は編成共通のシンクロレベル
- * - 編成: 戦闘時間・バースト・操作キャラ・敵（射撃場の的にし、属性だけ残す）。3 分モードの出来事のセットは eventSetsForCalc
+ * - 編成: 敵（射撃場の的にし、属性だけ残す）。戦闘時間・バースト・操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
+ *   3 分モードの出来事のセットは eventSetsForCalc
  */
 export function teamStateForCalc(state: TeamState): TeamState {
   return {
@@ -363,18 +373,15 @@ export function teamStateForCalc(state: TeamState): TeamState {
       build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
     })),
     enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
-    durationSeconds: DEFAULT_DURATION_SECONDS,
-    burst: DEFAULT_BURST,
-    controlledSlot: DEFAULT_CONTROLLED_SLOT,
   };
 }
 
 /**
- * 2026-10-31: オーナーの指示で 3 分モード（的のジャンプ）の欄を消し、射撃場の的の出来事のセットを常に入れる（保存データの
- * 選択は使わない）
+ * 2026-10-31: 3 分モード（的のジャンプ）は、詳細設定の欄（rangeJump）が ON なら射撃場の的の出来事のセットを入れる
+ * （保存データの enemyEventSets は使わない）
  */
-export function eventSetsForCalc(master: EnemyPresetMaster | null): string[] {
-  if (master === null) return [];
+export function eventSetsForCalc(master: EnemyPresetMaster | null, rangeJump: boolean): string[] {
+  if (master === null || !rangeJump) return [];
   return [...new Set(master.enemies.filter((p) => p.content === 'range').flatMap((p) => p.eventSets))];
 }
 
@@ -652,6 +659,8 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   if (consoleInput === null) return null;
   // 2026-10-31 までの保存データには無いので、欠落は既定（Lv200）
   if (raw.synchroLevel !== undefined && !isInt(raw.synchroLevel, 1)) return null;
+  // 2026-10-31 までの保存データには無いので、欠落は既定（ON）
+  if (raw.rangeJump !== undefined && !isBool(raw.rangeJump)) return null;
 
   return {
     slots,
@@ -663,6 +672,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
     console: consoleInput,
     synchroLevel: raw.synchroLevel === undefined ? DEFAULT_GROWTH.level : raw.synchroLevel,
+    rangeJump: raw.rangeJump === undefined ? true : raw.rangeJump,
   };
 }
 

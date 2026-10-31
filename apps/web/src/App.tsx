@@ -189,7 +189,12 @@ export function App() {
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      enemy: enemyForCalc(calcTeam.enemy, enemyMaster, eventSetsForCalc(enemyMaster), calcTeam.durationSeconds),
+      enemy: enemyForCalc(
+        calcTeam.enemy,
+        enemyMaster,
+        eventSetsForCalc(enemyMaster, calcTeam.rangeJump),
+        calcTeam.durationSeconds,
+      ),
       durationSeconds: calcTeam.durationSeconds,
       burst: calcTeam.burst,
       controlledSlot: calcTeam.controlledSlot,
@@ -254,6 +259,13 @@ export function App() {
             fixedSpec={team.fixedSpec}
             consoleInput={team.console}
             synchroLevel={team.synchroLevel}
+            durationSeconds={calcTeam.durationSeconds}
+            burst={calcTeam.burst}
+            controlledSlot={calcTeam.controlledSlot}
+            rangeJump={calcTeam.rangeJump}
+            slotNames={team.slots.map((s) =>
+              s.resourceId === null ? null : (cache.characters.get(s.resourceId)?.name.ja ?? null),
+            )}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">
