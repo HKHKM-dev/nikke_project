@@ -33,6 +33,13 @@
           },
           "reads": [
             "hp"
+          ],
+          "assumes": {
+            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          },
+          "claims": [
+            "C-0770"
           ]
         }
       ]
@@ -44,9 +51,12 @@
           "ref": 2,
           "damageType": "skill",
           "assumes": {
-            "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵",
-            "en": "The enemy with the highest final DEF is that enemy, given one enemy"
-          }
+            "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The enemy with the highest final DEF is that enemy, given one enemy. The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          },
+          "claims": [
+            "C-0771"
+          ]
         },
         {
           "kind": "heal",
@@ -55,8 +65,8 @@
           "ref": 3,
           "durationRef": 1,
           "assumes": {
-            "ja": "味方全体の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
-            "en": "Lifesteal on all allies (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+            "ja": "味方全体の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない。回復を受けた時の効果を持つ味方のいる編成を撮っておらず（V-0559）、確かめていない",
+            "en": "Lifesteal on all allies (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage. No team with an ally that has an effect on being healed was recorded (V-0559); unverified"
           }
         }
       ]
@@ -159,8 +169,8 @@
           "ref": 3,
           "durationRef": 4,
           "assumes": {
-            "ja": "味方全体の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
-            "en": "Lifesteal on all allies (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+            "ja": "味方全体の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない。回復を受けた時の効果を持つ味方のいる編成を撮っておらず（V-0559）、確かめていない",
+            "en": "Lifesteal on all allies (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage. No team with an ally that has an effect on being healed was recorded (V-0559); unverified"
           }
         }
       ],

@@ -71,8 +71,8 @@
           "ref": 6,
           "durationRef": 7,
           "assumes": {
-            "ja": "自分の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
-            "en": "Lifesteal on self (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+            "ja": "自分の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない。受け手の自分に回復を受けた時の効果が無いので録画（V-0566）では効かず、確かめていない",
+            "en": "Lifesteal on self (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage. The recipient (self) has no effect on being healed, so the recordings (V-0566) do not exercise it; unverified"
           }
         }
       ],
@@ -101,7 +101,10 @@
           "assumes": {
             "ja": "「バースト再突入 1 段階」。CDN の次の段階（Step1）と同じ",
             "en": "\"Burst Re-entry Stage 1\". Same as the CDN next stage (Step1)"
-          }
+          },
+          "claims": [
+            "C-0775"
+          ]
         }
       ],
       "notes": [

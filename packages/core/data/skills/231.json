@@ -99,8 +99,8 @@
             "C-0165"
           ],
           "assumes": {
-            "ja": "バーストスキルダメージは III の発動から遅れて出て（C-0165）、出る直前のバフで計算する（同じ発動の▲と S1 の段階のバフは乗らない）",
-            "en": "The Burst Skill damage lands after a delay from the Step III activation (C-0165) and uses the buffs just before it lands (the same activation's Damage Taken and S1 tier buffs do not apply)"
+            "ja": "バーストスキルダメージは III の発動から遅れて出て（C-0165）、発動（遅れの前）の直前の値で計算する（撃つ側のバフも敵の側のデバフも。同じ発動の▲と S1 の段階のバフは乗らない）",
+            "en": "The Burst Skill damage lands after a delay from the Step III activation (C-0165) and uses the values just before the activation, before the delay (both the shooter buffs and the enemy debuffs; the same activation's Damage Taken and S1 tier buffs do not apply)"
           }
         },
         {
