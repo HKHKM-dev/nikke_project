@@ -1,20 +1,35 @@
 // PR の前に main を取り込み、生成物を作り直して CI と同じ確認を回す（plan/design-workflow-simplification-4.md 2 節。AGENTS.md「コミット手順」）。
-//   npm run pr:prep [-- --push] [--no-ci]
+//   npm run pr:prep [-- --push] [--no-ci] [--allow-progress]
 // 1. 作業中の変更が無いことと、main の上でないことを確かめ、git fetch origin。
 // 2. ブランチで足した検証記録・結論・録画の ID が main と重なっていたら、リベースの前に止めて records:renumber のコマンドを出す。
+//    backlog.md 8 節・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を出す（--allow-progress で通す。
+//    plan/design-workflow-simplification-6.md 2 節）。
 // 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（ブランチが感度を変えていたか、それが衝突したときは records:minimal、ほかは records:check）。差分が
 //    あれば「生成物を作り直す」の commit を足す（スカッシュマージなので、途中のコミットの生成物は合っていなくてよい）。
 // 5. npm run ci（--no-ci で省く）。--push なら、通ったら git push --force-with-lease -u origin HEAD。
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../packages/core/scripts/records-data.ts';
-import { collisions, rebaseOutcome, regenerateScript, splitConflicts } from './pr-prep-lib.ts';
+import {
+  addedLines,
+  collisions,
+  PROGRESS_PATHS,
+  progressCopies,
+  rebaseOutcome,
+  regenerateScript,
+  splitConflicts,
+} from './pr-prep-lib.ts';
 
 const { values } = parseArgs({
-  options: { push: { type: 'boolean', default: false }, 'no-ci': { type: 'boolean', default: false } },
+  options: {
+    push: { type: 'boolean', default: false },
+    'no-ci': { type: 'boolean', default: false },
+    'allow-progress': { type: 'boolean', default: false },
+  },
 });
 
 /** 成功したら標準出力（前後の空白を除く）。失敗したら投げる */
@@ -74,6 +89,21 @@ if (!rebasing()) {
     for (const c of found)
       console.error(`  npm run records:renumber -- ${c.id} ${c.suggestion ?? '<空いている録画の番号>'}`);
     process.exit(1);
+  }
+
+  if (!values['allow-progress']) {
+    const diff = git(['diff', '-U0', 'origin/main...HEAD', '--', ...PROGRESS_PATHS]);
+    // 作業中の変更が無いことは確かめたので、作業ツリーのファイルがブランチの版
+    const copies = [...addedLines(diff)].flatMap(([path, added]) =>
+      added.size === 0 ? [] : progressCopies(path, readFileSync(join(ROOT, path), 'utf8'), added),
+    );
+    if (copies.length > 0) {
+      console.error(
+        '進み具合を書き写した行がある（AGENTS.md「文書の書き方」の進み具合の行）。直して commit してから、もう一度回す（段の出来事などで要る行なら --allow-progress）:',
+      );
+      for (const c of copies) console.error(`  ${c}`);
+      process.exit(1);
+    }
   }
 
   const behind = git(['rev-list', '--count', 'HEAD..origin/main']);

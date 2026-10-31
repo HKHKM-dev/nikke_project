@@ -6,6 +6,7 @@ import {
   snapshotForRecording,
   snapshotName,
   sortNames,
+  treasureForSlots,
 } from './import-lib.ts';
 
 describe('jstDate', () => {
@@ -71,5 +72,59 @@ describe('parseSnapshotAnswer', () => {
     expect(parseSnapshotAnswer('-', '2026-10-24')).toBeNull();
     expect(parseSnapshotAnswer(' 2026-10-06-2 ', '2026-10-24')).toBe('2026-10-06-2');
     expect(parseSnapshotAnswer('10-06', '2026-10-24')).toBeUndefined();
+  });
+});
+
+describe('treasureForSlots', () => {
+  const slots = [
+    { slot: 1, rid: 10, name: 'A' },
+    { slot: 2, rid: 20, name: 'B' },
+    { slot: 3, rid: 30, name: 'C' },
+    { slot: 4, rid: 40, name: 'D' },
+  ];
+  const snapshot = {
+    name: '2026-10-29',
+    characters: {
+      10: { treasure: { level: 2, phase: 3 as const } },
+      20: { treasure: null },
+      30: { treasure: { level: 0, phase: null } },
+    },
+  };
+
+  it('fills the phase from the snapshot, leaves the slots without a treasure on the base version, and names the rest', () => {
+    const got = treasureForSlots(slots, new Map(), snapshot);
+    expect([...got.phases]).toEqual([[1, 3]]);
+    expect(got.notices).toEqual([
+      '枠 1（A）: 宝物の段階 3（スナップショット 2026-10-29）',
+      '枠 2（B）: 宝物なし（基礎版）（スナップショット 2026-10-29）',
+    ]);
+    expect(got.missing).toEqual([
+      '枠 3（C）: スナップショット 2026-10-29 の宝物が Lv 0（段階が未確定）',
+      '枠 4（D）: スナップショット 2026-10-29 にキャラが無い',
+    ]);
+  });
+
+  it('takes --treasure first (0 is no treasure) and tells when it differs from the snapshot', () => {
+    const got = treasureForSlots(
+      slots,
+      new Map([
+        [1, 2],
+        [3, 1],
+        [4, 0],
+      ]),
+      snapshot,
+    );
+    expect([...got.phases]).toEqual([
+      [1, 2],
+      [3, 1],
+    ]);
+    expect(got.notices[0]).toBe('枠 1（A）: --treasure は段階 2、スナップショット 2026-10-29 は段階 3');
+    expect(got.missing).toEqual([]);
+  });
+
+  it('names every slot when there is no snapshot', () => {
+    expect(treasureForSlots(slots.slice(0, 1), new Map(), null).missing).toEqual([
+      '枠 1（A）: 育成のスナップショットが無い',
+    ]);
   });
 });
