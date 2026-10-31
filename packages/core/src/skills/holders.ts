@@ -376,6 +376,11 @@ export type HolderLists = {
    */
   selfStackCountAt(holder: number, state: NamedStateId, frame: number): number;
   /**
+   * エレグの S1（C-0773）: 敵が状態 state をフレーム frame に持つか（条件 enemyState と同じ見え方。そのフレームに付いた件も入れる）。
+   * 1 パス目が、条件 enemyState の付いた射撃の回数の倍率ダメージのヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
+   */
+  enemyStateAt(state: NamedStateId, frame: number): boolean;
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
@@ -2075,6 +2080,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 段は 1 始まりなので、付いていればスタック数は 1 以上
     selfStateAt: (holder, state, frame) => selfStackCountAt(holder, state, frame) > 0,
     selfStackCountAt,
+    enemyStateAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
       skipEffect(sourceSlotIndex, effect, frame);

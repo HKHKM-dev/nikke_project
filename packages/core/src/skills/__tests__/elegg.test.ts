@@ -303,3 +303,48 @@ describe('分配ダメージの受けるダメージ▲（C-0767）', () => {
     expect(distributedHitMultiplier(1, 1)).toBe(1);
   });
 });
+
+// V-0564: S1 のヒットは、どれも射手（エレグ）の 1 ヒットぶんのゲージを溜める（C-0773）。条件 enemyState は 1 パス目が発火のフレームで見る
+describe('エレグ（500）の S1 のゲージ', () => {
+  /** 鈴原サクラ（I）・エレグ（II）・ミハラ（III・撃たない）。フルバーストが 5 秒で、ブームインストールの残りでゲージが溜まる */
+  function teamMihara(definition: SkillDefinition): TeamInput {
+    const mihara = slotOf(161);
+    return {
+      ...teamC(),
+      slots: [
+        slotOf(SAKURA),
+        { ...slotOf(500), skills: { definition, levels: MAX_SKILL_LEVELS } },
+        { ...mihara, condition: { ...mihara.condition, hitRate: 0 } },
+      ],
+      durationSeconds: 180,
+    };
+  }
+  function withoutS1Gauge(): SkillDefinition {
+    const copy = structuredClone(raw);
+    delete (copy.skills.skill1!.effects[0] as { gaugePerHit?: true }).gaugePerHit;
+    return parseSkillDefinition(copy);
+  }
+
+  it('fills the gauge after full burst earlier with the S1 hits', () => {
+    const withGauge = planTeamRun(teamMihara(def)).schedule!.gaugeFullFrames;
+    const without = planTeamRun(teamMihara(withoutS1Gauge())).schedule!.gaugeFullFrames;
+    expect(withGauge[0]).toBe(without[0]);
+    for (let i = 1; i < without.length; i++) expect(withGauge[i]!).toBeLessThanOrEqual(without[i]!);
+    expect(withGauge.some((f, i) => f < without[i]!)).toBe(true);
+  });
+
+  it('accepts gaugePerHit with only an enemyState condition on a shot count trigger', () => {
+    const s1 = (extra: Record<string, unknown>) => ({
+      kind: 'damage',
+      trigger: { count: 'normalHit', everyRef: 2 },
+      ref: 4,
+      damageType: 'distributed',
+      delayFrames: 8,
+      hitOffsetFrames: [0, 24, 36],
+      gaugePerHit: true,
+      ...extra,
+    });
+    expect(withBurst([s1({ condition: { enemyState: 'boomInstall' } })], 'skill1')).not.toThrow();
+    expect(withBurst([s1({ condition: { inFullBurst: true } })], 'skill1')).toThrow(/except enemyState/);
+  });
+});
