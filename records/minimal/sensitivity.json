@@ -17847,14 +17847,6 @@
       "plus": null
     },
     {
-      "observation": "0815-01",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "d96f97eb2ba7d190",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0815-02",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
       "key": "5bfef9ae40a3990b",
@@ -17863,25 +17855,8 @@
       "plus": null
     },
     {
-      "observation": "0815-02",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "5bfef9ae40a3990b",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目の倍率ダメージが無い"
-    },
-    {
       "observation": "0815-03",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "af88ca075bd802c6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0815-03",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
       "key": "af88ca075bd802c6",
       "effective": false,
       "minus": 0,
@@ -17896,9 +17871,9 @@
       "plus": null
     },
     {
-      "observation": "0815-04",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "c539576836dddf75",
+      "observation": "0815-09",
+      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
+      "key": "9e0f598a57892357",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17912,9 +17887,9 @@
       "plus": null
     },
     {
-      "observation": "0816-01",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "48c530cf7e16252a",
+      "observation": "0816-06",
+      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
+      "key": "8d6da6dfe77c15c8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17922,14 +17897,6 @@
     {
       "observation": "0817-06",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "c76f8f7892c071ef",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-06",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
       "key": "c76f8f7892c071ef",
       "effective": false,
       "minus": 0,
@@ -17944,24 +17911,8 @@
       "plus": null
     },
     {
-      "observation": "0817-07",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "0da3b9729a96ea95",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0817-08",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "00dc391da6db112c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-08",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
       "key": "00dc391da6db112c",
       "effective": false,
       "minus": 0,
@@ -17976,25 +17927,8 @@
       "plus": null
     },
     {
-      "observation": "0817-09",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "e86e9b6edcdc9c49",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目の倍率ダメージが無い"
-    },
-    {
       "observation": "0818-08",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "eaec58617e4efd2e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-08",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
       "key": "eaec58617e4efd2e",
       "effective": false,
       "minus": 0,
@@ -18009,28 +17943,11 @@
       "plus": null
     },
     {
-      "observation": "0818-09",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "11994d28278f118b",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目の倍率ダメージが無い"
-    },
-    {
       "observation": "0818-10",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
       "key": "494fa15ce70b5645",
       "effective": false,
       "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-10",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "494fa15ce70b5645",
-      "effective": true,
-      "minus": -39315.25026,
       "plus": null
     },
     {
@@ -18060,14 +17977,6 @@
     {
       "observation": "0819-06",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "bbe71f103fc5f113",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-06",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
       "key": "bbe71f103fc5f113",
       "effective": false,
       "minus": 0,
@@ -18106,15 +18015,6 @@
       "plus": null
     },
     {
-      "observation": "0819-09",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "abce6c157dffb3f2",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目の倍率ダメージが無い"
-    },
-    {
       "observation": "0819-10",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "f1f497badbd43255",
@@ -18144,14 +18044,6 @@
       "key": "f1f497badbd43255",
       "effective": false,
       "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-10",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "f1f497badbd43255",
-      "effective": true,
-      "minus": -106821.9658439157,
       "plus": null
     },
     {
@@ -18187,15 +18079,6 @@
       "plus": null
     },
     {
-      "observation": "0820-09",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "85c38436d1536a3d",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 0 回目の倍率ダメージが無い"
-    },
-    {
       "observation": "0820-10",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "13e5d0fff7accbbe",
@@ -18225,14 +18108,6 @@
       "key": "13e5d0fff7accbbe",
       "effective": false,
       "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0820-10",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "13e5d0fff7accbbe",
-      "effective": true,
-      "minus": -106821.9658439157,
       "plus": null
     },
     {

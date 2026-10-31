@@ -211,7 +211,7 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
   - effects[0] state・fullChargeShot・missileGuide（chargeSpeed・chargeDamage）: C-0804（確定）
   - effects[1] removeState・最大弾数のリロードが完了した時・missileGuide: 根拠なし
 - **skill2**: supported
-  - effects[0] damage・fullChargeShot・true: C-0805（確定）、C-0806（仮説）
+  - effects[0] damage・fullChargeShot・true: C-0805（確定）、C-0806（確定）
   - effects[1] timed・fullChargeShot・attack: C-0809（確定）
   - effects[2] timed・fullChargeShot・projectileExplosionDamage: C-0809（確定）
 - **burst**: partial

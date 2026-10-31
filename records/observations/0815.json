@@ -154,5 +154,128 @@
       "tool": "目視（証拠フレームのバーの光った幅）",
       "note": "バーは実際のゲージのおよそ 12.6〜96% だけを映す（C-0084）。的以外の物の崩れ（1 発目）の分は読んでいない"
     }
+  },
+  {
+    "id": "0815-06",
+    "recording": "0815",
+    "source": "V-0591",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "input",
+    "unit": "個",
+    "value": 2,
+    "description": "ベスティー：タクティカル・アップの 1 発目のヒット（戦闘開始から約 145f）の爆発で崩れた、的以外の物の数。的の右の縦長のコンテナの柱と、その足もとの小さな物。比べる指定の obstacles の入力（C-0177。物 1 個は的以外の 1 ヒット 6,500 × フルチャージ倍率 2）",
+    "method": {
+      "tool": "録画の画を目で見た（ffmpeg の切り出し）",
+      "note": "f900（1 発目のヒットの前）には柱と小さな物が有り、f1100 では両方とも無い。BURST バーは 1・2 ヒット目では光らない（本当のゲージの約 12.6% まで。C-0084）ので、バーの伸びでは読めない。3 ヒット目の後のバー（約 3px）は、物 2 個を足したモデルの約 2.7px と合う"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0815-07",
+    "recording": "0815",
+    "source": "V-0591",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "input",
+    "unit": "個",
+    "value": 2,
+    "description": "13 ヒット目（f1609）の BURST バーの余分な伸び（ほかのヒットの約 5.2px を超える分）を、物 1 個ぶん（約 1.75px）で数えた数。比べる指定の obstacles の入力（C-0177）",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "前（f1608）49.4px → 後（f1612〜1628）58.3px で約 8.9px（ほかのヒットの 5.2px より約 3.6px 多い）。敵の攻撃の赤い画面（f1563〜1700 ほど）がバーに重なり、gauge.ts の固定の明るさでは読めないので、フレームごとにバーの左端（光った所）と右端（光っていない所）の明るさで割って読んだ。12 ヒット目（f1491）は 5.2px で余分は無い。12・16 ヒット目の後の読める所（49.5px → 74.0px）の差 24.5px も、4 ヒット 20.9px と物 2 個 3.5px の和と合う。同じ頃、的の右の 3 つの箱の左の 1 つが消える"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0815-08",
+    "recording": "0815",
+    "source": "V-0591",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "input",
+    "unit": "個",
+    "value": 1,
+    "description": "21 ヒット目（f2106）の BURST バーの余分な伸び（ほかのヒットの約 5.2px を超える分）を、物 1 個ぶん（約 1.75px）で数えた数。比べる指定の obstacles の入力（C-0177）",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "前 95.00px → 後 102.00px で 7.00px（前後のヒットは 5.28・5.25px）。f2105 に有った的の右の 2 つの箱が、このヒットの爆発の後に無い（箱 2 つで物 1 個ぶん。数の合わない理由は分からない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0815-09",
+    "recording": "0815",
+    "source": "V-0591",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "unit": "ヒット",
+    "value": 24,
+    "description": "ベスティー：タクティカル・アップ単騎で、戦闘の最初のヒットから数えて、BURST バーが消えた（本当の満タン）ヒットの番号",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/gauge.ts --mode events",
+      "note": "総ダメージの増分は 1 フレームに 1 発で、どれも通常攻撃 1 ヒットと S2 の防御力無視ダメージの和（外れた発は無い）。比べる指定は、1 発目と途中で崩れた物（obstacles）を入れたモデルの満タンの発の番号。物を入れないモデルは 26 発目、1 発目の 2 個だけなら 25 発目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "0815-06"
+          },
+          {
+            "slot": 1,
+            "shot": 13,
+            "count": "0815-07"
+          },
+          {
+            "slot": 1,
+            "shot": 21,
+            "count": "0815-08"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "0815-10",
+    "recording": "0815",
+    "source": "V-0591",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "ヒット",
+    "value": [3, 23],
+    "description": "ベスティー：タクティカル・アップ単騎で、戦闘の最初のヒットから数えて、BURST バーが初めて光ったヒットと、すべて光った（gauge.ts の満タン）ヒットの番号",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "最初のヒットは f936。バーが初めて光ったのは 3 ヒット目（f976。約 2.9px）、すべて光ったのは 23 ヒット目（f2146）、消えたのは 24 ヒット目（f2165）。読めるヒットの後のバーの px（--subpixel の中央値）: 3 ヒット目から 12 ヒット目まで 2.9・8.0・13.0・18.3・23.5・28.7・34.1・39.4・44.3・49.5、16 ヒット目から 22 ヒット目まで 74.0・79.2・84.4・89.8・95.0・102.0・107.3。物の崩れの無いヒットの伸びは 4.9〜5.4px（平均 5.22px）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
   }
 ]
