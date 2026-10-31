@@ -13384,7 +13384,7 @@
     {
       "observation": "0663-01",
       "element": "エレグ skill1.effects[0]",
-      "key": "56006876bbfebab9",
+      "key": "ffe001ede73153aa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13392,7 +13392,7 @@
     {
       "observation": "0664-01",
       "element": "エレグ skill1.effects[0]",
-      "key": "068bec251e78b0d6",
+      "key": "99ccfc4894eafd31",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13400,7 +13400,7 @@
     {
       "observation": "0665-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "40ddb3f267c6874b",
+      "key": "6212e825b8d41e90",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13408,7 +13408,7 @@
     {
       "observation": "0665-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "93f3e20f4f8d95d8",
+      "key": "927fe212752ddfd7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13416,7 +13416,7 @@
     {
       "observation": "0666-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "89b162e8199d02db",
+      "key": "f215428b45853040",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13424,7 +13424,7 @@
     {
       "observation": "0666-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "2d7c8a510010d488",
+      "key": "5be9a0fceceaf0e7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13496,7 +13496,7 @@
     {
       "observation": "0690-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "b91e96380e221663",
+      "key": "14b6224beeda8170",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13504,7 +13504,7 @@
     {
       "observation": "0690-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "83d85f24314a61c5",
+      "key": "f35426674a7d7226",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13512,7 +13512,7 @@
     {
       "observation": "0690-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "297869e3fb1284de",
+      "key": "09eb2e5e9c925a11",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13520,7 +13520,7 @@
     {
       "observation": "0690-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "5271a7ae5cead689",
+      "key": "d59c6d1126c5a182",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13528,7 +13528,7 @@
     {
       "observation": "0690-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "eb2f22a00f51cb99",
+      "key": "8f4f4a53ff0e67b2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13536,7 +13536,7 @@
     {
       "observation": "0690-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "56e1bb717097ab24",
+      "key": "0fb7aa345b190fc3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13544,7 +13544,7 @@
     {
       "observation": "0690-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "e8bcff40deb93827",
+      "key": "aea1d873245c412c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13552,7 +13552,7 @@
     {
       "observation": "0691-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "a5088e85c759eedc",
+      "key": "5e322ad881bdbd4b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13560,7 +13560,7 @@
     {
       "observation": "0691-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "b1be9d89ab57d26a",
+      "key": "46314c8cda529475",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13568,7 +13568,7 @@
     {
       "observation": "0691-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "36da54146149127d",
+      "key": "9f628457debd1b2e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13576,7 +13576,7 @@
     {
       "observation": "0691-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "bf9b295d96467022",
+      "key": "6efde0f096d8c75d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13584,7 +13584,7 @@
     {
       "observation": "0691-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "923adaebf7a369d2",
+      "key": "934f0266fea4cded",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13592,7 +13592,7 @@
     {
       "observation": "0692-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "0961c93066d30f6b",
+      "key": "00e269b12bca724c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13600,7 +13600,7 @@
     {
       "observation": "0692-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "485728bc44c4f9df",
+      "key": "520919cd22642888",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13608,7 +13608,7 @@
     {
       "observation": "0692-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "d09aebbbb8d43b22",
+      "key": "115d50cce4d619f1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13616,7 +13616,7 @@
     {
       "observation": "0692-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "40e147f39e38e8be",
+      "key": "bdfe4924a027eae5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13624,7 +13624,7 @@
     {
       "observation": "0693-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "d1ca3910230e5e73",
+      "key": "f14db0114d149904",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13632,7 +13632,7 @@
     {
       "observation": "0693-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "38c9c75de26cf3d4",
+      "key": "d8b376be113ab817",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13640,7 +13640,7 @@
     {
       "observation": "0693-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "b8aa1cdb05df5e9a",
+      "key": "a79e69ec7a629419",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14135,7 +14135,7 @@
     {
       "observation": "0711-14",
       "element": "エレグ skill1.effects[0]",
-      "key": "bba2bafb4266c154",
+      "key": "cea762b67784ea93",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14143,7 +14143,7 @@
     {
       "observation": "0711-15",
       "element": "エレグ skill1.effects[0]",
-      "key": "437d0fb04cce6823",
+      "key": "3647b2a31d8063b0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14151,7 +14151,7 @@
     {
       "observation": "0711-16",
       "element": "エレグ skill1.effects[0]",
-      "key": "fbbe18b262566423",
+      "key": "78ff6bb552acafb0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14159,7 +14159,7 @@
     {
       "observation": "0711-19",
       "element": "エレグ skill1.effects[0]",
-      "key": "19ceff17cddc7678",
+      "key": "e908f1423dbb1fbf",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14168,7 +14168,7 @@
     {
       "observation": "0711-20",
       "element": "エレグ skill1.effects[0]",
-      "key": "f56c6f51e55eb8d6",
+      "key": "8d8c0794d6d466b9",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14177,7 +14177,7 @@
     {
       "observation": "0711-21",
       "element": "エレグ skill1.effects[0]",
-      "key": "2e94966190ee3608",
+      "key": "475d15a42b68aa2f",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14186,7 +14186,7 @@
     {
       "observation": "0711-22",
       "element": "エレグ skill1.effects[0]",
-      "key": "5bf8bead3b026f00",
+      "key": "15122480135bdb37",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14195,7 +14195,7 @@
     {
       "observation": "0712-14",
       "element": "エレグ skill1.effects[0]",
-      "key": "1a73d72d03e3cad2",
+      "key": "9d957200c9ec9aed",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14203,7 +14203,7 @@
     {
       "observation": "0712-15",
       "element": "エレグ skill1.effects[0]",
-      "key": "a42683c6c470a475",
+      "key": "d10e63c93489ecf6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14211,7 +14211,7 @@
     {
       "observation": "0712-18",
       "element": "エレグ skill1.effects[0]",
-      "key": "b92021c9802090ce",
+      "key": "3213e8ccd826a1a1",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14220,7 +14220,7 @@
     {
       "observation": "0712-19",
       "element": "エレグ skill1.effects[0]",
-      "key": "ea19e3656747a810",
+      "key": "582c1cb84ae61ee7",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14229,7 +14229,7 @@
     {
       "observation": "0712-20",
       "element": "エレグ skill1.effects[0]",
-      "key": "3852db8b65c409c6",
+      "key": "7bc4978654f39b49",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14238,7 +14238,7 @@
     {
       "observation": "0712-21",
       "element": "エレグ skill1.effects[0]",
-      "key": "99213a292fdf5b56",
+      "key": "ae63e92ceebdd739",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -16789,7 +16789,7 @@
     {
       "observation": "0797-06",
       "element": "エレグ skill1.effects[0]",
-      "key": "2211e9dc421146f5",
+      "key": "618b57c5cfc06f62",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16797,7 +16797,7 @@
     {
       "observation": "0797-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "66a78ef116611222",
+      "key": "3a4e9ef2e1c83d19",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -16806,16 +16806,24 @@
     {
       "observation": "0797-13",
       "element": "エレグ skill1.effects[0]",
-      "key": "a31212ac9a6bf111",
+      "key": "1031b1d534ce7486",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 6 回目の倍率ダメージが無い"
     },
     {
+      "observation": "0797-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "384625b5a1bd5db0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0798-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "68e1615900f0c880",
+      "key": "456f761a7482af83",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -16824,11 +16832,19 @@
     {
       "observation": "0798-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "5ec56ba5d91bae00",
+      "key": "f2f1b1a679d62703",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0798-13",
+      "element": "エレグ skill1.effects[0]",
+      "key": "84eefafb5a78fade",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0803-10",
@@ -16961,7 +16977,7 @@
     {
       "observation": "0805-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "1c863c4946e25426",
+      "key": "9f776a02bf65cb8d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16985,7 +17001,7 @@
     {
       "observation": "0805-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "dd293ebaba14c237",
+      "key": "95d000abd401b890",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17009,7 +17025,7 @@
     {
       "observation": "0805-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "7353c4a3e4c80a84",
+      "key": "354c48d4492e1e77",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17033,7 +17049,7 @@
     {
       "observation": "0805-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "0ad845693067fdcc",
+      "key": "342c40225905f4ef",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17057,7 +17073,7 @@
     {
       "observation": "0805-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "aa7a926bbb60ee14",
+      "key": "5b8c931c3ee09aa7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17081,7 +17097,7 @@
     {
       "observation": "0805-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "d6fe4c71ef894ad8",
+      "key": "b7cd084a53b18b93",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17105,7 +17121,7 @@
     {
       "observation": "0805-13",
       "element": "エレグ skill1.effects[0]",
-      "key": "4c02a6e3d289fa6e",
+      "key": "b8d4fb14a1b01f45",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17129,7 +17145,7 @@
     {
       "observation": "0805-14",
       "element": "エレグ skill1.effects[0]",
-      "key": "a419cc6e09d9d659",
+      "key": "c0598bafa1508346",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17153,7 +17169,7 @@
     {
       "observation": "0806-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "a7e26e466e8767ef",
+      "key": "5439d4077d68cb98",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17177,7 +17193,7 @@
     {
       "observation": "0806-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "1073a62d9bc3e2fe",
+      "key": "9e7c6b16de5d5175",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17201,7 +17217,7 @@
     {
       "observation": "0806-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "59a87238270adf5d",
+      "key": "28917989628ea392",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17225,7 +17241,7 @@
     {
       "observation": "0806-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "03082b606a112351",
+      "key": "2bfad5715a3770ee",
       "effective": false,
       "minus": 0,
       "plus": null
