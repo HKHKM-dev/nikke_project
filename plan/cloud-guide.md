@@ -2,7 +2,6 @@
 
 - 何のための文書か: デスクトップの PC が使えないとき（停電・故障・不在）も、スマホや MacBook からクラウドのセッションで続けるための手順。どこに何があるか・始め方・離席と再開・同期と衝突・準備・困ったとき
 - 関連: [design-cloud-environment.md](design-cloud-environment.md)（決めたことと理由）、[captures/storage.md](captures/storage.md)「バックアップ」（E: と Drive の録画まわりの同期。ここには書き写さない）・「クラウド環境での取り寄せ」（録画の取り寄せ）
-- 作成日: 2026-10-23
 
 ## どこに何があるか
 
@@ -68,6 +67,6 @@ PC が使えないときに撮った録画は、Drive for desktop が「マイ �
   - 取れなかったものは、セッションの中で `node tools/drive/cloud-sync.ts --pull` で取り直せる
 - `scratch/` のファイルが無い: 裏の取り寄せが終わっていないか、取れなかった。`~/.cache/nikke-sync/pull-rest.log` の最後の行を見る。残りは `node tools/drive/cloud-sync.ts --pull-rest` で取る（裏で回っている途中なら、そう答えて何もしない）。
 - クラウドで Claude が自分で打つ curl などは、auto mode の判定で止まることがある。同期はフックで行うので、この判定は受けない。
-- クラウドでは `gh` のトークンが使えない（2026-10-23 の通しの試験）。PR は GitHub の MCP の道具で出す（作成と自動マージの予約）。
+- クラウドでは `gh` のトークンが使えない。PR は GitHub の MCP の道具で出す（作成と自動マージの予約）。
 - クラウドの Node は 22（リポジトリの `.nvmrc` は 24）。CI と同じ確認は 22 でも通る（`npm ci` の EBADENGINE の警告は出る）。
 - 「npm ci が失敗した」と出たか、セッションの途中でブランチを替えて `package-lock.json` が変わった: セッションの中で `npm ci` を回す。`node_modules` が無いまま生成の道具を回すと、全体の別の版の prettier が整形し、手を入れていないファイルに書式の差分が出る。

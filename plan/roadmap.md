@@ -1,12 +1,7 @@
 # ロードマップ
 
-- 関連: [requirements.md](requirements.md)
-- 番号規則: Stage・バージョンはすべて 1 始まりの整数。
-- 各 Stage は前段が動いて検証済みであることを前提にする。Stage 名は仮。
-- **基本原則（2026-10-27 改定）**: 計算のモデルは共通のフレームループ（1 パス目）と 2 パス目の集計の 1 本（[design-unify-sim-calc.md](design-unify-sim-calc.md)）。メカニクスは 1 パス目に足し、UI は最小限にとどめ、ヘッドレスなコアと自動テストで小規模な PDCA サイクルを回す。2026-09-22〜10-27 は「各 Stage とも sim → calc の順で並行開発する」だった
-- 書き方（2026-10-25 から。[design-workflow-simplification.md](design-workflow-simplification.md) 1 節）: Stage の 1 つを 1 行にし、状態と設計書と残りの行き先だけを書く（課題は [backlog.md](backlog.md) 8 節。2026-10-27 から）。V-/C- の ID と経過は書かない（設計書・[claims.md](claims.md)・[verifications.md](verifications.md)・[backlog.md](backlog.md) が持つ）。行は状態が変わったときだけ直す。
-- 表は詰めた形（`| a | b |`）で書き、前に `<!-- prettier-ignore -->` を置く（列幅をそろえ直すと 1 行の変更で表の全部の行が差分に出て、並行するブランチと衝突するため。[design-workflow-simplification-2.md](design-workflow-simplification-2.md) 4 節）。
-- 2026-10-25 までの中身（各 Stage の成果物と節、閉じた課題を含む「今後の課題」の全項目と経過）は [roadmap-archive.md](roadmap-archive.md)（凍結）。
+- 何のための文書か: Stage の一覧。Stage ごとに 1 行（内容・状態・設計書）を書き、状態が変わったときだけ直す。
+- 関連: [requirements.md](requirements.md)（目的と方針）、[backlog.md](backlog.md)（課題と、残っている仕事）、[roadmap-archive.md](roadmap-archive.md)（2026-10-25 までの各 Stage の中身と課題の経過。凍結）
 
 ## 一覧
 
@@ -37,11 +32,3 @@
 | 22 | チャージ武器の部分チャージと、待ちからの 1 発目 | 完了（2026-09-29） | [design-stage22.md](design-stage22.md) |
 | 23 | チャージの秒をゲーム内の時計にそろえる | 完了（2026-09-30） | [design-weapon-seconds.md](design-weapon-seconds.md) 10.4 節 |
 | 24 | リロードの秒をゲーム内の時計にそろえる | 完了（2026-10-01） | [design-weapon-seconds.md](design-weapon-seconds.md) 10.5 節 |
-
-## 残タスクの棚卸し
-
-- いま残っている仕事を種類ごとに 1 行ずつ並べた一覧は [backlog.md](backlog.md)（開いている検証・未解明の機構・許容外の残差・オーナーの判断待ち・道具の整備・スキル定義の未対応・Stage の未完了部分）。課題ごとの経過は設計書と検証記録に置き（2026-10-25 までは [roadmap-archive.md](roadmap-archive.md) にも）、roadmap.md と backlog.md には書かない。課題が閉じたら backlog.md の行を消し、下の行の状態を変える。
-
-## 今後の課題
-
-- 課題（設計書のあるもの）は [backlog.md](backlog.md) 8 節に置く（2026-10-27 から。[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 3 節）。2026-10-25 までに閉じた課題は [roadmap-archive.md](roadmap-archive.md)「今後の課題」にある。ほかの文書が「roadmap.md「今後の課題」の「題名」」で指す項目は、この 2 か所で引ける。

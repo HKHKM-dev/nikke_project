@@ -1,7 +1,7 @@
 # 検証の手順
 
 - 1 つの問いを、撮って（か既存の録画を読み直して）、読んで、モデルと比べ、結論にするまでの共通の流れ。キャラのスキルの定義に固有の手順は [skills-guide.md](skills-guide.md)、機構（射撃・ゲージ・バーストの段・時計・的・1 発の式・的の表）の検証は付録 A。
-- 規則の出どころ: [AGENTS.md](../AGENTS.md)「事実と記録」、[design-investigation-review.md](design-investigation-review.md) 1 節（確定の条件と予測の扱い。2026-10-10 のオーナーの決定）、[design-records-automation.md](design-records-automation.md)（道具）、[design-minimal-relevance.md](design-minimal-relevance.md)（最小構成の検査）。
+- 根拠の規則は [AGENTS.md](../AGENTS.md)「事実と記録」。道具の設計は [design-records-automation.md](design-records-automation.md)、最小構成の検査の設計は [design-minimal-relevance.md](design-minimal-relevance.md)。
 
 ## 1. 問いと最小構成
 
@@ -69,7 +69,7 @@
 
 - `npm run records:check` で、生成物を全部作り直す: 録画の一覧（[captures/recordings.md](captures/recordings.md)）・スキルの効果の分類（[skill-catalog.md](skill-catalog.md)）・残差の一覧（[residuals.md](residuals.md)）・結論の一覧（[claims.md](claims.md)）・検証記録の一覧（[verifications.md](verifications.md)。予測ファイルがあれば「予測との比べ」）・対応状況（[skills.md](skills.md)）・最小構成の検査（[minimal.md](minimal.md)）を作り直す。
 - 残差の一覧には見る行（許容外・比べられない・失効）しか載らない。自分の観測値の残差は `npm run records:residual -- V-NNNN`（録画 id・観測値 ID でも引ける。許容内の行も同じ列で出す）。
-- 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときは手で回す（[AGENTS.md](../AGENTS.md) の最小構成の検査の段落）。既定は、鍵（スキル定義・録画の台帳・比べる指定）の変わった観測値だけを計算し直す（数秒）。鍵はモデルのコードを含まないので、モデルを大きく組み直す PR と、定期の見直しでは `npm run records:minimal -- --all` で全部を計算し直し、差が出ないことを見る（差が出たら鍵に足りない入力を足す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 7.2 節）。
+- 最小構成の検査の感度（`npm run records:minimal`）は、閉じるとき（9 節）に `records:close` が計算し直す。それより前に見たいときと、検証でない PR でスキル定義・録画の台帳・比べる指定を変えたときは手で回す（[AGENTS.md](../AGENTS.md)「文書の書き方」）。既定は、鍵（スキル定義・録画の台帳・比べる指定）の変わった観測値だけを計算し直す（数秒）。鍵はモデルのコードを含まないので、モデルを大きく組み直す PR と、定期の見直しでは `npm run records:minimal -- --all` で全部を計算し直し、差が出ないことを見る（差が出たら鍵に足りない入力を足す。[design-workflow-simplification-5.md](design-workflow-simplification-5.md) 7.2 節）。
 - 合わないときは、まず読み取りと条件を疑う。機構の話にするのは、未確定の要素を 1 つにした編成で切り分けてから。残差を係数で埋めない（AGENTS.md）。
 
 ## 8. 結論

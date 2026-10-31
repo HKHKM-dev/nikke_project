@@ -45,7 +45,7 @@ export type MeasuredBurstDelayRow = {
 
 const NO_DELAYS: Readonly<BurstDelays> = Object.freeze({ hitFrames: 0, effectFrames: 0 });
 
-/** 実測値の表。1 行に根拠の結論の ID を添える（skills-guide.md 1.5 節） */
+/** 実測値の表。1 行に根拠の結論の ID を添える（skills-guide.md 1.4 節） */
 export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // イサベル: III のタイマーの 00.00 からヒットと効果の発火まで、どちらも 134f（動画で 156f。フルバーストの入りの止まり 22f を含む）
   { resourceIds: [231], delays: { hitFrames: 134, effectFrames: 134 }, claim: 'C-0165' },
