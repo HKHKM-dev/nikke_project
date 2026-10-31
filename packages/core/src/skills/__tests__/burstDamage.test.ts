@@ -150,3 +150,36 @@ describe('slotBurstHit', () => {
     expect(slotBurstHit(none, MAX_SKILL_LEVELS, character, enemy, trigger, ZERO_BUFFS)).toBeNull();
   });
 });
+
+// 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: 防御力無視バーストスキルダメージ（burstDamage の damageType true。C-0807）。
+// 式は倍率ダメージの防御力無視ダメージと同じ: 防御力を引かず（max(1, 攻撃力)）、防御力無視ダメージ▲を攻撃ダメージ▲と同じ和に足す
+describe('slotBurstHit（防御力無視のバーストスキルダメージ）', () => {
+  const withType = (damageType: 'skill' | 'true'): SkillDefinition => ({
+    ...definition,
+    skills: {
+      ...definition.skills,
+      burst: { support: 'supported', effects: [{ kind: 'burstDamage', ref: 1, damageType }] },
+    },
+  });
+  const buffs = { ...ZERO_BUFFS, attackRatio: 0.3, critRate: 0.05, attackDamage: 0.3, trueDamage: 0.2 };
+  const trigger = computeTriggerDamage({
+    character,
+    growth: { level: 1, grade: 0, core: 0 },
+    enemy,
+    condition: { coreHitRate: 1, distanceBonus: true, fullCharge: true },
+    buffs,
+  });
+
+  it('resolves the damage type through to the burst hit', () => {
+    expect(resolveBurstDamage(withType('true'), character, MAX_SKILL_LEVELS)[0]?.damageType).toBe('true');
+  });
+
+  it('does not subtract the defence and adds the true damage increase to the attack damage sum', () => {
+    const hit = slotBurstHit(withType('true'), MAX_SKILL_LEVELS, character, enemy, trigger, buffs)!;
+    const skill = slotBurstHit(withType('skill'), MAX_SKILL_LEVELS, character, enemy, trigger, buffs)!;
+    // 攻撃力 1300・防御力 100。(1 + 0.3 + 0.2) の和。属性有利 1.1
+    expect(hit.perActivation).toBeCloseTo(1300 * 3.5164 * hit.boost.total * 1.5 * 1.1, 6);
+    // 防御力無視でないバーストスキルダメージは、防御力を引き、防御力無視ダメージ▲は乗らない
+    expect(skill.perActivation).toBeCloseTo(1200 * 3.5164 * skill.boost.total * 1.3 * 1.1, 6);
+  });
+});

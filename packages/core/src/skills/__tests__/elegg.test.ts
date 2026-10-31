@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { hexagonFrameOf } from '../../burst/schedule.ts';
 import { distributedHitMultiplier } from '../../damage.ts';
-import { planTeamRun } from '../../frame/plan.ts';
+import { burstSnapshotState, planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { computeBurstHit } from '../burstDamage.ts';
@@ -347,5 +347,78 @@ describe('エレグ（500）の S1 のゲージ', () => {
     });
     expect(withBurst([s1({ condition: { enemyState: 'boomInstall' } })], 'skill1')).not.toThrow();
     expect(withBurst([s1({ condition: { inFullBurst: true } })], 'skill1')).toThrow(/except enemyState/);
+  });
+});
+
+// 2026-11-01 のデイリーレビュー: S1 の値のフレーム（valueDelayFrames）と、ヒットごとのゲージの条件 enemyState を、分岐を壊すと落ちる形で見る
+describe('エレグ（500）の S1 の値のフレームとゲージの条件', () => {
+  /** 編成 C の 180 秒で、エレグの定義を差し替える */
+  function teamCWith(definition: SkillDefinition): TeamInput {
+    const t = teamC();
+    return {
+      ...t,
+      slots: [t.slots[0]!, t.slots[1]!, { ...t.slots[2]!, skills: { definition, levels: MAX_SKILL_LEVELS } }],
+      durationSeconds: 180,
+    };
+  }
+  /** S1 の効果を書き換えた定義（ヒットごとのゲージは外して、ヒットの時刻を変えても時刻表が揃うようにする） */
+  function s1Variant(edit: (effect: Record<string, unknown>) => void): SkillDefinition {
+    const copy = structuredClone(raw);
+    const effect = copy.skills.skill1!.effects[0] as Record<string, unknown>;
+    delete effect.gaugePerHit;
+    edit(effect);
+    return parseSkillDefinition(copy);
+  }
+  const s1HitsOf = (plan: ReturnType<typeof planTeamRun>) => plan.skillHits.filter((h) => h.slotIndex === 2);
+  const boomWindows = (plan: ReturnType<typeof planTeamRun>) =>
+    plan
+      .schedule!.activations.filter((a) => a.slotIndex === 2)
+      .map((a) => ({ start: a.hitFrame!, end: a.hitFrame! + 588 }));
+
+  it('values all three hits with the buffs 1 f after the triggering shot, even when the buffs change before the hits', () => {
+    const real = planTeamRun(teamCWith(s1Variant(() => {})));
+    // 比べる相手: 発の 1f 後・2f 後・3f 後にヒットを出し、値をヒットのフレームで決める版（1 ヒット目が発の 1f 後の値）
+    const atNextFrame = planTeamRun(
+      teamCWith(
+        s1Variant((e) => {
+          e.delayFrames = 1;
+          e.hitOffsetFrames = [0, 1, 2];
+          delete e.valueDelayFrames;
+        }),
+      ),
+    );
+    expect(atNextFrame.schedule).toEqual(real.schedule);
+    const hits = s1HitsOf(real);
+    const ref = s1HitsOf(atNextFrame);
+    expect(ref).toHaveLength(hits.length);
+    const buffsAt = (f: number) => burstSnapshotState(real.timeline, f, 2, false).buffs;
+    let changed = 0;
+    for (let i = 0; i < hits.length; i += 3) {
+      const fire = hits[i]!.frame - 8;
+      expect(ref[i]!.frame).toBe(fire + 1);
+      // 発の 1f 後とヒットの間でバフ（受けるダメージ▲・防御力▼・分配ダメージ▲）が変わる回
+      if ([0, 1, 2].some((k) => JSON.stringify(buffsAt(hits[i + k]!.frame)) !== JSON.stringify(buffsAt(fire + 1))))
+        changed++;
+      for (const k of [0, 1, 2]) expect(hits[i + k]!.hit.perActivation).toBe(ref[i]!.hit.perActivation);
+    }
+    expect(changed).toBeGreaterThan(0);
+  });
+
+  it('reserves the gauge of the S1 hits only for fires inside BOOM Install, at the same hits as the second pass (C-0773)', () => {
+    /** ヒットごとのゲージの記録のうち、S1 のヒット（発の 8・32・44f 後）のもの */
+    const s1Gauges = (plan: ReturnType<typeof planTeamRun>) =>
+      plan.shotGauges.filter((g) => g.slotIndex === 2 && [8, 32, 44].includes(g.frame - g.shotFrame));
+    const inBoom = (windows: { start: number; end: number }[], f: number) =>
+      windows.some((w) => w.start <= f && f < w.end);
+    const plan = planTeamRun(teamCWith(def));
+    const gauges = s1Gauges(plan);
+    expect(gauges.length).toBeGreaterThan(0);
+    expect(gauges.map((g) => g.frame)).toEqual(s1HitsOf(plan).map((h) => h.frame));
+    expect(gauges.every((g) => inBoom(boomWindows(plan), g.shotFrame))).toBe(true);
+    // 条件を外した定義では、ブームインストールの外の発でもゲージを溜める（この編成で状態の外に届く発があることの確かめ）
+    const copy = structuredClone(raw);
+    delete (copy.skills.skill1!.effects[0] as { condition?: unknown }).condition;
+    const unconditioned = planTeamRun(teamCWith(parseSkillDefinition(copy)));
+    expect(s1Gauges(unconditioned).some((g) => !inBoom(boomWindows(unconditioned), g.shotFrame))).toBe(true);
   });
 });

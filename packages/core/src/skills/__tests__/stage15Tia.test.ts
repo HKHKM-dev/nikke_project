@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { runSimulation } from '../../sim/engine.ts';
+import { gameSecondsToFrames } from '../../time.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
@@ -88,5 +89,27 @@ describe('ティア（V-0566）', () => {
     expect(withoutS1.schedule!.activations).toHaveLength(4);
     const shortened = withS1.schedule!.activations.map((a) => a.cooldownShortenedFrames ?? 0);
     expect(shortened.slice(0, 4).every((f) => f > 0)).toBe(true);
+  });
+
+  // 単騎の発動の間隔（30 秒あまり）は維持 12 秒より長いので、どの発動の▼も、その発動から付いた 1 スタック（発動の後に付いた件を縮める
+  // 処理。frame/firstPass.ts の burstCooldownStartedAt）だけ
+  it('shortens each cooldown by 13 s from the stack its own activation applies', () => {
+    const shortened = run(definition).schedule!.activations.map((a) => a.cooldownShortenedFrames ?? 0);
+    expect(shortened.length).toBeGreaterThan(2);
+    for (const f of shortened) expect(f).toBe(gameSecondsToFrames(13));
+  });
+
+  // 2 スタック（スタック数 × 13 秒。plan/design-skill-stage15.md 2.2 節）: 維持を 60 秒に延ばした定義で、前の発動の▼が残っている間に次の
+  // 発動を迎える。2 回目は発動の時に付いていた 1 スタック（発動の前のフレームの件）と、その発動から付いた 2 スタック目（発動の後に付いた件）で
+  // 13 + 13 秒。3 回目からは発動の時に 2 スタック（26 秒）で、上限なので新しいスタックは付かない
+  it('shortens by 13 s per stack when the decrease stacks to 2', () => {
+    const json = structuredClone(rawDefinition) as { skills: { skill1: { effects: Record<string, unknown>[] } } };
+    const s1 = json.skills.skill1.effects[0]!;
+    delete s1.durationRef;
+    s1.durationSeconds = 60;
+    const shortened = run(parseSkillDefinition(json)).schedule!.activations.map((a) => a.cooldownShortenedFrames ?? 0);
+    expect(shortened.length).toBeGreaterThan(3);
+    expect(shortened.slice(0, 2)).toEqual([gameSecondsToFrames(13), 2 * gameSecondsToFrames(13)]);
+    for (const f of shortened.slice(2)) expect(f).toBe(gameSecondsToFrames(26));
   });
 });
