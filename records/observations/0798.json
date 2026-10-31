@@ -236,5 +236,49 @@
       "slot": 2,
       "source": "skill"
     }
+  },
+  {
+    "id": "0798-13",
+    "recording": "0798",
+    "source": "V-0570",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "timing",
+    "value": 589,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 571,
+      "high": 607
+    },
+    "description": "エレグのバーストの分配ダメージ▲の切れ目の、II → III の替わり目からの動画のフレーム数の幅。S1 の組の値を決めたフレーム（届いた発の次のフレーム = S1 の組の頭 − 7。C-0697・C-0766）の、II → III の替わり目（エレグの発動の六角形）からの動画のフレーム数が、▲ありの最後は 571f（窓 1）、▲なしの最初は 607f（窓 2）（値は幅の真ん中）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "組の頭は f1523（93,724。フルバーストの外）・f3937（59,727。▲なし・フルバーストの外）（`0798-10`）。替わり目は `0798-02`。窓 3〜5 には、500f より後の組は無い。替わり目の 480〜720f 後の、5 万以上の増分を全部並べ、+24・+36f に同じ 1 ヒットが出る組を S1 の組とした（ほかの増分は、エレグのコアの 1 ヒットなどの重なり）。▲の有無は、組の 1 ヒットの値の段（C-0766・C-0767・C-0772 の式）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "stat": "distributedDamage",
+        "from": 2,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 18
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
   }
 ]
