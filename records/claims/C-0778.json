@@ -11,5 +11,13 @@
   "subject": {
     "places": ["data/skills/500.json の burst の effects[2]"]
   },
-  "decidedOn": []
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": ["0711-23", "0712-22"],
+      "element": "エレグ skill1.effects[0]",
+      "reason": "仮説 C-0779 は S1 の値を決めるフレームを届いた発の 1〜3f 後（組の頭 − 7〜− 5）とする。どこでも、▲ありの最後は替わり目から 597〜599f、▲なしの最初は 605〜607f で、モデルの切れ目（605f から▲なし）は範囲に入る（V-0571）",
+      "decided": "2026-10-31"
+    }
+  ]
 }
