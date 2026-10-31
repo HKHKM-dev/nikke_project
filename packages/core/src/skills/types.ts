@@ -2280,8 +2280,10 @@ function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<strin
  * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵が持つ stat か（敵の受けるダメージ▲と、2 段目の段 2 の敵の防御力▼）。
  * 値は敵が受ける全ダメージに効くので、味方の各枠の区間の値に写す（skills/holders.ts の isEnemyEffect）
  */
+export const ENEMY_HELD_STATS = ['damageTaken', 'enemyDefenseDown'] as const;
+
 export function isEnemyHeldStat(stat: string): boolean {
-  return stat === 'damageTaken' || stat === 'enemyDefenseDown';
+  return (ENEMY_HELD_STATS as readonly string[]).includes(stat);
 }
 
 /** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */

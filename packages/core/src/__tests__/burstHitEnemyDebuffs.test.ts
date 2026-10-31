@@ -23,6 +23,7 @@ describe('バーストのヒットが敵の側のデバフを見る時点（C-07
   const activations = plan.schedule!.activations;
   // II（ブラン）まで進んだ回の I の発動
   const chained = activations.filter((a, k) => a.slotIndex === LUDMILLA && activations[k + 1]?.slotIndex === BLANC);
+  const sim = runSimulation(input);
 
   it("uses the enemy debuffs at the use, not at the hit: Blanc's ▲ from II is on at Ludmilla's hit but not used", () => {
     expect(chained.length).toBeGreaterThan(0);
@@ -36,7 +37,6 @@ describe('バーストのヒットが敵の側のデバフを見る時点（C-07
   });
 
   it("leaves Blanc's ▲ off Ludmilla's burst hits and on Privaty's (used after the ▲)", () => {
-    const sim = runSimulation(input);
     const ludmilla = sim.slots[LUDMILLA]!.burst.hits;
     const privaty = sim.slots[PRIVATY]!.burst.hits;
     expect(ludmilla.length).toBeGreaterThan(chained.length);
@@ -61,9 +61,8 @@ describe('バーストのヒットが敵の側のデバフを見る時点（C-07
   });
 
   it("puts Blanc's ▲ on Ludmilla's chained hits only under the 'hit' hypothesis ('activation' is the model)", () => {
-    const base = runSimulation(input);
     const activation = runSimulation({ ...input, enemy: { ...input.enemy, burstHitEnemyDebuffs: 'activation' } });
-    expect(activation.slots.map((s) => s.burst.hits)).toEqual(base.slots.map((s) => s.burst.hits));
+    expect(activation.slots.map((s) => s?.burst.hits)).toEqual(sim.slots.map((s) => s?.burst.hits));
     const hit = runSimulation({ ...input, enemy: { ...input.enemy, burstHitEnemyDebuffs: 'hit' } });
     const chainedFrames = new Set(chained.map((a) => a.frame));
     const ludmillaActivations = activations.filter((a) => a.slotIndex === LUDMILLA);
@@ -74,7 +73,7 @@ describe('バーストのヒットが敵の側のデバフを見る時点（C-07
       expect(h.damageTakenMultiplier).toBeCloseTo(expected, 12);
     });
     // プリバティ：アンカインド・メイドは遅れの無い受け手で、どちらの仮説でも同じ値
-    expect(hit.slots[PRIVATY]!.burst.hits).toEqual(base.slots[PRIVATY]!.burst.hits);
+    expect(hit.slots[PRIVATY]!.burst.hits).toEqual(sim.slots[PRIVATY]!.burst.hits);
   });
 });
 

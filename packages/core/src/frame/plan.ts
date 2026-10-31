@@ -70,6 +70,7 @@ import { stateMatches, statesMatching, type NamedStateId } from '../skills/state
 import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
+  ENEMY_HELD_STATS,
   isEnemyHeldStat,
   isStateStat,
   splitsPerCount,
@@ -695,8 +696,8 @@ export function burstSnapshotState(
  * 撃つ側のバフも敵の側のデバフ（受けるダメージ▲・防御力▼）も、発動のフレーム activationFrame の時点（preActivation なら直前）で
  * 固定する。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで付く S2 の攻撃ダメージ▲は乗らない
  * （`0079-07`）。ノワールのヒットには、III の発動の後・ヒットの前に付いた鈴原サクラの受けるダメージ▲は乗らず、発動の時に付いていて
- * ヒットの前に切れた▲は乗る（C-0795）。I・II の受け手（ルドミラ・ユニ）でも同じ（C-0813）。hitFrame は、sameActivation の小片がヒットまで続いているかを見るのと、enemyDebuffs が 'hit'
- * のときにだけ使う。
+ * ヒットの前に切れた▲は乗る（C-0795）。I・II の受け手（ルドミラ・ユニ）でも同じ（C-0813）。hitFrame は、sameActivation の小片が
+ * ヒットまで続いているかを見るのと、enemyDebuffs が 'hit' のときにだけ使う。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
  * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）。
  * enemyDebuffs が 'hit'（EnemyInput.burstHitEnemyDebuffs。検証の予測の仮説だけが使う）なら、敵の側のデバフだけヒットの直前の値で
@@ -712,9 +713,10 @@ export function burstHitBuffs(
   enemyDebuffs: BurstHitEnemyDebuffs = 'activation',
 ): BuffTotals {
   let buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
-  if (enemyDebuffs === 'hit' && hitFrame !== activationFrame) {
+  if (enemyDebuffs === 'hit') {
     const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
-    buffs = { ...buffs, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
+    buffs = { ...buffs };
+    for (const stat of ENEMY_HELD_STATS) buffs[stat] = atHit[stat];
   }
   if (sameActivation === undefined) return buffs;
   return withSameActivationEffects(
