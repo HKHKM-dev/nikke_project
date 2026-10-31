@@ -1,7 +1,7 @@
-// Stage 12: 育成入力（ステータス層）の入力欄と、戦闘中の攻撃力（バフ前）の内訳。
-// スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して入力を止める。
-// Stage 13: OL 装備のオプション行（最大 3 行）の入力と、効果層（OL・キューブ・コレクション → 常時バフ）の一覧。
-// Stage 14: 枠の育成（育成値 + 育成入力）の JSON の書き出し / 取り込み（CLI の --build の 1 枠分も読める）。
+// Stage 12: 育成入力（ステータス層）の入力欄。スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して
+// 入力を止める。Stage 13: OL 装備のオプション行（最大 3 行）の入力。
+// 2026-10-31: オーナーの指示で、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
+// スペック固定の説明）を消した。リサイクルルームとその他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）
 import {
   AFFECTION_RANK_MAX,
   AFFECTION_RANK_MIN,
@@ -15,12 +15,9 @@ import {
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
   computeCombatAttack,
-  resolveBuildEffects,
-  type BuildEffects,
   type BuildInput,
   type BuildMasters,
   type CharacterData,
-  type CombatAttack,
   type GearInput,
   type GearPart,
   type GearType,
@@ -30,8 +27,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
-import { formatNumber } from '../format.ts';
-import { GEAR_PART_LABEL, formatBuildEffect, formatBuildEffectSource } from '../skillLabels.ts';
+import { GEAR_PART_LABEL } from '../skillLabels.ts';
 import type { TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
@@ -52,8 +48,6 @@ type Props = {
   effectiveBuild: BuildInput;
   /** 実際に計算へ渡す育成値 */
   growth: GrowthInput;
-  /** Stage 14: 保存している育成値（JSON の書き出し用。スペック固定でも入力のまま） */
-  savedGrowth: GrowthInput;
   treasurePhase: TreasurePhase;
   masters: BuildMasters | null;
   mastersError: string | null;
@@ -72,7 +66,6 @@ export function BuildSection({
   build,
   effectiveBuild,
   growth,
-  savedGrowth: _savedGrowth,
   treasurePhase,
   masters,
   mastersError,
@@ -89,13 +82,11 @@ export function BuildSection({
     setGear(part, overload.length === 0 ? { type: gear.type, level: gear.level } : { ...gear, overload });
   };
 
-  let combat: CombatAttack | null = null;
-  let effects: BuildEffects | null = null;
+  // 攻撃力は出さないが、計算に使えない育成入力はここで知らせる
   let combatError: string | null = null;
   if (masters) {
     try {
-      combat = computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase });
-      effects = resolveBuildEffects(character, effectiveBuild, masters, { treasurePhase });
+      computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase });
     } catch (e) {
       combatError = e instanceof Error ? e.message : String(e);
     }
@@ -105,22 +96,11 @@ export function BuildSection({
 
   return (
     <details className="build">
-      <summary>
-        育成
-        {combat && (
-          <span className="build-attack">
-            {' '}
-            （攻撃力 <strong>{formatNumber(combat.attack)}</strong>）
-          </span>
-        )}
-      </summary>
+      <summary>育成</summary>
       {mastersError && <p className="error">育成のマスタの読み込みに失敗しました: {mastersError}</p>}
       {!masters && !mastersError && <p className="hint">育成のマスタを読み込み中…</p>}
-      {disabled && (
-        <p className="hint">スペック固定: 好感度 rank{shown.affectionRank}・装備 T9 Lv5 × 4・キューブ等なし</p>
-      )}
       <div className="build-grid">
-        <label className="field" title={`rank ${AFFECTION_RANK_MIN}〜${AFFECTION_RANK_MAX}`}>
+        <label className="field">
           <span>好感度</span>
           <input
             type="number"
@@ -137,7 +117,7 @@ export function BuildSection({
         {GEAR_PARTS.map((part) => {
           const gear = shown.gear[part];
           return (
-            <div className="field gear" key={part} title={`Lv 0〜${GEAR_LEVEL_MAX}`}>
+            <div className="field gear" key={part}>
               <span>装備 {GEAR_PART_LABEL[part]}</span>
               <span className="gear-inputs">
                 <select
@@ -222,7 +202,7 @@ export function BuildSection({
             </div>
           );
         })}
-        <div className="field gear" title={`Lv ${CUBE_LEVEL_MIN}〜${CUBE_LEVEL_MAX}`}>
+        <div className="field gear">
           <span>キューブ</span>
           <span className="gear-inputs">
             <select
@@ -256,7 +236,7 @@ export function BuildSection({
             />
           </span>
         </div>
-        <div className="field gear" title={hasTreasure ? '宝物（SR Lv15 相当）' : `Lv 0〜${COLLECTION_LEVEL_MAX}`}>
+        <div className="field gear">
           <span>コレクション</span>
           <span className="gear-inputs">
             <select
@@ -288,75 +268,8 @@ export function BuildSection({
             />
           </span>
         </div>
-        <div className="field gear">
-          <span>リサイクルルーム</span>
-          <span className="gear-inputs three">
-            {(['personal', 'class', 'corporation'] as const).map((key) => (
-              <input
-                key={key}
-                type="number"
-                min={0}
-                step={1}
-                value={shown.recycleRoom[key]}
-                disabled={disabled}
-                title={{ personal: '共通研究', class: 'クラス研究', corporation: '企業研究' }[key]}
-                onChange={(e) =>
-                  set({
-                    recycleRoom: { ...shown.recycleRoom, [key]: clampInt(Number(e.target.value), 0, 999) },
-                  })
-                }
-              />
-            ))}
-          </span>
-        </div>
-        <label className="field">
-          <span>その他攻撃加算</span>
-          <input
-            type="number"
-            min={0}
-            step={1}
-            value={shown.extraAttack}
-            disabled={disabled}
-            onChange={(e) => set({ extraAttack: Math.max(0, Number(e.target.value) || 0) })}
-          />
-        </label>
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
-      <details className="build-json">
-        <summary>攻撃力の合成内訳</summary>
-        {combat && (
-          <p className="hint build-breakdown">
-            {formatNumber(combat.attack)} = round(({formatNumber(combat.gradeBase)} 素 +{' '}
-            {formatNumber(combat.affection)} 好感度
-            {combat.recycleRoom > 0 && ` + ${formatNumber(combat.recycleRoom)} リサイクル`}) × (1 + コア {growth.core}{' '}
-            段)) = {formatNumber(combat.withCore)} + {formatNumber(combat.gear)} 装備
-            {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
-            {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
-            {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
-          </p>
-        )}
-        {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (
-          <div className="build-effects">
-            <span className="skills-title">効果</span>
-            <ul className="received-list">
-              {effects.effects.map((e, i) => (
-                <li key={i}>
-                  <span className="amount">{formatBuildEffect(e)}</span>
-                  <small className="sub">{formatBuildEffectSource(e.source)}</small>
-                </li>
-              ))}
-              {effects.notes.map((n, i) => (
-                <li key={`note-${i}`} className={n.level === 'unsupported' ? 'note-unsupported' : 'note-ignored'}>
-                  <span className="amount">{n.level === 'unsupported' ? '未対応' : '計算に無関係'}</span>
-                  <small className="sub">
-                    {formatBuildEffectSource(n.source)}: {n.message.ja}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </details>
     </details>
   );
 }

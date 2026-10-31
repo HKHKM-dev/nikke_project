@@ -20,11 +20,12 @@ import {
   SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
+  EMPTY_BUILD,
   emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
   fixedSpecBuild,
-  matchingEnemyPreset,
+  presetForEnemy,
   targetProfileForEnemy,
   type BuildInput,
   type CharacterData,
@@ -231,8 +232,8 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
 }
 
 /**
- * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵の値と一致するプリセットが持つものだけを戦闘時間ぶん展開して足す。
- * 手入力で値を変えた（カスタム）・プリセットの読み込み前は出来事なし
+ * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵にあたるプリセット（core の presetForEnemy。2026-10-31 から属性なしの
+ * 射撃場の的も射撃場のプリセット）が持つものだけを戦闘時間ぶん展開して足す。ほかの敵・プリセットの読み込み前は出来事なし
  */
 export function enemyWithEvents(
   enemy: EnemyInput,
@@ -241,7 +242,7 @@ export function enemyWithEvents(
   durationSeconds: number,
 ): EnemyInput {
   if (master === null || setIds.length === 0) return enemy;
-  const preset = matchingEnemyPreset(master.enemies, enemy);
+  const preset = presetForEnemy(master.enemies, enemy);
   const ids = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   if (ids.length === 0) return enemy;
   return { ...enemy, events: enemyEventsOf(master, ids, durationSeconds) };
@@ -262,7 +263,7 @@ export function enemyForCalc(
   if (master === null) return withEvents;
   const target = targetProfileForEnemy(master, enemy);
   if (target === undefined) return withEvents;
-  const preset = matchingEnemyPreset(master.enemies, enemy);
+  const preset = presetForEnemy(master.enemies, enemy);
   const active = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
 }
@@ -283,6 +284,38 @@ export function effectiveTreasurePhase(slot: SlotState, character: CharacterData
 /** Stage 12: 計算に渡す育成入力。スペック固定は T9 Lv5 × 4 と好感度 rank30/40/10 のプリセット（保存している入力は残す） */
 export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: CharacterData): BuildInput {
   return fixedSpec ? fixedSpecBuild(character) : slot.build;
+}
+
+/**
+ * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
+ * （欄が無いので直せないため）。計算と画面はこの編成を読む
+ * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算
+ * - 編成: 戦闘時間・バースト・操作キャラ・敵（射撃場の的にし、属性だけ残す）。3 分モードの出来事のセットは eventSetsForCalc
+ */
+export function teamStateForCalc(state: TeamState): TeamState {
+  return {
+    ...state,
+    slots: state.slots.map((slot) => ({
+      ...slot,
+      conditionMode: DEFAULT_CONDITION_MODE,
+      condition: { ...DEFAULT_SLOT_CONDITION },
+      hpRatio: DEFAULT_HP_RATIO,
+      build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
+    })),
+    enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
+    durationSeconds: DEFAULT_DURATION_SECONDS,
+    burst: DEFAULT_BURST,
+    controlledSlot: DEFAULT_CONTROLLED_SLOT,
+  };
+}
+
+/**
+ * 2026-10-31: オーナーの指示で 3 分モード（的のジャンプ）の欄を消し、射撃場の的の出来事のセットを常に入れる（保存データの
+ * 選択は使わない）
+ */
+export function eventSetsForCalc(master: EnemyPresetMaster | null): string[] {
+  if (master === null) return [];
+  return [...new Set(master.enemies.filter((p) => p.content === 'range').flatMap((p) => p.eventSets))];
 }
 
 /** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */

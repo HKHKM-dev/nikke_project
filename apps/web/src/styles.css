@@ -62,16 +62,6 @@ header h1 {
 .field.checkbox {
   grid-template-columns: auto minmax(0, 1fr);
 }
-.meta {
-  font-size: 0.8rem;
-  opacity: 0.8;
-  margin: 4px 0;
-}
-.slot .meta {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* 編成共通の設定 */
 .settings-simple {
@@ -88,39 +78,6 @@ header h1 {
   margin: 2px 0;
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 6px 10px;
-}
-.settings-advanced {
-  margin-top: 8px;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-  font-size: 0.85rem;
-}
-.settings-advanced > summary {
-  cursor: pointer;
-  opacity: 0.8;
-}
-.settings-advanced-body {
-  margin-top: 8px;
-}
-.settings-advanced-grid {
-  display: grid;
-  gap: 6px 16px;
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (min-width: 640px) {
-  .settings-advanced-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 960px) {
-  .settings-advanced-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-.settings-advanced-grid .field {
-  margin: 2px 0;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 4px 8px;
 }
 .settings-options {
   display: flex;
@@ -272,31 +229,6 @@ header h1 {
   font-weight: 400;
   opacity: 0.7;
 }
-.burst-headline {
-  margin: 0;
-  font-size: 0.85rem;
-}
-.summary {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 3px 16px;
-  margin: 6px 0;
-  max-width: 420px;
-}
-.summary dt {
-  opacity: 0.8;
-  font-size: 0.88rem;
-}
-.summary dd {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  font-size: 0.88rem;
-}
-.summary dd.total {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
 .notes {
   list-style: none;
   padding: 0;
@@ -328,15 +260,6 @@ header h1 {
   background: #455a64;
   color: #fff;
 }
-.note.no-damage .badge,
-.note.modeling .badge {
-  background: #757575;
-  color: #fff;
-}
-.note.indirect .badge {
-  background: #5e35b1;
-  color: #fff;
-}
 .breakdown {
   border-collapse: collapse;
   width: 100%;
@@ -357,80 +280,12 @@ header h1 {
   border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
 
-/* 編成の内訳 */
-.table-scroll {
-  overflow-x: auto;
-}
-.team-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.88rem;
-  white-space: nowrap;
-}
-.team-table th,
-.team-table td {
-  padding: 5px 8px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.team-table th:nth-child(-n + 2),
-.team-table td:nth-child(-n + 2) {
-  text-align: left;
-}
-.team-table thead th {
-  font-weight: 600;
-  opacity: 0.8;
-  border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-}
-.team-table tbody tr + tr {
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.team-table tfoot th,
-.team-table tfoot td {
-  font-weight: 700;
-  border-top: 2px solid color-mix(in srgb, currentColor 35%, transparent);
-}
-.team-table .grand-total {
-  font-size: 1.05rem;
-}
-.team-table .sub {
-  opacity: 0.65;
-  font-size: 0.78rem;
-}
 .simple-breakdown-table {
   max-width: 480px;
 }
 .simple-breakdown-table .damage-cell {
   font-weight: 600;
   font-size: 0.95rem;
-}
-.details {
-  margin-top: 12px;
-}
-.slot-detail > summary {
-  cursor: pointer;
-  padding: 4px 0;
-  font-size: 0.9rem;
-}
-.slot-detail .result {
-  border: none;
-  padding: 4px 0 8px 14px;
-  border-left: 2px solid color-mix(in srgb, currentColor 18%, transparent);
-  border-radius: 0;
-  margin-left: 4px;
-}
-.segments {
-  margin-top: 8px;
-}
-.segments > summary {
-  cursor: pointer;
-  font-size: 0.88rem;
-  padding: 3px 0;
-}
-.verification-details {
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
 }
 .error {
   color: #c62828;
@@ -463,45 +318,6 @@ header h1 {
 .skill-levels-row {
   margin: 4px 0 0;
 }
-.skill-row {
-  display: grid;
-  gap: 8px;
-  margin-top: 6px;
-}
-.skill-detail-item {
-  padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-  border-radius: 6px;
-}
-.skill-detail-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  font-size: 0.88rem;
-}
-.skill-name {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.skill-desc {
-  white-space: pre-wrap;
-  font: inherit;
-  font-size: 0.78rem;
-  opacity: 0.85;
-  margin: 4px 0 0;
-  padding: 5px 8px;
-  border-radius: 4px;
-  background: color-mix(in srgb, currentColor 6%, transparent);
-}
-.dev-notes-details {
-  margin-top: 6px;
-  font-size: 0.8rem;
-}
-.dev-notes-details > summary {
-  cursor: pointer;
-  opacity: 0.75;
-}
 .badge.supported {
   background: #2e7d32;
   color: #fff;
@@ -512,10 +328,6 @@ header h1 {
 }
 .badge.unsupported {
   background: #c62828;
-  color: #fff;
-}
-.badge.no-effect {
-  background: #757575;
   color: #fff;
 }
 .badge.treasure {
@@ -544,36 +356,6 @@ header h1 {
   background: #616161;
   color: #fff;
 }
-.received {
-  margin: 8px 0;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.received .hint {
-  margin: 2px 0 0;
-  font-size: 0.82rem;
-}
-.received-list {
-  list-style: none;
-  padding: 0;
-  margin: 4px 0 0;
-  display: grid;
-  gap: 2px;
-  font-size: 0.82rem;
-}
-.received-list li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-  align-items: baseline;
-}
-.received-list .amount {
-  font-variant-numeric: tabular-nums;
-}
-.received-list .sub {
-  opacity: 0.65;
-  font-size: 0.75rem;
-}
 
 /* Stage 12: 育成入力・射撃条件（折り畳み） */
 .build {
@@ -585,9 +367,6 @@ header h1 {
 .build > summary {
   cursor: pointer;
   font-size: 0.82rem;
-}
-.build-attack strong {
-  font-variant-numeric: tabular-nums;
 }
 .build-grid {
   display: grid;
@@ -605,9 +384,6 @@ header h1 {
   grid-template-columns: minmax(0, 1fr) 3.8em;
   gap: 4px;
 }
-.gear-inputs.three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
 .gear-inputs input,
 .gear-inputs select {
   min-width: 0;
@@ -617,23 +393,11 @@ header h1 {
   font: inherit;
   font-size: 0.82rem;
 }
-.build-breakdown {
-  font-variant-numeric: tabular-nums;
-}
 .ol-lines {
   grid-column: 1 / -1;
   display: grid;
   gap: 2px;
   margin-top: 2px;
-}
-.build-effects {
-  margin-top: 6px;
-}
-.received-list li.note-ignored {
-  opacity: 0.55;
-}
-.received-list li.note-unsupported .amount {
-  color: #b35900;
 }
 
 /* Stage 14: JSON の書き出し / 取り込み、未対応の一覧 */
@@ -642,14 +406,9 @@ header h1 {
   margin-top: 10px;
 }
 .notes-summary > summary,
-.data-panel > summary,
-.build-json > summary {
+.data-panel > summary {
   cursor: pointer;
   font-size: 0.9rem;
-}
-.build-json {
-  margin-top: 6px;
-  font-size: 0.82rem;
 }
 .data-grid {
   display: grid;
@@ -668,87 +427,4 @@ header h1 {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-}
-
-/* sim のタイムライン（Stage 16-B） */
-.timeline {
-  margin: 8px 0 12px;
-}
-.timeline svg {
-  display: block;
-  width: 100%;
-  max-width: 960px;
-  height: auto;
-}
-.tl-bar {
-  fill: currentColor;
-  opacity: 0.55;
-}
-.tl-axis {
-  stroke: currentColor;
-  opacity: 0.4;
-}
-.tl-label {
-  fill: currentColor;
-  font-size: 11px;
-  opacity: 0.7;
-}
-.tl-fullburst {
-  fill: #f59e0b;
-  background: #f59e0b;
-  opacity: 0.22;
-}
-.tl-untargetable {
-  fill: #64748b;
-  background: #64748b;
-  opacity: 0.45;
-}
-.tl-invulnerable {
-  fill: #a855f7;
-  background: #a855f7;
-  opacity: 0.3;
-}
-.tl-barrier {
-  fill: #0ea5e9;
-  background: #0ea5e9;
-  opacity: 0.3;
-}
-.tl-key {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  vertical-align: baseline;
-  opacity: 0.6;
-}
-
-/* Stage 18-C2: 条件が自動の枠 */
-.manual-condition {
-  margin: 4px 0 2px;
-  font-size: 0.82rem;
-}
-.manual-condition > summary {
-  cursor: pointer;
-  opacity: 0.8;
-}
-
-/* Stage 18-C2: タイムラインの着地点（距離帯）の帯 */
-.tl-band-near {
-  fill: #16a34a;
-  background: #16a34a;
-}
-.tl-band-midNear {
-  fill: #84cc16;
-  background: #84cc16;
-}
-.tl-band-midFar {
-  fill: #f97316;
-  background: #f97316;
-}
-.tl-band-far {
-  fill: #dc2626;
-  background: #dc2626;
-}
-.tl-band-unknown {
-  fill: #9ca3af;
-  background: #9ca3af;
 }

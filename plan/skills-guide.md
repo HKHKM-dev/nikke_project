@@ -48,7 +48,7 @@
   1. `skills/types.ts` の型と `parseSkillDefinition` の検証、その単体テスト。
   2. 解決（`skills/resolve.ts` ほか）と、共通のフレームループ（`frame/`）。
   3. **既存のテストが数値を変えずに通る**ことを確かめる（退化）。
-  4. 画面のラベル（`apps/web/src/components/SkillSection.tsx` など）と、CLI の表示（`packages/core/scripts/sim-run.ts`）。
+  4. CLI の表示（`packages/core/scripts/sim-run.ts`）。画面には効果の一覧を出さない（受けているバフとスキルの説明の欄は 2026-10-31 に消した）。
 - **定義を書く**
   - `data/skills/{resourceId}.json` と `index.json`。
   - 数値は書かず、`ref` で説明文の値を指す。
