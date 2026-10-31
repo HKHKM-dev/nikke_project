@@ -248,8 +248,8 @@
       ],
       "notes": [
         {
-          "ja": "粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734 で 1 回に通常攻撃の 20 発ほど）のは未対応（溜まる量の出どころが分からない）",
-          "en": "The burst gauge gained from a sticky grenade attach hit (about 20 normal attacks' worth each in solo recordings 0733 and 0734) is not modeled (the source of the amount is unknown)",
+          "ja": "粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）",
+          "en": "The burst gauge gained from a sticky grenade attach hit (solo recordings 0733 and 0734; observations 0733-08 and 0734-08) is not modeled. The amount is larger than one shooter hit (target_burst_energy_pershot) and does not grow on a critical attach (not proportional to the attach damage; 0733-06). Neither the description nor the data gives a value, so its source is unknown (plan/design-skill-stage12-leftovers.md section 2)",
           "kind": "unimplemented",
           "effect": {
             "kind": "burstGaugeHit",
@@ -355,15 +355,18 @@
       ],
       "notes": [
         {
-          "ja": "爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い）",
-          "en": "The explosion range increase (10 s) is not modeled (explosion range is not in the damage formula)",
-          "kind": "unimplemented",
+          "ja": "爆発範囲▲（I・III の行とも 10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない。射撃場の的では、窓の中と外で粘着榴弾の爆発の 1 ヒットの値・コア・数が変わらない",
+          "en": "The explosion range increase (10 s, in both the Stage 1 and Stage 3 rows) only adds hits on more enemies, which does not happen against a single enemy. On the range target, the grenade explosion hit value, core and count are the same inside and outside the window",
+          "kind": "outOfScope",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0759"
+          ]
         }
       ]
     }

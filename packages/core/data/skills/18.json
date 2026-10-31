@@ -244,8 +244,8 @@
       ],
       "notes": [
         {
-          "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い）",
-          "en": "Explosion range up is not modeled (explosion range is not in the damage formula)",
+          "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "Explosion range up is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
