@@ -308,12 +308,13 @@ describe('分配ダメージの受けるダメージ▲（C-0767）', () => {
 describe('エレグ（500）の S1 のゲージ', () => {
   /** 鈴原サクラ（I）・エレグ（II）・ミハラ（III・撃たない）。フルバーストが 5 秒で、ブームインストールの残りでゲージが溜まる */
   function teamMihara(definition: SkillDefinition): TeamInput {
-    const mihara = slotOf(161);
+    const elegg = slotOf(500)!;
+    const mihara = slotOf(161)!;
     return {
       ...teamC(),
       slots: [
         slotOf(SAKURA),
-        { ...slotOf(500), skills: { definition, levels: MAX_SKILL_LEVELS } },
+        { ...elegg, skills: { definition, levels: MAX_SKILL_LEVELS } },
         { ...mihara, condition: { ...mihara.condition, hitRate: 0 } },
       ],
       durationSeconds: 180,
