@@ -214,6 +214,8 @@ design-unify-sim-calc.md の経過（B-1・B-2 の項）と同じ作り: 本番�
 
 - 2026-10-30: `npm run records:minimal -- --all` で `--all` が効かなかった（package.json で `&&` の後に続けた `records:check` に渡っていた）のを直した: `records:check` は `records-minimal.ts` の中で回し、`records/minimal` の整形は `records:check` の整形に含めた。4 節の表の回避の書き方を戻した。
 
+- 2026-10-31: デイリーコードレビューの指摘で、フルバーストの窓を読む入力を守るテストを足した（段 1 の経過の「落としても結果もテストも変わらない」の穴）。`__tests__/firstPassItems.test.ts` の編成に、870 の S2 の属性ダメージ▲（`durationUntil: fullBurstEnd`）のきっかけを戦闘開始時に変えた作った定義を足し、窓より前に始まる件を作る。`trackReadsOf` の `fullBurstEnd` で窓を読まないようにすると、この編成だけが `stale items` で落ちる。
+
 - 2026-10-31: デスクトップで画面を測り直した（7.4 節）。機械は Windows 11・Core i7-14700KF・Node 24.19.0、画面はヘッドレスの Chrome 156（Playwright の `channel: 'chrome'`）。測り方は 7.1 節と同じ（本番ビルドを `vite preview` で配り、主力を `localStorage` に入れて開き、防御力の欄で ↑ キーを押して、`data-computing` が true → false になった次の描画までを取る。内訳は Worker の `postMessage` と受け取りの時刻から）。最適化の前（ecbda1b。#767）といまの main（a0a0a1a7。段 1・段 2 のほか #770〜#772 を含む）を同じ PC で 4 回ずつ交互に（順を入れ替えて）開き、開くごとに 1 回押しを 2 回（慣らし。数えない）、1 回押しを 8 回、40 ms ごとの 20 回押しを 1 回測った。値は中央値（括弧は幅）で、内訳は中央値。
 
   | 測り方                                                       | 最適化の前         | いまの main     |

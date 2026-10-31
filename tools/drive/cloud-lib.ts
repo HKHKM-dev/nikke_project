@@ -99,7 +99,9 @@ export type PullPlan = {
 
 /**
  * 1 つの根（private・scratch・メモリ）を Drive に合わせる計画。listed は Drive の一覧（パス → stampOf）、local は手元（パス → md5）、
- * old は前の基準・衝突の記憶・置いたときの一覧の値。Drive の一覧の値が置いたときと同じものは取らない
+ * old は前の基準・衝突の記憶・置いたときの一覧の値。Drive の一覧の値が置いたときと同じものは取らない。
+ * listedFiles は、一覧を取り始める前の基準（files）。一覧の後に応答の終わりの --push が基準を進めたもの（送ったばかりで一覧に無い）は、
+ * Drive で消えたものと見なさない。省略は old.files と同じ（一覧から計画まで lock を持っている）
  */
 export function planPull(
   listed: ReadonlyMap<string, string>,
@@ -109,6 +111,7 @@ export function planPull(
     conflicts: Readonly<Record<string, string>>;
     seen: Readonly<Record<string, string>>;
   },
+  listedFiles: Readonly<Record<string, string>> = old.files,
 ): PullPlan {
   const out: PullPlan = { fetch: [], remove: [], files: {}, conflicts: {}, seen: {} };
   const carry = (path: string) => {
@@ -126,7 +129,7 @@ export function planPull(
   // Drive で消えたもの: 手元が前に取ったときのままなら手元からも消す。手元で変わっていれば残し、応答の終わりに戻す
   for (const [path, md5] of local) {
     if (listed.has(path)) continue;
-    if (md5 === old.files[path]) out.remove.push(path);
+    if (md5 === old.files[path] && listedFiles[path] === old.files[path]) out.remove.push(path);
     else carry(path);
   }
   return out;

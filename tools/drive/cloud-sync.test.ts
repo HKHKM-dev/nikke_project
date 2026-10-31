@@ -20,6 +20,8 @@ const setDrive = (path: string, text: string | Buffer) =>
   drive.set(path, { buf: Buffer.from(text), modified: new Date(Date.UTC(2026, 9, 30, 0, 0, clock++)).toISOString() });
 /** true なら、合言葉が違うときと同じく全部断る */
 let refuse = false;
+/** あれば、scratch/ の一覧を受けた時の中身で答えを作り、arrived を呼んでから release まで返さない */
+let holdScratch: { arrived: () => void; release: Promise<void> } | null = null;
 
 type Req = { op: string; prefix?: string; path?: string; content?: string; baseMd5?: string | null };
 function answer(req: Req): Record<string, unknown> {
@@ -84,8 +86,14 @@ beforeAll(async () => {
     let body = '';
     req.on('data', (c: Buffer) => (body += c.toString()));
     req.on('end', () => {
-      res.writeHead(200, { 'content-type': 'application/json' });
-      res.end(JSON.stringify(answer(JSON.parse(body) as Req)));
+      const parsed = JSON.parse(body) as Req;
+      const text = JSON.stringify(answer(parsed));
+      const hold = parsed.op === 'snapshot' && parsed.prefix === 'scratch' ? holdScratch : null;
+      hold?.arrived();
+      void (hold?.release ?? Promise.resolve()).then(() => {
+        res.writeHead(200, { 'content-type': 'application/json' });
+        res.end(text);
+      });
     });
   });
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -181,5 +189,32 @@ describe('drive/cloud-sync', () => {
     } finally {
       refuse = false;
     }
+  });
+
+  it('裏の --pull-rest が一覧を取った後に --push が送ったものは、一覧に無くても手元から消さない', async () => {
+    let arrived!: () => void;
+    let release!: () => void;
+    const listed = new Promise<void>((resolve) => (arrived = resolve));
+    holdScratch = { arrived, release: new Promise<void>((resolve) => (release = resolve)) };
+    try {
+      const rest = run('--pull-rest');
+      await listed;
+      // 一覧（race.md の無い中身）を返す前に、最初の応答で作ったものを応答の終わりに送る
+      writeFileSync(join(repo(), 'scratch/race.md'), 'race\n');
+      expect((JSON.parse(await run('--push')) as { systemMessage: string }).systemMessage).toContain(
+        'Drive に戻した: 1 件',
+      );
+      release();
+      expect(await rest).toContain('件置いた');
+    } finally {
+      release();
+      holdScratch = null;
+    }
+    expect(readFileSync(join(repo(), 'scratch/race.md'), 'utf8')).toBe('race\n');
+    expect(JSON.parse(readFileSync(state('base.json'), 'utf8')).files['scratch/race.md']).toBe(
+      md5(Buffer.from('race\n')),
+    );
+    // 次の応答の終わりに送り直さない
+    expect(await run('--push')).toBe('');
   });
 });

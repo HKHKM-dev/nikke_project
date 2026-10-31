@@ -285,9 +285,10 @@ function listingNotes(lists: Listing[]): string[] {
 /**
  * 一覧を基準・手元と比べ、Drive で消えたものを手元から消し、前に置いたときから変わったものを新しいものから取って置く。置くかは、
  * lock の中で、いまの基準と手元で決める（取っている間に応答の終わりの --push が基準を進めたら置かない）。置かなかったものは基準を
- * 引き継ぐので、次に回すと続きから取る。一覧を取れなかった根は、手元も基準もそのまま
+ * 引き継ぐので、次に回すと続きから取る。一覧を取れなかった根は、手元も基準もそのまま。listedFiles は一覧を取り始める前の基準
+ * （lock の外で一覧を取るとき。一覧の後に --push が送ったものを、Drive で消えたものとして手元から消さない）
  */
-async function bring(lists: Listing[], until: number, locked: Locked) {
+async function bring(lists: Listing[], until: number, locked: Locked, listedFiles?: Record<string, string>) {
   const notes: string[] = [];
   const queue = await locked((base) => {
     const local = localFiles();
@@ -300,6 +301,7 @@ async function bring(lists: Listing[], until: number, locked: Locked) {
         new Map([...files].map(([path, f]) => [path, stampOf(f)])),
         new Map([...local].flatMap(([path, v]) => (under(path) ? [[path, v.md5]] : []))),
         { files: base.files, conflicts: base.conflicts.files, seen: base.seen },
+        listedFiles,
       );
       for (const path of plan.remove) rmSync(localPathOf(path, places)!, { force: true });
       // この根の基準を、計画の基準で置き換える
@@ -388,8 +390,10 @@ async function pullRest(): Promise<string[]> {
     return [`裏で取っている途中（pid ${readJson<Lock>(restPid)?.pid}）。終わるのを待つ`];
   try {
     const until = Date.now() + REST_BUDGET_MS;
+    // 一覧は lock の外で取るので、取り始める前の基準を覚える（--push は Drive に送り終えてから基準を書く）
+    const listedFiles = readBase().files;
     const lists = await listRoots(trackedRoots(places), until);
-    const b = await bring(lists, until, locking);
+    const b = await bring(lists, until, locking, listedFiles);
     return [
       `${b.placed} 件置いた（取るものは ${b.queued} 件）`,
       ...b.notes,
