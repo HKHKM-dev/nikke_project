@@ -90,9 +90,17 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, raven: slotI
   const ticks = plan.skillHits.filter((h) => h.slotIndex === slotIndex && h.effect.dot !== undefined);
   const fires = fullChargeFrames(plan.shots[slotIndex]!);
 
-  it('ticks from 1 s after each full-charge shot with the stacks of the group so far, up to 10 (C-0182)', () => {
+  it('ticks from 1 s after 5 frames past each full-charge shot with the stacks of the group so far, up to 10 (C-0182・C-0765)', () => {
     expect(fires.length).toBeGreaterThan(10);
-    const expected = dotTicks(fires, 1, 5, plan.frames, 'afterInterval', 10);
+    // tick の刻みは撃った 5f 後（付けた 6f 後の 1f 前）を起点に数える（tickDelayFrames。plan/design-shot-count-trigger-frame.md 6.7 節）
+    const expected = dotTicks(
+      fires.map((f) => f + 5),
+      1,
+      5,
+      plan.frames,
+      'afterInterval',
+      10,
+    );
     expect(ticks.map((h) => ({ frame: h.frame, stacks: h.stacks }))).toEqual(expected);
     expect(Math.max(...ticks.map((h) => h.stacks!))).toBeGreaterThan(1);
   });
@@ -155,12 +163,20 @@ describe('recording 141 (Raven solo, manual)', () => {
   const stacks = obs('0141-02') as number[];
   const hits = obs('0141-08') as number[];
   const full = obs('0141-07') as number;
-  const model = dotTicks(applications, 1, 5, 1_000_000, 'afterInterval', 10);
+  // tick の刻みの起点は、付けたフレーム（撃った 6f 後）の 1f 前（撃った 5f 後。C-0765）
+  const model = dotTicks(
+    applications.map((f) => f - 1),
+    1,
+    5,
+    1_000_000,
+    'afterInterval',
+    10,
+  );
 
-  it('gives the observed ticks within 1 frame and the observed stacks (C-0182)', () => {
+  it('gives the observed ticks and the observed stacks (C-0182・C-0765)', () => {
     expect(model).toHaveLength(tickFrames.length);
     model.forEach((t, i) => {
-      expect(Math.abs(t.frame - tickFrames[i]!)).toBeLessThanOrEqual(1);
+      expect(t.frame).toBe(tickFrames[i]);
       expect(t.stacks).toBe(stacks[i]);
     });
   });

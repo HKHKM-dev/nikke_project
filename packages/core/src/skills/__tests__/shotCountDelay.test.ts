@@ -82,6 +82,17 @@ const drake = readJson<CharacterData>('../../../data/characters/101.json');
 const scarlet = readJson<CharacterData>('../../../data/characters/225.json');
 const raven = readJson<CharacterData>('../../../data/characters/851.json');
 
+const rawRaven = readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(
+  '../../../data/skills/851.json',
+);
+
+/** 851.json を写して、skill1 の effects[0]（S1 の持続ダメージ）の欄を差し替えた定義 */
+function withShock(fields: Record<string, unknown>): unknown {
+  const copy = structuredClone(rawRaven);
+  copy.skills.skill1!.effects[0] = { ...copy.skills.skill1!.effects[0], ...fields };
+  return copy;
+}
+
 /** 313.json を写して、skill1 の effects[0] の欄を差し替えた定義を検証にかける */
 function withPrivatyS1(fields: Record<string, unknown>, sequential = false): unknown {
   const copy = structuredClone(rawPrivaty);
@@ -136,8 +147,8 @@ describe('cycle の段と dot の付けたときのゲージの遅れ', () => {
       MAX_SKILL_LEVELS,
     );
     expect(cycle!.steps.map((s) => s.delayFrames)).toEqual([10, 9, 9]);
-    // ゲージは射撃から数えたまま（C-0085）
-    expect(cycle!.gaugeHits).toEqual([[5], [5, 19, 33], [5]]);
+    // ゲージも段のヒットと同じフレーム（C-0764。plan/design-shot-count-trigger-frame.md 6.7 節の論点 10）
+    expect(cycle!.gaugeHits).toEqual([[10], [9, 23, 38], [9]]);
   });
 
   it('adds the apply gauge of Raven S1 six frames after the shot (C-0181)', () => {
@@ -147,18 +158,23 @@ describe('cycle の段と dot の付けたときのゲージの遅れ', () => {
       MAX_SKILL_LEVELS,
     );
     expect(shock!.dot!.gaugeOnApplyDelayFrames).toBe(6);
+    // tick の刻みは撃った 5f 後から（C-0765。6.7 節の論点 9）
+    expect(shock!.dot!.tickDelayFrames).toBe(5);
   });
 
   it('needs gaugeOnApply and a shot count trigger without a chance for gaugeOnApplyDelayFrames', () => {
-    const raw = readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(
-      '../../../data/skills/851.json',
-    );
-    const withShock = (fields: Record<string, unknown>): unknown => {
-      const copy = structuredClone(raw);
-      copy.skills.skill1!.effects[0] = { ...copy.skills.skill1!.effects[0], ...fields };
-      return copy;
-    };
     expect(() => parseSkillDefinition(withShock({ gaugeOnApply: undefined }))).toThrow(/needs gaugeOnApply/);
     expect(() => parseSkillDefinition(withShock({ gaugeOnApplyDelayFrames: 0 }))).toThrow(/gaugeOnApplyDelayFrames/);
+  });
+
+  it('takes a positive integer tickDelayFrames only with a shot count trigger and without a state', () => {
+    for (const d of [0, -1, 1.5, '5']) {
+      expect(() => parseSkillDefinition(withShock({ tickDelayFrames: d }))).toThrow(/tickDelayFrames/);
+    }
+    expect(() =>
+      parseSkillDefinition(
+        withShock({ trigger: 'burstUse', gaugeOnApply: undefined, gaugeOnApplyDelayFrames: undefined }),
+      ),
+    ).toThrow(/tickDelayFrames/);
   });
 });

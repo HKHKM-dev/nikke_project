@@ -394,7 +394,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 33・補足
 ## 225 紅蓮：ブラックシャドウ
 
 - **skill1**: supported
-  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）、C-0651（確定）、C-0661（確定）
+  - effects[0] cycle・fullChargeShot: C-0047（確定）、C-0085（確定）、C-0651（確定）、C-0661（確定）、C-0764（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0490（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0490（確定）
@@ -887,7 +887,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 33・補足
 ## 851 レイヴン
 
 - **skill1**: supported
-  - effects[0] dot・fullChargeShot: C-0181（確定）、C-0182（確定）、C-0111（確定）、C-0112（確定）、C-0661（確定）
+  - effects[0] dot・fullChargeShot: C-0181（確定）、C-0182（確定）、C-0111（確定）、C-0112（確定）、C-0661（確定）、C-0765（確定）
   - effects[1] timed・fullBurstStart・attack: C-0185（確定）
 - **skill2**: noEffect
   - notes[0] 前提の外: 戦闘開始時とフルバーストタイム発動時の自分のパーツダメージ▲（急所攻略）は、射撃場の的にパーツが無いので効かない: C-0365（確定）

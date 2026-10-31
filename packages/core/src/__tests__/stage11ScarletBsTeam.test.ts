@@ -152,9 +152,9 @@ describe('S1 の段のヒットで溜まるゲージ（V-0030・C-0085）', () =
   const plan = planTeamRun(REC46);
   const shots = plan.shots[0]!.frames;
 
-  it('charges 25,000 per hit, 5f after the shot for A and C and 5 / 19 / 33f for the 3 ticks of B', () => {
+  it('charges 25,000 per hit on the tier hits: 10f after the shot for A, 9 / 23 / 38f for the 3 ticks of B and 9f for C (C-0764)', () => {
     // 段の発動（planSkillHits）から出した予約と、1 パス目で追った予約が一致する（窓の中の段も含めて）
-    const delays = [[5], [5, 19, 33], [5]];
+    const delays = [[10], [9, 23, 38], [9]];
     const expected = plan.skillHits
       .filter((h) => h.slotIndex === 0 && h.effect.cycle !== undefined)
       .flatMap((h) => delays[h.effect.cycle!.step]!.map((d) => h.frame - TIER_DELAYS[h.effect.cycle!.step]! + d));

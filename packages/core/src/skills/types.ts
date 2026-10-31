@@ -1400,6 +1400,12 @@ export type DotEffect = {
    */
   gaugeOnApplyDelayFrames?: number;
   /**
+   * 回数トリガーの遅れ編の第 2 段の残り（plan/design-shot-count-trigger-frame.md 6.7 節の論点 9）: tick の刻み（とスタックの数）を、発火のフレームの d 後を
+   * 起点に数える（1 以上の整数。レイヴンは 5。付けたのは撃った 6f 後で、その 1f 前が起点。C-0765）。
+   * 付けたときのゲージ（gaugeOnApplyDelayFrames）は動かさない。トリガーは射撃の回数トリガーだけ
+   */
+  tickDelayFrames?: number;
+  /**
    * レイヴン編（2.2 節）: tick ごとに、射手の 1 ヒットぶんのバーストゲージを tick のフレームに足す。スタックの数によらない
    * （C-0181）。firstTick: afterInterval で、維持が間隔の整数倍のときだけ（8 節の 2。解決のときに見る）。トリガーは射撃の回数トリガーか、
    * burstUse（クルミのハッキング。C-0196。plan/design-raven-s1.md 10 節）。同じ state の効果は、どれも同じ値にする（tick は持続ダメージ
@@ -3631,6 +3637,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'maxStacksRef',
         'gaugeOnApply',
         'gaugeOnApplyDelayFrames',
+        'tickDelayFrames',
         'gaugeOnTick',
         'durationUntil',
         'tickIntervalFrames',
@@ -3742,6 +3749,10 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
       effect.trigger,
       `${path}.gaugeOnApplyDelayFrames`,
     );
+  }
+  if (v.tickDelayFrames !== undefined) {
+    if (effect.state !== undefined) fail(`${path}.tickDelayFrames`, 'cannot be combined with state');
+    effect.tickDelayFrames = parseShotCountDelay(v.tickDelayFrames, effect.trigger, `${path}.tickDelayFrames`);
   }
   if (effect.gaugeOnTick === true && effect.firstTick !== 'afterInterval') {
     fail(`${path}.gaugeOnTick`, 'needs firstTick afterInterval');

@@ -671,6 +671,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[];
     /** 回数トリガーの遅れ編の第 2 段: 付けたときのゲージを発火の何フレーム後に足すか（0 は発火のフレーム。C-0181） */
     applyDelay: number;
+    /** tick の刻みを発火の何フレーム後から数えるか（skills/types.ts の DotEffect.tickDelayFrames。0 は発火のフレーム） */
+    tickDelay: number;
     onBurstUse: boolean;
     tracker: DotTickTracker;
     onTick: boolean;
@@ -701,6 +703,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         slotIndex: i,
         effects,
         applyDelay: Math.max(0, ...group.map((e) => e.dot!.gaugeOnApplyDelayFrames ?? 0)),
+        tickDelay: dot.tickDelayFrames ?? 0,
         onBurstUse,
         tracker: dotTickTracker(dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick),
         onTick,
@@ -749,7 +752,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const trackDotBurstUse = dotGaugeTrackers.some((t) => t.onBurstUse);
   /** 持続ダメージがフレーム f に付いた。新しく決まった tick の分を、tick のフレームに予約する（どれも f より後） */
   const reserveDotTicks = (t: (typeof dotGaugeTrackers)[number], f: number): void => {
-    const { ticks } = t.tracker.fire(f);
+    const { ticks } = t.tracker.fire(f + t.tickDelay);
     if (!t.onTick) return;
     // 2 段目の段 1: 時間で変わるゲージ速度は、付いたフレームの速度で tick の分も決める
     const energy = targetEnergyNow(t.slotIndex, t.energy);

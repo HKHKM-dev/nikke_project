@@ -151,6 +151,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     gaugeOnApply?: true;
     /** 回数トリガーの遅れ編の第 2 段: 付けたときのゲージを発火の何フレーム後に足すか（レイヴンは 6。frame/firstPass.ts） */
     gaugeOnApplyDelayFrames?: number;
+    /** tick の刻みを発火の何フレーム後から数えるか（skills/types.ts の DotEffect.tickDelayFrames） */
+    tickDelayFrames?: number;
     gaugeOnTick?: true;
     /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
     autoAttack?: true;
@@ -526,6 +528,7 @@ export function resolveDotEffects(
           ...(!auto && effect.gaugeOnApplyDelayFrames !== undefined
             ? { gaugeOnApplyDelayFrames: effect.gaugeOnApplyDelayFrames }
             : {}),
+          ...(!auto && effect.tickDelayFrames !== undefined ? { tickDelayFrames: effect.tickDelayFrames } : {}),
           ...(gaugeOnTick ? { gaugeOnTick: true as const } : {}),
           ...(auto ? { autoAttack: true as const } : {}),
           ...(!auto && effect.tickIntervalFrames !== undefined

@@ -17,7 +17,7 @@
               "damageType": "skill",
               "ref": 2,
               "gaugeHits": [
-                5
+                10
               ],
               "delayFrames": 10
             },
@@ -26,9 +26,9 @@
               "damageType": "distributed",
               "ref": 3,
               "gaugeHits": [
-                5,
-                19,
-                33
+                9,
+                23,
+                38
               ],
               "delayFrames": 9,
               "assumes": {
@@ -41,20 +41,21 @@
               "damageType": "distributed",
               "ref": 4,
               "gaugeHits": [
-                5
+                9
               ],
               "delayFrames": 9
             }
           ],
           "assumes": {
-            "ja": "対象は単体ボス（最も防御の低い敵 1 機・攻撃範囲内の敵・敵全体とも同じ敵で、分配ダメージは全額）。回数は戦闘開始からの通算のフルチャージ攻撃回数で、段は A → B → C を循環する（録画 0046・0047）。段のダメージは段を出した射撃の A 10f・B 9f・C 9f 後（B は 1 ティック目。C-0651）。ゲージ（gaugeHits）は射撃から数えたまま",
-            "en": "A single boss is assumed (the lowest-DEF enemy, enemies in range and all enemies are the same target; distributed damage is dealt in full). The count is the running total of full charge attacks since the battle started, and the tiers cycle A → B → C (recordings 46 and 47). Tier damage lands 10 (A), 9 (B, first tick) and 9 (C) frames after the shot; the gauge (gaugeHits) still counts from the shot"
+            "ja": "対象は単体ボス（最も防御の低い敵 1 機・攻撃範囲内の敵・敵全体とも同じ敵で、分配ダメージは全額）。回数は戦闘開始からの通算のフルチャージ攻撃回数で、段は A → B → C を循環する（録画 0046・0047）。段のダメージは段を出した射撃の A 10f・B 9f・C 9f 後（B は 1 ティック目。C-0651）。ゲージ（gaugeHits）も段のヒットと同じフレームに溜まる（A 10f・B の 3 ティック 9・23・38f・C 9f。C はバーが隠れて読めず、A・B から推す。C-0764）",
+            "en": "A single boss is assumed (the lowest-DEF enemy, enemies in range and all enemies are the same target; distributed damage is dealt in full). The count is the running total of full charge attacks since the battle started, and the tiers cycle A → B → C (recordings 46 and 47). Tier damage lands 10 (A), 9 (B, first tick) and 9 (C) frames after the shot; the gauge (gaugeHits) charges on the same frames as the tier hits (A 10, B's three ticks 9, 23 and 38, C 9; C is inferred from A and B as the bar is hidden)"
           },
           "claims": [
             "C-0047",
             "C-0085",
             "C-0651",
-            "C-0661"
+            "C-0661",
+            "C-0764"
           ]
         }
       ]
