@@ -128,12 +128,9 @@
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0691"
-          ],
-          "assumes": {
-            "ja": "維持は説明文の 10 秒（窓の切れ目は測っていない）",
-            "en": "Lasts the 10 s in the description (the end of the window is not measured)"
-          }
+            "C-0691",
+            "C-0778"
+          ]
         }
       ]
     }
