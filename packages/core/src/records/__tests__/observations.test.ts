@@ -548,6 +548,53 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 3 })).toThrow('3 回目の発動が無い');
   });
 
+  it('measures the edges of a window received by an ally from the burst activation mark of another slot (V-0555)', () => {
+    const effect = (skill: string, stat: string) => ({ source: { skill }, stat, effectIndex: 0, value: 0.1 });
+    const track = (holder: number, items: { start: number; end: number }[], stat = 'attack') => ({
+      holder,
+      sourceSlotIndex: holder,
+      origin: { kind: 'timed', effect: effect('skill1', stat) },
+      stage: 1,
+      items,
+    });
+    const result = {
+      schedule: {
+        activations: [
+          { slotIndex: 2, frame: 100, startsFullBurst: false },
+          { slotIndex: 3, frame: 130, startsFullBurst: true, fullBurstStart: 136 },
+          { slotIndex: 2, frame: 2000, startsFullBurst: false },
+        ],
+        fullBurstWindows: [{ start: 136, end: 724 }],
+      },
+      history: {
+        tracks: [
+          // 続いた小片は 1 つの窓（100〜1570）
+          track(3, [
+            { start: 100, end: 800 },
+            { start: 800, end: 1570 },
+          ]),
+          track(3, [{ start: 2003, end: 3473 }]),
+          track(3, [{ start: 100, end: 400 }], 'reloadSpeed'),
+          track(1, [{ start: 2000, end: 3470 }]),
+        ],
+        amplified: [],
+        slots: [],
+      },
+    } as unknown as SimResult;
+    const metric = METRICS.buffEdgeFromActivation!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    const args = { slot: 4, skill: 'skill1', stat: 'attack', from: 3 };
+    // 印は替わり目（本当の発動の 5f 後）と、その前の発動の止まり 1f。窓の始まりは印の 6f 前
+    expect(value({ ...args, n: 0, edge: 'start' })).toBe(-6);
+    // 切れ目までに、III の発動（フルバーストの入りの止まり 22f）が挟まる
+    expect(value({ ...args, n: 0, edge: 'end' })).toBe(1570 + 22 + 1 - 106);
+    expect(value({ ...args, n: 1, edge: 'start' })).toBe(-2);
+    expect(() => value({ ...args, n: 2, edge: 'start' })).toThrow('2 回目の発動が無い');
+    expect(() => value({ ...args, slot: 3, n: 1, edge: 'start' })).toThrow('始まった窓が無い');
+    expect(() => value({ ...args, n: 0, edge: 'middle' })).toThrow('edge は start か end');
+  });
+
   it('reports unknown metrics, missing args, a model other than sim and unknown presets', () => {
     const base = observations.find((o) => o.id === '0047-02')!;
     const broken = (patch: Partial<NonNullable<Observation['compare']>>, id = '0047-99'): Observation => ({
