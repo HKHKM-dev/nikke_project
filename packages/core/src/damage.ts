@@ -67,7 +67,8 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
 /**
  * 分配ダメージのヒットに掛ける、分配ダメージ▲の乗数。受けるダメージ▲（damageTaken）は分配ダメージ▲と 1 つの和
  * (1 + Σ分配ダメージ + Σ受けるダメージ) で掛かるので、ほかの効果と同じく (1 + Σ受けるダメージ) を掛けた値に、その比を掛ける形にそろえる
- * （エレグの S1 の分配ダメージ C-0767・雪子のバーストの分配ダメージ C-0768）。引数はどちらも 1 + Σ の乗数。▲の無いときは 1
+ * （エレグの S1 の分配ダメージ C-0767・雪子のバーストの分配ダメージ C-0768・クイーン（真）の S1 の 1more C-0781・紅蓮：ブラックシャドウの
+ * S1 の段 B・段 C C-0782）。引数はどちらも 1 + Σ の乗数。▲の無いときは 1
  */
 export function distributedHitMultiplier(distributedMultiplier: number, damageTakenMultiplier: number): number {
   return 1 + (distributedMultiplier - 1) / damageTakenMultiplier;
