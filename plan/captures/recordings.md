@@ -794,6 +794,8 @@
 | 0820 | `20261101-0820_rl_tu_squad.mp4` | エマ：タクティカル・アップ（93、MG・灼熱・SSR） + ウンファ：タクティカル・アップ（95、SR・灼熱・SSR） + ◎ベスティー：タクティカル・アップ（94、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0584 の撮影 B3（段 16 の PR 2）。エマ：タクティカル・アップ（I）・ウンファ：タクティカル・アップ（II）・ベスティー：タクティカル・アップ（III・操作）。オート射撃 ON・オートバースト ON |
 | 0821 | `20261101-0821_smg+mg+rl_sakura+crown+rapi-redhood_stick-ad.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + クラウン（330、MG・鉄甲・SSR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0581。鈴原サクラ（I・AI）・クラウン（II・AI）・ラピ：レッドフード（III・操作） |
 | 0822 | `20261101-0822_smg+mg+rl_sakura+crown+rapi-redhood_stick-ad.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + クラウン（330、MG・鉄甲・SSR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0581。鈴原サクラ（I・AI）・クラウン（II・AI）・ラピ：レッドフード（III・操作） |
+| 0825 | `20261101-0825_sr+sg+mg+ar+smg_cocoa+soldier-fa+marian-queen+idoll-sun+sakura_ally-taken.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎マリアン：クイーン（19、MG・灼熱・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + 鈴原サクラ（836、SMG・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0585 の撮影の依頼（ココア・ソルジャーF.A.・マリアン：クイーン（操作）・I-DOLL・サン・鈴原サクラ・手動操作なし） |
+| 0826 | `20261101-0826_sr+sg+mg+ar+smg_cocoa+soldier-fa+marian-queen+idoll-sun+sakura_ally-taken.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎マリアン：クイーン（19、MG・灼熱・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + 鈴原サクラ（836、SMG・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0585 の撮影の依頼（ココア・ソルジャーF.A.・マリアン：クイーン（操作）・I-DOLL・サン・鈴原サクラ・手動操作なし） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
