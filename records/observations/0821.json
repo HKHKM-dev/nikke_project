@@ -1,0 +1,168 @@
+[
+  {
+    "id": "0821-01",
+    "recording": "0821",
+    "kind": "total",
+    "use": "record",
+    "value": 734134229,
+    "description": "鈴原サクラ・クラウン・ラピ：レッドフード の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11402。増分は 7196 個"
+    },
+    "source": "V-0581",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0821-02",
+    "recording": "0821",
+    "kind": "count",
+    "use": "record",
+    "value": 219,
+    "unit": "トリガー",
+    "description": "鈴原サクラ・クラウン・ラピ：レッドフード のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 7196 個。前の増分から 30f 未満の増分（7182 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 47f）から発の数を決めた（2 発になった組 14 個）"
+    },
+    "source": "V-0581",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0821-03",
+    "recording": "0821",
+    "source": "V-0581",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1022250,
+    "description": "クラウンのバーストの尾（フルバーストの後、クラウンのバーストの攻撃ダメージ▲ 36.24% の 15 秒の終わりまで）の付着の 1 ヒット（コア・会心でない・距離ボーナスなし。鈴原サクラの受けるダメージ▲あり）",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "f4590 の 1,082,344 − 60,094・f4469 の 1,119,327 − 97,077（どれも 1,022,250）。同じフレームの通常攻撃の和（ラピ：レッドフードとクラウンの MG は毎フレーム撃つ）は、前後 10f に繰り返し出る増分の値で、モデルのその段の 2 人の通常攻撃の 1 ヒットの和と同じ値（60,094・97,077）。E2（別の乗数）なら 1,216,829"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "projectile": "stick",
+        "frame": 1289
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0821-04",
+    "recording": "0821",
+    "source": "V-0581",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1003232,
+    "description": "クラウンのバーストの尾の付着の 1 ヒット（コア + 距離ボーナス・会心でない。鈴原サクラの受けるダメージ▲なし）",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "f6823 の 1,056,434 − 53,202（同じフレームの通常攻撃の和（ラピ：レッドフードとクラウンの MG は毎フレーム撃つ）は、前後 10f に繰り返し出る増分の値で、モデルのその段の 2 人の通常攻撃の 1 ヒットの和と同じ値）。E2 なら 1,194,192"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "projectile": "stick",
+        "frame": 3633,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0821-05",
+    "recording": "0821",
+    "source": "V-0581",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 778104,
+    "description": "クラウンの S2 のリラックスの回復の後（攻撃ダメージ 20.99%▲）の、フルバーストの外の付着の 1 ヒット（コア + 距離ボーナス・会心でない。鈴原サクラの受けるダメージ▲あり）",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "f7705 の単独の 778,104。E2 なら 868,701"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "projectile": "stick",
+        "frame": 5033,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0821-06",
+    "recording": "0821",
+    "source": "V-0581",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "record",
+    "value": [8, 0],
+    "description": "フルバーストの外の付着の候補の増分のうち、攻撃ダメージ▲の乗った付着の値と前後 10f の通常攻撃の和に分かれた数: [E1（同じ枠）で分かれた、E2（別の乗数）で分かれた]",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "付着の値は攻撃力の段（クラウンの S1 の攻撃力▲の有無）・攻撃ダメージ▲（0・20.99%・36.24%・57.23%）・受けるダメージ▲・コア/会心/距離ボーナスの組の全部で作り、差の許しは ±2。攻撃ダメージ▲の乗った付着 8 個（f2123・4469・4590・6823・6944・7584・7705・9291）。E2 で分かれる増分は無い。攻撃ダメージ▲の無い付着（どちらの仮説でも同じ値）と、フルバーストの窓の中の付着は数えていない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]
