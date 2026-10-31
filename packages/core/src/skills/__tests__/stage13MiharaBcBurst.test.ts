@@ -80,6 +80,17 @@ describe('dotStacksAt と消去', () => {
       { frame: 89, stacks: 1 },
       { frame: 230, stacks: 1 },
     ]);
+    // 消去のフレームちょうどの tick は出る（判定の後に閉じる）。その次の tick は出ない
+    expect(latestDotTicks([0], 260, 20, 59.25, [89])).toEqual([
+      { frame: 30, stacks: 1 },
+      { frame: 89, stacks: 1 },
+    ]);
+    // 消去と同じフレームの付与は、消去の前に数える（その付与の tick は出ない）
+    expect(latestDotTicks([0, 89, 120], 260, 20, 59.25, [89])).toEqual([
+      { frame: 30, stacks: 1 },
+      { frame: 150, stacks: 1 },
+      { frame: 209, stacks: 1 },
+    ]);
   });
 });
 
