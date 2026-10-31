@@ -54,7 +54,7 @@
 
 ## 5. 撮る・取り込む
 
-- 撮り終えたら、1 回の撮影の録画をまとめて、すぐに取り込む: `node tools/captures/intake.ts <元ファイル>... --name <識別子>,... --rid ... --controlled ... [--treasure <枠>:<段階>] --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（番号の取得・リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・録画の JSON の `backup` への記録・録画の一覧 [captures/recordings.md](captures/recordings.md) の作り直し・番号を押さえる commit と push。オプションは `intake.ts` の冒頭）。
+- 撮り終えたら、1 回の撮影の録画をまとめて、すぐに取り込む: `node tools/captures/intake.ts <元ファイル>... --name <識別子>,... --rid ... --controlled ... [--treasure <枠>:<段階>（スナップショットで決まらない枠だけ）] --target BigArms --element Fire --mode range-3min --fixed-spec on|off ...`（番号の取得・リネーム・移動・素性・`records/recordings/<録画 id>.json`・Drive への同期と sha256 の突き合わせ・録画の JSON の `backup` への記録・録画の一覧 [captures/recordings.md](captures/recordings.md) の作り直し・番号を押さえる commit と push。オプションは `intake.ts` の冒頭）。
 - 道具が埋めない項目（`人が埋める項目` に出る）を埋めたら、`npm run records:check` で一覧を作り直す。命名規約は [captures/index.md](captures/index.md)「命名規約」。
 
 ## 6. 読む

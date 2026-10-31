@@ -1,6 +1,7 @@
 // 育成データの取り込みの名前の決め方（plan/design-build-snapshot.md 2.2 節）と、録画に結び付けるスナップショットの選び方（同 6 節）。
 // store.ts と tools/captures/intake.ts から使う。
 import { SNAPSHOT_NAME } from '../../packages/core/src/records/ids.ts';
+import type { SnapshotTreasure } from '../../packages/core/src/shiftypad.ts';
 
 /** 取得の時刻（ISO）を日本時間の日付（YYYY-MM-DD）にする */
 export function jstDate(iso: string): string {
@@ -68,4 +69,51 @@ export function parseSnapshotAnswer(answer: string, fallback: string | null): st
   if (a === '') return fallback;
   if (a === '-') return null;
   return SNAPSHOT_NAME.test(a) ? a : undefined;
+}
+
+/** 取り込みの 1 枠（宝物を持つキャラの枠だけを渡す） */
+export type TreasureSlot = { slot: number; rid: number; name: string };
+
+/**
+ * 宝物を持つ枠の段階（plan/design-workflow-simplification-6.md 3 節）。--treasure の値（given。0 は宝物なし）を優先し、無ければ
+ * スナップショット（null なら無い）の段階（C-0744）。宝物を付けていなければ書かない。段階が決まらない枠（スナップショットが無い・
+ * キャラが無い・Lv 0）は missing に出す（オーナーに確かめて --treasure で書く）
+ */
+export function treasureForSlots(
+  slots: readonly TreasureSlot[],
+  given: ReadonlyMap<number, number>,
+  snapshot: {
+    name: string;
+    characters: Readonly<Record<string, { treasure: Pick<SnapshotTreasure, 'level' | 'phase'> | null }>>;
+  } | null,
+): { phases: Map<number, number>; notices: string[]; missing: string[] } {
+  const phases = new Map<number, number>();
+  const notices: string[] = [];
+  const missing: string[] = [];
+  for (const { slot, rid, name } of slots) {
+    const c = snapshot?.characters[rid];
+    // スナップショットの段階（0 は宝物なし）か、決まらない理由
+    const known =
+      snapshot === null
+        ? '育成のスナップショットが無い'
+        : c === undefined
+          ? `スナップショット ${snapshot.name} にキャラが無い`
+          : c.treasure === null
+            ? 0
+            : (c.treasure.phase ?? `スナップショット ${snapshot.name} の宝物が Lv ${c.treasure.level}（段階が未確定）`);
+    const g = given.get(slot);
+    const phase = g ?? (typeof known === 'number' ? known : undefined);
+    if (phase === undefined) {
+      missing.push(`枠 ${slot}（${name}）: ${known}`);
+      continue;
+    }
+    if (phase > 0) phases.set(slot, phase);
+    if (g === undefined)
+      notices.push(
+        `枠 ${slot}（${name}）: 宝物${phase > 0 ? `の段階 ${phase}` : 'なし（基礎版）'}（スナップショット ${snapshot!.name}）`,
+      );
+    else if (typeof known === 'number' && known !== g)
+      notices.push(`枠 ${slot}（${name}）: --treasure は段階 ${g}、スナップショット ${snapshot!.name} は段階 ${known}`);
+  }
+  return { phases, notices, missing };
 }

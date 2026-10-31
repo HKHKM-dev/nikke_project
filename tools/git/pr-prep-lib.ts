@@ -1,5 +1,6 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git を呼ぶ部分（pr-prep.ts）と分けてテストする。
 import { idsInPaths, nextId } from '../../packages/core/src/records/drafts.ts';
+import { ID_DIGITS } from '../../packages/core/src/records/ids.ts';
 
 /** 衝突したファイルを、main の版を取ってよい生成物と、人が直すものに分ける */
 export function splitConflicts(
@@ -68,4 +69,52 @@ function recordingIds(paths: readonly string[]): string[] {
   return paths
     .map((p) => /^records\/recordings\/(\d{3,})\.json$/.exec(p.trim())?.[1])
     .filter((x): x is string => x !== undefined);
+}
+
+/** git diff -U0 の出力から、ファイルごとに足した（変えた）行の番号（ブランチの版の 1 始まり） */
+export function addedLines(diff: string): Map<string, Set<number>> {
+  const out = new Map<string, Set<number>>();
+  let lines: Set<number> | undefined;
+  for (const l of diff.split('\n')) {
+    const file = /^\+\+\+ b\/(.+)$/.exec(l)?.[1];
+    if (file !== undefined) {
+      lines = new Set();
+      out.set(file, lines);
+      continue;
+    }
+    const hunk = /^@@ -\S+ \+(\d+)(?:,(\d+))? @@/.exec(l);
+    if (hunk === null || lines === undefined) continue;
+    const start = Number(hunk[1]);
+    const count = hunk[2] === undefined ? 1 : Number(hunk[2]);
+    for (let n = start; n < start + count; n++) lines.add(n);
+  }
+  return out;
+}
+
+/** 進み具合の書き写しを見るファイル（git の pathspec） */
+export const PROGRESS_PATHS = ['plan/backlog.md', 'plan/design-*.md'];
+
+/** 進み具合の書き写しの印（検証記録・結論の ID か「PR N を実装」） */
+const PROGRESS = new RegExp(`(?<![A-Za-z0-9_-])[CV]-${ID_DIGITS}(?![0-9A-Za-z_-])|PR ?\\d+ ?(?:を|は)?(?:実装|出し)`);
+
+/**
+ * 進み具合を書き写した行（AGENTS.md「文書の書き方」: 進み具合は、その仕事の設計書の経過にだけ書く）。見るのは backlog.md 8 節、
+ * 段の一覧の経過、設計書の冒頭の「状態」の行で、ブランチで足した行のうち検証記録・結論の ID か「PR N を実装」を含むもの
+ */
+export function progressCopies(path: string, text: string, added: ReadonlySet<number>): string[] {
+  // 節は題名で見る（番号は節を消すと変わる）
+  const watch: (line: string, heading: string) => boolean =
+    path === 'plan/backlog.md'
+      ? (_, heading) => heading.includes('課題（設計書のあるもの）')
+      : path === 'plan/design-skill-stages.md'
+        ? (line, heading) => line.startsWith('- 状態:') || heading === '## 経過'
+        : (line) => line.startsWith('- 状態:');
+  const out: string[] = [];
+  let heading = '';
+  text.split('\n').forEach((line, i) => {
+    if (line.startsWith('## ')) heading = line;
+    if (added.has(i + 1) && PROGRESS.test(line) && watch(line, heading))
+      out.push(`${path}:${i + 1}: ${line.length > 80 ? `${line.slice(0, 80)}…` : line}`);
+  });
+  return out;
 }

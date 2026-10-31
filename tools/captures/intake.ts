@@ -8,7 +8,9 @@
 // 1 つ（全部に同じ）か元ファイルと同じ数を繰り返す。ほかの引数は全部の録画に同じものを使う。番号は --id から順に、--id が無ければ
 // どのブランチも使っていない次の番号から順に取る。1 本ずつ子のプロセスで取り込み、失敗したらそこで止める。終わりに npm run records:table
 // を回し、書いた録画の JSON と一覧だけを commit して push する（番号を押さえる。packages/core/scripts/reserve.ts。--no-push でしない）。
-// --treasure は宝物ありの枠と段階（<枠>:<段階>,...。段階はオーナーに確かめた値。plan/captures/protocol.md「撮った後」）。
+// 宝物を持つキャラの枠の段階は、撮った日以前でいちばん新しい育成のスナップショット（スペック固定 OFF なら buildSnapshot）から埋める
+// （C-0744。plan/design-workflow-simplification-6.md 3 節）。--treasure <枠>:<段階>,... はそれより優先する（0 は宝物なし）。
+// スナップショットで段階が決まらない枠（スナップショットが無い・キャラが無い・Lv 0）は、オーナーに確かめて --treasure で書く（無ければ止める）。
 // スペック固定 OFF（--fixed-spec off）の録画は、読むのに使う育成のスナップショット（private/builds/<名前>.json）を台帳の buildSnapshot に
 // 書く（plan/design-build-snapshot.md 6 節）。--build-snapshot が無ければ、撮った日以前でいちばん新しいものを既定にして聞く（端末でなければ
 // 聞かずに既定を書く。- は書かない。まとめて取り込むときは、初めの録画で決めたものを残りにも書く）。撮った日に取ったものが無ければ知らせる。private/builds/ が無い環境では聞かない（人が埋める）。
@@ -57,8 +59,8 @@ import { RECORDING_ID } from '../../packages/core/src/records/ids.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
 import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import { reserve } from '../../packages/core/scripts/reserve.ts';
-import { buildsDir, snapshotNames } from '../builds/dirs.ts';
-import { parseSnapshotAnswer, snapshotForRecording } from '../builds/import-lib.ts';
+import { buildsDir, readSnapshot, snapshotNames } from '../builds/dirs.ts';
+import { parseSnapshotAnswer, snapshotForRecording, treasureForSlots } from '../builds/import-lib.ts';
 import { gatewayUrl, move } from '../drive/gateway.ts';
 import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
 import { relUnder, splitRel } from '../drive/sync-lib.ts';
@@ -258,16 +260,16 @@ const onOff = (v: string | undefined, name: string): boolean | null => {
   return fail(`${name} は on か off`);
 };
 const rids = values.rid === undefined ? [] : values.rid.split(',').map((s) => Number(s.trim()));
-// 宝物ありの枠と段階（--treasure <枠>:<段階>,...）。録画を動かす前に確かめる
-const treasure = new Map<number, number>();
+// 宝物を持つ枠の段階の指定（--treasure <枠>:<段階>,...。0 は宝物なし）。録画を動かす前に確かめる
+const givenTreasure = new Map<number, number>();
 for (const t of values.treasure?.split(',') ?? []) {
-  const m = /^(\d+):([1-3])$/.exec(t.trim());
-  if (!m) fail(`--treasure は <枠>:<段階（1〜3）> を , で並べる（${t}）`);
+  const m = /^(\d+):([0-3])$/.exec(t.trim());
+  if (!m) fail(`--treasure は <枠>:<段階（0〜3。0 は宝物なし）> を , で並べる（${t}）`);
   const slot = Number(m[1]);
   if (slot < 1 || slot > rids.length) fail(`--treasure の枠 ${slot} が --rid に無い`);
   if (characterOf(rids[slot - 1]!).treasure === null)
     fail(`--treasure の枠 ${slot}（rid ${rids[slot - 1]}）のキャラは宝物を持たない`);
-  treasure.set(slot, Number(m[2]));
+  givenTreasure.set(slot, Number(m[2]));
 }
 
 const recordPath = recordPathOf(values.id);
@@ -321,6 +323,27 @@ const characterName = (rid: number): string => characterOf(rid).name.ja;
 const date = dateOf();
 const fixedSpec = onOff(values['fixed-spec'], '--fixed-spec');
 const buildSnapshot = await chooseSnapshot();
+const treasure = treasurePhases();
+
+/** 宝物を持つ枠の段階（冒頭の説明）。録画を動かす前に決める */
+function treasurePhases(): Map<number, number> {
+  const slots = rids.flatMap((rid, i) => {
+    const c = characterOf(rid);
+    return c.treasure === null ? [] : [{ slot: i + 1, rid, name: c.name.ja }];
+  });
+  if (slots.length === 0) return new Map();
+  const name =
+    typeof buildSnapshot === 'string' ? buildSnapshot : snapshotForRecording(snapshotNames() ?? [], date).name;
+  const read = name === null ? null : readSnapshot(name);
+  const snapshot = read === null ? null : { name: name!, characters: read.characters };
+  const { phases, notices, missing } = treasureForSlots(slots, givenTreasure, snapshot);
+  for (const n of notices) console.log(n);
+  if (missing.length > 0)
+    fail(
+      `宝物の段階が決まらない枠がある。オーナーに確かめて --treasure <枠>:<段階>（宝物なしは 0）で書く:\n  ${missing.join('\n  ')}`,
+    );
+  return phases;
+}
 
 /**
  * 台帳の buildSnapshot（冒頭の説明）。録画を動かす前に決める。書かないなら null、private/builds/ が無くて聞けなければ undefined

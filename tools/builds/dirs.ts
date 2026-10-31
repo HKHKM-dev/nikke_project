@@ -1,8 +1,9 @@
 // 育成データの置き場所（plan/design-build-snapshot.md 5 節）。store.ts・fetch.ts・tools/captures/intake.ts から使う。
 // private/ はメインのチェックアウトの直下にだけある（追跡しない。クラウドでは始めのフックがリポジトリの直下に置く）。
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { SNAPSHOT_NAME } from '../../packages/core/src/records/ids.ts';
+import type { BuildSnapshot } from '../../packages/core/src/shiftypad.ts';
 import { mainCheckout } from '../git/main-checkout.ts';
 
 let privateCache: string | undefined;
@@ -22,3 +23,9 @@ export function namesIn(suffix: string): string[] | null {
 
 /** 写したスナップショット（private/builds/<名前>.json）の名前。private/builds/ が無ければ null */
 export const snapshotNames = (): string[] | null => namesIn('.json');
+
+/** 写したスナップショット（private/builds/<名前>.json）。無ければ null */
+export function readSnapshot(name: string): BuildSnapshot | null {
+  const path = join(buildsDir(), `${name}.json`);
+  return existsSync(path) ? (JSON.parse(readFileSync(path, 'utf8')) as BuildSnapshot) : null;
+}

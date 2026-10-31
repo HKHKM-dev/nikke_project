@@ -136,5 +136,5 @@ console.log(
   )}\n`,
 );
 console.log(
-  '残り: 課題の状態が変わったら plan/backlog.md の行を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
+  '残り: 設計書のある仕事なら、設計か実装が変わったときだけ設計書の経過に 1 行書く（ほかの所には書かない。AGENTS.md「文書の書き方」）。課題の状態が変わったら plan/backlog.md の行を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
 );
