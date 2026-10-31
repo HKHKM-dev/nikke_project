@@ -509,8 +509,8 @@ export function formatInstantTarget(effect: ResolvedInstantEffect): string {
 export function formatEffectSource(effect: AppliedEffect, characterName: string | undefined): string {
   const who =
     characterName === undefined
-      ? `枠 ${effect.sourceSlotIndex + 1}（読み込み中）`
-      : `枠 ${effect.sourceSlotIndex + 1} ${characterName}`;
+      ? `スロット ${effect.sourceSlotIndex + 1}（読み込み中）`
+      : `スロット ${effect.sourceSlotIndex + 1} ${characterName}`;
   // Stage 9: 「〈武器〉を所持する味方」だけに掛かる効果。Stage 11: 「直前にバーストを使った味方」「最終攻撃力が最も高い味方 N 機」
   // アスカ: 「〈コード〉コードの味方」（「灼熱コードの SG の味方」のように武器種と並べる）
   const element = effect.targetElement ? `${ELEMENT_LABEL[effect.targetElement].ja}コードの` : '';
@@ -569,11 +569,11 @@ export function formatBuildEffect(effect: BuildEffect): string {
   return `${BUFF_STAT_LABEL[effect.stat]} +${formatPercent(effect.value, 2)}`;
 }
 
-/** 「OL 頭 1 行目（攻撃力増加 Lv15）」「キューブ（アンチコードHC 段階 6）」「コレクション（…段階 4）」 */
+/** 「OL 頭 1 行目（攻撃力増加 LV15）」「キューブ（アンチコードHC 段階 6）」「コレクション（…段階 4）」 */
 export function formatBuildEffectSource(source: BuildEffectSource): string {
   switch (source.kind) {
     case 'overload':
-      return `OL ${source.part ? GEAR_PART_LABEL[source.part] : ''} ${(source.line ?? 0) + 1} 行目（${source.name.ja} Lv${source.level}）`;
+      return `OL ${source.part ? GEAR_PART_LABEL[source.part] : ''} ${(source.line ?? 0) + 1} 行目（${source.name.ja} LV${source.level}）`;
     case 'cube':
       return `キューブ（${source.name.ja} 段階 ${source.level}）`;
     case 'collection':

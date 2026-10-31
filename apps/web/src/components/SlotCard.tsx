@@ -1,4 +1,6 @@
 import {
+  AFFECTION_RANK_MIN,
+  affectionRankMax,
   growthLimits,
   type CharacterData,
   type CharacterIndexEntry,
@@ -10,10 +12,10 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
-import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
-import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
+import { clampInt, effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
+import { Popover } from './Popover.tsx';
 import { SkillSection } from './SkillSection.tsx';
 
 type Props = {
@@ -32,8 +34,9 @@ type Props = {
   effectiveBuild: BuildInput;
   masters: BuildMasters | null;
   mastersError: string | null;
-  skillsStatus: SlotSkillsStatus;
   slotResult: TeamSlotResult | null;
+  /** 2026-10-31: このスロットがフォーカス（操作キャラ）か */
+  focused: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -52,13 +55,15 @@ export function SlotCard({
   effectiveBuild,
   masters,
   mastersError,
-  skillsStatus,
   slotResult,
+  focused,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
 
   const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
+  // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
+  // 折りたたみ 1 つにまとめた
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
   // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（team.ts の teamStateForCalc）
 
@@ -79,8 +84,52 @@ export function SlotCard({
     </label>
   );
 
+  // スロットの詳細設定のボタン。フォーカスは編成で 1 人なので、押すとこのスロットに移る（外すボタンにはならない）
+  const toggles = [
+    {
+      label: 'フォーカス',
+      pressed: focused,
+      onToggle: () => dispatch({ type: 'setControlledSlot', controlledSlot: slotIndex }),
+    },
+    {
+      label: '撃たない',
+      pressed: slot.noFire,
+      onToggle: () => dispatch({ type: 'setNoFire', index: slotIndex, noFire: !slot.noFire }),
+    },
+    {
+      label: 'バーストしない',
+      pressed: slot.noBurst,
+      onToggle: () => dispatch({ type: 'setNoBurst', index: slotIndex, noBurst: !slot.noBurst }),
+    },
+  ];
+
   return (
-    <fieldset className="panel slot" aria-label={`枠 ${slotIndex + 1}`}>
+    <fieldset className="panel slot">
+      {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
+      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない・バーストしない）のポップアップ。設定は今後増やす。見出しの設定中の印と、ポップアップの説明文はオーナーの指示で出さない（設定はポップアップのボタンの色で分かる。撃たないの近似は未対応の一覧に出す） */}
+      <legend className="slot-legend">
+        <span>スロット {slotIndex + 1}</span>
+        <Popover
+          button="詳細設定"
+          buttonClassName="slot-settings-button"
+          label={`スロット ${slotIndex + 1} の詳細設定`}
+          align="left"
+        >
+          <div className="slot-toggles">
+            {toggles.map((t) => (
+              <button
+                key={t.label}
+                type="button"
+                className="toggle-button"
+                aria-pressed={t.pressed}
+                onClick={t.onToggle}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </Popover>
+      </legend>
       <CharacterPicker
         index={index}
         excludeIds={excludeIds}
@@ -99,20 +148,43 @@ export function SlotCard({
       )}
       {character && limits && (
         <details className="slot-settings">
-          <summary>設定</summary>
+          {/* 2026-10-31: オーナーの指示で、見出しの横の対応状況の印（対応・一部対応・未対応・未定義）は出さない。未対応はキャラ名の
+              「（未）」と「未対応・近似・仮定の一覧」に出る */}
+          <summary>育成</summary>
           <div className="slot-settings-body">
             <div className="growth-row">
-              {growthField('level', 'Lv', 1, limits.levelMax)}
+              <label className="field">
+                <span>好感度</span>
+                <input
+                  type="number"
+                  min={AFFECTION_RANK_MIN}
+                  max={affectionRankMax(character)}
+                  step={1}
+                  value={effectiveBuild.affectionRank}
+                  disabled={fixedSpec}
+                  onChange={(e) =>
+                    dispatch({
+                      type: 'setBuild',
+                      index: slotIndex,
+                      build: {
+                        ...slot.build,
+                        affectionRank: clampInt(
+                          Number(e.target.value),
+                          AFFECTION_RANK_MIN,
+                          affectionRankMax(character),
+                        ),
+                      },
+                    })
+                  }
+                />
+              </label>
               {growthField('grade', '限界突破', 0, limits.gradeMax)}
               {growthField('core', 'コア強化', 0, limits.coreMax)}
             </div>
             <SkillSection
               slotIndex={slotIndex}
-              character={character}
               levels={effectiveSkillLevels}
-              treasurePhase={treasurePhase}
               disabled={fixedSpec}
-              status={skillsStatus}
               dispatch={dispatch}
             />
             <BuildSection

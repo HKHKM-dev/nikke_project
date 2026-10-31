@@ -39,7 +39,7 @@ const smg = { weaponType: 'SMG', corporation: 'ELYSION' } as const;
 function build(patch: Partial<BuildInput>): BuildInput {
   return { ...emptyBuild(), ...patch };
 }
-function olBuild(...lines: { option: OverloadOption; level: number }[]): BuildInput {
+function olBuild(...lines: { option: OverloadOption; level: number; position?: number }[]): BuildInput {
   return build({ gear: { head: { type: 'OL', level: 5, overload: lines }, body: null, arm: null, leg: null } });
 }
 const byStat = (effects: readonly BuildEffect[]) => effects.map((e) => [e.stat, Number(e.value.toFixed(6))]);
@@ -194,6 +194,16 @@ describe('validateBuild: OL の行（12.2）', () => {
       ...(['attack', 'critRate', 'critDamage', 'hitRate'] as const).map((option) => ({ option, level: 1 })),
     );
     expect(() => validateBuild(ar, four, masters)).toThrow(/at most 3/);
+    // 2026-10-31: 行の位置（2 行目を空けて 3 行目）。位置は 0〜2 で、重ならない
+    expect(() => validateBuild(ar, olBuild({ option: 'attack', level: 1, position: 2 }), masters)).not.toThrow();
+    expect(() => validateBuild(ar, olBuild({ option: 'attack', level: 1, position: 3 }), masters)).toThrow(RangeError);
+    expect(() =>
+      validateBuild(
+        ar,
+        olBuild({ option: 'attack', level: 1 }, { option: 'critRate', level: 1, position: 0 }),
+        masters,
+      ),
+    ).toThrow(/share a position/);
     expect(() => validateBuild(ar, olBuild({ option: 'attack', level: 0 }), masters)).toThrow(RangeError);
     expect(() => validateBuild(ar, olBuild({ option: 'attack', level: 16 }), masters)).toThrow(RangeError);
     expect(() => validateBuild(ar, olBuild({ option: 'nope' as OverloadOption, level: 1 }), masters)).toThrow(

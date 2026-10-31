@@ -22,7 +22,9 @@ import {
   type TeamSlotInput,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
+import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
@@ -33,6 +35,7 @@ import {
   effectiveSkillLevels,
   effectiveTreasurePhase,
   enemyForCalc,
+  noBurstSlotsForCalc,
   eventSetsForCalc,
   parseTeamState,
   serializeTeamState,
@@ -41,6 +44,16 @@ import {
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
+import { useDetailed } from './detailed.ts';
+import { readStorage, writeStorage } from './storage.ts';
+import {
+  INITIAL_PARTIES,
+  PARTIES_STORAGE_KEY,
+  parseParties,
+  serializeParties,
+  switchParty,
+  type PartiesState,
+} from './parties.ts';
 import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 
@@ -56,18 +69,13 @@ function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput
   };
 }
 
-function readSavedTeam(): string | null {
-  try {
-    return localStorage.getItem(STORAGE_KEY);
-  } catch {
-    return null;
-  }
-}
-
 export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
+  const [detailed, setDetailed] = useDetailed();
+  // ソロレイド用の編成 01〜05（parties.ts）。選んでいる編成の中身は team
+  const [parties, setParties] = useState<PartiesState>(INITIAL_PARTIES);
   // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
   const [restored, setRestored] = useState(false);
   // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
@@ -92,8 +100,10 @@ export function App() {
     loadCharacterIndex({ baseUrl: BASE_URL })
       .then((i) => {
         setIndex(i.characters);
-        const saved = parseTeamState(readSavedTeam(), i.characters);
+        const saved = parseTeamState(readStorage(STORAGE_KEY), i.characters);
         if (saved) dispatch({ type: 'replace', state: saved });
+        const savedParties = parseParties(readStorage(PARTIES_STORAGE_KEY), i.characters);
+        if (savedParties) setParties(savedParties);
         setRestored(true);
       })
       .catch((e: unknown) => setLoadError(String(e)));
@@ -101,12 +111,18 @@ export function App() {
 
   useEffect(() => {
     if (!restored) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, serializeTeamState(team));
-    } catch {
-      // プライベートモード等で保存できないときは黙って諦める
-    }
+    writeStorage(STORAGE_KEY, serializeTeamState(team));
   }, [team, restored]);
+  // ほかの編成は切り替えたときだけ変わる（選んでいる編成は上の STORAGE_KEY）
+  useEffect(() => {
+    if (restored) writeStorage(PARTIES_STORAGE_KEY, serializeParties(parties));
+  }, [parties, restored]);
+
+  const selectParty = (to: number) => {
+    const next = switchParty(parties, team, to);
+    setParties(next.parties);
+    dispatch({ type: 'replace', state: next.team });
+  };
 
   const resourceIds = team.slots.map((s) => s.resourceId);
   const cache = useCharacterCache(resourceIds, BASE_URL);
@@ -153,14 +169,15 @@ export function App() {
         let hpOverride: number | undefined;
         let defenceOverride: number | undefined;
         let buildEffects: BuildEffect[] | undefined;
-        if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
+        const build = effectiveBuild(slot, false, character, team.console);
+        if (masters && (!isEmptyBuild(build) || treasurePhase > 0)) {
           try {
-            attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
-            hpOverride = computeCombatStat(character, growth, slot.build, masters, 'hp', { treasurePhase }).value;
-            defenceOverride = computeCombatStat(character, growth, slot.build, masters, 'defence', {
+            attackOverride = computeCombatAttack(character, growth, build, masters, { treasurePhase }).attack;
+            hpOverride = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase }).value;
+            defenceOverride = computeCombatStat(character, growth, build, masters, 'defence', {
               treasurePhase,
             }).value;
-            buildEffects = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).effects;
+            buildEffects = resolveBuildEffects(character, build, masters, { treasurePhase }).effects;
           } catch {
             attackOverride = undefined;
             hpOverride = undefined;
@@ -181,15 +198,21 @@ export function App() {
           skills: slotSkills,
         };
       }),
-    [calcTeam.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
+    [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters],
   );
 
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      enemy: enemyForCalc(calcTeam.enemy, enemyMaster, eventSetsForCalc(enemyMaster), calcTeam.durationSeconds),
+      enemy: enemyForCalc(
+        calcTeam.enemy,
+        enemyMaster,
+        eventSetsForCalc(enemyMaster, calcTeam.rangeJump),
+        calcTeam.durationSeconds,
+      ),
       durationSeconds: calcTeam.durationSeconds,
       burst: calcTeam.burst,
+      noBurstSlots: noBurstSlotsForCalc(calcTeam),
       controlledSlot: calcTeam.controlledSlot,
     }),
     [slotInputs, calcTeam, enemyMaster],
@@ -216,7 +239,7 @@ export function App() {
         let buildNotes: BuildEffectNote[] = [];
         if (masters && !team.fixedSpec) {
           try {
-            buildNotes = resolveBuildEffects(character, slot.build, masters, {
+            buildNotes = resolveBuildEffects(character, effectiveBuild(slot, false, character, team.console), masters, {
               treasurePhase,
             }).notes.filter((n) => n.level === 'unsupported');
           } catch {
@@ -230,23 +253,43 @@ export function App() {
           treasurePhase,
           modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
           buildNotes,
+          noFire: slot.noFire,
         };
       }),
-    [calcTeam.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
+    [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters, computed],
   );
 
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
+  // 詳細情報表示（右上の設定）のときだけ使う、ニケごとの詳細の材料
+  const teamCharacters = team.slots.map((s) =>
+    s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
+  );
+  const slotNames = teamCharacters.map((c) => c?.name.ja);
+  const allTreasurePhases = team.slots.map((s, i) => {
+    const character = teamCharacters[i];
+    return character ? effectiveTreasurePhase(s, character) : 0;
+  });
 
   return (
     <main className="app">
-      <header>
+      <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
+        <SettingsMenu detailed={detailed} onDetailedChange={setDetailed} />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
       {index && (
         <>
-          <TeamSettingsForm element={team.enemy.element} fixedSpec={team.fixedSpec} dispatch={dispatch} />
+          <TeamSettingsForm
+            element={team.enemy.element}
+            fixedSpec={team.fixedSpec}
+            consoleInput={team.console}
+            synchroLevel={team.synchroLevel}
+            durationSeconds={calcTeam.durationSeconds}
+            rangeJump={calcTeam.rangeJump}
+            dispatch={dispatch}
+          />
+          <PartyTabs active={parties.active} onSelect={selectParty} />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
               const character = slot.resourceId === null ? undefined : cache.characters.get(slot.resourceId);
@@ -265,13 +308,13 @@ export function App() {
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={input?.growth ?? slot.growth}
                   effectiveBuild={
-                    character ? effectiveBuild(calcTeam.slots[i]!, team.fixedSpec, character) : slot.build
+                    character ? effectiveBuild(calcTeam.slots[i]!, team.fixedSpec, character, team.console) : slot.build
                   }
                   masters={masters}
                   mastersError={mastersError}
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
-                  skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
+                  focused={team.controlledSlot === i}
                   dispatch={dispatch}
                 />
               );
@@ -287,6 +330,15 @@ export function App() {
               computing={computing}
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
+              detailed={detailed}
+              fixedSpec={team.fixedSpec}
+              slotNames={slotNames}
+              teamCharacters={teamCharacters}
+              enemyElement={team.enemy.element}
+              effectiveSkillLevels={allEffectiveSkillLevels}
+              treasurePhases={allTreasurePhases}
+              skillsStatuses={skillsStatuses}
+              hpRatios={calcTeam.slots.map((s) => s.hpRatio)}
             />
           ) : (
             <p className="error">
@@ -294,7 +346,7 @@ export function App() {
               {computing && '（計算中…）'}
             </p>
           )}
-          <NotesSummary slots={summarySlots} />
+          <NotesSummary slots={summarySlots} enemyNotes={computed?.ok ? computed.result.enemyNotes : []} />
         </>
       )}
     </main>

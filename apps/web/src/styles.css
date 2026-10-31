@@ -1,5 +1,11 @@
 :root {
   color-scheme: light dark;
+  /* スクロールバーを常に出し、ページが縦長になっても表示が横に動かないようにする。幅を空けるだけ（scrollbar-gutter）だと、
+     スクロールバーが無い間の空きがブラウザによってテーマと違う色で塗られた */
+  overflow-y: scroll;
+  /* スクロールバーとその幅の部分（右端）もテーマの色にする。既定の色はテーマを切り替えても追従しないことがある */
+  background: Canvas;
+  scrollbar-color: color-mix(in srgb, CanvasText 35%, Canvas) Canvas;
   font-family:
     system-ui,
     -apple-system,
@@ -8,7 +14,28 @@
     sans-serif;
   line-height: 1.45;
 }
+/* 右上の設定のテーマ（theme.ts）。アーティファクトの表示枠が当てる閲覧側のテーマより強くする（body にも当てる） */
+:root:root[data-app-theme='light'],
+:root:root[data-app-theme='light'] body {
+  color-scheme: light !important;
+}
+:root:root[data-app-theme='dark'],
+:root:root[data-app-theme='dark'] body {
+  color-scheme: dark !important;
+}
+/* ルート要素のスクロールバーと右端の色は、テーマの色を直接決める。表示枠がルート要素の color-scheme を後から閲覧側のテーマに
+   書き換えることがあり、Canvas では閲覧側の色になってしまう（ライトでも右端が黒かった）。値は各テーマの Canvas と、上の color-mix の値 */
+:root:root[data-app-theme='light'] {
+  background: #fff !important;
+  scrollbar-color: #a6a6a6 #fff !important;
+}
+:root:root[data-app-theme='dark'] {
+  background: #121212 !important;
+  scrollbar-color: #656565 #121212 !important;
+}
 body {
+  background: Canvas;
+  color: CanvasText;
   margin: 0;
   padding: 0 16px;
 }
@@ -20,6 +47,101 @@ body {
 header h1 {
   margin: 0 0 10px;
   font-size: 1.35rem;
+}
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ボタンで開くポップアップ（Popover.tsx。右上の設定・敵の詳細設定） */
+.popover {
+  position: relative;
+}
+/* 開いている間に画面を暗くする幕（即座に出す）。ボタンとポップアップはその手前に出す */
+.popover-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: rgb(0 0 0 / 0.5);
+}
+.popover-button {
+  position: relative;
+  z-index: 20;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 6px;
+  background: Canvas;
+  color: inherit;
+  cursor: pointer;
+}
+.popover-button:hover,
+.popover-button[aria-expanded='true'] {
+  background: color-mix(in srgb, CanvasText 10%, Canvas);
+}
+.popover-button:focus-visible {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+.popover-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  z-index: 20;
+  min-width: 12em;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 8px;
+  background: Canvas;
+  color: CanvasText;
+  box-shadow: 0 4px 16px color-mix(in srgb, CanvasText 18%, transparent);
+}
+.popover-panel-left {
+  left: 0;
+}
+.popover-panel-right {
+  right: 0;
+}
+.popover-group {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.popover-group > legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+.popover-option {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 3px 0;
+  cursor: pointer;
+}
+.settings-menu-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+/* 敵の詳細設定 */
+.advanced-settings-button {
+  padding: 3px 10px;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.advanced-settings {
+  width: 20em;
+}
+.advanced-settings .field {
+  grid-template-columns: 8em minmax(0, 1fr);
+}
+.advanced-settings .field.checkbox {
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 /* 共通のパネルとフォーム */
@@ -65,29 +187,41 @@ header h1 {
 
 /* 編成共通の設定 */
 .settings-simple {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px 24px;
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (min-width: 640px) {
-  .settings-simple {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  align-items: center;
 }
 .settings-simple .field {
   margin: 2px 0;
-  grid-template-columns: max-content minmax(0, 1fr);
+  grid-template-columns: max-content auto;
   gap: 6px 10px;
 }
-.settings-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  align-items: center;
-  margin-top: 8px;
+/* 敵・属性のプルダウンは中身の幅にする（オーナーの指示で狭くした） */
+.settings-simple .field select {
+  width: auto;
+  max-width: 100%;
 }
-.settings-options .field.checkbox {
-  margin: 0;
+.common-growth {
+  margin-top: 10px;
+}
+.common-growth > summary {
+  cursor: pointer;
+}
+.common-growth .field.checkbox {
+  margin: 6px 0;
+}
+.console {
+  font-size: 0.85rem;
+}
+.console-title {
+  font-weight: 600;
+}
+.console-grid {
+  display: grid;
+  gap: 0 16px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14em), 1fr));
+  margin-top: 4px;
 }
 
 /* 枠カード */
@@ -168,7 +302,6 @@ header h1 {
 .slot-settings > summary {
   cursor: pointer;
   font-size: 0.8rem;
-  opacity: 0.75;
 }
 .slot-settings-body {
   margin-top: 6px;
@@ -300,24 +433,6 @@ header h1 {
 }
 
 /* スキル（Stage 4） */
-.skills {
-  margin: 6px 0;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.skills-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  align-items: center;
-}
-.skills-title {
-  font-weight: 600;
-  font-size: 0.82rem;
-}
-.skill-levels-row {
-  margin: 4px 0 0;
-}
 .badge.supported {
   background: #2e7d32;
   color: #fff;
@@ -334,18 +449,6 @@ header h1 {
   background: #6a1b9a;
   color: #fff;
 }
-.treasure-phase {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  font-size: 0.78rem;
-  margin-left: auto;
-}
-.treasure-phase select {
-  font: inherit;
-  font-size: 0.78rem;
-  padding: 1px 4px;
-}
 .badge.undefined,
 .badge.loading {
   background: #616161;
@@ -360,13 +463,6 @@ header h1 {
 /* Stage 12: 育成入力・射撃条件（折り畳み） */
 .build {
   margin: 5px 0 0;
-  padding: 3px 7px;
-  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-  border-radius: 4px;
-}
-.build > summary {
-  cursor: pointer;
-  font-size: 0.82rem;
 }
 .build-grid {
   display: grid;
@@ -399,6 +495,10 @@ header h1 {
   gap: 2px;
   margin-top: 2px;
 }
+/* OL の行の上昇値（%）の選択は、Lv の欄より広くする */
+.ol-lines .gear-inputs {
+  grid-template-columns: minmax(0, 1fr) 5.8em;
+}
 
 /* Stage 14: JSON の書き出し / 取り込み、未対応の一覧 */
 .notes-summary,
@@ -427,4 +527,313 @@ header h1 {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
+}
+
+/* 詳細情報表示（右上の設定）のときだけ出す、ダメージの詳細（TeamBreakdown・ResultPanel・SkillDetails・DamageTimeline） */
+.meta {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin: 4px 0;
+}
+.burst-headline {
+  margin: 0;
+  font-size: 0.85rem;
+}
+.summary {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 3px 16px;
+  margin: 6px 0;
+  max-width: 420px;
+}
+.summary dt {
+  opacity: 0.8;
+  font-size: 0.88rem;
+}
+.summary dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  font-size: 0.88rem;
+}
+.summary dd.total {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.note.no-damage .badge,
+.note.modeling .badge {
+  background: #757575;
+  color: #fff;
+}
+/* 編成の内訳 */
+.table-scroll {
+  overflow-x: auto;
+}
+.team-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+.team-table th,
+.team-table td {
+  padding: 5px 8px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.team-table th:nth-child(-n + 2),
+.team-table td:nth-child(-n + 2) {
+  text-align: left;
+}
+.team-table thead th {
+  font-weight: 600;
+  opacity: 0.8;
+  border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+}
+.team-table tbody tr + tr {
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.team-table tfoot th,
+.team-table tfoot td {
+  font-weight: 700;
+  border-top: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+}
+.team-table .grand-total {
+  font-size: 1.05rem;
+}
+.team-table .sub {
+  opacity: 0.65;
+  font-size: 0.78rem;
+}
+.details {
+  margin-top: 12px;
+}
+.slot-detail > summary {
+  cursor: pointer;
+  padding: 4px 0;
+  font-size: 0.9rem;
+}
+.slot-detail .result {
+  border: none;
+  padding: 4px 0 8px 14px;
+  border-left: 2px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 0;
+  margin-left: 4px;
+}
+.segments {
+  margin-top: 8px;
+}
+.segments > summary {
+  cursor: pointer;
+  font-size: 0.88rem;
+  padding: 3px 0;
+}
+.verification-details {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+}
+.skills-title {
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+.skill-row {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+.skill-detail-item {
+  padding: 6px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+  border-radius: 6px;
+}
+.skill-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: 0.88rem;
+}
+.skill-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.skill-desc {
+  white-space: pre-wrap;
+  font: inherit;
+  font-size: 0.78rem;
+  opacity: 0.85;
+  margin: 4px 0 0;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+.dev-notes-details {
+  margin-top: 6px;
+  font-size: 0.8rem;
+}
+.dev-notes-details > summary {
+  cursor: pointer;
+  opacity: 0.75;
+}
+.received {
+  margin: 8px 0;
+  padding-top: 6px;
+  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+}
+.received .hint {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+}
+.received-list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  display: grid;
+  gap: 2px;
+  font-size: 0.82rem;
+}
+.received-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  align-items: baseline;
+}
+.received-list .amount {
+  font-variant-numeric: tabular-nums;
+}
+.received-list .sub {
+  opacity: 0.65;
+  font-size: 0.75rem;
+}
+.received-list li.note-ignored {
+  opacity: 0.55;
+}
+.received-list li.note-unsupported .amount {
+  color: #b35900;
+}
+/* sim のタイムライン（Stage 16-B） */
+.timeline {
+  margin: 8px 0 12px;
+}
+.timeline svg {
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  height: auto;
+}
+.tl-bar {
+  fill: currentColor;
+  opacity: 0.55;
+}
+.tl-axis {
+  stroke: currentColor;
+  opacity: 0.4;
+}
+.tl-label {
+  fill: currentColor;
+  font-size: 11px;
+  opacity: 0.7;
+}
+.tl-fullburst {
+  fill: #f59e0b;
+  background: #f59e0b;
+  opacity: 0.22;
+}
+.tl-untargetable {
+  fill: #64748b;
+  background: #64748b;
+  opacity: 0.45;
+}
+.tl-invulnerable {
+  fill: #a855f7;
+  background: #a855f7;
+  opacity: 0.3;
+}
+.tl-barrier {
+  fill: #0ea5e9;
+  background: #0ea5e9;
+  opacity: 0.3;
+}
+.tl-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  vertical-align: baseline;
+  opacity: 0.6;
+}
+/* 的の着地点の帯（タイムラインの上端。近いほど赤、遠いほど青。未測定は灰色） */
+.tl-band-near {
+  fill: #e11d48;
+  background: #e11d48;
+}
+.tl-band-midNear {
+  fill: #f97316;
+  background: #f97316;
+}
+.tl-band-midFar {
+  fill: #16a34a;
+  background: #16a34a;
+}
+.tl-band-far {
+  fill: #2563eb;
+  background: #2563eb;
+}
+.tl-band-unknown {
+  fill: #9ca3af;
+  background: #9ca3af;
+}
+/* 着地点の凡例は帯と同じ濃さにする（.tl-key は薄く出す） */
+.tl-key[class*='tl-band-'] {
+  opacity: 1;
+}
+
+/* スロットの見出しと詳細設定（フォーカス・撃たない） */
+.slot-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.slot-settings-button {
+  padding: 1px 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+.slot-toggles {
+  display: flex;
+  gap: 6px;
+  font-weight: 400;
+}
+.toggle-button {
+  padding: 4px 12px;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 6px;
+  background: Canvas;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.toggle-button[aria-pressed='true'] {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
+}
+/* ソロレイドの編成 01〜05 の切り替え（PartyTabs） */
+.party-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+}
+.party-tabs + .slots {
+  margin-top: 8px;
+}
+/* スマホの幅でも 5 つを 1 行に並べる */
+.party-tab {
+  flex: 1 1 0;
+  max-width: 6.5em;
+  padding-inline: 2px;
+  white-space: nowrap;
 }

@@ -11,6 +11,7 @@ import {
   GEAR_PARTS,
   GEAR_TYPES,
   MAX_SKILL_LEVELS,
+  NIKKE_CLASSES,
   OVERLOAD_LEVEL_MAX,
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
@@ -21,10 +22,12 @@ import {
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
   EMPTY_BUILD,
+  affectionRankMax,
   emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
   fixedSpecBuild,
+  overloadPositionsUnique,
   presetForEnemy,
   targetProfileForEnemy,
   type BuildInput,
@@ -37,6 +40,8 @@ import {
   type GearInput,
   type GearType,
   type GrowthInput,
+  type NikkeClass,
+  type RecycleRoomInput,
   type OverloadLine,
   type OverloadOption,
   type SkillLevels,
@@ -88,6 +93,16 @@ export type SlotState = {
    * 入力欄は HP の割合の条件を持つ効果のある枠にだけ出す（論点 5）。キャラを選び直すと既定（満タン）に戻る
    */
   hpRatio: number;
+  /**
+   * 2026-10-31: 撃たない（スロットの詳細設定）。モデルに撃たないスロットが無いので、計算では弾丸命中率を 0 にする（通常攻撃の
+   * ダメージとゲージが出ない。射撃の回数のきっかけは残る。records の noFireSlots と同じ扱い。teamStateForCalc）。既定は撃つ
+   */
+  noFire: boolean;
+  /**
+   * 2026-10-31: バーストしない（スロットの詳細設定）。バーストのチェーンの候補から外す（core の TeamInput.noBurstSlots。
+   * noBurstSlotsForCalc）。既定は使う
+   */
+  noBurst: boolean;
 };
 
 export type TeamState = {
@@ -106,7 +121,48 @@ export type TeamState = {
    * 効くのは、敵の値がそのセットを持つプリセットと一致しているときだけ（App.tsx の enemyWithEvents）
    */
   enemyEventSets: string[];
+  /** 2026-10-31: コンソール（前哨基地のリサイクルルームの研究 Lv）。編成共通で、枠ごとのリサイクルルームの代わりに使う */
+  console: ConsoleInput;
+  /** 2026-10-31: シンクロレベル。編成共通で、枠ごとの Lv の代わりに使う（キャラの上限で収める） */
+  synchroLevel: number;
+  /**
+   * 2026-10-31: 射撃場 3 分モード（的のジャンプ）を入れるか。既定は ON。詳細設定の欄で切り替え、enemyEventSets の代わりに使う
+   * （eventSetsForCalc）
+   */
+  rangeJump: boolean;
 };
+
+/** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
+export const CONSOLE_CORPORATIONS = ['ELYSION', 'MISSILIS', 'TETRA', 'PILGRIM', 'ABNORMAL'] as const;
+export type ConsoleCorporation = (typeof CONSOLE_CORPORATIONS)[number];
+export const CONSOLE_CLASSES: readonly NikkeClass[] = NIKKE_CLASSES;
+
+/** コンソール: 共通研究・クラス研究・企業研究の Lv */
+export type ConsoleInput = {
+  personal: number;
+  class: Record<NikkeClass, number>;
+  corporation: Record<ConsoleCorporation, number>;
+};
+
+export function emptyConsole(): ConsoleInput {
+  return {
+    personal: 0,
+    class: Object.fromEntries(CONSOLE_CLASSES.map((c) => [c, 0])) as Record<NikkeClass, number>,
+    corporation: Object.fromEntries(CONSOLE_CORPORATIONS.map((c) => [c, 0])) as Record<ConsoleCorporation, number>,
+  };
+}
+
+/** キャラのクラスと企業から、コンソールのうちそのキャラに効く研究 Lv を枠のリサイクルルームの形にする */
+export function recycleRoomFromConsole(
+  input: ConsoleInput,
+  character: Pick<CharacterData, 'class' | 'corporation'>,
+): RecycleRoomInput {
+  return {
+    personal: input.personal,
+    class: input.class[character.class],
+    corporation: (input.corporation as Record<string, number>)[character.corporation] ?? 0,
+  };
+}
 
 export type TeamAction =
   | { type: 'selectCharacter'; index: number; resourceId: number }
@@ -118,12 +174,17 @@ export type TeamAction =
   | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
   | { type: 'setBuild'; index: number; build: BuildInput }
   | { type: 'setHpRatio'; index: number; hpRatio: number }
+  | { type: 'setNoFire'; index: number; noFire: boolean }
+  | { type: 'setNoBurst'; index: number; noBurst: boolean }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
   | { type: 'setBurst'; burst: boolean }
   | { type: 'setControlledSlot'; controlledSlot: number }
   | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
+  | { type: 'setConsole'; console: ConsoleInput }
+  | { type: 'setSynchroLevel'; synchroLevel: number }
+  | { type: 'setRangeJump'; rangeJump: boolean }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -136,6 +197,8 @@ export function emptySlot(): SlotState {
     treasurePhase: DEFAULT_TREASURE_PHASE,
     build: emptyBuild(),
     hpRatio: DEFAULT_HP_RATIO,
+    noFire: false,
+    noBurst: false,
   };
 }
 
@@ -151,6 +214,9 @@ export function initialTeamState(): TeamState {
     burst: DEFAULT_BURST,
     controlledSlot: DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: [],
+    console: emptyConsole(),
+    synchroLevel: DEFAULT_GROWTH.level,
+    rangeJump: true,
   };
 }
 
@@ -202,6 +268,10 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, build: action.build }));
     case 'setHpRatio':
       return updateSlot(state, action.index, (s) => ({ ...s, hpRatio: action.hpRatio }));
+    case 'setNoFire':
+      return updateSlot(state, action.index, (s) => ({ ...s, noFire: action.noFire }));
+    case 'setNoBurst':
+      return updateSlot(state, action.index, (s) => ({ ...s, noBurst: action.noBurst }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -214,9 +284,18 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
     case 'setBurst':
       return { ...state, burst: action.burst };
     case 'setControlledSlot':
-      return { ...state, controlledSlot: action.controlledSlot };
+      // 押されているフォーカスをもう一度押しても計算し直さない
+      return state.controlledSlot === action.controlledSlot
+        ? state
+        : { ...state, controlledSlot: action.controlledSlot };
     case 'setEnemyEventSets':
       return { ...state, enemyEventSets: action.enemyEventSets };
+    case 'setConsole':
+      return { ...state, console: action.console };
+    case 'setSynchroLevel':
+      return { ...state, synchroLevel: action.synchroLevel };
+    case 'setRangeJump':
+      return { ...state, rangeJump: action.rangeJump };
     case 'replace':
       return action.state;
   }
@@ -282,46 +361,71 @@ export function effectiveTreasurePhase(slot: SlotState, character: CharacterData
 }
 
 /** Stage 12: 計算に渡す育成入力。スペック固定は T9 Lv5 × 4 と好感度 rank30/40/10 のプリセット（保存している入力は残す） */
-export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: CharacterData): BuildInput {
-  return fixedSpec ? fixedSpecBuild(character) : slot.build;
+export function effectiveBuild(
+  slot: SlotState,
+  fixedSpec: boolean,
+  character: CharacterData,
+  consoleInput: ConsoleInput,
+): BuildInput {
+  if (fixedSpec) return fixedSpecBuild(character);
+  // 好感度はキャラごとの上限（affectionRankMax）に収める。上限より上の保存データも上限で計算する。
+  // リサイクルルームは枠ごとの保存データを使わず、編成共通のコンソールから取る
+  return {
+    ...slot.build,
+    affectionRank: Math.min(slot.build.affectionRank, affectionRankMax(character)),
+    recycleRoom: recycleRoomFromConsole(consoleInput, character),
+  };
 }
 
 /**
  * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
  * （欄が無いので直せないため）。計算と画面はこの編成を読む
- * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算
- * - 編成: 戦闘時間・バースト・操作キャラ・敵（射撃場の的にし、属性だけ残す）。3 分モードの出来事のセットは eventSetsForCalc
+ * - 枠: 射撃条件・想定 HP・その他攻撃加算（リサイクルルームは effectiveBuild がコンソールから取る）。Lv は編成共通のシンクロレベル。撃たないスロットは、射撃条件を
+ *   手入力の弾丸命中率 0 にする（SlotState.noFire）
+ * - 編成: 敵（射撃場の的にし、属性だけ残す）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。戦闘時間・
+ *   操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
+ *   3 分モードの出来事のセットは eventSetsForCalc
  */
 export function teamStateForCalc(state: TeamState): TeamState {
   return {
     ...state,
     slots: state.slots.map((slot) => ({
       ...slot,
-      conditionMode: DEFAULT_CONDITION_MODE,
-      condition: { ...DEFAULT_SLOT_CONDITION },
+      growth: { ...slot.growth, level: state.synchroLevel },
+      conditionMode: slot.noFire ? 'manual' : DEFAULT_CONDITION_MODE,
+      condition: slot.noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : { ...DEFAULT_SLOT_CONDITION },
       hpRatio: DEFAULT_HP_RATIO,
-      build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
+      build: { ...slot.build, extraAttack: EMPTY_BUILD.extraAttack },
     })),
     enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
-    durationSeconds: DEFAULT_DURATION_SECONDS,
     burst: DEFAULT_BURST,
-    controlledSlot: DEFAULT_CONTROLLED_SLOT,
   };
 }
 
+/** 2026-10-31: バーストしないスロット（0 始まり。ニケのいるスロットだけ）。無ければ undefined（core の TeamInput.noBurstSlots） */
+export function noBurstSlotsForCalc(state: TeamState): number[] | undefined {
+  const slots = state.slots.flatMap((s, i) => (s.noBurst && s.resourceId !== null ? [i] : []));
+  return slots.length === 0 ? undefined : slots;
+}
+
 /**
- * 2026-10-31: オーナーの指示で 3 分モード（的のジャンプ）の欄を消し、射撃場の的の出来事のセットを常に入れる（保存データの
- * 選択は使わない）
+ * 2026-10-31: 3 分モード（的のジャンプ）は、詳細設定の欄（rangeJump）が ON なら射撃場の的の出来事のセットを入れる
+ * （保存データの enemyEventSets は使わない）
  */
-export function eventSetsForCalc(master: EnemyPresetMaster | null): string[] {
-  if (master === null) return [];
+export function eventSetsForCalc(master: EnemyPresetMaster | null, rangeJump: boolean): string[] {
+  if (master === null || !rangeJump) return [];
   return [...new Set(master.enemies.filter((p) => p.content === 'range').flatMap((p) => p.eventSets))];
 }
 
-/** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */
+/** min..max の整数に clamp する（入力欄の途中状態を吸収する。数でなければ min） */
+export function clampInt(value: number, min: number, max: number): number {
+  if (!Number.isFinite(value)) return min;
+  return Math.min(max, Math.max(min, Math.round(value)));
+}
+
+/** 1..10 の整数に clamp する */
 export function clampSkillLevel(level: number): number {
-  if (!Number.isFinite(level)) return SKILL_LEVEL_MIN;
-  return Math.min(SKILL_LEVEL_MAX, Math.max(SKILL_LEVEL_MIN, Math.round(level)));
+  return clampInt(level, SKILL_LEVEL_MIN, SKILL_LEVEL_MAX);
 }
 
 // ---- 永続化 ----
@@ -432,9 +536,16 @@ function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
   for (const line of v as Json[]) {
     if (!isRecord(line) || !(OVERLOAD_OPTIONS as readonly string[]).includes(String(line.option))) return undefined;
     if (!isInt(line.level, OVERLOAD_LEVEL_MIN) || line.level > OVERLOAD_LEVEL_MAX) return undefined;
-    lines.push({ option: line.option as OverloadOption, level: line.level });
+    // 2026-10-31 までの保存データには無いので、欠落は配列の並び
+    if (line.position !== undefined && !(isInt(line.position, 0) && line.position < OVERLOAD_LINE_MAX))
+      return undefined;
+    lines.push({
+      option: line.option as OverloadOption,
+      level: line.level,
+      ...(line.position === undefined ? {} : { position: line.position }),
+    });
   }
-  return lines;
+  return overloadPositionsUnique(lines) ? lines : undefined;
 }
 
 function parseGear(v: Json): GearInput | undefined {
@@ -518,7 +629,7 @@ export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]
   }
   const state = parseTeamFields(raw, index);
   return state === null
-    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 枠など）' }
+    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 スロットなど）' }
     : { ok: true, value: state };
 }
 
@@ -530,6 +641,11 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
   if (json === null) return null;
   const result = readTeamJson(json, index);
   return result.ok ? result.value : null;
+}
+
+/** JSON.parse した値を編成として検証する（parseTeamState の中身。版は見ない）。形が合わなければ null */
+export function parseTeamObject(raw: Json, index: readonly CharacterIndexEntry[]): TeamState | null {
+  return isRecord(raw) ? parseTeamFields(raw, index) : null;
 }
 
 function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterIndexEntry[]): TeamState | null {
@@ -552,6 +668,9 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
     const build = parseBuild(s.build);
     const hpRatio = parseHpRatio(s.hpRatio);
+    // 2026-10-31 までの保存データには無いので、欠落は撃つ
+    if (s.noFire !== undefined && !isBool(s.noFire)) return null;
+    if (s.noBurst !== undefined && !isBool(s.noBurst)) return null;
     if (
       growth === null ||
       condition === null ||
@@ -563,7 +682,18 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     ) {
       return null;
     }
-    slots.push({ resourceId: id, growth, conditionMode, condition, skillLevels, treasurePhase, build, hpRatio });
+    slots.push({
+      resourceId: id,
+      growth,
+      conditionMode,
+      condition,
+      skillLevels,
+      treasurePhase,
+      build,
+      hpRatio,
+      noFire: s.noFire === true,
+      noBurst: s.noBurst === true,
+    });
   }
 
   const enemy = parseEnemy(raw.enemy);
@@ -587,6 +717,14 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     return null;
   }
 
+  // 2026-10-31 までの保存データには無いので、欠落は全部 0
+  const consoleInput = raw.console === undefined ? emptyConsole() : parseConsole(raw.console);
+  if (consoleInput === null) return null;
+  // 2026-10-31 までの保存データには無いので、欠落は既定（Lv200）
+  if (raw.synchroLevel !== undefined && !isInt(raw.synchroLevel, 1)) return null;
+  // 2026-10-31 までの保存データには無いので、欠落は既定（ON）
+  if (raw.rangeJump !== undefined && !isBool(raw.rangeJump)) return null;
+
   return {
     slots,
     enemy,
@@ -595,7 +733,27 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
     controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
+    console: consoleInput,
+    synchroLevel: raw.synchroLevel === undefined ? DEFAULT_GROWTH.level : raw.synchroLevel,
+    rangeJump: raw.rangeJump === undefined ? true : raw.rangeJump,
   };
+}
+
+function parseConsole(v: Json): ConsoleInput | null {
+  if (!isRecord(v) || !isInt(v.personal, 0) || !isRecord(v.class) || !isRecord(v.corporation)) return null;
+  const result = emptyConsole();
+  result.personal = v.personal;
+  for (const c of CONSOLE_CLASSES) {
+    const lv = v.class[c];
+    if (!isInt(lv, 0)) return null;
+    result.class[c] = lv;
+  }
+  for (const c of CONSOLE_CORPORATIONS) {
+    const lv = v.corporation[c];
+    if (!isInt(lv, 0)) return null;
+    result.corporation[c] = lv;
+  }
+  return result;
 }
 
 // ---- Stage 14: 枠ごとの育成の JSON（書き出し / 取り込み） ----

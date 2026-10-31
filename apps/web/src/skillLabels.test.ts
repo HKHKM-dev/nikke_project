@@ -108,7 +108,7 @@ describe('効果の出どころの表示', () => {
       appliedAmount: 0.9203,
     };
     expect(formatEffectSource(effect, 'アニス：スター')).toBe(
-      '枠 2 アニス：スター スキル 2（自分と自分より最終防御力が低い味方）',
+      'スロット 2 アニス：スター スキル 2（自分と自分より最終防御力が低い味方）',
     );
   });
 });
@@ -167,7 +167,7 @@ describe('クラスで絞る効果の表示', () => {
       appliedAmount: 0.7722,
     };
     expect(formatEffectSource(effect, 'エヌ : ミラクルフェアリー')).toBe(
-      '枠 2 エヌ : ミラクルフェアリー バースト（火力型の味方）',
+      'スロット 2 エヌ : ミラクルフェアリー バースト（火力型の味方）',
     );
     const heal: ResolvedInstantEffect = {
       source: { resourceId: 121, skill: 'skill1', name: { ja: 'S1', en: 'S1' } },
@@ -207,7 +207,7 @@ describe('戦闘補助の側の表示', () => {
       sourceSlotIndex: 2,
       appliedAmount: 0.0802,
     };
-    expect(formatEffectSource(effect, 'ラピ：レッドフード')).toBe('枠 3 ラピ：レッドフード スキル 1（戦闘補助）');
+    expect(formatEffectSource(effect, 'ラピ：レッドフード')).toBe('スロット 3 ラピ：レッドフード スキル 1（戦闘補助）');
     expect(formatBurstStepMode({ name: { ja: '戦闘補助', en: 'Combat Assist' }, changed: false })).toBe(
       '（戦闘補助でない時）',
     );

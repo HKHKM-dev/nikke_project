@@ -27,6 +27,22 @@ export const GEAR_PARTS: readonly GearPart[] = ['head', 'body', 'arm', 'leg'];
 export const GEAR_LEVEL_MAX = 5;
 export const AFFECTION_RANK_MIN = 1;
 export const AFFECTION_RANK_MAX = 40;
+
+/** OL の行の位置（0 始まり）。position の無い行は配列の並び */
+export function overloadLinePosition(line: OverloadLine, index: number): number {
+  return line.position ?? index;
+}
+
+/** OL の行の位置が重ならないか */
+export function overloadPositionsUnique(lines: readonly OverloadLine[]): boolean {
+  const positions = lines.map(overloadLinePosition);
+  return new Set(positions).size === positions.length;
+}
+
+/** キャラごとの好感度ランクの上限。OVERSPEC（ピルグリム全員と、ピルグリムでない 4 体）は 40、ほかは 30（オーナーの指定） */
+export function affectionRankMax(character: Pick<CharacterData, 'corporationSubType'>): number {
+  return character.corporationSubType === 'OVERSPEC' ? AFFECTION_RANK_MAX : 30;
+}
 export const CUBE_LEVEL_MIN = 1;
 export const CUBE_LEVEL_MAX = 15;
 export const COLLECTION_LEVEL_MAX = 15;
@@ -48,8 +64,11 @@ export const OVERLOAD_OPTIONS: readonly OverloadOption[] = [
   'defence',
 ];
 
-/** Stage 13: OL 装備のオプション 1 行（効果は buildEffects.ts） */
-export type OverloadLine = { option: OverloadOption; level: number };
+/**
+ * Stage 13: OL 装備のオプション 1 行（効果は buildEffects.ts）。position は画面の何行目か（0 始まり。2 行目を空けて 3 行目に
+ * 入れるとき用。2026-10-31）。計算には効かない。省略は配列の並び
+ */
+export type OverloadLine = { option: OverloadOption; level: number; position?: number };
 /** overload は OL 装備だけ（最大 3 行。省略・空 = オプションなし）。ステータス層（攻撃力）には効かない */
 export type GearInput = { type: GearType; level: number; overload?: OverloadLine[] } | null;
 export type CubeInput = { id: number; level: number } | null;
@@ -190,7 +209,13 @@ export function validateBuild(
         throw new RangeError(`gear.${part}.overload[${i}]: unknown option ${String(line.option)}`);
       }
       assertInt(`gear.${part}.overload[${i}].level`, line.level, OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX);
+      if (line.position !== undefined) {
+        assertInt(`gear.${part}.overload[${i}].position`, line.position, 0, OVERLOAD_LINE_MAX - 1);
+      }
     });
+    if (!overloadPositionsUnique(lines)) {
+      throw new RangeError(`gear.${part}: overload lines share a position`);
+    }
   }
   if (build.cube !== null) {
     if (findCube(masters, build.cube.id) === undefined)

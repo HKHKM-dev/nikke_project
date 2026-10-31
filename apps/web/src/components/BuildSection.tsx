@@ -1,10 +1,10 @@
 // Stage 12: 育成入力（ステータス層）の入力欄。スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して
 // 入力を止める。Stage 13: OL 装備のオプション行（最大 3 行）の入力。
-// 2026-10-31: オーナーの指示で、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
-// スペック固定の説明）を消した。リサイクルルームとその他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）
+// 2026-10-31: オーナーの指示で、枠の「育成」の折りたたみの中の装備・キューブ・コレクションの部分にした（好感度は枠の側）。
+// また、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
+// スペック固定の説明）を消した。その他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）。リサイクルルームは編成共通の
+// コンソールから取る（team.ts の effectiveBuild）
 import {
-  AFFECTION_RANK_MAX,
-  AFFECTION_RANK_MIN,
   COLLECTION_LEVEL_MAX,
   CUBE_LEVEL_MAX,
   CUBE_LEVEL_MIN,
@@ -14,7 +14,9 @@ import {
   OVERLOAD_LEVEL_MAX,
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
+  TREASURE_PHASE_MAX,
   computeCombatAttack,
+  overloadLinePosition,
   type BuildInput,
   type BuildMasters,
   type CharacterData,
@@ -27,16 +29,19 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
-import { GEAR_PART_LABEL } from '../skillLabels.ts';
-import type { TeamAction } from '../team.ts';
+import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
+import { clampInt, type TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
-/** Stage 13: i 行目を line にした OL の行（null は削除。後ろの行は詰める） */
-function withOverloadLine(lines: readonly OverloadLine[], i: number, line: OverloadLine | null): OverloadLine[] {
-  const next: (OverloadLine | null)[] = [...lines];
-  next[i] = line;
-  return next.filter((l): l is OverloadLine => l !== null && l !== undefined);
+/**
+ * Stage 13: 位置 p の行を line にした OL の行（null は削除）。2026-10-31: オーナーの指示で、間の行を空けたまま後ろの行に
+ * 入れられるように、行は詰めずに位置（position）を持たせる
+ */
+function withOverloadLine(lines: readonly OverloadLine[], p: number, line: OverloadLine | null): OverloadLine[] {
+  const rest = lines.map((l, i) => ({ ...l, position: overloadLinePosition(l, i) })).filter((l) => l.position !== p);
+  const next = line === null ? rest : [...rest, { ...line, position: p }];
+  return next.sort((a, b) => a.position - b.position);
 }
 
 type Props = {
@@ -55,11 +60,6 @@ type Props = {
   dispatch: Dispatch<TeamAction>;
 };
 
-function clampInt(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value)) return min;
-  return Math.min(max, Math.max(min, Math.round(value)));
-}
-
 export function BuildSection({
   slotIndex,
   character,
@@ -74,6 +74,8 @@ export function BuildSection({
 }: Props) {
   const set = (patch: Partial<BuildInput>) =>
     dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
+  const setTreasurePhase = (treasurePhase: TreasurePhase) =>
+    dispatch({ type: 'setTreasurePhase', index: slotIndex, treasurePhase });
   const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
     set({ gear: { ...build.gear, [part]: gear } });
 
@@ -95,25 +97,10 @@ export function BuildSection({
   const hasTreasure = character.treasure !== null && treasurePhase > 0;
 
   return (
-    <details className="build">
-      <summary>育成</summary>
+    <div className="build">
       {mastersError && <p className="error">育成のマスタの読み込みに失敗しました: {mastersError}</p>}
       {!masters && !mastersError && <p className="hint">育成のマスタを読み込み中…</p>}
       <div className="build-grid">
-        <label className="field">
-          <span>好感度</span>
-          <input
-            type="number"
-            min={AFFECTION_RANK_MIN}
-            max={AFFECTION_RANK_MAX}
-            step={1}
-            value={shown.affectionRank}
-            disabled={disabled}
-            onChange={(e) =>
-              set({ affectionRank: clampInt(Number(e.target.value), AFFECTION_RANK_MIN, AFFECTION_RANK_MAX) })
-            }
-          />
-        </label>
         {GEAR_PARTS.map((part) => {
           const gear = shown.gear[part];
           return (
@@ -155,8 +142,7 @@ export function BuildSection({
                 <span className="ol-lines">
                   {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
                     const lines = gear.overload ?? [];
-                    const line = lines[i];
-                    if (i > lines.length) return null;
+                    const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
                     return (
                       <span className="gear-inputs" key={i}>
                         <select
@@ -179,11 +165,9 @@ export function BuildSection({
                             </option>
                           ))}
                         </select>
-                        <input
-                          type="number"
-                          min={OVERLOAD_LEVEL_MIN}
-                          max={OVERLOAD_LEVEL_MAX}
-                          step={1}
+                        {/* 2026-10-31: オーナーの指示で、OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
+                        <select
+                          aria-label={`オプション ${i + 1} の上昇値`}
                           value={line?.level ?? OVERLOAD_LEVEL_MIN}
                           disabled={disabled || line === undefined}
                           onChange={(e) =>
@@ -193,7 +177,18 @@ export function BuildSection({
                               level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX),
                             })
                           }
-                        />
+                        >
+                          {(() => {
+                            const values =
+                              line && masters?.overload.options.find((o) => o.option === line.option)?.values;
+                            if (!values) return <option value={OVERLOAD_LEVEL_MIN}>—</option>;
+                            return values.map((v, lv) => (
+                              <option key={lv} value={lv + OVERLOAD_LEVEL_MIN}>
+                                {v.toFixed(2)}%
+                              </option>
+                            ));
+                          })()}
+                        </select>
                       </span>
                     );
                   })}
@@ -239,18 +234,35 @@ export function BuildSection({
         <div className="field gear">
           <span>コレクション</span>
           <span className="gear-inputs">
+            {/* 2026-10-31: オーナーの指示で、スキル Lv の横にあった宝物の段階の選択をここに統合した（宝物はコレクションの枠に付ける）。
+                宝物はスペック固定でも選べる */}
             <select
-              value={hasTreasure ? 'SSR' : (shown.collection?.rarity ?? '')}
-              disabled={disabled || hasTreasure}
+              value={hasTreasure ? `treasure-${treasurePhase}` : (shown.collection?.rarity ?? '')}
+              disabled={disabled && character.treasure === null}
               onChange={(e) => {
-                const rarity = e.target.value as 'R' | 'SR' | '';
+                const value = e.target.value;
+                if (value.startsWith('treasure-')) {
+                  setTreasurePhase(Number(value.slice('treasure-'.length)) as TreasurePhase);
+                  return;
+                }
+                if (hasTreasure) setTreasurePhase(0);
+                const rarity = value as 'R' | 'SR' | '';
                 set({ collection: rarity === '' ? null : { rarity, level: shown.collection?.level ?? 0 } });
               }}
             >
               <option value="">なし</option>
-              <option value="R">R</option>
-              <option value="SR">SR</option>
-              {hasTreasure && <option value="SSR">SSR（宝物）</option>}
+              <option value="R" disabled={disabled}>
+                R
+              </option>
+              <option value="SR" disabled={disabled}>
+                SR
+              </option>
+              {character.treasure &&
+                Array.from({ length: TREASURE_PHASE_MAX }, (_, i) => i + 1).map((phase) => (
+                  <option key={phase} value={`treasure-${phase}`}>
+                    宝物 {treasurePhaseLabel(character.treasure!.unlockOrder, phase)}
+                  </option>
+                ))}
             </select>
             <input
               type="number"
@@ -270,6 +282,6 @@ export function BuildSection({
         </div>
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
-    </details>
+    </div>
   );
 }
