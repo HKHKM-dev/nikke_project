@@ -1,0 +1,52 @@
+{
+  "id": "0825",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0825_sr+sg+mg+ar+smg_cocoa+soldier-fa+marian-queen+idoll-sun+sakura_ally-taken.mp4",
+  "original": "2026-11-01_07-33-47.mp4",
+  "durationSec": 208.4,
+  "frames": 12503,
+  "fps": 60,
+  "sizeMB": 252.3,
+  "sha256": "faa1fad77e98",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 19,
+      "name": "マリアン：クイーン",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0585 の撮影の依頼で撮ったが、5 枠目が空き（EMPTY SLOT）で鈴原サクラが入っていなかった（戦闘履歴のパネルで確かめた）。編成は V-0538 の撮り方 B と同じ 4 人（ココア・ソルジャーF.A.・マリアン：クイーン（操作）・I-DOLL・サン・手動操作なし）。ファイル名の識別子は取り込みのときの計画のまま（smg・sakura を含む）",
+  "backup": {
+    "at": "2026-11-01T07:43+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

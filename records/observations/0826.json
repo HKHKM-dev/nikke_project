@@ -1,0 +1,387 @@
+[
+  {
+    "id": "0826-01",
+    "recording": "0826",
+    "kind": "total",
+    "use": "record",
+    "value": 764302098,
+    "description": "ココア・ソルジャーF.A.・マリアン：クイーン・I-DOLL・サン・鈴原サクラ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11587。増分は 7118 個"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-02",
+    "recording": "0826",
+    "kind": "count",
+    "use": "record",
+    "value": 273,
+    "unit": "トリガー",
+    "description": "ココア・ソルジャーF.A.・マリアン：クイーン・I-DOLL・サン・鈴原サクラ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 7118 個。前の増分から 30f 未満の増分（7110 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 7 個）"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-03",
+    "recording": "0826",
+    "kind": "timing",
+    "use": "record",
+    "value": [1204, 2223, 3353, 4554, 5786, 6994, 8179, 9384, 10652],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・0・0・0・0・0・0・0f"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-04",
+    "recording": "0826",
+    "kind": "timing",
+    "use": "record",
+    "value": [1233, 2435, 3636, 4837, 6038, 7239, 8441, 9706, 10907],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・0・6・6・7f"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-05",
+    "recording": "0826",
+    "kind": "timing",
+    "use": "record",
+    "value": [1262, 2464, 3665, 4866, 6067, 7268, 8470, 9734, 10936],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-06",
+    "recording": "0826",
+    "kind": "timing",
+    "use": "record",
+    "value": [4548, 8174],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-07",
+    "recording": "0826",
+    "kind": "timing",
+    "use": "record",
+    "value": [2428, 3630, 4831, 6032, 7233, 8434, 10900],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9635"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-08",
+    "recording": "0826",
+    "kind": "timing",
+    "use": "record",
+    "value": [2461, 3658, 6061, 8462],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0585",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0826-09",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 513859,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サンの窓（順番攻撃ダメージ▲ 85.17%）の槍の 1 ヒット（会心なし。鈴原サクラの受けるダメージ▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。発動の時点（最初のヒットの 19f 前）で▲ありと決まった発動は 2 回（窓 1 の f2606・窓 3 の f5007）。単独の増分は f2672・f2684・f5062・f5073・f5085・f5097（どれも 513,859）。1 つの和なら 470,873"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 0,
+        "frame": 1549,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0826-10",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 441633,
+    "unit": "ダメージ",
+    "description": "I-DOLL・サンの窓の槍の 1 ヒット（会心なし。鈴原サクラの受けるダメージ▲なし。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。発動の時点で▲なしと決まった発動は 4 回（f2853・f5242・f7690・f9809）。単独の増分は f2872〜f2932 の 6 つ・f5273・f5297・f5332・f7709・f9852（どれも 441,633。0740-21 と同じ値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 0,
+        "frame": 1784,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0826-11",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 71686,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓の通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし。鈴原サクラの受けるダメージ▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。単独の増分は f1344・f1348・f1350・f1356 など（どれも 71,686）。1 つの和なら 63,396、攻撃ダメージ▲の和に入れる形なら 65,968"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0826-12",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 61611,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓の通常攻撃のコアの 1 ヒット（会心・距離ボーナスなし。鈴原サクラの受けるダメージ▲なし。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。単独の増分は f3727・f8529・f8531・f8533 など（どれも 61,611。0740-23 と同じ値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 620,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0826-13",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180953,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓のコア命中ダメージ（会心なし。鈴原サクラの受けるダメージ▲あり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。単独の増分は f6585・f6606（180,953）。ほかは同じフレームの通常攻撃との和で、和を引いた残りが前後 10f に繰り返し出る増分と ±2 で一致したもの。1 つの和なら 160,026"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "frame": 348,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0826-14",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 155520,
+    "unit": "ダメージ",
+    "description": "マリアン：クイーンの窓のコア命中ダメージ（会心なし。鈴原サクラの受けるダメージ▲なし。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。同じフレームの通常攻撃との和で読んだ（和を引いた残りが前後 10f に繰り返し出る増分と ±2 で一致）。0740-22 と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "frame": 600,
+        "crit": false,
+        "core": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0826-15",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "record",
+    "value": [11, 0, 17, 0],
+    "description": "I-DOLL・サンの窓の槍のヒットのうち、発動の時点の鈴原サクラの▲の有無が決まったものの数: [▲ありで HS（別の乗数）に合った, ▲ありで HA（1 つの和）に合った, ▲なしで▲なしの値に合った, ▲なしで▲ありの値に合った]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。候補は会心の有無と、同じフレームの通常攻撃の和（前後 10f に繰り返し出る増分）。決まらない発動 2 回（f7408・f10044。鈴原サクラのリロードの空き）の 12 ヒットは数えていない（値はどれも HS）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0826-16",
+    "recording": "0826",
+    "source": "V-0585",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "record",
+    "value": [214, 266, 0, 32, 43, 0],
+    "description": "マリアン：クイーンの窓のコアの増分のうち、鈴原サクラの▲の有無が決まったものの数: [▲ありで HS に合った通常攻撃のコア, ▲ありで HS に合ったコア命中ダメージ, ▲ありで HA か攻撃ダメージ▲の和の形に合った, ▲なしで▲なしの値に合った通常攻撃のコア, 同じくコア命中ダメージ, ▲なしで▲ありの値に合った]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）を、使い捨てのスクリプトで 1 ヒットの候補に当てた（V-0585「読み方」）",
+      "note": "鈴原サクラの▲の有無は、比べるヒットの値を見ずに、前と後（60f 以内）の鈴原サクラの 1 ヒットの段で決めた（V-0585「読み方」）。会心の有無を含む。窓の中のどの増分も、HA と攻撃ダメージ▲の和の形には合わない（▲の有無が決まらない増分も含めて）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]
