@@ -239,6 +239,7 @@ export function App() {
           treasurePhase,
           modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
           buildNotes,
+          noFire: slot.noFire,
         };
       }),
     [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters, computed],
@@ -274,11 +275,7 @@ export function App() {
             synchroLevel={team.synchroLevel}
             durationSeconds={calcTeam.durationSeconds}
             burst={calcTeam.burst}
-            controlledSlot={calcTeam.controlledSlot}
             rangeJump={calcTeam.rangeJump}
-            slotNames={team.slots.map((s) =>
-              s.resourceId === null ? null : (cache.characters.get(s.resourceId)?.name.ja ?? null),
-            )}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">
@@ -305,6 +302,8 @@ export function App() {
                   mastersError={mastersError}
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
+                  focused={team.controlledSlot === i}
+                  burst={team.burst}
                   dispatch={dispatch}
                 />
               );

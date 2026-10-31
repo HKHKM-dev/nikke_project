@@ -787,3 +787,55 @@ header h1 {
 .tl-key[class*='tl-band-'] {
   opacity: 1;
 }
+
+/* スロットの見出しと詳細設定（フォーカス・撃たない） */
+.slot-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+/* 狭いスロットでは印やボタンを次の行へ送り、それぞれの中では折り返さない */
+.slot-legend > * {
+  white-space: nowrap;
+}
+.slot-flag {
+  padding: 0 5px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.slot-settings-button {
+  padding: 1px 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 400;
+}
+.slot-advanced {
+  width: 18em;
+  font-weight: 400;
+}
+.slot-advanced .hint {
+  font-size: 0.78rem;
+}
+.slot-toggles {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.toggle-button {
+  padding: 4px 12px;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 6px;
+  background: Canvas;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.toggle-button[aria-pressed='true'] {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
+}

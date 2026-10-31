@@ -1,4 +1,4 @@
-import { ELEMENTS, ELEMENT_LABEL, TEAM_SIZE, type Element } from '@nikke/core';
+import { ELEMENTS, ELEMENT_LABEL, type Element } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { CLASS_LABEL } from '../skillLabels.ts';
 import {
@@ -29,10 +29,7 @@ type Props = {
   /** 2026-10-31: 詳細設定（ポップアップ）の欄 */
   durationSeconds: number;
   burst: boolean;
-  controlledSlot: number;
   rangeJump: boolean;
-  /** 枠ごとのキャラ名（操作キャラの選択肢に出す）。空の枠は null */
-  slotNames: readonly (string | null)[];
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -40,7 +37,7 @@ type Props = {
  * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（射撃場スペック固定・シンクロレベル・リサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
  * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）。
- * 属性の右の「詳細設定」のポップアップで、3 分モード（的のジャンプ）・戦闘時間・バースト・操作キャラを設定する
+ * 属性の右の「詳細設定」のポップアップで、3 分モード（的のジャンプ）・戦闘時間・バーストを設定する（操作キャラはスロットの詳細設定のフォーカス）
  */
 export function TeamSettingsForm({
   element,
@@ -49,9 +46,7 @@ export function TeamSettingsForm({
   synchroLevel,
   durationSeconds,
   burst,
-  controlledSlot,
   rangeJump,
-  slotNames,
   dispatch,
 }: Props) {
   const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
@@ -130,20 +125,6 @@ export function TeamSettingsForm({
                   onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
                 />
                 <span>バースト</span>
-              </label>
-              <label className="field">
-                <span>操作キャラ</span>
-                <select
-                  value={controlledSlot}
-                  disabled={!burst}
-                  onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
-                >
-                  {Array.from({ length: TEAM_SIZE }, (_, i) => (
-                    <option key={i} value={i}>
-                      スロット {i + 1}: {slotNames[i] ?? 'なし'}
-                    </option>
-                  ))}
-                </select>
               </label>
             </div>
           </Popover>

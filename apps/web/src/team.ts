@@ -91,6 +91,11 @@ export type SlotState = {
    * 入力欄は HP の割合の条件を持つ効果のある枠にだけ出す（論点 5）。キャラを選び直すと既定（満タン）に戻る
    */
   hpRatio: number;
+  /**
+   * 2026-10-31: 撃たない（スロットの詳細設定）。モデルに撃たないスロットが無いので、計算では弾丸命中率を 0 にする（通常攻撃の
+   * ダメージとゲージが出ない。射撃の回数のきっかけは残る。records の noFireSlots と同じ扱い。teamStateForCalc）。既定は撃つ
+   */
+  noFire: boolean;
 };
 
 export type TeamState = {
@@ -162,6 +167,7 @@ export type TeamAction =
   | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
   | { type: 'setBuild'; index: number; build: BuildInput }
   | { type: 'setHpRatio'; index: number; hpRatio: number }
+  | { type: 'setNoFire'; index: number; noFire: boolean }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
@@ -183,6 +189,7 @@ export function emptySlot(): SlotState {
     treasurePhase: DEFAULT_TREASURE_PHASE,
     build: emptyBuild(),
     hpRatio: DEFAULT_HP_RATIO,
+    noFire: false,
   };
 }
 
@@ -252,6 +259,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, build: action.build }));
     case 'setHpRatio':
       return updateSlot(state, action.index, (s) => ({ ...s, hpRatio: action.hpRatio }));
+    case 'setNoFire':
+      return updateSlot(state, action.index, (s) => ({ ...s, noFire: action.noFire }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -357,7 +366,8 @@ export function effectiveBuild(
 /**
  * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
  * （欄が無いので直せないため）。計算と画面はこの編成を読む
- * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算。Lv は編成共通のシンクロレベル
+ * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算。Lv は編成共通のシンクロレベル。撃たないスロットは、射撃条件を
+ *   手入力の弾丸命中率 0 にする（SlotState.noFire）
  * - 編成: 敵（射撃場の的にし、属性だけ残す）。戦闘時間・バースト・操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
  *   3 分モードの出来事のセットは eventSetsForCalc
  */
@@ -367,8 +377,8 @@ export function teamStateForCalc(state: TeamState): TeamState {
     slots: state.slots.map((slot) => ({
       ...slot,
       growth: { ...slot.growth, level: state.synchroLevel },
-      conditionMode: DEFAULT_CONDITION_MODE,
-      condition: { ...DEFAULT_SLOT_CONDITION },
+      conditionMode: slot.noFire ? 'manual' : DEFAULT_CONDITION_MODE,
+      condition: slot.noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : { ...DEFAULT_SLOT_CONDITION },
       hpRatio: DEFAULT_HP_RATIO,
       build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
     })),
@@ -628,6 +638,8 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
     const build = parseBuild(s.build);
     const hpRatio = parseHpRatio(s.hpRatio);
+    // 2026-10-31 までの保存データには無いので、欠落は撃つ
+    if (s.noFire !== undefined && !isBool(s.noFire)) return null;
     if (
       growth === null ||
       condition === null ||
@@ -639,7 +651,17 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     ) {
       return null;
     }
-    slots.push({ resourceId: id, growth, conditionMode, condition, skillLevels, treasurePhase, build, hpRatio });
+    slots.push({
+      resourceId: id,
+      growth,
+      conditionMode,
+      condition,
+      skillLevels,
+      treasurePhase,
+      build,
+      hpRatio,
+      noFire: s.noFire === true,
+    });
   }
 
   const enemy = parseEnemy(raw.enemy);

@@ -653,6 +653,21 @@ describe('event sets for the calculation (3-minute mode in the advanced settings
   });
 });
 
+describe('no fire (slot advanced settings, 2026-10-31)', () => {
+  it('calculates a no-fire slot with the manual condition and a bullet hit rate of 0, and round-trips it', () => {
+    let s = withCharacters([10, 20]);
+    s = teamReducer(s, { type: 'setNoFire', index: 1, noFire: true });
+    const calc = teamStateForCalc(s);
+    expect(calc.slots[1]!.conditionMode).toBe('manual');
+    expect(calc.slots[1]!.condition.hitRate).toBe(0);
+    expect(calc.slots[0]!.conditionMode).toBe(initialTeamState().slots[0]!.conditionMode);
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    const old = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
+    for (const slot of old.slots) delete slot.noFire;
+    expect(parseTeamState(JSON.stringify(old), index)?.slots[0]?.noFire).toBe(false);
+  });
+});
+
 describe('affection rank cap per character (2026-10-31)', () => {
   it('caps the saved affection rank at 40 for OVERSPEC and 30 for the others when calculating', () => {
     const slot = { ...initialTeamState().slots[0]!, resourceId: 10 };

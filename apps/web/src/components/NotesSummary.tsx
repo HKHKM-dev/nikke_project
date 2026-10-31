@@ -20,6 +20,8 @@ export type NotesSummarySlot = {
   modelNotes: readonly ModelNote[];
   /** 育成の効果層で計算に入らないもの（未対応だけ。ダメージに無関係なものは出さない） */
   buildNotes: readonly BuildEffectNote[];
+  /** 2026-10-31: 撃たない（スロットの詳細設定）。近似の注記を出す */
+  noFire: boolean;
 };
 
 type Item = { level: 'unsupported' | 'outOfScope' | 'approx' | 'assumed'; text: string };
@@ -68,6 +70,12 @@ const MODEL_WIDE: Item[] = [
 
 function slotItems(slot: NotesSummarySlot): Item[] {
   const items: Item[] = [];
+  if (slot.noFire) {
+    items.push({
+      level: 'approx',
+      text: '撃たない: モデルに撃たないスロットが無いので、弾丸命中率を 0 にして通常攻撃のダメージとゲージを 0 にしている。射撃の回数で発動するスキルは、撃ったものとして発動する（未実装）',
+    });
+  }
   const { skills } = slot;
   if (skills.kind === 'undefined') {
     items.push({ level: 'unsupported', text: 'スキル定義なし（通常攻撃のみで計算。味方からのバフは受ける）' });

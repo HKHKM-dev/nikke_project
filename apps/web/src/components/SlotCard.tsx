@@ -15,6 +15,7 @@ import { formatNumber } from '../format.ts';
 import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
+import { Popover } from './Popover.tsx';
 import { SkillSection } from './SkillSection.tsx';
 
 type Props = {
@@ -34,6 +35,10 @@ type Props = {
   masters: BuildMasters | null;
   mastersError: string | null;
   slotResult: TeamSlotResult | null;
+  /** 2026-10-31: このスロットがフォーカス（操作キャラ）か */
+  focused: boolean;
+  /** バーストを回すか（フォーカスはバーストのゲージにだけ効く） */
+  burst: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -53,6 +58,8 @@ export function SlotCard({
   masters,
   mastersError,
   slotResult,
+  focused,
+  burst,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
@@ -83,7 +90,46 @@ export function SlotCard({
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
-      <legend>スロット {slotIndex + 1}</legend>
+      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない）のポップアップ。設定は今後増やす */}
+      <legend className="slot-legend">
+        <span>スロット {slotIndex + 1}</span>
+        {focused && <span className="slot-flag">フォーカス</span>}
+        {slot.noFire && <span className="slot-flag">撃たない</span>}
+        <Popover
+          button="詳細設定"
+          buttonClassName="slot-settings-button"
+          label={`スロット ${slotIndex + 1} の詳細設定`}
+          align="left"
+        >
+          <div className="slot-advanced">
+            <div className="slot-toggles">
+              <button
+                type="button"
+                className="toggle-button"
+                aria-pressed={focused}
+                onClick={() => dispatch({ type: 'setControlledSlot', controlledSlot: slotIndex })}
+              >
+                フォーカス
+              </button>
+              <button
+                type="button"
+                className="toggle-button"
+                aria-pressed={slot.noFire}
+                onClick={() => dispatch({ type: 'setNoFire', index: slotIndex, noFire: !slot.noFire })}
+              >
+                撃たない
+              </button>
+            </div>
+            <p className="hint">
+              フォーカス（操作キャラ）は編成で 1 人。チャージ武器のフルチャージ倍率がバーストのゲージに乗る
+              {!burst && '（バーストが OFF の間は効かない）'}。
+            </p>
+            <p className="hint">
+              撃たない: 通常攻撃のダメージとゲージを 0 にする。射撃の回数で発動するスキルは発動したまま（近似）。
+            </p>
+          </div>
+        </Popover>
+      </legend>
       <CharacterPicker
         index={index}
         excludeIds={excludeIds}
