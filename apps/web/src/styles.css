@@ -8,7 +8,16 @@
     sans-serif;
   line-height: 1.45;
 }
+/* 右上の設定のテーマ（theme.ts）。:root を重ねて、アーティファクトの表示枠の data-theme より強くする */
+:root:root[data-app-theme='light'] {
+  color-scheme: light;
+}
+:root:root[data-app-theme='dark'] {
+  color-scheme: dark;
+}
 body {
+  background: Canvas;
+  color: CanvasText;
   margin: 0;
   padding: 0 16px;
 }
@@ -20,6 +29,68 @@ body {
 header h1 {
   margin: 0 0 10px;
   font-size: 1.35rem;
+}
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* 右上の設定のメニュー */
+.settings-menu {
+  position: relative;
+}
+.settings-menu-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.settings-menu-button:hover,
+.settings-menu-button[aria-expanded='true'] {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+.settings-menu-button:focus-visible {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+.settings-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  min-width: 12em;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-radius: 8px;
+  background: Canvas;
+  color: CanvasText;
+  box-shadow: 0 4px 16px color-mix(in srgb, CanvasText 18%, transparent);
+}
+.settings-menu-group {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.settings-menu-group > legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+.settings-menu-option {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 3px 0;
+  cursor: pointer;
 }
 
 /* 共通のパネルとフォーム */

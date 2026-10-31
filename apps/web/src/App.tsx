@@ -23,6 +23,7 @@ import {
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
+import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
@@ -240,8 +241,9 @@ export function App() {
 
   return (
     <main className="app">
-      <header>
+      <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
+        <SettingsMenu />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
