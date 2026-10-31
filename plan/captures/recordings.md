@@ -770,6 +770,10 @@
 | 0796 | `20261031-0796_rl+sr+mg_flower+eunhwa-tu+emma-tu_round-explosion.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ウンファ：タクティカル・アップ（95、SR・灼熱・SSR） + ◎エマ：タクティカル・アップ（93、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON |  |
 | 0797 | `20261031-0797_smg+mg+ar_sakura+elegg+mihara_elegg-s1-gauge-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎ミハラ（161、AR・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0564（エレグの S1 のゲージ）。ミハラ（操作・撃たない） |
 | 0798 | `20261031-0798_smg+mg+ar_sakura+elegg+mihara_elegg-s1-gauge-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎ミハラ（161、AR・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0564（エレグの S1 のゲージ）。ミハラ（操作・撃たない） |
+| 0799 | `20261031-0799_smg+sg+mg_sakura+privaty-um+elegg_defence-round-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プリバティ：アンカインド・メイド（313、SG・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0561。鈴原サクラ（AI）・プリバティ：アンカインド・メイド（AI）・エレグ（操作・撃たない）。オートバースト ON |
+| 0800 | `20261031-0800_smg+sg+mg_sakura+privaty-um+elegg_defence-round-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プリバティ：アンカインド・メイド（313、SG・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0561。鈴原サクラ（AI）・プリバティ：アンカインド・メイド（AI）・エレグ（操作・撃たない）。オートバースト ON |
+| 0801 | `20261031-0801_smg+sg+rl_sakura+product23+laplace-uh_defence-round-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プロダクト23（307、SG・風圧・R） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0565。鈴原サクラ（AI）・プロダクト23（AI）・ラプラス：アルティメットヒーロー（操作・撃たない）。オートバースト ON |
+| 0802 | `20261031-0802_smg+sg+rl_sakura+product23+laplace-uh_defence-round-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プロダクト23（307、SG・風圧・R） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0565。鈴原サクラ（AI）・プロダクト23（AI）・ラプラス：アルティメットヒーロー（操作・撃たない）。オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
