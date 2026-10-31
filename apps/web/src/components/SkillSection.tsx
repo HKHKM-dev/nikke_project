@@ -113,7 +113,7 @@ export function SkillSection({ slotIndex, character, levels, treasurePhase, disa
   return (
     <div className="skills">
       <div className="skills-head">
-        <span className="skills-title">スキル Lv</span>
+        <span className="skills-title">スキル LV</span>
         {overallBadge && <span className={`badge ${overallBadge.className}`}>{overallBadge.label}</span>}
       </div>
       <div className="growth-row skill-levels-row">

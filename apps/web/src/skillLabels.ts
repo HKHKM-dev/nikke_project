@@ -569,11 +569,11 @@ export function formatBuildEffect(effect: BuildEffect): string {
   return `${BUFF_STAT_LABEL[effect.stat]} +${formatPercent(effect.value, 2)}`;
 }
 
-/** 「OL 頭 1 行目（攻撃力増加 Lv15）」「キューブ（アンチコードHC 段階 6）」「コレクション（…段階 4）」 */
+/** 「OL 頭 1 行目（攻撃力増加 LV15）」「キューブ（アンチコードHC 段階 6）」「コレクション（…段階 4）」 */
 export function formatBuildEffectSource(source: BuildEffectSource): string {
   switch (source.kind) {
     case 'overload':
-      return `OL ${source.part ? GEAR_PART_LABEL[source.part] : ''} ${(source.line ?? 0) + 1} 行目（${source.name.ja} Lv${source.level}）`;
+      return `OL ${source.part ? GEAR_PART_LABEL[source.part] : ''} ${(source.line ?? 0) + 1} 行目（${source.name.ja} LV${source.level}）`;
     case 'cube':
       return `キューブ（${source.name.ja} 段階 ${source.level}）`;
     case 'collection':

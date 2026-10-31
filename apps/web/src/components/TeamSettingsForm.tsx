@@ -94,7 +94,7 @@ export function TeamSettingsForm({ element, fixedSpec, consoleInput, synchroLeve
           <span>射撃場スペック固定</span>
         </label>
         <div className="console-grid">
-          {levelField('synchro', 'シンクロ Lv', synchroLevel, (lv) =>
+          {levelField('synchro', 'シンクロ LV', synchroLevel, (lv) =>
             dispatch({ type: 'setSynchroLevel', synchroLevel: Math.max(1, lv) }),
           )}
         </div>

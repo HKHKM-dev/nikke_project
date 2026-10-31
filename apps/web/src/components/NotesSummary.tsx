@@ -73,12 +73,17 @@ function slotItems(slot: NotesSummarySlot): Item[] {
   return items;
 }
 
+/** 2026-10-31: 画面のレベルの表記は「LV」にそろえる（スキル定義などの文の「Lv10」も出すときに直す） */
+function levelNotation(text: string): string {
+  return text.replace(/\bLv(?=\.?\s?\d)/g, 'LV');
+}
+
 function ItemList({ items }: { items: readonly Item[] }) {
   return (
     <ul className="notes">
       {items.map((item, i) => (
         <li key={i} className={`note ${LEVEL_CLASS[item.level]}`}>
-          <span className="badge">{LEVEL_LABEL[item.level]}</span> {item.text}
+          <span className="badge">{LEVEL_LABEL[item.level]}</span> {levelNotation(item.text)}
         </li>
       ))}
     </ul>
