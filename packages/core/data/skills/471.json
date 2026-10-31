@@ -91,13 +91,50 @@
           "sequentialAttack": true,
           "gaugePerHit": true,
           "assumes": {
-            "ja": "オートファイアの効果 2（ロックオン対象に装填数分だけ順番に攻撃）。発のフレームのオートファイア準備のスタック数（外れる前）だけ、発の 44f 後から 0.2 秒ごと（端数を持ち越す）に 1 ヒットずつ（コアに当たらない）。どのヒットも射手の 1 ヒットぶんのバーストゲージ（C-0426）",
-            "en": "Auto Fire effect 2 (sequential attacks on the lock-on target, one per load). As many hits as the Auto Fire Ready stacks on the shot frame (before removal), from 44 frames after the shot every 0.2 s carrying the fraction (no core). Each hit charges one shooter hit of burst gauge (C-0426)"
+            "ja": "オートファイアの効果 2（ロックオン対象に装填数分だけ順番に攻撃）。発のフレームのオートファイア準備のスタック数（外れる前）だけ、発の 44f 後から 0.2 秒ごと（端数を持ち越す）に 1 ヒットずつ（コアに当たらない）。値はバフとフルバースト補正を発のフレームの値で固定する（C-0761）。どのヒットも射手の 1 ヒットぶんのバーストゲージ（C-0426）",
+            "en": "Auto Fire effect 2 (sequential attacks on the lock-on target, one per load). As many hits as the Auto Fire Ready stacks on the shot frame (before removal), from 44 frames after the shot every 0.2 s carrying the fraction (no core). The values fix the buffs and the Full Burst bonus on the shot frame (C-0761). Each hit charges one shooter hit of burst gauge (C-0426)"
           },
           "claims": [
             "C-0757",
-            "C-0426"
+            "C-0426",
+            "C-0761"
           ]
+        },
+        {
+          "kind": "stackChange",
+          "state": "sevenDwarvesFullyActive",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "amount": 1,
+          "decrease": true,
+          "closesAtZero": true,
+          "condition": {
+            "selfState": "sevenDwarvesFullyActive"
+          },
+          "assumes": {
+            "ja": "使用回数はセブンスドワーフ・フルアクティブのスタック数（バーストの effects[1]）。フルチャージの発の次のフレームに 1 回▼（その次のフレームで切る）で、0 になったら状態を閉じる（解除条件「使用回数を使い切った時」）。発の判定（チャージダメージ▲・順番攻撃ダメージ▲の条件、オートファイアの装填数）は減る前のまま",
+            "en": "The use count is the Seven Dwarves Fully Active stacks (burst effects[1]). One use is spent on the frame after a full-charge shot (cut on the next frame), and the state closes at 0 (released when the uses run out). The checks of that shot (the condition of the charge damage and sequential attack damage increases, the Auto Fire loads) see the count before the decrease"
+          },
+          "claims": [
+            "C-0760"
+          ]
+        },
+        {
+          "kind": "removeState",
+          "state": "sevenDwarvesFullyActive",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "target": "self",
+          "condition": {
+            "inFullBurst": false
+          },
+          "assumes": {
+            "ja": "「通常攻撃をした時」はフルチャージの発も含むどの発も。撃ったフレームがフルバーストの外なら次のフレームで閉じる",
+            "en": "\"On normal attack\" covers every shot, full-charge shots included. A shot outside Full Burst closes the state on the next frame"
+          }
         }
       ],
       "notes": [
@@ -106,15 +143,6 @@
           "en": "The DEF increase inside Auto Fire Ready does not change damage by itself (it matters only with an effect reading DEF in the team; the loads are effects[0])",
           "kind": "indirect",
           "path": "defense"
-        },
-        {
-          "ja": "フルチャージして攻撃した時のセブンスドワーフ・フルアクティブの使用回数▼と、通常攻撃をした時（フルバースト状態でなければ）のフルアクティブ解除は未対応（バーストのフルアクティブと一緒に書く。段 14 の PR 3）",
-          "en": "The Seven Dwarves Fully Active use count decrease on fully charged attacks and its removal on normal attacks (outside Full Burst) are not modeled (written together with the Burst Fully Active in stage 14 PR 3)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "stackChange",
-            "trigger": "fullChargeShot"
-          }
         }
       ]
     },
@@ -148,6 +176,61 @@
           "claims": [
             "C-0758"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "どの III がバーストを使っても、バースト 3 段階突入時（II → III の替わり目。C-0755）から 10 秒",
+            "en": "Whichever Burst III character uses the burst, 10 s from entering burst stage 3 (the II to III changeover; C-0755)"
+          },
+          "claims": [
+            "C-0762"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "chargeFull": true
+          },
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 7,
+          "durationShotsRef": 8,
+          "condition": {
+            "selfState": "sevenDwarvesFullyActive"
+          },
+          "assumes": {
+            "ja": "「フルチャージした時」は溜めが満ちたフレーム（effects[1] と同じ）で、満ちたフレームにフルアクティブ状態なら、その溜めで撃つ 1 発（の通常攻撃のヒット）に乗る",
+            "en": "\"On full charge\" is the frame the charge fills (as effects[1]); with Fully Active on that frame it applies to the 1 shot of that charge (its normal attack hit)"
+          },
+          "claims": [
+            "C-0760"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "chargeFull": true
+          },
+          "target": "self",
+          "stat": "sequentialAttackDamage",
+          "ref": 9,
+          "durationShotsRef": 10,
+          "condition": {
+            "selfState": "sevenDwarvesFullyActive"
+          },
+          "assumes": {
+            "ja": "「1 発間維持」はその溜めで撃つ発で、その発のオートファイアの順番の攻撃（S1 の effects[4]。発の後に遅れて出る）の全部に乗る（順番の攻撃はバフを発のフレームで固定する。C-0761）。次の発の順番の攻撃には乗らない",
+            "en": "\"For 1 shot\" is the shot of that charge; it applies to all the sequential Auto Fire attacks of that shot (S1 effects[4], delayed after the shot; they fix their buffs on the shot frame; C-0761), not to those of the next shot"
+          },
+          "claims": [
+            "C-0760"
+          ]
         }
       ],
       "notes": [
@@ -167,28 +250,6 @@
           ]
         },
         {
-          "ja": "バースト 3 段階突入時の自分の攻撃力▲（10 秒）は未対応",
-          "en": "The attack increase on self on entering burst stage 3 (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "burstStage3Enter"
-          }
-        },
-        {
-          "ja": "セブンスドワーフ・フルアクティブ状態のフルチャージ時のチャージダメージ▲・順番攻撃ダメージ▲（1 発）は未対応",
-          "en": "The charge damage and sequential attack damage increases (1 shot) on full charge during Seventh Dwarf Full Active are not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "chargeDamage",
-            "target": "self",
-            "trigger": "fullChargeShot"
-          }
-        },
-        {
           "ja": "フルチャージした時のパーツダメージ▲は、パーツの無い射撃場の的ではダメージに関係しない（要件 5.2 節）",
           "en": "The parts damage increase on full charge does not affect damage against a range target without parts (requirements 5.2)",
           "kind": "outOfScope",
@@ -205,30 +266,48 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0762"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "sevenDwarvesFullyActive",
+          "trigger": "burstUse",
+          "target": "self",
+          "maxStacksRef": 5,
+          "stacksPerFireRef": 5,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "fixedChargeTime",
+              "ref": 1
+            },
+            {
+              "maxStacksUp": {
+                "state": "autoFireReady",
+                "amountRef": 2
+              }
+            }
+          ],
+          "assumes": {
+            "ja": "使用回数（値 05 = 2 回）をスタック数で持ち、バースト使用時に 2 スタックで付く（持続。減りと解除は S1 の effects[5]・effects[6]）。中身はスタック数によらず 1 回: チャージ時間 3.2 秒の固定（付いている間は S2 の 1.2 秒の固定より勝つ。溜めの途中で付けば、その溜めも 3.2 秒になる）と、オートファイア準備の最大装填数 +10（5 → 15。3.2 秒の溜めで 16 回の周期のうち 15 で止まる）。最大ロックオン対象数▲は敵 1 体では効かない",
+            "en": "The use count (value 05 = 2) is held as stacks; the burst grants 2 stacks (lasting; the decrease and removal are S1 effects[5] and effects[6]). The contents apply once regardless of the stacks: charge time fixed to 3.2 s (wins over the S2 1.2 s fix while held; a charge in progress also becomes 3.2 s) and Auto Fire Ready max loads +10 (5 to 15; a 3.2 s charge ticks 16 times and stops at 15). The lock-on target increase does not matter with one enemy"
+          },
+          "claims": [
+            "C-0760"
+          ]
+        }
+      ],
       "notes": [
-        {
-          "ja": "自分の攻撃ダメージ▲（10 秒）は未対応",
-          "en": "The attack damage increase on self (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attackDamage",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
-        {
-          "ja": "セブンスドワーフ・フルアクティブ（チャージ時間 3.2 秒の固定、ロックオン対象数とオートファイア準備の装填数▲、使用回数 2 回）は未対応",
-          "en": "Seventh Dwarf Full Active (charge time fixed to 3.2 s, more lock-on targets and auto-fire loads, 2 uses) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "fixedChargeTime",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
         {
           "ja": "破壊可能な発射体全体へのダメージは、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）",
           "en": "The damage to all destructible projectiles does not affect damage, since shooting enemy projectiles is not modeled (requirements 5.2)",

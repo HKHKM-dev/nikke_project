@@ -7,6 +7,7 @@ import {
   INDIRECT_PATH_NAMES,
   SKILL_NOTE_KINDS,
   SKILL_SLOTS,
+  contentStatOf,
   type IndirectPath,
   type SkillDefinition,
   type SkillEffect,
@@ -260,7 +261,7 @@ function whileLabel(e: SkillEffect): string | undefined {
 export function effectLabel(e: SkillEffect): string {
   const detail =
     e.kind === 'state'
-      ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map((c) => c.stat).join('・')}）`}`
+      ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map(contentStatOf).join('・')}）`}`
       : e.kind === 'removeState'
         ? e.state
         : e.kind === 'stackChange'
@@ -316,7 +317,8 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
         // 名前の付いた状態の語彙編: 中身の項目に claims があれば、項目の行も出す（無い項目の根拠は付与の claims）
         if (e.kind !== 'state') return;
         e.contents?.forEach((c, j) => {
-          if (c.claims !== undefined) body.push(`    - contents[${j}] ${c.stat}: ${claimList(c.claims, states)}`);
+          if (c.claims !== undefined)
+            body.push(`    - contents[${j}] ${contentStatOf(c)}: ${claimList(c.claims, states)}`);
         });
       });
       entry.notes?.forEach((n, i) => {

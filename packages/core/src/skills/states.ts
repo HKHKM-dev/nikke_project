@@ -168,6 +168,16 @@ export const NAMED_STATES = {
    * 順番の攻撃の数（perCount）になる）
    */
   autoFireReady: { name: { ja: 'オートファイア準備', en: 'Auto Fire Ready' }, holder: 'ally' },
+  /**
+   * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5・6）: セブンスドワーフ・フルアクティブ（スノーホワイト：ヘビーアームズの
+   * バースト。使用回数（スタック）2 回・持続。中身はチャージ時間 3.2 秒の固定（S2 の 1.2 秒の固定より勝つ）とオートファイア準備の最大装填数
+   * 10▲。最大ロックオン対象数 10▲は敵 1 体では効かない。S1 の「フルチャージして攻撃した時」に使用回数 1 回▼、使い切ったら解除。
+   * 通常攻撃をした時、フルバースト状態でなければ解除）
+   */
+  sevenDwarvesFullyActive: {
+    name: { ja: 'セブンスドワーフ・フルアクティブ', en: 'Seven Dwarves Fully Active' },
+    holder: 'ally',
+  },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

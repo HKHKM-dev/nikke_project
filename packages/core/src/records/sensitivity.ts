@@ -6,7 +6,7 @@
 // 計算は全部で 1 分ほどかかるので records:minimal で回し（既定は入力の変わった観測値だけ。reusedSensitivity）、結果を
 // records/minimal/sensitivity.json に置く。records:check はそれを読む。
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import type { EdgeShift, SkillDefinition, SkillEffect } from '../skills/types.ts';
+import { isStatContent, type EdgeShift, type SkillDefinition, type SkillEffect } from '../skills/types.ts';
 import { METRICS, buildTeamInput, compareValue, type Observation, type RecordsData } from './observations.ts';
 import type { RecordingEntry } from './recordings.ts';
 import {
@@ -59,6 +59,8 @@ export function variantDefinition(
     const { contents: _contents, ...grant } = effect;
     entry.effects[ref.index] = rest.length > 0 ? { ...grant, contents: rest } : grant;
     if (variant === 'minus') return copy;
+    // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は timed にできない（plus は当てない）
+    if (!isStatContent(item)) return undefined;
     const { kind: _kind, state: _state, claims: _claims, maxStacks: _m, maxStacksRef: _mr, ...fields } = grant;
     const { claims: _itemClaims, ...value } = item;
     entry.effects.push(alwaysOn({ ...fields, ...value, kind: 'timed' } as SkillEffect, battleSeconds));

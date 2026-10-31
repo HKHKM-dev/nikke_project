@@ -73,7 +73,8 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * elementAdvantage = 「〈コード〉コードの敵に有利コードのダメージ適用」。値を持たないフラグ（ref を書かない。passive の self だけ）。
  * 効いていれば、敵のコードが自分のコードの有利でなくても有利として扱う（element.ts の elementMultiplier。有利コードの攻撃ダメージ▲の
  * 掛かり方も同じ）。どのコードの敵かは効果の enemyElement で書く。
- * fixedChargeTime = 「チャージ時間 N 秒に固定」。射撃に効く。値は秒（100 で割らない）。timed の self だけ
+ * fixedChargeTime = 「チャージ時間 N 秒に固定」。射撃に効く。値は秒（100 で割らない）。timed の self だけ。2 段目の段 14 の PR 3: 自分に付く
+ * 状態の中身にも書け、付いている間は timed の固定より勝つ（skills/buffs.ts の applyResolvedEffect。plan/design-skill-stage14.md 2.7 節）
  * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.1 節）:
  * trueDamage = 防御力無視ダメージ▲。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃と、trueDamage の使用武器の変更）
  * にだけ乗る（式の中の置き場所は damage.ts の TRUE_DAMAGE_BUCKET）。
@@ -1523,9 +1524,36 @@ export type BurstStepChangeEffect = {
 /**
  * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 状態の中身の 1 項目。状態の窓の間だけ持ち主に効く stat の▲▼。
  * 欄の意味は timed の値の欄と同じ。ref は付与のあるスロットの説明文の値（そのスロットの Lv で解く）。項目に kind が無ければ
- * stat の▲▼と読む（ほかの種類は後の拡張で kind を持つ項目として足す。同 8.4 節）
+ * stat の▲▼と読む（ほかの種類は後の拡張で kind を持つ項目として足す。同 8.4 節）。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 「〈状態〉の最大スタック数 N▲」の項目（maxStacksUp）も持てる
  */
-export type StateContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'decrease'> & ClaimRefs;
+export type StateContentItem = StatContentItem | MaxStacksUpContentItem;
+
+/** 名前の付いた状態の語彙編: stat の▲▼の中身の項目 */
+export type StatContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'decrease'> & ClaimRefs;
+
+/**
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 「〈状態〉の最大スタック数 N▲」（セブンスドワーフ・フルアクティブの
+ * 効果 3「オートファイア準備 最大装填数 10▲・持続」）。持ち主の state の上限（同じ定義のその状態の付与の maxStacks）に、この中身の状態の
+ * 件が付いている間だけ N を足す（中身の状態のスタック数によらず 1 回。skills/holders.ts）。上限は state の始まり（付与の発火）ごとに、その
+ * フレームの値で見る。上限が戻っても、付いている段は切らない。amountRef は付与のあるスロットの説明文の値（整数）
+ */
+export type MaxStacksUpContentItem = { maxStacksUp: { state: NamedStateId; amountRef: number } } & ClaimRefs;
+
+/** 2 段目の段 14 の PR 3: 中身の項目が stat の▲▼か（maxStacksUp でない） */
+export function isStatContent(item: StateContentItem): item is StatContentItem {
+  return !('maxStacksUp' in item);
+}
+
+/** 2 段目の段 14 の PR 3: 中身の項目の stat の名前（最大スタック数▲の項目は 'maxStacksUp'。最小構成の検査の形・一覧の表示） */
+export function contentStatOf(item: StateContentItem): BuffStat | 'maxStacksUp' {
+  return isStatContent(item) ? item.stat : 'maxStacksUp';
+}
+
+/** 2 段目の段 14 の PR 3: 中身の項目のうち stat の▲▼だけ（並びは保つ） */
+export function statContentsOf(contents: readonly StateContentItem[] | undefined): StatContentItem[] {
+  return (contents ?? []).filter(isStatContent);
+}
 
 /**
  * 名前の付いた状態の語彙編（同 5.2 節）: 状態の付与。timed から値の欄（stat・ref・scaling・decrease）を除き、目録の id（state）を
@@ -1561,6 +1589,12 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
    * （V-0523）。maxStacks（即値）を書く
    */
   stacksFrom?: StacksFrom;
+  /**
+   * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 1 回の発火で付けるスタックの数の description_value_NN（整数。
+   * 上限以下）。セブンスドワーフ・フルアクティブの使用回数（値 05 = 2 回）は、バースト使用時に 2 スタックで付き、使うたびに stackChange の
+   * 減少で 1 つずつ減る。maxStacks か maxStacksRef と組み、stacksFrom とは組み合わせない
+   */
+  stacksPerFireRef?: number;
 };
 
 /** 2 段目の段 10: 付与のスタックの数の出どころ（カウンタの値か、自分の状態のスタック数） */
@@ -1621,6 +1655,12 @@ export type StackChangeEffect = {
   amountRef?: number;
   /** 2 段目の段 3: スタック量の減少（▼） */
   decrease?: true;
+  /**
+   * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 減少で最後の 1 段も切る（スタックが 0 になったら件を閉じる。
+   * 説明文の「解除条件：使用回数を使い切った時」。セブンスドワーフ・フルアクティブの使用回数 1 回▼）。無ければ段 3 のまま最後の 1 段は
+   * 残す（V-0437）。decrease の自分の状態だけ
+   */
+  closesAtZero?: true;
   condition?: EffectCondition;
   assumes?: LocalizedText;
 };
@@ -2611,7 +2651,10 @@ function parseTimedFields(
   if (byShots && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
     fail(path, 'a duration in shots cannot stack');
   }
-  if (byShots && v.condition !== undefined) fail(`${path}.condition`, 'a duration in shots cannot have a condition');
+  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 条件は自分の状態（selfState）だけ組める（発火のフレームで判定し、窓は
+  // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲）
+  if (byShots && isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))
+    fail(`${path}.condition`, 'a duration in shots can only have the condition selfState');
   if (
     (effect.durationUntil === 'fullBurstEnd' || effect.durationUntil === 'reloadEnd') &&
     (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)
@@ -2692,7 +2735,7 @@ function parseCondition(
   c: Json,
   path: string,
   allowed: readonly ConditionKey[],
-  /** 2 段目の段 12 の PR 2: inFullBurst に false（フルバーストタイムの外なら）を書けるか（counterChange だけ） */
+  /** 2 段目の段 12 の PR 2: inFullBurst に false（フルバーストタイムの外なら）を書けるか（counterChange と、段 14 の PR 3 から removeState） */
   outsideFullBurst = false,
 ): EffectCondition {
   if (!isRecord(c)) fail(path, `expected an object with ${allowed.join(' / ')}`);
@@ -2867,6 +2910,14 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
       effect.stacksFrom = { counter };
     }
   }
+  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 1 回の発火で付けるスタックの数（使用回数）
+  if (v.stacksPerFireRef !== undefined) {
+    if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
+      fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef needs maxStacks or maxStacksRef');
+    if (effect.stacksFrom !== undefined)
+      fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef cannot be used with stacksFrom');
+    effect.stacksPerFireRef = parseRef(v.stacksPerFireRef, `${path}.stacksPerFireRef`);
+  }
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`, onEnemy));
@@ -2940,6 +2991,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'maxStacks',
   'maxStacksRef',
   'stacksFrom',
+  'stacksPerFireRef',
   'condition',
   'burstStepMix',
   'squad',
@@ -2961,6 +3013,8 @@ function parseStateContentItem(
   onEnemy = false,
 ): StateContentItem {
   if (!isRecord(item)) fail(path, 'expected an object');
+  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 「〈状態〉の最大スタック数 N▲」
+  if (item.maxStacksUp !== undefined) return parseMaxStacksUpItem(item, grant, path, onEnemy);
   for (const key of Object.keys(item)) {
     if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
@@ -2973,7 +3027,7 @@ function parseStateContentItem(
   } else if (timed.stat === 'damageTaken') {
     fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
   }
-  const out: StateContentItem = { stat: timed.stat };
+  const out: StatContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.scaling !== undefined) out.scaling = timed.scaling;
   if (timed.decrease) out.decrease = true;
@@ -2981,7 +3035,41 @@ function parseStateContentItem(
   return out;
 }
 
-/** 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節） */
+/**
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 中身の「〈状態〉の最大スタック数 N▲」。持ち主は付与の対象で、自分にだけ
+ * 付く付与に書ける（上限を足す先は持ち主の state の件の列）。state は味方の状態で、付与の状態とは別。同じ定義にその状態をスタックで付ける
+ * 付与が要ること（validateMaxStacksUps）は、定義全体で見る
+ */
+function parseMaxStacksUpItem(
+  item: Record<string, Json>,
+  grant: Record<string, Json>,
+  path: string,
+  onEnemy: boolean,
+): MaxStacksUpContentItem {
+  for (const key of Object.keys(item)) {
+    if (key !== 'maxStacksUp' && key !== 'claims') fail(`${path}.${key}`, 'unknown field');
+  }
+  if (onEnemy || grant.target !== 'self')
+    fail(`${path}.maxStacksUp`, 'maxStacksUp is only allowed in a grant on "self"');
+  const up = item.maxStacksUp;
+  if (!isRecord(up)) fail(`${path}.maxStacksUp`, 'expected { state, amountRef }');
+  for (const key of Object.keys(up)) {
+    if (key !== 'state' && key !== 'amountRef') fail(`${path}.maxStacksUp.${key}`, 'unknown field');
+  }
+  const state = parseNamedStateId(up.state, `${path}.maxStacksUp.state`, 'ally');
+  if (state === grant.state) fail(`${path}.maxStacksUp.state`, `a state cannot raise its own max stacks (${state})`);
+  const out: MaxStacksUpContentItem = {
+    maxStacksUp: { state, amountRef: parseRef(up.amountRef, `${path}.maxStacksUp.amountRef`) },
+  };
+  if (item.claims !== undefined) out.claims = parseClaimRefs(item.claims, `${path}.claims`);
+  return out;
+}
+
+/**
+ * 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節）。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: チャージ時間の固定（fixedChargeTime）の中身は、状態のスタック（使用回数）に
+ * よらず 1 回だけ効く（固定の秒は足し合わせない。skills/buffs.ts の applyResolvedEffect）ので、付与のスタックの欄を渡さない
+ */
 function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>): Record<string, Json> {
   // 付与の delayFrames（周期の付与の遅れ）は付与の発火の欄なので、中身の規則には渡さない
   const {
@@ -2991,9 +3079,14 @@ function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>)
     claims: _claims,
     undispellable: _u,
     delayFrames: _delay,
+    stacksPerFireRef: _perFire,
     ...fields
   } = grant;
   const { claims: _itemClaims, ...value } = item;
+  if (value.stat === 'fixedChargeTime') {
+    delete fields.maxStacks;
+    delete fields.maxStacksRef;
+  }
   return { ...fields, ...value, kind: 'timed' };
 }
 
@@ -4149,6 +4242,7 @@ function parseStackChangeEffect(v: Record<string, Json>, path: string): StackCha
         'amount',
         'amountRef',
         'decrease',
+        'closesAtZero',
         'condition',
         'assumes',
         'claims',
@@ -4176,6 +4270,13 @@ function parseStackChangeEffect(v: Record<string, Json>, path: string): StackCha
   if (v.decrease !== undefined) {
     if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
     effect.decrease = true;
+  }
+  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 減少で 0 になったら件を閉じる（使用回数を使い切った時）
+  if (v.closesAtZero !== undefined) {
+    if (v.closesAtZero !== true) fail(`${path}.closesAtZero`, `expected true, got ${JSON.stringify(v.closesAtZero)}`);
+    if (!effect.decrease || target !== 'self')
+      fail(`${path}.closesAtZero`, 'closesAtZero needs decrease on target "self"');
+    effect.closesAtZero = true;
   }
   if (target === 'enemy') {
     if (effect.decrease) fail(`${path}.decrease`, 'decrease is not allowed with target enemy');
@@ -4214,7 +4315,9 @@ function parseRemoveStateEffect(v: Record<string, Json>, path: string): RemoveSt
   }
   const effect: RemoveStateEffect = { kind: 'removeState', state, trigger, target: 'self' };
   if (v.condition !== undefined) {
-    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState);
+    // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 「フルバースト状態でなければ」（inFullBurst: false）も書ける
+    // （「通常攻撃をした時、フルバースト状態でなければ、フルアクティブ解除」）
+    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState, true);
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
@@ -4352,12 +4455,30 @@ function validateCountTriggersEvery(effects: readonly SkillEffect[], e: CycleEve
   }
 }
 
-/** アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる） */
+/**
+ * アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる）。2 段目の段 14 の PR 3
+ * （plan/design-skill-stage14.md 2.7 節）: 状態の中身の固定も 1 つまで（状態どうしの勝ち負けを決めていない。timed の固定との兼ね合いは
+ * skills/buffs.ts の applyResolvedEffect）
+ */
 function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  const count = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
-    (e) => e.kind === 'timed' && e.stat === 'fixedChargeTime',
-  ).length;
-  if (count > 1) fail(root, 'at most one fixedChargeTime effect per definition');
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  const timed = effects.filter((e) => e.kind === 'timed' && e.stat === 'fixedChargeTime').length;
+  if (timed > 1) fail(root, 'at most one fixedChargeTime effect per definition');
+  const contents = effects
+    .flatMap((e) => (e.kind === 'state' ? statContentsOf(e.contents) : []))
+    .filter((c) => c.stat === 'fixedChargeTime').length;
+  if (contents > 1) fail(root, 'at most one fixedChargeTime state content per definition');
+}
+
+/** 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先） */
+function hasSelfStackingGrant(entries: Partial<Record<SkillSlot, SkillEntry>>, state: NamedStateId): boolean {
+  return SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).some(
+    (g) =>
+      g.kind === 'state' &&
+      g.state === state &&
+      g.target === 'self' &&
+      (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+  );
 }
 
 /**
@@ -4373,10 +4494,7 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
       if (!('trigger' in e) || !isFullStackTrigger(e.trigger)) return;
       const state = e.trigger.fullStack;
       const own = grants.filter((g) => g.state === state);
-      const stacking = own.some(
-        (g) => g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
-      );
-      if (!stacking || !own.every((g) => isShotCountTrigger(g.trigger))) {
+      if (!hasSelfStackingGrant(entries, state) || !own.every((g) => isShotCountTrigger(g.trigger))) {
         fail(
           `${root}.${slot}.effects[${i}].trigger`,
           `a full-stack trigger of "${state}" needs grants of the same state on self with maxStacks and shot count triggers in the definition`,
@@ -4414,22 +4532,36 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
  * 要る（上限・維持・中身は付与のもの）
  */
 function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
-    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
-  );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'stackChange' || e.target === 'enemy') return;
-      const stacking = grants.some(
-        (g) =>
-          g.state === e.state && g.target === 'self' && (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
-      );
-      if (!stacking) {
+      if (!hasSelfStackingGrant(entries, e.state)) {
         fail(
           `${root}.${slot}.effects[${i}]`,
           `stackChange of "${e.state}" needs a grant of the same state on self with maxStacks in the definition`,
         );
       }
+    });
+  }
+}
+
+/**
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の「〈状態〉の最大スタック数 N▲」は、同じ定義にその状態を自分に
+ * スタックで付ける付与が要る（足す先の上限）
+ */
+function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'state') return;
+      e.contents?.forEach((item, j) => {
+        if (isStatContent(item)) return;
+        const target = item.maxStacksUp.state;
+        if (!hasSelfStackingGrant(entries, target))
+          fail(
+            `${root}.${slot}.effects[${i}].contents[${j}]`,
+            `maxStacksUp of "${target}" needs a grant of the same state on self with maxStacks in the definition`,
+          );
+      });
     });
   }
 }
@@ -4544,6 +4676,8 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
     for (const g of grants) {
       if (g === bearer) continue;
       bearer.effect.contents!.forEach((item, j) => {
+        // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は timed の規則を持たない
+        if (!isStatContent(item)) return;
         parseTimedEffect(contentAsTimed(g.effect, item), `${g.path}（${bearer.path}.contents[${j}] と合わせて）`);
       });
     }
@@ -4595,6 +4729,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateFixedChargeTimeCount(skills, 'skills');
   validateStateGrants(skills, 'skills');
   validateStackChanges(skills, 'skills');
+  validateStateContentKinds(skills, 'skills');
   validateFullStackTriggers(skills, 'skills');
   validateAppliedTriggers(skills, 'skills');
   validateWhileEffects(skills, 'skills');
@@ -4617,6 +4752,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateStateContentKinds({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');

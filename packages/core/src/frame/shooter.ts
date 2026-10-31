@@ -234,7 +234,7 @@ export function stepShooter(
     // チャージ武器: 前の発（押下チャージ型のリロードの後は、込め終えてから解放の分の後）からの経過と、このフレームのチャージ時間で
     // 待ちを決め直す（C-0541・C-0542・C-0523）
     state.chargeElapsed += 1;
-    state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - state.chargeElapsed);
+    state.wait = chargeWaitFrames(params, model, state.chargeElapsed);
   }
   // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.2 節）: 押下チャージ型のマガジンの 2 発目以降は、AR・SMG・SG と同じく前の発の
   // 翌フレームから発射レートを蓄積し、1 発分たまるまで撃たない（チャージ 0 秒のシンデレラは 180rpm の 20・20・19f）。チャージを待つ間は
@@ -354,10 +354,28 @@ export function resumeShooter(
  * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: きっかけ { chargeTick }・{ chargeFull } の溜め始めと満ちた時も
  * この値で決める（frame/firstPass.ts）。マガジンの中の発は、チャージ時間が溜めの途中で変わっても前の発からの経過（chargeElapsed）で
  * 待ちを決め直すので、この値は 1 フレームに 1 ずつ進む（入力が UP の 1 秒チャージの SR なら、前の発の 22f 後が溜め始め）。
- * リロード中・狙えない窓の間は呼ぶ側が溜めていないとみなす
+ * リロード中・狙えない窓の間は呼ぶ側が溜めていないとみなす。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 前の発からの経過（chargeElapsed）があれば、待ちは前のフレームに決めた値でなく、
+ * このフレームの stepShooter が決め直す値（このフレームのチャージ時間 − 経過）で見る。チャージ時間がこのフレームに変わっても（溜めの途中で
+ * セブンスドワーフ・フルアクティブの 3.2 秒の固定が付く）、進みが跳ばない（変わらなければ前のフレームに決めた値と同じ）
  */
-export function chargeProgressFrames(state: ShooterState, params: FiringParams): number {
-  return params.chargeFrames + (params.stance?.holdFrames ?? 1) - state.wait;
+export function chargeProgressFrames(
+  state: ShooterState,
+  params: FiringParams,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
+): number {
+  const wait =
+    state.chargeElapsed === undefined ? state.wait : chargeWaitFrames(params, model, state.chargeElapsed + 1);
+  return params.chargeFrames + (params.stance?.holdFrames ?? 1) - wait;
+}
+
+/** チャージ武器の、前の発からの経過 elapsed のときの次の発までの待ち（そのフレームのチャージ時間で決める。C-0541・C-0542・C-0523） */
+function chargeWaitFrames(
+  params: FiringParams,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
+  elapsed: number,
+): number {
+  return Math.max(0, chargeShotIntervalFrames(params, model) - elapsed);
 }
 
 /**
@@ -379,7 +397,7 @@ export function partialChargeShot(
   if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
   if (state.phase === 'reloading') return null;
   const charge = params.chargeFrames;
-  const progress = charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params) / charge);
+  const progress = charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params, model) / charge);
   if (progress <= 0) return null;
   if (state.phase === 'priming') startMagazine(state);
   fire(state, shot, model, params);

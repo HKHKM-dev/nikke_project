@@ -9,6 +9,7 @@ import {
   INDIRECT_PATH_NAMES,
   SHOT_COUNT_KINDS,
   SKILL_SLOTS,
+  contentStatOf,
   type BuffStat,
   type IndirectPath,
   type NoteEffect,
@@ -174,11 +175,14 @@ export type MinimalElement = {
   reads?: IndirectPath[];
 };
 
-/** 2 段目の段 1: 定義のその状態の中身の stat（付与のどれかが持つ中身。無ければ空） */
+/**
+ * 2 段目の段 1: 定義のその状態の中身の stat（付与のどれかが持つ中身。無ければ空）。2 段目の段 14 の PR 3: 最大スタック数▲の項目は
+ * 'maxStacksUp'（分類は順番の攻撃のヒットの数を変える otherHit。statClassOf）
+ */
 function stateStatsOf(def: SkillDefinition, state: NamedStateId): string[] {
   for (const slot of SKILL_SLOTS) {
     for (const g of def.skills[slot].effects) {
-      if (g.kind === 'state' && g.state === state && g.contents !== undefined) return g.contents.map((c) => c.stat);
+      if (g.kind === 'state' && g.state === state && g.contents !== undefined) return g.contents.map(contentStatOf);
     }
   }
   return [];
@@ -287,7 +291,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
               name: `${who} ${prefix}${slot}.effects[${index}].contents[${subIndex}]`,
               places: [place(`effects[${index}].contents[${subIndex}]`)],
               type: 'effect',
-              shape: { ...grantShape, stat: item.stat },
+              shape: { ...grantShape, stat: contentStatOf(item) },
               skillSlot: slot,
               effectRef: { rid: member.rid, root, slot, index, subIndex },
               claims: item.claims,
@@ -464,6 +468,8 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
 /** stat の分類 */
 function statClassOf(stat: string | undefined): ElementClass {
   if (stat === undefined || stat === 'unknown') return 'unknown';
+  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の最大スタック数▲（オートファイアの順番の攻撃の数を変える）
+  if (stat === 'maxStacksUp') return 'otherHit';
   return STAT_CLASS[stat as BuffStat] ?? 'unknown';
 }
 

@@ -35,6 +35,7 @@ import {
   SKILL_SLOTS,
   isStateStat,
   parseSkillDefinition,
+  statContentsOf,
   type SkillDefinition,
   type SkillEntry,
   type SkillSlot,
@@ -1740,7 +1741,8 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
  * 簡素化・第 7 回の案 2（plan/design-workflow-simplification-7.md 2 節）: 枠の出来事（event）の録画の動画のフレームを、基準（anchor）からの
  * 差の列にする（フルバーストの入りの止まりを含む）。新しい「時刻の列」の比べは、指標を足さずにこれの引数で書く。
  * - anchor: start（戦闘の始まり。省略時）・fullBurst:<n>（n 回目のフルバーストの窓の始まり。III のタイマーの 00.00）・activation:<n>
- *   （枠の n 回目の発動。起点は activationVideoFrameOf）・prevBurstHit（出来事ごとに、その前の最後の自分のバーストの 1 ヒット目）
+ *   （枠の n 回目の発動。起点は activationVideoFrameOf）・prevBurstHit（出来事ごとに、その前の最後の自分のバーストの 1 ヒット目）・prevShot
+ *   （出来事ごとに、その前の最後の自分の発。同じフレームの発を含む）
  * - within: window（フルバーストの窓の中）・afterWindow（窓の終わりから次の窓の始まりまで）・untilNext（基準から次の同じ基準まで）。
  *   省略すると基準から終わりまで（start は全部）
  * - skill・projectile・trigger は倍率ダメージと持続ダメージを hitMatches で絞る。skip の数だけ頭を飛ばし、count 個を返す（足りなければ誤り）
@@ -1751,16 +1753,25 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
   const within = ctx.args.within;
   const schedule = result.schedule;
   let offsets: number[];
-  if (anchor === 'start' || anchor === 'prevBurstHit') {
+  if (anchor === 'start' || anchor === 'prevBurstHit' || anchor === 'prevShot') {
     if (within !== undefined) throw new Error(`anchor ${anchor} に within は使えない`);
     if (anchor === 'start') offsets = points.map((p) => p.video);
     else {
-      if (schedule === null) throw new Error('バーストの時刻表が無い');
-      const burstHits = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx)).map((a) => hitFrameOf(a));
+      // 出来事ごとに、その前の最後の基準のフレーム（自分の発か、自分のバーストの 1 ヒット目）からの差
+      let bases: readonly number[];
+      let label: string;
+      if (anchor === 'prevShot') {
+        bases = slotOf(result.shots, ctx).frames;
+        label = '発';
+      } else {
+        if (schedule === null) throw new Error('バーストの時刻表が無い');
+        bases = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx)).map((a) => hitFrameOf(a));
+        label = 'バーストのヒット';
+      }
       offsets = points.map((p) => {
-        const burst = burstHits.filter((f) => f <= p.frame).at(-1);
-        if (burst === undefined) throw new Error(`フレーム ${p.frame} の出来事の前にバーストのヒットが無い`);
-        return p.video - videoFrameOf(schedule, burst);
+        const base = bases.filter((f) => f <= p.frame).at(-1);
+        if (base === undefined) throw new Error(`フレーム ${p.frame} の出来事の前に${label}が無い`);
+        return p.video - videoFrameOf(schedule, base);
       });
     }
   } else {
@@ -1780,7 +1791,8 @@ function spanOf(
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const m = /^(fullBurst|activation):(\d+)$/.exec(anchor);
-  if (m === null) throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit（${anchor}）`);
+  if (m === null)
+    throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit・prevShot（${anchor}）`);
   const n = Number(m[2]);
   if (m[1] === 'fullBurst') {
     const window = schedule.fullBurstWindows[n];
@@ -2265,7 +2277,7 @@ function readsCasterMaxHp(definition: SkillDefinition | null): boolean {
     entry.effects.some(
       (e) =>
         ('scaling' in e && e.scaling === 'casterFinalMaxHp') ||
-        (e.kind === 'state' && (e.contents ?? []).some((c) => c.scaling === 'casterFinalMaxHp')),
+        (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.scaling === 'casterFinalMaxHp')),
     ),
   );
 }
