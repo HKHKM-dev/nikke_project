@@ -18,8 +18,6 @@ import {
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import {
   isResolvedApplied,
-  isResolvedChargeFull,
-  isResolvedChargeTick,
   isResolvedEventCount,
   isResolvedFullStack,
   isResolvedTimer,
@@ -28,7 +26,13 @@ import {
   type ResolvedTrigger,
 } from './resolve.ts';
 import type { FireContext } from './targets.ts';
-import { isCounterFullTrigger, type EndedTrigger, type ShotCountKind } from './types.ts';
+import {
+  isChargeFullTrigger,
+  isChargeTickTrigger,
+  isCounterFullTrigger,
+  type EndedTrigger,
+  type ShotCountKind,
+} from './types.ts';
 import type { NamedStateId } from './states.ts';
 
 /** 1 枠の 1 回の射撃 */
@@ -249,11 +253,11 @@ export function createTriggerTracker(
   // 2 段目の段 11: 使用武器の変更の終わり（1 パス目の撃ち切りの終わりの列）
   if (isResolvedWeaponChangeEnd(t)) return (ev) => (ev.weaponChangeEnds ?? []).includes(slotIndex);
   // 2 段目の段 14 の PR 2: 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
-  if (isResolvedChargeTick(t)) {
+  if (isChargeTickTrigger(t)) {
     const every = t.chargeTick.everySeconds;
-    return (ev) => (ev.chargeTicks ?? []).some((x) => x.slotIndex === slotIndex && x.everySeconds === every);
+    return (ev) => ev.chargeTicks?.some((x) => x.slotIndex === slotIndex && x.everySeconds === every) === true;
   }
-  if (isResolvedChargeFull(t)) return (ev) => (ev.chargeFulls ?? []).includes(slotIndex);
+  if (isChargeFullTrigger(t)) return (ev) => ev.chargeFulls?.includes(slotIndex) === true;
   // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);

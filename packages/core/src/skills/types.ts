@@ -1057,6 +1057,13 @@ export type DamageEffect = {
   assumes?: LocalizedText;
 };
 
+/** 2 段目の段 12・13: perCount の数だけ 1 つずつ出す倍率ダメージ（perCountIntervalSeconds・perCountIntervalFrames）か */
+export function splitsPerCount(
+  effect: Pick<DamageEffect, 'perCountIntervalSeconds' | 'perCountIntervalFrames'>,
+): boolean {
+  return effect.perCountIntervalSeconds !== undefined || effect.perCountIntervalFrames !== undefined;
+}
+
 /**
  * Stage 10: 「バーストスキルクールタイム X 秒▼」。発火の瞬間に対象の残りの CT を X 秒減らす（0 未満にはしない。即時効果）。
  * 同じフレームの発動の後に当てる（plan/design-stage10.md 4 節）
@@ -3462,16 +3469,13 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   if (v.sequentialAttack !== undefined) {
     if (v.sequentialAttack !== true)
       fail(`${path}.sequentialAttack`, `expected true, got ${JSON.stringify(v.sequentialAttack)}`);
-    if (effect.perCountIntervalSeconds === undefined && effect.perCountIntervalFrames === undefined)
+    if (!splitsPerCount(effect))
       fail(`${path}.sequentialAttack`, 'sequentialAttack needs perCountIntervalSeconds or perCountIntervalFrames');
     effect.sequentialAttack = true;
   }
   // 同: 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット（1 つずつ出すなら perCount の { state }）だけ
   if (effect.gaugePerHit === true && isShotCountTrigger(trigger) && effect.perCount !== undefined) {
-    if (
-      !('state' in effect.perCount) ||
-      (effect.perCountIntervalSeconds === undefined && effect.perCountIntervalFrames === undefined)
-    )
+    if (!('state' in effect.perCount) || !splitsPerCount(effect))
       fail(
         `${path}.gaugePerHit`,
         'gaugePerHit with perCount needs perCount { state } split by perCountIntervalSeconds or perCountIntervalFrames',

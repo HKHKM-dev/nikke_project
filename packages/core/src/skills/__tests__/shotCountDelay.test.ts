@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { resolveDamageEffects, resolveDotEffects, resolveShotGauges } from '../burstDamage.ts';
+import { resolveDamageEffects, resolveDotEffects, resolvePerShotDamage, resolveShotGauges } from '../burstDamage.ts';
 import { resolveCycles } from '../cycles.ts';
 import { startOfFire } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolveTimed } from '../resolve.ts';
@@ -106,9 +106,11 @@ describe('damage の delayFrames（射撃の回数のきっかけ）', () => {
     expect(() => parseSkillDefinition(withPrivatyS1({}, true))).toThrow(/a sequential skill cannot have a delayed/);
   });
 
-  it('rejects delayFrames on a per-shot damage (every 1), which is folded into the shot', () => {
+  it('does not fold a delayed per-shot damage (every 1) into the shot; it is a separate hit per shot', () => {
     const def = parseSkillDefinition(withPrivatyS1({ trigger: { count: 'normalShot', every: 1 } }));
-    expect(() => resolveDamageEffects(def, privaty, MAX_SKILL_LEVELS)).toThrow(/cannot have delayFrames/);
+    const s1 = resolveDamageEffects(def, privaty, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1');
+    expect(s1.map((e) => [e.trigger, e.delayFrames])).toEqual([[{ count: 'normalShot', every: 1 }, 6]]);
+    expect(resolvePerShotDamage(def, privaty, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1')).toEqual([]);
   });
 
   it('delays Privaty S1 and the treasure Drake S2 by six frames (C-0659・C-0660)', () => {

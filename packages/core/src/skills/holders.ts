@@ -1914,6 +1914,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     own: tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state),
   }));
 
+  const selfStackCountAt: HolderLists['selfStackCountAt'] = (holder, state, frame) => {
+    let level = 0;
+    for (const s of statesMatching(state)) {
+      if (staticStates[holder]?.has(s) === true) level = Math.max(level, 1);
+      for (const t of stateTracks[holder]?.get(s) ?? [])
+        for (const it of activeAt(t, frame)) if (it.start < frame) level = Math.max(level, it.stack ?? 1);
+    }
+    return level;
+  };
+
   return {
     hasSources:
       timedSources.length > 0 ||
@@ -1995,23 +2005,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       return sum;
     },
-    selfStateAt(holder, state, frame) {
-      // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）
-      return statesMatching(state).some(
-        (s) =>
-          staticStates[holder]?.has(s) === true ||
-          (stateTracks[holder]?.get(s) ?? []).some((t) => activeAt(t, frame).some((it) => it.start < frame)),
-      );
-    },
-    selfStackCountAt(holder, state, frame) {
-      let level = 0;
-      for (const s of statesMatching(state)) {
-        if (staticStates[holder]?.has(s) === true) level = Math.max(level, 1);
-        for (const t of stateTracks[holder]?.get(s) ?? [])
-          for (const it of activeAt(t, frame)) if (it.start < frame) level = Math.max(level, it.stack ?? 1);
-      }
-      return level;
-    },
+    // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）。
+    // 段は 1 始まりなので、付いていればスタック数は 1 以上
+    selfStateAt: (holder, state, frame) => selfStackCountAt(holder, state, frame) > 0,
+    selfStackCountAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
       skipEffect(sourceSlotIndex, effect, frame);

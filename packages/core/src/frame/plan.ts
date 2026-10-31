@@ -22,11 +22,11 @@ import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
   damageHitFramesOf,
+  effectHitFrames,
   perCountFrames,
   resolveDamageEffects,
   resolveDotEffects,
   resolvePerShotDamage,
-  splitsPerCount,
   type ResolvedDamageEffect,
   type ResolvedSkillDamage,
   type SkillHitResult,
@@ -72,6 +72,7 @@ import {
   isCounterFullTrigger,
   isEnemyHeldStat,
   isStateStat,
+  splitsPerCount,
   staticStatesOf,
   type EffectCondition,
   type SelfStateCondition,
@@ -484,8 +485,7 @@ export function planSkillHits(
         // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: オートファイアの順番の攻撃（フルチャージの発のフレームのオートファイア
         // 準備のスタック数。発で外れる前の数。V-0552）も同じ形で、delayFrames の後から刻む
         if (splitsPerCount(effect) && copied !== undefined) {
-          const step = { seconds: effect.perCountIntervalSeconds, frames: effect.perCountIntervalFrames, delay };
-          for (const at of perCountFrames(frame, copied, step, frames)) push(at, effect, pre);
+          for (const at of effectHitFrames(effect, frame, copied, frames)) push(at, effect, pre);
           continue;
         }
         if (effect.perBurstHit === true) {

@@ -23,6 +23,7 @@ import {
   isShotCountTrigger,
   isTimerTrigger,
   SKILL_SLOTS,
+  splitsPerCount,
   type DamageEffect,
   type DotFirstTick,
   type EffectCondition,
@@ -235,29 +236,40 @@ export function perCountFrames(
   return out;
 }
 
-/** 2 段目の段 12・13: perCount の数だけ 1 つずつ出す倍率ダメージ（perCountIntervalSeconds・perCountIntervalFrames）か */
-export function splitsPerCount(
-  effect: Pick<ResolvedDamageEffect, 'perCountIntervalSeconds' | 'perCountIntervalFrames'>,
-): boolean {
-  return effect.perCountIntervalSeconds !== undefined || effect.perCountIntervalFrames !== undefined;
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 発火のフレーム fire の倍率ダメージのヒットのフレーム。perCount の数だけ
+ * 1 つずつ出すなら（splitsPerCount。count は発火のフレームの数）perCountFrames、そうでなければ damageHitFramesOf。2 パス目
+ * （frame/plan.ts）のヒットと、1 パス目（frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit）が同じ列を使う
+ */
+export function effectHitFrames(
+  effect: Pick<
+    ResolvedDamageEffect,
+    'delayFrames' | 'hits' | 'hitIntervalFrames' | 'perCountIntervalSeconds' | 'perCountIntervalFrames'
+  >,
+  fire: number,
+  count: number | undefined,
+  end: number,
+): number[] {
+  if (!splitsPerCount(effect) || count === undefined) return damageHitFramesOf(effect, fire, end);
+  const step = {
+    seconds: effect.perCountIntervalSeconds,
+    frames: effect.perCountIntervalFrames,
+    delay: effect.delayFrames,
+  };
+  return perCountFrames(fire, count, step, end);
 }
 
 /**
  * Stage 11 モダニア: 射撃ごとの倍率ダメージ（every = 1）を 1 トリガーの値に畳み込むか（resolvePerShotDamage）。条件つきは畳み込まない
- * （射撃ごとの発動として 1 件ずつ出す）。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: フルチャージの発（fullChargeShot）の
- * 遅れて出るヒット・perCount の数だけのヒット（オートファイア）も、発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す
+ * （射撃ごとの発動として 1 件ずつ出す）。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 遅れて出るヒット（delayFrames）・
+ * perCount の数だけのヒット（オートファイア）も、発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す
  */
 function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger): boolean {
-  if (!isPerShotTrigger(trigger) || effect.condition !== undefined) return false;
-  return !isFullChargeShotHit(effect, trigger);
-}
-
-/** 2 段目の段 14 の PR 2: 発ごとに 1 件ずつ出す、フルチャージの発の遅れて出るヒットか perCount の数だけのヒット */
-function isFullChargeShotHit(effect: DamageEffect, trigger: ResolvedTrigger): boolean {
   return (
-    isResolvedShotCount(trigger) &&
-    trigger.count === 'fullChargeShot' &&
-    (effect.delayFrames !== undefined || effect.perCount !== undefined)
+    isPerShotTrigger(trigger) &&
+    effect.condition === undefined &&
+    effect.delayFrames === undefined &&
+    effect.perCount === undefined
   );
 }
 
@@ -279,12 +291,9 @@ export function resolveDamageEffects(
       // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
       // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 条件つきは、
       // 射撃ごとの発動として 1 件ずつ出す（ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
-      // 回数トリガーの遅れ編の第 2 段: 畳み込む効果は射撃と同じフレームに乗るので、遅れを書けない
-      if (isPerShotTrigger(trigger) && effect.delayFrames !== undefined && !isFullChargeShotHit(effect, trigger)) {
-        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot have delayFrames`);
-      }
+      // 回数トリガーの遅れ編の第 2 段: 畳み込む効果は射撃と同じフレームに乗る。遅れて出るヒットは畳み込まない（foldsIntoShot）
       // 2026-10-29 のキャラの編: 畳み込む効果はコアの補正を持てない（resolvePerShotDamage が読まない）
-      if (isPerShotTrigger(trigger) && effect.condition === undefined && effect.coreHit === true) {
+      if (foldsIntoShot(effect, trigger) && effect.coreHit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
       if (foldsIntoShot(effect, trigger)) return;
@@ -575,8 +584,8 @@ export function resolvePerShotDamage(
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage') continue;
-      // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。段 14 の PR 2: フルチャージの発の
-      // 遅れて出るヒット・perCount の数だけのヒットも
+      // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。段 14 の PR 2: 遅れて出るヒット・
+      // perCount の数だけのヒットも
       if (!foldsIntoShot(effect, resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
       if (character.weaponType === 'SG') {
         throw new RangeError(

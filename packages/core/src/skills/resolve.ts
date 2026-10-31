@@ -83,16 +83,6 @@ export type ResolvedTrigger =
   // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger;
 
-/** 2 段目の段 14 の PR 2: 溜めの周期のきっかけ（{ chargeTick }）か */
-export function isResolvedChargeTick(t: ResolvedTrigger): t is ChargeTickTrigger {
-  return typeof t === 'object' && 'chargeTick' in t;
-}
-
-/** 2 段目の段 14 の PR 2: 溜めが満ちた時のきっかけ（{ chargeFull }）か */
-export function isResolvedChargeFull(t: ResolvedTrigger): t is ChargeFullTrigger {
-  return typeof t === 'object' && 'chargeFull' in t;
-}
-
 /** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
 export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {
   return typeof t === 'object' && 'weaponChangeEnd' in t;
