@@ -507,8 +507,8 @@ export function gatedObservations(claims: readonly Claim[], invalidIds: Readonly
  * runs と parameterFree は plan/design-grade-runs.md（2026-10-29 のオーナーの指示）
  */
 /**
- * 1 ヒットの値の指標。モデルは端数を持ち、ゲームは途中の丸めで整数を出す（丸め方は四捨五入でも切り捨てでも揃わない）ので、
- * 差の絶対値が 1 未満を厳密一致とする（plan/design-records-automation.md 3.5 節。2026-10-02 にオーナーの決定で足した）
+ * 1 ヒットの値の指標。モデルは端数を持ち、ゲームは四捨五入した整数を出す（C-0803）が、モデルとゲームの中の値にも相対 1e-7 前後の
+ * 差が残る（V-0583）ので、差の絶対値が 1 未満を厳密一致とする（plan/design-records-automation.md 3.5 節。2026-10-02 にオーナーの決定で足した）
  */
 export const HIT_VALUE_METRICS: ReadonlySet<string> = new Set([
   'hitDamage',
