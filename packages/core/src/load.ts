@@ -1,6 +1,12 @@
 import { parseEnemyPresets } from './enemies.ts';
-import { parseSkillSupportIndex, type SkillSupportIndex } from './skills/support.ts';
-import { parseSkillDefinition, parseSkillIndex, type SkillDefinition, type SkillIndex } from './skills/types.ts';
+import {
+  parseSkillDefinition,
+  parseSkillIndex,
+  parseSkillSupportIndex,
+  type SkillDefinition,
+  type SkillIndex,
+  type SkillSupportIndex,
+} from './skills/types.ts';
 import type {
   AffectionMaster,
   BuildMasters,

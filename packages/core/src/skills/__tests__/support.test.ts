@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { SKILL_SUPPORT_PATH, skillSupportIndexOfData } from '../../../scripts/records-data.ts';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import type { CharacterData, SkillRaw } from '../../types.ts';
-import { buildSkillSupportIndex, parseSkillSupportIndex, renderSkillSupportIndex } from '../support.ts';
-import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
+import { buildSkillSupportIndex, renderSkillSupportIndex } from '../support.ts';
+import { parseSkillDefinition, parseSkillSupportIndex, type SkillDefinition } from '../types.ts';
 
 function raw(id: number): SkillRaw {
   return { id, name: { ja: `s${id}`, en: `s${id}` }, description: { ja: '', en: '' }, values: [Array(10).fill('10')] };

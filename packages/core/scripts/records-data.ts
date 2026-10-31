@@ -13,8 +13,13 @@ import type { DefinedCharacter } from '../src/records/skills.ts';
 import type { PredictionFile } from '../src/records/predictions.ts';
 import { idsInPaths } from '../src/records/drafts.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
-import { buildSkillSupportIndex, type SkillSupportIndex } from '../src/skills/support.ts';
-import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
+import { buildSkillSupportIndex } from '../src/skills/support.ts';
+import {
+  parseSkillDefinition,
+  parseSkillIndex,
+  type SkillDefinition,
+  type SkillSupportIndex,
+} from '../src/skills/types.ts';
 import type { BuildMasters, CharacterData } from '../src/types.ts';
 
 export const ROOT = fileURLToPath(new URL('../../../', import.meta.url));
@@ -238,22 +243,22 @@ export function loadCatalogInput(): { characters: CharacterData[]; defined: Set<
   };
 }
 
-/** data/skills/index.json に載った定義と、キャラの名前（index.json の順） */
-export function loadSkillDefinitions(): DefinedCharacter[] {
+/** data/skills/index.json に載った定義と、そのキャラデータ（index.json の順） */
+function loadDefinitionsWithCharacters(): { definition: SkillDefinition; character: CharacterData }[] {
   return parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds.map((rid) => ({
     definition: parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)),
-    name: readJson<CharacterData>(`${DATA}characters/${rid}.json`).name,
+    character: readJson<CharacterData>(`${DATA}characters/${rid}.json`),
   }));
+}
+
+/** data/skills/index.json に載った定義と、キャラの名前（index.json の順） */
+export function loadSkillDefinitions(): DefinedCharacter[] {
+  return loadDefinitionsWithCharacters().map(({ definition, character }) => ({ definition, name: character.name }));
 }
 
 /** data/skills/index.json に載った定義とキャラデータから作った、対応状況の索引（records:check が書き、npm test が最新かを確かめる） */
 export function skillSupportIndexOfData(): SkillSupportIndex {
-  return buildSkillSupportIndex(
-    parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds.map((rid) => ({
-      definition: parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)),
-      character: readJson<CharacterData>(`${DATA}characters/${rid}.json`),
-    })),
-  );
+  return buildSkillSupportIndex(loadDefinitionsWithCharacters());
 }
 
 export function claimFileNames(): string[] {

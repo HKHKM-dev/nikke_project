@@ -12,7 +12,7 @@ type Props = {
   onClear: () => void;
 };
 
-export function characterLabel(entry: CharacterIndexEntry, isUnsupported = false): string {
+export function characterLabel(entry: CharacterIndexEntry, isUnsupported: boolean): string {
   return `${entry.name.ja}${isUnsupported ? '（未）' : ''}`;
 }
 

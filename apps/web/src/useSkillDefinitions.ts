@@ -51,7 +51,7 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
       .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
     loadSkillSupportIndex({ baseUrl })
       .then((s) => setFullySupported(new Set(s.fullySupported)))
-      .catch(() => setFullySupported(null));
+      .catch(() => {}); // 読めなければ null のまま（印を付けない）
   }, [baseUrl]);
 
   const wantedKey = useMemo(() => wantedKeyOf(resourceIds), [resourceIds]);

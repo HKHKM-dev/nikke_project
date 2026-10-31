@@ -4,13 +4,7 @@
 // どのスロットの対応状況（読み込みで決まる support）も partial・unsupported でないもの。定義の無いキャラは載らない。
 import type { CharacterData } from '../types.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from './treasure.ts';
-import { SKILL_SLOTS, type SkillDefinition } from './types.ts';
-
-export type SkillSupportIndex = {
-  formatVersion: 1;
-  /** すべてのスロットに未実装が無いキャラ（昇順） */
-  fullySupported: number[];
-};
+import { SKILL_SLOTS, type SkillDefinition, type SkillSupportIndex } from './types.ts';
 
 /** 定義のどのスロットにも未実装が無いか */
 function fullySupportedDefinition(definition: SkillDefinition): boolean {
@@ -39,18 +33,4 @@ export function buildSkillSupportIndex(
 /** 索引のファイルの中身（data/ は prettier の対象外なので、ここで形を決める） */
 export function renderSkillSupportIndex(index: SkillSupportIndex): string {
   return `${JSON.stringify(index, null, 2)}\n`;
-}
-
-/** 索引の読み込み。不正なら Error */
-export function parseSkillSupportIndex(raw: unknown): SkillSupportIndex {
-  if (typeof raw !== 'object' || raw === null || Array.isArray(raw))
-    throw new Error('skill support: expected an object');
-  const v = raw as Record<string, unknown>;
-  if (v.formatVersion !== 1)
-    throw new Error(`skill support.formatVersion: expected 1, got ${JSON.stringify(v.formatVersion)}`);
-  const ids = v.fullySupported;
-  if (!Array.isArray(ids) || !ids.every((id) => Number.isInteger(id) && (id as number) > 0)) {
-    throw new Error('skill support.fullySupported: expected an array of positive integers');
-  }
-  return { formatVersion: 1, fullySupported: ids as number[] };
 }
