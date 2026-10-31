@@ -16,9 +16,8 @@ import {
   readTeamJson,
   serializeSlotBuild,
   serializeTeamState,
-  enemyStateForCalc,
   eventSetsForCalc,
-  slotForCalc,
+  teamStateForCalc,
   takenResourceIds,
   teamReducer,
   type TeamState,
@@ -583,7 +582,7 @@ describe('HP の割合の想定', () => {
   });
 });
 
-describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
+describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () => {
   it('uses the defaults for the shooting condition, the HP ratio, the recycle room and the extra attack and keeps the rest', () => {
     let s = withCharacters([10]);
     s = teamReducer(s, { type: 'setConditionMode', index: 0, conditionMode: 'manual' });
@@ -601,7 +600,7 @@ describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
     };
     s = teamReducer(s, { type: 'setBuild', index: 0, build });
 
-    const calc = slotForCalc(s.slots[0]!);
+    const calc = teamStateForCalc(s).slots[0]!;
     const initial = initialTeamState().slots[0]!;
     expect(calc.conditionMode).toBe(initial.conditionMode);
     expect(calc.condition).toEqual(initial.condition);
@@ -612,14 +611,26 @@ describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
     expect(s.slots[0]!.build.recycleRoom).toEqual({ personal: 5, class: 6, corporation: 7 });
     expect(s.slots[0]!.conditionMode).toBe('manual');
   });
+
+  it('uses the defaults for the team settings and the shooting-range enemy with the saved element only', () => {
+    let s = teamReducer(initialTeamState(), {
+      type: 'setEnemy',
+      enemy: { defence: 140, element: 'Fire', hasCore: false },
+    });
+    s = teamReducer(s, { type: 'setDuration', durationSeconds: 60 });
+    s = teamReducer(s, { type: 'setBurst', burst: false });
+    s = teamReducer(s, { type: 'setControlledSlot', controlledSlot: 0 });
+    const initial = initialTeamState();
+    const calc = teamStateForCalc(s);
+    expect(calc.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
+    expect(calc.durationSeconds).toBe(initial.durationSeconds);
+    expect(calc.burst).toBe(initial.burst);
+    expect(calc.controlledSlot).toBe(initial.controlledSlot);
+    expect(s.enemy.defence).toBe(140);
+  });
 });
 
-describe('enemy for the calculation (inputs removed from the screen on 2026-10-31)', () => {
-  it('is the shooting-range enemy with the saved element only', () => {
-    expect(enemyStateForCalc('Fire')).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
-    expect(enemyStateForCalc(null)).toEqual(SHOOTING_RANGE_ENEMY);
-  });
-
+describe('event sets for the calculation (3-minute mode removed from the screen on 2026-10-31)', () => {
   it('always uses the event sets of the shooting-range presets', () => {
     const master = parseEnemyPresets(
       JSON.parse(readFileSync(new URL('../../../packages/core/data/enemies.json', import.meta.url), 'utf8')) as unknown,

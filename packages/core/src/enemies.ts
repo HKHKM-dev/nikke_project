@@ -555,25 +555,29 @@ export function targetProfileOf(
 }
 
 /**
- * Stage 18-C2: 敵の値（EnemyInput）から的の条件の表を引く（plan/design-stage18.md 12.9 節の 5）。
- * 値がプリセットと一致すればそのプリセットの表。一致しなくても、属性だけを外した射撃場の的（属性なし・防御力とコアの有無が
- * 射撃場のプリセットと同じ。画面の既定の敵）なら、射撃場のプリセットの表。それ以外（ボス・手入力の敵）は undefined
+ * 敵の値（EnemyInput）にあたるプリセット。値がプリセットと一致すればそのプリセット。一致しなくても、属性だけを外した射撃場の的
+ * （属性なし・防御力とコアの有無が射撃場のプリセットと同じ。画面の既定の敵）なら、射撃場のプリセット。それ以外（ボス・手入力の敵）は
+ * undefined。射撃場のプリセットは属性のほかは同じなので、的の条件の表と出来事のセットはどれを引いても同じ
  */
-export function targetProfileForEnemy(
-  master: Pick<EnemyPresetMaster, 'enemies' | 'targetProfiles'>,
-  enemy: EnemyInput,
-): TargetProfile | undefined {
-  const preset = matchingEnemyPreset(master.enemies, enemy);
-  if (preset !== undefined) return targetProfileOf(master, preset);
-  if (enemy.element !== null) return undefined;
-  const range = master.enemies.find(
+export function presetForEnemy(presets: readonly EnemyPreset[], enemy: EnemyInput): EnemyPreset | undefined {
+  const preset = matchingEnemyPreset(presets, enemy);
+  if (preset !== undefined || enemy.element !== null) return preset;
+  return presets.find(
     (p) =>
       p.content === 'range' &&
       p.targetProfile !== undefined &&
       p.defence === enemy.defence &&
       p.hasCore === enemy.hasCore,
   );
-  return range === undefined ? undefined : targetProfileOf(master, range);
+}
+
+/** Stage 18-C2: 敵の値（EnemyInput）から的の条件の表を引く（plan/design-stage18.md 12.9 節の 5）。プリセットは presetForEnemy */
+export function targetProfileForEnemy(
+  master: Pick<EnemyPresetMaster, 'enemies' | 'targetProfiles'>,
+  enemy: EnemyInput,
+): TargetProfile | undefined {
+  const preset = presetForEnemy(master.enemies, enemy);
+  return preset === undefined ? undefined : targetProfileOf(master, preset);
 }
 
 /** プリセットの計算の入力 */

@@ -260,15 +260,6 @@ header h1 {
   background: #455a64;
   color: #fff;
 }
-.note.no-damage .badge,
-.note.modeling .badge {
-  background: #757575;
-  color: #fff;
-}
-.note.indirect .badge {
-  background: #5e35b1;
-  color: #fff;
-}
 .breakdown {
   border-collapse: collapse;
   width: 100%;
@@ -339,10 +330,6 @@ header h1 {
   background: #c62828;
   color: #fff;
 }
-.badge.no-effect {
-  background: #757575;
-  color: #fff;
-}
 .badge.treasure {
   background: #6a1b9a;
   color: #fff;
@@ -396,9 +383,6 @@ header h1 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 3.8em;
   gap: 4px;
-}
-.gear-inputs.three {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .gear-inputs input,
 .gear-inputs select {

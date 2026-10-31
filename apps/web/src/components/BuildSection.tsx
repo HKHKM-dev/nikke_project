@@ -1,9 +1,7 @@
-// Stage 12: 育成入力（ステータス層）の入力欄と、戦闘中の攻撃力（バフ前）の内訳。
-// スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して入力を止める。
-// Stage 13: OL 装備のオプション行（最大 3 行）の入力と、効果層（OL・キューブ・コレクション → 常時バフ）の一覧。
-// Stage 14: 枠の育成（育成値 + 育成入力）の JSON の書き出し / 取り込み（CLI の --build の 1 枠分も読める）。
+// Stage 12: 育成入力（ステータス層）の入力欄。スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して
+// 入力を止める。Stage 13: OL 装備のオプション行（最大 3 行）の入力。
 // 2026-10-31: オーナーの指示で、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
-// スペック固定の説明）を消した。リサイクルルームとその他攻撃加算は 0 で計算する（team.ts の slotForCalc）
+// スペック固定の説明）を消した。リサイクルルームとその他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）
 import {
   AFFECTION_RANK_MAX,
   AFFECTION_RANK_MIN,
@@ -50,8 +48,6 @@ type Props = {
   effectiveBuild: BuildInput;
   /** 実際に計算へ渡す育成値 */
   growth: GrowthInput;
-  /** Stage 14: 保存している育成値（JSON の書き出し用。スペック固定でも入力のまま） */
-  savedGrowth: GrowthInput;
   treasurePhase: TreasurePhase;
   masters: BuildMasters | null;
   mastersError: string | null;
@@ -70,7 +66,6 @@ export function BuildSection({
   build,
   effectiveBuild,
   growth,
-  savedGrowth: _savedGrowth,
   treasurePhase,
   masters,
   mastersError,

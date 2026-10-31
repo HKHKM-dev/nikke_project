@@ -27,21 +27,17 @@ import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
-  DEFAULT_BURST,
-  DEFAULT_CONTROLLED_SLOT,
-  DEFAULT_DURATION_SECONDS,
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
   effectiveBuild,
   effectiveSkillLevels,
   effectiveTreasurePhase,
   enemyForCalc,
-  enemyStateForCalc,
   eventSetsForCalc,
   parseTeamState,
   serializeTeamState,
-  slotForCalc,
   takenResourceIds,
+  teamStateForCalc,
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
@@ -122,14 +118,16 @@ export function App() {
     [team.slots, skills],
   );
 
+  // 2026-10-31: 画面から消した入力を既定値にした編成（team.ts の teamStateForCalc）。計算と画面の値はこれを読む
+  const calcTeam = useMemo(() => teamStateForCalc(team), [team]);
+
   // 枠ごとの計算入力。データが揃っていない枠は null（合計から除外）
   const slotInputs = useMemo<(TeamSlotInput | null)[]>(
     () =>
-      team.slots.map((saved, i) => {
-        if (saved.resourceId === null) return null;
-        const character = cache.characters.get(saved.resourceId);
+      calcTeam.slots.map((slot, i) => {
+        if (slot.resourceId === null) return null;
+        const character = cache.characters.get(slot.resourceId);
         const status = skillsStatuses[i];
-        const slot = slotForCalc(saved);
         if (!character || !status) return null;
         const slotSkills = toSlotSkills(
           status,
@@ -183,25 +181,18 @@ export function App() {
           skills: slotSkills,
         };
       }),
-    [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
+    [calcTeam.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
   );
 
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      // 2026-10-31: オーナーの指示で詳細設定の戦闘時間・防御力・コアあり・バースト・操作キャラ・3 分モードの欄を消した。
-      // 保存データの値は使わず、射撃場の的・既定値・出来事のセットを常に入れる形で計算する
-      enemy: enemyForCalc(
-        enemyStateForCalc(team.enemy.element),
-        enemyMaster,
-        eventSetsForCalc(enemyMaster),
-        DEFAULT_DURATION_SECONDS,
-      ),
-      durationSeconds: DEFAULT_DURATION_SECONDS,
-      burst: DEFAULT_BURST,
-      controlledSlot: DEFAULT_CONTROLLED_SLOT,
+      enemy: enemyForCalc(calcTeam.enemy, enemyMaster, eventSetsForCalc(enemyMaster), calcTeam.durationSeconds),
+      durationSeconds: calcTeam.durationSeconds,
+      burst: calcTeam.burst,
+      controlledSlot: calcTeam.controlledSlot,
     }),
-    [slotInputs, team.enemy.element, enemyMaster],
+    [slotInputs, calcTeam, enemyMaster],
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
@@ -217,7 +208,7 @@ export function App() {
   // Stage 14: 未対応の一覧に出す育成の注記（計算に入らないもののうち未対応だけ。スペック固定では効果層が空）
   const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
     () =>
-      team.slots.map((slot, i) => {
+      calcTeam.slots.map((slot, i) => {
         if (slot.resourceId === null) return null;
         const character = cache.characters.get(slot.resourceId);
         if (!character) return null;
@@ -225,7 +216,7 @@ export function App() {
         let buildNotes: BuildEffectNote[] = [];
         if (masters && !team.fixedSpec) {
           try {
-            buildNotes = resolveBuildEffects(character, slotForCalc(slot).build, masters, {
+            buildNotes = resolveBuildEffects(character, slot.build, masters, {
               treasurePhase,
             }).notes.filter((n) => n.level === 'unsupported');
           } catch {
@@ -241,7 +232,7 @@ export function App() {
           buildNotes,
         };
       }),
-    [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
+    [calcTeam.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
   );
 
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
@@ -255,12 +246,7 @@ export function App() {
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
       {index && (
         <>
-          <TeamSettingsForm
-            enemy={enemyStateForCalc(team.enemy.element)}
-            enemyPresets={enemyMaster?.enemies ?? []}
-            fixedSpec={team.fixedSpec}
-            dispatch={dispatch}
-          />
+          <TeamSettingsForm element={team.enemy.element} fixedSpec={team.fixedSpec} dispatch={dispatch} />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
               const character = slot.resourceId === null ? undefined : cache.characters.get(slot.resourceId);
@@ -278,7 +264,9 @@ export function App() {
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={input?.growth ?? slot.growth}
-                  effectiveBuild={character ? effectiveBuild(slotForCalc(slot), team.fixedSpec, character) : slot.build}
+                  effectiveBuild={
+                    character ? effectiveBuild(calcTeam.slots[i]!, team.fixedSpec, character) : slot.build
+                  }
                   masters={masters}
                   mastersError={mastersError}
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}

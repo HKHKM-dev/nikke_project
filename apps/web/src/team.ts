@@ -20,11 +20,12 @@ import {
   SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
+  EMPTY_BUILD,
   emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
   fixedSpecBuild,
-  matchingEnemyPreset,
+  presetForEnemy,
   targetProfileForEnemy,
   type BuildInput,
   type CharacterData,
@@ -32,7 +33,6 @@ import {
   type ConditionMode,
   type Element,
   type EnemyInput,
-  type EnemyPreset,
   type EnemyPresetMaster,
   type GearInput,
   type GearType,
@@ -232,23 +232,9 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
 }
 
 /**
- * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵の値と一致するプリセットが持つものだけを戦闘時間ぶん展開して足す。
- * 手入力で値を変えた（カスタム）・プリセットの読み込み前は出来事なし
+ * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵にあたるプリセット（core の presetForEnemy。2026-10-31 から属性なしの
+ * 射撃場の的も射撃場のプリセット）が持つものだけを戦闘時間ぶん展開して足す。ほかの敵・プリセットの読み込み前は出来事なし
  */
-/**
- * 出来事のセットを引くプリセット。一致するプリセットが無い属性なしの射撃場の的（既定の敵）は、射撃場のプリセットを使う
- * （2026-10-31: 3 分モードを常に入れるので、属性なしでも的のジャンプを入れる。的の条件の表と同じ扱い）
- */
-function eventPresetOf(master: EnemyPresetMaster, enemy: EnemyInput): EnemyPreset | undefined {
-  const preset = matchingEnemyPreset(master.enemies, enemy);
-  if (preset !== undefined) return preset;
-  const isDefaultRange =
-    enemy.element === null &&
-    enemy.defence === SHOOTING_RANGE_ENEMY.defence &&
-    enemy.hasCore === SHOOTING_RANGE_ENEMY.hasCore;
-  return isDefaultRange ? master.enemies.find((p) => p.content === 'range') : undefined;
-}
-
 export function enemyWithEvents(
   enemy: EnemyInput,
   master: EnemyPresetMaster | null,
@@ -256,7 +242,7 @@ export function enemyWithEvents(
   durationSeconds: number,
 ): EnemyInput {
   if (master === null || setIds.length === 0) return enemy;
-  const preset = eventPresetOf(master, enemy);
+  const preset = presetForEnemy(master.enemies, enemy);
   const ids = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   if (ids.length === 0) return enemy;
   return { ...enemy, events: enemyEventsOf(master, ids, durationSeconds) };
@@ -277,7 +263,7 @@ export function enemyForCalc(
   if (master === null) return withEvents;
   const target = targetProfileForEnemy(master, enemy);
   if (target === undefined) return withEvents;
-  const preset = eventPresetOf(master, enemy);
+  const preset = presetForEnemy(master.enemies, enemy);
   const active = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
 }
@@ -301,25 +287,26 @@ export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: C
 }
 
 /**
- * 2026-10-31: オーナーの指示で画面から消した枠の入力（射撃条件・想定 HP・リサイクルルーム・その他攻撃加算）を既定値にした枠。
- * 保存データの値は消さずに残すが、計算と画面の値には使わない（欄が無いので直せないため）
+ * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
+ * （欄が無いので直せないため）。計算と画面はこの編成を読む
+ * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算
+ * - 編成: 戦闘時間・バースト・操作キャラ・敵（射撃場の的にし、属性だけ残す）。3 分モードの出来事のセットは eventSetsForCalc
  */
-export function slotForCalc(slot: SlotState): SlotState {
+export function teamStateForCalc(state: TeamState): TeamState {
   return {
-    ...slot,
-    conditionMode: DEFAULT_CONDITION_MODE,
-    condition: { ...DEFAULT_SLOT_CONDITION },
-    hpRatio: DEFAULT_HP_RATIO,
-    build: { ...slot.build, recycleRoom: { personal: 0, class: 0, corporation: 0 }, extraAttack: 0 },
+    ...state,
+    slots: state.slots.map((slot) => ({
+      ...slot,
+      conditionMode: DEFAULT_CONDITION_MODE,
+      condition: { ...DEFAULT_SLOT_CONDITION },
+      hpRatio: DEFAULT_HP_RATIO,
+      build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
+    })),
+    enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
+    durationSeconds: DEFAULT_DURATION_SECONDS,
+    burst: DEFAULT_BURST,
+    controlledSlot: DEFAULT_CONTROLLED_SLOT,
   };
-}
-
-/**
- * 2026-10-31: オーナーの指示で敵の防御力・コアありの欄を消した。計算する敵は射撃場の的（属性だけ選べる）。
- * 保存データの防御力・コアありは使わない
- */
-export function enemyStateForCalc(element: Element | null): EnemyInput {
-  return { ...SHOOTING_RANGE_ENEMY, element };
 }
 
 /**

@@ -60,7 +60,7 @@ export function SlotCard({
 
   const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
-  // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（team.ts の slotForCalc）
+  // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（team.ts の teamStateForCalc）
 
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
     <label className="field">
@@ -121,7 +121,6 @@ export function SlotCard({
               build={slot.build}
               effectiveBuild={effectiveBuild}
               growth={effectiveGrowth}
-              savedGrowth={slot.growth}
               treasurePhase={treasurePhase}
               masters={masters}
               mastersError={mastersError}
