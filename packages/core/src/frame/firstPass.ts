@@ -812,8 +812,10 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       if (effect.gaugePerHit !== true) continue;
       const { trigger } = effect;
       if (isResolvedTimer(trigger)) {
+        // 2 段目の段 15 の PR 3: periodShorten の名前の無い窓（window）は gaugePerHit と組まない（読み込みで落とす）ので、鍵は状態だけ
         const shorten = effect.periodShorten;
-        const shortened = (frame: number) => shorten !== undefined && lists.selfStateAt(i, shorten.state, frame);
+        const state = shorten?.state;
+        const shortened = (frame: number) => state !== undefined && lists.selfStateAt(i, state, frame);
         const fires = shortenedTimer(trigger, shorten?.seconds ?? 0, frames, shortened);
         damageTimerGauges.push({ slotIndex: i, effect, fires });
       } else if (isResolvedShotCount(trigger)) {

@@ -141,6 +141,7 @@ describe('data/skills', () => {
                 // ラピ：レッドフード: S2 の発射体付着ダメージ▲は Lv10 で 150.72%・爆発▲は 100.6%、バースト III の付着▲は 421.2%（上限は 1000% で見る）
                 // スノーホワイト：ヘビーアームズ: S2 のフルアクティブのチャージダメージ▲は Lv10 で 528%（上限は 1000% で見る）・順番攻撃ダメージ▲は
                 // 158.4%（上限は 200% で見る）
+                // エイダ: バーストの特殊改造のチャージダメージ▲は Lv10 で 1500%（上限は 2000% で見る）・チャージ速度▼は 300%（上限は 1000% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat
@@ -148,22 +149,24 @@ describe('data/skills', () => {
                       ? statContentsOf(effect.contents).find((c) => c.ref === ref)?.stat
                       : undefined;
                 const limit =
-                  stat === 'maxAmmo' ||
-                  stat === 'projectileStickDamage' ||
-                  stat === 'projectileExplosionDamage' ||
                   stat === 'chargeDamage'
-                    ? 1000
-                    : stat !== undefined &&
-                        [
-                          'attack',
-                          'chargeDamageMultiplier',
-                          'sequentialAttackDamage',
-                          'attackDamage',
-                          'hitRate',
-                          'trueDamage',
-                        ].includes(stat)
-                      ? 200
-                      : 100;
+                    ? 2000
+                    : stat === 'maxAmmo' ||
+                        stat === 'projectileStickDamage' ||
+                        stat === 'projectileExplosionDamage' ||
+                        stat === 'chargeSpeed'
+                      ? 1000
+                      : stat !== undefined &&
+                          [
+                            'attack',
+                            'chargeDamageMultiplier',
+                            'sequentialAttackDamage',
+                            'attackDamage',
+                            'hitRate',
+                            'trueDamage',
+                          ].includes(stat)
+                        ? 200
+                        : 100;
                 expect(v).toBeLessThanOrEqual(limit);
               }
             }

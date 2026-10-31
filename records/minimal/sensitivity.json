@@ -16035,6 +16035,302 @@
       "plus": null
     },
     {
+      "observation": "0788-06",
+      "element": "エイダ skill1.effects[2]",
+      "key": "fc7ec849b3cb2600",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-07",
+      "element": "エイダ skill1.effects[2]",
+      "key": "566d6b5c26505a25",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-08",
+      "element": "エイダ skill1.effects[2]",
+      "key": "ce12e17965b02792",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-09",
+      "element": "エイダ skill1.effects[2]",
+      "key": "c6317a908dc2b1d3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-10",
+      "element": "エイダ skill1.effects[2]",
+      "key": "0325e44160d096ec",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-11",
+      "element": "エイダ skill1.effects[2]",
+      "key": "5220d28ff0e93186",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-12",
+      "element": "エイダ skill1.effects[2]",
+      "key": "cbe7870367032816",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-13",
+      "element": "エイダ skill1.effects[2]",
+      "key": "642e0a1c90a0a877",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-14",
+      "element": "エイダ skill1.effects[2]",
+      "key": "1445d2faa6e4f80f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-15",
+      "element": "エイダ skill1.effects[2]",
+      "key": "5d80b0546ae6685d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-16",
+      "element": "エイダ skill1.effects[2]",
+      "key": "549aa02724a09526",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-17",
+      "element": "エイダ skill1.effects[2]",
+      "key": "3fe30939c6b9bda2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0788-18",
+      "element": "エイダ skill1.effects[2]",
+      "key": "ce97a4c4462957c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-06",
+      "element": "エイダ skill1.effects[2]",
+      "key": "642d503bf579db56",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-07",
+      "element": "エイダ skill1.effects[2]",
+      "key": "47f8948abc9715cb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-08",
+      "element": "エイダ skill1.effects[2]",
+      "key": "02fda563bcf3f31c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-09",
+      "element": "エイダ skill1.effects[2]",
+      "key": "6f6fc2d635c4b18d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-10",
+      "element": "エイダ skill1.effects[2]",
+      "key": "f0c2ab3bd20fe7d2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-11",
+      "element": "エイダ skill1.effects[2]",
+      "key": "cd5065b14e9f7c88",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-12",
+      "element": "エイダ skill1.effects[2]",
+      "key": "08841c02bcf08371",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-13",
+      "element": "エイダ skill1.effects[2]",
+      "key": "479cbfe20f2ff683",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-14",
+      "element": "エイダ skill1.effects[2]",
+      "key": "c7f23a797d228c18",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-15",
+      "element": "エイダ skill1.effects[2]",
+      "key": "626c043344b36fac",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-16",
+      "element": "エイダ skill1.effects[2]",
+      "key": "37f58b6a9abc3cf1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-06",
+      "element": "エイダ skill1.effects[2]",
+      "key": "5b3e1ceb71a2d0b6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-07",
+      "element": "エイダ skill1.effects[2]",
+      "key": "280b49a247057fb3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-08",
+      "element": "エイダ skill1.effects[2]",
+      "key": "af2818bc3e436b7f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-09",
+      "element": "エイダ skill1.effects[2]",
+      "key": "2a4d58e56ea87d9a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-10",
+      "element": "エイダ skill1.effects[2]",
+      "key": "657c03c9282989c0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-11",
+      "element": "エイダ skill1.effects[2]",
+      "key": "ed2847b33ae54b72",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0790-12",
+      "element": "エイダ skill1.effects[2]",
+      "key": "36576c16337ac197",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0791-08",
+      "element": "エイダ skill1.effects[2]",
+      "key": "d51e82c819f087d3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0791-09",
+      "element": "エイダ skill1.effects[2]",
+      "key": "c1fd13896f6488ce",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0791-10",
+      "element": "エイダ skill1.effects[2]",
+      "key": "8cc129886525e033",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0791-11",
+      "element": "エイダ skill1.effects[2]",
+      "key": "6739279030d04eb9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0791-13",
+      "element": "エイダ skill1.effects[2]",
+      "key": "e5ad782e6ae9c043",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0791-14",
+      "element": "エイダ skill1.effects[2]",
+      "key": "0a75c6c12536aeaa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0796-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "b6b836c41c7c3aa1",

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 66・効果 395（根拠あり 369）・notes 173（根拠あり 78）
+件数: キャラ 67・効果 402（根拠あり 375）・notes 173（根拠あり 78）
 
 notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足 13・間接 53
 
-スロット: supported 152・partial 13・unsupported 17・noEffect 34
+スロット: supported 155・partial 13・unsupported 17・noEffect 34
 
 ## 10 ラピ
 
@@ -917,6 +917,19 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足
   - notes[1] 計算に無関係: 通常攻撃 120 回ごとの、残りの HP の割合が最も低い味方 2 機の受けるダメージ▼は、防御系でダメージに関係しない: C-0316（確定）、C-0321（確定）
 - **burst**: supported
   - effects[0] heal・burstUse: C-0590（確定）、C-0316（確定）
+
+## 840 エイダ
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・attack: C-0784（確定）
+  - effects[1] timed・fullBurstStart・trueDamage: C-0784（確定）
+  - effects[2] heal・fullBurstStart: 根拠なし
+- **skill2**: supported
+  - effects[0] damage・2 秒ごと・true: C-0787（確定）、C-0788（確定）、C-0783（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-0785（確定）
+  - effects[1] timed・burstUse・trueDamage: C-0785（確定）
+  - effects[2] state・burstUse・specialModification（chargeSpeed・chargeDamage）: C-0786（確定）
 
 ## 851 レイヴン
 

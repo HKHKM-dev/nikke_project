@@ -178,6 +178,11 @@ export const NAMED_STATES = {
     name: { ja: 'セブンスドワーフ・フルアクティブ', en: 'Seven Dwarves Fully Active' },
     holder: 'ally',
   },
+  /**
+   * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。論点 9）: 特殊改造（エイダのバースト。自分・1 発間維持。中身はチャージ速度▼と
+   * チャージダメージ▲。V-0569）
+   */
+  specialModification: { name: { ja: '特殊改造', en: 'Special Modification' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

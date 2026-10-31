@@ -87,7 +87,12 @@ const KIND_INFO: Record<string, Info> = {
   'damage:distributed': ['分配ダメージ', 'ok', 'damage・burstDamage（distributed）'],
   'damage:burst': ['バーストスキルダメージ', 'ok', 'burstDamage・damage'],
   'damage:dot': ['持続ダメージ', 'ok', 'dot'],
-  'damage:true': ['防御力無視ダメージ（倍率ダメージ）', 'gap', 'なし（weaponChange の trueDamage だけ）'],
+  // 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。C-0783）
+  'damage:true': [
+    '防御力無視ダメージ（倍率ダメージ）',
+    'ok',
+    'damage の damageType true（エイダの S2）・weaponChange の trueDamage',
+  ],
   'damage:burstTrue': ['防御力無視のバーストスキルダメージ', 'gap', 'なし'],
   'damage:core': ['コア命中ダメージ', 'ok', 'damage の coreHit'],
   'damage:fixed': ['固定ダメージ', 'gap', 'なし'],
@@ -164,7 +169,7 @@ const KIND_INFO: Record<string, Info> = {
   'sustained:cooldown': [
     'クールタイムの増減（維持の付いた形。その間スキル自体のクールタイムを変える。T4）',
     'check',
-    '状態の中身の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血。2 段目の段 11・C-0706）だけ',
+    '状態の中身の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血。2 段目の段 11・C-0706）と、周期の damage の periodShorten の window（名前の無い窓の発動間隔▼。エイダの S2。C-0788）だけ',
   ],
   'instant:forceSkill': ['スキルの強制使用', 'gap', 'なし'],
   // 2 段目の段 12 の PR 2: cycle の無いスロットの射撃の回数のきっかけの N▼（decreaseRef。ラピ：レッドフードのバースト III）も

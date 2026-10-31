@@ -1026,7 +1026,7 @@ function isBurstUseTrigger(t: ResolvedTrigger): boolean {
   return t === 'burstUse' || (typeof t === 'object' && 'count' in t && t.count === 'burstUse');
 }
 
-function durationSecondsOf(
+export function durationSecondsOf(
   effect: { durationRef?: number; durationSeconds?: number },
   skill: SkillRaw,
   level: number,
@@ -1194,6 +1194,8 @@ export type ResolvedInstantEffect = {
   targetCount?: number;
   /** 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 編成で決まる対象の枠（heal の lowestHpRatio。skills/composition.ts が書く） */
   fixedTargets?: readonly number[];
+  /** 2 段目の段 15 の PR 3: heal の「基本バースト段階が N の」（fixedTargets の無い呼び出しを skills/targets.ts が落とす印） */
+  targetBurstStep?: BasicBurstStep;
   /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
   durationFrames?: number;
   /** 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: heal の delayFrames（skills/heals.ts の healFrameOf） */
@@ -1254,6 +1256,7 @@ export function resolveInstant(
       const count = resolveTargetCount(effect, skill, levels[slot]);
       if (count !== undefined) r.targetCount = count;
       if (effect.kind === 'heal' && effect.fixedTargets) r.fixedTargets = effect.fixedTargets;
+      if (effect.kind === 'heal' && effect.targetBurstStep) r.targetBurstStep = effect.targetBurstStep;
       if (effect.kind === 'heal' && (effect.durationRef !== undefined || effect.durationSeconds !== undefined)) {
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }

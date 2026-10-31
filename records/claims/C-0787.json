@@ -1,0 +1,24 @@
+{
+  "id": "C-0787",
+  "text": "エイダの S2 の閃光手榴弾投擲（「フルバーストタイム発動中、2 秒ごとに」）は、周期を戦闘開始から 2 秒ごと（端数を持ち越す）に数え、フルバーストの外でも数え続け（窓ごとに数え直さない）、発動がフルバーストの窓の中の回だけ出る。ヒットは周期の発動の 6f 後",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0790-06`〜`0790-10`・`0791-08`〜`0791-11`（ほかの III（I-DOLL・サン）がバーストを使った回の窓の 5 発。窓の始まりからの位置は窓ごとに違い、戦闘開始からの 2 秒の格子に乗る）、`0788-06`・`0789-06`（自分がバーストを使った 1 回目の窓の 10 発）。どれも manualBursts（`0788-05`・`0789-05`・`0790-05`・`0791-06`）で録画のチェーンの時刻にそろえた。`0791-07`・`0788-20`（窓ごとの最初の 1 発のゲーム内の時刻が、どれも整数の秒の約 0.1 秒後）。V-0569",
+  "model": "`data/skills/840.json`（skill2 の effects[0]。トリガー { everySeconds: 2, carry: true }・条件 inFullBurst・delayFrames 6）。周期は `skills/timeline.ts` の timerDamageFrames、条件は `frame/plan.ts` の damageConditionHolds",
+  "replaces": [],
+  "updated": "2026-10-31",
+  "subject": {
+    "places": ["data/skills/840.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0791",
+      "role": "値を合わせた"
+    },
+    {
+      "recording": "0788",
+      "role": "値を合わせた"
+    }
+  ]
+}

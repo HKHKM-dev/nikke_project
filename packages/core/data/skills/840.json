@@ -1,0 +1,141 @@
+{
+  "formatVersion": 1,
+  "resourceId": 840,
+  "checkedAt": "2026-10-31",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "burstUsers",
+          "targetBurstStep": "Step3",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "フルバーストを開いたチェーンでバーストを使った枠のうち、基本バースト段階 III の枠（自分も入る）に付く。I・II の枠には付かない",
+            "en": "Applies to the Burst III units among those that used their Burst in the chain that opened Full Burst (herself included), not to Burst I or II units"
+          },
+          "claims": [
+            "C-0784"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "burstUsers",
+          "targetBurstStep": "Step3",
+          "stat": "trueDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "対象は effects[0] と同じ。防御力無視ダメージ▲は、防御力無視ダメージのヒット（自分の閃光手榴弾投擲など）にだけ乗る",
+            "en": "Same targets as effects[0]. True Damage ▲ applies only to true damage hits (such as her own Flash Grenade Toss)"
+          },
+          "claims": [
+            "C-0784"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "fullBurstStart",
+          "target": "burstUsers",
+          "targetBurstStep": "Step3",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "対象は effects[0] と同じ。吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
+            "en": "Same targets as effects[0]. Lifesteal (10 s) triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 2,
+            "carry": true
+          },
+          "condition": {
+            "inFullBurst": true
+          },
+          "delayFrames": 6,
+          "damageType": "true",
+          "ref": 2,
+          "periodShorten": {
+            "window": {
+              "trigger": "burstUse",
+              "durationRef": 4
+            },
+            "slot": "skill2",
+            "ref": 3
+          },
+          "assumes": {
+            "ja": "閃光手榴弾投擲。周期は戦闘開始から 2 秒ごと（端数を持ち越す）に数え続け、フルバーストの窓の中の回だけ、敵 1 体（的）に出す。ヒットは周期の 6f 後。自分のバースト使用から 10 秒の間は、縮めた次の発動（前の発動の 1 秒後）がその間にあれば 1 秒ごとになる。コアには当たらない。窓の中にだけ出るので、バーストゲージを溜めるかは確かめていない（窓の中はゲージが溜まらない）",
+            "en": "Flash Grenade Toss. The interval counts every 2 s from the start of battle (carrying the fraction) and only the ticks inside Full Burst deal damage to the single enemy (the target). The hit comes 6 f after the tick. For 10 s from her own Burst, the interval is 1 s when the shortened next tick (1 s after the previous one) falls in that window. It does not hit the core. As it only occurs inside Full Burst, whether it charges the burst gauge is unchecked (the gauge does not charge inside Full Burst)"
+          },
+          "claims": [
+            "C-0787",
+            "C-0788",
+            "C-0783"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0785"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0785"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "specialModification",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationShotsRef": 5,
+          "contents": [
+            {
+              "stat": "chargeSpeed",
+              "ref": 6,
+              "decrease": true
+            },
+            {
+              "stat": "chargeDamage",
+              "ref": 7
+            }
+          ],
+          "assumes": {
+            "ja": "特殊改造。バースト使用の後の最初の発（その溜め）にだけ効く。チャージ速度 300%▼ でチャージ時間は 4 倍（1 秒 → 4 秒。減算の式）で、バースト使用の時に溜めの途中なら、それまでに溜めたフレームは残る。チャージダメージ 1500%▲ はフルチャージ倍率（250%）に足す",
+            "en": "Special Modification. It applies only to the first shot after the Burst (and its charge). Charge Speed ▼ 300% makes the charge time 4 times longer (1 s to 4 s; subtractive formula); if a charge is in progress at the Burst, the frames already charged are kept. Charge Damage ▲ 1500% adds to the full charge multiplier (250%)"
+          },
+          "claims": [
+            "C-0786"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -350,6 +350,7 @@ export const BURST_DAMAGE_TYPE_LABEL: Record<SkillDamageType, string> = {
   skill: 'バーストスキルダメージ',
   distributed: '分配ダメージ',
   additional: '追加ダメージ',
+  true: '防御力無視ダメージ',
 };
 
 /** Stage 8: トリガー付きの倍率ダメージ（damage）の種別 */
@@ -357,6 +358,8 @@ export const SKILL_DAMAGE_TYPE_LABEL: Record<SkillDamageType, string> = {
   skill: 'ダメージ',
   distributed: '分配ダメージ',
   additional: '追加ダメージ',
+  // 2 段目の段 15 の PR 3: 「最終攻撃力の X% の防御力無視ダメージ」（エイダの閃光手榴弾投擲）
+  true: '防御力無視ダメージ',
 };
 
 export type SupportBadge = { label: string; className: string };

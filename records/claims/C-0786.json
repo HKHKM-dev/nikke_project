@@ -1,0 +1,16 @@
+{
+  "id": "C-0786",
+  "text": "エイダのバーストの特殊改造（チャージ速度 300%▼・チャージダメージ 1500%▲・1 発間維持）は、バースト使用の後の最初の発（その溜め）にだけ効く。チャージ時間は 4 倍（1 秒 → 4 秒。速度の減算の式）で、バースト使用の時に溜めの途中なら、それまでに溜めたフレームは残る。チャージダメージ▲はフルチャージ倍率（250%）に足す（1 発が 7 倍）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0788-16`〜`0788-18`・`0789-14`〜`0789-16`（前の発から特殊改造の発までの動画のフレーム数。リロードの明けから溜めた回は 401f（▼が無ければ 224f）、溜めの途中でバーストを使った回は 280〜283f（無ければ 104〜106f））、`0788-13`・`0788-14`・`0789-12`（特殊改造の発の 1 ヒット）。V-0569",
+  "model": "`data/skills/840.json`（burst の effects[2]。状態 specialModification の中身 chargeSpeed・chargeDamage、durationShotsRef 5）。チャージ速度の発数の維持は 1 パス目の件の列（`skills/holders.ts`）、溜めの進みは `frame/shooter.ts` の chargeProgressFrames",
+  "replaces": [],
+  "updated": "2026-10-31",
+  "subject": {
+    "places": ["data/skills/840.json の burst の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（スキル Lv10）と、確定の速度の式（減算。`frame/firing.ts` の SPEED_FORMULA）・チャージダメージ▲の足し方だけから決めた。値を合わせた録画は無い"
+}
