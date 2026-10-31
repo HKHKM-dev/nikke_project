@@ -8,10 +8,10 @@ import {
   type BuildInput,
   type BuildMasters,
   type SkillLevels,
-  type TeamSlotResult,
   type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
+import type { SlotResultView } from '../calcView.ts';
 import { formatNumber } from '../format.ts';
 import { clampInt, type SlotState, type TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
@@ -37,7 +37,8 @@ type Props = {
   treasurePhase: TreasurePhase;
   masters: BuildMasters | null;
   mastersError: string | null;
-  slotResult: TeamSlotResult | null;
+  /** このスロットの計算の結果（calcView.ts の slotResultFor）。stale なら計算中の印を付けて出す */
+  slotResult: SlotResultView | null;
   /** 2026-10-31: このスロットがフォーカス（操作キャラ）か */
   focused: boolean;
   dispatch: Dispatch<TeamAction>;
@@ -144,9 +145,9 @@ export function SlotCard({
       {error && <p className="error">読み込みに失敗しました: {error}</p>}
       {loading && <p className="hint">キャラデータを読み込み中…</p>}
       {character && (
-        <div className="slot-damage-display">
+        <div className="slot-damage-display" data-computing={slotResult?.stale ?? false}>
           <span className="slot-damage-label">ダメージ</span>
-          <span className="slot-damage-val">{slotResult ? formatNumber(slotResult.totalDamage) : '—'}</span>
+          <span className="slot-damage-val">{slotResult ? formatNumber(slotResult.result.totalDamage) : '—'}</span>
         </div>
       )}
       {character && limits && (

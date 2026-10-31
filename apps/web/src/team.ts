@@ -370,8 +370,8 @@ export function serializeTeamState(state: TeamState): string {
   return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
 }
 
-/** 読めた版（版のない旧形式は 0）。未知の版・形が合わないものは null */
-function formatVersionOf(raw: Record<string, unknown>): number | null {
+/** 読めた版（版のない旧形式は 0）。未知の版・形が合わないものは null。保存した編成の一覧（parties.ts）も同じ版を使う */
+export function formatVersionOf(raw: Record<string, unknown>): number | null {
   const v = raw.formatVersion;
   if (v === undefined) return 0;
   return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= TEAM_FORMAT_VERSION ? v : null;

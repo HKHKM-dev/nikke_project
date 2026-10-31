@@ -29,6 +29,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
+import { collectionActions, treasureOptionValue } from '../collectionChoice.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampInt, type TeamAction } from '../team.ts';
 
@@ -74,8 +75,6 @@ export function BuildSection({
 }: Props) {
   const set = (patch: Partial<BuildInput>) =>
     dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
-  const setTreasurePhase = (treasurePhase: TreasurePhase) =>
-    dispatch({ type: 'setTreasurePhase', index: slotIndex, treasurePhase });
   const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
     set({ gear: { ...build.gear, [part]: gear } });
 
@@ -237,17 +236,17 @@ export function BuildSection({
             {/* 2026-10-31: オーナーの指示で、スキル Lv の横にあった宝物の段階の選択をここに統合した（宝物はコレクションの枠に付ける）。
                 宝物はスペック固定でも選べる */}
             <select
-              value={hasTreasure ? `treasure-${treasurePhase}` : (shown.collection?.rarity ?? '')}
+              value={hasTreasure ? treasureOptionValue(treasurePhase) : (shown.collection?.rarity ?? '')}
               disabled={disabled && character.treasure === null}
               onChange={(e) => {
-                const value = e.target.value;
-                if (value.startsWith('treasure-')) {
-                  setTreasurePhase(Number(value.slice('treasure-'.length)) as TreasurePhase);
-                  return;
-                }
-                if (hasTreasure) setTreasurePhase(0);
-                const rarity = value as 'R' | 'SR' | '';
-                set({ collection: rarity === '' ? null : { rarity, level: shown.collection?.level ?? 0 } });
+                // スペック固定の間（disabled）は宝物の段階だけを変え、保存している育成には触れない
+                const actions = collectionActions(slotIndex, e.target.value, {
+                  fixedSpec: disabled,
+                  hasTreasure,
+                  build,
+                  level: shown.collection?.level ?? 0,
+                });
+                for (const action of actions) dispatch(action);
               }}
             >
               <option value="">なし</option>
@@ -259,7 +258,7 @@ export function BuildSection({
               </option>
               {character.treasure &&
                 Array.from({ length: TREASURE_PHASE_MAX }, (_, i) => i + 1).map((phase) => (
-                  <option key={phase} value={`treasure-${phase}`}>
+                  <option key={phase} value={treasureOptionValue(phase)}>
                     宝物 {treasurePhaseLabel(character.treasure!.unlockOrder, phase)}
                   </option>
                 ))}

@@ -1,7 +1,22 @@
-import { MAX_SKILL_LEVELS, fixedSpecBuild, parseEnemyPresets, type CharacterData } from '@nikke/core';
+import {
+  MASTER_FILES,
+  MAX_SKILL_LEVELS,
+  applyTreasure,
+  computeCombatAttack,
+  computeCombatStat,
+  computeFixedSpecAttack,
+  fixedSpecBuild,
+  parseEnemyPresets,
+  resolveBuildEffects,
+  type BuildInput,
+  type BuildMasters,
+  type CharacterData,
+  type TeamResult,
+} from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { buildCalcView, type CalcDeps } from './calcView.ts';
+import { buildCalcView, slotResultFor, type CalcDeps, type CalcView } from './calcView.ts';
+import type { Shown } from './compute.ts';
 import {
   DEFAULT_SLOT_CONDITION,
   SHOOTING_RANGE_ENEMY,
@@ -167,5 +182,146 @@ describe('buildCalcView: team settings', () => {
     expect(off.events).toBeUndefined();
     expect(off.target).toBeDefined();
     expect(buildCalcView(initialTeamState(), deps()).input.enemy.events).toBeUndefined();
+  });
+});
+
+// 育成のマスタ（画面は起動時に読む。App.tsx の loadBuildMasters）
+const masters = Object.fromEntries(
+  Object.entries(MASTER_FILES).map(([k, f]) => [k, readJson<unknown>(`../../../packages/core/data/masters/${f}`)]),
+) as BuildMasters;
+// クラッシュキューブ: 防御力無視ダメージ▲は未対応（未対応の一覧に出す育成の注記）
+const CRUSH_CUBE = 1000315;
+
+function withBuild(state: TeamState, index: number, patch: Partial<BuildInput>): TeamState {
+  return teamReducer(state, { type: 'setBuild', index, build: { ...state.slots[index]!.build, ...patch } });
+}
+
+describe('buildCalcView: build layer (masters loaded)', () => {
+  it('overrides attack, HP and defence with the build, passes the build effects, and keeps only the unsupported notes', () => {
+    const s = withBuild(withCharacters([LAPI]), 0, {
+      affectionRank: 10,
+      gear: {
+        head: {
+          type: 'OL',
+          level: 3,
+          overload: [
+            { option: 'attack', level: 5 },
+            { option: 'defence', level: 5 },
+          ],
+        },
+        body: { type: 'T9', level: 5 },
+        arm: null,
+        leg: null,
+      },
+      cube: { id: CRUSH_CUBE, level: 3 },
+    });
+    const slot = buildCalcView(s, deps({ masters })).slots[0]!;
+    const lapi = characters.get(LAPI)!;
+    const options = { treasurePhase: 0 };
+    expect(slot.input).toMatchObject({
+      attackOverride: computeCombatAttack(lapi, slot.growth, slot.build, masters, options).attack,
+      hpOverride: computeCombatStat(lapi, slot.growth, slot.build, masters, 'hp', options).value,
+      defenceOverride: computeCombatStat(lapi, slot.growth, slot.build, masters, 'defence', options).value,
+    });
+    const resolved = resolveBuildEffects(lapi, slot.build, masters, options);
+    expect(slot.input?.buildEffects).toEqual(resolved.effects);
+    expect(slot.input?.buildEffects?.some((e) => e.stat === 'attack')).toBe(true);
+    // OL の防御力▲（ダメージに無関係）は出さず、キューブの未対応だけを出す
+    expect(resolved.notes.length).toBeGreaterThan(slot.buildNotes.length);
+    expect(slot.buildNotes.map((n) => [n.level, n.source.kind])).toEqual([['unsupported', 'cube']]);
+  });
+
+  it('leaves the stats to the character data when the build is empty and the treasure phase is 0', () => {
+    const empty = buildCalcView(withCharacters([LAPLACE]), deps({ masters })).slots[0]!;
+    expect(empty.input).not.toHaveProperty('attackOverride');
+    expect(empty.input).not.toHaveProperty('buildEffects');
+    expect(empty.buildNotes).toEqual([]);
+
+    // 宝物の段階があれば、育成が空でも宝物のステータスを乗せる
+    const s = teamReducer(withCharacters([LAPLACE]), { type: 'setTreasurePhase', index: 0, treasurePhase: 1 });
+    const slot = buildCalcView(s, deps({ masters })).slots[0]!;
+    const laplace = characters.get(LAPLACE)!;
+    expect(slot.input?.attackOverride).toBe(
+      computeCombatAttack(laplace, slot.growth, slot.build, masters, { treasurePhase: 1 }).attack,
+    );
+    expect(slot.input?.attackOverride).not.toBe(
+      computeCombatAttack(laplace, slot.growth, slot.build, masters, { treasurePhase: 0 }).attack,
+    );
+  });
+
+  it('keeps only the notes when the stats cannot be computed, and drops both when the effects cannot be resolved', () => {
+    const s = withBuild(withCharacters([LAPI]), 0, {
+      gear: { head: { type: 'T9', level: 5 }, body: null, arm: null, leg: null },
+      cube: { id: CRUSH_CUBE, level: 3 },
+    });
+    // 装備のマスタに値が無い（攻撃力などを計算できない）
+    const broken = structuredClone(masters);
+    broken.gear.tiers.T9.Attacker.head.attack = [];
+    const slot = buildCalcView(s, deps({ masters: broken })).slots[0]!;
+    expect(slot.input).not.toBeNull();
+    expect(slot.input).not.toHaveProperty('attackOverride');
+    expect(slot.input).not.toHaveProperty('buildEffects');
+    expect(slot.buildNotes.map((n) => n.source.kind)).toEqual(['cube']);
+
+    // マスタに無いキューブ（効果を解決できない）
+    const unknown = buildCalcView(withBuild(s, 0, { cube: { id: 1, level: 3 } }), deps({ masters })).slots[0]!;
+    expect(unknown.input).not.toHaveProperty('attackOverride');
+    expect(unknown.buildNotes).toEqual([]);
+  });
+
+  it('ignores the saved build in fixed spec', () => {
+    let s = withBuild(withCharacters([LAPI]), 0, { cube: { id: CRUSH_CUBE, level: 3 } });
+    s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: true });
+    const slot = buildCalcView(s, deps({ masters })).slots[0]!;
+    expect(slot.buildNotes).toEqual([]);
+    expect(slot.input).not.toHaveProperty('buildEffects');
+    expect(slot.input?.attackOverride).toBe(computeFixedSpecAttack(characters.get(LAPI)!).attack);
+  });
+});
+
+describe('slotResultFor: the result shown in a slot', () => {
+  // 結果は、スロットのキャラと合計だけを持つ形にする（slotResultFor が読むのはそこだけ）
+  function shownFor(view: CalcView): Shown<CalcView> {
+    const slots = view.slots.map((s) =>
+      s.character === undefined ? null : { character: s.character, totalDamage: 100, notes: [] },
+    );
+    return { computed: { ok: true, result: { slots } as unknown as TeamResult }, source: view };
+  }
+  const party01 = withCharacters([LAPI]);
+  const party02 = teamReducer(withCharacters([LAPLACE]), { type: 'setTreasurePhase', index: 0, treasurePhase: 1 });
+
+  it('shows the result of the current input as it is', () => {
+    const view = buildCalcView(party01, deps());
+    expect(slotResultFor(shownFor(view), view, 0)).toMatchObject({ stale: false, result: { totalDamage: 100 } });
+    expect(slotResultFor(shownFor(view), view, 1)).toBeNull();
+  });
+
+  it('marks the result of the previous input of the same character as stale', () => {
+    const before = buildCalcView(party01, deps());
+    const after = buildCalcView(teamReducer(party01, { type: 'setDuration', durationSeconds: 60 }), deps());
+    expect(slotResultFor(shownFor(before), after, 0)).toMatchObject({ stale: true });
+  });
+
+  it('does not show the result of another character while the switched party is being computed', () => {
+    const before = buildCalcView(party01, deps());
+    const after = buildCalcView(party02, deps());
+    expect(slotResultFor(shownFor(before), after, 0)).toBeNull();
+    expect(slotResultFor({ computed: { ok: false, error: 'x' }, source: after }, after, 0)).toBeNull();
+    expect(slotResultFor(null, after, 0)).toBeNull();
+  });
+
+  it('keeps the character and the treasure phase of a result together in its source', () => {
+    // 2026-11-01 の不具合: 前の編成の結果のキャラ（宝物なし）に、いまの編成の宝物の段階を当てて画面が落ちていた。
+    // 詳細は結果の元（source）から読むので、キャラと宝物の段階は同じ計算の入力のものになる
+    const before = buildCalcView(party01, deps());
+    const after = buildCalcView(party02, deps());
+    const shownSlot = before.slots[0]!;
+    expect(() => applyTreasure(shownSlot.character!, null, after.slots[0]!.treasurePhase)).toThrow(RangeError);
+    for (const view of [before, after]) {
+      const { source } = shownFor(view);
+      for (const slot of source.slots) {
+        if (slot.character) expect(() => applyTreasure(slot.character!, null, slot.treasurePhase)).not.toThrow();
+      }
+    }
   });
 });

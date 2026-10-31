@@ -30,8 +30,10 @@ import {
   type SkillLevels,
   type TeamInput,
   type TeamSlotInput,
+  type TeamSlotResult,
   type TreasurePhase,
 } from '@nikke/core';
+import type { Shown } from './compute.ts';
 import {
   DEFAULT_BURST,
   DEFAULT_CONDITION_MODE,
@@ -59,13 +61,20 @@ export type CalcSlot = {
   hpRatio: number;
   /** 撃たない（スロットの詳細設定） */
   noFire: boolean;
+  /** スキル定義の状態（未選択は null） */
+  skillsStatus: SlotSkillsStatus | null;
   /** 未対応・近似・仮定の一覧に出す育成の注記（未対応だけ。スペック固定では空） */
   buildNotes: BuildEffectNote[];
   /** 計算の入力。キャラかスキル定義が揃っていないスロットは null（合計から除外） */
   input: TeamSlotInput | null;
 };
 
-export type CalcView = { slots: CalcSlot[]; input: TeamInput };
+export type CalcView = {
+  slots: CalcSlot[];
+  input: TeamInput;
+  /** スペック固定（結果の攻撃力の見出しを、その計算の入力に合わせる） */
+  fixedSpec: boolean;
+};
 
 export type CalcDeps = {
   characters: ReadonlyMap<number, CharacterData>;
@@ -148,6 +157,7 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
   const skillLevels = team.fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
   const hpRatio = DEFAULT_HP_RATIO;
   const { noFire } = slot;
+  const skillsStatus = deps.skillsStatuses[index] ?? null;
   const synchroGrowth = { ...slot.growth, level: team.synchroLevel };
   if (character === undefined) {
     return {
@@ -158,6 +168,7 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
       treasurePhase: 0,
       hpRatio,
       noFire,
+      skillsStatus,
       buildNotes: [],
       input: null,
     };
@@ -171,8 +182,7 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
     team.fixedSpec || masters === null
       ? { overrides: {}, notes: [] }
       : buildLayer(character, growth, build, treasurePhase, masters);
-  const status = deps.skillsStatuses[index];
-  const skills = status ? toSlotSkills(status, skillLevels, treasurePhase) : undefined;
+  const skills = skillsStatus ? toSlotSkills(skillsStatus, skillLevels, treasurePhase) : undefined;
   return {
     character,
     growth,
@@ -181,6 +191,7 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
     treasurePhase,
     hpRatio,
     noFire,
+    skillsStatus,
     buildNotes: layer.notes,
     input: skills
       ? {
@@ -204,6 +215,7 @@ export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
   const noBurstSlots = team.slots.flatMap((s, i) => (s.noBurst && s.resourceId !== null ? [i] : []));
   return {
     slots,
+    fixedSpec: team.fixedSpec,
     input: {
       slots: slots.map((s) => s.input),
       enemy: enemyForCalc(enemy, deps.enemyMaster, eventSets, team.durationSeconds),
@@ -213,4 +225,18 @@ export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
       controlledSlot: team.controlledSlot,
     },
   };
+}
+
+/** スロットの欄に出す計算の結果。stale は、いまの入力の結果ではない（計算中。印を付けて出す） */
+export type SlotResultView = { result: TeamSlotResult; stale: boolean };
+
+/**
+ * いまの画面（view）のスロット index に出す計算の結果。結果の元でそのスロットにいたキャラが、いまのキャラと違うときは
+ * 出さない（編成やキャラを替えた直後の計算中に、前のキャラの結果を出さないため）
+ */
+export function slotResultFor(shown: Shown<CalcView> | null, view: CalcView, index: number): SlotResultView | null {
+  if (shown === null || !shown.computed.ok) return null;
+  const result = shown.computed.result.slots[index] ?? null;
+  if (result === null || result.character.resourceId !== view.slots[index]?.character?.resourceId) return null;
+  return { result, stale: shown.source !== view };
 }
