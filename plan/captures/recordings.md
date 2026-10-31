@@ -782,6 +782,8 @@
 | 0808 | `20261101-0808_smg+sr+rl_sakura+delta+raven_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0579。鈴原サクラ（I・AI）・デルタ（II・AI）・レイヴン（III・操作） |
 | 0809 | `20261101-0809_smg+sr+rl_sakura+delta+rapi-redhood_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0580。鈴原サクラ（I・AI）・デルタ（II・AI）・ラピ：レッドフード（III・操作） |
 | 0810 | `20261101-0810_smg+sr+rl_sakura+delta+rapi-redhood_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0580。鈴原サクラ（I・AI）・デルタ（II・AI）・ラピ：レッドフード（III・操作） |
+| 0821 | `20261101-0821_smg+mg+rl_sakura+crown+rapi-redhood_stick-ad.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + クラウン（330、MG・鉄甲・SSR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0581。鈴原サクラ（I・AI）・クラウン（II・AI）・ラピ：レッドフード（III・操作） |
+| 0822 | `20261101-0822_smg+mg+rl_sakura+crown+rapi-redhood_stick-ad.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + クラウン（330、MG・鉄甲・SSR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0581。鈴原サクラ（I・AI）・クラウン（II・AI）・ラピ：レッドフード（III・操作） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
