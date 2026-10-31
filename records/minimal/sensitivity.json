@@ -13782,6 +13782,237 @@
       "plus": 0
     },
     {
+      "observation": "0710-10",
+      "element": "アスカ burst.effects[0]",
+      "key": "d872170de86efcae",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-10",
+      "element": "アスカ burst.effects[2]",
+      "key": "d872170de86efcae",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-10",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "d872170de86efcae",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 0 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0710-11",
+      "element": "アスカ burst.effects[0]",
+      "key": "9ed685726e36e62b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-11",
+      "element": "アスカ burst.effects[2]",
+      "key": "9ed685726e36e62b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-11",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "9ed685726e36e62b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 1 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0710-12",
+      "element": "アスカ burst.effects[0]",
+      "key": "ae8d188f972b61e6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-12",
+      "element": "アスカ burst.effects[2]",
+      "key": "ae8d188f972b61e6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-12",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "ae8d188f972b61e6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 2 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0710-13",
+      "element": "アスカ burst.effects[0]",
+      "key": "128cc9b7f30bb02c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-13",
+      "element": "アスカ burst.effects[2]",
+      "key": "128cc9b7f30bb02c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-13",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "128cc9b7f30bb02c",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 3 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0710-15",
+      "element": "アスカ burst.effects[0]",
+      "key": "5a5a676af4470e7b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-15",
+      "element": "アスカ burst.effects[2]",
+      "key": "5a5a676af4470e7b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-15",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "5a5a676af4470e7b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 0 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0710-17",
+      "element": "アスカ burst.effects[0]",
+      "key": "4b3ec1413f94b172",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-17",
+      "element": "アスカ burst.effects[2]",
+      "key": "4b3ec1413f94b172",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-17",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "4b3ec1413f94b172",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 2 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0710-18",
+      "element": "アスカ burst.effects[0]",
+      "key": "c587a1e2c5494d4f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0710-18",
+      "element": "アスカ burst.effects[2]",
+      "key": "c587a1e2c5494d4f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0710-18",
+      "element": "フォルクヴァン burst.effects[0]",
+      "key": "c587a1e2c5494d4f",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 3 回目の発動の後に始まった窓が無い"
+    },
+    {
       "observation": "0721-09",
       "element": "たきな burst.effects[0]",
       "key": "6e4c136f61431150",
