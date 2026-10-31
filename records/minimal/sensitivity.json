@@ -16177,6 +16177,326 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0803-10",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "a9ab505572be0778",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0803-10",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "a9ab505572be0778",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0803-11",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "bb2ea65a48ffae97",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0803-11",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "bb2ea65a48ffae97",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0804-10",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "fb61367a1464afd3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0804-10",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "fb61367a1464afd3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0804-11",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "3fe87df5711f421c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0804-11",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "3fe87df5711f421c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-07",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "1c863c4946e25426",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-08",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "dd293ebaba14c237",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-09",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "7353c4a3e4c80a84",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-10",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "0ad845693067fdcc",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-11",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "aa7a926bbb60ee14",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-12",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "d6fe4c71ef894ad8",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-13",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "4c02a6e3d289fa6e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-14",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "a419cc6e09d9d659",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0806-07",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "a7e26e466e8767ef",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0806-08",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "1073a62d9bc3e2fe",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0806-09",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "59a87238270adf5d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0806-10",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "03082b606a112351",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     }
   ]
 }

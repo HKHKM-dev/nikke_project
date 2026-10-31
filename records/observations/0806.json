@@ -1,0 +1,231 @@
+[
+  {
+    "id": "0806-01",
+    "recording": "0806",
+    "kind": "timing",
+    "use": "record",
+    "value": [891, 3269, 5647, 8025, 10402],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0806-02",
+    "recording": "0806",
+    "kind": "timing",
+    "use": "record",
+    "value": [920, 3298, 5676, 8054, 10431],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0806-03",
+    "recording": "0806",
+    "kind": "timing",
+    "use": "record",
+    "value": [949, 3327, 5705, 8083, 10460],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0806-04",
+    "recording": "0806",
+    "kind": "timing",
+    "use": "record",
+    "value": [3263, 5641, 8019, 10396],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0806-05",
+    "recording": "0806",
+    "kind": "timing",
+    "use": "record",
+    "value": [3321, 5699, 8077, 10454],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0567",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0806-06",
+    "recording": "0806",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "hit",
+    "value": [1208668, 5442407, 1611557, 1076340, 4846559, 1435120, 266138, 227119],
+    "description": "紅蓮：ブラックシャドウの S1 の段の 1 ヒット（重なりを引いた値）が乗った値の一覧。フルバースト中（エレグの分配ダメージ▲あり）で鈴原サクラの▲あり: 段 B の 1 ティック 1,208,668・段 C 5,442,407・段 B の会心 1,611,557。▲なし: 1,076,340・4,846,559・段 B の会心 1,435,120。フルバーストの外（分配ダメージ▲なし）: 段 B の 1 ティックの▲あり 266,138・▲なし 227,119。▲の有無は、段の値を見ずに、ヒットの 25f 前〜5f 後の鈴原サクラ・エレグの 1 ヒットの段（× 1.1718）で決めた。どの段も、▲ありの文脈では HA、▲なしの文脈では▲なしの値で、HS（段 B の 1 ティック 1,261,254・段 C 5,679,190）に乗る増分は無い",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "重なりの引き方と数えない組は 0805 と同じ（f3515〜3544・f6192〜6221 などは▲が付くか切れる組）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0806-07",
+    "recording": "0806",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 4846559,
+    "description": "紅蓮：BS の段 C（1 回目のフルバーストの 1 回目。f1096。増分 4,877,076 から 15,727 と 14,790 を引いた）。鈴原サクラの▲なし（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=2 も▲なし。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000002
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0806-08",
+    "recording": "0806",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 3626004,
+    "description": "紅蓮：BS の段 B の 3 ティックの和（1 回目のフルバーストの 3 回目。f1311・1325・1340 の 1,208,668 × 3。重なりなし）。分配ダメージ▲・鈴原サクラの▲あり",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=7 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 7,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000002
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0806-09",
+    "recording": "0806",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5442407,
+    "description": "紅蓮：BS の段 C（1 回目のフルバーストの 3 回目。f1354。重なりなし）。分配ダメージ▲・鈴原サクラの▲あり",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=8 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 8,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000002
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0806-10",
+    "recording": "0806",
+    "source": "V-0567",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5442407,
+    "description": "紅蓮：BS の段 C（1 回目のフルバーストの 4 回目。f1483。増分 5,459,738 から 17,331 を引いた）。分配ダメージ▲・鈴原サクラの▲あり",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=11 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 11,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.000002
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]
