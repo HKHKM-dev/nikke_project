@@ -167,16 +167,16 @@ export function TeamSettingsForm({
         <div className="console">
           <span className="console-title">リサイクルルーム</span>
           <div className="console-grid">
-            {levelField('personal', '共通研究', consoleInput.personal, (lv) =>
+            {levelField('personal', '共通', consoleInput.personal, (lv) =>
               setConsole({ ...consoleInput, personal: lv }),
             )}
             {CONSOLE_CLASSES.map((c) =>
-              levelField(`class-${c}`, `${CLASS_LABEL[c]}研究`, consoleInput.class[c], (lv) =>
+              levelField(`class-${c}`, CLASS_LABEL[c], consoleInput.class[c], (lv) =>
                 setConsole({ ...consoleInput, class: { ...consoleInput.class, [c]: lv } }),
               ),
             )}
             {CONSOLE_CORPORATIONS.map((c) =>
-              levelField(`corp-${c}`, `${CORPORATION_LABEL[c]}研究`, consoleInput.corporation[c], (lv) =>
+              levelField(`corp-${c}`, CORPORATION_LABEL[c], consoleInput.corporation[c], (lv) =>
                 setConsole({ ...consoleInput, corporation: { ...consoleInput.corporation, [c]: lv } }),
               ),
             )}
