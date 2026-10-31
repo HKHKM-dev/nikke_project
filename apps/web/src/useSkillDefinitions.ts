@@ -1,6 +1,7 @@
 import {
   loadSkillDefinition,
   loadSkillIndex,
+  loadSkillSupportIndex,
   type SkillDefinition,
   type SkillLevels,
   type TeamSlotSkills,
@@ -12,6 +13,11 @@ export type SkillDefinitionCache = {
   /** 定義済み resourceId の一覧。読み込み前は null */
   index: ReadonlySet<number> | null;
   indexError: string | null;
+  /**
+   * すべてのスロットに未実装が無いキャラ（data/skills/support.json）。キャラの選択肢の印に使う。読み込み前と、読めなかったときは null
+   * （印を付けない。計算には使わない）
+   */
+  fullySupported: ReadonlySet<number> | null;
   definitions: ReadonlyMap<number, SkillDefinition>;
   /** 定義ファイルの読み込み・検証に失敗した resourceId とメッセージ */
   errors: ReadonlyMap<number, string>;
@@ -33,6 +39,7 @@ function wantedKeyOf(resourceIds: readonly (number | null)[]): string {
 export function useSkillDefinitions(resourceIds: readonly (number | null)[], baseUrl: string): SkillDefinitionCache {
   const [index, setIndex] = useState<ReadonlySet<number> | null>(null);
   const [indexError, setIndexError] = useState<string | null>(null);
+  const [fullySupported, setFullySupported] = useState<ReadonlySet<number> | null>(null);
   const [definitions, setDefinitions] = useState<ReadonlyMap<number, SkillDefinition>>(() => new Map());
   const [errors, setErrors] = useState<ReadonlyMap<number, string>>(() => new Map());
   // 取得を開始した id（完了・失敗も含む）。state ではなく ref に持ち、取得完了で Effect を再実行させない
@@ -42,6 +49,9 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
     loadSkillIndex({ baseUrl })
       .then((i) => setIndex(new Set(i.resourceIds)))
       .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
+    loadSkillSupportIndex({ baseUrl })
+      .then((s) => setFullySupported(new Set(s.fullySupported)))
+      .catch(() => setFullySupported(null));
   }, [baseUrl]);
 
   const wantedKey = useMemo(() => wantedKeyOf(resourceIds), [resourceIds]);
@@ -61,7 +71,10 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
 
   // 返す物は中身が変わるまで同じにする。App.tsx の計算の入力（teamInput）がこれに依存し、毎回作り直すと、計算の結果が
   // 届いて描き直すたびに入力が変わって計算を出し直し続ける（(B) の段 B-2。plan/design-unify-sim-calc.md 経過）
-  return useMemo(() => ({ index, indexError, definitions, errors }), [index, indexError, definitions, errors]);
+  return useMemo(
+    () => ({ index, indexError, fullySupported, definitions, errors }),
+    [index, indexError, fullySupported, definitions, errors],
+  );
 }
 
 export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number): SlotSkillsStatus {

@@ -42,6 +42,7 @@ export function checkPagesBuild(distDir: string, base: string): string[] {
   const data = [
     'characters/index.json',
     'skills/index.json',
+    'skills/support.json',
     ENEMY_PRESETS_PATH,
     ...Object.values(MASTER_FILES).map((file) => `masters/${file}`),
   ];

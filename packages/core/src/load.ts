@@ -1,4 +1,5 @@
 import { parseEnemyPresets } from './enemies.ts';
+import { parseSkillSupportIndex, type SkillSupportIndex } from './skills/support.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition, type SkillIndex } from './skills/types.ts';
 import type {
   AffectionMaster,
@@ -41,6 +42,11 @@ export function skillIndexPath(): string {
   return `${SKILL_DATA_DIR}/index.json`;
 }
 
+/** スキル定義の対応状況の索引（生成物。skills/support.ts） */
+export function skillSupportPath(): string {
+  return `${SKILL_DATA_DIR}/support.json`;
+}
+
 export function skillDefinitionPath(resourceId: number): string {
   return `${SKILL_DATA_DIR}/${resourceId}.json`;
 }
@@ -78,6 +84,12 @@ export async function loadCharacter(resourceId: number, options: LoadOptions = {
 export async function loadSkillIndex(options: LoadOptions = {}): Promise<SkillIndex> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   return parseSkillIndex(await fetchJson<unknown>(joinUrl(baseUrl, skillIndexPath()), fetchImpl));
+}
+
+/** スキル定義の対応状況の索引（完全対応のキャラの一覧）。不正なら Error */
+export async function loadSkillSupportIndex(options: LoadOptions = {}): Promise<SkillSupportIndex> {
+  const { baseUrl = '/', fetchImpl = fetch } = options;
+  return parseSkillSupportIndex(await fetchJson<unknown>(joinUrl(baseUrl, skillSupportPath()), fetchImpl));
 }
 
 /** スキル定義。手書き JSON なので読み込み時に検証する（不正なら Error） */

@@ -30,6 +30,8 @@ type Props = {
   slot: SlotState;
   index: readonly CharacterIndexEntry[];
   excludeIds: ReadonlySet<number>;
+  /** キャラの選択肢の印（useSkillDefinitions の fullySupported） */
+  fullySupported: ReadonlySet<number> | null;
   character: CharacterData | undefined;
   loading: boolean;
   error: string | undefined;
@@ -52,6 +54,7 @@ export function SlotCard({
   slot,
   index,
   excludeIds,
+  fullySupported,
   character,
   loading,
   error,
@@ -161,6 +164,7 @@ export function SlotCard({
       <CharacterPicker
         index={index}
         excludeIds={excludeIds}
+        fullySupported={fullySupported}
         value={slot.resourceId}
         onSelect={(resourceId) => dispatch({ type: 'selectCharacter', index: slotIndex, resourceId })}
         onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}

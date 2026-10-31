@@ -13,6 +13,7 @@ import type { DefinedCharacter } from '../src/records/skills.ts';
 import type { PredictionFile } from '../src/records/predictions.ts';
 import { idsInPaths } from '../src/records/drafts.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
+import { buildSkillSupportIndex, type SkillSupportIndex } from '../src/skills/support.ts';
 import { parseSkillDefinition, parseSkillIndex, type SkillDefinition } from '../src/skills/types.ts';
 import type { BuildMasters, CharacterData } from '../src/types.ts';
 
@@ -33,6 +34,8 @@ export const PREDICTIONS_DIR = `${ROOT}records/predictions/`;
 export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 /** スキル定義の対応状況の一覧（生成物。plan/skills-guide.md 3 節） */
 export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
+/** スキル定義の対応状況の索引（生成物。画面のキャラの選択肢の印。skills/support.ts） */
+export const SKILL_SUPPORT_PATH = `${DATA}skills/support.json`;
 /** 最小構成の検査の一覧（生成物。plan/design-minimal-relevance.md 5 節） */
 export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
 /** スキルの効果の分類の一覧（生成物。plan/design-skill-catalog.md の論点 2） */
@@ -46,6 +49,7 @@ export const GENERATED_PATHS: readonly string[] = [
   CLAIMS_PATH,
   VERIFICATIONS_PATH,
   SKILLS_DOC_PATH,
+  SKILL_SUPPORT_PATH,
   MINIMAL_PATH,
   SKILL_CATALOG_PATH,
   SENSITIVITY_PATH,
@@ -240,6 +244,16 @@ export function loadSkillDefinitions(): DefinedCharacter[] {
     definition: parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)),
     name: readJson<CharacterData>(`${DATA}characters/${rid}.json`).name,
   }));
+}
+
+/** data/skills/index.json に載った定義とキャラデータから作った、対応状況の索引（records:check が書き、npm test が最新かを確かめる） */
+export function skillSupportIndexOfData(): SkillSupportIndex {
+  return buildSkillSupportIndex(
+    parseSkillIndex(readJson<unknown>(`${DATA}skills/index.json`)).resourceIds.map((rid) => ({
+      definition: parseSkillDefinition(readJson<unknown>(`${DATA}skills/${rid}.json`)),
+      character: readJson<CharacterData>(`${DATA}characters/${rid}.json`),
+    })),
+  );
 }
 
 export function claimFileNames(): string[] {
