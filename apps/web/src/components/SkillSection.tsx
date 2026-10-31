@@ -10,7 +10,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
-import { SKILL_SLOT_LABEL, SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
+import { SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
@@ -141,11 +141,7 @@ export function SkillSection({ slotIndex, character, levels, treasurePhase, disa
       </div>
       <div className="growth-row skill-levels-row">
         {SKILL_SLOTS.map((slot) => (
-          <label
-            key={slot}
-            className="field"
-            title={`${SKILL_SLOT_LABEL[slot]}: ${shown.character.skills[slot].name.ja}`}
-          >
+          <label key={slot} className="field">
             <span>{SHORT_SKILL_LABEL[slot]}</span>
             <SkillLevelInput value={levels[slot]} disabled={disabled} onCommit={(level) => setLevel(slot, level)} />
           </label>

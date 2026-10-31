@@ -4,7 +4,6 @@ import {
   enemyInputOf,
   matchingEnemyPreset,
   type Element,
-  type EnemyEventSet,
   type EnemyInput,
   type EnemyPreset,
 } from '@nikke/core';
@@ -15,35 +14,15 @@ type Props = {
   enemy: EnemyInput;
   /** Stage 15: 敵のプリセット（data/enemies.json）。読み込み前・失敗は空 */
   enemyPresets: readonly EnemyPreset[];
-  /** Stage 16-B: 敵の出来事のセット（data/enemies.json）。出すのは選んでいるプリセットが持つものだけ */
-  eventSets: readonly EnemyEventSet[];
-  /** Stage 16-B: ON にした出来事のセットの id */
-  enemyEventSets: readonly string[];
-  durationSeconds: number;
   fixedSpec: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
 /** 編成共通の設定: 敵名・属性（最低限）と詳細設定（折りたたみ） */
-export function TeamSettingsForm({
-  enemy,
-  enemyPresets,
-  eventSets,
-  enemyEventSets,
-  durationSeconds,
-  fixedSpec,
-  dispatch,
-}: Props) {
+export function TeamSettingsForm({ enemy, enemyPresets, fixedSpec, dispatch }: Props) {
   const setEnemy = (patch: Partial<EnemyInput>) => dispatch({ type: 'setEnemy', enemy: { ...enemy, ...patch } });
   const preset = matchingEnemyPreset(enemyPresets, enemy);
   const isBigArms = preset?.targetProfile === 'range-bigarms' || (enemy.defence === 100 && enemy.hasCore === true);
-  const activePreset = preset ?? (isBigArms ? enemyPresets.find((p) => p.content === 'range') : undefined);
-  const availableSets = eventSets.filter((set) => activePreset?.eventSets.includes(set.id) ?? false);
-  const toggleEventSet = (id: string, on: boolean) =>
-    dispatch({
-      type: 'setEnemyEventSets',
-      enemyEventSets: on ? [...enemyEventSets.filter((x) => x !== id), id] : enemyEventSets.filter((x) => x !== id),
-    });
 
   return (
     <fieldset className="panel settings" aria-label="敵条件">
@@ -67,7 +46,6 @@ export function TeamSettingsForm({
             }}
           >
             <option value="range-bigarms">射撃場BigArms</option>
-            <option value="">カスタム</option>
             {enemyPresets
               .filter((p) => p.content !== 'range')
               .map((p) => (
@@ -95,36 +73,6 @@ export function TeamSettingsForm({
       <details className="settings-advanced">
         <summary>詳細設定</summary>
         <div className="settings-advanced-body">
-          <div className="settings-advanced-grid">
-            <label className="field">
-              <span>戦闘時間（秒）</span>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                value={durationSeconds}
-                onChange={(e) => dispatch({ type: 'setDuration', durationSeconds: Number(e.target.value) })}
-              />
-            </label>
-            <label className="field">
-              <span>防御力</span>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                value={enemy.defence}
-                onChange={(e) => setEnemy({ defence: Number(e.target.value) })}
-              />
-            </label>
-            <label className="field checkbox">
-              <input
-                type="checkbox"
-                checked={enemy.hasCore}
-                onChange={(e) => setEnemy({ hasCore: e.target.checked })}
-              />
-              <span>コアあり</span>
-            </label>
-          </div>
           <div className="settings-options">
             <label className="field checkbox">
               <input
@@ -134,16 +82,6 @@ export function TeamSettingsForm({
               />
               <span>射撃場スペック固定</span>
             </label>
-            {availableSets.map((set) => (
-              <label key={set.id} className="field checkbox">
-                <input
-                  type="checkbox"
-                  checked={enemyEventSets.includes(set.id)}
-                  onChange={(e) => toggleEventSet(set.id, e.target.checked)}
-                />
-                <span>{set.name.ja}</span>
-              </label>
-            ))}
           </div>
         </div>
       </details>

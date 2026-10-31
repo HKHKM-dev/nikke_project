@@ -32,6 +32,7 @@ import {
   type ConditionMode,
   type Element,
   type EnemyInput,
+  type EnemyPreset,
   type EnemyPresetMaster,
   type GearInput,
   type GearType,
@@ -234,6 +235,20 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
  * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵の値と一致するプリセットが持つものだけを戦闘時間ぶん展開して足す。
  * 手入力で値を変えた（カスタム）・プリセットの読み込み前は出来事なし
  */
+/**
+ * 出来事のセットを引くプリセット。一致するプリセットが無い属性なしの射撃場の的（既定の敵）は、射撃場のプリセットを使う
+ * （2026-10-31: 3 分モードを常に入れるので、属性なしでも的のジャンプを入れる。的の条件の表と同じ扱い）
+ */
+function eventPresetOf(master: EnemyPresetMaster, enemy: EnemyInput): EnemyPreset | undefined {
+  const preset = matchingEnemyPreset(master.enemies, enemy);
+  if (preset !== undefined) return preset;
+  const isDefaultRange =
+    enemy.element === null &&
+    enemy.defence === SHOOTING_RANGE_ENEMY.defence &&
+    enemy.hasCore === SHOOTING_RANGE_ENEMY.hasCore;
+  return isDefaultRange ? master.enemies.find((p) => p.content === 'range') : undefined;
+}
+
 export function enemyWithEvents(
   enemy: EnemyInput,
   master: EnemyPresetMaster | null,
@@ -241,7 +256,7 @@ export function enemyWithEvents(
   durationSeconds: number,
 ): EnemyInput {
   if (master === null || setIds.length === 0) return enemy;
-  const preset = matchingEnemyPreset(master.enemies, enemy);
+  const preset = eventPresetOf(master, enemy);
   const ids = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   if (ids.length === 0) return enemy;
   return { ...enemy, events: enemyEventsOf(master, ids, durationSeconds) };
@@ -262,7 +277,7 @@ export function enemyForCalc(
   if (master === null) return withEvents;
   const target = targetProfileForEnemy(master, enemy);
   if (target === undefined) return withEvents;
-  const preset = matchingEnemyPreset(master.enemies, enemy);
+  const preset = eventPresetOf(master, enemy);
   const active = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
 }
@@ -286,7 +301,7 @@ export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: C
 }
 
 /**
- * 2026-10-31: オーナーの指示で画面から消した枠の入力（射撃条件・想定 HP・リサイクルルーム）を既定値にした枠。
+ * 2026-10-31: オーナーの指示で画面から消した枠の入力（射撃条件・想定 HP・リサイクルルーム・その他攻撃加算）を既定値にした枠。
  * 保存データの値は消さずに残すが、計算と画面の値には使わない（欄が無いので直せないため）
  */
 export function slotForCalc(slot: SlotState): SlotState {
@@ -295,8 +310,25 @@ export function slotForCalc(slot: SlotState): SlotState {
     conditionMode: DEFAULT_CONDITION_MODE,
     condition: { ...DEFAULT_SLOT_CONDITION },
     hpRatio: DEFAULT_HP_RATIO,
-    build: { ...slot.build, recycleRoom: { personal: 0, class: 0, corporation: 0 } },
+    build: { ...slot.build, recycleRoom: { personal: 0, class: 0, corporation: 0 }, extraAttack: 0 },
   };
+}
+
+/**
+ * 2026-10-31: オーナーの指示で敵の防御力・コアありの欄を消した。計算する敵は射撃場の的（属性だけ選べる）。
+ * 保存データの防御力・コアありは使わない
+ */
+export function enemyStateForCalc(element: Element | null): EnemyInput {
+  return { ...SHOOTING_RANGE_ENEMY, element };
+}
+
+/**
+ * 2026-10-31: オーナーの指示で 3 分モード（的のジャンプ）の欄を消し、射撃場の的の出来事のセットを常に入れる（保存データの
+ * 選択は使わない）
+ */
+export function eventSetsForCalc(master: EnemyPresetMaster | null): string[] {
+  if (master === null) return [];
+  return [...new Set(master.enemies.filter((p) => p.content === 'range').flatMap((p) => p.eventSets))];
 }
 
 /** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */

@@ -92,26 +92,6 @@ header h1 {
 .settings-advanced-body {
   margin-top: 8px;
 }
-.settings-advanced-grid {
-  display: grid;
-  gap: 6px 16px;
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (min-width: 640px) {
-  .settings-advanced-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 960px) {
-  .settings-advanced-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-.settings-advanced-grid .field {
-  margin: 2px 0;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 4px 8px;
-}
 .settings-options {
   display: flex;
   flex-wrap: wrap;
@@ -413,9 +393,6 @@ header h1 {
 .build > summary {
   cursor: pointer;
   font-size: 0.82rem;
-}
-.build-attack strong {
-  font-variant-numeric: tabular-nums;
 }
 .build-grid {
   display: grid;

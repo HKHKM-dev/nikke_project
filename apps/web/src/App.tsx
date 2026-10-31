@@ -29,12 +29,15 @@ import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   DEFAULT_BURST,
   DEFAULT_CONTROLLED_SLOT,
+  DEFAULT_DURATION_SECONDS,
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
   effectiveBuild,
   effectiveSkillLevels,
   effectiveTreasurePhase,
   enemyForCalc,
+  enemyStateForCalc,
+  eventSetsForCalc,
   parseTeamState,
   serializeTeamState,
   slotForCalc,
@@ -186,13 +189,19 @@ export function App() {
   const teamInput = useMemo<TeamInput>(
     () => ({
       slots: slotInputs,
-      enemy: enemyForCalc(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
-      durationSeconds: team.durationSeconds,
-      // 2026-10-31: オーナーの指示で詳細設定の「バースト」と「操作キャラ」の欄を消した。保存データの値は使わず既定値で計算する
+      // 2026-10-31: オーナーの指示で詳細設定の戦闘時間・防御力・コアあり・バースト・操作キャラ・3 分モードの欄を消した。
+      // 保存データの値は使わず、射撃場の的・既定値・出来事のセットを常に入れる形で計算する
+      enemy: enemyForCalc(
+        enemyStateForCalc(team.enemy.element),
+        enemyMaster,
+        eventSetsForCalc(enemyMaster),
+        DEFAULT_DURATION_SECONDS,
+      ),
+      durationSeconds: DEFAULT_DURATION_SECONDS,
       burst: DEFAULT_BURST,
       controlledSlot: DEFAULT_CONTROLLED_SLOT,
     }),
-    [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds],
+    [slotInputs, team.enemy.element, enemyMaster],
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
@@ -247,11 +256,8 @@ export function App() {
       {index && (
         <>
           <TeamSettingsForm
-            enemy={team.enemy}
+            enemy={enemyStateForCalc(team.enemy.element)}
             enemyPresets={enemyMaster?.enemies ?? []}
-            eventSets={enemyMaster?.eventSets ?? []}
-            enemyEventSets={team.enemyEventSets}
-            durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
             dispatch={dispatch}
           />
@@ -300,7 +306,7 @@ export function App() {
               {computing && '（計算中…）'}
             </p>
           )}
-          <NotesSummary slots={summarySlots} enemyNotes={computed?.ok ? computed.result.enemyNotes : []} />
+          <NotesSummary slots={summarySlots} />
         </>
       )}
     </main>

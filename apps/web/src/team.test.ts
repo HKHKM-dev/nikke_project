@@ -16,6 +16,8 @@ import {
   readTeamJson,
   serializeSlotBuild,
   serializeTeamState,
+  enemyStateForCalc,
+  eventSetsForCalc,
   slotForCalc,
   takenResourceIds,
   teamReducer,
@@ -546,8 +548,10 @@ describe('condition mode (Stage 18-C2)', () => {
     const jumping = enemyForCalc(fire, master, ['range-3min-jump'], 180);
     expect(jumping.events).toHaveLength(5);
     expect(jumping.landings?.map((l) => l.landing)).toEqual(['midNear', 'near', 'far', 'midFar', 'near', 'far']);
-    // 3 分モードは、一致するプリセットのセットだけ（既定の敵には付かない）
-    expect(enemyForCalc(SHOOTING_RANGE_ENEMY, master, ['range-3min-jump'], 180).landings).toHaveLength(1);
+    // 3 分モードは、一致するプリセットのセットだけ。2026-10-31 から、属性なしの射撃場の的（既定の敵）も射撃場のプリセットのセットを使う
+    const plainJumping = enemyForCalc(SHOOTING_RANGE_ENEMY, master, ['range-3min-jump'], 180);
+    expect(plainJumping.events).toEqual(jumping.events);
+    expect(plainJumping.landings).toEqual(jumping.landings);
     const boss = { defence: 140, element: 'Fire' as const, hasCore: true };
     expect(enemyForCalc(boss, master, [], 180)).toEqual(boss);
     expect(enemyForCalc(fire, null, ['range-3min-jump'], 180)).toBe(fire);
@@ -580,7 +584,7 @@ describe('HP の割合の想定', () => {
 });
 
 describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
-  it('uses the defaults for the shooting condition, the HP ratio and the recycle room and keeps the rest', () => {
+  it('uses the defaults for the shooting condition, the HP ratio, the recycle room and the extra attack and keeps the rest', () => {
     let s = withCharacters([10]);
     s = teamReducer(s, { type: 'setConditionMode', index: 0, conditionMode: 'manual' });
     s = teamReducer(s, {
@@ -589,7 +593,12 @@ describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
       condition: { coreHitRate: 0.3, distanceBonus: false, fullCharge: false, hitRate: 0.5 },
     });
     s = teamReducer(s, { type: 'setHpRatio', index: 0, hpRatio: 0.4 });
-    const build = { ...s.slots[0]!.build, affectionRank: 20, recycleRoom: { personal: 5, class: 6, corporation: 7 } };
+    const build = {
+      ...s.slots[0]!.build,
+      affectionRank: 20,
+      recycleRoom: { personal: 5, class: 6, corporation: 7 },
+      extraAttack: 300,
+    };
     s = teamReducer(s, { type: 'setBuild', index: 0, build });
 
     const calc = slotForCalc(s.slots[0]!);
@@ -597,10 +606,25 @@ describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
     expect(calc.conditionMode).toBe(initial.conditionMode);
     expect(calc.condition).toEqual(initial.condition);
     expect(calc.hpRatio).toBe(initial.hpRatio);
-    expect(calc.build).toEqual({ ...build, recycleRoom: { personal: 0, class: 0, corporation: 0 } });
+    expect(calc.build).toEqual({ ...build, recycleRoom: { personal: 0, class: 0, corporation: 0 }, extraAttack: 0 });
     expect(calc.resourceId).toBe(10);
     // 保存している値は消さない
     expect(s.slots[0]!.build.recycleRoom).toEqual({ personal: 5, class: 6, corporation: 7 });
     expect(s.slots[0]!.conditionMode).toBe('manual');
+  });
+});
+
+describe('enemy for the calculation (inputs removed from the screen on 2026-10-31)', () => {
+  it('is the shooting-range enemy with the saved element only', () => {
+    expect(enemyStateForCalc('Fire')).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
+    expect(enemyStateForCalc(null)).toEqual(SHOOTING_RANGE_ENEMY);
+  });
+
+  it('always uses the event sets of the shooting-range presets', () => {
+    const master = parseEnemyPresets(
+      JSON.parse(readFileSync(new URL('../../../packages/core/data/enemies.json', import.meta.url), 'utf8')) as unknown,
+    );
+    expect(eventSetsForCalc(null)).toEqual([]);
+    expect(eventSetsForCalc(master)).toEqual(['range-3min-jump']);
   });
 });

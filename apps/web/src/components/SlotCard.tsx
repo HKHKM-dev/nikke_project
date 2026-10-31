@@ -63,7 +63,7 @@ export function SlotCard({
   // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（team.ts の slotForCalc）
 
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
-    <label className="field" title={`${min}〜${max}`}>
+    <label className="field">
       <span>{name}</span>
       <input
         type="number"
