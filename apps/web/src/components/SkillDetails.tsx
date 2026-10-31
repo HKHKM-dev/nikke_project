@@ -134,7 +134,7 @@ function selfHpOf(e: SkillEffect): SelfHpCondition | undefined {
 
 /**
  * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節・論点 5）: 自分の HP の割合の条件。想定の HP の割合で効くか。
- * 2026-10-31: 想定の HP の割合の欄は画面から消した（満タンで計算する。team.ts の teamStateForCalc）ので、値だけ出す
+ * 2026-10-31: 想定の HP の割合の欄は画面から消した（満タンで計算する。calcView.ts）ので、値だけ出す
  */
 function HpConditionNote({ threshold, hpRatio }: { threshold: number; hpRatio: number }) {
   const applies = hpRatio >= threshold;

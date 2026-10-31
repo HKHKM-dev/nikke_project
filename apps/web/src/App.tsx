@@ -1,27 +1,13 @@
 import {
-  computeCombatAttack,
-  computeCombatStat,
-  computeFixedSpecAttack,
-  computeFixedSpecDefence,
-  computeFixedSpecHp,
-  fixedSpecGrowth,
-  growthLimits,
-  isEmptyBuild,
   loadBuildMasters,
   loadCharacterIndex,
   loadEnemyPresets,
-  resolveBuildEffects,
-  type BuildEffect,
-  type BuildEffectNote,
   type BuildMasters,
-  type CharacterData,
   type CharacterIndexEntry,
   type EnemyPresetMaster,
-  type GrowthInput,
-  type TeamInput,
-  type TeamSlotInput,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { buildCalcView } from './calcView.ts';
 import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
@@ -31,16 +17,9 @@ import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
-  effectiveBuild,
-  effectiveSkillLevels,
-  effectiveTreasurePhase,
-  enemyForCalc,
-  noBurstSlotsForCalc,
-  eventSetsForCalc,
   parseTeamState,
   serializeTeamState,
   takenResourceIds,
-  teamStateForCalc,
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
@@ -54,20 +33,10 @@ import {
   switchParty,
   type PartiesState,
 } from './parties.ts';
-import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
+import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
-
-function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput {
-  const limits = growthLimits(character);
-  const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, Math.round(v)));
-  return {
-    level: clamp(growth.level, 1, limits.levelMax),
-    grade: clamp(growth.grade, 0, limits.gradeMax),
-    core: clamp(growth.core, 0, limits.coreMax),
-  };
-}
 
 export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
@@ -134,141 +103,46 @@ export function App() {
     [team.slots, skills],
   );
 
-  // 2026-10-31: 画面から消した入力を既定値にした編成（team.ts の teamStateForCalc）。計算と画面の値はこれを読む
-  const calcTeam = useMemo(() => teamStateForCalc(team), [team]);
-
-  // 枠ごとの計算入力。データが揃っていない枠は null（合計から除外）
-  const slotInputs = useMemo<(TeamSlotInput | null)[]>(
+  // 計算の入力と、画面に出す実効値（calcView.ts）。計算と画面の値はこれだけを読み、team は入力欄と dispatch だけが読む
+  const calc = useMemo(
     () =>
-      calcTeam.slots.map((slot, i) => {
-        if (slot.resourceId === null) return null;
-        const character = cache.characters.get(slot.resourceId);
-        const status = skillsStatuses[i];
-        if (!character || !status) return null;
-        const slotSkills = toSlotSkills(
-          status,
-          effectiveSkillLevels(slot, team.fixedSpec),
-          effectiveTreasurePhase(slot, character),
-        );
-        if (team.fixedSpec) {
-          return {
-            character,
-            growth: fixedSpecGrowth(character),
-            condition: slot.condition,
-            conditionMode: slot.conditionMode,
-            attackOverride: computeFixedSpecAttack(character).attack,
-            hpOverride: computeFixedSpecHp(character),
-            hpRatio: slot.hpRatio,
-            defenceOverride: computeFixedSpecDefence(character),
-            skills: slotSkills,
-          };
-        }
-        const growth = clampGrowth(character, slot.growth);
-        const treasurePhase = effectiveTreasurePhase(slot, character);
-        let attackOverride: number | undefined;
-        let hpOverride: number | undefined;
-        let defenceOverride: number | undefined;
-        let buildEffects: BuildEffect[] | undefined;
-        const build = effectiveBuild(slot, false, character, team.console);
-        if (masters && (!isEmptyBuild(build) || treasurePhase > 0)) {
-          try {
-            attackOverride = computeCombatAttack(character, growth, build, masters, { treasurePhase }).attack;
-            hpOverride = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase }).value;
-            defenceOverride = computeCombatStat(character, growth, build, masters, 'defence', {
-              treasurePhase,
-            }).value;
-            buildEffects = resolveBuildEffects(character, build, masters, { treasurePhase }).effects;
-          } catch {
-            attackOverride = undefined;
-            hpOverride = undefined;
-            defenceOverride = undefined;
-            buildEffects = undefined;
-          }
-        }
-        return {
-          character,
-          growth,
-          condition: slot.condition,
-          conditionMode: slot.conditionMode,
-          attackOverride,
-          hpOverride,
-          hpRatio: slot.hpRatio,
-          defenceOverride,
-          buildEffects,
-          skills: slotSkills,
-        };
-      }),
-    [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters],
-  );
-
-  const teamInput = useMemo<TeamInput>(
-    () => ({
-      slots: slotInputs,
-      enemy: enemyForCalc(
-        calcTeam.enemy,
+      buildCalcView(team, {
+        characters: cache.characters,
+        skillsStatuses,
+        masters,
         enemyMaster,
-        eventSetsForCalc(enemyMaster, calcTeam.rangeJump),
-        calcTeam.durationSeconds,
-      ),
-      durationSeconds: calcTeam.durationSeconds,
-      burst: calcTeam.burst,
-      noBurstSlots: noBurstSlotsForCalc(calcTeam),
-      controlledSlot: calcTeam.controlledSlot,
-    }),
-    [slotInputs, calcTeam, enemyMaster],
+      }),
+    [team, cache.characters, skillsStatuses, masters, enemyMaster],
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
   // (B) の段 B-2（6.2 節）: 計算は Web Worker で回し、欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
   // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた
-  const { computed, computing } = useTeamComputation(teamInput);
+  const { computed, computing } = useTeamComputation(calc.input);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
   ).length;
   const skillsLoadingCount = skillsStatuses.filter((s) => s?.kind === 'loading').length;
 
-  // Stage 14: 未対応の一覧に出す育成の注記（計算に入らないもののうち未対応だけ。スペック固定では効果層が空）
+  // Stage 14: 未対応の一覧の材料（育成の注記は calcView が未対応だけにしたもの。スペック固定では効果層が空）
   const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
     () =>
-      calcTeam.slots.map((slot, i) => {
-        if (slot.resourceId === null) return null;
-        const character = cache.characters.get(slot.resourceId);
-        if (!character) return null;
-        const treasurePhase = effectiveTreasurePhase(slot, character);
-        let buildNotes: BuildEffectNote[] = [];
-        if (masters && !team.fixedSpec) {
-          try {
-            buildNotes = resolveBuildEffects(character, effectiveBuild(slot, false, character, team.console), masters, {
-              treasurePhase,
-            }).notes.filter((n) => n.level === 'unsupported');
-          } catch {
-            buildNotes = [];
-          }
-        }
-        return {
-          index: i,
-          character,
-          skills: skillsStatuses[i] ?? { kind: 'loading' },
-          treasurePhase,
-          modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
-          buildNotes,
-          noFire: slot.noFire,
-        };
-      }),
-    [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters, computed],
+      calc.slots.map((slot, i) =>
+        slot.character === undefined
+          ? null
+          : {
+              index: i,
+              character: slot.character,
+              skills: skillsStatuses[i] ?? { kind: 'loading' },
+              treasurePhase: slot.treasurePhase,
+              modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
+              buildNotes: slot.buildNotes,
+              noFire: team.slots[i]!.noFire,
+            },
+      ),
+    [calc.slots, team.slots, skillsStatuses, computed],
   );
-
-  const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
-  // 詳細情報表示（右上の設定）のときだけ使う、ニケごとの詳細の材料
-  const teamCharacters = team.slots.map((s) =>
-    s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
-  );
-  const slotNames = teamCharacters.map((c) => c?.name.ja);
-  const allTreasurePhases = team.slots.map((s, i) => {
-    const character = teamCharacters[i];
-    return character ? effectiveTreasurePhase(s, character) : 0;
-  });
 
   return (
     <main className="app">
@@ -285,15 +159,14 @@ export function App() {
             fixedSpec={team.fixedSpec}
             consoleInput={team.console}
             synchroLevel={team.synchroLevel}
-            durationSeconds={calcTeam.durationSeconds}
-            rangeJump={calcTeam.rangeJump}
+            durationSeconds={team.durationSeconds}
+            rangeJump={team.rangeJump}
             dispatch={dispatch}
           />
           <PartyTabs active={parties.active} onSelect={selectParty} />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
-              const character = slot.resourceId === null ? undefined : cache.characters.get(slot.resourceId);
-              const input = slotInputs[i] ?? null;
+              const { character, growth, build, skillLevels, treasurePhase } = calc.slots[i]!;
               return (
                 <SlotCard
                   key={i}
@@ -306,13 +179,12 @@ export function App() {
                   loading={slot.resourceId !== null && character === undefined && !cache.errors.has(slot.resourceId)}
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
                   fixedSpec={team.fixedSpec}
-                  effectiveGrowth={input?.growth ?? slot.growth}
-                  effectiveBuild={
-                    character ? effectiveBuild(calcTeam.slots[i]!, team.fixedSpec, character, team.console) : slot.build
-                  }
+                  effectiveGrowth={growth}
+                  effectiveBuild={build}
+                  treasurePhase={treasurePhase}
                   masters={masters}
                   mastersError={mastersError}
-                  effectiveSkillLevels={allEffectiveSkillLevels[i]!}
+                  effectiveSkillLevels={skillLevels}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
                   focused={team.controlledSlot === i}
                   dispatch={dispatch}
@@ -332,13 +204,13 @@ export function App() {
               skillsLoadingCount={skillsLoadingCount}
               detailed={detailed}
               fixedSpec={team.fixedSpec}
-              slotNames={slotNames}
-              teamCharacters={teamCharacters}
+              slotNames={calc.slots.map((s) => s.character?.name.ja)}
+              teamCharacters={calc.slots.map((s) => s.character ?? null)}
               enemyElement={team.enemy.element}
-              effectiveSkillLevels={allEffectiveSkillLevels}
-              treasurePhases={allTreasurePhases}
+              effectiveSkillLevels={calc.slots.map((s) => s.skillLevels)}
+              treasurePhases={calc.slots.map((s) => s.treasurePhase)}
               skillsStatuses={skillsStatuses}
-              hpRatios={calcTeam.slots.map((s) => s.hpRatio)}
+              hpRatios={calc.slots.map((s) => s.hpRatio)}
             />
           ) : (
             <p className="error">
