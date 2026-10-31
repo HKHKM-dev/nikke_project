@@ -81,7 +81,9 @@ export function SlotCard({
   );
 
   return (
-    <fieldset className="panel slot" aria-label={`枠 ${slotIndex + 1}`}>
+    <fieldset className="panel slot">
+      {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
+      <legend>スロット {slotIndex + 1}</legend>
       <CharacterPicker
         index={index}
         excludeIds={excludeIds}
