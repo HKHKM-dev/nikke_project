@@ -839,6 +839,39 @@ export function resolveDotCancels(
   );
 }
 
+/** スタック量・カウンタの増減の数（即値の amount か、description_value_NN の amountRef を整数に丸めたもの） */
+function amountOf(effect: { amount?: number; amountRef?: number }, skill: SkillRaw, level: number): number {
+  return effect.amount ?? Math.round(skillValue(skill, effect.amountRef!, level));
+}
+
+/**
+ * 2 段目の段 13 の PR 3（plan/design-skill-stage13.md 2.6 節）: 解決した敵のスタック量▲（stackChange の target enemy）。frame/plan.ts の
+ * planSkillHits が、同じ state の dot の付与として数える（対象がその状態のフレームだけ）
+ */
+export type ResolvedDotStackUp = ResolvedDotCancel & { amount: number; condition: EffectCondition };
+
+export function resolveDotStackUps(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedDotStackUp[] {
+  return SKILL_SLOTS.flatMap((slot) => {
+    const skill = character.skills[slot];
+    return def.skills[slot].effects.flatMap((effect) =>
+      effect.kind === 'stackChange' && effect.target === 'enemy'
+        ? [
+            {
+              state: effect.state,
+              trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+              amount: amountOf(effect, skill, levels[slot]),
+              condition: resolveCondition(effect.condition!, skill, levels[slot]),
+            },
+          ]
+        : [],
+    );
+  });
+}
+
 /**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: 解決したスタック量の増減（stackChange）。対象は自分。amount は足す
  * （decrease なら減らす）スタックの数（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
@@ -867,8 +900,9 @@ export function resolveStackChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'stackChange') return;
-      const amount = effect.amount ?? Math.round(skillValue(skill, effect.amountRef!, levels[slot]));
+      // 2 段目の段 13 の PR 3: 敵の持続ダメージのスタック量▲は resolveDotStackUps
+      if (effect.kind !== 'stackChange' || effect.target === 'enemy') return;
+      const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,
@@ -912,7 +946,7 @@ export function resolveCounterChanges(
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'counterChange') return;
-      const amount = effect.amount ?? Math.round(skillValue(skill, effect.amountRef!, levels[slot]));
+      const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedCounterChange = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,

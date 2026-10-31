@@ -130,8 +130,17 @@ const KIND_INFO: Record<string, Info> = {
   'buffOp:dispel': ['バフ・デバフ効果の解除', 'check', '自分に付く▼（デバフ）を外しうる。解除不可は外れない'],
   'buffOp:immunity': ['効果の免疫', 'check', '自分に付く▼（デバフ）を防ぎうる'],
   'buffOp:nullify': ['増減効果の無効', 'gap', 'なし（チャージ速度の増減を無効にする等）'],
-  'buffOp:copy': ['スタックのコピー', 'gap', 'なし'],
-  'buffOp:stackChange': ['スタック量の増減', 'ok', 'stackChange（増加と decrease の減少。2 段目の段 3）'],
+  // 2 段目の段 10・13: 写す元は自分の状態・カウンタと、敵に付く持続ダメージのスタックだけ
+  'buffOp:copy': [
+    'スタックのコピー',
+    'check',
+    '付与の stacksFrom（自分の状態・カウンタ。2 段目の段 10）と dot の stacksFrom（敵の持続ダメージのスタック。段 13）だけ',
+  ],
+  'buffOp:stackChange': [
+    'スタック量の増減',
+    'ok',
+    'stackChange（増加と decrease の減少。2 段目の段 3。敵の持続ダメージのスタック量▲は target enemy。段 13）',
+  ],
   'instant:ammoRefill': ['弾丸チャージ', 'ok', 'ammoRefill'],
   'instant:forceReload': ['強制リロード', 'gap', 'なし'],
   'instant:ammoDrain': [
@@ -146,7 +155,11 @@ const KIND_INFO: Record<string, Info> = {
     'cooldownReduction',
   ],
   'instant:burstCooldownUp': ['バーストスキルクールタイム▲（即時）', 'gap', 'なし'],
-  'instant:skillCooldown': ['スキルのクールタイム・周期の変更（即時）', 'gap', 'なし（周期のトリガーは即値）'],
+  'instant:skillCooldown': [
+    'スキルのクールタイム・周期の変更（即時）',
+    'check',
+    'periodShorten（前の発動のフレームに自分がその状態なら次の周期を縮める。マリアン：クイーンの S2）だけ',
+  ],
   // ツールチップ「クールタイム」（T4）: 維持やスタックの付いた増減は、その間スキル自体のクールタイムを変える。即時の増減とは別の効果
   'sustained:cooldown': [
     'クールタイムの増減（維持の付いた形。その間スキル自体のクールタイムを変える。T4）',
@@ -182,7 +195,12 @@ const KIND_INFO: Record<string, Info> = {
   'flag:infiniteAmmo': ['装弾数無限', 'ok', 'infiniteAmmo'],
   'stat:fixed': ['値の固定（〜に固定）', 'check', 'チャージ時間は fixedChargeTime。ほかはなし'],
   'stat:overflowConvert': ['超過した値の変換', 'gap', 'なし'],
-  resource: ['キャラ固有のカウンタ（MP・ゲージ・弾倉など）', 'gap', 'なし'],
+  // 2 段目の段 10〜13: 目録（skills/counters.ts）のカウンタの増減・値の条件・上限のきっかけと、値の数だけの攻撃
+  resource: [
+    'キャラ固有のカウンタ（MP・ゲージ・弾倉など）',
+    'check',
+    'counterChange・selfCounter・{ counterFull }・perCount { counter }（目録のカウンタだけ）',
+  ],
   'state:grant': ['名前の付いた状態の付与（名前・中身）', 'ok', 'state（目録の id）'],
   'state:grant?': ['名前だけの付与（状態・仕組み）', 'check', 'state か、仕組みごとの語彙'],
   'state:remove': [
@@ -192,8 +210,8 @@ const KIND_INFO: Record<string, Info> = {
   ],
   'state:cancel': [
     '状態の消去（同じスキルが外す。解除不可の状態も外す）',
-    'gap',
-    'なし（解除とは別の語彙。本体の論点 8）',
+    'check',
+    'cancelState（敵に付く持続ダメージの状態だけ。2 段目の段 13。解除とは別の語彙）',
   ],
   'state:switch': ['状態の変化（A が B に変化）', 'gap', 'なし（後の拡張 group）'],
   'state:block': ['発動不可', 'gap', 'なし'],
@@ -215,7 +233,8 @@ const TRIG_INFO: Record<string, Info> = {
   pelletHit: ['ペレットが命中した時', 'ok'],
   lastShot: ['最後の弾丸', 'ok'],
   timer: ['N 秒ごと', 'ok'],
-  specificTiming: ['特定のタイミング（フルバースト終了・バースト 3 段階突入・敵の出現。ツールチップ T5）', 'gap'],
+  // 2 段目の段 13: ミハラ：ボンディングチェーンのチェーンの攻撃は、カウンタが上限に届いた時 { counterFull } で書いた（敵の出現は無い）
+  specificTiming: ['特定のタイミング（フルバースト終了・バースト 3 段階突入・敵の出現。ツールチップ T5）', 'check'],
   healed: ['回復効果が適用された時', 'ok'],
   chance: ['確率', 'check'],
   stateApplied: ['〈状態〉が適用された時', 'check'],

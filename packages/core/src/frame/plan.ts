@@ -38,6 +38,7 @@ import {
   isResolvedEventCount,
   isResolvedShotCount,
   resolveDotCancels,
+  resolveDotStackUps,
   type ResolvedTrigger,
 } from '../skills/resolve.ts';
 import {
@@ -528,13 +529,6 @@ export function planSkillHits(
     // 最後に付けた効果に帰属させる（値は同じ）。
     // レイヴン編: スタックする持続ダメージ（maxStacks > 1）は、tick の時点のスタックの数を倍率に掛ける（dotTicks。C-0182）
     // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）のフレームと、ほかの dot が写す元の付いたフレーム
-    const dotGroups = groupDotsByState(resolveDotEffects(definition, slot.character, levels)).map((group) => ({
-      group,
-      dot: group[0]!.dot!,
-      fires: group
-        .flatMap((effect) => dotApplicationFrames(effect).map((f) => ({ f, effect })))
-        .sort((a, b) => a.f - b.f),
-    }));
     const dotCancels = resolveDotCancels(definition, slot.character, levels);
     const cancelsOf = (state: NamedStateId | undefined): number[] =>
       state === undefined
@@ -543,7 +537,26 @@ export function planSkillHits(
             .filter((c) => c.state === state)
             .flatMap((c) => triggerFrames(c.trigger, schedule, slotIndex, frames, shots))
             .sort((a, b) => a - b);
-    for (const { dot, fires } of dotGroups) {
+    // 同 PR 3（2.6 節）: 敵のスタック量▲は、対象がその状態のフレーム（条件 enemyState。damage と同じ判定）だけ、同じ state の dot の付与として数える（1 スタックぶんの
+    // ヒットと刻みの付け直しも付与と同じ。V-0548）。▲の付与は、その state の最初の dot の効果に帰属させる（値は同じ）
+    const dotStackUps = resolveDotStackUps(definition, slot.character, levels);
+    const dotGroups = groupDotsByState(resolveDotEffects(definition, slot.character, levels)).map((group) => {
+      const fires = group
+        .flatMap((effect) => dotApplicationFrames(effect).map((f) => ({ f, effect })))
+        .sort((a, b) => a.f - b.f);
+      const dot = group[0]!.dot!;
+      const cancels = cancelsOf(dot.state);
+      const ups = dotStackUps.filter((u) => u.state === dot.state);
+      if (ups.length > 0) {
+        for (const up of ups)
+          for (const f of triggerFrames(up.trigger, schedule, slotIndex, frames, shots))
+            if (damageConditionHolds(up.condition, f, schedule, enemySpans, selfStateHolds, counterAt))
+              for (let k = 0; k < up.amount; k++) fires.push({ f, effect: group[0]! });
+        fires.sort((a, b) => a.f - b.f);
+      }
+      return { dot, fires, cancels };
+    });
+    for (const { dot, fires, cancels } of dotGroups) {
       const { maxStacks } = dot;
       // 2 段目の段 13 の PR 2: スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
       const from = dot.stacksFrom;
@@ -551,9 +564,8 @@ export function planSkillHits(
         // 元は同じ定義の dot（skills/types.ts の validateDotStateRefs）
         const source = dotGroups.find((g) => g.dot.state === from)!;
         const sourceFires = source.fires.map((x) => x.f);
-        const sourceCancels = cancelsOf(from);
         for (const { f, effect } of fires) {
-          const copied = dotStacksAt(sourceFires, sourceCancels, source.dot.maxStacks, f);
+          const copied = dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, f);
           if (copied === 0) continue;
           for (const tick of dotTicks([f], dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick))
             push(tick.frame, effect, false, copied);
@@ -575,7 +587,7 @@ export function planSkillHits(
         dot.firstTick,
         maxStacks,
         dot.tickIntervalFrames,
-        cancelsOf(dot.state),
+        cancels,
       );
       let last = 0;
       for (const tick of ticks) {

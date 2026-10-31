@@ -1,0 +1,208 @@
+[
+  {
+    "id": "0754-01",
+    "recording": "0754",
+    "kind": "timing",
+    "use": "record",
+    "value": [1287, 3665, 6043, 8421, 10799],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・6・0f"
+    },
+    "source": "V-0548",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0754-02",
+    "recording": "0754",
+    "kind": "timing",
+    "use": "record",
+    "value": [1317, 3694, 6072, 8450, 10828],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・0・6・0f"
+    },
+    "source": "V-0548",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0754-03",
+    "recording": "0754",
+    "kind": "timing",
+    "use": "record",
+    "value": [1345, 3723, 6101, 8479, 10857],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0548",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0754-04",
+    "recording": "0754",
+    "kind": "timing",
+    "use": "record",
+    "value": [3659, 6037, 8414, 10793],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0548",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0754-05",
+    "recording": "0754",
+    "kind": "timing",
+    "use": "record",
+    "value": [3688, 6066, 8443, 10822],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0548",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0754-06",
+    "recording": "0754",
+    "kind": "timing",
+    "use": "record",
+    "value": [3717, 6095, 8473, 10851],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@1",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0548",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0754-07",
+    "recording": "0754",
+    "source": "V-0548",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [214, 256, 296, 337, 377, 417, 457],
+    "unit": "f",
+    "description": "1 回目のフルバーストの中の、S2 のチェーンバインドのスタック量▲の 1 スタックぶんの 1 ヒット（30,245 × バフ）の、III のタイマーの 00.00（f1345。`0754-03`）からの動画のフレーム数（全部の 7 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、1 スタックぶんの 1 ヒット（72,579。フルバースト補正と S2 の持続ダメージ▲の乗った値）と、同じフレームのミハラ：ボンディングチェーンの MG の 1 ヒットの和に当てた。どの▲も 30f 後に tick が出る（刻みの付け直し）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "fullBurst": 0,
+        "count": 7,
+        "kind": "apply"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0754-08",
+    "recording": "0754",
+    "source": "V-0548",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 40, 81, 121, 161, 201],
+    "unit": "f",
+    "description": "1 回目のフルバーストの中の、S2 のスタック量▲の 1 スタックぶんの 1 ヒットの、2 回目の▲（f1601）からの動画のフレーム数（2〜7 回目。`0754-07` の後ろ 6 回）。MG が毎フレーム当たる間の▲の間隔",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0754-07` と同じ読み。間の増分のあるフレームは、どの▲の間も 40（ミハラ：ボンディングチェーンの MG が毎フレーム当たっていて、ほかの 3 人の発はどれもその MG と同じフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "fullBurst": 0,
+        "skip": 1,
+        "count": 6,
+        "kind": "apply",
+        "relative": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0754-09",
+    "recording": "0754",
+    "source": "V-0548",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": [30, 30, 30, 30, 30, 30, 30],
+    "unit": "f",
+    "description": "1 回目のフルバーストの中の、S2 のスタック量▲（`0754-07`）のそれぞれから、次のチェーンバインドの tick までの動画のフレーム数。tick はどれも▲の後のスタック数（11〜17）× 72,579（と同じフレームの MG の 1 ヒット）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "▲の 30f 後の増分を、k スタック × 72,579 と MG の 1 ヒット（16,793・20,151）の和に当てた（13 スタックの回はほかのヒットも重なる）"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0754-10",
+    "recording": "0754",
+    "source": "V-0548",
+    "readAt": "2026-10-31",
+    "kind": "count",
+    "use": "record",
+    "value": 17,
+    "unit": "スタック",
+    "description": "1 回目のフルバーストの後のチェーンバインドの tick のスタック数（フルバーストの前は 10。▲ 7 回）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "フルバーストの後の tick（f2128 から）が 17 × 30,245（と MG の 1 ヒット）"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "dot"
+    }
+  }
+]

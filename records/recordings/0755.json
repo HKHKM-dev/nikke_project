@@ -1,0 +1,52 @@
+{
+  "id": "0755",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0755_mg_mihara-bc.mp4",
+  "original": "2026-10-31_10-10-00.mp4",
+  "durationSec": 203.5,
+  "frames": 12212,
+  "fps": 60,
+  "sizeMB": 246.6,
+  "sha256": "a4cdb1fe085e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 511,
+      "name": "シンデレラ",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 162,
+      "name": "ミハラ：ボンディングチェーン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0548 の撮影 C（段 13 の論点 12）。ラム（1 枠目・AI）+ デルタ（2 枠目・AI）+ シンデレラ（3 枠目・AI）+ ミハラ：ボンディングチェーン（4 枠目・操作・AUTO 射撃 ON）。オートバースト ON・宝物なし",
+  "backup": {
+    "at": "2026-10-31T10:15+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
