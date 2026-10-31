@@ -21,16 +21,13 @@ import {
   isEmptyBuild,
   presetForEnemy,
   resolveBuildEffects,
-  type BuildEffect,
   type BuildEffectNote,
   type BuildInput,
   type BuildMasters,
   type CharacterData,
-  type ConditionMode,
   type EnemyPresetMaster,
   type GrowthInput,
   type SkillLevels,
-  type SlotCondition,
   type TeamInput,
   type TeamSlotInput,
   type TreasurePhase,
@@ -59,9 +56,9 @@ export type CalcSlot = {
   build: BuildInput;
   skillLevels: SkillLevels;
   treasurePhase: TreasurePhase;
-  conditionMode: ConditionMode;
-  condition: SlotCondition;
   hpRatio: number;
+  /** 撃たない（スロットの詳細設定） */
+  noFire: boolean;
   /** 未対応・近似・仮定の一覧に出す育成の注記（未対応だけ。スペック固定では空） */
   buildNotes: BuildEffectNote[];
   /** 計算の入力。キャラかスキル定義が揃っていないスロットは null（合計から除外） */
@@ -78,6 +75,8 @@ export type CalcDeps = {
   enemyMaster: EnemyPresetMaster | null;
 };
 
+type StatOverrides = Pick<TeamSlotInput, 'attackOverride' | 'hpOverride' | 'defenceOverride' | 'buildEffects'>;
+
 function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput {
   const limits = growthLimits(character);
   return {
@@ -88,7 +87,7 @@ function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput
 }
 
 /** 宝物の段階。宝物のないキャラは 0（保存データが古い・データ更新で宝物が消えた場合に備える）。スペック固定でも所持状況のまま */
-export function effectiveTreasurePhase(slot: SlotState, character: CharacterData): TreasurePhase {
+function effectiveTreasurePhase(slot: SlotState, character: CharacterData): TreasurePhase {
   return character.treasure === null ? 0 : slot.treasurePhase;
 }
 
@@ -102,49 +101,53 @@ function slotBuild(team: TeamState, slot: SlotState, character: CharacterData): 
   };
 }
 
-/** 育成入力から攻撃力・HP・防御力と効果層を計算する。マスタが無い・育成が空・計算できないときは何も上書きしない */
-function combatOverrides(
+/**
+ * 育成入力から、攻撃力・HP・防御力と効果層（計算の上書き）と、未対応の育成の注記を作る。効果を解決できないときは
+ * どちらも空。上書きは、育成が空・攻撃力などを計算できないときは空（注記は残す）
+ */
+function buildLayer(
   character: CharacterData,
   growth: GrowthInput,
   build: BuildInput,
   treasurePhase: TreasurePhase,
   masters: BuildMasters,
-): Pick<TeamSlotInput, 'attackOverride' | 'hpOverride' | 'defenceOverride'> & { buildEffects?: BuildEffect[] } {
-  if (isEmptyBuild(build) && treasurePhase === 0) return {};
+): { overrides: StatOverrides; notes: BuildEffectNote[] } {
+  let resolved: ReturnType<typeof resolveBuildEffects>;
+  try {
+    resolved = resolveBuildEffects(character, build, masters, { treasurePhase });
+  } catch {
+    return { overrides: {}, notes: [] };
+  }
+  const notes = resolved.notes.filter((n) => n.level === 'unsupported');
+  if (isEmptyBuild(build) && treasurePhase === 0) return { overrides: {}, notes };
   try {
     return {
-      attackOverride: computeCombatAttack(character, growth, build, masters, { treasurePhase }).attack,
-      hpOverride: computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase }).value,
-      defenceOverride: computeCombatStat(character, growth, build, masters, 'defence', { treasurePhase }).value,
-      buildEffects: resolveBuildEffects(character, build, masters, { treasurePhase }).effects,
+      overrides: {
+        attackOverride: computeCombatAttack(character, growth, build, masters, { treasurePhase }).attack,
+        hpOverride: computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase }).value,
+        defenceOverride: computeCombatStat(character, growth, build, masters, 'defence', { treasurePhase }).value,
+        buildEffects: resolved.effects,
+      },
+      notes,
     };
   } catch {
-    return {};
+    return { overrides: {}, notes };
   }
 }
 
-/** 未対応の育成の注記。マスタが無い・計算できないときは空 */
-function unsupportedBuildNotes(
-  character: CharacterData,
-  build: BuildInput,
-  treasurePhase: TreasurePhase,
-  masters: BuildMasters,
-): BuildEffectNote[] {
-  try {
-    return resolveBuildEffects(character, build, masters, { treasurePhase }).notes.filter(
-      (n) => n.level === 'unsupported',
-    );
-  } catch {
-    return [];
-  }
+function fixedSpecOverrides(character: CharacterData): StatOverrides {
+  return {
+    attackOverride: computeFixedSpecAttack(character).attack,
+    hpOverride: computeFixedSpecHp(character),
+    defenceOverride: computeFixedSpecDefence(character),
+  };
 }
 
 function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDeps): CalcSlot {
   const character = slot.resourceId === null ? undefined : deps.characters.get(slot.resourceId);
   const skillLevels = team.fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
-  const conditionMode: ConditionMode = slot.noFire ? 'manual' : DEFAULT_CONDITION_MODE;
-  const condition: SlotCondition = slot.noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : DEFAULT_SLOT_CONDITION;
   const hpRatio = DEFAULT_HP_RATIO;
+  const { noFire } = slot;
   const synchroGrowth = { ...slot.growth, level: team.synchroLevel };
   if (character === undefined) {
     return {
@@ -153,9 +156,8 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
       build: slot.build,
       skillLevels,
       treasurePhase: 0,
-      conditionMode,
-      condition,
       hpRatio,
+      noFire,
       buildNotes: [],
       input: null,
     };
@@ -163,46 +165,31 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
 
   const treasurePhase = effectiveTreasurePhase(slot, character);
   const build = slotBuild(team, slot, character);
+  const growth = team.fixedSpec ? fixedSpecGrowth(character) : clampGrowth(character, synchroGrowth);
+  const { masters } = deps;
+  const layer =
+    team.fixedSpec || masters === null
+      ? { overrides: {}, notes: [] }
+      : buildLayer(character, growth, build, treasurePhase, masters);
   const status = deps.skillsStatuses[index];
   const skills = status ? toSlotSkills(status, skillLevels, treasurePhase) : undefined;
-  const base = { character, condition, conditionMode, hpRatio };
-
-  if (team.fixedSpec) {
-    const growth = fixedSpecGrowth(character);
-    return {
-      ...base,
-      growth,
-      build,
-      skillLevels,
-      treasurePhase,
-      buildNotes: [],
-      input: skills
-        ? {
-            ...base,
-            growth,
-            attackOverride: computeFixedSpecAttack(character).attack,
-            hpOverride: computeFixedSpecHp(character),
-            defenceOverride: computeFixedSpecDefence(character),
-            skills,
-          }
-        : null,
-    };
-  }
-
-  const growth = clampGrowth(character, synchroGrowth);
-  const { masters } = deps;
   return {
-    ...base,
+    character,
     growth,
     build,
     skillLevels,
     treasurePhase,
-    buildNotes: masters === null ? [] : unsupportedBuildNotes(character, build, treasurePhase, masters),
+    hpRatio,
+    noFire,
+    buildNotes: layer.notes,
     input: skills
       ? {
-          ...base,
+          character,
           growth,
-          ...(masters === null ? {} : combatOverrides(character, growth, build, treasurePhase, masters)),
+          conditionMode: noFire ? 'manual' : DEFAULT_CONDITION_MODE,
+          condition: noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : DEFAULT_SLOT_CONDITION,
+          hpRatio,
+          ...(team.fixedSpec ? fixedSpecOverrides(character) : layer.overrides),
           skills,
         }
       : null,

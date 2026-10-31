@@ -1,7 +1,7 @@
 import { MAX_SKILL_LEVELS, fixedSpecBuild, parseEnemyPresets, type CharacterData } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { buildCalcView, effectiveTreasurePhase, type CalcDeps } from './calcView.ts';
+import { buildCalcView, type CalcDeps } from './calcView.ts';
 import {
   DEFAULT_SLOT_CONDITION,
   SHOOTING_RANGE_ENEMY,
@@ -54,8 +54,6 @@ describe('buildCalcView: inputs removed from the screen', () => {
     s = teamReducer(s, { type: 'setBuild', index: 0, build });
 
     const slot = buildCalcView(s, deps()).slots[0]!;
-    expect(slot.conditionMode).toBe('auto');
-    expect(slot.condition).toEqual(DEFAULT_SLOT_CONDITION);
     expect(slot.hpRatio).toBe(1);
     expect(slot.build.extraAttack).toBe(0);
     expect(slot.build.affectionRank).toBe(20);
@@ -109,7 +107,6 @@ describe('buildCalcView: inputs removed from the screen', () => {
 
   it('uses phase 0 for characters without a treasure', () => {
     const s = teamReducer(withCharacters([LAPI]), { type: 'setTreasurePhase', index: 0, treasurePhase: 2 });
-    expect(effectiveTreasurePhase(s.slots[0]!, characters.get(LAPLACE)!)).toBe(2);
     expect(buildCalcView(s, deps()).slots[0]!.treasurePhase).toBe(0);
   });
 
@@ -128,9 +125,9 @@ describe('buildCalcView: slot advanced settings', () => {
   it('calculates a no-fire slot with the manual condition and a bullet hit rate of 0', () => {
     const s = teamReducer(withCharacters([LAPI, CROWN]), { type: 'setNoFire', index: 1, noFire: true });
     const view = buildCalcView(s, deps());
-    expect(view.slots[1]!.conditionMode).toBe('manual');
-    expect(view.slots[1]!.condition.hitRate).toBe(0);
-    expect(view.slots[0]!.conditionMode).toBe('auto');
+    expect(view.slots[1]!.noFire).toBe(true);
+    expect(view.slots[1]!.input).toMatchObject({ conditionMode: 'manual', condition: { hitRate: 0 } });
+    expect(view.slots[0]!.input).toMatchObject({ conditionMode: 'auto' });
   });
 
   it('lists only the occupied no-burst slots, and leaves the list out when there are none', () => {

@@ -138,10 +138,10 @@ export function App() {
               treasurePhase: slot.treasurePhase,
               modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
               buildNotes: slot.buildNotes,
-              noFire: team.slots[i]!.noFire,
+              noFire: slot.noFire,
             },
       ),
-    [calc.slots, team.slots, skillsStatuses, computed],
+    [calc.slots, skillsStatuses, computed],
   );
 
   return (

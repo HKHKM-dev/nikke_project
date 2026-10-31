@@ -89,7 +89,7 @@ export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number
 
 /**
  * runSimulation に渡す skills。読み込み中・エラー・未定義は definition: null（味方の効果は受ける）。
- * Stage 9: treasurePhase は calcView.ts の effectiveTreasurePhase を通した値（宝物のないキャラは 0）
+ * Stage 9: treasurePhase は calcView.ts の実効値（宝物のないキャラは 0）
  */
 export function toSlotSkills(
   status: SlotSkillsStatus,
