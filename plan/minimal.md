@@ -6,7 +6,7 @@
 - 残った要素が 1 つでもある組が警告。人の判断の印（結論の `minimal`。同 4.3 節）のある要素は外し、「印」に出す。
 - 結論ごとに、残った要素と、それが残った組の観測値を並べる。要素の後ろの括弧は、未確定の理由（根拠なし・仮説の結論・定義なし・的の表に無い）。感度で効くと決まったものには「感度で効く」を足す。
 
-件数: 確定の結論 516・組 3937。警告のある組 214（結論 69。うち組がすべて警告 8）
+件数: 確定の結論 518・組 3961。警告のある組 214（結論 69。うち組がすべて警告 8）
 
 ## 警告と印のある結論
 
@@ -1421,7 +1421,7 @@ I-DOLL・オーシャンの S1 の最後の弾丸の命中時の回復（残り�
 - C-0071: アドミ burst.effects[0]
 - C-0079: アドミ burst.effects[0]
 - C-0080: アドミ burst.effects[0]
-- C-0114: エレグ skill1.notes[1]
+- C-0114: エレグ skill1.effects[0]
 - C-0127: ソーダ：トゥインクルバニー skill2.notes[1]
 - C-0128: ソーダ：トゥインクルバニー skill1.effects[1]
 - C-0134: アリス burst.effects[1]
@@ -1494,14 +1494,14 @@ I-DOLL・オーシャンの S1 の最後の弾丸の命中時の回復（残り�
 - C-0656: シンデレラ burst.effects[0]
 - C-0657: ラム skill2.notes[0]
 - C-0657: デルタ skill1.notes[0]
-- C-0662: エレグ skill1.notes[1]
+- C-0662: エレグ skill1.effects[0]
 - C-0669: トーブ treasureSkills.burst.effects[0]
 - C-0685: ラプンツェル：ピュアグレイス skill1.notes[0]
-- C-0689: エレグ skill1.notes[1]
+- C-0689: エレグ skill1.effects[0]
 - C-0689: エレグ skill2.effects[1]
-- C-0690: エレグ skill1.notes[1]
+- C-0690: エレグ skill1.effects[0]
 - C-0690: エレグ skill2.effects[1]
-- C-0691: エレグ skill1.notes[1]
+- C-0691: エレグ skill1.effects[0]
 - C-0691: エレグ skill2.effects[1]
 - C-0715: ラピ：レッドフード skill2.effects[0]
 - C-0716: ラピ：レッドフード skill2.effects[0]

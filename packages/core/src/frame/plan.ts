@@ -505,8 +505,18 @@ export function planSkillHits(
         // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す。
         // 同 10.2 節の d: N ヒットとも発動（発火）のフレームのバフとフルバースト補正で出す（遅れ・間の後のヒットも。C-0735）。
         // N 回でない倍率ダメージは、遅れがあればヒットのフレームのバフ（遅れて出る倍率ダメージ編）
+        // エレグの S1（C-0766）: 値を決めるフレームのある効果（valueDelayFrames。N 回は 0）は、どのヒットも発火のその後の値で出す
+        // （エレグの S1 は届いた発の次のフレームで、同じ発で付いた timed も乗る）
         for (const at of damageHitFramesOf(effect, frame, frames))
-          push(at, effect, pre, copied, undefined, false, effect.hits === undefined ? at : frame);
+          push(
+            at,
+            effect,
+            pre,
+            copied,
+            undefined,
+            false,
+            effect.valueDelayFrames === undefined ? at : frame + effect.valueDelayFrames,
+          );
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。

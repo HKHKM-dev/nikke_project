@@ -1,12 +1,14 @@
 // エレグ（500）の定義（plan/design-elegg.md 段 1）。S2 の「ターゲットが出現した時、味方全体にバーストゲージのチャージ 100%」を、
-// 戦闘開始の burstGauge で入れる（C-0662）。段 3（plan/design-elegg-s3.md）: S2 の前半の攻撃力▲（C-0696・C-0697）。S1 の分配ダメージは notes
+// 戦闘開始の burstGauge で入れる（C-0662）。段 3（plan/design-elegg-s3.md）: S2 の前半の攻撃力▲（C-0696・C-0697）と S1 の分配ダメージ（C-0766）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { hexagonFrameOf } from '../../burst/schedule.ts';
+import { distributedHitMultiplier } from '../../damage.ts';
 import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
+import { computeBurstHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
@@ -220,5 +222,84 @@ describe('エレグ（500）の S2 の攻撃力▲', () => {
     };
     expect(with2(timed('boomInstall'))).not.toThrow();
     expect(with2(timed('persona'))).toThrow();
+  });
+});
+
+// V-0560: S1 の分配ダメージ。通算の命中が 100 の倍数に届いた発の 8f 後から +0・+24・+36f の 3 ヒットで、説明文の値を 3 等分した値。
+// 値は届いた発の次のフレームのバフで決め、3 ヒットとも同じ（C-0697・C-0766）。受けるダメージ▲は分配ダメージ▲と 1 つの和（C-0767）
+describe('エレグ（500）の S1 の分配ダメージ', () => {
+  it('defines three equal hits of the distributed damage', () => {
+    expect(def.skills.skill1.support).toBe('supported');
+    expect(def.skills.skill1.effects[0]).toMatchObject({
+      kind: 'damage',
+      trigger: { count: 'normalHit', everyRef: 2 },
+      condition: { enemyState: 'boomInstall' },
+      damageType: 'distributed',
+      delayFrames: 8,
+      hitOffsetFrames: [0, 24, 36],
+      valueDelayFrames: 1,
+    });
+  });
+
+  it('lands three hits of one third each inside BOOM Install, all with the same value', () => {
+    const plan = planTeamRun(teamC());
+    const boom = plan.schedule!.activations.filter((a) => a.slotIndex === 2).map((a) => a.hitFrame!);
+    const hits = plan.skillHits.filter((h) => h.slotIndex === 2);
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.length % 3).toBe(0);
+    for (let i = 0; i < hits.length; i += 3) {
+      const [a, b, c] = [hits[i]!, hits[i + 1]!, hits[i + 2]!];
+      expect([b.frame - a.frame, c.frame - a.frame]).toEqual([24, 36]);
+      const fire = a.frame - 8;
+      expect(boom.some((h) => h <= fire && fire < h + 588)).toBe(true);
+      expect(a.effect.multiplier).toBeCloseTo(1.5865 / 3, 10);
+      expect(b.hit.perActivation).toBe(a.hit.perActivation);
+      expect(c.hit.perActivation).toBe(a.hit.perActivation);
+    }
+  });
+
+  it('validates the split hits and the value frame', () => {
+    const s1 = (extra: Record<string, unknown>) => ({
+      kind: 'damage',
+      trigger: { count: 'normalHit', everyRef: 2 },
+      ref: 4,
+      damageType: 'distributed',
+      delayFrames: 8,
+      ...extra,
+    });
+    expect(withBurst([s1({ hitOffsetFrames: [0, 24, 36], valueDelayFrames: 1 })], 'skill1')).not.toThrow();
+    expect(withBurst([s1({ hitOffsetFrames: [1, 24] })], 'skill1')).toThrow(/starting at 0/);
+    expect(withBurst([s1({ hitOffsetFrames: [0, 24, 24] })], 'skill1')).toThrow(/strictly increasing/);
+    expect(withBurst([s1({ valueDelayFrames: 1 })], 'skill1')).toThrow(/needs hitOffsetFrames/);
+    expect(withBurst([s1({ hitOffsetFrames: [0, 24], valueDelayFrames: 9 })], 'skill1')).toThrow(/exceed delayFrames/);
+  });
+});
+
+describe('分配ダメージの受けるダメージ▲（C-0767）', () => {
+  it('adds the damage taken increase to the distributed damage increase in one sum', () => {
+    const input = {
+      attack: 1000,
+      enemy: { defence: 0, element: null, hasCore: false },
+      crit: { rate: 0, damage: 1.5 },
+      attackDamageMultiplier: 1,
+      elementMultiplier: 1,
+      fullBurstBonus: false,
+      distributedDamageMultiplier: 1.5,
+      damageTakenMultiplier: 1.2,
+    };
+    const effect = {
+      source: { resourceId: 500, skill: 'skill1' as const, name: elegg.skills.skill1.name },
+      multiplier: 1,
+    };
+    expect(
+      computeBurstHit({ ...input, effects: [{ ...effect, damageType: 'distributed' }] }).perActivation,
+    ).toBeCloseTo(1700, 6);
+    // 分配ダメージでない効果には、受けるダメージ▲だけが別の乗数で掛かる
+    expect(computeBurstHit({ ...input, effects: [{ ...effect, damageType: 'skill' }] }).perActivation).toBeCloseTo(
+      1200,
+      6,
+    );
+    expect(distributedHitMultiplier(1.3974, 1.1718)).toBeCloseTo(1.5692 / 1.1718, 12);
+    expect(distributedHitMultiplier(1, 1)).toBe(1);
   });
 });

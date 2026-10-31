@@ -4,7 +4,35 @@
   "checkedAt": "2026-10-26",
   "skills": {
     "skill1": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 2
+          },
+          "condition": {
+            "enemyState": "boomInstall"
+          },
+          "ref": 4,
+          "damageType": "distributed",
+          "delayFrames": 8,
+          "hitOffsetFrames": [
+            0,
+            24,
+            36
+          ],
+          "valueDelayFrames": 1,
+          "assumes": {
+            "ja": "敵 1 体。対象と周囲の敵 2 機の分配ダメージは、どれも対象に当たり、説明文の値を 3 つに等分したヒットで出る。値は届いた発の次のフレームのバフ（同じ発で付いた S2 の▲も入る）で決まり、3 ヒットとも変わらない（測ったのは届いた発の 1〜5f 後のどこか）。S1 のヒットがバーストゲージを溜めるかは確かめていない（溜めない）",
+            "en": "One enemy. The distributed damage to the target and 2 surrounding enemies all lands on the target, as three hits of one third of the description value each. The value uses the buffs on the frame after the triggering shot (including S2 applied by the same shot) and is the same for all three hits (measured as somewhere 1 to 5 frames after the shot). Whether the S1 hits charge the burst gauge is unchecked (they do not)"
+          },
+          "claims": [
+            "C-0697",
+            "C-0766"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "戦闘開始時の、敵の発射体を攻撃する時の発射体に与えるダメージ▲は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）",
@@ -18,18 +46,6 @@
           },
           "claims": [
             "C-0443"
-          ]
-        },
-        {
-          "ja": "通常攻撃 100 回命中ごとの、ブームインストール状態の対象と周囲の敵への分配ダメージは未対応。命中は戦闘中ずっと通算で数え、100 の倍数に届いた命中の時に敵がブームインストール状態なら起き、届いた発の 8f 後から同じ値の 3 ヒット（頭・+24f・+36f）で出る（V-0524）。1 ヒットの値は、説明文の値の全額・3 分の 1・それぞれ全額のどの形とも合わない（式が分からない）",
-          "en": "The distributed damage to a BOOM-Installed target and nearby enemies every 100 normal attack hits is not modeled. Hits are counted throughout the battle; it fires when a multiple of 100 is reached while the enemy is in BOOM Install, and lands as three equal hits 8 frames after that shot and then +24 and +36 frames (V-0524). The per-hit value matches none of: the full description value, one third of it, or the full value per hit (the formula is unknown)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "normalHit"
-          },
-          "claims": [
-            "C-0697"
           ]
         }
       ]

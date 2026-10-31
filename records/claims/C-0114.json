@@ -14,9 +14,9 @@
   "minimal": [
     {
       "observations": ["L-AN-03"],
-      "element": "エレグ skill1.notes[1]",
+      "element": "エレグ skill1.effects[0]",
       "reason": "観測量は戦闘開始の構え・リロードの長さ・時計で、分配ダメージや戦闘開始時のゲージのチャージは効かない",
-      "decided": "2026-10-08"
+      "decided": "2026-10-31"
     }
   ],
   "decidedOn": [
