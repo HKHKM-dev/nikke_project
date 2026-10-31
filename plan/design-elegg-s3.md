@@ -3,7 +3,7 @@
 - 関連: [design-elegg.md](design-elegg.md)（段 1・段 2 の見込み。5 節）、[design-named-state.md](design-named-state.md) 8.3 節（敵に付く状態）、[design-kurumi-s2.md](design-kurumi-s2.md) 2.1 節（窓の中だけ数える `during`）、V-0443（窓の外も数えて窓の中だけ発火する `firesDuring`）、[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.2 節（`normalHit`）、[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)（回数トリガーの付き始めの遅れ）、[skills-guide.md](skills-guide.md)、[verification-guide.md](verification-guide.md)
 - 作成日: 2026-10-26
 - 根拠: まだ無い（検証記録は承認の後、段 2 の実装の後に起こす）
-- 状態: 7 節の論点は推奨どおり（2026-10-26 のオーナーの承認）。段 2 は main に入った（`plan/design-elegg.md` 8 節）。S1・S2 とも実装済み（V-0524・V-0560）
+- 状態: 完了（7 節の論点は推奨どおり。8 節）
 
 ## 1. 何を足すか
 
