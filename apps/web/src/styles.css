@@ -22,6 +22,16 @@
 :root:root[data-app-theme='dark'] body {
   color-scheme: dark !important;
 }
+/* ルート要素のスクロールバーと右端の色は、テーマの色を直接決める。表示枠がルート要素の color-scheme を後から閲覧側のテーマに
+   書き換えることがあり、Canvas では閲覧側の色になってしまう（ライトでも右端が黒かった）。値は各テーマの Canvas と、上の color-mix の値 */
+:root:root[data-app-theme='light'] {
+  background: #fff !important;
+  scrollbar-color: #a6a6a6 #fff !important;
+}
+:root:root[data-app-theme='dark'] {
+  background: #121212 !important;
+  scrollbar-color: #656565 #121212 !important;
+}
 body {
   background: Canvas;
   color: CanvasText;
