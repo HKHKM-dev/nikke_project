@@ -1,0 +1,240 @@
+[
+  {
+    "id": "0798-01",
+    "recording": "0798",
+    "kind": "timing",
+    "use": "record",
+    "value": [916, 3294, 5672, 8049, 10427],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・5・0・5f"
+    },
+    "source": "V-0564",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0798-02",
+    "recording": "0798",
+    "kind": "timing",
+    "use": "record",
+    "value": [945, 3323, 5701, 8078, 10456],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0564",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0798-03",
+    "recording": "0798",
+    "kind": "timing",
+    "use": "record",
+    "value": [974, 3352, 5730, 8107, 10485],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0564",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0798-04",
+    "recording": "0798",
+    "kind": "timing",
+    "use": "record",
+    "value": [3288, 5665, 8043, 10420],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0564",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0798-05",
+    "recording": "0798",
+    "kind": "timing",
+    "use": "record",
+    "value": [3346, 5724, 8101, 10479],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0564",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0798-06",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [1290, 3668, 6046, 8423],
+    "description": "フルバーストの終わり（ゲージが 0 から溜まり始める窓の始まり。窓ごと）: エレグのコアの 1 ヒットがフルバーストの値から外の値（×2.0/2.5）に下がった最初のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "III のタイマーの 00.00 から 315〜316f"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0798-07",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [2202, 4591, 7016, 9219],
+    "description": "フルバーストの後に BURST バーが消えたフレーム（満タン。C-0083。窓ごと）",
+    "method": {
+      "tool": "gauge.ts --mode events",
+      "note": "「バー消失」の行"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0798-08",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "count",
+    "value": [300, 397, 3, 295, 407, 3, 274, 451, 3, 254, 486, 6],
+    "description": "窓（フルバーストの終わりからバーの消えたフレームまで）ごとの、鈴原サクラの 1 ヒット・エレグの 1 ヒット・S1 のヒットの数（窓ごとに 3 つずつ並べた）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "増分を 1 ヒットの格子（鈴原サクラ・エレグのコア・会心・距離ボーナス・S2 の攻撃力▲・鈴原サクラの受けるダメージ▲・防御力▼の組み合わせ）の 3 つまでの和に分けた。同じ人の 2 ヒット（動画の 1 フレームにゲームの 2 フレームぶんが入ったとき）は最後に回し、少ないヒットの読みを取った"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0798-09",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "count",
+    "value": [997000, 1000000, 997000, 1000000, 999000, 1002000, 994000, 1000000],
+    "description": "窓ごとの、バーの消えたフレームまでのゲージの和（鈴原サクラ 2,000・エレグ 1,000 の和。G0 は S1 を足さない、G1 は S1 の 1 ヒットを 1,000 で足す。窓ごとに G0・G1 の順）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "100 万を越えるフレーム: G0 2204・4594・7017・9225、G1 2202・4591・7016・9219"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0798-10",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "hit",
+    "value": [93724, 59727, 93724, 93724, 140585],
+    "description": "フルバーストの外の S1 の組の 1 ヒット（組の頭 f1523・3937・6078・8451・8551）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "組の 3 ヒットの増分から引いた重なり: 0・0・20,640・14,743・14,743"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0798-11",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 93724,
+    "description": "フルバーストの外の S1 の分配ダメージの 1 ヒット（分配ダメージ▲・鈴原サクラの受けるダメージ▲・S2 の攻撃力▲・防御力▼）。f1523 の組（1 回目のフルバーストの後。3 ヒット目 f1559 は重なりなし）。会心なし",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0798-10` の値。比べるのは、モデルのフルバーストの後の組で、分配ダメージ▲と鈴原サクラの▲の付いた組の頭"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 6,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0798-12",
+    "recording": "0798",
+    "source": "V-0564",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 140585,
+    "description": "フルバーストの外の S1 の分配ダメージの 1 ヒット（分配ダメージ▲・鈴原サクラの受けるダメージ▲・S2 の攻撃力▲・防御力▼）。f8551 の組（4 回目のフルバーストの後。3 ヒットとも 155,328 から、同じフレームのエレグの 1 ヒット 14,743 を引いた）。会心",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0798-10` の値。比べるのは、モデルのフルバーストの後の組で、分配ダメージ▲と鈴原サクラの▲の付いた組の頭"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "frame": 7450,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    }
+  }
+]
