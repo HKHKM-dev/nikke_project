@@ -1,0 +1,228 @@
+[
+  {
+    "id": "0801-01",
+    "recording": "0801",
+    "kind": "timing",
+    "use": "record",
+    "value": [1384, 3761, 6139, 8516, 10894],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0565",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0801-02",
+    "recording": "0801",
+    "kind": "timing",
+    "use": "record",
+    "value": [1413, 3790, 6168, 8545, 10923],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0565",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0801-03",
+    "recording": "0801",
+    "kind": "timing",
+    "use": "record",
+    "value": [1442, 3819, 6197, 8574, 10952],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0565",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0801-04",
+    "recording": "0801",
+    "kind": "timing",
+    "use": "record",
+    "value": [3755, 6133, 8510, 10888],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0565",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0801-05",
+    "recording": "0801",
+    "kind": "timing",
+    "use": "record",
+    "value": [3813, 6191, 8568, 10946],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0565",
+    "readAt": "2026-10-31"
+  },
+  {
+    "recording": "0801",
+    "kind": "hit",
+    "source": "V-0565",
+    "readAt": "2026-10-31",
+    "id": "0801-06",
+    "use": "compare",
+    "value": 16086056,
+    "unit": "ダメージ",
+    "description": "1 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心でない・鈴原サクラの受けるダメージ▲あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "III のタイマーの 00.00（`0801-03` の f1442）の 1f 前の f1441 の増分。的の防御力を 0 にした式（モデルの H-round の値に、防御力 1 あたりの差（H-round − H-ceil）× 51 を足した値）と 1 未満で合う: 会心でない・▲あり 16,086,056.65、会心でない・▲なし 13,727,646.9、会心・▲なし 20,591,470.4、会心・▲あり 24,129,085.3（▲なしは鈴原サクラの S1 を dropEffects で外して出した）。説明文の 48.75% の 3 つの仮説（51.25・51・52）より 1 ヒット約 2,690 大きい"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0801",
+    "kind": "hit",
+    "source": "V-0565",
+    "readAt": "2026-10-31",
+    "id": "0801-07",
+    "use": "compare",
+    "value": 16086056,
+    "unit": "ダメージ",
+    "description": "2 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心でない・▲あり）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "00.00（f3819）の 1f 前の f3818 の増分。的の防御力を 0 にした式（モデルの H-round の値に、防御力 1 あたりの差（H-round − H-ceil）× 51 を足した値）と 1 未満で合う: 会心でない・▲あり 16,086,056.65、会心でない・▲なし 13,727,646.9、会心・▲なし 20,591,470.4、会心・▲あり 24,129,085.3（▲なしは鈴原サクラの S1 を dropEffects で外して出した）。説明文の 48.75% の 3 つの仮説（51.25・51・52）より 1 ヒット約 2,690 大きい"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "recording": "0801",
+    "kind": "hit",
+    "source": "V-0565",
+    "readAt": "2026-10-31",
+    "id": "0801-08",
+    "use": "record",
+    "value": [16086056, 16086056, 20591470, 16086056, 16086056],
+    "unit": "ダメージ",
+    "description": "1〜5 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット。16,086,056 は会心でない・▲あり、20,591,470 は会心・▲なし（3 回目は 00.00 の前の鈴原サクラが▲なしの 7,048）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "どの回も III の 00.00 の 1f 前。的の防御力を 0 にした式（モデルの H-round の値に、防御力 1 あたりの差（H-round − H-ceil）× 51 を足した値）と 1 未満で合う: 会心でない・▲あり 16,086,056.65、会心でない・▲なし 13,727,646.9、会心・▲なし 20,591,470.4、会心・▲あり 24,129,085.3（▲なしは鈴原サクラの S1 を dropEffects で外して出した）。説明文の 48.75% の 3 つの仮説（51.25・51・52）より 1 ヒット約 2,690 大きい"
+    }
+  }
+]

@@ -79,6 +79,19 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
     expect(defenceAfterDown(enemy, { ...ZERO_BUFFS, enemyDefenseDown: -0.2 })).toBe(100);
   });
 
+  it('rounds the lowered defence only under a rounding hypothesis (C-0688・V-0561)', () => {
+    const down = (x: number) => ({ ...ZERO_BUFFS, enemyDefenseDown: x });
+    expect(defenceAfterDown({ ...enemy, defenceRounding: 'round' }, down(0.3564))).toBe(64);
+    expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.3564))).toBe(65);
+    expect(defenceAfterDown({ ...enemy, defenceRounding: 'none' }, down(0.3564))).toBeCloseTo(64.36, 12);
+    expect(defenceAfterDown({ ...enemy, defenceRounding: 'round' }, down(0.084))).toBe(92);
+    expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.084))).toBe(92);
+    // 100 × (1 − 0.3) は浮動小数で 70.00000000000001 になるが、切り上げても 70
+    expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.3))).toBe(70);
+    // ▼が無ければ丸めの仮説でも元の防御力
+    expect(defenceAfterDown({ ...enemy, defence: 100.5, defenceRounding: 'ceil' }, ZERO_BUFFS)).toBe(100.5);
+  });
+
   it('subtracts the lowered defence in normal attacks and skill hits alike', () => {
     const c = makeCharacter();
     const trigger = (enemyDefenseDown: number) =>

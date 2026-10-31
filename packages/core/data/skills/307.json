@@ -36,7 +36,10 @@
             "stat": "enemyDefenseDown",
             "target": "enemy",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0777"
+          ]
         }
       ]
     }

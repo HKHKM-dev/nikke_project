@@ -1,0 +1,46 @@
+{
+  "id": "0799",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0799_smg+sg+mg_sakura+privaty-um+elegg_defence-round-1.mp4",
+  "original": "2026-10-31_20-16-56.mp4",
+  "durationSec": 202.4,
+  "frames": 12146,
+  "fps": 60,
+  "sizeMB": 245.2,
+  "sha256": "5ca9d66e202c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0561。鈴原サクラ（AI）・プリバティ：アンカインド・メイド（AI）・エレグ（操作・撃たない）。オートバースト ON",
+  "backup": {
+    "at": "2026-10-31T20:25+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

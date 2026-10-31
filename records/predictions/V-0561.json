@@ -1,0 +1,351 @@
+{
+  "verification": "V-0561",
+  "note": "撮る前の予測。編成は鈴原サクラ（1 枠目・I）・プリバティ：アンカインド・メイド（2 枠目・III）・◎エレグ（3 枠目・II・操作・撃たない）。モデルには撃たない枠が無いので、エレグの射撃の回数で起きる S1 の分配ダメージ（skill1 の effects[0]）と S2 の攻撃力▲（skill2 の effects[1]）を dropEffects で外す（録画 0690 の観測値と同じ）。仮説は防御力▼の後の防御力の丸めの向きだけを setup の defenceRounding で替える",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 313
+    },
+    {
+      "rid": 500,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-none",
+      "note": "丸めない（いまのモデル。100 × (1 − 35.64%) = 64.36）",
+      "override": {
+        "defenceRounding": "none"
+      }
+    },
+    {
+      "id": "H-round",
+      "note": "四捨五入（64）",
+      "override": {
+        "defenceRounding": "round"
+      }
+    },
+    {
+      "id": "H-ceil",
+      "note": "切り上げ（65）",
+      "override": {
+        "defenceRounding": "ceil"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "privaty-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心でない）"
+    },
+    {
+      "id": "privaty-hit-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心）"
+    },
+    {
+      "id": "privaty-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心でない）"
+    },
+    {
+      "id": "privaty-hit-2-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心）"
+    },
+    {
+      "id": "privaty-hit-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心でない）"
+    },
+    {
+      "id": "privaty-hit-3-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心）"
+    },
+    {
+      "id": "privaty-hit-4",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心でない）"
+    },
+    {
+      "id": "privaty-hit-4-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心）"
+    },
+    {
+      "id": "elegg-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のエレグのバーストスキルダメージ（会心でない。▼は乗らない。C-0689。V-0521 と同じ値になるかの確かめ）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "e2f5edf3113a71e36bf2c8e960bbe8c2db89a8e4",
+    "values": {
+      "H-none": {
+        "privaty-hit-1": 1413173.6869052544,
+        "privaty-hit-1-crit": 3365755.7701022443,
+        "privaty-hit-2": 1655956.9263155768,
+        "privaty-hit-2-crit": 3943992.611405809,
+        "privaty-hit-3": 1655956.9263155768,
+        "privaty-hit-3-crit": 3943992.611405809,
+        "privaty-hit-4": 1655956.9263155768,
+        "privaty-hit-4-crit": 3943992.611405809,
+        "elegg-hit-1": 316105.8450000001
+      },
+      "H-round": {
+        "privaty-hit-1": 1413177.9323827203,
+        "privaty-hit-1-crit": 3365765.8815559247,
+        "privaty-hit-2": 1655961.9011660712,
+        "privaty-hit-2-crit": 3944004.4600072317,
+        "privaty-hit-3": 1655961.9011660712,
+        "privaty-hit-3-crit": 3944004.4600072317,
+        "privaty-hit-4": 1655961.9011660712,
+        "privaty-hit-4-crit": 3944004.4600072317,
+        "elegg-hit-1": 316105.8450000001
+      },
+      "H-ceil": {
+        "privaty-hit-1": 1413166.1393897599,
+        "privaty-hit-1-crit": 3365737.794184591,
+        "privaty-hit-2": 1655948.082136921,
+        "privaty-hit-2-crit": 3943971.547225504,
+        "privaty-hit-3": 1655948.082136921,
+        "privaty-hit-3-crit": 3943971.547225504,
+        "privaty-hit-4": 1655948.082136921,
+        "privaty-hit-4-crit": 3943971.547225504,
+        "elegg-hit-1": 316105.8450000001
+      }
+    }
+  }
+}
