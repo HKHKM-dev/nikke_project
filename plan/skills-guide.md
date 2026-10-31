@@ -80,7 +80,11 @@
     | 自分がバリア適用状態なら／バリア・共用バリア | `condition.selfState: "barrier"`／付与の `state: "barrier"` | 例: ラムのバースト・アスカの S2 | [design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節 |
     | 自分と〈状態〉の味方 | `targetState` と `includeSelf: true` | 家族の根を指せば家族のどれにも当たる。例: ラプンツェル：サンクチュアリの「自分と臨戦状態の味方」 | [design-new-chars-1029.md](design-new-chars-1029.md) 5.1・8 節 |
     | N 回順番に攻撃（バースト以外）／順番攻撃ダメージ X%▲ | damage の `hitsRef`・`hitIntervalFrames`／stat `sequentialAttackDamage` | 例: マリアン：クイーンの S1・S2 | 同 5.2・5.5 節 |
-    | 〈状態〉再発動周期 N 秒▼ | 周期の damage の `periodShorten` | 縮めた次の発動まで状態が続くときだけ縮む。例: マリアン：クイーンの S2 | 同 5.3 節・10.2 節の f |
+    | 〈状態〉再発動周期 N 秒▼／バーストを使用した時、〈スキル〉の発動間隔 N 秒▼（N 秒間維持） | 周期の damage の `periodShorten`（`state`／名前の無い窓 `window: { "trigger": "burstUse", "durationRef": N }`） | 状態は、前の発動の時点で状態があり、縮めた次の発動まで続くときだけ縮む。窓は、縮めた次の発動が窓の中なら縮む（前の発動は見ない。`gaugePerHit` とは組めない）。例: マリアン：クイーンの S2・エイダの S2 | 同 5.3 節・10.2 節の f・[design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
+    | フルバーストタイム発動中、N 秒ごとに | 周期のきっかけ（`everySeconds`）の damage と `condition.inFullBurst: true` | 周期は戦闘開始から数え続け、窓の中の回だけ出る（窓ごとに数え直さない）。例: エイダの S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.3 節 |
+    | 最終攻撃力の X% の防御力無視ダメージ（倍率ダメージ） | damage の `damageType: "true"` | 防御力を引かず、防御力無視ダメージ▲を攻撃ダメージ▲と同じ和に足す。射撃ごとに畳み込む damage には書けない。例: エイダの S2 | 同上 |
+    | 直前にバーストスキルを使用した基本バースト段階が N の味方全体 | `target: "burstUsers"` と `targetBurstStep`（timed・付与・heal） | 例: エイダの S1 | 同上 |
+    | 「〈名前〉」：N 発間維持のチャージ速度▼ | 付与の `durationShotsRef` と中身の `stat: "chargeSpeed"` | 射撃に効く stat のうち、発数の維持はチャージ速度だけ書ける。溜めの途中で付いても、それまでに溜めたフレームは残る。例: エイダの特殊改造 | 同上 |
     | 再発動周期 N 秒（端数を持ち越す）／命中した時に付く（周期の付与の遅れ） | 周期のきっかけの `carry: true`／周期の付与の `delayFrames` | `hitsRef` の damage は N ヒットとも発動の時点のバフ。例: マリアン：クイーンの S1 の槍と弱点露出 | 同 10.2 節の a・d・e |
     | コア命中ダメージ | damage の `coreHit: true` | 例: マリアン：クイーンの S2 | 同 5.4 節 |
     | マシンガン立ち上げ速度 X%▲ | stat `spinUpSpeed` | 例: マリアン：クイーンのバースト | 同 5.6 節 |

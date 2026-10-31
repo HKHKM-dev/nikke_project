@@ -132,13 +132,20 @@ export function isTrueDamageShot(buffs: BuffTotals): boolean {
 export function trueDamageMultiplier(shot: ShotParams, buffs: BuffTotals): number {
   const up = buffs.trueDamage;
   if (!isTrueDamageShot(buffs) || up === 0) return 1;
-  if (TRUE_DAMAGE_BUCKET === 'separate') return 1 + up;
   const explosion =
     PROJECTILE_EXPLOSION_BUCKET === 'attackDamage' && hasProjectileExplosion(shot, buffs)
       ? buffs.projectileExplosionDamage
       : 0;
-  const group = applyAttackDamageBuffs(buffs) + explosion;
-  return (group + up) / group;
+  return trueDamageBucketMultiplier(applyAttackDamageBuffs(buffs) + explosion, up);
+}
+
+/**
+ * 防御力無視ダメージ▲ up の、▲なしに対する比（TRUE_DAMAGE_BUCKET の置き場所。group は同じ枠の和 (1 + Σ攻撃ダメージ …)）。
+ * 通常攻撃（trueDamageMultiplier）と、2 段目の段 15 の PR 3 から防御力無視の倍率ダメージ（skills/burstDamage.ts の computeBurstHit）が使う
+ */
+export function trueDamageBucketMultiplier(group: number, up: number): number {
+  if (up === 0) return 1;
+  return TRUE_DAMAGE_BUCKET === 'separate' ? 1 + up : (group + up) / group;
 }
 
 /**

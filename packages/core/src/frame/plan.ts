@@ -46,7 +46,7 @@ import {
 import {
   EMPTY_BUFF_STATE,
   appliedFrames,
-  shortenedTimerFrames,
+  timerDamageFrames,
   resolvePassiveStates,
   segmentIndexAt,
   triggerFrames,
@@ -462,9 +462,9 @@ export function planSkillHits(
         ? counterFullFrames(ownCounters, slotIndex, t.counterFull)
         : isResolvedApplied(t)
           ? appliedFrames(history, t.applied, slotIndex)
-          : shorten !== undefined && isResolvedTimer(t)
-            ? shortenedTimerFrames(t, shorten.seconds, frames, (f) =>
-                selfStateHolds({ state: shorten.state, present: true }, f),
+          : isResolvedTimer(t)
+            ? timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
+                selfStateHolds({ state, present: true }, f),
               )
             : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {

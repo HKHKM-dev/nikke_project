@@ -1,0 +1,359 @@
+[
+  {
+    "id": "0791-01",
+    "recording": "0791",
+    "kind": "timing",
+    "use": "record",
+    "value": [1233, 2322, 3501, 4510, 5688, 6816, 7994, 9158, 10336, 11551],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・24・5・24・0・25・0・25・0f"
+    },
+    "source": "V-0569",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0791-02",
+    "recording": "0791",
+    "kind": "timing",
+    "use": "record",
+    "value": [1262, 3530, 5717, 8023, 10365],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・24・25・25f"
+    },
+    "source": "V-0569",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0791-03",
+    "recording": "0791",
+    "kind": "timing",
+    "use": "record",
+    "value": [1291, 3559, 5746, 8052, 10395],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0569",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0791-04",
+    "recording": "0791",
+    "kind": "timing",
+    "use": "record",
+    "value": [3494, 5681, 7987, 10330],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0569",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0791-05",
+    "recording": "0791",
+    "kind": "timing",
+    "use": "record",
+    "value": [5743],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0569",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0791-06",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [354, 1419, 2597, 3582, 4759, 5863, 7040, 8180, 9357, 10548],
+    "description": "リター（I）のバーストの本当の発動のゲーム内のフレーム（戦闘開始から、止まりを除く）の並び（比べる指定の manualBursts に使う）。I → II の替わり目（`0791-01`）の動画のフレームから、戦闘開始（f873）・替わり目までの 5f と発動の止まり 1f（C-0503）・それより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（モデルの videoFrameOf の逆）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の I → II の替わり目と、tools/captures/timer.ts --mode changes の戦闘開始",
+      "note": "timer.ts --mode ticks の替わり目のティックは、III まで撃ったチェーンでは同じ秒の中に入りの止まりがあり約 23 少なく出る（タイムアウトのチェーンでは、ここの値と 1 以内で同じ）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0791-07",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": [476.5, 2713.1, 4832.2, 7185.5, 9538.6],
+    "unit": "f",
+    "description": "エイダの S2 の閃光手榴弾投擲の、1〜5 回目のフルバーストの最初の 1 発のゲーム内のティック。秒にすると 8.10・46.12・82.15・122.15・162.16 秒で、どれも偶数の秒の約 0.10〜0.16 秒後（戦闘開始から数えた 2 秒の格子。窓の中の発の間は 116〜119 ティック）。窓の始まりからは 5〜112 ティックで、窓ごとに数え直す形（窓の始まりから一定）と合わない",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode ticks",
+      "note": "窓の中のフレームのティックは、入りの止まりを引くフレームが揃わないことがある（V-0541）。発どうしの差と、窓ごとの秒の端数の揃いだけを見る"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-08",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [500, 618, 736, 854, 971],
+    "unit": "f",
+    "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f873 から）。フルバースト（III のタイマーの 00.00 は f1291。I-DOLL・サンがバーストを使い、エイダは使っていない）の 5 発。発動間隔▼が無く、2 秒ごと",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 0,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0791-06"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-09",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [2761, 2878, 2996, 3114, 3231],
+    "unit": "f",
+    "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f873 から）。フルバースト（III のタイマーの 00.00 は f3559。I-DOLL・サンがバーストを使い、エイダは使っていない）の 5 発。発動間隔▼が無く、2 秒ごと",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 5,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0791-06"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-10",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [7283, 7400, 7518, 7636, 7753],
+    "unit": "f",
+    "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f873 から）。フルバースト（III のタイマーの 00.00 は f8052。I-DOLL・サンがバーストを使い、エイダは使っていない）の 5 発。発動間隔▼が無く、2 秒ごと",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 15,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0791-06"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-11",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [9660, 9779, 9896, 10014, 10131],
+    "unit": "f",
+    "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f873 から）。フルバースト（III のタイマーの 00.00 は f10395。I-DOLL・サンがバーストを使い、エイダは使っていない）の 5 発。発動間隔▼が無く、2 秒ごと",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 20,
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0791-06"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-12",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "record",
+    "value": [4905, 5021, 5140, 5257, 5375],
+    "unit": "f",
+    "description": "エイダの S2 の閃光手榴弾投擲の、3 回目のフルバースト（f5746）の 5 発の動画のフレーム（戦闘開始から）。モデル（`0791-06` の manualBursts）は、リター（I）の発動が録画より 19f 遅れ、窓が 2 秒遅いので比べない",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-13",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 755345,
+    "description": "エイダの S2 の閃光手榴弾投擲の 3 発目（戦闘の通し）の 1 ヒット（会心でない）の増分。1 回目のフルバーストの中（リターのバーストの攻撃力▲が切れた後）。エイダはバーストを使っていないので、自分の S1・バーストの▲は乗らない",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0791-06"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0791-14",
+    "recording": "0791",
+    "source": "V-0569",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 48864,
+    "description": "I-DOLL・サン（III。バーストを使った）の 1 回目のフルバーストの頭の 1 ヒット（コアなし・距離ボーナス・会心でない）の増分。エイダの S1 の攻撃力▲（発動者基準 60%）が乗った値（乗らなければ 29,816。録画に無い）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 0,
+        "frame": 40,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0791-06"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

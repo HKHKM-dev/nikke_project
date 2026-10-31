@@ -938,9 +938,19 @@ export type BurstDamageEffect = {
   assumes?: LocalizedText;
 };
 
-/** 倍率ダメージの種別（damage 用）。additional = 追加ダメージ */
-export type SkillDamageType = BurstDamageType | 'additional';
-export const SKILL_DAMAGE_TYPES = ['skill', 'distributed', 'additional'] as const satisfies readonly SkillDamageType[];
+/**
+ * 倍率ダメージの種別（damage 用）。additional = 追加ダメージ。
+ * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。論点 8）: true = 防御力無視ダメージ（「最終攻撃力の X% の防御力無視ダメージ」）。
+ * 防御力を引かず、防御力無視ダメージ▲（trueDamage）を攻撃ダメージ▲と同じ和に足す（使用武器の変更の防御力無視の発と同じ。C-0376・C-0525。
+ * skills/burstDamage.ts の computeBurstHit）
+ */
+export type SkillDamageType = BurstDamageType | 'additional' | 'true';
+export const SKILL_DAMAGE_TYPES = [
+  'skill',
+  'distributed',
+  'additional',
+  'true',
+] as const satisfies readonly SkillDamageType[];
 
 /**
  * Stage 8: トリガー付きの倍率ダメージ（「最終攻撃力の X% のダメージ / 分配ダメージ / 追加ダメージ」）。どのスロットにも書ける。
@@ -1043,7 +1053,7 @@ export type DamageEffect = {
    * C-0738）。N は slot のスロットの
    * description_value_NN（ref）。縮めた周期が 0 秒以下になる値は解決で落とす
    */
-  periodShorten?: { state: NamedStateId; slot: SkillSlot; ref: number };
+  periodShorten?: PeriodShorten;
   /**
    * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: perCount の数だけのヒットを、倍率を掛けずに 1 つずつ、発火のフレームから
    * この間隔（秒・即値。録画で読む）で出す。k 個目（0 始まり）は発火の floor(k × 間隔 ÷ 0.017) フレーム後（端数を持ち越す。ラピ：
@@ -1082,6 +1092,17 @@ export type DamageEffect = {
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
+
+/**
+ * 周期の短縮（damage の periodShorten）。N 秒は slot のスロットの description_value_NN（ref）。鍵は次のどちらか:
+ * - state: 自分の名前の付いた状態の間（マリアン：クイーン。C-0738。前の発動のフレームと縮めた次の発動のフレームの両方で状態のとき縮める）
+ * - window: 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。論点 7）: 名前の無い窓。自分の trigger（burstUse）のフレームから
+ *   slot のスロットの description_value_NN（durationRef）秒の間。縮めた次の発動のフレームが窓の中なら縮める（前の発動のフレームは見ない。
+ *   エイダの S2 の閃光手榴弾投擲の発動間隔▼。V-0569）
+ */
+export type PeriodShorten = { slot: SkillSlot; ref: number } & (
+  { state: NamedStateId; window?: never } | { window: { trigger: 'burstUse'; durationRef: number }; state?: never }
+);
 
 /** 2 段目の段 12・13: perCount の数だけ 1 つずつ出す倍率ダメージ（perCountIntervalSeconds・perCountIntervalFrames）か */
 export function splitsPerCount(
@@ -1157,6 +1178,11 @@ export type HealEffect = TargetCountFields &
     targetElement?: Element;
     /** 2 段目の段 9: 「〈クラス〉型の味方」（エヌ：ミラクルフェアリーの S1・バースト） */
     targetClass?: NikkeClass;
+    /**
+     * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節）: 「基本バースト段階が N の」（timed の targetBurstStep と同じ。対象 burstUsers・
+     * allies だけ。エイダの S1 の吸収回復）
+     */
+    targetBurstStep?: BasicBurstStep;
     /** 回復量（%）の description_value_NN（UI の表示用） */
     ref: number;
     /** 維持秒数の description_value_NN（任意。durationSeconds と両方は書けない） */
@@ -2146,7 +2172,7 @@ function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, path: str
   return squad;
 }
 
-/** ペルソナ編: targetState・targetBurstStep は target が allies のときだけ */
+/** ペルソナ編: targetState・targetBurstStep は target が allies のときだけ（2 段目の段 15 の PR 3 から targetBurstStep は burstUsers も） */
 function parsePersonaTargetFields(
   v: Record<string, Json>,
   target: BuffTarget,
@@ -2160,15 +2186,23 @@ function parsePersonaTargetFields(
     if (out.targetState === undefined) fail(`${path}.includeSelf`, 'only allowed with targetState');
     out.includeSelf = true;
   }
-  if (v.targetBurstStep !== undefined) {
-    out.targetBurstStep = oneOf(BASIC_BURST_STEPS, v.targetBurstStep, `${path}.targetBurstStep`);
-  }
-  for (const key of ['targetState', 'targetBurstStep'] as const) {
-    if (out[key] !== undefined && target !== 'allies') {
-      fail(`${path}.${key}`, `only allowed with target "allies", got "${target}"`);
-    }
+  const step = parseTargetBurstStep(v, target, path);
+  if (step !== undefined) out.targetBurstStep = step;
+  if (out.targetState !== undefined && target !== 'allies') {
+    fail(`${path}.targetState`, `only allowed with target "allies", got "${target}"`);
   }
   return out;
+}
+
+/**
+ * 「基本バースト段階が N の」。対象は allies と、2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節）から burstUsers（「直前に
+ * バーストスキルを使用した基本バースト段階が N の味方全体」。エイダの S1）
+ */
+function parseTargetBurstStep(v: Record<string, Json>, target: BuffTarget, path: string): BasicBurstStep | undefined {
+  if (v.targetBurstStep === undefined) return undefined;
+  if (target !== 'allies' && target !== 'burstUsers')
+    fail(`${path}.targetBurstStep`, `only allowed with target "allies" or "burstUsers", got "${target}"`);
+  return oneOf(BASIC_BURST_STEPS, v.targetBurstStep, `${path}.targetBurstStep`);
 }
 
 /**
@@ -3263,7 +3297,14 @@ function parseTimedDuration(
   if (v.durationRef !== undefined || v.durationSeconds !== undefined) {
     fail(path, 'a duration is either in seconds or in shots, not both');
   }
-  if (stat !== undefined && (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat))) {
+  // 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。V-0569）: チャージ速度は、1 パス目の件の列が持ち主の発で窓を閉じる
+  // （発数の維持の件は射撃の記録が伸びるたびに作り直す。skills/holders.ts の trackReadsOf）ので書ける。溜めの途中で付いても、それまでに
+  // 溜めたフレームは残り、伸びたチャージ時間まで溜める（frame/shooter.ts の chargeProgressFrames。エイダの特殊改造）
+  if (
+    stat !== undefined &&
+    stat !== 'chargeSpeed' &&
+    (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat))
+  ) {
     fail(
       `${path}.stat`,
       `a duration in shots is not supported for "${stat}" (its window is tracked inside the first pass)`,
@@ -3594,12 +3635,27 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       fail(`${path}.periodShorten`, 'periodShorten needs a timer trigger ({ everySeconds })');
     if (!isRecord(p)) fail(`${path}.periodShorten`, 'expected an object');
     for (const key of Object.keys(p))
-      if (!['state', 'slot', 'ref'].includes(key)) fail(`${path}.periodShorten.${key}`, 'unknown field');
-    effect.periodShorten = {
-      state: parseNamedStateId(p.state, `${path}.periodShorten.state`, 'ally'),
-      slot: oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`),
-      ref: parseRef(p.ref, `${path}.periodShorten.ref`),
-    };
+      if (!['state', 'window', 'slot', 'ref'].includes(key)) fail(`${path}.periodShorten.${key}`, 'unknown field');
+    if ((p.state === undefined) === (p.window === undefined))
+      fail(`${path}.periodShorten`, 'expected exactly one of state and window');
+    const slot = oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`);
+    const ref = parseRef(p.ref, `${path}.periodShorten.ref`);
+    if (p.state !== undefined) {
+      effect.periodShorten = { state: parseNamedStateId(p.state, `${path}.periodShorten.state`, 'ally'), slot, ref };
+    } else {
+      // 2 段目の段 15 の PR 3（論点 7）: 名前の無い窓（きっかけから N 秒）。きっかけはいまはバースト使用時だけ
+      const w = p.window;
+      const at = `${path}.periodShorten.window`;
+      if (!isRecord(w)) fail(at, 'expected an object');
+      for (const key of Object.keys(w))
+        if (key !== 'trigger' && key !== 'durationRef') fail(`${at}.${key}`, 'unknown field');
+      if (w.trigger !== 'burstUse') fail(`${at}.trigger`, `expected "burstUse", got ${JSON.stringify(w.trigger)}`);
+      effect.periodShorten = {
+        window: { trigger: 'burstUse', durationRef: parseRef(w.durationRef, `${at}.durationRef`) },
+        slot,
+        ref,
+      };
+    }
   }
   // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ。2 段目の段 14 の PR 2（plan/design-skill-stage14.md
   // 2.5 節）: 射撃の回数のきっかけ（数える窓なし）も
@@ -3611,6 +3667,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
         'gaugePerHit needs a timer trigger ({ everySeconds }) or a shot count trigger without a counting window',
       );
     if (effect.gaugeHits !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with gaugeHits');
+    // 2 段目の段 15 の PR 3: 1 パス目は名前の無い窓の短縮を追わない（使い手のエイダの S2 はゲージを溜めるかを確かめていない）
+    if (effect.periodShorten?.window !== undefined)
+      fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');
     // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない
     if (effect.delayFrames === undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit needs delayFrames');
     // エレグの S1（C-0773）: 射撃の回数のきっかけなら、条件 enemyState だけは 1 パス目が発火のフレームで見る（skills/holders.ts の enemyStateAt）
@@ -4092,7 +4151,7 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     kind === 'cooldownReduction'
       ? ['burstStepMix', 'squad']
       : kind === 'heal'
-        ? ['burstStepMix', 'squad', 'withCharacter']
+        ? ['burstStepMix', 'squad', 'withCharacter', 'targetBurstStep']
         : [];
   // 種類ごとの欄: 弾丸チャージの発数（scaling）。2 段目の段 12: cooldownReduction の直書きの秒数（seconds。PR 3）と発火の条件
   // （condition。PR 4。plan/design-skill-stage12.md 2.6 節）
@@ -4181,6 +4240,9 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
   if (targetElement !== undefined) effect.targetElement = targetElement;
   if (targetClass !== undefined) effect.targetClass = targetClass;
+  // 2 段目の段 15 の PR 3: heal の「基本バースト段階が N の」（欄の一覧で heal だけに限ってある）
+  const step = parseTargetBurstStep(v, target, path);
+  if (step !== undefined) (effect as HealEffect).targetBurstStep = step;
   // 2 段目の段 8: heal も N 機の対象（lowestHpRatio）の N を持つ
   Object.assign(effect, count);
   if (hasDuration) Object.assign(effect, parseDuration(v, path));

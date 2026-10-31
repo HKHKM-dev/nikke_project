@@ -173,6 +173,9 @@ export function fixedTargetsOf(
   // 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 「残りの HP の割合が最も低い味方 N 機」（heal の lowestHpRatio）は、枠の HP の
   // 割合の想定（省略は満タン）の低い順・同値は枠の若い順（C-0567）。自分も候補。先頭の N 枠は skills/targets.ts が取る
   if (effect.kind === 'heal') {
+    // 2 段目の段 15 の PR 3: 「基本バースト段階が N の」（エイダの S1 の吸収回復。timed と同じ countsAsBurstStep）
+    const step = effect.targetBurstStep;
+    if (step !== undefined) return characters.flatMap((c, i) => (c !== null && countsAsBurstStep(c, step) ? [i] : []));
     if (effect.target !== 'lowestHpRatio') return undefined;
     const ratio = (i: number) => characters[i]?.hpRatio ?? 1;
     return characters.flatMap((c, i) => (c === null ? [] : [i])).sort((a, b) => ratio(a) - ratio(b) || a - b);

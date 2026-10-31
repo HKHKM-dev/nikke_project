@@ -15,6 +15,7 @@ import {
   FULL_BURST_BOOST,
   skillElementMultiplier,
   stickHitMultiplier,
+  trueDamageBucketMultiplier,
 } from '../damage.ts';
 import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
@@ -35,6 +36,7 @@ import {
   type TimerTrigger,
 } from './types.ts';
 import {
+  durationSecondsOf,
   isResolvedShotCount,
   isResolvedTimer,
   resolveCondition,
@@ -104,6 +106,11 @@ export type ResolvedSkillDamage = {
 
 export type ResolvedBurstDamage = ResolvedSkillDamage;
 
+/** 周期の短縮の解決した形（skills/types.ts の PeriodShorten） */
+export type ResolvedPeriodShorten = { seconds: number } & (
+  { state: NamedStateId; window?: never } | { window: { trigger: 'burstUse'; durationFrames: number }; state?: never }
+);
+
 /** Stage 8: トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
 export type ResolvedDamageEffect = ResolvedSkillDamage & {
   /** 2 段目の段 13 の PR 1: { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders.ts の counterFullFrames） */
@@ -130,8 +137,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    */
   hitOffsets?: number[];
   valueDelayFrames?: number;
-  /** 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames） */
-  periodShorten?: { state: NamedStateId; seconds: number };
+  /**
+   * 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames）。
+   * 2 段目の段 15 の PR 3: window なら、自分のバースト使用のフレームから durationFrames の間（縮めた次の発動のフレームだけで見る）
+   */
+  periodShorten?: ResolvedPeriodShorten;
   /** V-0545: 周期の発火のどのヒットも射手の 1 ヒットぶんのゲージを溜める（frame/firstPass.ts が予約する） */
   gaugePerHit?: true;
   /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
@@ -345,14 +355,23 @@ export function resolveDamageEffects(
         if (effect.valueDelayFrames !== undefined) r.valueDelayFrames = effect.valueDelayFrames;
       }
       if (effect.periodShorten !== undefined && isResolvedTimer(trigger)) {
-        const { state, slot: from, ref } = effect.periodShorten;
+        const { slot: from, ref, state, window } = effect.periodShorten;
         const seconds = skillValue(character.skills[from], ref, levels[from]);
         if (!(seconds > 0 && seconds < trigger.everySeconds)) {
           throw new RangeError(
             `skill ${skill.id}: the shortened period must stay positive (${trigger.everySeconds} − ${seconds})`,
           );
         }
-        r.periodShorten = { state, seconds };
+        r.periodShorten =
+          window === undefined
+            ? { state, seconds }
+            : {
+                window: {
+                  trigger: window.trigger,
+                  durationFrames: gameSecondsToFrames(durationSecondsOf(window, character.skills[from], levels[from])),
+                },
+                seconds,
+              };
       }
       if (effect.gaugePerHit === true) r.gaugePerHit = true;
       if (effect.coreHit === true) {
@@ -614,6 +633,9 @@ export function resolvePerShotDamage(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
         );
       }
+      // 2 段目の段 15 の PR 3: 射撃ごとに畳み込む値（damage.ts）は防御力を引いた式だけを持つ。防御力無視は使い手が出た時に足す
+      if (effect.damageType === 'true')
+        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be true damage`);
       const r: ResolvedSkillDamage = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: effect.damageType,
@@ -641,6 +663,11 @@ export type BurstHitInput = {
   distributedDamageMultiplier?: number;
   /** 2026-10-29 のキャラの編: Σ sequentialAttackDamage。sequential の効果にだけ、攻撃ダメージ▲と同じ和に足す（V-0545）。省略 0 */
   sequentialAttackDamage?: number;
+  /**
+   * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節）: Σ trueDamage（防御力無視ダメージ▲）。damageType true の効果にだけ、攻撃ダメージ▲と
+   * 同じ和に足す（damage.ts の TRUE_DAMAGE_BUCKET。C-0525）。省略 0
+   */
+  trueDamage?: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
   /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
@@ -728,6 +755,11 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const groupOf = (effect: ResolvedSkillDamage): number =>
     boostBase + (effect.core === true ? boostCore : 0) + (effect.distance === true ? boostDistance : 0);
   const common = baseHit * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
+  // 2 段目の段 15 の PR 3: 防御力無視ダメージ（damageType true）は防御力を引かず（max(1, 攻撃力)）、防御力無視ダメージ▲を攻撃ダメージ▲と
+  // 同じ和に足す（使用武器の変更の防御力無視の発と同じ。damage.ts の trueDamageMultiplier）
+  const trueFactor =
+    (Math.max(1, input.attack) / baseHit) *
+    trueDamageBucketMultiplier(input.attackDamageMultiplier, input.trueDamage ?? 0);
   // 持続ダメージ▲は持続ダメージ（自動攻撃を除く）にだけ掛かり、コアは自動攻撃にだけ掛かるので、持続ダメージ▲の倍率グループはコアなし
   const placement = input.sustainedDamagePlacement ?? SUSTAINED_DAMAGE_PLACEMENT;
   const sustained = sustainedMultiplier(input.sustainedDamage ?? 0, placement, boostBase, input.attackDamageMultiplier);
@@ -744,6 +776,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
       groupOf(effect) *
       effect.multiplier *
       (effect.damageType === 'distributed' ? distributedFactor : 1) *
+      (effect.damageType === 'true' ? trueFactor : 1) *
       (effect.sequential === true ? sequential : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
       (effect.projectileStick === true ? stick : 1) *
@@ -864,6 +897,7 @@ export function computeSkillHit(
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
     sequentialAttackDamage: buffs.sequentialAttackDamage,
+    trueDamage: buffs.trueDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
     projectileStickMultiplier: stickHitMultiplier(buffs),

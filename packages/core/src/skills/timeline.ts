@@ -26,7 +26,7 @@
 // 1 パス目の件の一覧（skills/holders.ts）の段の印で再現する。区間はその履歴の値の小片から作り（buffTimelineOf）、ここには区間の
 // 組み立て（buildSegments）と、件を作る関数（unionItems など）、トリガーの発火の列（triggerFrames）を置く。段 E で窓と記録の
 // 書き出し（BuffTimeline の windows・stateWindows・namedStateWindows・cycleWindows と記録の欄）を消した（読む側は履歴を読む）。
-import { isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
+import { effectFrameOf, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
@@ -47,6 +47,7 @@ import {
 } from './resolve.ts';
 import type { RankSlot } from './ranking.ts';
 import type { TimerTrigger } from './types.ts';
+import type { ResolvedPeriodShorten } from './burstDamage.ts';
 import { stackItems } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import {
@@ -355,8 +356,9 @@ export function shortenedTimerFrames(
   shortenSeconds: number,
   frames: number,
   shortened: (frame: number) => boolean,
+  nextOnly = false,
 ): number[] {
-  const fires = shortenedTimer(trigger, shortenSeconds, frames, shortened);
+  const fires = shortenedTimer(trigger, shortenSeconds, frames, shortened, nextOnly);
   const out: number[] = [];
   for (let f = 0; f < frames; f++) if (fires(f)) out.push(f);
   return out;
@@ -365,13 +367,16 @@ export function shortenedTimerFrames(
 /**
  * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: shortenedTimerFrames の規則を、フレームの順に決める形にしたもの。返す関数は
  * 0 から frames − 1 まで順に呼び、そのフレームに発動すれば true。shortened は戦闘開始・発動のフレームと、縮めた次の発動のフレームに
- * だけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった状態で周期のゲージを追うのに使う
+ * だけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった状態で周期のゲージを追うのに使う。
+ * 2 段目の段 15 の PR 3（V-0569）: nextOnly なら、前の発動のフレームは見ず、縮めた次の発動のフレームで shortened なら縮める（名前の無い
+ * 窓の periodShorten。エイダの閃光手榴弾投擲は、窓が始まると次の発動が前の発動から縮めた周期の所に来る）
  */
 export function shortenedTimer(
   trigger: TimerTrigger,
   shortenSeconds: number,
   frames: number,
   shortened: (frame: number) => boolean,
+  nextOnly = false,
 ): (frame: number) => boolean {
   const { everySeconds } = trigger;
   const short = everySeconds - shortenSeconds;
@@ -383,7 +388,7 @@ export function shortenedTimer(
   const after = (period: number) =>
     trigger.carry === true ? gameSecondsToFirstFrame(seconds + period) : frame + gameSecondsToFirstFrame(period);
   const plan = () => {
-    shortFrame = shortened(frame) ? after(short) : undefined;
+    shortFrame = nextOnly || shortened(frame) ? after(short) : undefined;
     longFrame = after(everySeconds);
   };
   plan();
@@ -397,6 +402,27 @@ export function shortenedTimer(
     plan();
     return true;
   };
+}
+
+/**
+ * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。V-0569）: 周期のきっかけの倍率ダメージの発火のフレーム（2 パス目。frame/plan.ts）。
+ * 周期の短縮（periodShorten）があれば縮めた周期で並べる。state は自分の状態（selfState）、窓は自分のバースト使用（バーストの効果が付く
+ * フレーム。burstUse のきっかけと同じ）から durationFrames の間で、縮めた次の発動のフレームだけで見る
+ */
+export function timerDamageFrames(
+  trigger: TimerTrigger,
+  shorten: ResolvedPeriodShorten | undefined,
+  frames: number,
+  schedule: BurstSchedule | null,
+  slotIndex: number,
+  selfState: (state: NamedStateId, frame: number) => boolean,
+): number[] {
+  if (shorten === undefined) return timerFramesOf(trigger, frames);
+  const { state, window } = shorten;
+  if (window === undefined) return shortenedTimerFrames(trigger, shorten.seconds, frames, (f) => selfState(state, f));
+  const starts = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex).map(effectFrameOf);
+  const inWindow = (f: number) => starts.some((s) => s <= f && f < s + window.durationFrames);
+  return shortenedTimerFrames(trigger, shorten.seconds, frames, inWindow, true);
 }
 
 /**

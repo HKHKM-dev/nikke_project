@@ -1378,10 +1378,13 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   lastShotGapMedians: { args: ['slot', 'every'], sim: lastShotGapMedians },
   fullBurstMagazineShots: { args: ['slot'], sim: fullBurstMagazineShots },
   cycleWindowResidues: { args: ['slot', 'every'], sim: cycleWindowResidues },
+  // 2 段目の段 15 の PR 3（V-0569）: 省略できる引数 video が true なら、録画の動画のフレームの間隔（フルバーストの入りの止まり・発動の止まりを
+  // 含む。videoFrameOf）。HUD の増分どうしの間隔と比べる（入りの止まりを挟む発の間隔）
   shotIntervals: {
     args: ['slot'],
     sim: (r, c) => {
-      const frames = shotFramesIn(r, c);
+      const raw = shotFramesIn(r, c);
+      const frames = c.args.video === true ? raw.map((f) => videoFrameOf(r.schedule, f)) : raw;
       return frames.slice(1).map((f, i) => f - frames[i]!);
     },
   },
