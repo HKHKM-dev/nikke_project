@@ -1789,7 +1789,8 @@ function spanOf(
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const m = /^(fullBurst|activation):(\d+)$/.exec(anchor);
-  if (m === null) throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit・prevShot（${anchor}）`);
+  if (m === null)
+    throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit・prevShot（${anchor}）`);
   const n = Number(m[2]);
   if (m[1] === 'fullBurst') {
     const window = schedule.fullBurstWindows[n];
