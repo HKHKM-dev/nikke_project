@@ -833,7 +833,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0689（確定）
   - effects[1] state・burstHit・boomInstall（enemyDefenseDown）: C-0690（確定）
-  - effects[2] timed・burstUse・distributedDamage: C-0691（確定）
+  - effects[2] timed・burstUse・distributedDamage: C-0691（確定）、C-0778（確定）
 
 ## 501 トロニー
 
