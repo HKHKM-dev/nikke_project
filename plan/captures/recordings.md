@@ -767,6 +767,8 @@
 | 0793 | `20261031-0793_smg+sr+ar_sakura+delta+idoll-sun_sun-control.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0542 の B（I-DOLL・サン。対照）。10 本ずつの K が両方と合ったので足した 2 本 |
 | 0794 | `20261031-0794_smg+sr+sg_sakura+delta+drake_drake-control.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ドレイク（101、SG・灼熱・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0542 の A（ドレイク。宝物 3 段階）。10 本ずつの K が両方と合ったので足した 2 本 |
 | 0795 | `20261031-0795_smg+sr+sg_sakura+delta+drake_drake-control.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ドレイク（101、SG・灼熱・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0542 の A（ドレイク。宝物 3 段階）。10 本ずつの K が両方と合ったので足した 2 本 |
+| 0797 | `20261031-0797_smg+mg+ar_sakura+elegg+mihara_elegg-s1-gauge-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎ミハラ（161、AR・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0564（エレグの S1 のゲージ）。ミハラ（操作・撃たない） |
+| 0798 | `20261031-0798_smg+mg+ar_sakura+elegg+mihara_elegg-s1-gauge-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎ミハラ（161、AR・水冷・SR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0564（エレグの S1 のゲージ）。ミハラ（操作・撃たない） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
