@@ -778,6 +778,10 @@
 | 0804 | `20261031-0804_smg+sr+sg_sakura+delta+queen-makoto_dist-taken-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎クイーン（真）（870、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 0805 | `20261031-0805_smg+mg+rl_sakura+elegg+scarlet-black-shadow_dist-taken-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎紅蓮：ブラックシャドウ（225、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 0806 | `20261031-0806_smg+mg+rl_sakura+elegg+scarlet-black-shadow_dist-taken-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎紅蓮：ブラックシャドウ（225、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 0807 | `20261101-0807_smg+sr+rl_sakura+delta+raven_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0579。鈴原サクラ（I・AI）・デルタ（II・AI）・レイヴン（III・操作） |
+| 0808 | `20261101-0808_smg+sr+rl_sakura+delta+raven_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎レイヴン（851、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0579。鈴原サクラ（I・AI）・デルタ（II・AI）・レイヴン（III・操作） |
+| 0809 | `20261101-0809_smg+sr+rl_sakura+delta+rapi-redhood_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0580。鈴原サクラ（I・AI）・デルタ（II・AI）・ラピ：レッドフード（III・操作） |
+| 0810 | `20261101-0810_smg+sr+rl_sakura+delta+rapi-redhood_taken.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0580。鈴原サクラ（I・AI）・デルタ（II・AI）・ラピ：レッドフード（III・操作） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
