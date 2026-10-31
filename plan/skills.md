@@ -994,7 +994,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足
   - effects[2] state・battleStart・persona（elementDamage）: C-0354（確定）
     - contents[0] elementDamage: C-0296（確定）
   - effects[3] damage・burstUse・distributed: C-0310（確定）
-  - effects[4] damage・followUp が適用された時・distributed: C-0429（仮説）
+  - effects[4] damage・followUp が適用された時・distributed: C-0429（確定）
   - notes[0] 間接（防御力）: 防御力▲（ペルソナ - ヨハンナ）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
 - **skill2**: supported
   - effects[0] passive・attackDamage: C-0018（確定）

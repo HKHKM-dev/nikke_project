@@ -794,6 +794,8 @@
 | 0820 | `20261101-0820_rl_tu_squad.mp4` | エマ：タクティカル・アップ（93、MG・灼熱・SSR） + ウンファ：タクティカル・アップ（95、SR・灼熱・SSR） + ◎ベスティー：タクティカル・アップ（94、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0584 の撮影 B3（段 16 の PR 2）。エマ：タクティカル・アップ（I）・ウンファ：タクティカル・アップ（II）・ベスティー：タクティカル・アップ（III・操作）。オート射撃 ON・オートバースト ON |
 | 0821 | `20261101-0821_smg+mg+rl_sakura+crown+rapi-redhood_stick-ad.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + クラウン（330、MG・鉄甲・SSR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0581。鈴原サクラ（I・AI）・クラウン（II・AI）・ラピ：レッドフード（III・操作） |
 | 0822 | `20261101-0822_smg+mg+rl_sakura+crown+rapi-redhood_stick-ad.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + クラウン（330、MG・鉄甲・SSR） + ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0581。鈴原サクラ（I・AI）・クラウン（II・AI）・ラピ：レッドフード（III・操作） |
+| 0823 | `20261101-0823_smg+sr+mg+sg_sakura+delta+yukiko+queen-makoto_followup-taken-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎雪子（871、MG・灼熱・SSR） + クイーン（真）（870、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 0824 | `20261101-0824_smg+sr+mg+sg_sakura+delta+yukiko+queen-makoto_followup-taken-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎雪子（871、MG・灼熱・SSR） + クイーン（真）（870、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

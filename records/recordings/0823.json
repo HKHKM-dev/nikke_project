@@ -1,0 +1,52 @@
+{
+  "id": "0823",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0823_smg+sr+mg+sg_sakura+delta+yukiko+queen-makoto_followup-taken-1.mp4",
+  "original": "2026-11-01_01-42-21.mp4",
+  "durationSec": 205.4,
+  "frames": 12323,
+  "fps": 60,
+  "sizeMB": 248.7,
+  "sha256": "f2d089bdd39c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 871,
+      "name": "雪子",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 870,
+      "name": "クイーン（真）",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-01T01:50+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
