@@ -18921,6 +18921,126 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0830-12",
+      "element": "ノワール burst.effects[1]",
+      "key": "a2294cda62ba7a9d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0830-13",
+      "element": "ノワール burst.effects[1]",
+      "key": "b41a03909f1ffb9b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0830-14",
+      "element": "ノワール burst.effects[1]",
+      "key": "e1a4e6252fe51cb0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0830-15",
+      "element": "ノワール burst.effects[1]",
+      "key": "ede50eebecbc0552",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0831-10",
+      "element": "ノワール burst.effects[1]",
+      "key": "8b94977fb67dcfec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0831-11",
+      "element": "ノワール burst.effects[1]",
+      "key": "ba54191045ea3ed9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0831-12",
+      "element": "ノワール burst.effects[1]",
+      "key": "8fb4f6a56261885a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0832-08",
+      "element": "ノワール burst.effects[1]",
+      "key": "bb0ce78023a04f6b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0832-09",
+      "element": "ノワール burst.effects[1]",
+      "key": "accef17ced142139",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0833-08",
+      "element": "ノワール burst.effects[1]",
+      "key": "b6cdb154e118e185",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0833-09",
+      "element": "ノワール burst.effects[1]",
+      "key": "3206126e867fd719",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0834-12",
+      "element": "ノワール burst.effects[1]",
+      "key": "7db3e2239cbe96d8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0834-13",
+      "element": "ノワール burst.effects[1]",
+      "key": "587e4314264ca395",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0834-14",
+      "element": "ノワール burst.effects[1]",
+      "key": "55a38381075d04a6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0834-15",
+      "element": "ノワール burst.effects[1]",
+      "key": "094e0af73c06fb54",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

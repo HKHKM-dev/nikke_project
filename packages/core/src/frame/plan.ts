@@ -695,7 +695,7 @@ export function burstSnapshotState(
  * 撃つ側のバフも敵の側のデバフ（受けるダメージ▲・防御力▼）も、発動のフレーム activationFrame の時点（preActivation なら直前）で
  * 固定する。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで付く S2 の攻撃ダメージ▲は乗らない
  * （`0079-07`）。ノワールのヒットには、III の発動の後・ヒットの前に付いた鈴原サクラの受けるダメージ▲は乗らず、発動の時に付いていて
- * ヒットの前に切れた▲は乗る（C-0795）。hitFrame は、sameActivation の小片がヒットまで続いているかを見るのと、enemyDebuffs が 'hit'
+ * ヒットの前に切れた▲は乗る（C-0795）。I・II の受け手（ルドミラ・ユニ）でも同じ（C-0813）。hitFrame は、sameActivation の小片がヒットまで続いているかを見るのと、enemyDebuffs が 'hit'
  * のときにだけ使う。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
  * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）。
