@@ -1,0 +1,47 @@
+{
+  "id": "0784",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0784_sr+ar+sr_delta+idoll-sun+milk.mp4",
+  "original": "2026-10-31_18-31-02.mp4",
+  "durationSec": 203.5,
+  "frames": 12210,
+  "fps": 60,
+  "sizeMB": 246.5,
+  "sha256": "678709ee08d1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 141,
+      "name": "ミルク",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0559 の撮影 A2（段 15 の PR 1）。デルタ（II・AI）・I-DOLL・サン（III・AI）・ミルク（I・操作・オート射撃 ON）。オートバースト ON。スペック固定で宝物版のスキル。最後に戦闘履歴が写っている",
+  "backup": {
+    "at": "2026-10-31T19:05+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "formatVersion": 1,
+  "resourceId": 141,
+  "checkedAt": "2026-10-31",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機への攻撃力▲（10 秒）は未対応（きっかけの書かれていない CT ごとのアクティブで、周期を録画で読んでいない。宝物版を持つキャラはスペック固定でも宝物版が出るので、基礎版を撮れない。plan/design-skill-stage15.md 論点 3）",
+          "en": "The ATK up (10 s) on the 2 allies with the highest final ATK is not modeled (an active skill on its own cooldown with no trigger written; its interval has not been read from a recording. The base version cannot be recorded because the treasure version shows even with fixed spec. plan/design-skill-stage15.md issue 3)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "topAttack",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 1,
+          "condition": {
+            "selfHp": {
+              "atLeast": 80
+            }
+          },
+          "reads": [
+            "hp"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵",
+            "en": "The enemy with the highest final DEF is that enemy, given one enemy"
+          }
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 1,
+          "assumes": {
+            "ja": "味方全体の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
+            "en": "Lifesteal on all allies (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+          }
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 20
+          },
+          "target": "topAttack",
+          "targetCountRef": 5,
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "値 03（20）秒ごとに、最終攻撃力が最も高い味方 値 05（3）機に付き、10 秒続く",
+            "en": "Every value 03 (20) s, applied to the value 05 (3) allies with the highest final ATK for 10 s"
+          },
+          "claims": [
+            "C-0769"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "burstCooldown",
+          "scaling": "flat",
+          "ref": 4,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "戦闘開始時に付き、戦闘の終わりまで続く（持続）。効いている間に使ったバーストのクールタイムを 値 04（20）秒縮める（T4。モランの熱血と同じ形）",
+            "en": "Applied at battle start and lasts until the battle ends. Shortens the cooldown of a Burst used while it is active by value 04 (20) s (T4, the same shape as Moran's Fervor)"
+          },
+          "claims": [
+            "C-0769"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 2,
+          "condition": {
+            "selfHp": {
+              "atLeastRef": 1
+            }
+          },
+          "reads": [
+            "hp"
+          ],
+          "claims": [
+            "C-0770"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 3
+          },
+          "target": "allies",
+          "ref": 4,
+          "assumes": {
+            "ja": "「フルチャージ攻撃が 10 回命中した時」を、フルチャージの発を 10 回撃った時と読む（SR の発は外れない前提）。味方全体（自分も）の残りのバーストのクールタイムを 値 04（2.83）秒縮める（即時）",
+            "en": "Reads \"when Full Charge attacks hit 10 times\" as firing 10 Full Charge shots (SR shots are assumed to hit). Reduces the remaining Burst cooldown of all allies (including self) by value 04 (2.83) s (instant)"
+          },
+          "claims": [
+            "C-0770"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 1 機は、敵 1 体の前提でその敵",
+            "en": "The enemy with the highest final DEF is that enemy, given one enemy"
+          },
+          "claims": [
+            "C-0771"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "味方全体の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
+            "en": "Lifesteal on all allies (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "HP recovery taken up for all allies does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}

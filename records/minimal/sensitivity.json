@@ -16017,6 +16017,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0784-06",
+      "element": "ミルク treasureSkills.burst.effects[1]",
+      "key": "a05af7d1237ef38a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0785-08",
+      "element": "ミルク treasureSkills.burst.effects[1]",
+      "key": "71fafab266e035e3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

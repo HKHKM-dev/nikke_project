@@ -1,0 +1,52 @@
+{
+  "id": "0790",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0790_smg+ar+rl+sr_liter+idoll-sun+ada+delta.mp4",
+  "original": "2026-10-31_18-52-30.mp4",
+  "durationSec": 200.7,
+  "frames": 12042,
+  "fps": 60,
+  "sizeMB": 243.2,
+  "sha256": "37eb188684a7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 840,
+      "name": "エイダ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0559 の撮影 D（段 15 の PR 3）。リター（I・AI）・I-DOLL・サン（III・AI）・エイダ（III・操作・オート射撃 ON）・デルタ（II・AI）。オートバースト ON。最後に戦闘履歴が写っている",
+  "backup": {
+    "at": "2026-10-31T19:06+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

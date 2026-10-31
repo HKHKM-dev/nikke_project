@@ -157,7 +157,7 @@ describe('自分の HP の割合の条件（selfHp）', () => {
     expect(() =>
       parseSkillDefinition(withEffect({ ...passive, condition: { selfHp: { atLeastRef: 1 } } })),
     ).not.toThrow();
-    expect(() => parseSkillDefinition(withEffect({ ...passive, condition: { selfHp: { atLeast: 0.7 } } }))).toThrow(
+    expect(() => parseSkillDefinition(withEffect({ ...passive, condition: { selfHp: { below: 70 } } }))).toThrow(
       /unknown field/,
     );
     expect(() => parseSkillDefinition(withEffect({ ...passive, condition: { inFullBurst: true } }))).toThrow(

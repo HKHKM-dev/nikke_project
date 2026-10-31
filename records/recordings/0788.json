@@ -1,0 +1,46 @@
+{
+  "id": "0788",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0788_smg+sr+rl_liter+delta+ada.mp4",
+  "original": "2026-10-31_18-45-20.mp4",
+  "durationSec": 200.6,
+  "frames": 12038,
+  "fps": 60,
+  "sizeMB": 243.2,
+  "sha256": "94d5d86f35f3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 840,
+      "name": "エイダ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0559 の撮影 C（段 15 の PR 3）。リター（I・AI）・デルタ（II・AI）・エイダ（III・操作・オート射撃 ON）。オートバースト ON。エイダが唯一の III。最後に戦闘履歴が写っている",
+  "backup": {
+    "at": "2026-10-31T19:06+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
