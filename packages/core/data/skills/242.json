@@ -71,7 +71,8 @@
             "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not on hits inside its window (C-0082, C-0695). The targets are the top 2 allies by final attack at the burst-use frame, leaving out windows applied in that frame (including the attack increase from being healed; self is a candidate; option A of plan/design-heal-top-attack.md section 2). Reaching the ally with the highest final attack was seen in recording 0710 (C-0695); the time the ranking is taken (whether an attack increase applied in the same frame counts; no current definition has one) and reaching the second ally are not verified. Assumed to apply to allies at full HP. The healed amount does not affect damage"
           },
           "claims": [
-            "C-0695"
+            "C-0695",
+            "C-0763"
           ]
         }
       ],

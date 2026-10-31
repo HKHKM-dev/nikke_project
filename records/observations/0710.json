@@ -145,5 +145,405 @@
       "slot": 4,
       "source": "normal"
     }
+  },
+  {
+    "id": "0710-10",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": -25.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -67,
+      "high": 16
+    },
+    "description": "アスカの S1 の攻撃力▲（S1なし → S1あり）が アスカ の 1 発で替わるまでの時刻の幅（1 番目の事象 f1433 から数えた動画のフレーム）。S1なしの最後の発は -68f、S1ありの最初の発は 16f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1なし → S1あり（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜28f。S1なし 75・S1あり 16・区別できない 0・外れ 140・食い違い（S1ありの最初の発より後のS1なしの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 41.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-11",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": -28.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -70,
+      "high": 13
+    },
+    "description": "アスカの S1 の攻撃力▲（S1なし → S1あり）が アスカ の 1 発で替わるまでの時刻の幅（2 番目の事象 f3811 から数えた動画のフレーム）。S1なしの最後の発は -71f、S1ありの最初の発は 13f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1なし → S1あり（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜28f。S1なし 75・S1あり 16・区別できない 0・外れ 140・食い違い（S1ありの最初の発より後のS1なしの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 41.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-12",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": -48.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -105,
+      "high": 8
+    },
+    "description": "アスカの S1 の攻撃力▲（S1なし → S1あり）が アスカ の 1 発で替わるまでの時刻の幅（3 番目の事象 f6188 から数えた動画のフレーム）。S1なしの最後の発は -106f、S1ありの最初の発は 8f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1なし → S1あり（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜28f。S1なし 75・S1あり 16・区別できない 0・外れ 140・食い違い（S1ありの最初の発より後のS1なしの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 2,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 56.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-13",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": -3,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -6,
+      "high": 0
+    },
+    "description": "アスカの S1 の攻撃力▲（S1なし → S1あり）が アスカ の 1 発で替わるまでの時刻の幅（4 番目の事象 f8566 から数えた動画のフレーム）。S1なしの最後の発は -7f、S1ありの最初の発は 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1なし → S1あり（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜28f。S1なし 75・S1あり 16・区別できない 0・外れ 140・食い違い（S1ありの最初の発より後のS1なしの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 3,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-14",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "record",
+    "value": -3,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -6,
+      "high": 0
+    },
+    "description": "アスカの S1 の攻撃力▲（S1なし → S1あり）が アスカ の 1 発で替わるまでの時刻の幅の、5 回の事象（f1433・3811・6188・8566・10943）の共通部分（事象から数えた動画のフレーム）。S1なしの最後の発の最も遅いものは -7f、S1ありの最初の発の最も早いものは 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1なし → S1あり（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -150〜28f。S1なし 75・S1あり 16・区別できない 0・外れ 140・食い違い（S1ありの最初の発より後のS1なしの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0710-15",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1428,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1348,
+      "high": 1508
+    },
+    "description": "アスカの S1 の攻撃力▲（S1あり → S1なし）が アスカ の 1 発で替わるまでの時刻の幅（1 番目の事象 f1433 から数えた動画のフレーム）。S1ありの最後の発は 1347f、S1なしの最初の発は 1508f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1あり → S1なし（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 1300〜1700f。S1あり 58・S1なし 66・区別できない 0・外れ 245・食い違い（S1なしの最初の発より後のS1ありの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 80
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-16",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1491,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1489,
+      "high": 1493
+    },
+    "description": "アスカの S1 の攻撃力▲（S1あり → S1なし）が アスカ の 1 発で替わるまでの時刻の幅（2 番目の事象 f3811 から数えた動画のフレーム）。S1ありの最後の発は 1488f、S1なしの最初の発は 1493f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1あり → S1なし（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 1300〜1700f。S1あり 58・S1なし 66・区別できない 0・外れ 245・食い違い（S1なしの最初の発より後のS1ありの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 1,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-17",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1539.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1477,
+      "high": 1602
+    },
+    "description": "アスカの S1 の攻撃力▲（S1あり → S1なし）が アスカ の 1 発で替わるまでの時刻の幅（3 番目の事象 f6188 から数えた動画のフレーム）。S1ありの最後の発は 1476f、S1なしの最初の発は 1602f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1あり → S1なし（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 1300〜1700f。S1あり 58・S1なし 66・区別できない 0・外れ 245・食い違い（S1なしの最初の発より後のS1ありの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 2,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 62.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-18",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1524.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1484,
+      "high": 1565
+    },
+    "description": "アスカの S1 の攻撃力▲（S1あり → S1なし）が アスカ の 1 発で替わるまでの時刻の幅（4 番目の事象 f8566 から数えた動画のフレーム）。S1ありの最後の発は 1483f、S1なしの最初の発は 1565f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1あり → S1なし（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 1300〜1700f。S1あり 58・S1なし 66・区別できない 0・外れ 245・食い違い（S1なしの最初の発より後のS1ありの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 4,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 3,
+        "n": 3,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 40.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0710-19",
+    "recording": "0710",
+    "kind": "timing",
+    "use": "record",
+    "value": 1491,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1489,
+      "high": 1493
+    },
+    "description": "アスカの S1 の攻撃力▲（S1あり → S1なし）が アスカ の 1 発で替わるまでの時刻の幅の、5 回の事象（f1433・3811・6188・8566・10943）の共通部分（事象から数えた動画のフレーム）。S1ありの最後の発の最も遅いものは 1488f、S1なしの最初の発の最も早いものは 1493f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":true}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S1なし: 枠 4（アスカ）のモデルの f4500、S1あり: 枠 4（アスカ）のモデルの f4000、ラム: 枠 1（ラム）のモデルの f4500、サン: 枠 2（I-DOLL・サン）のモデルの f4500。境は S1あり → S1なし（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 1300〜1700f。S1あり 58・S1なし 66・区別できない 0・外れ 245・食い違い（S1なしの最初の発より後のS1ありの発） 0"
+    },
+    "source": "V-0555",
+    "readAt": "2026-10-31",
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
   }
 ]

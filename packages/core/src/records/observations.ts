@@ -663,17 +663,20 @@ function buffPiecesOf(result: SimResult): ValuePiece[] {
   return valuePiecesOf(result.history).filter((p) => !isStateStat(p.effect.stat));
 }
 
+/** 枠（引数 slot）が受ける効果の小片のうち、引数 skill（スロット）と stat の効果のもの */
+function buffPiecesFor(result: SimResult, ctx: MetricContext): ValuePiece[] {
+  const slotIndex = slotIndexOf(ctx);
+  return buffPiecesOf(result).filter(
+    (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
+  );
+}
+
 /**
  * 5-2 の撮影計画（V-0177）: その枠が受ける timed の効果の窓の終わり（モデルのフレーム。戦闘時間で切った窓は戦闘の終わり）。
  * skill（'skill1' | 'skill2' | 'burst'）と stat で絞る
  */
 function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
-  const slotIndex = slotIndexOf(ctx);
-  return buffPiecesOf(result)
-    .filter(
-      (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
-    )
-    .map((w) => w.end);
+  return buffPiecesFor(result, ctx).map((w) => w.end);
 }
 
 /**
@@ -682,17 +685,7 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
  * videoFrameOf で足す。戦闘開始からの数）
  */
 function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
-  const slotIndex = slotIndexOf(ctx);
-  const starts = [
-    ...new Set(
-      buffPiecesOf(result)
-        .filter(
-          (w) =>
-            w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
-        )
-        .map((w) => w.start),
-    ),
-  ]
+  const starts = [...new Set(buffPiecesFor(result, ctx).map((w) => w.start))]
     .sort((a, b) => a - b)
     .map((f) => (ctx.args.video === true ? videoFrameOf(result.schedule, f) : f));
   return ctx.args.count === undefined ? starts : starts.slice(0, Number(ctx.args.count));
@@ -704,10 +697,7 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
  * 止まりを挟む間）は除く。録画とモデルで発の時刻をそろえずに、チャージ速度▲などの射撃の速さの▲の効きを比べる
  */
 function buffWindowShotIntervalMean(result: SimResult, ctx: MetricContext): number {
-  const slotIndex = slotIndexOf(ctx);
-  const windows = buffPiecesOf(result).filter(
-    (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
-  );
+  const windows = buffPiecesFor(result, ctx);
   if (windows.length === 0) throw new Error(`枠 ${String(ctx.args.slot)} に ${String(ctx.args.stat)} の窓が無い`);
   const inside = (f: number) => windows.some((w) => w.start <= f && f < w.end);
   const want = ctx.args.inside === true;
@@ -738,20 +728,36 @@ function buffWindowEndFromFullBurstEnd(result: SimResult, ctx: MetricContext): n
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const window = schedule.fullBurstWindows[Number(ctx.args.n)];
   if (window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
-  const slotIndex = slotIndexOf(ctx);
   const before = ctx.args.before === undefined ? FULL_BURST_AFTER_ACTIVATION_FRAMES : Number(ctx.args.before);
-  const ends = buffPiecesOf(result)
-    .filter(
-      (w) =>
-        w.slotIndex === slotIndex &&
-        w.effect.source.skill === ctx.args.skill &&
-        w.effect.stat === ctx.args.stat &&
-        window.start - before <= w.start &&
-        w.start < window.end,
-    )
+  const ends = buffPiecesFor(result, ctx)
+    .filter((w) => window.start - before <= w.start && w.start < window.end)
     .map((w) => w.end);
   if (ends.length === 0) throw new Error(`${String(ctx.args.n)} 回目のフルバーストの近くに始まった窓が無い`);
   return Math.max(...ends) - window.end;
+}
+
+/**
+ * フォルクヴァンのバーストの吸収回復の読み直し（V-0555）: 枠 from の n 回目（0 始まり）のバーストの発動の印（activationVideoFrameOf。
+ * I・II は六角形の替わり目）から、その発動から次の発動までに始まった、枠 slot が受ける timed の効果（skill と stat で絞る）の窓の
+ * 付き始め（edge: start）か切れ目（edge: end）までの動画のフレーム数。続いた小片は 1 つの窓にまとめる。味方の発動のきっかけで
+ * 付く窓を、録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（レシピ buff-edge の観測値の spread）と比べる
+ */
+function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
+  const edge = ctx.args.edge;
+  if (edge !== 'start' && edge !== 'end') throw new Error(`edge は start か end（${String(edge)}）`);
+  // 発動の印（base）と、その発動から次の発動まで（from〜to）は枠 from のもの
+  const span = spanOf(result, withArgs(ctx, { slot: ctx.args.from }), `activation:${String(ctx.args.n)}`, 'untilNext');
+  const pieces = buffPiecesFor(result, ctx).sort((a, b) => a.start - b.start);
+  const windows: { start: number; end: number }[] = [];
+  for (const w of pieces) {
+    const last = windows.at(-1);
+    if (last !== undefined && w.start <= last.end) last.end = Math.max(last.end, w.end);
+    else windows.push({ start: w.start, end: w.end });
+  }
+  const window = windows.find((w) => span.from <= w.start && w.start < span.to);
+  if (window === undefined)
+    throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の後に始まった窓が無い`);
+  return videoFrameOf(result.schedule, edge === 'start' ? window.start : window.end) - span.base;
 }
 
 /**
@@ -1354,6 +1360,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: buffWindowShotIntervalMean,
   },
   buffWindowEndFromFullBurstEnd: { args: ['slot', 'skill', 'stat', 'n'], sim: buffWindowEndFromFullBurstEnd },
+  buffEdgeFromActivation: { args: ['slot', 'skill', 'stat', 'from', 'n', 'edge'], sim: buffEdgeFromActivation },
   chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
   chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
   critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
