@@ -1,6 +1,5 @@
 // Stage 14: 未対応・近似・仮定の一覧を 1 画面にまとめる（plan/design-stage12.md 4.2 節。「未対応は明示」の原則）。
-// 2026-10-31: オーナーの指示で、モデル全体と敵の出来事の注記を消し、見出しの「枠 N」を消した。出すのは編成のニケごとの注記だけ
-// （モデル全体の範囲と前提は README の「精度と未対応」と plan/requirements.md にある）。
+// 枠ごとの内容は枠カード（スキル・育成・計算の内訳）に出しているものと同じで、ここでは編成全体を 1 か所で見渡せるようにする。
 import {
   SKILL_SLOTS,
   applyTreasure,
@@ -37,6 +36,35 @@ const LEVEL_CLASS: Record<Item['level'], string> = {
   approx: 'approx',
   assumed: 'approx',
 };
+
+/** 編成によらずモデル全体で扱わないもの・確かめていないもの（README の「精度と未対応」はここを指す） */
+const MODEL_WIDE: Item[] = [
+  {
+    level: 'assumed',
+    text: '実戦（迎撃戦・ソロレイド・ユニオンレイド）とは未照合。確かめたのはユニオン射撃場（スペック固定）の録画だけ',
+  },
+  {
+    level: 'unsupported',
+    text: 'コア命中率・弾丸命中率・距離ボーナスは、枠の条件が「自動」なら射撃場の的の表（単騎 AUTO の実測と、3 分モードの着地点）から、「手入力」なら入力の値。ボスなど表の無い敵では、自動でも手入力の値を使う。敵の移動・攻撃・カバーによる中断は、射撃場 3 分モードの的のジャンプ（敵の欄のチェック）だけ扱う。命中を数えるトリガーは全弾命中で数える',
+  },
+  {
+    level: 'assumed',
+    text: 'フルバースト中などに配られる持続の命中率▲は、条件が自動の枠で、効いている間だけ常時の命中率▲と足してコア命中率に効かせる（仮説。確かめたのは 1 つの編成だけ）。命中率▲は AR・SMG・MG の弾丸命中率も上げる（外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする。確かめたのは SMG の遠と中遠 B・C だけで、ほかの帯と AR・MG には同じ式を当てる。SG は近（近 A・近 B）だけ同じ式で上げ、中近・中遠・遠には効かせていない（未実装）。持続の▲による上がりもバーストゲージと命中の回数に入れる（仮説））',
+  },
+  { level: 'unsupported', text: 'ボスの行動パターン・パーツ破壊・貫通・範囲攻撃の複数ヒット' },
+  {
+    level: 'approx',
+    text: '射撃場 3 分モードの的のジャンプの時刻は 1 組の代表値（1 回目 32.35 秒・間隔 36.34・39.66・36.34・33.17 秒）。実際は 1 回目と 2→3・3→4 回目のジャンプが録画ごとに約 3.6〜4.6 秒の段で早まることがあり（撃たない間にも起きる。何で決まるかは未解明）、この早まりは未実装（C-0552・C-0553・C-0548）',
+  },
+  {
+    level: 'unsupported',
+    text: '被弾・HP の変動・回復量・シールド（生存の計算）。回復は「回復を受けた時」のトリガーにだけ使う',
+  },
+  {
+    level: 'assumed',
+    text: '育成（スペック固定 OFF）: AR のコレクションのコアダメージ▲と、キューブのリロード速度・最大装弾数は射撃場で未確認（OL・キューブの命中率とアンチコード・コレクションの倍率▲の掛かり方と丸め、攻撃力の合成順、OL の上昇値は確認済み）',
+  },
+];
 
 function slotItems(slot: NotesSummarySlot): Item[] {
   const items: Item[] = [];
@@ -90,16 +118,33 @@ function ItemList({ items }: { items: readonly Item[] }) {
   );
 }
 
-export function NotesSummary({ slots }: { slots: readonly (NotesSummarySlot | null)[] }) {
+export function NotesSummary({
+  slots,
+  enemyNotes,
+}: {
+  slots: readonly (NotesSummarySlot | null)[];
+  /** Stage 16-B: 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空 */
+  enemyNotes: readonly ModelNote[];
+}) {
   const filled = slots.filter((s): s is NotesSummarySlot => s !== null);
   return (
     <details className="panel notes-summary">
       <summary>未対応・近似・仮定の一覧</summary>
+      <h3>モデル全体</h3>
+      <ItemList items={MODEL_WIDE} />
+      {enemyNotes.length > 0 && (
+        <>
+          <h3>敵の出来事</h3>
+          <ItemList items={enemyNotes.map((n) => ({ level: n.level, text: n.message.ja }))} />
+        </>
+      )}
       {filled.map((slot) => {
         const items = slotItems(slot);
         return (
           <section key={slot.index}>
-            <h3>{slot.character.name.ja}</h3>
+            <h3>
+              枠 {slot.index + 1} {slot.character.name.ja}
+            </h3>
             {items.length === 0 ? <p className="hint">なし（すべて対応）</p> : <ItemList items={items} />}
           </section>
         );

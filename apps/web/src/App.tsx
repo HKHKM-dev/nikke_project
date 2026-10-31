@@ -303,7 +303,7 @@ export function App() {
               {computing && '（計算中…）'}
             </p>
           )}
-          <NotesSummary slots={summarySlots} />
+          <NotesSummary slots={summarySlots} enemyNotes={computed?.ok ? computed.result.enemyNotes : []} />
         </>
       )}
     </main>
