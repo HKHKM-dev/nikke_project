@@ -79,7 +79,7 @@ export function skillSupportBadge(
   character: CharacterData,
   status: SlotSkillsStatus,
   treasurePhase: TreasurePhase,
-): { label: string; className: string } | null {
+): { label: string; className: string } {
   const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
   const allUnsupported =
     status.kind === 'ready' &&
@@ -93,9 +93,8 @@ export function skillSupportBadge(
       const sup = shown.definition?.skills[s]?.support;
       return sup === 'unsupported' || sup === 'partial';
     });
-  // 2026-10-31: オーナーの指示で「未定義」の印は出さない（スキル定義なしは「未対応・近似・仮定の一覧」と選択肢の「（未）」に出る）
   return status.kind === 'undefined'
-    ? null
+    ? SUPPORT_BADGE.undefined
     : status.kind === 'loading'
       ? SUPPORT_BADGE.loading
       : status.kind === 'error'
