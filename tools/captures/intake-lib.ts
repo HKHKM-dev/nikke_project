@@ -2,21 +2,29 @@
 // ファイルも git も読まない（使った番号の一覧とキャラの宝物の有無は呼ぶ側が渡す）。不正な引数は Error（intake.ts が使い方と一緒に出す）。
 import { RECORDING_ID } from '../../packages/core/src/records/ids.ts';
 
+/** --id の形（4 桁の番号）。違えば Error */
+export function checkRecordingId(id: string): void {
+  if (!RECORDING_ID.test(id)) throw new Error('--id は 4 桁の数字（0001〜9999）');
+}
+
+/** first から順に n 個の 4 桁の番号（最後が 9999 を超えるなら Error） */
+function idsFrom(first: number, n: number): string[] {
+  if (first + n - 1 > 9999) throw new Error(`録画の番号が 9999 を超える（${first} から ${n} 本）`);
+  return Array.from({ length: n }, (_, i) => String(first + i).padStart(4, '0'));
+}
+
 /**
  * 使った番号（手元の録画の JSON とどのブランチの番号。3 桁の古い番号も数として比べる）の最大の次から n 個。数字でない番号
  * （L-AN など）は数えない
  */
 export function nextRecordingIds(n: number, used: readonly string[]): string[] {
-  const max = Math.max(0, ...used.filter((x) => /^\d+$/.test(x)).map(Number));
-  return Array.from({ length: n }, (_, i) => String(max + 1 + i).padStart(4, '0'));
+  return idsFrom(Math.max(0, ...used.filter((x) => /^\d+$/.test(x)).map(Number)) + 1, n);
 }
 
-/** --id から順に n 個（4 桁の番号。最後が 9999 を超えるなら Error） */
+/** --id から順に n 個 */
 export function sequentialRecordingIds(start: string, n: number): string[] {
-  if (!RECORDING_ID.test(start)) throw new Error('--id は 4 桁の数字（0001〜9999）');
-  const ids = Array.from({ length: n }, (_, i) => String(Number(start) + i).padStart(4, '0'));
-  if (ids.some((id) => !RECORDING_ID.test(id))) throw new Error(`--id ${start} から ${n} 本では 9999 を超える`);
-  return ids;
+  checkRecordingId(start);
+  return idsFrom(Number(start), n);
 }
 
 /**

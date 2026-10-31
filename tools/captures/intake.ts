@@ -55,7 +55,6 @@ import {
   type RecordingFolder,
   type RecordingMode,
 } from '../../packages/core/src/records/recordings.ts';
-import { RECORDING_ID } from '../../packages/core/src/records/ids.ts';
 import type { CharacterData, Element } from '../../packages/core/src/types.ts';
 import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import { reserve } from '../../packages/core/scripts/reserve.ts';
@@ -67,6 +66,7 @@ import { relUnder, splitRel } from '../drive/sync-lib.ts';
 import { capturesDir, recordDir } from './dirs.ts';
 import {
   batchNamesAndNotes,
+  checkRecordingId,
   isRecordingName,
   nextRecordingIds,
   parseOnOff,
@@ -237,7 +237,7 @@ if (fromDrive !== null) {
   if (gatewayUrl() === null) fail('環境変数 NIKKE_DRIVE_GATEWAY_URL が無い（Drive の中で移すのに受け口を使う）');
 }
 // 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）
-if (!RECORDING_ID.test(values.id)) fail('--id は 4 桁の数字（0001〜9999）');
+orFail(() => checkRecordingId(values.id!));
 if (!isRecordingName(values.name)) fail('--name は英小文字・数字・-・_・+');
 // 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 0400〜0402・0407。plan/design-investigation-review.md 5 節）
 if (values.name.includes('+'))

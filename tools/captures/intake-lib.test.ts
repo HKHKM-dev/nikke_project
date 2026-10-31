@@ -15,6 +15,7 @@ describe('番号の割り当て', () => {
     // ブランチの歴史に残る 3 桁の番号のほうが大きくても、数として比べる
     expect(nextRecordingIds(1, ['0099', '120'])).toEqual(['0121']);
     expect(nextRecordingIds(2, [])).toEqual(['0001', '0002']);
+    expect(() => nextRecordingIds(2, ['9999'])).toThrow(/9999 を超える/);
   });
 
   it('numbers from --id in order and refuses a bad --id or going past 9999', () => {
@@ -22,7 +23,7 @@ describe('番号の割り当て', () => {
     expect(() => sequentialRecordingIds('640', 1)).toThrow(/4 桁の数字/);
     expect(() => sequentialRecordingIds('0000', 1)).toThrow(/4 桁の数字/);
     expect(sequentialRecordingIds('9998', 2)).toEqual(['9998', '9999']);
-    expect(() => sequentialRecordingIds('9998', 3)).toThrow(/9999 を超える/);
+    expect(() => sequentialRecordingIds('9998', 3)).toThrow('録画の番号が 9999 を超える（9998 から 3 本）');
   });
 
   it('labels the reserved numbers', () => {
