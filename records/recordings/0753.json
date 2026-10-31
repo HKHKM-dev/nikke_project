@@ -1,0 +1,52 @@
+{
+  "id": "0753",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0753_sr+rl+mg+ar_cocoa+rapunzel-sanctuary+marian-queen+idoll-sun.mp4",
+  "original": "2026-10-31_10-01-57.mp4",
+  "durationSec": 204.9,
+  "frames": 12291,
+  "fps": 60,
+  "sizeMB": 248.5,
+  "sha256": "d25c5cc1b52c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 473,
+      "name": "ラプンツェル：サンクチュアリ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 19,
+      "name": "マリアン：クイーン",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0545 の撮り方 B（ココア（I）+ ラプンツェル：サンクチュアリ（II）+ マリアン：クイーン（III・操作）+ I-DOLL・サン（III）・手動操作なし）",
+  "backup": {
+    "at": "2026-10-31T10:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
