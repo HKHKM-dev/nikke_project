@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 7 回（2026-10-30 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。オーナーの判断を待つ。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-31 にオーナーが全部を推奨どおりに承認し（5 の `nikke_sync/` の共有はオーナーが済ませた）、実施した（8 節）。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24）・[-2](design-workflow-simplification-2.md)・[-3](design-workflow-simplification-3.md)・[-4](design-workflow-simplification-4.md)・[-5](design-workflow-simplification-5.md)（どれも実施済み）。第 6 回（2026-10-29）はブランチ `claude/pensive-curie-t57dsa` にあり、main に入っていない。その 1（クラウドの始めの取得）は #770 で別の形で直り、2（段の進み具合の書く先）は文書の役割の見直し（ブランチ `claude/youthful-maxwell-9jvumc` の `plan/design-doc-roles.md`。決定済み）と重なり、3（宝物の段階の既定）は判断待ち。ここではどれも繰り返さない。
 - 文書の書き方・手引きの短縮は、文書の役割の見直しが扱っているので、この回では見ない。
 - 調べた範囲: 観測値（`records/observations/`）の `method.tool`、比べる指標（`records/observations.ts` の `METRICS`）、解析ツールとレシピ（`tools/captures/`）、origin のブランチ。
@@ -153,3 +153,14 @@
 - PR 3: 3（消すだけ。`npm run ci` が通ることを確かめる）。
 - PR 4: 5 の (b)〜(d)（`cloud-sync.ts`・`cloud-lib.ts`・`drive.ts` とテスト、[cloud-guide.md](cloud-guide.md) の始めに置かれるものと「困ったとき」の行、[design-cloud-environment.md](design-cloud-environment.md) 6.3 節の「共有しない」に変えたことの 1 行）。(a) の共有をオーナーがしてから。クラウドのセッションで、始めのフックの時間を前後で測って PR に書く。
 - 4 はオーナーの設定。(b) の 3 本を消すのは、オーナーが言ってから。
+
+## 8. 判断と実施
+
+**判断（2026-10-31）**: 1〜5 を全部推奨どおりに進める。5 の (a)（`nikke_sync/` をサービスアカウントに閲覧者で共有）はオーナーが済ませた。
+
+- 1: [design-buff-edge-recipe.md](design-buff-edge-recipe.md) 9 節のとおり、版 3 にした。格子の形は案のとおり（スタック数ごとの tick は `@dot@<f>/s<数>`、倍率ダメージ・tick は「f 以降の最初の 1 ヒット」で指す）。確かめた録画は 0738（V-0538）と 0119（V-0546）。0119 では、tick に通常攻撃が 2 ヒット重なった増分があり、通常攻撃の格子に `/x2`（同じフレームの 2 ヒットまでの和。今のペレットの和と同じ部品）を付けて当てた。案で「3 つ以上の和は作らない」としたのは、和の格子（`+`）を 2 つまでにするという意味で、同じ枠の数ヒットは `/x` で書く。
+- 2: `eventFrames` を足した（`event`・`anchor`・`within`・`skip`・`count`）。今の 8 個のうち 7 個（`skillHitVideoFrame`・`skillHitVideoFrameList`・`skillHitFramesFromFullBurst`・`skillHitFromBurstHit`・`dotHitVideoFrames`・`dotTickOffsets`・`healVideoFrame`）を包みに直した。これらと `skillHitMeanInterval`（中で同じ列を使う）を使う観測値 96 個のモデルの値が、前と同じことを使い捨てのスクリプトで確かめた。`burstHitOffsets` は、起点がその発動の 1 ヒット目で、範囲も発動ごとのヒットなので、包みにすると発動ごとの区切りを足すことになり、そのままにした。`dotTickOffsets` は付けた時のヒットも数えていたので、`event` に付与と tick を区別しない `dot` を足した。`skillHitVideoFrameList` と `dotHitVideoFrames` は、数が足りないとき黙って短い列を返していたが、包みにした後は誤りにする（今の観測値はどれも足りている）。
+- 3: 案のとおり消した。[captures/guide.md](captures/guide.md) に「操作中の SR の射撃は `diff.ts` で拾う」という行が残っていたので、照準の左の残弾（`reticle-ammo.ts`）で拾う、に直した。設計書（[design-charge-shots.md](design-charge-shots.md)・[design-c0485-landing-matched.md](design-c0485-landing-matched.md)）の末尾に、消したことを 1 行書いた。
+- 4: (a) の間隔の変更と (b) の GitHub の設定は、オーナーが行う。いまの 3 本のブランチは、この環境の安全確認で消すのが止められたので、オーナーが消す（GitHub のブランチの画面か、デスクトップで `git push origin --delete <ブランチ>`）。
+- 5: `tools/drive/sync-reader.ts` を足し、`cloud-sync.ts` の一覧と取り寄せをそれに替えた（鍵が無ければ受け口）。`nikke_sync` のフォルダはサービスアカウントから名前で探す（2 つ見えるときだけ `NIKKE_DRIVE_SYNC_FOLDER_ID`）ので、環境変数は足さなくてよい。このクラウドの環境で測ると、`--pull` は空の置き場所から 24 件で 3.9 秒、変わりなしで 2.5 秒、`--pull-rest` は 469 件で 22 秒（前は受け口で、始めの取得が 45 秒の打ち切りや HTTP 500 で取りこぼしていた）。一覧の更新時刻の形は受け口と同じで、切り替えた後に取り直しは起きなかった。テストは、偽の Drive API とトークンの受け口を足し、同じ流れを両方の道で回す。
+  - 測っている途中で、裏の取り寄せが 155 秒かかったように見えたのは、待つループの `pgrep -f` がループ自身の bash に一致した測り方の誤りだった。lock の待ちを列にする直しも試したが、速くならなかったので入れていない。
