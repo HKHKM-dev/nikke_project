@@ -1,14 +1,11 @@
-import { parseEnemyPresets, type CharacterData, type CharacterIndexEntry, type EnemyPresetMaster } from '@nikke/core';
+import { parseEnemyPresets, type CharacterIndexEntry, type EnemyPresetMaster } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
   clampSkillLevel,
-  effectiveBuild,
   emptyConsole,
   recycleRoomFromConsole,
-  effectiveSkillLevels,
-  effectiveTreasurePhase,
   enemyForCalc,
   enemyWithEvents,
   SHOOTING_RANGE_ENEMY,
@@ -19,9 +16,6 @@ import {
   readTeamJson,
   serializeSlotBuild,
   serializeTeamState,
-  eventSetsForCalc,
-  teamStateForCalc,
-  noBurstSlotsForCalc,
   takenResourceIds,
   teamReducer,
   type TeamState,
@@ -250,11 +244,9 @@ describe('skill levels (Stage 4)', () => {
     );
   });
 
-  it('clearSlot keeps skill levels; fixedSpec forces Lv10 without touching the stored levels', () => {
+  it('clearSlot keeps skill levels', () => {
     let s = teamReducer(initialTeamState(), { type: 'selectCharacter', index: 0, resourceId: 10 });
     s = teamReducer(s, { type: 'setSkillLevels', index: 0, skillLevels: { skill1: 3, skill2: 3, burst: 3 } });
-    expect(effectiveSkillLevels(s.slots[0]!, false)).toEqual({ skill1: 3, skill2: 3, burst: 3 });
-    expect(effectiveSkillLevels(s.slots[0]!, true)).toEqual({ skill1: 10, skill2: 10, burst: 10 });
     s = teamReducer(s, { type: 'clearSlot', index: 0 });
     expect(s.slots[0]?.skillLevels).toEqual({ skill1: 3, skill2: 3, burst: 3 });
   });
@@ -299,16 +291,6 @@ describe('treasure phase (Stage 9)', () => {
     expect(teamReducer(s, { type: 'selectCharacter', index: 0, resourceId: 10 }).slots[0]!.treasurePhase).toBe(3);
     expect(teamReducer(s, { type: 'selectCharacter', index: 0, resourceId: 30 }).slots[0]!.treasurePhase).toBe(0);
     expect(teamReducer(s, { type: 'clearSlot', index: 0 }).slots[0]!.treasurePhase).toBe(0);
-  });
-
-  it('keeps the phase under fixed spec, and uses 0 for characters without a treasure', () => {
-    let s = withCharacters([10]);
-    s = teamReducer(s, { type: 'setTreasurePhase', index: 0, treasurePhase: 2 });
-    s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: true });
-    const withTreasure = { treasure: { unlockOrder: ['skill1', 'skill2', 'burst'] } } as unknown as CharacterData;
-    const without = { treasure: null } as unknown as CharacterData;
-    expect(effectiveTreasurePhase(s.slots[0]!, withTreasure)).toBe(2);
-    expect(effectiveTreasurePhase(s.slots[0]!, without)).toBe(0);
   });
 
   it('parseTeamState fills a missing phase (Stage 8 data) with 0, rejects out-of-range ones and round-trips', () => {
@@ -588,63 +570,7 @@ describe('HP の割合の想定', () => {
   });
 });
 
-describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () => {
-  it('uses the defaults for the shooting condition, the HP ratio, the recycle room and the extra attack and keeps the rest', () => {
-    let s = withCharacters([10]);
-    s = teamReducer(s, { type: 'setConditionMode', index: 0, conditionMode: 'manual' });
-    s = teamReducer(s, {
-      type: 'setSlotCondition',
-      index: 0,
-      condition: { coreHitRate: 0.3, distanceBonus: false, fullCharge: false, hitRate: 0.5 },
-    });
-    s = teamReducer(s, { type: 'setHpRatio', index: 0, hpRatio: 0.4 });
-    const build = {
-      ...s.slots[0]!.build,
-      affectionRank: 20,
-      recycleRoom: { personal: 5, class: 6, corporation: 7 },
-      extraAttack: 300,
-    };
-    s = teamReducer(s, { type: 'setBuild', index: 0, build });
-
-    const calc = teamStateForCalc(s).slots[0]!;
-    const initial = initialTeamState().slots[0]!;
-    expect(calc.conditionMode).toBe(initial.conditionMode);
-    expect(calc.condition).toEqual(initial.condition);
-    expect(calc.hpRatio).toBe(initial.hpRatio);
-    expect(calc.build).toEqual({ ...build, extraAttack: 0 });
-    expect(calc.resourceId).toBe(10);
-    // 保存している値は消さない
-    expect(s.slots[0]!.build.recycleRoom).toEqual({ personal: 5, class: 6, corporation: 7 });
-    expect(s.slots[0]!.conditionMode).toBe('manual');
-  });
-
-  it('uses the shooting-range enemy with the saved element only, always bursts, and keeps the other advanced settings', () => {
-    let s = teamReducer(initialTeamState(), {
-      type: 'setEnemy',
-      enemy: { defence: 140, element: 'Fire', hasCore: false },
-    });
-    s = teamReducer(s, { type: 'setDuration', durationSeconds: 60 });
-    s = teamReducer(s, { type: 'setBurst', burst: false });
-    s = teamReducer(s, { type: 'setControlledSlot', controlledSlot: 0 });
-    const calc = teamStateForCalc(s);
-    expect(calc.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
-    expect(calc.durationSeconds).toBe(60);
-    expect(calc.burst).toBe(true);
-    expect(calc.controlledSlot).toBe(0);
-    expect(s.enemy.defence).toBe(140);
-  });
-});
-
-describe('event sets for the calculation (3-minute mode in the advanced settings, 2026-10-31)', () => {
-  it('uses the event sets of the shooting-range presets while the jump is on', () => {
-    const master = parseEnemyPresets(
-      JSON.parse(readFileSync(new URL('../../../packages/core/data/enemies.json', import.meta.url), 'utf8')) as unknown,
-    );
-    expect(eventSetsForCalc(null, true)).toEqual([]);
-    expect(eventSetsForCalc(master, true)).toEqual(['range-3min-jump']);
-    expect(eventSetsForCalc(master, false)).toEqual([]);
-  });
-
+describe('3-minute mode in the advanced settings (2026-10-31)', () => {
   it('round-trips the jump setting, and reads saved data without it as on', () => {
     const s = teamReducer(initialTeamState(), { type: 'setRangeJump', rangeJump: false });
     expect(parseTeamState(serializeTeamState(s), index)?.rangeJump).toBe(false);
@@ -655,13 +581,9 @@ describe('event sets for the calculation (3-minute mode in the advanced settings
 });
 
 describe('no fire (slot advanced settings, 2026-10-31)', () => {
-  it('calculates a no-fire slot with the manual condition and a bullet hit rate of 0, and round-trips it', () => {
+  it('round-trips the flag, and reads saved data without it as false', () => {
     let s = withCharacters([10, 20]);
     s = teamReducer(s, { type: 'setNoFire', index: 1, noFire: true });
-    const calc = teamStateForCalc(s);
-    expect(calc.slots[1]!.conditionMode).toBe('manual');
-    expect(calc.slots[1]!.condition.hitRate).toBe(0);
-    expect(calc.slots[0]!.conditionMode).toBe(initialTeamState().slots[0]!.conditionMode);
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
     const old = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
     for (const slot of old.slots) delete slot.noFire;
@@ -670,33 +592,15 @@ describe('no fire (slot advanced settings, 2026-10-31)', () => {
 });
 
 describe('no burst (slot advanced settings, 2026-10-31)', () => {
-  it('lists the occupied no-burst slots for the calculation, and round-trips the flag', () => {
+  it('round-trips the flag, and reads saved data without it as false', () => {
     let s = withCharacters([10, 20]);
-    expect(noBurstSlotsForCalc(s)).toBeUndefined();
     s = teamReducer(s, { type: 'setNoBurst', index: 1, noBurst: true });
-    s = teamReducer(s, { type: 'setNoBurst', index: 4, noBurst: true });
-    expect(noBurstSlotsForCalc(s)).toEqual([1]);
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
     const old = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
     for (const slot of old.slots) delete slot.noBurst;
     expect(parseTeamState(JSON.stringify(old), index)?.slots[0]?.noBurst).toBe(false);
     old.slots[0]!.noBurst = 'yes';
     expect(parseTeamState(JSON.stringify(old), index)).toBeNull();
-  });
-});
-
-describe('affection rank cap per character (2026-10-31)', () => {
-  it('caps the saved affection rank at 40 for OVERSPEC and 30 for the others when calculating', () => {
-    const slot = { ...initialTeamState().slots[0]!, resourceId: 10 };
-    const saved = { ...slot, build: { ...slot.build, affectionRank: 40 } };
-    const overspec = { corporationSubType: 'OVERSPEC' } as CharacterData;
-    const other = { corporationSubType: null } as CharacterData;
-    expect(effectiveBuild(saved, false, overspec, emptyConsole()).affectionRank).toBe(40);
-    expect(effectiveBuild(saved, false, other, emptyConsole()).affectionRank).toBe(30);
-    expect(
-      effectiveBuild({ ...saved, build: { ...saved.build, affectionRank: 12 } }, false, other, emptyConsole())
-        .affectionRank,
-    ).toBe(12);
   });
 });
 
@@ -734,13 +638,8 @@ describe('console (2026-10-31)', () => {
 });
 
 describe('synchro level (2026-10-31)', () => {
-  it('replaces every slot level when calculating, and reads saved data without it as Lv200', () => {
-    let s = withCharacters([10, 20]);
-    s = teamReducer(s, { type: 'setGrowth', index: 0, growth: { level: 50, grade: 1, core: 2 } });
-    s = teamReducer(s, { type: 'setSynchroLevel', synchroLevel: 400 });
-    const calc = teamStateForCalc(s);
-    expect(calc.slots[0]!.growth).toEqual({ level: 400, grade: 1, core: 2 });
-    expect(calc.slots[1]!.growth.level).toBe(400);
+  it('round-trips, and reads saved data without it as Lv200', () => {
+    const s = teamReducer(withCharacters([10, 20]), { type: 'setSynchroLevel', synchroLevel: 400 });
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
     const old = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
     delete old.synchroLevel;

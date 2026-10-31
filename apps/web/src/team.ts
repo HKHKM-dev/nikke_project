@@ -21,12 +21,9 @@ import {
   SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
-  EMPTY_BUILD,
-  affectionRankMax,
   emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
-  fixedSpecBuild,
   overloadPositionsUnique,
   presetForEnemy,
   targetProfileForEnemy,
@@ -95,12 +92,12 @@ export type SlotState = {
   hpRatio: number;
   /**
    * 2026-10-31: 撃たない（スロットの詳細設定）。モデルに撃たないスロットが無いので、計算では弾丸命中率を 0 にする（通常攻撃の
-   * ダメージとゲージが出ない。射撃の回数のきっかけは残る。records の noFireSlots と同じ扱い。teamStateForCalc）。既定は撃つ
+   * ダメージとゲージが出ない。射撃の回数のきっかけは残る。records の noFireSlots と同じ扱い。calcView.ts）。既定は撃つ
    */
   noFire: boolean;
   /**
    * 2026-10-31: バーストしない（スロットの詳細設定）。バーストのチェーンの候補から外す（core の TeamInput.noBurstSlots。
-   * noBurstSlotsForCalc）。既定は使う
+   * calcView.ts）。既定は使う
    */
   noBurst: boolean;
 };
@@ -112,13 +109,13 @@ export type TeamState = {
   durationSeconds: number;
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
-  /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル） */
+  /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル）。画面に欄が無く、計算では常に回す（calcView.ts） */
   burst: boolean;
   /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ */
   controlledSlot: number;
   /**
    * Stage 16-B: ON にした敵の出来事のセット（data/enemies.json の eventSets の id）。既定は空（OFF）。
-   * 効くのは、敵の値がそのセットを持つプリセットと一致しているときだけ（App.tsx の enemyWithEvents）
+   * 画面は使わず、rangeJump から出来事のセットを決める（calcView.ts）
    */
   enemyEventSets: string[];
   /** 2026-10-31: コンソール（前哨基地のリサイクルルームの研究 Lv）。編成共通で、枠ごとのリサイクルルームの代わりに使う */
@@ -127,7 +124,7 @@ export type TeamState = {
   synchroLevel: number;
   /**
    * 2026-10-31: 射撃場 3 分モード（的のジャンプ）を入れるか。既定は ON。詳細設定の欄で切り替え、enemyEventSets の代わりに使う
-   * （eventSetsForCalc）
+   * （calcView.ts）
    */
   rangeJump: boolean;
 };
@@ -345,76 +342,6 @@ export function enemyForCalc(
   const preset = presetForEnemy(master.enemies, enemy);
   const active = setIds.filter((id) => preset?.eventSets.includes(id) ?? false);
   return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
-}
-
-/** 計算に渡すスキル Lv。スペック固定は全スキル Lv10 */
-export function effectiveSkillLevels(slot: SlotState, fixedSpec: boolean): SkillLevels {
-  return fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
-}
-
-/**
- * Stage 9: 計算に渡す宝物の段階。宝物のないキャラは 0（保存データが古い・データ更新で宝物が消えた場合に備える）。
- * スペック固定でも上書きしない（所持状況がそのまま反映される）
- */
-export function effectiveTreasurePhase(slot: SlotState, character: CharacterData): TreasurePhase {
-  return character.treasure === null ? 0 : slot.treasurePhase;
-}
-
-/** Stage 12: 計算に渡す育成入力。スペック固定は T9 Lv5 × 4 と好感度 rank30/40/10 のプリセット（保存している入力は残す） */
-export function effectiveBuild(
-  slot: SlotState,
-  fixedSpec: boolean,
-  character: CharacterData,
-  consoleInput: ConsoleInput,
-): BuildInput {
-  if (fixedSpec) return fixedSpecBuild(character);
-  // 好感度はキャラごとの上限（affectionRankMax）に収める。上限より上の保存データも上限で計算する。
-  // リサイクルルームは枠ごとの保存データを使わず、編成共通のコンソールから取る
-  return {
-    ...slot.build,
-    affectionRank: Math.min(slot.build.affectionRank, affectionRankMax(character)),
-    recycleRoom: recycleRoomFromConsole(consoleInput, character),
-  };
-}
-
-/**
- * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
- * （欄が無いので直せないため）。計算と画面はこの編成を読む
- * - 枠: 射撃条件・想定 HP・その他攻撃加算（リサイクルルームは effectiveBuild がコンソールから取る）。Lv は編成共通のシンクロレベル。撃たないスロットは、射撃条件を
- *   手入力の弾丸命中率 0 にする（SlotState.noFire）
- * - 編成: 敵（射撃場の的にし、属性だけ残す）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。戦闘時間・
- *   操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
- *   3 分モードの出来事のセットは eventSetsForCalc
- */
-export function teamStateForCalc(state: TeamState): TeamState {
-  return {
-    ...state,
-    slots: state.slots.map((slot) => ({
-      ...slot,
-      growth: { ...slot.growth, level: state.synchroLevel },
-      conditionMode: slot.noFire ? 'manual' : DEFAULT_CONDITION_MODE,
-      condition: slot.noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : { ...DEFAULT_SLOT_CONDITION },
-      hpRatio: DEFAULT_HP_RATIO,
-      build: { ...slot.build, extraAttack: EMPTY_BUILD.extraAttack },
-    })),
-    enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
-    burst: DEFAULT_BURST,
-  };
-}
-
-/** 2026-10-31: バーストしないスロット（0 始まり。ニケのいるスロットだけ）。無ければ undefined（core の TeamInput.noBurstSlots） */
-export function noBurstSlotsForCalc(state: TeamState): number[] | undefined {
-  const slots = state.slots.flatMap((s, i) => (s.noBurst && s.resourceId !== null ? [i] : []));
-  return slots.length === 0 ? undefined : slots;
-}
-
-/**
- * 2026-10-31: 3 分モード（的のジャンプ）は、詳細設定の欄（rangeJump）が ON なら射撃場の的の出来事のセットを入れる
- * （保存データの enemyEventSets は使わない）
- */
-export function eventSetsForCalc(master: EnemyPresetMaster | null, rangeJump: boolean): string[] {
-  if (master === null || !rangeJump) return [];
-  return [...new Set(master.enemies.filter((p) => p.content === 'range').flatMap((p) => p.eventSets))];
 }
 
 /** min..max の整数に clamp する（入力欄の途中状態を吸収する。数でなければ min） */

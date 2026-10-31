@@ -9,10 +9,11 @@ import {
   type BuildMasters,
   type SkillLevels,
   type TeamSlotResult,
+  type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
-import { clampInt, effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
+import { clampInt, type SlotState, type TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
 import { Popover } from './Popover.tsx';
@@ -32,6 +33,8 @@ type Props = {
   effectiveGrowth: GrowthInput;
   effectiveSkillLevels: SkillLevels;
   effectiveBuild: BuildInput;
+  /** 宝物の段階（宝物のないキャラは 0。calcView.ts） */
+  treasurePhase: TreasurePhase;
   masters: BuildMasters | null;
   mastersError: string | null;
   slotResult: TeamSlotResult | null;
@@ -53,6 +56,7 @@ export function SlotCard({
   effectiveGrowth,
   effectiveSkillLevels,
   effectiveBuild,
+  treasurePhase,
   masters,
   mastersError,
   slotResult,
@@ -61,11 +65,10 @@ export function SlotCard({
 }: Props) {
   const limits = character ? growthLimits(character) : null;
 
-  const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
   // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
   // 折りたたみ 1 つにまとめた
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
-  // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（team.ts の teamStateForCalc）
+  // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（calcView.ts）
 
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
     <label className="field">

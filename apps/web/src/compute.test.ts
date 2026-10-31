@@ -34,7 +34,7 @@ const DEFINED = new Set(
   readJson<{ resourceIds: number[] }>('../../../packages/core/data/skills/index.json').resourceIds,
 );
 
-// 画面のスペック固定の枠（App.tsx の slotInputs）と同じ作り方。条件は既定の自動
+// 画面のスペック固定の枠（calcView.ts の buildCalcView）と同じ作り方。条件は既定の自動
 function fixedSpecSlot(id: number): TeamSlotInput {
   const character = readJson<CharacterData>(`../../../packages/core/data/characters/${id}.json`);
   return {

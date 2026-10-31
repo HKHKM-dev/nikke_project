@@ -1,11 +1,15 @@
 :root {
   color-scheme: light dark;
+  /* 画面の背景と文字の色。システムは Canvas・CanvasText（color-scheme に従い、アーティファクトの表示枠では閲覧側のテーマ）。
+     ライト・ダークは色を直接決める（下）。表示枠がルート要素の color-scheme を閲覧側のテーマに書き換えても、画面の色がずれない */
+  --app-bg: Canvas;
+  --app-fg: CanvasText;
   /* スクロールバーを常に出し、ページが縦長になっても表示が横に動かないようにする。幅を空けるだけ（scrollbar-gutter）だと、
      スクロールバーが無い間の空きがブラウザによってテーマと違う色で塗られた */
   overflow-y: scroll;
-  /* スクロールバーとその幅の部分（右端）もテーマの色にする。既定の色はテーマを切り替えても追従しないことがある */
-  background: Canvas;
-  scrollbar-color: color-mix(in srgb, CanvasText 35%, Canvas) Canvas;
+  /* スクロールバーとその幅の部分（右端）もテーマの色にする */
+  background: var(--app-bg);
+  scrollbar-color: color-mix(in srgb, var(--app-fg) 35%, var(--app-bg)) var(--app-bg);
   font-family:
     system-ui,
     -apple-system,
@@ -14,28 +18,25 @@
     sans-serif;
   line-height: 1.45;
 }
-/* 右上の設定のテーマ（theme.ts）。アーティファクトの表示枠が当てる閲覧側のテーマより強くする（body にも当てる） */
-:root:root[data-app-theme='light'],
-:root:root[data-app-theme='light'] body {
+/* 右上の設定のテーマ（theme.ts）。値は各テーマの Canvas・CanvasText。入力欄などの部品の色はルート要素の style の
+   color-scheme（theme.ts）で決め、body にも当てて表示枠のテーマより強くする */
+:root[data-app-theme='light'] {
+  --app-bg: #fff;
+  --app-fg: #000;
+}
+:root[data-app-theme='dark'] {
+  --app-bg: #121212;
+  --app-fg: #fff;
+}
+:root[data-app-theme='light'] body {
   color-scheme: light !important;
 }
-:root:root[data-app-theme='dark'],
-:root:root[data-app-theme='dark'] body {
+:root[data-app-theme='dark'] body {
   color-scheme: dark !important;
 }
-/* ルート要素のスクロールバーと右端の色は、テーマの色を直接決める。表示枠がルート要素の color-scheme を後から閲覧側のテーマに
-   書き換えることがあり、Canvas では閲覧側の色になってしまう（ライトでも右端が黒かった）。値は各テーマの Canvas と、上の color-mix の値 */
-:root:root[data-app-theme='light'] {
-  background: #fff !important;
-  scrollbar-color: #a6a6a6 #fff !important;
-}
-:root:root[data-app-theme='dark'] {
-  background: #121212 !important;
-  scrollbar-color: #656565 #121212 !important;
-}
 body {
-  background: Canvas;
-  color: CanvasText;
+  background: var(--app-bg);
+  color: var(--app-fg);
   margin: 0;
   padding: 0 16px;
 }
@@ -59,7 +60,8 @@ header h1 {
 .popover {
   position: relative;
 }
-/* 開いている間に画面を暗くする幕（即座に出す）。ボタンとポップアップはその手前に出す */
+/* 開いている間に画面を暗くする幕（即座に出す）。開いたボタンとポップアップだけをその手前に出し、閉じたボタンは幕の奥にする
+   （閉じたボタンを手前に出すと、幅が狭くてポップアップと重なったとき、後ろのボタンがポップアップの上に出る） */
 .popover-backdrop {
   position: fixed;
   inset: 0;
@@ -68,16 +70,18 @@ header h1 {
 }
 .popover-button {
   position: relative;
-  z-index: 20;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 6px;
-  background: Canvas;
+  background: var(--app-bg);
   color: inherit;
   cursor: pointer;
 }
+.popover-button[aria-expanded='true'] {
+  z-index: 20;
+}
 .popover-button:hover,
 .popover-button[aria-expanded='true'] {
-  background: color-mix(in srgb, CanvasText 10%, Canvas);
+  background: color-mix(in srgb, var(--app-fg) 10%, var(--app-bg));
 }
 .popover-button:focus-visible {
   outline: 2px solid Highlight;
@@ -86,16 +90,16 @@ header h1 {
 .popover-panel {
   position: absolute;
   top: calc(100% + 6px);
-  z-index: 20;
+  z-index: 21;
   min-width: 12em;
   max-width: calc(100vw - 32px);
   box-sizing: border-box;
   padding: 10px 12px;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 8px;
-  background: Canvas;
-  color: CanvasText;
-  box-shadow: 0 4px 16px color-mix(in srgb, CanvasText 18%, transparent);
+  background: var(--app-bg);
+  color: var(--app-fg);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--app-fg) 18%, transparent);
 }
 .popover-panel-left {
   left: 0;
@@ -810,7 +814,7 @@ header h1 {
   padding: 4px 12px;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 6px;
-  background: Canvas;
+  background: var(--app-bg);
   color: inherit;
   font: inherit;
   font-size: 0.85rem;
