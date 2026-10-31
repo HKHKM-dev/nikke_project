@@ -237,6 +237,7 @@
 - PC を付けると、Drive for desktop が `H:/record` の写しを消し、bisync が種別フォルダに増えた録画を E: に降ろす（数百 MB）。PC が使えなかったときだけ起きるので、降ろし直しを許す（デスクトップで先に動かす仕組みは作らない）。
 - `records:renumber` をクラウドで回すときの Drive 側の改名も、受け口の `move` で行う。
 - サービスアカウントが読むのは、今と同じ `nikke_project_captures`・`old_nikkecalc` と、取り込み元の `record`（どれも閲覧者で足りる）。`nikke_sync/`（`private`・`scratch`・`claude`）は共有しない。
+  - 2026-10-31 に変えた: `nikke_sync/` もサービスアカウントに閲覧者で共有し、クラウドの往復（`cloud-sync.ts`）の読みをサービスアカウントで行う（書くのは受け口のまま。[design-workflow-simplification-7.md](design-workflow-simplification-7.md) 5 節）。
 
 ### 6.4 再開
 

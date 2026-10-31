@@ -5,7 +5,8 @@
 //                                               手で回すと、取り切れなかった残りを取る
 //   node tools/drive/cloud-sync.ts --push       Stop: 前に取ったときから変わったものを受け口で戻す。クラウドで切り出した証拠フレームも上げる
 // クラウド（CLAUDE_CODE_REMOTE=true）で、受け口の URL（NIKKE_DRIVE_GATEWAY_URL）があるときだけ動く。失敗しても終了コード 0。
-// 受け口は中身を 1 件ずつ読むのが遅いので、一覧（中身なし）を取って、前に置いたときから変わったものだけを 1 件ずつ並べて取る。
+// 読むのは、サービスアカウントの鍵があればサービスアカウント、無ければ受け口（sync-reader.ts）。書くのはいつも受け口。
+// 一覧（中身なし）を取って、前に置いたときから変わったものだけを 1 件ずつ並べて取る。
 // --pull と --push は、フックの timeout（120 秒）より前に打ち切って知らせを出す。
 // 基準（前に取ったときの md5 と一覧の値）は ~/.cache/nikke-sync/base.json。使い回された VM でも同じ結果になるよう、上書きで書く。
 // --pull-rest と --push は同時に動くので、基準と手元のファイルを書き換える間は lock を持つ。
@@ -42,7 +43,8 @@ import {
   trackedRoots,
   type TrackedRoot,
 } from './cloud-lib.ts';
-import { get, gatewayUrl, put, snapshot, trash, type SnapshotFile } from './gateway.ts';
+import { gatewayUrl, put, trash, type SnapshotFile } from './gateway.ts';
+import { syncReader } from './sync-reader.ts';
 import { lockIsLive, memoryProjectName, type Lock } from './sync-lib.ts';
 
 const { values } = parseArgs({
@@ -58,7 +60,7 @@ if (process.env['CLAUDE_CODE_REMOTE'] !== 'true' || gatewayUrl() === null) proce
 const BUDGET_MS = 100_000;
 /** --pull-rest が取りに行く長さ */
 const REST_BUDGET_MS = 10 * 60_000;
-/** 受け口を同時に呼ぶ数（受け口は同時に 30 まで。--pull-rest と --push が重なっても収まるように） */
+/** 同時に呼ぶ数（受け口は同時に 30 まで。--pull-rest と --push が重なっても収まるように） */
 const PARALLEL = 8;
 /** これより大きいファイルは取らない */
 const MAX_BYTES = 5_000_000;
@@ -80,6 +82,7 @@ const restLog = join(stateDir, 'pull-rest.log');
 /** 書きかけのファイルの名前の終わり（手元のファイルを数えるときに外す） */
 const TMP = '.nikke-sync-tmp';
 const header = 'Drive との往復';
+const reader = syncReader();
 const retryRest = 'node tools/drive/cloud-sync.ts --pull-rest で残りを取る';
 
 // conflicts: 衝突を返された手元の版の md5。同じ版のままなら次の応答の終わりに送り直さない
@@ -267,8 +270,8 @@ async function push(base: Base, until: number): Promise<string[]> {
 function listRoots(roots: TrackedRoot[], until: number): Promise<Listing[]> {
   return Promise.all(
     roots.map((root) =>
-      snapshot('sync', root.drive.split('/')[0]!, call(until)).then(
-        (r) => ({ root, files: r.files }),
+      reader.list(root.drive.split('/')[0]!, call(until)).then(
+        (files) => ({ root, files }),
         (e: unknown) => ({ root, error: reason(e) }),
       ),
     ),
@@ -323,7 +326,7 @@ async function bring(lists: Listing[], until: number, locked: Locked, listedFile
   if (queue === null) throw new Error('ほかの往復が lock を持ったままだった');
   let placed = 0;
   const r = await runUntil(queue, PARALLEL, until, async ({ file, was }) => {
-    const got = await get('sync', file.path, call(until));
+    const got = await reader.get(file.path, call(until));
     if (got === null) return; // 一覧の後で Drive から消えた
     const done = await locked((base) => {
       // 取っている間に --push が基準を進めた。次に回すときに決め直す
@@ -357,7 +360,7 @@ async function pull(until: number): Promise<string[]> {
   const claude = lists.find((l) => l.root.drive.startsWith('claude/'))!;
   const globalMd =
     'files' in claude && claude.files.some((f) => f.path === 'claude/CLAUDE.md')
-      ? get('sync', 'claude/CLAUDE.md', call(until)).then(
+      ? reader.get('claude/CLAUDE.md', call(until)).then(
           (r) => r?.buf.toString('utf8') ?? '',
           (e: unknown) => {
             notes.push(`全体の CLAUDE.md を取れなかった: ${reason(e)}`);

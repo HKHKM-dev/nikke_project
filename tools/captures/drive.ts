@@ -1,4 +1,4 @@
-// Google Drive API（v3）の薄いラッパ。fetch.ts が使う。依存パッケージは足さず、Node の fetch と crypto だけで書く。
+// Google Drive API（v3）の薄いラッパ。fetch.ts・intake.ts と、クラウドの往復の読み（tools/drive/sync-reader.ts）が使う。依存パッケージは足さず、Node の fetch と crypto だけで書く。
 // 認証はサービスアカウント（読み取り専用のスコープ）。鍵は環境変数 NIKKE_DRIVE_SA_KEY に、鍵の JSON をそのままか
 // base64 にして入れる（plan/captures/storage.md「クラウド環境での取り寄せ」）。鍵とアクセストークンは出力しない。
 import { createSign } from 'node:crypto';
@@ -8,7 +8,8 @@ import { pipeline } from 'node:stream/promises';
 import type { ReadableStream as NodeReadableStream } from 'node:stream/web';
 
 const SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
-const API = 'https://www.googleapis.com/drive/v3';
+/** NIKKE_DRIVE_API はテストが偽の API を指すためのもの */
+const api = () => process.env.NIKKE_DRIVE_API ?? 'https://www.googleapis.com/drive/v3';
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
 
 type ServiceAccountKey = { client_email: string; private_key: string; token_uri?: string };
@@ -73,28 +74,44 @@ export class Drive {
     return new Drive(await accessToken());
   }
 
-  private async get(path: string, params: Record<string, string>): Promise<Response> {
-    const url = `${API}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
-    const res = await fetch(url, { headers: { authorization: `Bearer ${this.token}` } });
-    if (!res.ok) throw new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`);
+  /** timeoutMs を渡すと、その長さで打ち切る。失敗の例外は status（HTTP の状態）を持つ */
+  private async get(path: string, params: Record<string, string>, timeoutMs?: number): Promise<Response> {
+    const url = `${api()}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
+    const res = await fetch(url, {
+      headers: { authorization: `Bearer ${this.token}` },
+      ...(timeoutMs === undefined ? {} : { signal: AbortSignal.timeout(timeoutMs) }),
+    });
+    if (!res.ok)
+      throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
+        status: res.status,
+      });
     return res;
   }
 
   /** フォルダの直下（ゴミ箱は除く）。name を渡すとその名前のものだけ */
-  async children(folderId: string, name?: string): Promise<DriveFile[]> {
+  async children(folderId: string, name?: string, timeoutMs?: number): Promise<DriveFile[]> {
     let q = `${driveQueryString(folderId)} in parents and trashed = false`;
     if (name !== undefined) q += ` and name = ${driveQueryString(name)}`;
+    return this.search(q, timeoutMs);
+  }
+
+  /** 検索式 q に合うもの（このアカウントから見えるものだけ） */
+  async search(q: string, timeoutMs?: number): Promise<DriveFile[]> {
     const files: DriveFile[] = [];
     let pageToken: string | undefined;
     do {
-      const res = await this.get('/files', {
-        q,
-        fields: 'nextPageToken, files(id, name, mimeType, size, modifiedTime)',
-        pageSize: '1000',
-        includeItemsFromAllDrives: 'true',
-        orderBy: 'name',
-        ...(pageToken ? { pageToken } : {}),
-      });
+      const res = await this.get(
+        '/files',
+        {
+          q,
+          fields: 'nextPageToken, files(id, name, mimeType, size, modifiedTime)',
+          pageSize: '1000',
+          includeItemsFromAllDrives: 'true',
+          orderBy: 'name',
+          ...(pageToken ? { pageToken } : {}),
+        },
+        timeoutMs,
+      );
       const page = (await res.json()) as { files: DriveFile[]; nextPageToken?: string };
       files.push(...page.files);
       pageToken = page.nextPageToken;
@@ -124,6 +141,17 @@ export class Drive {
 
   isFolder(file: DriveFile): boolean {
     return file.mimeType === FOLDER_MIME;
+  }
+
+  /** ファイルの中身（小さいファイル用）。無ければ null */
+  async bytes(fileId: string, timeoutMs?: number): Promise<Buffer | null> {
+    try {
+      const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' }, timeoutMs);
+      return Buffer.from(await res.arrayBuffer());
+    } catch (e) {
+      if ((e as { status?: number }).status === 404) return null;
+      throw e;
+    }
   }
 
   /** ファイルの中身を out に書く */
