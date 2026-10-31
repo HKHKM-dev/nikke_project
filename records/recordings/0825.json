@@ -33,12 +33,6 @@
       "rid": 308,
       "name": "I-DOLL・サン",
       "controlled": false
-    },
-    {
-      "slot": 5,
-      "rid": 836,
-      "name": "鈴原サクラ",
-      "controlled": false
     }
   ],
   "target": {
@@ -49,7 +43,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0585 の撮影の依頼（ココア・ソルジャーF.A.・マリアン：クイーン（操作）・I-DOLL・サン・鈴原サクラ・手動操作なし）",
+  "conditionNote": "V-0585 の撮影の依頼で撮ったが、5 枠目が空き（EMPTY SLOT）で鈴原サクラが入っていなかった（戦闘履歴のパネルで確かめた）。編成は V-0538 の撮り方 B と同じ 4 人（ココア・ソルジャーF.A.・マリアン：クイーン（操作）・I-DOLL・サン・手動操作なし）。ファイル名の識別子は取り込みのときの計画のまま（smg・sakura を含む）",
   "backup": {
     "at": "2026-11-01T07:43+09:00",
     "via": "cloud-move",
