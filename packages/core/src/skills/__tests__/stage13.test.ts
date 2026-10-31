@@ -39,7 +39,7 @@ const smg = { weaponType: 'SMG', corporation: 'ELYSION' } as const;
 function build(patch: Partial<BuildInput>): BuildInput {
   return { ...emptyBuild(), ...patch };
 }
-function olBuild(...lines: { option: OverloadOption; level: number }[]): BuildInput {
+function olBuild(...lines: { option: OverloadOption; level: number; position?: number }[]): BuildInput {
   return build({ gear: { head: { type: 'OL', level: 5, overload: lines }, body: null, arm: null, leg: null } });
 }
 const byStat = (effects: readonly BuildEffect[]) => effects.map((e) => [e.stat, Number(e.value.toFixed(6))]);

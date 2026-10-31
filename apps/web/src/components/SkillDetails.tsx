@@ -11,6 +11,7 @@ import {
   enemyElementAllows,
   isTimerTrigger,
   renderSkillDescription,
+  selfHpThreshold,
   skillValue,
   squadAllows,
   treasureSlots,
@@ -18,6 +19,7 @@ import {
   type CharacterData,
   type DamageEffect,
   type Element,
+  type SelfHpCondition,
   type SkillLevels,
   type BurstStepMixCondition,
   type SkillEffect,
@@ -126,7 +128,7 @@ function withCharacterText(condition: WithCharacterCondition, characters: readon
 }
 
 /** 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 効果の自分の HP の割合の条件（無ければ undefined） */
-function selfHpOf(e: SkillEffect): { atLeastRef: number } | undefined {
+function selfHpOf(e: SkillEffect): SelfHpCondition | undefined {
   return 'condition' in e ? e.condition?.selfHp : undefined;
 }
 
@@ -269,7 +271,7 @@ export function SkillDetailsSection({
                     return [
                       <HpConditionNote
                         key={`${i}-hp`}
-                        threshold={skillValue(skill, hp.atLeastRef, levels[slot]) / 100}
+                        threshold={selfHpThreshold(hp, (ref) => skillValue(skill, ref, levels[slot]))}
                         hpRatio={hpRatio}
                       />,
                     ];
