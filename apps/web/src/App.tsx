@@ -251,6 +251,7 @@ export function App() {
             element={team.enemy.element}
             fixedSpec={team.fixedSpec}
             consoleInput={team.console}
+            synchroLevel={team.synchroLevel}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">

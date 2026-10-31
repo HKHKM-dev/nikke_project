@@ -690,3 +690,18 @@ describe('console (2026-10-31)', () => {
     expect(parseTeamState(JSON.stringify({ ...old, console: { personal: -1 } }), index)).toBeNull();
   });
 });
+
+describe('synchro level (2026-10-31)', () => {
+  it('replaces every slot level when calculating, and reads saved data without it as Lv200', () => {
+    let s = withCharacters([10, 20]);
+    s = teamReducer(s, { type: 'setGrowth', index: 0, growth: { level: 50, grade: 1, core: 2 } });
+    s = teamReducer(s, { type: 'setSynchroLevel', synchroLevel: 400 });
+    const calc = teamStateForCalc(s);
+    expect(calc.slots[0]!.growth).toEqual({ level: 400, grade: 1, core: 2 });
+    expect(calc.slots[1]!.growth.level).toBe(400);
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    const old = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    delete old.synchroLevel;
+    expect(parseTeamState(JSON.stringify(old), index)?.synchroLevel).toBe(200);
+  });
+});

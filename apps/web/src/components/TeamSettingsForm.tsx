@@ -23,14 +23,17 @@ type Props = {
   fixedSpec: boolean;
   /** 2026-10-31: コンソール（リサイクルルームの研究 Lv）。スペック固定の間は使わない */
   consoleInput: ConsoleInput;
+  /** 2026-10-31: シンクロレベル（編成共通）。スペック固定の間は使わない */
+  synchroLevel: number;
   dispatch: Dispatch<TeamAction>;
 };
 
 /**
- * 編成共通の設定: 敵名・属性の枠と、その外の「射撃場スペック固定」。2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、
- * 残った射撃場スペック固定を敵の枠の外に出した。敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）
+ * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（シンクロレベル・射撃場スペック固定・コンソール）。
+ * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
+ * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）
  */
-export function TeamSettingsForm({ element, fixedSpec, consoleInput, dispatch }: Props) {
+export function TeamSettingsForm({ element, fixedSpec, consoleInput, synchroLevel, dispatch }: Props) {
   const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
   const level = (raw: string) => Math.max(0, Math.floor(Number(raw) || 0));
   const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void) => (
@@ -80,7 +83,13 @@ export function TeamSettingsForm({ element, fixedSpec, consoleInput, dispatch }:
           </label>
         </div>
       </fieldset>
-      <div className="panel settings-options">
+      <details className="panel common-growth">
+        <summary>共通育成</summary>
+        <div className="console-grid">
+          {levelField('synchro', 'シンクロ Lv', synchroLevel, (lv) =>
+            dispatch({ type: 'setSynchroLevel', synchroLevel: Math.max(1, lv) }),
+          )}
+        </div>
         <label className="field checkbox">
           <input
             type="checkbox"
@@ -89,8 +98,8 @@ export function TeamSettingsForm({ element, fixedSpec, consoleInput, dispatch }:
           />
           <span>射撃場スペック固定</span>
         </label>
-        <details className="console">
-          <summary>コンソール</summary>
+        <div className="console">
+          <span className="console-title">コンソール</span>
           <div className="console-grid">
             {levelField('personal', '共通研究', consoleInput.personal, (lv) =>
               setConsole({ ...consoleInput, personal: lv }),
@@ -106,8 +115,8 @@ export function TeamSettingsForm({ element, fixedSpec, consoleInput, dispatch }:
               ),
             )}
           </div>
-        </details>
-      </div>
+        </div>
+      </details>
     </>
   );
 }

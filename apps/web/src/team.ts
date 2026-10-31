@@ -111,6 +111,8 @@ export type TeamState = {
   enemyEventSets: string[];
   /** 2026-10-31: コンソール（前哨基地のリサイクルルームの研究 Lv）。編成共通で、枠ごとのリサイクルルームの代わりに使う */
   console: ConsoleInput;
+  /** 2026-10-31: シンクロレベル。編成共通で、枠ごとの Lv の代わりに使う（キャラの上限で収める） */
+  synchroLevel: number;
 };
 
 /** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
@@ -162,6 +164,7 @@ export type TeamAction =
   | { type: 'setControlledSlot'; controlledSlot: number }
   | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
   | { type: 'setConsole'; console: ConsoleInput }
+  | { type: 'setSynchroLevel'; synchroLevel: number }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -190,6 +193,7 @@ export function initialTeamState(): TeamState {
     controlledSlot: DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: [],
     console: emptyConsole(),
+    synchroLevel: DEFAULT_GROWTH.level,
   };
 }
 
@@ -258,6 +262,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return { ...state, enemyEventSets: action.enemyEventSets };
     case 'setConsole':
       return { ...state, console: action.console };
+    case 'setSynchroLevel':
+      return { ...state, synchroLevel: action.synchroLevel };
     case 'replace':
       return action.state;
   }
@@ -342,7 +348,7 @@ export function effectiveBuild(
 /**
  * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
  * （欄が無いので直せないため）。計算と画面はこの編成を読む
- * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算
+ * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算。Lv は編成共通のシンクロレベル
  * - 編成: 戦闘時間・バースト・操作キャラ・敵（射撃場の的にし、属性だけ残す）。3 分モードの出来事のセットは eventSetsForCalc
  */
 export function teamStateForCalc(state: TeamState): TeamState {
@@ -350,6 +356,7 @@ export function teamStateForCalc(state: TeamState): TeamState {
     ...state,
     slots: state.slots.map((slot) => ({
       ...slot,
+      growth: { ...slot.growth, level: state.synchroLevel },
       conditionMode: DEFAULT_CONDITION_MODE,
       condition: { ...DEFAULT_SLOT_CONDITION },
       hpRatio: DEFAULT_HP_RATIO,
@@ -643,6 +650,8 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   // 2026-10-31 までの保存データには無いので、欠落は全部 0
   const consoleInput = raw.console === undefined ? emptyConsole() : parseConsole(raw.console);
   if (consoleInput === null) return null;
+  // 2026-10-31 までの保存データには無いので、欠落は既定（Lv200）
+  if (raw.synchroLevel !== undefined && !isInt(raw.synchroLevel, 1)) return null;
 
   return {
     slots,
@@ -653,6 +662,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
     console: consoleInput,
+    synchroLevel: raw.synchroLevel === undefined ? DEFAULT_GROWTH.level : raw.synchroLevel,
   };
 }
 

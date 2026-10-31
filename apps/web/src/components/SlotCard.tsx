@@ -102,7 +102,6 @@ export function SlotCard({
           <summary>設定</summary>
           <div className="slot-settings-body">
             <div className="growth-row">
-              {growthField('level', 'Lv', 1, limits.levelMax)}
               {growthField('grade', '限界突破', 0, limits.gradeMax)}
               {growthField('core', 'コア強化', 0, limits.coreMax)}
             </div>

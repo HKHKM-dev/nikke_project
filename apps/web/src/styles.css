@@ -79,22 +79,20 @@ header h1 {
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 6px 10px;
 }
-.settings-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
-  align-items: center;
+.common-growth {
   margin-top: 10px;
 }
-.settings-options .field.checkbox {
-  margin: 0;
+.common-growth > summary {
+  cursor: pointer;
+}
+.common-growth .field.checkbox {
+  margin: 6px 0;
 }
 .console {
-  flex-basis: 100%;
   font-size: 0.85rem;
 }
-.console > summary {
-  cursor: pointer;
+.console-title {
+  font-weight: 600;
 }
 .console-grid {
   display: grid;
