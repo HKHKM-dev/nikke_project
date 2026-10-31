@@ -46,8 +46,7 @@ export function TeamSettingsForm({
     });
 
   return (
-    <fieldset className="panel settings">
-      <legend>敵条件</legend>
+    <fieldset className="panel settings" aria-label="敵条件">
       <div className="settings-simple">
         <label className="field">
           <span>敵名</span>
@@ -136,7 +135,7 @@ export function TeamSettingsForm({
               <span>射撃場スペック固定</span>
             </label>
             {availableSets.map((set) => (
-              <label key={set.id} className="field checkbox" title={set.source}>
+              <label key={set.id} className="field checkbox">
                 <input
                   type="checkbox"
                   checked={enemyEventSets.includes(set.id)}

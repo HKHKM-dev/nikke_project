@@ -80,8 +80,7 @@ export function SlotCard({
   );
 
   return (
-    <fieldset className="panel slot">
-      <legend>枠 {slotIndex + 1}</legend>
+    <fieldset className="panel slot" aria-label={`枠 ${slotIndex + 1}`}>
       <CharacterPicker
         index={index}
         excludeIds={excludeIds}

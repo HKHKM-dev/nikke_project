@@ -322,56 +322,12 @@ header h1 {
   border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
 
-/* 編成の内訳 */
-.table-scroll {
-  overflow-x: auto;
-}
-.team-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.88rem;
-  white-space: nowrap;
-}
-.team-table th,
-.team-table td {
-  padding: 5px 8px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.team-table th:nth-child(-n + 2),
-.team-table td:nth-child(-n + 2) {
-  text-align: left;
-}
-.team-table thead th {
-  font-weight: 600;
-  opacity: 0.8;
-  border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-}
-.team-table tbody tr + tr {
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.team-table tfoot th,
-.team-table tfoot td {
-  font-weight: 700;
-  border-top: 2px solid color-mix(in srgb, currentColor 35%, transparent);
-}
-.team-table .grand-total {
-  font-size: 1.05rem;
-}
 .simple-breakdown-table {
   max-width: 480px;
 }
 .simple-breakdown-table .damage-cell {
   font-weight: 600;
   font-size: 0.95rem;
-}
-.segments {
-  margin-top: 8px;
-}
-.segments > summary {
-  cursor: pointer;
-  font-size: 0.88rem;
-  padding: 3px 0;
 }
 .error {
   color: #c62828;
@@ -523,77 +479,4 @@ header h1 {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-}
-
-/* sim のタイムライン（Stage 16-B） */
-.timeline {
-  margin: 8px 0 12px;
-}
-.timeline svg {
-  display: block;
-  width: 100%;
-  max-width: 960px;
-  height: auto;
-}
-.tl-bar {
-  fill: currentColor;
-  opacity: 0.55;
-}
-.tl-axis {
-  stroke: currentColor;
-  opacity: 0.4;
-}
-.tl-label {
-  fill: currentColor;
-  font-size: 11px;
-  opacity: 0.7;
-}
-.tl-fullburst {
-  fill: #f59e0b;
-  background: #f59e0b;
-  opacity: 0.22;
-}
-.tl-untargetable {
-  fill: #64748b;
-  background: #64748b;
-  opacity: 0.45;
-}
-.tl-invulnerable {
-  fill: #a855f7;
-  background: #a855f7;
-  opacity: 0.3;
-}
-.tl-barrier {
-  fill: #0ea5e9;
-  background: #0ea5e9;
-  opacity: 0.3;
-}
-.tl-key {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  vertical-align: baseline;
-  opacity: 0.6;
-}
-
-/* Stage 18-C2: タイムラインの着地点（距離帯）の帯 */
-.tl-band-near {
-  fill: #16a34a;
-  background: #16a34a;
-}
-.tl-band-midNear {
-  fill: #84cc16;
-  background: #84cc16;
-}
-.tl-band-midFar {
-  fill: #f97316;
-  background: #f97316;
-}
-.tl-band-far {
-  fill: #dc2626;
-  background: #dc2626;
-}
-.tl-band-unknown {
-  fill: #9ca3af;
-  background: #9ca3af;
 }

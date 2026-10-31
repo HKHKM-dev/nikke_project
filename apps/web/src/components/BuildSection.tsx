@@ -118,7 +118,7 @@ export function BuildSection({
         <p className="hint">スペック固定: 好感度 rank{shown.affectionRank}・装備 T9 Lv5 × 4・キューブ等なし</p>
       )}
       <div className="build-grid">
-        <label className="field" title={`rank ${AFFECTION_RANK_MIN}〜${AFFECTION_RANK_MAX}`}>
+        <label className="field">
           <span>好感度</span>
           <input
             type="number"
