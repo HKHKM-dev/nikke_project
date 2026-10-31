@@ -48,8 +48,8 @@ header h1 {
   position: fixed;
   inset: 0;
   z-index: 19;
-  background: rgb(0 0 0 / 0.3);
-  animation: settings-menu-fade 0.12s ease-out;
+  background: rgb(0 0 0 / 0.5);
+  animation: settings-menu-fade 0.3s ease-out;
 }
 @keyframes settings-menu-fade {
   from {
