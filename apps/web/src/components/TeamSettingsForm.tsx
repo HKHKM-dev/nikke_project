@@ -29,7 +29,7 @@ type Props = {
 };
 
 /**
- * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（シンクロレベル・射撃場スペック固定・コンソール）。
+ * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（シンクロレベル・射撃場スペック固定・リサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
  * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）
  */
@@ -99,7 +99,7 @@ export function TeamSettingsForm({ element, fixedSpec, consoleInput, synchroLeve
           <span>射撃場スペック固定</span>
         </label>
         <div className="console">
-          <span className="console-title">コンソール</span>
+          <span className="console-title">リサイクルルーム</span>
           <div className="console-grid">
             {levelField('personal', '共通研究', consoleInput.personal, (lv) =>
               setConsole({ ...consoleInput, personal: lv }),
