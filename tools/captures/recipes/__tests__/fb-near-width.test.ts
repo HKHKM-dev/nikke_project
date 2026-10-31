@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { FIELD, HALF_H, HALF_W } from '../../aim-lib.ts';
-import { midWidth, nearLanding } from '../fb-near-width.ts';
+import { midWidth, nearLandingByWidth } from '../fb-near-width.ts';
 
 /** 半分の解像度のマスクに矩形を塗る（座標は半分の解像度） */
 function mask(rects: [number, number, number, number][]): Uint8Array {
@@ -26,18 +26,22 @@ describe('midWidth', () => {
   });
 });
 
-describe('nearLanding', () => {
+describe('nearLandingByWidth', () => {
   it('多いほうが 8 割以上かつ 10 フレーム以上で決める（小さい群が近 A）', () => {
-    expect(nearLanding([...Array(37).fill(330), ...Array(5).fill(400)])).toEqual({ a: 37, b: 5, landing: 'A' });
-    expect(nearLanding([...Array(3).fill(330), ...Array(19).fill(390), 600])).toEqual({ a: 3, b: 19, landing: 'B' });
+    expect(nearLandingByWidth([...Array(37).fill(330), ...Array(5).fill(400)])).toEqual({ a: 37, b: 5, landing: 'A' });
+    expect(nearLandingByWidth([...Array(3).fill(330), ...Array(19).fill(390), 600])).toEqual({
+      a: 3,
+      b: 19,
+      landing: 'B',
+    });
   });
 
   it('8 割に届かないか、10 フレームに届かなければ決めない', () => {
-    expect(nearLanding([...Array(21).fill(340), ...Array(10).fill(400)]).landing).toBeUndefined();
-    expect(nearLanding(Array(9).fill(330)).landing).toBeUndefined();
+    expect(nearLandingByWidth([...Array(21).fill(340), ...Array(10).fill(400)]).landing).toBeUndefined();
+    expect(nearLandingByWidth(Array(9).fill(330)).landing).toBeUndefined();
   });
 
   it('群の外の幅（つながり・隠れ）は数えない', () => {
-    expect(nearLanding([...Array(12).fill(335), 280, 470, 780])).toEqual({ a: 12, b: 0, landing: 'A' });
+    expect(nearLandingByWidth([...Array(12).fill(335), 280, 470, 780])).toEqual({ a: 12, b: 0, landing: 'A' });
   });
 });

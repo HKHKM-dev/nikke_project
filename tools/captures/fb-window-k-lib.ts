@@ -94,7 +94,7 @@ export function estimate(
 const EMPTY: LandingCount = { inCores: 0, inHits: 0, outCores: 0, outHits: 0 };
 
 /** landings に無い着地点の数を 0 にする（ratio は数の無い着地点を飛ばすので、その着地点を使わないのと同じ） */
-export function restrictLandings(r: RecordingCounts, landings: readonly Landing[]): RecordingCounts {
+function restrictLandings(r: RecordingCounts, landings: readonly Landing[]): RecordingCounts {
   return {
     recording: r.recording,
     counts: Object.fromEntries(LANDINGS.map((l) => [l, landings.includes(l) ? r.counts[l] : EMPTY])) as Record<

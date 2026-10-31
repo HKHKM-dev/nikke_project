@@ -122,6 +122,9 @@ const emptyCounts = (): Record<Landing, LandingCount> =>
     LandingCount
   >;
 
+/** 近の 2 つの帯の番号（0 から。2 つ目と 5 つ目） */
+export const NEAR_BANDS = [1, 4] as const;
+
 /** 帯（ジャンプで区切った区間）ごとの [最初, 最後] のヒットのフレーム。jumps は 5 つ（戦闘の中のジャンプが 4 回なら 4 つ） */
 export function fbBands(rows: readonly HudRow[], jumps: readonly number[], hitMax: number): [number, number][] {
   if (jumps.length !== 5 && jumps.length !== 4) throw new Error(`ジャンプは 5 つか 4 つ（${jumps.length} 個）`);
@@ -208,7 +211,15 @@ export function tallyFbWindows(
   t.midFar = mf.filter((h) => h.dist === 1).length * 2 > mf.length ? '中遠A' : '中遠BC';
   const nearOf = (n: Near): Landing | undefined => (n === '-' ? undefined : `近${n}`);
   const landingOf = (band: number): Landing | undefined =>
-    band === 0 ? '中近' : band === 1 ? nearOf(near[0]) : band === 4 ? nearOf(near[1]) : band === 3 ? t.midFar : '遠';
+    band === 0
+      ? '中近'
+      : band === NEAR_BANDS[0]
+        ? nearOf(near[0])
+        : band === NEAR_BANDS[1]
+          ? nearOf(near[1])
+          : band === 3
+            ? t.midFar
+            : '遠';
   for (const h of hits) {
     const l = landingOf(h.band);
     if (l === undefined) {
@@ -248,15 +259,7 @@ export const FB_OPTIONS = {
 } as const;
 
 /** 共通の --opt を読み、ヒットの増分・フルバーストの入り・ジャンプを出す */
-export async function fbSetup(ctx: RecipeContext): Promise<{
-  g: FbGrid;
-  hitMax: number;
-  tol: number;
-  rows: HudRow[];
-  entries: Entry[];
-  jumps: number[];
-  given: number[];
-}> {
+export async function fbSetup(ctx: RecipeContext) {
   const body = Number(ctx.options.body);
   if (!Number.isFinite(body) || body <= 0) throw new Error('--opt body=<胴体> が要る');
   const num = (k: string, d: number) => (ctx.options[k] === undefined ? d : Number(ctx.options[k]));

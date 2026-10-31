@@ -4,10 +4,10 @@
 // --a は▲ありの録画、--b は対照。各録画の records/observations/<録画>.json の、method.tool が recipe:fb-window-cores の
 // 観測値（--source を付ければ、その検証記録のもの。invalid の付いたものは除く）の最後の 1 つを使う。--landings は K・K_out・R_B・R_A に使う着地点
 // （省くと 6 つ全部。V-0542 は中近・近A・近B）。着地点ごとの数の表は、使わない着地点も出す。
-import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { countsFromValue, fbWindowK, type Estimate, type RecordingCounts } from './fb-window-k-lib.ts';
 import { LANDINGS, type Landing } from './recipes/fb-window-cores.ts';
+import { loadObservations } from './records-io.ts';
 
 const { values } = parseArgs({
   options: { a: { type: 'string' }, b: { type: 'string' }, source: { type: 'string' }, landings: { type: 'string' } },
@@ -19,16 +19,11 @@ if (values.a === undefined || values.b === undefined) {
   process.exit(1);
 }
 
-type Obs = { id: string; source: string; value: number | number[]; method: { tool: string }; invalid?: unknown };
-
 function load(id: string): RecordingCounts & { obs: string } {
-  const all = JSON.parse(
-    readFileSync(new URL(`../../records/observations/${id}.json`, import.meta.url), 'utf8'),
-  ) as Obs[];
-  const hits = all.filter(
+  const hits = loadObservations(id).filter(
     (o) =>
       o.invalid === undefined &&
-      o.method.tool.startsWith('recipe:fb-window-cores@') &&
+      o.method?.tool?.startsWith('recipe:fb-window-cores@') === true &&
       (values.source === undefined || o.source === values.source),
   );
   const o = hits.at(-1);
@@ -37,12 +32,17 @@ function load(id: string): RecordingCounts & { obs: string } {
 }
 
 const split = (s: string) => s.split(',').filter((x) => x !== '');
-const landings = values.landings === undefined ? LANDINGS : split(values.landings);
-for (const l of landings)
-  if (!(LANDINGS as readonly string[]).includes(l)) throw new Error(`着地点 ${l} は無い（${LANDINGS.join('・')}）`);
+const isLanding = (l: string): l is Landing => (LANDINGS as readonly string[]).includes(l);
+const landings: readonly Landing[] =
+  values.landings === undefined
+    ? LANDINGS
+    : split(values.landings).map((l) => {
+        if (!isLanding(l)) throw new Error(`着地点 ${l} は無い（${LANDINGS.join('・')}）`);
+        return l;
+      });
 const a = split(values.a).map(load);
 const b = split(values.b).map(load);
-const r = fbWindowK(a, b, landings as Landing[]);
+const r = fbWindowK(a, b, landings);
 const f = (x: number) => x.toFixed(3);
 const line = (name: string, e: Estimate) =>
   `${name}: ${f(e.value)}（σ ${f(e.sigma)}。jackknife ${f(e.jackknife)}・2 項分布 ${f(e.binomial)}。ci95 ${f(e.value - 1.96 * e.sigma)}〜${f(e.value + 1.96 * e.sigma)}。` +

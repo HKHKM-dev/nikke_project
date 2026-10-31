@@ -14,14 +14,16 @@ import {
   HALF_H,
   HALF_W,
   findTarget,
+  maskSpanWidth,
   median,
+  medianImage,
   readFrames,
   toHalfField,
   type Aim,
   type Target,
 } from '../aim-lib.ts';
 import { derived } from './cache.ts';
-import { FB_OPTIONS, fbBands, fbSetup } from './fb-window-cores.ts';
+import { FB_OPTIONS, NEAR_BANDS, fbBands, fbSetup } from './fb-window-cores.ts';
 import { observation, type Recipe } from './types.ts';
 
 /** 近 A・近 B の幅の群（0354-12） */
@@ -32,21 +34,13 @@ export const NEAR_B_WIDTH = [370, 460] as const;
 export function midWidth(t: Pick<Target, 'y0' | 'y1' | 'mask'>): number {
   const hy0 = (t.y0 - FIELD.y0) / 2;
   const hy1 = (t.y1 - FIELD.y0) / 2;
-  let bl = Infinity;
-  let br = -Infinity;
-  for (let y = Math.floor(hy0 + (hy1 - hy0) * 0.45); y <= Math.ceil(hy0 + (hy1 - hy0) * 0.55); y++)
-    for (let x = 0; x < HALF_W; x++) {
-      if (!t.mask[y * HALF_W + x]) continue;
-      bl = Math.min(bl, x);
-      br = Math.max(br, x);
-    }
-  return Number.isFinite(bl) ? (br - bl + 1) * 2 : NaN;
+  return maskSpanWidth(t.mask, Math.floor(hy0 + (hy1 - hy0) * 0.45), Math.ceil(hy0 + (hy1 - hy0) * 0.55));
 }
 
-export type NearLanding = { a: number; b: number; landing: 'A' | 'B' | undefined };
+export type NearLandingByWidth = { a: number; b: number; landing: 'A' | 'B' | undefined };
 
 /** 幅の群のフレームの数から近の着地点を決める（多いほうが 8 割以上かつ 10 フレーム以上） */
-export function nearLanding(widths: readonly number[]): NearLanding {
+export function nearLandingByWidth(widths: readonly number[]): NearLandingByWidth {
   const a = widths.filter((w) => w >= NEAR_A_WIDTH[0] && w < NEAR_A_WIDTH[1]).length;
   const b = widths.filter((w) => w >= NEAR_B_WIDTH[0] && w < NEAR_B_WIDTH[1]).length;
   const [more, label] = a >= b ? [a, 'A' as const] : [b, 'B' as const];
@@ -69,19 +63,13 @@ function sideDistance(p: Uint8Array, q: Uint8Array): number {
 
 /** 左右の列で最も似た k 枚の中央値 */
 function nearestBackground(half: Uint8Array, pool: readonly Uint8Array[], k: number): Uint8Array {
-  const ps = pool
-    .map((p) => ({ p, d: sideDistance(half, p) }))
-    .sort((x, y) => x.d - y.d)
-    .slice(0, k)
-    .map((x) => x.p);
-  const bg = new Uint8Array(half.length);
-  const col = new Uint8Array(ps.length);
-  for (let i = 0; i < bg.length; i++) {
-    for (let j = 0; j < ps.length; j++) col[j] = ps[j]![i]!;
-    col.sort();
-    bg[i] = col[ps.length >> 1]!;
-  }
-  return bg;
+  return medianImage(
+    pool
+      .map((p) => ({ p, d: sideDistance(half, p) }))
+      .sort((x, y) => x.d - y.d)
+      .slice(0, k)
+      .map((x) => x.p),
+  );
 }
 
 const aimAt = (x: number): Aim => ({ x, y: 480, conf: 1, color: 'white', type: 'cross', size: 0 });
@@ -117,7 +105,7 @@ export const fbNearWidth: Recipe = {
     const step = Number(ctx.options.step ?? '30');
     const poolStep = Number(ctx.options.pool ?? '20');
     const bands = fbBands(rows, jumps, hitMax);
-    const nearBands = [bands[1]!, bands[4]!];
+    const nearBands = NEAR_BANDS.map((i) => bands[i]!);
     const crop = { y: FIELD.y0, h: FIELD.y1 - FIELD.y0 };
     const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
     const key = `fb-near-width@1_${nearBands.map(([a, b]) => `f${a}-${b}`).join('_')}_s${step}_p${poolStep}`;
@@ -128,7 +116,7 @@ export const fbNearWidth: Recipe = {
       sha,
       async () => {
         const pool: Uint8Array[] = [];
-        for (const [a, b] of bands.filter((_, i) => i !== 1 && i !== 4))
+        for (const [a, b] of bands.filter((_, i) => !(NEAR_BANDS as readonly number[]).includes(i)))
           for await (const { img } of readFrames(ctx.video, a, b, poolStep, crop))
             pool.push(toHalfField(img, FIELD.y0));
         ctx.log(`背景の候補: 近でない帯の ${pool.length} フレーム`);
@@ -151,7 +139,7 @@ export const fbNearWidth: Recipe = {
       .map((line) => line.split(',').map((x) => (x === '-' ? undefined : Number(x))));
     const results = perBand.map((ws) => {
       const used = ws.filter((w): w is number => w !== undefined);
-      return { total: ws.length, used, width: median(used), ...nearLanding(used) };
+      return { total: ws.length, used, width: median(used), ...nearLandingByWidth(used) };
     });
     const who = ctx.recording.team.map((m) => m.name).join('・');
     const landings = results.map((r) => r.landing ?? '決まらない');
