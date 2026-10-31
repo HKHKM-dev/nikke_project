@@ -14884,7 +14884,7 @@
     {
       "observation": "0744-03",
       "element": "ドレイク burst.effects[0]",
-      "key": "94f4497346eebaa2",
+      "key": "c3e97f78fbb8a57b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14892,7 +14892,7 @@
     {
       "observation": "0744-03",
       "element": "ドレイク burst.effects[1]",
-      "key": "94f4497346eebaa2",
+      "key": "c3e97f78fbb8a57b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14900,7 +14900,7 @@
     {
       "observation": "0744-03",
       "element": "ドレイク skill1.effects[0]",
-      "key": "94f4497346eebaa2",
+      "key": "c3e97f78fbb8a57b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14908,7 +14908,7 @@
     {
       "observation": "0744-03",
       "element": "ドレイク skill1.effects[1]",
-      "key": "94f4497346eebaa2",
+      "key": "c3e97f78fbb8a57b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14916,7 +14916,7 @@
     {
       "observation": "0744-03",
       "element": "ドレイク skill2.effects[0]",
-      "key": "94f4497346eebaa2",
+      "key": "c3e97f78fbb8a57b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14924,7 +14924,7 @@
     {
       "observation": "0744-03",
       "element": "ノワール burst.effects[1]",
-      "key": "94f4497346eebaa2",
+      "key": "c3e97f78fbb8a57b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14932,7 +14932,7 @@
     {
       "observation": "0745-03",
       "element": "ドレイク burst.effects[0]",
-      "key": "4463be5211036883",
+      "key": "b456fd99e3b9ceca",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14940,7 +14940,7 @@
     {
       "observation": "0745-03",
       "element": "ドレイク burst.effects[1]",
-      "key": "4463be5211036883",
+      "key": "b456fd99e3b9ceca",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14948,7 +14948,7 @@
     {
       "observation": "0745-03",
       "element": "ドレイク skill1.effects[0]",
-      "key": "4463be5211036883",
+      "key": "b456fd99e3b9ceca",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14956,7 +14956,7 @@
     {
       "observation": "0745-03",
       "element": "ドレイク skill1.effects[1]",
-      "key": "4463be5211036883",
+      "key": "b456fd99e3b9ceca",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -14964,7 +14964,7 @@
     {
       "observation": "0745-03",
       "element": "ドレイク skill2.effects[0]",
-      "key": "4463be5211036883",
+      "key": "b456fd99e3b9ceca",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14972,7 +14972,7 @@
     {
       "observation": "0745-03",
       "element": "ノワール burst.effects[1]",
-      "key": "4463be5211036883",
+      "key": "b456fd99e3b9ceca",
       "effective": false,
       "minus": 0,
       "plus": 0

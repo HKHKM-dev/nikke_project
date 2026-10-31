@@ -25,13 +25,5 @@
       "reproduced": "2〜8 回目の I",
       "observations": ["0744-03"]
     }
-  ],
-  "minimal": [
-    {
-      "observations": "*",
-      "element": "ラピ：レッドフード burst.notes[0]",
-      "reason": "爆発範囲▲（バーストの I・III の行）はダメージの式に無く、バーストの CT とチェーンの時刻にも効かないので、この観測値（I の替わり目と CT の明けの時刻）は変わらない",
-      "decided": "2026-10-30"
-    }
   ]
 }
