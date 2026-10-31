@@ -191,7 +191,7 @@ export type EnemyInput = {
   defenceRounding?: DefenceRounding;
 };
 
-/** 防御力▼の後の防御力の丸めの向き: 丸めない・四捨五入・切り上げ（C-0688 の 91.6 → 92 で、切り捨ては外れた） */
+/** 防御力▼の後の防御力の丸めの向き: 丸めない・四捨五入・切り上げ（切り捨ては C-0688 で外れた） */
 export type DefenceRounding = 'none' | 'round' | 'ceil';
 
 /** 1 トリガーの式に効く条件（時間を含まない） */
@@ -409,8 +409,7 @@ export const DISTANCE_BONUS = 0.3;
 
 /**
  * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の後の防御力。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
- * 端数は丸めない（録画 0305・0306 の読み直し。V-0433）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値。
- * 丸めの向きの仮説（enemy.defenceRounding。C-0688・V-0561）は予測の仮説だけが使う
+ * 端数は丸めない（録画 0305・0306 の読み直し。V-0433）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値。丸めは enemy.defenceRounding
  */
 export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
   const down = Math.min(1, Math.max(0, buffs.enemyDefenseDown));
