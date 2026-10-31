@@ -44,6 +44,38 @@ describe('バーストのヒットが敵の側のデバフを見る時点（C-07
     for (const h of ludmilla) expect(h.damageTakenMultiplier).toBe(1);
     for (const h of privaty) expect(h.damageTakenMultiplier).toBeCloseTo(1 + BLANC_DAMAGE_TAKEN, 12);
   });
+
+  // 予測の仮説（EnemyInput.burstHitEnemyDebuffs。V-0587 の H-hit）: 敵の側のデバフだけヒットの直前の値で見る（C-0795 の前の形）
+  it("takes only the enemy debuffs at the hit under the 'hit' hypothesis", () => {
+    for (const a of chained) {
+      const hitFrame = a.frame + 78;
+      const atHit = burstSnapshotState(plan.timeline, hitFrame, LUDMILLA, true).buffs;
+      const atUse = burstSnapshotState(plan.timeline, a.frame, LUDMILLA, true).buffs;
+      expect(burstHitBuffs(plan.timeline, a.frame, hitFrame, LUDMILLA, true, undefined, 'hit')).toEqual({
+        ...atUse,
+        damageTaken: atHit.damageTaken,
+        enemyDefenseDown: atHit.enemyDefenseDown,
+      });
+      expect(burstHitBuffs(plan.timeline, a.frame, a.frame, LUDMILLA, true, undefined, 'hit')).toEqual(atUse);
+    }
+  });
+
+  it("puts Blanc's ▲ on Ludmilla's chained hits only under the 'hit' hypothesis ('activation' is the model)", () => {
+    const base = runSimulation(input);
+    const activation = runSimulation({ ...input, enemy: { ...input.enemy, burstHitEnemyDebuffs: 'activation' } });
+    expect(activation.slots.map((s) => s.burst.hits)).toEqual(base.slots.map((s) => s.burst.hits));
+    const hit = runSimulation({ ...input, enemy: { ...input.enemy, burstHitEnemyDebuffs: 'hit' } });
+    const chainedFrames = new Set(chained.map((a) => a.frame));
+    const ludmillaActivations = activations.filter((a) => a.slotIndex === LUDMILLA);
+    const ludmilla = hit.slots[LUDMILLA]!.burst.hits;
+    expect(ludmilla.length).toBe(ludmillaActivations.length);
+    ludmilla.forEach((h, k) => {
+      const expected = chainedFrames.has(ludmillaActivations[k]!.frame) ? 1 + BLANC_DAMAGE_TAKEN : 1;
+      expect(h.damageTakenMultiplier).toBeCloseTo(expected, 12);
+    });
+    // プリバティ：アンカインド・メイドは遅れの無い受け手で、どちらの仮説でも同じ値
+    expect(hit.slots[PRIVATY]!.burst.hits).toEqual(base.slots[PRIVATY]!.burst.hits);
+  });
 });
 
 // 防御力▼の側（enemyDefenseDown）: エレグ（II）のヒット（II の発動の 35f 後）は、毎回ルドミラ（I）の発動の後・ヒットの前に来る

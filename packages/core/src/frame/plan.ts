@@ -17,7 +17,7 @@ import {
   type BurstSchedule,
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
-import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
+import { computeTriggerDamage, type BurstHitEnemyDebuffs, type EnemyInput } from '../damage.ts';
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
@@ -386,7 +386,7 @@ export function planSkillHits(
       // （シンデレラの S1 の攻撃力▲は、ヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時点のまま）
       const atHit =
         pre && !shooterAtHit
-          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre)
+          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, enemy.burstHitEnemyDebuffs)
           : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
@@ -695,9 +695,12 @@ export function burstSnapshotState(
  * 撃つ側のバフも敵の側のデバフ（受けるダメージ▲・防御力▼）も、発動のフレーム activationFrame の時点（preActivation なら直前）で
  * 固定する。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで付く S2 の攻撃ダメージ▲は乗らない
  * （`0079-07`）。ノワールのヒットには、III の発動の後・ヒットの前に付いた鈴原サクラの受けるダメージ▲は乗らず、発動の時に付いていて
- * ヒットの前に切れた▲は乗る（C-0795）。hitFrame は、sameActivation の小片がヒットまで続いているかを見るのにだけ使う。
+ * ヒットの前に切れた▲は乗る（C-0795）。hitFrame は、sameActivation の小片がヒットまで続いているかを見るのと、enemyDebuffs が 'hit'
+ * のときにだけ使う。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
- * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）
+ * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）。
+ * enemyDebuffs が 'hit'（EnemyInput.burstHitEnemyDebuffs。検証の予測の仮説だけが使う）なら、敵の側のデバフだけヒットの直前の値で
+ * 上書きする（C-0795 の前の形）
  */
 export function burstHitBuffs(
   timeline: BuffTimeline,
@@ -706,8 +709,13 @@ export function burstHitBuffs(
   slotIndex: number,
   preActivation: boolean,
   sameActivation?: readonly ValuePiece[],
+  enemyDebuffs: BurstHitEnemyDebuffs = 'activation',
 ): BuffTotals {
-  const buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
+  let buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
+  if (enemyDebuffs === 'hit' && hitFrame !== activationFrame) {
+    const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
+    buffs = { ...buffs, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
+  }
   if (sameActivation === undefined) return buffs;
   return withSameActivationEffects(
     sameActivation,
