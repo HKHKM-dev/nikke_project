@@ -10,8 +10,8 @@ import type { SkillDefinition, SkillEntry } from './types.ts';
 export type TreasurePhase = 0 | 1 | 2 | 3;
 export const TREASURE_PHASE_MAX = 3;
 
-/** 宝物版の定義が無いスロットの扱い。基礎版の定義には戻さない（宝物版とは数値の番号がずれるため） */
-const UNDEFINED_TREASURE_ENTRY: SkillEntry = {
+/** 宝物版の定義が無いスロットの扱い。基礎版の定義には戻さない（宝物版とは数値の番号がずれるため）。plan/skills.md もこれを出す */
+export const UNDEFINED_TREASURE_ENTRY: SkillEntry = {
   support: 'unsupported',
   effects: [],
   notes: [

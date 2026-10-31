@@ -63,6 +63,15 @@ describe('語彙の検証', () => {
     );
   });
 
+  it('rejects a coreHit count trigger with an instantFire weapon change (the first pass counts the base core rate)', () => {
+    const coreHitDamage = { kind: 'damage', trigger: { count: 'coreHit', every: 10 }, ref: 1, damageType: 'skill' };
+    expect(() => parseSkillDefinition(withSkill1(warmUp, change, coreHitDamage))).toThrow(
+      /coreHit count trigger cannot be combined with an instantFire weapon change/,
+    );
+    const { instantFire: _, ...charging } = change;
+    expect(() => parseSkillDefinition(withSkill1(warmUp, charging, coreHitDamage))).not.toThrow();
+  });
+
   it('allows { weaponChangeEnd } only in ammoDecrease, which targets self only', () => {
     const decrease = { kind: 'ammoDecrease', trigger: { weaponChangeEnd: true }, target: 'self', ref: 7 };
     expect(() => parseSkillDefinition(withSkill1(warmUp, change, decrease))).not.toThrow();

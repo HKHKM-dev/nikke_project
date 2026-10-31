@@ -4482,6 +4482,31 @@ function hasSelfStackingGrant(entries: Partial<Record<SkillSlot, SkillEntry>>, s
 }
 
 /**
+ * 即着弾に替える使用武器の変更（instantFire）と、コアの命中の回数のきっかけ（coreHit）は同じ定義に持てない。変更後の武器の発のコア命中率は、
+ * 2 パス目が的の表の変更後の武器の行（frame/landing.ts の weaponChangeParts）に替えるが、きっかけを数える 1 パス目（frame/firstPass.ts の
+ * hitsAt）は基礎の武器の値のままなので、数がずれる。使うキャラが無いので拒否する
+ */
+function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  if (!effects.some((e) => e.kind === 'weaponChange' && e.instantFire === true)) return;
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (
+        'trigger' in e &&
+        !isEndedTrigger(e.trigger) &&
+        isShotCountTrigger(e.trigger) &&
+        e.trigger.count === 'coreHit'
+      ) {
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          'a coreHit count trigger cannot be combined with an instantFire weapon change',
+        );
+      }
+    });
+  }
+}
+
+/**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
  * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される）
  */
@@ -4727,6 +4752,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   );
   validateCycles(skills, 'skills');
   validateFixedChargeTimeCount(skills, 'skills');
+  validateInstantFireCoreHits(skills, 'skills');
   validateStateGrants(skills, 'skills');
   validateStackChanges(skills, 'skills');
   validateStateContentKinds(skills, 'skills');
@@ -4750,6 +4776,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     }
     validateCycles({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateInstantFireCoreHits({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateStateContentKinds({ ...skills, ...treasureSkills }, 'treasureSkills');

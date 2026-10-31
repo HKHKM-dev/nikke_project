@@ -14,6 +14,7 @@ import type { PredictionFile } from '../src/records/predictions.ts';
 import { idsInPaths } from '../src/records/drafts.ts';
 import { parseVerification, sortVerifications, type Verification } from '../src/records/verifications.ts';
 import { buildSkillSupportIndex } from '../src/skills/support.ts';
+import { TREASURE_PHASE_MAX, treasureSlots } from '../src/skills/treasure.ts';
 import {
   parseSkillDefinition,
   parseSkillIndex,
@@ -253,7 +254,11 @@ function loadDefinitionsWithCharacters(): { definition: SkillDefinition; charact
 
 /** data/skills/index.json に載った定義と、キャラの名前（index.json の順） */
 export function loadSkillDefinitions(): DefinedCharacter[] {
-  return loadDefinitionsWithCharacters().map(({ definition, character }) => ({ definition, name: character.name }));
+  return loadDefinitionsWithCharacters().map(({ definition, character }) => ({
+    definition,
+    name: character.name,
+    treasureSlots: treasureSlots(character, TREASURE_PHASE_MAX),
+  }));
 }
 
 /** data/skills/index.json に載った定義とキャラデータから作った、対応状況の索引（records:check が書き、npm test が最新かを確かめる） */
