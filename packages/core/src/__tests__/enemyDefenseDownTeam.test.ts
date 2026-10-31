@@ -74,7 +74,9 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
 
   it('multiplies the defence by (1 − Σ) and keeps Σ within 0 to 1', () => {
     expect(defenceAfterDown(enemy, ZERO_BUFFS)).toBe(100);
-    expect(defenceAfterDown({ ...enemy, defenceRounding: 'none' }, { ...ZERO_BUFFS, enemyDefenseDown: 0.084 })).toBeCloseTo(91.6, 12);
+    expect(
+      defenceAfterDown({ ...enemy, defenceRounding: 'none' }, { ...ZERO_BUFFS, enemyDefenseDown: 0.084 }),
+    ).toBeCloseTo(91.6, 12);
     expect(defenceAfterDown(enemy, { ...ZERO_BUFFS, enemyDefenseDown: 1.5 })).toBe(0);
     expect(defenceAfterDown(enemy, { ...ZERO_BUFFS, enemyDefenseDown: -0.2 })).toBe(100);
   });
