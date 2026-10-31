@@ -11,6 +11,7 @@ import {
   GEAR_PARTS,
   GEAR_TYPES,
   MAX_SKILL_LEVELS,
+  NIKKE_CLASSES,
   OVERLOAD_LEVEL_MAX,
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
@@ -26,6 +27,7 @@ import {
   enemyEventsOf,
   enemyLandingsOf,
   fixedSpecBuild,
+  overloadPositionsUnique,
   presetForEnemy,
   targetProfileForEnemy,
   type BuildInput,
@@ -133,7 +135,7 @@ export type TeamState = {
 /** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
 export const CONSOLE_CORPORATIONS = ['ELYSION', 'MISSILIS', 'TETRA', 'PILGRIM', 'ABNORMAL'] as const;
 export type ConsoleCorporation = (typeof CONSOLE_CORPORATIONS)[number];
-export const CONSOLE_CLASSES: readonly NikkeClass[] = ['Attacker', 'Defender', 'Supporter'];
+export const CONSOLE_CLASSES: readonly NikkeClass[] = NIKKE_CLASSES;
 
 /** コンソール: 共通研究・クラス研究・企業研究の Lv */
 export type ConsoleInput = {
@@ -145,8 +147,8 @@ export type ConsoleInput = {
 export function emptyConsole(): ConsoleInput {
   return {
     personal: 0,
-    class: { Attacker: 0, Defender: 0, Supporter: 0 },
-    corporation: { ELYSION: 0, MISSILIS: 0, TETRA: 0, PILGRIM: 0, ABNORMAL: 0 },
+    class: Object.fromEntries(CONSOLE_CLASSES.map((c) => [c, 0])) as Record<NikkeClass, number>,
+    corporation: Object.fromEntries(CONSOLE_CORPORATIONS.map((c) => [c, 0])) as Record<ConsoleCorporation, number>,
   };
 }
 
@@ -282,7 +284,10 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
     case 'setBurst':
       return { ...state, burst: action.burst };
     case 'setControlledSlot':
-      return { ...state, controlledSlot: action.controlledSlot };
+      // 押されているフォーカスをもう一度押しても計算し直さない
+      return state.controlledSlot === action.controlledSlot
+        ? state
+        : { ...state, controlledSlot: action.controlledSlot };
     case 'setEnemyEventSets':
       return { ...state, enemyEventSets: action.enemyEventSets };
     case 'setConsole':
@@ -375,7 +380,7 @@ export function effectiveBuild(
 /**
  * 2026-10-31: オーナーの指示で画面から消した入力を既定値にした編成。保存データの値は消さずに残すが、計算と画面の値には使わない
  * （欄が無いので直せないため）。計算と画面はこの編成を読む
- * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算。Lv は編成共通のシンクロレベル。撃たないスロットは、射撃条件を
+ * - 枠: 射撃条件・想定 HP・その他攻撃加算（リサイクルルームは effectiveBuild がコンソールから取る）。Lv は編成共通のシンクロレベル。撃たないスロットは、射撃条件を
  *   手入力の弾丸命中率 0 にする（SlotState.noFire）
  * - 編成: 敵（射撃場の的にし、属性だけ残す）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。戦闘時間・
  *   操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
@@ -390,7 +395,7 @@ export function teamStateForCalc(state: TeamState): TeamState {
       conditionMode: slot.noFire ? 'manual' : DEFAULT_CONDITION_MODE,
       condition: slot.noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : { ...DEFAULT_SLOT_CONDITION },
       hpRatio: DEFAULT_HP_RATIO,
-      build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
+      build: { ...slot.build, extraAttack: EMPTY_BUILD.extraAttack },
     })),
     enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
     burst: DEFAULT_BURST,
@@ -412,10 +417,15 @@ export function eventSetsForCalc(master: EnemyPresetMaster | null, rangeJump: bo
   return [...new Set(master.enemies.filter((p) => p.content === 'range').flatMap((p) => p.eventSets))];
 }
 
-/** 1..10 の整数に clamp する（入力欄の途中状態を吸収する） */
+/** min..max の整数に clamp する（入力欄の途中状態を吸収する。数でなければ min） */
+export function clampInt(value: number, min: number, max: number): number {
+  if (!Number.isFinite(value)) return min;
+  return Math.min(max, Math.max(min, Math.round(value)));
+}
+
+/** 1..10 の整数に clamp する */
 export function clampSkillLevel(level: number): number {
-  if (!Number.isFinite(level)) return SKILL_LEVEL_MIN;
-  return Math.min(SKILL_LEVEL_MAX, Math.max(SKILL_LEVEL_MIN, Math.round(level)));
+  return clampInt(level, SKILL_LEVEL_MIN, SKILL_LEVEL_MAX);
 }
 
 // ---- 永続化 ----
@@ -535,9 +545,7 @@ function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
       ...(line.position === undefined ? {} : { position: line.position }),
     });
   }
-  const positions = lines.map((line, i) => line.position ?? i);
-  if (new Set(positions).size !== positions.length) return undefined;
-  return lines;
+  return overloadPositionsUnique(lines) ? lines : undefined;
 }
 
 function parseGear(v: Json): GearInput | undefined {
@@ -633,6 +641,11 @@ export function parseTeamState(json: string | null, index: readonly CharacterInd
   if (json === null) return null;
   const result = readTeamJson(json, index);
   return result.ok ? result.value : null;
+}
+
+/** JSON.parse した値を編成として検証する（parseTeamState の中身。版は見ない）。形が合わなければ null */
+export function parseTeamObject(raw: Json, index: readonly CharacterIndexEntry[]): TeamState | null {
+  return isRecord(raw) ? parseTeamFields(raw, index) : null;
 }
 
 function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterIndexEntry[]): TeamState | null {

@@ -1,9 +1,9 @@
 // ソロレイド用の編成 01〜05 の切り替え。
 // 編成ごとに持つのは、スロット（ニケ・育成・スキル・スロットの詳細設定）とフォーカスだけ。敵・共通育成・
-// チームの詳細設定（3 分モード・戦闘時間・バースト）・スペック固定は全編成で共通にする（ソロレイドは 5 編成で同じボスに挑む）。
-// 選んでいる編成は、これまでどおり STORAGE_KEY（team.ts）の編成そのもの。ほかの編成をこのキーに保存する
+// チームの詳細設定（3 分モード・戦闘時間）・スペック固定は全編成で共通にする（ソロレイドは 5 編成で同じボスに挑む）。
+// 選んでいる編成は、これまでどおり STORAGE_KEY（team.ts）の編成そのもの。ほかの編成をこのキーに保存する（切り替えたときだけ書く）
 import type { CharacterIndexEntry } from '@nikke/core';
-import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, parseTeamState, type TeamState } from './team.ts';
+import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, parseTeamObject, type TeamState } from './team.ts';
 
 export const PARTY_COUNT = 5;
 export const PARTIES_STORAGE_KEY = 'nikke-calc.parties.v1';
@@ -12,8 +12,8 @@ export const PARTIES_STORAGE_KEY = 'nikke-calc.parties.v1';
 export type Party = Pick<TeamState, 'slots' | 'controlledSlot'>;
 
 /**
- * 選んでいる編成の番号（0 から）と、編成ごとの中身。選んでいる編成の中身は画面の編成（TeamState）が正で、
- * parties[active] は使わない（切り替えたときと保存するときに画面の編成から作る）。未使用の編成は null（空の 5 スロット）
+ * 選んでいる編成の番号（0 から）と、ほかの編成の中身。選んでいる編成の中身は画面の編成（TeamState）が正で、
+ * parties[active] は null にしておく。未使用の編成も null（空の 5 スロット）
  */
 export type PartiesState = { active: number; parties: (Party | null)[] };
 
@@ -24,7 +24,7 @@ export function partyOf(team: TeamState): Party {
 }
 
 /** 共通の設定はそのままに、スロットとフォーカスを編成のものにする。null は空の編成 */
-export function withParty(team: TeamState, party: Party | null): TeamState {
+function withParty(team: TeamState, party: Party | null): TeamState {
   return {
     ...team,
     slots: party?.slots ?? INITIAL_TEAM_STATE.slots,
@@ -41,17 +41,18 @@ export function switchParty(
   if (to === state.active || to < 0 || to >= PARTY_COUNT) return { parties: state, team };
   const parties = state.parties.slice();
   parties[state.active] = partyOf(team);
-  return { parties: { active: to, parties }, team: withParty(team, parties[to] ?? null) };
+  const next = withParty(team, parties[to] ?? null);
+  parties[to] = null;
+  return { parties: { active: to, parties }, team: next };
 }
 
-export function serializeParties(state: PartiesState, team: TeamState): string {
-  const parties = state.parties.map((p, i) => (i === state.active ? partyOf(team) : p));
-  return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, active: state.active, parties });
+export function serializeParties(state: PartiesState): string {
+  return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
 }
 
 /**
  * 保存した編成の一覧を読む。読めないもの全体は null（初期値に落とす）。1 つの編成だけ形が合わないときは、その編成を空にする。
- * 編成の中身の検証は、共通の設定を既定値で埋めて編成の JSON の検証（team.ts の parseTeamState）に任せる
+ * 編成の中身の検証は、共通の設定を既定値で埋めて編成の検証（team.ts の parseTeamObject）に任せる
  */
 export function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
   if (json === null) return null;
@@ -67,13 +68,10 @@ export function parseParties(json: string | null, index: readonly CharacterIndex
   if (!Array.isArray(parties) || parties.length !== PARTY_COUNT) return null;
   return {
     active,
-    parties: parties.map((p: unknown) => {
-      if (typeof p !== 'object' || p === null) return null;
+    parties: parties.map((p: unknown, i) => {
+      if (i === active || typeof p !== 'object' || p === null) return null;
       const { slots, controlledSlot } = p as { slots?: unknown; controlledSlot?: unknown };
-      const team = parseTeamState(
-        JSON.stringify({ ...INITIAL_TEAM_STATE, formatVersion: TEAM_FORMAT_VERSION, slots, controlledSlot }),
-        index,
-      );
+      const team = parseTeamObject({ ...INITIAL_TEAM_STATE, slots, controlledSlot }, index);
       return team === null ? null : partyOf(team);
     }),
   };

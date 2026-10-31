@@ -12,7 +12,7 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
-import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
+import { clampInt, effectiveTreasurePhase, type SlotState, type TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
 import { Popover } from './Popover.tsx';
@@ -84,6 +84,25 @@ export function SlotCard({
     </label>
   );
 
+  // スロットの詳細設定のボタン。フォーカスは編成で 1 人なので、押すとこのスロットに移る（外すボタンにはならない）
+  const toggles = [
+    {
+      label: 'フォーカス',
+      pressed: focused,
+      onToggle: () => dispatch({ type: 'setControlledSlot', controlledSlot: slotIndex }),
+    },
+    {
+      label: '撃たない',
+      pressed: slot.noFire,
+      onToggle: () => dispatch({ type: 'setNoFire', index: slotIndex, noFire: !slot.noFire }),
+    },
+    {
+      label: 'バーストしない',
+      pressed: slot.noBurst,
+      onToggle: () => dispatch({ type: 'setNoBurst', index: slotIndex, noBurst: !slot.noBurst }),
+    },
+  ];
+
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
@@ -96,33 +115,18 @@ export function SlotCard({
           label={`スロット ${slotIndex + 1} の詳細設定`}
           align="left"
         >
-          <div className="slot-advanced">
-            <div className="slot-toggles">
+          <div className="slot-toggles">
+            {toggles.map((t) => (
               <button
+                key={t.label}
                 type="button"
                 className="toggle-button"
-                aria-pressed={focused}
-                onClick={() => dispatch({ type: 'setControlledSlot', controlledSlot: slotIndex })}
+                aria-pressed={t.pressed}
+                onClick={t.onToggle}
               >
-                フォーカス
+                {t.label}
               </button>
-              <button
-                type="button"
-                className="toggle-button"
-                aria-pressed={slot.noFire}
-                onClick={() => dispatch({ type: 'setNoFire', index: slotIndex, noFire: !slot.noFire })}
-              >
-                撃たない
-              </button>
-              <button
-                type="button"
-                className="toggle-button"
-                aria-pressed={slot.noBurst}
-                onClick={() => dispatch({ type: 'setNoBurst', index: slotIndex, noBurst: !slot.noBurst })}
-              >
-                バーストしない
-              </button>
-            </div>
+            ))}
           </div>
         </Popover>
       </legend>
@@ -164,9 +168,10 @@ export function SlotCard({
                       index: slotIndex,
                       build: {
                         ...slot.build,
-                        affectionRank: Math.min(
+                        affectionRank: clampInt(
+                          Number(e.target.value),
+                          AFFECTION_RANK_MIN,
                           affectionRankMax(character),
-                          Math.max(AFFECTION_RANK_MIN, Math.round(Number(e.target.value) || AFFECTION_RANK_MIN)),
                         ),
                       },
                     })

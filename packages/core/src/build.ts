@@ -28,6 +28,17 @@ export const GEAR_LEVEL_MAX = 5;
 export const AFFECTION_RANK_MIN = 1;
 export const AFFECTION_RANK_MAX = 40;
 
+/** OL の行の位置（0 始まり）。position の無い行は配列の並び */
+export function overloadLinePosition(line: OverloadLine, index: number): number {
+  return line.position ?? index;
+}
+
+/** OL の行の位置が重ならないか */
+export function overloadPositionsUnique(lines: readonly OverloadLine[]): boolean {
+  const positions = lines.map(overloadLinePosition);
+  return new Set(positions).size === positions.length;
+}
+
 /** キャラごとの好感度ランクの上限。OVERSPEC（ピルグリム全員と、ピルグリムでない 4 体）は 40、ほかは 30（オーナーの指定） */
 export function affectionRankMax(character: Pick<CharacterData, 'corporationSubType'>): number {
   return character.corporationSubType === 'OVERSPEC' ? AFFECTION_RANK_MAX : 30;
@@ -202,8 +213,7 @@ export function validateBuild(
         assertInt(`gear.${part}.overload[${i}].position`, line.position, 0, OVERLOAD_LINE_MAX - 1);
       }
     });
-    const positions = lines.map((line, i) => line.position ?? i);
-    if (new Set(positions).size !== positions.length) {
+    if (!overloadPositionsUnique(lines)) {
       throw new RangeError(`gear.${part}: overload lines share a position`);
     }
   }

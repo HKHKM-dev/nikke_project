@@ -26,6 +26,8 @@ describe('parties', () => {
     expect(back.team.slots[0]!.resourceId).toBe(10);
     expect(back.team.controlledSlot).toBe(0);
     expect(back.parties.parties[1]).toEqual(partyOf(team1));
+    // 選んでいる編成の中身は画面の編成が持つ
+    expect(back.parties.parties[0]).toBeNull();
   });
 
   it('switching to the active party does nothing', () => {
@@ -34,20 +36,17 @@ describe('parties', () => {
     expect(r.team).toBe(INITIAL_TEAM_STATE);
   });
 
-  it('round-trips through the saved JSON, writing the current team into the active party', () => {
+  it('round-trips the inactive parties through the saved JSON', () => {
     const team0 = withCharacter(INITIAL_TEAM_STATE, 0, 10);
-    const { parties, team } = switchParty(INITIAL_PARTIES, team0, 3);
-    const team3 = withCharacter(team, 4, 11);
-    const read = parseParties(serializeParties(parties, team3), index);
-    expect(read?.active).toBe(3);
+    const { parties } = switchParty(INITIAL_PARTIES, team0, 3);
+    const read = parseParties(serializeParties(parties), index);
+    expect(read).toEqual(parties);
     expect(read?.parties[0]).toEqual(partyOf(team0));
-    expect(read?.parties[3]).toEqual(partyOf(team3));
-    expect(read?.parties[1]).toBeNull();
   });
 
   it('empties only a party that does not parse, and rejects a broken list', () => {
-    const json = serializeParties(INITIAL_PARTIES, withCharacter(INITIAL_TEAM_STATE, 0, 10));
-    const raw = JSON.parse(json);
+    const { parties } = switchParty(INITIAL_PARTIES, withCharacter(INITIAL_TEAM_STATE, 0, 10), 1);
+    const raw = JSON.parse(serializeParties(parties));
     raw.parties[2] = { slots: 'x', controlledSlot: 0 };
     const read = parseParties(JSON.stringify(raw), index);
     expect(read?.parties[0]?.slots[0]?.resourceId).toBe(10);

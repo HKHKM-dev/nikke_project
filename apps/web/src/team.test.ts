@@ -611,7 +611,7 @@ describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () =
     expect(calc.conditionMode).toBe(initial.conditionMode);
     expect(calc.condition).toEqual(initial.condition);
     expect(calc.hpRatio).toBe(initial.hpRatio);
-    expect(calc.build).toEqual({ ...build, recycleRoom: { personal: 0, class: 0, corporation: 0 }, extraAttack: 0 });
+    expect(calc.build).toEqual({ ...build, extraAttack: 0 });
     expect(calc.resourceId).toBe(10);
     // 保存している値は消さない
     expect(s.slots[0]!.build.recycleRoom).toEqual({ personal: 5, class: 6, corporation: 7 });

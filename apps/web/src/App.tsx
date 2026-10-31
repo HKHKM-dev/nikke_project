@@ -45,6 +45,7 @@ import {
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { useDetailed } from './detailed.ts';
+import { readStorage, writeStorage } from './storage.ts';
 import {
   INITIAL_PARTIES,
   PARTIES_STORAGE_KEY,
@@ -66,22 +67,6 @@ function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput
     grade: clamp(growth.grade, 0, limits.gradeMax),
     core: clamp(growth.core, 0, limits.coreMax),
   };
-}
-
-function readStorage(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function writeStorage(key: string, value: string): void {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // プライベートモード等で保存できないときは黙って諦める
-  }
 }
 
 export function App() {
@@ -127,8 +112,11 @@ export function App() {
   useEffect(() => {
     if (!restored) return;
     writeStorage(STORAGE_KEY, serializeTeamState(team));
-    writeStorage(PARTIES_STORAGE_KEY, serializeParties(parties, team));
-  }, [team, parties, restored]);
+  }, [team, restored]);
+  // ほかの編成は切り替えたときだけ変わる（選んでいる編成は上の STORAGE_KEY）
+  useEffect(() => {
+    if (restored) writeStorage(PARTIES_STORAGE_KEY, serializeParties(parties));
+  }, [parties, restored]);
 
   const selectParty = (to: number) => {
     const next = switchParty(parties, team, to);
@@ -273,14 +261,12 @@ export function App() {
 
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
   // 詳細情報表示（右上の設定）のときだけ使う、ニケごとの詳細の材料
-  const slotNames = team.slots.map((s) =>
-    s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
-  );
   const teamCharacters = team.slots.map((s) =>
     s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
   );
-  const allTreasurePhases = team.slots.map((s) => {
-    const character = s.resourceId === null ? undefined : cache.characters.get(s.resourceId);
+  const slotNames = teamCharacters.map((c) => c?.name.ja);
+  const allTreasurePhases = team.slots.map((s, i) => {
+    const character = teamCharacters[i];
     return character ? effectiveTreasurePhase(s, character) : 0;
   });
 

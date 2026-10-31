@@ -16,6 +16,7 @@ import {
   OVERLOAD_LINE_MAX,
   TREASURE_PHASE_MAX,
   computeCombatAttack,
+  overloadLinePosition,
   type BuildInput,
   type BuildMasters,
   type CharacterData,
@@ -29,21 +30,16 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
-import type { TeamAction } from '../team.ts';
+import { clampInt, type TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
-
-/** OL の行の位置（0 始まり）。position の無い保存データは配列の並び */
-function overloadPosition(line: OverloadLine, index: number): number {
-  return line.position ?? index;
-}
 
 /**
  * Stage 13: 位置 p の行を line にした OL の行（null は削除）。2026-10-31: オーナーの指示で、間の行を空けたまま後ろの行に
  * 入れられるように、行は詰めずに位置（position）を持たせる
  */
 function withOverloadLine(lines: readonly OverloadLine[], p: number, line: OverloadLine | null): OverloadLine[] {
-  const rest = lines.map((l, i) => ({ ...l, position: overloadPosition(l, i) })).filter((l) => l.position !== p);
+  const rest = lines.map((l, i) => ({ ...l, position: overloadLinePosition(l, i) })).filter((l) => l.position !== p);
   const next = line === null ? rest : [...rest, { ...line, position: p }];
   return next.sort((a, b) => a.position - b.position);
 }
@@ -63,11 +59,6 @@ type Props = {
   disabled: boolean;
   dispatch: Dispatch<TeamAction>;
 };
-
-function clampInt(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value)) return min;
-  return Math.min(max, Math.max(min, Math.round(value)));
-}
 
 export function BuildSection({
   slotIndex,
@@ -151,7 +142,7 @@ export function BuildSection({
                 <span className="ol-lines">
                   {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
                     const lines = gear.overload ?? [];
-                    const line = lines.find((l, j) => overloadPosition(l, j) === i);
+                    const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
                     return (
                       <span className="gear-inputs" key={i}>
                         <select

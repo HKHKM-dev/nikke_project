@@ -801,12 +801,10 @@ header h1 {
   font-size: 0.78rem;
   font-weight: 400;
 }
-.slot-advanced {
-  font-weight: 400;
-}
 .slot-toggles {
   display: flex;
   gap: 6px;
+  font-weight: 400;
 }
 .toggle-button {
   padding: 4px 12px;
