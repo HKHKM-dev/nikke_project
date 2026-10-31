@@ -65,6 +65,15 @@ import { gatewayUrl, move } from '../drive/gateway.ts';
 import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
 import { relUnder, splitRel } from '../drive/sync-lib.ts';
 import { capturesDir, recordDir } from './dirs.ts';
+import {
+  batchNamesAndNotes,
+  isRecordingName,
+  nextRecordingIds,
+  parseOnOff,
+  parseTreasureArg,
+  reservedLabel,
+  sequentialRecordingIds,
+} from './intake-lib.ts';
 import { Drive, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
@@ -111,6 +120,15 @@ function fail(message: string): never {
   process.exit(1);
 }
 
+/** intake-lib.ts の検査の Error を、使い方と一緒に出して止める */
+function orFail<T>(check: () => T): T {
+  try {
+    return check();
+  } catch (e) {
+    return fail((e as Error).message);
+  }
+}
+
 function envId(name: string): string {
   const v = process.env[name];
   if (!v) fail(`環境変数 ${name} が無い（plan/cloud-guide.md「準備」）`);
@@ -130,26 +148,19 @@ const recordPathOf = (id: string) => `${ROOT}records/recordings/${id}.json`;
 
 /** どのブランチ（手元か origin。main を含む）も足したことのない、手元の最大の次の番号から n 個 */
 function freeRecordingIds(n: number, branchIds: readonly string[]): string[] {
-  const used = [...readdirSync(`${ROOT}records/recordings`).map((f) => f.replace(/\.json$/, '')), ...branchIds];
-  // 数として比べる（ブランチの歴史には 4 桁にそろえる前の 3 桁の番号が残る）
-  const max = Math.max(0, ...used.filter((x) => /^\d+$/.test(x)).map(Number));
-  return Array.from({ length: n }, (_, i) => String(max + 1 + i).padStart(4, '0'));
+  return nextRecordingIds(n, [
+    ...readdirSync(`${ROOT}records/recordings`).map((f) => f.replace(/\.json$/, '')),
+    ...branchIds,
+  ]);
 }
 
 if (!values.child) {
   // まとめて取り込む（冒頭の説明）: 1 本ずつ子のプロセスで回し、終わりに一覧を作り直して番号を押さえる
   if (positionals.length === 0 || !values.name) fail('元ファイル・--name が要る');
-  const names = values.name.split(',').map((s) => s.trim());
-  if (names.length !== positionals.length)
-    fail(`--name は元ファイルと同じ数（${positionals.length}）を , で並べる（${names.length} 個あった）`);
-  const notes = values.note;
-  if (notes.length > 1 && notes.length !== positionals.length)
-    fail(`--note は 1 つか、元ファイルと同じ数（${positionals.length}）を繰り返す（${notes.length} 個あった）`);
+  const { names, notes } = orFail(() => batchNamesAndNotes(positionals.length, values.name!, values.note));
   let ids: string[];
-  if (values.id !== undefined) {
-    if (!RECORDING_ID.test(values.id)) fail('--id は 4 桁の数字（0001〜9999）');
-    ids = positionals.map((_, i) => String(Number(values.id) + i).padStart(4, '0'));
-  } else {
+  if (values.id !== undefined) ids = orFail(() => sequentialRecordingIds(values.id!, positionals.length));
+  else {
     const branches = recordingIdsInBranches();
     if (branches.note !== '') console.error(`注意: ${branches.note}`);
     ids = freeRecordingIds(positionals.length, branches.ids);
@@ -173,7 +184,7 @@ if (!values.child) {
   const written: string[] = [];
   let status = 0;
   for (const [i, src] of positionals.entries()) {
-    const note = notes.length === 1 ? notes[0] : notes[i];
+    const note = notes[i];
     if (positionals.length > 1) console.log(`--- ${i + 1}/${positionals.length}: ${src} → 録画 ${ids[i]}`);
     const existed = existsSync(recordPathOf(ids[i]!));
     const r = spawnSync(
@@ -206,10 +217,9 @@ if (!values.child) {
   if (written.length > 0) {
     const table = spawnSync('npm run records:table', { cwd: ROOT, stdio: 'inherit', shell: true });
     if (table.status !== 0) status ||= table.status ?? 1;
-    const label = `録画 ${written[0]}${written.length > 1 ? `〜${written[written.length - 1]}` : ''}`;
     reserve(
       [...written.map(recordPathOf), `${ROOT}plan/captures/recordings.md`],
-      label,
+      reservedLabel(written),
       !values['no-push'] && table.status === 0,
     );
   }
@@ -228,7 +238,7 @@ if (fromDrive !== null) {
 }
 // 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）
 if (!RECORDING_ID.test(values.id)) fail('--id は 4 桁の数字（0001〜9999）');
-if (!/^[a-z0-9][a-z0-9_+-]*$/.test(values.name)) fail('--name は英小文字・数字・-・_・+');
+if (!isRecordingName(values.name)) fail('--name は英小文字・数字・-・_・+');
 // 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 0400〜0402・0407。plan/design-investigation-review.md 5 節）
 if (values.name.includes('+'))
   console.log(
@@ -243,24 +253,12 @@ if (values.mode !== undefined && !(RECORDING_MODES as readonly string[]).include
 if (values.element !== undefined && !(ELEMENTS as readonly string[]).includes(values.element)) {
   fail(`--element は ${ELEMENTS.join(' / ')}`);
 }
-const onOff = (v: string | undefined, name: string): boolean | null => {
-  if (v === undefined) return null;
-  if (v === 'on') return true;
-  if (v === 'off') return false;
-  return fail(`${name} は on か off`);
-};
+const onOff = (v: string | undefined, flag: string): boolean | null => orFail(() => parseOnOff(v, flag));
 const rids = values.rid === undefined ? [] : values.rid.split(',').map((s) => Number(s.trim()));
 // 宝物を持つ枠の段階の指定（--treasure <枠>:<段階>,...。0 は宝物なし）。録画を動かす前に確かめる
-const givenTreasure = new Map<number, number>();
-for (const t of values.treasure?.split(',') ?? []) {
-  const m = /^(\d+):([0-3])$/.exec(t.trim());
-  if (!m) fail(`--treasure は <枠>:<段階（0〜3。0 は宝物なし）> を , で並べる（${t}）`);
-  const slot = Number(m[1]);
-  if (slot < 1 || slot > rids.length) fail(`--treasure の枠 ${slot} が --rid に無い`);
-  if (characterOf(rids[slot - 1]!).treasure === null)
-    fail(`--treasure の枠 ${slot}（rid ${rids[slot - 1]}）のキャラは宝物を持たない`);
-  givenTreasure.set(slot, Number(m[2]));
-}
+const givenTreasure = orFail(() =>
+  parseTreasureArg(values.treasure, rids, (rid) => characterOf(rid).treasure !== null),
+);
 
 const recordPath = recordPathOf(values.id);
 if (existsSync(recordPath)) fail(`${recordPath} が既にある`);
