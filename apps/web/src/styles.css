@@ -43,7 +43,27 @@ header h1 {
 .settings-menu {
   position: relative;
 }
+/* 開いている間に画面を少し暗くする幕。ボタンとパネルはその手前に出す */
+.settings-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  background: rgb(0 0 0 / 0.3);
+  animation: settings-menu-fade 0.12s ease-out;
+}
+@keyframes settings-menu-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-menu-backdrop {
+    animation: none;
+  }
+}
 .settings-menu-button {
+  position: relative;
+  z-index: 20;
   display: grid;
   place-items: center;
   width: 34px;
@@ -51,13 +71,13 @@ header h1 {
   padding: 0;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 6px;
-  background: transparent;
+  background: Canvas;
   color: inherit;
   cursor: pointer;
 }
 .settings-menu-button:hover,
 .settings-menu-button[aria-expanded='true'] {
-  background: color-mix(in srgb, currentColor 10%, transparent);
+  background: color-mix(in srgb, CanvasText 10%, Canvas);
 }
 .settings-menu-button:focus-visible {
   outline: 2px solid Highlight;

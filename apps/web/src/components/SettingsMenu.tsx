@@ -49,6 +49,8 @@ export function SettingsMenu() {
       >
         <GridIcon />
       </button>
+      {/* 開いている間は画面を少し暗くする（幕を押しても閉じる） */}
+      {open && <div className="settings-menu-backdrop" aria-hidden="true" onPointerDown={() => setOpen(false)} />}
       {open && (
         <div className="settings-menu-panel" role="dialog" aria-label="設定">
           <fieldset className="settings-menu-group">
