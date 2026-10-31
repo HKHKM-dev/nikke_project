@@ -1,13 +1,6 @@
-import {
-  ENEMY_EVENT_KIND_LABEL,
-  WEAPON_LABEL,
-  type TeamResult,
-  type TeamSlotResult,
-  framesToGameSeconds,
-} from '@nikke/core';
+import { type TeamResult, type TeamSlotResult } from '@nikke/core';
 import { formatNumber, formatPercent } from '../format.ts';
-import { DamageTimeline, landingLabel } from './DamageTimeline.tsx';
-import { ResultPanel } from './ResultPanel.tsx';
+import { DamageTimeline } from './DamageTimeline.tsx';
 
 type Props = {
   result: TeamResult;
@@ -19,24 +12,10 @@ type Props = {
   skillsLoadingCount: number;
 };
 
-// 2026-10-31: オーナーの指示で、DPS・バーストとスキルの回数・フルバーストの要約・攻撃力とトリガー数の表・バーストの時刻表を
-// 画面から消した（DPS のほかは CLI の npm run sim で見られる）
+// 2026-10-31: オーナーの指示で、DPS・バーストとスキルの回数・武器種・フルバーストの要約・ニケごとの詳細・検証用の詳細
+// （敵の出来事と的の着地点・攻撃力とトリガー数の表・バーストの時刻表）を画面から消した（DPS のほかは CLI の npm run sim で見られる）
 export function TeamBreakdown({ result, computing, loadingCount, skillsLoadingCount }: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
-  const eventKinds = [...new Set(result.enemyEvents.map((e) => e.kind))];
-  const eventsLabel = eventKinds
-    .map((kind) => {
-      const list = result.enemyEvents.filter((e) => e.kind === kind);
-      const spans = list.map((e) => `${formatNumber(e.start, 1)}–${formatNumber(e.end, 1)}`).join('・');
-      return `${ENEMY_EVENT_KIND_LABEL[kind].ja} ${list.length} 回（${spans} 秒）`;
-    })
-    .join(' / ');
-  const landingsLabel = result.landings
-    .map(
-      (s) =>
-        `${landingLabel(s)} ${formatNumber(framesToGameSeconds(s.start), 1)}–${formatNumber(framesToGameSeconds(s.end), 1)}`,
-    )
-    .join('・');
 
   return (
     <section className="panel result breakdown-panel">
@@ -83,10 +62,7 @@ export function TeamBreakdown({ result, computing, loadingCount, skillsLoadingCo
                 {filled.map((s) => (
                   <tr key={s.index}>
                     <td>{s.index + 1}</td>
-                    <td>
-                      {s.character.name.ja}
-                      <small className="sub"> {WEAPON_LABEL[s.character.weaponType].ja}</small>
-                    </td>
+                    <td>{s.character.name.ja}</td>
                     <td>{formatNumber(s.normalDamage)}</td>
                     <td>{s.burst.hit ? formatNumber(s.burst.totalDamage) : '—'}</td>
                     <td>{s.skillHits.activations.length > 0 ? formatNumber(s.skillHits.totalDamage) : '—'}</td>
@@ -104,30 +80,8 @@ export function TeamBreakdown({ result, computing, loadingCount, skillsLoadingCo
               </tfoot>
             </table>
           </div>
-
-          <div className="details">
-            <h3>ニケごとの詳細</h3>
-            {filled.map((s) => (
-              <details key={s.index} className="slot-detail">
-                <summary>
-                  枠 {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
-                  {formatPercent(s.share, 1)}）
-                </summary>
-                <ResultPanel character={s.character} slot={s} />
-              </details>
-            ))}
-          </div>
         </details>
       )}
-
-      <details className="segments verification-details">
-        {/* 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 2026-10-27 までは、ここに計算モデル（calc / sim）の切り替えと「calc との差」があった */}
-        <summary>検証用の詳細</summary>
-        {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
-        {filled.length > 0 && landingsLabel !== '' && (
-          <p className="hint">的の着地点（条件が自動の枠に効く）: {landingsLabel} 秒</p>
-        )}
-      </details>
     </section>
   );
 }

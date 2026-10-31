@@ -16,6 +16,7 @@ import {
   readTeamJson,
   serializeSlotBuild,
   serializeTeamState,
+  slotForCalc,
   takenResourceIds,
   teamReducer,
   type TeamState,
@@ -50,6 +51,7 @@ describe('teamReducer', () => {
     expect(INITIAL_TEAM_STATE.enemy).toEqual({ defence: 100, element: null, hasCore: true });
     expect(INITIAL_TEAM_STATE.durationSeconds).toBe(180);
     expect(INITIAL_TEAM_STATE.fixedSpec).toBe(false);
+    expect(INITIAL_TEAM_STATE.burst).toBe(true);
   });
 
   it('selects a character into a slot and ignores a duplicate in another slot', () => {
@@ -144,13 +146,19 @@ describe('parseTeamState', () => {
   });
 });
 
-describe('burst flag of saved data (until 2026-10-31)', () => {
-  it('parseTeamState reads data with the old burst flag and drops it', () => {
-    const saved = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
-    expect(saved.burst).toBeUndefined();
-    for (const burst of [true, false, 'on']) {
-      expect(parseTeamState(JSON.stringify({ ...saved, burst }), index)).toEqual(withCharacters([10]));
-    }
+describe('burst toggle (Stage 5)', () => {
+  it('setBurst toggles the fixed cycle and round-trips', () => {
+    const off = teamReducer(initialTeamState(), { type: 'setBurst', burst: false });
+    expect(off.burst).toBe(false);
+    expect(parseTeamState(serializeTeamState(off), index)).toEqual(off);
+    expect(teamReducer(off, { type: 'setBurst', burst: true }).burst).toBe(true);
+  });
+
+  it('parseTeamState fills a missing burst flag (Stage 4 data) with true and rejects non-booleans', () => {
+    const stage4 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    delete stage4.burst;
+    expect(parseTeamState(JSON.stringify(stage4), index)?.burst).toBe(true);
+    expect(parseTeamState(JSON.stringify({ ...stage4, burst: 'on' }), index)).toBeNull();
   });
 });
 
@@ -568,5 +576,31 @@ describe('HP の割合の想定', () => {
       raw.slots[0]!.hpRatio = bad;
       expect(parseTeamState(JSON.stringify(raw), index), String(bad)).toBeNull();
     }
+  });
+});
+
+describe('slotForCalc (inputs removed from the screen on 2026-10-31)', () => {
+  it('uses the defaults for the shooting condition, the HP ratio and the recycle room and keeps the rest', () => {
+    let s = withCharacters([10]);
+    s = teamReducer(s, { type: 'setConditionMode', index: 0, conditionMode: 'manual' });
+    s = teamReducer(s, {
+      type: 'setSlotCondition',
+      index: 0,
+      condition: { coreHitRate: 0.3, distanceBonus: false, fullCharge: false, hitRate: 0.5 },
+    });
+    s = teamReducer(s, { type: 'setHpRatio', index: 0, hpRatio: 0.4 });
+    const build = { ...s.slots[0]!.build, affectionRank: 20, recycleRoom: { personal: 5, class: 6, corporation: 7 } };
+    s = teamReducer(s, { type: 'setBuild', index: 0, build });
+
+    const calc = slotForCalc(s.slots[0]!);
+    const initial = initialTeamState().slots[0]!;
+    expect(calc.conditionMode).toBe(initial.conditionMode);
+    expect(calc.condition).toEqual(initial.condition);
+    expect(calc.hpRatio).toBe(initial.hpRatio);
+    expect(calc.build).toEqual({ ...build, recycleRoom: { personal: 0, class: 0, corporation: 0 } });
+    expect(calc.resourceId).toBe(10);
+    // 保存している値は消さない
+    expect(s.slots[0]!.build.recycleRoom).toEqual({ personal: 5, class: 6, corporation: 7 });
+    expect(s.slots[0]!.conditionMode).toBe('manual');
   });
 });

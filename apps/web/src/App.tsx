@@ -27,6 +27,8 @@ import { SlotCard } from './components/SlotCard.tsx';
 import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
+  DEFAULT_BURST,
+  DEFAULT_CONTROLLED_SLOT,
   INITIAL_TEAM_STATE,
   STORAGE_KEY,
   effectiveBuild,
@@ -35,10 +37,10 @@ import {
   enemyForCalc,
   parseTeamState,
   serializeTeamState,
+  slotForCalc,
   takenResourceIds,
   teamReducer,
 } from './team.ts';
-import { hasLowestHpRatioHeal } from './skillLabels.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
@@ -116,16 +118,15 @@ export function App() {
     () => team.slots.map((slot) => (slot.resourceId === null ? null : slotSkillsStatus(skills, slot.resourceId))),
     [team.slots, skills],
   );
-  // 2 段目の段 8: 編成に「残りの HP の割合が最も低い味方」を選ぶ回復があれば、各枠に HP の割合の想定の欄を出す
-  const hpRatioTargeted = skillsStatuses.some((s) => s?.kind === 'ready' && hasLowestHpRatioHeal(s.definition));
 
   // 枠ごとの計算入力。データが揃っていない枠は null（合計から除外）
   const slotInputs = useMemo<(TeamSlotInput | null)[]>(
     () =>
-      team.slots.map((slot, i) => {
-        if (slot.resourceId === null) return null;
-        const character = cache.characters.get(slot.resourceId);
+      team.slots.map((saved, i) => {
+        if (saved.resourceId === null) return null;
+        const character = cache.characters.get(saved.resourceId);
         const status = skillsStatuses[i];
+        const slot = slotForCalc(saved);
         if (!character || !status) return null;
         const slotSkills = toSlotSkills(
           status,
@@ -187,11 +188,11 @@ export function App() {
       slots: slotInputs,
       enemy: enemyForCalc(team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds),
       durationSeconds: team.durationSeconds,
-      // 2026-10-31: オーナーの指示で詳細設定の「バースト」の欄を消し、バーストは常に使う
-      burst: true,
-      controlledSlot: team.controlledSlot,
+      // 2026-10-31: オーナーの指示で詳細設定の「バースト」と「操作キャラ」の欄を消した。保存データの値は使わず既定値で計算する
+      burst: DEFAULT_BURST,
+      controlledSlot: DEFAULT_CONTROLLED_SLOT,
     }),
-    [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds, team.controlledSlot],
+    [slotInputs, team.enemy, enemyMaster, team.enemyEventSets, team.durationSeconds],
   );
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
@@ -215,9 +216,9 @@ export function App() {
         let buildNotes: BuildEffectNote[] = [];
         if (masters && !team.fixedSpec) {
           try {
-            buildNotes = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).notes.filter(
-              (n) => n.level === 'unsupported',
-            );
+            buildNotes = resolveBuildEffects(character, slotForCalc(slot).build, masters, {
+              treasurePhase,
+            }).notes.filter((n) => n.level === 'unsupported');
           } catch {
             buildNotes = [];
           }
@@ -234,9 +235,6 @@ export function App() {
     [team.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
   );
 
-  const teamCharacters = team.slots.map((s) =>
-    s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
-  );
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
 
   return (
@@ -255,7 +253,6 @@ export function App() {
             enemyEventSets={team.enemyEventSets}
             durationSeconds={team.durationSeconds}
             fixedSpec={team.fixedSpec}
-            controlledSlot={team.controlledSlot}
             dispatch={dispatch}
           />
           <section className="slots" aria-label="編成">
@@ -275,14 +272,12 @@ export function App() {
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={input?.growth ?? slot.growth}
-                  effectiveBuild={character ? effectiveBuild(slot, team.fixedSpec, character) : slot.build}
+                  effectiveBuild={character ? effectiveBuild(slotForCalc(slot), team.fixedSpec, character) : slot.build}
                   masters={masters}
                   mastersError={mastersError}
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
                   skillsStatus={skillsStatuses[i] ?? { kind: 'loading' }}
-                  hpRatioTargeted={hpRatioTargeted}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
-                  teamCharacters={teamCharacters}
                   dispatch={dispatch}
                 />
               );

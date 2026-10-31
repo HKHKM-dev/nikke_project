@@ -1,7 +1,6 @@
 import {
   ELEMENTS,
   ELEMENT_LABEL,
-  TEAM_SIZE,
   enemyInputOf,
   matchingEnemyPreset,
   type Element,
@@ -22,7 +21,6 @@ type Props = {
   enemyEventSets: readonly string[];
   durationSeconds: number;
   fixedSpec: boolean;
-  controlledSlot: number;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -34,7 +32,6 @@ export function TeamSettingsForm({
   enemyEventSets,
   durationSeconds,
   fixedSpec,
-  controlledSlot,
   dispatch,
 }: Props) {
   const setEnemy = (patch: Partial<EnemyInput>) => dispatch({ type: 'setEnemy', enemy: { ...enemy, ...patch } });
@@ -97,7 +94,7 @@ export function TeamSettingsForm({
         </label>
       </div>
       <details className="settings-advanced">
-        <summary>詳細設定（戦闘時間・スペック固定・ステータス等）</summary>
+        <summary>詳細設定</summary>
         <div className="settings-advanced-body">
           <div className="settings-advanced-grid">
             <label className="field">
@@ -109,19 +106,6 @@ export function TeamSettingsForm({
                 value={durationSeconds}
                 onChange={(e) => dispatch({ type: 'setDuration', durationSeconds: Number(e.target.value) })}
               />
-            </label>
-            <label className="field">
-              <span>操作キャラ</span>
-              <select
-                value={controlledSlot}
-                onChange={(e) => dispatch({ type: 'setControlledSlot', controlledSlot: Number(e.target.value) })}
-              >
-                {Array.from({ length: TEAM_SIZE }, (_, i) => (
-                  <option key={i} value={i}>
-                    枠 {i + 1}
-                  </option>
-                ))}
-              </select>
             </label>
             <label className="field">
               <span>防御力</span>

@@ -6,7 +6,6 @@ import {
   applyTreasure,
   type CharacterData,
   type SkillLevels,
-  type SkillEffect,
   type SkillSlot,
   type TreasurePhase,
 } from '@nikke/core';
@@ -68,65 +67,6 @@ function SkillLevelInput({ value, disabled, onCommit }: LevelInputProps) {
   );
 }
 
-/** 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 効果の自分の HP の割合の条件（無ければ undefined） */
-function selfHpOf(e: SkillEffect): { atLeastRef: number } | undefined {
-  return 'condition' in e ? e.condition?.selfHp : undefined;
-}
-
-/** 自分のスキル定義に HP の割合の条件（selfHp）が含まれるか */
-export function hasSelfHpCondition(
-  character: CharacterData,
-  status: SlotSkillsStatus,
-  treasurePhase: TreasurePhase,
-): boolean {
-  if (status.kind !== 'ready') return false;
-  const shown = applyTreasure(character, status.definition, treasurePhase);
-  return SKILL_SLOTS.some((slot) =>
-    (shown.definition?.skills[slot]?.effects ?? []).some((e) => selfHpOf(e) !== undefined),
-  );
-}
-
-type HpRatioInputProps = { value: number; onCommit: (ratio: number) => void };
-
-/**
- * 2 段目の段 6: HP の割合の想定の入力欄（%。1〜100 の整数）。入力途中の空欄や範囲外はそのまま表示しておき、範囲の整数になった時点で
- * 反映、フォーカスが外れたら範囲に収めて確定する（SkillLevelInput と同じ）
- */
-export function HpRatioInput({ value, onCommit }: HpRatioInputProps) {
-  const percent = Math.round(value * 100);
-  const [text, setText] = useState(String(percent));
-  const [lastValue, setLastValue] = useState(percent);
-  if (lastValue !== percent) {
-    setLastValue(percent);
-    setText(String(percent));
-  }
-  const commit = (raw: string, clamp: boolean) => {
-    const n = Number(raw);
-    if (raw.trim() !== '' && Number.isInteger(n) && n >= 1 && n <= 100) {
-      if (n !== percent) onCommit(n / 100);
-    } else if (clamp) {
-      const fixed = Number.isFinite(n) ? Math.min(100, Math.max(1, Math.round(n))) : percent;
-      setText(String(fixed));
-      if (fixed !== percent) onCommit(fixed / 100);
-    }
-  };
-  return (
-    <input
-      type="number"
-      min={1}
-      max={100}
-      step={1}
-      value={text}
-      aria-label="HP の割合の想定（%）"
-      onChange={(e) => {
-        setText(e.target.value);
-        commit(e.target.value, false);
-      }}
-      onBlur={(e) => commit(e.target.value, true)}
-    />
-  );
-}
-
 type InputProps = {
   slotIndex: number;
   character: CharacterData;
@@ -155,9 +95,10 @@ export function SkillSection({ slotIndex, character, levels, treasurePhase, disa
       const sup = shown.definition?.skills[s]?.support;
       return sup === 'unsupported' || sup === 'partial';
     });
+  // 2026-10-31: オーナーの指示で「未定義」の印は出さない（スキル定義なしは「未対応・近似・仮定の一覧」と選択肢の「（未）」に出る）
   const overallBadge =
     status.kind === 'undefined'
-      ? SUPPORT_BADGE.undefined
+      ? null
       : status.kind === 'loading'
         ? SUPPORT_BADGE.loading
         : status.kind === 'error'

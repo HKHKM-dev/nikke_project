@@ -62,16 +62,6 @@ header h1 {
 .field.checkbox {
   grid-template-columns: auto minmax(0, 1fr);
 }
-.meta {
-  font-size: 0.8rem;
-  opacity: 0.8;
-  margin: 4px 0;
-}
-.slot .meta {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* 編成共通の設定 */
 .settings-simple {
@@ -272,27 +262,6 @@ header h1 {
   font-weight: 400;
   opacity: 0.7;
 }
-.summary {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 3px 16px;
-  margin: 6px 0;
-  max-width: 420px;
-}
-.summary dt {
-  opacity: 0.8;
-  font-size: 0.88rem;
-}
-.summary dd {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  font-size: 0.88rem;
-}
-.summary dd.total {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
 .notes {
   list-style: none;
   padding: 0;
@@ -389,31 +358,12 @@ header h1 {
 .team-table .grand-total {
   font-size: 1.05rem;
 }
-.team-table .sub {
-  opacity: 0.65;
-  font-size: 0.78rem;
-}
 .simple-breakdown-table {
   max-width: 480px;
 }
 .simple-breakdown-table .damage-cell {
   font-weight: 600;
   font-size: 0.95rem;
-}
-.details {
-  margin-top: 12px;
-}
-.slot-detail > summary {
-  cursor: pointer;
-  padding: 4px 0;
-  font-size: 0.9rem;
-}
-.slot-detail .result {
-  border: none;
-  padding: 4px 0 8px 14px;
-  border-left: 2px solid color-mix(in srgb, currentColor 18%, transparent);
-  border-radius: 0;
-  margin-left: 4px;
 }
 .segments {
   margin-top: 8px;
@@ -422,11 +372,6 @@ header h1 {
   cursor: pointer;
   font-size: 0.88rem;
   padding: 3px 0;
-}
-.verification-details {
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
 }
 .error {
   color: #c62828;
@@ -501,36 +446,6 @@ header h1 {
   background: #616161;
   color: #fff;
 }
-.received {
-  margin: 8px 0;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.received .hint {
-  margin: 2px 0 0;
-  font-size: 0.82rem;
-}
-.received-list {
-  list-style: none;
-  padding: 0;
-  margin: 4px 0 0;
-  display: grid;
-  gap: 2px;
-  font-size: 0.82rem;
-}
-.received-list li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-  align-items: baseline;
-}
-.received-list .amount {
-  font-variant-numeric: tabular-nums;
-}
-.received-list .sub {
-  opacity: 0.65;
-  font-size: 0.75rem;
-}
 
 /* Stage 12: 育成入力・射撃条件（折り畳み） */
 .build {
@@ -574,23 +489,11 @@ header h1 {
   font: inherit;
   font-size: 0.82rem;
 }
-.build-breakdown {
-  font-variant-numeric: tabular-nums;
-}
 .ol-lines {
   grid-column: 1 / -1;
   display: grid;
   gap: 2px;
   margin-top: 2px;
-}
-.build-effects {
-  margin-top: 6px;
-}
-.received-list li.note-ignored {
-  opacity: 0.55;
-}
-.received-list li.note-unsupported .amount {
-  color: #b35900;
 }
 
 /* Stage 14: JSON の書き出し / 取り込み、未対応の一覧 */
@@ -599,14 +502,9 @@ header h1 {
   margin-top: 10px;
 }
 .notes-summary > summary,
-.data-panel > summary,
-.build-json > summary {
+.data-panel > summary {
   cursor: pointer;
   font-size: 0.9rem;
-}
-.build-json {
-  margin-top: 6px;
-  font-size: 0.82rem;
 }
 .data-grid {
   display: grid;
@@ -676,16 +574,6 @@ header h1 {
   height: 10px;
   vertical-align: baseline;
   opacity: 0.6;
-}
-
-/* Stage 18-C2: 条件が自動の枠 */
-.manual-condition {
-  margin: 4px 0 2px;
-  font-size: 0.82rem;
-}
-.manual-condition > summary {
-  cursor: pointer;
-  opacity: 0.8;
 }
 
 /* Stage 18-C2: タイムラインの着地点（距離帯）の帯 */

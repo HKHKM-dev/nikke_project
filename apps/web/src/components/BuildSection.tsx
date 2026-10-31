@@ -2,6 +2,8 @@
 // スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して入力を止める。
 // Stage 13: OL 装備のオプション行（最大 3 行）の入力と、効果層（OL・キューブ・コレクション → 常時バフ）の一覧。
 // Stage 14: 枠の育成（育成値 + 育成入力）の JSON の書き出し / 取り込み（CLI の --build の 1 枠分も読める）。
+// 2026-10-31: オーナーの指示で、リサイクルルームの欄と攻撃力の合成内訳（効果層の一覧を含む）を消した。リサイクルルームは 0 で
+// 計算する（team.ts の slotForCalc）
 import {
   AFFECTION_RANK_MAX,
   AFFECTION_RANK_MIN,
@@ -15,8 +17,6 @@ import {
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
   computeCombatAttack,
-  resolveBuildEffects,
-  type BuildEffects,
   type BuildInput,
   type BuildMasters,
   type CharacterData,
@@ -31,7 +31,7 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { formatNumber } from '../format.ts';
-import { GEAR_PART_LABEL, formatBuildEffect, formatBuildEffectSource } from '../skillLabels.ts';
+import { GEAR_PART_LABEL } from '../skillLabels.ts';
 import type { TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
@@ -90,12 +90,10 @@ export function BuildSection({
   };
 
   let combat: CombatAttack | null = null;
-  let effects: BuildEffects | null = null;
   let combatError: string | null = null;
   if (masters) {
     try {
       combat = computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase });
-      effects = resolveBuildEffects(character, effectiveBuild, masters, { treasurePhase });
     } catch (e) {
       combatError = e instanceof Error ? e.message : String(e);
     }
@@ -288,27 +286,6 @@ export function BuildSection({
             />
           </span>
         </div>
-        <div className="field gear">
-          <span>リサイクルルーム</span>
-          <span className="gear-inputs three">
-            {(['personal', 'class', 'corporation'] as const).map((key) => (
-              <input
-                key={key}
-                type="number"
-                min={0}
-                step={1}
-                value={shown.recycleRoom[key]}
-                disabled={disabled}
-                title={{ personal: '共通研究', class: 'クラス研究', corporation: '企業研究' }[key]}
-                onChange={(e) =>
-                  set({
-                    recycleRoom: { ...shown.recycleRoom, [key]: clampInt(Number(e.target.value), 0, 999) },
-                  })
-                }
-              />
-            ))}
-          </span>
-        </div>
         <label className="field">
           <span>その他攻撃加算</span>
           <input
@@ -322,41 +299,6 @@ export function BuildSection({
         </label>
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
-      <details className="build-json">
-        <summary>攻撃力の合成内訳</summary>
-        {combat && (
-          <p className="hint build-breakdown">
-            {formatNumber(combat.attack)} = round(({formatNumber(combat.gradeBase)} 素 +{' '}
-            {formatNumber(combat.affection)} 好感度
-            {combat.recycleRoom > 0 && ` + ${formatNumber(combat.recycleRoom)} リサイクル`}) × (1 + コア {growth.core}{' '}
-            段)) = {formatNumber(combat.withCore)} + {formatNumber(combat.gear)} 装備
-            {combat.cube > 0 && ` + ${formatNumber(combat.cube)} キューブ`}
-            {combat.collection > 0 && ` + ${formatNumber(combat.collection)} コレクション`}
-            {combat.extra > 0 && ` + ${formatNumber(combat.extra)} その他`}
-          </p>
-        )}
-        {effects && (effects.effects.length > 0 || effects.notes.length > 0) && (
-          <div className="build-effects">
-            <span className="skills-title">効果</span>
-            <ul className="received-list">
-              {effects.effects.map((e, i) => (
-                <li key={i}>
-                  <span className="amount">{formatBuildEffect(e)}</span>
-                  <small className="sub">{formatBuildEffectSource(e.source)}</small>
-                </li>
-              ))}
-              {effects.notes.map((n, i) => (
-                <li key={`note-${i}`} className={n.level === 'unsupported' ? 'note-unsupported' : 'note-ignored'}>
-                  <span className="amount">{n.level === 'unsupported' ? '未対応' : '計算に無関係'}</span>
-                  <small className="sub">
-                    {formatBuildEffectSource(n.source)}: {n.message.ja}
-                  </small>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </details>
     </details>
   );
 }
