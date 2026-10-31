@@ -69,6 +69,28 @@ describe('panelEvents の替わり目', () => {
     expect(ev.twoToThree.map((c) => c.frame)).toEqual([34]);
     expect(ev.fullBurst).toEqual([63]);
   });
+
+  it('各段ではその段と次の段の色と I の緑だけを読む（画面が赤みがかった回の、I → II の白い光りの終わりの赤み）', () => {
+    // 録画 0735 の 3 回目のチェーン（f6118〜）の六角形の色。白い光りが II の色に戻る途中の 2 フレームが III の色相になる
+    const ev = panelEvents(
+      rows(
+        [GREEN, 10],
+        [FLASH, 10],
+        [{ r: 213, g: 166, b: 146 }, 2],
+        [{ r: 226, g: 176, b: 149 }, 1],
+        [{ r: 238, g: 185, b: 152 }, 1],
+        [{ r: 250, g: 215, b: 158 }, 5],
+        [{ r: 247, g: 160, b: 54 }, 5],
+        [FLASH, 24],
+        [{ r: 238, g: 114, b: 96 }, 4],
+        [FB_OVERLAY, 3, { magenta: 495 }],
+      ),
+    );
+    expect(classOf({ frame: 0, magenta: 0, white: 0, dim: 0, r: 238, g: 185, b: 152 })).toBe('3');
+    expect(ev.oneToTwo).toEqual([{ frame: 10, firstColor: 24 }]);
+    expect(ev.twoToThree).toEqual([{ frame: 34, firstColor: 58 }]);
+    expect(ev.fullBurst).toEqual([62]);
+  });
 });
 
 describe('panelEvents の CT の明け', () => {

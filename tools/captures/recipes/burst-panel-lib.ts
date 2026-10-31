@@ -67,6 +67,15 @@ export function classOf(row: PanelRow): PanelClass {
   return '-';
 }
 
+/** 段ごとに読む六角形の色（その段・次の段と、新しいチェーンの I の緑） */
+const READS: Record<PanelClass, readonly PanelClass[]> = {
+  '-': ['1'],
+  '1': ['1', '2'],
+  '2': ['2', '3', '1'],
+  '3': ['3', 'F', '1'],
+  F: ['1'],
+};
+
 /** 段の替わり目 1 つ。frame は前の段の色の最後のフレームの次、firstColor は新しい段の色が出た最初のフレーム */
 export type StageChange = { frame: number; firstColor: number };
 
@@ -102,8 +111,9 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
     ctEndOutside: [],
   };
   /**
-   * フレームごとの段。段は I → II → III → フルバーストの順にだけ進み（替わり目からは新しい段）、フルバーストの後は次の I の緑が
-   * 出るまで II・III の色を読まない（フルバースト中の背景の橙を六角形の色と取り違える）。- は段の外（I の緑の前）
+   * フレームごとの段。段は I → II → III → フルバーストの順にだけ進み（替わり目からは新しい段）、各段ではその段と次の段の色と
+   * 新しいチェーンの I の緑だけを読む（READS）。フルバースト中の背景の橙を II・III の色と、画面が赤みがかった回の I → II の白い
+   * 光りが II の色に戻る途中を III と取り違える（録画 0735 の 3 回目のチェーン）。- は段の外（I の緑の前）
    */
   const stage: PanelClass[] = [];
   let phase = '-' as PanelClass;
@@ -111,7 +121,7 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
   let lastAt = -1;
   for (let i = 0; i < cls.length; i++) {
     const k = cls[i]!;
-    if (k !== '-' && (phase !== 'F' || k === '1')) {
+    if (READS[phase].includes(k)) {
       const near = k !== last && i - lastAt <= MAX_GAP;
       const change = () => ({ frame: rows[lastAt + 1]!.frame, firstColor: rows[i]!.frame });
       // 替わり目からは新しい段
