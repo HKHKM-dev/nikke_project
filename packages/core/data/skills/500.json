@@ -23,13 +23,16 @@
             36
           ],
           "valueDelayFrames": 1,
+          "gaugePerHit": true,
           "assumes": {
-            "ja": "敵 1 体。対象と周囲の敵 2 機の分配ダメージは、どれも対象に当たり、説明文の値を 3 つに等分したヒットで出る。値は届いた発の次のフレームのバフ（同じ発で付いた S2 の▲も入る）で決まり、3 ヒットとも変わらない（測ったのは届いた発の 1〜5f 後のどこか）。S1 のヒットがバーストゲージを溜めるかは確かめていない（溜めない）",
-            "en": "One enemy. The distributed damage to the target and 2 surrounding enemies all lands on the target, as three hits of one third of the description value each. The value uses the buffs on the frame after the triggering shot (including S2 applied by the same shot) and is the same for all three hits (measured as somewhere 1 to 5 frames after the shot). Whether the S1 hits charge the burst gauge is unchecked (they do not)"
+            "ja": "敵 1 体。対象と周囲の敵 2 機の分配ダメージは、どれも対象に当たり、説明文の値を 3 つに等分したヒットで出る。値は届いた発の次のフレームのバフ（同じ発で付いた S2 の▲も入る）で決まり、3 ヒットとも変わらない（測ったのは届いた発の 1〜5f 後のどこか）。どのヒットも、射手（エレグ）の 1 ヒットぶんのバーストゲージを溜める",
+            "en": "One enemy. The distributed damage to the target and 2 surrounding enemies all lands on the target, as three hits of one third of the description value each. The value uses the buffs on the frame after the triggering shot (including S2 applied by the same shot) and is the same for all three hits (measured as somewhere 1 to 5 frames after the shot). Each hit charges the burst gauge by one hit of the shooter (Elegg)"
           },
           "claims": [
             "C-0697",
-            "C-0766"
+            "C-0766",
+            "C-0772",
+            "C-0773"
           ]
         }
       ],

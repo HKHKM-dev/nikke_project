@@ -1018,7 +1018,7 @@ export type DamageEffect = {
   /**
    * エレグの S1（C-0766）: 1 回の発動を、ref の値を等分したヒットに分けて出す。各ヒットの、発火の delayFrames 後からの遅れ（フレーム。
    * 0 から始まる昇順の整数。長さがヒットの数）。測った値を即値で書き、根拠の結論を claims に結ぶ。hitsRef・perBurstHit・perCount・
-   * gaugeHits・gaugePerHit とは組み合わせない
+   * gaugeHits とは組み合わせない（gaugePerHit なら、どのヒットも射手の 1 ヒットぶんを溜める。C-0773）
    */
   hitOffsetFrames?: number[];
   /**
@@ -3550,10 +3550,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       effect.hitsRef !== undefined ||
       effect.perBurstHit !== undefined ||
       effect.perCount !== undefined ||
-      effect.gaugeHits !== undefined ||
-      v.gaugePerHit !== undefined
+      effect.gaugeHits !== undefined
     )
-      fail(at, 'hitOffsetFrames cannot be used with hitsRef, perBurstHit, perCount, gaugeHits or gaugePerHit');
+      fail(at, 'hitOffsetFrames cannot be used with hitsRef, perBurstHit, perCount or gaugeHits');
     effect.hitOffsetFrames = offsets;
   }
   if (v.valueDelayFrames !== undefined) {
@@ -3589,7 +3588,16 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (effect.gaugeHits !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with gaugeHits');
     // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない
     if (effect.delayFrames === undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit needs delayFrames');
-    if (effect.condition !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a condition');
+    // エレグの S1（C-0773）: 射撃の回数のきっかけなら、条件 enemyState だけは 1 パス目が発火のフレームで見る（skills/holders.ts の enemyStateAt）
+    const enemyOnly =
+      isShotCountTrigger(trigger) &&
+      effect.condition !== undefined &&
+      Object.keys(effect.condition).every((k) => k === 'enemyState');
+    if (effect.condition !== undefined && !enemyOnly)
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit cannot be used with a condition (except enemyState with a shot count trigger)',
+      );
     effect.gaugePerHit = true;
   }
   // 同 5.4 節: 「コア命中ダメージ」

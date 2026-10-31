@@ -138,6 +138,7 @@ import {
 import type { ShotLog } from './shots.ts';
 import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
 import type { SkillSlot } from '../types.ts';
+import type { NamedStateId } from '../skills/states.ts';
 import type { ObstacleBreak, PelletHits } from '../team.ts';
 
 export type FirstPassOptions = {
@@ -801,6 +802,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     count: ShotCountKind;
     every: number;
     n: number;
+    /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
+    enemyState?: NamedStateId;
   }[] = [];
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
@@ -814,7 +817,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         damageTimerGauges.push({ slotIndex: i, effect, fires });
       } else if (isResolvedShotCount(trigger)) {
         if (trigger.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
-        shotDamageGauges.push({ slotIndex: i, effect, count: trigger.count, every: trigger.every, n: 0 });
+        const enemyState = effect.condition?.enemyState;
+        shotDamageGauges.push({
+          slotIndex: i,
+          effect,
+          count: trigger.count,
+          every: trigger.every,
+          n: 0,
+          ...(enemyState === undefined ? {} : { enemyState }),
+        });
       }
     }
   });
@@ -832,6 +843,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
       t.n = counted.count;
       if (!counted.fired) continue;
+      if (t.enemyState !== undefined && !lists.enemyStateAt(t.enemyState, f)) continue;
       const per = t.effect.perCount;
       const count = per !== undefined && 'state' in per ? lists.selfStackCountAt(t.slotIndex, per.state, f) : undefined;
       const energy = hitGaugeEnergy(t.slotIndex);
