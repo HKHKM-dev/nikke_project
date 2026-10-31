@@ -1,7 +1,8 @@
 // Stage 12: 育成入力（ステータス層）の入力欄。スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して
 // 入力を止める。Stage 13: OL 装備のオプション行（最大 3 行）の入力。
 // 2026-10-31: オーナーの指示で、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
-// スペック固定の説明）を消した。リサイクルルームとその他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）
+// スペック固定の説明）を消した。その他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）。リサイクルルームは編成共通の
+// コンソールから取る（team.ts の effectiveBuild）
 import {
   AFFECTION_RANK_MIN,
   COLLECTION_LEVEL_MAX,

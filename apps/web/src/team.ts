@@ -38,6 +38,8 @@ import {
   type GearInput,
   type GearType,
   type GrowthInput,
+  type NikkeClass,
+  type RecycleRoomInput,
   type OverloadLine,
   type OverloadOption,
   type SkillLevels,
@@ -107,7 +109,41 @@ export type TeamState = {
    * 効くのは、敵の値がそのセットを持つプリセットと一致しているときだけ（App.tsx の enemyWithEvents）
    */
   enemyEventSets: string[];
+  /** 2026-10-31: コンソール（前哨基地のリサイクルルームの研究 Lv）。編成共通で、枠ごとのリサイクルルームの代わりに使う */
+  console: ConsoleInput;
 };
+
+/** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
+export const CONSOLE_CORPORATIONS = ['ELYSION', 'MISSILIS', 'TETRA', 'PILGRIM', 'ABNORMAL'] as const;
+export type ConsoleCorporation = (typeof CONSOLE_CORPORATIONS)[number];
+export const CONSOLE_CLASSES: readonly NikkeClass[] = ['Attacker', 'Defender', 'Supporter'];
+
+/** コンソール: 共通研究・クラス研究・企業研究の Lv */
+export type ConsoleInput = {
+  personal: number;
+  class: Record<NikkeClass, number>;
+  corporation: Record<ConsoleCorporation, number>;
+};
+
+export function emptyConsole(): ConsoleInput {
+  return {
+    personal: 0,
+    class: { Attacker: 0, Defender: 0, Supporter: 0 },
+    corporation: { ELYSION: 0, MISSILIS: 0, TETRA: 0, PILGRIM: 0, ABNORMAL: 0 },
+  };
+}
+
+/** キャラのクラスと企業から、コンソールのうちそのキャラに効く研究 Lv を枠のリサイクルルームの形にする */
+export function recycleRoomFromConsole(
+  input: ConsoleInput,
+  character: Pick<CharacterData, 'class' | 'corporation'>,
+): RecycleRoomInput {
+  return {
+    personal: input.personal,
+    class: input.class[character.class],
+    corporation: (input.corporation as Record<string, number>)[character.corporation] ?? 0,
+  };
+}
 
 export type TeamAction =
   | { type: 'selectCharacter'; index: number; resourceId: number }
@@ -125,6 +161,7 @@ export type TeamAction =
   | { type: 'setBurst'; burst: boolean }
   | { type: 'setControlledSlot'; controlledSlot: number }
   | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
+  | { type: 'setConsole'; console: ConsoleInput }
   | { type: 'replace'; state: TeamState };
 
 export function emptySlot(): SlotState {
@@ -152,6 +189,7 @@ export function initialTeamState(): TeamState {
     burst: DEFAULT_BURST,
     controlledSlot: DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: [],
+    console: emptyConsole(),
   };
 }
 
@@ -218,6 +256,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return { ...state, controlledSlot: action.controlledSlot };
     case 'setEnemyEventSets':
       return { ...state, enemyEventSets: action.enemyEventSets };
+    case 'setConsole':
+      return { ...state, console: action.console };
     case 'replace':
       return action.state;
   }
@@ -283,10 +323,20 @@ export function effectiveTreasurePhase(slot: SlotState, character: CharacterData
 }
 
 /** Stage 12: 計算に渡す育成入力。スペック固定は T9 Lv5 × 4 と好感度 rank30/40/10 のプリセット（保存している入力は残す） */
-export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: CharacterData): BuildInput {
+export function effectiveBuild(
+  slot: SlotState,
+  fixedSpec: boolean,
+  character: CharacterData,
+  consoleInput: ConsoleInput,
+): BuildInput {
   if (fixedSpec) return fixedSpecBuild(character);
-  // 好感度はキャラごとの上限（affectionRankMax）に収める。上限より上の保存データも上限で計算する
-  return { ...slot.build, affectionRank: Math.min(slot.build.affectionRank, affectionRankMax(character)) };
+  // 好感度はキャラごとの上限（affectionRankMax）に収める。上限より上の保存データも上限で計算する。
+  // リサイクルルームは枠ごとの保存データを使わず、編成共通のコンソールから取る
+  return {
+    ...slot.build,
+    affectionRank: Math.min(slot.build.affectionRank, affectionRankMax(character)),
+    recycleRoom: recycleRoomFromConsole(consoleInput, character),
+  };
 }
 
 /**
@@ -590,6 +640,10 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     return null;
   }
 
+  // 2026-10-31 までの保存データには無いので、欠落は全部 0
+  const consoleInput = raw.console === undefined ? emptyConsole() : parseConsole(raw.console);
+  if (consoleInput === null) return null;
+
   return {
     slots,
     enemy,
@@ -598,7 +652,25 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
     controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
+    console: consoleInput,
   };
+}
+
+function parseConsole(v: Json): ConsoleInput | null {
+  if (!isRecord(v) || !isInt(v.personal, 0) || !isRecord(v.class) || !isRecord(v.corporation)) return null;
+  const result = emptyConsole();
+  result.personal = v.personal;
+  for (const c of CONSOLE_CLASSES) {
+    const lv = v.class[c];
+    if (!isInt(lv, 0)) return null;
+    result.class[c] = lv;
+  }
+  for (const c of CONSOLE_CORPORATIONS) {
+    const lv = v.corporation[c];
+    if (!isInt(lv, 0)) return null;
+    result.corporation[c] = lv;
+  }
+  return result;
 }
 
 // ---- Stage 14: 枠ごとの育成の JSON（書き出し / 取り込み） ----

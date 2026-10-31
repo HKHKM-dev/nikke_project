@@ -153,7 +153,7 @@ export function App() {
         let hpOverride: number | undefined;
         let defenceOverride: number | undefined;
         let buildEffects: BuildEffect[] | undefined;
-        const build = effectiveBuild(slot, false, character);
+        const build = effectiveBuild(slot, false, character, team.console);
         if (masters && (!isEmptyBuild(build) || treasurePhase > 0)) {
           try {
             attackOverride = computeCombatAttack(character, growth, build, masters, { treasurePhase }).attack;
@@ -182,7 +182,7 @@ export function App() {
           skills: slotSkills,
         };
       }),
-    [calcTeam.slots, team.fixedSpec, cache.characters, skillsStatuses, masters],
+    [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters],
   );
 
   const teamInput = useMemo<TeamInput>(
@@ -217,7 +217,7 @@ export function App() {
         let buildNotes: BuildEffectNote[] = [];
         if (masters && !team.fixedSpec) {
           try {
-            buildNotes = resolveBuildEffects(character, effectiveBuild(slot, false, character), masters, {
+            buildNotes = resolveBuildEffects(character, effectiveBuild(slot, false, character, team.console), masters, {
               treasurePhase,
             }).notes.filter((n) => n.level === 'unsupported');
           } catch {
@@ -233,7 +233,7 @@ export function App() {
           buildNotes,
         };
       }),
-    [calcTeam.slots, team.fixedSpec, cache.characters, skillsStatuses, masters, computed],
+    [calcTeam.slots, team.fixedSpec, team.console, cache.characters, skillsStatuses, masters, computed],
   );
 
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
@@ -247,7 +247,12 @@ export function App() {
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
       {index && (
         <>
-          <TeamSettingsForm element={team.enemy.element} fixedSpec={team.fixedSpec} dispatch={dispatch} />
+          <TeamSettingsForm
+            element={team.enemy.element}
+            fixedSpec={team.fixedSpec}
+            consoleInput={team.console}
+            dispatch={dispatch}
+          />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
               const character = slot.resourceId === null ? undefined : cache.characters.get(slot.resourceId);
@@ -266,7 +271,7 @@ export function App() {
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={input?.growth ?? slot.growth}
                   effectiveBuild={
-                    character ? effectiveBuild(calcTeam.slots[i]!, team.fixedSpec, character) : slot.build
+                    character ? effectiveBuild(calcTeam.slots[i]!, team.fixedSpec, character, team.console) : slot.build
                   }
                   masters={masters}
                   mastersError={mastersError}

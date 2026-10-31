@@ -5,6 +5,8 @@ import {
   INITIAL_TEAM_STATE,
   clampSkillLevel,
   effectiveBuild,
+  emptyConsole,
+  recycleRoomFromConsole,
   effectiveSkillLevels,
   effectiveTreasurePhase,
   enemyForCalc,
@@ -647,10 +649,44 @@ describe('affection rank cap per character (2026-10-31)', () => {
     const saved = { ...slot, build: { ...slot.build, affectionRank: 40 } };
     const overspec = { corporationSubType: 'OVERSPEC' } as CharacterData;
     const other = { corporationSubType: null } as CharacterData;
-    expect(effectiveBuild(saved, false, overspec).affectionRank).toBe(40);
-    expect(effectiveBuild(saved, false, other).affectionRank).toBe(30);
-    expect(effectiveBuild({ ...saved, build: { ...saved.build, affectionRank: 12 } }, false, other).affectionRank).toBe(
-      12,
-    );
+    expect(effectiveBuild(saved, false, overspec, emptyConsole()).affectionRank).toBe(40);
+    expect(effectiveBuild(saved, false, other, emptyConsole()).affectionRank).toBe(30);
+    expect(
+      effectiveBuild({ ...saved, build: { ...saved.build, affectionRank: 12 } }, false, other, emptyConsole())
+        .affectionRank,
+    ).toBe(12);
+  });
+});
+
+describe('console (2026-10-31)', () => {
+  it('gives each character the research levels of its class and corporation', () => {
+    const input = emptyConsole();
+    input.personal = 5;
+    input.class.Attacker = 7;
+    input.class.Defender = 1;
+    input.corporation.PILGRIM = 9;
+    input.corporation.ELYSION = 2;
+    expect(recycleRoomFromConsole(input, { class: 'Attacker', corporation: 'PILGRIM' })).toEqual({
+      personal: 5,
+      class: 7,
+      corporation: 9,
+    });
+    expect(recycleRoomFromConsole(input, { class: 'Defender', corporation: 'ELYSION' })).toEqual({
+      personal: 5,
+      class: 1,
+      corporation: 2,
+    });
+  });
+
+  it('round-trips, and reads saved data without a console as all zeros', () => {
+    const s = teamReducer(withCharacters([10]), {
+      type: 'setConsole',
+      console: { ...emptyConsole(), personal: 3 },
+    });
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    const old = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    delete old.console;
+    expect(parseTeamState(JSON.stringify(old), index)?.console).toEqual(emptyConsole());
+    expect(parseTeamState(JSON.stringify({ ...old, console: { personal: -1 } }), index)).toBeNull();
   });
 });
