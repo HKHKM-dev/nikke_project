@@ -55,7 +55,7 @@ describe('everySeconds の検証', () => {
     expect(() => parseSkillDefinition(withSkill2([heal]))).not.toThrow();
     const cooldown = { kind: 'cooldownReduction', trigger: { everySeconds: 10 }, target: 'allies', ref: 1 };
     expect(() => parseSkillDefinition(withSkill2([cooldown]))).toThrow(
-      /only allowed in damage, dot, autoAttack, burstGaugeHit, timed and heal/,
+      /only allowed in damage, dot, autoAttack, burstGaugeHit, timed, heal and counterChange/,
     );
   });
 

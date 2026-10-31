@@ -1,0 +1,218 @@
+[
+  {
+    "id": "0814-01",
+    "recording": "0814",
+    "kind": "timing",
+    "use": "record",
+    "value": [1397, 2768, 3988, 5393, 6673, 7885, 9187, 10475],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・6・25・0・24・0・25・0f"
+    },
+    "source": "V-0581",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0814-02",
+    "recording": "0814",
+    "kind": "timing",
+    "use": "record",
+    "value": [1426, 4017, 6702, 9216],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24・27f"
+    },
+    "source": "V-0581",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0814-03",
+    "recording": "0814",
+    "kind": "timing",
+    "use": "record",
+    "value": [1455, 4046, 6731, 9246],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0581",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0814-04",
+    "recording": "0814",
+    "source": "V-0581",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [547, 1894, 3113, 4494, 5773, 6961, 8262, 9526],
+    "description": "リター（I）のバーストの本当の発動のゲーム内のフレーム（戦闘開始から、止まりを除く）の並び（比べる指定の manualBursts に使う）。I → II の替わり目（`0814-01`）の動画のフレームから、戦闘開始（f844）・替わり目までの 5f と発動の止まり 1f（C-0503）・それより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（モデルの videoFrameOf の逆。V-0569 と同じ）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の I → II の替わり目と、tools/captures/timer.ts --mode changes の戦闘開始"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0814-05",
+    "recording": "0814",
+    "source": "V-0581",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 95056,
+    "description": "千束の通常攻撃の 1 ヒット（胴体・距離ボーナスあり・会心でない）の、1 回目のフルバーストの窓の中（自分のバースト使用から 10 秒の通常攻撃の変更とバーストの攻撃力▲、リターのバーストの▲の中）の値。窓の中に 26 回ほど同じ増分で出る",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "リター（15,686 など）・デルタ（26,050 など）の増分とは値で分かれる。単独で増えたフレームの増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0814-04"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0814-06",
+    "recording": "0814",
+    "source": "V-0581",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3695945,
+    "description": "千束の S2 の 48 回命中の防御力無視ダメージの、1 回目のフルバーストの窓の中の 1 ヒット（会心でない。戦闘を通して 5 回目）。f1547 の増分 3,791,001 から千束の通常攻撃（窓の中の 95,056）を引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0814-04"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0814-07",
+    "recording": "0814",
+    "source": "V-0581",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": 606,
+    "spread": {
+      "kind": "range",
+      "low": 596,
+      "high": 616
+    },
+    "description": "千束の S2 の通常攻撃の変更（10 秒）の切れ目。3 回目のフルバーストの III のタイマーの 00.00 から、変更の乗った最後の千束の発（596f）と、乗らない最初の発（616f）の間（値は幅の真ん中）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "千束の通常攻撃を、変更の中（窓の中 95,056・121,460・174,269、窓の外 73,633・94,087・134,994 など）と外（24,229・33,548・52,186・18,638 など）の格子に当てた。4 回の窓のどれも幅は 00.00 の約 546〜666f の中"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "trueDamageConversion",
+        "from": 3,
+        "n": 2,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0814-04"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0814-08",
+    "recording": "0814",
+    "source": "V-0581",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1293108,
+    "description": "千束の S2 の 48 回命中の防御力無視ダメージの、戦闘開始から約 152 秒の窓の外の 1 ヒット（会心でない）。S1 の攻撃力▲と防御力無視ダメージ▲が両方乗った値（単騎の A1 ならどちらも切れている時刻。超感覚がバーストで 100 に戻る）。f9944 の増分 1,345,294 から千束の通常攻撃 52,186 を引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "窓の外の S2 の倍率ダメージは、0813 で 40 回・0814 で 47 回が両方の▲の乗った値（リターの▲の中の回を除く）で、片方だけ・どちらも無い値は 0 回"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 58,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0814-04"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

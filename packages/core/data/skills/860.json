@@ -1,0 +1,94 @@
+{
+  "formatVersion": 1,
+  "resourceId": 860,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "counterChange",
+          "counter": "extrasensory",
+          "trigger": "battleStart",
+          "target": "self",
+          "amountRef": 1
+        },
+        {
+          "kind": "counterChange",
+          "counter": "extrasensory",
+          "trigger": { "everySeconds": 2, "carry": true },
+          "target": "self",
+          "amountRef": 11,
+          "decrease": true,
+          "assumes": {
+            "ja": "超感覚の 1%▼ は戦闘開始から 2 秒ごと（端数を持ち越す）",
+            "en": "The 1% Extrasensory decrease comes every 2 s from the start of battle (carrying the fraction)"
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "while": { "selfCounter": { "counter": "extrasensory", "atLeast": 70 } }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 7,
+          "while": { "selfCounter": { "counter": "extrasensory", "atLeast": 55 } }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 9,
+          "while": { "selfCounter": { "counter": "extrasensory", "atLeast": 25 } }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "超感覚 100% の時の射撃予測：無敵はダメージに関係しない",
+          "en": "Shot prediction: invincible at 100% Extrasensory does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamageConversion",
+          "durationRef": 1
+        },
+        {
+          "kind": "damage",
+          "trigger": { "count": "normalHit", "everyRef": 2 },
+          "damageType": "true",
+          "ref": 3
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "counterChange",
+          "counter": "extrasensory",
+          "trigger": "burstUse",
+          "target": "self",
+          "amountRef": 1
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ]
+    }
+  }
+}

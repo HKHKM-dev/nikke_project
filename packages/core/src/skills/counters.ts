@@ -34,6 +34,11 @@ export const COUNTERS = {
    * 上限に届いた次のフレームからチェーンの数だけ攻撃して 0 に戻す（V-0546）。上限 10（説明文の「最大10回」）
    */
   restraintChains: { name: { ja: 'キャプチャーチェーン', en: 'Restraint Chains' }, max: 10 },
+  /**
+   * 超感覚（千束の S1・バースト。2 段目の段 16 の PR 1。plan/design-skill-stage16.md 2.1 節）。戦闘開始時とバースト使用時に 100、2 秒ごとに
+   * 1 減る。値で段階の効果（70・55・25 以上）が決まる。上限 100（説明文の「最大100％」）
+   */
+  extrasensory: { name: { ja: '超感覚', en: 'Extrasensory' }, max: 100 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

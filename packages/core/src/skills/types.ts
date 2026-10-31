@@ -2488,7 +2488,7 @@ function parseTrigger(
     if (!allowTimer)
       fail(
         path,
-        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed and heal',
+        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed, heal and counterChange',
       );
     const flags = allowTimer === 'withStart' ? (['atStart', 'carry'] as const) : (['carry'] as const);
     for (const key of Object.keys(v)) {
@@ -4446,7 +4446,8 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
   } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
     trigger = parseCounterFullTrigger(v.trigger, `${path}.trigger`)!;
   } else {
-    trigger = parseTrigger(v.trigger, `${path}.trigger`);
+    // 2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）: 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
+    trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
   }
   if (v.target !== 'self') fail(`${path}.target`, `expected "self", got ${JSON.stringify(v.target)}`);
   const effect: CounterChangeEffect = { kind: 'counterChange', counter, trigger, target: 'self' };
