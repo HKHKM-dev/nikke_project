@@ -93,6 +93,8 @@ beforeAll(async () => {
   env = {
     PATH: process.env['PATH'],
     HOME: join(tmp, 'home'),
+    // Windows の os.homedir() は HOME でなく USERPROFILE を見る
+    USERPROFILE: join(tmp, 'home'),
     CLAUDE_CODE_REMOTE: 'true',
     CLAUDE_PROJECT_DIR: repo(),
     CLAUDE_CONFIG_DIR: join(tmp, 'claude'),
