@@ -12,10 +12,10 @@
 //   含まないものを使い、5 つでなければ止める（ジャンプがフルバーストの入りと重なった回は途切れで見分けられない。V-0424）。
 //   4 回目のジャンプが遅く、5 回目が戦闘の終わりより後になる録画（0633）は、--opt jumps で 4 つ渡す（帯は 5 つ）。
 // - 着地点: 中近・近 A・近 B・遠（3 つ目と 6 つ目の帯）・中遠 A・中遠 B/C（4 つ目の帯の距離ボーナスの多数決）。近の 2 つの帯の
-//   A・B は --opt near で渡す（0354-12 の読み方で読む）。
+//   A・B は --opt near で渡す（レシピ fb-near-width で読む。V-0542）。決まらない帯は - で渡し、その帯のヒットは数えない。
 import { loadHudJumps } from './hud-jumps.ts';
 import type { HudRow } from './triggers.ts';
-import { observation, type Recipe } from './types.ts';
+import { observation, type Recipe, type RecipeContext } from './types.ts';
 
 /** 1 ヒットの格子 */
 export type FbGrid = {
@@ -93,6 +93,9 @@ export function detectJumps(rows: readonly HudRow[], entries: readonly Entry[], 
   return out;
 }
 
+/** 近の帯の着地点（- は決まらない。その帯のヒットは数えない） */
+export type Near = 'A' | 'B' | '-';
+
 export type LandingCount = { inCores: number; inHits: number; outCores: number; outHits: number };
 export type FbTally = {
   counts: Record<Landing, LandingCount>;
@@ -107,6 +110,8 @@ export type FbTally = {
   gapped: number;
   unfit: number;
   ambiguous: number;
+  /** 近の着地点が決まらない帯（--opt near の -）のヒット */
+  nearUndecided: number;
   /** 窓の中で攻撃力▲の段が決まったヒットの [なし, あり] */
   atkInWindow: [number, number];
 };
@@ -117,16 +122,11 @@ const emptyCounts = (): Record<Landing, LandingCount> =>
     LandingCount
   >;
 
-/** 着地点ごとに数える。jumps は 5 つ（戦闘の中のジャンプが 4 回なら 4 つ）、near は 2 つ目と 5 つ目の帯の近の着地点 */
-export function tallyFbWindows(
-  rows: readonly HudRow[],
-  g: FbGrid,
-  entries: readonly Entry[],
-  jumps: readonly number[],
-  near: readonly ['A' | 'B', 'A' | 'B'],
-  hitMax: number,
-  tol: number,
-): FbTally {
+/** 近の 2 つの帯の番号（0 から。2 つ目と 5 つ目） */
+export const NEAR_BANDS = [1, 4] as const;
+
+/** 帯（ジャンプで区切った区間）ごとの [最初, 最後] のヒットのフレーム。jumps は 5 つ（戦闘の中のジャンプが 4 回なら 4 つ） */
+export function fbBands(rows: readonly HudRow[], jumps: readonly number[], hitMax: number): [number, number][] {
   if (jumps.length !== 5 && jumps.length !== 4) throw new Error(`ジャンプは 5 つか 4 つ（${jumps.length} 個）`);
   const small = rows.filter((r) => r.increment <= hitMax);
   const cuts = [-Infinity, ...jumps, Infinity];
@@ -136,6 +136,21 @@ export function tallyFbWindows(
     if (h.length === 0) throw new Error(`${k + 1} つ目の帯にヒットが無い`);
     bands.push([h[0]!.frame, h.at(-1)!.frame]);
   }
+  return bands;
+}
+
+/** 着地点ごとに数える。jumps は 5 つ（戦闘の中のジャンプが 4 回なら 4 つ）、near は 2 つ目と 5 つ目の帯の近の着地点 */
+export function tallyFbWindows(
+  rows: readonly HudRow[],
+  g: FbGrid,
+  entries: readonly Entry[],
+  jumps: readonly number[],
+  near: readonly [Near, Near],
+  hitMax: number,
+  tol: number,
+): FbTally {
+  const small = rows.filter((r) => r.increment <= hitMax);
+  const bands = fbBands(rows, jumps, hitMax);
   const bandOf = (f: number) => bands.findIndex(([a, b]) => f >= a && f <= b);
   const windowBands = entries.map((en) => {
     const first = small.find((r) => r.frame >= en.e + 40);
@@ -150,6 +165,7 @@ export function tallyFbWindows(
     gapped: 0,
     unfit: 0,
     ambiguous: 0,
+    nearUndecided: 0,
     atkInWindow: [0, 0],
   };
   type Hit = { band: number; win: boolean; core: 0 | 1; dist: 0 | 1 | undefined };
@@ -193,10 +209,24 @@ export function tallyFbWindows(
   }
   const mf = hits.filter((h) => h.band === 3 && h.dist !== undefined);
   t.midFar = mf.filter((h) => h.dist === 1).length * 2 > mf.length ? '中遠A' : '中遠BC';
-  const landingOf = (band: number): Landing =>
-    band === 0 ? '中近' : band === 1 ? `近${near[0]}` : band === 4 ? `近${near[1]}` : band === 3 ? t.midFar : '遠';
+  const nearOf = (n: Near): Landing | undefined => (n === '-' ? undefined : `近${n}`);
+  const landingOf = (band: number): Landing | undefined =>
+    band === 0
+      ? '中近'
+      : band === NEAR_BANDS[0]
+        ? nearOf(near[0])
+        : band === NEAR_BANDS[1]
+          ? nearOf(near[1])
+          : band === 3
+            ? t.midFar
+            : '遠';
   for (const h of hits) {
-    const c = t.counts[landingOf(h.band)];
+    const l = landingOf(h.band);
+    if (l === undefined) {
+      t.nearUndecided++;
+      continue;
+    }
+    const c = t.counts[l];
     if (h.win) {
       c.inHits++;
       c.inCores += h.core;
@@ -217,47 +247,59 @@ function parseList(text: string | undefined, name: string): number[] {
   return xs;
 }
 
+/** fb-window-cores と fb-near-width に共通の --opt（body・up・atk・jumps・hitMax・tol） */
+export const FB_OPTIONS = {
+  body: '1 ヒットの胴体（距離ボーナスなし・非会心・フルバースト補正なし。鈴原サクラは 7047.8991）',
+  up: '受けるダメージ▲の倍率をカンマ区切りで（1 は自動で入る。鈴原サクラ S1 は 1.1718）',
+  atk: '窓の中の攻撃力▲の倍率をカンマ区切りで（1 は自動で入る。ドレイク S1 は 1.11865。対照では省く）',
+  jumps:
+    '的の立ち上がりのフレームをカンマ区切りで（5 つ。戦闘の中のジャンプが 4 回なら 4 つ）。省けばヒットの途切れから探す',
+  hitMax: '1 ヒットとみなす増分の上限（既定 100000）',
+  tol: '格子の値との差の許し（既定 3）',
+} as const;
+
+/** 共通の --opt を読み、ヒットの増分・フルバーストの入り・ジャンプを出す */
+export async function fbSetup(ctx: RecipeContext) {
+  const body = Number(ctx.options.body);
+  if (!Number.isFinite(body) || body <= 0) throw new Error('--opt body=<胴体> が要る');
+  const num = (k: string, d: number) => (ctx.options[k] === undefined ? d : Number(ctx.options[k]));
+  const g: FbGrid = {
+    body,
+    core: 1,
+    crit: 0.5,
+    distance: 0.3,
+    fullBurst: 0.5,
+    up: parseList(ctx.options.up, 'up'),
+    atk: parseList(ctx.options.atk, 'atk'),
+  };
+  const hitMax = num('hitMax', 100000);
+  const tol = num('tol', 3);
+  const rows = (await loadHudJumps(ctx)).rows;
+  const entries = detectEntries(rows, g, hitMax, tol);
+  const given = parseList(ctx.options.jumps, 'jumps');
+  const jumps = given.length > 0 ? given : detectJumps(rows, entries, hitMax);
+  if (given.length === 0 && jumps.length !== 5)
+    throw new Error(
+      `ヒットの途切れから探したジャンプが ${jumps.length} 個（${jumps.join(',')}）。--opt jumps で的の立ち上がりのフレームを渡す`,
+    );
+  return { g, hitMax, tol, rows, entries, jumps, given };
+}
+
 export const fbWindowCores: Recipe = {
   name: 'fb-window-cores',
   version: 1,
   describe:
     'AI の SMG の、フルバーストの入りから 589f の窓の中と外の、着地点（中近・近 A・近 B・遠・中遠 A・中遠 B/C）ごとのコアのヒットの数とヒットの数（count。V-0492）',
   options: {
-    body: '1 ヒットの胴体（距離ボーナスなし・非会心・フルバースト補正なし。鈴原サクラは 7047.8991）',
-    up: '受けるダメージ▲の倍率をカンマ区切りで（1 は自動で入る。鈴原サクラ S1 は 1.1718）',
-    atk: '窓の中の攻撃力▲の倍率をカンマ区切りで（1 は自動で入る。ドレイク S1 は 1.11865。対照では省く）',
-    near: '2 つ目と 5 つ目の帯の近の着地点（例: B,A）',
-    jumps:
-      '的の立ち上がりのフレームをカンマ区切りで（5 つ。戦闘の中のジャンプが 4 回なら 4 つ）。省けばヒットの途切れから探す',
-    hitMax: '1 ヒットとみなす増分の上限（既定 100000）',
-    tol: '格子の値との差の許し（既定 3）',
+    ...FB_OPTIONS,
+    near: '2 つ目と 5 つ目の帯の近の着地点（例: B,A。fb-near-width で読む。決まらない帯は -）',
   },
   async run(ctx) {
-    const body = Number(ctx.options.body);
-    if (!Number.isFinite(body) || body <= 0) throw new Error('--opt body=<胴体> が要る');
     const near = (ctx.options.near ?? '').split(',');
-    if (near.length !== 2 || near.some((n) => n !== 'A' && n !== 'B')) throw new Error('--opt near=<A|B>,<A|B> が要る');
-    const num = (k: string, d: number) => (ctx.options[k] === undefined ? d : Number(ctx.options[k]));
-    const g: FbGrid = {
-      body,
-      core: 1,
-      crit: 0.5,
-      distance: 0.3,
-      fullBurst: 0.5,
-      up: parseList(ctx.options.up, 'up'),
-      atk: parseList(ctx.options.atk, 'atk'),
-    };
-    const hitMax = num('hitMax', 100000);
-    const tol = num('tol', 3);
-    const rows = (await loadHudJumps(ctx)).rows;
-    const entries = detectEntries(rows, g, hitMax, tol);
-    const given = parseList(ctx.options.jumps, 'jumps');
-    const jumps = given.length > 0 ? given : detectJumps(rows, entries, hitMax);
-    if (given.length === 0 && jumps.length !== 5)
-      throw new Error(
-        `ヒットの途切れから探したジャンプが ${jumps.length} 個（${jumps.join(',')}）。--opt jumps で的の立ち上がりのフレームを渡す`,
-      );
-    const t = tallyFbWindows(rows, g, entries, jumps, near as ['A' | 'B', 'A' | 'B'], hitMax, tol);
+    if (near.length !== 2 || near.some((n) => n !== 'A' && n !== 'B' && n !== '-'))
+      throw new Error('--opt near=<A|B|->,<A|B|-> が要る');
+    const { g, hitMax, tol, rows, entries, jumps, given } = await fbSetup(ctx);
+    const t = tallyFbWindows(rows, g, entries, jumps, near as [Near, Near], hitMax, tol);
     const who = ctx.recording.team.map((m) => m.name).join('・');
     const role =
       g.atk.length > 0
@@ -268,7 +310,7 @@ export const fbWindowCores: Recipe = {
       return [c.inCores, c.inHits, c.outCores, c.outHits];
     });
     const note =
-      `${body} × 受けるダメージ▲（1・${g.up.join('・')}）× 攻撃力▲（窓の中だけ。1${g.atk.map((a) => `・${a}`).join('')}）× ` +
+      `${g.body} × 受けるダメージ▲（1・${g.up.join('・')}）× 攻撃力▲（窓の中だけ。1${g.atk.map((a) => `・${a}`).join('')}）× ` +
       `(1 + コア ${g.core} + 会心 ${g.crit} + 距離ボーナス ${g.distance} + フルバースト補正 ${g.fullBurst}) の格子で、差 ${tol} 以内で読み、` +
       `コアの有無が 1 つに決まる増分だけを数えた（読み方は V-0492「読み方」の 1〜3）。フルバーストの入り E は ` +
       `${entries.map((en) => `f${en.e}`).join('・')}（止まりの前の最後の増分 P は ${entries.map((en) => `f${en.p}`).join('・')}）。` +
@@ -276,7 +318,9 @@ export const fbWindowCores: Recipe = {
       `（${given.length > 0 ? '--opt jumps' : 'ヒットの途切れ'}）、帯の最初と最後のヒットは ${t.bands.map(([a, b]) => `f${a}〜${b}`).join('・')}。` +
       `近の着地点は ${near.join('・')}（--opt near）、中遠は ${t.midFar === '中遠A' ? '中遠 A（距離ボーナスあり）' : '中遠 B/C（距離ボーナスなし）'}。` +
       `数えなかった増分: 端と窓の中のジャンプの先 ${t.excluded}、前のフレームが読めていない ${t.gapped}、格子に合わない ${t.unfit}、` +
-      `コアの有無が決まらない ${t.ambiguous}。` +
+      `コアの有無が決まらない ${t.ambiguous}` +
+      (near.includes('-') ? `、近の着地点が決まらない帯 ${t.nearUndecided}` : '') +
+      '。' +
       (g.atk.length > 0
         ? `窓の中で攻撃力▲の有無が決まったヒットは、なし ${t.atkInWindow[0]}・あり ${t.atkInWindow[1]}`
         : '');

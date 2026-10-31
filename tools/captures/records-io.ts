@@ -70,7 +70,8 @@ export function prepareObservations(
   const finished: Observation[] = [];
   for (const p of produced) {
     const prior = existing.find(
-      (o) => o.method?.tool === opts.tool && o.kind === p.kind && o.description === p.description,
+      (o) =>
+        o.invalid === undefined && o.method?.tool === opts.tool && o.kind === p.kind && o.description === p.description,
     );
     if (prior) {
       if (sameValue(prior.value, p.value)) {

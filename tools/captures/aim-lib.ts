@@ -35,6 +35,8 @@ export async function* readFrames(
   const filters = [`select='${selectExpr(first, last, every)}'`];
   if (crop) filters.push(`crop=${W}:${crop.h}:0:${crop.y}`);
   const args = ['-v', 'error', '-i', video, '-vf', filters.join(','), '-fps_mode', 'passthrough'];
+  // 終わりがあれば、選んだ枚数を出したところで止める（録画の終わりまでデコードしない）
+  if (last !== undefined) args.push('-frames:v', String(Math.floor((last - first) / every) + 1));
   args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', '-');
   let n = first;
   for await (const buf of rawFrames(args, W * h * 3)) {
@@ -718,15 +720,33 @@ export async function buildBackground(
     if (!linesVisible(lines)) continue;
     frames.push(toHalfField(img, FIELD.y0));
   }
+  return { bg: medianImage(frames), used: frames.length, seen };
+}
+
+/** 半分の解像度のフレームの、画素ごとの中央値（0 枚なら全部 0） */
+export function medianImage(frames: readonly Uint8Array[]): Uint8Array {
   const n = frames.length;
-  const bg = new Uint8Array(HALF_W * HALF_H * 3);
+  const out = new Uint8Array(HALF_W * HALF_H * 3);
   const col = new Uint8Array(n);
-  for (let i = 0; i < bg.length; i++) {
+  for (let i = 0; i < out.length; i++) {
     for (let k = 0; k < n; k++) col[k] = frames[k]![i]!;
     col.sort();
-    bg[i] = col[n >> 1] ?? 0;
+    out[i] = col[n >> 1] ?? 0;
   }
-  return { bg, used: n, seen };
+  return out;
+}
+
+/** 半分の解像度のマスクの、行 hy0〜hy1 での左右の端の幅（元の解像度の px。無ければ NaN） */
+export function maskSpanWidth(mask: Uint8Array, hy0: number, hy1: number): number {
+  let bl = Infinity;
+  let br = -Infinity;
+  for (let y = Math.max(0, hy0); y <= Math.min(HALF_H - 1, hy1); y++)
+    for (let x = 0; x < HALF_W; x++) {
+      if (!mask[y * HALF_W + x]) continue;
+      bl = Math.min(bl, x);
+      br = Math.max(br, x);
+    }
+  return Number.isFinite(bl) ? (br - bl + 1) * 2 : NaN;
 }
 
 export type Target = {
@@ -954,18 +974,8 @@ export function findTarget(half: Uint8Array, bg: Uint8Array, aim: Aim | null): T
     }
   }
   // 照準の高さ ±30px の帯での的の左右の端（腕を広げた幅。ポップアップは照準より上に出るので入りにくい）
-  let bl = Infinity;
-  let br = -Infinity;
-  if (aim) {
-    const yc = (aim.y - FIELD.y0) / 2;
-    for (let y = Math.max(0, Math.floor(yc - 15)); y <= Math.min(HALF_H - 1, Math.ceil(yc + 15)); y++) {
-      for (let x = 0; x < HALF_W; x++) {
-        if (!out[y * HALF_W + x]) continue;
-        bl = Math.min(bl, x);
-        br = Math.max(br, x);
-      }
-    }
-  }
+  const yc = aim ? (aim.y - FIELD.y0) / 2 : NaN;
+  const bandW = aim ? maskSpanWidth(out, Math.floor(yc - 15), Math.ceil(yc + 15)) : NaN;
   return {
     x0: box.x0 * 2,
     y0: box.y0 * 2 + FIELD.y0,
@@ -973,7 +983,7 @@ export function findTarget(half: Uint8Array, bg: Uint8Array, aim: Aim | null): T
     y1: box.y1 * 2 + 2 + FIELD.y0,
     area: box.area * 4,
     fx: fxAll ? fxN / fxAll : NaN,
-    bandW: Number.isFinite(bl) ? (br - bl + 1) * 2 : NaN,
+    bandW,
     clipped:
       box.x0 <= Math.max(0, Math.floor(((aim?.x ?? 0) - TARGET_HALF_W) / 2)) ||
       box.x1 >= Math.min(HALF_W - 1, Math.ceil(((aim?.x ?? W) + TARGET_HALF_W) / 2)) ||
