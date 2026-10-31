@@ -191,6 +191,25 @@ export function resolveBurstDamage(
 }
 
 /** Stage 8: 定義の各 damage 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
+/**
+ * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 発火のフレーム fire の倍率ダメージのヒットのフレーム。delayFrames の後に
+ * N ヒット（hits。無ければ 1）を hitIntervalFrames おきに出し、戦闘の終わりを越えるヒットは出さない。2 パス目（frame/plan.ts）のヒットと、
+ * 1 パス目（frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit。V-0545）が同じ列を使う
+ */
+export function damageHitFramesOf(
+  effect: Pick<ResolvedDamageEffect, 'delayFrames' | 'hits' | 'hitIntervalFrames'>,
+  fire: number,
+  frames: number,
+): number[] {
+  const out: number[] = [];
+  for (let k = 0; k < (effect.hits ?? 1); k++) {
+    const at = fire + (effect.delayFrames ?? 0) + k * (effect.hitIntervalFrames ?? 0);
+    if (at >= frames) break;
+    out.push(at);
+  }
+  return out;
+}
+
 export function resolveDamageEffects(
   def: SkillDefinition,
   character: CharacterData,
@@ -529,11 +548,8 @@ export type BurstHitInput = {
   fullBurstBonus?: boolean;
   /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ掛ける。省略 1 */
   distributedDamageMultiplier?: number;
-  /**
-   * 2026-10-29 のキャラの編: 順番攻撃ダメージ▲の乗数（sequential の効果にだけ掛かる。省略は 1）。攻撃ダメージ▲と同じ和に足すので、
-   * 呼ぶ側が (攻撃ダメージの乗数 + Σ sequentialAttackDamage) ÷ 攻撃ダメージの乗数 を渡す（V-0545）
-   */
-  sequentialAttackDamageMultiplier?: number;
+  /** 2026-10-29 のキャラの編: Σ sequentialAttackDamage。sequential の効果にだけ、攻撃ダメージ▲と同じ和に足す（V-0545）。省略 0 */
+  sequentialAttackDamage?: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
   /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
@@ -603,7 +619,6 @@ export type SkillHitResult = BurstHitResult;
 export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const fullBurstBonus = input.fullBurstBonus ?? BURST_SKILL_FULL_BURST_BONUS;
   const distributed = input.distributedDamageMultiplier ?? 1;
-  const sequential = input.sequentialAttackDamageMultiplier ?? 1;
   const damageTaken = input.damageTakenMultiplier ?? 1;
   const explosion = input.projectileExplosionMultiplier ?? 1;
   const stick = input.projectileStickMultiplier ?? 1;
@@ -626,6 +641,9 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const placement = input.sustainedDamagePlacement ?? SUSTAINED_DAMAGE_PLACEMENT;
   const sustained = sustainedMultiplier(input.sustainedDamage ?? 0, placement, boostBase, input.attackDamageMultiplier);
   const hasSustained = input.effects.some((e) => e.sustained === true);
+  // V-0545: 順番攻撃ダメージ▲は攻撃ダメージ▲と同じ和に足す（▲なしに対する比。持続ダメージ▲の attackDamage の置き場所と同じ形）
+  const sequential =
+    (input.attackDamageMultiplier + (input.sequentialAttackDamage ?? 0)) / input.attackDamageMultiplier;
   const perEffect = input.effects.map((effect) => ({
     effect,
     expected:
@@ -752,13 +770,7 @@ export function computeSkillHit(
     effects,
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
-    // V-0545（plan/design-new-chars-1029.md 11.2 節の a）: 順番攻撃ダメージ▲は攻撃ダメージ▲と同じ和に足す（▲なしに対する比で渡す）
-    sequentialAttackDamageMultiplier: sustainedMultiplier(
-      buffs.sequentialAttackDamage,
-      'attackDamage',
-      0,
-      trigger.attackDamageMultiplier,
-    ),
+    sequentialAttackDamage: buffs.sequentialAttackDamage,
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
     projectileStickMultiplier: stickHitMultiplier(buffs),

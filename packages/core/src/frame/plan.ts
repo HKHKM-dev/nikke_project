@@ -21,6 +21,7 @@ import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
+  damageHitFramesOf,
   resolveDamageEffects,
   resolveDotEffects,
   resolvePerShotDamage,
@@ -518,11 +519,8 @@ export function planSkillHits(
         // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す。
         // 同 10.2 節の d: N ヒットとも発動（発火）のフレームのバフとフルバースト補正で出す（遅れ・間の後のヒットも。C-0735）。
         // N 回でない倍率ダメージは、遅れがあればヒットのフレームのバフ（遅れて出る倍率ダメージ編）
-        for (let k = 0; k < (effect.hits ?? 1); k++) {
-          const at = frame + delay + k * (effect.hitIntervalFrames ?? 0);
-          if (at >= frames) break;
+        for (const at of damageHitFramesOf(effect, frame, frames))
           push(at, effect, pre, copied, undefined, false, effect.hits === undefined ? at : frame);
-        }
       }
     }
     // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。

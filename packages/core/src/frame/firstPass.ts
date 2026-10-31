@@ -78,6 +78,7 @@ import {
 } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import {
+  damageHitFramesOf,
   resolveDamageEffects,
   resolveDamageGauges,
   resolveAllyGaugeAdd,
@@ -85,6 +86,7 @@ import {
   resolveShotGauges,
   resolveShotPauses,
   resolveTimerGauges,
+  type ResolvedDamageEffect,
 } from '../skills/burstDamage.ts';
 import {
   effectFrameOf,
@@ -700,6 +702,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   // 2 段目の段 1: 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
   const timedTimerGauges = new Map<number, { slotIndex: number; delayFrames: number }[]>();
   const timerGauges: FirstPassResult['timerGauges'] = [];
+  /** 周期のゲージを、発火 fireFrame の後のフレーム at のゲージに予約する（timerGauges にも残す） */
+  const reserveTimerGauge = (slotIndex: number, fireFrame: number, at: number, energy: number): void => {
+    timerGauges.push({ slotIndex, fireFrame, frame: at, energy });
+    pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+  };
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
@@ -709,45 +716,29 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         if (at >= frames) continue;
         if (timedGauge[i])
           timedTimerGauges.set(fire, [...(timedTimerGauges.get(fire) ?? []), { slotIndex: i, delayFrames }]);
-        else {
-          timerGauges.push({ slotIndex: i, fireFrame: fire, frame: at, energy });
-          pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
-        }
+        else reserveTimerGauge(i, fire, at, energy);
       }
     }
   });
   // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ（gaugePerHit）。発火をフレームの順に
   // 追い（periodShorten の短縮は、そのフレームまでに登録した自分の状態で決める。2 パス目の shortenedTimerFrames と同じ規則）、
   // N ヒットのフレームのゲージに予約する（delayFrames は 1 以上なので、どのヒットも発火より後のフレーム）
-  const damageTimerGauges = slots.flatMap((slot, i) =>
-    slot === null || slot.definition === null
-      ? []
-      : resolveDamageEffects(slot.definition, slot.character, slot.levels).flatMap((effect) =>
-          effect.gaugePerHit === true && isResolvedTimer(effect.trigger)
-            ? [
-                {
-                  slotIndex: i,
-                  effect,
-                  timer: shortenedTimer(effect.trigger, effect.periodShorten?.seconds ?? 0, frames),
-                  energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
-                },
-              ]
-            : [],
-        ),
-  );
+  const damageTimerGauges: { slotIndex: number; effect: ResolvedDamageEffect; fires: (f: number) => boolean }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveDamageEffects(slot.definition, slot.character, slot.levels)) {
+      if (effect.gaugePerHit !== true || !isResolvedTimer(effect.trigger)) continue;
+      const shorten = effect.periodShorten;
+      const shortened = (frame: number) => shorten !== undefined && lists.selfStateAt(i, shorten.state, frame);
+      const fires = shortenedTimer(effect.trigger, shorten?.seconds ?? 0, frames, shortened);
+      damageTimerGauges.push({ slotIndex: i, effect, fires });
+    }
+  });
   const countTimerDamageGauges = (f: number): void => {
     for (const t of damageTimerGauges) {
-      const shorten = t.effect.periodShorten;
-      const shortened = (frame: number) =>
-        shorten !== undefined && lists.selfStateAt(t.slotIndex, shorten.state, frame);
-      if (!t.timer.step(f, shortened)) continue;
-      const energy = targetEnergyNow(t.slotIndex, t.energy);
-      for (let k = 0; k < (t.effect.hits ?? 1); k++) {
-        const at = f + (t.effect.delayFrames ?? 0) + k * (t.effect.hitIntervalFrames ?? 0);
-        if (at >= frames) break;
-        timerGauges.push({ slotIndex: t.slotIndex, fireFrame: f, frame: at, energy });
-        pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
-      }
+      if (!t.fires(f)) continue;
+      const energy = targetEnergyNow(t.slotIndex, targetEnergies[t.slotIndex]! * (1 + gaugeSpeed[t.slotIndex]!));
+      for (const at of damageHitFramesOf(t.effect, f, frames)) reserveTimerGauge(t.slotIndex, f, at, energy);
     }
   };
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
@@ -823,10 +814,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     // 2 段目の段 1: 時間で変わるゲージ速度の枠の、このフレームの (1 + 速度)（f − 1 までに付いた件）と、その速度の周期のゲージ
     for (const i of timedGaugeSlots) gaugeScale[i] = 1 + gaugeSpeed[i]! + lists.gaugeSpeedAt(i, f);
     for (const t of timedTimerGauges.get(f) ?? []) {
-      const at = f + t.delayFrames;
-      const energy = targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!;
-      timerGauges.push({ slotIndex: t.slotIndex, fireFrame: f, frame: at, energy });
-      pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+      reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
     }
     // 1. 射手（V-0030: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
     let gauge = pendingGauge.get(f) ?? 0;

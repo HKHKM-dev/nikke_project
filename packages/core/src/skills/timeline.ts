@@ -356,59 +356,46 @@ export function shortenedTimerFrames(
   frames: number,
   shortened: (frame: number) => boolean,
 ): number[] {
-  const timer = shortenedTimer(trigger, shortenSeconds, frames);
-  const fires: number[] = [];
-  for (let f = 0; f < frames; f++) if (timer.step(f, shortened)) fires.push(f);
-  return fires;
+  const fires = shortenedTimer(trigger, shortenSeconds, frames, shortened);
+  const out: number[] = [];
+  for (let f = 0; f < frames; f++) if (fires(f)) out.push(f);
+  return out;
 }
 
-/** shortenedTimerFrames をフレームの順に 1 つずつ決める形。step は 0 から frames − 1 まで順に呼び、そのフレームに発動すれば true */
-export type ShortenedTimer = { step(frame: number, shortened: (frame: number) => boolean): boolean };
-
 /**
- * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: shortenedTimerFrames の規則を、フレームの順に決める形にしたもの。shortened は
- * 発動のフレームと、縮めた次の発動のフレームにだけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった
- * 状態で周期のゲージを追うのに使う
+ * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: shortenedTimerFrames の規則を、フレームの順に決める形にしたもの。返す関数は
+ * 0 から frames − 1 まで順に呼び、そのフレームに発動すれば true。shortened は戦闘開始・発動のフレームと、縮めた次の発動のフレームに
+ * だけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった状態で周期のゲージを追うのに使う
  */
-export function shortenedTimer(trigger: TimerTrigger, shortenSeconds: number, frames: number): ShortenedTimer {
+export function shortenedTimer(
+  trigger: TimerTrigger,
+  shortenSeconds: number,
+  frames: number,
+  shortened: (frame: number) => boolean,
+): (frame: number) => boolean {
   const { everySeconds } = trigger;
   const short = everySeconds - shortenSeconds;
   const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
-  let started = false;
-  let done = false;
   let frame = 0;
   let seconds = 0;
   let shortFrame: number | undefined;
   let longFrame = 0;
   const after = (period: number) =>
     trigger.carry === true ? gameSecondsToFirstFrame(seconds + period) : frame + gameSecondsToFirstFrame(period);
-  const plan = (shortened: (frame: number) => boolean) => {
+  const plan = () => {
     shortFrame = shortened(frame) ? after(short) : undefined;
     longFrame = after(everySeconds);
   };
-  return {
-    step(f, shortened) {
-      if (!started) {
-        started = true;
-        plan(shortened);
-      }
-      if (done) return false;
-      let period: number | undefined;
-      if (shortFrame === f) {
-        if (shortened(f)) period = short;
-        else shortFrame = undefined;
-      }
-      if (period === undefined && longFrame === f) period = everySeconds;
-      if (period === undefined) return false;
-      seconds += period;
-      frame = f;
-      if (seconds > lastFrameSeconds) {
-        done = true;
-        return false;
-      }
-      plan(shortened);
-      return true;
-    },
+  plan();
+  return (f) => {
+    // 縮めた次の発動のフレームでもう状態でなければ、縮めない周期の発動を待つ。秒が戦闘の終わりを越えた発動は出さず、その後は
+    // 予定のフレームがどれも過ぎているので発動しない
+    const period = shortFrame === f && shortened(f) ? short : longFrame === f ? everySeconds : undefined;
+    if (period === undefined || seconds + period > lastFrameSeconds) return false;
+    seconds += period;
+    frame = f;
+    plan();
+    return true;
   };
 }
 

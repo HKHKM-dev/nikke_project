@@ -1990,10 +1990,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return sum;
     },
     selfStateAt(holder, state, frame) {
-      const family = statesMatching(state);
-      if (family.some((s) => staticStates[holder]?.has(s) === true)) return true;
-      return family.some((s) =>
-        (stateTracks[holder]?.get(s) ?? []).some((t) => readItems(t).some((it) => it.start < frame && frame < it.end)),
+      // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）
+      return statesMatching(state).some(
+        (s) =>
+          staticStates[holder]?.has(s) === true ||
+          (stateTracks[holder]?.get(s) ?? []).some((t) => activeAt(t, frame).some((it) => it.start < frame)),
       );
     },
     instantConditionHolds(effect, sourceSlotIndex, frame) {

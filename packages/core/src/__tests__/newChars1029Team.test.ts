@@ -241,7 +241,9 @@ describe('11.2 の b 周期の倍率ダメージのヒットごとのゲージ�
     const hits = plan.skillHits.map((h) => h.frame);
     expect(hits.length).toBeGreaterThan(7);
     expect(plan.timerGauges.map((g) => g.frame)).toEqual(hits);
-    expect(new Set(plan.timerGauges.map((g) => g.energy))).toEqual(new Set([character().shot.targetBurstEnergyPerShot]));
+    expect(new Set(plan.timerGauges.map((g) => g.energy))).toEqual(
+      new Set([character().shot.targetBurstEnergyPerShot]),
+    );
     // 状態の間に縮んだ周期も、2 パス目のヒットと同じ発火で追う
     const fires = [...new Set(plan.timerGauges.map((g) => g.fireFrame))];
     expect(fires[2]! - fires[1]!).toBe(gameSecondsToFrames(2) + 1);
