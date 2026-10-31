@@ -7,6 +7,7 @@ import type { EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
+import { resolveDamageEffects } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
@@ -111,5 +112,17 @@ describe('ネオン：ビジョン・アイ（18）の火力ゲージ', () => {
     expect(withEffect('skill2', 1, { counter: 'nope' })).toThrow(/counter/);
     expect(withEffect('skill2', 1, { amount: 2 })).toThrow(/exactly one of amount and amountRef/);
     expect(withEffect('skill2', 3, { trigger: { ended: 'firepowerCharge', x: 1 } })).toThrow(/unknown field/);
+    // 増減の判定は状態が付いているかだけを見るので、スタック数の条件は書けない
+    expect(withEffect('skill2', 2, { condition: { selfState: { state: 'firepowerCharge', stacks: 2 } } })).toThrow(
+      /stack count condition is not supported in counterChange/,
+    );
+  });
+
+  it('rejects a conditioned per-shot damage for SG (per pellet or per trigger is undecided)', () => {
+    // S1 の超火力状態の追加効果（条件つきの射撃ごと）は、射撃ごとの発動として出す。SG なら畳み込む側と同じく拒否する
+    expect(() => resolveDamageEffects(definition(NEON), character(NEON), MAX_SKILL_LEVELS)).not.toThrow();
+    expect(() =>
+      resolveDamageEffects(definition(NEON), { ...character(NEON), weaponType: 'SG' }, MAX_SKILL_LEVELS),
+    ).toThrow(/not supported for SG/);
   });
 });

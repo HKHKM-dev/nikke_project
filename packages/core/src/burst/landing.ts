@@ -120,9 +120,6 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 効果（命中率▲・攻撃力▲・ゴールデンチップの減少）はヒットより前に付く（発動から約 0.4 秒の一時停止画面で付いていた）ので 0。
   // ヒットに同じ発動の攻撃力▲が乗る（C-0582。ラピ・ヘルム・イサベルは乗らない）
   { resourceIds: [314], sameActivationBuffsOnHit: true, delays: { hitFrames: 96, effectFrames: 0 }, claim: 'C-0581' },
-  // シンデレラ: 「10 回順番に攻撃」。III のタイマーの 00.00 から 1 ヒット目まで 54f（動画で 76f の最も多い値。止まり 22f を含む）、
-  // 2 ヒット目以降は 1 ヒット目から約 12f おき（録画 0480 の 5 回の中央値）。バーストの倍率は回数倍（burstDamage の hitsRef）なので、
-  // 等分した各ヒットが説明文の値（C-0654）。追加ダメージ（burst の effects[1]）は perBurstHit で 10 ヒットのそれぞれに出る（C-0656）
   // ルドミラ: I の発動（六角形が I から II に替わるフレーム）からヒットまで、動画で 96f（印からの動画のフレーム。hitFrames は本当の発動からの
   // ゲーム内のフレームで 73）。バースト使用時の効果（防御力▲。間接）の遅れは未測定（V-0509）
   { resourceIds: [190], delays: { hitFrames: 73, effectFrames: 0 }, claim: 'C-0675' },
@@ -142,6 +139,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // エマ: I の発動（六角形の替わり目）から回復（味方全体の回復と吸収回復）まで 20f（アスカの S1 の付き始めで挟んだ 19〜21f のうち 20f。
   // 1 本の録画の 3 回）。バーストの倍率ダメージは無い（V-0515）
   { resourceIds: [90], delays: { hitFrames: 0, effectFrames: 20 }, claim: 'C-0687' },
+  // シンデレラ: 「10 回順番に攻撃」。III のタイマーの 00.00 から 1 ヒット目まで 54f（動画で 76f の最も多い値。止まり 22f を含む）、
+  // 2 ヒット目以降は 1 ヒット目から約 12f おき（録画 0480 の 5 回の中央値）。バーストの倍率は回数倍（burstDamage の hitsRef）なので、
+  // 等分した各ヒットが説明文の値（C-0654）。追加ダメージ（burst の effects[1]）は perBurstHit で 10 ヒットのそれぞれに出る（C-0656）
   {
     resourceIds: [511],
     delays: { hitFrames: 54, effectFrames: 0, hitOffsets: [0, 12, 24, 35, 47, 59, 71, 82, 94, 106] },

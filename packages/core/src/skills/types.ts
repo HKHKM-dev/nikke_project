@@ -3998,6 +3998,10 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.counterChange, true);
     validateUsedBurst(effect.condition, trigger, `${path}.condition`);
+    // 増減の判定（skills/holders.ts の counterConditionHolds）は状態が付いているかだけを見る。スタック数の条件は使うキャラが無いので拒否する
+    if (isStacksCondition(effect.condition.selfState)) {
+      fail(`${path}.condition.selfState`, 'a stack count condition is not supported in counterChange (only presence)');
+    }
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
