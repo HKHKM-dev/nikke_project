@@ -849,8 +849,10 @@ export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false, di
 
 /**
  * 分かれたヒット編（plan/design-burst-split-hits.md 4.2 節）: 1 回の発動の、当たったヒットを足し合わせる。各ヒットは倍率の
- * share ぶん。撃つ側のバフは発動で共通なので、ヒットごとに違うのは受けるダメージ（damageTakenMultiplier）だけで、合わせた値は
- * share で重みをつけた平均にする。1 ヒット（share 1）ならそのまま返す
+ * share ぶん。撃つ側のバフも敵の側のデバフも発動の直前の値で見る（frame/plan.ts の burstHitBuffs。plan/design-burst-landing.md 11 節）
+ * ので、ヒットごとに違いうるのは、同じ発動で自分に付いた効果がヒットまで続いているか（同じ発動の▲がヒットに乗るキャラ。同 10 節）
+ * だけ。perActivation・perEffect は share で重みをつけて足し、受けるダメージ（damageTakenMultiplier）は share で重みをつけた平均に
+ * する（ほかの欄は最初のヒットのまま）。1 ヒット（share 1）ならそのまま返す
  */
 export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; share: number }[]): BurstHitResult {
   const first = parts[0];

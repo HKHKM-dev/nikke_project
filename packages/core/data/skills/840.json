@@ -46,8 +46,8 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "対象は effects[0] と同じ。吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
-            "en": "Same targets as effects[0]. Lifesteal (10 s) triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+            "ja": "対象は effects[0] と同じ。吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない。回復を受けた時の効果を持つ味方のいる編成を撮っておらず（V-0569）、確かめていない",
+            "en": "Same targets as effects[0]. Lifesteal (10 s) triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage. No team with an ally that has an effect on being healed was recorded (V-0569); unverified"
           }
         }
       ]

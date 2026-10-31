@@ -132,8 +132,8 @@
             "inFullBurst": false
           },
           "assumes": {
-            "ja": "「通常攻撃をした時」はフルチャージの発も含むどの発も。撃ったフレームがフルバーストの外なら次のフレームで閉じる",
-            "en": "\"On normal attack\" covers every shot, full-charge shots included. A shot outside Full Burst closes the state on the next frame"
+            "ja": "「通常攻撃をした時」はフルチャージの発も含むどの発も。撃ったフレームがフルバーストの外なら次のフレームで閉じる。録画（V-0553）ではどのフルバーストでも使用回数がフルバーストの中で尽きたので起きず、確かめていない",
+            "en": "\"On normal attack\" covers every shot, full-charge shots included. A shot outside Full Burst closes the state on the next frame. In the recordings (V-0553) the uses always ran out inside Full Burst, so this did not occur; unverified"
           }
         }
       ],
@@ -156,8 +156,8 @@
           "ref": 1,
           "durationUntil": "battleEnd",
           "assumes": {
-            "ja": "武器の基礎のチャージ時間も 1.2 秒なので、チャージ速度の効果の無い編成では変わらない",
-            "en": "The weapon base charge time is also 1.2 s, so nothing changes in a team without charge speed effects"
+            "ja": "武器の基礎のチャージ時間も 1.2 秒なので、チャージ速度の効果の無い編成では変わらない。チャージ速度の効果のある編成では、固定がチャージ速度の効果に勝つ（チャージ時間は 1.2 秒のまま）とみるが、その編成を撮っておらず、確かめていない",
+            "en": "The weapon base charge time is also 1.2 s, so nothing changes in a team without charge speed effects. With charge speed effects in the team, the fix is taken to win over them (the charge time stays 1.2 s), but no such team was recorded; unverified"
           }
         },
         {
@@ -243,7 +243,7 @@
             "kind": "timed",
             "stat": "unknown",
             "target": "self",
-            "trigger": "fullChargeShot"
+            "trigger": "chargeFull"
           },
           "claims": [
             "C-0443"
@@ -257,7 +257,7 @@
             "kind": "timed",
             "stat": "unknown",
             "target": "self",
-            "trigger": "fullChargeShot"
+            "trigger": "chargeFull"
           },
           "claims": [
             "C-0443"

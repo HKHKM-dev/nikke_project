@@ -1955,9 +1955,18 @@ void _allEffectKinds;
 
 /**
  * 最小構成の検査編（plan/design-minimal-relevance.md 3.3 節）: notes の効く先のきっかけ。定義のトリガーの名前（BuffTrigger・回数トリガーの
- * count・時間の周期は timer・効果名のトリガーは applied）に、damaged（自分が被弾した時。射撃場 3 分モードの的の反撃で起きうる）を足したもの
+ * count・時間の周期は timer・効果名のトリガーは applied・溜めの周期は chargeTick・溜めが満ちた時は chargeFull。records/relevance.ts の
+ * triggerNameOf と同じ名前）に、damaged（自分が被弾した時。射撃場 3 分モードの的の反撃で起きうる）を足したもの
  */
-export const NOTE_EFFECT_TRIGGERS = [...BUFF_TRIGGERS, ...SHOT_COUNT_KINDS, 'timer', 'applied', 'damaged'] as const;
+export const NOTE_EFFECT_TRIGGERS = [
+  ...BUFF_TRIGGERS,
+  ...SHOT_COUNT_KINDS,
+  'timer',
+  'applied',
+  'chargeTick',
+  'chargeFull',
+  'damaged',
+] as const;
 export type NoteEffectTrigger = (typeof NOTE_EFFECT_TRIGGERS)[number];
 
 /**
@@ -2017,7 +2026,7 @@ export type SkillEntry = {
    * 着弾編（plan/design-burst-landing.md 3 節）: 「下位効果のスタック適用」。同じ発動で発火する効果を書いた順に当て、
    * 後の damage は、同じ発動で前に書いた timed の値を足したバフで計算する（C-0163）。ルドミラ：ウィンターオーナー編で
    * スキルのスロットにも書けるようにした（plan/design-ludmilla-wo.md 2.4 節。射撃の回数トリガーの窓は発火の次のフレームから）。
-   * burst スロットでは先頭は burstDamage（ヒットの直前のバフのまま）。別スロットの効果は見ない
+   * burst スロットでは先頭は burstDamage（発動の直前のバフのまま。plan/design-burst-landing.md 11 節）。別スロットの効果は見ない
    */
   sequential?: true;
 };
