@@ -1,0 +1,46 @@
+{
+  "id": "0797",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0797_smg+mg+ar_sakura+elegg+mihara_elegg-s1-gauge-1.mp4",
+  "original": "2026-10-31_20-09-36.mp4",
+  "durationSec": 202.7,
+  "frames": 12162,
+  "fps": 60,
+  "sizeMB": 245.5,
+  "sha256": "722aacb67aae",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 836,
+      "name": "鈴原サクラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 161,
+      "name": "ミハラ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0564（エレグの S1 のゲージ）。ミハラ（操作・撃たない）",
+  "backup": {
+    "at": "2026-10-31T20:18+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
