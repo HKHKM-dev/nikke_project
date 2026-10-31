@@ -1,0 +1,155 @@
+[
+  {
+    "id": "0807-01",
+    "recording": "0807",
+    "kind": "total",
+    "use": "record",
+    "value": 415916997,
+    "description": "鈴原サクラ・デルタ・レイヴン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11529。増分は 3286 個"
+    },
+    "source": "V-0579",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0807-02",
+    "recording": "0807",
+    "kind": "count",
+    "use": "record",
+    "value": 237,
+    "unit": "トリガー",
+    "description": "鈴原サクラ・デルタ・レイヴン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3286 個。前の増分から 30f 未満の増分（3244 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 45f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0579",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0807-03",
+    "recording": "0807",
+    "source": "V-0579",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 402962.2,
+    "description": "A.N.モード（フルバースト）の窓の中のレイヴンの S1 の持続ダメージの tick（会心なし）の 1 スタックの値。鈴原サクラの受けるダメージ▲の窓の中",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "10 スタックの tick 4,029,622 の 10 分の 1（19 回: f3790・3966・4025・4084・4201・4319・6401・6460・6519・8603・8662・8838・8897・8956・9073・10921・11038・11391・11450）。1 つの和（HA）なら 10 スタックで 3,750,693 で、その値は 1 回も出ない。1 スタックの読みの幅は ±0.05"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2915,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "0807-04",
+    "recording": "0807",
+    "source": "V-0579",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 343883.1,
+    "description": "A.N.モードの窓の中のレイヴンの tick（会心なし）の 1 スタックの値。鈴原サクラの受けるダメージ▲の窓の外（持続ダメージ▲の対照）",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "10 スタックの tick 3,438,831 の 10 分の 1（6 回）。録画 0173 の窓の中の 1 スタック（`0173-03`）と同じ値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3033,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "0807-05",
+    "recording": "0807",
+    "source": "V-0579",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 96102.1,
+    "description": "A.N.モードの窓の外のレイヴンの tick（会心なし）の 1 スタックの値。鈴原サクラの受けるダメージ▲の窓の中（受けるダメージ▲の対照。▲の無い値は 82,012.3）",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "10 スタックの tick 961,021 の 10 分の 1（52 回）。▲の無い tick は 820,123（20 回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotStackTickDamage",
+      "args": {
+        "slot": 3,
+        "frame": 327,
+        "stacks": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "0807-06",
+    "recording": "0807",
+    "source": "V-0579",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "record",
+    "value": [
+      23,
+      4,
+      6,
+      1,
+      29,
+      51
+    ],
+    "description": "レイヴンの tick（1 スタックの値の整数倍。同じフレームの鈴原サクラの 1 ヒットとの和も含む）を、鈴原サクラの▲の有無で分けた数: [窓の中・▲あり・会心なし、同・会心、窓の中・▲なし・会心なし、同・会心、窓の外・▲なし、窓の外・▲あり]",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "鈴原サクラの▲の有無は、tick の前と後の鈴原サクラの 1 ヒット（▲なし 7,048・9,162・10,572・12,686・16,210・19,734、▲あり その × 1.1718）が同じ段で、その間が 40f 以内のときだけ決めた（tick の値は見ない。V-0563 の読み方）。決まった tick は、どれも▲ありなら × 1.1718 の値（別の乗数）、▲なしなら × 1 の値で、食い違いは無い。▲の有無が決まらない tick は 44 個（鈴原サクラのリロードの空き・▲の付き始めと切れ目）。窓の中の会心は 10 スタックで ▲あり 5,372,830（3 回）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]
