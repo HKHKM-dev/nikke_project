@@ -22,6 +22,7 @@ import {
   type TeamSlotInput,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
@@ -43,6 +44,14 @@ import {
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { useDetailed } from './detailed.ts';
+import {
+  INITIAL_PARTIES,
+  PARTIES_STORAGE_KEY,
+  parseParties,
+  serializeParties,
+  switchParty,
+  type PartiesState,
+} from './parties.ts';
 import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 
@@ -58,11 +67,19 @@ function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput
   };
 }
 
-function readSavedTeam(): string | null {
+function readStorage(key: string): string | null {
   try {
-    return localStorage.getItem(STORAGE_KEY);
+    return localStorage.getItem(key);
   } catch {
     return null;
+  }
+}
+
+function writeStorage(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // プライベートモード等で保存できないときは黙って諦める
   }
 }
 
@@ -71,6 +88,8 @@ export function App() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
   const [detailed, setDetailed] = useDetailed();
+  // ソロレイド用の編成 01〜05（parties.ts）。選んでいる編成の中身は team
+  const [parties, setParties] = useState<PartiesState>(INITIAL_PARTIES);
   // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
   const [restored, setRestored] = useState(false);
   // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
@@ -95,8 +114,10 @@ export function App() {
     loadCharacterIndex({ baseUrl: BASE_URL })
       .then((i) => {
         setIndex(i.characters);
-        const saved = parseTeamState(readSavedTeam(), i.characters);
+        const saved = parseTeamState(readStorage(STORAGE_KEY), i.characters);
         if (saved) dispatch({ type: 'replace', state: saved });
+        const savedParties = parseParties(readStorage(PARTIES_STORAGE_KEY), i.characters);
+        if (savedParties) setParties(savedParties);
         setRestored(true);
       })
       .catch((e: unknown) => setLoadError(String(e)));
@@ -104,12 +125,15 @@ export function App() {
 
   useEffect(() => {
     if (!restored) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, serializeTeamState(team));
-    } catch {
-      // プライベートモード等で保存できないときは黙って諦める
-    }
-  }, [team, restored]);
+    writeStorage(STORAGE_KEY, serializeTeamState(team));
+    writeStorage(PARTIES_STORAGE_KEY, serializeParties(parties, team));
+  }, [team, parties, restored]);
+
+  const selectParty = (to: number) => {
+    const next = switchParty(parties, team, to);
+    setParties(next.parties);
+    dispatch({ type: 'replace', state: next.team });
+  };
 
   const resourceIds = team.slots.map((s) => s.resourceId);
   const cache = useCharacterCache(resourceIds, BASE_URL);
@@ -278,6 +302,7 @@ export function App() {
             rangeJump={calcTeam.rangeJump}
             dispatch={dispatch}
           />
+          <PartyTabs active={parties.active} onSelect={selectParty} />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
               const character = slot.resourceId === null ? undefined : cache.characters.get(slot.resourceId);

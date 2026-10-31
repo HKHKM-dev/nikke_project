@@ -839,3 +839,19 @@ header h1 {
   background: Highlight;
   color: HighlightText;
 }
+/* ソロレイドの編成 01〜05 の切り替え（PartyTabs） */
+.party-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 12px;
+}
+.party-tabs + .slots {
+  margin-top: 8px;
+}
+/* スマホの幅でも 5 つを 1 行に並べる */
+.party-tab {
+  flex: 1 1 0;
+  max-width: 6.5em;
+  padding-inline: 2px;
+  white-space: nowrap;
+}
