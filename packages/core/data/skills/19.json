@@ -10,7 +10,10 @@
           "state": "intoTheFraySharpenedResolve",
           "trigger": "battleStart",
           "target": "self",
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-0750"
+          ]
         },
         {
           "kind": "damage",
@@ -36,7 +39,8 @@
           "claims": [
             "C-0734",
             "C-0735",
-            "C-0738"
+            "C-0738",
+            "C-0753"
           ]
         },
         {
@@ -127,7 +131,7 @@
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0740"
+            "C-0752"
           ]
         },
         {

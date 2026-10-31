@@ -1,0 +1,19 @@
+{
+  "id": "C-0750",
+  "text": "ラプンツェル：サンクチュアリの S1 の「フルバーストタイムが発動した時、自分と臨戦状態の味方全体に攻撃ダメージ▲」と S2 の「同じ対象に発動者基準で攻撃力▲」は、臨戦：意思の鋭槍（戦闘開始時に付いて持続）を持つマリアン：クイーンに、ほかの III がバーストを撃った回にも、マリアン：クイーン自身がバーストを撃った回にも乗り、通常攻撃と S1 の槍のヒットに出る。値と群は C-0719 と同じ（攻撃ダメージ▲はほかの攻撃ダメージ▲と同じ和、攻撃力▲は発動者の攻撃力 × X% の固定加算）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0752-10`・`0752-11`・`0752-13`・`0753-10`・`0753-11`・`0753-13`（I-DOLL・サンの窓とマリアン：クイーンの窓の通常攻撃のコアの 1 ヒット、マリアン：クイーンの窓の槍の 1 ヒットが、S1・S2 の▲を乗せたモデルの値と差 1 未満。S1 だけ・S2 だけの値は 2 本のどこにも出ない）。読む前の定義（臨戦：意思の鋭槍を持つ枠を静的に対象にする）のまま合い、撮る前の予測ファイル（records/predictions/V-0545.json の H-a）の通常攻撃の 2 つの値とも同じ。V-0545",
+  "model": "`data/skills/473.json` の skill1 の effects[1]・skill2 の effects[0]（`targetState: \"intoTheFray\"`）と、`data/skills/19.json` の skill1 の effects[0]（臨戦：意思の鋭槍。`skills/composition.ts` の `fixedTargetsOf` が静的な臨戦の枠を対象にする）",
+  "replaces": [],
+  "updated": "2026-10-31",
+  "subject": {
+    "places": [
+      "data/skills/473.json の skill1 の effects[1]",
+      "data/skills/473.json の skill2 の effects[0]",
+      "data/skills/19.json の skill1 の effects[0]"
+    ]
+  },
+  "decidedOn": []
+}

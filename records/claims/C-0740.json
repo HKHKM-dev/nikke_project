@@ -1,15 +1,12 @@
 {
   "id": "C-0740",
   "text": "マリアン：クイーンの S2 の「フルバースト発動時、臨戦：胸を刺す願い状態でなければ」の順番攻撃ダメージ 85.17%▲は、ほかの III がバーストを撃った回に付き、S1 の槍のヒットにだけ、ほかのどの群とも別の乗数 (1 + 85.17%) で乗る（通常攻撃には乗らない）。槍のヒットにはフルバースト補正も乗る",
-  "state": "確定",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`0740-21`・`0741-21`（I-DOLL・サンの窓の槍の 1 ヒット 441,633。同じ窓の通常攻撃は 17,641）。仮説は撮る前に決めていた（plan/design-new-chars-1029.md 5.5 節）。V-0538",
   "model": "`data/skills/19.json` の skill2 の effects[2]（stat `sequentialAttackDamage`。`skills/burstDamage.ts` の `computeBurstHit`）",
   "replaces": [],
-  "updated": "2026-10-29",
-  "subject": {
-    "places": ["data/skills/19.json の skill2 の effects[2]"]
-  },
+  "updated": "2026-10-31",
   "decidedOn": []
 }
