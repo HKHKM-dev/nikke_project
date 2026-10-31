@@ -16031,7 +16031,7 @@
       "effective": true,
       "minus": null,
       "plus": null,
-      "error": "minus: 窓の中の発動が 0 回しかない"
+      "error": "minus: 出来事（dotApply）が 0 回しか無い"
     },
     {
       "observation": "0755-08",
@@ -16048,7 +16048,7 @@
       "effective": true,
       "minus": null,
       "plus": null,
-      "error": "minus: 窓の中の発動が 0 回しかない"
+      "error": "minus: 出来事（dotApply）が 0 回しか無い"
     },
     {
       "observation": "0774-01",
