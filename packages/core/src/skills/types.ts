@@ -3527,13 +3527,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   // エレグの S1（C-0766）: 等分した不等間隔のヒットと、値を決めるフレーム
   if (v.hitOffsetFrames !== undefined) {
     const at = `${path}.hitOffsetFrames`;
-    const offsets = v.hitOffsetFrames;
-    if (
-      !Array.isArray(offsets) ||
-      offsets.length < 2 ||
-      offsets[0] !== 0 ||
-      !offsets.every((o, i) => typeof o === 'number' && Number.isInteger(o) && (i === 0 || o > offsets[i - 1]!))
-    )
+    // 昇順の 0 以上の整数はゲージのヒットと同じ検査。等分するヒットなので、2 つ以上・0 から・同じ遅れの重なりなしを足す
+    const offsets = parseGaugeHits(v.hitOffsetFrames, at, 0);
+    if (offsets.length < 2 || offsets[0] !== 0 || offsets.some((o, i) => i > 0 && o === offsets[i - 1]))
       fail(at, `expected strictly increasing integers starting at 0 (2 or more), got ${JSON.stringify(offsets)}`);
     if (
       effect.hitsRef !== undefined ||
@@ -3543,7 +3539,7 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       v.gaugePerHit !== undefined
     )
       fail(at, 'hitOffsetFrames cannot be used with hitsRef, perBurstHit, perCount, gaugeHits or gaugePerHit');
-    effect.hitOffsetFrames = offsets as number[];
+    effect.hitOffsetFrames = offsets;
   }
   if (v.valueDelayFrames !== undefined) {
     const at = `${path}.valueDelayFrames`;

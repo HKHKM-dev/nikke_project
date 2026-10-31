@@ -299,7 +299,7 @@ describe('分配ダメージの受けるダメージ▲（C-0767）', () => {
       1200,
       6,
     );
-    expect(distributedHitMultiplier(0.3974, 0.1718)).toBeCloseTo(1.5692 / 1.1718, 12);
-    expect(distributedHitMultiplier(0, 0)).toBe(1);
+    expect(distributedHitMultiplier(1.3974, 1.1718)).toBeCloseTo(1.5692 / 1.1718, 12);
+    expect(distributedHitMultiplier(1, 1)).toBe(1);
   });
 });

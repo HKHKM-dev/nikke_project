@@ -67,10 +67,10 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
 /**
  * 分配ダメージのヒットに掛ける、分配ダメージ▲の乗数。受けるダメージ▲（damageTaken）は分配ダメージ▲と 1 つの和
  * (1 + Σ分配ダメージ + Σ受けるダメージ) で掛かるので、ほかの効果と同じく (1 + Σ受けるダメージ) を掛けた値に、その比を掛ける形にそろえる
- * （エレグの S1 の分配ダメージ。C-0767）。▲の無いときは 1
+ * （エレグの S1 の分配ダメージ。C-0767）。引数はどちらも 1 + Σ の乗数。▲の無いときは 1
  */
-export function distributedHitMultiplier(distributedDamage: number, damageTaken: number): number {
-  return (1 + distributedDamage + damageTaken) / (1 + damageTaken);
+export function distributedHitMultiplier(distributedMultiplier: number, damageTakenMultiplier: number): number {
+  return 1 + (distributedMultiplier - 1) / damageTakenMultiplier;
 }
 
 /**
@@ -538,13 +538,9 @@ function perShotDamage(
   const boost =
     1 + boostCrit + (SKILL_HIT_FULL_BURST_BONUS ? boostFullBurst : 0) + (PER_SHOT_DAMAGE_CORE ? boostCore : 0);
   const common = baseHit * boost * applyAttackDamageBuffs(buffs) * (1 + buffs.damageTaken) * element;
+  const distributed = distributedHitMultiplier(1 + buffs.distributedDamage, 1 + buffs.damageTaken);
   let total = 0;
-  for (const e of effects) {
-    total +=
-      common *
-      e.multiplier *
-      (e.damageType === 'distributed' ? distributedHitMultiplier(buffs.distributedDamage, buffs.damageTaken) : 1);
-  }
+  for (const e of effects) total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
   return total;
 }
 

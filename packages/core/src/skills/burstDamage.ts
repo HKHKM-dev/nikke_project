@@ -126,7 +126,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   hitIntervalFrames?: number;
   /**
    * エレグの S1（C-0766）: 等分したヒットの、delayFrames 後からの遅れ（multiplier は 1 ヒットの値 = 定義の値 ÷ ヒットの数）と、値を決める
-   * 発火からのフレーム数（frame/plan.ts の planSkillHits）
+   * 発火からのフレーム数（frame/plan.ts の planSkillHits。N 回（hits）は 0 = 発火のフレーム。無ければヒットのフレームの値）
    */
   hitOffsets?: number[];
   valueDelayFrames?: number;
@@ -215,12 +215,12 @@ export function damageHitFramesOf(
   fire: number,
   frames: number,
 ): number[] {
-  // エレグの S1（C-0766）: 等分したヒットは、delayFrames の後の遅れの並び
-  if (effect.hitOffsets !== undefined)
-    return effect.hitOffsets.map((o) => fire + (effect.delayFrames ?? 0) + o).filter((at) => at < frames);
+  // エレグの S1（C-0766）: 等分したヒットは、delayFrames の後の遅れの並び（N ヒットは間隔の倍数の並び）
+  const offsets =
+    effect.hitOffsets ?? Array.from({ length: effect.hits ?? 1 }, (_, k) => k * (effect.hitIntervalFrames ?? 0));
   const out: number[] = [];
-  for (let k = 0; k < (effect.hits ?? 1); k++) {
-    const at = fire + (effect.delayFrames ?? 0) + k * (effect.hitIntervalFrames ?? 0);
+  for (const offset of offsets) {
+    const at = fire + (effect.delayFrames ?? 0) + offset;
     if (at >= frames) break;
     out.push(at);
   }
@@ -335,6 +335,8 @@ export function resolveDamageEffects(
         r.hits = hits;
         r.hitIntervalFrames = effect.hitIntervalFrames ?? 0;
         r.sequential = true;
+        // 同 10.2 節の d: N ヒットとも発火のフレームの値（C-0735）
+        r.valueDelayFrames = 0;
       }
       // エレグの S1（C-0766）: 定義の値をヒットの数で等分する
       if (effect.hitOffsetFrames !== undefined) {
@@ -734,7 +736,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const sequential =
     (input.attackDamageMultiplier + (input.sequentialAttackDamage ?? 0)) / input.attackDamageMultiplier;
   // 分配ダメージ▲は受けるダメージ▲と 1 つの和（common に掛けた受けるダメージ▲に対する比。damage.ts の distributedHitMultiplier。C-0767）
-  const distributedFactor = distributedHitMultiplier(distributed - 1, damageTaken - 1);
+  const distributedFactor = distributedHitMultiplier(distributed, damageTaken);
   const perEffect = input.effects.map((effect) => ({
     effect,
     expected:
