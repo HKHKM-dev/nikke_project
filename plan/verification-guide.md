@@ -104,6 +104,8 @@
 | `damageFormula` | 1 ヒットの値（バフの掛かり方・会心・コア・距離）  | `damage.ts`                                                         | `hitDamage`・`perShotHitDamage`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage`                       | レシピ `hud-jumps`・`buff-edge`、`hud.ts`。スキルの帯は `banner.ts`                                | 画面の読み方                                     |
 | `targetTable`   | 的の表のコア命中率・弾丸命中率                    | `data/enemies.json` の `range-bigarms`                              | `coreHitRate`・`bulletHitRate`                                                                            | レシピ `sg-pellets`・`smg-mags`・`smg-cores`・`ar-cores`                                           | 射撃場の条件                                     |
 
+出来事（倍率ダメージ・持続ダメージの付与と tick・バーストのヒット・発動・回復）の動画のフレームを、基準（戦闘の始まり・n 回目のフルバースト・n 回目の発動・直前のバーストのヒット）からの差の列で比べるときは、指標を足さずに `eventFrames` の引数（`event`・`anchor`・`within`・`skip`・`count`。冒頭の注記）で書く。
+
 ## 付録 B. 機構を変えたとき
 
 - 機構の変更に合わせて既存の観測値の比べ方（比べるフレーム・`setup`）を直すときは、変更と同じ PR で直し、理由に結論の ID を書く。
