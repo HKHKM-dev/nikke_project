@@ -174,27 +174,30 @@ export function TeamBreakdown({ result, view, computing, loadingCount, skillsLoa
 
           <div className="details">
             <h3>ニケごとの詳細</h3>
-            {filled.map((s) => (
-              <details key={s.index} className="slot-detail">
-                <summary>
-                  スロット {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
-                  {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
-                </summary>
-                <ResultPanel
-                  slotIndex={s.index}
-                  character={s.character}
-                  slot={s}
-                  attackLabel={attackLabel}
-                  slotNames={slotNames}
-                  teamCharacters={teamCharacters}
-                  enemyElement={view.input.enemy.element}
-                  effectiveSkillLevels={view.slots[s.index]!.skillLevels}
-                  treasurePhase={view.slots[s.index]!.treasurePhase}
-                  skillsStatus={view.slots[s.index]!.skillsStatus ?? { kind: 'loading' }}
-                  hpRatio={view.slots[s.index]!.hpRatio}
-                />
-              </details>
-            ))}
+            {filled.map((s) => {
+              const input = view.slots[s.index]!;
+              return (
+                <details key={s.index} className="slot-detail">
+                  <summary>
+                    スロット {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
+                    {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
+                  </summary>
+                  <ResultPanel
+                    slotIndex={s.index}
+                    character={s.character}
+                    slot={s}
+                    attackLabel={attackLabel}
+                    slotNames={slotNames}
+                    teamCharacters={teamCharacters}
+                    enemyElement={view.input.enemy.element}
+                    effectiveSkillLevels={input.skillLevels}
+                    treasurePhase={input.treasurePhase}
+                    skillsStatus={input.skillsStatus ?? { kind: 'loading' }}
+                    hpRatio={input.hpRatio}
+                  />
+                </details>
+              );
+            })}
           </div>
         </details>
       )}

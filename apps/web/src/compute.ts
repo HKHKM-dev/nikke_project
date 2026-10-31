@@ -50,7 +50,7 @@ export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
   #seq = 0;
   #inFlight: { seq: number; source: T } | null = null;
   #pending: T | null = null;
-  /** 最後に受けた元（エラーと組にする） */
+  /** 最後に受けた元。エラーと組にする（待ちのないときに Worker が止まっても、エラーを出すため） */
   #latest: T | null = null;
   #stopped: string | null = null;
   readonly #send: (request: ComputeRequest) => void;

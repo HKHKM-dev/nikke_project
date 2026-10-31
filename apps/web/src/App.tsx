@@ -121,7 +121,7 @@ export function App() {
   // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた。
   // 結果はその計算の元（shown.source）と組で届く。結果の詳細はその元から読み、スロットの欄は slotResultFor で合わせる
   const { shown, computing } = useTeamComputation(calc);
-  const computed = shown?.computed ?? null;
+  const slotResults = useMemo(() => calc.slots.map((_, i) => slotResultFor(shown, calc, i)), [calc, shown]);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -139,12 +139,12 @@ export function App() {
               character: slot.character,
               skills: slot.skillsStatus ?? { kind: 'loading' },
               treasurePhase: slot.treasurePhase,
-              modelNotes: slotResultFor(shown, calc, i)?.result.notes ?? [],
+              modelNotes: slotResults[i]?.result.notes ?? [],
               buildNotes: slot.buildNotes,
               noFire: slot.noFire,
             },
       ),
-    [calc, shown],
+    [calc.slots, slotResults],
   );
 
   return (
@@ -188,7 +188,7 @@ export function App() {
                   masters={masters}
                   mastersError={mastersError}
                   effectiveSkillLevels={skillLevels}
-                  slotResult={slotResultFor(shown, calc, i)}
+                  slotResult={slotResults[i] ?? null}
                   focused={team.controlledSlot === i}
                   dispatch={dispatch}
                 />
@@ -218,7 +218,10 @@ export function App() {
                 {computing && '（計算中…）'}
               </p>
             )}
-            <NotesSummary slots={summarySlots} enemyNotes={computed?.ok ? computed.result.enemyNotes : []} />
+            <NotesSummary
+              slots={summarySlots}
+              enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}
+            />
           </ErrorBoundary>
         </>
       )}

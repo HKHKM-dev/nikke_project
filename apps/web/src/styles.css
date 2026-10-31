@@ -298,10 +298,6 @@ header h1 {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-/* 計算中は前の入力の結果（総ダメージの欄と同じ印） */
-.slot-damage-display[data-computing='true'] .slot-damage-val {
-  opacity: 0.5;
-}
 .slot-settings {
   margin-top: 6px;
   padding-top: 4px;
@@ -361,7 +357,9 @@ header h1 {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.team-total-bar[data-computing='true'] .team-total-val {
+/* 計算中は前の入力の結果（総ダメージとスロットの欄で同じ印） */
+.team-total-bar[data-computing='true'] .team-total-val,
+.slot-damage-display[data-computing='true'] .slot-damage-val {
   opacity: 0.5;
 }
 .team-total-computing {

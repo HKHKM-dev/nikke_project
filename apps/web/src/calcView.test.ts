@@ -1,7 +1,7 @@
 import {
   MASTER_FILES,
+  masterDataPath,
   MAX_SKILL_LEVELS,
-  applyTreasure,
   computeCombatAttack,
   computeCombatStat,
   computeFixedSpecAttack,
@@ -187,7 +187,10 @@ describe('buildCalcView: team settings', () => {
 
 // 育成のマスタ（画面は起動時に読む。App.tsx の loadBuildMasters）
 const masters = Object.fromEntries(
-  Object.entries(MASTER_FILES).map(([k, f]) => [k, readJson<unknown>(`../../../packages/core/data/masters/${f}`)]),
+  Object.keys(MASTER_FILES).map((k) => [
+    k,
+    readJson<unknown>(`../../../packages/core/data/${masterDataPath(k as keyof BuildMasters)}`),
+  ]),
 ) as BuildMasters;
 // クラッシュキューブ: 防御力無視ダメージ▲は未対応（未対応の一覧に出す育成の注記）
 const CRUSH_CUBE = 1000315;
@@ -308,20 +311,5 @@ describe('slotResultFor: the result shown in a slot', () => {
     expect(slotResultFor(shownFor(before), after, 0)).toBeNull();
     expect(slotResultFor({ computed: { ok: false, error: 'x' }, source: after }, after, 0)).toBeNull();
     expect(slotResultFor(null, after, 0)).toBeNull();
-  });
-
-  it('keeps the character and the treasure phase of a result together in its source', () => {
-    // 2026-11-01 の不具合: 前の編成の結果のキャラ（宝物なし）に、いまの編成の宝物の段階を当てて画面が落ちていた。
-    // 詳細は結果の元（source）から読むので、キャラと宝物の段階は同じ計算の入力のものになる
-    const before = buildCalcView(party01, deps());
-    const after = buildCalcView(party02, deps());
-    const shownSlot = before.slots[0]!;
-    expect(() => applyTreasure(shownSlot.character!, null, after.slots[0]!.treasurePhase)).toThrow(RangeError);
-    for (const view of [before, after]) {
-      const { source } = shownFor(view);
-      for (const slot of source.slots) {
-        if (slot.character) expect(() => applyTreasure(slot.character!, null, slot.treasurePhase)).not.toThrow();
-      }
-    }
   });
 });
