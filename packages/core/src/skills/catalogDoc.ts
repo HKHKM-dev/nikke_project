@@ -169,7 +169,7 @@ const KIND_INFO: Record<string, Info> = {
   'sustained:cooldown': [
     'クールタイムの増減（維持の付いた形。その間スキル自体のクールタイムを変える。T4）',
     'check',
-    '状態の中身の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血。2 段目の段 11・C-0706）と、周期の damage の periodShorten の window（名前の無い窓の発動間隔▼。エイダの S2。C-0788）だけ',
+    '状態の中身か timed の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血・ミルクの宝物版の S1・ティアの S1。2 段目の段 11・15。C-0706・C-0769・C-0775）と、周期の damage の periodShorten の window（名前の無い窓の発動間隔▼。エイダの S2。C-0788）だけ',
   ],
   'instant:forceSkill': ['スキルの強制使用', 'gap', 'なし'],
   // 2 段目の段 12 の PR 2: cycle の無いスロットの射撃の回数のきっかけの N▼（decreaseRef。ラピ：レッドフードのバースト III）も
@@ -267,7 +267,12 @@ const TRIG_INFO: Record<string, Info> = {
   parts: ['パーツ・発射体の破壊・命中', 'oos'],
   enemySpawn: ['敵の出現・数', 'oos'],
   hpThreshold: ['HP が閾値を越えた時（HP の経路の読む側）', 'indirect'],
-  coverHealed: ['遮蔽物の HP を回復した時（壊れていない遮蔽物への回復で起きる。ツールチップ）', 'gap'],
+  // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節。C-0775）
+  coverHealed: [
+    '遮蔽物の HP を回復した時（壊れていない遮蔽物への回復で起きる。ツールチップ）',
+    'ok',
+    'timed の { coverHealed: true }（同じ定義の自分の coverHeal のきっかけに置き換える。ティアの S1。味方の遮蔽物 HP 回復は間接の notes）',
+  ],
   multiHit: ['N 機以上に同時に命中', 'oos'],
   enemyEvent: ['ターゲットの出現', 'ok', 'battleStart（射撃場の的は戦闘の始めからいるターゲットとみなす。V-0504）'],
   decoyPresent: ['デコイが存在する時（デコイの経路の読む側）', 'indirect'],
