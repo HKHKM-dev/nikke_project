@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 64・効果 380（根拠あり 360）・notes 169（根拠あり 76）
+件数: キャラ 64・効果 380（根拠あり 360）・notes 169（根拠あり 77）
 
-notes の種類: 未対応 42・前提の外 31・計算に無関係 33・補足 13・間接 50
+notes の種類: 未対応 41・前提の外 32・計算に無関係 33・補足 13・間接 50
 
-スロット: supported 142・partial 14・unsupported 17・noEffect 34
+スロット: supported 143・partial 13・unsupported 17・noEffect 34
 
 ## 10 ラピ
 
@@ -42,14 +42,14 @@ notes の種類: 未対応 42・前提の外 31・計算に無関係 33・補足
   - effects[6] damage・fullBurstStart・skill: C-0726（確定）、C-0725（確定）
   - effects[7] counterChange・fullBurstStart・stickyGrenade（減少）: C-0726（確定）
   - effects[8] passive・elementAdvantage: C-0723（確定）
-  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734 で 1 回に通常攻撃の 20 発ほど）のは未対応（溜まる量の出どころが分からない）: 根拠なし
-- **burst**: partial
+  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）: 根拠なし
+- **burst**: supported
   - effects[0] damage・burstUse・additional: C-0716（確定）
   - effects[1] timed・burstUse・projectileStickDamage: C-0724（確定）
   - effects[2] cycleEvery・burstUse: C-0727（確定）
   - effects[3] cooldownReduction・burstUse: C-0732（確定）
   - effects[4] timed・burstUse・attack: C-0733（確定）
-  - notes[0] 未対応: 爆発範囲▲（10 秒）は未対応（爆発範囲はダメージの式に無い）: 根拠なし
+  - notes[0] 前提の外: 爆発範囲▲（I・III の行とも 10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない。射撃場の的では、窓の中と外で粘着榴弾の爆発の 1 ヒットの値・コア・数が変わらない: C-0759（確定）
 
 ## 17 アニス：スター
 
@@ -99,7 +99,7 @@ notes の種類: 未対応 42・前提の外 31・計算に無関係 33・補足
   - effects[2] counterChange・burstUse・firepowerGauge: C-0667（確定）
   - effects[3] state・burstUse・superFirepower（attackDamage）: C-0667（確定）、C-0665（確定）
   - effects[4] counterChange・burstUse・firepowerGauge（減少）: C-0667（確定）
-  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い）: 根拠なし
+  - notes[0] 未対応: 爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）: 根拠なし
 
 ## 19 マリアン：クイーン
 
