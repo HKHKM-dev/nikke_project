@@ -564,8 +564,10 @@ export function planSkillHits(
           hits[hits.length - 1]!.onApply = true;
         }
       }
+      // tick の刻み・スタックの数・効果の帰属は、発火の tickDelayFrames 後（skills/types.ts の DotEffect.tickDelayFrames）を起点にする
+      const starts = fires.map((x) => x.f + (dot.tickDelayFrames ?? 0));
       const ticks = dotTicks(
-        fires.map((x) => x.f),
+        starts,
         dot.intervalSeconds,
         dot.durationSeconds,
         frames,
@@ -576,7 +578,7 @@ export function planSkillHits(
       );
       let last = 0;
       for (const tick of ticks) {
-        while (last + 1 < fires.length && fires[last + 1]!.f <= tick.frame) last += 1;
+        while (last + 1 < starts.length && starts[last + 1]! <= tick.frame) last += 1;
         push(tick.frame, fires[last]!.effect, false, maxStacks > 1 ? tick.stacks : undefined);
       }
     }
