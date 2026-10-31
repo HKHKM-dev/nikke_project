@@ -9,8 +9,8 @@
 // 4. 生成物を 1 回だけ作り直す（ブランチが感度を変えていたか、それが衝突したときは records:minimal、ほかは records:check）。差分が
 //    あれば「生成物を作り直す」の commit を足す（スカッシュマージなので、途中のコミットの生成物は合っていなくてよい）。
 // 5. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
-//    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。型・テスト・ビルドは全部。--push なら、通ったら
-//    git push --force-with-lease -u origin HEAD。
+//    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。npm run ci のほかの段（型・テスト・ビルド）は
+//    全部。--push なら、通ったら git push --force-with-lease -u origin HEAD。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -20,7 +20,10 @@ import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../pa
 import {
   addedLines,
   changedChecks,
+  checkSteps,
   collisions,
+  nulPaths,
+  pathListArgs,
   PROGRESS_PATHS,
   progressCopies,
   rebaseOutcome,
@@ -36,9 +39,19 @@ const { values } = parseArgs({
   },
 });
 
+/** 成功したら標準出力。失敗したら投げる */
+function gitRaw(args: readonly string[]): string {
+  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+}
+
 /** 成功したら標準出力（前後の空白を除く）。失敗したら投げる */
 function git(args: readonly string[]): string {
-  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  return gitRaw(args).trim();
+}
+
+/** パスの一覧（-z で読む。ASCII でないパスも、そのままの形で） */
+function gitPaths(args: readonly string[]): string[] {
+  return nulPaths(gitRaw(pathListArgs(args)));
 }
 
 /** 失敗しても投げない git（終了コードを返す） */
@@ -69,7 +82,6 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-const lines = (text: string) => text.split('\n').filter((l) => l !== '');
 const gitDir = git(['rev-parse', '--absolute-git-dir']);
 const rebasing = () => existsSync(`${gitDir}/rebase-merge`) || existsSync(`${gitDir}/rebase-apply`);
 const sensitivity = SENSITIVITY_PATH.slice(ROOT.length);
@@ -83,19 +95,17 @@ if (!rebasing()) {
   if (git(['status', '--porcelain', '--untracked-files=no']) !== '') fail('作業中の変更がある。commit してから回す');
   if (tryGit(['fetch', '--quiet', 'origin']) !== 0) fail('git fetch origin が落ちた');
 
-  const added = lines(git(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']));
-  const mainFiles = lines(
-    git([
-      'ls-tree',
-      '-r',
-      '--name-only',
-      'origin/main',
-      '--',
-      'records/verifications',
-      'records/claims',
-      'records/recordings',
-    ]),
-  );
+  const added = gitPaths(['diff', '--name-only', '--diff-filter=AR', 'origin/main...HEAD', '--', 'records']);
+  const mainFiles = gitPaths([
+    'ls-tree',
+    '-r',
+    '--name-only',
+    'origin/main',
+    '--',
+    'records/verifications',
+    'records/claims',
+    'records/recordings',
+  ]);
   const found = collisions(added, mainFiles, idsInBranches().ids);
   if (found.length > 0) {
     console.error('ブランチで足した番号が main と重なっている。振り直して commit してから、もう一度回す:');
@@ -133,7 +143,7 @@ if (!rebasing()) {
 
 // リベースの途中（衝突で止まったか、前の回で人が直している途中）なら、生成物の衝突を解いて続ける
 while (rebasing()) {
-  const conflicted = lines(git(['diff', '--name-only', '--diff-filter=U']));
+  const conflicted = gitPaths(['diff', '--name-only', '--diff-filter=U']);
   const { generated, other } = splitConflicts(conflicted, GENERATED_PATHS);
   if (other.length > 0) {
     console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
@@ -161,7 +171,7 @@ while (rebasing()) {
   }
 }
 
-const branchChanged = lines(git(['diff', '--name-only', 'origin/main...HEAD']));
+const branchChanged = gitPaths(['diff', '--name-only', 'origin/main...HEAD']);
 const script = regenerateScript(branchChanged, conflictedSoFar, sensitivity);
 console.log(`生成物を作り直す（npm run ${script}）`);
 npm(script);
@@ -172,7 +182,7 @@ if (git(['status', '--porcelain', '--untracked-files=no']) !== '') {
 }
 
 if (!values['no-ci']) {
-  const checks = changedChecks(lines(git(['diff', '--name-only', 'origin/main...HEAD'])), (p) =>
+  const checks = changedChecks(gitPaths(['diff', '--name-only', 'origin/main...HEAD']), (p) =>
     existsSync(join(ROOT, p)),
   );
   if (checks.full) {
@@ -184,7 +194,10 @@ if (!values['no-ci']) {
     );
     if (checks.format.length > 0) bin('prettier', ['--check', '--ignore-unknown', ...checks.format]);
     if (checks.lint.length > 0) bin('eslint', ['--no-warn-ignored', ...checks.lint]);
-    for (const script of ['typecheck', 'test', 'build']) npm(script);
+    const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as {
+      scripts: Record<string, string>;
+    };
+    for (const script of checkSteps(manifest.scripts['ci']!)) npm(script);
   }
 }
 

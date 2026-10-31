@@ -1,6 +1,6 @@
 // 観測値の予測値の覚え（plan/design-workflow-simplification-8.md 2 節）。records:check・npm test などが runObservations を回すたびに、
 // 比べる観測値の全部をモデルで回し直さないよう、予測値を node_modules/.cache/residuals/ に覚える（追跡しない）。
-// 覚えはモデルのコードとデータ（packages/core/src・packages/core/data の全部のファイルの中身。テストは除く）の hash ごとに分け、
+// 覚えはモデルのコードとデータ（MODEL_ROOTS の全部のファイルの中身。テストは除く）の hash ごとに分け、
 // その中で観測値ごとの鍵（records/observations.ts の predictionKey）で引く。コードかデータが 1 字でも変われば、別の覚えになる。
 // NIKKE_NO_RESIDUAL_CACHE=1 で覚えを使わない（読みも書きもしない）。
 import { createHash } from 'node:crypto';
@@ -18,21 +18,28 @@ import type { RecordingEntry } from '../src/records/recordings.ts';
 import { ROOT } from './records-data.ts';
 
 export const RESIDUAL_CACHE_DIR = `${ROOT}node_modules/.cache/residuals/`;
-/** モデルの入力（コードとデータ）の置き場所 */
-const MODEL_ROOTS = [`${ROOT}packages/core/src/`, `${ROOT}packages/core/data/`];
+/**
+ * モデルの入力（コードとデータ）の置き場所。/ で終わるものはディレクトリ、ほかはファイル。scripts からは、どのキャラ・スキル・マスタを
+ * 読むかを決める records-data.ts と、覚えを引くこれ自身（ここから import で辿れるファイルが全部入ることは residual-cache.test.ts が見る）
+ */
+export const MODEL_ROOTS = [
+  `${ROOT}packages/core/src/`,
+  `${ROOT}packages/core/data/`,
+  `${ROOT}packages/core/scripts/records-data.ts`,
+  `${ROOT}packages/core/scripts/residual-cache.ts`,
+];
 /** 残す覚えの数（ブランチを行き来しても使えるように、古いものから消す） */
 const KEEP = 4;
 
-/** ディレクトリの下の全部のファイル（__tests__ を除く）の、相対パスと中身の hash */
+/** ファイルと、ディレクトリの下の全部のファイル（__tests__ を除く）の、相対パスと中身の hash */
 export function modelHash(roots: readonly string[] = MODEL_ROOTS): string {
   const hash = createHash('sha256');
-  const walk = (dir: string, rel: string) => {
-    for (const name of readdirSync(dir).sort()) {
-      if (name === '__tests__') continue;
-      const path = join(dir, name);
-      if (statSync(path).isDirectory()) walk(path, `${rel}${name}/`);
-      else hash.update(`${rel}${name}\0`).update(readFileSync(path)).update('\0');
+  const walk = (path: string, rel: string) => {
+    if (!statSync(path).isDirectory()) {
+      hash.update(`${rel}\0`).update(readFileSync(path)).update('\0');
+      return;
     }
+    for (const name of readdirSync(path).sort()) if (name !== '__tests__') walk(join(path, name), `${rel}/${name}`);
   };
   roots.forEach((root, i) => walk(root, `${i}:`));
   return hash.digest('hex').slice(0, 32);

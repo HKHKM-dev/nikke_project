@@ -119,14 +119,17 @@ export function progressCopies(path: string, text: string, added: ReadonlySet<nu
   return out;
 }
 
-/** 書式と lint の結果を、変えていないファイルでも変えうる設定（これを変えたブランチは全部のファイルを見る） */
-export const FULL_CHECK_PATHS = [
-  '.prettierrc.json',
-  '.prettierignore',
-  'eslint.config.js',
-  'package.json',
-  'package-lock.json',
-];
+/**
+ * 書式と lint の結果を、変えていないファイルでも変えうる設定（これを変えたブランチは全部のファイルを見る）。prettier の設定と ignore、
+ * prettier が読む .editorconfig、eslint の設定は、どの階層にあっても効くので名前の形で見る。package.json は道具の版と prettier の欄、
+ * package-lock.json は道具の版
+ */
+const CHECK_SETTING =
+  /(?:^|\/)(?:\.prettierrc(?:\.[^/]+)?|prettier\.config\.[^/]+|\.prettierignore|\.editorconfig|eslint\.config\.[^/]+|package\.json)$|^package-lock\.json$/;
+
+export function isCheckSetting(path: string): boolean {
+  return CHECK_SETTING.test(path);
+}
 /** eslint が見る拡張子（eslint.config.js） */
 const LINT_FILE = /\.(?:[cm]?js|tsx?)$/;
 /** これより多く変えたら全部を見る（コマンドラインの長さの上限を避ける。Windows は約 32,000 字） */
@@ -140,9 +143,41 @@ export type ChangedChecks = { full: true; reason: string } | { full: false; form
  * 設定を変えたか、変えたファイルが多すぎるときは全部を見る
  */
 export function changedChecks(changed: readonly string[], exists: (path: string) => boolean): ChangedChecks {
-  const config = changed.find((p) => FULL_CHECK_PATHS.includes(p));
+  const config = changed.find(isCheckSetting);
   if (config !== undefined) return { full: true, reason: `${config} を変えた` };
   const format = changed.filter(exists);
   if (format.length > MAX_CHANGED_FILES) return { full: true, reason: `変えたファイルが ${format.length} 件ある` };
   return { full: false, format, lint: format.filter((p) => LINT_FILE.test(p)) };
+}
+
+/**
+ * パスの一覧を出す git のコマンド（diff --name-only・ls-tree --name-only）に -z を足す。既定の core.quotePath では ASCII でないパスが
+ * "\343…" の形に包まれ、ファイルとして見つからなくなる。-z なら包まず、NUL で区切る（nulPaths で読む）
+ */
+export function pathListArgs(args: readonly string[]): string[] {
+  const [command, ...rest] = args;
+  return [command!, '-z', ...rest];
+}
+
+/** -z の出力のパス */
+export function nulPaths(stdout: string): string[] {
+  return stdout.split('\0').filter((p) => p !== '');
+}
+
+/** pr:prep が変えたファイルだけで見る段（npm run ci の段のうち、これを除いたものを全部回す） */
+const CHANGED_ONLY_STEPS = ['format:check', 'lint'];
+
+/**
+ * npm run ci（package.json）の段のうち、書式と lint を除いたもの（npm run の名前）。ci に段を足せば pr:prep も回す。npm run <名前> か
+ * npm test でない段や、書式か lint の段が無いときは止める（pr:prep が ci と違う確認になるので）
+ */
+export function checkSteps(ci: string): string[] {
+  const steps = ci.split('&&').map((step) => {
+    const m = /^npm (?:run (\S+)|(test))$/.exec(step.trim());
+    if (m === null) throw new Error(`npm run ci の段「${step.trim()}」が npm run <名前> の形でない`);
+    return (m[1] ?? m[2])!;
+  });
+  for (const s of CHANGED_ONLY_STEPS)
+    if (!steps.includes(s)) throw new Error(`npm run ci に ${s} の段が無い（pr:prep の絞り込みを見直す）`);
+  return steps.filter((s) => !CHANGED_ONLY_STEPS.includes(s));
 }
