@@ -18074,86 +18074,6 @@
       "plus": null
     },
     {
-      "observation": "0819-07",
-      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "d52395351c08824e",
-      "effective": false,
-      "minus": 4.656612873077393e-10,
-      "plus": null
-    },
-    {
-      "observation": "0819-07",
-      "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "d52395351c08824e",
-      "effective": true,
-      "minus": -78369.51804914721,
-      "plus": 0
-    },
-    {
-      "observation": "0819-07",
-      "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "d52395351c08824e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-07",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "d52395351c08824e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-07",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "d52395351c08824e",
-      "effective": true,
-      "minus": -282432.8744142442,
-      "plus": null
-    },
-    {
-      "observation": "0819-08",
-      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "810544cc18010de7",
-      "effective": false,
-      "minus": -2.3283064365386963e-10,
-      "plus": null
-    },
-    {
-      "observation": "0819-08",
-      "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "810544cc18010de7",
-      "effective": true,
-      "minus": -68151.63112692535,
-      "plus": 0
-    },
-    {
-      "observation": "0819-08",
-      "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "810544cc18010de7",
-      "effective": false,
-      "minus": -2.3283064365386963e-10,
-      "plus": null
-    },
-    {
-      "observation": "0819-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "810544cc18010de7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-08",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "810544cc18010de7",
-      "effective": true,
-      "minus": 282432.8744142442,
-      "plus": null
-    },
-    {
       "observation": "0819-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "abce6c157dffb3f2",
@@ -18235,83 +18155,84 @@
       "plus": null
     },
     {
-      "observation": "0820-06",
+      "observation": "0820-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "bfd18e2e9090fdc9",
-      "effective": false,
-      "minus": 9.313225746154785e-10,
-      "plus": null
-    },
-    {
-      "observation": "0820-06",
-      "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "bfd18e2e9090fdc9",
-      "effective": true,
-      "minus": -135978.95076707518,
-      "plus": 0
-    },
-    {
-      "observation": "0820-06",
-      "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "bfd18e2e9090fdc9",
-      "effective": true,
-      "minus": -509276.87798554124,
-      "plus": null
-    },
-    {
-      "observation": "0820-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "bfd18e2e9090fdc9",
+      "key": "85c38436d1536a3d",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
-      "observation": "0820-06",
-      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "bfd18e2e9090fdc9",
-      "effective": true,
-      "minus": -490049.2803961551,
-      "plus": null
-    },
-    {
-      "observation": "0820-08",
-      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "4f80aa9f25d729d0",
-      "effective": false,
-      "minus": -2.3283064365386963e-10,
-      "plus": null
-    },
-    {
-      "observation": "0820-08",
+      "observation": "0820-09",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "4f80aa9f25d729d0",
+      "key": "85c38436d1536a3d",
       "effective": true,
-      "minus": -68151.63112692535,
+      "minus": -63660.3092989116,
       "plus": 0
     },
     {
-      "observation": "0820-08",
+      "observation": "0820-09",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "4f80aa9f25d729d0",
-      "effective": false,
-      "minus": -2.3283064365386963e-10,
-      "plus": null
-    },
-    {
-      "observation": "0820-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "4f80aa9f25d729d0",
+      "key": "85c38436d1536a3d",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
-      "observation": "0820-08",
+      "observation": "0820-09",
+      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
+      "key": "85c38436d1536a3d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0820-09",
       "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
-      "key": "4f80aa9f25d729d0",
+      "key": "85c38436d1536a3d",
       "effective": true,
-      "minus": 282432.8744142442,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0820-10",
+      "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
+      "key": "13e5d0fff7accbbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0820-10",
+      "element": "エマ：タクティカル・アップ burst.effects[1]",
+      "key": "13e5d0fff7accbbe",
+      "effective": true,
+      "minus": -15763.5952741144,
+      "plus": 0
+    },
+    {
+      "observation": "0820-10",
+      "element": "エマ：タクティカル・アップ skill2.effects[0]",
+      "key": "13e5d0fff7accbbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0820-10",
+      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
+      "key": "13e5d0fff7accbbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0820-10",
+      "element": "ベスティー：タクティカル・アップ skill2.effects[0]",
+      "key": "13e5d0fff7accbbe",
+      "effective": true,
+      "minus": -106821.9658439157,
       "plus": null
     },
     {

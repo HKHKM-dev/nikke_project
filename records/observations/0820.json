@@ -177,5 +177,94 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0820-09",
+    "recording": "0820",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2214724,
+    "description": "1 回目のフルバーストの窓の中の S2 の 1 ヒット（会心でない。S2 の攻撃力▲の中）。ガイドの発のコアと同じ増分に出る。会心でない組 2,763,137（f2037）と会心の組 3,848,500（f9737。4 回目の窓）の差 × 1.5 ÷ 0.7351（フルバースト +50% と会心ダメージ +73.51%）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 430,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 250
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0820-04",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0820-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0820-10",
+    "recording": "0820",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 548413,
+    "description": "同じ窓のガイドの発のコアの 1 ヒット（会心でない・フルバースト +50%。S2 の攻撃力▲と発射体爆発ダメージ▲（徹甲炸裂弾の中のフルチャージ）の中）。2,763,137 から S2（2,214,724）を引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 430,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 60
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0820-04",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0820-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
   }
 ]
