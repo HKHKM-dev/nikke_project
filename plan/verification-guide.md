@@ -60,7 +60,7 @@
 ## 6. 読む
 
 - 読み取りはレシピで: `npm run records:read -- <録画 id>[,<録画 id>...] --recipe <名前> --source V-NNNN --write`（録画は , で並べて 1 回で読める。クラウドで録画が手元に無ければ、道具が Drive から取り寄せる）。レシピと `--opt` の一覧は `npm run records:read -- --list`。観測値が `records/observations/<録画 id>.json` に足され、`source` に検証記録の ID、`method.tool` にレシピ名と版が入る。
-- HUD の増分を何人かの 1 ヒットの格子（コア × 会心 × 距離 × ▲の有無。SG はペレットの和）に当て、誰のどの発か・▲が乗っているかを決め、事象の前後で窓の端を挟むのは、レシピ `buff-edge` の `--opt grid`・`pair`（格子はモデルのフレームで指す。事象の時刻は `burst-panel` の観測値の ID で渡せる）。使い捨てのスクリプトで書き直さない（[design-buff-edge-recipe.md](design-buff-edge-recipe.md) 8 節）。
+- HUD の増分を何人かの 1 ヒットの格子（コア × 会心 × 距離 × ▲の有無。SG はペレットの和。倍率ダメージ・持続ダメージの tick と、それらの同じフレームの和も）に当て、誰のどの発か・▲が乗っているかを決め、事象の前後で窓の端を挟むのは、レシピ `buff-edge` の `--opt grid`・`pair`（格子はモデルのフレームで指す。事象の時刻は `burst-panel` の観測値の ID で渡せる）。使い捨てのスクリプトで書き直さない（[design-buff-edge-recipe.md](design-buff-edge-recipe.md) 8・9 節）。
 - レシピに無い値は、解析ツール（[captures/tools.md](captures/tools.md)）か目で読み、同じファイルに手で書く（`method.note` に読み方）。観測値の形は `packages/core/src/records/observations.ts` の型（[design-records-automation.md](design-records-automation.md) 3.4 節）。
 - モデルと比べる値は、比べる指定（`compare`。指標は照合ランナー `observations.ts` の `METRICS`）を書く。要る指標が無ければ `METRICS` に足す（足した PR に入れる）。予測ファイルの指標と `metric`・`args`・`setup` を同じにすると、予測と自動で結び付く。
 - 繰り返し使う読み方はレシピにする（`tools/captures/recipes/`）。読み取りの落とし穴は [captures/guide.md](captures/guide.md)。

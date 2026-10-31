@@ -10,6 +10,9 @@
 // - 版 2: 何人かの格子（--opt grid）に当て、増分ごとに誰のどの格子かを出す。境は --opt pair の 2 つの格子で挟む
 //   （V-0489・V-0508・V-0513〜V-0517・V-0523 で使い捨てのスクリプトにしていた当て方。plan/design-buff-edge-recipe.md 8 節）。
 //   SG はペレットの値の和に当てる（格子の /x<ペレット数>）。
+// - 版 3: 格子に、倍率ダメージ（@skill@<f>）・持続ダメージの tick（@dot@<f>。/s でスタック数ごと）と、同じフレームの 2 つの格子の和
+//   （<名前>=<格子>+<格子>）を足す（V-0525・V-0536・V-0538・V-0546・V-0547 で使い捨てのスクリプトにしていた当て方。
+//   plan/design-workflow-simplification-7.md 1 節）。
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,6 +21,7 @@ import {
   buildTeamInput,
   METRICS,
   type CompareSetup,
+  type CompareSpec,
   type Observation,
 } from '../../../packages/core/src/records/observations.ts';
 import { V_ID } from '../../../packages/core/src/records/ids.ts';
@@ -193,7 +197,12 @@ function resolveSetup(text: string | undefined, source: string): CompareSetup {
 /** モデルの 1 ヒットの値（コア × 会心 × 距離） */
 export type Cell = { core: boolean; crit: boolean; distance: boolean; value: number };
 
-type Model = { cells: (slot: number, frame: number) => Cell[]; segments: (slot: number) => string[] };
+type Model = {
+  cells: (slot: number, frame: number) => Cell[];
+  /** 枠の frame 以降の最初の倍率ダメージ（skill）か持続ダメージの tick（dot。stacks があればそのスタック数ごと）の、会心なし・ありの値 */
+  hits: (spec: HitGridSpec) => number[];
+  segments: (slot: number) => string[];
+};
 
 function model(recording: RecordingEntry, setup: CompareSetup): Model {
   const data = loadRecordsData(loadRecordingsFile());
@@ -201,7 +210,26 @@ function model(recording: RecordingEntry, setup: CompareSetup): Model {
   const sim = runSimulation(input);
   const hit = (slot: number, frame: number, core: boolean, crit: boolean, distance: boolean) =>
     METRICS.hitDamage!.sim(sim, { args: { slot, frame, core, crit, distance }, input }) as number;
+  const value = (name: string, args: CompareSpec['args']) => METRICS[name]!.sim(sim, { args, input }) as number;
   return {
+    hits({ kind, slot, frame, skill, stacks }) {
+      const named: CompareSpec['args'] = skill === undefined ? {} : { skill };
+      const out: number[] = [];
+      for (const crit of [false, true]) {
+        if (kind === 'skill') out.push(value('skillHitDamage', { slot, n: 0, frame, crit, ...named }));
+        else if (stacks.length > 0)
+          for (const k of stacks) out.push(value('dotStackTickDamage', { slot, frame, stacks: k, crit }));
+        else {
+          const n = sim.skillHits
+            .filter((h) => h.slotIndex === slot - 1 && h.effect.dot !== undefined)
+            .filter((h) => skill === undefined || h.effect.source.skill === skill)
+            .findIndex((h) => h.frame >= frame);
+          if (n < 0) throw new Error(`枠 ${slot} の f${frame} 以降に持続ダメージの tick が無い`);
+          out.push(value('dotHitDamage', { slot, n, crit, ...named }));
+        }
+      }
+      return out;
+    },
     cells(slot, frame) {
       const out: Cell[] = [];
       for (const core of [false, true])
@@ -228,35 +256,96 @@ function model(recording: RecordingEntry, setup: CompareSetup): Model {
 
 const distinct = (values: readonly number[]) => [...new Set(values)];
 
-/** 格子の指定（--opt grid の 1 つ）。<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>[,<倍率>...]] */
-export type GridSpec = { name: string; slot: number; frames: number[]; pellets: number; scales: number[] };
+/**
+ * 格子の指定（--opt grid の 1 つ）。通常攻撃は <名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>[,<倍率>...]]、
+ * 倍率ダメージ・持続ダメージの tick は <名前>=<枠>@skill@<f>[:<スキル>] と <名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>,...]、
+ * 2 つの格子の和は <名前>=<格子>+<格子>（どれも /*<倍率> を付けられる）
+ */
+export type NormalGridSpec = {
+  kind: 'normal';
+  name: string;
+  slot: number;
+  frames: number[];
+  pellets: number;
+  scales: number[];
+};
+export type HitGridSpec = {
+  kind: 'skill' | 'dot';
+  name: string;
+  slot: number;
+  frame: number;
+  skill?: string;
+  stacks: number[];
+  scales: number[];
+};
+export type SumGridSpec = { kind: 'sum'; name: string; parts: [string, string]; scales: number[] };
+export type GridSpec = NormalGridSpec | HitGridSpec | SumGridSpec;
+
+const GRID_FORMS =
+  '<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]・<名前>=<枠>@skill@<f>[:<スキル>]・' +
+  '<名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>]・<名前>=<格子>+<格子>';
 
 export function parseGrids(text: string): GridSpec[] {
   const specs = text
     .split(';')
     .map((t) => t.trim())
     .filter((t) => t !== '')
-    .map((t) => {
-      const m = /^([^=]+)=(\d+)@(\d+(?:\+\d+)*)((?:\/[x*][\d.,]+)*)$/.exec(t);
-      if (m === null)
-        throw new Error(`--opt grid の形が違う（<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]）: ${t}`);
-      const parts = m[4]!.split('/').filter((x) => x !== '');
-      const [pellets, ...morePellets] = parts.filter((x) => x.startsWith('x'));
+    .map((t): GridSpec => {
+      const [, name, body, tail] = /^([^=]+)=([^/]+)((?:\/[xs*][\d.,]+)*)$/.exec(t) ?? [];
+      if (name === undefined || body === undefined) throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
+      const mods = tail!.split('/').filter((x) => x !== '');
+      const take = (c: string) => mods.filter((x) => x.startsWith(c)).map((x) => x.slice(1));
+      const [pellets, ...morePellets] = take('x');
       if (morePellets.length > 0) throw new Error(`--opt grid のペレット数が 2 つある: ${t}`);
-      const scales = parts.filter((x) => x.startsWith('*')).flatMap((x) => parseNumbers(x.slice(1), 'grid の倍率'));
-      return {
-        name: m[1]!.trim(),
-        slot: Number(m[2]),
-        frames: m[3]!.split('+').map(Number),
-        pellets: pellets === undefined ? 1 : Number(pellets.slice(1)),
-        scales,
+      const scales = take('*').flatMap((x) => parseNumbers(x, 'grid の倍率'));
+      const stacks = take('s').flatMap((x) => parseNumbers(x, 'grid のスタック数'));
+      const only = (ok: boolean, what: string) => {
+        if (!ok) throw new Error(`--opt grid の ${what}: ${t}`);
       };
+      const normal = /^(\d+)@(\d+(?:\+\d+)*)$/.exec(body);
+      const hit = /^(\d+)@(skill|dot)@(\d+)(?::(.+))?$/.exec(body);
+      const sum = /^([^@+]+)\+([^@+]+)$/.exec(body);
+      if (normal !== null) {
+        only(stacks.length === 0, '/s は dot の格子だけ');
+        const frames = normal[2]!.split('+').map(Number);
+        return {
+          kind: 'normal',
+          name: name.trim(),
+          slot: Number(normal[1]),
+          frames,
+          pellets: Number(pellets ?? 1),
+          scales,
+        };
+      }
+      only(pellets === undefined, '/x は通常攻撃の格子だけ');
+      if (hit !== null) {
+        const kind = hit[2] as 'skill' | 'dot';
+        only(kind === 'dot' || stacks.length === 0, '/s は dot の格子だけ');
+        only(
+          stacks.length === 0 || hit[4] === undefined,
+          '/s とスキルは一緒に書けない（スタック数の tick はスキルで絞らない）',
+        );
+        const skill = hit[4] === undefined ? {} : { skill: hit[4] };
+        return { kind, name: name.trim(), slot: Number(hit[1]), frame: Number(hit[3]), ...skill, stacks, scales };
+      }
+      if (sum !== null) {
+        only(stacks.length === 0, '/s は dot の格子だけ');
+        return { kind: 'sum', name: name.trim(), parts: [sum[1]!.trim(), sum[2]!.trim()], scales };
+      }
+      throw new Error(`--opt grid の形が違う（${GRID_FORMS}）: ${t}`);
     });
   const names = specs.map((g) => g.name);
   const dup = names.find((n, i) => names.indexOf(n) !== i);
   if (dup !== undefined) throw new Error(`--opt grid の名前が重なる: ${dup}`);
   for (const g of specs) {
-    if (!Number.isInteger(g.pellets) || g.pellets < 1) throw new Error(`--opt grid のペレット数が違う: ${g.name}`);
+    if (g.kind === 'normal' && (!Number.isInteger(g.pellets) || g.pellets < 1))
+      throw new Error(`--opt grid のペレット数が違う: ${g.name}`);
+    if (g.kind === 'sum')
+      for (const part of g.parts) {
+        const at = specs.find((h) => h.name === part);
+        if (at === undefined) throw new Error(`--opt grid の和の ${part} が格子に無い: ${g.name}`);
+        if (at.kind === 'sum') throw new Error(`--opt grid の和に和は入れない: ${g.name}`);
+      }
   }
   return specs;
 }
@@ -282,10 +371,36 @@ export function pelletSums(cells: readonly Cell[], pellets: number): number[] {
 /** 格子の値（倍率の版を含む） */
 export type Grid = GridSpec & { values: number[]; base: number[] };
 
-export function gridOf(spec: GridSpec, cellsAt: (slot: number, frame: number) => Cell[]): Grid {
-  const cells = spec.frames.flatMap((f) => cellsAt(spec.slot, f));
-  const base = spec.pellets === 1 ? distinct(cells.map((c) => c.value)) : pelletSums(cells, spec.pellets);
-  return { ...spec, base, values: withScales(base, spec.scales) };
+/** 2 つの格子の値の組の和（それぞれ四捨五入して足す。HUD の増分は 1 ヒットごとに整数） */
+export function sumValues(a: readonly number[], b: readonly number[]): number[] {
+  return distinct(a.flatMap((x) => b.map((y) => Math.round(x) + Math.round(y)))).sort((p, q) => p - q);
+}
+
+/** 格子の値を出す（和の格子は、和でない格子の後に、その値から出す。並びは指定の順） */
+export function gridsOf(specs: readonly GridSpec[], m: Pick<Model, 'cells' | 'hits'>): Grid[] {
+  const made = new Map<string, Grid>();
+  const make = (spec: GridSpec, base: number[]) =>
+    made.set(spec.name, { ...spec, base, values: withScales(base, spec.scales) });
+  for (const spec of specs) {
+    if (spec.kind === 'normal') {
+      const cells = spec.frames.flatMap((f) => m.cells(spec.slot, f));
+      make(spec, spec.pellets === 1 ? distinct(cells.map((c) => c.value)) : pelletSums(cells, spec.pellets));
+    } else if (spec.kind !== 'sum') make(spec, distinct(m.hits(spec)));
+  }
+  for (const spec of specs)
+    if (spec.kind === 'sum') make(spec, sumValues(made.get(spec.parts[0])!.values, made.get(spec.parts[1])!.values));
+  return specs.map((spec) => made.get(spec.name)!);
+}
+
+/** 格子が当てる枠（和はその 2 つの枠） */
+function slotsOf(g: Grid, grids: readonly Grid[]): number[] {
+  if (g.kind !== 'sum') return [g.slot];
+  return g.parts.flatMap((p) =>
+    slotsOf(
+      grids.find((h) => h.name === p)!,
+      grids,
+    ),
+  );
 }
 
 const fmt = (n: number) => roundTo(n, 2).toLocaleString('en-US');
@@ -367,7 +482,7 @@ function edgeObservations(
 
 export const buffEdge: Recipe = {
   name: 'buff-edge',
-  version: 2,
+  version: 3,
   describe:
     '味方の 1 発の HUD の増分をモデルの 1 ヒットの格子に当てる。事象（II の発動など）の前後で、▲の無い最後の発と▲の乗った最初の発で付き始め（か切れ目）を挟んだ幅（事象ごとと全回の共通部分。timing）。' +
     '--opt grid で何人かの格子に当て、増分ごとに合う格子を出す（--opt pair で境を挟む）',
@@ -375,7 +490,10 @@ export const buffEdge: Recipe = {
     slot: '値を当てる枠（1 始まり。grid を使わないとき）',
     off: '▲の無い格子を取るモデルのフレーム（カンマ区切り）。省くと枠の区間の一覧を出して止まる',
     on: '▲の乗った格子を取るモデルのフレーム（カンマ区切り）',
-    grid: '格子の並び（; 区切り）: <名前>=<枠>@<モデルのフレーム>[+<f>...][/x<ペレット数>][/*<倍率>]。例 サン=2@1300;サン▲=2@380;ナガ=1@1300/x10。slot・off・on の代わり',
+    grid:
+      '格子の並び（; 区切り）: 通常攻撃 <名前>=<枠>@<モデルのフレーム>[+<f>...][/x<ペレット数>]、倍率ダメージ <名前>=<枠>@skill@<f>[:<スキル>]、' +
+      '持続ダメージの tick <名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>,...]、2 つの格子の和 <名前>=<格子>+<格子>。どれも /*<倍率> を付けられる。' +
+      '例 サン=2@1300;サン▲=2@380;ナガ=1@1300/x10;槍=1@skill@1000:skill1;槍+通常=槍+サン。slot・off・on の代わり',
     pair: '境を挟む格子の組: <前の格子>[,...]><後の格子>[,...]（付き始めなら ▲なし>▲あり、切れ目なら ▲あり>▲なし。何人かの発で挟むなら , で並べる）。省くと増分ごとの当て方だけを出す',
     segments: '区間の一覧を出して止まる枠（カンマ区切り。grid のフレームを選ぶため）',
     events: '事象の時刻（動画のフレーム）をカンマ区切りで、か値が数の列の観測値の ID（burst-panel の出力など）',
@@ -485,12 +603,21 @@ async function runGrids(
     nameOf: (slot: number) => string;
   },
 ): Promise<RecipeObservation[]> {
-  const grids = parseGrids(ctx.options.grid!).map((spec) => gridOf(spec, m.cells));
+  const grids = gridsOf(parseGrids(ctx.options.grid!), m);
+  const whose = (slot: number) => `枠 ${slot}（${o.nameOf(slot)}）のモデルの`;
+  const sourceOf = (g: Grid) => {
+    if (g.kind === 'sum') return `${g.parts.join(' と ')} の和`;
+    if (g.kind === 'normal')
+      return `${whose(g.slot)} f${g.frames.join('・')}${g.pellets > 1 ? `のペレット ${g.pellets} 個までの和` : ''}`;
+    const skill = g.skill === undefined ? '' : `（${g.skill}）`;
+    if (g.kind === 'skill') return `${whose(g.slot)} f${g.frame} 以降の最初の倍率ダメージ${skill}`;
+    const stacks = g.stacks.length > 0 ? `の ${g.stacks.join('・')} スタック` : '';
+    return `${whose(g.slot)} f${g.frame} 以降の最初の持続ダメージの tick${skill}${stacks}`;
+  };
   const describeGrid = (g: Grid) =>
-    `${g.name}: 枠 ${g.slot}（${o.nameOf(g.slot)}）のモデルの f${g.frames.join('・')}` +
-    `${g.pellets > 1 ? `のペレット ${g.pellets} 個までの和` : ''}${g.scales.length > 0 ? `（× ${g.scales.join('・')} の版も）` : ''}`;
+    `${g.name}: ${sourceOf(g)}${g.scales.length > 0 ? `（× ${g.scales.join('・')} の版も）` : ''}`;
   for (const g of grids) {
-    ctx.log(`${describeGrid(g)}: ${g.pellets > 1 ? `${g.base.length} 通り` : g.base.map(fmt).join('・')}`);
+    ctx.log(`${describeGrid(g)}: ${g.base.length > 8 ? `${g.base.length} 通り` : g.base.map(fmt).join('・')}`);
   }
   for (const [i, g] of grids.entries()) {
     for (const h of grids.slice(i + 1)) {
@@ -548,12 +675,14 @@ async function runGrids(
   const beforeJa = `${beforeName}の最後の発`;
   const afterJa = `${afterName}の最初の発`;
   const note =
-    `HUD の増分を、モデル（setup ${JSON.stringify(o.setup)}）の hitDamage の格子に ±${o.tol} で当てた。` +
+    `HUD の増分を、モデル（setup ${JSON.stringify(o.setup)}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±${o.tol} で当てた。` +
     `格子は ${grids.map(describeGrid).join('、')}。` +
     `境は ${beforeName} → ${afterName}（両方の組やほかの格子にも合う増分は区別できないとして外す）。` +
     `範囲は事象の ${o.from}〜${o.to}f。${beforeName} ${count('before')}・${afterName} ${count('after')}・区別できない ${count('both')}・外れ ${count('none')}` +
     `・食い違い（${afterJa}より後の${beforeName}の発） ${conflicts}`;
-  const slots = [...new Set(grids.filter((g) => [...pair.before, ...pair.after].includes(g.name)).map((g) => g.slot))];
+  const slots = [
+    ...new Set(grids.filter((g) => [...pair.before, ...pair.after].includes(g.name)).flatMap((g) => slotsOf(g, grids))),
+  ];
   const who = slots.map(o.nameOf).join('・');
   const out = edgeObservations(recipe, edges, events, {
     subject: `${o.what}（${beforeName} → ${afterName}）が ${who} の 1 発で替わる`,

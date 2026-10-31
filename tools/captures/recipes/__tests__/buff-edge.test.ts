@@ -5,12 +5,14 @@ import {
   commonRange,
   edgeBy,
   edgeOf,
+  gridsOf,
   matchGrids,
   parsePair,
   parseGrids,
   pelletSums,
   rangeOf,
   roleOf,
+  sumValues,
   withScales,
   type Edge,
 } from '../buff-edge.ts';
@@ -98,9 +100,9 @@ describe('手で読んだ境との一致', () => {
 describe('parseGrids', () => {
   it('名前・枠・モデルのフレーム・ペレット数・倍率を読む', () => {
     expect(parseGrids('サン=2@1300; サン▲=2@380+600/*1.091,1.2;ナガ=1@1300/x10')).toEqual([
-      { name: 'サン', slot: 2, frames: [1300], pellets: 1, scales: [] },
-      { name: 'サン▲', slot: 2, frames: [380, 600], pellets: 1, scales: [1.091, 1.2] },
-      { name: 'ナガ', slot: 1, frames: [1300], pellets: 10, scales: [] },
+      { kind: 'normal', name: 'サン', slot: 2, frames: [1300], pellets: 1, scales: [] },
+      { kind: 'normal', name: 'サン▲', slot: 2, frames: [380, 600], pellets: 1, scales: [1.091, 1.2] },
+      { kind: 'normal', name: 'ナガ', slot: 1, frames: [1300], pellets: 10, scales: [] },
     ]);
     expect(() => parseGrids('サン=2')).toThrow();
     expect(() => parseGrids('a=1@1;a=2@1')).toThrow(/重なる/);
@@ -110,6 +112,48 @@ describe('parseGrids', () => {
     for (const bad of ['a=1@1300++', 'a=1@+1300', 'a=1@1300+', 'a=1@1++2'])
       expect(() => parseGrids(bad)).toThrow(/形が違う/);
     expect(() => parseGrids('a=1@1300/x10/x5')).toThrow(/ペレット数が 2 つある/);
+  });
+});
+
+// 版 3: 倍率ダメージ・持続ダメージの tick・2 つの格子の和
+describe('parseGrids（版 3）', () => {
+  it('倍率ダメージ・tick・和の格子を読む', () => {
+    expect(
+      parseGrids('槍=1@skill@1000:skill1;鎖=1@dot@1200/s1,10;攻撃=2@skill@0;通常=1@900;槍+通常=槍+通常/*1.2'),
+    ).toEqual([
+      { kind: 'skill', name: '槍', slot: 1, frame: 1000, skill: 'skill1', stacks: [], scales: [] },
+      { kind: 'dot', name: '鎖', slot: 1, frame: 1200, stacks: [1, 10], scales: [] },
+      { kind: 'skill', name: '攻撃', slot: 2, frame: 0, stacks: [], scales: [] },
+      { kind: 'normal', name: '通常', slot: 1, frames: [900], pellets: 1, scales: [] },
+      { kind: 'sum', name: '槍+通常', parts: ['槍', '通常'], scales: [1.2] },
+    ]);
+  });
+
+  it('形に合わない付け足しと、無い格子・和の和を受けない', () => {
+    expect(() => parseGrids('a=1@skill@10/x3')).toThrow(/\/x は通常攻撃の格子だけ/);
+    expect(() => parseGrids('a=1@skill@10/s2')).toThrow(/\/s は dot の格子だけ/);
+    expect(() => parseGrids('a=1@dot@10:burst/s2')).toThrow(/一緒に書けない/);
+    expect(() => parseGrids('a=1@10;b=a+c')).toThrow(/c が格子に無い/);
+    expect(() => parseGrids('a=1@10;b=a+a;c=b+a')).toThrow(/和に和は入れない/);
+  });
+});
+
+describe('gridsOf・sumValues', () => {
+  const cell = (core: boolean, crit: boolean, distance: boolean, value: number) => ({ core, crit, distance, value });
+  const m = {
+    cells: () => [cell(false, false, false, 100.4), cell(false, true, false, 150.6)],
+    hits: (spec: { kind: string }) => (spec.kind === 'skill' ? [1000.2, 1500.3] : [30, 45]),
+  };
+
+  it('和は、2 つの格子の値をそれぞれ四捨五入して足した組', () => {
+    expect(sumValues([100.4, 150.6], [1000.2])).toEqual([1100, 1151]);
+  });
+
+  it('格子を指定の順に出し、和は和でない格子の値（倍率の版を含む）から出す', () => {
+    const grids = gridsOf(parseGrids('和=通常+槍;通常=1@900;槍=1@skill@0/*2'), m);
+    expect(grids.map((g) => g.name)).toEqual(['和', '通常', '槍']);
+    expect(grids[2]!.values).toEqual([1000.2, 1500.3, 2000.4, 3000.6]);
+    expect(grids[0]!.values).toEqual(sumValues([100.4, 150.6], [1000.2, 1500.3, 2000.4, 3000.6]));
   });
 });
 
