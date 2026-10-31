@@ -358,6 +358,11 @@ export type HolderLists = {
    */
   burstCooldownAt(holder: number, frame: number): number;
   /**
+   * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: 枠 holder の、バーストスキルのクールタイム▼ の件のうち、始まりが
+   * [from, to) にあるものの秒の和（発動の後に付いた▼。frame/firstPass.ts が、走っている CT をその場で縮めるのに使う）
+   */
+  burstCooldownStartedIn(holder: number, from: number, to: number): number;
+  /**
    * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 即時効果 effect の発火の条件（cooldownReduction の selfState）が、
    * 出どころの枠 sourceSlotIndex でフレーム frame に満たされるか。timed の段 1.5 の条件と同じ件を見る。満たさなければ条件で出なかった
    * 記録を残す。手順 3 の後に呼ぶ
@@ -2073,6 +2078,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       let sum = 0;
       for (const v of cooldownViews[holder] ?? []) {
         for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
+      }
+      return sum;
+    },
+    burstCooldownStartedIn(holder, from, to) {
+      let sum = 0;
+      for (const v of cooldownViews[holder] ?? []) {
+        for (const it of readItems(v.track)) if (it.start >= from && it.start < to) sum += valueOf(v.effect, it);
       }
       return sum;
     },

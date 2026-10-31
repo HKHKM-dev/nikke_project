@@ -74,7 +74,8 @@
     | フルバーストタイム持続中に N 回／窓の外の発も数え、付くのは窓の中だけ | 回数のきっかけの `during: "fullBurst"` と `reset`／`firesDuring: "fullBurst"` | 例: ソーダ：トゥインクルバニーの S1 | 同 1.2・1.6 節 |
     | 〈名前〉のフルスタック状態の時、スタック解除後（回復） | トリガー `{ "fullStack": "<id>" }` | 例: クラウンの S2 | 同 1.3 節 |
     | 自分が武器変更状態の場合、通常攻撃が N 回命中した時 | 回数のきっかけの `firesDuring: "weaponChange"` | 命中は変更の外の発も数え、出るのは使用武器の変更の発だけ（H1）。例: モランの S1 | [design-skill-stage11.md](design-skill-stage11.md) 2.3・3.3 節 |
-    | 〈名前〉：バーストスキルクールタイム X 秒▼（持続・維持の付いた形。T4） | 状態の中身（か timed）の `stat: "burstCooldown"`・`scaling: "flat"` | 値は縮める秒で、効いている間に使ったバーストの CT を縮める。即時の CT▼ は `cooldownReduction`。例: モランの宝物版 S1 の熱血 | 同 3.3 節 |
+    | 〈名前〉：バーストスキルクールタイム X 秒▼（持続・維持の付いた形。T4） | 状態の中身（か timed）の `stat: "burstCooldown"`・`scaling: "flat"` | 値は縮める秒で、効いている間に使ったバーストの CT と、付いた時に走っている CT（同じ発動から付いたものも）を縮める。即時の CT▼ は `cooldownReduction`。例: モランの宝物版 S1 の熱血・ミルクの宝物版 S1・ティアの S1 | 同 3.3 節・[design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
+    | 遮蔽物の HP を回復した時／遮蔽物 HP 回復 | timed のきっかけ `{ "coverHealed": true }`／`kind: "coverHeal"`（対象は `self` だけ） | 読み込みが、同じ定義のただ 1 つの `coverHeal` のきっかけに置き換える。味方の遮蔽物 HP 回復は間接の notes（読む側に `reads: ["cover"]`）。例: ティアの S1・S2 | [design-skill-stage15.md](design-skill-stage15.md) 2.2 節 |
     | 〈名前〉が適用される時・適用された時／〈名前〉：弾丸チャージ X% | トリガー `{ "applied": "<id>" }`／即時効果と、維持 0 秒の付与 | 例: トーブの宝物版 S1 | [design-skill-stage4.md](design-skill-stage4.md) 1.1・1.2 節 |
     | 自分がバリア適用状態なら／バリア・共用バリア | `condition.selfState: "barrier"`／付与の `state: "barrier"` | 例: ラムのバースト・アスカの S2 | [design-skill-stage5.md](design-skill-stage5.md) 1.1・1.2 節 |
     | 自分と〈状態〉の味方 | `targetState` と `includeSelf: true` | 家族の根を指せば家族のどれにも当たる。例: ラプンツェル：サンクチュアリの「自分と臨戦状態の味方」 | [design-new-chars-1029.md](design-new-chars-1029.md) 5.1・8 節 |

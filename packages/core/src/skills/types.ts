@@ -683,6 +683,11 @@ export type TimedEffect = TargetCountFields &
   FixedTargetFields & {
     kind: 'timed';
     trigger: EffectTrigger;
+    /**
+     * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: JSON のきっかけが { coverHealed: true }（「遮蔽物の HP を回復した時」）で、
+     * 読み込みが同じ定義の遮蔽物 HP 回復（coverHeal）のきっかけに置き換えた。計算は読まず、表示と最小構成の検査が読む
+     */
+    viaCoverHealed?: true;
     target: BuffTarget;
     /** 対象の語彙編: 「同じ部隊の味方全体に」。target が 'allies' のときだけ書ける */
     targetSquad?: TargetSquad;
@@ -1517,6 +1522,20 @@ export type AllyGaugeAddEffect = {
 };
 
 /**
+ * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: 「遮蔽物 HP 回復」。回復量はダメージに効かないので計算は読まない。
+ * 同じ定義の timed のきっかけ { coverHealed: true }（「遮蔽物の HP を回復した時」）を、読み込み（parseSkillDefinition）でこの効果の
+ * きっかけに置き換える。対象はいまは自分だけ（ティアの S2）。味方の遮蔽物 HP 回復（リター・ナガ・ココア）は間接の notes のまま
+ */
+export type CoverHealEffect = {
+  kind: 'coverHeal';
+  trigger: EffectTrigger;
+  target: 'self';
+  /** 回復量（%）の description_value_NN（表示用） */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+/**
  * アニス：スター編: 「バースト再突入 N 段階に変更」（plan/design-anis-star-rest.md 3 節）。持つ枠のバーストの次の段階（CDN の
  * change_burst_step。BurstUnit.nextStep）を step に差し替える。I を撃った後にもう一度 I に入れば、このチェーンで未使用の
  * 別の I の枠が撃つ。編成の条件（burstStepMix・squad）を付けられる。どのスロットにも書けるが、1 つの定義に 1 つまで
@@ -1822,6 +1841,7 @@ export type SkillEffect = (
   | BurstGaugeHitEffect
   | ShotPauseEffect
   | BurstReentryEffect
+  | CoverHealEffect
   | BurstStepChangeEffect
   | AllyGaugeAddEffect
   | StateGrantEffect
@@ -1871,6 +1891,7 @@ export const SKILL_EFFECT_KINDS = [
   'burstGaugeHit',
   'shotPause',
   'burstReentry',
+  'coverHeal',
   'burstStepChange',
   'allyGaugeAdd',
   'state',
@@ -2555,7 +2576,10 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   // 防御力無視ダメージ編: 周期のトリガー（ソルジャーE.G. 編で、1 パス目で窓を追う stat にも）。ソルジャーE.G. 編: 確率のきっかけ
   // 鍵の順は今までの timed と同じ（kind・trigger・target・stat の後に残りの欄）。最小構成の感度の鍵が定義の JSON から作られるので
   const { trigger, target, ...rest } = parseTimedFields(v, path, stat, true);
-  return { kind: 'timed', trigger, target, stat, ...rest } as TimedEffect;
+  const effect = { kind: 'timed', trigger, target, stat, ...rest } as TimedEffect;
+  // 段 15 の PR 2: { coverHealed } を置き換えた印（resolveCoverHealedTriggers が書く）
+  if (v[COVER_HEALED_MARK] === true) effect.viaCoverHealed = true;
+  return effect;
 }
 
 /** timed の、値（stat）を除いた欄。名前の付いた状態の語彙編: 付与（StateGrantEffect）はこの欄を timed と同じ規則で持つ */
@@ -3937,6 +3961,89 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
   return effect;
 }
 
+/** 2 段目の段 15 の PR 2: 遮蔽物 HP 回復。対象は自分だけ */
+function parseCoverHealEffect(v: Record<string, Json>, path: string): CoverHealEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'target', 'ref', 'assumes', 'claims'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
+  }
+  if (v.target !== 'self') fail(`${path}.target`, `only "self" for now, got ${JSON.stringify(v.target)}`);
+  const effect: CoverHealEffect = {
+    kind: 'coverHeal',
+    trigger: parseTrigger(v.trigger, `${path}.trigger`),
+    target: 'self',
+    ref: parseRef(v.ref, `${path}.ref`),
+  };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/** 段 15 の PR 2: resolveCoverHealedTriggers が置き換えた timed に書く印（JSON には書けない） */
+const COVER_HEALED_MARK = '__coverHealed';
+
+/**
+ * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: timed のきっかけ { coverHealed: true }（「遮蔽物の HP を回復した時」）を、
+ * 同じ組（skills か、skills に treasureSkills を重ねたもの）の遮蔽物 HP 回復（coverHeal。対象は自分）のきっかけに置き換えた JSON の写しを
+ * 返す。遮蔽物 HP 回復がちょうど 1 つでなければ落とす。置き換えた timed には印を書く（parseTimedEffect が viaCoverHealed にする）
+ */
+function resolveCoverHealedTriggers(raw: Record<string, Json>): Record<string, Json> {
+  const isMarker = (t: Json): boolean => isRecord(t) && t.coverHealed !== undefined;
+  const effectsOf = (entry: Json): Json[] => (isRecord(entry) && Array.isArray(entry.effects) ? entry.effects : []);
+  const groups: { key: 'skills' | 'treasureSkills'; slots: Record<string, Json>; sources: Record<string, Json> }[] = [];
+  if (isRecord(raw.skills)) groups.push({ key: 'skills', slots: raw.skills, sources: raw.skills });
+  if (isRecord(raw.treasureSkills) && isRecord(raw.skills))
+    groups.push({
+      key: 'treasureSkills',
+      slots: raw.treasureSkills,
+      sources: { ...raw.skills, ...raw.treasureSkills },
+    });
+  let out = raw;
+  for (const { key, slots, sources } of groups) {
+    const uses = Object.values(slots).some((entry) =>
+      effectsOf(entry).some((e) => isRecord(e) && (isMarker(e.trigger) || e[COVER_HEALED_MARK] !== undefined)),
+    );
+    if (!uses) continue;
+    const heals = Object.values(sources).flatMap((entry) =>
+      effectsOf(entry).filter((e): e is Record<string, Json> => isRecord(e) && e.kind === 'coverHeal'),
+    );
+    if (heals.length !== 1)
+      fail(
+        key,
+        `a { coverHealed } trigger needs exactly one coverHeal effect in the definition, found ${heals.length}`,
+      );
+    const trigger = heals[0]!.trigger;
+    const resolved: Record<string, Json> = {};
+    for (const [slot, entry] of Object.entries(slots)) {
+      if (!isRecord(entry) || !Array.isArray(entry.effects)) {
+        resolved[slot] = entry;
+        continue;
+      }
+      resolved[slot] = {
+        ...entry,
+        effects: entry.effects.map((e, i) => {
+          if (!isRecord(e)) return e;
+          if (e[COVER_HEALED_MARK] !== undefined)
+            fail(`${key}.${slot}.effects[${i}].${COVER_HEALED_MARK}`, 'unknown field');
+          if (!isMarker(e.trigger)) return e;
+          const t = e.trigger as Record<string, Json>;
+          for (const k of Object.keys(t))
+            if (k !== 'coverHealed') fail(`${key}.${slot}.effects[${i}].trigger.${k}`, 'unknown field');
+          if (t.coverHealed !== true)
+            fail(
+              `${key}.${slot}.effects[${i}].trigger.coverHealed`,
+              `expected true, got ${JSON.stringify(t.coverHealed)}`,
+            );
+          if (e.kind !== 'timed')
+            fail(`${key}.${slot}.effects[${i}].trigger`, 'a { coverHealed } trigger is only allowed in timed');
+          return { ...e, trigger: trigger ?? null, [COVER_HEALED_MARK]: true };
+        }),
+      };
+    }
+    out = { ...out, [key]: resolved };
+  }
+  return out;
+}
+
 function parseBurstReentryEffect(v: Record<string, Json>, path: string): BurstReentryEffect {
   for (const key of Object.keys(v)) {
     if (!['kind', 'step', 'burstStepMix', 'squad', 'assumes', 'claims'].includes(key)) {
@@ -4231,6 +4338,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
   if (v.kind === 'shotPause') return parseShotPauseEffect(v, path);
   if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
+  if (v.kind === 'coverHeal') return parseCoverHealEffect(v, path);
   if (v.kind === 'burstStepChange') return parseBurstStepChangeEffect(v, path);
   if (v.kind === 'allyGaugeAdd') return parseAllyGaugeAddEffect(v, path);
   if (v.kind === 'state') return parseStateGrantEffect(v, path);
@@ -4240,7 +4348,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "coverHeal", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 
@@ -4794,8 +4902,10 @@ function stackFormOf(e: StateGrantEffect): string {
 }
 
 /** JSON.parse 済みの値を検証して SkillDefinition にする。不正なら Error */
-export function parseSkillDefinition(raw: Json): SkillDefinition {
-  if (!isRecord(raw)) fail('', 'expected an object');
+export function parseSkillDefinition(input: Json): SkillDefinition {
+  if (!isRecord(input)) fail('', 'expected an object');
+  // 2 段目の段 15 の PR 2: 「遮蔽物の HP を回復した時」を、同じ定義の遮蔽物 HP 回復のきっかけに置き換える
+  const raw = resolveCoverHealedTriggers(input);
   if (raw.formatVersion !== 1) fail('formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
   if (typeof raw.resourceId !== 'number' || !Number.isInteger(raw.resourceId) || raw.resourceId < 1) {
     fail('resourceId', 'expected a positive integer');

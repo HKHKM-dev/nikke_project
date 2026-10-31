@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 65・効果 390（根拠あり 366）・notes 170（根拠あり 76）
+件数: キャラ 66・効果 395（根拠あり 369）・notes 173（根拠あり 77）
 
-notes の種類: 未対応 41・前提の外 32・計算に無関係 33・補足 13・間接 51
+notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足 13・間接 53
 
-スロット: supported 149・partial 13・unsupported 17・noEffect 34
+スロット: supported 152・partial 13・unsupported 17・noEffect 34
 
 ## 10 ラピ
 
@@ -748,6 +748,20 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 33・補足
   - effects[0] timed・burstUse・attack: C-0672（確定）
   - effects[1] timed・burstUse・attack（読む: バリア）: C-0672（確定）
   - notes[0] 間接（貫通）: 自分の貫通特化（10 秒）は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く）: 根拠なし
+
+## 451 ティア
+
+- **skill1**: supported
+  - effects[0] timed・burstUse・burstCooldown（読む: 遮蔽物）: C-0775（確定）
+  - effects[1] timed・burstUse・attackDamage（読む: 遮蔽物）: C-0776（確定）
+- **skill2**: supported
+  - effects[0] coverHeal・burstUse: C-0775（確定）
+  - effects[1] heal・burstUse: 根拠なし
+  - notes[0] 間接（遮蔽物）: 通常攻撃が 5 回命中した時の、自分の遮蔽物の最大 HP▲は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 計算に無関係: 通常攻撃が 5 回命中した時の、敵全体への挑発（ヘイト）はダメージに関係しない（ゲージも溜めない。C-0505）: C-0505（確定）
+- **burst**: supported
+  - effects[0] burstReentry: 根拠なし
+  - notes[0] 間接（バリア）: 自分と、自分を除く味方全体へのバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く）: 根拠なし
 
 ## 471 スノーホワイト：ヘビーアームズ
 

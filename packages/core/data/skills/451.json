@@ -1,0 +1,117 @@
+{
+  "formatVersion": 1,
+  "resourceId": 451,
+  "checkedAt": "2026-10-31",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "coverHealed": true
+          },
+          "target": "self",
+          "stat": "burstCooldown",
+          "scaling": "flat",
+          "ref": 1,
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "「遮蔽物の HP を回復した時」は、自分の S2 のバースト使用時の遮蔽物 HP 回復で起きる（壊れていない遮蔽物への回復で起きる。射撃場の敵の攻撃では遮蔽物は壊れない前提）。付いた時に走っている自分のバーストのクールタイムを 値 01（13）秒 × スタック数だけ縮める（T4。同じ発動から付いた▼もその CT を縮める）。味方の遮蔽物 HP 回復（リター・ナガ・ココア）は間接の notes で、この効果は読む側",
+            "en": "\"When restoring cover HP\" happens with this unit's S2 cover HP recovery on using the Burst (it happens on recovery of an unbroken cover; the cover is assumed not to break from the shooting range enemy's attacks). Shortens this unit's running Burst cooldown by value 01 (13) s × stacks when applied (T4; a decrease applied by the same activation also shortens that cooldown). Allies' cover HP recovery (Liter, Naga, Cocoa) are indirect notes and this effect reads them"
+          },
+          "reads": [
+            "cover"
+          ],
+          "claims": [
+            "C-0775"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "coverHealed": true
+          },
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "きっかけは上の効果と同じ（自分の S2 のバースト使用時の遮蔽物 HP 回復）",
+            "en": "Same trigger as the effect above (this unit's S2 cover HP recovery on using the Burst)"
+          },
+          "reads": [
+            "cover"
+          ],
+          "claims": [
+            "C-0776"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "coverHeal",
+          "trigger": "burstUse",
+          "target": "self",
+          "ref": 5,
+          "assumes": {
+            "ja": "バーストスキルを使用した時の、自分の遮蔽物 HP 回復。回復量はダメージに関係せず、S1 の「遮蔽物の HP を回復した時」を起こす",
+            "en": "This unit's cover HP recovery on using the Burst. The amount does not affect damage; it triggers S1's \"when restoring cover HP\""
+          },
+          "claims": [
+            "C-0775"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "self",
+          "ref": 6,
+          "durationRef": 7,
+          "assumes": {
+            "ja": "自分の吸収回復（10 秒間維持）。付いていない状態から付いた時だけ「回復効果が適用された時」を起こす（C-0082 と同じ扱い）。回復量はダメージに関係しない",
+            "en": "Lifesteal on self (10 s). Triggers \"when healed\" only when newly applied (as in C-0082). The healed amount does not affect damage"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃が 5 回命中した時の、自分の遮蔽物の最大 HP▲は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "The cover max HP increase on self after 5 normal attack hits does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        },
+        {
+          "ja": "通常攻撃が 5 回命中した時の、敵全体への挑発（ヘイト）はダメージに関係しない（ゲージも溜めない。C-0505）",
+          "en": "The taunt on all enemies after 5 normal attack hits does not affect damage (nor charge the gauge; C-0505)",
+          "kind": "noDamage",
+          "claims": [
+            "C-0505"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstReentry",
+          "step": "Step1",
+          "assumes": {
+            "ja": "「バースト再突入 1 段階」。CDN の次の段階（Step1）と同じ",
+            "en": "\"Burst Re-entry Stage 1\". Same as the CDN next stage (Step1)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分と、自分を除く味方全体へのバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く）",
+          "en": "The barriers on self and on all other allies (10 s) do not change damage by themselves (they matter only with an effect reading barriers in the team)",
+          "kind": "indirect",
+          "path": "barrier"
+        }
+      ]
+    }
+  }
+}
