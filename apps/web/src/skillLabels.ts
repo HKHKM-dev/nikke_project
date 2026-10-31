@@ -481,7 +481,10 @@ export function hasLowestHpRatioHeal(definition: SkillDefinition): boolean {
 export function formatInstantTarget(effect: ResolvedInstantEffect): string {
   if (effect.target === 'lowestHpRatio') return `（残りの HP の割合が最も低い味方 ${effect.targetCount ?? 1} 機）`;
   // 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 「〈クラス〉型の味方」（エヌ：ミラクルフェアリーの回復）
-  return effect.targetClass ? `（${CLASS_LABEL[effect.targetClass]}の味方）` : '';
+  const nikkeClass = effect.targetClass ? `${CLASS_LABEL[effect.targetClass]}の` : '';
+  // plan/design-heal-top-attack.md 4.1 節: 「最終攻撃力が最も高い味方 N 機」への回復（フォルクヴァンのバースト）
+  if (effect.target === 'topAttack') return `（最終攻撃力が最も高い${nikkeClass}味方 ${effect.targetCount ?? 1} 機）`;
+  return nikkeClass !== '' ? `（${nikkeClass}味方）` : '';
 }
 
 /** 「枠 2 ノワール スキル 1」。ニケ名がまだ無い（読み込み中）ときは「枠 2（読み込み中）スキル 1」 */

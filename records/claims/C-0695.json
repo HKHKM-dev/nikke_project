@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`0710-07`・`0710-08`（フォルクヴァンの 4 回の発動のたびにアスカの S1 が付き、発動から 1,488〜1,493f（ゲーム内の 25 秒 + フルバーストの入りの止まり 22f）で外れる）・`0710-09`。録画 0710 の 1 本。モデルには、回復の対象（最終攻撃力の上位）を書けないので入れていない（plan/design-skill-unrecorded.md 1 節）。V-0517",
-  "model": "**未実装**（`data/skills/242.json` の burst の notes[1]。回復の対象（最終攻撃力の上位）をいまの語彙で書けない）",
+  "model": "実装済み（`data/skills/242.json` の burst の effects[0]。`heal`・`burstUse`・`topAttack` の 2 機・`durationRef` 4。対象の順位は、バーストを使ったフレームに付く窓を入れずに出す（plan/design-heal-top-attack.md 2 節の A。確かめていない））",
   "replaces": [],
-  "updated": "2026-10-27",
+  "updated": "2026-10-31",
   "subject": {
-    "places": ["data/skills/242.json の burst の notes[1]"]
+    "places": ["data/skills/242.json の burst の effects[0]"]
   },
   "decidedOn": []
 }

@@ -48,6 +48,8 @@ describe('parseSkillDefinition (Stage 11 アリス編, 22.2)', () => {
           { ...aliceS1, trigger: { count: 'normalShot', every: 5 }, targetCountRef: undefined, targetCount: 2 },
           { ...aliceS1, targetWeapon: 'SG' },
           { kind: 'ammoRefill', trigger: 'burstUse', target: 'topAttack', targetCount: 1, ref: 1 },
+          // plan/design-heal-top-attack.md 4.1 節: 回復も順位で対象を選べる
+          { kind: 'heal', trigger: 'burstUse', target: 'topAttack', targetCount: 2, ref: 1, durationRef: 2 },
         ),
       }),
     );
@@ -57,6 +59,7 @@ describe('parseSkillDefinition (Stage 11 アリス編, 22.2)', () => {
     expect(effects[1]).not.toHaveProperty('targetCountRef');
     expect(effects[2]).toMatchObject({ targetWeapon: 'SG' });
     expect(effects[3]).toMatchObject({ kind: 'ammoRefill', targetCount: 1 });
+    expect(effects[4]).toMatchObject({ kind: 'heal', target: 'topAttack', targetCount: 2 });
   });
 
   it.each([
@@ -74,9 +77,9 @@ describe('parseSkillDefinition (Stage 11 アリス編, 22.2)', () => {
     ],
     ['a zero count', { ...aliceS1, targetCountRef: undefined, targetCount: 0 }, /positive integer/],
     [
-      'heal on topAttack',
-      { kind: 'heal', trigger: 'burstUse', target: 'topAttack', targetCount: 2, ref: 1 },
-      /heal cannot target "topAttack"/,
+      'heal on topAttack without a count',
+      { kind: 'heal', trigger: 'burstUse', target: 'topAttack', ref: 1 },
+      /exactly one of targetCount/,
     ],
   ])('rejects %s', (_name, effect, message) => {
     expect(() => parseSkillDefinition(definition({ skill1: supported(effect) }))).toThrow(message);

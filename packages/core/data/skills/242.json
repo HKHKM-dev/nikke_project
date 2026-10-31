@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 242,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-31",
   "skills": {
     "skill1": {
       "effects": [],
@@ -58,7 +58,23 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCount": 2,
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "吸収回復（10 秒間維持）は、付いていない状態から付いた時だけ「回復効果が適用された時」を起こし、窓の中の命中では起こさない（C-0082・C-0695）。対象は、バーストを使ったフレームの、そのフレームに付く窓（回復を受けた時の攻撃力▲を含む）を入れない最終攻撃力の上位 2 機（自分も候補。plan/design-heal-top-attack.md 2 節の A）。最も高い 1 機に届くことは録画 0710 で見た（C-0695）が、順位を比べる時点（同じフレームに付く攻撃力▲を入れるか。いまの定義には無い）と、2 機目に届くことは確かめていない。満タンの味方にも起きるとみなす。回復量はダメージに関係しない",
+            "en": "The lifesteal (10 s) triggers \"when healed\" only when newly applied, not on hits inside its window (C-0082, C-0695). The targets are the top 2 allies by final attack at the burst-use frame, leaving out windows applied in that frame (including the attack increase from being healed; self is a candidate; option A of plan/design-heal-top-attack.md section 2). Reaching the ally with the highest final attack was seen in recording 0710 (C-0695); the time the ranking is taken (whether an attack increase applied in the same frame counts; no current definition has one) and reaching the second ally are not verified. Assumed to apply to allies at full HP. The healed amount does not affect damage"
+          },
+          "claims": [
+            "C-0695"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "最終攻撃力が最も高い味方 2 機へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
@@ -73,19 +89,6 @@
           },
           "claims": [
             "C-0443"
-          ]
-        },
-        {
-          "ja": "最終攻撃力が最も高い味方 2 機の吸収回復（攻撃ダメージの X% 回復・10 秒）は未対応（回復を受けた時の効果を持つ味方の発動を変える。使った時に 1 回だけ回復を受けた時の効果を起こす。回復の対象の最終攻撃力の順位をいまの語彙で書けない）",
-          "en": "The lifesteal (restore X% of attack damage, 10 s) on the 2 allies with the highest final attack is not modeled (it changes the activation of allies with on-healed effects; it triggers them once on use; the target by final attack rank cannot be written with the current vocabulary)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "heal",
-            "target": "allies",
-            "trigger": "burstUse"
-          },
-          "claims": [
-            "C-0695"
           ]
         }
       ]
