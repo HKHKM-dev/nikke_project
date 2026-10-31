@@ -1,7 +1,7 @@
 # 繰り返しの業務の簡素化の案・第 7 回（2026-10-30 の定期の見直し）
 
 - 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-31 にオーナーが全部を推奨どおりに承認し（5 の `nikke_sync/` の共有はオーナーが済ませた）、実施した（8 節）。
-- 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24）・[-2](design-workflow-simplification-2.md)・[-3](design-workflow-simplification-3.md)・[-4](design-workflow-simplification-4.md)・[-5](design-workflow-simplification-5.md)（どれも実施済み）。第 6 回（2026-10-29）はブランチ `claude/pensive-curie-t57dsa` にあり、main に入っていない。その 1（クラウドの始めの取得）は #770 で別の形で直り、2（段の進み具合の書く先）は文書の役割の見直し（ブランチ `claude/youthful-maxwell-9jvumc` の `plan/design-doc-roles.md`。決定済み）と重なり、3（宝物の段階の既定）は判断待ち。ここではどれも繰り返さない。
+- 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)（2026-10-24）・[-2](design-workflow-simplification-2.md)・[-3](design-workflow-simplification-3.md)・[-4](design-workflow-simplification-4.md)・[-5](design-workflow-simplification-5.md)・[-6](design-workflow-simplification-6.md)（2026-10-29）。どれも実施済み。そこで扱ったものは繰り返さない。
 - 文書の書き方・手引きの短縮は、文書の役割の見直しが扱っているので、この回では見ない。
 - 調べた範囲: 観測値（`records/observations/`）の `method.tool`、比べる指標（`records/observations.ts` の `METRICS`）、解析ツールとレシピ（`tools/captures/`）、origin のブランチ。
 - 調べ方: origin/main（a0a0a1a）で、観測値の `method.tool` を道具の名前ごとに数え、指標を使う検証の数を数えた（使い捨てのスクリプト。コミットしない）。クローンは浅く、履歴は直近 50 件（#722 から）しか見ていない。
