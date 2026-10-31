@@ -1,0 +1,376 @@
+{
+  "verification": "V-0565",
+  "note": "撮る前の予測。編成は鈴原サクラ（1 枠目・I）・プロダクト23（2 枠目・II）・◎ラプラス：アルティメットヒーロー（3 枠目・III・操作・撃たない）。プロダクト23 のバーストの防御力▼（Lv10 で 48.75%・5 秒）は定義に無いので、どの仮説にも II の発動から付く timed の enemyDefenseDown（ref 2・durationRef 3。ルドミラの S1 と同じ形）を addEffects で足す。仮説は防御力▼の後の防御力の丸めの向きだけを setup の defenceRounding で替える。ラプラス：アルティメットヒーローは撃たないが、モデルには撃たない枠が無いので、撃つ発の回数で起きる効果（skill1 の effects[1]〜[3]（ウォームアップ・使用武器の変更・弾の減り）と skill2 の effects[1]〜[3]（オーバーエネルギーのカウンター））を dropEffects で外す",
+  "team": [
+    {
+      "rid": 836
+    },
+    {
+      "rid": 307
+    },
+    {
+      "rid": 103,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-none",
+      "note": "丸めない（100 × (1 − 48.75%) = 51.25）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 307,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ],
+        "defenceRounding": "none"
+      }
+    },
+    {
+      "id": "H-round",
+      "note": "四捨五入（51）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 307,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ],
+        "defenceRounding": "round"
+      }
+    },
+    {
+      "id": "H-ceil",
+      "note": "切り上げ（52）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 307,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 2,
+              "durationRef": 3
+            }
+          }
+        ],
+        "defenceRounding": "ceil"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "laplace-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心でない）"
+    },
+    {
+      "id": "laplace-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心でない）"
+    },
+    {
+      "id": "laplace-hit-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心でない）"
+    },
+    {
+      "id": "laplace-hit-4",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心でない）"
+    },
+    {
+      "id": "laplace-hit-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true,
+        "dropEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "index": 3
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 2
+          },
+          {
+            "rid": 103,
+            "skill": "skill2",
+            "index": 3
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のチェーンのラプラス：アルティメットヒーローのバーストのヒット（会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "f7baf8fa1126ab310e9d01fd717e626c497c5091",
+    "values": {
+      "H-none": {
+        "laplace-hit-1": 16083357.824815387,
+        "laplace-hit-2": 16083357.824815387,
+        "laplace-hit-3": 16083357.824815387,
+        "laplace-hit-4": 16083357.824815387,
+        "laplace-hit-1-crit": 24125036.73722308
+      },
+      "H-round": {
+        "laplace-hit-1": 16083370.98990688,
+        "laplace-hit-2": 16083370.98990688,
+        "laplace-hit-3": 16083370.98990688,
+        "laplace-hit-4": 16083370.98990688,
+        "laplace-hit-1-crit": 24125056.48486032
+      },
+      "H-ceil": {
+        "laplace-hit-1": 16083318.329540921,
+        "laplace-hit-2": 16083318.329540921,
+        "laplace-hit-3": 16083318.329540921,
+        "laplace-hit-4": 16083318.329540921,
+        "laplace-hit-1-crit": 24124977.49431138
+      }
+    }
+  }
+}
