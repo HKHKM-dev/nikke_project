@@ -251,7 +251,8 @@ export const BUFF_SCALINGS = [
  * 効果の対象。Stage 11: burstUsers = 「直前にバーストスキルを使用した味方」（そのフルバーストを開いたチェーンでバーストを撃った枠）。
  * トリガーが fullBurstStart / fullBurstEnd のときだけ書ける（発火のたびに対象が変わる。skills/targets.ts）。
  * Stage 11 アリス編: topAttack = 「最終攻撃力が最も高い味方 N 機」（発火のフレームの最終攻撃力の順位。自分も候補。skills/ranking.ts）。
- * N は targetCount / targetCountRef。passive と heal には書けない。
+ * N は targetCount / targetCountRef。passive には書けない。heal の順位は、そのフレームに付く件を入れずに出す
+ * （plan/design-heal-top-attack.md 2 節。frame/firstPass.ts）。
  * 対象の語彙編（plan/design-target-vocab.md 2.2 節）: longestChargeTime = 「基本チャージ時間が一番長い味方 N 機」
  * （CharacterData.shot.chargeTime の長い順。同値は枠の若い順。編成で決まるので最上位の skills/composition.ts で対象の枠を決める）。
  * N は topAttack と同じ欄。timed にだけ書ける。

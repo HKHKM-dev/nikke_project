@@ -10,8 +10,8 @@ import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
-import { healsOf } from './historyHelpers.ts';
 import { gameSecondsToFrames } from '../time.ts';
+import { healsOf } from './historyHelpers.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -42,26 +42,28 @@ function team(slots: TeamSlotInput[], controlledSlot: number): TeamInput {
 }
 
 const FOLKWANG = 242;
+const FW = 2;
+const ASUKA = 3;
 
-/** 枠 slot のフォルクヴァンの回復を受けた枠（フレームの順。同じフレームは枠の順） */
-function healTargets(input: TeamInput, slot: number): { frame: number; slotIndex: number }[] {
-  return healsOf(planTeamRun(input))
-    .filter((h) => h.sourceSlotIndex === slot)
-    .map(({ frame, slotIndex }) => ({ frame, slotIndex }))
-    .sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
+/** 録画 0710 の編成（ラム・I-DOLL・サン・フォルクヴァン（操作）・アスカ）。フォルクヴァンの枠は差し替えられる */
+const team0710 = (folkwang = fixedSlot(FOLKWANG)) =>
+  team([fixedSlot(822), fixedSlot(308), folkwang, fixedSlot(830)], FW);
+
+/** フォルクヴァンの回復を受けた枠（healsOf の順。フレーム → 枠） */
+function healTargets(plan: ReturnType<typeof planTeamRun>): { frame: number; slotIndex: number }[] {
+  return healsOf(plan)
+    .filter((h) => h.sourceSlotIndex === FW)
+    .map(({ frame, slotIndex }) => ({ frame, slotIndex }));
 }
 
 describe('録画 0710 の編成（ラム・I-DOLL・サン・フォルクヴァン・アスカ）', () => {
-  const input = team([fixedSlot(822), fixedSlot(308), fixedSlot(FOLKWANG), fixedSlot(830)], 2);
-  const plan = planTeamRun(input);
-  const FW = 2;
-  const ASUKA = 3;
+  const plan = planTeamRun(team0710());
   const uses = plan.schedule!.activations.filter((a) => a.slotIndex === FW).map((a) => a.frame);
 
   // 順位はアスカ → フォルクヴァン（自分も候補）→ サン → ラム
   it('heals Asuka and Folkwang herself on every burst use', () => {
     expect(uses.length).toBeGreaterThan(3);
-    expect(healTargets(input, FW)).toEqual(
+    expect(healTargets(plan)).toEqual(
       uses.flatMap((frame) => [
         { frame, slotIndex: FW },
         { frame, slotIndex: ASUKA },
@@ -83,21 +85,17 @@ describe('録画 0710 の編成（ラム・I-DOLL・サン・フォルクヴァ�
 // 回復と同じフレームに付く攻撃力▲: 試しにフォルクヴァンのバーストに自分の攻撃力 65.81%▲（10 秒。ref 3・durationRef 4）を足すと、
 // 順位に入れればフォルクヴァンがアスカより上になる。いまの定義には、回復と同じフレームに付く攻撃力▲は無い（設計書 3 節）
 describe('同じフレームに付く攻撃力▲（録画 0710 の編成で、回復を 1 機にする）', () => {
-  const FW = 2;
-  const ASUKA = 3;
   const boosted = (trigger: string) =>
     fixedSlot(FOLKWANG, (raw) => {
       const effects = raw.skills.burst!.effects;
       Object.assign(effects[0]!, { targetCount: 1, trigger });
       effects.push({ kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'attack', ref: 3, durationRef: 4 });
     });
-  const inputWith = (trigger: string) => team([fixedSlot(822), fixedSlot(308), boosted(trigger), fixedSlot(830)], 2);
 
   it('leaves out the attack increase applied in the frame of the burst use (A)', () => {
-    const input = inputWith('burstUse');
-    const plan = planTeamRun(input);
+    const plan = planTeamRun(team0710(boosted('burstUse')));
     const own = itemsOf(plan.history, { holder: FW, kind: 'timed', skill: 'burst', stat: 'attack' });
-    const targets = healTargets(input, FW);
+    const targets = healTargets(plan);
     expect(targets.length).toBeGreaterThan(3);
     for (const t of targets) expect(own.some((i) => i.start === t.frame)).toBe(true);
     expect(targets.every((t) => t.slotIndex === ASUKA)).toBe(true);
@@ -105,7 +103,7 @@ describe('同じフレームに付く攻撃力▲（録画 0710 の編成で、�
 
   it('counts an attack increase applied in an earlier frame', () => {
     // 回復をフルバーストの開始に替えると、その前（II の発動）に付いた▲が順位に入る
-    const targets = healTargets(inputWith('fullBurstStart'), FW);
+    const targets = healTargets(planTeamRun(team0710(boosted('fullBurstStart'))));
     expect(targets.length).toBeGreaterThan(3);
     expect(targets.every((t) => t.slotIndex === FW)).toBe(true);
   });
