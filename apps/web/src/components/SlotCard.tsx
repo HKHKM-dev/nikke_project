@@ -1,4 +1,6 @@
 import {
+  AFFECTION_RANK_MIN,
+  affectionRankMax,
   growthLimits,
   type CharacterData,
   type CharacterIndexEntry,
@@ -14,7 +16,7 @@ import { effectiveTreasurePhase, type SlotState, type TeamAction } from '../team
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
-import { SkillSection } from './SkillSection.tsx';
+import { SkillSection, skillSupportBadge } from './SkillSection.tsx';
 
 type Props = {
   slotIndex: number;
@@ -59,6 +61,9 @@ export function SlotCard({
   const limits = character ? growthLimits(character) : null;
 
   const treasurePhase = character ? effectiveTreasurePhase(slot, character) : 0;
+  const badge = character ? skillSupportBadge(character, skillsStatus, treasurePhase) : null;
+  // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
+  // 折りたたみ 1 つにまとめた
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
   // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（team.ts の teamStateForCalc）
 
@@ -99,19 +104,43 @@ export function SlotCard({
       )}
       {character && limits && (
         <details className="slot-settings">
-          <summary>設定</summary>
+          <summary>
+            育成
+            {badge && <span className={`badge ${badge.className}`}>{badge.label}</span>}
+          </summary>
           <div className="slot-settings-body">
             <div className="growth-row">
+              <label className="field">
+                <span>好感度</span>
+                <input
+                  type="number"
+                  min={AFFECTION_RANK_MIN}
+                  max={affectionRankMax(character)}
+                  step={1}
+                  value={effectiveBuild.affectionRank}
+                  disabled={fixedSpec}
+                  onChange={(e) =>
+                    dispatch({
+                      type: 'setBuild',
+                      index: slotIndex,
+                      build: {
+                        ...slot.build,
+                        affectionRank: Math.min(
+                          affectionRankMax(character),
+                          Math.max(AFFECTION_RANK_MIN, Math.round(Number(e.target.value) || AFFECTION_RANK_MIN)),
+                        ),
+                      },
+                    })
+                  }
+                />
+              </label>
               {growthField('grade', '限界突破', 0, limits.gradeMax)}
               {growthField('core', 'コア強化', 0, limits.coreMax)}
             </div>
             <SkillSection
               slotIndex={slotIndex}
-              character={character}
               levels={effectiveSkillLevels}
-              treasurePhase={treasurePhase}
               disabled={fixedSpec}
-              status={skillsStatus}
               dispatch={dispatch}
             />
             <BuildSection

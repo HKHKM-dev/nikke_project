@@ -1,10 +1,10 @@
 // Stage 12: 育成入力（ステータス層）の入力欄。スペック固定のときは fixedSpecBuild（T9 Lv5 × 4・好感度 rank30/40/10）を表示して
 // 入力を止める。Stage 13: OL 装備のオプション行（最大 3 行）の入力。
-// 2026-10-31: オーナーの指示で、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
+// 2026-10-31: オーナーの指示で、枠の「育成」の折りたたみの中の装備・キューブ・コレクションの部分にした（好感度は枠の側）。
+// また、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
 // スペック固定の説明）を消した。その他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）。リサイクルルームは編成共通の
 // コンソールから取る（team.ts の effectiveBuild）
 import {
-  AFFECTION_RANK_MIN,
   COLLECTION_LEVEL_MAX,
   CUBE_LEVEL_MAX,
   CUBE_LEVEL_MIN,
@@ -15,7 +15,6 @@ import {
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
   TREASURE_PHASE_MAX,
-  affectionRankMax,
   computeCombatAttack,
   type BuildInput,
   type BuildMasters,
@@ -99,25 +98,10 @@ export function BuildSection({
   const hasTreasure = character.treasure !== null && treasurePhase > 0;
 
   return (
-    <details className="build">
-      <summary>育成</summary>
+    <div className="build">
       {mastersError && <p className="error">育成のマスタの読み込みに失敗しました: {mastersError}</p>}
       {!masters && !mastersError && <p className="hint">育成のマスタを読み込み中…</p>}
       <div className="build-grid">
-        <label className="field">
-          <span>好感度</span>
-          <input
-            type="number"
-            min={AFFECTION_RANK_MIN}
-            max={affectionRankMax(character)}
-            step={1}
-            value={shown.affectionRank}
-            disabled={disabled}
-            onChange={(e) =>
-              set({ affectionRank: clampInt(Number(e.target.value), AFFECTION_RANK_MIN, affectionRankMax(character)) })
-            }
-          />
-        </label>
         {GEAR_PARTS.map((part) => {
           const gear = shown.gear[part];
           return (
@@ -291,6 +275,6 @@ export function BuildSection({
         </div>
       </div>
       {combatError && <p className="error">育成入力を計算に使えません: {combatError}</p>}
-    </details>
+    </div>
   );
 }

@@ -181,6 +181,9 @@ header h1 {
   font-size: 0.8rem;
   opacity: 0.75;
 }
+.slot-settings > summary .badge {
+  margin-left: 6px;
+}
 .slot-settings-body {
   margin-top: 6px;
 }
@@ -311,24 +314,6 @@ header h1 {
 }
 
 /* スキル（Stage 4） */
-.skills {
-  margin: 6px 0;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.skills-head {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-  align-items: center;
-}
-.skills-title {
-  font-weight: 600;
-  font-size: 0.82rem;
-}
-.skill-levels-row {
-  margin: 4px 0 0;
-}
 .badge.supported {
   background: #2e7d32;
   color: #fff;
@@ -359,13 +344,6 @@ header h1 {
 /* Stage 12: 育成入力・射撃条件（折り畳み） */
 .build {
   margin: 5px 0 0;
-  padding: 3px 7px;
-  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
-  border-radius: 4px;
-}
-.build > summary {
-  cursor: pointer;
-  font-size: 0.82rem;
 }
 .build-grid {
   display: grid;
