@@ -3,7 +3,7 @@
 // チームの詳細設定（3 分モード・戦闘時間）・スペック固定は全編成で共通にする（ソロレイドは 5 編成で同じボスに挑む）。
 // 選んでいる編成は、これまでどおり STORAGE_KEY（team.ts）の編成そのもの。ほかの編成をこのキーに保存する（切り替えたときだけ書く）
 import type { CharacterIndexEntry } from '@nikke/core';
-import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, parseTeamObject, type TeamState } from './team.ts';
+import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, formatVersionOf, parseTeamObject, type TeamState } from './team.ts';
 
 export const PARTY_COUNT = 5;
 export const PARTIES_STORAGE_KEY = 'nikke-calc.parties.v1';
@@ -52,7 +52,9 @@ export function serializeParties(state: PartiesState): string {
 
 /**
  * 保存した編成の一覧を読む。読めないもの全体は null（初期値に落とす）。1 つの編成だけ形が合わないときは、その編成を空にする。
- * 編成の中身の検証は、共通の設定を既定値で埋めて編成の検証（team.ts の parseTeamObject）に任せる
+ * 版は編成（team.ts）と同じで、版のない旧形式も読み、未知の版（新しい版で書き出したもの）は読まない。
+ * 編成の中身の検証は、共通の設定を既定値で埋めて編成の検証（team.ts の parseTeamObject）に任せる。
+ * 画面は復元の直後に読めたものを書き戻す（App.tsx）ので、読めなかった編成は空になって残らない
  */
 export function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
   if (json === null) return null;
@@ -63,6 +65,7 @@ export function parseParties(json: string | null, index: readonly CharacterIndex
     return null;
   }
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+  if (formatVersionOf(raw as Record<string, unknown>) === null) return null;
   const { active, parties } = raw as { active?: unknown; parties?: unknown };
   if (typeof active !== 'number' || !Number.isInteger(active) || active < 0 || active >= PARTY_COUNT) return null;
   if (!Array.isArray(parties) || parties.length !== PARTY_COUNT) return null;

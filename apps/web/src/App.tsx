@@ -7,7 +7,8 @@ import {
   type EnemyPresetMaster,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
-import { buildCalcView } from './calcView.ts';
+import { buildCalcView, slotResultFor } from './calcView.ts';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
@@ -117,8 +118,10 @@ export function App() {
   // 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 計算は runSimulation → simTeamResult の 1 本。
   // 2026-10-27 までは calc と sim の切り替え（保存キー nikke-web.model）があり、sim の表示では 1 パス目を 2 回回していた
   // (B) の段 B-2（6.2 節）: 計算は Web Worker で回し、欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
-  // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた
-  const { computed, computing } = useTeamComputation(calc.input);
+  // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた。
+  // 結果はその計算の元（shown.source）と組で届く。結果の詳細はその元から読み、スロットの欄は slotResultFor で合わせる
+  const { shown, computing } = useTeamComputation(calc);
+  const slotResults = useMemo(() => calc.slots.map((_, i) => slotResultFor(shown, calc, i)), [calc, shown]);
 
   const loadingCount = team.slots.filter(
     (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
@@ -134,14 +137,14 @@ export function App() {
           : {
               index: i,
               character: slot.character,
-              skills: skillsStatuses[i] ?? { kind: 'loading' },
+              skills: slot.skillsStatus ?? { kind: 'loading' },
               treasurePhase: slot.treasurePhase,
-              modelNotes: computed?.ok ? (computed.result.slots[i]?.notes ?? []) : [],
+              modelNotes: slotResults[i]?.result.notes ?? [],
               buildNotes: slot.buildNotes,
               noFire: slot.noFire,
             },
       ),
-    [calc.slots, skillsStatuses, computed],
+    [calc.slots, slotResults],
   );
 
   return (
@@ -185,40 +188,41 @@ export function App() {
                   masters={masters}
                   mastersError={mastersError}
                   effectiveSkillLevels={skillLevels}
-                  slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
+                  slotResult={slotResults[i] ?? null}
                   focused={team.controlledSlot === i}
                   dispatch={dispatch}
                 />
               );
             })}
           </section>
-          {computed === null ? (
-            <section className="panel result breakdown-panel">
-              <p className="hint">計算中…</p>
-            </section>
-          ) : computed.ok ? (
-            <TeamBreakdown
-              result={computed.result}
-              computing={computing}
-              loadingCount={loadingCount}
-              skillsLoadingCount={skillsLoadingCount}
-              detailed={detailed}
-              fixedSpec={team.fixedSpec}
-              slotNames={calc.slots.map((s) => s.character?.name.ja)}
-              teamCharacters={calc.slots.map((s) => s.character ?? null)}
-              enemyElement={team.enemy.element}
-              effectiveSkillLevels={calc.slots.map((s) => s.skillLevels)}
-              treasurePhases={calc.slots.map((s) => s.treasurePhase)}
-              skillsStatuses={skillsStatuses}
-              hpRatios={calc.slots.map((s) => s.hpRatio)}
+          <ErrorBoundary
+            resetKey={shown}
+            fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
+          >
+            {shown === null ? (
+              <section className="panel result breakdown-panel">
+                <p className="hint">計算中…</p>
+              </section>
+            ) : shown.computed.ok ? (
+              <TeamBreakdown
+                result={shown.computed.result}
+                view={shown.source}
+                computing={computing}
+                loadingCount={loadingCount}
+                skillsLoadingCount={skillsLoadingCount}
+                detailed={detailed}
+              />
+            ) : (
+              <p className="error">
+                {shown.computed.error}
+                {computing && '（計算中…）'}
+              </p>
+            )}
+            <NotesSummary
+              slots={summarySlots}
+              enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}
             />
-          ) : (
-            <p className="error">
-              {computed.error}
-              {computing && '（計算中…）'}
-            </p>
-          )}
-          <NotesSummary slots={summarySlots} enemyNotes={computed?.ok ? computed.result.enemyNotes : []} />
+          </ErrorBoundary>
         </>
       )}
     </main>

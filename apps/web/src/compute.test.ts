@@ -101,7 +101,8 @@ describe('compute (B-2)', () => {
 });
 
 describe('LatestComputeQueue (B-2)', () => {
-  const input = (durationSeconds: number): TeamInput => ({ ...MAIN, slots: [], durationSeconds });
+  // 要求の元（画面では CalcView）。結果はこの元と組で届く
+  const input = (durationSeconds: number) => ({ input: { ...MAIN, slots: [], durationSeconds } satisfies TeamInput });
   const done = (seq: number, durationSeconds: number) => ({
     seq,
     computed: { ok: false, error: `done ${durationSeconds}` } satisfies Computed,
@@ -110,11 +111,15 @@ describe('LatestComputeQueue (B-2)', () => {
   function setup() {
     const sent: ComputeRequest[] = [];
     const delivered: Computed[] = [];
-    const queue = new LatestComputeQueue(
+    const sources: ReturnType<typeof input>[] = [];
+    const queue = new LatestComputeQueue<ReturnType<typeof input>>(
       (r) => sent.push(r),
-      (c) => delivered.push(c),
+      (c, source) => {
+        delivered.push(c);
+        sources.push(source);
+      },
     );
-    return { sent, delivered, queue };
+    return { sent, delivered, sources, queue };
   }
 
   it('sends one request at a time and keeps only the latest input while busy', () => {
@@ -131,6 +136,22 @@ describe('LatestComputeQueue (B-2)', () => {
     queue.receive(done(sent[1]!.seq, 3));
     expect(delivered).toEqual([{ ok: false, error: 'done 3' }]);
     expect(queue.busy).toBe(false);
+  });
+
+  it('delivers each result together with the source it was computed from', () => {
+    const { sent, sources, queue } = setup();
+    const first = input(1);
+    queue.request(first);
+    queue.receive(done(sent[0]!.seq, 1));
+    // 元は同じオブジェクト（画面はこれといまの CalcView を比べて、結果が古いかを見る）
+    expect(sources[0]).toBe(first);
+
+    const last = input(5);
+    queue.request(input(4));
+    queue.request(last);
+    queue.fail('worker failed');
+    // エラーは最後に受けた元と組にする
+    expect(sources[1]).toBe(last);
   });
 
   it('ignores a response to a request it is not waiting for', () => {
@@ -158,6 +179,7 @@ describe('LatestComputeQueue (B-2)', () => {
     s.queue.request(input(2));
     s.queue.fail('worker failed');
     expect(s.delivered).toEqual([{ ok: false, error: 'worker failed' }]);
+    expect(s.sources.map((x) => x.input.durationSeconds)).toEqual([2]);
     expect(s.queue.busy).toBe(false);
     s.queue.request(input(3));
     expect(s.sent.map((r) => r.input.durationSeconds)).toEqual([1, 3]);

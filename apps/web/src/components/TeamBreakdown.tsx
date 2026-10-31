@@ -3,37 +3,30 @@ import {
   ENEMY_EVENT_KIND_LABEL,
   WEAPON_LABEL,
   slotsByStep,
-  type CharacterData,
-  type Element,
-  type SkillLevels,
   type TeamResult,
   type TeamSlotResult,
-  type TreasurePhase,
   type TriggerDamage,
   framesToGameSeconds,
   gameSecondsToFrame,
 } from '@nikke/core';
+import type { CalcView } from '../calcView.ts';
 import { formatNumber, formatPercent } from '../format.ts';
-import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 import { DamageTimeline, landingLabel } from './DamageTimeline.tsx';
 import { ResultPanel } from './ResultPanel.tsx';
 
 type Props = {
   result: TeamResult;
+  /**
+   * result の計算の元（その時のキャラ・スキル LV・宝物の段階など）。詳細はいまの入力ではなくこれから読む
+   * （計算中は result が前の入力の結果なので、いまの入力と混ぜるとキャラと宝物の段階が食い違う）
+   */
+  view: CalcView;
   /** (B) の段 B-2: 入力が変わって計算し直している間。result は前の入力の結果 */
   computing: boolean;
   /** ニケは選ばれているがデータ読み込み中で合計に入っていない枠の数 */
   loadingCount: number;
   /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
   skillsLoadingCount: number;
-  fixedSpec: boolean;
-  slotNames: readonly (string | undefined)[];
-  teamCharacters: readonly (CharacterData | null)[];
-  enemyElement: Element | null;
-  effectiveSkillLevels: readonly SkillLevels[];
-  treasurePhases: readonly TreasurePhase[];
-  skillsStatuses: readonly (SlotSkillsStatus | null)[];
-  hpRatios: readonly number[];
   /** 2026-10-31: 右上の設定の「詳細情報表示」。ON のときだけ、総ダメージのほかの詳細（内訳・ニケごと・検証用）を出す */
   detailed: boolean;
 };
@@ -47,23 +40,11 @@ function triggerRange(slot: TeamSlotResult, pick: (t: TriggerDamage) => number, 
   return max ? Math.max(...values) : Math.min(...values);
 }
 
-export function TeamBreakdown({
-  result,
-  computing,
-  loadingCount,
-  skillsLoadingCount,
-  fixedSpec,
-  slotNames,
-  teamCharacters,
-  enemyElement,
-  effectiveSkillLevels,
-  treasurePhases,
-  skillsStatuses,
-  hpRatios,
-  detailed,
-}: Props) {
+export function TeamBreakdown({ result, view, computing, loadingCount, skillsLoadingCount, detailed }: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
-  const attackLabel = fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
+  const slotNames = view.slots.map((s) => s.character?.name.ja);
+  const teamCharacters = view.slots.map((s) => s.character ?? null);
+  const attackLabel = view.fixedSpec ? '攻撃力（スペック固定: 好感度 + 装備込み）' : '攻撃力（素）';
   const schedule = result.schedule;
   const byStep = schedule ? slotsByStep(schedule) : null;
   const rankings = result.history.rankings;
@@ -193,27 +174,30 @@ export function TeamBreakdown({
 
           <div className="details">
             <h3>ニケごとの詳細</h3>
-            {filled.map((s) => (
-              <details key={s.index} className="slot-detail">
-                <summary>
-                  スロット {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
-                  {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
-                </summary>
-                <ResultPanel
-                  slotIndex={s.index}
-                  character={s.character}
-                  slot={s}
-                  attackLabel={attackLabel}
-                  slotNames={slotNames}
-                  teamCharacters={teamCharacters}
-                  enemyElement={enemyElement}
-                  effectiveSkillLevels={effectiveSkillLevels[s.index]!}
-                  treasurePhase={treasurePhases[s.index] ?? 0}
-                  skillsStatus={skillsStatuses[s.index] ?? { kind: 'loading' }}
-                  hpRatio={hpRatios[s.index] ?? 1}
-                />
-              </details>
-            ))}
+            {filled.map((s) => {
+              const input = view.slots[s.index]!;
+              return (
+                <details key={s.index} className="slot-detail">
+                  <summary>
+                    スロット {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
+                    {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
+                  </summary>
+                  <ResultPanel
+                    slotIndex={s.index}
+                    character={s.character}
+                    slot={s}
+                    attackLabel={attackLabel}
+                    slotNames={slotNames}
+                    teamCharacters={teamCharacters}
+                    enemyElement={view.input.enemy.element}
+                    effectiveSkillLevels={input.skillLevels}
+                    treasurePhase={input.treasurePhase}
+                    skillsStatus={input.skillsStatus ?? { kind: 'loading' }}
+                    hpRatio={input.hpRatio}
+                  />
+                </details>
+              );
+            })}
           </div>
         </details>
       )}
@@ -224,7 +208,7 @@ export function TeamBreakdown({
           <summary>検証用の詳細</summary>
           {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
           {filled.length > 0 && landingsLabel !== '' && (
-            <p className="hint">的の着地点（条件が自動のスロットに効く）: {landingsLabel} 秒</p>
+            <p className="hint">的の着地点（撃つスロットに効く）: {landingsLabel} 秒</p>
           )}
           {filled.length > 0 && (
             <>
