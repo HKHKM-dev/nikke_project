@@ -16,7 +16,7 @@
 ## クラウドのセッションの始め方
 
 1. スマホか MacBook の Claude アプリ（または claude.ai/code）で、このリポジトリのクラウドのセッションを始める（環境は「デフォルト」）。
-2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・メモリ・全体の CLAUDE.md を取って置く（十数秒。最初の応答はこれを待つ）。`scratch/` は、フックが裏で起こす `--pull-rest` が新しいものから取って置く（新しい VM では数分。最初の応答は待たない。取り終えたか・取れなかったものは `~/.cache/nikke-sync/pull-rest.log` の最後の行）。前に置いたときから Drive で変わっていないものは取り直さない。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
+2. 始めのフック（`tools/drive/cloud-sync.ts --pull`）が、Drive から `private/`・メモリ・全体の CLAUDE.md を取って置く（数秒。最初の応答はこれを待つ）。`scratch/` は、フックが裏で起こす `--pull-rest` が新しいものから取って置く（新しい VM では 30 秒前後。最初の応答は待たない。取り終えたか・取れなかったものは `~/.cache/nikke-sync/pull-rest.log` の最後の行）。前に置いたときから Drive で変わっていないものは取り直さない。読むのはサービスアカウント（`NIKKE_DRIVE_SA_KEY` が無ければ受け口）、書くのは受け口（`tools/drive/sync-reader.ts`）。並んで走る `tools/cloud/npm-ci.ts` が、`node_modules` が無いか `package-lock.json` と合わなければ `npm ci` を回す（数秒）。
 3. 応答の終わりのフック（`--push`）が、直したもの・増やしたもの・消したものを Drive に戻す（衝突は下）。デスクトップには、次のデスクトップのセッションの始めの同期で届く。
 
 クラウドでは自動メモリが使えないので、メモリは `~/.claude/CLAUDE.md` に書かれた決まりで読み書きする（同じ形式。設計書 6.1 節）。
@@ -63,6 +63,7 @@ PC が使えないときに撮った録画は、Drive for desktop が「マイ �
   - 「受け口に届かなかった」: 受け口の URL（環境変数 `NIKKE_DRIVE_GATEWAY_URL`）と、環境の通信の許可（`script.google.com`・`script.googleusercontent.com`）
   - 「受け口の応答が JSON でない」: 受け口の URL と、デプロイの「アクセスできるユーザー: 全員」
   - 「合言葉が違う」: 環境変数 `NIKKE_DRIVE_GATEWAY_KEY` と、受け口のスクリプト プロパティの `KEY`
+  - 「サービスアカウントで読めなかった」: Drive で `nikke_sync` をサービスアカウント（鍵の `client_email`）に閲覧者で共有しているかと、環境変数 `NIKKE_DRIVE_SA_KEY`。`nikke_sync` が 2 つ見えるときは、環境変数 `NIKKE_DRIVE_SYNC_FOLDER_ID` で指す
   - 「〜秒たっても答えなかった」: 受け口（Apps Script）が止まっているか、遅い。デスクトップで `npm run drive:gateway-check` が通るかを見る。受け口は中身を 1 件あたり約 1 秒で読むので、件数の多いフォルダを中身ごと一度に取ると 1 回の実行（6 分まで）で終わらない（2026-10-30 に `scratch/` で起きた。[design-cloud-environment-log.md](design-cloud-environment-log.md) 12.2 節）
   - 取れなかったものは、セッションの中で `node tools/drive/cloud-sync.ts --pull` で取り直せる
 - `scratch/` のファイルが無い: 裏の取り寄せが終わっていないか、取れなかった。`~/.cache/nikke-sync/pull-rest.log` の最後の行を見る。残りは `node tools/drive/cloud-sync.ts --pull-rest` で取る（裏で回っている途中なら、そう答えて何もしない）。

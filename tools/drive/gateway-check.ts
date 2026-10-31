@@ -3,15 +3,14 @@
 // nikke_sync/scratch/_gateway-check/ と nikke_project_captures/frames/ に試しのファイルを作り、一覧・読み出し・衝突・大きさ・移動・ごみ箱を
 // 確かめて片付ける（フォルダは空で残る）。クラウドの始めのフックと同じく、一覧は中身なしで取り、中身は 1 件ずつ取る。
 // scratch/ 全体の一覧が、フックが 1 回の呼び出しを待つ長さ（CALL_MS）で返るかも見る。
-import { createHash, randomBytes } from 'node:crypto';
-import { CALL_MS } from './cloud-lib.ts';
+import { randomBytes } from 'node:crypto';
+import { CALL_MS, md5 } from './cloud-lib.ts';
 import { gateway, get, move, put, snapshot, trash } from './gateway.ts';
 
 const DIR = 'scratch/_gateway-check';
 const TXT = `${DIR}/check.txt`;
 const BIG = `${DIR}/3mb.bin`;
 
-const md5 = (b: Buffer) => createHash('md5').update(b).digest('hex');
 let failed = 0;
 const check = (name: string, ok: boolean, detail = '') => {
   console.log(`${ok ? 'OK ' : 'NG '} ${name}${detail ? `（${detail}）` : ''}`);

@@ -559,9 +559,9 @@ function healFramesOf(result: SimResult, ctx: MetricContext): number[] {
 
 /** 雪子編（V-0501）: 枠が出した n 回目（0 始まり）の回復のフレームを、動画のフレームにする */
 function healVideoFrame(result: SimResult, ctx: MetricContext): number {
-  const frame = healFramesOf(result, ctx)[Number(ctx.args.n)];
+  const frame = eventFrames(result, withArgs(ctx, { event: 'heal' }))[Number(ctx.args.n)];
   if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.n)} 回目の回復が無い`);
-  return videoFrameOf(result.schedule, frame);
+  return frame;
 }
 
 /**
@@ -1038,12 +1038,12 @@ function burstActivationVideoFrames(result: { schedule: BurstSchedule | null }, 
   return schedule.activations.slice(0, n).map((a) => activationVideoFrameOf(schedule, a));
 }
 
-/** 結果を最初の count 個に切る（count が無ければそのまま。足りなければ誤り） */
+/** 結果の頭の skip 個（省略は 0）を飛ばし、count 個に切る（count が無ければ残り全部。足りなければ誤り） */
 function firstCount(values: number[], ctx: MetricContext, what: string): number[] {
-  if (ctx.args.count === undefined) return values;
-  const count = Number(ctx.args.count);
-  if (values.length < count) throw new Error(`${what}が ${values.length} 回しか無い`);
-  return values.slice(0, count);
+  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
+  const count = ctx.args.count === undefined ? values.length - skip : Number(ctx.args.count);
+  if (values.length < skip + count) throw new Error(`${what}が ${values.length} 回しか無い`);
+  return values.slice(skip, skip + count);
 }
 
 /** 2 段目の段 3: 枠 slotIndex のフレーム frame の、状態 state のスタックの段の最大（付いていなければ 0） */
@@ -1425,7 +1425,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   // 2 段目の段 13 の PR 1（V-0546）: skillHitVideoFrame の頭の count 個の列（キャプチャーチェーンの 10 回の攻撃）
   skillHitVideoFrameList: {
     args: ['slot', 'skill', 'count'],
-    sim: (r, c) => skillHitVideoFrames(r, c).slice(0, Number(c.args.count)),
+    sim: (r, c) => eventFrames(r, withArgs(c, { event: 'skillHit' })),
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
@@ -1438,6 +1438,9 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     args: ['slot', 'skill', 'fullBurst', 'count'],
     sim: skillHitFramesFromFullBurst,
   },
+  // 簡素化・第 7 回の案 2: 出来事の動画のフレームの、基準からの差の列（eventFrames の注記）。上の skillHit…・dot…・healVideoFrame の
+  // 時刻の指標はこれの包み
+  eventFrames: { args: ['slot', 'event'], sim: eventFrames },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
   burstHitDelays: { args: ['slot', 'count'], sim: burstHitDelays },
   gaugeFullToBurstHit: { args: ['slot', 'n'], sim: gaugeFullToBurstHit },
@@ -1622,9 +1625,15 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
  * （boost に コア倍率 − 1 を足す）。core の効果でないヒットに core: true は拒否する
  */
 function dotHitDamage(result: SimResult, ctx: MetricContext): number {
-  // 2 段目の段 13 の PR 2（V-0547）: hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）
+  // 2 段目の段 13 の PR 2（V-0547）: hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）。
+  // 簡素化・第 7 回の案 1: 省略できる引数 frame（と fullBurst。frameArgOf）で、そのフレーム以降の tick だけを数える（skillHitDamage と同じ）
+  const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
   const ticks = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && hitMatches(h, ctx),
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) &&
+      h.effect.dot !== undefined &&
+      hitMatches(h, ctx) &&
+      (from === null || h.frame >= from),
   );
   const tick = ticks[Number(ctx.args.n)];
   if (tick === undefined) throw new Error(`${String(ctx.args.n)} 回目の持続ダメージの tick が無い`);
@@ -1639,8 +1648,9 @@ function dotHitDamage(result: SimResult, ctx: MetricContext): number {
  */
 function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
   const frame = Number(ctx.args.frame);
+  // 簡素化・第 7 回の案 1: 省略できる引数 skill（hitMatches）で、そのスロットの持続ダメージだけを見る
   const tick = result.skillHits.find(
-    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && h.frame >= frame,
+    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.dot !== undefined && hitMatches(h, ctx) && h.frame >= frame,
   );
   if (tick === undefined) throw new Error(`フレーム ${frame} 以降に持続ダメージの tick が無い`);
   if (tick.stacks === undefined) throw new Error('スタックしない持続ダメージの tick');
@@ -1683,16 +1693,122 @@ function skillHitsDamage(result: SimResult, ctx: MetricContext): number {
   return sum;
 }
 
+/** ctx の引数を args で上書きした ctx（undefined の欄は消す）。指標を eventFrames の包みにするときに使う */
+function withArgs(ctx: MetricContext, args: Record<string, string | number | boolean | undefined>): MetricContext {
+  const merged: CompareSpec['args'] = { ...ctx.args };
+  for (const [k, v] of Object.entries(args)) {
+    if (v === undefined) delete merged[k];
+    else merged[k] = v;
+  }
+  return { ...ctx, args: merged };
+}
+
+/** eventFrames の出来事（モデルのフレームと、録画の動画のフレーム） */
+type EventPoint = { frame: number; video: number };
+
+/** eventFrames の event: 枠の出来事の列（時刻の順） */
+function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
+  const slotIndex = slotIndexOf(ctx);
+  const schedule = result.schedule;
+  const at = (frame: number): EventPoint => ({ frame, video: videoFrameOf(schedule, frame) });
+  const mine = () => (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
+  const hits = (keep: (h: SimResult['skillHits'][number]) => boolean) =>
+    result.skillHits.filter((h) => h.slotIndex === slotIndex && keep(h) && hitMatches(h, ctx)).map((h) => at(h.frame));
+  switch (ctx.args.event) {
+    case 'skillHit':
+      return hits((h) => h.effect.dot === undefined);
+    case 'dot':
+      return hits((h) => h.effect.dot !== undefined);
+    case 'dotApply':
+      return hits((h) => dotKindMatches(h, 'apply'));
+    case 'dotTick':
+      return hits((h) => dotKindMatches(h, 'tick'));
+    case 'burstHit':
+      return mine().flatMap((a) => hitFramesOf(a).map(at));
+    case 'activation':
+      return mine().map((a) => ({ frame: a.frame, video: activationVideoFrameOf(schedule!, a) }));
+    case 'heal':
+      return healFramesOf(result, ctx).map(at);
+    default:
+      throw new Error(
+        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal（${String(ctx.args.event)}）`,
+      );
+  }
+}
+
+/**
+ * 簡素化・第 7 回の案 2（plan/design-workflow-simplification-7.md 2 節）: 枠の出来事（event）の録画の動画のフレームを、基準（anchor）からの
+ * 差の列にする（フルバーストの入りの止まりを含む）。新しい「時刻の列」の比べは、指標を足さずにこれの引数で書く。
+ * - anchor: start（戦闘の始まり。省略時）・fullBurst:<n>（n 回目のフルバーストの窓の始まり。III のタイマーの 00.00）・activation:<n>
+ *   （枠の n 回目の発動。起点は activationVideoFrameOf）・prevBurstHit（出来事ごとに、その前の最後の自分のバーストの 1 ヒット目）
+ * - within: window（フルバーストの窓の中）・afterWindow（窓の終わりから次の窓の始まりまで）・untilNext（基準から次の同じ基準まで）。
+ *   省略すると基準から終わりまで（start は全部）
+ * - skill・projectile・trigger は倍率ダメージと持続ダメージを hitMatches で絞る。skip の数だけ頭を飛ばし、count 個を返す（足りなければ誤り）
+ */
+function eventFrames(result: SimResult, ctx: MetricContext): number[] {
+  const points = eventPointsOf(result, ctx);
+  const anchor = String(ctx.args.anchor ?? 'start');
+  const within = ctx.args.within;
+  const schedule = result.schedule;
+  let offsets: number[];
+  if (anchor === 'start' || anchor === 'prevBurstHit') {
+    if (within !== undefined) throw new Error(`anchor ${anchor} に within は使えない`);
+    if (anchor === 'start') offsets = points.map((p) => p.video);
+    else {
+      if (schedule === null) throw new Error('バーストの時刻表が無い');
+      const burstHits = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx)).map((a) => hitFrameOf(a));
+      offsets = points.map((p) => {
+        const burst = burstHits.filter((f) => f <= p.frame).at(-1);
+        if (burst === undefined) throw new Error(`フレーム ${p.frame} の出来事の前にバーストのヒットが無い`);
+        return p.video - videoFrameOf(schedule, burst);
+      });
+    }
+  } else {
+    const span = spanOf(result, ctx, anchor, within);
+    offsets = points.filter((p) => span.from <= p.frame && p.frame < span.to).map((p) => p.video - span.base);
+  }
+  return firstCount(offsets, ctx, `出来事（${String(ctx.args.event)}）`);
+}
+
+/** eventFrames の基準（fullBurst:<n>・activation:<n>）の、動画のフレームと、数える範囲（モデルのフレーム） */
+function spanOf(
+  result: SimResult,
+  ctx: MetricContext,
+  anchor: string,
+  within: CompareSpec['args'][string] | undefined,
+): { base: number; from: number; to: number } {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const m = /^(fullBurst|activation):(\d+)$/.exec(anchor);
+  if (m === null) throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit（${anchor}）`);
+  const n = Number(m[2]);
+  if (m[1] === 'fullBurst') {
+    const window = schedule.fullBurstWindows[n];
+    if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+    const next = schedule.fullBurstWindows[n + 1]?.start ?? Number.POSITIVE_INFINITY;
+    const base = videoFrameOf(schedule, window.start);
+    if (within === 'window') return { base, from: window.start, to: window.end };
+    if (within === 'afterWindow') return { base, from: window.end, to: next };
+    if (within === 'untilNext') return { base, from: window.start, to: next };
+    if (within === undefined) return { base, from: window.start, to: Number.POSITIVE_INFINITY };
+    throw new Error(`within は window・afterWindow・untilNext（${String(within)}）`);
+  }
+  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
+  const activation = mine[n];
+  if (activation === undefined) throw new Error(`${n} 回目の発動が無い`);
+  const base = activationVideoFrameOf(schedule, activation);
+  if (within === 'untilNext')
+    return { base, from: activation.frame, to: mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY };
+  if (within === undefined) return { base, from: activation.frame, to: Number.POSITIVE_INFINITY };
+  throw new Error(`activation の within は untilNext だけ（${String(within)}）`);
+}
+
 /**
  * V-0268: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の発動の、録画の動画のフレーム（戦闘開始から。フルバーストの入りの
  * 止まりを足す）の列
  */
 function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
-  return result.skillHits
-    .filter(
-      (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-    )
-    .map((h) => videoFrameOf(result.schedule, h.frame));
+  return eventFrames(result, withArgs(ctx, { event: 'skillHit', count: undefined }));
 }
 
 /**
@@ -1715,31 +1831,17 @@ function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): bool
  * skip の数だけ先頭を飛ばし、count 個を返す（録画では、入りの止まりの後の最初の増分に合わさるヒットは時刻が読めないので飛ばす）
  */
 function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
-  const schedule = result.schedule;
-  const n = Number(ctx.args.fullBurst);
-  const window = schedule?.fullBurstWindows[n];
-  if (schedule === null || window === undefined)
-    throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
-  const start = videoFrameOf(schedule, window.start);
   // 2 段目の段 13 の PR 2（V-0547）: after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット。kind が apply・tick なら、
   // 倍率ダメージの代わりに持続ダメージの付けた時のヒット・tick（フルバーストの終わりのキャプチャーチェーンの攻撃とチェーンバインド）
-  const [from, to] =
-    ctx.args.after === true
-      ? [window.end, schedule.fullBurstWindows[n + 1]?.start ?? Number.POSITIVE_INFINITY]
-      : [window.start, window.end];
-  const kind = ctx.args.kind === undefined ? undefined : dotKindOf(ctx);
-  const hits = result.skillHits.filter(
-    (h) =>
-      h.slotIndex === slotIndexOf(ctx) &&
-      (kind === undefined ? h.effect.dot === undefined : dotKindMatches(h, kind)) &&
-      hitMatches(h, ctx) &&
-      from <= h.frame &&
-      h.frame < to,
+  const event = ctx.args.kind === undefined ? 'skillHit' : dotEventOf(ctx);
+  const picked = eventFrames(
+    result,
+    withArgs(ctx, {
+      event,
+      anchor: `fullBurst:${String(ctx.args.fullBurst)}`,
+      within: ctx.args.after === true ? 'afterWindow' : 'window',
+    }),
   );
-  const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
-  const count = Number(ctx.args.count);
-  if (hits.length < skip + count) throw new Error(`窓の中の発動が ${hits.length} 回しかない`);
-  const picked = hits.slice(skip, skip + count).map((h) => videoFrameOf(schedule, h.frame) - start);
   // 2 段目の段 13 の PR 3（V-0548）: relative が true なら、返す最初のヒットからのフレーム数（S2 のスタック量▲の間隔。数え始めの位相に依らない）
   return ctx.args.relative === true ? picked.map((f) => f - picked[0]!) : picked;
 }
@@ -1784,19 +1886,7 @@ function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
  * HUD の増分から倍率ダメージの増分までのフレーム数と比べる（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
  */
 function skillHitFromBurstHit(result: SimResult, ctx: MetricContext): number[] {
-  const schedule = result.schedule;
-  if (schedule === null) throw new Error('バーストの時刻表が無い');
-  const slotIndex = slotIndexOf(ctx);
-  const burstHits = schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => hitFrameOf(a));
-  const hits = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-  );
-  const offsets = hits.map((h) => {
-    const burst = burstHits.filter((f) => f <= h.frame).at(-1);
-    if (burst === undefined) throw new Error(`フレーム ${h.frame} の倍率ダメージの前にバーストのヒットが無い`);
-    return videoFrameOf(schedule, h.frame) - videoFrameOf(schedule, burst);
-  });
-  return firstCount(offsets, ctx, '倍率ダメージ');
+  return eventFrames(result, withArgs(ctx, { event: 'skillHit', anchor: 'prevBurstHit' }));
 }
 
 /**
@@ -1910,17 +2000,16 @@ function dotKindOf(ctx: MetricContext): 'apply' | 'tick' {
   return kind;
 }
 
+/** 引数 kind に当たる eventFrames の event */
+const dotEventOf = (ctx: MetricContext) => (dotKindOf(ctx) === 'apply' ? 'dotApply' : 'dotTick');
+
 function dotKindMatches(h: SimResult['skillHits'][number], kind: 'apply' | 'tick'): boolean {
   return h.effect.dot !== undefined && (h.onApply === true) === (kind === 'apply');
 }
 
 /** 2 段目の段 13 の PR 1（V-0546）: dotHitVideoFrames。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
 function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
-  const kind = dotKindOf(ctx);
-  return result.skillHits
-    .filter((h) => h.slotIndex === slotIndexOf(ctx) && dotKindMatches(h, kind))
-    .slice(0, Number(ctx.args.count))
-    .map((h) => videoFrameOf(result.schedule, h.frame));
+  return eventFrames(result, withArgs(ctx, { event: dotEventOf(ctx) }));
 }
 
 /**
@@ -1928,25 +2017,13 @@ function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
  * バーストのスロットの持続ダメージの tick（次の発動の前まで）までの動画のフレーム数の列（フルバーストの入りの止まりを含む。起点は activationVideoFrameOf）
  */
 function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
-  const schedule = result.schedule;
-  if (schedule === null) throw new Error('バーストの時刻表が無い');
-  const slotIndex = slotIndexOf(ctx);
-  const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex);
-  const n = Number(ctx.args.n);
-  const activation = mine[n];
-  if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
-  const end = mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY;
-  const ticks = result.skillHits.filter(
-    (h) =>
-      h.slotIndex === slotIndex &&
-      h.effect.dot !== undefined &&
-      h.effect.source.skill === 'burst' &&
-      h.frame >= activation.frame &&
-      h.frame < end,
+  const n = String(ctx.args.n);
+  const frames = eventFrames(
+    result,
+    withArgs(ctx, { event: 'dot', skill: 'burst', anchor: `activation:${n}`, within: 'untilNext' }),
   );
-  if (ticks.length === 0) throw new Error(`${String(ctx.args.n)} 回目の発動の後に持続ダメージの tick が無い`);
-  const from = activationVideoFrameOf(schedule, activation);
-  return ticks.map((h) => videoFrameOf(schedule, h.frame) - from);
+  if (frames.length === 0) throw new Error(`${n} 回目の発動の後に持続ダメージの tick が無い`);
+  return frames;
 }
 
 /**

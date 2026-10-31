@@ -1,5 +1,10 @@
 // クラウドのセッションと Drive の nikke_sync の往復の決まりごと（plan/design-cloud-environment.md 6.1・6.2 節）。テストのために、
 // 受け口を呼ぶ部分（cloud-sync.ts）と分ける。
+import { createHash } from 'node:crypto';
+
+export const md5 = (buf: Buffer) => createHash('md5').update(buf).digest('hex');
+/** 例外の知らせの文 */
+export const reason = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 /** Drive の nikke_sync の下のパスを、クラウドの手元の置き場所に読み替える。扱わないものは null */
 export function localPathOf(
@@ -22,7 +27,7 @@ export function trackedRoots(places: { repo: string; memoryDir: string; memoryPr
 }
 export type TrackedRoot = ReturnType<typeof trackedRoots>[number];
 
-/** クラウドの往復で、受け口を 1 回呼んで待つ長さ（ふだんは一覧が 10 秒、1 件が 3 秒ほど。止まっていたら、フックの終わりより前に知らせる） */
+/** クラウドの往復で、受け口か Drive API を 1 回呼んで待つ長さ（ふだんは一覧が 10 秒、1 件が 3 秒ほど。止まっていたら、フックの終わりより前に知らせる） */
 export const CALL_MS = 45_000;
 
 /**

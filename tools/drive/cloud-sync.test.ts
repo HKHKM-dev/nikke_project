@@ -1,9 +1,10 @@
 // クラウドの往復（cloud-sync.ts）を、手元に立てた偽の受け口と仮の置き場所で通しで回す。受け口の決まり（衝突は別名・消すのは
-// md5 が合うときだけ・作り直すと更新時刻が変わる）は tools/drive/gateway/Code.gs と同じにする。
+// md5 が合うときだけ・作り直すと更新時刻が変わる）は tools/drive/gateway/Code.gs と同じにする。読みをサービスアカウントで行う形
+// （sync-reader.ts）も、同じサーバーに立てた偽の Drive API とトークンの受け口で同じ流れを回す。
 import { execFile } from 'node:child_process';
-import { createHash } from 'node:crypto';
+import { createHash, generateKeyPairSync } from 'node:crypto';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { createServer, type Server } from 'node:http';
+import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -18,10 +19,22 @@ const calls: Record<string, number> = {};
 let clock = 0;
 const setDrive = (path: string, text: string | Buffer) =>
   drive.set(path, { buf: Buffer.from(text), modified: new Date(Date.UTC(2026, 9, 30, 0, 0, clock++)).toISOString() });
-/** true なら、合言葉が違うときと同じく全部断る */
+/** true なら、合言葉が違うときと同じく全部断る（偽の Drive API は 403） */
 let refuse = false;
-/** あれば、scratch/ の一覧を受けた時の中身で答えを作り、arrived を呼んでから release まで返さない */
+/**
+ * あれば、scratch/ の一覧（受け口の snapshot か、Drive API の scratch の中の一覧）を受けた時の中身で答えを作り、arrived を呼んでから
+ * release まで返さない
+ */
 let holdScratch: { arrived: () => void; release: Promise<void> } | null = null;
+/** 答えを返す（scratch/ の一覧なら holdScratch で止める） */
+function reply(res: ServerResponse, status: number, body: string | Buffer, scratchListing: boolean): void {
+  const hold = scratchListing ? holdScratch : null;
+  hold?.arrived();
+  void (hold?.release ?? Promise.resolve()).then(() => {
+    res.writeHead(status, typeof body === 'string' ? { 'content-type': 'application/json' } : {});
+    res.end(body);
+  });
+}
 
 type Req = { op: string; prefix?: string; path?: string; content?: string; baseMd5?: string | null };
 function answer(req: Req): Record<string, unknown> {
@@ -57,6 +70,62 @@ function answer(req: Req): Record<string, unknown> {
   return { ok: false, error: `知らない操作: ${req.op}` };
 }
 
+const FOLDER = 'application/vnd.google-apps.folder';
+/** 偽の Drive API（v3 の files.list と alt=media だけ）。フォルダの ID は d:<パス>（nikke_sync は d:）、ファイルの ID は f:<パス> */
+function driveApi(url: URL, res: ServerResponse): void {
+  const send = (status: number, body: unknown) => {
+    res.writeHead(status, { 'content-type': 'application/json' });
+    res.end(JSON.stringify(body));
+  };
+  if (refuse) return send(403, { error: 'forbidden' });
+  const media = /^\/drive\/v3\/files\/(.+)$/.exec(url.pathname);
+  if (media !== null) {
+    calls['media'] = (calls['media'] ?? 0) + 1;
+    const f = drive.get(decodeURIComponent(media[1]!).slice(2));
+    if (f === undefined) return send(404, { error: 'notFound' });
+    res.writeHead(200);
+    return void res.end(f.buf);
+  }
+  calls['list'] = (calls['list'] ?? 0) + 1;
+  const q = url.searchParams.get('q') ?? '';
+  if (q.startsWith("name = 'nikke_sync'"))
+    return send(200, { files: [{ id: 'd:', name: 'nikke_sync', mimeType: FOLDER }] });
+  const m = /^'d:([^']*)' in parents and trashed = false(?: and name = '([^']*)')?$/.exec(q);
+  if (m === null) return send(400, { error: `知らない検索式: ${q}` });
+  const at = m[1] === '' ? '' : `${m[1]}/`;
+  const kids = new Map<string, Record<string, string>>();
+  for (const [path, f] of drive) {
+    if (!path.startsWith(at)) continue;
+    const [name, ...rest] = path.slice(at.length).split('/');
+    if (m[2] !== undefined && name !== m[2]) continue;
+    kids.set(
+      name!,
+      rest.length > 0
+        ? { id: `d:${at}${name}`, name: name!, mimeType: FOLDER }
+        : {
+            id: `f:${path}`,
+            name: name!,
+            mimeType: 'text/plain',
+            size: String(f.buf.length),
+            modifiedTime: f.modified,
+          },
+    );
+  }
+  reply(res, 200, JSON.stringify({ files: [...kids.values()] }), m[1] === 'scratch' && m[2] === undefined);
+}
+
+function serve(req: IncomingMessage, res: ServerResponse): void {
+  let body = '';
+  req.on('data', (c: Buffer) => (body += c.toString()));
+  req.on('end', () => {
+    const url = new URL(req.url ?? '/', 'http://127.0.0.1');
+    if (url.pathname.startsWith('/drive/')) return driveApi(url, res);
+    if (url.pathname === '/token') return reply(res, 200, JSON.stringify({ access_token: 'token' }), false);
+    const parsed = JSON.parse(body) as Req;
+    reply(res, 200, JSON.stringify(answer(parsed)), parsed.op === 'snapshot' && parsed.prefix === 'scratch');
+  });
+}
+
 let server: Server;
 let tmp: string;
 let env: NodeJS.ProcessEnv;
@@ -81,49 +150,54 @@ async function pull(): Promise<{ out: string; rest: string }> {
   throw new Error('--pull-rest が終わらない');
 }
 
-beforeAll(async () => {
-  server = createServer((req, res) => {
-    let body = '';
-    req.on('data', (c: Buffer) => (body += c.toString()));
-    req.on('end', () => {
-      const parsed = JSON.parse(body) as Req;
-      const text = JSON.stringify(answer(parsed));
-      const hold = parsed.op === 'snapshot' && parsed.prefix === 'scratch' ? holdScratch : null;
-      hold?.arrived();
-      void (hold?.release ?? Promise.resolve()).then(() => {
-        res.writeHead(200, { 'content-type': 'application/json' });
-        res.end(text);
-      });
-    });
+/** 読みの道ごとに、同じ流れを回す */
+describe.each(['受け口', 'サービスアカウント'] as const)('drive/cloud-sync（読みは%s）', (via) => {
+  beforeAll(async () => {
+    drive.clear();
+    for (const k of Object.keys(calls)) delete calls[k];
+    server = createServer(serve);
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    tmp = mkdtempSync(join(tmpdir(), 'cloud-sync-'));
+    const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+    const key = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
+    env = {
+      PATH: process.env['PATH'],
+      HOME: join(tmp, 'home'),
+      // Windows の os.homedir() は HOME でなく USERPROFILE を見る
+      USERPROFILE: join(tmp, 'home'),
+      CLAUDE_CODE_REMOTE: 'true',
+      CLAUDE_PROJECT_DIR: repo(),
+      CLAUDE_CONFIG_DIR: join(tmp, 'claude'),
+      NIKKE_CAPTURES_DIR: join(tmp, 'captures'),
+      NIKKE_DRIVE_GATEWAY_URL: `${origin}/exec`,
+      ...(via === 'サービスアカウント'
+        ? {
+            NIKKE_DRIVE_SA_KEY: JSON.stringify({
+              client_email: 'sa@example',
+              private_key: key,
+              token_uri: `${origin}/token`,
+            }),
+            NIKKE_DRIVE_API: `${origin}/drive/v3`,
+          }
+        : {}),
+    };
+    mkdirSync(repo(), { recursive: true });
+    setDrive('private/owner.md', 'owner\n');
+    setDrive('claude/CLAUDE.md', '# 言語設定\n');
+    setDrive('claude/projects/D--nikke-project/memory/MEMORY.md', '- [a](a.md) — x\n');
+    setDrive('scratch/old.md', 'old\n');
+    setDrive('scratch/notes/new.md', 'new\n');
   });
-  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
-  tmp = mkdtempSync(join(tmpdir(), 'cloud-sync-'));
-  env = {
-    PATH: process.env['PATH'],
-    HOME: join(tmp, 'home'),
-    // Windows の os.homedir() は HOME でなく USERPROFILE を見る
-    USERPROFILE: join(tmp, 'home'),
-    CLAUDE_CODE_REMOTE: 'true',
-    CLAUDE_PROJECT_DIR: repo(),
-    CLAUDE_CONFIG_DIR: join(tmp, 'claude'),
-    NIKKE_CAPTURES_DIR: join(tmp, 'captures'),
-    NIKKE_DRIVE_GATEWAY_URL: `http://127.0.0.1:${(server.address() as AddressInfo).port}/exec`,
-  };
-  mkdirSync(repo(), { recursive: true });
-  setDrive('private/owner.md', 'owner\n');
-  setDrive('claude/CLAUDE.md', '# 言語設定\n');
-  setDrive('claude/projects/D--nikke-project/memory/MEMORY.md', '- [a](a.md) — x\n');
-  setDrive('scratch/old.md', 'old\n');
-  setDrive('scratch/notes/new.md', 'new\n');
-});
 
-afterAll(async () => {
-  server.closeAllConnections();
-  await new Promise<void>((resolve) => server.close(() => resolve()));
-  rmSync(tmp, { recursive: true, force: true });
-});
+  afterAll(async () => {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+    rmSync(tmp, { recursive: true, force: true });
+  });
 
-describe('drive/cloud-sync', () => {
+  /** 中身を読んだ回数（受け口の get か、Drive API の alt=media） */
+  const reads = () => (via === '受け口' ? calls['get'] : calls['media']) ?? 0;
+
   it('--pull は private/・メモリ・CLAUDE.md を置き、裏の --pull-rest が scratch/ を置く', async () => {
     const { out, rest } = await pull();
     expect(out).toContain('Drive から private/・メモリを 2 件置いた');
@@ -141,11 +215,11 @@ describe('drive/cloud-sync', () => {
   });
 
   it('Drive で変わっていなければ、取り直すのは全体の CLAUDE.md だけ', async () => {
-    const before = calls['get'] ?? 0;
+    const before = reads();
     const { out, rest } = await pull();
     expect(out).toContain('Drive から private/・メモリを 0 件置いた');
     expect(rest).toContain('0 件置いた（取るものは 0 件）');
-    expect(calls['get']).toBe(before + 1);
+    expect(reads()).toBe(before + 1);
   });
 
   it('--push は変えた・増やした・消したものだけを戻し、Drive 側も変わっていれば別名で置く', async () => {
@@ -175,12 +249,16 @@ describe('drive/cloud-sync', () => {
     expect(readFileSync(join(repo(), 'private/owner.md'), 'utf8')).toBe('owner edited\n');
   });
 
-  it('受け口に断られたら、手元をそのままにして、何を確かめるかを 1 つにまとめて知らせる', async () => {
+  it('断られたら、手元をそのままにして、何を確かめるかを 1 つにまとめて知らせる', async () => {
     const base = readFileSync(state('base.json'), 'utf8');
     refuse = true;
     try {
       const { out, rest } = await pull();
-      expect(out).toContain('private/・メモリを取れなかった: 受け口が断った（snapshot）: 合言葉が違う。合言葉');
+      expect(out).toContain(
+        via === '受け口'
+          ? 'private/・メモリを取れなかった: 受け口が断った（snapshot）: 合言葉が違う。合言葉'
+          : 'private/・メモリを取れなかった: サービスアカウントで読めなかった: Drive API /files が失敗（403）',
+      );
       expect(out).toContain('確かめ方は plan/cloud-guide.md「困ったとき」');
       expect(out).not.toContain('Drive から private/・メモリを');
       expect(rest).toContain('private/・scratch/・メモリを取れなかった');
@@ -216,5 +294,10 @@ describe('drive/cloud-sync', () => {
     );
     // 次の応答の終わりに送り直さない
     expect(await run('--push')).toBe('');
+  });
+
+  it('読みに使わないほうの道は呼ばない（サービスアカウントで読むときは、受け口は書くことにだけ使う）', () => {
+    if (via === '受け口') expect(calls['list'] ?? 0).toBe(0);
+    else expect([calls['snapshot'] ?? 0, calls['get'] ?? 0]).toEqual([0, 0]);
   });
 });

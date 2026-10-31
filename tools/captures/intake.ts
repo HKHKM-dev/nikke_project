@@ -117,19 +117,9 @@ function envId(name: string): string {
   return v;
 }
 
-/** record の下を / 区切りの相対パスで全部たどる（フォルダは潜る） */
-async function listRecord(drive: Drive, folderId: string, rel = ''): Promise<(DriveFile & { path: string })[]> {
-  const out: (DriveFile & { path: string })[] = [];
-  for (const f of await drive.children(folderId)) {
-    if (drive.isFolder(f)) out.push(...(await listRecord(drive, f.id, `${rel}${f.name}/`)));
-    else out.push({ ...f, path: `${rel}${f.name}` });
-  }
-  return out;
-}
-
 if (values['list-record']) {
   const drive = await Drive.connect();
-  const files = await listRecord(drive, envId('NIKKE_DRIVE_RECORD_FOLDER_ID'));
+  const files = await drive.tree(envId('NIKKE_DRIVE_RECORD_FOLDER_ID'));
   for (const f of files)
     console.log(`${f.path}\t${(Number(f.size ?? 0) / 1024 / 1024).toFixed(1)}MB\t${f.modifiedTime ?? ''}`);
   if (files.length === 0) console.log('record は空');
