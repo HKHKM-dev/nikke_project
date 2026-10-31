@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 64・効果 373（根拠あり 354）・notes 174（根拠あり 76）
+件数: キャラ 64・効果 380（根拠あり 360）・notes 169（根拠あり 76）
 
-notes の種類: 未対応 47・前提の外 31・計算に無関係 33・補足 13・間接 50
+notes の種類: 未対応 42・前提の外 31・計算に無関係 33・補足 13・間接 50
 
-スロット: supported 139・partial 16・unsupported 18・noEffect 34
+スロット: supported 142・partial 14・unsupported 17・noEffect 34
 
 ## 10 ラピ
 
@@ -731,25 +731,27 @@ notes の種類: 未対応 47・前提の外 31・計算に無関係 33・補足
 
 ## 471 スノーホワイト：ヘビーアームズ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] state・チャージ中の 0.2 秒ごと・autoFireReady: C-0757（確定）
   - effects[1] removeState・normalShot・autoFireReady: C-0757（確定）
   - effects[2] timed・チャージ中の 0.2 秒ごと・damageTaken: C-0758（確定）
   - effects[3] damage・fullChargeShot・skill: C-0757（確定）、C-0426（確定）
-  - effects[4] damage・fullChargeShot・skill: C-0757（確定）、C-0426（確定）
+  - effects[4] damage・fullChargeShot・skill: C-0757（確定）、C-0426（確定）、C-0761（確定）
+  - effects[5] stackChange・fullChargeShot・sevenDwarvesFullyActive（減少）: C-0760（確定）
+  - effects[6] removeState・normalShot・sevenDwarvesFullyActive: 根拠なし
   - notes[0] 間接（防御力）: オートファイア準備の中身の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。装填数は effects[0]）: 根拠なし
-  - notes[1] 未対応: フルチャージして攻撃した時のセブンスドワーフ・フルアクティブの使用回数▼と、通常攻撃をした時（フルバースト状態でなければ）のフルアクティブ解除は未対応（バーストのフルアクティブと一緒に書く。段 14 の PR 3）: 根拠なし
-- **skill2**: partial
+- **skill2**: supported
   - effects[0] timed・battleStart・fixedChargeTime: 根拠なし
   - effects[1] timed・フルチャージした時・attack: C-0758（確定）
+  - effects[2] timed・burstStage3Enter・attack: C-0762（確定）
+  - effects[3] timed・フルチャージした時・chargeDamage: C-0760（確定）
+  - effects[4] timed・フルチャージした時・sequentialAttackDamage: C-0760（確定）
   - notes[0] 間接（貫通）: フルチャージした時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）: C-0443（範囲外）
-  - notes[1] 未対応: バースト 3 段階突入時の自分の攻撃力▲（10 秒）は未対応: 根拠なし
-  - notes[2] 未対応: セブンスドワーフ・フルアクティブ状態のフルチャージ時のチャージダメージ▲・順番攻撃ダメージ▲（1 発）は未対応: 根拠なし
-  - notes[3] 前提の外: フルチャージした時のパーツダメージ▲は、パーツの無い射撃場の的ではダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
-- **burst**: unsupported
-  - notes[0] 未対応: 自分の攻撃ダメージ▲（10 秒）は未対応: 根拠なし
-  - notes[1] 未対応: セブンスドワーフ・フルアクティブ（チャージ時間 3.2 秒の固定、ロックオン対象数とオートファイア準備の装填数▲、使用回数 2 回）は未対応: 根拠なし
-  - notes[2] 前提の外: 破壊可能な発射体全体へのダメージは、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+  - notes[1] 前提の外: フルチャージした時のパーツダメージ▲は、パーツの無い射撃場の的ではダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-0762（確定）
+  - effects[1] state・burstUse・sevenDwarvesFullyActive（fixedChargeTime・maxStacksUp）: C-0760（確定）
+  - notes[0] 前提の外: 破壊可能な発射体全体へのダメージは、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
 
 ## 472 紅蓮：神殺
 
