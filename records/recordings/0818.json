@@ -37,7 +37,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0581 の撮影 B2（段 16 の PR 2）。リター（I）・デルタ（II）・ベスティー：タクティカル・アップ（III・操作）。オート射撃 ON・オートバースト ON",
+  "conditionNote": "V-0584 の撮影 B2（段 16 の PR 2）。リター（I）・デルタ（II）・ベスティー：タクティカル・アップ（III・操作）。オート射撃 ON・オートバースト ON",
   "backup": {
     "at": "2026-11-01T01:36+09:00",
     "via": "cloud-move",

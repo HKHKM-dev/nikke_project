@@ -25,7 +25,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": false,
-  "conditionNote": "V-0581 の撮影 A1（段 16 の PR 1）。千束単騎・操作（オート射撃 ON）。オートバースト OFF",
+  "conditionNote": "V-0584 の撮影 A1（段 16 の PR 1）。千束単騎・操作（オート射撃 ON）。オートバースト OFF",
   "backup": {
     "at": "2026-11-01T01:13+09:00",
     "via": "cloud-move",
