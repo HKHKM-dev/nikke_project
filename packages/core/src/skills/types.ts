@@ -615,6 +615,33 @@ export function isWeaponChangeEndTrigger(t: unknown): t is WeaponChangeEndTrigge
   return typeof t === 'object' && t !== null && 'weaponChangeEnd' in t;
 }
 
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1 節。論点 3）: 「チャージ中の時、N 秒ごとに」。自分のチャージ武器の溜めの中で、
+ * 溜め始めから k × everySeconds 秒（k = 1, 2, …）に発火する。k 回目は溜め始めの floor(k × everySeconds ÷ 0.017) フレーム後（端数を
+ * 持ち越す。damage の perCountIntervalSeconds と同じ刻み）。溜めの進み（溜め始めからのフレーム）は、部分チャージの進みと同じ式
+ * （frame/shooter.ts の chargeProgressFrames）で、撃ったフレーム・リロード中・狙えない窓（ハイド）の間は溜めていない（撃つ・リロード・
+ * ハイドで切れたら、次の溜め始めから数え直す）。部分チャージの発の溜めでも発火する。1 パス目が溜めを追って発火のフレームを射撃の記録
+ * （ShotLog.chargeTicks）に書き、流し直し（skills/triggers.ts の replayEvents）も同じ列を読む。timed と状態の付与にだけ書ける
+ */
+export type ChargeTickTrigger = { chargeTick: { everySeconds: number } };
+
+export function isChargeTickTrigger(t: unknown): t is ChargeTickTrigger {
+  return typeof t === 'object' && t !== null && 'chargeTick' in t;
+}
+
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.6 節）: 「フルチャージした時」（溜めが満ちた時）。自分のチャージ武器の溜めの進みが
+ * チャージのフレーム数に届いたフレーム（撃つ発の、満ちてから撃つまでのフレーム前。射撃姿勢維持型でなければ 1f 前）に発火する。
+ * 窓は発火のフレームから（射撃の回数のきっかけの「次のフレームから」ではない）なので、その満ちた溜めで撃つ発自身にも乗る（0774 の
+ * 戦闘の最初の発から攻撃力▲が乗る。V-0552）。「フルチャージして攻撃した時」（fullChargeShot）とは別。1 パス目が満ちたフレームを射撃の
+ * 記録（ShotLog.chargeFullFrames）に書く。timed と状態の付与にだけ書ける
+ */
+export type ChargeFullTrigger = { chargeFull: true };
+
+export function isChargeFullTrigger(t: unknown): t is ChargeFullTrigger {
+  return typeof t === 'object' && t !== null && 'chargeFull' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー（ペルソナ編: 効果名のトリガー） */
 export type EffectTrigger =
   | BuffTrigger
@@ -624,6 +651,9 @@ export type EffectTrigger =
   | AppliedTrigger
   | FullStackTrigger
   | WeaponChangeEndTrigger
+  // 2 段目の段 14 の PR 2: { chargeTick }・{ chargeFull }（timed・状態の付与だけが受ける。parseChargeTrigger）
+  | ChargeTickTrigger
+  | ChargeFullTrigger
   // 2 段目の段 13 の PR 1: { counterFull }（damage・dot・counterChange だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger;
 
@@ -922,7 +952,10 @@ export type DamageEffect = {
   /**
    * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 時間の周期のきっかけの倍率ダメージの、どのヒット（hitsRef の N ヒット）も射手の
    * 1 ヒットぶんのバーストゲージ（targetBurstEnergyPerShot。フルチャージ倍率なし）をヒットのフレームに溜める。1 パス目
-   * （frame/firstPass.ts）が周期の発火（periodShorten の短縮も）を追って予約する。delayFrames と組み、condition とは組み合わせない
+   * （frame/firstPass.ts）が周期の発火（periodShorten の短縮も）を追って予約する。delayFrames と組み、condition とは組み合わせない。
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節。C-0426）: 射撃の回数のきっかけ（数える窓・確率なし）にも書ける。1 パス目が
+   * 射撃を数えて発火を追い、ヒット（perCount { state } の数だけ 1 つずつ出すヒットなら、発火のフレームのスタック数のヒット）のフレームの
+   * ゲージに予約する（オートファイアのどのヒットも射手の target_burst_energy_pershot を溜める）
    */
   gaugePerHit?: true;
   /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
@@ -988,7 +1021,9 @@ export type DamageEffect = {
   /**
    * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: perCount の数だけのヒットを、倍率を掛けずに 1 つずつ、発火のフレームから
    * この間隔（秒・即値。録画で読む）で出す。k 個目（0 始まり）は発火の floor(k × 間隔 ÷ 0.017) フレーム後（端数を持ち越す。ラピ：
-   * レッドフードの粘着榴弾の起爆は 0.2 秒ごと。C-0726）。perCount の { counter } のときだけ書ける
+   * レッドフードの粘着榴弾の起爆は 0.2 秒ごと。C-0726）。perCount のときだけ書ける。
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: perCount の { state } と、delayFrames とも組める（k 個目は発火の
+   * delayFrames + floor(k × 間隔 ÷ 0.017) フレーム後。オートファイアの順番の攻撃。V-0552）
    */
   perCountIntervalSeconds?: number;
   /**
@@ -997,6 +1032,12 @@ export type DamageEffect = {
    * どちらか 1 つ
    */
   perCountIntervalFrames?: number;
+  /**
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 「（装填数分だけ）順番に攻撃」。perCount の数だけ 1 つずつ出すヒット
+   * （perCountIntervalSeconds・perCountIntervalFrames）を順番の攻撃にし、順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける
+   * （hitsRef のヒットと同じ。値は true だけ）
+   */
+  sequentialAttack?: true;
   /**
    * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: ヒットがコアに当たりうるか。当たる割合は的の表の coreHitRate.autoAttacks の
    * `<resourceId>:<スロット>` の行（無ければ 0）で、当たったヒットは倍率グループに (コア倍率 − 1) を足す（autoAttack の core と同じ。
@@ -1015,6 +1056,13 @@ export type DamageEffect = {
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
 };
+
+/** 2 段目の段 12・13: perCount の数だけ 1 つずつ出す倍率ダメージ（perCountIntervalSeconds・perCountIntervalFrames）か */
+export function splitsPerCount(
+  effect: Pick<DamageEffect, 'perCountIntervalSeconds' | 'perCountIntervalFrames'>,
+): boolean {
+  return effect.perCountIntervalSeconds !== undefined || effect.perCountIntervalFrames !== undefined;
+}
 
 /**
  * Stage 10: 「バーストスキルクールタイム X 秒▼」。発火の瞬間に対象の残りの CT を X 秒減らす（0 未満にはしない。即時効果）。
@@ -1651,6 +1699,23 @@ export function staticStatesOf(definition: SkillDefinition | null | undefined): 
 }
 
 /**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 定義の効果が使う溜めのきっかけ（{ chargeTick } の間隔の秒の一覧
+ * （重複なし）と、{ chargeFull } があるか）。1 パス目は、これのある枠の溜めだけを追って射撃の記録に書く（frame/firstPass.ts）
+ */
+export function chargeTriggersOf(definition: SkillDefinition): { tickSeconds: number[]; full: boolean } {
+  const tickSeconds = new Set<number>();
+  let full = false;
+  for (const slot of SKILL_SLOTS) {
+    for (const e of definition.skills[slot].effects) {
+      if (!('trigger' in e)) continue;
+      if (isChargeTickTrigger(e.trigger)) tickSeconds.add(e.trigger.chargeTick.everySeconds);
+      if (isChargeFullTrigger(e.trigger)) full = true;
+    }
+  }
+  return { tickSeconds: [...tickSeconds], full };
+}
+
+/**
  * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 定義に、リロードの込め終わりで終わる効果（durationUntil: reloadEnd。
  * timed の自分だけ）があるか（宝物版・編成の条件を当てた後の定義を渡す）。1 パス目が、その枠の込め終わりのフレームを書くかを決める
  */
@@ -2281,6 +2346,10 @@ function parseTrigger(
     for (const key of Object.keys(v)) if (key !== 'fullStack') fail(`${path}.${key}`, 'unknown field');
     return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
   }
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 溜めのきっかけは timed・付与だけ（parseChargeTrigger で先に読む）
+  if (v.chargeTick !== undefined || v.chargeFull !== undefined) {
+    fail(path, 'a charge trigger ({ chargeTick } / { chargeFull }) is only allowed in timed and state grants');
+  }
   // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: 使用武器の変更の終わりのきっかけは ammoDecrease だけ
   if (v.weaponChangeEnd !== undefined) {
     if (!allowWeaponChangeEnd)
@@ -2444,8 +2513,11 @@ function parseTimedFields(
 ): TimedFields {
   // 2 段目の段 3（plan/design-skill-stage3.md 1.2 節）: 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける。
   // 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: 「〈名前〉が適用される時」（{ applied }）も書ける
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
+  // 「フルチャージした時」（{ chargeFull }）も書ける
   const trigger =
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
+    parseChargeTrigger(v.trigger, `${path}.trigger`) ??
     parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
@@ -2816,6 +2888,29 @@ function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined 
   if (!isRecord(v) || v.applied === undefined) return undefined;
   for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');
   return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
+}
+
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: { chargeTick: { everySeconds } } か { chargeFull: true }。それ以外の形なら
+ * undefined（timed と状態の付与の parseTimedFields だけが読む）
+ */
+function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | ChargeFullTrigger | undefined {
+  if (!isRecord(v)) return undefined;
+  if (v.chargeFull !== undefined) {
+    for (const key of Object.keys(v)) if (key !== 'chargeFull') fail(`${path}.${key}`, 'unknown field');
+    if (v.chargeFull !== true) fail(`${path}.chargeFull`, `expected true, got ${JSON.stringify(v.chargeFull)}`);
+    return { chargeFull: true };
+  }
+  if (v.chargeTick === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'chargeTick') fail(`${path}.${key}`, 'unknown field');
+  const tick = v.chargeTick;
+  if (!isRecord(tick)) fail(`${path}.chargeTick`, 'expected { everySeconds }');
+  for (const key of Object.keys(tick)) if (key !== 'everySeconds') fail(`${path}.chargeTick.${key}`, 'unknown field');
+  const seconds = tick.everySeconds;
+  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+    fail(`${path}.chargeTick.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+  }
+  return { chargeTick: { everySeconds: seconds } };
 }
 
 /** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
@@ -3287,9 +3382,14 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     // 段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: フルバーストの始まり（ラピ：レッドフードの粘着榴弾の起爆）も
     const per = v.perCount;
     if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
-    // 段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: カウンタが上限に届いた時（ミハラ：ボンディングチェーンのチェーンの数だけの攻撃）も
-    if (trigger !== 'burstUse' && trigger !== 'fullBurstStart' && !isCounterFullTrigger(trigger))
-      fail(`${path}.perCount`, 'perCount needs the trigger "burstUse", "fullBurstStart" or { counterFull }');
+    // 段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: カウンタが上限に届いた時（ミハラ：ボンディングチェーンのチェーンの数だけの攻撃）も。
+    // 段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: フルチャージして攻撃した時（オートファイアの装填数分の順番の攻撃）も
+    const fullChargeShot = isShotCountTrigger(trigger) && trigger.count === 'fullChargeShot';
+    if (trigger !== 'burstUse' && trigger !== 'fullBurstStart' && !isCounterFullTrigger(trigger) && !fullChargeShot)
+      fail(
+        `${path}.perCount`,
+        'perCount needs the trigger "burstUse", "fullBurstStart", { counterFull } or { count: "fullChargeShot" }',
+      );
     for (const key of Object.keys(per))
       if (key !== 'state' && key !== 'counter') fail(`${path}.perCount.${key}`, 'unknown field');
     if ((per.state === undefined) === (per.counter === undefined))
@@ -3327,10 +3427,16 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       ref: parseRef(p.ref, `${path}.periodShorten.ref`),
     };
   }
-  // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ
+  // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ。2 段目の段 14 の PR 2（plan/design-skill-stage14.md
+  // 2.5 節）: 射撃の回数のきっかけ（数える窓なし）も
   if (v.gaugePerHit !== undefined) {
     if (v.gaugePerHit !== true) fail(`${path}.gaugePerHit`, `expected true, got ${JSON.stringify(v.gaugePerHit)}`);
-    if (!isTimerTrigger(trigger)) fail(`${path}.gaugePerHit`, 'gaugePerHit needs a timer trigger ({ everySeconds })');
+    if (!isTimerTrigger(trigger) && !(isShotCountTrigger(trigger) && !hasCountingWindow(trigger)))
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit needs a timer trigger ({ everySeconds }) or a shot count trigger without a counting window',
+      );
+    if (effect.gaugeHits !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with gaugeHits');
     // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない
     if (effect.delayFrames === undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit needs delayFrames');
     if (effect.condition !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a condition');
@@ -3343,10 +3449,9 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   }
   if (v.perCountIntervalSeconds !== undefined) {
     const key = 'perCountIntervalSeconds';
-    if (effect.perCount === undefined || !('counter' in effect.perCount))
-      fail(`${path}.${key}`, `${key} needs perCount { counter }`);
-    if (effect.delayFrames !== undefined || effect.perBurstHit !== undefined)
-      fail(`${path}.${key}`, `${key} cannot be used with delayFrames or perBurstHit`);
+    // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: perCount の { state } と delayFrames も（オートファイアの順番の攻撃）
+    if (effect.perCount === undefined) fail(`${path}.${key}`, `${key} needs perCount`);
+    if (effect.perBurstHit !== undefined) fail(`${path}.${key}`, `${key} cannot be used with perBurstHit`);
     const seconds = v.perCountIntervalSeconds;
     if (typeof seconds !== 'number' || !(seconds > 0))
       fail(`${path}.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
@@ -3359,6 +3464,22 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (effect.perCountIntervalSeconds !== undefined || effect.perBurstHit !== undefined)
       fail(`${path}.${key}`, `${key} cannot be used with perCountIntervalSeconds or perBurstHit`);
     effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.${key}`);
+  }
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 「順番に攻撃」の perCount の数だけのヒット
+  if (v.sequentialAttack !== undefined) {
+    if (v.sequentialAttack !== true)
+      fail(`${path}.sequentialAttack`, `expected true, got ${JSON.stringify(v.sequentialAttack)}`);
+    if (!splitsPerCount(effect))
+      fail(`${path}.sequentialAttack`, 'sequentialAttack needs perCountIntervalSeconds or perCountIntervalFrames');
+    effect.sequentialAttack = true;
+  }
+  // 同: 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット（1 つずつ出すなら perCount の { state }）だけ
+  if (effect.gaugePerHit === true && isShotCountTrigger(trigger) && effect.perCount !== undefined) {
+    if (!('state' in effect.perCount) || !splitsPerCount(effect))
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit with perCount needs perCount { state } split by perCountIntervalSeconds or perCountIntervalFrames',
+      );
   }
   // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2・2.3 節）: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
   for (const key of ['core', 'distance', 'projectileExplosion', 'projectileStick'] as const) {

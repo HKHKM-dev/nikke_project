@@ -174,7 +174,6 @@ export type MinimalElement = {
   reads?: IndirectPath[];
 };
 
-/** 効果の形（きっかけは名前に直す: 文字列はそのまま、回数トリガーは count、時間の周期は timer、効果名は applied） */
 /** 2 段目の段 1: 定義のその状態の中身の stat（付与のどれかが持つ中身。無ければ空） */
 function stateStatsOf(def: SkillDefinition, state: NamedStateId): string[] {
   for (const slot of SKILL_SLOTS) {
@@ -185,23 +184,25 @@ function stateStatsOf(def: SkillDefinition, state: NamedStateId): string[] {
   return [];
 }
 
+/** 鍵の名前をそのままきっかけの名前にするきっかけ（shapeOfEffect） */
+const NAMED_TRIGGER_KEYS = ['applied', 'fullStack', 'chargeTick', 'chargeFull'] as const;
+
+/** 効果の形のきっかけの名前（shapeOfEffect。名前に直せないきっかけは無し） */
+function triggerNameOf(t: unknown): string | undefined {
+  if (typeof t === 'string') return t;
+  if (t === null || typeof t !== 'object') return undefined;
+  if ('count' in t) return String(t.count);
+  if ('everySeconds' in t) return 'timer';
+  return NAMED_TRIGGER_KEYS.find((k) => k in t);
+}
+
+/**
+ * 効果の形（きっかけは名前に直す: 文字列はそのまま、回数トリガーは count、時間の周期は timer、効果名は applied。2 段目の段 14 の PR 2:
+ * 溜めの周期は chargeTick、溜めが満ちた時は chargeFull）
+ */
 function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<MinimalElement['shape']> {
   const v = e as Record<string, unknown>;
-  const t = v.trigger;
-  const trigger =
-    typeof t === 'string'
-      ? t
-      : t !== null && typeof t === 'object'
-        ? 'count' in t
-          ? String((t as { count: string }).count)
-          : 'everySeconds' in t
-            ? 'timer'
-            : 'applied' in t
-              ? 'applied'
-              : 'fullStack' in t
-                ? 'fullStack'
-                : undefined
-        : undefined;
+  const trigger = triggerNameOf(v.trigger);
   return {
     kind: e.kind,
     ...(typeof v.stat === 'string' ? { stat: v.stat } : {}),
@@ -433,7 +434,8 @@ export function sameEdgeRange(a: EdgeRange | undefined, b: EdgeRange | undefined
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
-const SHOT_TRIGGERS: ReadonlySet<string> = new Set(SHOT_COUNT_KINDS);
+/** 2 段目の段 14 の PR 2: 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い） */
+const SHOT_TRIGGERS: ReadonlySet<string> = new Set([...SHOT_COUNT_KINDS, 'chargeTick', 'chargeFull']);
 const FULL_BURST_TRIGGERS: ReadonlySet<string> = new Set([
   'fullBurstStart',
   'fullBurstEnd',

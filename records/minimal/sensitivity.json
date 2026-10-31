@@ -15242,6 +15242,70 @@
       "minus": null,
       "plus": null,
       "error": "minus: 窓の中の発動が 0 回しかない"
+    },
+    {
+      "observation": "0774-01",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "4097f2890873cd74",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0774-02",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "d0c26fe82740feef",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0774-03",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "42a196e96f87872e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0774-04",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "0c36ed1efacde295",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0775-01",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "dcff71dfaa4a23f8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0775-02",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "a5161c2f8a172110",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0775-03",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "85077e8e59b8be31",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0775-04",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "901963e5b40fa69a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

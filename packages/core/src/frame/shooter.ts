@@ -348,6 +348,19 @@ export function resumeShooter(
 }
 
 /**
+ * チャージ武器の溜めの進み（フレーム）。このフレームの stepShooter の前に呼ぶ。次の発までの残りの待ちが k のとき C + H − k（C はチャージの
+ * フレーム数、H は満ちてから撃つまで。射撃姿勢維持型は stance.holdFrames、ほかは 1）で、溜め始めのフレームで 0、満ちたフレームで C、
+ * 撃つフレームで C + H。0 以下は構え解除・構えの間（溜めていない）。部分チャージの進み（partialChargeShot）は これ ÷ C。
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: きっかけ { chargeTick }・{ chargeFull } の溜め始めと満ちた時も
+ * この値で決める（frame/firstPass.ts）。マガジンの中の発は、チャージ時間が溜めの途中で変わっても前の発からの経過（chargeElapsed）で
+ * 待ちを決め直すので、この値は 1 フレームに 1 ずつ進む（入力が UP の 1 秒チャージの SR なら、前の発の 22f 後が溜め始め）。
+ * リロード中・狙えない窓の間は呼ぶ側が溜めていないとみなす
+ */
+export function chargeProgressFrames(state: ShooterState, params: FiringParams): number {
+  return params.chargeFrames + (params.stance?.holdFrames ?? 1) - state.wait;
+}
+
+/**
  * Stage 22-B: 攻撃できる的がいなくなったフレーム（窓の始まり。hideShooter の前に呼ぶ）に、チャージの途中なら、
  * その時点のチャージで撃つ（部分チャージ。C-0109）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
  * - 次の発までの残りの待ちが k のとき、p = min(1, (C + H − k) / C)（C はチャージのフレーム数、H は満ちてから撃つまで。
@@ -366,8 +379,7 @@ export function partialChargeShot(
   if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
   if (state.phase === 'reloading') return null;
   const charge = params.chargeFrames;
-  const hold = params.stance?.holdFrames ?? 1;
-  const progress = charge <= 0 ? 1 : Math.min(1, (charge + hold - state.wait) / charge);
+  const progress = charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params) / charge);
   if (progress <= 0) return null;
   if (state.phase === 'priming') startMagazine(state);
   fire(state, shot, model, params);

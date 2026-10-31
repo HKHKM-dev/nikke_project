@@ -369,6 +369,12 @@ export type HolderLists = {
    */
   selfStateAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
+   * 静的な状態は 1、無ければ 0）。frame/plan.ts の damage の perCount { state } と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
+   * ヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
+   */
+  selfStackCountAt(holder: number, state: NamedStateId, frame: number): number;
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
@@ -1908,6 +1914,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     own: tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === state),
   }));
 
+  const selfStackCountAt: HolderLists['selfStackCountAt'] = (holder, state, frame) => {
+    let level = 0;
+    for (const s of statesMatching(state)) {
+      if (staticStates[holder]?.has(s) === true) level = Math.max(level, 1);
+      for (const t of stateTracks[holder]?.get(s) ?? [])
+        for (const it of activeAt(t, frame)) if (it.start < frame) level = Math.max(level, it.stack ?? 1);
+    }
+    return level;
+  };
+
   return {
     hasSources:
       timedSources.length > 0 ||
@@ -1989,14 +2005,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       return sum;
     },
-    selfStateAt(holder, state, frame) {
-      // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）
-      return statesMatching(state).some(
-        (s) =>
-          staticStates[holder]?.has(s) === true ||
-          (stateTracks[holder]?.get(s) ?? []).some((t) => activeAt(t, frame).some((it) => it.start < frame)),
-      );
-    },
+    // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）。
+    // 段は 1 始まりなので、付いていればスタック数は 1 以上
+    selfStateAt: (holder, state, frame) => selfStackCountAt(holder, state, frame) > 0,
+    selfStackCountAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
       skipEffect(sourceSlotIndex, effect, frame);

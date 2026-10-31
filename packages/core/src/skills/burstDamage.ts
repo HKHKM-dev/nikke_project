@@ -14,6 +14,7 @@ import {
   skillElementMultiplier,
   stickHitMultiplier,
 } from '../damage.ts';
+import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData, LocalizedText } from '../types.ts';
 import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
@@ -22,6 +23,8 @@ import {
   isShotCountTrigger,
   isTimerTrigger,
   SKILL_SLOTS,
+  splitsPerCount,
+  type DamageEffect,
   type DotFirstTick,
   type EffectCondition,
   type SkillDamageType,
@@ -211,6 +214,65 @@ export function damageHitFramesOf(
   return out;
 }
 
+/**
+ * 2 段目の段 12・13: perCount の数だけのヒット（付与）の、発火 frame からのフレーム。k 個目（0 始まり）は、秒の間隔なら
+ * delay + floor(k × 間隔 ÷ 0.017) 後（端数を持ち越す。粘着榴弾の起爆。C-0726）、フレーム数の間隔なら delay + k × 間隔の後（キャプチャーチェーン。
+ * C-0745）。戦闘の終わり（end）より前だけ。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 秒の間隔にも delay を足す
+ * （オートファイアの順番の攻撃は、フルチャージの発の 44f 後から 0.2 秒ごと。V-0552）。2 パス目（frame/plan.ts）のヒットと、1 パス目
+ * （frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit）が同じ列を使う
+ */
+export function perCountFrames(
+  frame: number,
+  count: number,
+  step: { seconds?: number; frames?: number; delay?: number },
+  end: number,
+): number[] {
+  const out: number[] = [];
+  for (let k = 0; k < count; k++) {
+    const offset =
+      (step.delay ?? 0) + (step.seconds !== undefined ? gameSecondsToFrames(k * step.seconds) : k * step.frames!);
+    if (frame + offset < end) out.push(frame + offset);
+  }
+  return out;
+}
+
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 発火のフレーム fire の倍率ダメージのヒットのフレーム。perCount の数だけ
+ * 1 つずつ出すなら（splitsPerCount。count は発火のフレームの数）perCountFrames、そうでなければ damageHitFramesOf。2 パス目
+ * （frame/plan.ts）のヒットと、1 パス目（frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit）が同じ列を使う
+ */
+export function effectHitFrames(
+  effect: Pick<
+    ResolvedDamageEffect,
+    'delayFrames' | 'hits' | 'hitIntervalFrames' | 'perCountIntervalSeconds' | 'perCountIntervalFrames'
+  >,
+  fire: number,
+  count: number | undefined,
+  end: number,
+): number[] {
+  if (!splitsPerCount(effect) || count === undefined) return damageHitFramesOf(effect, fire, end);
+  const step = {
+    seconds: effect.perCountIntervalSeconds,
+    frames: effect.perCountIntervalFrames,
+    delay: effect.delayFrames,
+  };
+  return perCountFrames(fire, count, step, end);
+}
+
+/**
+ * Stage 11 モダニア: 射撃ごとの倍率ダメージ（every = 1）を 1 トリガーの値に畳み込むか（resolvePerShotDamage）。条件つきは畳み込まない
+ * （射撃ごとの発動として 1 件ずつ出す）。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 遅れて出るヒット（delayFrames）・
+ * perCount の数だけのヒット（オートファイア）も、発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す
+ */
+function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger): boolean {
+  return (
+    isPerShotTrigger(trigger) &&
+    effect.condition === undefined &&
+    effect.delayFrames === undefined &&
+    effect.perCount === undefined
+  );
+}
+
 export function resolveDamageEffects(
   def: SkillDefinition,
   character: CharacterData,
@@ -229,15 +291,12 @@ export function resolveDamageEffects(
       // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
       // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 条件つきは、
       // 射撃ごとの発動として 1 件ずつ出す（ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
-      // 回数トリガーの遅れ編の第 2 段: 畳み込む効果は射撃と同じフレームに乗るので、遅れを書けない
-      if (isPerShotTrigger(trigger) && effect.delayFrames !== undefined) {
-        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot have delayFrames`);
-      }
+      // 回数トリガーの遅れ編の第 2 段: 畳み込む効果は射撃と同じフレームに乗る。遅れて出るヒットは畳み込まない（foldsIntoShot）
       // 2026-10-29 のキャラの編: 畳み込む効果はコアの補正を持てない（resolvePerShotDamage が読まない）
-      if (isPerShotTrigger(trigger) && effect.condition === undefined && effect.coreHit === true) {
+      if (foldsIntoShot(effect, trigger) && effect.coreHit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
-      if (isPerShotTrigger(trigger) && effect.condition === undefined) return;
+      if (foldsIntoShot(effect, trigger)) return;
       // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）
       if (isPerShotTrigger(trigger) && character.weaponType === 'SG') {
         throw new RangeError(
@@ -281,6 +340,9 @@ export function resolveDamageEffects(
       }
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
       if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
+      // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 「順番に攻撃」の perCount の数だけのヒット（オートファイアの効果 2）も
+      // 順番の攻撃で、順番攻撃ダメージ▲を掛ける
+      if (effect.sequentialAttack === true) r.sequential = true;
       // 2 段目の段 12 の PR 2: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
       if (effect.core === true) r.core = true;
       if (effect.distance === true) r.distance = true;
@@ -522,9 +584,9 @@ export function resolvePerShotDamage(
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage') continue;
-      if (!isPerShotTrigger(resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
-      // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）
-      if (effect.condition !== undefined) continue;
+      // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。段 14 の PR 2: 遅れて出るヒット・
+      // perCount の数だけのヒットも
+      if (!foldsIntoShot(effect, resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
       if (character.weaponType === 'SG') {
         throw new RangeError(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,

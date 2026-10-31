@@ -39,8 +39,9 @@ describe('語彙の検証', () => {
   it('allows { counterFull } with perCount on damage, and perCountIntervalFrames only with perCount { counter }', () => {
     expect(withEffect(attack, { perCount: undefined, perCountIntervalFrames: undefined })).not.toThrow();
     expect(withEffect(attack, { perCount: undefined })).toThrow(/perCountIntervalFrames needs perCount/);
+    // 段 14 の PR 2: perCountIntervalSeconds は delayFrames と組めるようになったので、秒とフレームの間隔の重なりで落ちる
     expect(withEffect(attack, { perCountIntervalSeconds: 0.25 })).toThrow(
-      /cannot be used with delayFrames or perBurstHit/,
+      /perCountIntervalFrames cannot be used with perCountIntervalSeconds/,
     );
     expect(withEffect(attack, { trigger: { counterFull: 'nope' } })).toThrow(/counterFull/);
   });

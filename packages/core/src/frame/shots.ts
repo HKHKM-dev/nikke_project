@@ -41,6 +41,16 @@ export type ShotLog = {
    */
   weaponChangeShotFrames?: number[];
   /**
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1 節）: きっかけ { chargeTick } の間隔ごとの、溜めの周期の発火のフレーム（昇順）。
+   * 定義にそのきっかけを持つ枠だけ、1 パス目が溜めの進み（frame/shooter.ts の chargeProgressFrames）から書く。流し直し
+   * （skills/triggers.ts の replayEvents）も同じ列を読む。省略は無し
+   */
+  chargeTicks?: { everySeconds: number; frames: number[] }[];
+  /**
+   * 同 2.6 節: 溜めが満ちたフレーム（きっかけ { chargeFull }。昇順）。定義にそのきっかけを持つ枠だけ、1 パス目が書く。省略は無し
+   */
+  chargeFullFrames?: number[];
+  /**
    * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: チャージしない変更後の武器（instantFire）で撃った射撃のフレーム（frames の
    * 部分列）。fullChargeShot に数えない。1 パス目が書く。省略は無し
    */

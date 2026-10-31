@@ -1,0 +1,159 @@
+[
+  {
+    "id": "0775-01",
+    "recording": "0775",
+    "source": "V-0552",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 876044,
+    "description": "スノーホワイト：ヘビーアームズ単騎の、戦闘の最初のフルチャージの発（戦闘開始 f819 から 82f）のヒット（コアで会心・距離ボーナスなし）。S1 の受けるダメージ▲と S2 のフルチャージした時の攻撃力▲の両方が乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（単騎・1 フレームに 1 ヒット）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（残り時間の表示が出たフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 82,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0775-02",
+    "recording": "0775",
+    "source": "V-0552",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 85067,
+    "description": "同じ録画の最初のオートファイアの効果 1（敵全体。最終攻撃力の 41.9%）の 1 ヒット（会心なし。戦闘開始から 88f）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（単騎・1 フレームに 1 ヒット）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（残り時間の表示が出たフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0775-03",
+    "recording": "0775",
+    "source": "V-0552",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 214372,
+    "description": "同じ録画の最初のオートファイアの効果 2（ロックオン対象に順番の攻撃。最終攻撃力の 105.59%）の 1 ヒット目（会心なし。戦闘開始から 126f）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（単騎・1 フレームに 1 ヒット）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（残り時間の表示が出たフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0775-04",
+    "recording": "0775",
+    "source": "V-0552",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": [88, 126, 137, 149, 161, 173, 182, 220, 231, 243, 255, 267],
+    "unit": "f",
+    "description": "同じ録画の最初の 2 回のフルチャージの発（戦闘開始から 82f・176f）のオートファイアの 12 ヒット（敵全体 1 と順番の攻撃 5 ずつ）の、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（単騎・1 フレームに 1 ヒット）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（残り時間の表示が出たフレーム）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "count": 12
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0775-05",
+    "recording": "0775",
+    "source": "V-0552",
+    "readAt": "2026-10-31",
+    "kind": "total",
+    "use": "record",
+    "value": 177333247,
+    "description": "同じ録画の 180 秒の総ダメージ（HUD の最後の値。戦闘履歴の与ダメージと同じ）。モデルは発が多く（的のジャンプの前後の発の刻み）、比べない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "最後の増分のフレームの値"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "normal"
+    }
+  }
+]

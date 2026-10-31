@@ -30,6 +30,8 @@ import {
   type AppliedTrigger,
   type FullStackTrigger,
   type WeaponChangeEndTrigger,
+  type ChargeTickTrigger,
+  type ChargeFullTrigger,
   type BasicBurstStep,
   type BurstStepMode,
   type BurstStepModeField,
@@ -74,6 +76,9 @@ export type ResolvedTrigger =
   | AppliedTrigger
   | FullStackTrigger
   | WeaponChangeEndTrigger
+  // 2 段目の段 14 の PR 2: 溜めの周期と、溜めが満ちた時（1 パス目の射撃の記録 ShotLog.chargeTicks・chargeFullFrames。skills/triggers.ts）
+  | ChargeTickTrigger
+  | ChargeFullTrigger
   // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレーム。damage・dot・counterChange だけ。1 パス目のカウンタの記録で決まる
   // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger;
