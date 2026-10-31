@@ -8,12 +8,14 @@
     sans-serif;
   line-height: 1.45;
 }
-/* 右上の設定のテーマ（theme.ts）。:root を重ねて、アーティファクトの表示枠の data-theme より強くする */
-:root:root[data-app-theme='light'] {
-  color-scheme: light;
+/* 右上の設定のテーマ（theme.ts）。アーティファクトの表示枠が当てる閲覧側のテーマより強くする（body にも当てる） */
+:root:root[data-app-theme='light'],
+:root:root[data-app-theme='light'] body {
+  color-scheme: light !important;
 }
-:root:root[data-app-theme='dark'] {
-  color-scheme: dark;
+:root:root[data-app-theme='dark'],
+:root:root[data-app-theme='dark'] body {
+  color-scheme: dark !important;
 }
 body {
   background: Canvas;
