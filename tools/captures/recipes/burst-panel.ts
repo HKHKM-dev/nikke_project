@@ -19,7 +19,7 @@ import {
 import { derived } from './cache.ts';
 import { observation, type Recipe, type RecipeObservation } from './types.ts';
 
-const VERSION = 1;
+const VERSION = 2;
 /** 特徴のキャッシュの名前（特徴の測り方を変えたら上げる） */
 const CACHE_KEY = 'burst-panel@1';
 
