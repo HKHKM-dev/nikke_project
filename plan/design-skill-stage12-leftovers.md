@@ -3,7 +3,7 @@
 - 何のための文書か: 段 12 で決着しなかった、ラピ：レッドフード（`packages/core/data/skills/16.json`）の未対応の notes の 2 件を片づける。[design-skill-stage14.md](design-skill-stage14.md) 4 節の候補 4。
 - 関連: [design-skill-stage12.md](design-skill-stage12.md)（2.1・3.2 節と「経過」の 2026-10-30）、[design-skill-stage10.md](design-skill-stage10.md) 0.2 節（爆発範囲▲を前提の外に移さない理由）、[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.1 節（notes の種類）、[requirements.md](requirements.md) 4.2 節（前提）、V-0535・V-0537（録画 0116・0117・0733・0734）
 - 作成日: 2026-10-31
-- 状態: 決定（2026-10-31。オーナーが論点 1・2 を推奨どおりに決めた）。実装した（V-0554、C-0759）
+- 状態: 決定（2026-10-31。オーナーが論点 1・2 を推奨どおりに決めた）
 
 ## 1. 爆発範囲▲
 
