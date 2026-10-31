@@ -13382,6 +13382,54 @@
       "plus": 0
     },
     {
+      "observation": "0663-01",
+      "element": "エレグ skill1.effects[0]",
+      "key": "56006876bbfebab9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0664-01",
+      "element": "エレグ skill1.effects[0]",
+      "key": "068bec251e78b0d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0665-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "40ddb3f267c6874b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0665-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "93f3e20f4f8d95d8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0666-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "89b162e8199d02db",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0666-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "2d7c8a510010d488",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0667-01",
       "element": "マナ burst.effects[0]",
       "key": "8983d207c721eb50",
@@ -13441,6 +13489,158 @@
       "observation": "0670-01",
       "element": "マナ burst.effects[1]",
       "key": "2ba189b6b85ddff7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "b91e96380e221663",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "83d85f24314a61c5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "297869e3fb1284de",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-09",
+      "element": "エレグ skill1.effects[0]",
+      "key": "5271a7ae5cead689",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "eb2f22a00f51cb99",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "56e1bb717097ab24",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0690-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "e8bcff40deb93827",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0691-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "a5088e85c759eedc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0691-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "b1be9d89ab57d26a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0691-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "36da54146149127d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0691-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "bf9b295d96467022",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0691-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "923adaebf7a369d2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0692-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "0961c93066d30f6b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0692-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "485728bc44c4f9df",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0692-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "d09aebbbb8d43b22",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0692-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "40e147f39e38e8be",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0693-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "d1ca3910230e5e73",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0693-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "38c9c75de26cf3d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0693-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "b8aa1cdb05df5e9a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13931,6 +14131,118 @@
       "minus": null,
       "plus": null,
       "error": "minus: 枠 3 の 3 回目の発動の後に始まった窓が無い"
+    },
+    {
+      "observation": "0711-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "bba2bafb4266c154",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0711-15",
+      "element": "エレグ skill1.effects[0]",
+      "key": "437d0fb04cce6823",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0711-16",
+      "element": "エレグ skill1.effects[0]",
+      "key": "fbbe18b262566423",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0711-19",
+      "element": "エレグ skill1.effects[0]",
+      "key": "19ceff17cddc7678",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0711-20",
+      "element": "エレグ skill1.effects[0]",
+      "key": "f56c6f51e55eb8d6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 6 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0711-21",
+      "element": "エレグ skill1.effects[0]",
+      "key": "2e94966190ee3608",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0711-22",
+      "element": "エレグ skill1.effects[0]",
+      "key": "5bf8bead3b026f00",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0712-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "1a73d72d03e3cad2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0712-15",
+      "element": "エレグ skill1.effects[0]",
+      "key": "a42683c6c470a475",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0712-18",
+      "element": "エレグ skill1.effects[0]",
+      "key": "b92021c9802090ce",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0712-19",
+      "element": "エレグ skill1.effects[0]",
+      "key": "ea19e3656747a810",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0712-20",
+      "element": "エレグ skill1.effects[0]",
+      "key": "3852db8b65c409c6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0712-21",
+      "element": "エレグ skill1.effects[0]",
+      "key": "99213a292fdf5b56",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
     },
     {
       "observation": "0721-09",
@@ -16475,6 +16787,50 @@
       "plus": null
     },
     {
+      "observation": "0797-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "2211e9dc421146f5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0797-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "66a78ef116611222",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 6 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0797-13",
+      "element": "エレグ skill1.effects[0]",
+      "key": "a31212ac9a6bf111",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 6 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0798-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "68e1615900f0c880",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 6 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0798-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "5ec56ba5d91bae00",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "0803-10",
       "element": "クイーン（真） burst.effects[1]",
       "key": "a9ab505572be0778",
@@ -16604,6 +16960,14 @@
     },
     {
       "observation": "0805-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "1c863c4946e25426",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "9f776a02bf65cb8d",
       "effective": false,
@@ -16617,6 +16981,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0805-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "dd293ebaba14c237",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0805-08",
@@ -16636,6 +17008,14 @@
     },
     {
       "observation": "0805-09",
+      "element": "エレグ skill1.effects[0]",
+      "key": "7353c4a3e4c80a84",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "354c48d4492e1e77",
       "effective": false,
@@ -16649,6 +17029,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0805-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "0ad845693067fdcc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0805-10",
@@ -16668,6 +17056,14 @@
     },
     {
       "observation": "0805-11",
+      "element": "エレグ skill1.effects[0]",
+      "key": "aa7a926bbb60ee14",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-11",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "5b8c931c3ee09aa7",
       "effective": false,
@@ -16681,6 +17077,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0805-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "d6fe4c71ef894ad8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0805-12",
@@ -16700,6 +17104,14 @@
     },
     {
       "observation": "0805-13",
+      "element": "エレグ skill1.effects[0]",
+      "key": "4c02a6e3d289fa6e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-13",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "b8d4fb14a1b01f45",
       "effective": false,
@@ -16713,6 +17125,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0805-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "a419cc6e09d9d659",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0805-14",
@@ -16732,6 +17152,14 @@
     },
     {
       "observation": "0806-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "a7e26e466e8767ef",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0806-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "5439d4077d68cb98",
       "effective": false,
@@ -16745,6 +17173,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0806-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "1073a62d9bc3e2fe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0806-08",
@@ -16764,6 +17200,14 @@
     },
     {
       "observation": "0806-09",
+      "element": "エレグ skill1.effects[0]",
+      "key": "59a87238270adf5d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0806-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "28917989628ea392",
       "effective": false,
@@ -16777,6 +17221,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0806-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "03082b606a112351",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0806-10",
