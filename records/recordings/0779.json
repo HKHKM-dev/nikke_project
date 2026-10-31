@@ -1,0 +1,52 @@
+{
+  "id": "0779",
+  "date": "2026-10-31",
+  "folder": "range",
+  "file": "20261031-0779_smg+ar+sr+sr_liter+idoll-sun+snow-white-ha+delta.mp4",
+  "original": "2026-10-31_12-55-28.mp4",
+  "durationSec": 203.9,
+  "frames": 12231,
+  "fps": 60,
+  "sizeMB": 246.9,
+  "sha256": "ed24df6d3aa7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 471,
+      "name": "スノーホワイト：ヘビーアームズ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0549 の撮影 C（段 14 の PR 3）。リター（AI）・I-DOLL・サン（AI）・スノーホワイト：ヘビーアームズ（操作・オート射撃 ON）・デルタ（AI）。オートバースト ON。III はスノーホワイト：ヘビーアームズより左の I-DOLL・サンとの 2 体。最後に戦闘履歴が写っている",
+  "backup": {
+    "at": "2026-10-31T13:19+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
