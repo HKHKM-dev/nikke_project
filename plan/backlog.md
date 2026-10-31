@@ -74,7 +74,6 @@
 <!-- prettier-ignore -->
 | # | 課題 | 残り | 出どころ |
 | --- | --- | --- | --- |
-| 5-6 | 画面のレスポンス（`useDeferredValue` → Web Worker） | デスクトップで B-2 と同じ測り方で、主力の最後の打鍵から描き変わりまでを測り、100 ms を下回れば閉じる（[design-first-pass-perf.md](design-first-pass-perf.md) 7.4 節。B-3 は見送り（オーナーの決定）） | [design-unify-sim-calc.md](design-unify-sim-calc.md) 6・8 節・[design-first-pass-perf.md](design-first-pass-perf.md) 7 節 |
 | 5-13 | レシピ `burst-panel` が、画面が赤みがかったチェーンの替わり目と 00.00 を取りこぼす（録画 0735 の 3 回目） | 直していない（読みは手で補った） | V-0540、[design-skill-stage12.md](design-skill-stage12.md) 3.4 節 |
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
@@ -102,7 +101,6 @@
 1 行の形は「題名（起票日）→ 状態: 設計書（あれば）。残りの行き先（この文書の節か行）」。状態は「進行中」「一部完了」「保留」などの一語に、要るときだけ短い括弧（撮影待ちの部分など）を添える。進み具合は設計書の経過に書く。題名は変えない（開いている課題を記録が題名で指す）。行は状態が変わったときだけ直し、閉じたら消す。
 
 - 2026-10-29 のアップデートのキャラ（マリアン：クイーン・ラプンツェル：サンクチュアリ・紅蓮：神殺）の仮実装（2026-10-28 起票）→ 進行中（紅蓮：神殺は撮影待ち）: [design-new-chars-1029.md](design-new-chars-1029.md) 7・10・11 節
-- sim と calc の一本化とレスポンス保証（2026-10-27 起票）→ 一部完了（一本化と 1 パス目の最適化は済み）: [design-unify-sim-calc.md](design-unify-sim-calc.md) 8 節。残りは 5-6
 - エレグ（500）の定義（2026-10-26 起票）→ 一部完了（S1 の分配ダメージは値の式が分からず未対応）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - 回数トリガーで付く持続の効果の付き始めの遅れ（2026-10-24 起票）→ 一部完了: [design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)。残りは 2-38
 - スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 進行中（段 13）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの状態と設計書）
