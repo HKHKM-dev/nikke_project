@@ -164,5 +164,123 @@
       "slot": 3,
       "source": "burst"
     }
+  },
+  {
+    "id": "0692-09",
+    "recording": "0692",
+    "source": "V-0563",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "hit",
+    "value": [8120953, 5512702, 3675135, 3272772, 3272772],
+    "description": "雪子のバーストの分配ダメージの 1 ヒット（チェーン 1〜5。動画の f938・3315・5693・8071・10449）。同じフレームに重なったほかの 1 ヒットは引いた",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "引いた重なり（鈴原サクラの 1 ヒット）: 0・12,144・0・0・0"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0692-10",
+    "recording": "0692",
+    "source": "V-0563",
+    "readAt": "2026-10-31",
+    "use": "record",
+    "kind": "count",
+    "value": [0, 1, 1, 0, 0],
+    "description": "チェーン 1〜5 の雪子の発動の時に、鈴原サクラの受けるダメージ▲が付いていたか（1 = あり）。雪子のヒットの値を見ずに、直前の鈴原サクラの 1 ヒットの段（×1.1718）で決めた",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f3291〜3314 は 10,736（▲あり）、f5675〜5688 は 8,259（距離ボーナスなしの▲あり。f5691 の 7,048 は▲の切れた後）、f10427〜10448 は 9,162（▲なし）。チェーン 4 の前は HUD が読めず、f8071 の値が▲なしの 3,272,772"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0692-11",
+    "recording": "0692",
+    "source": "V-0563",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5512702,
+    "description": "雪子のバーストの分配ダメージの 1 ヒット（エレグの分配ダメージ▲・鈴原サクラの受けるダメージ▲あり・雪子の攻撃力▲なし）。チェーン 2（f3315。増分 5,524,846 から、同じフレームの鈴原サクラの 1 ヒット 12,144 を引いた）。会心",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0692-09` の値。モデルの 2 回目の雪子のバーストも、分配ダメージ▲と鈴原サクラの▲が付き、雪子の攻撃力▲が切れている"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0692-12",
+    "recording": "0692",
+    "source": "V-0563",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 3675135,
+    "description": "雪子のバーストの分配ダメージの 1 ヒット（エレグの分配ダメージ▲・鈴原サクラの受けるダメージ▲あり・雪子の攻撃力▲なし）。チェーン 3（f5693。重なりなし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0692-09` の値。モデルの 3 回目の雪子のバーストも、分配ダメージ▲と鈴原サクラの▲が付き、雪子の攻撃力▲が切れている"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
   }
 ]
