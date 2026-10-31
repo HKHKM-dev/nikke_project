@@ -179,4 +179,23 @@ describe('定義の claims と結論の突き合わせ', () => {
     expect(doc).toContain('- **skill2**: unsupported');
     expect(doc).toContain('- **burst**: supported');
   });
+
+  it('lists a treasure slot without a treasure definition as unsupported, like the model', () => {
+    const passive = { effects: [{ kind: 'passive', target: 'self', stat: 'attack', ref: 1 }] };
+    const chars = [
+      {
+        ...defined({ ...definition(), treasureSkills: { skill2: passive } }),
+        treasureSlots: ['skill2', 'burst'] as const,
+      },
+    ];
+    const doc = renderSkills(chars, []);
+    expect(doc).toContain('- **宝物版 skill2**: supported');
+    expect(doc).toContain('- **宝物版 burst**: unsupported');
+    expect(doc).toContain('宝物版のスキル定義がない');
+    // 宝物版にならないスロットは出さない
+    expect(doc).not.toContain('宝物版 skill1');
+    // 基礎版のスロットの後に、宝物版をスロットの順で並べる
+    expect(doc.indexOf('- **burst**:')).toBeLessThan(doc.indexOf('- **宝物版 skill2**'));
+    expect(doc.indexOf('- **宝物版 skill2**')).toBeLessThan(doc.indexOf('- **宝物版 burst**'));
+  });
 });

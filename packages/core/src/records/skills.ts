@@ -14,14 +14,22 @@ import {
   type SkillNoteKind,
   type SkillSupport,
 } from '../skills/types.ts';
+import { UNDEFINED_TREASURE_ENTRY } from '../skills/treasure.ts';
 import type { LocalizedText, SkillSlot } from '../types.ts';
 import type { Claim, ClaimState } from './claims.ts';
 
 export type SkillRoot = 'skills' | 'treasureSkills';
 const SKILL_ROOTS: readonly SkillRoot[] = ['skills', 'treasureSkills'];
 
-/** 定義済みのキャラ（data/skills/index.json の順） */
-export type DefinedCharacter = { definition: SkillDefinition; name: LocalizedText };
+/**
+ * 定義済みのキャラ（data/skills/index.json の順）。treasureSlots は宝物の全段階で宝物版になるスロット（宝物が無ければ空か省略）。
+ * plan/skills.md は、そのうち宝物版の定義が無いスロットを、計算と同じく unsupported として出す（skills/treasure.ts）
+ */
+export type DefinedCharacter = {
+  definition: SkillDefinition;
+  name: LocalizedText;
+  treasureSlots?: readonly SkillSlot[];
+};
 
 /**
  * 定義の中の場所。index が無いのは「そのスロットの notes のどれか」（結論の model の「skill1 の notes」）。
@@ -222,7 +230,7 @@ const SKILLS_HEADER = `# スキル定義の対応状況
 
 - **このファイルは生成する（手で書かない）**。定義は \`packages/core/data/skills/{resourceId}.json\` に置き、\`npm run records:check\` で作り直す（[skills-guide.md](skills-guide.md) 3 節）。
 - キャラ × スロットごとに、対応状況と、効果・notes と、その根拠の結論（定義の \`claims\`。後ろの括弧は結論の状態）を並べる。結論の中身は [claims.md](claims.md)。
-- 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: \`supported\`（効果あり・未対応なし）・\`partial\`（効果あり・未対応あり）・\`unsupported\`（効果なし・未対応あり）・\`noEffect\`（前提の中でダメージに効く効果なし）。
+- 対応状況は効果と notes の種類から決まる（[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.2 節）: \`supported\`（効果あり・未対応なし）・\`partial\`（効果あり・未対応あり）・\`unsupported\`（効果なし・未対応あり）・\`noEffect\`（前提の中でダメージに効く効果なし）。宝物を持つキャラで宝物版の定義が無いスロットは、計算と同じく \`unsupported\`（画面のキャラの選択肢の「（未）」も同じ判定。\`data/skills/support.json\`）。
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。`;
 
@@ -304,9 +312,21 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
   const noteKinds = new Map<SkillNoteKind, number>(SKILL_NOTE_KINDS.map((k) => [k, 0]));
   const supports = new Map<SkillSupport, number>();
   const body: string[] = [];
-  for (const { definition, name } of characters) {
+  for (const { definition, name, treasureSlots = [] } of characters) {
     body.push('', `## ${definition.resourceId} ${name.ja}`, '');
-    for (const { root, slot, entry } of entriesOf(definition)) {
+    // 宝物版の定義が無いスロット（宝物版になるスロットのうち）は、計算と同じ unsupported の項目で出す
+    const missing = SKILL_SLOTS.filter(
+      (slot) => treasureSlots.includes(slot) && definition.treasureSkills?.[slot] === undefined,
+    );
+    const rows = [
+      ...entriesOf(definition),
+      ...missing.map((slot) => ({ root: 'treasureSkills' as const, slot, entry: UNDEFINED_TREASURE_ENTRY })),
+    ].sort(
+      (a, b) =>
+        SKILL_ROOTS.indexOf(a.root) - SKILL_ROOTS.indexOf(b.root) ||
+        SKILL_SLOTS.indexOf(a.slot) - SKILL_SLOTS.indexOf(b.slot),
+    );
+    for (const { root, slot, entry } of rows) {
       body.push(`- **${root === 'skills' ? slot : `宝物版 ${slot}`}**: ${entry.support}`);
       supports.set(entry.support, (supports.get(entry.support) ?? 0) + 1);
       entry.effects.forEach((e, i) => {
