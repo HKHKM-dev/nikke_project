@@ -1,10 +1,11 @@
-import { mkdirSync, mkdtempSync, readdirSync, utimesSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { predictionKey, runObservations, type Prediction } from '../src/records/observations.ts';
 import { loadObservations, loadRecordingsFile, loadRecordsData, recordingMap } from './records-data.ts';
-import { modelHash, openPredictionMemo, runObservationsCached } from './residual-cache.ts';
+import { MODEL_ROOTS, modelHash, openPredictionMemo, runObservationsCached } from './residual-cache.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -100,5 +101,78 @@ describe('runObservations with a memo', () => {
     );
     expect(r).toMatchObject({ status: 'error', message: 'metric no-such-metric が語彙に無い' });
     expect(set).toEqual([{ error: 'metric no-such-metric が語彙に無い' }]);
+  });
+});
+
+describe('the inputs of the memo key', () => {
+  /** ファイルから相対の import で辿れるファイル（予測に効くコード） */
+  function reachable(entry: string): string[] {
+    const seen = new Set<string>();
+    const visit = (path: string) => {
+      if (seen.has(path)) return;
+      seen.add(path);
+      const text = readFileSync(path, 'utf8');
+      for (const m of text.matchAll(/(?:from|import)\s+'(\.{1,2}\/[^']+)'/g)) visit(resolve(dirname(path), m[1]!));
+    };
+    visit(entry);
+    return [...seen];
+  }
+
+  it('hashes every file of the code that reads the records and runs the model', () => {
+    const entry = fileURLToPath(new URL('./residual-cache.ts', import.meta.url));
+    const files = reachable(entry);
+    expect(files.length).toBeGreaterThan(10);
+    const covered = (f: string) => MODEL_ROOTS.some((r) => (r.endsWith('/') ? f.startsWith(r) : f === r));
+    expect(files.filter((f) => !covered(f))).toEqual([]);
+  });
+
+  it('hashes a file given as a root', () => {
+    const root = tempDir();
+    writeFileSync(join(root, 'x.ts'), 'one');
+    const first = modelHash([join(root, 'x.ts')]);
+    writeFileSync(join(root, 'x.ts'), 'two');
+    expect(modelHash([join(root, 'x.ts')])).not.toBe(first);
+  });
+
+  it('changes the key with the recording, the setup and the args', () => {
+    const o = picked.find((x) => x.id === '0056-02')!;
+    const recording = recordings.get('0056')!;
+    const key = predictionKey(o, recording, data);
+    expect(predictionKey(o, { ...recording, team: recording.team.slice(1) }, data)).not.toBe(key);
+    expect(
+      predictionKey({ ...o, compare: { ...o.compare!, setup: { ...o.compare!.setup, burst: true } } }, recording, data),
+    ).not.toBe(key);
+    expect(predictionKey({ ...o, compare: { ...o.compare!, args: { slot: 2 } } }, recording, data)).not.toBe(key);
+    expect(predictionKey({ ...o, compare: { ...o.compare!, metric: 'other' } }, recording, data)).not.toBe(key);
+  });
+
+  it('keeps the recording ID in the key when the recording is missing', () => {
+    const o = picked.find((x) => x.id === '0056-02')!;
+    expect(predictionKey({ ...o, recording: 'x1' }, undefined, data)).not.toBe(
+      predictionKey({ ...o, recording: 'x2' }, undefined, data),
+    );
+    const stored = new Map<string, Prediction>();
+    const memo = { get: (k: string) => stored.get(k), set: (k: string, p: Prediction) => void stored.set(k, p) };
+    const residuals = runObservations(
+      [
+        { ...o, id: 'x1-01', recording: 'x1' },
+        { ...o, id: 'x2-01', recording: 'x2' },
+      ],
+      recordings,
+      data,
+      memo,
+    );
+    expect(residuals.map((r) => r.message)).toEqual(['録画 x1 が無い', '録画 x2 が無い']);
+  });
+});
+
+describe('runObservations on a draft', () => {
+  it('reports a compare without a tolerance as an error instead of throwing', () => {
+    const o = picked.find((x) => x.id === '0056-02')!;
+    const draft = { ...o, compare: { ...o.compare!, tolerance: undefined as never } };
+    for (const memo of [undefined, { get: () => ({ predicted: 1 }), set: () => {} }]) {
+      const [r] = runObservations([draft], recordings, data, memo);
+      expect(r).toMatchObject({ status: 'error', predicted: null, diff: null });
+    }
   });
 });

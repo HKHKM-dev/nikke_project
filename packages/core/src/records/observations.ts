@@ -2547,8 +2547,9 @@ export type PredictionMemo = {
 };
 
 /**
- * 観測値の予測を決める入力のうち、モデルのコードとデータ（packages/core/src・data）でないもの: 録画の JSON・比べる指定と、比べる指定が
- * ID で指すほかの観測値の値（条件が時刻などを観測値の ID で指す。buildTeamInput）。観測値自身の値と許容は入れない（比べるのは覚えの後）
+ * 観測値の予測を決める入力のうち、モデルのコードとデータ（residual-cache.ts の MODEL_ROOTS）でないもの: 録画の ID と JSON・比べる指定と、
+ * 比べる指定が ID で指すほかの観測値の値（条件が時刻などを観測値の ID で指す。buildTeamInput）。観測値自身の値と許容は入れない（比べるのは
+ * 覚えの後）
  */
 export function predictionKey(o: Observation, recording: RecordingEntry | undefined, data: RecordsData): string {
   const c = o.compare!;
@@ -2561,6 +2562,8 @@ export function predictionKey(o: Observation, recording: RecordingEntry | undefi
     return v;
   });
   return JSON.stringify({
+    // 録画が無いと予測は「録画 <ID> が無い」のエラーになるので、ID も入れる
+    id: o.recording,
     recording: recording ?? null,
     metric: c.metric,
     args: c.args ?? null,
@@ -2619,12 +2622,14 @@ export function runObservations(
       p = predict(o, c, recording);
       if (key !== undefined && memorable(p)) memo!.set(key, p);
     }
-    if ('error' in p) {
-      residuals.push({ observation: o, status: 'error', predicted: null, diff: null, message: p.error });
-      continue;
+    try {
+      if ('error' in p) throw new Error(p.error);
+      // 下書きは許容が無いことがある（そのときも投げずに比べられない 1 行にする）
+      const { diff, ok } = compareValue(o.value, p.predicted, c.tolerance);
+      residuals.push({ observation: o, status: ok ? 'ok' : 'outside', predicted: p.predicted, diff });
+    } catch (e) {
+      residuals.push({ observation: o, status: 'error', predicted: null, diff: null, message: (e as Error).message });
     }
-    const { diff, ok } = compareValue(o.value, p.predicted, c.tolerance);
-    residuals.push({ observation: o, status: ok ? 'ok' : 'outside', predicted: p.predicted, diff });
   }
   return residuals;
 }

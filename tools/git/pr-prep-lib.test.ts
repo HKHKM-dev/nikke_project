@@ -1,11 +1,18 @@
-// PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git は呼ばない。
+// PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git は、パスの一覧の読み方を見るところだけ一時のリポジトリで呼ぶ。
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   addedLines,
   changedChecks,
+  checkSteps,
   collisions,
-  FULL_CHECK_PATHS,
+  isCheckSetting,
   MAX_CHANGED_FILES,
+  nulPaths,
+  pathListArgs,
   progressCopies,
   rebaseOutcome,
   regenerateScript,
@@ -155,8 +162,32 @@ describe('changedChecks', () => {
   });
 
   it('checks every file when the branch changed a setting of prettier or eslint', () => {
-    for (const p of FULL_CHECK_PATHS)
+    const settings = [
+      '.prettierrc.json',
+      '.prettierignore',
+      'eslint.config.js',
+      'package.json',
+      'package-lock.json',
+      '.editorconfig',
+      'apps/web/.editorconfig',
+      'apps/web/.prettierrc',
+      'packages/core/.prettierrc.yaml',
+      'prettier.config.mjs',
+      'eslint.config.mjs',
+      'apps/web/eslint.config.ts',
+      'apps/web/package.json',
+    ];
+    for (const p of settings) {
+      expect(isCheckSetting(p)).toBe(true);
       expect(changedChecks(['plan/claims.md', p], exists)).toEqual({ full: true, reason: `${p} を変えた` });
+    }
+    for (const p of [
+      'plan/eslint.config.md.bak/x.md',
+      'plan/prettierrc.md',
+      'tools/eslint.ts',
+      'records/package.json.md',
+    ])
+      expect(isCheckSetting(p)).toBe(false);
   });
 
   it('checks every file when the branch changed too many files', () => {
@@ -166,5 +197,59 @@ describe('changedChecks', () => {
       reason: `変えたファイルが ${MAX_CHANGED_FILES + 1} 件ある`,
     });
     expect(changedChecks(many.slice(1), exists).full).toBe(false);
+  });
+});
+
+describe('pathListArgs and nulPaths', () => {
+  const git = (cwd: string, args: readonly string[]) =>
+    execFileSync(
+      'git',
+      ['-c', 'user.name=t', '-c', 'user.email=t@example.com', '-c', 'commit.gpgsign=false', ...args],
+      {
+        cwd,
+        encoding: 'utf8',
+      },
+    );
+
+  it('reads paths that are not ASCII as they are, and the new path of a rename', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
+    git(cwd, ['init', '-q']);
+    writeFileSync(join(cwd, 'a.md'), 'a\nb\nc\nd\n');
+    writeFileSync(join(cwd, 'keep.md'), 'k\n');
+    git(cwd, ['add', '.']);
+    git(cwd, ['commit', '-q', '-m', 'base']);
+    const base = git(cwd, ['rev-parse', 'HEAD']).trim();
+    mkdirSync(join(cwd, '録画'));
+    renameSync(join(cwd, 'a.md'), join(cwd, '録画', 'あ.md'));
+    writeFileSync(join(cwd, '日本語 の 名前.md'), 'x\n');
+    git(cwd, ['add', '-A']);
+    git(cwd, ['commit', '-q', '-m', 'change']);
+    const out = git(cwd, pathListArgs(['diff', '--name-only', `${base}...HEAD`]));
+    expect(nulPaths(out)).toEqual(['日本語 の 名前.md', '録画/あ.md']);
+    expect(
+      nulPaths(git(cwd, pathListArgs(['diff', '--name-only', '--diff-filter=AR', `${base}...HEAD`, '--', '録画']))),
+    ).toEqual(['録画/あ.md']);
+    expect(nulPaths(git(cwd, pathListArgs(['ls-tree', '-r', '--name-only', 'HEAD'])))).toEqual([
+      'keep.md',
+      '日本語 の 名前.md',
+      '録画/あ.md',
+    ]);
+  });
+});
+
+describe('checkSteps', () => {
+  const ci = 'npm run format:check && npm run lint && npm run typecheck && npm test && npm run build';
+
+  it('takes the steps of npm run ci but the format and the lint', () => {
+    const manifest = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')) as {
+      scripts: Record<string, string>;
+    };
+    expect(checkSteps(manifest.scripts['ci']!)).toEqual(['typecheck', 'test', 'build']);
+    expect(checkSteps(`${ci} && npm run records:check`)).toEqual(['typecheck', 'test', 'build', 'records:check']);
+  });
+
+  it('stops on a step it cannot run by name, or when the format or the lint is gone', () => {
+    expect(() => checkSteps(`${ci} && tsc -b`)).toThrow('tsc -b');
+    expect(() => checkSteps('npm run lint && npm test')).toThrow('format:check');
   });
 });
