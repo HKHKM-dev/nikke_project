@@ -39,7 +39,7 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
 
 /**
  * 何が上がるか。Stage 8 の 2 つ:
- * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 0021 で別枠の乗数と確認）。
+ * distributedDamage = 分配ダメージの乗数 (1 + Σ)。distributed の倍率ダメージにだけ掛かる（録画 0021 で攻撃ダメージ▲と別枠の乗数と確認。受けるダメージ▲とは 1 つの和。C-0767）。
  * burstGaugeSpeed = バーストゲージのチャージ速度 (1 + Σ)。対象の枠の射撃で溜まるゲージに掛かる。Stage 8 では passive にだけ
  * 書けた（timed に書くと 時刻表 → バフ窓 → ゲージ → 時刻表 と循環したため）。2 段目の段 1（plan/design-skill-stage1.md 1.6 節）で、
  * 1 パス目がフレームごとに件を作るようになったので、timed と状態の中身にも書ける（f − 1 までに付いた件を、射手と同じに読む）。
@@ -1008,6 +1008,17 @@ export type DamageEffect = {
    * claims に結ぶ。hitsRef と組むときだけ
    */
   hitIntervalFrames?: number;
+  /**
+   * エレグの S1（C-0766）: 1 回の発動を、ref の値を等分したヒットに分けて出す。各ヒットの、発火の delayFrames 後からの遅れ（フレーム。
+   * 0 から始まる昇順の整数。長さがヒットの数）。測った値を即値で書き、根拠の結論を claims に結ぶ。hitsRef・perBurstHit・perCount・
+   * gaugeHits・gaugePerHit とは組み合わせない
+   */
+  hitOffsetFrames?: number[];
+  /**
+   * 同: 値（撃つ側と敵の側のバフ・フルバースト補正）を、発火のこのフレーム数後のもので決め、どのヒットもその値で出す（1 以上、delayFrames
+   * 以下の整数）。省略は、遅れがあればヒットのフレームの値（遅れて出る倍率ダメージ編）。hitOffsetFrames と組むときだけ
+   */
+  valueDelayFrames?: number;
   /**
    * 同 5.4 節: 「コア命中ダメージ」。コアに当たったヒットとして、コアの項（コア倍率 − 1 + コアダメージ▲）を足す（割合 1。敵にコアが
    * 無ければ足さない）。射撃ごとに畳み込む効果（毎回の回数のきっかけで条件なし）には書けない
@@ -3512,6 +3523,34 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       fail(`${path}.hitIntervalFrames`, `expected an integer >= 0, got ${JSON.stringify(n)}`);
     }
     effect.hitIntervalFrames = n;
+  }
+  // エレグの S1（C-0766）: 等分した不等間隔のヒットと、値を決めるフレーム
+  if (v.hitOffsetFrames !== undefined) {
+    const at = `${path}.hitOffsetFrames`;
+    const offsets = v.hitOffsetFrames;
+    if (
+      !Array.isArray(offsets) ||
+      offsets.length < 2 ||
+      offsets[0] !== 0 ||
+      !offsets.every((o, i) => typeof o === 'number' && Number.isInteger(o) && (i === 0 || o > offsets[i - 1]!))
+    )
+      fail(at, `expected strictly increasing integers starting at 0 (2 or more), got ${JSON.stringify(offsets)}`);
+    if (
+      effect.hitsRef !== undefined ||
+      effect.perBurstHit !== undefined ||
+      effect.perCount !== undefined ||
+      effect.gaugeHits !== undefined ||
+      v.gaugePerHit !== undefined
+    )
+      fail(at, 'hitOffsetFrames cannot be used with hitsRef, perBurstHit, perCount, gaugeHits or gaugePerHit');
+    effect.hitOffsetFrames = offsets as number[];
+  }
+  if (v.valueDelayFrames !== undefined) {
+    const at = `${path}.valueDelayFrames`;
+    if (effect.hitOffsetFrames === undefined) fail(at, 'valueDelayFrames needs hitOffsetFrames');
+    const n = parsePositiveInt(v.valueDelayFrames, at);
+    if (n > (effect.delayFrames ?? 0)) fail(at, 'valueDelayFrames must not exceed delayFrames');
+    effect.valueDelayFrames = n;
   }
   // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
   if (v.periodShorten !== undefined) {

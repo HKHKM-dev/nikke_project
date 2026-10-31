@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`0711-17`・`0711-18`・`0711-19`・`0711-20`・`0711-21`・`0711-22`・`0712-16`・`0712-17`・`0712-18`・`0712-19`・`0712-20`・`0712-21`。V-0560",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "反映（`data/skills/500.json` の skill1 の effects[0]（`damage`・`distributed`・`ref: 4`・`delayFrames: 8`・`hitOffsetFrames: [0, 24, 36]`（定義の値を 3 等分）・`valueDelayFrames: 1`）。等分したヒットは `skills/burstDamage.ts` の `resolveDamageEffects`・`damageHitFramesOf`、値を決めるフレームは `frame/plan.ts` の `planSkillHits`）。S1 のヒットがバーストゲージを溜めるかは確かめていない（溜めない）",
   "replaces": [],
   "updated": "2026-10-31",
   "subject": {

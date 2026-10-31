@@ -3,7 +3,7 @@
 - 関連: [design-elegg.md](design-elegg.md)（段 1・段 2 の見込み。5 節）、[design-named-state.md](design-named-state.md) 8.3 節（敵に付く状態）、[design-kurumi-s2.md](design-kurumi-s2.md) 2.1 節（窓の中だけ数える `during`）、V-0443（窓の外も数えて窓の中だけ発火する `firesDuring`）、[design-ludmilla-wo.md](design-ludmilla-wo.md) 2.2 節（`normalHit`）、[design-shot-count-trigger-frame.md](design-shot-count-trigger-frame.md)（回数トリガーの付き始めの遅れ）、[skills-guide.md](skills-guide.md)、[verification-guide.md](verification-guide.md)
 - 作成日: 2026-10-26
 - 根拠: まだ無い（検証記録は承認の後、段 2 の実装の後に起こす）
-- 状態: 7 節の論点は推奨どおり（2026-10-26 のオーナーの承認）。段 2 は main に入った（`plan/design-elegg.md` 8 節）。S2 は実装済み（V-0524）。S1 の値は V-0560（撮影待ち）
+- 状態: 7 節の論点は推奨どおり（2026-10-26 のオーナーの承認）。段 2 は main に入った（`plan/design-elegg.md` 8 節）。S1・S2 とも実装済み（V-0524・V-0560）
 
 ## 1. 何を足すか
 
@@ -190,3 +190,4 @@
 - 2026-10-26: 論点 4 の順で実装した。S2 を定義に入れ（C-0696。値はモデルと端数まで合う）、条件 `enemyState` を timed に開き、付与で敵に付く状態も見るようにした（`skills/holders.ts`・`frame/plan.ts`）。S1 の 1 ヒットの値は、全額・3 分の 1・それぞれ全額のどの形とも合わなかったので、定義に入れず notes に分かったこと（K1・8f・3 ヒット。C-0697）を書いた。段 2 の録画（エレグは撃っていない）の比べには、モデルからエレグの S2 を落とす指定（`dropEffects`）を足した（モデルには撃たない枠が無い）。
 - 2026-10-27: オーナーの判断で、C-0696 を確定にし、C-0697 をオーナーの判断（指標なし）で確定にして V-0524 を閉じた。S1 の値の式は別の検証で、乗数を 1 つずつ分ける録画を撮って調べる。
 - 2026-10-31: V-0524 の録画を読み直し、S1 の 1 ヒットを、HUD の増分に重なったほかの 1 ヒットを引いて読み分けた。全額の 3 分の 1・届いた発の次のフレームのバフで固定・受けるダメージ▲は分配ダメージ▲と同じ和、の形で 30 組とも合う（V-0560）。別の録画での再現の撮影待ち。
+- 2026-10-31: オーナーの判断で撮り直さず、読み直しで C-0766（S1 の 1 ヒットの式とバフの固定）・C-0767（分配ダメージの受けるダメージ▲の置き場所）を確定にした。S1 を定義に入れ（`damage` に `hitOffsetFrames`・`valueDelayFrames` を足した）、分配ダメージの受けるダメージ▲を分配ダメージ▲と同じ和にした。S1 のゲージ（U7）は確かめていない。

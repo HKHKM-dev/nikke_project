@@ -4,11 +4,13 @@
 // 武器倍率・チャージ倍率・コア・距離は掛けない。
 // Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 0021 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
+// ただし受けるダメージ▲とは 1 つの和 (1 + Σ distributedDamage + Σ damageTaken) で掛かる（エレグの S1。C-0767）。
 // 持続ダメージ▲編: 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import {
   defenceAfterDown,
   DISTANCE_BONUS,
+  distributedHitMultiplier,
   explosionHitMultiplier,
   FULL_BURST_BOOST,
   skillElementMultiplier,
@@ -122,6 +124,12 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 1 回の発動のヒット数と、ヒットの間（フレーム） */
   hits?: number;
   hitIntervalFrames?: number;
+  /**
+   * エレグの S1（C-0766）: 等分したヒットの、delayFrames 後からの遅れ（multiplier は 1 ヒットの値 = 定義の値 ÷ ヒットの数）と、値を決める
+   * 発火からのフレーム数（frame/plan.ts の planSkillHits）
+   */
+  hitOffsets?: number[];
+  valueDelayFrames?: number;
   /** 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames） */
   periodShorten?: { state: NamedStateId; seconds: number };
   /** V-0545: 周期の発火のどのヒットも射手の 1 ヒットぶんのゲージを溜める（frame/firstPass.ts が予約する） */
@@ -203,10 +211,13 @@ export function resolveBurstDamage(
  * 1 パス目（frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit。V-0545）が同じ列を使う
  */
 export function damageHitFramesOf(
-  effect: Pick<ResolvedDamageEffect, 'delayFrames' | 'hits' | 'hitIntervalFrames'>,
+  effect: Pick<ResolvedDamageEffect, 'delayFrames' | 'hits' | 'hitIntervalFrames' | 'hitOffsets'>,
   fire: number,
   frames: number,
 ): number[] {
+  // エレグの S1（C-0766）: 等分したヒットは、delayFrames の後の遅れの並び
+  if (effect.hitOffsets !== undefined)
+    return effect.hitOffsets.map((o) => fire + (effect.delayFrames ?? 0) + o).filter((at) => at < frames);
   const out: number[] = [];
   for (let k = 0; k < (effect.hits ?? 1); k++) {
     const at = fire + (effect.delayFrames ?? 0) + k * (effect.hitIntervalFrames ?? 0);
@@ -246,7 +257,7 @@ export function perCountFrames(
 export function effectHitFrames(
   effect: Pick<
     ResolvedDamageEffect,
-    'delayFrames' | 'hits' | 'hitIntervalFrames' | 'perCountIntervalSeconds' | 'perCountIntervalFrames'
+    'delayFrames' | 'hits' | 'hitIntervalFrames' | 'hitOffsets' | 'perCountIntervalSeconds' | 'perCountIntervalFrames'
   >,
   fire: number,
   count: number | undefined,
@@ -324,6 +335,12 @@ export function resolveDamageEffects(
         r.hits = hits;
         r.hitIntervalFrames = effect.hitIntervalFrames ?? 0;
         r.sequential = true;
+      }
+      // エレグの S1（C-0766）: 定義の値をヒットの数で等分する
+      if (effect.hitOffsetFrames !== undefined) {
+        r.hitOffsets = effect.hitOffsetFrames;
+        r.multiplier /= effect.hitOffsetFrames.length;
+        if (effect.valueDelayFrames !== undefined) r.valueDelayFrames = effect.valueDelayFrames;
       }
       if (effect.periodShorten !== undefined && isResolvedTimer(trigger)) {
         const { state, slot: from, ref } = effect.periodShorten;
@@ -618,7 +635,7 @@ export type BurstHitInput = {
   effects: readonly ResolvedSkillDamage[];
   /** 省略時は BURST_SKILL_FULL_BURST_BONUS */
   fullBurstBonus?: boolean;
-  /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ掛ける。省略 1 */
+  /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ、受けるダメージ▲と 1 つの和で掛ける（C-0767）。省略 1 */
   distributedDamageMultiplier?: number;
   /** 2026-10-29 のキャラの編: Σ sequentialAttackDamage。sequential の効果にだけ、攻撃ダメージ▲と同じ和に足す（V-0545）。省略 0 */
   sequentialAttackDamage?: number;
@@ -716,13 +733,15 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   // V-0545: 順番攻撃ダメージ▲は攻撃ダメージ▲と同じ和に足す（▲なしに対する比。持続ダメージ▲の attackDamage の置き場所と同じ形）
   const sequential =
     (input.attackDamageMultiplier + (input.sequentialAttackDamage ?? 0)) / input.attackDamageMultiplier;
+  // 分配ダメージ▲は受けるダメージ▲と 1 つの和（common に掛けた受けるダメージ▲に対する比。damage.ts の distributedHitMultiplier。C-0767）
+  const distributedFactor = distributedHitMultiplier(distributed - 1, damageTaken - 1);
   const perEffect = input.effects.map((effect) => ({
     effect,
     expected:
       common *
       groupOf(effect) *
       effect.multiplier *
-      (effect.damageType === 'distributed' ? distributed : 1) *
+      (effect.damageType === 'distributed' ? distributedFactor : 1) *
       (effect.sequential === true ? sequential : 1) *
       (effect.projectileExplosion === true ? explosion : 1) *
       (effect.projectileStick === true ? stick : 1) *

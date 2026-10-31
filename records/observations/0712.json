@@ -323,5 +323,144 @@
       "slot": "all",
       "source": "normal"
     }
+  },
+  {
+    "id": "0712-18",
+    "recording": "0712",
+    "source": "V-0560",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 125194,
+    "description": "S1 の分配ダメージの 1 ヒット（分配ダメージ▲あり・受けるダメージ▲なし・会心なし・フルバースト・防御力▼・S2 の攻撃力▲）。f1073 の組（窓 1 の 1 つ目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0712-16` の組の値。比べるのは、条件のそろったモデルの 1 回目の組の頭（ゲーム内の 208。▲なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0712-19",
+    "recording": "0712",
+    "source": "V-0560",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 140585,
+    "description": "S1 の分配ダメージの 1 ヒット（分配ダメージ▲・受けるダメージ▲あり・会心なし・フルバースト・防御力▼・S2 の攻撃力▲）。f3641 の組（窓 2 の 3 つ目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0712-16` の組の値。比べるのは、条件のそろったゲーム内の 2755 以降の最初の組の頭（モデルの窓 2 の 2 つ目。鈴原サクラの▲あり）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 2755,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0712-20",
+    "recording": "0712",
+    "source": "V-0560",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 166925,
+    "description": "S1 の分配ダメージの 1 ヒット（分配ダメージ▲あり・受けるダメージ▲なし・会心・フルバースト・防御力▼・S2 の攻撃力▲）。f3541 の組（窓 2 の 2 つ目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0712-16` の組の値。比べるのは、条件のそろったゲーム内の 2655 以降の最初の組の頭（モデルの窓 2 の 1 つ目。▲なし）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 2655,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0712-21",
+    "recording": "0712",
+    "source": "V-0560",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 187447,
+    "description": "S1 の分配ダメージの 1 ヒット（分配ダメージ▲・受けるダメージ▲あり・会心・フルバースト・防御力▼・S2 の攻撃力▲）。f8112 の組（窓 4 の 1 つ目）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "`0712-16` の組の値。比べるのは、条件のそろったゲーム内の 7250 以降の最初の組の頭（モデルの窓 4 の 1 つ目。鈴原サクラの▲あり）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "frame": 7250,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

@@ -65,6 +65,15 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
 }
 
 /**
+ * 分配ダメージのヒットに掛ける、分配ダメージ▲の乗数。受けるダメージ▲（damageTaken）は分配ダメージ▲と 1 つの和
+ * (1 + Σ分配ダメージ + Σ受けるダメージ) で掛かるので、ほかの効果と同じく (1 + Σ受けるダメージ) を掛けた値に、その比を掛ける形にそろえる
+ * （エレグの S1 の分配ダメージ。C-0767）。▲の無いときは 1
+ */
+export function distributedHitMultiplier(distributedDamage: number, damageTaken: number): number {
+  return (1 + distributedDamage + damageTaken) / (1 + damageTaken);
+}
+
+/**
  * 発射体の爆発のヒット 1 つに掛ける、発射体爆発ダメージ▲の乗数（武器によらない形）。通常攻撃（爆発を持つ武器）と、
  * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 0162-12）で使う
  */
@@ -531,7 +540,10 @@ function perShotDamage(
   const common = baseHit * boost * applyAttackDamageBuffs(buffs) * (1 + buffs.damageTaken) * element;
   let total = 0;
   for (const e of effects) {
-    total += common * e.multiplier * (e.damageType === 'distributed' ? 1 + buffs.distributedDamage : 1);
+    total +=
+      common *
+      e.multiplier *
+      (e.damageType === 'distributed' ? distributedHitMultiplier(buffs.distributedDamage, buffs.damageTaken) : 1);
   }
   return total;
 }
