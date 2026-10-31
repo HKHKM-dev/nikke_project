@@ -1,0 +1,46 @@
+{
+  "id": "0819",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0819_rl_tu_squad.mp4",
+  "original": "2026-11-01_01-26-35.mp4",
+  "durationSec": 200.4,
+  "frames": 12023,
+  "fps": 60,
+  "sizeMB": 242.9,
+  "sha256": "eea750fc40a5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 94,
+      "name": "ベスティー：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0584 の撮影 B3（段 16 の PR 2）。エマ：タクティカル・アップ（I）・ウンファ：タクティカル・アップ（II）・ベスティー：タクティカル・アップ（III・操作）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T01:36+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

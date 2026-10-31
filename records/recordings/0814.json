@@ -1,0 +1,46 @@
+{
+  "id": "0814",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0814_smg_chisato_team.mp4",
+  "original": "2026-11-01_01-08-48.mp4",
+  "durationSec": 201.2,
+  "frames": 12070,
+  "fps": 60,
+  "sizeMB": 243.7,
+  "sha256": "70a6f224620b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 860,
+      "name": "千束",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0584 の撮影 A2（段 16 の PR 1）。リター（I）・デルタ（II）・千束（III・操作）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T01:15+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
