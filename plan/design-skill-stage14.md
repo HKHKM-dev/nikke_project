@@ -7,7 +7,7 @@
 - 前提: [design-skill-stage1.md](design-skill-stage1.md)（自分の状態の条件と外れ方。`removeState`）、[design-skill-stage3.md](design-skill-stage3.md) 1.1 節（`stackChange`）、[design-skill-stage10.md](design-skill-stage10.md) 2.1 節（`perCount: { state }`）、[design-skill-stage12.md](design-skill-stage12.md) 2.2 節（`perCount` の数だけのヒットを 1 つずつ出す）、[design-anis-star-s2-burst.md](design-anis-star-s2-burst.md) 2.3 節（`fixedChargeTime`）、[design-helm.md](design-helm.md) 2 節（`durationShots`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.2 節（`sequentialAttackDamage`）
 - いまの未対応: [skills.md](skills.md)（生成）の「未対応」の notes が正（[design-skill-note-kinds.md](design-skill-note-kinds.md)）
 - 作成日: 2026-10-31
-- 状態: 決定（2026-10-31。オーナーが論点 1〜9 を推奨どおりに決めた）
+- 状態: 閉じた（2026-10-31。オーナーの指示。論点 1〜9 は 2026-10-31 にオーナーが推奨どおりに決めた。3.1〜3.3 節の PR を全部入れた）
 
 ## 0. 範囲の選び方
 
@@ -229,3 +229,4 @@
 - 2026-10-31: PR 1 を実装した（V-0549、C-0755 を確定に、C-0749 を棄却に）。雪子の S2 の▲は、3 本とも II → III の替わり目から 588f 乗る。モデルの `burstStage3Enter` を替わり目に動かした（`burst/schedule.ts` の `stageEnterFrameOf`。動的サイクルの段階 3 だけ）。2.8 節と棚卸しに書いた「`0258-11` では▲の窓がモデルの 588f より長い」は誤りで、動画の 609f は入りの止まりを含む（ゲーム内では 588f のまま）。
 - 2026-10-31: 撮影 A・B・C を撮った（録画 0774〜0779）。PR 2 を実装した（V-0552、C-0757・C-0758 を確定に）。語彙は、きっかけ `{ chargeTick }`（溜めの周期）と `{ chargeFull }`（溜めが満ちた時。「フルチャージした時」の攻撃力▲がその発自身に乗るため。2.6 節で決めずにいた点）、自分の状態 `autoFireReady`、damage の `perCount: { state }` を 1 つずつのヒットに（`perCountIntervalSeconds`・`sequentialAttack`）、射撃の回数のきっかけの `gaugePerHit`。S1 の 5・6 行目（フルアクティブの使用回数と解除）は PR 3 の未対応の notes にした。
 - 2026-10-31: PR 3 を実装した（V-0553、C-0760〜C-0762 を確定に）。2.7 節の語彙に、状態の中身 `maxStacksUp` と `fixedChargeTime`（timed の固定より勝ち、溜めの途中で付けばその溜めも変わる）、付与の `stacksPerFireRef`（使用回数を 2 スタックで付ける）、`stackChange` の `closesAtZero`（いまの減少は最後の 1 段を残すため）、発数の維持と条件 `selfState` の組み合わせを足し、`removeState` の条件 `inFullBurst: false` を開いた（2.7 節は書けるとしていたが、検査と判定が `true` しか受けていなかった）。比べると、オートファイアの順番の攻撃のヒットはバフとフルバースト補正を発のフレームの値で固定していたので（C-0761）、順番攻撃ダメージ▲だけを発のフレームで読む最初の形から直した（`frame/plan.ts`）。S1 の 6 行目の解除は、撮影 B では使用回数がいつもフルバーストの中で尽き、起きていない。
+- 2026-10-31: 段 14 を閉じた（オーナーの指示）。PR 1〜3 で、C-0749 の読み直しと、スノーホワイト：ヘビーアームズの全スロット（S1 のオートファイア準備・ロックオンの受けるダメージ▲・オートファイア・フルアクティブの使用回数と解除、S2 の戦闘開始時とフルチャージした時の▲・バースト 3 段階突入時の攻撃力▲・フルアクティブ状態の▲、バーストの攻撃ダメージ▲とセブンスドワーフ・フルアクティブ）を定義した。録画で確かめていないのは S1 の解除（フルバーストの外の通常攻撃）だけ（V-0553 の次に撮るもの）。段 15 以降の候補は 4 節。
