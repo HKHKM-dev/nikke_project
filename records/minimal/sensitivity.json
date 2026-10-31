@@ -5851,6 +5851,38 @@
       }
     },
     {
+      "observation": "0259-09",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "534ac7b7b026d236",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0259-09",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "534ac7b7b026d236",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
       "observation": "0259-11",
       "element": "クイーン（真） burst.effects[1]",
       "key": "379260ba83e5ff97",
