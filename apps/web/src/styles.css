@@ -791,20 +791,9 @@ header h1 {
 /* スロットの見出しと詳細設定（フォーカス・撃たない） */
 .slot-legend {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 4px 6px;
-}
-/* 狭いスロットでは印やボタンを次の行へ送り、それぞれの中では折り返さない */
-.slot-legend > * {
+  gap: 6px;
   white-space: nowrap;
-}
-.slot-flag {
-  padding: 0 5px;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 .slot-settings-button {
   padding: 1px 8px;

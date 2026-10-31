@@ -87,7 +87,7 @@ export function SlotCard({
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
-      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない）のポップアップ。設定は今後増やす。設定中の印（撃たない）はその右（狭いと次の行）。フォーカスの印と、ポップアップの説明文はオーナーの指示で出さない（撃たないの近似は未対応の一覧に出す） */}
+      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない）のポップアップ。設定は今後増やす。見出しの設定中の印と、ポップアップの説明文はオーナーの指示で出さない（設定はポップアップのボタンの色で分かる。撃たないの近似は未対応の一覧に出す） */}
       <legend className="slot-legend">
         <span>スロット {slotIndex + 1}</span>
         <Popover
@@ -117,7 +117,6 @@ export function SlotCard({
             </div>
           </div>
         </Popover>
-        {slot.noFire && <span className="slot-flag">撃たない</span>}
       </legend>
       <CharacterPicker
         index={index}
