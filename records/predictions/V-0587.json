@@ -1,0 +1,488 @@
+{
+  "verification": "V-0587",
+  "note": "撮る前の予測。撮り方 I は ルドミラ（1 枠目・I・操作・撃たない）・ブラン（2 枠目・II）・プリバティ：アンカインド・メイド（3 枠目・III）、撮り方 II は 鈴原サクラ（1 枠目・I）・ユニ（2 枠目・II・操作・撃たない）・ノワール（3 枠目・III）（指標の team）。モデルには撃たない枠が無いので、操作する枠を noFireSlots にし（ゲージも出ない）、射撃の回数で起きる効果（ルドミラの S1 の防御力▼、ユニの S2 の最大装弾数▲と回復）を dropEffects で外す。仮説は、バーストのヒットが敵の側のデバフを見る時点だけを setup の burstHitEnemyDebuffs で替える",
+  "team": [
+    {
+      "rid": 190,
+      "controlled": true
+    },
+    {
+      "rid": 270
+    },
+    {
+      "rid": 313
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-snap",
+      "note": "発動の時点（いまのモデル。C-0795）",
+      "override": {
+        "burstHitEnemyDebuffs": "activation"
+      }
+    },
+    {
+      "id": "H-hit",
+      "note": "ヒットの直前（C-0795 の前のモデル。plan/design-burst-landing.md 9 節）",
+      "override": {
+        "burstHitEnemyDebuffs": "hit"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "ludmilla-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 I。1 回目のルドミラのバーストのヒット（会心でない）。モデルの時刻表で II まで進む回で、ブランの▲は I の発動の 28f 後に付き、ヒット（73f 後）の前。実機で II まで進んだ回にこの順で当てる"
+    },
+    {
+      "id": "ludmilla-hit-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 I。1 回目のルドミラのバーストのヒット（会心）。モデルの時刻表で II まで進む回で、ブランの▲は I の発動の 28f 後に付き、ヒット（73f 後）の前。実機で II まで進んだ回にこの順で当てる"
+    },
+    {
+      "id": "ludmilla-hit-4",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 I。4 回目のルドミラのバーストのヒット（会心でない）。モデルの時刻表で II まで進む回で、ブランの▲は I の発動の 28f 後に付き、ヒット（73f 後）の前。実機で II まで進んだ回にこの順で当てる"
+    },
+    {
+      "id": "ludmilla-hit-4-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 I。4 回目のルドミラのバーストのヒット（会心）。モデルの時刻表で II まで進む回で、ブランの▲は I の発動の 28f 後に付き、ヒット（73f 後）の前。実機で II まで進んだ回にこの順で当てる"
+    },
+    {
+      "id": "ludmilla-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "note": "撮り方 I の対照。2 回目のルドミラのバーストのヒット（会心でない）。II まで進まない回で、ブランの▲は無い（仮説で値は変わらない）"
+    },
+    {
+      "id": "ludmilla-hit-2-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "note": "撮り方 I の対照。2 回目のルドミラのバーストのヒット（会心）。II まで進まない回で、ブランの▲は無い（仮説で値は変わらない）"
+    },
+    {
+      "id": "privaty-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      },
+      "note": "撮り方 I の対照。1 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（2 ヒットとも会心でない）。発動はブランの▲の後で、どちらの仮説でも▲あり"
+    },
+    {
+      "id": "yuni-hit-on",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 836
+        },
+        {
+          "rid": 160,
+          "controlled": true
+        },
+        {
+          "rid": 271
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 1
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 II。ユニのバーストのヒット（会心でない）。鈴原サクラの▲が II の発動の後・ヒットの前に付いた回の形。モデルの▲の窓は実機と違うので、▲を実機の見分けられる回の順に置いた形（▲はフルバーストの入りから 5 秒）で出す。H-snap は▲なし、H-hit は▲あり"
+    },
+    {
+      "id": "yuni-hit-on-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 836
+        },
+        {
+          "rid": 160,
+          "controlled": true
+        },
+        {
+          "rid": 271
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 1
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstStart",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationSeconds": 5
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 II。ユニのバーストのヒット（会心）。鈴原サクラの▲が II の発動の後・ヒットの前に付いた回の形。モデルの▲の窓は実機と違うので、▲を実機の見分けられる回の順に置いた形（▲はフルバーストの入りから 5 秒）で出す。H-snap は▲なし、H-hit は▲あり"
+    },
+    {
+      "id": "yuni-hit-off",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 836
+        },
+        {
+          "rid": 160,
+          "controlled": true
+        },
+        {
+          "rid": 271
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 1
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationSeconds": 1.5
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 II。ユニのバーストのヒット（会心でない）。鈴原サクラの▲が II の発動の時に付いていて、ヒットの前に切れた回の形。▲を I の発動から 1.5 秒（ユニのヒットの前に切れる）にした形で出す。H-snap は▲あり、H-hit は▲なし"
+    },
+    {
+      "id": "yuni-hit-off-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 836
+        },
+        {
+          "rid": 160,
+          "controlled": true
+        },
+        {
+          "rid": 271
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [2],
+        "dropEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 160,
+            "skill": "skill2",
+            "index": 1
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 836,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 2,
+              "durationSeconds": 1.5
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮り方 II。ユニのバーストのヒット（会心）。鈴原サクラの▲が II の発動の時に付いていて、ヒットの前に切れた回の形。▲を I の発動から 1.5 秒（ユニのヒットの前に切れる）にした形で出す。H-snap は▲あり、H-hit は▲なし"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "3df333d41ea83be1a930b4dff5942d954fbf0280",
+    "values": {
+      "H-snap": {
+        "ludmilla-hit-1": 143266.0614,
+        "ludmilla-hit-1-crit": 214899.0921,
+        "ludmilla-hit-4": 143266.0614,
+        "ludmilla-hit-4-crit": 214899.0921,
+        "ludmilla-hit-2": 143266.0614,
+        "ludmilla-hit-2-crit": 214899.0921,
+        "privaty-hit-1": 1967400.3634443167,
+        "yuni-hit-on": 337343.96550000005,
+        "yuni-hit-on-crit": 506015.9482500001,
+        "yuni-hit-off": 395299.6587729,
+        "yuni-hit-off-crit": 592949.48815935
+      },
+      "H-hit": {
+        "ludmilla-hit-1": 199512.31710564002,
+        "ludmilla-hit-1-crit": 299268.47565846005,
+        "ludmilla-hit-4": 199512.31710564002,
+        "ludmilla-hit-4-crit": 299268.47565846005,
+        "ludmilla-hit-2": 143266.0614,
+        "ludmilla-hit-2-crit": 214899.0921,
+        "privaty-hit-1": 1967400.3634443167,
+        "yuni-hit-on": 395299.6587729,
+        "yuni-hit-on-crit": 592949.48815935,
+        "yuni-hit-off": 337343.96550000005,
+        "yuni-hit-off-crit": 506015.9482500001
+      }
+    }
+  }
+}
