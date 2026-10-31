@@ -138,6 +138,27 @@ describe('drive/cloud-lib', () => {
     expect(p.fetch).toEqual([]);
   });
 
+  it('取り直し: 一覧を取った後に --push が送ったもの（一覧の前の基準と違う）は、一覧に無くても消さない', () => {
+    const stamp = stampOf({ size: 1, modified: '2026-10-30T00:00:00.000Z' });
+    const p = planPull(
+      new Map([['scratch/a.md', stamp]]),
+      new Map([
+        ['scratch/a.md', 'A'],
+        ['scratch/pushed.md', 'P'],
+        ['scratch/gone.md', 'G'],
+      ]),
+      {
+        files: { 'scratch/a.md': 'A', 'scratch/pushed.md': 'P', 'scratch/gone.md': 'G' },
+        conflicts: {},
+        seen: { 'scratch/a.md': stamp },
+      },
+      { 'scratch/a.md': 'A', 'scratch/gone.md': 'G' },
+    );
+    expect(p.remove).toEqual(['scratch/gone.md']);
+    // 送ったものは基準を引き継ぐ（次の応答の終わりに送り直さない）
+    expect(p.files).toEqual({ 'scratch/a.md': 'A', 'scratch/pushed.md': 'P' });
+  });
+
   it('並べて回し、期限を過ぎたら新しく始めない（始めなかったもの・期限の後に失敗したものは rest）', async () => {
     let t = 0;
     let running = 0;

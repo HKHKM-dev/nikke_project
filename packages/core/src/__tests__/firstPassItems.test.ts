@@ -19,16 +19,24 @@ function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
 
-function fixedSlot(id: number, treasurePhase: TreasurePhase = 0): TeamSlotInput {
+type RawDefinition = { skills: Record<string, { effects: Record<string, unknown>[] }> };
+
+function fixedSlot(
+  id: number,
+  treasurePhase: TreasurePhase = 0,
+  edit: (raw: RawDefinition) => void = () => {},
+): TeamSlotInput {
   const character = readJson<CharacterData>(`../../data/characters/${id}.json`);
   const fixed = computeFixedSpecAttack(character);
+  const raw = readJson<RawDefinition>(`../../data/skills/${id}.json`);
+  edit(raw);
   return {
     character,
     growth: fixed.growth,
     attackOverride: fixed.attack,
     condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
     skills: {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
+      definition: parseSkillDefinition(raw),
       levels: MAX_SKILL_LEVELS,
       treasurePhase,
     },
@@ -55,6 +63,26 @@ const TEAMS: [string, TeamInput][] = [
     '103, 511, 300, 862, 95（60 秒）',
     team(
       [103, 511, 300, 862, 95].map((id) => fixedSlot(id)),
+      60,
+    ),
+  ],
+  // フルバーストの終わりまでの件が、窓より前に始まる（作った定義。870 の S2 の属性ダメージ▲のきっかけを戦闘開始時に変える）。
+  // 定義にある fullBurstEnd の件は、窓が伸びるのと始まりが足されるのが同じ時なので、窓を読む入力を落としても上の編成では落ちない
+  // （plan/design-first-pass-perf.md の経過）
+  [
+    '82, 330, 271, 870（S2 の▲を戦闘開始時に）, 225（60 秒）',
+    team(
+      [
+        fixedSlot(82),
+        fixedSlot(330),
+        fixedSlot(271),
+        fixedSlot(870, 0, (raw) => {
+          const effect = raw.skills['skill2']!.effects[2]!;
+          if (effect['durationUntil'] !== 'fullBurstEnd') throw new Error('870 の S2 の effects[2] が変わった');
+          effect['trigger'] = 'battleStart';
+        }),
+        fixedSlot(225),
+      ],
       60,
     ),
   ],
