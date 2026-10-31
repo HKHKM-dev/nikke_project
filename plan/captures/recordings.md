@@ -774,6 +774,10 @@
 | 0800 | `20261031-0800_smg+sg+mg_sakura+privaty-um+elegg_defence-round-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プリバティ：アンカインド・メイド（313、SG・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0561。鈴原サクラ（AI）・プリバティ：アンカインド・メイド（AI）・エレグ（操作・撃たない）。オートバースト ON |
 | 0801 | `20261031-0801_smg+sg+rl_sakura+product23+laplace-uh_defence-round-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プロダクト23（307、SG・風圧・R） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0565。鈴原サクラ（AI）・プロダクト23（AI）・ラプラス：アルティメットヒーロー（操作・撃たない）。オートバースト ON |
 | 0802 | `20261031-0802_smg+sg+rl_sakura+product23+laplace-uh_defence-round-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + プロダクト23（307、SG・風圧・R） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0565。鈴原サクラ（AI）・プロダクト23（AI）・ラプラス：アルティメットヒーロー（操作・撃たない）。オートバースト ON |
+| 0803 | `20261031-0803_smg+sr+sg_sakura+delta+queen-makoto_dist-taken-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎クイーン（真）（870、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 0804 | `20261031-0804_smg+sr+sg_sakura+delta+queen-makoto_dist-taken-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + デルタ（20、SR・風圧・SR） + ◎クイーン（真）（870、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 0805 | `20261031-0805_smg+mg+rl_sakura+elegg+scarlet-black-shadow_dist-taken-1.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎紅蓮：ブラックシャドウ（225、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 0806 | `20261031-0806_smg+mg+rl_sakura+elegg+scarlet-black-shadow_dist-taken-2.mp4` | 鈴原サクラ（836、SMG・水冷・SR） + エレグ（500、MG・電撃・SSR） + ◎紅蓮：ブラックシャドウ（225、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
