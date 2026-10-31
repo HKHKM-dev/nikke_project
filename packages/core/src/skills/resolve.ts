@@ -296,6 +296,8 @@ export type ResolvedEffect = {
   weapon?: ChangedWeapon;
   /** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示）。定義に無ければキーごと無い */
   burstStepMode?: BurstStepMode;
+  /** 2 段目の段 15 の PR 2: きっかけは読み込みが置き換えた「遮蔽物の HP を回復した時」（画面の表示だけが読む） */
+  viaCoverHealed?: true;
   assumes?: LocalizedText;
 };
 
@@ -604,6 +606,7 @@ function resolveItemFields(
   if (shots !== undefined) r.durationShots = shots;
   if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
   if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
+  if ('viaCoverHealed' in effect && effect.viaCoverHealed) r.viaCoverHealed = true;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }

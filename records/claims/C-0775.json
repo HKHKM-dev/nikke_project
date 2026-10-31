@@ -1,0 +1,16 @@
+{
+  "id": "C-0775",
+  "text": "ティアの S1 の「遮蔽物の HP を回復した時、自分にバーストスキルクールタイム 13 秒▼（2 スタック・12 秒）」は、S2 のバースト使用時の遮蔽物 HP 回復で付き、付いたその発動の CT（40 秒）をその場で縮める（T4 の▼は、発動の後に付いたものも走っている CT を縮める）。単騎のオートバーストでは、発動の間隔はチェーンの待ちの後のゲージで決まり、180 秒の発動は 5 回（その発動の CT に効かなければ 4 回）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0786-05`・`0787-05`（ティア単騎・操作・オートバースト ON。180 秒の発動はモデルと同じ 5 回で、S1 の▼がその発動の CT に効かなければ 4 回。どの発動の間隔も CT 40 秒より短い）。V-0566",
+  "model": "`data/skills/451.json`（skill1 の effects[0]。きっかけ { coverHealed } は読み込み（`skills/types.ts` の resolveCoverHealedTriggers）が skill2 の遮蔽物 HP 回復のきっかけ burstUse に置き換える）。T4 の▼の読みは `frame/firstPass.ts`（発動の前のフレームに効いていた件と、発動の後に付いた件）",
+  "replaces": [],
+  "updated": "2026-10-31",
+  "subject": {
+    "places": ["data/skills/451.json の skill1 の effects[0]", "data/skills/451.json の skill2 の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（スキル Lv10）と、確定の結論の CT・チェーンの待ち・ゲージの機構だけから決めた。値を合わせた録画は無い"
+}

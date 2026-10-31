@@ -65,6 +65,7 @@ import {
   finishSchedule,
   initialBurstController,
   reduceCooldown,
+  shortenCooldown,
   stepBurstController,
   type BurstControllerState,
   type BurstTiming,
@@ -898,6 +899,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   let nextWindowStart = 0;
   let nextWindowEnd = 0;
   let gaugeFullSeen = 0;
+  // 2 段目の段 15 の PR 2: T4 の▼ の件を持ちうる枠の、最後の発動（発動の後に付いた▼ の縮めた長さを足す先）
+  const lastActivationOf = new Map<number, BurstActivation>();
 
   const instants: InstantApplication[] = [];
   /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
@@ -1128,13 +1131,25 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       // 「その間スキル自体のクールタイムを変える」）。このフレームに発動した枠に効いている秒（f − 1 までに付いた件）だけ、その発動の
       // CT を短くする（明けるのは発動のフレームより前にしない）。常時（戦闘開始から持続の静的な状態の中身も）と時間で変わる件の和。
       // 即時の CT▼（reduceCooldown）とは別で、cooldownReductions に残さず、縮めた長さは発動の cooldownShortenedFrames に残す
-      for (const a of controller.activations.slice(before)) {
-        const seconds = (passive[a.slotIndex]?.buffs.burstCooldown ?? 0) + lists.burstCooldownAt(a.slotIndex, f);
-        if (seconds <= 0) continue;
-        const end = controller.cooldownEnd[a.slotIndex]!;
-        const shortened = Math.max(f, end - gameSecondsToFrames(seconds));
-        controller.cooldownEnd[a.slotIndex] = shortened;
-        if (shortened < end) a.cooldownShortenedFrames = end - shortened;
+      // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節。V-0566）: 時間で変わる件は、発動の前のフレームに効いていた件だけ
+      // （発動のフレームより後に付いた件は、下の「発動の後に付いた▼」が縮める。同じ件を 2 回数えない）
+      const shorten = (a: BurstActivation, seconds: number) => {
+        const applied = shortenCooldown(controller!, a.slotIndex, gameSecondsToFrames(seconds), f);
+        if (applied > 0) a.cooldownShortenedFrames = (a.cooldownShortenedFrames ?? 0) + applied;
+      };
+      for (let i = before; i < controller.activations.length; i++) {
+        const a = controller.activations[i]!;
+        const seconds = (passive[a.slotIndex]?.buffs.burstCooldown ?? 0) + lists.burstCooldownAt(a.slotIndex, f - 1);
+        if (seconds > 0) shorten(a, seconds);
+        if (lists.hasBurstCooldownTracks(a.slotIndex)) lastActivationOf.set(a.slotIndex, a);
+      }
+      // 2 段目の段 15 の PR 2: 発動の後に付いた T4 の▼（ティアの S1 のように、同じ発動から付いたものも）は、走っている CT をその場で
+      // 縮める（V-0566。単騎のティアの発動の間隔が 40 秒より短い）。前のフレームに始まった件を、そのフレームより前に発動した CT に当てる
+      // （このフレームに発動した枠は、上の発動の前のフレームの件で数えた）
+      for (const last of lastActivationOf.values()) {
+        if (last.frame >= f || controller.cooldownEnd[last.slotIndex]! <= f) continue;
+        const seconds = lists.burstCooldownStartedAt(last.slotIndex, f - 1);
+        if (seconds > 0) shorten(last, seconds);
       }
     }
     // 2b. V-0030: 段の循環の射撃は、手順 3 の後に数える（countCycles）

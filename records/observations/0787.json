@@ -1,0 +1,276 @@
+[
+  {
+    "id": "0787-01",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": 10.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -31,
+      "high": 52
+    },
+    "description": "ティアの S1 の攻撃ダメージ▲（遮蔽物の HP を回復した時・10 秒）の付き始めの、1 回目のバースト（BURST バーが消えたフレーム f2223）から数えた動画のフレームの幅。▲なしの最後の発は -31f、▲ありの最初の発は 52f（値は幅の真ん中）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps と tools/captures/gauge.ts --mode events",
+      "note": "▲なしは 244,753（コア・距離ボーナスなし）・305,941（距離ボーナス）・122,376（コアなし）、▲ありはその ×1.3211。バーストは BURST バーが消えたフレーム（再突入の I なので六角形は替わらない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "from": 1,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 41.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0787-02",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": 587,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 498,
+      "high": 676
+    },
+    "description": "ティアの S1 の攻撃ダメージ▲（遮蔽物の HP を回復した時・10 秒）の切れ目の、1 回目のバースト（BURST バーが消えたフレーム f2223）から数えた動画のフレームの幅。▲ありの最後の発は 498f、▲なしの最初の発は 676f（値は幅の真ん中）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps と tools/captures/gauge.ts --mode events",
+      "note": "▲なしは 244,753（コア・距離ボーナスなし）・305,941（距離ボーナス）・122,376（コアなし）、▲ありはその ×1.3211。バーストは BURST バーが消えたフレーム（再突入の I なので六角形は替わらない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "from": 1,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 89
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0787-03",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": 9.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -32,
+      "high": 51
+    },
+    "description": "ティアの S1 の攻撃ダメージ▲（遮蔽物の HP を回復した時・10 秒）の付き始めの、2 回目のバースト（BURST バーが消えたフレーム f4150）から数えた動画のフレームの幅。▲なしの最後の発は -32f、▲ありの最初の発は 51f（値は幅の真ん中）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps と tools/captures/gauge.ts --mode events",
+      "note": "▲なしは 244,753（コア・距離ボーナスなし）・305,941（距離ボーナス）・122,376（コアなし）、▲ありはその ×1.3211。バーストは BURST バーが消えたフレーム（再突入の I なので六角形は替わらない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "from": 1,
+        "n": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 41.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0787-04",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "timing",
+    "use": "compare",
+    "value": 620.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 580,
+      "high": 661
+    },
+    "description": "ティアの S1 の攻撃ダメージ▲（遮蔽物の HP を回復した時・10 秒）の切れ目の、2 回目のバースト（BURST バーが消えたフレーム f4150）から数えた動画のフレームの幅。▲ありの最後の発は 580f、▲なしの最初の発は 661f（値は幅の真ん中）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps と tools/captures/gauge.ts --mode events",
+      "note": "▲なしは 244,753（コア・距離ボーナスなし）・305,941（距離ボーナス）・122,376（コアなし）、▲ありはその ×1.3211。バーストは BURST バーが消えたフレーム（再突入の I なので六角形は替わらない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "from": 1,
+        "n": 1,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 40.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0787-05",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "count",
+    "use": "compare",
+    "value": 5,
+    "unit": "回",
+    "description": "ティアのバーストの発動の回数（180 秒）。BURST バーが消えたフレーム（f2223・4150・6198・8470・10565）の数。S1 のバーストスキルクールタイム 13 秒▼が付いたその発動の CT に効かなければ（CT 40 秒）4 回",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "バー消失のうち、満タン・溜め始めと数 f おきに続く読み違い（f673・f10597・f11426）を除いた。どの発動の間隔も CT 40 秒（約 2,400f）より短い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 1
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0787-06",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 244753,
+    "description": "ティアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の外",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0787-07",
+    "recording": "0787",
+    "source": "V-0566",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 323343,
+    "description": "ティアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。1 回目のバーストの後の S1 の攻撃ダメージ▲の窓の中",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  }
+]

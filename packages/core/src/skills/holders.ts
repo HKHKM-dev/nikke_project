@@ -358,6 +358,13 @@ export type HolderLists = {
    */
   burstCooldownAt(holder: number, frame: number): number;
   /**
+   * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: 枠 holder の、バーストスキルのクールタイム▼ の件のうち、フレーム
+   * frame に始まったものの秒の和（発動の後に付いた▼。frame/firstPass.ts が、走っている CT をその場で縮めるのに使う）
+   */
+  burstCooldownStartedAt(holder: number, frame: number): number;
+  /** 同: バーストスキルのクールタイム▼ の件の列を持ちうるか */
+  hasBurstCooldownTracks(holder: number): boolean;
+  /**
    * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 即時効果 effect の発火の条件（cooldownReduction の selfState）が、
    * 出どころの枠 sourceSlotIndex でフレーム frame に満たされるか。timed の段 1.5 の条件と同じ件を見る。満たさなければ条件で出なかった
    * 記録を残す。手順 3 の後に呼ぶ
@@ -1354,6 +1361,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
   // 2 段目の段 11 の PR 3: バーストスキルのクールタイム▼ の維持の付いた形（T4）の件
   const cooldownViews = viewsOf((_, e) => e.stat === 'burstCooldown');
+  /** 2 段目の段 15 の PR 2: 枠 holder の T4 の▼ の件のうち、pick に合うものの秒の和 */
+  const cooldownSum = (holder: number, pick: (it: HeldItem) => boolean): number => {
+    let sum = 0;
+    for (const v of cooldownViews[holder] ?? [])
+      for (const it of readItems(v.track)) if (pick(it)) sum += valueOf(v.effect, it);
+    return sum;
+  };
 
   const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
     if (condition.selfState !== undefined) {
@@ -2069,13 +2083,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return sum;
     },
     hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
-    burstCooldownAt(holder, frame) {
-      let sum = 0;
-      for (const v of cooldownViews[holder] ?? []) {
-        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
-      }
-      return sum;
-    },
+    burstCooldownAt: (holder, frame) => cooldownSum(holder, (it) => it.start <= frame && frame < it.end),
+    burstCooldownStartedAt: (holder, frame) => cooldownSum(holder, (it) => it.start === frame),
+    hasBurstCooldownTracks: (holder) => (cooldownViews[holder] ?? []).length > 0,
     // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）。
     // 段は 1 始まりなので、付いていればスタック数は 1 以上
     selfStateAt: (holder, state, frame) => selfStackCountAt(holder, state, frame) > 0,

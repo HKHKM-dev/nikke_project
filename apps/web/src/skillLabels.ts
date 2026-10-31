@@ -211,6 +211,8 @@ export function formatItemTrigger(effect: AppliedTimedEffect): string {
   // 2 段目の段 11 の PR 2: カウンタの while の効果は「オーバーエネルギーの段階 2 以上の間 →」
   if (isCounterWhileEffect(effect))
     return `${counterName(effect.whileCounter.counter).ja} ${formatNumber(effect.whileCounter.atLeast)} 以上の間 →`;
+  // 2 段目の段 15 の PR 2: 読み込みが置き換えた「遮蔽物の HP を回復した時」（ティアの S1）は、置き換える前のきっかけで出す
+  if (effect.viaCoverHealed === true) return '遮蔽物の HP を回復した時 →';
   return isStateContent(effect) ? `${stateLabel(effect.whileState)}の間 →` : formatTimedTrigger(effect.trigger);
 }
 
