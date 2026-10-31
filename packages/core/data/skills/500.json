@@ -21,8 +21,8 @@
           ]
         },
         {
-          "ja": "通常攻撃 100 回命中ごとの、ブームインストール状態の対象と周囲の敵への分配ダメージは未対応。命中は戦闘中ずっと通算で数え、100 の倍数に届いた命中の時に敵がブームインストール状態なら起き、届いた発の 8f 後から同じ値の 3 ヒット（頭・+24f・+36f）で出る（V-0524）。1 ヒットの値は、説明文の値の全額・3 分の 1・それぞれ全額のどの形とも合わない（式が分からない）",
-          "en": "The distributed damage to a BOOM-Installed target and nearby enemies every 100 normal attack hits is not modeled. Hits are counted throughout the battle; it fires when a multiple of 100 is reached while the enemy is in BOOM Install, and lands as three equal hits 8 frames after that shot and then +24 and +36 frames (V-0524). The per-hit value matches none of: the full description value, one third of it, or the full value per hit (the formula is unknown)",
+          "ja": "通常攻撃 100 回命中ごとの、ブームインストール状態の対象と周囲の敵への分配ダメージは未対応。命中は戦闘中ずっと通算で数え、100 の倍数に届いた命中の時に敵がブームインストール状態なら起き、届いた発の 8f 後から同じ値の 3 ヒット（頭・+24f・+36f）で出る（V-0524）。1 ヒットの値の式は撮影待ち（V-0560。読み直しでは、全額の 3 分の 1 を、届いた発の次のフレームのバフで 3 ヒットとも固定し、受けるダメージ▲を分配ダメージ▲と同じ和に入れた形と合う）",
+          "en": "The distributed damage to a BOOM-Installed target and nearby enemies every 100 normal attack hits is not modeled. Hits are counted throughout the battle; it fires when a multiple of 100 is reached while the enemy is in BOOM Install, and lands as three equal hits 8 frames after that shot and then +24 and +36 frames (V-0524). The per-hit formula awaits recordings (V-0560; a re-read matches one third of the full value, with buffs fixed on the frame after that shot for all three hits and damage-taken increases summed with distributed damage increases)",
           "kind": "unimplemented",
           "effect": {
             "kind": "damage",

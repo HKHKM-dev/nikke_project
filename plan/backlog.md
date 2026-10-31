@@ -98,7 +98,7 @@
 1 行の形は「題名（起票日）→ 状態: 設計書（あれば）。残りの行き先（この文書の節か行）」。状態は「進行中」「一部完了」「保留」などの一語に、要るときだけ短い括弧（撮影待ちの部分など）を添える。進み具合は設計書の経過に書く。題名は変えない（開いている課題を記録が題名で指す）。行は状態が変わったときだけ直し、閉じたら消す。
 
 - 2026-10-29 のアップデートのキャラ（マリアン：クイーン・ラプンツェル：サンクチュアリ・紅蓮：神殺）の仮実装（2026-10-28 起票）→ 進行中（紅蓮：神殺は撮影待ち）: [design-new-chars-1029.md](design-new-chars-1029.md) 7・10・11 節
-- エレグ（500）の定義（2026-10-26 起票）→ 一部完了（S1 の分配ダメージは値の式が分からず未対応）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
+- エレグ（500）の定義（2026-10-26 起票）→ 一部完了（S1 の分配ダメージは撮影待ち。V-0560）: [design-elegg.md](design-elegg.md)・[design-elegg-s3.md](design-elegg-s3.md)
 - スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 一部完了（段 15 以降は未起案）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの状態と設計書）
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
