@@ -28,7 +28,6 @@ type Props = {
   synchroLevel: number;
   /** 2026-10-31: 詳細設定（ポップアップ）の欄 */
   durationSeconds: number;
-  burst: boolean;
   rangeJump: boolean;
   dispatch: Dispatch<TeamAction>;
 };
@@ -37,7 +36,7 @@ type Props = {
  * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（射撃場スペック固定・シンクロレベル・リサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
  * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）。
- * 属性の右の「詳細設定」のポップアップで、3 分モード（的のジャンプ）・戦闘時間・バーストを設定する（操作キャラはスロットの詳細設定のフォーカス）
+ * 属性の右の「詳細設定」のポップアップで、3 分モード（的のジャンプ）・戦闘時間を設定する（操作キャラ・バーストを使うかはスロットの詳細設定）
  */
 export function TeamSettingsForm({
   element,
@@ -45,7 +44,6 @@ export function TeamSettingsForm({
   consoleInput,
   synchroLevel,
   durationSeconds,
-  burst,
   rangeJump,
   dispatch,
 }: Props) {
@@ -117,14 +115,6 @@ export function TeamSettingsForm({
                     dispatch({ type: 'setDuration', durationSeconds: Math.max(0, Number(e.target.value) || 0) })
                   }
                 />
-              </label>
-              <label className="field checkbox">
-                <input
-                  type="checkbox"
-                  checked={burst}
-                  onChange={(e) => dispatch({ type: 'setBurst', burst: e.target.checked })}
-                />
-                <span>バースト</span>
               </label>
             </div>
           </Popover>

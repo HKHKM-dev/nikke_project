@@ -35,6 +35,7 @@ import {
   effectiveSkillLevels,
   effectiveTreasurePhase,
   enemyForCalc,
+  noBurstSlotsForCalc,
   eventSetsForCalc,
   parseTeamState,
   serializeTeamState,
@@ -223,6 +224,7 @@ export function App() {
       ),
       durationSeconds: calcTeam.durationSeconds,
       burst: calcTeam.burst,
+      noBurstSlots: noBurstSlotsForCalc(calcTeam),
       controlledSlot: calcTeam.controlledSlot,
     }),
     [slotInputs, calcTeam, enemyMaster],
@@ -298,7 +300,6 @@ export function App() {
             consoleInput={team.console}
             synchroLevel={team.synchroLevel}
             durationSeconds={calcTeam.durationSeconds}
-            burst={calcTeam.burst}
             rangeJump={calcTeam.rangeJump}
             dispatch={dispatch}
           />

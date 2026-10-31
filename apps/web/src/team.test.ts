@@ -21,6 +21,7 @@ import {
   serializeTeamState,
   eventSetsForCalc,
   teamStateForCalc,
+  noBurstSlotsForCalc,
   takenResourceIds,
   teamReducer,
   type TeamState,
@@ -617,7 +618,7 @@ describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () =
     expect(s.slots[0]!.conditionMode).toBe('manual');
   });
 
-  it('uses the shooting-range enemy with the saved element only, and keeps the advanced settings', () => {
+  it('uses the shooting-range enemy with the saved element only, always bursts, and keeps the other advanced settings', () => {
     let s = teamReducer(initialTeamState(), {
       type: 'setEnemy',
       enemy: { defence: 140, element: 'Fire', hasCore: false },
@@ -628,7 +629,7 @@ describe('teamStateForCalc (inputs removed from the screen on 2026-10-31)', () =
     const calc = teamStateForCalc(s);
     expect(calc.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
     expect(calc.durationSeconds).toBe(60);
-    expect(calc.burst).toBe(false);
+    expect(calc.burst).toBe(true);
     expect(calc.controlledSlot).toBe(0);
     expect(s.enemy.defence).toBe(140);
   });
@@ -665,6 +666,22 @@ describe('no fire (slot advanced settings, 2026-10-31)', () => {
     const old = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
     for (const slot of old.slots) delete slot.noFire;
     expect(parseTeamState(JSON.stringify(old), index)?.slots[0]?.noFire).toBe(false);
+  });
+});
+
+describe('no burst (slot advanced settings, 2026-10-31)', () => {
+  it('lists the occupied no-burst slots for the calculation, and round-trips the flag', () => {
+    let s = withCharacters([10, 20]);
+    expect(noBurstSlotsForCalc(s)).toBeUndefined();
+    s = teamReducer(s, { type: 'setNoBurst', index: 1, noBurst: true });
+    s = teamReducer(s, { type: 'setNoBurst', index: 4, noBurst: true });
+    expect(noBurstSlotsForCalc(s)).toEqual([1]);
+    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
+    const old = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
+    for (const slot of old.slots) delete slot.noBurst;
+    expect(parseTeamState(JSON.stringify(old), index)?.slots[0]?.noBurst).toBe(false);
+    old.slots[0]!.noBurst = 'yes';
+    expect(parseTeamState(JSON.stringify(old), index)).toBeNull();
   });
 });
 

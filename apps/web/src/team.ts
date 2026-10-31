@@ -96,6 +96,11 @@ export type SlotState = {
    * ダメージとゲージが出ない。射撃の回数のきっかけは残る。records の noFireSlots と同じ扱い。teamStateForCalc）。既定は撃つ
    */
   noFire: boolean;
+  /**
+   * 2026-10-31: バーストしない（スロットの詳細設定）。バーストのチェーンの候補から外す（core の TeamInput.noBurstSlots。
+   * noBurstSlotsForCalc）。既定は使う
+   */
+  noBurst: boolean;
 };
 
 export type TeamState = {
@@ -168,6 +173,7 @@ export type TeamAction =
   | { type: 'setBuild'; index: number; build: BuildInput }
   | { type: 'setHpRatio'; index: number; hpRatio: number }
   | { type: 'setNoFire'; index: number; noFire: boolean }
+  | { type: 'setNoBurst'; index: number; noBurst: boolean }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
@@ -190,6 +196,7 @@ export function emptySlot(): SlotState {
     build: emptyBuild(),
     hpRatio: DEFAULT_HP_RATIO,
     noFire: false,
+    noBurst: false,
   };
 }
 
@@ -261,6 +268,8 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, hpRatio: action.hpRatio }));
     case 'setNoFire':
       return updateSlot(state, action.index, (s) => ({ ...s, noFire: action.noFire }));
+    case 'setNoBurst':
+      return updateSlot(state, action.index, (s) => ({ ...s, noBurst: action.noBurst }));
     case 'setEnemy':
       return { ...state, enemy: action.enemy };
     case 'setDuration':
@@ -368,7 +377,8 @@ export function effectiveBuild(
  * （欄が無いので直せないため）。計算と画面はこの編成を読む
  * - 枠: 射撃条件・想定 HP・リサイクルルーム・その他攻撃加算。Lv は編成共通のシンクロレベル。撃たないスロットは、射撃条件を
  *   手入力の弾丸命中率 0 にする（SlotState.noFire）
- * - 編成: 敵（射撃場の的にし、属性だけ残す）。戦闘時間・バースト・操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
+ * - 編成: 敵（射撃場の的にし、属性だけ残す）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。戦闘時間・
+ *   操作キャラは詳細設定の欄で戻したので、保存データの値を使う。
  *   3 分モードの出来事のセットは eventSetsForCalc
  */
 export function teamStateForCalc(state: TeamState): TeamState {
@@ -383,7 +393,14 @@ export function teamStateForCalc(state: TeamState): TeamState {
       build: { ...slot.build, recycleRoom: { ...EMPTY_BUILD.recycleRoom }, extraAttack: EMPTY_BUILD.extraAttack },
     })),
     enemy: { ...SHOOTING_RANGE_ENEMY, element: state.enemy.element },
+    burst: DEFAULT_BURST,
   };
+}
+
+/** 2026-10-31: バーストしないスロット（0 始まり。ニケのいるスロットだけ）。無ければ undefined（core の TeamInput.noBurstSlots） */
+export function noBurstSlotsForCalc(state: TeamState): number[] | undefined {
+  const slots = state.slots.flatMap((s, i) => (s.noBurst && s.resourceId !== null ? [i] : []));
+  return slots.length === 0 ? undefined : slots;
 }
 
 /**
@@ -640,6 +657,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const hpRatio = parseHpRatio(s.hpRatio);
     // 2026-10-31 までの保存データには無いので、欠落は撃つ
     if (s.noFire !== undefined && !isBool(s.noFire)) return null;
+    if (s.noBurst !== undefined && !isBool(s.noBurst)) return null;
     if (
       growth === null ||
       condition === null ||
@@ -661,6 +679,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
       build,
       hpRatio,
       noFire: s.noFire === true,
+      noBurst: s.noBurst === true,
     });
   }
 
