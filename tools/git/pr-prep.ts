@@ -14,7 +14,7 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../packages/core/scripts/records-data.ts';
 import {
@@ -55,13 +55,13 @@ function npm(script: string): void {
   if (r.status !== 0) fail(`npm run ${script} が落ちた`);
 }
 
-/** node_modules の道具を node で回す（npx を通さない。Windows でも同じ） */
-function bin(path: string, args: readonly string[]): void {
-  const r = spawnSync(process.execPath, [createRequire(import.meta.url).resolve(path), ...args], {
-    cwd: ROOT,
-    stdio: 'inherit',
-  });
-  if (r.status !== 0) fail(`${path.split('/')[0]} が落ちた`);
+/** node_modules の道具を、package.json の bin から node で回す（npx を通さない。Windows でも同じ。eslint は bin を exports に出していない） */
+function bin(pkg: string, args: readonly string[]): void {
+  const manifest = createRequire(import.meta.url).resolve(`${pkg}/package.json`);
+  const field = (JSON.parse(readFileSync(manifest, 'utf8')) as { bin: string | Record<string, string> }).bin;
+  const entry = join(dirname(manifest), typeof field === 'string' ? field : field[pkg]!);
+  const r = spawnSync(process.execPath, [entry, ...args], { cwd: ROOT, stdio: 'inherit' });
+  if (r.status !== 0) fail(`${pkg} が落ちた`);
 }
 
 function fail(message: string): never {
@@ -182,8 +182,8 @@ if (!values['no-ci']) {
     console.log(
       `書式と lint は、ブランチで変えたファイル ${checks.format.length} 件だけを見る（全部は GitHub の CI が見る）`,
     );
-    if (checks.format.length > 0) bin('prettier/bin/prettier.cjs', ['--check', '--ignore-unknown', ...checks.format]);
-    if (checks.lint.length > 0) bin('eslint/bin/eslint.js', ['--no-warn-ignored', ...checks.lint]);
+    if (checks.format.length > 0) bin('prettier', ['--check', '--ignore-unknown', ...checks.format]);
+    if (checks.lint.length > 0) bin('eslint', ['--no-warn-ignored', ...checks.lint]);
     for (const script of ['typecheck', 'test', 'build']) npm(script);
   }
 }
