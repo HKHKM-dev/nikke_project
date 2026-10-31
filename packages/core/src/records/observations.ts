@@ -2622,9 +2622,12 @@ export function runObservations(
       p = predict(o, c, recording);
       if (key !== undefined && memorable(p)) memo!.set(key, p);
     }
+    if ('error' in p) {
+      residuals.push({ observation: o, status: 'error', predicted: null, diff: null, message: p.error });
+      continue;
+    }
+    // 下書きは許容が無いことがある（そのときも投げずに比べられない 1 行にする）
     try {
-      if ('error' in p) throw new Error(p.error);
-      // 下書きは許容が無いことがある（そのときも投げずに比べられない 1 行にする）
       const { diff, ok } = compareValue(o.value, p.predicted, c.tolerance);
       residuals.push({ observation: o, status: ok ? 'ok' : 'outside', predicted: p.predicted, diff });
     } catch (e) {

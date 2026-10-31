@@ -39,16 +39,19 @@ const { values } = parseArgs({
   },
 });
 
+/** 成功したら標準出力。失敗したら投げる */
+function gitRaw(args: readonly string[]): string {
+  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+}
+
 /** 成功したら標準出力（前後の空白を除く）。失敗したら投げる */
 function git(args: readonly string[]): string {
-  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
+  return gitRaw(args).trim();
 }
 
 /** パスの一覧（-z で読む。ASCII でないパスも、そのままの形で） */
 function gitPaths(args: readonly string[]): string[] {
-  return nulPaths(
-    execFileSync('git', pathListArgs(args), { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }),
-  );
+  return nulPaths(gitRaw(pathListArgs(args)));
 }
 
 /** 失敗しても投げない git（終了コードを返す） */
