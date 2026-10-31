@@ -2,7 +2,6 @@ import {
   SKILL_LEVEL_MAX,
   SKILL_LEVEL_MIN,
   SKILL_SLOTS,
-  TREASURE_PHASE_MAX,
   applyTreasure,
   type CharacterData,
   type SkillLevels,
@@ -10,7 +9,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { useState, type Dispatch } from 'react';
-import { SUPPORT_BADGE, treasurePhaseLabel } from '../skillLabels.ts';
+import { SUPPORT_BADGE } from '../skillLabels.ts';
 import { clampSkillLevel, type TeamAction } from '../team.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
@@ -81,7 +80,6 @@ type InputProps = {
 
 /** 枠カード内のスキル Lv 入力と宝物の段階（スキル名・説明文は「ニケごとの詳細」に出す） */
 export function SkillSection({ slotIndex, character, levels, treasurePhase, disabled, status, dispatch }: InputProps) {
-  const treasure = character.treasure;
   const shown = applyTreasure(character, status.kind === 'ready' ? status.definition : null, treasurePhase);
   const allUnsupported =
     status.kind === 'ready' &&
@@ -117,27 +115,6 @@ export function SkillSection({ slotIndex, character, levels, treasurePhase, disa
       <div className="skills-head">
         <span className="skills-title">スキル Lv</span>
         {overallBadge && <span className={`badge ${overallBadge.className}`}>{overallBadge.label}</span>}
-        {treasure && (
-          <label className="treasure-phase" title={treasure.name.ja}>
-            <span>宝物</span>
-            <select
-              value={treasurePhase}
-              onChange={(e) =>
-                dispatch({
-                  type: 'setTreasurePhase',
-                  index: slotIndex,
-                  treasurePhase: Number(e.target.value) as TreasurePhase,
-                })
-              }
-            >
-              {Array.from({ length: TREASURE_PHASE_MAX + 1 }, (_, phase) => (
-                <option key={phase} value={phase}>
-                  {treasurePhaseLabel(treasure.unlockOrder, phase)}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
       </div>
       <div className="growth-row skill-levels-row">
         {SKILL_SLOTS.map((slot) => (

@@ -27,6 +27,11 @@ export const GEAR_PARTS: readonly GearPart[] = ['head', 'body', 'arm', 'leg'];
 export const GEAR_LEVEL_MAX = 5;
 export const AFFECTION_RANK_MIN = 1;
 export const AFFECTION_RANK_MAX = 40;
+
+/** キャラごとの好感度ランクの上限。OVERSPEC（ピルグリム全員と、ピルグリムでない 4 体）は 40、ほかは 30（オーナーの指定） */
+export function affectionRankMax(character: Pick<CharacterData, 'corporationSubType'>): number {
+  return character.corporationSubType === 'OVERSPEC' ? AFFECTION_RANK_MAX : 30;
+}
 export const CUBE_LEVEL_MIN = 1;
 export const CUBE_LEVEL_MAX = 15;
 export const COLLECTION_LEVEL_MAX = 15;

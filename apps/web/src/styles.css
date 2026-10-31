@@ -334,18 +334,6 @@ header h1 {
   background: #6a1b9a;
   color: #fff;
 }
-.treasure-phase {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  font-size: 0.78rem;
-  margin-left: auto;
-}
-.treasure-phase select {
-  font: inherit;
-  font-size: 0.78rem;
-  padding: 1px 4px;
-}
 .badge.undefined,
 .badge.loading {
   background: #616161;

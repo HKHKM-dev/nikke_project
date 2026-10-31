@@ -153,14 +153,15 @@ export function App() {
         let hpOverride: number | undefined;
         let defenceOverride: number | undefined;
         let buildEffects: BuildEffect[] | undefined;
-        if (masters && (!isEmptyBuild(slot.build) || treasurePhase > 0)) {
+        const build = effectiveBuild(slot, false, character);
+        if (masters && (!isEmptyBuild(build) || treasurePhase > 0)) {
           try {
-            attackOverride = computeCombatAttack(character, growth, slot.build, masters, { treasurePhase }).attack;
-            hpOverride = computeCombatStat(character, growth, slot.build, masters, 'hp', { treasurePhase }).value;
-            defenceOverride = computeCombatStat(character, growth, slot.build, masters, 'defence', {
+            attackOverride = computeCombatAttack(character, growth, build, masters, { treasurePhase }).attack;
+            hpOverride = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase }).value;
+            defenceOverride = computeCombatStat(character, growth, build, masters, 'defence', {
               treasurePhase,
             }).value;
-            buildEffects = resolveBuildEffects(character, slot.build, masters, { treasurePhase }).effects;
+            buildEffects = resolveBuildEffects(character, build, masters, { treasurePhase }).effects;
           } catch {
             attackOverride = undefined;
             hpOverride = undefined;
@@ -216,7 +217,7 @@ export function App() {
         let buildNotes: BuildEffectNote[] = [];
         if (masters && !team.fixedSpec) {
           try {
-            buildNotes = resolveBuildEffects(character, slot.build, masters, {
+            buildNotes = resolveBuildEffects(character, effectiveBuild(slot, false, character), masters, {
               treasurePhase,
             }).notes.filter((n) => n.level === 'unsupported');
           } catch {

@@ -21,6 +21,7 @@ import {
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
   EMPTY_BUILD,
+  affectionRankMax,
   emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
@@ -283,7 +284,9 @@ export function effectiveTreasurePhase(slot: SlotState, character: CharacterData
 
 /** Stage 12: 計算に渡す育成入力。スペック固定は T9 Lv5 × 4 と好感度 rank30/40/10 のプリセット（保存している入力は残す） */
 export function effectiveBuild(slot: SlotState, fixedSpec: boolean, character: CharacterData): BuildInput {
-  return fixedSpec ? fixedSpecBuild(character) : slot.build;
+  if (fixedSpec) return fixedSpecBuild(character);
+  // 好感度はキャラごとの上限（affectionRankMax）に収める。上限より上の保存データも上限で計算する
+  return { ...slot.build, affectionRank: Math.min(slot.build.affectionRank, affectionRankMax(character)) };
 }
 
 /**

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
   clampSkillLevel,
+  effectiveBuild,
   effectiveSkillLevels,
   effectiveTreasurePhase,
   enemyForCalc,
@@ -637,5 +638,19 @@ describe('event sets for the calculation (3-minute mode removed from the screen 
     );
     expect(eventSetsForCalc(null)).toEqual([]);
     expect(eventSetsForCalc(master)).toEqual(['range-3min-jump']);
+  });
+});
+
+describe('affection rank cap per character (2026-10-31)', () => {
+  it('caps the saved affection rank at 40 for OVERSPEC and 30 for the others when calculating', () => {
+    const slot = { ...initialTeamState().slots[0]!, resourceId: 10 };
+    const saved = { ...slot, build: { ...slot.build, affectionRank: 40 } };
+    const overspec = { corporationSubType: 'OVERSPEC' } as CharacterData;
+    const other = { corporationSubType: null } as CharacterData;
+    expect(effectiveBuild(saved, false, overspec).affectionRank).toBe(40);
+    expect(effectiveBuild(saved, false, other).affectionRank).toBe(30);
+    expect(effectiveBuild({ ...saved, build: { ...saved.build, affectionRank: 12 } }, false, other).affectionRank).toBe(
+      12,
+    );
   });
 });

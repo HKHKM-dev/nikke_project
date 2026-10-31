@@ -3,7 +3,6 @@
 // 2026-10-31: オーナーの指示で、リサイクルルーム・その他攻撃加算の欄と、攻撃力の表示（見出しの攻撃力・合成内訳・効果層の一覧・
 // スペック固定の説明）を消した。リサイクルルームとその他攻撃加算は 0 で計算する（team.ts の teamStateForCalc）
 import {
-  AFFECTION_RANK_MAX,
   AFFECTION_RANK_MIN,
   COLLECTION_LEVEL_MAX,
   CUBE_LEVEL_MAX,
@@ -14,6 +13,8 @@ import {
   OVERLOAD_LEVEL_MAX,
   OVERLOAD_LEVEL_MIN,
   OVERLOAD_LINE_MAX,
+  TREASURE_PHASE_MAX,
+  affectionRankMax,
   computeCombatAttack,
   type BuildInput,
   type BuildMasters,
@@ -27,7 +28,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import type { Dispatch } from 'react';
-import { GEAR_PART_LABEL } from '../skillLabels.ts';
+import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
 import type { TeamAction } from '../team.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
@@ -74,6 +75,8 @@ export function BuildSection({
 }: Props) {
   const set = (patch: Partial<BuildInput>) =>
     dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
+  const setTreasurePhase = (treasurePhase: TreasurePhase) =>
+    dispatch({ type: 'setTreasurePhase', index: slotIndex, treasurePhase });
   const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
     set({ gear: { ...build.gear, [part]: gear } });
 
@@ -105,12 +108,12 @@ export function BuildSection({
           <input
             type="number"
             min={AFFECTION_RANK_MIN}
-            max={AFFECTION_RANK_MAX}
+            max={affectionRankMax(character)}
             step={1}
             value={shown.affectionRank}
             disabled={disabled}
             onChange={(e) =>
-              set({ affectionRank: clampInt(Number(e.target.value), AFFECTION_RANK_MIN, AFFECTION_RANK_MAX) })
+              set({ affectionRank: clampInt(Number(e.target.value), AFFECTION_RANK_MIN, affectionRankMax(character)) })
             }
           />
         </label>
@@ -239,18 +242,35 @@ export function BuildSection({
         <div className="field gear">
           <span>コレクション</span>
           <span className="gear-inputs">
+            {/* 2026-10-31: オーナーの指示で、スキル Lv の横にあった宝物の段階の選択をここに統合した（宝物はコレクションの枠に付ける）。
+                宝物はスペック固定でも選べる */}
             <select
-              value={hasTreasure ? 'SSR' : (shown.collection?.rarity ?? '')}
-              disabled={disabled || hasTreasure}
+              value={hasTreasure ? `treasure-${treasurePhase}` : (shown.collection?.rarity ?? '')}
+              disabled={disabled && character.treasure === null}
               onChange={(e) => {
-                const rarity = e.target.value as 'R' | 'SR' | '';
+                const value = e.target.value;
+                if (value.startsWith('treasure-')) {
+                  setTreasurePhase(Number(value.slice('treasure-'.length)) as TreasurePhase);
+                  return;
+                }
+                if (hasTreasure) setTreasurePhase(0);
+                const rarity = value as 'R' | 'SR' | '';
                 set({ collection: rarity === '' ? null : { rarity, level: shown.collection?.level ?? 0 } });
               }}
             >
               <option value="">なし</option>
-              <option value="R">R</option>
-              <option value="SR">SR</option>
-              {hasTreasure && <option value="SSR">SSR（宝物）</option>}
+              <option value="R" disabled={disabled}>
+                R
+              </option>
+              <option value="SR" disabled={disabled}>
+                SR
+              </option>
+              {character.treasure &&
+                Array.from({ length: TREASURE_PHASE_MAX }, (_, i) => i + 1).map((phase) => (
+                  <option key={phase} value={`treasure-${phase}`}>
+                    宝物 {treasurePhaseLabel(character.treasure!.unlockOrder, phase)}
+                  </option>
+                ))}
             </select>
             <input
               type="number"
