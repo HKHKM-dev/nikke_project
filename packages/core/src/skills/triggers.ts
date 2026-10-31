@@ -9,6 +9,7 @@
 import {
   effectFrameOf,
   hitFrameOf,
+  stageEnterFrameOf,
   type BurstActivation,
   type BurstSchedule,
   type BurstScheduleModel,
@@ -136,6 +137,11 @@ export type FrameEvents = {
    * （ShotLog.weaponChangeEnds）。トリガー { weaponChangeEnd } が見る。省略は無し
    */
   weaponChangeEnds?: readonly number[];
+  /**
+   * 2 段目の段 14 の PR 1（plan/design-skill-stage14.md 2.8 節）: このフレームに発動の結果進んだ段階（burst/schedule.ts の
+   * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目）。トリガー burstStage{N}Enter が見る。省略は無し
+   */
+  stageEntries?: readonly BurstStepKey[];
 };
 
 /** 2 段目の段 3: フルスタックになって外れた状態 */
@@ -266,7 +272,7 @@ export function createTriggerTracker(
     case 'burstStage3Enter': {
       const step = STAGE_OF[t];
       return (ev) => {
-        if (ev.activations.some((a) => a.enteredStep === step)) return true;
+        if (ev.stageEntries?.includes(step) === true) return true;
         if (step !== 'Step1') return false;
         return scheduleModel === 'fixed' ? ev.fullBurstStart : ev.gaugeFull;
       };
@@ -347,6 +353,13 @@ export function replayEvents(
   });
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);
+    // 段 14 の PR 1: 段階のきっかけは stageEnterFrameOf のフレーム（段階 3 は替わり目）
+    for (const a of schedule.activations) {
+      const f = stageEnterFrameOf(a, schedule.model);
+      if (a.enteredStep === null || f >= frames) continue;
+      const ev = at(f);
+      ev.stageEntries = [...(ev.stageEntries ?? []), a.enteredStep];
+    }
     // 着弾編: 効果の発火は発動 + 遅れのフレーム（同じフレームなら時刻表の順）
     for (const a of schedule.activations) {
       const f = effectFrameOf(a);

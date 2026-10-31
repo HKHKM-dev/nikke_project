@@ -729,7 +729,8 @@ function buffWindowShotIntervalMean(result: SimResult, ctx: MetricContext): numb
  * バーストの効果の遅れ（backlog 2-4 の P3。V-0392）: n 回目（0 始まり）のフルバーストの窓の中か、窓を開いた III の本当の発動から窓の
  * 始まりまで（FULL_BURST_AFTER_ACTIVATION_FRAMES）に始まった、その枠が受ける timed の効果（skill と stat で絞る）の窓の終わりから、
  * フルバーストの窓の終わりを引いたモデルのフレーム数（効果が先に切れれば負）。窓の終わりの前後の発の値（効果だけ・フルバースト補正
- * だけの発の数）と比べる
+ * だけの発の数）と比べる。2 段目の段 14 の PR 1（V-0549）: before を書くと、窓の始まりの before フレーム前から始まった効果も見る
+ * （バースト 3 段階突入時の効果は II → III の替わり目から。00.00 の 29f 前）
  */
 function buffWindowEndFromFullBurstEnd(result: SimResult, ctx: MetricContext): number {
   const schedule = result.schedule;
@@ -737,13 +738,14 @@ function buffWindowEndFromFullBurstEnd(result: SimResult, ctx: MetricContext): n
   const window = schedule.fullBurstWindows[Number(ctx.args.n)];
   if (window === undefined) throw new Error(`${String(ctx.args.n)} 回目のフルバーストが無い`);
   const slotIndex = slotIndexOf(ctx);
+  const before = ctx.args.before === undefined ? FULL_BURST_AFTER_ACTIVATION_FRAMES : Number(ctx.args.before);
   const ends = buffPiecesOf(result)
     .filter(
       (w) =>
         w.slotIndex === slotIndex &&
         w.effect.source.skill === ctx.args.skill &&
         w.effect.stat === ctx.args.stat &&
-        window.start - FULL_BURST_AFTER_ACTIVATION_FRAMES <= w.start &&
+        window.start - before <= w.start &&
         w.start < window.end,
     )
     .map((w) => w.end);

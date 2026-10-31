@@ -314,7 +314,7 @@ notes の種類: 未対応 51・前提の外 31・計算に無関係 33・補足
   - effects[3] counterChange・restraintChains が最大になった時・restraintChains（減少）: C-0411（確定）
   - effects[4] dot・restraintChains が最大になった時: C-0411（確定）、C-0745（確定）、C-0747（確定）
 - **skill2**: supported
-  - effects[0] timed・burstStage3Enter・sustainedDamage: C-0748（確定）、C-0749（仮説）
+  - effects[0] timed・burstStage3Enter・sustainedDamage: C-0748（確定）、C-0755（確定）
   - effects[1] stackChange・normalHit・ensnaringChains: C-0754（確定）、C-0751（仮説）
   - notes[0] 前提の外: 自分が戦闘不能になった時のスタック量▲と、敵が破壊された時のキャプチャーチェーン▲は、前提（味方が倒れない・敵 1 体）の外（要件 5.2 節）: C-0443（範囲外）
 - **burst**: supported
@@ -948,7 +948,7 @@ notes の種類: 未対応 51・前提の外 31・計算に無関係 33・補足
 - **skill2**: supported
   - effects[0] passive・attackDamage: C-0348（確定）
   - effects[1] timed・burstUse・distributedDamage: C-0349（確定）
-  - effects[2] timed・burstStage3Enter・elementDamage: C-0350（確定）、C-0360（確定）
+  - effects[2] timed・burstStage3Enter・elementDamage: C-0350（確定）、C-0360（確定）、C-0755（確定）
   - effects[3] state・burstUse・followUp（attack）: C-0355（確定）、C-0555（確定）
   - notes[0] 補足: 真紅の華の 3 秒ごとの味方全体の回復（メディラマ）は、S1 のメディア（skill1 の effects[4]）と同じフレームに起き、ほかのフレームには起きないので、別に定義しない（回復を受けた時の効果の発動は S1 の回復の定義で入る）: C-0648（確定）
   - notes[1] 計算に無関係: 真紅の守護（水冷コードの敵から受けるダメージ▼）はダメージに関係しない: 根拠なし

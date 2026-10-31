@@ -92,9 +92,11 @@ import {
   effectFrameOf,
   hexagonFrameOf,
   hitFrameOf,
+  stageEnterFrameOf,
   type BurstActivation,
   type BurstSchedule,
   type BurstScheduleModel,
+  type BurstStepKey,
 } from '../burst/schedule.ts';
 import { capCritRate, ZERO_BUFFS } from '../skills/buffs.ts';
 import { isResolvedShotCount, isResolvedTimer, resolveInstant, type ResolvedInstantEffect } from '../skills/resolve.ts';
@@ -745,6 +747,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   /** エレグのバースト編（plan/design-elegg.md 8.9 節）: 先のフレームのバーストのヒット（トリガー burstHit） */
   const pendingBurstHits = new Map<number, BurstActivation[]>();
+  /** 2 段目の段 14 の PR 1: 先のフレームの段階のきっかけ（stageEnterFrameOf。段階 3 は替わり目） */
+  const pendingStageEntries = new Map<number, BurstStepKey[]>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
   /**
    * V-0030: 段の循環。このフレームの射撃を数え、段のヒットのゲージを当たるフレームに予約する。間隔の変更の件は、このフレームに
@@ -1046,6 +1050,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     const burstHits = pendingBurstHits.get(f);
     if (burstHits !== undefined) pendingBurstHits.delete(f);
+    for (const a of now) {
+      if (a.enteredStep === null) continue;
+      const at = stageEnterFrameOf(a, burstModel);
+      if (at < frames) pendingStageEntries.set(at, [...(pendingStageEntries.get(at) ?? []), a.enteredStep]);
+    }
+    const stageEntries = pendingStageEntries.get(f);
+    if (stageEntries !== undefined) pendingStageEntries.delete(f);
     const windows = windowsOf();
     let fullBurstStart = false;
     let fullBurstStartUsers: readonly number[] = [];
@@ -1109,6 +1120,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       healed,
       ...(fullStacks.length > 0 ? { fullStacks } : {}),
       ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
+      ...(stageEntries !== undefined ? { stageEntries } : {}),
     };
     // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
     // （burstUse のトリガーの判定と同じく、このフレームの効果の発火 burstEffects で見る）
