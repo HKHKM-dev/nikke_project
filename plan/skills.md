@@ -969,7 +969,7 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
   - notes[0] 計算に無関係: 超感覚 100% の時の射撃予測：無敵はダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] timed・burstUse・trueDamageConversion: C-0799（確定）
-  - effects[1] damage・normalHit・true: C-0798（確定）
+  - effects[1] damage・normalHit・true: C-0814（確定）、C-0815（仮説）
 - **burst**: supported
   - effects[0] counterChange・burstUse・extrasensory: C-0797（確定）
   - effects[1] timed・burstUse・attack: C-0799（確定）

@@ -89,6 +89,10 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
     expect(defenceAfterDown({ ...enemy, defenceRounding: 'none' }, down(0.3564))).toBeCloseTo(64.36, 12);
     // 100 × (1 − 0.3) は浮動小数で 70.00000000000001 になるが、切り上げても 70
     expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.3))).toBe(70);
+    // .5 ちょうどは切り上げる（Math.round のまま）。C-0790 が見分けたのは .36 と .6 だけで、.5 の向きは確かめていない
+    // （plan/backlog.md 2-43）。この 2 行はいまの扱いを留めるだけで、根拠ではない
+    expect(defenceAfterDown(enemy, down(0.0672 + 0.3078))).toBe(63);
+    expect(defenceAfterDown({ ...enemy, defence: 125 }, down(0.084))).toBe(115);
     // ▼が無ければ丸めの仮説でも元の防御力
     expect(defenceAfterDown({ ...enemy, defence: 100.5, defenceRounding: 'ceil' }, ZERO_BUFFS)).toBe(100.5);
   });
