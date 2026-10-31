@@ -78,6 +78,7 @@ import {
 } from '../burst/dynamic.ts';
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import {
+  resolveDamageEffects,
   resolveDamageGauges,
   resolveAllyGaugeAdd,
   resolveDotEffects,
@@ -98,7 +99,7 @@ import { isResolvedShotCount, isResolvedTimer, resolveInstant, type ResolvedInst
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { resolvePassiveStates, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
+import { resolvePassiveStates, shortenedTimer, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
   createTriggerTracker,
@@ -715,6 +716,40 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
     }
   });
+  // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ（gaugePerHit）。発火をフレームの順に
+  // 追い（periodShorten の短縮は、そのフレームまでに登録した自分の状態で決める。2 パス目の shortenedTimerFrames と同じ規則）、
+  // N ヒットのフレームのゲージに予約する（delayFrames は 1 以上なので、どのヒットも発火より後のフレーム）
+  const damageTimerGauges = slots.flatMap((slot, i) =>
+    slot === null || slot.definition === null
+      ? []
+      : resolveDamageEffects(slot.definition, slot.character, slot.levels).flatMap((effect) =>
+          effect.gaugePerHit === true && isResolvedTimer(effect.trigger)
+            ? [
+                {
+                  slotIndex: i,
+                  effect,
+                  timer: shortenedTimer(effect.trigger, effect.periodShorten?.seconds ?? 0, frames),
+                  energy: slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!),
+                },
+              ]
+            : [],
+        ),
+  );
+  const countTimerDamageGauges = (f: number): void => {
+    for (const t of damageTimerGauges) {
+      const shorten = t.effect.periodShorten;
+      const shortened = (frame: number) =>
+        shorten !== undefined && lists.selfStateAt(t.slotIndex, shorten.state, frame);
+      if (!t.timer.step(f, shortened)) continue;
+      const energy = targetEnergyNow(t.slotIndex, t.energy);
+      for (let k = 0; k < (t.effect.hits ?? 1); k++) {
+        const at = f + (t.effect.delayFrames ?? 0) + k * (t.effect.hitIntervalFrames ?? 0);
+        if (at >= frames) break;
+        timerGauges.push({ slotIndex: t.slotIndex, fireFrame: f, frame: at, energy });
+        pendingGauge.set(at, (pendingGauge.get(at) ?? 0) + energy);
+      }
+    }
+  };
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
   /** エレグのバースト編（plan/design-elegg.md 8.9 節）: 先のフレームのバーストのヒット（トリガー burstHit） */
@@ -997,6 +1032,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (!trackEvents && !trackDotBurstUse) {
       countCycles(f);
       countShotPauses(f);
+      countTimerDamageGauges(f);
       continue;
     }
 
@@ -1190,6 +1226,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     countCycles(f);
     countShotPauses(f);
+    countTimerDamageGauges(f);
   }
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;

@@ -356,22 +356,60 @@ export function shortenedTimerFrames(
   frames: number,
   shortened: (frame: number) => boolean,
 ): number[] {
+  const timer = shortenedTimer(trigger, shortenSeconds, frames);
+  const fires: number[] = [];
+  for (let f = 0; f < frames; f++) if (timer.step(f, shortened)) fires.push(f);
+  return fires;
+}
+
+/** shortenedTimerFrames をフレームの順に 1 つずつ決める形。step は 0 から frames − 1 まで順に呼び、そのフレームに発動すれば true */
+export type ShortenedTimer = { step(frame: number, shortened: (frame: number) => boolean): boolean };
+
+/**
+ * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: shortenedTimerFrames の規則を、フレームの順に決める形にしたもの。shortened は
+ * 発動のフレームと、縮めた次の発動のフレームにだけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった
+ * 状態で周期のゲージを追うのに使う
+ */
+export function shortenedTimer(trigger: TimerTrigger, shortenSeconds: number, frames: number): ShortenedTimer {
   const { everySeconds } = trigger;
   const short = everySeconds - shortenSeconds;
-  const fires: number[] = [];
   const lastFrameSeconds = framesToGameSeconds(frames - 1) + 1e-9;
+  let started = false;
+  let done = false;
   let frame = 0;
   let seconds = 0;
+  let shortFrame: number | undefined;
+  let longFrame = 0;
   const after = (period: number) =>
     trigger.carry === true ? gameSecondsToFirstFrame(seconds + period) : frame + gameSecondsToFirstFrame(period);
-  for (;;) {
-    const shortFrame = shortened(frame) ? after(short) : undefined;
-    const isShort = shortFrame !== undefined && shortened(shortFrame);
-    frame = isShort ? shortFrame : after(everySeconds);
-    seconds += isShort ? short : everySeconds;
-    if (frame >= frames || seconds > lastFrameSeconds) return fires;
-    fires.push(frame);
-  }
+  const plan = (shortened: (frame: number) => boolean) => {
+    shortFrame = shortened(frame) ? after(short) : undefined;
+    longFrame = after(everySeconds);
+  };
+  return {
+    step(f, shortened) {
+      if (!started) {
+        started = true;
+        plan(shortened);
+      }
+      if (done) return false;
+      let period: number | undefined;
+      if (shortFrame === f) {
+        if (shortened(f)) period = short;
+        else shortFrame = undefined;
+      }
+      if (period === undefined && longFrame === f) period = everySeconds;
+      if (period === undefined) return false;
+      seconds += period;
+      frame = f;
+      if (seconds > lastFrameSeconds) {
+        done = true;
+        return false;
+      }
+      plan(shortened);
+      return true;
+    },
+  };
 }
 
 /**

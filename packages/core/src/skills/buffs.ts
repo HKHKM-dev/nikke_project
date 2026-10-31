@@ -110,7 +110,7 @@ export type BuffTotals = {
   burstGaugeSpeed: number;
   /**
    * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.5 節）: 順番攻撃ダメージの加算。「N 回順番に攻撃」の倍率ダメージにだけ
-   * (1 + sequentialAttackDamage) を掛ける（skills/burstDamage.ts の computeBurstHit。置き場所は仮説）
+   * 攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeSkillHit。V-0545）
    */
   sequentialAttackDamage: number;
   /**

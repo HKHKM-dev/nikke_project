@@ -121,6 +121,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   hitIntervalFrames?: number;
   /** 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames） */
   periodShorten?: { state: NamedStateId; seconds: number };
+  /** V-0545: 周期の発火のどのヒットも射手の 1 ヒットぶんのゲージを溜める（frame/firstPass.ts が予約する） */
+  gaugePerHit?: true;
   /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
   perCount?: { state: NamedStateId } | { counter: CounterId };
   /** 2 段目の段 12 の PR 2: perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
@@ -246,6 +248,7 @@ export function resolveDamageEffects(
         }
         r.periodShorten = { state, seconds };
       }
+      if (effect.gaugePerHit === true) r.gaugePerHit = true;
       if (effect.coreHit === true) {
         r.core = true;
         r.coreHit = true;
@@ -526,7 +529,10 @@ export type BurstHitInput = {
   fullBurstBonus?: boolean;
   /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ掛ける。省略 1 */
   distributedDamageMultiplier?: number;
-  /** 2026-10-29 のキャラの編: 1 + Σ sequentialAttackDamage（sequential の効果にだけ掛かる。省略は 1） */
+  /**
+   * 2026-10-29 のキャラの編: 順番攻撃ダメージ▲の乗数（sequential の効果にだけ掛かる。省略は 1）。攻撃ダメージ▲と同じ和に足すので、
+   * 呼ぶ側が (攻撃ダメージの乗数 + Σ sequentialAttackDamage) ÷ 攻撃ダメージの乗数 を渡す（V-0545）
+   */
   sequentialAttackDamageMultiplier?: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
@@ -580,7 +586,7 @@ export type BurstHitResult = {
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
   distributedDamageMultiplier: number;
-  /** 2026-10-29 のキャラの編: 1 + Σ sequentialAttackDamage（sequential の効果にだけ掛かる） */
+  /** 2026-10-29 のキャラの編: 順番攻撃ダメージ▲の乗数（sequential の効果にだけ掛かる。攻撃ダメージ▲の和に足した比。V-0545） */
   sequentialAttackDamageMultiplier: number;
   /** 受けるダメージ編: 1 + Σ damageTaken（すべての効果に掛かる） */
   damageTakenMultiplier: number;
@@ -746,7 +752,13 @@ export function computeSkillHit(
     effects,
     fullBurstBonus,
     distributedDamageMultiplier: 1 + buffs.distributedDamage,
-    sequentialAttackDamageMultiplier: 1 + buffs.sequentialAttackDamage,
+    // V-0545（plan/design-new-chars-1029.md 11.2 節の a）: 順番攻撃ダメージ▲は攻撃ダメージ▲と同じ和に足す（▲なしに対する比で渡す）
+    sequentialAttackDamageMultiplier: sustainedMultiplier(
+      buffs.sequentialAttackDamage,
+      'attackDamage',
+      0,
+      trigger.attackDamageMultiplier,
+    ),
     damageTakenMultiplier: 1 + buffs.damageTaken,
     projectileExplosionMultiplier: explosionHitMultiplier(buffs),
     projectileStickMultiplier: stickHitMultiplier(buffs),
