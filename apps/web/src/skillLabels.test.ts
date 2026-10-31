@@ -129,6 +129,10 @@ describe('HP の割合で選ぶ回復の表示', () => {
     };
     expect(formatInstantTarget(heal)).toBe('（残りの HP の割合が最も低い味方 1 機）');
     expect(formatInstantTarget({ ...heal, target: 'allies' })).toBe('');
+    // plan/design-heal-top-attack.md 4.1 節
+    expect(formatInstantTarget({ ...heal, target: 'topAttack', targetCount: 2 })).toBe(
+      '（最終攻撃力が最も高い味方 2 機）',
+    );
   });
 });
 

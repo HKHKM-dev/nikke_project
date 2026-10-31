@@ -24,6 +24,7 @@
 // 攻撃力の timed 効果の窓も同じ TriggerTracker で追い（射撃には使わず順位のためだけ）、発火のフレームで順位を出して対象を決める。
 // 手順 3 の順番は 回復 → 攻撃力の窓 → 射撃に効く窓 → 即時効果 で、同じフレームに付いた攻撃力の窓も順位に入る
 // （段の 2 段目。skills/ranking.ts）。
+// 回復の対象の順位は、回復が手順 3 の最初なので、そのフレームに付く窓を入れない（循環を順番で断つ。plan/design-heal-top-attack.md 2 節）。
 //
 // Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: スタックする効果（最大装弾数▼）は段ごとの窓で登録する（skills/stacks.ts）。
 // 条件「自分が 〈stat〉 増加状態なら」の効果を追うときは、条件の stat の窓（状態の窓）も追い、手順 3 の順番は
@@ -1240,10 +1241,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
 
     // 回復を先に当てる。射撃の回数起点は、撃った枠より後ろの枠にはこのフレーム、ほかの枠には次のフレームに送り（V-0490）、
-    // それ以外はこのフレームの healed に立てる
+    // それ以外はこのフレームの healed に立てる。対象の順位（topAttack）は、このフレームの件を登録する前に出す（回復を受けた時の
+    // 攻撃力▲を含め、このフレームに付く窓は入れない。plan/design-heal-top-attack.md 2 節の A）
     for (const src of heals) {
       if (!src.fires(ev)) continue;
-      for (const target of targetsAt(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev))) {
+      const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
+      for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
         if (at < frames && !lists.applyHeal(src.effect, src.sourceSlotIndex, target, at)) continue;
         if (at === f) {
