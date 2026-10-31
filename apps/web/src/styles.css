@@ -762,3 +762,28 @@ header h1 {
   vertical-align: baseline;
   opacity: 0.6;
 }
+/* 的の着地点の帯（タイムラインの上端。近いほど赤、遠いほど青。未測定は灰色） */
+.tl-band-near {
+  fill: #e11d48;
+  background: #e11d48;
+}
+.tl-band-midNear {
+  fill: #f97316;
+  background: #f97316;
+}
+.tl-band-midFar {
+  fill: #16a34a;
+  background: #16a34a;
+}
+.tl-band-far {
+  fill: #2563eb;
+  background: #2563eb;
+}
+.tl-band-unknown {
+  fill: #9ca3af;
+  background: #9ca3af;
+}
+/* 着地点の凡例は帯と同じ濃さにする（.tl-key は薄く出す） */
+.tl-key[class*='tl-band-'] {
+  opacity: 1;
+}
