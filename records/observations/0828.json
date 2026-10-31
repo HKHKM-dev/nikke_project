@@ -1,0 +1,234 @@
+[
+  {
+    "id": "0828-01",
+    "recording": "0828",
+    "kind": "timing",
+    "use": "record",
+    "value": [1547, 3004, 4284, 5636, 7242, 8649, 10633],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・15・25・0・25・0f"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0828-02",
+    "recording": "0828",
+    "kind": "timing",
+    "use": "record",
+    "value": [1577, 5665, 9220],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25f"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0828-03",
+    "recording": "0828",
+    "kind": "timing",
+    "use": "record",
+    "value": [1606, 5694, 9351],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0828-04",
+    "recording": "0828",
+    "kind": "timing",
+    "use": "record",
+    "value": [9214],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0828-05",
+    "recording": "0828",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 143266,
+    "unit": "ダメージ",
+    "description": "1 回目のルドミラのバーストのヒット（会心でない）。ブランが I の直後に II を使い、受けるダメージ▲はルドミラの発動の後・ヒットの前に付いたが、ヒットには乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f1547（II → III は f1577）の 97f 後の f1644 の増分 143,266（替わり目は `0828-01`）。比べる指定はいまのモデル（発動の時点。H-snap）。ヒットの直前の▲を見るモデル（H-hit）なら 1.3926 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0828-06",
+    "recording": "0828",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 143266,
+    "unit": "ダメージ",
+    "description": "4 回目のルドミラのバーストのヒット（会心でない）。ブランが I の直後に II を使い、受けるダメージ▲はルドミラの発動の後・ヒットの前に付いたが、ヒットには乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f5636（II → III は f5665）の 96f 後の f5732 の増分 166,035 = 143,266 + ブランの▲ありの 1 ヒット 22,769（f5721・f5722 と同じ値）。▲ありのルドミラのヒット（199,512.317）とブランの 1 ヒットの和には分けられない（替わり目は `0828-01`）。比べる指定はいまのモデル（発動の時点。H-snap）。ヒットの直前の▲を見るモデル（H-hit）なら 1.3926 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0828-07",
+    "recording": "0828",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 143266,
+    "unit": "ダメージ",
+    "description": "2 回目のルドミラのバーストのヒット（会心でない）。II まで進まなかった回で、ブランの受けるダメージ▲は無い（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f3004 の 74f 後の f3078 の増分 143,266。II の候補が無くチェーンは切れた（替わり目は `0828-01`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0828-08",
+    "recording": "0828",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 1967400,
+    "unit": "ダメージ",
+    "description": "1 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（会心でない）。発動はブランの受けるダメージ▲の後で、▲が乗っている（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "II → III の替わり目 f1577 の後の f1654 と f1676 の増分 983,700 の和（替わり目は `0828-01`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  }
+]
