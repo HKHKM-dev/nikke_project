@@ -60,7 +60,8 @@ header h1 {
 .popover {
   position: relative;
 }
-/* 開いている間に画面を暗くする幕（即座に出す）。ボタンとポップアップはその手前に出す */
+/* 開いている間に画面を暗くする幕（即座に出す）。開いたボタンとポップアップだけをその手前に出し、閉じたボタンは幕の奥にする
+   （閉じたボタンを手前に出すと、幅が狭くてポップアップと重なったとき、後ろのボタンがポップアップの上に出る） */
 .popover-backdrop {
   position: fixed;
   inset: 0;
@@ -69,12 +70,14 @@ header h1 {
 }
 .popover-button {
   position: relative;
-  z-index: 20;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   border-radius: 6px;
   background: var(--app-bg);
   color: inherit;
   cursor: pointer;
+}
+.popover-button[aria-expanded='true'] {
+  z-index: 20;
 }
 .popover-button:hover,
 .popover-button[aria-expanded='true'] {
@@ -87,7 +90,7 @@ header h1 {
 .popover-panel {
   position: absolute;
   top: calc(100% + 6px);
-  z-index: 20;
+  z-index: 21;
   min-width: 12em;
   max-width: calc(100vw - 32px);
   box-sizing: border-box;
