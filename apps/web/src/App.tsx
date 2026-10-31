@@ -42,6 +42,7 @@ import {
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
+import { useDetailed } from './detailed.ts';
 import { slotSkillsStatus, toSlotSkills, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 
@@ -69,6 +70,7 @@ export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
+  const [detailed, setDetailed] = useDetailed();
   // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
   const [restored, setRestored] = useState(false);
   // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
@@ -243,12 +245,23 @@ export function App() {
   );
 
   const allEffectiveSkillLevels = team.slots.map((s) => effectiveSkillLevels(s, team.fixedSpec));
+  // 詳細情報表示（右上の設定）のときだけ使う、ニケごとの詳細の材料
+  const slotNames = team.slots.map((s) =>
+    s.resourceId === null ? undefined : cache.characters.get(s.resourceId)?.name.ja,
+  );
+  const teamCharacters = team.slots.map((s) =>
+    s.resourceId === null ? null : (cache.characters.get(s.resourceId) ?? null),
+  );
+  const allTreasurePhases = team.slots.map((s) => {
+    const character = s.resourceId === null ? undefined : cache.characters.get(s.resourceId);
+    return character ? effectiveTreasurePhase(s, character) : 0;
+  });
 
   return (
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu />
+        <SettingsMenu detailed={detailed} onDetailedChange={setDetailed} />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -307,6 +320,15 @@ export function App() {
               computing={computing}
               loadingCount={loadingCount}
               skillsLoadingCount={skillsLoadingCount}
+              detailed={detailed}
+              fixedSpec={team.fixedSpec}
+              slotNames={slotNames}
+              teamCharacters={teamCharacters}
+              enemyElement={team.enemy.element}
+              effectiveSkillLevels={allEffectiveSkillLevels}
+              treasurePhases={allTreasurePhases}
+              skillsStatuses={skillsStatuses}
+              hpRatios={calcTeam.slots.map((s) => s.hpRatio)}
             />
           ) : (
             <p className="error">
