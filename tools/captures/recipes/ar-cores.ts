@@ -235,7 +235,7 @@ export const arCores: Recipe = {
     if (cuts.length !== 5) throw new Error(`区間の切れ目が ${cuts.length} 個（3 分モードは 5 個）: ${cuts.join(',')}`);
     const t = tallyAr(rows, grid, cuts, { interval, mag, tol });
     const s = t.segments;
-    // 距離ボーナスの確かめ: 中近は全部、近・遠は無し（中遠は着地点 A だけ付く。C-0044）
+    // 距離ボーナスの確かめ: 中近・中遠は全部、近・遠は無し（AR の範囲 25〜45 に中遠の 3 か所とも入る。C-0032・C-0044）
     const distNote = s.map((c) => c.dist).join('・');
     ctx.log(
       `区間の切れ目 ${cuts.join(',')}・区間ごとのヒット ${s.map((c) => c.hits).join('・')}・距離ボーナス ${distNote}`,
