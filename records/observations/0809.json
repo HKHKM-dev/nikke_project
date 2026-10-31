@@ -1,0 +1,135 @@
+[
+  {
+    "id": "0809-01",
+    "recording": "0809",
+    "kind": "total",
+    "use": "record",
+    "value": 415283321,
+    "description": "鈴原サクラ・デルタ・ラピ：レッドフード の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11492。増分は 6701 個"
+    },
+    "source": "V-0580",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0809-02",
+    "recording": "0809",
+    "kind": "count",
+    "use": "record",
+    "value": 296,
+    "unit": "トリガー",
+    "description": "鈴原サクラ・デルタ・ラピ：レッドフード のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 6701 個。前の増分から 30f 未満の増分（6687 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 34f）から発の数を決めた（2 発になった組 12 個）"
+    },
+    "source": "V-0580",
+    "readAt": "2026-10-31"
+  },
+  {
+    "id": "0809-03",
+    "recording": "0809",
+    "source": "V-0580",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 624343,
+    "description": "フルバーストの外のラピ：レッドフードの粘着榴弾の付着の 1 ヒット（コア・会心でない・距離ボーナスなし。S2 の常時の付着▲だけ）。鈴原サクラの受けるダメージ▲の窓の中",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "単独で 624,343（f9520・10345）、同じフレームの通常攻撃のコア（▲あり 15,742）との和 640,085（f1250・2278・4876・10102・10726）。1 つの和（HA）なら 569,316 で、その値（と通常攻撃との和）は 1 回も出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "projectile": "stick",
+        "frame": 346
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0809-04",
+    "recording": "0809",
+    "source": "V-0580",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 532807,
+    "description": "同じ付着の 1 ヒット。鈴原サクラの受けるダメージ▲の窓の外（対照。C-0724 の灼熱の的のコアの付着と同じ値）",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "単独で 532,807（f3225）、同じフレームの通常攻撃のコア（13,434）との和 546,241（f2399・2777・3606・7747）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false,
+        "core": true,
+        "projectile": "stick",
+        "frame": 225
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0809-05",
+    "recording": "0809",
+    "source": "V-0580",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "record",
+    "value": [
+      10,
+      9,
+      2
+    ],
+    "description": "フルバーストの外の付着の 1 ヒット（会心・距離ボーナスの組と、同じフレームの通常攻撃・鈴原サクラとの和を含む）を、鈴原サクラの▲の有無で分けた数: [▲あり、▲なし、決まらない]",
+    "method": {
+      "tool": "hud-jumps（hud.ts --mode jumps）",
+      "note": "鈴原サクラの▲の有無は、付着の前と後 10f 以内の 1 ヒット（ラピ：レッドフードの通常攻撃のコア 13,434・コア + 距離ボーナス 15,449・コア + 会心 16,793 と鈴原サクラの 1 ヒット（▲なし）、▲あり はその × 1.1718）が同じ段のときだけ決めた（付着の値は見ない。V-0563 の読み方）。決まった付着は、どれも▲ありなら × 1.1718（別の乗数）、▲なしなら × 1 の値で、食い違いは無い。どの付着も 1 つの和（× 1.0685）の値には乗らない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]
