@@ -2,7 +2,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   addedLines,
+  changedChecks,
   collisions,
+  FULL_CHECK_PATHS,
+  MAX_CHANGED_FILES,
   progressCopies,
   rebaseOutcome,
   regenerateScript,
@@ -131,5 +134,37 @@ describe('progressCopies', () => {
     ].join('\n');
     expect(progressCopies('plan/design-skill-stages.md', text, all(text))).toEqual([]);
     expect(progressCopies('plan/roadmap.md', '- V-0546', new Set([1]))).toEqual([]);
+  });
+});
+
+describe('changedChecks', () => {
+  const exists = (p: string) => !p.startsWith('gone/');
+
+  it('checks only the files the branch changed and kept, and lints only the script files', () => {
+    expect(
+      changedChecks(
+        ['plan/claims.md', 'tools/git/pr-prep.ts', 'apps/web/src/App.tsx', 'gone/old.ts', 'eslint.cjs'],
+        exists,
+      ),
+    ).toEqual({
+      full: false,
+      format: ['plan/claims.md', 'tools/git/pr-prep.ts', 'apps/web/src/App.tsx', 'eslint.cjs'],
+      lint: ['tools/git/pr-prep.ts', 'apps/web/src/App.tsx', 'eslint.cjs'],
+    });
+    expect(changedChecks([], exists)).toEqual({ full: false, format: [], lint: [] });
+  });
+
+  it('checks every file when the branch changed a setting of prettier or eslint', () => {
+    for (const p of FULL_CHECK_PATHS)
+      expect(changedChecks(['plan/claims.md', p], exists)).toEqual({ full: true, reason: `${p} を変えた` });
+  });
+
+  it('checks every file when the branch changed too many files', () => {
+    const many = Array.from({ length: MAX_CHANGED_FILES + 1 }, (_, i) => `records/observations/${i}.json`);
+    expect(changedChecks(many, exists)).toEqual({
+      full: true,
+      reason: `変えたファイルが ${MAX_CHANGED_FILES + 1} 件ある`,
+    });
+    expect(changedChecks(many.slice(1), exists).full).toBe(false);
   });
 });

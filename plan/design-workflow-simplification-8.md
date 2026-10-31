@@ -1,6 +1,6 @@
 # 繰り返しの業務の簡素化の案・第 8 回（2026-10-31 の定期の見直し）
 
-- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。状態: オーナーの判断待ち。
+- 何のための文書か: 検証 1 件ごと・PR ごと・セッションごとに繰り返す手順のうち、要らない手順や重なりを洗い出し、簡素化の案を出す。2026-10-31 にオーナーが 1〜3 を承認し、実施した（7 節）。4 はオーナーが行う。
 - 前の回: [design-workflow-simplification.md](design-workflow-simplification.md)・[-2](design-workflow-simplification-2.md)〜[-7](design-workflow-simplification-7.md)。どれも実施済み。そこで扱ったものは繰り返さない。
 - この回で見たもの: PR の前の確認（`pr:prep` の中の `npm run ci`）と生成物の作り直し（`records:check`）にかかる時間、道具・レシピ・npm のスクリプトの使われ方、origin のブランチ、最小構成の感度の全部の計算し直し（[verification-guide.md](verification-guide.md) 7 節の「定期の見直し」の分）。
 - 調べ方: origin/main（a5cc5f9f）のクラウドの環境（4 コア）で、各コマンドの時間を測った。道具の使われ方は、観測値の `method.tool` を道具ごとに数えた（使い捨てのスクリプト。コミットしない）。
@@ -65,7 +65,7 @@
 
 **効果**: 同じセッションで 2 回目からの `records:check` が約 30 秒 → 約 8 秒（新しく足した観測値の録画だけを回す）。`npm test` の同じ計算も、`records:check` の後なら覚えた値で済む。直近の 45 本の PR のうち 13 本はモデルのコードもデータも変えておらず、`pr:prep` の中の作り直しとテストでも効く。
 
-**気をつけること**: 鍵の入力の漏れ（モデルが読むのに鍵に入っていないファイル）があると、古い値を使う。実装の PR で、`runSimulation` と `buildTeamInput` が読むファイルを洗い、鍵の入力の一覧をテストで持つ。キャッシュを使わない `--no-cache` も付ける。
+**気をつけること**: 鍵の入力の漏れ（モデルが読むのに鍵に入っていないファイル）があると、古い値を使う。実装の PR で、`runSimulation` と `buildTeamInput` が読むファイルを洗い、鍵の入力の一覧をテストで持つ。覚えを使わない道（環境変数 `NIKKE_NO_RESIDUAL_CACHE=1`）も付ける。
 
 ## 3. 感度の全部の計算し直しで出た差（この回で作り直した）
 
@@ -96,10 +96,14 @@ origin に、次の 4 本が残っている（どれも PR が無いか、中身
 
 ## 6. 実施の分け方（承認されたら）
 
-- PR 1: 1（`pr-prep.ts`・`pr-prep-lib.ts` とテスト、AGENTS.md「コミット手順」の 1 行）。変えたファイルの選び方（生成物・消したファイル・設定のファイル）をテストで持つ。
-- PR 2: 2（`records/observations.ts` の `runObservations` の覚えと鍵、テスト）。実装の後に、覚えありとなしで `plan/residuals.md` が 1 字まで同じことと、`records:check` の 1 回目・2 回目の時間を PR に書く。
-- 3 は、この文書と同じ PR に入れる。4 はオーナーの操作。
+- 1〜3 を 1 つの PR にした（7 節）。4 はオーナーの操作。
 
 ## 7. 判断と実施
 
-（判断待ち）
+**判断（2026-10-31）**: 1〜3 を承認。4 はオーナーが行う。
+
+- 1: `tools/git/pr-prep-lib.ts` の `changedChecks` が、`git diff --name-only origin/main...HEAD` のうち消していないファイルを書式の対象に、そのうち `.js`・`.ts`・`.tsx` などを lint の対象にする。`pr-prep.ts` は、それに `prettier --check --ignore-unknown` と `eslint --no-warn-ignored` を回し（`.prettierignore` と eslint の ignores にあるファイルは渡しても見ない）、`typecheck`・`test`・`build` は全部回す。案のほかに、変えたファイルが 300 件を超えたら全部を見る（Windows のコマンドラインの長さの上限を避ける）。設定のファイルには `package.json` も入れた（prettier・eslint の版が変わりうる）。AGENTS.md「コミット手順」の 1 と [verification-guide.md](verification-guide.md) 9 節の 1 行を直した。
+- 2: `runObservations` に、覚え（`PredictionMemo`）を受ける引数を足し、鍵の入力を `predictionKey`（録画の JSON・比べる指定・比べる指定が ID で指す観測値の値）にした。覚えの読み書きとモデルのコードとデータの hash は `packages/core/scripts/residual-cache.ts`。`records:check`・`records:close`・`records:residual`・`records:new` と `observations.test.ts` がそれを使う。覚えはモデルの hash ごとに 1 ファイルで、新しい 4 つを残す。テストのファイル（`__tests__`）は hash に入れない。NaN・Infinity は JSON で往復できないので覚えない。
+  - 測った時間（このクラウドの環境）: `records-check.ts` は覚えなしで 31 秒、覚えありの 2 回目で 2.8 秒。`npm run records:check` は、2 回目で 15 秒（残りは書式の整え直しの 11 秒）。覚えありでもなしでも、生成物は 1 字も変わらなかった。
+  - 案の「`buildTeamInput` が読むファイルを洗う」は、`loadRecordsData` がディスクから読むのが `packages/core/data/` と観測値だけだと確かめ、観測値は指している値だけを鍵に入れた。
+- 3: 案のとおり（`sensitivity.json` の 2 行）。

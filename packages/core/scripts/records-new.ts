@@ -35,7 +35,7 @@ import {
   validateRuns,
 } from '../src/records/claims.ts';
 import { claimDraft, nextId, verificationFileName, verificationTemplate } from '../src/records/drafts.ts';
-import { invalidReasonsOf, runObservations } from '../src/records/observations.ts';
+import { invalidReasonsOf } from '../src/records/observations.ts';
 import { comparePredictions, todayLocal } from '../src/records/predictions.ts';
 import { relevanceOf } from '../src/records/relevance.ts';
 import { withFreshSensitivity } from '../src/records/sensitivity.ts';
@@ -53,6 +53,7 @@ import {
   recordingMap,
 } from './records-data.ts';
 import { reserve } from './reserve.ts';
+import { runObservationsCached } from './residual-cache.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -193,7 +194,7 @@ if (kind === 'verification') {
   const decidedOn = parseDecidedOn(values['decided-on']);
   const runs = parseRuns(values.run);
   const parameterFree = values['parameter-free'];
-  const residuals = runObservations(own, recordings, data);
+  const residuals = runObservationsCached(own, recordings, data);
   const residualOf = new Map(
     residuals.map((r) => [
       r.observation.id,

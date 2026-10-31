@@ -2534,23 +2534,60 @@ export function compareValue(
   return { diff: worst, ok };
 }
 
-/** use が compare の観測値をすべてモデルと比べる。同じ録画・同じ条件のモデルは 1 回だけ回す */
+/** 1 つの観測値のモデルの予測値か、予測できなかったわけ */
+export type Prediction = { predicted: number | number[] } | { error: string };
+
+/**
+ * 予測値の覚え（packages/core/scripts/residual-cache.ts。plan/design-workflow-simplification-8.md 2 節）。key は、モデルのコードと
+ * データのほかに予測を決める入力（predictionKey）。モデルのコードとデータで覚えを分けるのは覚える側
+ */
+export type PredictionMemo = {
+  get(key: string): Prediction | undefined;
+  set(key: string, prediction: Prediction): void;
+};
+
+/**
+ * 観測値の予測を決める入力のうち、モデルのコードとデータ（packages/core/src・data）でないもの: 録画の JSON・比べる指定と、比べる指定が
+ * ID で指すほかの観測値の値（条件が時刻などを観測値の ID で指す。buildTeamInput）。観測値自身の値と許容は入れない（比べるのは覚えの後）
+ */
+export function predictionKey(o: Observation, recording: RecordingEntry | undefined, data: RecordsData): string {
+  const c = o.compare!;
+  const refs: [string, number | number[]][] = [];
+  JSON.stringify(c, (_, v: unknown) => {
+    if (typeof v === 'string') {
+      const value = data.observationValues?.get(v);
+      if (value !== undefined) refs.push([v, value]);
+    }
+    return v;
+  });
+  return JSON.stringify({
+    recording: recording ?? null,
+    metric: c.metric,
+    args: c.args ?? null,
+    setup: c.setup ?? null,
+    refs,
+  });
+}
+
+/** 覚えてよい予測（JSON で往復して同じになるもの。NaN・Infinity は JSON で null になるので覚えない） */
+function memorable(p: Prediction): boolean {
+  if ('error' in p) return true;
+  return (Array.isArray(p.predicted) ? p.predicted : [p.predicted]).every(Number.isFinite);
+}
+
+/**
+ * use が compare の観測値をすべてモデルと比べる。同じ録画・同じ条件のモデルは 1 回だけ回す。memo があれば、覚えた予測値を使い、
+ * 覚えていない観測値だけモデルを回す
+ */
 export function runObservations(
   observations: readonly Observation[],
   recordings: ReadonlyMap<string, RecordingEntry>,
   data: RecordsData,
+  memo?: PredictionMemo,
 ): Residual[] {
   const cache = new Map<string, { input: TeamInput; sim?: SimResult }>();
-  const residuals: Residual[] = [];
-  for (const o of observations) {
-    const c = o.compare;
-    if (o.use !== 'compare' || c === undefined) continue;
-    if (o.invalid !== undefined) {
-      residuals.push({ observation: o, status: 'invalid', predicted: null, diff: null, message: o.invalid.reason });
-      continue;
-    }
+  const predict = (o: Observation, c: CompareSpec, recording: RecordingEntry | undefined): Prediction => {
     try {
-      const recording = recordings.get(o.recording);
       if (recording === undefined) throw new Error(`録画 ${o.recording} が無い`);
       const metric = METRICS[c.metric];
       if (metric === undefined) throw new Error(`metric ${c.metric} が語彙に無い`);
@@ -2562,12 +2599,32 @@ export function runObservations(
       }
       const ctx: MetricContext = { args: c.args, input: run.input };
       run.sim ??= runSimulation(run.input);
-      const predicted = metric.sim(run.sim, ctx);
-      const { diff, ok } = compareValue(o.value, predicted, c.tolerance);
-      residuals.push({ observation: o, status: ok ? 'ok' : 'outside', predicted, diff });
+      return { predicted: metric.sim(run.sim, ctx) };
     } catch (e) {
-      residuals.push({ observation: o, status: 'error', predicted: null, diff: null, message: (e as Error).message });
+      return { error: (e as Error).message };
     }
+  };
+  const residuals: Residual[] = [];
+  for (const o of observations) {
+    const c = o.compare;
+    if (o.use !== 'compare' || c === undefined) continue;
+    if (o.invalid !== undefined) {
+      residuals.push({ observation: o, status: 'invalid', predicted: null, diff: null, message: o.invalid.reason });
+      continue;
+    }
+    const recording = recordings.get(o.recording);
+    const key = memo === undefined ? undefined : predictionKey(o, recording, data);
+    let p = key === undefined ? undefined : memo!.get(key);
+    if (p === undefined) {
+      p = predict(o, c, recording);
+      if (key !== undefined && memorable(p)) memo!.set(key, p);
+    }
+    if ('error' in p) {
+      residuals.push({ observation: o, status: 'error', predicted: null, diff: null, message: p.error });
+      continue;
+    }
+    const { diff, ok } = compareValue(o.value, p.predicted, c.tolerance);
+    residuals.push({ observation: o, status: ok ? 'ok' : 'outside', predicted: p.predicted, diff });
   }
   return residuals;
 }

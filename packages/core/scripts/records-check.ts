@@ -24,12 +24,7 @@ import {
   validatePredictions,
 } from '../src/records/predictions.ts';
 import { RESULTS_MARKERS } from '../src/records/drafts.ts';
-import {
-  invalidReasonsOf,
-  renderResiduals,
-  runObservations,
-  validateObservations,
-} from '../src/records/observations.ts';
+import { invalidReasonsOf, renderResiduals, validateObservations } from '../src/records/observations.ts';
 import { replaceGeneratedSection } from '../src/records/recordings.ts';
 import { definitionPlacesByClaim, renderSkills, validateSkillClaims } from '../src/records/skills.ts';
 import { renderSkillSupportIndex } from '../src/skills/support.ts';
@@ -63,6 +58,7 @@ import {
   verificationPath,
 } from './records-data.ts';
 import { renumberMarksFromGit } from './records-marks.ts';
+import { runObservationsCached } from './residual-cache.ts';
 
 const file = loadRecordingsFile();
 const recordings = recordingMap(file);
@@ -108,7 +104,7 @@ if (errors.length > 0) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-const residuals = runObservations(observations, recordings, data);
+const residuals = runObservationsCached(observations, recordings, data);
 const doc = readFileSync(RESIDUALS_PATH, 'utf8');
 writeFileSync(
   RESIDUALS_PATH,

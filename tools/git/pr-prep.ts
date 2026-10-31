@@ -8,14 +8,18 @@
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（ブランチが感度を変えていたか、それが衝突したときは records:minimal、ほかは records:check）。差分が
 //    あれば「生成物を作り直す」の commit を足す（スカッシュマージなので、途中のコミットの生成物は合っていなくてよい）。
-// 5. npm run ci（--no-ci で省く）。--push なら、通ったら git push --force-with-lease -u origin HEAD。
+// 5. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
+//    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。型・テスト・ビルドは全部。--push なら、通ったら
+//    git push --force-with-lease -u origin HEAD。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../packages/core/scripts/records-data.ts';
 import {
   addedLines,
+  changedChecks,
   collisions,
   PROGRESS_PATHS,
   progressCopies,
@@ -49,6 +53,15 @@ function npm(script: string): void {
     shell: process.platform === 'win32',
   });
   if (r.status !== 0) fail(`npm run ${script} が落ちた`);
+}
+
+/** node_modules の道具を node で回す（npx を通さない。Windows でも同じ） */
+function bin(path: string, args: readonly string[]): void {
+  const r = spawnSync(process.execPath, [createRequire(import.meta.url).resolve(path), ...args], {
+    cwd: ROOT,
+    stdio: 'inherit',
+  });
+  if (r.status !== 0) fail(`${path.split('/')[0]} が落ちた`);
 }
 
 function fail(message: string): never {
@@ -158,7 +171,22 @@ if (git(['status', '--porcelain', '--untracked-files=no']) !== '') {
   console.log('生成物を作り直した差分を commit した');
 }
 
-if (!values['no-ci']) npm('ci');
+if (!values['no-ci']) {
+  const checks = changedChecks(lines(git(['diff', '--name-only', 'origin/main...HEAD'])), (p) =>
+    existsSync(join(ROOT, p)),
+  );
+  if (checks.full) {
+    console.log(`書式と lint も全部のファイルで見る（${checks.reason}）`);
+    npm('ci');
+  } else {
+    console.log(
+      `書式と lint は、ブランチで変えたファイル ${checks.format.length} 件だけを見る（全部は GitHub の CI が見る）`,
+    );
+    if (checks.format.length > 0) bin('prettier/bin/prettier.cjs', ['--check', '--ignore-unknown', ...checks.format]);
+    if (checks.lint.length > 0) bin('eslint/bin/eslint.js', ['--no-warn-ignored', ...checks.lint]);
+    for (const script of ['typecheck', 'test', 'build']) npm(script);
+  }
+}
 
 if (values.push) {
   if (tryGit(['push', '--force-with-lease', '-u', 'origin', 'HEAD']) !== 0) fail('push が落ちた');
