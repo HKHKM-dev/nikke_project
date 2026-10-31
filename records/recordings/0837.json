@@ -1,0 +1,46 @@
+{
+  "id": "0837",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0837_rl_liter_eunhwa_bestie.mp4",
+  "original": "2026-11-01_08-21-23.mp4",
+  "durationSec": 202.2,
+  "frames": 12131,
+  "fps": 60,
+  "sizeMB": 245,
+  "sha256": "d9357bc6b40b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 94,
+      "name": "ベスティー：タクティカル・アップ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0588 の撮影。リター（I）・ウンファ：タクティカル・アップ（II）・ベスティー：タクティカル・アップ（III・操作）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T08:30+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
