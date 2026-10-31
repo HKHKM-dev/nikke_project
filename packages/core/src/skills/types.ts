@@ -918,7 +918,10 @@ export function isMaxHpStat(stat: BuffStat | 'weapon' | undefined): boolean {
   return stat === 'maxHp' || stat === 'maxHpOnly';
 }
 
-/** バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ（単体ボスでは全額と仮定） */
+/**
+ * バーストの倍率ダメージの種別。skill = バーストスキルダメージ / ダメージ / 追加ダメージ（即時 1 ヒット）、distributed = 分配ダメージ
+ * （射撃場の的 1 体では全額が当たる。C-0391 など。対象と周囲の敵の分配ダメージは、等分したヒットで合計が全額になる。C-0766）
+ */
 export type BurstDamageType = 'skill' | 'distributed';
 export const BURST_DAMAGE_TYPES = ['skill', 'distributed'] as const satisfies readonly BurstDamageType[];
 
