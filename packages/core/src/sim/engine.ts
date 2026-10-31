@@ -310,7 +310,6 @@ export function runSimulation(simInput: SimInput): SimResult {
       index,
       BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
       sameActivationPiecesOf(history, slot.character),
-      enemy.burstHitDebuffsAt,
     );
     const trigger = computeTriggerDamage({
       character: slot.character,

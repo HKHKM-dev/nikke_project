@@ -17,7 +17,7 @@ import {
   type BurstSchedule,
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
-import { computeTriggerDamage, type BurstHitDebuffsAt, type EnemyInput } from '../damage.ts';
+import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
@@ -386,7 +386,7 @@ export function planSkillHits(
       // （シンデレラの S1 の攻撃力▲は、ヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時点のまま）
       const atHit =
         pre && !shooterAtHit
-          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, enemy.burstHitDebuffsAt)
+          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre)
           : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
@@ -696,8 +696,7 @@ export function burstSnapshotState(
  * ヒットのフレーム hitFrame の時点の値を使う。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで
  * 付く S2 の攻撃ダメージ▲は乗らない（`0079-07`）。遅れの無いキャラ（hitFrame = activationFrame）は burstSnapshotState と同じ。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
- * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）。
- * debuffsAt（EnemyInput.burstHitDebuffsAt）が 'activation' なら、敵の側のデバフも発動の時点の値を使う（C-0774 の H-snap。予測の仮説だけ）
+ * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）
  */
 export function burstHitBuffs(
   timeline: BuffTimeline,
@@ -706,11 +705,10 @@ export function burstHitBuffs(
   slotIndex: number,
   preActivation: boolean,
   sameActivation?: readonly ValuePiece[],
-  debuffsAt: BurstHitDebuffsAt = 'hit',
 ): BuffTotals {
   const atActivation = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
   let buffs = atActivation;
-  if (hitFrame !== activationFrame && debuffsAt === 'hit') {
+  if (hitFrame !== activationFrame) {
     const atHit = burstSnapshotState(timeline, hitFrame, slotIndex, preActivation).buffs;
     buffs = { ...atActivation, damageTaken: atHit.damageTaken, enemyDefenseDown: atHit.enemyDefenseDown };
   }

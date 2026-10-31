@@ -197,19 +197,10 @@ export type EnemyInput = {
    * ほかの向きは検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
    */
   defenceRounding?: DefenceRounding;
-  /**
-   * バーストのヒットが、この敵の側のデバフ（受けるダメージ▲・防御力▼）を見る時点（frame/plan.ts の burstHitBuffs。C-0774）。
-   * 省略は 'hit'（いまのモデル。plan/design-burst-landing.md 9 節）。'activation' は撃つ側のバフと同じく発動の時点（C-0774 の H-snap）。
-   * 検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
-   */
-  burstHitDebuffsAt?: BurstHitDebuffsAt;
 };
 
 /** 防御力▼の後の防御力の丸めの向き: 丸めない・四捨五入・切り上げ（四捨五入のほかは C-0790 で外れた。切り捨ては型に無い） */
 export type DefenceRounding = 'none' | 'round' | 'ceil';
-
-/** バーストのヒットが敵の側のデバフを見る時点: ヒットの時点（いまのモデル）・発動の時点（C-0774 の H-snap） */
-export type BurstHitDebuffsAt = 'hit' | 'activation';
 
 /** 1 トリガーの式に効く条件（時間を含まない） */
 export type TriggerCondition = {
