@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 542・仮説 86・棄却 116・範囲外 2（計 746）
+件数: 確定 543・仮説 86・棄却 116・範囲外 2（計 747）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -1221,7 +1221,7 @@
 - **C-0794** 発射体付着ダメージ▲は、受けるダメージ▲とは別の乗数 (1 + Σ発射体付着ダメージ▲) × (1 + Σ受けるダメージ▲) で掛かる（1 つの和ではない）。確かめたのは、フルバーストの外のラピ：レッドフードの粘着榴弾の付着（付着▲は S2 の常時の▲、受けるダメージ▲は鈴原サクラの S1）
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-31
   - 根拠: `0809-03`・`0810-03`（フルバーストの外の付着・鈴原サクラの▲あり）・`0809-04`・`0810-04`（▲なしの対照）・`0809-05`・`0810-05`（▲の有無をほかの 1 ヒットで決めた付着の数。食い違いなし）。どれもいまのモデル（別の乗数）と 1 未満の差で、1 つの和の値（8.8% 小さい）は出ない。V-0580
-  - モデル側: 反映済み（変更なし）。`damage.ts` の `stickHitMultiplier`（付着▲。置き場所 `PROJECTILE_STICK_BUCKET` は攻撃ダメージ▲と同じ枠の仮定）と、受けるダメージ▲（`(1 + damageTaken)`）を別の乗数で掛ける
+  - モデル側: 反映済み（変更なし）。`damage.ts` の `stickHitMultiplier`（付着▲。置き場所 `PROJECTILE_STICK_BUCKET` は攻撃ダメージ▲と同じ枠。C-0796）と、受けるダメージ▲（`(1 + damageTaken)`）を別の乗数で掛ける
   - 決めるのに使った録画: なし
   - 合わせ込みの定数なし: 和の項は説明文の値（ラピ：レッドフードの S2 の付着▲ 150.72%・鈴原サクラの S1 の受けるダメージ▲ 17.18%）だけ。付着の 1 ヒットの式は C-0724
   - 検証記録: V-0580
@@ -1231,6 +1231,13 @@
   - モデル側: 未反映（`frame/plan.ts` の `burstHitBuffs` は、敵の側のデバフ（受けるダメージ▲・防御力▼）をヒットの時点の値で取る（plan/design-burst-landing.md 9 節）。発動の時点に直すかはオーナーの判断（plan/backlog.md 4 節）。根拠の観測値の比べる指定は、ヒットに乗った▲の有無に合わせ、乗らなかった回は鈴原サクラの S1 の▲を外したモデルと比べる）
   - 決めるのに使った録画: 0799（仮説の出どころ）
   - 検証記録: V-0576
+- **C-0796** 発射体付着ダメージ▲は、攻撃ダメージ▲と 1 つの和 (1 + Σ攻撃ダメージ▲ + Σ発射体付着ダメージ▲) で付着のヒットに掛かる（別の乗数 (1 + Σ攻撃ダメージ▲) × (1 + Σ発射体付着ダメージ▲) ではない。発射体爆発ダメージ▲（C-0205）と同じ置き場所）。確かめたのは、ラピ：レッドフードの粘着榴弾の付着（攻撃ダメージ▲はクラウンのバーストと S2、付着▲はラピ：レッドフードの S2 の常時の▲）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-10-31
+  - 根拠: `0821-03`・`0822-03`（クラウンのバーストの尾の付着・受けるダメージ▲あり）・`0821-04`・`0822-04`（尾の付着のコア + 距離ボーナス・受けるダメージ▲なし）・`0821-05`・`0822-05`（リラックスの後の付着）・`0821-06`・`0822-06`（攻撃ダメージ▲の乗った付着と通常攻撃の和に分かれた増分の数。E1 で 8 個ずつ、E2 で 0 個）。どれもいまのモデル（同じ枠）と 1 未満の差で、別の乗数の値（11〜19% 大きい）は出ない。V-0581
+  - モデル側: 反映済み（変更なし）。`damage.ts` の `PROJECTILE_STICK_BUCKET`（`attackDamage`）と `stickHitMultiplier`。仮定としていた置き場所をこの結論で確かめた
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 和の項は説明文の値（クラウンのバーストの攻撃ダメージ▲ 36.24%・S2 の 20.99%、ラピ：レッドフードの S2 の付着▲ 150.72%、鈴原サクラの S1 の受けるダメージ▲ 17.18%）と確定の結論の式（C-0724・C-0393・C-0794）だけ
+  - 検証記録: V-0581
 
 ## 育成・ステータス
 
@@ -4343,7 +4350,7 @@
 - **C-0724** ラピ：レッドフードの S2 の粘着榴弾の付着の 1 ヒットは、最終攻撃力 × 88.11%（説明文の付着ダメージ）×（1 + 発射体付着ダメージ▲）×（1 + コア 1 + 会心 + 距離ボーナス + フルバースト補正）。S2 の常時の付着▲ 150.72% とバーストⅢで使った時の付着▲ 421.2%（10 秒）は 1 つの和で掛かり、発射体爆発ダメージ▲は乗らない。射撃場の BigArms では、付着はどの距離帯でもコアに当たる
   - 状態: 確定・等級: 厳密一致・更新日: 2026-10-29
   - 根拠: `0733-04`〜`0733-07`・`0734-04`〜`0734-07`（単騎の付着の 1 ヒットと、付着が全部コアの値）・`0116-30`・`0116-31`・`0117-26`・`0117-27`（フルバーストの窓の中の付着。同じフレームの爆発と 1 ヒットを、同じ回に単独で出る値で引いた）・`0116-23`・`0117-22`（4 人の録画のフルバーストの外の付着が全部コアの値）・`0116-34`（I-DOLL・サンが III を使った回は、付着に S2 の常時の▲だけが乗る）。付着▲が別の乗数（積）なら窓の中の値は約 2 倍になり合わない。コアの割合 1 は 0733 の付着で決め、0734 と 0116・0117 で再現した。V-0537
-  - モデル側: `data/skills/16.json` の skill2 の effects[1]（passive・projectileStickDamage・ref 5）・effects[3]（damage・{ count: normalShot, everyRef: 1 }・skill・ref 2・core・distance・projectileStick・delayFrames 5）と burst の effects[1]（timed・burstUse・self・projectileStickDamage・ref 6・durationRef 7・burstStepMix { otherBurstStep: Step1, present: true }）。付着▲は `damage.ts` の stickHitMultiplier（置き場所 PROJECTILE_STICK_BUCKET は attackDamage。攻撃ダメージ▲と同じ枠かは確かめていない仮定）、コアは `data/enemies.json` の coreHitRate.autoAttacks の 16:skill2（どの帯も 1）、距離ボーナスは `frame/landing.ts` の slotDistanceRatesOf（通常攻撃と同じ着地点の条件）。付着のヒットのゲージはモデルに入れていない（未対応として書いた）。plan/design-skill-stage12.md 2.2・2.3 節
+  - モデル側: `data/skills/16.json` の skill2 の effects[1]（passive・projectileStickDamage・ref 5）・effects[3]（damage・{ count: normalShot, everyRef: 1 }・skill・ref 2・core・distance・projectileStick・delayFrames 5）と burst の effects[1]（timed・burstUse・self・projectileStickDamage・ref 6・durationRef 7・burstStepMix { otherBurstStep: Step1, present: true }）。付着▲は `damage.ts` の stickHitMultiplier（置き場所 PROJECTILE_STICK_BUCKET は attackDamage。攻撃ダメージ▲と同じ枠であることは C-0796）、コアは `data/enemies.json` の coreHitRate.autoAttacks の 16:skill2（どの帯も 1）、距離ボーナスは `frame/landing.ts` の slotDistanceRatesOf（通常攻撃と同じ着地点の条件）。付着のヒットのゲージはモデルに入れていない（未対応として書いた）。plan/design-skill-stage12.md 2.2・2.3 節
   - 決めるのに使った録画: 0733（値を合わせた）、0116（仮説の出どころ）
   - 検証記録: V-0537
   - 定義: `data/skills/16.json` の skill2 の effects[1]、`data/skills/16.json` の skill2 の effects[3]、`data/skills/16.json` の burst の effects[1]
