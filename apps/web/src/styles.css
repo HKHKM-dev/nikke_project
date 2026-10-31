@@ -138,19 +138,19 @@ header h1 {
 
 /* 編成共通の設定 */
 .settings-simple {
-  display: grid;
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px 24px;
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (min-width: 640px) {
-  .settings-simple {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 .settings-simple .field {
   margin: 2px 0;
-  grid-template-columns: max-content minmax(0, 1fr);
+  grid-template-columns: max-content auto;
   gap: 6px 10px;
+}
+/* 敵・属性のプルダウンは中身の幅にする（オーナーの指示で狭くした） */
+.settings-simple .field select {
+  width: auto;
+  max-width: 100%;
 }
 .common-growth {
   margin-top: 10px;
