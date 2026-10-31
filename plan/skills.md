@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 67・効果 402（根拠あり 375）・notes 173（根拠あり 78）
+件数: キャラ 68・効果 411（根拠あり 384）・notes 174（根拠あり 78）
 
-notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足 13・間接 53
+notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足 13・間接 53
 
-スロット: supported 155・partial 13・unsupported 17・noEffect 34
+スロット: supported 158・partial 13・unsupported 17・noEffect 34
 
 ## 10 ラピ
 
@@ -943,6 +943,22 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足
   - effects[0] burstDamage・skill: C-0185（確定）、C-0233（確定）、C-0234（確定）
   - effects[1] timed・burstUse・sustainedDamage: C-0332（確定）、C-0421（確定）
   - notes[0] 補足: A.N.モードの一点集中の解除は、一点集中（S2。パーツの破壊で付く）が射撃場の的では起きないので何もしない: C-0365（確定）
+
+## 860 千束
+
+- **skill1**: supported
+  - effects[0] counterChange・battleStart・extrasensory: C-0797（確定）
+  - effects[1] counterChange・2 秒ごと・extrasensory（減少）: C-0797（確定）
+  - effects[2] passive・extrasensory 70 以上の間・attack: C-0797（確定）
+  - effects[3] passive・extrasensory 55 以上の間・trueDamage: C-0797（確定）
+  - effects[4] passive・extrasensory 25 以上の間・hitRate: C-0800（仮説）
+  - notes[0] 計算に無関係: 超感覚 100% の時の射撃予測：無敵はダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・burstUse・trueDamageConversion: C-0799（確定）
+  - effects[1] damage・normalHit・true: C-0798（確定）
+- **burst**: supported
+  - effects[0] counterChange・burstUse・extrasensory: C-0797（確定）
+  - effects[1] timed・burstUse・attack: C-0799（確定）
 
 ## 861 たきな
 

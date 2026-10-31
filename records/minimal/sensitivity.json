@@ -17677,6 +17677,166 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0811-01",
+      "element": "千束 skill1.effects[4]",
+      "key": "45306c67d6fb27f6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0811-02",
+      "element": "千束 skill1.effects[4]",
+      "key": "1d0c05940186e661",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0811-03",
+      "element": "千束 skill1.effects[4]",
+      "key": "2be2fd22d3168fdf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0811-04",
+      "element": "千束 skill1.effects[4]",
+      "key": "ef2815c97c07f0b8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0811-05",
+      "element": "千束 skill1.effects[4]",
+      "key": "fe4224c477cabfb9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0811-06",
+      "element": "千束 skill1.effects[4]",
+      "key": "abe45a8d351aedc0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0812-01",
+      "element": "千束 skill1.effects[4]",
+      "key": "23e6ba4ee42f6a07",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0812-02",
+      "element": "千束 skill1.effects[4]",
+      "key": "d5a84babbdb8fd44",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0812-03",
+      "element": "千束 skill1.effects[4]",
+      "key": "72aa5d612910bd12",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0812-04",
+      "element": "千束 skill1.effects[4]",
+      "key": "9e82f31fbddcfafa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0812-05",
+      "element": "千束 skill1.effects[4]",
+      "key": "1d1e8154459698ab",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0812-06",
+      "element": "千束 skill1.effects[4]",
+      "key": "3283ed1cf718d681",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0813-05",
+      "element": "千束 skill1.effects[4]",
+      "key": "8d71eb8f9e589c3e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0813-06",
+      "element": "千束 skill1.effects[4]",
+      "key": "4e460b142d8f8acb",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0813-07",
+      "element": "千束 skill1.effects[4]",
+      "key": "1d55ea8d6593a7d8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0813-08",
+      "element": "千束 skill1.effects[4]",
+      "key": "fc03ad6dd24e289e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0814-05",
+      "element": "千束 skill1.effects[4]",
+      "key": "9f52c5bc1cb596d1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0814-06",
+      "element": "千束 skill1.effects[4]",
+      "key": "420194f7ea01748c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0814-07",
+      "element": "千束 skill1.effects[4]",
+      "key": "bdf7cb146327c867",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0814-08",
+      "element": "千束 skill1.effects[4]",
+      "key": "3e641262a0ed9c89",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

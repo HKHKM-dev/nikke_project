@@ -89,6 +89,7 @@
     | コア命中ダメージ | damage の `coreHit: true` | 例: マリアン：クイーンの S2 | 同 5.4 節 |
     | マシンガン立ち上げ速度 X%▲ | stat `spinUpSpeed` | 例: マリアン：クイーンのバースト | 同 5.6 節 |
     | 通常攻撃が N 回クリティカル命中した時／自分が使用武器変更状態でなければ | 回数の種類 `critHit`／回数のきっかけの `firesOutside: "weaponChange"` | 例: 紅蓮：神殺の S2 | 同 5.7 節 |
+    | N 秒ごとに〈カウンタ〉N%▼／〈カウンタ〉の N% 以上の時（下位効果のスタック適用） | `counterChange` の時間の周期のきっかけ（`{ "everySeconds": N, "carry": true }`・`decrease`）／`passive` の `while.selfCounter`（閾値ごとに 1 つ） | 周期は戦闘開始から数える。閾値ごとに別々に付くので、高い段階では下位の効果も乗る。例: 千束の S1 の超感覚 | [design-skill-stage16.md](design-skill-stage16.md) 2.1 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

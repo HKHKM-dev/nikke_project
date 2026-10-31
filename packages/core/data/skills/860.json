@@ -10,40 +10,73 @@
           "counter": "extrasensory",
           "trigger": "battleStart",
           "target": "self",
-          "amountRef": 1
+          "amountRef": 1,
+          "claims": [
+            "C-0797"
+          ]
         },
         {
           "kind": "counterChange",
           "counter": "extrasensory",
-          "trigger": { "everySeconds": 2, "carry": true },
+          "trigger": {
+            "everySeconds": 2,
+            "carry": true
+          },
           "target": "self",
           "amountRef": 11,
           "decrease": true,
           "assumes": {
             "ja": "超感覚の 1%▼ は戦闘開始から 2 秒ごと（端数を持ち越す）",
             "en": "The 1% Extrasensory decrease comes every 2 s from the start of battle (carrying the fraction)"
-          }
+          },
+          "claims": [
+            "C-0797"
+          ]
         },
         {
           "kind": "passive",
           "target": "self",
           "stat": "attack",
           "ref": 5,
-          "while": { "selfCounter": { "counter": "extrasensory", "atLeast": 70 } }
+          "while": {
+            "selfCounter": {
+              "counter": "extrasensory",
+              "atLeast": 70
+            }
+          },
+          "claims": [
+            "C-0797"
+          ]
         },
         {
           "kind": "passive",
           "target": "self",
           "stat": "trueDamage",
           "ref": 7,
-          "while": { "selfCounter": { "counter": "extrasensory", "atLeast": 55 } }
+          "while": {
+            "selfCounter": {
+              "counter": "extrasensory",
+              "atLeast": 55
+            }
+          },
+          "claims": [
+            "C-0797"
+          ]
         },
         {
           "kind": "passive",
           "target": "self",
           "stat": "hitRate",
           "ref": 9,
-          "while": { "selfCounter": { "counter": "extrasensory", "atLeast": 25 } }
+          "while": {
+            "selfCounter": {
+              "counter": "extrasensory",
+              "atLeast": 25
+            }
+          },
+          "claims": [
+            "C-0800"
+          ]
         }
       ],
       "notes": [
@@ -61,13 +94,26 @@
           "trigger": "burstUse",
           "target": "self",
           "stat": "trueDamageConversion",
-          "durationRef": 1
+          "durationRef": 1,
+          "claims": [
+            "C-0799"
+          ]
         },
         {
           "kind": "damage",
-          "trigger": { "count": "normalHit", "everyRef": 2 },
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 2
+          },
           "damageType": "true",
-          "ref": 3
+          "ref": 3,
+          "claims": [
+            "C-0798"
+          ],
+          "assumes": {
+            "ja": "発の 48 回ごとに 1 回（命中はモデルの弾丸命中率で数える）。コアの補正は乗らない。バーストゲージを溜めるかは確かめていない（モデルは溜めない）",
+            "en": "Once per 48 shots hit (hits counted with the model bullet hit rate). The core bonus does not apply. Whether it charges the Burst Gauge is unchecked (the model does not)"
+          }
         }
       ]
     },
@@ -78,7 +124,10 @@
           "counter": "extrasensory",
           "trigger": "burstUse",
           "target": "self",
-          "amountRef": 1
+          "amountRef": 1,
+          "claims": [
+            "C-0797"
+          ]
         },
         {
           "kind": "timed",
@@ -86,7 +135,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-0799"
+          ]
         }
       ]
     }
