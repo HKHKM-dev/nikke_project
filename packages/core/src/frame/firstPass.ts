@@ -79,6 +79,7 @@ import {
 import { resolveCycleEvery, resolveCycles } from '../skills/cycles.ts';
 import {
   damageHitFramesOf,
+  perCountFrames,
   resolveDamageEffects,
   resolveDamageGauges,
   resolveAllyGaugeAdd,
@@ -108,13 +109,14 @@ import {
   advanceShotCount,
   createTriggerTracker,
   fireContextOf,
+  type ChargeTickEvent,
   type FrameEvents,
   type ShotCountEveryAt,
   type ShotEvent,
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { hasReloadEndEffect, type ShotCountKind } from '../skills/types.ts';
+import { chargeTriggersOf, hasReloadEndEffect, type ShotCountKind } from '../skills/types.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
@@ -127,6 +129,7 @@ import {
   resumeAfterLastShotRefill,
   resumeShooter,
   partialChargeShot,
+  chargeProgressFrames,
   stepShooter,
   unhideShooter,
   weaponChangeShooter,
@@ -350,6 +353,73 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   );
   // シンデレラ S1 編: リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）を持つ枠だけが書く
   const writesReloadEnds = slots.map((slot) => slot?.definition != null && hasReloadEndEffect(slot.definition));
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 溜めのきっかけ（{ chargeTick }・{ chargeFull }）を持つ枠だけ、溜めを追い、
+  // 周期と満ちたフレームを射撃の記録に書く（流し直しも同じ列を読む）。ticks の k はいまの溜めで発火した周期の数、full は { chargeFull } を
+  // 持つか、fullDone はいまの溜めで満ちた時が発火したか
+  const chargeWatches = slots.map((slot, i) => {
+    if (slot?.definition == null) return null;
+    const { tickSeconds, full } = chargeTriggersOf(slot.definition);
+    if (tickSeconds.length === 0 && !full) return null;
+    const log = logs[i]!;
+    const ticks = tickSeconds.map((everySeconds) => {
+      const entry = { everySeconds, frames: [] as number[] };
+      (log.chargeTicks ??= []).push(entry);
+      return { entry, k: 0 };
+    });
+    if (full) log.chargeFullFrames = [];
+    return { ticks, full, fullDone: false };
+  });
+  /** このフレームの溜めの周期と満ちた枠（FrameEvents.chargeTicks・chargeFulls。毎フレーム空にする） */
+  const frameChargeTicks: ChargeTickEvent[] = [];
+  const frameChargeFulls: number[] = [];
+  /**
+   * 段 14 の PR 2: 枠 i のフレーム f の溜め。progress は撃つ前の溜めの進み（chargeProgressFrames。溜めていなければ null）、shot は
+   * このフレームに撃ったか（fullShot はフルチャージの発か）。撃ったフレームは周期を出さずに数え直し、満ちた時がまだならフルチャージの発の
+   * フレームに出す（チャージ時間が縮んで満ちたフレームを飛ばした発も、その発に乗る）
+   */
+  const watchCharge = (
+    i: number,
+    f: number,
+    progress: number | null,
+    shot: boolean,
+    fullShot: boolean,
+    chargeFrames: number,
+  ): void => {
+    const w = chargeWatches[i]!;
+    const log = logs[i]!;
+    const restart = () => {
+      for (const t of w.ticks) t.k = 0;
+      w.fullDone = false;
+    };
+    if (shot) {
+      if (w.full && !w.fullDone && fullShot) {
+        log.chargeFullFrames!.push(f);
+        frameChargeFulls.push(i);
+      }
+      restart();
+      return;
+    }
+    if (progress === null || progress <= 0) {
+      restart();
+      return;
+    }
+    for (const t of w.ticks) {
+      // k + 1 回目の周期は溜め始めの floor((k + 1) × 間隔 ÷ 0.017) フレーム後（端数を持ち越す）。溜めが跳んでも 1 フレームに 1 回
+      let fired = false;
+      while (progress >= gameSecondsToFrames((t.k + 1) * t.entry.everySeconds)) {
+        t.k += 1;
+        fired = true;
+      }
+      if (!fired) continue;
+      t.entry.frames.push(f);
+      frameChargeTicks.push({ slotIndex: i, everySeconds: t.entry.everySeconds });
+    }
+    if (w.full && !w.fullDone && progress >= chargeFrames) {
+      w.fullDone = true;
+      log.chargeFullFrames!.push(f);
+      frameChargeFulls.push(i);
+    }
+  };
   // 持ち主ごとの件の一覧（plan/design-holder-effects.md 段 A）。スキルの効果をすべて、受ける枠ごとの件の列で持つ
   const lists = createHolderLists(slots, {
     frames,
@@ -736,11 +806,54 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       damageTimerGauges.push({ slotIndex: i, effect, fires });
     }
   });
-  const countTimerDamageGauges = (f: number): void => {
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節。C-0426）: 射撃の回数のきっかけの倍率ダメージのヒットごとのゲージ
+  // （gaugePerHit。オートファイア）。射撃を数えて発火を追い、ヒットのフレーム（perCount { state } の数だけ 1 つずつ出すヒットは、発火の
+  // フレームより前に付いたスタック数。2 パス目の planSkillHits と同じ見え方）のゲージに予約する（delayFrames は 1 以上なので、どのヒットも
+  // 発火より後のフレーム）。射撃ごとの倍率ダメージのゲージと同じく発のゲージの記録（shotGauges）に残し、味方のゲージの回数にも数える
+  const shotDamageGauges: {
+    slotIndex: number;
+    effect: ResolvedDamageEffect;
+    count: ShotCountKind;
+    every: number;
+    n: number;
+  }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveDamageEffects(slot.definition, slot.character, slot.levels)) {
+      if (effect.gaugePerHit !== true || !isResolvedShotCount(effect.trigger)) continue;
+      if (effect.trigger.count === 'fullChargeShot' && !logs[i]!.fullCharge) continue;
+      shotDamageGauges.push({ slotIndex: i, effect, count: effect.trigger.count, every: effect.trigger.every, n: 0 });
+    }
+  });
+  const countDamageHitGauges = (f: number): void => {
     for (const t of damageTimerGauges) {
       if (!t.fires(f)) continue;
       const energy = targetEnergyNow(t.slotIndex, targetEnergies[t.slotIndex]! * (1 + gaugeSpeed[t.slotIndex]!));
       for (const at of damageHitFramesOf(t.effect, f, frames)) reserveTimerGauge(t.slotIndex, f, at, energy);
+    }
+    for (const t of shotDamageGauges) {
+      const shot = shotEvents[t.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
+      t.n = counted.count;
+      if (!counted.fired) continue;
+      const { effect } = t;
+      const per = effect.perCount;
+      const at =
+        per !== undefined && 'state' in per
+          ? perCountFrames(
+              f,
+              lists.selfStackCountAt(t.slotIndex, per.state, f),
+              {
+                seconds: effect.perCountIntervalSeconds,
+                frames: effect.perCountIntervalFrames,
+                delay: effect.delayFrames,
+              },
+              frames,
+            )
+          : damageHitFramesOf(effect, f, frames);
+      const energy = targetEnergyNow(t.slotIndex, targetEnergies[t.slotIndex]! * (1 + gaugeSpeed[t.slotIndex]!));
+      for (const hit of at) landingGauge(t.slotIndex, hit, f, energy, 1);
     }
   };
   /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
@@ -809,6 +922,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   let nextBlock = 0;
 
   for (let f = 0; f < frames; f++) {
+    frameChargeTicks.length = 0;
+    frameChargeFulls.length = 0;
     // Stage 16-B: 狙えない窓。入るフレームで hide、明けるフレームで unhide（どちらも射手を進める前）
     while (nextBlock < untargetable.length && untargetable[nextBlock]!.end < f) nextBlock += 1;
     const block = untargetable[nextBlock];
@@ -856,8 +971,18 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         return;
       }
       const reloading = state.phase === 'reloading';
+      // 段 14 の PR 2: 撃つ前の溜めの進み（部分チャージの進みと同じ見え方）。リロード中・狙えない窓の間は溜めていない
+      const progress =
+        chargeWatches[i] !== null && isChargeWeapon(shot) && !reloading && !blocked
+          ? chargeProgressFrames(state, params)
+          : null;
       const fired = stepShooter(state, shot, model, params, blocked);
       const log = logs[i]!;
+      if (chargeWatches[i] !== null) {
+        const shotNow = fired || partial !== null;
+        const fullShot = shotNow && isChargeWeapon(shot) && (partial === null || partial >= 1);
+        watchCharge(i, f, progress, shotNow, fullShot, params.chargeFrames);
+      }
       // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 基礎の武器のリロードを込め終えた。込め終えたフレームまでが
       // 「リロード完了時に解除」の窓（件の終わりは次のフレーム）
       if (writesReloadEnds[i] && reloading && state.phase !== 'reloading' && params.weapon === null)
@@ -1024,7 +1149,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     if (!trackEvents && !trackDotBurstUse) {
       countCycles(f);
       countShotPauses(f);
-      countTimerDamageGauges(f);
+      countDamageHitGauges(f);
       continue;
     }
 
@@ -1120,6 +1245,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       healed,
       ...(fullStacks.length > 0 ? { fullStacks } : {}),
       ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
+      // 2 段目の段 14 の PR 2: このフレームの溜めの周期と満ちた時（手順 1 の射手が書いた）
+      ...(frameChargeTicks.length > 0 ? { chargeTicks: [...frameChargeTicks] } : {}),
+      ...(frameChargeFulls.length > 0 ? { chargeFulls: [...frameChargeFulls] } : {}),
       ...(stageEntries !== undefined ? { stageEntries } : {}),
     };
     // V-0113: バースト使用時に付く持続ダメージ（クルミのハッキング）。付け直しと同じで、延びた tick のゲージを予約する
@@ -1226,7 +1354,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     }
     countCycles(f);
     countShotPauses(f);
-    countTimerDamageGauges(f);
+    countDamageHitGauges(f);
   }
 
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;

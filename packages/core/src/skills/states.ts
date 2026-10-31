@@ -162,6 +162,12 @@ export const NAMED_STATES = {
    * チェーンバインドのスタック数を写す・10 秒・解除不可。付けた後にチェーンバインドを消去する。V-0547）
    */
   draggingChain: { name: { ja: 'プリング・チェーン', en: 'Dragging Chain' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.2 節）: オートファイア準備（スノーホワイト：ヘビーアームズの S1。チャージ中の
+   * 0.2 秒ごとに 1 スタック・最大装填数（スタック）5・持続・解除条件は通常攻撃時。中身の防御力▲は間接。装填数がオートファイアの
+   * 順番の攻撃の数（perCount）になる）
+   */
+  autoFireReady: { name: { ja: 'オートファイア準備', en: 'Auto Fire Ready' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

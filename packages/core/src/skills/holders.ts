@@ -369,6 +369,12 @@ export type HolderLists = {
    */
   selfStateAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
+   * 静的な状態は 1、無ければ 0）。frame/plan.ts の damage の perCount { state } と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
+   * ヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
+   */
+  selfStackCountAt(holder: number, state: NamedStateId, frame: number): number;
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
@@ -1996,6 +2002,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           staticStates[holder]?.has(s) === true ||
           (stateTracks[holder]?.get(s) ?? []).some((t) => activeAt(t, frame).some((it) => it.start < frame)),
       );
+    },
+    selfStackCountAt(holder, state, frame) {
+      let level = 0;
+      for (const s of statesMatching(state)) {
+        if (staticStates[holder]?.has(s) === true) level = Math.max(level, 1);
+        for (const t of stateTracks[holder]?.get(s) ?? [])
+          for (const it of activeAt(t, frame)) if (it.start < frame) level = Math.max(level, it.stack ?? 1);
+      }
+      return level;
     },
     instantConditionHolds(effect, sourceSlotIndex, frame) {
       if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;

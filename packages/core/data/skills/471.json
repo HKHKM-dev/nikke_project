@@ -1,64 +1,156 @@
 {
   "formatVersion": 1,
   "resourceId": 471,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-10-31",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "チャージ中の 0.2 秒ごとのロックオンと、ロックオン状態の敵全体への受けるダメージ▲（4 秒）は未対応（ゲージは溜めない。C-0426）",
-          "en": "The lock-on every 0.2 s while charging and the damage-taken increase on all locked-on enemies (4 s) are not modeled (they do not charge the burst gauge; C-0426)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "damageTaken",
-            "target": "allies",
-            "trigger": "unknown"
-          }
+          "kind": "state",
+          "state": "autoFireReady",
+          "trigger": {
+            "chargeTick": {
+              "everySeconds": 0.2
+            }
+          },
+          "target": "self",
+          "maxStacksRef": 5,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "オートファイア準備の装填数をスタック数で持つ（チャージ 1.2 秒の溜めで 6 回発火し、上限の 5 で止まる）。中身の防御力▲は間接（notes）。周期は溜め始め（前の発の 22f 後。満ちる 71f 前）から 0.2 秒ごと（端数を持ち越す）",
+            "en": "Holds the Auto Fire Ready loads as stacks (a 1.2 s charge ticks 6 times and stops at the cap of 5). The DEF increase in it is indirect (notes). The ticks come every 0.2 s from the charge start (22 frames after the previous shot, 71 frames before it is full), carrying the fraction"
+          },
+          "claims": [
+            "C-0757"
+          ]
         },
         {
-          "ja": "チャージ中のオートファイア準備（防御力▲）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
-          "en": "Auto-fire preparation (defense increase) while charging does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "removeState",
+          "state": "autoFireReady",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "target": "self",
+          "assumes": {
+            "ja": "解除条件の「通常攻撃時」は撃ったフレームに外れ、同じ発のオートファイア（effects[4]）は外れる前の装填数を読む",
+            "en": "The removal on a normal attack happens on the shot frame; the Auto Fire of the same shot (effects[4]) reads the loads before the removal"
+          },
+          "claims": [
+            "C-0757"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "chargeTick": {
+              "everySeconds": 0.2
+            }
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 2,
+          "durationRef": 8,
+          "assumes": {
+            "ja": "敵 1 体。ロックオン（S1 の 1 行目）は語彙を持たず、どの溜めも最初の周期（溜め始めの 0.2 秒後）からその敵がロックオン状態とみる（受けるダメージ▲とオートファイアの効果 2 の対象はどちらもその敵。対象数の上限は敵 1 体では効かない）",
+            "en": "One enemy. Lock-On (S1 line 1) has no vocabulary: from the first tick of each charge (0.2 s after the charge starts) the enemy is taken to be locked on (both the damage-taken increase and Auto Fire effect 2 target it; the target cap does not matter with one enemy)"
+          },
+          "claims": [
+            "C-0758"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "ref": 6,
+          "damageType": "skill",
+          "delayFrames": 6,
+          "gaugePerHit": true,
+          "assumes": {
+            "ja": "オートファイアの効果 1（敵全体。敵 1 体）。フルチャージの発の 6f 後に 1 ヒット（コアに当たらない）。バーストゲージは射手の 1 ヒットぶん（C-0426）",
+            "en": "Auto Fire effect 1 (all enemies; one enemy). One hit 6 frames after the full-charge shot (no core). It charges one shooter hit of burst gauge (C-0426)"
+          },
+          "claims": [
+            "C-0757",
+            "C-0426"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "ref": 7,
+          "damageType": "skill",
+          "delayFrames": 44,
+          "perCount": {
+            "state": "autoFireReady"
+          },
+          "perCountIntervalSeconds": 0.2,
+          "sequentialAttack": true,
+          "gaugePerHit": true,
+          "assumes": {
+            "ja": "オートファイアの効果 2（ロックオン対象に装填数分だけ順番に攻撃）。発のフレームのオートファイア準備のスタック数（外れる前）だけ、発の 44f 後から 0.2 秒ごと（端数を持ち越す）に 1 ヒットずつ（コアに当たらない）。どのヒットも射手の 1 ヒットぶんのバーストゲージ（C-0426）",
+            "en": "Auto Fire effect 2 (sequential attacks on the lock-on target, one per load). As many hits as the Auto Fire Ready stacks on the shot frame (before removal), from 44 frames after the shot every 0.2 s carrying the fraction (no core). Each hit charges one shooter hit of burst gauge (C-0426)"
+          },
+          "claims": [
+            "C-0757",
+            "C-0426"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "オートファイア準備の中身の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。装填数は effects[0]）",
+          "en": "The DEF increase inside Auto Fire Ready does not change damage by itself (it matters only with an effect reading DEF in the team; the loads are effects[0])",
           "kind": "indirect",
           "path": "defense"
         },
         {
-          "ja": "フルチャージ攻撃時のオートファイア（敵全体と、ロックオン対象への装填数分の順番の攻撃）は未対応",
-          "en": "Auto Fire on fully charged attacks (on all enemies, and sequential attacks on lock-on targets by the loaded count) is not modeled",
+          "ja": "フルチャージして攻撃した時のセブンスドワーフ・フルアクティブの使用回数▼と、通常攻撃をした時（フルバースト状態でなければ）のフルアクティブ解除は未対応（バーストのフルアクティブと一緒に書く。段 14 の PR 3）",
+          "en": "The Seven Dwarves Fully Active use count decrease on fully charged attacks and its removal on normal attacks (outside Full Burst) are not modeled (written together with the Burst Fully Active in stage 14 PR 3)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "damage",
+            "kind": "stackChange",
             "trigger": "fullChargeShot"
           }
         }
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "fixedChargeTime",
+          "ref": 1,
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "武器の基礎のチャージ時間も 1.2 秒なので、チャージ速度の効果の無い編成では変わらない",
+            "en": "The weapon base charge time is also 1.2 s, so nothing changes in a team without charge speed effects"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "chargeFull": true
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "「フルチャージした時」は溜めが満ちたフレーム（撃つ 1f 前）で、その溜めで撃つ発自身にも乗る（0774 の戦闘の最初の発から乗る。V-0552）。付き直しは窓を延ばすだけで重ならない",
+            "en": "\"On full charge\" is the frame the charge fills (1 frame before the shot), so it applies to the shot of that charge itself (from the first shot of the battle in 0774; V-0552). Reapplying extends the window without stacking"
+          },
+          "claims": [
+            "C-0758"
+          ]
+        }
+      ],
       "notes": [
-        {
-          "ja": "戦闘開始時のチャージ時間 1.2 秒の固定（持続）は未対応",
-          "en": "Fixing the charge time to 1.2 s from the start of combat (permanent) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "fixedChargeTime",
-            "target": "self",
-            "trigger": "battleStart"
-          }
-        },
-        {
-          "ja": "フルチャージした時の自分の攻撃力▲（5 秒）は未対応",
-          "en": "The attack increase on self on full charge (5 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "fullChargeShot"
-          }
-        },
         {
           "ja": "フルチャージした時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）",
           "en": "Pierce on full charge does not change damage by itself (it matters only with a Pierce Damage increase in the team; whether it applies against a single enemy is not verified)",

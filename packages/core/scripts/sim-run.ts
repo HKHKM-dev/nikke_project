@@ -93,6 +93,9 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('fullStack' in t) return `fullStack:${t.fullStack}`;
   // 2 段目の段 11: 使用武器の変更の終わり
   if ('weaponChangeEnd' in t) return 'weaponChangeEnd';
+  // 2 段目の段 14 の PR 2: 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
+  if ('chargeTick' in t) return `chargeTick${t.chargeTick.everySeconds}s`;
+  if ('chargeFull' in t) return 'chargeFull';
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;

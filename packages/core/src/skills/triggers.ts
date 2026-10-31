@@ -18,6 +18,8 @@ import {
 import { fullChargeFrameSet, type ShotLog } from '../frame/shots.ts';
 import {
   isResolvedApplied,
+  isResolvedChargeFull,
+  isResolvedChargeTick,
   isResolvedEventCount,
   isResolvedFullStack,
   isResolvedTimer,
@@ -142,7 +144,17 @@ export type FrameEvents = {
    * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目）。トリガー burstStage{N}Enter が見る。省略は無し
    */
   stageEntries?: readonly BurstStepKey[];
+  /**
+   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1 節）: このフレームに溜めの周期が来た枠と間隔（ShotLog.chargeTicks）。
+   * トリガー { chargeTick } が見る。省略は無し
+   */
+  chargeTicks?: readonly ChargeTickEvent[];
+  /** 同 2.6 節: このフレームに溜めが満ちた枠（ShotLog.chargeFullFrames）。トリガー { chargeFull } が見る。省略は無し */
+  chargeFulls?: readonly number[];
 };
+
+/** 2 段目の段 14 の PR 2: 溜めの周期の発火（枠と間隔の秒） */
+export type ChargeTickEvent = { slotIndex: number; everySeconds: number };
 
 /** 2 段目の段 3: フルスタックになって外れた状態 */
 export type FullStackEvent = { slotIndex: number; state: NamedStateId };
@@ -236,6 +248,12 @@ export function createTriggerTracker(
   }
   // 2 段目の段 11: 使用武器の変更の終わり（1 パス目の撃ち切りの終わりの列）
   if (isResolvedWeaponChangeEnd(t)) return (ev) => (ev.weaponChangeEnds ?? []).includes(slotIndex);
+  // 2 段目の段 14 の PR 2: 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
+  if (isResolvedChargeTick(t)) {
+    const every = t.chargeTick.everySeconds;
+    return (ev) => (ev.chargeTicks ?? []).some((x) => x.slotIndex === slotIndex && x.everySeconds === every);
+  }
+  if (isResolvedChargeFull(t)) return (ev) => (ev.chargeFulls ?? []).includes(slotIndex);
   // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
@@ -349,6 +367,19 @@ export function replayEvents(
       if (f >= frames) continue;
       const ev = at(f);
       ev.weaponChangeEnds = [...(ev.weaponChangeEnds ?? []), slotIndex];
+    }
+    // 2 段目の段 14 の PR 2: 溜めの周期（{ chargeTick }）と溜めが満ちた時（{ chargeFull }）
+    for (const { everySeconds, frames: ticks } of log.chargeTicks ?? []) {
+      for (const f of ticks) {
+        if (f >= frames) continue;
+        const ev = at(f);
+        ev.chargeTicks = [...(ev.chargeTicks ?? []), { slotIndex, everySeconds }];
+      }
+    }
+    for (const f of log.chargeFullFrames ?? []) {
+      if (f >= frames) continue;
+      const ev = at(f);
+      ev.chargeFulls = [...(ev.chargeFulls ?? []), slotIndex];
     }
   });
   if (schedule !== null) {

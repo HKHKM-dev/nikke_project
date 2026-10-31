@@ -8,7 +8,7 @@
 // （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { battleSecondsToFrames, gameSecondsToFrames } from '../time.ts';
+import { battleSecondsToFrames } from '../time.ts';
 import { burstCandidateOf, planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
 import {
   effectFrameOf,
@@ -22,9 +22,11 @@ import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
   damageHitFramesOf,
+  perCountFrames,
   resolveDamageEffects,
   resolveDotEffects,
   resolvePerShotDamage,
+  splitsPerCount,
   type ResolvedDamageEffect,
   type ResolvedSkillDamage,
   type SkillHitResult,
@@ -126,26 +128,6 @@ export type SkillHitEvent = {
   /** 2 段目の段 13 の PR 1: 持続ダメージの、付けた時の 1 スタックぶんのヒット（dot の hitOnApply）。tick ではない */
   onApply?: true;
 };
-
-/**
- * 2 段目の段 12・13: perCount の数だけのヒット（付与）の、発火 frame からのフレーム。k 個目（0 始まり）は、秒の間隔なら
- * floor(k × 間隔 ÷ 0.017) 後（端数を持ち越す。粘着榴弾の起爆。C-0726）、フレーム数の間隔なら delay + k × 間隔の後（キャプチャーチェーン。
- * C-0745）。戦闘の終わり（end）より前だけ
- */
-function perCountFrames(
-  frame: number,
-  count: number,
-  step: { seconds?: number; frames?: number; delay?: number },
-  end: number,
-): number[] {
-  const out: number[] = [];
-  for (let k = 0; k < count; k++) {
-    const offset =
-      step.seconds !== undefined ? gameSecondsToFrames(k * step.seconds) : (step.delay ?? 0) + k * step.frames!;
-    if (frame + offset < end) out.push(frame + offset);
-  }
-  return out;
-}
 
 /** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
 export function planTeamSchedule(
@@ -498,11 +480,10 @@ export function planSkillHits(
               : counterAt(per.counter, frame);
         if (copied === 0) continue;
         // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
-        // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正）
-        if (
-          (effect.perCountIntervalSeconds !== undefined || effect.perCountIntervalFrames !== undefined) &&
-          copied !== undefined
-        ) {
+        // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正）。
+        // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: オートファイアの順番の攻撃（フルチャージの発のフレームのオートファイア
+        // 準備のスタック数。発で外れる前の数。V-0552）も同じ形で、delayFrames の後から刻む
+        if (splitsPerCount(effect) && copied !== undefined) {
           const step = { seconds: effect.perCountIntervalSeconds, frames: effect.perCountIntervalFrames, delay };
           for (const at of perCountFrames(frame, copied, step, frames)) push(at, effect, pre);
           continue;
