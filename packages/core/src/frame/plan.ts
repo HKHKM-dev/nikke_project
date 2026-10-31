@@ -483,9 +483,13 @@ export function planSkillHits(
         // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
         // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正）。
         // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: オートファイアの順番の攻撃（フルチャージの発のフレームのオートファイア
-        // 準備のスタック数。発で外れる前の数。V-0552）も同じ形で、delayFrames の後から刻む
+        // 準備のスタック数。発で外れる前の数。V-0552）も同じ形で、delayFrames の後から刻む。
+        // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。V-0553）: 順番の攻撃（sequentialAttack）のヒットは、バフとフルバースト
+        // 補正を発火のフレーム（オートファイアならフルチャージの発）の値で固定する。「1 発間維持」の▲（窓は溜めが満ちたフレームから撃った
+        // 発まで）は、その発の遅れて出る順番の攻撃の全部に乗り、次の発の順番の攻撃には乗らない
         if (splitsPerCount(effect) && copied !== undefined) {
-          for (const at of effectHitFrames(effect, frame, copied, frames)) push(at, effect, pre);
+          for (const at of effectHitFrames(effect, frame, copied, frames))
+            push(at, effect, pre, undefined, undefined, false, effect.sequential === true ? frame : at);
           continue;
         }
         if (effect.perBurstHit === true) {

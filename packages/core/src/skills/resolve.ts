@@ -24,6 +24,8 @@ import {
   isCounterFullTrigger,
   isFlagStat,
   isShotCountTrigger,
+  isStatContent,
+  statContentsOf,
   type BuffScaling,
   type BuffStat,
   type BuffTarget,
@@ -366,7 +368,8 @@ function staticContentsOf(
   level: number,
 ): ResolvedEffect[] {
   const skill = character.skills[slot];
-  return (effect.contents ?? []).map((item) => {
+  // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は stat の値を持たない（静的な状態の上限は変わらない。使い手がいない）
+  return statContentsOf(effect.contents).map((item) => {
     const r: ResolvedEffect = {
       source: { resourceId: character.resourceId, skill: slot, name: skill.name },
       target: 'self',
@@ -620,6 +623,11 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * スタック数（PR 3）にする
    */
   stacksFrom?: StacksFrom;
+  /**
+   * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 1 回の発火で付けるスタックの数（stacksPerFireRef を解いた整数。1 以上
+   * maxStacks 以下）。無ければ 1（stacksFrom があればその数）
+   */
+  stacksPerFire?: number;
   /** エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある） */
   enemy?: true;
 };
@@ -647,6 +655,14 @@ export function resolveStateGrants(
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
+      if (effect.stacksPerFireRef !== undefined) {
+        const n = Math.round(skillValue(character.skills[slot], effect.stacksPerFireRef, levels[slot]));
+        if (n < 1 || n > (window.maxStacks ?? 1))
+          throw new RangeError(
+            `character ${character.resourceId}: ${slot} effects[${effectIndex}] stacksPerFireRef resolves to ${n} (needs 1 to the max stacks ${window.maxStacks})`,
+          );
+        grant.stacksPerFire = n;
+      }
       if (effect.enemy) grant.enemy = true;
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       untrimmed.push(grant);
@@ -682,6 +698,34 @@ export function resolveStateGrants(
 }
 
 /**
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 解決した中身の「〈状態〉の最大スタック数 N▲」。whileState の件が持ち主に
+ * 付いている間、持ち主の state の上限に amount を足す（skills/holders.ts）
+ */
+export type ResolvedMaxStacksUp = { whileState: NamedStateId; state: NamedStateId; amount: number };
+
+/** 2 段目の段 14 の PR 3: 定義の中身の最大スタック数▲を Lv の数値に解く（静的な状態のものは無い。値は付与のスロットの Lv の説明文の値の整数） */
+export function resolveMaxStacksUps(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedMaxStacksUp[] {
+  const statics = new Set(staticStatesOf(def));
+  const out: ResolvedMaxStacksUp[] = [];
+  for (const slot of SKILL_SLOTS) {
+    for (const effect of def.skills[slot].effects) {
+      if (effect.kind !== 'state' || statics.has(effect.state)) continue;
+      for (const item of effect.contents ?? []) {
+        if (isStatContent(item)) continue;
+        const { state, amountRef } = item.maxStacksUp;
+        const amount = Math.round(skillValue(character.skills[slot], amountRef, levels[slot]));
+        out.push({ whileState: effect.state, state, amount });
+      }
+    }
+  }
+  return out;
+}
+
+/**
  * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 時間で変わる状態の中身を Lv の数値に解く（静的な付与の中身は
  * resolvePassives）。値は付与のあるスロットの説明文の値で、そのスロットの Lv で解く。対象の欄・スタックの上限・仮定は付与のもの
  */
@@ -698,6 +742,8 @@ export function resolveStateContents(
       if (effect.kind !== 'state' || effect.contents === undefined || statics.has(effect.state)) return;
       const grant = grants.find((g) => g.source.skill === slot && g.effectIndex === effectIndex)!;
       effect.contents.forEach((item, subIndex) => {
+        // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は resolveMaxStacksUps（subIndex は JSON の並びのまま）
+        if (!isStatContent(item)) return;
         const r: ResolvedStateContent = {
           source: grant.source,
           target: grant.target,
@@ -889,6 +935,8 @@ export type ResolvedStackChange = {
   amount: number;
   /** スタック量の減少（▼） */
   decrease?: true;
+  /** 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 減少で最後の 1 段も切る（0 になったら件を閉じる） */
+  closesAtZero?: true;
   condition?: EffectCondition;
 };
 
@@ -916,6 +964,7 @@ export function resolveStackChanges(
         amount,
       };
       if (effect.decrease) r.decrease = true;
+      if (effect.closesAtZero) r.closesAtZero = true;
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
     });

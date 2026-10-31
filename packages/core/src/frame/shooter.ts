@@ -354,10 +354,21 @@ export function resumeShooter(
  * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: きっかけ { chargeTick }・{ chargeFull } の溜め始めと満ちた時も
  * この値で決める（frame/firstPass.ts）。マガジンの中の発は、チャージ時間が溜めの途中で変わっても前の発からの経過（chargeElapsed）で
  * 待ちを決め直すので、この値は 1 フレームに 1 ずつ進む（入力が UP の 1 秒チャージの SR なら、前の発の 22f 後が溜め始め）。
- * リロード中・狙えない窓の間は呼ぶ側が溜めていないとみなす
+ * リロード中・狙えない窓の間は呼ぶ側が溜めていないとみなす。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 前の発からの経過（chargeElapsed）があれば、待ちは前のフレームに決めた値でなく、
+ * このフレームの stepShooter が決め直す値（このフレームのチャージ時間 − 経過）で見る。チャージ時間がこのフレームに変わっても（溜めの途中で
+ * セブンスドワーフ・フルアクティブの 3.2 秒の固定が付く）、進みが跳ばない（変わらなければ前のフレームに決めた値と同じ）
  */
-export function chargeProgressFrames(state: ShooterState, params: FiringParams): number {
-  return params.chargeFrames + (params.stance?.holdFrames ?? 1) - state.wait;
+export function chargeProgressFrames(
+  state: ShooterState,
+  params: FiringParams,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'> = DEFAULT_WEAPON_MODEL,
+): number {
+  const wait =
+    state.chargeElapsed === undefined
+      ? state.wait
+      : Math.max(0, chargeShotIntervalFrames(params, model) - (state.chargeElapsed + 1));
+  return params.chargeFrames + (params.stance?.holdFrames ?? 1) - wait;
 }
 
 /**
@@ -379,7 +390,7 @@ export function partialChargeShot(
   if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
   if (state.phase === 'reloading') return null;
   const charge = params.chargeFrames;
-  const progress = charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params) / charge);
+  const progress = charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params, model) / charge);
   if (progress <= 0) return null;
   if (state.phase === 'priming') startMagazine(state);
   fire(state, shot, model, params);

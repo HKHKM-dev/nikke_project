@@ -26,6 +26,7 @@ import {
   resolveCounterChanges,
   resolveDotCancels,
   resolveInstant,
+  resolveMaxStacksUps,
   resolvePassives,
   resolveRemoveStates,
   resolveStackChanges,
@@ -53,7 +54,7 @@ import {
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
 import { counterMax, type CounterId } from './counters.ts';
 import { createSpanMemo } from './spanMemo.ts';
-import { stackItems, STACK_REFRESH, type StackDecrease } from './stacks.ts';
+import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from './stacks.ts';
 import { stateMatches, statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
@@ -433,7 +434,10 @@ function healWindowItems(starts: readonly number[], durationFrames: number | und
   return items;
 }
 
-/** 状態の件（段 A までの planBuffTimeline の stateWindowsOf と同じ規則）。2 段目の段 3: decreases はスタックする状態だけ */
+/**
+ * 状態の件（段 A までの planBuffTimeline の stateWindowsOf と同じ規則）。2 段目の段 3: decreases はスタックする状態だけ。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: maxStacksAt は、最大スタック数▲の中身で上がる上限（無ければ付与の上限）
+ */
 function stateItems(
   grant: ResolvedStateGrant,
   starts: readonly number[],
@@ -441,6 +445,7 @@ function stateItems(
   fullBurstEnds: readonly number[],
   frames: number,
   decreases: readonly StackDecrease[] = [],
+  maxStacksAt?: MaxStacksAt,
 ): HeldItem[] {
   if (grant.durationShots !== undefined) {
     return itemsOfPairs(shotCountItems(starts, shotFrames, grant.durationShots, frames));
@@ -449,7 +454,14 @@ function stateItems(
     return itemsOfPairs(untilNextEndItems(starts, fullBurstEnds, frames));
   }
   if (grant.maxStacks !== undefined) {
-    return stackItems(starts, grant.durationFrames, frames, grant.maxStacks, STACK_REFRESH, decreases).map((w) => ({
+    return stackItems(
+      starts,
+      grant.durationFrames,
+      frames,
+      maxStacksAt ?? grant.maxStacks,
+      STACK_REFRESH,
+      decreases,
+    ).map((w) => ({
       start: w.start,
       end: w.end,
       stack: w.stack,
@@ -633,6 +645,8 @@ function buildTrackItems(
   log: ShotLog | null | undefined,
   fullBurstWindows: readonly FullBurstWindow[],
   frames: number,
+  /** 2 段目の段 14 の PR 3: 状態の件の列の、最大スタック数▲で上がる上限（無ければ付与の上限） */
+  maxStacksAt?: MaxStacksAt,
 ): HeldItem[] {
   const o = track.origin;
   switch (o.kind) {
@@ -660,7 +674,7 @@ function buildTrackItems(
       return closedStateItems(
         track.starts,
         track.closes,
-        (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases),
+        (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases, maxStacksAt),
         track.consumes,
         track.decreases,
       );
@@ -804,7 +818,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   /**
    * 件の列ごとの、件を作る関数が読む入力（trackReadsOf）と、件を作った時の入力の長さ（始まり・機会・射撃・使用武器の変更の終わり・
-   * リロードの込め終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少。読まない入力は 0。updateLengths）
+   * リロードの込め終わり・フルバーストの窓・閉じるフレーム・消費のフレーム・減少・上限を上げる状態の件の列の入力。読まない入力は 0。
+   * updateLengths）
    */
   const itemsSeen = new Map<HeldTrack, { reads: TrackReads; lengths: number[]; verified: number[] }>();
   const newTrack = (
@@ -830,7 +845,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     };
     tracks.push(track);
     // verified はテスト用（verifyItems）: 確かめた時の入力の長さ（件を作る関数が読まない入力も含む）
-    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: new Array<number>(9).fill(-1), verified: [] });
+    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: new Array<number>(10).fill(-1), verified: [] });
     return track;
   };
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
@@ -1106,6 +1121,40 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   }
 
+  // ---- 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 状態の中身の最大スタック数▲ ----
+  // 上限が上がる件の列（持ち主のその状態の、スタックする件の列）→ 上げる状態の件の列（同じ持ち主に、中身を持つ定義の枠が付けたもの）と量
+  const capRaisers = new Map<HeldTrack, { track: HeldTrack; amount: number }[]>();
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const up of resolveMaxStacksUps(slot.definition, slot.character, slot.levels)) {
+      for (const raiser of tracks) {
+        const r = raiser.origin;
+        if (r.kind !== 'state' || raiser.sourceSlotIndex !== sourceSlotIndex || r.state !== up.whileState) continue;
+        for (const target of tracks) {
+          const t = target.origin;
+          if (target.holder !== raiser.holder || t.kind !== 'state' || t.state !== up.state) continue;
+          if (t.grant.maxStacks === undefined) continue;
+          capRaisers.set(target, [...(capRaisers.get(target) ?? []), { track: raiser, amount: up.amount }]);
+        }
+      }
+    }
+  });
+  /**
+   * 件の列の、始まりのフレームごとの上限（上げる状態の件がそのフレームに付いていれば量を足す。上げる状態のスタック数によらず 1 回）。
+   * 上げる件の列が無ければ undefined（付与の上限のまま）
+   */
+  const maxStacksAtOf = (track: HeldTrack): MaxStacksAt | undefined => {
+    const raisers = capRaisers.get(track);
+    const o = track.origin;
+    if (raisers === undefined || o.kind !== 'state' || o.grant.maxStacks === undefined) return undefined;
+    const base = o.grant.maxStacks;
+    return (frame) => {
+      let cap = base;
+      for (const r of raisers) if (activeAt(r.track, frame).length > 0) cap += r.amount;
+      return cap;
+    };
+  };
+
   // ---- 件を作る ----
   /**
    * 件の列の、件を作る関数が読む入力（reads）の長さを lengths に書き、前に書いた長さと違えば true（読まない入力は 0）。
@@ -1125,7 +1174,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     changed = setLength(lengths, 5, reads.fullBurstWindows ? options.fullBurstWindows().length : 0) || changed;
     changed = setLength(lengths, 6, track.closes.length) || changed;
     changed = setLength(lengths, 7, track.consumes.length) || changed;
-    return setLength(lengths, 8, track.decreases.length) || changed;
+    changed = setLength(lengths, 8, track.decreases.length) || changed;
+    // 2 段目の段 14 の PR 3: 上限を上げる状態の件の列の入力（始まり・閉じる・消費・減少。その件の列は持続の付与で、ほかの入力を読まない）
+    let raised = 0;
+    for (const r of capRaisers.get(track) ?? [])
+      raised += r.track.starts.length + r.track.closes.length + r.track.consumes.length + r.track.decreases.length;
+    return setLength(lengths, 9, raised) || changed;
   };
   /** 件の列の件（件を作る関数が読む入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
@@ -1137,12 +1191,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     const log = track.holder === ENEMY ? null : logs[track.holder];
     const { reads, lengths, verified } = itemsSeen.get(track)!;
     if (updateLengths(track, log, reads, lengths)) {
-      track.items = buildTrackItems(track, log, options.fullBurstWindows(), frames);
+      track.items = buildTrackItems(track, log, options.fullBurstWindows(), frames, maxStacksAtOf(track));
     } else if (options.verifyItems === true) {
       // 作り直さずに返す件が、いまの入力から作り直した件と同じか（入力のどれも変わっていなければ確かめ直さない）
       if (
         updateLengths(track, log, ALL_READS, verified) &&
-        JSON.stringify(track.items) !== JSON.stringify(buildTrackItems(track, log, options.fullBurstWindows(), frames))
+        JSON.stringify(track.items) !==
+          JSON.stringify(buildTrackItems(track, log, options.fullBurstWindows(), frames, maxStacksAtOf(track)))
       )
         throw new Error(`stale items: track ${tracks.indexOf(track)}`);
     }
@@ -1322,7 +1377,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         );
       if (!buffed) return false;
     }
-    if (condition.inFullBurst === true && !inFullBurstAt(frame)) return false;
+    // 2 段目の段 14 の PR 3: 解除の「フルバースト状態でなければ」（inFullBurst: false）も
+    if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
     if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値（前のフレームの終わりの値）
     if (condition.selfCounter !== undefined) {
@@ -1432,9 +1488,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。発火のフレームの
     // 段の最大。条件 selfState と同じ件を見る）から取る（0 なら付けない）。付いた後は、数え元が変わっても段は変わらない（V-0523）
     const from = g.grant.stacksFrom;
+    // 2 段目の段 14 の PR 3: 使用回数のある状態は、1 回の発火で stacksPerFire のスタック（セブンスドワーフ・フルアクティブの 2 回）
     const count =
       from === undefined
-        ? 1
+        ? (g.grant.stacksPerFire ?? 1)
         : 'counter' in from
           ? counterValue(group.sourceSlotIndex, from.counter)
           : stackLevelAt(group.sourceSlotIndex, from.state, start);
@@ -1491,7 +1548,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const decreases = src.track.decreases;
       let i = decreases.length;
       while (i > 0 && decreases[i - 1]!.frame > start) i--;
-      decreases.splice(i, 0, { frame: start, amount: src.effect.amount });
+      // 2 段目の段 14 の PR 3: 0 になったら件を閉じる減少（使用回数を使い切った時）
+      decreases.splice(i, 0, {
+        frame: start,
+        amount: src.effect.amount,
+        ...(src.effect.closesAtZero === true ? { closes: true as const } : {}),
+      });
       return;
     }
     for (let k = 0; k < src.effect.amount; k++) insertSorted(src.track.starts, start);

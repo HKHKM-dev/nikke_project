@@ -25,7 +25,7 @@ import {
 } from '../resolve.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
-import { parseSkillDefinition, parseSkillIndex, SKILL_SLOTS } from '../types.ts';
+import { isStatContent, parseSkillDefinition, parseSkillIndex, SKILL_SLOTS, statContentsOf } from '../types.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../../../data');
 const SKILLS_DIR = join(DATA_DIR, 'skills');
@@ -93,7 +93,13 @@ describe('data/skills', () => {
               : effect.kind === 'cycle'
                 ? effect.steps.map((s) => s.ref)
                 : effect.kind === 'state'
-                  ? (effect.contents ?? []).flatMap((c) => (c.ref === undefined ? [] : [c.ref]))
+                  ? // 2 段目の段 14 の PR 3: 最大スタック数▲の項目の amountRef と、1 回に付けるスタックの数の stacksPerFireRef も
+                    [
+                      ...(effect.contents ?? []).flatMap((c) =>
+                        isStatContent(c) ? (c.ref === undefined ? [] : [c.ref]) : [c.maxStacksUp.amountRef],
+                      ),
+                      ...(effect.stacksPerFireRef === undefined ? [] : [effect.stacksPerFireRef]),
+                    ]
                   : // 2 段目の段 3: スタック量の増加は、足す数の amountRef
                     effect.kind === 'stackChange' || effect.kind === 'counterChange'
                     ? effect.amountRef === undefined
@@ -133,20 +139,25 @@ describe('data/skills', () => {
                 // I-DOLL・サン: バーストの最大装弾数▲は Lv10 で 787.5%（C-0364。上限は 1000% で見る）
                 // たきな: S2 の防御力無視ダメージ▲は Lv10 で 140.49%（上限は 200% で見る）
                 // ラピ：レッドフード: S2 の発射体付着ダメージ▲は Lv10 で 150.72%・爆発▲は 100.6%、バースト III の付着▲は 421.2%（上限は 1000% で見る）
+                // スノーホワイト：ヘビーアームズ: S2 のフルアクティブのチャージダメージ▲は Lv10 で 528%（上限は 1000% で見る）・順番攻撃ダメージ▲は
+                // 158.4%（上限は 200% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat
                     : effect.kind === 'state'
-                      ? effect.contents?.find((c) => c.ref === ref)?.stat
+                      ? statContentsOf(effect.contents).find((c) => c.ref === ref)?.stat
                       : undefined;
                 const limit =
-                  stat === 'maxAmmo' || stat === 'projectileStickDamage' || stat === 'projectileExplosionDamage'
+                  stat === 'maxAmmo' ||
+                  stat === 'projectileStickDamage' ||
+                  stat === 'projectileExplosionDamage' ||
+                  stat === 'chargeDamage'
                     ? 1000
                     : stat !== undefined &&
                         [
                           'attack',
-                          'chargeDamage',
                           'chargeDamageMultiplier',
+                          'sequentialAttackDamage',
                           'attackDamage',
                           'hitRate',
                           'trueDamage',
@@ -289,7 +300,7 @@ describe('data/skills', () => {
           def.skills[slot].effects.some(
             (e) =>
               ('stat' in e && e.stat === stat) ||
-              (e.kind === 'state' && (e.contents ?? []).some((c) => c.stat === stat)),
+              (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.stat === stat)),
           );
         if (writes('maxHp')) expect(character.skills[slot].description.ja, slot).not.toMatch(/最大HPのみ/);
         if (writes('maxHpOnly')) expect(character.skills[slot].description.ja, slot).toMatch(/最大HPのみ/);

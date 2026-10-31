@@ -1,0 +1,145 @@
+[
+  {
+    "id": "0779-01",
+    "recording": "0779",
+    "source": "V-0553",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1711275,
+    "description": "1 回目のフルバースト（I-DOLL・サンのバースト）の中の、スノーホワイト：ヘビーアームズの発（f1290）のフルチャージのヒット（コア・会心なし・距離ボーナスなし）。バースト 3 段階突入時の攻撃力▲とリターのバーストの攻撃力▲が乗る",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 364,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（3 人・4 人の編成なので、ほかのキャラのヒットが同じフレームに重なった増分は使わない）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（f811）。フルバーストは read.ts のレシピ burst-panel"
+    }
+  },
+  {
+    "id": "0779-02",
+    "recording": "0779",
+    "source": "V-0553",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1317298,
+    "description": "同じフルバーストの、リターのバーストの攻撃力▲が切れた後の発（f1691）のフルチャージのヒット。バースト 3 段階突入時の攻撃力▲だけが乗る",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 764,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（3 人・4 人の編成なので、ほかのキャラのヒットが同じフレームに重なった増分は使わない）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（f811）。フルバーストは read.ts のレシピ burst-panel"
+    }
+  },
+  {
+    "id": "0779-03",
+    "recording": "0779",
+    "source": "V-0553",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 700835,
+    "description": "バースト 3 段階突入時の攻撃力▲（10 秒）が切れた後の 2 回目の発（f1973。1 回目はほかのヒットと重なった）のフルチャージのヒット（戦闘の最初の発と同じ値）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 858,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（3 人・4 人の編成なので、ほかのキャラのヒットが同じフレームに重なった増分は使わない）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（f811）。フルバーストは read.ts のレシピ burst-panel"
+    }
+  },
+  {
+    "id": "0779-04",
+    "recording": "0779",
+    "source": "V-0553",
+    "readAt": "2026-10-31",
+    "kind": "hit",
+    "use": "compare",
+    "value": 628135,
+    "description": "リターのバーストの攻撃力▲が乗っている最後の発（f1384）の順番の攻撃の 4 ヒット目（f1463。会心なし）。このヒットの時には切れているが、乗った値（切れた値なら 483,523）",
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "n": 28,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（3 人・4 人の編成なので、ほかのキャラのヒットが同じフレームに重なった増分は使わない）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（f811）。フルバーストは read.ts のレシピ burst-panel"
+    }
+  }
+]

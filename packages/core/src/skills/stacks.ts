@@ -16,9 +16,17 @@ export type StackItem = { stack: number; start: number; end: number };
 
 /**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少。フレーム frame に効いている段の上から amount 段を、
- * 次のフレーム（frame + 1）で切る。最後の 1 段は残す（付いている段より多く減らしても 1 段になる。V-0437 の録画 0463・0471）
+ * 次のフレーム（frame + 1）で切る。最後の 1 段は残す（付いている段より多く減らしても 1 段になる。V-0437 の録画 0463・0471）。
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: closes なら最後の 1 段も切る（0 になったら件を閉じる。使用回数を使い切った時）。
+ * 後の始まりは段 1 から数え直す
  */
-export type StackDecrease = { frame: number; amount: number };
+export type StackDecrease = { frame: number; amount: number; closes?: true };
+
+/**
+ * 2 段目の段 14 の PR 3（同 2.7 節。論点 5）: スタックの上限。数か、始まりのフレームごとの上限（最大スタック数▲の中身の状態が付いている間だけ
+ * 上がる。skills/holders.ts）。上限は始まり（発火）ごとに、そのフレームの値で見る。上限が下がっても付いている段は切らない
+ */
+export type MaxStacksAt = number | ((frame: number) => number);
 
 /**
  * 発火（件が始まるフレーム）の列から、段ごとの件を作る。durationFrames ≤ 0 なら空。frames が上限。
@@ -29,37 +37,43 @@ export function stackItems(
   starts: readonly number[],
   durationFrames: number,
   frames: number,
-  maxStacks: number,
+  maxStacks: MaxStacksAt,
   mode: 'all' | 'each' = STACK_REFRESH,
   decreases: readonly StackDecrease[] = [],
 ): StackItem[] {
-  if (durationFrames <= 0 || maxStacks < 1) return [];
+  if (durationFrames <= 0 || (typeof maxStacks === 'number' && maxStacks < 1)) return [];
   const sorted = starts.filter((s) => s < frames).sort((a, b) => a - b);
   if (mode === 'each' && decreases.length > 0) throw new RangeError('a stack decrease needs STACK_REFRESH "all"');
-  return mode === 'all'
-    ? refreshAll(sorted, durationFrames, frames, maxStacks, decreases)
-    : eachOwn(sorted, durationFrames, frames, maxStacks);
+  if (mode === 'all') return refreshAll(sorted, durationFrames, frames, maxStacks, decreases);
+  if (typeof maxStacks !== 'number')
+    throw new RangeError('a max stacks that changes by frame needs STACK_REFRESH "all"');
+  return eachOwn(sorted, durationFrames, frames, maxStacks);
 }
 
 function refreshAll(
   sorted: readonly number[],
   durationFrames: number,
   frames: number,
-  maxStacks: number,
+  maxStacks: MaxStacksAt,
   decreases: readonly StackDecrease[],
 ): StackItem[] {
+  const capAt = typeof maxStacks === 'number' ? () => maxStacks : maxStacks;
   const out: StackItem[] = [];
   /** いまのチェーンの段の件（段 1 から） */
   let chain: StackItem[] = [];
   let chainEnd = -1;
   const cuts = decreases.filter((d) => d.frame < frames).sort((a, b) => a.frame - b.frame);
   let next = 0;
-  /** フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す）、後の始まりは減った段から数える */
+  /**
+   * フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す。段 14 の PR 3: closes なら最後の 1 段も切って
+   * チェーンを閉じる）、後の始まりは減った段から数える
+   */
   const cutBefore = (limit: number): void => {
     while (next < cuts.length && cuts[next]!.frame < limit) {
-      const { frame, amount } = cuts[next++]!;
+      const { frame, amount, closes } = cuts[next++]!;
       if (chain.length === 0 || frame >= chainEnd) continue;
-      for (const w of chain.splice(Math.max(1, chain.length - amount))) w.end = frame + 1;
+      for (const w of chain.splice(Math.max(closes === true ? 0 : 1, chain.length - amount))) w.end = frame + 1;
+      if (chain.length === 0) chainEnd = -1;
     }
   };
   for (const s of sorted) {
@@ -67,7 +81,7 @@ function refreshAll(
     const end = Math.min(s + durationFrames, frames);
     // 和集合（unionItems）と同じく、ちょうど切れたフレームの発火も続きとみなす
     if (chain.length > 0 && s <= chainEnd) {
-      if (chain.length < maxStacks) {
+      if (chain.length < capAt(s)) {
         const w = { stack: chain.length + 1, start: s, end };
         chain.push(w);
         out.push(w);

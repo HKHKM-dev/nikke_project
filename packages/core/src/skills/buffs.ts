@@ -150,7 +150,8 @@ export type BuffTotals = {
   chargeTimeFlat: number;
   /**
    * アニス：スター S2・バースト編: 固定したチャージ時間の秒数（0 は固定なし）。有ればチャージ速度・発動者基準のチャージ速度を無視して
-   * この秒数でチャージする（frame/firing.ts。plan/design-anis-star-s2-burst.md 2.3 節）
+   * この秒数でチャージする（frame/firing.ts。plan/design-anis-star-s2-burst.md 2.3 節）。2 段目の段 14 の PR 3: 足し合わせず、状態の中身の
+   * 固定が timed の固定より勝つ（applyResolvedEffect）
    */
   fixedChargeTime: number;
   /**
@@ -335,6 +336,14 @@ export function applyResolvedEffect(
   // 対象の語彙編: 「チャージ時間 X 秒▼」（chargeSpeed の flat。値は秒）は、発動者基準のチャージ速度と同じく秒数を引く
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed') {
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
+  }
+  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: チャージ時間の固定は秒を足し合わせない。状態の中身の固定（whileState を持つ。
+  // セブンスドワーフ・フルアクティブの 3.2 秒）は上書きし、timed の固定（S2 の戦闘開始時の 1.2 秒）は固定がまだ無い時だけ入れる。どちらも
+  // 自分にだけ付き、1 つの定義に 1 つずつまで（skills/types.ts）なので、当てる順によらず「状態が付いている間は状態の秒」になる。
+  // 状態のスタック（使用回数）の段の数だけ当てても同じ値
+  if (effect.stat === 'fixedChargeTime') {
+    const fixed = 'whileState' in effect || totals.fixedChargeTime === 0 ? effect.value : totals.fixedChargeTime;
+    return { totals: { ...totals, fixedChargeTime: fixed }, appliedAmount: effect.value };
   }
   // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）
   if (effect.scaling === 'flat' && effect.stat === 'burstCooldown') {

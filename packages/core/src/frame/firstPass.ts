@@ -951,7 +951,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       // 段 14 の PR 2: 撃つ前の溜めの進み（部分チャージの進みと同じ見え方）。リロード中・狙えない窓の間は溜めていない
       const progress =
         chargeWatches[i] !== null && isChargeWeapon(shot) && !reloading && !blocked
-          ? chargeProgressFrames(state, params)
+          ? chargeProgressFrames(state, params, model)
           : null;
       const fired = stepShooter(state, shot, model, params, blocked);
       const log = logs[i]!;

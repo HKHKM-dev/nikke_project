@@ -9,6 +9,7 @@ import {
   isCounterFullTrigger,
   isCounterWhileEffect,
   isEndedTrigger,
+  isStatContent,
   isStateContent,
   isTimedItem,
   isWhileEffect,
@@ -41,6 +42,7 @@ import type {
   SkillNote,
   SkillNoteKind,
   SkillSupport,
+  StateContentItem,
   StateGrantEffect,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
@@ -241,7 +243,7 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
       ? '即時（維持なし。付いた記録だけを作り、「〜が適用された時」の効果がきっかけにする）'
       : contents === undefined
         ? '中身なし（ほかの効果が、対象の絞り込み・条件・きっかけでこの状態を見る）'
-        : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map((c) => BUFF_STAT_LABEL[c.stat]).join('・')}`;
+        : `中身${effect.contents === undefined ? '（同じ状態のほかの付与）' : ''}: ${contents.map(contentLabel).join('・')}`;
   // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。付いた時の数で固定）から取る付与
   const from = effect.stacksFrom;
   const stacksFrom =
@@ -250,7 +252,15 @@ export function formatStateGrant(effect: StateGrantEffect, definition: SkillDefi
       : 'counter' in from
         ? `。スタック数は${counterName(from.counter).ja}の値`
         : `。スタック数は付いた時の自分の${namedStateName(from.state).ja}のスタック数（コピー）`;
-  return `${head}。${contentText}${stacksFrom}${effect.undispellable ? '。解除不可' : ''}`;
+  // 2 段目の段 14 の PR 3: 1 回の発火で付けるスタックの数（使用回数）。解く前の定義なので説明文の値の番号で出す
+  const perFire =
+    effect.stacksPerFireRef === undefined ? '' : `。1 回に説明文の値（${effect.stacksPerFireRef}）のスタックで付く`;
+  return `${head}。${contentText}${stacksFrom}${perFire}${effect.undispellable ? '。解除不可' : ''}`;
+}
+
+/** 2 段目の段 14 の PR 3: 中身の項目の名前（stat の▲▼と、「〈状態〉の最大スタック数▲」） */
+function contentLabel(item: StateContentItem): string {
+  return isStatContent(item) ? BUFF_STAT_LABEL[item.stat] : `${stateLabel(item.maxStacksUp.state)}の最大スタック数▲`;
 }
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 定義の解除。「マターシグマを解除（自分がマターシグマ状態なら）」 */
@@ -267,7 +277,10 @@ export function formatStackChange(
   amount: number,
   stacksOf?: (ref: number) => number,
 ): string {
-  const change = effect.decrease ? `−${formatNumber(amount)}（次のフレームに上の段から）` : `+${formatNumber(amount)}`;
+  // 2 段目の段 14 の PR 3: 0 になったら解除する減少（使用回数を使い切った時）
+  const change = effect.decrease
+    ? `−${formatNumber(amount)}（次のフレームに上の段から${effect.closesAtZero ? '。0 になったら解除' : ''}）`
+    : `+${formatNumber(amount)}`;
   return `${stateLabel(effect.state)}のスタック量 ${change}${formatConditionSuffix(effect.condition, stacksOf)}`;
 }
 
