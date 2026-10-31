@@ -353,7 +353,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           pelletHits: [],
         },
   );
-  // シンデレラ S1 編: リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）を持つ枠だけが書く
+  // シンデレラ S1 編: リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）か、それで発火する解除
+  // （{ reloadEnd }。2 段目の段 16 の PR 2）を持つ枠だけが書く
   const writesReloadEnds = slots.map((slot) => slot?.definition != null && hasReloadEndEffect(slot.definition));
   // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 溜めのきっかけ（{ chargeTick }・{ chargeFull }）を持つ枠だけ、溜めを追い、
   // 周期と満ちたフレームを射撃の記録に書く（流し直しも、このフレームの出来事も同じ列を読む）。ticks の k はいまの溜めで発火した周期の数、
@@ -1240,6 +1241,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     const fullStacks = lists.consumeFullStacks(f);
     // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: このフレームに使用武器の変更（撃ち切り）が終わった枠
     const weaponChangeEnds = logs.flatMap((log, i) => (log?.weaponChangeEnds?.at(-1) === f ? [i] : []));
+    // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: このフレームがリロードの込め終わりの次のフレームの枠
+    const reloadEnds = logs.flatMap((log, i) => (log?.reloadEnds?.at(-1) === f ? [i] : []));
     // 2 段目の段 14 の PR 2: このフレームの溜めの周期と満ちた時（手順 1 の射手が射撃の記録に書いた）
     const chargeTicks = logs.flatMap(
       (log, i) =>
@@ -1262,6 +1265,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       healed,
       ...(fullStacks.length > 0 ? { fullStacks } : {}),
       ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
+      ...(reloadEnds.length > 0 ? { reloadEnds } : {}),
       ...(chargeTicks.length > 0 ? { chargeTicks } : {}),
       ...(chargeFulls.length > 0 ? { chargeFulls } : {}),
       ...(stageEntries !== undefined ? { stageEntries } : {}),

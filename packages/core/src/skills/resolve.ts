@@ -32,6 +32,7 @@ import {
   type AppliedTrigger,
   type FullStackTrigger,
   type WeaponChangeEndTrigger,
+  type ReloadEndTrigger,
   type ChargeTickTrigger,
   type ChargeFullTrigger,
   type BasicBurstStep,
@@ -78,6 +79,8 @@ export type ResolvedTrigger =
   | AppliedTrigger
   | FullStackTrigger
   | WeaponChangeEndTrigger
+  // 2 段目の段 16 の PR 2: リロードの込め終わり（1 パス目の ShotLog.reloadEnds。skills/triggers.ts）
+  | ReloadEndTrigger
   // 2 段目の段 14 の PR 2: 溜めの周期と、溜めが満ちた時（1 パス目の射撃の記録 ShotLog.chargeTicks・chargeFullFrames。skills/triggers.ts）
   | ChargeTickTrigger
   | ChargeFullTrigger
@@ -88,6 +91,11 @@ export type ResolvedTrigger =
 /** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
 export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {
   return typeof t === 'object' && 'weaponChangeEnd' in t;
+}
+
+/** 2 段目の段 16 の PR 2: リロードの込め終わりのきっかけ（{ reloadEnd }）か */
+export function isResolvedReloadEnd(t: ResolvedTrigger): t is ReloadEndTrigger {
+  return typeof t === 'object' && 'reloadEnd' in t;
 }
 
 /** 2 段目の段 3: フルスタックの消費のきっかけ（{ fullStack }）か */

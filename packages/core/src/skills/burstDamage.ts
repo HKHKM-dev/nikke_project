@@ -285,11 +285,14 @@ export function effectHitFrames(
 /**
  * Stage 11 モダニア: 射撃ごとの倍率ダメージ（every = 1）を 1 トリガーの値に畳み込むか（resolvePerShotDamage）。条件つきは畳み込まない
  * （射撃ごとの発動として 1 件ずつ出す）。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 遅れて出るヒット（delayFrames）・
- * perCount の数だけのヒット（オートファイア）も、発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す
+ * perCount の数だけのヒット（オートファイア）も、発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す。
+ * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: 防御力無視ダメージ（ベスティー：タクティカル・アップの S2）も、畳み込む値
+ * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す
  */
 function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger): boolean {
   return (
     isPerShotTrigger(trigger) &&
+    effect.damageType !== 'true' &&
     effect.condition === undefined &&
     effect.delayFrames === undefined &&
     effect.perCount === undefined
@@ -633,9 +636,6 @@ export function resolvePerShotDamage(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
         );
       }
-      // 2 段目の段 15 の PR 3: 射撃ごとに畳み込む値（damage.ts）は防御力を引いた式だけを持つ。防御力無視は使い手が出た時に足す
-      if (effect.damageType === 'true')
-        throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be true damage`);
       const r: ResolvedSkillDamage = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         damageType: effect.damageType,

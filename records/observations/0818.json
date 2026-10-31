@@ -1,0 +1,245 @@
+[
+  {
+    "id": "0818-01",
+    "recording": "0818",
+    "kind": "timing",
+    "use": "record",
+    "value": [1438, 2720, 3991, 5357, 6571, 7932, 9806],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・6・25・0・0f"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-02",
+    "recording": "0818",
+    "kind": "timing",
+    "use": "record",
+    "value": [1467, 4020, 6600, 8494, 10389],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・24・25・0・6f"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-03",
+    "recording": "0818",
+    "kind": "timing",
+    "use": "record",
+    "value": [1496, 4049, 6629, 8523, 10418],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-04",
+    "recording": "0818",
+    "kind": "timing",
+    "use": "record",
+    "value": [8488, 10383],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-05",
+    "recording": "0818",
+    "kind": "timing",
+    "use": "record",
+    "value": [8517, 10411],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-06",
+    "recording": "0818",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [572, 1830, 3100, 4442, 5655, 6992, 8842],
+    "description": "リター（I）のバーストの本当の発動のゲーム内のフレーム（戦闘開始から、止まりを除く）の並び（比べる指定の manualBursts に使う）。I → II の替わり目（`0818-01`）の動画のフレームから、戦闘開始（f860）・替わり目までの 5f と発動の止まり 1f（C-0503）・それより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（モデルの videoFrameOf の逆。V-0569 と同じ）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の I → II の替わり目と、tools/captures/timer.ts --mode changes の戦闘開始"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-07",
+    "recording": "0818",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 2,
+    "description": "ベスティー：タクティカル・アップ（III）の 1 発目のヒット（戦闘開始から約 145f）の爆発で崩れた、的以外の物の数。的の右の縦長のコンテナの柱と、的のすぐ右の小さな物（f1128 では両方とも無い。戦闘開始の前には有る）。比べる指定の obstacles の入力（C-0177。物 1 個は的以外の 1 ヒット 6,500 × フルチャージ倍率 2）",
+    "method": {
+      "tool": "録画の画を目で見た（tools/captures/still.ts の切り出し）",
+      "note": "0817 は f985 で柱の上に爆発と破片が出て、f1030・f1100 で柱と小さな物が無い。BURST バーは 1 発目のヒットで 8.9px 伸びた（ほかのヒットは約 5.2px。差の約 2.7% は物 2 個ぶん）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0818-08",
+    "recording": "0818",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 944397,
+    "description": "バーストの防御力無視のバーストスキルダメージ（会心でない）。4 回目のフルバースト（リターのバーストの攻撃力▲の外）。5 回目は同じフレームに S2 とガイドの発の 940,868 が重なって 1,885,265",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0818-06",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0818-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0818-09",
+    "recording": "0818",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 767145,
+    "description": "1 回目のフルバーストの窓の後ろ（リターの▲の外、バーストの防御力無視ダメージ▲ 60% の中）の S2 の 1 ヒット（会心でない。ガイドの 3 発目）。ガイドの発のコアと同じ増分に出る。会心でない組 940,868（f2061）と会心の組 1,196,583（f2080）の差（会心ダメージ +50% の分）× 3（フルバースト +50% を含めた 1.5 ÷ 0.5）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 510,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0818-06",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0818-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0818-10",
+    "recording": "0818",
+    "source": "normal",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 173723,
+    "description": "同じ窓のガイドの発のコアの 1 ヒット（会心でない・フルバースト +50%）。940,868 から S2（767,145）を引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 0,
+        "frame": 510,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0818-06",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0818-07"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]

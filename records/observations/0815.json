@@ -1,0 +1,158 @@
+[
+  {
+    "id": "0815-01",
+    "recording": "0815",
+    "source": "normal",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [20, 20, 19, 117, 20, 21, 19, 260],
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "HUD の増分のフレーム（着弾）の差。1f の揺れがある"
+    },
+    "description": "ベスティー：タクティカル・アップの 1 発目から 9 発目までのヒットの間隔（動画のフレーム）。1 マガジン 8 発が「溜める 1 発・ガイドの 3 発」の 2 組で、4 発目と 5 発目の間が次の溜め（2 秒チャージ）、8 発目と 9 発目の間がリロードを挟む",
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 0,
+        "to": 630
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0815-02",
+    "recording": "0815",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 319642,
+    "description": "S2 のフルチャージの防御力無視ダメージの 1 ヒット（会心でない）。ガイドの発（コア）と同じ増分に出る。会心の組 618,445 と会心でない組 458,624 の差（会心ダメージ +50% の分）の 2 倍",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0815-03",
+    "recording": "0815",
+    "source": "normal",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 138982,
+    "description": "ガイドの発（ミサイルガイドの中。チャージダメージ▲）のコアの 1 ヒット（会心でない）。増分 458,624 から S2（319,642）を引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 150,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0815-04",
+    "recording": "0815",
+    "source": "normal",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 107530,
+    "description": "溜める発（ミサイルガイドの外）のコアの 1 ヒット（会心でない）。増分 427,172 から S2（319,642）を引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 250,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0815-05",
+    "recording": "0815",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "record",
+    "value": 5.2,
+    "unit": "px",
+    "description": "BURST バーの、ベスティー：タクティカル・アップの 1 ヒット（通常攻撃と S2 の防御力無視ダメージが同じフレーム）あたりの伸び（バーの見える範囲の中の平均）。1px は約 0.74%（C-0084）なので、1 ヒット約 39,000（通常攻撃のフルチャージ 26,000 だけなら約 3.5px）",
+    "method": {
+      "tool": "目視（証拠フレームのバーの光った幅）",
+      "note": "バーは実際のゲージのおよそ 12.6〜96% だけを映す（C-0084）。的以外の物の崩れ（1 発目）の分は読んでいない"
+    }
+  }
+]

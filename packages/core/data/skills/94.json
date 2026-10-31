@@ -1,0 +1,129 @@
+{
+  "formatVersion": 1,
+  "resourceId": 94,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "missileGuide",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "condition": {
+            "selfState": {
+              "state": "missileGuide",
+              "present": false
+            }
+          },
+          "durationShotsRef": 2,
+          "contents": [
+            {
+              "stat": "chargeSpeed",
+              "ref": 1
+            },
+            {
+              "stat": "chargeDamage",
+              "ref": 3
+            }
+          ],
+          "claims": ["C-0804"]
+        },
+        {
+          "kind": "removeState",
+          "state": "missileGuide",
+          "trigger": {
+            "reloadEnd": true
+          },
+          "target": "self",
+          "assumes": {
+            "ja": "最大装弾数のリロードが完了した時の解除は説明文の読み。最大装弾数 8 発ではガイドの 3 発がマガジンの中で使い切られるので、録画（V-0586）では効かず、確かめていない",
+            "en": "Removal on a full reload is read from the description. With 8 max ammo the 3 guided shots are used up inside the magazine, so the recordings (V-0586) do not exercise it; unverified"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "damageType": "true",
+          "ref": 1,
+          "gaugeHits": [0],
+          "claims": ["C-0805", "C-0806"],
+          "assumes": {
+            "ja": "倍率ダメージは発のフレームに出す。録画では発の着弾（ロケットランチャーの飛び約 14f の後）と同じ増分に出るので、秒ごとのダメージだけがずれる",
+            "en": "The damage is placed on the shot frame. In recordings it appears with the shot's hit (about 14f of rocket flight later), so only the per-second damage is shifted"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "selfState": "battlefieldFormation"
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": ["C-0809"]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "enemyState": "explosiveRound"
+          },
+          "target": "self",
+          "stat": "projectileExplosionDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": ["C-0809"]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": ["C-0808"]
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "true",
+          "claims": ["C-0807"]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "爆発範囲▲は未対応（爆発範囲はダメージの式に無い。コアに当たる割合への効きは確かめていない）",
+          "en": "Explosion range up is not modeled (explosion range is not in the damage formula; its effect on the core hit rate is not checked)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

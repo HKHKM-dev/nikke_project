@@ -357,7 +357,8 @@ describe('ウンファ：TU の定義（data/skills/95.json）', () => {
   // 名前の付いた状態の語彙編（plan/design-named-state.md 7.1 節）: カモフラージュの 2 つの付与と、1 つ目の付与に書いた中身
   it('grants Camouflage for 5 s on Burst Skill use and on Full Charge during Full Burst, with its contents (C-0311・C-0314)', () => {
     const grants = resolveStateGrants(definition, character, MAX_SKILL_LEVELS);
-    expect(grants.map((g) => [g.source.skill, g.state, g.trigger, g.durationFrames, g.condition])).toEqual([
+    const camouflage = grants.filter((g) => g.state === 'camouflage');
+    expect(camouflage.map((g) => [g.source.skill, g.state, g.trigger, g.durationFrames, g.condition])).toEqual([
       ['skill1', 'camouflage', 'burstUse', gameSecondsToFrames(5), undefined],
       [
         'skill1',
@@ -371,15 +372,21 @@ describe('ウンファ：TU の定義（data/skills/95.json）', () => {
     expect(contents.map((c) => [c.whileState, c.effectIndex, c.subIndex, c.stat, c.value, c.target])).toEqual([
       ['camouflage', 0, 0, 'trueDamageConversion', 1, 'self'],
       ['camouflage', 0, 1, 'trueDamage', 0.4224, 'self'],
+      ['explosiveRound', 0, 0, 'damageTaken', 0.2787, 'allies'],
     ]);
     expect(timed.filter((e) => e.source.skill === 'skill1')).toEqual([]);
   });
 
-  it('gives Damage Taken up for 10 s on Burst Skill use (C-0312)', () => {
+  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: 受けるダメージ▲は、炸裂弾の発で敵に付く徹甲炸裂弾の中身（解決後の対象は
+  // 受けるダメージ▲を受け取る味方）
+  it('gives Damage Taken up as Explosive Round on the enemy for 10 s from the explosive round shot (C-0312)', () => {
     // 使用武器の変更（C-0313）は packages/core/src/__tests__/eunhwaTuWeaponChange.test.ts で見る
-    const burst = timed.filter((e) => e.source.skill === 'burst' && e.stat !== 'weapon');
-    expect(burst.map((e) => [e.stat, e.target, e.value, e.durationFrames])).toEqual([
-      ['damageTaken', 'allies', 0.2787, gameSecondsToFrames(10)],
+    expect(timed.filter((e) => e.source.skill === 'burst' && e.stat !== 'weapon')).toEqual([]);
+    const grants = resolveStateGrants(definition, character, MAX_SKILL_LEVELS).filter(
+      (g) => g.source.skill === 'burst',
+    );
+    expect(grants.map((g) => [g.state, g.target, g.trigger, g.durationFrames])).toEqual([
+      ['explosiveRound', 'allies', expect.objectContaining({ count: 'weaponChangeShot' }), gameSecondsToFrames(10)],
     ]);
   });
 });

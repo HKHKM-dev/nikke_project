@@ -93,6 +93,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('fullStack' in t) return `fullStack:${t.fullStack}`;
   // 2 段目の段 11: 使用武器の変更の終わり
   if ('weaponChangeEnd' in t) return 'weaponChangeEnd';
+  // 2 段目の段 16 の PR 2: リロードの込め終わり
+  if ('reloadEnd' in t) return 'reloadEnd';
   // 2 段目の段 14 の PR 2: 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
   if ('chargeTick' in t) return `chargeTick${t.chargeTick.everySeconds}s`;
   if ('chargeFull' in t) return 'chargeFull';

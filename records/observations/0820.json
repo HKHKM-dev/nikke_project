@@ -1,0 +1,181 @@
+[
+  {
+    "id": "0820-01",
+    "recording": "0820",
+    "kind": "timing",
+    "use": "record",
+    "value": [1526, 2772, 4096, 5443, 6756, 8108, 9364, 10609],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 6・0・26・6・26・0・26・0f"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0820-02",
+    "recording": "0820",
+    "kind": "timing",
+    "use": "record",
+    "value": [1555, 2901, 4125, 5472, 6785, 8137, 9393, 10638],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・24・0・25・0f"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0820-03",
+    "recording": "0820",
+    "kind": "timing",
+    "use": "record",
+    "value": [1584, 4154, 6814, 9422],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0820-04",
+    "recording": "0820",
+    "kind": "timing",
+    "use": "input",
+    "unit": "f",
+    "value": [664, 1886, 3208, 4531, 5842, 7170, 8424, 9645],
+    "description": "エマ：タクティカル・アップ（I）のバーストの本当の発動のゲーム内のフレーム（戦闘開始から、止まりを除く）の並び（比べる指定の manualBursts に使う）。I → II の替わり目（`0820-01`）の動画のフレームから、戦闘開始（f856）・替わり目までの 5f と発動の止まり 1f（C-0503）・それより前のフルバーストの入りの止まり 22f（C-0069）と I・II の発動の止まり 1f ずつを引いた（モデルの videoFrameOf の逆。V-0569 と同じ）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の I → II の替わり目と、tools/captures/timer.ts --mode changes の戦闘開始"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0820-05",
+    "recording": "0820",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 2,
+    "description": "ベスティー：タクティカル・アップ（III）の 1 発目のヒット（戦闘開始から約 145f）の爆発で崩れた、的以外の物の数。的の右の縦長のコンテナの柱と、的のすぐ右の小さな物（f1124 では両方とも無い。戦闘開始の前には有る）。比べる指定の obstacles の入力（C-0177。物 1 個は的以外の 1 ヒット 6,500 × フルチャージ倍率 2）",
+    "method": {
+      "tool": "録画の画を目で見た（tools/captures/still.ts の切り出し）",
+      "note": "0817 は f985 で柱の上に爆発と破片が出て、f1030・f1100 で柱と小さな物が無い。BURST バーは 1 発目のヒットで 8.9px 伸びた（ほかのヒットは約 5.2px。差の約 2.7% は物 2 個ぶん）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    },
+    "source": "V-0586",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0820-06",
+    "recording": "0820",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4730672,
+    "description": "バーストの防御力無視のバーストスキルダメージ（会心）。1 回目のフルバースト。S2 の攻撃力▲の中。増分 4,757,097 から、エマ：タクティカル・アップの通常攻撃（26,425。録画に単独で 390 回ほど出る）が同じフレームに重なるので引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0820-04",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0820-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0820-07",
+    "recording": "0820",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "record",
+    "value": [2185441, 2196011, 3264173],
+    "description": "3・4 回目のフルバーストの、III の 00.00 の 39f 後のバーストのヒットの増分と、3 回目のフルバーストのウンファ：タクティカル・アップの炸裂弾のヒット（00.00 の 1f 前）の増分。炸裂弾は 1・2・4 回目は 3,539,878（4 回目はほかの小さな増分が重なる）で、3 回目だけ同じ比（約 0.922）で小さい",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    }
+  },
+  {
+    "id": "0820-08",
+    "recording": "0820",
+    "source": "V-0586",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2370978,
+    "description": "バーストの防御力無視のバーストスキルダメージ（会心でない）。2 回目のフルバースト。S2 の攻撃力▲の外（戦場コントロールが付いてからヒットまでにフルチャージの発が無い）。増分 2,397,403 から、エマ：タクティカル・アップの通常攻撃（26,425）が同じフレームに重なるので引いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0820-04",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0820-05"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

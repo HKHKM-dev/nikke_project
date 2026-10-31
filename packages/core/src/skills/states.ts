@@ -183,6 +183,21 @@ export const NAMED_STATES = {
    * チャージダメージ▲。V-0569）
    */
   specialModification: { name: { ja: '特殊改造', en: 'Special Modification' }, holder: 'ally' },
+  /**
+   * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: ミサイルガイド（ベスティー：タクティカル・アップの S1。フルチャージして攻撃した時、
+   * ミサイルガイド状態でなければ自分に付く。中身はチャージ速度▲とチャージダメージ▲・3 発間維持。最大弾数のリロードが完了した時に解除）
+   */
+  missileGuide: { name: { ja: 'ミサイルガイド', en: 'Missile Guide' }, holder: 'ally' },
+  /**
+   * 同: 戦場コントロール（エマ：タクティカル・アップのバースト。味方全体に付く。中身は発動者の攻撃力の▲・10 秒。ベスティー：タクティカル・アップの
+   * S2 の「自分が戦場コントロール状態なら」が見る）
+   */
+  battlefieldFormation: { name: { ja: '戦場コントロール', en: 'Battle Formation' }, holder: 'ally' },
+  /**
+   * 同: 徹甲炸裂弾（ウンファ：タクティカル・アップのバースト。敵に付く。中身は受けるダメージ▲・10 秒。ベスティー：タクティカル・アップの S2 の
+   * 「対象が徹甲炸裂弾状態なら」が見る）
+   */
+  explosiveRound: { name: { ja: '徹甲炸裂弾', en: 'Explosive Round' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
