@@ -5628,16 +5628,72 @@
     },
     {
       "observation": "0259-01",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "156cc3cf784c2ade",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0259-01",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "156cc3cf784c2ade",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0259-02",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "acbb7d84855f3919",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0259-02",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "acbb7d84855f3919",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0259-03",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "6593af682916d733",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0259-03",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "6593af682916d733",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -5665,14 +5721,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-04",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "6336655d6eb7f80a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-04",
@@ -5705,14 +5753,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-05",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "9f64be54158bcb23",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-05",
@@ -5745,14 +5785,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-06",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "f451053922e70a68",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-06",
@@ -5785,14 +5817,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-07",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "cebbba5169456844",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-07",
@@ -5825,14 +5849,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-08",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "5324cc2976558174",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-08",
@@ -5900,14 +5916,6 @@
     },
     {
       "observation": "0259-11",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "379260ba83e5ff97",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0259-11",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "379260ba83e5ff97",
       "effective": false,
@@ -5937,14 +5945,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-12",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "ab87af0a99821e77",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-12",
@@ -5980,14 +5980,6 @@
     },
     {
       "observation": "0259-13",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "22657dccab8f1d09",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0259-13",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "22657dccab8f1d09",
       "effective": false,
@@ -6001,14 +5993,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0261-01",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "61968f060c06fc3d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0261-01",
@@ -6028,14 +6012,6 @@
     },
     {
       "observation": "0261-02",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "4c78a4a91c2ccd48",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0261-02",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "4c78a4a91c2ccd48",
       "effective": false,
@@ -6049,14 +6025,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0261-03",
-      "element": "クイーン（真） skill1.effects[4]",
-      "key": "2c9628f38bb2dab4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0261-03",
@@ -17869,6 +17837,550 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0823-13",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "2ac512a29ae8543d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-13",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "2ac512a29ae8543d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-14",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "537d1125a1272496",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-14",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "537d1125a1272496",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-15",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "0e6fb108830bcb9f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-15",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "0e6fb108830bcb9f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-16",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "e30a2c43d5ae4240",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-16",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "e30a2c43d5ae4240",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-17",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "ed1659448fdff3b3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-17",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "ed1659448fdff3b3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-18",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "170af7b18034e86a",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-18",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "170af7b18034e86a",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-19",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "3184c25b9fd5e968",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-19",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "3184c25b9fd5e968",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-20",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "58eed8c058dbb167",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-20",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "58eed8c058dbb167",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-21",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "d32180e0649c6c2d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0823-21",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "d32180e0649c6c2d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-13",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "a9071453b554110a",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-13",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "a9071453b554110a",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-14",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "d570f6e6aab6f7d3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-14",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "d570f6e6aab6f7d3",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-15",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "5da8480345828b1e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-15",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "5da8480345828b1e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-16",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "e0d1c02f6876605e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-16",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "e0d1c02f6876605e",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-17",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "798efbf043f31b7d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-17",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "798efbf043f31b7d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-18",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "735b194d0c42aa14",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-18",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "735b194d0c42aa14",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-19",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "f8dfe887a466aad6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-19",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "f8dfe887a466aad6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-20",
+      "element": "クイーン（真） burst.effects[1]",
+      "key": "d11a44aca2d9f32b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0824-20",
+      "element": "クイーン（真） skill2.effects[2]",
+      "key": "d11a44aca2d9f32b",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 12],
+          "end": [0, 12]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
     }
   ]
 }
