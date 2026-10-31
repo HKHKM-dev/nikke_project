@@ -1,0 +1,15 @@
+{
+  "id": "C-0779",
+  "text": "エレグの S1 の分配ダメージの値を決めるフレームは、届いた発の 3f 後より後ではない（C-0766 の届いた発の 1〜5f 後を 1〜3f 後に狭める。1・2・3 は見分けていない）。届いた発の 3f 後まで乗り 4f 後から乗らない鈴原サクラの受けるダメージ▲が、S1 の値に乗る",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`0798-14`・`0798-15`。V-0571",
+  "model": "反映（`data/skills/500.json` の skill1 の effects[0] の `valueDelayFrames: 1`（届いた発の次のフレーム）は、この範囲に入る。値を決めるフレームは `frame/plan.ts` の `planSkillHits`）",
+  "replaces": [],
+  "updated": "2026-10-31",
+  "subject": {
+    "places": ["data/skills/500.json の skill1 の effects[0]"]
+  },
+  "decidedOn": []
+}

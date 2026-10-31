@@ -825,7 +825,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 34・補足
 ## 500 エレグ
 
 - **skill1**: supported
-  - effects[0] damage・normalHit・distributed: C-0697（確定）、C-0766（確定）、C-0772（確定）、C-0773（確定）
+  - effects[0] damage・normalHit・distributed: C-0697（確定）、C-0766（確定）、C-0772（確定）、C-0773（確定）、C-0779（仮説）
   - notes[0] 前提の外: 戦闘開始時の、敵の発射体を攻撃する時の発射体に与えるダメージ▲は、敵の発射体を撃つ場面を扱わないのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
 - **skill2**: supported
   - effects[0] burstGauge・battleStart: C-0662（確定）
