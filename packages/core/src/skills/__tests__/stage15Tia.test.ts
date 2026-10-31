@@ -8,7 +8,7 @@ import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } 
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
-import { MAX_SKILL_LEVELS } from '../resolve.ts';
+import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -35,6 +35,11 @@ describe('{ coverHealed }（遮蔽物の HP を回復した時）', () => {
     const parsed = parseSkillDefinition(def([{ ...cooldown, trigger: { coverHealed: true } }], [coverHeal]));
     expect(parsed.skills.skill1.effects[0]).toMatchObject({ trigger: 'burstUse', viaCoverHealed: true });
     expect(parsed.skills.skill2.effects[0]).toMatchObject({ kind: 'coverHeal', trigger: 'burstUse', target: 'self' });
+  });
+
+  it('keeps the mark through resolution for the label', () => {
+    const resolved = resolveTimed(definition, character, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1');
+    expect(resolved.map((e) => e.viaCoverHealed)).toEqual([true, true]);
   });
 
   it('needs exactly one coverHeal and is only allowed in timed', () => {

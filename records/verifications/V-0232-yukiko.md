@@ -98,23 +98,23 @@ H1 はいまの定義で、値は予測ファイル（records/predictions/V-0232
 
 予測は 2026-10-06（commit 1eda9c6）に出した。
 
-| 指標                                | 実測                   | 予測 H1                         |
-| ----------------------------------- | ---------------------- | ------------------------------- |
-| fb-wind-body（hitDamage）           | 35,738（`0258-01`）    | 35,737.657（-0.343、許容内）    |
-| fb-wind-crit（hitDamage）           | （実測なし）           | 47,650.21                       |
-| fb-tail-wind-body（hitDamage）      | 24,857（`0258-02`）    | 24,857.049（+0.049、許容内）    |
-| pre-wind-body（hitDamage）          | 16,389.5（`0258-03`）  | 16,389.516（+0.016、許容内）    |
-| post-wind-body（hitDamage）         | 18,858（`0258-04`）    | 18,857.738（-0.262、許容内）    |
-| clean-wind-body（hitDamage）        | 11,400（`0258-05`）    | 11,399.6（-0.4、許容内）        |
-| early-fire-body（hitDamage）        | 17,143（`0260-04`）    | 17,143.398（+0.398、許容内）    |
-| fb-fire-body（hitDamage）           | 15,545（`0260-01`）    | 15,544.909（-0.091、許容内）    |
-| post-fire-body（hitDamage）         | 17,143（`0260-02`）    | 17,143.398（+0.398、許容内）    |
-| clean-fire-body（hitDamage）        | 10,363（`0260-03`）    | 10,363.273（+0.273、許容内）    |
-| burst-fire（burstHitDamage）        | 2,342,044（`0260-05`） | 2,342,043.844（-0.156、許容内） |
-| burst-wind（burstHitDamage）        | 3,703,942（`0258-06`） | 3,703,942.34（+0.34、許容内）   |
-| onemore-wind（skillHitDamage）      | 4,880,269（`0258-07`） | 4,880,269.234（+0.234、許容内） |
-| onemore-count-wind（skillHitCount） | 5（`0258-08`）         | 5（+0、許容内）                 |
-| onemore-count-fire（skillHitCount） | 0（`0260-06`）         | 0（+0、許容内）                 |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| fb-wind-body（hitDamage） | 35,738（`0258-01`） | 35,737.657（-0.343、許容内） |
+| fb-wind-crit（hitDamage） | （実測なし） | 47,650.21 |
+| fb-tail-wind-body（hitDamage） | 24,857（`0258-02`） | 24,857.049（+0.049、許容内） |
+| pre-wind-body（hitDamage） | 16,389.5（`0258-03`） | 16,389.516（+0.016、許容内） |
+| post-wind-body（hitDamage） | 18,858（`0258-04`） | 18,857.738（-0.262、許容内） |
+| clean-wind-body（hitDamage） | 11,400（`0258-05`） | 11,399.6（-0.4、許容内） |
+| early-fire-body（hitDamage） | 17,143（`0260-04`） | 17,143.398（+0.398、許容内） |
+| fb-fire-body（hitDamage） | 15,545（`0260-01`） | 15,544.909（-0.091、許容内） |
+| post-fire-body（hitDamage） | 17,143（`0260-02`） | 17,143.398（+0.398、許容内） |
+| clean-fire-body（hitDamage） | 10,363（`0260-03`） | 10,363.273（+0.273、許容内） |
+| burst-fire（burstHitDamage） | 2,342,044（`0260-05`） | 2,342,043.844（-0.156、許容内） |
+| burst-wind（burstHitDamage） | 3,703,942（`0258-06`） | 3,703,942.34（+0.34、許容内） |
+| onemore-wind（skillHitDamage） | 4,880,269（`0258-07`） | 4,880,269.234（+0.234、許容内） |
+| onemore-count-wind（skillHitCount） | 5（`0258-08`） | 5（+0、許容内） |
+| onemore-count-fire（skillHitCount） | 0（`0260-06`） | 0（+0、許容内） |
 
 <!-- records:predictions:end -->
 

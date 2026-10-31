@@ -44,12 +44,12 @@
 
 予測は 2026-10-09（commit b3ecbae）に出した。
 
-| 指標                               | 実測              | 予測 H1            |
-| ---------------------------------- | ----------------- | ------------------ |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
 | effect-delay-1（burstEffectDelay） | 15.5（`0400-01`） | 19（+3.5、許容内） |
-| effect-delay-2（burstEffectDelay） | （実測なし）      | 19                 |
-| effect-delay-3（burstEffectDelay） | （実測なし）      | 19                 |
-| effect-delay-4（burstEffectDelay） | （実測なし）      | 19                 |
+| effect-delay-2（burstEffectDelay） | （実測なし） | 19 |
+| effect-delay-3（burstEffectDelay） | （実測なし） | 19 |
+| effect-delay-4（burstEffectDelay） | （実測なし） | 19 |
 
 <!-- records:predictions:end -->
 

@@ -90,13 +90,13 @@ H1 はいまの定義で、値は予測ファイル（records/predictions/V-0212
 
 予測は 2026-10-05（commit ce342b1）に出した。
 
-| 指標                                | 実測                   | 予測 H1                                     |
-| ----------------------------------- | ---------------------- | ------------------------------------------- |
-| burst-fire（burstHitDamage）        | 4,206,947（`0230-04`） | 4,206,946.955（-0.045、許容内）             |
-| burst-wind（burstHitDamage）        | 5,199,366（`0229-04`） | 5,199,365.742（-0.258、許容内）             |
-| onemore-wind（skillHitDamage）      | 4,735,556（`0229-05`） | 3,011,626.795（-1,723,929.205、**許容外**） |
-| onemore-count-wind（skillHitCount） | 5（`0229-06`）         | 5（+0、許容内）                             |
-| onemore-count-fire（skillHitCount） | 0（`0230-05`）         | 0（+0、許容内）                             |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| burst-fire（burstHitDamage） | 4,206,947（`0230-04`） | 4,206,946.955（-0.045、許容内） |
+| burst-wind（burstHitDamage） | 5,199,366（`0229-04`） | 5,199,365.742（-0.258、許容内） |
+| onemore-wind（skillHitDamage） | 4,735,556（`0229-05`） | 3,011,626.795（-1,723,929.205、**許容外**） |
+| onemore-count-wind（skillHitCount） | 5（`0229-06`） | 5（+0、許容内） |
+| onemore-count-fire（skillHitCount） | 0（`0230-05`） | 0（+0、許容内） |
 
 <!-- records:predictions:end -->
 

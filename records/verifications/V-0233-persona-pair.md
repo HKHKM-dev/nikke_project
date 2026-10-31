@@ -91,19 +91,19 @@ H1 はいまの定義で、値は予測ファイル（records/predictions/V-0233
 
 予測は 2026-10-06（commit d9b182a）に出した。
 
-| 指標                                 | 実測                   | 予測 H1                              |
-| ------------------------------------ | ---------------------- | ------------------------------------ |
-| q-followup-body（hitDamage）         | 104,899.2（`0259-01`） | 104,899.371（+0.171、許容内）        |
-| q-followup-crit（hitDamage）         | （実測なし）           | 139,865.828                          |
-| q-fb-fire-body（hitDamage）          | 47,070.8（`0261-01`）  | 47,070.843（+0.043、許容内）         |
-| q-followup-hit（skillHitDamage）     | 6,946,003（`0259-02`） | 6,945,978.471（-24.529、**許容外**） |
-| q-skill1-count-wind（skillHitCount） | 9（`0259-03`）         | 9（+0、許容内）                      |
-| q-skill1-count-fire（skillHitCount） | 0（`0261-03`）         | 0（+0、許容内）                      |
-| y-baton1-body（hitDamage）           | 33,245（`0259-04`）    | 33,245.082（+0.082、許容内）         |
-| y-baton2-body（hitDamage）           | 41,906（`0259-05`）    | 41,906.095（+0.095、許容内）         |
-| y-baton3-body（hitDamage）           | 50,567（`0259-06`）    | 50,566.902（-0.098、許容内）         |
-| y-own-fb-body（hitDamage）           | （実測なし）           | 36,905.106                           |
-| y-fb-fire-body（hitDamage）          | 15,545（`0261-02`）    | 15,544.909（-0.091、許容内）         |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| q-followup-body（hitDamage） | 104,899.2（`0259-01`） | 104,899.371（+0.171、許容内） |
+| q-followup-crit（hitDamage） | （実測なし） | 139,865.828 |
+| q-fb-fire-body（hitDamage） | 47,070.8（`0261-01`） | 47,070.843（+0.043、許容内） |
+| q-followup-hit（skillHitDamage） | 6,946,003（`0259-02`） | 6,945,978.471（-24.529、**許容外**） |
+| q-skill1-count-wind（skillHitCount） | 9（`0259-03`） | 9（+0、許容内） |
+| q-skill1-count-fire（skillHitCount） | 0（`0261-03`） | 0（+0、許容内） |
+| y-baton1-body（hitDamage） | 33,245（`0259-04`） | 33,245.082（+0.082、許容内） |
+| y-baton2-body（hitDamage） | 41,906（`0259-05`） | 41,906.095（+0.095、許容内） |
+| y-baton3-body（hitDamage） | 50,567（`0259-06`） | 50,566.902（-0.098、許容内） |
+| y-own-fb-body（hitDamage） | （実測なし） | 36,905.106 |
+| y-fb-fire-body（hitDamage） | 15,545（`0261-02`） | 15,544.909（-0.091、許容内） |
 
 <!-- records:predictions:end -->
 

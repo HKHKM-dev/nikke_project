@@ -35,18 +35,18 @@
 
 予測は 2026-10-06（commit f34bb68）に出した。
 
-| 指標                                     | 実測                   | 予測 H1                                                                                                                              |
-| ---------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| burst-s1on-dton（burstHitDamage）        | 740,984（`0280-02`）   | 740,984.449（+0.449、許容内）                                                                                                        |
-| burst-s1on-dton-crit（burstHitDamage）   | （実測なし）           | 1,111,476.673                                                                                                                        |
-| burst-s1on-dtoff（burstHitDamage）       | 632,347（`0280-03`）   | 632,347.2（+0.2、許容内）                                                                                                            |
-| burst-s1on-dtoff-crit（burstHitDamage）  | （実測なし）           | 948,520.8                                                                                                                            |
-| burst-s1off-dton（burstHitDamage）       | 686,541（`0281-02`）   | 686,540.746（-0.254、許容内）                                                                                                        |
-| burst-s1off-dton-crit（burstHitDamage）  | 1,029,811（`0280-01`） | 1,029,811.119（+0.119、許容内）                                                                                                      |
-| burst-s1off-dtoff（burstHitDamage）      | （実測なし）           | 585,885.6                                                                                                                            |
-| burst-s1off-dtoff-crit（burstHitDamage） | （実測なし）           | 878,828.4                                                                                                                            |
-| burst-delays（burstHitDelays）           | （実測なし）           | [0, 0, 0, 0, 0]                                                                                                                      |
-| s2-starts-team（buffWindowStarts）       | （実測なし）           | [529, 1,081, 1,610, 2,140, 2,669, 3,220, 3,750, 4,279, 4,809, 5,338, 5,890, 6,419, 6,948, 7,478, 8,029, 8,559, 9,088, 9,617, 10,169] |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| burst-s1on-dton（burstHitDamage） | 740,984（`0280-02`） | 740,984.449（+0.449、許容内） |
+| burst-s1on-dton-crit（burstHitDamage） | （実測なし） | 1,111,476.673 |
+| burst-s1on-dtoff（burstHitDamage） | 632,347（`0280-03`） | 632,347.2（+0.2、許容内） |
+| burst-s1on-dtoff-crit（burstHitDamage） | （実測なし） | 948,520.8 |
+| burst-s1off-dton（burstHitDamage） | 686,541（`0281-02`） | 686,540.746（-0.254、許容内） |
+| burst-s1off-dton-crit（burstHitDamage） | 1,029,811（`0280-01`） | 1,029,811.119（+0.119、許容内） |
+| burst-s1off-dtoff（burstHitDamage） | （実測なし） | 585,885.6 |
+| burst-s1off-dtoff-crit（burstHitDamage） | （実測なし） | 878,828.4 |
+| burst-delays（burstHitDelays） | （実測なし） | [0, 0, 0, 0, 0] |
+| s2-starts-team（buffWindowStarts） | （実測なし） | [529, 1,081, 1,610, 2,140, 2,669, 3,220, 3,750, 4,279, 4,809, 5,338, 5,890, 6,419, 6,948, 7,478, 8,029, 8,559, 9,088, 9,617, 10,169] |
 
 <!-- records:predictions:end -->
 

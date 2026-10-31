@@ -297,11 +297,20 @@ export function reduceCooldown(
   if (!Number.isInteger(frames) || frames < 0)
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
   if (state.units[slotIndex] == null) return;
+  const applied = shortenCooldown(state, slotIndex, frames, frame);
+  state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied });
+}
+
+/**
+ * 枠 slotIndex の CT の明けを frames だけ早める（明けるフレームは frame より前に戻さない。明けている枠は変わらない）。縮めた長さを返す。
+ * reduceCooldown（即時の CT▼。記録を残す）と、1 パス目の T4 の▼（記録を残さず、発動の cooldownShortenedFrames に足す）が使う
+ */
+export function shortenCooldown(state: BurstControllerState, slotIndex: number, frames: number, frame: number): number {
   const before = state.cooldownEnd[slotIndex]!;
   const after = Math.max(frame, before - frames);
   const applied = Math.max(0, before - after);
   if (applied > 0) state.cooldownEnd[slotIndex] = after;
-  state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied });
+  return applied;
 }
 
 /** 戦闘時間 frames で切って BurstSchedule にする */

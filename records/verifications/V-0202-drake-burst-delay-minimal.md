@@ -55,16 +55,16 @@
 
 予測は 2026-10-05（commit ce342b1）に出した。
 
-| 指標                                   | 実測                              | 予測 H0                            |
-| -------------------------------------- | --------------------------------- | ---------------------------------- |
-| drake-delays（burstHitDelays）         | [26, 26, 26, 26, 26]（`0222-01`） | [26, 26, 26, 26, 26]（+0、許容内） |
-| drake-offsets-1（burstHitOffsets）     | [0, 28, 57]（`0222-02`）          | [0, 27, 55]（-2、**許容外**）      |
-| drake-offsets-2（burstHitOffsets）     | [0, 28, 56]（`0222-03`）          | [0, 27, 55]（-1、許容内）          |
-| drake-offsets-3（burstHitOffsets）     | [0, 28, 56]（`0222-04`）          | [0, 27, 55]（-1、許容内）          |
-| drake-offsets-4（burstHitOffsets）     | [0, 28, 56]（`0222-05`）          | [0, 27, 55]（-1、許容内）          |
-| drake-offsets-5（burstHitOffsets）     | [0, 28, 56]（`0222-06`）          | [0, 27, 55]（-1、許容内）          |
-| drake-burst-hit（burstHitDamage）      | （実測なし）                      | 3,605,380.416                      |
-| drake-burst-hit-crit（burstHitDamage） | 5,408,070（`0222-07`）            | 5,408,070.624（+0.624、許容内）    |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| drake-delays（burstHitDelays） | [26, 26, 26, 26, 26]（`0222-01`） | [26, 26, 26, 26, 26]（+0、許容内） |
+| drake-offsets-1（burstHitOffsets） | [0, 28, 57]（`0222-02`） | [0, 27, 55]（-2、**許容外**） |
+| drake-offsets-2（burstHitOffsets） | [0, 28, 56]（`0222-03`） | [0, 27, 55]（-1、許容内） |
+| drake-offsets-3（burstHitOffsets） | [0, 28, 56]（`0222-04`） | [0, 27, 55]（-1、許容内） |
+| drake-offsets-4（burstHitOffsets） | [0, 28, 56]（`0222-05`） | [0, 27, 55]（-1、許容内） |
+| drake-offsets-5（burstHitOffsets） | [0, 28, 56]（`0222-06`） | [0, 27, 55]（-1、許容内） |
+| drake-burst-hit（burstHitDamage） | （実測なし） | 3,605,380.416 |
+| drake-burst-hit-crit（burstHitDamage） | 5,408,070（`0222-07`） | 5,408,070.624（+0.624、許容内） |
 
 <!-- records:predictions:end -->
 

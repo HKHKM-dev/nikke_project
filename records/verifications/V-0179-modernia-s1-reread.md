@@ -39,34 +39,34 @@
 
 予測は 2026-10-05（commit 6320185）に出した。
 
-| 指標                                | 実測                | 予測 H1                      |
-| ----------------------------------- | ------------------- | ---------------------------- |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
 | s1-k1-body-crit-nodist（hitDamage） | 15,272（`0045-09`） | 15,271.632（-0.368、許容内） |
-| s1-k1-core-crit-nodist（hitDamage） | 24,569（`0045-10`） | 24,569.43（+0.43、許容内）   |
-| s1-k1-body-crit-dist（hitDamage）   | （実測なし）        | 18,060.971                   |
-| s1-k1-core-crit-dist（hitDamage）   | （実測なし）        | 27,358.769                   |
+| s1-k1-core-crit-nodist（hitDamage） | 24,569（`0045-10`） | 24,569.43（+0.43、許容内） |
+| s1-k1-body-crit-dist（hitDamage） | （実測なし） | 18,060.971 |
+| s1-k1-core-crit-dist（hitDamage） | （実測なし） | 27,358.769 |
 | s1-k2-body-crit-nodist（hitDamage） | 16,597（`0045-11`） | 16,596.568（-0.432、許容内） |
 | s1-k2-core-crit-nodist（hitDamage） | 25,894（`0045-12`） | 25,894.366（+0.366、許容内） |
-| s1-k2-body-crit-dist（hitDamage）   | （実測なし）        | 19,385.908                   |
-| s1-k2-core-crit-dist（hitDamage）   | （実測なし）        | 28,683.705                   |
-| s1-k3-body-crit-nodist（hitDamage） | （実測なし）        | 17,921.504                   |
+| s1-k2-body-crit-dist（hitDamage） | （実測なし） | 19,385.908 |
+| s1-k2-core-crit-dist（hitDamage） | （実測なし） | 28,683.705 |
+| s1-k3-body-crit-nodist（hitDamage） | （実測なし） | 17,921.504 |
 | s1-k3-core-crit-nodist（hitDamage） | 27,219（`0045-13`） | 27,219.302（+0.302、許容内） |
-| s1-k3-body-crit-dist（hitDamage）   | （実測なし）        | 20,710.844                   |
-| s1-k3-core-crit-dist（hitDamage）   | （実測なし）        | 30,008.641                   |
+| s1-k3-body-crit-dist（hitDamage） | （実測なし） | 20,710.844 |
+| s1-k3-core-crit-dist（hitDamage） | （実測なし） | 30,008.641 |
 | s1-k4-body-crit-nodist（hitDamage） | 19,246（`0045-14`） | 19,246.441（+0.441、許容内） |
 | s1-k4-core-crit-nodist（hitDamage） | 28,544（`0045-15`） | 28,544.238（+0.238、許容内） |
-| s1-k4-body-crit-dist（hitDamage）   | （実測なし）        | 22,035.78                    |
-| s1-k4-core-crit-dist（hitDamage）   | （実測なし）        | 31,333.577                   |
+| s1-k4-body-crit-dist（hitDamage） | （実測なし） | 22,035.78 |
+| s1-k4-core-crit-dist（hitDamage） | （実測なし） | 31,333.577 |
 | s1-k5-body-crit-nodist（hitDamage） | 20,571（`0045-16`） | 20,571.377（+0.377、許容内） |
 | s1-k5-core-crit-nodist（hitDamage） | 29,869（`0045-17`） | 29,869.174（+0.174、許容内） |
-| s1-k5-body-crit-dist（hitDamage）   | 23,361（`0045-18`） | 23,360.716（-0.284、許容内） |
-| s1-k5-core-crit-dist（hitDamage）   | 32,659（`0045-19`） | 32,658.513（-0.487、許容内） |
-| s1-k0-maxammo（maxAmmoAt）          | 300（`0045-20`）    | 300（+0、許容内）            |
-| s1-k1-maxammo（maxAmmoAt）          | 285（`0045-21`）    | 285（+0、許容内）            |
-| s1-k2-maxammo（maxAmmoAt）          | 270（`0045-22`）    | 270（+0、許容内）            |
-| s1-k3-maxammo（maxAmmoAt）          | （実測なし）        | 255                          |
-| s1-k4-maxammo（maxAmmoAt）          | 240（`0045-23`）    | 240（+0、許容内）            |
-| s1-k5-maxammo（maxAmmoAt）          | 224（`0045-24`）    | 224（+0、許容内）            |
+| s1-k5-body-crit-dist（hitDamage） | 23,361（`0045-18`） | 23,360.716（-0.284、許容内） |
+| s1-k5-core-crit-dist（hitDamage） | 32,659（`0045-19`） | 32,658.513（-0.487、許容内） |
+| s1-k0-maxammo（maxAmmoAt） | 300（`0045-20`） | 300（+0、許容内） |
+| s1-k1-maxammo（maxAmmoAt） | 285（`0045-21`） | 285（+0、許容内） |
+| s1-k2-maxammo（maxAmmoAt） | 270（`0045-22`） | 270（+0、許容内） |
+| s1-k3-maxammo（maxAmmoAt） | （実測なし） | 255 |
+| s1-k4-maxammo（maxAmmoAt） | 240（`0045-23`） | 240（+0、許容内） |
+| s1-k5-maxammo（maxAmmoAt） | 224（`0045-24`） | 224（+0、許容内） |
 
 <!-- records:predictions:end -->
 

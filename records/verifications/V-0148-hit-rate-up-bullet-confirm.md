@@ -73,12 +73,12 @@ V-0118「読み方」と同じ。HUD の増分をレシピ `hud-jumps` で読み
 
 予測は 2026-10-04（commit 44c002e）に出した。
 
-| 指標                            | 実測         | 予測 H2       |
-| ------------------------------- | ------------ | ------------- |
-| misato-body（hitDamage）        | （実測なし） | 6,407.181     |
-| misato-core（hitDamage）        | （実測なし） | 12,814.362    |
-| misato-crit（hitDamage）        | （実測なし） | 9,610.772     |
-| misato-shots（shotCount）       | （実測なし） | 3,237         |
+| 指標 | 実測 | 予測 H2 |
+| --- | --- | --- |
+| misato-body（hitDamage） | （実測なし） | 6,407.181 |
+| misato-core（hitDamage） | （実測なし） | 12,814.362 |
+| misato-crit（hitDamage） | （実測なし） | 9,610.772 |
+| misato-shots（shotCount） | （実測なし） | 3,237 |
 | misato-total（slotTotalDamage） | （実測なし） | 29,143,461.89 |
 
 <!-- records:predictions:end -->

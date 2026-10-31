@@ -96,20 +96,20 @@ H1 はいまの定義で、値は予測ファイル（records/predictions/V-0211
 
 予測は 2026-10-05（commit ce342b1）に出した。
 
-| 指標                           | 実測                  | 予測 H1                      |
-| ------------------------------ | --------------------- | ---------------------------- |
-| fb-wind-body（hitDamage）      | 91,475.8（`0229-01`） | 91,475.308（-0.492、許容内） |
-| fb-wind-crit（hitDamage）      | （実測なし）          | 121,967.077                  |
-| fb-wind-core（hitDamage）      | （実測なし）          | 152,458.847                  |
-| fb-wind-core-crit（hitDamage） | （実測なし）          | 182,950.616                  |
-| clean-wind-body（hitDamage）   | 38,783.1（`0229-03`） | 38,783.237（+0.137、許容内） |
-| clean-wind-crit（hitDamage）   | （実測なし）          | 58,174.855                   |
-| post-wind-body（hitDamage）    | 58,300（`0229-02`）   | 58,299.726（-0.274、許容内） |
-| fb-fire-body（hitDamage）      | 47,070.9（`0230-01`） | 47,070.843（-0.057、許容内） |
-| fb-fire-crit（hitDamage）      | （実測なし）          | 62,761.124                   |
-| clean-fire-body（hitDamage）   | 31,380.8（`0230-03`） | 31,380.562（-0.238、許容内） |
-| post-fire-body（hitDamage）    | 47,172.1（`0230-02`） | 47,171.88（-0.22、許容内）   |
-| post-fire-crit（hitDamage）    | （実測なし）          | 70,757.82                    |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| fb-wind-body（hitDamage） | 91,475.8（`0229-01`） | 91,475.308（-0.492、許容内） |
+| fb-wind-crit（hitDamage） | （実測なし） | 121,967.077 |
+| fb-wind-core（hitDamage） | （実測なし） | 152,458.847 |
+| fb-wind-core-crit（hitDamage） | （実測なし） | 182,950.616 |
+| clean-wind-body（hitDamage） | 38,783.1（`0229-03`） | 38,783.237（+0.137、許容内） |
+| clean-wind-crit（hitDamage） | （実測なし） | 58,174.855 |
+| post-wind-body（hitDamage） | 58,300（`0229-02`） | 58,299.726（-0.274、許容内） |
+| fb-fire-body（hitDamage） | 47,070.9（`0230-01`） | 47,070.843（-0.057、許容内） |
+| fb-fire-crit（hitDamage） | （実測なし） | 62,761.124 |
+| clean-fire-body（hitDamage） | 31,380.8（`0230-03`） | 31,380.562（-0.238、許容内） |
+| post-fire-body（hitDamage） | 47,172.1（`0230-02`） | 47,171.88（-0.22、許容内） |
+| post-fire-crit（hitDamage） | （実測なし） | 70,757.82 |
 
 <!-- records:predictions:end -->
 

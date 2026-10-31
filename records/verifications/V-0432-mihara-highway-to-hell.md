@@ -50,13 +50,13 @@
 
 予測は 2026-10-16（commit ab7e648）に出した。
 
-| 指標                                    | 実測                 | 予測 H1                       |
-| --------------------------------------- | -------------------- | ----------------------------- |
-| mihara-additional-hits（skillHitCount） | （実測なし）         | 4                             |
-| mihara-burst-skill-1（burstHitDamage）  | 379,353（`0470-03`） | 379,352.268（-0.732、許容内） |
-| mihara-burst-skill-2（burstHitDamage）  | 438,441（`0470-04`） | 438,441.12（+0.12、許容内）   |
-| mihara-additional-1（skillHitDamage）   | （実測なし）         | 292,294.08                    |
-| full-bursts（fullBurstCount）           | 5（`0469-06`）       | 5（+0、許容内）               |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| mihara-additional-hits（skillHitCount） | （実測なし） | 4 |
+| mihara-burst-skill-1（burstHitDamage） | 379,353（`0470-03`） | 379,352.268（-0.732、許容内） |
+| mihara-burst-skill-2（burstHitDamage） | 438,441（`0470-04`） | 438,441.12（+0.12、許容内） |
+| mihara-additional-1（skillHitDamage） | （実測なし） | 292,294.08 |
+| full-bursts（fullBurstCount） | 5（`0469-06`） | 5（+0、許容内） |
 
 <!-- records:predictions:end -->
 

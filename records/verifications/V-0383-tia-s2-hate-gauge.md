@@ -60,9 +60,9 @@ H0（いまのモデル。ティアの定義なし = 溜めない）の値は予
 
 予測は 2026-10-09（commit b3ecbae）に出した。
 
-| 指標                                    | 実測         | 予測 H0 |
-| --------------------------------------- | ------------ | ------- |
-| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 15      |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 15 |
 
 <!-- records:predictions:end -->
 

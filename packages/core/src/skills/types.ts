@@ -685,7 +685,8 @@ export type TimedEffect = TargetCountFields &
     trigger: EffectTrigger;
     /**
      * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: JSON のきっかけが { coverHealed: true }（「遮蔽物の HP を回復した時」）で、
-     * 読み込みが同じ定義の遮蔽物 HP 回復（coverHeal）のきっかけに置き換えた。計算は読まず、表示と最小構成の検査が読む
+     * 読み込みが同じ定義の遮蔽物 HP 回復（coverHeal）のきっかけに置き換えた。計算は読まず、画面の表示（きっかけの文）と、
+     * 読み直し（records/observations.ts の withAddedEffects が JSON の形に戻す）が読む
      */
     viaCoverHealed?: true;
     target: BuffTarget;
