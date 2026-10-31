@@ -123,7 +123,7 @@ export type CompareSetup = {
    * 予測の仮説の override に使う
    */
   attackRounding?: AttackRounding;
-  /** EnemyInput.defenceRounding の override（予測の仮説）。省略はいまのモデル（丸めない） */
+  /** EnemyInput.defenceRounding の override（予測の仮説）。省略はいまのモデル（四捨五入。C-0790） */
   defenceRounding?: DefenceRounding;
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;

@@ -193,13 +193,13 @@ export type EnemyInput = {
   /** Stage 18-C: 着地点の時間割り（enemies.ts の enemyLandingsOf）。省略は戦闘時間全体を target の初期位置とする */
   landings?: readonly LandingSpan[];
   /**
-   * 防御力▼の後の防御力の丸めの向き（defenceAfterDown。C-0688・V-0561）。省略は 'none'（いまのモデル）。
-   * 検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
+   * 防御力▼の後の防御力の丸めの向き（defenceAfterDown。C-0790）。省略は 'round'（いまのモデル）。
+   * ほかの向きは検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
    */
   defenceRounding?: DefenceRounding;
 };
 
-/** 防御力▼の後の防御力の丸めの向き: 丸めない・四捨五入・切り上げ（切り捨ては C-0688 で外れた） */
+/** 防御力▼の後の防御力の丸めの向き: 丸めない・四捨五入・切り上げ（四捨五入のほかは C-0790 で外れた。切り捨ては型に無い） */
 export type DefenceRounding = 'none' | 'round' | 'ceil';
 
 /** 1 トリガーの式に効く条件（時間を含まない） */
@@ -417,13 +417,13 @@ export const DISTANCE_BONUS = 0.3;
 
 /**
  * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の後の防御力。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
- * 端数は丸めない（録画 0305・0306 の読み直し。V-0433）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値。丸めは enemy.defenceRounding
+ * 四捨五入で整数にする（C-0790）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値。丸めの向きは enemy.defenceRounding
  */
 export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
   const down = Math.min(1, Math.max(0, buffs.enemyDefenseDown));
   if (down === 0) return enemy.defence;
   const raw = enemy.defence * (1 - down);
-  const rounding = enemy.defenceRounding ?? 'none';
+  const rounding = enemy.defenceRounding ?? 'round';
   if (rounding === 'none') return raw;
   // 浮動小数の誤差（100 × (1 − 0.3) = 70.00000000000001 など）で切り上げが 1 ずれないよう、先に 1e-9 の桁にそろえる
   const settled = Math.round(raw * 1e9) / 1e9;

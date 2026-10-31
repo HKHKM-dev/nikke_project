@@ -103,7 +103,7 @@
     "description": "紅蓮：BS の段 C（1 回目のフルバーストの 1 回目。f1080。増分 4,877,076 から、エレグのコア 15,727 と鈴原サクラ 14,790 を引いた）。鈴原サクラの▲なし（対照）",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=2 も▲なし。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=2 も▲なし。"
     },
     "compare": {
       "model": "sim",
@@ -114,7 +114,7 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -137,7 +137,7 @@
     "description": "紅蓮：BS の段 B の 3 ティックの和（1 回目のフルバーストの 3 回目。f1295・1309・1324 の 1,208,668 × 3。重なりなし）。分配ダメージ▲・鈴原サクラの▲あり",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=7 も両方の▲あり。HS なら 3,783,761。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=7 も両方の▲あり。HS なら 3,783,761。"
     },
     "compare": {
       "model": "sim",
@@ -148,7 +148,7 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -171,7 +171,7 @@
     "description": "紅蓮：BS の段 C（1 回目のフルバーストの 3 回目。f1338。重なりなし）。分配ダメージ▲・鈴原サクラの▲あり",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=8 も両方の▲あり。HS なら 5,679,190。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=8 も両方の▲あり。HS なら 5,679,190。"
     },
     "compare": {
       "model": "sim",
@@ -182,7 +182,7 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -205,7 +205,7 @@
     "description": "紅蓮：BS の段 C（1 回目のフルバーストの 4 回目。f1467。増分 5,459,738 から鈴原サクラの▲ありの 17,331 を引いた）。分配ダメージ▲・鈴原サクラの▲あり",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=11 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=11 も両方の▲あり。"
     },
     "compare": {
       "model": "sim",
@@ -216,7 +216,7 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -239,7 +239,7 @@
     "description": "紅蓮：BS の段 C（2 回目のフルバーストの 2 回目。f3544。増分 4,877,076 から 15,727 と 14,790 を引いた）。鈴原サクラの▲なし（対照）",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=26 も▲なし。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=26 も▲なし。"
     },
     "compare": {
       "model": "sim",
@@ -250,7 +250,7 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -273,7 +273,7 @@
     "description": "紅蓮：BS の段 C（2 回目のフルバーストの 3 回目。f3674。増分 7,273,874 から 17,331 を引いた）。会心。分配ダメージ▲・鈴原サクラの▲あり",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=29 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=29 も両方の▲あり。"
     },
     "compare": {
       "model": "sim",
@@ -284,7 +284,7 @@
         "crit": true
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -307,7 +307,7 @@
     "description": "紅蓮：BS の段 B の 3 ティックの和（2 回目のフルバーストの 4 回目。f3759・3773・3788。1 ティック目は増分 1,225,999 から 17,331 を引いた）。分配ダメージ▲・鈴原サクラの▲あり",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=31 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=31 も両方の▲あり。"
     },
     "compare": {
       "model": "sim",
@@ -318,7 +318,7 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",
@@ -341,7 +341,7 @@
     "description": "紅蓮：BS の段 C（2 回目のフルバーストの 4 回目。f3802。重なりなし）。分配ダメージ▲・鈴原サクラの▲あり",
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "モデルの n=32 も両方の▲あり。 フルバースト中の段は、▲の有無によらずモデルより約 1.2〜1.3 ppm 大きい（▲なしの段 C の 4,846,559 も同じ。フルバーストの外の段は 1 未満でそろう）ので、許容は rel 2e-6（HA と HS の差は 4.3%）"
+      "note": "モデルの n=32 も両方の▲あり。"
     },
     "compare": {
       "model": "sim",
@@ -352,7 +352,109 @@
         "crit": false
       },
       "tolerance": {
-        "rel": 0.000002
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0805-15",
+    "recording": "0805",
+    "source": "V-0575",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 4846559,
+    "description": "紅蓮：BS の段 C（5 回目のフルバーストの 2 回目。f10663。増分 4,862,286 から、エレグのコアの▲なしの 1 ヒット 15,727 を引いた）。エレグのブームインストールの防御力▼・分配ダメージ▲あり、鈴原サクラの▲なし",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=92 も鈴原サクラの▲なし。防御力▼の後の防御力を 64（四捨五入）にした式で 4,846,558.9、64.36（丸めない）で 4,846,552.5、65（切り上げ）で 4,846,541.1"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 92,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0805-16",
+    "recording": "0805",
+    "source": "V-0575",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5442407,
+    "description": "紅蓮：BS の段 C（5 回目のフルバーストの 3 回目。f10792。増分 5,460,836 から、エレグのコアの▲ありの 1 ヒット 18,429 を引いた）。防御力▼・分配ダメージ▲・鈴原サクラの▲あり",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=95 も両方の▲あり。防御力 64 の式で 5,442,407.5、64.36 で 5,442,400.3、65 で 5,442,387.5"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 95,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0805-17",
+    "recording": "0805",
+    "source": "V-0575",
+    "readAt": "2026-10-31",
+    "use": "compare",
+    "kind": "hit",
+    "value": 5442407,
+    "description": "紅蓮：BS の段 C（5 回目のフルバーストの 4 回目。f10921。増分 5,464,552 から、鈴原サクラの▲ありの 1 ヒット 22,145 を引いた）。防御力▼・分配ダメージ▲・鈴原サクラの▲あり",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "モデルの n=98 も両方の▲あり。値は n=95 と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 98,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
       },
       "setup": {
         "enemy": "range-bigarms-fire",

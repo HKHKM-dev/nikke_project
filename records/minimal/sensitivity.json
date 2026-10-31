@@ -16977,7 +16977,7 @@
     {
       "observation": "0805-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "9f776a02bf65cb8d",
+      "key": "fb13f93ecd694d93",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16985,7 +16985,7 @@
     {
       "observation": "0805-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "9f776a02bf65cb8d",
+      "key": "fb13f93ecd694d93",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17001,7 +17001,7 @@
     {
       "observation": "0805-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "95d000abd401b890",
+      "key": "699cc989ddcb182a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17009,7 +17009,7 @@
     {
       "observation": "0805-08",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "95d000abd401b890",
+      "key": "699cc989ddcb182a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17025,7 +17025,7 @@
     {
       "observation": "0805-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "354c48d4492e1e77",
+      "key": "8b2dd038043318e1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17033,7 +17033,7 @@
     {
       "observation": "0805-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "354c48d4492e1e77",
+      "key": "8b2dd038043318e1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17049,7 +17049,7 @@
     {
       "observation": "0805-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "342c40225905f4ef",
+      "key": "39de8b5eef77c3f9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17057,7 +17057,7 @@
     {
       "observation": "0805-10",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "342c40225905f4ef",
+      "key": "39de8b5eef77c3f9",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17073,7 +17073,7 @@
     {
       "observation": "0805-11",
       "element": "エレグ skill1.effects[0]",
-      "key": "5b8c931c3ee09aa7",
+      "key": "eeef08f03db3ec91",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17081,7 +17081,7 @@
     {
       "observation": "0805-11",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "5b8c931c3ee09aa7",
+      "key": "eeef08f03db3ec91",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17097,7 +17097,7 @@
     {
       "observation": "0805-12",
       "element": "エレグ skill1.effects[0]",
-      "key": "b7cd084a53b18b93",
+      "key": "a8833e56f044f905",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17105,7 +17105,7 @@
     {
       "observation": "0805-12",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "b7cd084a53b18b93",
+      "key": "a8833e56f044f905",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17121,7 +17121,7 @@
     {
       "observation": "0805-13",
       "element": "エレグ skill1.effects[0]",
-      "key": "b8d4fb14a1b01f45",
+      "key": "8c14fbf8937927cb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17129,7 +17129,7 @@
     {
       "observation": "0805-13",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "b8d4fb14a1b01f45",
+      "key": "8c14fbf8937927cb",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17145,7 +17145,7 @@
     {
       "observation": "0805-14",
       "element": "エレグ skill1.effects[0]",
-      "key": "c0598bafa1508346",
+      "key": "a2da015dcdd5628c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17153,7 +17153,79 @@
     {
       "observation": "0805-14",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "c0598bafa1508346",
+      "key": "a2da015dcdd5628c",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-15",
+      "element": "エレグ skill1.effects[0]",
+      "key": "f88c037f9c9d45c6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-15",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "f88c037f9c9d45c6",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-16",
+      "element": "エレグ skill1.effects[0]",
+      "key": "482f0fead4a98f2d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-16",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "482f0fead4a98f2d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 4],
+          "end": [0, 4]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0805-17",
+      "element": "エレグ skill1.effects[0]",
+      "key": "f3659af532b4c2c4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0805-17",
+      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
+      "key": "f3659af532b4c2c4",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17169,7 +17241,7 @@
     {
       "observation": "0806-07",
       "element": "エレグ skill1.effects[0]",
-      "key": "5439d4077d68cb98",
+      "key": "8eb85d45ec27a0b2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17177,7 +17249,7 @@
     {
       "observation": "0806-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "5439d4077d68cb98",
+      "key": "8eb85d45ec27a0b2",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17193,7 +17265,7 @@
     {
       "observation": "0806-08",
       "element": "エレグ skill1.effects[0]",
-      "key": "9e7c6b16de5d5175",
+      "key": "25c15be2430d98bb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17201,7 +17273,7 @@
     {
       "observation": "0806-08",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "9e7c6b16de5d5175",
+      "key": "25c15be2430d98bb",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17217,7 +17289,7 @@
     {
       "observation": "0806-09",
       "element": "エレグ skill1.effects[0]",
-      "key": "28917989628ea392",
+      "key": "5b31bd4fe9860890",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17225,7 +17297,7 @@
     {
       "observation": "0806-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "28917989628ea392",
+      "key": "5b31bd4fe9860890",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -17241,7 +17313,7 @@
     {
       "observation": "0806-10",
       "element": "エレグ skill1.effects[0]",
-      "key": "2bfad5715a3770ee",
+      "key": "223c3f07ebdcda34",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -17249,7 +17321,7 @@
     {
       "observation": "0806-10",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "2bfad5715a3770ee",
+      "key": "223c3f07ebdcda34",
       "effective": false,
       "minus": null,
       "plus": null,

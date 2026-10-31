@@ -74,18 +74,19 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
 
   it('multiplies the defence by (1 − Σ) and keeps Σ within 0 to 1', () => {
     expect(defenceAfterDown(enemy, ZERO_BUFFS)).toBe(100);
-    expect(defenceAfterDown(enemy, { ...ZERO_BUFFS, enemyDefenseDown: 0.084 })).toBeCloseTo(91.6, 12);
+    expect(
+      defenceAfterDown({ ...enemy, defenceRounding: 'none' }, { ...ZERO_BUFFS, enemyDefenseDown: 0.084 }),
+    ).toBeCloseTo(91.6, 12);
     expect(defenceAfterDown(enemy, { ...ZERO_BUFFS, enemyDefenseDown: 1.5 })).toBe(0);
     expect(defenceAfterDown(enemy, { ...ZERO_BUFFS, enemyDefenseDown: -0.2 })).toBe(100);
   });
 
-  it('rounds the lowered defence only under a rounding hypothesis (C-0688・V-0561)', () => {
+  it('rounds the lowered defence half up by default, and by the hypothesis when given (C-0790)', () => {
     const down = (x: number) => ({ ...ZERO_BUFFS, enemyDefenseDown: x });
-    expect(defenceAfterDown({ ...enemy, defenceRounding: 'round' }, down(0.3564))).toBe(64);
+    expect(defenceAfterDown(enemy, down(0.3564))).toBe(64);
+    expect(defenceAfterDown(enemy, down(0.084))).toBe(92);
     expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.3564))).toBe(65);
     expect(defenceAfterDown({ ...enemy, defenceRounding: 'none' }, down(0.3564))).toBeCloseTo(64.36, 12);
-    expect(defenceAfterDown({ ...enemy, defenceRounding: 'round' }, down(0.084))).toBe(92);
-    expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.084))).toBe(92);
     // 100 × (1 − 0.3) は浮動小数で 70.00000000000001 になるが、切り上げても 70
     expect(defenceAfterDown({ ...enemy, defenceRounding: 'ceil' }, down(0.3))).toBe(70);
     // ▼が無ければ丸めの仮説でも元の防御力
@@ -104,7 +105,7 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
         condition: { coreHitRate: 0, distanceBonus: false, fullCharge: true },
       });
     expect(trigger(0).baseHit).toBe(9_900);
-    expect(trigger(0.084).baseHit).toBeCloseTo(9_908.4, 9);
+    expect(trigger(0.084).baseHit).toBe(9_908);
     const effect = {
       source: { resourceId: 1, skill: 'burst' as const, name: { ja: '-', en: '-' } },
       effectIndex: 0,
@@ -115,7 +116,7 @@ describe('敵の防御力▼の式（plan/design-skill-stage2.md 1 節。C-0556�
     const hit = (enemyDefenseDown: number) =>
       computeSkillHit([effect], c, enemy, trigger(enemyDefenseDown), { ...ZERO_BUFFS, enemyDefenseDown }, false);
     expect(hit(0).baseHit).toBe(9_900);
-    expect(hit(0.084).baseHit).toBeCloseTo(9_908.4, 9);
+    expect(hit(0.084).baseHit).toBe(9_908);
   });
 });
 
