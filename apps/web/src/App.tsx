@@ -328,7 +328,6 @@ export function App() {
                   effectiveSkillLevels={allEffectiveSkillLevels[i]!}
                   slotResult={computed?.ok ? (computed.result.slots[i] ?? null) : null}
                   focused={team.controlledSlot === i}
-                  burst={team.burst}
                   dispatch={dispatch}
                 />
               );

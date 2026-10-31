@@ -37,8 +37,6 @@ type Props = {
   slotResult: TeamSlotResult | null;
   /** 2026-10-31: このスロットがフォーカス（操作キャラ）か */
   focused: boolean;
-  /** バーストを回すか（フォーカスはバーストのゲージにだけ効く） */
-  burst: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -59,7 +57,6 @@ export function SlotCard({
   mastersError,
   slotResult,
   focused,
-  burst,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
@@ -90,7 +87,7 @@ export function SlotCard({
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
-      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない）のポップアップ。設定は今後増やす。設定中の印はその右（狭いと次の行） */}
+      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない）のポップアップ。設定は今後増やす。設定中の印（撃たない）はその右（狭いと次の行）。フォーカスの印と、ポップアップの説明文はオーナーの指示で出さない（撃たないの近似は未対応の一覧に出す） */}
       <legend className="slot-legend">
         <span>スロット {slotIndex + 1}</span>
         <Popover
@@ -118,16 +115,8 @@ export function SlotCard({
                 撃たない
               </button>
             </div>
-            <p className="hint">
-              フォーカス（操作キャラ）は編成で 1 人。チャージ武器のフルチャージ倍率がバーストのゲージに乗る
-              {!burst && '（バーストが OFF の間は効かない）'}。
-            </p>
-            <p className="hint">
-              撃たない: 通常攻撃のダメージとゲージを 0 にする。射撃の回数で発動するスキルは発動したまま（近似）。
-            </p>
           </div>
         </Popover>
-        {focused && <span className="slot-flag">フォーカス</span>}
         {slot.noFire && <span className="slot-flag">撃たない</span>}
       </legend>
       <CharacterPicker

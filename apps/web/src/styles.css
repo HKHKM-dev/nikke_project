@@ -813,16 +813,11 @@ header h1 {
   font-weight: 400;
 }
 .slot-advanced {
-  width: 18em;
   font-weight: 400;
-}
-.slot-advanced .hint {
-  font-size: 0.78rem;
 }
 .slot-toggles {
   display: flex;
   gap: 6px;
-  margin-bottom: 6px;
 }
 .toggle-button {
   padding: 4px 12px;
