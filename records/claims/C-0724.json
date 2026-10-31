@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`0733-04`〜`0733-07`・`0734-04`〜`0734-07`（単騎の付着の 1 ヒットと、付着が全部コアの値）・`0116-30`・`0116-31`・`0117-26`・`0117-27`（フルバーストの窓の中の付着。同じフレームの爆発と 1 ヒットを、同じ回に単独で出る値で引いた）・`0116-23`・`0117-22`（4 人の録画のフルバーストの外の付着が全部コアの値）・`0116-34`（I-DOLL・サンが III を使った回は、付着に S2 の常時の▲だけが乗る）。付着▲が別の乗数（積）なら窓の中の値は約 2 倍になり合わない。コアの割合 1 は 0733 の付着で決め、0734 と 0116・0117 で再現した。V-0537",
-  "model": "`data/skills/16.json` の skill2 の effects[1]（passive・projectileStickDamage・ref 5）・effects[3]（damage・{ count: normalShot, everyRef: 1 }・skill・ref 2・core・distance・projectileStick・delayFrames 5）と burst の effects[1]（timed・burstUse・self・projectileStickDamage・ref 6・durationRef 7・burstStepMix { otherBurstStep: Step1, present: true }）。付着▲は `damage.ts` の stickHitMultiplier（置き場所 PROJECTILE_STICK_BUCKET は attackDamage。攻撃ダメージ▲と同じ枠かは確かめていない仮定）、コアは `data/enemies.json` の coreHitRate.autoAttacks の 16:skill2（どの帯も 1）、距離ボーナスは `frame/landing.ts` の slotDistanceRatesOf（通常攻撃と同じ着地点の条件）。付着のヒットのゲージはモデルに入れていない（未対応として書いた）。plan/design-skill-stage12.md 2.2・2.3 節",
+  "model": "`data/skills/16.json` の skill2 の effects[1]（passive・projectileStickDamage・ref 5）・effects[3]（damage・{ count: normalShot, everyRef: 1 }・skill・ref 2・core・distance・projectileStick・delayFrames 5）と burst の effects[1]（timed・burstUse・self・projectileStickDamage・ref 6・durationRef 7・burstStepMix { otherBurstStep: Step1, present: true }）。付着▲は `damage.ts` の stickHitMultiplier（置き場所 PROJECTILE_STICK_BUCKET は attackDamage。攻撃ダメージ▲と同じ枠であることは C-0796）、コアは `data/enemies.json` の coreHitRate.autoAttacks の 16:skill2（どの帯も 1）、距離ボーナスは `frame/landing.ts` の slotDistanceRatesOf（通常攻撃と同じ着地点の条件）。付着のヒットのゲージはモデルに入れていない（未対応として書いた）。plan/design-skill-stage12.md 2.2・2.3 節",
   "replaces": [],
   "updated": "2026-10-29",
   "subject": {
