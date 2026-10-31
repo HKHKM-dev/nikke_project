@@ -43,23 +43,12 @@ header h1 {
 .settings-menu {
   position: relative;
 }
-/* 開いている間に画面を少し暗くする幕。ボタンとパネルはその手前に出す */
+/* 開いている間に画面を暗くする幕（即座に出す）。ボタンとパネルはその手前に出す */
 .settings-menu-backdrop {
   position: fixed;
   inset: 0;
   z-index: 19;
   background: rgb(0 0 0 / 0.5);
-  animation: settings-menu-fade 0.3s ease-out;
-}
-@keyframes settings-menu-fade {
-  from {
-    opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .settings-menu-backdrop {
-    animation: none;
-  }
 }
 .settings-menu-button {
   position: relative;
