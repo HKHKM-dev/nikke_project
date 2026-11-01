@@ -1,0 +1,97 @@
+[
+  {
+    "id": "0922-01",
+    "recording": "0922",
+    "kind": "timing",
+    "use": "record",
+    "value": [1413, 2778, 4000, 5366, 6647, 7969, 9204, 10582],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・24・0・24・0f"
+    },
+    "source": "V-0638",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0922-02",
+    "recording": "0922",
+    "kind": "timing",
+    "use": "record",
+    "value": [1442, 2807, 4029, 5395, 6675, 7998, 9326, 10611],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・6・25・0・25・0・25・0f"
+    },
+    "source": "V-0638",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0922-03",
+    "recording": "0922",
+    "kind": "timing",
+    "use": "record",
+    "value": [1472, 4058, 6705, 9356],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0638",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0922-04",
+    "recording": "0922",
+    "source": "V-0638",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 1.1557,
+    "unit": "倍",
+    "description": "シン（3 枠目・AR・操作）だけが当たったフレームの BURST バーの段（1 ヒットの伸び）の平均の、フルバーストの終わりから 294f（5 秒）の間と、ほかの時の比",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "フルバーストの終わりは 0922-03（III のタイマーの 00.00）の 600f 後とし、窓は f2072〜2365・f4658〜4951・f7305〜7598・f9956〜10249。HUD の総ダメージの増分が 60,000 以下で前のフレームから続く増分（シンの 1 ヒット。SR の 1 ヒットは 150,000 を超える）のうち、SR の増分が前後 4f に無く、バーが前後 3f 読めて動かない（前の 3f と後の 3f の揺れの和が 0.3px 以下。被弾の赤い画面とフルバーストの終わりの表示を外す）、バーの端（1px 未満・111px 超）でないものを段とし、後の 3f の中央値から前の 3f の中央値を引いた。窓の中 79 個（窓ごとに 18・12・20・29 個。窓の始めの約 2 秒はバーが 0px のまま。C-0084）の平均 0.61px、ほか（フルバーストの間と、窓の後の 30f を除く）331 個の平均 0.528px。比の標準誤差は約 0.05 で、許容はその約 2 倍。バーの高さをそろえても（0〜40px）、窓の中の段は戦闘開始からの段より大きい。窓を 8f 後ろにずらしても比は 0.01 の内で変わらない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGaugeRatioAfterFullBurst",
+      "args": {
+        "slot": 3,
+        "frames": 294
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0922-05",
+    "recording": "0922",
+    "source": "V-0638",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "record",
+    "value": [7.97, 7.93],
+    "unit": "px",
+    "description": "SR（プロダクト08・アリス。AI）の 1 ヒットの BURST バーの段の中央値（フルバーストの終わりから 294f の間・ほかの時）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "HUD の総ダメージの増分が 60,000 を超えるフレームの、後の 3f の中央値から前の 3f の中央値を引いた（窓は 0922-04 と同じ。前後 3f の揺れの和が 0.6px 以下で、バーの端でないもの）。窓の中 9 個・ほか 31 個。2 つの SR の発が近いと 2 ヒットぶんの段（約 15px）になる。SR の 1 ヒット 56,000 は C-0084 の換算で約 7.6px"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "gauge",
+      "frames": [1472, 10250]
+    }
+  }
+]

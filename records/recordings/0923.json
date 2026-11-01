@@ -1,0 +1,46 @@
+{
+  "id": "0923",
+  "date": "2026-11-02",
+  "folder": "range",
+  "file": "20261102-0923_ar_sin_sr.mp4",
+  "original": "2026-11-02_00-24-04.mp4",
+  "durationSec": 202.6,
+  "frames": 12153,
+  "fps": 60,
+  "sizeMB": 245.4,
+  "sha256": "446d6725caac",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 401,
+      "name": "シン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0638 の撮影 SG1。プロダクト08（I・AI）・アリス（III・AI）・シン（操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-02T00:28+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

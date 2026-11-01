@@ -1615,6 +1615,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   stateStacksAtFullBurstEnds: { args: ['slot', 'state'], sim: stateStacksAtFullBurstEnds },
   fullBurstStackGainResidues: { args: ['slot', 'state', 'every'], sim: fullBurstStackGainResidues },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
+  // シンの S2 編（V-0638）: フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比
+  shotGaugeRatioAfterFullBurst: { args: ['slot', 'frames'], sim: shotGaugeRatioAfterFullBurst },
   // フラワー編（V-0483）: 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）
   timerGauge: {
     args: ['slot', 'n'],
@@ -1731,6 +1733,31 @@ function shotGauge(result: SimResult, ctx: MetricContext): number {
     .filter((g) => g.slotIndex === slotIndex && g.shotFrame === frame)
     .reduce((a, g) => a + g.energy, 0);
   return Math.round((energy / BURST_GAUGE_MAX) * 10_000) / 100;
+}
+
+/**
+ * シンの S2 編（V-0638）: 枠の 1 発のゲージ（同じ発の記録の合計）の平均を、フルバーストの終わりから frames の間（[終わり, 終わり + frames)）に
+ * 撃った発と、ほかの時（フルバーストの間とその後の frames を除く）に撃った発で比べた比（小数 4 桁）。録画では、その枠だけが当たった
+ * フレームの BURST バーの段の平均の比と比べる。どちらかに発が無ければ誤り
+ */
+function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const slotIndex = slotIndexOf(ctx);
+  const frames = Number(ctx.args.frames);
+  const windows = schedule.fullBurstWindows;
+  const perShot = new Map<number, number>();
+  for (const g of result.shotGauges)
+    if (g.slotIndex === slotIndex) perShot.set(g.shotFrame, (perShot.get(g.shotFrame) ?? 0) + g.energy);
+  const inside: number[] = [];
+  const outside: number[] = [];
+  for (const [f, energy] of perShot) {
+    if (windows.some((w) => w.end <= f && f < w.end + frames)) inside.push(energy);
+    else if (!windows.some((w) => w.start <= f && f < w.end)) outside.push(energy);
+  }
+  if (inside.length === 0 || outside.length === 0) throw new Error('フルバーストの後か、ほかの時の発が無い');
+  const mean = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
+  return Math.round((mean(inside) / mean(outside)) * 10_000) / 10_000;
 }
 
 /**
