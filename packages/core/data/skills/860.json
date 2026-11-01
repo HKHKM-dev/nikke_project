@@ -112,8 +112,8 @@
             "C-0815"
           ],
           "assumes": {
-            "ja": "命中の 48 回ごとに 1 回（命中はモデルの弾丸命中率で数える。撃った数で数える形とは見分けていない。C-0815）。コアの補正は乗らない。バーストゲージを溜めるかは確かめていない（モデルは溜めない）",
-            "en": "Once per 48 hits (hits counted with the model bullet hit rate; not yet distinguished from counting shots fired, C-0815). The core bonus does not apply. Whether it charges the Burst Gauge is unchecked (the model does not)"
+            "ja": "命中の 48 回ごとに 1 回（外れた発を数えない。命中はモデルの弾丸命中率の期待値で数える。C-0815）。コアの補正は乗らない。バーストゲージを溜めるかは確かめていない（モデルは溜めない）",
+            "en": "Once per 48 hits (missed shots do not count; hits counted with the model bullet hit rate expectation, C-0815). The core bonus does not apply. Whether it charges the Burst Gauge is unchecked (the model does not)"
           }
         }
       ]

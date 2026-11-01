@@ -49,7 +49,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false,
         "condition": "auto"
       },
@@ -70,7 +72,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false,
         "condition": "auto"
       },
@@ -78,19 +82,176 @@
         "abs": 10
       },
       "note": "補助。同じ 15 回の動画のフレーム（戦闘開始から）。的のジャンプの時刻（代表値）の録画とのずれが乗るので、見分けは本命で行う"
+    },
+    {
+      "id": "far-hits-a",
+      "model": "sim",
+      "metric": "skillHitNormalHits",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 34,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "読んだ後に足した（V-0616「読み方」）。35〜36 回目の倍率ダメージの、前の回からの通常攻撃の命中の数（0811-08・0812-09。HUD の読めない間の無い回）"
+    },
+    {
+      "id": "far-hits-b",
+      "model": "sim",
+      "metric": "skillHitNormalHits",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 37,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "読んだ後に足した（V-0616「読み方」）。38〜38 回目の倍率ダメージの、前の回からの通常攻撃の命中の数（0811-09。HUD の読めない間の無い回）"
+    },
+    {
+      "id": "far-hits-c",
+      "model": "sim",
+      "metric": "skillHitNormalHits",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 28,
+        "count": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "読んだ後に足した（V-0616「読み方」）。29〜31 回目の倍率ダメージの、前の回からの通常攻撃の命中の数（0812-08。HUD の読めない間の無い回）"
     }
   ],
   "predicted": {
     "at": "2026-11-01",
-    "commit": "896806761d8e45bf3daf30582a7e193537110714",
+    "commit": "c1683db474f213ef54c67e460c48ea84dbddc62a",
     "values": {
       "Hit": {
-        "far-shot-indices": [1300, 1352, 1404, 1456, 1508, 1560, 1612, 1664, 1717, 1769, 1821, 1873, 1925, 1977, 2026],
-        "far-video-frames": [4261, 4389, 4597, 4724, 4933, 5060, 5188, 5395, 5525, 5733, 5861, 6069, 6196, 6324, 6609]
+        "far-shot-indices": [
+          1300,
+          1352,
+          1404,
+          1456,
+          1508,
+          1560,
+          1612,
+          1664,
+          1717,
+          1769,
+          1821,
+          1873,
+          1925,
+          1977,
+          2026
+        ],
+        "far-video-frames": [
+          4261,
+          4389,
+          4597,
+          4724,
+          4933,
+          5060,
+          5188,
+          5395,
+          5525,
+          5733,
+          5861,
+          6069,
+          6196,
+          6324,
+          6609
+        ],
+        "far-hits-a": [
+          48.82952044996951,
+          47.90820874336631
+        ],
+        "far-hits-b": [
+          47.90820874336631
+        ],
+        "far-hits-c": [
+          47.90820874336631,
+          47.90820874336631,
+          47.90820874336631
+        ]
       },
       "Shot": {
-        "far-shot-indices": [1296, 1344, 1392, 1440, 1488, 1536, 1584, 1632, 1680, 1728, 1776, 1824, 1872, 1920, 1968],
-        "far-video-frames": [4251, 4369, 4568, 4685, 4803, 5001, 5119, 5317, 5434, 5552, 5750, 5868, 6067, 6184, 6302]
+        "far-shot-indices": [
+          1296,
+          1344,
+          1392,
+          1440,
+          1488,
+          1536,
+          1584,
+          1632,
+          1680,
+          1728,
+          1776,
+          1824,
+          1872,
+          1920,
+          1968
+        ],
+        "far-video-frames": [
+          4251,
+          4369,
+          4568,
+          4685,
+          4803,
+          5001,
+          5119,
+          5317,
+          5434,
+          5552,
+          5750,
+          5868,
+          6067,
+          6184,
+          6302
+        ],
+        "far-hits-a": [
+          44.222961916953516,
+          44.222961916953516
+        ],
+        "far-hits-b": [
+          44.222961916953516
+        ],
+        "far-hits-c": [
+          44.222961916953516,
+          44.222961916953516,
+          44.222961916953516
+        ]
       }
     }
   }

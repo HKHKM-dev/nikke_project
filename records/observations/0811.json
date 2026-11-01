@@ -208,5 +208,116 @@
       "slot": 1,
       "source": "skill"
     }
+  },
+  {
+    "id": "0811-07",
+    "recording": "0811",
+    "source": "V-0616",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": [1303, 1352, 1404, 1455, 1507, 1559, 1613, 1663, 1713, 1761, 1812, 1864, 1912, 1962, 2012],
+    "description": "千束の S2 の 48 回の倍率ダメージの 27〜41 回目が、千束の何発目の発で出たか（撃った数の累計。遠の区間（2 回目と 3 回目のジャンプの間）とその後）",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series --max 120・node tools/captures/hud.ts --mode jumps",
+      "note": "倍率ダメージの回は HUD の増分が 500,000 より大きいフレーム（戦闘開始 f828）。撃った数は、その回のフレームまでの照準の左の残弾の減りの累計: 撃ち切ったマガジン（最後の読みが 3 以下）は 120 発、ジャンプの間に捨てたマガジンは 120 − 最後の読み、いまのマガジンは 120 − その回のフレームまでの最後の読み（マガジンの中の誤読は最長の非増加列で落とす）。頭の 4 回は 48・96・144・192 で、5 回目は 239（マガジンの最後の発で 0 の表示が読めない）。許容 24 は、命中で数える形の外れの乱数の幅（遠の約 730 発、弾丸命中率約 0.92 の 2 項分布で当たりの数の標準偏差 約 7.4 を、撃った数にして約 8.0 発。その 3 倍）。撃った数で数える形（48 の倍数）なら幅は読みのずれだけ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 26,
+        "count": 15
+      },
+      "tolerance": {
+        "abs": 24
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0811-08",
+    "recording": "0811",
+    "source": "V-0616",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": [48, 48],
+    "description": "千束の S2 の 48 回の倍率ダメージの 35・36 回目の、前の回の次からその回まで（その回と同じフレームの通常攻撃を含む）の千束の通常攻撃の当たりの数（遠の区間）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "HUD の増分を 1 増分 1 ヒットで数える。間に読めないフレーム（gap > 1。約 20f の間で、何発かが 1 つの増分にまとまる）の無い回だけ。SMG の発は 2〜3f おきで、1 フレームに 2 発は重ならない。その回の増分は倍率ダメージと通常攻撃 1 発の和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitNormalHits",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 34,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0811-09",
+    "recording": "0811",
+    "source": "V-0616",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": [48],
+    "description": "千束の S2 の 48 回の倍率ダメージの 38 回目の、前の回の次からその回まで（その回と同じフレームの通常攻撃を含む）の千束の通常攻撃の当たりの数（遠の区間）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "HUD の増分を 1 増分 1 ヒットで数える。間に読めないフレーム（gap > 1。約 20f の間で、何発かが 1 つの増分にまとまる）の無い回だけ。SMG の発は 2〜3f おきで、1 フレームに 2 発は重ならない。その回の増分は倍率ダメージと通常攻撃 1 発の和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitNormalHits",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 37,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]

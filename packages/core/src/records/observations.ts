@@ -1506,6 +1506,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
+  // V-0616: 倍率ダメージの回の間の通常攻撃の命中の期待値の和（回数トリガーを命中で数えるか撃った数で数えるか）
+  skillHitNormalHits: { args: ['slot', 'skill'], sim: skillHitNormalHits },
   skillHitShotDelay: { args: ['slot', 'skill'], sim: skillHitShotDelay },
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
@@ -1945,6 +1947,25 @@ function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
     (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
   );
   return firstCount(hits, ctx, '発動').map((h) => shots.filter((f) => f <= h.frame).length);
+}
+
+/**
+ * V-0616: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の回ごとに、前の回の後からその回まで（その回と同じフレームの発を含む）の
+ * 枠の通常攻撃の命中の期待値の和（発ごとの弾丸命中率。1 回目は戦闘の始めから）。skip・count で回を絞る。録画では、その間の HUD の増分
+ * （1 増分 1 ヒット。読めない間の無い回だけ）の数と比べる。命中で数える回数トリガーなら、外れの多い区間でも N の前後になる
+ */
+function skillHitNormalHits(result: SimResult, ctx: MetricContext): number[] {
+  const log = slotOf(result.shots, ctx);
+  const frames = result.skillHits
+    .filter(
+      (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+    )
+    .map((h) => h.frame);
+  const sums = frames.map((frame, i) => {
+    const from = i === 0 ? Number.NEGATIVE_INFINITY : frames[i - 1]!;
+    return log.frames.reduce((sum, f, k) => (from < f && f <= frame ? sum + (log.hits?.[k] ?? 1) : sum), 0);
+  });
+  return firstCount(sums, ctx, '発動');
 }
 
 /**
