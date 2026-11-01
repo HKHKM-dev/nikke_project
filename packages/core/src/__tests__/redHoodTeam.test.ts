@@ -115,14 +115,17 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) =
     expect(cuts.every((x) => x.slotIndex === redHood)).toBe(true);
   });
 
-  it('converts the charge speed over 100% into charge damage only on the Red Wolf shots', () => {
+  it('converts the charge speed over 100% into charge damage, which happens on the Red Wolf shots', () => {
     const frames = plan.shots[redHood]!.frames;
+    let converted = 0;
     for (const g of result.slots[redHood]!.segments) {
       if (countShotsInRanges(frames, g.ranges) === 0) continue;
       const extra = chargeSpeedOverflowDamage(g.buffs);
-      if (g.buffs.weapon === null) expect(extra).toBe(0);
-      else expect(extra).toBeGreaterThan(0);
+      expect(extra).toBeCloseTo(Math.max(0, g.buffs.chargeSpeed - 1) * 2.4, 10);
+      if (extra > 0 && g.buffs.weapon !== null) converted += 1;
     }
+    // 窓の外の S1 の 10 スタック（38.1%）では超えない。レッドウルフの窓（III の 100.8%）がある編成では超える
+    expect(converted > 0).toBe(plan.schedule!.activations.some((a) => a.slotIndex === redHood && a.step === 'Step3'));
   });
 
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
@@ -134,14 +137,24 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) =
   });
 });
 
-describe('レッドフード単騎のチェーン（いまの状態機械: 同じチェーンで撃ち直さない。設計書 3 節の R2）', () => {
+describe('レッドフード単騎のチェーン（全段階の枠は同じチェーンで撃ち直す。設計書 7.1 節の論点 7・V-0639）', () => {
   const input = TEAMS['レッドフード単騎（撮影 A）']!.input;
   const activations = planTeamRun(input).schedule!.activations;
 
-  it('uses only I, comes back as soon as the gauge fills after the first CT cut, then waits for the 40 s CT', () => {
-    expect(activations.every((a) => a.step === 'Step1' && !a.startsFullBurst)).toBe(true);
-    const gaps = activations.slice(1).map((a, i) => a.frame - activations[i]!.frame);
-    expect(gaps[0]!).toBeLessThan(gameSecondsToFrames(40));
-    for (const gap of gaps.slice(1)) expect(gap).toBeGreaterThanOrEqual(gameSecondsToFrames(40));
+  it('uses I, II and III herself in the first chain and enters Full Burst', () => {
+    expect(activations.slice(0, 3).map((a) => [a.step, a.slotIndex])).toEqual([
+      ['Step1', 0],
+      ['Step2', 0],
+      ['Step3', 0],
+    ]);
+    expect(activations[2]!.startsFullBurst).toBe(true);
+  });
+
+  it('uses only I after the CT cuts are spent, every 40 s CT', () => {
+    const later = activations.slice(3);
+    expect(later.length).toBeGreaterThan(0);
+    expect(later.every((a) => a.step === 'Step1' && !a.startsFullBurst)).toBe(true);
+    const gaps = activations.slice(3).map((a, i) => a.frame - activations[i + 2]!.frame);
+    for (const gap of gaps) expect(gap).toBeGreaterThanOrEqual(gameSecondsToFrames(40));
   });
 });
