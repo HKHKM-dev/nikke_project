@@ -1,0 +1,129 @@
+[
+  {
+    "id": "0909-01",
+    "recording": "0909",
+    "kind": "hit",
+    "use": "compare",
+    "value": 233843,
+    "unit": "ダメージ",
+    "description": "シンの 1 回目のバーストのダメージ（非会心。II → III の替わり目の 104f 後・フルバーストの中）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0628",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0909-02",
+    "recording": "0909",
+    "kind": "hit",
+    "use": "compare",
+    "value": 233843,
+    "unit": "ダメージ",
+    "description": "シンの 2 回目のバーストのダメージ（非会心。II → III の替わり目の 82f 後・フルバーストの外（チェーンの III が出ない回））",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0628",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0909-03",
+    "recording": "0909",
+    "kind": "hit",
+    "use": "compare",
+    "value": 254171,
+    "unit": "ダメージ",
+    "description": "シンの 4 回目のバーストのダメージ（非会心。II → III の替わり目の 84f 後・フルバーストの外（チェーンの III が出ない回））",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0628",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0909-04",
+    "recording": "0909",
+    "kind": "hit",
+    "use": "record",
+    "value": [307881, 277766, 269901, 284445, 292310],
+    "unit": "ダメージ",
+    "description": "シンの 3・5・6・7・8 回目のバーストのダメージのフレームの増分（同じフレームにほかの味方のヒットが重なる。単独の値と比べない）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "モデルの非会心 254,170.57 を引いた残りは 53,710・23,595・15,730・30,274・38,139 で、ほかの味方の通常攻撃のヒットの重なりと見る"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0628",
+    "readAt": "2026-11-01"
+  }
+]
