@@ -673,6 +673,19 @@ export function isChargeFullTrigger(t: unknown): t is ChargeFullTrigger {
   return typeof t === 'object' && t !== null && 'chargeFull' in t;
 }
 
+/**
+ * マスト編（plan/design-mast.md 8 節の論点 7）: 「自分の HP が X% 以下である限り」。自分の HP の割合が閾値（description_value_NN の X%）以下に
+ * 下がったフレームに発火し、durationUntil: "selfHpAbove" で閾値を上回るフレームまで続く。HP の割合 = 枠の想定の割合 × (1 + Σ 最大HP▲ −
+ * Σ 最大HP のみ▲) ÷ (1 + Σ 最大HP▲)（Σ 最大HP▲ は最大HP のみ▲ も含む。plan/design-skill-stage6.md 2.4 節の式）で、そのフレームより前に
+ * 始まった件から求める（同じフレームに付いた最大HP のみ▲ は次のフレームから。論点 8）。1 パス目の件の一覧が追う（skills/holders.ts）ので、
+ * timed にだけ書ける。回復で現在の HP が戻る分は扱わない
+ */
+export type SelfHpAtMostTrigger = { selfHpAtMostRef: number };
+
+export function isSelfHpAtMostTrigger(t: unknown): t is SelfHpAtMostTrigger {
+  return typeof t === 'object' && t !== null && 'selfHpAtMostRef' in t;
+}
+
 /** JSON に書くトリガー。文字列は BuffTrigger、オブジェクトは回数トリガーか時間の周期のトリガー（ペルソナ編: 効果名のトリガー） */
 export type EffectTrigger =
   | BuffTrigger
@@ -689,6 +702,8 @@ export type EffectTrigger =
   // 2 段目の段 14 の PR 2: { chargeTick }・{ chargeFull }（timed・状態の付与だけが受ける。parseChargeTrigger）
   | ChargeTickTrigger
   | ChargeFullTrigger
+  // マスト編: { selfHpAtMostRef }（timed だけが受ける。parseSelfHpAtMostTrigger）
+  | SelfHpAtMostTrigger
   // 2 段目の段 13 の PR 1: { counterFull }（damage・dot・counterChange だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger;
 
@@ -829,10 +844,17 @@ export type Amplifies = { skill: SkillSlot; percent: number };
  * fullBurstEnd と違い 1 パス目で窓を追う stat とスタックにも書ける。
  * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: reloadEnd = 持ち主（自分）のリロードが最大装弾数まで込め終わった
  * フレームまで（「最大弾数リロード完了時に解除」）。窓の終わりは 1 パス目の射撃の列（ShotLog.reloadEnds）から作るので、1 パス目で窓を
- * 追う stat にも書ける。timed の対象が自分のときだけ（スタック・状態の付与には書けない）
+ * 追う stat にも書ける。timed の対象が自分のときだけ（スタック・状態の付与には書けない）。
+ * マスト編（plan/design-mast.md 8 節）: selfHpAbove = 発動者の HP の割合が閾値を上回るフレームまで（きっかけ { selfHpAtMostRef } とだけ組む。
+ * timed だけ。順位の対象 topAttack にも書ける）
  */
-export type DurationUntil = 'fullBurstEnd' | 'battleEnd' | 'reloadEnd';
-export const DURATION_UNTILS = ['fullBurstEnd', 'battleEnd', 'reloadEnd'] as const satisfies readonly DurationUntil[];
+export type DurationUntil = 'fullBurstEnd' | 'battleEnd' | 'reloadEnd' | 'selfHpAbove';
+export const DURATION_UNTILS = [
+  'fullBurstEnd',
+  'battleEnd',
+  'reloadEnd',
+  'selfHpAbove',
+] as const satisfies readonly DurationUntil[];
 
 /**
  * 発火の条件。名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）で、timed・付与・damage を 1 つの型にした。
@@ -2743,6 +2765,7 @@ function parseTimedFields(
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
     parseChargeTrigger(v.trigger, `${path}.trigger`) ??
     (stat !== undefined ? parseCoverHealedTrigger(v.trigger, `${path}.trigger`) : undefined) ??
+    (stat !== undefined ? parseSelfHpAtMostTrigger(v.trigger, `${path}.trigger`) : undefined) ??
     parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance, false, false, true);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
@@ -2823,6 +2846,9 @@ function parseTimedFields(
     }
   }
   Object.assign(effect, parseTimedDuration(v, stat, target, path));
+  // マスト編（plan/design-mast.md 8 節）: HP の割合の窓は、きっかけと維持を組で書く
+  if (isSelfHpAtMostTrigger(trigger) !== (effect.durationUntil === 'selfHpAbove'))
+    fail(path, 'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" (and only with it)');
   // Stage 11 モダニア: 効果のあるスタック
   if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
     fail(path, 'at most one of maxStacks and maxStacksRef');
@@ -3170,6 +3196,13 @@ function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined 
 }
 
 /** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
+/** マスト編（plan/design-mast.md 8 節）: { selfHpAtMostRef: N }。それ以外の形なら undefined（timed だけが読む） */
+function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTrigger | undefined {
+  if (!isRecord(v) || v.selfHpAtMostRef === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'selfHpAtMostRef') fail(`${path}.${key}`, 'unknown field');
+  return { selfHpAtMostRef: parseRef(v.selfHpAtMostRef, `${path}.selfHpAtMostRef`) };
+}
+
 function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigger | undefined {
   if (!isRecord(v) || v.coverHealed === undefined) return undefined;
   for (const key of Object.keys(v)) if (key !== 'coverHealed') fail(`${path}.${key}`, 'unknown field');
@@ -3441,7 +3474,11 @@ function parseTimedDuration(
         `a duration until an event is not supported for "${stat}" (its window is tracked inside the first pass)`,
       );
     }
-    if (target === 'topAttack') fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
+    // マスト編: HP の割合の窓は、窓の始まりの順位で対象を決めて窓の終わりまで続く
+    if (target === 'topAttack' && until !== 'selfHpAbove')
+      fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
+    if (until === 'selfHpAbove' && (stat === undefined || isFirstPassTrackedStat(stat) || isFlagStat(stat)))
+      fail(`${path}.durationUntil`, 'a duration until the HP rises is only supported for timed effects of a value not tracked in the first pass');
     // シンデレラ S1 編: リロードの込め終わりは持ち主の射撃の列にある。使い手は自分にだけ付ける（timed の自分）
     if (until === 'reloadEnd' && (stat === undefined || target !== 'self')) {
       fail(`${path}.durationUntil`, 'a duration until the reload ends is only supported for timed effects on "self"');

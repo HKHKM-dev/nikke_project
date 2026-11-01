@@ -107,6 +107,28 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, mast }) => {
     expect(late.every((h) => h.stacks === 50)).toBe(true);
   });
 
+  it('gives the HP 70% or lower Critical Damage up from the frame after the max-HP-only up starts, until it ends', () => {
+    const tracksOf = (stat: string, kind: 'burstUse' | 'hp') =>
+      plan.history.tracks.filter(
+        (t) =>
+          t.sourceSlotIndex === mast &&
+          t.origin.kind === 'timed' &&
+          t.origin.effect.stat === stat &&
+          (kind === 'burstUse') === (t.origin.effect.trigger === 'burstUse'),
+      );
+    const own = (stat: string, kind: 'burstUse' | 'hp') => tracksOf(stat, kind).find((t) => t.holder === mast)!.items;
+    const maxHpOnly = own('maxHpOnly', 'burstUse');
+    const hpCrit = own('critDamage', 'hp');
+    expect(hpCrit).toEqual(maxHpOnly.map((w) => ({ start: w.start + 1, end: w.end })));
+    // 自分を除く最終攻撃力が最も高い味方（窓の始まりの順位で 2 機まで）にも、同じ窓で付く
+    const others = tracksOf('critDamage', 'hp').filter((t) => t.holder !== mast);
+    const allies = input.slots.length - 1;
+    for (const w of hpCrit) {
+      const holders = others.filter((t) => t.items.some((it) => it.start === w.start && it.end === w.end));
+      expect(holders.length).toBe(Math.min(2, allies));
+    }
+  });
+
   it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
     input.slots.forEach((_, i) => {
       const frames = plan.shots[i]!.frames;

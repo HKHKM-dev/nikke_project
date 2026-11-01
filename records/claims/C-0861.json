@@ -1,0 +1,15 @@
+{
+  "id": "C-0861",
+  "text": "マストのバーストのクリティカルダメージ▲（25.19%。Lv10）は、バーストと同じフレームから 7 秒、自分と、自分を除く最終攻撃力が最も高い味方に付き、同じフレームの暴風の 1 回目の tick にも乗る",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0896-01`・`0897-01`・`0896-07`（バーストと同じフレームの暴風の 1 回目の tick の会心は、会心の項 0.5 + 0.2519 でモデルと 1 未満。窓の中のリターとマストの会心の発の和は、2 人とも同じ会心の項）。V-0623",
+  "model": "反映（data/skills/350.json の burst の effects[0]・effects[1]）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": ["data/skills/350.json の burst の effects[0]", "data/skills/350.json の burst の effects[1]"]
+  },
+  "decidedOn": []
+}

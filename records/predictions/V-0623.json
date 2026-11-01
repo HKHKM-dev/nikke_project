@@ -493,11 +493,107 @@
         }
       ],
       "note": "撮影 B。同じ比を、リター（最終攻撃力が最も高い味方として、マストのバーストのクリティカルダメージ▲を受ける）で"
+    },
+    {
+      "id": "B-read-n2",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "読んだ後に足した（録画で会心しなかった tick の番号に合わせ、観測値と結び付けるため）。1 回目のバーストの暴風の 3 回目の tick（会心なし）"
+    },
+    {
+      "id": "B-read-n4",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 4,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "読んだ後に足した（録画で会心しなかった tick の番号に合わせ、観測値と結び付けるため）。1 回目のバーストの暴風の 5 回目の tick（会心なし）"
+    },
+    {
+      "id": "B-read-n5",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 5,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "読んだ後に足した（録画で会心しなかった tick の番号に合わせ、観測値と結び付けるため）。1 回目のバーストの暴風の 6 回目の tick（会心なし）"
     }
   ],
   "predicted": {
     "at": "2026-11-01",
-    "commit": "34b942011f913eb09f0d4af4ba6bff64f41d9c0c",
+    "commit": "50b16176229e151a1bc272b876812c8569a770f5",
     "values": {
       "H0": {
         "A-before": 11329.13925,
@@ -510,9 +606,12 @@
         "B-storm-6": 225830.49999999997,
         "A-crit-10s": 0.38559999999999994,
         "A-crit-40s": 0.15,
-        "B-critdmg-mast-in": 1.578384615384615,
+        "B-critdmg-mast-in": 1.9702307692307688,
         "B-critdmg-mast-out": 1.3846153846153846,
-        "B-critdmg-liter-in": 1.578384615384615
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 374879.75999999995,
+        "B-read-n4": 374879.75999999995,
+        "B-read-n5": 225830.49999999997
       },
       "H1": {
         "A-before": 11329.13925,
@@ -525,9 +624,12 @@
         "B-storm-6": 225819.19999999995,
         "A-crit-10s": 0.38559999999999994,
         "A-crit-40s": 0.15,
-        "B-critdmg-mast-in": 1.578384615384615,
+        "B-critdmg-mast-in": 1.9702307692307686,
         "B-critdmg-mast-out": 1.3846153846153846,
-        "B-critdmg-liter-in": 1.578384615384615
+        "B-critdmg-liter-in": 1.9702307692307686,
+        "B-read-n2": 374868.45999999996,
+        "B-read-n4": 374868.45999999996,
+        "B-read-n5": 225819.19999999995
       },
       "H2": {
         "A-before": 11329.13925,
@@ -540,9 +642,12 @@
         "B-storm-6": 27099.66,
         "A-crit-10s": 0.38559999999999994,
         "A-crit-40s": 0.15,
-        "B-critdmg-mast-in": 1.578384615384615,
+        "B-critdmg-mast-in": 1.9702307692307688,
         "B-critdmg-mast-out": 1.3846153846153846,
-        "B-critdmg-liter-in": 1.578384615384615
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 44985.5712,
+        "B-read-n4": 44985.5712,
+        "B-read-n5": 27099.66
       },
       "H3": {
         "A-before": 11329.13925,
@@ -555,9 +660,12 @@
         "B-storm-6": 22583.05,
         "A-crit-10s": 0.38559999999999994,
         "A-crit-40s": 0.15,
-        "B-critdmg-mast-in": 1.578384615384615,
+        "B-critdmg-mast-in": 1.9702307692307688,
         "B-critdmg-mast-out": 1.3846153846153846,
-        "B-critdmg-liter-in": 1.578384615384615
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 104966.33279999999,
+        "B-read-n4": 82473.54719999999,
+        "B-read-n5": 27099.66
       },
       "H4": {
         "A-before": 11329.13925,
@@ -570,9 +678,12 @@
         "B-storm-6": 225830.49999999997,
         "A-crit-10s": 0.38559999999999994,
         "A-crit-40s": 0.15,
-        "B-critdmg-mast-in": 1.578384615384615,
+        "B-critdmg-mast-in": 1.9702307692307688,
         "B-critdmg-mast-out": 1.3846153846153846,
-        "B-critdmg-liter-in": 1.578384615384615
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 374879.75999999995,
+        "B-read-n4": 374879.75999999995,
+        "B-read-n5": 225830.49999999997
       }
     }
   }

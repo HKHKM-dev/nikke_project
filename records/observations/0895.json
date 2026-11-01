@@ -1,0 +1,163 @@
+[
+  {
+    "id": "0895-01",
+    "recording": "0895",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11329,
+    "description": "撃ち始め（最初の 2 回の会心の前。803〜806f）のマストの会心なし・コアなし・距離ボーナスありの 1 ヒット（敵の防御力 100）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、マストの 1 ヒット = (99,925 − 防御力) × 8.73% × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)（防御力は 0 か 100）の格子に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0895-02",
+    "recording": "0895",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 11340,
+    "description": "2 回目の会心の次の発（808f）からの、マストの会心なし・コアなし・距離ボーナスありの 1 ヒット（敵の防御力 0）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、マストの 1 ヒット = (99,925 − 防御力) × 8.73% × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)（防御力は 0 か 100）の格子に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0895-03",
+    "recording": "0895",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.3614,
+    "description": "最初の発から 1,800f（約 30 秒）の、マストの会心の発の割合（193 / 534。S2 のクリティカル確率▲の中）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、マストの 1 ヒット = (99,925 − 防御力) × 8.73% × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)（防御力は 0 か 100）の格子に当てた（V-0623「読み方」）。会心の割合は、格子に乗った発のうち会心の発の割合"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0895-04",
+    "recording": "0895",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.1487,
+    "description": "最初の発から 1,800〜3,600f の、マストの会心の発の割合（73 / 491。S2 の▲の切れた後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、マストの 1 ヒット = (99,925 − 防御力) × 8.73% × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)（防御力は 0 か 100）の格子に当てた（V-0623「読み方」）。会心の割合は、格子に乗った発のうち会心の発の割合"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 2400
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0895-05",
+    "recording": "0895",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "record",
+    "value": [179, 178, 183, 193],
+    "unit": "f",
+    "description": "射撃の途中で敵の防御力が 100 に戻った発（6,215・7,297・8,530・4,946f）の、最後の海風の付与（その前の会心 2 回目の発）からのフレーム数。どれも約 3 秒で、付与のたびに全スタックの維持を数え直す形（all）と合う",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、マストの 1 ヒット = (99,925 − 防御力) × 8.73% × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)（防御力は 0 か 100）の格子に当てた（V-0623「読み方」）。防御力 100 → 0 に変わる直前の会心で付いたとみて数え直し、その後は会心 2 回ごとに付くとみた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]
