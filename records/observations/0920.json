@@ -1,0 +1,98 @@
+[
+  {
+    "id": "0920-01",
+    "recording": "0920",
+    "source": "V-0637",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": 250,
+    "unit": "ヒット",
+    "description": "シン（AR・操作・オート射撃 ON）単騎で、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）ヒットの番号",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "最初のヒットは f778。バーが消えたのは f2316 で、そのフレームのヒットが 250 番目。マガジンは 1〜60・61〜120・121〜179 番目（3 マガジン目の f1567 の発は的に当たらず、増分の間が 10f）・180〜239 番目と、240 番目から。f1929〜1948 と f2291〜2311 は被弾の赤い画面で HUD が読めず、その後の増分 56,680・78,480 を 1 ヒットの格子（14,170・19,620・25,070・30,520）の 4 つの和として数えた（間の発の数 4 と合う）。f2288〜2315 は被弾の赤い画面でバーの読みが落ちるが、バーは消えていない（画で確かめた）。外れた発は数えない（総ダメージが増えない）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [
+        778,
+        2316
+      ]
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "0920-02",
+    "recording": "0920",
+    "source": "V-0637",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "record",
+    "value": [
+      0.03,
+      -0.03,
+      0.02,
+      -0.02
+    ],
+    "unit": "px",
+    "description": "シン単騎で、1〜4 回目のマガジンの最後の弾（S1 の挑発が付く発。f1068・1440・1812・2184）の後のリロードの間の、BURST バーの差（端数つきの px。最後の弾の 1〜5f 後の中央値から、次のマガジンの最初のヒットの前 6f の中央値まで）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "次のマガジンの最初のヒットは f1150・1522・1894・2266。この間に HUD の総ダメージの増分は無い。挑発を付けたときに射手の 4,000 を溜めれば約 0.5px の段差が出る（0920-03 の 1 ヒットの伸び）。4 回目の後のバーは約 112px で、113px の上の端の手前"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [
+        1068,
+        2266
+      ]
+    }
+  },
+  {
+    "id": "0920-03",
+    "recording": "0920",
+    "source": "V-0637",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "record",
+    "value": [
+      0.56,
+      0.54,
+      0.52,
+      0.46
+    ],
+    "unit": "px",
+    "description": "シン単騎で、2〜5 回目のマガジンの最初のヒット（f1150・1522・1894・2266）の BURST バーの伸び（端数つきの px。0920-02 の見え方の物差し）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "ヒットの前 6f の中央値と、ヒットの 1〜3f 後の中央値の差。AR の 1 ヒット 4,000（0.4%）は C-0084 の換算で約 0.54px"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge",
+      "frames": [
+        1150,
+        2266
+      ]
+    }
+  }
+]
