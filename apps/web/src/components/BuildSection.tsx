@@ -134,62 +134,64 @@ export function BuildSection({
                   onCommit={(level) => gear && setGear(part, { ...gear, level })}
                 />
               </span>
-              {gear?.type === 'OL' && (
-                <span className="ol-lines">
-                  {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
-                    const lines = gear.overload ?? [];
-                    const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
-                    return (
-                      <span className="gear-inputs" key={i}>
-                        <select
-                          value={line?.option ?? ''}
-                          disabled={disabled || !masters}
-                          onChange={(e) => {
-                            const option = e.target.value as OverloadOption | '';
-                            setOverload(
-                              part,
-                              gear,
-                              i,
-                              option === '' ? null : { option, level: line?.level ?? OVERLOAD_LEVEL_MIN },
-                            );
-                          }}
-                        >
-                          <option value="">オプション {i + 1}: なし</option>
-                          {(masters?.overload.options ?? []).map((o) => (
-                            <option key={o.option} value={o.option}>
-                              {o.name.ja}
+              {/* OL のオプションは、装備が OL でないときも欄だけ出す（選べない。欄の並びを変えない） */}
+              <span className="ol-lines">
+                {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
+                  const isOverload = gear?.type === 'OL';
+                  const lines = (isOverload && gear.overload) || [];
+                  const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
+                  return (
+                    <span className="gear-inputs" key={i}>
+                      <select
+                        value={line?.option ?? ''}
+                        disabled={disabled || !masters || !isOverload}
+                        onChange={(e) => {
+                          if (!isOverload) return;
+                          const option = e.target.value as OverloadOption | '';
+                          setOverload(
+                            part,
+                            gear,
+                            i,
+                            option === '' ? null : { option, level: line?.level ?? OVERLOAD_LEVEL_MIN },
+                          );
+                        }}
+                      >
+                        <option value="">オプション {i + 1}: なし</option>
+                        {(masters?.overload.options ?? []).map((o) => (
+                          <option key={o.option} value={o.option}>
+                            {o.name.ja}
+                          </option>
+                        ))}
+                      </select>
+                      {/* 2026-10-31: オーナーの指示で、OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
+                      <select
+                        aria-label={`オプション ${i + 1} の上昇値`}
+                        value={line?.level ?? OVERLOAD_LEVEL_MIN}
+                        disabled={disabled || line === undefined}
+                        onChange={(e) =>
+                          isOverload &&
+                          line &&
+                          setOverload(part, gear, i, {
+                            ...line,
+                            level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX),
+                          })
+                        }
+                      >
+                        {(() => {
+                          const values =
+                            line && masters?.overload.options.find((o) => o.option === line.option)?.values;
+                          if (!values) return <option value={OVERLOAD_LEVEL_MIN}>—</option>;
+                          return values.map((v, lv) => (
+                            <option key={lv} value={lv + OVERLOAD_LEVEL_MIN}>
+                              {v.toFixed(2)}%
                             </option>
-                          ))}
-                        </select>
-                        {/* 2026-10-31: オーナーの指示で、OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
-                        <select
-                          aria-label={`オプション ${i + 1} の上昇値`}
-                          value={line?.level ?? OVERLOAD_LEVEL_MIN}
-                          disabled={disabled || line === undefined}
-                          onChange={(e) =>
-                            line &&
-                            setOverload(part, gear, i, {
-                              ...line,
-                              level: clampInt(Number(e.target.value), OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX),
-                            })
-                          }
-                        >
-                          {(() => {
-                            const values =
-                              line && masters?.overload.options.find((o) => o.option === line.option)?.values;
-                            if (!values) return <option value={OVERLOAD_LEVEL_MIN}>—</option>;
-                            return values.map((v, lv) => (
-                              <option key={lv} value={lv + OVERLOAD_LEVEL_MIN}>
-                                {v.toFixed(2)}%
-                              </option>
-                            ));
-                          })()}
-                        </select>
-                      </span>
-                    );
-                  })}
-                </span>
-              )}
+                          ));
+                        })()}
+                      </select>
+                    </span>
+                  );
+                })}
+              </span>
             </div>
           );
         })}
