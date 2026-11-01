@@ -22,6 +22,8 @@ const CORPORATION_LABEL: Record<ConsoleCorporation, string> = {
 
 type Props = {
   element: Element | null;
+  /** 敵の防御力（詳細設定）。的の動き（ジャンプ・的の条件の表）は射撃場の的のまま */
+  defence: number;
   fixedSpec: boolean;
   /** 2026-10-31: コンソール（リサイクルルームの研究 Lv）。スペック固定の間は使わない */
   consoleInput: ConsoleInput;
@@ -36,11 +38,12 @@ type Props = {
 /**
  * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（スペック固定（ユニオン射撃場の固定値）・シンクロレベル・リサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
- * 敵は射撃場の的だけで、選べるのは属性（防御力・コアありの欄は消した）。
- * 属性の右の「詳細設定」のポップアップで、3 分モード（的のジャンプ）・戦闘時間を設定する（操作キャラ・バーストを使うかはスロットの詳細設定）
+ * 敵は射撃場の的だけで、選べるのは属性（コアありの欄は消した）。
+ * 属性の右の「詳細設定」のポップアップで、敵防御力・ジャンプ移動（3 分モードの的のジャンプ）・戦闘時間を設定する（操作キャラ・バーストを使うかはスロットの詳細設定）
  */
 export function TeamSettingsForm({
   element,
+  defence,
   fixedSpec,
   consoleInput,
   synchroLevel,
@@ -74,6 +77,7 @@ export function TeamSettingsForm({
                   type: 'setEnemy',
                   enemy: {
                     ...SHOOTING_RANGE_ENEMY,
+                    defence,
                     element: e.target.value === '' ? null : (e.target.value as Element),
                   },
                 })
@@ -89,13 +93,23 @@ export function TeamSettingsForm({
           </label>
           <Popover button="詳細設定" buttonClassName="advanced-settings-button" label="詳細設定" align="left">
             <div className="advanced-settings">
+              <label className="field">
+                <span>敵防御力</span>
+                <IntInput
+                  value={defence}
+                  min={0}
+                  onCommit={(d) =>
+                    dispatch({ type: 'setEnemy', enemy: { ...SHOOTING_RANGE_ENEMY, element, defence: d } })
+                  }
+                />
+              </label>
               <label className="field checkbox">
                 <input
                   type="checkbox"
                   checked={rangeJump}
                   onChange={(e) => dispatch({ type: 'setRangeJump', rangeJump: e.target.checked })}
                 />
-                <span>3 分モード（的のジャンプ）</span>
+                <span>ジャンプ移動</span>
               </label>
               <label className="field">
                 <span>戦闘時間（秒）</span>

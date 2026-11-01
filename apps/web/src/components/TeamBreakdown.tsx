@@ -21,8 +21,6 @@ type Props = {
    * （計算中は result が前の入力の結果なので、いまの入力と混ぜるとキャラと宝物の段階が食い違う）
    */
   view: CalcView;
-  /** (B) の段 B-2: 入力が変わって計算し直している間。result は前の入力の結果 */
-  computing: boolean;
   /** ニケは選ばれているがデータ読み込み中で合計に入っていない枠の数 */
   loadingCount: number;
   /** スキル定義を読み込み中で、まだバフなしで計算している枠の数 */
@@ -40,7 +38,7 @@ function triggerRange(slot: TeamSlotResult, pick: (t: TriggerDamage) => number, 
   return max ? Math.max(...values) : Math.min(...values);
 }
 
-export function TeamBreakdown({ result, view, computing, loadingCount, skillsLoadingCount, detailed }: Props) {
+export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, detailed }: Props) {
   const filled = result.slots.filter((s): s is TeamSlotResult => s !== null);
   const slotNames = view.slots.map((s) => s.character?.name.ja);
   const teamCharacters = view.slots.map((s) => s.character ?? null);
@@ -83,20 +81,11 @@ export function TeamBreakdown({ result, view, computing, loadingCount, skillsLoa
     )
     .join('・');
 
+  // 総ダメージは App.tsx の「編成ダメージ」の枠。ここは読み込み中の案内と詳細だけで、どちらも無ければ枠を出さない
+  if (loadingCount === 0 && skillsLoadingCount === 0 && !(detailed && filled.length > 0)) return null;
+
   return (
     <section className="panel result breakdown-panel">
-      <div className="team-total-bar" data-computing={computing}>
-        <span className="team-total-label">
-          総ダメージ
-          {computing && (
-            <span className="team-total-computing" role="status">
-              計算中…
-            </span>
-          )}
-        </span>
-        <span className="team-total-val">{formatNumber(result.totalDamage)}</span>
-      </div>
-
       {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
       {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
 

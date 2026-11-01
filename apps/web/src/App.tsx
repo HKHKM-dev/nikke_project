@@ -8,6 +8,7 @@ import {
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { buildCalcView, slotResultFor } from './calcView.ts';
+import { DamageTotalPanel } from './components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
@@ -25,15 +26,21 @@ import {
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { useDetailed } from './detailed.ts';
+import { formatNumber } from './format.ts';
 import { readStorage, writeStorage } from './storage.ts';
 import {
   INITIAL_PARTIES,
   PARTIES_STORAGE_KEY,
   parseParties,
+  partyLabel,
   serializeParties,
+  sharedSettingsOf,
   switchParty,
   type PartiesState,
+  type SharedSettings,
 } from './parties.ts';
+import { partyInputs, partyTotals } from './partyTotals.ts';
+import { useBatchComputation } from './useBatchComputation.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 
@@ -94,7 +101,11 @@ export function App() {
     dispatch({ type: 'replace', state: next.team });
   };
 
-  const resourceIds = team.slots.map((s) => s.resourceId);
+  // ほかの編成のキャラも読む（全編成の合計ダメージ）
+  const resourceIds = useMemo(
+    () => [...team.slots, ...parties.parties.flatMap((p) => p?.slots ?? [])].map((s) => s.resourceId),
+    [team.slots, parties],
+  );
   const cache = useCharacterCache(resourceIds, BASE_URL);
   const skills = useSkillDefinitions(resourceIds, BASE_URL);
 
@@ -128,6 +139,26 @@ export function App() {
   ).length;
   const skillsLoadingCount = skillsStatuses.filter((s) => s?.kind === 'loading').length;
 
+  // 全編成の合計ダメージ（partyTotals.ts）。ほかの編成は、共通の設定かほかの編成の中身が変わったときだけ計算し直す
+  // （共通の設定は文字列にして比べ、選んでいる編成のスロットを変えても作り直さない）
+  const sharedJson = JSON.stringify(sharedSettingsOf(team));
+  const allPartyInputs = useMemo(
+    () =>
+      partyInputs(parties, JSON.parse(sharedJson) as SharedSettings, {
+        characters: cache.characters,
+        characterErrors: cache.errors,
+        skills,
+        masters,
+        enemyMaster,
+      }),
+    [parties, sharedJson, cache.characters, cache.errors, skills, masters, enemyMaster],
+  );
+  const batchInputs = useMemo(() => allPartyInputs.map((p) => (p.kind === 'ready' ? p.input : null)), [allPartyInputs]);
+  const batch = useBatchComputation(batchInputs);
+  const totals = partyTotals(allPartyInputs, shown?.computed ?? null, batch.results);
+  const totalsPending =
+    computing || batch.computing || shown === null || allPartyInputs.some((p) => p.kind === 'loading');
+
   // Stage 14: 未対応の一覧の材料（育成の注記は calcView が未対応だけにしたもの。スペック固定では効果層が空）
   const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
     () =>
@@ -159,6 +190,7 @@ export function App() {
         <>
           <TeamSettingsForm
             element={team.enemy.element}
+            defence={team.enemy.defence}
             fixedSpec={team.fixedSpec}
             consoleInput={team.console}
             synchroLevel={team.synchroLevel}
@@ -199,25 +231,42 @@ export function App() {
             resetKeys={[shown, detailed]}
             fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
           >
-            {shown === null ? (
-              <section className="panel result breakdown-panel">
-                <p className="hint">計算中…</p>
-              </section>
-            ) : shown.computed.ok ? (
+            <DamageTotalPanel
+              title="編成ダメージ"
+              label={partyLabel(parties.active)}
+              value={shown?.computed.ok ? shown.computed.result.totalDamage : null}
+              computing={computing || shown === null}
+            />
+            {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
+            {shown?.computed.ok && (
               <TeamBreakdown
                 result={shown.computed.result}
                 view={shown.source}
-                computing={computing}
                 loadingCount={loadingCount}
                 skillsLoadingCount={skillsLoadingCount}
                 detailed={detailed}
               />
-            ) : (
-              <p className="error">
-                {shown.computed.error}
-                {computing && '（計算中…）'}
-              </p>
             )}
+            <DamageTotalPanel title="合計ダメージ" label="全編成" value={totals.total} computing={totalsPending}>
+              <ul className="party-totals">
+                {totals.parties.map((p, i) => (
+                  <li key={i} data-active={p.kind === 'active'}>
+                    <span>{partyLabel(i)}</span>
+                    <span className="party-total-val" title={p.error}>
+                      {p.kind === 'empty'
+                        ? '—'
+                        : p.kind === 'loading'
+                          ? '読み込み中'
+                          : p.total === null
+                            ? p.error === undefined
+                              ? '計算中'
+                              : 'エラー'
+                            : formatNumber(p.total)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </DamageTotalPanel>
             <NotesSummary
               slots={summarySlots}
               enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}

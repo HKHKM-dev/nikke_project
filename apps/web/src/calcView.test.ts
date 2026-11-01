@@ -155,7 +155,7 @@ describe('buildCalcView: slot advanced settings', () => {
 });
 
 describe('buildCalcView: team settings', () => {
-  it('uses the shooting-range enemy with the saved element only, always bursts, and keeps the advanced settings', () => {
+  it('uses the shooting-range enemy with the saved element and defence, always bursts, and keeps the advanced settings', () => {
     let s = teamReducer(initialTeamState(), {
       type: 'setEnemy',
       enemy: { defence: 140, element: 'Fire', hasCore: false },
@@ -164,11 +164,20 @@ describe('buildCalcView: team settings', () => {
     s = teamReducer(s, { type: 'setBurst', burst: false });
     s = teamReducer(s, { type: 'setControlledSlot', controlledSlot: 0 });
     const { input } = buildCalcView(s, deps());
-    expect(input.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire' });
+    expect(input.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire', defence: 140 });
     expect(input.durationSeconds).toBe(60);
     expect(input.burst).toBe(true);
     expect(input.controlledSlot).toBe(0);
-    expect(s.enemy.defence).toBe(140);
+  });
+
+  it('keeps the target conditions and the jumps of the shooting-range target when the defence is changed', () => {
+    const base = buildCalcView(initialTeamState(), deps({ enemyMaster })).input.enemy;
+    const s = teamReducer(initialTeamState(), {
+      type: 'setEnemy',
+      enemy: { ...SHOOTING_RANGE_ENEMY, defence: 500 },
+    });
+    const changed = buildCalcView(s, deps({ enemyMaster })).input.enemy;
+    expect(changed).toEqual({ ...base, defence: 500 });
   });
 
   it('adds the jumps of the shooting-range target only while the 3-minute mode is on', () => {

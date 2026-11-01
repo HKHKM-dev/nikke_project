@@ -4,7 +4,7 @@
 // 画面から消した入力は、ここで既定値にする。保存データの値は消さずに残すが、計算と画面の値には使わない（欄が無いので直せないため）。
 // - スロット: 射撃条件（自動。撃たないスロットは手入力の弾丸命中率 0。モデルに撃たないスロットが無いため）・想定 HP（満タン）・
 //   その他攻撃加算（0）。リサイクルルームは編成共通のコンソールから取り、LV は編成共通のシンクロレベル。好感度はキャラごとの上限に収める
-// - 編成: 敵（射撃場の的にし、属性だけ残す）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。
+// - 編成: 敵（射撃場の的にし、属性と防御力だけ残す。的の動き（出来事・的の条件の表・着地点）は射撃場の的のまま）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。
 //   3 分モード（rangeJump）は、その的のプリセットの出来事のセットを入れる（保存データの enemyEventSets は使わない）
 import {
   EMPTY_BUILD,
@@ -218,7 +218,7 @@ export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
     fixedSpec: team.fixedSpec,
     input: {
       slots: slots.map((s) => s.input),
-      enemy: enemyForCalc(enemy, deps.enemyMaster, eventSets, team.durationSeconds),
+      enemy: { ...enemyForCalc(enemy, deps.enemyMaster, eventSets, team.durationSeconds), defence: team.enemy.defence },
       durationSeconds: team.durationSeconds,
       burst: DEFAULT_BURST,
       ...(noBurstSlots.length === 0 ? {} : { noBurstSlots }),
