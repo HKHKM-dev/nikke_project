@@ -252,7 +252,21 @@ export type HolderListsOptions = {
    * 作り直す判定（readItems）が、件を作る関数の読む入力を落としていないことを確かめる。フレームごとに全部の件の列を読む
    */
   verifyItems?: boolean;
+  /**
+   * 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節の案 1）: leadFrames のある付与の、前の回で発火した発の
+   * フレーム（leadShotKey ごと）。渡された発は、発 − leadFrames のフレームで件を登録し、発のフレームでは足さない（frame/firstPass.ts の
+   * runFirstPass が回し直すときに渡す）
+   */
+  leadShots?: LeadShots;
 };
+
+/** leadFrames のある付与ごとの、発火した発のフレーム（昇順。leadShotKey ごと。発火の無い付与は入らない） */
+export type LeadShots = Readonly<Record<string, readonly number[]>>;
+
+/** leadFrames のある付与の鍵（出どころの枠・スロット・効果の番号） */
+function leadShotKey(g: GrantSource): string {
+  return `${g.group.sourceSlotIndex}.${g.grant.source.skill}.${g.grant.effectIndex}`;
+}
 
 /** 1 つの出どころ（timed の効果） */
 type TimedSource = {
@@ -392,6 +406,8 @@ export type HolderLists = {
    * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
   consumeFullStacks(frame: number): FullStackEvent[];
+  /** ループの後の、leadFrames のある付与が発火した発のフレーム（HolderListsOptions.leadShots に渡す形） */
+  leadShots(): LeadShots;
   /** ループの後の履歴 */
   history(): HolderHistory;
 };
@@ -1696,6 +1712,21 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       group.grants.filter((g) => g.stage === stage && !isResolvedApplied(g.grant.trigger)),
     );
   const stage1Grants = grantsAt(1);
+  // 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節）: leadFrames のある付与（段 1 だけ。types.ts が条件・
+  // stacksFrom・順位の対象を止める）の、前の回の発（known）と、件を先に登録するフレーム → 発のフレーム（early）と、この回の発（fired）
+  const leads = new Map(
+    stage1Grants.flatMap((g) => {
+      const lead = g.grant.leadFrames;
+      if (lead === undefined) return [];
+      const known = options.leadShots?.[leadShotKey(g)] ?? [];
+      const early = new Map<number, number[]>();
+      for (const shot of known) {
+        const at = grantStartOf(g.grant, shot);
+        early.set(at, [...(early.get(at) ?? []), shot]);
+      }
+      return [[g, { known: new Set(known), early, fired: [] as number[] }] as const];
+    }),
+  );
   const stage15Grants = grantsAt(1.5);
   const stage2Grants = grantsAt(2);
   const stage1Removes = removeSources.filter((r) => r.stage === 1);
@@ -1797,10 +1828,19 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {
+      const lead = leads.get(g);
+      // 前の回の発の件は、その始まりのフレームに登録する（同じフレームの段 1.5 の enemyState が見る）
+      if (lead !== undefined && !battleStartOnly) {
+        for (const shot of lead.early.get(f) ?? []) fireGrant(g, grantStartOf(g.grant, shot), null);
+      }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (!usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
         skipGrant(g, f);
         continue;
+      }
+      if (lead !== undefined) {
+        lead.fired.push(f);
+        if (lead.known.has(f)) continue;
       }
       fireGrant(g, battleStartOnly ? 0 : grantStartOf(g.grant, f), fireContextOf(g.grant.trigger, ev));
     }
@@ -2109,6 +2149,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         out.push({ slotIndex: holder, state });
       }
       return out;
+    },
+    leadShots() {
+      return Object.fromEntries(
+        [...leads].filter(([, l]) => l.fired.length > 0).map(([g, l]) => [leadShotKey(g), [...l.fired]]),
+      );
     },
     history() {
       for (const track of tracks) readItems(track);

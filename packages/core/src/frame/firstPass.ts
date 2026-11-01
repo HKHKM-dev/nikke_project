@@ -112,7 +112,7 @@ import {
   type ResolvedTrigger,
 } from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
-import { createHolderLists, type HolderHistory } from '../skills/holders.ts';
+import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { resolvePassiveStates, shortenedTimer, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
 import {
@@ -310,7 +310,40 @@ function slotBlockRanges(
   });
 }
 
+/** 回し直しの上限（plan/design-explosive-round-lead.md 5.2 節。ふつうは 2 回で揃う） */
+const MAX_LEAD_PASSES = 4;
+
+/**
+ * 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節の案 1）: leadFrames のある付与が発火したら、その発のフレームを
+ * 渡して回し直し、発 − leadFrames のフレームから件を見せる。発のフレームが渡したものと同じになるまで回す（揃わなければ例外）
+ */
 export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassOptions): FirstPassResult {
+  let known: LeadShots = {};
+  for (let pass = 1; ; pass++) {
+    const { result, leadShots } = runFirstPassOnce(slots, options, known);
+    if (sameLeadShots(leadShots, known)) return result;
+    if (pass >= MAX_LEAD_PASSES) {
+      throw new Error(`the shots of the grants with leadFrames did not settle in ${MAX_LEAD_PASSES} passes`);
+    }
+    known = leadShots;
+  }
+}
+
+function sameLeadShots(a: LeadShots, b: LeadShots): boolean {
+  const keys = Object.keys(a);
+  if (keys.length !== Object.keys(b).length) return false;
+  return keys.every((k) => {
+    const x = a[k]!;
+    const y = b[k];
+    return y !== undefined && x.length === y.length && x.every((f, i) => f === y[i]);
+  });
+}
+
+function runFirstPassOnce(
+  slots: readonly TimelineSlot[],
+  options: FirstPassOptions,
+  leadShots: LeadShots,
+): { result: FirstPassResult; leadShots: LeadShots } {
   const { frames } = options;
   if (!Number.isInteger(frames) || frames < 0) {
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
@@ -485,6 +518,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     logs,
     fullBurstWindows: windowsOf,
     verifyItems: options.verifyItems,
+    leadShots,
   });
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
@@ -1499,14 +1533,17 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
   const history = lists.history();
   return {
-    frames,
-    shots: logs,
-    schedule,
-    instants,
-    cycleGaugeHits,
-    dotGauges,
-    shotGauges,
-    timerGauges,
-    history,
+    result: {
+      frames,
+      shots: logs,
+      schedule,
+      instants,
+      cycleGaugeHits,
+      dotGauges,
+      shotGauges,
+      timerGauges,
+      history,
+    },
+    leadShots: lists.leadShots(),
   };
 }
