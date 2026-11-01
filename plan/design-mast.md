@@ -4,7 +4,7 @@
 - 計画の上の位置: [design-skill-stage17.md](design-skill-stage17.md) 4 節の候補 6 のマストの分。段の番号を使わない段の外で進める（段の一覧 [design-skill-stages.md](design-skill-stages.md) には書かない）
 - 前提の語彙: [design-skill-stage2.md](design-skill-stage2.md)（敵の防御力▼ `enemyDefenseDown`。式は C-0556、丸めは C-0790）、[design-skill-stage13.md](design-skill-stage13.md) 2.5 節（dot の `stacksFrom: { enemyState }`。C-0746）、[design-elegg.md](design-elegg.md)（敵に付く状態の付与 `target: "enemy"`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.7 節（回数の種類 `critHit`）、[design-target-vocab.md](design-target-vocab.md) 2.1 節（`topAttack` の `excludeSelf`）
 - 作成日: 2026-11-01
-- 状態: 決定（2026-11-01。オーナーが論点 1〜6 を推奨どおりに決めた）。論点 7・8 も推奨どおりに決めて実装した（8 節）。完了（V-0623 を閉じた。C-0858〜C-0862 は確定、C-0863 は仮説）
+- 状態: 完了（7・8 節）
 
 ## 0. 範囲
 
