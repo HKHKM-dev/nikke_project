@@ -18951,7 +18951,7 @@
     {
       "observation": "0851-15",
       "element": "ジル burst.effects[2]",
-      "key": "5cde5d3ac1999acd",
+      "key": "4846576b96147428",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18959,7 +18959,7 @@
     {
       "observation": "0851-16",
       "element": "ジル burst.effects[2]",
-      "key": "9ac32f068898676f",
+      "key": "408f549f24ac91ea",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18967,7 +18967,7 @@
     {
       "observation": "0851-17",
       "element": "ジル burst.effects[2]",
-      "key": "46c5ad4f9171f47a",
+      "key": "6306f6e25c52ca6f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18975,7 +18975,7 @@
     {
       "observation": "0851-18",
       "element": "ジル burst.effects[2]",
-      "key": "1ca12f17bdc1b234",
+      "key": "d08eac1a63a21321",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18983,7 +18983,7 @@
     {
       "observation": "0851-19",
       "element": "ジル burst.effects[2]",
-      "key": "122f39c32313facc",
+      "key": "abcd6cae8f732609",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18991,7 +18991,7 @@
     {
       "observation": "0851-20",
       "element": "ジル burst.effects[2]",
-      "key": "b8380780e2f8ad4b",
+      "key": "1b6d5a6161cac24e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18999,7 +18999,7 @@
     {
       "observation": "0851-21",
       "element": "ジル burst.effects[2]",
-      "key": "04d45f53c0a4adf2",
+      "key": "96c6e41efbcc1ff7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19007,7 +19007,7 @@
     {
       "observation": "0852-15",
       "element": "ジル burst.effects[2]",
-      "key": "2bc265120d15886b",
+      "key": "781f79b384d8a0ee",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19015,7 +19015,7 @@
     {
       "observation": "0852-16",
       "element": "ジル burst.effects[2]",
-      "key": "da2d834efae1b661",
+      "key": "6a4b1dd74b8ec374",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19023,7 +19023,7 @@
     {
       "observation": "0852-17",
       "element": "ジル burst.effects[2]",
-      "key": "4e006f27efbec3f4",
+      "key": "b4331f8a4dd27fe1",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19031,7 +19031,7 @@
     {
       "observation": "0852-18",
       "element": "ジル burst.effects[2]",
-      "key": "87575c7fedc245f2",
+      "key": "c8596d322baef7f7",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19039,7 +19039,7 @@
     {
       "observation": "0852-19",
       "element": "ジル burst.effects[2]",
-      "key": "d55cda4b76b11f0a",
+      "key": "f778b126464e799f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19047,7 +19047,7 @@
     {
       "observation": "0852-20",
       "element": "ジル burst.effects[2]",
-      "key": "851f34c84b80e2fd",
+      "key": "98a89859511ca2f8",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19055,7 +19055,7 @@
     {
       "observation": "0852-21",
       "element": "ジル burst.effects[2]",
-      "key": "305fb3ab4e9d4eec",
+      "key": "853dd30636132ea9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -20511,6 +20511,100 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0900-07",
+      "element": "アイン burst.effects[2]",
+      "key": "0429d544fcdc1789",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0900-08",
+      "element": "アイン burst.effects[2]",
+      "key": "96468323aaf5efa2",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0900-09",
+      "element": "アイン burst.effects[2]",
+      "key": "2863bc8aea70145b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 3 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0900-12",
+      "element": "アイン burst.effects[2]",
+      "key": "e9acdfc2bfa50435",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-13",
+      "element": "アイン burst.effects[2]",
+      "key": "c770aa0dc5d835d2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-07",
+      "element": "アイン burst.effects[2]",
+      "key": "a364f958522a5831",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0901-08",
+      "element": "アイン burst.effects[2]",
+      "key": "78f007c70a4b414a",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0901-11",
+      "element": "アイン burst.effects[2]",
+      "key": "4a7ec87ff6c1848e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-12",
+      "element": "アイン burst.effects[2]",
+      "key": "49fbf381b52189c0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-13",
+      "element": "アイン burst.effects[2]",
+      "key": "0713bb496d88f5aa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-16",
+      "element": "アイン burst.effects[2]",
+      "key": "a07aaed1bf876a58",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
     },
     {
       "observation": "0902-04",
