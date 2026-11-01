@@ -231,10 +231,11 @@ describe('録画 0232 の編成（フラワー + ウンファ：TU）', () => {
     expect(total).toBe(shots.frames.length);
   });
 
-  it('opens the Explosive Round’s Damage Taken up on the frame after the round, so the round itself does not get it (C-0312・論点 12)', () => {
+  it('opens the Explosive Round’s Damage Taken up for the user on the frame after the round, so the round itself does not get it (C-0312・C-0816・論点 12)', () => {
+    // 件は炸裂弾の 2f 前から 10 秒（leadFrames。C-0816）で、付けた枠の小片だけ炸裂弾の次のフレームから（3f 短い）
     const taken = piecesOf(plan).filter((w) => w.slotIndex === 1 && w.effect.stat === 'damageTaken');
     expect(taken.map((w) => w.start)).toEqual(windows.map((w) => w.end));
-    expect(taken.every((w) => w.end - w.start === gameSecondsToFrames(10))).toBe(true);
+    expect(taken.every((w) => w.end - w.start === gameSecondsToFrames(10) - 3)).toBe(true);
   });
 
   it('matches the Explosive Round of recording 232 within 1: body, core in the distance bonus, core crit, core (0232-10。C-0313)', () => {

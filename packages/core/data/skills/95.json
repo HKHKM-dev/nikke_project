@@ -146,6 +146,7 @@
           },
           "target": "enemy",
           "durationRef": 4,
+          "leadFrames": 2,
           "contents": [
             {
               "stat": "damageTaken",
@@ -154,11 +155,12 @@
           ],
           "claims": [
             "C-0312",
-            "C-0138"
+            "C-0138",
+            "C-0816"
           ],
           "assumes": {
-            "ja": "徹甲炸裂弾（敵 1 体）。中身の受けるダメージ▲は、ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）を撃った次のフレームから 10 秒で、炸裂弾自身には乗らない。実機の窓は炸裂弾の着弾から 10 秒。モデルの炸裂弾は撃ったフレームに着くとみなす（射撃場の的では着弾の時刻に撃つ。effects[1] の assumes・C-0509）",
-            "en": "Explosive Round (one enemy). Its Damage Taken ▲ multiplies allies' damage as a separate multiplier (1 + 27.87%). It starts on the frame after the Explosive Round (the weapon-change shot) is fired and lasts 10 s, so the round itself does not get it. In game the window is 10 s from the round's hit. The model takes the round to hit on the frame it is fired (on the shooting range target it is fired at the hit time; see effects[1] and C-0509)"
+            "ja": "徹甲炸裂弾（敵 1 体）。中身の受けるダメージ▲は、ほかのどの群とも別の乗数 (1 + 27.87%) で味方の与ダメージに掛かる。炸裂弾（使用武器の変更の発）のフレームの 2f 前から 10 秒で、炸裂弾自身には乗らない（付けた枠の小片は発の次のフレームから）。2f 前は、炸裂弾の HUD の増分が III の 00.00 の 5f 前までなら III のバーストのヒットに乗り、3f 前より後なら乗らないこと（C-0816）に合わせた形で、3f 前でも録画と合う（00.00 の 4f 前の回が無い）。実機の窓の長さは測っていない。モデルの炸裂弾は撃ったフレームに着くとみなす（射撃場の的では着弾の時刻に撃つ。effects[1] の assumes・C-0509）",
+            "en": "Explosive Round (one enemy). Its Damage Taken ▲ multiplies allies' damage as a separate multiplier (1 + 27.87%). It runs for 10 s from 2 frames before the Explosive Round (the weapon-change shot), and the round itself does not get it (the user's own piece starts on the frame after the shot). The 2-frame lead fits the finding that the ▲ is on the Burst III hit when the round's HUD increment comes up to 5 frames before 00.00 of the III timer and not when it comes 3 frames before or later (C-0816); a 3-frame lead also fits (no case at 4 frames before). The in-game window length is not measured. The model takes the round to hit on the frame it is fired (on the shooting range target it is fired at the hit time; see effects[1] and C-0509)"
           }
         },
         {

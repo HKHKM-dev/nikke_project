@@ -1,0 +1,225 @@
+{
+  "verification": "V-0588",
+  "note": "撮る前の予測。編成はリター（1 枠目・I）・ウンファ：タクティカル・アップ（2 枠目・II）・◎ベスティー：タクティカル・アップ（3 枠目・III・操作）。オートバースト ON。チェーンの時刻はモデルのオートバーストのまま（読んだ後の比べる指定は I の本当の発動を manualBursts で渡す）。仮説は、徹甲炸裂弾の▲がバーストのヒットに乗るかだけを替える",
+  "team": [
+    {
+      "rid": 82
+    },
+    {
+      "rid": 95
+    },
+    {
+      "rid": 94,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル（C-0795 のまま。炸裂弾は II の替わり目から帯のフレームで撃ち、▲は次のフレームから。III の発動の時点に付いていなければ乗らない）"
+    },
+    {
+      "id": "H-on",
+      "note": "00.00 より前に着いた徹甲炸裂弾の▲はいつも乗る形（H-c の、敵に付く状態だけ見る時点が遅い読み）。ウンファ：タクティカル・アップのバーストの effects[0] のきっかけを、炸裂弾の発からバースト使用時（II の発動）に替えて作った。炸裂弾の発自身にも▲が乗るが、比べる指標（ベスティーのヒット）には効かない",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 95,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "state",
+              "state": "explosiveRound",
+              "trigger": "burstUse",
+              "target": "enemy",
+              "durationRef": 4,
+              "contents": [
+                {
+                  "stat": "damageTaken",
+                  "ref": 3
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "bestie-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 300
+      },
+      "note": "1 回目のフルバーストのベスティー：タクティカル・アップのバーストのヒット（会心でない）。モデルの的の着地点は中近"
+    },
+    {
+      "id": "bestie-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 300
+      },
+      "note": "2 回目のフルバーストのベスティー：タクティカル・アップのバーストのヒット（会心でない）。モデルの的の着地点は近"
+    },
+    {
+      "id": "bestie-hit-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 300
+      },
+      "note": "3 回目のフルバーストのベスティー：タクティカル・アップのバーストのヒット（会心でない）。モデルの的の着地点は遠"
+    },
+    {
+      "id": "bestie-hit-4",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 300
+      },
+      "note": "4 回目のフルバーストのベスティー：タクティカル・アップのバーストのヒット（会心でない）。モデルの的の着地点は中遠"
+    },
+    {
+      "id": "shot-delay-1",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のフルバーストのチェーンの、ウンファ：タクティカル・アップの II の替わり目から炸裂弾までのフレーム（帯の表。C-0509）。仮説では変わらない（帯の確かめ）"
+    },
+    {
+      "id": "shot-delay-2",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のフルバーストのチェーンの、ウンファ：タクティカル・アップの II の替わり目から炸裂弾までのフレーム（帯の表。C-0509）。仮説では変わらない（帯の確かめ）"
+    },
+    {
+      "id": "shot-delay-3",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のフルバーストのチェーンの、ウンファ：タクティカル・アップの II の替わり目から炸裂弾までのフレーム（帯の表。C-0509）。仮説では変わらない（帯の確かめ）"
+    },
+    {
+      "id": "shot-delay-4",
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 2,
+        "n": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のフルバーストのチェーンの、ウンファ：タクティカル・アップの II の替わり目から炸裂弾までのフレーム（帯の表。C-0509）。仮説では変わらない（帯の確かめ）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "3939b11046a95b89ed7639be9075ece5f0a1e011",
+    "values": {
+      "H0": {
+        "bestie-hit-1": 1567695.8736,
+        "bestie-hit-2": 1703877.8688000003,
+        "bestie-hit-3": 1703877.8688000003,
+        "bestie-hit-4": 1703877.8688000003,
+        "shot-delay-1": 24,
+        "shot-delay-2": 22,
+        "shot-delay-3": 28,
+        "shot-delay-4": 25
+      },
+      "H-on": {
+        "bestie-hit-1": 2004612.7135723198,
+        "bestie-hit-2": 2178748.6308345604,
+        "bestie-hit-3": 2178748.6308345604,
+        "bestie-hit-4": 2178748.6308345604,
+        "shot-delay-1": 24,
+        "shot-delay-2": 22,
+        "shot-delay-3": 28,
+        "shot-delay-4": 25
+      }
+    }
+  }
+}
