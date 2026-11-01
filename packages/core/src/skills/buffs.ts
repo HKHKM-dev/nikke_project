@@ -22,6 +22,8 @@ export type ChangedWeapon = {
    * （WeaponChangeEffect.firstShotDelayFrames）。省略は weaponChangeShooter の待ち
    */
   firstShotDelayFrames?: number;
+  /** レッドフード編: 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
+  firstShotAfterSwapFrames?: number;
   /** 2 段目の段 11 の PR 4: 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
   infiniteAmmo?: true;
   /** レッドフード編: 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */

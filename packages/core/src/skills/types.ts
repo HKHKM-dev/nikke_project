@@ -1488,6 +1488,13 @@ export type WeaponChangeEffect = {
    */
   firstShotDelayFrames?: number;
   /**
+   * レッドフード編（plan/design-red-hood.md 7.1 節の論点 13。V-0639）: 持ち替え（この変更を起こした発動がフルバーストに入るなら窓の
+   * 始まり、ほかは変更の窓が射手に見える最初のフレーム）から変更後の武器の最初の発までのフレーム（即値。録画で読む）。持ち替えの時の
+   * 基礎の武器が、リロード中ならそのまま、構え解除の途中（最後の発から WeaponModel.aimOutFrames 未満）なら構え解除の終わりから数え、
+   * 構え直し・チャージの途中なら構え解除 1 回分（aimOutFrames）を足す（frame/firstPass.ts）。firstShotDelayFrames とは組まない
+   */
+  firstShotAfterSwapFrames?: number;
+  /**
    * 2 段目の段 11 の PR 4（plan/design-skill-stage11.md 3.4 節）: 変更後の武器は撃っても残弾を減らさない（維持の間リロードしない）。
    * 説明文に「装弾数無限」の行が無い変更で、録画で読む（たきなのバースト。C-0708）。維持の欄（durationRef・durationSeconds）の変更にだけ書ける
    */
@@ -3782,6 +3789,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'rateOfFire',
         'instantFire',
         'firstShotDelayFrames',
+        'firstShotAfterSwapFrames',
         'infiniteAmmo',
         'condition',
         'assumes',
@@ -3850,6 +3858,17 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
     }
     effect.firstShotDelayFrames = n;
   }
+  if (v.firstShotAfterSwapFrames !== undefined) {
+    const n = v.firstShotAfterSwapFrames;
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+      fail(`${path}.firstShotAfterSwapFrames`, `expected a non-negative integer, got ${JSON.stringify(n)}`);
+    }
+    if (effect.firstShotDelayFrames !== undefined) {
+      fail(`${path}.firstShotAfterSwapFrames`, 'firstShotAfterSwapFrames cannot be combined with firstShotDelayFrames');
+    }
+    effect.firstShotAfterSwapFrames = n;
+  }
+
   if (v.infiniteAmmo !== undefined) {
     if (v.infiniteAmmo !== true) fail(`${path}.infiniteAmmo`, `expected true, got ${JSON.stringify(v.infiniteAmmo)}`);
     if (untilEmpty) fail(`${path}.infiniteAmmo`, 'infiniteAmmo cannot be combined with maxAmmoRef');

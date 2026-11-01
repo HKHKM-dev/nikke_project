@@ -1132,6 +1132,26 @@ function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): num
 }
 
 /**
+ * レッドフード編（V-0639。plan/design-red-hood.md 7.1 節の論点 13）: n 回目（0 始まり）のフルバーストの窓の始まり（III のタイマーの 00.00）から、
+ * 枠の変更後の武器の最初の発（窓の始まりの 60f 前より後）までの、録画の動画のフレーム（入りの止まりを含む。videoFrameOf）。n はカンマ区切りの並びも書ける
+ */
+function fullBurstToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const changed = slotOf(result.shots, ctx).weaponChangeShotFrames ?? [];
+  const at = (n: number): number => {
+    const window = schedule.fullBurstWindows[n];
+    if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+    const shot = changed.find((f) => f >= window.start - 60);
+    if (shot === undefined) throw new Error(`${n} 回目のフルバーストの後に変更後の武器の発が無い`);
+    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, window.start);
+  };
+  const n = ctx.args.n;
+  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
+  return at(Number(n));
+}
+
+/**
  * V-0359（リターの S1 の CT▼）: n 回目（0 始まり）のフルバーストの入りのフレームに、枠の残りのバーストスキル CT が縮んだフレーム数
  * （その枠が受けた即時効果の CT▼ の、実際に縮んだ量の和。CT が明けていた枠は 0。burst/controller.ts の reduceCooldown）。
  * n はカンマ区切りの並び（"0,2,3"）も書け、そのときは回ごとの列。録画では、右のバースト欄の CT の残り秒の切り替わりから読んだ
@@ -1399,6 +1419,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: (r, c) => gaugeFullToActivation(r, c),
   },
   gaugeFullToWeaponChangeShot: { args: ['slot', 'n'], sim: gaugeFullToWeaponChangeShot },
+  fullBurstToWeaponChangeShot: { args: ['slot', 'n'], sim: fullBurstToWeaponChangeShot },
   // 2 段目の段 11 の PR 3（V-0530）: 枠のバーストの発動の回数（時刻表。burstCount は倍率ダメージのバーストの回数）
   burstActivationCount: {
     args: ['slot'],

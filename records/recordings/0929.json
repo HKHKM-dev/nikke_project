@@ -11,13 +11,13 @@
   "sha256": "f1f9fa2d6d10",
   "team": [
     {
-      "slot": 3,
+      "slot": 1,
       "rid": 470,
       "name": "レッドフード",
       "controlled": true
     },
     {
-      "slot": 4,
+      "slot": 2,
       "rid": 500,
       "name": "エレグ",
       "controlled": false
@@ -31,7 +31,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0639 の検証用（オーナーが撮った約 30 秒の録画）。1・2 枠目は空き、レッドフード（全段階・操作）・エレグ（II）（オート射撃 ON・オートバースト ON。編成は出撃画面で確かめた）",
+  "conditionNote": "V-0639 の検証用（オーナーが撮った約 30 秒の録画）。レッドフード（全段階・操作）・エレグ（II）で、画面では 3・4 枠目（1・2 枠目は空き。台帳の枠は空きを詰めた並び）（オート射撃 ON・オートバースト ON。編成は出撃画面で確かめた）",
   "backup": {
     "at": "2026-11-02T03:56+09:00",
     "via": "cloud-move",

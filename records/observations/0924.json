@@ -58,5 +58,215 @@
     },
     "source": "V-0639",
     "readAt": "2026-11-01"
+  },
+  {
+    "id": "0924-07",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "count",
+    "value": 1,
+    "description": "フルバーストの回数（1 回目のチェーンで I・II・III をレッドフードが撃ち、2 回目からは I だけで時間切れ）",
+    "method": {
+      "tool": "burst-panel@3 と目視",
+      "note": "レシピ burst-panel の段の替わり目と、替わり目の前後のバースト欄の顔（撃った人の顔に新しい CT が出る）で、各段を撃った枠を読んだ（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstCount",
+      "args": {},
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0924-08",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "hit",
+    "value": 739391,
+    "description": "1 回目の I の後の窓の外の発（コア・会心なし）。I のスキル発動者基準の攻撃力▲が自分に乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 766,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0924-09",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1327857,
+    "description": "レッドウルフの窓の発（S1 が 10 スタック・コア・会心なし・フルバースト）。I の攻撃力▲・S2 の攻撃力▲・超過分の変換が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0924-10",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "hit",
+    "value": 914115,
+    "description": "レッドウルフの窓の終わりの発（I の攻撃力▲が切れた後。S1 が 10 スタック・コア・会心なし・フルバースト）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1340,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0924-11",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "interval",
+    "value": [80, 78, 76, 73, 71],
+    "description": "撃ち始めの発と発の間（S1 のチャージ速度のスタックで縮む）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "to": 460
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0924-12",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "interval",
+    "value": 17.645,
+    "description": "レッドウルフの窓の発と発の間の平均（窓の最初の発から最後の発まで。リロードなし）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 820,
+        "to": 1380
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0924-13",
+    "recording": "0924",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "interval",
+    "value": 47,
+    "description": "フルバーストの 00.00 からレッドウルフの最初の発まで（動画のフレーム。入りの止まりを含む）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

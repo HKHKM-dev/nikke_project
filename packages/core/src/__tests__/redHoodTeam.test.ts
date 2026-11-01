@@ -190,3 +190,21 @@ describe('全段階の枠と専任の順（設計書 7.1 節の論点 12）', ()
     expect([first.step, first.slotIndex]).toEqual(['Step1', 0]);
   });
 });
+
+describe('レッドウルフの最初の発（設計書 7.1 節の論点 13。C-0897）', () => {
+  const input = TEAMS['リター・デルタ・レッドフード（撮影 B）']!.input;
+  const plan = planTeamRun(input);
+  const frames = plan.shots[2]!.frames;
+  const changed = new Set(plan.shots[2]!.weaponChangeShotFrames ?? []);
+
+  it('fires 12 f after the Full Burst start when reloading, after the aim-out when in it, or 13 f later when charging', () => {
+    for (const w of plan.schedule!.fullBurstWindows) {
+      const first = frames.find((f) => changed.has(f) && f >= w.start - 60)!;
+      const lastBase = frames.filter((f) => !changed.has(f) && f < first).at(-1)!;
+      const aimOutEnd = lastBase + 13;
+      const offset = first - w.start;
+      if (aimOutEnd > w.start) expect(first).toBe(aimOutEnd + 12);
+      else expect([12, 25]).toContain(offset);
+    }
+  });
+});

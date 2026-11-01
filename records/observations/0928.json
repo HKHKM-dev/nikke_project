@@ -43,5 +43,62 @@
     },
     "source": "V-0639",
     "readAt": "2026-11-01"
+  },
+  {
+    "id": "0928-04",
+    "recording": "0928",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "count",
+    "value": [1, 2, 3],
+    "description": "最初のチェーンでバーストを撃った枠の並び",
+    "method": {
+      "tool": "burst-panel@3 と目視",
+      "note": "レシピ burst-panel の段の替わり目と、替わり目の前後のバースト欄の顔（撃った人の顔に新しい CT が出る）で、各段を撃った枠を読んだ（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0928-05",
+    "recording": "0928",
+    "source": "V-0639",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "interval",
+    "value": 47,
+    "description": "フルバーストの 00.00 からレッドウルフの最初の発まで（動画のフレーム。入りの止まりを含む。00.00 の 15f 前に通常攻撃を撃った）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

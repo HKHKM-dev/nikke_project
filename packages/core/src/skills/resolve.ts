@@ -1220,6 +1220,9 @@ function resolveWeaponChange(
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
       ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
+      ...(effect.firstShotAfterSwapFrames !== undefined
+        ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
+        : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
       // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す）
       ...(effect.chargeReleaseSeconds !== undefined
