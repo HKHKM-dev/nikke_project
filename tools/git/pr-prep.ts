@@ -26,16 +26,15 @@ import {
   BACKLOG_PATH,
   GENERATED_PATHS,
   ROOT,
-  backlogNamesInBranches,
   idsInBranches,
   renderBacklogOfData,
 } from '../../packages/core/scripts/records-data.ts';
-import { handEditedLines, type BacklogFile } from '../../packages/core/src/records/backlog.ts';
+import { backlogNameOfPath, backlogNumber, type BacklogFile } from '../../packages/core/src/records/backlog.ts';
 import {
   addedLines,
-  backlogCollisions,
   backlogProgressCopy,
   branchChangedChecks,
+  handEditedLines,
   checkSteps,
   collisions,
   nulPaths,
@@ -43,6 +42,7 @@ import {
   PROGRESS_PATHS,
   progressCopies,
   rebaseOutcome,
+  short,
   splitGenerated,
 } from './pr-prep-lib.ts';
 
@@ -124,21 +124,11 @@ if (!rebasing()) {
   if (found.length > 0) {
     console.error('ブランチで足した番号が main と重なっている。振り直して commit してから、もう一度回す:');
     for (const c of found)
-      console.error(`  npm run records:renumber -- ${c.id} ${c.suggestion ?? '<空いている録画の番号>'}`);
-    process.exit(1);
-  }
-  // ほかのブランチの名前（git log を回す）は、重なりがあって空いた番号の案を作るときだけ読む
-  const backlogFound =
-    backlogCollisions(added, mainFiles, []).length === 0
-      ? []
-      : backlogCollisions(added, mainFiles, backlogNamesInBranches().names);
-  if (backlogFound.length > 0) {
-    console.error(
-      'ブランチで足した課題の番号が main と重なっている。ファイルの名前と、自分のブランチの中の参照を直して commit してから、もう一度回す:',
-    );
-    for (const c of backlogFound)
       console.error(
-        `  git mv records/backlog/${c.name}.json records/backlog/${c.suggestion}.json（参照の「${c.name}」も ${c.suggestion} に）`,
+        backlogNumber(c.id) === undefined
+          ? `  npm run records:renumber -- ${c.id} ${c.suggestion ?? '<空いている録画の番号>'}`
+          : // 課題の番号は文の中の目印が無いので道具では振り直さない（plan/design-backlog-files.md 2.2 節）
+            `  git mv records/backlog/${c.id}.json records/backlog/${c.suggestion}.json（自分のブランチの中の参照の「${c.id}」も直す）`,
       );
     process.exit(1);
   }
@@ -156,7 +146,7 @@ if (!rebasing()) {
       console.error(
         `${backlogPath} は生成物で、手で直しても PR に入らない。次の行を課題のファイル（records/backlog/）に移し、git checkout origin/main -- ${backlogPath} で戻して commit してから、もう一度回す（作り直しを commit した後に課題のファイルを直しただけなら、戻して commit するだけでよい）:`,
       );
-      for (const l of edited) console.error(`  ${l.length > 80 ? `${l.slice(0, 80)}…` : l}`);
+      for (const l of edited) console.error(`  ${short(l)}`);
       process.exit(1);
     }
   }
@@ -175,14 +165,11 @@ if (!rebasing()) {
       '--',
       'records/backlog',
     ])) {
-      if (!path.endsWith('.json')) continue;
+      if (backlogNameOfPath(path) === undefined) continue;
       const branchFile = JSON.parse(readFileSync(join(ROOT, path), 'utf8')) as BacklogFile;
-      let mainFile: BacklogFile | undefined;
-      try {
-        mainFile = JSON.parse(gitRaw(['show', `origin/main:${path}`])) as BacklogFile;
-      } catch {
-        mainFile = undefined;
-      }
+      const mainFile = mainFiles.includes(path)
+        ? (JSON.parse(gitRaw(['show', `origin/main:${path}`])) as BacklogFile)
+        : undefined;
       const copy = backlogProgressCopy(path, branchFile, mainFile);
       if (copy !== undefined) copies.push(copy);
     }

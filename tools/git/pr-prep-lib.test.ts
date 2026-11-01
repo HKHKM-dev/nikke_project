@@ -6,12 +6,12 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   addedLines,
-  backlogCollisions,
   backlogProgressCopy,
   branchChangedChecks,
   changedChecks,
   checkSteps,
   collisions,
+  handEditedLines,
   isCheckSetting,
   MAX_CHANGED_FILES,
   nulPaths,
@@ -93,16 +93,24 @@ describe('addedLines', () => {
   });
 });
 
-describe('backlogCollisions', () => {
+describe('collisions of backlog numbers', () => {
   const main = ['records/backlog/2-43.json', 'records/backlog/2-44.json', 'records/backlog/pr-conflicts.json'];
 
   it('suggests the next free number of the section, avoiding main, the branch and the other branches', () => {
     const added = ['records/backlog/2-44.json', 'records/backlog/2-45.json', 'records/backlog/template.md'];
-    expect(backlogCollisions(added, main, ['2-46'])).toEqual([{ name: '2-44', suggestion: '2-47' }]);
+    expect(collisions(added, main, ['2-46'])).toEqual([{ id: '2-44', suggestion: '2-47' }]);
   });
 
   it('ignores named items, which do not collide by numbering', () => {
-    expect(backlogCollisions(['records/backlog/pr-conflicts.json'], main, [])).toEqual([]);
+    expect(collisions(['records/backlog/pr-conflicts.json'], main, [])).toEqual([]);
+  });
+});
+
+describe('handEditedLines', () => {
+  it('returns the added lines that the regenerated version does not have', () => {
+    expect(handEditedLines(['- 先の課題', '', '- 手で足した課題'], '# 一覧\n\n- 先の課題\n')).toEqual([
+      '- 手で足した課題',
+    ]);
   });
 });
 

@@ -21,7 +21,7 @@ export type BacklogItem = BacklogFile & { name: string };
 export type BacklogSlot = { section: string; columns?: string[] };
 
 /** `#` の列（ファイル名の番号を出す列） */
-export const ID_COLUMN = '#';
+const ID_COLUMN = '#';
 
 const MARKER = /^<!-- backlog (\S+)(?: (\|.*\|))? -->$/;
 /** 番号のない課題の名前（英小文字・数字・ハイフン） */
@@ -39,6 +39,11 @@ function slotOf(line: string): BacklogSlot | undefined {
   return { section: m[1]!, columns };
 }
 
+/** `#` の列のある節（名前が番号で、番号順に並べる） */
+function isNumbered(slot: BacklogSlot): boolean {
+  return slot.columns?.includes(ID_COLUMN) === true;
+}
+
 /** 雛形の印（書いた順） */
 export function parseBacklogTemplate(template: string): BacklogSlot[] {
   return template.split('\n').flatMap((line) => slotOf(line) ?? []);
@@ -46,8 +51,8 @@ export function parseBacklogTemplate(template: string): BacklogSlot[] {
 
 /** 節の中の並び: `#` の列のある節は番号順、ほかは order の小さい順（同じなら名前順） */
 function sortItems(slot: BacklogSlot, items: readonly BacklogItem[]): BacklogItem[] {
-  const numbered = slot.columns?.includes(ID_COLUMN) === true;
-  const num = (i: BacklogItem) => Number(NUMBERED.exec(i.name)?.[2] ?? NaN);
+  const numbered = isNumbered(slot);
+  const num = (i: BacklogItem) => backlogNumber(i.name)?.n ?? NaN;
   return [...items].sort((a, b) =>
     numbered ? num(a) - num(b) : (a.order ?? 0) - (b.order ?? 0) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
   );
@@ -116,7 +121,7 @@ export function validateBacklog(
       errors.push(`${at}: 節 ${item.section} が雛形（records/backlog/template.md）の印に無い`);
       continue;
     }
-    const numbered = slot.columns?.includes(ID_COLUMN) === true;
+    const numbered = isNumbered(slot);
     const n = NUMBERED.exec(item.name);
     if (numbered && n?.[1] !== item.section)
       errors.push(`${at}: 節 ${item.section} の課題は、名前を番号（${item.section}-NN）にする`);
@@ -170,13 +175,4 @@ export function backlogNameOfPath(path: string): string | undefined {
 /** 進み具合の書き写しを見る節（8 節と、その下の 8.2 節。plan/design-backlog-files.md 2.8 節） */
 export function isIssueSection(section: string): boolean {
   return section === '8' || section.startsWith('8.');
-}
-
-/**
- * 手で直した plan/backlog.md の行（2.11 節）: ブランチで足した行のうち、課題のファイルと雛形から作った版に無いもの。
- * 空の行は見ない
- */
-export function handEditedLines(addedLines: readonly string[], generated: string): string[] {
-  const lines = new Set(generated.split('\n'));
-  return addedLines.filter((l) => l.trim() !== '' && !lines.has(l));
 }

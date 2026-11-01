@@ -38,7 +38,6 @@ import {
 } from '../src/records/verifications.ts';
 import {
   BACKLOG_PATH,
-  BACKLOG_TEMPLATE_PATH,
   CLAIMS_PATH,
   ROOT,
   MINIMAL_PATH,
@@ -47,6 +46,7 @@ import {
   SKILL_SUPPORT_PATH,
   VERIFICATIONS_PATH,
   loadBacklog,
+  loadBacklogTemplate,
   loadClaims,
   loadSensitivity,
   knownRids,
@@ -83,7 +83,7 @@ const skills = loadSkillDefinitions();
 // 最小構成の検査の文脈（行き先の無い印の検査と、警告の判定）
 const relevanceCtx = { recordings, ...data, claims };
 const backlog = loadBacklog();
-const backlogTemplate = readFileSync(BACKLOG_TEMPLATE_PATH, 'utf8');
+const backlogTemplate = loadBacklogTemplate();
 // Stage 20-E: 失効した観測値は照合と結論の根拠から外す
 const invalidReasons = invalidReasonsOf(observations);
 const errors = [

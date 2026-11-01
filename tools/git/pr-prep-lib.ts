@@ -32,51 +32,63 @@ export function rebaseOutcome(status: number, rebasing: boolean): 'clean' | 'con
 export type Collision = { id: string; suggestion?: string };
 
 /**
- * ブランチで足した検証記録・結論・録画の ID のうち、main も足したもの。suggestion は振り直しの番号の案（V・C だけ。taken はほかの
- * ブランチが使った ID も含めた、避ける ID）
+ * ブランチで足した検証記録・結論・録画の ID と課題の番号（records/backlog/2-NN.json）のうち、main も足したもの。suggestion は振り直しの
+ * 番号の案（V・C と課題の番号だけ。課題は同じ節の最大の次。taken はほかのブランチが使った ID も含めた、避ける ID）
  */
 export function collisions(
   branchAdded: readonly string[],
   mainFiles: readonly string[],
   taken: readonly string[],
 ): Collision[] {
-  const own = [...idsInPaths(branchAdded.join('\n')), ...recordingIds(branchAdded)];
-  const main = new Set([...idsInPaths(mainFiles.join('\n')), ...recordingIds(mainFiles)]);
+  const own = [...idsInPaths(branchAdded.join('\n')), ...recordingIds(branchAdded), ...backlogIds(branchAdded)];
+  const main = new Set([...idsInPaths(mainFiles.join('\n')), ...recordingIds(mainFiles), ...backlogIds(mainFiles)]);
   const avoid = [...main, ...own, ...taken];
   const out: Collision[] = [];
   for (const id of own) {
     if (!main.has(id)) continue;
     const prefix = id.slice(0, 1);
-    if (prefix === 'V' || prefix === 'C') {
-      const suggestion = nextId(prefix, avoid);
-      avoid.push(suggestion);
-      out.push({ id, suggestion });
-    } else out.push({ id });
+    const b = backlogNumber(id);
+    const suggestion =
+      prefix === 'V' || prefix === 'C'
+        ? nextId(prefix, avoid)
+        : b !== undefined
+          ? nextBacklogId(b.section, avoid)
+          : undefined;
+    if (suggestion !== undefined) avoid.push(suggestion);
+    out.push(suggestion === undefined ? { id } : { id, suggestion });
   }
   return out;
 }
 
 /**
- * ブランチで足した番号の課題（records/backlog/2-NN.json）のうち、main も足したもの。suggestion は同じ節の空いた番号（taken は
- * ほかのブランチが足した課題の名前も含めた、避ける名前。plan/design-backlog-files.md 2.2 節）
+ * 手で直した生成物の行（plan/design-backlog-files.md 2.11 節）: ブランチで足した行のうち、作り直した版に無いもの。
+ * 空の行は見ない
  */
-export function backlogCollisions(
-  branchAdded: readonly string[],
-  mainFiles: readonly string[],
-  taken: readonly string[],
-): { name: string; suggestion: string }[] {
-  const names = (paths: readonly string[]) => paths.flatMap((p) => backlogNameOfPath(p) ?? []);
-  const own = names(branchAdded);
-  const main = new Set(names(mainFiles));
-  const avoid = [...main, ...own, ...taken].flatMap((n) => backlogNumber(n) ?? []);
-  return own
-    .filter((name) => main.has(name) && backlogNumber(name) !== undefined)
-    .map((name) => {
-      const { section } = backlogNumber(name)!;
-      const n = Math.max(...avoid.filter((b) => b.section === section).map((b) => b.n)) + 1;
-      avoid.push({ section, n });
-      return { name, suggestion: `${section}-${n}` };
-    });
+export function handEditedLines(addedLines: readonly string[], generated: string): string[] {
+  const lines = new Set(generated.split('\n'));
+  return addedLines.filter((l) => l.trim() !== '' && !lines.has(l));
+}
+
+/** 出す行を 80 字で切る */
+export function short(line: string): string {
+  return line.length > 80 ? `${line.slice(0, 80)}…` : line;
+}
+
+/** 課題の節の次の番号（avoid の中の同じ節の最大の次） */
+function nextBacklogId(section: string, avoid: readonly string[]): string {
+  const used = avoid.flatMap((id) => {
+    const b = backlogNumber(id);
+    return b?.section === section ? [b.n] : [];
+  });
+  return `${section}-${Math.max(0, ...used) + 1}`;
+}
+
+/** records/backlog/<番号>.json の番号（2-NN。名前の課題は重ならないので除く） */
+function backlogIds(paths: readonly string[]): string[] {
+  return paths.flatMap((p) => {
+    const name = backlogNameOfPath(p);
+    return name !== undefined && backlogNumber(name) !== undefined ? [name] : [];
+  });
 }
 
 /** records/recordings/<id>.json の id（README などは除く） */
@@ -127,8 +139,7 @@ export function progressCopies(path: string, text: string, added: ReadonlySet<nu
   let heading = '';
   text.split('\n').forEach((line, i) => {
     if (line.startsWith('## ')) heading = line;
-    if (added.has(i + 1) && PROGRESS.test(line) && watch(line, heading))
-      out.push(`${path}:${i + 1}: ${line.length > 80 ? `${line.slice(0, 80)}…` : line}`);
+    if (added.has(i + 1) && PROGRESS.test(line) && watch(line, heading)) out.push(`${path}:${i + 1}: ${short(line)}`);
   });
   return out;
 }
@@ -145,7 +156,7 @@ export function backlogProgressCopy(
   const text = branch.text;
   if (!isIssueSection(branch.section) || text === undefined || text === main?.text || !PROGRESS.test(text))
     return undefined;
-  return `${path}: ${text.length > 80 ? `${text.slice(0, 80)}…` : text}`;
+  return `${path}: ${short(text)}`;
 }
 
 /**

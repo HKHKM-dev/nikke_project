@@ -2,7 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BACKLOG_PATH, renderBacklogOfData } from '../../../scripts/records-data.ts';
-import { handEditedLines, parseBacklogTemplate, renderBacklog, validateBacklog, type BacklogItem } from '../backlog.ts';
+import { parseBacklogTemplate, renderBacklog, validateBacklog, type BacklogItem } from '../backlog.ts';
 
 const TEMPLATE = [
   '# 一覧',
@@ -122,13 +122,6 @@ describe('validateBacklog', () => {
       'records/backlog/refs.json: V-0009 が無い',
       'records/backlog/refs.json: リンクの先 design-missing.md（plan/ からの相対パス）が無い',
     ]);
-  });
-});
-
-describe('handEditedLines', () => {
-  it('returns the added lines that the generated version does not have', () => {
-    const generated = renderBacklog(TEMPLATE, ITEMS);
-    expect(handEditedLines(['- 先の課題', '', '- 手で足した課題'], generated)).toEqual(['- 手で足した課題']);
   });
 });
 
