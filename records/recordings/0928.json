@@ -9,16 +9,41 @@
   "fps": 60,
   "sizeMB": 38.3,
   "sha256": "d3efc78f9377",
-  "team": [],
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 470,
+      "name": "レッドフード",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": false
+    }
+  ],
   "target": {
     "name": "BigArms",
-    "element": null
+    "element": "Fire"
   },
   "mode": "range-3min",
-  "fixedSpec": null,
-  "autoFire": null,
-  "autoBurst": null,
-  "conditionNote": "V-0639 の検証用（オーナーが撮った短い録画。編成と条件は画で確かめる）",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0639 の検証用（オーナーが撮った約 30 秒の録画）。リター（I）・デルタ（II）・レッドフード（全段階・操作）・エレグ（II）（オート射撃 ON・オートバースト ON。編成は出撃画面で確かめた）",
   "backup": {
     "at": "2026-11-02T03:56+09:00",
     "via": "cloud-move",

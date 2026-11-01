@@ -1,0 +1,47 @@
+[
+  {
+    "id": "0929-01",
+    "recording": "0929",
+    "kind": "timing",
+    "use": "record",
+    "value": [882],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0f"
+    },
+    "source": "V-0639",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0929-02",
+    "recording": "0929",
+    "kind": "timing",
+    "use": "record",
+    "value": [911],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0f"
+    },
+    "source": "V-0639",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0929-03",
+    "recording": "0929",
+    "kind": "timing",
+    "use": "record",
+    "value": [940],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0639",
+    "readAt": "2026-11-01"
+  }
+]
