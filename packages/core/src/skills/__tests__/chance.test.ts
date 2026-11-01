@@ -84,6 +84,14 @@ describe('chance / chanceRef の検証', () => {
       /cannot target "topAttack"/,
     );
   });
+
+  // T4 の▼は、件の始まりごとに走っている CT を縮める（frame/firstPass.ts の burstCooldownStartedAt）。期待値の窓は機会の始まりと終わりで
+  // 小片に割るので、小片の始まりのたびに縮め直してしまう
+  it('rejects the burst cooldown decrease', () => {
+    expect(() => parseSkillDefinition(withSkill1([{ ...S1, stat: 'burstCooldown', scaling: 'flat' }]))).toThrow(
+      /not supported for "burstCooldown"/,
+    );
+  });
 });
 
 describe('解決', () => {
