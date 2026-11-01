@@ -1523,35 +1523,46 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
   // 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の順位の値が読む
   const maxHpViews = viewsOf((_, e) => isMaxHpStat(e.stat));
+  /**
+   * 枠のフレーム frame の最大HP▲ の和（常時 + 効いている件。up）と、そのうちの最大HP のみ▲ の和（only）。startsBefore なら frame より前に
+   * 始まった件だけ（同じフレームに付いた件は次のフレームから。マスト編の HP の割合）
+   */
+  const maxHpUpAt = (slotIndex: number, frame: number, startsBefore: boolean): { up: number; only: number } => {
+    let up = passive[slotIndex]?.buffs.maxHpRatio ?? 0;
+    let only = passiveMaxHpOnly[slotIndex] ?? 0;
+    for (const v of maxHpViews[slotIndex] ?? []) {
+      for (const it of readItems(v.track)) {
+        if (!(startsBefore ? it.start < frame : it.start <= frame) || frame >= it.end) continue;
+        const x = valueOf(v.effect, it);
+        up += x;
+        if (v.effect.stat === 'maxHpOnly') only += x;
+      }
+    }
+    return { up, only };
+  };
   const finalMaxHpAt = (slotIndex: number, frame: number): number | undefined => {
     const base = slots[slotIndex]?.casterMaxHp;
     if (base === undefined) return undefined;
-    let up = passive[slotIndex]?.buffs.maxHpRatio ?? 0;
-    for (const v of maxHpViews[slotIndex] ?? []) for (const it of activeAt(v.track, frame)) up += valueOf(v.effect, it);
-    return base * (1 + up);
+    return base * (1 + maxHpUpAt(slotIndex, frame, false).up);
   };
   /**
    * マスト編（plan/design-mast.md 8 節。plan/design-skill-stage6.md 2.4 節の式）: 枠のフレーム frame の HP の割合。枠の想定の割合 ×
    * (1 + Σ 最大HP▲ − Σ 最大HP のみ▲) ÷ (1 + Σ 最大HP▲)（Σ 最大HP▲ は最大HP のみ▲ も含む）。常時の分と、frame より前に始まって frame に
    * 効いている件（同じフレームに付いた件は次のフレームから。論点 8）
    */
-  const passiveMaxHpOnly = slots.map((_, holder) =>
-    tracks
-      .filter((t) => t.holder === holder && t.origin.kind === 'passive' && t.origin.effect.stat === 'maxHpOnly')
-      .reduce((sum, t) => sum + (t.origin.kind === 'passive' ? t.origin.effect.value : 0), 0),
+  const passiveMaxHpOnly = passive.map(
+    (state) =>
+      state?.passiveEffects.filter((e) => e.stat === 'maxHpOnly').reduce((sum, e) => sum + e.appliedAmount, 0) ?? 0,
+  );
+  // 最大HP のみ▲ を持ちうる枠（常時か件の列）だけ割合が動く。ほかの枠は想定の割合のまま（毎フレームの走査を省く）
+  const hpRatioMoves = slots.map(
+    (_, i) => (passiveMaxHpOnly[i] ?? 0) > 0 || (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly'),
   );
   const selfHpRatioAt = (slotIndex: number, frame: number): number => {
-    let up = passive[slotIndex]?.buffs.maxHpRatio ?? 0;
-    let only = passiveMaxHpOnly[slotIndex] ?? 0;
-    for (const v of maxHpViews[slotIndex] ?? []) {
-      for (const it of readItems(v.track)) {
-        if (!(it.start < frame && frame < it.end)) continue;
-        const x = valueOf(v.effect, it);
-        up += x;
-        if (v.effect.stat === 'maxHpOnly') only += x;
-      }
-    }
-    return ((slots[slotIndex]?.hpRatio ?? 1) * (1 + up - only)) / (1 + up);
+    const assumed = slots[slotIndex]?.hpRatio ?? 1;
+    if (!hpRatioMoves[slotIndex]) return assumed;
+    const { up, only } = maxHpUpAt(slotIndex, frame, true);
+    return (assumed * (1 + up - only)) / (1 + up);
   };
   // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   // 発動者より低い枠（同値は含まない）と発動者自身

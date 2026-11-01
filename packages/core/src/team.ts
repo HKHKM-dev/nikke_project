@@ -375,7 +375,7 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           // 2 段目の段 7: 枠のバフ前の防御力。最終防御力は、これに防御力▲ の件を足して、発火のフレームで出す（plan/design-skill-stage7.md 1.2 節）
           baseDefence: baseDefenceOf(slot),
           // マスト編: 枠の HP の割合の想定（HP の割合の窓のきっかけが、最大HP のみ▲ の件で下げて読む。plan/design-mast.md 8 節）
-          ...(slot.hpRatio === undefined ? {} : { hpRatio: slot.hpRatio }),
+          hpRatio: slot.hpRatio,
           buildEffects: slot.buildEffects,
           hitRate: hitRateOf(slot.condition),
           coreHitRate: slot.condition.coreHitRate,

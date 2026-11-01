@@ -301,25 +301,24 @@ export function planSkillHits(
   // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）
   const enemySpans = new Map<NamedStateId, { start: number; end: number }[]>();
   // エレグの段 3（plan/design-elegg-s3.md 2 節の 2）: 敵に付く状態の付与の件（ブームインストール）も同じ列に入れる
+  // マスト編（plan/design-mast.md 2.3 節）: dot の stacksFrom が写す、敵にスタックで付く状態の付与の件（出どころの枠 × 状態。海風）
+  const enemyGrantStacks = new Map<string, { start: number; end: number; stack?: number }[]>();
   for (const item of itemsOf(history, { holder: ENEMY })) {
     if (item.origin.kind !== 'enemyState' && item.origin.kind !== 'state') continue;
     enemySpans.set(item.origin.state, [...(enemySpans.get(item.origin.state) ?? []), item]);
-  }
-  // マスト編（plan/design-mast.md 2.3 節）: dot の stacksFrom が写す、敵にスタックで付く状態の付与の件（出どころの枠 × 状態。海風）
-  const enemyGrantStacks = new Map<string, { start: number; end: number; stack: number }[]>();
-  for (const item of itemsOf(history, { holder: ENEMY, kind: 'state' })) {
     if (item.origin.kind !== 'state' || item.stack === undefined) continue;
     const key = `${item.sourceSlotIndex}:${item.origin.state}`;
-    enemyGrantStacks.set(key, [...(enemyGrantStacks.get(key) ?? []), { start: item.start, end: item.end, stack: item.stack }]);
+    const list = enemyGrantStacks.get(key);
+    if (list === undefined) enemyGrantStacks.set(key, [item]);
+    else list.push(item);
   }
   /** フレーム frame に敵に付いている、枠 sourceSlotIndex の状態 state のスタックの数（そのフレームに付いた段も入れる。条件 enemyState と同じ見え方） */
-  const enemyGrantStacksAt = (sourceSlotIndex: number, state: NamedStateId, frame: number): number =>
-    Math.max(
-      0,
-      ...(enemyGrantStacks.get(`${sourceSlotIndex}:${state}`) ?? [])
-        .filter((x) => x.start <= frame && frame < x.end)
-        .map((x) => x.stack),
-    );
+  const enemyGrantStacksAt = (sourceSlotIndex: number, state: NamedStateId, frame: number): number => {
+    let stacks = 0;
+    for (const x of enemyGrantStacks.get(`${sourceSlotIndex}:${state}`) ?? [])
+      if (x.start <= frame && frame < x.end) stacks = Math.max(stacks, x.stack ?? 0);
+    return stacks;
+  };
   // 段 D の 2: 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）
   const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
   slots.forEach((slot, slotIndex) => {

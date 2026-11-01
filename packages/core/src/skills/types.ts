@@ -4893,13 +4893,20 @@ function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEn
   if (contents > 1) fail(root, 'at most one fixedChargeTime state content per definition');
 }
 
-/** 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先） */
-function hasSelfStackingGrant(entries: Partial<Record<SkillSlot, SkillEntry>>, state: NamedStateId): boolean {
+/**
+ * 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先）。マスト編: holder が enemy なら、
+ * 敵にスタックで付ける付与（dot の stacksFrom の元。plan/design-mast.md 2.3 節）
+ */
+function hasSelfStackingGrant(
+  entries: Partial<Record<SkillSlot, SkillEntry>>,
+  state: NamedStateId,
+  holder: 'self' | 'enemy' = 'self',
+): boolean {
   return SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).some(
     (g) =>
       g.kind === 'state' &&
       g.state === state &&
-      g.target === 'self' &&
+      (holder === 'enemy' ? g.enemy === true : g.target === 'self') &&
       (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
   );
 }
@@ -5023,11 +5030,6 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
   );
-  const stackedEnemyGrants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).flatMap((e) =>
-    e.kind === 'state' && e.enemy === true && (e.maxStacks !== undefined || e.maxStacksRef !== undefined)
-      ? [e.state]
-      : [],
-  );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       const onDot = e.kind === 'cancelState' || (e.kind === 'stackChange' && e.target === 'enemy');
@@ -5038,7 +5040,7 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
         );
       // マスト編（plan/design-mast.md 2.3 節）: 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風）
       const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
-      if (from !== undefined && !dots.some((d) => d.state === from) && !stackedEnemyGrants.includes(from))
+      if (from !== undefined && !dots.some((d) => d.state === from) && !hasSelfStackingGrant(entries, from, 'enemy'))
         fail(
           `${root}.${slot}.effects[${i}].stacksFrom`,
           `stacksFrom needs a dot of the state "${from}", or a grant of it on the enemy with stacks, in the definition`,
