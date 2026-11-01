@@ -4,11 +4,11 @@
 //                                             ブランチが入れていない。npm run pr:prep が入れる）。main への push では知らせるだけ
 //   node tools/git/ci-generated.ts --commit   main への push で、確認が通った後: 生成物の差分を commit し、origin/main がまだこの
 //                                             commit なら push する（進んでいれば、後の commit の CI が全部を作り直すので何もしない）
-// push には環境変数 GH_TOKEN（GITHUB_TOKEN）を使う。main は PR 必須なので、ruleset の bypass に GitHub Actions が要る。
+// push には環境変数 GH_TOKEN（GITHUB_TOKEN）を使う。
 import { execFileSync } from 'node:child_process';
 import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT } from '../../packages/core/scripts/records-data.ts';
-import { nulPaths, splitGenerated } from './pr-prep-lib.ts';
+import { nulPaths, pathListArgs, splitGenerated } from './pr-prep-lib.ts';
 
 const { values } = parseArgs({ options: { commit: { type: 'boolean', default: false } } });
 
@@ -16,7 +16,7 @@ function git(args: readonly string[]): string {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
 }
 
-const changed = splitGenerated(nulPaths(git(['diff', '-z', '--name-only', 'HEAD'])), GENERATED_PATHS);
+const changed = splitGenerated(nulPaths(git(pathListArgs(['diff', '--name-only', 'HEAD']))), GENERATED_PATHS);
 const onMain = process.env['GITHUB_EVENT_NAME'] === 'push';
 
 if (!values.commit) {

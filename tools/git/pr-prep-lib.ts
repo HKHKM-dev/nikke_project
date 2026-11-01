@@ -2,10 +2,7 @@
 import { idsInPaths, nextId } from '../../packages/core/src/records/drafts.ts';
 import { ID_DIGITS } from '../../packages/core/src/records/ids.ts';
 
-/**
- * ファイルを生成物とほかに分ける（衝突したファイルなら、main の版を取ってよい生成物と、人が直すもの。CI の作り直しで変わった
- * ファイルなら、commit してよい生成物と、ブランチが入れ忘れたもの）
- */
+/** ファイルを生成物とほかに分ける */
 export function splitGenerated(
   paths: readonly string[],
   generated: readonly string[],
