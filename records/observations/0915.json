@@ -1,0 +1,381 @@
+[
+  {
+    "id": "0915-01",
+    "recording": "0915",
+    "kind": "timing",
+    "use": "record",
+    "value": [2540.4, 4894.3, 7248.2, 9602.2],
+    "unit": "ティック",
+    "description": "チェーン（4 回）の III のタイマーの 00.00 の、戦闘開始からのゲーム内のティック。00.00 は、イサベルのバーストのヒットの 156f 前（C-0165。動画の f3441・5818・8196・10573）。隣どうしの間隔は 2,353.9・2,353.9・2,353.9（40.0 秒。45 秒の 2,648 ティックより短く、ターゲットマーキングの回数は数え直されない。C-0872）",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "00.00 のフレームは、HUD の増分のイサベルのバーストのヒットから 156f 引いた（burst-panel の 00.00 は、手で II と III を続けて押したチェーンでは遅れて出る。V-0619「結果」）。2 回目からはオートバーストで撃たれ、間隔はクールタイム（40 秒）どおり。どのフレームもその秒の中に止まりがある（*）ので、20 ティックほど小さく出うる（plan/captures/guide.md）"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-02",
+    "recording": "0915",
+    "kind": "timing",
+    "use": "input",
+    "value": [2478, 4832, 7186, 9540],
+    "unit": "f",
+    "description": "チェーン（4 回。1 回目は手、2 回目からはオートバースト）の I の発動のゲーム内のフレーム（比べる指定の manualBursts）。III の本当の発動の 56f 前（モデルの I → III の間隔）に置いた",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "III のタイマーの 00.00 のティック（`0915-01`）の 6 ティック前（C-0512）を III の本当の発動とした。I・II の時刻はイサベルのヒットの値にも、たきなの S2 の▲の時刻にも効かない"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-03",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。1 回目のチェーン（付き始めの回。たきなの S2 の▲は III の発動の後に付いた）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f3597 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-04",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。2 回目のチェーン（対照。▲は発動の時点にもヒットの直前にも無い）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f5974 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-05",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "record",
+    "value": 957710,
+    "unit": "ダメージ",
+    "description": "イサベルの 3 回目のチェーン（切れ目の回。たきなの S2 の▲が III の発動の後・ヒットの前に切れた）のヒットのフレームの増分。バーストスキルダメージ（会心なし。▲あり）と段階 2 の追加ダメージ（会心なし。▲なし）の和",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8352 の増分。バーストのヒット（会心・会心なし）と段階 2 の追加ダメージ（会心・会心なし × 発動の時点の▲あり・発火の時点の▲なし）の 8 通りのうち、端数まで合うのは「バーストのヒット 198,943.759 + 追加ダメージ（発火の時点。▲なし）758,765.606（会心なし）」だけ（発動の時点の▲ありの追加ダメージなら 813,466.556（会心なし））"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-06",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 198944,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。3 回目のチェーン（切れ目の回。発動の時点の▲ありの値。C-0854）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8352 の増分（`0915-05`）を、段階 2 の追加ダメージと分けた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-07",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 758766,
+    "unit": "ダメージ",
+    "description": "イサベルの段階 2 の追加ダメージ（会心なし）。3 回目のチェーン（切れ目の回）。たきなの S2 の▲は III の発動の後・発火の前に切れ、乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8352 の増分（`0915-05`）からバーストのヒット 198,944 を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-08",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "record",
+    "value": 2279290,
+    "unit": "ダメージ",
+    "description": "イサベルの 4 回目のチェーン（付き始めの回。たきなの S2 の▲が III の発動の後・ヒットの前に付いた）のヒットのフレームの増分。バーストスキルダメージ（会心なし。▲なし）と段階 2・3 の追加ダメージ（どちらも会心なし。▲あり）の和",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10729 の増分。バーストのヒットと段階 2・3 の追加ダメージの会心・会心なし（8 通り）× 追加ダメージの▲の時点（発動・発火）のうち、端数まで合うのは「211,962.825 + 954,150.657 + 1,113,175.766」（どれも会心なし、追加ダメージは発火の時点の▲あり）だけ。発動の時点の▲なしなら 2,140,273、次に近い組み合わせ（バーストのヒットが会心で、追加ダメージが発動の時点）は 2,284,472"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-09",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 211963,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。4 回目のチェーン（付き始めの回。発動の時点の▲なしの値。C-0854）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10729 の増分（`0915-08`）を、段階 2・3 の追加ダメージと分けた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-10",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 954151,
+    "unit": "ダメージ",
+    "description": "イサベルの段階 2 の追加ダメージ（会心なし）。4 回目のチェーン（付き始めの回）。たきなの S2 の▲が乗っている",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10729 の増分（`0915-08`）を分けた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0915-11",
+    "recording": "0915",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1113176,
+    "unit": "ダメージ",
+    "description": "イサベルの段階 3 の追加ダメージ（会心なし）。4 回目のチェーン（付き始めの回）。たきなの S2 の▲が乗っている",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10729 の増分（`0915-08`）を分けた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0915-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0630",
+    "readAt": "2026-11-01"
+  }
+]
