@@ -351,7 +351,7 @@ notes の種類: 未対応 42・前提の外 37・計算に無関係 35・補足
   - effects[4] dot・restraintChains が最大になった時: C-0411（確定）、C-0745（確定）、C-0747（確定）
 - **skill2**: supported
   - effects[0] timed・burstStage3Enter・sustainedDamage: C-0748（確定）、C-0755（確定）
-  - effects[1] stackChange・normalHit・ensnaringChains: C-0754（確定）、C-0751（仮説）
+  - effects[1] stackChange・normalHit・ensnaringChains: C-0754（確定）、C-0751（確定）
   - notes[0] 前提の外: 自分が戦闘不能になった時のスタック量▲と、敵が破壊された時のキャプチャーチェーン▲は、前提（味方が倒れない・敵 1 体）の外（要件 5.2 節）: C-0443（範囲外）
 - **burst**: supported
   - effects[0] dot・burstUse: C-0746（確定）
