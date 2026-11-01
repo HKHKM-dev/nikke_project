@@ -249,5 +249,98 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0817-10",
+    "recording": "0817",
+    "source": "V-0593",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "unit": "ヒット",
+    "value": 172,
+    "description": "リター（I）の、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）フレームまでのヒットの数（そのフレームのヒットを含む）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "リターの 1 ヒットは総ダメージの増分 11,329（136 回）・15,686（29 回）・20,044（4 回）（コア・会心の組で 4357 ずつ違う 4 つの値）。ほかの 2 人のヒットと同じフレームの増分（219,955・438,501・469,953 の 3 回）は、デルタ・ベスティー：タクティカル・アップの 1 ヒットの値との差がリターの値になるものを 1 ヒットに数えた。1 回目の満タンはリターのヒットのフレームで、デルタは 6 ヒット・ベスティー：タクティカル・アップは 8 ヒット（`0817-11`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0817-05"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "0817-11",
+    "recording": "0817",
+    "source": "V-0593",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "unit": "ヒット",
+    "value": 8,
+    "description": "ベスティー：タクティカル・アップ（III）の、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）フレームまでのヒットの数（そのフレームのヒットを含む）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "戦闘開始からの動画のフレームで 144・164・184・203・320・340・361・380 の増分（1 ヒット 427,172〜618,445。リターと同じフレームの 2 回を含む）。デルタは 70・152・234・316・398・480 の 6 ヒット"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0817-05"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "0817-12",
+    "recording": "0817",
+    "source": "V-0593",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": 546,
+    "description": "1 回目に BURST バーが消えた（本当の満タン）フレームの、戦闘開始からの動画のフレーム数",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "戦闘開始 f832、バーが消えたのは f1378（そのフレームに総ダメージの増分がある）。I の本当の発動（`0817-04`）は、この 23f 後（C-0285）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    }
   }
 ]

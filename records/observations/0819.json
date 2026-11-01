@@ -332,5 +332,61 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0819-13",
+    "recording": "0819",
+    "source": "V-0593",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "unit": "ヒット",
+    "value": 9,
+    "description": "ベスティー：タクティカル・アップ（III）の、戦闘の最初のヒットから数えて、1 回目に BURST バーが消えた（本当の満タン）フレームまでのヒットの数（そのフレームのヒットを含む）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "戦闘開始からの動画のフレームで 145・165・185・204・321・341・362・381・641 の増分。9 ヒット目のフレームでバーが消えた（8 ヒット目の後は消えていない）。ウンファ：タクティカル・アップは 71・153・235・317・399・481 の 6 ヒット。エマ：タクティカル・アップのヒットは 1 ヒット 5,777〜15,801 の小さな増分で、ほかの 2 人と同じフレームのものを除いて 292 回（満タンまでの数は 287〜325 回ならベスティー：タクティカル・アップの 9 ヒット目で満タンになる形と合う）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0819-05"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "0819-14",
+    "recording": "0819",
+    "source": "V-0593",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": 641,
+    "description": "1 回目に BURST バーが消えた（本当の満タン）フレームの、戦闘開始からの動画のフレーム数",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode series --subpixel",
+      "note": "戦闘開始 f846、バーが消えたのは f1487（そのフレームに総ダメージの増分がある）。I の本当の発動（`0819-04`）は、この 23f 後（C-0285）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    }
   }
 ]
