@@ -69,9 +69,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -95,9 +93,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -122,9 +118,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -149,9 +143,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -176,9 +168,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -203,9 +193,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -230,9 +218,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -257,9 +243,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -284,9 +268,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -311,9 +293,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
         "hitRate": 0.97
       },
@@ -329,91 +309,33 @@
     "values": {
       "Hit": {
         "fb1-hits": [
-          320.10000000000156,
-          360.8400000000027,
-          400.6100000000038,
-          440.38000000000494,
-          480.15000000000606,
-          520.8900000000071,
-          560.6600000000083
+          320.10000000000156, 360.8400000000027, 400.6100000000038, 440.38000000000494, 480.15000000000606,
+          520.8900000000071, 560.6600000000083
         ],
-        "fb1-shots": [
-          330,
-          372,
-          413,
-          454,
-          495,
-          537,
-          578
-        ],
-        "fb2-hits-phase": [
-          0.22000000003413334
-        ],
-        "fb2-shots-phase": [
-          6
-        ],
-        "fb3-hits-phase": [
-          0.3399999999278407
-        ],
-        "fb3-shots-phase": [
-          2
-        ],
-        "fb4-hits-phase": [
-          0.45999999968853444
-        ],
-        "fb4-shots-phase": [
-          -2
-        ],
-        "fb5-hits-phase": [
-          0.5799999998544081
-        ],
-        "fb5-shots-phase": [
-          -6
-        ]
+        "fb1-shots": [330, 372, 413, 454, 495, 537, 578],
+        "fb2-hits-phase": [0.22000000003413334],
+        "fb2-shots-phase": [6],
+        "fb3-hits-phase": [0.3399999999278407],
+        "fb3-shots-phase": [2],
+        "fb4-hits-phase": [0.45999999968853444],
+        "fb4-shots-phase": [-2],
+        "fb5-hits-phase": [0.5799999998544081],
+        "fb5-shots-phase": [-6]
       },
       "Shot": {
         "fb1-hits": [
-          310.4000000000013,
-          349.2000000000024,
-          388.00000000000347,
-          426.80000000000456,
-          465.60000000000565,
-          504.40000000000674,
-          543.2000000000078
+          310.4000000000013, 349.2000000000024, 388.00000000000347, 426.80000000000456, 465.60000000000565,
+          504.40000000000674, 543.2000000000078
         ],
-        "fb1-shots": [
-          320,
-          360,
-          400,
-          440,
-          480,
-          520,
-          560
-        ],
-        "fb2-hits-phase": [
-          -5.59999999996603
-        ],
-        "fb2-shots-phase": [
-          0
-        ],
-        "fb3-hits-phase": [
-          -1.6000000000717591
-        ],
-        "fb3-shots-phase": [
-          0
-        ],
-        "fb4-hits-phase": [
-          2.3999999996881343
-        ],
-        "fb4-shots-phase": [
-          0
-        ],
-        "fb5-hits-phase": [
-          6.399999999855936
-        ],
-        "fb5-shots-phase": [
-          0
-        ]
+        "fb1-shots": [320, 360, 400, 440, 480, 520, 560],
+        "fb2-hits-phase": [-5.59999999996603],
+        "fb2-shots-phase": [0],
+        "fb3-hits-phase": [-1.6000000000717591],
+        "fb3-shots-phase": [0],
+        "fb4-hits-phase": [2.3999999996881343],
+        "fb4-shots-phase": [0],
+        "fb5-hits-phase": [6.399999999855936],
+        "fb5-shots-phase": [0]
       }
     }
   }
