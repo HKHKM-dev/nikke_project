@@ -24,14 +24,19 @@
           "claims": [
             "C-0671"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "通常攻撃 12 回ごとの味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
-          "en": "Cover HP recovery for all allies every 12 normal attacks does not change damage by itself (it matters only with an effect reading cover in the team)",
-          "kind": "indirect",
-          "path": "cover"
+          "kind": "coverHeal",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "ref": 2,
+          "assumes": {
+            "ja": "通常攻撃 値 01（12）回ごとの、味方全体の遮蔽物 HP 回復。回復量はダメージに関係せず、受けた味方の「遮蔽物の HP を回復した時」（ティアの S1）を起こす。起きるフレームは回復と同じ（後ろの枠には撃った発と同じフレーム、自分と前の枠には次のフレーム。C-0628 の形の見込み）。射撃場の敵の攻撃では遮蔽物は壊れない前提",
+            "en": "Cover HP recovery for all allies every value 01 (12) normal attacks. The amount does not affect damage; it triggers \"when restoring cover HP\" (Tia S1) on the allies that receive it. It lands on the same frame as a heal (the shot frame for later slots, the next frame for self and earlier slots; expected to follow C-0628). Covers are assumed not to break from the shooting range enemy's attacks"
+          }
         }
       ]
     },

@@ -125,6 +125,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   // 2 段目の段 11: 「使用武器の変更が終了した時」
   if ('weaponChangeEnd' in trigger) return '使用武器の変更が終了した時';
   if ('reloadEnd' in trigger) return '最大弾数のリロードが完了した時';
+  // 2 段目の段 17 の PR 1: 「遮蔽物の HP を回復した時」（ティアの S1。自分と味方の遮蔽物 HP 回復）
+  if ('coverHealed' in trigger) return '遮蔽物の HP を回復した時';
   // 2 段目の段 14 の PR 2: 「チャージ中の時、0.2 秒ごとに」「フルチャージした時」
   if ('chargeTick' in trigger) return `チャージ中の ${formatNumber(trigger.chargeTick.everySeconds)} 秒ごと`;
   if ('chargeFull' in trigger) return 'フルチャージした時';
@@ -212,8 +214,6 @@ export function formatItemTrigger(effect: AppliedTimedEffect): string {
   // 2 段目の段 11 の PR 2: カウンタの while の効果は「オーバーエネルギーの段階 2 以上の間 →」
   if (isCounterWhileEffect(effect))
     return `${counterName(effect.whileCounter.counter).ja} ${formatNumber(effect.whileCounter.atLeast)} 以上の間 →`;
-  // 2 段目の段 15 の PR 2: 読み込みが置き換えた「遮蔽物の HP を回復した時」（ティアの S1）は、置き換える前のきっかけで出す
-  if (effect.viaCoverHealed === true) return '遮蔽物の HP を回復した時 →';
   return isStateContent(effect) ? `${stateLabel(effect.whileState)}の間 →` : formatTimedTrigger(effect.trigger);
 }
 

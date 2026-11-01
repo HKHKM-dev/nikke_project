@@ -33,6 +33,8 @@ import {
   type FullStackTrigger,
   type WeaponChangeEndTrigger,
   type ReloadEndTrigger,
+  type CoverHealedTrigger,
+  type CoverHealEffect,
   type ChargeTickTrigger,
   type ChargeFullTrigger,
   type BasicBurstStep,
@@ -81,6 +83,8 @@ export type ResolvedTrigger =
   | WeaponChangeEndTrigger
   // 2 段目の段 16 の PR 2: リロードの込め終わり（1 パス目の ShotLog.reloadEnds。skills/triggers.ts）
   | ReloadEndTrigger
+  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時（1 パス目の FrameEvents.coverHealed。skills/triggers.ts）
+  | CoverHealedTrigger
   // 2 段目の段 14 の PR 2: 溜めの周期と、溜めが満ちた時（1 パス目の射撃の記録 ShotLog.chargeTicks・chargeFullFrames。skills/triggers.ts）
   | ChargeTickTrigger
   | ChargeFullTrigger
@@ -96,6 +100,11 @@ export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChange
 /** 2 段目の段 16 の PR 2: リロードの込め終わりのきっかけ（{ reloadEnd }）か */
 export function isResolvedReloadEnd(t: ResolvedTrigger): t is ReloadEndTrigger {
   return typeof t === 'object' && 'reloadEnd' in t;
+}
+
+/** 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時のきっかけ（{ coverHealed }）か */
+export function isResolvedCoverHealed(t: ResolvedTrigger): t is CoverHealedTrigger {
+  return typeof t === 'object' && 'coverHealed' in t;
 }
 
 /** 2 段目の段 3: フルスタックの消費のきっかけ（{ fullStack }）か */
@@ -304,8 +313,6 @@ export type ResolvedEffect = {
   weapon?: ChangedWeapon;
   /** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示）。定義に無ければキーごと無い */
   burstStepMode?: BurstStepMode;
-  /** 2 段目の段 15 の PR 2: きっかけは読み込みが置き換えた「遮蔽物の HP を回復した時」（画面の表示だけが読む） */
-  viaCoverHealed?: true;
   assumes?: LocalizedText;
 };
 
@@ -614,7 +621,6 @@ function resolveItemFields(
   if (shots !== undefined) r.durationShots = shots;
   if (effect.durationUntil !== undefined) r.durationUntil = effect.durationUntil;
   if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
-  if ('viaCoverHealed' in effect && effect.viaCoverHealed) r.viaCoverHealed = true;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }
@@ -1277,6 +1283,42 @@ export function resolveInstant(
       if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);
+    });
+  }
+  return resolved;
+}
+
+/** 2 段目の段 17 の PR 1: 解決した遮蔽物 HP 回復（回復量は計算に効かないので持たない） */
+export type ResolvedCoverHeal = {
+  source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
+  trigger: ResolvedTrigger;
+  target: CoverHealEffect['target'];
+  effectIndex: number;
+};
+
+/**
+ * 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 定義の遮蔽物 HP 回復（coverHeal）を解決する。1 パス目が、対象の枠ごとに
+ * 遮蔽物 HP 回復を受けた出来事（FrameEvents.coverHealed）を起こす。support が 'unsupported' のスキルは空
+ */
+export function resolveCoverHeals(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedCoverHeal[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const resolved: ResolvedCoverHeal[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'coverHeal') return;
+      resolved.push({
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: effect.target,
+        effectIndex,
+      });
     });
   }
   return resolved;

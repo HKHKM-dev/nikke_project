@@ -12155,9 +12155,73 @@
       "plus": 0
     },
     {
+      "observation": "0505-01",
+      "element": "ナガ skill1.effects[1]",
+      "key": "518a307652bd8837",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0505-02",
+      "element": "ナガ skill1.effects[1]",
+      "key": "6a7e61a3ba1582c4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0505-03",
+      "element": "ナガ skill1.effects[1]",
+      "key": "ccba1e41d08eb51a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0505-04",
+      "element": "ナガ skill1.effects[1]",
+      "key": "85d8cb5eb5ddb4cd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0506-01",
+      "element": "ナガ skill1.effects[1]",
+      "key": "216f5af8b48b6f61",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0506-02",
+      "element": "ナガ skill1.effects[1]",
+      "key": "f3608219aa0de20a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0506-03",
+      "element": "ナガ skill1.effects[1]",
+      "key": "368fad7bfdf792c4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0506-04",
+      "element": "ナガ skill1.effects[1]",
+      "key": "93b25bb85d073ce3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[0]",
-      "key": "2c3fb02c206690fb",
+      "key": "951a1d3b51f1382c",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -12166,7 +12230,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[1]",
-      "key": "2c3fb02c206690fb",
+      "key": "951a1d3b51f1382c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12182,7 +12246,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[2]",
-      "key": "2c3fb02c206690fb",
+      "key": "951a1d3b51f1382c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12196,9 +12260,17 @@
       }
     },
     {
+      "observation": "0507-01",
+      "element": "ナガ skill1.effects[1]",
+      "key": "951a1d3b51f1382c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[0]",
-      "key": "ad526da75de60a14",
+      "key": "231cfab833b6fbab",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -12207,7 +12279,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[1]",
-      "key": "ad526da75de60a14",
+      "key": "231cfab833b6fbab",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12223,7 +12295,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[2]",
-      "key": "ad526da75de60a14",
+      "key": "231cfab833b6fbab",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12237,9 +12309,17 @@
       }
     },
     {
+      "observation": "0507-02",
+      "element": "ナガ skill1.effects[1]",
+      "key": "231cfab833b6fbab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "88bad8e002adf78b",
+      "key": "3183d8476f0c27bc",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -12248,7 +12328,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "88bad8e002adf78b",
+      "key": "3183d8476f0c27bc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12264,7 +12344,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[2]",
-      "key": "88bad8e002adf78b",
+      "key": "3183d8476f0c27bc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12276,6 +12356,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0507-03",
+      "element": "ナガ skill1.effects[1]",
+      "key": "3183d8476f0c27bc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0508-05",
@@ -13160,7 +13248,15 @@
     {
       "observation": "0581-01",
       "element": "エマ burst.effects[0]",
-      "key": "fae527e6473f1877",
+      "key": "c42f6c858db27d50",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0581-01",
+      "element": "ナガ skill1.effects[1]",
+      "key": "c42f6c858db27d50",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13168,7 +13264,15 @@
     {
       "observation": "0581-02",
       "element": "エマ burst.effects[0]",
-      "key": "c1c74687ee7a1e0c",
+      "key": "d25a331cf376ad43",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0581-02",
+      "element": "ナガ skill1.effects[1]",
+      "key": "d25a331cf376ad43",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13176,7 +13280,15 @@
     {
       "observation": "0581-03",
       "element": "エマ burst.effects[0]",
-      "key": "2de234b74e733fa4",
+      "key": "326c08ccd1183ceb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0581-03",
+      "element": "ナガ skill1.effects[1]",
+      "key": "326c08ccd1183ceb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13184,7 +13296,15 @@
     {
       "observation": "0582-01",
       "element": "エマ burst.effects[0]",
-      "key": "cd5272caf791a733",
+      "key": "ac0f6ae14430e044",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0582-01",
+      "element": "ナガ skill1.effects[1]",
+      "key": "ac0f6ae14430e044",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13192,7 +13312,15 @@
     {
       "observation": "0582-02",
       "element": "エマ burst.effects[0]",
-      "key": "6b7429734c882898",
+      "key": "b6b40ed00ab98ab7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0582-02",
+      "element": "ナガ skill1.effects[1]",
+      "key": "b6b40ed00ab98ab7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13200,7 +13328,15 @@
     {
       "observation": "0582-03",
       "element": "エマ burst.effects[0]",
-      "key": "55975643feb307d8",
+      "key": "ca0c06a0b21f1b77",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0582-03",
+      "element": "ナガ skill1.effects[1]",
+      "key": "ca0c06a0b21f1b77",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14056,7 +14192,7 @@
     {
       "observation": "0703-03",
       "element": "アスカ burst.effects[0]",
-      "key": "0b7c3f405eb989ad",
+      "key": "b565b34b1a819d0a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14072,15 +14208,23 @@
     {
       "observation": "0703-03",
       "element": "アスカ burst.effects[2]",
-      "key": "0b7c3f405eb989ad",
+      "key": "b565b34b1a819d0a",
       "effective": false,
       "minus": 0,
       "plus": 0
     },
     {
+      "observation": "0703-03",
+      "element": "ナガ skill1.effects[1]",
+      "key": "b565b34b1a819d0a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0703-04",
       "element": "アスカ burst.effects[0]",
-      "key": "17d885710d389ed6",
+      "key": "c753a31ae207a259",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14096,10 +14240,34 @@
     {
       "observation": "0703-04",
       "element": "アスカ burst.effects[2]",
-      "key": "17d885710d389ed6",
+      "key": "c753a31ae207a259",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0703-04",
+      "element": "ナガ skill1.effects[1]",
+      "key": "c753a31ae207a259",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0706-06",
+      "element": "ナガ skill1.effects[1]",
+      "key": "184e6007199c2d40",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0706-07",
+      "element": "ナガ skill1.effects[1]",
+      "key": "bd83a6c45e603de7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0708-05",

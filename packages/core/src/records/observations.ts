@@ -244,11 +244,6 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
       for (const effect of (group[slot]?.effects ?? []) as Record<string, unknown>[]) {
         // 2 段目の段 12: バースト段階の変更の側（burstStepMode）も読み込みで書く欄
         delete effect.burstStepMode;
-        // 2 段目の段 15 の PR 2: 読み込みが置き換えた「遮蔽物の HP を回復した時」は、JSON の形に戻して読み直す
-        if (effect.viaCoverHealed === true) {
-          delete effect.viaCoverHealed;
-          effect.trigger = { coverHealed: true };
-        }
         if (effect.kind !== 'state' || effect.enemy !== true) continue;
         delete effect.enemy;
         effect.target = 'enemy';

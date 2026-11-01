@@ -36,6 +36,8 @@ export type ElementClass =
   | 'burstTiming'
   | 'otherHit'
   | 'heal'
+  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復（「遮蔽物の HP を回復した時」の効果を通してだけ効く。回復と同じ扱い）
+  | 'coverHeal'
   | 'normalCondition'
   | 'unknown';
 
@@ -44,8 +46,8 @@ const ALLOWED: Record<ObservationKind, readonly ElementClass[] | 'all'> = {
   hit: ['damageValue', 'otherHit'],
   rate: ['critRate', 'hitRate', 'normalCondition'],
   interval: ['firing'],
-  timing: ['firing', 'burstTiming', 'otherHit', 'heal', 'hitRate', 'normalCondition'],
-  count: ['firing', 'burstTiming', 'otherHit', 'heal', 'hitRate', 'normalCondition'],
+  timing: ['firing', 'burstTiming', 'otherHit', 'heal', 'coverHeal', 'hitRate', 'normalCondition'],
+  count: ['firing', 'burstTiming', 'otherHit', 'heal', 'coverHeal', 'hitRate', 'normalCondition'],
   gauge: ['firing', 'burstTiming', 'otherHit', 'hitRate', 'normalCondition'],
   total: 'all',
   position: [],
@@ -102,6 +104,7 @@ const KIND_CLASS: Record<string, ElementClass> = {
   autoAttack: 'otherHit',
   weaponChange: 'otherHit',
   heal: 'heal',
+  coverHeal: 'coverHeal',
   cooldownReduction: 'burstTiming',
   burstGauge: 'burstTiming',
   burstGaugeHit: 'burstTiming',
@@ -504,7 +507,16 @@ export function observedSource(o: Observation): ObservationSource | undefined {
 
 /** 編成に、回復を受けた時（trigger: healed）がきっかけの効果か notes を持つキャラがいるか（宝物版のスロットも見る） */
 export function teamHasHealedTrigger(recording: RecordingEntry, ctx: RelevanceContext): boolean {
-  const healed = (x: { trigger?: unknown } | undefined) => x?.trigger === 'healed';
+  return teamHasTrigger(recording, ctx, (t) => t === 'healed');
+}
+
+/** 2 段目の段 17 の PR 1: 編成に、遮蔽物 HP 回復を受けた時（trigger: { coverHealed }）がきっかけの効果か notes を持つキャラがいるか */
+export function teamHasCoverHealedTrigger(recording: RecordingEntry, ctx: RelevanceContext): boolean {
+  return teamHasTrigger(recording, ctx, (t) => typeof t === 'object' && t !== null && 'coverHealed' in t);
+}
+
+function teamHasTrigger(recording: RecordingEntry, ctx: RelevanceContext, matches: (t: unknown) => boolean): boolean {
+  const healed = (x: { trigger?: unknown } | undefined) => x !== undefined && matches(x.trigger);
   return recording.team.some((m) => {
     const def = ctx.skills.get(m.rid);
     if (def === undefined) return false;
@@ -574,6 +586,8 @@ export function notRelevantReason(
   const cls = classOf(element);
   // 回復は「回復を受けた時」の効果を通してだけ観測量に効く（11.8 節。2026-10-08、オーナー決定）
   if (cls === 'heal' && !teamHasHealedTrigger(recording, ctx)) return '回復を受けた時の効果を持つ味方がいない';
+  if (cls === 'coverHeal' && !teamHasCoverHealedTrigger(recording, ctx))
+    return '遮蔽物の HP を回復した時の効果を持つ味方がいない';
   const single = o.kind === 'hit' || o.kind === 'rate';
   if (observedSource(o) === 'normal' && o.kind === 'hit' && cls === 'otherHit') return '別のヒット';
   const slots = observedSlots(o);

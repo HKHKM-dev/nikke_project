@@ -102,7 +102,15 @@ import {
   type BurstStepKey,
 } from '../burst/schedule.ts';
 import { capCritRate, ZERO_BUFFS } from '../skills/buffs.ts';
-import { isResolvedShotCount, isResolvedTimer, resolveInstant, type ResolvedInstantEffect } from '../skills/resolve.ts';
+import {
+  isResolvedShotCount,
+  isResolvedTimer,
+  resolveCoverHeals,
+  resolveInstant,
+  type ResolvedCoverHeal,
+  type ResolvedInstantEffect,
+  type ResolvedTrigger,
+} from '../skills/resolve.ts';
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
@@ -317,7 +325,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
   // F5（plan/design-heal-vocabulary.md 3.3 節）: 時間の周期のトリガー（heal だけ書ける）は出来事の列に無いので、
   // 周期のフレーム（atStart ならフレーム 0 も。skills/timeline.ts の triggerFires）で発火する
-  const instantTracker = (effect: ResolvedInstantEffect, sourceSlotIndex: number): TriggerTracker => {
+  const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
     const at = new Set(triggerFrames(effect.trigger, null, sourceSlotIndex, frames));
     return (ev) => at.has(ev.frame);
@@ -330,6 +338,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         effect,
         fires: instantTracker(effect, sourceSlotIndex),
       });
+    }
+  });
+  // 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 遮蔽物 HP 回復。受けた枠に coverHealed の出来事を、回復と同じフレームの
+  // 規則（healFrameOf）で立てる。回復量は計算に効かないので、件も記録も作らない
+  const coverHeals: { sourceSlotIndex: number; effect: ResolvedCoverHeal; fires: TriggerTracker }[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveCoverHeals(slot.definition, slot.character, slot.levels)) {
+      coverHeals.push({ sourceSlotIndex, effect, fires: instantTracker(effect, sourceSlotIndex) });
     }
   });
   // 回復は healed の出来事を作るので先に当てる（heal のトリガーに healed は書けないので順番で閉じる。plan/design-stage11.md 3.3 節）
@@ -916,6 +933,8 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
   const healed: boolean[] = slots.map(() => false);
   let healedDirty = false;
+  /** 段 17 の PR 1: 次のフレーム以降に遮蔽物 HP 回復を受ける枠（射撃の回数起点で、撃った枠と同じか前の枠）。フレーム → 受ける枠 */
+  const pendingCoverHeals = new Map<number, number[]>();
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
   /** Stage 16-B: いま見ている（または次に来る）狙えない窓の添字 */
@@ -1251,6 +1270,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
         ) ?? [],
     );
     const chargeFulls = logs.flatMap((log, i) => (log?.chargeFullFrames?.at(-1) === f ? [i] : []));
+    // 段 17 の PR 1: このフレームに遮蔽物 HP 回復を受けた枠（前のフレームの射撃で起きたものから。このフレームの分は下で足す）
+    const coverHealed: number[] | undefined = coverHeals.length > 0 ? [...(pendingCoverHeals.get(f) ?? [])] : undefined;
+    pendingCoverHeals.delete(f);
     const ev: FrameEvents = {
       frame: f,
       shots: shotEvents,
@@ -1266,6 +1288,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       ...(fullStacks.length > 0 ? { fullStacks } : {}),
       ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
       ...(reloadEnds.length > 0 ? { reloadEnds } : {}),
+      ...(coverHealed !== undefined ? { coverHealed } : {}),
       ...(chargeTicks.length > 0 ? { chargeTicks } : {}),
       ...(chargeFulls.length > 0 ? { chargeFulls } : {}),
       ...(stageEntries !== undefined ? { stageEntries } : {}),
@@ -1299,6 +1322,21 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
           const list = pendingHeals.get(at) ?? [];
           list.push({ sourceSlotIndex: src.sourceSlotIndex, slotIndex: target, effect: src.effect });
           pendingHeals.set(at, list);
+        }
+      }
+    }
+
+    // 段 17 の PR 1: 遮蔽物 HP 回復も回復と同じく件の登録の前に当てる（同じフレームの { coverHealed } の timed が読む）
+    for (const src of coverHeals) {
+      if (coverHealed === undefined || !src.fires(ev)) continue;
+      for (const target of targetsAt(src.effect, src.sourceSlotIndex, null)) {
+        const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
+        if (at === f) {
+          if (!coverHealed.includes(target)) coverHealed.push(target);
+        } else if (at < frames) {
+          const list = pendingCoverHeals.get(at) ?? [];
+          if (!list.includes(target)) list.push(target);
+          pendingCoverHeals.set(at, list);
         }
       }
     }

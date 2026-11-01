@@ -1,5 +1,5 @@
-// 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2・3.2 節）: ティア（451）。きっかけ { coverHealed }（「遮蔽物の HP を回復した時」）を、
-// 読み込みで同じ定義の遮蔽物 HP 回復（coverHeal）のきっかけに置き換える。T4 の▼は、発動の後に付いたもの（同じ発動から付いたものも）も
+// 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2・3.2 節）: ティア（451）。きっかけ { coverHealed }（「遮蔽物の HP を回復した時」）は、
+// 段 17 の PR 1 から、自分の枠が遮蔽物 HP 回復（coverHeal）を受けた出来事で発火する。T4 の▼は、発動の後に付いたもの（同じ発動から付いたものも）も
 // 走っている CT を縮める（V-0566）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -32,32 +32,28 @@ const def = (skill1: unknown[], skill2: unknown[]) => ({
 });
 
 describe('{ coverHealed }（遮蔽物の HP を回復した時）', () => {
-  it('takes the trigger of the coverHeal effect in the same definition and marks the effect', () => {
+  // 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 置き換えでなく、遮蔽物 HP 回復を受けた出来事のきっかけとして読む
+  it('keeps the trigger as the cover-healed event', () => {
     const parsed = parseSkillDefinition(def([{ ...cooldown, trigger: { coverHealed: true } }], [coverHeal]));
-    expect(parsed.skills.skill1.effects[0]).toMatchObject({ trigger: 'burstUse', viaCoverHealed: true });
+    expect(parsed.skills.skill1.effects[0]).toMatchObject({ trigger: { coverHealed: true } });
     expect(parsed.skills.skill2.effects[0]).toMatchObject({ kind: 'coverHeal', trigger: 'burstUse', target: 'self' });
-  });
-
-  it('keeps the mark through resolution for the label', () => {
     const resolved = resolveTimed(definition, character, MAX_SKILL_LEVELS).filter((e) => e.source.skill === 'skill1');
-    expect(resolved.map((e) => e.viaCoverHealed)).toEqual([true, true]);
+    expect(resolved.map((e) => e.trigger)).toEqual([{ coverHealed: true }, { coverHealed: true }]);
   });
 
-  it('needs exactly one coverHeal and is only allowed in timed', () => {
-    expect(() => parseSkillDefinition(def([{ ...cooldown, trigger: { coverHealed: true } }], []))).toThrow(
-      /exactly one coverHeal/,
-    );
+  it('needs no coverHeal in the same definition and is only allowed in timed', () => {
+    expect(() => parseSkillDefinition(def([{ ...cooldown, trigger: { coverHealed: true } }], []))).not.toThrow();
     expect(() =>
       parseSkillDefinition(
         def([{ kind: 'damage', trigger: { coverHealed: true }, damageType: 'skill', ref: 1 }], [coverHeal]),
       ),
     ).toThrow(/only allowed in timed/);
     expect(() =>
-      parseSkillDefinition(def([{ ...cooldown, trigger: 'burstUse', __coverHealed: true }], [coverHeal])),
+      parseSkillDefinition(def([{ ...cooldown, trigger: { coverHealed: true, x: 1 } }], [coverHeal])),
     ).toThrow(/unknown field/);
     expect(() =>
-      parseSkillDefinition(def([{ ...cooldown, trigger: 'burstUse' }], [{ ...coverHeal, target: 'allies' }])),
-    ).toThrow(/only "self"/);
+      parseSkillDefinition(def([{ ...cooldown, trigger: 'burstUse' }], [{ ...coverHeal, target: 'enemy' }])),
+    ).toThrow(/"self" or "allies"/);
   });
 });
 

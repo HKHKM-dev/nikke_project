@@ -13,7 +13,7 @@ import { isResolvedShotCount, type ResolvedInstantEffect } from './resolve.ts';
  * （そのフレームの始めに当てるので、そのフレームのどの枠の発にも間に合う）。ミサト S1 は前の枠のアスカの 5f 後の発に乗らない（C-0652）
  */
 export function healFrameOf(
-  effect: Pick<ResolvedInstantEffect, 'trigger' | 'delayFrames'>,
+  effect: { trigger: ResolvedInstantEffect['trigger']; delayFrames?: number },
   fireFrame: number,
   sourceSlotIndex: number,
   targetSlotIndex: number,
