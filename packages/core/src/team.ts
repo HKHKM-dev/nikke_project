@@ -140,7 +140,7 @@ export type TeamInput = {
   /**
    * 語彙はあるのに撮っていない効果の撮影（plan/design-skill-unrecorded.md 5 節）: バーストを使わない枠（0 始まり）。オートバースト OFF で
    * 手で撃たなかった枠（録画 0507 のナガ）を、チェーンの候補から外す。burst が true の動的サイクルだけ。録画の照合
-   * （records/observations.ts）と、画面のスロットの詳細設定「バーストしない」（apps/web の noBurstSlotsForCalc）が使う
+   * （records/observations.ts）と、画面のスロットの詳細設定「バーストしない」（apps/web の calcView.ts の buildCalcView）が使う
    */
   noBurstSlots?: readonly number[];
   /**

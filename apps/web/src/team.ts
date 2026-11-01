@@ -350,11 +350,6 @@ export function clampInt(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, Math.round(value)));
 }
 
-/** 1..10 の整数に clamp する */
-export function clampSkillLevel(level: number): number {
-  return clampInt(level, SKILL_LEVEL_MIN, SKILL_LEVEL_MAX);
-}
-
 // ---- 永続化 ----
 
 /** localStorage のキー。Stage 14 で formatVersion を付けたが、版のない旧形式もこのキーのまま読む */
@@ -666,17 +661,23 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   };
 }
 
+/**
+ * コンソールの保存データ。クラス・企業の欠けたキーは 0（クラスや企業を足したときに、前の保存データを読めなくして初期値で
+ * 上書きしない）。ある値が 0 以上の整数でなければ読まない
+ */
 function parseConsole(v: Json): ConsoleInput | null {
   if (!isRecord(v) || !isInt(v.personal, 0) || !isRecord(v.class) || !isRecord(v.corporation)) return null;
   const result = emptyConsole();
   result.personal = v.personal;
   for (const c of CONSOLE_CLASSES) {
     const lv = v.class[c];
+    if (lv === undefined) continue;
     if (!isInt(lv, 0)) return null;
     result.class[c] = lv;
   }
   for (const c of CONSOLE_CORPORATIONS) {
     const lv = v.corporation[c];
+    if (lv === undefined) continue;
     if (!isInt(lv, 0)) return null;
     result.corporation[c] = lv;
   }

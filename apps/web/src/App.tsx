@@ -196,7 +196,7 @@ export function App() {
             })}
           </section>
           <ErrorBoundary
-            resetKey={shown}
+            resetKeys={[shown, detailed]}
             fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
           >
             {shown === null ? (
