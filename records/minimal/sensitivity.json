@@ -20303,6 +20303,214 @@
       "minus": null,
       "plus": null,
       "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0894-01",
+      "element": "マスト skill2.effects[1]",
+      "key": "5a0d033ee2afa5bd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0894-02",
+      "element": "マスト skill2.effects[1]",
+      "key": "0357137f6e1aab14",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0894-03",
+      "element": "マスト skill2.effects[1]",
+      "key": "6b9a194877828a43",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0894-04",
+      "element": "マスト skill2.effects[1]",
+      "key": "5e7467ca94dc9d7b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0895-01",
+      "element": "マスト skill2.effects[1]",
+      "key": "e32d50d378d94998",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0895-02",
+      "element": "マスト skill2.effects[1]",
+      "key": "92a45e900f104dc5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0895-03",
+      "element": "マスト skill2.effects[1]",
+      "key": "eae960c9684789ce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0895-04",
+      "element": "マスト skill2.effects[1]",
+      "key": "143805692d9d1f3a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-01",
+      "element": "マスト burst.effects[4]",
+      "key": "f70891952b8138e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-01",
+      "element": "マスト skill2.effects[1]",
+      "key": "f70891952b8138e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-02",
+      "element": "マスト burst.effects[4]",
+      "key": "4da7306ca299035b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-02",
+      "element": "マスト skill2.effects[1]",
+      "key": "4da7306ca299035b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-03",
+      "element": "マスト burst.effects[4]",
+      "key": "b12c4dda9498aa33",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-03",
+      "element": "マスト skill2.effects[1]",
+      "key": "b12c4dda9498aa33",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-04",
+      "element": "マスト burst.effects[4]",
+      "key": "faa9a90b05bb51f0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-04",
+      "element": "マスト skill2.effects[1]",
+      "key": "faa9a90b05bb51f0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-05",
+      "element": "マスト burst.effects[4]",
+      "key": "16b93bb3d05a6324",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0896-05",
+      "element": "マスト skill2.effects[1]",
+      "key": "16b93bb3d05a6324",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-01",
+      "element": "マスト burst.effects[4]",
+      "key": "33325668f1851fa3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-01",
+      "element": "マスト skill2.effects[1]",
+      "key": "33325668f1851fa3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-02",
+      "element": "マスト burst.effects[4]",
+      "key": "46d7855277585f61",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-02",
+      "element": "マスト skill2.effects[1]",
+      "key": "46d7855277585f61",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-03",
+      "element": "マスト burst.effects[4]",
+      "key": "73b1b4a753741b48",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-03",
+      "element": "マスト skill2.effects[1]",
+      "key": "73b1b4a753741b48",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-04",
+      "element": "マスト burst.effects[4]",
+      "key": "87ce47fdec03df4e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0897-04",
+      "element": "マスト skill2.effects[1]",
+      "key": "87ce47fdec03df4e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

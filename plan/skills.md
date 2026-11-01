@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 71・効果 439（根拠あり 415）・notes 176（根拠あり 84）
+件数: キャラ 72・効果 449（根拠あり 425）・notes 179（根拠あり 84）
 
-notes の種類: 未対応 42・前提の外 37・計算に無関係 35・補足 14・間接 48
+notes の種類: 未対応 43・前提の外 37・計算に無関係 35・補足 16・間接 48
 
-スロット: supported 166・partial 16・unsupported 16・noEffect 33
+スロット: supported 168・partial 17・unsupported 16・noEffect 33
 
 ## 10 ラピ
 
@@ -739,6 +739,25 @@ notes の種類: 未対応 42・前提の外 37・計算に無関係 35・補足
   - notes[0] 未対応: 味方全体のバースト再突入 2 段階は未対応: 根拠なし
   - notes[1] 未対応: 味方全体の最大装弾数▲（10 秒）は未対応: 根拠なし
   - notes[2] 未対応: 自分の王への攻撃ダメージ▲（10 秒）は未対応: 根拠なし
+
+## 350 マスト
+
+- **skill1**: partial
+  - effects[0] state・critHit・seaBreeze（enemyDefenseDown）: C-0858（確定）
+  - effects[1] timed・自分の HP が閾値以下の間・critDamage: C-0862（確定）
+  - effects[2] timed・自分の HP が閾値以下の間・critDamage: C-0862（確定）
+  - notes[0] 補足: 海風は通常攻撃のクリティカルの命中 2 回ごとに付き、最後の付与から約 3 秒で全スタックが切れる。実機では会心が 3 秒の間に 2 回無いと途切れて 0 から積み直すが、モデルはクリティカルを期待値で数えるので途切れず、暴風が写すスタックを多めに出す（V-0623）: 根拠なし
+  - notes[1] 未対応: 回復で現在の HP が戻って HP の割合が 70% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・battleStart・critRate: C-0859（確定）
+  - effects[1] timed・battleStart・critRate: C-0863（仮説）
+- **burst**: supported
+  - effects[0] timed・burstUse・critDamage: C-0861（確定）
+  - effects[1] timed・burstUse・critDamage: C-0861（確定）
+  - effects[2] dot・burstUse: C-0860（確定）
+  - effects[3] timed・burstUse・maxHpOnly: C-0862（確定）
+  - effects[4] timed・burstUse・maxHpOnly: C-0863（仮説）
+  - notes[0] 補足: 暴風は説明文で「持続ダメージ」でなく「ダメージ」なので、持続ダメージ▲を掛けない。確かめた編成は無い（持続ダメージ▲の使い手を混ぜていない。plan/design-mast.md 2.3 節）: 根拠なし
 
 ## 352 ヘルム
 
