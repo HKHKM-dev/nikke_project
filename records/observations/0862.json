@@ -36,5 +36,98 @@
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
       "note": "1 回目: 増分 f2244 → バーの見え始め 2252 → 消えた 2353。4 回目: 増分 f8371・0 の点 8368.91 → 消えた 8480。明けの後の 1 発目は消えたフレームの 70f 後（f2423・8550）"
     }
+  },
+  {
+    "id": "0862-03",
+    "recording": "0862",
+    "source": "V-0609",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "value": [25.098, 27.098, 61.478, 63.478, 101.156, 103.156, 129.257, 131.257, 162.427, 164.427],
+    "description": "アドミ単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は動画 f759（最初の発の増分の 70f 前。モデルの戦闘開始から 1 発目まで）。フレームは戦闘開始から数え、1f = 0.017 秒。1〜4 回目の終わりは明けの後の最初の発（動画 f2423・4563・6897・8550）の 70f 前（モデルの明けから 1 発目まで。windowEndFirstShotFrames）、始まりは終わりの 2 秒前。5 回目は戦闘の終わりと重なり明けの後の発が無いので、4 回目の始まりの 33.17 秒後（data/enemies.json の 4→5 回目の間隔。C-0546）から 2 秒"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0862-04",
+    "recording": "0862",
+    "source": "V-0609",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [82, 82, 63, 179, 82, 184],
+    "description": "1 回目（4 発の後のチャージの途中）の敵のジャンプの前後の、アドミの発と発の間（窓の前の発・窓の中の部分チャージの発・明けの後の発・リロードを挟む間の順）。部分チャージの発は窓の始まりの D + H 後で、明けの後はリロードの前にマガジンの残りを撃つ（plan/design-hide-reload-detect.md 案 A）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "発（動画のフレーム − 戦闘開始 f759）: 1258・1340・1422・1485・1664・1746・1930。比べる範囲はモデルのフレーム（録画の窓 `0862-03`）。即着弾なので増分が撃ったフレーム。許容 ±2 は、録画とモデルの発の刻みの差（1 マガジンで 2〜3f。V-0590）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 1250,
+        "to": 1940
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0862-03"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0862-05",
+    "recording": "0862",
+    "source": "V-0609",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [83, 82, 39, 179, 184, 82],
+    "description": "4 回目（5 発の後のチャージの途中）の敵のジャンプの前後の、アドミの発と発の間（窓の前の発・窓の中の部分チャージの発・明けの後の発・リロードを挟む間の順）。部分チャージの発は窓の始まりの D + H 後で、明けの後はリロードの前にマガジンの残りを撃つ（plan/design-hide-reload-detect.md 案 A）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "発（動画のフレーム − 戦闘開始 f759）: 7408・7491・7573・7612・7791・7975・8057。比べる範囲はモデルのフレーム（録画の窓 `0862-03`）。即着弾なので増分が撃ったフレーム。許容 ±2 は、録画とモデルの発の刻みの差（1 マガジンで 2〜3f。V-0590）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 7400,
+        "to": 8060
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0862-03"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
