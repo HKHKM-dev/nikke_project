@@ -9,7 +9,7 @@ import type { AddressInfo } from 'node:net';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { memoryProjectName } from './sync-lib.ts';
 
 const md5 = (b: Buffer) => createHash('md5').update(b).digest('hex');
@@ -150,16 +150,41 @@ async function pull(): Promise<{ out: string; rest: string }> {
   throw new Error('--pull-rest が終わらない');
 }
 
-/** 読みの道ごとに、同じ流れを回す */
+/** 手元で変え・増やし・消し、Drive 側でも同じファイルを変えてから --push を回す（--pull の後に呼ぶ）。--push の出力を返す */
+async function editAndPush(): Promise<{ systemMessage: string }> {
+  writeFileSync(join(repo(), 'private/owner.md'), 'owner edited\n');
+  writeFileSync(join(repo(), 'scratch/made.md'), 'made\n');
+  rmSync(join(repo(), 'scratch/old.md'));
+  setDrive('scratch/notes/new.md', 'changed on desktop\n');
+  writeFileSync(join(repo(), 'scratch/notes/new.md'), 'changed in cloud\n');
+  return JSON.parse(await run('--push')) as { systemMessage: string };
+}
+
+/**
+ * 読みの道ごとに、同じ流れを回す。テストはどの順でも通るように、仮の置き場所・偽の Drive・受けた操作の数を beforeEach で作り直し、
+ * 前の段の状態（--pull や --push の後）が要るテストは、自分の中でその段を回す
+ */
 describe.each(['受け口', 'サービスアカウント'] as const)('drive/cloud-sync（読みは%s）', (via) => {
+  let origin: string;
+  let key: string;
   beforeAll(async () => {
-    drive.clear();
-    for (const k of Object.keys(calls)) delete calls[k];
     server = createServer(serve);
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+    key = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }) as string;
+  });
+
+  afterAll(async () => {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
+
+  beforeEach(() => {
+    drive.clear();
+    for (const k of Object.keys(calls)) delete calls[k];
+    refuse = false;
+    holdScratch = null;
     tmp = mkdtempSync(join(tmpdir(), 'cloud-sync-'));
-    const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-    const key = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' });
     env = {
       PATH: process.env['PATH'],
       HOME: join(tmp, 'home'),
@@ -189,9 +214,7 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
     setDrive('scratch/notes/new.md', 'new\n');
   });
 
-  afterAll(async () => {
-    server.closeAllConnections();
-    await new Promise<void>((resolve) => server.close(() => resolve()));
+  afterEach(() => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
@@ -215,6 +238,7 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
   });
 
   it('Drive で変わっていなければ、取り直すのは全体の CLAUDE.md だけ', async () => {
+    await pull();
     const before = reads();
     const { out, rest } = await pull();
     expect(out).toContain('Drive から private/・メモリを 0 件置いた');
@@ -223,12 +247,8 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
   });
 
   it('--push は変えた・増やした・消したものだけを戻し、Drive 側も変わっていれば別名で置く', async () => {
-    writeFileSync(join(repo(), 'private/owner.md'), 'owner edited\n');
-    writeFileSync(join(repo(), 'scratch/made.md'), 'made\n');
-    rmSync(join(repo(), 'scratch/old.md'));
-    setDrive('scratch/notes/new.md', 'changed on desktop\n');
-    writeFileSync(join(repo(), 'scratch/notes/new.md'), 'changed in cloud\n');
-    const out = JSON.parse(await run('--push')) as { systemMessage: string };
+    await pull();
+    const out = await editAndPush();
     expect(out.systemMessage).toContain('Drive に戻した: 3 件、ごみ箱へ: 1 件');
     expect(drive.get('private/owner.md')?.buf.toString()).toBe('owner edited\n');
     expect(drive.get('scratch/made.md')?.buf.toString()).toBe('made\n');
@@ -241,6 +261,8 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
   });
 
   it('次の取り直しは、衝突として送った版を Drive の版で上書きし、Drive で消えたものを手元からも消す', async () => {
+    await pull();
+    await editAndPush();
     drive.delete('scratch/made.md');
     expect((await pull()).rest).toContain('件置いた');
     expect(readFileSync(join(repo(), 'scratch/notes/new.md'), 'utf8')).toBe('changed on desktop\n');
@@ -250,6 +272,8 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
   });
 
   it('断られたら、手元をそのままにして、何を確かめるかを 1 つにまとめて知らせる', async () => {
+    await pull();
+    await editAndPush();
     const base = readFileSync(state('base.json'), 'utf8');
     refuse = true;
     try {
@@ -270,6 +294,7 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
   });
 
   it('裏の --pull-rest が一覧を取った後に --push が送ったものは、一覧に無くても手元から消さない', async () => {
+    await pull();
     let arrived!: () => void;
     let release!: () => void;
     const listed = new Promise<void>((resolve) => (arrived = resolve));
@@ -296,7 +321,10 @@ describe.each(['受け口', 'サービスアカウント'] as const)('drive/clou
     expect(await run('--push')).toBe('');
   });
 
-  it('読みに使わないほうの道は呼ばない（サービスアカウントで読むときは、受け口は書くことにだけ使う）', () => {
+  it('読みに使わないほうの道は呼ばない（サービスアカウントで読むときは、受け口は書くことにだけ使う）', async () => {
+    await pull();
+    await editAndPush();
+    await pull();
     if (via === '受け口') expect(calls['list'] ?? 0).toBe(0);
     else expect([calls['snapshot'] ?? 0, calls['get'] ?? 0]).toEqual([0, 0]);
   });
