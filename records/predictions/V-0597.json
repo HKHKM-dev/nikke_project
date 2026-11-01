@@ -1,0 +1,264 @@
+{
+  "verification": "V-0597",
+  "note": "撮る編成（案 B）: ティア（451・RL・バースト I・枠 1・AI）+ I-DOLL・フラワー（304・RL・バースト I・枠 2・AI）+ エマ：TU（93・MG・バースト I・枠 3・操作・撃たない）+ ウンファ：TU（95・SR・バースト II・枠 4・AI）・AUTO 射撃 OFF・オートバースト ON・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON。III がいないのでフルバーストは起きない。モデルの自動のバーストは同じ段の候補を枠の若い順に選ぶので、ティアが使える回はティア I → 再突入 → フラワー I → ウンファ II（攻撃ダメージ▲ 32.11% の乗った炸裂弾。モデルの 703・3344・5907・8345f）、ティアの CT の回はフラワー I → ウンファ II（攻撃ダメージ▲なし。V-0562 と同じ形）。エマのバーストは起きない。操作のエマもモデルでは撃つのでバーストの時刻は録画とずれるが、比べるのはバーストからの相対の時刻で決まる 1 発の値なので、時刻のずれは値に効かない。フレームはモデルの 2 回目のティアの回（I 3344f・II 3400f・炸裂弾の発 3427f）と、ティアの CT の回（II 2130f・炸裂弾の発 2157f）",
+  "team": [
+    {
+      "rid": 451,
+      "controlled": false
+    },
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 93,
+      "controlled": true
+    },
+    {
+      "rid": 95,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Rs",
+      "note": "いまのモデル（C-0525・C-0205・C-0376 からの帰結）。炸裂弾は発射体の爆発を持ち（95.json の burst の effects[1] の projectileExplosion）、攻撃ダメージ▲（ティアの S1。32.11%。C-0776）・発射体爆発ダメージ▲（2.32 + 3.09 + 5.11 = 10.52%）・防御力無視ダメージ▲（カモフラージュ 42.24% + フォーメーション 30.97% × 2 = 104.18%）が 1 つの和 (1 + 0.3211 + 0.1052 + 1.0418) で掛かる（damage.ts の trueDamageMultiplier・hasProjectileExplosion、TRUE_DAMAGE_BUCKET = attackDamage）。override は無い。対立する読み（どれか 1 つが別の乗数・乗らない）は、語彙かコードの切り替えが要るので検証記録に手で書いた"
+    }
+  ],
+  "targets": [
+    {
+      "id": "eun-round-ad-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3427,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "本命。ティアの攻撃ダメージ▲の窓の中の炸裂弾（使用武器変更の 1 発）のコア（会心・距離ボーナスなし）。3 つの▲が同時に乗る"
+    },
+    {
+      "id": "eun-round-ad-core-dist",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3427,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ発の距離ボーナス付き（的の着地点で決まる）"
+    },
+    {
+      "id": "eun-round-ad-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3427,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ発の会心"
+    },
+    {
+      "id": "eun-round-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 2157,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。ティアの CT の回（フラワー I → ウンファ II）の炸裂弾のコア。攻撃ダメージ▲が無く、V-0562 の eun-round-core と同じ形（C-0376）"
+    },
+    {
+      "id": "flower-core-pre",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。バーストの前のフラワーのコアの 1 ヒット。発射体爆発ダメージ▲の合計（10.52%）が効いていることを見る。どの読みでも同じ"
+    },
+    {
+      "id": "flower-ad-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3403,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。ティアの攻撃ダメージ▲の窓の中・徹甲炸裂弾の前のフラワーのコア。攻撃ダメージ▲と発射体爆発ダメージ▲の和（C-0205）と、ティアの▲が付いていること（C-0776）を見る。どの読みでも同じ"
+    },
+    {
+      "id": "eun-pre-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。バーストの前のウンファのコア（カモフラージュ・徹甲炸裂弾の外）。どの読みでも同じ"
+    },
+    {
+      "id": "eun-camo-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 2240,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。ティアの CT の回のカモフラージュの中（徹甲炸裂弾の中）のウンファのコア。防御力無視ダメージ▲の合計（104.18%）を見る。どの読みでも同じ"
+    },
+    {
+      "id": "eun-camo-ad-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 4,
+        "frame": 3510,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。ティアの窓の中のカモフラージュの中（徹甲炸裂弾の中）のウンファのコア。攻撃ダメージ▲と防御力無視ダメージ▲の和（C-0525）を見る。SR の通常攻撃には発射体の爆発が無いので、どの読みでも同じ"
+    },
+    {
+      "id": "alt-a-round-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1572,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noBurstSlots": [1]
+      },
+      "team": [
+        {
+          "rid": 93,
+          "controlled": false
+        },
+        {
+          "rid": 95,
+          "controlled": false
+        },
+        {
+          "rid": 226,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "比べた案 A（撮らない）: エマ：TU（枠 1・AI・撃つ）+ ウンファ：TU（枠 2・AI）+ ラプンツェル：ピュアグレイス（226・SR・バースト I・枠 3・操作・撃たない）・オートバースト OFF でラプンツェル I → ウンファ II を手で撃つ（モデルはエマの枠のバーストを使わない noBurstSlots）。攻撃ダメージ▲ 15.24%（C-0685）の乗った炸裂弾のコア。感度の比べのためだけの値"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "04b21507ec6adb6ac06269b2126dcc517855bc8a",
+    "values": {
+      "Rs": {
+        "eun-round-ad-core": 3157062.912434675,
+        "eun-round-ad-core-dist": 3630622.3492998756,
+        "eun-round-ad-core-crit": 4317441.385900039,
+        "eun-round-core": 2746328.784488979,
+        "flower-core-pre": 222727.85635211715,
+        "flower-ad-core": 287438.23879390577,
+        "eun-pre-core": 713539.5038357567,
+        "eun-camo-core": 1848787.3165063574,
+        "eun-camo-ad-core": 2139533.5244259336,
+        "alt-a-round-core": 2941270.799745672
+      }
+    }
+  }
+}
