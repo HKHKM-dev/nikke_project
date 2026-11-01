@@ -158,3 +158,35 @@ describe('レッドフード単騎のチェーン（全段階の枠は同じチ�
     for (const gap of gaps) expect(gap).toBeGreaterThanOrEqual(gameSecondsToFrames(40));
   });
 });
+
+describe('レッドウルフの射撃（設計書 7.1 節の論点 10・11。V-0639）', () => {
+  const input = TEAMS['レッドフード単騎（撮影 A）']!.input;
+  const plan = planTeamRun(input);
+  const weapon = plan.history.tracks
+    .filter((t) => t.origin.kind === 'timed' && t.origin.effect.stat === 'weapon')
+    .flatMap((t) => t.items)[0]!;
+  const shots = plan.shots[0]!.frames.filter((f) => f >= weapon.start && f < weapon.end);
+
+  it('fires every 0.3 s (18, 18, 17 f) without reloading through the 10 s window', () => {
+    const gaps = shots.slice(1).map((f, i) => f - shots[i]!);
+    expect(gaps.every((g) => g === 17 || g === 18)).toBe(true);
+    // 0.3 秒 = 17.647f の端数を持ち越すので、n 発の間の長さは n × 17.647 の切り上げか切り捨て
+    const span = shots.at(-1)! - shots[0]!;
+    expect(Math.abs(span - (shots.length - 1) * (0.3 / 0.017))).toBeLessThan(1);
+    expect(shots.length).toBeGreaterThan(30);
+  });
+});
+
+describe('全段階の枠と専任の順（設計書 7.1 節の論点 12）', () => {
+  it('picks the leftmost ready candidate, even an AllStep slot left of a ready dedicated one', () => {
+    const input: TeamInput = {
+      slots: [fixedSlot(RED_HOOD), fixedSlot(LITER), fixedSlot(DELTA)],
+      enemy,
+      durationSeconds: 60,
+      burst: true,
+      controlledSlot: 0,
+    };
+    const first = planTeamRun(input).schedule!.activations[0]!;
+    expect([first.step, first.slotIndex]).toEqual(['Step1', 0]);
+  });
+});

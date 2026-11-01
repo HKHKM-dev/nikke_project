@@ -209,8 +209,9 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
     state.lastShot = false;
     if (isChargeWeapon(shot)) {
-      state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - 1);
-      state.chargeElapsed = 0;
+      const carry = chargeCarryAtFire(state, params, model);
+      state.wait = Math.max(0, Math.ceil(chargeShotIntervalFrames(params, model) - carry - 1e-9) - 1);
+      state.chargeElapsed = carry;
     }
     return;
   }
@@ -230,8 +231,9 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     return;
   }
   if (isChargeWeapon(shot)) {
-    state.wait = Math.max(0, chargeShotIntervalFrames(params, model) - 1);
-    state.chargeElapsed = 0;
+    const carry = chargeCarryAtFire(state, params, model);
+    state.wait = Math.max(0, Math.ceil(chargeShotIntervalFrames(params, model) - carry - 1e-9) - 1);
+    state.chargeElapsed = carry;
   }
 }
 
@@ -405,7 +407,22 @@ function chargeWaitFrames(
   model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
   elapsed: number,
 ): number {
-  return Math.max(0, chargeShotIntervalFrames(params, model) - elapsed);
+  // レッドフード編: 解放に端数のある変更後の武器は、端数の残る待ちを切り上げる（整数の間隔はいままでどおり）
+  return Math.max(0, Math.ceil(chargeShotIntervalFrames(params, model) - elapsed - 1e-9));
+}
+
+/**
+ * レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 撃った発の、間隔の端数の持ち越し。解放に端数のある変更後の武器
+ * （FiringParams.releaseFrames）だけ、前の発からの経過が間隔を超えた分（0 以上 1 未満）を次の発の経過の始まりにする。ほかは 0
+ */
+function chargeCarryAtFire(
+  state: ShooterState,
+  params: FiringParams,
+  model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
+): number {
+  if (params.releaseFrames === undefined || state.chargeElapsed === undefined) return 0;
+  const over = state.chargeElapsed - chargeShotIntervalFrames(params, model);
+  return over > 0 && over < 1 ? over : 0;
 }
 
 /**

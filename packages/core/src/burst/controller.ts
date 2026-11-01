@@ -8,7 +8,8 @@
 // - ready: I の候補（CT 明け）が出るまで時間制限なしで待つ（録画 0019）。
 // - chain: 段階 step の候補が出たら発動し、発動したニケの nextStep に進む。最後の発動から
 //   chainTimeoutFrames 候補が出なければチェーン失敗でゲージ 0（録画 0022）。
-// - 候補の順: その段階の専任（burstStep が一致）→ AllStep、それぞれ枠番号の若い順。CT が明けていて、このチェーンで未使用のもの。
+// - 候補の順: その段階の専任（burstStep が一致）と AllStep のうち、枠番号の若い順（レッドフード編の論点 12。plan/design-red-hood.md
+//   7.1 節）。CT が明けていて、このチェーンで未使用のもの。
 //   レッドフード編（plan/design-red-hood.md 7.1 節の論点 7。V-0639）: AllStep の枠は、CT が明けていれば同じチェーンでも撃ち直す
 //   （I・II のクールタイム▼で CT が 0 になったレッドフードが、同じチェーンの次の段階を撃つ）。
 // 定数の根拠は plan/design-stage7.md 0 節・1 節。演出時間は録画からの目視で、tools/captures/gauge.ts で較正する。
@@ -195,14 +196,18 @@ export function initialBurstController(
 }
 
 /**
- * 段階 step で撃てる枠。専任 → AllStep の順、それぞれ枠番号の若い順。なければ -1。
+ * 段階 step で撃てる枠（専任か AllStep）のうち、枠番号の最も若いもの。なければ -1。
  * レッドフード編（plan/design-red-hood.md 7.1 節の論点 7）: AllStep の枠は、このチェーンで撃っていても CT が明けていれば候補にする
  */
 function pickCandidate(state: BurstControllerState, step: BurstStepKey, frame: number): number {
-  const ready = (i: number): boolean => state.cooldownEnd[i]! <= frame && !state.usedInChain[i];
-  const dedicated = state.units.findIndex((u, i) => u !== null && u.burstStep === step && ready(i));
-  if (dedicated >= 0) return dedicated;
-  return state.units.findIndex((u, i) => u !== null && u.burstStep === 'AllStep' && state.cooldownEnd[i]! <= frame);
+  // レッドフード編（同 論点 12）: 専任と AllStep を分けず、撃てる候補を枠の若い順に選ぶ（オーナーの言う「左側優先」。AllStep の枠が
+  // 撃てる専任より左にいる録画は無い）
+  return state.units.findIndex(
+    (u, i) =>
+      u !== null &&
+      state.cooldownEnd[i]! <= frame &&
+      ((u.burstStep === step && !state.usedInChain[i]) || u.burstStep === 'AllStep'),
+  );
 }
 
 const NEXT_OF: Record<BurstStepKey, BurstStepKey | 'StepFull'> = {

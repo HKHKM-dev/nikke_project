@@ -1459,6 +1459,12 @@ export type WeaponChangeEffect = {
   /** 同: 変更後の武器のフルチャージダメージ（%・即値。300 = 300%）。省略は基礎の武器のまま。チャージ武器にだけ書ける */
   fullChargeDamage?: number;
   /**
+   * レッドフード編（plan/design-red-hood.md 7.1 節の論点 10。V-0639）: 変更後の武器の解放の長さ（ゲーム内の秒・即値。録画で読む）。
+   * 省略は武器の形の解放（SR は 23f）。端数は発ごとに持ち越す（0.3 秒 = 17.647f は 18・18・17f の繰り返し）。チャージ武器にだけ書ける。
+   * 確かめたのはチャージが 0 のとき（チャージ速度の和が 100% 以上）だけ
+   */
+  chargeReleaseSeconds?: number;
+  /**
    * 同: 変更後の武器の最大装弾数の description_value_NN。書いたら維持の欄（durationRef・durationSeconds）は書かず、
    * 変更後の武器はリロードせず、最後の弾丸を撃ったフレームの次のフレームに基礎の武器に戻る（撃ち切り。論点 8）
    */
@@ -3769,6 +3775,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'projectileExplosion',
         'chargeTimeSeconds',
         'fullChargeDamage',
+        'chargeReleaseSeconds',
         'maxAmmoRef',
         'durationRef',
         'durationSeconds',
@@ -3812,6 +3819,13 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
       fail(`${path}.fullChargeDamage`, `expected a positive finite number, got ${JSON.stringify(percent)}`);
     }
     effect.fullChargeDamage = percent;
+  }
+  if (v.chargeReleaseSeconds !== undefined) {
+    const seconds = v.chargeReleaseSeconds;
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      fail(`${path}.chargeReleaseSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+    }
+    effect.chargeReleaseSeconds = seconds;
   }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
   // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（『バーストⅢで使用時』）の条件だけ

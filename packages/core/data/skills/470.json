@@ -7,7 +7,9 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": { "count": "normalShot" },
+          "trigger": {
+            "count": "normalShot"
+          },
           "target": "self",
           "stat": "chargeSpeed",
           "ref": 1,
@@ -31,7 +33,9 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": { "applied": "redWolf" },
+          "trigger": {
+            "applied": "redWolf"
+          },
           "target": "self",
           "stat": "attack",
           "ref": 5,
@@ -44,7 +48,9 @@
           "en": "Pierce at the start of battle does not change damage by itself (it matters only with a Pierce Damage increase in the team; whether it applies against a single enemy is not verified)",
           "kind": "indirect",
           "path": "pierce",
-          "effect": { "kind": "unknown" }
+          "effect": {
+            "kind": "unknown"
+          }
         },
         {
           "ja": "ビーストケージを適用時の、味方全体へのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
@@ -67,7 +73,9 @@
           "trigger": "burstUse",
           "target": "self",
           "durationSeconds": 0,
-          "condition": { "burstStep": "Step1" },
+          "condition": {
+            "burstStep": "Step1"
+          },
           "assumes": {
             "ja": "『バーストⅠで使用時：ビーストケージ』の呼び名（中身なし。S2 の「ビーストケージを適用時」が見る）。維持は 0 秒で、付いた記録だけを作る",
             "en": "The name of 'When used in Burst Stage 1: Beast Cage' (no contents; read by Skill 2's 'when Beast Cage takes effect'). It lasts 0 s and only records the application"
@@ -81,14 +89,18 @@
           "scaling": "casterAttack",
           "ref": 1,
           "durationRef": 2,
-          "condition": { "burstStep": "Step1" }
+          "condition": {
+            "burstStep": "Step1"
+          }
         },
         {
           "kind": "cooldownReduction",
           "trigger": "burstUse",
           "target": "self",
           "seconds": 40,
-          "condition": { "burstStep": "Step1" },
+          "condition": {
+            "burstStep": "Step1"
+          },
           "maxFires": 1
         },
         {
@@ -97,7 +109,9 @@
           "trigger": "burstUse",
           "target": "self",
           "durationSeconds": 0,
-          "condition": { "burstStep": "Step2" },
+          "condition": {
+            "burstStep": "Step2"
+          },
           "assumes": {
             "ja": "『バーストⅡで使用時：ハウリングエンド』の呼び名（中身なし。S2 の「ハウリングエンドを適用時」が見る）。維持は 0 秒で、付いた記録だけを作る",
             "en": "The name of 'When used in Burst Stage 2: The Last Howl' (no contents; read by Skill 2's 'when The Last Howl takes effect'). It lasts 0 s and only records the application"
@@ -108,7 +122,9 @@
           "trigger": "burstUse",
           "target": "self",
           "seconds": 40,
-          "condition": { "burstStep": "Step2" },
+          "condition": {
+            "burstStep": "Step2"
+          },
           "maxFires": 1
         },
         {
@@ -117,7 +133,9 @@
           "trigger": "burstUse",
           "target": "self",
           "durationSeconds": 0,
-          "condition": { "burstStep": "Step3" },
+          "condition": {
+            "burstStep": "Step3"
+          },
           "assumes": {
             "ja": "『バーストⅢで使用時：レッドウルフ』の呼び名（中身なし。S2 の「レッドウルフを発動した時」が見る）。維持は 0 秒で、付いた記録だけを作る",
             "en": "The name of 'When used in Burst Stage 3: Red Wolf' (no contents; read by Skill 2's 'when Red Wolf activates'). It lasts 0 s and only records the application"
@@ -130,10 +148,14 @@
           "fullChargeDamage": 250,
           "durationSeconds": 10,
           "rateOfFire": 60,
-          "condition": { "burstStep": "Step3" },
+          "chargeReleaseSeconds": 0.3,
+          "infiniteAmmo": true,
+          "condition": {
+            "burstStep": "Step3"
+          },
           "assumes": {
-            "ja": "チャージ時間は説明文に無いので基礎の武器（1 秒）のまま",
-            "en": "The charge time is not in the description, so it stays that of the base weapon (1 s)"
+            "ja": "チャージ時間は説明文に無いので基礎の武器（1 秒）のまま。解放の長さ（0.3 秒）と装弾数無限は録画で読んだ（V-0639。説明文に無い）。解放の長さを確かめたのは、チャージ速度の和が 100% 以上でチャージが 0 のときだけ",
+            "en": "The charge time is not in the description, so it stays that of the base weapon (1 s). The release (0.3 s) and infinite ammo were read from recordings (V-0639; not in the description). The release was verified only with total Charge Speed at 100% or more (zero charge)"
           }
         },
         {
@@ -143,7 +165,9 @@
           "stat": "chargeSpeed",
           "ref": 10,
           "durationRef": 11,
-          "condition": { "burstStep": "Step3" }
+          "condition": {
+            "burstStep": "Step3"
+          }
         }
       ],
       "notes": [

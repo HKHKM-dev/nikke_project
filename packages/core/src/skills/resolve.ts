@@ -14,7 +14,7 @@ import type {
   WeaponType,
 } from '../types.ts';
 import { burstWindowTrimOf } from '../burst/landing.ts';
-import { gameSecondsToFrames } from '../time.ts';
+import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
 import type { ChangedWeapon } from './buffs.ts';
 import type { CounterId } from './counters.ts';
@@ -1185,9 +1185,15 @@ function resolveWeaponChange(
   const damage = skillValue(skill, effect.damageRef, level) / 100;
   const hits = effect.hitsPerShot ?? 1;
   const overrides: ChangedWeaponOverrides = {};
-  if (effect.chargeTimeSeconds !== undefined || effect.fullChargeDamage !== undefined) {
+  if (
+    effect.chargeTimeSeconds !== undefined ||
+    effect.fullChargeDamage !== undefined ||
+    effect.chargeReleaseSeconds !== undefined
+  ) {
     if (!isChargeWeapon(character.shot)) {
-      throw new RangeError(`skill ${skill.id}: chargeTimeSeconds/fullChargeDamage need a charge weapon`);
+      throw new RangeError(
+        `skill ${skill.id}: chargeTimeSeconds/fullChargeDamage/chargeReleaseSeconds need a charge weapon`,
+      );
     }
     if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
     if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
@@ -1215,6 +1221,10 @@ function resolveWeaponChange(
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
       ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
+      // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す）
+      ...(effect.chargeReleaseSeconds !== undefined
+        ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }
+        : {}),
       ...(effect.instantFire ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),

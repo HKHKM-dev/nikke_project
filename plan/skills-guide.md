@@ -100,6 +100,9 @@
     | 〈カウンタ〉が 100% になった時、〈状態〉（解除条件：〈カウンタ〉が 0% になった時） | 付与のきっかけ `{ "counterFull": 〈カウンタ〉 }` と `durationUntil: { "counterEmpty": 〈カウンタ〉 }`（同じカウンタで組む。自分にだけ・スタックなし） | 付くのは届いたフレームの次、外れるのは 0 に届いたフレームの次（解除不可でも外れる）。例: アークレンジャー・ブラックの変身 | [design-skill-stage19.md](design-skill-stage19.md) 2.1 節 |
     | 〈状態〉の間、N 秒間隔で〈カウンタ〉N%▼／〈状態〉の後、〈カウンタ〉N%▼ | `counterChange` の周期のきっかけ `{ "everySeconds": N, "carry": true, "since": { "applied": 〈状態〉 } }`／`counterChange` のきっかけ `{ "applied": 〈状態〉 }` | 周期は状態の付いたフレームから数え、外れたら止まる。どちらも、その状態を自分に付ける付与が同じ定義に要る | 同上 |
     | 〈状態〉が適用された時、〈状態〉解除までの持続ダメージ | dot のきっかけ `{ "applied": 〈状態〉 }` と `durationUntil: { "stateEnd": 〈状態〉 }`（同じ状態で組む） | 付いたフレームを含む自分の件の終わりまで tick を出す。ゲージ・敵の状態・スタック・条件とは組めない | 同上 |
+| 『バースト〈段階〉で使用時：〈モード〉』／バーストスキルクールタイム X 秒▼「戦闘中 1 回発動」 | burstUse の効果の `condition.burstStep`（モードの名前は維持 0 秒の付与）／`cooldownReduction` の `maxFires: 1` | burstStep は全段階（AllStep）のキャラだけ（`definitions.test.ts`）。全段階の枠は CT が明けていれば同じチェーンで撃ち直す。例: レッドフードのバースト | [design-red-hood.md](design-red-hood.md) 2.1〜2.3 節・7.1 節 |
+| チャージ速度 100% を超えた場合、超過した値をチャージダメージに変換・超過した値の X% のチャージダメージ▲ | passive の stat `chargeSpeedOverflow`（`self` だけ） | フルチャージの発で、チャージ速度▲の比率の和の 1 を超えた分 × X をチャージダメージ▲に足す。例: レッドフードの S1 | 同 2.4 節 |
+| 使用武器変更の解放の長さ・装弾数無限（説明文に無く、録画で読む） | `weaponChange` の `chargeReleaseSeconds`・`infiniteAmmo` | 解放の秒の端数は射手が発ごとに持ち越す。確かめたのはチャージが 0 のときだけ。例: レッドフードのレッドウルフ | 同 7.1 節の論点 10・11 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
