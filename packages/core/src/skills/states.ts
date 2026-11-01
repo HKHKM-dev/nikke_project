@@ -232,6 +232,13 @@ export const NAMED_STATES = {
    * 射撃場には防ぐ気絶が無いので中身なし。D のバーストの「自分が気絶免疫状態なら」のフルバーストタイムの延長が見る）
    */
   stunImmunity: { name: { ja: '気絶免疫', en: 'Stun Immunity' }, holder: 'ally' },
+  /**
+   * レッドフード編（plan/design-red-hood.md 2.2 節）: バーストの使った段階ごとのモードの名前（『バーストⅠで使用時：ビーストケージ』など）。
+   * バーストの発動に維持 0 秒で付き（記録だけ）、S2 の「〈モード〉を適用時」「レッドウルフを発動した時」の { applied } が見る
+   */
+  beastCage: { name: { ja: 'ビーストケージ', en: 'Beast Cage' }, holder: 'ally' },
+  theLastHowl: { name: { ja: 'ハウリングエンド', en: 'The Last Howl' }, holder: 'ally' },
+  redWolf: { name: { ja: 'レッドウルフ', en: 'Red Wolf' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

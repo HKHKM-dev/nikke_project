@@ -118,6 +118,7 @@ import { isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { resolvePassiveStates, shortenedTimer, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
+  burstStepHolds,
   createTriggerTracker,
   fireContextOf,
   type FrameEvents,
@@ -1108,6 +1109,8 @@ function runFirstPassOnce(
   const lastActivationOf = new Map<number, BurstActivation>();
 
   const instants: InstantApplication[] = [];
+  // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数に上限（maxFires）のある即時効果の、効いた発火の回数
+  const instantFireCounts = new Map<object, number>();
   // 2 段目の段 21: バースト使用時の延長は、発動のたびに状態機械が聞く（条件は発動のフレームの件で見る。窓を作る発動ならその窓に、
   // 作らない発動なら次の窓に足す）
   if (controller !== null && activationExtensions.length > 0) {
@@ -1584,6 +1587,13 @@ function runFirstPassOnce(
       if (!src.fires(ev)) continue;
       // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（いまは cooldownReduction の selfState だけ）
       if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
+      // レッドフード編（plan/design-red-hood.md 2.1・2.3 節）: 使った段階（発火の文脈）と、戦闘中の発火の回数の上限
+      if (!burstStepHolds(src.effect.condition, ev, src.sourceSlotIndex)) continue;
+      if (src.effect.maxFires !== undefined) {
+        const fired = instantFireCounts.get(src) ?? 0;
+        if (fired >= src.effect.maxFires) continue;
+        instantFireCounts.set(src, fired + 1);
+      }
       // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
       if (src.effect.kind === 'burstGauge') {
         if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない

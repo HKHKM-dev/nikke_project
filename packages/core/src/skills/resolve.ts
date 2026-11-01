@@ -1223,6 +1223,8 @@ function resolveWeaponChange(
   };
   // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は、窓の終わりを 1 パス目の最後の弾丸の発で決める（論点 8）
   if (untilEmpty) r.durationUntil = 'ammoSpent';
+  // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件（件を見ないので段 1 のまま）
+  if (effect.condition) r.condition = effect.condition;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }
@@ -1254,9 +1256,11 @@ export type ResolvedInstantEffect = {
   scaling?: 'flat';
   /**
    * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある）。
-   * 2 段目の段 21: fullBurstExtend も
+   * 2 段目の段 21: fullBurstExtend も。レッドフード編: cooldownReduction の使った段階（burstStep）も
    */
   condition?: EffectCondition;
+  /** レッドフード編（plan/design-red-hood.md 2.3 節）: cooldownReduction の戦闘中の発火の回数の上限 */
+  maxFires?: number;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -1319,6 +1323,7 @@ export function resolveInstant(
       if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if ((effect.kind === 'cooldownReduction' || effect.kind === 'fullBurstExtend') && effect.condition !== undefined)
         r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      if (effect.kind === 'cooldownReduction' && effect.maxFires !== undefined) r.maxFires = effect.maxFires;
       if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

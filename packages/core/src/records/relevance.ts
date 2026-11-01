@@ -85,6 +85,8 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲（付着のヒットの値）と有利コードのダメージ適用（電撃コードの敵の 1 ヒットの値）
   projectileStickDamage: 'damageValue',
   elementAdvantage: 'damageValue',
+  // レッドフード編: チャージ速度の超過分の変換（フルチャージの発の値）
+  chargeSpeedOverflow: 'damageValue',
   fixedChargeTime: 'firing',
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',

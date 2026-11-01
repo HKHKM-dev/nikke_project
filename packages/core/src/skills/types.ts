@@ -86,6 +86,10 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * だけ掛ける（autoAttack には掛けない）。式の中の置き場所は skills/burstDamage.ts の SUSTAINED_DAMAGE_PLACEMENT
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: attackSpeed = 攻撃速度▲（比率）。レートを蓄積して撃つ武器（AR・SMG・SG）の
  * マガジンの中の発と発の間を、レート × (1 + Σ) にする（V-0458。C-0600）。リロード・リロード明けの 1 発目の待ち・構えは変えない。射撃に効く
+ * レッドフード編（plan/design-red-hood.md 2.4 節）: chargeSpeedOverflow = 「チャージ速度 100% を超えた場合、超過した値をチャージダメージに
+ * 変換」「超過した値の X% のチャージダメージ▲」（比率。passive の self だけ）。フルチャージの発で、その発のチャージ速度▲の和 Σ（比率の和。
+ * 発動者基準のチャージ時間▼は入れない。未確定）の 1 を超えた分 × X をチャージダメージ▲（chargeDamage）に足す（skills/buffs.ts の
+ * applyChargeBuffs）
  */
 export type BuffStat =
   | 'attack'
@@ -120,7 +124,8 @@ export type BuffStat =
   | 'attackSpeed'
   | 'burstCooldown'
   | 'sequentialAttackDamage'
-  | 'spinUpSpeed';
+  | 'spinUpSpeed'
+  | 'chargeSpeedOverflow';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -171,7 +176,12 @@ export const BUFF_STATS = [
   // 同 5.6 節: マシンガン立ち上げ速度▲（比率）。MG のレートの上がり方（1 発ごとの rateOfFireChangePerShot）に (1 + Σ) を掛ける
   // （読みは仮説。論点 I。cadence.ts の rateAfterShots）。スピンアップの無い武器には効かない。射撃に効く
   'spinUpSpeed',
+  // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分のチャージダメージへの変換（passive の self だけ）
+  'chargeSpeedOverflow',
 ] as const satisfies readonly BuffStat[];
+
+/** レッドフード編: passive の self にだけ書ける stat */
+export const PASSIVE_SELF_ONLY_STATS = ['chargeSpeedOverflow'] as const satisfies readonly BuffStat[];
 
 /**
  * Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定、2 段目の段 9 の
@@ -224,6 +234,10 @@ export const FLAG_STATS = [
 
 /** 2 段目の段 12 の PR 2: passive に書けるフラグの stat（ref を書かない。値 1） */
 export const PASSIVE_FLAG_STATS = ['elementAdvantage'] as const satisfies readonly BuffStat[];
+
+export function isPassiveSelfOnlyStat(stat: BuffStat): boolean {
+  return (PASSIVE_SELF_ONLY_STATS as readonly string[]).includes(stat);
+}
 
 export function isPassiveFlagStat(stat: BuffStat): boolean {
   return (PASSIVE_FLAG_STATS as readonly string[]).includes(stat);
@@ -923,7 +937,10 @@ export type StateEndUntil = { stateEnd: NamedStateId };
  * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除。フルバーストの開始・終了のきっかけだけ。
  * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
  * selfHp = 自分の HP の割合が閾値以上なら（2 段目の段 6。plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
- * 戦闘中一定なので、編成の段で決まる）
+ * 戦闘中一定なので、編成の段で決まる）。
+ * burstStep = この発動を撃った段階が N なら（レッドフード編。plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
+ * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
+ * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
  */
 export type EffectCondition = {
   selfBuffed?: BuffStat;
@@ -937,6 +954,7 @@ export type EffectCondition = {
   usedBurst?: true;
   selfHp?: SelfHpCondition;
   selfCounter?: SelfCounterCondition;
+  burstStep?: BasicBurstStep;
 };
 
 /**
@@ -965,7 +983,8 @@ export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => n
 export function conditionReadsItems(condition: EffectCondition | undefined): boolean {
   if (condition === undefined) return false;
   // 2 段目の段 6: selfHp は編成の段で決まる（件を見ない）
-  return Object.keys(condition).some((key) => key !== 'usedBurst' && key !== 'selfHp');
+  // レッドフード編: burstStep も発火の文脈だけで決まる
+  return Object.keys(condition).some((key) => key !== 'usedBurst' && key !== 'selfHp' && key !== 'burstStep');
 }
 
 /**
@@ -1253,9 +1272,15 @@ export type CooldownReductionEffect = TargetCountFields & {
   squad?: SquadCondition;
   /**
    * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件。鍵は selfState だけ（モランの宝物版の S2「自分が熱血状態なら」）。
-   * 発火のフレームに、timed の段 1.5 の条件と同じ件を見る（skills/holders.ts の instantConditionHolds）
+   * 発火のフレームに、timed の段 1.5 の条件と同じ件を見る（skills/holders.ts の instantConditionHolds）。レッドフード編（plan/design-red-hood.md
+   * 2.1 節）: 使った段階（burstStep）も。発火の文脈で見る（skills/triggers.ts の burstStepHolds）
    */
   condition?: EffectCondition;
+  /**
+   * レッドフード編（plan/design-red-hood.md 2.3 節）: 「戦闘中 N 回発動」。戦闘を通して、条件を満たして効いた発火を数え、N 回の後の発火は
+   * 無かったことにする（frame/firstPass.ts）。効果ごとに別に数える
+   */
+  maxFires?: number;
   assumes?: LocalizedText;
 } & (
     | {
@@ -1461,6 +1486,8 @@ export type WeaponChangeEffect = {
    * 説明文に「装弾数無限」の行が無い変更で、録画で読む（たきなのバースト。C-0708）。維持の欄（durationRef・durationSeconds）の変更にだけ書ける
    */
   infiniteAmmo?: true;
+  /** レッドフード編（plan/design-red-hood.md 2.1 節）: 発火の条件。鍵は使った段階（burstStep）だけ */
+  condition?: EffectCondition;
   assumes?: LocalizedText;
 };
 
@@ -2582,6 +2609,11 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
     if (target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
     if (v.while !== undefined) fail(`${path}.while`, `${stat} cannot have while`);
   }
+  // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換は自分だけ（持ち主の発にだけ効く）
+  if (isPassiveSelfOnlyStat(stat)) {
+    if (target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
+  }
   const effect: PassiveEffect = { kind: 'passive', target, stat };
   if (!passiveFlag) effect.ref = parseRef(v.ref, `${path}.ref`);
   if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
@@ -2859,6 +2891,7 @@ function parseTrigger(
 
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  if (isPassiveSelfOnlyStat(stat)) fail(`${path}.stat`, `${stat} is only allowed in passive`);
   // 防御力無視ダメージ編: 周期のトリガー（ソルジャーE.G. 編で、1 パス目で窓を追う stat にも）。ソルジャーE.G. 編: 確率のきっかけ
   // 鍵の順は今までの timed と同じ（kind・trigger・target・stat の後に残りの欄）。最小構成の感度の鍵が定義の JSON から作られるので
   const { trigger, target, ...rest } = parseTimedFields(v, path, stat, true);
@@ -3031,6 +3064,7 @@ function parseTimedFields(
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
     validateUsedBurst(condition, trigger, `${path}.condition`);
+    validateBurstStep(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
   // 回数トリガーの遅れ編: 確率のきっかけの検査より先に見る。2026-10-29 のキャラの編（plan/design-new-chars-1029.md 10.2 節の e）:
@@ -3065,7 +3099,8 @@ function parseTimedFields(
 /** 名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）: 効果の種類ごとに受ける条件の鍵 */
 const CONDITION_KEYS_OF = {
   // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）。エレグの段 3（plan/design-elegg-s3.md 3.2 節）: enemyState
-  timed: ['selfBuffed', 'inFullBurst', 'enemyState', 'selfState', 'usedBurst', 'selfCounter'],
+  // レッドフード編（plan/design-red-hood.md 2.1 節）: burstStep（使った段階）
+  timed: ['selfBuffed', 'inFullBurst', 'enemyState', 'selfState', 'usedBurst', 'selfCounter', 'burstStep'],
   // 2 段目の段 11 の PR 5: damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
   damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter'],
   // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 持続ダメージは付くフレームの自分の状態だけ（ジルの硫酸弾）
@@ -3078,10 +3113,21 @@ const CONDITION_KEYS_OF = {
   // 2 段目の段 13 の PR 2: usedBurst（ミハラ：ボンディングチェーンのフルバースト終了時のキャプチャーチェーンのチャージ）
   counterChange: ['selfState', 'selfCounter', 'inFullBurst', 'usedBurst'],
   // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: クールタイム▼は自分の状態だけ
-  cooldownReduction: ['selfState'],
+  // レッドフード編: と使った段階（burstStep）
+  cooldownReduction: ['selfState', 'burstStep'],
+  // レッドフード編: 使用武器の変更は使った段階だけ
+  weaponChange: ['burstStep'],
   // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: フルバーストタイムの延長も自分の状態だけ
   fullBurstExtend: ['selfState'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
+
+/** レッドフード編（plan/design-red-hood.md 2.1 節）: burstStep はバースト使用時（burstUse）のきっかけにだけ書ける */
+function validateBurstStep(condition: EffectCondition, trigger: unknown, path: string): void {
+  if (condition.burstStep === undefined) return;
+  if (trigger !== 'burstUse') {
+    fail(`${path}.burstStep`, `burstStep is only allowed with trigger burstUse, got ${JSON.stringify(trigger)}`);
+  }
+}
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
 function validateUsedBurst(condition: EffectCondition, trigger: CounterChangeEffect['trigger'], path: string): void {
@@ -3131,6 +3177,7 @@ function parseCondition(
   if (c.selfHp !== undefined) condition.selfHp = parseSelfHpCondition(c.selfHp, `${path}.selfHp`);
   if (c.selfCounter !== undefined)
     condition.selfCounter = parseSelfCounterCondition(c.selfCounter, `${path}.selfCounter`);
+  if (c.burstStep !== undefined) condition.burstStep = oneOf(BASIC_BURST_STEPS, c.burstStep, `${path}.burstStep`);
   if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
   return condition;
 }
@@ -3729,6 +3776,7 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
         'instantFire',
         'firstShotDelayFrames',
         'infiniteAmmo',
+        'condition',
         'assumes',
         'claims',
       ].includes(key)
@@ -3766,6 +3814,12 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
     effect.fullChargeDamage = percent;
   }
   if (v.hitsPerShot !== undefined) effect.hitsPerShot = parsePositiveInt(v.hitsPerShot, `${path}.hitsPerShot`);
+  // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（『バーストⅢで使用時』）の条件だけ
+  if (v.condition !== undefined) {
+    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.weaponChange);
+    validateBurstStep(condition, effect.trigger, `${path}.condition`);
+    effect.condition = condition;
+  }
   // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: CDN に無い変更後の武器の形（録画で読む即値）
   if (v.rateOfFire !== undefined) effect.rateOfFire = parsePositiveInt(v.rateOfFire, `${path}.rateOfFire`);
   if (v.instantFire !== undefined) {
@@ -4638,7 +4692,8 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     kind === 'ammoRefill'
       ? ['scaling']
       : kind === 'cooldownReduction'
-        ? ['seconds', 'condition']
+        ? // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数の上限（maxFires）
+          ['seconds', 'condition', 'maxFires']
         : kind === 'fullBurstExtend'
           ? ['condition']
           : [];
@@ -4747,12 +4802,17 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   }
   // 2 段目の段 12 の PR 4: 欄の一覧で cooldownReduction（段 21: と fullBurstExtend）だけに限ってある
   if (v.condition !== undefined) {
-    (effect as CooldownReductionEffect | FullBurstExtendEffect).condition = parseCondition(
+    const condition = parseCondition(
       v.condition,
       `${path}.condition`,
       kind === 'fullBurstExtend' ? CONDITION_KEYS_OF.fullBurstExtend : CONDITION_KEYS_OF.cooldownReduction,
     );
+    validateBurstStep(condition, trigger, `${path}.condition`);
+    (effect as CooldownReductionEffect | FullBurstExtendEffect).condition = condition;
   }
+  // レッドフード編: 欄の一覧で cooldownReduction だけに限ってある
+  if (v.maxFires !== undefined)
+    (effect as CooldownReductionEffect).maxFires = parsePositiveInt(v.maxFires, `${path}.maxFires`);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

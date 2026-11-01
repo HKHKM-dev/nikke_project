@@ -214,6 +214,8 @@ const BUFF_FIELDS = [
   'maxAmmoFlat',
   'reloadSpeed',
   'chargeSpeed',
+  // レッドフード編: チャージ速度の超過分の変換（常時だけ。区間の値に入るので鍵に入れる）
+  'chargeSpeedOverflow',
   // 2 段目の段 9 の PR 2: 攻撃速度▲（射撃が変わるので鍵に入れる）
   'attackSpeed',
   // 2026-10-29 のキャラの編: 立ち上げ速度▲（射撃が変わるので鍵に入れる）

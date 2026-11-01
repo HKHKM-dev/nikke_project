@@ -79,6 +79,7 @@ export const BUFF_STAT_LABEL: Record<BuffStat, string> = {
   maxAmmo: '最大装弾数',
   reloadSpeed: 'リロード速度',
   chargeSpeed: 'チャージ速度',
+  chargeSpeedOverflow: 'チャージ速度の超過分のチャージダメージ',
   attackSpeed: '攻撃速度',
   hitRate: '命中率',
   infiniteAmmo: '装弾数無限',
@@ -335,7 +336,14 @@ function formatGrantCondition(condition: EffectCondition | undefined, stacksOf?:
   if (condition.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ', stacksOf));
   if (condition.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
   if (condition.selfCounter !== undefined) parts.push(selfCounterText(condition.selfCounter));
+  // レッドフード編: 使った段階
+  if (condition.burstStep !== undefined) parts.push(burstStepUseText(condition.burstStep));
   return parts.join('・');
+}
+
+/** レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件。「バーストⅠで使用時」 */
+function burstStepUseText(step: 'Step1' | 'Step2' | 'Step3'): string {
+  return `バースト${{ Step1: 'Ⅰ', Step2: 'Ⅱ', Step3: 'Ⅲ' }[step]}で使用時`;
 }
 
 /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値の条件。「火力ゲージが 100 以上なら」「火力ゲージが 100 未満なら」 */
@@ -490,6 +498,7 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
   // 2 段目の段 1: 自分の状態の条件（静的な状態を見るものは編成の段で決まり、ここには来ない）。段 3: スタック数の条件
   if (condition?.selfState !== undefined) parts.push(selfStateText(condition.selfState, 'なら', 'でなければ'));
   if (condition?.usedBurst === true) parts.push('直前に自分がバーストを使用していれば');
+  if (condition?.burstStep !== undefined) parts.push(burstStepUseText(condition.burstStep));
   if (effect.durationUntil === 'fullBurstEnd') parts.push('フルバーストタイムの終了まで');
   if (effect.amplifies !== undefined) {
     parts.push(

@@ -339,6 +339,19 @@ export function createTriggerTracker(
   }
 }
 
+/**
+ * レッドフード編（plan/design-red-hood.md 2.1 節）: 条件の burstStep（この発動を撃った段階が N なら）。このフレームに効果が発火した自分の
+ * 発動（burstEffects）の段階を見る。鍵が無ければ true
+ */
+export function burstStepHolds(
+  condition: { burstStep?: BurstStepKey } | undefined,
+  ev: Pick<FrameEvents, 'burstEffects'>,
+  slotIndex: number,
+): boolean {
+  const step = condition?.burstStep;
+  return step === undefined || ev.burstEffects.some((a) => a.slotIndex === slotIndex && a.step === step);
+}
+
 /** Stage 11: 発火したトリガーの文脈（対象 burstUsers の判定に使う）。フルバーストの開始・終了だけが枠の列を持つ */
 export function fireContextOf(trigger: ResolvedTrigger | EndedTrigger, ev: FrameEvents): FireContext {
   if (trigger === 'fullBurstStart') return { burstUsers: ev.fullBurstStartUsers };

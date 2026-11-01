@@ -68,6 +68,7 @@ import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type Fi
 import {
   createTriggerTracker,
   fireContextOf,
+  burstStepHolds,
   shotCountWeight,
   type FrameEvents,
   type FullStackEvent,
@@ -1582,7 +1583,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     ev: FrameEvents,
     sourceSlotIndex: number,
   ): boolean =>
-    condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false);
+    (condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false)) &&
+    // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
+    burstStepHolds(condition, ev, sourceSlotIndex);
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
