@@ -19,7 +19,7 @@ import { parseArgs } from 'node:util';
 import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../packages/core/scripts/records-data.ts';
 import {
   addedLines,
-  changedChecks,
+  branchChangedChecks,
   checkSteps,
   collisions,
   nulPaths,
@@ -182,9 +182,7 @@ if (git(['status', '--porcelain', '--untracked-files=no']) !== '') {
 }
 
 if (!values['no-ci']) {
-  const checks = changedChecks(gitPaths(['diff', '--name-only', 'origin/main...HEAD']), (p) =>
-    existsSync(join(ROOT, p)),
-  );
+  const checks = branchChangedChecks('origin/main', gitRaw, (p) => existsSync(join(ROOT, p)));
   if (checks.full) {
     console.log(`書式と lint も全部のファイルで見る（${checks.reason}）`);
     npm('ci');
@@ -197,7 +195,7 @@ if (!values['no-ci']) {
     const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as {
       scripts: Record<string, string>;
     };
-    for (const script of checkSteps(manifest.scripts['ci']!)) npm(script);
+    for (const script of checkSteps(manifest.scripts['ci'])) npm(script);
   }
 }
 

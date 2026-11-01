@@ -9,6 +9,7 @@ import {
   type ConsoleInput,
   type TeamAction,
 } from '../team.ts';
+import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 
 const CORPORATION_LABEL: Record<ConsoleCorporation, string> = {
@@ -48,18 +49,10 @@ export function TeamSettingsForm({
   dispatch,
 }: Props) {
   const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
-  const level = (raw: string) => Math.max(0, Math.floor(Number(raw) || 0));
   const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void) => (
     <label key={key} className="field">
       <span>{label}</span>
-      <input
-        type="number"
-        min={0}
-        step={1}
-        value={value}
-        disabled={fixedSpec}
-        onChange={(e) => onLevel(level(e.target.value))}
-      />
+      <IntInput value={value} min={0} disabled={fixedSpec} onCommit={onLevel} />
     </label>
   );
   return (
@@ -106,14 +99,10 @@ export function TeamSettingsForm({
               </label>
               <label className="field">
                 <span>戦闘時間（秒）</span>
-                <input
-                  type="number"
-                  min={1}
-                  step={1}
+                <IntInput
                   value={durationSeconds}
-                  onChange={(e) =>
-                    dispatch({ type: 'setDuration', durationSeconds: Math.max(0, Number(e.target.value) || 0) })
-                  }
+                  min={1}
+                  onCommit={(seconds) => dispatch({ type: 'setDuration', durationSeconds: seconds })}
                 />
               </label>
             </div>
@@ -131,9 +120,15 @@ export function TeamSettingsForm({
           <span>射撃場スペック固定</span>
         </label>
         <div className="console-grid">
-          {levelField('synchro', 'シンクロ LV', synchroLevel, (lv) =>
-            dispatch({ type: 'setSynchroLevel', synchroLevel: Math.max(1, lv) }),
-          )}
+          <label className="field">
+            <span>シンクロ LV</span>
+            <IntInput
+              value={synchroLevel}
+              min={1}
+              disabled={fixedSpec}
+              onCommit={(lv) => dispatch({ type: 'setSynchroLevel', synchroLevel: lv })}
+            />
+          </label>
         </div>
         <div className="console">
           <span className="console-title">リサイクルルーム</span>

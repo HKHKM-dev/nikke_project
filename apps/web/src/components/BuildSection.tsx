@@ -32,6 +32,7 @@ import type { Dispatch } from 'react';
 import { collectionActions, treasureOptionValue } from '../collectionChoice.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampInt, type TeamAction } from '../team.ts';
+import { IntInput } from './IntInput.tsx';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
@@ -125,16 +126,12 @@ export function BuildSection({
                     </option>
                   ))}
                 </select>
-                <input
-                  type="number"
+                <IntInput
+                  value={gear?.level ?? 0}
                   min={0}
                   max={GEAR_LEVEL_MAX}
-                  step={1}
-                  value={gear?.level ?? 0}
                   disabled={disabled || gear === null}
-                  onChange={(e) =>
-                    gear && setGear(part, { ...gear, level: clampInt(Number(e.target.value), 0, GEAR_LEVEL_MAX) })
-                  }
+                  onCommit={(level) => gear && setGear(part, { ...gear, level })}
                 />
               </span>
               {gear?.type === 'OL' && (
@@ -214,19 +211,12 @@ export function BuildSection({
                 </option>
               ))}
             </select>
-            <input
-              type="number"
+            <IntInput
+              value={shown.cube?.level ?? CUBE_LEVEL_MIN}
               min={CUBE_LEVEL_MIN}
               max={CUBE_LEVEL_MAX}
-              step={1}
-              value={shown.cube?.level ?? CUBE_LEVEL_MIN}
               disabled={disabled || shown.cube === null}
-              onChange={(e) =>
-                shown.cube &&
-                set({
-                  cube: { ...shown.cube, level: clampInt(Number(e.target.value), CUBE_LEVEL_MIN, CUBE_LEVEL_MAX) },
-                })
-              }
+              onCommit={(level) => shown.cube && set({ cube: { ...shown.cube, level } })}
             />
           </span>
         </div>
@@ -263,19 +253,12 @@ export function BuildSection({
                   </option>
                 ))}
             </select>
-            <input
-              type="number"
+            <IntInput
+              value={hasTreasure ? COLLECTION_LEVEL_MAX : (shown.collection?.level ?? 0)}
               min={0}
               max={COLLECTION_LEVEL_MAX}
-              step={1}
-              value={hasTreasure ? COLLECTION_LEVEL_MAX : (shown.collection?.level ?? 0)}
               disabled={disabled || hasTreasure || shown.collection === null}
-              onChange={(e) =>
-                shown.collection &&
-                set({
-                  collection: { ...shown.collection, level: clampInt(Number(e.target.value), 0, COLLECTION_LEVEL_MAX) },
-                })
-              }
+              onCommit={(level) => shown.collection && set({ collection: { ...shown.collection, level } })}
             />
           </span>
         </div>

@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   INITIAL_TEAM_STATE,
-  clampSkillLevel,
   emptyConsole,
   recycleRoomFromConsole,
   enemyForCalc,
@@ -249,13 +248,6 @@ describe('skill levels (Stage 4)', () => {
     s = teamReducer(s, { type: 'setSkillLevels', index: 0, skillLevels: { skill1: 3, skill2: 3, burst: 3 } });
     s = teamReducer(s, { type: 'clearSlot', index: 0 });
     expect(s.slots[0]?.skillLevels).toEqual({ skill1: 3, skill2: 3, burst: 3 });
-  });
-
-  it('clampSkillLevel keeps typed values inside 1..10', () => {
-    expect(clampSkillLevel(0)).toBe(1);
-    expect(clampSkillLevel(11)).toBe(10);
-    expect(clampSkillLevel(4.6)).toBe(5);
-    expect(clampSkillLevel(Number.NaN)).toBe(1);
   });
 
   it('parseTeamState fills missing skill levels (Stage 3 data) with 10 and rejects out-of-range ones', () => {
@@ -634,6 +626,21 @@ describe('console (2026-10-31)', () => {
     delete old.console;
     expect(parseTeamState(JSON.stringify(old), index)?.console).toEqual(emptyConsole());
     expect(parseTeamState(JSON.stringify({ ...old, console: { personal: -1 } }), index)).toBeNull();
+  });
+
+  it('reads a missing class or corporation key as 0, so adding one does not drop older saved data', () => {
+    const input = { ...emptyConsole(), personal: 3 };
+    input.class.Attacker = 4;
+    input.corporation.PILGRIM = 6;
+    const saved = JSON.parse(
+      serializeTeamState(teamReducer(withCharacters([10]), { type: 'setConsole', console: input })),
+    ) as { console: { class: Record<string, unknown>; corporation: Record<string, unknown> } };
+    delete saved.console.class.Defender;
+    delete saved.console.corporation.ELYSION;
+    expect(parseTeamState(JSON.stringify(saved), index)?.console).toEqual(input);
+    // ある値が整数でなければ、いままでどおり読まない
+    saved.console.corporation.TETRA = 'x';
+    expect(parseTeamState(JSON.stringify(saved), index)).toBeNull();
   });
 });
 

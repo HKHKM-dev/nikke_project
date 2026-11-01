@@ -13,9 +13,10 @@ import {
 import type { Dispatch } from 'react';
 import type { SlotResultView } from '../calcView.ts';
 import { formatNumber } from '../format.ts';
-import { clampInt, type SlotState, type TeamAction } from '../team.ts';
+import type { SlotState, TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
+import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { SkillSection } from './SkillSection.tsx';
 
@@ -74,16 +75,12 @@ export function SlotCard({
   const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
     <label className="field">
       <span>{name}</span>
-      <input
-        type="number"
+      <IntInput
+        value={effectiveGrowth[key]}
         min={min}
         max={max}
-        step={1}
-        value={effectiveGrowth[key]}
         disabled={fixedSpec}
-        onChange={(e) =>
-          dispatch({ type: 'setGrowth', index: slotIndex, growth: { ...slot.growth, [key]: Number(e.target.value) } })
-        }
+        onCommit={(n) => dispatch({ type: 'setGrowth', index: slotIndex, growth: { ...slot.growth, [key]: n } })}
       />
     </label>
   );
@@ -159,26 +156,13 @@ export function SlotCard({
             <div className="growth-row">
               <label className="field">
                 <span>好感度</span>
-                <input
-                  type="number"
+                <IntInput
+                  value={effectiveBuild.affectionRank}
                   min={AFFECTION_RANK_MIN}
                   max={affectionRankMax(character)}
-                  step={1}
-                  value={effectiveBuild.affectionRank}
                   disabled={fixedSpec}
-                  onChange={(e) =>
-                    dispatch({
-                      type: 'setBuild',
-                      index: slotIndex,
-                      build: {
-                        ...slot.build,
-                        affectionRank: clampInt(
-                          Number(e.target.value),
-                          AFFECTION_RANK_MIN,
-                          affectionRankMax(character),
-                        ),
-                      },
-                    })
+                  onCommit={(rank) =>
+                    dispatch({ type: 'setBuild', index: slotIndex, build: { ...slot.build, affectionRank: rank } })
                   }
                 />
               </label>

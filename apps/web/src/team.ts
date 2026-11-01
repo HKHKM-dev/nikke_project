@@ -344,15 +344,10 @@ export function enemyForCalc(
   return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
 }
 
-/** min..max の整数に clamp する（入力欄の途中状態を吸収する。数でなければ min） */
+/** min..max の整数に丸める（数でなければ min）。入力欄の打ちかけの値は intDraft.ts が持つ */
 export function clampInt(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, Math.round(value)));
-}
-
-/** 1..10 の整数に clamp する */
-export function clampSkillLevel(level: number): number {
-  return clampInt(level, SKILL_LEVEL_MIN, SKILL_LEVEL_MAX);
 }
 
 // ---- 永続化 ----
@@ -666,17 +661,23 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   };
 }
 
+/**
+ * コンソールの保存データ。クラス・企業の欠けたキーは 0（クラスや企業を足したときに、前の保存データを読めなくして初期値で
+ * 上書きしない）。ある値が 0 以上の整数でなければ読まない
+ */
 function parseConsole(v: Json): ConsoleInput | null {
   if (!isRecord(v) || !isInt(v.personal, 0) || !isRecord(v.class) || !isRecord(v.corporation)) return null;
   const result = emptyConsole();
   result.personal = v.personal;
   for (const c of CONSOLE_CLASSES) {
     const lv = v.class[c];
+    if (lv === undefined) continue;
     if (!isInt(lv, 0)) return null;
     result.class[c] = lv;
   }
   for (const c of CONSOLE_CORPORATIONS) {
     const lv = v.corporation[c];
+    if (lv === undefined) continue;
     if (!isInt(lv, 0)) return null;
     result.corporation[c] = lv;
   }
