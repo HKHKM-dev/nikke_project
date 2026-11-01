@@ -76,7 +76,7 @@ export type SimEvent =
   | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
   | {
       frame: number;
-      kind: 'cooldownReduction' | 'ammoRefill' | 'heal' | 'burstGauge' | 'ammoDecrease';
+      kind: 'cooldownReduction' | 'ammoRefill' | 'heal' | 'burstGauge' | 'ammoDecrease' | 'fullBurstExtend';
       slot: number;
       source: number;
       amount: number;

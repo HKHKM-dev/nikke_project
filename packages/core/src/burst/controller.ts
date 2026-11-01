@@ -79,6 +79,11 @@ export type BurstUnit = {
   cooldownFrames: number;
   /** Stage 8: この枠の発動でフルバーストに入ったときの長さ（burst_duration）。省略は timing.fullBurstFrames */
   fullBurstFrames?: number;
+  /**
+   * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: fullBurstFrames の元の秒（burst_duration）。フルバーストタイムの延長の秒を
+   * 足してからフレームにする（切り捨てを 1 回にする）。省略は fullBurstFrames に延長の秒のフレームを足す
+   */
+  fullBurstSeconds?: number;
   /** 着弾編: 発動からヒット・効果の発火までの遅れ（burst/landing.ts）。省略は 0 */
   delays?: Readonly<BurstDelays>;
 } | null;
@@ -108,6 +113,17 @@ export type BurstControllerState = {
   gaugeFullFrames: number[];
   chainTimeouts: number[];
   cooldownReductions: CooldownReduction[];
+  /**
+   * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 次に作るフルバーストの窓に足す延長の秒（予約。fullBurstExtend の発火が足す）。
+   * 窓を作る時に足して 0 に戻す。窓を作らずにチェーンが切れたら捨てる
+   */
+  fullBurstExtensionSeconds: number;
+  /**
+   * 同: 発動のフレームに、その発動の枠のバーストの延長（バースト使用時の fullBurstExtend。条件はそのフレームで見る）の秒を返す。
+   * 窓を作る発動ならその窓に足し、作らない発動なら次の窓に予約する（件の一覧が窓の終わりを読むので、窓の終わりは窓を作る時に決め、
+   * 後から動かさない）。省略は 0
+   */
+  extensionAtActivation?: (slotIndex: number, frame: number) => number;
   /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 3.2 節）: 手で撃ったチェーンの始まり（I の本当の発動）のフレームの並び。
    * null はオートバースト
@@ -170,6 +186,7 @@ export function initialBurstController(
     gaugeFullFrames: [],
     chainTimeouts: [],
     cooldownReductions: [],
+    fullBurstExtensionSeconds: 0,
     manualBursts,
     manualNext: 0,
   };
@@ -199,15 +216,32 @@ function intervalAfter(timing: BurstTiming, from: BurstStepKey): number {
 }
 
 function resetChain(state: BurstControllerState): void {
+  state.fullBurstExtensionSeconds = 0;
   state.usedInChain.fill(false);
   state.chainSlots = [];
   state.gauge = 0;
   state.step = 'Step1';
 }
 
+/**
+ * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 窓の長さ。burst_duration に予約の延長の秒を足してからフレームにする
+ * （延長が無ければいままでどおり）
+ */
+function fullBurstLengthOf(state: BurstControllerState, unit: NonNullable<BurstUnit>): number {
+  const base = unit.fullBurstFrames ?? state.timing.fullBurstFrames;
+  const extension = state.fullBurstExtensionSeconds;
+  if (extension <= 0) return base;
+  if (unit.fullBurstFrames !== undefined && unit.fullBurstSeconds !== undefined)
+    return gameSecondsToFrames(unit.fullBurstSeconds + extension);
+  return base + gameSecondsToFrames(extension);
+}
+
 function activate(state: BurstControllerState, slotIndex: number, frame: number): void {
   const unit = state.units[slotIndex]!;
   if (state.phase === 'ready' && state.manualBursts !== null) state.manualNext += 1;
+  // 2 段目の段 21: この発動の枠のバーストの延長は予約に足す（窓を作る発動なら、下でこの窓に足して空にする）
+  if (state.extensionAtActivation !== undefined)
+    reserveFullBurstExtension(state, state.extensionAtActivation(slotIndex, frame));
   const from = state.step;
   const next = resolveNextStep(unit.nextStep, from);
   state.cooldownEnd[slotIndex] = frame + unit.cooldownFrames;
@@ -226,7 +260,7 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
   };
   state.activations.push(unit.delays === undefined ? activation : withBurstDelays(activation, unit.delays));
   if (startsFullBurst) {
-    state.fullBurstEnd = start + (unit.fullBurstFrames ?? state.timing.fullBurstFrames);
+    state.fullBurstEnd = start + fullBurstLengthOf(state, unit);
     // resetChain が chainSlots を差し替えるので、この配列はそのまま窓に渡せる
     state.windows.push({ start, end: state.fullBurstEnd, burstUsers: state.chainSlots });
     state.phase = 'fullBurst';
@@ -311,6 +345,15 @@ export function shortenCooldown(state: BurstControllerState, slotIndex: number, 
   const applied = Math.max(0, before - after);
   if (applied > 0) state.cooldownEnd[slotIndex] = after;
   return applied;
+}
+
+/**
+ * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 次に作るフルバーストの窓に延長の秒を予約する（fullBurstExtend のうち、窓の外で
+ * 発火したもの。ソーダ：トゥインクルバニーのバースト 3 段階突入時）。同じ窓への予約は足し算
+ */
+export function reserveFullBurstExtension(state: BurstControllerState, seconds: number): void {
+  if (!Number.isFinite(seconds) || seconds < 0) throw new RangeError(`seconds must be >= 0, got ${seconds}`);
+  state.fullBurstExtensionSeconds += seconds;
 }
 
 /** 戦闘時間 frames で切って BurstSchedule にする */

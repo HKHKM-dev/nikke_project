@@ -138,7 +138,11 @@ const KIND_INFO: Record<string, Info> = {
   'control:lockOn': ['ロックオン', 'check', '他の効果の対象・条件になる'],
   'control:mark': ['対象の指定（警戒対象など）', 'check', '他の効果の対象・条件になる'],
   'buffOp:dispel': ['バフ・デバフ効果の解除', 'check', '自分に付く▼（デバフ）を外しうる。解除不可は外れない'],
-  'buffOp:immunity': ['効果の免疫', 'check', '自分に付く▼（デバフ）を防ぎうる'],
+  'buffOp:immunity': [
+    '効果の免疫',
+    'check',
+    '自分に付く▼（デバフ）を防ぎうる。気絶免疫は射撃場では防ぐものが無く、状態（stunImmunity）としてだけ読む（D。C-0886）',
+  ],
   'buffOp:nullify': ['増減効果の無効', 'gap', 'なし（チャージ速度の増減を無効にする等）'],
   // 2 段目の段 10・13: 写す元は自分の状態・カウンタと、敵に付く持続ダメージのスタックだけ
   'buffOp:copy': [
@@ -195,7 +199,8 @@ const KIND_INFO: Record<string, Info> = {
     'ok',
     'cycleEvery（段の循環の間隔は every、cycle の無いスロットの射撃の回数のきっかけの N▼ は decreaseRef）',
   ],
-  'fullBurst:extend': ['フルバーストタイム延長', 'gap', 'なし'],
+  // 2 段目の段 21（plan/design-skill-stage21.md 5 節）: 条件の付いた延長は、窓を作る時に秒を足す即時効果（C-0877・C-0886）
+  'fullBurst:extend': ['フルバーストタイム延長', 'ok', 'fullBurstExtend（窓を作る時に延長の秒を足す。C-0877・C-0886）'],
   'fullBurst:shorten': ['フルバーストタイム短縮', 'gap', 'なし'],
   'burst:reentry': ['バースト再突入', 'ok', 'burstReentry'],
   // 2 段目の段 12 の PR 3: 編成で決まる静的な形（ラピ：レッドフードの戦闘補助）

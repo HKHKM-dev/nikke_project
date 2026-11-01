@@ -5,6 +5,7 @@ import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
   initialBurstController,
+  reserveFullBurstExtension,
   resolveNextStep,
   stepBurstController,
   type BurstTiming,
@@ -195,5 +196,53 @@ describe('BurstController', () => {
     expect(() => initialBurstController([], { ...DEFAULT_BURST_TIMING, gaugeMax: 0 })).toThrow(RangeError);
     expect(() => initialBurstController([], { ...DEFAULT_BURST_TIMING, fullBurstFrames: 1.5 })).toThrow(RangeError);
     expect(() => initialBurstController([unit('Step1', -1)])).toThrow(RangeError);
+  });
+});
+
+describe('フルバーストタイムの延長（2 段目の段 21）', () => {
+  const team = (): BurstUnit[] => [
+    unit('Step1', 2000),
+    unit('Step2', 2000),
+    {
+      burstStep: 'Step3',
+      nextStep: 'StepFull',
+      cooldownFrames: 2000,
+      fullBurstFrames: gameSecondsToFrames(10),
+      fullBurstSeconds: 10,
+    },
+  ];
+  const timing: BurstTiming = { ...TIMING_600, fullBurstFrames: gameSecondsToFrames(10) };
+
+  it('予約した延長は次に作る窓に足し（burst_duration の秒に足してからフレームにする）、窓を作ったら空にする', () => {
+    const state = initialBurstController(team(), timing);
+    stepBurstController(state, 0, FAST);
+    reserveFullBurstExtension(state, 2);
+    reserveFullBurstExtension(state, 3);
+    for (let f = 1; f < 3000; f++) stepBurstController(state, f, FAST);
+    const [w] = finishSchedule(state, 3000).fullBurstWindows;
+    expect(w!.end - w!.start).toBe(gameSecondsToFrames(15));
+    expect(gameSecondsToFrames(15)).not.toBe(gameSecondsToFrames(10) + gameSecondsToFrames(2) + gameSecondsToFrames(3));
+    expect(state.fullBurstExtensionSeconds).toBe(0);
+  });
+
+  it('発動の枠の延長（extensionAtActivation）は発動のたびに聞き、窓を作る発動の分はその窓に、作らない発動の分は次の窓に足す', () => {
+    const state = initialBurstController(team(), timing);
+    const asked: number[] = [];
+    state.extensionAtActivation = (slotIndex) => {
+      asked.push(slotIndex);
+      return slotIndex === 2 ? 5.04 : slotIndex === 0 ? 1 : 0;
+    };
+    for (let f = 0; f < 1500; f++) stepBurstController(state, f, FAST);
+    const [w] = finishSchedule(state, 1500).fullBurstWindows;
+    expect(w!.end - w!.start).toBe(gameSecondsToFrames(16.04));
+    expect(asked).toEqual([0, 1, 2]);
+  });
+
+  it('窓を作らずにチェーンが切れたら、予約を捨てる', () => {
+    const state = initialBurstController([unit('Step1', 2000), unit('Step2', 2000), null], timing);
+    reserveFullBurstExtension(state, 2);
+    for (let f = 0; f < 1500; f++) stepBurstController(state, f, FAST);
+    expect(state.chainTimeouts.length).toBeGreaterThan(0);
+    expect(state.fullBurstExtensionSeconds).toBe(0);
   });
 });

@@ -54,6 +54,16 @@ const team = (slots: TeamSlotInput[], controlledSlot: number): TeamInput => ({
 const recordingTeam = (soda?: unknown) => team([fixedSlot(822), fixedSlot(20), fixedSlot(SODA, soda)], 2);
 const S = 2;
 
+/**
+ * 2 段目の段 21（C-0877）: S2 の時間延長（fullBurstExtend）を外した定義。窓が 10 秒のままなので、窓の外の発で数え方の違いが出る回が
+ * この編成に残る（延長があると、どの窓も中の発の数が 3 の倍数の位相でそろい、数え方の見分けの例にならない）
+ */
+function withoutExtension(): RawDefinition {
+  const raw = structuredClone(rawDefinition(SODA));
+  raw.skills.skill2!.effects = raw.skills.skill2!.effects.filter((e) => e.kind !== 'fullBurstExtend');
+  return raw;
+}
+
 /** 枠 S のフレーム frame のゴールデンチップのスタック数（効いている件の段の最大） */
 function chipsAt(plan: ReturnType<typeof planTeamRun>, frame: number): number {
   const items = itemsOf(plan.history, { holder: S, state: 'goldenChip' });
@@ -98,12 +108,14 @@ describe('ソーダ：トゥインクルバニーのバースト（ラム + デ�
       const fires = third.filter((f) => w.start <= f && f < w.end).length;
       expect(chipsAt(plan, w.end) - chipsAt(plan, w.start)).toBe(fires);
     }
-    // 窓の外で 3 の倍数に届く回があり、フルバーストごとに数え直す読みとは数が変わる回がある
+    // 窓の外で 3 の倍数に届く回があり、フルバーストごとに数え直す読みとは数が変わる回がある（延長の無い定義で見せる）
     expect(third.some((f) => !windows.some((w) => w.start <= f && f < w.end))).toBe(true);
+    const short = planTeamRun(recordingTeam(withoutExtension()));
+    const shortShots = short.shots[S]!.frames;
     expect(
-      windows.some((w) => {
-        const inside = shots.filter((f) => w.start <= f && f < w.end).length;
-        return chipsAt(plan, w.end) - chipsAt(plan, w.start) !== Math.floor(inside / 3);
+      short.schedule!.fullBurstWindows.some((w) => {
+        const inside = shortShots.filter((f) => w.start <= f && f < w.end).length;
+        return chipsAt(short, w.end) - chipsAt(short, w.start) !== Math.floor(inside / 3);
       }),
     ).toBe(true);
   });
@@ -141,8 +153,11 @@ describe('damage の条件のスタック数（frame/plan.ts）', () => {
     });
     return raw;
   };
+  // 足したバースト使用時の damage のヒットだけ（S2 の時間延長状態別のダメージ（射撃ごと）は除く。段 21 の PR 2）
   const hitFrames = (plan: ReturnType<typeof planTeamRun>) =>
-    plan.skillHits.filter((h) => h.slotIndex === S && h.effect.source.skill === 'skill2').map((h) => h.frame);
+    plan.skillHits
+      .filter((h) => h.slotIndex === S && h.effect.source.skill === 'skill2' && h.effect.trigger === 'burstUse')
+      .map((h) => h.frame);
 
   it('fires at bursts whose stacks of that frame reach N (before the decrease)', () => {
     const plan = planTeamRun(recordingTeam(withDamage(30)));
@@ -177,8 +192,11 @@ describe('スタックの指標（records/observations.ts。V-0437 の比べ）'
 
   it('gives zero gain residues when the count restarts at each Full Burst, and not when it counts the whole battle', () => {
     const args = { slot: 3, state: 'goldenChip', every: 3 };
-    // いまの定義（戦闘中ずっと数える。V-0443）は、窓の外の発の分だけ余りが出る回がある
-    expect((metric('fullBurstStackGainResidues', args) as number[]).some((r) => r !== 0)).toBe(true);
+    // いまの数え方（戦闘中ずっと数える。V-0443）は、窓の外の発の分だけ余りが出る回がある（延長の無い定義で見せる。withoutExtension）
+    const short = recordingTeam(withoutExtension());
+    expect(
+      (metric('fullBurstStackGainResidues', args, runSimulation(short), short) as number[]).some((r) => r !== 0),
+    ).toBe(true);
     // フルバーストごとに数え直す読み（V-0437 の H1。V-0443 で棄却）なら余りは 0 だけ
     const raw = structuredClone(rawDefinition(SODA));
     const grant = raw.skills.skill1!.effects[1]!;

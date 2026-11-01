@@ -292,5 +292,314 @@
       "slot": 3,
       "source": "burst"
     }
+  },
+  {
+    "id": "0542-13",
+    "recording": "0542",
+    "kind": "timing",
+    "use": "record",
+    "value": [2165, 4542, 6919, 9120, 11380],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0633",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0542-14",
+    "recording": "0542",
+    "kind": "interval",
+    "use": "compare",
+    "value": [903, 903, 903, 726, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0633",
+    "readAt": "2026-11-01",
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstLengths",
+      "args": {
+        "n": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0542-15",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 449915,
+    "description": "ソーダ：トゥインクルバニーの1・2 回目のフルバースト（時間延長 I と II）の、時間延長状態別のダメージの I と II の和（同じ増分）。S1 の攻撃ダメージ▲が乗った値（会心なし。発の 9f 後の HUD の増分。最初の回は f1509）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 760,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0542-16",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 407126,
+    "description": "ソーダ：トゥインクルバニーの1・2 回目のフルバースト（時間延長 I と II）の、時間延長状態別のダメージの I と II の和。S1 の攻撃ダメージ▲の乗らない値（会心なし。発の 9f 後の HUD の増分。最初の回は f1391）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 942,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0542-17",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 272174,
+    "description": "ソーダ：トゥインクルバニーの3 回目のフルバースト（時間延長 I と II。バーストの攻撃力▲なし）の I と II の和。S1 の▲が乗った値（会心なし。発の 9f 後の HUD の増分。最初の回は f6115）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 5210,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0542-18",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 246289,
+    "description": "ソーダ：トゥインクルバニーの3 回目のフルバーストの I と II の和。S1 の▲の乗らない値（会心なし。発の 9f 後の HUD の増分。最初の回は f6076）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 5560,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0542-19",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 103341,
+    "description": "ソーダ：トゥインクルバニーの4 回目のフルバースト（時間延長 I だけ）の I のヒット。S1 の▲が乗った値（会心なし。発の 9f 後の HUD の増分。最初の回は f8746）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 7550,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0542-20",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 93513,
+    "description": "ソーダ：トゥインクルバニーの4 回目のフルバーストの I のヒット。S1 の▲の乗らない値（会心なし。発の 9f 後の HUD の増分。最初の回は f8445）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 7470,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0542-21",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "value": [26, 0],
+    "description": "S1 の攻撃ダメージ▲（自分を除く最終攻撃力が最も高い味方 1 機）の乗った発の数（デルタ・ラム）。デルタの発の値 × 1.1051 に当たる増分（▲の無い値と重ならないもの）と、ラムの▲の乗った格子に当たる増分",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760（DonX はデルタの格子 × 1.1051、Ron はモデルの▲の乗ったラムの格子）。当てた数: E1on 17・E1off 6・E3on 6・E3off 2・E4on 4・E4off 5・DonX 26・Roff 80・Ron 0"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0542-22",
+    "recording": "0542",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "record",
+    "value": 9,
+    "unit": "f",
+    "description": "ソーダ：トゥインクルバニーの時間延長状態別のダメージのヒット（I と II の和か I。当てたすべての回）の、HUD の 1 つ前の増分からの動画のフレーム。9f が 35 回、ほかは 2〜7f（間にほかの増分が入った回）。1 つ前の増分はソーダ：トゥインクルバニーの発（ペレットの和）",
+    "method": {
+      "tool": "recipe:buff-edge@4・hud-jumps@2",
+      "note": "buff-edge の格子に当たった増分（E1on・E1off・E3on・E3off・E4on・E4off）と、hud-jumps の 1 つ前の増分の差。9f の回数 35"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

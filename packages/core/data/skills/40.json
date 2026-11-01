@@ -1,0 +1,106 @@
+{
+  "formatVersion": 1,
+  "resourceId": 40,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時（初回は追加で）の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない",
+          "en": "The life steal (heal by damage dealt) on Full Burst start (plus the extra one the first time) is a heal and affects no damage unless an ally reads healing",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "burstGauge",
+          "trigger": "battleStart",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。V-0504）。「戦闘中 1 回発動」は、戦闘開始時の 1 回だけなので書かない",
+            "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; V-0504). \"Once per battle\" needs nothing because it fires only at the start"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "stunImmunity",
+          "trigger": "battleStart",
+          "target": "allies",
+          "durationRef": 3,
+          "assumes": {
+            "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。V-0504）。気絶を防ぐことは射撃場では効かない（防ぐ気絶が無い）。バーストの条件が見る",
+            "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; V-0504). Preventing stun has no effect in the range (there is no stun); the burst condition reads it"
+          },
+          "claims": [
+            "C-0886"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。V-0504）",
+            "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; V-0504)"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は敵 1 体",
+            "en": "All enemies means one enemy"
+          },
+          "claims": [
+            "C-0887"
+          ]
+        },
+        {
+          "kind": "fullBurstExtend",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 4,
+          "condition": {
+            "selfState": "stunImmunity"
+          },
+          "assumes": {
+            "ja": "D の発動が作るフルバーストの窓に、窓を作る時に足す（気絶免疫は発動のフレームで見る）",
+            "en": "Added to the Full Burst window that D's activation creates, when the window is made (Stun Immunity is checked at the activation frame)"
+          },
+          "claims": [
+            "C-0886"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）",
+          "en": "The Parts Damage increase for Attacker allies has no effect because parts are not modeled (outside the requirements)",
+          "kind": "outOfScope"
+        }
+      ]
+    }
+  }
+}

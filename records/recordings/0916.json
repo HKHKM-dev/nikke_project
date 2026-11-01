@@ -1,0 +1,46 @@
+{
+  "id": "0916",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0916_smg_d.mp4",
+  "original": "2026-11-01_22-41-01.mp4",
+  "durationSec": 203.6,
+  "frames": 12213,
+  "fps": 60,
+  "sizeMB": 246.8,
+  "sha256": "297a9913e169",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 40,
+      "name": "D",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0635 の撮影 D1。リター（I）・デルタ（II）・D（III・操作）（オート射撃 ON・オートバースト ON）",
+  "backup": {
+    "at": "2026-11-01T22:49+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

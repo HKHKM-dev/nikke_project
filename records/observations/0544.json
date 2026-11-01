@@ -292,5 +292,57 @@
       "slot": 3,
       "source": "burst"
     }
+  },
+  {
+    "id": "0544-13",
+    "recording": "0544",
+    "kind": "timing",
+    "use": "record",
+    "value": [2142, 4663, 6600, 8360, 10489],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0633",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0544-14",
+    "recording": "0544",
+    "kind": "interval",
+    "use": "compare",
+    "value": [904, 903, 903, 726, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0633",
+    "readAt": "2026-11-01",
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstLengths",
+      "args": {
+        "n": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   }
 ]

@@ -60,6 +60,7 @@ describe('burstUnitOf', () => {
       nextStep: 'StepFull',
       cooldownFrames: gameSecondsToFrames(40),
       fullBurstFrames: gameSecondsToFrames(10),
+      fullBurstSeconds: 10,
       // 分かれたヒット編: ラピは遅れの表に 3 ヒットで載っている（C-0227）
       delays: { hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] },
     });
@@ -68,6 +69,7 @@ describe('burstUnitOf', () => {
       nextStep: 'Step2',
       cooldownFrames: gameSecondsToFrames(20),
       fullBurstFrames: gameSecondsToFrames(10),
+      fullBurstSeconds: 10,
     });
   });
 
