@@ -13,9 +13,12 @@
           "path": "hp"
         },
         {
-          "ja": "最後の弾丸で攻撃した時の、敵全体への挑発（ヘイト）はダメージに関係しない",
-          "en": "The taunt on all enemies when firing the last bullet does not affect damage",
-          "kind": "noDamage"
+          "ja": "最後の弾丸で攻撃した時の、敵全体への挑発（ヘイト）はダメージに関係しない（ゲージも溜めないと見込む。ティアの S2 と同じ形）",
+          "en": "The taunt on all enemies when firing the last bullet does not affect damage (assumed not to charge the gauge either, as with Tia's Skill 2)",
+          "kind": "noDamage",
+          "claims": [
+            "C-0876"
+          ]
         }
       ]
     },
@@ -27,7 +30,14 @@
           "target": "self",
           "stat": "burstGaugeSpeed",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0876"
+          ],
+          "assumes": {
+            "ja": "自分の弾のゲージだけに掛かる。フルバーストの終了の時のゲージ速度▲は 3 体の録画では見分けられず、説明文どおりに書いた",
+            "en": "Applies to the gauge from own bullets only. The gauge-speed increase at the end of Full Burst could not be told apart in the 3-unit recordings and is written as described"
+          }
         }
       ],
       "notes": [

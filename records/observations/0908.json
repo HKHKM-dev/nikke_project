@@ -212,7 +212,7 @@
     },
     "scope": {
       "slot": 2,
-      "source": "skill1"
+      "source": "gauge"
     },
     "source": "V-0628",
     "readAt": "2026-11-01"
@@ -231,7 +231,7 @@
     },
     "scope": {
       "slot": 2,
-      "source": "skill2"
+      "source": "burstChain"
     },
     "source": "V-0628",
     "readAt": "2026-11-01"
