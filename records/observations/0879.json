@@ -1,0 +1,315 @@
+[
+  {
+    "id": "0879-01",
+    "recording": "0879",
+    "kind": "timing",
+    "use": "record",
+    "value": [2523, 4895, 7351, 9786],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・24・26f"
+    },
+    "source": "V-0617",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0879-02",
+    "recording": "0879",
+    "kind": "timing",
+    "use": "record",
+    "value": [2552, 5020, 7379, 9815],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": [2, 3],
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0879-03",
+    "recording": "0879",
+    "kind": "timing",
+    "use": "record",
+    "value": [5017],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0617",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0879-04",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "input",
+    "value": [0, 10589],
+    "unit": "f",
+    "description": "クラウン（枠 3。AUTO 射撃 OFF の操作枠）が撃たなかった区間（ゲーム内のフレーム。戦闘の全体。比べる設定 holdFire の入力）",
+    "method": {
+      "tool": "目視",
+      "note": "戦闘履歴のパネルでクラウンの与ダメージ 0・盾の欄 0、戦闘中の画面左上で AUTO 射撃 OFF を確かめた。戦闘開始は f857（timer.ts --mode changes の画面の切り替えの次の変わり目）"
+    }
+  },
+  {
+    "id": "0879-05",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": [1, 2, 1, 3, 1, 2, 1, 3],
+    "unit": "枠",
+    "description": "バーストを撃った枠の並び（最初の 8 回。1 = I-DOLL・フラワー、2 = エヌ：ミラクルフェアリー、3 = クラウン）。II はエヌ：ミラクルフェアリーとクラウンが交互で、クラウンの回はエヌ：ミラクルフェアリーの CT の秒の表示が欄に出ていた",
+    "method": {
+      "tool": "recipe:burst-panel@2 + 欄の切り出しの目視",
+      "note": "II → III の替わり目（`0879-02`）の 15f 前の欄の切り出しで、II の段の顔（エヌ：ミラクルフェアリー）に CT の秒が出ているか（2・4 回目は 18・19 秒）を見た。III はいないので、どの回も II の後にチェーンが切れた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 8
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0879-04"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": [1, 2, 3],
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0879-06",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "value": [0, 0, 0, 0],
+    "unit": "画素",
+    "description": "操作のクラウンの周り（x 450〜1350・y 420〜980）の純緑の画素（G > 200・R < 90・B < 90）の数の、各回の II → III の替わり目（`0879-02`）から 80f の間の最大。回復の数字が出れば数千になる（V-0456 の `0495-03`）。戦闘中（画面の切り替えの後）の全フレームでも最大 24（終わりのパネルの画）で、クラウンの上に回復の数字は一度も出なかった",
+    "method": {
+      "tool": "純緑の画素の数（使い捨てのスクリプト）",
+      "note": "ffmpeg で切り出した全フレームを数えた。戦闘の初めの緑の十字（受けるHP回復量▲が付いた時の演出）は純緑の閾値に掛からない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0879-07",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "value": [0, 1, 0, 1],
+    "unit": "個",
+    "description": "フラワー（枠 1）とクラウン（枠 3）の顔の下のバフのアイコンの、各回の II → III の替わり目（`0879-02`）の 120〜20f 前から 40〜140f 後への増えた数（2 つの枠で同じ）。エヌ：ミラクルフェアリーの回（1・3 回目）は増えず、300〜400f 後も同じ。クラウンの回（2・4 回目）は替わり目の約 3f 前に 1 つ増えた（クラウンのバーストの攻撃ダメージ▲。同じ時に体力の表示の右端にバリアの帯）",
+    "method": {
+      "tool": "枠の下の青の画素の数（使い捨てのスクリプト。plan/captures/guide.md「枠の下のバフのアイコン」）",
+      "note": "枠ごと（x 650〜770・775〜895・905〜1025、y 1036〜1070）の青の画素を全フレームで数え、区間の中央値で比べた（アイコン 1 つで約 230 画素）。切り出しの画で、エヌ：ミラクルフェアリーの回に 3 人のアイコンが増えないことと、クラウンの回に 3 人に剣のアイコンが付くことを確かめた。エヌ：ミラクルフェアリー自身の枠は S1 の吸収回復のアイコンが出入りするので数えない"
+    },
+    "scope": {
+      "slot": [1, 3],
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0879-08",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 166172,
+    "description": "II の 1 回目（f2552）の 400・401f 後と 3 回目（f7379）の 139・140f 後のうち f2952 の、フラワーの 1 ヒット（コアあり・会心なし・距離ボーナスなし）。H2（回復がクラウンに付き、クラウンの S2 の攻撃ダメージ▲が 7 秒乗る）なら × 1.2099 の値になる窓の中（替わり目の 21〜432f 後）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2093,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0879-04"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [2952, 2952]
+    },
+    "method": {
+      "tool": "recipe:buff-edge@3（hud-jumps@2 の増分を格子に当てた）",
+      "note": "--opt grid=フラワー=1@600;MF=2@600 --opt scale=1.2099 --opt events=2552,7379 --opt from=0 --opt to=440。窓の中の単独の増分は、どれも▲なしの格子に乗り、× 1.2099 の格子に乗る増分は無かった（同じフレームに重なった増分も▲なしの値の和）。モデルのフレームは、動画のフレーム − 戦闘開始（f857）− それより前の I・II の発動ごとの止まり 1f"
+    }
+  },
+  {
+    "id": "0879-09",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 305964,
+    "description": "II の 1 回目（f2552）の 400・401f 後と 3 回目（f7379）の 139・140f 後のうち f2953 の、エヌ：ミラクルフェアリーの 1 ヒット（コアあり・会心なし・距離ボーナスなし）。H2（回復がクラウンに付き、クラウンの S2 の攻撃ダメージ▲が 7 秒乗る）なら × 1.2099 の値になる窓の中（替わり目の 21〜432f 後）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2094,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0879-04"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [2953, 2953]
+    },
+    "method": {
+      "tool": "recipe:buff-edge@3（hud-jumps@2 の増分を格子に当てた）",
+      "note": "--opt grid=フラワー=1@600;MF=2@600 --opt scale=1.2099 --opt events=2552,7379 --opt from=0 --opt to=440。窓の中の単独の増分は、どれも▲なしの格子に乗り、× 1.2099 の格子に乗る増分は無かった（同じフレームに重なった増分も▲なしの値の和）。モデルのフレームは、動画のフレーム − 戦闘開始（f857）− それより前の I・II の発動ごとの止まり 1f"
+    }
+  },
+  {
+    "id": "0879-10",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 166172,
+    "description": "II の 1 回目（f2552）の 400・401f 後と 3 回目（f7379）の 139・140f 後のうち f7518 の、フラワーの 1 ヒット（コアあり・会心なし・距離ボーナスなし）。H2（回復がクラウンに付き、クラウンの S2 の攻撃ダメージ▲が 7 秒乗る）なら × 1.2099 の値になる窓の中（替わり目の 21〜432f 後）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6655,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0879-04"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal",
+      "frames": [7518, 7518]
+    },
+    "method": {
+      "tool": "recipe:buff-edge@3（hud-jumps@2 の増分を格子に当てた）",
+      "note": "--opt grid=フラワー=1@600;MF=2@600 --opt scale=1.2099 --opt events=2552,7379 --opt from=0 --opt to=440。窓の中の単独の増分は、どれも▲なしの格子に乗り、× 1.2099 の格子に乗る増分は無かった（同じフレームに重なった増分も▲なしの値の和）。モデルのフレームは、動画のフレーム − 戦闘開始（f857）− それより前の I・II の発動ごとの止まり 1f"
+    }
+  },
+  {
+    "id": "0879-11",
+    "recording": "0879",
+    "source": "V-0617",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 305964,
+    "description": "II の 1 回目（f2552）の 400・401f 後と 3 回目（f7379）の 139・140f 後のうち f7519 の、エヌ：ミラクルフェアリーの 1 ヒット（コアあり・会心なし・距離ボーナスなし）。H2（回復がクラウンに付き、クラウンの S2 の攻撃ダメージ▲が 7 秒乗る）なら × 1.2099 の値になる窓の中（替わり目の 21〜432f 後）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 6656,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0879-04"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal",
+      "frames": [7519, 7519]
+    },
+    "method": {
+      "tool": "recipe:buff-edge@3（hud-jumps@2 の増分を格子に当てた）",
+      "note": "--opt grid=フラワー=1@600;MF=2@600 --opt scale=1.2099 --opt events=2552,7379 --opt from=0 --opt to=440。窓の中の単独の増分は、どれも▲なしの格子に乗り、× 1.2099 の格子に乗る増分は無かった（同じフレームに重なった増分も▲なしの値の和）。モデルのフレームは、動画のフレーム − 戦闘開始（f857）− それより前の I・II の発動ごとの止まり 1f"
+    }
+  }
+]
