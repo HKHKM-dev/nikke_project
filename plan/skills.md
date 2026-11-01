@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 71・効果 438（根拠あり 413）・notes 177（根拠あり 82）
+件数: キャラ 71・効果 438（根拠あり 414）・notes 177（根拠あり 82）
 
 notes の種類: 未対応 43・前提の外 37・計算に無関係 35・補足 14・間接 48
 
@@ -292,7 +292,7 @@ notes の種類: 未対応 43・前提の外 37・計算に無関係 35・補足
   - notes[0] 計算に無関係: 最後の弾丸が命中した時の敵全体の受けるHP回復量▼はダメージに関係しない（バーストゲージも溜めない。C-0431）: 根拠なし
   - notes[1] 間接（HP）: 自分の HP が 90% 以上の時の味方全体の受けるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 - **burst**: supported
-  - effects[0] heal・burstUse: C-0618（確定）、C-0617（仮説）
+  - effects[0] heal・burstUse: C-0618（確定）、C-0845（確定）、C-0846（仮説）
   - effects[1] timed・burstUse・attack: C-0595（確定）、C-0596（確定）
   - notes[0] 前提の外: 戦闘不能の火力型の味方の復活は、味方が倒れないので起きない（要件 5.2 節）: C-0443（範囲外）
 
@@ -803,7 +803,7 @@ notes の種類: 未対応 43・前提の外 37・計算に無関係 35・補足
   - effects[6] removeState・normalShot・sevenDwarvesFullyActive: C-0834（確定）
   - notes[0] 間接（防御力）: オートファイア準備の中身の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。装填数は effects[0]）: 根拠なし
 - **skill2**: supported
-  - effects[0] timed・battleStart・fixedChargeTime: 根拠なし
+  - effects[0] timed・battleStart・fixedChargeTime: C-0849（確定）、C-0850（仮説）
   - effects[1] timed・フルチャージした時・attack: C-0758（確定）
   - effects[2] timed・burstStage3Enter・attack: C-0762（確定）
   - effects[3] timed・フルチャージした時・chargeDamage: C-0760（確定）
@@ -1003,7 +1003,7 @@ notes の種類: 未対応 43・前提の外 37・計算に無関係 35・補足
   - notes[0] 計算に無関係: 超感覚 100% の時の射撃予測：無敵はダメージに関係しない: 根拠なし
 - **skill2**: supported
   - effects[0] timed・burstUse・trueDamageConversion: C-0799（確定）
-  - effects[1] damage・normalHit・true: C-0814（確定）、C-0815（仮説）
+  - effects[1] damage・normalHit・true: C-0814（確定）、C-0815（確定）
 - **burst**: supported
   - effects[0] counterChange・burstUse・extrasensory: C-0797（確定）
   - effects[1] timed・burstUse・attack: C-0799（確定）
