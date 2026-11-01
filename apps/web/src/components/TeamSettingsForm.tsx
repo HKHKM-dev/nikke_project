@@ -1,4 +1,4 @@
-import { ELEMENTS, ELEMENT_LABEL, type Element } from '@nikke/core';
+import { ELEMENTS, ELEMENT_LABEL, FIXED_SPEC_LEVEL, type Element } from '@nikke/core';
 import type { Dispatch } from 'react';
 import { CLASS_LABEL } from '../skillLabels.ts';
 import {
@@ -52,10 +52,11 @@ export function TeamSettingsForm({
   dispatch,
 }: Props) {
   const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
+  // スペック固定の間は、計算に使う値（シンクロ LV は 400、リサイクルルームはなし）を暗くして出す。保存している値は残す
   const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void) => (
     <label key={key} className="field">
       <span>{label}</span>
-      <IntInput value={value} min={0} disabled={fixedSpec} onCommit={onLevel} />
+      <IntInput value={fixedSpec ? 0 : value} min={0} disabled={fixedSpec} onCommit={onLevel} />
     </label>
   );
   return (
@@ -132,7 +133,7 @@ export function TeamSettingsForm({
           <label className="field">
             <span>シンクロ LV</span>
             <IntInput
-              value={synchroLevel}
+              value={fixedSpec ? FIXED_SPEC_LEVEL : synchroLevel}
               min={1}
               disabled={fixedSpec}
               onCommit={(lv) => dispatch({ type: 'setSynchroLevel', synchroLevel: lv })}
