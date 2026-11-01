@@ -19329,6 +19329,38 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0858-01",
+      "element": "エレグ skill1.effects[0]",
+      "key": "802cbcea27ab9af1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0858-02",
+      "element": "エレグ skill1.effects[0]",
+      "key": "42ab3a248494a6d7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0859-01",
+      "element": "エレグ skill1.effects[0]",
+      "key": "35ac54cf0ddf42da",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0859-02",
+      "element": "エレグ skill1.effects[0]",
+      "key": "9abfa575fa9b4cac",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
