@@ -73,7 +73,7 @@
 
 ## 4. オーナーの判断待ち
 
-- 仮説 C-0810 を C-0816（確定）で置き換えるか: 並行のブランチ（`claude/vigilant-fermat-2esqm3`）のマージの後（[design-explosive-round-lead.md](design-explosive-round-lead.md) 4 節の 2）
+（なし）
 
 ## 5. 道具・記録の整備
 
