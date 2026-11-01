@@ -102,6 +102,8 @@ header h1 {
   position: absolute;
   top: calc(100% + 6px);
   z-index: 21;
+  /* 位置の基準は開くボタンの枠なので、幅は中身で決める（基準の幅に押し込まれると、狭いボタンの下で中身が縦に並ぶ） */
+  width: max-content;
   min-width: 12em;
   max-width: calc(100vw - 32px);
   box-sizing: border-box;
@@ -851,25 +853,24 @@ header h1 {
   align-items: stretch;
   margin: 2px 0 6px;
 }
-/* 選択欄は長いキャラ名でも列の幅に収め、ボタンの文字は折り返さない（和文はどの字の間でも折り返せるので、列が縮むと縦書きになる） */
 .picker-row .picker {
-  grid-template-columns: minmax(0, 1fr);
   margin: 0;
 }
 .slot-settings-button {
   height: 100%;
-  white-space: nowrap;
   padding: 3px 8px;
   font: inherit;
   font-size: 0.8rem;
 }
 .slot-toggles {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   font-weight: 400;
 }
 .toggle-button {
   padding: 4px 12px;
+  white-space: nowrap;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   background: var(--app-bg);
   color: inherit;
