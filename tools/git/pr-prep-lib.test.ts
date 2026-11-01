@@ -6,8 +6,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   addedLines,
+  branchChangedChecks,
   changedChecks,
-  changedFilesArgs,
   checkSteps,
   collisions,
   isCheckSetting,
@@ -250,15 +250,18 @@ describe('pathListArgs and nulPaths', () => {
     git(cwd, ['commit', '-q', '-m', 'base']);
     const base = git(cwd, ['rev-parse', 'HEAD']).trim();
     const exists = (path: string) => existsSync(join(cwd, path));
-    const changed = () => nulPaths(git(cwd, pathListArgs(changedFilesArgs(base))));
+    const checks = () => branchChangedChecks(base, (args) => git(cwd, args), exists);
     git(cwd, ['mv', '.prettierignore', 'prettierignore.old']);
     git(cwd, ['commit', '-q', '-m', 'rename']);
-    expect(changed()).toEqual(['.prettierignore', 'prettierignore.old']);
-    expect(changedChecks(changed(), exists)).toEqual({ full: true, reason: '.prettierignore を変えた' });
+    expect(checks()).toEqual({ full: true, reason: '.prettierignore を変えた' });
+    git(cwd, ['reset', '-q', '--hard', base]);
     git(cwd, ['rm', '-q', '.editorconfig']);
     git(cwd, ['commit', '-q', '-m', 'delete']);
-    expect(changed()).toContain('.editorconfig');
-    expect(changedChecks(changed(), exists).full).toBe(true);
+    expect(checks()).toEqual({ full: true, reason: '.editorconfig を変えた' });
+    git(cwd, ['reset', '-q', '--hard', base]);
+    writeFileSync(join(cwd, 'a.ts'), 'export const a = 1;\n');
+    git(cwd, ['commit', '-q', '-am', 'edit']);
+    expect(checks()).toEqual({ full: false, format: ['a.ts'], lint: ['a.ts'] });
   });
 });
 

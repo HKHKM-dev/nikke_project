@@ -14,7 +14,7 @@ type Props = {
  * 整数の入力欄。打ちかけの空欄や範囲外はそのまま表示しておき、min..max の整数になった時点で反映、フォーカスが外れたら
  * 丸めて確定する（空欄は元の値に戻す）。外から value が変わったら表示を合わせる
  */
-export function IntInput({ value, min, max = Infinity, disabled = false, onCommit }: Props) {
+export function IntInput({ value, min, max, disabled = false, onCommit }: Props) {
   const [text, setText] = useState(String(value));
   const [lastValue, setLastValue] = useState(value);
   if (lastValue !== value) {
@@ -26,17 +26,17 @@ export function IntInput({ value, min, max = Infinity, disabled = false, onCommi
     <input
       type="number"
       min={min}
-      max={Number.isFinite(max) ? max : undefined}
+      max={max}
       step={1}
       value={text}
       disabled={disabled}
       onChange={(e) => {
         setText(e.target.value);
-        const n = parseIntDraft(e.target.value, min, max);
+        const n = parseIntDraft(e.target.value, min, max ?? Infinity);
         if (n !== null && n !== value) onCommit(n);
       }}
       onBlur={(e) => {
-        const n = settleIntDraft(e.target.value, value, min, max);
+        const n = settleIntDraft(e.target.value, value, min, max ?? Infinity);
         setText(String(n));
         if (n !== value) onCommit(n);
       }}

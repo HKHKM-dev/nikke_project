@@ -1,3 +1,5 @@
+import { clampInt } from './team.ts';
+
 // 整数の入力欄の打ちかけの文字列（components/IntInput.tsx）。欄を空にして打ち直す途中の値を、丸めて state に入れない
 // （丸めた値を欄に書き戻すと、空欄が最小値になり、続けて打った数字がその後ろに付く）
 
@@ -15,5 +17,5 @@ export function parseIntDraft(raw: string, min: number, max: number): number | n
 export function settleIntDraft(raw: string, current: number, min: number, max: number): number {
   const n = Number(raw);
   if (raw.trim() === '' || !Number.isFinite(n)) return current;
-  return Math.min(max, Math.max(min, Math.round(n)));
+  return clampInt(n, min, max);
 }

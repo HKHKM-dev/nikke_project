@@ -142,20 +142,25 @@ export type ChangedChecks = { full: true; reason: string } | { full: false; form
  * 書式と lint はファイルごとに決まる（eslint は型を使う規則を入れていない）ので、ブランチで変えた（消していない）ファイルだけを見る。
  * 設定を変えたか、変えたファイルが多すぎるときは全部を見る
  */
-/**
- * ブランチで変えたファイルを出す git の引数（pathListArgs に渡す）。--no-renames で、名前を変えたファイルは前のパスも出す（.prettierignore や
- * package.json の名前を変えたブランチも、isCheckSetting で全部のファイルを見る）
- */
-export function changedFilesArgs(base: string): string[] {
-  return ['diff', '--name-only', '--no-renames', `${base}...HEAD`];
-}
-
 export function changedChecks(changed: readonly string[], exists: (path: string) => boolean): ChangedChecks {
   const config = changed.find(isCheckSetting);
   if (config !== undefined) return { full: true, reason: `${config} を変えた` };
   const format = changed.filter(exists);
   if (format.length > MAX_CHANGED_FILES) return { full: true, reason: `変えたファイルが ${format.length} 件ある` };
   return { full: false, format, lint: format.filter((p) => LINT_FILE.test(p)) };
+}
+
+/**
+ * ブランチ（base...HEAD）で変えたファイルを git で読んで、changedChecks で決める。run は git を引数で呼んで標準出力を返すもの。
+ * --no-renames で、名前を変えたファイルは前のパスも出す（.prettierignore や package.json の名前を変えたブランチも、isCheckSetting で
+ * 全部のファイルを見る）
+ */
+export function branchChangedChecks(
+  base: string,
+  run: (args: readonly string[]) => string,
+  exists: (path: string) => boolean,
+): ChangedChecks {
+  return changedChecks(nulPaths(run(pathListArgs(['diff', '--name-only', '--no-renames', `${base}...HEAD`]))), exists);
 }
 
 /**

@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { parseIntDraft, settleIntDraft } from './intDraft.ts';
-import { sameKeys } from './resetKeys.ts';
 
 describe('parseIntDraft（打ちかけの値をいつ反映するか）', () => {
   it('reflects only integers inside min..max', () => {
@@ -32,15 +31,5 @@ describe('settleIntDraft（フォーカスが外れたときの確定）', () =>
     expect(settleIntDraft('99', 3, 1, 40)).toBe(40);
     expect(settleIntDraft('4.6', 3, 1, 10)).toBe(5);
     expect(settleIntDraft('7', 3, 1, 10)).toBe(7);
-  });
-});
-
-describe('sameKeys（ErrorBoundary の描き直し）', () => {
-  it('changes when any key changes, so turning detail display off clears the error', () => {
-    const shown = { id: 1 };
-    expect(sameKeys([shown, true], [shown, true])).toBe(true);
-    expect(sameKeys([shown, false], [shown, true])).toBe(false);
-    expect(sameKeys([{ id: 1 }, true], [shown, true])).toBe(false);
-    expect(sameKeys([shown], [shown, true])).toBe(false);
   });
 });

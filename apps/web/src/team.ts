@@ -344,7 +344,7 @@ export function enemyForCalc(
   return { ...withEvents, target, landings: enemyLandingsOf(master, active, durationSeconds, target) };
 }
 
-/** min..max の整数に clamp する（入力欄の途中状態を吸収する。数でなければ min） */
+/** min..max の整数に丸める（数でなければ min）。入力欄の打ちかけの値は intDraft.ts が持つ */
 export function clampInt(value: number, min: number, max: number): number {
   if (!Number.isFinite(value)) return min;
   return Math.min(max, Math.max(min, Math.round(value)));

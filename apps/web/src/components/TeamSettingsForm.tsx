@@ -49,10 +49,10 @@ export function TeamSettingsForm({
   dispatch,
 }: Props) {
   const setConsole = (next: ConsoleInput) => dispatch({ type: 'setConsole', console: next });
-  const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void, min = 0) => (
+  const levelField = (key: string, label: string, value: number, onLevel: (lv: number) => void) => (
     <label key={key} className="field">
       <span>{label}</span>
-      <IntInput value={value} min={min} disabled={fixedSpec} onCommit={onLevel} />
+      <IntInput value={value} min={0} disabled={fixedSpec} onCommit={onLevel} />
     </label>
   );
   return (
@@ -120,13 +120,15 @@ export function TeamSettingsForm({
           <span>射撃場スペック固定</span>
         </label>
         <div className="console-grid">
-          {levelField(
-            'synchro',
-            'シンクロ LV',
-            synchroLevel,
-            (lv) => dispatch({ type: 'setSynchroLevel', synchroLevel: lv }),
-            1,
-          )}
+          <label className="field">
+            <span>シンクロ LV</span>
+            <IntInput
+              value={synchroLevel}
+              min={1}
+              disabled={fixedSpec}
+              onCommit={(lv) => dispatch({ type: 'setSynchroLevel', synchroLevel: lv })}
+            />
+          </label>
         </div>
         <div className="console">
           <span className="console-title">リサイクルルーム</span>
