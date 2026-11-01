@@ -455,17 +455,17 @@ notes の種類: 未対応 46・前提の外 39・計算に無関係 36・補足
 ## 231 イサベル
 
 - **skill1**: supported
-  - effects[0] timed・burstUse・critRate: C-0160（確定）
-  - effects[1] timed・burstUse・critDamage: C-0160（確定）
-  - effects[2] timed・burstUse・attack: C-0160（確定）
+  - effects[0] timed・burstUse・critRate: C-0160（確定）、C-0872（確定）
+  - effects[1] timed・burstUse・critDamage: C-0160（確定）、C-0872（確定）
+  - effects[2] timed・burstUse・attack: C-0160（確定）、C-0872（確定）
 - **skill2**: supported
-  - effects[0] damage・15 秒ごと・skill: C-0402（確定）、C-0102（確定）、C-0453（確定）
+  - effects[0] damage・15 秒ごと・skill: C-0402（確定）、C-0102（確定）、C-0453（確定）、C-0864（確定）
   - effects[1] burstGaugeHit・15 秒ごと: C-0404（仮説）、C-0402（確定）、C-0453（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
-  - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（確定）
-  - effects[2] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）、C-0838（確定）
-  - effects[3] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）、C-0838（確定）
+  - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（確定）、C-0872（確定）
+  - effects[2] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）、C-0838（確定）、C-0872（確定）
+  - effects[3] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）、C-0838（確定）、C-0872（確定）
   - notes[0] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
 
 ## 233 ドロシー

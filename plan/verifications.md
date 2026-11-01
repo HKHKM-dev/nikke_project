@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 2・完了 566・打ち切り 24（計 592）
+件数: 調査中 0・保留 2・完了 569・打ち切り 24（計 595）
 
 ## 開いている検証
 
@@ -5664,6 +5664,7 @@
   - 観測値: 0890-01、0890-02、0890-03、0890-04、0890-05、0890-06、0890-07、0890-08、0890-09、0890-10、0890-11、0890-12、0890-13、0890-14、0890-15、0890-16、0890-17、0891-01、0891-02、0891-03、0891-04、0891-05、0891-06、0891-07、0891-08、0891-09、0891-10、0891-11、0891-12、0891-13、0891-14、0891-15、0891-16、0892-01、0892-02、0892-03、0892-04、0892-05、0892-06、0892-07、0892-08、0892-09、0892-10、0892-11、0892-12、0892-13、0892-14、0892-15、0892-16、0893-01、0893-02、0893-03、0893-04、0893-05、0893-06、0893-07、0893-08、0893-09、0893-10、0893-11、0893-12、0893-13、0893-14、0893-15、0893-16、0893-17
   - 結論: C-0854、C-0857、C-0856
   - 派生元: V-0608
+  - 派生した検証: V-0630、V-0631、V-0632
   - 予測（2026-11-01、commit b09d731）との比べ:
     - isabel-hit-1（burstHitDamage）: 実測 180,710（0890-12）。H-snap 180,710.109（+0.109、許容内）、H-hit 198,943.759（+18,233.759、**許容外**）
     - isabel-hit-1-crit（burstHitDamage）: 実測なし。H-snap 271,065.163、H-hit 298,415.638
@@ -5788,3 +5789,73 @@
   - 話題: スキル・キャラ固有・日付: 2026-11-01・状態: 保留・Stage: 2 段目の段 19 の PR 4（plan/design-skill-stage19.md 2.4・3.4 節）
   - 録画: 0910、0911
   - 待ち: 読み取り（PR 3 の後）
+- **[V-0630](../records/verifications/V-0630-isabel-additional-damage-taken.md)** バースト使用時の追加ダメージは、遅れの間に付いた（切れた）受けるダメージ▲を効果の発火の時点で見るか（撮り足し。イサベル・たきなの S2、40 秒おき）
+  - 問い: イサベルの段階 2・3 の追加ダメージは、III の発動の後・発火の前に付いた（切れた）たきなの S2 の受けるダメージ▲を、発火の時点の値で見るか（C-0857 の撮り足し）
+  - 話題: 1 発の式・バフの掛かり方・日付: 2026-11-01・状態: 完了
+  - 録画: 0914、0915
+  - 観測値: 0914-01、0914-02、0914-03、0914-04、0914-05、0914-06、0914-07、0914-08、0914-09、0914-10、0914-11、0915-01、0915-02、0915-03、0915-04、0915-05、0915-06、0915-07、0915-08、0915-09、0915-10、0915-11
+  - 結論: C-0857
+  - 派生元: V-0619
+  - 予測（2026-11-01、commit 97348cf）との比べ:
+    - isabel-add-3-end（skillHitDamage）: 実測 758,766（0915-07）。H-fire 758,765.606（-0.394、許容内）、H-act 813,466.556（+54,700.556、**許容外**）
+    - isabel-add-3-end-crit（skillHitDamage）: 実測なし。H-fire 1,102,891.1、H-act 1,182,400.754
+    - isabel-add-4-stage2（skillHitDamage）: 実測 954,151（0915-10）。H-fire 954,150.657（-0.343、許容内）、H-act 889,989.51（-64,161.49、**許容外**）
+    - isabel-add-4-stage2-crit（skillHitDamage）: 実測なし。H-fire 1,386,889.785、H-act 1,293,629.419
+    - isabel-add-4-stage3（skillHitDamage）: 実測 1,113,176（0915-11）。H-fire 1,113,175.766（-0.234、許容内）、H-act 1,038,321.095（-74,854.905、**許容外**）
+    - isabel-add-4-stage3-crit（skillHitDamage）: 実測なし。H-fire 1,618,038.082、H-act 1,509,234.322
+    - isabel-hit-1（burstHitDamage）: 実測 180,710（0914-03）。H-fire 180,710.109（+0.109、許容内）、H-act 180,710.109（+0.109、許容内）
+    - isabel-hit-1-crit（burstHitDamage）: 実測なし。H-fire 271,065.163、H-act 271,065.163
+    - isabel-hit-2（burstHitDamage）: 実測 180,710（0914-04）。H-fire 180,710.109（+0.109、許容内）、H-act 180,710.109（+0.109、許容内）
+    - isabel-hit-2-crit（burstHitDamage）: 実測なし。H-fire 271,065.164、H-act 271,065.164
+    - isabel-hit-3（burstHitDamage）: 実測 198,944（0914-06）。H-fire 198,943.759（-0.241、許容内）、H-act 198,943.759（-0.241、許容内）
+    - isabel-hit-3-crit（burstHitDamage）: 実測なし。H-fire 334,285.198、H-act 334,285.198
+    - isabel-hit-4（burstHitDamage）: 実測 211,963（0914-09）。H-fire 211,962.825（-0.175、許容内）、H-act 211,962.825（-0.175、許容内）
+    - isabel-hit-4-crit（burstHitDamage）: 実測なし。H-fire 356,161.135、H-act 356,161.135
+    - 許容内の指標: H-fire 7/7・H-act 4/7。合う仮説は H-fire だけ
+- **[V-0631](../records/verifications/V-0631-isabel-marking-reset.md)** イサベルのターゲットマーキングの回数は、45 秒の間に次のバーストを使わないと数え直されるか
+  - 問い: イサベルの S1 のターゲットマーキング（45 秒維持）の回数は、維持の間に次のバーストを使わないと最初から数え直されるか
+  - 話題: スキル・キャラ固有・日付: 2026-11-01・状態: 完了
+  - 録画: 0912、0913
+  - 観測値: 0912-01、0912-02、0912-03、0912-04、0912-05、0912-06、0912-07、0912-08、0912-09、0913-01、0913-02、0913-03、0913-04、0913-05、0913-06、0913-07、0913-08、0913-09、0913-10、0913-11
+  - 結論: C-0872
+  - 派生元: V-0619
+  - 予測（2026-11-01、commit 97348cf）との比べ:
+    - isabel-bursts-A（burstActivationCount）: 実測なし。H-cum 4
+    - gauge-full-1-A（gaugeFullFrame）: 実測なし。H-cum 844
+    - gauge-full-2-A（gaugeFullFrame）: 実測なし。H-cum 3,298
+    - gauge-full-3-A（gaugeFullFrame）: 実測なし。H-cum 5,811
+    - gauge-full-4-A（gaugeFullFrame）: 実測なし。H-cum 8,681
+    - isabel-hit-1-A（burstHitDamage）: 実測なし。H-cum 180,710.109
+    - isabel-hit-1-crit-A（burstHitDamage）: 実測なし。H-cum 271,065.163
+    - isabel-hit-2-A（burstHitDamage）: 実測なし。H-cum 180,710.109
+    - isabel-hit-2-crit-A（burstHitDamage）: 実測なし。H-cum 271,065.164
+    - isabel-hit-3-A（burstHitDamage）: 実測なし。H-cum 180,710.109
+    - isabel-hit-3-crit-A（burstHitDamage）: 実測なし。H-cum 271,065.163
+    - isabel-hit-4-A（burstHitDamage）: 実測なし。H-cum 211,962.825
+    - isabel-hit-4-crit-A（burstHitDamage）: 実測なし。H-cum 356,161.135
+    - isabel-add-3-A（skillHitDamage）: 実測なし。H-cum 758,765.606
+    - isabel-add-4-stage2-A（skillHitDamage）: 実測なし。H-cum 889,989.51
+    - isabel-add-4-stage3-A（skillHitDamage）: 実測なし。H-cum 1,038,321.095
+    - isabel-bursts-B（burstActivationCount）: 実測なし。H-cum 4
+    - gauge-full-1-B（gaugeFullFrame）: 実測なし。H-cum 844
+    - gauge-full-2-B（gaugeFullFrame）: 実測なし。H-cum 3,298
+    - gauge-full-3-B（gaugeFullFrame）: 実測なし。H-cum 6,057
+    - gauge-full-4-B（gaugeFullFrame）: 実測なし。H-cum 8,681
+    - isabel-hit-1-B（burstHitDamage）: 実測なし。H-cum 180,710.109
+    - isabel-hit-1-crit-B（burstHitDamage）: 実測なし。H-cum 271,065.163
+    - isabel-hit-2-B（burstHitDamage）: 実測なし。H-cum 180,710.109
+    - isabel-hit-2-crit-B（burstHitDamage）: 実測なし。H-cum 271,065.163
+    - isabel-hit-3-B（burstHitDamage）: 実測なし。H-cum 180,710.109
+    - isabel-hit-3-crit-B（burstHitDamage）: 実測なし。H-cum 303,647.196
+    - isabel-hit-4-B（burstHitDamage）: 実測なし。H-cum 211,962.825
+    - isabel-hit-4-crit-B（burstHitDamage）: 実測なし。H-cum 356,161.135
+    - isabel-add-3-B（skillHitDamage）: 実測なし。H-cum 758,765.606
+    - isabel-add-4-stage2-B（skillHitDamage）: 実測なし。H-cum 889,989.51
+    - isabel-add-4-stage3-B（skillHitDamage）: 実測なし。H-cum 1,038,321.095
+- **[V-0632](../records/verifications/V-0632-isabel-s2-snapshot.md)** イサベルの S2 のヒットは、発動の時点の値で計算するか（読み直し）
+  - 問い: イサベルの S2 のヒット（発動の約 45f 後）は、発動の後・ヒットの前に付いた（切れた）敵の側のデバフと撃つ側のバフを乗せるか（C-0856）
+  - 話題: 1 発の式・バフの掛かり方・日付: 2026-11-01・状態: 完了
+  - 録画: 0038、0891、0892、0893
+  - 観測値: 0038-34、0038-35、0891-17、0891-18、0892-17、0892-18、0892-19、0892-20、0892-21、0892-22、0892-23、0892-24、0892-25、0892-26、0892-27、0893-18、0893-19、0893-20、0893-21、0893-22、0893-23、0893-24、0893-25、0893-26、0893-27
+  - 結論: C-0864
+  - 派生元: V-0619
