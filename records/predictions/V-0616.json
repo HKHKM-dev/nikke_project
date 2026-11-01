@@ -1,0 +1,97 @@
+{
+  "verification": "V-0616",
+  "note": "千束（860・SMG・単騎・操作）・AUTO 射撃 ON・オートバースト OFF・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON（録画 0811・0812 と同じ）。条件は的の表（condition auto）で、遠（2 回目と 3 回目のジャンプの間）の弾丸命中率が 1 より小さい。比べるのは S2 の 48 回の倍率ダメージの 27 回目から 15 回（遠の区間とその前後。頭の 5 回は V-0584 で読み済みなので入れない）",
+  "team": [
+    {
+      "rid": 860,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Hit",
+      "note": "いまのモデル（skill2 の effects[1] の count が normalHit）。命中の期待値（弾丸命中率。S1 の命中率▲を H2 で効かせた値）を足し、48 の倍数を越えた発で出る。遠では 1 回あたり撃った数で約 52 発"
+    },
+    {
+      "id": "Shot",
+      "note": "撃った数で数える（count を normalShot に替える）。撃った 48 発ごと（48 の倍数の発）に出る。外れの数に依らない",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 860,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 2
+              },
+              "damageType": "true",
+              "ref": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "far-shot-indices",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 26,
+        "count": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "本命。27〜41 回目の倍率ダメージが、千束の何発目の発で出たか（録画は照準の左の残弾の減りの累計で数える）。幅 2 は残弾の読みの 1 フレームのずれ"
+    },
+    {
+      "id": "far-video-frames",
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "skip": 26,
+        "count": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "補助。同じ 15 回の動画のフレーム（戦闘開始から）。的のジャンプの時刻（代表値）の録画とのずれが乗るので、見分けは本命で行う"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "896806761d8e45bf3daf30582a7e193537110714",
+    "values": {
+      "Hit": {
+        "far-shot-indices": [1300, 1352, 1404, 1456, 1508, 1560, 1612, 1664, 1717, 1769, 1821, 1873, 1925, 1977, 2026],
+        "far-video-frames": [4261, 4389, 4597, 4724, 4933, 5060, 5188, 5395, 5525, 5733, 5861, 6069, 6196, 6324, 6609]
+      },
+      "Shot": {
+        "far-shot-indices": [1296, 1344, 1392, 1440, 1488, 1536, 1584, 1632, 1680, 1728, 1776, 1824, 1872, 1920, 1968],
+        "far-video-frames": [4251, 4369, 4568, 4685, 4803, 5001, 5119, 5317, 5434, 5552, 5750, 5868, 6067, 6184, 6302]
+      }
+    }
+  }
+}

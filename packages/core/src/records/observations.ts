@@ -1110,7 +1110,7 @@ function burstActivationVideoFrames(result: { schedule: BurstSchedule | null }, 
 }
 
 /** 結果の頭の skip 個（省略は 0）を飛ばし、count 個に切る（count が無ければ残り全部。足りなければ誤り） */
-function firstCount(values: number[], ctx: MetricContext, what: string): number[] {
+function firstCount<T>(values: T[], ctx: MetricContext, what: string): T[] {
   const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
   const count = ctx.args.count === undefined ? values.length - skip : Number(ctx.args.count);
   if (values.length < skip + count) throw new Error(`${what}が ${values.length} 回しか無い`);
@@ -1936,16 +1936,15 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
 
 /**
  * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0374）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
- * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる
+ * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる。
+ * skip（V-0616）の数だけ頭の回を飛ばす
  */
 function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
   const shots = slotOf(result.shots, ctx).frames;
   const hits = result.skillHits.filter(
     (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
   );
-  const count = Number(ctx.args.count);
-  if (hits.length < count) throw new Error(`発動が ${hits.length} 回しかない`);
-  return hits.slice(0, count).map((h) => shots.filter((f) => f <= h.frame).length);
+  return firstCount(hits, ctx, '発動').map((h) => shots.filter((f) => f <= h.frame).length);
 }
 
 /**
