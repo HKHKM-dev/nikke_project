@@ -15,7 +15,7 @@ import {
   type Residual,
 } from '../src/records/observations.ts';
 import type { RecordingEntry } from '../src/records/recordings.ts';
-import { ROOT } from './records-data.ts';
+import { ROOT, SKILL_SUPPORT_PATH } from './records-data.ts';
 
 export const RESIDUAL_CACHE_DIR = `${ROOT}node_modules/.cache/residuals/`;
 /**
@@ -28,6 +28,11 @@ export const MODEL_ROOTS = [
   `${ROOT}packages/core/scripts/records-data.ts`,
   `${ROOT}packages/core/scripts/residual-cache.ts`,
 ];
+/**
+ * 置き場所の中でもモデルの入力でないもの。support.json は画面だけが読む生成物で、PR の CI と pr:prep は作り直した後に main の版へ戻す
+ * ので、入れると作り直しの前後で hash が変わり、覚えが外れる（plan/design-pr-conflicts.md 5 節）
+ */
+const NOT_MODEL = new Set([SKILL_SUPPORT_PATH]);
 /** 残す覚えの数（ブランチを行き来しても使えるように、古いものから消す） */
 const KEEP = 4;
 
@@ -35,6 +40,7 @@ const KEEP = 4;
 export function modelHash(roots: readonly string[] = MODEL_ROOTS): string {
   const hash = createHash('sha256');
   const walk = (path: string, rel: string) => {
+    if (NOT_MODEL.has(path)) return;
     if (!statSync(path).isDirectory()) {
       hash.update(`${rel}\0`).update(readFileSync(path)).update('\0');
       return;
