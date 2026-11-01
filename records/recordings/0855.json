@@ -1,0 +1,46 @@
+{
+  "id": "0855",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0855_sr_delta.mp4",
+  "original": "2026-11-01_12-41-39.mp4",
+  "durationSec": 201.1,
+  "frames": 12066,
+  "fps": 60,
+  "sizeMB": 243.7,
+  "sha256": "cebec1c24b00",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 291,
+      "name": "エーテル",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 10,
+      "name": "ラピ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "BigArms（灼熱・防100）。エーテル（I）+ デルタ（II）+ ラピ（III・操作）（V-0602 の行 B。録画 0018 と同じ編成）。計画は電撃タブで、灼熱タブで撮った（3 体とも有利コードは無い）",
+  "backup": {
+    "at": "2026-11-01T12:50+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

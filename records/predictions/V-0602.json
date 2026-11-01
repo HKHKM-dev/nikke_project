@@ -1,0 +1,268 @@
+{
+  "verification": "V-0602",
+  "team": [
+    {
+      "rid": 291,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。エーテルの S2 の防御力▼は未対応（291.json の skill2 の notes[0]）で、S2 の後もヒットは変わらない"
+    },
+    {
+      "id": "H1",
+      "note": "説明文どおり: フルバーストタイム中に発動した S2 だけが、防御力 9.38%▼（6 秒）を付ける。防御 100 × (1 − 9.38%) = 90.62 は四捨五入で 91（C-0790）。単騎ではフルバーストが起きないので、H0 と同じ（S2 の後もヒットは変わらない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 291,
+            "skill": "skill2",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 13
+              },
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 3,
+              "durationRef": 4,
+              "condition": {
+                "inFullBurst": true
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "説明文の値で、条件なし: どの S2 の後も 6 秒、防御力 9.38%▼（防御 91。C-0790）。「攻撃力 − 防御」が 9 増える。V-0282 の増えを、デルタの本当の「攻撃力 − 防御」（スペック固定の 63,368 − 100）で直した読み（V-0602「条件」）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 291,
+            "skill": "skill2",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 13
+              },
+              "target": "allies",
+              "stat": "enemyDefenseDown",
+              "ref": 3,
+              "durationRef": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "s2-frames",
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 13
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "エーテルの S2 のヒットの動画のフレーム（13 回）。窓の始まりの目安"
+    },
+    {
+      "id": "ether-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の S2 の前の、エーテルの 1 ペレット（胴体・会心なし・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-before-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の S2 の前の、エーテルの 1 ペレット（胴体・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-before-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の S2 の前の、エーテルの 1 ペレット（コア・会心なし・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-before-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "2 回目の S2 の前の、エーテルの 1 ペレット（コア・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目の S2 の窓の中の、エーテルの 1 ペレット（胴体・会心なし・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-after-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目の S2 の窓の中の、エーテルの 1 ペレット（胴体・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-after-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目の S2 の窓の中の、エーテルの 1 ペレット（コア・会心なし・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    },
+    {
+      "id": "ether-pellet-after-core-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目の S2 の窓の中の、エーテルの 1 ペレット（コア・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
+    }
+  ],
+  "note": "撮る編成（行 A）: エーテル（291・SG・バースト I・枠 1・操作）単騎・オート射撃 ON・オートバースト OFF・灼熱タブの BigArms（撮る前は電撃タブで出した。撮った録画 0853・0854 は灼熱タブなので、撮った後に setup の的を灼熱にして出し直した。エーテルはどちらにも有利コードを持たず、値は変わらない）・射撃場 3 分・スペック固定 ON（スキル Lv10 なので S2 の防御力▼は 9.38%）。III がいないのでフルバーストは起きず、S2 はどれもフルバーストの外で発動する。フレームはモデルの 2 回目の S2（発動はモデルの約 1530f、ヒットはその 52f 後）の前（1450f）と、窓の中（1700f）。仮説の効果は everySeconds のきっかけで delayFrames を書けないので、モデルの窓は発動から始まる（実機はヒットの頃から。C-0412）。窓の端は見ない。比べる指定と同じにするため、出した後に指標の setup から condition（auto）を外した（この指標の値は manual でも同じ。値は出した時のまま）",
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "3242e6eff1581eaf41c31b69f5c54357c4ce3d1c",
+    "values": {
+      "H0": {
+        "s2-frames": [817, 1582, 2348, 3113, 3878, 4644, 5409, 6174, 6940, 7705, 8470, 9236, 10001],
+        "ether-pellet-before": 13558.3324,
+        "ether-pellet-before-crit": 20337.4986,
+        "ether-pellet-before-core": 27116.6648,
+        "ether-pellet-before-core-crit": 33895.831,
+        "ether-pellet-after": 13558.3324,
+        "ether-pellet-after-crit": 20337.4986,
+        "ether-pellet-after-core": 27116.6648,
+        "ether-pellet-after-core-crit": 33895.831
+      },
+      "H1": {
+        "s2-frames": [817, 1582, 2348, 3113, 3878, 4644, 5409, 6174, 6940, 7705, 8470, 9236, 10001],
+        "ether-pellet-before": 13558.3324,
+        "ether-pellet-before-crit": 20337.4986,
+        "ether-pellet-before-core": 27116.6648,
+        "ether-pellet-before-core-crit": 33895.831,
+        "ether-pellet-after": 13558.3324,
+        "ether-pellet-after-crit": 20337.4986,
+        "ether-pellet-after-core": 27116.6648,
+        "ether-pellet-after-core-crit": 33895.831
+      },
+      "H2": {
+        "s2-frames": [817, 1582, 2348, 3113, 3878, 4644, 5409, 6174, 6940, 7705, 8470, 9236, 10001],
+        "ether-pellet-before": 13558.3324,
+        "ether-pellet-before-crit": 20337.4986,
+        "ether-pellet-before-core": 27116.6648,
+        "ether-pellet-before-core-crit": 33895.831,
+        "ether-pellet-after": 13560.2611,
+        "ether-pellet-after-crit": 20340.391649999998,
+        "ether-pellet-after-core": 27120.5222,
+        "ether-pellet-after-core-crit": 33900.65275
+      }
+    }
+  }
+}
