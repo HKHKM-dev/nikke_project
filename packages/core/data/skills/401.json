@@ -1,0 +1,80 @@
+{
+  "formatVersion": 1,
+  "resourceId": 401,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "最後の弾丸で攻撃した時の、自分への最大HP が最も高い味方 1 機の最大HP のコピーは、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Duplicating the max HP of the ally with the highest max HP onto self when firing the last bullet does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "最後の弾丸で攻撃した時の、敵全体への挑発（ヘイト）はダメージに関係しない",
+          "en": "The taunt on all enemies when firing the last bullet does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "stat": "burstGaugeSpeed",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ],
+      "notes": [
+        {
+          "ja": "バーストスキルを使用した時の 1 回目の吸収回復はダメージに関係しない",
+          "en": "The lifesteal of the first Burst use does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "バーストスキルを使用した時の 2 回目からの自分の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The incoming healing increase on self from the second Burst use does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "バーストスキルを使用した時の 3 回目からの自分の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on self from the third Burst use does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は的 1 体で 1 ヒット",
+            "en": "Enemies in range are the lone target, so it lands once"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ニケを除いた敵が 4 機以上の時の敵全体の受けるダメージ▲は、敵 1 体では起きない",
+          "en": "The damage taken increase on all enemies when there are 4 or more enemies (excluding Nikkes) does not occur against a single enemy",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "damageTaken",
+            "target": "allies",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
