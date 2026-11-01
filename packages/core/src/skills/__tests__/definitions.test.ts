@@ -16,6 +16,7 @@ import {
 } from '../burstDamage.ts';
 import {
   MAX_SKILL_LEVELS,
+  resolveCoverHeals,
   resolveInstant,
   resolvePassives,
   resolveStackChanges,
@@ -254,6 +255,8 @@ describe('data/skills', () => {
         resolveStackChanges(def, character, MAX_SKILL_LEVELS).length;
       // シンデレラ編（V-0445）: 射撃ごとの倍率ダメージ（damage の every = 1。発に畳み込む）だけの定義もある
       const perShot10 = resolvePerShotDamage(def, character, MAX_SKILL_LEVELS).length;
+      // 2 段目の段 17 の PR 3: 遮蔽物 HP 回復（coverHeal）だけの定義もある（ココアの S1）
+      const coverHeals10 = resolveCoverHeals(def, character, MAX_SKILL_LEVELS).length;
       // ダメージに効く効果が 1 つも無いキャラ（デルタなど）は、全スロットが効果なしで notes だけ（noEffect・unsupported）
       const modeled = SKILL_SLOTS.some((slot) => def.skills[slot].effects.length > 0);
       if (modeled) {
@@ -267,7 +270,8 @@ describe('data/skills', () => {
           gauges10 +
           pauses10 +
           states10 +
-          perShot10;
+          perShot10 +
+          coverHeals10;
         expect(count).toBeGreaterThan(0);
       }
       damage10.forEach((e, i) => {

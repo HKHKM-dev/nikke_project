@@ -1,0 +1,425 @@
+[
+  {
+    "id": "0848-01",
+    "recording": "0848",
+    "kind": "timing",
+    "use": "record",
+    "value": [1668, 3141, 4532, 6041, 7472, 8917, 10246],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25・25f"
+    },
+    "source": "V-0600",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0848-02",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "value": 863,
+    "unit": "f",
+    "description": "戦闘開始（残り時間の表示が出たフレーム。表示は 03:00 で、次のフレームから 02:59）",
+    "method": {
+      "tool": "node tools/captures/timer.ts --mode changes",
+      "note": "戦闘開始は timer.ts --mode changes の画面の切り替え（+320f の変わり目）の次の変わり目で、残り時間の表示（03:00）が出たフレーム（02:59 はその次のフレーム）。画で確かめた"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0848-03",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1, 1, 1, 1, 1, 1, 1],
+    "unit": "枠",
+    "description": "バーストを使った枠（1 始まり）の並び。7 回とも、I から II への替わり目（0848-01）の 2〜3f 前に、バースト欄の候補のうちココアの顔に CT（20）が出た（ティアの CT は 40）。ティアはバーストを 1 回も使っていない（2 体とも I で、ココアの CT がいつも明けていた）",
+    "method": {
+      "tool": "recipe:burst-panel@2・ffmpeg の切り出し（バースト欄 1720,300 から 200×260）",
+      "note": "0848-01 の各フレームの 3f 前と 2f 前を切り出して、CT の秒が出た顔を見た。BURST バーの消えたフレーム（tools/captures/gauge.ts --mode events）は、どの回も替わり目の約 28f 前"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 7
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0848-04",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": 0,
+    "unit": "回",
+    "description": "ティアのバーストの発動の回数（180 秒）。バーストは 7 回ともココアが使った（前の観測値）ので、ティアのバーストの S2 の遮蔽物 HP 回復で始まる▲の窓（C-0776）は無い",
+    "method": {
+      "tool": "recipe:burst-panel@2・ffmpeg の切り出し",
+      "note": "バースト欄に I の段が出た 7 回（BURST バーが消えた回）は、どれもココアの顔に CT が出て II に替わった。最後の BURST バーの消え（戦闘の終わりの直前）の後は替わり目も CT も出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 2
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0848-05",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "value": [887, 1770, 2654, 3537, 4421, 5305, 6188, 7072, 7955, 8839, 9723],
+    "unit": "f",
+    "description": "ティアの S1 の攻撃ダメージ▲の窓（ココアとティアの両方に付く）の始まりの並び。▲のアイコンがココアの枠に付いたフレーム（f1750・f2633・f3517・f4400・f5284・f6168・f7051・f7935・f8818・f9702・f10586）から戦闘開始 f863 を引いた動画のフレーム。11 回。ティアはバーストを使わないので、どの窓もティアのバーストの窓の外",
+    "method": {
+      "tool": "枠の下のバフのアイコンの青い画素（使い捨てのスクリプト）・timer.ts --mode changes",
+      "note": "枠の下のバフのアイコン（1920×1080 で y 1036〜1072）の青い画素（B > 60・B − R > 40・B ≥ G。暗くなったアイコンも拾う）を、アイコンの位置（枠 1 は x 779.5 + 20.5k、枠 2 は x 911.5 + 20.5k の 15px 幅）ごとに全フレームで数えた（使い捨てのスクリプト。V-0451 の読み方。plan/captures/guide.md「枠の下のバフのアイコン」）。ココア（枠 1）の 1 つ目のアイコンは戦闘の初めから終わりまで付いたままで、2 つ目のアイコンが▲だけ（ココアにはほかに付くものが無い。ティアはバーストを使わない）なので、枠 1 の 2 つ目の位置の青が 15 画素以上あるフレームを▲ありとした（1f だけの立ち上がりは除いた）。付くフレームではティア（枠 2）にも B のアイコン（S1 のバーストスキルクールタイム▼）と▲のアイコンが同時に付く。手前の物（敵の攻撃の赤い画面・手前のキャラの体）でアイコンの青が減るフレームがあるので、終わりは青が 0 に落ちたフレームで取り、0847 の 3 回目（f4095 まで・f4096 で消える）と 5 回目（f5862・f5863）は画で確かめた。左の「スキル1 プロ折り紙」（ココアの S1）の帯の立ち上がり（banner.ts の明るさ。帯の文字は 1 回目だけ画で確かめた）は、アイコンの付いたフレームから −1・−1・0・−1・−1・−2・−1・−1・0・−1・−1f。戦闘開始の直後（f863〜1 回目）には▲のアイコンも▲の乗った発も無い"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    }
+  },
+  {
+    "id": "0848-06",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "value": [1475, 2359, 3242, 4126, 5009, 5893, 6776, 7660, 8544, 9428, 10311],
+    "unit": "f",
+    "description": "同じ▲の窓の終わりの並び（▲のアイコンがココアの枠から消えた最初のフレーム f2338・f3222・f4105・f4989・f5872・f6756・f7639・f8523・f9407・f10291・f11174 から戦闘開始を引いた動画のフレーム）。11 回",
+    "method": {
+      "tool": "枠の下のバフのアイコンの青い画素（使い捨てのスクリプト）",
+      "note": "枠の下のバフのアイコン（1920×1080 で y 1036〜1072）の青い画素（B > 60・B − R > 40・B ≥ G。暗くなったアイコンも拾う）を、アイコンの位置（枠 1 は x 779.5 + 20.5k、枠 2 は x 911.5 + 20.5k の 15px 幅）ごとに全フレームで数えた（使い捨てのスクリプト。V-0451 の読み方。plan/captures/guide.md「枠の下のバフのアイコン」）。ココア（枠 1）の 1 つ目のアイコンは戦闘の初めから終わりまで付いたままで、2 つ目のアイコンが▲だけ（ココアにはほかに付くものが無い。ティアはバーストを使わない）なので、枠 1 の 2 つ目の位置の青が 15 画素以上あるフレームを▲ありとした（1f だけの立ち上がりは除いた）。付くフレームではティア（枠 2）にも B のアイコン（S1 のバーストスキルクールタイム▼）と▲のアイコンが同時に付く。手前の物（敵の攻撃の赤い画面・手前のキャラの体）でアイコンの青が減るフレームがあるので、終わりは青が 0 に落ちたフレームで取り、0847 の 3 回目（f4095 まで・f4096 で消える）と 5 回目（f5862・f5863）は画で確かめた。窓の長さ（消えたフレーム − 付いたフレーム）は 588・589・588・589・588・588・588・588・589・589・588f"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    }
+  },
+  {
+    "id": "0848-07",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "value": [885.8, 1768.5, 2651.9, 3534.2, 4417.6, 5299.8, 6182.9, 7065.6, 7948, 8831.4, 9713.7],
+    "unit": "ティック",
+    "description": "▲の窓の始まり（0848-05 のフレーム）を、戦闘開始からのゲーム内のティック（止まりを除いた 0.017 秒）に直した並び。隣どうしの差は 882.7・883.4・882.3・883.4・882.2・883.1・882.7・882.4・883.4・882.3（平均 882.8）",
+    "method": {
+      "tool": "node tools/captures/timer.ts --mode ticks",
+      "note": "--start 863 --at に窓の始まりのフレームを渡した。小数はその秒の中の位置の当てはめ。* の付いた（その秒の中に止まりがある）ものは 885.8・5299.8"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    }
+  },
+  {
+    "id": "0848-08",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "record",
+    "value": [1473.4, 2356.6, 3239.8, 4122.5, 5004.8, 5888, 6769.5, 7653.7, 8536.2, 9419.2, 10301.9],
+    "unit": "ティック",
+    "description": "▲の窓の終わり（▲のアイコンが消えた最初のフレーム）を、戦闘開始からのゲーム内のティックに直した並び。窓の長さは 587.6・588.1・587.9・588.3・587.2・588.2・586.6・588.1・588.2・587.8・588.2 ティック",
+    "method": {
+      "tool": "node tools/captures/timer.ts --mode ticks",
+      "note": "--start 863 --at に窓の終わりのフレームを渡した"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    }
+  },
+  {
+    "id": "0848-09",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "value": [95, 2],
+    "unit": "発",
+    "description": "HUD の増分の▲の有無と、アイコンの窓（0848-05・0848-06）の内外の食い違い。値は [ココアの発で一致した数, ティアの発で食い違った数]。ココアの発（SR）は 95 発とも一致。ティアの発（RL の追尾弾で、増分は着弾のフレーム）は 95 発が一致し、食い違いは窓の始まりの直後に着弾して▲の乗っていない 2 発（f6176（窓の始まりの 8f 後）・f8827（9f 後））だけ。窓の終わりの直後に着弾して▲の乗った発は無い",
+    "method": {
+      "tool": "recipe:buff-edge@3（--opt grid の増分ごとの当て方。derived の buff-edge-grid.tsv）",
+      "note": "--opt setup=0786-06（灼熱の BigArms・3 分モードのジャンプ・バースト ON）、--opt grid=ココア=1@1000;ココア▲=1@1000/*1.3211;ティア=2@1000;ティア▲=2@1000/*1.3211。モデル（いまの main）ではティアのバーストもココアの回復も起きないので▲の窓が無く、▲の格子は C-0776 の値 32.11% の倍率の版（/*1.3211。この編成にほかの攻撃ダメージ▲は無い）にした。/* の格子は元の値も含むので、元の値に合った増分（区別できない と出る）を▲なし、倍率の版だけに合った増分を▲ありとした（pair はこの形では使えないので、窓の内外は手で数えた）。増分 199 個: ▲なし（元の値）のココア 40・ティア 40、▲ありのココア 55・ティア 57、外れ 7。外れのうち、読みが 2 つのフレームに割れたものは和で数えた: f5630 + f5631（503,532 + 20,000 = 523,532。ココアの▲あり）と f11111（859,424 = ココアの▲あり 455,246 + ティアの▲あり 404,178）。ほかの外れ（f4912・f4919（302,829・215,087）、f7242・f7270（289,513・89,404））は、どの格子の値にも 2 つの和にも合わない（2 本の録画の同じ戦闘時刻に同じ値が出るので、読み違いではない。境の外の発なので、窓の端には使っていない）"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0848-10",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "description": "ココアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の外（1 回目の窓の前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（hud-jumps@2）・recipe:buff-edge@3"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0848-11",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 244753,
+    "description": "ティアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の外（1 回目の窓の前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（hud-jumps@2）・recipe:buff-edge@3"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0848-12",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 455246,
+    "description": "ココアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の中（344,596 × 1.3211）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（hud-jumps@2）・recipe:buff-edge@3",
+      "note": "元の値 × 1.3211（C-0776 の 32.11%）を四捨五入した値と同じ。いまの main のモデルにはこの編成で▲の窓が無いので比べない。段 17 の PR 3 で、モデルの 1 回目の窓（886〜1474）の中のフレーム 1100 と比べる指定を足した"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0848-13",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 323343,
+    "description": "ティアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の中（244,753 × 1.3211）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（hud-jumps@2）・recipe:buff-edge@3",
+      "note": "元の値 × 1.3211（C-0776 の 32.11%）を四捨五入した値と同じ。いまの main のモデルにはこの編成で▲の窓が無いので比べない。段 17 の PR 3 で、モデルの 1 回目の窓（886〜1474）の中のフレーム 1100 と比べる指定を足した"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0848-14",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "ティック",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    },
+    "value": [885.8],
+    "description": "ティアの S1 の攻撃ダメージ▲の 1 回目の窓の始まりの、戦闘開始からのゲーム内のティック（`0848-07` の 1 つ目）",
+    "method": {
+      "tool": "`0848-07` から",
+      "note": "アイコンの付いたフレームを timer.ts --mode ticks で直した値（`0848-07`）の 1 つ目。読みは 1f の単位で、動画とゲーム内の時間のずれを 1f ほど見込んで ±2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0848-15",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "ティック",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    },
+    "value": 882.79,
+    "description": "ティアの S1 の攻撃ダメージ▲の窓の始まりの間隔（1 回目から 11 回目までの 10 間隔の平均）の、ゲーム内のティック（`0848-07` から）",
+    "method": {
+      "tool": "`0848-07` から",
+      "note": "(11 回目 − 1 回目) ÷ 10。端ごとに読み 1f と動画とゲーム内の時間のずれ 1f ほどを見込み、V-0599 と同じ ±0.5"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "count": 11
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  }
+]
