@@ -813,6 +813,7 @@
 | 0839 | `20261101-0839_rl+rl_bestie-tu+yuni_guide-reload-1.mp4` | ◎ベスティー：タクティカル・アップ（94、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0589 の撮影。ベスティー：タクティカル・アップ（1 枠目・操作）・ユニ（2 枠目・AI）。ユニの S2 で最大装弾数 9 発。オートバースト OFF |
 | 0840 | `20261101-0840_rl+rl_bestie-tu+yuni_guide-reload-2.mp4` | ◎ベスティー：タクティカル・アップ（94、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0589 の撮影。ベスティー：タクティカル・アップ（1 枠目・操作）・ユニ（2 枠目・AI）。ユニの S2 で最大装弾数 9 発。オートバースト OFF |
 | 0841 | `20261101-0841_sr_liberalio.mp4` | ◎リバーレリオ（262、SR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0596 の撮影。リバーレリオ単騎・操作（オート射撃 ON）。オートバースト OFF |
+| 0842 | `20261101-0842_rl+rl+mg+sr_tia+flower+emma-tu+eunhwa-tu_round-three-buckets.mp4` | ティア（451、RL・鉄甲・SSR） + I-DOLL・フラワー（304、RL・風圧・R） + ◎エマ：タクティカル・アップ（93、MG・灼熱・SSR） + ウンファ：タクティカル・アップ（95、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
