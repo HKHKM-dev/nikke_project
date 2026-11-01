@@ -1683,6 +1683,13 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
    * 減少で 1 つずつ減る。maxStacks か maxStacksRef と組み、stacksFrom とは組み合わせない
    */
   stacksPerFireRef?: number;
+  /**
+   * 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節。C-0816）: 回数のきっかけ { count: "weaponChangeShot" } の付与で、
+   * 件をきっかけの発のフレームの leadFrames 前から始める（1 以上の整数。書かなければ次のフレームから）。付けた枠（出どころ）の値の小片
+   * だけは、いままでどおり発の次のフレームから効かせ、きっかけの発自身には乗らない（C-0312）。1 パス目で状態を見るもの（条件
+   * enemyState など）には、発のフレームから見える（1 パス目は前から進む）
+   */
+  leadFrames?: number;
 };
 
 /** 2 段目の段 10: 付与のスタックの数の出どころ（カウンタの値か、自分の状態のスタック数） */
@@ -3056,6 +3063,13 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
       fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef cannot be used with stacksFrom');
     effect.stacksPerFireRef = parseRef(v.stacksPerFireRef, `${path}.stacksPerFireRef`);
   }
+  // 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発の leadFrames 前から始める付与
+  if (v.leadFrames !== undefined) {
+    const t = fields.trigger;
+    if (typeof t !== 'object' || t === null || !('count' in t) || t.count !== 'weaponChangeShot' || isChanceTrigger(t))
+      fail(`${path}.leadFrames`, 'leadFrames needs the trigger { count: "weaponChangeShot" }');
+    effect.leadFrames = parsePositiveInt(v.leadFrames, `${path}.leadFrames`);
+  }
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`, onEnemy));
@@ -3130,6 +3144,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'maxStacksRef',
   'stacksFrom',
   'stacksPerFireRef',
+  'leadFrames',
   'condition',
   'burstStepMix',
   'squad',
@@ -3218,6 +3233,7 @@ function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>)
     undispellable: _u,
     delayFrames: _delay,
     stacksPerFireRef: _perFire,
+    leadFrames: _lead,
     ...fields
   } = grant;
   const { claims: _itemClaims, ...value } = item;

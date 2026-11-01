@@ -639,6 +639,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * maxStacks 以下）。無ければ 1（stacksFrom があればその数）
    */
   stacksPerFire?: number;
+  /** 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 定義の leadFrames を写したもの（skills/holders.ts の fireGrant） */
+  leadFrames?: number;
   /** エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある） */
   enemy?: true;
 };
@@ -676,6 +678,7 @@ export function resolveStateGrants(
       }
       if (effect.enemy) grant.enemy = true;
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
+      if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       untrimmed.push(grant);
     });
   }

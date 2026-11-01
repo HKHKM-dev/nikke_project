@@ -232,7 +232,7 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
   - effects[3] passive・projectileExplosionDamage: C-0374（確定）
   - effects[4] passive・trueDamage: C-0375（確定）
 - **burst**: supported
-  - effects[0] state・weaponChangeShot・explosiveRound（damageTaken）: C-0312（確定）、C-0138（確定）
+  - effects[0] state・weaponChangeShot・explosiveRound（damageTaken）: C-0312（確定）、C-0138（確定）、C-0816（確定）
   - effects[1] weaponChange・burstUse: C-0313（確定）、C-0376（確定）、C-0509（確定）
   - notes[0] 補足: II の直後に III が来たとき、炸裂弾は III のタイマーの 00.00（フルバーストの窓の始まり）より前に着き、フルバースト補正が乗らない（0233-10）。モデルもフルバーストの窓を III の発動の 6f 後の 00.00 から始める（II の替わり目の 29f 後。C-0516）ので、炸裂弾（替わり目の 22〜28f 後）に補正は乗らない: C-0509（確定）、C-0516（確定）
 

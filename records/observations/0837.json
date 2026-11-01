@@ -57,6 +57,10 @@
     "method": {
       "tool": "recipe:hud-jumps@3 の増分（キャッシュ hud-jumps@2）と recipe:burst-panel@2 の 00.00",
       "note": "II → III の替わり目の後の、ウンファの通常攻撃より大きい最初の増分（V-0387）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
     }
   },
   {

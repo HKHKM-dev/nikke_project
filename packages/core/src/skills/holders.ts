@@ -407,6 +407,15 @@ export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames
   return frame + (delayFrames ?? 1);
 }
 
+/**
+ * 状態の付与の件の始まり（startOfFire）。徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: leadFrames のある付与は、
+ * きっかけの発のフレームの leadFrames 前から（戦闘の始まりより前にはしない）
+ */
+function grantStartOf(grant: ResolvedStateGrant, frame: number): number {
+  if (grant.leadFrames !== undefined) return Math.max(0, frame - grant.leadFrames);
+  return startOfFire(grant.trigger, frame, grant.delayFrames);
+}
+
 /** 戦闘開始時の窓（ループの前に登録する）か */
 function atBattleStart(t: ResolvedTrigger): boolean {
   return t === 'battleStart' || (isResolvedTimer(t) && 'atStart' in t && t.atStart === true);
@@ -1793,11 +1802,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipGrant(g, f);
         continue;
       }
-      fireGrant(
-        g,
-        battleStartOnly ? 0 : startOfFire(g.grant.trigger, f, g.grant.delayFrames),
-        fireContextOf(g.grant.trigger, ev),
-      );
+      fireGrant(g, battleStartOnly ? 0 : grantStartOf(g.grant, f), fireContextOf(g.grant.trigger, ev));
     }
     for (const src of stage1Timed) {
       if (src.chance) {
@@ -1872,11 +1877,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipGrant(g, f);
         continue;
       }
-      fireGrant(
-        g,
-        battleStartOnly ? 0 : startOfFire(g.grant.trigger, f, g.grant.delayFrames),
-        fireContextOf(g.grant.trigger, ev),
-      );
+      fireGrant(g, battleStartOnly ? 0 : grantStartOf(g.grant, f), fireContextOf(g.grant.trigger, ev));
     }
     for (const src of stage15Timed) {
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
@@ -2234,6 +2235,8 @@ export type ValuePiece = {
 /** 件の列の値の小片（timed・状態の中身・確率のきっかけ。強化は別）。並びは作った順 */
 function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValuePiece[] {
   const pieces: ValuePiece[] = [];
+  const o = track.origin;
+  const lead = o.kind === 'state' ? o.grant.leadFrames : undefined;
   const push = (effect: ItemEffect, item: HeldItem): void => {
     // 段 C: 敵の件は、効果の対象の味方の各枠に写す。エレグのバースト編: 敵に付く状態の中身も（対象は付与の対象）
     const holders =
@@ -2245,11 +2248,18 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
             ? alliesOf(effect, track.sourceSlotIndex, slots)
             : [track.holder];
     for (const slotIndex of holders) {
+      // 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発より前から始める付与の、付けた枠の小片は、いままでどおり
+      // 発の次のフレームから（きっかけの発自身には乗らない。C-0312）
+      const start =
+        lead !== undefined && slotIndex === track.sourceSlotIndex
+          ? Math.min(item.end, item.start + lead + 1)
+          : item.start;
+      if (lead !== undefined && start >= item.end) continue;
       const piece: ValuePiece = {
         slotIndex,
         sourceSlotIndex: track.sourceSlotIndex,
         effect: item.scale === undefined ? effect : { ...effect, value: chanceValueOf(effect.value, item.scale) },
-        start: item.start,
+        start,
         end: item.end,
         stage: track.stage,
       };
@@ -2257,7 +2267,6 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
       pieces.push(piece);
     }
   };
-  const o = track.origin;
   // 2 段目の段 9 の PR 2: while の効果は timed と同じく件ごとに 1 つ（値はスタックごとではない）
   if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item);
   if (o.kind === 'state') for (const item of track.items) for (const c of o.contents) push(c, item);

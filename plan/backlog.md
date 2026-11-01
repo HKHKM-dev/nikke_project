@@ -73,7 +73,7 @@
 
 ## 4. オーナーの判断待ち
 
-- III のバーストのヒットが敵の側のデバフを見る時点（C-0795）と、ベスティー：タクティカル・アップの録画の食い違い（仮説 C-0810・C-0816）: 設計の承認待ち（[design-explosive-round-lead.md](design-explosive-round-lead.md) 4 節）
+- 仮説 C-0810 を C-0816（確定）で置き換えるか: 並行のブランチ（`claude/vigilant-fermat-2esqm3`）のマージの後（[design-explosive-round-lead.md](design-explosive-round-lead.md) 4 節の 2）
 
 ## 5. 道具・記録の整備
 
@@ -117,10 +117,10 @@
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - エーテルの S2 の防御力▼（2026-10-07）→ 一部完了（設計書なし）。残りは 1.3 節
 - ミハラ：ボンディングチェーン（162）の S1（2026-10-07）→ 一部完了（設計書なし。定義は未）。残りは 1.3 節
-- 徹甲炸裂弾の受けるダメージ▲の付く時刻（2026-11-01 起票）→ 設計の承認待ち: [design-explosive-round-lead.md](design-explosive-round-lead.md) 4 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- 徹甲炸裂弾の受けるダメージ▲の付く時刻（2026-11-01 起票）→ 実装済み（2026-11-01）: [design-explosive-round-lead.md](design-explosive-round-lead.md)
 - 点検で仮説にした結論の再現（2-33。2026-10-11 起票）→ 閉じた（2026-10-31。残りの 2 件は撮り足さない仮説。オーナーの決定）: [design-c0641-n-version.md](design-c0641-n-version.md)。行（2-33）は残す
 - ミハラ（161）の追加ダメージの撃つ側のバフの時点（2026-10-27 起票）→ 完了（2026-10-28。ヒットの時点のまま。モデルは変えない）: [design-mihara-burst-hits.md](design-mihara-burst-hits.md) 8 節
 - 語彙はあるのに撮っていない効果の撮影（2026-10-26 起票）→ 完了（2026-10-27。フォルクヴァンの回復の定義は 6 節）: [design-skill-unrecorded.md](design-skill-unrecorded.md)
