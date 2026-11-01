@@ -1,0 +1,52 @@
+{
+  "id": "0858",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0858_sr+mg+ar+ar_cocoa+elegg+kurumi+idoll-sun_kurumi-s2-edge-1.mp4",
+  "original": "2026-11-01_13-29-59.mp4",
+  "durationSec": 26.5,
+  "frames": 1588,
+  "fps": 60,
+  "sizeMB": 32.1,
+  "sha256": "b18287651693",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 500,
+      "name": "エレグ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 862,
+      "name": "クルミ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0604: ココア・エレグ・クルミ（操作。オート射撃 ON）・I-DOLL・サン。オートバースト ON。エレグの S2 の戦闘開始時のゲージで開始の約 2 秒後にフルバースト（I はココア。バースト欄の顔）。フルバーストの途中で ESC の一時停止に入り、パネルで枠順を映して終えた",
+  "backup": {
+    "at": "2026-11-01T13:44+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

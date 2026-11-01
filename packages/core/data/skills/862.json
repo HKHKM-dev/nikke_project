@@ -67,12 +67,13 @@
           "ref": 2,
           "damageType": "additional",
           "assumes": {
-            "ja": "撃った弾はすべて命中する（命中の回数は S1 と同じ通算の列）。対象は敵 1 体。ハッキング状態は、ハッキングが付いた命中から最後の tick まで（両端を含む。同じ命中で付くハッキングも入れる）。境界は確かめていない（フルバースト中はハッキングがずっと付いていて、録画では効かなかった）",
-            "en": "Every shot hits (hits follow the same battle-wide count as S1). One enemy. The target counts as hacked from the hit that applies the hacking to its last tick (both ends, including hacking applied by the same hit). The boundary is unchecked (the hacking stayed on during Full Burst in the recording)"
+            "ja": "撃った弾はすべて命中する（命中の回数は S1 と同じ通算の列）。対象は敵 1 体。ハッキング状態は、ハッキングが付いた命中から最後の tick まで（両端を含む）。同じ命中で S1 が付けるハッキングも状態に数える（C-0833）ので、S2 が出うる命中（S1 も付く命中）では条件は止めない。切れる境（最後の tick の後のフレーム）は効かず、確かめていない",
+            "en": "Every shot hits (hits follow the same battle-wide count as S1). One enemy. The target counts as hacked from the hit that applies the hacking to its last tick (both ends). Hacking applied by S1 on the same hit counts (C-0833), so the condition never blocks the hits that can trigger S2 (S1 also applies on them). Where the state ends (the frames after the last tick) does not matter and is unchecked"
           },
           "claims": [
             "C-0276",
-            "C-0277"
+            "C-0277",
+            "C-0833"
           ]
         }
       ]
