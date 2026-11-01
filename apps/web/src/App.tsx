@@ -215,6 +215,8 @@ export function App() {
                 </li>
               ))}
             </ul>
+            {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
+            {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
           </DamageTotalPanel>
           <PartyTabs active={parties.active} onSelect={selectParty} />
           <section className="slots" aria-label="編成">
@@ -249,15 +251,6 @@ export function App() {
             resetKeys={[shown]}
             fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
           >
-            <DamageTotalPanel
-              title="編成ダメージ"
-              label={partyLabel(parties.active)}
-              value={shown?.computed.ok ? shown.computed.result.totalDamage : null}
-              computing={computing || shown === null}
-            >
-              {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
-              {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
-            </DamageTotalPanel>
             {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
             <NotesSummary
               slots={summarySlots}

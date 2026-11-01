@@ -97,6 +97,14 @@ export function TeamSettingsForm({
           <Popover button="詳細設定" buttonClassName="advanced-settings-button" label="詳細設定" align="left">
             <div className="advanced-settings">
               <label className="field">
+                <span>戦闘時間（秒）</span>
+                <IntInput
+                  value={durationSeconds}
+                  min={1}
+                  onCommit={(seconds) => dispatch({ type: 'setDuration', durationSeconds: seconds })}
+                />
+              </label>
+              <label className="field">
                 <span>敵防御力</span>
                 <IntInput
                   value={defence}
@@ -113,14 +121,6 @@ export function TeamSettingsForm({
                   onChange={(e) => dispatch({ type: 'setRangeJump', rangeJump: e.target.checked })}
                 />
                 <span>ジャンプ移動</span>
-              </label>
-              <label className="field">
-                <span>戦闘時間（秒）</span>
-                <IntInput
-                  value={durationSeconds}
-                  min={1}
-                  onCommit={(seconds) => dispatch({ type: 'setDuration', durationSeconds: seconds })}
-                />
               </label>
             </div>
           </Popover>
