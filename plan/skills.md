@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 69・効果 421（根拠あり 397）・notes 173（根拠あり 78）
+件数: キャラ 69・効果 422（根拠あり 398）・notes 173（根拠あり 78）
 
-notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足 13・間接 52
+notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足 13・間接 51
 
-スロット: supported 161・partial 13・unsupported 17・noEffect 34
+スロット: supported 161・partial 14・unsupported 17・noEffect 33
 
 ## 10 ラピ
 
@@ -172,8 +172,9 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足
   - effects[3] timed・burstUse・maxAmmo: C-0468（確定）
   - effects[4] timed・burstUse・critDamage: C-0468（確定）、C-0493（確定）
   - effects[5] timed・burstUse・attack: C-0468（確定）、C-0493（確定）
-- **skill2**: noEffect
-  - notes[0] 間接（遮蔽物）: 遮蔽物の HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）: 根拠なし
+- **skill2**: partial
+  - effects[0] coverHeal・15 秒ごと: C-0821（確定）
+  - notes[0] 未対応: 3 体以上の編成で、遮蔽物 HP が最も低い味方 2 機をどう選ぶか（遮蔽物 HP が並んだ時・敵の攻撃で減った時）は未対応（モデルでは誰にも遮蔽物 HP 回復を起こさない。plan/design-skill-stage17.md 論点 3）: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0468（確定）、C-0493（確定）
 
@@ -768,7 +769,7 @@ notes の種類: 未対応 41・前提の外 32・計算に無関係 35・補足
 
 - **skill1**: supported
   - effects[0] timed・遮蔽物の HP を回復した時・burstCooldown（読む: 遮蔽物）: C-0775（確定）、C-0827（確定）
-  - effects[1] timed・遮蔽物の HP を回復した時・attackDamage（読む: 遮蔽物）: C-0776（確定）、C-0826（確定）
+  - effects[1] timed・遮蔽物の HP を回復した時・attackDamage（読む: 遮蔽物）: C-0776（確定）、C-0821（確定）、C-0826（確定）
 - **skill2**: supported
   - effects[0] coverHeal・burstUse: C-0775（確定）
   - effects[1] heal・burstUse: 根拠なし
