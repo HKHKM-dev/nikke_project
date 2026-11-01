@@ -1,0 +1,913 @@
+{
+  "verification": "V-0619",
+  "note": "撮る前の予測。ラム（1 枠目・I）・イサベル（2 枠目・III）・◎たきな（3 枠目・II・操作・撃たない）。オートバースト OFF で、チェーンを手で撃つ予定の時刻（I の本当の発動。III はその 56f 後）を values に置き、manualBursts で指す。付き始めの回は III をたきなの S2 の発動（883f ごと）の 2・5・8・11 回目の 70f 前に、切れ目の回（指標の id の -end）は 1・4・8・11 回目の▲の切れ目（発動の 294f 後）の 70f 前に置く。モデルには撃たない枠が無いので、たきなを noFireSlots にし、変更後の武器の発で付く受けるダメージ▲（burst の effects[1]）を dropEffects で外す。仮説は、バーストのヒットと追加ダメージが敵の側のデバフを見る時点を setup の burstHitEnemyDebuffs・burstEffectEnemyDebuffs で替える（2 つを一緒に替える。読むときは指標ごとに合う仮説を見る）",
+  "team": [
+    {
+      "rid": 822
+    },
+    {
+      "rid": 231
+    },
+    {
+      "rid": 861,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-snap",
+      "note": "発動の時点（バーストのヒットはいまのモデル。C-0795・C-0837）。追加ダメージも発動の時点",
+      "override": {
+        "burstHitEnemyDebuffs": "activation",
+        "burstEffectEnemyDebuffs": "activation"
+      }
+    },
+    {
+      "id": "H-hit",
+      "note": "ヒット（効果の発火）の直前（追加ダメージはいまのモデル。C-0838）。バーストのヒットもヒットの直前",
+      "override": {
+        "burstHitEnemyDebuffs": "hit",
+        "burstEffectEnemyDebuffs": "hit"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "isabel-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）",
+      "observations": ["0890-12", "0890-14", "0891-11", "0891-12"]
+    },
+    {
+      "id": "isabel-hit-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）",
+      "observations": ["0890-13", "0890-15", "0891-13"]
+    },
+    {
+      "id": "isabel-hit-2-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-hit-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）",
+      "observations": ["0891-15"]
+    },
+    {
+      "id": "isabel-hit-3-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-hit-4",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-hit-4-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-add-3",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）",
+      "observations": ["0891-16"]
+    },
+    {
+      "id": "isabel-add-3-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-add-4-stage2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-add-4-stage2-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-add-4-stage3",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-add-4-stage3-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の 70f 後（ヒットの 70f 前）に付く（付き始めの回）"
+    },
+    {
+      "id": "isabel-hit-1-end",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）",
+      "observations": ["0892-13", "0892-14", "0892-15", "0893-14", "0893-15", "0893-16"]
+    },
+    {
+      "id": "isabel-hit-1-end-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）",
+      "observations": ["0893-17"]
+    },
+    {
+      "id": "isabel-hit-2-end",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）",
+      "observations": ["0892-16"]
+    },
+    {
+      "id": "isabel-hit-2-end-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-hit-3-end",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-hit-3-end-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-hit-4-end",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心でない）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-hit-4-end-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-add-3-end",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-add-3-end-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-add-4-stage2-end",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-add-4-stage2-end-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-add-4-stage3-end",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-add-4-stage3-end-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-end"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）。たきなの S2 の受けるダメージ▲は III の発動の前から付いていて、発動の 70f 後（ヒットの 70f 前）に切れる（切れ目の回）"
+    },
+    {
+      "id": "isabel-s2-2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "plan-onset"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。2 回目のイサベルの S2 のヒット（会心でない。付き始めの回の 1 回目のチェーンで、たきなの S2 の▲の付き始めの 45f 後・イサベルのバーストのヒットの 25f 前に出る）。バーストのヒットでないので 2 仮説で同じ値で、▲がヒットの前に敵に付いていることを示す",
+      "observations": ["0890-17"]
+    }
+  ],
+  "values": {
+    "plan-onset": [1640, 4289, 6938, 9587],
+    "plan-end": [1051, 3700, 7232, 9881]
+  },
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "b09d7314527ebc7abad94389fadd286214fab6b9",
+    "values": {
+      "H-snap": {
+        "isabel-hit-1": 180710.10899999997,
+        "isabel-hit-1-crit": 271065.16349999997,
+        "isabel-hit-2": 180710.109,
+        "isabel-hit-2-crit": 271065.1635,
+        "isabel-hit-3": 180710.109,
+        "isabel-hit-3-crit": 303647.1961527,
+        "isabel-hit-4": 211962.825,
+        "isabel-hit-4-crit": 356161.1348475,
+        "isabel-add-3": 758765.6056691998,
+        "isabel-add-3-crit": 1102891.1000270376,
+        "isabel-add-4-stage2": 889989.50961,
+        "isabel-add-4-stage2-crit": 1293629.418535122,
+        "isabel-add-4-stage3": 1038321.094545,
+        "isabel-add-4-stage3-crit": 1509234.3216243088,
+        "isabel-hit-1-end": 198943.75899809998,
+        "isabel-hit-1-end-crit": 298415.63849715,
+        "isabel-hit-2-end": 198943.7589981,
+        "isabel-hit-2-end-crit": 298415.63849715004,
+        "isabel-hit-3-end": 198943.75899809998,
+        "isabel-hit-3-end-crit": 298415.63849715,
+        "isabel-hit-4-end": 233349.87404249999,
+        "isabel-hit-4-end-crit": 392097.7933536127,
+        "isabel-add-3-end": 813466.5556635,
+        "isabel-add-3-end-crit": 1084622.074218,
+        "isabel-add-4-stage2-end": 954150.6567375002,
+        "isabel-add-4-stage2-end-crit": 1386889.7845898478,
+        "isabel-add-4-stage3-end": 1113175.76619375,
+        "isabel-add-4-stage3-end-crit": 1618038.0820214888,
+        "isabel-s2-2": 339697.9620610201
+      },
+      "H-hit": {
+        "isabel-hit-1": 198943.75899809998,
+        "isabel-hit-1-crit": 298415.63849715,
+        "isabel-hit-2": 198943.7589981,
+        "isabel-hit-2-crit": 298415.63849715004,
+        "isabel-hit-3": 198943.7589981,
+        "isabel-hit-3-crit": 334285.1982445074,
+        "isabel-hit-4": 233349.87404249999,
+        "isabel-hit-4-crit": 392097.7933536127,
+        "isabel-add-3": 813466.5556635,
+        "isabel-add-3-crit": 1182400.7542087527,
+        "isabel-add-4-stage2": 954150.6567375002,
+        "isabel-add-4-stage2-crit": 1386889.7845898478,
+        "isabel-add-4-stage3": 1113175.76619375,
+        "isabel-add-4-stage3-crit": 1618038.0820214888,
+        "isabel-hit-1-end": 180710.10899999997,
+        "isabel-hit-1-end-crit": 271065.16349999997,
+        "isabel-hit-2-end": 180710.109,
+        "isabel-hit-2-end-crit": 271065.1635,
+        "isabel-hit-3-end": 180710.10899999997,
+        "isabel-hit-3-end-crit": 271065.16349999997,
+        "isabel-hit-4-end": 211962.825,
+        "isabel-hit-4-end-crit": 356161.1348475,
+        "isabel-add-3-end": 758765.6056692,
+        "isabel-add-3-end-crit": 1011687.4742255999,
+        "isabel-add-4-stage2-end": 889989.50961,
+        "isabel-add-4-stage2-end-crit": 1293629.418535122,
+        "isabel-add-4-stage3-end": 1038321.094545,
+        "isabel-add-4-stage3-end-crit": 1509234.3216243088,
+        "isabel-s2-2": 339697.9620610201
+      }
+    }
+  }
+}

@@ -1,0 +1,417 @@
+[
+  {
+    "id": "0891-01",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": [2505, 5185, 7849, 10521],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0f"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-02",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": [2507, 5188, 7852, 10524],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 4・4・4・4f"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-03",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": [2556, 5237, 7901, 10573],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01",
+    "invalid": {
+      "reason": "手で撃ったチェーン（II と III を続けて押した）では、レシピの「バーの行の紫の画素が 100 以上」になるのが 00.00 の表示より 36〜50f 遅い（0890 の 1 回目は f2520 の画でバーに 00.00 が出ていて、レシピは f2558）。00.00 は、イサベルのバーストのヒットの 156f 前（C-0165）として読む（V-0619「結果」）",
+      "date": "2026-11-01"
+    }
+  },
+  {
+    "id": "0891-04",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": -15.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -56,
+      "high": 25
+    },
+    "description": "たきなのS2の受けるダメージ▲（ラム・ラムFB → ラム▲・ラムFB▲）が ラム の 1 発で替わるまでの時刻の幅（6 番目の事象 f8917 から数えた動画のフレーム）。ラム・ラムFBの最後の発は -57f、ラム▲・ラムFB▲の最初の発は 25f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"noFireSlots\":[3],\"dropEffects\":[{\"rid\":861,\"skill\":\"burst\",\"index\":1}],\"manualBursts\":[1640,4289,6938,9587]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は ラム: 枠 1（ラム）のモデルの f600、ラム▲: 枠 1（ラム）のモデルの f1000、ラムFB: 枠 1（ラム）のモデルの f1730、ラムFB▲: 枠 1（ラム）のモデルの f1900。境は ラム・ラムFB → ラム▲・ラムFB▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。ラム・ラムFB 1・ラム▲・ラムFB▲ 7・区別できない 0・外れ 26・食い違い（ラム▲・ラムFB▲の最初の発より後のラム・ラムFBの発） 0"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-05",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": -41.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -56,
+      "high": -27
+    },
+    "description": "たきなのS2の受けるダメージ▲（ラム・ラムFB → ラム▲・ラムFB▲）が ラム の 1 発で替わるまでの時刻の幅の、7 回の事象（f1771・3564・4447・6241・7124・8917・9800）の共通部分（事象から数えた動画のフレーム）。ラム・ラムFBの最後の発の最も遅いものは -57f、ラム▲・ラムFB▲の最初の発の最も早いものは -27f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"noFireSlots\":[3],\"dropEffects\":[{\"rid\":861,\"skill\":\"burst\",\"index\":1}],\"manualBursts\":[1640,4289,6938,9587]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は ラム: 枠 1（ラム）のモデルの f600、ラム▲: 枠 1（ラム）のモデルの f1000、ラムFB: 枠 1（ラム）のモデルの f1730、ラムFB▲: 枠 1（ラム）のモデルの f1900。境は ラム・ラムFB → ラム▲・ラムFB▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -60〜60f。ラム・ラムFB 1・ラム▲・ラムFB▲ 7・区別できない 0・外れ 26・食い違い（ラム▲・ラムFB▲の最初の発より後のラム・ラムFBの発） 0"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-06",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": 286.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 246,
+      "high": 327
+    },
+    "description": "たきなのS2の受けるダメージ▲（ラム▲・ラムFB▲ → ラム・ラムFB）が ラム の 1 発で替わるまでの時刻の幅（2 番目の事象 f3564 から数えた動画のフレーム）。ラム▲・ラムFB▲の最後の発は 245f、ラム・ラムFBの最初の発は 327f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"noFireSlots\":[3],\"dropEffects\":[{\"rid\":861,\"skill\":\"burst\",\"index\":1}],\"manualBursts\":[1640,4289,6938,9587]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は ラム: 枠 1（ラム）のモデルの f600、ラム▲: 枠 1（ラム）のモデルの f1000、ラムFB: 枠 1（ラム）のモデルの f1730、ラムFB▲: 枠 1（ラム）のモデルの f1900。境は ラム▲・ラムFB▲ → ラム・ラムFB（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 180〜380f。ラム▲・ラムFB▲ 3・ラム・ラムFB 7・区別できない 0・外れ 27・食い違い（ラム・ラムFBの最初の発より後のラム▲・ラムFB▲の発） 0"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-07",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": 266.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 226,
+      "high": 307
+    },
+    "description": "たきなのS2の受けるダメージ▲（ラム▲・ラムFB▲ → ラム・ラムFB）が ラム の 1 発で替わるまでの時刻の幅（6 番目の事象 f8917 から数えた動画のフレーム）。ラム▲・ラムFB▲の最後の発は 225f、ラム・ラムFBの最初の発は 307f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"noFireSlots\":[3],\"dropEffects\":[{\"rid\":861,\"skill\":\"burst\",\"index\":1}],\"manualBursts\":[1640,4289,6938,9587]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は ラム: 枠 1（ラム）のモデルの f600、ラム▲: 枠 1（ラム）のモデルの f1000、ラムFB: 枠 1（ラム）のモデルの f1730、ラムFB▲: 枠 1（ラム）のモデルの f1900。境は ラム▲・ラムFB▲ → ラム・ラムFB（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 180〜380f。ラム▲・ラムFB▲ 3・ラム・ラムFB 7・区別できない 0・外れ 27・食い違い（ラム・ラムFBの最初の発より後のラム▲・ラムFB▲の発） 0"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-08",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "record",
+    "value": 253.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 246,
+      "high": 261
+    },
+    "description": "たきなのS2の受けるダメージ▲（ラム▲・ラムFB▲ → ラム・ラムFB）が ラム の 1 発で替わるまでの時刻の幅の、7 回の事象（f1771・3564・4447・6241・7124・8917・9800）の共通部分（事象から数えた動画のフレーム）。ラム▲・ラムFB▲の最後の発の最も遅いものは 245f、ラム・ラムFBの最初の発の最も早いものは 261f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"noFireSlots\":[3],\"dropEffects\":[{\"rid\":861,\"skill\":\"burst\",\"index\":1}],\"manualBursts\":[1640,4289,6938,9587]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は ラム: 枠 1（ラム）のモデルの f600、ラム▲: 枠 1（ラム）のモデルの f1000、ラムFB: 枠 1（ラム）のモデルの f1730、ラムFB▲: 枠 1（ラム）のモデルの f1900。境は ラム▲・ラムFB▲ → ラム・ラムFB（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 180〜380f。ラム▲・ラムFB▲ 3・ラム・ラムFB 7・区別できない 0・外れ 27・食い違い（ラム・ラムFBの最初の発より後のラム▲・ラムFB▲の発） 0"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-09",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "input",
+    "value": [1587],
+    "unit": "f",
+    "description": "手で撃ったチェーン（1 回目）の I の発動のゲーム内のフレーム（比べる指定の manualBursts）。III の本当の発動の 56f 前（モデルの I → III の間隔）に置いた",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "III のタイマーの 00.00（イサベルのバーストのヒットの 156f 前。動画の f2518）をゲーム内のティック（1649）に直し、6 ティック前（C-0512）を III の本当の発動とした。I・II の時刻はイサベルのヒットの値にも、たきなの S2 の▲の時刻にも効かない。イサベルの S1 のターゲットマーキングの段階は 45 秒で切れて数え直す（V-0619「結果」）ので、前のチェーンから 2,648 ティック以上離れたチェーンは別の組にした（モデルは段階を数え直さない）。00.00 のフレームは窓の始まりなので、timer.ts のティックは止まりの引き方で 20 ティックほど小さく出うる（plan/captures/guide.md）。どの回も、モデルの III の発動とヒット・効果の発火の時点の▲の状態は実測と同じで、比べる値は変わらない"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-10",
+    "recording": "0891",
+    "kind": "timing",
+    "use": "input",
+    "value": [4240, 6879, 9524],
+    "unit": "f",
+    "description": "手で撃ったチェーン（2 回目・3 回目・4 回目）の I の発動のゲーム内のフレーム（比べる指定の manualBursts）。III の本当の発動の 56f 前（モデルの I → III の間隔）に置いた",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "III のタイマーの 00.00（イサベルのバーストのヒットの 156f 前。動画の f5199・f7863・f10535）をゲーム内のティック（4302.1・6940.8・9586.2）に直し、6 ティック前（C-0512）を III の本当の発動とした。I・II の時刻はイサベルのヒットの値にも、たきなの S2 の▲の時刻にも効かない。イサベルの S1 のターゲットマーキングの段階は 45 秒で切れて数え直す（V-0619「結果」）ので、前のチェーンから 2,648 ティック以上離れたチェーンは別の組にした（モデルは段階を数え直さない）。00.00 のフレームは窓の始まりなので、timer.ts のティックは止まりの引き方で 20 ティックほど小さく出うる（plan/captures/guide.md）。どの回も、モデルの III の発動とヒット・効果の発火の時点の▲の状態は実測と同じで、比べる値は変わらない"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-11",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。1 回目のチェーン（組の 1 回目（段階 0）。00.00 の 156f 後）。たきなの S2 の受けるダメージ▲は III の発動の後・このヒットの前に付いた",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f2674 の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-09"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-12",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。2 回目のチェーン（組の 1 回目（段階 0）。00.00 の 156f 後）。たきなの S2 の受けるダメージ▲は III の発動の後・このヒットの前に付いた",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f5355 の増分。▲の付き始めは、同じ S2 の発動のイサベルの S2 のヒット（f5358）の 55〜28f 前（0890-05・0891-05。ヒットの 25f 以上前）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-13",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。3 回目のチェーン（組の 2 回目。00.00 の 156f 後）。たきなの S2 の受けるダメージ▲は III の発動の後・このヒットの前に付いた",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8019 の増分。▲の付き始めは、同じ S2 の発動のイサベルの S2 のヒット（f8034）の 55〜28f 前（0890-05・0891-05。ヒットの 13f 以上前）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-14",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "record",
+    "value": 994177,
+    "unit": "ダメージ",
+    "description": "イサベルの 4 回目のチェーンのヒットのフレーム（00.00 の 156f 後）の増分。バーストスキルダメージ（会心なし）と段階 2 の追加ダメージ（会心なし）の和",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10691 の増分。バーストのヒットと追加ダメージの、それぞれ会心・会心でない × 発動の時点・効果の発火の時点の組み合わせ（16 通り）のうち、端数まで合うのは「バーストのヒット（▲なし）180,710.109 + 追加ダメージ（▲あり）813,466.556」だけ（次に近い組み合わせとは 18,000 以上違う）"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-15",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。4 回目のチェーン（組の 3 回目。00.00 の 156f 後）。たきなの S2 の受けるダメージ▲は III の発動の後・このヒットの前に付いた",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10691 の増分（和から分けた）。▲の付き始めは、同じ S2 の発動のイサベルの S2 のヒット（f10710）の 55〜28f 前（0890-05・0891-05。ヒットの 9f 以上前）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-16",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 813467,
+    "unit": "ダメージ",
+    "description": "イサベルの段階 2 の追加ダメージ（会心なし）。4 回目のチェーン（組の 3 回目）。たきなの S2 の受けるダメージ▲は III の発動の後・発火の前に付いた",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10691 の増分 994,177 からバーストのヒット 180,710 を引いた。▲の付き始めは、同じ S2 の発動のイサベルの S2 のヒット（f10710）の 55〜28f 前（0890-05・0891-05。ヒットの 9f 以上前）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0619",
+    "readAt": "2026-11-01"
+  }
+]
