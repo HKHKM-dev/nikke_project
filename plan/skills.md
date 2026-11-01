@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 78・効果 487（根拠あり 459）・notes 193（根拠あり 88）
+件数: キャラ 78・効果 490（根拠あり 462）・notes 190（根拠あり 88）
 
-notes の種類: 未対応 44・前提の外 41・計算に無関係 39・補足 16・間接 53
+notes の種類: 未対応 41・前提の外 41・計算に無関係 39・補足 16・間接 53
 
-スロット: supported 182・partial 20・unsupported 15・noEffect 35
+スロット: supported 185・partial 17・unsupported 15・noEffect 35
 
 ## 10 ラピ
 
@@ -804,17 +804,17 @@ notes の種類: 未対応 44・前提の外 41・計算に無関係 39・補足
 
 ## 391 アイン
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・burstStage3Enter・attack: C-0869（確定）
-  - notes[0] 未対応: 戦闘開始時のニアフェザー 4 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない: 根拠なし
-- **skill2**: partial
+  - effects[1] summon・battleStart・nearFeather 4 機: C-0888（確定）
+- **skill2**: supported
   - effects[0] timed・fullChargeShot・chargeDamage: C-0868（確定）
-  - notes[0] 未対応: ニアフェザー攻撃（ランダムの敵 1 機に最終攻撃力の 値 02 % の防御力無視ダメージ）は未対応。1 回の攻撃は 1 ヒット（機数を掛けない）だが、攻撃の間隔は展開している機数で変わり、機数はそれぞれ独立した維持時間で減る（ツールチップ「ニアフェザー」）。機数ごとの間隔と維持時間を読んでいない（V-0625）: 根拠なし
-- **burst**: partial
+  - effects[1] damage・nearFeather の攻撃（機数で決まる間隔）・true: C-0888（確定）、C-0889（確定）、C-0890（仮説）、C-0891（確定）
+- **burst**: supported
   - effects[0] timed・burstUse・trueDamage: C-0870（確定）
   - effects[1] timed・burstUse・chargeDamage: C-0869（確定）
   - effects[2] damage・burstUse・true: C-0870（確定）、C-0871（仮説）
-  - notes[0] 未対応: ニアフェザー 6 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない。録画では、バーストのたびに約 17.6f おきのニアフェザー攻撃が 33〜35 回続いた（V-0625）: 根拠なし
+  - effects[3] summon・burstUse・nearFeather 6 機: C-0889（確定）、C-0890（仮説）
 
 ## 400 ギルティ
 

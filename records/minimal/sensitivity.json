@@ -21051,36 +21051,184 @@
       "plus": 0
     },
     {
+      "observation": "0898-01",
+      "element": "アイン skill2.effects[1]",
+      "key": "e9f6f496fb2223e5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0898-02",
+      "element": "アイン skill2.effects[1]",
+      "key": "2f5511cf7bab842c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0898-10",
+      "element": "アイン skill2.effects[1]",
+      "key": "edd8996ed869250b",
+      "effective": true,
+      "minus": -32,
+      "plus": null
+    },
+    {
+      "observation": "0898-11",
+      "element": "アイン skill2.effects[1]",
+      "key": "4b7e21a8fac1636b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0898-12",
+      "element": "アイン skill2.effects[1]",
+      "key": "0704a82e5c42c2f1",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 1 の 1 回目の周期のゲージが無い"
+    },
+    {
+      "observation": "0899-01",
+      "element": "アイン skill2.effects[1]",
+      "key": "5740ea10db4d2293",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0899-02",
+      "element": "アイン skill2.effects[1]",
+      "key": "d717756598409c6a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0899-10",
+      "element": "アイン skill2.effects[1]",
+      "key": "9ab552cc936a6dc5",
+      "effective": true,
+      "minus": -32,
+      "plus": null
+    },
+    {
+      "observation": "0899-11",
+      "element": "アイン skill2.effects[1]",
+      "key": "5d2ac072ee808c6d",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0899-12",
+      "element": "アイン skill2.effects[1]",
+      "key": "75dac1f4f33301e7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 1 の 1 回目の周期のゲージが無い"
+    },
+    {
       "observation": "0900-07",
       "element": "アイン burst.effects[2]",
-      "key": "0429d544fcdc1789",
+      "key": "816d66562ec86fa1",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 1 回目の倍率ダメージが無い"
     },
     {
+      "observation": "0900-07",
+      "element": "アイン burst.effects[3]",
+      "key": "816d66562ec86fa1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-07",
+      "element": "アイン skill2.effects[1]",
+      "key": "816d66562ec86fa1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0900-08",
       "element": "アイン burst.effects[2]",
-      "key": "96468323aaf5efa2",
+      "key": "bc54b9996b99ab1a",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 2 回目の倍率ダメージが無い"
     },
     {
+      "observation": "0900-08",
+      "element": "アイン burst.effects[3]",
+      "key": "bc54b9996b99ab1a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-08",
+      "element": "アイン skill2.effects[1]",
+      "key": "bc54b9996b99ab1a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0900-09",
       "element": "アイン burst.effects[2]",
-      "key": "2863bc8aea70145b",
+      "key": "7e91c8a4f64a9073",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 3 回目の倍率ダメージが無い"
     },
     {
+      "observation": "0900-09",
+      "element": "アイン burst.effects[3]",
+      "key": "7e91c8a4f64a9073",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-09",
+      "element": "アイン skill2.effects[1]",
+      "key": "7e91c8a4f64a9073",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0900-12",
       "element": "アイン burst.effects[2]",
-      "key": "e9acdfc2bfa50435",
+      "key": "6258950d50e1cbb6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-12",
+      "element": "アイン burst.effects[3]",
+      "key": "6258950d50e1cbb6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-12",
+      "element": "アイン skill2.effects[1]",
+      "key": "6258950d50e1cbb6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21088,7 +21236,23 @@
     {
       "observation": "0900-13",
       "element": "アイン burst.effects[2]",
-      "key": "c770aa0dc5d835d2",
+      "key": "aeee40d4d9998dd9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-13",
+      "element": "アイン burst.effects[3]",
+      "key": "aeee40d4d9998dd9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0900-13",
+      "element": "アイン skill2.effects[1]",
+      "key": "aeee40d4d9998dd9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21096,25 +21260,73 @@
     {
       "observation": "0901-07",
       "element": "アイン burst.effects[2]",
-      "key": "a364f958522a5831",
+      "key": "4fda8f0296d57489",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 1 回目の倍率ダメージが無い"
     },
     {
+      "observation": "0901-07",
+      "element": "アイン burst.effects[3]",
+      "key": "4fda8f0296d57489",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-07",
+      "element": "アイン skill2.effects[1]",
+      "key": "4fda8f0296d57489",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0901-08",
       "element": "アイン burst.effects[2]",
-      "key": "78f007c70a4b414a",
+      "key": "13d68ae570e09622",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 2 回目の倍率ダメージが無い"
     },
     {
+      "observation": "0901-08",
+      "element": "アイン burst.effects[3]",
+      "key": "13d68ae570e09622",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-08",
+      "element": "アイン skill2.effects[1]",
+      "key": "13d68ae570e09622",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0901-11",
       "element": "アイン burst.effects[2]",
-      "key": "4a7ec87ff6c1848e",
+      "key": "0f6aadf814452fb9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-11",
+      "element": "アイン burst.effects[3]",
+      "key": "0f6aadf814452fb9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-11",
+      "element": "アイン skill2.effects[1]",
+      "key": "0f6aadf814452fb9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21122,7 +21334,23 @@
     {
       "observation": "0901-12",
       "element": "アイン burst.effects[2]",
-      "key": "49fbf381b52189c0",
+      "key": "fc67c76e33358a97",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-12",
+      "element": "アイン burst.effects[3]",
+      "key": "fc67c76e33358a97",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-12",
+      "element": "アイン skill2.effects[1]",
+      "key": "fc67c76e33358a97",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21130,7 +21358,23 @@
     {
       "observation": "0901-13",
       "element": "アイン burst.effects[2]",
-      "key": "0713bb496d88f5aa",
+      "key": "4a6c7ad84700d161",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-13",
+      "element": "アイン burst.effects[3]",
+      "key": "4a6c7ad84700d161",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-13",
+      "element": "アイン skill2.effects[1]",
+      "key": "4a6c7ad84700d161",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -21138,11 +21382,27 @@
     {
       "observation": "0901-16",
       "element": "アイン burst.effects[2]",
-      "key": "a07aaed1bf876a58",
+      "key": "7f79246f8dec7b50",
       "effective": true,
       "minus": null,
       "plus": null,
       "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "0901-16",
+      "element": "アイン burst.effects[3]",
+      "key": "7f79246f8dec7b50",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0901-16",
+      "element": "アイン skill2.effects[1]",
+      "key": "7f79246f8dec7b50",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0902-04",
@@ -21674,6 +21934,79 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0918-09",
+      "element": "アイン burst.effects[2]",
+      "key": "51eb1d2e4efbb757",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0918-09",
+      "element": "アイン burst.effects[3]",
+      "key": "51eb1d2e4efbb757",
+      "effective": true,
+      "minus": -106,
+      "plus": null
+    },
+    {
+      "observation": "0918-09",
+      "element": "アイン skill2.effects[1]",
+      "key": "51eb1d2e4efbb757",
+      "effective": true,
+      "minus": -138,
+      "plus": null
+    },
+    {
+      "observation": "0918-10",
+      "element": "アイン burst.effects[2]",
+      "key": "e033dac0ea9d72b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0918-10",
+      "element": "アイン burst.effects[3]",
+      "key": "e033dac0ea9d72b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0918-10",
+      "element": "アイン skill2.effects[1]",
+      "key": "e033dac0ea9d72b9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 枠 3 の 1 回目の周期のゲージが無い"
+    },
+    {
+      "observation": "0919-08",
+      "element": "アイン burst.effects[2]",
+      "key": "42bf55f05c278a87",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0919-08",
+      "element": "アイン burst.effects[3]",
+      "key": "42bf55f05c278a87",
+      "effective": true,
+      "minus": -106,
+      "plus": null
+    },
+    {
+      "observation": "0919-08",
+      "element": "アイン skill2.effects[1]",
+      "key": "42bf55f05c278a87",
+      "effective": true,
+      "minus": -138,
+      "plus": null
     }
   ]
 }
