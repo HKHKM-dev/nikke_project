@@ -1,0 +1,696 @@
+{
+  "verification": "V-0631",
+  "note": "撮る前の予測（いまのモデル H-cum だけ。数え直す H-reset はモデルで表せないので検証記録の「予測」に手で書いた）。ラム（1 枠目・I）・イサベル（2 枠目・III）・◎デルタ（3 枠目・II・操作・撃たない）。オートバースト OFF で、チェーンを手で撃つ予定の時刻（I の本当の発動。III はその 56f 後）を values に置き、manualBursts で指す。A は間隔 43・48・43 秒、B は 48・43・43 秒。デルタを noFireSlots にする",
+  "team": [
+    {
+      "rid": 822
+    },
+    {
+      "rid": 231
+    },
+    {
+      "rid": 20,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "values": {
+    "plan-A": [2032, 4562, 7385, 9915],
+    "plan-B": [2032, 4856, 7385, 9915]
+  },
+  "hypotheses": [
+    {
+      "id": "H-cum",
+      "note": "回数を戦闘の通しで数える（いまのモデル。効果の count: burstUse）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "isabel-bursts-A",
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "イサベルの III の回数（予定の 4 回が全部撃てるか）"
+    },
+    {
+      "id": "gauge-full-1-A",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "1 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "gauge-full-2-A",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "2 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "gauge-full-3-A",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "3 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "gauge-full-4-A",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "4 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "isabel-hit-1-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-1-crit-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-hit-2-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-2-crit-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-hit-3-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-3-crit-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-hit-4-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-4-crit-A",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-add-3-A",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2 の追加ダメージ（会心でない。数え直すなら出ない）"
+    },
+    {
+      "id": "isabel-add-4-stage2-A",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2 の追加ダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-add-4-stage3-A",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-A"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3 の追加ダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-bursts-B",
+      "model": "sim",
+      "metric": "burstActivationCount",
+      "args": {
+        "slot": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "イサベルの III の回数（予定の 4 回が全部撃てるか）"
+    },
+    {
+      "id": "gauge-full-1-B",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "1 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "gauge-full-2-B",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "2 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "gauge-full-3-B",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "3 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "gauge-full-4-B",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "4 回目のゲージの満タン（予定の III より前か）"
+    },
+    {
+      "id": "isabel-hit-1-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-1-crit-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-hit-2-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-2-crit-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-hit-3-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-3-crit-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-hit-4-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-hit-4-crit-B",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心）"
+    },
+    {
+      "id": "isabel-add-3-B",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2 の追加ダメージ（会心でない。数え直すなら出ない）"
+    },
+    {
+      "id": "isabel-add-4-stage2-B",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2 の追加ダメージ（会心でない）"
+    },
+    {
+      "id": "isabel-add-4-stage3-B",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "plan-B"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3 の追加ダメージ（会心でない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "97348cf811422624ccb809ac10c082ce170a5ac5",
+    "values": {
+      "H-cum": {
+        "isabel-bursts-A": 4,
+        "gauge-full-1-A": 844,
+        "gauge-full-2-A": 3298,
+        "gauge-full-3-A": 5811,
+        "gauge-full-4-A": 8681,
+        "isabel-hit-1-A": 180710.10899999997,
+        "isabel-hit-1-crit-A": 271065.16349999997,
+        "isabel-hit-2-A": 180710.109,
+        "isabel-hit-2-crit-A": 271065.1635,
+        "isabel-hit-3-A": 180710.10899999997,
+        "isabel-hit-3-crit-A": 271065.16349999997,
+        "isabel-hit-4-A": 211962.825,
+        "isabel-hit-4-crit-A": 356161.1348475,
+        "isabel-add-3-A": 758765.6056692,
+        "isabel-add-4-stage2-A": 889989.50961,
+        "isabel-add-4-stage3-A": 1038321.094545,
+        "isabel-bursts-B": 4,
+        "gauge-full-1-B": 844,
+        "gauge-full-2-B": 3298,
+        "gauge-full-3-B": 6057,
+        "gauge-full-4-B": 8681,
+        "isabel-hit-1-B": 180710.10899999997,
+        "isabel-hit-1-crit-B": 271065.16349999997,
+        "isabel-hit-2-B": 180710.10899999997,
+        "isabel-hit-2-crit-B": 271065.16349999997,
+        "isabel-hit-3-B": 180710.109,
+        "isabel-hit-3-crit-B": 303647.1961527,
+        "isabel-hit-4-B": 211962.825,
+        "isabel-hit-4-crit-B": 356161.1348475,
+        "isabel-add-3-B": 758765.6056691998,
+        "isabel-add-4-stage2-B": 889989.50961,
+        "isabel-add-4-stage3-B": 1038321.094545
+      }
+    }
+  }
+}
