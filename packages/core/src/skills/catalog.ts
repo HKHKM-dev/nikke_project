@@ -175,6 +175,9 @@ const KINDS: Rules = [
   [/効果解除/, 'buffOp:dispel'],
   [/免疫/, 'buffOp:immunity'],
   [/効果無効/, 'buffOp:nullify'],
+  // 2 段目の段 19: 攻撃力のコピー（ギルティ。copyTopAttack）と最大HP のコピー（シン・クエンシー。間接の notes）はスタックのコピーと分ける
+  [/攻撃力のコピー X％$/, 'buffOp:copyAttack'],
+  [/最大HPのコピー X％$/, 'buffOp:copyMaxHp'],
   [/スタックコピー|コピー$|コピー X％$/, 'buffOp:copy'],
   [/スタック量 ?[XN\d]+個[▲▼]/, 'buffOp:stackChange'],
   [/弾丸チャージ|弾丸ポーチ|^弾丸泥棒$|^代用弾丸$/, 'instant:ammoRefill'],
