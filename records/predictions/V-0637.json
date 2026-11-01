@@ -1,0 +1,69 @@
+{
+  "verification": "V-0637",
+  "note": "撮影 S2 の編成: シン単騎（枠 1・操作・オート射撃 ON・オートバースト OFF）・灼熱の BigArms・3 分モード・スペック固定 ON。H0 はいまの定義（S1 の挑発はゲージを溜めない。ティアの S2 と同じ形。C-0505）。H1 は、最後の弾ごとに挑発を付けたときに 1 回溜める形（最後の弾丸で敵に挑発を付けるモランの S2 と同じ形。C-0480。burstGaugeHit・delayFrames 6）。切れるとき（5 秒後）に溜める形は語彙に無いので、検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 401,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまの定義（S1 の挑発はゲージを溜めない）"
+    },
+    {
+      "id": "H1",
+      "note": "S1 の挑発を付けたとき（最後の弾の 6f 後）に、モランの S2 と同じ 1 回ぶんのゲージを溜める",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 401,
+            "skill": "skill1",
+            "effect": {
+              "kind": "burstGaugeHit",
+              "trigger": {
+                "count": "lastShot"
+              },
+              "delayFrames": 6
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-shot-0",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "note": "戦闘の最初の発から数えて、1 回目に BURST バーが消えたシンの発の番号",
+      "tolerance": {
+        "abs": 1
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "2eaa4d71423479188720694ec0abc4c731be3ea1",
+    "values": {
+      "H0": {
+        "gauge-full-shot-0": 250
+      },
+      "H1": {
+        "gauge-full-shot-0": 246
+      }
+    }
+  }
+}
