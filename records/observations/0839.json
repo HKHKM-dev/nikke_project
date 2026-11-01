@@ -1,0 +1,73 @@
+[
+  {
+    "id": "0839-01",
+    "recording": "0839",
+    "source": "V-0589",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [261, 20, 20, 19, 118],
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "HUD の増分のフレーム（着弾）の差。増分を値で、溜める発（107,530 + S2）・ガイドの値の発（138,982 + S2）・ユニの発（171,327・342,654 とその会心）に分けた（会心・胴体の組も格子で分けた）"
+    },
+    "description": "ベスティー：タクティカル・アップの 2 本目のマガジン（9 発）の最終弾（溜める発。f1862）から次の溜める発までのヒットの間隔（動画のフレーム）。リロードを挟んだ 1 発目（f2123）は 2 秒チャージの後の間隔で、その後にガイドの刻みの 3 発が続く",
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 900,
+        "to": 1420
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0839-02",
+    "recording": "0839",
+    "source": "V-0589",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 138982,
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps"
+    },
+    "description": "2 本目のマガジンのリロードの後の 1 発目（f2123）のコアの 1 ヒット（会心でない）。増分 458,624 から S2（319,642。0815-02）を引いた。ガイドの発の値（0815-03）と同じで、溜める発の値（0815-04）でない",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

@@ -1,0 +1,106 @@
+{
+  "verification": "V-0589",
+  "note": "撮る前の予測。編成はベスティー：タクティカル・アップ（1 枠目・操作）・ユニ（2 枠目）。ユニの S2（C-0390）で最大装弾数が 9 発になり、9 発のマガジンは「溜める 1 発・ガイドの 3 発」の 2 組の後に溜める 1 発で終わるので、最後の溜める発で付いたミサイルガイドの 3 発がまるごと残ったままリロードする。仮説は skill1 の effects[1]（リロード完了時の解除）の有無だけを dropEffects で替える。モデルのフレームで、2 本目のマガジンの最終弾は f975、そのリロードの完了は f1094",
+  "team": [
+    {
+      "rid": 94,
+      "controlled": true
+    },
+    {
+      "rid": 160
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-remove",
+      "note": "リロード完了でミサイルガイドを外す（いまの定義）。次のマガジンの 1 発目は溜める発（2 秒チャージ）"
+    },
+    {
+      "id": "H-keep",
+      "note": "リロード完了では外さない（skill1 の effects[1] を外す）。次のマガジンの頭の 3 発はガイドの発",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 94,
+            "skill": "skill1",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "max-ammo-at-reload",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 1,
+        "frame": 1100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "撮影の条件の確かめ（仮説では分かれない）: 2 本目のマガジンのリロードの後の最大装弾数。録画では照準の横の残弾"
+    },
+    {
+      "id": "mag3-head-intervals",
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 900,
+        "to": 1260
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "2 本目のマガジンの最終弾（溜める発）からの、次のマガジンの頭の発との間隔（モデルのフレームの窓 [900, 1260) の発）"
+    },
+    {
+      "id": "mag3-first-core",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "2 本目のマガジンのリロードの完了の後の、ベスティー：タクティカル・アップの通常攻撃のコアの 1 ヒット（会心でない。S2 の防御力無視ダメージを引いた値）。次のマガジンの 1 発目の値"
+    }
+  ],
+  "predicted": {
+    "at": "2026-10-31",
+    "commit": "b3bd3b6877d59d9faa65cfd8c2d1eaac84599523",
+    "values": {
+      "H-remove": {
+        "max-ammo-at-reload": 9,
+        "mag3-head-intervals": [258, 20],
+        "mag3-first-core": 107528.8896
+      },
+      "H-keep": {
+        "max-ammo-at-reload": 9,
+        "mag3-head-intervals": [140, 20, 20],
+        "mag3-first-core": 138981.089808
+      }
+    }
+  }
+}

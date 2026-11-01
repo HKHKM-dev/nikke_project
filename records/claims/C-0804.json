@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "並び: 0815・0816 の HUD の増分を値で分けると、どのマガジンも「溜める発（107,530 + S2）・ガイドの発 3 つ（138,982 + S2）」の 2 組（4 発の組が切れるのは的のジャンプでマガジンが分かれたところだけ）。間隔: `0815-01`・`0816-01`（ガイドの発は 20・20・19f、次の溜めまで 117f、リロードを挟んで 260f。モデルと 1f 以内）。値: `0815-03`（ガイドの発のコア。チャージダメージ▲）・`0815-04`（溜める発のコア）。付けた発を数える形（溜める発の次の 2 発だけがガイド）は、どのマガジンにも無い。V-0586",
-  "model": "`data/skills/94.json` の skill1 の effects[0]（`state` の missileGuide・`{ count: \"fullChargeShot\" }`・`selfState` の `present: false`・`durationShotsRef`）。リロード完了時の解除（同じスロットの `removeState`・`reloadEnd`）は、最大装弾数 8 発ではガイドの 3 発がマガジンの中で使い切られるので、この録画では効かない（未確認）",
+  "model": "`data/skills/94.json` の skill1 の effects[0]（`state` の missileGuide・`{ count: \"fullChargeShot\" }`・`selfState` の `present: false`・`durationShotsRef`。中身はチャージ速度▲）と effects[2]（同じきっかけと条件の `timed` のチャージダメージ▲。リロード完了時の解除で外れない。C-0818）",
   "replaces": [],
   "updated": "2026-11-01",
   "subject": {
-    "places": ["data/skills/94.json の skill1 の effects[0]"]
+    "places": ["data/skills/94.json の skill1 の effects[0]", "data/skills/94.json の skill1 の effects[2]"]
   },
   "decidedOn": []
 }

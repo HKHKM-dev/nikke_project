@@ -1,5 +1,6 @@
 // ベスティー：タクティカル・アップ（94）を含む編成（2 段目の段 16 の PR 2。plan/design-skill-stage16.md 2.2 節。V-0586）。
 // S1: ミサイルガイドはフルチャージの発で（ミサイルガイドでないときに）付き、次の発から 3 発にチャージ速度▲・チャージダメージ▲（C-0804）。
+// 最大弾数のリロードの完了で外れるのはミサイルガイド（チャージ速度▲）だけで、チャージダメージ▲は残る（C-0818。V-0589）。
 // S2: フルチャージの発ごとの防御力無視ダメージ（C-0805）と、戦場コントロール・徹甲炸裂弾の間の▲（C-0809）。バースト: 防御力無視の
 // バーストスキルダメージと、そのヒットに乗る同じ発動の防御力無視ダメージ▲（C-0807・C-0808）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
@@ -76,7 +77,8 @@ describe('ベスティー：タクティカル・アップ単騎（バースト�
 
 // S1 の「最大弾数のリロードが完了した時、ミサイルガイド解除」（removeState・きっかけ { reloadEnd }）。最大装弾数 8 発ではガイドがマガジンの
 // 中で使い切られるので、ユニ（160）の S2 の最大装弾数▲（C-0390）で 9 発にし、マガジンの最後の溜める発で付いたガイドの 3 発がリロードを
-// またぐ場面を作る（V-0589 の撮影計画と同じ編成）。最初のマガジンは戦闘開始時に込めた 8 発
+// またぐ場面を作る（V-0589 の撮影と同じ編成）。最初のマガジンは戦闘開始時に込めた 8 発。解除で外れるのはミサイルガイド（状態の中身の
+// チャージ速度▲）だけで、チャージダメージ▲（skill1 の effects[2]）は残りの発数を持ったまま残る（C-0818）
 const YUNI = 160;
 const withYuni = fixedTeam([BESTIE, YUNI], 0);
 
@@ -86,16 +88,17 @@ describe('ベスティー：タクティカル・アップ + ユニ（最大装�
     if (!withRemoval) json.skills.skill1.effects.splice(1, 1);
     const input: TeamInput = { ...withYuni, slots: [fixedSlot(BESTIE, json), fixedSlot(YUNI)] };
     const plan = planTeamRun(input);
-    const guide = slotPieces(plan, 0).filter(
-      (p) => p.effect.source.skill === 'skill1' && p.effect.stat === 'chargeDamage',
-    );
-    const pattern = plan.shots[0]!.frames.map((f) => (guide.some((p) => p.start <= f && f < p.end) ? 'G' : 'N'));
-    return { plan, guide, pattern: pattern.join('') };
+    const pieces = slotPieces(plan, 0).filter((p) => p.effect.source.skill === 'skill1');
+    const guide = pieces.filter((p) => p.effect.stat === 'chargeSpeed');
+    const damage = pieces.filter((p) => p.effect.stat === 'chargeDamage');
+    const patternOf = (ps: typeof pieces) =>
+      plan.shots[0]!.frames.map((f) => (ps.some((p) => p.start <= f && f < p.end) ? 'G' : 'N')).join('');
+    return { plan, guide, pattern: patternOf(guide), damagePattern: patternOf(damage) };
   }
 
   const withRemoval = run(true);
 
-  it('writes the reload ends for the removal alone, and removes the guide on each reload end', () => {
+  it('writes the reload ends for the removal alone, and removes the guide (charge speed) on each reload end', () => {
     const { plan, guide } = withRemoval;
     const log = plan.shots[0]!;
     // 定義に durationUntil: reloadEnd は無く、込め終わりのフレームを書くのは解除（hasReloadEndEffect の removeState）のため
@@ -112,10 +115,12 @@ describe('ベスティー：タクティカル・アップ + ユニ（最大装�
     });
   });
 
-  it('starts every 9-shot magazine with a charged shot (the guide from the last shot is removed on the reload)', () => {
-    const { pattern } = withRemoval;
-    // 1 本目は 8 発（溜める・ガイド 3 の 2 組）、2 本目から 9 発（2 組の後に溜める 1 発）
+  it('starts every 9-shot magazine with a charged shot that still carries the charge damage of the last guide', () => {
+    const { pattern, damagePattern } = withRemoval;
+    // 1 本目は 8 発（溜める・ガイド 3 の 2 組）、2 本目から 9 発（2 組の後に溜める 1 発）。リロードの後の 1 発目はチャージ速度▲の外
     expect(pattern.slice(0, 8 + 9 * 3)).toBe('NGGGNGGG' + 'NGGGNGGGN'.repeat(3));
+    // チャージダメージ▲は残り、その 1 発目に乗る。1 発目で付き直すので、続くガイドの 3 発にも乗る（▲の乗った発が 4 発。録画 0839・0840）
+    expect(damagePattern.slice(0, 8 + 9 * 3)).toBe('NGGGNGGG' + 'NGGGNGGGN' + 'GGGGNGGGN'.repeat(2));
     // 解除が無ければ、最後の発で付いたガイドの 3 発が次のマガジンの頭に残る
     expect(run(false).pattern.slice(0, 8 + 9 + 3)).toBe('NGGGNGGG' + 'NGGGNGGGN' + 'GGG');
   });
