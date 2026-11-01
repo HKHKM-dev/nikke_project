@@ -7,18 +7,7 @@
     "kind": "timing",
     "use": "input",
     "unit": "秒",
-    "value": [
-      25.081,
-      27.081,
-      61.546,
-      63.546,
-      101.037,
-      103.037,
-      133.881,
-      135.881,
-      167.031,
-      169.031
-    ],
+    "value": [25.081, 27.081, 61.546, 63.546, 101.037, 103.037, 133.881, 135.881, 167.031, 169.031],
     "description": "紅蓮：ブラックシャドウ単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
@@ -59,9 +48,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "jumpWindows": "0889-01"
       }

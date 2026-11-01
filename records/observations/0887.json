@@ -7,18 +7,7 @@
     "kind": "timing",
     "use": "input",
     "unit": "秒",
-    "value": [
-      32.187,
-      34.187,
-      68.584,
-      70.584,
-      108.177,
-      110.177,
-      145.101,
-      147.101,
-      177.741,
-      179.741
-    ],
+    "value": [32.187, 34.187, 68.584, 70.584, 108.177, 110.177, 145.101, 147.101, 177.741, 179.741],
     "description": "レイヴン単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
@@ -78,9 +67,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "jumpWindows": "0887-01"
       }
@@ -116,9 +103,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "jumpWindows": "0887-01"
       }
@@ -154,9 +139,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "jumpWindows": "0887-01"
       }
@@ -165,20 +148,37 @@
   {
     "id": "0887-06",
     "recording": "0887",
+    "source": "V-0624",
     "readAt": "2026-11-01",
-    "use": "record",
+    "kind": "gauge",
+    "use": "compare",
+    "unit": "進み",
+    "value": 0.629,
+    "description": "レイヴン単騎の、3 回目の敵のジャンプの始まりの部分チャージの発のチャージの進み（総ダメージの増分 142,721 を胴体・会心なしとして、コアのフルチャージの発 367,175（会心 458,968）に対する比から読んだ。溜めて 37f）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分 f7182（前の発 f7084）。1 発の値は胴体・会心なし・チャージなしの u（コアのフルチャージの発 ÷ (コア 2 × フルチャージ倍率 2.5)）に、部位（胴体 1・会心 1.5・コア 2・コアの会心 2.5）と 1 + 1.5 × 進みを掛けた値で、進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 1 秒。モデルは録画の窓 `0887-01` で回し、窓の中の部分チャージの発の進み（partialChargeProgress。チャージのフレーム数 59f で割る）。許容 ±0.04 は約 2f（録画の窓の始まりと、増分にそろえたモデルの発のずれ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "partialChargeProgress",
+      "args": {
+        "slot": 1,
+        "window": 2
+      },
+      "tolerance": {
+        "abs": 0.04
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0887-01"
+      }
+    },
     "scope": {
       "slot": 1,
       "source": "firing"
-    },
-    "source": "V-0624",
-    "kind": "hit",
-    "unit": "ダメージ",
-    "value": 142721,
-    "description": "レイヴン単騎の、3 回目の敵のジャンプの始まりの部分チャージの発の総ダメージの増分。3 回目は胴体の進み 0.629（溜めて 37.0f）。コアのフルチャージの発 367,175（会心 458,968）を (コア 2 × フルチャージ倍率 2.5) で割った胴体・会心なしの値に、部位の倍率と 1 + (2.5 − 1) × 進みを掛けた格子に当てた",
-    "method": {
-      "tool": "node tools/captures/hud.ts --mode jumps",
-      "note": "増分 f7182（前の発 f7084。Δ 98f。D の時点のモデルの溜めたフレーム数 38f = Δ − H 16f − 溜め始め 44f）。進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 1 秒"
     }
   }
 ]
