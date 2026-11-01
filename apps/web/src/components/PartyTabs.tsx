@@ -1,5 +1,5 @@
 // ソロレイド用の編成 01〜05 の切り替えボタン（parties.ts）。スロットの並びの上に置く
-import { PARTY_COUNT, partyLabel } from '../parties.ts';
+import { PARTY_COUNT, partyLabel, partyNumber } from '../parties.ts';
 
 type Props = {
   active: number;
@@ -15,9 +15,10 @@ export function PartyTabs({ active, onSelect }: Props) {
           type="button"
           className="toggle-button party-tab"
           aria-pressed={i === active}
+          aria-label={partyLabel(i)}
           onClick={() => onSelect(i)}
         >
-          {partyLabel(i)}
+          {partyNumber(i)}
         </button>
       ))}
     </div>

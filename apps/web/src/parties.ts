@@ -94,7 +94,12 @@ export function parseParties(json: string | null, index: readonly CharacterIndex
   };
 }
 
-/** 画面に出す編成の名前（01〜05） */
+/** 編成の番号（01〜05）。編成のタブはこれだけを出す */
+export function partyNumber(i: number): string {
+  return String(i + 1).padStart(2, '0');
+}
+
+/** 画面に出す編成の名前（編成01〜05） */
 export function partyLabel(i: number): string {
-  return `編成${String(i + 1).padStart(2, '0')}`;
+  return `編成${partyNumber(i)}`;
 }
