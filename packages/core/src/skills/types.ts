@@ -1119,6 +1119,11 @@ export type DamageEffect = {
    */
   valueDelayFrames?: number;
   /**
+   * イサベルの S2（V-0632）: 値（撃つ側と敵の側のバフ・フルバースト補正）を、発火の直前のもので決める（遅れの間と、発火のフレームで付いた
+   * ものは乗らない）。delayFrames のある damage だけ。valueDelayFrames とは組まない
+   */
+  valueBeforeFire?: true;
+  /**
    * 同 5.4 節: 「コア命中ダメージ」。コアに当たったヒットとして、コアの項（コア倍率 − 1 + コアダメージ▲）を足す（割合 1。敵にコアが
    * 無ければ足さない）。射撃ごとに畳み込む効果（毎回の回数のきっかけで条件なし）には書けない
    */
@@ -3907,6 +3912,13 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     const n = parsePositiveInt(v.valueDelayFrames, at);
     if (n > (effect.delayFrames ?? 0)) fail(at, 'valueDelayFrames must not exceed delayFrames');
     effect.valueDelayFrames = n;
+  }
+  if (v.valueBeforeFire !== undefined) {
+    const at = `${path}.valueBeforeFire`;
+    if (v.valueBeforeFire !== true) fail(at, 'expected true');
+    if ((effect.delayFrames ?? 0) === 0) fail(at, 'valueBeforeFire needs delayFrames');
+    if (effect.valueDelayFrames !== undefined) fail(at, 'valueBeforeFire cannot be used with valueDelayFrames');
+    effect.valueBeforeFire = true;
   }
   // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
   if (v.periodShorten !== undefined) {

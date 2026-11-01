@@ -403,5 +403,455 @@
     },
     "source": "V-0619",
     "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-18",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 1 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f1786 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-19",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 308564,
+    "unit": "ダメージ",
+    "description": "イサベルの 2 回目の S2 のヒット（会心）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f2696 の単独の増分。▲が乗れば 339,698。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-20",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 3 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f3579 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-21",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 4 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f4462 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-22",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 5 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f5373 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-23",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 6 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f6256 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 5,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-24",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 8 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8022 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 7,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-25",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 9 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8932 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 8,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-26",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 308564,
+    "unit": "ダメージ",
+    "description": "イサベルの 10 回目の S2 のヒット（会心）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f9815 の単独の増分。▲が乗れば 339,698。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 9,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0893-27",
+    "recording": "0893",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 11 回目の S2 のヒット（会心なし）。たきなの S2 と同じ時刻に発動し、たきなの受けるダメージ▲が付いた後に出る",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10698 の単独の増分。▲が乗れば 226,465。比べる指定は 1 回目のチェーンだけを manualBursts に渡す（ほかのチェーンはターゲットマーキングの段階が数え直された 1 回目で、どの S2 のヒットもフルバーストと段階 1 の▲の窓に入らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 10,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0893-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
   }
 ]
