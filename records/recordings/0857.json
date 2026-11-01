@@ -22,11 +22,10 @@
     "element": "Fire"
   },
   "mode": "range-3min",
-  "fixedSpec": false,
-  "buildSnapshot": "2026-10-29",
+  "fixedSpec": true,
   "autoFire": false,
   "autoBurst": false,
-  "conditionNote": "単騎・手動（V-0603 の撮り方 2）。2 区間目と 5 区間目（2 回目の近）だけを撃つ計画",
+  "conditionNote": "単騎・手動（V-0603 の撮り方 2）。2 区間目と 5 区間目（2 回目の近）だけを撃つ計画。出撃画面はスペック固定 ON（計画は OFF。ファイル名の fixed-off は計画の名残）",
   "backup": {
     "at": "2026-11-01T13:29+09:00",
     "via": "cloud-move",
