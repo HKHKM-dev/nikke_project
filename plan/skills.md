@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 69・効果 418（根拠あり 393）・notes 175（根拠あり 78）
+件数: キャラ 69・効果 419（根拠あり 395）・notes 175（根拠あり 78）
 
 notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足 13・間接 53
 
@@ -208,8 +208,9 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
 ## 94 ベスティー：タクティカル・アップ
 
 - **skill1**: supported
-  - effects[0] state・fullChargeShot・missileGuide（chargeSpeed・chargeDamage）: C-0804（確定）
-  - effects[1] removeState・最大弾数のリロードが完了した時・missileGuide: 根拠なし
+  - effects[0] state・fullChargeShot・missileGuide（chargeSpeed）: C-0804（確定）、C-0818（確定）
+  - effects[1] removeState・最大弾数のリロードが完了した時・missileGuide: C-0818（確定）
+  - effects[2] timed・fullChargeShot・chargeDamage: C-0804（確定）、C-0818（確定）
 - **skill2**: supported
   - effects[0] damage・fullChargeShot・true: C-0805（確定）、C-0806（確定）
   - effects[1] timed・fullChargeShot・attack: C-0809（確定）
