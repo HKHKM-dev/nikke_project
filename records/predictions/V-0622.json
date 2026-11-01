@@ -1,0 +1,342 @@
+{
+  "verification": "V-0622",
+  "note": "ラム（822・枠 1）・デルタ（20・枠 2）・シンデレラ（511・枠 3）・ミハラ：ボンディングチェーン（162・枠 4・操作）。射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オート射撃 ON・オートバースト ON（録画 0754・0755。V-0548 の撮影 C）。条件は手入力の弾丸命中率 0.97（V-0548 で読んだ 1 本目のマガジンの命中の約 291/300）。いまのモデルの的の表では MG の命中がどの発も 1 で、命中で数える形と撃った数で数える形が同じ列になるので、2 つの形を分けるために 1 より小さい率を置いた。命中で数える形では、命中の指標（fb*-hits*）はこの値に依らず 40 の倍数（余り 0）になる",
+  "team": [
+    {
+      "rid": 822,
+      "controlled": false
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    },
+    {
+      "rid": 511,
+      "controlled": false
+    },
+    {
+      "rid": 162,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Hit",
+      "note": "いまのモデル（C-0751）。S2 の effects[1] のきっかけは normalHit・everyRef 1（40 回）・firesDuring fullBurst。命中を戦闘の始めからフルバーストの外も通して数え、40 の倍数の命中がフルバーストの中のときだけ▲が付く"
+    },
+    {
+      "id": "Shot",
+      "note": "撃った数で通して数える（count を normalShot に替える）。外れた発も数え、40 の倍数の発がフルバーストの中のときだけ▲が付く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 162,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "stackChange",
+              "state": "ensnaringChains",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 1,
+                "firesDuring": "fullBurst"
+              },
+              "target": "enemy",
+              "amountRef": 2,
+              "condition": {
+                "enemyState": "ensnaringChains"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "fb1-hits",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:0",
+        "tally": "hits",
+        "count": 7
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "本命。1 回目のフルバーストの中の▲（S2 のスタック量▲の 1 スタックぶんのヒット。7 回）のそれぞれの、戦闘の始めからその▲のフレームまでの、ミハラ：ボンディングチェーンの命中の通しの数。録画は、照準の左の残弾の減りで数えた発から、HUD の増分で拾った外れを引く（V-0573 の読み方）。幅 2 は、外れか当たりか決めない発の幅"
+    },
+    {
+      "id": "fb1-shots",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:0",
+        "tally": "shots",
+        "count": 7
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "1 回目のフルバーストの中の▲の、戦闘の始めからの撃った数の通しの数（照準の左の残弾の減り）"
+    },
+    {
+      "id": "fb2-hits-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:1",
+        "tally": "hits",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "2 回目のフルバーストの最初の▲の、戦闘の始めからの命中の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb2-shots-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:1",
+        "tally": "shots",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "2 回目のフルバーストの最初の▲の、戦闘の始めからの撃った数の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb3-hits-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:2",
+        "tally": "hits",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "3 回目のフルバーストの最初の▲の、戦闘の始めからの命中の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb3-shots-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:2",
+        "tally": "shots",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "3 回目のフルバーストの最初の▲の、戦闘の始めからの撃った数の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb4-hits-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:3",
+        "tally": "hits",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "4 回目のフルバーストの最初の▲の、戦闘の始めからの命中の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb4-shots-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:3",
+        "tally": "shots",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "4 回目のフルバーストの最初の▲の、戦闘の始めからの撃った数の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb5-hits-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:4",
+        "tally": "hits",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "5 回目のフルバーストの最初の▲の、戦闘の始めからの命中の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    },
+    {
+      "id": "fb5-shots-phase",
+      "model": "sim",
+      "metric": "eventTallies",
+      "args": {
+        "slot": 4,
+        "event": "dotApply",
+        "skill": "skill1",
+        "within": "window",
+        "anchor": "fullBurst:4",
+        "tally": "shots",
+        "modulo": 40,
+        "count": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "hitRate": 0.97
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "5 回目のフルバーストの最初の▲の、戦闘の始めからの撃った数の通しの数を 40 で割った余り（-20 から 20 に寄せる）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "e9b01b8b77689fadcb9861fd493d3a7fabd0fd0c",
+    "values": {
+      "Hit": {
+        "fb1-hits": [
+          320.10000000000156, 360.8400000000027, 400.6100000000038, 440.38000000000494, 480.15000000000606,
+          520.8900000000071, 560.6600000000083
+        ],
+        "fb1-shots": [330, 372, 413, 454, 495, 537, 578],
+        "fb2-hits-phase": [0.22000000003413334],
+        "fb2-shots-phase": [6],
+        "fb3-hits-phase": [0.3399999999278407],
+        "fb3-shots-phase": [2],
+        "fb4-hits-phase": [0.45999999968853444],
+        "fb4-shots-phase": [-2],
+        "fb5-hits-phase": [0.5799999998544081],
+        "fb5-shots-phase": [-6]
+      },
+      "Shot": {
+        "fb1-hits": [
+          310.4000000000013, 349.2000000000024, 388.00000000000347, 426.80000000000456, 465.60000000000565,
+          504.40000000000674, 543.2000000000078
+        ],
+        "fb1-shots": [320, 360, 400, 440, 480, 520, 560],
+        "fb2-hits-phase": [-5.59999999996603],
+        "fb2-shots-phase": [0],
+        "fb3-hits-phase": [-1.6000000000717591],
+        "fb3-shots-phase": [0],
+        "fb4-hits-phase": [2.3999999996881343],
+        "fb4-shots-phase": [0],
+        "fb5-hits-phase": [6.399999999855936],
+        "fb5-shots-phase": [0]
+      }
+    }
+  }
+}
