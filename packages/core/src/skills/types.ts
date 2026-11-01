@@ -34,6 +34,7 @@ import { WEAPON_TYPES } from '../weapons.ts';
 import { COUNTER_IDS, counterMax, type CounterId } from './counters.ts';
 import { dependsOnRank } from './targets.ts';
 import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
+import { SUMMON_IDS, type SummonId } from './summons.ts';
 
 export type { SkillSlot };
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
@@ -614,6 +615,22 @@ export type TimerTrigger = {
 };
 
 /**
+ * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃。自分のその召喚（展開 kind: 'summon'）の機数で間隔が
+ * 決まる周期。進み（0〜1）を、いまの機数の間隔（intervalSeconds。機数 → ゲームの秒）の逆数の速さでフレームごとに積み、1 に届いた
+ * フレームで発火する（余りは持ち越す。機数が変わっても進みは保つ）。展開のたびに進みを 0 に戻し、展開から startDelaySeconds の間は
+ * 進めない。機数が 0 なら進めない。1 パス目（frame/firstPass.ts）が機数と進みを追って発火のフレームを決める。damage にだけ書ける
+ */
+export type SummonAttackTrigger = {
+  summon: SummonId;
+  intervalSeconds: Readonly<Record<number, number>>;
+  startDelaySeconds: number;
+};
+
+export function isSummonAttackTrigger(t: unknown): t is SummonAttackTrigger {
+  return typeof t === 'object' && t !== null && 'summon' in t;
+}
+
+/**
  * ペルソナ編（plan/design-persona.md 3.3 節）: 「〈名前〉が適用された時」。名前の付いた状態の語彙編（plan/design-named-state.md 5.4 節）:
  * 編成のどの枠の付与でも、その状態がこの効果を持つ枠に付いたフレーム（状態の窓の始まり。付き直しでも 1 回）で発火する。
  * damage と、2 段目の段 4（plan/design-skill-stage4.md 1.1 節）から timed・状態の付与に書ける（timed・付与は連鎖させない）。
@@ -727,7 +744,9 @@ export type EffectTrigger =
   // マスト編: { selfHpAtMostRef }（timed だけが受ける。parseSelfHpAtMostTrigger）
   | SelfHpAtMostTrigger
   // 2 段目の段 13 の PR 1: { counterFull }（damage・dot・counterChange だけが受ける。parseCounterFullTrigger）
-  | CounterFullTrigger;
+  | CounterFullTrigger
+  // アインのニアフェザー編: { summon }（damage だけが受ける。parseSummonAttackTrigger）
+  | SummonAttackTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
@@ -1070,9 +1089,11 @@ export type DamageEffect = {
    * （frame/firstPass.ts）が周期の発火（periodShorten の短縮も）を追って予約する。delayFrames と組み、condition とは組み合わせない。
    * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節。C-0426）: 射撃の回数のきっかけ（数える窓・確率なし）にも書ける。1 パス目が
    * 射撃を数えて発火を追い、ヒット（perCount { state } の数だけ 1 つずつ出すヒットなら、発火のフレームのスタック数のヒット）のフレームの
-   * ゲージに予約する（オートファイアのどのヒットも射手の target_burst_energy_pershot を溜める）
+   * ゲージに予約する（オートファイアのどのヒットも射手の target_burst_energy_pershot を溜める）。
+   * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃（{ summon }）のきっかけなら、射手の何ヒットぶん溜めるかの
+   * 数（2 以上の整数）も書ける（true は 1 ヒットぶん）
    */
-  gaugePerHit?: true;
+  gaugePerHit?: true | number;
   /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
   withCharacter?: WithCharacterCondition;
   /** 防御力無視ダメージ編: 敵の属性の条件（クイーン（真）S1 の「1more が適用された時」） */
@@ -1911,6 +1932,20 @@ export type StackChangeEffect = {
 };
 
 /**
+ * アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。自分にその召喚を lifetimesSeconds の数だけ展開し、
+ * 1 機ずつ維持時間（ゲームの秒。null は消えない）が過ぎたら消す。展開は同じ召喚の前の組を置き換える（残っていた機も消える）。
+ * 機数は維持時間の残っている機の数で、攻撃（damage のきっかけ { summon }）の間隔を決める。展開のフレームは battleStart が 0、
+ * burstUse がその枠のバーストの効果のフレーム
+ */
+export type SummonEffect = {
+  kind: 'summon';
+  summon: SummonId;
+  trigger: 'battleStart' | 'burstUse';
+  lifetimesSeconds: (number | null)[];
+  assumes?: LocalizedText;
+};
+
+/**
  * 2 段目の段 10（plan/design-skill-stage10.md 2.3・2.4 節）: 「〈カウンタ〉N チャージ」「〈カウンタ〉N 消費」。発火のフレームの、そのフレームの
  * すべての判定の後に、自分のカウンタに N を足す（decrease なら減らす）。結果は 0 と上限の間で切る。トリガーは parseTrigger のものと、
  * { ended: 状態 }（自分のその状態の件が外れたフレーム。段 4 の 1.3 節）
@@ -2054,6 +2089,7 @@ export type SkillEffect = (
   | CancelStateEffect
   | StackChangeEffect
   | CounterChangeEffect
+  | SummonEffect
 ) &
   ClaimRefs &
   IndirectReads &
@@ -2104,6 +2140,7 @@ export const SKILL_EFFECT_KINDS = [
   'cancelState',
   'stackChange',
   'counterChange',
+  'summon',
 ] as const satisfies readonly SkillEffect['kind'][];
 type MissingEffectKind = Exclude<SkillEffect['kind'], (typeof SKILL_EFFECT_KINDS)[number]>;
 const _allEffectKinds: [MissingEffectKind] extends [never] ? true : never = true;
@@ -3867,6 +3904,20 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
   // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
   const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
   const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  // アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃は 1 パス目が発火を決めるので、ほかの欄（条件・遅れ・
+  // 数のヒット）とは組まない。ゲージは gaugePerHit（true か、射手の何ヒットぶんかの数）だけ
+  if (isSummonAttackTrigger(trigger)) {
+    for (const key of Object.keys(v))
+      if (!['kind', 'trigger', 'ref', 'damageType', 'gaugePerHit', 'assumes', 'claims', 'reads'].includes(key))
+        fail(`${path}.${key}`, 'not allowed with a summon trigger ({ summon })');
+    if (v.gaugePerHit !== undefined) {
+      if (v.gaugePerHit !== true && !(Number.isInteger(v.gaugePerHit) && (v.gaugePerHit as number) >= 2))
+        fail(`${path}.gaugePerHit`, `expected true or an integer of 2 or more, got ${JSON.stringify(v.gaugePerHit)}`);
+      effect.gaugePerHit = v.gaugePerHit as true | number;
+    }
+    if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+    return effect;
+  }
   if (v.gaugeHits !== undefined) {
     // ヘルム編: ゲージは 1 パス目で射撃を数えて予約するので、射撃の回数トリガーのときだけ
     if (!isShotCountTrigger(trigger)) fail(`${path}.gaugeHits`, 'gaugeHits needs a shot count trigger');
@@ -4107,7 +4158,35 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
  * 2 段目の段 13 の PR 1: { counterFull: カウンタ } も（dot も同じ）
  */
 function parseDamageTrigger(v: Json, path: string): EffectTrigger {
-  return parseCounterFullTrigger(v, path) ?? parseAppliedTrigger(v, path) ?? parseTrigger(v, path, true, true);
+  return (
+    parseSummonAttackTrigger(v, path) ??
+    parseCounterFullTrigger(v, path) ??
+    parseAppliedTrigger(v, path) ??
+    parseTrigger(v, path, true, true)
+  );
+}
+
+/** アインのニアフェザー編: { summon, intervalSeconds, startDelaySeconds }。それ以外の形なら undefined */
+function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | undefined {
+  if (!isRecord(v) || v.summon === undefined) return undefined;
+  for (const key of Object.keys(v))
+    if (key !== 'summon' && key !== 'intervalSeconds' && key !== 'startDelaySeconds')
+      fail(`${path}.${key}`, 'unknown field');
+  const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);
+  const table = v.intervalSeconds;
+  if (!isRecord(table) || Object.keys(table).length === 0)
+    fail(`${path}.intervalSeconds`, 'expected a non-empty object');
+  const intervalSeconds: Record<number, number> = {};
+  for (const [key, seconds] of Object.entries(table)) {
+    const count = parsePositiveInt(Number(key), `${path}.intervalSeconds.${key}`);
+    if (typeof seconds !== 'number' || !(seconds > 0))
+      fail(`${path}.intervalSeconds.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
+    intervalSeconds[count] = seconds;
+  }
+  const delay = v.startDelaySeconds;
+  if (typeof delay !== 'number' || !(delay >= 0))
+    fail(`${path}.startDelaySeconds`, `expected a non-negative number, got ${JSON.stringify(delay)}`);
+  return { summon, intervalSeconds, startDelaySeconds: delay };
 }
 
 /** 2 段目の段 11 の PR 2・段 13 の PR 1: { counterFull: カウンタ }。それ以外の形なら undefined */
@@ -4822,10 +4901,33 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'cancelState') return parseCancelStateEffect(v, path);
   if (v.kind === 'stackChange') return parseStackChangeEffect(v, path);
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
+  if (v.kind === 'summon') return parseSummonEffect(v, path, slot);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "fullBurstExtend", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "coverHeal", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "fullBurstExtend", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "coverHeal", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange", "counterChange" or "summon", got ${JSON.stringify(v.kind)}`,
   );
+}
+
+/** アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。burstUse はバーストにだけ書ける */
+function parseSummonEffect(v: Record<string, Json>, path: string, slot: SkillSlot): SummonEffect {
+  for (const key of Object.keys(v))
+    if (!['kind', 'summon', 'trigger', 'lifetimesSeconds', 'assumes', 'claims'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
+  const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);
+  const trigger = oneOf(['battleStart', 'burstUse'] as const, v.trigger, `${path}.trigger`);
+  if (trigger === 'burstUse' && slot !== 'burst') fail(`${path}.trigger`, 'burstUse is only allowed in burst');
+  const lifetimes = v.lifetimesSeconds;
+  if (!Array.isArray(lifetimes) || lifetimes.length === 0)
+    fail(`${path}.lifetimesSeconds`, 'expected a non-empty array');
+  const lifetimesSeconds = lifetimes.map((x, k) => {
+    if (x === null) return null;
+    if (typeof x !== 'number' || !(x > 0))
+      fail(`${path}.lifetimesSeconds[${k}]`, `expected a positive number or null, got ${JSON.stringify(x)}`);
+    return x;
+  });
+  const effect: SummonEffect = { kind: 'summon', summon, trigger, lifetimesSeconds };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
 }
 
 /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減。対象は自分だけ */
@@ -5285,6 +5387,40 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
+ * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃は、同じ定義にその召喚の展開が要る。展開の組がなりうる
+ * 機数（維持時間の並びで、消えた後に残る数。0 を除く）は、どれも攻撃の intervalSeconds の表にある
+ */
+export function summonCountsOf(lifetimesSeconds: readonly (number | null)[]): number[] {
+  const finite = lifetimesSeconds.filter((x): x is number => x !== null);
+  const counts = new Set<number>([lifetimesSeconds.length]);
+  for (const t of finite) counts.add(lifetimesSeconds.filter((x) => x === null || x > t).length);
+  counts.delete(0);
+  return [...counts].sort((a, b) => a - b);
+}
+
+function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const summons = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is SummonEffect & ClaimRefs => e.kind === 'summon',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'damage' || !isSummonAttackTrigger(e.trigger)) return;
+      const { summon, intervalSeconds } = e.trigger;
+      const deploys = summons.filter((d) => d.summon === summon);
+      if (deploys.length === 0)
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `a summon attack of "${summon}" needs a summon of it in the definition`,
+        );
+      for (const d of deploys)
+        for (const n of summonCountsOf(d.lifetimesSeconds))
+          if (intervalSeconds[n] === undefined)
+            fail(`${root}.${slot}.effects[${i}].trigger.intervalSeconds`, `needs the interval for ${n} ${summon}`);
+    });
+  }
+}
+
+/**
  * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）と、PR 3: 敵のスタック量▲（stackChange の target
  * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
  * enemyState も、同じ定義の dot の state を指す
@@ -5455,6 +5591,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateOwnStateTriggers(skills, 'skills');
   validateWhileEffects(skills, 'skills');
   validateDotStateRefs(skills, 'skills');
+  validateSummons(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -5480,6 +5617,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateOwnStateTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateDotStateRefs({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateSummons({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;

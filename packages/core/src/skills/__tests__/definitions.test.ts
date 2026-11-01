@@ -116,6 +116,7 @@ describe('data/skills', () => {
                         effect.kind === 'burstStepChange' ||
                         effect.kind === 'removeState' ||
                         effect.kind === 'cancelState' ||
+                        effect.kind === 'summon' ||
                         effect.ref === undefined
                       ? []
                       : [effect.ref];

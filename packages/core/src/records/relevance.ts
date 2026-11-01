@@ -118,6 +118,8 @@ const KIND_CLASS: Record<string, ElementClass> = {
   ammoRefill: 'firing',
   cycle: 'firing',
   cycleEvery: 'firing',
+  // アインのニアフェザー編: 召喚の展開は、機数を通して召喚の攻撃（damage のきっかけ { summon }）のヒットにだけ効く
+  summon: 'otherHit',
 };
 
 /**

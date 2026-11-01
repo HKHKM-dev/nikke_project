@@ -214,7 +214,7 @@ const KIND_INFO: Record<string, Info> = {
   autoAttack: [
     '自動攻撃・召喚・独自の弾',
     'check',
-    'autoAttack（形による）。召喚の機数で間隔の変わる攻撃（アインのニアフェザー。機数ごとに独立した維持時間）はなし',
+    'autoAttack（形による）。召喚の機数で間隔の変わる攻撃（アインのニアフェザー。1 機ずつの維持時間）は、展開 summon と damage のきっかけ { summon }（機数ごとの間隔の期待値。plan/design-ein-near-feather.md）。ほかの形（ミサイルコンテナなど）は形による',
   ],
   'flag:trueDamageConversion': ['通常攻撃を防御力無視ダメージに', 'ok', 'trueDamageConversion'],
   // 2 段目の段 12 の PR 2: 自分に付く常時の形（ラピ：レッドフードの S2・シュガーの宝物版の S1）

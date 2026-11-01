@@ -264,6 +264,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('chargeFull' in t) return 'フルチャージした時';
   // マスト編
   if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下の間';
+  // アインのニアフェザー編
+  if ('summon' in t) return `${t.summon} の攻撃（機数で決まる間隔）`;
   return t.count;
 }
 
@@ -292,11 +294,13 @@ export function effectLabel(e: SkillEffect): string {
           ? `${e.state}${e.decrease ? '（減少）' : ''}`
           : e.kind === 'counterChange'
             ? `${e.counter}${e.decrease ? '（減少）' : ''}`
-            : 'stat' in e
-              ? e.stat
-              : 'damageType' in e
-                ? e.damageType
-                : undefined;
+            : e.kind === 'summon'
+              ? `${e.summon} ${e.lifetimesSeconds.length} 機`
+              : 'stat' in e
+                ? e.stat
+                : 'damageType' in e
+                  ? e.damageType
+                  : undefined;
   return [e.kind, triggerLabel(e), whileLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 

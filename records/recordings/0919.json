@@ -1,0 +1,47 @@
+{
+  "id": "0919",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0919_sr_ein.mp4",
+  "original": "2026-11-01_22-54-59.mp4",
+  "durationSec": 201.3,
+  "frames": 12075,
+  "fps": 60,
+  "sizeMB": 243.7,
+  "sha256": "a0dbbb4a61dc",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 391,
+      "name": "アイン",
+      "controlled": true,
+      "fires": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0636 の撮影 B1。ラム（I）・デルタ（II）・アイン（III・操作。撃たない）（オート射撃 OFF・オートバースト OFF。残り 2:15・1:30・0:45 のころに手でバースト）",
+  "backup": {
+    "at": "2026-11-01T22:59+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

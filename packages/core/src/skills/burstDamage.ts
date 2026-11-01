@@ -145,8 +145,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    * 2 段目の段 15 の PR 3: window なら、自分のバースト使用のフレームから durationFrames の間（縮めた次の発動のフレームだけで見る）
    */
   periodShorten?: ResolvedPeriodShorten;
-  /** V-0545: 周期の発火のどのヒットも射手の 1 ヒットぶんのゲージを溜める（frame/firstPass.ts が予約する） */
-  gaugePerHit?: true;
+  /**
+   * V-0545: 周期の発火のどのヒットも、射手の 1 ヒットぶん × この数のゲージを溜める（frame/firstPass.ts が予約する。定義の true は 1。
+   * アインのニアフェザー編: 召喚の攻撃は 2 以上の数も書ける）
+   */
+  gaugePerHit?: number;
   /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
   perCount?: { state: NamedStateId } | { counter: CounterId };
   /** 2 段目の段 12 の PR 2: perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
@@ -392,7 +395,7 @@ export function resolveDamageEffects(
                 seconds,
               };
       }
-      if (effect.gaugePerHit === true) r.gaugePerHit = true;
+      if (effect.gaugePerHit !== undefined) r.gaugePerHit = effect.gaugePerHit === true ? 1 : effect.gaugePerHit;
       if (effect.coreHit === true) {
         r.core = true;
         r.coreHit = true;

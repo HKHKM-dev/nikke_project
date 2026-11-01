@@ -33,6 +33,7 @@ import {
   isChargeFullTrigger,
   isChargeTickTrigger,
   isCounterFullTrigger,
+  isSummonAttackTrigger,
   type EndedTrigger,
   type ShotCountKind,
 } from './types.ts';
@@ -289,6 +290,10 @@ export function createTriggerTracker(
   // 2 段目の段 13 の PR 1: カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf・counterFullFrames）
   if (isCounterFullTrigger(t)) {
     throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
+  }
+  // アインのニアフェザー編: 召喚の攻撃は 1 パス目が機数と進みを追って決める（frame/firstPass.ts の summonHits）。出来事の列では追わない
+  if (isSummonAttackTrigger(t)) {
+    throw new RangeError(`a summon trigger (${t.summon}) is not tracked per event; use the first pass summonHits`);
   }
   if (isResolvedEventCount(t)) {
     return (ev) => {

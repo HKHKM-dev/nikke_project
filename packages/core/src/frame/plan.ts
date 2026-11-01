@@ -70,6 +70,7 @@ import { stateMatches, statesMatching, type NamedStateId } from '../skills/state
 import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
+  isSummonAttackTrigger,
   ENEMY_HELD_STATS,
   isEnemyHeldStat,
   isFixedAttackScaling,
@@ -235,6 +236,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     schedule,
     frames,
     shots,
+    first.summonHits,
     input.sustainedDamagePlacement,
     slotAutoAttackCoreRatesOf(slots, enemy, frames),
     input.attackRounding,
@@ -287,6 +289,8 @@ export function planSkillHits(
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
+  /** アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火 */
+  summonHits: FirstPassResult['summonHits'],
   sustainedDamagePlacement?: SustainedDamagePlacement,
   /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
@@ -500,15 +504,18 @@ export function planSkillHits(
       const shorten = effect.periodShorten;
       // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } はカウンタが上限に届いた次のフレーム（1 パス目の記録）
       const t = effect.trigger;
-      const fires = isCounterFullTrigger(t)
-        ? counterFullFrames(ownCounters, slotIndex, t.counterFull)
-        : isResolvedApplied(t)
-          ? appliedFrames(history, t.applied, slotIndex)
-          : isResolvedTimer(t)
-            ? timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
-                selfStateHolds({ state, present: true }, f),
-              )
-            : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
+      // アインのニアフェザー編: 召喚の攻撃は 1 パス目が決めた発火のフレーム
+      const fires = isSummonAttackTrigger(t)
+        ? summonHits.filter((h) => h.slotIndex === slotIndex && h.summon === t.summon).map((h) => h.frame)
+        : isCounterFullTrigger(t)
+          ? counterFullFrames(ownCounters, slotIndex, t.counterFull)
+          : isResolvedApplied(t)
+            ? appliedFrames(history, t.applied, slotIndex)
+            : isResolvedTimer(t)
+              ? timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
+                  selfStateHolds({ state, present: true }, f),
+                )
+              : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
         // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける

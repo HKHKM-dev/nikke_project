@@ -153,5 +153,163 @@
       "slot": 1,
       "source": "skill"
     }
+  },
+  {
+    "id": "0899-07",
+    "recording": "0899",
+    "kind": "timing",
+    "use": "record",
+    "value": 823,
+    "unit": "f",
+    "description": "残り時間の表示が 02:59 になったフレーム（戦闘開始。timer.ts の既定の取り方）",
+    "method": {
+      "tool": "timer.ts --mode changes"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0899-08",
+    "recording": "0899",
+    "kind": "timing",
+    "use": "record",
+    "value": [2352, 2705, 3056],
+    "unit": "f",
+    "description": "アインの左に並ぶニアフェザーが 4 機・3 機・2 機見えた最後のフレーム（次のフレームでそれぞれ 3 機・2 機・1 機）。2 機の最後はスコープの縁で 3030〜3056 の 1 機が見え隠れし、3060 から 1 機（幅 3056〜3059）",
+    "method": {
+      "tool": "使い捨てのスクリプト（フレームを 960×540 にし、紫の体に囲まれた白い目を数える。アインの左の列の範囲だけ。2f おき）",
+      "note": "3 サンプル続けて k 機以上が見えた最後のフレーム。境目の前後はフレームごとに数え直し、絵で確かめた"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0899-09",
+    "recording": "0899",
+    "kind": "gauge",
+    "use": "record",
+    "value": [13.3, 13.3],
+    "unit": "%",
+    "description": "ニアフェザー攻撃のヒット（1034・1205）のフレームの、BURST バーの充填率の増分（バーの 113px に対する %。バーは本当のゲージの約 1.19 倍に見える。C-0084）",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "1205 は 12.4% と次のフレームの 0.9% に分かれて読めた（和を書いた）。同じ録画のアインの発（フルチャージ）は 16.8%"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0899-10",
+    "recording": "0899",
+    "kind": "count",
+    "use": "compare",
+    "value": 32,
+    "unit": "hits",
+    "description": "アイン単騎の戦闘の全部の、ニアフェザー攻撃のヒットの数（0899-04〜06 の数）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "108,878 か 163,316 の増分の数。単騎なので重なりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0899-11",
+    "recording": "0899",
+    "kind": "timing",
+    "use": "compare",
+    "value": [211, 382, 551, 723, 892, 1064, 1235, 1405],
+    "unit": "f",
+    "description": "アイン単騎の、戦闘開始の 4 機のニアフェザー攻撃の最初の 8 回のヒットの動画のフレーム（戦闘開始から）",
+    "method": {
+      "tool": "hud.ts --mode jumps と timer.ts --mode changes",
+      "note": "0899-04 から戦闘開始（0899-07）を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0899-12",
+    "recording": "0899",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 11.08,
+    "unit": "%",
+    "description": "ニアフェザー攻撃の 1 ヒットで溜まったゲージ（本当の量。0899-09 の増分から）",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "同じ録画のアインの発（フルチャージ。14%）の増分 16.8%（19px）との比で、13.3%（15px）÷ 16.8% × 14% = 11.08%"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.75
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]
