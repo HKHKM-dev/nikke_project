@@ -59,7 +59,10 @@
           "assumes": {
             "ja": "攻撃範囲内の敵は的 1 体で 1 ヒット",
             "en": "Enemies in range are the lone target, so it lands once"
-          }
+          },
+          "claims": [
+            "C-0875"
+          ]
         }
       ],
       "notes": [
