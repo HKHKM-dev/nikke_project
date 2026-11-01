@@ -1,5 +1,5 @@
 // 描画中の例外で画面全体が外れないようにする。main.tsx が画面全体を、App.tsx が結果の欄を包む。
-// 結果の欄は、resetKeys（計算の結果と、詳細情報表示の切り替え）のどれかが変われば描き直す（次の結果で直るものは、入力を直せば戻る）
+// 結果の欄は、resetKeys（計算の結果）が変われば描き直す（次の結果で直るものは、入力を直せば戻る）
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 type Props = {

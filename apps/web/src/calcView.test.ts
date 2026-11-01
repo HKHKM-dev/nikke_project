@@ -69,7 +69,6 @@ describe('buildCalcView: inputs removed from the screen', () => {
     s = teamReducer(s, { type: 'setBuild', index: 0, build });
 
     const slot = buildCalcView(s, deps()).slots[0]!;
-    expect(slot.hpRatio).toBe(1);
     expect(slot.build.extraAttack).toBe(0);
     expect(slot.build.affectionRank).toBe(20);
     expect(slot.input).toMatchObject({ conditionMode: 'auto', condition: DEFAULT_SLOT_CONDITION, hpRatio: 1 });

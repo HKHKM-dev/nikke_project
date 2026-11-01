@@ -58,7 +58,6 @@ export type CalcSlot = {
   build: BuildInput;
   skillLevels: SkillLevels;
   treasurePhase: TreasurePhase;
-  hpRatio: number;
   /** 撃たない（スロットの詳細設定） */
   noFire: boolean;
   /** スキル定義の状態（未選択は null） */
@@ -72,8 +71,6 @@ export type CalcSlot = {
 export type CalcView = {
   slots: CalcSlot[];
   input: TeamInput;
-  /** スペック固定（結果の攻撃力の見出しを、その計算の入力に合わせる） */
-  fixedSpec: boolean;
 };
 
 export type CalcDeps = {
@@ -166,7 +163,6 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
       build: slot.build,
       skillLevels,
       treasurePhase: 0,
-      hpRatio,
       noFire,
       skillsStatus,
       buildNotes: [],
@@ -189,7 +185,6 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
     build,
     skillLevels,
     treasurePhase,
-    hpRatio,
     noFire,
     skillsStatus,
     buildNotes: layer.notes,
@@ -215,7 +210,6 @@ export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
   const noBurstSlots = team.slots.flatMap((s, i) => (s.noBurst && s.resourceId !== null ? [i] : []));
   return {
     slots,
-    fixedSpec: team.fixedSpec,
     input: {
       slots: slots.map((s) => s.input),
       enemy: { ...enemyForCalc(enemy, deps.enemyMaster, eventSets, team.durationSeconds), defence: team.enemy.defence },

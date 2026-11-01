@@ -8,7 +8,3 @@ export function formatNumber(value: number, maximumFractionDigits = 0): string {
   }
   return f.format(value);
 }
-
-export function formatPercent(ratio: number, maximumFractionDigits = 1): string {
-  return `${formatNumber(ratio * 100, maximumFractionDigits)}%`;
-}

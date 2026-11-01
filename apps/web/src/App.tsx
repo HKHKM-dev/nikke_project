@@ -14,7 +14,6 @@ import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
-import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
@@ -25,7 +24,6 @@ import {
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
-import { useDetailed } from './detailed.ts';
 import { formatNumber } from './format.ts';
 import { readStorage, writeStorage } from './storage.ts';
 import {
@@ -50,7 +48,6 @@ export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
-  const [detailed, setDetailed] = useDetailed();
   // ソロレイド用の編成 01〜05（parties.ts）。選んでいる編成の中身は team
   const [parties, setParties] = useState<PartiesState>(INITIAL_PARTIES);
   // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
@@ -182,7 +179,7 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu detailed={detailed} onDetailedChange={setDetailed} />
+        <SettingsMenu />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -228,7 +225,7 @@ export function App() {
             })}
           </section>
           <ErrorBoundary
-            resetKeys={[shown, detailed]}
+            resetKeys={[shown]}
             fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
           >
             <DamageTotalPanel
@@ -236,17 +233,11 @@ export function App() {
               label={partyLabel(parties.active)}
               value={shown?.computed.ok ? shown.computed.result.totalDamage : null}
               computing={computing || shown === null}
-            />
+            >
+              {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
+              {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
+            </DamageTotalPanel>
             {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
-            {shown?.computed.ok && (
-              <TeamBreakdown
-                result={shown.computed.result}
-                view={shown.source}
-                loadingCount={loadingCount}
-                skillsLoadingCount={skillsLoadingCount}
-                detailed={detailed}
-              />
-            )}
             <DamageTotalPanel title="合計ダメージ" label="全編成" value={totals.total} computing={totalsPending}>
               <ul className="party-totals">
                 {totals.parties.map((p, i) => (

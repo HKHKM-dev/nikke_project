@@ -310,14 +310,12 @@ header h1 {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-/* キャラのいないスロットの、ダメージと育成の欄と、キャラのいない編成の詳細内訳（開かない） */
+/* キャラのいないスロットの、ダメージと育成の欄（開かない） */
 .slot-damage-display[data-placeholder='true'],
-.slot-settings[data-placeholder='true'],
-.segments[data-placeholder='true'] {
+.slot-settings[data-placeholder='true'] {
   opacity: 0.45;
 }
-.slot-settings[data-placeholder='true'] > summary,
-.segments[data-placeholder='true'] > summary {
+.slot-settings[data-placeholder='true'] > summary {
   cursor: default;
 }
 .slot-settings {
@@ -369,8 +367,7 @@ header h1 {
   background: color-mix(in srgb, currentColor 8%, transparent);
   margin-bottom: 8px;
 }
-.damage-total,
-.breakdown-panel {
+.damage-total {
   margin-top: 12px;
 }
 .damage-total .team-total-bar:last-child {
@@ -446,25 +443,6 @@ header h1 {
 .note.out-of-scope .badge {
   background: #455a64;
   color: #fff;
-}
-.breakdown {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.85rem;
-}
-.breakdown th {
-  text-align: left;
-  font-weight: 500;
-  padding: 4px 8px 4px 0;
-  opacity: 0.8;
-}
-.breakdown td {
-  text-align: right;
-  padding: 4px 0;
-  font-variant-numeric: tabular-nums;
-}
-.breakdown tr + tr {
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .simple-breakdown-table {
@@ -581,258 +559,6 @@ header h1 {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-}
-
-/* 詳細情報表示（右上の設定）のときだけ出す、ダメージの詳細（TeamBreakdown・ResultPanel・SkillDetails・DamageTimeline） */
-.meta {
-  font-size: 0.8rem;
-  opacity: 0.8;
-  margin: 4px 0;
-}
-.burst-headline {
-  margin: 0;
-  font-size: 0.85rem;
-}
-.summary {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 3px 16px;
-  margin: 6px 0;
-  max-width: 420px;
-}
-.summary dt {
-  opacity: 0.8;
-  font-size: 0.88rem;
-}
-.summary dd {
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  font-size: 0.88rem;
-}
-.summary dd.total {
-  font-size: 1.15rem;
-  font-weight: 700;
-}
-.note.no-damage .badge,
-.note.modeling .badge {
-  background: #757575;
-  color: #fff;
-}
-/* 編成の内訳 */
-.table-scroll {
-  overflow-x: auto;
-}
-.team-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.88rem;
-  white-space: nowrap;
-}
-.team-table th,
-.team-table td {
-  padding: 5px 8px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.team-table th:nth-child(-n + 2),
-.team-table td:nth-child(-n + 2) {
-  text-align: left;
-}
-.team-table thead th {
-  font-weight: 600;
-  opacity: 0.8;
-  border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-}
-.team-table tbody tr + tr {
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.team-table tfoot th,
-.team-table tfoot td {
-  font-weight: 700;
-  border-top: 2px solid color-mix(in srgb, currentColor 35%, transparent);
-}
-.team-table .grand-total {
-  font-size: 1.05rem;
-}
-.team-table .sub {
-  opacity: 0.65;
-  font-size: 0.78rem;
-}
-.details {
-  margin-top: 12px;
-}
-.slot-detail > summary {
-  cursor: pointer;
-  padding: 4px 0;
-  font-size: 0.9rem;
-}
-.slot-detail .result {
-  border: none;
-  padding: 4px 0 8px 14px;
-  border-left: 2px solid color-mix(in srgb, currentColor 18%, transparent);
-  border-radius: 0;
-  margin-left: 4px;
-}
-.segments {
-  margin-top: 8px;
-}
-.segments > summary {
-  cursor: pointer;
-  font-size: 0.88rem;
-  padding: 3px 0;
-}
-.skills-title {
-  font-weight: 600;
-  font-size: 0.82rem;
-}
-.skill-row {
-  display: grid;
-  gap: 8px;
-  margin-top: 6px;
-}
-.skill-detail-item {
-  padding: 6px 8px;
-  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-}
-.skill-detail-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  font-size: 0.88rem;
-}
-.skill-name {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.skill-desc {
-  white-space: pre-wrap;
-  font: inherit;
-  font-size: 0.78rem;
-  opacity: 0.85;
-  margin: 4px 0 0;
-  padding: 5px 8px;
-  background: color-mix(in srgb, currentColor 6%, transparent);
-}
-.dev-notes-details {
-  margin-top: 6px;
-  font-size: 0.8rem;
-}
-.dev-notes-details > summary {
-  cursor: pointer;
-  opacity: 0.75;
-}
-.received {
-  margin: 8px 0;
-  padding-top: 6px;
-  border-top: 1px solid color-mix(in srgb, currentColor 12%, transparent);
-}
-.received .hint {
-  margin: 2px 0 0;
-  font-size: 0.82rem;
-}
-.received-list {
-  list-style: none;
-  padding: 0;
-  margin: 4px 0 0;
-  display: grid;
-  gap: 2px;
-  font-size: 0.82rem;
-}
-.received-list li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-  align-items: baseline;
-}
-.received-list .amount {
-  font-variant-numeric: tabular-nums;
-}
-.received-list .sub {
-  opacity: 0.65;
-  font-size: 0.75rem;
-}
-.received-list li.note-ignored {
-  opacity: 0.55;
-}
-.received-list li.note-unsupported .amount {
-  color: #b35900;
-}
-/* sim のタイムライン（Stage 16-B） */
-.timeline {
-  margin: 8px 0 12px;
-}
-.timeline svg {
-  display: block;
-  width: 100%;
-  max-width: 960px;
-  height: auto;
-}
-.tl-bar {
-  fill: currentColor;
-  opacity: 0.55;
-}
-.tl-axis {
-  stroke: currentColor;
-  opacity: 0.4;
-}
-.tl-label {
-  fill: currentColor;
-  font-size: 11px;
-  opacity: 0.7;
-}
-.tl-fullburst {
-  fill: #f59e0b;
-  background: #f59e0b;
-  opacity: 0.22;
-}
-.tl-untargetable {
-  fill: #64748b;
-  background: #64748b;
-  opacity: 0.45;
-}
-.tl-invulnerable {
-  fill: #a855f7;
-  background: #a855f7;
-  opacity: 0.3;
-}
-.tl-barrier {
-  fill: #0ea5e9;
-  background: #0ea5e9;
-  opacity: 0.3;
-}
-.tl-key {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  vertical-align: baseline;
-  opacity: 0.6;
-}
-/* 的の着地点の帯（タイムラインの上端。近いほど赤、遠いほど青。未測定は灰色） */
-.tl-band-near {
-  fill: #e11d48;
-  background: #e11d48;
-}
-.tl-band-midNear {
-  fill: #f97316;
-  background: #f97316;
-}
-.tl-band-midFar {
-  fill: #16a34a;
-  background: #16a34a;
-}
-.tl-band-far {
-  fill: #2563eb;
-  background: #2563eb;
-}
-.tl-band-unknown {
-  fill: #9ca3af;
-  background: #9ca3af;
-}
-/* 着地点の凡例は帯と同じ濃さにする（.tl-key は薄く出す） */
-.tl-key[class*='tl-band-'] {
-  opacity: 1;
 }
 
 /* スロットの見出しと詳細設定（フォーカス・撃たない） */
