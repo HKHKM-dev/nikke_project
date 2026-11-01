@@ -1,6 +1,6 @@
 # PR の衝突の頻度と対策の案（2026-11-01）
 
-- 何のための文書か: PR が main と衝突する頻度を、マージ済みの PR（#1〜#873）の履歴から測り、原因のファイルと対策の案を出す。オーナーの判断を待つ（0 節）。
+- 何のための文書か: PR が main と衝突する頻度を、マージ済みの PR（#1〜#873）の履歴から測り、原因のファイルと対策の案を出す。2026-11-01 にオーナーが 1 と ruleset の bypass を承認し、1 を実施した（5 節）。3 は残っている（2 は 1 の代わりなので要らない）。
 - 関連: 衝突の手間を道具に寄せた `npm run pr:prep`（[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 2 節）、表の列幅（[-2](design-workflow-simplification-2.md) 4）・roadmap.md と backup-log.md の書き足し（[design-workflow-simplification.md](design-workflow-simplification.md) 1・2）・段の一覧の経過（[-6](design-workflow-simplification-6.md)）の衝突を減らした回。生成物をコミットし続ける判断（[-4](design-workflow-simplification-4.md) の採らない案・[-7](design-workflow-simplification-7.md)）。
 - 調べ方: origin/main（68f19e24）の first-parent の履歴（スカッシュの commit が PR 1 本）と、PR の作成・マージの時刻（GitHub の検索）と、PR の最後の head（`refs/pull/N/head`）を使った。PR ごとに、PR の変更（スカッシュの commit とその親の差）を、次の 2 つの時点の main の上に置いたときに、マージの直前の main と衝突するかを `git merge-tree --merge-base` で試した。
   - **作成の後**: PR を作った時刻の main。GitHub の画面で「衝突あり」になり、自動マージが止まる分。
@@ -105,6 +105,19 @@ PR 100 本ごと（#801〜#873 は 73 本）。「生成物」は `GENERATED_PAT
 - **GitHub の merge queue**: 衝突の解消はしない。
 - **並行するセッションを減らす**: 衝突は並行の多い日に集中するが、並行で進めることはオーナーの使い方なので、構造の側で減らす。
 
+## 5. 決定と実施
+
+- 決定（2026-11-01、オーナー）: 案 1 で進める。ruleset「automerge」の bypass に GitHub Actions を足してよい。
+- 案からの変更:
+  - main で作り直すのは新しいワークフローではなく、CI（`ci.yml`）の `check` のジョブの終わりの段にした（`tools/git/ci-generated.ts --commit`）。確認の前に作り直しているので、確認の通った中身をそのまま commit でき、作り直しを 2 回回さずに済む。push の前に origin/main がまだその commit かを見て、進んでいれば何もしない（後の commit の CI が全部を作り直す）。
+  - PR の CI も確認の前に `npm run records:minimal` で作り直す。作り直しで生成物でないファイル（開いている検証記録の予測との比べの表・整形）が変わったら、PR の CI を落とす（`tools/git/ci-generated.ts`。CI の作業ツリーで整形し直したファイルが書式の確認を素通りしないように）。main では知らせるだけ。
+  - `pr:prep` は、作り直しをいつも `records:minimal`（変わった組だけ計算し直す。`records:check` も回る）にした（前の `regenerateScript` の切り替えは要らなくなった）。作り直しで生成物でないファイルが変わったら「records:check の書き換え」として commit し、確認の後に生成物を main の版に戻して「生成物を main の版に戻す」の commit を足す。
+  - GitHub Pages（`pages.yml`）は、main への push ではなく、main の CI が通った後（`workflow_run`）に main の先頭を配る。画面が読む `packages/core/data/skills/support.json` も生成物で、CI の push（`GITHUB_TOKEN`）では Pages が起きないため。CI が落ちた main は配らなくなる。
+- 確かめたこと: 使い捨てのブランチで結論の文を変えて生成物ごと commit し、`node tools/git/pr-prep.ts --no-ci` を回した。main を取り込み、生成物を main の版に戻す commit が足され、`origin/main...HEAD` の差分に生成物が無くなった。その上で `records:minimal` と `ci-generated.ts` を回し、変わった生成物が `plan/claims.md` だけと出て通った。`--commit` の push は GitHub の上でしか試せないので、この PR のマージの後の main の CI で確かめる。
+- 費用: PR の CI が作り直しの分（このクラウドの環境で約 1 分半）長くなる。
+- オーナーの設定: ruleset「automerge」の Bypass list に「GitHub Actions」を足す（この PR のマージの前に）。
+
 ## 経過
 
 - 2026-11-01: 起案（頻度の測定と案）。
+- 2026-11-01: 案 1 を実施（5 節）。
