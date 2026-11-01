@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 78・効果 490（根拠あり 462）・notes 190（根拠あり 88）
+件数: キャラ 79・効果 501（根拠あり 472）・notes 197（根拠あり 88）
 
-notes の種類: 未対応 41・前提の外 41・計算に無関係 39・補足 16・間接 53
+notes の種類: 未対応 41・前提の外 42・計算に無関係 41・補足 17・間接 56
 
-スロット: supported 185・partial 17・unsupported 15・noEffect 35
+スロット: supported 188・partial 17・unsupported 15・noEffect 35
 
 ## 10 ラピ
 
@@ -879,6 +879,30 @@ notes の種類: 未対応 41・前提の外 41・計算に無関係 39・補足
 - **burst**: supported
   - effects[0] burstReentry: C-0775（確定）
   - notes[0] 間接（バリア）: 自分と、自分を除く味方全体へのバリア（10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く）: 根拠なし
+
+## 470 レッドフード
+
+- **skill1**: supported
+  - effects[0] timed・normalShot・chargeSpeed: C-0895（確定）
+  - effects[1] passive・chargeSpeedOverflow: C-0898（仮説）
+- **skill2**: supported
+  - effects[0] timed・redWolf が適用された時・attack: C-0898（仮説）
+  - notes[0] 間接（貫通）: 戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）: 根拠なし
+  - notes[1] 間接（防御力）: ビーストケージを適用時の、味方全体へのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[2] 計算に無関係: ハウリングエンドを適用時の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない: 根拠なし
+- **burst**: supported
+  - effects[0] state・burstUse・beastCage: C-0893（確定）
+  - effects[1] timed・burstUse・attack: C-0893（確定）
+  - effects[2] cooldownReduction・burstUse: C-0894（確定）
+  - effects[3] state・burstUse・theLastHowl: 根拠なし
+  - effects[4] cooldownReduction・burstUse: C-0894（確定）
+  - effects[5] state・burstUse・redWolf: C-0898（仮説）
+  - effects[6] weaponChange・burstUse: C-0896（確定）、C-0897（確定）
+  - effects[7] timed・burstUse・chargeSpeed: C-0898（仮説）
+  - notes[0] 補足: 使用武器変更の発射レートは、CDN のバーストが使用武器の変更の形（ChangeWeapon）でないので無い。チャージ武器の発の間隔はチャージ時間と解放で決まり、レートを読まないので、基礎の武器のレート（60）を書いた: 根拠なし
+  - notes[1] 計算に無関係: バーストⅡの、自分にヘイト：敵全体を挑発は、ダメージに関係しない。付けたときにゲージを溜めても、チェーンの間はゲージを足さないので効かない: 根拠なし
+  - notes[2] 間接（HP）: バーストⅡの、自分の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[3] 前提の外: バーストⅢの貫通範囲の拡張は、敵 1 体の前提では効かない（要件の前提の外）: 根拠なし
 
 ## 471 スノーホワイト：ヘビーアームズ
 

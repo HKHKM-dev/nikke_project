@@ -22007,6 +22007,518 @@
       "effective": true,
       "minus": -138,
       "plus": null
+    },
+    {
+      "observation": "0924-07",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "5a567c47063e783a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0924-07",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "5a567c47063e783a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0924-08",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "bc6162703a6349ab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0924-08",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "bc6162703a6349ab",
+      "effective": true,
+      "minus": 0,
+      "plus": 297562.4
+    },
+    {
+      "observation": "0924-11",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "b53bff2480f615c5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0924-11",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "b53bff2480f615c5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0924-12",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "e20e077c6149aac9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0924-12",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "e20e077c6149aac9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0924-13",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "0a79bfa1711b26fc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0924-13",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "0a79bfa1711b26fc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0925-07",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "b6e64a80bbb97c5b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0925-07",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "b6e64a80bbb97c5b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0925-08",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "9a6612c5b85a771e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0925-08",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "9a6612c5b85a771e",
+      "effective": true,
+      "minus": 0,
+      "plus": 297562.4
+    },
+    {
+      "observation": "0925-11",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "e453c7436ffaf634",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0925-11",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "e453c7436ffaf634",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0925-12",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "a36439dde0d4b174",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0925-12",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "a36439dde0d4b174",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0925-13",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "6519d48403ccafa9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0925-13",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "6519d48403ccafa9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0926-09",
+      "element": "レッドフード burst.effects[3]",
+      "key": "58af9b8f76a833fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0926-09",
+      "element": "レッドフード burst.effects[5]",
+      "key": "58af9b8f76a833fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0926-09",
+      "element": "レッドフード burst.effects[7]",
+      "key": "58af9b8f76a833fe",
+      "effective": true,
+      "minus": 0,
+      "plus": -2
+    },
+    {
+      "observation": "0926-09",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "58af9b8f76a833fe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0926-09",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "58af9b8f76a833fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0926-10",
+      "element": "レッドフード burst.effects[3]",
+      "key": "c5e51220b4f8c33b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0926-10",
+      "element": "レッドフード burst.effects[5]",
+      "key": "c5e51220b4f8c33b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0926-10",
+      "element": "レッドフード burst.effects[7]",
+      "key": "c5e51220b4f8c33b",
+      "effective": true,
+      "minus": 0,
+      "plus": -6
+    },
+    {
+      "observation": "0926-10",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "c5e51220b4f8c33b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0926-10",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "c5e51220b4f8c33b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-08",
+      "element": "レッドフード burst.effects[3]",
+      "key": "404a375522156ad4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-08",
+      "element": "レッドフード burst.effects[5]",
+      "key": "404a375522156ad4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-08",
+      "element": "レッドフード burst.effects[7]",
+      "key": "404a375522156ad4",
+      "effective": true,
+      "minus": 0,
+      "plus": -2
+    },
+    {
+      "observation": "0927-08",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "404a375522156ad4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0927-08",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "404a375522156ad4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-09",
+      "element": "レッドフード burst.effects[3]",
+      "key": "d1dbf6a2da7bf719",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-09",
+      "element": "レッドフード burst.effects[5]",
+      "key": "d1dbf6a2da7bf719",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-09",
+      "element": "レッドフード burst.effects[7]",
+      "key": "d1dbf6a2da7bf719",
+      "effective": true,
+      "minus": 0,
+      "plus": -6
+    },
+    {
+      "observation": "0927-09",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "d1dbf6a2da7bf719",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0927-09",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "d1dbf6a2da7bf719",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-04",
+      "element": "エレグ skill1.effects[0]",
+      "key": "d65e9589c975ff84",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0928-04",
+      "element": "レッドフード burst.effects[3]",
+      "key": "d65e9589c975ff84",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-04",
+      "element": "レッドフード burst.effects[5]",
+      "key": "d65e9589c975ff84",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-04",
+      "element": "レッドフード burst.effects[7]",
+      "key": "d65e9589c975ff84",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-04",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "d65e9589c975ff84",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0928-04",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "d65e9589c975ff84",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-05",
+      "element": "エレグ skill1.effects[0]",
+      "key": "018c8459230f77c8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0928-05",
+      "element": "レッドフード burst.effects[3]",
+      "key": "018c8459230f77c8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-05",
+      "element": "レッドフード burst.effects[5]",
+      "key": "018c8459230f77c8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0928-05",
+      "element": "レッドフード burst.effects[7]",
+      "key": "018c8459230f77c8",
+      "effective": true,
+      "minus": 0,
+      "plus": -6
+    },
+    {
+      "observation": "0928-05",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "018c8459230f77c8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0928-05",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "018c8459230f77c8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-04",
+      "element": "エレグ skill1.effects[0]",
+      "key": "4322291b6e398de8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0929-04",
+      "element": "レッドフード burst.effects[3]",
+      "key": "4322291b6e398de8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-04",
+      "element": "レッドフード burst.effects[5]",
+      "key": "4322291b6e398de8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-04",
+      "element": "レッドフード burst.effects[7]",
+      "key": "4322291b6e398de8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-04",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "4322291b6e398de8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0929-04",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "4322291b6e398de8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-05",
+      "element": "エレグ skill1.effects[0]",
+      "key": "90bf00d107c46ed6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0929-05",
+      "element": "レッドフード burst.effects[3]",
+      "key": "90bf00d107c46ed6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-05",
+      "element": "レッドフード burst.effects[5]",
+      "key": "90bf00d107c46ed6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0929-05",
+      "element": "レッドフード burst.effects[7]",
+      "key": "90bf00d107c46ed6",
+      "effective": true,
+      "minus": 0,
+      "plus": -6
+    },
+    {
+      "observation": "0929-05",
+      "element": "レッドフード skill1.effects[1]",
+      "key": "90bf00d107c46ed6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0929-05",
+      "element": "レッドフード skill2.effects[0]",
+      "key": "90bf00d107c46ed6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
