@@ -816,6 +816,8 @@
 | 0844 | `20261101-0844_tia-naga.mp4` | ティア（451、RL・鉄甲・SSR） + ◎ナガ（450、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 0845 | `20261101-0845_liter-tia.mp4` | リター（82、SMG・鉄甲・SSR） + ◎ティア（451、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 0846 | `20261101-0846_liter-tia.mp4` | リター（82、SMG・鉄甲・SSR） + ◎ティア（451、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 0847 | `20261101-0847_cocoa-tia.mp4` | ココア（311、SR・灼熱・SSR） + ◎ティア（451、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 0848 | `20261101-0848_cocoa-tia.mp4` | ココア（311、SR・灼熱・SSR） + ◎ティア（451、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
