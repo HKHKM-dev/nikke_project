@@ -1,0 +1,46 @@
+{
+  "id": "0901",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0901_sr_ein.mp4",
+  "original": "2026-11-01_19-44-49.mp4",
+  "durationSec": 200.2,
+  "frames": 12012,
+  "fps": 60,
+  "sizeMB": 242.5,
+  "sha256": "015c6884aa4f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 391,
+      "name": "アイン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0625 の撮影 A2。リター（I）・デルタ（II）・アイン（III・操作）（オート射撃 ON・オートバースト ON）",
+  "backup": {
+    "at": "2026-11-01T19:50+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

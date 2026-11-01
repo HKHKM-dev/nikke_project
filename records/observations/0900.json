@@ -1,0 +1,400 @@
+[
+  {
+    "id": "0900-01",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [1218, 2281, 3459, 4395, 5573, 6481, 7658, 8546, 9725, 10641],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・25・5・25・0・24・0f"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0900-02",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [1247, 3488, 5602, 7688, 9754],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・24・24f"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0900-03",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [1276, 3518, 5631, 7717, 9783],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0900-04",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [2275, 3453, 5567, 7652, 9719],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0900-05",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [3481],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0900-06",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [3510],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0900-07",
+    "recording": "0900",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2099394,
+    "unit": "damage",
+    "description": "アインのバーストの防御力無視ダメージ（最終攻撃力の 300.02%）の 2 回目のヒットの値。同じ発動の防御力無視ダメージ 55.3%▲とフルバーストの +50% が乗った値（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "0900-03 の 2 回目の 00.00 の 53〜54f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0900-08",
+    "recording": "0900",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2099394,
+    "unit": "damage",
+    "description": "アインのバーストの防御力無視ダメージ（最終攻撃力の 300.02%）の 3 回目のヒットの値。同じ発動の防御力無視ダメージ 55.3%▲とフルバーストの +50% が乗った値（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "0900-03 の 3 回目の 00.00 の 53〜54f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0900-09",
+    "recording": "0900",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2099394,
+    "unit": "damage",
+    "description": "アインのバーストの防御力無視ダメージ（最終攻撃力の 300.02%）の 4 回目のヒットの値。同じ発動の防御力無視ダメージ 55.3%▲とフルバーストの +50% が乗った値（会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "0900-03 の 4 回目の 00.00 の 53〜54f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0900-10",
+    "recording": "0900",
+    "kind": "hit",
+    "use": "record",
+    "value": [2127708, 2099394, 2099394, 2099394, 2099394],
+    "unit": "damage",
+    "description": "アインのバーストの防御力無視ダメージの 5 回のヒットの増分。モデルの値と違う回は、リターの 1 ヒット（1 回目は不明の増分 685,571、2 回目は 28,314）が同じフレームに重なった増分で、それを引くとモデルの値（1 回目 1,978,562、2 回目以降 2,099,394）と合う",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "0900-03 の各回の 00.00 の 53〜54f 後の増分"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0900-11",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "compare",
+    "value": [53],
+    "unit": "f",
+    "description": "アインのバーストの防御力無視ダメージの 2 回目のヒットの、フルバーストの 00.00（III のタイマー）からの動画のフレーム数。5 回とも 53〜54f",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）・recipe:burst-panel@2",
+      "note": "0900-03 の 2 回目からの差"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0900-12",
+    "recording": "0900",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2439513,
+    "unit": "damage",
+    "description": "アイン（操作）の 2 回目のフルバーストの中の発（00.00 の 238f 後。コア・会心なし・距離ボーナスなし）の 1 発の値。バーストのチャージダメージ 140.68%▲・S2 のチャージダメージ▲・S1 の攻撃力▲・フルバーストの +50% が乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）・recipe:burst-panel@2",
+      "note": "0900-03 の 2 回目の 238f 後の増分。モデルのフレームは、モデルの 2 回目のフルバーストの始まり（2649）+ 動画の差 − 入りの止まり 22f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2865,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0900-13",
+    "recording": "0900",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1987443,
+    "unit": "damage",
+    "description": "アイン（操作）の 2 回目のフルバーストの中の発（00.00 の 520f 後。コア・会心・距離ボーナスなし）の 1 発の値。バーストのチャージダメージ 140.68%▲・S2 のチャージダメージ▲・S1 の攻撃力▲・フルバーストの +50% が乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）・recipe:burst-panel@2",
+      "note": "0900-03 の 2 回目の 520f 後の増分。モデルのフレームは、モデルの 2 回目のフルバーストの始まり（2649）+ 動画の差 − 入りの止まり 22f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3147,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0900-14",
+    "recording": "0900",
+    "kind": "count",
+    "use": "record",
+    "value": [33, 33, 33, 34, 33],
+    "unit": "hits",
+    "description": "フルバーストごとの、約 17.6f おきのニアフェザー攻撃のヒットの列の長さ（00.00 の 66〜91f 後から 629〜673f 後まで。ほかの増分と重なって見えない回を含む）。列の後は、4 機の時と同じ 170f おきに戻る",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "00.00 の 60f 後から、15〜20f（重なりの抜けは 33〜38f）後の増分を順につないだ列の長さ（抜けを 1 つに数える）"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0900-15",
+    "recording": "0900",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      1907, 2130, 2643, 2813, 2913, 4155, 4372, 4715, 4886, 5162, 5410, 6246, 6445, 6958, 7128, 7411, 8335, 8353, 8860,
+      9030, 9413, 10426, 10590, 11103, 11274, 11415
+    ],
+    "unit": "f",
+    "description": "フルバーストの列の後の、倍率の乗らない（リター・デルタの攻撃力▲の分だけの）ニアフェザー攻撃のヒットのフレーム。間は 170〜171f の倍数か、機数の減る所の不規則な間（100・247・283f など）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "108,878 に 1・1.08・1.104・1.144・1.184 か、その 1.5 倍（会心）を掛けた値の増分のフレーム（ほかと重なった回は抜ける）"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

@@ -431,7 +431,9 @@ const TARGETS: Rules = [
   [/自分と自分の両隣|両隣/, 'ally:neighbors'],
   [/直前にバーストスキルを使用した/, 'ally:burstUsers'],
   [/最終攻撃力が最も高い味方|攻撃力が最も高い味方/, 'ally:topAttack'],
-  [/残りの?HPの(割合|数値|値)が最も低い味方|残りHPの値が最も低い味方/, 'ally:lowestHp'],
+  // 2 段目の段 20（plan/design-skill-stage20.md 6 節の論点 5）: HP の割合の順（lowestHpRatio）と値の順を分ける
+  [/残りの?HPの割合が最も低い味方/, 'ally:lowestHpRatio'],
+  [/残りの?HPの(数値|値)が最も低い味方/, 'ally:lowestHpValue'],
   [/基本チャージ時間が一番長い味方/, 'ally:longestChargeTime'],
   [/最大HPが最も高い味方|最終防御力が最も高い味方/, 'ally:topOther'],
   // 「デバフ効果がかけられている味方のうち、ランダムに N 機に」（ココア）は条件ではなく対象の絞り込み

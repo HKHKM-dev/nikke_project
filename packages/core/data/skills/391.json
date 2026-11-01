@@ -1,0 +1,120 @@
+{
+  "formatVersion": 1,
+  "resourceId": 391,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0869"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時のニアフェザー 4 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない",
+          "en": "The 4 Near Feathers summoned at the start of battle only set the count for Near Feather Attack (skill2 notes[0], not modeled) and affect nothing else",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "unknown",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 3,
+          "durationShotsRef": 4,
+          "assumes": {
+            "ja": "フルチャージの発の後に付き、次の 1 発に乗る（きっかけの発には乗らない。戦闘の最初の発は▲なし）",
+            "en": "Applied after a full-charge shot and used by the next shot (not the triggering shot; the first shot of battle has no bonus)"
+          },
+          "claims": [
+            "C-0868"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ニアフェザー攻撃（ランダムの敵 1 機に最終攻撃力の 値 02 % の防御力無視ダメージ）は未対応。1 回の攻撃は 1 ヒット（機数を掛けない）だが、攻撃の間隔は展開している機数で変わり、機数はそれぞれ独立した維持時間で減る（ツールチップ「ニアフェザー」）。機数ごとの間隔と維持時間を読んでいない（V-0625）",
+          "en": "Near Feather Attack (true damage of value 02 % of final ATK to one random enemy) is not modeled. Each attack is one hit (not multiplied by the count), but the interval depends on the number of deployed feathers, which expire on independent timers (tooltip \"Near Feather\"). The interval per count and the durations are not read (V-0625)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "unknown",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0870"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "chargeDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0869"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 6,
+          "damageType": "true",
+          "delayFrames": 38,
+          "assumes": {
+            "ja": "「最終防御力が最も高い敵 10 機」は単体ボス。説明文はバーストスキルダメージでなく防御力無視ダメージなので、倍率ダメージとして書いた。発動の 38f 後（動画で III のタイマーの 00.00 の 53〜54f 後）に、その時のバフ（同じ発動の防御力無視ダメージ▲を含む）とフルバーストの +50% で 1 ヒット",
+            "en": "\"The 10 enemies with the highest final DEF\" is the single boss. The description says true damage, not Burst Skill damage, so it is written as skill damage: one hit 38 frames after activation (53-54 video frames after the III timer reads 00.00) with the buffs at that frame (including the True Damage up of the same activation) and the Full Burst +50%"
+          },
+          "claims": [
+            "C-0870",
+            "C-0871"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ニアフェザー 6 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない。録画では、バーストのたびに約 17.6f おきのニアフェザー攻撃が 33〜35 回続いた（V-0625）",
+          "en": "The 6 Near Feathers only set the count for Near Feather Attack (skill2 notes[0], not modeled) and affect nothing else. In recordings each Burst was followed by 33-35 Near Feather Attacks about 17.6 frames apart (V-0625)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "unknown",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    }
+  }
+}

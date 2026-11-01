@@ -1,0 +1,157 @@
+[
+  {
+    "id": "0899-01",
+    "recording": "0899",
+    "kind": "hit",
+    "use": "compare",
+    "value": 413536,
+    "unit": "damage",
+    "description": "アイン（単騎・操作）の戦闘の最初の発（フルチャージ・コア・会心なし・距離ボーナスなし）の 1 発の値。S2 のチャージダメージ▲の乗らない値",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "戦闘の最初の増分。ほかの発（コアの格子）と同じ値の並びから、▲なしのコアの値とした（▲ありの値の 2.5 / 3.3）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0899-02",
+    "recording": "0899",
+    "kind": "hit",
+    "use": "compare",
+    "value": 545867,
+    "unit": "damage",
+    "description": "アイン（単騎・操作）の中近の区間の、2 発目以降のフルチャージの発（コア・会心なし・距離ボーナスなし）の 1 発の値。S2 のチャージダメージ 80%▲の乗った値",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "中近の区間で最も多い増分。会心は 1.25 倍・距離ボーナスは 1.15 倍の値で並ぶ（コアの倍率 2 に足す形）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0899-03",
+    "recording": "0899",
+    "kind": "hit",
+    "use": "record",
+    "value": [108878, 163316],
+    "unit": "damage",
+    "description": "ニアフェザー攻撃の 1 ヒットの値（会心なし・会心）。どの回も 1 回の発動で増分 1 つ（4 機展開の間も）で、最終攻撃力 119,896（モデル）× 90.81% に一致する（機数を掛けない）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "発の格子に当たらない増分。会心は 1.5 倍"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0899-04",
+    "recording": "0899",
+    "kind": "timing",
+    "use": "record",
+    "value": [1034, 1205, 1374, 1546, 1715, 1887, 2058, 2228],
+    "unit": "f",
+    "description": "ニアフェザー攻撃のヒットのフレーム（戦闘開始から 4 機展開のまま。アインの横に 4 機が並んでいる間）。間は 170〜171f",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "108,878 か 163,316 の増分のフレーム"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0899-05",
+    "recording": "0899",
+    "kind": "timing",
+    "use": "record",
+    "value": [2593, 2769, 3087, 3228],
+    "unit": "f",
+    "description": "ニアフェザー攻撃のヒットのフレーム（4 機から 1 機に減る間。絵ではアインの横の機数が 4 → 3 → 1 と減る）。前の回からの間は 365・176・318・141f",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "108,878 か 163,316 の増分のフレーム。機数は絵で数えた（飛んで攻撃している機は見えないので、数は目安）"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0899-06",
+    "recording": "0899",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      3622, 4016, 4411, 4805, 5199, 5593, 5987, 6381, 6775, 7169, 7563, 7958, 8352, 8746, 9141, 9535, 9929, 10323,
+      10717, 11111
+    ],
+    "unit": "f",
+    "description": "ニアフェザー攻撃のヒットのフレーム（1 機になった後、戦闘の終わりまで）。間は 393〜396f",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "108,878 か 163,316 の増分のフレーム。最後の 1 機は戦闘の終わりまで消えなかった"
+    },
+    "source": "V-0625",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  }
+]

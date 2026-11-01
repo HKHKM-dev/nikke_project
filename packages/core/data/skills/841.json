@@ -203,15 +203,9 @@
       ],
       "notes": [
         {
-          "ja": "リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は未対応（ほかのリロード速度▲▼を持つ味方のいる編成では、モデルは足し合わせる。plan/design-skill-stage17.md 論点 5）",
-          "en": "The reload speed being \"fixed\" (ignoring other reload speed ups/downs during the window) is not modeled (with an ally that has reload speed up/down, the model adds them. plan/design-skill-stage17.md issue 5)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "reloadSpeed",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "ja": "リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は、どの編成でも値に効かない。リロードの時間は 時間 × max(0, 1 − Σ速度)（C-0013）で、この▲にほかのリロード速度▲を足しても足さなくても 1 フレームに満たない。固定と足し合わせが分かれるのはジルにリロード速度▼が付く時だけで、味方に▼を付けるキャラはいない（plan/design-skill-stage20.md 2.3 節）",
+          "en": "The reload speed being \"fixed\" (ignoring other reload speed ups/downs during the window) does not change any value in any team. Reload time is time × max(0, 1 − Σspeed) (C-0013), so with this buff the reload is under one frame whether other reload speed ups are added or not. Fixing and adding differ only when a reload speed down is on Jill, and no character gives allies a reload speed down (plan/design-skill-stage20.md section 2.3)",
+          "kind": "noDamage"
         }
       ]
     }
