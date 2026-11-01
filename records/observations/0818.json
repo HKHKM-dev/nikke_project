@@ -334,5 +334,24 @@
       "slot": "all",
       "source": "gauge"
     }
+  },
+  {
+    "id": "0818-14",
+    "recording": "0818",
+    "source": "V-0593",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "unit": "ヒット",
+    "value": 117,
+    "description": "リター（I）の 1 本目のマガジン（120 発）で、総ダメージにリターの 1 ヒットが出た数",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始（f860）から 12f 目に最初のヒット、304f 目に最後のヒット、リロードの後の最初のヒットは 416f 目で、0817 とモデルと同じ時刻。それでもヒットは 117 回で、86〜167f の間にモデルとのずれが 0 から 7f に増える（3 発ぶん抜けた）。抜けた発の値（2 発ぶんの和など）の増分は無い"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]
