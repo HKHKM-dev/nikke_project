@@ -85,7 +85,8 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
   if (loadingCount === 0 && skillsLoadingCount === 0 && !(detailed && filled.length > 0)) return null;
 
   return (
-    <section className="panel result breakdown-panel">
+    <fieldset className="panel result breakdown-panel">
+      <legend>詳細戦闘情報</legend>
       {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
       {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
 
@@ -296,6 +297,6 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
           )}
         </details>
       )}
-    </section>
+    </fieldset>
   );
 }

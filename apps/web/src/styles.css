@@ -367,7 +367,8 @@ header h1 {
   background: color-mix(in srgb, currentColor 8%, transparent);
   margin-bottom: 8px;
 }
-.damage-total {
+.damage-total,
+.breakdown-panel {
   margin-top: 12px;
 }
 .damage-total .team-total-bar:last-child {
