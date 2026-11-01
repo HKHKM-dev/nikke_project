@@ -3,8 +3,10 @@
 //   npm run pr:prep [-- --push] [--no-ci] [--allow-progress]
 // 1. 作業中の変更が無いことと、main の上でないことを確かめ、git fetch origin。
 // 2. ブランチで足した検証記録・結論・録画の ID が main と重なっていたら、リベースの前に止めて records:renumber のコマンドを出す。
-//    backlog.md 8 節・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を出す（--allow-progress で通す。
-//    plan/design-workflow-simplification-6.md 2 節）。
+//    課題のファイルで足した 2 節の番号（records/backlog/2-NN.json）が main と重なっていたら、止めて空いた番号を出す。
+//    8 節・8.2 節の課題のファイル（records/backlog/）・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を
+//    出す（--allow-progress で通す。plan/design-workflow-simplification-6.md 2 節・plan/design-backlog-files.md 2.8 節）。
+//    plan/backlog.md（生成物）を手で直していたら、止めて行を出す（直しは生成物を main の版に戻すと消えるので。同 2.11 節）。
 // 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
@@ -20,9 +22,19 @@ import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { GENERATED_PATHS, ROOT, idsInBranches } from '../../packages/core/scripts/records-data.ts';
+import {
+  BACKLOG_PATH,
+  GENERATED_PATHS,
+  ROOT,
+  backlogNamesInBranches,
+  idsInBranches,
+  renderBacklogOfData,
+} from '../../packages/core/scripts/records-data.ts';
+import { handEditedLines, type BacklogFile } from '../../packages/core/src/records/backlog.ts';
 import {
   addedLines,
+  backlogCollisions,
+  backlogProgressCopy,
   branchChangedChecks,
   checkSteps,
   collisions,
@@ -106,6 +118,7 @@ if (!rebasing()) {
     'records/verifications',
     'records/claims',
     'records/recordings',
+    'records/backlog',
   ]);
   const found = collisions(added, mainFiles, idsInBranches().ids);
   if (found.length > 0) {
@@ -114,6 +127,35 @@ if (!rebasing()) {
       console.error(`  npm run records:renumber -- ${c.id} ${c.suggestion ?? '<空いている録画の番号>'}`);
     process.exit(1);
   }
+  const backlogFound = backlogCollisions(added, mainFiles, backlogNamesInBranches().names);
+  if (backlogFound.length > 0) {
+    console.error(
+      'ブランチで足した課題の番号が main と重なっている。ファイルの名前と、自分のブランチの中の参照を直して commit してから、もう一度回す:',
+    );
+    for (const c of backlogFound)
+      console.error(
+        `  git mv records/backlog/${c.name}.json records/backlog/${c.suggestion}.json（参照の「${c.name}」も ${c.suggestion} に）`,
+      );
+    process.exit(1);
+  }
+
+  const backlogPath = BACKLOG_PATH.slice(ROOT.length);
+  const editedLines = addedLines(git(['diff', '-U0', 'origin/main...HEAD', '--', backlogPath])).get(backlogPath);
+  if (editedLines !== undefined && editedLines.size > 0) {
+    // 作業中の変更が無いことは確かめたので、作業ツリーのファイルがブランチの版
+    const text = readFileSync(BACKLOG_PATH, 'utf8').split('\n');
+    const edited = handEditedLines(
+      [...editedLines].map((n) => text[n - 1] ?? ''),
+      renderBacklogOfData(),
+    );
+    if (edited.length > 0) {
+      console.error(
+        `${backlogPath} は生成物で、手で直しても PR に入らない。次の行を課題のファイル（records/backlog/）に移し、git checkout origin/main -- ${backlogPath} で戻して commit してから、もう一度回す（作り直しを commit した後に課題のファイルを直しただけなら、戻して commit するだけでよい）:`,
+      );
+      for (const l of edited) console.error(`  ${l.length > 80 ? `${l.slice(0, 80)}…` : l}`);
+      process.exit(1);
+    }
+  }
 
   if (!values['allow-progress']) {
     const diff = git(['diff', '-U0', 'origin/main...HEAD', '--', ...PROGRESS_PATHS]);
@@ -121,6 +163,25 @@ if (!rebasing()) {
     const copies = [...addedLines(diff)].flatMap(([path, added]) =>
       added.size === 0 ? [] : progressCopies(path, readFileSync(join(ROOT, path), 'utf8'), added),
     );
+    for (const path of gitPaths([
+      'diff',
+      '--name-only',
+      '--diff-filter=AMR',
+      'origin/main...HEAD',
+      '--',
+      'records/backlog',
+    ])) {
+      if (!path.endsWith('.json')) continue;
+      const branchFile = JSON.parse(readFileSync(join(ROOT, path), 'utf8')) as BacklogFile;
+      let mainFile: BacklogFile | undefined;
+      try {
+        mainFile = JSON.parse(gitRaw(['show', `origin/main:${path}`])) as BacklogFile;
+      } catch {
+        mainFile = undefined;
+      }
+      const copy = backlogProgressCopy(path, branchFile, mainFile);
+      if (copy !== undefined) copies.push(copy);
+    }
     if (copies.length > 0) {
       console.error(
         '進み具合を書き写した行がある（AGENTS.md「文書の書き方」の進み具合の行）。直して commit してから、もう一度回す（段の出来事などで要る行なら --allow-progress）:',

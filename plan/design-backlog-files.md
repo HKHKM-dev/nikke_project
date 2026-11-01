@@ -2,7 +2,7 @@
 
 - 何のための文書か: [design-pr-conflicts.md](design-pr-conflicts.md) 3.3 節の案 3（課題を 1 件 1 ファイルに置き、`plan/backlog.md` を生成物にする）の形と、移し方・手順の文書の直しを決める。
 - 関連: 先例の結論の 1 件 1 ファイル（`records/claims/` → `plan/claims.md`。[design-stage20.md](design-stage20.md) 3.3 節）、生成物を main でだけ作り直す（design-pr-conflicts.md 5 節）、進み具合の書き写しの検査（[design-workflow-simplification-6.md](design-workflow-simplification-6.md) 2 節）。
-- 状態: 承認待ち
+- 状態: 実装済み
 
 ## 1. いまの形と困りごと
 
@@ -105,12 +105,19 @@
 - `packages/core/src/records/backlog.ts`（読む・検査・書く。純粋な部分）と、`records-data.ts` の `loadBacklog`・`BACKLOG_PATH`。`records-check.ts` が `plan/backlog.md` を書き、`GENERATED_PATHS` に足す（`pr:prep` が main の版に戻し、`ci-generated.ts` が main で作り直して commit する）。`records:check` の整形（`format-retry.ts`）に `plan/backlog.md` と `records/backlog` を足す。
 - `records:renumber` は追跡しているファイルの中の V・C・観測値・録画の ID を書き換えるので、`records/backlog/*.json` も追加の手当て無しで直る。
 
+### 2.11 手で直した backlog.md を止める
+
+- 困りごと: `plan/backlog.md` を習慣で手で直すと、`pr:prep` が生成物を main の版に戻すので、直しが PR に入らず黙って消える。
+- `pr:prep` の 2 段（リベースの前。進み具合の検査と同じ所）で、ブランチ（`origin/main...HEAD`）が `plan/backlog.md` を変えていたら、ブランチで足した行のうち、HEAD の課題のファイルと雛形から作った版に無い行を出して止める。`records:check` の作り直しを commit しただけなら、足した行は作った版にあるので通る。
+- 止めたときの案内: 手で直したなら、その行を課題のファイル（`records/backlog/`）に移し、`git checkout origin/main -- plan/backlog.md` で戻して commit する。作り直しを commit した後に課題のファイルを直しただけなら、同じく戻して commit すればよい（生成物は PR に入れない）。通す口は設けない（どちらの場合も直し方がある）。
+- 作った版との比べを prettier 無しで済ませるため、書き出しは prettier で変わらない形にする（テストで見る）。
+
 ### 2.10 書き換える手順の文書
 
 - `AGENTS.md`: 「記録の置き場所」の表の `plan/backlog.md` の行を `records/backlog/`・`plan/backlog.md`（現状・生成。課題は 1 件 1 ファイル）にする。「文書の書き方」の進み具合の行（「backlog.md 8 節…への書き写しは `pr:prep` が止める」→ 8 節・8.2 節の課題のファイル）と、詰めた表の例から backlog.md を外す（生成物は道具が詰めた形で書く）。
 - `plan/verification-guide.md` 閉じる段（「backlog.md の行を直す」→ 課題のファイルを直す）。
 - `packages/core/scripts/records-close.ts` が出す「残り」の文と冒頭の注記。
-- `tools/git/pr-prep.ts` の冒頭の説明（2 の書き写しの検査）。
+- `tools/git/pr-prep.ts` の冒頭の説明（2 の書き写しの検査と、2.11 の手の直しの検査）。
 - `records/backlog/template.md`（いまの backlog.md の冒頭・各節の説明。起票の手順を 2.6 に）。
 - 設計書・検証記録（型が記録）は書き換えない。「backlog.md に足した」などの過去の記述は、書いた時点の版を指す（AGENTS.md「文書の書き方」）。`plan/requirements.md`・`plan/roadmap.md` の「backlog.md」へのリンクは生成物を指したままでよい。
 - Claude Code のメモリ（`bash-pitfalls.md` の「道具が止めたファイル（… backlog など）」）からも backlog を外す。
@@ -119,7 +126,7 @@
 
 - 一度きりの移し替えの道具（スクラッチパッドに置く。リポジトリには入れない）で、いまの `plan/backlog.md` を読み、行ごとにファイルを書く。名前（2.2）は手で付けて道具に渡す。
 - `records:check` で作り直した `plan/backlog.md` と、移す前の版の差分が、1.1 節の「（なし）」（2.5）と整形だけであることを確かめる。
-- テスト: 雛形の印の読み、表・箇条・「（なし）」の書き出し、検査の各項目、2 節の番号順と `order` の並び、`collisions` の 2 節の番号の重なり、`progressCopies` の課題のファイル版。`plan/backlog.md` が入力と合っているか（ほかの生成物と同じく CI が作り直してから見る）。
+- テスト: 雛形の印の読み、表・箇条・「（なし）」の書き出し、検査の各項目、2 節の番号順と `order` の並び、`collisions` の 2 節の番号の重なり、`progressCopies` の課題のファイル版、手の直しの検査（2.11）。書き出しが prettier で変わらないこと（2.11 の検査の前提）。`plan/backlog.md` が入力と合っているか（ほかの生成物と同じく CI が作り直してから見る）。
 
 ## 4. 採らない案
 
@@ -131,3 +138,5 @@
 ## 経過
 
 - 2026-11-01: 起案。
+- 2026-11-01: 承認（2.11 の手の直しの検査を足した）。
+- 2026-11-01: 実装。

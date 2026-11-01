@@ -1,0 +1,5 @@
+{
+  "section": "8",
+  "order": 80,
+  "text": "バーストの効果の着弾の遅れと、同じ発動の中の効果の順（2026-10-01 起票）→ 一部完了: まとめは [burst-effect-delay-candidates.md](burst-effect-delay-candidates.md)「まとめ」、[design-burst-landing.md](design-burst-landing.md)・[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-effect-window-end.md](design-burst-effect-window-end.md)。残りは 2-4"
+}

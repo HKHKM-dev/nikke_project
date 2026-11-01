@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
 import { MASTER_FILES } from '../src/load.ts';
+import { renderBacklog, type BacklogFile, type BacklogItem } from '../src/records/backlog.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
@@ -48,6 +49,11 @@ export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
 export const SKILL_CATALOG_PATH = `${ROOT}plan/skill-catalog.md`;
 /** 最小構成の検査の感度の結果（records:minimal が書く。plan/design-minimal-relevance.md 10.6 節） */
 export const SENSITIVITY_PATH = `${ROOT}records/minimal/sensitivity.json`;
+/** 課題のファイル（1 件 1 ファイル）と雛形の置き場所（plan/design-backlog-files.md） */
+export const BACKLOG_DIR = `${ROOT}records/backlog/`;
+export const BACKLOG_TEMPLATE_PATH = `${BACKLOG_DIR}template.md`;
+/** 残っている仕事の一覧（生成物。plan/design-backlog-files.md） */
+export const BACKLOG_PATH = `${ROOT}plan/backlog.md`;
 /** records:check（と records:minimal）が丸ごと書く生成物（ROOT からの相対パス。tools/git/pr-prep.ts が衝突を main の版で解く） */
 export const GENERATED_PATHS: readonly string[] = [
   RECORDINGS_DOC_PATH,
@@ -59,6 +65,7 @@ export const GENERATED_PATHS: readonly string[] = [
   MINIMAL_PATH,
   SKILL_CATALOG_PATH,
   SENSITIVITY_PATH,
+  BACKLOG_PATH,
 ].map((p) => p.slice(ROOT.length));
 
 /** 検証記録のファイルの絶対パス */
@@ -127,6 +134,29 @@ export function recordingIdsInBranches(): { ids: string[]; note: string } {
     .map((l) => /(?:^|\/)records\/recordings\/([^/]+)\.json$/.exec(l.trim())?.[1])
     .filter((x): x is string => x !== undefined);
   return { ids: [...new Set(ids)], note };
+}
+
+/** どれかのブランチが足したことのある課題のファイルの名前（records/backlog/<名前>.json。pr:prep の 2 節の番号の重なりの案） */
+export function backlogNamesInBranches(): { names: string[]; note: string } {
+  const { out, note } = logBranches(['--format=', '--name-only', '--diff-filter=AR'], ['records/backlog']);
+  const names = out
+    .split('\n')
+    .map((l) => /(?:^|\/)records\/backlog\/([^/]+)\.json$/.exec(l.trim())?.[1])
+    .filter((x): x is string => x !== undefined);
+  return { names: [...new Set(names)], note };
+}
+
+/** records/backlog/*.json（名前順。並びは renderBacklog が決める） */
+export function loadBacklog(): BacklogItem[] {
+  return readdirSync(BACKLOG_DIR)
+    .filter((name) => name.endsWith('.json'))
+    .sort()
+    .map((name) => ({ ...readJson<BacklogFile>(`${BACKLOG_DIR}${name}`), name: name.slice(0, -'.json'.length) }));
+}
+
+/** 課題のファイルと雛形から作った plan/backlog.md の中身 */
+export function renderBacklogOfData(): string {
+  return renderBacklog(readFileSync(BACKLOG_TEMPLATE_PATH, 'utf8'), loadBacklog());
 }
 
 /** records/predictions/V-NNNN.json（番号順）。無ければ空 */

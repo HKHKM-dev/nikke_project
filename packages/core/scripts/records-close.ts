@@ -5,7 +5,7 @@
 // 確定の結論の根拠の観測値のうち compare の無いものに scope がある・「次に撮るもの」「分かったこと」が空でない）。撮る前の予測と読みの順は
 // 見ない（plan/design-investigation-review.md 1 節）。通れば --mark で状態を完了に書き換え、records:minimal（感度を計算し直し、records:check も回る）と
 // PR の題名の案と本文の骨組み（plan/design-workflow-simplification-5.md 2 節）を出す。CI と同じ確認（npm run ci）は --ci のときだけ回す（ふつうは PR の前の npm run pr:prep が回す。
-// plan/design-workflow-simplification-4.md 2 節。--no-ci は前の既定の名残で、何もしない）。backlog.md の更新と PR は人（エージェント）が行う。
+// plan/design-workflow-simplification-4.md 2 節。--no-ci は前の既定の名残で、何もしない）。課題のファイル（records/backlog/）の更新と PR は人（エージェント）が行う。
 import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
@@ -137,5 +137,5 @@ console.log(
   )}\n`,
 );
 console.log(
-  '残り: 設計書のある仕事なら、設計か実装が変わったときだけ設計書の経過に 1 行書く（ほかの所には書かない。AGENTS.md「文書の書き方」）。課題の状態が変わったら plan/backlog.md の行を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
+  '残り: 設計書のある仕事なら、設計か実装が変わったときだけ設計書の経過に 1 行書く（ほかの所には書かない。AGENTS.md「文書の書き方」）。課題の状態が変わったら課題のファイル（records/backlog/。plan/backlog.md は生成物）を直し（Stage の状態が変わったときだけ plan/roadmap.md）、commit して npm run pr:prep -- --push の後に PR を出す（AGENTS.md「コミット手順」）',
 );

@@ -1,6 +1,12 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git を呼ぶ部分（pr-prep.ts）と分けてテストする。
 import { idsInPaths, nextId } from '../../packages/core/src/records/drafts.ts';
 import { ID_DIGITS } from '../../packages/core/src/records/ids.ts';
+import {
+  backlogNameOfPath,
+  backlogNumber,
+  isIssueSection,
+  type BacklogFile,
+} from '../../packages/core/src/records/backlog.ts';
 
 /** ファイルを生成物とほかに分ける */
 export function splitGenerated(
@@ -50,6 +56,29 @@ export function collisions(
   return out;
 }
 
+/**
+ * ブランチで足した番号の課題（records/backlog/2-NN.json）のうち、main も足したもの。suggestion は同じ節の空いた番号（taken は
+ * ほかのブランチが足した課題の名前も含めた、避ける名前。plan/design-backlog-files.md 2.2 節）
+ */
+export function backlogCollisions(
+  branchAdded: readonly string[],
+  mainFiles: readonly string[],
+  taken: readonly string[],
+): { name: string; suggestion: string }[] {
+  const names = (paths: readonly string[]) => paths.flatMap((p) => backlogNameOfPath(p) ?? []);
+  const own = names(branchAdded);
+  const main = new Set(names(mainFiles));
+  const avoid = [...main, ...own, ...taken].flatMap((n) => backlogNumber(n) ?? []);
+  return own
+    .filter((name) => main.has(name) && backlogNumber(name) !== undefined)
+    .map((name) => {
+      const { section } = backlogNumber(name)!;
+      const n = Math.max(...avoid.filter((b) => b.section === section).map((b) => b.n)) + 1;
+      avoid.push({ section, n });
+      return { name, suggestion: `${section}-${n}` };
+    });
+}
+
 /** records/recordings/<id>.json の id（README などは除く） */
 function recordingIds(paths: readonly string[]): string[] {
   return paths
@@ -78,23 +107,22 @@ export function addedLines(diff: string): Map<string, Set<number>> {
 }
 
 /** 進み具合の書き写しを見るファイル（git の pathspec） */
-export const PROGRESS_PATHS = ['plan/backlog.md', 'plan/design-*.md'];
+export const PROGRESS_PATHS = ['plan/design-*.md'];
 
 /** 進み具合の書き写しの印（検証記録・結論の ID か「PR N を実装」） */
 const PROGRESS = new RegExp(`(?<![A-Za-z0-9_-])[CV]-${ID_DIGITS}(?![0-9A-Za-z_-])|PR ?\\d+ ?(?:を|は)?(?:実装|出し)`);
 
 /**
- * 進み具合を書き写した行（AGENTS.md「文書の書き方」: 進み具合は、その仕事の設計書の経過にだけ書く）。見るのは backlog.md 8 節、
- * 段の一覧の経過、設計書の冒頭の「状態」の行で、ブランチで足した行のうち検証記録・結論の ID か「PR N を実装」を含むもの
+ * 進み具合を書き写した行（AGENTS.md「文書の書き方」: 進み具合は、その仕事の設計書の経過にだけ書く）。見るのは段の一覧の経過と、
+ * 設計書の冒頭の「状態」の行で、ブランチで足した行のうち検証記録・結論の ID か「PR N を実装」を含むもの（8 節の課題は
+ * backlogProgressCopy）
  */
 export function progressCopies(path: string, text: string, added: ReadonlySet<number>): string[] {
   // 節は題名で見る（番号は節を消すと変わる）
   const watch: (line: string, heading: string) => boolean =
-    path === 'plan/backlog.md'
-      ? (_, heading) => heading.includes('課題（設計書のあるもの）')
-      : path === 'plan/design-skill-stages.md'
-        ? (line, heading) => line.startsWith('- 状態:') || heading === '## 経過'
-        : (line) => line.startsWith('- 状態:');
+    path === 'plan/design-skill-stages.md'
+      ? (line, heading) => line.startsWith('- 状態:') || heading === '## 経過'
+      : (line) => line.startsWith('- 状態:');
   const out: string[] = [];
   let heading = '';
   text.split('\n').forEach((line, i) => {
@@ -103,6 +131,21 @@ export function progressCopies(path: string, text: string, added: ReadonlySet<nu
       out.push(`${path}:${i + 1}: ${line.length > 80 ? `${line.slice(0, 80)}…` : line}`);
   });
   return out;
+}
+
+/**
+ * 8 節（8.2 節を含む）の課題のファイルに書き写した進み具合（plan/design-backlog-files.md 2.8 節）: ブランチの版の text が検証記録・
+ * 結論の ID か「PR N を実装」を含み、main の版（無ければ undefined）と違うもの
+ */
+export function backlogProgressCopy(
+  path: string,
+  branch: BacklogFile,
+  main: BacklogFile | undefined,
+): string | undefined {
+  const text = branch.text;
+  if (!isIssueSection(branch.section) || text === undefined || text === main?.text || !PROGRESS.test(text))
+    return undefined;
+  return `${path}: ${text.length > 80 ? `${text.slice(0, 80)}…` : text}`;
 }
 
 /**
