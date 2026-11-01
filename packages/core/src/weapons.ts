@@ -86,6 +86,22 @@ export type WeaponModel = {
    * 明けで引かない（windowEndShorterFrames。戦闘開始からの短さは srHideAimShorterFrames）
    */
   rlWindowEndShorterFrames: number;
+  /**
+   * 敵のジャンプの間（狙えない窓）のハイド中のリロードで、残弾が満ちるまでにリロードの秒（reloadChunkFrames）へ足すフレーム。
+   * ゲームで残弾が満ちるのは RELOADING のバーが満ちたとき（最終弾からリロードの秒 + 約 12f。C-0135）で、ふだんのリロードでは
+   * その 12f を込め終えた後の 1 発目の待ち（reloadFirstShotFrames）に入れてある。ハイド中のリロードは明けで取り消されるので、
+   * 込め終わりそのものを 12f 遅らせる（込め終えた後の 1 発目の待ちから同じだけ引き、ふだんの和は変えない）。射撃姿勢維持型は
+   * reloadChunkFrames に stanceReloadExtraFrames が入っているので、その差だけ足す。分割リロードには足さない（C-0817。
+   * plan/design-hide-reload.md 案 A）
+   */
+  hideReloadExtraFrames: number;
+  /**
+   * 入力が UP のチャージ武器が、前の発からハイド中のリロードを始めるまでのフレーム（窓の始まりより前にはしない）。窓の始まりに
+   * チャージの途中なら部分チャージで撃ち（C-0109）、その後の動きの後に RELOADING が出る（部分チャージの発から 18〜19f。C-0109 の
+   * 根拠の 0046-18、A2 の 0123-21）。窓の直前に撃っていれば、その発から数える（0224 のデルタ）。
+   * 押下チャージ型とチャージの無い武器は窓の始まりから（0815-13・0816-10）（C-0817。plan/design-hide-reload.md 案 A'）
+   */
+  hideReloadUpChargeLeadFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -98,6 +114,8 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   srHideAimShorterFrames: 1,
   stanceReloadExtraFrames: 11,
   rlWindowEndShorterFrames: 1,
+  hideReloadExtraFrames: 12,
+  hideReloadUpChargeLeadFrames: 19,
 };
 
 /**

@@ -824,5 +824,24 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "0077-47",
+    "recording": "0077",
+    "source": "V-0590",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "kind": "interval",
+    "unit": "f",
+    "value": [115.34, 110, 110.1, 109.99],
+    "description": "1〜4 回目の敵のジャンプの間の、I-DOLL・フラワー（RL・入力が UP・リロード 2 秒）のハイド中のリロードの RELOADING のバーの、長さ 0 に遡った点から消えたフレーム（取り消し）まで。どれも満ちる前（ふだんのリロードは 0 の点から満ちるまで約 129.4f）に取り消され、ジャンプの間にリロードを終えていない",
+    "method": {
+      "tool": "node tools/captures/reload.ts <動画> --mode fit（canceled の回）",
+      "note": "0 の点 → 消えたフレーム（動画）: f2741.66 → 2857、f4889 → 4999、f7219.9 → 7330、f9361.01 → 9471"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

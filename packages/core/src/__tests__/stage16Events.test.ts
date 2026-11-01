@@ -11,7 +11,7 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
 import { enemyEventsOf, expandEnemyEvents, parseEnemyPresets } from '../enemies.ts';
 import { enemyEventNotes, untargetableRanges } from '../frame/events.ts';
-import { hideShooter, initialShooter, stepShooter, unhideShooter } from '../frame/shooter.ts';
+import { hideShooter, initialShooter, partialChargeShot, stepShooter, unhideShooter } from '../frame/shooter.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
@@ -179,6 +179,69 @@ describe('射手（ハイドとリロード）', () => {
     expect(shotsWithWindow(sr, { start: 100, end: reloadEnd + 5 }, 400)[1]).toBe(usual);
     // 完了が窓の終わりの 40f 前: 明けから 70f
     expect(shotsWithWindow(sr, { start: 100, end: reloadEnd + 40 }, 400)[1]).toBe(reloadEnd + 40 + 70);
+  });
+
+  // C-0817（plan/design-hide-reload.md）: ハイド中のリロードは、バーが満ちる（リロードの秒 + 12f。C-0135）前に明けると取り消す。
+  // 入力が UP のチャージ武器は、窓に入って 19f 後から始める（C-0109）。窓はマガジンの途中（3 発目の 30f 後）から 118f
+  // 窓の始まりに部分チャージ（C-0109）→ ハイドの順（frame/firstPass.ts の手順 1 と同じ）
+  const firedWithPartial = (shot: ShotParams, window: FrameRange, frames: number): number[] => {
+    const state = initialShooter(shot);
+    const fired: number[] = [];
+    for (let f = 0; f < frames; f++) {
+      const blocked = window.start <= f && f < window.end;
+      if (f === window.start) {
+        if (partialChargeShot(state, shot) !== null) fired.push(f);
+        hideShooter(state, shot);
+      }
+      if (f === window.end) unhideShooter(state, shot, window.end - window.start);
+      if (stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, blocked)) fired.push(f);
+    }
+    return fired;
+  };
+  const remainingAfter = (shot: ShotParams, offset = 30): { before: number; after: number } => {
+    const usual = firedWithPartial(shot, { start: 1e9, end: 1e9 + 1 }, 2000);
+    const start = usual[2]! + offset;
+    const fired = firedWithPartial(shot, { start, end: start + 118 }, start + 2000);
+    const after = fired.filter((f) => f >= start + 118);
+    // 明けの後、リロード（窓の無い列の、いちばん短い間といちばん長い間の中間を超える間）までに撃った数
+    const gaps = usual.slice(1, 20).map((f, i) => f - usual[i]!);
+    const threshold = (Math.min(...gaps) + Math.max(...gaps)) / 2;
+    const reload = after.findIndex((f, i) => i > 0 && f - after[i - 1]! > threshold);
+    // 窓の始まりの部分チャージの発は、ジャンプの前に数える
+    return { before: fired.filter((f) => f <= start).length, after: reload };
+  };
+  const shotOf = (rid: number): ShotParams =>
+    (JSON.parse(readFileSync(new URL(`../../data/characters/${rid}.json`, import.meta.url), 'utf8')) as { shot: ShotParams }).shot;
+
+  it('C-0817: a 2 s reload does not finish in a 2 s window; the rest of the magazine is fired after it (Vesti: TU, DOWN_Charge)', () => {
+    // 0815・0816: マガジン 8 発のうち 4 発の後のジャンプで、明けの後に残りの 4 発を撃ってからリロード（0815-11・0816-08）
+    const { before, after } = remainingAfter(shotOf(94));
+    expect(before).toBe(3);
+    expect(after).toBe(8 - before);
+  });
+
+  it('C-0817: an UP-charge weapon starts the hide reload 19f after its last shot (the partial shot at the window start), so A2 does not finish', () => {
+    // 0123: 窓の始まりに部分チャージで撃ち、3 回とも明けの後に残りを撃ってからリロード（0123-19・0123-21）
+    // 窓は 3 発目と 4 発目の間の、4 発目の 20f 前（チャージの途中）から
+    const a2 = shotOf(811);
+    const usual = firedWithPartial(a2, { start: 1e9, end: 1e9 + 1 }, 2000);
+    const { before, after } = remainingAfter(a2, usual[3]! - usual[2]! - 20);
+    expect(before).toBe(4);
+    expect(after).toBe(6 - before);
+  });
+
+  it('C-0817: an UP-charge weapon that fired just before the window starts the hide reload earlier and can finish (Delta in 0224)', () => {
+    // デルタ（SR・1.5 秒）: 窓に入る 5f 前に撃つと（撃った後の動きの途中なので部分チャージは無い）、その 19f 後（窓の 14f 後）から
+    // 88 + 12f で、118f の窓の中で満ちる
+    const { before, after } = remainingAfter(shotOf(20), 5);
+    expect(before).toBe(3);
+    expect(after).toBe(6);
+  });
+
+  it('C-0817: a short reload still finishes in the window (reload 1.6 s + 12f < 118f; the magazine is full after it)', () => {
+    const shot: ShotParams = { ...shotOf(94), reloadTime: 1.6 };
+    const { after } = remainingAfter(shot);
+    expect(after).toBe(8);
   });
 
   it('does nothing when the magazine is full or already empty (the ordinary reload continues)', () => {
