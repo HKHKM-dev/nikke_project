@@ -310,12 +310,14 @@ header h1 {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-/* キャラのいないスロットの、ダメージと育成の欄（開かない） */
+/* キャラのいないスロットの、ダメージと育成の欄と、キャラのいない編成の詳細内訳（開かない） */
 .slot-damage-display[data-placeholder='true'],
-.slot-settings[data-placeholder='true'] {
+.slot-settings[data-placeholder='true'],
+.segments[data-placeholder='true'] {
   opacity: 0.45;
 }
-.slot-settings[data-placeholder='true'] > summary {
+.slot-settings[data-placeholder='true'] > summary,
+.segments[data-placeholder='true'] > summary {
   cursor: default;
 }
 .slot-settings {

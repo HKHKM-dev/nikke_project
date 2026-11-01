@@ -29,6 +29,20 @@ type Props = {
   detailed: boolean;
 };
 
+const DETAIL_SUMMARY = '詳細内訳（通常・バースト・スキル・DPS・タイムライン等）';
+const VERIFICATION_SUMMARY = '検証用の詳細';
+
+/** キャラのいない編成の、詳細の見出し（薄くして開かない） */
+function PlaceholderDetails({ summary }: { summary: string }) {
+  return (
+    <details className="segments" data-placeholder="true" aria-disabled="true">
+      <summary tabIndex={-1} onClick={(e) => e.preventDefault()}>
+        {summary}
+      </summary>
+    </details>
+  );
+}
+
 const STEP_LABEL = { Step1: 'I', Step2: 'II', Step3: 'III' } as const;
 
 /** 区間によって値が変わる項目の最小値（max: true で最大値）。持続バフがなければ 1 区間なので同じ値 */
@@ -81,8 +95,9 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
     )
     .join('・');
 
-  // 総ダメージは App.tsx の「編成ダメージ」の枠。ここは読み込み中の案内と詳細だけで、どちらも無ければ枠を出さない
-  if (loadingCount === 0 && skillsLoadingCount === 0 && !(detailed && filled.length > 0)) return null;
+  // 総ダメージは App.tsx の「編成ダメージ」の枠。ここは読み込み中の案内と詳細だけで、どちらも出さない設定なら枠を出さない。
+  // 編成にキャラがいなくても、詳細を出す設定なら枠と詳細内訳の見出しを薄くして出す（キャラを選んでも枠の並びが変わらない）
+  if (loadingCount === 0 && skillsLoadingCount === 0 && !detailed) return null;
 
   return (
     <fieldset className="panel result breakdown-panel">
@@ -90,9 +105,15 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
       {loadingCount > 0 && <p className="hint">読み込み中のスロット: {loadingCount}</p>}
       {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
 
+      {detailed && filled.length === 0 && (
+        <>
+          <PlaceholderDetails summary={DETAIL_SUMMARY} />
+          <PlaceholderDetails summary={VERIFICATION_SUMMARY} />
+        </>
+      )}
       {detailed && filled.length > 0 && (
         <details className="segments">
-          <summary>詳細内訳（通常・バースト・スキル・DPS・タイムライン等）</summary>
+          <summary>{DETAIL_SUMMARY}</summary>
           {schedule && summary && (
             <p className="hint burst-headline">
               フルバースト {summary.fullBursts} 回（稼働率 {formatPercent(summary.fullBurstUptime)}
@@ -192,56 +213,47 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
         </details>
       )}
 
-      {detailed && (
+      {detailed && filled.length > 0 && (
         <details className="segments verification-details">
           {/* 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 2026-10-27 までは、ここに計算モデル（calc / sim）の切り替えと「calc との差」があった */}
-          <summary>検証用の詳細</summary>
-          {filled.length > 0 && eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
-          {filled.length > 0 && landingsLabel !== '' && (
-            <p className="hint">的の着地点（撃つスロットに効く）: {landingsLabel} 秒</p>
-          )}
-          {filled.length > 0 && (
-            <>
-              <h4>攻撃力・トリガー数</h4>
-              <div className="table-scroll">
-                <table className="team-table">
-                  <thead>
-                    <tr>
-                      <th>スロット</th>
-                      <th>ニケ</th>
-                      <th>{attackLabel}</th>
-                      <th>攻撃力（バフ後）</th>
-                      <th>1 トリガー</th>
-                      <th>秒間トリガー</th>
-                      <th>総ダメージ</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filled.map((s) => (
-                      <tr key={s.index}>
-                        <td>{s.index + 1}</td>
-                        <td>{s.character.name.ja}</td>
-                        <td>{formatNumber(s.baseAttack)}</td>
-                        <td>{formatNumber(triggerRange(s, (t) => t.attack))}</td>
-                        <td>
-                          {formatNumber(triggerRange(s, (t) => t.perTrigger))}
-                          {s.segments.length > 1 && (
-                            <small className="sub">
-                              {' '}
-                              〜 {formatNumber(triggerRange(s, (t) => t.perTrigger, true))}
-                            </small>
-                          )}
-                        </td>
-                        <td>{formatNumber(s.cadence.triggersPerSecond, 3)}</td>
-                        <td>{formatNumber(s.totalDamage)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-          {filled.length > 0 && schedule && summary && (
+          <summary>{VERIFICATION_SUMMARY}</summary>
+          {eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}
+          {landingsLabel !== '' && <p className="hint">的の着地点（撃つスロットに効く）: {landingsLabel} 秒</p>}
+          <h4>攻撃力・トリガー数</h4>
+          <div className="table-scroll">
+            <table className="team-table">
+              <thead>
+                <tr>
+                  <th>スロット</th>
+                  <th>ニケ</th>
+                  <th>{attackLabel}</th>
+                  <th>攻撃力（バフ後）</th>
+                  <th>1 トリガー</th>
+                  <th>秒間トリガー</th>
+                  <th>総ダメージ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filled.map((s) => (
+                  <tr key={s.index}>
+                    <td>{s.index + 1}</td>
+                    <td>{s.character.name.ja}</td>
+                    <td>{formatNumber(s.baseAttack)}</td>
+                    <td>{formatNumber(triggerRange(s, (t) => t.attack))}</td>
+                    <td>
+                      {formatNumber(triggerRange(s, (t) => t.perTrigger))}
+                      {s.segments.length > 1 && (
+                        <small className="sub"> 〜 {formatNumber(triggerRange(s, (t) => t.perTrigger, true))}</small>
+                      )}
+                    </td>
+                    <td>{formatNumber(s.cadence.triggersPerSecond, 3)}</td>
+                    <td>{formatNumber(s.totalDamage)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {schedule && summary && (
             <details className="segments">
               <summary>
                 バーストの時刻表（{schedule.activations.length} 回の発動 —{' '}
