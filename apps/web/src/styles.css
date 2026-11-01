@@ -40,6 +40,13 @@ body {
   margin: 0;
   padding: 0 16px;
 }
+/* 枠は角を丸めない。入力欄・ボタンはブラウザの既定で丸いので、角を 0 にする（ラジオボタンとチェックボックスは除く） */
+button,
+select,
+textarea,
+input:not([type='radio'], [type='checkbox']) {
+  border-radius: 0;
+}
 .app {
   max-width: 1440px;
   margin: 0 auto;
@@ -71,7 +78,6 @@ header h1 {
 .popover-button {
   position: relative;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-  border-radius: 6px;
   background: var(--app-bg);
   color: inherit;
   cursor: pointer;
@@ -96,7 +102,6 @@ header h1 {
   box-sizing: border-box;
   padding: 10px 12px;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-  border-radius: 8px;
   background: var(--app-bg);
   color: var(--app-fg);
   box-shadow: 0 4px 16px color-mix(in srgb, var(--app-fg) 18%, transparent);
@@ -151,7 +156,6 @@ header h1 {
 /* 共通のパネルとフォーム */
 .panel {
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-  border-radius: 8px;
   padding: 10px 12px;
   margin: 0;
   min-width: 0;
@@ -286,7 +290,6 @@ header h1 {
   align-items: baseline;
   padding: 6px 8px;
   margin: 6px 0;
-  border-radius: 4px;
   background: color-mix(in srgb, currentColor 6%, transparent);
 }
 .slot-damage-label {
@@ -345,7 +348,6 @@ header h1 {
   align-items: baseline;
   padding: 8px 12px;
   background: color-mix(in srgb, currentColor 8%, transparent);
-  border-radius: 6px;
   margin-bottom: 8px;
 }
 .team-total-label {
@@ -382,7 +384,6 @@ header h1 {
 .badge {
   display: inline-block;
   padding: 0 5px;
-  border-radius: 4px;
   font-size: 0.72rem;
   font-weight: 600;
   margin-right: 4px;
@@ -651,7 +652,6 @@ header h1 {
 .skill-detail-item {
   padding: 6px 8px;
   border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-  border-radius: 6px;
 }
 .skill-detail-header {
   display: flex;
@@ -671,7 +671,6 @@ header h1 {
   opacity: 0.85;
   margin: 4px 0 0;
   padding: 5px 8px;
-  border-radius: 4px;
   background: color-mix(in srgb, currentColor 6%, transparent);
 }
 .dev-notes-details {
@@ -815,7 +814,6 @@ header h1 {
 .toggle-button {
   padding: 4px 12px;
   border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
-  border-radius: 6px;
   background: var(--app-bg);
   color: inherit;
   font: inherit;
