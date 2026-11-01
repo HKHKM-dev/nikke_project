@@ -196,6 +196,8 @@ header h1 {
 }
 .field.checkbox {
   grid-template-columns: auto minmax(0, 1fr);
+  /* 押して切り替わる範囲を、チェックボックスと文字の分だけにする（行の幅いっぱいにしない） */
+  width: fit-content;
 }
 
 /* 編成共通の設定 */
