@@ -66,7 +66,7 @@ import {
 } from '../skills/holders.ts';
 import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
 import type { CounterId } from '../skills/counters.ts';
-import { stateMatches, type NamedStateId } from '../skills/states.ts';
+import { stateMatches, statesMatching, type NamedStateId } from '../skills/states.ts';
 import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
 import {
   isCounterFullTrigger,
@@ -633,7 +633,8 @@ function damageConditionHolds(
   }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
   if (condition.enemyState !== undefined) {
-    const spans = enemySpans.get(condition.enemyState) ?? [];
+    // 家族の根なら、家族のどの状態でも当たる（1 パス目の skills/holders.ts の enemyStateAt と同じ stateMatches の規則）
+    const spans = statesMatching(condition.enemyState).flatMap((state) => enemySpans.get(state) ?? []);
     if (!spans.some((s) => s.start <= frame && frame < s.end)) return false;
   }
   return true;
