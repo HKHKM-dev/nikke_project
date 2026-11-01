@@ -380,27 +380,6 @@ header h1 {
 .damage-total .team-total-bar:last-child {
   margin-bottom: 0;
 }
-/* 合計ダメージの枠の、編成ごとの値 */
-.party-totals {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11em, 1fr));
-  gap: 2px 16px;
-  font-size: 0.85rem;
-}
-.party-totals li {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-.party-totals li[data-active='true'] {
-  font-weight: 600;
-}
-.party-total-val {
-  font-variant-numeric: tabular-nums;
-}
 .team-total-label {
   font-size: 1rem;
   font-weight: 600;
@@ -622,10 +601,38 @@ header h1 {
 .party-tabs + .slots {
   margin-top: 8px;
 }
-/* スマホの幅でも 5 つを 1 行に並べる */
-.party-tab {
+/* スマホの幅でも 5 つを 1 行に並べる。各ボタンの下に、その編成のダメージを小さく出す */
+.party-tab-cell {
   flex: 1 1 0;
   max-width: 6.5em;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.party-tab {
   padding-inline: 2px;
   white-space: nowrap;
+}
+.party-tab-total {
+  font-size: 0.72rem;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+.party-tab-total[data-active='true'] {
+  font-weight: 600;
+  opacity: 1;
+}
+/* 広い画面は桁を全部、狭い画面は「21.01億」の形 */
+.party-tab-total-compact {
+  display: none;
+}
+@media (max-width: 640px) {
+  .party-tab-total-full {
+    display: none;
+  }
+  .party-tab-total-compact {
+    display: inline;
+  }
 }
