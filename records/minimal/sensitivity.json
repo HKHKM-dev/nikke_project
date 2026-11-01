@@ -18011,153 +18011,9 @@
       "error": "minus: 58 回目の倍率ダメージが無い"
     },
     {
-      "observation": "0815-01",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "d96f97eb2ba7d190",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0815-02",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "5bfef9ae40a3990b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0815-03",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "af88ca075bd802c6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0815-04",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "c539576836dddf75",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0815-09",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "9e0f598a57892357",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0816-01",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "48c530cf7e16252a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0816-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "8d6da6dfe77c15c8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "c76f8f7892c071ef",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-07",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "0da3b9729a96ea95",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "00dc391da6db112c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-09",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "e86e9b6edcdc9c49",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-10",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "99bf11c1cf2f70fc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0817-11",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "80c387ff664a3a36",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "eaec58617e4efd2e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-09",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "11994d28278f118b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-10",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "494fa15ce70b5645",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-11",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "bdc890327a64a1dd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0818-12",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "3f753aac34d02467",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0819-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "491a732ccab9c005",
+      "key": "3642427d01ab48a0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18165,7 +18021,7 @@
     {
       "observation": "0819-06",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "491a732ccab9c005",
+      "key": "3642427d01ab48a0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18173,15 +18029,7 @@
     {
       "observation": "0819-06",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "491a732ccab9c005",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "491a732ccab9c005",
+      "key": "3642427d01ab48a0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18189,7 +18037,7 @@
     {
       "observation": "0819-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "519127e72e8f9048",
+      "key": "8a6ede7ee40d940d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18197,7 +18045,7 @@
     {
       "observation": "0819-09",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "519127e72e8f9048",
+      "key": "8a6ede7ee40d940d",
       "effective": true,
       "minus": -63660.3092989116,
       "plus": 0
@@ -18205,15 +18053,7 @@
     {
       "observation": "0819-09",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "519127e72e8f9048",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-09",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "519127e72e8f9048",
+      "key": "8a6ede7ee40d940d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18221,7 +18061,7 @@
     {
       "observation": "0819-10",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "17702e96d45746bb",
+      "key": "de40ae57c263bdae",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18229,7 +18069,7 @@
     {
       "observation": "0819-10",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "17702e96d45746bb",
+      "key": "de40ae57c263bdae",
       "effective": true,
       "minus": -15763.5952741144,
       "plus": 0
@@ -18237,15 +18077,7 @@
     {
       "observation": "0819-10",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "17702e96d45746bb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-10",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "17702e96d45746bb",
+      "key": "de40ae57c263bdae",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18253,7 +18085,7 @@
     {
       "observation": "0819-13",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "34b01a2956940742",
+      "key": "7c33baa648ecdbc3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18261,7 +18093,7 @@
     {
       "observation": "0819-13",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "34b01a2956940742",
+      "key": "7c33baa648ecdbc3",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18269,15 +18101,7 @@
     {
       "observation": "0819-13",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "34b01a2956940742",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0819-13",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "34b01a2956940742",
+      "key": "7c33baa648ecdbc3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18285,7 +18109,7 @@
     {
       "observation": "0820-09",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "028ea7baf0e1cb03",
+      "key": "42abc3d35a6cb6be",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18293,7 +18117,7 @@
     {
       "observation": "0820-09",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "028ea7baf0e1cb03",
+      "key": "42abc3d35a6cb6be",
       "effective": true,
       "minus": -63660.3092989116,
       "plus": 0
@@ -18301,15 +18125,7 @@
     {
       "observation": "0820-09",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "028ea7baf0e1cb03",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0820-09",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "028ea7baf0e1cb03",
+      "key": "42abc3d35a6cb6be",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18317,7 +18133,7 @@
     {
       "observation": "0820-10",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "95d28bf573083e74",
+      "key": "173420a4ac908ed9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18325,7 +18141,7 @@
     {
       "observation": "0820-10",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "95d28bf573083e74",
+      "key": "173420a4ac908ed9",
       "effective": true,
       "minus": -15763.5952741144,
       "plus": 0
@@ -18333,15 +18149,7 @@
     {
       "observation": "0820-10",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "95d28bf573083e74",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0820-10",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "95d28bf573083e74",
+      "key": "173420a4ac908ed9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18349,7 +18157,7 @@
     {
       "observation": "0820-11",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "7611ff84d45f6503",
+      "key": "f5033d2b7113a2a2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18357,7 +18165,7 @@
     {
       "observation": "0820-11",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
-      "key": "7611ff84d45f6503",
+      "key": "f5033d2b7113a2a2",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -18365,15 +18173,7 @@
     {
       "observation": "0820-11",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
-      "key": "7611ff84d45f6503",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0820-11",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "7611ff84d45f6503",
+      "key": "f5033d2b7113a2a2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19045,15 +18845,7 @@
     {
       "observation": "0836-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "79194dc9cc545214",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0836-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "79194dc9cc545214",
+      "key": "898f4d24d4db4e89",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19061,15 +18853,7 @@
     {
       "observation": "0836-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "03c9d23006a0f8b5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0836-07",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "03c9d23006a0f8b5",
+      "key": "ebf1f875440b72c8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19077,15 +18861,7 @@
     {
       "observation": "0836-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "b1e18cd795a6b326",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0836-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "b1e18cd795a6b326",
+      "key": "19a808c21fd1b8eb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19093,15 +18869,7 @@
     {
       "observation": "0837-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "73bab985b6473276",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0837-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "73bab985b6473276",
+      "key": "bef5ffc87f32505b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19109,15 +18877,7 @@
     {
       "observation": "0837-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "dff1668cd9594337",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0837-07",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "dff1668cd9594337",
+      "key": "e757608941e8c49a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19125,15 +18885,7 @@
     {
       "observation": "0837-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "b1318ad3ae7fa5e4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0837-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "b1318ad3ae7fa5e4",
+      "key": "e3d41d464db9fe79",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19141,15 +18893,7 @@
     {
       "observation": "0838-06",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "0b1a375952b7ac64",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0838-06",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "0b1a375952b7ac64",
+      "key": "33aa1814a6a84cf9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19157,15 +18901,7 @@
     {
       "observation": "0838-07",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "15edf100b6099f45",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0838-07",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "15edf100b6099f45",
+      "key": "17c132659edad2f8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19173,15 +18909,7 @@
     {
       "observation": "0838-08",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
-      "key": "52b095f2ee99fc65",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0838-08",
-      "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
-      "key": "52b095f2ee99fc65",
+      "key": "5f20f0ef64281f18",
       "effective": false,
       "minus": 0,
       "plus": null

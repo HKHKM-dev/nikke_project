@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 560・仮説 88・棄却 118・範囲外 2（計 768）
+件数: 確定 561・仮説 88・棄却 118・範囲外 2（計 769）
 
 ## 射撃（間隔・リロード・チャージ）
 
