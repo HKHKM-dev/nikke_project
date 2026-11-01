@@ -126,16 +126,8 @@ export function TeamSettingsForm({
       </fieldset>
       <fieldset className="panel common-growth">
         <legend>共通育成</legend>
-        {/* スペック固定とシンクロ LV はいつも 1 行で出し、リサイクルルームは折りたたむ */}
+        {/* シンクロ LV とスペック固定はいつも 1 行で出し、リサイクルルームは折りたたむ */}
         <div className="common-growth-row">
-          <label className="field checkbox">
-            <input
-              type="checkbox"
-              checked={fixedSpec}
-              onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
-            />
-            <span>スペック固定</span>
-          </label>
           <label className="field">
             <span>シンクロ LV</span>
             <IntInput
@@ -144,6 +136,14 @@ export function TeamSettingsForm({
               disabled={fixedSpec}
               onCommit={(lv) => dispatch({ type: 'setSynchroLevel', synchroLevel: lv })}
             />
+          </label>
+          <label className="field checkbox">
+            <input
+              type="checkbox"
+              checked={fixedSpec}
+              onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
+            />
+            <span>スペック固定</span>
           </label>
         </div>
         <details className="console">
