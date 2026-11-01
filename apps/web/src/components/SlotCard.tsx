@@ -12,7 +12,7 @@ import {
 } from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { SlotResultView } from '../calcView.ts';
-import { formatNumber } from '../format.ts';
+import { formatCompact, formatNumber } from '../format.ts';
 import type { SlotState, TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
@@ -149,8 +149,11 @@ export function SlotCard({
         data-placeholder={character === undefined}
       >
         <span className="slot-damage-label">ダメージ</span>
-        <span className="slot-damage-val">
-          {character && slotResult ? formatNumber(slotResult.result.totalDamage) : '—'}
+        <span
+          className="slot-damage-val"
+          title={character && slotResult ? formatNumber(slotResult.result.totalDamage) : undefined}
+        >
+          {character && slotResult ? formatCompact(slotResult.result.totalDamage) : '—'}
         </span>
       </div>
       {!(character && limits) && (

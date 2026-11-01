@@ -1,6 +1,6 @@
 // ダメージの合計の枠（編成ダメージ・合計ダメージ）。見出しと、名前と値の帯。計算中は値を薄くして印を出す
 import type { ReactNode } from 'react';
-import { formatNumber } from '../format.ts';
+import { formatCompact, formatNumber } from '../format.ts';
 
 type Props = {
   title: string;
@@ -25,7 +25,9 @@ export function DamageTotalPanel({ title, label, value, computing, children }: P
             </span>
           )}
         </span>
-        <span className="team-total-val">{value === null ? '—' : formatNumber(value)}</span>
+        <span className="team-total-val" title={value === null ? undefined : formatNumber(value)}>
+          {value === null ? '—' : formatCompact(value)}
+        </span>
       </div>
       {children}
     </fieldset>

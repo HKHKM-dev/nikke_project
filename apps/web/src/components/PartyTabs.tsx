@@ -1,5 +1,5 @@
 // ソロレイド用の編成 01〜05 の切り替えボタン（parties.ts）。スロットの並びの上に置き、各ボタンの下にその編成のダメージを小さく出す
-import { formatNumber } from '../format.ts';
+import { formatCompact, formatNumber } from '../format.ts';
 import { PARTY_COUNT, partyLabel, partyNumber } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 
@@ -10,8 +10,6 @@ type Props = {
   totals: readonly PartyTotal[];
 };
 
-const compact = new Intl.NumberFormat('ja-JP', { notation: 'compact', maximumFractionDigits: 2 });
-
 /** 値の欄の文言。値は短い表記（「21.01億」）で出し、全部の桁は title に出す */
 function totalText(p: PartyTotal | undefined): { text: string; title: string } {
   if (p === undefined || p.kind === 'empty') return { text: '—', title: '' };
@@ -19,7 +17,7 @@ function totalText(p: PartyTotal | undefined): { text: string; title: string } {
   if (p.total === null) {
     return p.error === undefined ? { text: '計算中', title: '計算中' } : { text: 'エラー', title: p.error };
   }
-  return { text: compact.format(p.total), title: formatNumber(p.total) };
+  return { text: formatCompact(p.total), title: formatNumber(p.total) };
 }
 
 export function PartyTabs({ active, onSelect, totals }: Props) {
