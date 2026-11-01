@@ -627,6 +627,21 @@ function reloadFramesAt(result: SimResult, ctx: MetricContext): number {
  * リロード 1 回分の端数つきの長さ + リロード明けの 1 発目まで。C-0148）。録画では、レシピ reload-segments の最終弾 → 完了と
  * 完了 → 次の増分の和（リロードごと）と比べる。バーの長さと違い、武器種ごとの切片（C-0135）を含まない形で比べられる
  */
+/**
+ * V-0621: window 回目（0 始まり）の狙えない窓の中で始めたハイド中のリロードの、始まり（RELOADING のバーの 0 の点）から窓の終わり（明け）
+ * までのフレーム数（C-0842・C-0844）。録画では、reload.ts --mode fit のバーの長さ 0 に遡った点から、バーが消えたフレーム（明けで取り消された
+ * 回）まで。窓の中にハイド中のリロードが無ければ比べられない
+ */
+function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
+  const index = Number(ctx.args.window);
+  const window = result.untargetable[index];
+  if (window === undefined) throw new Error(`${index} 回目の狙えない窓が無い`);
+  const starts = result.shots[slotIndexOf(ctx)]?.hideReloadStarts ?? [];
+  const start = starts.find((s) => s >= window.start - 1 && s < window.end);
+  if (start === undefined) throw new Error(`${index} 回目の狙えない窓の中にハイド中のリロードが無い`);
+  return window.end - start;
+}
+
 function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
   const slot = slotOf(result.slots, ctx);
   const input = slotOf(ctx.input.slots, ctx);
@@ -1417,6 +1432,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   ammoRefillAmounts: { args: ['slot', 'count'], sim: ammoRefillAmounts },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
+  hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
   buffWindowStartIntervalMean: { args: ['slot', 'skill', 'stat', 'count'], sim: buffWindowStartIntervalMean },

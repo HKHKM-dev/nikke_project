@@ -1,0 +1,93 @@
+[
+  {
+    "id": "0888-01",
+    "recording": "0888",
+    "source": "V-0621",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "value": [25.115, 27.115, 61.58, 63.58, 101.037, 103.037, 137.434, 139.434, 170.737, 172.737],
+    "description": "紅蓮：ブラックシャドウ単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
+      "note": "戦闘開始は動画 f820（最初の発の増分の、モデルの戦闘開始から 1 発目までの前）。フレームは戦闘開始から数え、1f = 0.017 秒。窓の終わりは1・2・5 回目は明けの後の 1 発目（動画 f2444・4589・11010）の 29f 前、3・4 回目はハイド中のリロードのバーが消えたフレーム（動画 f6881・9022）、始まりは終わりの 2 秒前"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0888-02",
+    "recording": "0888",
+    "source": "V-0621",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "unit": "f",
+    "value": 96.26,
+    "description": "3 回目の敵のジャンプの、紅蓮：ブラックシャドウのハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（部分チャージの発の回）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "0 の点 f6784.74 → 消えた 6881（動画）。モデルは録画の窓 `0888-01` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "use": "compare",
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0888-01"
+      }
+    }
+  },
+  {
+    "id": "0888-03",
+    "recording": "0888",
+    "source": "V-0621",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "unit": "f",
+    "value": 110.09,
+    "description": "4 回目の敵のジャンプの、紅蓮：ブラックシャドウのハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（姿勢が窓の始まりより前に終わっていて D から）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "0 の点 f8911.91 → 消えた 9022（動画）。モデルは録画の窓 `0888-01` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "use": "compare",
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0888-01"
+      }
+    }
+  }
+]

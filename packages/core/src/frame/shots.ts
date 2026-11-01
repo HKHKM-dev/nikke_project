@@ -36,6 +36,11 @@ export type ShotLog = {
    */
   reloadEnds?: number[];
   /**
+   * 狙えない窓（と holdFire の区間）の間のハイド中のリロードの始まり（RELOADING のバーの 0 の点）のフレーム（昇順。C-0842・C-0844）。
+   * 1 パス目が書く（frame/shooter.ts の hideShooter）。照合の指標 hideReloadToWindowEnd が読む。省略は無し
+   */
+  hideReloadStarts?: number[];
+  /**
    * 同 9.6 節: 使用武器の変更で持ち替えた武器で撃った射撃のフレーム（frames の部分列。回数トリガー weaponChangeShot の列）。
    * 1 パス目が書く。省略は無し
    */

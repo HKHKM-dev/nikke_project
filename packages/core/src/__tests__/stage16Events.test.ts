@@ -29,7 +29,7 @@ import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
 import { characterOf } from './teamHelpers.ts';
-import { battleSecondsToFrames, gameSecondsToFrame } from '../time.ts';
+import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
 
 const master = parseEnemyPresets(
   JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')) as unknown,
@@ -237,6 +237,36 @@ describe('射手（ハイドとリロード）', () => {
     expect(inWindow).toEqual([DEFAULT_WEAPON_MODEL.hideDetectFrames + 24]);
     expect(before).toBe(4);
     expect(after).toBe(6 - before);
+  });
+
+  it('logs where the hide reload starts: D for non-stance weapons, the end of the stance for fire-stance ones (C-0842・C-0844)', () => {
+    // 窓の始まりからの、ハイド中のリロードの始まり（RELOADING のバーの 0 の点）。射撃姿勢維持型でない武器は D、射撃姿勢維持型は
+    // D + H の部分チャージの発の ⌈S⌉ − H 後（= D + ⌈S⌉。レイヴン 49f・紅蓮：ブラックシャドウ 14f）
+    const D = DEFAULT_WEAPON_MODEL.hideDetectFrames;
+    const startOf = (rid: number, before: number): number => {
+      const shot = shotOf(rid);
+      const start = shotFramesUpTo(shot, 2000)[3]! - before;
+      const events: EnemyEvent[] = [
+        { kind: 'untargetable', start: framesToGameSeconds(start), end: framesToGameSeconds(start + 118) },
+      ];
+      const sim = runSimulation({
+        slots: [
+          {
+            character: characterOf(rid),
+            growth: { level: 1, grade: 0, core: 0 },
+            condition: { coreHitRate: 1, distanceBonus: false, fullCharge: true },
+          },
+        ],
+        enemy: { defence: 100, element: null, hasCore: true, events },
+        durationSeconds: 60,
+        burst: false,
+      });
+      const window = sim.untargetable[0]!;
+      return sim.shots[0]!.hideReloadStarts!.find((f) => f >= window.start - 1 && f < window.end)! - window.start;
+    };
+    expect(startOf(172, 30)).toBe(D);
+    expect(startOf(851, 40)).toBe(D + 49);
+    expect(startOf(225, 10)).toBe(D + 14);
   });
 
   it('values the partial shot of a long-hold fire-stance weapon at the window start, others at the shot (design 8)', () => {
