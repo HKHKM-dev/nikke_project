@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 69・効果 423（根拠あり 400）・notes 172（根拠あり 77）
+件数: キャラ 70・効果 436（根拠あり 412）・notes 173（根拠あり 77）
 
-notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足 13・間接 50
+notes の種類: 未対応 43・前提の外 32・計算に無関係 35・補足 13・間接 50
 
-スロット: supported 162・partial 14・unsupported 17・noEffect 32
+スロット: supported 164・partial 15・unsupported 17・noEffect 32
 
 ## 10 ラピ
 
@@ -946,6 +946,26 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
   - effects[0] timed・burstUse・attack: C-0785（確定）
   - effects[1] timed・burstUse・trueDamage: C-0785（確定）
   - effects[2] state・burstUse・specialModification（chargeSpeed・chargeDamage）: C-0786（確定）
+
+## 841 ジル
+
+- **skill1**: supported
+  - effects[0] timed・battleStart・normalAttackDamage: C-0823（確定）
+  - effects[1] timed・最大弾数のリロードが完了した時・normalAttackDamage: C-0823（確定）
+  - effects[2] timed・burstUse・trueDamage: C-0825（確定）
+- **skill2**: supported
+  - effects[0] state・battleStart・acidRound: C-0824（確定）
+  - effects[1] state・最大弾数のリロードが完了した時・acidRound: C-0824（確定）
+  - effects[2] dot・normalShot: C-0824（確定）
+  - effects[3] removeState・normalShot・acidRound: C-0824（確定）
+  - effects[4] timed・fullBurstStart・attack: C-0825（確定）
+- **burst**: partial
+  - effects[0] timed・burstUse・reloadSpeed: C-0825（確定）
+  - effects[1] ammoDecrease・burstUse: C-0825（確定）
+  - effects[2] timed・burstUse・hitRate: 根拠なし
+  - effects[3] timed・burstUse・attackDamage: C-0825（確定）
+  - effects[4] timed・burstUse・trueDamageConversion: C-0825（確定）
+  - notes[0] 未対応: リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は未対応（ほかのリロード速度▲▼を持つ味方のいる編成では、モデルは足し合わせる。plan/design-skill-stage17.md 論点 5）: 根拠なし
 
 ## 851 レイヴン
 
