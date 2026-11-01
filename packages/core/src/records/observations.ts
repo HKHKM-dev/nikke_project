@@ -175,7 +175,7 @@ export type CompareSetup = {
   /**
    * 2 段目の段 12 の PR 3（V-0541）: 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠）。モデルには撃たない枠が無いので、
    * 代わりに弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す
-   * （撃たない枠をモデルに足せば要らなくなる）。
+   * （撃たない枠をモデルに足せば要らなくなる。V-0605 の holdFire がその形で、戦闘の全体の区間にすれば置き換えられるが、移すのは後）。
    * 条件が auto（射撃場の表）のときは書かない。省略は全員撃つ
    */
   noFireSlots?: number[];
@@ -2272,8 +2272,13 @@ export function validateObservations(
       }
     }
     const size = recordings.get(o.recording)?.team.length;
-    for (const key of ['noBurstSlots', 'noFireSlots'] as const)
-      for (const s of c.setup[key] ?? [])
+    const slotLists = {
+      noBurstSlots: c.setup.noBurstSlots ?? [],
+      noFireSlots: c.setup.noFireSlots ?? [],
+      holdFire: (c.setup.holdFire ?? []).map((h) => h.slot),
+    };
+    for (const [key, list] of Object.entries(slotLists))
+      for (const s of list)
         if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
           errors.push(`${at}: ${key} の枠 ${String(s)} が編成の外`);
     if (c.setup.noBurstSlots !== undefined && c.setup.burst !== true)
@@ -2293,8 +2298,6 @@ export function validateObservations(
       }
     }
     for (const h of c.setup.holdFire ?? []) {
-      if (!Number.isInteger(h.slot) || h.slot < 1 || (size !== undefined && h.slot > size))
-        errors.push(`${at}: holdFire の枠 ${String(h.slot)} が編成の外`);
       const ref = observations.find((x) => x.id === h.frames);
       if (ref === undefined) errors.push(`${at}: holdFire の観測値 ${h.frames} が無い`);
       else {
@@ -2305,7 +2308,7 @@ export function validateObservations(
           errors.push(`${at}: holdFire の観測値 ${ref.id} の値は昇順の 0 以上の整数の、偶数個の配列`);
       }
     }
-    if (new Set((c.setup.holdFire ?? []).map((h) => h.slot)).size !== (c.setup.holdFire ?? []).length)
+    if (new Set(slotLists.holdFire).size !== slotLists.holdFire.length)
       errors.push(`${at}: holdFire の枠が重なっている`);
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
@@ -2322,11 +2325,7 @@ export function manualBurstsOf(value: number | number[] | undefined): number[] |
 
 /** V-0605: オート射撃を OFF にしていた時間（[OFF, ON, …] の昇順の 0 以上の整数で偶数個）を [start, end) の並びにする。形が違えば undefined */
 export function holdFireRangesOf(value: number | number[] | undefined): { start: number; end: number }[] | undefined {
-  const frames = manualBurstsOf(value);
-  if (frames === undefined || frames.length === 0 || frames.length % 2 !== 0) return undefined;
-  const ranges: { start: number; end: number }[] = [];
-  for (let i = 0; i < frames.length; i += 2) ranges.push({ start: frames[i]!, end: frames[i + 1]! });
-  return ranges;
+  return manualBurstsOf(value) === undefined ? undefined : jumpWindowsOf(value);
 }
 
 // ---- 照合ランナー ----

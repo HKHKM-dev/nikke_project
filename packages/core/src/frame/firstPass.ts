@@ -148,7 +148,8 @@ import type { ShotLog } from './shots.ts';
 import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
 import type { SkillSlot } from '../types.ts';
 import type { NamedStateId } from '../skills/states.ts';
-import type { ObstacleBreak, PelletHits } from '../team.ts';
+import type { HoldFire, ObstacleBreak, PelletHits } from '../team.ts';
+import { unionRanges } from './events.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -172,7 +173,7 @@ export type FirstPassOptions = {
    * V-0605: 枠ごとの、撃たずにハイドする時間（TeamInput.holdFire）。その枠だけ untargetable と同じに扱い（重なれば合わせた区間）、
    * 入るフレームに部分チャージの発は撃たない（狙えない窓の始まりと重なるフレームは撃つ）。ゲージとバーストの使用は止めない
    */
-  holdFire?: readonly { slotIndex: number; ranges: readonly FrameRange[] }[];
+  holdFire?: readonly HoldFire[];
   /**
    * Stage 18-C: 枠ごとの弾丸命中率の区間（条件が自動の枠。frame/landing.ts の hitRateSpansOf）。null・省略の枠は
    * TimelineSlot.hitRate の定数のまま。区間は昇順で [0, frames) を覆う
@@ -284,25 +285,25 @@ function refillRounds(maxAmmo: number, ratio: number): number {
   return AMMO_REFILL_ROUNDING === 'floor' ? Math.floor(raw + 1e-9) : Math.round(raw);
 }
 
+/** V-0605: 枠の撃たない区間。partial は区間の始まりが狙えない窓の始まりか（そのときだけ入るフレームに部分チャージの発を撃つ） */
+type SlotBlock = FrameRange & { partial: boolean };
+
 /**
- * V-0605: 枠の撃たない区間。狙えない窓に枠の holdFire を合わせ、重なる区間を 1 つにする。partial は合わせた区間の始まりが
- * 狙えない窓の始まりか（holdFire の無い枠は狙えない窓のまま）
+ * V-0605: 枠ごとの撃たない区間。狙えない窓に枠の holdFire を合わせて 1 つにする（同じフレームに始まれば狙えない窓の側）。
+ * holdFire の無い枠は、狙えない窓の列を共有する
  */
 function slotBlockRanges(
+  slotCount: number,
   untargetable: readonly FrameRange[],
-  holds: readonly { ranges: readonly FrameRange[] }[] | undefined,
-): { start: number; end: number; partial: boolean }[] {
-  const all = [
-    ...untargetable.map((r) => ({ start: r.start, end: r.end, partial: true })),
-    ...(holds ?? []).flatMap((h) => h.ranges.map((r) => ({ start: r.start, end: r.end, partial: false }))),
-  ].sort((a, b) => a.start - b.start || Number(b.partial) - Number(a.partial));
-  const merged: { start: number; end: number; partial: boolean }[] = [];
-  for (const r of all) {
-    const last = merged.at(-1);
-    if (last !== undefined && r.start < last.end) last.end = Math.max(last.end, r.end);
-    else merged.push({ ...r });
-  }
-  return merged;
+  holdFire: readonly HoldFire[] | undefined,
+): (readonly SlotBlock[])[] {
+  const shared: SlotBlock[] = untargetable.map((r) => ({ start: r.start, end: r.end, partial: true }));
+  return Array.from({ length: slotCount }, (_, i) => {
+    const holds = (holdFire ?? []).filter((h) => h.slotIndex === i).flatMap((h) => h.ranges);
+    if (holds.length === 0) return shared;
+    const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, partial: false }))];
+    return unionRanges(all.sort((a, b) => a.start - b.start || Number(b.partial) - Number(a.partial)));
+  });
 }
 
 export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassOptions): FirstPassResult {
@@ -983,18 +984,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
   /** Stage 16-B: いま見ている（または次に来る）狙えない窓の添字 */
   let nextBlock = 0;
-  // V-0605: 枠ごとの撃たない区間（狙えない窓と、その枠の holdFire を合わせたもの）と、いま見ている区間の添字。partial は区間の
-  // 始まりが狙えない窓の始まりか（そのときだけ部分チャージの発を撃つ）
-  const slotBlocks = slots.map((_, i) =>
-    slotBlockRanges(
-      untargetable,
-      options.holdFire?.filter((h) => h.slotIndex === i),
-    ),
-  );
+  // V-0605: 枠ごとの撃たない区間（狙えない窓と、その枠の holdFire を合わせたもの）と、いま見ている区間の添字
+  const slotBlocks = slotBlockRanges(slots.length, untargetable, options.holdFire);
   const slotNextBlock = slots.map(() => 0);
 
   for (let f = 0; f < frames; f++) {
-    // Stage 16-B: 狙えない窓。入るフレームで hide、明けるフレームで unhide（どちらも射手を進める前）
+    // Stage 16-B: 狙えない窓（バーストの制御が見る。射手のハイドは枠ごとの slotBlocks で、下の射手の中）
     while (nextBlock < untargetable.length && untargetable[nextBlock]!.end < f) nextBlock += 1;
     const block = untargetable[nextBlock];
     const blocked = block !== undefined && block.start <= f && f < block.end;
@@ -1029,9 +1024,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       }
       const state = params.weapon !== null ? changedShooters[i]! : shooters[i]!;
       const shot = params.weapon?.shot ?? slot.character.shot;
+      // 枠の撃たない区間。入るフレームで hide、明けるフレームで unhide（どちらも射手を進める前）
       const own = slotBlocks[i]!;
-      while (slotNextBlock[i]! < own.length && own[slotNextBlock[i]!]!.end < f) slotNextBlock[i]! += 1;
-      const ownBlock = own[slotNextBlock[i]!];
+      let k = slotNextBlock[i]!;
+      while (k < own.length && own[k]!.end < f) k += 1;
+      slotNextBlock[i] = k;
+      const ownBlock = own[k];
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
       const slotHideNow = slotBlocked && ownBlock.start === f;
       // Stage 22-B: 窓に入るフレームに、チャージの途中ならその時点のチャージで撃ってから、ハイドする（C-0109）
