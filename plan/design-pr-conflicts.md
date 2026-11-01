@@ -115,7 +115,8 @@ PR 100 本ごと（#801〜#873 は 73 本）。「生成物」は `GENERATED_PAT
   - GitHub Pages（`pages.yml`）は、main への push ではなく、main の CI が通った後（`workflow_run`）に main の先頭を配る。画面が読む `packages/core/data/skills/support.json` も生成物で、CI の push（`GITHUB_TOKEN`）では Pages が起きないため。CI が落ちた main は配らなくなる。
 - 確かめたこと: 使い捨てのブランチで結論の文を変えて生成物ごと commit し、`node tools/git/pr-prep.ts --no-ci` を回した。main を取り込み、生成物を main の版に戻す commit が足され、`origin/main...HEAD` の差分に生成物が無くなった。その上で `records:minimal` と `ci-generated.ts` を回し、変わった生成物が `plan/claims.md` だけと出て通った。`--commit` の push は GitHub の上でしか試せないので、この PR のマージの後の main の CI で確かめる。
 - 費用: PR の CI が作り直しの分（このクラウドの環境で約 1 分半）長くなる。
-- オーナーの設定: ruleset「automerge」の Bypass list に「GitHub Actions」を足す（この PR のマージの前に）。
+- push の身元: ruleset の Bypass list に GitHub Actions（`GITHUB_TOKEN`・github-actions[bot]）は出てこない（GitHub の仕様で、bypass に足せない）。そのため、書き込みのできるデプロイキーで push する。秘密鍵は secret の `GENERATED_DEPLOY_KEY` に置き、`ci-generated.ts --commit` が SSH で使う。CI の `GITHUB_TOKEN` は読むだけ（`contents: read`）に戻した。デプロイキーはこのリポジトリだけに効き、人のアカウントに結び付かない。
+- オーナーの設定（この PR のマージの前に）: 鍵の組を作り、公開鍵を Settings → Deploy keys に「Allow write access」つきで足し、秘密鍵を Settings → Secrets and variables → Actions に `GENERATED_DEPLOY_KEY` で足し、ruleset「automerge」の Bypass list に「Deploy keys」を足す。
 
 ## 経過
 
