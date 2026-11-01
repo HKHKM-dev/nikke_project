@@ -1,0 +1,47 @@
+{
+  "verification": "V-0596",
+  "note": "撮る前の予測。編成はリバーレリオ単騎（操作）。いまのモデル（押下チャージ型はマガジンの中に解放を足さない・リロードの後の 1 発目は足す。C-0222 の形）の値だけを持つ。解放を足す形・リロードの後にも足さない形・緩流（チャージ時間 1 秒の固定）は、コードや定義を切り替える仮説なので、このファイルの外（検証記録の「予測」の表）",
+  "team": [
+    {
+      "rid": 262,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1-R1",
+      "note": "いまのモデル: マガジンの中はチャージ 1.5 秒だけ、リロードを挟む間はリロード 2 秒 + チャージ 1.5 秒 + 解放"
+    }
+  ],
+  "targets": [
+    {
+      "id": "early-intervals",
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 0,
+        "to": 1900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "戦闘の始まりから 1 回目の的のジャンプの前まで"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "123864f74dab54d06dd88ed72249a68e68fb4a83",
+    "values": {
+      "H1-R1": {
+        "early-intervals": [89, 89, 89, 89, 89, 230, 89, 89, 89, 89, 89, 229, 89, 89, 89, 89, 89]
+      }
+    }
+  }
+}
