@@ -820,6 +820,8 @@
 | 0848 | `20261101-0848_cocoa-tia.mp4` | ココア（311、SR・灼熱・SSR） + ◎ティア（451、RL・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 0849 | `20261101-0849_jill.mp4` | ◎ジル（841、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 0850 | `20261101-0850_jill.mp4` | ◎ジル（841、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 0851 | `20261101-0851_liter-delta-jill.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ジル（841、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 0852 | `20261101-0852_liter-delta-jill.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ジル（841、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
