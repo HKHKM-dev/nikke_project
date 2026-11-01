@@ -4,7 +4,7 @@ import { partialGaugeRatio } from '../burst/dynamic.ts';
 import { runTeam } from './runTeam.ts';
 import { firstShotFrames } from '../cadence.ts';
 import { computeTriggerDamage, partialChargeTriggerDamage, type EnemyEvent, type EnemyInput } from '../damage.ts';
-import { initialShooter, partialChargeShot, stepShooter } from '../frame/shooter.ts';
+import { beginHide, initialShooter, partialChargeProgress, stepShooter } from '../frame/shooter.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { cycleShotFrames } from '../skills/cycles.ts';
@@ -35,7 +35,7 @@ function shooterAfter(shot: ShotParams, n: number) {
   return state;
 }
 
-describe('partialChargeShot（射手）', () => {
+describe('partialChargeProgress（射手）', () => {
   const shot = makeCharacter(SR).shot;
 
   it('fires with the charge progress (C + 1 − k) / C, where k is the wait until the next shot', () => {
@@ -44,28 +44,30 @@ describe('partialChargeShot（射手）', () => {
     expect(firstShotFrames(shot)).toBe(70);
     const state = shooterAfter(shot, 20);
     expect(state.wait).toBe(50);
-    expect(partialChargeShot(state, shot)).toBeCloseTo(10 / 59, 12);
-    expect(state.ammo).toBe(5);
+    expect(partialChargeProgress(state, shot)).toBeCloseTo(10 / 59, 12);
   });
 
   it('does not fire before the charge starts (during the aim motion) or while reloading', () => {
-    expect(partialChargeShot(shooterAfter(shot, 5), shot)).toBeNull();
+    expect(partialChargeProgress(shooterAfter(shot, 5), shot)).toBeLessThanOrEqual(0);
     const reloading = shooterAfter(shot, 0);
     reloading.phase = 'reloading';
-    expect(partialChargeShot(reloading, shot)).toBeNull();
+    expect(partialChargeProgress(reloading, shot)).toBeNull();
   });
 
   it('counts a shot that was due on this very frame as a full charge', () => {
     const state = shooterAfter(shot, 70);
     expect(state.wait).toBe(0);
-    expect(partialChargeShot(state, shot)).toBe(1);
+    expect(partialChargeProgress(state, shot)).toBe(1);
+    // 窓の始まりにチャージが満ちていれば、その場で撃つ（plan/design-hide-reload-detect.md 案 A）
+    expect(beginHide(state, shot)).toBe(1);
+    expect(state.ammo).toBe(5);
   });
 
   it('ignores DOWN_Charge and non-charge weapons (design-stage22.md 0.4 節)', () => {
     const down = makeCharacter({ ...SR, inputType: 'DOWN_Charge' }).shot;
-    expect(partialChargeShot(shooterAfter(down, 60), down)).toBeNull();
+    expect(partialChargeProgress(shooterAfter(down, 60), down)).toBeNull();
     const ar = makeCharacter({}).shot;
-    expect(partialChargeShot(shooterAfter(ar, 3), ar)).toBeNull();
+    expect(partialChargeProgress(shooterAfter(ar, 3), ar)).toBeNull();
   });
 });
 

@@ -94,13 +94,12 @@ export type ShooterState = {
 
 /** 窓の始まりの後の待ち（ShooterState.hidePending） */
 export type HidePending = {
-  /** D までの残りフレーム（0 になったフレームが D） */
-  detectIn: number;
-  /** 窓の始まりにチャージの途中だったか（D から H の後に部分チャージで撃つ） */
-  charging: boolean;
-  /** 部分チャージの発までの残りフレーム（D で決める。0 になったフレームに撃つ） */
-  fireIn?: number;
-  /** 窓の始まりのチャージの進み（H の長い射撃姿勢維持型の部分チャージの値。plan/design-hide-reload-detect.md 8 節） */
+  /** 残りフレーム（0 になったフレームに動く）。チャージの途中だった枠は D + H（部分チャージの発）、ほかの枠は D（ハイド） */
+  framesLeft: number;
+  /**
+   * 窓の始まりのチャージの進み（0 以上 1 未満）。0 より大きければチャージの途中だった枠。H の長い射撃姿勢維持型の部分チャージの値にも
+   * 使う（plan/design-hide-reload-detect.md 8 節）
+   */
   progressAtStart: number;
 };
 
@@ -371,7 +370,7 @@ export function resumeShooter(
 /**
  * チャージ武器の溜めの進み（フレーム）。このフレームの stepShooter の前に呼ぶ。次の発までの残りの待ちが k のとき C + H − k（C はチャージの
  * フレーム数、H は満ちてから撃つまで。射撃姿勢維持型は stance.holdFrames、ほかは 1）で、溜め始めのフレームで 0、満ちたフレームで C、
- * 撃つフレームで C + H。0 以下は構え解除・構えの間（溜めていない）。部分チャージの進み（partialChargeShot）は これ ÷ C。
+ * 撃つフレームで C + H。0 以下は構え解除・構えの間（溜めていない）。部分チャージの進み（partialChargeProgress）は これ ÷ C。
  * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: きっかけ { chargeTick }・{ chargeFull } の溜め始めと満ちた時も
  * この値で決める（frame/firstPass.ts）。マガジンの中の発は、チャージ時間が溜めの途中で変わっても前の発からの経過（chargeElapsed）で
  * 待ちを決め直すので、この値は 1 フレームに 1 ずつ進む（入力が UP の 1 秒チャージの SR なら、前の発の 22f 後が溜め始め）。
@@ -387,7 +386,12 @@ export function chargeProgressFrames(
 ): number {
   const wait =
     state.chargeElapsed === undefined ? state.wait : chargeWaitFrames(params, model, state.chargeElapsed + 1);
-  return params.chargeFrames + (params.stance?.holdFrames ?? 1) - wait;
+  return params.chargeFrames + holdFramesOf(params) - wait;
+}
+
+/** 満ちてから撃つまで（H）。射撃姿勢維持型は stance.holdFrames、ほかのチャージ武器は 1f（plan/design-fire-stance-cadence.md 3.2 節） */
+function holdFramesOf(params: FiringParams): number {
+  return params.stance?.holdFrames ?? 1;
 }
 
 /** チャージ武器の、前の発からの経過 elapsed のときの次の発までの待ち（そのフレームのチャージ時間で決める。C-0541・C-0542・C-0523） */
@@ -400,33 +404,19 @@ function chargeWaitFrames(
 }
 
 /**
- * Stage 22-B: 攻撃できる的がいなくなったフレーム（窓の始まり。hideShooter の前に呼ぶ）に、チャージの途中なら、
- * その時点のチャージで撃つ（部分チャージ。C-0840）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
+ * Stage 22-B: 部分チャージで撃つときのチャージの進み p（C-0840・C-0843）。撃てない枠は null。
  * - 次の発までの残りの待ちが k のとき、p = min(1, (C + H − k) / C)（C はチャージのフレーム数、H は満ちてから撃つまで。
  *   ほかのチャージ武器は H = 1 で、満ちた次のフレームで撃つ。射撃姿勢維持型は満ちてから H フレーム待つので、その間は p = 1。
- *   plan/design-fire-stance-cadence.md 3.2 節）。構え解除・構えの間（p ≤ 0）は撃たない。k = 0（このフレームに撃つはずだった）は p = 1。
- * - 押下チャージ型（DOWN_Charge）は撃たない（design-stage22.md 0.4 節。アニス：スター単騎の録画 0161 でも、的のジャンプの前に
- *   フルチャージでない発は無い。V-0134）。
- * - リロード中は撃たない。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目として撃つ
+ *   plan/design-fire-stance-cadence.md 3.2 節）。0 以下は構え解除・構えの間（撃たない）。k = 0（このフレームに撃つはずだった）は p = 1。
+ * - 押下チャージ型（DOWN_Charge）・チャージの無い武器は null（design-stage22.md 0.4 節。アニス：スター単騎の録画 0161 でも、
+ *   的のジャンプの前にフルチャージでない発は無い。V-0134）。
+ * - リロード中は null。込め終えて 1 発目を待っている（priming）枠は、そのマガジンの 1 発目の溜めの進み
  */
-export function partialChargeShot(
+export function partialChargeProgress(
   state: ShooterState,
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
-): number | null {
-  const progress = partialChargeProgress(state, shot, model, params);
-  if (progress === null || progress <= 0) return null;
-  firePartial(state, shot, model, params);
-  return progress;
-}
-
-/** 部分チャージで撃てる枠（入力が UP のチャージ武器でリロード中でない）の、このフレームのチャージの進み（0〜1）。ほかは null */
-function partialChargeProgress(
-  state: ShooterState,
-  shot: ShotParams,
-  model: WeaponModel,
-  params: FiringParams,
 ): number | null {
   if (!isChargeWeapon(shot) || shot.inputType === 'DOWN_Charge') return null;
   if (state.phase === 'reloading') return null;
@@ -434,10 +424,19 @@ function partialChargeProgress(
   return charge <= 0 ? 1 : Math.min(1, chargeProgressFrames(state, params, model) / charge);
 }
 
-/** 部分チャージの発を撃つ（込め終えて 1 発目を待っている枠は、そのマガジンの 1 発目として撃つ） */
-function firePartial(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): void {
+/**
+ * 窓の中で撃ってハイドする（込め終えて 1 発目を待っている枠は、そのマガジンの 1 発目として撃つ）。startedFramesAgo は hideShooter と同じ
+ */
+function fireAndHide(
+  state: ShooterState,
+  shot: ShotParams,
+  model: WeaponModel,
+  params: FiringParams,
+  startedFramesAgo = 0,
+): void {
   if (state.phase === 'priming') startMagazine(state);
   fire(state, shot, model, params);
+  hideShooter(state, shot, model, params, startedFramesAgo);
 }
 
 /**
@@ -491,25 +490,20 @@ export function beginHide(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number | null {
-  const progress = partialChargeProgress(state, shot, model, params);
-  if (progress !== null && progress >= 1) {
-    firePartial(state, shot, model, params);
-    hideShooter(state, shot, model, params);
+  const progress = partialChargeProgress(state, shot, model, params) ?? 0;
+  if (progress >= 1) {
+    fireAndHide(state, shot, model, params);
     return 1;
   }
   if (state.phase === 'reloading') return null;
-  state.hidePending = {
-    detectIn: model.hideDetectFrames,
-    charging: progress !== null && progress > 0,
-    progressAtStart: progress ?? 0,
-  };
-  if (model.hideDetectFrames <= 0) return stepHideNow(state, shot, model, params);
-  return null;
+  const hold = progress > 0 ? holdFramesOf(params) : 0;
+  state.hidePending = { framesLeft: model.hideDetectFrames + hold, progressAtStart: progress };
+  return settleHide(state, shot, model, params);
 }
 
 /**
  * 狙えない窓の始まりの次のフレームから、待ち（hidePending）がある間、毎フレーム stepShooter の前に呼ぶ。
- * D に、チャージの途中だった枠は部分チャージの発を H（満ちてから撃つまで）の後に予約し、ほかの枠はハイドする。
+ * 待ちが尽きたら、チャージの途中だった枠は（D の H 後に）部分チャージで撃ち、ほかの枠は（D に）ハイドする。待ちが無ければ何もしない。
  * 部分チャージの発の値は、H が 1f の武器は撃つフレームの進み、H の長い射撃姿勢維持型は窓の始まりの進み（設計書 8 節）。
  * 撃った後のリロードは、射撃姿勢維持型でない武器は D から（H 前から数える）、射撃姿勢維持型は姿勢の終わりから。
  * @returns このフレームに撃った部分チャージの発の進み（撃たなければ null）
@@ -520,33 +514,25 @@ export function stepHide(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number | null {
-  const pending = state.hidePending;
-  if (pending === undefined) return null;
-  if (pending.fireIn !== undefined) pending.fireIn -= 1;
-  else pending.detectIn -= 1;
-  return stepHideNow(state, shot, model, params);
+  if (state.hidePending === undefined) return null;
+  state.hidePending.framesLeft -= 1;
+  return settleHide(state, shot, model, params);
 }
 
-function stepHideNow(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): number | null {
-  const pending = state.hidePending!;
-  const hold = params.stance?.holdFrames ?? 1;
-  if (pending.fireIn === undefined) {
-    if (pending.detectIn > 0) return null;
-    if (!pending.charging) {
-      delete state.hidePending;
-      hideShooter(state, shot, model, params);
-      return null;
-    }
-    pending.fireIn = hold;
+/** 待ちが尽きたら、チャージの途中だった枠は部分チャージで撃ってハイドし、ほかの枠はハイドする */
+function settleHide(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): number | null {
+  const { framesLeft, progressAtStart } = state.hidePending!;
+  if (framesLeft > 0) return null;
+  delete state.hidePending;
+  if (progressAtStart <= 0) {
+    hideShooter(state, shot, model, params);
     return null;
   }
-  if (pending.fireIn > 0) return null;
-  delete state.hidePending;
   if (state.phase === 'reloading') return null;
   const progress =
-    hold > 1 ? Math.min(1, pending.progressAtStart) : (partialChargeProgress(state, shot, model, params) ?? 0);
-  firePartial(state, shot, model, params);
-  hideShooter(state, shot, model, params, params.stance === null ? hold : 0);
+    holdFramesOf(params) > 1 ? progressAtStart : (partialChargeProgress(state, shot, model, params) ?? 0);
+  // 射撃姿勢維持型でない武器のリロードは D から（撃った 1f 前から）数える
+  fireAndHide(state, shot, model, params, params.stance === null ? 1 : 0);
   return progress;
 }
 
