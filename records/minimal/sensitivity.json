@@ -60,7 +60,7 @@
     {
       "observation": "0018-01",
       "element": "エーテル skill2.effects[1]",
-      "key": "f014574d1fb04864",
+      "key": "d794b7a7e3400b04",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -68,7 +68,7 @@
     {
       "observation": "0018-01",
       "element": "ラピ burst.effects[1]",
-      "key": "f014574d1fb04864",
+      "key": "d794b7a7e3400b04",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -84,7 +84,7 @@
     {
       "observation": "0018-01",
       "element": "ラピ skill2.effects[1]",
-      "key": "f014574d1fb04864",
+      "key": "d794b7a7e3400b04",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -92,7 +92,7 @@
     {
       "observation": "0018-06",
       "element": "エーテル skill2.effects[1]",
-      "key": "bed0f44a9ca86fd5",
+      "key": "38c42f7ab9dfc6c1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -100,7 +100,7 @@
     {
       "observation": "0018-06",
       "element": "ラピ burst.effects[1]",
-      "key": "bed0f44a9ca86fd5",
+      "key": "38c42f7ab9dfc6c1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -116,7 +116,7 @@
     {
       "observation": "0018-06",
       "element": "ラピ skill2.effects[1]",
-      "key": "bed0f44a9ca86fd5",
+      "key": "38c42f7ab9dfc6c1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -124,7 +124,7 @@
     {
       "observation": "0018-12",
       "element": "エーテル skill2.effects[1]",
-      "key": "69f639b0cff710ef",
+      "key": "3fbf0144240e60f3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -132,7 +132,7 @@
     {
       "observation": "0018-12",
       "element": "ラピ burst.effects[1]",
-      "key": "69f639b0cff710ef",
+      "key": "3fbf0144240e60f3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -148,7 +148,7 @@
     {
       "observation": "0018-12",
       "element": "ラピ skill2.effects[1]",
-      "key": "69f639b0cff710ef",
+      "key": "3fbf0144240e60f3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -156,7 +156,7 @@
     {
       "observation": "0018-13",
       "element": "エーテル skill2.effects[1]",
-      "key": "926d0ad0fb44aee3",
+      "key": "b13f78245f241da7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -164,7 +164,7 @@
     {
       "observation": "0018-13",
       "element": "ラピ burst.effects[1]",
-      "key": "926d0ad0fb44aee3",
+      "key": "b13f78245f241da7",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -180,7 +180,7 @@
     {
       "observation": "0018-13",
       "element": "ラピ skill2.effects[1]",
-      "key": "926d0ad0fb44aee3",
+      "key": "b13f78245f241da7",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -188,7 +188,7 @@
     {
       "observation": "0018-14",
       "element": "エーテル skill2.effects[1]",
-      "key": "ca5747f542d87cc2",
+      "key": "31f6acbf4e72c8aa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -196,7 +196,7 @@
     {
       "observation": "0018-14",
       "element": "ラピ burst.effects[1]",
-      "key": "ca5747f542d87cc2",
+      "key": "31f6acbf4e72c8aa",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -212,7 +212,7 @@
     {
       "observation": "0018-14",
       "element": "ラピ skill2.effects[1]",
-      "key": "ca5747f542d87cc2",
+      "key": "31f6acbf4e72c8aa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -220,7 +220,7 @@
     {
       "observation": "0018-15",
       "element": "エーテル skill2.effects[1]",
-      "key": "d3c2920a5bf679b1",
+      "key": "8464ecbaadb2aa1d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -228,7 +228,7 @@
     {
       "observation": "0018-15",
       "element": "ラピ burst.effects[1]",
-      "key": "d3c2920a5bf679b1",
+      "key": "8464ecbaadb2aa1d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -244,7 +244,7 @@
     {
       "observation": "0018-15",
       "element": "ラピ skill2.effects[1]",
-      "key": "d3c2920a5bf679b1",
+      "key": "8464ecbaadb2aa1d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -252,7 +252,7 @@
     {
       "observation": "0018-16",
       "element": "エーテル skill2.effects[1]",
-      "key": "00ece2d7f46cba50",
+      "key": "53cce04527792120",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -260,7 +260,7 @@
     {
       "observation": "0018-16",
       "element": "ラピ burst.effects[1]",
-      "key": "00ece2d7f46cba50",
+      "key": "53cce04527792120",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -276,7 +276,7 @@
     {
       "observation": "0018-16",
       "element": "ラピ skill2.effects[1]",
-      "key": "00ece2d7f46cba50",
+      "key": "53cce04527792120",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -284,7 +284,7 @@
     {
       "observation": "0018-17",
       "element": "エーテル skill2.effects[1]",
-      "key": "f7e47af42089b127",
+      "key": "97f065a0365a014b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -292,7 +292,7 @@
     {
       "observation": "0018-17",
       "element": "ラピ burst.effects[1]",
-      "key": "f7e47af42089b127",
+      "key": "97f065a0365a014b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -308,7 +308,7 @@
     {
       "observation": "0018-17",
       "element": "ラピ skill2.effects[1]",
-      "key": "f7e47af42089b127",
+      "key": "97f065a0365a014b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -316,7 +316,7 @@
     {
       "observation": "0018-21",
       "element": "エーテル skill2.effects[1]",
-      "key": "131875907479bee5",
+      "key": "d591be640b97f971",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -324,7 +324,7 @@
     {
       "observation": "0018-21",
       "element": "ラピ burst.effects[1]",
-      "key": "131875907479bee5",
+      "key": "d591be640b97f971",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -340,7 +340,7 @@
     {
       "observation": "0018-21",
       "element": "ラピ skill2.effects[1]",
-      "key": "131875907479bee5",
+      "key": "d591be640b97f971",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -348,7 +348,7 @@
     {
       "observation": "0019-01",
       "element": "エーテル skill2.effects[1]",
-      "key": "d3d0f81d0ec52af0",
+      "key": "fa9b76651d454094",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -356,7 +356,7 @@
     {
       "observation": "0019-01",
       "element": "ノワール burst.effects[1]",
-      "key": "d3d0f81d0ec52af0",
+      "key": "fa9b76651d454094",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -364,7 +364,7 @@
     {
       "observation": "0019-06",
       "element": "エーテル skill2.effects[1]",
-      "key": "fbc8f0da2f519e29",
+      "key": "fb718e0ca9b50959",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -372,7 +372,7 @@
     {
       "observation": "0019-06",
       "element": "ノワール burst.effects[1]",
-      "key": "fbc8f0da2f519e29",
+      "key": "fb718e0ca9b50959",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -380,7 +380,7 @@
     {
       "observation": "0019-10",
       "element": "エーテル skill2.effects[1]",
-      "key": "5b8904f6adb74031",
+      "key": "be2dc20012a3d621",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -388,7 +388,7 @@
     {
       "observation": "0019-10",
       "element": "ノワール burst.effects[1]",
-      "key": "5b8904f6adb74031",
+      "key": "be2dc20012a3d621",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -396,7 +396,7 @@
     {
       "observation": "0019-17",
       "element": "エーテル skill2.effects[1]",
-      "key": "54776dcc9cb681a9",
+      "key": "a62d4cd20a25e6d9",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -404,7 +404,7 @@
     {
       "observation": "0019-17",
       "element": "ノワール burst.effects[1]",
-      "key": "54776dcc9cb681a9",
+      "key": "a62d4cd20a25e6d9",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -412,7 +412,7 @@
     {
       "observation": "0019-19",
       "element": "エーテル skill2.effects[1]",
-      "key": "81caa5ed7f1fdd5a",
+      "key": "1fd603759f38e5a6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -420,7 +420,7 @@
     {
       "observation": "0019-19",
       "element": "ノワール burst.effects[1]",
-      "key": "81caa5ed7f1fdd5a",
+      "key": "1fd603759f38e5a6",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -428,7 +428,7 @@
     {
       "observation": "0019-20",
       "element": "エーテル skill2.effects[1]",
-      "key": "d53492a6f31fb76b",
+      "key": "f8f631b0ffce6d23",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -436,7 +436,7 @@
     {
       "observation": "0019-20",
       "element": "ノワール burst.effects[1]",
-      "key": "d53492a6f31fb76b",
+      "key": "f8f631b0ffce6d23",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -444,7 +444,7 @@
     {
       "observation": "0019-24",
       "element": "エーテル skill2.effects[1]",
-      "key": "d2d9a6e0830014b3",
+      "key": "61c3af4ec8a8756b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -452,7 +452,7 @@
     {
       "observation": "0019-24",
       "element": "ノワール burst.effects[1]",
-      "key": "d2d9a6e0830014b3",
+      "key": "61c3af4ec8a8756b",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -460,7 +460,7 @@
     {
       "observation": "0020-01",
       "element": "エーテル skill2.effects[1]",
-      "key": "acb59083116a3e8c",
+      "key": "7ad313431b8569c0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -468,7 +468,7 @@
     {
       "observation": "0020-01",
       "element": "マナ burst.effects[0]",
-      "key": "acb59083116a3e8c",
+      "key": "7ad313431b8569c0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -476,7 +476,7 @@
     {
       "observation": "0020-01",
       "element": "マナ burst.effects[1]",
-      "key": "acb59083116a3e8c",
+      "key": "7ad313431b8569c0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -484,7 +484,7 @@
     {
       "observation": "0020-04",
       "element": "エーテル skill2.effects[1]",
-      "key": "01a4e664bfb499cd",
+      "key": "03e3a7ee8b8be2bd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -492,7 +492,7 @@
     {
       "observation": "0020-04",
       "element": "マナ burst.effects[0]",
-      "key": "01a4e664bfb499cd",
+      "key": "03e3a7ee8b8be2bd",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -500,7 +500,7 @@
     {
       "observation": "0020-04",
       "element": "マナ burst.effects[1]",
-      "key": "01a4e664bfb499cd",
+      "key": "03e3a7ee8b8be2bd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -508,7 +508,7 @@
     {
       "observation": "0020-08",
       "element": "エーテル skill2.effects[1]",
-      "key": "7a854d4816dee50f",
+      "key": "f5f2775a750f8847",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -516,7 +516,7 @@
     {
       "observation": "0020-08",
       "element": "マナ burst.effects[0]",
-      "key": "7a854d4816dee50f",
+      "key": "f5f2775a750f8847",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -524,7 +524,7 @@
     {
       "observation": "0020-08",
       "element": "マナ burst.effects[1]",
-      "key": "7a854d4816dee50f",
+      "key": "f5f2775a750f8847",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -532,7 +532,7 @@
     {
       "observation": "0020-09",
       "element": "エーテル skill2.effects[1]",
-      "key": "d997ec593b81d7ce",
+      "key": "5550b6459d753e8a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -540,7 +540,7 @@
     {
       "observation": "0020-09",
       "element": "マナ burst.effects[0]",
-      "key": "d997ec593b81d7ce",
+      "key": "5550b6459d753e8a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -548,7 +548,7 @@
     {
       "observation": "0020-09",
       "element": "マナ burst.effects[1]",
-      "key": "d997ec593b81d7ce",
+      "key": "5550b6459d753e8a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -556,7 +556,7 @@
     {
       "observation": "0020-10",
       "element": "エーテル skill2.effects[1]",
-      "key": "854bc432216acbad",
+      "key": "7c8db428e23e859d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -564,7 +564,7 @@
     {
       "observation": "0020-10",
       "element": "マナ burst.effects[0]",
-      "key": "854bc432216acbad",
+      "key": "7c8db428e23e859d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -572,7 +572,7 @@
     {
       "observation": "0020-10",
       "element": "マナ burst.effects[1]",
-      "key": "854bc432216acbad",
+      "key": "7c8db428e23e859d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -580,7 +580,7 @@
     {
       "observation": "0020-11",
       "element": "エーテル skill2.effects[1]",
-      "key": "f674ba73bd1bba4c",
+      "key": "1635b5f358b8b680",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -588,7 +588,7 @@
     {
       "observation": "0020-11",
       "element": "マナ burst.effects[0]",
-      "key": "f674ba73bd1bba4c",
+      "key": "1635b5f358b8b680",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -596,7 +596,7 @@
     {
       "observation": "0020-11",
       "element": "マナ burst.effects[1]",
-      "key": "f674ba73bd1bba4c",
+      "key": "1635b5f358b8b680",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -604,7 +604,7 @@
     {
       "observation": "0020-12",
       "element": "エーテル skill2.effects[1]",
-      "key": "d5203dccbc6c1e3b",
+      "key": "1ba6d46615058023",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -612,7 +612,7 @@
     {
       "observation": "0020-12",
       "element": "マナ burst.effects[0]",
-      "key": "d5203dccbc6c1e3b",
+      "key": "1ba6d46615058023",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -620,7 +620,7 @@
     {
       "observation": "0020-12",
       "element": "マナ burst.effects[1]",
-      "key": "d5203dccbc6c1e3b",
+      "key": "1ba6d46615058023",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -628,7 +628,7 @@
     {
       "observation": "0020-14",
       "element": "エーテル skill2.effects[1]",
-      "key": "196967767a8a5045",
+      "key": "0c2c79d40cbfdb55",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -636,7 +636,7 @@
     {
       "observation": "0020-14",
       "element": "マナ burst.effects[0]",
-      "key": "196967767a8a5045",
+      "key": "0c2c79d40cbfdb55",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -644,7 +644,7 @@
     {
       "observation": "0020-14",
       "element": "マナ burst.effects[1]",
-      "key": "196967767a8a5045",
+      "key": "0c2c79d40cbfdb55",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -652,7 +652,7 @@
     {
       "observation": "0020-15",
       "element": "エーテル skill2.effects[1]",
-      "key": "196967767a8a5045",
+      "key": "0c2c79d40cbfdb55",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -660,7 +660,7 @@
     {
       "observation": "0020-15",
       "element": "マナ burst.effects[0]",
-      "key": "196967767a8a5045",
+      "key": "0c2c79d40cbfdb55",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -668,7 +668,7 @@
     {
       "observation": "0020-15",
       "element": "マナ burst.effects[1]",
-      "key": "196967767a8a5045",
+      "key": "0c2c79d40cbfdb55",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -676,7 +676,7 @@
     {
       "observation": "0021-01",
       "element": "エーテル skill2.effects[1]",
-      "key": "1fc823a772afa602",
+      "key": "0355bddf3a596d6e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -684,7 +684,7 @@
     {
       "observation": "0021-01",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "1fc823a772afa602",
+      "key": "0355bddf3a596d6e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -700,7 +700,7 @@
     {
       "observation": "0021-04",
       "element": "エーテル skill2.effects[1]",
-      "key": "b2d493a21da06b4f",
+      "key": "920f6d982d7d5697",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -708,7 +708,7 @@
     {
       "observation": "0021-04",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "b2d493a21da06b4f",
+      "key": "920f6d982d7d5697",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -724,7 +724,7 @@
     {
       "observation": "0021-17",
       "element": "エーテル skill2.effects[1]",
-      "key": "356e00049868356d",
+      "key": "04bb8bee00fbf8bd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -732,7 +732,7 @@
     {
       "observation": "0021-17",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "356e00049868356d",
+      "key": "04bb8bee00fbf8bd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -748,7 +748,7 @@
     {
       "observation": "0021-21",
       "element": "エーテル skill2.effects[1]",
-      "key": "010193e81c9d093f",
+      "key": "8e03560a8f5b3727",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -756,7 +756,7 @@
     {
       "observation": "0021-21",
       "element": "クイーン（真） skill2.effects[2]",
-      "key": "010193e81c9d093f",
+      "key": "8e03560a8f5b3727",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -19390,6 +19390,174 @@
       "observation": "0844-15",
       "element": "ティア skill2.effects[1]",
       "key": "7c3314134d6cb5d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0853-04",
+      "element": "エーテル skill2.effects[1]",
+      "key": "34dae5e2613824b9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0853-05",
+      "element": "エーテル skill2.effects[1]",
+      "key": "82931f0a8c580083",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0853-07",
+      "element": "エーテル skill2.effects[1]",
+      "key": "4fa664470c5894e4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0854-04",
+      "element": "エーテル skill2.effects[1]",
+      "key": "655dfe326c2b6c87",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0854-05",
+      "element": "エーテル skill2.effects[1]",
+      "key": "ed412a9a1b306da5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-10",
+      "element": "エーテル skill2.effects[1]",
+      "key": "4084390e4fe4b963",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-10",
+      "element": "ラピ burst.effects[1]",
+      "key": "4084390e4fe4b963",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 5],
+          "end": [0, 5]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0855-10",
+      "element": "ラピ skill2.effects[1]",
+      "key": "4084390e4fe4b963",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-11",
+      "element": "エーテル skill2.effects[1]",
+      "key": "c39128ca3f97f411",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-11",
+      "element": "ラピ burst.effects[1]",
+      "key": "c39128ca3f97f411",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 5],
+          "end": [0, 5]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0855-11",
+      "element": "ラピ skill2.effects[1]",
+      "key": "c39128ca3f97f411",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-12",
+      "element": "エーテル skill2.effects[1]",
+      "key": "d13e311168198858",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-12",
+      "element": "ラピ burst.effects[1]",
+      "key": "d13e311168198858",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 5],
+          "end": [0, 5]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0855-12",
+      "element": "ラピ skill2.effects[1]",
+      "key": "d13e311168198858",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-13",
+      "element": "エーテル skill2.effects[1]",
+      "key": "42ff8b17472b3ade",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0855-13",
+      "element": "ラピ burst.effects[1]",
+      "key": "42ff8b17472b3ade",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 5],
+          "end": [0, 5]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0855-13",
+      "element": "ラピ skill2.effects[1]",
+      "key": "42ff8b17472b3ade",
       "effective": false,
       "minus": 0,
       "plus": null
