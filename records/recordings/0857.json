@@ -1,0 +1,35 @@
+{
+  "id": "0857",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0857_sg_privaty-unkind-maid_manual-near-2-5_fixed-off.mp4",
+  "original": "2026-11-01_13-23-44.mp4",
+  "durationSec": 199.8,
+  "frames": 11986,
+  "fps": 60,
+  "sizeMB": 240.7,
+  "sha256": "940c07042a1f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "buildSnapshot": "2026-10-29",
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "単騎・手動（V-0603 の撮り方 2）。2 区間目と 5 区間目（2 回目の近）だけを撃つ計画",
+  "backup": {
+    "at": "2026-11-01T13:29+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

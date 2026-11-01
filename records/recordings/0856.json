@@ -1,0 +1,35 @@
+{
+  "id": "0856",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0856_sg_privaty-unkind-maid_manual-near-container_fixed-off.mp4",
+  "original": "2026-11-01_13-22-19.mp4",
+  "durationSec": 74.8,
+  "frames": 4486,
+  "fps": 60,
+  "sizeMB": 90.3,
+  "sha256": "0f7267a0722d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": false,
+  "buildSnapshot": "2026-10-29",
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "単騎・手動（V-0603 の撮り方 1）。1 区間目は撃たず、2 区間目（1 回目の近）を撃ち、1 回目のリロードの後にコンテナを撃つ計画。2 回目のジャンプの後で止めた",
+  "backup": {
+    "at": "2026-11-01T13:29+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
