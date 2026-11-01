@@ -42,12 +42,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -77,12 +73,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -112,12 +104,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -147,12 +135,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -182,12 +166,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -217,12 +197,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -252,12 +228,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -287,12 +259,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -322,12 +290,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -357,12 +321,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -393,12 +353,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -429,12 +385,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -465,12 +417,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -501,12 +449,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -537,12 +481,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -573,12 +513,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -609,12 +545,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -645,12 +577,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -681,12 +609,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -717,12 +641,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -752,12 +672,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
@@ -788,12 +704,8 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "noFireSlots": [
-          3
-        ],
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
         "dropEffects": [
           {
             "rid": 500,
