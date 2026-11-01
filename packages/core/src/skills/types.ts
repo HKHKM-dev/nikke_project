@@ -529,7 +529,7 @@ export type ShotCountTrigger = {
    * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 「〜した時、p% の確率で」の p（%。0 より大きく 100 以下の即値）。
    * 1 発ごとに確率 p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付く。モデルは期待値で持ち、
    * 窓の値を「付いている確率 × 値」にする（skills/chance.ts）。count は normalShot か normalHit、timed にだけ書ける。
-   * every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方
+   * every・everyRef・stacksRef・during とは組み合わせない。chanceRef とどちらか片方。書ける stat の制限は validateChanceTimed
    */
   chance?: number;
   /** 確率（%）の description_value_NN */
@@ -3236,6 +3236,14 @@ function validateChanceTimed(effect: TimedEffect, path: string): void {
   const stat = effect.stat;
   if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat)) {
     fail(`${path}.stat`, `a chance trigger is not supported for "${stat}" (it needs a value that adds up linearly)`);
+  }
+  // T4 の▼は、件の始まりごとに走っている CT を縮める（frame/firstPass.ts の burstCooldownStartedAt）。期待値の窓は機会の始まりと終わりで
+  // 小片に割る（skills/chance.ts）ので、小片の始まりのたびに縮め直してしまう
+  if (stat === 'burstCooldown') {
+    fail(
+      `${path}.stat`,
+      'a chance trigger is not supported for "burstCooldown" (each piece of the expected window would shorten the running cooldown again)',
+    );
   }
   if (effect.target === 'topAttack') fail(`${path}.target`, 'a chance trigger cannot target "topAttack"');
   const forbidden: [unknown, string][] = [
