@@ -37,7 +37,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "V-0601 撮り方 D2。リター（1 枠目・AI）・デルタ（2 枠目・AI）・ジル（3 枠目・操作）。オート射撃 ON・オートバースト ON",
   "backup": {
     "at": "2026-11-01T11:15+09:00",
     "via": "cloud-move",

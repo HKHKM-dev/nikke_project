@@ -31,7 +31,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "V-0598 撮り方 A1。ティア（1 枠目・AI）・ナガ（2 枠目・操作）。オート射撃 ON・オートバースト ON",
   "backup": {
     "at": "2026-11-01T10:47+09:00",
     "via": "cloud-move",

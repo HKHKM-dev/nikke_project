@@ -31,7 +31,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "V-0599 撮り方 B1。リター（1 枠目・AI）・ティア（2 枠目・操作）。オート射撃 ON・オートバースト ON",
   "backup": {
     "at": "2026-11-01T10:54+09:00",
     "via": "cloud-move",

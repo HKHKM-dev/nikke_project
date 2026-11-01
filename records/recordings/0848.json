@@ -31,7 +31,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "",
+  "conditionNote": "V-0600 撮り方 C1。ココア（1 枠目・AI）・ティア（2 枠目・操作）。オート射撃 ON・オートバースト ON",
   "backup": {
     "at": "2026-11-01T11:01+09:00",
     "via": "cloud-move",
