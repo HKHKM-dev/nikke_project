@@ -25,7 +25,10 @@
               "ref": 1
             }
           ],
-          "claims": ["C-0804"]
+          "claims": [
+            "C-0804",
+            "C-0818"
+          ]
         },
         {
           "kind": "removeState",
@@ -33,7 +36,10 @@
           "trigger": {
             "reloadEnd": true
           },
-          "target": "self"
+          "target": "self",
+          "claims": [
+            "C-0818"
+          ]
         },
         {
           "kind": "timed",
@@ -50,7 +56,10 @@
           "stat": "chargeDamage",
           "ref": 3,
           "durationShotsRef": 4,
-          "claims": ["C-0804"],
+          "claims": [
+            "C-0804",
+            "C-0818"
+          ],
           "assumes": {
             "ja": "説明文の 2 行目（チャージダメージ▲・N 発間維持）は「ミサイルガイド：」の名前の外にあるので、状態 missileGuide とは別の timed に書く（リロード完了時の解除で外れない）。付く条件は 1 行目と同じ（同じフレームの条件は付ける前の状態で見る）。維持中に付き直すと、そこから 3 発を数え直す（別に付いて重ならないだけの形と、録画 0839・0840 では分けられない）",
             "en": "The second line (Charge Damage up for N rounds) is outside the \"Missile Guide:\" name, so it is a timed effect separate from the missileGuide state (not removed on a full reload). It is applied under the same condition as the first line (conditions in the same frame see the state before application). Re-applying while active restarts the 3-round count (not distinguished in recordings 839 and 840 from a separate non-stacking application)"
@@ -68,8 +77,13 @@
           },
           "damageType": "true",
           "ref": 1,
-          "gaugeHits": [0],
-          "claims": ["C-0805", "C-0806"],
+          "gaugeHits": [
+            0
+          ],
+          "claims": [
+            "C-0805",
+            "C-0806"
+          ],
           "assumes": {
             "ja": "倍率ダメージは発のフレームに出す。録画では発の着弾（ロケットランチャーの飛び約 14f の後）と同じ増分に出るので、秒ごとのダメージだけがずれる",
             "en": "The damage is placed on the shot frame. In recordings it appears with the shot's hit (about 14f of rocket flight later), so only the per-second damage is shifted"
@@ -87,7 +101,9 @@
           "stat": "attack",
           "ref": 2,
           "durationRef": 3,
-          "claims": ["C-0809"]
+          "claims": [
+            "C-0809"
+          ]
         },
         {
           "kind": "timed",
@@ -101,7 +117,9 @@
           "stat": "projectileExplosionDamage",
           "ref": 4,
           "durationRef": 5,
-          "claims": ["C-0809"]
+          "claims": [
+            "C-0809"
+          ]
         }
       ],
       "notes": []
@@ -115,13 +133,17 @@
           "stat": "trueDamage",
           "ref": 3,
           "durationRef": 4,
-          "claims": ["C-0808"]
+          "claims": [
+            "C-0808"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 5,
           "damageType": "true",
-          "claims": ["C-0807"]
+          "claims": [
+            "C-0807"
+          ]
         }
       ],
       "notes": [
