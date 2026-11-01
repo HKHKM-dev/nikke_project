@@ -78,7 +78,7 @@ describe('語彙の検証', () => {
     expect(() => parseSkillDefinition(withSkill1(warmUp, change, { ...decrease, target: 'allies' }))).toThrow(
       /ammoDecrease must target "self"/,
     );
-    expect(() => parseSkillDefinition(withSkill1(warmUp, change, { ...decrease, trigger: 'burstUse' }))).toThrow(
+    expect(() => parseSkillDefinition(withSkill1(warmUp, change, { ...decrease, trigger: 'battleStart' }))).toThrow(
       /ammoDecrease needs the trigger/,
     );
     expect(() =>

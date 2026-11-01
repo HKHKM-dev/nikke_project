@@ -198,6 +198,11 @@ export const NAMED_STATES = {
    * 「対象が徹甲炸裂弾状態なら」が見る）
    */
   explosiveRound: { name: { ja: '徹甲炸裂弾', en: 'Explosive Round' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節。論点 4）: 硫酸弾（ジルの S2。戦闘開始時と最大弾数のリロード完了時に自分に付く。
+   * 中身は無く、次の通常攻撃で対象に持続ダメージを付けて外れる）
+   */
+  acidRound: { name: { ja: '硫酸弾', en: 'Acid Round' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

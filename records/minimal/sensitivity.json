@@ -19339,6 +19339,118 @@
       "plus": null
     },
     {
+      "observation": "0851-15",
+      "element": "ジル burst.effects[2]",
+      "key": "5cde5d3ac1999acd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0851-16",
+      "element": "ジル burst.effects[2]",
+      "key": "9ac32f068898676f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0851-17",
+      "element": "ジル burst.effects[2]",
+      "key": "46c5ad4f9171f47a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0851-18",
+      "element": "ジル burst.effects[2]",
+      "key": "1ca12f17bdc1b234",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0851-19",
+      "element": "ジル burst.effects[2]",
+      "key": "122f39c32313facc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0851-20",
+      "element": "ジル burst.effects[2]",
+      "key": "b8380780e2f8ad4b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0851-21",
+      "element": "ジル burst.effects[2]",
+      "key": "04d45f53c0a4adf2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-15",
+      "element": "ジル burst.effects[2]",
+      "key": "2bc265120d15886b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-16",
+      "element": "ジル burst.effects[2]",
+      "key": "da2d834efae1b661",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-17",
+      "element": "ジル burst.effects[2]",
+      "key": "4e006f27efbec3f4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-18",
+      "element": "ジル burst.effects[2]",
+      "key": "87575c7fedc245f2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-19",
+      "element": "ジル burst.effects[2]",
+      "key": "d55cda4b76b11f0a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-20",
+      "element": "ジル burst.effects[2]",
+      "key": "851f34c84b80e2fd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0852-21",
+      "element": "ジル burst.effects[2]",
+      "key": "305fb3ab4e9d4eec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0853-04",
       "element": "エーテル skill2.effects[1]",
       "key": "34dae5e2613824b9",

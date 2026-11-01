@@ -1,0 +1,21 @@
+{
+  "id": "C-0824",
+  "text": "ジルの S2 の硫酸弾は、戦闘開始時と最大弾数のリロードの込め終わりに付き、次の通常攻撃で対象に最終攻撃力の 192% の持続ダメージ（1 秒間隔・30 秒）を付ける。tick は最初の発の 1 間隔後から 1 秒おきに出て（C-0130 の形）、マガジンごとの付き直しは維持を延ばすだけで、tick は重ならず刻みも変わらない（C-0129 の形）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0849-17`・`0850-17`（1 tick の値 230,008。モデルと 1 以内）、`0849-18`・`0850-18`（180 秒の tick は 179 回。重なるなら付き直すたびに増え、刻みを数え直すなら 1 秒おきの並びが崩れる）、`0849-19`・`0850-19`（最初の tick は戦闘開始から 69・71f。モデル 71。最初の発の 59f 後で、付いた時の tick は無い）、`0849-09`・`0849-10`・`0849-11`・`0849-12`・`0850-09`・`0850-10`・`0850-11`・`0850-12`（tick の値は 1 つぶんだけで 2 つぶん以上の増分は無く、マガジンの 1 発目・リロード・敵のジャンプで刻みが数え直されない）。単騎（バーストなし）の 2 本。V-0601",
+  "model": "`data/skills/841.json` の skill2 の effects[0]〜[3]（状態 `acidRound` の付与 2 つ（`battleStart`・`{ reloadEnd }`）、`dot`（`{ count: \"normalShot\" }`・条件 `selfState`・`firstTick: afterInterval`）、`removeState`（`{ count: \"normalShot\" }`）。dot の条件は `frame/plan.ts` の dotApplicationFrames が付くフレームで見る）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": [
+      "data/skills/841.json の skill2 の effects[0]",
+      "data/skills/841.json の skill2 の effects[1]",
+      "data/skills/841.json の skill2 の effects[2]",
+      "data/skills/841.json の skill2 の effects[3]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値と C-0129・C-0130 の形だけから決めた。値を合わせた録画は無い"
+}

@@ -585,6 +585,8 @@ export function resolveDotEffects(
         r.perCountIntervalFrames = effect.perCountIntervalFrames!;
       }
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
+      // 2 段目の段 17 の PR 4: 付くフレームの条件（frame/plan.ts の dotApplicationFrames が絞る）
+      if (!auto && effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）
       if (!auto) r.sustained = true;
       if (auto && effect.core === true) r.core = true;

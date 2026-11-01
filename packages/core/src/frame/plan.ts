@@ -355,7 +355,15 @@ export function planSkillHits(
     // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
     const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
       const t = effect.trigger;
-      if (!isCounterFullTrigger(t)) return triggerFrames(t, schedule, slotIndex, frames, shots);
+      // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 付くフレームの条件（自分の状態。damage と同じ判定）
+      if (!isCounterFullTrigger(t)) {
+        const at = triggerFrames(t, schedule, slotIndex, frames, shots);
+        return effect.condition === undefined
+          ? at
+          : at.filter((f) =>
+              damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt),
+            );
+      }
       const per = effect.perCount;
       if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
         throw new RangeError('a dot with { counterFull } needs perCount { counter } and perCountIntervalFrames');

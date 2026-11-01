@@ -24,7 +24,8 @@ import {
 } from './teamHelpers.ts';
 
 const BESTIE = 94;
-const raw = () => rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(BESTIE);
+const raw = () =>
+  rawDefinition<{ skills: Record<'skill1' | 'skill2', { effects: Record<string, unknown>[] }> }>(BESTIE);
 
 describe('ベスティー：タクティカル・アップの定義', () => {
   const def = parseSkillDefinition(raw());
@@ -39,10 +40,11 @@ describe('ベスティー：タクティカル・アップの定義', () => {
     expect(def.skills.burst.effects[1]).toMatchObject({ kind: 'burstDamage', damageType: 'true' });
   });
 
-  it('allows a reload end trigger only in removeState', () => {
+  // 2 段目の段 17 の PR 4: timed と状態の付与にも書ける（ジル）。倍率ダメージにはまだ書けない
+  it('allows a reload end trigger only in removeState, timed and state grants', () => {
     const json = raw();
-    json.skills.skill1.effects[0]!.trigger = { reloadEnd: true };
-    expect(() => parseSkillDefinition(json)).toThrow(/only allowed in removeState/);
+    json.skills.skill2.effects[0]!.trigger = { reloadEnd: true };
+    expect(() => parseSkillDefinition(json)).toThrow(/only allowed in removeState, timed and state grants/);
   });
 
   it('allows a grant to look at its own state only as "not in the state"', () => {
