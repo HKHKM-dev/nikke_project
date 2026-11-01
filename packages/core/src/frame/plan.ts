@@ -642,12 +642,20 @@ function damageConditionHolds(
     if (below !== undefined && value >= below) return false;
   }
   if (condition.inFullBurst === true && (schedule === null || !isInFullBurst(schedule, frame))) return false;
-  if (condition.enemyState !== undefined) {
-    // 家族の根なら、家族のどの状態でも当たる（1 パス目の skills/holders.ts の enemyStateAt と同じ stateMatches の規則）
-    const spans = statesMatching(condition.enemyState).flatMap((state) => enemySpans.get(state) ?? []);
-    if (!spans.some((s) => s.start <= frame && frame < s.end)) return false;
-  }
+  if (condition.enemyState !== undefined && !enemyStateSpansHold(enemySpans, condition.enemyState, frame)) return false;
   return true;
+}
+
+/**
+ * 2 パス目の条件 enemyState: 敵の状態の区間 enemySpans のうち、state に当たる状態（家族の根なら家族のどの状態でも。1 パス目の
+ * skills/holders.ts の enemyStateAt と同じ stateMatches の規則）の区間が frame を含むか
+ */
+export function enemyStateSpansHold(
+  enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
+  state: NamedStateId,
+  frame: number,
+): boolean {
+  return statesMatching(state).some((s) => (enemySpans.get(s) ?? []).some((x) => x.start <= frame && frame < x.end));
 }
 
 /**
