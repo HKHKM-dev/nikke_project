@@ -32,11 +32,11 @@
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0884"
+            "C-0892"
           ],
           "assumes": {
-            "ja": "自分の弾のゲージだけに掛かる。フルバーストの終了の時のゲージ速度▲は 3 体の録画では見分けられず、単騎ではフルバーストが起きないので、説明文どおりに書いた",
-            "en": "Applies to the gauge from own bullets only. The gauge-speed increase at the end of Full Burst could not be told apart in the 3-unit recordings and does not occur solo (no Full Burst), so it is written as described"
+            "ja": "自分の弾のゲージだけに掛かる（味方の弾のゲージには掛からない）",
+            "en": "Applies to the gauge from own bullets only (not to allies' bullets)"
           }
         }
       ],
