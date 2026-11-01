@@ -15,12 +15,14 @@
           "damageType": "skill",
           "ref": 2,
           "assumes": {
-            "ja": "的に当たったペレットを数え、累計が 30 の倍数に届いた発で 1 回（端数は持ち越す）。当たったペレットは期待値で数える（SG は 10 × 当たったペレットの割合。的の表の区間はその値、手入力は弾丸命中率 × 0.75）。対象「照準線に最も近い敵 2 機」は単体ボスで 1 ヒット。ヒットは発の 6f 後（C-0659）",
-            "en": "Counts pellets that hit the target and fires once on the shot where the total reaches a multiple of 30 (the remainder carries over). Pellet hits are counted as expected values (SG: 10 × the share of pellets that hit; the range target table gives the share per segment, manual input uses hit rate × 0.75). The 2 enemies nearest the crosshair are a lone boss, so it lands once. The hit lands 6 frames after the shot"
+            "ja": "的に当たったペレットを数え、累計が 30 の倍数に届いた発で 1 回（端数は持ち越し、的のジャンプや撃たない時間でも 0 に戻さない。C-0830）。当たったペレットは期待値で数える（SG は 10 × 当たったペレットの割合。的の表の区間はその値、手入力は弾丸命中率 × 0.75）。射撃場の縦長のコンテナ（的でない障害物）に当たったペレットは数えない（C-0831）。対象「照準線に最も近い敵 2 機」は単体ボスで 1 ヒット。ヒットは発の 6f 後（C-0659）",
+            "en": "Counts pellets that hit the target and fires once on the shot where the total reaches a multiple of 30 (the remainder carries over, and is not reset by target jumps or time spent not firing). Pellet hits are counted as expected values (SG: 10 × the share of pellets that hit; the range target table gives the share per segment, manual input uses hit rate × 0.75). Pellets that hit the tall range containers (non-target obstacles) are not counted. The 2 enemies nearest the crosshair are a lone boss, so it lands once. The hit lands 6 frames after the shot"
           },
           "claims": [
             "C-0408",
-            "C-0659"
+            "C-0659",
+            "C-0830",
+            "C-0831"
           ]
         }
       ]

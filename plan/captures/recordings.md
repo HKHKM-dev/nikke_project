@@ -814,6 +814,8 @@
 | 0840 | `20261101-0840_rl+rl_bestie-tu+yuni_guide-reload-2.mp4` | ◎ベスティー：タクティカル・アップ（94、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0589 の撮影。ベスティー：タクティカル・アップ（1 枠目・操作）・ユニ（2 枠目・AI）。ユニの S2 で最大装弾数 9 発。オートバースト OFF |
 | 0841 | `20261101-0841_sr_liberalio.mp4` | ◎リバーレリオ（262、SR・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0596 の撮影。リバーレリオ単騎・操作（オート射撃 ON）。オートバースト OFF |
 | 0842 | `20261101-0842_rl+rl+mg+sr_tia+flower+emma-tu+eunhwa-tu_round-three-buckets.mp4` | ティア（451、RL・鉄甲・SSR） + I-DOLL・フラワー（304、RL・風圧・R） + ◎エマ：タクティカル・アップ（93、MG・灼熱・SSR） + ウンファ：タクティカル・アップ（95、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON |  |
+| 0856 | `20261101-0856_sg_privaty-unkind-maid_manual-near-container_fixed-off.mp4` | ◎プリバティ：アンカインド・メイド（313、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | 単騎・手動（V-0603 の撮り方 1）。1 区間目は撃たず、2 区間目（1 回目の近）を撃ち、1 回目のリロードの後にコンテナを撃つ計画。2 回目のジャンプの後で止めた。出撃画面はスペック固定 ON（計画は OFF。ファイル名の fixed-off は計画の名残） |
+| 0857 | `20261101-0857_sg_privaty-unkind-maid_manual-near-2-5_fixed-off.mp4` | ◎プリバティ：アンカインド・メイド（313、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | 単騎・手動（V-0603 の撮り方 2）。2 区間目と 5 区間目（2 回目の近）だけを撃つ計画。出撃画面はスペック固定 ON（計画は OFF。ファイル名の fixed-off は計画の名残） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
