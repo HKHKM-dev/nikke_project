@@ -8,7 +8,8 @@ import { buildTeamInput, METRICS, type CompareSetup } from '../observations.ts';
 
 const file = loadRecordingsFile();
 const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: true };
-const input = buildTeamInput(recordingMap(file).get('0746')!, setup, loadRecordsData(file));
+const data = loadRecordsData(file);
+const input = buildTeamInput(recordingMap(file).get('0746')!, setup, data);
 const result = runSimulation(input);
 const metric = (name: string, args: Record<string, number | string | boolean>) =>
   METRICS[name]!.sim(result, { args, input: input as TeamInput });
@@ -89,21 +90,16 @@ describe('eventFrames', () => {
 // V-0622: 出来事ごとの、戦闘の始めからの発の数・命中の期待値の和。録画 0754（ミハラ：ボンディングチェーンが枠 4。S2 のスタック量▲は
 // 命中 40 回ごと）のモデルで、弾丸命中率を 0.97 にして見る
 describe('eventTallies', () => {
-  const file0754 = loadRecordingsFile();
-  const input0754 = buildTeamInput(
-    recordingMap(file0754).get('0754')!,
-    { ...setup, hitRate: 0.97 },
-    loadRecordsData(file0754),
-  );
+  const input0754 = buildTeamInput(recordingMap(file).get('0754')!, { ...setup, hitRate: 0.97 }, data);
   const result0754 = runSimulation(input0754);
   const tallies = (args: Record<string, number | string | boolean>) =>
     METRICS.eventTallies!.sim(result0754, {
       args: { slot: 4, event: 'dotApply', skill: 'skill1', anchor: 'fullBurst:0', within: 'window', ...args },
-      input: input0754 as TeamInput,
+      input: input0754,
     }) as number[];
+  const shots = tallies({ tally: 'shots' });
 
   it('counts shots and expected hits from the start of battle up to each event', () => {
-    const shots = tallies({ tally: 'shots' });
     const hits = tallies({ tally: 'hits' });
     expect(shots.length).toBe(hits.length);
     shots.forEach((s, i) => expect(hits[i]).toBeCloseTo(s * 0.97, 6));
@@ -112,12 +108,13 @@ describe('eventTallies', () => {
   });
 
   it('folds the tally into (-modulo/2, modulo/2] with modulo', () => {
-    const shots = tallies({ tally: 'shots' });
     const phases = tallies({ tally: 'shots', modulo: 40 });
     shots.forEach((s, i) => {
-      expect(phases[i]! > -20 && phases[i]! <= 20).toBe(true);
-      expect((((s - phases[i]!) % 40) + 40) % 40).toBe(0);
+      expect(phases[i]).toBeGreaterThan(-20);
+      expect(phases[i]).toBeLessThanOrEqual(20);
+      expect((s - phases[i]!) % 40).toBe(0);
     });
     expect(() => tallies({ tally: 'kills' })).toThrow(/tally は/);
+    expect(() => tallies({ tally: 'shots', anchor: 'start' })).toThrow(/within は使えない/);
   });
 });

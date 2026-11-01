@@ -1872,38 +1872,39 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
     }
   } else {
     const span = spanOf(result, ctx, anchor, within);
-    offsets = points.filter((p) => span.from <= p.frame && p.frame < span.to).map((p) => p.video - span.base);
+    offsets = pointsIn(points, span).map((p) => p.video - span.base);
   }
   return firstCount(offsets, ctx, `出来事（${String(ctx.args.event)}）`);
 }
 
+/** spanOf の範囲 [from, to) に入る出来事 */
+function pointsIn(points: EventPoint[], span: { from: number; to: number }): EventPoint[] {
+  return points.filter((p) => span.from <= p.frame && p.frame < span.to);
+}
+
 /**
- * V-0622: 出来事（eventFrames の event・anchor・within で絞る。anchor が start・prevBurstHit・prevShot なら全部）ごとに、戦闘の始めから
+ * V-0622: 出来事（eventFrames の event・skill・anchor・within で絞る。anchor は start・fullBurst:<n>・activation:<n>）ごとに、戦闘の始めから
  * その出来事まで（同じフレームの発を含む）の枠の発の数（tally: shots）か、通常攻撃の命中の期待値の和（tally: hits。発ごとの弾丸命中率）。
  * modulo を書くと、その数で割った余りを (-modulo/2, modulo/2] に寄せた値（回数のきっかけの、通しの数の位相）。skip・count で絞る。録画では、
  * 照準の左の残弾の減りで数えた発と、HUD の増分で拾った外れから数える
  */
 function eventTallies(result: SimResult, ctx: MetricContext): number[] {
-  const anchor = String(ctx.args.anchor ?? 'start');
-  let points = eventPointsOf(result, ctx);
-  if (anchor !== 'start' && anchor !== 'prevBurstHit' && anchor !== 'prevShot') {
-    const span = spanOf(result, ctx, anchor, ctx.args.within);
-    points = points.filter((p) => span.from <= p.frame && p.frame < span.to);
-  }
-  const log = slotOf(result.shots, ctx);
   const tally = ctx.args.tally;
   if (tally !== 'shots' && tally !== 'hits') throw new Error(`tally は shots・hits（${String(tally)}）`);
+  const anchor = String(ctx.args.anchor ?? 'start');
+  let points = eventPointsOf(result, ctx);
+  if (anchor === 'start') {
+    if (ctx.args.within !== undefined) throw new Error('anchor start に within は使えない');
+  } else points = pointsIn(points, spanOf(result, ctx, anchor, ctx.args.within));
+  const log = slotOf(result.shots, ctx);
+  const weight = (k: number) => (tally === 'shots' ? 1 : (log.hits?.[k] ?? 1));
   const modulo = ctx.args.modulo === undefined ? undefined : Number(ctx.args.modulo);
-  const values = points.map((p) => {
-    let sum = 0;
-    log.frames.forEach((f, k) => {
-      if (f <= p.frame) sum += tally === 'shots' ? 1 : (log.hits?.[k] ?? 1);
-    });
+  return firstCount(points, ctx, `出来事（${String(ctx.args.event)}）`).map((p) => {
+    const sum = log.frames.reduce((s, f, k) => (f <= p.frame ? s + weight(k) : s), 0);
     if (modulo === undefined) return sum;
     const r = ((sum % modulo) + modulo) % modulo;
     return r > modulo / 2 ? r - modulo : r;
   });
-  return firstCount(values, ctx, `出来事（${String(ctx.args.event)}）`);
 }
 
 /** eventFrames の基準（fullBurst:<n>・activation:<n>）の、動画のフレームと、数える範囲（モデルのフレーム） */
