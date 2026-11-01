@@ -159,9 +159,13 @@
           "ref": 1,
           "durationUntil": "battleEnd",
           "assumes": {
-            "ja": "武器の基礎のチャージ時間も 1.2 秒なので、チャージ速度の効果の無い編成では変わらない。チャージ速度の効果のある編成では、固定がチャージ速度の効果に勝つ（チャージ時間は 1.2 秒のまま）とみるが、その編成を撮っておらず、確かめていない",
-            "en": "The weapon base charge time is also 1.2 s, so nothing changes in a team without charge speed effects. With charge speed effects in the team, the fix is taken to win over them (the charge time stays 1.2 s), but no such team was recorded; unverified"
-          }
+            "ja": "武器の基礎のチャージ時間も 1.2 秒なので、チャージ速度の効果の無い編成では変わらない。固定は味方のチャージ速度▲に勝つ（チャージ時間は 1.2 秒のまま。C-0849）。チャージ時間▼（秒）にも勝つとみる（C-0850。▼の相手を確かめていないので仮説）",
+            "en": "The weapon base charge time is also 1.2 s, so nothing changes in a team without charge speed effects. The fix wins over allies charge speed increases (the charge time stays 1.2 s; C-0849). It is taken to win over charge time reductions (seconds) too (C-0850; a hypothesis, since the target of the reduction was not confirmed)"
+          },
+          "claims": [
+            "C-0849",
+            "C-0850"
+          ]
         },
         {
           "kind": "timed",
