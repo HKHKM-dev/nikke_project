@@ -204,13 +204,13 @@
             "percent": 100
           },
           "assumes": {
-            "ja": "環境コントロール強化（維持時間 10 秒）。バースト使用の瞬間に自分が環境コントロール（S1）の窓の中のときだけ付く。発動から 10 秒、環境コントロールの受けるダメージ▲を同じ群の中で 2 倍（3.9% なら合計 7.8%）に保ち、環境コントロールの窓が先に切れても 10 秒続く。録画では合計が 2 倍より +0.011% ほど大きい（Lv10 で 7.811%。ずれは環境コントロールの値に依らない一定の量で、出どころは分からない）",
-            "en": "Enhanced Environment Setup (10 s). Applied only if this unit is in an Environment Setup (S1) window at the moment of burst use. For 10 s from activation, keeps Environment Setup's Damage Taken up doubled within the same group (3.9% becomes 7.8% in total), even after the Environment Setup window ends. Recordings show about +0.011% above doubling (7.811% at Lv10; the offset is constant regardless of the Environment Setup value, source unknown)"
+            "ja": "環境コントロール強化（維持時間 10 秒）。バースト使用の瞬間に自分が環境コントロール（S1）の窓の中のときだけ付く。発動から 10 秒、環境コントロールの受けるダメージ▲を同じ群の中で 2 倍（3.9% なら合計 7.8%）に保ち、環境コントロールの窓が先に切れても 10 秒続く。録画では合計が 2 倍より +0.01%（説明文の値の刻み 1 つ分）大きい（Lv10 で 7.81%。ずれは環境コントロールの値に依らない一定の量で、出どころは分からない。モデルは 2 倍のまま）",
+            "en": "Enhanced Environment Setup (10 s). Applied only if this unit is in an Environment Setup (S1) window at the moment of burst use. For 10 s from activation, keeps Environment Setup's Damage Taken up doubled within the same group (3.9% becomes 7.8% in total), even after the Environment Setup window ends. Recordings show +0.01% (one step of the description values) above doubling (7.81% at Lv10; the offset is constant regardless of the Environment Setup value, source unknown; the model keeps exact doubling)"
           },
           "claims": [
             "C-0335",
             "C-0336",
-            "C-0379",
+            "C-0819",
             "C-0619"
           ]
         }
