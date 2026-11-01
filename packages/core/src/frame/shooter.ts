@@ -209,9 +209,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
     state.lastShot = false;
     if (isChargeWeapon(shot)) {
-      const carry = chargeCarryAtFire(state, params, model);
-      state.wait = Math.max(0, Math.ceil(chargeShotIntervalFrames(params, model) - carry - 1e-9) - 1);
-      state.chargeElapsed = carry;
+      startNextCharge(state, params, model);
     }
     return;
   }
@@ -231,9 +229,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
     return;
   }
   if (isChargeWeapon(shot)) {
-    const carry = chargeCarryAtFire(state, params, model);
-    state.wait = Math.max(0, Math.ceil(chargeShotIntervalFrames(params, model) - carry - 1e-9) - 1);
-    state.chargeElapsed = carry;
+    startNextCharge(state, params, model);
   }
 }
 
@@ -412,17 +408,34 @@ function chargeWaitFrames(
 }
 
 /**
- * レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 撃った発の、間隔の端数の持ち越し。解放に端数のある変更後の武器
- * （FiringParams.releaseFrames）だけ、前の発からの経過が間隔を超えた分（0 以上 1 未満）を次の発の経過の始まりにする。ほかは 0
+ * チャージ武器が撃った後の、次の発の待ちと経過を決める。レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 前の発からの経過が
+ * 間隔を超えた端数（0 より大きく 1 未満。間隔が整数なら出ない）を次の発の経過の始まりに持ち越す（解放に端数のある変更後の武器）
  */
-function chargeCarryAtFire(
+function startNextCharge(
   state: ShooterState,
   params: FiringParams,
   model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
+): void {
+  const over = state.chargeElapsed === undefined ? 0 : state.chargeElapsed - chargeShotIntervalFrames(params, model);
+  const carry = over > 0 && over < 1 ? over : 0;
+  state.wait = Math.max(0, chargeWaitFrames(params, model, carry) - 1);
+  state.chargeElapsed = carry;
+}
+
+/**
+ * レッドフード編（plan/design-red-hood.md 7.1 節の論点 13）: 基礎の武器から持ち替えるフレーム swap に、武器が空くフレーム。リロード中なら
+ * swap、構え解除の途中（最後の発 lastShot から aimOutFrames 未満）なら構え解除の終わり、構え直し・チャージの途中（まだ撃っていない
+ * 射手も）なら構え解除 1 回分の後
+ */
+export function weaponFreeFrameAtSwap(
+  state: ShooterState,
+  lastShot: number | undefined,
+  swap: number,
+  model: Pick<WeaponModel, 'aimOutFrames'>,
 ): number {
-  if (params.releaseFrames === undefined || state.chargeElapsed === undefined) return 0;
-  const over = state.chargeElapsed - chargeShotIntervalFrames(params, model);
-  return over > 0 && over < 1 ? over : 0;
+  if (state.phase === 'reloading') return swap;
+  const aimOutEnd = lastShot === undefined ? -Infinity : lastShot + model.aimOutFrames;
+  return aimOutEnd > swap ? aimOutEnd : swap + model.aimOutFrames;
 }
 
 /**

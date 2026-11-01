@@ -1111,20 +1111,23 @@ function gaugeFullToActivation(result: { schedule: BurstSchedule | null }, ctx: 
 }
 
 /**
- * 2 段目の段 11 の PR 3（V-0530）: n 回目（0 始まり）にゲージが満タンになった（BURST バーが消えた）フレームから、その後の枠の最初の
- * 使用武器の変更の発（変更後の武器の発）までの動画のフレーム数。n はカンマ区切りの並び（"0,1,3"）も書け、そのときは回ごとの列。
- * 単騎の I で満タンの直後に使うバーストの、変更後の武器の最初の発の待ち（firstShotDelayFrames）を、HUD の最初の増分で比べる
+ * 起点のフレーム（n 回目。0 始まり）から、枠の変更後の武器の最初の発（起点から lead フレーム前より後）までの、録画の動画のフレーム
+ * （videoFrameOf）。n はカンマ区切りの並びも書け、そのときは回ごとの列
  */
-function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
+function toWeaponChangeShot(
+  result: SimResult,
+  ctx: MetricContext,
+  originOf: (schedule: BurstSchedule, n: number) => number,
+  lead = 0,
+): number | number[] {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const changed = slotOf(result.shots, ctx).weaponChangeShotFrames ?? [];
   const at = (n: number): number => {
-    const full = schedule.gaugeFullFrames[n];
-    if (full === undefined) throw new Error(`${n} 回目の満タンが無い`);
-    const shot = changed.find((f) => f >= full);
-    if (shot === undefined) throw new Error(`${n} 回目の満タンの後に変更後の武器の発が無い`);
-    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, full);
+    const origin = originOf(schedule, n);
+    const shot = changed.find((f) => f >= origin - lead);
+    if (shot === undefined) throw new Error(`${n} 回目の起点の後に変更後の武器の発が無い`);
+    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, origin);
   };
   const n = ctx.args.n;
   if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
@@ -1132,23 +1135,33 @@ function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): num
 }
 
 /**
+ * 2 段目の段 11 の PR 3（V-0530）: n 回目（0 始まり）にゲージが満タンになった（BURST バーが消えた）フレームから、その後の枠の最初の
+ * 使用武器の変更の発（変更後の武器の発）までの動画のフレーム数。n はカンマ区切りの並び（"0,1,3"）も書け、そのときは回ごとの列。
+ * 単騎の I で満タンの直後に使うバーストの、変更後の武器の最初の発の待ち（firstShotDelayFrames）を、HUD の最初の増分で比べる
+ */
+function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
+  return toWeaponChangeShot(result, ctx, (schedule, n) => {
+    const full = schedule.gaugeFullFrames[n];
+    if (full === undefined) throw new Error(`${n} 回目の満タンが無い`);
+    return full;
+  });
+}
+
+/**
  * レッドフード編（V-0639。plan/design-red-hood.md 7.1 節の論点 13）: n 回目（0 始まり）のフルバーストの窓の始まり（III のタイマーの 00.00）から、
- * 枠の変更後の武器の最初の発（窓の始まりの 60f 前より後）までの、録画の動画のフレーム（入りの止まりを含む。videoFrameOf）。n はカンマ区切りの並びも書ける
+ * 枠の変更後の武器の最初の発（窓の始まりの 60f 前より後）までの、録画の動画のフレーム（入りの止まりを含む）
  */
 function fullBurstToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
-  const schedule = result.schedule;
-  if (schedule === null) throw new Error('バーストの時刻表が無い');
-  const changed = slotOf(result.shots, ctx).weaponChangeShotFrames ?? [];
-  const at = (n: number): number => {
-    const window = schedule.fullBurstWindows[n];
-    if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
-    const shot = changed.find((f) => f >= window.start - 60);
-    if (shot === undefined) throw new Error(`${n} 回目のフルバーストの後に変更後の武器の発が無い`);
-    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, window.start);
-  };
-  const n = ctx.args.n;
-  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
-  return at(Number(n));
+  return toWeaponChangeShot(
+    result,
+    ctx,
+    (schedule, n) => {
+      const window = schedule.fullBurstWindows[n];
+      if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+      return window.start;
+    },
+    60,
+  );
 }
 
 /**

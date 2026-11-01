@@ -240,10 +240,7 @@ function readValue(gs: Glyph[], templates: Templates): number | null {
   return Number(text.replace(/,/g, ''));
 }
 
-async function* frames(
-  first: number,
-  last: number | undefined,
-): AsyncGenerator<{ n: number; bin: Uint8Array; rgb: Buffer }> {
+async function* frames(first: number, last: number | undefined): AsyncGenerator<{ n: number; rgb: Buffer }> {
   const select = last === undefined ? `gte(n\\,${first})` : `between(n\\,${first}\\,${last})`;
   const args = ['-v', 'error', '-i', video!, '-vf', `select='${select}',${cropFilter(crop)}`];
   args.push('-fps_mode', 'passthrough');
@@ -251,7 +248,7 @@ async function* frames(
   args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1');
   let n = first;
   for await (const rgb of rawFrames(args, crop.w * crop.h * 3)) {
-    yield { n, bin: binarize(rgb, crop.w, crop.h), rgb };
+    yield { n, rgb };
     n++;
   }
 }
@@ -307,8 +304,10 @@ async function makeTemplates(spec: string): Promise<void> {
   const heights: number[] = [];
   for (const { frame, value } of samples) {
     let done = false;
-    for await (const { bin } of frames(frame, frame)) {
-      const gs = glyphs(components(bin, crop.w, crop.h), null).filter((g) => g.kind === 'digit');
+    for await (const { rgb } of frames(frame, frame)) {
+      const gs = glyphs(components(binarize(rgb, crop.w, crop.h), crop.w, crop.h), null).filter(
+        (g) => g.kind === 'digit',
+      );
       const digits = String(value);
       if (gs.length !== digits.length) {
         throw new Error(`frame ${frame}: 数字の塊が ${gs.length} 個（${value} は ${digits.length} 桁）`);
@@ -381,16 +380,15 @@ async function main(): Promise<void> {
     }
   } else {
     const templates = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8')) as Templates;
-    const readAt = (bin: Uint8Array) =>
-      readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
-    for await (const { n, bin, rgb } of frames(from, to)) {
+    for await (const { n, rgb } of frames(from, to)) {
       total++;
-      let value = readAt(bin);
-      for (const threshold of FALLBACK_THRESHOLDS) {
-        if (value !== null) break;
-        value = readAt(binarize(rgb, crop.w, crop.h, threshold));
+      for (const threshold of [THRESHOLD, ...FALLBACK_THRESHOLDS]) {
+        const bin = binarize(rgb, crop.w, crop.h, threshold);
+        const value = readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
+        if (value === null) continue;
+        reads.push({ n, value });
+        break;
       }
-      if (value !== null) reads.push({ n, value });
     }
   }
   const keep = longestNonDecreasing(reads.map((r) => r.value));

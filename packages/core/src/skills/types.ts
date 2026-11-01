@@ -180,9 +180,6 @@ export const BUFF_STATS = [
   'chargeSpeedOverflow',
 ] as const satisfies readonly BuffStat[];
 
-/** レッドフード編: passive の self にだけ書ける stat */
-export const PASSIVE_SELF_ONLY_STATS = ['chargeSpeedOverflow'] as const satisfies readonly BuffStat[];
-
 /**
  * Stage 10: 射撃に効く stat（射手の実効値を変える）。Stage 11 モダニアで装弾数無限、アニス：スター編でチャージ時間の固定、2 段目の段 9 の
  * PR 2 で攻撃速度を足した
@@ -234,10 +231,6 @@ export const FLAG_STATS = [
 
 /** 2 段目の段 12 の PR 2: passive に書けるフラグの stat（ref を書かない。値 1） */
 export const PASSIVE_FLAG_STATS = ['elementAdvantage'] as const satisfies readonly BuffStat[];
-
-export function isPassiveSelfOnlyStat(stat: BuffStat): boolean {
-  return (PASSIVE_SELF_ONLY_STATS as readonly string[]).includes(stat);
-}
 
 export function isPassiveFlagStat(stat: BuffStat): boolean {
   return (PASSIVE_FLAG_STATS as readonly string[]).includes(stat);
@@ -2615,17 +2608,16 @@ function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffec
   // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
   validateDamageTaken(stat, target, v, path);
   validateAttackSpeed(stat, v, path);
-  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 有利コードのダメージ適用は値を持たないフラグで、自分だけ
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 有利コードのダメージ適用は値を持たないフラグで、自分だけ。
+  // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換も自分だけ（持ち主の発にだけ効く。比率の scaling だけ）
+  const overflow = stat === 'chargeSpeedOverflow';
+  if ((passiveFlag || overflow) && target !== 'self')
+    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+  if (overflow && scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
   if (passiveFlag) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value`);
-    if (target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
     if (v.while !== undefined) fail(`${path}.while`, `${stat} cannot have while`);
-  }
-  // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換は自分だけ（持ち主の発にだけ効く）
-  if (isPassiveSelfOnlyStat(stat)) {
-    if (target !== 'self') fail(`${path}.target`, `${stat} is only allowed with target "self"`);
-    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
   }
   const effect: PassiveEffect = { kind: 'passive', target, stat };
   if (!passiveFlag) effect.ref = parseRef(v.ref, `${path}.ref`);
@@ -2696,6 +2688,13 @@ function parseDecrease(v: Record<string, Json>, scaling: BuffScaling | undefined
     fail(`${path}.decrease`, `only allowed with scaling "ratio" or "flat", got "${scaling}"`);
   }
   return true;
+}
+
+function parseNonNegativeInt(v: Json, path: string): number {
+  if (typeof v !== 'number' || !Number.isInteger(v) || v < 0) {
+    fail(path, `expected a non-negative integer, got ${JSON.stringify(v)}`);
+  }
+  return v;
 }
 
 function parsePositiveInt(v: Json, path: string): number {
@@ -2904,7 +2903,7 @@ function parseTrigger(
 
 function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
-  if (isPassiveSelfOnlyStat(stat)) fail(`${path}.stat`, `${stat} is only allowed in passive`);
+  if (stat === 'chargeSpeedOverflow') fail(`${path}.stat`, `${stat} is only allowed in passive`);
   // 防御力無視ダメージ編: 周期のトリガー（ソルジャーE.G. 編で、1 パス目で窓を追う stat にも）。ソルジャーE.G. 編: 確率のきっかけ
   // 鍵の順は今までの timed と同じ（kind・trigger・target・stat の後に残りの欄）。最小構成の感度の鍵が定義の JSON から作られるので
   const { trigger, target, ...rest } = parseTimedFields(v, path, stat, true);
@@ -3852,21 +3851,16 @@ function parseWeaponChangeEffect(v: Record<string, Json>, path: string): WeaponC
     effect.instantFire = true;
   }
   if (v.firstShotDelayFrames !== undefined) {
-    const n = v.firstShotDelayFrames;
-    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
-      fail(`${path}.firstShotDelayFrames`, `expected a non-negative integer, got ${JSON.stringify(n)}`);
-    }
-    effect.firstShotDelayFrames = n;
+    effect.firstShotDelayFrames = parseNonNegativeInt(v.firstShotDelayFrames, `${path}.firstShotDelayFrames`);
   }
   if (v.firstShotAfterSwapFrames !== undefined) {
-    const n = v.firstShotAfterSwapFrames;
-    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
-      fail(`${path}.firstShotAfterSwapFrames`, `expected a non-negative integer, got ${JSON.stringify(n)}`);
-    }
     if (effect.firstShotDelayFrames !== undefined) {
       fail(`${path}.firstShotAfterSwapFrames`, 'firstShotAfterSwapFrames cannot be combined with firstShotDelayFrames');
     }
-    effect.firstShotAfterSwapFrames = n;
+    effect.firstShotAfterSwapFrames = parseNonNegativeInt(
+      v.firstShotAfterSwapFrames,
+      `${path}.firstShotAfterSwapFrames`,
+    );
   }
 
   if (v.infiniteAmmo !== undefined) {

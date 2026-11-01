@@ -1,47 +1,15 @@
 // レッドフード編（plan/design-red-hood.md）: レッドフード（470）を含む編成で、使った段階で分かれるバーストの効果（ビーストケージ・
 // ハウリングエンド・レッドウルフ）、I・II の CT▼（戦闘中 1 回）、S1 のチャージ速度のスタックと超過分の変換が意図どおりに出るか
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { EnemyInput } from '../damage.ts';
-import { computeFixedSpecAttack, computeFixedSpecDefence, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { chargeSpeedOverflowDamage } from '../skills/buffs.ts';
-import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { appliedFrames } from '../skills/timeline.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
-import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import type { CharacterData } from '../types.ts';
 import { runTeam } from './runTeam.ts';
+import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
 
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
-
-const DEFINED = new Set(readJson<{ resourceIds: number[] }>('../../data/skills/index.json').resourceIds);
-const character = (id: number) => readJson<CharacterData>(`../../data/characters/${id}.json`);
-
-function fixedSlot(id: number): TeamSlotInput {
-  const c = character(id);
-  const fixed = computeFixedSpecAttack(c);
-  const slot: TeamSlotInput = {
-    character: c,
-    growth: fixed.growth,
-    attackOverride: fixed.attack,
-    defenceOverride: computeFixedSpecDefence(c),
-    condition: { coreHitRate: 0.1, distanceBonus: true, fullCharge: true },
-  };
-  if (DEFINED.has(id)) {
-    slot.skills = {
-      definition: parseSkillDefinition(readJson<unknown>(`../../data/skills/${id}.json`)),
-      levels: MAX_SKILL_LEVELS,
-    };
-  }
-  return slot;
-}
-
-const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: null, hasCore: true };
 const RED_HOOD = 470;
 const LITER = 82;
 const DELTA = 20;
@@ -50,31 +18,15 @@ const ALICE = 191;
 const TEN_SECONDS = gameSecondsToFrames(10);
 
 const TEAMS: Record<string, { input: TeamInput; redHood: number }> = {
-  'レッドフード単騎（撮影 A）': {
-    input: { slots: [fixedSlot(RED_HOOD)], enemy, durationSeconds: 180, burst: true, controlledSlot: 0 },
-    redHood: 0,
-  },
-  'リター・デルタ・レッドフード（撮影 B）': {
-    input: {
-      slots: [fixedSlot(LITER), fixedSlot(DELTA), fixedSlot(RED_HOOD)],
-      enemy,
-      durationSeconds: 180,
-      burst: true,
-      controlledSlot: 2,
-    },
-    redHood: 2,
-  },
+  'レッドフード単騎（撮影 A）': { input: fixedTeam([RED_HOOD], 0), redHood: 0 },
+  'リター・デルタ・レッドフード（撮影 B）': { input: fixedTeam([LITER, DELTA, RED_HOOD], 2), redHood: 2 },
   '実戦寄り（リター・クラウン・レッドフード・アリス・デルタ）': {
-    input: {
-      slots: [fixedSlot(LITER), fixedSlot(CROWN), fixedSlot(RED_HOOD), fixedSlot(ALICE), fixedSlot(DELTA)],
-      enemy,
-      durationSeconds: 180,
-      burst: true,
-      controlledSlot: 2,
-    },
+    input: fixedTeam([LITER, CROWN, RED_HOOD, ALICE, DELTA], 2),
     redHood: 2,
   },
 };
+
+describeEveryShotInOneGroup(Object.fromEntries(Object.entries(TEAMS).map(([name, t]) => [name, t.input])));
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) => {
   const plan = planTeamRun(input);
@@ -127,14 +79,6 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) =
     // 窓の外の S1 の 10 スタック（38.1%）では超えない。レッドウルフの窓（III の 100.8%）がある編成では超える
     expect(converted > 0).toBe(plan.schedule!.activations.some((a) => a.slotIndex === redHood && a.step === 'Step3'));
   });
-
-  it('partitions every shot into exactly one group (start ≤ shot < end)', () => {
-    input.slots.forEach((_, i) => {
-      const frames = plan.shots[i]!.frames;
-      const total = result.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
-      expect(total).toBe(frames.length);
-    });
-  });
 });
 
 describe('レッドフード単騎のチェーン（全段階の枠は同じチェーンで撃ち直す。設計書 7.1 節の論点 7・V-0639）', () => {
@@ -179,13 +123,7 @@ describe('レッドウルフの射撃（設計書 7.1 節の論点 10・11。V-0
 
 describe('全段階の枠と専任の順（設計書 7.1 節の論点 12）', () => {
   it('picks the leftmost ready candidate, even an AllStep slot left of a ready dedicated one', () => {
-    const input: TeamInput = {
-      slots: [fixedSlot(RED_HOOD), fixedSlot(LITER), fixedSlot(DELTA)],
-      enemy,
-      durationSeconds: 60,
-      burst: true,
-      controlledSlot: 0,
-    };
+    const input = fixedTeam([RED_HOOD, LITER, DELTA], 0, { durationSeconds: 60 });
     const first = planTeamRun(input).schedule!.activations[0]!;
     expect([first.step, first.slotIndex]).toEqual(['Step1', 0]);
   });

@@ -154,6 +154,7 @@ import {
   stepHide,
   unhideShooter,
   weaponChangeShooter,
+  weaponFreeFrameAtSwap,
   type ShooterState,
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
@@ -162,12 +163,6 @@ import type { SkillSlot } from '../types.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { HoldFire, ObstacleBreak, PelletHits } from '../team.ts';
 import { unionRanges } from './events.ts';
-
-/**
- * レッドフード編: 使用武器変更の射手の待ち（wait）を、持ち替えを見たフレームに決めたときの、待ちから最初の発までのずれ
- * （待ち w を決めたフレーム f の発は f + w + この値。確かめた値）
- */
-const WEAPON_CHANGE_WAIT_TO_SHOT = 0;
 
 export type FirstPassOptions = {
   frames: number;
@@ -655,14 +650,9 @@ function runFirstPassOnce(
    * 構え直し・チャージの途中（まだ撃っていない枠も）なら構え解除 1 回分を足す
    */
   const firstShotAfterSwap = (i: number, f: number, after: number): number => {
-    const opened = activationsOf()
-      .filter((a) => a.slotIndex === i && effectFrameOf(a) <= f)
-      .at(-1);
+    const opened = activationsOf().findLast((a) => a.slotIndex === i && effectFrameOf(a) <= f);
     const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
-    if (shooters[i]!.phase === 'reloading') return swap + after;
-    const last = logs[i]?.frames.at(-1);
-    const aimOutEnd = last === undefined ? -Infinity : last + model.aimOutFrames;
-    return aimOutEnd > swap ? aimOutEnd + after : swap + model.aimOutFrames + after;
+    return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model) + after;
   };
   const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
   // 同 2 節（C-0177・C-0243）: 枠ごとの「発の番号 → 壊した障害物の数」と、物 1 個のゲージ
@@ -1203,7 +1193,7 @@ function runFirstPassOnce(
           // 基礎の武器の状態で、最初の発を決める
           else if (params.weapon.firstShotAfterSwapFrames !== undefined) {
             const first = firstShotAfterSwap(i, f, params.weapon.firstShotAfterSwapFrames);
-            changedShooters[i]!.wait = Math.max(0, first - f - WEAPON_CHANGE_WAIT_TO_SHOT);
+            changedShooters[i]!.wait = Math.max(0, first - f);
           }
         } else {
           changedShooters[i] = null;

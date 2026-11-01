@@ -341,9 +341,9 @@ function formatGrantCondition(condition: EffectCondition | undefined, stacksOf?:
   return parts.join('・');
 }
 
-/** レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件。「バーストⅠで使用時」 */
-function burstStepUseText(step: 'Step1' | 'Step2' | 'Step3'): string {
-  return `バースト${{ Step1: 'Ⅰ', Step2: 'Ⅱ', Step3: 'Ⅲ' }[step]}で使用時`;
+/** レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件。「バースト I で使用時」 */
+function burstStepUseText(step: BasicBurstStep): string {
+  return `バースト ${BURST_STEP_ROMAN[step]} で使用時`;
 }
 
 /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値の条件。「火力ゲージが 100 以上なら」「火力ゲージが 100 未満なら」 */

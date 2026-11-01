@@ -82,11 +82,6 @@ export type FiringParams = {
   spinUpScale: number;
   /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
   infiniteAmmo: boolean;
-  /**
-   * レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の長さ（フレーム。端数あり）。使用武器の変更の
-   * chargeReleaseSeconds のあるときだけ持ち、WeaponModel.chargeReleaseFrames の代わりに使う。端数は射手が発ごとに持ち越す
-   */
-  releaseFrames?: number;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（frame/firstPass.ts） */
   weapon: ChangedWeapon | null;
 };
@@ -186,7 +181,6 @@ export function firingParams(
     spinUpScale: hasSpinUp(shot) ? Math.max(0, 1 + buffs.spinUpSpeed) : 1,
     // 2 段目の段 11 の PR 4: 変更後の武器そのものが残弾を減らさない変更（WeaponChangeEffect.infiniteAmmo。たきなのバースト）
     infiniteAmmo: buffs.infiniteAmmo > 0 || buffs.weapon?.infiniteAmmo === true,
-    ...(buffs.weapon?.chargeReleaseFrames !== undefined ? { releaseFrames: buffs.weapon.chargeReleaseFrames } : {}),
     weapon: buffs.weapon,
   };
 }
@@ -203,7 +197,10 @@ export function chargeShotIntervalFrames(
   model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
 ): number {
   if (params.stance !== null) return params.stance.frames + model.aimInFrames + params.chargeFrames - 1;
-  return params.chargeFrames + (params.downCharge ? 0 : (params.releaseFrames ?? model.chargeReleaseFrames));
+  // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 使用武器の変更の解放の長さ（端数あり。射手が発ごとに持ち越す）
+  return (
+    params.chargeFrames + (params.downCharge ? 0 : (params.weapon?.chargeReleaseFrames ?? model.chargeReleaseFrames))
+  );
 }
 
 /**
