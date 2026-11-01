@@ -292,5 +292,184 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0850-15",
+    "recording": "0850",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 110715,
+    "description": "ジルの 1 本目のマガジンの通常攻撃 1 ヒット（胴体・距離ボーナスなし。マグナム弾の▲が乗った値。`0850-07` の 1 つ目）",
+    "method": {
+      "tool": "`0850-07` から",
+      "note": "読み取りの格子（`0850-07`）の胴体の値。モデルの 1 本目のマガジンの中のフレーム 300 と比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0850-16",
+    "recording": "0850",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 110715,
+    "description": "ジルの後のマガジン（リロードの後）の通常攻撃 1 ヒット（胴体・距離ボーナスなし。マグナム弾の▲が乗った値。`0850-07`・`0850-08` から）",
+    "method": {
+      "tool": "`0850-07`・`0850-08` から",
+      "note": "どのマガジンも 9 発とも▲の乗った値（`0850-08`）なので、後のマガジンの値も `0850-07` の胴体と同じ。モデルの 5 本目のマガジンの中のフレーム 1176（4 回目のリロードの後）と比べる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1176,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0850-17",
+    "recording": "0850",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 230008,
+    "description": "硫酸弾の持続ダメージの 1 tick（会心なし。`0850-09` の 1 つ目）",
+    "method": {
+      "tool": "`0850-09` から",
+      "note": "読み取りの tick の値（`0850-09`）の会心なしの値"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0850-18",
+    "recording": "0850",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": 179,
+    "description": "硫酸弾の持続ダメージの tick の数（180 秒。`0850-11` の 1 つ目）",
+    "method": {
+      "tool": "`0850-11` から",
+      "note": "付き直しが維持を延ばすだけで刻みを変えず、重ならないなら、最初の発の 1 秒後から戦闘の終わりまで 1 秒おきの数になる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0850-19",
+    "recording": "0850",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [71],
+    "unit": "f",
+    "description": "硫酸弾の持続ダメージの最初の tick の、戦闘開始からの動画のフレーム（`0850-10` の 1 つ目 − 戦闘開始）",
+    "method": {
+      "tool": "`0850-10` から",
+      "note": "最初の発は戦闘開始の 10〜12f 後（録画で違う）で、tick はその 59f 後（`0850-12`）。最初の発の時刻のずれを見込んで ±3"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "dot"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitVideoFrames",
+      "args": {
+        "slot": 1,
+        "kind": "tick",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
   }
 ]

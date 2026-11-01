@@ -622,7 +622,8 @@ export function isWeaponChangeEndTrigger(t: unknown): t is WeaponChangeEndTrigge
 /**
  * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節。論点 3）: 「最大弾数のリロードが完了した時」。自分の基礎の武器のリロードを
  * 込め終えたフレームの次のフレーム（1 パス目の ShotLog.reloadEnds。durationUntil: "reloadEnd" の窓の終わりと同じフレーム）に発火する。
- * 解除（removeState）にだけ書ける
+ * 解除（removeState）にだけ書ける。2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: timed と状態の付与にも書ける（ジルの
+ * 「戦闘開始時および最大弾数のリロードが完了した時」のマグナム弾・硫酸弾）
  */
 export type ReloadEndTrigger = { reloadEnd: true };
 
@@ -677,7 +678,7 @@ export type EffectTrigger =
   | AppliedTrigger
   | FullStackTrigger
   | WeaponChangeEndTrigger
-  // 2 段目の段 16 の PR 2: { reloadEnd }（removeState だけが受ける）
+  // 2 段目の段 16 の PR 2: { reloadEnd }（removeState と、段 17 の PR 4 から timed・状態の付与が受ける）
   | ReloadEndTrigger
   // 2 段目の段 17 の PR 1: { coverHealed }（timed だけが受ける。parseCoverHealedTrigger）
   | CoverHealedTrigger
@@ -1411,6 +1412,8 @@ export const DOT_FIRST_TICKS = [
 
 export type DotEffect = {
   kind: 'dot';
+  /** 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 付くフレームの条件（selfState だけ。ジルの硫酸弾） */
+  condition?: EffectCondition;
   /** 2 段目の段 13 の PR 1: { counterFull } も（damage と同じ。perCount の { counter } と組む） */
   trigger: EffectTrigger;
   /** 1 tick の倍率（%）の description_value_NN */
@@ -1878,7 +1881,7 @@ export function hasReloadEndEffect(definition: SkillDefinition): boolean {
     definition.skills[slot].effects.some(
       (e) =>
         (e.kind === 'timed' && e.durationUntil === 'reloadEnd') ||
-        (e.kind === 'removeState' && isReloadEndTrigger(e.trigger)),
+        ((e.kind === 'removeState' || e.kind === 'timed' || e.kind === 'state') && isReloadEndTrigger(e.trigger)),
     ),
   );
 }
@@ -2548,7 +2551,8 @@ function parseTrigger(
   if (v.coverHealed !== undefined) fail(path, 'a { coverHealed } trigger is only allowed in timed');
   // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: リロードの込め終わりのきっかけは removeState だけ
   if (v.reloadEnd !== undefined) {
-    if (!allowReloadEnd) fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState');
+    if (!allowReloadEnd)
+      fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState, timed and state grants');
     for (const key of Object.keys(v)) if (key !== 'reloadEnd') fail(`${path}.${key}`, 'unknown field');
     if (v.reloadEnd !== true) fail(`${path}.reloadEnd`, `expected true, got ${JSON.stringify(v.reloadEnd)}`);
     return { reloadEnd: true };
@@ -2713,7 +2717,7 @@ function parseTimedFields(
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
     parseChargeTrigger(v.trigger, `${path}.trigger`) ??
     (stat !== undefined ? parseCoverHealedTrigger(v.trigger, `${path}.trigger`) : undefined) ??
-    parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
+    parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance, false, false, true);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   // 同: { applied } の効果は条件・順位の対象・強化を書けない（使い手がいない。論点 6）
@@ -2870,6 +2874,8 @@ const CONDITION_KEYS_OF = {
   timed: ['selfBuffed', 'inFullBurst', 'enemyState', 'selfState', 'usedBurst', 'selfCounter'],
   // 2 段目の段 11 の PR 5: damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
   damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter'],
+  // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 持続ダメージは付くフレームの自分の状態だけ（ジルの硫酸弾）
+  dot: ['selfState'],
   // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst
   removeState: ['selfBuffed', 'inFullBurst', 'selfState', 'usedBurst'],
   // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 常時の効果は、自分の HP の割合の条件だけ（編成の段で決まる）
@@ -3900,6 +3906,7 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'perCountIntervalFrames',
         'delayFrames',
         'stacksFrom',
+        'condition',
         'assumes',
         'claims',
       ].includes(key)
@@ -3926,6 +3933,13 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
     intervalSeconds: interval,
     ...(untilBattleEnd ? { durationUntil: 'battleEnd' as const } : parseDuration(v, path)),
   };
+  // 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ。frame/plan.ts が付くフレームを damage と同じ判定で絞る）。ゲージを溜める dot は
+  // 1 パス目が付くフレームを追うので、条件と組まない
+  if (v.condition !== undefined) {
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.dot);
+    for (const key of ['gaugeOnApply', 'gaugeOnTick', 'gaugeOnApplyDelayFrames'])
+      if (v[key] !== undefined) fail(`${path}.${key}`, 'a dot with a condition cannot charge the gauge');
+  }
   if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
     fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
   }
@@ -4255,10 +4269,11 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
     kind === 'heal',
     kind === 'ammoDecrease',
   );
-  // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は、いまは使用武器の変更の終わりのきっかけで自分にだけ
+  // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は、使用武器の変更の終わりのきっかけで自分にだけ。2 段目の段 17 の
+  // PR 4（plan/design-skill-stage17.md 2.2 節）: バースト使用時も（ジルのバースト。100% で残弾 0 になり、リロードを始める）
   if (kind === 'ammoDecrease') {
-    if (!isWeaponChangeEndTrigger(trigger))
-      fail(`${path}.trigger`, 'ammoDecrease needs the trigger { weaponChangeEnd: true }');
+    if (!isWeaponChangeEndTrigger(trigger) && trigger !== 'burstUse')
+      fail(`${path}.trigger`, 'ammoDecrease needs the trigger { weaponChangeEnd: true } or "burstUse"');
     if (v.target !== 'self') fail(`${path}.target`, 'ammoDecrease must target "self"');
     for (const key of ['targetWeapon', 'targetElement', 'targetClass', 'targetCount', 'targetCountRef']) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'ammoDecrease cannot narrow its target');

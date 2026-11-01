@@ -1,0 +1,219 @@
+{
+  "formatVersion": 1,
+  "resourceId": 841,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "normalAttackDamage",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "assumes": {
+            "ja": "マグナム弾（通常攻撃ダメージ倍率▲・値 02（9）発間維持）。戦闘開始時の分。通常攻撃の武器倍率に (1 + 値 01) を掛ける（C-0121）",
+            "en": "Magnum Round (normal attack damage multiplier up for value 02 (9) rounds), the battle start part. Multiplies the normal attack weapon multiplier by (1 + value 01) (C-0121)"
+          },
+          "claims": [
+            "C-0823"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "reloadEnd": true
+          },
+          "target": "self",
+          "stat": "normalAttackDamage",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "assumes": {
+            "ja": "マグナム弾の、最大弾数のリロード完了時の分。込め終わりの次のフレームに付き直す（同じ効果の付き直しは上書き）。最大装弾数 9 発のマガジンをちょうど覆う",
+            "en": "Magnum Round on finishing a full reload. Reapplied on the frame after the reload completes (reapplying the same effect overwrites). Covers exactly a 9-round magazine"
+          },
+          "claims": [
+            "C-0823"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "乗るのは防御力無視の発（バーストの窓の、防御力無視として適用した通常攻撃）だけ",
+            "en": "Applies only to true-damage hits (normal attacks applied as true damage in the Burst window)"
+          },
+          "claims": [
+            "C-0825"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "acidRound",
+          "trigger": "battleStart",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "硫酸弾。戦闘開始時の分。次の通常攻撃で対象に持続ダメージを付けて外れる（下の dot と removeState）",
+            "en": "Acid Round, the battle start part. The next normal attack applies the damage over time to the target and removes it (the dot and removeState below)"
+          },
+          "claims": [
+            "C-0824"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "acidRound",
+          "trigger": {
+            "reloadEnd": true
+          },
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "assumes": {
+            "ja": "硫酸弾の、最大弾数のリロード完了時の分（込め終わりの次のフレーム）",
+            "en": "Acid Round on finishing a full reload (the frame after the reload completes)"
+          },
+          "claims": [
+            "C-0824"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "condition": {
+            "selfState": {
+              "state": "acidRound",
+              "present": true
+            }
+          },
+          "ref": 1,
+          "intervalSeconds": 1,
+          "durationRef": 2,
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "硫酸弾の状態で撃った通常攻撃が、対象に最終攻撃力の 値 01（192）% の持続ダメージ（1 秒間隔・値 02（30）秒）を付ける。tick は付いた 1 間隔後から（C-0130 の形）。マガジンごとの付き直しは維持を延ばすだけで、tick は重ならず刻みも変わらない（C-0129 の形）",
+            "en": "A normal attack fired in the Acid Round state applies damage over time of value 01 (192)% of final ATK to the target (every 1 s, value 02 (30) s). Ticks start one interval after it is applied (the C-0130 form). Reapplying it every magazine only extends it; ticks do not stack and keep their phase (the C-0129 form)"
+          },
+          "claims": [
+            "C-0824"
+          ]
+        },
+        {
+          "kind": "removeState",
+          "state": "acidRound",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "target": "self",
+          "assumes": {
+            "ja": "硫酸弾を付けた発で外れる（射撃の回数のきっかけの解除は次のフレームに閉じるので、同じ発の持続ダメージは状態を見る）",
+            "en": "Removed by the shot that applied it (a shot-count removal closes on the next frame, so the damage over time on the same shot still sees the state)"
+          },
+          "claims": [
+            "C-0824"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0825"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "reloadSpeed",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "リロード速度 値 01（99.96）%▲（10 秒）。リロードの時間 × (1 − 値) で、ほぼ 0 になる（C-0013）。「固定」は書いていない（下の notes）",
+            "en": "Reload speed up by value 01 (99.96)% (10 s): reload time × (1 − value), almost 0 (C-0013). \"Fixed\" is not modeled (see the notes below)"
+          },
+          "claims": [
+            "C-0825"
+          ]
+        },
+        {
+          "kind": "ammoDecrease",
+          "trigger": "burstUse",
+          "target": "self",
+          "ref": 5,
+          "assumes": {
+            "ja": "残弾数 値 05（100）% 減少。残弾は 0 になり、リロードを始める（説明文の「強制リロード」はこれで起きる）",
+            "en": "Ammo reduced by value 05 (100)%: the ammo becomes 0 and a reload starts (the description's \"forced reload\" happens through this)"
+          },
+          "claims": [
+            "C-0825"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "hitRate",
+          "ref": 6,
+          "durationRef": 7
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 8,
+          "durationRef": 9,
+          "claims": [
+            "C-0825"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "trueDamageConversion",
+          "durationRef": 10,
+          "assumes": {
+            "ja": "窓の中の通常攻撃の 1 発の基礎を、防御力を引かない最終攻撃力にする（C-0311・C-0525 の式）",
+            "en": "Normal attacks in the window use final ATK without subtracting DEF (the C-0311 / C-0525 formula)"
+          },
+          "claims": [
+            "C-0825"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は未対応（ほかのリロード速度▲▼を持つ味方のいる編成では、モデルは足し合わせる。plan/design-skill-stage17.md 論点 5）",
+          "en": "The reload speed being \"fixed\" (ignoring other reload speed ups/downs during the window) is not modeled (with an ally that has reload speed up/down, the model adds them. plan/design-skill-stage17.md issue 5)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "reloadSpeed",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

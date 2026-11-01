@@ -243,5 +243,262 @@
       "slot": 3,
       "source": "normal"
     }
+  },
+  {
+    "id": "0852-15",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "value": 24,
+    "unit": "f",
+    "description": "バーストの窓の中のジルのリロードの、最終弾から次のマガジンの 1 発目まで（`0852-10` の中央値）",
+    "method": {
+      "tool": "`0852-10` から",
+      "note": "窓の中のリロードはどれも 23〜24f（射撃の刻みと同じ）。モデルの 1 回目のバーストの窓（ジルのバースト使用から 10 秒）の中のフレーム 1000 と比べる"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 3,
+        "frame": 1000
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0852-16",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "compare",
+    "value": [13, 13, 13, 13],
+    "unit": "発",
+    "description": "フルバーストの開始から、その後で最初にマガジンを撃ち切った発までのジルの発の数（回ごと。`0852-09` の読みから）",
+    "method": {
+      "tool": "`0852-09` から",
+      "note": "読み取りでは、開始の後の 4 発目まで残弾の表示が読めず、4 発目のフレームで 9、そこから 1 まで減って次の発で撃ち切る（`0852-09`）。照準の横の残弾は 9 までのテンプレート（--max 9）で読んでいるので、9 より大きい残弾は読めない。読み取りの「4 発のマガジンの後に 9 発のマガジン」と、「13 発のマガジン（9 にリターのバーストの最大装弾数▲が乗った数。C-0468）を開始の後の 4 発目で 9 まで撃った」の、どちらでも撃ち切りまでの発の数は 4 + 9。窓の中のリロードは射撃の刻みと同じ長さ（`0852-10`）なので、4 発目と 5 発目の間のリロードの有無は時刻では分からない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstMagazineShots",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0852-17",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1342321,
+    "description": "1 回目のフルバーストの、開始の後の 1 本目のマガジンの最初の 9 発（リターのバーストの攻撃力▲とマグナム弾の▲が乗る）の、コア・会心なし・距離ボーナスありの 1 ヒット（`0852-12` の値）",
+    "method": {
+      "tool": "`0852-12` から",
+      "note": "読み取りの回ごとの発の並び（`0852-12` の note）で、フルバーストの開始の後の 1 回目の窓は、開始の後のマガジンの最初の 9 発・続く 4 発・リロードの後の発の順に値の段が替わる。その段の値を、マガジンの中の何発目かでモデルの同じ段のフレームに当てた（モデルの 1 本目のマガジン（ジルのバーストの残弾数減少の後の込め終わりで付いたマグナム弾の 9 発）の中のフレーム 700）。動画とモデルのフレームはフルバーストの入りの止まりの分ずれるので、時刻では当てない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0852-18",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 701762,
+    "description": "同じマガジンの残りの 4 発（マグナム弾の 9 発が終わった後。リターの攻撃力▲も切れている）の、コア・会心なし・距離ボーナスありの 1 ヒット（`0852-12` の値）",
+    "method": {
+      "tool": "`0852-12` から",
+      "note": "読み取りの回ごとの発の並び（`0852-12` の note）で、フルバーストの開始の後の 1 回目の窓は、開始の後のマガジンの最初の 9 発・続く 4 発・リロードの後の発の順に値の段が替わる。その段の値を、マガジンの中の何発目かでモデルの同じ段のフレームに当てた（モデルの 1 本目のマガジンの 10〜13 発目の中のフレーム 850）。動画とモデルのフレームはフルバーストの入りの止まりの分ずれるので、時刻では当てない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 850,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0852-19",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 912320,
+    "description": "2 本目のマガジン（窓の中のリロードの込め終わりでマグナム弾が付き直す）の、コア・会心なし・距離ボーナスありの 1 ヒット（`0852-12` の値）",
+    "method": {
+      "tool": "`0852-12` から",
+      "note": "読み取りの回ごとの発の並び（`0852-12` の note）で、フルバーストの開始の後の 1 回目の窓は、開始の後のマガジンの最初の 9 発・続く 4 発・リロードの後の発の順に値の段が替わる。その段の値を、マガジンの中の何発目かでモデルの同じ段のフレームに当てた（モデルの 2 本目のマガジンの最初の 9 発の中のフレーム 1000）。動画とモデルのフレームはフルバーストの入りの止まりの分ずれるので、時刻では当てない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0852-20",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1075235,
+    "description": "2 本目のマガジンの、コア・会心・距離ボーナスありの 1 ヒット（`0852-12` の値）",
+    "method": {
+      "tool": "`0852-12` から",
+      "note": "読み取りの回ごとの発の並び（`0852-12` の note）で、フルバーストの開始の後の 1 回目の窓は、開始の後のマガジンの最初の 9 発・続く 4 発・リロードの後の発の順に値の段が替わる。その段の値を、マガジンの中の何発目かでモデルの同じ段のフレームに当てた（モデルの 2 本目のマガジンの最初の 9 発の中のフレーム 1000）。動画とモデルのフレームはフルバーストの入りの止まりの分ずれるので、時刻では当てない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0852-21",
+    "recording": "0852",
+    "source": "V-0601",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": 597,
+    "unit": "f",
+    "description": "1 回目のフルバーストの開始（III のタイマーの 00.00）から、ジルのバーストの窓（防御力無視として適用・攻撃ダメージ▲ほか）の切れ目までの動画のフレーム（`0852-14` の 1 回目から）",
+    "method": {
+      "tool": "`0852-14` から",
+      "note": "窓の値の最後のジルの発は開始の 585f 後で、次の発（窓の外の値）は約 24f 後（射撃の刻み）。その間（585〜609）を挟んだ幅の真ん中で、幅の半分を許容にした"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "trueDamageConversion",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 12
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
   }
 ]
