@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 595・仮説 91・棄却 126・範囲外 2（計 814）
+件数: 確定 598・仮説 91・棄却 126・範囲外 2（計 817）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -5278,6 +5278,31 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0623
   - 定義: `data/skills/350.json` の skill2 の effects[1]、`data/skills/350.json` の burst の effects[4]
+- **C-0865** アークレンジャー・ブラックのバーストのバッテリー緊急チャージ（変身状態でない時）でバッテリーが 100% になると、次のフレームに変身が付き、同じフレームにバッテリーが値 06 減る（変身後の▼）。変身の間は、変身の付いたフレームから 0.2 秒ごとに値 04 ずつ減り、0% になった次のフレームに変身が外れる（バーストからの変身は 10 秒）。変身の中の攻撃力▲（値 05）は通常攻撃に乗り、外れた後の発には乗らない。S2 のアークブラックコレダーは変身の付いたフレームに付き、その 1 秒後から 1 秒ごとに、変身の最後のフレームまで tick を出す（バーストからの変身では 10 回。付いた瞬間には出ない）
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-01
+  - 根拠: `0902-04`・`0902-05`・`0903-04`・`0903-05`（コレダーの 10 回の tick の、III のタイマーの 00.00 からの動画のフレーム。どの回もモデルと ±1f で、10 回目の後は次のフルバーストまで出ない。変身後の▼が効かずに 20 秒続く形なら、フルバーストの後にも 10 回出る。付いた瞬間に出る形なら 00.00 の前に 1 回多い。0.2 秒の周期を戦闘開始から数える形なら、10 回目が変身の外れた後になって出ない）、`0902-12`・`0903-12`（2 回目のフルバーストの中の通常攻撃の 1 ヒットに変身の攻撃力▲が乗る）、`0902-13`・`0903-13`（フルバーストの後の発には乗らない）。どちらの録画も 3・4 回目のフルバーストの tick が同じ列（観測値の note）。V-0626
+  - モデル側: `data/skills/570.json` の skill1 の effects[0]（state transformation・{ counterFull: battery }・durationUntil { counterEmpty: battery }・contents attack ref 5）・effects[1]（counterChange・{ everySeconds: 0.2, carry, since: { applied: transformation } }・amountRef 4・decrease）、burst の effects[1]（counterChange・burstUse・amount 100・変身状態でない時）・effects[2]（counterChange・{ applied: transformation }・amountRef 6・decrease）、skill2 の effects[0]（dot・{ applied: transformation }・durationUntil { stateEnd: transformation }・firstTick afterInterval）。満タンの次のフレームの付与と 0% の次のフレームの解除は `skills/holders.ts` の registerCounters、変身の間だけの tick は `frame/plan.ts` の dotApplicationFrames（plan/design-skill-stage19.md 2.1 節）
+  - 決めるのに使った録画: 0902（読み方を合わせた）
+  - 録画の中の反復: 0902（1 回目のフルバーストで決め、2 回目のフルバーストで再現。0902-05）
+  - 検証記録: V-0626
+  - 定義: `data/skills/570.json` の skill1 の effects[0]、`data/skills/570.json` の skill1 の effects[1]、`data/skills/570.json` の skill2 の effects[0]、`data/skills/570.json` の burst の effects[1]、`data/skills/570.json` の burst の effects[2]
+  - 等級の候補（機械）: 厳密一致
+- **C-0866** アークレンジャー・ブラックのバーストの持続ダメージ（最終最大HP が最も高い敵 1 機）は、バースト使用時に付き、その 1 秒後から 1 秒ごとに 10 回 tick を出す（付いた瞬間には出ない）。付くのは本当の発動の 2〜3f 後（tick がどの回もコレダーの 1〜2f 後）
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-01
+  - 根拠: `0902-06`・`0902-07`・`0903-06`・`0903-07`（バーストの持続ダメージの 10 回の tick の、III のタイマーの 00.00 からの動画のフレーム。どの回もモデルより 2〜3f 後で、間隔はモデルと同じ。付いた瞬間に出る形（マナ C-0300 の形）なら 00.00 の前に 1 回出て、2 回目まで 1.5 秒空く）。どちらの録画も 3・4 回目のフルバーストの tick が同じ列（観測値の note）。V-0626
+  - モデル側: `data/skills/570.json` の burst の effects[3]（dot・burstUse・durationRef 9・firstTick afterInterval）。付く時刻は本当の発動のフレーム（`burst/landing.ts` の遅れの表に行が無い）で、録画より 2〜3f 早い（バースト使用時の効果の付き始めの数 f の差は直さない。plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）
+  - 決めるのに使った録画: 0902（読み方を合わせた）
+  - 録画の中の反復: 0902（1 回目のフルバーストで決め、2 回目のフルバーストで再現。0902-07）
+  - 検証記録: V-0626
+  - 定義: `data/skills/570.json` の burst の effects[3]
+- **C-0867** アークレンジャー・ブラックの S2 のアークブラックコレダーとバーストの持続ダメージの 1 tick は、最終攻撃力 × 説明文の値（値 01・値 08）×（1 + 会心 + フルバースト補正）×（1 + 持続ダメージ▲の和）で、和には S1 の通常攻撃 30 回ごとの値 08、S2 のフルバースト開始時の風圧 AR の味方への値 02、バーストの自分の値 10（10 秒）が入る。バーストの自分の▲が切れた後の 10 回目の tick は、その分だけ下がる
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-01
+  - 根拠: `0902-08`〜`0902-11`・`0903-08`〜`0903-11`（1 回目のフルバーストの 2 回目と 10 回目の tick の値。モデルと ±1 で一致。2 回目は 3 つの▲とリターのバーストの攻撃力▲の中、10 回目はバーストの自分の▲の切れた後）。値はどれも説明文の値とほかの確定の結論から決め、録画で合わせた定数は無い。V-0626
+  - モデル側: `data/skills/570.json` の skill1 の effects[2]（timed・{ count: normalShot, everyRef: 7 }・self・sustainedDamage ref 8）、skill2 の effects[1]（timed・fullBurstStart・allies・AR・Wind・sustainedDamage ref 2）、burst の effects[4]（timed・burstUse・self・sustainedDamage ref 10）。持続ダメージ▲の和の掛かり方は C-0332・C-0421・C-0793 と同じ（`damage.ts` の sustainedDamageMultiplier）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 1 tick の式は持続ダメージの式（C-0332）、値は 570 の説明文（値 01・値 02・値 08・値 10）とリター・デルタの確定の結論から
+  - 検証記録: V-0626
+  - 定義: `data/skills/570.json` の skill1 の effects[2]、`data/skills/570.json` の skill2 の effects[1]、`data/skills/570.json` の burst の effects[4]
 
 ## 敵・的・場面
 
@@ -5439,7 +5464,7 @@
   - 状態: 範囲外・等級: 推論・更新日: 2026-10-17
   - 根拠: 要件 5.2 節（当面扱わないもの: ボスの行動パターン・パーツ破壊、被弾による HP 変動・回復・シールド、貫通・範囲攻撃の複数ヒット）と、スキル定義の notes の種類 outOfScope（design-skill-note-kinds.md 2.1 節）。最小構成の検査で、射撃場では起きない notes を未確定の要素に数えないための約束（design-minimal-relevance.md 11.2 節）。2026-10-17 に、味方に付けるバリアの部分を量に限った（2 段目の段 5 でバリアが付いている状態をモデルに入れた。plan/design-skill-stage5.md。オーナーの判断）
   - モデル側: 未反映（モデルは扱わない）。スキル定義の前提の外（outOfScope）の notes の claims にこの結論を書く
-  - 定義: `data/skills/16.json` の skill1 の notes[0]、`data/skills/60.json` の skill2 の notes[0]、`data/skills/121.json` の burst の notes[0]、`data/skills/162.json` の skill2 の notes[0]、`data/skills/191.json` の skill2 の notes[0]、`data/skills/226.json` の skill1 の notes[0]、`data/skills/233.json` の skill1 の notes[0]、`data/skills/233.json` の burst の notes[1]、`data/skills/242.json` の skill1 の notes[0]、`data/skills/242.json` の burst の notes[0]、`data/skills/260.json` の burst の notes[2]、`data/skills/270.json` の skill1 の notes[0]、`data/skills/271.json` の burst の notes[0]、`data/skills/290.json` の skill1 の notes[0]、`data/skills/352.json` の skill2 の notes[0]、`data/skills/352.json` の treasureSkills.skill2 の notes[0]、`data/skills/471.json` の skill2 の notes[0]、`data/skills/471.json` の skill2 の notes[1]、`data/skills/471.json` の burst の notes[0]、`data/skills/472.json` の skill1 の notes[0]、`data/skills/472.json` の skill1 の notes[1]、`data/skills/472.json` の burst の notes[0]、`data/skills/473.json` の skill1 の notes[0]、`data/skills/473.json` の burst の notes[0]、`data/skills/500.json` の skill1 の notes[0]、`data/skills/811.json` の skill2 の notes[0]、`data/skills/830.json` の skill1 の notes[0]
+  - 定義: `data/skills/16.json` の skill1 の notes[0]、`data/skills/60.json` の skill2 の notes[0]、`data/skills/121.json` の burst の notes[0]、`data/skills/162.json` の skill2 の notes[0]、`data/skills/191.json` の skill2 の notes[0]、`data/skills/226.json` の skill1 の notes[0]、`data/skills/233.json` の skill1 の notes[0]、`data/skills/233.json` の burst の notes[1]、`data/skills/242.json` の skill1 の notes[0]、`data/skills/242.json` の burst の notes[0]、`data/skills/260.json` の burst の notes[2]、`data/skills/270.json` の skill1 の notes[0]、`data/skills/271.json` の burst の notes[0]、`data/skills/290.json` の skill1 の notes[0]、`data/skills/352.json` の skill2 の notes[0]、`data/skills/352.json` の treasureSkills.skill2 の notes[0]、`data/skills/471.json` の skill2 の notes[0]、`data/skills/471.json` の skill2 の notes[1]、`data/skills/471.json` の burst の notes[0]、`data/skills/472.json` の skill1 の notes[0]、`data/skills/472.json` の skill1 の notes[1]、`data/skills/472.json` の burst の notes[0]、`data/skills/473.json` の skill1 の notes[0]、`data/skills/473.json` の burst の notes[0]、`data/skills/500.json` の skill1 の notes[0]、`data/skills/570.json` の skill1 の notes[0]、`data/skills/570.json` の skill2 の notes[0]、`data/skills/811.json` の skill2 の notes[0]、`data/skills/830.json` の skill1 の notes[0]
 - **C-0477** 射撃場 3 分モードの遠（3 区間目）の着地点は 2 か所ある。遠 A（足元の y 540〜542。近い）と遠 B（534 前後。遠い）で、遠 B の的は高さ・幅が約 8% 小さく、上端が約 4px 下に写る。単騎の 129 本では遠 A 67・遠 B 62（遠 A の割合 0.52、95% の幅 0.43〜0.60）。アニス：スターの誘導弾の飛ぶ時間は遠 A で 26〜27f（録画 0164・0211）、遠 B で 28〜29f（録画 0161）
   - 状態: 仮説・等級: 単独実測・更新日: 2026-10-08
   - 根拠: 単騎・3 分モードの 119 本の遠の的の（足元の y, 上端の y, 高さ, 幅）の中央値（113 本が読めた。6 本は使えるコマが 8 未満）。予測（V-0228 の F1・F0・F2・F3。commit 649f953）の後に読んだ。仮説の出どころの 22 本を除く新しい 92 本で、足元 534 前後 38 本・540〜542 52 本・間 2 本に分かれ、足元の高い群ほど高さ（中央値 146 / 156）・幅（130 / 142）が小さく、上端（388 / 384）が下で、F0（上端が動かない）・F2（上端が足元と同じ向き）と合わない。ただし大きさの差は F1 の見込み（地平線 459 の遠近法で高さの差 16 ± 4・上端の差 −8 ± 3）より小さく、中央値では幅をわずかに外れた（平均では高さの差 12.0）。飛ぶ時間は `0161-22`・`0164-31`・`0211-21`（211 は着地点を読む前に読んだ）。観測値: `0045-25`・`0046-36`・`0054-26`・`0055-29`・`0056-25`・`0057-12`・`0058-07`・`0060-05`・`0061-05`・`0062-05`・`0070-25`・`0071-23`・`0072-16`・`0073-18`・`0074-29`・`0075-20`・`0076-12`・`0077-41`・`0095-08`・`0098-15`・`0099-11`・`0100-04`・`0101-23`・`0102-17`・`0103-19`・`0104-10`・`0105-04`・`0109-10`・`0110-09`・`0111-09`・`0112-10`・`0121-08`・`0122-22`・`0123-15`・`0126-12`・`0127-12`・`0128-08`・`0129-08`・`0130-06`・`0131-06`・`0137-16`・`0138-14`・`0139-11`・`0140-14`・`0142-08`・`0143-13`・`0144-11`・`0145-16`・`0146-08`・`0147-14`・`0148-08`・`0149-13`・`0152-15`・`0153-03`・`0154-08`・`0155-10`・`0156-03`・`0157-05`・`0158-10`・`0159-03`・`0160-05`・`0161-25`・`0164-34`・`0166-01`・`0167-10`・`0168-04`・`0169-10`・`0170-04`・`0171-10`・`0172-04`・`0174-08`・`0175-08`・`0176-08`・`0177-08`・`0198-12`・`0199-08`・`0200-09`・`0201-08`・`0202-08`・`0203-08`・`0204-08`・`0205-08`・`0206-08`・`0207-08`・`0208-08`・`0209-08`・`0210-05`・`0211-20`・`0211-21`・`0213-06`・`0214-05`・`0215-06`・`0216-05`・`0217-05`・`0218-05`・`0219-05`・`0220-05`・`0226-04`・`0228-03`・`0231-04`・`0234-05`・`0235-05`・`0236-05`・`0237-05`・`0238-05`・`0239-05`・`0240-05`・`0241-05`・`0242-03`・`0243-10`・`0250-09`・`0251-05`・`0252-04`・`0253-02`。V-0228。V-0328 の 20 本（遠 A 6・遠 B 14。V-0228 と同じ規則で、弾丸命中率より先に読んだ）を配分の数に足した: `0329-01`・`0330-01`・`0331-01`・`0332-01`・`0333-01`・`0334-01`・`0335-01`・`0336-01`・`0339-01`・`0340-01`・`0341-01`・`0342-01`・`0343-01`・`0344-01`・`0345-01`・`0346-01`・`0347-01`・`0348-01`・`0349-01`・`0350-01`。V-0228 の配分（遠 A 0.56）なら V-0328 の 20 本で遠 A が 6 本以下になる見込みは 1.7%。C-0333 から、配分の数を V-0328 の 20 本を足した数にし、モデル側を反映にして置き換えた（2026-10-08 のオーナーの判断。plan/design-far-landings.md）。状態は C-0333 と同じく仮説（V-0228 の大きさの見込みを中央値でわずかに外した点は変わらない）

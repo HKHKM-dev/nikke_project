@@ -20511,6 +20511,166 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0902-04",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "1f172ec8e4c83d4b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-05",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "eebceb8b4c7a24de",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-06",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "807a438c3447356f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-07",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "6731502b44c4d40a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-08",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "533d0181a2d02ed2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-09",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "d82df5447c5c8a4f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-10",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "93a34c9910aa535a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-11",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "4bc240ccf271c967",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-12",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "b7925f6708848328",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0902-13",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "dd602e5ed95d812d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-04",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "a87f0b28a531b3af",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-05",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "45f687eb87a36b92",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-06",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "56cd596cf3a5ebd3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-07",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "7bcaf70b0b253b5e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-08",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "976dc2218ee2a86e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-09",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "859f2e64ab0bb27b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-10",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "4365a3b90e8f4396",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-11",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "de3a7becb8f78bf3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-12",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "934a99073907b072",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0903-13",
+      "element": "アークレンジャー・ブラック burst.effects[0]",
+      "key": "9502f69a57205bab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
