@@ -87,6 +87,11 @@ export type BuffTotals = {
    */
   enemyDefenseDown: number;
   /**
+   * マスト編（plan/design-mast.md 2.2 節）: 発動者基準の敵の防御力▼の加算（防御力の値。Σ(発動者のバフ前防御力 × value)）。割合の▼の後に
+   * 引き、0 で止める（damage.ts の defenceAfterDown。順と 0 で止めるのは未確定の仮の形）
+   */
+  enemyDefenseDownFlat: number;
+  /**
    * アニス：スター S2・バースト編: 発射体爆発ダメージの加算。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
    * damage.ts の PROJECTILE_EXPLOSION_BUCKET。plan/design-anis-star-s2-burst.md 2.1 節）
    */
@@ -192,6 +197,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   distributedDamage: 0,
   damageTaken: 0,
   enemyDefenseDown: 0,
+  enemyDefenseDownFlat: 0,
   projectileExplosionDamage: 0,
   projectileStickDamage: 0,
   elementAdvantage: 0,
@@ -298,7 +304,9 @@ export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
  * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、flat（Stage 10。maxAmmo だけ）は value を発数として
  * maxAmmoFlat に加算し、それ以外は value を比率として加算する。
  * 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: casterFinalMaxHp は 発動者の最終最大HP（casterMaxHp）× value を攻撃力に
- * 固定加算する（casterAttack と同じ置き場所）。casterMaxHp が無ければ RangeError（黙って 0 にしない）
+ * 固定加算する（casterAttack と同じ置き場所）。casterMaxHp が無ければ RangeError（黙って 0 にしない）。
+ * マスト編（plan/design-mast.md 2.2 節）: casterDefence は 発動者のバフ前防御力（casterBaseDefence）× value を敵の防御力から引く量
+ * （enemyDefenseDownFlat）に足す。casterBaseDefence が無ければ RangeError
  */
 export function applyResolvedEffect(
   totals: BuffTotals,
@@ -311,6 +319,7 @@ export function applyResolvedEffect(
   },
   casterBaseAttack: number,
   casterMaxHp?: number,
+  casterBaseDefence?: number,
 ): AppliedBuff {
   // Stage 11 モダニア: 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
   if (effect.stat === 'weapon') {
@@ -328,6 +337,14 @@ export function applyResolvedEffect(
     const appliedAmount = casterMaxHp * effect.value;
     return {
       totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self'),
+      appliedAmount,
+    };
+  }
+  if (effect.scaling === 'casterDefence') {
+    if (casterBaseDefence === undefined) throw new RangeError('casterDefence needs the base defence of the caster');
+    const appliedAmount = casterBaseDefence * effect.value;
+    return {
+      totals: { ...totals, enemyDefenseDownFlat: totals.enemyDefenseDownFlat + appliedAmount },
       appliedAmount,
     };
   }

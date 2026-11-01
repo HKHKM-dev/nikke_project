@@ -111,6 +111,7 @@ describe('computeDamage', () => {
       distributedDamage: 0,
       damageTaken: 0,
       enemyDefenseDown: 0,
+      enemyDefenseDownFlat: 0,
       projectileExplosionDamage: 0,
       projectileStickDamage: 0,
       elementAdvantage: 0,

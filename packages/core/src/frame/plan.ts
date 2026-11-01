@@ -301,10 +301,24 @@ export function planSkillHits(
   // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）
   const enemySpans = new Map<NamedStateId, { start: number; end: number }[]>();
   // エレグの段 3（plan/design-elegg-s3.md 2 節の 2）: 敵に付く状態の付与の件（ブームインストール）も同じ列に入れる
+  // マスト編（plan/design-mast.md 2.3 節）: dot の stacksFrom が写す、敵にスタックで付く状態の付与の件（出どころの枠 × 状態。海風）
+  const enemyGrantStacks = new Map<string, { start: number; end: number; stack?: number }[]>();
   for (const item of itemsOf(history, { holder: ENEMY })) {
     if (item.origin.kind !== 'enemyState' && item.origin.kind !== 'state') continue;
     enemySpans.set(item.origin.state, [...(enemySpans.get(item.origin.state) ?? []), item]);
+    if (item.origin.kind !== 'state' || item.stack === undefined) continue;
+    const key = `${item.sourceSlotIndex}:${item.origin.state}`;
+    const list = enemyGrantStacks.get(key);
+    if (list === undefined) enemyGrantStacks.set(key, [item]);
+    else list.push(item);
   }
+  /** フレーム frame に敵に付いている、枠 sourceSlotIndex の状態 state のスタックの数（そのフレームに付いた段も入れる。条件 enemyState と同じ見え方） */
+  const enemyGrantStacksAt = (sourceSlotIndex: number, state: NamedStateId, frame: number): number => {
+    let stacks = 0;
+    for (const x of enemyGrantStacks.get(`${sourceSlotIndex}:${state}`) ?? [])
+      if (x.start <= frame && frame < x.end) stacks = Math.max(stacks, x.stack ?? 0);
+    return stacks;
+  };
   // 段 D の 2: 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）
   const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
   slots.forEach((slot, slotIndex) => {
@@ -577,14 +591,21 @@ export function planSkillHits(
       // 2 段目の段 13 の PR 2: スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
       const from = dot.stacksFrom;
       if (from !== undefined) {
-        // 元は同じ定義の dot（skills/types.ts の validateDotStateRefs）
-        const source = dotGroups.find((g) => g.dot.state === from)!;
-        const sourceFires = source.fires.map((x) => x.f);
+        // 元は同じ定義の dot か、敵にスタックで付く状態の付与（マスト編。skills/types.ts の validateDotStateRefs）
+        const source = dotGroups.find((g) => g.dot.state === from);
+        const sourceFires = source?.fires.map((x) => x.f) ?? [];
+        const stacksAt = (frame: number): number =>
+          source !== undefined
+            ? dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, frame)
+            : enemyGrantStacksAt(slotIndex, from, frame);
         for (const { f, effect } of fires) {
-          const copied = dotStacksAt(sourceFires, source.cancels, source.dot.maxStacks, f);
+          const copied = stacksAt(f);
           if (copied === 0) continue;
-          for (const tick of dotTicks([f], dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick))
-            push(tick.frame, effect, false, copied);
+          for (const tick of dotTicks([f], dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick)) {
+            // マスト編（plan/design-mast.md 2.3 節）: copyEachTick は tick ごとに写し直す（0 の tick は出さない）
+            const stacks = dot.copyEachTick === true ? stacksAt(tick.frame) : copied;
+            if (stacks > 0) push(tick.frame, effect, false, stacks);
+          }
         }
         continue;
       }

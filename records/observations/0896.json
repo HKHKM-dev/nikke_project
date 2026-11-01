@@ -1,0 +1,219 @@
+[
+  {
+    "id": "0896-01",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 656752,
+    "description": "1 回目のバースト（1,719f）と同じフレームの暴風の 1 回目の tick（会心。50 スタック。会心の項は 0.5 + バーストのクリティカルダメージ▲ 0.2519）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0896-02",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 847716,
+    "description": "暴風の 2 回目の tick（1,807f。1 回目の 1.5 秒後。会心。会心の項にさらに S1 の HP 70% 以下のクリティカルダメージ▲ 0.5094）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0896-03",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 374880,
+    "description": "暴風の 3 回目の tick（1,866f。会心なし。4.52% × 50 スタック × マストの最終攻撃力 165,876）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0896-04",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 225831,
+    "description": "暴風の 6 回目の tick（2,042f。会心なし。リターの攻撃力▲の切れた後）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 5,
+        "crit": false,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0896-05",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 510670,
+    "description": "暴風の 7 回目の tick（2,101f。会心。S1 の HP 70% 以下の▲はまだ乗る）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 6,
+        "crit": true,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0896-06",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "value": [50, 10, 44, 26],
+    "unit": "スタック",
+    "description": "暴風の出たバーストごとの、写した海風のスタック数（tick の値 ÷ 1 スタックの値。1,719・5,142・8,618・10,096f から）。どの回も 7 回の tick が同じ数で、tick の間に海風が増えても変わらない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "dot"
+    }
+  },
+  {
+    "id": "0896-07",
+    "recording": "0896",
+    "source": "V-0623",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "record",
+    "value": [74180, 55915],
+    "description": "1 回目のバーストの窓の中（1,720〜1,924f）の、2 人の発の和。74,180 = 37,090 × 2（2 人とも会心・距離ボーナスあり、会心の項 0.5 + 0.2519 + 0.5094）、55,915 = 18,825 + 37,090。リターにも、バーストのクリティカルダメージ▲と S1 の HP 70% 以下の▲が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "hud.ts --mode jumps の増分を、使い捨てのスクリプトで、暴風の tick（4.52% × スタック数 × マストの最終攻撃力。会心は会心の項を足す）と、同じフレームのリター・マストの SMG の 1 ヒットの和に当てた（V-0623「読み方」）"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  }
+]

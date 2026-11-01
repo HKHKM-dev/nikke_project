@@ -1,0 +1,40 @@
+{
+  "id": "0897",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0897_smg+smg_liter+mast.mp4",
+  "original": "2026-11-01_18-52-22.mp4",
+  "durationSec": 199.2,
+  "frames": 11951,
+  "fps": 60,
+  "sizeMB": 241.4,
+  "sha256": "3142835f878b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 350,
+      "name": "マスト",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0623 の撮影 B。リター（1 枠目・AI）+ マスト（2 枠目・操作）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T18:57+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

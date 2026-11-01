@@ -261,6 +261,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   // 2 段目の段 14 の PR 2
   if ('chargeTick' in t) return `チャージ中の ${t.chargeTick.everySeconds} 秒ごと`;
   if ('chargeFull' in t) return 'フルチャージした時';
+  // マスト編
+  if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下の間';
   return t.count;
 }
 

@@ -435,12 +435,15 @@ export const DISTANCE_BONUS = 0.3;
  * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の後の防御力。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
  * 四捨五入で整数にする（C-0790）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値。丸めの向きは enemy.defenceRounding
  * 未確定: .5 ちょうど（防御力を手入力する敵など）は Math.round で切り上げるが、C-0790 は 64.36 と 91.6 だけで見分けていて、
- * .5 の向きの根拠は無い（plan/backlog.md 2-43）
+ * .5 の向きの根拠は無い（plan/backlog.md 2-43）。
+ * マスト編（plan/design-mast.md 2.2 節）: 発動者基準の▼（enemyDefenseDownFlat。防御力の値）は、割合の▼の後に引いて 0 で止め、丸めはその後。
+ * 割合の▼との順と 0 で止めるのは未確定（射撃場の防御力 100 では、マストの 1 スタックで 0 になり見分けられない。論点 3）
  */
 export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
   const down = Math.min(1, Math.max(0, buffs.enemyDefenseDown));
-  if (down === 0) return enemy.defence;
-  const raw = enemy.defence * (1 - down);
+  const flat = Math.max(0, buffs.enemyDefenseDownFlat);
+  if (down === 0 && flat === 0) return enemy.defence;
+  const raw = Math.max(0, enemy.defence * (1 - down) - flat);
   const rounding = enemy.defenceRounding ?? 'round';
   if (rounding === 'none') return raw;
   // 浮動小数の誤差（100 × (1 − 0.3) = 70.00000000000001 など）で切り上げが 1 ずれないよう、先に 1e-9 の桁にそろえる

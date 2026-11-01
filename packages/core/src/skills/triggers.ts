@@ -24,6 +24,7 @@ import {
   isResolvedWeaponChangeEnd,
   isResolvedReloadEnd,
   isResolvedCoverHealed,
+  isResolvedSelfHpAtMost,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from './resolve.ts';
@@ -269,6 +270,10 @@ export function createTriggerTracker(
   if (isResolvedReloadEnd(t)) return (ev) => (ev.reloadEnds ?? []).includes(slotIndex);
   // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時（1 パス目が当てた遮蔽物 HP 回復の受け手）
   if (isResolvedCoverHealed(t)) return (ev) => ev.coverHealed?.[slotIndex] === true;
+  // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders.ts の firesOf）。出来事の列では追わない
+  if (isResolvedSelfHpAtMost(t)) {
+    throw new RangeError('a selfHpAtMost trigger is not tracked per event; the holder lists track it');
+  }
   // 2 段目の段 14 の PR 2: 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
   if (isChargeTickTrigger(t)) {
     const every = t.chargeTick.everySeconds;

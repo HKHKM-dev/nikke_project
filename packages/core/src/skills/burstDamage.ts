@@ -180,8 +180,13 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     hitOnApply?: true;
     /** 同: { counterFull } の perCount の最初の付与の、発火からの遅れ（フレーム） */
     applyDelayFrames?: number;
-    /** 2 段目の段 13 の PR 2: tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン） */
+    /**
+     * 2 段目の段 13 の PR 2: tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン）。マスト編（plan/design-mast.md 2.3 節）:
+     * 敵にスタックで付く状態の付与の state も（海風）
+     */
     stacksFrom?: NamedStateId;
+    /** マスト編: stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
+    copyEachTick?: true;
   };
 };
 
@@ -580,6 +585,7 @@ export function resolveDotEffects(
           ...(!auto && effect.hitOnApply === true ? { hitOnApply: true as const } : {}),
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
           ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
+          ...(!auto && effect.copyEachTick === true ? { copyEachTick: true as const } : {}),
         },
       };
       if (!auto && effect.perCount !== undefined) {
@@ -589,8 +595,9 @@ export function resolveDotEffects(
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
       // 2 段目の段 17 の PR 4: 付くフレームの条件（frame/plan.ts の dotApplicationFrames が絞る）
       if (!auto && effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
-      // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）
-      if (!auto) r.sustained = true;
+      // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）。
+      // マスト編（plan/design-mast.md 2.3 節）: sustained: false の dot（暴風）も持続ダメージではない
+      if (!auto && effect.sustained !== false) r.sustained = true;
       if (auto && effect.core === true) r.core = true;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

@@ -1,0 +1,15 @@
+{
+  "id": "C-0863",
+  "text": "マストの S2 のクリティカル確率▲と、バーストの最大HP のみ▲ は、説明文どおり、自分を除く最終攻撃力が最も高い味方 2 機にも付く（V-0623 の録画では、リターの会心率と HP の割合を読んでいない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0896-07`（リターへの付き方は、同じ対象の書き方（自分を除く最終攻撃力が最も高い味方）のバーストのクリティカルダメージ▲（C-0861）と S1 の▲（C-0862）で確かめたが、S2 の会心率と最大HP のみ▲ のリターの分は読んでいない）。V-0623",
+  "model": "反映（data/skills/350.json の skill2 の effects[1]、burst の effects[4]）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": ["data/skills/350.json の skill2 の effects[1]", "data/skills/350.json の burst の effects[4]"]
+  },
+  "decidedOn": []
+}

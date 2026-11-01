@@ -1,0 +1,203 @@
+{
+  "formatVersion": 1,
+  "resourceId": 350,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "seaBreeze",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 1
+          },
+          "target": "enemy",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "scaling": "casterDefence",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "クリティカル命中は、発ごとに命中の期待値 × その発の通常攻撃の会心率を足して数える（乱数を期待値で持つ）。「スキル発動者基準で防御力 X%▼」は、敵の防御力から発動者のバフ前防御力 × X% を 1 スタックごとに引く形と読む（plan/design-mast.md 2.2 節）",
+            "en": "Critical hits are counted by adding, per shot, the expected hits × the normal attack crit rate of that shot (randomness as an expectation). \"DEF ▼ X% of the skill user's DEF\" is read as subtracting the caster's pre-buff DEF × X% per stack from the enemy's DEF (plan/design-mast.md 2.2)"
+          },
+          "claims": [
+            "C-0858"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "selfHpAtMostRef": 5
+          },
+          "durationUntil": "selfHpAbove",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 7,
+          "assumes": {
+            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、バーストの最大HP のみ▲ の間だけ 70% 以下になる（plan/design-mast.md 8 節）",
+            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it falls to 70% or lower only during the burst's max-HP-only up (plan/design-mast.md 8)"
+          },
+          "claims": [
+            "C-0862"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "selfHpAtMostRef": 5
+          },
+          "durationUntil": "selfHpAbove",
+          "target": "topAttack",
+          "targetCountRef": 6,
+          "excludeSelf": "always",
+          "stat": "critDamage",
+          "ref": 7,
+          "assumes": {
+            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、バーストの最大HP のみ▲ の間だけ 70% 以下になる（plan/design-mast.md 8 節）",
+            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it falls to 70% or lower only during the burst's max-HP-only up (plan/design-mast.md 8)"
+          },
+          "claims": [
+            "C-0862"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "海風は通常攻撃のクリティカルの命中 2 回ごとに付き、最後の付与から約 3 秒で全スタックが切れる。実機では会心が 3 秒の間に 2 回無いと途切れて 0 から積み直すが、モデルはクリティカルを期待値で数えるので途切れず、暴風が写すスタックを多めに出す（V-0623）",
+          "en": "Sea Breeze is applied every 2 critical normal-attack hits and all its stacks expire about 3 s after the last application. In game it breaks and restarts from 0 when 2 crits do not land within 3 s, but the model counts crits as an expectation, so it never breaks and Storm copies more stacks (V-0623)",
+          "kind": "modeling",
+          "refers": "effects[0]"
+        },
+        {
+          "ja": "回復で現在の HP が戻って HP の割合が 70% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）",
+          "en": "The HP ratio rising above 70% because a heal restores current HP (a heal received during the max-HP-only up) is not modeled (the ratio is lowered only by max HP up and max-HP-only up)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critDamage",
+            "target": "topAttack",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0859"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "always",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0863"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-0861"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "always",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "claims": [
+            "C-0861"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 6,
+          "intervalSeconds": 1,
+          "durationRef": 7,
+          "state": "storm",
+          "stacksFrom": {
+            "enemyState": "seaBreeze"
+          },
+          "sustained": false,
+          "assumes": {
+            "ja": "海風状態の対象（敵 1 体の前提ではその敵）にだけ付き、tick は 1 スタックの倍率 × 写した海風のスタックの数（付けた時に 0 なら付かない）",
+            "en": "Applied only to a target in the Sea Breeze state (the enemy, with one enemy assumed); each tick is the per-stack multiplier × the copied Sea Breeze stack count (not applied if it is 0 at application)"
+          },
+          "claims": [
+            "C-0860"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxHpOnly",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0862"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "always",
+          "stat": "maxHpOnly",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "「スキル発動者基準」の値は、対象の枠のバフ前の最大HP の比率として足す（スペック固定では同じ支援型の最大HP は同じ値）。読むのは HP の割合と最終最大HP だけ",
+            "en": "The caster-based value is added as a ratio of the target slot's pre-buff max HP (with fixed specs, supporters have the same max HP). Only the HP ratio and the final max HP read it"
+          },
+          "claims": [
+            "C-0863"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "暴風は説明文で「持続ダメージ」でなく「ダメージ」なので、持続ダメージ▲を掛けない。確かめた編成は無い（持続ダメージ▲の使い手を混ぜていない。plan/design-mast.md 2.3 節）",
+          "en": "Storm is described as \"damage\", not \"sustained damage\", so sustained damage up is not applied. No team has confirmed it (no sustained damage up user was mixed in. plan/design-mast.md 2.3)",
+          "kind": "modeling",
+          "refers": "effects[2]"
+        }
+      ]
+    }
+  }
+}

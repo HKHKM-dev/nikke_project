@@ -23,6 +23,7 @@ import {
   isEndedTrigger,
   isCounterFullTrigger,
   isFlagStat,
+  isSelfHpAtMostTrigger,
   isShotCountTrigger,
   isStatContent,
   statContentsOf,
@@ -90,7 +91,15 @@ export type ResolvedTrigger =
   | ChargeFullTrigger
   // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレーム。damage・dot・counterChange だけ。1 パス目のカウンタの記録で決まる
   // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
-  | CounterFullTrigger;
+  | CounterFullTrigger
+  // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値（比率。説明文の X% ÷ 100）以下に下がった時。timed だけ。1 パス目の件の一覧が
+  // 追う（skills/holders.ts の firesOf）ので、出来事の列では追わない
+  | { selfHpAtMost: number };
+
+/** マスト編: 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
+export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
+  return typeof t === 'object' && 'selfHpAtMost' in t;
+}
 
 /** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
 export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {
@@ -165,6 +174,8 @@ export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
 
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
+  // マスト編: HP の割合の閾値は % → 比率
+  if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: skillValue(skill, trigger.selfHpAtMostRef, level) / 100 };
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // ソルジャーE.G. 編: 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
@@ -649,6 +660,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   leadFrames?: number;
   /** エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある） */
   enemy?: true;
+  /** マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方（skills/types.ts の StateGrantEffect.stackRefresh） */
+  stackRefresh?: 'each';
 };
 
 /**
@@ -683,6 +696,7 @@ export function resolveStateGrants(
         grant.stacksPerFire = n;
       }
       if (effect.enemy) grant.enemy = true;
+      if (effect.stackRefresh !== undefined) grant.stackRefresh = effect.stackRefresh;
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       untrimmed.push(grant);

@@ -1,0 +1,658 @@
+{
+  "verification": "V-0623",
+  "note": "撮影 A: マスト（350）単騎・操作。撮影 B: リター（82・I・AI）+ マスト（II・操作）。III を置かないのでフルバーストにならず、チェーンは II で時間切れ。どちらも射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オート射撃 ON（B はオートバースト ON）",
+  "team": [
+    {
+      "rid": 350,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。海風の 1 スタックは発動者のバフ前防御力 × 1.9% を敵の防御力から引く（casterDefence。射撃場の敵の防御力 100 は 1 スタックで 0）。スタックの維持は all（付けるたびに全スタックを数え直す）。暴風は付けた時に海風のスタックの数を 1 回写す"
+    },
+    {
+      "id": "H1",
+      "note": "海風を割合の▼と読む（1 スタックで敵の防御力の 1.9%。50 スタックで 95%）。維持と暴風は H0 と同じ",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 350,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "state",
+              "state": "seaBreeze",
+              "trigger": {
+                "count": "critHit",
+                "everyRef": 1
+              },
+              "target": "enemy",
+              "maxStacksRef": 3,
+              "durationRef": 4,
+              "contents": [
+                {
+                  "stat": "enemyDefenseDown",
+                  "ref": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "海風のスタックはスタックごとに独立に 3 秒で切れる（each）。暴風は付けた時に 1 回写す",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 350,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "state",
+              "state": "seaBreeze",
+              "trigger": {
+                "count": "critHit",
+                "everyRef": 1
+              },
+              "target": "enemy",
+              "maxStacksRef": 3,
+              "durationRef": 4,
+              "contents": [
+                {
+                  "stat": "enemyDefenseDown",
+                  "scaling": "casterDefence",
+                  "ref": 2
+                }
+              ],
+              "stackRefresh": "each"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "H2 に加え、暴風は tick ごとに海風のスタックの数を写し直す（copyEachTick）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 350,
+            "skill": "skill1",
+            "replace": 0,
+            "effect": {
+              "kind": "state",
+              "state": "seaBreeze",
+              "trigger": {
+                "count": "critHit",
+                "everyRef": 1
+              },
+              "target": "enemy",
+              "maxStacksRef": 3,
+              "durationRef": 4,
+              "contents": [
+                {
+                  "stat": "enemyDefenseDown",
+                  "scaling": "casterDefence",
+                  "ref": 2
+                }
+              ],
+              "stackRefresh": "each"
+            }
+          },
+          {
+            "rid": 350,
+            "skill": "burst",
+            "replace": 2,
+            "effect": {
+              "kind": "dot",
+              "trigger": "burstUse",
+              "ref": 6,
+              "intervalSeconds": 1,
+              "durationRef": 7,
+              "state": "storm",
+              "stacksFrom": {
+                "enemyState": "seaBreeze"
+              },
+              "sustained": false,
+              "copyEachTick": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H4",
+      "note": "維持は all のまま、暴風が tick ごとに写し直す。all では海風が 50 で止まるので H0 と同じ値になる見込み（写す時刻を見分けられない例）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 350,
+            "skill": "burst",
+            "replace": 2,
+            "effect": {
+              "kind": "dot",
+              "trigger": "burstUse",
+              "ref": 6,
+              "intervalSeconds": 1,
+              "durationRef": 7,
+              "state": "storm",
+              "stacksFrom": {
+                "enemyState": "seaBreeze"
+              },
+              "sustained": false,
+              "copyEachTick": true
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A。最初の 2 回のクリティカルの前（戦闘開始の直後）の通常攻撃の 1 ヒット（コアなし・会心なし・距離ボーナスあり）。どの仮説も敵の防御力 100"
+    },
+    {
+      "id": "A-1s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A。戦闘開始から約 1 秒の 1 ヒット。H0 は敵の防御力 0、H1 は 100 × (1 − 1.9% × その時のスタックの数)"
+    },
+    {
+      "id": "A-3s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 180,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A。約 3 秒の 1 ヒット。H1 の防御力の下がり方を見る"
+    },
+    {
+      "id": "A-20s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A。約 20 秒の 1 ヒット。H1 でも 50 スタック（95%）で防御力 5 になり、H0 との差は 1 未満の見込み"
+    },
+    {
+      "id": "B-storm-0",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "撮影 B。1 回目のバーストの暴風の 1 回目の tick（会心なし）。値 ÷（4.52% × マストの最終攻撃力）が写したスタックの数"
+    },
+    {
+      "id": "B-storm-1",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "撮影 B。1 回目のバーストの暴風の 2 回目の tick（会心なし）。値 ÷（4.52% × マストの最終攻撃力）が写したスタックの数"
+    },
+    {
+      "id": "B-storm-3",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "撮影 B。1 回目のバーストの暴風の 4 回目の tick（会心なし）。値 ÷（4.52% × マストの最終攻撃力）が写したスタックの数"
+    },
+    {
+      "id": "B-storm-6",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 6,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "撮影 B。1 回目のバーストの暴風の 7 回目の tick（会心なし）。値 ÷（4.52% × マストの最終攻撃力）が写したスタックの数"
+    },
+    {
+      "id": "A-crit-10s",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "撮影 A。約 10 秒の通常攻撃の会心率（S2 のクリティカル確率▲の 30 秒の中）。録画ではクリティカルの命中の割合（30 秒の前後で比べる）"
+    },
+    {
+      "id": "A-crit-40s",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 2400
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "note": "撮影 A。約 40 秒の会心率（S2 の▲の切れた後）"
+    },
+    {
+      "id": "B-critdmg-mast-in",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "note": "撮影 B。マストの 1 回目のバーストの 7 秒の中の、マストの会心した 1 ヒットと会心しない 1 ヒットの比（バーストのクリティカルダメージ▲）"
+    },
+    {
+      "id": "B-critdmg-mast-out",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 2,
+        "frame": 2000,
+        "core": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "note": "撮影 B。同じ比を、バーストの窓の外（リターの▲の外）で"
+    },
+    {
+      "id": "B-critdmg-liter-in",
+      "model": "sim",
+      "metric": "critHitRatio",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "note": "撮影 B。同じ比を、リター（最終攻撃力が最も高い味方として、マストのバーストのクリティカルダメージ▲を受ける）で"
+    },
+    {
+      "id": "B-read-n2",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "読んだ後に足した（録画で会心しなかった tick の番号に合わせ、観測値と結び付けるため）。1 回目のバーストの暴風の 3 回目の tick（会心なし）"
+    },
+    {
+      "id": "B-read-n4",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 4,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "読んだ後に足した（録画で会心しなかった tick の番号に合わせ、観測値と結び付けるため）。1 回目のバーストの暴風の 5 回目の tick（会心なし）"
+    },
+    {
+      "id": "B-read-n5",
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 5,
+        "crit": false,
+        "skill": "burst"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 350,
+          "controlled": true
+        }
+      ],
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "読んだ後に足した（録画で会心しなかった tick の番号に合わせ、観測値と結び付けるため）。1 回目のバーストの暴風の 6 回目の tick（会心なし）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "50b16176229e151a1bc272b876812c8569a770f5",
+    "values": {
+      "H0": {
+        "A-before": 11329.13925,
+        "A-1s": 11340.48825,
+        "A-3s": 11340.48825,
+        "A-20s": 11340.48825,
+        "B-storm-0": 374879.75999999995,
+        "B-storm-1": 374879.75999999995,
+        "B-storm-3": 374879.75999999995,
+        "B-storm-6": 225830.49999999997,
+        "A-crit-10s": 0.38559999999999994,
+        "A-crit-40s": 0.15,
+        "B-critdmg-mast-in": 1.9702307692307688,
+        "B-critdmg-mast-out": 1.3846153846153846,
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 374879.75999999995,
+        "B-read-n4": 374879.75999999995,
+        "B-read-n5": 225830.49999999997
+      },
+      "H1": {
+        "A-before": 11329.13925,
+        "A-1s": 11329.820190000002,
+        "A-3s": 11331.9765,
+        "A-20s": 11339.9208,
+        "B-storm-0": 374868.45999999996,
+        "B-storm-1": 374868.45999999996,
+        "B-storm-3": 374868.45999999996,
+        "B-storm-6": 225819.19999999995,
+        "A-crit-10s": 0.38559999999999994,
+        "A-crit-40s": 0.15,
+        "B-critdmg-mast-in": 1.9702307692307686,
+        "B-critdmg-mast-out": 1.3846153846153846,
+        "B-critdmg-liter-in": 1.9702307692307686,
+        "B-read-n2": 374868.45999999996,
+        "B-read-n4": 374868.45999999996,
+        "B-read-n5": 225819.19999999995
+      },
+      "H2": {
+        "A-before": 11329.13925,
+        "A-1s": 11340.48825,
+        "A-3s": 11340.48825,
+        "A-20s": 11340.48825,
+        "B-storm-0": 44985.5712,
+        "B-storm-1": 44985.5712,
+        "B-storm-3": 44985.5712,
+        "B-storm-6": 27099.66,
+        "A-crit-10s": 0.38559999999999994,
+        "A-crit-40s": 0.15,
+        "B-critdmg-mast-in": 1.9702307692307688,
+        "B-critdmg-mast-out": 1.3846153846153846,
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 44985.5712,
+        "B-read-n4": 44985.5712,
+        "B-read-n5": 27099.66
+      },
+      "H3": {
+        "A-before": 11329.13925,
+        "A-1s": 11340.48825,
+        "A-3s": 11340.48825,
+        "A-20s": 11340.48825,
+        "B-storm-0": 44985.5712,
+        "B-storm-1": 89971.1424,
+        "B-storm-3": 104966.33279999999,
+        "B-storm-6": 22583.05,
+        "A-crit-10s": 0.38559999999999994,
+        "A-crit-40s": 0.15,
+        "B-critdmg-mast-in": 1.9702307692307688,
+        "B-critdmg-mast-out": 1.3846153846153846,
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 104966.33279999999,
+        "B-read-n4": 82473.54719999999,
+        "B-read-n5": 27099.66
+      },
+      "H4": {
+        "A-before": 11329.13925,
+        "A-1s": 11340.48825,
+        "A-3s": 11340.48825,
+        "A-20s": 11340.48825,
+        "B-storm-0": 374879.75999999995,
+        "B-storm-1": 374879.75999999995,
+        "B-storm-3": 374879.75999999995,
+        "B-storm-6": 225830.49999999997,
+        "A-crit-10s": 0.38559999999999994,
+        "A-crit-40s": 0.15,
+        "B-critdmg-mast-in": 1.9702307692307688,
+        "B-critdmg-mast-out": 1.3846153846153846,
+        "B-critdmg-liter-in": 1.9702307692307688,
+        "B-read-n2": 374879.75999999995,
+        "B-read-n4": 374879.75999999995,
+        "B-read-n5": 225830.49999999997
+      }
+    }
+  }
+}

@@ -79,6 +79,11 @@ export type TimelineSlot = {
    * 件を足した値）は、対象の絞り込み「自分より最終防御力が低い味方」が発火のフレームで比べる。省略して比べると RangeError
    */
   baseDefence?: number;
+  /**
+   * マスト編（plan/design-mast.md 8 節）: 枠の HP の割合の想定（TeamSlotInput.hpRatio。省略 1）。HP の割合の窓のきっかけ（{ selfHpAtMost }）が、
+   * 最大HP▲・最大HP のみ▲ の件で割合を下げて読む（skills/holders.ts の selfHpRatioAt）
+   */
+  hpRatio?: number;
   /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
   /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージと normalHit の回数に使う */
@@ -195,6 +200,8 @@ const BUFF_FIELDS = [
   'damageTaken',
   // 2 段目の段 2: 敵の防御力▼
   'enemyDefenseDown',
+  // マスト編: 発動者基準の敵の防御力▼
+  'enemyDefenseDownFlat',
   // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
   'projectileExplosionDamage',
   // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲と有利コードのダメージ適用
@@ -696,6 +703,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         p.effect,
         caster?.casterBaseAttack ?? 0,
         finalMaxHpOf(p.sourceSlotIndex),
+        caster?.baseDefence,
       );
       state.buffs = applied.totals;
       state.timedEffects.push({
@@ -715,6 +723,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
           p.effect,
           slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0,
           finalMaxHpOf(p.sourceSlotIndex),
+          slots[p.sourceSlotIndex]?.baseDefence,
         ).totals;
       }
     }

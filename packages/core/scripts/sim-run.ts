@@ -100,6 +100,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   // 2 段目の段 14 の PR 2: 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
   if ('chargeTick' in t) return `chargeTick${t.chargeTick.everySeconds}s`;
   if ('chargeFull' in t) return 'chargeFull';
+  // マスト編: 自分の HP の割合が閾値以下の間（hp<=70%）
+  if ('selfHpAtMost' in t) return `hp<=${+(t.selfHpAtMost * 100).toFixed(2)}%`;
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;
@@ -642,7 +644,7 @@ for (const [i, slot] of slots.entries()) {
         .map(
           ({ e, n }) =>
             // 名前の付いた状態の語彙編: 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${isStateContent(e) ? `while:${e.whileState}` : isCounterWhileEffect(e) ? `while:${e.whileCounter.counter}>=${e.whileCounter.atLeast}` : triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${isStateContent(e) ? `while:${e.whileState}` : isCounterWhileEffect(e) ? `while:${e.whileCounter.counter}>=${e.whileCounter.atLeast}` : triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),

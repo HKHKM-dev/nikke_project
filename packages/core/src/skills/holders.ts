@@ -18,6 +18,7 @@ import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
 import {
   isResolvedApplied,
+  isResolvedSelfHpAtMost,
   isResolvedChance,
   isResolvedFullStack,
   isResolvedShotCount,
@@ -168,6 +169,11 @@ export type HeldTrack = {
   decreases: StackDecrease[];
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
+  /**
+   * マスト編（plan/design-mast.md 8 節）: durationUntil "selfHpAbove" の窓の終わり（発動者の HP の割合が閾値を上回ったフレーム。昇順。
+   * 同じ発動者・閾値の件の列で共有する）。ほかは無い
+   */
+  untilEnds?: number[];
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
 };
@@ -496,7 +502,7 @@ function stateItems(
       grant.durationFrames,
       frames,
       maxStacksAt ?? grant.maxStacks,
-      STACK_REFRESH,
+      grant.stackRefresh ?? STACK_REFRESH,
       decreases,
     ).map((w) => ({
       start: w.start,
@@ -601,7 +607,10 @@ function timedItems(
   log: ShotLog | null | undefined,
   fullBurstEnds: readonly number[],
   frames: number,
+  untilEnds: readonly number[] = [],
 ): HeldItem[] {
+  // マスト編（plan/design-mast.md 8 節）: HP の割合が閾値を上回るフレームまで
+  if (effect.durationUntil === 'selfHpAbove') return itemsOfPairs(untilNextEndItems(starts, untilEnds, frames));
   if (effect.durationShots !== undefined) {
     return itemsOfPairs(shotCountItems(starts, log?.frames ?? [], effect.durationShots, frames));
   }
@@ -631,10 +640,16 @@ function timedItems(
  * 1 パス目の最適化の段 1（plan/design-first-pass-perf.md 3.1 節）: 件の列の件を作る関数（buildTrackItems）が、始まり・確率の機会・
  * 閉じるフレーム・消費のフレーム・減少のほかに読む入力。分かれ道は timedItems・stateItems と同じ。読まない入力の変化では作り直さない
  */
-type TrackReads = { shots: boolean; weaponChangeEnds: boolean; reloadEnds: boolean; fullBurstWindows: boolean };
+type TrackReads = {
+  shots: boolean;
+  weaponChangeEnds: boolean;
+  reloadEnds: boolean;
+  fullBurstWindows: boolean;
+  untilEnds: boolean;
+};
 
 function trackReadsOf(origin: HeldOrigin): TrackReads {
-  const reads = { shots: false, weaponChangeEnds: false, reloadEnds: false, fullBurstWindows: false };
+  const reads = { shots: false, weaponChangeEnds: false, reloadEnds: false, fullBurstWindows: false, untilEnds: false };
   if (origin.kind !== 'timed' && origin.kind !== 'state') return reads;
   const { durationShots, durationUntil } = origin.kind === 'timed' ? origin.effect : origin.grant;
   if (durationShots !== undefined) {
@@ -652,6 +667,10 @@ function trackReadsOf(origin: HeldOrigin): TrackReads {
     case 'fullBurstEnd':
       reads.fullBurstWindows = true;
       break;
+    // マスト編: HP の割合の窓の終わり（件の列の untilEnds）
+    case 'selfHpAbove':
+      reads.untilEnds = true;
+      break;
     case 'battleEnd':
     case undefined:
       break;
@@ -664,7 +683,13 @@ function trackReadsOf(origin: HeldOrigin): TrackReads {
 }
 
 /** テスト用（verifyItems）: 件を作る関数が読まない入力も見る */
-const ALL_READS: TrackReads = { shots: true, weaponChangeEnds: true, reloadEnds: true, fullBurstWindows: true };
+const ALL_READS: TrackReads = {
+  shots: true,
+  weaponChangeEnds: true,
+  reloadEnds: true,
+  fullBurstWindows: true,
+  untilEnds: true,
+};
 
 /** lengths[i] を n にし、前と違えば true */
 function setLength(lengths: number[], i: number, n: number): boolean {
@@ -703,6 +728,7 @@ function buildTrackItems(
               log,
               fullBurstWindows.map((w) => w.end),
               frames,
+              track.untilEnds,
             );
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
@@ -889,9 +915,46 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
   const counterFullAt = new Map<string, number>();
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
+  /**
+   * マスト編（plan/design-mast.md 8 節）: 発動者 × 閾値ごとの、HP の割合の窓の追跡。毎フレームのきっかけの判定で 1 回だけ割合を求め、
+   * 閾値以下に下がったフレーム（dropped）と、上回ったフレーム（ends。件の列の untilEnds と共有）を記録する
+   */
+  type SelfHpState = {
+    slotIndex: number;
+    threshold: number;
+    frame: number;
+    low: boolean;
+    dropped: boolean;
+    ends: number[];
+  };
+  const selfHpStates = new Map<string, SelfHpState>();
+  const selfHpStateOf = (slotIndex: number, threshold: number): SelfHpState => {
+    const key = `${slotIndex}:${threshold}`;
+    let state = selfHpStates.get(key);
+    if (state === undefined) {
+      state = { slotIndex, threshold, frame: -1, low: false, dropped: false, ends: [] };
+      selfHpStates.set(key, state);
+    }
+    return state;
+  };
+  const selfHpDropped = (state: SelfHpState, frame: number): boolean => {
+    if (state.frame !== frame) {
+      const low = selfHpRatioAt(state.slotIndex, frame) <= state.threshold + 1e-9;
+      if (state.low && !low && frame < frames) state.ends.push(frame);
+      state.dropped = low && !state.low;
+      state.low = low;
+      state.frame = frame;
+    }
+    return state.dropped;
+  };
   const firesOf = (trigger: ResolvedTrigger, slotIndex: number, everyAt?: ShotCountEveryAt): TriggerTracker => {
     // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
+    // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値以下に下がったフレーム（上がったフレームは窓の終わりに書く）
+    if (isResolvedSelfHpAtMost(trigger)) {
+      const state = selfHpStateOf(slotIndex, trigger.selfHpAtMost);
+      return (ev) => selfHpDropped(state, ev.frame);
+    }
     // 2 段目の段 11 の PR 2・段 13 の PR 1: カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
     if (isCounterFullTrigger(trigger)) {
       const key = counterKey(slotIndex, trigger.counterFull);
@@ -948,6 +1011,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
             ? newTrack(ENEMY, sourceSlotIndex, { kind: 'timed', effect }, stage, opportunities)
             : null,
       };
+      // マスト編: HP の割合の窓の終わりは、発動者 × 閾値の追跡と共有する
+      if (isResolvedSelfHpAtMost(effect.trigger)) {
+        const ends = selfHpStateOf(sourceSlotIndex, effect.trigger.selfHpAtMost).ends;
+        for (const track of [...src.tracks, src.enemy]) if (track !== null) track.untilEnds = ends;
+      }
       timedSources.push(src);
     }
   });
@@ -1214,6 +1282,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     changed = setLength(lengths, 6, track.closes.length) || changed;
     changed = setLength(lengths, 7, track.consumes.length) || changed;
     changed = setLength(lengths, 8, track.decreases.length) || changed;
+    changed = setLength(lengths, 10, reads.untilEnds ? (track.untilEnds?.length ?? 0) : 0) || changed;
     // 2 段目の段 14 の PR 3: 上限を上げる状態の件の列の入力（始まり・閉じる・消費・減少。その件の列は持続の付与で、ほかの入力を読まない）
     const raisers = capRaisers.get(track)?.raisers;
     if (raisers === undefined) return changed;
@@ -1454,12 +1523,46 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
   // 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の順位の値が読む
   const maxHpViews = viewsOf((_, e) => isMaxHpStat(e.stat));
+  /**
+   * 枠のフレーム frame の最大HP▲ の和（常時 + 効いている件。up）と、そのうちの最大HP のみ▲ の和（only）。startsBefore なら frame より前に
+   * 始まった件だけ（同じフレームに付いた件は次のフレームから。マスト編の HP の割合）
+   */
+  const maxHpUpAt = (slotIndex: number, frame: number, startsBefore: boolean): { up: number; only: number } => {
+    let up = passive[slotIndex]?.buffs.maxHpRatio ?? 0;
+    let only = passiveMaxHpOnly[slotIndex] ?? 0;
+    for (const v of maxHpViews[slotIndex] ?? []) {
+      for (const it of readItems(v.track)) {
+        if (!(startsBefore ? it.start < frame : it.start <= frame) || frame >= it.end) continue;
+        const x = valueOf(v.effect, it);
+        up += x;
+        if (v.effect.stat === 'maxHpOnly') only += x;
+      }
+    }
+    return { up, only };
+  };
   const finalMaxHpAt = (slotIndex: number, frame: number): number | undefined => {
     const base = slots[slotIndex]?.casterMaxHp;
     if (base === undefined) return undefined;
-    let up = passive[slotIndex]?.buffs.maxHpRatio ?? 0;
-    for (const v of maxHpViews[slotIndex] ?? []) for (const it of activeAt(v.track, frame)) up += valueOf(v.effect, it);
-    return base * (1 + up);
+    return base * (1 + maxHpUpAt(slotIndex, frame, false).up);
+  };
+  /**
+   * マスト編（plan/design-mast.md 8 節。plan/design-skill-stage6.md 2.4 節の式）: 枠のフレーム frame の HP の割合。枠の想定の割合 ×
+   * (1 + Σ 最大HP▲ − Σ 最大HP のみ▲) ÷ (1 + Σ 最大HP▲)（Σ 最大HP▲ は最大HP のみ▲ も含む）。常時の分と、frame より前に始まって frame に
+   * 効いている件（同じフレームに付いた件は次のフレームから。論点 8）
+   */
+  const passiveMaxHpOnly = passive.map(
+    (state) =>
+      state?.passiveEffects.filter((e) => e.stat === 'maxHpOnly').reduce((sum, e) => sum + e.appliedAmount, 0) ?? 0,
+  );
+  // 最大HP のみ▲ を持ちうる枠（常時か件の列）だけ割合が動く。ほかの枠は想定の割合のまま（毎フレームの走査を省く）
+  const hpRatioMoves = slots.map(
+    (_, i) => (passiveMaxHpOnly[i] ?? 0) > 0 || (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly'),
+  );
+  const selfHpRatioAt = (slotIndex: number, frame: number): number => {
+    const assumed = slots[slotIndex]?.hpRatio ?? 1;
+    if (!hpRatioMoves[slotIndex]) return assumed;
+    const { up, only } = maxHpUpAt(slotIndex, frame, true);
+    return (assumed * (1 + up - only)) / (1 + up);
   };
   // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   // 発動者より低い枠（同値は含まない）と発動者自身

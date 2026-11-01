@@ -93,6 +93,9 @@
     | N 秒ごとに〈カウンタ〉N%▼／〈カウンタ〉の N% 以上の時（下位効果のスタック適用） | `counterChange` の時間の周期のきっかけ（`{ "everySeconds": N, "carry": true }`・`decrease`）／`passive` の `while.selfCounter`（閾値ごとに 1 つ） | 周期は戦闘開始から数える。閾値ごとに別々に付くので、高い段階では下位の効果も乗る。例: 千束の S1 の超感覚 | [design-skill-stage16.md](design-skill-stage16.md) 2.1 節 |
     | 防御力無視バーストスキルダメージ | burstDamage の `damageType: "true"` | 式は倍率ダメージの防御力無視ダメージと同じ。同じ発動の防御力無視ダメージ▲が乗るかは、着地点の表（`burst/landing.ts`）の `sameActivationBuffsOnHit`。例: ベスティー：タクティカル・アップのバースト | [design-skill-stage16.md](design-skill-stage16.md) 2.2 節 |
     | 最大弾数のリロードが完了した時、〈状態〉解除／自分が〈状態〉でない時（その状態の付与の条件） | `removeState` のきっかけ `{ "reloadEnd": true }`（removeState にだけ書ける）／付与の `condition.selfState: { "state": 〈状態〉, "present": false }`（自分の状態を見る付与は `present: false` だけ） | 例: ベスティー：タクティカル・アップの S1 のミサイルガイド | 同上 |
+    | 対象に「〈名前〉：…」「N スタック」（敵に付く状態のスタック）／スキル発動者基準で防御力 X%▼ | 付与の `target: "enemy"` と `maxStacksRef`／中身の `stat: "enemyDefenseDown"`・`scaling: "casterDefence"` | 発動者基準の▼は、発動者のバフ前防御力 × X% を 1 スタックごとに敵の防御力から引き、割合の▼の後に 0 で止める（順と 0 で止めるのは未確定）。例: マストの S1 の海風 | [design-mast.md](design-mast.md) 2.1・2.2 節 |
+    | 〈状態〉の対象に「最終攻撃力の X% のダメージ」「〈状態〉スタックコピー」「1 秒間隔」 | dot の `stacksFrom: { enemyState }`（元は dot か、敵にスタックで付く状態の付与）と `sustained: false` | 付けた時に 1 回写す（`copyEachTick` は tick ごとに写し直す仮説の形）。「持続ダメージ」でない周期のダメージは持続ダメージ▲を掛けない。例: マストのバーストの暴風 | [design-mast.md](design-mast.md) 2.3 節 |
+    | 自分の HP が X% 以下である限り | timed のきっかけ `{ "selfHpAtMostRef": N }` と `durationUntil: "selfHpAbove"` | HP の割合は枠の想定を最大HP▲・最大HP のみ▲ の件で下げた値で、同じフレームに付いた件は次のフレームから。回復で HP が戻る分は扱わない。例: マストの S1（バーストの最大HP のみ▲ の間） | [design-mast.md](design-mast.md) 8 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
