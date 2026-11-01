@@ -1,0 +1,34 @@
+{
+  "id": "0870",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0870_ar_dorothy.mp4",
+  "original": "2026-11-01_15-55-50.mp4",
+  "durationSec": 198.5,
+  "frames": 11912,
+  "fps": 60,
+  "sizeMB": 241.1,
+  "sha256": "9ee6d36a565f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 233,
+      "name": "ドロシー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0612 の撮影 E1。ドロシー単騎（操作）。オート射撃 ON・オートバースト ON。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた",
+  "backup": {
+    "at": "2026-11-01T16:55+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

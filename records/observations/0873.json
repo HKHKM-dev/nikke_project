@@ -1,0 +1,85 @@
+[
+  {
+    "id": "0873-01",
+    "recording": "0873",
+    "kind": "timing",
+    "use": "record",
+    "value": [1632, 3163, 5164, 7144, 8913, 10839],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25f"
+    },
+    "source": "V-0612",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0873-02",
+    "recording": "0873",
+    "kind": "timing",
+    "use": "record",
+    "value": [1661, 3650, 5547, 7444, 9432, 11329],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・25f"
+    },
+    "source": "V-0612",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0873-03",
+    "recording": "0873",
+    "kind": "timing",
+    "use": "record",
+    "value": [5541, 7438, 9426, 11323],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0612",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0873-04",
+    "recording": "0873",
+    "source": "V-0612",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [123, 242, 360, 478, 595],
+    "unit": "f",
+    "description": "同じ編成（2 本目）の、ドロシーの 1 回目のバーストの六角形の替わり目（I → II）からの、S2（焦土化）のヒットの動画のフレームの差（次のバーストまで）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）・tools/captures/timer.ts --mode ticks（戦闘開始）・recipe:burst-panel@2（六角形の替わり目）と使い捨てのスクリプト（V-0612「読み方」）",
+      "note": "替わり目は f1632（burst-panel）。ヒットは f1755・1874・1992・2110・2227（238,764・358,146 か、同じフレームの通常攻撃と合わさった増分）。発現（S2 のクールタイム 18 秒▼・10 秒）の間は 118f ごと。許容は ±2f（替わり目と HUD の増分の 2 つの読みの差で、HUD の増分は 1f 揺れる。焦土化どうしの間が 117〜119f になる回がある）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "anchor": "activation:0",
+        "within": "untilNext",
+        "count": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  }
+]

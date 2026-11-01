@@ -1,0 +1,128 @@
+[
+  {
+    "id": "0870-01",
+    "recording": "0870",
+    "kind": "timing",
+    "use": "record",
+    "value": [2487, 4775, 7034, 9219],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0612",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0870-02",
+    "recording": "0870",
+    "source": "V-0612",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1186],
+    "unit": "f",
+    "description": "ドロシー単騎（操作）の、ドロシーの S2（焦土化）の 1 回目のヒットの、戦闘開始からの動画のフレーム",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）・tools/captures/timer.ts --mode ticks（戦闘開始）・recipe:burst-panel@2（六角形の替わり目）と使い捨てのスクリプト（V-0612「読み方」）",
+      "note": "焦土化のヒットは HUD の 238,764（会心は 358,146）の増分。1 回目は f1976、戦闘開始（02:59 が出たフレーム）は f790"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0870-03",
+    "recording": "0870",
+    "source": "V-0612",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "value": [122, 240, 358, 476, 594, 1771],
+    "unit": "f",
+    "description": "ドロシー単騎（操作）の、ドロシーの 1 回目のバーストの六角形の替わり目（I → II）からの、S2（焦土化）のヒットの動画のフレームの差（次のバーストまで）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）・tools/captures/timer.ts --mode ticks（戦闘開始）・recipe:burst-panel@2（六角形の替わり目）と使い捨てのスクリプト（V-0612「読み方」）",
+      "note": "替わり目は f2487（burst-panel）。ヒットは f2609・2727・2845・2963・3081・4258（238,764・358,146 か、同じフレームの通常攻撃と合わさった増分）。発現（S2 のクールタイム 18 秒▼・10 秒）の間は 118f ごと。許容は ±2f（替わり目と HUD の増分の 2 つの読みの差で、HUD の増分は 1f 揺れる。焦土化どうしの間が 117〜119f になる回がある）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "anchor": "activation:0",
+        "within": "untilNext",
+        "count": 6
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0870-04",
+    "recording": "0870",
+    "source": "V-0612",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 238764,
+    "unit": "ダメージ",
+    "description": "ドロシー単騎（操作）の、ドロシーの S2（焦土化。最終攻撃力の 216% の分配ダメージ）の 1 ヒット（会心なし）。1 回目のヒット",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）",
+      "note": "1 回目のヒット f1976。会心のヒットは 358,146（× 1.5）。どの回も同じ値（味方の▲は無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "skill": "skill2",
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  }
+]

@@ -563,5 +563,41 @@
       "slot": 3,
       "source": "gauge"
     }
+  },
+  {
+    "id": "0729-21",
+    "recording": "0729",
+    "source": "V-0614",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "value": 82,
+    "unit": "f",
+    "description": "リター・I-DOLL・サン・ラプンツェル：サンクチュアリ（操作・AUTO 射撃 ON）の、ラプンツェル：サンクチュアリの 2 本目のマガジン（6 発）の、発と発の間の平均（(最後の発 − 最初の発) ÷ 5 = 410 ÷ 5）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と使い捨てのスクリプト（V-0614「読み方」）",
+      "note": "発射のフレームは S2 の追加ダメージの増分（C-0720。ロケットの命中は 1〜23f 後の別の増分）。2 本目のマガジンは f1528・1610・1692・1774・1856・1938（どれも 82f）。1 秒（60f）以上フルチャージを保つなら、マガジンの中の間が 142f 以上になる。比べるモデルの範囲は 2 本目のマガジン"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 3,
+        "from": 600,
+        "to": 1200
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
   }
 ]

@@ -96,7 +96,7 @@
 
 - PR の衝突（2026-11-01 起票）→ 一部完了: [design-pr-conflicts.md](design-pr-conflicts.md)。残りは 3.3 節
 - 2026-10-29 のアップデートのキャラ（マリアン：クイーン・ラプンツェル：サンクチュアリ・紅蓮：神殺）の仮実装（2026-10-28 起票）→ 進行中（紅蓮：神殺は撮影待ち）: [design-new-chars-1029.md](design-new-chars-1029.md) 7・10・11 節
-- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 一部完了（段 18 以降は未起案）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの状態と設計書）
+- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 一部完了（段 18 は撮影待ち・段 19 以降は未起案）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの状態と設計書）
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1

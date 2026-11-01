@@ -276,5 +276,75 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0752-14",
+    "recording": "0752",
+    "source": "V-0614",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "value": 82,
+    "unit": "f",
+    "description": "ココア・ラプンツェル：サンクチュアリ（AI の枠）・マリアン：クイーン（操作）・I-DOLL・サンの、ラプンツェル：サンクチュアリの続いた 4 発の、発と発の間の平均（(f3318 − f3072) ÷ 3 = 246 ÷ 3）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と使い捨てのスクリプト（V-0614「読み方」）",
+      "note": "発射のフレームは S2 の追加ダメージの増分（f3072・3154・3236 は 247,094、f3318 は 232,981。ココアの発（361,998 など）とロケットの命中は値で分けた）。どれも 82f。比べるモデルの範囲は 2 本目のマガジン（マガジンの中の間はどれも 82f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 2,
+        "from": 600,
+        "to": 1200
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0752-15",
+    "recording": "0752",
+    "source": "V-0614",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "value": 82.3333,
+    "unit": "f",
+    "description": "ココア（AI の枠・SR）・ラプンツェル：サンクチュアリ・マリアン：クイーン（操作）・I-DOLL・サンの、ココアの続いた 4 発の、発と発の間の平均（(f2413 − f2166) ÷ 3 = 247 ÷ 3）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分）と使い捨てのスクリプト（V-0614「読み方」）",
+      "note": "ココアの発の増分（f2166・2248・2330 は 361,998、f2413 は 376,111。ラプンツェル：サンクチュアリの追加ダメージ（6f 後）とロケットの命中（17f 後）は値で分けた）。間は 82・82・83f。比べるモデルの範囲は 2 本目のマガジン（マガジンの中の間はどれも 82f）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 600,
+        "to": 1200
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

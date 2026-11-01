@@ -1,0 +1,98 @@
+{
+  "formatVersion": 1,
+  "resourceId": 233,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "ref": 1
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸で攻撃した時、自分が発現状態なら味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない",
+          "en": "Part damage up for all allies on the last bullet while she is in Manifestation does not apply (the training target has no parts)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 20
+          },
+          "delayFrames": 8,
+          "damageType": "distributed",
+          "ref": 1,
+          "periodShorten": {
+            "window": {
+              "trigger": "burstUse",
+              "durationRef": 1,
+              "elapsed": true
+            },
+            "slot": "burst",
+            "ref": 5
+          },
+          "assumes": {
+            "ja": "焦土化。説明文にきっかけの無い周期のスキルで、周期は 20 秒（録画で読んだ。説明文に無い）。戦闘開始から 20 秒ごと（端数は持ち越さない）に、敵 1 体（的）に分配ダメージを出す。バーストの発現（10 秒）の間は、前の発動から 2 秒（20 − 18 秒）が経ったフレームで発動し、発現が付いた時にもう 2 秒経っていれば、付いたフレームで発動する",
+            "en": "Scorch to Dust. A recurring skill with no trigger in the description; the interval is 20 s (read from recordings; not in the description). Every 20 s from the start of battle (no carried fraction) it deals distributed damage to the single enemy (the target). During Manifestation from her Burst (10 s) it activates once 2 s (20 − 18 s) have passed since the previous activation, and at the moment Manifestation is applied if 2 s have already passed"
+          },
+          "claims": [
+            "C-0847",
+            "C-0848"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "発現（スキル 2 のクールタイム 18 秒▼・10 秒）は、スキル 2 の焦土化の周期の短縮（skill2.effects[0] の periodShorten）に書いた",
+          "en": "Manifestation (Skill 2 cooldown −18 s for 10 s) is written as the period shortening of Skill 2 Scorch to Dust (periodShorten of skill2.effects[0])",
+          "kind": "modeling"
+        },
+        {
+          "ja": "発現の間の自分の貫通特化は、敵 1 体の前提では効かない（要件 4.2 節）",
+          "en": "Pierce specialization on self during Manifestation does not apply under the single-enemy premise (requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "burstUse"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        },
+        {
+          "ja": "指定された敵 1 機への烙印（効果時間中に対象が受けたダメージを累計し、終了後に累計に応じて分配ダメージ。最大蓄積量は最終攻撃力の 8900.83%）は未対応（爆発はバーストの約 799 ティック後に 1 ヒット出るが、値と累計の関係が決まっていない。V-0612）",
+          "en": "Brand on one designated enemy (accumulates the damage the target takes during the effect and deals distributed damage according to it afterwards; the maximum is 8900.83% of final ATK) is not modeled (the explosion is one hit about 799 ticks after the Burst, but how its value relates to the accumulated damage is undetermined. V-0612)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
