@@ -1,0 +1,40 @@
+{
+  "id": "0847",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0847_cocoa-tia.mp4",
+  "original": "2026-11-01_10-53-47.mp4",
+  "durationSec": 199.9,
+  "frames": 11994,
+  "fps": 60,
+  "sizeMB": 242.2,
+  "sha256": "ae47c2f0db9d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 451,
+      "name": "ティア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-01T11:01+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
