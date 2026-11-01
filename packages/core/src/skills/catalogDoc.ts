@@ -276,11 +276,11 @@ const TRIG_INFO: Record<string, Info> = {
   parts: ['パーツ・発射体の破壊・命中', 'oos'],
   enemySpawn: ['敵の出現・数', 'oos'],
   hpThreshold: ['HP が閾値を越えた時（HP の経路の読む側）', 'indirect'],
-  // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節。C-0775）
+  // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節。C-0775）・段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）
   coverHealed: [
     '遮蔽物の HP を回復した時（壊れていない遮蔽物への回復で起きる。ツールチップ）',
     'ok',
-    'timed の { coverHealed: true }（同じ定義の自分の coverHeal のきっかけに置き換える。ティアの S1。味方の遮蔽物 HP 回復は間接の notes）',
+    'timed の { coverHealed: true }（自分の枠が遮蔽物 HP 回復 coverHeal を受けた時。自分のものも味方のものも。ティアの S1）',
   ],
   multiHit: ['N 機以上に同時に命中', 'oos'],
   enemyEvent: ['ターゲットの出現', 'ok', 'battleStart（射撃場の的は戦闘の始めからいるターゲットとみなす。V-0504）'],

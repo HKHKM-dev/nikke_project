@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 69・効果 419（根拠あり 395）・notes 175（根拠あり 78）
+件数: キャラ 69・効果 420（根拠あり 396）・notes 174（根拠あり 78）
 
-notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足 13・間接 53
+notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足 13・間接 52
 
 スロット: supported 160・partial 14・unsupported 17・noEffect 34
 
@@ -755,7 +755,7 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
 
 - **skill1**: supported
   - effects[0] timed・barrier が適用された時・coreDamage（読む: バリア）: C-0671（確定）
-  - notes[0] 間接（遮蔽物）: 通常攻撃 12 回ごとの味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）: 根拠なし
+  - effects[1] coverHeal・normalShot: C-0826（確定）
 - **skill2**: supported
   - effects[0] timed・normalShot・coreDamage: C-0592（確定）、C-0593（確定）、C-0653（確定）
   - effects[1] heal・normalShot: C-0673（確定）
@@ -767,8 +767,8 @@ notes の種類: 未対応 42・前提の外 32・計算に無関係 35・補足
 ## 451 ティア
 
 - **skill1**: supported
-  - effects[0] timed・burstUse・burstCooldown（読む: 遮蔽物）: C-0775（確定）
-  - effects[1] timed・burstUse・attackDamage（読む: 遮蔽物）: C-0776（確定）
+  - effects[0] timed・遮蔽物の HP を回復した時・burstCooldown（読む: 遮蔽物）: C-0775（確定）、C-0827（確定）
+  - effects[1] timed・遮蔽物の HP を回復した時・attackDamage（読む: 遮蔽物）: C-0776（確定）、C-0826（確定）
 - **skill2**: supported
   - effects[0] coverHeal・burstUse: C-0775（確定）
   - effects[1] heal・burstUse: 根拠なし

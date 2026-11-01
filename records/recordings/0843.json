@@ -1,0 +1,40 @@
+{
+  "id": "0843",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0843_tia-naga.mp4",
+  "original": "2026-11-01_10-39-08.mp4",
+  "durationSec": 201.1,
+  "frames": 12065,
+  "fps": 60,
+  "sizeMB": 243.6,
+  "sha256": "c5c73436d8fa",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 451,
+      "name": "ティア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0598 撮り方 A1。ティア（1 枠目・AI）・ナガ（2 枠目・操作）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T10:47+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

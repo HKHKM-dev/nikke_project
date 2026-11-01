@@ -1,0 +1,40 @@
+{
+  "id": "0846",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0846_liter-tia.mp4",
+  "original": "2026-11-01_10-50-13.mp4",
+  "durationSec": 199,
+  "frames": 11937,
+  "fps": 60,
+  "sizeMB": 241.1,
+  "sha256": "cf1b048cd0e9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 451,
+      "name": "ティア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0599 撮り方 B1。リター（1 枠目・AI）・ティア（2 枠目・操作）。オート射撃 ON・オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T10:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

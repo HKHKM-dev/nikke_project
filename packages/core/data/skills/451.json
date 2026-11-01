@@ -17,14 +17,15 @@
           "maxStacksRef": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "「遮蔽物の HP を回復した時」は、自分の S2 のバースト使用時の遮蔽物 HP 回復で起きる（壊れていない遮蔽物への回復で起きる。射撃場の敵の攻撃では遮蔽物は壊れない前提）。付いた時に走っている自分のバーストのクールタイムを 値 01（13）秒 × スタック数だけ縮める（T4。同じ発動から付いた▼もその CT を縮める）。味方の遮蔽物 HP 回復（リター・ナガ・ココア）は間接の notes で、この効果は読む側",
-            "en": "\"When restoring cover HP\" happens with this unit's S2 cover HP recovery on using the Burst (it happens on recovery of an unbroken cover; the cover is assumed not to break from the shooting range enemy's attacks). Shortens this unit's running Burst cooldown by value 01 (13) s × stacks when applied (T4; a decrease applied by the same activation also shortens that cooldown). Allies' cover HP recovery (Liter, Naga, Cocoa) are indirect notes and this effect reads them"
+            "ja": "「遮蔽物の HP を回復した時」は、自分の枠が遮蔽物 HP 回復を受けたフレームに起きる（自分の S2 のバースト使用時の分と、味方の分（ナガの S1）。壊れていない遮蔽物への回復で起きる。射撃場の敵の攻撃では遮蔽物は壊れない前提）。付いた時に走っている自分のバーストのクールタイムを 値 01（13）秒 × スタック数だけ縮める（T4。同じ発動から付いた▼もその CT を縮める）",
+            "en": "\"When restoring cover HP\" happens on the frame this unit receives a cover HP recovery (its own S2 recovery on using the Burst and an ally's, e.g. Naga S1; it happens on recovery of an unbroken cover; the cover is assumed not to break from the shooting range enemy's attacks). Shortens this unit's running Burst cooldown by value 01 (13) s × stacks when applied (T4; a decrease applied by the same activation also shortens that cooldown)"
           },
           "reads": [
             "cover"
           ],
           "claims": [
-            "C-0775"
+            "C-0775",
+            "C-0827"
           ]
         },
         {
@@ -37,14 +38,15 @@
           "ref": 4,
           "durationRef": 5,
           "assumes": {
-            "ja": "きっかけは上の効果と同じ（自分の S2 のバースト使用時の遮蔽物 HP 回復）",
-            "en": "Same trigger as the effect above (this unit's S2 cover HP recovery on using the Burst)"
+            "ja": "きっかけは上の効果と同じ（自分の枠が受けた遮蔽物 HP 回復）",
+            "en": "Same trigger as the effect above (a cover HP recovery this unit receives)"
           },
           "reads": [
             "cover"
           ],
           "claims": [
-            "C-0776"
+            "C-0776",
+            "C-0826"
           ]
         }
       ]

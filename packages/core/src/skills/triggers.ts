@@ -23,6 +23,7 @@ import {
   isResolvedTimer,
   isResolvedWeaponChangeEnd,
   isResolvedReloadEnd,
+  isResolvedCoverHealed,
   isResolvedShotCount,
   type ResolvedTrigger,
 } from './resolve.ts';
@@ -150,6 +151,12 @@ export type FrameEvents = {
    */
   reloadEnds?: readonly number[];
   /**
+   * 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 枠ごとに、このフレームに遮蔽物 HP 回復（coverHeal）を受けたか。届くフレームは
+   * 回復と同じ（skills/heals.ts の healFrameOf）。トリガー { coverHealed } が見る。流し直し（replayEvents）では作らないので、このきっかけは
+   * 1 パス目が件を登録する timed にだけ書ける。省略は無し
+   */
+  coverHealed?: readonly boolean[];
+  /**
    * 2 段目の段 14 の PR 1（plan/design-skill-stage14.md 2.8 節）: このフレームに発動の結果進んだ段階（burst/schedule.ts の
    * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目）。トリガー burstStage{N}Enter が見る。省略は無し
    */
@@ -260,6 +267,8 @@ export function createTriggerTracker(
   if (isResolvedWeaponChangeEnd(t)) return (ev) => (ev.weaponChangeEnds ?? []).includes(slotIndex);
   // 2 段目の段 16 の PR 2: リロードの込め終わり（1 パス目の込め終わりの列）
   if (isResolvedReloadEnd(t)) return (ev) => (ev.reloadEnds ?? []).includes(slotIndex);
+  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時（1 パス目が当てた遮蔽物 HP 回復の受け手）
+  if (isResolvedCoverHealed(t)) return (ev) => ev.coverHealed?.[slotIndex] === true;
   // 2 段目の段 14 の PR 2: 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
   if (isChargeTickTrigger(t)) {
     const every = t.chargeTick.everySeconds;

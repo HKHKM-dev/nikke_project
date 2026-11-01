@@ -12,5 +12,13 @@
     "places": ["data/skills/451.json の skill1 の effects[0]", "data/skills/451.json の skill2 の effects[0]"]
   },
   "decidedOn": [],
-  "parameterFree": "説明文の値（スキル Lv10）と、確定の結論の CT・チェーンの待ち・ゲージの機構だけから決めた。値を合わせた録画は無い"
+  "parameterFree": "説明文の値（スキル Lv10）と、確定の結論の CT・チェーンの待ち・ゲージの機構だけから決めた。値を合わせた録画は無い",
+  "minimal": [
+    {
+      "observations": ["0786-05", "0787-05"],
+      "element": "ティア skill2.notes[0]",
+      "reason": "ティアの S2 の遮蔽物の最大 HP▲ は遮蔽物 HP 回復を起こさない。遮蔽物を読むのはティアの S1 だけで、そのきっかけは遮蔽物 HP 回復を受けた時（段 17 の PR 1）なので、この notes はこれらの観測値に効かない",
+      "decided": "2026-11-01"
+    }
+  ]
 }
