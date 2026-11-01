@@ -1110,7 +1110,7 @@ function burstActivationVideoFrames(result: { schedule: BurstSchedule | null }, 
 }
 
 /** 結果の頭の skip 個（省略は 0）を飛ばし、count 個に切る（count が無ければ残り全部。足りなければ誤り） */
-function firstCount(values: number[], ctx: MetricContext, what: string): number[] {
+function firstCount<T>(values: T[], ctx: MetricContext, what: string): T[] {
   const skip = ctx.args.skip === undefined ? 0 : Number(ctx.args.skip);
   const count = ctx.args.count === undefined ? values.length - skip : Number(ctx.args.count);
   if (values.length < skip + count) throw new Error(`${what}が ${values.length} 回しか無い`);
@@ -1506,6 +1506,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   skillHitMeanInterval: { args: ['slot', 'skill'], sim: skillHitMeanInterval },
   skillHitShotIndices: { args: ['slot', 'skill', 'count'], sim: skillHitShotIndices },
+  // V-0616: 倍率ダメージの回の間の通常攻撃の命中の期待値の和（回数トリガーを命中で数えるか撃った数で数えるか）
+  skillHitNormalHits: { args: ['slot', 'skill'], sim: skillHitNormalHits },
   skillHitShotDelay: { args: ['slot', 'skill'], sim: skillHitShotDelay },
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
   // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
@@ -1934,18 +1936,37 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
   return ctx.args.relative === true ? picked.map((f) => f - picked[0]!) : picked;
 }
 
+/** 枠のスロット skill（ctx.args.skill）の倍率ダメージのヒット（持続ダメージを除く。時刻の順） */
+function slotSkillHits(result: SimResult, ctx: MetricContext): SimResult['skillHits'] {
+  const slotIndex = slotIndexOf(ctx);
+  return result.skillHits.filter(
+    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+  );
+}
+
 /**
  * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0374）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
- * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる
+ * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる。
+ * skip（V-0616）の数だけ頭の回を飛ばす
  */
 function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
   const shots = slotOf(result.shots, ctx).frames;
-  const hits = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-  );
-  const count = Number(ctx.args.count);
-  if (hits.length < count) throw new Error(`発動が ${hits.length} 回しかない`);
-  return hits.slice(0, count).map((h) => shots.filter((f) => f <= h.frame).length);
+  return firstCount(slotSkillHits(result, ctx), ctx, '発動').map((h) => shots.filter((f) => f <= h.frame).length);
+}
+
+/**
+ * V-0616: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の回ごとに、前の回の後からその回まで（その回と同じフレームの発を含む）の
+ * 枠の通常攻撃の命中の期待値の和（発ごとの弾丸命中率。1 回目は戦闘の始めから）。skip・count で回を絞る。録画では、その間の HUD の増分
+ * （1 増分 1 ヒット。読めない間の無い回だけ）の数と比べる。命中で数える回数トリガーなら、外れの多い区間でも N の前後になる
+ */
+function skillHitNormalHits(result: SimResult, ctx: MetricContext): number[] {
+  const log = slotOf(result.shots, ctx);
+  const frames = slotSkillHits(result, ctx).map((h) => h.frame);
+  const sums = frames.map((frame, i) => {
+    const from = i === 0 ? Number.NEGATIVE_INFINITY : frames[i - 1]!;
+    return log.frames.reduce((sum, f, k) => (from < f && f <= frame ? sum + (log.hits?.[k] ?? 1) : sum), 0);
+  });
+  return firstCount(sums, ctx, '発動');
 }
 
 /**
@@ -1956,10 +1977,7 @@ function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
 function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
   const shots = slotOf(result.shots, ctx).frames;
   const counts = new Map<number, number>();
-  for (const h of result.skillHits) {
-    if (h.slotIndex !== slotIndexOf(ctx) || h.effect.source.skill !== ctx.args.skill || h.effect.dot !== undefined) {
-      continue;
-    }
+  for (const h of slotSkillHits(result, ctx)) {
     const shot = shots.filter((f) => f <= h.frame).at(-1);
     if (shot === undefined) continue;
     counts.set(h.frame - shot, (counts.get(h.frame - shot) ?? 0) + 1);
@@ -1986,9 +2004,7 @@ function skillHitBurstOrdinals(result: SimResult, ctx: MetricContext): number[] 
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const slotIndex = slotIndexOf(ctx);
   const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
-  const hits = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-  );
+  const hits = slotSkillHits(result, ctx);
   const ordinals = new Set<number>();
   for (const h of hits) {
     const n = mine.filter((f) => f <= h.frame).length;
