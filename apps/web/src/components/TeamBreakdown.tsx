@@ -1,7 +1,6 @@
 import {
   BURST_STEP_KEYS,
   ENEMY_EVENT_KIND_LABEL,
-  WEAPON_LABEL,
   slotsByStep,
   type TeamResult,
   type TeamSlotResult,
@@ -29,7 +28,8 @@ type Props = {
   detailed: boolean;
 };
 
-const DETAIL_SUMMARY = '詳細内訳（通常・バースト・スキル・タイムライン等）';
+const DETAIL_SUMMARY = '詳細内訳（通常・バースト・スキル等）';
+const TIMELINE_SUMMARY = 'タイムライン（1 秒ごとのダメージ）';
 const VERIFICATION_SUMMARY = '検証用の詳細';
 
 /** キャラのいない編成の、詳細の見出し（薄くして開かない） */
@@ -108,6 +108,7 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
       {detailed && filled.length === 0 && (
         <>
           <PlaceholderDetails summary={DETAIL_SUMMARY} />
+          <PlaceholderDetails summary={TIMELINE_SUMMARY} />
           <PlaceholderDetails summary={VERIFICATION_SUMMARY} />
         </>
       )}
@@ -126,13 +127,6 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
             </p>
           )}
 
-          <DamageTimeline
-            perSecond={result.damagePerSecond}
-            events={result.enemyEvents}
-            landings={result.landings}
-            fullBursts={schedule?.fullBurstWindows ?? []}
-          />
-
           <div className="table-scroll">
             <table className="team-table">
               <thead>
@@ -150,10 +144,7 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
                 {filled.map((s) => (
                   <tr key={s.index}>
                     <td>{s.index + 1}</td>
-                    <td>
-                      {s.character.name.ja}
-                      <small className="sub"> {WEAPON_LABEL[s.character.weaponType].ja}</small>
-                    </td>
+                    <td>{s.character.name.ja}</td>
                     <td>{formatNumber(s.normalDamage)}</td>
                     <td>
                       {s.burst.hit ? formatNumber(s.burst.totalDamage) : '—'}
@@ -208,6 +199,18 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
               );
             })}
           </div>
+        </details>
+      )}
+
+      {detailed && filled.length > 0 && (
+        <details className="segments">
+          <summary>{TIMELINE_SUMMARY}</summary>
+          <DamageTimeline
+            perSecond={result.damagePerSecond}
+            events={result.enemyEvents}
+            landings={result.landings}
+            fullBursts={schedule?.fullBurstWindows ?? []}
+          />
         </details>
       )}
 
