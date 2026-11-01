@@ -18251,7 +18251,7 @@
       "plus": null
     },
     {
-      "observation": "0819-12",
+      "observation": "0819-13",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "3cd8ba2b19cfa8e8",
       "effective": false,
@@ -18259,7 +18259,7 @@
       "plus": null
     },
     {
-      "observation": "0819-12",
+      "observation": "0819-13",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "3cd8ba2b19cfa8e8",
       "effective": false,
@@ -18267,7 +18267,7 @@
       "plus": 0
     },
     {
-      "observation": "0819-12",
+      "observation": "0819-13",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
       "key": "3cd8ba2b19cfa8e8",
       "effective": false,
@@ -18275,7 +18275,7 @@
       "plus": null
     },
     {
-      "observation": "0819-12",
+      "observation": "0819-13",
       "element": "ベスティー：タクティカル・アップ skill1.effects[1]",
       "key": "3cd8ba2b19cfa8e8",
       "effective": false,
