@@ -11,6 +11,7 @@ import type { TeamInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { computeBurstHit } from '../burstDamage.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
+import { NAMED_STATES } from '../states.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
 function readJson<T>(path: string): T {
@@ -420,5 +421,35 @@ describe('エレグ（500）の S1 の値のフレームとゲージの条件', 
     // 条件を外した定義では、ブームインストールの外の発でもゲージを溜める（この編成で状態の外に届く発があることの確かめ）
     const unconditioned = planTeamRun(teamCWith(s1Variant((e) => delete e.condition, true)));
     expect(s1Gauges(unconditioned).some((g) => !inBoom(boomWindows(unconditioned), g.shotFrame))).toBe(true);
+  });
+});
+
+// 条件 enemyState の家族の判定は、1 パス目（ゲージの予約。skills/holders.ts の enemyStateAt）と 2 パス目（ヒット。frame/plan.ts の
+// damageConditionHolds）で同じ（stateMatches）。いまは敵が持つ状態に家族が無いので、テストの間だけ徹甲炸裂弾（ウンファ：タクティカル・
+// アップのバーストの使用武器変更の発で敵に付く）をブームインストールの家族にして見る
+describe('条件 enemyState の家族（1 パス目と 2 パス目）', () => {
+  it('fires the S1 hits and reserves their gauge at the same frames when a family member of BOOM Install is on', () => {
+    const info = NAMED_STATES.explosiveRound as { family?: string };
+    info.family = 'boomInstall';
+    try {
+      const input: TeamInput = { ...teamC(), slots: [slotOf(SAKURA), slotOf(95), slotOf(500)], durationSeconds: 180 };
+      const plan = planTeamRun(input);
+      const states = stateItemsOf(plan);
+      const during = (state: string, f: number) => states.some((x) => x.state === state && x.start <= f && f < x.end);
+      const s1 = raw.skills.skill1!.effects[0] as { delayFrames: number; hitOffsetFrames: number[] };
+      const delays = s1.hitOffsetFrames.map((offset) => s1.delayFrames + offset);
+      const hits = plan.skillHits.filter((h) => h.slotIndex === 2);
+      const gauges = plan.shotGauges.filter((g) => g.slotIndex === 2 && delays.includes(g.frame - g.shotFrame));
+      // ブームインストールの外で、徹甲炸裂弾の間に届いた発からもヒットが出る
+      expect(
+        hits.some((h) => {
+          const fire = h.frame - delays[0]!;
+          return !during('boomInstall', fire) && during('explosiveRound', fire);
+        }),
+      ).toBe(true);
+      expect(gauges.map((g) => g.frame)).toEqual(hits.map((h) => h.frame));
+    } finally {
+      delete info.family;
+    }
   });
 });
