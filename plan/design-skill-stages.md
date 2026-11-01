@@ -116,4 +116,4 @@
 - 段 14: 2026-10-31 起案・決定・閉じた（[design-skill-stage14.md](design-skill-stage14.md)）。
 - 段 15: 2026-10-31 起案・決定・閉じた（[design-skill-stage15.md](design-skill-stage15.md)）。
 - 段 16: 2026-10-31 起案・決定・2026-11-01 閉じた（[design-skill-stage16.md](design-skill-stage16.md)）。
-- 段 17: 2026-11-01 起案・決定（[design-skill-stage17.md](design-skill-stage17.md)）。
+- 段 17: 2026-11-01 起案・決定・閉じた（[design-skill-stage17.md](design-skill-stage17.md)）。

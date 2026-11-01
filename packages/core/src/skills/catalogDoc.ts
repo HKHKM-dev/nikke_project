@@ -152,11 +152,16 @@ const KIND_INFO: Record<string, Info> = {
     'stackChange（増加と decrease の減少。2 段目の段 3。敵の持続ダメージのスタック量▲は target enemy。段 13）',
   ],
   'instant:ammoRefill': ['弾丸チャージ', 'ok', 'ammoRefill'],
-  'instant:forceReload': ['強制リロード', 'gap', 'なし'],
+  // 2 段目の段 17: ジルのバーストの「残弾数 100% 減少」「強制リロード」は ammoDecrease の burstUse で書いた。ミルク：ブルーミングバニーの羞恥心の形が残る
+  'instant:forceReload': [
+    '強制リロード',
+    'check',
+    '残弾数 100% 減少の ammoDecrease（バースト使用時のきっかけ burstUse。リロードを始める。2 段目の段 17）だけ',
+  ],
   'instant:ammoDrain': [
     '残弾数の減少',
     'ok',
-    'ammoDecrease（自分。いまは使用武器の変更の終わりのきっかけだけ。2 段目の段 11）',
+    'ammoDecrease（自分。使用武器の変更の終わりのきっかけ（2 段目の段 11）と、バースト使用時のきっかけ burstUse（段 17）だけ）',
   ],
   'instant:burstGauge': ['バーストゲージのチャージ', 'ok', 'burstGauge'],
   'instant:burstCooldown': [
@@ -255,7 +260,7 @@ const TRIG_INFO: Record<string, Info> = {
   reloadComplete: [
     'リロード完了時',
     'check',
-    'removeState の { reloadEnd }（最大弾数のリロード完了で状態を外す。2 段目の段 16）だけ',
+    '{ reloadEnd }（最大弾数のリロード完了。removeState（2 段目の段 16）と、timed・状態の付与（段 17））だけ',
   ],
   teamAmmo: ['味方の消費した弾の合計', 'gap'],
   fullStackConsume: [
