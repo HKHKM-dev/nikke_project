@@ -219,8 +219,16 @@ header h1 {
   width: auto;
   max-width: 100%;
 }
-.common-growth {
-  margin-top: 10px;
+/* 敵情報と共通育成の行（スロットの 2 列と同じ幅から横に並べる） */
+.settings-row {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 700px) {
+  .settings-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 /* スペック固定とシンクロ LV の 1 行（幅が足りなければ折り返す） */
 .common-growth-row {
@@ -236,19 +244,20 @@ header h1 {
 .common-growth-row .field.checkbox {
   grid-template-columns: auto auto;
 }
-.console {
+/* 共通育成の詳細設定（リサイクルルーム）。ポップアップは中身の幅なので、幅を決めて列を自動で並べる */
+.console-settings {
+  width: min(32em, calc(100vw - 56px));
   font-size: 0.85rem;
-  margin-top: 6px;
-}
-.console-title {
-  font-weight: 600;
-  cursor: pointer;
 }
 .console-grid {
   display: grid;
   gap: 0 16px;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14em), 1fr));
   margin-top: 4px;
+}
+.console-grid .field {
+  grid-template-columns: 7em 5em;
+  white-space: nowrap;
 }
 
 /* 枠カード */

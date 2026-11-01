@@ -59,7 +59,8 @@ export function TeamSettingsForm({
     </label>
   );
   return (
-    <>
+    // 敵情報と共通育成は横に並べる（狭い画面では縦）
+    <div className="settings-row">
       <fieldset className="panel settings">
         <legend>敵情報</legend>
         <div className="settings-simple">
@@ -126,7 +127,7 @@ export function TeamSettingsForm({
       </fieldset>
       <fieldset className="panel common-growth">
         <legend>共通育成</legend>
-        {/* シンクロ LV とスペック固定はいつも 1 行で出し、リサイクルルームは折りたたむ */}
+        {/* シンクロ LV とスペック固定はいつも 1 行で出し、リサイクルルームは詳細設定のポップアップに置く */}
         <div className="common-growth-row">
           <label className="field">
             <span>シンクロ LV</span>
@@ -145,26 +146,28 @@ export function TeamSettingsForm({
             />
             <span>スペック固定</span>
           </label>
+          <Popover button="詳細設定" buttonClassName="advanced-settings-button" label="共通育成の詳細設定" align="left">
+            <fieldset className="popover-group console-settings">
+              <legend>リサイクルルーム</legend>
+              <div className="console-grid">
+                {levelField('personal', '共通', consoleInput.personal, (lv) =>
+                  setConsole({ ...consoleInput, personal: lv }),
+                )}
+                {CONSOLE_CLASSES.map((c) =>
+                  levelField(`class-${c}`, CLASS_LABEL[c], consoleInput.class[c], (lv) =>
+                    setConsole({ ...consoleInput, class: { ...consoleInput.class, [c]: lv } }),
+                  ),
+                )}
+                {CONSOLE_CORPORATIONS.map((c) =>
+                  levelField(`corp-${c}`, CORPORATION_LABEL[c], consoleInput.corporation[c], (lv) =>
+                    setConsole({ ...consoleInput, corporation: { ...consoleInput.corporation, [c]: lv } }),
+                  ),
+                )}
+              </div>
+            </fieldset>
+          </Popover>
         </div>
-        <details className="console">
-          <summary className="console-title">リサイクルルーム</summary>
-          <div className="console-grid">
-            {levelField('personal', '共通', consoleInput.personal, (lv) =>
-              setConsole({ ...consoleInput, personal: lv }),
-            )}
-            {CONSOLE_CLASSES.map((c) =>
-              levelField(`class-${c}`, CLASS_LABEL[c], consoleInput.class[c], (lv) =>
-                setConsole({ ...consoleInput, class: { ...consoleInput.class, [c]: lv } }),
-              ),
-            )}
-            {CONSOLE_CORPORATIONS.map((c) =>
-              levelField(`corp-${c}`, CORPORATION_LABEL[c], consoleInput.corporation[c], (lv) =>
-                setConsole({ ...consoleInput, corporation: { ...consoleInput.corporation, [c]: lv } }),
-              ),
-            )}
-          </div>
-        </details>
       </fieldset>
-    </>
+    </div>
   );
 }
