@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 74・効果 464（根拠あり 439）・notes 184（根拠あり 86）
+件数: キャラ 75・効果 470（根拠あり 445）・notes 185（根拠あり 86）
 
-notes の種類: 未対応 45・前提の外 39・計算に無関係 36・補足 16・間接 48
+notes の種類: 未対応 46・前提の外 39・計算に無関係 36・補足 16・間接 48
 
-スロット: supported 172・partial 19・unsupported 16・noEffect 33
+スロット: supported 174・partial 20・unsupported 16・noEffect 33
 
 ## 10 ラピ
 
@@ -796,6 +796,19 @@ notes の種類: 未対応 45・前提の外 39・計算に無関係 36・補足
   - effects[1] timed・burstUse・chargeDamage: C-0869（確定）
   - effects[2] damage・burstUse・true: C-0870（確定）、C-0871（仮説）
   - notes[0] 未対応: ニアフェザー 6 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない。録画では、バーストのたびに約 17.6f おきのニアフェザー攻撃が 33〜35 回続いた（V-0625）: 根拠なし
+
+## 400 ギルティ
+
+- **skill1**: supported
+  - effects[0] state・normalShot・mindIfIBorrowThis（attack）: C-0873（確定）
+- **skill2**: partial
+  - effects[0] stackChange・normalShot・mindIfIBorrowThis: C-0873（確定）
+  - effects[1] timed・normalShot・attack: C-0873（確定）
+  - notes[0] 未対応: 風圧コードのほかの味方のスタック可能バフ効果のスタック量▲は未対応（自分の借りていくよぉ…の分だけ扱う）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0874（確定）
+  - effects[1] timed・burstUse・enemyDefenseDown: C-0874（確定）
+  - effects[2] damage・burstUse・additional: C-0874（確定）
 
 ## 450 ナガ
 
