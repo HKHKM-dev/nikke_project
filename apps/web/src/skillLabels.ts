@@ -366,7 +366,7 @@ export function formatCounterChange(effect: CounterChangeEffect, amount: number)
  * 1 機ずつ 26・32・38 秒で消え、1 機は消えない」
  */
 export function formatSummon(effect: SummonEffect): string {
-  const when = effect.trigger === 'battleStart' ? '戦闘開始時' : 'バースト使用時';
+  const when = BUFF_TRIGGER_LABEL[effect.trigger];
   const finite = effect.lifetimesSeconds.filter((x): x is number => x !== null);
   const stays = effect.lifetimesSeconds.length - finite.length;
   const expiry = finite.length === 0 ? '' : `。1 機ずつ ${finite.map(formatNumber).join('・')} 秒で消え`;

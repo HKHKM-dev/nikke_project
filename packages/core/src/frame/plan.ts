@@ -236,11 +236,11 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     schedule,
     frames,
     shots,
+    first.summonHits,
     input.sustainedDamagePlacement,
     slotAutoAttackCoreRatesOf(slots, enemy, frames),
     input.attackRounding,
     slotDistanceRatesOf(landing, slots, frames),
-    first.summonHits,
   );
   return {
     frames,
@@ -289,6 +289,8 @@ export function planSkillHits(
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
+  /** アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火 */
+  summonHits: FirstPassResult['summonHits'],
   sustainedDamagePlacement?: SustainedDamagePlacement,
   /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
@@ -299,8 +301,6 @@ export function planSkillHits(
    * ヒットが読む。省略は距離ボーナスなし
    */
   distanceRates: readonly (FlightFrameSpan[] | null)[] = [],
-  /** アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火。省略は無し */
-  summonHits: FirstPassResult['summonHits'] = [],
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
   // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）

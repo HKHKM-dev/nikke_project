@@ -59,7 +59,7 @@
 // このフレームに付いた間隔の変更の件も見るように、手順 3 の後で数える（ゲージは先のフレームに予約するので、数える位置で値は変わらない）。
 import { burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
+import { FRAMES_PER_GAME_SECOND, gameSecondsToFrames } from '../time.ts';
 import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
@@ -132,6 +132,7 @@ import {
   isSummonAttackTrigger,
   SKILL_SLOTS,
   type ShotCountKind,
+  type SummonAttackTrigger,
   type SummonEffect,
 } from '../skills/types.ts';
 import type { SummonId } from '../skills/summons.ts';
@@ -919,10 +920,13 @@ function runFirstPassOnce(
     /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
     enemyState?: NamedStateId;
   }[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    for (const effect of resolveDamageEffects(slot.definition, slot.character, slot.levels)) {
-      if (effect.gaugePerHit !== true) continue;
+  /** 枠ごとの倍率ダメージ（ヒットごとのゲージと召喚の攻撃が読む。枠ごとに 1 回だけ解く） */
+  const damageEffects = slots.map((slot) =>
+    slot === null || slot.definition === null ? [] : resolveDamageEffects(slot.definition, slot.character, slot.levels),
+  );
+  damageEffects.forEach((effects, i) => {
+    for (const effect of effects) {
+      if (effect.gaugePerHit === undefined || isSummonAttackTrigger(effect.trigger)) continue;
       const { trigger } = effect;
       if (isResolvedTimer(trigger)) {
         // 2 段目の段 15 の PR 3: periodShorten の名前の無い窓（window）は gaugePerHit と組まない（読み込みで落とす）ので、鍵は状態だけ
@@ -954,59 +958,65 @@ function runFirstPassOnce(
   const summonTrackers: {
     slotIndex: number;
     summon: SummonId;
-    onBattleStart?: SummonEffect;
-    onBurstUse?: SummonEffect;
-    /** 攻撃のフレーム数で表した、機数ごとの間隔（端数あり） */
-    intervalFrames: Readonly<Record<number, number>>;
+    onBurstUse: SummonEffect | undefined;
+    /** 機数ごとの、1 フレームに積む進み（間隔の逆数） */
+    ratePerFrame: Readonly<Record<number, number>>;
     delayFrames: number;
     /** ヒットごとのゲージの倍数（gaugePerHit の効果ごと） */
     gaugeScales: number[];
-    deployFrame: number | null;
-    /** いまの組の、1 機ずつの維持時間（フレーム。null は消えない） */
-    lifetimes: (number | null)[];
+    /** 進みを積み始めるフレーム（展開 + 遅れ。この後のフレームから積む）。展開の前は null */
+    activeFrom: number | null;
+    /** いまの組の、1 機ずつの消えるフレーム（昇順。消えない機は入れない）と、消えない機の数 */
+    expiries: number[];
+    stays: number;
     progress: number;
     /** 次に見るバーストの発動（activationsOf() の添字） */
     nextActivation: number;
   }[] = [];
-  slots.forEach((slot, i) => {
-    if (slot === null || slot.definition === null) return;
-    const deploys = SKILL_SLOTS.flatMap((s) => slot.definition!.skills[s].effects).filter(
-      (e): e is SummonEffect => e.kind === 'summon',
-    );
-    const attacks = resolveDamageEffects(slot.definition, slot.character, slot.levels);
-    for (const effect of attacks) {
-      const t = effect.trigger;
-      if (!isSummonAttackTrigger(t) || summonTrackers.some((x) => x.slotIndex === i && x.summon === t.summon)) continue;
-      const same = attacks.filter((e) => isSummonAttackTrigger(e.trigger) && e.trigger.summon === t.summon);
-      const onBattleStart = deploys.find((d) => d.summon === t.summon && d.trigger === 'battleStart');
-      const onBurstUse = deploys.find((d) => d.summon === t.summon && d.trigger === 'burstUse');
-      summonTrackers.push({
-        slotIndex: i,
-        summon: t.summon,
-        ...(onBattleStart === undefined ? {} : { onBattleStart }),
-        ...(onBurstUse === undefined ? {} : { onBurstUse }),
-        intervalFrames: Object.fromEntries(
-          Object.entries(t.intervalSeconds).map(([n, sec]) => [Number(n), sec / GAME_SECONDS_PER_FRAME]),
-        ),
-        delayFrames: gameSecondsToFrames(t.startDelaySeconds),
-        gaugeScales: same.filter((e) => e.gaugePerHit === true).map((e) => e.gaugePerHitScale ?? 1),
-        deployFrame: null,
-        lifetimes: [],
-        progress: 0,
-        nextActivation: 0,
-      });
-    }
-  });
   const deploySummon = (t: (typeof summonTrackers)[number], at: number, effect: SummonEffect): void => {
-    t.deployFrame = at;
-    t.lifetimes = effect.lifetimesSeconds.map((x) => (x === null ? null : gameSecondsToFrames(x)));
+    const finite = effect.lifetimesSeconds.filter((x): x is number => x !== null);
+    t.activeFrom = at + t.delayFrames;
+    t.expiries = finite.map((x) => at + gameSecondsToFrames(x)).sort((a, b) => a - b);
+    t.stays = effect.lifetimesSeconds.length - finite.length;
     t.progress = 0;
   };
-  /** フレーム f の終わりに、f の展開を入れ、次のフレームの攻撃の進みを積む（発火したら次のフレームのゲージに予約する） */
+  damageEffects.forEach((effects, i) => {
+    const byId = new Map<SummonId, ResolvedDamageEffect[]>();
+    for (const e of effects) {
+      if (isSummonAttackTrigger(e.trigger)) byId.set(e.trigger.summon, [...(byId.get(e.trigger.summon) ?? []), e]);
+    }
+    if (byId.size === 0) return;
+    const deploys = SKILL_SLOTS.flatMap((s) => slots[i]!.definition!.skills[s].effects).filter(
+      (e): e is SummonEffect => e.kind === 'summon',
+    );
+    for (const [summon, attacks] of byId) {
+      const trigger = attacks[0]!.trigger as SummonAttackTrigger;
+      const t: (typeof summonTrackers)[number] = {
+        slotIndex: i,
+        summon,
+        onBurstUse: deploys.find((d) => d.summon === summon && d.trigger === 'burstUse'),
+        ratePerFrame: Object.fromEntries(
+          Object.entries(trigger.intervalSeconds).map(([n, sec]) => [Number(n), 1 / (sec * FRAMES_PER_GAME_SECOND)]),
+        ),
+        delayFrames: gameSecondsToFrames(trigger.startDelaySeconds),
+        gaugeScales: attacks.flatMap((e) => (e.gaugePerHit === undefined ? [] : [e.gaugePerHit])),
+        activeFrom: null,
+        expiries: [],
+        stays: 0,
+        progress: 0,
+        nextActivation: 0,
+      };
+      // 戦闘開始時の展開はフレーム 0（フレーム 0 の終わりに、次のフレームの進みから積む）
+      const atStart = deploys.find((d) => d.summon === summon && d.trigger === 'battleStart');
+      if (atStart !== undefined) deploySummon(t, 0, atStart);
+      summonTrackers.push(t);
+    }
+  });
+  /** フレーム f の終わりに、f のバーストの展開を入れ、次のフレームの攻撃の進みを積む（発火したら次のフレームのゲージに予約する） */
   const countSummons = (f: number): void => {
     const activations = activationsOf();
+    const g = f + 1;
     for (const t of summonTrackers) {
-      if (f === 0 && t.onBattleStart !== undefined) deploySummon(t, 0, t.onBattleStart);
       while (t.nextActivation < activations.length) {
         const a = activations[t.nextActivation]!;
         if (a.slotIndex === t.slotIndex) {
@@ -1016,13 +1026,11 @@ function runFirstPassOnce(
         }
         t.nextActivation += 1;
       }
-      const g = f + 1;
-      if (g >= frames || t.deployFrame === null) continue;
-      const age = g - t.deployFrame;
-      if (age <= t.delayFrames) continue;
-      const n = t.lifetimes.filter((l) => l === null || age < l).length;
+      if (g >= frames || t.activeFrom === null || g <= t.activeFrom) continue;
+      while (t.expiries.length > 0 && t.expiries[0]! <= g) t.expiries.shift();
+      const n = t.expiries.length + t.stays;
       if (n === 0) continue;
-      t.progress += 1 / t.intervalFrames[n]!;
+      t.progress += t.ratePerFrame[n]!;
       if (t.progress < 1 - 1e-9) continue;
       t.progress -= 1;
       summonHits.push({ slotIndex: t.slotIndex, summon: t.summon, frame: g });
@@ -1032,7 +1040,7 @@ function runFirstPassOnce(
   const countDamageHitGauges = (f: number): void => {
     for (const t of damageTimerGauges) {
       if (!t.fires(f)) continue;
-      const energy = hitGaugeEnergy(t.slotIndex);
+      const energy = hitGaugeEnergy(t.slotIndex) * t.effect.gaugePerHit!;
       for (const at of damageHitFramesOf(t.effect, f, frames)) reserveTimerGauge(t.slotIndex, f, at, energy);
     }
     for (const t of shotDamageGauges) {
@@ -1044,7 +1052,7 @@ function runFirstPassOnce(
       if (t.enemyState !== undefined && !lists.enemyStateAt(t.enemyState, f)) continue;
       const per = t.effect.perCount;
       const count = per !== undefined && 'state' in per ? lists.selfStackCountAt(t.slotIndex, per.state, f) : undefined;
-      const energy = hitGaugeEnergy(t.slotIndex);
+      const energy = hitGaugeEnergy(t.slotIndex) * t.effect.gaugePerHit!;
       for (const hit of effectHitFrames(t.effect, f, count, frames)) landingGauge(t.slotIndex, hit, f, energy, 1);
     }
   };

@@ -1932,11 +1932,6 @@ export type StackChangeEffect = {
 };
 
 /**
- * 2 段目の段 10（plan/design-skill-stage10.md 2.3・2.4 節）: 「〈カウンタ〉N チャージ」「〈カウンタ〉N 消費」。発火のフレームの、そのフレームの
- * すべての判定の後に、自分のカウンタに N を足す（decrease なら減らす）。結果は 0 と上限の間で切る。トリガーは parseTrigger のものと、
- * { ended: 状態 }（自分のその状態の件が外れたフレーム。段 4 の 1.3 節）
- */
-/**
  * アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。自分にその召喚を lifetimesSeconds の数だけ展開し、
  * 1 機ずつ維持時間（ゲームの秒。null は消えない）が過ぎたら消す。展開は同じ召喚の前の組を置き換える（残っていた機も消える）。
  * 機数は維持時間の残っている機の数で、攻撃（damage のきっかけ { summon }）の間隔を決める。展開のフレームは battleStart が 0、
@@ -1950,6 +1945,11 @@ export type SummonEffect = {
   assumes?: LocalizedText;
 };
 
+/**
+ * 2 段目の段 10（plan/design-skill-stage10.md 2.3・2.4 節）: 「〈カウンタ〉N チャージ」「〈カウンタ〉N 消費」。発火のフレームの、そのフレームの
+ * すべての判定の後に、自分のカウンタに N を足す（decrease なら減らす）。結果は 0 と上限の間で切る。トリガーは parseTrigger のものと、
+ * { ended: 状態 }（自分のその状態の件が外れたフレーム。段 4 の 1.3 節）
+ */
 export type CounterChangeEffect = {
   kind: 'counterChange';
   counter: CounterId;
@@ -4178,9 +4178,7 @@ function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | 
     fail(`${path}.intervalSeconds`, 'expected a non-empty object');
   const intervalSeconds: Record<number, number> = {};
   for (const [key, seconds] of Object.entries(table)) {
-    const count = Number(key);
-    if (!Number.isInteger(count) || count < 1)
-      fail(`${path}.intervalSeconds.${key}`, 'expected a positive integer key');
+    const count = parsePositiveInt(Number(key), `${path}.intervalSeconds.${key}`);
     if (typeof seconds !== 'number' || !(seconds > 0))
       fail(`${path}.intervalSeconds.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
     intervalSeconds[count] = seconds;
@@ -4916,9 +4914,8 @@ function parseSummonEffect(v: Record<string, Json>, path: string, slot: SkillSlo
     if (!['kind', 'summon', 'trigger', 'lifetimesSeconds', 'assumes', 'claims'].includes(key))
       fail(`${path}.${key}`, 'unknown field');
   const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);
-  if (v.trigger !== 'battleStart' && v.trigger !== 'burstUse')
-    fail(`${path}.trigger`, `expected "battleStart" or "burstUse", got ${JSON.stringify(v.trigger)}`);
-  if (v.trigger === 'burstUse' && slot !== 'burst') fail(`${path}.trigger`, 'burstUse is only allowed in burst');
+  const trigger = oneOf(['battleStart', 'burstUse'] as const, v.trigger, `${path}.trigger`);
+  if (trigger === 'burstUse' && slot !== 'burst') fail(`${path}.trigger`, 'burstUse is only allowed in burst');
   const lifetimes = v.lifetimesSeconds;
   if (!Array.isArray(lifetimes) || lifetimes.length === 0)
     fail(`${path}.lifetimesSeconds`, 'expected a non-empty array');
@@ -4928,7 +4925,7 @@ function parseSummonEffect(v: Record<string, Json>, path: string, slot: SkillSlo
       fail(`${path}.lifetimesSeconds[${k}]`, `expected a positive number or null, got ${JSON.stringify(x)}`);
     return x;
   });
-  const effect: SummonEffect = { kind: 'summon', summon, trigger: v.trigger, lifetimesSeconds };
+  const effect: SummonEffect = { kind: 'summon', summon, trigger, lifetimesSeconds };
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }
@@ -5390,11 +5387,6 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
- * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）と、PR 3: 敵のスタック量▲（stackChange の target
- * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
- * enemyState も、同じ定義の dot の state を指す
- */
-/**
  * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃は、同じ定義にその召喚の展開が要る。展開の組がなりうる
  * 機数（維持時間の並びで、消えた後に残る数。0 を除く）は、どれも攻撃の intervalSeconds の表にある
  */
@@ -5428,6 +5420,11 @@ function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: 
   }
 }
 
+/**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）と、PR 3: 敵のスタック量▲（stackChange の target
+ * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
+ * enemyState も、同じ定義の dot の state を指す
+ */
 function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
