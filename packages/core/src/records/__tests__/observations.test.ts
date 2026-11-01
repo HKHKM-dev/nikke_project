@@ -448,6 +448,26 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 2, n: 2 })).toThrow('2 発目が無い');
   });
 
+  it('compares the gauge per shot after the full burst end with the other shots (V-0638)', () => {
+    const result = {
+      schedule: { fullBurstWindows: [{ start: 100, end: 700 }] },
+      shotGauges: [
+        { slotIndex: 0, shotFrame: 50, frame: 50, energy: 4000 },
+        { slotIndex: 0, shotFrame: 400, frame: 400, energy: 4000 },
+        { slotIndex: 0, shotFrame: 700, frame: 700, energy: 4600 },
+        { slotIndex: 0, shotFrame: 993, frame: 993, energy: 2300 },
+        { slotIndex: 0, shotFrame: 993, frame: 993, energy: 2300 },
+        { slotIndex: 0, shotFrame: 994, frame: 994, energy: 4000 },
+        { slotIndex: 1, shotFrame: 800, frame: 800, energy: 56000 },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.shotGaugeRatioAfterFullBurst!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    expect(value({ slot: 1, frames: 294 })).toBe(1.15);
+    expect(() => value({ slot: 2, frames: 294 })).toThrow('ほかの時の発が無い');
+  });
+
   it('counts the shot intervals from the n-th burst activation of the slot (V-0227)', () => {
     const result = {
       frames: 2000,
