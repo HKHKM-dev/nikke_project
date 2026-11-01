@@ -843,11 +843,22 @@ header h1 {
   gap: 6px;
   white-space: nowrap;
 }
+/* キャラの選択と、その右のスロットの詳細設定のボタン */
+.picker-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px;
+  align-items: stretch;
+  margin: 2px 0 6px;
+}
+.picker-row .picker {
+  margin: 0;
+}
 .slot-settings-button {
-  padding: 1px 8px;
+  height: 100%;
+  padding: 3px 8px;
   font: inherit;
-  font-size: 0.78rem;
-  font-weight: 400;
+  font-size: 0.8rem;
 }
 .slot-toggles {
   display: flex;

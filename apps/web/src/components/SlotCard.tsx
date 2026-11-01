@@ -107,14 +107,23 @@ export function SlotCard({
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
-      {/* 2026-10-31: 右に、スロットの詳細設定（フォーカス・撃たない・バーストしない）のポップアップ。設定は今後増やす。見出しの設定中の印と、ポップアップの説明文はオーナーの指示で出さない（設定はポップアップのボタンの色で分かる。撃たないの近似は未対応の一覧に出す） */}
-      <legend className="slot-legend">
-        <span>スロット {slotIndex + 1}</span>
+      <legend className="slot-legend">スロット {slotIndex + 1}</legend>
+      {/* キャラの選択の右に、スロットの詳細設定（フォーカス・撃たない・バーストしない）のポップアップ。設定は今後増やす。設定中の印と、
+          ポップアップの説明文はオーナーの指示で出さない（設定はポップアップのボタンの色で分かる。撃たないの近似は未対応の一覧に出す） */}
+      <div className="picker-row">
+        <CharacterPicker
+          index={index}
+          excludeIds={excludeIds}
+          fullySupported={fullySupported}
+          value={slot.resourceId}
+          onSelect={(resourceId) => dispatch({ type: 'selectCharacter', index: slotIndex, resourceId })}
+          onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}
+        />
         <Popover
           button="詳細設定"
           buttonClassName="slot-settings-button"
           label={`スロット ${slotIndex + 1} の詳細設定`}
-          align="left"
+          align="right"
         >
           <div className="slot-toggles">
             {toggles.map((t) => (
@@ -130,15 +139,7 @@ export function SlotCard({
             ))}
           </div>
         </Popover>
-      </legend>
-      <CharacterPicker
-        index={index}
-        excludeIds={excludeIds}
-        fullySupported={fullySupported}
-        value={slot.resourceId}
-        onSelect={(resourceId) => dispatch({ type: 'selectCharacter', index: slotIndex, resourceId })}
-        onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}
-      />
+      </div>
       {error && <p className="error">読み込みに失敗しました: {error}</p>}
       {loading && <p className="hint">キャラデータを読み込み中…</p>}
       {/* キャラのいないスロットも、ダメージと育成の欄を薄くして出す（枠の大きさをそろえる） */}
