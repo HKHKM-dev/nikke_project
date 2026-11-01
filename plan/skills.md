@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 73・効果 459（根拠あり 434）・notes 181（根拠あり 86）
+件数: キャラ 72・効果 449（根拠あり 425）・notes 179（根拠あり 84）
 
-notes の種類: 未対応 43・前提の外 39・計算に無関係 35・補足 16・間接 48
+notes の種類: 未対応 43・前提の外 37・計算に無関係 35・補足 16・間接 48
 
-スロット: supported 171・partial 17・unsupported 16・noEffect 33
+スロット: supported 168・partial 17・unsupported 16・noEffect 33
 
 ## 10 ラピ
 
@@ -906,24 +906,6 @@ notes の種類: 未対応 43・前提の外 39・計算に無関係 35・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0654（確定）、C-0655（確定）
   - effects[1] damage・burstUse・additional: C-0656（確定）、C-0657（確定）
-
-## 570 アークレンジャー・ブラック
-
-- **skill1**: supported
-  - effects[0] state・battery が最大になった時・transformation（attack）: C-0865（確定）
-  - effects[1] counterChange・transformation の間 0.2 秒ごと・battery（減少）: C-0865（確定）
-  - effects[2] timed・normalShot・sustainedDamage: C-0867（確定）
-  - notes[0] 前提の外: 戦闘開始時のパーツダメージ▲と、味方がパーツを破壊した時のバッテリーのチャージは、射撃場の的にパーツが無いので起きない: C-0443（範囲外）
-- **skill2**: supported
-  - effects[0] dot・transformation が適用された時: C-0865（確定）
-  - effects[1] timed・fullBurstStart・sustainedDamage: C-0867（確定）
-  - notes[0] 前提の外: 変身状態の間に敵が出現した時のアークブラックコレダーは、射撃場の的が 1 体で出現し直さないので起きない: C-0443（範囲外）
-- **burst**: supported
-  - effects[0] counterChange・burstUse・battery: 根拠なし
-  - effects[1] counterChange・burstUse・battery: C-0865（確定）
-  - effects[2] counterChange・transformation が適用された時・battery（減少）: C-0865（確定）
-  - effects[3] dot・burstUse: C-0866（確定）
-  - effects[4] timed・burstUse・sustainedDamage: C-0867（確定）
 
 ## 811 A2
 
