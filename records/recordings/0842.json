@@ -1,0 +1,52 @@
+{
+  "id": "0842",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0842_rl+rl+mg+sr_tia+flower+emma-tu+eunhwa-tu_round-three-buckets.mp4",
+  "original": "2026-11-01_10-34-01.mp4",
+  "durationSec": 200.7,
+  "frames": 12040,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "13d889cc72b2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 451,
+      "name": "ティア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 95,
+      "name": "ウンファ：タクティカル・アップ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-01T10:38+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
