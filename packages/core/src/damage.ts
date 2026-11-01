@@ -353,8 +353,8 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   if (shot.inputType === 'DOWN_Charge')
     unsupported(
       'down-charge',
-      '押下チャージ型の入力は一部だけ対応（発と発の間に解放を足さない刻みは、アニス：スターで確かめた形をほかの押下チャージ型にも当てている。C-0222）',
-      'DOWN_Charge input only partly modeled (no release frames between shots, verified on Anis: Star only)',
+      '押下チャージ型の入力は一部だけ対応（発と発の間に解放を足さない刻みと、リロードを挟む間は 6 体とも確かめた（C-0222）。チャージの途中でチャージ時間が変わったときの扱い（C-0223）と、自分の発で満タンになったときの発動の時刻（C-0224）は仮説）',
+      'DOWN_Charge input only partly modeled (no release frames between shots and the reload interval are verified on all six characters, C-0222; mid-charge charge-time changes, C-0223, and burst activation timing, C-0224, are hypotheses)',
     );
   // 射撃姿勢維持型の刻みは CDN の項目からの式（frame/firing.ts の stanceFrames。C-0217 は仮説）なので近似として扱う。
   // Stage 11 の紅蓮BS の較正表（measured-cadence）と、レイヴン・A2 の未対応（fire-stance）を 1 つにした（plan/design-fire-stance-cadence.md 5.4 節）
