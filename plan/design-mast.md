@@ -4,7 +4,7 @@
 - 計画の上の位置: [design-skill-stage17.md](design-skill-stage17.md) 4 節の候補 6 のマストの分。段の番号を使わない段の外で進める（段の一覧 [design-skill-stages.md](design-skill-stages.md) には書かない）
 - 前提の語彙: [design-skill-stage2.md](design-skill-stage2.md)（敵の防御力▼ `enemyDefenseDown`。式は C-0556、丸めは C-0790）、[design-skill-stage13.md](design-skill-stage13.md) 2.5 節（dot の `stacksFrom: { enemyState }`。C-0746）、[design-elegg.md](design-elegg.md)（敵に付く状態の付与 `target: "enemy"`）、[design-new-chars-1029.md](design-new-chars-1029.md) 5.7 節（回数の種類 `critHit`）、[design-target-vocab.md](design-target-vocab.md) 2.1 節（`topAttack` の `excludeSelf`）
 - 作成日: 2026-11-01
-- 状態: 決定（2026-11-01。オーナーが論点 1〜6 を推奨どおりに決めた）。論点 7・8 も推奨どおりに決めて実装した（8 節）。結論 C-0858〜C-0863 の確定の判断をオーナーに諮っている
+- 状態: 決定（2026-11-01。オーナーが論点 1〜6 を推奨どおりに決めた）。論点 7・8 も推奨どおりに決めて実装した（8 節）。完了（V-0623 を閉じた。C-0858〜C-0862 は確定、C-0863 は仮説）
 
 ## 0. 範囲
 
@@ -142,3 +142,4 @@ V-0623 の録画 0894〜0897 で、2.1〜2.3 節の読み（発動者基準・�
 - 2026-11-01: オーナーが論点 1〜6 を推奨どおりに決めた。2.1〜2.3 節の語彙と、定義 `data/skills/350.json` を実装した。予測の仮説に書けるよう、付与の `stackRefresh: "each"` を足した（2.1 節）。4 節の 1 ヒットの差の見積もり（約 1,300）は武器の倍率の読み違いで、約 11 に直した。撮影 A・B を依頼した（V-0623）。
 - 2026-11-01: 撮影 A・B（録画 0894〜0897）を取り込んで読んだ。2.1〜2.3 節の読みは合った。S1 の HP 70% 以下の▲がバーストの最大HP のみ▲ で効いていると分かり、論点 7・8 を足して諮る（8 節）。
 - 2026-11-01: オーナーが論点 7・8 を推奨どおりに決めた。HP の割合の窓のきっかけ `{ selfHpAtMostRef }` と維持 `durationUntil: "selfHpAbove"` を足し、S1 の▲とバーストの最大HP のみ▲ を効果にした。V-0623 の観測値と結論（C-0858〜C-0863）を作った。
+- 2026-11-01: オーナーが C-0858〜C-0862 の確定（予測の H4 と合う仮説が 2 つの上書き・最小構成の印 2 つ）を推奨どおりに決めた。V-0623 を閉じた。
