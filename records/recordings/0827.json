@@ -1,0 +1,46 @@
+{
+  "id": "0827",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0827_smg+ar+sg_ludmilla+blanc+privaty-um_burst-hit-snap-1.mp4",
+  "original": "2026-11-01_07-44-15.mp4",
+  "durationSec": 200.4,
+  "frames": 12026,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "5c7520093f11",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 270,
+      "name": "ブラン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 313,
+      "name": "プリバティ：アンカインド・メイド",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0587 撮り方 I。ルドミラ（操作・撃たない）・ブラン（AI）・プリバティ：アンカインド・メイド（AI）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T07:56+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -1,0 +1,274 @@
+[
+  {
+    "id": "0829-01",
+    "recording": "0829",
+    "kind": "timing",
+    "use": "record",
+    "value": [1622, 3128, 4412, 5881, 7330, 8664, 10077, 11395],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・24・25・0・25・15・0f"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0829-02",
+    "recording": "0829",
+    "kind": "timing",
+    "use": "record",
+    "value": [1651, 5910, 10106],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24f"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0829-03",
+    "recording": "0829",
+    "kind": "timing",
+    "use": "record",
+    "value": [1681, 5939, 10135],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0829-04",
+    "recording": "0829",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 214899,
+    "unit": "ダメージ",
+    "description": "1 回目のルドミラのバーストのヒット（会心）。ブランが I の直後に II を使い、受けるダメージ▲はルドミラの発動の後・ヒットの前に付いたが、ヒットには乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f1622（II → III は f1651）の 96f 後の f1718 の増分 214,899（会心）。前後のブランの 1 ヒットは▲ありの 42,502・27,323（f1714・f1719）（替わり目は `0829-01`）。比べる指定はいまのモデル（発動の時点。H-snap）。ヒットの直前の▲を見るモデル（H-hit）なら 1.3926 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0829-05",
+    "recording": "0829",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 214899,
+    "unit": "ダメージ",
+    "description": "4 回目のルドミラのバーストのヒット（会心）。ブランが I の直後に II を使い、受けるダメージ▲はルドミラの発動の後・ヒットの前に付いたが、ヒットには乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f5881（II → III は f5910）の 96f 後の f5977 の増分 214,899（会心）。前のブランの 1 ヒットは▲ありの 22,769（f5974）（替わり目は `0829-01`）。比べる指定はいまのモデル（発動の時点。H-snap）。ヒットの直前の▲を見るモデル（H-hit）なら 1.3926 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 3,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0829-06",
+    "recording": "0829",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 143266,
+    "unit": "ダメージ",
+    "description": "7 回目のルドミラのバーストのヒット（会心でない）。ブランが I の直後に II を使い、受けるダメージ▲はルドミラの発動の後・ヒットの前に付いたが、ヒットには乗っていない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f10077（II → III は f10106）の 96f 後の f10173 の増分 143,266。前後のブランの 1 ヒットは▲ありの 22,769（f10171・f10176）（替わり目は `0829-01`）。比べる指定はいまのモデル（発動の時点。H-snap）。ヒットの直前の▲を見るモデル（H-hit）なら 1.3926 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 6,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0829-07",
+    "recording": "0829",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 143266,
+    "unit": "ダメージ",
+    "description": "2 回目のルドミラのバーストのヒット（会心でない）。II まで進まなかった回で、ブランの受けるダメージ▲は無い（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "I の替わり目 f3128 の 73f 後の f3201 の増分 143,266。II の候補が無くチェーンは切れた（替わり目は `0829-01`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0829-08",
+    "recording": "0829",
+    "kind": "hit",
+    "source": "V-0587",
+    "readAt": "2026-11-01",
+    "use": "compare",
+    "value": 1967400,
+    "unit": "ダメージ",
+    "description": "1 回目のチェーンのプリバティ：アンカインド・メイドのバーストの 2 ヒットの和（会心でない）。発動はブランの受けるダメージ▲の後で、▲が乗っている（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "II → III の替わり目 f1651 の後の f1729 の増分 1,011,023 = 983,700 + ブランの▲ありの 1 ヒット 27,323 と、f1750 の増分 983,700 の和（替わり目は `0829-01`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [1],
+        "dropEffects": [
+          {
+            "rid": 190,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  }
+]
