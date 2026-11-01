@@ -271,9 +271,11 @@ export const BUFF_TARGETS = [
   'lowestHpRatio',
 ] as const satisfies readonly BuffTarget[];
 
-/** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ） */
-export function isCountedTarget(target: BuffTarget): boolean {
-  return target === 'topAttack' || target === 'longestChargeTime' || target === 'lowestHpRatio';
+/** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ）。段 17 の PR 2: coverHeal の lowestCoverHp も */
+export function isCountedTarget(target: BuffTarget | CoverHealEffect['target']): boolean {
+  return (
+    target === 'topAttack' || target === 'longestChargeTime' || target === 'lowestHpRatio' || target === 'lowestCoverHp'
+  );
 }
 
 /**
@@ -1578,14 +1580,21 @@ export type AllyGaugeAddEffect = {
  * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: 「遮蔽物 HP 回復」。回復量はダメージに効かないので計算は読まない。
  * 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 対象の枠ごとに「遮蔽物 HP 回復を受けた」出来事を起こし、その枠の
  * timed のきっかけ { coverHealed: true }（「遮蔽物の HP を回復した時」）が読む。起きるフレームは回復（heal）と同じ（healFrameOf）。
- * 対象は自分（ティアの S2）か味方全体（ナガの S1）
+ * 対象は自分（ティアの S2）か味方全体（ナガの S1）。段 17 の PR 2（同 3.2 節。論点 3）: 遮蔽物 HP が最も低い味方 N 機
+ * （lowestCoverHp。リターの S2）は、モデルが遮蔽物 HP を持たないので、編成（空枠を除く）が N 体以下の時だけ全員を選び、N 体より多い時は
+ * 選び方を確かめていないので誰も選ばない（未実装。定義の notes に未対応で書く）
  */
-export type CoverHealEffect = {
+export type CoverHealEffect = TargetCountFields & {
   kind: 'coverHeal';
   trigger: EffectTrigger;
-  target: 'self' | 'allies';
+  target: 'self' | 'allies' | 'lowestCoverHp';
   /** 回復量（%）の description_value_NN（表示用） */
   ref: number;
+  /**
+   * 段 17 の PR 2: 時間の周期のきっかけ（CT ごとのアクティブ）の発動から、回復を受けた出来事までのフレーム（1 以上の整数。測った遅れを
+   * 即値で書き、根拠の結論を claims に結ぶ。C-0453 の倍率ダメージの delayFrames と同じ）。時間の周期のきっかけにだけ書ける
+   */
+  delayFrames?: number;
   assumes?: LocalizedText;
 };
 
@@ -2340,14 +2349,18 @@ function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, pa
 }
 
 /** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime（対象の語彙編）のときだけ、ちょうど片方 */
-function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: string): TargetCountFields {
+function parseTargetCount(
+  v: Record<string, Json>,
+  target: BuffTarget | CoverHealEffect['target'],
+  path: string,
+): TargetCountFields {
   const hasCount = v.targetCount !== undefined;
   const hasRef = v.targetCountRef !== undefined;
   if (!isCountedTarget(target)) {
     if (hasCount || hasRef)
       fail(
         path,
-        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime" or "lowestHpRatio", got "${target}"`,
+        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime", "lowestHpRatio" or "lowestCoverHp", got "${target}"`,
       );
     return {};
   }
@@ -4123,17 +4136,36 @@ function parseBurstGaugeHitEffect(v: Record<string, Json>, path: string): BurstG
 /** 2 段目の段 15 の PR 2: 遮蔽物 HP 回復。段 17 の PR 1: 対象は自分か味方全体 */
 function parseCoverHealEffect(v: Record<string, Json>, path: string): CoverHealEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'target', 'ref', 'assumes', 'claims'].includes(key))
+    if (
+      ![
+        'kind',
+        'trigger',
+        'target',
+        'targetCount',
+        'targetCountRef',
+        'ref',
+        'delayFrames',
+        'assumes',
+        'claims',
+      ].includes(key)
+    )
       fail(`${path}.${key}`, 'unknown field');
   }
-  if (v.target !== 'self' && v.target !== 'allies')
-    fail(`${path}.target`, `expected "self" or "allies", got ${JSON.stringify(v.target)}`);
+  if (v.target !== 'self' && v.target !== 'allies' && v.target !== 'lowestCoverHp')
+    fail(`${path}.target`, `expected "self", "allies" or "lowestCoverHp", got ${JSON.stringify(v.target)}`);
+  // 段 17 の PR 2: CT ごとのアクティブ（リターの S2・ココアの S1）は時間の周期のきっかけ
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
   const effect: CoverHealEffect = {
     kind: 'coverHeal',
-    trigger: parseTrigger(v.trigger, `${path}.trigger`),
+    trigger,
     target: v.target,
     ref: parseRef(v.ref, `${path}.ref`),
+    ...parseTargetCount(v, v.target, path),
   };
+  if (v.delayFrames !== undefined) {
+    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
+    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+  }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

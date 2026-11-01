@@ -342,11 +342,26 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   });
   // 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 遮蔽物 HP 回復。受けた枠に coverHealed の出来事を、回復と同じフレームの
   // 規則（healFrameOf）で立てる。回復量は計算に効かないので、件も記録も作らない
-  const coverHeals: { sourceSlotIndex: number; effect: ResolvedCoverHeal; fires: TriggerTracker }[] = [];
+  // 対象の枠は編成だけで決まるので、始めに 1 回求めておく
+  const coverHeals: {
+    sourceSlotIndex: number;
+    effect: ResolvedCoverHeal;
+    fires: TriggerTracker;
+    targets: readonly number[];
+  }[] = [];
+  // 段 17 の PR 2（plan/design-skill-stage17.md 2.1 節。論点 3）: 遮蔽物 HP が最も低い味方 N 機は、編成が N 体以下なら全員、N 体より多ければ
+  // 選び方を確かめていないので誰も選ばない（未実装）
+  const present = slots.flatMap((s, i) => (s === null ? [] : [i]));
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveCoverHeals(slot.definition, slot.character, slot.levels)) {
-      coverHeals.push({ sourceSlotIndex, effect, fires: instantTracker(effect, sourceSlotIndex) });
+      const targets =
+        effect.target === 'lowestCoverHp'
+          ? present.length <= effect.targetCount!
+            ? present
+            : []
+          : targetsAt({ ...effect, target: effect.target }, sourceSlotIndex, null);
+      coverHeals.push({ sourceSlotIndex, effect, fires: instantTracker(effect, sourceSlotIndex), targets });
     }
   });
   // 回復は healed の出来事を作るので先に当てる（heal のトリガーに healed は書けないので順番で閉じる。plan/design-stage11.md 3.3 節）
@@ -1340,7 +1355,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     // 段 17 の PR 1: 遮蔽物 HP 回復も回復と同じく件の登録の前に当てる（同じフレームの { coverHealed } の timed が読む）
     for (const src of coverHeals) {
       if (!src.fires(ev)) continue;
-      for (const target of targetsAt(src.effect, src.sourceSlotIndex, null)) {
+      for (const target of src.targets) {
         const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
         if (at === f) {
           coverHealed[target] = true;

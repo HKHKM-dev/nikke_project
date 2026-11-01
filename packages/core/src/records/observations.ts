@@ -702,6 +702,21 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
+ * 2 段目の段 17 の PR 2（V-0599）: その枠が受ける timed の効果の窓の始まり（モデルのフレーム。skill と stat で絞る）の、最初の count 個の
+ * 隣どうしの間隔の平均（(count 個目 − 1 個目) ÷ (count − 1)）。CT ごとのアクティブの周期を、録画で読めた回数の窓の始まりと比べる
+ */
+function buffWindowStartIntervalMean(result: SimResult, ctx: MetricContext): number {
+  const count = Number(ctx.args.count);
+  if (!Number.isInteger(count) || count < 2) throw new Error(`count は 2 以上の整数（${String(ctx.args.count)}）`);
+  const starts = firstCount(
+    buffWindowStarts(result, withArgs(ctx, { video: false, count: undefined })),
+    ctx,
+    '窓の始まり',
+  );
+  return (starts.at(-1)! - starts[0]!) / (count - 1);
+}
+
+/**
  * ベロータのバースト編（V-0510）: 枠の、受けた効果（skill と stat で絞る）の窓の中（inside: true）か外（inside: false）の、連続した
  * 2 発の間の平均（両方の発が同じ側のものだけ）。minGap より短い間と maxGap より長い間（リロード・的のジャンプ・フルバーストの入りの
  * 止まりを挟む間）は除く。録画とモデルで発の時刻をそろえずに、チャージ速度▲などの射撃の速さの▲の効きを比べる
@@ -1398,6 +1413,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
+  buffWindowStartIntervalMean: { args: ['slot', 'skill', 'stat', 'count'], sim: buffWindowStartIntervalMean },
   buffWindowShotIntervalMean: {
     args: ['slot', 'skill', 'stat', 'inside'],
     sim: buffWindowShotIntervalMean,

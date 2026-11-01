@@ -1293,6 +1293,10 @@ export type ResolvedCoverHeal = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   trigger: ResolvedTrigger;
   target: CoverHealEffect['target'];
+  /** 段 17 の PR 2: 対象 lowestCoverHp の機数 */
+  targetCount?: number;
+  /** 段 17 の PR 2: 時間の周期の発動から出来事までのフレーム */
+  delayFrames?: number;
   effectIndex: number;
 };
 
@@ -1313,12 +1317,16 @@ export function resolveCoverHeals(
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'coverHeal') return;
-      resolved.push({
+      const r: ResolvedCoverHeal = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         target: effect.target,
         effectIndex,
-      });
+      };
+      const count = resolveTargetCount(effect, skill, levels[slot]);
+      if (count !== undefined) r.targetCount = count;
+      if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
+      resolved.push(r);
     });
   }
   return resolved;
