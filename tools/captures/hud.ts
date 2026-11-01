@@ -40,6 +40,11 @@ const TEMPLATE_FILE = new URL('./hud-templates.json', import.meta.url);
 const INTERCEPTION_TEMPLATE_FILE = new URL('./hud-interception-templates.json', import.meta.url);
 /** 数字とみなす明るさ（min(R,G,B)） */
 const THRESHOLD = 150;
+/**
+ * THRESHOLD で読めなかったフレームを読み直す閾値（順に試す）。レッドフードのレッドウルフの窓では、数字が赤みがかって min(R,G,B) が
+ * 110〜150 に下がり、赤い横線も重なる（背景は 80 未満。V-0639）。いままで読めていたフレームの読みは変えない
+ */
+const FALLBACK_THRESHOLDS = [120, 100];
 /** 照合に使う大きさ（正規化した数字の画像） */
 const NORM_W = 10;
 const NORM_H = 16;
@@ -80,9 +85,9 @@ if (!video && !(interception && values['make-templates'] !== undefined)) {
 }
 const crop = parseCrop(values.crop);
 
-function binarize(rgb: Buffer, w: number, h: number): Uint8Array {
+function binarize(rgb: Buffer, w: number, h: number, threshold = THRESHOLD): Uint8Array {
   const out = new Uint8Array(w * h);
-  for (let i = 0; i < w * h; i++) out[i] = Math.min(rgb[i * 3]!, rgb[i * 3 + 1]!, rgb[i * 3 + 2]!) > THRESHOLD ? 1 : 0;
+  for (let i = 0; i < w * h; i++) out[i] = Math.min(rgb[i * 3]!, rgb[i * 3 + 1]!, rgb[i * 3 + 2]!) > threshold ? 1 : 0;
   return out;
 }
 
@@ -235,7 +240,10 @@ function readValue(gs: Glyph[], templates: Templates): number | null {
   return Number(text.replace(/,/g, ''));
 }
 
-async function* frames(first: number, last: number | undefined): AsyncGenerator<{ n: number; bin: Uint8Array }> {
+async function* frames(
+  first: number,
+  last: number | undefined,
+): AsyncGenerator<{ n: number; bin: Uint8Array; rgb: Buffer }> {
   const select = last === undefined ? `gte(n\\,${first})` : `between(n\\,${first}\\,${last})`;
   const args = ['-v', 'error', '-i', video!, '-vf', `select='${select}',${cropFilter(crop)}`];
   args.push('-fps_mode', 'passthrough');
@@ -243,7 +251,7 @@ async function* frames(first: number, last: number | undefined): AsyncGenerator<
   args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1');
   let n = first;
   for await (const rgb of rawFrames(args, crop.w * crop.h * 3)) {
-    yield { n, bin: binarize(rgb, crop.w, crop.h) };
+    yield { n, bin: binarize(rgb, crop.w, crop.h), rgb };
     n++;
   }
 }
@@ -373,9 +381,15 @@ async function main(): Promise<void> {
     }
   } else {
     const templates = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8')) as Templates;
-    for await (const { n, bin } of frames(from, to)) {
+    const readAt = (bin: Uint8Array) =>
+      readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
+    for await (const { n, bin, rgb } of frames(from, to)) {
       total++;
-      const value = readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
+      let value = readAt(bin);
+      for (const threshold of FALLBACK_THRESHOLDS) {
+        if (value !== null) break;
+        value = readAt(binarize(rgb, crop.w, crop.h, threshold));
+      }
       if (value !== null) reads.push({ n, value });
     }
   }
