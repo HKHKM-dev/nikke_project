@@ -32,6 +32,7 @@ import { C_ID } from '../records/ids.ts';
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
 import { COUNTER_IDS, counterMax, type CounterId } from './counters.ts';
+import { dependsOnRank } from './targets.ts';
 import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
 
 export type { SkillSlot };
@@ -1708,7 +1709,8 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
    * 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節。C-0816）: 回数のきっかけ { count: "weaponChangeShot" } の付与で、
    * 件をきっかけの発のフレームの leadFrames 前から始める（1 以上の整数。書かなければ次のフレームから）。付けた枠（出どころ）の値の小片
    * だけは、いままでどおり発の次のフレームから効かせ、きっかけの発自身には乗らない（C-0312）。1 パス目で状態を見るもの（条件
-   * enemyState など）には、発のフレームから見える（1 パス目は前から進む）
+   * enemyState など）にも件の始まりから見える（1 パス目を回し直す。同 5 節の frame/firstPass.ts の runFirstPass）。条件・stacksFrom・
+   * 順位の対象とは組み合わせない（発のフレームで判定するもの。同 5.3 節）
    */
   leadFrames?: number;
 };
@@ -3106,6 +3108,10 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     const t = fields.trigger;
     if (typeof t !== 'object' || t === null || !('count' in t) || t.count !== 'weaponChangeShot' || isChanceTrigger(t))
       fail(`${path}.leadFrames`, 'leadFrames needs the trigger { count: "weaponChangeShot" }');
+    // 1 パス目は発の leadFrames 前のフレームで件を登録する（同 5.3 節）ので、発のフレームで判定するものは書けない
+    if (effect.condition !== undefined) fail(`${path}.condition`, 'condition cannot be used with leadFrames');
+    if (effect.stacksFrom !== undefined) fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with leadFrames');
+    if (dependsOnRank(effect)) fail(`${path}.target`, 'topAttack cannot be used with leadFrames');
     effect.leadFrames = parsePositiveInt(v.leadFrames, `${path}.leadFrames`);
   }
   if (v.contents !== undefined) {
