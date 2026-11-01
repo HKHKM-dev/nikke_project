@@ -85,3 +85,39 @@ describe('eventFrames', () => {
     expect(() => frames({ event: 'skillHit', anchor: 'fullBurst:99' })).toThrow(/フルバーストが無い/);
   });
 });
+
+// V-0622: 出来事ごとの、戦闘の始めからの発の数・命中の期待値の和。録画 0754（ミハラ：ボンディングチェーンが枠 4。S2 のスタック量▲は
+// 命中 40 回ごと）のモデルで、弾丸命中率を 0.97 にして見る
+describe('eventTallies', () => {
+  const file0754 = loadRecordingsFile();
+  const input0754 = buildTeamInput(
+    recordingMap(file0754).get('0754')!,
+    { ...setup, hitRate: 0.97 },
+    loadRecordsData(file0754),
+  );
+  const result0754 = runSimulation(input0754);
+  const tallies = (args: Record<string, number | string | boolean>) =>
+    METRICS.eventTallies!.sim(result0754, {
+      args: { slot: 4, event: 'dotApply', skill: 'skill1', anchor: 'fullBurst:0', within: 'window', ...args },
+      input: input0754 as TeamInput,
+    }) as number[];
+
+  it('counts shots and expected hits from the start of battle up to each event', () => {
+    const shots = tallies({ tally: 'shots' });
+    const hits = tallies({ tally: 'hits' });
+    expect(shots.length).toBe(hits.length);
+    shots.forEach((s, i) => expect(hits[i]).toBeCloseTo(s * 0.97, 6));
+    // 命中で数える回数のきっかけなので、▲の命中の通しの数は 40 を越えた所
+    hits.forEach((h) => expect(h % 40).toBeLessThan(0.97));
+  });
+
+  it('folds the tally into (-modulo/2, modulo/2] with modulo', () => {
+    const shots = tallies({ tally: 'shots' });
+    const phases = tallies({ tally: 'shots', modulo: 40 });
+    shots.forEach((s, i) => {
+      expect(phases[i]! > -20 && phases[i]! <= 20).toBe(true);
+      expect((((s - phases[i]!) % 40) + 40) % 40).toBe(0);
+    });
+    expect(() => tallies({ tally: 'kills' })).toThrow(/tally は/);
+  });
+});
