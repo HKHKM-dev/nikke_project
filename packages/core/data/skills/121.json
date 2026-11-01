@@ -50,12 +50,13 @@
           "targetClass": "Attacker",
           "ref": 3,
           "assumes": {
-            "ja": "火力型の味方全体（自分は支援型なので入らない）への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（V-0480 で確かめた）。火力型の味方にだけ付くのは、同じ行の攻撃力▲（C-0595）からの類推。回復量はダメージに関係しない",
-            "en": "A one-off heal on all Attacker allies (not herself, a Supporter) that triggers \"when healed\" even on allies at full HP (verified in V-0480). That it applies only to Attackers is by analogy with the attack buff on the same line (C-0595). The healed amount does not affect damage"
+            "ja": "火力型の味方全体（自分は支援型なので入らない）への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす（V-0480 で確かめた）。防御型の味方に付かないことは V-0617 で確かめた。支援型の味方と自分に付かないのは、同じ行の攻撃力▲（C-0595）からの類推。回復量はダメージに関係しない",
+            "en": "A one-off heal on all Attacker allies (not herself, a Supporter) that triggers \"when healed\" even on allies at full HP (verified in V-0480). That it does not apply to Defenders was verified in V-0617; that it does not apply to Supporters or herself is by analogy with the attack buff on the same line (C-0595). The healed amount does not affect damage"
           },
           "claims": [
             "C-0618",
-            "C-0617"
+            "C-0845",
+            "C-0846"
           ]
         },
         {
