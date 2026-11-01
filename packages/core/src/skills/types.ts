@@ -562,7 +562,7 @@ export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies 
 /**
  * Stage 8: 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
  * atLeast 回目以降の発動のたびに発火する。burstUse = 自分がバーストスキルを使った回数、fullBurstStart = フルバーストの回数（編成全体）。
- * 回数は戦闘中ずっと数え、リセットしない。
+ * 回数は戦闘中ずっと数え、リセットしない（resetAfterSeconds を書いたものを除く）。
  */
 export type EventCountKind = 'burstUse' | 'fullBurstStart';
 export const EVENT_COUNT_KINDS = ['burstUse', 'fullBurstStart'] as const satisfies readonly EventCountKind[];
@@ -571,6 +571,11 @@ export type EventCountTrigger = {
   count: EventCountKind;
   /** 何回目以降か（1 始まりの即値。説明文の「1 回 / 2 回 / 3 回」） */
   atLeast: number;
+  /**
+   * V-0631（イサベルのターゲットマーキング）: 前の発動から N 秒（ゲーム内の秒）より後に次の発動が来たら、その発動から数え直す
+   * （その発動が 1 回目になる）。burstUse にだけ書ける
+   */
+  resetAfterSeconds?: number;
 };
 
 /**
@@ -2754,9 +2759,19 @@ function parseTrigger(
   }
   if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'atLeast'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+      if (!['count', 'atLeast', 'resetAfterSeconds'].includes(key)) fail(`${path}.${key}`, 'unknown field');
     }
-    return { count: v.count as EventCountKind, atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`) };
+    const trigger: EventCountTrigger = {
+      count: v.count as EventCountKind,
+      atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`),
+    };
+    if (v.resetAfterSeconds !== undefined) {
+      const at = `${path}.resetAfterSeconds`;
+      if (trigger.count !== 'burstUse') fail(at, 'resetAfterSeconds needs count burstUse');
+      if (typeof v.resetAfterSeconds !== 'number' || !(v.resetAfterSeconds > 0)) fail(at, 'expected a positive number');
+      trigger.resetAfterSeconds = v.resetAfterSeconds;
+    }
+    return trigger;
   }
   fail(
     `${path}.count`,

@@ -9,42 +9,48 @@
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 1
+            "atLeast": 1,
+            "resetAfterSeconds": 45
           },
           "target": "self",
           "stat": "critRate",
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0160"
+            "C-0160",
+            "C-0872"
           ]
         },
         {
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 2
+            "atLeast": 2,
+            "resetAfterSeconds": 45
           },
           "target": "self",
           "stat": "critDamage",
           "ref": 3,
           "durationRef": 4,
           "claims": [
-            "C-0160"
+            "C-0160",
+            "C-0872"
           ]
         },
         {
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 3
+            "atLeast": 3,
+            "resetAfterSeconds": 45
           },
           "target": "self",
           "stat": "attack",
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0160"
+            "C-0160",
+            "C-0872"
           ]
         }
       ]
@@ -109,7 +115,8 @@
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 2
+            "atLeast": 2,
+            "resetAfterSeconds": 45
           },
           "target": "allies",
           "stat": "damageTaken",
@@ -124,14 +131,16 @@
             "C-0161",
             "C-0162",
             "C-0165",
-            "C-0153"
+            "C-0153",
+            "C-0872"
           ]
         },
         {
           "kind": "damage",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 3
+            "atLeast": 3,
+            "resetAfterSeconds": 45
           },
           "damageType": "additional",
           "ref": 4,
@@ -143,14 +152,16 @@
             "C-0160",
             "C-0163",
             "C-0165",
-            "C-0838"
+            "C-0838",
+            "C-0872"
           ]
         },
         {
           "kind": "damage",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 4
+            "atLeast": 4,
+            "resetAfterSeconds": 45
           },
           "damageType": "additional",
           "ref": 5,
@@ -162,7 +173,8 @@
             "C-0160",
             "C-0163",
             "C-0165",
-            "C-0838"
+            "C-0838",
+            "C-0872"
           ]
         }
       ],

@@ -49,7 +49,7 @@ import {
   type EffectTrigger,
   type EndedTrigger,
   type CounterFullTrigger,
-  type EventCountKind,
+  type EventCountTrigger,
   type ExcludeSelf,
   type TargetDefense,
   type InstantKind,
@@ -77,7 +77,7 @@ import type { NamedStateId } from './states.ts';
 export type ResolvedTrigger =
   | BuffTrigger
   | ResolvedShotCountTrigger
-  | { count: EventCountKind; atLeast: number }
+  | EventCountTrigger
   | TimerTrigger
   | AppliedTrigger
   | FullStackTrigger
@@ -163,7 +163,7 @@ export function isResolvedShotCount(t: ResolvedTrigger): t is ResolvedShotCountT
   return typeof t === 'object' && 'every' in t;
 }
 
-export function isResolvedEventCount(t: ResolvedTrigger): t is { count: EventCountKind; atLeast: number } {
+export function isResolvedEventCount(t: ResolvedTrigger): t is EventCountTrigger {
   return typeof t === 'object' && 'atLeast' in t;
 }
 
