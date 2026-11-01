@@ -621,5 +621,561 @@
       "tool": "hud.ts --mode jumps（hud.ts は V-0327 で直した読み）",
       "note": "単独の増分のうち、モデルのデルタの 1 ヒット（フルバースト中・外 × コア × 会心の 4 通り）より 3 以上大きく、差 ÷ 値 × (攻撃力 − 防御) が 5〜25 のものを全部挙げた。019 は、ノワールの S1 の攻撃力▲でデルタの値がほかの 3 本より 1.0135 倍大きい。旧の読み（`0019-21`）では、f8822 の 396,482 が直前の f8816 との割れで 396,402 に、f9641 の 264,321 が f9642 で前のフレームが読めず単独でない増分になっていて、29 個だった（V-0364）"
     }
+  },
+  {
+    "id": "0019-26",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -24,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -109,
+      "high": 61
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（2 番目の事象 f2458 から数えた動画のフレーム）。防御100の最後の発は -110f、防御91の最初の発は 61f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-27",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 24.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -16,
+      "high": 65
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（3 番目の事象 f3223 から数えた動画のフレーム）。防御100の最後の発は -17f、防御91の最初の発は 65f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-28",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -0.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -41,
+      "high": 40
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（4 番目の事象 f4018 から数えた動画のフレーム）。防御100の最後の発は -42f、防御91の最初の発は 40f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-29",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -15,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -56,
+      "high": 26
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（5 番目の事象 f4778 から数えた動画のフレーム）。防御100の最後の発は -57f、防御91の最初の発は 26f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-30",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 14.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -26,
+      "high": 55
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（7 番目の事象 f6332 から数えた動画のフレーム）。防御100の最後の発は -27f、防御91の最初の発は 55f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-31",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -15.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -56,
+      "high": 25
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（8 番目の事象 f7862 から数えた動画のフレーム）。防御100の最後の発は -57f、防御91の最初の発は 25f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-32",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -34.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -75,
+      "high": 6
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（9 番目の事象 f8651 から数えた動画のフレーム）。防御100の最後の発は -76f、防御91の最初の発は 6f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-33",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -45,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -130,
+      "high": 40
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（11 番目の事象 f10182 から数えた動画のフレーム）。防御100の最後の発は -131f、防御91の最初の発は 40f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-34",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": -20.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -61,
+      "high": 20
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅（12 番目の事象 f10971 から数えた動画のフレーム）。防御100の最後の発は -62f、防御91の最初の発は 20f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-35",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "value": -0.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -7,
+      "high": 6
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御100 → 防御91）が デルタ の 1 発で替わるまでの時刻の幅の、12 回の事象（f1693・2458・3223・4018・4778・5543・6332・7862・8651・9417・10182・10971）の共通部分（事象から数えた動画のフレーム）。防御100の最後の発の最も遅いものは -8f、防御91の最初の発の最も早いものは 6f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御100 → 防御91（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -400〜120f。防御100 50・防御91 12・区別できない 0・外れ 281・食い違い（防御91の最初の発より後の防御100の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-36",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 368.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 328,
+      "high": 409
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（1 番目の事象 f1693 から数えた動画のフレーム）。防御91の最後の発は 327f、防御100の最初の発は 409f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-37",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 361,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 319,
+      "high": 403
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（3 番目の事象 f3223 から数えた動画のフレーム）。防御91の最後の発は 318f、防御100の最初の発は 403f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-38",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 388.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 348,
+      "high": 429
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（5 番目の事象 f4778 から数えた動画のフレーム）。防御91の最後の発は 347f、防御100の最初の発は 429f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-39",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 368.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 328,
+      "high": 409
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（6 番目の事象 f5543 から数えた動画のフレーム）。防御91の最後の発は 327f、防御100の最初の発は 409f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-40",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 349.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 309,
+      "high": 390
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（7 番目の事象 f6332 から数えた動画のフレーム）。防御91の最後の発は 308f、防御100の最初の発は 390f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-41",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 278.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 197,
+      "high": 360
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（8 番目の事象 f7862 から数えた動画のフレーム）。防御91の最後の発は 196f、防御100の最初の発は 360f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-42",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 383.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 343,
+      "high": 424
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（9 番目の事象 f8651 から数えた動画のフレーム）。防御91の最後の発は 342f、防御100の最初の発は 424f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-43",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 347,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 307,
+      "high": 387
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（10 番目の事象 f9417 から数えた動画のフレーム）。防御91の最後の発は 306f、防御100の最初の発は 387f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-44",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 327.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 287,
+      "high": 368
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（11 番目の事象 f10182 から数えた動画のフレーム）。防御91の最後の発は 286f、防御100の最初の発は 368f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-45",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "value": 389.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 349,
+      "high": 430
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅（12 番目の事象 f10971 から数えた動画のフレーム）。防御91の最後の発は 348f、防御100の最初の発は 430f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-46",
+    "recording": "0019",
+    "kind": "timing",
+    "use": "record",
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "value": 354.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 349,
+      "high": 360
+    },
+    "description": "エーテルの S2 の防御力▼（防御 91）（防御91 → 防御100）が デルタ の 1 発で替わるまでの時刻の幅の、12 回の事象（f1693・2458・3223・4018・4778・5543・6332・7862・8651・9417・10182・10971）の共通部分（事象から数えた動画のフレーム）。防御91の最後の発の最も遅いものは 348f、防御100の最初の発の最も早いものは 360f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は 防御100: 枠 2（デルタ）のモデルの f300・500、防御91: 枠 2（デルタ）のモデルの f1600・900。境は 防御91 → 防御100（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 150〜430f。防御91 22・防御100 10・区別できない 0・外れ 132・食い違い（防御100の最初の発より後の防御91の発） 0"
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-47",
+    "recording": "0019",
+    "kind": "hit",
+    "use": "compare",
+    "value": 264321,
+    "description": "フルバーストの外で発動したエーテルの S2 の窓の中の、デルタ（II・AI）のコアの会心でない 1 ヒット（フルバーストの外。III がノワール）",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ hud-jumps@2）",
+      "note": "f2519（S2 のヒット f2458 の 61f 後。S2 はフルバーストの外）の単独の増分（gap 1）。防御 100 なら 264,291.33、防御 91（C-0832）なら 264,321.01。デルタの攻撃力はスペック固定の 63,368 にノワールの S1 の攻撃力▲（発動者基準の固定値。C-0020）を足した 80,249 で、攻撃力 − 防御は 80,149（モデルの `0019` の区間の値。V-0611「条件」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-48",
+    "recording": "0019",
+    "kind": "hit",
+    "use": "compare",
+    "value": 264291,
+    "description": "エーテルの S2 の窓の前の、デルタのコアの会心でない 1 ヒット（フルバーストの外。対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ hud-jumps@2）",
+      "note": "f2348（S2 のヒット f2458 の 110f 前。前の S2 の窓（f1693 から約 353f）の外）の単独の増分（gap 1）。デルタの攻撃力はスペック固定の 63,368 にノワールの S1 の攻撃力▲（発動者基準の固定値。C-0020）を足した 80,249 で、攻撃力 − 防御は 80,149（モデルの `0019` の区間の値。V-0611「条件」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-49",
+    "recording": "0019",
+    "kind": "hit",
+    "use": "compare",
+    "value": 396482,
+    "description": "フルバースト中に発動したエーテルの S2 の窓の中の、デルタのコアの会心の 1 ヒット（フルバースト中）",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ hud-jumps@2）",
+      "note": "f8822（S2 のヒット f8651 の 171f 後。S2 は 4 回目のフルバースト（f8397 から）の中）の単独の増分（gap 1）。防御 100 なら 396,436.99、防御 91 なら 396,481.51。デルタの攻撃力はスペック固定の 63,368 にノワールの S1 の攻撃力▲（発動者基準の固定値。C-0020）を足した 80,249 で、攻撃力 − 防御は 80,149（モデルの `0019` の区間の値。V-0611「条件」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 900,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0019-50",
+    "recording": "0019",
+    "kind": "hit",
+    "use": "compare",
+    "value": 396437,
+    "description": "フルバースト中で、エーテルの S2 の窓の前の、デルタのコアの会心の 1 ヒット（対照）",
+    "method": {
+      "tool": "recipe:hud-jumps@3（キャッシュ hud-jumps@2）",
+      "note": "f8575（4 回目のフルバーストの始まり f8397 の後、S2 のヒット f8651 の 76f 前）の単独の増分（gap 1）。デルタの攻撃力はスペック固定の 63,368 にノワールの S1 の攻撃力▲（発動者基準の固定値。C-0020）を足した 80,249 で、攻撃力 − 防御は 80,149（モデルの `0019` の区間の値。V-0611「条件」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "source": "V-0611",
+    "readAt": "2026-11-01"
   }
 ]
