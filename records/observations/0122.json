@@ -482,5 +482,43 @@
       "slot": 1,
       "source": "dot"
     }
+  },
+  {
+    "id": "0122-28",
+    "recording": "0122",
+    "source": "V-0615",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "kind": "interval",
+    "unit": "f",
+    "value": [31.9, 62.1, 94],
+    "description": "3 回目の敵のジャンプの、窓の始まりの部分チャージの発を撃ったフレーム（照準の横の残弾が減ったフレーム）から、ハイド中のリロードの RELOADING のバーの長さ 0 に遡った点まで、その点からバーが消えたフレーム（明け。取り消し）まで、撃ったフレームからバーが消えたフレームまで。満ちる前に取り消された",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）・node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps",
+      "note": "残弾 4 → 3: f7140 → 7141（続いたフレームで読めた）。部分チャージの発の増分 f7149（142,721。0122-04 の注記の発）。0 の点 f7172.9 → 消えた 7235 → 明けの後の 1 発目の増分 7327"
+    }
+  },
+  {
+    "id": "0122-29",
+    "recording": "0122",
+    "source": "V-0615",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "kind": "interval",
+    "unit": "f",
+    "value": [28.89, 91.11, 30.65, 98.35],
+    "description": "1・2 回目の敵のジャンプ（どちらも窓の前のフルチャージの発の後に窓に入り、部分チャージの発なし）の、その発の総ダメージの増分からハイド中のリロードのバーの 0 の点まで、その点からバーが消えたフレーム（明け。取り消し）まで（1 回目の 2 つ、2 回目の 2 つの順）。撃ったフレームは、照準の残弾の表示が発の前後で読めず、1 回目は f2639〜2646、2 回目は f4767〜4777 の間（残弾の替わり目と増分の間）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "1 回目: 増分 f2646 → 0 の点 2674.89 → 消えた 2766 → 明けの後の 1 発目 2853（残弾 5 → 4 は f2638〜2671 の間）。2 回目: 増分 f4777 → 0 の点 4807.65 → 消えた 4906 → 4998（残弾 2 → 1 は f4766〜4808 の間）。4 回目はマガジンの 6 発目の後（ふだんのリロード）、5 回目は戦闘の終わりと重なり明けが読めない"
+    }
   }
 ]
