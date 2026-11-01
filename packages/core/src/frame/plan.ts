@@ -427,10 +427,20 @@ export function planSkillHits(
           : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
+      // 2 段目の段 19 の PR 2（V-0627）: 下位効果のスタック適用でないバーストでも、追加ダメージには、同じ発火で前に書いた敵の側の
+      // デバフ（防御力▼）が乗る（ギルティのフルスタックの防御力▼。同じフレームのバーストスキルダメージには乗らない。C-0838 の続き）
       const skill = effect.source.skill;
       const buffs =
-        pre && sequential && skill === 'burst'
-          ? withEarlierSequentialEffects(pieces, atHit, frame, slotIndex, skill, effect.effectIndex)
+        pre && skill === 'burst' && !shooterAtHit
+          ? withEarlierSequentialEffects(
+              pieces,
+              atHit,
+              frame,
+              slotIndex,
+              skill,
+              effect.effectIndex,
+              sequential ? undefined : isEnemyHeldStat,
+            )
           : skill !== 'burst' && definition.skills[skill].sequential === true && isResolvedShotCount(effect.trigger)
             ? withEarlierSequentialEffects(pieces, atHit, frame + 1, slotIndex, skill, effect.effectIndex)
             : atHit;
@@ -712,7 +722,9 @@ export function enemyStateSpansHold(
  * この枠に掛かる値の小片を足す（イサベルの段階 2・3 の追加ダメージに、同じ発動の段階 1 の受けるダメージ▲が乗る。C-0163。
  * 持ち主ごとの一覧編の段 D の 2: 受けるダメージ▲は敵の件で、値の小片はこの枠にも写る）。
  * 前の発動の窓が続いていれば、直前のバフにもう入っている（窓が和集合で、start に始まらない）。
- * ルドミラ：ウィンターオーナー編: スキルのスロットでは、射撃の回数トリガーの窓の始まり（発火の次のフレーム）を start に渡す
+ * ルドミラ：ウィンターオーナー編: スキルのスロットでは、射撃の回数トリガーの窓の始まり（発火の次のフレーム）を start に渡す。
+ * 2 段目の段 19 の PR 2（V-0627）: only を渡すと、その stat の小片だけを足す（下位効果のスタック適用でないバーストの追加ダメージは、
+ * 敵の側のデバフだけ）
  */
 function withEarlierSequentialEffects(
   pieces: readonly ValuePiece[],
@@ -721,14 +733,17 @@ function withEarlierSequentialEffects(
   slotIndex: number,
   skill: SkillSlot,
   effectIndex: number,
+  only?: (stat: string) => boolean,
 ): BuffTotals {
   let out = buffs;
   for (const w of pieces) {
     if (w.start !== start || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
     if (w.effect.source.skill !== skill || w.effect.effectIndex >= effectIndex) continue;
+    if (only !== undefined && !only(w.effect.stat)) continue;
     if (
       w.stack !== undefined ||
       w.effect.scaling === 'casterAttack' ||
+      w.effect.scaling === 'copyTopAttack' ||
       w.effect.scaling === 'casterFinalMaxHp' ||
       w.effect.stat === 'weapon'
     ) {
@@ -823,6 +838,7 @@ function withSameActivationEffects(
     if (
       w.stack !== undefined ||
       w.effect.scaling === 'casterAttack' ||
+      w.effect.scaling === 'copyTopAttack' ||
       w.effect.scaling === 'casterFinalMaxHp' ||
       w.effect.stat === 'weapon'
     ) {

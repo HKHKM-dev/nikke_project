@@ -215,6 +215,11 @@ export const NAMED_STATES = {
    * 0 になった時に外れる。解除不可。中身は攻撃力▲。付いている間 0.2 秒ごとにバッテリーが 1 減る。S2 の持続ダメージ・バーストの「変身状態なら」が見る）
    */
   transformation: { name: { ja: '変身', en: 'Transformation' }, holder: 'ally' },
+  /**
+   * 2 段目の段 19 の PR 2（plan/design-skill-stage19.md 2.2 節。論点 5）: 借りていくよぉ…（ギルティの S1。通常攻撃 6 回ごとに自分に 1 スタック・
+   * 5 スタック・10 秒。中身は攻撃力のコピー。S2 のスタック量▲が足し、バーストの「フルスタックなら」が見る）
+   */
+  mindIfIBorrowThis: { name: { ja: '借りていくよぉ…', en: 'Mind If I Borrow This?' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

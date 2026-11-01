@@ -7,7 +7,7 @@
 //   - 同値は枠の若い順（仮定。未検証）。
 // 1 パス目のループの持ち主ごとの一覧（skills/holders.ts）が使う。
 import type { Element, WeaponType } from '../types.ts';
-import { applyAttackBuffs, applyResolvedEffect, type BuffTotals } from './buffs.ts';
+import { applyAttackBuffs, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
 import type { ResolvedEffect } from './resolve.ts';
 import { matchesTargetFilter, type TargetedEffect } from './targets.ts';
 
@@ -65,7 +65,7 @@ export function finalAttacksAt(
       buffs = applyResolvedEffect(
         buffs,
         w.effect,
-        caster?.casterBaseAttack ?? 0,
+        fixedAttackBaseOf(w.effect, caster?.casterBaseAttack ?? 0, slots),
         w.casterMaxHp ?? caster?.casterMaxHp,
       ).totals;
     }

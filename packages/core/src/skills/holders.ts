@@ -13,7 +13,14 @@ import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burs
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
-import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, statTotal, type BuffTotals } from './buffs.ts';
+import {
+  ZERO_BUFFS,
+  addRatioBuff,
+  applyResolvedEffect,
+  fixedAttackBaseOf,
+  statTotal,
+  type BuffTotals,
+} from './buffs.ts';
 import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
 import {
@@ -2192,7 +2199,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         for (const v of views) {
           // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
           for (let k = activeAt(v.track, frame).length; k > 0; k--) {
-            buffs = applyResolvedEffect(buffs, v.effect, v.track.casterBaseAttack, v.track.casterMaxHp).totals;
+            buffs = applyResolvedEffect(
+              buffs,
+              v.effect,
+              fixedAttackBaseOf(v.effect, v.track.casterBaseAttack, slots),
+              v.track.casterMaxHp,
+            ).totals;
             changed = true;
           }
         }
@@ -2611,7 +2623,12 @@ function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
         track.casterMaxHp === undefined
           ? undefined
           : track.casterMaxHp * (1 + (passiveMaxHp[track.sourceSlotIndex] ?? 0));
-      const applied = applyResolvedEffect(buffs, track.origin.effect, track.casterBaseAttack, finalMaxHp);
+      const applied = applyResolvedEffect(
+        buffs,
+        track.origin.effect,
+        fixedAttackBaseOf(track.origin.effect, track.casterBaseAttack, history.slots),
+        finalMaxHp,
+      );
       buffs = applied.totals;
       passiveEffects.push({
         ...track.origin.effect,

@@ -980,6 +980,23 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
+ * 2 段目の段 19 の PR 2（V-0627）: 枠の shot 発目（1 始まり）の撃ったフレームの hitDamage。shot はカンマ区切りの並び（"1,7,13"）も書け、
+ * そのときは発ごとの列。射撃の回数のきっかけで段が上がるスタックの攻撃力▲を、録画のその発の増分から読んだ 1 ヒットの値と比べる
+ * （モデルの発のフレームは動くので、発の番号で引く）
+ */
+function hitDamageAtShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const frames = slotOf(result.shots, ctx).frames;
+  const at = (n: number): number => {
+    const frame = frames[n - 1];
+    if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${n} 発目が無い`);
+    return hitDamage(result, { ...ctx, args: { ...ctx.args, frame } });
+  };
+  const n = ctx.args.shot;
+  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
+  return at(Number(n));
+}
+
+/**
  * V-0165: その時点の区間で通常攻撃に使うコア命中率（条件が自動の枠は、着地点の表の値をその区間の命中率▲ N で出し直したもの。
  * C-0036・C-0170）。1 トリガーの倍率グループのコアの項を、コアのダメージ倍率で割って戻す。着地点の配分が複数の区間（中遠）では
  * 配分の重みの平均で、弾丸命中率の重みは付けない（録画の「コア / 当たった数」と比べるのは、配分が 1 つの区間（近・中近・遠）だけにする）
@@ -1509,6 +1526,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     },
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
+  hitDamageAtShot: { args: ['slot', 'shot', 'core', 'crit', 'distance'], sim: hitDamageAtShot },
   // 対象の語彙編（plan/design-target-vocab.md 4.1 節）: 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
   critHitRatio: {
