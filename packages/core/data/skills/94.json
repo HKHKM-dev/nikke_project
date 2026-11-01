@@ -23,10 +23,6 @@
             {
               "stat": "chargeSpeed",
               "ref": 1
-            },
-            {
-              "stat": "chargeDamage",
-              "ref": 3
             }
           ],
           "claims": ["C-0804"]
@@ -37,10 +33,27 @@
           "trigger": {
             "reloadEnd": true
           },
+          "target": "self"
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "selfState": {
+              "state": "missileGuide",
+              "present": false
+            }
+          },
           "target": "self",
+          "stat": "chargeDamage",
+          "ref": 3,
+          "durationShotsRef": 4,
+          "claims": ["C-0804"],
           "assumes": {
-            "ja": "最大装弾数のリロードが完了した時の解除は説明文の読み。最大装弾数 8 発ではガイドの 3 発がマガジンの中で使い切られるので、録画（V-0586）では効かず、確かめていない",
-            "en": "Removal on a full reload is read from the description. With 8 max ammo the 3 guided shots are used up inside the magazine, so the recordings (V-0586) do not exercise it; unverified"
+            "ja": "説明文の 2 行目（チャージダメージ▲・N 発間維持）は「ミサイルガイド：」の名前の外にあるので、状態 missileGuide とは別の timed に書く（リロード完了時の解除で外れない）。付く条件は 1 行目と同じ（同じフレームの条件は付ける前の状態で見る）。維持中に付き直すと、そこから 3 発を数え直す（別に付いて重ならないだけの形と、録画 0839・0840 では分けられない）",
+            "en": "The second line (Charge Damage up for N rounds) is outside the \"Missile Guide:\" name, so it is a timed effect separate from the missileGuide state (not removed on a full reload). It is applied under the same condition as the first line (conditions in the same frame see the state before application). Re-applying while active restarts the 3-round count (not distinguished in recordings 839 and 840 from a separate non-stacking application)"
           }
         }
       ],
