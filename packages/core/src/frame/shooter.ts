@@ -80,6 +80,11 @@ export type ShooterState = {
    */
   hidePending?: HidePending;
   /**
+   * ハイド中のリロードを始めたフレームから見た、リロードの始まり（RELOADING のバーの 0 の点）までのフレーム（負は前。射撃姿勢維持型の
+   * 姿勢の終わりを待つ分と、D から数える分。hideShooter が書き、1 パス目が ShotLog.hideReloadStarts に移して消す）。無ければキーごと無い
+   */
+  hideReloadStartIn?: number;
+  /**
    * チャージ武器の、前の発（押下チャージ型のリロードの後は、込め終えてから解放の分の後）からのフレーム数。
    * 発と発の間で持ち、毎フレームその時の発と発の間（chargeShotIntervalFrames）で待ちを決め直す。
    * チャージの途中でチャージ時間が変わると、経過を持ち越して新しいチャージ時間に届いたら撃つ（撃った時点の待ちのまま・やり直しとは
@@ -469,6 +474,7 @@ export function hideShooter(
   // 射撃姿勢維持型: 前の発からの経過（chargeElapsed）が姿勢の終わりに届くまで待つ
   const stance = params.stance;
   const lead = stance === null ? 0 : Math.max(0, stance.frames - stance.holdFrames - (state.chargeElapsed ?? Infinity));
+  state.hideReloadStartIn = lead - startedFramesAgo;
   const chunk = startReload(state, params) + lead + hideReloadExtraFrames(model, params) - startedFramesAgo;
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える

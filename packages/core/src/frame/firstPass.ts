@@ -1071,6 +1071,10 @@ function runFirstPassOnce(
       else if (slotHideNow) hideShooter(state, shot, model, params);
       else if (slotBlocked) windowShot = stepHide(state, shot, model, params);
       const partial = windowShot;
+      if (state.hideReloadStartIn !== undefined) {
+        (logs[i]!.hideReloadStarts ??= []).push(f + state.hideReloadStartIn);
+        delete state.hideReloadStartIn;
+      }
       if (ownBlock !== undefined && ownBlock.end === f)
         unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params);
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
