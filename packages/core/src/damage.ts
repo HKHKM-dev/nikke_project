@@ -203,11 +203,17 @@ export type EnemyInput = {
    * setup）だけが使う。利用者の計算には出さない。バースト使用時の追加ダメージ（damage）は切り替えに依らず効果の発火の直前の値で見る
    * （plan/design-burst-landing.md 12 節。C-0838）
    */
-  burstHitEnemyDebuffs?: BurstHitEnemyDebuffs;
+  burstHitEnemyDebuffs?: EnemyDebuffTiming;
+  /**
+   * バースト使用時の追加ダメージ（効果の発火で出る damage。perBurstHit でないもの）が敵の側のデバフを見る時点。省略は 'hit'
+   * （いまのモデル。効果の発火の直前。C-0838）。'activation'（発動の時点）は検証の予測の仮説（V-0619 の H-snap）だけが使う。
+   * 利用者の計算には出さない
+   */
+  burstEffectEnemyDebuffs?: EnemyDebuffTiming;
 };
 
-/** バーストのヒットが敵の側のデバフを見る時点: 発動の時点・ヒットの直前（ヒットの直前は C-0795 で III の受け手では外れた） */
-export type BurstHitEnemyDebuffs = 'activation' | 'hit';
+/** バーストのヒット・追加ダメージが敵の側のデバフを見る時点: 発動の時点・ヒット（効果の発火）の直前（バーストのヒットでは、ヒットの直前は C-0795 で外れた） */
+export type EnemyDebuffTiming = 'activation' | 'hit';
 
 /** 防御力▼の後の防御力の丸めの向き: 丸めない・四捨五入・切り上げ（四捨五入のほかは C-0790 で外れた。切り捨ては型に無い） */
 export type DefenceRounding = 'none' | 'round' | 'ceil';

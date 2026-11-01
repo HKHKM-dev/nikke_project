@@ -113,6 +113,23 @@ describe('records/predictions', () => {
     expect(values.H2!.total as number).toBeLessThan(values.H1!.total as number);
   });
 
+  // V-0619: 撮る前の入力の値（values）を、観測値の id を指す比べる指定の項目から引ける
+  it('reads planned input values (values) through observation-id setup fields', () => {
+    const manual = { ...SETUP, burst: true, condition: undefined, coreHitRate: 1, manualBursts: 'plan' };
+    const targets: PredictionFile['targets'] = [
+      { id: 'chains', model: 'sim', metric: 'burstActivationCount', args: { slot: 1 }, setup: manual },
+    ];
+    // 録画 0263 と同じエマ：タクティカル・アップ単騎で、手で撃つ予定の 2 回だけ撃つ
+    const team = [{ rid: 93, controlled: true }];
+    const f = file({ team, hypotheses: [{ id: 'H1' }], targets, values: { plan: [1999, 4972] } });
+    expect(runPredictions(f, data).H1!.chains).toBe(2);
+    expect(validatePredictions([f], ctx)).toEqual([]);
+    expect(validatePredictions([file({ values: { '0101-01': 1, bad: 'x' as unknown as number } })], ctx)).toEqual([
+      '予測 V-0063: values の id 0101-01 が観測値の id と重なる',
+      '予測 V-0063: values の bad は数か数の配列',
+    ]);
+  });
+
   it('links a target to observations by explicit ids or by the same metric・args・setup of the same verification', () => {
     const f = file();
     expect(observationsOfTarget(f, f.targets[1]!, observations).map((o) => o.id)).toEqual(['0101-01']);

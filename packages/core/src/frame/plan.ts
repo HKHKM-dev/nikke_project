@@ -17,7 +17,7 @@ import {
   type BurstSchedule,
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
-import { computeTriggerDamage, type BurstHitEnemyDebuffs, type EnemyInput } from '../damage.ts';
+import { computeTriggerDamage, type EnemyDebuffTiming, type EnemyInput } from '../damage.ts';
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
@@ -399,7 +399,15 @@ export function planSkillHits(
       // バーストのヒットは発動の時点のまま。C-0837）。遅れ 0 のキャラは発動と発火が同じフレームなので変わらない
       const atHit =
         pre && !shooterAtHit
-          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, 'hit')
+          ? burstHitBuffs(
+              timeline,
+              activationFrame,
+              frame,
+              slotIndex,
+              pre,
+              undefined,
+              enemy.burstEffectEnemyDebuffs ?? 'hit',
+            )
           : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
@@ -731,7 +739,7 @@ export function burstHitBuffs(
   slotIndex: number,
   preActivation: boolean,
   sameActivation?: readonly ValuePiece[],
-  enemyDebuffs: BurstHitEnemyDebuffs = 'activation',
+  enemyDebuffs: EnemyDebuffTiming = 'activation',
 ): BuffTotals {
   let buffs = burstSnapshotState(timeline, activationFrame, slotIndex, preActivation).buffs;
   if (enemyDebuffs === 'hit') {

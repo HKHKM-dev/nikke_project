@@ -152,4 +152,18 @@ describe('バースト使用時の追加ダメージが敵の側のデバフを�
     expect(again.map((h) => h.hit)).toEqual(additional.map((h) => h.hit));
     expect(hit.slots[ISABEL]!.burst.hits[0]!.baseHit).toBeGreaterThan(burstHits[0]!.baseHit);
   });
+
+  // 予測の仮説（EnemyInput.burstEffectEnemyDebuffs。V-0619 の H-snap）: 追加ダメージも敵の側のデバフを発動の時点で見る
+  it("takes the enemy debuffs at the use for the additional damage under the 'activation' hypothesis", () => {
+    const snap = runSimulation({ ...team, enemy: { ...team.enemy, burstEffectEnemyDebuffs: 'activation' } });
+    const again = snap.skillHits.filter((h) => h.slotIndex === ISABEL && h.effect.source.skill === 'burst');
+    expect(again).toHaveLength(additional.length);
+    again.forEach((h, k) => {
+      const i = isabel.findIndex((a) => hitFrameOf(a) === h.frame);
+      // 撃つ側のバフも敵の側のデバフも発動の時点なので、1 ヒットの元の値は同じフレームのバーストのヒットと同じ
+      expect(h.hit.baseHit).toBe(burstHits[i]!.baseHit);
+      expect(h.hit.baseHit).toBeLessThan(additional[k]!.hit.baseHit);
+    });
+    expect(snap.slots[ISABEL]!.burst.hits).toEqual(burstHits);
+  });
 });

@@ -90,6 +90,11 @@ export type PredictionFile = {
   fixedSpec: boolean;
   hypotheses: PredictionHypothesis[];
   targets: PredictionTarget[];
+  /**
+   * 撮る前の入力の値（id → 値）。観測値の id を指す比べる指定の項目（manualBursts・jumpWindows など）は、撮る前には指す観測値が無いので、
+   * 予定の値をここに置いて id で指す（V-0619 の手で撃つ予定のチェーンの時刻）。観測値の id と重ねない
+   */
+  values?: Record<string, number | number[]>;
   /** records:predict が書き込む。無ければまだ予測を出していない */
   predicted: Predicted | null;
 };
@@ -127,6 +132,11 @@ export function validatePredictions(
     for (const h of f.hypotheses) {
       if (h.id.trim() === '' || hyp.has(h.id)) errors.push(`${at}: 仮説の id が空か重複している: ${h.id}`);
       hyp.add(h.id);
+    }
+    for (const [id, v] of Object.entries(f.values ?? {})) {
+      if (observationIds.has(id)) errors.push(`${at}: values の id ${id} が観測値の id と重なる`);
+      if (typeof v !== 'number' && !(Array.isArray(v) && v.every((x) => typeof x === 'number')))
+        errors.push(`${at}: values の ${id} は数か数の配列`);
     }
     if (f.targets.length === 0) errors.push(`${at}: 比べる指標が 1 つ以上要る`);
     const tgt = new Set<string>();
@@ -258,6 +268,12 @@ function asRecording(
   };
 }
 
+/** 予測ファイルの撮る前の入力の値（values）を、観測値の値に足した RecordsData */
+function withPlannedValues(file: PredictionFile, data: RecordsData): RecordsData {
+  if (file.values === undefined) return data;
+  return { ...data, observationValues: new Map([...(data.observationValues ?? []), ...Object.entries(file.values)]) };
+}
+
 /**
  * 仮説ごと・指標ごとにモデルを回す（同じ条件は 1 回だけ）。指標の recording（plan/design-compare-setup-extension.md 4 節）を引くには
  * recordings を渡す
@@ -276,6 +292,7 @@ export function runPredictions(
     if (t.team !== undefined) return asRecording(file, t.team, t.fixedSpec ?? file.fixedSpec, `:${t.id}`);
     return asRecording(file);
   };
+  const withValues = withPlannedValues(file, data);
   const cache = new Map<string, { input: TeamInput; sim?: SimResult }>();
   const values: Predicted['values'] = {};
   for (const h of file.hypotheses) {
@@ -288,7 +305,7 @@ export function runPredictions(
       const key = `${recording.id}:${JSON.stringify(setup)}`;
       let run = cache.get(key);
       if (run === undefined) {
-        run = { input: buildTeamInput(recording, setup, data) };
+        run = { input: buildTeamInput(recording, setup, withValues) };
         cache.set(key, run);
       }
       const ctx = { args: t.args ?? {}, input: run.input };

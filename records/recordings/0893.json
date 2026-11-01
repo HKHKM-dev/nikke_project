@@ -1,0 +1,46 @@
+{
+  "id": "0893",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0893_sg_isabel_takina-end.mp4",
+  "original": "2026-11-01_17-59-19.mp4",
+  "durationSec": 201.4,
+  "frames": 12084,
+  "fps": 60,
+  "sizeMB": 243.9,
+  "sha256": "851bcc60fe5e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 861,
+      "name": "たきな",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0619 の切れ目の回（III を残り 02:41・01:56・00:56・00:11 に手で押す）。ラム・イサベル・たきな（操作・撃たない）。オートバースト OFF（バーストは手で撃つ）",
+  "backup": {
+    "at": "2026-11-01T18:05+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
