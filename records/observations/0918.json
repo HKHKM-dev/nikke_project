@@ -104,5 +104,24 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0918-07",
+    "recording": "0918",
+    "kind": "gauge",
+    "use": "record",
+    "value": [13.3, 13.3],
+    "unit": "%",
+    "description": "ニアフェザー攻撃のヒット（4184・4354）のフレームの、BURST バーの充填率の増分（バーの 113px に対する %。バーは本当のゲージの約 1.19 倍に見える。C-0084）",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "1 回目のバーストの後、ゲージが空から溜まる所。同じ区間のラム・デルタの発（AI。フルチャージ倍率なし）は 6.2〜7.1%"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

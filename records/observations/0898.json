@@ -186,5 +186,24 @@
       "slot": 1,
       "source": "skill"
     }
+  },
+  {
+    "id": "0898-09",
+    "recording": "0898",
+    "kind": "gauge",
+    "use": "record",
+    "value": [13.3, 13.3],
+    "unit": "%",
+    "description": "ニアフェザー攻撃のヒット（994・1165）のフレームの、BURST バーの充填率の増分（バーの 113px に対する %。バーは本当のゲージの約 1.19 倍に見える。C-0084）",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "同じ録画のアインの発（フルチャージ）は 16.8%（936・1018・1100 など）"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]
