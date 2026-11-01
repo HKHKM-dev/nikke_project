@@ -3478,7 +3478,10 @@ function parseTimedDuration(
     if (target === 'topAttack' && until !== 'selfHpAbove')
       fail(`${path}.target`, 'a duration until an event cannot target "topAttack"');
     if (until === 'selfHpAbove' && (stat === undefined || isFirstPassTrackedStat(stat) || isFlagStat(stat)))
-      fail(`${path}.durationUntil`, 'a duration until the HP rises is only supported for timed effects of a value not tracked in the first pass');
+      fail(
+        `${path}.durationUntil`,
+        'a duration until the HP rises is only supported for timed effects of a value not tracked in the first pass',
+      );
     // シンデレラ S1 編: リロードの込め終わりは持ち主の射撃の列にある。使い手は自分にだけ付ける（timed の自分）
     if (until === 'reloadEnd' && (stat === undefined || target !== 'self')) {
       fail(`${path}.durationUntil`, 'a duration until the reload ends is only supported for timed effects on "self"');

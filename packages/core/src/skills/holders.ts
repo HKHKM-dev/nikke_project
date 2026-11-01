@@ -919,7 +919,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * マスト編（plan/design-mast.md 8 節）: 発動者 × 閾値ごとの、HP の割合の窓の追跡。毎フレームのきっかけの判定で 1 回だけ割合を求め、
    * 閾値以下に下がったフレーム（dropped）と、上回ったフレーム（ends。件の列の untilEnds と共有）を記録する
    */
-  type SelfHpState = { slotIndex: number; threshold: number; frame: number; low: boolean; dropped: boolean; ends: number[] };
+  type SelfHpState = {
+    slotIndex: number;
+    threshold: number;
+    frame: number;
+    low: boolean;
+    dropped: boolean;
+    ends: number[];
+  };
   const selfHpStates = new Map<string, SelfHpState>();
   const selfHpStateOf = (slotIndex: number, threshold: number): SelfHpState => {
     const key = `${slotIndex}:${threshold}`;
