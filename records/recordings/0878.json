@@ -1,0 +1,46 @@
+{
+  "id": "0878",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0878_rl_anne-miracle-fairy_crown-noshoot.mp4",
+  "original": "2026-11-01_16-50-30.mp4",
+  "durationSec": 198,
+  "frames": 11879,
+  "fps": 60,
+  "sizeMB": 239.8,
+  "sha256": "d5e928222b77",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 121,
+      "name": "エヌ : ミラクルフェアリー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 330,
+      "name": "クラウン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0617。I-DOLL・フラワー（AI）+ エヌ：ミラクルフェアリー（AI）+ クラウン（操作・AUTO 射撃 OFF で撃たない）・オートバースト ON（III なし）",
+  "backup": {
+    "at": "2026-11-01T16:58+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
