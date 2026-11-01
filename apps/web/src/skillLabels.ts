@@ -130,6 +130,8 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   // 2 段目の段 14 の PR 2: 「チャージ中の時、0.2 秒ごとに」「フルチャージした時」
   if ('chargeTick' in trigger) return `チャージ中の ${formatNumber(trigger.chargeTick.everySeconds)} 秒ごと`;
   if ('chargeFull' in trigger) return 'フルチャージした時';
+  // マスト編: 「自分の HP が X% 以下である限り」
+  if ('selfHpAtMost' in trigger) return `自分の HP が ${formatNumber(trigger.selfHpAtMost * 100)}% 以下の間`;
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',
