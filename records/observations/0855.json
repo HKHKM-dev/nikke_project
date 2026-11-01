@@ -1,0 +1,317 @@
+[
+  {
+    "id": "0855-01",
+    "recording": "0855",
+    "kind": "total",
+    "use": "record",
+    "value": 108696580,
+    "description": "エーテル・デルタ・ラピ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11568。増分は 1844 個"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-02",
+    "recording": "0855",
+    "kind": "count",
+    "use": "record",
+    "value": 273,
+    "unit": "トリガー",
+    "description": "エーテル・デルタ・ラピ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1844 個。前の増分から 30f 未満の増分（1809 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 37f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-03",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [1436, 3814, 6191, 8568, 10946],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・6・0・0・0f"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-04",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [1465, 3842, 6220, 8597, 10975],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0f"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-05",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [1494, 3872, 6249, 8627, 11004],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-06",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [3807, 6185, 8562, 10940],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-07",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [3836, 6214, 8591, 10969],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-08",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [3865, 6243, 8620, 10998],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0602",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0855-09",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [1708, 2473, 3238, 4027, 4793, 5558, 6347, 7112, 7877, 8665, 9431, 10963],
+    "unit": "f",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "エーテル（I・AI）の S2 のヒットの動画のフレーム（12 回）。フルバーストの始まり（`0855-05`）から 588f（10 秒）の中は f1708・4027・6347・8665 の 4 回、外は残りの 8 回",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の増分のうち、エーテルの S2 の 1 ヒット（会心でない 35,633・会心かフルバースト補正の 53,449）とちょうど一致するもの。値で拾えなかった 1 回（f10196 の頃。ほかの発と重なった）は、前後の回から 765f の周期で置ける（その後のデルタのヒットは増えている）"
+    }
+  },
+  {
+    "id": "0855-10",
+    "recording": "0855",
+    "kind": "hit",
+    "use": "compare",
+    "value": 208656,
+    "unit": "ダメージ",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "フルバーストの外で発動したエーテルの S2 の窓の中の、デルタ（II・AI）のコアの会心でない 1 ヒット（フルバーストの外）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f2704（S2 のヒット f2473 の 231f 後。S2 はフルバーストの外）の単独の増分。いまのモデル（防御 100）は 208,626.23、防御 91（説明文の 9.38%▼。C-0790）なら 208,655.91。デルタの攻撃力 − 防御は 63,268（スペック固定。V-0602「条件」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0855-11",
+    "recording": "0855",
+    "kind": "hit",
+    "use": "compare",
+    "value": 208626,
+    "unit": "ダメージ",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "エーテルの S2 の窓の外の、デルタのコアの会心でない 1 ヒット（フルバーストの外。対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1347 の単独の増分（S2 のヒットの前）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0855-12",
+    "recording": "0855",
+    "kind": "hit",
+    "use": "compare",
+    "value": 260820,
+    "unit": "ダメージ",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "フルバースト中に発動したエーテルの S2 の窓の中の、デルタのコアの会心でない 1 ヒット（フルバースト中）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1788（S2 のヒット f1708 の 80f 後。S2 はフルバースト中）の単独の増分。いまのモデル（防御 100）は 260,782.79、防御 91 なら 260,819.89"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0855-13",
+    "recording": "0855",
+    "kind": "hit",
+    "use": "compare",
+    "value": 260783,
+    "unit": "ダメージ",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "フルバースト中で、エーテルの S2 の窓の前の、デルタのコアの会心でない 1 ヒット（対照）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f1542 の単独の増分（フルバーストの始まり f1494 の後、S2 のヒット f1708 の前）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0855-14",
+    "recording": "0855",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      [1708, -2, 80, 244, 415],
+      [2473, -22, 231, 313, 501],
+      [3238, -100, 64, 317, 399],
+      [4027, -37, 134, 216, 381],
+      [4793, -50, 114, 114, -1],
+      [7877, -142, 22, 275, 439],
+      [8665, -185, 10, 256, 420],
+      [9431, -93, 303, 303, 385],
+      [10963, -319, 18, 204, 457]
+    ],
+    "unit": "f",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "エーテルの S2 のヒットごとの [S2 のヒットのフレーム, その前の増えていない最後のデルタのヒット, 増えた最初のヒット, 増えた最後のヒット, その後の増えていない最初のヒット]（後ろの 4 つは S2 のヒットからの差。−1 は無い）。f1708・4027・8665 はフルバースト中の S2、ほかは外の S2",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "デルタの単独の 1 ヒットを、いまのモデルの値（104,313.115 × 2・2.5・3。コア・会心・フルバースト補正）と比べた。増えたヒットは 22 個で、どれも防御 91 の値（208,656・260,820・312,984）にちょうど一致（差を攻撃力 − 防御 63,268 で直すと 9.0）、増えていないヒットはモデルの値と ±0.5。フルバースト中の S2 の後と外の S2 の後で量は同じ。窓の中にデルタの単独のヒットが無い S2（f5558・6347・7112）は除いた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

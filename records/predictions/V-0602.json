@@ -71,7 +71,7 @@
         "count": 13
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -89,7 +89,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -107,7 +107,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -125,7 +125,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -143,7 +143,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -161,7 +161,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -182,7 +182,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -203,7 +203,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -224,7 +224,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-electric",
+        "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "condition": "auto"
       },
@@ -234,10 +234,10 @@
       "note": "2 回目の S2 の窓の中の、エーテルの 1 ペレット（コア・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
     }
   ],
-  "note": "撮る編成（行 A）: エーテル（291・SG・バースト I・枠 1・操作）単騎・オート射撃 ON・オートバースト OFF・電撃タブの BigArms・射撃場 3 分・スペック固定 ON（スキル Lv10 なので S2 の防御力▼は 9.38%）。III がいないのでフルバーストは起きず、S2 はどれもフルバーストの外で発動する。フレームはモデルの 2 回目の S2（発動はモデルの約 1530f、ヒットはその 52f 後）の前（1450f）と、窓の中（1700f）。仮説の効果は everySeconds のきっかけで delayFrames を書けないので、モデルの窓は発動から始まる（実機はヒットの頃から。C-0412）。窓の端は見ない",
+  "note": "撮る編成（行 A）: エーテル（291・SG・バースト I・枠 1・操作）単騎・オート射撃 ON・オートバースト OFF・灼熱タブの BigArms（撮る前は電撃タブで出した。撮った録画 0853・0854 は灼熱タブなので、撮った後に setup の的を灼熱にして出し直した。エーテルはどちらにも有利コードを持たず、値は変わらない）・射撃場 3 分・スペック固定 ON（スキル Lv10 なので S2 の防御力▼は 9.38%）。III がいないのでフルバーストは起きず、S2 はどれもフルバーストの外で発動する。フレームはモデルの 2 回目の S2（発動はモデルの約 1530f、ヒットはその 52f 後）の前（1450f）と、窓の中（1700f）。仮説の効果は everySeconds のきっかけで delayFrames を書けないので、モデルの窓は発動から始まる（実機はヒットの頃から。C-0412）。窓の端は見ない",
   "predicted": {
     "at": "2026-11-01",
-    "commit": "8ac7fc75332cd37ab7d3fecd6a5553e51475dbbb",
+    "commit": "3242e6eff1581eaf41c31b69f5c54357c4ce3d1c",
     "values": {
       "H0": {
         "s2-frames": [817, 1582, 2348, 3113, 3878, 4644, 5409, 6174, 6940, 7705, 8470, 9236, 10001],
