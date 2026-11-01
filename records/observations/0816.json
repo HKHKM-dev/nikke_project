@@ -229,5 +229,77 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0816-11",
+    "recording": "0816",
+    "source": "V-0606",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [20, 20, 19, 260, 20],
+    "description": "3 回目の敵のジャンプ（マガジンの前半の 4 発の後に来る）の明けの後の、ベスティー：タクティカル・アップの発と発の間（明けの後の 4 発・リロードを挟む間・次のマガジンの 1 発目と 2 発目）。ジャンプの間にリロードを終えず、明けの後に残りの 4 発を撃ってからリロードする（C-0817）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "単騎で止まりが無いので、動画のフレームの差。比べる範囲はモデルの狙えない窓の終わりから（モデルのフレーム）。許容 ±2 は、録画の 1 マガジンの周期がモデルより 2〜3f 長い分（V-0590。`0815-07`・`0816-03`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 6491,
+        "to": 6960
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0816-12",
+    "recording": "0816",
+    "source": "V-0606",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [20, 20, 19, 260, 20],
+    "description": "4 回目の敵のジャンプ（マガジンの前半の 4 発の後に来る）の明けの後の、ベスティー：タクティカル・アップの発と発の間（明けの後の 4 発・リロードを挟む間・次のマガジンの 1 発目と 2 発目）。ジャンプの間にリロードを終えず、明けの後に残りの 4 発を撃ってからリロードする（C-0817）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "単騎で止まりが無いので、動画のフレームの差。比べる範囲はモデルの狙えない窓の終わりから（モデルのフレーム）。許容 ±2 は、録画の 1 マガジンの周期がモデルより 2〜3f 長い分（V-0590。`0815-07`・`0816-03`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 8629,
+        "to": 9100
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
