@@ -17577,17 +17577,17 @@
     {
       "observation": "0811-08",
       "element": "千束 skill1.effects[4]",
-      "key": "f5b92bdd6e74d054",
+      "key": "53a8d015732a2e8c",
       "effective": false,
-      "minus": -0.17688044996950225,
+      "minus": 0,
       "plus": 0
     },
     {
       "observation": "0811-09",
       "element": "千束 skill1.effects[4]",
-      "key": "b98578cd935a2344",
+      "key": "19a65d650d43889c",
       "effective": false,
-      "minus": -0.17604874336631582,
+      "minus": 0,
       "plus": 0
     },
     {
@@ -17641,17 +17641,17 @@
     {
       "observation": "0812-08",
       "element": "千束 skill1.effects[4]",
-      "key": "56701234666a1ac9",
+      "key": "c478bde05e663019",
       "effective": false,
-      "minus": 0.7444312566336961,
+      "minus": 0,
       "plus": 0
     },
     {
       "observation": "0812-09",
       "element": "千束 skill1.effects[4]",
-      "key": "cf638c2635936a71",
+      "key": "82d6d2726b844111",
       "effective": false,
-      "minus": -0.17688044996950225,
+      "minus": 0,
       "plus": 0
     },
     {

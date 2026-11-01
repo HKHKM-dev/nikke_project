@@ -1936,6 +1936,14 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
   return ctx.args.relative === true ? picked.map((f) => f - picked[0]!) : picked;
 }
 
+/** 枠のスロット skill（ctx.args.skill）の倍率ダメージのヒット（持続ダメージを除く。時刻の順） */
+function slotSkillHits(result: SimResult, ctx: MetricContext): SimResult['skillHits'] {
+  const slotIndex = slotIndexOf(ctx);
+  return result.skillHits.filter(
+    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
+  );
+}
+
 /**
  * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0374）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
  * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる。
@@ -1943,10 +1951,7 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
  */
 function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
   const shots = slotOf(result.shots, ctx).frames;
-  const hits = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-  );
-  return firstCount(hits, ctx, '発動').map((h) => shots.filter((f) => f <= h.frame).length);
+  return firstCount(slotSkillHits(result, ctx), ctx, '発動').map((h) => shots.filter((f) => f <= h.frame).length);
 }
 
 /**
@@ -1956,11 +1961,7 @@ function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
  */
 function skillHitNormalHits(result: SimResult, ctx: MetricContext): number[] {
   const log = slotOf(result.shots, ctx);
-  const frames = result.skillHits
-    .filter(
-      (h) => h.slotIndex === slotIndexOf(ctx) && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-    )
-    .map((h) => h.frame);
+  const frames = slotSkillHits(result, ctx).map((h) => h.frame);
   const sums = frames.map((frame, i) => {
     const from = i === 0 ? Number.NEGATIVE_INFINITY : frames[i - 1]!;
     return log.frames.reduce((sum, f, k) => (from < f && f <= frame ? sum + (log.hits?.[k] ?? 1) : sum), 0);
@@ -1976,10 +1977,7 @@ function skillHitNormalHits(result: SimResult, ctx: MetricContext): number[] {
 function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
   const shots = slotOf(result.shots, ctx).frames;
   const counts = new Map<number, number>();
-  for (const h of result.skillHits) {
-    if (h.slotIndex !== slotIndexOf(ctx) || h.effect.source.skill !== ctx.args.skill || h.effect.dot !== undefined) {
-      continue;
-    }
+  for (const h of slotSkillHits(result, ctx)) {
     const shot = shots.filter((f) => f <= h.frame).at(-1);
     if (shot === undefined) continue;
     counts.set(h.frame - shot, (counts.get(h.frame - shot) ?? 0) + 1);
@@ -2006,9 +2004,7 @@ function skillHitBurstOrdinals(result: SimResult, ctx: MetricContext): number[] 
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const slotIndex = slotIndexOf(ctx);
   const mine = schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
-  const hits = result.skillHits.filter(
-    (h) => h.slotIndex === slotIndex && h.effect.source.skill === ctx.args.skill && h.effect.dot === undefined,
-  );
+  const hits = slotSkillHits(result, ctx);
   const ordinals = new Set<number>();
   for (const h of hits) {
     const n = mine.filter((f) => f <= h.frame).length;
