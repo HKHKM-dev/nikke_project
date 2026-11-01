@@ -126,4 +126,4 @@
 - 段 19: 2026-11-01 起案・決定・閉じた（[design-skill-stage19.md](design-skill-stage19.md)）。
 - 段 20: 2026-11-01 起案・決定・閉じた（[design-skill-stage20.md](design-skill-stage20.md)）。
 - 段 21: 2026-11-01 起案・決定・閉じた（[design-skill-stage21.md](design-skill-stage21.md)）。
-- 2026-11-01: オーナーの判断で、段 21 の後は段を起こさず、残りの家族はキャラ毎・効果毎の調査としてまとめる（[skills-guide.md](skills-guide.md) 1.3 節）。段 20 の 4 節の候補 15（アインのニアフェザー）は V-0636 で扱う。
+- 2026-11-01: オーナーの判断で、段 21 の後は段を起こさず、残りの家族はキャラ毎・効果毎の調査としてまとめる（[skills-guide.md](skills-guide.md) 1.3 節）。
