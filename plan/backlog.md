@@ -111,6 +111,7 @@
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - エーテルの S2 の防御力▼（2026-10-07）→ 一部完了（設計書なし）。残りは 1.3 節
+- 敵のジャンプの間のハイド中のリロード（C-0817。2026-11-01 起票）→ 設計の承認待ち: [design-hide-reload.md](design-hide-reload.md) 7 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
