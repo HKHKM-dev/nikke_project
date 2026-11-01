@@ -17535,12 +17535,30 @@
       "plus": 0
     },
     {
+      "observation": "0811-01",
+      "element": "千束 skill2.effects[1]",
+      "key": "6af2762c717ee66f",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "0811-02",
       "element": "千束 skill1.effects[4]",
       "key": "45c437e985ffbc2c",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0811-02",
+      "element": "千束 skill2.effects[1]",
+      "key": "45c437e985ffbc2c",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 30 回目の倍率ダメージが無い"
     },
     {
       "observation": "0811-03",
@@ -17551,12 +17569,29 @@
       "plus": 0
     },
     {
+      "observation": "0811-03",
+      "element": "千束 skill2.effects[1]",
+      "key": "1582ce537072ca1a",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 50 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "0811-04",
       "element": "千束 skill1.effects[4]",
       "key": "6b9fd5e0195f911d",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0811-04",
+      "element": "千束 skill2.effects[1]",
+      "key": "6b9fd5e0195f911d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0811-05",
@@ -17567,6 +17602,14 @@
       "plus": 0
     },
     {
+      "observation": "0811-05",
+      "element": "千束 skill2.effects[1]",
+      "key": "688e0597712969a8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0811-06",
       "element": "千束 skill1.effects[4]",
       "key": "d661f13ea505c319",
@@ -17575,20 +17618,13 @@
       "plus": 0
     },
     {
-      "observation": "0811-08",
-      "element": "千束 skill1.effects[4]",
-      "key": "53a8d015732a2e8c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0811-09",
-      "element": "千束 skill1.effects[4]",
-      "key": "19a65d650d43889c",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
+      "observation": "0811-06",
+      "element": "千束 skill2.effects[1]",
+      "key": "d661f13ea505c319",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
     },
     {
       "observation": "0812-01",
@@ -17599,12 +17635,30 @@
       "plus": 0
     },
     {
+      "observation": "0812-01",
+      "element": "千束 skill2.effects[1]",
+      "key": "e02f6591880efd2e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "0812-02",
       "element": "千束 skill1.effects[4]",
       "key": "260ab0a64c9980b9",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0812-02",
+      "element": "千束 skill2.effects[1]",
+      "key": "260ab0a64c9980b9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 30 回目の倍率ダメージが無い"
     },
     {
       "observation": "0812-03",
@@ -17615,12 +17669,29 @@
       "plus": 0
     },
     {
+      "observation": "0812-03",
+      "element": "千束 skill2.effects[1]",
+      "key": "27f80e301e5ad957",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 50 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "0812-04",
       "element": "千束 skill1.effects[4]",
       "key": "71174b7e7752d21f",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0812-04",
+      "element": "千束 skill2.effects[1]",
+      "key": "71174b7e7752d21f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0812-05",
@@ -17631,6 +17702,14 @@
       "plus": 0
     },
     {
+      "observation": "0812-05",
+      "element": "千束 skill2.effects[1]",
+      "key": "9b57f6df085033ba",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0812-06",
       "element": "千束 skill1.effects[4]",
       "key": "1982b6a3516ec088",
@@ -17639,20 +17718,13 @@
       "plus": 0
     },
     {
-      "observation": "0812-08",
-      "element": "千束 skill1.effects[4]",
-      "key": "c478bde05e663019",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0812-09",
-      "element": "千束 skill1.effects[4]",
-      "key": "82d6d2726b844111",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
+      "observation": "0812-06",
+      "element": "千束 skill2.effects[1]",
+      "key": "1982b6a3516ec088",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
     },
     {
       "observation": "0813-05",
@@ -17663,12 +17735,29 @@
       "plus": 0
     },
     {
+      "observation": "0813-05",
+      "element": "千束 skill2.effects[1]",
+      "key": "c56fc83925e7643a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0813-06",
       "element": "千束 skill1.effects[4]",
       "key": "bf04c4886d979813",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0813-06",
+      "element": "千束 skill2.effects[1]",
+      "key": "bf04c4886d979813",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 4 回目の倍率ダメージが無い"
     },
     {
       "observation": "0813-07",
@@ -17679,12 +17768,29 @@
       "plus": 0
     },
     {
+      "observation": "0813-07",
+      "element": "千束 skill2.effects[1]",
+      "key": "653ae24993b0cee0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0813-08",
       "element": "千束 skill1.effects[4]",
       "key": "d10df7d9d4f9935e",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0813-08",
+      "element": "千束 skill2.effects[1]",
+      "key": "d10df7d9d4f9935e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 58 回目の倍率ダメージが無い"
     },
     {
       "observation": "0814-05",
@@ -17695,12 +17801,29 @@
       "plus": 0
     },
     {
+      "observation": "0814-05",
+      "element": "千束 skill2.effects[1]",
+      "key": "4c1d52489cccba99",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0814-06",
       "element": "千束 skill1.effects[4]",
       "key": "c5530a3dcbabd028",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0814-06",
+      "element": "千束 skill2.effects[1]",
+      "key": "c5530a3dcbabd028",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 4 回目の倍率ダメージが無い"
     },
     {
       "observation": "0814-07",
@@ -17711,12 +17834,29 @@
       "plus": 0
     },
     {
+      "observation": "0814-07",
+      "element": "千束 skill2.effects[1]",
+      "key": "420aeaeabd2de4c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0814-08",
       "element": "千束 skill1.effects[4]",
       "key": "7417b8f02ac5ca9d",
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0814-08",
+      "element": "千束 skill2.effects[1]",
+      "key": "7417b8f02ac5ca9d",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 58 回目の倍率ダメージが無い"
     },
     {
       "observation": "0819-06",
