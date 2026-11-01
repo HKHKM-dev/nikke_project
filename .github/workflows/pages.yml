@@ -2,10 +2,14 @@
 # base はリポジトリ名のサブパス（https://<owner>.github.io/<repo>/）。ビルドの出力は check-pages-build.ts で確かめる。
 # 配信（deploy）はリポジトリが公開のときだけ行う。非公開のあいだはビルドと確認だけ通す。
 # 初回は リポジトリの Settings → Pages → Build and deployment の Source を「GitHub Actions」にする。
+# main の CI（ci.yml）が通った後に回す。画面が読む生成物（data/skills/support.json）を CI がマージの後に作り直して commit するので、
+# それを含む main の先頭を配る（CI の push は GITHUB_TOKEN なので、push では Pages が起きない。plan/design-pr-conflicts.md 3.1 節）。
 name: Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -19,12 +23,14 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: main
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:

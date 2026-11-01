@@ -2,30 +2,19 @@
 import { idsInPaths, nextId } from '../../packages/core/src/records/drafts.ts';
 import { ID_DIGITS } from '../../packages/core/src/records/ids.ts';
 
-/** 衝突したファイルを、main の版を取ってよい生成物と、人が直すものに分ける */
-export function splitConflicts(
-  conflicted: readonly string[],
+/**
+ * ファイルを生成物とほかに分ける（衝突したファイルなら、main の版を取ってよい生成物と、人が直すもの。CI の作り直しで変わった
+ * ファイルなら、commit してよい生成物と、ブランチが入れ忘れたもの）
+ */
+export function splitGenerated(
+  paths: readonly string[],
   generated: readonly string[],
 ): { generated: string[]; other: string[] } {
   const set = new Set(generated);
   return {
-    generated: conflicted.filter((p) => set.has(p)),
-    other: conflicted.filter((p) => !set.has(p)),
+    generated: paths.filter((p) => set.has(p)),
+    other: paths.filter((p) => !set.has(p)),
   };
-}
-
-/**
- * 作り直しのコマンド。ブランチが感度（sensitivity.json）を変えていたか、それが衝突したときは、感度の入力（スキル定義・録画の台帳・
- * 観測値の比べる指定）がブランチと main の両方で変わったので、計算し直す（records:minimal。records:check も回る）
- */
-export function regenerateScript(
-  branchChanged: readonly string[],
-  conflicted: readonly string[],
-  sensitivityPath: string,
-): 'records:minimal' | 'records:check' {
-  return branchChanged.includes(sensitivityPath) || conflicted.includes(sensitivityPath)
-    ? 'records:minimal'
-    : 'records:check';
 }
 
 /**

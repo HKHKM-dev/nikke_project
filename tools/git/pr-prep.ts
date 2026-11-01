@@ -1,4 +1,5 @@
 // PR の前に main を取り込み、生成物を作り直して CI と同じ確認を回す（plan/design-workflow-simplification-4.md 2 節。AGENTS.md「コミット手順」）。
+// 生成物は PR に入れない（main の版に戻して push する。マージの後に GitHub の CI が main で作り直して commit する。plan/design-pr-conflicts.md 3.1 節）。
 //   npm run pr:prep [-- --push] [--no-ci] [--allow-progress]
 // 1. 作業中の変更が無いことと、main の上でないことを確かめ、git fetch origin。
 // 2. ブランチで足した検証記録・結論・録画の ID が main と重なっていたら、リベースの前に止めて records:renumber のコマンドを出す。
@@ -6,17 +7,20 @@
 //    plan/design-workflow-simplification-6.md 2 節）。
 // 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
-// 4. 生成物を 1 回だけ作り直す（ブランチが感度を変えていたか、それが衝突したときは records:minimal、ほかは records:check）。差分が
-//    あれば「生成物を作り直す」の commit を足す（スカッシュマージなので、途中のコミットの生成物は合っていなくてよい）。
+// 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
+//    ファイル（開いている検証記録の予測との比べの表・整形）が変わったら、「records:check の書き換え」の commit を足す。
 // 5. CI と同じ確認（--no-ci で省く）。書式（prettier）と lint（eslint）は、ブランチで変えたファイルだけを見る（全部は GitHub の CI が
 //    見る。設定を変えたブランチは全部。plan/design-workflow-simplification-8.md 1 節）。npm run ci のほかの段（型・テスト・ビルド）は
-//    全部。--push なら、通ったら git push --force-with-lease -u origin HEAD。
+//    全部。確認は作り直した生成物の上で回す（GitHub の CI も作り直してから回す）。
+// 6. 生成物を main の版に戻し、ブランチが変えていたら「生成物を main の版に戻す」の commit を足す（スカッシュマージなので、途中の
+//    コミットの生成物は合っていなくてよい）。作業ツリーの生成物も main の版になるので、手元で npm test を回すなら作り直す。
+//    --push なら git push --force-with-lease -u origin HEAD。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../packages/core/scripts/records-data.ts';
+import { GENERATED_PATHS, ROOT, idsInBranches } from '../../packages/core/scripts/records-data.ts';
 import {
   addedLines,
   branchChangedChecks,
@@ -27,8 +31,7 @@ import {
   PROGRESS_PATHS,
   progressCopies,
   rebaseOutcome,
-  regenerateScript,
-  splitConflicts,
+  splitGenerated,
 } from './pr-prep-lib.ts';
 
 const { values } = parseArgs({
@@ -84,11 +87,9 @@ function fail(message: string): never {
 
 const gitDir = git(['rev-parse', '--absolute-git-dir']);
 const rebasing = () => existsSync(`${gitDir}/rebase-merge`) || existsSync(`${gitDir}/rebase-apply`);
-const sensitivity = SENSITIVITY_PATH.slice(ROOT.length);
 const NO_EDITOR = { GIT_EDITOR: 'true' };
 
 const branch = git(['rev-parse', '--abbrev-ref', 'HEAD']);
-const conflictedSoFar: string[] = [];
 
 if (!rebasing()) {
   if (branch === 'main' || branch === 'HEAD') fail('トピックブランチで回す（main の上か、ブランチが無い）');
@@ -144,7 +145,7 @@ if (!rebasing()) {
 // リベースの途中（衝突で止まったか、前の回で人が直している途中）なら、生成物の衝突を解いて続ける
 while (rebasing()) {
   const conflicted = gitPaths(['diff', '--name-only', '--diff-filter=U']);
-  const { generated, other } = splitConflicts(conflicted, GENERATED_PATHS);
+  const { generated, other } = splitGenerated(conflicted, GENERATED_PATHS);
   if (other.length > 0) {
     console.error('生成物でないファイルが衝突した。直して git add し、もう一度 npm run pr:prep を回す:');
     for (const p of other) console.error(`  ${p}`);
@@ -154,7 +155,6 @@ while (rebasing()) {
     console.log(`生成物の衝突は main の版を取る（終わりに作り直す）: ${generated.join('・')}`);
     git(['checkout', '--ours', '--', ...generated]);
     git(['add', '--', ...generated]);
-    conflictedSoFar.push(...generated);
   }
   if (tryGit(['rebase', '--continue'], NO_EDITOR) !== 0 && rebasing()) {
     // 次のコミットが衝突したなら、次の回で解く
@@ -171,14 +171,13 @@ while (rebasing()) {
   }
 }
 
-const branchChanged = gitPaths(['diff', '--name-only', 'origin/main...HEAD']);
-const script = regenerateScript(branchChanged, conflictedSoFar, sensitivity);
-console.log(`生成物を作り直す（npm run ${script}）`);
-npm(script);
-if (git(['status', '--porcelain', '--untracked-files=no']) !== '') {
-  git(['add', '-u']);
-  git(['commit', '--quiet', '-m', '生成物を作り直す']);
-  console.log('生成物を作り直した差分を commit した');
+console.log('生成物を作り直す（npm run records:minimal）');
+npm('records:minimal');
+const rewritten = splitGenerated(gitPaths(['diff', '--name-only']), GENERATED_PATHS).other;
+if (rewritten.length > 0) {
+  git(['add', '--', ...rewritten]);
+  git(['commit', '--quiet', '-m', 'records:check の書き換え']);
+  console.log(`records:check が書き換えた生成物でないファイルを commit した: ${rewritten.join('・')}`);
 }
 
 if (!values['no-ci']) {
@@ -198,6 +197,13 @@ if (!values['no-ci']) {
     for (const script of checkSteps(manifest.scripts['ci'])) npm(script);
   }
 }
+
+git(['checkout', 'origin/main', '--', ...GENERATED_PATHS]);
+if (tryGit(['diff', '--cached', '--quiet']) !== 0) {
+  git(['commit', '--quiet', '-m', '生成物を main の版に戻す']);
+  console.log('生成物を main の版に戻した（マージの後に CI が main で作り直す）');
+}
+console.log('作業ツリーの生成物は main の版。手元で npm test を回すなら npm run records:minimal で作り直す');
 
 if (values.push) {
   if (tryGit(['push', '--force-with-lease', '-u', 'origin', 'HEAD']) !== 0) fail('push が落ちた');

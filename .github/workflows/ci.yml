@@ -5,10 +5,12 @@ on:
     branches: [main]
   pull_request:
 
+# main への push では、作り直した生成物を commit して main に push する（ruleset の bypass に GitHub Actions を足してある）
 permissions:
-  contents: read
+  contents: write
 
-# 同じ PR に push し直したら古い実行を止める（main への push は止めない）
+# 同じ PR に push し直したら古い実行を止める（main への push は止めず、1 本ずつ回す。待っている古い実行は後の実行に置き換わり、
+# 後の実行が全部を作り直す）
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -25,8 +27,15 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # PR は生成物を入れない（main の版のまま）。確認の前に作り直す（plan/design-pr-conflicts.md 3.1 節）
+      - run: npm run records:minimal
+      - run: node tools/git/ci-generated.ts
       - run: npm run format:check
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - if: github.event_name == 'push'
+        run: node tools/git/ci-generated.ts --commit
+        env:
+          GH_TOKEN: ${{ github.token }}

@@ -16,28 +16,18 @@ import {
   pathListArgs,
   progressCopies,
   rebaseOutcome,
-  regenerateScript,
-  splitConflicts,
+  splitGenerated,
 } from './pr-prep-lib.ts';
 
 const GENERATED = ['plan/claims.md', 'plan/residuals.md', 'records/minimal/sensitivity.json'];
-const SENSITIVITY = 'records/minimal/sensitivity.json';
 
-describe('splitConflicts', () => {
+describe('splitGenerated', () => {
   it('takes only the generated files, and leaves the rest to a person', () => {
-    expect(splitConflicts(['plan/claims.md', 'plan/backlog.md'], GENERATED)).toEqual({
+    expect(splitGenerated(['plan/claims.md', 'plan/backlog.md'], GENERATED)).toEqual({
       generated: ['plan/claims.md'],
       other: ['plan/backlog.md'],
     });
-    expect(splitConflicts(['plan/residuals.md'], GENERATED).other).toEqual([]);
-  });
-});
-
-describe('regenerateScript', () => {
-  it('recomputes the sensitivity when the branch changed it or it conflicted', () => {
-    expect(regenerateScript([SENSITIVITY, 'plan/claims.md'], [], SENSITIVITY)).toBe('records:minimal');
-    expect(regenerateScript([], [SENSITIVITY], SENSITIVITY)).toBe('records:minimal');
-    expect(regenerateScript(['plan/claims.md'], ['plan/claims.md'], SENSITIVITY)).toBe('records:check');
+    expect(splitGenerated(['plan/residuals.md'], GENERATED).other).toEqual([]);
   });
 });
 
