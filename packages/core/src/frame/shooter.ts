@@ -167,7 +167,11 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
       continue;
     }
     state.phase = 'priming';
-    const first = reloadFirstShotFrames(shot, model, params);
+    // ハイド中のリロードは込め終わりを遅らせた分だけ 1 発目の待ちを縮める（ふだんのリロードと同じ和。hideReloadExtraFrames）
+    const first = Math.max(
+      0,
+      reloadFirstShotFrames(shot, model, params) - (state.hideReload ? hideReloadExtraFrames(model, params) : 0),
+    );
     if (first === 0) return true;
     state.wait = first - 1;
     // 押下チャージ型: 1 発目の待ち（チャージ + 解放）は、込め終えた時に決めず、解放の分を負の経過から数えて毎フレームその時の
@@ -405,9 +409,20 @@ export function partialChargeShot(
 }
 
 /**
+ * ハイド中のリロードの込め終わりを、ふだんのリロードより遅らせるフレーム（WeaponModel.hideReloadExtraFrames。射撃姿勢維持型は
+ * reloadChunkFrames に入っている stanceReloadExtraFrames との差。分割リロードは 0）。込め終えた後の 1 発目の待ちからは同じだけ引く
+ */
+function hideReloadExtraFrames(model: WeaponModel, params: FiringParams): number {
+  if (params.splitReload) return 0;
+  return Math.max(0, model.hideReloadExtraFrames - (params.stance === null ? 0 : model.stanceReloadExtraFrames));
+}
+
+/**
  * Stage 16-B: 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
- * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま
+ * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま。
+ * C-0817（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅く、射撃姿勢維持型は
+ * 前の発から hideReloadStanceLeadFrames の後（窓の始まりより前にはしない）から始める
  */
 export function hideShooter(
   state: ShooterState,
@@ -417,7 +432,10 @@ export function hideShooter(
 ): void {
   if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
   state.hideReload = true;
-  const chunk = startReload(state, params);
+  // 窓に入る前の発からの経過（chargeElapsed）の分だけ早まる
+  const lead =
+    params.stance === null ? 0 : Math.max(0, model.hideReloadStanceLeadFrames - (state.chargeElapsed ?? Infinity));
+  const chunk = startReload(state, params) + lead + hideReloadExtraFrames(model, params);
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える
     state.wait = chunk - 1;

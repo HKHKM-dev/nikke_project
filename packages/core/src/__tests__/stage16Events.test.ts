@@ -11,13 +11,21 @@ import { runTeam } from './runTeam.ts';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
 import { enemyEventsOf, expandEnemyEvents, parseEnemyPresets } from '../enemies.ts';
 import { enemyEventNotes, untargetableRanges } from '../frame/events.ts';
-import { hideShooter, initialShooter, stepShooter, unhideShooter } from '../frame/shooter.ts';
+import {
+  hideShooter,
+  initialShooter,
+  partialChargeShot,
+  shotFramesUpTo,
+  stepShooter,
+  unhideShooter,
+} from '../frame/shooter.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
+import { characterOf } from './teamHelpers.ts';
 import { battleSecondsToFrames, gameSecondsToFrame } from '../time.ts';
 
 const master = parseEnemyPresets(
@@ -98,14 +106,25 @@ describe('untargetableRanges', () => {
   });
 });
 
-/** 射手を frames フレーム回し、窓の出入りで hide / unhide を呼ぶ（frame/firstPass.ts の手順 1 と同じ順） */
-function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frames: number): number[] {
+/**
+ * 射手を frames フレーム回し、窓の出入りで hide / unhide を呼ぶ（frame/firstPass.ts の手順 1 と同じ順）。partialCharge なら窓の始まりに
+ * 部分チャージで撃ってからハイドする（C-0109）
+ */
+function shotsWithWindow(
+  partial: Partial<ShotParams>,
+  window: FrameRange,
+  frames: number,
+  { partialCharge = false }: { partialCharge?: boolean } = {},
+): number[] {
   const shot = makeCharacter(partial).shot;
   const state = initialShooter(shot);
   const fired: number[] = [];
   for (let f = 0; f < frames; f++) {
     const blocked = window.start <= f && f < window.end;
-    if (f === window.start) hideShooter(state, shot);
+    if (f === window.start) {
+      if (partialCharge && partialChargeShot(state, shot) !== null) fired.push(f);
+      hideShooter(state, shot);
+    }
     if (f === window.end) unhideShooter(state, shot, window.end - window.start);
     if (stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, blocked)) fired.push(f);
   }
@@ -179,6 +198,55 @@ describe('射手（ハイドとリロード）', () => {
     expect(shotsWithWindow(sr, { start: 100, end: reloadEnd + 5 }, 400)[1]).toBe(usual);
     // 完了が窓の終わりの 40f 前: 明けから 70f
     expect(shotsWithWindow(sr, { start: 100, end: reloadEnd + 40 }, 400)[1]).toBe(reloadEnd + 40 + 70);
+  });
+
+  // C-0817（plan/design-hide-reload.md）: ハイド中のリロードは、バーが満ちる（リロードの秒 + 12f。C-0135）前に明けると取り消す。
+  // 射撃姿勢維持型は、前の発の 19f 後から始める（C-0109）。窓はマガジンの途中から 118f
+  // startOf は窓の無い列（usual）から窓の始まりを決める
+  const remainingAfter = (
+    shot: ShotParams,
+    startOf: (usual: number[]) => number = (usual) => usual[2]! + 30,
+  ): { before: number; after: number } => {
+    const usual = shotFramesUpTo(shot, 2000);
+    const start = startOf(usual);
+    const fired = shotsWithWindow(shot, { start, end: start + 118 }, start + 2000, { partialCharge: true });
+    const after = fired.filter((f) => f >= start + 118);
+    // 明けの後、リロード（窓の無い列の、いちばん短い間といちばん長い間の中間を超える間）までに撃った数
+    const gaps = usual.slice(1, 20).map((f, i) => f - usual[i]!);
+    const threshold = (Math.min(...gaps) + Math.max(...gaps)) / 2;
+    const reload = after.findIndex((f, i) => i > 0 && f - after[i - 1]! > threshold);
+    // 窓の始まりの部分チャージの発は、ジャンプの前に数える
+    return { before: fired.filter((f) => f <= start).length, after: reload };
+  };
+  const shotOf = (rid: number): ShotParams => characterOf(rid).shot;
+  // 3 発目と 4 発目の間の、4 発目の 20f 前（チャージの途中）
+  const midCharge = (usual: number[]): number => usual[3]! - 20;
+
+  it('C-0817: a 2 s reload does not finish in a 2 s window; the rest of the magazine is fired after it (Vesti: TU, DOWN_Charge)', () => {
+    // 0815・0816: マガジン 8 発のうち 4 発の後のジャンプで、明けの後に残りの 4 発を撃ってからリロード（0815-11・0816-08）
+    const { before, after } = remainingAfter(shotOf(94));
+    expect(before).toBe(3);
+    expect(after).toBe(8 - before);
+  });
+
+  it('C-0817: a fire-stance weapon starts the hide reload 19f after its last shot (the partial shot at the window start), so A2 does not finish', () => {
+    // 0123: 窓の始まりに部分チャージで撃ち、3 回とも明けの後に残りを撃ってからリロード（0123-19・0123-21）
+    const { before, after } = remainingAfter(shotOf(811), midCharge);
+    expect(before).toBe(4);
+    expect(after).toBe(6 - before);
+  });
+
+  it('C-0817: an UP-charge weapon without the fire stance reloads from the window start and finishes a 1.5 s reload (Delta in 0224)', () => {
+    // デルタ（SR・1.5 秒）: チャージの途中で窓に入って部分チャージで撃っても、窓の始まりから 88 + 12f で、118f の窓の中で満ちる（0224-08）
+    const { before, after } = remainingAfter(shotOf(20), midCharge);
+    expect(before).toBe(4);
+    expect(after).toBe(6);
+  });
+
+  it('C-0817: a short reload still finishes in the window (reload 1.6 s + 12f < 118f; the magazine is full after it)', () => {
+    const shot: ShotParams = { ...shotOf(94), reloadTime: 1.6 };
+    const { after } = remainingAfter(shot);
+    expect(after).toBe(8);
   });
 
   it('does nothing when the magazine is full or already empty (the ordinary reload continues)', () => {

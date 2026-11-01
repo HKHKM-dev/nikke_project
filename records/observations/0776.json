@@ -158,7 +158,7 @@
       "metric": "hitDamage",
       "args": {
         "slot": 3,
-        "frame": 6890,
+        "frame": 6784,
         "core": true,
         "crit": false,
         "distance": false
@@ -177,7 +177,7 @@
     },
     "method": {
       "tool": "hud.ts --mode jumps",
-      "note": "HUD の総ダメージの増分（3 人・4 人の編成なので、ほかのキャラのヒットが同じフレームに重なった増分は使わない）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（f776）。フルバーストは read.ts のレシピ burst-panel"
+      "note": "HUD の総ダメージの増分（3 人・4 人の編成なので、ほかのキャラのヒットが同じフレームに重なった増分は使わない）。戦闘開始は timer.ts --mode changes の画面の切り替えの次の変わり目（f776）。フルバーストは read.ts のレシピ burst-panel。敵のジャンプの間のハイド中のリロード（C-0817。plan/design-hide-reload.md）をモデルに入れてチェーンが動いたので、比べるモデルのフレームを同じ場面（4 回目のフルバーストのフルアクティブの 1 発目）の f6784 に指し直した（前は f6890。2026-11-01）"
     }
   },
   {
