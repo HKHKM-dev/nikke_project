@@ -29,7 +29,7 @@ type Props = {
   detailed: boolean;
 };
 
-const DETAIL_SUMMARY = '詳細内訳（通常・バースト・スキル・DPS・タイムライン等）';
+const DETAIL_SUMMARY = '詳細内訳（通常・バースト・スキル・タイムライン等）';
 const VERIFICATION_SUMMARY = '検証用の詳細';
 
 /** キャラのいない編成の、詳細の見出し（薄くして開かない） */
@@ -142,7 +142,6 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
                   <th>通常攻撃</th>
                   <th>バーストスキル</th>
                   <th>スキルダメージ</th>
-                  <th>DPS</th>
                   <th>総ダメージ</th>
                   <th>寄与率</th>
                 </tr>
@@ -166,7 +165,6 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
                         <small className="sub"> ×{s.skillHits.activations.length}</small>
                       )}
                     </td>
-                    <td>{formatNumber(s.dps)}</td>
                     <td>{formatNumber(s.totalDamage)}</td>
                     <td>{formatPercent(s.share, 1)}</td>
                   </tr>
@@ -191,7 +189,7 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
                 <details key={s.index} className="slot-detail">
                   <summary>
                     スロット {s.index + 1}: {s.character.name.ja} — 総ダメージ {formatNumber(s.totalDamage)}（
-                    {formatPercent(s.share, 1)}） / DPS {formatNumber(s.dps)}
+                    {formatPercent(s.share, 1)}）
                   </summary>
                   <ResultPanel
                     slotIndex={s.index}
@@ -214,7 +212,7 @@ export function TeamBreakdown({ result, view, loadingCount, skillsLoadingCount, 
       )}
 
       {detailed && filled.length > 0 && (
-        <details className="segments verification-details">
+        <details className="segments">
           {/* 一本化の段 A-2（plan/design-unify-sim-calc.md 5.3 節）: 2026-10-27 までは、ここに計算モデル（calc / sim）の切り替えと「calc との差」があった */}
           <summary>{VERIFICATION_SUMMARY}</summary>
           {eventsLabel !== '' && <p className="hint">敵の出来事: {eventsLabel}</p>}

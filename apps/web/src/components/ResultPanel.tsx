@@ -247,8 +247,6 @@ export function ResultPanel({
             <dd>{`${formatNumber(slot.skillHits.totalDamage)}（${slot.skillHits.activations.length} 回）`}</dd>
           </>
         )}
-        <dt>DPS</dt>
-        <dd>{formatNumber(slot.dps)}</dd>
         <dt>総ダメージ</dt>
         <dd className="total">{formatNumber(slot.totalDamage)}</dd>
       </dl>
