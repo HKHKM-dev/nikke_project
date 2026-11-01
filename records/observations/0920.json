@@ -16,10 +16,7 @@
     "scope": {
       "slot": 1,
       "source": "gauge",
-      "frames": [
-        778,
-        2316
-      ]
+      "frames": [778, 2316]
     },
     "compare": {
       "model": "sim",
@@ -33,9 +30,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -46,12 +41,7 @@
     "readAt": "2026-11-01",
     "kind": "gauge",
     "use": "record",
-    "value": [
-      0.03,
-      -0.03,
-      0.02,
-      -0.02
-    ],
+    "value": [0.03, -0.03, 0.02, -0.02],
     "unit": "px",
     "description": "シン単騎で、1〜4 回目のマガジンの最後の弾（S1 の挑発が付く発。f1068・1440・1812・2184）の後のリロードの間の、BURST バーの差（端数つきの px。最後の弾の 1〜5f 後の中央値から、次のマガジンの最初のヒットの前 6f の中央値まで）",
     "method": {
@@ -61,10 +51,7 @@
     "scope": {
       "slot": 1,
       "source": "gauge",
-      "frames": [
-        1068,
-        2266
-      ]
+      "frames": [1068, 2266]
     }
   },
   {
@@ -74,12 +61,7 @@
     "readAt": "2026-11-01",
     "kind": "gauge",
     "use": "record",
-    "value": [
-      0.56,
-      0.54,
-      0.52,
-      0.46
-    ],
+    "value": [0.56, 0.54, 0.52, 0.46],
     "unit": "px",
     "description": "シン単騎で、2〜5 回目のマガジンの最初のヒット（f1150・1522・1894・2266）の BURST バーの伸び（端数つきの px。0920-02 の見え方の物差し）",
     "method": {
@@ -89,10 +71,7 @@
     "scope": {
       "slot": 1,
       "source": "gauge",
-      "frames": [
-        1150,
-        2266
-      ]
+      "frames": [1150, 2266]
     }
   }
 ]

@@ -44,9 +44,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "note": "戦闘の最初の発から数えて、1 回目に BURST バーが消えたシンの発の番号",
       "tolerance": {
