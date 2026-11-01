@@ -12155,70 +12155,6 @@
       "plus": 0
     },
     {
-      "observation": "0505-01",
-      "element": "ナガ skill1.effects[1]",
-      "key": "518a307652bd8837",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0505-02",
-      "element": "ナガ skill1.effects[1]",
-      "key": "6a7e61a3ba1582c4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0505-03",
-      "element": "ナガ skill1.effects[1]",
-      "key": "ccba1e41d08eb51a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0505-04",
-      "element": "ナガ skill1.effects[1]",
-      "key": "85d8cb5eb5ddb4cd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0506-01",
-      "element": "ナガ skill1.effects[1]",
-      "key": "216f5af8b48b6f61",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0506-02",
-      "element": "ナガ skill1.effects[1]",
-      "key": "f3608219aa0de20a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0506-03",
-      "element": "ナガ skill1.effects[1]",
-      "key": "368fad7bfdf792c4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0506-04",
-      "element": "ナガ skill1.effects[1]",
-      "key": "93b25bb85d073ce3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[0]",
       "key": "951a1d3b51f1382c",
@@ -12258,14 +12194,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0507-01",
-      "element": "ナガ skill1.effects[1]",
-      "key": "951a1d3b51f1382c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0507-02",
@@ -12309,14 +12237,6 @@
       }
     },
     {
-      "observation": "0507-02",
-      "element": "ナガ skill1.effects[1]",
-      "key": "231cfab833b6fbab",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[0]",
       "key": "3183d8476f0c27bc",
@@ -12356,14 +12276,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0507-03",
-      "element": "ナガ skill1.effects[1]",
-      "key": "3183d8476f0c27bc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0508-05",
@@ -13254,24 +13166,8 @@
       "plus": null
     },
     {
-      "observation": "0581-01",
-      "element": "ナガ skill1.effects[1]",
-      "key": "c42f6c858db27d50",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0581-02",
       "element": "エマ burst.effects[0]",
-      "key": "d25a331cf376ad43",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0581-02",
-      "element": "ナガ skill1.effects[1]",
       "key": "d25a331cf376ad43",
       "effective": false,
       "minus": 0,
@@ -13286,24 +13182,8 @@
       "plus": null
     },
     {
-      "observation": "0581-03",
-      "element": "ナガ skill1.effects[1]",
-      "key": "326c08ccd1183ceb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0582-01",
       "element": "エマ burst.effects[0]",
-      "key": "ac0f6ae14430e044",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0582-01",
-      "element": "ナガ skill1.effects[1]",
       "key": "ac0f6ae14430e044",
       "effective": false,
       "minus": 0,
@@ -13318,24 +13198,8 @@
       "plus": null
     },
     {
-      "observation": "0582-02",
-      "element": "ナガ skill1.effects[1]",
-      "key": "b6b40ed00ab98ab7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0582-03",
       "element": "エマ burst.effects[0]",
-      "key": "ca0c06a0b21f1b77",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0582-03",
-      "element": "ナガ skill1.effects[1]",
       "key": "ca0c06a0b21f1b77",
       "effective": false,
       "minus": 0,
@@ -14214,14 +14078,6 @@
       "plus": 0
     },
     {
-      "observation": "0703-03",
-      "element": "ナガ skill1.effects[1]",
-      "key": "b565b34b1a819d0a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0703-04",
       "element": "アスカ burst.effects[0]",
       "key": "c753a31ae207a259",
@@ -14244,30 +14100,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0703-04",
-      "element": "ナガ skill1.effects[1]",
-      "key": "c753a31ae207a259",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0706-06",
-      "element": "ナガ skill1.effects[1]",
-      "key": "184e6007199c2d40",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0706-07",
-      "element": "ナガ skill1.effects[1]",
-      "key": "bd83a6c45e603de7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0708-05",
@@ -19179,14 +19011,21 @@
       "plus": null
     },
     {
+<<<<<<< HEAD
       "observation": "0842-03",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "4a0513053f327452",
+=======
+      "observation": "0843-01",
+      "element": "ティア skill2.effects[1]",
+      "key": "e3a88c1b066cb786",
+>>>>>>> 510819d6 (段 17 の PR 1 を仕上げる: ナガの S1 の遮蔽物 HP 回復とティアの S1（V-0598、C-0826・C-0827）)
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
+<<<<<<< HEAD
       "observation": "0842-03",
       "element": "エマ：タクティカル・アップ burst.effects[1]",
       "key": "4a0513053f327452",
@@ -19198,12 +19037,69 @@
       "observation": "0842-03",
       "element": "エマ：タクティカル・アップ skill2.effects[0]",
       "key": "4a0513053f327452",
+=======
+      "observation": "0843-02",
+      "element": "ティア skill2.effects[1]",
+      "key": "6ac14bd8bd044ab1",
+>>>>>>> 510819d6 (段 17 の PR 1 を仕上げる: ナガの S1 の遮蔽物 HP 回復とティアの S1（V-0598、C-0826・C-0827）)
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
+<<<<<<< HEAD
       "observation": "0842-03",
+=======
+      "observation": "0843-07",
+      "element": "ティア skill2.effects[1]",
+      "key": "c2040e2dc0ce5ae2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0843-18",
+      "element": "ティア skill2.effects[1]",
+      "key": "b51bfbe58e993150",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0844-01",
+      "element": "ティア skill2.effects[1]",
+      "key": "49ac9950ed5d547b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0844-02",
+      "element": "ティア skill2.effects[1]",
+      "key": "4ecfc66e2a694335",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0844-06",
+      "element": "ティア skill2.effects[1]",
+      "key": "9152f43280f87617",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0844-15",
+      "element": "ティア skill2.effects[1]",
+      "key": "7c3314134d6cb5d4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0845-08",
+>>>>>>> 510819d6 (段 17 の PR 1 を仕上げる: ナガの S1 の遮蔽物 HP 回復とティアの S1（V-0598、C-0826・C-0827）)
       "element": "ティア skill2.effects[1]",
       "key": "4a0513053f327452",
       "effective": false,

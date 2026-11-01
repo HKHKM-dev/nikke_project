@@ -771,6 +771,35 @@ function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
+ * 2 段目の段 17 の PR 1（V-0598）: 枠 from の shot 発目（1 始まり）の撃ったフレームから、枠 slot が受ける timed の効果（skill と stat で絞る）の
+ * 窓の付き始め（edge: start。その発のフレームより後に始まった最初の窓）か切れ目（edge: end。その発の次のフレームに効いている窓）までの
+ * 動画のフレーム数。続いた小片は 1 つの窓にまとめる。味方の射撃の回数のきっかけ（ナガの 12 発ごとの遮蔽物 HP 回復）で付く窓を、録画の
+ * その発から数えた幅（レシピ buff-edge の観測値）と比べる
+ */
+function buffEdgeFromShot(result: SimResult, ctx: MetricContext): number {
+  const edge = ctx.args.edge;
+  if (edge !== 'start' && edge !== 'end') throw new Error(`edge は start か end（${String(edge)}）`);
+  const shots = slotOf(result.shots, withArgs(ctx, { slot: ctx.args.from })).frames;
+  const n = Number(ctx.args.shot);
+  const base = shots[n - 1];
+  if (!Number.isInteger(n) || n < 1 || base === undefined)
+    throw new Error(`枠 ${String(ctx.args.from)} の ${n} 発目が無い`);
+  const windows: { start: number; end: number }[] = [];
+  for (const w of buffPiecesFor(result, ctx).sort((a, b) => a.start - b.start)) {
+    const last = windows.at(-1);
+    if (last !== undefined && w.start <= last.end) last.end = Math.max(last.end, w.end);
+    else windows.push({ start: w.start, end: w.end });
+  }
+  const window =
+    edge === 'start'
+      ? windows.find((w) => w.start > base)
+      : windows.find((w) => w.start <= base + 1 && base + 1 < w.end);
+  if (window === undefined) throw new Error(`${n} 発目の後に${edge === 'start' ? '始まった' : '効いている'}窓が無い`);
+  const at = edge === 'start' ? window.start : window.end;
+  return videoFrameOf(result.schedule, at) - videoFrameOf(result.schedule, base);
+}
+
+/**
  * ソルジャーE.G. 編（V-0241）: 枠の、スロット skill の確率のきっかけの効果の機会（発の次のフレームから、確率 = p × その発の回数の量）と
  * 維持のフレーム。窓の小片（skills/chance.ts）と同じ機会を、射撃の列から作り直す
  */
@@ -1370,6 +1399,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     sim: buffWindowShotIntervalMean,
   },
   buffWindowEndFromFullBurstEnd: { args: ['slot', 'skill', 'stat', 'n'], sim: buffWindowEndFromFullBurstEnd },
+  buffEdgeFromShot: { args: ['slot', 'skill', 'stat', 'from', 'shot', 'edge'], sim: buffEdgeFromShot },
   buffEdgeFromActivation: { args: ['slot', 'skill', 'stat', 'from', 'n', 'edge'], sim: buffEdgeFromActivation },
   chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
   chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
