@@ -835,6 +835,8 @@
 | 0861 | `20261101-0861_smg+sr+sr_liter+delta+snow-white-ha.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0605 の撮影。リター（AI）・デルタ（AI）・スノーホワイト：ヘビーアームズ（操作）。オートバースト ON。オート射撃は ON で、依頼ではチェーンの始まりからフルバーストの終わりの 1〜2 秒後まで手で OFF（読みで確かめる）。残り 01:58 で一時停止して止めた（最後に一時停止のパネルが写っている） |
 | 0866 | `20261101-0866_mg+rl_emma-tu+laplace-uh_weapon-change-explosion.mp4` | エマ：タクティカル・アップ（93、MG・灼熱・SSR） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 0867 | `20261101-0867_mg+rl_emma-tu+laplace-uh_weapon-change-explosion.mp4` | エマ：タクティカル・アップ（93、MG・灼熱・SSR） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 0868 | `20261101-0868_sg_isabel_delay-def-down-1.mp4` | ラム（822、SR・風圧・SR） + イサベル（231、SG・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0608。ラム（AI）・イサベル（AI）・エレグ（操作・撃たない）。オートバースト ON |
+| 0869 | `20261101-0869_sg_isabel_delay-def-down-2.mp4` | ラム（822、SR・風圧・SR） + イサベル（231、SG・電撃・SSR） + ◎エレグ（500、MG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / ON | V-0608。ラム（AI）・イサベル（AI）・エレグ（操作・撃たない）。オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
