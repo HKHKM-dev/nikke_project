@@ -205,5 +205,111 @@
       "slot": 1,
       "source": "skill"
     }
+  },
+  {
+    "id": "0898-10",
+    "recording": "0898",
+    "kind": "count",
+    "use": "compare",
+    "value": 32,
+    "unit": "hits",
+    "description": "アイン単騎の戦闘の全部の、ニアフェザー攻撃のヒットの数（0898-04〜06 の数）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "108,878 か 163,316 の増分の数。単騎なので重なりは無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0898-11",
+    "recording": "0898",
+    "kind": "timing",
+    "use": "compare",
+    "value": [210, 381, 551, 722, 892, 1063, 1234, 1404],
+    "unit": "f",
+    "description": "アイン単騎の、戦闘開始の 4 機のニアフェザー攻撃の最初の 8 回のヒットの動画のフレーム（戦闘開始から）",
+    "method": {
+      "tool": "hud.ts --mode jumps と timer.ts --mode changes",
+      "note": "0898-04 から戦闘開始（0898-07）を引いた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0898-12",
+    "recording": "0898",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 11.08,
+    "unit": "%",
+    "description": "ニアフェザー攻撃の 1 ヒットで溜まったゲージ（本当の量。0898-09 の増分から）",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "同じ録画のアインの発（フルチャージ。14% = 56,000 × 2.5。C-0007）の増分 16.8%（19px）との比で、13.3%（15px）÷ 16.8% × 14% = 11.08%"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.75
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]

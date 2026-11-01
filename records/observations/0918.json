@@ -123,5 +123,90 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0918-08",
+    "recording": "0918",
+    "kind": "timing",
+    "use": "input",
+    "value": [2607, 5265, 7904],
+    "unit": "f",
+    "description": "撮影 B1（手でバースト）の、ラム（I）のバーストの本当の発動のゲーム内のフレーム（戦闘開始から、止まりを除く）の並び（比べる指定の manualBursts に使う）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の I → II の替わり目と、tools/captures/timer.ts --mode changes の戦闘開始",
+      "note": "I → II の替わり目（0918-01）の動画のフレームから、戦闘開始（0918-04）・替わり目までの 5f と発動の止まり 1f・それより前のフルバーストの入りの止まり 22f と I・II の発動の止まり 1f ずつを引いた（0788-05 と同じ。モデルの videoFrameOf の逆）"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0918-09",
+    "recording": "0918",
+    "kind": "count",
+    "use": "compare",
+    "value": 139,
+    "unit": "hits",
+    "description": "撮影 B1 の戦闘の全部の、ニアフェザー攻撃のヒットの数（0918-05 の数）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "ラム・デルタと重なった増分は分けて数えた（0918-05）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0918-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0918-10",
+    "recording": "0918",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 11.08,
+    "unit": "%",
+    "description": "ニアフェザー攻撃の 1 ヒットで溜まったゲージ（本当の量。0918-07 の増分から）",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "アインは撃たないので、単騎と同じ px（15px）を、単騎のアインの発（19px = 14%）との比で直した（11.08%）。同じ区間の AI のラム・デルタの発（1 発ぶん 5.6%）は 7〜8px"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "timerGauge",
+      "args": {
+        "slot": 3,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.75
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0918-08"
+      }
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

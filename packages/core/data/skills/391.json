@@ -15,18 +15,24 @@
           "claims": [
             "C-0869"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "戦闘開始時のニアフェザー 4 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない",
-          "en": "The 4 Near Feathers summoned at the start of battle only set the count for Near Feather Attack (skill2 notes[0], not modeled) and affect nothing else",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "target": "unknown",
-            "trigger": "unknown"
-          }
+          "kind": "summon",
+          "summon": "nearFeather",
+          "trigger": "battleStart",
+          "lifetimesSeconds": [
+            26,
+            32,
+            38,
+            null
+          ],
+          "assumes": {
+            "ja": "戦闘開始時に 4 機を展開し、1 機ずつ 26・32・38 秒で消え、最後の 1 機は消えない（録画で読んだ値。V-0636）",
+            "en": "Deploys 4 at the start of battle; they expire one by one at 26, 32 and 38 s and the last one stays (values read from recordings, V-0636)"
+          },
+          "claims": [
+            "C-0888"
+          ]
         }
       ]
     },
@@ -48,18 +54,33 @@
           "claims": [
             "C-0868"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "ニアフェザー攻撃（ランダムの敵 1 機に最終攻撃力の 値 02 % の防御力無視ダメージ）は未対応。1 回の攻撃は 1 ヒット（機数を掛けない）だが、攻撃の間隔は展開している機数で変わり、機数はそれぞれ独立した維持時間で減る（ツールチップ「ニアフェザー」）。機数ごとの間隔と維持時間を読んでいない（V-0625）",
-          "en": "Near Feather Attack (true damage of value 02 % of final ATK to one random enemy) is not modeled. Each attack is one hit (not multiplied by the count), but the interval depends on the number of deployed feathers, which expire on independent timers (tooltip \"Near Feather\"). The interval per count and the durations are not read (V-0625)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "target": "unknown",
-            "trigger": "unknown"
-          }
+          "kind": "damage",
+          "trigger": {
+            "summon": "nearFeather",
+            "intervalSeconds": {
+              "1": 6.7,
+              "2": 5.4,
+              "3": 4.2,
+              "4": 2.9,
+              "6": 0.3
+            },
+            "startDelaySeconds": 0.67
+          },
+          "ref": 2,
+          "damageType": "true",
+          "gaugePerHit": 2,
+          "assumes": {
+            "ja": "ランダムの敵 1 機は単体ボス。1 回の攻撃は 1 ヒット（V-0625）。間隔は展開している機数で決まる（1・2・3・4・6 機。V-0636）。機数が変わった時に次の攻撃がいつ来るかは読めていないので、進みをいまの機数の間隔の逆数の速さで積む期待値の形で出す（展開で 0 に戻し、展開から 0.67 秒は進めない）。1 ヒットで射手の 1 発ぶん（フルチャージ倍率なし）の 2 倍のゲージを溜める（V-0636）",
+            "en": "One random enemy is the single boss. Each attack is one hit (V-0625). The interval depends on the number of deployed feathers (1, 2, 3, 4 and 6; V-0636). When the count changes, the timing of the next attack is not known, so attacks are placed by the expected rate: progress accumulates at the inverse of the current interval (reset on deploy, paused for 0.67 s after deploy). Each hit charges twice the shooter's per-shot burst gauge without the full-charge multiplier (V-0636)"
+          },
+          "claims": [
+            "C-0888",
+            "C-0889",
+            "C-0890",
+            "C-0891"
+          ]
         }
       ]
     },
@@ -101,18 +122,27 @@
             "C-0870",
             "C-0871"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "ニアフェザー 6 機展開は、ニアフェザー攻撃（S2 の notes[0]。未対応）の機数で、ほかに効かない。録画では、バーストのたびに約 17.6f おきのニアフェザー攻撃が 33〜35 回続いた（V-0625）",
-          "en": "The 6 Near Feathers only set the count for Near Feather Attack (skill2 notes[0], not modeled) and affect nothing else. In recordings each Burst was followed by 33-35 Near Feather Attacks about 17.6 frames apart (V-0625)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "target": "unknown",
-            "trigger": "unknown"
-          }
+          "kind": "summon",
+          "summon": "nearFeather",
+          "trigger": "burstUse",
+          "lifetimesSeconds": [
+            10.67,
+            10.67,
+            26,
+            32,
+            38,
+            null
+          ],
+          "assumes": {
+            "ja": "前の組を置き換えて 6 機を展開する。2 機は 10.67 秒（B1 で読んだ幅の中の値）、残りは戦闘開始時の 4 機と同じ 26・32・38 秒で消え、最後の 1 機は消えない（V-0636）",
+            "en": "Replaces the previous feathers with 6. Two expire at 10.67 s (a value within the range read in B1); the rest expire at 26, 32 and 38 s like the 4 at the start of battle, and the last one stays (V-0636)"
+          },
+          "claims": [
+            "C-0889",
+            "C-0890"
+          ]
         }
       ]
     }

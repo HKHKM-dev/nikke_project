@@ -35,6 +35,7 @@ import {
   SUPPORT_BADGE,
   formatRemoveState,
   formatCounterChange,
+  formatSummon,
   formatStackChange,
   formatStateGrant,
 } from '../skillLabels.ts';
@@ -205,7 +206,8 @@ export function SkillDetailsSection({
                 e.kind === 'state' ||
                 e.kind === 'removeState' ||
                 e.kind === 'stackChange' ||
-                e.kind === 'counterChange',
+                e.kind === 'counterChange' ||
+                e.kind === 'summon',
             );
           const hasAssumes = entry !== null && entry.effects.some((e) => e.assumes);
           const hasBurstDelay = slot === 'burst' && measuredBurstDelayRow(shown.character) !== null;
@@ -337,7 +339,13 @@ export function SkillDetailsSection({
                                       )}
                                     </li>,
                                   ]
-                                : [],
+                                : e.kind === 'summon'
+                                  ? [
+                                      <li key={i} className="note modeling">
+                                        <span className="badge">召喚</span> {formatSummon(e)}
+                                      </li>,
+                                    ]
+                                  : [],
                       )}
                     </ul>
                   )}

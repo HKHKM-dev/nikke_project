@@ -59,7 +59,7 @@
 // このフレームに付いた間隔の変更の件も見るように、手順 3 の後で数える（ゲージは先のフレームに予約するので、数える位置で値は変わらない）。
 import { burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { gameSecondsToFrames } from '../time.ts';
+import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
 import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
@@ -126,7 +126,15 @@ import {
   shotCountWeight,
   type TriggerTracker,
 } from '../skills/triggers.ts';
-import { chargeTriggersOf, hasReloadEndEffect, type ShotCountKind } from '../skills/types.ts';
+import {
+  chargeTriggersOf,
+  hasReloadEndEffect,
+  isSummonAttackTrigger,
+  SKILL_SLOTS,
+  type ShotCountKind,
+  type SummonEffect,
+} from '../skills/types.ts';
+import type { SummonId } from '../skills/summons.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
@@ -246,6 +254,11 @@ export type FirstPassResult = {
    * delayFrames）。照合用
    */
   timerGauges: { slotIndex: number; fireFrame: number; frame: number; energy: number }[];
+  /**
+   * アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 召喚の攻撃（damage のきっかけ { summon }）の発火のフレーム（発生順）。
+   * 1 パス目が機数と進みを追って決め、2 パス目（frame/plan.ts の planSkillHits）がこの列で倍率ダメージを出す
+   */
+  summonHits: { slotIndex: number; summon: SummonId; frame: number }[];
   /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が区間を作る
    * （skills/holders.ts の buffTimelineOf）
@@ -934,6 +947,88 @@ function runFirstPassOnce(
   });
   /** 枠 i のヒットごとのゲージの、このフレームの 1 ヒットの量 */
   const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
+  // アインのニアフェザー編（plan/design-ein-near-feather.md 1.2・1.3 節）: 召喚の機数と攻撃の進み。展開（戦闘開始と、その枠のバーストの
+  // 効果のフレーム）で組を置き換えて進みを 0 に戻し、フレームごとに、いまの機数の間隔の逆数を進みに積む。1 に届いたフレームに攻撃が
+  // 発火し（余りは持ち越す）、gaugePerHit の効果はそのフレームのゲージに射手の 1 ヒットぶん × 倍数を足す
+  const summonHits: FirstPassResult['summonHits'] = [];
+  const summonTrackers: {
+    slotIndex: number;
+    summon: SummonId;
+    onBattleStart?: SummonEffect;
+    onBurstUse?: SummonEffect;
+    /** 攻撃のフレーム数で表した、機数ごとの間隔（端数あり） */
+    intervalFrames: Readonly<Record<number, number>>;
+    delayFrames: number;
+    /** ヒットごとのゲージの倍数（gaugePerHit の効果ごと） */
+    gaugeScales: number[];
+    deployFrame: number | null;
+    /** いまの組の、1 機ずつの維持時間（フレーム。null は消えない） */
+    lifetimes: (number | null)[];
+    progress: number;
+    /** 次に見るバーストの発動（activationsOf() の添字） */
+    nextActivation: number;
+  }[] = [];
+  slots.forEach((slot, i) => {
+    if (slot === null || slot.definition === null) return;
+    const deploys = SKILL_SLOTS.flatMap((s) => slot.definition!.skills[s].effects).filter(
+      (e): e is SummonEffect => e.kind === 'summon',
+    );
+    const attacks = resolveDamageEffects(slot.definition, slot.character, slot.levels);
+    for (const effect of attacks) {
+      const t = effect.trigger;
+      if (!isSummonAttackTrigger(t) || summonTrackers.some((x) => x.slotIndex === i && x.summon === t.summon)) continue;
+      const same = attacks.filter((e) => isSummonAttackTrigger(e.trigger) && e.trigger.summon === t.summon);
+      const onBattleStart = deploys.find((d) => d.summon === t.summon && d.trigger === 'battleStart');
+      const onBurstUse = deploys.find((d) => d.summon === t.summon && d.trigger === 'burstUse');
+      summonTrackers.push({
+        slotIndex: i,
+        summon: t.summon,
+        ...(onBattleStart === undefined ? {} : { onBattleStart }),
+        ...(onBurstUse === undefined ? {} : { onBurstUse }),
+        intervalFrames: Object.fromEntries(
+          Object.entries(t.intervalSeconds).map(([n, sec]) => [Number(n), sec / GAME_SECONDS_PER_FRAME]),
+        ),
+        delayFrames: gameSecondsToFrames(t.startDelaySeconds),
+        gaugeScales: same.filter((e) => e.gaugePerHit === true).map((e) => e.gaugePerHitScale ?? 1),
+        deployFrame: null,
+        lifetimes: [],
+        progress: 0,
+        nextActivation: 0,
+      });
+    }
+  });
+  const deploySummon = (t: (typeof summonTrackers)[number], at: number, effect: SummonEffect): void => {
+    t.deployFrame = at;
+    t.lifetimes = effect.lifetimesSeconds.map((x) => (x === null ? null : gameSecondsToFrames(x)));
+    t.progress = 0;
+  };
+  /** フレーム f の終わりに、f の展開を入れ、次のフレームの攻撃の進みを積む（発火したら次のフレームのゲージに予約する） */
+  const countSummons = (f: number): void => {
+    const activations = activationsOf();
+    for (const t of summonTrackers) {
+      if (f === 0 && t.onBattleStart !== undefined) deploySummon(t, 0, t.onBattleStart);
+      while (t.nextActivation < activations.length) {
+        const a = activations[t.nextActivation]!;
+        if (a.slotIndex === t.slotIndex) {
+          const at = effectFrameOf(a);
+          if (at > f) break;
+          if (t.onBurstUse !== undefined) deploySummon(t, at, t.onBurstUse);
+        }
+        t.nextActivation += 1;
+      }
+      const g = f + 1;
+      if (g >= frames || t.deployFrame === null) continue;
+      const age = g - t.deployFrame;
+      if (age <= t.delayFrames) continue;
+      const n = t.lifetimes.filter((l) => l === null || age < l).length;
+      if (n === 0) continue;
+      t.progress += 1 / t.intervalFrames[n]!;
+      if (t.progress < 1 - 1e-9) continue;
+      t.progress -= 1;
+      summonHits.push({ slotIndex: t.slotIndex, summon: t.summon, frame: g });
+      for (const scale of t.gaugeScales) reserveTimerGauge(t.slotIndex, f, g, hitGaugeEnergy(t.slotIndex) * scale);
+    }
+  };
   const countDamageHitGauges = (f: number): void => {
     for (const t of damageTimerGauges) {
       if (!t.fires(f)) continue;
@@ -1303,6 +1398,7 @@ function runFirstPassOnce(
       countCycles(f);
       countShotPauses(f);
       countDamageHitGauges(f);
+      countSummons(f);
       continue;
     }
 
@@ -1561,6 +1657,7 @@ function runFirstPassOnce(
     countCycles(f);
     countShotPauses(f);
     countDamageHitGauges(f);
+    countSummons(f);
   }
 
   const leadShots = lists.leadShots();
@@ -1576,6 +1673,7 @@ function runFirstPassOnce(
     dotGauges,
     shotGauges,
     timerGauges,
+    summonHits,
     history,
   };
   return { result, leadShots };

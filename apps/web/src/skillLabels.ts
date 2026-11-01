@@ -15,6 +15,7 @@ import {
   isWhileEffect,
   namedStateName,
   staticStatesOf,
+  summonName,
 } from '@nikke/core';
 import type {
   BasicBurstStep,
@@ -44,6 +45,7 @@ import type {
   SkillSupport,
   StateContentItem,
   StateGrantEffect,
+  SummonEffect,
 } from '@nikke/core';
 import { formatNumber, formatPercent } from './format.ts';
 
@@ -136,6 +138,13 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   if ('chargeFull' in trigger) return 'フルチャージした時';
   // マスト編: 「自分の HP が X% 以下である限り」
   if ('selfHpAtMost' in trigger) return `自分の HP が ${formatNumber(trigger.selfHpAtMost * 100)}% 以下の間`;
+  // アインのニアフェザー編: 「ニアフェザーの機数で決まる間隔ごと（4 機 2.9 秒…）」
+  if ('summon' in trigger) {
+    const table = Object.entries(trigger.intervalSeconds)
+      .map(([n, s]) => `${n} 機 ${formatNumber(s)} 秒`)
+      .join('・');
+    return `${summonName(trigger.summon).ja}の機数で決まる間隔ごと（${table}）`;
+  }
   if ('every' in trigger) {
     const what = {
       normalShot: '通常攻撃',
@@ -350,6 +359,19 @@ export function formatCounterChange(effect: CounterChangeEffect, amount: number)
       : '';
   const change = `${effect.decrease ? '−' : '+'}${formatNumber(amount)}`;
   return `${trigger}${counterName(effect.counter).ja} ${change}（上限 ${formatNumber(counterMax(effect.counter))}）${formatConditionSuffix(effect.condition)}`;
+}
+
+/**
+ * アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。「戦闘開始時、ニアフェザー 4 機を展開（前の組を置き換える）。
+ * 1 機ずつ 26・32・38 秒で消え、1 機は消えない」
+ */
+export function formatSummon(effect: SummonEffect): string {
+  const when = effect.trigger === 'battleStart' ? '戦闘開始時' : 'バースト使用時';
+  const finite = effect.lifetimesSeconds.filter((x): x is number => x !== null);
+  const stays = effect.lifetimesSeconds.length - finite.length;
+  const expiry = finite.length === 0 ? '' : `。1 機ずつ ${finite.map(formatNumber).join('・')} 秒で消え`;
+  const rest = stays === 0 ? '' : `、${stays} 機は消えない`;
+  return `${when}、${summonName(effect.summon).ja} ${effect.lifetimesSeconds.length} 機を展開（前の組を置き換える）${expiry}${rest}`;
 }
 
 /** バーストスロットの倍率ダメージ（burstDamage）の種別 */

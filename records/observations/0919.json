@@ -104,5 +104,55 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0919-07",
+    "recording": "0919",
+    "kind": "timing",
+    "use": "input",
+    "value": [2599, 5256, 7895],
+    "unit": "f",
+    "description": "撮影 B1（手でバースト）の、ラム（I）のバーストの本当の発動のゲーム内のフレーム（戦闘開始から、止まりを除く）の並び（比べる指定の manualBursts に使う）",
+    "method": {
+      "tool": "recipe:burst-panel@2 の I → II の替わり目と、tools/captures/timer.ts --mode changes の戦闘開始",
+      "note": "I → II の替わり目（0919-01）の動画のフレームから、戦闘開始（0919-04）・替わり目までの 5f と発動の止まり 1f・それより前のフルバーストの入りの止まり 22f と I・II の発動の止まり 1f ずつを引いた（0788-05 と同じ。モデルの videoFrameOf の逆）"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0919-08",
+    "recording": "0919",
+    "kind": "count",
+    "use": "compare",
+    "value": 137,
+    "unit": "hits",
+    "description": "撮影 B1 の戦闘の全部の、ニアフェザー攻撃のヒットの数（0919-05 の数）",
+    "method": {
+      "tool": "hud.ts --mode jumps（HUD の総ダメージの増分）",
+      "note": "ラム・デルタと重なった増分は分けて数えた（0919-05）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0919-07"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0636",
+    "readAt": "2026-11-01"
   }
 ]

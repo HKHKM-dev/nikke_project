@@ -103,6 +103,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('chargeFull' in t) return 'chargeFull';
   // マスト編: 自分の HP の割合が閾値以下の間（hp<=70%）
   if ('selfHpAtMost' in t) return `hp<=${+(t.selfHpAtMost * 100).toFixed(2)}%`;
+  // アインのニアフェザー編: 召喚の攻撃（summon:nearFeather）
+  if ('summon' in t) return `summon:${t.summon}`;
   // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
   // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;

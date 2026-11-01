@@ -50,6 +50,7 @@ import {
   type EndedTrigger,
   type CounterFullTrigger,
   type EventCountTrigger,
+  type SummonAttackTrigger,
   type ExcludeSelf,
   type TargetDefense,
   type InstantKind,
@@ -92,6 +93,8 @@ export type ResolvedTrigger =
   // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレーム。damage・dot・counterChange だけ。1 パス目のカウンタの記録で決まる
   // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger
+  // アインのニアフェザー編: 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
+  | SummonAttackTrigger
   // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値（比率。説明文の X% ÷ 100）以下に下がった時。timed だけ。1 パス目の件の一覧が
   // 追う（skills/holders.ts の firesOf）ので、出来事の列では追わない
   | { selfHpAtMost: number };
