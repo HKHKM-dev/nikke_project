@@ -269,8 +269,8 @@ describe('射手（ハイドとリロード）', () => {
     expect(startOf(225, 10)).toBe(D + 14);
   });
 
-  it('values the partial shot of a long-hold fire-stance weapon at the window start, others at the shot (design 8)', () => {
-    // plan/design-hide-reload-detect.md 8 節: H が 1f の武器は撃つフレームの進み、H の長い射撃姿勢維持型（A2）は窓の始まりの進み
+  it('values the partial shot at D, whatever the hold (design 9)', () => {
+    // plan/design-hide-reload-detect.md 9 節: H によらず D（窓の始まりの約 8f 後）の時点の進み。満ちてから撃つまでの間の分は乗らない
     const progressOf = (rid: number, before: number): { atStart: number; shot: number; frames: number } => {
       const shot = shotOf(rid);
       const params = firingParams(shot);
@@ -289,10 +289,10 @@ describe('射手（ハイドとリロード）', () => {
     };
     const a2 = progressOf(811, 40);
     expect(a2.frames).toBe(DEFAULT_WEAPON_MODEL.hideDetectFrames + 24);
-    expect(a2.shot).toBeCloseTo(a2.atStart, 12);
+    expect(a2.shot).toBeCloseTo(a2.atStart + DEFAULT_WEAPON_MODEL.hideDetectFrames / 59, 12);
     const delta = progressOf(20, 30);
     expect(delta.frames).toBe(DEFAULT_WEAPON_MODEL.hideDetectFrames + 1);
-    expect(delta.shot).toBeCloseTo(delta.atStart + (DEFAULT_WEAPON_MODEL.hideDetectFrames + 1) / 59, 12);
+    expect(delta.shot).toBeCloseTo(delta.atStart + DEFAULT_WEAPON_MODEL.hideDetectFrames / 59, 12);
   });
 
   it('an UP-charge weapon without the fire stance reloads from D and still finishes a 1.5 s reload (Delta in 0224)', () => {

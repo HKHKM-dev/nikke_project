@@ -27,6 +27,7 @@ import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { landingFrameSpans } from '../frame/landing.ts';
+import { partialShotsInRanges } from '../frame/shots.ts';
 import { computeFixedSpecAttack, computeFixedSpecDefence, computeFixedSpecHp, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
@@ -632,14 +633,31 @@ function reloadFramesAt(result: SimResult, ctx: MetricContext): number {
  * までのフレーム数（C-0842・C-0844）。録画では、reload.ts --mode fit のバーの長さ 0 に遡った点から、バーが消えたフレーム（明けで取り消された
  * 回）まで。窓の中にハイド中のリロードが無ければ比べられない
  */
-function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
+/** 引数 window 回目の狙えない窓（0 始まり） */
+function untargetableWindowOf(
+  result: SimResult,
+  ctx: MetricContext,
+): { index: number; window: { start: number; end: number } } {
   const index = Number(ctx.args.window);
   const window = result.untargetable[index];
   if (window === undefined) throw new Error(`${index} 回目の狙えない窓が無い`);
+  return { index, window };
+}
+
+function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
+  const { index, window } = untargetableWindowOf(result, ctx);
   const starts = result.shots[slotIndexOf(ctx)]?.hideReloadStarts ?? [];
   const start = starts.find((s) => s >= window.start - 1 && s < window.end);
   if (start === undefined) throw new Error(`${index} 回目の狙えない窓の中にハイド中のリロードが無い`);
   return window.end - start;
+}
+
+/** window 回目の狙えない窓の中の部分チャージの発の、チャージの進み（plan/design-hide-reload-detect.md 9 節） */
+function partialChargeProgressIn(result: SimResult, ctx: MetricContext): number {
+  const { index, window } = untargetableWindowOf(result, ctx);
+  const [progress] = partialShotsInRanges(result.shots[slotIndexOf(ctx)]?.partialShots, [window]);
+  if (progress === undefined) throw new Error(`${index} 回目の狙えない窓の中に部分チャージの発が無い`);
+  return progress;
 }
 
 function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
@@ -1433,6 +1451,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
+  partialChargeProgress: { args: ['slot', 'window'], sim: partialChargeProgressIn },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
   buffWindowStartIntervalMean: { args: ['slot', 'skill', 'stat', 'count'], sim: buffWindowStartIntervalMean },

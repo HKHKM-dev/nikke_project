@@ -102,10 +102,10 @@ export type HidePending = {
   /** 残りフレーム（0 になったフレームに動く）。チャージの途中だった枠は D + H（部分チャージの発）、ほかの枠は D（ハイド） */
   framesLeft: number;
   /**
-   * 窓の始まりのチャージの進み（0 以上 1 未満）。0 より大きければチャージの途中だった枠。H の長い射撃姿勢維持型の部分チャージの値にも
-   * 使う（plan/design-hide-reload-detect.md 8 節）
+   * チャージの進み（0 以上 1 未満）。窓の始まりの進みで、0 より大きければチャージの途中だった枠。チャージの途中だった枠は、D（残りが H に
+   * なったフレーム）にその時点の進みに置き換え、部分チャージの発の値にする（C-0843 を置き換えた結論。plan/design-hide-reload-detect.md 9 節）
    */
-  progressAtStart: number;
+  progress: number;
 };
 
 export function initialShooter(
@@ -503,14 +503,14 @@ export function beginHide(
   }
   if (state.phase === 'reloading') return null;
   const hold = progress > 0 ? holdFramesOf(params) : 0;
-  state.hidePending = { framesLeft: model.hideDetectFrames + hold, progressAtStart: progress };
+  state.hidePending = { framesLeft: model.hideDetectFrames + hold, progress };
   return settleHide(state, shot, model, params);
 }
 
 /**
  * 狙えない窓の始まりの次のフレームから、待ち（hidePending）がある間、毎フレーム stepShooter の前に呼ぶ。
  * 待ちが尽きたら、チャージの途中だった枠は（D の H 後に）部分チャージで撃ち、ほかの枠は（D に）ハイドする。待ちが無ければ何もしない。
- * 部分チャージの発の値は、H が 1f の武器は撃つフレームの進み、H の長い射撃姿勢維持型は窓の始まりの進み（設計書 8 節）。
+ * 部分チャージの発の値は、H によらず D の時点の進み（満ちてから撃つまでの間に溜まった分は乗らない。設計書 9 節）。
  * 撃った後のリロードは、射撃姿勢維持型でない武器は D から（H 前から数える）、射撃姿勢維持型は姿勢の終わりから。
  * @returns このフレームに撃った部分チャージの発の進み（撃たなければ null）
  */
@@ -527,16 +527,20 @@ export function stepHide(
 
 /** 待ちが尽きたら、チャージの途中だった枠は部分チャージで撃ってハイドし、ほかの枠はハイドする */
 function settleHide(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): number | null {
-  const { framesLeft, progressAtStart } = state.hidePending!;
-  if (framesLeft > 0) return null;
+  const pending = state.hidePending!;
+  const charging = pending.progress > 0;
+  // D: チャージの途中だった枠の値を、この時点の進みに決める
+  if (charging && pending.framesLeft === holdFramesOf(params)) {
+    pending.progress = partialChargeProgress(state, shot, model, params) ?? pending.progress;
+  }
+  if (pending.framesLeft > 0) return null;
   delete state.hidePending;
-  if (progressAtStart <= 0) {
+  if (!charging) {
     hideShooter(state, shot, model, params);
     return null;
   }
   if (state.phase === 'reloading') return null;
-  const progress =
-    holdFramesOf(params) > 1 ? progressAtStart : (partialChargeProgress(state, shot, model, params) ?? 0);
+  const { progress } = pending;
   // 射撃姿勢維持型でない武器のリロードは D から（撃った 1f 前から）数える
   fireAndHide(state, shot, model, params, params.stance === null ? 1 : 0);
   return progress;

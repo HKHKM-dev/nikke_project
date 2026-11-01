@@ -407,5 +407,96 @@
       "tool": "node tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）・node tools/captures/reload.ts --mode fit",
       "note": "撃った → 0 の点: f2757 → 2782.99、f9368 → 9394.04（増分は f2763・9375）"
     }
+  },
+  {
+    "id": "0123-23",
+    "recording": "0123",
+    "source": "V-0624",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "value": [32.221, 34.221, 68.72, 70.72, 108.279, 110.279, 144.608, 146.608, 177.778, 179.778],
+    "description": "A2単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "`0864-04` と同じ決め方。戦闘開始は動画 f833（最初の発の増分 f927 の 94f 前）。フレームは戦闘開始から数え、1f = 0.017 秒。1〜4 回目の終わりは明けの後の最初の発（動画 f2939・5086・7413・9550）の 93f 前、始まりは終わりの 2 秒前。5 回目は 4 回目の始まりの 33.17 秒後から 2 秒"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0123-24",
+    "recording": "0123",
+    "source": "V-0624",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "compare",
+    "unit": "進み",
+    "value": 0.238,
+    "description": "A2単騎の、1 回目の敵のジャンプの始まりの部分チャージの発のチャージの進み（総ダメージの増分 109,974 を胴体・会心なしとして、コアのフルチャージの発 405,210（S2 の追加ダメージを除く。`0123-02`・`0123-16`）に対する比から読んだ。溜めて 14f）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分 f2763（前の発 f2688）。1 発の値は胴体・会心なし・チャージなしの u（コアのフルチャージの発 ÷ (コア 2 × フルチャージ倍率 2.5)）に、部位（胴体 1・会心 1.5・コア 2・コアの会心 2.5）と 1 + 1.5 × 進みを掛けた値で、進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 1 秒。モデルは録画の窓 `0123-23` で回し、窓の中の部分チャージの発の進み（partialChargeProgress。チャージのフレーム数 59f で割る）。許容 ±0.04 は約 2f（録画の窓の始まりと、増分にそろえたモデルの発のずれ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "partialChargeProgress",
+      "args": {
+        "slot": 1,
+        "window": 0
+      },
+      "tolerance": {
+        "abs": 0.04
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0123-23"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0123-25",
+    "recording": "0123",
+    "source": "V-0624",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "compare",
+    "unit": "進み",
+    "value": 0.68,
+    "description": "A2単騎の、4 回目の敵のジャンプの始まりの部分チャージの発のチャージの進み（総ダメージの増分 327,410 をコア・会心なしとして、コアのフルチャージの発 405,210（S2 の追加ダメージを除く。`0123-02`・`0123-16`）に対する比から読んだ。溜めて 40f）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分 f9375（前の発 f9274）。1 発の値は胴体・会心なし・チャージなしの u（コアのフルチャージの発 ÷ (コア 2 × フルチャージ倍率 2.5)）に、部位（胴体 1・会心 1.5・コア 2・コアの会心 2.5）と 1 + 1.5 × 進みを掛けた値で、進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 1 秒。モデルは録画の窓 `0123-23` で回し、窓の中の部分チャージの発の進み（partialChargeProgress。チャージのフレーム数 59f で割る）。許容 ±0.04 は約 2f（録画の窓の始まりと、増分にそろえたモデルの発のずれ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "partialChargeProgress",
+      "args": {
+        "slot": 1,
+        "window": 3
+      },
+      "tolerance": {
+        "abs": 0.04
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0123-23"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

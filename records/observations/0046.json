@@ -650,5 +650,24 @@
       "tool": "node tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）・node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps",
       "note": "撃った → 増分 → 0 の点 → 消えた: 3 回目 f6818 → 6826 → 6830.86 → 6927、4 回目 f8934 → 8939 → 8956.8 → 9067。残弾の替わり目は続いたフレームで読めた。0046-18（目で読んだ RELOADING の文字の出）と同じ回"
     }
+  },
+  {
+    "id": "0046-38",
+    "recording": "0046",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0624",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 251021,
+    "description": "紅蓮：ブラックシャドウ単騎の、3 回目の敵のジャンプの始まりの部分チャージの発の総ダメージの増分。3 回目はコアの会心の進み 0.907（溜めて 16.0f）。コアのフルチャージの発 207,265（会心 259,081）を (コア 2 × フルチャージ倍率 1.5) で割った胴体・会心なしの値に、部位の倍率と 1 + (1.5 − 1) × 進みを掛けた格子に当てた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分 f6826（前の発 f6785。Δ 41f。D の時点のモデルの溜めたフレーム数 16f = Δ − H 1f − 溜め始め 24f）。進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 0.3 秒"
+    }
   }
 ]

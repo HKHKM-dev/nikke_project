@@ -167,5 +167,77 @@
       "tool": "node tools/captures/hud.ts --mode jumps",
       "note": "増分 f2708・9319"
     }
+  },
+  {
+    "id": "0865-08",
+    "recording": "0865",
+    "source": "V-0624",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "compare",
+    "unit": "進み",
+    "value": 0.238,
+    "description": "A2単騎の、1 回目の敵のジャンプの始まりの部分チャージの発のチャージの進み（総ダメージの増分 109,974 を胴体・会心なしとして、コアのフルチャージの発 405,210（S2 の追加ダメージを除く。`0123-02`・`0123-16`）に対する比から読んだ。溜めて 14f）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "`0865-07` の増分 f2708（前の発 f2634）。1 発の値は胴体・会心なし・チャージなしの u（コアのフルチャージの発 ÷ (コア 2 × フルチャージ倍率 2.5)）に、部位（胴体 1・会心 1.5・コア 2・コアの会心 2.5）と 1 + 1.5 × 進みを掛けた値で、進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 1 秒。モデルは録画の窓 `0865-04` で回し、窓の中の部分チャージの発の進み（partialChargeProgress。チャージのフレーム数 59f で割る）。許容 ±0.04 は約 2f（録画の窓の始まりと、増分にそろえたモデルの発のずれ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "partialChargeProgress",
+      "args": {
+        "slot": 1,
+        "window": 0
+      },
+      "tolerance": {
+        "abs": 0.04
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0865-04"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0865-09",
+    "recording": "0865",
+    "source": "V-0624",
+    "readAt": "2026-11-01",
+    "kind": "gauge",
+    "use": "compare",
+    "unit": "進み",
+    "value": 0.68,
+    "description": "A2単騎の、4 回目の敵のジャンプの始まりの部分チャージの発のチャージの進み（総ダメージの増分 409,262 をコアの会心・会心ありとして、コアのフルチャージの発 405,210（S2 の追加ダメージを除く。`0123-02`・`0123-16`）に対する比から読んだ。溜めて 40f）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "`0865-07` の増分 f9319（前の発 f9218）。1 発の値は胴体・会心なし・チャージなしの u（コアのフルチャージの発 ÷ (コア 2 × フルチャージ倍率 2.5)）に、部位（胴体 1・会心 1.5・コア 2・コアの会心 2.5）と 1 + 1.5 × 進みを掛けた値で、進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 1 秒。モデルは録画の窓 `0865-04` で回し、窓の中の部分チャージの発の進み（partialChargeProgress。チャージのフレーム数 59f で割る）。許容 ±0.04 は約 2f（録画の窓の始まりと、増分にそろえたモデルの発のずれ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "partialChargeProgress",
+      "args": {
+        "slot": 1,
+        "window": 3
+      },
+      "tolerance": {
+        "abs": 0.04
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0865-04"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
