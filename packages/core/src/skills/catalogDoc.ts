@@ -199,7 +199,11 @@ const KIND_INFO: Record<string, Info> = {
   ],
   weaponChange: ['使用武器変更', 'ok', 'weaponChange（項目による）'],
   'weaponChange:pierce': ['貫通特化', 'indirect', '貫通ダメージ▲を読む側にする状態（ツールチップ T2）'],
-  autoAttack: ['自動攻撃・召喚・独自の弾', 'check', 'autoAttack（形による）'],
+  autoAttack: [
+    '自動攻撃・召喚・独自の弾',
+    'check',
+    'autoAttack（形による）。召喚の機数で間隔の変わる攻撃（アインのニアフェザー。機数ごとに独立した維持時間）はなし',
+  ],
   'flag:trueDamageConversion': ['通常攻撃を防御力無視ダメージに', 'ok', 'trueDamageConversion'],
   // 2 段目の段 12 の PR 2: 自分に付く常時の形（ラピ：レッドフードの S2・シュガーの宝物版の S1）
   'flag:elementAdvantage': [
@@ -208,7 +212,11 @@ const KIND_INFO: Record<string, Info> = {
     'passive の stat elementAdvantage（自分。どのコードの敵かは enemyElement）',
   ],
   'flag:infiniteAmmo': ['装弾数無限', 'ok', 'infiniteAmmo'],
-  'stat:fixed': ['値の固定（〜に固定）', 'check', 'チャージ時間は fixedChargeTime。ほかはなし'],
+  'stat:fixed': [
+    '値の固定（〜に固定）',
+    'check',
+    'チャージ時間は fixedChargeTime。リロード速度の増加状態の固定（ジル）は値に効かない（C-0013。計算に無関係の notes）。ほかはなし',
+  ],
   'stat:overflowConvert': ['超過した値の変換', 'gap', 'なし'],
   // 2 段目の段 10〜13: 目録（skills/counters.ts）のカウンタの増減・値の条件・上限のきっかけと、値の数だけの攻撃
   resource: [
@@ -350,7 +358,8 @@ const TGT_INFO: Record<string, Info> = {
   'ally:topAttack': ['最終攻撃力が最も高い味方 N 機', 'ok'],
   'ally:longestChargeTime': ['基本チャージ時間が一番長い味方', 'ok'],
   'ally:burstUsers': ['直前にバーストスキルを使用した味方', 'ok'],
-  'ally:lowestHp': ['残りの HP が最も低い味方 N 機', 'check'],
+  'ally:lowestHpRatio': ['残りの HP の割合が最も低い味方 N 機', 'ok'],
+  'ally:lowestHpValue': ['残りの HP の値が最も低い味方 N 機', 'gap'],
   'ally:topOther': ['最大HP・防御力が最も高い味方', 'gap'],
   'ally:neighbors': ['両隣の味方', 'gap'],
   'ally:random': ['ランダムな味方', 'check'],
@@ -1081,7 +1090,7 @@ function writeIndirectSection(
       'HP',
       '読む',
       'HP 順の対象（残りの HP の割合・数値が最も低い味方）',
-      L.filter((l) => l.targets.includes('ally:lowestHp')),
+      L.filter((l) => l.targets.includes('ally:lowestHpRatio') || l.targets.includes('ally:lowestHpValue')),
     ],
     ['防御力', '動かす', '防御力▲（味方）', E.filter((e) => statIs(e, 'defense') && e.side !== 'enemy')],
     [
