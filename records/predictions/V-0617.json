@@ -1,0 +1,207 @@
+{
+  "verification": "V-0617",
+  "note": "撮影の依頼の編成（I-DOLL・フラワー（304・RL・I・枠 1・AI）+ エヌ：ミラクルフェアリー（121・RL・II・枠 2・AI）+ クラウン（330・MG・II・枠 3・操作・撃たない）、オートバースト ON・灼熱タブの BigArms・射撃場 3 分・スペック固定 ON）。III がいないのでフルバーストは起きず、II の後はチェーンが切れる（C-0009）。オートバーストは II の候補のうち左のエヌ：ミラクルフェアリーを撃たせ、その CT（60 秒）の回は右のクラウンに撃たせる（C-0663・C-0664）。予測では撃たない枠を入れられない（録画の後は holdFire で入れる）ので、モデルのクラウンは撃つ。撃つ分の自分の回復（skill2 の effects[0]・effects[2] のリラックス）を dropEffects で外した。撃つ分のゲージでバーストの時刻は録画とずれるが、比べるのは II からの相対の時刻で決まる 1 発の値なので、時刻のずれは値に効かない。フレームはモデルの 1 回目のエヌ：ミラクルフェアリーの回（II 907f。H2 のクラウンの回復とクラウンの S2 は 933f から 411f）と、1 回目のクラウンの回（II 2696f。クラウンのバーストの攻撃ダメージ▲は 882f）",
+  "team": [
+    {
+      "rid": 304,
+      "controlled": false
+    },
+    {
+      "rid": 121,
+      "controlled": false
+    },
+    {
+      "rid": 330,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（121.json の burst の effects[0] の targetClass: Attacker。C-0617）。回復は火力型の味方にだけ付き、編成に火力型がいないので誰にも付かない。クラウンの S2 は起きない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 330,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 330,
+            "skill": "skill2",
+            "index": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "回復は味方全体に付く（targetClass を外す）。満タンのクラウンにも付き、クラウンの S2（味方全体に攻撃ダメージ 20.99%▲・ゲーム内の 7 秒。C-0271・C-0050）を起こす。自分を含まない読み（H2'）も、この編成の指標では同じ値",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 330,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 330,
+            "skill": "skill2",
+            "index": 2
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 121,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "heal",
+              "trigger": "burstUse",
+              "target": "allies",
+              "ref": 3
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "flower-core-pre",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。最初のバーストより前のフラワーのコア（会心・距離ボーナスなし）。どの仮説も同じ"
+    },
+    {
+      "id": "flower-core-mf",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "本命。エヌ：ミラクルフェアリーの II の後、クラウンの S2 の窓（H2 で 933〜1344f）の中のフラワーのコア"
+    },
+    {
+      "id": "nmf-core-mf",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "本命。同じ窓の中のエヌ：ミラクルフェアリー自身のコア（バーストの攻撃力▲は火力型だけなので自分には乗らない。C-0595）"
+    },
+    {
+      "id": "flower-core-mf-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "H2 の窓（7 秒）が切れた後のフラワーのコア。どの仮説も pre と同じ"
+    },
+    {
+      "id": "flower-core-crown",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。クラウンが II を撃った回のフラワーのコア（クラウンのバーストの攻撃ダメージ 36.24%▲・15 秒。C-0393。確定）。回復は無いので、どの仮説も同じ"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "6a4e10ec622348b3a0914b3a6e78c0f973b9da20",
+    "values": {
+      "H1": {
+        "flower-core-pre": 166172.03999999998,
+        "flower-core-mf": 166172.03999999998,
+        "nmf-core-mf": 305963.625,
+        "flower-core-mf-after": 166172.03999999998,
+        "flower-core-crown": 226392.787296
+      },
+      "H2": {
+        "flower-core-pre": 166172.03999999998,
+        "flower-core-mf": 201051.551196,
+        "nmf-core-mf": 370185.3898875,
+        "flower-core-mf-after": 166172.03999999998,
+        "flower-core-crown": 226392.787296
+      }
+    }
+  }
+}
