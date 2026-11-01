@@ -1,0 +1,8 @@
+{
+  "section": "6",
+  "order": 30,
+  "cells": {
+    "要るもの": "語彙（最大HP のみ▲ で HP の割合が下がる分と、HP の割合の条件を時間で判定する形。エードの定義の時に足す。エードの S1 の HP の割合の条件を、自分の最大HP のみ▲ だけで満たしうる。[design-skill-stage11.md](design-skill-stage11.md) 3.2 節・[design-skill-stage6.md](design-skill-stage6.md) 2.4 節の論点 8）",
+    "対象": "ラプラス：UH の S2 の間接の notes（C-0577）"
+  }
+}

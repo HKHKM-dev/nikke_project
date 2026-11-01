@@ -6,10 +6,12 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   addedLines,
+  backlogProgressCopy,
   branchChangedChecks,
   changedChecks,
   checkSteps,
   collisions,
+  handEditedLines,
   isCheckSetting,
   MAX_CHANGED_FILES,
   nulPaths,
@@ -91,21 +93,49 @@ describe('addedLines', () => {
   });
 });
 
-describe('progressCopies', () => {
-  const all = (text: string) => new Set(text.split('\n').map((_, i) => i + 1));
+describe('collisions of backlog numbers', () => {
+  const main = ['records/backlog/2-43.json', 'records/backlog/2-44.json', 'records/backlog/pr-conflicts.json'];
 
-  it('finds progress copied into backlog.md section 8, but not into the other sections', () => {
-    const text = [
-      '## 2. 撮影の案',
-      '| 2-1 | x | V-0401 |',
-      '## 8. 課題（設計書のあるもの）',
-      '- 段の課題（2026-10-14 起票）→ 進行中: [design-a.md](design-a.md)',
-      '- 段の課題（2026-10-14 起票）→ 段 13 は PR 1 を実装した（V-0546、C-0745）',
-    ].join('\n');
-    expect(progressCopies('plan/backlog.md', text, all(text))).toEqual([
-      'plan/backlog.md:5: - 段の課題（2026-10-14 起票）→ 段 13 は PR 1 を実装した（V-0546、C-0745）',
+  it('suggests the next free number of the section, avoiding main, the branch and the other branches', () => {
+    const added = ['records/backlog/2-44.json', 'records/backlog/2-45.json', 'records/backlog/template.md'];
+    expect(collisions(added, main, ['2-46'])).toEqual([{ id: '2-44', suggestion: '2-47' }]);
+  });
+
+  it('ignores named items, which do not collide by numbering', () => {
+    expect(collisions(['records/backlog/pr-conflicts.json'], main, [])).toEqual([]);
+  });
+});
+
+describe('handEditedLines', () => {
+  it('returns the added lines that the regenerated version does not have', () => {
+    expect(handEditedLines(['- 先の課題', '', '- 手で足した課題'], '# 一覧\n\n- 先の課題\n')).toEqual([
+      '- 手で足した課題',
     ]);
   });
+});
+
+describe('backlogProgressCopy', () => {
+  const path = 'records/backlog/x.json';
+  const issue = (text: string, section = '8') => ({ section, order: 10, text });
+
+  it('finds progress in the text of an issue (section 8 and 8.2) that the branch changed', () => {
+    const copied = '段の課題（2026-10-14 起票）→ 段 13 は PR 1 を実装した（V-0546、C-0745）';
+    expect(backlogProgressCopy(path, issue(copied), undefined)).toBe(`${path}: ${copied}`);
+    expect(backlogProgressCopy(path, issue(copied, '8.2'), issue('前の文'))).toBe(`${path}: ${copied}`);
+    expect(backlogProgressCopy(path, issue(copied), issue(copied))).toBeUndefined();
+    expect(
+      backlogProgressCopy(path, issue('段の課題（2026-10-14 起票）→ 進行中: [design-a.md](design-a.md)'), undefined),
+    ).toBeUndefined();
+  });
+
+  it('does not look at the other sections', () => {
+    expect(backlogProgressCopy(path, { section: '2', cells: { 課題: 'V-0401' } }, undefined)).toBeUndefined();
+    expect(backlogProgressCopy(path, issue('V-0401 を撮る', '4'), undefined)).toBeUndefined();
+  });
+});
+
+describe('progressCopies', () => {
+  const all = (text: string) => new Set(text.split('\n').map((_, i) => i + 1));
 
   it('finds progress in the status line of a design doc and in the stage list, only on the lines the branch added', () => {
     const doc = [

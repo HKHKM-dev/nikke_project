@@ -4,6 +4,13 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { parseEnemyPresets } from '../src/enemies.ts';
 import { MASTER_FILES } from '../src/load.ts';
+import {
+  backlogNameOfPath,
+  backlogNumber,
+  renderBacklog,
+  type BacklogFile,
+  type BacklogItem,
+} from '../src/records/backlog.ts';
 import { toClaims, type Claim, type ClaimFile } from '../src/records/claims.ts';
 import { V_ID } from '../src/records/ids.ts';
 import type { Observation, RecordsData } from '../src/records/observations.ts';
@@ -48,6 +55,11 @@ export const MINIMAL_PATH = `${ROOT}plan/minimal.md`;
 export const SKILL_CATALOG_PATH = `${ROOT}plan/skill-catalog.md`;
 /** 最小構成の検査の感度の結果（records:minimal が書く。plan/design-minimal-relevance.md 10.6 節） */
 export const SENSITIVITY_PATH = `${ROOT}records/minimal/sensitivity.json`;
+/** 課題のファイル（1 件 1 ファイル）と雛形の置き場所（plan/design-backlog-files.md） */
+const BACKLOG_DIR = `${ROOT}records/backlog/`;
+const BACKLOG_TEMPLATE_PATH = `${BACKLOG_DIR}template.md`;
+/** 残っている仕事の一覧（生成物。plan/design-backlog-files.md） */
+export const BACKLOG_PATH = `${ROOT}plan/backlog.md`;
 /** records:check（と records:minimal）が丸ごと書く生成物（ROOT からの相対パス。tools/git/pr-prep.ts が衝突を main の版で解く） */
 export const GENERATED_PATHS: readonly string[] = [
   RECORDINGS_DOC_PATH,
@@ -59,6 +71,7 @@ export const GENERATED_PATHS: readonly string[] = [
   MINIMAL_PATH,
   SKILL_CATALOG_PATH,
   SENSITIVITY_PATH,
+  BACKLOG_PATH,
 ].map((p) => p.slice(ROOT.length));
 
 /** 検証記録のファイルの絶対パス */
@@ -97,15 +110,19 @@ function logBranches(args: readonly string[], paths: readonly string[]): { out: 
 }
 
 /**
- * どれかのブランチ（手元か origin。main を含む）が足したことのある検証記録・結論の ID と、見た範囲の説明。並行する作業が同じ空き番号を
- * 取らないように、records:new の空き番号に含める（V-0378 の振り直し）
+ * どれかのブランチ（手元か origin。main を含む）が足したことのある検証記録・結論の ID と課題の番号（2-NN。plan/design-backlog-files.md
+ * 2.2 節）と、見た範囲の説明。並行する作業が同じ空き番号を取らないように、records:new の空き番号に含める（V-0378 の振り直し）
  */
 export function idsInBranches(): { ids: string[]; note: string } {
   const { out, note } = logBranches(
     ['--format=', '--name-only', '--diff-filter=AR'],
-    ['records/verifications', 'records/claims'],
+    ['records/verifications', 'records/claims', 'records/backlog'],
   );
-  return { ids: idsInPaths(out), note };
+  const backlog = out.split('\n').flatMap((l) => {
+    const name = backlogNameOfPath(l);
+    return name !== undefined && backlogNumber(name) !== undefined ? [name] : [];
+  });
+  return { ids: [...idsInPaths(out), ...new Set(backlog)], note };
 }
 
 /**
@@ -127,6 +144,24 @@ export function recordingIdsInBranches(): { ids: string[]; note: string } {
     .map((l) => /(?:^|\/)records\/recordings\/([^/]+)\.json$/.exec(l.trim())?.[1])
     .filter((x): x is string => x !== undefined);
   return { ids: [...new Set(ids)], note };
+}
+
+/** records/backlog/*.json（名前順。並びは renderBacklog が決める） */
+export function loadBacklog(): BacklogItem[] {
+  return readdirSync(BACKLOG_DIR)
+    .filter((name) => name.endsWith('.json'))
+    .sort()
+    .map((name) => ({ ...readJson<BacklogFile>(`${BACKLOG_DIR}${name}`), name: name.slice(0, -'.json'.length) }));
+}
+
+/** plan/backlog.md の雛形（records/backlog/template.md） */
+export function loadBacklogTemplate(): string {
+  return readFileSync(BACKLOG_TEMPLATE_PATH, 'utf8');
+}
+
+/** 課題のファイルと雛形から作った plan/backlog.md の中身 */
+export function renderBacklogOfData(): string {
+  return renderBacklog(loadBacklogTemplate(), loadBacklog());
 }
 
 /** records/predictions/V-NNNN.json（番号順）。無ければ空 */

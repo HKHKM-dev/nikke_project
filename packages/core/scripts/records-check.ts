@@ -3,8 +3,10 @@
 // Stage 20-D: 検証記録の一覧（plan/verifications.md）も records/verifications/ から作り直す（前の中身は読まない）。
 // スキル定義の根拠（plan/skills-guide.md 3 節）: 定義の claims を結論と突き合わせ、対応状況の一覧（plan/skills.md）と、画面が読む
 // 対応状況の索引（packages/core/data/skills/support.json。skills/support.ts）も作り直す。
+// 残っている仕事の一覧（plan/backlog.md）も、課題のファイル（records/backlog/）と雛形から作り直す（plan/design-backlog-files.md）。
 // 使い方: npm run records:check（ルート。整形まで行う）
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { parseBacklogTemplate, renderBacklog, validateBacklog } from '../src/records/backlog.ts';
 import {
   claimsByObservation,
   gatedObservations,
@@ -35,12 +37,16 @@ import {
   verificationsByClaim,
 } from '../src/records/verifications.ts';
 import {
+  BACKLOG_PATH,
   CLAIMS_PATH,
+  ROOT,
   MINIMAL_PATH,
   RESIDUALS_PATH,
   SKILLS_DOC_PATH,
   SKILL_SUPPORT_PATH,
   VERIFICATIONS_PATH,
+  loadBacklog,
+  loadBacklogTemplate,
   loadClaims,
   loadSensitivity,
   knownRids,
@@ -76,6 +82,8 @@ const verifications = loadVerifications();
 const skills = loadSkillDefinitions();
 // 最小構成の検査の文脈（行き先の無い印の検査と、警告の判定）
 const relevanceCtx = { recordings, ...data, claims };
+const backlog = loadBacklog();
+const backlogTemplate = loadBacklogTemplate();
 // Stage 20-E: 失効した観測値は照合と結論の根拠から外す
 const invalidReasons = invalidReasonsOf(observations);
 const errors = [
@@ -98,6 +106,15 @@ const errors = [
     knownRids: knownRids(),
     observations,
     recordingIds: new Set(recordings.keys()),
+  }),
+  ...validateBacklog(parseBacklogTemplate(backlogTemplate), backlog, {
+    ids: new Set([
+      ...claims.map((c) => c.id),
+      ...verifications.map((v) => v.id),
+      ...recordings.keys(),
+      ...observations.map((o) => o.id),
+    ]),
+    exists: (path) => existsSync(`${ROOT}plan/${path}`),
   }),
 ];
 if (errors.length > 0) {
@@ -165,6 +182,7 @@ writeFileSync(
   renderVerifications(verifications, observations, verificationExtraLines(observations, predictions, staleness)),
 );
 writeFileSync(SKILLS_DOC_PATH, renderSkills(skills, claims));
+writeFileSync(BACKLOG_PATH, renderBacklog(backlogTemplate, backlog));
 writeFileSync(SKILL_SUPPORT_PATH, renderSkillSupportIndex(skillSupportIndexOfData()));
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
 for (const r of residuals.filter((x) => x.status !== 'ok' && x.status !== 'invalid')) {

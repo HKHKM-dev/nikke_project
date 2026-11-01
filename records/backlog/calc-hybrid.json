@@ -1,0 +1,5 @@
+{
+  "section": "8.2",
+  "order": 110,
+  "text": "calc のハイブリッド（[design-stage10.md](design-stage10.md) 5 節）の限界（2026-09-28 起票）→ 完了（2026-10-27。全グループを射撃の列から数える形に一本化。[design-unify-sim-calc.md](design-unify-sim-calc.md)）: [design-calc-hybrid.md](design-calc-hybrid.md) 10 節"
+}

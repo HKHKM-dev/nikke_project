@@ -1,6 +1,6 @@
 # PR の衝突の頻度と対策の案（2026-11-01）
 
-- 何のための文書か: PR が main と衝突する頻度を、マージ済みの PR（#1〜#873）の履歴から測り、原因のファイルと対策の案を出す。2026-11-01 にオーナーが 1 と ruleset の bypass を承認し、1 を実施した（5 節）。3 は残っている（2 は 1 の代わりなので要らない）。
+- 何のための文書か: PR が main と衝突する頻度を、マージ済みの PR（#1〜#873）の履歴から測り、原因のファイルと対策の案を出す。2026-11-01 にオーナーが 1 と ruleset の bypass を承認し、1 を実施した（5 節）。3 は [design-backlog-files.md](design-backlog-files.md) で実施した（2 は 1 の代わりなので要らない）。
 - 関連: 衝突の手間を道具に寄せた `npm run pr:prep`（[design-workflow-simplification-4.md](design-workflow-simplification-4.md) 2 節）、表の列幅（[-2](design-workflow-simplification-2.md) 4）・roadmap.md と backup-log.md の書き足し（[design-workflow-simplification.md](design-workflow-simplification.md) 1・2）・段の一覧の経過（[-6](design-workflow-simplification-6.md)）の衝突を減らした回。生成物をコミットし続ける判断（[-4](design-workflow-simplification-4.md) の採らない案・[-7](design-workflow-simplification-7.md)）。
 - 調べ方: origin/main（68f19e24）の first-parent の履歴（スカッシュの commit が PR 1 本）と、PR の作成・マージの時刻（GitHub の検索）と、PR の最後の head（`refs/pull/N/head`）を使った。PR ごとに、PR の変更（スカッシュの commit とその親の差）を、次の 2 つの時点の main の上に置いたときに、マージの直前の main と衝突するかを `git merge-tree --merge-base` で試した。
   - **作成の後**: PR を作った時刻の main。GitHub の画面で「衝突あり」になり、自動マージが止まる分。
@@ -122,3 +122,4 @@ PR 100 本ごと（#801〜#873 は 73 本）。「生成物」は `GENERATED_PAT
 
 - 2026-11-01: 起案（頻度の測定と案）。
 - 2026-11-01: 案 1 を実施（5 節）。
+- 2026-11-01: 案 3 を実施（[design-backlog-files.md](design-backlog-files.md)）。

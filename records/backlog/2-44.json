@@ -1,0 +1,9 @@
+{
+  "section": "2",
+  "cells": {
+    "課題": "状態の付与の `leadFrames` を、1 パス目で状態を見るものが見ない",
+    "いま分かっていること": "徹甲炸裂弾（`95.json` の burst の effects[0]）の件は、炸裂弾の発の `leadFrames` 前から始まる（C-0816）。2 パス目（受けるダメージ▲の小片・条件 enemyState のヒット）はその始まりから見るが、1 パス目は前から進むので、1 パス目で状態を見るもの（ベスティー：TU の S2 の `enemyState: explosiveRound` の timed。C-0809）は発のフレームから見る（[design-explosive-round-lead.md](design-explosive-round-lead.md) の経過）。ベスティーのフルチャージの発がその間に入る回だけ、▲の有無が 2 パス目の区間と食い違う。`leadFrames` はいま 95.json だけ",
+    "次の 1 手": "`leadFrames` をほかの付与にも書くとき、1 パス目の状態の判定（`skills/holders.ts` の `enemyStateAt` と件の登録）を、件の始まりから見るように直す",
+    "要るもの": "実装"
+  }
+}
