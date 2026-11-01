@@ -209,7 +209,7 @@ describe('computeCadence (calibrated against recordings)', () => {
       stanceReloadExtraFrames: 11,
       rlWindowEndShorterFrames: 1,
       hideReloadExtraFrames: 12,
-      hideReloadUpChargeLeadFrames: 19,
+      hideReloadStanceLeadFrames: 19,
     });
     // Stage 23: 1 秒チャージは 1 ÷ 0.017 = 58.8 → 59f（C-0140）
     expect(f[1]).toBe(59);

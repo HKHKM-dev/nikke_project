@@ -96,12 +96,12 @@ export type WeaponModel = {
    */
   hideReloadExtraFrames: number;
   /**
-   * 入力が UP のチャージ武器が、前の発からハイド中のリロードを始めるまでのフレーム（窓の始まりより前にはしない）。窓の始まりに
-   * チャージの途中なら部分チャージで撃ち（C-0109）、その後の動きの後に RELOADING が出る（部分チャージの発から 18〜19f。C-0109 の
-   * 根拠の 0046-18、A2 の 0123-21）。窓の直前に撃っていれば、その発から数える（0224 のデルタ）。
-   * 押下チャージ型とチャージの無い武器は窓の始まりから（0815-13・0816-10）（C-0817。plan/design-hide-reload.md 案 A'）
+   * 射撃姿勢維持型のチャージ武器が、前の発からハイド中のリロードを始めるまでのフレーム（窓の始まりより前にはしない）。窓の始まりに
+   * チャージの途中なら部分チャージで撃ち（C-0109）、撃った後の姿勢の後に RELOADING が出る（部分チャージの発から 18〜19f。紅蓮BS の
+   * 0046-18（C-0109 の根拠）、A2 の 0123-21）。ほかの武器は窓の始まりから（押下チャージ型の 0815-13・0816-10、射撃姿勢維持型で
+   * ない入力が UP の RL の 0077-47、SR のデルタの 0224-08）（C-0817。plan/design-hide-reload.md 案 A'）
    */
-  hideReloadUpChargeLeadFrames: number;
+  hideReloadStanceLeadFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -115,7 +115,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   stanceReloadExtraFrames: 11,
   rlWindowEndShorterFrames: 1,
   hideReloadExtraFrames: 12,
-  hideReloadUpChargeLeadFrames: 19,
+  hideReloadStanceLeadFrames: 19,
 };
 
 /**

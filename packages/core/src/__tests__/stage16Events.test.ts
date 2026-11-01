@@ -182,7 +182,7 @@ describe('射手（ハイドとリロード）', () => {
   });
 
   // C-0817（plan/design-hide-reload.md）: ハイド中のリロードは、バーが満ちる（リロードの秒 + 12f。C-0135）前に明けると取り消す。
-  // 入力が UP のチャージ武器は、窓に入って 19f 後から始める（C-0109）。窓はマガジンの途中（3 発目の 30f 後）から 118f
+  // 射撃姿勢維持型は、前の発の 19f 後から始める（C-0109）。窓はマガジンの途中から 118f
   // 窓の始まりに部分チャージ（C-0109）→ ハイドの順（frame/firstPass.ts の手順 1 と同じ）
   const firedWithPartial = (shot: ShotParams, window: FrameRange, frames: number): number[] => {
     const state = initialShooter(shot);
@@ -220,7 +220,7 @@ describe('射手（ハイドとリロード）', () => {
     expect(after).toBe(8 - before);
   });
 
-  it('C-0817: an UP-charge weapon starts the hide reload 19f after its last shot (the partial shot at the window start), so A2 does not finish', () => {
+  it('C-0817: a fire-stance weapon starts the hide reload 19f after its last shot (the partial shot at the window start), so A2 does not finish', () => {
     // 0123: 窓の始まりに部分チャージで撃ち、3 回とも明けの後に残りを撃ってからリロード（0123-19・0123-21）
     // 窓は 3 発目と 4 発目の間の、4 発目の 20f 前（チャージの途中）から
     const a2 = shotOf(811);
@@ -230,11 +230,12 @@ describe('射手（ハイドとリロード）', () => {
     expect(after).toBe(6 - before);
   });
 
-  it('C-0817: an UP-charge weapon that fired just before the window starts the hide reload earlier and can finish (Delta in 0224)', () => {
-    // デルタ（SR・1.5 秒）: 窓に入る 5f 前に撃つと（撃った後の動きの途中なので部分チャージは無い）、その 19f 後（窓の 14f 後）から
-    // 88 + 12f で、118f の窓の中で満ちる
-    const { before, after } = remainingAfter(shotOf(20), 5);
-    expect(before).toBe(3);
+  it('C-0817: an UP-charge weapon without the fire stance reloads from the window start and finishes a 1.5 s reload (Delta in 0224)', () => {
+    // デルタ（SR・1.5 秒）: チャージの途中で窓に入って部分チャージで撃っても、窓の始まりから 88 + 12f で、118f の窓の中で満ちる（0224-08）
+    const delta = shotOf(20);
+    const usual = firedWithPartial(delta, { start: 1e9, end: 1e9 + 1 }, 2000);
+    const { before, after } = remainingAfter(delta, usual[3]! - usual[2]! - 20);
+    expect(before).toBe(4);
     expect(after).toBe(6);
   });
 

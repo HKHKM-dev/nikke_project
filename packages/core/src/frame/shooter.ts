@@ -421,8 +421,8 @@ function hideReloadExtraFrames(model: WeaponModel, params: FiringParams): number
  * Stage 16-B: 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
  * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま。
- * C-0817（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅く、入力が UP のチャージ武器は
- * 前の発から hideReloadUpChargeLeadFrames の後（窓の始まりより前にはしない）から始める
+ * C-0817（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅く、射撃姿勢維持型は
+ * 前の発から hideReloadStanceLeadFrames の後（窓の始まりより前にはしない）から始める
  */
 export function hideShooter(
   state: ShooterState,
@@ -432,10 +432,9 @@ export function hideShooter(
 ): void {
   if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
   state.hideReload = true;
-  // 入力が UP のチャージ武器は、前の発（窓の始まりの部分チャージの発を含む）から hideReloadUpChargeLeadFrames の後に始める。
+  // 射撃姿勢維持型は、前の発（窓の始まりの部分チャージの発を含む）から hideReloadStanceLeadFrames の後に始める。
   // 窓に入る前の発からの経過（chargeElapsed）の分だけ早まる（窓の始まりより前にはしない）
-  const upCharge = isChargeWeapon(shot) && shot.inputType !== 'DOWN_Charge';
-  const lead = upCharge ? Math.max(0, model.hideReloadUpChargeLeadFrames - (state.chargeElapsed ?? Infinity)) : 0;
+  const lead = params.stance === null ? 0 : Math.max(0, model.hideReloadStanceLeadFrames - (state.chargeElapsed ?? Infinity));
   const chunk = startReload(state, params) + lead + hideReloadExtraFrames(model, params);
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える
