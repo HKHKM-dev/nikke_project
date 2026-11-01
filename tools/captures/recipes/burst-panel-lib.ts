@@ -45,6 +45,16 @@ export const SLIDE_IN_DROP = 0.8;
 /** CT の明けを段の表示の事象（I は I → II、II は II → III、III は 00.00）の前とみなす長さ（plan/design-burst-panel-recipe.md 6 節の 2） */
 export const CT_END_LEAD_MAX = 15;
 
+/**
+ * 2 段目の段 21（plan/design-skill-stage21.md 3.1 節・論点 5）: フルバーストの終わり。六角形の所がフルバーストの背景（橙）から次の段の
+ * 灰色に替わるフレーム（青が FB_END_BLUE_JUMP 以上・緑が FB_END_GREEN_JUMP 以上上がり、青が FB_END_BLUE_MIN 以上・バーの紫が 0）。
+ * 00.00 の FB_END_MIN_FRAMES 後から探す（バーの紫は窓の終わりより前に尽きるので、紫の切れ目は使わない。録画 0542〜0544）
+ */
+export const FB_END_BLUE_JUMP = 30;
+export const FB_END_GREEN_JUMP = 15;
+export const FB_END_BLUE_MIN = 130;
+export const FB_END_MIN_FRAMES = 300;
+
 /** フレームの分類。1・2・3 は I・II・III の六角形、F はフルバースト（00.00 からのバーの紫）、- は読めない */
 export type PanelClass = '1' | '2' | '3' | 'F' | '-';
 
@@ -87,6 +97,11 @@ export type PanelEvents = {
   /** III のタイマーの 00.00（フルバーストの紫が出た最初のフレーム） */
   fullBurst: number[];
   /**
+   * 2 段目の段 21: フルバーストの終わり（六角形の所が橙から灰色に替わったフレーム）。fullBurst と同じ並びで、読めなかった窓は null
+   * （次の 00.00 か録画の終わりまでに見つからない）
+   */
+  fullBurstEnd: (number | null)[];
+  /**
    * 段ごとの CT の明け（顔の枠の CT の秒が消えたフレーム）のうち、その段の表示の事象の CT_END_LEAD_MAX 前までにあるもの
    * （CT が律速の発動の明け）。添字 0・1・2 が I・II・III の段
    */
@@ -106,6 +121,7 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
     oneToTwo: [],
     twoToThree: [],
     fullBurst: [],
+    fullBurstEnd: [],
     ctEnd: [[], [], []],
     ctEndOther: [[], [], []],
     ctEndOutside: [],
@@ -116,6 +132,8 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
    * 光りが II の色に戻る途中を III と取り違える（録画 0735 の 3 回目のチェーン）。- は段の外（I の緑の前）
    */
   const stage: PanelClass[] = [];
+  /** 00.00 の行の添字（fullBurst と同じ並び。2 段目の段 21 のフルバーストの終わりを探す起点） */
+  const fullBurstAt: number[] = [];
   let phase = '-' as PanelClass;
   let last: PanelClass = '-';
   let lastAt = -1;
@@ -138,6 +156,7 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
         phase = '3';
       } else if (near && phase === '3' && last === '3' && k === 'F') {
         out.fullBurst.push(rows[i]!.frame);
+        fullBurstAt.push(i);
         phase = 'F';
       } else if (k === '1') phase = '1';
       last = k;
@@ -145,6 +164,26 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
     }
     stage.push(phase);
   }
+  // 2 段目の段 21: フルバーストの終わり（00.00 の FB_END_MIN_FRAMES 後から、次の 00.00 の前まで）
+  fullBurstAt.forEach((at, k) => {
+    const from = at + FB_END_MIN_FRAMES;
+    const to = fullBurstAt[k + 1] ?? rows.length;
+    let end: number | null = null;
+    for (let i = Math.max(from, 1); i < to; i++) {
+      const p = rows[i - 1]!;
+      const q = rows[i]!;
+      if (
+        q.magenta === 0 &&
+        q.b - p.b >= FB_END_BLUE_JUMP &&
+        q.g - p.g >= FB_END_GREEN_JUMP &&
+        q.b >= FB_END_BLUE_MIN
+      ) {
+        end = q.frame;
+        break;
+      }
+    }
+    out.fullBurstEnd.push(end);
+  });
   const rises = (i: number) => {
     const now = rows[i];
     const prev = rows[i - 1];

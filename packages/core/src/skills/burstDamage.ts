@@ -336,8 +336,9 @@ export function resolveDamageEffects(
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
       if (foldsIntoShot(effect, trigger)) return;
-      // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）
-      if (isPerShotTrigger(trigger) && character.weaponType === 'SG') {
+      // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）。
+      // 2 段目の段 21 の PR 2: 1 回の射撃ごとと読んだもの（perTrigger）は、射撃ごとの発動として 1 件ずつ出す（ほかの武器と同じ）
+      if (isPerShotTrigger(trigger) && character.weaponType === 'SG' && effect.perTrigger !== true) {
         throw new RangeError(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
         );

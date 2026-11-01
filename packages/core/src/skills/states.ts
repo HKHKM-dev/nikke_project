@@ -220,6 +220,18 @@ export const NAMED_STATES = {
    * 5 スタック・10 秒。中身は攻撃力のコピー。S2 のスタック量▲が足し、バーストの「フルスタックなら」が見る）
    */
   mindIfIBorrowThis: { name: { ja: '借りていくよぉ…', en: 'Mind If I Borrow This?' }, holder: 'ally' },
+  /**
+   * 2 段目の段 21 の PR 2（plan/design-skill-stage21.md 2.2・2.3 節）: 時間延長 I・II（ソーダ：トゥインクルバニーの S2。バースト 3 段階突入時に
+   * ゴールデンチップの数で味方全体に付き、フルバーストタイムの間続く。延長の秒は同じきっかけの fullBurstExtend が足す（C-0877）。中身なし。
+   * S2 の「自分が時間延長 I（II）状態なら」のダメージが見る）
+   */
+  timeExtension1: { name: { ja: '時間延長I', en: 'Time Extension I' }, holder: 'ally' },
+  timeExtension2: { name: { ja: '時間延長II', en: 'Time Extension II' }, holder: 'ally' },
+  /**
+   * 2 段目の段 21 の PR 3（plan/design-skill-stage21.md 2.4 節）: 気絶免疫（D の S2。ターゲットが出現した時（戦闘開始時）に味方全体に付く。
+   * 射撃場には防ぐ気絶が無いので中身なし。D のバーストの「自分が気絶免疫状態なら」のフルバーストタイムの延長が見る）
+   */
+  stunImmunity: { name: { ja: '気絶免疫', en: 'Stun Immunity' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

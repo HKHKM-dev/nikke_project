@@ -41,6 +41,9 @@ const files = readdirSync(SKILLS_DIR)
   .map((f) => Number(f.replace('.json', '')))
   .sort((a, b) => a - b);
 
+/** 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ */
+const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3']);
+
 describe('data/skills', () => {
   it('index lists exactly the definition files, sorted and without duplicates', () => {
     expect([...index.resourceIds].sort((a, b) => a - b)).toEqual(files);
@@ -227,7 +230,9 @@ describe('data/skills', () => {
             skillValue(character.skills[slot], effect.durationRef!, i + 1),
           );
           expect(seconds[0], `${slot} durationRef ${effect.durationRef}`).toBeGreaterThan(0);
-          // NIKKE の維持時間は Lv に依らないはず。崩れたらここで気づきたい
+          // NIKKE の維持時間は Lv に依らないはず。崩れたらここで気づきたい。2 段目の段 21: D の S2 の気絶免疫（値 03）は、説明文の値が
+          // Lv で変わる（19.44〜36.95 秒）ので除く（LEVEL_DEPENDENT_DURATIONS）
+          if (LEVEL_DEPENDENT_DURATIONS.has(`${def.resourceId}:${slot}:${effect.durationRef}`)) continue;
           expect(new Set(seconds).size, `${slot} durationRef ${effect.durationRef}`).toBe(1);
         }
       }

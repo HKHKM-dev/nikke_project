@@ -500,6 +500,9 @@ export function formatInstant(effect: ResolvedInstantEffect): string {
     // 2 段目の段 11: 「残弾数 100% 減少」
     case 'ammoDecrease':
       return `残弾数 ${formatPercent(effect.value, 2)} 減少`;
+    // 2 段目の段 21: 「フルバーストタイム 5.04 秒▲」
+    case 'fullBurstExtend':
+      return `フルバーストタイム ${formatNumber(effect.value, 2)} 秒▲`;
   }
 }
 

@@ -1249,7 +1249,10 @@ export type ResolvedInstantEffect = {
   delayFrames?: number;
   /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
   scaling?: 'flat';
-  /** 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある） */
+  /**
+   * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある）。
+   * 2 段目の段 21: fullBurstExtend も
+   */
   condition?: EffectCondition;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
@@ -1278,7 +1281,8 @@ export function resolveInstant(
         effect.kind !== 'ammoRefill' &&
         effect.kind !== 'heal' &&
         effect.kind !== 'burstGauge' &&
-        effect.kind !== 'ammoDecrease'
+        effect.kind !== 'ammoDecrease' &&
+        effect.kind !== 'fullBurstExtend'
       )
         return;
       // 2 段目の段 12: cooldownReduction の直書きの秒数（seconds）は Lv に依らない
@@ -1289,9 +1293,11 @@ export function resolveInstant(
         kind: effect.kind,
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
         target: effect.target,
-        // CT 短縮は秒、発数の弾丸チャージは発のまま。ほかは % を割合に
+        // CT 短縮・フルバーストタイムの延長は秒、発数の弾丸チャージは発のまま。ほかは % を割合に
         value:
-          effect.kind === 'cooldownReduction' || (effect.kind === 'ammoRefill' && effect.scaling === 'flat')
+          effect.kind === 'cooldownReduction' ||
+          effect.kind === 'fullBurstExtend' ||
+          (effect.kind === 'ammoRefill' && effect.scaling === 'flat')
             ? raw
             : raw / 100,
         effectIndex,
@@ -1308,7 +1314,7 @@ export function resolveInstant(
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }
       if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
-      if (effect.kind === 'cooldownReduction' && effect.condition !== undefined)
+      if ((effect.kind === 'cooldownReduction' || effect.kind === 'fullBurstExtend') && effect.condition !== undefined)
         r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
       if (effect.assumes) r.assumes = effect.assumes;

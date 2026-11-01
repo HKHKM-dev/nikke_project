@@ -1,0 +1,23 @@
+{
+  "id": "C-0887",
+  "text": "D のバーストスキルダメージは、最終攻撃力の 値 01（426.24）%（Lv10。説明文どおり）で、1 回目の発動の値がモデルと端数まで合う",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0916-07`（会心）・`0917-07`（会心なし）（1 回目のバーストのヒット。同じフレームの D の通常攻撃 1 発を引いた値が、モデルと 1 以内）。V-0635",
+  "model": "`data/skills/40.json` の burst の effects[0]（burstDamage。敵 1 体の前提）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": ["data/skills/40.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "minimal": [
+    {
+      "observations": ["0916-07", "0917-07"],
+      "element": "D burst.notes[0]",
+      "reason": "パーツダメージ▲は、パーツの無い射撃場の敵の値と窓に効かない",
+      "decided": "2026-11-01"
+    }
+  ]
+}

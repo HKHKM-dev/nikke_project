@@ -1,0 +1,30 @@
+{
+  "id": "C-0886",
+  "text": "D のバーストの「自分が気絶免疫状態なら、味方全体にフルバーストタイム 値 04（5.04）秒▲」は、S2 の気絶免疫（ターゲットの出現（戦闘開始時）から 値 03（36.95）秒）の間に D がバーストを使った窓だけを 5.04 秒延ばす。射撃場のリター・デルタとのチェーンでは 1 回目の窓だけが延び、2 回目以降の窓は 10 秒",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0916-05`・`0917-05`（III のタイマーの 00.00 から窓の終わり（レシピ burst-panel の、六角形の所が灰色に替わるフレーム）までの動画のフレーム。2 本とも 1 回目の窓だけが 10 + 5.04 秒の長さで、2〜4 回目は 10 秒。延長を足したモデルと 2 以内。撮る前の予測（V-0635）の「気絶免疫の間だけ」の形）。V-0635",
+  "model": "`data/skills/40.json` の skill2 の effects[1]（状態 stunImmunity の付与。battleStart・味方全体・値 03 秒）と burst の effects[1]（fullBurstExtend。burstUse・条件 selfState stunImmunity）。D の発動が作る窓に、窓を作る時に足す（`burst/controller.ts` の extensionAtActivation。plan/design-skill-stage21.md 2.1 節）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": ["data/skills/40.json の burst の effects[1]", "data/skills/40.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "延長の秒（値 04 の 5.04 秒）と気絶免疫の維持（値 03 の 36.95 秒）は説明文の値、窓の長さの元は CDN の burst_duration（10 秒）、延長の足し方は C-0877。合わせ込みの定数なし",
+  "minimal": [
+    {
+      "observations": ["0916-05", "0917-05"],
+      "element": "D skill2.effects[0]",
+      "reason": "戦闘開始時のバーストゲージのチャージは窓の始まりの時刻に効くが、窓の長さ（00.00 から終わりまで）に効かない",
+      "decided": "2026-11-01"
+    },
+    {
+      "observations": ["0916-05", "0917-05"],
+      "element": "D burst.notes[0]",
+      "reason": "パーツダメージ▲は、パーツの無い射撃場の敵の値と窓に効かない",
+      "decided": "2026-11-01"
+    }
+  ]
+}

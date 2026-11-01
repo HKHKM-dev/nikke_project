@@ -6,6 +6,9 @@ import {
   BAR_BOX,
   CT_END_LEAD_MAX,
   FACE_BOX,
+  FB_END_BLUE_JUMP,
+  FB_END_GREEN_JUMP,
+  FB_END_MIN_FRAMES,
   HEXAGON_BOX,
   PANEL_CROP,
   WHITE_MIN,
@@ -19,7 +22,7 @@ import {
 import { derived } from './cache.ts';
 import { observation, type Recipe, type RecipeObservation } from './types.ts';
 
-const VERSION = 2;
+const VERSION = 3;
 /** 特徴のキャッシュの名前（特徴の測り方を変えたら上げる） */
 const CACHE_KEY = 'burst-panel@1';
 
@@ -87,7 +90,7 @@ export const burstPanel: Recipe = {
   name: 'burst-panel',
   version: VERSION,
   describe:
-    '右のバースト欄の I → II・II → III の六角形の替わり目、III のタイマーの 00.00、I・II・III の段の CT の明けのフレーム（timing。事象のある件だけ）',
+    '右のバースト欄の I → II・II → III の六角形の替わり目、III のタイマーの 00.00、フルバーストの終わりと長さ、I・II・III の段の CT の明けのフレーム（timing・interval。事象のある件だけ）',
   options: {},
   async run(ctx) {
     const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
@@ -121,6 +124,32 @@ export const burstPanel: Recipe = {
           { unit: 'f' },
         ),
       );
+    // 2 段目の段 21（論点 5）: フルバーストの終わりと、00.00 からの長さ。読めなかった窓から先は出さない（並びを 00.00 とそろえる）
+    const unread = ev.fullBurstEnd.indexOf(null);
+    const ends = (unread < 0 ? ev.fullBurstEnd : ev.fullBurstEnd.slice(0, unread)) as number[];
+    if (ends.length > 0) {
+      const rest = unread < 0 ? '' : `。${unread + 1} 回目の窓の終わりが読めなかったので、そこから先は出さない`;
+      out.push(
+        observation(
+          this,
+          'timing',
+          ends,
+          '右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）',
+          `${how}00.00 の ${FB_END_MIN_FRAMES}f 後から、青と緑が一度に上がり（青 ${FB_END_BLUE_JUMP}・緑 ${FB_END_GREEN_JUMP} 以上）、バーの紫が 0 になったフレーム${rest}`,
+          { unit: 'f' },
+        ),
+      );
+      out.push(
+        observation(
+          this,
+          'interval',
+          ends.map((e, k) => e - ev.fullBurst[k]!),
+          '右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）',
+          `${how}上の 00.00 と終わりの差${rest}`,
+          { unit: 'f' },
+        ),
+      );
+    }
     const next = ['I → II の替わり目', 'II → III の替わり目', '00.00'];
     ev.ctEnd.forEach((frames, i) => {
       if (frames.length === 0) return;

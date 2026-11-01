@@ -1138,6 +1138,12 @@ export type DamageEffect = {
    */
   valueBeforeFire?: true;
   /**
+   * 2 段目の段 21 の PR 2（plan/design-skill-stage21.md 2.3 節。V-0634）: SG の射撃ごと（every 1）のダメージを、ペレットごとでなく 1 回の射撃
+   * （トリガー）に 1 回出す（ソーダ：トゥインクルバニーの S2 の時間延長状態別のダメージ）。SG はどちらかが決まっていないので、書かないと
+   * 解決で止まる（skills/burstDamage.ts）。射撃の回数のきっかけで、条件の付いた（畳み込まない）damage にだけ書ける
+   */
+  perTrigger?: true;
+  /**
    * 同 5.4 節: 「コア命中ダメージ」。コアに当たったヒットとして、コアの項（コア倍率 − 1 + コアダメージ▲）を足す（割合 1。敵にコアが
    * 無ければ足さない）。射撃ごとに畳み込む効果（毎回の回数のきっかけで条件なし）には書けない
    */
@@ -1337,8 +1343,36 @@ export type AmmoDecreaseEffect = TargetCountFields & {
   assumes?: LocalizedText;
 };
 
+/**
+ * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 「フルバーストタイム（の持続時間）X 秒▲」。フルバーストの窓を X 秒延ばす
+ * （即時効果）。窓の外の発火（バースト 3 段階突入時。ソーダ：トゥインクルバニー）は次に作る窓に予約し、窓を作る発動のバースト使用時の
+ * 発火（D）はその発動が作る窓に足す。件の一覧が窓の終わりを読むので、窓の終わりは窓を作る時に決め、後から動かさない。窓は編成で
+ * 1 つなので、対象は allies だけ書ける（対象の数によらず 1 回だけ足す）。固定サイクルでは足さない（状態機械を回さない）。
+ * 条件の無いバーストの「フルバーストタイム X 秒▲▼」は CDN の burst_duration に入っているので書かない
+ */
+export type FullBurstExtendEffect = TargetCountFields & {
+  kind: 'fullBurstExtend';
+  /** バースト 3 段階突入時（burstStage3Enter）かバースト使用時（burstUse）だけ */
+  trigger: EffectTrigger;
+  target: 'allies';
+  /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  /** 秒の description_value_NN */
+  ref: number;
+  /** 発火の条件。鍵は selfState だけ（ゴールデンチップの段・気絶免疫状態なら）。発火のフレームに見る */
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
 export type InstantEffect =
-  CooldownReductionEffect | AmmoRefillEffect | HealEffect | BurstGaugeEffect | AmmoDecreaseEffect;
+  | CooldownReductionEffect
+  | AmmoRefillEffect
+  | HealEffect
+  | BurstGaugeEffect
+  | AmmoDecreaseEffect
+  | FullBurstExtendEffect;
 export type InstantKind = InstantEffect['kind'];
 export const INSTANT_KINDS = [
   'cooldownReduction',
@@ -1346,6 +1380,7 @@ export const INSTANT_KINDS = [
   'heal',
   'burstGauge',
   'ammoDecrease',
+  'fullBurstExtend',
 ] as const satisfies readonly InstantKind[];
 
 /**
@@ -3007,6 +3042,8 @@ const CONDITION_KEYS_OF = {
   counterChange: ['selfState', 'selfCounter', 'inFullBurst', 'usedBurst'],
   // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: クールタイム▼は自分の状態だけ
   cooldownReduction: ['selfState'],
+  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: フルバーストタイムの延長も自分の状態だけ
+  fullBurstExtend: ['selfState'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
@@ -3934,6 +3971,14 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     if (n > (effect.delayFrames ?? 0)) fail(at, 'valueDelayFrames must not exceed delayFrames');
     effect.valueDelayFrames = n;
   }
+  if (v.perTrigger !== undefined) {
+    const at = `${path}.perTrigger`;
+    if (v.perTrigger !== true) fail(at, 'expected true');
+    if (!isShotCountTrigger(trigger)) fail(at, 'perTrigger needs a shot count trigger');
+    if (effect.condition === undefined)
+      fail(at, 'perTrigger needs a condition (a per-shot damage without one is folded into the shot)');
+    effect.perTrigger = true;
+  }
   if (v.valueBeforeFire !== undefined) {
     const at = `${path}.valueBeforeFire`;
     if (v.valueBeforeFire !== true) fail(at, 'expected true');
@@ -4509,7 +4554,15 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         : [];
   // 種類ごとの欄: 弾丸チャージの発数（scaling）。2 段目の段 12: cooldownReduction の直書きの秒数（seconds。PR 3）と発火の条件
   // （condition。PR 4。plan/design-skill-stage12.md 2.6 節）
-  const kindKeys = kind === 'ammoRefill' ? ['scaling'] : kind === 'cooldownReduction' ? ['seconds', 'condition'] : [];
+  // 2 段目の段 21: fullBurstExtend の発火の条件（condition）
+  const kindKeys =
+    kind === 'ammoRefill'
+      ? ['scaling']
+      : kind === 'cooldownReduction'
+        ? ['seconds', 'condition']
+        : kind === 'fullBurstExtend'
+          ? ['condition']
+          : [];
   for (const key of Object.keys(v)) {
     if (
       ![
@@ -4567,13 +4620,17 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
         fail(`${path}.${key}`, 'lowestHpRatio cannot be combined with a weapon, element or class filter');
     }
   }
-  // ヘルム編: ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）
-  if (kind === 'burstGauge') {
-    if (target !== 'allies') fail(`${path}.target`, 'burstGauge must target "allies" (the team shares one gauge)');
+  // ヘルム編: ゲージは編成で 1 本なので、対象は味方全体だけ（絞り込みも書けない）。2 段目の段 21: フルバーストの窓も編成で 1 つ
+  if (kind === 'burstGauge' || kind === 'fullBurstExtend') {
+    const what = kind === 'burstGauge' ? 'the team shares one gauge' : 'the team shares one Full Burst window';
+    if (target !== 'allies') fail(`${path}.target`, `${kind} must target "allies" (${what})`);
     for (const key of ['targetWeapon', 'targetElement', 'targetClass', 'targetCount', 'targetCountRef']) {
-      if (v[key] !== undefined) fail(`${path}.${key}`, 'burstGauge cannot narrow its target');
+      if (v[key] !== undefined) fail(`${path}.${key}`, `${kind} cannot narrow its target`);
     }
   }
+  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 延長は窓の外のバースト 3 段階突入時か、バースト使用時だけ
+  if (kind === 'fullBurstExtend' && trigger !== 'burstStage3Enter' && trigger !== 'burstUse')
+    fail(`${path}.trigger`, 'fullBurstExtend needs the trigger "burstStage3Enter" or "burstUse"');
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const targetClass = parseTargetClass(v, target, path);
@@ -4609,12 +4666,12 @@ function parseInstantEffect(v: Record<string, Json>, path: string, kind: Instant
   if (v.delayFrames !== undefined) {
     (effect as HealEffect).delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }
-  // 2 段目の段 12 の PR 4: 欄の一覧で cooldownReduction だけに限ってある
+  // 2 段目の段 12 の PR 4: 欄の一覧で cooldownReduction（段 21: と fullBurstExtend）だけに限ってある
   if (v.condition !== undefined) {
-    (effect as CooldownReductionEffect).condition = parseCondition(
+    (effect as CooldownReductionEffect | FullBurstExtendEffect).condition = parseCondition(
       v.condition,
       `${path}.condition`,
-      CONDITION_KEYS_OF.cooldownReduction,
+      kind === 'fullBurstExtend' ? CONDITION_KEYS_OF.fullBurstExtend : CONDITION_KEYS_OF.cooldownReduction,
     );
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
@@ -4744,7 +4801,8 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
     v.kind === 'ammoRefill' ||
     v.kind === 'heal' ||
     v.kind === 'burstGauge' ||
-    v.kind === 'ammoDecrease'
+    v.kind === 'ammoDecrease' ||
+    v.kind === 'fullBurstExtend'
   ) {
     return parseInstantEffect(v, path, v.kind);
   }
@@ -4766,7 +4824,7 @@ function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot)
   if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
   fail(
     `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "coverHeal", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
+    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "fullBurstExtend", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "coverHeal", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange" or "counterChange", got ${JSON.stringify(v.kind)}`,
   );
 }
 

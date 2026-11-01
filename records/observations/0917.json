@@ -1,0 +1,166 @@
+[
+  {
+    "id": "0917-01",
+    "recording": "0917",
+    "kind": "timing",
+    "use": "record",
+    "value": [872, 2541, 3786, 5262, 6589, 7887, 9131, 10407],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・24・0・25・0f"
+    },
+    "source": "V-0635",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0917-02",
+    "recording": "0917",
+    "kind": "timing",
+    "use": "record",
+    "value": [901, 3815, 6618, 9160],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24・25f"
+    },
+    "source": "V-0635",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0917-03",
+    "recording": "0917",
+    "kind": "timing",
+    "use": "record",
+    "value": [930, 3845, 6647, 9189],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0635",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0917-04",
+    "recording": "0917",
+    "kind": "timing",
+    "use": "record",
+    "value": [1835, 4453, 7256, 9798],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0635",
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0917-05",
+    "recording": "0917",
+    "kind": "interval",
+    "use": "compare",
+    "value": [905, 608, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0635",
+    "readAt": "2026-11-01",
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstLengths",
+      "args": {
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0917-06",
+    "recording": "0917",
+    "source": "V-0635",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "value": [2915, 2802, 2542],
+    "unit": "f",
+    "description": "フルバーストの入り（III のタイマーの 00.00）どうしの間隔（動画のフレーム）。1 回目の窓の延長と、戦闘開始時のゲージのチャージの後のチェーンの間隔",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "0917-03 の差"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 90
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0917-07",
+    "recording": "0917",
+    "source": "V-0635",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 847906,
+    "description": "D の 1 回目のバーストスキルダメージ（会心なし。最終攻撃力の 426.24%）。III のタイマーの 00.00（0917-03 の 1 回目）の 37f 後の HUD の増分 913,899 から、同じフレームの D の通常攻撃 1 発（0〜300f に繰り返し出る値 65,993）を引いた値（f967）",
+    "method": {
+      "tool": "recipe:buff-edge@4（--opt grid=Dn=3@200。00.00 から 0〜300f の増分）",
+      "note": "増分は 913,899。D の通常攻撃の値（格子 Dn の 57,309 と、ほかの回に繰り返し出る 65,993）を引くと、会心・会心なしのバーストスキルダメージの値になる。00.00 の後に 1 つだけ出る大きな増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  }
+]

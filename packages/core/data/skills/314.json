@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 314,
-  "checkedAt": "2026-10-17",
+  "checkedAt": "2026-11-01",
   "skills": {
     "skill1": {
       "effects": [
@@ -38,46 +38,160 @@
           "claims": [
             "C-0580"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 2,
+            "firesDuring": "fullBurst"
+          },
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "回数はゴールデンチップの付与（effects[1]。C-0580）と同じく、戦闘の始めから通して数え、3 の倍数の発がフルバーストの中のときだけ付く",
+            "en": "Counted like the Golden Chip grant (effects[1], C-0580): through the whole battle, applied only when the multiple-of-3 shot is inside Full Burst"
+          },
+          "claims": [
+            "C-0881"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "フルバーストタイム中の通常攻撃 3 回ごとの、自分と自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応",
-          "en": "The attack damage increase on self and the ally with the highest final attack every 3 normal attacks during Full Burst (2 s) is not modeled",
+          "ja": "同じきっかけの、自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応。ラム・デルタ（スペック固定の攻撃力が同じ）との編成の録画では▲はデルタに乗り、ラムには乗らない（V-0634）。モデルの順位（最終攻撃力。同値は枠の若い順）ではラムになり、選び方が決まらない",
+          "en": "The attack damage increase (2 s) on the ally with the highest final ATK excluding self, from the same trigger, is not modeled. In recordings with Rumani and Delta (same fixed-spec ATK) it goes to Delta, not Rumani (V-0634). The model ranking (final ATK, ties by slot order) picks Rumani, so the selection is not determined",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
             "stat": "attackDamage",
             "target": "allies",
             "trigger": "normalShot"
-          }
+          },
+          "claims": [
+            "C-0882"
+          ]
         }
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "バースト 3 段階突入時の、ゴールデンチップのスタック量別のフルバーストタイムの持続時間▲は未対応",
-          "en": "The Full Burst duration increase by Golden Chip stacks on entering burst stage 3 is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "allies",
-            "trigger": "burstStage3Enter"
-          }
+          "kind": "fullBurstExtend",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "ref": 2,
+          "condition": {
+            "selfState": {
+              "state": "goldenChip",
+              "stacksRef": 1
+            }
+          },
+          "assumes": {
+            "ja": "時間延長 I。発火のフレーム（バースト 3 段階突入）のゴールデンチップの数で見て、次に始まるフルバーストの窓を延ばす",
+            "en": "Time Extension I. Checks Golden Chip stacks at the frame of entering Burst Stage 3 and extends the next Full Burst window"
+          },
+          "claims": [
+            "C-0877"
+          ]
         },
         {
-          "ja": "フルバーストタイム中の通常攻撃ごとの、時間延長状態別のダメージは未対応",
-          "en": "The damage by time-extension state on each normal attack during Full Burst is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "normalShot"
-          }
+          "kind": "fullBurstExtend",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "ref": 4,
+          "condition": {
+            "selfState": {
+              "state": "goldenChip",
+              "stacksRef": 3
+            }
+          },
+          "assumes": {
+            "ja": "時間延長 II。下位効果のスタック適用で、20 スタック以上なら時間延長 I の延長も付く（足し算）",
+            "en": "Time Extension II. With \"each subsequent effect triggers all effects before it\", 20+ stacks also get the Time Extension I extension (added)"
+          },
+          "claims": [
+            "C-0877"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "timeExtension1",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "durationUntil": "fullBurstEnd",
+          "condition": {
+            "selfState": {
+              "state": "goldenChip",
+              "stacksRef": 1
+            }
+          },
+          "claims": [
+            "C-0880"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "timeExtension2",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "durationUntil": "fullBurstEnd",
+          "condition": {
+            "selfState": {
+              "state": "goldenChip",
+              "stacksRef": 3
+            }
+          },
+          "claims": [
+            "C-0880"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "damageType": "skill",
+          "ref": 6,
+          "condition": {
+            "inFullBurst": true,
+            "selfState": "timeExtension1"
+          },
+          "assumes": {
+            "ja": "時間延長状態別のダメージの 1 段階。フルバーストの中の通常攻撃 1 発ごとに 1 回（照準線に最も近い敵 1 機は的）。ヒットは発と同じフレーム",
+            "en": "Stage 1 of the damage by Time Extension state: once per normal attack shot during Full Burst (the enemy nearest the crosshair is the target). The hit is on the shot frame"
+          },
+          "perTrigger": true,
+          "delayFrames": 9,
+          "claims": [
+            "C-0880"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "damageType": "skill",
+          "ref": 7,
+          "condition": {
+            "inFullBurst": true,
+            "selfState": "timeExtension2"
+          },
+          "assumes": {
+            "ja": "2 段階。下位効果のスタック適用で、時間延長 II の窓では 1 段階のヒットも出る（1 発ごとに 2 ヒット）",
+            "en": "Stage 2. With \"each subsequent effect triggers all effects before it\", the stage 1 hit also fires in a Time Extension II window (two hits per shot)"
+          },
+          "perTrigger": true,
+          "delayFrames": 9,
+          "claims": [
+            "C-0880"
+          ]
         }
-      ]
+      ],
+      "notes": []
     },
     "burst": {
       "effects": [
@@ -92,7 +206,8 @@
           "claims": [
             "C-0572",
             "C-0581",
-            "C-0582", "C-0615"
+            "C-0582",
+            "C-0615"
           ]
         },
         {

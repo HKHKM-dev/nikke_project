@@ -313,5 +313,262 @@
       "slot": 3,
       "source": "burst"
     }
+  },
+  {
+    "id": "0471-14",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 449915,
+    "description": "ソーダ：トゥインクルバニーの1・2 回目のフルバースト（時間延長 I と II）の、時間延長状態別のダメージの I と II の和（同じ増分）。S1 の攻撃ダメージ▲が乗った値（会心なし。発の 9f 後の HUD の増分。最初の回は f2158）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 760,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0471-15",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 407126,
+    "description": "ソーダ：トゥインクルバニーの1・2 回目のフルバースト（時間延長 I と II）の、時間延長状態別のダメージの I と II の和。S1 の攻撃ダメージ▲の乗らない値（会心なし。発の 9f 後の HUD の増分。最初の回は f1678）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 942,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0471-16",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 272174,
+    "description": "ソーダ：トゥインクルバニーの3 回目のフルバースト（時間延長 I と II。バーストの攻撃力▲なし）の I と II の和。S1 の▲が乗った値（会心なし。発の 9f 後の HUD の増分。最初の回は f7795）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 5210,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0471-17",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 246289,
+    "description": "ソーダ：トゥインクルバニーの3 回目のフルバーストの I と II の和。S1 の▲の乗らない値（会心なし。発の 9f 後の HUD の増分。最初の回は f7758）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 5560,
+        "n": 0,
+        "crit": false,
+        "count": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0471-18",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 103341,
+    "description": "ソーダ：トゥインクルバニーの4 回目のフルバースト（時間延長 I だけ）の I のヒット。S1 の▲が乗った値（会心なし。発の 9f 後の HUD の増分。最初の回は f10573）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 7550,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0471-19",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "hit",
+    "use": "compare",
+    "value": 93513,
+    "description": "ソーダ：トゥインクルバニーの4 回目のフルバーストの I のヒット。S1 の▲の乗らない値（会心なし。発の 9f 後の HUD の増分。最初の回は f10454）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "frame": 7470,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0471-20",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "count",
+    "use": "record",
+    "value": [27, 0],
+    "description": "S1 の攻撃ダメージ▲（自分を除く最終攻撃力が最も高い味方 1 機）の乗った発の数（デルタ・ラム）。デルタの発の値 × 1.1051 に当たる増分（▲の無い値と重ならないもの）と、ラムの▲の乗った格子に当たる増分",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "--opt grid=E1on=3@skill@760:skill2/h2;E1off=3@skill@942:skill2/h2;E3on=3@skill@5210:skill2/h2;E3off=3@skill@5560:skill2/h2;E4on=3@skill@7550:skill2;E4off=3@skill@7470:skill2;Doff=2@707;DonX=2@707/*1.1051;Roff=1@707;Ron=1@760（DonX はデルタの格子 × 1.1051、Ron はモデルの▲の乗ったラムの格子）。当てた数: E1on 14・E1off 10・E3on 10・E3off 3・E4on 7・E4off 5・DonX 27・Roff 76・Ron 0"
+    },
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0471-21",
+    "recording": "0471",
+    "source": "V-0634",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "record",
+    "value": 9,
+    "unit": "f",
+    "description": "ソーダ：トゥインクルバニーの時間延長状態別のダメージのヒット（I と II の和か I。当てたすべての回）の、HUD の 1 つ前の増分からの動画のフレーム。9f が 34 回、ほかは 1〜8f と 471f（間にほかの増分が入った回か、ほかの増分と値が重なった回）。1 つ前の増分はソーダ：トゥインクルバニーの発（ペレットの和）",
+    "method": {
+      "tool": "recipe:buff-edge@4・hud-jumps@2",
+      "note": "buff-edge の格子に当たった増分（E1on・E1off・E3on・E3off・E4on・E4off）と、hud-jumps の 1 つ前の増分の差。9f の回数 34"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

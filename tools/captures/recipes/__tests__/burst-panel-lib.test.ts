@@ -174,3 +174,31 @@ describe('burst-panel の TSV', () => {
     expect(parsePanelTsv(formatPanelTsv(r))).toEqual(r);
   });
 });
+
+describe('panelEvents のフルバーストの終わり（2 段目の段 21）', () => {
+  // 録画 0542 の 5 回目の窓の終わりの前後の六角形の所の色（f11379 → f11380）
+  const FB_BACK = { r: 154, g: 123, b: 107 };
+  const GREY = { r: 169, g: 158, b: 151 };
+  const chain = (): [Color, number, Patch?][] => [
+    [GREEN, 5],
+    [ORANGE, 29],
+    [RED, 29],
+  ];
+
+  it('00.00 の 300f 後から、橙から灰色に替わったフレームを終わりにする（バーの紫が尽きた後でも、紫の切れ目は使わない）', () => {
+    const ev = panelEvents(
+      rows(...chain(), [FB_BACK, 400, { magenta: 300 }], [FB_BACK, 209], [GREY, 20], ...chain(), [
+        FB_BACK,
+        10,
+        { magenta: 600 },
+      ]),
+    );
+    expect(ev.fullBurst).toEqual([63, 755]);
+    expect(ev.fullBurstEnd).toEqual([672, null]);
+  });
+
+  it('00.00 の 300f 前までの色の上がりは終わりにしない', () => {
+    const ev = panelEvents(rows(...chain(), [FB_BACK, 100, { magenta: 300 }], [GREY, 5], [FB_BACK, 400], [GREY, 5]));
+    expect(ev.fullBurstEnd).toEqual([568]);
+  });
+});

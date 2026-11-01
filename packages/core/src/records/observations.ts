@@ -1056,6 +1056,15 @@ function fullBurstStartIntervals(result: { schedule: BurstSchedule | null }, ctx
   return starts.slice(1, n + 1).map((s, i) => s - starts[i]!);
 }
 
+function fullBurstLengths(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  const windows = schedule.fullBurstWindows.slice(0, n);
+  if (windows.length < n) throw new Error(`フルバーストが ${windows.length} 回しかない`);
+  return windows.map((w) => videoFrameOf(schedule, w.end) - videoFrameOf(schedule, w.start));
+}
+
 /**
  * アニス：スター S2・バースト編（V-0124）: n 回目（0 始まり）のフルバーストの入りから、その後の最初のバーストの発動までの動画のフレーム数
  * （フルバーストの後に I だけ撃って切れる発動の時刻。ゲージの溜まり方と CT で決まる）。入りの止まり（C-0069）は videoFrameOf で足す
@@ -1359,6 +1368,14 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   fullBurstStartIntervals: {
     args: ['n'],
     sim: (r, c) => fullBurstStartIntervals(r, c),
+  },
+  /**
+   * 2 段目の段 21（V-0633）: 最初の n 回のフルバーストの、III のタイマーの 00.00（窓の始まり）から窓の終わりまでの動画のフレーム。
+   * 入りの止まり（C-0069）を足す（videoFrameOf）。録画ではレシピ burst-panel の、六角形の所が灰色に替わったフレームまで
+   */
+  fullBurstLengths: {
+    args: ['n'],
+    sim: (r, c) => fullBurstLengths(r, c),
   },
   /** アニス：スター編（V-0121）: バーストを撃った枠（1 始まり）の並び（最初の n 回。チェーンが切れた単独の発動も入る） */
   burstActivationSlots: {

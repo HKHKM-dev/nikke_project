@@ -108,6 +108,8 @@ const KIND_CLASS: Record<string, ElementClass> = {
   coverHeal: 'coverHeal',
   cooldownReduction: 'burstTiming',
   burstGauge: 'burstTiming',
+  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: フルバーストの窓の長さ（窓の終わり・窓の中の発・フルバースト終了時のきっかけ）
+  fullBurstExtend: 'burstTiming',
   burstGaugeHit: 'burstTiming',
   shotPause: 'firing',
   burstReentry: 'burstTiming',

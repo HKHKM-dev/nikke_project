@@ -65,6 +65,7 @@ import {
   finishSchedule,
   initialBurstController,
   reduceCooldown,
+  reserveFullBurstExtension,
   shortenCooldown,
   stepBurstController,
   type BurstControllerState,
@@ -429,7 +430,14 @@ function runFirstPassOnce(
   const isShotGaugeCharge = (src: InstantSource): boolean =>
     src.effect.kind === 'burstGauge' && isResolvedShotCount(src.effect.trigger);
   const shotGaugeCharges = instant.filter(isShotGaugeCharge);
-  const otherInstants = instant.filter((src) => src.effect.kind !== 'heal' && !isShotGaugeCharge(src));
+  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: バースト使用時のフルバーストタイムの延長（D）は、状態機械が発動の時に聞く
+  // （extensionAtActivation。件の一覧が窓の終わりを読む前に足す）ので、下の即時効果のループでは扱わない
+  const isActivationExtension = (src: InstantSource): boolean =>
+    src.effect.kind === 'fullBurstExtend' && src.effect.trigger === 'burstUse';
+  const activationExtensions = instant.filter(isActivationExtension);
+  const otherInstants = instant.filter(
+    (src) => src.effect.kind !== 'heal' && !isShotGaugeCharge(src) && !isActivationExtension(src),
+  );
   const logs: (ShotLog | null)[] = slots.map((slot) =>
     slot === null
       ? null
@@ -997,6 +1005,20 @@ function runFirstPassOnce(
   const lastActivationOf = new Map<number, BurstActivation>();
 
   const instants: InstantApplication[] = [];
+  // 2 段目の段 21: バースト使用時の延長は、発動のたびに状態機械が聞く（条件は発動のフレームの件で見る。窓を作る発動ならその窓に、
+  // 作らない発動なら次の窓に足す）
+  if (controller !== null && activationExtensions.length > 0) {
+    controller.extensionAtActivation = (slotIndex, frame) => {
+      let seconds = 0;
+      for (const src of activationExtensions) {
+        if (src.sourceSlotIndex !== slotIndex) continue;
+        if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, frame)) continue;
+        seconds += src.effect.value;
+        instants.push({ frame, sourceSlotIndex: slotIndex, slotIndex, effect: src.effect, amount: src.effect.value });
+      }
+      return seconds;
+    };
+  }
   /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
   const pendingHeals = new Map<
     number,
@@ -1464,6 +1486,19 @@ function runFirstPassOnce(
         const list = pendingGaugeCharges.get(f + 1) ?? [];
         list.push({ sourceSlotIndex: src.sourceSlotIndex, effect: src.effect });
         pendingGaugeCharges.set(f + 1, list);
+        continue;
+      }
+      // 2 段目の段 21: 窓の外で発火したフルバーストタイムの延長（バースト 3 段階突入時）は、対象によらず 1 回だけ、次に作る窓に予約する
+      if (src.effect.kind === 'fullBurstExtend') {
+        if (controller === null) continue; // 固定サイクル・バーストなしでは窓を延ばさない
+        reserveFullBurstExtension(controller, src.effect.value);
+        instants.push({
+          frame: f,
+          sourceSlotIndex: src.sourceSlotIndex,
+          slotIndex: src.sourceSlotIndex,
+          effect: src.effect,
+          amount: src.effect.value,
+        });
         continue;
       }
       const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
