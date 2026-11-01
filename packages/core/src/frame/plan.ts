@@ -356,10 +356,14 @@ export function planSkillHits(
     const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
       const t = effect.trigger;
       // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 付くフレームの条件（自分の状態。damage と同じ判定）
-      if (!isCounterFullTrigger(t))
-        return triggerFrames(t, schedule, slotIndex, frames, shots).filter((f) =>
-          damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt),
-        );
+      if (!isCounterFullTrigger(t)) {
+        const at = triggerFrames(t, schedule, slotIndex, frames, shots);
+        return effect.condition === undefined
+          ? at
+          : at.filter((f) =>
+              damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt),
+            );
+      }
       const per = effect.perCount;
       if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
         throw new RangeError('a dot with { counterFull } needs perCount { counter } and perCountIntervalFrames');

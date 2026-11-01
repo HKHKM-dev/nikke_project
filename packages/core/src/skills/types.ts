@@ -1874,14 +1874,13 @@ export function chargeTriggersOf(definition: SkillDefinition): { tickSeconds: nu
 
 /**
  * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 定義に、リロードの込め終わりで終わる効果（durationUntil: reloadEnd。
- * timed の自分だけ）か、込め終わりのきっかけ（{ reloadEnd }。2 段目の段 16 の PR 2）の解除があるか（宝物版・編成の条件を当てた後の定義を渡す）。1 パス目が、その枠の込め終わりのフレームを書くかを決める
+ * timed の自分だけ）か、込め終わりのきっかけ（{ reloadEnd }。2 段目の段 16 の PR 2 の解除と、段 17 の PR 4 の timed・状態の付与）の効果があるか（宝物版・編成の条件を当てた後の定義を渡す）。1 パス目が、その枠の込め終わりのフレームを書くかを決める
  */
 export function hasReloadEndEffect(definition: SkillDefinition): boolean {
   return SKILL_SLOTS.some((slot) =>
     definition.skills[slot].effects.some(
       (e) =>
-        (e.kind === 'timed' && e.durationUntil === 'reloadEnd') ||
-        ((e.kind === 'removeState' || e.kind === 'timed' || e.kind === 'state') && isReloadEndTrigger(e.trigger)),
+        (e.kind === 'timed' && e.durationUntil === 'reloadEnd') || ('trigger' in e && isReloadEndTrigger(e.trigger)),
     ),
   );
 }
@@ -3933,12 +3932,14 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
     intervalSeconds: interval,
     ...(untilBattleEnd ? { durationUntil: 'battleEnd' as const } : parseDuration(v, path)),
   };
-  // 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ。frame/plan.ts が付くフレームを damage と同じ判定で絞る）。ゲージを溜める dot は
-  // 1 パス目が付くフレームを追うので、条件と組まない
+  // 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
+  // 付くフレームをほかで追うもの（ゲージを溜める dot は 1 パス目、敵の状態を付ける dot は件の一覧、{ counterFull } はカウンタの経路）とは組まない
   if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.dot);
     for (const key of ['gaugeOnApply', 'gaugeOnTick', 'gaugeOnApplyDelayFrames'])
       if (v[key] !== undefined) fail(`${path}.${key}`, 'a dot with a condition cannot charge the gauge');
+    if (v.state !== undefined) fail(`${path}.state`, 'a dot with a condition cannot apply a state');
+    if (counterFull !== undefined) fail(`${path}.trigger`, 'a dot with a condition cannot use { counterFull }');
   }
   if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
     fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);

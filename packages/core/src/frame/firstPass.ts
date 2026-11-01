@@ -1059,11 +1059,11 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       // 「リロード完了時に解除」の窓（件の終わりは次のフレーム）
       // 2 段目の段 17 の PR 4（V-0601）: 1 回分が 0 フレームのリロード（リロード速度 100% 近く）は、最終弾の発の中で込め終える
       // （shooter.ts の fire）。フレームの始めにリロード中でなくても、最終弾を撃ってリロード中でなければ込め終えている
-      const reloadedOnLastShot = fired && state.lastShot && state.phase !== 'reloading';
       if (
         writesReloadEnds[i] &&
-        ((reloading && state.phase !== 'reloading') || reloadedOnLastShot) &&
-        params.weapon === null
+        params.weapon === null &&
+        state.phase !== 'reloading' &&
+        (reloading || (fired && state.lastShot))
       )
         (log.reloadEnds ??= []).push(f + 1);
       if (!fired && partial === null) return;

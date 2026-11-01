@@ -150,5 +150,8 @@ describe('読み込み', () => {
     expect(() => parseSkillDefinition(def([{ ...dot, condition: cond, gaugeOnTick: true }]))).toThrow(
       /cannot charge the gauge/,
     );
+    expect(() => parseSkillDefinition(def([{ ...dot, condition: cond, state: 'acidRound' }]))).toThrow(
+      /cannot apply a state/,
+    );
   });
 });
