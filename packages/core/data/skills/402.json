@@ -1,0 +1,55 @@
+{
+  "formatVersion": 1,
+  "resourceId": 402,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "通常攻撃 60 回ごとの、自分への最大HP が最も高いニケの最大HP のコピーは、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Duplicating the max HP of the Nikke with the highest max HP onto self every 60 normal attacks does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "（S2 は録画を読んでから書く）",
+          "en": "(Skill 2 is written after reading the recordings)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "topAttack",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最終攻撃力が最も高い味方 2 機への最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The max HP increase on the 2 allies with the highest final ATK does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}
