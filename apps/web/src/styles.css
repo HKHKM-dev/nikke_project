@@ -851,11 +851,14 @@ header h1 {
   align-items: stretch;
   margin: 2px 0 6px;
 }
+/* 選択欄は長いキャラ名でも列の幅に収め、ボタンの文字は折り返さない（和文はどの字の間でも折り返せるので、列が縮むと縦書きになる） */
 .picker-row .picker {
+  grid-template-columns: minmax(0, 1fr);
   margin: 0;
 }
 .slot-settings-button {
   height: 100%;
+  white-space: nowrap;
   padding: 3px 8px;
   font: inherit;
   font-size: 0.8rem;
