@@ -127,7 +127,7 @@ describe('自分の HP の割合の条件（selfHp）', () => {
       scaling: 'casterAttack',
       condition: { selfHp: { atLeastRef: 1 } },
       reads: ['hp'],
-      claims: ['C-0020'],
+      claims: ['C-0020', 'C-0835'],
     });
     expect(e).not.toHaveProperty('assumes');
   });

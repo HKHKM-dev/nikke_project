@@ -458,6 +458,70 @@
       "plus": 0
     },
     {
+      "observation": "0019-47",
+      "element": "エーテル skill2.effects[1]",
+      "key": "637ff0fd22324542",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0019-47",
+      "element": "ノワール burst.effects[1]",
+      "key": "637ff0fd22324542",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0019-48",
+      "element": "エーテル skill2.effects[1]",
+      "key": "5849c7f155781ee6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0019-48",
+      "element": "ノワール burst.effects[1]",
+      "key": "5849c7f155781ee6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0019-49",
+      "element": "エーテル skill2.effects[1]",
+      "key": "0a8f82e319635702",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0019-49",
+      "element": "ノワール burst.effects[1]",
+      "key": "0a8f82e319635702",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0019-50",
+      "element": "エーテル skill2.effects[1]",
+      "key": "1dc6514c4530d7ad",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0019-50",
+      "element": "ノワール burst.effects[1]",
+      "key": "1dc6514c4530d7ad",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0020-01",
       "element": "エーテル skill2.effects[1]",
       "key": "7ad313431b8569c0",

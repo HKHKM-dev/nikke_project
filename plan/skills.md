@@ -527,7 +527,7 @@ notes の種類: 未対応 43・前提の外 32・計算に無関係 35・補足
 ## 271 ノワール
 
 - **skill1**: supported
-  - effects[0] passive・attack（読む: HP）: C-0020（確定）
+  - effects[0] passive・attack（読む: HP）: C-0020（確定）、C-0835（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0395（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0395（確定）
@@ -593,7 +593,7 @@ notes の種類: 未対応 43・前提の外 32・計算に無関係 35・補足
 - **skill2**: supported
   - effects[0] damage・13 秒ごと・skill: C-0405（確定）、C-0102（確定）、C-0453（確定）
   - effects[1] burstGaugeHit・13 秒ごと: C-0409（仮説）、C-0405（確定）、C-0453（確定）
-  - effects[2] timed・13 秒ごと・enemyDefenseDown: C-0832（確定）、C-0405（確定）、C-0453（確定）、C-0790（確定）
+  - effects[2] timed・13 秒ごと・enemyDefenseDown: C-0832（確定）、C-0405（確定）、C-0453（確定）、C-0790（確定）、C-0835（確定）
 - **burst**: noEffect
   - notes[0] 間接（バリア）: 残りの HP の数値が最も低い味方へのバリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。バーストゲージは溜めない）: 根拠なし
 
