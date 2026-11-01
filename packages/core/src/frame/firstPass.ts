@@ -935,6 +935,9 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   let healedDirty = false;
   /** 段 17 の PR 1: 次のフレーム以降に遮蔽物 HP 回復を受ける枠（射撃の回数起点で、撃った枠と同じか前の枠）。フレーム → 受ける枠 */
   const pendingCoverHeals = new Map<number, number[]>();
+  /** 段 17 の PR 1: このフレームに遮蔽物 HP 回復を受けた枠（FrameEvents.coverHealed）。healed と同じく使い回す */
+  const coverHealed: boolean[] = slots.map(() => false);
+  let coverHealedDirty = false;
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
   /** Stage 16-B: いま見ている（または次に来る）狙えない窓の添字 */
@@ -1271,8 +1274,16 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
     );
     const chargeFulls = logs.flatMap((log, i) => (log?.chargeFullFrames?.at(-1) === f ? [i] : []));
     // 段 17 の PR 1: このフレームに遮蔽物 HP 回復を受けた枠（前のフレームの射撃で起きたものから。このフレームの分は下で足す）
-    const coverHealed: number[] | undefined = coverHeals.length > 0 ? [...(pendingCoverHeals.get(f) ?? [])] : undefined;
-    pendingCoverHeals.delete(f);
+    if (coverHealedDirty) {
+      coverHealed.fill(false);
+      coverHealedDirty = false;
+    }
+    const dueCover = pendingCoverHeals.size > 0 ? pendingCoverHeals.get(f) : undefined;
+    if (dueCover !== undefined) {
+      for (const i of dueCover) coverHealed[i] = true;
+      coverHealedDirty = true;
+      pendingCoverHeals.delete(f);
+    }
     const ev: FrameEvents = {
       frame: f,
       shots: shotEvents,
@@ -1288,7 +1299,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       ...(fullStacks.length > 0 ? { fullStacks } : {}),
       ...(weaponChangeEnds.length > 0 ? { weaponChangeEnds } : {}),
       ...(reloadEnds.length > 0 ? { reloadEnds } : {}),
-      ...(coverHealed !== undefined ? { coverHealed } : {}),
+      ...(coverHeals.length > 0 ? { coverHealed } : {}),
       ...(chargeTicks.length > 0 ? { chargeTicks } : {}),
       ...(chargeFulls.length > 0 ? { chargeFulls } : {}),
       ...(stageEntries !== undefined ? { stageEntries } : {}),
@@ -1328,11 +1339,12 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
 
     // 段 17 の PR 1: 遮蔽物 HP 回復も回復と同じく件の登録の前に当てる（同じフレームの { coverHealed } の timed が読む）
     for (const src of coverHeals) {
-      if (coverHealed === undefined || !src.fires(ev)) continue;
+      if (!src.fires(ev)) continue;
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, null)) {
         const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
         if (at === f) {
-          if (!coverHealed.includes(target)) coverHealed.push(target);
+          coverHealed[target] = true;
+          coverHealedDirty = true;
         } else if (at < frames) {
           const list = pendingCoverHeals.get(at) ?? [];
           if (!list.includes(target)) list.push(target);

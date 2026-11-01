@@ -2698,7 +2698,7 @@ function parseTimedFields(
   const trigger =
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
     parseChargeTrigger(v.trigger, `${path}.trigger`) ??
-    parseCoverHealedTrigger(v.trigger, `${path}.trigger`, stat !== undefined) ??
+    (stat !== undefined ? parseCoverHealedTrigger(v.trigger, `${path}.trigger`) : undefined) ??
     parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
@@ -3103,19 +3103,18 @@ function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined 
   return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
 }
 
-/**
- * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: { chargeTick: { everySeconds } } か { chargeFull: true }。それ以外の形なら
- * undefined（timed と状態の付与の parseTimedFields だけが読む）
- */
-/** 2 段目の段 17 の PR 1: { coverHealed: true }。allowed が false（状態の付与）なら落とす。ほかのきっかけなら undefined */
-function parseCoverHealedTrigger(v: Json, path: string, allowed: boolean): CoverHealedTrigger | undefined {
+/** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
+function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigger | undefined {
   if (!isRecord(v) || v.coverHealed === undefined) return undefined;
-  if (!allowed) fail(path, 'a { coverHealed } trigger is only allowed in timed');
   for (const key of Object.keys(v)) if (key !== 'coverHealed') fail(`${path}.${key}`, 'unknown field');
   if (v.coverHealed !== true) fail(`${path}.coverHealed`, `expected true, got ${JSON.stringify(v.coverHealed)}`);
   return { coverHealed: true };
 }
 
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: { chargeTick: { everySeconds } } か { chargeFull: true }。それ以外の形なら
+ * undefined（timed と状態の付与の parseTimedFields だけが読む）
+ */
 function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | ChargeFullTrigger | undefined {
   if (!isRecord(v)) return undefined;
   if (v.chargeFull !== undefined) {
@@ -4990,9 +4989,8 @@ function stackFormOf(e: StateGrantEffect): string {
 }
 
 /** JSON.parse 済みの値を検証して SkillDefinition にする。不正なら Error */
-export function parseSkillDefinition(input: Json): SkillDefinition {
-  if (!isRecord(input)) fail('', 'expected an object');
-  const raw = input;
+export function parseSkillDefinition(raw: Json): SkillDefinition {
+  if (!isRecord(raw)) fail('', 'expected an object');
   if (raw.formatVersion !== 1) fail('formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
   if (typeof raw.resourceId !== 'number' || !Number.isInteger(raw.resourceId) || raw.resourceId < 1) {
     fail('resourceId', 'expected a positive integer');

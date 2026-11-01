@@ -10,6 +10,7 @@ import {
   SHOT_COUNT_KINDS,
   SKILL_SLOTS,
   contentStatOf,
+  isCoverHealedTrigger,
   type BuffStat,
   type IndirectPath,
   type NoteEffect,
@@ -512,17 +513,17 @@ export function teamHasHealedTrigger(recording: RecordingEntry, ctx: RelevanceCo
 
 /** 2 段目の段 17 の PR 1: 編成に、遮蔽物 HP 回復を受けた時（trigger: { coverHealed }）がきっかけの効果か notes を持つキャラがいるか */
 export function teamHasCoverHealedTrigger(recording: RecordingEntry, ctx: RelevanceContext): boolean {
-  return teamHasTrigger(recording, ctx, (t) => typeof t === 'object' && t !== null && 'coverHealed' in t);
+  return teamHasTrigger(recording, ctx, isCoverHealedTrigger);
 }
 
 function teamHasTrigger(recording: RecordingEntry, ctx: RelevanceContext, matches: (t: unknown) => boolean): boolean {
-  const healed = (x: { trigger?: unknown } | undefined) => x !== undefined && matches(x.trigger);
+  const hits = (x: { trigger?: unknown } | undefined) => x !== undefined && matches(x.trigger);
   return recording.team.some((m) => {
     const def = ctx.skills.get(m.rid);
     if (def === undefined) return false;
     const slots = [def.skills, def.treasureSkills ?? {}].flatMap((s) => Object.values(s) as SkillEntry[]);
     return slots.some(
-      (s) => s.effects.some((e) => healed(e as { trigger?: unknown })) || (s.notes ?? []).some((n) => healed(n.effect)),
+      (s) => s.effects.some((e) => hits(e as { trigger?: unknown })) || (s.notes ?? []).some((n) => hits(n.effect)),
     );
   });
 }
