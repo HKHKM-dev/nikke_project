@@ -1,4 +1,5 @@
-// ココア（311）を含む編成: 定義はダメージに効く効果を持たない（全スロット noEffect）。射撃の列のグループ分け（V-0031、C-0092）。
+// ココア（311）を含む編成: 定義はダメージに効く効果を持たない（S1 の遮蔽物 HP 回復は、遮蔽物を読む味方がいる時だけ効く。段 17 の PR 3、
+// C-0822）。射撃の列のグループ分け（V-0031、C-0092）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -57,9 +58,10 @@ const TEAMS: Record<string, { input: TeamInput; cocoa: number }> = {
 };
 
 describe('ココアの定義', () => {
-  it('is defined with notes only (no effects in any slot)', () => {
+  it('has only the S1 cover heal as an effect (the other slots are notes only)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
-    for (const slot of ['skill1', 'skill2', 'burst'] as const) {
+    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal']);
+    for (const slot of ['skill2', 'burst'] as const) {
       expect(def.skills[slot].support).toBe('noEffect');
       expect(def.skills[slot].effects).toEqual([]);
     }

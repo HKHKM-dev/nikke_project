@@ -4,17 +4,26 @@
   "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
-          "en": "Cover HP recovery for all allies does not change damage by itself (it matters only with an effect reading cover in the team)",
-          "kind": "indirect",
-          "path": "cover",
+          "kind": "coverHeal",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "target": "allies",
+          "ref": 1,
+          "delayFrames": 3,
+          "assumes": {
+            "ja": "説明文にきっかけの無い CT ごとのアクティブで、戦闘開始から ceil(15 ÷ 0.017) = 883 フレームごとに発動し（C-0502 の形）、発動の 3 フレーム後に味方全体に遮蔽物 HP 回復を受けた出来事が届く。回復量はダメージに関係せず、受けた味方の「遮蔽物の HP を回復した時」（ティアの S1）を起こす（遮蔽物を読む味方がいなければ与ダメージを変えない。C-0092）。射撃場の敵の攻撃では遮蔽物は壊れない前提",
+            "en": "An active skill on its own cooldown with no trigger written: it activates every ceil(15 ÷ 0.017) = 883 frames from the battle start (the C-0502 form), and the cover-healed event lands on all allies 3 frames after the activation. The amount does not affect damage; it triggers \"when restoring cover HP\" (Tia S1) on the allies that receive it (without an ally reading cover it does not change damage; C-0092). Covers are assumed not to break from the shooting range enemy's attacks"
+          },
           "claims": [
-            "C-0092"
+            "C-0092",
+            "C-0822"
           ]
-        },
+        }
+      ],
+      "notes": [
         {
           "ja": "デバフのかかった味方のデバフ解除はダメージに関係しない",
           "en": "Debuff removal on debuffed allies does not affect damage",

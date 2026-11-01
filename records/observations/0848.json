@@ -278,16 +278,35 @@
     "source": "V-0600",
     "readAt": "2026-11-01",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 455246,
     "description": "ココアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の中（344,596 × 1.3211）",
     "method": {
       "tool": "recipe:hud-jumps@3 のキャッシュ（hud-jumps@2）・recipe:buff-edge@3",
-      "note": "元の値 × 1.3211（C-0776 の 32.11%）を四捨五入した値と同じ。いまの main のモデルにはこの編成で▲の窓が無いので比べない"
+      "note": "元の値 × 1.3211（C-0776 の 32.11%）を四捨五入した値と同じ。いまの main のモデルにはこの編成で▲の窓が無いので比べない。段 17 の PR 3 で、モデルの 1 回目の窓（886〜1474）の中のフレーム 1100 と比べる指定を足した"
     },
     "scope": {
       "slot": 1,
       "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
     }
   },
   {
@@ -296,16 +315,111 @@
     "source": "V-0600",
     "readAt": "2026-11-01",
     "kind": "hit",
-    "use": "record",
+    "use": "compare",
     "value": 323343,
     "description": "ティアのフルチャージの 1 発（コア・会心でない・距離ボーナスなし）の増分。▲の窓の中（244,753 × 1.3211）",
     "method": {
       "tool": "recipe:hud-jumps@3 のキャッシュ（hud-jumps@2）・recipe:buff-edge@3",
-      "note": "元の値 × 1.3211（C-0776 の 32.11%）を四捨五入した値と同じ。いまの main のモデルにはこの編成で▲の窓が無いので比べない"
+      "note": "元の値 × 1.3211（C-0776 の 32.11%）を四捨五入した値と同じ。いまの main のモデルにはこの編成で▲の窓が無いので比べない。段 17 の PR 3 で、モデルの 1 回目の窓（886〜1474）の中のフレーム 1100 と比べる指定を足した"
     },
     "scope": {
       "slot": 2,
       "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0848-14",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "ティック",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    },
+    "value": [885.8],
+    "description": "ティアの S1 の攻撃ダメージ▲の 1 回目の窓の始まりの、戦闘開始からのゲーム内のティック（`0848-07` の 1 つ目）",
+    "method": {
+      "tool": "`0848-07` から",
+      "note": "アイコンの付いたフレームを timer.ts --mode ticks で直した値（`0848-07`）の 1 つ目。読みは 1f の単位で、動画とゲーム内の時間のずれを 1f ほど見込んで ±2"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStarts",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0848-15",
+    "recording": "0848",
+    "source": "V-0600",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "ティック",
+    "scope": {
+      "slot": [1, 2],
+      "source": "normal",
+      "frames": [863, 11174]
+    },
+    "value": 882.79,
+    "description": "ティアの S1 の攻撃ダメージ▲の窓の始まりの間隔（1 回目から 11 回目までの 10 間隔の平均）の、ゲーム内のティック（`0848-07` から）",
+    "method": {
+      "tool": "`0848-07` から",
+      "note": "(11 回目 − 1 回目) ÷ 10。端ごとに読み 1f と動画とゲーム内の時間のずれ 1f ほどを見込み、V-0599 と同じ ±0.5"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 2,
+        "skill": "skill1",
+        "stat": "attackDamage",
+        "count": 11
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
     }
   }
 ]
