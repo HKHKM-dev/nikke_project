@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts/records-data.ts';
+import { burstSnapshotState } from '../frame/plan.ts';
 import { buildTeamInput, type CompareSetup } from '../records/observations.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -74,7 +75,7 @@ describe('leadFrames（徹甲炸裂弾の▲の付く時刻）', () => {
 describe('leadFrames in the first pass (Bestie: Tactical Upgrade S2 on Explosive Round)', () => {
   const PROJECTILE_UP = 0.2;
   const buffsAt = (r: SimResult, slotIndex: number, frame: number) =>
-    r.timeline.segments.find((s) => s.start <= frame && frame < s.end)!.slots[slotIndex]!.buffs;
+    burstSnapshotState(r.timeline, frame, slotIndex, false).buffs;
   const shifted = (frames: number): SimResult =>
     runSimulation({ ...input, holdFire: [{ slotIndex: BESTIE, ranges: [{ start: 0, end: frames }] }] });
 

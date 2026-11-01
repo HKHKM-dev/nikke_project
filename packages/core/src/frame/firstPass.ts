@@ -321,7 +321,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   let known: LeadShots = {};
   for (let pass = 1; ; pass++) {
     const { result, leadShots } = runFirstPassOnce(slots, options, known);
-    if (sameLeadShots(leadShots, known)) return result;
+    if (result !== null) return result;
     if (pass >= MAX_LEAD_PASSES) {
       throw new Error(`the shots of the grants with leadFrames did not settle in ${MAX_LEAD_PASSES} passes`);
     }
@@ -329,21 +329,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
   }
 }
 
-function sameLeadShots(a: LeadShots, b: LeadShots): boolean {
-  const keys = Object.keys(a);
-  if (keys.length !== Object.keys(b).length) return false;
-  return keys.every((k) => {
-    const x = a[k]!;
-    const y = b[k];
-    return y !== undefined && x.length === y.length && x.every((f, i) => f === y[i]);
-  });
-}
-
+/**
+ * 1 回分。この回の leadFrames の付与の発が渡したもの（known）と違えば、結果を作らずに（result: null）この回の発だけ返す。どちらも
+ * HolderLists.leadShots が作る形（鍵は付与の順、発は昇順）なので、JSON の文字列で比べる
+ */
 function runFirstPassOnce(
   slots: readonly TimelineSlot[],
   options: FirstPassOptions,
-  leadShots: LeadShots,
-): { result: FirstPassResult; leadShots: LeadShots } {
+  known: LeadShots,
+): { result: FirstPassResult | null; leadShots: LeadShots } {
   const { frames } = options;
   if (!Number.isInteger(frames) || frames < 0) {
     throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
@@ -518,7 +512,7 @@ function runFirstPassOnce(
     logs,
     fullBurstWindows: windowsOf,
     verifyItems: options.verifyItems,
-    leadShots,
+    leadShots: known,
   });
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
@@ -1530,20 +1524,20 @@ function runFirstPassOnce(
     countDamageHitGauges(f);
   }
 
+  const leadShots = lists.leadShots();
+  if (JSON.stringify(leadShots) !== JSON.stringify(known)) return { result: null, leadShots };
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
   const history = lists.history();
-  return {
-    result: {
-      frames,
-      shots: logs,
-      schedule,
-      instants,
-      cycleGaugeHits,
-      dotGauges,
-      shotGauges,
-      timerGauges,
-      history,
-    },
-    leadShots: lists.leadShots(),
+  const result = {
+    frames,
+    shots: logs,
+    schedule,
+    instants,
+    cycleGaugeHits,
+    dotGauges,
+    shotGauges,
+    timerGauges,
+    history,
   };
+  return { result, leadShots };
 }

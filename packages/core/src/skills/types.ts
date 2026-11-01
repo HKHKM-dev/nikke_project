@@ -32,6 +32,7 @@ import { C_ID } from '../records/ids.ts';
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
 import { COUNTER_IDS, counterMax, type CounterId } from './counters.ts';
+import { dependsOnRank } from './targets.ts';
 import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
 
 export type { SkillSlot };
@@ -3110,7 +3111,7 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     // 1 パス目は発の leadFrames 前のフレームで件を登録する（同 5.3 節）ので、発のフレームで判定するものは書けない
     if (effect.condition !== undefined) fail(`${path}.condition`, 'condition cannot be used with leadFrames');
     if (effect.stacksFrom !== undefined) fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with leadFrames');
-    if (effect.target === 'topAttack') fail(`${path}.target`, 'topAttack cannot be used with leadFrames');
+    if (dependsOnRank(effect)) fail(`${path}.target`, 'topAttack cannot be used with leadFrames');
     effect.leadFrames = parsePositiveInt(v.leadFrames, `${path}.leadFrames`);
   }
   if (v.contents !== undefined) {

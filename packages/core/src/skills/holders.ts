@@ -1713,16 +1713,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     );
   const stage1Grants = grantsAt(1);
   // 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節）: leadFrames のある付与（段 1 だけ。types.ts が条件・
-  // stacksFrom・順位の対象を止める）の、前の回の発（known）と、件を先に登録するフレーム → 発のフレーム（early）と、この回の発（fired）
+  // stacksFrom・順位の対象を止める）の、前の回の発（known）と、件の始まりのフレーム → その件の数（early）と、この回の発（fired）
+  if (stateGroups.some((group) => group.grants.some((g) => g.grant.leadFrames !== undefined && g.stage !== 1)))
+    throw new Error('a grant with leadFrames must be in stage 1');
   const leads = new Map(
     stage1Grants.flatMap((g) => {
-      const lead = g.grant.leadFrames;
-      if (lead === undefined) return [];
+      if (g.grant.leadFrames === undefined) return [];
       const known = options.leadShots?.[leadShotKey(g)] ?? [];
-      const early = new Map<number, number[]>();
+      const early = new Map<number, number>();
       for (const shot of known) {
         const at = grantStartOf(g.grant, shot);
-        early.set(at, [...(early.get(at) ?? []), shot]);
+        early.set(at, (early.get(at) ?? 0) + 1);
       }
       return [[g, { known: new Set(known), early, fired: [] as number[] }] as const];
     }),
@@ -1828,10 +1829,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {
-      const lead = leads.get(g);
+      const lead = leads.size > 0 ? leads.get(g) : undefined;
       // 前の回の発の件は、その始まりのフレームに登録する（同じフレームの段 1.5 の enemyState が見る）
       if (lead !== undefined && !battleStartOnly) {
-        for (const shot of lead.early.get(f) ?? []) fireGrant(g, grantStartOf(g.grant, shot), null);
+        for (let k = lead.early.get(f) ?? 0; k > 0; k--) fireGrant(g, f, null);
       }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (!usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
@@ -2152,7 +2153,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     leadShots() {
       return Object.fromEntries(
-        [...leads].filter(([, l]) => l.fired.length > 0).map(([g, l]) => [leadShotKey(g), [...l.fired]]),
+        [...leads].filter(([, l]) => l.fired.length > 0).map(([g, l]) => [leadShotKey(g), l.fired]),
       );
     },
     history() {
