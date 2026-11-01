@@ -266,7 +266,7 @@ notes の種類: 未対応 43・前提の外 32・計算に無関係 35・補足
 - **skill1**: partial
   - effects[0] timed・battleStart・attack（読む: HP）: C-0579（確定）
   - effects[1] state・fullChargeShot・warmUp（chargeSpeed）: C-0698（確定）
-  - effects[2] weaponChange・warmUp のフルスタック: C-0699（確定）
+  - effects[2] weaponChange・warmUp のフルスタック: C-0699（確定）、C-0836（確定）
   - effects[3] ammoDecrease・使用武器の変更が終了した時: C-0700（確定）
   - notes[0] 未対応: 変更後の武器が 6 区間目（5 回目の着地の後の遠）でコアを外す発（V-0528）は未対応（的の表の行はどの区間もコア命中率 1）: C-0701（仮説）
 - **skill2**: supported

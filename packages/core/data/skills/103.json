@@ -54,11 +54,12 @@
           "instantFire": true,
           "firstShotDelayFrames": 25,
           "assumes": {
-            "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0528）: 即着弾でチャージしない・1440rpm・満タン（最大装弾数）で始まり撃ち切りで終わる・最初の発はフルスタックになった 5 発目の 27f 後（窓が射手に見えるフレームから 25f）。コア命中率は的の表の coreHitRate.weaponChanges の行。変更後の武器の発のバーストゲージは確かめていない（モデルは変更前の武器の 1 発の量で、フルチャージ倍率は掛けない。2026-10-27 のオーナー決定）。追加効果「貫通特化」は書かない（敵 1 体の前提では、貫通ダメージ▲を持つ味方がいる時だけ効きうる。敵 1 体で乗るかは確かめていない。定義のある味方に貫通ダメージ▲は無い）。変更後の武器は即着弾で発射体を持たないので、味方の発射体爆発ダメージ▲は変更後の発に乗らない（乗るかは確かめていない）",
-            "en": "The changed weapon is not in CDN, so it was read from recordings (V-0528): instant hit, no charge, 1440 rpm, starts with a full magazine and ends when empty, first shot 27 f after the fifth shot. Core hit rate from the target table row coreHitRate.weaponChanges. Burst gauge per changed shot is unverified (the model uses one base weapon shot without the full-charge multiplier). Pierce is not written (against a single enemy it could matter only with an ally having Pierce Damage up; unverified; no defined ally has it). The changed weapon hits instantly and has no projectile, so an ally’s Projectile Explosion Damage up does not apply to the changed shots (unverified)"
+            "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0528）: 即着弾でチャージしない・1440rpm・満タン（最大装弾数）で始まり撃ち切りで終わる・最初の発はフルスタックになった 5 発目の 27f 後（窓が射手に見えるフレームから 25f）。コア命中率は的の表の coreHitRate.weaponChanges の行。変更後の武器の発のバーストゲージは確かめていない（モデルは変更前の武器の 1 発の量で、フルチャージ倍率は掛けない。2026-10-27 のオーナー決定）。追加効果「貫通特化」は書かない（敵 1 体の前提では、貫通ダメージ▲を持つ味方がいる時だけ効きうる。敵 1 体で乗るかは確かめていない。定義のある味方に貫通ダメージ▲は無い）。変更後の武器は即着弾で発射体を持たず、味方の発射体爆発ダメージ▲は変更後の発に乗らない（C-0836。変更前の武器の発には乗る）",
+            "en": "The changed weapon is not in CDN, so it was read from recordings (V-0528): instant hit, no charge, 1440 rpm, starts with a full magazine and ends when empty, first shot 27 f after the fifth shot. Core hit rate from the target table row coreHitRate.weaponChanges. Burst gauge per changed shot is unverified (the model uses one base weapon shot without the full-charge multiplier). Pierce is not written (against a single enemy it could matter only with an ally having Pierce Damage up; unverified; no defined ally has it). The changed weapon hits instantly and has no projectile; an ally’s Projectile Explosion Damage up does not apply to the changed shots (C-0836; it does apply to the base weapon shots)"
           },
           "claims": [
-            "C-0699"
+            "C-0699",
+            "C-0836"
           ]
         },
         {
