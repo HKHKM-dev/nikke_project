@@ -127,7 +127,11 @@ if (!rebasing()) {
       console.error(`  npm run records:renumber -- ${c.id} ${c.suggestion ?? '<空いている録画の番号>'}`);
     process.exit(1);
   }
-  const backlogFound = backlogCollisions(added, mainFiles, backlogNamesInBranches().names);
+  // ほかのブランチの名前（git log を回す）は、重なりがあって空いた番号の案を作るときだけ読む
+  const backlogFound =
+    backlogCollisions(added, mainFiles, []).length === 0
+      ? []
+      : backlogCollisions(added, mainFiles, backlogNamesInBranches().names);
   if (backlogFound.length > 0) {
     console.error(
       'ブランチで足した課題の番号が main と重なっている。ファイルの名前と、自分のブランチの中の参照を直して commit してから、もう一度回す:',
