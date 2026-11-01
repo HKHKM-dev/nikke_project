@@ -19,7 +19,7 @@ export type ShotLog = {
   fullCharge: boolean;
   /**
    * Stage 22-B: 攻撃できる的がいなくなった瞬間に、チャージの途中で撃った発（frames の部分列）と、そのチャージの進み（0〜1）。
-   * 省略・空は無し（C-0109）
+   * 省略・空は無し（C-0840）
    */
   partialShots?: PartialShot[];
   /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */

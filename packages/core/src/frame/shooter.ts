@@ -401,7 +401,7 @@ function chargeWaitFrames(
 
 /**
  * Stage 22-B: 攻撃できる的がいなくなったフレーム（窓の始まり。hideShooter の前に呼ぶ）に、チャージの途中なら、
- * その時点のチャージで撃つ（部分チャージ。C-0109）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
+ * その時点のチャージで撃つ（部分チャージ。C-0840）。撃ったらチャージの進み p（0 < p ≤ 1）を返し、撃たなければ null。
  * - 次の発までの残りの待ちが k のとき、p = min(1, (C + H − k) / C)（C はチャージのフレーム数、H は満ちてから撃つまで。
  *   ほかのチャージ武器は H = 1 で、満ちた次のフレームで撃つ。射撃姿勢維持型は満ちてから H フレーム待つので、その間は p = 1。
  *   plan/design-fire-stance-cadence.md 3.2 節）。構え解除・構えの間（p ≤ 0）は撃たない。k = 0（このフレームに撃つはずだった）は p = 1。
@@ -453,7 +453,7 @@ function hideReloadExtraFrames(model: WeaponModel, params: FiringParams): number
  * Stage 16-B: 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
  * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま。
- * C-0817（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅い。
+ * C-0841（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅い。
  * plan/design-hide-reload-detect.md 案 A: 射撃姿勢維持型は、前の発の姿勢の終わり（撃ってから ⌈S⌉ − H）より前には始めない。
  * startedFramesAgo は、このフレームより前に始まっていたとみなすフレーム数（射撃姿勢維持型でない武器が D の H 後に部分チャージで
  * 撃ったときの H。リロードは D から数える）

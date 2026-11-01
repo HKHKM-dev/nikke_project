@@ -1040,7 +1040,7 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
       const slotHideNow = slotBlocked && ownBlock.start === f;
       // 狙えない窓（plan/design-hide-reload-detect.md 案 A）: 入るフレームにチャージが満ちていればその場で撃ってハイドし、ほかの枠は
-      // D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ。C-0109）。holdFire の区間は待たずにハイドする（V-0605）
+      // D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ。C-0840）。holdFire の区間は待たずにハイドする（V-0605）
       const partial = slotHideNow
         ? ownBlock.partial
           ? beginHide(state, shot, model, params)

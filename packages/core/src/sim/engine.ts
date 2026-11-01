@@ -232,7 +232,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       );
       const range = [{ start: segment.start, end: segment.end }];
       const triggers = countShotsInRanges(shotFrames, range);
-      // Stage 22-B: 部分チャージの発（C-0109）は、その発のチャージの進みで値を出し直す
+      // Stage 22-B: 部分チャージの発（C-0840。値は C-0843）は、その発のチャージの進みで値を出し直す
       const partial = partialShotsInRanges(shots[index]?.partialShots, range);
       const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
       return {

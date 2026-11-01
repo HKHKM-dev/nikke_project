@@ -91,7 +91,7 @@ export type WeaponModel = {
    * ゲームで残弾が満ちるのは RELOADING のバーが満ちたとき（最終弾からリロードの秒 + 約 12f。C-0135）で、ふだんのリロードでは
    * その 12f を込め終えた後の 1 発目の待ち（reloadFirstShotFrames）に入れてある。ハイド中のリロードは明けで取り消されるので、
    * 込め終わりそのものを 12f 遅らせる（込め終えた後の 1 発目の待ちから同じだけ引き、ふだんの和は変えない）。射撃姿勢維持型は
-   * reloadChunkFrames に stanceReloadExtraFrames が入っているので、その差だけ足す。分割リロードには足さない（C-0817。
+   * reloadChunkFrames に stanceReloadExtraFrames が入っているので、その差だけ足す。分割リロードには足さない（C-0841。
    * plan/design-hide-reload.md 案 A）
    */
   hideReloadExtraFrames: number;

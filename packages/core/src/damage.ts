@@ -544,7 +544,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
 
 /**
  * Stage 22-B: 部分チャージの発（チャージの進み progress）の 1 トリガーの値。フルチャージ倍率 M（チャージのバフ込み）を
- * 1 + (M − 1) × progress に置き換える（C-0109。紅蓮BS・ラムで確かめたのは素の倍率だけで、バフのある場合の比例は仮定）。
+ * 1 + (M − 1) × progress に置き換える（C-0843。紅蓮BS・ラムで確かめたのは素の倍率だけで、バフのある場合の比例は仮定）。
  * 射撃ごとの倍率ダメージ（perShot）は変えない
  */
 export function partialChargeTriggerDamage<T extends TriggerDamage>(trigger: T, progress: number): T {

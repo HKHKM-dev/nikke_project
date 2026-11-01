@@ -17359,30 +17359,6 @@
       }
     },
     {
-      "observation": "0805-15",
-      "element": "エレグ skill1.effects[0]",
-      "key": "f88c037f9c9d45c6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0805-15",
-      "element": "紅蓮：ブラックシャドウ burst.effects[1]",
-      "key": "f88c037f9c9d45c6",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 4],
-          "end": [0, 4]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "0805-16",
       "element": "エレグ skill1.effects[0]",
       "key": "482f0fead4a98f2d",
@@ -19801,6 +19777,38 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0864-05",
+      "element": "A2 skill2.effects[0]",
+      "key": "6dc2aead3d00917c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0864-06",
+      "element": "A2 skill2.effects[0]",
+      "key": "a8ac7267c5119f76",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0865-05",
+      "element": "A2 skill2.effects[0]",
+      "key": "5d2c294de63425b2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0865-06",
+      "element": "A2 skill2.effects[0]",
+      "key": "315d4a8779fa7b68",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0866-03",
