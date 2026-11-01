@@ -584,7 +584,12 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
     for (const { slotIndex, casterBaseAttack, casterMaxHp, effect } of sources) {
       if (!isEffectTarget(effect, slotIndex, index, slot.character)) continue;
       const finalMaxHp = casterMaxHp === undefined ? undefined : casterMaxHp * (1 + passiveMaxHp[slotIndex]!);
-      const applied = applyResolvedEffect(buffs, effect, fixedAttackBaseOf(effect, casterBaseAttack, slots), finalMaxHp);
+      const applied = applyResolvedEffect(
+        buffs,
+        effect,
+        fixedAttackBaseOf(effect, casterBaseAttack, slots),
+        finalMaxHp,
+      );
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
