@@ -16052,27 +16052,11 @@
     },
     {
       "observation": "0774-01",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "f0014b260b55bf0b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0774-01",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "f0014b260b55bf0b",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0774-02",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "78351f93936ec810",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0774-02",
@@ -16084,27 +16068,11 @@
     },
     {
       "observation": "0774-03",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "68c8ca8680fa9631",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0774-03",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "68c8ca8680fa9631",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0774-04",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "c5faf11db9ca68ca",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0774-04",
@@ -16116,27 +16084,11 @@
     },
     {
       "observation": "0775-01",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "69bc4830b59ab637",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0775-01",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "69bc4830b59ab637",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0775-02",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "8f416ba0d0b2f87f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0775-02",
@@ -16148,27 +16100,11 @@
     },
     {
       "observation": "0775-03",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "9b8cdd6d2289506e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0775-03",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "9b8cdd6d2289506e",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0775-04",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "16e19b9a779e6675",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0775-04",
@@ -16180,27 +16116,11 @@
     },
     {
       "observation": "0776-01",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "1c36925a9f953285",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0776-01",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "1c36925a9f953285",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0776-02",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "d2db59b120125efa",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0776-02",
@@ -16212,27 +16132,11 @@
     },
     {
       "observation": "0776-03",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "3fbf768c5435aa39",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0776-03",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "3fbf768c5435aa39",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0776-04",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "180c0007ca889fae",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0776-04",
@@ -16244,27 +16148,11 @@
     },
     {
       "observation": "0776-05",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "73aa3b3055af388f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0776-05",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "73aa3b3055af388f",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0776-06",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "501f8a1e2ce6e5b1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0776-06",
@@ -16276,27 +16164,11 @@
     },
     {
       "observation": "0777-01",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "1ca850124486091d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0777-01",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "1ca850124486091d",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0777-02",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "ed80ba1432d19381",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0777-02",
@@ -16308,27 +16180,11 @@
     },
     {
       "observation": "0777-03",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "aad4fcba09a59e79",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0777-03",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "aad4fcba09a59e79",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0777-04",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "293ab9fb89d04156",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0777-04",
@@ -16340,27 +16196,11 @@
     },
     {
       "observation": "0777-05",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "683b6ce6c7ac2159",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0777-05",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "683b6ce6c7ac2159",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0778-01",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "09cd6492c91b36f1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0778-01",
@@ -16372,27 +16212,11 @@
     },
     {
       "observation": "0778-02",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "913cf39f2b7afad6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0778-02",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "913cf39f2b7afad6",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0778-03",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "7465e7741468c6d1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0778-03",
@@ -16404,27 +16228,11 @@
     },
     {
       "observation": "0778-04",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "46fa89d38c54734c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0778-04",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "46fa89d38c54734c",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0779-01",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "208888eaa914b845",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0779-01",
@@ -16436,14 +16244,6 @@
     },
     {
       "observation": "0779-02",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "d53b67e6a661d451",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0779-02",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "d53b67e6a661d451",
       "effective": false,
@@ -16452,27 +16252,11 @@
     },
     {
       "observation": "0779-03",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "b4f66b8c05e0faad",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0779-03",
       "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
       "key": "b4f66b8c05e0faad",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0779-04",
-      "element": "スノーホワイト：ヘビーアームズ skill1.effects[6]",
-      "key": "35a867dbfce267a8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0779-04",
@@ -19753,6 +19537,94 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0860-09",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "d8205bb45305f3f1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0860-10",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "1d5a53305f905cdd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0860-11",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "07c74ebd0d09e35c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0860-13",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "b0097ebd6f9ba12a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0860-14",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "c5b36f45184524f0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0860-15",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "196b9a97a73ec4f4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0861-09",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "2e9ec048f0fc24a9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0861-10",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "faf7fcba9d8cdea5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0861-12",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "cd7fe37879f379c7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0861-13",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "bd8a94a270647a15",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0861-14",
+      "element": "スノーホワイト：ヘビーアームズ skill2.effects[0]",
+      "key": "8dc0f49dc1a2ca14",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

@@ -132,9 +132,12 @@
             "inFullBurst": false
           },
           "assumes": {
-            "ja": "「通常攻撃をした時」はフルチャージの発も含むどの発も。撃ったフレームがフルバーストの外なら次のフレームで閉じる。録画（V-0553）ではどのフルバーストでも使用回数がフルバーストの中で尽きたので起きず、確かめていない",
-            "en": "\"On normal attack\" covers every shot, full-charge shots included. A shot outside Full Burst closes the state on the next frame. In the recordings (V-0553) the uses always ran out inside Full Burst, so this did not occur; unverified"
-          }
+            "ja": "「通常攻撃をした時」はフルチャージの発も含むどの発も。撃ったフレームがフルバーストの外なら次のフレームで閉じる（その発の判定は外れる前のまま）。オート射撃のまま撃ち続けると使用回数はフルバーストの中でほぼ尽き、残っても 1 回で、その発で使い切る（V-0605）",
+            "en": "\"On normal attack\" covers every shot, full-charge shots included. A shot outside Full Burst closes the state on the next frame (the checks of that shot see it still held). With continuous auto fire the uses almost always run out inside Full Burst, and at most one is left, which that shot spends (V-0605)"
+          },
+          "claims": [
+            "C-0834"
+          ]
         }
       ],
       "notes": [

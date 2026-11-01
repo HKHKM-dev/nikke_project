@@ -488,3 +488,41 @@ describe('スノーホワイト：ヘビーアームズが唯一の III の編�
 function uses(copy: { skills: { skill1: { effects: Record<string, unknown>[] } } }): number {
   return copy.skills.skill1.effects.findIndex((e) => e.kind === 'stackChange');
 }
+
+describe('オート射撃 OFF の時間（holdFire。V-0605 の撮影の形）', () => {
+  const m = 2;
+  // 1 回目のチェーン（I 243f・III 299f。フルバーストは 305〜893f）の I の後から、フルバーストの終わりの後まで撃たない
+  const hold = { slotIndex: m, ranges: [{ start: 248, end: 908 }] };
+  const run = (def = definition) => runSimulation({ ...teamInput(def), holdFire: [hold] });
+  const r = run();
+  const shots = r.shots[m]!.frames;
+  const after = shots.filter((s) => s >= 908).slice(0, 3);
+  const fa = itemsOf(r.history, { holder: m, kind: 'state', state: 'sevenDwarvesFullyActive' });
+
+  it('keeps the slot from firing (without a partial-charge shot on entering) while the others fire and the burst is used', () => {
+    expect(shots.filter((s) => s >= 248 && s < 908)).toEqual([]);
+    expect(r.shots[m]!.partialShots ?? []).toEqual([]);
+    expect(r.shots[0]!.frames.some((s) => s >= 248 && s < 908)).toBe(true);
+    expect(r.schedule!.activations.filter((a) => a.slotIndex === m).map((a) => a.frame)[0]).toBe(299);
+    expect(r.schedule!.fullBurstWindows[0]).toMatchObject({ start: 305, end: 893 });
+  });
+
+  it('keeps both uses through Full Burst, then removes Fully Active on the first shot outside it (S1 line 6)', () => {
+    const own = fa.filter((i) => i.start === 299);
+    expect(own.map((i) => i.end)).toEqual([after[0]! + 2, after[0]! + 2]);
+    // ハイドの明けから構え 11f + 3.2 秒のチャージ 189f（C-0232 の形）。外れた後は 1.2 秒の溜め
+    expect([after[0]! - 908, after[1]! - after[0]!, after[2]! - after[1]!]).toEqual([200, 94, 94]);
+  });
+
+  it('keeps Fully Active for the second shot when S1 line 6 is dropped (H0 of V-0605: 212 f)', () => {
+    const copy = structuredClone(rawBurst);
+    copy.skills.skill1.effects.splice(
+      copy.skills.skill1.effects.findIndex((e) => e.kind === 'removeState' && e.state === 'sevenDwarvesFullyActive'),
+      1,
+    );
+    const shots2 = run(parseSkillDefinition(copy))
+      .shots[m]!.frames.filter((s) => s >= 908)
+      .slice(0, 3);
+    expect([shots2[1]! - shots2[0]!, shots2[2]! - shots2[1]!]).toEqual([212, 94]);
+  });
+});

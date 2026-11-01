@@ -175,10 +175,16 @@ export type CompareSetup = {
   /**
    * 2 段目の段 12 の PR 3（V-0541）: 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠）。モデルには撃たない枠が無いので、
    * 代わりに弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す
-   * （撃たない枠をモデルに足せば要らなくなる）。
+   * （撃たない枠をモデルに足せば要らなくなる。V-0605 の holdFire がその形で、戦闘の全体の区間にすれば置き換えられるが、移すのは後）。
    * 条件が auto（射撃場の表）のときは書かない。省略は全員撃つ
    */
   noFireSlots?: number[];
+  /**
+   * V-0605: 録画でオート射撃を手で OFF にしていた枠（1 始まり）と、その時間を持つ観測値の id（同じ録画・use が input・値は
+   * [OFF, ON, OFF, ON, …] のゲーム内のフレーム（戦闘開始から）。昇順の 0 以上の整数で偶数個。TeamInput.holdFire）。その枠だけ
+   * 撃たずにハイドする。省略は無し
+   */
+  holdFire?: { slot: number; frames: string }[];
 };
 
 /** CompareSetup.burstDelays の 1 件 */
@@ -2266,8 +2272,13 @@ export function validateObservations(
       }
     }
     const size = recordings.get(o.recording)?.team.length;
-    for (const key of ['noBurstSlots', 'noFireSlots'] as const)
-      for (const s of c.setup[key] ?? [])
+    const slotLists = {
+      noBurstSlots: c.setup.noBurstSlots ?? [],
+      noFireSlots: c.setup.noFireSlots ?? [],
+      holdFire: (c.setup.holdFire ?? []).map((h) => h.slot),
+    };
+    for (const [key, list] of Object.entries(slotLists))
+      for (const s of list)
         if (!Number.isInteger(s) || s < 1 || (size !== undefined && s > size))
           errors.push(`${at}: ${key} の枠 ${String(s)} が編成の外`);
     if (c.setup.noBurstSlots !== undefined && c.setup.burst !== true)
@@ -2286,6 +2297,19 @@ export function validateObservations(
           errors.push(`${at}: manualBursts の観測値 ${ref.id} の値は昇順の 0 以上の整数の配列`);
       }
     }
+    for (const h of c.setup.holdFire ?? []) {
+      const ref = observations.find((x) => x.id === h.frames);
+      if (ref === undefined) errors.push(`${at}: holdFire の観測値 ${h.frames} が無い`);
+      else {
+        if (ref.recording !== o.recording) errors.push(`${at}: holdFire の観測値は同じ録画のもの`);
+        if (ref.use !== 'input') errors.push(`${at}: holdFire の観測値 ${ref.id} の use は input`);
+        if (ref.invalid !== undefined) errors.push(`${at}: holdFire の観測値 ${ref.id} は失効している`);
+        if (holdFireRangesOf(ref.value) === undefined)
+          errors.push(`${at}: holdFire の観測値 ${ref.id} の値は昇順の 0 以上の整数の、偶数個の配列`);
+      }
+    }
+    if (new Set(slotLists.holdFire).size !== slotLists.holdFire.length)
+      errors.push(`${at}: holdFire の枠が重なっている`);
     const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
     if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   }
@@ -2297,6 +2321,11 @@ export function manualBurstsOf(value: number | number[] | undefined): number[] |
   if (!Array.isArray(value)) return undefined;
   const ok = value.every((f, i) => Number.isInteger(f) && f >= 0 && (i === 0 || f > value[i - 1]!));
   return ok ? value : undefined;
+}
+
+/** V-0605: オート射撃を OFF にしていた時間（[OFF, ON, …] の昇順の 0 以上の整数で偶数個）を [start, end) の並びにする。形が違えば undefined */
+export function holdFireRangesOf(value: number | number[] | undefined): { start: number; end: number }[] | undefined {
+  return manualBurstsOf(value) === undefined ? undefined : jumpWindowsOf(value);
 }
 
 // ---- 照合ランナー ----
@@ -2501,6 +2530,12 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     if (manualBursts === undefined)
       throw new Error(`manualBursts の観測値 ${setup.manualBursts} が無いか、昇順のフレームの並びでない`);
   }
+  const holdFire = (setup.holdFire ?? []).map((h) => {
+    const ranges = holdFireRangesOf(data.observationValues?.get(h.frames));
+    if (ranges === undefined)
+      throw new Error(`holdFire の観測値 ${h.frames} が無いか、[OFF, ON, …] のフレームの並びでない`);
+    return { slotIndex: h.slot - 1, ranges };
+  });
   const obstacleBreaks = (setup.obstacles ?? []).map((ob) => {
     const count = data.observationValues?.get(ob.count);
     if (typeof count !== 'number') throw new Error(`obstacles の観測値 ${ob.count} が無いか、個数でない`);
@@ -2545,6 +2580,7 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
     ...(setup.attackRounding === undefined ? {} : { attackRounding: setup.attackRounding }),
     ...(manualBursts === undefined ? {} : { manualBursts }),
     ...(setup.noBurstSlots === undefined ? {} : { noBurstSlots: setup.noBurstSlots.map((s) => s - 1) }),
+    ...(holdFire.length === 0 ? {} : { holdFire }),
   };
 }
 
@@ -2725,6 +2761,7 @@ function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   if (setup?.manualBursts !== undefined) entries.push(['manualBursts', setup.manualBursts]);
   if (setup?.noBurstSlots !== undefined) entries.push(['noBurstSlots', setup.noBurstSlots.join('・')]);
   if (setup?.noFireSlots !== undefined) entries.push(['noFireSlots', setup.noFireSlots.join('・')]);
+  for (const h of setup?.holdFire ?? []) entries.push([`holdFire[${h.slot}]`, h.frames]);
   for (const d of setup?.burstDelays ?? []) {
     const r = d.row;
     const row =

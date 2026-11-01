@@ -20,9 +20,14 @@ export function untargetableRanges(events: readonly EnemyEvent[] | undefined, fr
     .map((e) => ({ start: Math.max(0, frameOf(e.start)), end: endSecondsToFrame(e.end, frames) }))
     .filter((r) => r.start < r.end)
     .sort((a, b) => a.start - b.start);
-  const merged: FrameRange[] = [];
-  for (const r of ranges) {
-    const last = merged[merged.length - 1];
+  return unionRanges(ranges);
+}
+
+/** 始まりの順に並べた区間の、重なる・接する区間を 1 つにする（ほかの欄は先に始まった区間のもの）。元の区間は書き換えない */
+export function unionRanges<T extends FrameRange>(sorted: readonly T[]): T[] {
+  const merged: T[] = [];
+  for (const r of sorted) {
+    const last = merged.at(-1);
     if (last !== undefined && r.start <= last.end) last.end = Math.max(last.end, r.end);
     else merged.push({ ...r });
   }

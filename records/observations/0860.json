@@ -1,0 +1,420 @@
+[
+  {
+    "id": "0860-01",
+    "recording": "0860",
+    "kind": "timing",
+    "use": "record",
+    "value": [1098, 2161, 3340, 4386],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0f"
+    },
+    "source": "V-0605",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0860-02",
+    "recording": "0860",
+    "kind": "timing",
+    "use": "record",
+    "value": [1127, 3369],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・24f"
+    },
+    "source": "V-0605",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0860-03",
+    "recording": "0860",
+    "kind": "timing",
+    "use": "record",
+    "value": [1156, 3398],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0605",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0860-04",
+    "recording": "0860",
+    "kind": "timing",
+    "use": "record",
+    "value": [2155, 3333],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0605",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0860-05",
+    "recording": "0860",
+    "kind": "timing",
+    "use": "record",
+    "value": [3361],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f2422・f4554"
+    },
+    "source": "V-0605",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0860-06",
+    "recording": "0860",
+    "kind": "timing",
+    "use": "record",
+    "value": [3390],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0605",
+    "readAt": "2026-11-01"
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-07",
+    "kind": "timing",
+    "use": "record",
+    "value": [1123, 1805, 3382, 4085],
+    "unit": "f",
+    "description": "オート射撃のボタンを OFF にしたフレームと ON に戻したフレーム（[OFF, ON, OFF, ON]。2 回のフルバースト（III のタイマーの 00.00 は f1156・f3398）を挟む）",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "method": {
+      "tool": "ffmpeg（左上のボタンの切り出し）",
+      "note": "左上の 2 つのボタンのうち照準の形のボタン（オート射撃。右の AUTO の字はオートバースト）の、オレンジの画素（R − B の上位 3% の値が 150 を超える）の有無が替わったフレーム。フルバーストの黄色い色味の中でも灰色と読める。使い捨ての読み（V-0605）"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-08",
+    "kind": "timing",
+    "use": "input",
+    "value": [248, 908, 2482, 3163],
+    "unit": "f",
+    "description": "同じ OFF・ON のゲーム内のフレーム（戦闘開始から。比べる設定 holdFire の入力）",
+    "method": {
+      "tool": "timer.ts --mode changes・recipe:burst-panel@2",
+      "note": "動画のフレーム − 戦闘開始（f873。画面の切り替えの次の変わり目）− その前の止まり（I・II の発動ごとに 1f、フルバーストの入り（III のタイマーの 00.00）ごとに 22f。burst/schedule.ts の videoFrameOf の逆）"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-09",
+    "kind": "interval",
+    "use": "compare",
+    "value": [93],
+    "unit": "f",
+    "description": "1 回目のフルバーストの後、オート射撃を ON に戻した（f1805）後のスノーホワイト：ヘビーアームズの 1 発目（f1999。ON から 194f）から 2 発目（f2092）までの動画のフレーム数",
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 1108,
+        "to": 1203
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0860-08"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1999, 2092]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2180999,
+    "description": "同じ 1 発目（f1999）のフルチャージのヒット（コアあり・会心なし）。増分 2,197,344 から、同じフレームのリターのヒット 16,345 を引いた",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1108,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0860-08"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [1999, 1999]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 700835,
+    "description": "同じ 2 発目（f2092）のフルチャージのヒット（コアあり・会心なし）。増分 712,640 から、同じフレームのリターのヒット 11,805 を引いた",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1202,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0860-08"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [2092, 2092]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-12",
+    "kind": "count",
+    "use": "record",
+    "value": [15, 5],
+    "description": "同じ 1 発目と 2 発目のオートファイアの順番の攻撃のヒットの数",
+    "scope": {
+      "slot": 3,
+      "source": "skill",
+      "frames": [2043, 2196]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-13",
+    "kind": "interval",
+    "use": "compare",
+    "value": [94],
+    "unit": "f",
+    "description": "2 回目のフルバーストの後、オート射撃を ON に戻した（f4085）後のスノーホワイト：ヘビーアームズの 1 発目（f4263。ON から 178f）から 2 発目（f4357）までの動画のフレーム数",
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "from": 3363,
+        "to": 3458
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0860-08"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [4263, 4357]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-14",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2180999,
+    "description": "同じ 1 発目（f4263）のフルチャージのヒット（コアあり・会心なし）。増分 2,197,344 から、同じフレームのリターのヒット 16,345 を引いた",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3363,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0860-08"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [4263, 4263]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-15",
+    "kind": "hit",
+    "use": "compare",
+    "value": 700835,
+    "description": "同じ 2 発目（f4357）のフルチャージのヒット（コアあり・会心なし）",
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3457,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "holdFire": [
+          {
+            "slot": 3,
+            "frames": "0860-08"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal",
+      "frames": [4357, 4357]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  },
+  {
+    "recording": "0860",
+    "source": "V-0605",
+    "readAt": "2026-11-01",
+    "id": "0860-16",
+    "kind": "count",
+    "use": "record",
+    "value": [15],
+    "description": "同じ 1 発目のオートファイアの順番の攻撃のヒットの数。1 発目の順番の攻撃のうち 2 つ（f4449・f4461 の頃）は HUD の読めない 20f（f4444〜4464 の増分 2,538,806）の中で、15 番目の時刻（f4472）に 553,937 + 31,546 の増分がある。2 発目の順番の攻撃は同じ 20f にかかるので数えていない",
+    "scope": {
+      "slot": 3,
+      "source": "skill",
+      "frames": [4307, 4461]
+    },
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "node tools/captures/hud.ts --mode jumps の増分。スノーホワイト：ヘビーアームズのフルチャージのヒットは、6f 後のオートファイアの敵全体の 1 ヒット（85,067 前後）で発と決めた。順番の攻撃は発の 44f 後から 11・12f おきのヒットで、フルアクティブの発のもの（順番攻撃ダメージ▲あり。553,937 前後）と通常の発のもの（214,372 前後）を値で分けた。ほかのキャラのヒットと同じフレームに重なった増分は、重なった値（リターの 11,805・16,345 など、前後のフレームに単独で出る値）を引いた"
+    }
+  }
+]

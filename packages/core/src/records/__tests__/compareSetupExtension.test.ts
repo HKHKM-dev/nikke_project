@@ -125,6 +125,64 @@ describe('manualBursts（手で撃ったバースト）', () => {
   });
 });
 
+describe('holdFire（オート射撃を手で OFF にした時間。V-0605）', () => {
+  it('passes the [OFF, ON, …] frames to the slot as ranges', () => {
+    const { input } = run('0860', { holdFire: [{ slot: 3, frames: 'x' }] }, new Map([['x', [248, 908, 2482, 3163]]]));
+    expect(input.holdFire).toEqual([
+      {
+        slotIndex: 2,
+        ranges: [
+          { start: 248, end: 908 },
+          { start: 2482, end: 3163 },
+        ],
+      },
+    ]);
+    expect(() => run('0860', { holdFire: [{ slot: 3, frames: 'x' }] }, new Map([['x', [248]]]))).toThrow(/holdFire/);
+  });
+
+  it('checks the slot and the referenced observation', () => {
+    const observations: Observation[] = [
+      {
+        id: '0860-90',
+        recording: '0860',
+        kind: 'timing',
+        use: 'record',
+        value: [3, 2, 1],
+        description: 'x',
+        source: 'V-0001',
+      },
+      {
+        id: '0860-91',
+        recording: '0860',
+        kind: 'hit',
+        use: 'compare',
+        value: 1,
+        description: 'x',
+        source: 'V-0001',
+        compare: {
+          model: 'sim',
+          metric: 'teamTotalDamage',
+          args: {},
+          tolerance: { abs: 1 },
+          setup: {
+            ...setup,
+            holdFire: [
+              { slot: 4, frames: '0860-90' },
+              { slot: 4, frames: '0860-99' },
+            ],
+          },
+        },
+      },
+    ];
+    const errors = validateObservations(observations, recordings, data.enemies);
+    expect(errors).toContain('0860-91: holdFire の枠 4 が編成の外');
+    expect(errors).toContain('0860-91: holdFire の観測値 0860-90 の use は input');
+    expect(errors).toContain('0860-91: holdFire の観測値 0860-90 の値は昇順の 0 以上の整数の、偶数個の配列');
+    expect(errors).toContain('0860-91: holdFire の観測値 0860-99 が無い');
+    expect(errors).toContain('0860-91: holdFire の枠が重なっている');
+  });
+});
+
 describe('表示の時刻の指標', () => {
   // 録画 0222: ココア（I）+ デルタ（II）+ ドレイク（III・操作）。2〜4 回目は CT が律速（0222-21）
   it('ctEndToFullBurstStart is the model III from the CT end to 00.00', () => {

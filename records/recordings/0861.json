@@ -1,0 +1,46 @@
+{
+  "id": "0861",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0861_smg+sr+sr_liter+delta+snow-white-ha.mp4",
+  "original": "2026-11-01_13-41-48.mp4",
+  "durationSec": 77.5,
+  "frames": 4652,
+  "fps": 60,
+  "sizeMB": 93.9,
+  "sha256": "e3be1f8c45b2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 471,
+      "name": "スノーホワイト：ヘビーアームズ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0605 の撮影。リター（AI）・デルタ（AI）・スノーホワイト：ヘビーアームズ（操作）。オートバースト ON。オート射撃は ON で、依頼ではチェーンの始まりからフルバーストの終わりの 1〜2 秒後まで手で OFF（読みで確かめる）。残り 01:58 で一時停止して止めた（最後に一時停止のパネルが写っている）",
+  "backup": {
+    "at": "2026-11-01T13:45+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
