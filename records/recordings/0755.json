@@ -26,13 +26,13 @@
       "slot": 3,
       "rid": 511,
       "name": "シンデレラ",
-      "controlled": false
+      "controlled": true
     },
     {
       "slot": 4,
       "rid": 162,
       "name": "ミハラ：ボンディングチェーン",
-      "controlled": true
+      "controlled": false
     }
   ],
   "target": {
@@ -43,7 +43,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0548 の撮影 C（段 13 の論点 12）。ラム（1 枠目・AI）+ デルタ（2 枠目・AI）+ シンデレラ（3 枠目・AI）+ ミハラ：ボンディングチェーン（4 枠目・操作・AUTO 射撃 ON）。オートバースト ON・宝物なし",
+  "conditionNote": "V-0548 の撮影 C（段 13 の論点 12）。ラム（1 枠目・AI）+ デルタ（2 枠目・AI）+ シンデレラ（3 枠目・操作）+ ミハラ：ボンディングチェーン（4 枠目・AI）。オート射撃 ON・オートバースト ON・宝物なし。依頼の操作はミハラ：ボンディングチェーンだったが、シンデレラで撮られた（戦闘の間ずっと SPC の印がシンデレラに付き、ミハラ：ボンディングチェーンの残弾が枠アイコンの上に出る。V-0622 で確かめた）",
   "backup": {
     "at": "2026-10-31T10:15+09:00",
     "via": "cloud-move",
