@@ -92,5 +92,24 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0863-05",
+    "recording": "0863",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "source": "V-0609",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 271699,
+    "description": "1 回目の敵のジャンプの部分チャージの発の総ダメージの増分（会心でない。同じ録画の会心でないフルチャージの発は 336,261）。値の比から読んだチャージの進みは 0.68 で、撃ったフレームの進み 0.69 と合い、窓の始まりの進み 0.54 とは合わない（plan/design-hide-reload-detect.md 8 節）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "増分 f2275（前の発 f2212。経過 63f）"
+    }
   }
 ]
