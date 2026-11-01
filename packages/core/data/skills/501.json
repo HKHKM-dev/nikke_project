@@ -1,19 +1,22 @@
 {
   "formatVersion": 1,
   "resourceId": 501,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-11-01",
   "skills": {
     "skill1": {
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃が命中した時の蓄積爆破（与えたダメージの一部を蓄積し、最大量で分配ダメージ）は未対応（付けたときはゲージを溜めず、切れるときに溜める。C-0430）",
-          "en": "Accumulated Blast on a fully charged hit (stores part of the damage dealt and deals distributed damage at the cap) is not modeled (it does not charge the gauge when applied, but does when it ends; C-0430)",
+          "ja": "フルチャージ攻撃が命中した時の蓄積爆破（与えたダメージの一部を蓄積し、最大量で分配ダメージ）は未対応（付けたときはゲージを溜めず、最大量に届かずに切れるときに溜める。C-0430。リター・デルタと組んだ録画では、フルバーストの窓の中に 1 回だけ大きな 1 ヒットが出るが、値は最大量とも発の和の割合とも合わない。V-0613）",
+          "en": "Accumulated Blast on a fully charged hit (stores part of the damage dealt and deals distributed damage at the cap) is not modeled (it does not charge the gauge when applied, but does when it ends without reaching the cap; C-0430. With Liter and Delta, one large hit appears once in some Full Burst windows, but its value matches neither the cap nor a ratio of the summed shots; V-0613)",
           "kind": "unimplemented",
           "effect": {
             "kind": "damage",
             "trigger": "fullChargeShot"
-          }
+          },
+          "claims": [
+            "C-0430"
+          ]
         }
       ]
     },
@@ -21,8 +24,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃 5 回ごとの自分の分配ダメージ▲（10 秒）は未対応",
-          "en": "The distributed damage increase on self every 5 fully charged attacks (10 s) is not modeled",
+          "ja": "フルチャージ攻撃 5 回ごとの自分の分配ダメージ▲（10 秒）は未対応（乗るのは未対応の蓄積爆破の爆発だけで、ほかのヒットの値を変えない）",
+          "en": "The distributed damage increase on self every 5 fully charged attacks (10 s) is not modeled (it applies only to the explosion of Accumulated Blast, which is not modeled, and changes no other hit)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
@@ -32,32 +35,36 @@
           }
         },
         {
-          "ja": "フルチャージ攻撃が 5 回命中した時の対象の防御力▼（10 秒）は未対応",
-          "en": "The defense decrease on the target when 5 fully charged attacks hit (10 s) is not modeled",
+          "ja": "フルチャージ攻撃が 5 回命中した時の対象の防御力▼（10 秒）は未対応（録画では、▼の後に的の防御 100 が 0 になった値で、説明文の 9.59% を C-0556 の式で引いた値と合わない。V-0613）",
+          "en": "The defense decrease on the target when 5 fully charged attacks hit (10 s) is not modeled (in recordings the target defense 100 drops to 0 after it, which does not match 9.59% from the description with the C-0556 formula; V-0613)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
             "stat": "enemyDefenseDown",
             "target": "enemy",
             "trigger": "fullChargeShot"
-          }
+          },
+          "claims": [
+            "C-0851"
+          ]
         }
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "自分の攻撃力▲（10 秒）は未対応",
-          "en": "The attack increase on self (10 s) is not modeled",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "self",
-            "trigger": "burstUse"
-          }
-        },
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-0852"
+          ]
+        }
+      ],
+      "notes": [
         {
           "ja": "蓄積爆破のダメージ蓄積割合▲（10 秒）は未対応",
           "en": "The accumulation ratio increase of Accumulated Blast (10 s) is not modeled",
