@@ -1,0 +1,782 @@
+{
+  "verification": "V-0608",
+  "note": "撮る前の予測。ラム（1 枠目・I）・イサベル（2 枠目・III）・エレグ（3 枠目・II・操作・撃たない）。モデルには撃たない枠が無いので、エレグを noFireSlots にし、通常攻撃の命中で起きる効果（S1 の分配ダメージ・S2 の攻撃力▲）を dropEffects で外す（V-0561 と同じ）。仮説は、バーストのヒット（と、同じ発動の追加ダメージ）が敵の側のデバフを見る時点だけを setup の burstHitEnemyDebuffs で替える",
+  "team": [
+    {
+      "rid": 822
+    },
+    {
+      "rid": 231
+    },
+    {
+      "rid": 500,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-snap",
+      "note": "発動の時点（いまのモデル。C-0795）",
+      "override": {
+        "burstHitEnemyDebuffs": "activation"
+      }
+    },
+    {
+      "id": "H-hit",
+      "note": "ヒット（効果の発火）の直前（C-0795 の前のモデル。plan/design-burst-landing.md 9 節）。追加ダメージも同じ切り替えで替わる",
+      "override": {
+        "burstHitEnemyDebuffs": "hit"
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "isabel-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心でない）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-1-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目のイサベルのバーストスキルダメージ（会心）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心でない）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-2-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "2 回目のイサベルのバーストスキルダメージ（会心）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心でない）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-3-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目のイサベルのバーストスキルダメージ（会心）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-4",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心でない）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-4-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目のイサベルのバーストスキルダメージ（会心）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-5",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 回目のイサベルのバーストスキルダメージ（会心でない）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-hit-5-crit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 4,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 回目のイサベルのバーストスキルダメージ（会心）。エレグのブームインストールの▼は III の発動の後・このヒットの前に付く"
+    },
+    {
+      "id": "isabel-add-3",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-3-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 0,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "3 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-4-stage2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-4-stage2-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 1,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-4-stage3",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-4-stage3-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "4 回目の発動の段階 3の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-5-stage2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 回目の発動の段階 2の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-5-stage2-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 3,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 回目の発動の段階 2の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-5-stage3",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 4,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 回目の発動の段階 3の追加ダメージ（会心でない）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "isabel-add-5-stage3-crit",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "burst",
+        "n": 4,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "5 回目の発動の段階 3の追加ダメージ（会心）。バーストスキルダメージと同じフレームに出る（HUD の増分は和）"
+    },
+    {
+      "id": "elegg-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。1 回目のエレグのバーストスキルダメージ（会心でない）。▼は自分のヒットから付くので、2 仮説で同じ値"
+    },
+    {
+      "id": "isabel-s2-3",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 500,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 500,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "対照。3 回目のイサベルの S2 のヒット（会心でない。2 回目のチェーンのブームインストールの▼と、イサベルの段階 1 の▲の間に出る）。バーストのヒットでないので 2 仮説で同じ値で、▼が敵に付いていることを示す"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "f7eeaee1ea54dd8d3a057a5e29a2e0c40b0cdac4",
+    "values": {
+      "H-snap": {
+        "isabel-hit-1": 180710.10899999997,
+        "isabel-hit-1-crit": 271065.16349999997,
+        "isabel-hit-2": 180710.109,
+        "isabel-hit-2-crit": 271065.1635,
+        "isabel-hit-3": 180710.109,
+        "isabel-hit-3-crit": 303647.1961527,
+        "isabel-hit-4": 211962.825,
+        "isabel-hit-4-crit": 356161.1348475,
+        "isabel-hit-5": 211962.825,
+        "isabel-hit-5-crit": 356161.1348475,
+        "isabel-add-3": 758765.6056691998,
+        "isabel-add-3-crit": 1102891.1000270376,
+        "isabel-add-4-stage2": 889989.50961,
+        "isabel-add-4-stage2-crit": 1293629.418535122,
+        "isabel-add-4-stage3": 1038321.094545,
+        "isabel-add-4-stage3-crit": 1509234.3216243088,
+        "isabel-add-5-stage2": 889989.50961,
+        "isabel-add-5-stage2-crit": 1293629.418535122,
+        "isabel-add-5-stage3": 1038321.094545,
+        "isabel-add-5-stage3-crit": 1509234.3216243088,
+        "elegg-hit-1": 316105.8450000001,
+        "isabel-s2-3": 431994.91100759996
+      },
+      "H-hit": {
+        "isabel-hit-1": 180764.055,
+        "isabel-hit-1-crit": 271146.0825,
+        "isabel-hit-2": 180764.055,
+        "isabel-hit-2-crit": 271146.0825,
+        "isabel-hit-3": 180764.05499999996,
+        "isabel-hit-3-crit": 303737.84161649994,
+        "isabel-hit-4": 212016.771,
+        "isabel-hit-4-crit": 356251.7803113,
+        "isabel-hit-5": 212016.771,
+        "isabel-hit-5-crit": 356251.7803113,
+        "isabel-add-3": 758992.1141339999,
+        "isabel-add-3-crit": 1103220.3376309066,
+        "isabel-add-4-stage2": 890216.0180748,
+        "isabel-add-4-stage2-crit": 1293958.6561389908,
+        "isabel-add-4-stage3": 1038585.3544206,
+        "isabel-add-4-stage3-crit": 1509618.4321621559,
+        "isabel-add-5-stage2": 890216.0180748,
+        "isabel-add-5-stage2-crit": 1293958.6561389908,
+        "isabel-add-5-stage3": 1038585.3544206,
+        "isabel-add-5-stage3-crit": 1509618.4321621559,
+        "elegg-hit-1": 316105.8450000001,
+        "isabel-s2-3": 431994.91100759996
+      }
+    }
+  }
+}

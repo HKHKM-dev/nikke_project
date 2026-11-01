@@ -119,3 +119,37 @@ describe('バーストのヒットが敵の防御力▼を見る時点（C-0795�
     });
   });
 });
+
+// バースト使用時の追加ダメージの時点（plan/design-burst-landing.md 12 節の案 A。C-0837・C-0838。V-0608）: イサベル（III。ヒットと
+// 効果の発火は 00.00 の 134f 後。C-0165）の段階 2・3 の追加ダメージは、敵の側のデバフを効果の発火の直前の値で見る。エレグ（II）の
+// ブームインストールの▼は III の発動の後・発火の前に付くので、追加ダメージには乗り、同じフレームのバーストのヒットには乗らない
+describe('バースト使用時の追加ダメージが敵の側のデバフを見る時点（C-0838）', () => {
+  const ISABEL = 1;
+  const ELEGG = 2;
+  const team = fixedTeam([822, 231, 500], ELEGG, { burstModel: 'dynamic' });
+  const sim = runSimulation(team);
+  const isabel = sim.schedule!.activations.filter((a) => a.slotIndex === ISABEL);
+  const burstHits = sim.slots[ISABEL]!.burst.hits;
+  const additional = sim.skillHits.filter((h) => h.slotIndex === ISABEL && h.effect.source.skill === 'burst');
+
+  it("puts Elegg's ▼ on Isabel's additional damage but not on her burst hit at the same frame", () => {
+    expect(additional.length).toBeGreaterThan(0);
+    for (const h of additional) {
+      const k = isabel.findIndex((a) => hitFrameOf(a) === h.frame);
+      expect(k).toBeGreaterThanOrEqual(0);
+      const atUse = burstSnapshotState(sim.timeline, isabel[k]!.frame, ISABEL, true).buffs;
+      const atFire = burstSnapshotState(sim.timeline, h.frame, ISABEL, true).buffs;
+      const down = defenceAfterDown(team.enemy, atUse) - defenceAfterDown(team.enemy, atFire);
+      expect(down).toBeGreaterThan(0);
+      // 撃つ側のバフは同じ（発動の時点）なので、1 ヒットの元の値の差は防御力の差だけ
+      expect(h.hit.baseHit - burstHits[k]!.baseHit).toBe(down);
+    }
+  });
+
+  it('does not move the additional damage with the burst-hit hypothesis switch', () => {
+    const hit = runSimulation({ ...team, enemy: { ...team.enemy, burstHitEnemyDebuffs: 'hit' } });
+    const again = hit.skillHits.filter((h) => h.slotIndex === ISABEL && h.effect.source.skill === 'burst');
+    expect(again.map((h) => h.hit)).toEqual(additional.map((h) => h.hit));
+    expect(hit.slots[ISABEL]!.burst.hits[0]!.baseHit).toBeGreaterThan(burstHits[0]!.baseHit);
+  });
+});

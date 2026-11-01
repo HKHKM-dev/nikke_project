@@ -394,9 +394,12 @@ export function planSkillHits(
       // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）。
       // 2 段目の段 10（C-0657。V-0527）: バーストのヒットごとに出す追加ダメージ（perBurstHit）は、撃つ側のバフもヒットの時点の値で出す
       // （シンデレラの S1 の攻撃力▲は、ヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時点のまま）
+      // 追加ダメージの時点編（plan/design-burst-landing.md 12 節の案 A。C-0838）: 敵の側のデバフ（受けるダメージ▲・防御力▼）は
+      // 効果の発火の直前の値で見る（イサベルの段階 2・3 には、遅れの間に付いたブームインストールの▼が乗る。同じフレームの
+      // バーストのヒットは発動の時点のまま。C-0837）。遅れ 0 のキャラは発動と発火が同じフレームなので変わらない
       const atHit =
         pre && !shooterAtHit
-          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, enemy.burstHitEnemyDebuffs)
+          ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, 'hit')
           : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
@@ -714,7 +717,8 @@ export function burstSnapshotState(
  * 固定する。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで付く S2 の攻撃ダメージ▲は乗らない
  * （`0079-07`）。ノワールのヒットには、III の発動の後・ヒットの前に付いた鈴原サクラの受けるダメージ▲は乗らず、発動の時に付いていて
  * ヒットの前に切れた▲は乗る（C-0795）。I・II の受け手（ルドミラ・ユニ）でも同じ（C-0813）。hitFrame は、sameActivation の小片が
- * ヒットまで続いているかを見るのと、enemyDebuffs が 'hit' のときにだけ使う。
+ * ヒットまで続いているかを見るのと、enemyDebuffs が 'hit' のときにだけ使う。バースト使用時の追加ダメージ（planSkillHits の damage）は、
+ * enemyDebuffs を 'hit' にして、敵の側のデバフを効果の発火の直前の値で見る（plan/design-burst-landing.md 12 節。C-0838）。
  * sameActivation（同じ発動の▲がヒットに乗る行のキャラだけ。plan/design-burst-landing.md 10 節の案 1、C-0582）を渡すと、
  * 撃つ側のバフに、同じ発動で自分に付いた burst スロットの効果を足す（withSameActivationEffects）。
  * enemyDebuffs が 'hit'（EnemyInput.burstHitEnemyDebuffs。検証の予測の仮説だけが使う）なら、敵の側のデバフだけヒットの直前の値で

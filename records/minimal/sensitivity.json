@@ -19993,6 +19993,210 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "0868-06",
+      "element": "イサベル skill2.effects[1]",
+      "key": "951162f9e96bd736",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0868-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "951162f9e96bd736",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0868-07",
+      "element": "イサベル skill2.effects[1]",
+      "key": "7027f4cd62f29e6a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0868-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "7027f4cd62f29e6a",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0868-08",
+      "element": "イサベル skill2.effects[1]",
+      "key": "5cf405df6024100c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0868-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "5cf405df6024100c",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0868-10",
+      "element": "イサベル skill2.effects[1]",
+      "key": "edecde9c0811e56b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0868-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "edecde9c0811e56b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0868-12",
+      "element": "イサベル skill2.effects[1]",
+      "key": "ff24548d4283f112",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0868-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "ff24548d4283f112",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0868-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "3a6260fdd0f2fec8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0868-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "3a6260fdd0f2fec8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0869-06",
+      "element": "イサベル skill2.effects[1]",
+      "key": "152753074e0be61e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0869-06",
+      "element": "エレグ skill1.effects[0]",
+      "key": "152753074e0be61e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0869-07",
+      "element": "イサベル skill2.effects[1]",
+      "key": "83c92e402e36ad4d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0869-07",
+      "element": "エレグ skill1.effects[0]",
+      "key": "83c92e402e36ad4d",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0869-08",
+      "element": "イサベル skill2.effects[1]",
+      "key": "34f15141a62cac94",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0869-08",
+      "element": "エレグ skill1.effects[0]",
+      "key": "34f15141a62cac94",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0869-10",
+      "element": "イサベル skill2.effects[1]",
+      "key": "df141b72f12b20d3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0869-10",
+      "element": "エレグ skill1.effects[0]",
+      "key": "df141b72f12b20d3",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0869-12",
+      "element": "イサベル skill2.effects[1]",
+      "key": "1c051f075b5d4aba",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0869-12",
+      "element": "エレグ skill1.effects[0]",
+      "key": "1c051f075b5d4aba",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
+    },
+    {
+      "observation": "0869-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "3cedf79992876cb8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0869-14",
+      "element": "エレグ skill1.effects[0]",
+      "key": "3cedf79992876cb8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 500 の skill1 に 0 番目の効果が無い"
     }
   ]
 }
