@@ -1,0 +1,205 @@
+{
+  "verification": "V-0618",
+  "note": "撮影 A: リター（82・I）・マナ（290・III）・スノーホワイト：ヘビーアームズ（471・III・枠 3・操作）・デルタ（20・II）。録画 0778 の編成の I-DOLL・サンをマナに替えた形。デルタの CT が 40 秒なので III は毎回マナで、スノーホワイト：ヘビーアームズはバーストを使わない（セブンスドワーフ・フルアクティブの 3.2 秒の固定が起きない）。マナの S2 のチャージ時間 0.18 秒▼（フルバースト開始時から 10 秒。C-0267）は、基本チャージ時間が一番長い味方（スノーホワイト：ヘビーアームズの 1.2 秒。デルタは 1 秒）に付く。撮影 B（指標 B-*）: リター（I）・I-DOLL・サン（308・III）・スノーホワイト：ヘビーアームズ（III・枠 3・操作）・ユニ（160・II）。ユニの S1 のチャージ速度▲（フルバースト開始時から味方全体に 10 秒。C-0013）。ユニの CT が 20 秒なので、III はサンとスノーホワイト：ヘビーアームズが替わりばんこに使い、スノーホワイト：ヘビーアームズのフルアクティブの発（間が 200f を超える）が窓に入るので、間を 70〜100f に絞る。どちらも射撃場 3 分・灼熱タブの BigArms・スペック固定 ON・オート射撃 ON・オートバースト ON",
+  "team": [
+    {
+      "rid": 82,
+      "controlled": false
+    },
+    {
+      "rid": 290,
+      "controlled": false
+    },
+    {
+      "rid": 471,
+      "controlled": true
+    },
+    {
+      "rid": 20,
+      "controlled": false
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "いまのモデル。S2 の effects[0]（fixedChargeTime 1.2 秒・戦闘開始時から戦闘の終わりまで）が効いている間は、チャージの秒数を固定の値にし、チャージ速度▲・チャージ時間▼を無視する（frame/firing.ts の chargeSecondsOf。アニス：スターの固定と同じ読み）。窓の中も外も、発の間は 94f（チャージ 72f と解放 22f）"
+    },
+    {
+      "id": "H1",
+      "note": "▲・▼が勝つ。S2 の effects[0] を落とし、武器の基礎のチャージ時間 1.2 秒にチャージ時間▼・チャージ速度▲を効かせる。「固定した 1.2 秒にチャージ速度を掛ける」形も、基礎が 1.2 秒なので同じ値になる",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 471,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-inside",
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "chargeSpeed",
+        "inside": true,
+        "minGap": 70,
+        "maxGap": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "本命。撮影 A。マナの S2 のチャージ時間▼の窓（フルバースト開始時から 10 秒）の中の、スノーホワイト：ヘビーアームズの連続した 2 発の間の平均（2 発とも窓の中。リロード・的のジャンプを挟む間は 70〜100f の外なので除く）"
+    },
+    {
+      "id": "A-outside",
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "chargeSpeed",
+        "inside": false,
+        "minGap": 70,
+        "maxGap": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "対照。撮影 A の同じ窓の外（2 発とも外）。仮説を見分けない（読み取りの確かめ）"
+    },
+    {
+      "id": "A-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A の 180 秒のスノーホワイト：ヘビーアームズの発の数。窓の中で縮んだ分だけ増える（フルバーストの時刻の揺れでも動くので、見分けの補い）"
+    },
+    {
+      "id": "B-inside",
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "chargeSpeed",
+        "inside": true,
+        "minGap": 70,
+        "maxGap": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 308,
+          "controlled": false
+        },
+        {
+          "rid": 471,
+          "controlled": true
+        },
+        {
+          "rid": 160,
+          "controlled": false
+        }
+      ],
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "本命。撮影 B。ユニの S1 のチャージ速度▲の窓（フルバースト開始時から 10 秒）の中の、スノーホワイト：ヘビーアームズの連続した 2 発の間の平均（70〜100f。フルアクティブの発の間とリロードを挟む間を除く）"
+    },
+    {
+      "id": "B-outside",
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "chargeSpeed",
+        "inside": false,
+        "minGap": 70,
+        "maxGap": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      },
+      "team": [
+        {
+          "rid": 82,
+          "controlled": false
+        },
+        {
+          "rid": 308,
+          "controlled": false
+        },
+        {
+          "rid": 471,
+          "controlled": true
+        },
+        {
+          "rid": 160,
+          "controlled": false
+        }
+      ],
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "対照。撮影 B の同じ窓の外。仮説を見分けない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-01",
+    "commit": "4ae2a16f8d46c0b0630c7594e7f5c165662de4de",
+    "values": {
+      "H0": {
+        "A-inside": 94,
+        "A-outside": 93.47916666666667,
+        "A-shots": 90,
+        "B-inside": 94,
+        "B-outside": 94
+      },
+      "H1": {
+        "A-inside": 83,
+        "A-outside": 94,
+        "A-shots": 95,
+        "B-inside": 88,
+        "B-outside": 94
+      }
+    }
+  }
+}

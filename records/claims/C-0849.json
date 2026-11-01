@@ -1,0 +1,15 @@
+{
+  "id": "C-0849",
+  "text": "スノーホワイト：ヘビーアームズの S2 の戦闘開始時の「チャージ時間 1.2 秒に固定（持続）」は、味方のチャージ速度▲（%。ユニの S1）に勝つ。▲の窓の中も、チャージ時間は 1.2 秒のまま（発の間は窓の外と同じ）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0882-07`・`0883-07`（スノーホワイト：ヘビーアームズの連続した 2 発の間の平均。ユニの S1 のチャージ速度▲の窓の中）と `0882-08`・`0883-08`（同じ窓の外）。窓の中も外も同じで、モデル（固定が勝つ）と許容内。▲が勝てば窓の中は縮む（予測ファイル records/predictions/V-0618.json の B-inside の H1）。仮説は説明文と定義から立て、合わせ込みの定数は無い。V-0618",
+  "model": "`data/skills/471.json` の skill2 の effects[0]（`timed`・`battleStart`・`self`・`fixedChargeTime`・`durationUntil: battleEnd`）と、`frame/firing.ts` の `chargeSecondsOf`（固定が効いている間はチャージ速度▲を無視する）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": ["data/skills/471.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}

@@ -1,0 +1,52 @@
+{
+  "id": "0880",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0880_sr_snow-white-ha_mana.mp4",
+  "original": "2026-11-01_16-58-03.mp4",
+  "durationSec": 201.8,
+  "frames": 12109,
+  "fps": 60,
+  "sizeMB": 244.7,
+  "sha256": "70cfccc8cfb8",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 290,
+      "name": "マナ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 471,
+      "name": "スノーホワイト：ヘビーアームズ",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0618 の撮影 A。リター（AI）・マナ（AI）・スノーホワイト：ヘビーアームズ（操作・オート射撃 ON）・デルタ（AI）。オートバースト ON。最後に戦闘履歴が写っている",
+  "backup": {
+    "at": "2026-11-01T17:26+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

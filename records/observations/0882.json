@@ -1,0 +1,170 @@
+[
+  {
+    "id": "0882-01",
+    "recording": "0882",
+    "kind": "timing",
+    "use": "record",
+    "value": [1054, 2117, 3022, 3847, 4686, 5580, 6534, 7501, 8452, 9310, 10109, 10930],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・5・0・0・0・0・0・0・0・0・0f"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-02",
+    "recording": "0882",
+    "kind": "timing",
+    "use": "record",
+    "value": [1083, 2146, 3051, 3876, 4715, 5610, 6563, 7530, 8481, 9339, 10138, 10959],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・6・0・0・0・0・0・0f"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-03",
+    "recording": "0882",
+    "kind": "timing",
+    "use": "record",
+    "value": [1112, 2176, 3080, 3905, 4745, 5639, 6592, 7559, 8510, 9368, 10167, 10988],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-04",
+    "recording": "0882",
+    "kind": "timing",
+    "use": "record",
+    "value": [2111, 3015],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-05",
+    "recording": "0882",
+    "kind": "timing",
+    "use": "record",
+    "value": [2140, 3044],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-06",
+    "recording": "0882",
+    "kind": "timing",
+    "use": "record",
+    "value": [3073],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-07",
+    "recording": "0882",
+    "kind": "interval",
+    "use": "compare",
+    "value": 94.18,
+    "unit": "f",
+    "description": "スノーホワイト：ヘビーアームズ（操作）の、連続した 2 発の間の平均（11 個）。ユニの S1 のチャージ速度▲の窓（フルバーストの始まりから 10 秒）の中（2 発とも同じ側）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・recipe:burst-panel@2 + 使い捨てのスクリプト（V-0618「読み方」）",
+      "note": "発は照準の左の残弾が 1 減ったフレーム（同じ値の読みが 4 フレーム未満の続きは読み違いとして捨て、減る前の最後の読みとの幅が 2f 以下で 1 だけ減ったものだけ）。窓は III のタイマーの 00.00（同じ録画の -03）から 610f（フルバーストの入りの止まり 22f とゲーム内の 10 秒 588f）。連続した 2 発の間のうち 70〜100f のものだけ（リロード・的のジャンプ・フルバーストの入りの止まり・フルアクティブの発を挟む間を除く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "chargeSpeed",
+        "inside": true,
+        "minGap": 70,
+        "maxGap": 100
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0882-08",
+    "recording": "0882",
+    "kind": "interval",
+    "use": "compare",
+    "value": 94.47,
+    "unit": "f",
+    "description": "スノーホワイト：ヘビーアームズ（操作）の、連続した 2 発の間の平均（15 個）。ユニの S1 のチャージ速度▲の窓（フルバーストの始まりから 10 秒）の外（2 発とも同じ側）",
+    "method": {
+      "tool": "reticle-ammo.ts --mode series・recipe:burst-panel@2 + 使い捨てのスクリプト（V-0618「読み方」）",
+      "note": "発は照準の左の残弾が 1 減ったフレーム（同じ値の読みが 4 フレーム未満の続きは読み違いとして捨て、減る前の最後の読みとの幅が 2f 以下で 1 だけ減ったものだけ）。窓は III のタイマーの 00.00（同じ録画の -03）から 610f（フルバーストの入りの止まり 22f とゲーム内の 10 秒 588f）。連続した 2 発の間のうち 70〜100f のものだけ（リロード・的のジャンプ・フルバーストの入りの止まり・フルアクティブの発を挟む間を除く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "chargeSpeed",
+        "inside": false,
+        "minGap": 70,
+        "maxGap": 100
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0618",
+    "readAt": "2026-11-01"
+  }
+]
