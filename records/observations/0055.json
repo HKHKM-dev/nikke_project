@@ -531,5 +531,24 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0055-31",
+    "recording": "0055",
+    "source": "V-0610",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "kind": "interval",
+    "unit": "f",
+    "value": [12.86, 96.14, 22.86, 110.14],
+    "description": "紅蓮：ブラックシャドウ単騎の 3 回目（窓の始まりの部分チャージの発）・4 回目（窓の前のフルチャージの発）の敵のジャンプの、撃ったフレーム（照準の横の残弾が減ったフレーム）からハイド中のリロードの RELOADING のバーの長さ 0 に遡った点まで、その点からバーが消えたフレーム（取り消し）まで（3 回目の 2 つ、4 回目の 2 つの順）。どちらの回も満ちる前に取り消された",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）・node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps",
+      "note": "撃った → 増分 → 0 の点 → 消えた: 3 回目 f6750 → 6758 → 6762.86 → 6859、4 回目 f8866 → 8872 → 8888.86 → 8999。残弾の替わり目は続いたフレームで読めた。0046-18（目で読んだ RELOADING の文字の出）と同じ回"
+    }
   }
 ]

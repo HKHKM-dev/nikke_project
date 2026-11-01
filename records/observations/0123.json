@@ -388,5 +388,24 @@
       "tool": "hud.ts の増分と reload.ts の 0 の点",
       "note": "f2763 → 2782.99、f7206 → 7223.03、f9375 → 9394.04"
     }
+  },
+  {
+    "id": "0123-22",
+    "recording": "0123",
+    "source": "V-0610",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "kind": "interval",
+    "unit": "f",
+    "value": [25.99, 26.04],
+    "description": "1・4 回目の敵のジャンプの、窓の始まりの部分チャージの発を撃ったフレーム（照準の横の残弾が減ったフレーム）から、ハイド中のリロードのバーの 0 の点まで（0123-21 は同じ回を総ダメージの増分から数えた）。3 回目は残弾の表示が読めない区間で、撃ったフレームが決まらない",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）・node tools/captures/reload.ts --mode fit",
+      "note": "撃った → 0 の点: f2757 → 2782.99、f9368 → 9394.04（増分は f2763・9375）"
+    }
   }
 ]
