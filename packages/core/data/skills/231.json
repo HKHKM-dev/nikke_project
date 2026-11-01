@@ -9,42 +9,48 @@
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 1
+            "atLeast": 1,
+            "resetAfterSeconds": 45
           },
           "target": "self",
           "stat": "critRate",
           "ref": 1,
           "durationRef": 2,
           "claims": [
-            "C-0160"
+            "C-0160",
+            "C-0872"
           ]
         },
         {
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 2
+            "atLeast": 2,
+            "resetAfterSeconds": 45
           },
           "target": "self",
           "stat": "critDamage",
           "ref": 3,
           "durationRef": 4,
           "claims": [
-            "C-0160"
+            "C-0160",
+            "C-0872"
           ]
         },
         {
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 3
+            "atLeast": 3,
+            "resetAfterSeconds": 45
           },
           "target": "self",
           "stat": "attack",
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0160"
+            "C-0160",
+            "C-0872"
           ]
         }
       ]
@@ -59,14 +65,16 @@
           "ref": 2,
           "damageType": "skill",
           "delayFrames": 45,
+          "valueBeforeFire": true,
           "assumes": {
-            "ja": "戦闘開始から約 15 秒ごと（CT 15 秒は録画 0038・0162・0165 から読んだ値。C-0402）。最終防御力が最も高い敵 5 機を単体ボスで 1 体として 1 ヒット。発動からヒットまで 45f（C-0453。単騎の録画 0008 の 1 回目のヒットが ceil の周期 883 の 45f 後）",
-            "en": "Every ~15 s from the start of combat (the 15 s cooldown read from recordings 038, 162 and 165; C-0402). The 5 highest-DEF enemies hit once as a single boss. 45 f from activation to hit (C-0453: in solo recording 008 the first hit lands 45 f after the ceil period of 883)"
+            "ja": "戦闘開始から約 15 秒ごと（CT 15 秒は録画 0038・0162・0165 から読んだ値。C-0402）。最終防御力が最も高い敵 5 機を単体ボスで 1 体として 1 ヒット。発動からヒットまで 45f（C-0453。単騎の録画 0008 の 1 回目のヒットが ceil の周期 883 の 45f 後）。値（撃つ側のバフ・敵の側のデバフ・フルバースト補正）は発動の直前のもので決め、遅れの間と発動と同じフレームで付いたものは乗らない（V-0632）",
+            "en": "Every ~15 s from the start of combat (the 15 s cooldown read from recordings 038, 162 and 165; C-0402). The 5 highest-DEF enemies hit once as a single boss. 45 f from activation to hit (C-0453: in solo recording 008 the first hit lands 45 f after the ceil period of 883). The value (shooter buffs, enemy debuffs and the Full Burst bonus) is fixed just before the activation; anything applied during the delay or on the activation frame does not apply (V-0632)"
           },
           "claims": [
             "C-0402",
             "C-0102",
-            "C-0453"
+            "C-0453",
+            "C-0864"
           ]
         },
         {
@@ -107,7 +115,8 @@
           "kind": "timed",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 2
+            "atLeast": 2,
+            "resetAfterSeconds": 45
           },
           "target": "allies",
           "stat": "damageTaken",
@@ -122,14 +131,16 @@
             "C-0161",
             "C-0162",
             "C-0165",
-            "C-0153"
+            "C-0153",
+            "C-0872"
           ]
         },
         {
           "kind": "damage",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 3
+            "atLeast": 3,
+            "resetAfterSeconds": 45
           },
           "damageType": "additional",
           "ref": 4,
@@ -141,14 +152,16 @@
             "C-0160",
             "C-0163",
             "C-0165",
-            "C-0838"
+            "C-0838",
+            "C-0872"
           ]
         },
         {
           "kind": "damage",
           "trigger": {
             "count": "burstUse",
-            "atLeast": 4
+            "atLeast": 4,
+            "resetAfterSeconds": 45
           },
           "damageType": "additional",
           "ref": 5,
@@ -160,7 +173,8 @@
             "C-0160",
             "C-0163",
             "C-0165",
-            "C-0838"
+            "C-0838",
+            "C-0872"
           ]
         }
       ],

@@ -1,0 +1,46 @@
+{
+  "id": "0912",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0912_sg_isabel_delta-a.mp4",
+  "original": "2026-11-01_20-27-42.mp4",
+  "durationSec": 201.6,
+  "frames": 12098,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "66327ff1b417",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 822,
+      "name": "ラム",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0631 の ※1（III を残り 02:24・01:41・00:53・00:10 に手で押す）。ラム・イサベル・デルタ（操作・撃たない）。オートバースト OFF（バーストは手で撃つ）",
+  "backup": {
+    "at": "2026-11-01T20:50+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

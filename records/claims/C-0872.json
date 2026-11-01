@@ -1,0 +1,40 @@
+{
+  "id": "C-0872",
+  "text": "イサベルの S1 のターゲットマーキングの回数（S1 の段階とバーストの追加ダメージ・受けるダメージ▲の段階）は、前のバーストの発動から 45 秒より後に次のバーストを使うと、その発動から数え直す（その発動が 1 回目になる）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0912-03`・`0912-04`・`0912-05`・`0912-06`・`0912-09`・`0913-03`・`0913-04`・`0913-05`・`0913-06`・`0913-07`・`0913-08`・`0913-11`。V-0631",
+  "model": "スキル定義の発動の回数のトリガーに resetAfterSeconds（前の発動から N 秒より後の発動で数え直す。skills/triggers.ts）を足し、イサベルの S1 の effects[0]〜[2] とバーストの effects[1]〜[3] に 45 を書いた",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": [
+      "data/skills/231.json の skill1 の effects[0]",
+      "data/skills/231.json の skill1 の effects[1]",
+      "data/skills/231.json の skill1 の effects[2]",
+      "data/skills/231.json の burst の effects[1]",
+      "data/skills/231.json の burst の effects[2]",
+      "data/skills/231.json の burst の effects[3]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0890",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0891",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0892",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0893",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "parameterFree": "数え直す秒は、S1 の説明文の各段階の「45 秒間維持」の 45 秒（合わせ込みの定数なし）。境は、前の発動からの経過（ゲーム内の秒。1 フレーム 0.017 秒。C-0260）が 45 秒を超えたか"
+}

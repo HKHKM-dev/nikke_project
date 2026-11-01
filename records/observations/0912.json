@@ -1,0 +1,246 @@
+[
+  {
+    "id": "0912-01",
+    "recording": "0912",
+    "kind": "timing",
+    "use": "record",
+    "value": [2056.8, 4594.2, 7416.4, 9939.1],
+    "unit": "ティック",
+    "description": "手で撃ったチェーン（4 回）の III のタイマーの 00.00 の、戦闘開始からのゲーム内のティック。00.00 は、イサベルのバーストのヒットの 156f 前（C-0165。動画の f2926・5489・8338・10887）。隣どうしの間隔は 2,537.4・2,822.2・2,522.8（45 秒は 2,648 ティック）",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "00.00 のフレームは、HUD の増分のイサベルのバーストのヒットから 156f 引いた（burst-panel の 00.00 は、手で II と III を続けて押したチェーンでは遅れて出る。V-0619「結果」）。どのフレームもその秒の中に止まりがある（*）ので、20 ティックほど小さく出うる（plan/captures/guide.md）"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-02",
+    "recording": "0912",
+    "kind": "timing",
+    "use": "input",
+    "value": [1995, 4532, 7354, 9877],
+    "unit": "f",
+    "description": "手で撃ったチェーン（4 回）の I の発動のゲーム内のフレーム（比べる指定の manualBursts）。III の本当の発動の 56f 前（モデルの I → III の間隔）に置いた",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "III のタイマーの 00.00（イサベルのバーストのヒットの 156f 前。C-0165）をゲーム内のティックに直し（0912-01 の観測値の 00.00 のティック）、6 ティック前（C-0512）を III の本当の発動とした。I・II の時刻はイサベルのヒットの値に効かない。4 回を 1 つの並びで渡す（ターゲットマーキングの回数の数え直しは、スキル定義の resetAfterSeconds でモデルが数える）"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-03",
+    "recording": "0912",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。1 回目のチェーン（1 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f3082 の単独の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "0912-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-04",
+    "recording": "0912",
+    "kind": "hit",
+    "use": "compare",
+    "value": 271065,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心）。2 回目のチェーン（前の 00.00 から 2,537.4 ティック。2 回目）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f5645 の単独の増分。追加ダメージは 3 回目から（C-0160）なので出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "0912-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-05",
+    "recording": "0912",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。3 回目のチェーン（前の 00.00 から 2,822.2 ティック。数え直して 1 回目）。このフレームの増分はバーストのヒットだけで、通しで数えたとき（3 回目）の段階 2 の追加ダメージ（会心なしで 75 万ほど）は出ていない",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8494 の単独の増分。後の 330f にも 60 万以上の増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "0912-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-06",
+    "recording": "0912",
+    "kind": "hit",
+    "use": "compare",
+    "value": 180710,
+    "unit": "ダメージ",
+    "description": "イサベルのバーストスキルダメージ（会心なし）。4 回目のチェーン（前の 00.00 から 2,522.8 ティック。数え直して 2 回目）。通しで数えたとき（4 回目）のバーストのヒット 211,963（S1 の段階 3 の攻撃力▲）と段階 2・3 の追加ダメージは出ていない",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f11043 の単独の増分。後の 330f の 60 万以上の増分は f11136 の 611,679 だけで、イサベルの追加ダメージの値（会心・会心なし）に合わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "0912-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-07",
+    "recording": "0912",
+    "kind": "timing",
+    "use": "record",
+    "value": 285,
+    "unit": "f",
+    "description": "3 回目のチェーン（数え直して 1 回目）のイサベルのヒット（f8494）の後、段階 1 の▲の無い発が続いた最後の時刻（ヒットから数えた動画のフレーム）。通しで数えたとき（3 回目）は、ヒットの後 5 秒（約 294f）▲が付く",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "buff-edge の --opt grid で、HUD の増分（キャッシュ hud-jumps@2）をモデル（setup は 0912-03 の比べる指定）の 1 発の格子（ラム・イサベル × ▲なし・▲あり × フルバーストの中と外。コア・会心・距離の 8 通り）に ±1.5 で当てた。範囲はヒットの -60〜330f。ヒットの後のラム・イサベルの発は、どれも▲なしの格子（か外れ）。▲ありの格子に合う発は無い（+39・+121・+203・+285f の 4 発）"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-08",
+    "recording": "0912",
+    "kind": "timing",
+    "use": "record",
+    "value": [4, 19],
+    "unit": "f",
+    "description": "2 回目・4 回目のチェーン（どちらも 2 回目）のイサベルのヒット（f5645・f11043）の後、段階 1 の▲の乗った最初の発の時刻（ヒットから数えた動画のフレーム）",
+    "method": {
+      "tool": "recipe:buff-edge@3",
+      "note": "buff-edge の --opt grid で、HUD の増分（キャッシュ hud-jumps@2）をモデル（setup は 0912-03 の比べる指定）の 1 発の格子（ラム・イサベル × ▲なし・▲あり × フルバーストの中と外。コア・会心・距離の 8 通り）に ±1.5 で当てた。範囲はヒットの -60〜330f。ヒットの後のラム・イサベルの発で格子に合うものは、どれも▲あり。▲なしの格子に合う発は無い（2 回目は 3 発、4 回目は 4 発）。1 回目（f3082）は +200f まで▲なしの 4 発"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0912-09",
+    "recording": "0912",
+    "kind": "timing",
+    "use": "compare",
+    "value": [],
+    "unit": "回目",
+    "description": "イサベルの段階 2・3 の追加ダメージが出たバースト（イサベルの何回目の発動か）。4 回のどれにも出ていない（通しで数えると 3・4 回目に出る）",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "4 回のヒットのフレーム（f3082・5645・8494・11043）の増分はどれもバーストのヒットだけの値（`0912-03`〜`0912-06`）で、どのヒットの後 330f にも追加ダメージの値（会心・会心なし）の増分は無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitBurstOrdinals",
+      "args": {
+        "slot": 2,
+        "skill": "burst"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "manualBursts": "0912-02"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    },
+    "source": "V-0631",
+    "readAt": "2026-11-01"
+  }
+]

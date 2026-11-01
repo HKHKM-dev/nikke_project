@@ -37,6 +37,7 @@ import {
   type ShotCountKind,
 } from './types.ts';
 import type { NamedStateId } from './states.ts';
+import { GAME_SECONDS_PER_FRAME } from '../time.ts';
 
 /** 1 枠の 1 回の射撃 */
 export type ShotEvent = {
@@ -226,6 +227,7 @@ export function createTriggerTracker(
   everyAt?: ShotCountEveryAt,
 ): TriggerTracker {
   let count = 0;
+  let lastEventFrame: number | undefined;
   const t = trigger;
   if (isResolvedShotCount(t)) {
     // クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: フルバーストの窓（[start, end)）の中の射撃だけを数える（firesDuring は
@@ -293,7 +295,15 @@ export function createTriggerTracker(
       const happened =
         t.count === 'burstUse' ? ev.burstEffects.some((a) => a.slotIndex === slotIndex) : ev.fullBurstStart;
       if (!happened) return false;
-      // 回数は戦闘中ずっと数える。atLeast 回目以降の発動のたびに発火する（下位効果のスタック適用）
+      // 回数は戦闘中ずっと数える。atLeast 回目以降の発動のたびに発火する（下位効果のスタック適用）。
+      // V-0631: resetAfterSeconds を書いたものは、前の発動から N 秒より後の発動で数え直す
+      if (
+        t.resetAfterSeconds !== undefined &&
+        lastEventFrame !== undefined &&
+        (ev.frame - lastEventFrame) * GAME_SECONDS_PER_FRAME > t.resetAfterSeconds
+      )
+        count = 0;
+      lastEventFrame = ev.frame;
       count += 1;
       return count >= t.atLeast;
     };

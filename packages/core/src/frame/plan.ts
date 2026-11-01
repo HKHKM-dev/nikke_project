@@ -549,6 +549,8 @@ export function planSkillHits(
         // N 回でない倍率ダメージは、遅れがあればヒットのフレームのバフ（遅れて出る倍率ダメージ編）
         // エレグの S1（C-0766）: 値を決めるフレームのある効果（valueDelayFrames。N 回は 0）は、どのヒットも発火のその後の値で出す
         // （エレグの S1 は届いた発の次のフレームで、同じ発で付いた timed も乗る）
+        // イサベルの S2（V-0632）: 値を決めるのが発火の直前の効果（valueBeforeFire）は、どのヒットも発火の 1 フレーム前の値で出す
+        // （遅れの間と、発火のフレームで付いたたきなの S2 の▲は乗らない）
         for (const at of damageHitFramesOf(effect, frame, frames))
           push(
             at,
@@ -557,7 +559,11 @@ export function planSkillHits(
             copied,
             undefined,
             false,
-            effect.valueDelayFrames === undefined ? at : frame + effect.valueDelayFrames,
+            effect.valueDelayFrames !== undefined
+              ? frame + effect.valueDelayFrames
+              : effect.valueBeforeFire === true
+                ? frame - 1
+                : at,
           );
       }
     }

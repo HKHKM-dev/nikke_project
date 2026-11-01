@@ -138,6 +138,8 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    */
   hitOffsets?: number[];
   valueDelayFrames?: number;
+  /** イサベルの S2（V-0632）: 値を発火の直前のもので決める（frame/plan.ts の planSkillHits） */
+  valueBeforeFire?: true;
   /**
    * 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames）。
    * 2 段目の段 15 の PR 3: window なら、自分のバースト使用のフレームから durationFrames の間（縮めた次の発動のフレームだけで見る）
@@ -368,6 +370,7 @@ export function resolveDamageEffects(
         r.multiplier /= effect.hitOffsetFrames.length;
         if (effect.valueDelayFrames !== undefined) r.valueDelayFrames = effect.valueDelayFrames;
       }
+      if (effect.valueBeforeFire === true) r.valueBeforeFire = true;
       if (effect.periodShorten !== undefined && isResolvedTimer(trigger)) {
         const { slot: from, ref, state, window } = effect.periodShorten;
         const seconds = skillValue(character.skills[from], ref, levels[from]);

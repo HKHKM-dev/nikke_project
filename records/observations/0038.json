@@ -734,5 +734,77 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0038-34",
+    "recording": "0038",
+    "kind": "hit",
+    "use": "compare",
+    "value": 205709,
+    "unit": "ダメージ",
+    "description": "イサベルの 6 回目の S2 のヒット（会心なし）。3 回目のフルバーストの始まり（00.00。f6265。`0038-22`）が、S2 の発動（ヒットの約 46f 前。C-0453）の後・ヒットの前に入った回。フルバースト補正なしの値",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f6298 の単独の増分（`0038-30` の 6 回目と同じフレーム・値。録画から読み直した）。00.00 はヒットの 33f 前、S2 の発動はその約 13f 前。補正が乗れば 308,564、会心なら 411,418（どちらも出ていない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 5,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0038-35",
+    "recording": "0038",
+    "kind": "hit",
+    "use": "compare",
+    "value": 736294,
+    "unit": "ダメージ",
+    "description": "イサベルの 9 回目の S2 のヒット（会心）。4 回目のフルバースト（00.00 は f8643。`0038-22`。窓は止まりを含めて 316f）の終わりが、S2 の発動の後・ヒットの前に入った回。フルバースト補正と段階 1 の受けるダメージ▲（4 回目の着弾 f8799 から 5 秒）の乗った会心の値",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8971 の単独の増分（`0038-30` の 8 番目と同じ値。録画から読み直した）。窓の終わりはヒットの約 12f 前、S2 の発動は窓の終わりの約 34f 前。補正なしの会心なら 567,436"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "n": 8,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
   }
 ]

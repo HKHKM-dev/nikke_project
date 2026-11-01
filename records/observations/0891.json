@@ -413,5 +413,95 @@
     },
     "source": "V-0619",
     "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-17",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 308564,
+    "unit": "ダメージ",
+    "description": "イサベルの S2 のヒット（会心なし。3 回目のチェーンのフルバーストの中）。同じ時刻に発動したたきなの S2 の受けるダメージ▲と、イサベルのバーストのヒット（f8019。組の 2 回目なので段階 1 の▲が付く）の▲が、S2 の発動の後・ヒットの前に付いた。フルバースト補正だけの値",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f8034 の単独の増分。バーストのヒット（f8019）の 15f 後で、S2 の発動（ヒットの約 46f 前）の約 31f 後。2 つの▲が乗れば 463,000、段階 1 の▲だけなら 431,866"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 7,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0891-18",
+    "recording": "0891",
+    "kind": "hit",
+    "use": "compare",
+    "value": 308564,
+    "unit": "ダメージ",
+    "description": "イサベルの S2 のヒット（会心なし。4 回目のチェーンのフルバーストの中）。たきなの S2 の▲と、イサベルのバーストのヒット（f10691。組の 3 回目で、段階 1 の▲と S1 の段階 3 の攻撃力▲）が、S2 の発動の後・ヒットの前に付いた。フルバースト補正だけの値",
+    "method": {
+      "tool": "hud.ts --mode jumps（キャッシュ hud-jumps@2）",
+      "note": "f10710 の単独の増分。バーストのヒット（f10691）の 19f 後で、S2 の発動の約 27f 後。ヒットの時点の値（いまのモデル）なら 543,073"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "n": 10,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "noFireSlots": [3],
+        "dropEffects": [
+          {
+            "rid": 861,
+            "skill": "burst",
+            "index": 1
+          }
+        ],
+        "manualBursts": "0891-10"
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "skill"
+    },
+    "source": "V-0632",
+    "readAt": "2026-11-01"
   }
 ]

@@ -571,7 +571,7 @@ export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies 
 /**
  * Stage 8: 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
  * atLeast 回目以降の発動のたびに発火する。burstUse = 自分がバーストスキルを使った回数、fullBurstStart = フルバーストの回数（編成全体）。
- * 回数は戦闘中ずっと数え、リセットしない。
+ * 回数は戦闘中ずっと数え、リセットしない（resetAfterSeconds を書いたものを除く）。
  */
 export type EventCountKind = 'burstUse' | 'fullBurstStart';
 export const EVENT_COUNT_KINDS = ['burstUse', 'fullBurstStart'] as const satisfies readonly EventCountKind[];
@@ -580,6 +580,11 @@ export type EventCountTrigger = {
   count: EventCountKind;
   /** 何回目以降か（1 始まりの即値。説明文の「1 回 / 2 回 / 3 回」） */
   atLeast: number;
+  /**
+   * V-0631（イサベルのターゲットマーキング）: 前の発動から N 秒（ゲーム内の秒）より後に次の発動が来たら、その発動から数え直す
+   * （その発動が 1 回目になる）。burstUse にだけ書ける
+   */
+  resetAfterSeconds?: number;
 };
 
 /**
@@ -1127,6 +1132,11 @@ export type DamageEffect = {
    * 以下の整数）。省略は、遅れがあればヒットのフレームの値（遅れて出る倍率ダメージ編）。hitOffsetFrames と組むときだけ
    */
   valueDelayFrames?: number;
+  /**
+   * イサベルの S2（V-0632）: 値（撃つ側と敵の側のバフ・フルバースト補正）を、発火の直前のもので決める（遅れの間と、発火のフレームで付いた
+   * ものは乗らない）。delayFrames のある damage だけ。valueDelayFrames とは組まない
+   */
+  valueBeforeFire?: true;
   /**
    * 同 5.4 節: 「コア命中ダメージ」。コアに当たったヒットとして、コアの項（コア倍率 − 1 + コアダメージ▲）を足す（割合 1。敵にコアが
    * 無ければ足さない）。射撃ごとに畳み込む効果（毎回の回数のきっかけで条件なし）には書けない
@@ -2755,9 +2765,19 @@ function parseTrigger(
   }
   if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'atLeast'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+      if (!['count', 'atLeast', 'resetAfterSeconds'].includes(key)) fail(`${path}.${key}`, 'unknown field');
     }
-    return { count: v.count as EventCountKind, atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`) };
+    const trigger: EventCountTrigger = {
+      count: v.count as EventCountKind,
+      atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`),
+    };
+    if (v.resetAfterSeconds !== undefined) {
+      const at = `${path}.resetAfterSeconds`;
+      if (trigger.count !== 'burstUse') fail(at, 'resetAfterSeconds needs count burstUse');
+      if (typeof v.resetAfterSeconds !== 'number' || !(v.resetAfterSeconds > 0)) fail(at, 'expected a positive number');
+      trigger.resetAfterSeconds = v.resetAfterSeconds;
+    }
+    return trigger;
   }
   fail(
     `${path}.count`,
@@ -3913,6 +3933,13 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
     const n = parsePositiveInt(v.valueDelayFrames, at);
     if (n > (effect.delayFrames ?? 0)) fail(at, 'valueDelayFrames must not exceed delayFrames');
     effect.valueDelayFrames = n;
+  }
+  if (v.valueBeforeFire !== undefined) {
+    const at = `${path}.valueBeforeFire`;
+    if (v.valueBeforeFire !== true) fail(at, 'expected true');
+    if ((effect.delayFrames ?? 0) === 0) fail(at, 'valueBeforeFire needs delayFrames');
+    if (effect.valueDelayFrames !== undefined) fail(at, 'valueBeforeFire cannot be used with valueDelayFrames');
+    effect.valueBeforeFire = true;
   }
   // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
   if (v.periodShorten !== undefined) {
