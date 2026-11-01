@@ -1,0 +1,40 @@
+{
+  "id": "0866",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0866_mg+rl_emma-tu+laplace-uh_weapon-change-explosion.mp4",
+  "original": "2026-11-01_15-40-05.mp4",
+  "durationSec": 200.9,
+  "frames": 12054,
+  "fps": 60,
+  "sizeMB": 243.8,
+  "sha256": "874a82ef2dd7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 93,
+      "name": "エマ：タクティカル・アップ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 103,
+      "name": "ラプラス：アルティメットヒーロー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-01T15:48+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
