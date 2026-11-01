@@ -1,0 +1,40 @@
+{
+  "id": "0844",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0844_tia-naga.mp4",
+  "original": "2026-11-01_10-42-34.mp4",
+  "durationSec": 231.3,
+  "frames": 13879,
+  "fps": 60,
+  "sizeMB": 279.7,
+  "sha256": "63f0fe50a9d4",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 451,
+      "name": "ティア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 450,
+      "name": "ナガ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-01T10:47+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
