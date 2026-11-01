@@ -47,6 +47,11 @@ textarea,
 input:not([type='radio'], [type='checkbox']) {
   border-radius: 0;
 }
+/* フォーカスの枠も四角にする（ブラウザの既定の outline: auto は角が丸い） */
+:where(button, select, textarea, input, summary):focus-visible {
+  outline: 2px solid Highlight;
+  outline-offset: 0;
+}
 .app {
   max-width: 1440px;
   margin: 0 auto;
