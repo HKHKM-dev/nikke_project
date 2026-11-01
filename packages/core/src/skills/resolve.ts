@@ -649,6 +649,8 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   leadFrames?: number;
   /** エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある） */
   enemy?: true;
+  /** マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方（skills/types.ts の StateGrantEffect.stackRefresh） */
+  stackRefresh?: 'each';
 };
 
 /**
@@ -683,6 +685,7 @@ export function resolveStateGrants(
         grant.stacksPerFire = n;
       }
       if (effect.enemy) grant.enemy = true;
+      if (effect.stackRefresh !== undefined) grant.stackRefresh = effect.stackRefresh;
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       untrimmed.push(grant);

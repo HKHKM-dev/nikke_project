@@ -238,15 +238,18 @@ export function isFlagStat(stat: BuffStat): boolean {
  * casterChargeTime = 発動者の基礎チャージ時間 × 比率の秒数を対象のチャージ時間から引く（Stage 11 アリス編。stat が chargeSpeed のときだけ。
  * 「スキル発動者基準でチャージ速度 X%▲」。録画 0042 でアドミ（1 秒）が 0.175 秒縮んだ。plan/design-stage11.md 27 節）、
  * casterFinalMaxHp = 発動者の最終最大HP × 比率を攻撃力に固定加算する（2 段目の段 6。stat が attack のときだけ。「スキル発動者の
- * 最終最大HP の X% 分の攻撃力▲」。plan/design-skill-stage6.md 1.3 節。録画 0121 のラプラス：アルティメットヒーロー）
+ * 最終最大HP の X% 分の攻撃力▲」。plan/design-skill-stage6.md 1.3 節。録画 0121 のラプラス：アルティメットヒーロー）、
+ * casterDefence = 発動者のバフ前防御力 × 比率を敵の防御力から引く（マスト編。stat が enemyDefenseDown のときだけ。「スキル発動者基準で
+ * 防御力 X%▼」。plan/design-mast.md 2.2 節）
  */
-export type BuffScaling = 'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime' | 'casterFinalMaxHp';
+export type BuffScaling = 'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime' | 'casterFinalMaxHp' | 'casterDefence';
 export const BUFF_SCALINGS = [
   'ratio',
   'casterAttack',
   'flat',
   'casterChargeTime',
   'casterFinalMaxHp',
+  'casterDefence',
 ] as const satisfies readonly BuffScaling[];
 
 /**
@@ -1462,6 +1465,16 @@ export type DotEffect = {
    */
   stacksFrom?: { enemyState: NamedStateId };
   /**
+   * マスト編（plan/design-mast.md 2.3 節）: stacksFrom の数を、付けた時に 1 回だけでなく tick ごとに写し直す（その tick のフレームの判定で
+   * 敵に付いている元のスタックの数。0 の tick は出さない）。stacksFrom のときだけ書ける。写す時刻は撮影で決める（論点 4）
+   */
+  copyEachTick?: true;
+  /**
+   * マスト編（同 2.3 節。論点 5）: false は「持続ダメージ」でない周期のダメージ（説明文の「ダメージ」「1 秒間隔」。暴風）。tick に
+   * 持続ダメージ▲（sustainedDamage）を掛けない（skills/burstDamage.ts の sustained を立てない）。省略は持続ダメージ
+   */
+  sustained?: false;
+  /**
    * クルミ編: 状態異常の名前（「ハッキング」など）。同じキャラの同じ state の dot は 1 つの持続ダメージとして扱い、
    * 発火をまとめて tick を出す（どれで付いても付き直しと同じ。C-0136）。間隔・維持・firstTick・倍率は同じであること。
    * 省略は効果ごとに別の持続ダメージ。名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: status を改め、目録の id
@@ -1716,6 +1729,12 @@ export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scal
    * 順位の対象とは組み合わせない（発のフレームで判定するもの。同 5.3 節）
    */
   leadFrames?: number;
+  /**
+   * マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方を、この状態だけ 'each'（スタックごとに独立の維持。skills/stacks.ts）に
+   * する。省略はいまの既定（STACK_REFRESH）。maxStacks か maxStacksRef と組み、stackChange の減少と最大スタック数▲の中身とは組まない。
+   * 撮影で数え方を見分ける予測の仮説（addEffects の replace）に使う
+   */
+  stackRefresh?: 'each';
 };
 
 /** 2 段目の段 10: 付与のスタックの数の出どころ（カウンタの値か、自分の状態のスタック数） */
@@ -2200,6 +2219,9 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   }
   if (scaling === 'casterFinalMaxHp' && stat !== 'attack') {
     fail(`${path}.scaling`, `casterFinalMaxHp is only allowed with stat "attack", got "${stat}"`);
+  }
+  if (scaling === 'casterDefence' && stat !== 'enemyDefenseDown') {
+    fail(`${path}.scaling`, `casterDefence is only allowed with stat "enemyDefenseDown", got "${stat}"`);
   }
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
@@ -3013,7 +3035,8 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   for (const key of Object.keys(v)) {
     if (!STATE_GRANT_KEYS.includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
-  // エレグのバースト編: target: "enemy" は敵に付く状態の付与。敵の件の timed と同じく target: "allies" に読み替えて残りの欄を読む
+  // エレグのバースト編: target: "enemy" は敵に付く状態の付与。敵の件の timed と同じく target: "allies" に読み替えて残りの欄を読む。
+  // マスト編（plan/design-mast.md 2.1 節）: スタック（maxStacks・maxStacksRef）は書ける（件は味方の状態と同じ stackItems で作る）
   const onEnemy = v.target === 'enemy';
   if (onEnemy) {
     for (const key of [
@@ -3029,8 +3052,6 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
       'fixedTargets',
       'targetCount',
       'targetCountRef',
-      'maxStacks',
-      'maxStacksRef',
       'undispellable',
       'stacksFrom',
       'condition',
@@ -3105,6 +3126,13 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     if (effect.stacksFrom !== undefined)
       fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef cannot be used with stacksFrom');
     effect.stacksPerFireRef = parseRef(v.stacksPerFireRef, `${path}.stacksPerFireRef`);
+  }
+  // マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方
+  if (v.stackRefresh !== undefined) {
+    if (v.stackRefresh !== 'each') fail(`${path}.stackRefresh`, 'expected "each" (omit it for the default)');
+    if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
+      fail(`${path}.stackRefresh`, 'stackRefresh needs maxStacks or maxStacksRef');
+    effect.stackRefresh = 'each';
   }
   // 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発の leadFrames 前から始める付与
   if (v.leadFrames !== undefined) {
@@ -3200,6 +3228,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'stacksFrom',
   'stacksPerFireRef',
   'leadFrames',
+  'stackRefresh',
   'condition',
   'burstStepMix',
   'squad',
@@ -3289,6 +3318,7 @@ function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>)
     delayFrames: _delay,
     stacksPerFireRef: _perFire,
     leadFrames: _lead,
+    stackRefresh: _refresh,
     ...fields
   } = grant;
   const { claims: _itemClaims, ...value } = item;
@@ -3923,6 +3953,8 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
         'perCountIntervalFrames',
         'delayFrames',
         'stacksFrom',
+        'copyEachTick',
+        'sustained',
         'condition',
         'assumes',
         'claims',
@@ -4012,6 +4044,16 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
     if (effect.maxStacksRef !== undefined || effect.perCount !== undefined)
       fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with maxStacksRef or perCount');
     effect.stacksFrom = { enemyState: parseNamedStateId(from.enemyState, `${path}.stacksFrom.enemyState`, 'enemy') };
+  }
+  // マスト編（plan/design-mast.md 2.3 節）: tick ごとに写し直す印と、持続ダメージでない印
+  if (v.copyEachTick !== undefined) {
+    if (v.copyEachTick !== true) fail(`${path}.copyEachTick`, 'expected true');
+    if (effect.stacksFrom === undefined) fail(`${path}.copyEachTick`, 'copyEachTick needs stacksFrom');
+    effect.copyEachTick = true;
+  }
+  if (v.sustained !== undefined) {
+    if (v.sustained !== false) fail(`${path}.sustained`, 'expected false (omit it for sustained damage)');
+    effect.sustained = false;
   }
   for (const key of ['gaugeOnApply', 'gaugeOnTick'] as const) {
     if (v[key] === undefined) continue;
@@ -4941,6 +4983,11 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
   );
+  const stackedEnemyGrants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).flatMap((e) =>
+    e.kind === 'state' && e.enemy === true && (e.maxStacks !== undefined || e.maxStacksRef !== undefined)
+      ? [e.state]
+      : [],
+  );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       const onDot = e.kind === 'cancelState' || (e.kind === 'stackChange' && e.target === 'enemy');
@@ -4949,11 +4996,12 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `${root}.${slot}.effects[${i}]`,
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
         );
+      // マスト編（plan/design-mast.md 2.3 節）: 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風）
       const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
-      if (from !== undefined && !dots.some((d) => d.state === from))
+      if (from !== undefined && !dots.some((d) => d.state === from) && !stackedEnemyGrants.includes(from))
         fail(
           `${root}.${slot}.effects[${i}].stacksFrom`,
-          `stacksFrom needs a dot of the state "${from}" in the definition`,
+          `stacksFrom needs a dot of the state "${from}", or a grant of it on the enemy with stacks, in the definition`,
         );
     });
   }

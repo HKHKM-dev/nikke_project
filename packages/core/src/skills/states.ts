@@ -203,6 +203,13 @@ export const NAMED_STATES = {
    * 中身は無く、次の通常攻撃で対象に持続ダメージを付けて外れる）
    */
   acidRound: { name: { ja: '硫酸弾', en: 'Acid Round' }, holder: 'ally' },
+  /**
+   * マスト編（plan/design-mast.md 2.1・2.2 節）: 海風（マストの S1。通常攻撃のクリティカルの命中 2 回ごとに敵に 1 スタック・50 スタック・3 秒。
+   * 中身は発動者基準の防御力▼（casterDefence）。バーストの暴風が写すスタックの元）
+   */
+  seaBreeze: { name: { ja: '海風', en: 'Sea Breeze' }, holder: 'enemy' },
+  /** 同 2.3 節: 暴風（マストのバースト。海風のスタック数を写す 1 秒ごとのダメージ・7 秒。持続ダメージではない） */
+  storm: { name: { ja: '暴風', en: 'Storm' }, holder: 'enemy' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

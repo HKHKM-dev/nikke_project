@@ -496,7 +496,7 @@ function stateItems(
       grant.durationFrames,
       frames,
       maxStacksAt ?? grant.maxStacks,
-      STACK_REFRESH,
+      grant.stackRefresh ?? STACK_REFRESH,
       decreases,
     ).map((w) => ({
       start: w.start,

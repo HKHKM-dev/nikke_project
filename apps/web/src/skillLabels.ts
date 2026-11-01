@@ -417,6 +417,9 @@ export function formatAppliedAmount(effect: AppliedEffect): string {
   if (effect.stat === 'infiniteAmmo') return stat;
   // アニス：スター編: チャージ時間の固定は秒
   if (effect.stat === 'fixedChargeTime') return `チャージ時間 ${formatNumber(effect.appliedAmount, 2)} 秒に固定`;
+  // マスト編（plan/design-mast.md 2.2 節）: 発動者基準の敵の防御力▼は、敵の防御力から引く値
+  if (effect.stat === 'enemyDefenseDown' && effect.scaling === 'casterDefence')
+    return `${stat} −${formatNumber(Math.abs(effect.appliedAmount))}（発動者の防御力の ${formatPercent(effect.value, 2)}）`;
   // 2 段目の段 2: 敵の防御力▼は下げる割合（値は正）
   if (effect.stat === 'enemyDefenseDown') return `${stat} −${formatPercent(Math.abs(effect.appliedAmount), 2)}`;
   const sign = effect.appliedAmount < 0 ? '−' : '+';

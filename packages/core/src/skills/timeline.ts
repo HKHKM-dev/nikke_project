@@ -195,6 +195,8 @@ const BUFF_FIELDS = [
   'damageTaken',
   // 2 段目の段 2: 敵の防御力▼
   'enemyDefenseDown',
+  // マスト編: 発動者基準の敵の防御力▼
+  'enemyDefenseDownFlat',
   // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
   'projectileExplosionDamage',
   // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲と有利コードのダメージ適用
@@ -696,6 +698,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         p.effect,
         caster?.casterBaseAttack ?? 0,
         finalMaxHpOf(p.sourceSlotIndex),
+        caster?.baseDefence,
       );
       state.buffs = applied.totals;
       state.timedEffects.push({
@@ -715,6 +718,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
           p.effect,
           slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0,
           finalMaxHpOf(p.sourceSlotIndex),
+          slots[p.sourceSlotIndex]?.baseDefence,
         ).totals;
       }
     }

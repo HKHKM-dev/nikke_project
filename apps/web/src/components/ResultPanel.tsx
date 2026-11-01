@@ -165,7 +165,9 @@ export function ResultPanel({
       ...summary.effect,
       sourceSlotIndex: summary.sourceSlotIndex,
       appliedAmount:
-        summary.effect.scaling === 'casterAttack' || summary.effect.scaling === 'casterFinalMaxHp'
+        summary.effect.scaling === 'casterAttack' ||
+        summary.effect.scaling === 'casterFinalMaxHp' ||
+        summary.effect.scaling === 'casterDefence'
           ? 0
           : summary.effect.value,
     };

@@ -1,0 +1,121 @@
+{
+  "formatVersion": 1,
+  "resourceId": 350,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "seaBreeze",
+          "trigger": {
+            "count": "critHit",
+            "everyRef": 1
+          },
+          "target": "enemy",
+          "maxStacksRef": 3,
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "enemyDefenseDown",
+              "scaling": "casterDefence",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "クリティカル命中は、発ごとに命中の期待値 × その発の通常攻撃の会心率を足して数える（乱数を期待値で持つ）。「スキル発動者基準で防御力 X%▼」は、敵の防御力から発動者のバフ前防御力 × X% を 1 スタックごとに引く形と読む（plan/design-mast.md 2.2 節）",
+            "en": "Critical hits are counted by adding, per shot, the expected hits × the normal attack crit rate of that shot (randomness as an expectation). \"DEF ▼ X% of the skill user's DEF\" is read as subtracting the caster's pre-buff DEF × X% per stack from the enemy's DEF (plan/design-mast.md 2.2)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分の HP が 70% 以下である限りの、自分と最終攻撃力が最も高い味方 2 機へのクリティカルダメージ▲は、被弾を扱わない（HP が減らない）ので起きない",
+          "en": "The critical damage up for self and the 2 allies with the highest final ATK while own HP is 70% or lower does not happen, since taking damage is not modeled (HP does not drop)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "critDamage",
+            "target": "topAttack",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "timed",
+          "trigger": "battleStart",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "always",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "excludeSelf": "always",
+          "stat": "critDamage",
+          "ref": 4,
+          "durationRef": 5
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 6,
+          "intervalSeconds": 1,
+          "durationRef": 7,
+          "state": "storm",
+          "stacksFrom": {
+            "enemyState": "seaBreeze"
+          },
+          "sustained": false,
+          "assumes": {
+            "ja": "海風状態の対象（敵 1 体の前提ではその敵）にだけ付き、tick は 1 スタックの倍率 × 写した海風のスタックの数（付けた時に 0 なら付かない）",
+            "en": "Applied only to a target in the Sea Breeze state (the enemy, with one enemy assumed); each tick is the per-stack multiplier × the copied Sea Breeze stack count (not applied if it is 0 at application)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "自分と最終攻撃力が最も高い味方 2 機への、発動者基準の最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。モデルは HP の割合を読む効果に、枠の HP の割合の想定のまま渡す（下がる分は未実装）",
+          "en": "The lower HP ratio from the caster-based max-HP-only increase for self and the 2 allies with the highest final ATK (current HP does not increase) does not change damage by itself (it matters only with an effect reading the HP ratio in the team). The model gives effects that read the HP ratio the slot's assumed HP ratio (the decrease is not modeled)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "暴風は説明文で「持続ダメージ」でなく「ダメージ」なので、持続ダメージ▲を掛けない。確かめた編成は無い（持続ダメージ▲の使い手を混ぜていない。plan/design-mast.md 2.3 節）",
+          "en": "Storm is described as \"damage\", not \"sustained damage\", so sustained damage up is not applied. No team has confirmed it (no sustained damage up user was mixed in. plan/design-mast.md 2.3)",
+          "kind": "modeling",
+          "refers": "effects[2]"
+        }
+      ]
+    }
+  }
+}
