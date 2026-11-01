@@ -205,6 +205,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     ...(input.manualBursts === undefined ? {} : { manualBursts: input.manualBursts }),
     ...(input.noBurstSlots === undefined ? {} : { noBurstSlots: input.noBurstSlots }),
     untargetable,
+    ...(input.holdFire === undefined ? {} : { holdFire: input.holdFire }),
     hitRates: landing === null ? undefined : hitRateSpansOf(landing, slots.length),
     enemyHasCore: enemy.hasCore,
     // plan/design-anis-star-gauge-timing.md: 飛ぶ時間（的の表）と、発が壊した障害物（録画で数えた入力）

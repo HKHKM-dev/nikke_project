@@ -27,7 +27,7 @@ import type {
 import type { HolderHistory } from './skills/holders.ts';
 import type { SlotCycleSummary, SlotEffectSummary, SlotStateSummary } from './skills/summaries.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type SkillLevels } from './skills/resolve.ts';
-import { resolvePassiveStates, type BuffTimeline, type TimelineSlot } from './skills/timeline.ts';
+import { resolvePassiveStates, type BuffTimeline, type FrameRange, type TimelineSlot } from './skills/timeline.ts';
 import { treasureSlots, type TreasurePhase } from './skills/treasure.ts';
 import { SKILL_SLOTS, type SkillDefinition, type SkillSlot, type SkillSupport } from './skills/types.ts';
 import type { GrowthInput } from './stats.ts';
@@ -143,7 +143,17 @@ export type TeamInput = {
    * （records/observations.ts）と、画面のスロットの詳細設定「バーストしない」（apps/web の noBurstSlotsForCalc）が使う
    */
   noBurstSlots?: readonly number[];
+  /**
+   * V-0605: 枠ごとの、オート射撃を手で OFF にしていた時間（ゲーム内のフレームの [start, end)。昇順・重なりなし）。その枠だけ、敵を
+   * 狙えない窓（frame/firstPass.ts の untargetable）と同じくハイドする（撃たず、ハイド中のリロードをし、明けから構えてチャージし直す）。
+   * 狙えない窓と違い、入るフレームに部分チャージの発を撃たない（録画 0860・0861 の OFF の 4 回）。ゲージとバーストの使用は止めない。
+   * 録画の照合（records/observations.ts）だけが使う。利用者の計算には出さない
+   */
+  holdFire?: readonly HoldFire[];
 };
+
+/** V-0605: 枠 slotIndex（0 始まり）が撃たずにハイドしていた時間 */
+export type HoldFire = { slotIndex: number; ranges: readonly FrameRange[] };
 
 /** 枠 slotIndex の shot 発目（1 始まり）が、障害物を count 個壊した */
 export type ObstacleBreak = { slotIndex: number; shot: number; count: number };
