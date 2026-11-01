@@ -195,6 +195,27 @@ export function App() {
             rangeJump={team.rangeJump}
             dispatch={dispatch}
           />
+          {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
+          <DamageTotalPanel title="合計ダメージ" label="全編成" value={totals.total} computing={totalsPending}>
+            <ul className="party-totals">
+              {totals.parties.map((p, i) => (
+                <li key={i} data-active={p.kind === 'active'}>
+                  <span>{partyLabel(i)}</span>
+                  <span className="party-total-val" title={p.error}>
+                    {p.kind === 'empty'
+                      ? '—'
+                      : p.kind === 'loading'
+                        ? '読み込み中'
+                        : p.total === null
+                          ? p.error === undefined
+                            ? '計算中'
+                            : 'エラー'
+                          : formatNumber(p.total)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </DamageTotalPanel>
           <PartyTabs active={parties.active} onSelect={selectParty} />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
@@ -238,26 +259,6 @@ export function App() {
               {skillsLoadingCount > 0 && <p className="hint">スキル定義を読み込み中のスロット: {skillsLoadingCount}</p>}
             </DamageTotalPanel>
             {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
-            <DamageTotalPanel title="合計ダメージ" label="全編成" value={totals.total} computing={totalsPending}>
-              <ul className="party-totals">
-                {totals.parties.map((p, i) => (
-                  <li key={i} data-active={p.kind === 'active'}>
-                    <span>{partyLabel(i)}</span>
-                    <span className="party-total-val" title={p.error}>
-                      {p.kind === 'empty'
-                        ? '—'
-                        : p.kind === 'loading'
-                          ? '読み込み中'
-                          : p.total === null
-                            ? p.error === undefined
-                              ? '計算中'
-                              : 'エラー'
-                            : formatNumber(p.total)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </DamageTotalPanel>
             <NotesSummary
               slots={summarySlots}
               enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}
