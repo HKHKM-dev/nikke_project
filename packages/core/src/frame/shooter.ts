@@ -432,9 +432,9 @@ export function hideShooter(
 ): void {
   if (state.phase !== 'ready' || params.infiniteAmmo || state.ammo >= params.maxAmmo) return;
   state.hideReload = true;
-  // 射撃姿勢維持型は、前の発（窓の始まりの部分チャージの発を含む）から hideReloadStanceLeadFrames の後に始める。
-  // 窓に入る前の発からの経過（chargeElapsed）の分だけ早まる（窓の始まりより前にはしない）
-  const lead = params.stance === null ? 0 : Math.max(0, model.hideReloadStanceLeadFrames - (state.chargeElapsed ?? Infinity));
+  // 窓に入る前の発からの経過（chargeElapsed）の分だけ早まる
+  const lead =
+    params.stance === null ? 0 : Math.max(0, model.hideReloadStanceLeadFrames - (state.chargeElapsed ?? Infinity));
   const chunk = startReload(state, params) + lead + hideReloadExtraFrames(model, params);
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える
