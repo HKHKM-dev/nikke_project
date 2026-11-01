@@ -131,15 +131,16 @@ import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapo
 import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
+  beginHide,
   hideShooter,
   initialShooter,
   refillAmmo,
   drainAmmo,
   resumeAfterLastShotRefill,
   resumeShooter,
-  partialChargeShot,
   chargeProgressFrames,
   stepShooter,
+  stepHide,
   unhideShooter,
   weaponChangeShooter,
   type ShooterState,
@@ -285,8 +286,11 @@ function refillRounds(maxAmmo: number, ratio: number): number {
   return AMMO_REFILL_ROUNDING === 'floor' ? Math.floor(raw + 1e-9) : Math.round(raw);
 }
 
-/** V-0605: 枠の撃たない区間。partial は区間の始まりが狙えない窓の始まりか（そのときだけ入るフレームに部分チャージの発を撃つ） */
-type SlotBlock = FrameRange & { partial: boolean };
+/**
+ * V-0605: 枠の撃たない区間。untargetable は区間の始まりが狙えない窓の始まりか（そのときだけ窓の始まりの D を待ち、部分チャージの発を撃つ。
+ * holdFire の区間は待たずにハイドする。plan/design-hide-reload-detect.md 案 A）
+ */
+type SlotBlock = FrameRange & { untargetable: boolean };
 
 /**
  * V-0605: 枠ごとの撃たない区間。狙えない窓に枠の holdFire を合わせて 1 つにする（同じフレームに始まれば狙えない窓の側）。
@@ -297,12 +301,12 @@ function slotBlockRanges(
   untargetable: readonly FrameRange[],
   holdFire: readonly HoldFire[] | undefined,
 ): (readonly SlotBlock[])[] {
-  const shared: SlotBlock[] = untargetable.map((r) => ({ start: r.start, end: r.end, partial: true }));
+  const shared: SlotBlock[] = untargetable.map((r) => ({ start: r.start, end: r.end, untargetable: true }));
   return Array.from({ length: slotCount }, (_, i) => {
     const holds = (holdFire ?? []).filter((h) => h.slotIndex === i).flatMap((h) => h.ranges);
     if (holds.length === 0) return shared;
-    const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, partial: false }))];
-    return unionRanges(all.sort((a, b) => a.start - b.start || Number(b.partial) - Number(a.partial)));
+    const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, untargetable: false }))];
+    return unionRanges(all.sort((a, b) => a.start - b.start || Number(b.untargetable) - Number(a.untargetable)));
   });
 }
 
@@ -1032,9 +1036,13 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const ownBlock = own[k];
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
       const slotHideNow = slotBlocked && ownBlock.start === f;
-      // Stage 22-B: 窓に入るフレームに、チャージの途中ならその時点のチャージで撃ってから、ハイドする（C-0109）
-      const partial = slotHideNow && ownBlock.partial ? partialChargeShot(state, shot, model, params) : null;
-      if (slotHideNow) hideShooter(state, shot, model, params);
+      // 狙えない窓（plan/design-hide-reload-detect.md 案 A）: 入るフレームにチャージが満ちていればその場で撃ってハイドし、ほかの枠は
+      // D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ。C-0840）。holdFire の区間は待たずにハイドする（V-0605）
+      let windowShot: number | null = null;
+      if (slotHideNow && ownBlock.untargetable) windowShot = beginHide(state, shot, model, params);
+      else if (slotHideNow) hideShooter(state, shot, model, params);
+      else if (slotBlocked) windowShot = stepHide(state, shot, model, params);
+      const partial = windowShot;
       if (ownBlock !== undefined && ownBlock.end === f)
         unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params);
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）

@@ -229,7 +229,7 @@ export type SlotSegmentResult = {
    */
   triggerSource: 'shots';
   damage: number;
-  /** Stage 22-B: triggers・damage のうち部分チャージの発（C-0109）。無ければキーごと無い */
+  /** Stage 22-B: triggers・damage のうち部分チャージの発（C-0840）。無ければキーごと無い */
   partialCharge?: PartialChargeTotals;
 };
 

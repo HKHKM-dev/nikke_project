@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import { firingParams, stanceFrames } from '../frame/firing.ts';
-import { hideShooter, initialShooter, partialChargeShot, stepShooter, unhideShooter } from '../frame/shooter.ts';
+import { hideShooter, initialShooter, partialChargeProgress, stepShooter, unhideShooter } from '../frame/shooter.ts';
 import { planShots } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
@@ -67,18 +67,18 @@ describe('部分チャージ（設計書 3.2 節）', () => {
   it('fires at full charge while waiting to fire after the charge is full (レイヴン H = 16)', () => {
     // 撃った後 119 − 16 = 103f で満ち、そこから撃つまでの間は p = 1
     const { state, shot, params } = afterShot(851, 110);
-    expect(partialChargeShot(state, shot, DEFAULT_WEAPON_MODEL, params)).toBe(1);
+    expect(partialChargeProgress(state, shot, DEFAULT_WEAPON_MODEL, params)).toBe(1);
   });
 
   it('does not fire during the rest of the stance or the aim-in (レイヴン)', () => {
     const { state, shot, params } = afterShot(851, 40);
-    expect(partialChargeShot(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeNull();
+    expect(partialChargeProgress(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeLessThanOrEqual(0);
   });
 
   it('scales the progress over the charge only (レイヴン)', () => {
     // 撃つまでの残り k = 118 − 74 = 44。満ちるのは k = H = 16 なので、p = (C + H − k) / C = (59 + 16 − 44) / 59
     const { state, shot, params } = afterShot(851, 74);
-    expect(partialChargeShot(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeCloseTo(31 / 59, 9);
+    expect(partialChargeProgress(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeCloseTo(31 / 59, 9);
   });
 });
 

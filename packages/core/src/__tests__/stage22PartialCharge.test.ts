@@ -4,7 +4,7 @@ import { partialGaugeRatio } from '../burst/dynamic.ts';
 import { runTeam } from './runTeam.ts';
 import { firstShotFrames } from '../cadence.ts';
 import { computeTriggerDamage, partialChargeTriggerDamage, type EnemyEvent, type EnemyInput } from '../damage.ts';
-import { initialShooter, partialChargeShot, stepShooter } from '../frame/shooter.ts';
+import { beginHide, initialShooter, partialChargeProgress, stepShooter } from '../frame/shooter.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { cycleShotFrames } from '../skills/cycles.ts';
@@ -13,6 +13,7 @@ import type { SlotCondition, TeamInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { framesToGameSeconds } from '../time.ts';
+import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 
 // SR: チャージ 1 秒（59f）・発と発の間 82f・戦闘開始から 70f（C-0232）・6 発
 const SR: Partial<ShotParams> = {
@@ -34,7 +35,7 @@ function shooterAfter(shot: ShotParams, n: number) {
   return state;
 }
 
-describe('partialChargeShot（射手）', () => {
+describe('partialChargeProgress（射手）', () => {
   const shot = makeCharacter(SR).shot;
 
   it('fires with the charge progress (C + 1 − k) / C, where k is the wait until the next shot', () => {
@@ -43,28 +44,30 @@ describe('partialChargeShot（射手）', () => {
     expect(firstShotFrames(shot)).toBe(70);
     const state = shooterAfter(shot, 20);
     expect(state.wait).toBe(50);
-    expect(partialChargeShot(state, shot)).toBeCloseTo(10 / 59, 12);
-    expect(state.ammo).toBe(5);
+    expect(partialChargeProgress(state, shot)).toBeCloseTo(10 / 59, 12);
   });
 
   it('does not fire before the charge starts (during the aim motion) or while reloading', () => {
-    expect(partialChargeShot(shooterAfter(shot, 5), shot)).toBeNull();
+    expect(partialChargeProgress(shooterAfter(shot, 5), shot)).toBeLessThanOrEqual(0);
     const reloading = shooterAfter(shot, 0);
     reloading.phase = 'reloading';
-    expect(partialChargeShot(reloading, shot)).toBeNull();
+    expect(partialChargeProgress(reloading, shot)).toBeNull();
   });
 
   it('counts a shot that was due on this very frame as a full charge', () => {
     const state = shooterAfter(shot, 70);
     expect(state.wait).toBe(0);
-    expect(partialChargeShot(state, shot)).toBe(1);
+    expect(partialChargeProgress(state, shot)).toBe(1);
+    // 窓の始まりにチャージが満ちていれば、その場で撃つ（plan/design-hide-reload-detect.md 案 A）
+    expect(beginHide(state, shot)).toBe(1);
+    expect(state.ammo).toBe(5);
   });
 
   it('ignores DOWN_Charge and non-charge weapons (design-stage22.md 0.4 節)', () => {
     const down = makeCharacter({ ...SR, inputType: 'DOWN_Charge' }).shot;
-    expect(partialChargeShot(shooterAfter(down, 60), down)).toBeNull();
+    expect(partialChargeProgress(shooterAfter(down, 60), down)).toBeNull();
     const ar = makeCharacter({}).shot;
-    expect(partialChargeShot(shooterAfter(ar, 3), ar)).toBeNull();
+    expect(partialChargeProgress(shooterAfter(ar, 3), ar)).toBeNull();
   });
 });
 
@@ -125,14 +128,21 @@ describe('編成', () => {
     burst: false,
   };
 
-  it('fires a partial-charge shot on the first frame of the window, then hides and reloads', () => {
+  it('fires a partial-charge shot D + H after the start of the window, then hides and reloads', () => {
+    // plan/design-hide-reload-detect.md 案 A: 窓の始まりの D（8f）後に、満ちてから撃つまで（射撃姿勢維持型でない SR は 1f）の後に撃つ。
+    // 値は撃つフレームのチャージの進み（設計書 8 節）。D を 0 にした形（窓の始まりの 1f 後に撃つ）より D の分だけ進んでいる
     const sim = runSimulation(input);
+    const noDetect = runSimulation({ ...input, model: { ...DEFAULT_WEAPON_MODEL, hideDetectFrames: 0 } });
     const log = sim.shots[0]!;
     const start = sim.untargetable[0]!.start;
-    expect(log.partialShots).toEqual([{ frame: start, progress: expect.any(Number) }]);
-    expect(log.frames.filter((f) => f >= start && f < sim.untargetable[0]!.end)).toEqual([start]);
-    expect(log.partialShots![0]!.progress).toBeGreaterThan(0);
-    expect(log.partialShots![0]!.progress).toBeLessThan(1);
+    const at = start + DEFAULT_WEAPON_MODEL.hideDetectFrames + 1;
+    expect(log.partialShots).toEqual([{ frame: at, progress: expect.any(Number) }]);
+    expect(log.frames.filter((f) => f >= start && f < sim.untargetable[0]!.end)).toEqual([at]);
+    expect(noDetect.shots[0]!.partialShots).toEqual([{ frame: start + 1, progress: expect.any(Number) }]);
+    expect(log.partialShots![0]!.progress - noDetect.shots[0]!.partialShots![0]!.progress).toBeCloseTo(
+      DEFAULT_WEAPON_MODEL.hideDetectFrames / 59,
+      12,
+    );
   });
 
   it('shows the one partial-charge shot in the screen shape, with its damage', () => {

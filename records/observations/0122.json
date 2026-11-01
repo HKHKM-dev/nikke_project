@@ -482,5 +482,99 @@
       "slot": 1,
       "source": "dot"
     }
+  },
+  {
+    "id": "0122-28",
+    "recording": "0122",
+    "source": "V-0615",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "kind": "interval",
+    "unit": "f",
+    "value": [31.9, 62.1, 94],
+    "description": "3 回目の敵のジャンプの、窓の始まりの部分チャージの発を撃ったフレーム（照準の横の残弾が減ったフレーム）から、ハイド中のリロードの RELOADING のバーの長さ 0 に遡った点まで、その点からバーが消えたフレーム（明け。取り消し）まで、撃ったフレームからバーが消えたフレームまで。満ちる前に取り消された",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series（照準の横の残弾）・node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps",
+      "note": "残弾 4 → 3: f7140 → 7141（続いたフレームで読めた）。部分チャージの発の増分 f7149（142,721。0122-04 の注記の発）。0 の点 f7172.9 → 消えた 7235 → 明けの後の 1 発目の増分 7327"
+    }
+  },
+  {
+    "id": "0122-29",
+    "recording": "0122",
+    "source": "V-0615",
+    "readAt": "2026-11-01",
+    "use": "record",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "kind": "interval",
+    "unit": "f",
+    "value": [28.89, 91.11, 30.65, 98.35],
+    "description": "1・2 回目の敵のジャンプ（どちらも窓の前のフルチャージの発の後に窓に入り、部分チャージの発なし）の、その発の総ダメージの増分からハイド中のリロードのバーの 0 の点まで、その点からバーが消えたフレーム（明け。取り消し）まで（1 回目の 2 つ、2 回目の 2 つの順）。撃ったフレームは、照準の残弾の表示が発の前後で読めず、1 回目は f2639〜2646、2 回目は f4767〜4777 の間（残弾の替わり目と増分の間）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "1 回目: 増分 f2646 → 0 の点 2674.89 → 消えた 2766 → 明けの後の 1 発目 2853（残弾 5 → 4 は f2638〜2671 の間）。2 回目: 増分 f4777 → 0 の点 4807.65 → 消えた 4906 → 4998（残弾 2 → 1 は f4766〜4808 の間）。4 回目はマガジンの 6 発目の後（ふだんのリロード）、5 回目は戦闘の終わりと重なり明けが読めない"
+    }
+  },
+  {
+    "id": "0122-30",
+    "recording": "0122",
+    "source": "V-0615",
+    "readAt": "2026-11-01",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "value": [32.221, 34.221, 68.686, 70.686, 108.279, 110.279, 145.152, 147.152, 178.322, 180.322],
+    "description": "レイヴン単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "戦闘開始は動画 f755（最初の発の増分の 86f 前。モデルの戦闘開始から 1 発目まで。増分は飛ぶ時間だけ撃ったフレームより遅く、モデルの発を増分にそろえる）。フレームは戦闘開始から数え、1f = 0.017 秒。1〜4 回目の終わりは明けの後の最初の発（動画 f2853・4998・7327・9496）の 85f 前（モデルの明けから 1 発目まで。windowEndFirstShotFrames）、始まりは終わりの 2 秒前。5 回目は戦闘の終わりと重なり明けの後の発が無いので、4 回目の始まりの 33.17 秒後（data/enemies.json の 4→5 回目の間隔。C-0546）から 2 秒"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0122-31",
+    "recording": "0122",
+    "source": "V-0615",
+    "readAt": "2026-11-01",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [98, 178, 119],
+    "description": "3 回目（2 発の後のチャージの途中）の敵のジャンプの前後の、レイヴンの発と発の間（窓の前の発・窓の中の部分チャージの発・明けの後の発・リロードを挟む間の順）。部分チャージの発は窓の始まりの D + H 後で、明けの後はリロードの前にマガジンの残りを撃つ（plan/design-hide-reload-detect.md 案 A）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps",
+      "note": "発（動画のフレーム − 戦闘開始 f755）: 6296・6394・6572・6691。比べる範囲はモデルのフレーム（録画の窓 `0122-30`）。増分は撃ったフレームより飛ぶ時間（約 4〜8f。着地点で変わる）だけ遅い。許容 ±4 は、窓の前と明けの後で着地点が変わって飛ぶ時間（約 4〜8f）が変わる分（モデルには直進弾の RL の飛ぶ時間が無く、発のフレームを増分と比べる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 1,
+        "from": 6280,
+        "to": 6700
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0122-30"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
