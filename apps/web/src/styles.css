@@ -291,16 +291,6 @@ header h1 {
   font: inherit;
   font-size: 0.85rem;
 }
-.picker-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px;
-}
-.picker button {
-  font: inherit;
-  font-size: 0.8rem;
-  padding: 3px 8px;
-}
 .slot-damage-display {
   display: flex;
   justify-content: space-between;
