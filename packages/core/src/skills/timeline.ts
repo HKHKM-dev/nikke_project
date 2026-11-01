@@ -31,7 +31,7 @@ import type { BuildEffect } from '../buildEffects.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
-import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, type BuffTotals } from './buffs.ts';
+import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,
@@ -584,7 +584,12 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
     for (const { slotIndex, casterBaseAttack, casterMaxHp, effect } of sources) {
       if (!isEffectTarget(effect, slotIndex, index, slot.character)) continue;
       const finalMaxHp = casterMaxHp === undefined ? undefined : casterMaxHp * (1 + passiveMaxHp[slotIndex]!);
-      const applied = applyResolvedEffect(buffs, effect, casterBaseAttack, finalMaxHp);
+      const applied = applyResolvedEffect(
+        buffs,
+        effect,
+        fixedAttackBaseOf(effect, casterBaseAttack, slots),
+        finalMaxHp,
+      );
       buffs = applied.totals;
       passiveEffects.push({ ...effect, sourceSlotIndex: slotIndex, appliedAmount: applied.appliedAmount });
     }
@@ -701,7 +706,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
       const applied = applyResolvedEffect(
         state.buffs,
         p.effect,
-        caster?.casterBaseAttack ?? 0,
+        fixedAttackBaseOf(p.effect, caster?.casterBaseAttack ?? 0, slots),
         finalMaxHpOf(p.sourceSlotIndex),
         caster?.baseDefence,
       );
@@ -721,7 +726,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         state.buffs = applyResolvedEffect(
           state.buffs,
           p.effect,
-          slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0,
+          fixedAttackBaseOf(p.effect, slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0, slots),
           finalMaxHpOf(p.sourceSlotIndex),
           slots[p.sourceSlotIndex]?.baseDefence,
         ).totals;

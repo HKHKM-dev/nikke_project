@@ -1,0 +1,138 @@
+{
+  "formatVersion": 1,
+  "resourceId": 400,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "mindIfIBorrowThis",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacksRef": 4,
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "copyTopAttack",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "「攻撃力が最も高い味方 1 機」の順位も写す値も、最終の付かない攻撃力（バフ前）で読む（自分も候補）。撮影ではギルティが最も高く（単騎と、リターとの 2 体）、ほかの味方のほうが高い編成は確かめていない。付くたびに全部のスタックの維持を付け直す",
+            "en": "Both the ranking of \"the ally with the highest ATK\" and the copied value use ATK without \"final\" (before buffs; self is a candidate). In the recordings Guilty had the highest ATK (solo, and with Liter); a team where another ally is higher was not checked. Each application refreshes the duration of all stacks"
+          },
+          "claims": [
+            "C-0873"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "stackChange",
+          "state": "mindIfIBorrowThis",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "amountRef": 2,
+          "assumes": {
+            "ja": "自分の借りていくよぉ…に足す分だけ。S1 と同じ発で起きる時の順は見分けていない（どちらの順でも同じ段になる）",
+            "en": "Only the part added to own Mind If I Borrow This?. The order when it fires on the same shot as Skill 1 is not distinguished (either order gives the same stack count)"
+          },
+          "claims": [
+            "C-0873"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "targetElement": "Wind",
+          "stat": "attack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0873"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "風圧コードのほかの味方のスタック可能バフ効果のスタック量▲は未対応（自分の借りていくよぉ…の分だけ扱う）",
+          "en": "The stack count increase of stackable buffs on other Wind Code allies is not modeled (only own Mind If I Borrow This? is handled)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "stackChange",
+            "target": "allies",
+            "trigger": "normalShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "最終防御力が最も高い敵 1 機は敵 1 体。同じバーストの防御力▼（effects[1]）は乗らない（発動の時点の値。C-0795）",
+            "en": "The enemy with the highest final DEF is the lone enemy. The DEF decrease of the same Burst (effects[1]) does not apply (values at activation; C-0795)"
+          },
+          "claims": [
+            "C-0874"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": {
+              "state": "mindIfIBorrowThis",
+              "stacks": "full"
+            }
+          },
+          "claims": [
+            "C-0874"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 5,
+          "damageType": "additional",
+          "condition": {
+            "selfState": {
+              "state": "mindIfIBorrowThis",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "バーストスキルダメージと同じフレームに 1 ヒット。同じバーストの防御力▼（effects[1]）が乗る（V-0627）",
+            "en": "One hit on the same frame as the Burst Skill damage. The DEF decrease of the same Burst (effects[1]) applies (V-0627)"
+          },
+          "claims": [
+            "C-0874"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

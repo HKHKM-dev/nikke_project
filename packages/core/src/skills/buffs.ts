@@ -300,6 +300,21 @@ function sourceKeyOf(effect: { source?: ResolvedEffect['source'] }): string {
 export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
 
 /**
+ * 2 段目の段 19 の PR 2（V-0627）: 攻撃力の固定加算の元のバフ前攻撃力。copyTopAttack は、枠のうちバフ前攻撃力が最も高い枠の値
+ * （自分も候補。空枠は除く。編成で決まり、戦闘の間は動かない）、ほかは発動者の値
+ */
+export function fixedAttackBaseOf(
+  effect: Pick<ResolvedEffect, 'scaling'>,
+  casterBaseAttack: number,
+  slots: readonly ({ casterBaseAttack: number } | null | undefined)[],
+): number {
+  if (effect.scaling !== 'copyTopAttack') return casterBaseAttack;
+  let top = 0;
+  for (const slot of slots) if (slot && slot.casterBaseAttack > top) top = slot.casterBaseAttack;
+  return top;
+}
+
+/**
  * 解決済みの効果 1 件を totals に足す。単位の判断（比率か実数か）はここに閉じ込める。
  * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、flat（Stage 10。maxAmmo だけ）は value を発数として
  * maxAmmoFlat に加算し、それ以外は value を比率として加算する。
@@ -325,7 +340,8 @@ export function applyResolvedEffect(
   if (effect.stat === 'weapon') {
     return { totals: { ...totals, weapon: effect.weapon ?? null }, appliedAmount: effect.value };
   }
-  if (effect.scaling === 'casterAttack') {
+  // copyTopAttack は呼ぶ側が写す元の値を casterBaseAttack に渡す（fixedAttackBaseOf）
+  if (effect.scaling === 'casterAttack' || effect.scaling === 'copyTopAttack') {
     const appliedAmount = casterBaseAttack * effect.value;
     return {
       totals: addFlatAttack(totals, appliedAmount, sourceKeyOf(effect), effect.target === 'self'),

@@ -3,6 +3,7 @@ import {
   capCritRate,
   energyPerTrigger,
   framesToGameSeconds,
+  isFixedAttackScaling,
   isStateContent,
   isTimedItem,
   type AppliedTimedEffect,
@@ -165,9 +166,7 @@ export function ResultPanel({
       ...summary.effect,
       sourceSlotIndex: summary.sourceSlotIndex,
       appliedAmount:
-        summary.effect.scaling === 'casterAttack' ||
-        summary.effect.scaling === 'casterFinalMaxHp' ||
-        summary.effect.scaling === 'casterDefence'
+        isFixedAttackScaling(summary.effect.scaling) || summary.effect.scaling === 'casterDefence'
           ? 0
           : summary.effect.value,
     };

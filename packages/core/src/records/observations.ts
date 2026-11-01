@@ -690,9 +690,14 @@ function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
  * 後の値）。録画では、その発の後の枠アイコンの上の「残弾/最大」の最大を読む（ゲーム内の時刻に依らない）
  */
 function maxAmmoAtShot(result: SimResult, ctx: MetricContext): number {
-  const frame = slotOf(result.shots, ctx).frames[Number(ctx.args.shot) - 1];
-  if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.shot)} 発目が無い`);
-  return maxAmmoAt(result, { ...ctx, args: { ...ctx.args, frame } });
+  return maxAmmoAt(result, atShotFrame(result, ctx, Number(ctx.args.shot)));
+}
+
+/** 枠（ctx.args.slot）の n 発目（1 始まり）を撃ったフレームを frame に入れた ctx（maxAmmoAtShot・hitDamageAtShot） */
+function atShotFrame(result: SimResult, ctx: MetricContext, n: number): MetricContext {
+  const frame = slotOf(result.shots, ctx).frames[n - 1];
+  if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${n} 発目が無い`);
+  return { ...ctx, args: { ...ctx.args, frame } };
 }
 
 /**
@@ -977,6 +982,18 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
   // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
   return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / shot.shotCount;
+}
+
+/**
+ * 2 段目の段 19 の PR 2（V-0627）: 枠の shot 発目（1 始まり）の撃ったフレームの hitDamage。shot はカンマ区切りの並び（"1,7,13"）も書け、
+ * そのときは発ごとの列。射撃の回数のきっかけで段が上がるスタックの攻撃力▲を、録画のその発の増分から読んだ 1 ヒットの値と比べる
+ * （モデルの発のフレームは動くので、発の番号で引く）
+ */
+function hitDamageAtShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const at = (n: number): number => hitDamage(result, atShotFrame(result, ctx, n));
+  const n = ctx.args.shot;
+  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
+  return at(Number(n));
 }
 
 /**
@@ -1509,6 +1526,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
     },
   },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
+  hitDamageAtShot: { args: ['slot', 'shot', 'core', 'crit', 'distance'], sim: hitDamageAtShot },
   // 対象の語彙編（plan/design-target-vocab.md 4.1 節）: 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
   critHitRatio: {
