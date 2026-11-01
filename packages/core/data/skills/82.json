@@ -88,13 +88,33 @@
       ]
     },
     "skill2": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "coverHeal",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "target": "lowestCoverHp",
+          "targetCountRef": 1,
+          "ref": 2,
+          "delayFrames": 28,
+          "assumes": {
+            "ja": "説明文にきっかけの無い CT ごとのアクティブで、戦闘開始から ceil(15 ÷ 0.017) = 883 フレームごとに発動し（C-0502 の形）、発動の 28 フレーム後に遮蔽物 HP 回復を受けた出来事が届く。回復量はダメージに関係せず、受けた味方の「遮蔽物の HP を回復した時」（ティアの S1）を起こす。対象の「残存する遮蔽物 HP が最も低い味方 値 01（2）機」は、モデルが遮蔽物 HP を持たないので、編成が 2 体以下なら全員（確かめたのは 2 体の編成）。射撃場の敵の攻撃では遮蔽物は壊れない前提",
+            "en": "An active skill on its own cooldown with no trigger written: it activates every ceil(15 ÷ 0.017) = 883 frames from the battle start (the C-0502 form), and the cover-healed event lands 28 frames after the activation. The amount does not affect damage; it triggers \"when restoring cover HP\" (Tia S1) on the allies that receive it. The target \"value 01 (2) allies with the lowest remaining cover HP\" is everyone when the team has 2 units or fewer, since the model has no cover HP (verified with a 2-unit team). Covers are assumed not to break from the shooting range enemy's attacks"
+          },
+          "claims": [
+            "C-0821"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "遮蔽物の HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
-          "en": "Cover HP recovery does not change damage by itself (it matters only with an effect reading cover in the team)",
-          "kind": "indirect",
-          "path": "cover"
+          "ja": "3 体以上の編成で、遮蔽物 HP が最も低い味方 2 機をどう選ぶか（遮蔽物 HP が並んだ時・敵の攻撃で減った時）は未対応（モデルでは誰にも遮蔽物 HP 回復を起こさない。plan/design-skill-stage17.md 論点 3）",
+          "en": "Which 2 allies with the lowest cover HP are chosen in a team of 3 or more (on ties or after cover damage from enemy attacks) is not modeled (the model raises no cover HP recovery for anyone. plan/design-skill-stage17.md issue 3)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "coverHeal"
+          }
         }
       ]
     },

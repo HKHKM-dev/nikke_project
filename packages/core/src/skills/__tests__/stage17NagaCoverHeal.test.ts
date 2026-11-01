@@ -94,3 +94,52 @@ describe('ナガの S1 の遮蔽物 HP 回復とティアの S1（ティア（1 
     for (const f of shots) expect(starts.has(f)).toBe(true);
   });
 });
+
+// 2 段目の段 17 の PR 2（plan/design-skill-stage17.md 2.1・3.2 節。V-0599、C-0821）: リター（82）の S2 は 15 秒ごとの CT ごとのアクティブで、
+// 発動の 28f 後に遮蔽物 HP 回復が届く。対象「遮蔽物 HP が最も低い味方 2 機」は、編成が 2 体以下なら全員、3 体以上なら未実装で誰も選ばない
+describe('リターの S2 の遮蔽物 HP 回復とティアの S1', () => {
+  const LITER = 82;
+  const DELTA = 20;
+  const PERIOD = 883; // ceil(15 ÷ 0.017)
+  const DELAY = 28;
+  const startsOf = (p: ReturnType<typeof plan>, holder: number, sourceSlotIndex: number) =>
+    itemsOf(p.history, { holder, sourceSlotIndex, kind: 'timed', stat: 'attackDamage' }).map((i) => i.start);
+
+  it('starts Tia S1 attack damage up 28 f after every 15 s activation in a 2-unit team (Tia never bursts first)', () => {
+    const p = plan([slotOf(LITER), slotOf(TIA)]);
+    const starts = startsOf(p, 1, 1);
+    const fromLiter = Array.from(
+      { length: Math.floor((p.frames - 1 - DELAY) / PERIOD) },
+      (_, k) => (k + 1) * PERIOD + DELAY,
+    );
+    for (const f of fromLiter) expect(starts).toContain(f);
+  });
+
+  it('does not choose anyone in a team of 3 or more (not modeled)', () => {
+    const p = plan([slotOf(LITER), slotOf(DELTA), slotOf(TIA)]);
+    const starts = startsOf(p, 2, 2);
+    expect(starts.filter((f) => (f - DELAY) % PERIOD === 0 && f > DELAY)).toEqual([]);
+  });
+
+  it('accepts delayFrames only with a timer trigger and needs a target count for lowestCoverHp', () => {
+    const base = { kind: 'coverHeal', target: 'lowestCoverHp', targetCountRef: 1, ref: 2 };
+    const def = (e: Record<string, unknown>) => ({
+      formatVersion: 1,
+      resourceId: 1,
+      checkedAt: '2026-11-01',
+      skills: {
+        skill1: { effects: [e] },
+        skill2: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+        burst: { effects: [], notes: [{ ja: '-', en: '-', kind: 'unimplemented' }] },
+      },
+    });
+    expect(() => parseSkillDefinition(def({ ...base, trigger: { everySeconds: 15 }, delayFrames: 28 }))).not.toThrow();
+    expect(() => parseSkillDefinition(def({ ...base, trigger: 'burstUse', delayFrames: 28 }))).toThrow(/timer trigger/);
+    expect(() =>
+      parseSkillDefinition(def({ kind: 'coverHeal', target: 'lowestCoverHp', ref: 2, trigger: { everySeconds: 15 } })),
+    ).toThrow(/exactly one of targetCount/);
+    expect(() =>
+      parseSkillDefinition(def({ kind: 'coverHeal', target: 'allies', targetCount: 2, ref: 2, trigger: 'burstUse' })),
+    ).toThrow(/only allowed with target "lowestCoverHp"/);
+  });
+});

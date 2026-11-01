@@ -53,7 +53,7 @@ describe('{ coverHealed }（遮蔽物の HP を回復した時）', () => {
     ).toThrow(/unknown field/);
     expect(() =>
       parseSkillDefinition(def([{ ...cooldown, trigger: 'burstUse' }], [{ ...coverHeal, target: 'enemy' }])),
-    ).toThrow(/"self" or "allies"/);
+    ).toThrow(/"self", "allies" or "lowestCoverHp"/);
   });
 });
 
