@@ -114,7 +114,7 @@
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
-- 敵のジャンプの間のハイド中のリロード（C-0817。2026-11-01 起票）→ 実装済み（2026-11-01）: [design-hide-reload.md](design-hide-reload.md)
+- 敵のジャンプの間のハイド中のリロード（C-0817。2026-11-01 起票）→ 実装済み: [design-hide-reload.md](design-hide-reload.md)
 - 徹甲炸裂弾の受けるダメージ▲の付く時刻（2026-11-01 起票）→ 実装済み（2026-11-01）: [design-explosive-round-lead.md](design-explosive-round-lead.md)
 - 点検で仮説にした結論の再現（2-33。2026-10-11 起票）→ 閉じた（2026-10-31。残りの 2 件は撮り足さない仮説。オーナーの決定）: [design-c0641-n-version.md](design-c0641-n-version.md)。行（2-33）は残す
 - ミハラ：ボンディングチェーン（162）の S1（2026-10-07）→ 完了（2026-10-31。段 13 で定義した）: [design-skill-stage13.md](design-skill-stage13.md)
