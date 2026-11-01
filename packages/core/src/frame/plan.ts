@@ -370,6 +370,8 @@ export function planSkillHits(
     const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
       const t = effect.trigger;
       // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 付くフレームの条件（自分の状態。damage と同じ判定）
+      // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: 「〈状態〉が適用された時」は、その状態が自分に付いたフレーム
+      if (isResolvedApplied(t)) return appliedFrames(history, t.applied, slotIndex);
       if (!isCounterFullTrigger(t)) {
         const at = triggerFrames(t, schedule, slotIndex, frames, shots);
         return effect.condition === undefined
@@ -615,6 +617,20 @@ export function planSkillHits(
           push(f, effect, false);
           hits[hits.length - 1]!.onApply = true;
         }
+      }
+      // 2 段目の段 19 の PR 1（論点 4）: 「〈状態〉解除まで」は、付いたフレームを含む自分のその状態の件ごとに、件の終わりまでの tick を出す
+      // （件の続いている間の付き直しは、ほかの dot と同じく刻みを変えない）
+      const until = dot.untilStateEnd;
+      if (until !== undefined) {
+        for (const item of ownStateItems) {
+          if (item.origin.kind !== 'state' || item.origin.state !== until) continue;
+          const first = fires.find(({ f }) => item.start <= f && f < item.end);
+          if (first === undefined) continue;
+          const end = Math.min(frames, item.end);
+          for (const tick of dotTicks([first.f], dot.intervalSeconds, dot.durationSeconds, end, dot.firstTick))
+            push(tick.frame, first.effect, false);
+        }
+        continue;
       }
       // tick の刻み・スタックの数・効果の帰属は、発火の tickDelayFrames 後（skills/types.ts の DotEffect.tickDelayFrames）を起点にする
       const starts = fires.map((x) => x.f + (dot.tickDelayFrames ?? 0));

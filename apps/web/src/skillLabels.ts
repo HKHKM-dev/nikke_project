@@ -117,7 +117,11 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
   // 2 段目の段 13 の PR 1: 「キャプチャーチェーンが最大になった時」（ミハラ：ボンディングチェーンの攻撃・チェーンバインド）
   if ('counterFull' in trigger) return `${counterName(trigger.counterFull).ja}が最大になった時`;
   // ニヒリスター編: 時間の周期のトリガー（CT ごとに発動するアクティブ型のスキル）
-  if ('everySeconds' in trigger) return `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`;
+  // 2 段目の段 19 の PR 1: 「変身の間 0.2 秒ごと」（状態の付いた時から数える周期）
+  if ('everySeconds' in trigger)
+    return trigger.since === undefined
+      ? `戦闘開始から ${formatNumber(trigger.everySeconds)} 秒ごと`
+      : `${stateLabel(trigger.since.applied)}の間 ${formatNumber(trigger.everySeconds)} 秒ごと`;
   // ペルソナ編: 「追撃が適用された時」
   if ('applied' in trigger) return `${stateLabel(trigger.applied)}が適用された時`;
   // 2 段目の段 3: 「リラックスのフルスタックで解除した時」

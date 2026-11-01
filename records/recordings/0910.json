@@ -1,0 +1,46 @@
+{
+  "id": "0910",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0910_smg_quency.mp4",
+  "original": "2026-11-01_20-19-28.mp4",
+  "durationSec": 203.7,
+  "frames": 12224,
+  "fps": 60,
+  "sizeMB": 247.1,
+  "sha256": "e51c0488fc79",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 190,
+      "name": "ルドミラ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 402,
+      "name": "クエンシー",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0629 の撮影 Q1。ルドミラ（AI）・クエンシー（操作・オート射撃 ON）・ソルジャーE.G.（AI）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T20:27+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

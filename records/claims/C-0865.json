@@ -1,0 +1,35 @@
+{
+  "id": "C-0865",
+  "text": "アークレンジャー・ブラックのバーストのバッテリー緊急チャージ（変身状態でない時）でバッテリーが 100% になると、次のフレームに変身が付き、同じフレームにバッテリーが値 06 減る（変身後の▼）。変身の間は、変身の付いたフレームから 0.2 秒ごとに値 04 ずつ減り、0% になった次のフレームに変身が外れる（バーストからの変身は 10 秒）。変身の中の攻撃力▲（値 05）は通常攻撃に乗り、外れた後の発には乗らない。S2 のアークブラックコレダーは変身の付いたフレームに付き、その 1 秒後から 1 秒ごとに、変身の最後のフレームまで tick を出す（バーストからの変身では 10 回。付いた瞬間には出ない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0902-04`・`0902-05`・`0903-04`・`0903-05`（コレダーの 10 回の tick の、III のタイマーの 00.00 からの動画のフレーム。どの回もモデルと ±1f で、10 回目の後は次のフルバーストまで出ない。変身後の▼が効かずに 20 秒続く形なら、フルバーストの後にも 10 回出る。付いた瞬間に出る形なら 00.00 の前に 1 回多い。0.2 秒の周期を戦闘開始から数える形なら、10 回目が変身の外れた後になって出ない）、`0902-12`・`0903-12`（2 回目のフルバーストの中の通常攻撃の 1 ヒットに変身の攻撃力▲が乗る）、`0902-13`・`0903-13`（フルバーストの後の発には乗らない）。どちらの録画も 3・4 回目のフルバーストの tick が同じ列（観測値の note）。V-0626",
+  "model": "`data/skills/570.json` の skill1 の effects[0]（state transformation・{ counterFull: battery }・durationUntil { counterEmpty: battery }・contents attack ref 5）・effects[1]（counterChange・{ everySeconds: 0.2, carry, since: { applied: transformation } }・amountRef 4・decrease）、burst の effects[1]（counterChange・burstUse・amount 100・変身状態でない時）・effects[2]（counterChange・{ applied: transformation }・amountRef 6・decrease）、skill2 の effects[0]（dot・{ applied: transformation }・durationUntil { stateEnd: transformation }・firstTick afterInterval）。満タンの次のフレームの付与と 0% の次のフレームの解除は `skills/holders.ts` の registerCounters、変身の間だけの tick は `frame/plan.ts` の dotApplicationFrames（plan/design-skill-stage19.md 2.1 節）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": [
+      "data/skills/570.json の skill1 の effects[0]",
+      "data/skills/570.json の skill1 の effects[1]",
+      "data/skills/570.json の burst の effects[1]",
+      "data/skills/570.json の burst の effects[2]",
+      "data/skills/570.json の skill2 の effects[0]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0902",
+      "role": "読み方を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "0902",
+      "decided": "1 回目のフルバースト",
+      "reproduced": "2 回目のフルバースト",
+      "observations": ["0902-05"]
+    }
+  ],
+  "gradeReason": "録画 0902 の 1 回目のフルバーストで変身の長さと tick の形を読み、0902 の 2 回目と 0903 の 2 回で再現した"
+}

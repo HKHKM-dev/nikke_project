@@ -249,7 +249,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if (!('trigger' in e)) return undefined;
   const t = e.trigger;
   if (typeof t === 'string') return t;
-  if ('everySeconds' in t) return `${t.everySeconds} 秒ごと`;
+  if ('everySeconds' in t)
+    return t.since === undefined ? `${t.everySeconds} 秒ごと` : `${t.since.applied} の間 ${t.everySeconds} 秒ごと`;
   if ('applied' in t) return `${t.applied} が適用された時`;
   if ('fullStack' in t) return `${t.fullStack} のフルスタック`;
   if ('ended' in t) return `${t.ended} が終了した時`;

@@ -1,0 +1,34 @@
+{
+  "id": "0904",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0904_sg_guilty.mp4",
+  "original": "2026-11-01_19-56-25.mp4",
+  "durationSec": 201.1,
+  "frames": 12064,
+  "fps": 60,
+  "sizeMB": 243.6,
+  "sha256": "4957d0a7dc36",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 400,
+      "name": "ギルティ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0627 の撮影 G1。ギルティ単騎（操作・オート射撃 ON）。オートバースト ON（依頼は OFF。単騎の II はバーストを使わない）",
+  "backup": {
+    "at": "2026-11-01T20:11+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

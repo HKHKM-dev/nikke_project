@@ -210,6 +210,11 @@ export const NAMED_STATES = {
   seaBreeze: { name: { ja: '海風', en: 'Sea Breeze' }, holder: 'enemy' },
   /** 同 2.3 節: 暴風（マストのバースト。海風のスタック数を写す 1 秒ごとのダメージ・7 秒。持続ダメージではない） */
   storm: { name: { ja: '暴風', en: 'Storm' }, holder: 'enemy' },
+  /**
+   * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: 変身（アークレンジャー・ブラックの S1。バッテリーが 100 になった時に自分に付き、
+   * 0 になった時に外れる。解除不可。中身は攻撃力▲。付いている間 0.2 秒ごとにバッテリーが 1 減る。S2 の持続ダメージ・バーストの「変身状態なら」が見る）
+   */
+  transformation: { name: { ja: '変身', en: 'Transformation' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
