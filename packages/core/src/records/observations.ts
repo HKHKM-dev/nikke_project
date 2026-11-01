@@ -690,9 +690,14 @@ function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
  * 後の値）。録画では、その発の後の枠アイコンの上の「残弾/最大」の最大を読む（ゲーム内の時刻に依らない）
  */
 function maxAmmoAtShot(result: SimResult, ctx: MetricContext): number {
-  const frame = slotOf(result.shots, ctx).frames[Number(ctx.args.shot) - 1];
-  if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.shot)} 発目が無い`);
-  return maxAmmoAt(result, { ...ctx, args: { ...ctx.args, frame } });
+  return maxAmmoAt(result, atShotFrame(result, ctx, Number(ctx.args.shot)));
+}
+
+/** 枠（ctx.args.slot）の n 発目（1 始まり）を撃ったフレームを frame に入れた ctx（maxAmmoAtShot・hitDamageAtShot） */
+function atShotFrame(result: SimResult, ctx: MetricContext, n: number): MetricContext {
+  const frame = slotOf(result.shots, ctx).frames[n - 1];
+  if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${n} 発目が無い`);
+  return { ...ctx, args: { ...ctx.args, frame } };
 }
 
 /**
@@ -985,12 +990,7 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
  * （モデルの発のフレームは動くので、発の番号で引く）
  */
 function hitDamageAtShot(result: SimResult, ctx: MetricContext): number | number[] {
-  const frames = slotOf(result.shots, ctx).frames;
-  const at = (n: number): number => {
-    const frame = frames[n - 1];
-    if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${n} 発目が無い`);
-    return hitDamage(result, { ...ctx, args: { ...ctx.args, frame } });
-  };
+  const at = (n: number): number => hitDamage(result, atShotFrame(result, ctx, n));
   const n = ctx.args.shot;
   if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
   return at(Number(n));

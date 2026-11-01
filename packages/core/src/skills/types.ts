@@ -245,13 +245,7 @@ export function isFlagStat(stat: BuffStat): boolean {
  * stat が attack のときだけ。「攻撃力が最も高い味方 1 機の攻撃力のコピー X%」。順位も写す値も「最終」の付かない攻撃力で読む。V-0627）
  */
 export type BuffScaling =
-  | 'ratio'
-  | 'casterAttack'
-  | 'flat'
-  | 'casterChargeTime'
-  | 'casterFinalMaxHp'
-  | 'casterDefence'
-  | 'copyTopAttack';
+  'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime' | 'casterFinalMaxHp' | 'casterDefence' | 'copyTopAttack';
 export const BUFF_SCALINGS = [
   'ratio',
   'casterAttack',
@@ -261,6 +255,11 @@ export const BUFF_SCALINGS = [
   'casterDefence',
   'copyTopAttack',
 ] as const satisfies readonly BuffScaling[];
+
+/** 攻撃力に実数を固定加算するスケーリング（比率で足さない。stat は attack だけ） */
+export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean {
+  return scaling === 'casterAttack' || scaling === 'copyTopAttack' || scaling === 'casterFinalMaxHp';
+}
 
 /**
  * 効果の対象。Stage 11: burstUsers = 「直前にバーストスキルを使用した味方」（そのフルバーストを開いたチェーンでバーストを撃った枠）。
@@ -2275,14 +2274,8 @@ function parseNoteEffect(v: Json, path: string): NoteEffect {
  * burstCooldown（段 11 の PR 3。「バーストスキルクールタイム X 秒▼」の秒。burstCooldown は flat だけ）
  */
 function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
-  if (scaling === 'casterAttack' && stat !== 'attack') {
-    fail(`${path}.scaling`, `casterAttack is only allowed with stat "attack", got "${stat}"`);
-  }
-  if (scaling === 'copyTopAttack' && stat !== 'attack') {
-    fail(`${path}.scaling`, `copyTopAttack is only allowed with stat "attack", got "${stat}"`);
-  }
-  if (scaling === 'casterFinalMaxHp' && stat !== 'attack') {
-    fail(`${path}.scaling`, `casterFinalMaxHp is only allowed with stat "attack", got "${stat}"`);
+  if (isFixedAttackScaling(scaling) && stat !== 'attack') {
+    fail(`${path}.scaling`, `${String(scaling)} is only allowed with stat "attack", got "${stat}"`);
   }
   if (scaling === 'casterDefence' && stat !== 'enemyDefenseDown') {
     fail(`${path}.scaling`, `casterDefence is only allowed with stat "enemyDefenseDown", got "${stat}"`);

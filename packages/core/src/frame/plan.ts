@@ -72,6 +72,7 @@ import {
   isCounterFullTrigger,
   ENEMY_HELD_STATS,
   isEnemyHeldStat,
+  isFixedAttackScaling,
   isStateStat,
   splitsPerCount,
   staticStatesOf,
@@ -413,25 +414,19 @@ export function planSkillHits(
       // 追加ダメージの時点編（plan/design-burst-landing.md 12 節の案 A。C-0838）: 敵の側のデバフ（受けるダメージ▲・防御力▼）は
       // 効果の発火の直前の値で見る（イサベルの段階 2・3 には、遅れの間に付いたブームインストールの▼が乗る。同じフレームの
       // バーストのヒットは発動の時点のまま。C-0837）。遅れ 0 のキャラは発動と発火が同じフレームなので変わらない
-      const atHit =
-        pre && !shooterAtHit
-          ? burstHitBuffs(
-              timeline,
-              activationFrame,
-              frame,
-              slotIndex,
-              pre,
-              undefined,
-              enemy.burstEffectEnemyDebuffs ?? 'hit',
-            )
-          : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
+      const atFire = pre && !shooterAtHit;
+      const enemyDebuffs = enemy.burstEffectEnemyDebuffs ?? 'hit';
+      const atHit = atFire
+        ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, enemyDebuffs)
+        : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
       // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
       // 2 段目の段 19 の PR 2（V-0627）: 下位効果のスタック適用でないバーストでも、追加ダメージには、同じ発火で前に書いた敵の側の
-      // デバフ（防御力▼）が乗る（ギルティのフルスタックの防御力▼。同じフレームのバーストスキルダメージには乗らない。C-0838 の続き）
+      // デバフ（防御力▼）が乗る（ギルティのフルスタックの防御力▼。同じフレームのバーストスキルダメージには乗らない。C-0838 の続きなので、
+      // 敵の側のデバフを発火の時点で見るとき（enemyDebuffs が 'hit'）だけ）
       const skill = effect.source.skill;
       const buffs =
-        pre && skill === 'burst' && !shooterAtHit
+        atFire && skill === 'burst' && (sequential || enemyDebuffs === 'hit')
           ? withEarlierSequentialEffects(
               pieces,
               atHit,
@@ -716,6 +711,13 @@ export function enemyStateSpansHold(
   return statesMatching(state).some((s) => (enemySpans.get(s) ?? []).some((x) => x.start <= frame && frame < x.end));
 }
 
+/** 発動の時点の値に足す小片は、スタック・固定加算の攻撃力・武器の替えの無い timed だけ（what は拒否の文言の主語） */
+function assertPlainTimed(w: ValuePiece, what: string): void {
+  if (w.stack !== undefined || isFixedAttackScaling(w.effect.scaling) || w.effect.stat === 'weapon') {
+    throw new RangeError(`${what} supports only plain timed effects (no stacks, fixed attack scalings or weapon)`);
+  }
+}
+
 /**
  * 着弾編（plan/design-burst-landing.md 3.2 節）: 「下位効果のスタック適用」（sequential）の damage が見るバフ。
  * 発動の直前のバフに、同じ枠の同じスロットで前に書いた timed のうち、start（同じ発動の効果の窓の始まり）に始まって
@@ -740,17 +742,7 @@ function withEarlierSequentialEffects(
     if (w.start !== start || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
     if (w.effect.source.skill !== skill || w.effect.effectIndex >= effectIndex) continue;
     if (only !== undefined && !only(w.effect.stat)) continue;
-    if (
-      w.stack !== undefined ||
-      w.effect.scaling === 'casterAttack' ||
-      w.effect.scaling === 'copyTopAttack' ||
-      w.effect.scaling === 'casterFinalMaxHp' ||
-      w.effect.stat === 'weapon'
-    ) {
-      throw new RangeError(
-        'a sequential burst supports only plain timed effects (no stacks, casterAttack, casterFinalMaxHp or weapon)',
-      );
-    }
+    assertPlainTimed(w, 'a sequential burst');
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }
   return out;
@@ -835,17 +827,7 @@ function withSameActivationEffects(
     if (w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex || w.effect.source.skill !== 'burst') continue;
     if (w.start < activationFrame || w.start > at || w.end <= at) continue;
     if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
-    if (
-      w.stack !== undefined ||
-      w.effect.scaling === 'casterAttack' ||
-      w.effect.scaling === 'copyTopAttack' ||
-      w.effect.scaling === 'casterFinalMaxHp' ||
-      w.effect.stat === 'weapon'
-    ) {
-      throw new RangeError(
-        'same-activation buffs on a burst hit support only plain timed effects (no stacks, casterAttack, casterFinalMaxHp or weapon)',
-      );
-    }
+    assertPlainTimed(w, 'same-activation buffs on a burst hit');
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }
   return out;
