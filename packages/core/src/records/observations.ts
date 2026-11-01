@@ -708,8 +708,11 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
 function buffWindowStartIntervalMean(result: SimResult, ctx: MetricContext): number {
   const count = Number(ctx.args.count);
   if (!Number.isInteger(count) || count < 2) throw new Error(`count は 2 以上の整数（${String(ctx.args.count)}）`);
-  const starts = buffWindowStarts(result, withArgs(ctx, { video: false, count: undefined })).slice(0, count);
-  if (starts.length < count) throw new Error(`窓の始まりが ${count} 個無い（${starts.length} 個）`);
+  const starts = firstCount(
+    buffWindowStarts(result, withArgs(ctx, { video: false, count: undefined })),
+    ctx,
+    '窓の始まり',
+  );
   return (starts.at(-1)! - starts[0]!) / (count - 1);
 }
 

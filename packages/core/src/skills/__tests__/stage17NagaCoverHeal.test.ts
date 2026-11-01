@@ -102,12 +102,12 @@ describe('リターの S2 の遮蔽物 HP 回復とティアの S1', () => {
   const DELTA = 20;
   const PERIOD = 883; // ceil(15 ÷ 0.017)
   const DELAY = 28;
-  const startsOf = (p: ReturnType<typeof plan>, holder: number, sourceSlotIndex: number) =>
-    itemsOf(p.history, { holder, sourceSlotIndex, kind: 'timed', stat: 'attackDamage' }).map((i) => i.start);
+  const startsOf = (p: ReturnType<typeof plan>, holder: number) =>
+    itemsOf(p.history, { holder, sourceSlotIndex: holder, kind: 'timed', stat: 'attackDamage' }).map((i) => i.start);
 
   it('starts Tia S1 attack damage up 28 f after every 15 s activation in a 2-unit team (Tia never bursts first)', () => {
     const p = plan([slotOf(LITER), slotOf(TIA)]);
-    const starts = startsOf(p, 1, 1);
+    const starts = startsOf(p, 1);
     const fromLiter = Array.from(
       { length: Math.floor((p.frames - 1 - DELAY) / PERIOD) },
       (_, k) => (k + 1) * PERIOD + DELAY,
@@ -117,7 +117,7 @@ describe('リターの S2 の遮蔽物 HP 回復とティアの S1', () => {
 
   it('does not choose anyone in a team of 3 or more (not modeled)', () => {
     const p = plan([slotOf(LITER), slotOf(DELTA), slotOf(TIA)]);
-    const starts = startsOf(p, 2, 2);
+    const starts = startsOf(p, 2);
     expect(starts.filter((f) => (f - DELAY) % PERIOD === 0 && f > DELAY)).toEqual([]);
   });
 
@@ -140,6 +140,6 @@ describe('リターの S2 の遮蔽物 HP 回復とティアの S1', () => {
     ).toThrow(/exactly one of targetCount/);
     expect(() =>
       parseSkillDefinition(def({ kind: 'coverHeal', target: 'allies', targetCount: 2, ref: 2, trigger: 'burstUse' })),
-    ).toThrow(/only allowed with target "lowestCoverHp"/);
+    ).toThrow(/only allowed with target .*"lowestCoverHp"/);
   });
 });

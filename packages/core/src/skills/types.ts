@@ -271,9 +271,11 @@ export const BUFF_TARGETS = [
   'lowestHpRatio',
 ] as const satisfies readonly BuffTarget[];
 
-/** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ） */
-export function isCountedTarget(target: BuffTarget): boolean {
-  return target === 'topAttack' || target === 'longestChargeTime' || target === 'lowestHpRatio';
+/** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ）。段 17 の PR 2: coverHeal の lowestCoverHp も */
+export function isCountedTarget(target: BuffTarget | CoverHealEffect['target']): boolean {
+  return (
+    target === 'topAttack' || target === 'longestChargeTime' || target === 'lowestHpRatio' || target === 'lowestCoverHp'
+  );
 }
 
 /**
@@ -2347,14 +2349,18 @@ function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, pa
 }
 
 /** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime（対象の語彙編）のときだけ、ちょうど片方 */
-function parseTargetCount(v: Record<string, Json>, target: BuffTarget, path: string): TargetCountFields {
+function parseTargetCount(
+  v: Record<string, Json>,
+  target: BuffTarget | CoverHealEffect['target'],
+  path: string,
+): TargetCountFields {
   const hasCount = v.targetCount !== undefined;
   const hasRef = v.targetCountRef !== undefined;
   if (!isCountedTarget(target)) {
     if (hasCount || hasRef)
       fail(
         path,
-        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime" or "lowestHpRatio", got "${target}"`,
+        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime", "lowestHpRatio" or "lowestCoverHp", got "${target}"`,
       );
     return {};
   }
@@ -4147,11 +4153,6 @@ function parseCoverHealEffect(v: Record<string, Json>, path: string): CoverHealE
   }
   if (v.target !== 'self' && v.target !== 'allies' && v.target !== 'lowestCoverHp')
     fail(`${path}.target`, `expected "self", "allies" or "lowestCoverHp", got ${JSON.stringify(v.target)}`);
-  const hasCount = v.targetCount !== undefined || v.targetCountRef !== undefined;
-  if (v.target === 'lowestCoverHp') {
-    if ((v.targetCount !== undefined) === (v.targetCountRef !== undefined))
-      fail(path, 'exactly one of targetCount and targetCountRef is required with target "lowestCoverHp"');
-  } else if (hasCount) fail(path, 'targetCount / targetCountRef are only allowed with target "lowestCoverHp"');
   // 段 17 の PR 2: CT ごとのアクティブ（リターの S2・ココアの S1）は時間の周期のきっかけ
   const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
   const effect: CoverHealEffect = {
@@ -4159,9 +4160,8 @@ function parseCoverHealEffect(v: Record<string, Json>, path: string): CoverHealE
     trigger,
     target: v.target,
     ref: parseRef(v.ref, `${path}.ref`),
+    ...parseTargetCount(v, v.target, path),
   };
-  if (v.targetCount !== undefined) effect.targetCount = parsePositiveInt(v.targetCount, `${path}.targetCount`);
-  if (v.targetCountRef !== undefined) effect.targetCountRef = parseRef(v.targetCountRef, `${path}.targetCountRef`);
   if (v.delayFrames !== undefined) {
     if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
