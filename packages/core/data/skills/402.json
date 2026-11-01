@@ -15,20 +15,24 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "（S2 は録画を読んでから書く）",
-          "en": "(Skill 2 is written after reading the recordings)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "attack",
-            "target": "topAttack",
-            "trigger": "unknown"
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 8
+          },
+          "target": "topAttack",
+          "targetCountRef": 1,
+          "stat": "attack",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "説明文にきっかけが無い。CT ごとのアクティブで、戦闘開始から 8 秒ごとに発動する（1 回目も 8 秒。左のスキルの帯の間隔は 470〜475f）",
+            "en": "The description gives no trigger. It is an active skill on a cooldown, activating every 8 s from the start of combat (the first also at 8 s; the skill banners are 470-475 frames apart)"
           }
         }
-      ]
+      ],
+      "notes": []
     },
     "burst": {
       "effects": [
