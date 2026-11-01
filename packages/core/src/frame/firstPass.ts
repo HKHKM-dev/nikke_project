@@ -118,6 +118,7 @@ import { isEffectTarget, type FireContext } from '../skills/targets.ts';
 import { resolvePassiveStates, shortenedTimer, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
 import {
   advanceShotCount,
+  burstStepHolds,
   createTriggerTracker,
   fireContextOf,
   type FrameEvents,
@@ -153,6 +154,7 @@ import {
   stepHide,
   unhideShooter,
   weaponChangeShooter,
+  weaponFreeFrameAtSwap,
   type ShooterState,
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
@@ -641,6 +643,17 @@ function runFirstPassOnce(
     if (opened === undefined) return null;
     return hexagonFrameOf(opened) + flightFramesAt(spans, f);
   };
+  /**
+   * レッドフード編（plan/design-red-hood.md 7.1 節の論点 13。V-0639）: フレーム f に始まった枠 i の使用武器変更の最初の発のフレーム。
+   * 持ち替えは、変更を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）がフルバーストに入るなら窓の始まり、ほかは f。持ち替えの時の
+   * 基礎の武器が、リロード中ならそのまま、構え解除の途中（最後の発から aimOutFrames 未満）なら構え解除の終わりから after を数え、
+   * 構え直し・チャージの途中（まだ撃っていない枠も）なら構え解除 1 回分を足す
+   */
+  const firstShotAfterSwap = (i: number, f: number, after: number): number => {
+    const opened = activationsOf().findLast((a) => a.slotIndex === i && effectFrameOf(a) <= f);
+    const swap = opened?.startsFullBurst ? Math.max(f, hexagonFrameOf(opened)) : f;
+    return weaponFreeFrameAtSwap(shooters[i]!, logs[i]?.frames.at(-1), swap, model) + after;
+  };
   const shotFlightAt = (i: number, f: number): number => flightFramesAt(flights[i]?.shot, f);
   // 同 2 節（C-0177・C-0243）: 枠ごとの「発の番号 → 壊した障害物の数」と、物 1 個のゲージ
   const obstacles = slots.map(() => new Map<number, number>());
@@ -1108,6 +1121,8 @@ function runFirstPassOnce(
   const lastActivationOf = new Map<number, BurstActivation>();
 
   const instants: InstantApplication[] = [];
+  // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数に上限（maxFires）のある即時効果の、効いた発火の回数
+  const instantFireCounts = new Map<object, number>();
   // 2 段目の段 21: バースト使用時の延長は、発動のたびに状態機械が聞く（条件は発動のフレームの件で見る。窓を作る発動ならその窓に、
   // 作らない発動なら次の窓に足す）
   if (controller !== null && activationExtensions.length > 0) {
@@ -1173,6 +1188,12 @@ function runFirstPassOnce(
           // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 定義の即値の待ち（録画で読む）
           else if (params.weapon.firstShotDelayFrames !== undefined) {
             changedShooters[i]!.wait = params.weapon.firstShotDelayFrames;
+          }
+          // レッドフード編（plan/design-red-hood.md 7.1 節の論点 13。V-0639）: 持ち替え（フルバーストに入る発動なら窓の始まり）の時の
+          // 基礎の武器の状態で、最初の発を決める
+          else if (params.weapon.firstShotAfterSwapFrames !== undefined) {
+            const first = firstShotAfterSwap(i, f, params.weapon.firstShotAfterSwapFrames);
+            changedShooters[i]!.wait = Math.max(0, first - f);
           }
         } else {
           changedShooters[i] = null;
@@ -1584,6 +1605,13 @@ function runFirstPassOnce(
       if (!src.fires(ev)) continue;
       // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（いまは cooldownReduction の selfState だけ）
       if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
+      // レッドフード編（plan/design-red-hood.md 2.1・2.3 節）: 使った段階（発火の文脈）と、戦闘中の発火の回数の上限
+      if (!burstStepHolds(src.effect.condition, ev, src.sourceSlotIndex)) continue;
+      if (src.effect.maxFires !== undefined) {
+        const fired = instantFireCounts.get(src) ?? 0;
+        if (fired >= src.effect.maxFires) continue;
+        instantFireCounts.set(src, fired + 1);
+      }
       // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
       if (src.effect.kind === 'burstGauge') {
         if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない

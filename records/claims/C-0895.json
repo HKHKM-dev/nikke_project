@@ -1,0 +1,16 @@
+{
+  "id": "C-0895",
+  "text": "レッドフードの S1 の「通常攻撃をした時、自分にチャージ速度 値 01（3.81%）▲・値 02（10）スタック・値 03（5）秒」は、1 発ごとに 1 スタック付き、撃ち始めの発と発の間が 80・78・76・73・71f と縮む",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0924-11`・`0925-11`（単騎の撃ち始めの 5 つの発と発の間。モデルと 1 以内）。V-0639",
+  "model": "`data/skills/470.json` の skill1 の effects[0]（timed。count normalShot・chargeSpeed・maxStacksRef 2・durationRef 3）。チャージ速度の式は `frame/firing.ts` の speedScaledSeconds",
+  "replaces": [],
+  "updated": "2026-11-02",
+  "subject": {
+    "places": ["data/skills/470.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "チャージ速度の値・スタック数・維持は説明文の値、チャージ速度の式と SR の解放は既存の結論。合わせ込みの定数なし"
+}

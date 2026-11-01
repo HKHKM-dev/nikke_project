@@ -197,7 +197,10 @@ export function chargeShotIntervalFrames(
   model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
 ): number {
   if (params.stance !== null) return params.stance.frames + model.aimInFrames + params.chargeFrames - 1;
-  return params.chargeFrames + (params.downCharge ? 0 : model.chargeReleaseFrames);
+  // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 使用武器の変更の解放の長さ（端数あり。射手が発ごとに持ち越す）
+  return (
+    params.chargeFrames + (params.downCharge ? 0 : (params.weapon?.chargeReleaseFrames ?? model.chargeReleaseFrames))
+  );
 }
 
 /**

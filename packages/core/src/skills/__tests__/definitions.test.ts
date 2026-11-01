@@ -76,6 +76,17 @@ describe('data/skills', () => {
   });
 
   describe.each(variants)('definition $label', ({ resourceId, def, character }) => {
+    // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件は、段階が 1 つでないキャラ（AllStep）にだけ意味がある
+    it('writes burstStep conditions only for an AllStep character', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          const condition = 'condition' in effect ? effect.condition : undefined;
+          if (condition?.burstStep === undefined) continue;
+          expect(character.burstStep, `${slot}: burstStep needs an AllStep character`).toBe('AllStep');
+        }
+      }
+    });
+
     it('names the character of its file and a checked date', () => {
       expect(def.resourceId).toBe(resourceId);
       expect(character.resourceId).toBe(resourceId);
@@ -154,8 +165,9 @@ describe('data/skills', () => {
                     : effect.kind === 'state'
                       ? statContentsOf(effect.contents).find((c) => c.ref === ref)?.stat
                       : undefined;
+                // レッドフード編: チャージ速度の超過分の変換の割合（240%）もチャージダメージと同じ幅
                 const limit =
-                  stat === 'chargeDamage'
+                  stat === 'chargeDamage' || stat === 'chargeSpeedOverflow'
                     ? 2000
                     : stat === 'maxAmmo' ||
                         stat === 'projectileStickDamage' ||

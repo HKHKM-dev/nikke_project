@@ -1,0 +1,20 @@
+{
+  "id": "C-0896",
+  "text": "レッドフードのレッドウルフ（バースト III の使用武器変更）の発は、チャージ速度の和が 100% を超えてチャージが 0 のとき、ゲーム内 0.3 秒おき（18・18・17f の繰り返し）で、窓の 10 秒をリロードなしで撃つ（説明文に無い。録画で読んだ）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0924-12`・`0925-12`（単騎の窓の発と発の間の平均 17.645・17.677f。モデル 17.667f）。0926・0927 の 12 回の窓も 18・18・17f の繰り返しで 31〜34 発（V-0639「結果」）。V-0639",
+  "model": "`data/skills/470.json` の burst の effects[6]（weaponChange の chargeReleaseSeconds 0.3・infiniteAmmo）。端数の持ち越しは `frame/shooter.ts` の chargeCarryAtFire（plan/design-red-hood.md 7.1 節の論点 10・11）",
+  "replaces": [],
+  "updated": "2026-11-02",
+  "subject": {
+    "places": ["data/skills/470.json の burst の effects[6]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0924",
+      "role": "値を合わせた"
+    }
+  ]
+}

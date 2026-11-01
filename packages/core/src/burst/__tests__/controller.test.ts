@@ -170,11 +170,23 @@ describe('BurstController', () => {
     expect(summary(s)).toEqual(['20:Step1:0', '40:Step1:1', '60:Step2:2', '80:Step3:3']);
   });
 
-  it('fills a missing step with AllStep (NextStep) and prefers dedicated slots', () => {
-    const s = run([unit('AllStep', 2400), unit('Step1', 1200), unit('Step3', 2400)], 200, FAST);
-    expect(summary(s)).toEqual(['20:Step1:1', '40:Step2:0', '60:Step3:2']);
+  it('fills a missing step with AllStep (NextStep)', () => {
+    const s = run([unit('Step1', 1200), unit('AllStep', 2400), unit('Step3', 2400)], 200, FAST);
+    expect(summary(s)).toEqual(['20:Step1:0', '40:Step2:1', '60:Step3:2']);
     expect(resolveNextStep('NextStep', 'Step3')).toBe('StepFull');
     expect(resolveNextStep('Step1', 'Step1')).toBe('Step1');
+  });
+
+  // レッドフード編（plan/design-red-hood.md 7.1 節の論点 12）: 専任と AllStep を分けず、撃てる候補のうち左の枠から
+  it('picks the leftmost ready candidate, AllStep or dedicated', () => {
+    const s = run([unit('AllStep', 2400), unit('Step1', 1200), unit('Step3', 2400)], 200, FAST);
+    expect(summary(s)[0]).toBe('20:Step1:0');
+  });
+
+  // 同 論点 7: AllStep の枠は、CT が明けていれば同じチェーンでも撃ち直す
+  it('lets an AllStep slot fire again in the same chain once its CT is over', () => {
+    const s = run([unit('AllStep', 0)], 200, FAST);
+    expect(summary(s).slice(0, 3)).toEqual(['20:Step1:0', '40:Step2:0', '60:Step3:0']);
   });
 
   it('clips the last full burst at the end of the battle', () => {

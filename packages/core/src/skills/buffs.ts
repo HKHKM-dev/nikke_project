@@ -22,8 +22,12 @@ export type ChangedWeapon = {
    * （WeaponChangeEffect.firstShotDelayFrames）。省略は weaponChangeShooter の待ち
    */
   firstShotDelayFrames?: number;
+  /** レッドフード編: 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
+  firstShotAfterSwapFrames?: number;
   /** 2 段目の段 11 の PR 4: 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
   infiniteAmmo?: true;
+  /** レッドフード編: 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */
+  chargeReleaseFrames?: number;
   /**
    * 同: 的の表の変更後の武器の行の鍵（`<resourceId>:<スロット>`。coreHitRate.weaponChanges）。即着弾に替えた変更
    * （instantFire）だけが持ち、通常攻撃のコア命中率をこの行から引く（行が無ければ基礎の武器の行のまま）
@@ -142,6 +146,11 @@ export type BuffTotals = {
   /** Stage 10: チャージ速度の加算 */
   chargeSpeed: number;
   /**
+   * レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換の割合の加算（「超過した値の X% のチャージダメージ▲」の X）。
+   * フルチャージの発で max(0, chargeSpeed − 1) × この値をチャージダメージ▲に足す（applyChargeBuffs）
+   */
+  chargeSpeedOverflow: number;
+  /**
    * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度の加算。レートを蓄積して撃つ武器の発と発の間を、レート × (1 + Σ) に
    * する（frame/firing.ts の FiringParams.rateScale。C-0600）。ダメージの式は読まない
    */
@@ -211,6 +220,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
+  chargeSpeedOverflow: 0,
   attackSpeed: 0,
   spinUpSpeed: 0,
   chargeTimeFlat: 0,
@@ -252,6 +262,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
   chargeSpeed: 'chargeSpeed',
+  chargeSpeedOverflow: 'chargeSpeedOverflow',
   attackSpeed: 'attackSpeed',
   spinUpSpeed: 'spinUpSpeed',
   hitRate: 'hitRate',
@@ -463,9 +474,20 @@ export function scaleBasisPoints(units: number, ratio: number): number {
 /**
  * charge ? 四捨五入(fullChargeDamage × (1 + chargeDamageMultiplier)) + chargeDamage : 1。倍率▲（スキル・コレクション）は
  * 足し合わせてから素のフルチャージ倍率に掛けて 1e-4 単位で丸め、足し算の▲（OL の増加など）はその後に足す（C-0122・C-0126）。
- * スキルの足し算の▲（C-0020）も OL と同じく倍率▲の後に足す（C-0134。アリスのフルバースト中）
+ * スキルの足し算の▲（C-0020）も OL と同じく倍率▲の後に足す（C-0134。アリスのフルバースト中）。
+ * レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換は、足し算の▲に max(0, チャージ速度の和 − 1) × 割合 を足す
  */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
   if (!charge) return 1;
-  return scaleBasisPoints(fullChargeDamage * 10000, buffs.chargeDamageMultiplier) / 10000 + buffs.chargeDamage;
+  return (
+    scaleBasisPoints(fullChargeDamage * 10000, buffs.chargeDamageMultiplier) / 10000 +
+    buffs.chargeDamage +
+    chargeSpeedOverflowDamage(buffs)
+  );
+}
+
+/** レッドフード編: チャージ速度の超過分から変換したチャージダメージ▲（変換が無いか、超えていなければ 0） */
+export function chargeSpeedOverflowDamage(buffs: Pick<BuffTotals, 'chargeSpeed' | 'chargeSpeedOverflow'>): number {
+  if (buffs.chargeSpeedOverflow === 0) return 0;
+  return Math.max(0, buffs.chargeSpeed - 1) * buffs.chargeSpeedOverflow;
 }

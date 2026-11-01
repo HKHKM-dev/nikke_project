@@ -14,7 +14,7 @@ import type {
   WeaponType,
 } from '../types.ts';
 import { burstWindowTrimOf } from '../burst/landing.ts';
-import { gameSecondsToFrames } from '../time.ts';
+import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../time.ts';
 import { isChargeWeapon } from '../weapons.ts';
 import type { ChangedWeapon } from './buffs.ts';
 import type { CounterId } from './counters.ts';
@@ -1185,9 +1185,15 @@ function resolveWeaponChange(
   const damage = skillValue(skill, effect.damageRef, level) / 100;
   const hits = effect.hitsPerShot ?? 1;
   const overrides: ChangedWeaponOverrides = {};
-  if (effect.chargeTimeSeconds !== undefined || effect.fullChargeDamage !== undefined) {
+  if (
+    effect.chargeTimeSeconds !== undefined ||
+    effect.fullChargeDamage !== undefined ||
+    effect.chargeReleaseSeconds !== undefined
+  ) {
     if (!isChargeWeapon(character.shot)) {
-      throw new RangeError(`skill ${skill.id}: chargeTimeSeconds/fullChargeDamage need a charge weapon`);
+      throw new RangeError(
+        `skill ${skill.id}: chargeTimeSeconds/fullChargeDamage/chargeReleaseSeconds need a charge weapon`,
+      );
     }
     if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
     if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
@@ -1214,7 +1220,14 @@ function resolveWeaponChange(
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
       ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
+      ...(effect.firstShotAfterSwapFrames !== undefined
+        ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
+        : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
+      // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す）
+      ...(effect.chargeReleaseSeconds !== undefined
+        ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }
+        : {}),
       ...(effect.instantFire ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
@@ -1223,6 +1236,8 @@ function resolveWeaponChange(
   };
   // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は、窓の終わりを 1 パス目の最後の弾丸の発で決める（論点 8）
   if (untilEmpty) r.durationUntil = 'ammoSpent';
+  // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件（件を見ないので段 1 のまま）
+  if (effect.condition) r.condition = effect.condition;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }
@@ -1254,9 +1269,11 @@ export type ResolvedInstantEffect = {
   scaling?: 'flat';
   /**
    * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある）。
-   * 2 段目の段 21: fullBurstExtend も
+   * 2 段目の段 21: fullBurstExtend も。レッドフード編: cooldownReduction の使った段階（burstStep）も
    */
   condition?: EffectCondition;
+  /** レッドフード編（plan/design-red-hood.md 2.3 節）: cooldownReduction の戦闘中の発火の回数の上限 */
+  maxFires?: number;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -1319,6 +1336,7 @@ export function resolveInstant(
       if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if ((effect.kind === 'cooldownReduction' || effect.kind === 'fullBurstExtend') && effect.condition !== undefined)
         r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      if (effect.kind === 'cooldownReduction' && effect.maxFires !== undefined) r.maxFires = effect.maxFires;
       if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

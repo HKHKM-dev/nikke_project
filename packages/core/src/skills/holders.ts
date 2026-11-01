@@ -68,6 +68,7 @@ import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type Fi
 import {
   createTriggerTracker,
   fireContextOf,
+  burstStepHolds,
   shotCountWeight,
   type FrameEvents,
   type FullStackEvent,
@@ -1573,16 +1574,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
 
   /**
-   * 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件の usedBurst（直前に自分がバーストスキルを使用していれば）。発火の文脈の
+   * 発火の文脈だけで決まる条件。2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件の usedBurst（直前に自分がバーストスキルを使用していれば）。発火の文脈の
    * burstUsers に自分がいるか。件を見ないので、段 1 の効果でも発火の前に見る。鍵が無ければ true
    */
-  const usedBurstHolds = (
+  const fireContextHolds = (
     condition: EffectCondition | undefined,
     trigger: ResolvedTrigger | EndedTrigger,
     ev: FrameEvents,
     sourceSlotIndex: number,
   ): boolean =>
-    condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false);
+    (condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false)) &&
+    // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
+    burstStepHolds(condition, ev, sourceSlotIndex);
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -1967,7 +1970,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!fired) continue;
       const condition = src.effect.condition;
       if (
-        !usedBurstHolds(condition, t, ev, src.sourceSlotIndex) ||
+        !fireContextHolds(condition, t, ev, src.sourceSlotIndex) ||
         (condition !== undefined && !counterConditionHolds(condition, src.sourceSlotIndex, f))
       ) {
         skipEffect(src.sourceSlotIndex, src.effect, f);
@@ -2009,7 +2012,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         for (let k = lead.early.get(f) ?? 0; k > 0; k--) fireGrant(g, f, null);
       }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
-      if (!usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
+      if (!fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
         skipGrant(g, f);
         continue;
       }
@@ -2032,7 +2035,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         continue;
       }
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
-      if (!usedBurstHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex)) {
+      if (!fireContextHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex)) {
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
       }
@@ -2045,7 +2048,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 1: 解除（閉じるのは発火の次のフレームなので、段の中の順は同じフレームの判定に効かない。plan/design-skill-stage1.md 1.2 節）
     for (const r of stage1Removes) {
       if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
-      if (!usedBurstHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex)) {
+      if (!fireContextHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex)) {
         skipEffect(r.sourceSlotIndex, r.effect, f);
         continue;
       }
@@ -2055,7 +2058,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 段の中の順は同じフレームの判定に効かない）
     for (const x of stage1Stacks) {
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
-      if (!usedBurstHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex)) {
+      if (!fireContextHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex)) {
         skipEffect(x.sourceSlotIndex, x.effect, f);
         continue;
       }
@@ -2086,7 +2089,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const g of stage15Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (
-        !usedBurstHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex) ||
+        !fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex) ||
         (g.grant.condition !== undefined && !holdsAt(g.grant.condition, g.group.sourceSlotIndex, f))
       ) {
         skipGrant(g, f);
@@ -2097,7 +2100,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const src of stage15Timed) {
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
       if (
-        !usedBurstHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex) ||
+        !fireContextHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex) ||
         !holdsAt(src.effect.condition!, src.sourceSlotIndex, f)
       ) {
         skipEffect(src.sourceSlotIndex, src.effect, f);
@@ -2112,7 +2115,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const r of stage15Removes) {
       if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
       if (
-        !usedBurstHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex) ||
+        !fireContextHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex) ||
         !holdsAt(r.effect.condition!, r.sourceSlotIndex, f)
       ) {
         skipEffect(r.sourceSlotIndex, r.effect, f);
@@ -2123,7 +2126,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const x of stage15Stacks) {
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
       if (
-        !usedBurstHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
+        !fireContextHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
         !holdsAt(x.effect.condition!, x.sourceSlotIndex, f)
       ) {
         skipEffect(x.sourceSlotIndex, x.effect, f);

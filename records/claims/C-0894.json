@@ -1,0 +1,38 @@
+{
+  "id": "C-0894",
+  "text": "レッドフードの I・II のバーストスキルクールタイム 40 秒▼は、それぞれ戦闘中 1 回だけ効く。全段階のレッドフードは、CT が明けていれば同じチェーンの次の段階も撃つ（単騎では 1 回目のチェーンで I・II・III を 1 人で撃ってフルバーストに入り、2 回目からは I だけで時間切れ）。各段階は、撃てる候補（その段階の専任と全段階の枠）のうち左の枠が撃つ（専任と全段階を分けない。オートバースト）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0924-07`・`0925-07`（単騎のフルバーストは 1 回）、`0926-09`・`0927-08`（リター・デルタ・レッドフードの 20 回の発動の枠の並び。専任の CT の間はレッドフードが I・II を撃ち、CT▼ の後に同じチェーンの III も撃つ）、`0928-04`（リター・デルタ・レッドフード・エレグ。I・II は左の専任）、`0929-04`（レッドフード・エレグ。II はエレグより左のレッドフード）。V-0639",
+  "model": "`data/skills/470.json` の burst の effects[2]・effects[4]（cooldownReduction。seconds 40・maxFires 1・条件 burstStep Step1／Step2）。`burst/controller.ts` の pickCandidate（撃てる候補のうち枠の若い順。AllStep の枠は同じチェーンでも CT が明けていれば候補。plan/design-red-hood.md 7.1 節の論点 7・12）",
+  "replaces": [],
+  "updated": "2026-11-02",
+  "subject": {
+    "places": ["data/skills/470.json の burst の effects[2]", "data/skills/470.json の burst の effects[4]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0924",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0926",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["0926-09", "0927-08"],
+      "element": "レッドフード burst.effects[7]",
+      "reason": "III のチャージ速度▲は III の発動から 10 秒で、フルバーストの窓（ゲージを溜めない間）の中で切れるので、発動の並びを決めるゲージに効かない",
+      "decided": "2026-11-02"
+    },
+    {
+      "observations": ["0926-09", "0927-08", "0928-04", "0929-04"],
+      "element": "レッドフード burst.notes[3]",
+      "reason": "III の貫通範囲の拡張は、敵 1 体の射撃場では効かない（前提の外）",
+      "decided": "2026-11-02"
+    }
+  ]
+}

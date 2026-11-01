@@ -1,0 +1,231 @@
+{
+  "formatVersion": 1,
+  "resourceId": 470,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "target": "self",
+          "stat": "chargeSpeed",
+          "ref": 1,
+          "maxStacksRef": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0895"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "chargeSpeedOverflow",
+          "ref": 4,
+          "assumes": {
+            "ja": "超過した値は、チャージ速度▲の比率の和の 100% を超えた分（発動者基準のチャージ時間▼は入れない。未確定）。変換したチャージダメージ▲は足し算の▲（倍率▲の後に足す）",
+            "en": "The excess is the sum of Charge Speed up ratios above 100% (caster-based charge time reductions are not included; unverified). The converted Charge Damage up is additive (added after the multiplier ups)"
+          },
+          "claims": [
+            "C-0898"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "applied": "redWolf"
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 5,
+          "durationRef": 6,
+          "claims": [
+            "C-0898"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）",
+          "en": "Pierce at the start of battle does not change damage by itself (it matters only with a Pierce Damage increase in the team; whether it applies against a single enemy is not verified)",
+          "kind": "indirect",
+          "path": "pierce",
+          "effect": {
+            "kind": "unknown"
+          }
+        },
+        {
+          "ja": "ビーストケージを適用時の、味方全体へのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF up based on the caster's DEF for all allies when Beast Cage takes effect does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        },
+        {
+          "ja": "ハウリングエンドを適用時の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない",
+          "en": "The life steal (heal by damage dealt) when The Last Howl takes effect is a heal and affects no damage unless an ally reads healing",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "beastCage",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationSeconds": 0,
+          "condition": {
+            "burstStep": "Step1"
+          },
+          "assumes": {
+            "ja": "『バーストⅠで使用時：ビーストケージ』の呼び名（中身なし。S2 の「ビーストケージを適用時」が見る）。維持は 0 秒で、付いた記録だけを作る",
+            "en": "The name of 'When used in Burst Stage 1: Beast Cage' (no contents; read by Skill 2's 'when Beast Cage takes effect'). It lasts 0 s and only records the application"
+          },
+          "claims": [
+            "C-0893"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "condition": {
+            "burstStep": "Step1"
+          },
+          "claims": [
+            "C-0893"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "burstUse",
+          "target": "self",
+          "seconds": 40,
+          "condition": {
+            "burstStep": "Step1"
+          },
+          "maxFires": 1,
+          "claims": [
+            "C-0894"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "theLastHowl",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationSeconds": 0,
+          "condition": {
+            "burstStep": "Step2"
+          },
+          "assumes": {
+            "ja": "『バーストⅡで使用時：ハウリングエンド』の呼び名（中身なし。S2 の「ハウリングエンドを適用時」が見る）。維持は 0 秒で、付いた記録だけを作る",
+            "en": "The name of 'When used in Burst Stage 2: The Last Howl' (no contents; read by Skill 2's 'when The Last Howl takes effect'). It lasts 0 s and only records the application"
+          }
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": "burstUse",
+          "target": "self",
+          "seconds": 40,
+          "condition": {
+            "burstStep": "Step2"
+          },
+          "maxFires": 1,
+          "claims": [
+            "C-0894"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "redWolf",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationSeconds": 0,
+          "condition": {
+            "burstStep": "Step3"
+          },
+          "assumes": {
+            "ja": "『バーストⅢで使用時：レッドウルフ』の呼び名（中身なし。S2 の「レッドウルフを発動した時」が見る）。維持は 0 秒で、付いた記録だけを作る",
+            "en": "The name of 'When used in Burst Stage 3: Red Wolf' (no contents; read by Skill 2's 'when Red Wolf activates'). It lasts 0 s and only records the application"
+          },
+          "claims": [
+            "C-0898"
+          ]
+        },
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 7,
+          "fullChargeDamage": 250,
+          "durationSeconds": 10,
+          "rateOfFire": 60,
+          "chargeReleaseSeconds": 0.3,
+          "infiniteAmmo": true,
+          "firstShotAfterSwapFrames": 12,
+          "condition": {
+            "burstStep": "Step3"
+          },
+          "assumes": {
+            "ja": "チャージ時間は説明文に無いので基礎の武器（1 秒）のまま。解放の長さ（0.3 秒）・装弾数無限・最初の発（持ち替えから 12f。録画の動画のフレームでは入りの止まり 22f を含めて 34f。持ち替えの時の基礎の武器の状態で構え解除を足す）は録画で読んだ（V-0639。説明文に無い）。解放の長さを確かめたのは、チャージ速度の和が 100% 以上でチャージが 0 のときだけ",
+            "en": "The charge time is not in the description, so it stays that of the base weapon (1 s). The release (0.3 s), infinite ammo and the first shot (12 f after the swap; 34 video frames including the 22-frame Full Burst entry stop; plus an aim-out by the base weapon state at the swap) were read from recordings (V-0639; not in the description). The release was verified only with total Charge Speed at 100% or more (zero charge)"
+          },
+          "claims": [
+            "C-0896",
+            "C-0897"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "chargeSpeed",
+          "ref": 10,
+          "durationRef": 11,
+          "condition": {
+            "burstStep": "Step3"
+          },
+          "claims": [
+            "C-0898"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "使用武器変更の発射レートは、CDN のバーストが使用武器の変更の形（ChangeWeapon）でないので無い。チャージ武器の発の間隔はチャージ時間と解放で決まり、レートを読まないので、基礎の武器のレート（60）を書いた",
+          "en": "The changed weapon has no rate of fire in CDN because the Burst is not of the ChangeWeapon type. A charge weapon's shot interval is set by its charge time and release and does not read the rate, so the base weapon's rate (60) is written",
+          "kind": "modeling",
+          "refers": "effects[6]"
+        },
+        {
+          "ja": "バーストⅡの、自分にヘイト：敵全体を挑発は、ダメージに関係しない。付けたときにゲージを溜めても、チェーンの間はゲージを足さないので効かない",
+          "en": "Burst Stage 2's Attract (taunting all enemies) on self does not affect damage. Even if it charged the gauge when applied, the gauge is not filled during a chain",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "バーストⅡの、自分の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Burst Stage 2's Incoming Healing up on self does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "バーストⅢの貫通範囲の拡張は、敵 1 体の前提では効かない（要件の前提の外）",
+          "en": "Burst Stage 3's Pierce range expansion has no effect against a single enemy (outside the requirements)",
+          "kind": "outOfScope"
+        }
+      ]
+    }
+  }
+}

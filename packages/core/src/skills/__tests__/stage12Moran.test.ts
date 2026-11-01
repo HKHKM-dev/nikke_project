@@ -32,13 +32,14 @@ const cut = (fields: Record<string, unknown>) => ({
 });
 
 describe('cooldownReduction の condition（定義の読み）', () => {
-  it('takes { selfState } only', () => {
+  // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も書ける
+  it('takes { selfState } and { burstStep } only', () => {
     const def = parseSkillDefinition(withSkill2(cut({ condition: { selfState: 'fervor' } })));
     expect(def.skills.skill2.effects[0]).toMatchObject({
       condition: { selfState: { state: 'fervor', present: true } },
     });
     expect(() => parseSkillDefinition(withSkill2(cut({ condition: { inFullBurst: true } })))).toThrow(
-      /unknown field \(allowed: selfState\)/,
+      /unknown field \(allowed: selfState, burstStep\)/,
     );
   });
 
