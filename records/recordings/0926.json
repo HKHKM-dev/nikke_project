@@ -1,0 +1,46 @@
+{
+  "id": "0926",
+  "date": "2026-11-02",
+  "folder": "range",
+  "file": "20261102-0926_smg+sr+sr_liter+delta+red-hood.mp4",
+  "original": "2026-11-02_01-15-03.mp4",
+  "durationSec": 202.9,
+  "frames": 12175,
+  "fps": 60,
+  "sizeMB": 245.8,
+  "sha256": "b551c970f88d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 470,
+      "name": "レッドフード",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0639 の撮影 B。リター（I）・デルタ（II）・レッドフード（III・操作）（オート射撃 ON・オートバースト ON）",
+  "backup": {
+    "at": "2026-11-02T01:24+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
