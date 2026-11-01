@@ -220,17 +220,27 @@ header h1 {
 .common-growth {
   margin-top: 10px;
 }
-.common-growth > summary {
-  cursor: pointer;
+/* スペック固定とシンクロ LV の 1 行（幅が足りなければ折り返す） */
+.common-growth-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
 }
-.common-growth .field.checkbox {
-  margin: 6px 0;
+.common-growth-row .field {
+  margin: 2px 0;
+  grid-template-columns: max-content 5em;
+}
+.common-growth-row .field.checkbox {
+  grid-template-columns: auto auto;
 }
 .console {
   font-size: 0.85rem;
+  margin-top: 6px;
 }
 .console-title {
   font-weight: 600;
+  cursor: pointer;
 }
 .console-grid {
   display: grid;

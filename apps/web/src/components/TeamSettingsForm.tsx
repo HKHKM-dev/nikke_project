@@ -36,7 +36,7 @@ type Props = {
 };
 
 /**
- * 編成共通の設定: 敵名・属性の枠と、「共通育成」の折りたたみ（スペック固定（ユニオン射撃場の固定値）・シンクロレベル・リサイクルルーム（コンソール））。
+ * 編成共通の設定: 「敵情報」の枠（敵名・属性）と、「共通育成」の枠（スペック固定（ユニオン射撃場の固定値）・シンクロレベルと、折りたたみのリサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
  * 敵は射撃場の的だけで、選べるのは属性（コアありの欄は消した）。
  * 属性の右の「詳細設定」のポップアップで、敵防御力・ジャンプ移動（3 分モードの的のジャンプ）・戦闘時間を設定する（操作キャラ・バーストを使うかはスロットの詳細設定）
@@ -60,7 +60,8 @@ export function TeamSettingsForm({
   );
   return (
     <>
-      <fieldset className="panel settings" aria-label="敵条件">
+      <fieldset className="panel settings">
+        <legend>敵情報</legend>
         <div className="settings-simple">
           <label className="field">
             <span>敵</span>
@@ -123,17 +124,18 @@ export function TeamSettingsForm({
           </Popover>
         </div>
       </fieldset>
-      <details className="panel common-growth">
-        <summary>共通育成</summary>
-        <label className="field checkbox">
-          <input
-            type="checkbox"
-            checked={fixedSpec}
-            onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
-          />
-          <span>スペック固定</span>
-        </label>
-        <div className="console-grid">
+      <fieldset className="panel common-growth">
+        <legend>共通育成</legend>
+        {/* スペック固定とシンクロ LV はいつも 1 行で出し、リサイクルルームは折りたたむ */}
+        <div className="common-growth-row">
+          <label className="field checkbox">
+            <input
+              type="checkbox"
+              checked={fixedSpec}
+              onChange={(e) => dispatch({ type: 'setFixedSpec', fixedSpec: e.target.checked })}
+            />
+            <span>スペック固定</span>
+          </label>
           <label className="field">
             <span>シンクロ LV</span>
             <IntInput
@@ -144,8 +146,8 @@ export function TeamSettingsForm({
             />
           </label>
         </div>
-        <div className="console">
-          <span className="console-title">リサイクルルーム</span>
+        <details className="console">
+          <summary className="console-title">リサイクルルーム</summary>
           <div className="console-grid">
             {levelField('personal', '共通', consoleInput.personal, (lv) =>
               setConsole({ ...consoleInput, personal: lv }),
@@ -161,8 +163,8 @@ export function TeamSettingsForm({
               ),
             )}
           </div>
-        </div>
-      </details>
+        </details>
+      </fieldset>
     </>
   );
 }
