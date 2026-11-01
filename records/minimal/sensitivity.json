@@ -20031,6 +20031,278 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0890-12",
+      "element": "イサベル skill2.effects[1]",
+      "key": "fd92413ed73383c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0890-12",
+      "element": "たきな burst.effects[0]",
+      "key": "fd92413ed73383c7",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0890-13",
+      "element": "イサベル skill2.effects[1]",
+      "key": "b9d4b08b81166496",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0890-13",
+      "element": "たきな burst.effects[0]",
+      "key": "b9d4b08b81166496",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0890-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "a78174ec8dca0ff1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0890-14",
+      "element": "たきな burst.effects[0]",
+      "key": "a78174ec8dca0ff1",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0890-15",
+      "element": "イサベル skill2.effects[1]",
+      "key": "7db4ad21c513d328",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0890-15",
+      "element": "たきな burst.effects[0]",
+      "key": "7db4ad21c513d328",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0891-11",
+      "element": "イサベル skill2.effects[1]",
+      "key": "a415f1f775cd87a8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0891-11",
+      "element": "たきな burst.effects[0]",
+      "key": "a415f1f775cd87a8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0891-12",
+      "element": "イサベル skill2.effects[1]",
+      "key": "81733a3caec6b943",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0891-12",
+      "element": "たきな burst.effects[0]",
+      "key": "81733a3caec6b943",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0891-13",
+      "element": "イサベル skill2.effects[1]",
+      "key": "e2e1544b2e3c0ed6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0891-13",
+      "element": "たきな burst.effects[0]",
+      "key": "e2e1544b2e3c0ed6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0891-15",
+      "element": "イサベル skill2.effects[1]",
+      "key": "0e6b115e4f9ce599",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0891-15",
+      "element": "たきな burst.effects[0]",
+      "key": "0e6b115e4f9ce599",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0892-13",
+      "element": "イサベル skill2.effects[1]",
+      "key": "0995f9dd0ad14192",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0892-13",
+      "element": "たきな burst.effects[0]",
+      "key": "0995f9dd0ad14192",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0892-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "a0bcfeecbce818cb",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0892-14",
+      "element": "たきな burst.effects[0]",
+      "key": "a0bcfeecbce818cb",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0892-15",
+      "element": "イサベル skill2.effects[1]",
+      "key": "11e2c63b5d4fa4ea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0892-15",
+      "element": "たきな burst.effects[0]",
+      "key": "11e2c63b5d4fa4ea",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0892-16",
+      "element": "イサベル skill2.effects[1]",
+      "key": "5365d9425970521b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0892-16",
+      "element": "たきな burst.effects[0]",
+      "key": "5365d9425970521b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0893-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "6258617805e9277b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0893-14",
+      "element": "たきな burst.effects[0]",
+      "key": "6258617805e9277b",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0893-15",
+      "element": "イサベル skill2.effects[1]",
+      "key": "8979fabdcc2b25f0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0893-15",
+      "element": "たきな burst.effects[0]",
+      "key": "8979fabdcc2b25f0",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0893-16",
+      "element": "イサベル skill2.effects[1]",
+      "key": "33dc7075875180fc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0893-16",
+      "element": "たきな burst.effects[0]",
+      "key": "33dc7075875180fc",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
+    },
+    {
+      "observation": "0893-17",
+      "element": "イサベル skill2.effects[1]",
+      "key": "b79011b685617aed",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0893-17",
+      "element": "たきな burst.effects[0]",
+      "key": "b79011b685617aed",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: dropEffects: rid 861 の burst に 1 番目の効果が無い"
     }
   ]
 }
