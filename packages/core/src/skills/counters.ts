@@ -39,6 +39,11 @@ export const COUNTERS = {
    * 1 減る。値で段階の効果（70・55・25 以上）が決まる。上限 100（説明文の「最大100％」）
    */
   extrasensory: { name: { ja: '超感覚', en: 'Extrasensory' }, max: 100 },
+  /**
+   * バッテリー（アークレンジャー・ブラックの S1・バースト。2 段目の段 19 の PR 1。plan/design-skill-stage19.md 2.1 節）。前提の中ではバーストで
+   * 増え（変身状態でなければ 100、変身状態なら 50）、変身の間 0.2 秒ごとに 1 減る。100 で変身が付き、0 で外れる。上限 100（説明文の「最大100％」）
+   */
+  battery: { name: { ja: 'バッテリー', en: 'Battery' }, max: 100 },
 } as const satisfies Record<string, CounterInfo>;
 
 export type CounterId = keyof typeof COUNTERS;

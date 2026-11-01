@@ -1,0 +1,211 @@
+{
+  "formatVersion": 1,
+  "resourceId": 570,
+  "checkedAt": "2026-11-01",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "transformation",
+          "trigger": {
+            "counterFull": "battery"
+          },
+          "target": "self",
+          "durationUntil": {
+            "counterEmpty": "battery"
+          },
+          "undispellable": true,
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 5
+            }
+          ],
+          "assumes": {
+            "ja": "変身。バッテリーが 100% に届いた次のフレームに付き、0% に届いた次のフレームで外れる（解除条件。解除不可は解除・効果解除で外れない印）。中身の攻撃力▲は変身の間",
+            "en": "Transformation. It is applied on the frame after the battery reaches 100% and ends on the frame after it reaches 0% (the removal condition; 'cannot be removed' only keeps it from dispels). The ATK up inside lasts while transformed"
+          },
+          "claims": [
+            "C-0865"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "battery",
+          "trigger": {
+            "everySeconds": 0.2,
+            "carry": true,
+            "since": {
+              "applied": "transformation"
+            }
+          },
+          "target": "self",
+          "amountRef": 4,
+          "decrease": true,
+          "assumes": {
+            "ja": "変身の効果 1。変身の付いたフレームから 0.2 秒ごとにバッテリーを 1% 減らす（端数を持ち越す）。変身が外れたら止まる",
+            "en": "Transformation effect 1. The battery drops by 1% every 0.2 s from the frame Transformation is applied (carrying the remainder). It stops when Transformation ends"
+          },
+          "claims": [
+            "C-0865"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 7
+          },
+          "target": "self",
+          "stat": "sustainedDamage",
+          "ref": 8,
+          "durationRef": 9,
+          "claims": [
+            "C-0867"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時のパーツダメージ▲と、味方がパーツを破壊した時のバッテリーのチャージは、射撃場の的にパーツが無いので起きない",
+          "en": "Damage to Parts up at the start of battle and the battery charge when an ally destroys a part do not happen (the training target has no parts)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "dot",
+          "trigger": {
+            "applied": "transformation"
+          },
+          "ref": 1,
+          "intervalSeconds": 1,
+          "durationUntil": {
+            "stateEnd": "transformation"
+          },
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "アークブラックコレダー。敵全体は敵 1 体。変身の付いたフレームに付き、変身の外れるまで 1 秒ごとに tick を出す",
+            "en": "Ark Black Collider. All enemies is the single enemy. It is applied on the frame Transformation is applied and ticks every second until Transformation ends"
+          },
+          "claims": [
+            "C-0865"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetWeapon": "AR",
+          "targetElement": "Wind",
+          "stat": "sustainedDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "claims": [
+            "C-0867"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "変身状態の間に敵が出現した時のアークブラックコレダーは、射撃場の的が 1 体で出現し直さないので起きない",
+          "en": "Ark Black Collider when an enemy appears during Transformation does not happen (the training target is a single enemy that does not reappear)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "dot"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "counterChange",
+          "counter": "battery",
+          "trigger": "burstUse",
+          "target": "self",
+          "amountRef": 3,
+          "condition": {
+            "selfState": "transformation"
+          }
+        },
+        {
+          "kind": "counterChange",
+          "counter": "battery",
+          "trigger": "burstUse",
+          "target": "self",
+          "amount": 100,
+          "condition": {
+            "selfState": {
+              "state": "transformation",
+              "present": false
+            }
+          },
+          "assumes": {
+            "ja": "バッテリー緊急チャージの効果 1（バッテリー 100%▲）。100% に届くので、次のフレームに変身が付く",
+            "en": "Emergency Charge Protocol effect 1 (Battery up 100%). It reaches 100%, so Transformation is applied on the next frame"
+          },
+          "claims": [
+            "C-0865"
+          ]
+        },
+        {
+          "kind": "counterChange",
+          "counter": "battery",
+          "trigger": {
+            "applied": "transformation"
+          },
+          "target": "self",
+          "amountRef": 6,
+          "decrease": true,
+          "assumes": {
+            "ja": "バッテリー緊急チャージの効果 2（変身後、バッテリー 50%▼）を、変身の付いたフレームに引く形で書いた。前提の中では変身はバーストの緊急チャージからしか起きないので、どの変身でも引く",
+            "en": "Emergency Charge Protocol effect 2 (Battery down 50% after transforming), written as a drop on the frame Transformation is applied. Under the premise Transformation only comes from the emergency charge, so every Transformation drops it"
+          },
+          "claims": [
+            "C-0865"
+          ]
+        },
+        {
+          "kind": "dot",
+          "trigger": "burstUse",
+          "ref": 8,
+          "intervalSeconds": 1,
+          "durationRef": 9,
+          "firstTick": "afterInterval",
+          "assumes": {
+            "ja": "最終最大HP が最も高い敵 1 機は敵 1 体。付いた 1 秒後から 1 秒ごとに 10 回",
+            "en": "The one enemy with the highest final max HP is the single enemy. It ticks 10 times every second from 1 s after it is applied"
+          },
+          "claims": [
+            "C-0866"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "sustainedDamage",
+          "ref": 10,
+          "durationRef": 11,
+          "claims": [
+            "C-0867"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

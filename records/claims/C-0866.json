@@ -1,0 +1,29 @@
+{
+  "id": "C-0866",
+  "text": "アークレンジャー・ブラックのバーストの持続ダメージ（最終最大HP が最も高い敵 1 機）は、バースト使用時に付き、その 1 秒後から 1 秒ごとに 10 回 tick を出す（付いた瞬間には出ない）。付くのは本当の発動の 2〜3f 後（tick がどの回もコレダーの 1〜2f 後）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0902-06`・`0902-07`・`0903-06`・`0903-07`（バーストの持続ダメージの 10 回の tick の、III のタイマーの 00.00 からの動画のフレーム。どの回もモデルより 2〜3f 後で、間隔はモデルと同じ。付いた瞬間に出る形（マナ C-0300 の形）なら 00.00 の前に 1 回出て、2 回目まで 1.5 秒空く）。どちらの録画も 3・4 回目のフルバーストの tick が同じ列（観測値の note）。V-0626",
+  "model": "`data/skills/570.json` の burst の effects[3]（dot・burstUse・durationRef 9・firstTick afterInterval）。付く時刻は本当の発動のフレーム（`burst/landing.ts` の遅れの表に行が無い）で、録画より 2〜3f 早い（バースト使用時の効果の付き始めの数 f の差は直さない。plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": ["data/skills/570.json の burst の effects[3]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0902",
+      "role": "読み方を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "0902",
+      "decided": "1 回目のフルバースト",
+      "reproduced": "2 回目のフルバースト",
+      "observations": ["0902-07"]
+    }
+  ],
+  "gradeReason": "録画 0902 の 1 回目のフルバーストで tick の形を読み、0902 の 2 回目と 0903 の 2 回で再現した"
+}

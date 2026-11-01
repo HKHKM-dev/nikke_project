@@ -1,0 +1,46 @@
+{
+  "id": "0902",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0902_ar_ark-ranger-black.mp4",
+  "original": "2026-11-01_19-48-53.mp4",
+  "durationSec": 203,
+  "frames": 12177,
+  "fps": 60,
+  "sizeMB": 245.8,
+  "sha256": "693a1c44c77c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 570,
+      "name": "アークレンジャー・ブラック",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0626 の撮影 A1。リター（AI）・デルタ（AI）・アークレンジャー・ブラック（操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T20:09+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

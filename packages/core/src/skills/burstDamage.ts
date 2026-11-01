@@ -187,6 +187,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     stacksFrom?: NamedStateId;
     /** マスト編: stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
     copyEachTick?: true;
+    /**
+     * 2 段目の段 19 の PR 1: 「〈状態〉解除まで」の状態（定義の durationUntil: { stateEnd }。durationSeconds は無限）。付いたフレームを含む自分の件の
+     * 終わりより後の tick を出さない（frame/plan.ts の planSkillHits）
+     */
+    untilStateEnd?: NamedStateId;
   };
 };
 
@@ -535,9 +540,10 @@ export function resolveDotEffects(
       if (effect.kind !== 'dot' && effect.kind !== 'autoAttack') return;
       const auto = effect.kind === 'autoAttack';
       const gaugeOnTick = auto ? effect.gaugePerHit === true : effect.gaugeOnTick === true;
-      // 2 段目の段 13 の PR 1: 「持続」（durationUntil: battleEnd）は終わりが無い
+      // 2 段目の段 13 の PR 1: 「持続」（durationUntil: battleEnd）は終わりが無い。段 19 の PR 1: 「〈状態〉解除まで」も、状態の件の終わりまで
+      const until = auto ? undefined : effect.durationUntil;
       const durationSeconds =
-        !auto && effect.durationUntil === 'battleEnd'
+        until !== undefined
           ? Number.POSITIVE_INFINITY
           : (effect.durationSeconds ?? skillValue(skill, effect.durationRef!, levels[slot]));
       if (durationSeconds < effect.intervalSeconds) {
@@ -586,6 +592,7 @@ export function resolveDotEffects(
           ...(!auto && effect.delayFrames !== undefined ? { applyDelayFrames: effect.delayFrames } : {}),
           ...(!auto && effect.stacksFrom !== undefined ? { stacksFrom: effect.stacksFrom.enemyState } : {}),
           ...(!auto && effect.copyEachTick === true ? { copyEachTick: true as const } : {}),
+          ...(typeof until === 'object' ? { untilStateEnd: until.stateEnd } : {}),
         },
       };
       if (!auto && effect.perCount !== undefined) {

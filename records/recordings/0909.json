@@ -1,0 +1,46 @@
+{
+  "id": "0909",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0909_ar_sin.mp4",
+  "original": "2026-11-01_20-15-21.mp4",
+  "durationSec": 200.7,
+  "frames": 12039,
+  "fps": 60,
+  "sizeMB": 243.1,
+  "sha256": "dc1f1a40329a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 401,
+      "name": "シン",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0628 の撮影 S1。リター（AI）・シン（操作・オート射撃 ON）・ソルジャーE.G.（AI）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T20:21+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

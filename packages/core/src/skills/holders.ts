@@ -83,6 +83,7 @@ import {
   type EndedTrigger,
   type EdgeShift,
   type EffectCondition,
+  type TimerTrigger,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
 import {
@@ -768,6 +769,13 @@ function insertSorted(xs: number[], x: number): void {
   xs.splice(i, 0, x);
 }
 
+/** 昇順の列 xs の、x 以下の最後の値（無ければ undefined。末尾から探す） */
+function lastAtOrBefore(xs: readonly number[], x: number): number | undefined {
+  let i = xs.length - 1;
+  while (i >= 0 && xs[i]! > x) i--;
+  return xs[i];
+}
+
 /** 段の印の並び（同じフレームの件の並び。段 → 出どころの枠 → 定義の順） */
 const STAGE_RANK: Record<HeldStage, number> = { 1: 0, 1.5: 1, 2: 2, 2.5: 3 };
 
@@ -912,6 +920,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return track;
   };
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
+  /** 件の列を frame で閉じる（同じフレームは 1 つ。戦闘の後は閉じない）。効果解除（fireRemove）とカウンタの 0（registerCounters） */
+  const closeTrack = (track: HeldTrack, frame: number): void => {
+    if (frame < frames && !track.closes.includes(frame)) insertSorted(track.closes, frame);
+  };
   /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
   const counterFullAt = new Map<string, number>();
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
@@ -1138,16 +1150,51 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
 
   // ---- 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ） ----
+  /**
+   * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 枠 × 状態ごとの、その枠に付いた記録のフレーム（昇順）。counterChange の { applied } と
+   * 周期の since が読む。読むたびに、まだ見ていない記録を足す
+   */
+  const ownApplied = new Map<string, number[]>();
+  let ownAppliedSeen = 0;
+  const ownAppliedOf = (slotIndex: number, state: NamedStateId): readonly number[] => {
+    for (; ownAppliedSeen < applications.length; ownAppliedSeen++) {
+      const r = applications[ownAppliedSeen]!;
+      const key = `${r.slotIndex}:${r.state}`;
+      const list = ownApplied.get(key) ?? [];
+      if (!list.includes(r.frame)) insertSorted(list, r.frame);
+      ownApplied.set(key, list);
+    }
+    return ownApplied.get(`${slotIndex}:${state}`) ?? [];
+  };
+  /** 同: 枠にその状態の件（段によらない）が効いているか */
+  const ownStateActive = (slotIndex: number, state: NamedStateId, frame: number): boolean =>
+    (stateTracks[slotIndex]?.get(state) ?? []).some((t) => activeAt(t, frame).length > 0);
+  /**
+   * 同（論点 2）: 状態の付いた時から数える周期（since）。起点はそのフレームまでに付いた最後の記録で、k 回目は起点から k × everySeconds 秒
+   * （timerFramesOf と同じ数え方）。その状態が効いている間だけ
+   */
+  const sinceFires = (trigger: TimerTrigger, slotIndex: number): TriggerTracker => {
+    const state = trigger.since!.applied;
+    const offsets = new Set(timerFramesOf(trigger, frames));
+    return (ev) => {
+      const start = lastAtOrBefore(ownAppliedOf(slotIndex, state), ev.frame);
+      return start !== undefined && offsets.has(ev.frame - start) && ownStateActive(slotIndex, state, ev.frame);
+    };
+  };
   const counterSources: CounterSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of resolveCounterChanges(slot.definition, slot.character, slot.levels)) {
+      const t = effect.trigger;
       counterSources.push({
         sourceSlotIndex,
         effect,
-        fires: isEndedTrigger(effect.trigger)
-          ? null
-          : firesOf(effect.trigger, sourceSlotIndex, shotCountEveryOf(sourceSlotIndex, effect.source.skill)),
+        fires:
+          isEndedTrigger(t) || isResolvedApplied(t)
+            ? null
+            : isResolvedTimer(t) && t.since !== undefined
+              ? sinceFires(t, sourceSlotIndex)
+              : firesOf(t, sourceSlotIndex, shotCountEveryOf(sourceSlotIndex, effect.source.skill)),
       });
     }
   });
@@ -1426,6 +1473,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     return byState;
   });
+  /**
+   * 2 段目の段 19 の PR 1（論点 2）: 持ち主 × カウンタごとの、そのカウンタが 0 に届いたら閉じる自分の状態の件の列（付与の untilCounterEmpty。
+   * 解除不可でも閉じる。registerCounters）
+   */
+  const counterEmptyTracks = new Map<string, HeldTrack[]>();
+  for (const track of tracks) {
+    const o = track.origin;
+    if (o.kind !== 'state' || o.grant.untilCounterEmpty === undefined) continue;
+    const key = counterKey(track.holder, o.grant.untilCounterEmpty);
+    counterEmptyTracks.set(key, [...(counterEmptyTracks.get(key) ?? []), track]);
+  }
   /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
   const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
     track.stage === 1 ? activeAt(track, frame) : activeAt(track, frame).filter((it) => it.start < frame);
@@ -1680,12 +1738,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 閉じるフレームを足す。解除不可の件の列は閉じない
    */
   const fireRemove = (src: RemoveSource, frame: number): void => {
-    if (frame >= frames) return;
     for (const track of tracks) {
       const o = track.origin;
       if (track.holder !== src.sourceSlotIndex || o.kind !== 'state' || o.state !== src.effect.state) continue;
       if (o.grant.undispellable === true) continue;
-      if (!track.closes.includes(frame)) insertSorted(track.closes, frame);
+      closeTrack(track, frame);
     }
   };
   /**
@@ -1894,6 +1951,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const t = src.effect.trigger;
       let fired: boolean;
       if (isEndedTrigger(t)) fired = !battleStartOnly && endedAt(src.sourceSlotIndex, t.ended, f);
+      // 2 段目の段 19 の PR 1（論点 3）: 自分にその状態が付いたフレーム（このフレームのすべての付与の後。戦闘開始時の付与はフレーム 0 の
+      // 出来事で読む）
+      else if (isResolvedApplied(t))
+        fired = !battleStartOnly && lastAtOrBefore(ownAppliedOf(src.sourceSlotIndex, t.applied), f) === f;
       else if (battleStartOnly) fired = atBattleStart(t);
       else fired = t !== 'battleStart' && src.fires!(ev);
       if (!fired) continue;
@@ -1921,6 +1982,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           : { frame: f, slotIndex, counter, value: after },
       );
       if (after === counterMax(counter)) counterFullAt.set(key, (battleStartOnly ? 0 : f) + 1);
+      // 2 段目の段 19 の PR 1（論点 2）: 0 に届いたら、そのカウンタで続く自分の状態の件の列を次のフレームで閉じる（解除不可でも）
+      if (after === 0)
+        for (const track of counterEmptyTracks.get(key) ?? []) closeTrack(track, battleStartOnly ? 0 : f);
     }
   };
 

@@ -1,0 +1,20 @@
+{
+  "id": "C-0867",
+  "text": "アークレンジャー・ブラックの S2 のアークブラックコレダーとバーストの持続ダメージの 1 tick は、最終攻撃力 × 説明文の値（値 01・値 08）×（1 + 会心 + フルバースト補正）×（1 + 持続ダメージ▲の和）で、和には S1 の通常攻撃 30 回ごとの値 08、S2 のフルバースト開始時の風圧 AR の味方への値 02、バーストの自分の値 10（10 秒）が入る。バーストの自分の▲が切れた後の 10 回目の tick は、その分だけ下がる",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0902-08`〜`0902-11`・`0903-08`〜`0903-11`（1 回目のフルバーストの 2 回目と 10 回目の tick の値。モデルと ±1 で一致。2 回目は 3 つの▲とリターのバーストの攻撃力▲の中、10 回目はバーストの自分の▲の切れた後）。値はどれも説明文の値とほかの確定の結論から決め、録画で合わせた定数は無い。V-0626",
+  "model": "`data/skills/570.json` の skill1 の effects[2]（timed・{ count: normalShot, everyRef: 7 }・self・sustainedDamage ref 8）、skill2 の effects[1]（timed・fullBurstStart・allies・AR・Wind・sustainedDamage ref 2）、burst の effects[4]（timed・burstUse・self・sustainedDamage ref 10）。持続ダメージ▲の和の掛かり方は C-0332・C-0421・C-0793 と同じ（`damage.ts` の sustainedDamageMultiplier）",
+  "replaces": [],
+  "updated": "2026-11-01",
+  "subject": {
+    "places": [
+      "data/skills/570.json の skill1 の effects[2]",
+      "data/skills/570.json の skill2 の effects[1]",
+      "data/skills/570.json の burst の effects[4]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "1 tick の式は持続ダメージの式（C-0332）、値は 570 の説明文（値 01・値 02・値 08・値 10）とリター・デルタの確定の結論から"
+}

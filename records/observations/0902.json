@@ -1,0 +1,433 @@
+[
+  {
+    "id": "0902-01",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "record",
+    "value": [1390, 2761, 3982, 5337, 6581, 7789, 9005, 10288],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 6・0・24・0・25・0・24・0f"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-02",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "record",
+    "value": [1419, 4011, 6610, 9033],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・25・25f"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-03",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "record",
+    "value": [1448, 4040, 6639, 9063],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@2",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-04",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "compare",
+    "value": [76, 134, 193, 252, 311, 369, 428, 487, 546, 605],
+    "unit": "f",
+    "description": "1 回目のフルバーストの、S2 のアークブラックコレダーの 10 回の tick の、III のタイマーの 00.00（f1448。`0902-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "40 万以上の増分のうち、S2 のアークブラックコレダーの 1 tick の値（モデルの値と同じ。同じフレームのアークレンジャー・ブラック・リター・デルタの 1 発との和を含む）のフレーム。10 回目の後、次のフルバーストまでS2 のアークブラックコレダーの値は出ない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "fullBurst": 0,
+        "count": 10,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-05",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "compare",
+    "value": [76, 135, 194, 253, 312, 370, 429, 488, 547, 606],
+    "unit": "f",
+    "description": "2 回目のフルバーストの、S2 のアークブラックコレダーの 10 回の tick の、III のタイマーの 00.00（f4040。`0902-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "40 万以上の増分のうち、S2 のアークブラックコレダーの 1 tick の値（モデルの値と同じ。同じフレームのアークレンジャー・ブラック・リター・デルタの 1 発との和を含む）のフレーム。10 回目の後、次のフルバーストまでS2 のアークブラックコレダーの値は出ない。FB 3・4 回目（`0902-03` の 3・4 個目）の tick も、どの回も FB 1・2 回目と ±1f で同じ列"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "fullBurst": 1,
+        "count": 10,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-06",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "compare",
+    "value": [77, 136, 195, 254, 314, 371, 430, 489, 549, 607],
+    "unit": "f",
+    "description": "1 回目のフルバーストの、バーストの持続ダメージの 10 回の tick の、III のタイマーの 00.00（f1448。`0902-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "40 万以上の増分のうち、バーストの持続ダメージの 1 tick の値（モデルの値と同じ。同じフレームのアークレンジャー・ブラック・リター・デルタの 1 発との和を含む）のフレーム。10 回目の後、次のフルバーストまでバーストの持続ダメージの値は出ない。どの回もコレダーの 1〜2f 後（モデルは 1f 前）。バースト使用時の効果の付き始めの数 f の差（plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 0,
+        "count": 10,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-07",
+    "recording": "0902",
+    "kind": "timing",
+    "use": "compare",
+    "value": [78, 137, 196, 255, 314, 372, 431, 490, 549, 608],
+    "unit": "f",
+    "description": "2 回目のフルバーストの、バーストの持続ダメージの 10 回の tick の、III のタイマーの 00.00（f4040。`0902-03`）からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "40 万以上の増分のうち、バーストの持続ダメージの 1 tick の値（モデルの値と同じ。同じフレームのアークレンジャー・ブラック・リター・デルタの 1 発との和を含む）のフレーム。10 回目の後、次のフルバーストまでバーストの持続ダメージの値は出ない。どの回もコレダーの 1〜2f 後（モデルは 1f 前）。バースト使用時の効果の付き始めの数 f の差（plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 1,
+        "count": 10,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-08",
+    "recording": "0902",
+    "kind": "hit",
+    "use": "compare",
+    "value": 990950,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、S2 のアークブラックコレダーの 2 回目の tick（非会心。00.00 から +134f。フルバースト補正・リターのバーストの攻撃力▲・持続ダメージ▲の 3 つの中）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-09",
+    "recording": "0902",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5761422,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、バーストの持続ダメージの 2 回目の tick（非会心。00.00 から +136f。フルバースト補正・リターのバーストの攻撃力▲・持続ダメージ▲の 3 つの中）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-10",
+    "recording": "0902",
+    "kind": "hit",
+    "use": "compare",
+    "value": 500931,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、S2 のアークブラックコレダーの 10 回目の tick（非会心。00.00 から +605f。バーストの自分の持続ダメージ▲（10 秒）の切れた後）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 9,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-11",
+    "recording": "0902",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2912431,
+    "unit": "ダメージ",
+    "description": "1 回目のフルバーストの、バーストの持続ダメージの 10 回目の tick（非会心。00.00 から +607f。バーストの自分の持続ダメージ▲（10 秒）の切れた後）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 9,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-12",
+    "recording": "0902",
+    "kind": "hit",
+    "use": "compare",
+    "value": 62871,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの 00.00 から +260f の、アークレンジャー・ブラックの通常攻撃の 1 ヒット（胴体・非会心・距離ボーナスなし。変身の攻撃力▲とフルバースト補正の中。リターのバーストの攻撃力▲の切れた後）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま。同じ値の増分がその区間に何度も出る（コア・会心の組の値も、モデルの格子のどれかに合う）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": 238,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  },
+  {
+    "id": "0902-13",
+    "recording": "0902",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16352,
+    "unit": "ダメージ",
+    "description": "2 回目のフルバーストの 00.00 から +642f の、アークレンジャー・ブラックの通常攻撃の 1 ヒット（胴体・非会心・距離ボーナスなし。フルバーストの後。変身の攻撃力▲が乗っていない）",
+    "method": {
+      "tool": "recipe:hud-jumps@2 の増分",
+      "note": "増分そのまま。同じ値の増分がその区間に何度も出る（コア・会心の組の値も、モデルの格子のどれかに合う）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "fullBurst": 1,
+        "frame": 620,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "source": "V-0626",
+    "readAt": "2026-11-01"
+  }
+]

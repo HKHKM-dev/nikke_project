@@ -1,0 +1,40 @@
+{
+  "id": "0906",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0906_sg_guilty.mp4",
+  "original": "2026-11-01_20-03-31.mp4",
+  "durationSec": 200.6,
+  "frames": 12038,
+  "fps": 60,
+  "sizeMB": 243.2,
+  "sha256": "a6f7ccd1d3ad",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 400,
+      "name": "ギルティ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0627 の撮影 G2。リター（AI）・ギルティ（操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-01T20:12+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

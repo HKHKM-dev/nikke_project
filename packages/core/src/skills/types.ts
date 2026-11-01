@@ -591,12 +591,20 @@ export type TimerTrigger = {
    * フレームにする（省略は発動のたびに数え直す。C-0502）。「再発動周期」のマリアン：クイーンの S1 の槍（V-0538）
    */
   carry?: true;
+  /**
+   * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: 周期の起点を、その状態が自分に付いた最後のフレーム（付いた記録）にする。
+   * k 回目は起点から k × everySeconds 秒に達した最初のフレーム（carry と同じ数え方）で、その状態が自分に付いている間だけ発火する（外れたら止まり、
+   * 次に付いた時は数え直す）。counterChange にだけ書ける（変身の間 0.2 秒ごとのバッテリーの▼）
+   */
+  since?: AppliedTrigger;
 };
 
 /**
  * ペルソナ編（plan/design-persona.md 3.3 節）: 「〈名前〉が適用された時」。名前の付いた状態の語彙編（plan/design-named-state.md 5.4 節）:
  * 編成のどの枠の付与でも、その状態がこの効果を持つ枠に付いたフレーム（状態の窓の始まり。付き直しでも 1 回）で発火する。
- * damage と、2 段目の段 4（plan/design-skill-stage4.md 1.1 節）から timed・状態の付与に書ける（timed・付与は連鎖させない）
+ * damage と、2 段目の段 4（plan/design-skill-stage4.md 1.1 節）から timed・状態の付与に書ける（timed・付与は連鎖させない）。
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 3・4）: counterChange と dot にも書ける（その状態の、自分に付ける付与が同じ定義に
+ * あること。validateOwnStateTriggers）
  */
 export type AppliedTrigger = { applied: NamedStateId };
 
@@ -855,6 +863,19 @@ export const DURATION_UNTILS = [
   'reloadEnd',
   'selfHpAbove',
 ] as const satisfies readonly DurationUntil[];
+
+/**
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: 状態の付与の維持の「解除条件：〈カウンタ〉が 0 になった時」。自分のそのカウンタが
+ * 0 に届いたフレームの次のフレームで件を閉じる（それまでは戦闘の終わりまで。解除不可の印があっても閉じる）。自分にだけ付き、スタックせず、
+ * きっかけは同じカウンタの { counterFull } の付与にだけ書ける（アークレンジャー・ブラックの変身）
+ */
+export type CounterEmptyUntil = { counterEmpty: CounterId };
+
+/**
+ * 同（論点 4）: dot の「〈状態〉解除まで」。きっかけ { applied } の状態の、自分の件の終わり（付いたフレームを含む件）より後の tick を出さない
+ * （それまでは戦闘の終わりまで）。きっかけは同じ状態の { applied } だけ（アークレンジャー・ブラックの S2 のアークブラックコレダー）
+ */
+export type StateEndUntil = { stateEnd: NamedStateId };
 
 /**
  * 発火の条件。名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）で、timed・付与・damage を 1 つの型にした。
@@ -1452,8 +1473,11 @@ export type DotEffect = {
   /** 維持秒数の description_value_NN。durationSeconds・durationUntil とちょうど 1 つ */
   durationRef?: number;
   durationSeconds?: number;
-  /** 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: 「持続」（battleEnd だけ。firstTick: halfAfterLatest のときだけ） */
-  durationUntil?: 'battleEnd';
+  /**
+   * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: 「持続」（battleEnd。firstTick: halfAfterLatest のときだけ）。
+   * 2 段目の段 19 の PR 1: 「〈状態〉解除まで」（StateEndUntil。きっかけ { applied } と組む）
+   */
+  durationUntil?: 'battleEnd' | StateEndUntil;
   /**
    * クルミ編: tick の時刻の形（plan/design-kurumi.md 2.1 節）。省略は atApplication。
    * atApplication = 付いた瞬間と、1.5 秒後から間隔ごと（ニヒリスターの火傷。C-0101）、
@@ -1711,8 +1735,13 @@ export function statContentsOf(contents: readonly StateContentItem[] | undefined
  * 静的な状態（staticStatesOf）の付与は編成の段で持ち主が決まり、中身は常時パッシブとして解く。2 段目の段 4（plan/design-skill-stage4.md
  * 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけを作る（中身・スタック・解除不可は書けない）
  */
-export type StateGrantEffect = Omit<TimedEffect, 'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies'> & {
+export type StateGrantEffect = Omit<
+  TimedEffect,
+  'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies' | 'durationUntil'
+> & {
   kind: 'state';
+  /** timed と同じ維持の終わりの出来事。2 段目の段 19 の PR 1: カウンタが 0 になった時（CounterEmptyUntil）も */
+  durationUntil?: DurationUntil | CounterEmptyUntil;
   /** 目録の id（持ち主が味方の状態。enemy なら敵の状態） */
   state: NamedStateId;
   /**
@@ -2740,6 +2769,8 @@ function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
 
 /** timed の、値（stat）を除いた欄。名前の付いた状態の語彙編: 付与（StateGrantEffect）はこの欄を timed と同じ規則で持つ */
 type TimedFields = Omit<TimedEffect, 'kind' | 'stat'>;
+/** 付与（stat が undefined）の欄。2 段目の段 19 の PR 1: 維持に { counterEmpty } も書ける（StateGrantEffect） */
+type GrantTimedFields = Omit<TimedFields, 'durationUntil'> & { durationUntil?: DurationUntil | CounterEmptyUntil };
 
 /** 2 段目の段 7: 防御力の比べの対象の絞り込み。lowerThanSelf = 自分と、自分より最終防御力が低い味方 */
 export type TargetDefense = 'lowerThanSelf';
@@ -2750,22 +2781,33 @@ export const TARGET_DEFENSES = ['lowerThanSelf'] as const satisfies readonly Tar
  * （値の欄 ref・scaling・decrease・amplifies と stat ごとの規則を除く）。付与の stat ごとの規則は、付与の欄と中身の項目を合わせた
  * timed として中身ごとに通す（validateStateGrants）
  */
+function parseTimedFields(v: Record<string, Json>, path: string, stat: BuffStat, allowChance: boolean): TimedFields;
+function parseTimedFields(
+  v: Record<string, Json>,
+  path: string,
+  stat: undefined,
+  allowChance: boolean,
+): GrantTimedFields;
 function parseTimedFields(
   v: Record<string, Json>,
   path: string,
   stat: BuffStat | undefined,
   allowChance: boolean,
-): TimedFields {
+): GrantTimedFields {
   // 2 段目の段 3（plan/design-skill-stage3.md 1.2 節）: 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける。
   // 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: 「〈名前〉が適用される時」（{ applied }）も書ける
   // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
   // 「フルチャージした時」（{ chargeFull }）も書ける
   // 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 「遮蔽物の HP を回復した時」（{ coverHealed }）は timed だけ
+  // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 「〈カウンタ〉が 100% になった時」（{ counterFull }）は状態の付与だけ
+  // （validateCounterGrant）
   const trigger =
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
     parseChargeTrigger(v.trigger, `${path}.trigger`) ??
-    (stat !== undefined ? parseCoverHealedTrigger(v.trigger, `${path}.trigger`) : undefined) ??
-    (stat !== undefined ? parseSelfHpAtMostTrigger(v.trigger, `${path}.trigger`) : undefined) ??
+    (stat === undefined
+      ? parseCounterFullTrigger(v.trigger, `${path}.trigger`)
+      : (parseCoverHealedTrigger(v.trigger, `${path}.trigger`) ??
+        parseSelfHpAtMostTrigger(v.trigger, `${path}.trigger`))) ??
     parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance, false, false, true);
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
@@ -2815,7 +2857,7 @@ function parseTimedFields(
     validateDamageTaken(stat, target, v, path);
     validateAttackSpeed(stat, v, path);
   }
-  const effect: TimedFields = { trigger, target };
+  const effect: GrantTimedFields = { trigger, target };
   if (stat !== undefined) {
     // 環境コントロール強化編: 値は参照する効果から取る
     if (v.amplifies !== undefined) {
@@ -2913,8 +2955,10 @@ function parseTimedFields(
     } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }
   if (stat !== undefined) {
-    validateFixedChargeTime({ kind: 'timed', ...effect, stat }, path);
-    validateChanceTimed({ kind: 'timed', ...effect, stat }, path);
+    // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
+    const timed = { kind: 'timed', ...(effect as TimedFields), stat } as const;
+    validateFixedChargeTime(timed, path);
+    validateChanceTimed(timed, path);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
@@ -3090,6 +3134,7 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
   // トリガーの確率のきっかけは書けない（窓が期待値の小片になり、見る側の「付いているか」に使えない）。
   // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）
   const fields = parseTimedFields(v, path, undefined, false);
+  validateCounterGrant(fields, path);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
   }
@@ -3183,6 +3228,26 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     }
   }
   return effect;
+}
+
+/**
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: カウンタで続く状態の付与。{ counterFull } のきっかけと
+ * durationUntil: { counterEmpty } は同じカウンタで組み（片方だけは書けない）、自分にだけ付け、スタックしない（閉じるのは持ち主の件の列ごと）
+ */
+function validateCounterGrant(fields: GrantTimedFields, path: string): void {
+  const full = isCounterFullTrigger(fields.trigger) ? fields.trigger.counterFull : undefined;
+  const until = fields.durationUntil;
+  const empty = typeof until === 'object' ? until.counterEmpty : undefined;
+  if (full === undefined && empty === undefined) return;
+  if (full !== empty)
+    fail(
+      path,
+      `a grant on { counterFull } lasts until the same counter is empty (durationUntil { counterEmpty }), got ${JSON.stringify(fields.trigger)} and ${JSON.stringify(until)}`,
+    );
+  if (fields.target !== 'self') fail(`${path}.target`, 'a grant lasting until a counter is empty is only on "self"');
+  if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
+    fail(path, 'a grant lasting until a counter is empty cannot stack');
+  if (fields.condition !== undefined) fail(`${path}.condition`, 'a grant on { counterFull } cannot have a condition');
 }
 
 /**
@@ -3355,6 +3420,12 @@ function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>)
     ...fields
   } = grant;
   const { claims: _itemClaims, ...value } = item;
+  // 2 段目の段 19 の PR 1: カウンタで続く状態（{ counterFull } で付き、0 になるまで）の中身の規則は、戦闘開始時から「持続」の付与と同じ
+  // （付くフレームも窓も件の一覧が決める。きっかけ { counterFull } は timed には書けない）
+  if (isRecord(fields.durationUntil) && 'counterEmpty' in fields.durationUntil) {
+    fields.durationUntil = 'battleEnd';
+    fields.trigger = 'battleStart';
+  }
   if (value.stat === 'fixedChargeTime') {
     delete fields.maxStacks;
     delete fields.maxStacksRef;
@@ -3458,7 +3529,7 @@ function parseTimedDuration(
   durationSeconds?: number;
   durationShots?: number;
   durationShotsRef?: number;
-  durationUntil?: DurationUntil;
+  durationUntil?: DurationUntil | CounterEmptyUntil;
 } {
   const hasShots = v.durationShots !== undefined;
   const hasShotsRef = v.durationShotsRef !== undefined;
@@ -3466,6 +3537,19 @@ function parseTimedDuration(
   if (v.durationUntil !== undefined) {
     if (hasShots || hasShotsRef || v.durationRef !== undefined || v.durationSeconds !== undefined) {
       fail(path, 'durationUntil cannot be combined with another duration');
+    }
+    // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 付与だけ「解除条件：〈カウンタ〉が 0 になった時」（validateCounterGrant）
+    if (stat === undefined && isRecord(v.durationUntil)) {
+      const key = `${path}.durationUntil`;
+      return {
+        durationUntil: {
+          counterEmpty: oneOf(
+            COUNTER_IDS,
+            objectUntil(v.durationUntil, 'counterEmpty', key, 'expected { counterEmpty }'),
+            `${key}.counterEmpty`,
+          ),
+        },
+      };
     }
     const until = oneOf(DURATION_UNTILS, v.durationUntil, `${path}.durationUntil`);
     if (stat !== undefined && (isFlagStat(stat) || (until === 'fullBurstEnd' && isFirstPassTrackedStat(stat)))) {
@@ -3965,6 +4049,62 @@ export function hasCountingWindow(trigger: EffectTrigger): boolean {
   );
 }
 
+/** dot の durationUntil: "battleEnd"（持続）か、2 段目の段 19 の PR 1 の { stateEnd }（〈状態〉解除まで）。書かなければ undefined */
+function parseDotDurationUntil(v: Record<string, Json>, path: string): DotEffect['durationUntil'] {
+  const u = v.durationUntil;
+  if (u === undefined) return undefined;
+  if (v.durationRef !== undefined || v.durationSeconds !== undefined)
+    fail(path, 'durationUntil cannot be combined with another duration');
+  if (u === 'battleEnd') return u;
+  const key = `${path}.durationUntil`;
+  return {
+    stateEnd: parseNamedStateId(
+      objectUntil(u, 'stateEnd', key, 'expected "battleEnd" or { stateEnd }'),
+      `${key}.stateEnd`,
+      'ally',
+    ),
+  };
+}
+
+/** 2 段目の段 19 の PR 1: durationUntil の 1 つの欄のオブジェクト（{ counterEmpty }・{ stateEnd }）の値。ほかの形なら expected で落とす */
+function objectUntil(u: Json, field: string, path: string, expected: string): Json {
+  if (!isRecord(u)) fail(path, expected);
+  for (const key of Object.keys(u)) if (key !== field) fail(`${path}.${key}`, 'unknown field');
+  return u[field];
+}
+
+/**
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: { applied } の dot は、同じ状態の durationUntil: { stateEnd } と組む（片方だけは
+ * 書けない）。付くフレームは 2 パス目の付いた記録（frame/plan.ts の appliedFrames）で決まり、出来事の列では追わないので、1 パス目と件の一覧で
+ * 付くフレームを追うもの（ゲージ・敵の状態）と、スタック・数・遅れ・条件とは組まない（使い手がいない）
+ */
+function validateAppliedDot(
+  v: Record<string, Json>,
+  applied: AppliedTrigger | undefined,
+  stateEnd: StateEndUntil | undefined,
+  path: string,
+): void {
+  if (applied === undefined && stateEnd === undefined) return;
+  if (applied?.applied !== stateEnd?.stateEnd)
+    fail(
+      path,
+      `a dot on { applied } lasts until the same state ends (durationUntil { stateEnd }), got ${JSON.stringify(v.trigger)} and ${JSON.stringify(v.durationUntil)}`,
+    );
+  for (const key of [
+    'state',
+    'maxStacksRef',
+    'gaugeOnApply',
+    'gaugeOnApplyDelayFrames',
+    'tickDelayFrames',
+    'gaugeOnTick',
+    'perCount',
+    'delayFrames',
+    'stacksFrom',
+    'condition',
+  ])
+    if (v[key] !== undefined) fail(`${path}.${key}`, `a dot on { applied } cannot have ${key}`);
+}
+
 /**
  * ニヒリスター編: 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
  * （skills/burstDamage.ts の resolveDotEffects）
@@ -4008,20 +4148,19 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
     fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
   }
   const counterFull = parseCounterFullTrigger(v.trigger, `${path}.trigger`);
+  // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: 「〈状態〉が適用された時」の「〈状態〉解除まで」
+  const applied = parseAppliedTrigger(v.trigger, `${path}.trigger`);
   // 2 段目の段 13 の PR 1: 「持続」は durationUntil: battleEnd
-  const untilBattleEnd = v.durationUntil !== undefined;
-  if (untilBattleEnd) {
-    if (v.durationUntil !== 'battleEnd') fail(`${path}.durationUntil`, 'expected "battleEnd"');
-    if (v.durationRef !== undefined || v.durationSeconds !== undefined)
-      fail(path, 'durationUntil cannot be combined with another duration');
-  }
+  const durationUntil = parseDotDurationUntil(v, path);
+  const stateEnd = typeof durationUntil === 'object' ? durationUntil : undefined;
   const effect: DotEffect = {
     kind: 'dot',
-    trigger: counterFull ?? parseTrigger(v.trigger, `${path}.trigger`, true),
+    trigger: counterFull ?? applied ?? parseTrigger(v.trigger, `${path}.trigger`, true),
     ref: parseRef(v.ref, `${path}.ref`),
     intervalSeconds: interval,
-    ...(untilBattleEnd ? { durationUntil: 'battleEnd' as const } : parseDuration(v, path)),
+    ...(durationUntil !== undefined ? { durationUntil } : parseDuration(v, path)),
   };
+  validateAppliedDot(v, applied, stateEnd, path);
   // 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
   // 付くフレームをほかで追うもの（ゲージを溜める dot は 1 パス目、敵の状態を付ける dot は件の一覧、{ counterFull } はカウンタの経路）とは組まない
   if (v.condition !== undefined) {
@@ -4049,7 +4188,8 @@ function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
   }
   // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: チェーンバインドの形（付けるたびに刻みを付け直す持続）
   const latest = effect.firstTick === 'halfAfterLatest';
-  if (latest !== untilBattleEnd) fail(`${path}.firstTick`, 'halfAfterLatest goes with durationUntil "battleEnd"');
+  if (latest !== (durationUntil === 'battleEnd'))
+    fail(`${path}.firstTick`, 'halfAfterLatest goes with durationUntil "battleEnd"');
   if (v.tickIntervalFrames !== undefined) {
     const n = v.tickIntervalFrames;
     if (!latest) fail(`${path}.tickIntervalFrames`, 'needs firstTick halfAfterLatest');
@@ -4624,6 +4764,17 @@ function parseCounterChangeEffect(v: Record<string, Json>, path: string): Counte
     trigger = { ended: parseNamedStateId(v.trigger.ended, `${path}.trigger.ended`, 'ally') };
   } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
     trigger = parseCounterFullTrigger(v.trigger, `${path}.trigger`)!;
+  } else if (isRecord(v.trigger) && v.trigger.applied !== undefined) {
+    // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 3）: 「変身後、バッテリー N%▼」
+    trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`)!;
+  } else if (isRecord(v.trigger) && v.trigger.since !== undefined) {
+    // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）
+    const { since, ...rest } = v.trigger;
+    const timer = parseTrigger(rest, `${path}.trigger`, true);
+    if (!isTimerTrigger(timer)) fail(`${path}.trigger.since`, 'since needs a timer trigger ({ everySeconds })');
+    const from = parseAppliedTrigger(since, `${path}.trigger.since`);
+    if (from === undefined) fail(`${path}.trigger.since`, 'expected { applied }');
+    trigger = { ...timer, since: from };
   } else {
     // 2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）: 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
     trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
@@ -4983,6 +5134,27 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
 }
 
 /**
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
+ * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）
+ */
+function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'counterChange' && e.kind !== 'dot') return;
+      const t = e.trigger;
+      const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
+      if (state === undefined) return;
+      if (!effects.some((g) => g.kind === 'state' && g.state === state && g.target === 'self'))
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `a ${e.kind} on "${state}" needs a grant of the same state on self in the definition`,
+        );
+    });
+  }
+}
+
+/**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
  * 要る（上限・維持・中身は付与のもの）
  */
@@ -5142,7 +5314,7 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
 
 /** 名前の付いた状態の語彙編: 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
 function durationFormOf(e: StateGrantEffect): string {
-  if (e.durationUntil !== undefined) return `until ${e.durationUntil}`;
+  if (e.durationUntil !== undefined) return `until ${JSON.stringify(e.durationUntil)}`;
   if (e.durationShots !== undefined) return `shots ${e.durationShots}`;
   if (e.durationShotsRef !== undefined) return 'shots (ref)';
   if (e.durationSeconds !== undefined) return `seconds ${e.durationSeconds}`;
@@ -5189,6 +5361,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   validateStateContentKinds(skills, 'skills');
   validateFullStackTriggers(skills, 'skills');
   validateAppliedTriggers(skills, 'skills');
+  validateOwnStateTriggers(skills, 'skills');
   validateWhileEffects(skills, 'skills');
   validateDotStateRefs(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
@@ -5213,6 +5386,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     validateStateContentKinds({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateOwnStateTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');
     validateDotStateRefs({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;

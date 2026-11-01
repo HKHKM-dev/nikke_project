@@ -86,7 +86,8 @@ function triggerLabel(t: ResolvedTrigger): string {
   // 2 段目の段 13 の PR 1: カウンタが上限に届いた時（counterFull:restraintChains）
   if ('counterFull' in t) return `counterFull:${t.counterFull}`;
   // ニヒリスター編: 時間の周期のトリガー（every10s）
-  if ('everySeconds' in t) return `every${t.everySeconds}s`;
+  // 2 段目の段 19 の PR 1: 状態の付いた時から数える周期（every0.2s:since:transformation）
+  if ('everySeconds' in t) return `every${t.everySeconds}s${t.since === undefined ? '' : `:since:${t.since.applied}`}`;
   // ペルソナ編: 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
   if ('applied' in t) return `applied:${t.applied}`;
   // 2 段目の段 3: フルスタックの消費のきっかけ（fullStack:relax）

@@ -96,6 +96,9 @@
     | 対象に「〈名前〉：…」「N スタック」（敵に付く状態のスタック）／スキル発動者基準で防御力 X%▼ | 付与の `target: "enemy"` と `maxStacksRef`／中身の `stat: "enemyDefenseDown"`・`scaling: "casterDefence"` | 発動者基準の▼は、発動者のバフ前防御力 × X% を 1 スタックごとに敵の防御力から引き、割合の▼の後に 0 で止める（順と 0 で止めるのは未確定）。例: マストの S1 の海風 | [design-mast.md](design-mast.md) 2.1・2.2 節 |
     | 〈状態〉の対象に「最終攻撃力の X% のダメージ」「〈状態〉スタックコピー」「1 秒間隔」 | dot の `stacksFrom: { enemyState }`（元は dot か、敵にスタックで付く状態の付与）と `sustained: false` | 付けた時に 1 回写す（`copyEachTick` は tick ごとに写し直す仮説の形）。「持続ダメージ」でない周期のダメージは持続ダメージ▲を掛けない。例: マストのバーストの暴風 | [design-mast.md](design-mast.md) 2.3 節 |
     | 自分の HP が X% 以下である限り | timed のきっかけ `{ "selfHpAtMostRef": N }` と `durationUntil: "selfHpAbove"` | HP の割合は枠の想定を最大HP▲・最大HP のみ▲ の件で下げた値で、同じフレームに付いた件は次のフレームから。回復で HP が戻る分は扱わない。例: マストの S1（バーストの最大HP のみ▲ の間） | [design-mast.md](design-mast.md) 8 節 |
+    | 〈カウンタ〉が 100% になった時、〈状態〉（解除条件：〈カウンタ〉が 0% になった時） | 付与のきっかけ `{ "counterFull": 〈カウンタ〉 }` と `durationUntil: { "counterEmpty": 〈カウンタ〉 }`（同じカウンタで組む。自分にだけ・スタックなし） | 付くのは届いたフレームの次、外れるのは 0 に届いたフレームの次（解除不可でも外れる）。例: アークレンジャー・ブラックの変身 | [design-skill-stage19.md](design-skill-stage19.md) 2.1 節 |
+    | 〈状態〉の間、N 秒間隔で〈カウンタ〉N%▼／〈状態〉の後、〈カウンタ〉N%▼ | `counterChange` の周期のきっかけ `{ "everySeconds": N, "carry": true, "since": { "applied": 〈状態〉 } }`／`counterChange` のきっかけ `{ "applied": 〈状態〉 }` | 周期は状態の付いたフレームから数え、外れたら止まる。どちらも、その状態を自分に付ける付与が同じ定義に要る | 同上 |
+    | 〈状態〉が適用された時、〈状態〉解除までの持続ダメージ | dot のきっかけ `{ "applied": 〈状態〉 }` と `durationUntil: { "stateEnd": 〈状態〉 }`（同じ状態で組む） | 付いたフレームを含む自分の件の終わりまで tick を出す。ゲージ・敵の状態・スタック・条件とは組めない | 同上 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

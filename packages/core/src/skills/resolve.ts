@@ -598,7 +598,8 @@ type ResolvedItemFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value'
  * Lv の数値に解く。付与は「値を持たない持続効果」なので、件の欄は timed と同じ関数で解く
  */
 function resolveItemFields(
-  effect: (TimedEffect | StateGrantEffect) & BurstStepModeField,
+  effect: (TimedEffect | (Omit<StateGrantEffect, 'durationUntil'> & Pick<TimedEffect, 'durationUntil'>)) &
+    BurstStepModeField,
   character: CharacterData,
   slot: SkillSlot,
   level: number,
@@ -662,6 +663,11 @@ export type ResolvedStateGrant = ResolvedItemFields & {
   enemy?: true;
   /** マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方（skills/types.ts の StateGrantEffect.stackRefresh） */
   stackRefresh?: 'each';
+  /**
+   * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 定義の durationUntil: { counterEmpty } のカウンタ。持ち主（自分）のそのカウンタが 0 に
+   * 届いたフレームで件の列を閉じる（skills/holders.ts の registerCounters。durationFrames は BATTLE_END_FRAMES）
+   */
+  untilCounterEmpty?: CounterId;
 };
 
 /**
@@ -683,7 +689,16 @@ export function resolveStateGrants(
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'state') return;
-      const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
+      // 2 段目の段 19 の PR 1: カウンタが 0 になるまでの付与は、閉じる（untilCounterEmpty）までは「持続」と同じ窓
+      const until = effect.durationUntil;
+      const counterEmpty = typeof until === 'object' ? until.counterEmpty : undefined;
+      const window = resolveItemFields(
+        { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
+        character,
+        slot,
+        levels[slot],
+        effectIndex,
+      );
       const grant: ResolvedStateGrant = { ...window, state: effect.state, isStatic: statics.has(effect.state) };
       if (effect.undispellable) grant.undispellable = true;
       if (effect.stacksFrom !== undefined) grant.stacksFrom = effect.stacksFrom;
@@ -699,6 +714,7 @@ export function resolveStateGrants(
       if (effect.stackRefresh !== undefined) grant.stackRefresh = effect.stackRefresh;
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
+      if (counterEmpty !== undefined) grant.untilCounterEmpty = counterEmpty;
       untrimmed.push(grant);
     });
   }
