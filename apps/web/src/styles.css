@@ -318,6 +318,14 @@ header h1 {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
+/* キャラのいないスロットの、ダメージと育成の欄（開かない） */
+.slot-damage-display[data-placeholder='true'],
+.slot-settings[data-placeholder='true'] {
+  opacity: 0.45;
+}
+.slot-settings[data-placeholder='true'] > summary {
+  cursor: default;
+}
 .slot-settings {
   margin-top: 6px;
   padding-top: 4px;

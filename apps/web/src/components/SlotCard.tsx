@@ -141,11 +141,23 @@ export function SlotCard({
       />
       {error && <p className="error">読み込みに失敗しました: {error}</p>}
       {loading && <p className="hint">キャラデータを読み込み中…</p>}
-      {character && (
-        <div className="slot-damage-display" data-computing={slotResult?.stale ?? false}>
-          <span className="slot-damage-label">ダメージ</span>
-          <span className="slot-damage-val">{slotResult ? formatNumber(slotResult.result.totalDamage) : '—'}</span>
-        </div>
+      {/* キャラのいないスロットも、ダメージと育成の欄を薄くして出す（枠の大きさをそろえる） */}
+      <div
+        className="slot-damage-display"
+        data-computing={slotResult?.stale ?? false}
+        data-placeholder={character === undefined}
+      >
+        <span className="slot-damage-label">ダメージ</span>
+        <span className="slot-damage-val">
+          {character && slotResult ? formatNumber(slotResult.result.totalDamage) : '—'}
+        </span>
+      </div>
+      {!(character && limits) && (
+        <details className="slot-settings" data-placeholder="true" aria-disabled="true">
+          <summary tabIndex={-1} onClick={(e) => e.preventDefault()}>
+            育成
+          </summary>
+        </details>
       )}
       {character && limits && (
         <details className="slot-settings">
