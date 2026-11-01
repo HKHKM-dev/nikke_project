@@ -13,6 +13,7 @@ import type { SlotCondition, TeamInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
 import { framesToGameSeconds } from '../time.ts';
+import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
 
 // SR: チャージ 1 秒（59f）・発と発の間 82f・戦闘開始から 70f（C-0232）・6 発
 const SR: Partial<ShotParams> = {
@@ -125,14 +126,21 @@ describe('編成', () => {
     burst: false,
   };
 
-  it('fires a partial-charge shot on the first frame of the window, then hides and reloads', () => {
+  it('fires a partial-charge shot D + H after the start of the window, then hides and reloads', () => {
+    // plan/design-hide-reload-detect.md 案 A: 窓の始まりの D（8f）後に、満ちてから撃つまで（射撃姿勢維持型でない SR は 1f）の後に撃つ。
+    // 値は撃つフレームのチャージの進み（設計書 8 節）。D を 0 にした形（窓の始まりの 1f 後に撃つ）より D の分だけ進んでいる
     const sim = runSimulation(input);
+    const noDetect = runSimulation({ ...input, model: { ...DEFAULT_WEAPON_MODEL, hideDetectFrames: 0 } });
     const log = sim.shots[0]!;
     const start = sim.untargetable[0]!.start;
-    expect(log.partialShots).toEqual([{ frame: start, progress: expect.any(Number) }]);
-    expect(log.frames.filter((f) => f >= start && f < sim.untargetable[0]!.end)).toEqual([start]);
-    expect(log.partialShots![0]!.progress).toBeGreaterThan(0);
-    expect(log.partialShots![0]!.progress).toBeLessThan(1);
+    const at = start + DEFAULT_WEAPON_MODEL.hideDetectFrames + 1;
+    expect(log.partialShots).toEqual([{ frame: at, progress: expect.any(Number) }]);
+    expect(log.frames.filter((f) => f >= start && f < sim.untargetable[0]!.end)).toEqual([at]);
+    expect(noDetect.shots[0]!.partialShots).toEqual([{ frame: start + 1, progress: expect.any(Number) }]);
+    expect(log.partialShots![0]!.progress - noDetect.shots[0]!.partialShots![0]!.progress).toBeCloseTo(
+      DEFAULT_WEAPON_MODEL.hideDetectFrames / 59,
+      12,
+    );
   });
 
   it('shows the one partial-charge shot in the screen shape, with its damage', () => {

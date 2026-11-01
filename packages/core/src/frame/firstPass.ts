@@ -131,22 +131,23 @@ import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapo
 import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
+  beginHide,
   hideShooter,
   initialShooter,
   refillAmmo,
   drainAmmo,
   resumeAfterLastShotRefill,
   resumeShooter,
-  partialChargeShot,
   chargeProgressFrames,
   stepShooter,
+  stepHide,
   unhideShooter,
   weaponChangeShooter,
   type ShooterState,
 } from './shooter.ts';
 import type { ShotLog } from './shots.ts';
 import { flightFramesAt, type FlightFrameSpan, type LandingHitRateSpan, type SlotFlight } from './landing.ts';
-import type { SkillSlot } from '../types.ts';
+import type { ShotParams, SkillSlot } from '../types.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { HoldFire, ObstacleBreak, PelletHits } from '../team.ts';
 import { unionRanges } from './events.ts';
@@ -304,6 +305,12 @@ function slotBlockRanges(
     const all = [...shared, ...holds.map((r) => ({ start: r.start, end: r.end, partial: false }))];
     return unionRanges(all.sort((a, b) => a.start - b.start || Number(b.partial) - Number(a.partial)));
   });
+}
+
+/** V-0605: holdFire の区間の始まり。部分チャージの発を撃たず、待たずにハイドする */
+function hideWithoutPartial(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): null {
+  hideShooter(state, shot, model, params);
+  return null;
 }
 
 export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassOptions): FirstPassResult {
@@ -1032,9 +1039,15 @@ export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassO
       const ownBlock = own[k];
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
       const slotHideNow = slotBlocked && ownBlock.start === f;
-      // Stage 22-B: 窓に入るフレームに、チャージの途中ならその時点のチャージで撃ってから、ハイドする（C-0109）
-      const partial = slotHideNow && ownBlock.partial ? partialChargeShot(state, shot, model, params) : null;
-      if (slotHideNow) hideShooter(state, shot, model, params);
+      // 狙えない窓（plan/design-hide-reload-detect.md 案 A）: 入るフレームにチャージが満ちていればその場で撃ってハイドし、ほかの枠は
+      // D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ。C-0109）。holdFire の区間は待たずにハイドする（V-0605）
+      const partial = slotHideNow
+        ? ownBlock.partial
+          ? beginHide(state, shot, model, params)
+          : hideWithoutPartial(state, shot, model, params)
+        : slotBlocked && state.hidePending !== undefined
+          ? stepHide(state, shot, model, params)
+          : null;
       if (ownBlock !== undefined && ownBlock.end === f)
         unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params);
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）

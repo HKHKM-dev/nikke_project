@@ -96,12 +96,13 @@ export type WeaponModel = {
    */
   hideReloadExtraFrames: number;
   /**
-   * 射撃姿勢維持型のチャージ武器が、前の発からハイド中のリロードを始めるまでのフレーム（窓の始まりより前にはしない）。窓の始まりに
-   * チャージの途中なら部分チャージで撃ち（C-0109）、撃った後の姿勢の後に RELOADING が出る（部分チャージの発から 18〜19f。紅蓮BS の
-   * 0046-18（C-0109 の根拠）、A2 の 0123-21）。ほかの武器は窓の始まりから（押下チャージ型の 0815-13・0816-10、射撃姿勢維持型で
-   * ない入力が UP の RL の 0077-47、SR のデルタの 0224-08）（C-0817。plan/design-hide-reload.md 案 A'）
+   * 敵のジャンプ（狙えない窓）の始まりから、窓の中の出来事（チャージの途中の枠の部分チャージの判定・ハイド中のリロード）が
+   * 始まるまでのフレーム（D。明けの約 110f 前）。窓の始まりにチャージが満ちていた枠は待たずにその場で撃つ。チャージの途中の枠は
+   * D から満ちてから撃つまで（H）の後に部分チャージで撃ち、射撃姿勢維持型でない武器は D から、射撃姿勢維持型は撃ってから
+   * 姿勢の終わり（⌈S⌉ − H）からリロードを始める。ほかの枠は D と前の発の姿勢の終わり（射撃姿勢維持型だけ）の遅い方から
+   * （plan/design-hide-reload-detect.md 案 A。V-0609・V-0610・V-0615）
    */
-  hideReloadStanceLeadFrames: number;
+  hideDetectFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -115,7 +116,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   stanceReloadExtraFrames: 11,
   rlWindowEndShorterFrames: 1,
   hideReloadExtraFrames: 12,
-  hideReloadStanceLeadFrames: 19,
+  hideDetectFrames: 8,
 };
 
 /**

@@ -8,6 +8,7 @@ import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
 import { isInFullBurst } from '../../burst/schedule.ts';
 import { planTeamRun } from '../../frame/plan.ts';
+import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
@@ -227,7 +228,8 @@ describe('スノーホワイト：ヘビーアームズ単騎（灼熱の的・�
       [1, 2, 3, 4, 5, 6].map((k) => after - CHARGE_TO_SHOT + tick(k)),
     );
     // 部分チャージの発の溜めでも周期は出る（溜め始めの 292f から 11・23f 後。窓の始まりまで）
-    expect(wlog.partialShots!.map((x) => x.frame)).toEqual([start]);
+    // 部分チャージの発は窓の始まりの D + H 後（plan/design-hide-reload-detect.md 案 A）
+    expect(wlog.partialShots!.map((x) => x.frame)).toEqual([start + DEFAULT_WEAPON_MODEL.hideDetectFrames + 1]);
     expect(ticks.filter((f) => f > 270 && f <= start)).toEqual([270 + 22 + tick(1), 270 + 22 + tick(2)]);
     // 部分チャージの発はフルチャージの発ではないので、溜めが満ちた時もオートファイアも無い
     expect(wlog.chargeFullFrames!.includes(start - 1) || wlog.chargeFullFrames!.includes(start)).toBe(false);
