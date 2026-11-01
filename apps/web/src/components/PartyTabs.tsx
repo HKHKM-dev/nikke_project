@@ -12,15 +12,14 @@ type Props = {
 
 const compact = new Intl.NumberFormat('ja-JP', { notation: 'compact', maximumFractionDigits: 2 });
 
-/** 値の欄の文言。狭い画面では compact（「21.01億」）を出す（styles.css） */
-function totalText(p: PartyTotal | undefined): { full: string; compact: string } {
-  if (p === undefined || p.kind === 'empty') return { full: '—', compact: '—' };
-  if (p.kind === 'loading') return { full: '読み込み中', compact: '読込中' };
+/** 値の欄の文言。値は短い表記（「21.01億」）で出し、全部の桁は title に出す */
+function totalText(p: PartyTotal | undefined): { text: string; title: string } {
+  if (p === undefined || p.kind === 'empty') return { text: '—', title: '' };
+  if (p.kind === 'loading') return { text: '読込中', title: '読み込み中' };
   if (p.total === null) {
-    const text = p.error === undefined ? '計算中' : 'エラー';
-    return { full: text, compact: text };
+    return p.error === undefined ? { text: '計算中', title: '計算中' } : { text: 'エラー', title: p.error };
   }
-  return { full: formatNumber(p.total), compact: compact.format(p.total) };
+  return { text: compact.format(p.total), title: formatNumber(p.total) };
 }
 
 export function PartyTabs({ active, onSelect, totals }: Props) {
@@ -39,9 +38,8 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
             >
               {partyNumber(i)}
             </button>
-            <span className="party-tab-total" data-active={i === active} title={totals[i]?.error ?? text.full}>
-              <span className="party-tab-total-full">{text.full}</span>
-              <span className="party-tab-total-compact">{text.compact}</span>
+            <span className="party-tab-total" data-active={i === active} title={text.title}>
+              {text.text}
             </span>
           </div>
         );

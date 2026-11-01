@@ -624,15 +624,3 @@ header h1 {
   font-weight: 600;
   opacity: 1;
 }
-/* 広い画面は桁を全部、狭い画面は「21.01億」の形 */
-.party-tab-total-compact {
-  display: none;
-}
-@media (max-width: 640px) {
-  .party-tab-total-full {
-    display: none;
-  }
-  .party-tab-total-compact {
-    display: inline;
-  }
-}
