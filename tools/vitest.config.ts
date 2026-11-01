@@ -4,6 +4,8 @@ export default defineConfig({
   test: {
     name: 'tools',
     environment: 'node',
+    // ファイルごとの隔離を外す（モジュールの読み直しが npm test の約半分。plan/design-workflow-simplification-9.md 1 節）
+    isolate: false,
     include: [
       'captures/**/*.test.ts',
       'drive/**/*.test.ts',
