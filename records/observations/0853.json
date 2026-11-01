@@ -41,6 +41,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "HUD の増分のうち、エーテルの S2 の 1 ヒット（いまのモデルの値。▼を乗せない）とちょうど一致するもの。値で拾えなかった 2 回（f3166・7756 の頃。トリガーと同じフレームで重なった）は、前後の回から 765f の周期で置ける（その後のトリガーは増えている）。隣どうしの間隔は 765f（13 秒）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -72,8 +76,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -110,8 +113,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -148,6 +150,41 @@
     "scope": {
       "slot": 1,
       "source": "normal"
+    }
+  },
+  {
+    "id": "0853-07",
+    "recording": "0853",
+    "kind": "hit",
+    "use": "compare",
+    "value": 35633,
+    "unit": "ダメージ",
+    "source": "V-0602",
+    "readAt": "2026-11-01",
+    "description": "エーテルの 2 回目の S2 のヒット（会心でない）。前の S2 の窓は切れていて、この S2 の防御力▼はヒットそのものには乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "f2401 の単独の増分 35,633。防御 100 のモデルは 35,632.538、防御 91 なら 35,637.606（表示は 35,638）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   }
 ]

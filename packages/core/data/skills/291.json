@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 291,
-  "checkedAt": "2026-10-08",
+  "checkedAt": "2026-11-01",
   "skills": {
     "skill1": {
       "effects": [],
@@ -48,21 +48,30 @@
             "C-0405",
             "C-0453"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 13
+          },
+          "target": "allies",
+          "stat": "enemyDefenseDown",
+          "ref": 3,
+          "durationRef": 4,
+          "delayFrames": 53,
+          "assumes": {
+            "ja": "説明文の「フルバーストタイム持続中に発動した時」の条件は付けない（フルバーストの外の S2 の後にも、同じ量が付く。V-0602）。最終防御力が最も高い敵 3 機を単体ボスで 1 体とする。窓は S2 のヒット（発動の 52f 後。C-0453）の次のフレームから維持の秒数（ヒットそのものには乗らない）",
+            "en": "The description condition (activated during Full Burst) is not applied: the same DEF down follows S2 outside Full Burst too (V-0602). The 3 highest-DEF enemies are one boss. The window starts the frame after the S2 hit (52 f after activation; C-0453) and lasts the duration (the hit itself does not get it)"
+          },
+          "claims": [
+            "C-0832",
+            "C-0405",
+            "C-0453",
+            "C-0790"
+          ]
         }
       ],
-      "notes": [
-        {
-          "ja": "フルバーストタイム持続中に発動した時の、同じ敵への防御力▼は未対応（語彙と効きの確かめが要るため）",
-          "en": "The DEF down on the same enemy when activated during Full Burst is not modeled (needs vocabulary and verification)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "enemyDefenseDown",
-            "target": "enemy",
-            "trigger": "unknown"
-          }
-        }
-      ]
+      "notes": []
     },
     "burst": {
       "effects": [],

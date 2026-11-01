@@ -71,7 +71,11 @@
       "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
     },
     "source": "V-0602",
-    "readAt": "2026-11-01"
+    "readAt": "2026-11-01",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "0855-06",
@@ -131,6 +135,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "HUD の増分のうち、エーテルの S2 の 1 ヒット（会心でない 35,633・会心かフルバースト補正の 53,449）とちょうど一致するもの。値で拾えなかった 1 回（f10196 の頃。ほかの発と重なった）は、前後の回から 765f の周期で置ける（その後のデルタのヒットは増えている）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -162,8 +170,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -200,8 +207,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -238,8 +244,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -276,8 +281,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {

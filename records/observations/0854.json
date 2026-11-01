@@ -41,6 +41,10 @@
     "method": {
       "tool": "hud.ts --mode jumps",
       "note": "HUD の増分のうち、エーテルの S2 の 1 ヒット（いまのモデルの値。▼を乗せない）とちょうど一致するもの。値で拾えなかった 1 回（f10816 の頃）は、前の回から 765f の周期で置ける（その後のトリガーは増えている）。隣どうしの間隔は 765f（13 秒）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -72,8 +76,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -110,8 +113,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {

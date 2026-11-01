@@ -805,7 +805,8 @@ export type TimedEffect = TargetCountFields &
     /**
      * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 射撃の回数のきっかけで、窓をきっかけの射撃のフレームの
      * delayFrames 後から始める（1 以上の整数。書かなければ次のフレームから）。測った遅れを即値で書き、根拠の結論を claims に結ぶ。
-     * 確率のきっかけ・付与には書けない
+     * 確率のきっかけ・付与には書けない。V-0602: 時間の周期のきっかけ（{ everySeconds }）にも書け、窓を周期の発火の delayFrames 後から
+     * 始める（書かなければ発火のフレームから）。1 パス目で窓を追う stat には書けない
      */
     delayFrames?: number;
     /** 常に満たすとみなした条件。UI に「仮定」として出す */
@@ -2829,6 +2830,16 @@ function parseTimedFields(
   if (v.delayFrames !== undefined) {
     if (stat === undefined) {
       if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames in a state grant needs a timer trigger');
+      effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+    } else if (isTimerTrigger(trigger)) {
+      // V-0602: 時間の周期のきっかけの timed も、周期の発火の delayFrames 後から（エーテルの S2 の防御力▼は、S2 のヒットから。
+      // C-0453・C-0832）。窓は 2 パス目の件（skills/holders.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
+      if (isFirstPassTrackedStat(stat)) {
+        fail(
+          `${path}.delayFrames`,
+          `delayFrames on a timer trigger is not supported for "${stat}" (its window is tracked inside the first pass)`,
+        );
+      }
       effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
     } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }

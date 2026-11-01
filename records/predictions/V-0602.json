@@ -72,8 +72,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "note": "エーテルの S2 のヒットの動画のフレーム（13 回）。窓の始まりの目安"
     },
@@ -90,8 +89,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目の S2 の前の、エーテルの 1 ペレット（胴体・会心なし・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
     },
@@ -108,8 +106,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目の S2 の前の、エーテルの 1 ペレット（胴体・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
     },
@@ -126,8 +123,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目の S2 の前の、エーテルの 1 ペレット（コア・会心なし・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
     },
@@ -144,8 +140,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "note": "2 回目の S2 の前の、エーテルの 1 ペレット（コア・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
     },
@@ -162,8 +157,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -183,8 +177,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -204,8 +197,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -225,8 +217,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "condition": "auto"
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -234,7 +225,7 @@
       "note": "2 回目の S2 の窓の中の、エーテルの 1 ペレット（コア・会心・距離ボーナスなし）。1 トリガーの増分はペレットの和なので、増えはペレットの数だけ足される"
     }
   ],
-  "note": "撮る編成（行 A）: エーテル（291・SG・バースト I・枠 1・操作）単騎・オート射撃 ON・オートバースト OFF・灼熱タブの BigArms（撮る前は電撃タブで出した。撮った録画 0853・0854 は灼熱タブなので、撮った後に setup の的を灼熱にして出し直した。エーテルはどちらにも有利コードを持たず、値は変わらない）・射撃場 3 分・スペック固定 ON（スキル Lv10 なので S2 の防御力▼は 9.38%）。III がいないのでフルバーストは起きず、S2 はどれもフルバーストの外で発動する。フレームはモデルの 2 回目の S2（発動はモデルの約 1530f、ヒットはその 52f 後）の前（1450f）と、窓の中（1700f）。仮説の効果は everySeconds のきっかけで delayFrames を書けないので、モデルの窓は発動から始まる（実機はヒットの頃から。C-0412）。窓の端は見ない",
+  "note": "撮る編成（行 A）: エーテル（291・SG・バースト I・枠 1・操作）単騎・オート射撃 ON・オートバースト OFF・灼熱タブの BigArms（撮る前は電撃タブで出した。撮った録画 0853・0854 は灼熱タブなので、撮った後に setup の的を灼熱にして出し直した。エーテルはどちらにも有利コードを持たず、値は変わらない）・射撃場 3 分・スペック固定 ON（スキル Lv10 なので S2 の防御力▼は 9.38%）。III がいないのでフルバーストは起きず、S2 はどれもフルバーストの外で発動する。フレームはモデルの 2 回目の S2（発動はモデルの約 1530f、ヒットはその 52f 後）の前（1450f）と、窓の中（1700f）。仮説の効果は everySeconds のきっかけで delayFrames を書けないので、モデルの窓は発動から始まる（実機はヒットの頃から。C-0412）。窓の端は見ない。比べる指定と同じにするため、出した後に指標の setup から condition（auto）を外した（この指標の値は manual でも同じ。値は出した時のまま）",
   "predicted": {
     "at": "2026-11-01",
     "commit": "3242e6eff1581eaf41c31b69f5c54357c4ce3d1c",
