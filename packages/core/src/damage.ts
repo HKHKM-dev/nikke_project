@@ -200,7 +200,8 @@ export type EnemyInput = {
   /**
    * バーストのヒットが敵の側のデバフ（受けるダメージ▲・防御力▼）を見る時点（burstHitBuffs）。省略は 'activation'（いまのモデル。
    * 発動の時点。C-0795）。'hit'（ヒットの直前。plan/design-burst-landing.md 9 節の形）は検証の予測の仮説（records/predictions の
-   * setup）だけが使う。利用者の計算には出さない
+   * setup）だけが使う。利用者の計算には出さない。バースト使用時の追加ダメージ（damage）は切り替えに依らず効果の発火の直前の値で見る
+   * （plan/design-burst-landing.md 12 節。C-0838）
    */
   burstHitEnemyDebuffs?: BurstHitEnemyDebuffs;
 };

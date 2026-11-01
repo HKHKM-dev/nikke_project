@@ -464,8 +464,8 @@ notes の種類: 未対応 43・前提の外 32・計算に無関係 35・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0160（確定）、C-0165（確定）
   - effects[1] timed・burstUse・damageTaken: C-0160（確定）、C-0161（確定）、C-0162（確定）、C-0165（確定）、C-0153（確定）
-  - effects[2] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）
-  - effects[3] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）
+  - effects[2] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）、C-0838（確定）
+  - effects[3] damage・burstUse・additional: C-0160（確定）、C-0163（確定）、C-0165（確定）、C-0838（確定）
   - notes[0] 補足: フルバーストタイム 5 秒▼は burst_duration（5 秒）から時刻表に入る: C-0011（確定）
 
 ## 242 フォルクヴァン
