@@ -146,6 +146,13 @@ const KIND_INFO: Record<string, Info> = {
     'check',
     '付与の stacksFrom（自分の状態・カウンタ。2 段目の段 10）と dot の stacksFrom（敵の持続ダメージのスタック。段 13）だけ',
   ],
+  // 2 段目の段 19: 写す元は順位で選んだ味方（自分も含む）
+  'buffOp:copyAttack': [
+    '攻撃力のコピー',
+    'ok',
+    'timed の scaling copyTopAttack（バフ前の攻撃力が最も高い味方の攻撃力を写す。C-0873）',
+  ],
+  'buffOp:copyMaxHp': ['最大HP のコピー', 'indirect', '間接の notes（HP。最大HP を読む効果のある編成でだけ効く）'],
   'buffOp:stackChange': [
     'スタック量の増減',
     'ok',
@@ -222,7 +229,7 @@ const KIND_INFO: Record<string, Info> = {
   resource: [
     'キャラ固有のカウンタ（MP・ゲージ・弾倉など）',
     'check',
-    'counterChange・selfCounter・{ counterFull }・perCount { counter }（目録のカウンタだけ）',
+    'counterChange・selfCounter・{ counterFull }・durationUntil: { counterEmpty }・perCount { counter }（目録のカウンタだけ。バッテリーは 2 段目の段 19）',
   ],
   'state:grant': ['名前の付いた状態の付与（名前・中身）', 'ok', 'state（目録の id）'],
   'state:grant?': ['名前だけの付与（状態・仕組み）', 'check', 'state か、仕組みごとの語彙'],
@@ -412,7 +419,7 @@ const DUR: Record<string, Info> = {
   'dur:shots': ['N 発間維持', 'ok'],
   'dur:fullBurst': ['フルバーストタイムの間', 'ok'],
   'dur:reloads': ['リロード N 回に適用', 'gap'],
-  'dur:untilState': ['〈状態〉解除まで', 'gap'],
+  'dur:untilState': ['〈状態〉解除まで', 'ok', 'durationUntil: { stateEnd }（持続ダメージ。2 段目の段 19）'],
   'dur:scaled': ['回数 × N 秒', 'gap'],
   'stack:max': ['N スタック', 'ok'],
   'stack:cap': ['最大 N（個・回・段階）', 'check'],
@@ -988,7 +995,9 @@ function writeRemovalSection(p: Writer, begin: (key: string) => void, L: readonl
   const withSec = undisp.filter((l) => /「[XN\d.]+秒間維持」「解除不可」/.test(l.flat));
   const withUntil = undisp.filter((l) => /解除条件：/.test(l.flat));
   p(`- 解除不可と N 秒間維持が同じ効果に付く行: ${withSec.length}（${fmtChars(withSec)}）`);
-  p(`- 解除不可の状態に解除条件が書かれた行: ${withUntil.length}（${fmtChars(withUntil)}）`);
+  p(
+    `- 解除不可の状態に解除条件が書かれた行: ${withUntil.length}（${fmtChars(withUntil)}）。解除条件は維持の終わりとして持ち（アークレンジャー・ブラックの変身は durationUntil: { counterEmpty }。2 段目の段 19）、解除不可は解除・効果解除で外れない印のまま`,
+  );
   // 消去・解除の相手が、解除不可で付く状態か
   const grantedUndisp = new Set<string>();
   for (const l of undisp) {
