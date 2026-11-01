@@ -108,7 +108,8 @@ export type ResolvedBurstDamage = ResolvedSkillDamage;
 
 /** 周期の短縮の解決した形（skills/types.ts の PeriodShorten） */
 export type ResolvedPeriodShorten = { seconds: number } & (
-  { state: NamedStateId; window?: never } | { window: { trigger: 'burstUse'; durationFrames: number }; state?: never }
+  | { state: NamedStateId; window?: never }
+  | { window: { trigger: 'burstUse'; durationFrames: number; elapsed?: true }; state?: never }
 );
 
 /** Stage 8: トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
@@ -372,6 +373,7 @@ export function resolveDamageEffects(
                 window: {
                   trigger: window.trigger,
                   durationFrames: gameSecondsToFrames(durationSecondsOf(window, character.skills[from], levels[from])),
+                  ...(window.elapsed === true ? { elapsed: true as const } : {}),
                 },
                 seconds,
               };

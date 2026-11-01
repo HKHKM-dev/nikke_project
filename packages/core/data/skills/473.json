@@ -104,28 +104,32 @@
       ],
       "notes": [
         {
-          "ja": "フルチャージ状態を 1 秒以上維持した時の自分への共用バリアは、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。きっかけ「フルチャージ状態を N 秒以上維持した時」は語彙に無い）",
-          "en": "The shared barrier on self when Full Charge is held for 1 s or more does not change damage by itself (it matters only with an effect reading barriers; the trigger 'Full Charge held for N s or more' is not in the vocabulary)",
-          "kind": "indirect",
-          "path": "barrier",
+          "ja": "フルチャージ状態を 1 秒以上維持した時の自分への共用バリアは、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）",
+          "en": "The shared barrier on self when Full Charge is held for 1 s or more never happens, since auto fire does not hold Full Charge (requirements 4.2)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
             "target": "self",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0839"
+          ]
         },
         {
-          "ja": "フルチャージ状態を 1 秒以上維持した時の味方全体のゴッデスブレッシング（発動者基準の防御力▲）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く。きっかけは上と同じく語彙に無い）",
-          "en": "Goddess Blessing (DEF up based on the caster) on all allies when Full Charge is held for 1 s or more does not change damage by itself (it matters only with an effect reading DEF; the trigger is not in the vocabulary, as above)",
-          "kind": "indirect",
-          "path": "defense",
+          "ja": "フルチャージ状態を 1 秒以上維持した時の味方全体のゴッデスブレッシング（発動者基準の防御力▲）は、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）",
+          "en": "Goddess Blessing (DEF up based on the caster) on all allies when Full Charge is held for 1 s or more never happens, since auto fire does not hold Full Charge (requirements 4.2)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "timed",
             "stat": "defense",
             "target": "allies",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0839"
+          ]
         }
       ]
     },

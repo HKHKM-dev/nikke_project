@@ -1,0 +1,40 @@
+{
+  "id": "0873",
+  "date": "2026-11-01",
+  "folder": "range",
+  "file": "20261101-0873_ar+sr_dorothy+delta.mp4",
+  "original": "2026-11-01_16-06-20.mp4",
+  "durationSec": 198.3,
+  "frames": 11896,
+  "fps": 60,
+  "sizeMB": 240.3,
+  "sha256": "3250076703a0",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 233,
+      "name": "ドロシー",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0612 の撮影 E2。ドロシー（I・操作）・デルタ（II）。オート射撃 ON・オートバースト ON。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた",
+  "backup": {
+    "at": "2026-11-01T16:56+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

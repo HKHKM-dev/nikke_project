@@ -1128,10 +1128,13 @@ export type DamageEffect = {
  * - state: 自分の名前の付いた状態の間（マリアン：クイーン。C-0738。前の発動のフレームと縮めた次の発動のフレームの両方で状態のとき縮める）
  * - window: 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。論点 7）: 名前の無い窓。自分の trigger（burstUse）のフレームから
  *   slot のスロットの description_value_NN（durationRef）秒の間。縮めた次の発動のフレームが窓の中なら縮める（前の発動のフレームは見ない。
- *   エイダの S2 の閃光手榴弾投擲の発動間隔▼。V-0569）
+ *   エイダの S2 の閃光手榴弾投擲の発動間隔▼。V-0569）。2 段目の段 18 の PR 1（plan/design-skill-stage18.md 2.2 節。V-0612）: elapsed なら、
+ *   クールタイムを縮める窓（T4 のクールタイム▼の読み）。発動のフレームが窓の中なら次の発動まで縮めた周期、外なら縮めない周期で、窓が始まった
+ *   フレームからは縮めた周期で次の発動が来る（ドロシーの発現。skills/timeline.ts の elapsedShortenedTimerFrames）。carry の周期とは組まない
  */
 export type PeriodShorten = { slot: SkillSlot; ref: number } & (
-  { state: NamedStateId; window?: never } | { window: { trigger: 'burstUse'; durationRef: number }; state?: never }
+  | { state: NamedStateId; window?: never }
+  | { window: { trigger: 'burstUse'; durationRef: number; elapsed?: true }; state?: never }
 );
 
 /** 2 段目の段 12・13: perCount の数だけ 1 つずつ出す倍率ダメージ（perCountIntervalSeconds・perCountIntervalFrames）か */
@@ -3771,10 +3774,19 @@ function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect 
       const at = `${path}.periodShorten.window`;
       if (!isRecord(w)) fail(at, 'expected an object');
       for (const key of Object.keys(w))
-        if (key !== 'trigger' && key !== 'durationRef') fail(`${at}.${key}`, 'unknown field');
+        if (!['trigger', 'durationRef', 'elapsed'].includes(key)) fail(`${at}.${key}`, 'unknown field');
       if (w.trigger !== 'burstUse') fail(`${at}.trigger`, `expected "burstUse", got ${JSON.stringify(w.trigger)}`);
+      // 2 段目の段 18 の PR 1: 経過で縮める窓（ドロシーの発現）。端数を持ち越す周期とは組まない
+      if (w.elapsed !== undefined && w.elapsed !== true)
+        fail(`${at}.elapsed`, `expected true, got ${JSON.stringify(w.elapsed)}`);
+      if (w.elapsed === true && isTimerTrigger(trigger) && trigger.carry === true)
+        fail(`${at}.elapsed`, 'elapsed cannot be used with a carry timer');
       effect.periodShorten = {
-        window: { trigger: 'burstUse', durationRef: parseRef(w.durationRef, `${at}.durationRef`) },
+        window: {
+          trigger: 'burstUse',
+          durationRef: parseRef(w.durationRef, `${at}.durationRef`),
+          ...(w.elapsed === true ? { elapsed: true as const } : {}),
+        },
         slot,
         ref,
       };

@@ -22,18 +22,18 @@
           ]
         },
         {
-          "ja": "フルチャージ状態を 1 秒以上維持した時、自分がバリア適用状態なら味方全体の攻撃ダメージ▲（持続）は未対応（きっかけ「フルチャージ状態を 1 秒以上維持した時」が語彙に無い。バリア適用状態の条件は書ける）",
-          "en": "The attack damage increase on all allies (permanent) when full charge is held for 1 s or more while she has a barrier is not modeled (the trigger 'full charge held for 1 s or more' is not in the vocabulary; the barrier-state condition can be written)",
-          "kind": "unimplemented",
-          "reads": [
-            "barrier"
-          ],
+          "ja": "フルチャージ状態を 1 秒以上維持した時、自分がバリア適用状態なら味方全体の攻撃ダメージ▲（持続）は、オートの射撃ではフルチャージを保たないので起きない（要件 4.2 節）",
+          "en": "The attack damage increase on all allies (permanent) when full charge is held for 1 s or more while she has a barrier never happens, since auto fire does not hold full charge (requirements 4.2)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "timed",
             "stat": "attackDamage",
             "target": "allies",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0839"
+          ]
         }
       ]
     },

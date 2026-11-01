@@ -421,8 +421,38 @@ export function timerDamageFrames(
   const { state, window } = shorten;
   if (window === undefined) return shortenedTimerFrames(trigger, shorten.seconds, frames, (f) => selfState(state, f));
   const starts = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex).map(effectFrameOf);
+  if (window.elapsed === true)
+    return elapsedShortenedTimerFrames(trigger, shorten.seconds, frames, starts, window.durationFrames);
   const inWindow = (f: number) => starts.some((s) => s <= f && f < s + window.durationFrames);
   return shortenedTimerFrames(trigger, shorten.seconds, frames, inWindow, true);
+}
+
+/**
+ * 2 段目の段 18 の PR 1（plan/design-skill-stage18.md 2.2 節。V-0612）: クールタイムを縮める窓の周期の発火フレーム（ドロシーの発現）。
+ * 発動のフレーム f（初めは戦闘開始の 0）の次の発動は、f が窓の中なら f + 縮めた周期、外なら f + 縮めない周期。窓が始まったフレーム s では、
+ * 次の発動を s + 縮めた周期に早める（もっと早い予定ならそのまま）。周期はどれも gameSecondsToFirstFrame（端数は持ち越さない）。窓の終わりを
+ * 越えた発動も、窓の中の発動から縮めた周期で来る（V-0612。窓の 5 回目）
+ */
+export function elapsedShortenedTimerFrames(
+  trigger: TimerTrigger,
+  shortenSeconds: number,
+  frames: number,
+  windowStarts: readonly number[],
+  durationFrames: number,
+): number[] {
+  const long = gameSecondsToFirstFrame(trigger.everySeconds);
+  const short = gameSecondsToFirstFrame(trigger.everySeconds - shortenSeconds);
+  const inWindow = (f: number) => windowStarts.some((s) => s <= f && f < s + durationFrames);
+  const starts = new Set(windowStarts);
+  const out: number[] = [];
+  let next = long;
+  for (let f = 1; f < frames; f++) {
+    if (starts.has(f)) next = Math.min(next, f + short);
+    if (f !== next) continue;
+    out.push(f);
+    next = f + (inWindow(f) ? short : long);
+  }
+  return out;
 }
 
 /**
