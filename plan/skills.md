@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 77・効果 474（根拠あり 449）・notes 193（根拠あり 87）
+件数: キャラ 78・効果 487（根拠あり 459）・notes 193（根拠あり 88）
 
-notes の種類: 未対応 46・前提の外 40・計算に無関係 38・補足 16・間接 53
+notes の種類: 未対応 44・前提の外 41・計算に無関係 39・補足 16・間接 53
 
-スロット: supported 178・partial 20・unsupported 16・noEffect 35
+スロット: supported 182・partial 20・unsupported 15・noEffect 35
 
 ## 10 ラピ
 
@@ -152,6 +152,20 @@ notes の種類: 未対応 46・前提の外 40・計算に無関係 38・補足
 - **宝物版 burst**: supported
   - effects[0] timed・burstUse・attack: C-0322（確定）、C-0450（確定）、C-0451（確定）
   - effects[1] timed・burstUse・critDamage: C-0322（確定）、C-0450（確定）、C-0451（確定）
+
+## 40 D
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・elementDamage: 根拠なし
+  - notes[0] 計算に無関係: フルバーストタイムが発動した時（初回は追加で）の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない: 根拠なし
+- **skill2**: supported
+  - effects[0] burstGauge・battleStart: 根拠なし
+  - effects[1] state・battleStart・stunImmunity: C-0886（確定）
+  - effects[2] timed・battleStart・elementDamage: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0887（確定）
+  - effects[1] fullBurstExtend・burstUse: C-0886（確定）
+  - notes[0] 前提の外: 火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）: 根拠なし
 
 ## 60 ベロータ
 
@@ -703,10 +717,15 @@ notes の種類: 未対応 46・前提の外 40・計算に無関係 38・補足
   - effects[0] stackChange・battleStart・goldenChip: C-0128（確定）
   - effects[1] state・normalShot・goldenChip（critDamage）: C-0580（確定）
     - contents[0] critDamage: C-0128（確定）
-  - notes[0] 未対応: フルバーストタイム中の通常攻撃 3 回ごとの、自分と自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応: 根拠なし
-- **skill2**: unsupported
-  - notes[0] 未対応: バースト 3 段階突入時の、ゴールデンチップのスタック量別のフルバーストタイムの持続時間▲は未対応: 根拠なし
-  - notes[1] 未対応: フルバーストタイム中の通常攻撃ごとの、時間延長状態別のダメージは未対応: 根拠なし
+  - effects[2] timed・normalShot・attackDamage: C-0881（確定）
+  - notes[0] 未対応: 同じきっかけの、自分を除く最終攻撃力が最も高い味方 1 機への攻撃ダメージ▲（2 秒）は未対応。ラム・デルタ（スペック固定の攻撃力が同じ）との編成の録画では▲はデルタに乗り、ラムには乗らない（V-0634）。モデルの順位（最終攻撃力。同値は枠の若い順）ではラムになり、選び方が決まらない: C-0882（確定）
+- **skill2**: supported
+  - effects[0] fullBurstExtend・burstStage3Enter: C-0877（確定）
+  - effects[1] fullBurstExtend・burstStage3Enter: C-0877（確定）
+  - effects[2] state・burstStage3Enter・timeExtension1: C-0880（確定）
+  - effects[3] state・burstStage3Enter・timeExtension2: C-0880（確定）
+  - effects[4] damage・normalShot・skill: C-0880（確定）
+  - effects[5] damage・normalShot・skill: C-0880（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0572（確定）、C-0581（確定）、C-0582（確定）、C-0615（確定）
   - effects[1] timed・burstUse・hitRate: C-0573（確定）
