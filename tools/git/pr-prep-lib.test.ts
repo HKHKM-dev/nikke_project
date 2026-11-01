@@ -1,12 +1,13 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git は、パスの一覧の読み方を見るところだけ一時のリポジトリで呼ぶ。
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   addedLines,
   changedChecks,
+  changedFilesArgs,
   checkSteps,
   collisions,
   isCheckSetting,
@@ -159,6 +160,9 @@ describe('changedChecks', () => {
       lint: ['tools/git/pr-prep.ts', 'apps/web/src/App.tsx', 'eslint.cjs'],
     });
     expect(changedChecks([], exists)).toEqual({ full: false, format: [], lint: [] });
+    expect(changedChecks(['tools/x.mts', 'tools/y.cts', 'a.d.ts'], exists)).toMatchObject({
+      lint: ['tools/x.mts', 'tools/y.cts', 'a.d.ts'],
+    });
   });
 
   it('checks every file when the branch changed a setting of prettier or eslint', () => {
@@ -235,6 +239,27 @@ describe('pathListArgs and nulPaths', () => {
       '録画/あ.md',
     ]);
   });
+
+  it('lists both paths of a renamed or deleted setting, so the branch checks every file', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
+    git(cwd, ['init', '-q']);
+    writeFileSync(join(cwd, '.prettierignore'), 'plan/residuals.md\n');
+    writeFileSync(join(cwd, '.editorconfig'), 'root = true\n');
+    writeFileSync(join(cwd, 'a.ts'), 'export {};\n');
+    git(cwd, ['add', '.']);
+    git(cwd, ['commit', '-q', '-m', 'base']);
+    const base = git(cwd, ['rev-parse', 'HEAD']).trim();
+    const exists = (path: string) => existsSync(join(cwd, path));
+    const changed = () => nulPaths(git(cwd, pathListArgs(changedFilesArgs(base))));
+    git(cwd, ['mv', '.prettierignore', 'prettierignore.old']);
+    git(cwd, ['commit', '-q', '-m', 'rename']);
+    expect(changed()).toEqual(['.prettierignore', 'prettierignore.old']);
+    expect(changedChecks(changed(), exists)).toEqual({ full: true, reason: '.prettierignore を変えた' });
+    git(cwd, ['rm', '-q', '.editorconfig']);
+    git(cwd, ['commit', '-q', '-m', 'delete']);
+    expect(changed()).toContain('.editorconfig');
+    expect(changedChecks(changed(), exists).full).toBe(true);
+  });
 });
 
 describe('checkSteps', () => {
@@ -251,5 +276,6 @@ describe('checkSteps', () => {
   it('stops on a step it cannot run by name, or when the format or the lint is gone', () => {
     expect(() => checkSteps(`${ci} && tsc -b`)).toThrow('tsc -b');
     expect(() => checkSteps('npm run lint && npm test')).toThrow('format:check');
+    expect(() => checkSteps(undefined)).toThrow('npm run ci の段が無い');
   });
 });

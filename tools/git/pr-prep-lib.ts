@@ -130,8 +130,8 @@ const CHECK_SETTING =
 export function isCheckSetting(path: string): boolean {
   return CHECK_SETTING.test(path);
 }
-/** eslint が見る拡張子（eslint.config.js） */
-const LINT_FILE = /\.(?:[cm]?js|tsx?)$/;
+/** eslint が見る拡張子（eslint.config.js と、typescript-eslint の recommended の files） */
+const LINT_FILE = /\.(?:[cm]?[jt]s|tsx)$/;
 /** これより多く変えたら全部を見る（コマンドラインの長さの上限を避ける。Windows は約 32,000 字） */
 export const MAX_CHANGED_FILES = 300;
 
@@ -142,6 +142,14 @@ export type ChangedChecks = { full: true; reason: string } | { full: false; form
  * 書式と lint はファイルごとに決まる（eslint は型を使う規則を入れていない）ので、ブランチで変えた（消していない）ファイルだけを見る。
  * 設定を変えたか、変えたファイルが多すぎるときは全部を見る
  */
+/**
+ * ブランチで変えたファイルを出す git の引数（pathListArgs に渡す）。--no-renames で、名前を変えたファイルは前のパスも出す（.prettierignore や
+ * package.json の名前を変えたブランチも、isCheckSetting で全部のファイルを見る）
+ */
+export function changedFilesArgs(base: string): string[] {
+  return ['diff', '--name-only', '--no-renames', `${base}...HEAD`];
+}
+
 export function changedChecks(changed: readonly string[], exists: (path: string) => boolean): ChangedChecks {
   const config = changed.find(isCheckSetting);
   if (config !== undefined) return { full: true, reason: `${config} を変えた` };
@@ -171,7 +179,8 @@ const CHANGED_ONLY_STEPS = ['format:check', 'lint'];
  * npm run ci（package.json）の段のうち、書式と lint を除いたもの（npm run の名前）。ci に段を足せば pr:prep も回す。npm run <名前> か
  * npm test でない段や、書式か lint の段が無いときは止める（pr:prep が ci と違う確認になるので）
  */
-export function checkSteps(ci: string): string[] {
+export function checkSteps(ci: string | undefined): string[] {
+  if (ci === undefined) throw new Error('package.json に npm run ci の段が無い（pr:prep は ci の段から確認を組む）');
   const steps = ci.split('&&').map((step) => {
     const m = /^npm (?:run (\S+)|(test))$/.exec(step.trim());
     if (m === null) throw new Error(`npm run ci の段「${step.trim()}」が npm run <名前> の形でない`);

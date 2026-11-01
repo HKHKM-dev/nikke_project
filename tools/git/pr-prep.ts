@@ -20,6 +20,7 @@ import { GENERATED_PATHS, ROOT, SENSITIVITY_PATH, idsInBranches } from '../../pa
 import {
   addedLines,
   changedChecks,
+  changedFilesArgs,
   checkSteps,
   collisions,
   nulPaths,
@@ -171,7 +172,7 @@ while (rebasing()) {
   }
 }
 
-const branchChanged = gitPaths(['diff', '--name-only', 'origin/main...HEAD']);
+const branchChanged = gitPaths(changedFilesArgs('origin/main'));
 const script = regenerateScript(branchChanged, conflictedSoFar, sensitivity);
 console.log(`生成物を作り直す（npm run ${script}）`);
 npm(script);
@@ -197,7 +198,7 @@ if (!values['no-ci']) {
     const manifest = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')) as {
       scripts: Record<string, string>;
     };
-    for (const script of checkSteps(manifest.scripts['ci']!)) npm(script);
+    for (const script of checkSteps(manifest.scripts['ci'])) npm(script);
   }
 }
 
