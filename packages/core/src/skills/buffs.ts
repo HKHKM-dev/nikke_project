@@ -55,7 +55,7 @@ export const ATTACK_ROUNDING: AttackRounding = 'self';
 export type AttackPart = { source: string; ratio: number; flat: number; self?: true };
 
 /** チャージ速度▲の 1 件（超過分の変換の丸め用。V-0640）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`） */
-export type ChargeSpeedPart = { source: string; ratio: number };
+export type ChargeSpeedPart = Pick<AttackPart, 'source' | 'ratio'>;
 
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
 export type BuffTotals = {
@@ -295,11 +295,28 @@ export function addRatioBuff(
   self = false,
 ): BuffTotals {
   const field = RATIO_FIELD[stat];
-  const next = { ...totals, [field]: totals[field] + ratio };
-  if (stat === 'chargeSpeed') return { ...next, chargeSpeedParts: [...totals.chargeSpeedParts, { source, ratio }] };
-  if (stat !== 'attack') return next;
-  return { ...next, attackParts: [...totals.attackParts, { source, ratio, flat: 0, ...(self ? { self } : {}) }] };
+  const next: BuffTotals = { ...totals, [field]: totals[field] + ratio };
+  if (stat === 'chargeSpeed') next.chargeSpeedParts = [...totals.chargeSpeedParts, { source, ratio }];
+  if (stat === 'attack') {
+    next.attackParts = [...totals.attackParts, { source, ratio, flat: 0, ...(self ? { self } : {}) }];
+  }
+  return next;
 }
+
+/** 内訳を key ごとに足し、まとめた値ごとに四捨五入してから足した和（攻撃力▲・チャージ速度▲の丸め） */
+function sumRoundedGroups<T>(parts: readonly T[], keyOf: (part: T) => string, amountOf: (part: T) => number): number {
+  const groups = new Map<string, number>();
+  for (const part of parts) {
+    const key = keyOf(part);
+    groups.set(key, (groups.get(key) ?? 0) + amountOf(part));
+  }
+  let sum = 0;
+  for (const amount of groups.values()) sum += Math.round(amount);
+  return sum;
+}
+
+/** 攻撃力▲の 1 件の「効果」の鍵（同じスキルの同じ値の効果＝スタックは 1 つにまとめる） */
+const attackEffectKey = (part: AttackPart): string => `${part.source}|${part.ratio}|${part.flat}`;
 
 /** 攻撃力の固定加算（実数）。新しいオブジェクトを返す。内訳にも出どころ source で足す */
 export function addFlatAttack(totals: BuffTotals, amount: number, source = 'build', self = false): BuffTotals {
@@ -429,27 +446,20 @@ export function roundedAttack(
   if (rounding === 'total') return Math.round(applyAttackBuffs(baseAttack, buffs));
   if (rounding === 'self') {
     if (buffs.attackParts.length === 0) return Math.round(applyAttackBuffs(baseAttack, buffs));
-    const own = new Map<string, number>();
+    const amountOf = (part: AttackPart) => baseAttack * part.ratio + part.flat;
     let rest = baseAttack;
-    for (const part of buffs.attackParts) {
-      const amount = baseAttack * part.ratio + part.flat;
-      if (part.self !== true) rest += amount;
-      else {
-        const key = `${part.source}|${part.ratio}|${part.flat}`;
-        own.set(key, (own.get(key) ?? 0) + amount);
-      }
-    }
-    for (const amount of own.values()) rest += Math.round(amount);
+    for (const part of buffs.attackParts) if (part.self !== true) rest += amountOf(part);
+    rest += sumRoundedGroups(
+      buffs.attackParts.filter((part) => part.self === true),
+      attackEffectKey,
+      amountOf,
+    );
     return Math.round(rest);
   }
-  const groups = new Map<string, number>();
-  for (const part of buffs.attackParts) {
-    const key = rounding === 'skill' ? part.source : `${part.source}|${part.ratio}|${part.flat}`;
-    groups.set(key, (groups.get(key) ?? 0) + baseAttack * part.ratio + part.flat);
-  }
-  let attack = Math.round(baseAttack);
-  for (const amount of groups.values()) attack += Math.round(amount);
-  return attack;
+  const keyOf = rounding === 'skill' ? (part: AttackPart) => part.source : attackEffectKey;
+  return (
+    Math.round(baseAttack) + sumRoundedGroups(buffs.attackParts, keyOf, (part) => baseAttack * part.ratio + part.flat)
+  );
 }
 
 /**
@@ -499,16 +509,12 @@ export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buff
  * 効果ごと（同じ出どころの同じ値＝スタックは 1 つにまとめる）に整数の % に四捨五入してから足す（V-0640。丸めの単位と、
  * 味方からの▲を和に入れることは未確定）。チャージの長さ（chargeSpeed）は丸めない
  */
-export function chargeSpeedOverflowDamage(
-  buffs: Pick<BuffTotals, 'chargeSpeedParts' | 'chargeSpeedOverflow'>,
-): number {
+export function chargeSpeedOverflowDamage(buffs: Pick<BuffTotals, 'chargeSpeedParts' | 'chargeSpeedOverflow'>): number {
   if (buffs.chargeSpeedOverflow === 0) return 0;
-  const groups = new Map<string, number>();
-  for (const part of buffs.chargeSpeedParts) {
-    const key = `${part.source}|${part.ratio}`;
-    groups.set(key, (groups.get(key) ?? 0) + part.ratio);
-  }
-  let percent = 0;
-  for (const ratio of groups.values()) percent += Math.round(ratio * 100);
+  const percent = sumRoundedGroups(
+    buffs.chargeSpeedParts,
+    (part) => `${part.source}|${part.ratio}`,
+    (part) => part.ratio * 100,
+  );
   return (Math.max(0, percent - 100) / 100) * buffs.chargeSpeedOverflow;
 }
