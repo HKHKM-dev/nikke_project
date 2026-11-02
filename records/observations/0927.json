@@ -167,5 +167,60 @@
       "slot": 3,
       "source": "normal"
     }
+  },
+  {
+    "id": "0927-11",
+    "recording": "0927",
+    "source": "V-0641",
+    "readAt": "2026-11-02",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 1,
+    "description": "レッドフードの 1 発目（911f）で、的の 1 ヒットのほかに溜まったゲージを、的以外の 1 ヒット（物 1 個と同じ量）と読んだ数。何に当たったかは画に見えない（V-0641「条件」）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps・hud-jumps@2 のキャッシュ",
+      "note": "1 発目のフレームのバーの伸び（% の値）から、同じフレームまでのリターのヒット（HUD の増分の数）とデルタの 1 発を引いた（V-0641「読み方」）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0927-12",
+    "recording": "0927",
+    "source": "V-0641",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "interval",
+    "value": 35,
+    "description": "1 回目のフルバーストの 00.00 からレッドウルフの最初の発まで（動画のフレーム。入りの止まりを含む）。モデルには、レッドフードの 1 発目の余分（0927-11）を入力する",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "レシピ hud-jumps のキャッシュ（hud.ts は閾値 150 で読めないフレームを 120・100 で読み直す）の増分を、レッドフードの 1 発の格子（攻撃力 × 倍率 × (コア 1 + 会心 0.5 + フルバースト 0.5 の組)）に目で当てた（V-0639「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 1,
+            "count": "0927-11"
+          }
+        ]
+      }
+    }
   }
 ]
