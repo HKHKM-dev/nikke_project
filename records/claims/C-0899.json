@@ -1,0 +1,29 @@
+{
+  "id": "C-0899",
+  "text": "レッドフードのレッドウルフの窓の発には、S2 の「レッドウルフを発動した時、自分に攻撃力 値 05（71.42%）▲」と、S1 の超過分の変換が乗る。超過分は、チャージ速度▲を効果ごと（III のチャージ速度 値 10（100.8%）▲と、S1 の k スタックの和）に整数の % に四捨五入してから足した和の 100% を超えた分で、その 240%（S1 の値 04）をチャージダメージ▲（足し算の▲）に足す",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0926-11`・`0927-10`。V-0640",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-02",
+  "subject": {
+    "places": [
+      "data/skills/470.json の skill2 の effects[0]",
+      "data/skills/470.json の skill1 の effects[1]",
+      "data/skills/470.json の burst の effects[5]",
+      "data/skills/470.json の burst の effects[7]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0924",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0926",
+      "role": "仮説の出どころ"
+    }
+  ]
+}
