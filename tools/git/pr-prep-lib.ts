@@ -69,6 +69,16 @@ export function handEditedLines(addedLines: readonly string[], generated: string
   return addedLines.filter((l) => l.trim() !== '' && !lines.has(l));
 }
 
+/**
+ * 手で消した生成物の行: ブランチで消した行のうち、作り直した版にまだあり（元のデータに残っている）、ブランチの版（branch）に無いもの
+ * （動かしただけの行は除く）。空の行は見ない
+ */
+export function handRemovedLines(removedLines: readonly string[], generated: string, branch: string): string[] {
+  const lines = new Set(generated.split('\n'));
+  const kept = new Set(branch.split('\n'));
+  return removedLines.filter((l) => l.trim() !== '' && lines.has(l) && !kept.has(l));
+}
+
 /** 出す行を 80 字で切る */
 export function short(line: string): string {
   return line.length > 80 ? `${line.slice(0, 80)}…` : line;
@@ -114,6 +124,37 @@ export function addedLines(diff: string): Map<string, Set<number>> {
     const start = Number(hunk[1]);
     const count = hunk[2] === undefined ? 1 : Number(hunk[2]);
     for (let n = start; n < start + count; n++) lines.add(n);
+  }
+  return out;
+}
+
+/**
+ * git diff -U0 の出力から、ファイルごとに消した（変えた）行の文（main の版のパスで引く）。ファイルの頭（--- a/…）は、次の
+ * diff --git までの最初の @@ の前にだけあるので、「--」で始まる行を消したものと取り違えない
+ */
+export function removedLines(diff: string): Map<string, string[]> {
+  const out = new Map<string, string[]>();
+  let lines: string[] | undefined;
+  let inHunk = false;
+  for (const l of diff.split('\n')) {
+    if (l.startsWith('diff --git ')) {
+      lines = undefined;
+      inHunk = false;
+      continue;
+    }
+    if (l.startsWith('@@ ')) {
+      inHunk = true;
+      continue;
+    }
+    if (!inHunk) {
+      const file = /^--- a\/(.+)$/.exec(l)?.[1];
+      if (file !== undefined) {
+        lines = [];
+        out.set(file, lines);
+      }
+      continue;
+    }
+    if (l.startsWith('-')) lines?.push(l.slice(1));
   }
   return out;
 }
