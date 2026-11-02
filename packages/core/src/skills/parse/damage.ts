@@ -4,7 +4,7 @@ import {
   BURST_DAMAGE_TYPES,
   type BurstDamageEffect,
   type DamageEffect,
-  hasCountingWindow,
+  type EffectTrigger,
   isAppliedTrigger,
   isCounterFullTrigger,
   isShotCountTrigger,
@@ -288,4 +288,14 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     fail(path, 'projectileExplosion and projectileStick cannot be used together');
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
+}
+
+/** クルミ S2 編: 回数トリガーに数える窓（during）か、発火の窓（firesDuring。V-0443）があるか */
+function hasCountingWindow(trigger: EffectTrigger): boolean {
+  return (
+    typeof trigger === 'object' &&
+    'count' in trigger &&
+    (('during' in trigger && trigger.during !== undefined) ||
+      ('firesDuring' in trigger && trigger.firesDuring !== undefined))
+  );
 }

@@ -1,7 +1,6 @@
 // スキル定義の読み込みの検査のうち、効果 1 件の読み込み（種類ごとのモジュールへの振り分けと、どの種類にも共通の欄）。型は ../types.ts
 import { ELEMENTS } from '../../element.ts';
-import type { SkillSlot } from '../../types.ts';
-import type { SkillEffect } from '../types.ts';
+import { INSTANT_KINDS, type InstantKind, SKILL_EFFECT_KINDS, type SkillEffect, type SkillSlot } from '../types.ts';
 import { parseAutoAttackEffect, parseShotPauseEffect, parseSummonEffect } from './attack.ts';
 import { fail, isRecord, type Json, oneOf, parseClaimRefs } from './common.ts';
 import { parseBurstStepMixCondition, parseSquadCondition, parseWithCharacterCondition } from './condition.ts';
@@ -16,7 +15,6 @@ import {
 } from './gauge.ts';
 import { parseCoverHealEffect, parseInstantEffect } from './instant.ts';
 import { parseIndirectReads } from './notes.ts';
-import { parsePassiveEffect } from './passive.ts';
 import {
   parseCancelStateEffect,
   parseCounterChangeEffect,
@@ -24,7 +22,7 @@ import {
   parseStackChangeEffect,
   parseStateGrantEffect,
 } from './state.ts';
-import { parseTimedEffect } from './timed.ts';
+import { parsePassiveEffect, parseTimedEffect } from './timed.ts';
 import { parseWeaponChangeEffect } from './weapon.ts';
 
 /**
@@ -81,47 +79,49 @@ export function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect
   return effect;
 }
 
-function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot): SkillEffect {
-  if (v.kind === 'passive') {
+type EffectBodyParser = (v: Record<string, Json>, path: string, slot: SkillSlot) => SkillEffect;
+
+/**
+ * 効果の種類ごとの読み込み（即時効果の種類は parseInstantEffect にまとめて渡す）。新しい種類はこの表に足す。
+ * 値は関数の宣言だけを指す（最上位で types.ts の値を読まない。types.ts と parse/ は循環 import）
+ */
+const EFFECT_BODY_PARSERS = {
+  passive: (v, path, slot) => {
     if (slot === 'burst')
       fail(`${path}.kind`, 'passive effects are not allowed in burst (use timed with trigger "burstUse")');
     return parsePassiveEffect(v, path);
-  }
-  if (v.kind === 'burstDamage') {
+  },
+  burstDamage: (v, path, slot) => {
     if (slot !== 'burst') fail(`${path}.kind`, `burstDamage is only allowed in burst, found in ${slot}`);
     return parseBurstDamageEffect(v, path);
+  },
+  timed: (v, path) => parseTimedEffect(v, path),
+  damage: (v, path) => parseDamageEffect(v, path),
+  weaponChange: (v, path) => parseWeaponChangeEffect(v, path),
+  cycle: (v, path) => parseCycleEffect(v, path),
+  cycleEvery: (v, path) => parseCycleEveryEffect(v, path),
+  dot: (v, path) => parseDotEffect(v, path),
+  autoAttack: (v, path) => parseAutoAttackEffect(v, path),
+  burstGaugeHit: (v, path) => parseBurstGaugeHitEffect(v, path),
+  shotPause: (v, path) => parseShotPauseEffect(v, path),
+  burstReentry: (v, path) => parseBurstReentryEffect(v, path),
+  coverHeal: (v, path) => parseCoverHealEffect(v, path),
+  burstStepChange: (v, path) => parseBurstStepChangeEffect(v, path),
+  allyGaugeAdd: (v, path) => parseAllyGaugeAddEffect(v, path),
+  state: (v, path) => parseStateGrantEffect(v, path),
+  removeState: (v, path) => parseRemoveStateEffect(v, path),
+  cancelState: (v, path) => parseCancelStateEffect(v, path),
+  stackChange: (v, path) => parseStackChangeEffect(v, path),
+  counterChange: (v, path) => parseCounterChangeEffect(v, path),
+  summon: (v, path, slot) => parseSummonEffect(v, path, slot),
+} satisfies Record<Exclude<SkillEffect['kind'], InstantKind>, EffectBodyParser>;
+
+function parseEffectBody(v: Record<string, Json>, path: string, slot: SkillSlot): SkillEffect {
+  const kind = v.kind;
+  if ((INSTANT_KINDS as readonly Json[]).includes(kind)) return parseInstantEffect(v, path, kind as InstantKind);
+  if (typeof kind === 'string' && Object.hasOwn(EFFECT_BODY_PARSERS, kind)) {
+    return EFFECT_BODY_PARSERS[kind as keyof typeof EFFECT_BODY_PARSERS](v, path, slot);
   }
-  if (v.kind === 'timed') return parseTimedEffect(v, path);
-  if (v.kind === 'damage') return parseDamageEffect(v, path);
-  if (
-    v.kind === 'cooldownReduction' ||
-    v.kind === 'ammoRefill' ||
-    v.kind === 'heal' ||
-    v.kind === 'burstGauge' ||
-    v.kind === 'ammoDecrease' ||
-    v.kind === 'fullBurstExtend'
-  ) {
-    return parseInstantEffect(v, path, v.kind);
-  }
-  if (v.kind === 'weaponChange') return parseWeaponChangeEffect(v, path);
-  if (v.kind === 'cycle') return parseCycleEffect(v, path);
-  if (v.kind === 'cycleEvery') return parseCycleEveryEffect(v, path);
-  if (v.kind === 'dot') return parseDotEffect(v, path);
-  if (v.kind === 'autoAttack') return parseAutoAttackEffect(v, path);
-  if (v.kind === 'burstGaugeHit') return parseBurstGaugeHitEffect(v, path);
-  if (v.kind === 'shotPause') return parseShotPauseEffect(v, path);
-  if (v.kind === 'burstReentry') return parseBurstReentryEffect(v, path);
-  if (v.kind === 'coverHeal') return parseCoverHealEffect(v, path);
-  if (v.kind === 'burstStepChange') return parseBurstStepChangeEffect(v, path);
-  if (v.kind === 'allyGaugeAdd') return parseAllyGaugeAddEffect(v, path);
-  if (v.kind === 'state') return parseStateGrantEffect(v, path);
-  if (v.kind === 'removeState') return parseRemoveStateEffect(v, path);
-  if (v.kind === 'cancelState') return parseCancelStateEffect(v, path);
-  if (v.kind === 'stackChange') return parseStackChangeEffect(v, path);
-  if (v.kind === 'counterChange') return parseCounterChangeEffect(v, path);
-  if (v.kind === 'summon') return parseSummonEffect(v, path, slot);
-  fail(
-    `${path}.kind`,
-    `expected "passive", "burstDamage", "timed", "damage", "cooldownReduction", "ammoRefill", "heal", "burstGauge", "ammoDecrease", "fullBurstExtend", "weaponChange", "cycle", "cycleEvery", "dot", "autoAttack", "burstGaugeHit", "shotPause", "burstReentry", "coverHeal", "burstStepChange", "allyGaugeAdd", "state", "removeState", "stackChange", "counterChange" or "summon", got ${JSON.stringify(v.kind)}`,
-  );
+  const kinds = SKILL_EFFECT_KINDS.map((k) => JSON.stringify(k));
+  fail(`${path}.kind`, `expected ${kinds.slice(0, -1).join(', ')} or ${kinds.at(-1)}, got ${JSON.stringify(kind)}`);
 }

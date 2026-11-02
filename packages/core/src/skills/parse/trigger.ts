@@ -234,7 +234,6 @@ export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | und
   return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
 }
 
-/** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
 /** マスト編（plan/design-mast.md 8 節）: { selfHpAtMostRef: N }。それ以外の形なら undefined（timed だけが読む） */
 export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTrigger | undefined {
   if (!isRecord(v) || v.selfHpAtMostRef === undefined) return undefined;
@@ -242,6 +241,7 @@ export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTri
   return { selfHpAtMostRef: parseRef(v.selfHpAtMostRef, `${path}.selfHpAtMostRef`) };
 }
 
+/** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
 export function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigger | undefined {
   if (!isRecord(v) || v.coverHealed === undefined) return undefined;
   for (const key of Object.keys(v)) if (key !== 'coverHealed') fail(`${path}.${key}`, 'unknown field');

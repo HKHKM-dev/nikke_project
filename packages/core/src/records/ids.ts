@@ -1,6 +1,6 @@
 // 検証記録（V-NNNN）・結論（C-NNNN）・録画の番号の形。写しが散ると 1 つだけずれる（#731 の records-residual.ts の \d{4}）ので、
 // 形を見る所はみなここを使う。ほかの文字と組み合わせる所（ファイル名・文の中など）は ID_DIGITS から正規表現を作る。
-// import を持たない（skills/types.ts・scripts・tools のどこからでも読めるように）。
+// import を持たない（skills/parse/・scripts・tools のどこからでも読めるように）。
 
 /** 検証記録・結論の番号の部分（4 桁以上の数字）。正規表現の文字列 */
 export const ID_DIGITS = String.raw`\d{4,}`;

@@ -1,5 +1,4 @@
 // スキル定義の読み込みの検査のうち、射撃と別に出る攻撃・射撃を止める効果（autoAttack・shotPause・summon）の読み込み。型は ../types.ts
-import type { SkillSlot } from '../../types.ts';
 import { SUMMON_IDS } from '../summons.ts';
 import {
   type AutoAttackEffect,
@@ -7,6 +6,7 @@ import {
   type DotFirstTick,
   isShotCountTrigger,
   type ShotPauseEffect,
+  type SkillSlot,
   type SummonEffect,
 } from '../types.ts';
 import { fail, type Json, oneOf, parseDuration, parseLocalizedText, parseRef } from './common.ts';

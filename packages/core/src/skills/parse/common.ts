@@ -3,8 +3,6 @@ import { C_ID } from '../../records/ids.ts';
 import type { LocalizedText } from '../../types.ts';
 import { NAMED_STATE_IDS, namedStateHolder, type NamedStateId, type StateHolder } from '../states.ts';
 
-// ---- 検証 ----
-
 export type Json = unknown;
 
 export function isRecord(v: Json): v is Record<string, Json> {

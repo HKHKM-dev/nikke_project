@@ -1,5 +1,4 @@
 // スキル定義の読み込みの検査のうち、定義 1 件の中の、スロットや効果をまたぐ検査。型は ../types.ts
-import type { SkillSlot } from '../../types.ts';
 import { type NamedStateId, stateMatches } from '../states.ts';
 import {
   type ClaimRefs,
@@ -20,6 +19,7 @@ import {
   SKILL_SLOTS,
   type SkillEffect,
   type SkillEntry,
+  type SkillSlot,
   statContentsOf,
   type StateGrantEffect,
   summonCountsOf,
@@ -48,7 +48,7 @@ export function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: 
  * Stage 11 紅蓮BS: cycle は 1 スロットに 1 つまで。cycleEvery の slot にはちょうど 1 つの cycle があり、
  * every が即値ならそれより小さい（間隔を「速める」効果だけ。everyRef との比較は Lv で決まるので解決時に見る）
  */
-export function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
     const cycles = entries[slot]?.effects.filter((e) => e.kind === 'cycle') ?? [];
     if (cycles.length > 1) fail(`${root}.${slot}.effects`, 'at most one cycle per skill');
@@ -110,7 +110,7 @@ function validateCountTriggersEvery(effects: readonly SkillEffect[], e: CycleEve
  * （plan/design-skill-stage14.md 2.7 節）: 状態の中身の固定も 1 つまで（状態どうしの勝ち負けを決めていない。timed の固定との兼ね合いは
  * skills/buffs.ts の applyResolvedEffect）
  */
-export function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
   const timed = effects.filter((e) => e.kind === 'timed' && e.stat === 'fixedChargeTime').length;
   if (timed > 1) fail(root, 'at most one fixedChargeTime effect per definition');
@@ -143,7 +143,7 @@ function hasSelfStackingGrant(
  * 2 パス目が的の表の変更後の武器の行（frame/landing.ts の weaponChangeParts）に替えるが、きっかけを数える 1 パス目（frame/firstPass.ts の
  * hitsAt）は基礎の武器の値のままなので、数がずれる。使うキャラが無いので拒否する
  */
-export function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
   if (!effects.some((e) => e.kind === 'weaponChange' && e.instantFire === true)) return;
   for (const slot of SKILL_SLOTS) {
@@ -167,7 +167,7 @@ export function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, S
  * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
  * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される）
  */
-export function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
   );
@@ -190,7 +190,7 @@ export function validateFullStackTriggers(entries: Partial<Record<SkillSlot, Ski
  * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: timed・付与の { applied } は連鎖させない。同じ定義の中で、{ applied } の付与が
  * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
  */
-export function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const chained = new Set<NamedStateId>();
   for (const slot of SKILL_SLOTS) {
     for (const e of entries[slot]?.effects ?? [])
@@ -213,7 +213,7 @@ export function validateAppliedTriggers(entries: Partial<Record<SkillSlot, Skill
  * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
  * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）
  */
-export function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
@@ -234,7 +234,7 @@ export function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, Skil
  * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
  * 要る（上限・維持・中身は付与のもの）
  */
-export function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'stackChange' || e.target === 'enemy') return;
@@ -252,7 +252,7 @@ export function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEnt
  * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の「〈状態〉の最大スタック数 N▲」は、同じ定義にその状態を自分に
  * スタックで付ける付与が要る（足す先の上限）
  */
-export function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'state') return;
@@ -269,7 +269,7 @@ export function validateStateContentKinds(entries: Partial<Record<SkillSlot, Ski
   }
 }
 
-export function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const summons = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is SummonEffect & ClaimRefs => e.kind === 'summon',
   );
@@ -296,7 +296,7 @@ export function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>,
  * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
  * enemyState も、同じ定義の dot の state を指す
  */
-export function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
   );
@@ -323,7 +323,7 @@ export function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEnt
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
  * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
  */
-export function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
   );
@@ -364,7 +364,7 @@ export function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEnt
  * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
  * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
  */
-export function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const byState = new Map<NamedStateId, { effect: StateGrantEffect; path: string }[]>();
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
@@ -423,4 +423,26 @@ function durationFormOf(e: StateGrantEffect): string {
 function stackFormOf(e: StateGrantEffect): string {
   if (e.maxStacks !== undefined) return `${e.maxStacks}`;
   return e.maxStacksRef !== undefined ? 'ref' : 'none';
+}
+
+/**
+ * 定義全体の検査を、決まった順に全部通す（skills と、skills に宝物版を重ねた treasureSkills の両方に。parseSkillDefinition）。
+ * 新しい検査はこの列に足す
+ */
+export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const check of [
+    validateCycles,
+    validateFixedChargeTimeCount,
+    validateInstantFireCoreHits,
+    validateStateGrants,
+    validateStackChanges,
+    validateStateContentKinds,
+    validateFullStackTriggers,
+    validateAppliedTriggers,
+    validateOwnStateTriggers,
+    validateWhileEffects,
+    validateDotStateRefs,
+    validateSummons,
+  ])
+    check(entries, root);
 }

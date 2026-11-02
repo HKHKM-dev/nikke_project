@@ -29,9 +29,9 @@
 // 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
-import { type CounterId } from './counters.ts';
-import { type NamedStateId } from './states.ts';
-import { type SummonId } from './summons.ts';
+import type { CounterId } from './counters.ts';
+import type { NamedStateId } from './states.ts';
+import type { SummonId } from './summons.ts';
 
 export type { SkillSlot };
 export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies readonly SkillSlot[];
@@ -238,6 +238,16 @@ export function isFlagStat(stat: BuffStat): boolean {
 }
 
 /**
+ * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵が持つ stat か（敵の受けるダメージ▲と、2 段目の段 2 の敵の防御力▼）。
+ * 値は敵が受ける全ダメージに効くので、味方の各枠の区間の値に写す（skills/holders.ts の isEnemyEffect）
+ */
+export const ENEMY_HELD_STATS = ['damageTaken', 'enemyDefenseDown'] as const;
+
+export function isEnemyHeldStat(stat: string): boolean {
+  return (ENEMY_HELD_STATS as readonly string[]).includes(stat);
+}
+
+/**
  * どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算、
  * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）、
  * casterChargeTime = 発動者の基礎チャージ時間 × 比率の秒数を対象のチャージ時間から引く（Stage 11 アリス編。stat が chargeSpeed のときだけ。
@@ -302,6 +312,10 @@ export function isCountedTarget(target: BuffTarget | CoverHealEffect['target']):
  */
 export type ExcludeSelf = 'always' | 'unlessShort';
 export const EXCLUDE_SELF = ['always', 'unlessShort'] as const satisfies readonly ExcludeSelf[];
+
+/** 2 段目の段 7: 防御力の比べの対象の絞り込み。lowerThanSelf = 自分と、自分より最終防御力が低い味方 */
+export type TargetDefense = 'lowerThanSelf';
+export const TARGET_DEFENSES = ['lowerThanSelf'] as const satisfies readonly TargetDefense[];
 
 /**
  * 対象の語彙編（同 2.3 節）: 「同じ部隊の味方全体に」。same = 対象の枠のキャラの CharacterData.squad が発動者と同じ枠だけ
@@ -1004,26 +1018,6 @@ export type ConditionKey = keyof EffectCondition;
 /** 条件が「自分が 〈stat〉 増加状態なら」を含むならその stat、それ以外は undefined */
 export function selfBuffedStatOf(condition: EffectCondition | undefined): BuffStat | undefined {
   return condition?.selfBuffed;
-}
-
-/**
- * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
- * planBuffTimeline だけが作ったので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける。持ち主ごとの一覧編
- * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
- */
-export function isFirstPassTrackedStat(stat: BuffStat): boolean {
-  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。
-  // 2 段目の段 6 の PR 2: 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
-  // 2 段目の段 7: 防御力▲ は、1 パス目の発火の対象の絞り込み（最終防御力の比べ）が読むので、攻撃力と同じに扱う
-  return (
-    stat === 'attack' ||
-    isMaxHpStat(stat) ||
-    stat === 'defense' ||
-    stat === 'burstGaugeSpeed' ||
-    stat === 'burstCooldown' ||
-    isFiringStat(stat) ||
-    isStateStat(stat)
-  );
 }
 
 /** 2 段目の段 11 の PR 2: 最終最大HP に足す stat か（最大HP▲・最大HP のみ▲） */
@@ -1976,6 +1970,18 @@ export type SummonEffect = {
 };
 
 /**
+ * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃は、同じ定義にその召喚の展開が要る。展開の組がなりうる
+ * 機数（維持時間の並びで、消えた後に残る数。0 を除く）は、どれも攻撃の intervalSeconds の表にある
+ */
+export function summonCountsOf(lifetimesSeconds: readonly (number | null)[]): number[] {
+  const finite = lifetimesSeconds.filter((x): x is number => x !== null);
+  const counts = new Set<number>([lifetimesSeconds.length]);
+  for (const t of finite) counts.add(lifetimesSeconds.filter((x) => x === null || x > t).length);
+  counts.delete(0);
+  return [...counts].sort((a, b) => a - b);
+}
+
+/**
  * 2 段目の段 10（plan/design-skill-stage10.md 2.3・2.4 節）: 「〈カウンタ〉N チャージ」「〈カウンタ〉N 消費」。発火のフレームの、そのフレームの
  * すべての判定の後に、自分のカウンタに N を足す（decrease なら減らす）。結果は 0 と上限の間で切る。トリガーは parseTrigger のものと、
  * { ended: 状態 }（自分のその状態の件が外れたフレーム。段 4 の 1.3 節）
@@ -2280,40 +2286,5 @@ export type SkillSupportIndex = {
   fullySupported: number[];
 };
 
-/**
- * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵が持つ stat か（敵の受けるダメージ▲と、2 段目の段 2 の敵の防御力▼）。
- * 値は敵が受ける全ダメージに効くので、味方の各枠の区間の値に写す（skills/holders.ts の isEnemyEffect）
- */
-export const ENEMY_HELD_STATS = ['damageTaken', 'enemyDefenseDown'] as const;
-
-export function isEnemyHeldStat(stat: string): boolean {
-  return (ENEMY_HELD_STATS as readonly string[]).includes(stat);
-}
-
-/** 2 段目の段 7: 防御力の比べの対象の絞り込み。lowerThanSelf = 自分と、自分より最終防御力が低い味方 */
-export type TargetDefense = 'lowerThanSelf';
-export const TARGET_DEFENSES = ['lowerThanSelf'] as const satisfies readonly TargetDefense[];
-
-/** クルミ S2 編: 回数トリガーに数える窓（during）か、発火の窓（firesDuring。V-0443）があるか */
-export function hasCountingWindow(trigger: EffectTrigger): boolean {
-  return (
-    typeof trigger === 'object' &&
-    'count' in trigger &&
-    (('during' in trigger && trigger.during !== undefined) ||
-      ('firesDuring' in trigger && trigger.firesDuring !== undefined))
-  );
-}
-
-/**
- * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃は、同じ定義にその召喚の展開が要る。展開の組がなりうる
- * 機数（維持時間の並びで、消えた後に残る数。0 を除く）は、どれも攻撃の intervalSeconds の表にある
- */
-export function summonCountsOf(lifetimesSeconds: readonly (number | null)[]): number[] {
-  const finite = lifetimesSeconds.filter((x): x is number => x !== null);
-  const counts = new Set<number>([lifetimesSeconds.length]);
-  for (const t of finite) counts.add(lifetimesSeconds.filter((x) => x === null || x > t).length);
-  counts.delete(0);
-  return [...counts].sort((a, b) => a - b);
-}
-
+// 読み込みの検査（skills/parse/）の入口。parse/ は types.ts の値を読むので循環 import になる。parse/ の最上位（関数の外）では types.ts の値を読まない
 export { parseSkillDefinition, parseSkillIndex, parseSkillSupportIndex } from './parse/definition.ts';

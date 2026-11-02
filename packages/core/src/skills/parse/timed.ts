@@ -1,4 +1,4 @@
-// スキル定義の読み込みの検査のうち、持続の効果（timed）の読み込み。欄の規則は状態の付与（state.ts）と共有する。型は ../types.ts
+// スキル定義の読み込みの検査のうち、常時の効果（passive）と持続の効果（timed）の読み込み。timed の欄の規則は状態の付与（state.ts）と共有する。型は ../types.ts
 import type { WeaponType } from '../../types.ts';
 import { COUNTER_IDS } from '../counters.ts';
 import {
@@ -15,17 +15,20 @@ import {
   EXCLUDE_SELF,
   type ExcludeSelf,
   isAppliedTrigger,
+  isEnemyHeldStat,
   isChanceTrigger,
   isFiringStat,
-  isFirstPassTrackedStat,
   isFixedAttackScaling,
   isFlagStat,
   isHitStateStat,
+  isMaxHpStat,
+  isPassiveFlagStat,
   isSelfHpAtMostTrigger,
   isStateStat,
   isTimerTrigger,
   SKILL_SLOTS,
   TARGET_DEFENSES,
+  type PassiveEffect,
   type TargetDefense,
   type TimedEffect,
 } from '../types.ts';
@@ -40,7 +43,13 @@ import {
   parsePositiveInt,
   parseRef,
 } from './common.ts';
-import { CONDITION_KEYS_OF, parseCondition, validateBurstStep, validateUsedBurst } from './condition.ts';
+import {
+  CONDITION_KEYS_OF,
+  parseCondition,
+  parseWhileCondition,
+  validateBurstStep,
+  validateUsedBurst,
+} from './condition.ts';
 import {
   LOWEST_HP_RATIO_HEAL_ONLY,
   parsePersonaTargetFields,
@@ -66,7 +75,7 @@ import {
  * casterAttack は attack だけ、flat（Stage 10）は maxAmmo（発数）と chargeSpeed（対象の語彙編。「チャージ時間 X 秒▼」の秒）と
  * burstCooldown（段 11 の PR 3。「バーストスキルクールタイム X 秒▼」の秒。burstCooldown は flat だけ）
  */
-export function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
+function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path: string): void {
   if (isFixedAttackScaling(scaling) && stat !== 'attack') {
     fail(`${path}.scaling`, `${String(scaling)} is only allowed with stat "attack", got "${stat}"`);
   }
@@ -88,7 +97,7 @@ export function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat
 }
 
 /** 対象の語彙編: chargeSpeed の flat は「チャージ時間 X 秒▼」で、正の値が縮める秒数。▼（decrease）は書かない（burstCooldown も同じ） */
-export function validateFlatChargeTime(
+function validateFlatChargeTime(
   stat: BuffStat,
   scaling: BuffScaling | undefined,
   v: Record<string, Json>,
@@ -100,7 +109,7 @@ export function validateFlatChargeTime(
 }
 
 /** 名前の付いた状態の語彙編: timed の name（ペルソナ編）は状態の付与に置き換えた */
-export const NAME_REPLACED = 'name was replaced by a state grant (kind "state". plan/design-named-state.md)';
+const NAME_REPLACED = 'name was replaced by a state grant (kind "state". plan/design-named-state.md)';
 
 /** 2 段目の段 9 の PR 2: 攻撃速度▲を書ける武器種（レートを蓄積して撃ち、立ち上げの無い武器） */
 const ATTACK_SPEED_WEAPONS = ['AR', 'SMG', 'SG'] as const satisfies readonly WeaponType[];
@@ -109,7 +118,7 @@ const ATTACK_SPEED_WEAPONS = ['AR', 'SMG', 'SG'] as const satisfies readonly Wea
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度▲は、AR・SMG・SG を所持する味方にだけ書ける（targetWeapon が要る）。
  * チャージ武器（チャージの秒）・MG（立ち上げのレート）への効き方と「▼」は、使い手がいないので書けない
  */
-export function validateAttackSpeed(stat: BuffStat, v: Record<string, Json>, path: string): void {
+function validateAttackSpeed(stat: BuffStat, v: Record<string, Json>, path: string): void {
   if (stat !== 'attackSpeed') return;
   if (!(ATTACK_SPEED_WEAPONS as readonly Json[]).includes(v.targetWeapon ?? null)) {
     fail(
@@ -121,7 +130,7 @@ export function validateAttackSpeed(stat: BuffStat, v: Record<string, Json>, pat
 }
 
 /** Stage 11 モダニア: decrease（「▼」）は true だけ・scaling が ratio / flat のときだけ */
-export function parseDecrease(v: Record<string, Json>, scaling: BuffScaling | undefined, path: string): boolean {
+function parseDecrease(v: Record<string, Json>, scaling: BuffScaling | undefined, path: string): boolean {
   if (v.decrease === undefined) return false;
   if (v.decrease !== true) fail(`${path}.decrease`, `expected true, got ${JSON.stringify(v.decrease)}`);
   if (scaling !== undefined && scaling !== 'ratio' && scaling !== 'flat') {
@@ -500,4 +509,86 @@ function parseTimedDuration(
   // 順位の発数編（plan/design-ranked-shot-duration.md 2 節）: topAttack は 2 段目（順位）で、対象の枠の射撃で窓を切る
   if (hasShots) return { durationShots: parsePositiveInt(v.durationShots, `${path}.durationShots`) };
   return { durationShotsRef: parseRef(v.durationShotsRef, `${path}.durationShotsRef`) };
+}
+
+/**
+ * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
+ * planBuffTimeline だけが作ったので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける。持ち主ごとの一覧編
+ * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
+ */
+function isFirstPassTrackedStat(stat: BuffStat): boolean {
+  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。
+  // 2 段目の段 6 の PR 2: 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
+  // 2 段目の段 7: 防御力▲ は、1 パス目の発火の対象の絞り込み（最終防御力の比べ）が読むので、攻撃力と同じに扱う
+  return (
+    stat === 'attack' ||
+    isMaxHpStat(stat) ||
+    stat === 'defense' ||
+    stat === 'burstGaugeSpeed' ||
+    stat === 'burstCooldown' ||
+    isFiringStat(stat) ||
+    isStateStat(stat)
+  );
+}
+
+export function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
+  const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  if (target === 'burstUsers') fail(`${path}.target`, 'burstUsers is not allowed in passive (it needs a full burst)');
+  // 常時の効果の対象が戦闘中に入れ替わるのは持続バフの窓の仕組みの外（plan/design-stage11.md 17 節）
+  if (target === 'topAttack')
+    fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');
+  if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
+  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
+  const targetWeapon = parseTargetWeapon(v, target, path);
+  const targetElement = parseTargetElement(v, target, path);
+  const targetClass = parseTargetClass(v, target, path);
+  const targetSquad = parseTargetSquad(v, target, path);
+  if (v.excludeSelf !== undefined) fail(`${path}.excludeSelf`, 'excludeSelf is only allowed in timed');
+  // 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 最終防御力の比べは発火の瞬間に決めるので、常時の効果には書けない
+  if (v.targetDefense !== undefined) fail(`${path}.targetDefense`, 'targetDefense is only allowed in timed');
+  for (const key of ['targetState', 'includeSelf', 'targetBurstStep'] as const) {
+    if (v[key] !== undefined) fail(`${path}.${key}`, `${key} is only allowed in timed and state`);
+  }
+  if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
+  const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
+  const passiveFlag = isPassiveFlagStat(stat);
+  if ((isFlagStat(stat) && !passiveFlag) || stat === 'fixedChargeTime')
+    fail(`${path}.stat`, `${stat} is only allowed in timed`);
+  const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
+  validateScaling(scaling, stat, path);
+  validateFlatChargeTime(stat, scaling, v, path);
+  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま
+  // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
+  validateDamageTaken(stat, target, v, path);
+  validateAttackSpeed(stat, v, path);
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 有利コードのダメージ適用は値を持たないフラグで、自分だけ。
+  // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換も自分だけ（持ち主の発にだけ効く。比率の scaling だけ）
+  const overflow = stat === 'chargeSpeedOverflow';
+  if ((passiveFlag || overflow) && target !== 'self')
+    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+  if (overflow && scaling !== undefined) fail(`${path}.scaling`, `${stat} takes no scaling`);
+  if (passiveFlag) {
+    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value`);
+    if (v.while !== undefined) fail(`${path}.while`, `${stat} cannot have while`);
+  }
+  const effect: PassiveEffect = { kind: 'passive', target, stat };
+  if (!passiveFlag) effect.ref = parseRef(v.ref, `${path}.ref`);
+  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
+  if (targetElement !== undefined) effect.targetElement = targetElement;
+  if (targetClass !== undefined) effect.targetClass = targetClass;
+  if (targetSquad !== undefined) effect.targetSquad = targetSquad;
+  if (scaling !== undefined) effect.scaling = scaling;
+  if (parseDecrease(v, scaling, path)) effect.decrease = true;
+  if (v.condition !== undefined)
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.passive);
+  if (v.while !== undefined) {
+    // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: HP の条件（編成の段で決まる）とは組み合わせない（使い手がいない）。
+    // 敵が持つ stat は、敵の件に写すので、自分の状態の件で切れない
+    if (v.condition !== undefined) fail(`${path}.while`, 'while cannot be combined with condition');
+    if (isEnemyHeldStat(stat)) fail(`${path}.while`, `${stat} is held by the enemy, so it cannot have while`);
+    effect.while = parseWhileCondition(v.while, `${path}.while`);
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
 }

@@ -1,5 +1,4 @@
 // スキル定義の読み込みの検査のうち、定義のファイル（data/skills/{resourceId}.json）と索引の読み込みの入口。types.ts が再び公開する。型は ../types.ts
-import type { SkillSlot } from '../../types.ts';
 import {
   type BurstStepChangeEffect,
   type ClaimRefs,
@@ -10,24 +9,11 @@ import {
   type SkillEntry,
   type SkillIndex,
   type SkillNote,
+  type SkillSlot,
   type SkillSupportIndex,
 } from '../types.ts';
 import { fail, isRecord, type Json } from './common.ts';
-import {
-  validateAppliedTriggers,
-  validateBurstHitTriggers,
-  validateCycles,
-  validateDotStateRefs,
-  validateFixedChargeTimeCount,
-  validateFullStackTriggers,
-  validateInstantFireCoreHits,
-  validateOwnStateTriggers,
-  validateStackChanges,
-  validateStateContentKinds,
-  validateStateGrants,
-  validateSummons,
-  validateWhileEffects,
-} from './crossChecks.ts';
+import { validateBurstHitTriggers, validateCrossChecks } from './crossChecks.ts';
 import { parseEffect } from './effect.ts';
 import { NOTE_REFERS, parseNote } from './notes.ts';
 
@@ -111,18 +97,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
     skills,
     effects.find((e): e is BurstStepChangeEffect & ClaimRefs => e.kind === 'burstStepChange'),
   );
-  validateCycles(skills, 'skills');
-  validateFixedChargeTimeCount(skills, 'skills');
-  validateInstantFireCoreHits(skills, 'skills');
-  validateStateGrants(skills, 'skills');
-  validateStackChanges(skills, 'skills');
-  validateStateContentKinds(skills, 'skills');
-  validateFullStackTriggers(skills, 'skills');
-  validateAppliedTriggers(skills, 'skills');
-  validateOwnStateTriggers(skills, 'skills');
-  validateWhileEffects(skills, 'skills');
-  validateDotStateRefs(skills, 'skills');
-  validateSummons(skills, 'skills');
+  validateCrossChecks(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
   // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
   if (raw.states !== undefined) {
@@ -137,18 +112,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
       const slot = key as SkillSlot;
       treasureSkills[slot] = parseEntry(treasure[slot], slot, 'treasureSkills');
     }
-    validateCycles({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateFixedChargeTimeCount({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateInstantFireCoreHits({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateStateGrants({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateStackChanges({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateStateContentKinds({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateFullStackTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateAppliedTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateOwnStateTriggers({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateWhileEffects({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateDotStateRefs({ ...skills, ...treasureSkills }, 'treasureSkills');
-    validateSummons({ ...skills, ...treasureSkills }, 'treasureSkills');
+    validateCrossChecks({ ...skills, ...treasureSkills }, 'treasureSkills');
     def.treasureSkills = treasureSkills;
   }
   return def;
