@@ -57,8 +57,7 @@ describe('fullBurstExtend の検証', () => {
 
 describe('ソーダ：トゥインクルバニーの時間延長（ラム + デルタ + ソーダ：TB）', () => {
   const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
-  function slot(id: number, raw?: unknown): TeamSlotInput {
-    const c = character(id);
+  function slot(id: number, raw?: unknown, c = character(id)): TeamSlotInput {
     const fixed = computeFixedSpecAttack(c);
     return {
       character: c,
@@ -83,5 +82,39 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
     const raw = structuredClone(rawOf(SODA)) as { skills: { skill2: { effects: { kind: string }[] } } };
     raw.skills.skill2.effects = raw.skills.skill2.effects.filter((e) => e.kind !== 'fullBurstExtend');
     expect(lengths(team(raw)).slice(0, 5)).toEqual(Array(5).fill(gameSecondsToFrames(10)));
+  });
+
+  // 3 段階に入ってもソーダの CT が明けずにチェーンが切れると、状態機械は予約を捨てる（burst/controller.ts の resetChain）。捨てた延長は
+  // 即時効果の記録（画面と trace）に残さない
+  it('窓を作らずにチェーンが切れて捨てた延長は、即時効果の記録に残さない', () => {
+    const slow = character(SODA);
+    slow.burstSkill = { ...slow.burstSkill!, cooldownSeconds: 100 };
+    const input: TeamInput = { ...team(), slots: [slot(822), slot(20), slot(SODA, undefined, slow)] };
+    const plan = planTeamRun(input);
+    const { activations, chainTimeouts, fullBurstWindows } = plan.schedule!;
+    // 3 段階に入った（II を撃った）チェーンが、窓を作らずに切れている
+    const stage3Entries = activations.filter((a) => a.enteredStep === 'Step3').map((a) => a.frame);
+    const discarded = stage3Entries.filter((f) => {
+      const timeout = chainTimeouts.find((t) => t > f);
+      const window = fullBurstWindows.find((w) => w.start > f);
+      return timeout !== undefined && (window === undefined || timeout < window.start);
+    });
+    expect(discarded.length).toBeGreaterThan(0);
+    // 残った延長はどれも窓に足され、窓の長さは足した秒と合う
+    const extensions = plan.instants.filter((x) => x.effect.kind === 'fullBurstExtend');
+    expect(extensions.length).toBeGreaterThan(0);
+    for (const w of fullBurstWindows) {
+      const previous = fullBurstWindows.filter((v) => v.start < w.start).at(-1)?.start ?? -1;
+      const seconds = extensions
+        .filter((x) => x.frame > previous && x.frame <= w.start)
+        .reduce((sum, x) => sum + x.amount, 0);
+      if (w.end < plan.frames) expect(w.end - w.start).toBe(gameSecondsToFrames(10 + seconds));
+    }
+    for (const x of extensions) {
+      const window = fullBurstWindows.find((w) => w.start >= x.frame);
+      const timeout = chainTimeouts.find((t) => t >= x.frame);
+      expect(window).toBeDefined();
+      expect(timeout === undefined || window!.start < timeout).toBe(true);
+    }
   });
 });

@@ -1123,6 +1123,14 @@ function runFirstPassOnce(
   const instants: InstantApplication[] = [];
   // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数に上限（maxFires）のある即時効果の、効いた発火の回数
   const instantFireCounts = new Map<object, number>();
+  // 2 段目の段 21: まだ窓に足していない延長（予約）の記録。窓を作ったら残し、窓を作らずにチェーンが切れたら（状態機械が予約を捨てる）か
+  // 戦闘の終わりまで残ったら、即時効果の記録から外す（効かなかった延長を画面と trace に出さない）
+  let pendingExtensions: InstantApplication[] = [];
+  const discardedExtensions = new Set<InstantApplication>();
+  const reserveExtension = (x: InstantApplication): void => {
+    instants.push(x);
+    pendingExtensions.push(x);
+  };
   // 2 段目の段 21: バースト使用時の延長は、発動のたびに状態機械が聞く（条件は発動のフレームの件で見る。窓を作る発動ならその窓に、
   // 作らない発動なら次の窓に足す）
   if (controller !== null && activationExtensions.length > 0) {
@@ -1132,7 +1140,13 @@ function runFirstPassOnce(
         if (src.sourceSlotIndex !== slotIndex) continue;
         if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, frame)) continue;
         seconds += src.effect.value;
-        instants.push({ frame, sourceSlotIndex: slotIndex, slotIndex, effect: src.effect, amount: src.effect.value });
+        reserveExtension({
+          frame,
+          sourceSlotIndex: slotIndex,
+          slotIndex,
+          effect: src.effect,
+          amount: src.effect.value,
+        });
       }
       return seconds;
     };
@@ -1396,7 +1410,15 @@ function runFirstPassOnce(
     // 2. ゲージと状態機械（planDynamicSchedule と同じく、このフレームの射撃のゲージを枠順に足してから 1 フレーム進める）
     if (controller !== null) {
       const before = controller.activations.length;
+      const windowsBefore = controller.windows.length;
+      const timeoutsBefore = controller.chainTimeouts.length;
       stepBurstController(controller, f, gauge, blocked);
+      // 2 段目の段 21: 予約した延長は、窓を作ったら足され、窓を作らずにチェーンが切れたら捨てられる（burst/controller.ts の resetChain）
+      if (pendingExtensions.length > 0) {
+        const timedOut = controller.chainTimeouts.length > timeoutsBefore;
+        if (timedOut) for (const x of pendingExtensions) discardedExtensions.add(x);
+        if (timedOut || controller.windows.length > windowsBefore) pendingExtensions = [];
+      }
       // 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節。V-0530）: バーストスキルのクールタイム▼ の維持の付いた形（T4。
       // 「その間スキル自体のクールタイムを変える」）。このフレームに発動した枠に効いている秒（f − 1 までに付いた件）だけ、その発動の
       // CT を短くする（明けるのは発動のフレームより前にしない）。常時（戦闘開始から持続の静的な状態の中身も）と時間で変わる件の和。
@@ -1605,11 +1627,19 @@ function runFirstPassOnce(
       if (!src.fires(ev)) continue;
       // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（いまは cooldownReduction の selfState だけ）
       if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
-      // レッドフード編（plan/design-red-hood.md 2.1・2.3 節）: 使った段階（発火の文脈）と、戦闘中の発火の回数の上限
-      if (!burstStepHolds(src.effect.condition, ev, src.sourceSlotIndex)) continue;
+      // レッドフード編（plan/design-red-hood.md 2.1・2.3 節）: 使った段階（発火の文脈）と、戦闘中の発火の回数の上限。どちらで出なかった
+      // 発火も、件の条件と同じく不発に数える（timed の burstStep は件の一覧の fireContextHolds が数える。上限の後の発火は「条件を
+      // 満たさない発火と同じ」。2.3 節）
+      if (!burstStepHolds(src.effect.condition, ev, src.sourceSlotIndex)) {
+        lists.skipInstant(src.effect, src.sourceSlotIndex, f);
+        continue;
+      }
       if (src.effect.maxFires !== undefined) {
         const fired = instantFireCounts.get(src) ?? 0;
-        if (fired >= src.effect.maxFires) continue;
+        if (fired >= src.effect.maxFires) {
+          lists.skipInstant(src.effect, src.sourceSlotIndex, f);
+          continue;
+        }
         instantFireCounts.set(src, fired + 1);
       }
       // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
@@ -1624,7 +1654,7 @@ function runFirstPassOnce(
       if (src.effect.kind === 'fullBurstExtend') {
         if (controller === null) continue; // 固定サイクル・バーストなしでは窓を延ばさない
         reserveFullBurstExtension(controller, src.effect.value);
-        instants.push({
+        reserveExtension({
           frame: f,
           sourceSlotIndex: src.sourceSlotIndex,
           slotIndex: src.sourceSlotIndex,
@@ -1700,11 +1730,12 @@ function runFirstPassOnce(
   if (JSON.stringify(leadShots) !== JSON.stringify(known)) return { result: null, leadShots };
   const schedule = controller !== null ? finishSchedule(controller, frames) : fixed;
   const history = lists.history();
+  for (const x of pendingExtensions) discardedExtensions.add(x);
   const result = {
     frames,
     shots: logs,
     schedule,
-    instants,
+    instants: discardedExtensions.size === 0 ? instants : instants.filter((x) => !discardedExtensions.has(x)),
     cycleGaugeHits,
     dotGauges,
     shotGauges,

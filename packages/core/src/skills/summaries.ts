@@ -106,6 +106,24 @@ export function slotEffectSummaries(
   return [...byKey.values()];
 }
 
+/**
+ * 枠 sourceSlotIndex が出した即時効果 effect の不発の回数（発火したが、条件・使った段階・戦闘中の発火の回数の上限で効かなかった回数。
+ * frame/firstPass.ts と件の一覧の instantConditionHolds が残す記録）。画面は持続の効果と同じく、出した枠の行にだけ出す
+ */
+export function instantSkipCount(
+  skips: readonly ConditionSkip[],
+  sourceSlotIndex: number,
+  effect: { source: { skill: SkillSlot }; effectIndex: number },
+): number {
+  return skips.filter(
+    (x) =>
+      x.state === undefined &&
+      x.sourceSlotIndex === sourceSlotIndex &&
+      x.effect.source.skill === effect.source.skill &&
+      x.effect.effectIndex === effect.effectIndex,
+  ).length;
+}
+
 /** 循環の間隔の変更の、効果ごとのまとめ（並びは最初に出た順） */
 export function slotCycleSummaries(cycles: readonly SummaryCycle[], slotIndex: number): SlotCycleSummary[] {
   const byKey = new Map<string, SlotCycleSummary>();

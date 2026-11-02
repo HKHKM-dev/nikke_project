@@ -194,6 +194,7 @@ export function TeamBreakdown({ result, view, computing, loadingCount, skillsLoa
                     treasurePhase={input.treasurePhase}
                     skillsStatus={input.skillsStatus ?? { kind: 'loading' }}
                     hpRatio={input.hpRatio}
+                    conditionSkips={result.history.conditionSkips}
                   />
                 </details>
               );

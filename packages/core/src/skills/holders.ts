@@ -400,6 +400,11 @@ export type HolderLists = {
    */
   instantConditionHolds(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): boolean;
   /**
+   * 即時効果 effect がフレーム frame に発火したが効かなかった記録（不発）を残す。1 パス目が見る、件によらない理由（使った段階の条件
+   * burstStep・戦闘中の発火の回数の上限 maxFires）で出なかった発火に使う（件の条件は instantConditionHolds が残す）
+   */
+  skipInstant(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): void;
+  /**
    * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 枠 holder が自分の状態 state（家族の根なら家族のどれか）をフレーム frame に
    * 持つか。frame/plan.ts の damage の selfState と同じく、静的な状態か、frame より前に付いて frame に続いている件を見る。1 パス目が
    * 周期の短縮（periodShorten）を追うのに、frame までに登録した件で呼ぶ
@@ -2320,6 +2325,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       skipEffect(sourceSlotIndex, effect, frame);
       return false;
     },
+    skipInstant: (effect, sourceSlotIndex, frame) => skipEffect(sourceSlotIndex, effect, frame),
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];
       for (const { holder, state, own } of consumingTracks) {

@@ -3,11 +3,13 @@ import {
   capCritRate,
   energyPerTrigger,
   framesToGameSeconds,
+  instantSkipCount,
   isFixedAttackScaling,
   isStateContent,
   isTimedItem,
   type AppliedTimedEffect,
   type CharacterData,
+  type ConditionSkip,
   type Element,
   type ItemEffect,
   type SkillLevels,
@@ -50,6 +52,8 @@ type Props = {
   treasurePhase: TreasurePhase;
   skillsStatus: SlotSkillsStatus;
   hpRatio: number;
+  /** 編成の判定の記録（TeamResult.history.conditionSkips）。即時効果の不発の回数を数える */
+  conditionSkips: readonly ConditionSkip[];
 };
 
 type SkillHitGroup = {
@@ -148,6 +152,7 @@ export function ResultPanel({
   treasurePhase,
   skillsStatus,
   hpRatio,
+  conditionSkips,
 }: Props) {
   const { cadence, segments, burst, notes, autoCondition } = slot;
   const skillHitGroups = groupSkillHits(slot);
@@ -197,7 +202,12 @@ export function ResultPanel({
       }
       byKey.set(key, { instant: x, count: 1, total: x.amount });
     }
-    return [...byKey.values()];
+    // 不発は持続の効果と同じく、出した枠の行にだけ出す
+    return [...byKey.values()].map((x) => ({
+      ...x,
+      skips:
+        x.instant.sourceSlotIndex === slotIndex ? instantSkipCount(conditionSkips, slotIndex, x.instant.effect) : 0,
+    }));
   })();
 
   const cycleSummary = slot.cycleChanges;
@@ -299,6 +309,7 @@ export function ResultPanel({
                     : x.instant.effect.kind === 'ammoRefill'
                       ? `（計 ${x.total} 発）`
                       : ''}
+                  {x.skips > 0 ? `・不発 ${x.skips} 回` : ''}
                 </small>
               </li>
             ))}

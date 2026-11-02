@@ -92,7 +92,10 @@ export type TimelineSlot = {
   coreHitRate?: number;
 } | null;
 
-/** Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった記録 */
+/**
+ * Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった記録（不発）。レッドフード編: 即時効果の使った段階の違う
+ * 発火と、戦闘中の発火の回数の上限の後の発火も
+ */
 export type ConditionSkip = {
   /** トリガーが起きたフレーム */
   frame: number;
