@@ -335,9 +335,14 @@ const MAX_LEAD_PASSES = 4;
  * 渡して回し直し、発 − leadFrames のフレームから件を見せる。発のフレームが渡したものと同じになるまで回す（揃わなければ例外）
  */
 export function runFirstPass(slots: readonly TimelineSlot[], options: FirstPassOptions): FirstPassResult {
+  return settleLeadShots((known) => runFirstPassOnce(slots, options, known));
+}
+
+/** runFirstPass の回し直し。1 回分（runOnce）を受け取るのは、揃わないときの例外をテストで確かめるため */
+export function settleLeadShots<T>(runOnce: (known: LeadShots) => { result: T | null; leadShots: LeadShots }): T {
   let known: LeadShots = {};
   for (let pass = 1; ; pass++) {
-    const { result, leadShots } = runFirstPassOnce(slots, options, known);
+    const { result, leadShots } = runOnce(known);
     if (result !== null) return result;
     if (pass >= MAX_LEAD_PASSES) {
       throw new Error(`the shots of the grants with leadFrames did not settle in ${MAX_LEAD_PASSES} passes`);

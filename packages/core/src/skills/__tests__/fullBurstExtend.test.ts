@@ -8,6 +8,7 @@ import { planTeamRun } from '../../frame/plan.ts';
 import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { CharacterData } from '../../types.ts';
+import { itemsOf } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -116,5 +117,36 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
       expect(window).toBeDefined();
       expect(timeout === undefined || window!.start < timeout).toBe(true);
     }
+  });
+
+  // 2 段目の段 21（C-0886）: D（40）のバースト使用時の延長。条件（自分が気絶免疫）は発動のフレームで見て（1 パス目の
+  // extensionAtActivation）、その発動が作る窓に足す。リター I・デルタ II・D III（操作）
+  describe('D のバースト使用時の延長（リター + デルタ + D）', () => {
+    const D = 40;
+    const plan = planTeamRun({ ...team(), slots: [slot(82), slot(20), slot(D)] });
+    const schedule = plan.schedule!;
+    const extension = resolveInstant(parseSkillDefinition(rawOf(D)), character(D), MAX_SKILL_LEVELS).find(
+      (e) => e.kind === 'fullBurstExtend',
+    )!.value;
+    const immunity = itemsOf(plan.history, { holder: 2, state: 'stunImmunity' });
+    const activations = schedule.activations.filter((a) => a.slotIndex === 2).map((a) => a.frame);
+
+    it('extends only the windows of the activations in Stun Immunity', () => {
+      // 気絶免疫は戦闘開始時に付く 1 件。1 回目の発動はその中、2 回目からは切れた後
+      expect(immunity).toHaveLength(1);
+      const inImmunity = activations.map((f) => immunity[0]!.start <= f && f < immunity[0]!.end);
+      expect(inImmunity.slice(0, 4)).toEqual([true, false, false, false]);
+      // 窓はどれも D の発動が作る。戦闘の終わりで切れる最後の窓のほかは、条件が立った発動の窓だけ 10 + 延長の秒
+      const windows = schedule.fullBurstWindows.slice(0, -1);
+      expect(windows.length).toBeGreaterThanOrEqual(4);
+      expect(windows.map((w) => w.end - w.start)).toEqual(
+        windows.map((_, k) => gameSecondsToFrames(10 + (inImmunity[k]! ? extension : 0))),
+      );
+    });
+
+    it('records the extension as an instant on the activation frame only while the condition holds', () => {
+      const instants = plan.instants.filter((x) => x.effect.kind === 'fullBurstExtend');
+      expect(instants.map((x) => [x.frame, x.amount])).toEqual([[activations[0], extension]]);
+    });
   });
 });

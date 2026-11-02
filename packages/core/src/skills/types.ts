@@ -32,7 +32,7 @@ import { C_ID } from '../records/ids.ts';
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import { WEAPON_TYPES } from '../weapons.ts';
 import { COUNTER_IDS, counterMax, type CounterId } from './counters.ts';
-import { dependsOnRank } from './targets.ts';
+import { dependsOnContext } from './targets.ts';
 import { NAMED_STATE_IDS, namedStateHolder, stateMatches, type NamedStateId, type StateHolder } from './states.ts';
 import { SUMMON_IDS, type SummonId } from './summons.ts';
 
@@ -3372,7 +3372,12 @@ function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGran
     // 1 パス目は発の leadFrames 前のフレームで件を登録する（同 5.3 節）ので、発のフレームで判定するものは書けない
     if (effect.condition !== undefined) fail(`${path}.condition`, 'condition cannot be used with leadFrames');
     if (effect.stacksFrom !== undefined) fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with leadFrames');
-    if (dependsOnRank(effect)) fail(`${path}.target`, 'topAttack cannot be used with leadFrames');
+    // 対象を発火の文脈（攻撃力の順位・バーストを使った枠・最終防御力の比べ）で決めるものも、文脈の無い登録では誰にも掛からない
+    if (dependsOnContext(effect))
+      fail(
+        `${path}.target`,
+        `${effect.target} cannot be used with leadFrames (the targets depend on the fire context)`,
+      );
     effect.leadFrames = parsePositiveInt(v.leadFrames, `${path}.leadFrames`);
   }
   if (v.contents !== undefined) {

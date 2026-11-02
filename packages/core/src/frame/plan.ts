@@ -724,10 +724,20 @@ export function enemyStateSpansHold(
   return statesMatching(state).some((s) => (enemySpans.get(s) ?? []).some((x) => x.start <= frame && frame < x.end));
 }
 
-/** 発動の時点の値に足す小片は、スタック・固定加算の攻撃力・武器の替えの無い timed だけ（what は拒否の文言の主語） */
+/**
+ * 発動の時点の値に足す小片は、スタック・固定加算の攻撃力・発動者基準の防御力▼・武器の替えの無い timed だけ（what は拒否の文言の主語）。
+ * 足すときに発動者の攻撃力・防御力を渡さないので、それを読む小片は黙って誤らずにここで止める
+ */
 function assertPlainTimed(w: ValuePiece, what: string): void {
-  if (w.stack !== undefined || isFixedAttackScaling(w.effect.scaling) || w.effect.stat === 'weapon') {
-    throw new RangeError(`${what} supports only plain timed effects (no stacks, fixed attack scalings or weapon)`);
+  if (
+    w.stack !== undefined ||
+    isFixedAttackScaling(w.effect.scaling) ||
+    w.effect.scaling === 'casterDefence' ||
+    w.effect.stat === 'weapon'
+  ) {
+    throw new RangeError(
+      `${what} supports only plain timed effects (no stacks, fixed attack scalings, casterDefence or weapon)`,
+    );
   }
 }
 

@@ -4,7 +4,15 @@ import { partialGaugeRatio } from '../burst/dynamic.ts';
 import { runTeam } from './runTeam.ts';
 import { firstShotFrames } from '../cadence.ts';
 import { computeTriggerDamage, partialChargeTriggerDamage, type EnemyEvent, type EnemyInput } from '../damage.ts';
-import { beginHide, initialShooter, partialChargeProgress, stepShooter } from '../frame/shooter.ts';
+import {
+  beginHide,
+  initialShooter,
+  partialChargeProgress,
+  stepHide,
+  stepShooter,
+  unhideShooter,
+  windowEndFirstShotFrames,
+} from '../frame/shooter.ts';
 import type { ShotLog } from '../frame/shots.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { cycleShotFrames } from '../skills/cycles.ts';
@@ -68,6 +76,23 @@ describe('partialChargeProgress（射手）', () => {
     expect(partialChargeProgress(shooterAfter(down, 60), down)).toBeNull();
     const ar = makeCharacter({}).shot;
     expect(partialChargeProgress(shooterAfter(ar, 3), ar)).toBeNull();
+  });
+
+  it('drops the pending wait when the window ends before D + H, without a partial-charge shot or hiding', () => {
+    // チャージの途中の窓の始まりは D + H（射撃姿勢維持型でない武器の H は 1）待つ。待ちが尽きる前に明けたら、撃たずに待ちを捨てる
+    const state = shooterAfter(shot, 20);
+    expect(beginHide(state, shot)).toBeNull();
+    const pending = DEFAULT_WEAPON_MODEL.hideDetectFrames + 1;
+    expect(state.hidePending?.framesLeft).toBe(pending);
+    const stopped = pending - 2;
+    for (let k = 1; k < stopped; k++) expect(stepHide(state, shot)).toBeNull();
+    unhideShooter(state, shot, stopped);
+    expect(state.hidePending).toBeUndefined();
+    expect(state.hideReload).toBeUndefined();
+    expect(state.ammo).toBe(6);
+    // 明けからは戦闘開始と同じ待ちでチャージし直す
+    expect(state.wait).toBe(windowEndFirstShotFrames(shot));
+    expect(stepHide(state, shot)).toBeNull();
   });
 });
 

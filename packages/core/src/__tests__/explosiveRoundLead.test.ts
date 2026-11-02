@@ -7,7 +7,8 @@ import { loadRecordingsFile, loadRecordsData, recordingMap } from '../../scripts
 import { burstSnapshotState } from '../frame/plan.ts';
 import { buildTeamInput, type CompareSetup } from '../records/observations.ts';
 import { runSimulation, type SimResult } from '../sim/engine.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { ENEMY, itemsOf } from '../skills/holders.ts';
+import { parseSkillDefinition, type SkillDefinition, type StateGrantEffect } from '../skills/types.ts';
 
 const file = loadRecordingsFile();
 const setup: CompareSetup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: true };
@@ -67,6 +68,18 @@ describe('leadFrames（徹甲炸裂弾の▲の付く時刻）', () => {
       'topAttack cannot be used with leadFrames',
     );
   });
+
+  it('cannot be written with targets chosen by the fire context (burstUsers, targetDefense)', () => {
+    // 前倒しの件は発火の文脈なし（null）で登録するので、文脈で対象を決めるものは誰にも掛からない（skills/targets.ts の isEffectTarget）。
+    // 状態の付与には targetDefense を書けず、burstUsers はトリガーの検査（フルバーストの始まり・終わりだけ）が先に止める
+    const own = { state: 'camouflage' };
+    expect(() =>
+      parseSkillDefinition(withGrant({ ...own, target: 'allies', targetDefense: 'lowerThanSelf' }) as never),
+    ).toThrow('targetDefense: unknown field');
+    expect(() => parseSkillDefinition(withGrant({ ...own, target: 'burstUsers' }) as never)).toThrow(
+      'burstUsers is only allowed with trigger',
+    );
+  });
 });
 
 // 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5 節。backlog 2-44）: ベスティー：タクティカル・アップの S2 の
@@ -94,5 +107,31 @@ describe('leadFrames in the first pass (Bestie: Tactical Upgrade S2 on Explosive
     // 1 パス目: その発の S2 の▲は、発が件の中なら次のフレームから付く（件より前の発なら付かない）
     expect(buffsAt(r, BESTIE, shot!).projectileExplosionDamage).toBe(0);
     expect(buffsAt(r, BESTIE, shot! + 1).projectileExplosionDamage).toBeCloseTo(up, 12);
+  });
+});
+
+describe('leadFrames の境目（skills/holders.ts）', () => {
+  /** ウンファ：タクティカル・アップの定義を替えて録画 0837 のモデルを回す */
+  const runWith = (definition: SkillDefinition): SimResult =>
+    runSimulation({
+      ...input,
+      slots: input.slots.map((s, i) => (i === EUNHWA ? { ...s!, skills: { ...s!.skills!, definition } } : s)),
+    });
+  const round = result.shots[EUNHWA]!.weaponChangeShotFrames![0]!;
+
+  it('starts the state on the battle start when the round comes less than leadFrames after it', () => {
+    // 発 − leadFrames が負になる付与は、戦闘の始まり（0）から
+    const r = runWith(parseSkillDefinition(withGrant({ leadFrames: round + 10 }) as never));
+    const first = itemsOf(r.history, { state: 'explosiveRound' })[0]!;
+    expect(first.holder).toBe(ENEMY);
+    expect(first.start).toBe(0);
+  });
+
+  it('throws when a grant with leadFrames is not in stage 1', () => {
+    // 型の検証が条件を止めるので、検証の後の定義に件を見る条件を足して、1 パス目の段の検査に届かせる
+    const definition = parseSkillDefinition(eunhwaJson as never);
+    const grant = definition.skills.burst.effects[0] as StateGrantEffect;
+    grant.condition = { selfState: { state: 'camouflage', present: true } };
+    expect(() => runWith(definition)).toThrow('a grant with leadFrames must be in stage 1');
   });
 });
