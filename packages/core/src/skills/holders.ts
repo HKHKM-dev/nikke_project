@@ -1887,7 +1887,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       group.grants.filter((g) => g.stage === stage && !isResolvedApplied(g.grant.trigger)),
     );
   const stage1Grants = grantsAt(1);
-  // 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節）: leadFrames のある付与（段 1 だけ。types.ts が条件・
+  // 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節）: leadFrames のある付与（段 1 だけ。skills/parse/state.ts が条件・
   // stacksFrom・順位の対象を止める）の、前の回の発（known）と、件の始まりのフレーム → その件の数（early）と、この回の発（fired）
   if (stateGroups.some((group) => group.grants.some((g) => g.grant.leadFrames !== undefined && g.stage !== 1)))
     throw new Error('a grant with leadFrames must be in stage 1');

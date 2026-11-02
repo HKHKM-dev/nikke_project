@@ -1,0 +1,426 @@
+// スキル定義の読み込みの検査のうち、定義 1 件の中の、スロットや効果をまたぐ検査。型は ../types.ts
+import type { SkillSlot } from '../../types.ts';
+import { type NamedStateId, stateMatches } from '../states.ts';
+import {
+  type ClaimRefs,
+  type CounterChangeEffect,
+  type CycleEffect,
+  type CycleEveryEffect,
+  type DotEffect,
+  type EffectTrigger,
+  isAppliedTrigger,
+  isEndedTrigger,
+  isFullStackTrigger,
+  isShotCountTrigger,
+  isStatContent,
+  isStaticStateGrant,
+  isSummonAttackTrigger,
+  isTimerTrigger,
+  type ShotCountTrigger,
+  SKILL_SLOTS,
+  type SkillEffect,
+  type SkillEntry,
+  statContentsOf,
+  type StateGrantEffect,
+  summonCountsOf,
+  type SummonEffect,
+} from '../types.ts';
+import { fail } from './common.ts';
+import { contentAsTimed } from './state.ts';
+import { parseTimedEffect } from './timed.ts';
+
+/**
+ * エレグのバースト編（plan/design-elegg.md 8.9 節）: トリガー burstHit は、バーストの倍率ダメージ（burstDamage）のある burst スロットの
+ * timed・付与にだけ書ける（ヒットの無いバースト・ほかのスロットでは発火のフレームが決まらない）
+ */
+export function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: SkillSlot, path: string): void {
+  effects.forEach((e, i) => {
+    if (!('trigger' in e) || e.trigger !== 'burstHit') return;
+    const at = `${path}.effects[${i}].trigger`;
+    if (e.kind !== 'timed' && e.kind !== 'state')
+      fail(at, `burstHit is allowed only in timed and state grants, not in ${e.kind}`);
+    if (slot !== 'burst') fail(at, 'burstHit is allowed only in the burst slot');
+    if (!effects.some((x) => x.kind === 'burstDamage')) fail(at, 'burstHit needs a burstDamage in the same slot');
+  });
+}
+
+/**
+ * Stage 11 紅蓮BS: cycle は 1 スロットに 1 つまで。cycleEvery の slot にはちょうど 1 つの cycle があり、
+ * every が即値ならそれより小さい（間隔を「速める」効果だけ。everyRef との比較は Lv で決まるので解決時に見る）
+ */
+export function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    const cycles = entries[slot]?.effects.filter((e) => e.kind === 'cycle') ?? [];
+    if (cycles.length > 1) fail(`${root}.${slot}.effects`, 'at most one cycle per skill');
+  }
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'cycleEvery') return;
+      const path = `${root}.${slot}.effects[${i}]`;
+      const target = entries[e.slot]?.effects.find((x): x is CycleEffect => x.kind === 'cycle');
+      if (target === undefined) {
+        validateCountTriggersEvery(entries[e.slot]?.effects ?? [], e, path);
+        return;
+      }
+      if (e.every === undefined) fail(`${path}.decreaseRef`, 'decreaseRef is only allowed for a slot without a cycle');
+      if (target.trigger.every !== undefined && e.every >= target.trigger.every) {
+        fail(`${path}.every`, `must be less than the cycle's every (${target.trigger.every})`);
+      }
+    });
+  }
+}
+
+/**
+ * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: cycle の無いスロットへの cycleEvery（射撃の回数のきっかけの間隔の変更）。
+ * 窓の間隔は解決時に「きっかけの回数 − decreaseRef の値」にするので、対象のスロットの射撃の回数のきっかけは 1 つ以上あり、どれも同じ
+ * 回数の種類と同じ N（everyRef か every）で、窓を見るのは damage（gaugeHits なし）・shotPause・counterChange だけ（ほかの効果の数え方は
+ * 窓を見ないので、書けば窓の中で食い違う）
+ */
+function validateCountTriggersEvery(effects: readonly SkillEffect[], e: CycleEveryEffect, path: string): void {
+  if (e.decreaseRef === undefined)
+    fail(`${path}.every`, `${e.slot} has no cycle (use decreaseRef for its shot counts)`);
+  const counted = effects.filter(
+    (x) => 'trigger' in x && isShotCountTrigger(x.trigger as EffectTrigger),
+  ) as (SkillEffect & { trigger: ShotCountTrigger })[];
+  if (counted.length === 0) fail(`${path}.slot`, `${e.slot} has neither a cycle nor a shot count trigger`);
+  const first = counted[0]!.trigger;
+  for (const x of counted) {
+    if (x.kind !== 'damage' && x.kind !== 'shotPause' && x.kind !== 'counterChange')
+      fail(`${path}.slot`, `a shot count trigger of ${x.kind} in ${e.slot} does not follow cycleEvery`);
+    if (x.kind === 'damage' && x.gaugeHits !== undefined)
+      fail(`${path}.slot`, `a damage with gaugeHits in ${e.slot} does not follow cycleEvery`);
+    const t = x.trigger;
+    if (
+      t.count !== first.count ||
+      t.every !== first.every ||
+      t.everyRef !== first.everyRef ||
+      t.stacksRef !== undefined ||
+      t.during !== undefined ||
+      t.firesDuring !== undefined ||
+      t.chance !== undefined ||
+      t.chanceRef !== undefined
+    ) {
+      fail(`${path}.slot`, `the shot count triggers in ${e.slot} must be the same plain { count, every(Ref) }`);
+    }
+  }
+}
+
+/**
+ * アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる）。2 段目の段 14 の PR 3
+ * （plan/design-skill-stage14.md 2.7 節）: 状態の中身の固定も 1 つまで（状態どうしの勝ち負けを決めていない。timed の固定との兼ね合いは
+ * skills/buffs.ts の applyResolvedEffect）
+ */
+export function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  const timed = effects.filter((e) => e.kind === 'timed' && e.stat === 'fixedChargeTime').length;
+  if (timed > 1) fail(root, 'at most one fixedChargeTime effect per definition');
+  const contents = effects
+    .flatMap((e) => (e.kind === 'state' ? statContentsOf(e.contents) : []))
+    .filter((c) => c.stat === 'fixedChargeTime').length;
+  if (contents > 1) fail(root, 'at most one fixedChargeTime state content per definition');
+}
+
+/**
+ * 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先）。マスト編: holder が enemy なら、
+ * 敵にスタックで付ける付与（dot の stacksFrom の元。plan/design-mast.md 2.3 節）
+ */
+function hasSelfStackingGrant(
+  entries: Partial<Record<SkillSlot, SkillEntry>>,
+  state: NamedStateId,
+  holder: 'self' | 'enemy' = 'self',
+): boolean {
+  return SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).some(
+    (g) =>
+      g.kind === 'state' &&
+      g.state === state &&
+      (holder === 'enemy' ? g.enemy === true : g.target === 'self') &&
+      (g.maxStacks !== undefined || g.maxStacksRef !== undefined),
+  );
+}
+
+/**
+ * 即着弾に替える使用武器の変更（instantFire）と、コアの命中の回数のきっかけ（coreHit）は同じ定義に持てない。変更後の武器の発のコア命中率は、
+ * 2 パス目が的の表の変更後の武器の行（frame/landing.ts の weaponChangeParts）に替えるが、きっかけを数える 1 パス目（frame/firstPass.ts の
+ * hitsAt）は基礎の武器の値のままなので、数がずれる。使うキャラが無いので拒否する
+ */
+export function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  if (!effects.some((e) => e.kind === 'weaponChange' && e.instantFire === true)) return;
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (
+        'trigger' in e &&
+        !isEndedTrigger(e.trigger) &&
+        isShotCountTrigger(e.trigger) &&
+        e.trigger.count === 'coreHit'
+      ) {
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          'a coreHit count trigger cannot be combined with an instantFire weapon change',
+        );
+      }
+    });
+  }
+}
+
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
+ * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される）
+ */
+export function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (!('trigger' in e) || !isFullStackTrigger(e.trigger)) return;
+      const state = e.trigger.fullStack;
+      const own = grants.filter((g) => g.state === state);
+      if (!hasSelfStackingGrant(entries, state) || !own.every((g) => isShotCountTrigger(g.trigger))) {
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `a full-stack trigger of "${state}" needs grants of the same state on self with maxStacks and shot count triggers in the definition`,
+        );
+      }
+    });
+  }
+}
+
+/**
+ * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: timed・付与の { applied } は連鎖させない。同じ定義の中で、{ applied } の付与が
+ * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
+ */
+export function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const chained = new Set<NamedStateId>();
+  for (const slot of SKILL_SLOTS) {
+    for (const e of entries[slot]?.effects ?? [])
+      if (e.kind === 'state' && isAppliedTrigger(e.trigger)) chained.add(e.state);
+  }
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if ((e.kind !== 'timed' && e.kind !== 'state') || !isAppliedTrigger(e.trigger)) return;
+      if (chained.has(e.trigger.applied)) {
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `"${e.trigger.applied}" is granted on an applied trigger in the definition (applied triggers do not chain)`,
+        );
+      }
+    });
+  }
+}
+
+/**
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
+ * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）
+ */
+export function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'counterChange' && e.kind !== 'dot') return;
+      const t = e.trigger;
+      const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
+      if (state === undefined) return;
+      if (!effects.some((g) => g.kind === 'state' && g.state === state && g.target === 'self'))
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `a ${e.kind} on "${state}" needs a grant of the same state on self in the definition`,
+        );
+    });
+  }
+}
+
+/**
+ * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
+ * 要る（上限・維持・中身は付与のもの）
+ */
+export function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'stackChange' || e.target === 'enemy') return;
+      if (!hasSelfStackingGrant(entries, e.state)) {
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `stackChange of "${e.state}" needs a grant of the same state on self with maxStacks in the definition`,
+        );
+      }
+    });
+  }
+}
+
+/**
+ * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の「〈状態〉の最大スタック数 N▲」は、同じ定義にその状態を自分に
+ * スタックで付ける付与が要る（足す先の上限）
+ */
+export function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'state') return;
+      e.contents?.forEach((item, j) => {
+        if (isStatContent(item)) return;
+        const target = item.maxStacksUp.state;
+        if (!hasSelfStackingGrant(entries, target))
+          fail(
+            `${root}.${slot}.effects[${i}].contents[${j}]`,
+            `maxStacksUp of "${target}" needs a grant of the same state on self with maxStacks in the definition`,
+          );
+      });
+    });
+  }
+}
+
+export function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const summons = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is SummonEffect & ClaimRefs => e.kind === 'summon',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'damage' || !isSummonAttackTrigger(e.trigger)) return;
+      const { summon, intervalSeconds } = e.trigger;
+      const deploys = summons.filter((d) => d.summon === summon);
+      if (deploys.length === 0)
+        fail(
+          `${root}.${slot}.effects[${i}].trigger`,
+          `a summon attack of "${summon}" needs a summon of it in the definition`,
+        );
+      for (const d of deploys)
+        for (const n of summonCountsOf(d.lifetimesSeconds))
+          if (intervalSeconds[n] === undefined)
+            fail(`${root}.${slot}.effects[${i}].trigger.intervalSeconds`, `needs the interval for ${n} ${summon}`);
+    });
+  }
+}
+
+/**
+ * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）と、PR 3: 敵のスタック量▲（stackChange の target
+ * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
+ * enemyState も、同じ定義の dot の state を指す
+ */
+export function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const dots = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is DotEffect & ClaimRefs => e.kind === 'dot' && e.state !== undefined,
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      const onDot = e.kind === 'cancelState' || (e.kind === 'stackChange' && e.target === 'enemy');
+      if (onDot && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
+        );
+      // マスト編（plan/design-mast.md 2.3 節）: 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風）
+      const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
+      if (from !== undefined && !dots.some((d) => d.state === from) && !hasSelfStackingGrant(entries, from, 'enemy'))
+        fail(
+          `${root}.${slot}.effects[${i}].stacksFrom`,
+          `stacksFrom needs a dot of the state "${from}", or a grant of it on the enemy with stacks, in the definition`,
+        );
+    });
+  }
+}
+
+/**
+ * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
+ * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
+ */
+export function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
+  );
+  const counterChanges = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
+    (e): e is CounterChangeEffect & ClaimRefs => e.kind === 'counterChange',
+  );
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'passive' || e.while === undefined) return;
+      // 2 段目の段 11 の PR 2: カウンタの while は、同じ定義にそのカウンタを増やす counterChange が要る
+      if ('selfCounter' in e.while) {
+        const { counter } = e.while.selfCounter;
+        if (!counterChanges.some((c) => c.counter === counter && c.decrease !== true))
+          fail(
+            `${root}.${slot}.effects[${i}].while`,
+            `while on "${counter}" needs a counterChange that increases it in the definition`,
+          );
+        return;
+      }
+      const { state, stacks, stacksRef } = e.while.selfState;
+      const own = grants.filter(
+        (g) => stateMatches(state, g.state) && !isStaticStateGrant(g) && (g.target === 'self' || g.target === 'allies'),
+      );
+      const stacked = stacks !== undefined || stacksRef !== undefined;
+      const ok = own.some((g) => !stacked || g.maxStacks !== undefined || g.maxStacksRef !== undefined);
+      if (!ok) {
+        fail(
+          `${root}.${slot}.effects[${i}].while`,
+          `while on "${state}" needs a grant of the same state on self (target self or allies, not static${stacked ? ', with maxStacks' : ''}) in the definition`,
+        );
+      }
+    });
+  }
+}
+
+/**
+ * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.6 節）: 同じ定義の同じ状態の付与どうしの規則。中身（contents）を
+ * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
+ * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
+ */
+export function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const byState = new Map<NamedStateId, { effect: StateGrantEffect; path: string }[]>();
+  for (const slot of SKILL_SLOTS) {
+    entries[slot]?.effects.forEach((e, i) => {
+      if (e.kind !== 'state') return;
+      byState.set(e.state, [...(byState.get(e.state) ?? []), { effect: e, path: `${root}.${slot}.effects[${i}]` }]);
+    });
+  }
+  for (const [state, grants] of byState) {
+    const bearers = grants.filter((g) => g.effect.contents !== undefined);
+    // 敵に付く状態は、中身を読む側がまだ無いので、どれかの付与が中身を持つ（2026-10-29 のキャラの編（plan/design-new-chars-1029.md
+    // 9 節）: 同じ状態のほかの付与は中身を共有する。マリアン：クイーンの S1 の弱点露出は、槍とバースト使用時の 2 つで付く）
+    const enemyGrant = grants.find((g) => g.effect.enemy === true);
+    if (enemyGrant !== undefined && bearers.length === 0) {
+      fail(`${enemyGrant.path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
+    }
+    if (bearers.length > 1) {
+      fail(`${bearers[1]!.path}.contents`, `only one grant of "${state}" in a definition may have contents`);
+    }
+    const first = grants[0]!;
+    for (const g of grants.slice(1)) {
+      // 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 静的な付与の形と時間で変わる付与が混ざった状態は静的にしない
+      // （staticStatesOf）。解除不可は件の列ごとに見るので、同じ状態の付与で揃える
+      if ((g.effect.undispellable === true) !== (first.effect.undispellable === true)) {
+        fail(g.path, `grants of "${state}" need the same undispellable`);
+      }
+      if (durationFormOf(g.effect) !== durationFormOf(first.effect)) {
+        fail(g.path, `grants of "${state}" need the same duration (${durationFormOf(first.effect)})`);
+      }
+      if (stackFormOf(g.effect) !== stackFormOf(first.effect)) {
+        fail(g.path, `grants of "${state}" need the same max stacks (${stackFormOf(first.effect)})`);
+      }
+    }
+    const bearer = bearers[0];
+    if (bearer === undefined) continue;
+    for (const g of grants) {
+      if (g === bearer) continue;
+      bearer.effect.contents!.forEach((item, j) => {
+        // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は timed の規則を持たない
+        if (!isStatContent(item)) return;
+        parseTimedEffect(contentAsTimed(g.effect, item), `${g.path}（${bearer.path}.contents[${j}] と合わせて）`);
+      });
+    }
+  }
+}
+
+/** 名前の付いた状態の語彙編: 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
+function durationFormOf(e: StateGrantEffect): string {
+  if (e.durationUntil !== undefined) return `until ${JSON.stringify(e.durationUntil)}`;
+  if (e.durationShots !== undefined) return `shots ${e.durationShots}`;
+  if (e.durationShotsRef !== undefined) return 'shots (ref)';
+  if (e.durationSeconds !== undefined) return `seconds ${e.durationSeconds}`;
+  return 'seconds (ref)';
+}
+
+/** 名前の付いた状態の語彙編: 付与のスタックの形（同じ状態の付与どうしで比べる。即値は値も） */
+function stackFormOf(e: StateGrantEffect): string {
+  if (e.maxStacks !== undefined) return `${e.maxStacks}`;
+  return e.maxStacksRef !== undefined ? 'ref' : 'none';
+}
