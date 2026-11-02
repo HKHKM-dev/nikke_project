@@ -80,7 +80,7 @@
 
 ## 5. 道具・記録の整備
 
-- `packages/core/src/skills/types.ts` の読み込みの検査（`parse*`・`validate*`・`CONDITION_KEYS_OF` など。ファイルの後半の大半）を、効果の種類ごとのモジュールに分ける。キャラのスキルの PR がほぼ全部このファイルの同じあたりを書き換えるので、並行する PR の衝突とレビューのしにくさの元になっている（`skills/holders.ts` も同じ傾向）。分けるのは並行の PR の少ない時に 1 回で行い、型（`Effect` など）の置き場所と読み込む側の import は変えない
+- `packages/core/src/skills/holders.ts` と、`skills/types.ts` に残る型の部分（`DamageEffect`・`EffectTrigger` の和集合・`BuffStat` と `BUFF_STATS`・`SkillEffect` と `SKILL_EFFECT_KINDS` など）も、キャラのスキルの PR がほぼ全部同じあたりを書き換えるので、並行する PR の衝突の元になっている。分け方は未定（型を分けるなら、読み込む側の import は `skills/types.ts` からの再公開で変えない）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
