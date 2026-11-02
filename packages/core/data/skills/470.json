@@ -25,11 +25,11 @@
           "stat": "chargeSpeedOverflow",
           "ref": 4,
           "assumes": {
-            "ja": "超過した値は、チャージ速度▲の比率の和の 100% を超えた分（発動者基準のチャージ時間▼は入れない。未確定）。変換したチャージダメージ▲は足し算の▲（倍率▲の後に足す）",
-            "en": "The excess is the sum of Charge Speed up ratios above 100% (caster-based charge time reductions are not included; unverified). The converted Charge Damage up is additive (added after the multiplier ups)"
+            "ja": "超過した値は、チャージ速度▲を効果ごと（スタックはまとめる）に整数の % に四捨五入してから足した和の、100% を超えた分（V-0640。チャージの長さは丸めない。丸めの単位が効果ごとかスキルごとかと、味方からの▲・発動者基準のチャージ時間▼を和に入れるかは未確定）。変換したチャージダメージ▲は足し算の▲（倍率▲の後に足す）",
+            "en": "The excess is the sum of Charge Speed ups, each effect (stacks combined) rounded to a whole percent before summing, above 100% (V-0640; the charge time is not rounded. Whether the rounding is per effect or per skill, and whether Charge Speed ups from allies and caster-based charge time reductions are included, is unverified). The converted Charge Damage up is additive (added after the multiplier ups)"
           },
           "claims": [
-            "C-0898"
+            "C-0899"
           ]
         }
       ],
@@ -47,7 +47,7 @@
           "ref": 5,
           "durationRef": 6,
           "claims": [
-            "C-0898"
+            "C-0899"
           ]
         }
       ],
@@ -162,7 +162,7 @@
             "en": "The name of 'When used in Burst Stage 3: Red Wolf' (no contents; read by Skill 2's 'when Red Wolf activates'). It lasts 0 s and only records the application"
           },
           "claims": [
-            "C-0898"
+            "C-0899"
           ]
         },
         {
@@ -198,7 +198,7 @@
             "burstStep": "Step3"
           },
           "claims": [
-            "C-0898"
+            "C-0899"
           ]
         }
       ],

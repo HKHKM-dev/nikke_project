@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { CharacterData } from '../../types.ts';
-import { applyChargeBuffs, chargeSpeedOverflowDamage, ZERO_BUFFS } from '../buffs.ts';
+import { addRatioBuff, applyChargeBuffs, type BuffTotals, chargeSpeedOverflowDamage, ZERO_BUFFS } from '../buffs.ts';
 import { MAX_SKILL_LEVELS, resolveInstant, resolvePassives, resolveStateGrants, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
 
@@ -103,23 +103,32 @@ describe('解決値（Lv10）', () => {
   });
 });
 
-describe('チャージ速度の超過分の変換（applyChargeBuffs）', () => {
-  const buffs = (chargeSpeed: number, chargeSpeedOverflow: number) => ({
-    ...ZERO_BUFFS,
-    chargeSpeed,
-    chargeSpeedOverflow,
+describe('チャージ速度の超過分の変換（applyChargeBuffs。V-0640）', () => {
+  // III の 100.8% と S1 の k スタック（3.81% ずつ）を、レッドフードの効果として足す
+  const buffs = (stacks: number, chargeSpeedOverflow: number, withIII = true) => {
+    let totals: BuffTotals = { ...ZERO_BUFFS, chargeSpeedOverflow };
+    if (withIII) totals = addRatioBuff(totals, 'chargeSpeed', 1.008, '470.burst', true);
+    for (let i = 0; i < stacks; i++) totals = addRatioBuff(totals, 'chargeSpeed', 0.0381, '470.skill1', true);
+    return totals;
+  };
+
+  it('rounds each effect to a whole percent before summing, and adds the excess × the rate to the additive charge damage', () => {
+    // 10 スタック: 101% + 38% → 超過 39%（丸めない和は 38.9%）
+    expect(chargeSpeedOverflowDamage(buffs(10, 2.4))).toBeCloseTo(0.936, 10);
+    expect(applyChargeBuffs(2.5, true, buffs(10, 2.4))).toBeCloseTo(3.436, 10);
+    // 7 スタック: 101% + 27%（26.67%）→ 28%。和を丸めると 27%（127.67%）になる
+    expect(chargeSpeedOverflowDamage(buffs(7, 2.4))).toBeCloseTo(0.672, 10);
+    // 5 スタック: 101% + 19%（19.05%）→ 20%
+    expect(chargeSpeedOverflowDamage(buffs(5, 2.4))).toBeCloseTo(0.48, 10);
   });
 
-  it('adds max(0, Σ − 1) × the conversion rate to the additive charge damage', () => {
-    // レッドウルフの窓: III の 100.8% と S1 の 10 スタック（38.1%）で、超過は 38.9%
-    expect(chargeSpeedOverflowDamage(buffs(1.008 + 0.381, 2.4))).toBeCloseTo(0.9336, 10);
-    expect(applyChargeBuffs(2.5, true, buffs(1.008 + 0.381, 2.4))).toBeCloseTo(3.4336, 10);
+  it('keeps the charge speed itself unrounded', () => {
+    expect(buffs(10, 2.4).chargeSpeed).toBeCloseTo(1.008 + 0.381, 10);
   });
 
   it('adds nothing at or below 100%, without the conversion, or on a partial charge', () => {
-    expect(applyChargeBuffs(2.5, true, buffs(0.381, 2.4))).toBeCloseTo(2.5, 10);
-    expect(applyChargeBuffs(2.5, true, buffs(1, 2.4))).toBeCloseTo(2.5, 10);
-    expect(applyChargeBuffs(2.5, true, buffs(1.389, 0))).toBeCloseTo(2.5, 10);
-    expect(applyChargeBuffs(2.5, false, buffs(1.389, 2.4))).toBe(1);
+    expect(applyChargeBuffs(2.5, true, buffs(10, 2.4, false))).toBeCloseTo(2.5, 10);
+    expect(applyChargeBuffs(2.5, true, buffs(10, 0))).toBeCloseTo(2.5, 10);
+    expect(applyChargeBuffs(2.5, false, buffs(10, 2.4))).toBe(1);
   });
 });

@@ -1,0 +1,37 @@
+{
+  "id": "C-0899",
+  "text": "レッドフードのレッドウルフの窓の発には、S2 の「レッドウルフを発動した時、自分に攻撃力 値 05（71.42%）▲」と、S1 の超過分の変換が乗る。超過分は、チャージ速度▲を効果ごと（III のチャージ速度 値 10（100.8%）▲と、S1 の k スタックの和）に整数の % に四捨五入してから足した和の 100% を超えた分で、その 240%（S1 の値 04）をチャージダメージ▲（足し算の▲）に足す",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0926-11`・`0927-10`（撮影 B の 1 回目の窓の入りの 6 発。S1 が 5〜10 スタック。重なった味方の 1 ヒットを引いた値）、`0924-09`・`0924-10`・`0925-09`・`0925-10`（撮影 A の窓の発。S1 が 10 スタック）。和をまとめて丸める読みは k = 7 の発で、1 スタック 4.0%・III 99% の読みは k = 5・6 の発で外れる（V-0640「結果」）。V-0640",
+  "model": "`data/skills/470.json` の skill2 の effects[0]（timed。{ applied: redWolf }・attack）、skill1 の effects[1]（passive chargeSpeedOverflow）、burst の effects[5]（状態 redWolf の付与）・effects[7]（timed。chargeSpeed）。変換は `skills/buffs.ts` の chargeSpeedOverflowDamage（チャージ速度▲の内訳 chargeSpeedParts を、同じ出どころの同じ値ごとにまとめて整数の % に四捨五入してから足す）。丸めの単位（効果ごとかスキルごとか）と、味方からの▲を和に入れることは未確定（定義の assumes）",
+  "replaces": ["C-0898"],
+  "updated": "2026-11-02",
+  "subject": {
+    "places": [
+      "data/skills/470.json の skill2 の effects[0]",
+      "data/skills/470.json の skill1 の effects[1]",
+      "data/skills/470.json の burst の effects[5]",
+      "data/skills/470.json の burst の effects[7]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0924",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0926",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["0926-11", "0927-10"],
+      "element": "レッドフード burst.notes[3]",
+      "reason": "III の貫通範囲の拡張は、敵 1 体の射撃場では効かない（前提の外）",
+      "decided": "2026-11-02"
+    }
+  ]
+}
