@@ -1,8 +1,12 @@
 // 2 段目の段 1（plan/design-skill-stage1.md 1.2・1.4 節）: スキルの欄の付与と解除の表示。定義は data/skills のもの（マナ・アニス：スター）
 import {
+  MAX_SKILL_LEVELS,
   isCounterFullTrigger,
   parseSkillDefinition,
+  resolveInstant,
+  resolveTimed,
   type AppliedEffect,
+  type CharacterData,
   type CounterChangeEffect,
   type ResolvedInstantEffect,
   type SkillDefinition,
@@ -15,7 +19,9 @@ import {
   formatCounterChange,
   formatEffectSource,
   formatConditionSuffix,
+  formatInstant,
   formatInstantTarget,
+  formatItemDuration,
   formatRemoveState,
   formatStateGrant,
   formatTrigger,
@@ -23,10 +29,10 @@ import {
   noteBadgeLabel,
 } from './skillLabels.ts';
 
-const definitionOf = (id: number): SkillDefinition =>
-  parseSkillDefinition(
-    JSON.parse(readFileSync(new URL(`../../../packages/core/data/skills/${id}.json`, import.meta.url), 'utf8')),
-  );
+const dataOf = (path: string): unknown =>
+  JSON.parse(readFileSync(new URL(`../../../packages/core/data/${path}`, import.meta.url), 'utf8'));
+const definitionOf = (id: number): SkillDefinition => parseSkillDefinition(dataOf(`skills/${id}.json`));
+const characterOf = (id: number): CharacterData => dataOf(`characters/${id}.json`) as CharacterData;
 
 describe('付与と解除の表示', () => {
   it('writes a static state from the start to the end, and a removed state as a grant with its condition', () => {
@@ -212,5 +218,37 @@ describe('戦闘補助の側の表示', () => {
       '（戦闘補助でない時）',
     );
     expect(formatBurstStepMode(undefined)).toBe('');
+  });
+});
+
+// マスト（350）の「自分の HP が X% 以下である限り」、イサベル（231）の数え直し、レッドフード（470）の「戦闘中 1 回発動」
+describe('維持・きっかけ・回数の上限の表示', () => {
+  it('writes the end of a window lasting while own HP is at most the threshold', () => {
+    const effect = resolveTimed(definitionOf(350), characterOf(350), MAX_SKILL_LEVELS).find(
+      (e) => e.durationUntil === 'selfHpAbove',
+    )!;
+    expect(formatTrigger(effect.trigger)).toBe('自分の HP が 70% 以下の間');
+    expect(formatItemDuration({ ...effect, sourceSlotIndex: 0, appliedAmount: effect.value })).toBe(
+      '・自分の HP が 70% を上回るまで',
+    );
+  });
+
+  it('writes the recount of a Burst use count trigger', () => {
+    const triggers = resolveTimed(definitionOf(231), characterOf(231), MAX_SKILL_LEVELS).map((e) => e.trigger);
+    expect(triggers.map(formatTrigger)).toContain(
+      'バースト使用 2 回目以降（前の発動から 45 秒より後の発動で数え直す）',
+    );
+    expect(formatTrigger({ count: 'burstUse', atLeast: 2 })).toBe('バースト使用 2 回目以降');
+  });
+
+  it('writes the cap on the fires of a cooldown reduction', () => {
+    const cuts = resolveInstant(definitionOf(470), characterOf(470), MAX_SKILL_LEVELS).filter(
+      (e) => e.kind === 'cooldownReduction',
+    );
+    expect(cuts.map(formatInstant)).toEqual([
+      'バースト CT −40 秒（戦闘中 1 回まで）',
+      'バースト CT −40 秒（戦闘中 1 回まで）',
+    ]);
+    expect(formatInstant({ ...cuts[0]!, maxFires: undefined })).toBe('バースト CT −40 秒');
   });
 });

@@ -6,7 +6,8 @@
 //    課題のファイルで足した 2 節の番号（records/backlog/2-NN.json）が main と重なっていたら、止めて空いた番号を出す。
 //    8 節・8.2 節の課題のファイル（records/backlog/）・段の一覧の経過・設計書の「状態」の行に進み具合を書き写していたら、止めて行を
 //    出す（--allow-progress で通す。plan/design-workflow-simplification-6.md 2 節・plan/design-backlog-files.md 2.8 節）。
-//    plan/backlog.md（生成物）を手で直していたら、止めて行を出す（直しは生成物を main の版に戻すと消えるので。同 2.11 節）。
+//    plan/backlog.md（生成物）を手で直していたら（足した行も消した行も）、止めて行を出す（直しは生成物を main の版に戻すと消えるので。
+//    同 2.11 節）。
 // 3. git rebase origin/main。衝突したファイルが全部生成物（records-data.ts の GENERATED_PATHS）なら main の版を取って続ける。
 //    生成物でないファイルが 1 つでもあれば、そこで止めてファイルを出す（人が直して git add し、もう一度 npm run pr:prep を回すと続きから）。
 // 4. 生成物を 1 回だけ作り直す（records:minimal。感度は変わった組だけ計算し直し、records:check も回る）。作り直しで生成物でない
@@ -35,6 +36,7 @@ import {
   backlogProgressCopy,
   branchChangedChecks,
   handEditedLines,
+  handRemovedLines,
   checkSteps,
   collisions,
   nulPaths,
@@ -42,6 +44,7 @@ import {
   PROGRESS_PATHS,
   progressCopies,
   rebaseOutcome,
+  removedLines,
   short,
   splitGenerated,
 } from './pr-prep-lib.ts';
@@ -134,19 +137,25 @@ if (!rebasing()) {
   }
 
   const backlogPath = BACKLOG_PATH.slice(ROOT.length);
-  const editedLines = addedLines(git(['diff', '-U0', 'origin/main...HEAD', '--', backlogPath])).get(backlogPath);
-  if (editedLines !== undefined && editedLines.size > 0) {
+  const backlogDiff = git(['diff', '-U0', 'origin/main...HEAD', '--', backlogPath]);
+  const editedLines = addedLines(backlogDiff).get(backlogPath) ?? new Set<number>();
+  const removed = removedLines(backlogDiff).get(backlogPath) ?? [];
+  if (editedLines.size > 0 || removed.length > 0) {
     // 作業中の変更が無いことは確かめたので、作業ツリーのファイルがブランチの版
-    const text = readFileSync(BACKLOG_PATH, 'utf8').split('\n');
+    const branchText = readFileSync(BACKLOG_PATH, 'utf8');
+    const text = branchText.split('\n');
+    const generated = renderBacklogOfData();
     const edited = handEditedLines(
       [...editedLines].map((n) => text[n - 1] ?? ''),
-      renderBacklogOfData(),
+      generated,
     );
-    if (edited.length > 0) {
+    const dropped = handRemovedLines(removed, generated, branchText);
+    if (edited.length > 0 || dropped.length > 0) {
       console.error(
-        `${backlogPath} は生成物で、手で直しても PR に入らない。次の行を課題のファイル（records/backlog/）に移し、git checkout origin/main -- ${backlogPath} で戻して commit してから、もう一度回す（作り直しを commit した後に課題のファイルを直しただけなら、戻して commit するだけでよい）:`,
+        `${backlogPath} は生成物で、手で直しても PR に入らない（pr:prep は main の版に戻す）。足した行（+）は課題のファイル（records/backlog/）に移し、消した行（-）はその課題のファイルを消すか直してから、git checkout origin/main -- ${backlogPath} で戻して commit し、もう一度回す（作り直しを commit した後に課題のファイルを直しただけなら、戻して commit するだけでよい）:`,
       );
-      for (const l of edited) console.error(`  ${short(l)}`);
+      for (const l of edited) console.error(`  + ${short(l)}`);
+      for (const l of dropped) console.error(`  - ${short(l)}`);
       process.exit(1);
     }
   }

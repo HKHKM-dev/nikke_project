@@ -17,10 +17,24 @@ export const HUD_JUMPS_VERSION = 3;
  */
 export const HUD_JUMPS_CACHE_KEY = 'hud-jumps@2';
 
-function runHud(video: string): Promise<string> {
+/**
+ * --opt の名前。0 以外なら hud.ts --fallback で読む（数字が赤みがかるレッドウルフの窓。V-0639）。ほかの録画には使わない。
+ * hud-jumps のキャッシュを読むレシピ（loadHudJumps）はどれも受ける
+ */
+export const HUD_FALLBACK_OPTION = 'hud-fallback';
+
+/** hud.ts に足す引数と、増分のキャッシュの名前（--fallback の読みは違うので、別の名前に置く） */
+export function hudReading(options: Readonly<Record<string, string>>): { args: string[]; cacheKey: string } {
+  const v = options[HUD_FALLBACK_OPTION];
+  return v === undefined || v === '0'
+    ? { args: [], cacheKey: HUD_JUMPS_CACHE_KEY }
+    : { args: ['--fallback'], cacheKey: `${HUD_JUMPS_CACHE_KEY}-fallback` };
+}
+
+function runHud(video: string, args: readonly string[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const script = fileURLToPath(new URL('../hud.ts', import.meta.url));
-    const child = spawn(process.execPath, [script, video, '--mode', 'jumps'], {
+    const child = spawn(process.execPath, [script, video, '--mode', 'jumps', ...args], {
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let out = '';
@@ -34,25 +48,37 @@ function runHud(video: string): Promise<string> {
   });
 }
 
-export type HudJumps = { rows: HudRow[]; groups: TriggerGroup[]; shotInterval: number; final: number | undefined };
+export type HudJumps = {
+  rows: HudRow[];
+  groups: TriggerGroup[];
+  shotInterval: number;
+  final: number | undefined;
+  /** 増分のキャッシュの名前（derived/<録画 id>/<名前>.tsv） */
+  cacheKey: string;
+};
 
 /** 増分の列（キャッシュ）と、組にまとめたトリガーの列 */
 export async function loadHudJumps(ctx: RecipeContext): Promise<HudJumps> {
   const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
-  const text = await derived(ctx.derivedDir, HUD_JUMPS_CACHE_KEY, ctx.video, sha, () => runHud(ctx.video), ctx.log);
+  const { args, cacheKey } = hudReading(ctx.options);
+  const text = await derived(ctx.derivedDir, cacheKey, ctx.video, sha, () => runHud(ctx.video, args), ctx.log);
   const rows = parseHudJumpsTsv(text);
   const shotInterval = shotIntervalOf(rows.map((r) => r.frame));
   const groups = groupIncrements(rows, shotInterval);
-  return { rows, groups, shotInterval, final: rows.at(-1)?.value };
+  return { rows, groups, shotInterval, final: rows.at(-1)?.value, cacheKey };
 }
 
 export const hudJumps: Recipe = {
   name: 'hud-jumps',
   version: HUD_JUMPS_VERSION,
   describe: 'HUD の総ダメージの最後の値（total）と、増分の数から数えたトリガーの数（count）',
-  options: {},
+  options: {
+    [HUD_FALLBACK_OPTION]:
+      '1 なら閾値 150 で読めなかったフレームを低い閾値で読み直す（hud.ts --fallback。レッドウルフの窓。V-0639）',
+  },
   async run(ctx) {
-    const { rows, groups, shotInterval, final } = await loadHudJumps(ctx);
+    const { rows, groups, shotInterval, final, cacheKey } = await loadHudJumps(ctx);
+    const via = cacheKey === HUD_JUMPS_CACHE_KEY ? '' : '（hud.ts --fallback で読んだ）';
     const triggers = groups.reduce((s, g) => s + g.shots, 0);
     const merged = rows.length - groups.length;
     const who = ctx.recording.team.map((m) => m.name).join('・');
@@ -64,7 +90,7 @@ export const hudJumps: Recipe = {
           'total',
           final,
           `${who} の HUD の総ダメージの最後の値`,
-          `最後の増分は f${rows.at(-1)!.frame}。増分は ${rows.length} 個`,
+          `最後の増分は f${rows.at(-1)!.frame}。増分は ${rows.length} 個${via}`,
         ),
       );
     }
@@ -74,7 +100,7 @@ export const hudJumps: Recipe = {
         'count',
         triggers,
         `${who} のトリガーの数（総ダメージの増分の数）`,
-        `増分は ${rows.length} 個。前の増分から 30f 未満の増分（${merged} 個）は同じトリガーの読みが割れたものとしてまとめ、` +
+        `増分は ${rows.length} 個${via}。前の増分から 30f 未満の増分（${merged} 個）は同じトリガーの読みが割れたものとしてまとめ、` +
           `まとめた組が跨ぐ長さ（発の間 ${shotInterval}f）から発の数を決めた（2 発になった組 ${groups.filter((g) => g.shots > 1).length} 個）`,
         { unit: 'トリガー' },
       ),

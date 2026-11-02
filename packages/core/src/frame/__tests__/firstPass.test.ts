@@ -19,7 +19,7 @@ import { resolvePassiveStates, type TimelineSlot } from '../../skills/timeline.t
 import { firstPassTimeline } from '../../__tests__/firstPassTimeline.ts';
 import { parseSkillDefinition, type SkillDefinition, type SkillEffect } from '../../skills/types.ts';
 import type { CharacterData, ShotParams, SkillRaw } from '../../types.ts';
-import { runFirstPass } from '../firstPass.ts';
+import { runFirstPass, settleLeadShots } from '../firstPass.ts';
 import { planShots, type ShotLog } from '../shots.ts';
 
 const FRAMES = gameSecondsToFrames(180);
@@ -419,5 +419,27 @@ describe('runFirstPass: ammo refill', () => {
     expect(byslot(2)).toBeGreaterThanOrEqual(0);
     expect(byslot(2)).toBeLessThanOrEqual(6);
     expect(byslot(0)).toBeLessThanOrEqual(26);
+  });
+});
+
+// 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節の案 1）: leadFrames の付与の発が渡したものと同じになるまで回し直す
+describe('settleLeadShots（leadFrames の回し直し）', () => {
+  it('returns the result of the first pass whose lead shots match the ones given', () => {
+    const given: string[] = [];
+    const result = settleLeadShots((known) => {
+      given.push(JSON.stringify(known));
+      // 2 回目に、1 回目の発が渡ってきて揃う
+      return given.length === 1 ? { result: null, leadShots: { a: [10] } } : { result: 'ok', leadShots: known };
+    });
+    expect(result).toBe('ok');
+    expect(given).toEqual(['{}', '{"a":[10]}']);
+  });
+
+  it('throws when the lead shots do not settle in 4 passes', () => {
+    let passes = 0;
+    expect(() => settleLeadShots(() => ({ result: null, leadShots: { a: [passes++] } }))).toThrow(
+      'the shots of the grants with leadFrames did not settle in 4 passes',
+    );
+    expect(passes).toBe(4);
   });
 });

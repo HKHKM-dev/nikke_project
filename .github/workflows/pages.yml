@@ -2,8 +2,10 @@
 # base はリポジトリ名のサブパス（https://<owner>.github.io/<repo>/）。ビルドの出力は check-pages-build.ts で確かめる。
 # 配信（deploy）はリポジトリが公開のときだけ行う。非公開のあいだはビルドと確認だけ通す。
 # 初回は リポジトリの Settings → Pages → Build and deployment の Source を「GitHub Actions」にする。
-# main の CI（ci.yml）が通った後に回す。画面が読む生成物（data/skills/support.json）を CI がマージの後に作り直して commit するので、
-# それを含む main の先頭を配る（CI の push は GITHUB_TOKEN なので、push では Pages が起きない。plan/design-pr-conflicts.md 3.1 節）。
+# main の CI（ci.yml）が通った後に、その CI の commit を配る。画面が読む生成物（data/skills/support.json）は、CI がマージの後に作り直して
+# デプロイキーで main に push する（「生成物を作り直す（CI）」の commit）。その push でも CI が回り、通った後にここが回る。そのため、
+# CI の通った commit が main の先頭でなくなっていたら配らない（後の commit の CI が通った後に配る）。手動の実行は main の先頭を配る
+# （plan/design-pr-conflicts.md 5 節）。
 name: Pages
 
 on:
@@ -22,15 +24,39 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  # 配る commit（ref）。CI の通った commit が main の先頭でなければ空にして、ビルドと配信を飛ばす
+  target:
     if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.target.outputs.ref }}
+    steps:
+      - id: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ]; then
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          head=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+          if [ "$head" = "$SHA" ]; then
+            echo "ref=$SHA" >> "$GITHUB_OUTPUT"
+          else
+            echo "CI の通った $SHA は main の先頭（$head）でないので配らない（後の commit の CI が通った後に配る）"
+          fi
+
+  build:
+    needs: target
+    if: needs.target.outputs.ref != ''
     runs-on: ubuntu-latest
     env:
       BASE_PATH: /${{ github.event.repository.name }}/
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: main
+          ref: ${{ needs.target.outputs.ref }}
           persist-credentials: false
       - uses: actions/setup-node@v7
         with:

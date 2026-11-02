@@ -51,8 +51,8 @@
             "ref": 5
           },
           "assumes": {
-            "ja": "焦土化。説明文にきっかけの無い周期のスキルで、周期は 20 秒（録画で読んだ。説明文に無い）。戦闘開始から 20 秒ごと（端数は持ち越さない）に、敵 1 体（的）に分配ダメージを出す。バーストの発現（10 秒）の間は、前の発動から 2 秒（20 − 18 秒）が経ったフレームで発動し、発現が付いた時にもう 2 秒経っていれば、付いたフレームで発動する",
-            "en": "Scorch to Dust. A recurring skill with no trigger in the description; the interval is 20 s (read from recordings; not in the description). Every 20 s from the start of battle (no carried fraction) it deals distributed damage to the single enemy (the target). During Manifestation from her Burst (10 s) it activates once 2 s (20 − 18 s) have passed since the previous activation, and at the moment Manifestation is applied if 2 s have already passed"
+            "ja": "焦土化。説明文にきっかけの無い周期のスキルで、周期は 20 秒（録画で読んだ。説明文に無い）。戦闘開始から 20 秒ごと（端数は持ち越さない）に、敵 1 体（的）に分配ダメージを出す。バーストの発現（10 秒）が付いたフレームから 2 秒（20 − 18 秒）後に発動し（もっと早い予定ならそのまま）、発現の間の発動からは 2 秒ごとに発動する（窓の終わりを越えた発動も、窓の中の発動から 2 秒で来る）。発現が付いた時に前の発動から 2 秒以上経っていても、その場では発動しない",
+            "en": "Scorch to Dust. A recurring skill with no trigger in the description; the interval is 20 s (read from recordings; not in the description). Every 20 s from the start of battle (no carried fraction) it deals distributed damage to the single enemy (the target). When Manifestation from her Burst (10 s) is applied, it activates 2 s (20 − 18 s) later (or earlier if already scheduled earlier), and 2 s after each activation within Manifestation (an activation past the end of the window also comes 2 s after the last one inside it). It does not activate at the moment Manifestation is applied even if 2 s have already passed since the previous activation"
           },
           "claims": [
             "C-0847",

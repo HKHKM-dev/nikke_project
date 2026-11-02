@@ -77,8 +77,10 @@ describe('フルスタックのバースト（C-0874）', () => {
     copy.skills.burst!.effects = copy.skills.burst!.effects.filter((e) => e.stat !== 'enemyDefenseDown');
     return parseSkillDefinition(copy);
   }
-  const run = (definition: SkillDefinition) =>
-    runSimulation(team([slotOf(liter, literDef), slotOf(guilty, definition)], true, 1));
+  const run = (definition: SkillDefinition, enemy: Partial<TeamInput['enemy']> = {}) => {
+    const input = team([slotOf(liter, literDef), slotOf(guilty, definition)], true, 1);
+    return runSimulation({ ...input, enemy: { ...input.enemy, ...enemy } });
+  };
   const additional = (r: ReturnType<typeof run>) =>
     r.skillHits.filter((h) => h.slotIndex === 1 && h.effect.dot === undefined).map((h) => h.hit.perActivation);
 
@@ -96,5 +98,23 @@ describe('フルスタックのバースト（C-0874）', () => {
     expect(burstHits(r).length).toBeGreaterThan(0);
     burstHits(r).forEach((v, k) => expect(v).toBeCloseTo(burstHits(bare)[k]!, 6));
     expect(additional(r)[0]!).toBeGreaterThan(additional(bare)[0]!);
+  });
+
+  it('does not add the defense decrease when the enemy debuffs are read at activation', () => {
+    // 予測の仮説（burstEffectEnemyDebuffs: 'activation'）では、同じバーストの防御力▼は追加ダメージにも乗らない
+    const snap = additional(run(def, { burstEffectEnemyDebuffs: 'activation' }));
+    const snapBare = additional(run(withoutDefenseDown(), { burstEffectEnemyDebuffs: 'activation' }));
+    expect(snap.length).toBeGreaterThan(0);
+    expect(snap.length).toBe(snapBare.length);
+    snap.forEach((v, k) => expect(v).toBeCloseTo(snapBare[k]!, 6));
+  });
+
+  it('rejects a casterDefence decrease written before the additional damage', () => {
+    // 前の防御力▼を足すときは発動者の防御力を渡さないので、発動者基準の防御力▼は拒む（根拠のあるデータが無い）
+    const copy = structuredClone(raw);
+    copy.skills.burst!.effects.find((e) => e.stat === 'enemyDefenseDown')!.scaling = 'casterDefence';
+    expect(() => run(parseSkillDefinition(copy))).toThrow(
+      /a sequential burst supports only plain timed effects.*casterDefence/,
+    );
   });
 });

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
 import { computeFixedSpecAttack, computeFixedSpecHp, FIXED_SPEC_ENEMY_DEFENCE } from '../../fixedSpec.ts';
+import { effectFrameOf } from '../../burst/schedule.ts';
 import { runSimulation } from '../../sim/engine.ts';
 import type { TeamSlotInput } from '../../team.ts';
 import { GAME_SECONDS_PER_FRAME, gameSecondsToFrames } from '../../time.ts';
@@ -125,5 +126,47 @@ describe('ニアフェザー（単騎・バーストなし。アインの定義�
     const gauges = r.timerGauges.filter((g) => g.slotIndex === 0);
     expect(gauges.map((g) => g.frame)).toEqual(hits);
     for (const g of gauges) expect(g.energy).toBeCloseTo(2 * character.shot.targetBurstEnergyPerShot);
+  });
+});
+
+// バーストの展開（burstUse）: 効果のフレームで組を 6 機に置き換え、進みを 0 に戻す。リター I・デルタ II・アイン III（操作）
+describe('ニアフェザー（バーストあり。リター + デルタ + アイン）', () => {
+  const slotOf = (id: number): TeamSlotInput => {
+    const c = readJson<CharacterData>(`../../../data/characters/${id}.json`);
+    const fixed = computeFixedSpecAttack(c);
+    return {
+      character: c,
+      growth: fixed.growth,
+      attackOverride: fixed.attack,
+      hpOverride: computeFixedSpecHp(c),
+      condition: { coreHitRate: 0, distanceBonus: false, fullCharge: false },
+      skills: {
+        definition: parseSkillDefinition(readJson(`../../../data/skills/${id}.json`)),
+        levels: MAX_SKILL_LEVELS,
+      },
+    };
+  };
+  const enemy: EnemyInput = { defence: FIXED_SPEC_ENEMY_DEFENCE, element: 'Fire', hasCore: true };
+  const r = runSimulation({
+    slots: [slotOf(82), slotOf(20), slotOf(EIN)],
+    enemy,
+    durationSeconds: 180,
+    burst: true,
+    controlledSlot: 2,
+  });
+  const hits = r.skillHits.filter((h) => h.slotIndex === 2 && h.effect.source.skill === 'skill2').map((h) => h.frame);
+  const deploys = r.schedule!.activations.filter((a) => a.slotIndex === 2).map(effectFrameOf);
+
+  it('redeploys 6 feathers on the effect frame of each burst and attacks every 0.3 s until two of them expire', () => {
+    expect(deploys.length).toBeGreaterThan(0);
+    const delay = gameSecondsToFrames(0.67);
+    const per = 0.3 / GAME_SECONDS_PER_FRAME;
+    for (const at of deploys) {
+      // 進みは展開で 0 に戻る（展開の前の進みを持ち越さない）ので、展開から遅れの間は撃たず、その後 6 機の間隔ごとに撃つ
+      const expiry = at + gameSecondsToFrames(10.67);
+      const six = hits.filter((f) => f > at && f <= expiry);
+      expect(six.length).toBeGreaterThan(0);
+      expect(six).toEqual(six.map((_, k) => at + delay + Math.ceil((k + 1) * per - 1e-9)));
+    }
   });
 });

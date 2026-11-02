@@ -12,12 +12,14 @@ import {
   checkSteps,
   collisions,
   handEditedLines,
+  handRemovedLines,
   isCheckSetting,
   MAX_CHANGED_FILES,
   nulPaths,
   pathListArgs,
   progressCopies,
   rebaseOutcome,
+  removedLines,
   splitGenerated,
 } from './pr-prep-lib.ts';
 
@@ -111,6 +113,46 @@ describe('handEditedLines', () => {
     expect(handEditedLines(['- 先の課題', '', '- 手で足した課題'], '# 一覧\n\n- 先の課題\n')).toEqual([
       '- 手で足した課題',
     ]);
+  });
+});
+
+describe('removedLines', () => {
+  it('reads the removed lines of each file from git diff -U0, keyed by the path on main', () => {
+    const diff = [
+      'diff --git a/plan/backlog.md b/plan/backlog.md',
+      'index 1111111..2222222 100644',
+      '--- a/plan/backlog.md',
+      '+++ b/plan/backlog.md',
+      '@@ -3 +2,0 @@ x',
+      '-- 手で消した課題',
+      '@@ -7,2 +6 @@ y',
+      '--- 「-」で始まる行',
+      '-| 2-5 | 前の文 |',
+      '+| 2-5 | 後の文 |',
+      'diff --git a/plan/design-new.md b/plan/design-new.md',
+      'new file mode 100644',
+      '--- /dev/null',
+      '+++ b/plan/design-new.md',
+      '@@ -0,0 +1 @@',
+      '+# 題',
+    ].join('\n');
+    const got = removedLines(diff);
+    expect([...got.keys()]).toEqual(['plan/backlog.md']);
+    expect(got.get('plan/backlog.md')).toEqual(['- 手で消した課題', '-- 「-」で始まる行', '| 2-5 | 前の文 |']);
+  });
+});
+
+describe('handRemovedLines', () => {
+  const generated = '# 一覧\n\n- 残っている課題\n- 動かした課題\n';
+
+  it('returns the removed lines that the data still generates and the branch no longer has', () => {
+    const branch = '# 一覧\n\n- 動かした課題\n';
+    expect(handRemovedLines(['- 残っている課題', '', '- 閉じた課題'], generated, branch)).toEqual(['- 残っている課題']);
+  });
+
+  it('ignores lines that were only moved', () => {
+    const branch = '# 一覧\n\n- 動かした課題\n- 残っている課題\n';
+    expect(handRemovedLines(['- 残っている課題'], generated, branch)).toEqual([]);
   });
 });
 

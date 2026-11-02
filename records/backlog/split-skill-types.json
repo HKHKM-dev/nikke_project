@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 1,
+  "text": "`packages/core/src/skills/types.ts` の読み込みの検査（`parse*`・`validate*`・`CONDITION_KEYS_OF` など。ファイルの後半の大半）を、効果の種類ごとのモジュールに分ける。キャラのスキルの PR がほぼ全部このファイルの同じあたりを書き換えるので、並行する PR の衝突とレビューのしにくさの元になっている（`skills/holders.ts` も同じ傾向）。分けるのは並行の PR の少ない時に 1 回で行い、型（`Effect` など）の置き場所と読み込む側の import は変えない"
+}

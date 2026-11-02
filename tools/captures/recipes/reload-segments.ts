@@ -8,7 +8,7 @@ import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { derived } from './cache.ts';
-import { HUD_JUMPS_CACHE_KEY, loadHudJumps } from './hud-jumps.ts';
+import { loadHudJumps } from './hud-jumps.ts';
 import { parseReloadRows, summarizeReloads, MAX_FIT_RMS } from './reload-rows.ts';
 import { observation, roundTo, type Recipe, type RecipeContext } from './types.ts';
 
@@ -47,11 +47,11 @@ export const reloadSegments: Recipe = {
   },
   async run(ctx) {
     const stages = ctx.options.stages !== undefined && ctx.options.stages !== '0';
-    await loadHudJumps(ctx);
-    const shots = join(ctx.derivedDir, `${HUD_JUMPS_CACHE_KEY}.tsv`);
+    const hudKey = (await loadHudJumps(ctx)).cacheKey;
+    const shots = join(ctx.derivedDir, `${hudKey}.tsv`);
     const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
     // 発のフレームは hud-jumps のキャッシュから取るので、その版も鍵に入れる
-    const key = `reload-fit${stages ? '-stages' : ''}${ctx.options.crop ? `-${ctx.options.crop.replace(/,/g, '_')}` : ''}@${VERSION}+${HUD_JUMPS_CACHE_KEY}`;
+    const key = `reload-fit${stages ? '-stages' : ''}${ctx.options.crop ? `-${ctx.options.crop.replace(/,/g, '_')}` : ''}@${VERSION}+${hudKey}`;
     const text = await derived(
       ctx.derivedDir,
       key,

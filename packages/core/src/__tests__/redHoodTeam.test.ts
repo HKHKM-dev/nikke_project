@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { countShotsInRanges } from '../frame/shots.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { chargeSpeedOverflowDamage } from '../skills/buffs.ts';
+import { instantSkipCount } from '../skills/summaries.ts';
 import { appliedFrames } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
@@ -65,6 +66,18 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) =
       [firstOf('Step1'), firstOf('Step2')].filter((f) => f !== undefined).sort((a, b) => a - b),
     );
     expect(cuts.every((x) => x.slotIndex === redHood)).toBe(true);
+  });
+
+  // 使った段階の違う発動と、1 回の後の発動は不発に数える（持続の効果の使った段階の条件と同じ数え方。設計書 2.3 節）
+  it('counts each Burst use where a CT cut does not apply as a skip, like the timed effects of another stage', () => {
+    const uses = activations.filter((a) => (a.effectFrame ?? a.frame) < plan.frames).length;
+    const skipsOf = (effectIndex: number) =>
+      instantSkipCount(plan.history.conditionSkips, redHood, { source: { skill: 'burst' }, effectIndex });
+    const firesOf = (effectIndex: number) =>
+      plan.instants.filter((x) => x.sourceSlotIndex === redHood && x.effect.effectIndex === effectIndex).length;
+    // バーストの 1 番目は I の攻撃力▲（timed）、2・4 番目は I・II の CT▼
+    expect(skipsOf(1)).toBe(uses - effectFramesAt('Step1').length);
+    for (const cut of [2, 4]) expect(firesOf(cut) + skipsOf(cut)).toBe(uses);
   });
 
   it('converts the charge speed over 100% into charge damage, which happens on the Red Wolf shots', () => {
