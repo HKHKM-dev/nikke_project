@@ -268,5 +268,80 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "0924-14",
+    "recording": "0924",
+    "source": "V-0641",
+    "readAt": "2026-11-02",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 1,
+    "description": "レッドフードの 1 発目（868f）で、的の 1 ヒットのほかに溜まったゲージを、的以外の 1 ヒット（物 1 個と同じ量）と読んだ数。何に当たったかは画に見えない（V-0641「条件」）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "1 発目の前後と、2〜6 発目の後のバーの px を読み、C-0084 の換算で本当の量に直した（V-0641「読み方」）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0924-15",
+    "recording": "0924",
+    "source": "V-0641",
+    "readAt": "2026-11-02",
+    "use": "compare",
+    "kind": "count",
+    "unit": "発",
+    "value": 7,
+    "description": "レッドフード単騎で、戦闘の最初の発（868f）から数えて、1 回目に BURST バーが消えた（本当の満タン）発の番号。モデルには、1 発目の余分（0924-14）を入力する",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "1 発目の前後と、2〜6 発目の後のバーの px を読み、C-0084 の換算で本当の量に直した（V-0641「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 1,
+            "shot": 1,
+            "count": "0924-14"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "0924-16",
+    "recording": "0924",
+    "source": "V-0641",
+    "readAt": "2026-11-02",
+    "use": "record",
+    "kind": "gauge",
+    "unit": "px",
+    "value": 11.67,
+    "description": "レッドフード単騎の、1 発目（868f）の後の BURST バーの px（1 発目の前は 1px 未満）。本当の約 21.2% で、的の 1 ヒット（14%）より約 7% 多い",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "1 発目の前後と、2〜6 発目の後のバーの px を読み、C-0084 の換算で本当の量に直した（V-0641「読み方」）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
   }
 ]
