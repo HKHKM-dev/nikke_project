@@ -73,10 +73,12 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, redHood }) =
     for (const g of result.slots[redHood]!.segments) {
       if (countShotsInRanges(frames, g.ranges) === 0) continue;
       const extra = chargeSpeedOverflowDamage(g.buffs);
-      expect(extra).toBeCloseTo(Math.max(0, g.buffs.chargeSpeed - 1) * 2.4, 10);
+      // 効果ごとに整数の % に丸めてから足すので、超過は 1% 刻みで、丸めない和との差は効果 2 つ分（1%）まで（V-0640）
+      expect(Math.abs(extra / 0.024 - Math.round(extra / 0.024))).toBeLessThan(1e-9);
+      expect(Math.abs(extra - Math.max(0, g.buffs.chargeSpeed - 1) * 2.4)).toBeLessThanOrEqual(0.024 + 1e-9);
       if (extra > 0 && g.buffs.weapon !== null) converted += 1;
     }
-    // 窓の外の S1 の 10 スタック（38.1%）では超えない。レッドウルフの窓（III の 100.8%）がある編成では超える
+    // 窓の外の S1 の 10 スタック（38%）では超えない。レッドウルフの窓（III の 101%）がある編成では超える
     expect(converted > 0).toBe(plan.schedule!.activations.some((a) => a.slotIndex === redHood && a.step === 'Step3'));
   });
 });

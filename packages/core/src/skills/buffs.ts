@@ -54,6 +54,9 @@ export const ATTACK_ROUNDING: AttackRounding = 'self';
  */
 export type AttackPart = { source: string; ratio: number; flat: number; self?: true };
 
+/** チャージ速度▲の 1 件（超過分の変換の丸め用。V-0640）。source は出どころ（`<resourceId>.<スロット>`。育成の効果層は `build`） */
+export type ChargeSpeedPart = { source: string; ratio: number };
+
 /** 1 体が受けるバフの合計。attackFlat 以外はすべて比率の加算（0.2 = +20%） */
 export type BuffTotals = {
   /** 攻撃力の比率加算。Σ(stat attack, scaling ratio) */
@@ -145,6 +148,8 @@ export type BuffTotals = {
   reloadSpeed: number;
   /** Stage 10: チャージ速度の加算 */
   chargeSpeed: number;
+  /** チャージ速度▲の内訳（足した順）。chargeSpeed と同じものを 1 件ずつ持つ。超過分の変換（chargeSpeedOverflowDamage）だけが読む */
+  chargeSpeedParts: readonly ChargeSpeedPart[];
   /**
    * レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換の割合の加算（「超過した値の X% のチャージダメージ▲」の X）。
    * フルチャージの発で max(0, chargeSpeed − 1) × この値をチャージダメージ▲に足す（applyChargeBuffs）
@@ -220,6 +225,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   maxAmmoFlat: 0,
   reloadSpeed: 0,
   chargeSpeed: 0,
+  chargeSpeedParts: Object.freeze([]) as readonly ChargeSpeedPart[],
   chargeSpeedOverflow: 0,
   attackSpeed: 0,
   spinUpSpeed: 0,
@@ -237,7 +243,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
 });
 
 /** stat に対応する BuffTotals の比率フィールド */
-const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attackParts'>> = {
+const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attackParts' | 'chargeSpeedParts'>> = {
   attack: 'attackRatio',
   critRate: 'critRate',
   critDamage: 'critDamage',
@@ -280,7 +286,7 @@ export function statTotal(totals: BuffTotals, stat: BuffStat): number {
   return totals[RATIO_FIELD[stat]];
 }
 
-/** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す。攻撃力は内訳にも出どころ source で足す */
+/** 比率の加算（0.2 = +20%）。新しいオブジェクトを返す。攻撃力とチャージ速度は内訳にも出どころ source で足す */
 export function addRatioBuff(
   totals: BuffTotals,
   stat: BuffStat,
@@ -290,6 +296,7 @@ export function addRatioBuff(
 ): BuffTotals {
   const field = RATIO_FIELD[stat];
   const next = { ...totals, [field]: totals[field] + ratio };
+  if (stat === 'chargeSpeed') return { ...next, chargeSpeedParts: [...totals.chargeSpeedParts, { source, ratio }] };
   if (stat !== 'attack') return next;
   return { ...next, attackParts: [...totals.attackParts, { source, ratio, flat: 0, ...(self ? { self } : {}) }] };
 }
@@ -476,6 +483,7 @@ export function scaleBasisPoints(units: number, ratio: number): number {
  * 足し合わせてから素のフルチャージ倍率に掛けて 1e-4 単位で丸め、足し算の▲（OL の増加など）はその後に足す（C-0122・C-0126）。
  * スキルの足し算の▲（C-0020）も OL と同じく倍率▲の後に足す（C-0134。アリスのフルバースト中）。
  * レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換は、足し算の▲に max(0, チャージ速度の和 − 1) × 割合 を足す
+ * （和は効果ごとに整数の % に丸めてから足す。chargeSpeedOverflowDamage）
  */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
   if (!charge) return 1;
@@ -486,8 +494,21 @@ export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buff
   );
 }
 
-/** レッドフード編: チャージ速度の超過分から変換したチャージダメージ▲（変換が無いか、超えていなければ 0） */
-export function chargeSpeedOverflowDamage(buffs: Pick<BuffTotals, 'chargeSpeed' | 'chargeSpeedOverflow'>): number {
+/**
+ * レッドフード編: チャージ速度の超過分から変換したチャージダメージ▲（変換が無いか、超えていなければ 0）。チャージ速度▲は
+ * 効果ごと（同じ出どころの同じ値＝スタックは 1 つにまとめる）に整数の % に四捨五入してから足す（V-0640。丸めの単位と、
+ * 味方からの▲を和に入れることは未確定）。チャージの長さ（chargeSpeed）は丸めない
+ */
+export function chargeSpeedOverflowDamage(
+  buffs: Pick<BuffTotals, 'chargeSpeedParts' | 'chargeSpeedOverflow'>,
+): number {
   if (buffs.chargeSpeedOverflow === 0) return 0;
-  return Math.max(0, buffs.chargeSpeed - 1) * buffs.chargeSpeedOverflow;
+  const groups = new Map<string, number>();
+  for (const part of buffs.chargeSpeedParts) {
+    const key = `${part.source}|${part.ratio}`;
+    groups.set(key, (groups.get(key) ?? 0) + part.ratio);
+  }
+  let percent = 0;
+  for (const ratio of groups.values()) percent += Math.round(ratio * 100);
+  return (Math.max(0, percent - 100) / 100) * buffs.chargeSpeedOverflow;
 }
