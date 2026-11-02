@@ -9,6 +9,7 @@ import {
   isCounterFullTrigger,
   isCounterWhileEffect,
   isEndedTrigger,
+  isResolvedSelfHpAtMost,
   isStatContent,
   isStateContent,
   isTimedItem,
@@ -175,7 +176,11 @@ export function formatTrigger(trigger: ResolvedTrigger): string {
     return base;
   }
   const what = trigger.count === 'burstUse' ? 'バースト使用' : 'フルバースト';
-  return trigger.atLeast === 1 ? `${what}時` : `${what} ${trigger.atLeast} 回目以降`;
+  const nth = trigger.atLeast === 1 ? `${what}時` : `${what} ${trigger.atLeast} 回目以降`;
+  // V-0631: 前の発動から N 秒より後の発動で数え直す（イサベルのターゲットマーキング）
+  return trigger.resetAfterSeconds === undefined
+    ? nth
+    : `${nth}（前の発動から ${formatNumber(trigger.resetAfterSeconds)} 秒より後の発動で数え直す）`;
 }
 
 /**
@@ -241,6 +246,13 @@ export function formatItemDuration(effect: AppliedTimedEffect): string {
   if (effect.durationUntil === 'battleEnd') return '・持続';
   // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 最大弾数リロード完了時に解除
   if (effect.durationUntil === 'reloadEnd') return '・リロード完了まで';
+  // マスト編（plan/design-mast.md 8 節）: きっかけ { selfHpAtMost } の閾値を上回るフレームまで
+  if (effect.durationUntil === 'selfHpAbove') {
+    const t = effect.trigger;
+    return isResolvedSelfHpAtMost(t)
+      ? `・自分の HP が ${formatNumber(t.selfHpAtMost * 100)}% を上回るまで`
+      : '・自分の HP が閾値を上回るまで';
+  }
   return `・${formatNumber(framesToGameSeconds(effect.durationFrames), 0)} 秒`;
 }
 
@@ -516,7 +528,8 @@ export function formatTimedExtras(effect: AppliedTimedEffect): string {
 export function formatInstant(effect: ResolvedInstantEffect): string {
   switch (effect.kind) {
     case 'cooldownReduction':
-      return `バースト CT −${formatNumber(effect.value, 2)} 秒`;
+      // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数の上限
+      return `バースト CT −${formatNumber(effect.value, 2)} 秒${effect.maxFires === undefined ? '' : `（戦闘中 ${effect.maxFires} 回まで）`}`;
     case 'ammoRefill':
       // ルドミラ：ウィンターオーナー編: 発数の弾丸チャージ（scaling 'flat'）
       return effect.scaling === 'flat'
