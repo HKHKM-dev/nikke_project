@@ -1,6 +1,6 @@
 // 画面上部中央の HUD の総ダメージ（例: 79,851,043）を全フレーム読み、値の列・増分・最終値を出す（Stage 19-D。
 // plan/design-stage19.md 2.7 節）。Stage 11 モダニア・17・18 で使い捨てのスクリプトで読んでいた読み方をツールにしたもの。
-//   node tools/captures/hud.ts <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38]
+//   node tools/captures/hud.ts <動画> [--mode final|jumps|series] [--from N] [--to N] [--crop 810,34,300,38] [--fallback]
 //   node tools/captures/hud.ts <動画> --make-templates 6000:39174344,11400:79851043,...   # テンプレートを作り直す
 //   node tools/captures/hud.ts <動画> --screen interception [--mode ...]   # 迎撃戦の段階の数値（V-0462）
 //   node tools/captures/hud.ts --screen interception --make-templates 516:1300:896779,514:1090:79191,...  # 録画 id:フレーム:左の値
@@ -14,6 +14,9 @@
 // 正規化相互相関で照合する。0 と 8 は照合の差が小さいとき、字の穴の数で分ける（V-0327）。
 // カンマの位置が 3 桁区切りにならない読みは捨てる。
 // 総ダメージは減らないので、読めた値の列から最長の非減少列を残し、そこから外れた読み（1 桁の誤読・先頭の桁の欠け）を落とす。
+//
+// --fallback: 閾値 150 で読めなかったフレームを、低い閾値（FALLBACK_THRESHOLDS）で読み直す。数字が赤みがかる録画（レッドフードの
+// レッドウルフの窓。V-0639）だけに使う。ほかの録画では、演出が重なったり字が薄れたりして落ちていたフレームを読み違えうる。
 //
 // mode:
 //   final   最後に残った値（単騎なら戦闘履歴の与ダメージと同じになる）
@@ -41,8 +44,8 @@ const INTERCEPTION_TEMPLATE_FILE = new URL('./hud-interception-templates.json', 
 /** 数字とみなす明るさ（min(R,G,B)） */
 const THRESHOLD = 150;
 /**
- * THRESHOLD で読めなかったフレームを読み直す閾値（順に試す）。レッドフードのレッドウルフの窓では、数字が赤みがかって min(R,G,B) が
- * 110〜150 に下がり、赤い横線も重なる（背景は 80 未満。V-0639）。いままで読めていたフレームの読みは変えない
+ * --fallback のとき、THRESHOLD で読めなかったフレームを読み直す閾値（順に試す）。レッドフードのレッドウルフの窓では、数字が
+ * 赤みがかって min(R,G,B) が 110〜150 に下がり、赤い横線も重なる（背景は 80 未満。V-0639）。THRESHOLD で読めたフレームの読みは変えない
  */
 const FALLBACK_THRESHOLDS = [120, 100];
 /** 照合に使う大きさ（正規化した数字の画像） */
@@ -65,6 +68,7 @@ const { values, positionals } = parseArgs({
     mode: { type: 'string', default: 'final' },
     from: { type: 'string', default: '0' },
     to: { type: 'string' },
+    fallback: { type: 'boolean', default: false },
     'make-templates': { type: 'string' },
   },
 });
@@ -74,10 +78,14 @@ if (!interception && values.screen !== 'range') {
   console.error('--screen は range か interception');
   process.exit(1);
 }
+if (interception && values.fallback) {
+  console.error('--fallback は --screen range だけ');
+  process.exit(1);
+}
 const video = positionals[0];
 if (!video && !(interception && values['make-templates'] !== undefined)) {
   console.error(
-    'usage: node tools/captures/hud.ts <動画> [--screen range|interception] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h]\n' +
+    'usage: node tools/captures/hud.ts <動画> [--screen range|interception] [--mode final|jumps|series] [--from N] [--to N] [--crop x,y,w,h] [--fallback]\n' +
       '       node tools/captures/hud.ts <動画> --make-templates frame:value,... [--crop x,y,w,h]\n' +
       '       node tools/captures/hud.ts --screen interception --make-templates 録画id:frame:value,...',
   );
@@ -380,9 +388,10 @@ async function main(): Promise<void> {
     }
   } else {
     const templates = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8')) as Templates;
+    const thresholds = values.fallback ? [THRESHOLD, ...FALLBACK_THRESHOLDS] : [THRESHOLD];
     for await (const { n, rgb } of frames(from, to)) {
       total++;
-      for (const threshold of [THRESHOLD, ...FALLBACK_THRESHOLDS]) {
+      for (const threshold of thresholds) {
         const bin = binarize(rgb, crop.w, crop.h, threshold);
         const value = readValue(glyphs(components(bin, crop.w, crop.h), templates.digitHeight), templates);
         if (value === null) continue;
