@@ -884,9 +884,9 @@ notes の種類: 未対応 41・前提の外 42・計算に無関係 41・補足
 
 - **skill1**: supported
   - effects[0] timed・normalShot・chargeSpeed: C-0895（確定）
-  - effects[1] passive・chargeSpeedOverflow: C-0898（仮説）
+  - effects[1] passive・chargeSpeedOverflow: C-0899（確定）
 - **skill2**: supported
-  - effects[0] timed・redWolf が適用された時・attack: C-0898（仮説）
+  - effects[0] timed・redWolf が適用された時・attack: C-0899（確定）
   - notes[0] 間接（貫通）: 戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）: 根拠なし
   - notes[1] 間接（防御力）: ビーストケージを適用時の、味方全体へのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）: 根拠なし
   - notes[2] 計算に無関係: ハウリングエンドを適用時の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない: 根拠なし
@@ -896,9 +896,9 @@ notes の種類: 未対応 41・前提の外 42・計算に無関係 41・補足
   - effects[2] cooldownReduction・burstUse: C-0894（確定）
   - effects[3] state・burstUse・theLastHowl: 根拠なし
   - effects[4] cooldownReduction・burstUse: C-0894（確定）
-  - effects[5] state・burstUse・redWolf: C-0898（仮説）
+  - effects[5] state・burstUse・redWolf: C-0899（確定）
   - effects[6] weaponChange・burstUse: C-0896（確定）、C-0897（確定）
-  - effects[7] timed・burstUse・chargeSpeed: C-0898（仮説）
+  - effects[7] timed・burstUse・chargeSpeed: C-0899（確定）
   - notes[0] 補足: 使用武器変更の発射レートは、CDN のバーストが使用武器の変更の形（ChangeWeapon）でないので無い。チャージ武器の発の間隔はチャージ時間と解放で決まり、レートを読まないので、基礎の武器のレート（60）を書いた: 根拠なし
   - notes[1] 計算に無関係: バーストⅡの、自分にヘイト：敵全体を挑発は、ダメージに関係しない。付けたときにゲージを溜めても、チェーンの間はゲージを足さないので効かない: 根拠なし
   - notes[2] 間接（HP）: バーストⅡの、自分の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
