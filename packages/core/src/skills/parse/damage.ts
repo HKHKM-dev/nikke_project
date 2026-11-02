@@ -1,0 +1,301 @@
+// スキル定義の読み込みの検査のうち、倍率ダメージ（burstDamage・damage）の読み込み。型は ../types.ts
+import { COUNTER_IDS } from '../counters.ts';
+import {
+  BURST_DAMAGE_TYPES,
+  type BurstDamageEffect,
+  type DamageEffect,
+  type EffectTrigger,
+  isAppliedTrigger,
+  isCounterFullTrigger,
+  isShotCountTrigger,
+  isSummonAttackTrigger,
+  isTimerTrigger,
+  SKILL_DAMAGE_TYPES,
+  SKILL_SLOTS,
+  splitsPerCount,
+} from '../types.ts';
+import {
+  fail,
+  isRecord,
+  type Json,
+  oneOf,
+  parseGaugeHits,
+  parseLocalizedText,
+  parseNamedStateId,
+  parsePositiveInt,
+  parseRef,
+} from './common.ts';
+import { CONDITION_KEYS_OF, parseCondition } from './condition.ts';
+import { parseDamageTrigger, parseShotCountDelay } from './trigger.ts';
+
+export function parseBurstDamageEffect(v: Record<string, Json>, path: string): BurstDamageEffect {
+  const damageType = oneOf(BURST_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
+  const effect: BurstDamageEffect = { kind: 'burstDamage', ref: parseRef(v.ref, `${path}.ref`), damageType };
+  if (v.hitsRef !== undefined) effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+export function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
+  const trigger = parseDamageTrigger(v.trigger, `${path}.trigger`);
+  // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
+  const damageType = oneOf(SKILL_DAMAGE_TYPES, v.damageType, `${path}.damageType`);
+  const effect: DamageEffect = { kind: 'damage', trigger, ref: parseRef(v.ref, `${path}.ref`), damageType };
+  // アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃は 1 パス目が発火を決めるので、ほかの欄（条件・遅れ・
+  // 数のヒット）とは組まない。ゲージは gaugePerHit（true か、射手の何ヒットぶんかの数）だけ
+  if (isSummonAttackTrigger(trigger)) {
+    for (const key of Object.keys(v))
+      if (!['kind', 'trigger', 'ref', 'damageType', 'gaugePerHit', 'assumes', 'claims', 'reads'].includes(key))
+        fail(`${path}.${key}`, 'not allowed with a summon trigger ({ summon })');
+    if (v.gaugePerHit !== undefined) {
+      if (v.gaugePerHit !== true && !(Number.isInteger(v.gaugePerHit) && (v.gaugePerHit as number) >= 2))
+        fail(`${path}.gaugePerHit`, `expected true or an integer of 2 or more, got ${JSON.stringify(v.gaugePerHit)}`);
+      effect.gaugePerHit = v.gaugePerHit as true | number;
+    }
+    if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+    return effect;
+  }
+  if (v.gaugeHits !== undefined) {
+    // ヘルム編: ゲージは 1 パス目で射撃を数えて予約するので、射撃の回数トリガーのときだけ
+    if (!isShotCountTrigger(trigger)) fail(`${path}.gaugeHits`, 'gaugeHits needs a shot count trigger');
+    if (trigger.stacksRef !== undefined) fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with stacksRef');
+    effect.gaugeHits = parseGaugeHits(v.gaugeHits, `${path}.gaugeHits`, 0);
+  }
+  // クルミ S2 編: 発火の条件。名前の付いた状態の語彙編: timed と同じ型（鍵は inFullBurst・enemyState）
+  if (v.condition !== undefined)
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.damage);
+  // クルミ S2 編: ゲージは 1 パス目で溜めるので、1 パス目の後に決まる窓・条件とは組み合わせない（plan/design-kurumi-s2.md 2.4 節）
+  if (effect.gaugeHits !== undefined && (effect.condition !== undefined || hasCountingWindow(trigger))) {
+    fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a condition or a counting window (during)');
+  }
+  if (v.delayFrames !== undefined) {
+    // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: いま要るのはバースト使用時と、
+    // ペルソナ編の「〈効果名〉が適用された時」（クイーン（真）S1 の追撃。plan/design-persona.md 9.3 節）と、
+    // 周期のスキルの発動からヒットまでの遅れ（時間の周期のトリガー。C-0453。plan/design-timer-ceil.md 2 節の論点 4）。
+    // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 射撃の回数のきっかけ（確率を除く）も
+    if (isShotCountTrigger(trigger)) {
+      effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+      // ゲージのヒットのフレームは測っていない（ゲージは 1 パス目で射撃から数える）
+      if (effect.gaugeHits !== undefined) fail(`${path}.delayFrames`, 'delayFrames cannot be used with gaugeHits');
+    } else {
+      if (
+        trigger !== 'burstUse' &&
+        !isAppliedTrigger(trigger) &&
+        !isTimerTrigger(trigger) &&
+        !isCounterFullTrigger(trigger)
+      ) {
+        fail(
+          `${path}.delayFrames`,
+          'delayFrames needs the trigger "burstUse", { applied }, { everySeconds }, { counterFull } or a shot count trigger',
+        );
+      }
+      effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+    }
+  }
+  if (v.perBurstHit !== undefined) {
+    // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: バーストの倍率ダメージのヒットに合わせる
+    if (v.perBurstHit !== true) fail(`${path}.perBurstHit`, `expected true, got ${JSON.stringify(v.perBurstHit)}`);
+    if (trigger !== 'burstUse') fail(`${path}.perBurstHit`, 'perBurstHit needs the trigger "burstUse"');
+    if (effect.delayFrames !== undefined) fail(`${path}.perBurstHit`, 'perBurstHit cannot be used with delayFrames');
+    effect.perBurstHit = true;
+  }
+  if (v.perCount !== undefined) {
+    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 値 × 状態のスタック数。使い手（シンデレラ）のいるバースト使用時だけ。
+    // 段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 値 × カウンタの値（ラプラス：アルティメットヒーロー）。
+    // 段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: フルバーストの始まり（ラピ：レッドフードの粘着榴弾の起爆）も
+    const per = v.perCount;
+    if (!isRecord(per)) fail(`${path}.perCount`, 'expected an object');
+    // 段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: カウンタが上限に届いた時（ミハラ：ボンディングチェーンのチェーンの数だけの攻撃）も。
+    // 段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: フルチャージして攻撃した時（オートファイアの装填数分の順番の攻撃）も
+    const fullChargeShot = isShotCountTrigger(trigger) && trigger.count === 'fullChargeShot';
+    if (trigger !== 'burstUse' && trigger !== 'fullBurstStart' && !isCounterFullTrigger(trigger) && !fullChargeShot)
+      fail(
+        `${path}.perCount`,
+        'perCount needs the trigger "burstUse", "fullBurstStart", { counterFull } or { count: "fullChargeShot" }',
+      );
+    for (const key of Object.keys(per))
+      if (key !== 'state' && key !== 'counter') fail(`${path}.perCount.${key}`, 'unknown field');
+    if ((per.state === undefined) === (per.counter === undefined))
+      fail(`${path}.perCount`, 'expected exactly one of state and counter');
+    effect.perCount =
+      per.state !== undefined
+        ? { state: parseNamedStateId(per.state, `${path}.perCount.state`, 'ally') }
+        : { counter: oneOf(COUNTER_IDS, per.counter, `${path}.perCount.counter`) };
+  }
+  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」
+  if (v.hitsRef !== undefined) {
+    if (isShotCountTrigger(trigger)) fail(`${path}.hitsRef`, 'hitsRef cannot be used with a shot count trigger');
+    if (effect.perBurstHit === true) fail(`${path}.hitsRef`, 'hitsRef cannot be used with perBurstHit');
+    effect.hitsRef = parseRef(v.hitsRef, `${path}.hitsRef`);
+  }
+  if (v.hitIntervalFrames !== undefined) {
+    if (effect.hitsRef === undefined) fail(`${path}.hitIntervalFrames`, 'hitIntervalFrames needs hitsRef');
+    const n = v.hitIntervalFrames;
+    if (typeof n !== 'number' || !Number.isInteger(n) || n < 0) {
+      fail(`${path}.hitIntervalFrames`, `expected an integer >= 0, got ${JSON.stringify(n)}`);
+    }
+    effect.hitIntervalFrames = n;
+  }
+  // エレグの S1（C-0766）: 等分した不等間隔のヒットと、値を決めるフレーム
+  if (v.hitOffsetFrames !== undefined) {
+    const at = `${path}.hitOffsetFrames`;
+    // 昇順の 0 以上の整数はゲージのヒットと同じ検査。等分するヒットなので、2 つ以上・0 から・同じ遅れの重なりなしを足す
+    const offsets = parseGaugeHits(v.hitOffsetFrames, at, 0);
+    if (offsets.length < 2 || offsets[0] !== 0 || offsets.some((o, i) => i > 0 && o === offsets[i - 1]))
+      fail(at, `expected strictly increasing integers starting at 0 (2 or more), got ${JSON.stringify(offsets)}`);
+    if (
+      effect.hitsRef !== undefined ||
+      effect.perBurstHit !== undefined ||
+      effect.perCount !== undefined ||
+      effect.gaugeHits !== undefined
+    )
+      fail(at, 'hitOffsetFrames cannot be used with hitsRef, perBurstHit, perCount or gaugeHits');
+    effect.hitOffsetFrames = offsets;
+  }
+  if (v.valueDelayFrames !== undefined) {
+    const at = `${path}.valueDelayFrames`;
+    if (effect.hitOffsetFrames === undefined) fail(at, 'valueDelayFrames needs hitOffsetFrames');
+    const n = parsePositiveInt(v.valueDelayFrames, at);
+    if (n > (effect.delayFrames ?? 0)) fail(at, 'valueDelayFrames must not exceed delayFrames');
+    effect.valueDelayFrames = n;
+  }
+  if (v.perTrigger !== undefined) {
+    const at = `${path}.perTrigger`;
+    if (v.perTrigger !== true) fail(at, 'expected true');
+    if (!isShotCountTrigger(trigger)) fail(at, 'perTrigger needs a shot count trigger');
+    if (effect.condition === undefined)
+      fail(at, 'perTrigger needs a condition (a per-shot damage without one is folded into the shot)');
+    effect.perTrigger = true;
+  }
+  if (v.valueBeforeFire !== undefined) {
+    const at = `${path}.valueBeforeFire`;
+    if (v.valueBeforeFire !== true) fail(at, 'expected true');
+    if ((effect.delayFrames ?? 0) === 0) fail(at, 'valueBeforeFire needs delayFrames');
+    if (effect.valueDelayFrames !== undefined) fail(at, 'valueBeforeFire cannot be used with valueDelayFrames');
+    effect.valueBeforeFire = true;
+  }
+  // 同 5.3 節: 「〈状態〉再発動周期 N 秒▼」
+  if (v.periodShorten !== undefined) {
+    const p = v.periodShorten;
+    if (!isTimerTrigger(trigger))
+      fail(`${path}.periodShorten`, 'periodShorten needs a timer trigger ({ everySeconds })');
+    if (!isRecord(p)) fail(`${path}.periodShorten`, 'expected an object');
+    for (const key of Object.keys(p))
+      if (!['state', 'window', 'slot', 'ref'].includes(key)) fail(`${path}.periodShorten.${key}`, 'unknown field');
+    if ((p.state === undefined) === (p.window === undefined))
+      fail(`${path}.periodShorten`, 'expected exactly one of state and window');
+    const slot = oneOf(SKILL_SLOTS, p.slot, `${path}.periodShorten.slot`);
+    const ref = parseRef(p.ref, `${path}.periodShorten.ref`);
+    if (p.state !== undefined) {
+      effect.periodShorten = { state: parseNamedStateId(p.state, `${path}.periodShorten.state`, 'ally'), slot, ref };
+    } else {
+      // 2 段目の段 15 の PR 3（論点 7）: 名前の無い窓（きっかけから N 秒）。きっかけはいまはバースト使用時だけ
+      const w = p.window;
+      const at = `${path}.periodShorten.window`;
+      if (!isRecord(w)) fail(at, 'expected an object');
+      for (const key of Object.keys(w))
+        if (!['trigger', 'durationRef', 'elapsed'].includes(key)) fail(`${at}.${key}`, 'unknown field');
+      if (w.trigger !== 'burstUse') fail(`${at}.trigger`, `expected "burstUse", got ${JSON.stringify(w.trigger)}`);
+      // 2 段目の段 18 の PR 1: 経過で縮める窓（ドロシーの発現）。端数を持ち越す周期とは組まない
+      if (w.elapsed !== undefined && w.elapsed !== true)
+        fail(`${at}.elapsed`, `expected true, got ${JSON.stringify(w.elapsed)}`);
+      if (w.elapsed === true && isTimerTrigger(trigger) && trigger.carry === true)
+        fail(`${at}.elapsed`, 'elapsed cannot be used with a carry timer');
+      effect.periodShorten = {
+        window: {
+          trigger: 'burstUse',
+          durationRef: parseRef(w.durationRef, `${at}.durationRef`),
+          ...(w.elapsed === true ? { elapsed: true as const } : {}),
+        },
+        slot,
+        ref,
+      };
+    }
+  }
+  // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ。2 段目の段 14 の PR 2（plan/design-skill-stage14.md
+  // 2.5 節）: 射撃の回数のきっかけ（数える窓なし）も
+  if (v.gaugePerHit !== undefined) {
+    if (v.gaugePerHit !== true) fail(`${path}.gaugePerHit`, `expected true, got ${JSON.stringify(v.gaugePerHit)}`);
+    if (!isTimerTrigger(trigger) && !(isShotCountTrigger(trigger) && !hasCountingWindow(trigger)))
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit needs a timer trigger ({ everySeconds }) or a shot count trigger without a counting window',
+      );
+    if (effect.gaugeHits !== undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with gaugeHits');
+    // 2 段目の段 15 の PR 3: 1 パス目は名前の無い窓の短縮を追わない（使い手のエイダの S2 はゲージを溜めるかを確かめていない）
+    if (effect.periodShorten?.window !== undefined)
+      fail(`${path}.gaugePerHit`, 'gaugePerHit cannot be used with a periodShorten window');
+    // 1 パス目は発火のフレームより後のゲージだけを予約できる。条件は 1 パス目の後に絞るので組み合わせない
+    if (effect.delayFrames === undefined) fail(`${path}.gaugePerHit`, 'gaugePerHit needs delayFrames');
+    // エレグの S1（C-0773）: 射撃の回数のきっかけなら、条件 enemyState だけは 1 パス目が発火のフレームで見る（skills/holders.ts の enemyStateAt）
+    const enemyOnly =
+      isShotCountTrigger(trigger) &&
+      effect.condition !== undefined &&
+      Object.keys(effect.condition).every((k) => k === 'enemyState');
+    if (effect.condition !== undefined && !enemyOnly)
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit cannot be used with a condition (except enemyState with a shot count trigger)',
+      );
+    effect.gaugePerHit = true;
+  }
+  // 同 5.4 節: 「コア命中ダメージ」
+  if (v.coreHit !== undefined) {
+    if (v.coreHit !== true) fail(`${path}.coreHit`, `expected true, got ${JSON.stringify(v.coreHit)}`);
+    effect.coreHit = true;
+  }
+  if (v.perCountIntervalSeconds !== undefined) {
+    const key = 'perCountIntervalSeconds';
+    // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: perCount の { state } と delayFrames も（オートファイアの順番の攻撃）
+    if (effect.perCount === undefined) fail(`${path}.${key}`, `${key} needs perCount`);
+    if (effect.perBurstHit !== undefined) fail(`${path}.${key}`, `${key} cannot be used with perBurstHit`);
+    const seconds = v.perCountIntervalSeconds;
+    if (typeof seconds !== 'number' || !(seconds > 0))
+      fail(`${path}.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
+    effect.perCountIntervalSeconds = seconds;
+  }
+  if (v.perCountIntervalFrames !== undefined) {
+    const key = 'perCountIntervalFrames';
+    if (effect.perCount === undefined || !('counter' in effect.perCount))
+      fail(`${path}.${key}`, `${key} needs perCount { counter }`);
+    if (effect.perCountIntervalSeconds !== undefined || effect.perBurstHit !== undefined)
+      fail(`${path}.${key}`, `${key} cannot be used with perCountIntervalSeconds or perBurstHit`);
+    effect.perCountIntervalFrames = parsePositiveInt(v.perCountIntervalFrames, `${path}.${key}`);
+  }
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 「順番に攻撃」の perCount の数だけのヒット
+  if (v.sequentialAttack !== undefined) {
+    if (v.sequentialAttack !== true)
+      fail(`${path}.sequentialAttack`, `expected true, got ${JSON.stringify(v.sequentialAttack)}`);
+    if (!splitsPerCount(effect))
+      fail(`${path}.sequentialAttack`, 'sequentialAttack needs perCountIntervalSeconds or perCountIntervalFrames');
+    effect.sequentialAttack = true;
+  }
+  // 同: 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット（1 つずつ出すなら perCount の { state }）だけ
+  if (effect.gaugePerHit === true && isShotCountTrigger(trigger) && effect.perCount !== undefined) {
+    if (!('state' in effect.perCount) || !splitsPerCount(effect))
+      fail(
+        `${path}.gaugePerHit`,
+        'gaugePerHit with perCount needs perCount { state } split by perCountIntervalSeconds or perCountIntervalFrames',
+      );
+  }
+  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2・2.3 節）: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
+  for (const key of ['core', 'distance', 'projectileExplosion', 'projectileStick'] as const) {
+    if (v[key] === undefined) continue;
+    if (v[key] !== true) fail(`${path}.${key}`, `expected true, got ${JSON.stringify(v[key])}`);
+    effect[key] = true;
+  }
+  if (effect.projectileExplosion === true && effect.projectileStick === true)
+    fail(path, 'projectileExplosion and projectileStick cannot be used together');
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/** クルミ S2 編: 回数トリガーに数える窓（during）か、発火の窓（firesDuring。V-0443）があるか */
+function hasCountingWindow(trigger: EffectTrigger): boolean {
+  return (
+    typeof trigger === 'object' &&
+    'count' in trigger &&
+    (('during' in trigger && trigger.during !== undefined) ||
+      ('firesDuring' in trigger && trigger.firesDuring !== undefined))
+  );
+}

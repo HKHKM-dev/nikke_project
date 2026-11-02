@@ -137,7 +137,7 @@ export function resolveCycleEvery(
           );
         }
       } else {
-        // 2 段目の段 12 の PR 2: cycle の無いスロットは、射撃の回数のきっかけの N（どれも同じ。skills/types.ts の validateCountTriggersEvery）
+        // 2 段目の段 12 の PR 2: cycle の無いスロットは、射撃の回数のきっかけの N（どれも同じ。skills/parse/crossChecks.ts の validateCountTriggersEvery）
         // から decreaseRef の値を引く。対象のスロットが unsupported なら効果が無いので出さない
         if (effect.decreaseRef === undefined) return;
         const counted = shotCountTriggerOf(def, character, levels, effect.slot);
@@ -192,7 +192,7 @@ export function cycleShotFrames(log: ShotLog | null | undefined, trigger: Resolv
     return log.frames.filter(full);
   }
   if (trigger.count === 'lastShot') return log.lastShotFrames ?? [];
-  // 使用武器変更の武器のパラメータ編: 循環には書けない（skills/types.ts の parseCycleEffect）が、型のために列を返す
+  // 使用武器変更の武器のパラメータ編: 循環には書けない（skills/parse/cycle.ts の parseCycleEffect）が、型のために列を返す
   if (trigger.count === 'weaponChangeShot') return log.weaponChangeShotFrames ?? [];
   return log.frames;
 }

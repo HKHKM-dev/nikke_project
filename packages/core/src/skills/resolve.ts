@@ -924,7 +924,7 @@ export function resolveRemoveStates(
 
 /**
  * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 解決した消去（cancelState）。消す状態は、同じ定義の firstTick halfAfterLatest
- * の dot の state（定義の読みで見る。types.ts の validateDotStateRefs）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む
+ * の dot の state（定義の読みで見る。skills/parse/crossChecks.ts の validateDotStateRefs）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む
  */
 export type ResolvedDotCancel = { state: NamedStateId; trigger: ResolvedTrigger };
 

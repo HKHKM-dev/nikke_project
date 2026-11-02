@@ -1,0 +1,139 @@
+// スキル定義の読み込みの検査のうち、定義のファイル（data/skills/{resourceId}.json）と索引の読み込みの入口。types.ts が再び公開する。型は ../types.ts
+import {
+  type BurstStepChangeEffect,
+  type ClaimRefs,
+  deriveSkillSupport,
+  isShotCountTrigger,
+  SKILL_SLOTS,
+  type SkillDefinition,
+  type SkillEntry,
+  type SkillIndex,
+  type SkillNote,
+  type SkillSlot,
+  type SkillSupportIndex,
+} from '../types.ts';
+import { fail, isRecord, type Json } from './common.ts';
+import { validateBurstHitTriggers, validateCrossChecks } from './crossChecks.ts';
+import { parseEffect } from './effect.ts';
+import { NOTE_REFERS, parseNote } from './notes.ts';
+
+/** 2 段目の段 12: 名前の付いたバースト段階の変更と同じ（か逆の）編成の条件 burstStepMix の効果に、どちらの側かを書く（BurstStepMode） */
+function markBurstStepModes(skills: Record<SkillSlot, SkillEntry>, change: BurstStepChangeEffect | undefined): void {
+  const mix = change?.burstStepMix;
+  if (change?.name === undefined || mix === undefined) return;
+  for (const slot of SKILL_SLOTS) {
+    for (const e of skills[slot].effects) {
+      if (
+        e.kind === 'burstStepChange' ||
+        !('burstStepMix' in e) ||
+        e.burstStepMix?.otherBurstStep !== mix.otherBurstStep
+      )
+        continue;
+      e.burstStepMode = { name: change.name, changed: e.burstStepMix.present === mix.present };
+    }
+  }
+}
+
+function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' = 'skills'): SkillEntry {
+  const path = `${root}.${slot}`;
+  if (!isRecord(v)) fail(path, 'expected an object');
+  if (v.support !== undefined)
+    fail(`${path}.support`, 'support is derived from effects and notes (plan/design-skill-note-kinds.md); remove it');
+  if (!Array.isArray(v.effects)) fail(`${path}.effects`, 'expected an array');
+  const effects = v.effects.map((e, i) => parseEffect(e, `${path}.effects[${i}]`, slot));
+  validateBurstHitTriggers(effects, slot, path);
+  let notes: SkillNote[] | undefined;
+  if (v.notes !== undefined) {
+    if (!Array.isArray(v.notes)) fail(`${path}.notes`, 'expected an array');
+    notes = v.notes.map((n, i) => parseNote(n, `${path}.notes[${i}]`));
+  }
+  if (effects.length === 0 && (notes ?? []).length === 0)
+    fail(`${path}.notes`, 'a slot without effects needs notes saying why');
+  notes?.forEach((n, i) => {
+    const index = n.refers === undefined ? undefined : Number(NOTE_REFERS.exec(n.refers)![1]);
+    if (index !== undefined && index >= effects.length)
+      fail(`${path}.notes[${i}].refers`, `${n.refers} is not an effect of this slot`);
+  });
+  const entry: SkillEntry = { support: deriveSkillSupport(effects, notes), effects };
+  if (v.sequential !== undefined) {
+    if (v.sequential !== true) fail(`${path}.sequential`, 'expected true');
+    // ルドミラ：ウィンターオーナー編: スキルのスロットにも書ける（plan/design-ludmilla-wo.md 2.4 節）。burst は先頭が burstDamage
+    if (slot === 'burst' && effects[0]?.kind !== 'burstDamage') {
+      fail(`${path}.sequential`, 'the first effect of a sequential burst must be burstDamage');
+    }
+    // 回数トリガーの遅れ編の第 2 段: 順番の効果は、射撃の回数の発火の次のフレームから窓を数える（frame/plan.ts）。遅れたヒットとの順は決めていない
+    if (effects.some((e) => e.kind === 'damage' && e.delayFrames !== undefined && isShotCountTrigger(e.trigger))) {
+      fail(`${path}.sequential`, 'a sequential skill cannot have a delayed shot count damage');
+    }
+    entry.sequential = true;
+  }
+  if (notes !== undefined) entry.notes = notes;
+  return entry;
+}
+
+/** JSON.parse 済みの値を検証して SkillDefinition にする。不正なら Error */
+export function parseSkillDefinition(raw: Json): SkillDefinition {
+  if (!isRecord(raw)) fail('', 'expected an object');
+  if (raw.formatVersion !== 1) fail('formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
+  if (typeof raw.resourceId !== 'number' || !Number.isInteger(raw.resourceId) || raw.resourceId < 1) {
+    fail('resourceId', 'expected a positive integer');
+  }
+  if (typeof raw.checkedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(raw.checkedAt)) {
+    fail('checkedAt', 'expected a YYYY-MM-DD string');
+  }
+  if (!isRecord(raw.skills)) fail('skills', 'expected an object');
+  for (const key of Object.keys(raw.skills)) {
+    if (!(SKILL_SLOTS as readonly string[]).includes(key)) fail(`skills.${key}`, 'unknown skill slot');
+  }
+  const skills = {} as Record<SkillSlot, SkillEntry>;
+  for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
+  // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）。2 段目の段 12: バースト段階の変更も
+  // （持つ枠の段は 1 つしか持てない）
+  const effects = SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects);
+  for (const kind of ['burstReentry', 'burstStepChange', 'allyGaugeAdd'] as const) {
+    if (effects.filter((e) => e.kind === kind).length > 1) fail('skills', `at most one ${kind} effect per definition`);
+  }
+  markBurstStepModes(
+    skills,
+    effects.find((e): e is BurstStepChangeEffect & ClaimRefs => e.kind === 'burstStepChange'),
+  );
+  validateCrossChecks(skills, 'skills');
+  const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
+  // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
+  if (raw.states !== undefined) {
+    fail('states', 'states was replaced by a static state grant (kind "state". plan/design-named-state.md)');
+  }
+  if (raw.treasureSkills !== undefined) {
+    const treasure = raw.treasureSkills;
+    if (!isRecord(treasure)) fail('treasureSkills', 'expected an object');
+    const treasureSkills: Partial<Record<SkillSlot, SkillEntry>> = {};
+    for (const key of Object.keys(treasure)) {
+      if (!(SKILL_SLOTS as readonly string[]).includes(key)) fail(`treasureSkills.${key}`, 'unknown skill slot');
+      const slot = key as SkillSlot;
+      treasureSkills[slot] = parseEntry(treasure[slot], slot, 'treasureSkills');
+    }
+    validateCrossChecks({ ...skills, ...treasureSkills }, 'treasureSkills');
+    def.treasureSkills = treasureSkills;
+  }
+  return def;
+}
+
+export function parseSkillIndex(raw: Json): SkillIndex {
+  if (!isRecord(raw)) fail('index', 'expected an object');
+  if (raw.formatVersion !== 1) fail('index.formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
+  if (!Array.isArray(raw.resourceIds) || !raw.resourceIds.every((id) => Number.isInteger(id) && (id as number) > 0)) {
+    fail('index.resourceIds', 'expected an array of positive integers');
+  }
+  return { formatVersion: 1, resourceIds: raw.resourceIds as number[] };
+}
+
+/** 対応状況の索引（生成物。skills/support.ts）。不正なら Error */
+export function parseSkillSupportIndex(raw: Json): SkillSupportIndex {
+  if (!isRecord(raw)) fail('support', 'expected an object');
+  if (raw.formatVersion !== 1) fail('support.formatVersion', `expected 1, got ${JSON.stringify(raw.formatVersion)}`);
+  const ids = raw.fullySupported;
+  if (!Array.isArray(ids) || !ids.every((id) => Number.isInteger(id) && (id as number) > 0)) {
+    fail('support.fullySupported', 'expected an array of positive integers');
+  }
+  return { formatVersion: 1, fullySupported: ids as number[] };
+}

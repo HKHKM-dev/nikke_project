@@ -611,7 +611,7 @@ export function planSkillHits(
       // 2 段目の段 13 の PR 2: スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
       const from = dot.stacksFrom;
       if (from !== undefined) {
-        // 元は同じ定義の dot か、敵にスタックで付く状態の付与（マスト編。skills/types.ts の validateDotStateRefs）
+        // 元は同じ定義の dot か、敵にスタックで付く状態の付与（マスト編。skills/parse/crossChecks.ts の validateDotStateRefs）
         const source = dotGroups.find((g) => g.dot.state === from);
         const sourceFires = source?.fires.map((x) => x.f) ?? [];
         const stacksAt = (frame: number): number =>

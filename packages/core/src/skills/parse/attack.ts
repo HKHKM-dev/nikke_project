@@ -1,0 +1,124 @@
+// スキル定義の読み込みの検査のうち、射撃と別に出る攻撃・射撃を止める効果（autoAttack・shotPause・summon）の読み込み。型は ../types.ts
+import { SUMMON_IDS } from '../summons.ts';
+import {
+  type AutoAttackEffect,
+  DOT_FIRST_TICKS,
+  type DotFirstTick,
+  isShotCountTrigger,
+  type ShotPauseEffect,
+  type SkillSlot,
+  type SummonEffect,
+} from '../types.ts';
+import { fail, type Json, oneOf, parseDuration, parseLocalizedText, parseRef } from './common.ts';
+import { parseTrigger } from './trigger.ts';
+
+/** アニス：スター S2・バースト編: 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
+export function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttackEffect {
+  for (const key of Object.keys(v)) {
+    if (
+      ![
+        'kind',
+        'trigger',
+        'ref',
+        'intervalSeconds',
+        'durationRef',
+        'durationSeconds',
+        'firstTick',
+        'gaugePerHit',
+        'projectileExplosion',
+        'core',
+        'assumes',
+        'claims',
+      ].includes(key)
+    ) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const interval = v.intervalSeconds;
+  if (typeof interval !== 'number' || !Number.isFinite(interval) || interval <= 0) {
+    fail(`${path}.intervalSeconds`, `expected a positive finite number, got ${JSON.stringify(interval)}`);
+  }
+  const effect: AutoAttackEffect = {
+    kind: 'autoAttack',
+    trigger: parseTrigger(v.trigger, `${path}.trigger`, true),
+    ref: parseRef(v.ref, `${path}.ref`),
+    intervalSeconds: interval,
+    ...parseDuration(v, path),
+  };
+  if (effect.durationSeconds !== undefined && effect.durationSeconds < interval) {
+    fail(`${path}.intervalSeconds`, `must not exceed the duration (${effect.durationSeconds} s)`);
+  }
+  if (v.firstTick !== undefined) {
+    if (typeof v.firstTick !== 'string' || !(DOT_FIRST_TICKS as readonly string[]).includes(v.firstTick)) {
+      fail(`${path}.firstTick`, `expected one of ${DOT_FIRST_TICKS.join(', ')}, got ${JSON.stringify(v.firstTick)}`);
+    }
+    effect.firstTick = v.firstTick as DotFirstTick;
+  }
+  if (v.gaugePerHit !== undefined) {
+    if (v.gaugePerHit !== true) fail(`${path}.gaugePerHit`, 'expected true');
+    if (effect.trigger !== 'burstUse' && !isShotCountTrigger(effect.trigger)) {
+      fail(`${path}.gaugePerHit`, 'needs a shot count trigger or burstUse');
+    }
+    if ((effect.firstTick ?? 'afterInterval') !== 'afterInterval') {
+      fail(`${path}.gaugePerHit`, 'needs firstTick afterInterval');
+    }
+    effect.gaugePerHit = true;
+  }
+  if (v.projectileExplosion !== undefined) {
+    if (v.projectileExplosion !== true) fail(`${path}.projectileExplosion`, 'expected true');
+    effect.projectileExplosion = true;
+  }
+  if (v.core !== undefined) {
+    if (v.core !== true) fail(`${path}.core`, 'expected true');
+    effect.core = true;
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/** V-0534: 射撃の止まり（shotPause）。きっかけは射撃の回数だけ（during・firesDuring・stacksRef・確率は書けない） */
+export function parseShotPauseEffect(v: Record<string, Json>, path: string): ShotPauseEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'frames', 'framesOnLastShot', 'assumes', 'claims'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
+  if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'shotPause needs a shot count trigger ({ count })');
+  for (const key of ['stacksRef', 'firesDuring'] as const) {
+    if (trigger[key] !== undefined) fail(`${path}.trigger.${key}`, `${key} cannot be used in shotPause`);
+  }
+  const positive = (x: Json, at: string): number => {
+    if (typeof x !== 'number' || !Number.isInteger(x) || x < 1)
+      fail(at, `expected a positive integer, got ${JSON.stringify(x)}`);
+    return x;
+  };
+  const effect: ShotPauseEffect = { kind: 'shotPause', trigger, frames: positive(v.frames, `${path}.frames`) };
+  if (v.framesOnLastShot !== undefined) {
+    effect.framesOnLastShot = positive(v.framesOnLastShot, `${path}.framesOnLastShot`);
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/** アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。burstUse はバーストにだけ書ける */
+export function parseSummonEffect(v: Record<string, Json>, path: string, slot: SkillSlot): SummonEffect {
+  for (const key of Object.keys(v))
+    if (!['kind', 'summon', 'trigger', 'lifetimesSeconds', 'assumes', 'claims'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
+  const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);
+  const trigger = oneOf(['battleStart', 'burstUse'] as const, v.trigger, `${path}.trigger`);
+  if (trigger === 'burstUse' && slot !== 'burst') fail(`${path}.trigger`, 'burstUse is only allowed in burst');
+  const lifetimes = v.lifetimesSeconds;
+  if (!Array.isArray(lifetimes) || lifetimes.length === 0)
+    fail(`${path}.lifetimesSeconds`, 'expected a non-empty array');
+  const lifetimesSeconds = lifetimes.map((x, k) => {
+    if (x === null) return null;
+    if (typeof x !== 'number' || !(x > 0))
+      fail(`${path}.lifetimesSeconds[${k}]`, `expected a positive number or null, got ${JSON.stringify(x)}`);
+    return x;
+  });
+  const effect: SummonEffect = { kind: 'summon', summon, trigger, lifetimesSeconds };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}

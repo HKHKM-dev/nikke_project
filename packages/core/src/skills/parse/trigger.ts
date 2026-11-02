@@ -1,0 +1,316 @@
+// スキル定義の読み込みの検査のうち、きっかけ（trigger）の読み込み。型は ../types.ts
+import { COUNTER_IDS } from '../counters.ts';
+import { SUMMON_IDS } from '../summons.ts';
+import {
+  type AppliedTrigger,
+  BUFF_TRIGGERS,
+  CHANCE_COUNT_KINDS,
+  type ChargeFullTrigger,
+  type ChargeTickTrigger,
+  type CounterFullTrigger,
+  type CoverHealedTrigger,
+  type EffectTrigger,
+  EVENT_COUNT_KINDS,
+  type EventCountKind,
+  type EventCountTrigger,
+  FIRING_WINDOWS,
+  isChanceTrigger,
+  isShotCountTrigger,
+  type SelfHpAtMostTrigger,
+  SHOT_COUNT_KINDS,
+  SHOT_COUNT_RESETS,
+  SHOT_COUNT_WINDOWS,
+  type ShotCountKind,
+  type ShotCountTrigger,
+  type SummonAttackTrigger,
+  type TimerTrigger,
+} from '../types.ts';
+import { fail, isRecord, type Json, oneOf, parseNamedStateId, parsePositiveInt, parseRef } from './common.ts';
+
+/**
+ * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: timed・heal の delayFrames。射撃の回数のきっかけ
+ * （確率のきっかけを除く）だけに書ける
+ */
+export function parseShotCountDelay(v: Json, trigger: EffectTrigger, path: string): number {
+  if (!isShotCountTrigger(trigger) || isChanceTrigger(trigger)) {
+    fail(path, 'delayFrames needs a shot count trigger ({ count }) without a chance');
+  }
+  return parsePositiveInt(v, path);
+}
+
+/**
+ * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
+ * （damage・dot・autoAttack・burstGaugeHit・timed・heal）だけ
+ */
+export function parseTrigger(
+  v: Json,
+  path: string,
+  allowTimer: boolean | 'withStart' = false,
+  allowDuring = false,
+  allowChance = false,
+  allowFullStack = false,
+  allowWeaponChangeEnd = false,
+  allowReloadEnd = false,
+): EffectTrigger {
+  if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
+  if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
+  // ペルソナ編: 効果名のトリガーは damage と、2 段目の段 4 から timed・付与だけ（parseAppliedTrigger で先に読む）
+  if (v.applied !== undefined) {
+    fail(path, 'an applied trigger ({ applied }) is only allowed in damage, timed and state grants');
+  }
+  // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）。段 11 から weaponChange も
+  // （plan/design-skill-stage11.md 2.1 節）
+  if (v.fullStack !== undefined) {
+    if (!allowFullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal and weaponChange');
+    for (const key of Object.keys(v)) if (key !== 'fullStack') fail(`${path}.${key}`, 'unknown field');
+    return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
+  }
+  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 溜めのきっかけは timed・付与だけ（parseChargeTrigger で先に読む）
+  if (v.chargeTick !== undefined || v.chargeFull !== undefined) {
+    fail(path, 'a charge trigger ({ chargeTick } / { chargeFull }) is only allowed in timed and state grants');
+  }
+  // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: 使用武器の変更の終わりのきっかけは ammoDecrease だけ
+  if (v.weaponChangeEnd !== undefined) {
+    if (!allowWeaponChangeEnd)
+      fail(path, 'a weapon change end trigger ({ weaponChangeEnd }) is only allowed in ammoDecrease');
+    for (const key of Object.keys(v)) if (key !== 'weaponChangeEnd') fail(`${path}.${key}`, 'unknown field');
+    if (v.weaponChangeEnd !== true) {
+      fail(`${path}.weaponChangeEnd`, `expected true, got ${JSON.stringify(v.weaponChangeEnd)}`);
+    }
+    return { weaponChangeEnd: true };
+  }
+  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時のきっかけは timed だけ（parseCoverHealedTrigger で先に読む）
+  if (v.coverHealed !== undefined) fail(path, 'a { coverHealed } trigger is only allowed in timed');
+  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: リロードの込め終わりのきっかけは removeState だけ
+  if (v.reloadEnd !== undefined) {
+    if (!allowReloadEnd)
+      fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState, timed and state grants');
+    for (const key of Object.keys(v)) if (key !== 'reloadEnd') fail(`${path}.${key}`, 'unknown field');
+    if (v.reloadEnd !== true) fail(`${path}.reloadEnd`, `expected true, got ${JSON.stringify(v.reloadEnd)}`);
+    return { reloadEnd: true };
+  }
+  if (v.everySeconds !== undefined) {
+    if (!allowTimer)
+      fail(
+        path,
+        'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed, heal and counterChange',
+      );
+    const flags = allowTimer === 'withStart' ? (['atStart', 'carry'] as const) : (['carry'] as const);
+    for (const key of Object.keys(v)) {
+      if (key !== 'everySeconds' && !(flags as readonly string[]).includes(key))
+        fail(`${path}.${key}`, 'unknown field');
+    }
+    const seconds = v.everySeconds;
+    if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+      fail(`${path}.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+    }
+    const timer: TimerTrigger = { everySeconds: seconds };
+    for (const flag of flags) {
+      if (v[flag] === undefined) continue;
+      if (v[flag] !== true) fail(`${path}.${flag}`, `expected true, got ${JSON.stringify(v[flag])}`);
+      timer[flag] = true;
+    }
+    return timer;
+  }
+  if ((SHOT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
+    for (const key of Object.keys(v)) {
+      if (
+        ![
+          'count',
+          'every',
+          'everyRef',
+          'stacksRef',
+          'during',
+          'reset',
+          'firesDuring',
+          'firesOutside',
+          'chance',
+          'chanceRef',
+        ].includes(key)
+      ) {
+        fail(`${path}.${key}`, 'unknown field');
+      }
+    }
+    if (v.every !== undefined && v.everyRef !== undefined) fail(path, 'at most one of every and everyRef');
+    // ペレットの命中編（plan/design-pellet-hit.md 2 節）: 1 発で複数のペレットを数えるので、毎回（1）は書けない
+    if (v.count === 'pelletHit' && v.every === undefined && v.everyRef === undefined) {
+      fail(path, 'pelletHit needs every or everyRef');
+    }
+    const trigger: ShotCountTrigger = { count: v.count as ShotCountKind };
+    if (v.every !== undefined) trigger.every = parsePositiveInt(v.every, `${path}.every`);
+    if (v.everyRef !== undefined) trigger.everyRef = parseRef(v.everyRef, `${path}.everyRef`);
+    if (v.stacksRef !== undefined) trigger.stacksRef = parseRef(v.stacksRef, `${path}.stacksRef`);
+    // クルミ S2 編: フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）
+    if (v.during !== undefined || v.reset !== undefined) {
+      if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage, timed and state');
+      if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
+      trigger.during = oneOf(SHOT_COUNT_WINDOWS, v.during, `${path}.during`);
+      if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
+      trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
+      if (trigger.stacksRef !== undefined) fail(`${path}.during`, 'during cannot be used with stacksRef');
+      if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
+      if (trigger.count === 'weaponChangeShot') fail(`${path}.during`, 'during cannot be used with weaponChangeShot');
+    }
+    // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけフルバーストの窓の中に限る
+    if (v.firesDuring !== undefined) {
+      if (!allowDuring) {
+        fail(`${path}.firesDuring`, 'a firing window (firesDuring) is only allowed in damage, timed and state');
+      }
+      if (v.during !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with during');
+      trigger.firesDuring = oneOf(FIRING_WINDOWS, v.firesDuring, `${path}.firesDuring`);
+      if (trigger.stacksRef !== undefined) fail(`${path}.firesDuring`, 'firesDuring cannot be used with stacksRef');
+      if (trigger.count === 'lastShot') fail(`${path}.firesDuring`, 'firesDuring cannot be used with lastShot');
+      if (trigger.count === 'weaponChangeShot') {
+        fail(`${path}.firesDuring`, 'firesDuring cannot be used with weaponChangeShot');
+      }
+    }
+    // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の外でだけ発火する
+    if (v.firesOutside !== undefined) {
+      if (v.firesOutside !== 'weaponChange') {
+        fail(`${path}.firesOutside`, `expected "weaponChange", got ${JSON.stringify(v.firesOutside)}`);
+      }
+      for (const key of ['during', 'firesDuring', 'stacksRef', 'chance', 'chanceRef'] as const) {
+        if (v[key] !== undefined) fail(`${path}.firesOutside`, `firesOutside cannot be used with ${key}`);
+      }
+      if (trigger.count === 'weaponChangeShot') {
+        fail(`${path}.firesOutside`, 'firesOutside cannot be used with weaponChangeShot');
+      }
+      trigger.firesOutside = 'weaponChange';
+    }
+    // ソルジャーE.G. 編: 確率のきっかけ（plan/design-soldier-eg.md 3.1 節）
+    if (v.chance !== undefined || v.chanceRef !== undefined) {
+      if (!allowChance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
+      if (v.chance !== undefined && v.chanceRef !== undefined) fail(path, 'at most one of chance and chanceRef');
+      if (!(CHANCE_COUNT_KINDS as readonly string[]).includes(trigger.count)) {
+        fail(
+          `${path}.count`,
+          `a chance trigger needs count ${CHANCE_COUNT_KINDS.join(' or ')}, got "${trigger.count}"`,
+        );
+      }
+      for (const key of ['every', 'everyRef', 'stacksRef', 'during', 'firesDuring'] as const) {
+        if (v[key] !== undefined) fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key}`);
+      }
+      if (v.chance !== undefined) {
+        const chance = v.chance;
+        if (typeof chance !== 'number' || !Number.isFinite(chance) || chance <= 0 || chance > 100) {
+          fail(`${path}.chance`, `expected a percentage in (0, 100], got ${JSON.stringify(chance)}`);
+        }
+        trigger.chance = chance;
+      } else {
+        trigger.chanceRef = parseRef(v.chanceRef, `${path}.chanceRef`);
+      }
+    }
+    return trigger;
+  }
+  if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
+    for (const key of Object.keys(v)) {
+      if (!['count', 'atLeast', 'resetAfterSeconds'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    }
+    const trigger: EventCountTrigger = {
+      count: v.count as EventCountKind,
+      atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`),
+    };
+    if (v.resetAfterSeconds !== undefined) {
+      const at = `${path}.resetAfterSeconds`;
+      if (trigger.count !== 'burstUse') fail(at, 'resetAfterSeconds needs count burstUse');
+      if (typeof v.resetAfterSeconds !== 'number' || !(v.resetAfterSeconds > 0)) fail(at, 'expected a positive number');
+      trigger.resetAfterSeconds = v.resetAfterSeconds;
+    }
+    return trigger;
+  }
+  fail(
+    `${path}.count`,
+    `expected one of ${[...SHOT_COUNT_KINDS, ...EVENT_COUNT_KINDS].join(', ')}, got ${JSON.stringify(v.count)}`,
+  );
+}
+
+/**
+ * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } を damage のほかで読む。{ applied } でなければ undefined
+ * （ほかのトリガーは呼ぶ側の parseTrigger が読む）
+ */
+export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined {
+  if (!isRecord(v) || v.applied === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');
+  return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
+}
+
+/** マスト編（plan/design-mast.md 8 節）: { selfHpAtMostRef: N }。それ以外の形なら undefined（timed だけが読む） */
+export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTrigger | undefined {
+  if (!isRecord(v) || v.selfHpAtMostRef === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'selfHpAtMostRef') fail(`${path}.${key}`, 'unknown field');
+  return { selfHpAtMostRef: parseRef(v.selfHpAtMostRef, `${path}.selfHpAtMostRef`) };
+}
+
+/** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
+export function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigger | undefined {
+  if (!isRecord(v) || v.coverHealed === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'coverHealed') fail(`${path}.${key}`, 'unknown field');
+  if (v.coverHealed !== true) fail(`${path}.coverHealed`, `expected true, got ${JSON.stringify(v.coverHealed)}`);
+  return { coverHealed: true };
+}
+
+/**
+ * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: { chargeTick: { everySeconds } } か { chargeFull: true }。それ以外の形なら
+ * undefined（timed と状態の付与の parseTimedFields だけが読む）
+ */
+export function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | ChargeFullTrigger | undefined {
+  if (!isRecord(v)) return undefined;
+  if (v.chargeFull !== undefined) {
+    for (const key of Object.keys(v)) if (key !== 'chargeFull') fail(`${path}.${key}`, 'unknown field');
+    if (v.chargeFull !== true) fail(`${path}.chargeFull`, `expected true, got ${JSON.stringify(v.chargeFull)}`);
+    return { chargeFull: true };
+  }
+  if (v.chargeTick === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'chargeTick') fail(`${path}.${key}`, 'unknown field');
+  const tick = v.chargeTick;
+  if (!isRecord(tick)) fail(`${path}.chargeTick`, 'expected { everySeconds }');
+  for (const key of Object.keys(tick)) if (key !== 'everySeconds') fail(`${path}.chargeTick.${key}`, 'unknown field');
+  const seconds = tick.everySeconds;
+  if (typeof seconds !== 'number' || !Number.isFinite(seconds) || seconds <= 0) {
+    fail(`${path}.chargeTick.everySeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
+  }
+  return { chargeTick: { everySeconds: seconds } };
+}
+
+/**
+ * ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ。
+ * 2 段目の段 13 の PR 1: { counterFull: カウンタ } も（dot も同じ）
+ */
+export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
+  return (
+    parseSummonAttackTrigger(v, path) ??
+    parseCounterFullTrigger(v, path) ??
+    parseAppliedTrigger(v, path) ??
+    parseTrigger(v, path, true, true)
+  );
+}
+
+/** アインのニアフェザー編: { summon, intervalSeconds, startDelaySeconds }。それ以外の形なら undefined */
+function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | undefined {
+  if (!isRecord(v) || v.summon === undefined) return undefined;
+  for (const key of Object.keys(v))
+    if (key !== 'summon' && key !== 'intervalSeconds' && key !== 'startDelaySeconds')
+      fail(`${path}.${key}`, 'unknown field');
+  const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);
+  const table = v.intervalSeconds;
+  if (!isRecord(table) || Object.keys(table).length === 0)
+    fail(`${path}.intervalSeconds`, 'expected a non-empty object');
+  const intervalSeconds: Record<number, number> = {};
+  for (const [key, seconds] of Object.entries(table)) {
+    const count = parsePositiveInt(Number(key), `${path}.intervalSeconds.${key}`);
+    if (typeof seconds !== 'number' || !(seconds > 0))
+      fail(`${path}.intervalSeconds.${key}`, `expected a positive number, got ${JSON.stringify(seconds)}`);
+    intervalSeconds[count] = seconds;
+  }
+  const delay = v.startDelaySeconds;
+  if (typeof delay !== 'number' || !(delay >= 0))
+    fail(`${path}.startDelaySeconds`, `expected a non-negative number, got ${JSON.stringify(delay)}`);
+  return { summon, intervalSeconds, startDelaySeconds: delay };
+}
+
+/** 2 段目の段 11 の PR 2・段 13 の PR 1: { counterFull: カウンタ }。それ以外の形なら undefined */
+export function parseCounterFullTrigger(v: Json, path: string): CounterFullTrigger | undefined {
+  if (!isRecord(v) || v.counterFull === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'counterFull') fail(`${path}.${key}`, 'unknown field');
+  return { counterFull: oneOf(COUNTER_IDS, v.counterFull, `${path}.counterFull`) };
+}
