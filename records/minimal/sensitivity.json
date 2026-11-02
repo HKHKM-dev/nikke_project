@@ -22033,6 +22033,14 @@
       "plus": 0
     },
     {
+      "observation": "0926-13",
+      "element": "レッドフード burst.effects[3]",
+      "key": "fffc3fdeb230730b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0927-08",
       "element": "レッドフード burst.effects[3]",
       "key": "404a375522156ad4",
@@ -22052,6 +22060,14 @@
       "observation": "0927-10",
       "element": "レッドフード burst.effects[3]",
       "key": "d7c567cbb05fb63c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0927-12",
+      "element": "レッドフード burst.effects[3]",
+      "key": "7d0d5244a8cbed81",
       "effective": false,
       "minus": 0,
       "plus": 0
