@@ -37,7 +37,7 @@ npm run sim -- --ids 82,330 --build builds.json   # 内訳を CLI で出す（�
 npm run artifact:build   # Web 版を claude.ai の Artifact として出せる形に dist/artifact/ へ作り直す（公開の手順は tools/artifact/build.ts の冒頭）
 ```
 
-`main` への push で GitHub Pages に配信します（`.github/workflows/pages.yml`）。リポジトリが公開のときだけ配信し、非公開のあいだはビルドとサブパスの確認だけ行います。
+`main` の CI が通った commit を GitHub Pages に配信します（`.github/workflows/pages.yml`。その間に `main` が進んでいれば、後の commit の CI が通った後に配信します）。リポジトリが公開のときだけ配信し、非公開のあいだはビルドとサブパスの確認だけ行います。
 
 ## ライセンスとデータの扱い
 
