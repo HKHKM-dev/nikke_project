@@ -1,6 +1,7 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
-import { CharacterVisual, ELEMENT_LABEL } from './CharacterVisual.tsx';
+import { ELEMENT_LABEL } from './CharacterVisual.tsx';
+import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -116,17 +117,13 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
             const isTaken = takenIds.has(char.resourceId);
             const isUnsupported = fullySupported !== null && !fullySupported.has(char.resourceId);
             return (
-              <button
+              <CharacterTrayItem
                 key={char.resourceId}
-                type="button"
-                className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''}`}
+                character={char}
+                isTaken={isTaken}
+                isUnsupported={isUnsupported}
                 onClick={() => onSelectCharacter(char.resourceId)}
-                title={`${char.name.ja}${isTaken ? ' (他スロットに配置中)' : ''}`}
-              >
-                <CharacterVisual character={char} isUnsupported={isUnsupported} size="compact" />
-                <span className="char-tray-item-name">{char.name.ja}</span>
-                {isTaken && <span className="char-tray-item-taken-badge">配置中</span>}
-              </button>
+              />
             );
           })
         )}

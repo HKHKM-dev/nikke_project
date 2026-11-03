@@ -1,6 +1,6 @@
 # 設計書: モダンUIとUIモード切り替えの段階的導入
 
-- 状態: **進行中（Step 2 & 3: モダン編成カード・キャラトレイ・クリック配置）**
+- 状態: **進行中（Step 4: @dnd-kit/core によるドラッグ＆ドロップ）**
 - 関連: [design-unify-sim-calc.md](design-unify-sim-calc.md)
 - 作成日: 2026-11-03
 
@@ -16,7 +16,7 @@
 2. **段階的な導入ステップ**:
    - **Step 1**: UIモード切り替え基盤（`classic` / `modern`）と `ClassicView` への切り出し、`ModernView` の受け皿作成（PR #945 完了）。
    - **Step 2**: 画像アセット配置構造とフォールバック表示（属性・バースト・武器・キャラ名）。
-   - **Step 3**: モダン編成カード ＆ キャラトレイ（クリック配置＋育成詳細モーダル）。
+   - **Step 3**: モダン編成カード ＆ キャラトレイ（クリック配置＋育成詳細モーダル、PR #946 完了）。
    - **Step 4**: `@dnd-kit/core` によるドラッグ＆ドロップ（トレイ→スロット、スロット間スワップ）。
    - **Step 5**: スタイリングとデザインのブラッシュアップ。
 3. **画像アセット**:
@@ -41,9 +41,18 @@
 - `CharacterTray.tsx`: 属性・バースト段階・武器種・完全対応・検索キーワードによる絞り込みが可能なキャラクター選択パレット。クリックで対象スロットに配置。
 - `SlotBuildModal.tsx`: モーダルダイアログによる育成設定（好感度、限界突破、コア強化、スキルLv、装備、キューブ、コレクション、宝物）およびスロット詳細設定（フォーカス、撃たない、バーストしない）の編集。
 
+### 2.3 Step 4: @dnd-kit/core によるドラッグ＆ドロップ
+
+- `apps/web/package.json`: `@dnd-kit/core` を導入。
+- `CharacterTrayItem.tsx`: 各キャラアイテムを `useDraggable` でドラッグ可能に。
+- `ModernSlotCard.tsx`: `useDroppable` によるドロップ受け入れ（`isOver` 時のハイライト）と、配置済みキャラの `useDraggable`（スロット間スワップ用）。
+- `team.ts`: `swapSlots` アクション（スロット間の入れ替え、操作キャラの追従）を追加。
+- `ModernView.tsx`: `DndContext`、PointerSensor（8pxのしきい値でクリック操作と共存）、`DragOverlay`（カーソル追従プレビュー）を統合。
+
 ---
 
 ## 経過
 
 - 2026-11-03: オーナーとの対話により設計方針を承認。ブランチ `antigrav/modern-ui-foundation` にて Step 1 着手。PR #945 にて main にマージ完了。
-- 2026-11-03: ブランチ `antigrav/modern-ui-cards` にて Step 2 & 3（モダン編成カード・キャラトレイ・クリック配置）を着手。
+- 2026-11-03: ブランチ `antigrav/modern-ui-cards` にて Step 2 & 3（モダン編成カード・キャラトレイ・クリック配置）を着手。PR #946 にて main にマージ完了。
+- 2026-11-04: ブランチ `antigrav/modern-ui-dnd` にて Step 4（@dnd-kit/core によるドラッグ＆ドロップ）を着手。
