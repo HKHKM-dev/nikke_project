@@ -106,6 +106,10 @@ export type BurstControllerState = {
   lastUseFrame: number;
   /** 枠ごとの CT 明けフレーム（戦闘開始時は 0 = すぐ使える） */
   cooldownEnd: number[];
+  /**
+   * メイド編（plan/design-maids.md 2.2 節の論点 2）: 枠ごとの気絶の明けのフレーム（このフレームより前は候補にしない）。省略は気絶なし
+   */
+  stunnedUntil?: number[];
   usedInChain: boolean[];
   /** Stage 11: 今のチェーンで撃った枠（発動順）。フルバーストに入ったら窓の burstUsers になる */
   chainSlots: number[];
@@ -206,6 +210,7 @@ function pickCandidate(state: BurstControllerState, step: BurstStepKey, frame: n
     (u, i) =>
       u !== null &&
       state.cooldownEnd[i]! <= frame &&
+      (state.stunnedUntil?.[i] ?? 0) <= frame &&
       ((u.burstStep === step && !state.usedInChain[i]) || u.burstStep === 'AllStep'),
   );
 }
@@ -352,6 +357,12 @@ export function reduceCooldown(
   if (state.units[slotIndex] == null) return;
   const applied = shortenCooldown(state, slotIndex, frames, frame);
   state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied });
+}
+
+/** メイド編（plan/design-maids.md 2.2 節）: 枠を until（このフレームを含まない）まで気絶にし、バーストの候補から外す */
+export function stunSlot(state: BurstControllerState, slotIndex: number, until: number): void {
+  const stunned = (state.stunnedUntil ??= state.units.map(() => 0));
+  stunned[slotIndex] = Math.max(stunned[slotIndex]!, until);
 }
 
 /**

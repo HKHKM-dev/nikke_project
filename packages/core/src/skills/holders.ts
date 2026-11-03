@@ -183,6 +183,11 @@ export type HeldTrack = {
    * 同じ発動者・閾値の件の列で共有する）。ほかは無い
    */
   untilEnds?: number[];
+  /**
+   * メイド編（plan/design-maids.md 2.1 節）: perCount の timed の、発火の窓の始まり → 発火のフレームのスタック数（件の scale にする）。
+   * ほかは無い
+   */
+  startScales?: Map<number, number>;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
 };
@@ -620,6 +625,26 @@ export function whileItems(
   return out;
 }
 
+/**
+ * メイド編（plan/design-maids.md 2.1 節）: perCount の timed の件。発火ごとに [s, s + 維持) を作り、次の発火で切る（上書き。値は次の
+ * 発火のスタック数に替わる）。scale は発火のフレームのスタック数
+ */
+function perCountItems(
+  starts: readonly number[],
+  scales: ReadonlyMap<number, number>,
+  durationFrames: number,
+  frames: number,
+): HeldItem[] {
+  const out: HeldItem[] = [];
+  starts.forEach((start, i) => {
+    const next = starts[i + 1];
+    const end = Math.min(start + durationFrames, next ?? frames, frames);
+    const scale = scales.get(start);
+    if (start < end && scale !== undefined && scale > 0) out.push({ start, end, scale });
+  });
+  return out;
+}
+
 /** timed の件（段 A までの planBuffTimeline の distribute と同じ規則）。確率のきっかけと強化は呼ぶ側 */
 function timedItems(
   effect: ResolvedTimedEffect,
@@ -736,20 +761,22 @@ function buildTrackItems(
       return track.starts.length > 0 ? [{ start: 0, end: frames }] : [];
     case 'timed': {
       const items =
-        track.opportunities !== null
-          ? chancePieces(track.opportunities, o.effect.durationFrames, frames).map((p) => ({
-              start: p.start,
-              end: p.end,
-              scale: p.scale,
-            }))
-          : timedItems(
-              o.effect,
-              track.starts,
-              log,
-              fullBurstWindows.map((w) => w.end),
-              frames,
-              track.untilEnds,
-            );
+        o.effect.perCount !== undefined
+          ? perCountItems(track.starts, track.startScales ?? new Map(), o.effect.durationFrames, frames)
+          : track.opportunities !== null
+            ? chancePieces(track.opportunities, o.effect.durationFrames, frames).map((p) => ({
+                start: p.start,
+                end: p.end,
+                scale: p.scale,
+              }))
+            : timedItems(
+                o.effect,
+                track.starts,
+                log,
+                fullBurstWindows.map((w) => w.end),
+                frames,
+                track.untilEnds,
+              );
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
     case 'state': {
@@ -891,8 +918,8 @@ function stageOfTimed(effect: ResolvedTimedEffect): HeldStage {
   if (effect.amplifies !== undefined) return 2.5;
   // 2 段目の段 7: 最終防御力の比べの対象も、順位と同じく段 1・1.5 の件（防御力▲）が出そろってから決める
   if (dependsOnRank(effect) || dependsOnDefense(effect)) return 2;
-  // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）
-  if (conditionReadsItems(effect.condition)) return 1.5;
+  // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）。メイド編: スタック数を読む perCount も段 1.5
+  if (conditionReadsItems(effect.condition) || effect.perCount !== undefined) return 1.5;
   return 1;
 }
 
@@ -1715,6 +1742,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
   const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
     if (start >= frames) return [];
+    // メイド編（plan/design-maids.md 2.1 節）: 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない）
+    const per = src.effect.perCount;
+    const scale = per === undefined ? undefined : stackLevelAt(src.sourceSlotIndex, per.state, start);
+    if (scale !== undefined && scale <= 0) return [];
     const targets: number[] = [];
     slots.forEach((target, holder) => {
       if (target === null) return;
@@ -1729,6 +1760,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!track)
         throw new Error(`no track for ${src.effect.source.skill}[${src.effect.effectIndex}] on slot ${holder}`);
       insertSorted(track.starts, start);
+      if (scale !== undefined) (track.startScales ??= new Map()).set(start, scale);
       targets.push(holder);
     });
     return targets;

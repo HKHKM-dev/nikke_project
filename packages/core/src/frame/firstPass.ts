@@ -68,6 +68,7 @@ import {
   reduceCooldown,
   reserveFullBurstExtension,
   shortenCooldown,
+  stunSlot,
   stepBurstController,
   type BurstControllerState,
   type BurstTiming,
@@ -89,6 +90,7 @@ import {
   resolveAllyGaugeAdd,
   resolveDotEffects,
   resolveShotGauges,
+  resolveAppliedPauses,
   resolveBurstUsePause,
   resolveShotPauses,
   resolveTimerGauges,
@@ -842,6 +844,13 @@ function runFirstPassOnce(
   const burstUsePause = slots.map((slot) =>
     slot === null || slot.definition === null ? 0 : resolveBurstUsePause(slot.definition),
   );
+  // メイド編（plan/design-maids.md 2.2 節）: 状態が付いた時の止まり（気絶）。手順 1 で、前のフレームに無かった状態が付いていれば立て、
+  // 明けまでバーストの候補からも外す（論点 2）。明けは、バーストの発動の止まりと同じく構え直す
+  const appliedPauses = slots.map((slot) =>
+    slot === null || slot.definition === null
+      ? []
+      : resolveAppliedPauses(slot.definition).map((p) => ({ ...p, was: false })),
+  );
   // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
@@ -1361,6 +1370,15 @@ function runFirstPassOnce(
       }
       if (ownBlock !== undefined && ownBlock.end === f)
         unhideShooter(state, shot, ownBlock.end - ownBlock.start, model, params);
+      for (const p of appliedPauses[i]!) {
+        const on = lists.selfStateAt(i, p.state, f);
+        if (on && !p.was) {
+          pauseLeft[i] = Math.max(pauseLeft[i]!, p.frames);
+          burstPauseAim[i] = p.frames;
+          if (controller !== null) stunSlot(controller, i, f + p.frames);
+        }
+        p.was = on;
+      }
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
       if (pauseLeft[i]! > 0) {
         pauseLeft[i]! -= 1;

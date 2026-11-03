@@ -40,6 +40,7 @@ import {
   oneOf,
   parseDuration,
   parseLocalizedText,
+  parseNamedStateId,
   parsePositiveInt,
   parseRef,
 } from './common.ts';
@@ -138,6 +139,16 @@ function parseDecrease(v: Record<string, Json>, scaling: BuffScaling | undefined
   }
   return true;
 }
+
+/** メイド編（plan/design-maids.md 2.1 節）: timed の perCount を書けるきっかけ（出来事のきっかけ） */
+const PER_COUNT_TIMED_TRIGGERS: readonly string[] = [
+  'burstUse',
+  'burstStage1Enter',
+  'burstStage2Enter',
+  'burstStage3Enter',
+  'fullBurstStart',
+  'fullBurstEnd',
+];
 
 export function parseTimedEffect(v: Record<string, Json>, path: string): TimedEffect {
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
@@ -338,6 +349,26 @@ export function parseTimedFields(
       }
       effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
     } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+  }
+  // メイド編（plan/design-maids.md 2.1 節）: 値 × 自分の状態のスタック数。出来事のきっかけだけ
+  if (v.perCount !== undefined) {
+    const at = `${path}.perCount`;
+    if (stat === undefined) fail(at, 'perCount in a state grant is not supported (use stacksFrom)');
+    const per = v.perCount;
+    if (!isRecord(per) || Object.keys(per).length !== 1 || per.state === undefined) fail(at, 'expected { state }');
+    if (typeof trigger !== 'string' || !PER_COUNT_TIMED_TRIGGERS.includes(trigger))
+      fail(at, `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}`);
+    for (const key of [
+      'maxStacks',
+      'maxStacksRef',
+      'amplifies',
+      'durationShots',
+      'durationShotsRef',
+      'durationUntil',
+    ] as const) {
+      if (v[key] !== undefined) fail(at, `perCount cannot be combined with ${key}`);
+    }
+    effect.perCount = { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
   }
   if (stat !== undefined) {
     // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
