@@ -322,5 +322,110 @@
       "tool": "recipe:burst-panel@1・tools/captures/hud.ts --mode jumps（キャッシュ hud-jumps@2）",
       "note": "00.00 は `0727-03`。1 ヒット目は各回の 3 ヒットの組（10f・22f 後に続く）の最初の増分。モデル（burstHitDelays）の値と同じ（2026-10-28 のモデル）。数と 6 回目の遅れは、6 回目のバーストが 180 秒に入るか（アニス：スターの未確定のゲージの要素）に左右されるので、結論の根拠にせず記録だけにする"
     }
+  },
+  {
+    "id": "0727-15",
+    "recording": "0727",
+    "kind": "timing",
+    "use": "compare",
+    "value": 62,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -24,
+      "high": 148
+    },
+    "description": "ミハラの S1 のクリティカルダメージ▲（M → M▲）が ミハラ の 1 発で替わるまでの時刻の幅（1 番目の事象 f1172 から数えた動画のフレーム）。Mの最後の発は -25f、M▲の最初の発は 148f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-wind\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は M: 枠 3（ミハラ）のモデルの f100、M▲: 枠 3（ミハラ）のモデルの f400、A: 枠 1（アニス：スター）のモデルの f100、Dl: 枠 2（デルタ）のモデルの f100。境は M → M▲（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -320〜200f。M 8・M▲ 1・区別できない 59・外れ 14・食い違い（M▲の最初の発より後のMの発） 0。1 マガジン目の最後の弾（事象。ミハラの最後の増分の後に約 120f のリロードの止まり）から数えた、モデルのミハラの 60 発目からの S1 の窓の付き始めと比べる（許容は幅の半分）"
+    },
+    "source": "V-0652",
+    "readAt": "2026-11-03",
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "critDamage",
+        "from": 3,
+        "shot": 60,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 86
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0727-16",
+    "recording": "0727",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0652",
+    "readAt": "2026-11-03",
+    "value": 25752,
+    "description": "ミハラの 1 マガジン目（S1 の付く前）の会心・距離ボーナスありの通常攻撃の 1 ヒット（f892・907・1064・1069・1132・1137・1147 の増分）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "0727-15 の読みの増分（格子 M。会心 × 距離ボーナス × コアなしの値 25,751.53 にだけ合う）。比べるのはモデルの f100（1 マガジン目の中）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 100,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0727-17",
+    "recording": "0727",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0652",
+    "readAt": "2026-11-03",
+    "value": 28427,
+    "description": "ミハラの 2 マガジン目（1 マガジン目の最後の弾の後・1 回目のバーストの前）の会心・距離ボーナスありの通常攻撃の 1 ヒット（f1320 の増分）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "0727-15 の読みの増分（格子 M▲。S1 のクリティカルダメージ▲ 18.7% 込みの値 28,426.82 にだけ合う）。比べるのはモデルの f400（2 マガジン目の中）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
