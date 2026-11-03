@@ -19181,22 +19181,6 @@
       "plus": null
     },
     {
-      "observation": "0853-09",
-      "element": "エーテル skill2.effects[1]",
-      "key": "412d6a0a336f8dbd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0853-11",
-      "element": "エーテル skill2.effects[1]",
-      "key": "4ae96f1cbc48f35f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0854-04",
       "element": "エーテル skill2.effects[1]",
       "key": "655dfe326c2b6c87",
@@ -19208,22 +19192,6 @@
       "observation": "0854-05",
       "element": "エーテル skill2.effects[1]",
       "key": "ed412a9a1b306da5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0854-08",
-      "element": "エーテル skill2.effects[1]",
-      "key": "058e866033d59357",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0854-10",
-      "element": "エーテル skill2.effects[1]",
-      "key": "ff310de165f66fca",
       "effective": false,
       "minus": 0,
       "plus": null
