@@ -29,7 +29,8 @@ describe('プリバティの定義', () => {
     const def = parseSkillDefinition(rawDefinition(PRIVATY));
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill2.support).toBe('partial');
-    expect(def.skills.burst.support).toBe('supported');
+    // 基礎版のバーストの撃たない間は未測定（宝物版だけ。plan/design-privaty-burst-pause.md 論点 2）
+    expect(def.skills.burst.support).toBe('partial');
     for (const slot of ['skill1', 'skill2', 'burst'] as const) {
       expect(def.treasureSkills?.[slot]?.support).toBe('supported');
     }
@@ -71,6 +72,13 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(expected.length).toBeGreaterThan(0);
     expect(expected.length).toBeLessThan(lastShots.length);
     expect(hitsOf(true).map((h) => h.frame)).toEqual(expected);
+  });
+
+  it('does not fire from her burst activation until the pause ends (V-0661)', () => {
+    const shots = plan.shots[PRIVATY_SLOT]!.frames;
+    const mine = plan.schedule!.activations.filter((a) => a.slotIndex === PRIVATY_SLOT);
+    expect(mine.length).toBeGreaterThan(0);
+    for (const a of mine) expect(shots.some((f) => f > a.frame && f <= a.frame + 97)).toBe(false);
   });
 
   it('applies Elemental Advantage Attack Damage only on herself', () => {

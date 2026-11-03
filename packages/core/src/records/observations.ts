@@ -2281,7 +2281,9 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
     return shot;
   };
   const origin = ctx.args.fromShot === true ? firstFrom(activation.frame) : hexagonFrameOf(activation);
-  return firstFrom(effectFrameOf(activation)) - origin;
+  // プリバティ編（V-0661）: afterHits が true なら、バーストの倍率ダメージの最後のヒットの次のフレーム以後の最初の発（発動の後に撃たない間の明け）
+  const from = ctx.args.afterHits === true ? hitFramesOf(activation).at(-1)! + 1 : effectFrameOf(activation);
+  return firstFrom(from) - origin;
 }
 
 /**

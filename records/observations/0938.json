@@ -387,5 +387,113 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0938-17",
+    "recording": "0938",
+    "source": "V-0661",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 103,
+    "description": "1 回目のフルバーストの、III のタイマーの 00.00 から、バーストの 3 ヒット目の後のプリバティの最初の発までのフレーム（ゲーム内。動画の +125f から入りの止まり 22f を引いた）。バーストの 3 ヒット目の後まで撃たない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "00.00 は f1444（burst-panel）。プリバティの発は 5f おきの増分（V-0661「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "afterHits": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0938-18",
+    "recording": "0938",
+    "source": "V-0661",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 104,
+    "description": "2 回目のフルバーストの、III のタイマーの 00.00 から、バーストの 3 ヒット目の後のプリバティの最初の発までのフレーム（ゲーム内。動画の +126f から入りの止まり 22f を引いた）。バーストの 3 ヒット目の後まで撃たない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "00.00 は f3978（burst-panel）。プリバティの発は 5f おきの増分（V-0661「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "afterHits": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0938-19",
+    "recording": "0938",
+    "source": "V-0661",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 104,
+    "description": "3 回目のフルバーストの、III のタイマーの 00.00 から、バーストの 3 ヒット目の後のプリバティの最初の発までのフレーム（ゲーム内。動画の +126f から入りの止まり 22f を引いた）。バーストの 3 ヒット目の後まで撃たない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "00.00 は f6603（burst-panel）。プリバティの発は 5f おきの増分（V-0661「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 2,
+        "afterHits": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
   }
 ]

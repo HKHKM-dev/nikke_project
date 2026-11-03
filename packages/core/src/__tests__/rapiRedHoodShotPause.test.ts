@@ -26,7 +26,9 @@ describe('語彙の検証', () => {
   });
 
   it('needs a shot count trigger and positive integer frames', () => {
-    expect(() => parseSkillDefinition(withSkill2({ ...BASE, trigger: 'burstUse' }))).toThrow(/shot count/);
+    expect(() => parseSkillDefinition(withSkill2({ ...BASE, trigger: 'battleStart' }))).toThrow(/shot count/);
+    // プリバティ編: burstUse は burst スロットだけ
+    expect(() => parseSkillDefinition(withSkill2({ ...BASE, trigger: 'burstUse' }))).toThrow(/burst slot/);
     expect(() => parseSkillDefinition(withSkill2({ ...BASE, frames: 0 }))).toThrow(/positive integer/);
     expect(() => parseSkillDefinition(withSkill2({ ...BASE, framesOnLastShot: 1.5 }))).toThrow(/positive integer/);
     expect(() =>

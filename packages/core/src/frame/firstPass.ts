@@ -89,6 +89,7 @@ import {
   resolveAllyGaugeAdd,
   resolveDotEffects,
   resolveShotGauges,
+  resolveBurstUsePause,
   resolveShotPauses,
   resolveTimerGauges,
   type ResolvedDamageEffect,
@@ -833,6 +834,11 @@ function runFirstPassOnce(
     }
   });
   const pauseLeft = slots.map(() => 0);
+  // プリバティ編（plan/design-privaty-burst-pause.md 2 節）: 自分のバーストの発動の次のフレームから止めるフレーム数（手順 3 で立てる）
+  const burstPauseAim = slots.map(() => false);
+  const burstUsePause = slots.map((slot) =>
+    slot === null || slot.definition === null ? 0 : resolveBurstUsePause(slot.definition),
+  );
   // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
@@ -1353,6 +1359,11 @@ function runFirstPassOnce(
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
       if (pauseLeft[i]! > 0) {
         pauseLeft[i]! -= 1;
+        // プリバティ編（plan/design-privaty-burst-pause.md 3 節の論点 4）: バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す
+        if (pauseLeft[i] === 0 && burstPauseAim[i]) {
+          burstPauseAim[i] = false;
+          unhideShooter(state, shot, burstUsePause[i]!, model, params);
+        }
         return;
       }
       const reloading = state.phase === 'reloading';
@@ -1594,6 +1605,13 @@ function runFirstPassOnce(
     // 着弾編: 効果の発火は発動 + 遅れのフレーム。先のフレームなら積んでおく（遅れの無いキャラはこのフレーム）
     const burstEffects: BurstActivation[] = pendingBurstEffects.get(f) ?? [];
     if (burstEffects.length > 0) pendingBurstEffects.delete(f);
+    for (const a of now) {
+      const pause = burstUsePause[a.slotIndex]!;
+      if (pause > 0) {
+        pauseLeft[a.slotIndex] = Math.max(pauseLeft[a.slotIndex]!, pause);
+        burstPauseAim[a.slotIndex] = true;
+      }
+    }
     for (const a of now) {
       const at = effectFrameOf(a);
       if (at === f) burstEffects.push(a);

@@ -1758,11 +1758,13 @@ export type BurstGaugeHitEffect = {
  * V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717）: 射撃の回数のトリガーが発火した射撃の次のフレームから frames フレームの間、
  * 自分の射手を進めない（撃たず、待ち・リロードも進めない。残弾・スピンアップ・レートの蓄積はそのまま持ち越す）。ダメージは出さない。
  * 発火した射撃で残弾が 0 になった（その発からリロードに入る）ときは、frames の代わりに framesOnLastShot フレーム止める
- * （リロードがその分遅れる。C-0718）。止めている間のフレームは射撃の回数に入らない
+ * （リロードがその分遅れる。C-0718）。止めている間のフレームは射撃の回数に入らない。
+ * プリバティ編（plan/design-privaty-burst-pause.md 2 節）: きっかけ 'burstUse'（burst スロットだけ）は、自分のバーストの発動の次のフレームから
+ * frames フレーム止める（framesOnLastShot は書けない）
  */
 export type ShotPauseEffect = {
   kind: 'shotPause';
-  trigger: ShotCountTrigger;
+  trigger: ShotCountTrigger | 'burstUse';
   /** 止めるフレーム数（1 以上の整数。録画で読む） */
   frames: number;
   /** 発火した射撃がマガジンの最後の弾丸のときに止めるフレーム数（1 以上の整数。省略は frames） */
