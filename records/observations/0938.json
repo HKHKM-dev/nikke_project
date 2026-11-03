@@ -568,5 +568,78 @@
         "abs": 0
       }
     }
+  },
+  {
+    "id": "0938-23",
+    "recording": "0938",
+    "source": "V-0664",
+    "readAt": "2026-11-03",
+    "use": "input",
+    "kind": "timing",
+    "unit": "f",
+    "value": [545, 1852, 3055, 4408, 5655, 6913, 8201, 9422],
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "description": "チェーンの I の発動のゲーム内のフレーム（戦闘開始から。比べる指定の manualBursts）。オートバーストのチェーンの始まりを録画にそろえる（II・III はモデルのオートのまま）",
+    "method": {
+      "tool": "recipe:burst-panel@3 の観測値",
+      "note": "I → II の替わり目（0938-03）から、本当の発動の 5f 後（HEXAGON_AFTER_ACTIVATION_FRAMES）を引き、戦闘開始 f834 からのフレームから、それより前のフルバーストの入り（0938-05）ごとに 22f と I・II の発動（替わり目の 6f 前）ごとに 1f を引いた（V-0086 の数え方）。0938-08 は timer.ts のティックから作り、ティックとこの数え方の差が回ごとに −1〜22f 揺れた（V-0664）"
+    }
+  },
+  {
+    "id": "0938-24",
+    "recording": "0938",
+    "source": "V-0664",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 522,
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    },
+    "description": "戦闘開始から最初のゲージの満タン（BURST バーの消失）までのゲーム内のフレーム。的のジャンプもフルバーストも絡まない区間",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "バー消失の動画の f1356 − 戦闘開始 f834（この前に止まりは無い）。timer.ts --mode ticks のティックに直すと約 24 小さく出る（V-0664「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-23",
+        "jumpWindows": "0938-20"
+      }
+    }
+  },
+  {
+    "id": "0938-25",
+    "recording": "0938",
+    "source": "V-0664",
+    "readAt": "2026-11-03",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": [522, 3032, 4385, 5632, 6890, 8075, 9399],
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    },
+    "description": "ゲージの満タン（BURST バーの消失。I の発動の前のもの）のゲーム内のフレームの並び（バーが見えて読めた回だけ）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "動画のフレーム 1356・3891・5268・6516・7798・8984・10332 から、戦闘開始 f834 と、それより前のフルバーストの入りごとに 22f・I・II の発動ごとに 1f を引いた（V-0086 の数え方）"
+    }
   }
 ]
