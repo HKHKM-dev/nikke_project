@@ -134,7 +134,10 @@
           "assumes": {
             "ja": "『バーストⅡで使用時：ハウリングエンド』の呼び名（中身なし。S2 の「ハウリングエンドを適用時」が見る）。維持は 0 秒で、付いた記録だけを作る",
             "en": "The name of 'When used in Burst Stage 2: The Last Howl' (no contents; read by Skill 2's 'when The Last Howl takes effect'). It lasts 0 s and only records the application"
-          }
+          },
+          "claims": [
+            "C-0920"
+          ]
         },
         {
           "kind": "cooldownReduction",
@@ -224,7 +227,10 @@
         {
           "ja": "バーストⅢの貫通範囲の拡張は、敵 1 体の前提では効かない（要件の前提の外）",
           "en": "Burst Stage 3's Pierce range expansion has no effect against a single enemy (outside the requirements)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }
