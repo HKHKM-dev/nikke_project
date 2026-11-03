@@ -195,5 +195,199 @@
       "slot": 1,
       "source": "burst"
     }
+  },
+  {
+    "id": "0873-09",
+    "recording": "0873",
+    "source": "V-0658",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "input",
+    "value": [28.781, 30.753, 65.161, 67.116, 104.737, 106.743, 141.168, 143.021, 174.352, 176.358],
+    "unit": "秒",
+    "description": "ドロシー・デルタの、的のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる。1〜5 回目）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "`0916-08`（V-0646）と同じ読み方。戦闘開始は動画 f788（timer.ts --mode changes。最初の増分 f799）。ドロシーの通常攻撃の増分（8 万未満）が 90f 以上止まった所のうち、リロードの止まり（約 70f）と I・II の発動の止まりでないもの（総ダメージの増分は、ジャンプの間も S2 の焦土化と烙印の爆発が出るので止まらない）。終わりは着地の後の最初の増分（f2611・4752・7085・9222・11185）の 12f 前、始まりは終わりの 118f（2 秒）前と、止まる前の最後の増分（f2482・4624・6904・9100・11002）の 1f 後の遅いほう。動画の窓: 2483〜2599・4625〜4740・6955〜7073・9101〜9210・11055〜11173。ゲーム内の秒は、戦闘開始からのフレームから、それより前の I・II の発動（六角形の替わり目の 6f 前）ごとに 1f を引き、1f = 0.017 秒で数えた（フルバーストは無い）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0873-10",
+    "recording": "0873",
+    "source": "V-0658",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1989],
+    "unit": "f",
+    "description": "ドロシー（I・操作）・デルタ（II）の、デルタの 1 回目の II の発動から 2 回目までの動画のフレーム（II → III の六角形の替わり目の差）",
+    "method": {
+      "tool": "recipe:burst-panel@3 の差",
+      "note": "`0873-02` の 1・2 つ目（f1661・3650）の差。比べるのは、録画のジャンプの窓（`0873-09`）で回したモデルの、枠 2 の発動の間隔"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "anchor": "activation:0",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "0873-09"
+      }
+    }
+  },
+  {
+    "id": "0873-11",
+    "recording": "0873",
+    "source": "V-0658",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1897],
+    "unit": "f",
+    "description": "ドロシー（I・操作）・デルタ（II）の、デルタの 2 回目の II の発動から 3 回目までの動画のフレーム（II → III の六角形の替わり目の差）",
+    "method": {
+      "tool": "recipe:burst-panel@3 の差",
+      "note": "`0873-02` の 2・3 つ目（f3650・5547）の差。比べるのは、録画のジャンプの窓（`0873-09`）で回したモデルの、枠 2 の発動の間隔"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "anchor": "activation:1",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "0873-09"
+      }
+    }
+  },
+  {
+    "id": "0873-12",
+    "recording": "0873",
+    "source": "V-0658",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1897],
+    "unit": "f",
+    "description": "ドロシー（I・操作）・デルタ（II）の、デルタの 3 回目の II の発動から 4 回目までの動画のフレーム（II → III の六角形の替わり目の差）",
+    "method": {
+      "tool": "recipe:burst-panel@3 の差",
+      "note": "`0873-02` の 3・4 つ目（f5547・7444）の差。比べるのは、録画のジャンプの窓（`0873-09`）で回したモデルの、枠 2 の発動の間隔"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "anchor": "activation:2",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "0873-09"
+      }
+    }
+  },
+  {
+    "id": "0873-13",
+    "recording": "0873",
+    "source": "V-0658",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1988],
+    "unit": "f",
+    "description": "ドロシー（I・操作）・デルタ（II）の、デルタの 4 回目の II の発動から 5 回目までの動画のフレーム（II → III の六角形の替わり目の差）",
+    "method": {
+      "tool": "recipe:burst-panel@3 の差",
+      "note": "`0873-02` の 4・5 つ目（f7444・9432）の差。比べるのは、録画のジャンプの窓（`0873-09`）で回したモデルの、枠 2 の発動の間隔"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "anchor": "activation:3",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "0873-09"
+      }
+    }
+  },
+  {
+    "id": "0873-14",
+    "recording": "0873",
+    "source": "V-0658",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [1897],
+    "unit": "f",
+    "description": "ドロシー（I・操作）・デルタ（II）の、デルタの 5 回目の II の発動から 6 回目までの動画のフレーム（II → III の六角形の替わり目の差）",
+    "method": {
+      "tool": "recipe:burst-panel@3 の差",
+      "note": "`0873-02` の 5・6 つ目（f9432・11329）の差。比べるのは、録画のジャンプの窓（`0873-09`）で回したモデルの、枠 2 の発動の間隔"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "anchor": "activation:4",
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "jumpWindows": "0873-09"
+      }
+    }
   }
 ]
