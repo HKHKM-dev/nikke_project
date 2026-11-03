@@ -1214,8 +1214,27 @@ export type DamageEffect = {
   projectileExplosion?: true;
   /** 同: ヒットが発射体の付着か。発射体付着ダメージ▲（projectileStickDamage）を掛ける（damage.ts の stickHitMultiplier。粘着榴弾の付着） */
   projectileStick?: true;
+  /**
+   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: きっかけから窓の間に的が受けたダメージを累計し、爆発の 1 ヒットで
+   * 出す。ref は最大量（発動者の最終攻撃力の %）。爆発の値には式の補正を掛けない（C-0901）
+   */
+  accumulate?: AccumulateSpec;
   /** 常に満たすとみなした条件（対象の数など）。UI に「仮定」として出す */
   assumes?: LocalizedText;
+};
+
+/**
+ * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1・2.2 節）。source team は、窓の間に的が受けた味方全員のダメージ（烙印。
+ * C-0901）。release windowEnd は、窓の終わりの releaseDelayFrames 後に累計（最大量で切る）を 1 ヒット出す（C-0902）。最大量は、発火の
+ * フレームの最終攻撃力 × ref% × (1 + 分配ダメージ▲)（C-0904 と同じ形とみた。烙印では録画で届いていない）
+ */
+export type AccumulateSpec = {
+  source: 'team';
+  release: 'windowEnd';
+  /** 窓の長さ（秒）の description_value_NN */
+  durationRef: number;
+  /** 窓の終わりから爆発のヒットまでのフレーム（録画で読んだ即値） */
+  releaseDelayFrames: number;
 };
 
 /**

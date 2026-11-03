@@ -39,7 +39,7 @@ import {
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type ItemEffect } from '../skills/resolve.ts';
 import { valuePiecesOf } from '../skills/holders.ts';
 import { isStateStat } from '../skills/types.ts';
-import { combineBurstHitParts, slotBurstHit, type BurstHitResult } from '../skills/burstDamage.ts';
+import { combineBurstHitParts, slotBurstHit, withSkillHitValue, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
@@ -345,7 +345,11 @@ export function runSimulation(simInput: SimInput): SimResult {
     addPerSecond(index, f, damage);
     return damage;
   });
-  // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順）
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 爆発のヒットの値を、窓の中に的が受けたダメージの和
+  // （最大量で切る）にする。ほかのヒットの値が決まった後に、爆発のフレーム順に決める（前の爆発の値も後の窓に入る）
+  if (skillHits.some((h) => h.accumulate !== undefined))
+    settleAccumulates(skillHits, burstHits, burstHitDamages, runners, timeline.segments, frames);
+  // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順。蓄積して爆発するダメージは上で決めた）
   for (const h of skillHits) {
     if (h.frame >= frames) continue;
     const runner = runners[h.slotIndex];
@@ -402,6 +406,49 @@ export function runSimulation(simInput: SimInput): SimResult {
 }
 
 type BurstHitAt = { activation: BurstActivation; frame: number; share: number };
+
+/**
+ * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: skillHits の爆発のヒット（accumulate のあるもの）の値を、
+ * 窓 [start, end) に的が受けた味方全員のダメージ（通常攻撃・バーストのヒット・ほかの倍率ダメージと持続ダメージ・前の爆発）の和を最大量で
+ * 切ったものにする（C-0901。式の補正は掛けない）。skillHits の要素を置き換える
+ */
+function settleAccumulates(
+  skillHits: SkillHitEvent[],
+  burstHits: readonly BurstHitAt[],
+  burstHitDamages: readonly (number | null)[],
+  runners: readonly (Runner | null)[],
+  segments: readonly { end: number }[],
+  frames: number,
+): void {
+  const hits: { frame: number; damage: number }[] = [];
+  burstHits.forEach((h, i) => {
+    const damage = burstHitDamages[i];
+    if (damage !== null && damage !== undefined) hits.push({ frame: h.frame, damage });
+  });
+  for (const h of skillHits)
+    if (h.accumulate === undefined && h.frame < frames) hits.push({ frame: h.frame, damage: h.hit.perActivation });
+  for (const runner of runners) {
+    if (runner === null) continue;
+    let segIndex = 0;
+    for (const f of runner.shots) {
+      if (f >= frames) break;
+      while (segIndex + 1 < segments.length && segments[segIndex]!.end <= f) segIndex += 1;
+      hits.push({ frame: f, damage: shotDamage(runner, runner.result.segments[segIndex]!, f) });
+    }
+  }
+  const order = skillHits
+    .map((h, i) => ({ h, i }))
+    .filter(({ h }) => h.accumulate !== undefined)
+    .sort((x, y) => x.h.frame - y.h.frame);
+  for (const { h, i } of order) {
+    const { start, end, cap } = h.accumulate!;
+    let sum = 0;
+    for (const x of hits) if (x.frame >= start && x.frame < end) sum += x.damage;
+    const value = Math.min(cap, sum);
+    skillHits[i] = { ...h, hit: withSkillHitValue(h.hit, value) };
+    hits.push({ frame: h.frame, damage: value });
+  }
+}
 
 /** 1 発のダメージ（区間の 1 トリガー値。Stage 22-B: 部分チャージの発は、その発のチャージの進みで出し直す） */
 function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {

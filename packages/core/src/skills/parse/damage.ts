@@ -55,6 +55,34 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
     return effect;
   }
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 使い手の形（バースト使用時・分配ダメージ・窓の終わりの爆発）
+  // だけを許し、ほかの欄とは組まない
+  if (v.accumulate !== undefined) {
+    for (const key of Object.keys(v))
+      if (!['kind', 'trigger', 'ref', 'damageType', 'accumulate', 'assumes', 'claims', 'reads'].includes(key))
+        fail(`${path}.${key}`, 'not allowed with accumulate');
+    if (trigger !== 'burstUse') fail(`${path}.accumulate`, 'accumulate needs the trigger "burstUse"');
+    if (damageType !== 'distributed') fail(`${path}.accumulate`, 'accumulate needs the damageType "distributed"');
+    const a = v.accumulate;
+    const at = `${path}.accumulate`;
+    if (!isRecord(a)) fail(at, 'expected an object');
+    for (const key of Object.keys(a))
+      if (!['source', 'release', 'durationRef', 'releaseDelayFrames'].includes(key))
+        fail(`${at}.${key}`, 'unknown field');
+    if (a.source !== 'team') fail(`${at}.source`, `expected "team", got ${JSON.stringify(a.source)}`);
+    if (a.release !== 'windowEnd') fail(`${at}.release`, `expected "windowEnd", got ${JSON.stringify(a.release)}`);
+    const delay = a.releaseDelayFrames;
+    if (typeof delay !== 'number' || !Number.isInteger(delay) || delay < 0)
+      fail(`${at}.releaseDelayFrames`, `expected an integer >= 0, got ${JSON.stringify(delay)}`);
+    effect.accumulate = {
+      source: 'team',
+      release: 'windowEnd',
+      durationRef: parseRef(a.durationRef, `${at}.durationRef`),
+      releaseDelayFrames: delay,
+    };
+    if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+    return effect;
+  }
   if (v.gaugeHits !== undefined) {
     // ヘルム編: ゲージは 1 パス目で射撃を数えて予約するので、射撃の回数トリガーのときだけ
     if (!isShotCountTrigger(trigger)) fail(`${path}.gaugeHits`, 'gaugeHits needs a shot count trigger');

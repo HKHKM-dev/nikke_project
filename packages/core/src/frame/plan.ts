@@ -21,6 +21,7 @@ import { computeTriggerDamage, type EnemyDebuffTiming, type EnemyInput } from '.
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
+  withSkillHitValue,
   damageHitFramesOf,
   effectHitFrames,
   perCountFrames,
@@ -131,6 +132,11 @@ export type SkillHitEvent = {
   stacks?: number;
   /** 2 段目の段 13 の PR 1: 持続ダメージの、付けた時の 1 スタックぶんのヒット（dot の hitOnApply）。tick ではない */
   onApply?: true;
+  /**
+   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 累計の窓 [start, end) と最大量。hit の値は 2 パス目
+   * （sim/engine.ts）が、窓の中に的が受けたダメージの和（最大量で切る）にする。1 パス目では 0
+   */
+  accumulate?: { start: number; end: number; cap: number };
 };
 
 /** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
@@ -490,6 +496,38 @@ export function planSkillHits(
       );
     const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
+      // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
+      // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。値は 2 パス目
+      const acc = effect.accumulate;
+      if (acc !== undefined) {
+        for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
+          const at = frame + acc.durationFrames + acc.releaseDelayFrames;
+          if (at >= frames) continue;
+          const buffs = burstSnapshotState(timeline, frame, slotIndex, false).buffs;
+          const trigger = computeTriggerDamage({
+            character: slot.character,
+            growth: slot.growth,
+            enemy,
+            attackOverride: slot.attackOverride,
+            attackRounding,
+            buffs,
+            condition: { ...slot.condition, fullBurst: false },
+          });
+          const hit = computeSkillHit([effect], slot.character, enemy, trigger, buffs, false, sustainedDamagePlacement);
+          hits.push({
+            frame: at,
+            slotIndex,
+            effect,
+            hit: withSkillHitValue(hit, 0),
+            accumulate: {
+              start: frame,
+              end: frame + acc.durationFrames,
+              cap: trigger.attack * effect.multiplier * (1 + buffs.distributedDamage),
+            },
+          });
+        }
+        continue;
+      }
       // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
       const delay = effect.delayFrames ?? 0;

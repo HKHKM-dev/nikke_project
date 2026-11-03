@@ -162,5 +162,81 @@
       "slot": "all",
       "source": "burst"
     }
+  },
+  {
+    "id": "0871-07",
+    "recording": "0871",
+    "source": "V-0645",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [794],
+    "unit": "f",
+    "description": "ドロシー単騎（操作）の、ドロシーの 1 回目のバーストの六角形の替わり目（I → II）からの、烙印の爆発のヒットの動画のフレームの差",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。キャッシュ hud-jumps@3）と、替わり目の観測値（0871-01）",
+      "note": "爆発の増分は 0871-05 の 1 個目。許容は ±2f（替わり目と HUD の増分の 2 つの読みの差。E2 はデルタのバーストの止まりの 1f が窓の中に入る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "anchor": "activation:0",
+        "within": "untilNext",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0871-08",
+    "recording": "0871",
+    "source": "V-0645",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [794],
+    "unit": "f",
+    "description": "ドロシー単騎（操作）の、ドロシーの 2 回目のバーストの六角形の替わり目（I → II）からの、烙印の爆発のヒットの動画のフレームの差",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。キャッシュ hud-jumps@3）と、替わり目の観測値（0871-01）",
+      "note": "爆発の増分は 0871-05 の 2 個目。許容は ±2f（替わり目と HUD の増分の 2 つの読みの差。E2 はデルタのバーストの止まりの 1f が窓の中に入る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "anchor": "activation:1",
+        "within": "untilNext",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burst"
+    }
   }
 ]

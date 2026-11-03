@@ -146,6 +146,11 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    */
   periodShorten?: ResolvedPeriodShorten;
   /**
+   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 窓の長さ（フレーム）と爆発の遅れ。最大量の倍率は multiplier。
+   * frame/plan.ts の planSkillHits が爆発のヒットを置き、sim/engine.ts の 2 パス目が累計を値にする
+   */
+  accumulate?: { source: 'team'; durationFrames: number; releaseDelayFrames: number };
+  /**
    * V-0545: 周期の発火のどのヒットも、射手の 1 ヒットぶん × この数のゲージを溜める（frame/firstPass.ts が予約する。定義の true は 1。
    * アインのニアフェザー編: 召喚の攻撃は 2 以上の数も書ける）
    */
@@ -396,6 +401,12 @@ export function resolveDamageEffects(
               };
       }
       if (effect.gaugePerHit !== undefined) r.gaugePerHit = effect.gaugePerHit === true ? 1 : effect.gaugePerHit;
+      if (effect.accumulate !== undefined)
+        r.accumulate = {
+          source: effect.accumulate.source,
+          durationFrames: gameSecondsToFrames(skillValue(skill, effect.accumulate.durationRef, levels[slot])),
+          releaseDelayFrames: effect.accumulate.releaseDelayFrames,
+        };
       if (effect.coreHit === true) {
         r.core = true;
         r.coreHit = true;
@@ -901,6 +912,14 @@ export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; shar
  * 倍率ダメージ 1 回ぶん（effects をまとめて）。攻撃力・会心・攻撃ダメージ・分配ダメージは通常攻撃と同じバフ後の値を使う。
  * burstDamage（slotBurstHit）と damage（Stage 8）で共通。
  */
+/**
+ * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 値を式の外で決めたヒット（爆発の値には式の補正を掛けない。
+ * C-0901）。内訳は computeSkillHit のまま、1 発動の値だけを value にする
+ */
+export function withSkillHitValue(hit: SkillHitResult, value: number): SkillHitResult {
+  return { ...hit, perEffect: hit.perEffect.map((p) => ({ ...p, expected: value })), perActivation: value };
+}
+
 export function computeSkillHit(
   effects: readonly ResolvedSkillDamage[],
   character: CharacterData,
