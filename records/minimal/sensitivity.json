@@ -19743,7 +19743,7 @@
     {
       "observation": "0874-04",
       "element": "トロニー skill1.effects[0]",
-      "key": "b40b5c42b85d422b",
+      "key": "8ee6683bd202d99e",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -19752,7 +19752,7 @@
     {
       "observation": "0874-04",
       "element": "トロニー skill2.effects[0]",
-      "key": "b40b5c42b85d422b",
+      "key": "8ee6683bd202d99e",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -19760,7 +19760,7 @@
     {
       "observation": "0875-04",
       "element": "トロニー skill1.effects[0]",
-      "key": "089c4829a51cca48",
+      "key": "0c7acd2427ab2ce5",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -19769,7 +19769,7 @@
     {
       "observation": "0875-04",
       "element": "トロニー skill2.effects[0]",
-      "key": "089c4829a51cca48",
+      "key": "0c7acd2427ab2ce5",
       "effective": false,
       "minus": 0,
       "plus": 0
