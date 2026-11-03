@@ -1,0 +1,40 @@
+{
+  "id": "0932",
+  "date": "2026-11-03",
+  "folder": "range",
+  "file": "20261103-0932_rl+ar_rapunzel-sanctuary+asuka_asuka-control.mp4",
+  "original": "2026-11-03_15-47-09.mp4",
+  "durationSec": 209.6,
+  "frames": 12573,
+  "fps": 60,
+  "sizeMB": 253.7,
+  "sha256": "d7a47bbe76c9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 473,
+      "name": "ラプンツェル：サンクチュアリ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 830,
+      "name": "アスカ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0650（ラプンツェル：サンクチュアリの S1 の回復）の録画。ラプンツェル：サンクチュアリ（AI）・アスカ（操作・AUTO 射撃 ON）。オートバースト OFF",
+  "backup": {
+    "at": "2026-11-03T15:56+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
