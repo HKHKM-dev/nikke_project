@@ -22,6 +22,7 @@ import {
   parseGaugeHits,
   parseLocalizedText,
   parseNamedStateId,
+  parseNonNegativeInt,
   parsePositiveInt,
   parseRef,
 } from './common.ts';
@@ -69,16 +70,11 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     for (const key of Object.keys(a))
       if (!['source', 'release', 'durationRef', 'releaseDelayFrames'].includes(key))
         fail(`${at}.${key}`, 'unknown field');
-    if (a.source !== 'team') fail(`${at}.source`, `expected "team", got ${JSON.stringify(a.source)}`);
-    if (a.release !== 'windowEnd') fail(`${at}.release`, `expected "windowEnd", got ${JSON.stringify(a.release)}`);
-    const delay = a.releaseDelayFrames;
-    if (typeof delay !== 'number' || !Number.isInteger(delay) || delay < 0)
-      fail(`${at}.releaseDelayFrames`, `expected an integer >= 0, got ${JSON.stringify(delay)}`);
     effect.accumulate = {
-      source: 'team',
-      release: 'windowEnd',
+      source: oneOf(['team'] as const, a.source, `${at}.source`),
+      release: oneOf(['windowEnd'] as const, a.release, `${at}.release`),
       durationRef: parseRef(a.durationRef, `${at}.durationRef`),
-      releaseDelayFrames: delay,
+      releaseDelayFrames: parseNonNegativeInt(a.releaseDelayFrames, `${at}.releaseDelayFrames`),
     };
     if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
     return effect;

@@ -21,7 +21,6 @@ import { computeTriggerDamage, type EnemyDebuffTiming, type EnemyInput } from '.
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
-  withSkillHitValue,
   damageHitFramesOf,
   effectHitFrames,
   perCountFrames,
@@ -133,8 +132,8 @@ export type SkillHitEvent = {
   /** 2 段目の段 13 の PR 1: 持続ダメージの、付けた時の 1 スタックぶんのヒット（dot の hitOnApply）。tick ではない */
   onApply?: true;
   /**
-   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 累計の窓 [start, end) と最大量。hit の値は 2 パス目
-   * （sim/engine.ts）が、窓の中に的が受けたダメージの和（最大量で切る）にする。1 パス目では 0
+   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 累計の窓 [start, end) と最大量。2 パス目（sim/engine.ts）が、
+   * hit の値を窓の中に的が受けたダメージの和（最大量で切る）に置き換える（1 パス目の hit の値は式の値で、使わない）
    */
   accumulate?: { start: number; end: number; cap: number };
 };
@@ -416,7 +415,7 @@ export function planSkillHits(
       activationFrame = frame - delays.effectFrames,
       shooterAtHit = false,
       valueFrame = frame,
-    ): void => {
+    ): { trigger: ReturnType<typeof computeTriggerDamage>; hit: SkillHitResult } => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
       // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）。
       // 2 段目の段 10（C-0657。V-0527）: バーストのヒットごとに出す追加ダメージ（perBurstHit）は、撃つ側のバフもヒットの時点の値で出す
@@ -485,6 +484,7 @@ export function planSkillHits(
         distanceRate,
       );
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
+      return { trigger, hit };
     };
     // 段 D の 2: 間隔の変更の件（持ち主はその枠。時刻の順）。2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 窓が効く先
     // （段の循環か、射撃の回数のきっかけか）とスロットで絞る
@@ -496,38 +496,6 @@ export function planSkillHits(
       );
     const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
-      // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
-      // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。値は 2 パス目
-      const acc = effect.accumulate;
-      if (acc !== undefined) {
-        for (const frame of triggerFrames(effect.trigger, schedule, slotIndex, frames, shots)) {
-          const at = frame + acc.durationFrames + acc.releaseDelayFrames;
-          if (at >= frames) continue;
-          const buffs = burstSnapshotState(timeline, frame, slotIndex, false).buffs;
-          const trigger = computeTriggerDamage({
-            character: slot.character,
-            growth: slot.growth,
-            enemy,
-            attackOverride: slot.attackOverride,
-            attackRounding,
-            buffs,
-            condition: { ...slot.condition, fullBurst: false },
-          });
-          const hit = computeSkillHit([effect], slot.character, enemy, trigger, buffs, false, sustainedDamagePlacement);
-          hits.push({
-            frame: at,
-            slotIndex,
-            effect,
-            hit: withSkillHitValue(hit, 0),
-            accumulate: {
-              start: frame,
-              end: frame + acc.durationFrames,
-              cap: trigger.attack * effect.multiplier * (1 + buffs.distributedDamage),
-            },
-          });
-        }
-        continue;
-      }
       // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
       const delay = effect.delayFrames ?? 0;
@@ -556,6 +524,29 @@ export function planSkillHits(
               : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
+        // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
+        // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。ヒットの値は
+        // 2 パス目（sim/engine.ts）が窓の中のダメージの和にする
+        const acc = effect.accumulate;
+        if (acc !== undefined) {
+          const end = frame + acc.durationFrames;
+          if (end + acc.releaseDelayFrames >= frames) continue;
+          const { trigger, hit } = push(
+            end + acc.releaseDelayFrames,
+            effect,
+            false,
+            undefined,
+            undefined,
+            false,
+            frame,
+          );
+          hits[hits.length - 1]!.accumulate = {
+            start: frame,
+            end,
+            cap: trigger.attack * effect.multiplier * hit.distributedDamageMultiplier,
+          };
+          continue;
+        }
         // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
         // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502）。段 11 の PR 5: 「× オーバー
         // エネルギー段階」は発火のフレームのカウンタの値（V-0532）
