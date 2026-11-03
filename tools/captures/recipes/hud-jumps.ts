@@ -13,9 +13,11 @@ import { observation, type Recipe, type RecipeContext } from './types.ts';
 export const HUD_JUMPS_VERSION = 3;
 /**
  * hud.ts --mode jumps の出力のキャッシュの名前（出力の形は版 1 から変わらない）。
- * 2: hud.ts が 0 と 8 を穴の数で分けるようにした（V-0327）。同じ録画でも読みが変わるので作り直す
+ * 2: hud.ts が 0 と 8 を穴の数で分けるようにした（V-0327）。同じ録画でも読みが変わるので作り直す。
+ * 3: 読みは 2 と同じ。低い閾値の読み直しがどの録画にも効いていた間（V-0639 から --fallback に分けるまで）に作った @2 には、
+ * 読み直しの入ったものが混ざり、録画の大きさでは見分けられないので、全部作り直す
  */
-export const HUD_JUMPS_CACHE_KEY = 'hud-jumps@2';
+export const HUD_JUMPS_CACHE_KEY = 'hud-jumps@3';
 
 /**
  * --opt の名前。0 以外なら hud.ts --fallback で読む（数字が赤みがかるレッドウルフの窓。V-0639）。ほかの録画には使わない。

@@ -23,6 +23,13 @@ import {
   splitGenerated,
 } from './pr-prep-lib.ts';
 
+/** 一時のリポジトリで回す git（名前と署名の設定を足す） */
+const git = (cwd: string, args: readonly string[]) =>
+  execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@example.com', '-c', 'commit.gpgsign=false', ...args], {
+    cwd,
+    encoding: 'utf8',
+  });
+
 const GENERATED = ['plan/claims.md', 'plan/residuals.md', 'records/minimal/sensitivity.json'];
 
 describe('splitGenerated', () => {
@@ -154,6 +161,35 @@ describe('handRemovedLines', () => {
     const branch = '# 一覧\n\n- 動かした課題\n- 残っている課題\n';
     expect(handRemovedLines(['- 残っている課題'], generated, branch)).toEqual([]);
   });
+
+  // pr:prep の案内（戻す先は分かれ目の版）: この検査はリベースの前に回り、差分は分かれ目から（main...HEAD）取る。
+  // ブランチのデータには、分かれた後に main で閉じた課題がまだあるので、作り直した版（generated）にもその行がある
+  it('passes after restoring the version at the merge base, but not the newer main that closed an issue', () => {
+    const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
+    const path = 'plan/backlog.md';
+    const commit = (text: string, message: string) => {
+      writeFileSync(join(cwd, path), text);
+      git(cwd, ['add', '.']);
+      git(cwd, ['commit', '-q', '-m', message]);
+    };
+    git(cwd, ['init', '-q', '-b', 'main']);
+    mkdirSync(join(cwd, 'plan'));
+    commit(generated, 'base');
+    const base = git(cwd, ['rev-parse', 'HEAD']).trim();
+    git(cwd, ['checkout', '-q', '-b', 'topic']);
+    commit('# 一覧\n\n- 動かした課題\n', '手で消した');
+    git(cwd, ['checkout', '-q', 'main']);
+    commit('# 一覧\n\n- 動かした課題\n', 'main で閉じた');
+    git(cwd, ['checkout', '-q', 'topic']);
+    const dropped = (restoreFrom: string) => {
+      git(cwd, ['checkout', '-q', restoreFrom, '--', path]);
+      git(cwd, ['commit', '-q', '--allow-empty', '-m', `戻した（${restoreFrom}）`]);
+      const removed = removedLines(git(cwd, ['diff', '-U0', 'main...HEAD', '--', path])).get(path) ?? [];
+      return handRemovedLines(removed, generated, readFileSync(join(cwd, path), 'utf8'));
+    };
+    expect(dropped('main')).toEqual(['- 残っている課題']);
+    expect(dropped(base)).toEqual([]);
+  });
 });
 
 describe('backlogProgressCopy', () => {
@@ -267,16 +303,6 @@ describe('changedChecks', () => {
 });
 
 describe('pathListArgs and nulPaths', () => {
-  const git = (cwd: string, args: readonly string[]) =>
-    execFileSync(
-      'git',
-      ['-c', 'user.name=t', '-c', 'user.email=t@example.com', '-c', 'commit.gpgsign=false', ...args],
-      {
-        cwd,
-        encoding: 'utf8',
-      },
-    );
-
   it('reads paths that are not ASCII as they are, and the new path of a rename', () => {
     const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
     git(cwd, ['init', '-q']);
