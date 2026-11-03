@@ -155,5 +155,43 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0877-10",
+    "recording": "0877",
+    "source": "V-0649",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [13],
+    "unit": "f",
+    "description": "リター（I）・デルタ（II）・トロニー（III・操作）の、蓄積爆破が最大量に届いた時の 1 ヒットの、直前のトロニーの発（届いた発）からの動画のフレームの差",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。キャッシュ hud-jumps@3）と使い捨てのスクリプト（V-0649「読み方」）",
+      "note": "爆発は 0877-08 の 1 個（f5974）。届いた発は f5961。モデルは、届く回が録画と違うので、出た順の頭の 1 個と比べる。許容は ±1f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "anchor": "prevShot",
+        "release": "cap",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
   }
 ]

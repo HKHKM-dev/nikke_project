@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`0874-03`・`0875-03`（単騎 T1。82f の並びに乗らない増分のうち付けた発の 309〜311f 後のもの 49 回が、後の発の 50% の和と 2 以内。部分チャージの発も溜める）、`0876-07`・`0877-07`（T2。26 回が、リターの発を引いて 1.5 以内。バーストの間の発は 112.83% で、掛け算の 81.415% では 65 万〜154 万外れる）。差の 1〜1.5 は発ごとの切り上げで消える。C-0430 の単騎・手動の録画（0337）で切れる時に総ダメージが増えないのは、発が 5 秒より離れて溜めた値が 0 だったため。V-0643",
-  "model": "未反映（`data/skills/501.json` の skill1.notes[0]・burst.notes[0] は未対応のまま。語彙と定義は backlog 2-47）",
+  "model": "反映（2026-11-03。V-0649）: `data/skills/501.json` の skill1 の effects[0]（damage の accumulate。source self・release capOrExpire・ratioRef 2（50%））と burst の effects[1]（蓄積割合▲ accumulateRatio）。1 パス目（frame/firstPass.ts）が付け方と切れるフレームを決め、2 パス目（sim/engine.ts の settleAccumulates）が、付けた発の後のトロニーの発の値 × (50% + その発の蓄積割合▲) の和を補正なしで爆発の値にする。モデルの発の値は期待値なので、発ごとの切り上げはせず、爆発の値は録画の 1 発ごとの値（会心の発）のぶんずれる",
   "replaces": [],
   "updated": "2026-11-03",
   "subject": {
-    "places": ["data/skills/501.json の skill1 の notes[0]", "data/skills/501.json の burst の notes[0]"]
+    "places": ["data/skills/501.json の skill1 の effects[0]", "data/skills/501.json の burst の effects[1]"]
   },
   "decidedOn": [
     {
@@ -26,13 +26,13 @@
     },
     {
       "observations": ["0874-03", "0875-03", "0876-07", "0877-07"],
-      "element": "トロニー skill2.notes[1]",
+      "element": "トロニー skill2.notes[0]",
       "reason": "防御力▼は溜める発の値を変えるが、溜める値は録画で読んだ発の値から出した（モデルの発の値とは比べていない）",
       "decided": "2026-11-03"
     },
     {
       "observations": ["0874-03", "0875-03", "0876-07", "0877-07"],
-      "element": "トロニー skill2.notes[0]",
+      "element": "トロニー skill2.effects[0]",
       "reason": "分配ダメージ▲は蓄積爆破の最大量にだけ効き（C-0904）、切れる時の爆発の値には乗らない（乗るなら 1.5184 倍で、75 回とも合わない）",
       "decided": "2026-11-03"
     }

@@ -147,9 +147,12 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   periodShorten?: ResolvedPeriodShorten;
   /**
    * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 窓の長さ（フレーム）と爆発の遅れ。最大量の倍率は multiplier。
-   * frame/plan.ts の planSkillHits が爆発のヒットを置き、sim/engine.ts の 2 パス目が累計を値にする
+   * team（烙印）は frame/plan.ts の planSkillHits が爆発のヒットを置き、self（蓄積爆破）は frame/firstPass.ts が付け方と爆発のフレームを
+   * 決める（ratio は溜める割合）。どちらも sim/engine.ts の 2 パス目が累計を値にする
    */
-  accumulate?: { durationFrames: number; releaseDelayFrames: number };
+  accumulate?:
+    | { source: 'team'; durationFrames: number; releaseDelayFrames: number }
+    | { source: 'self'; durationFrames: number; releaseDelayFrames: number; capDelayFrames: number; ratio: number };
   /**
    * V-0545: 周期の発火のどのヒットも、射手の 1 ヒットぶん × この数のゲージを溜める（frame/firstPass.ts が予約する。定義の true は 1。
    * アインのニアフェザー編: 召喚の攻撃は 2 以上の数も書ける）
@@ -316,7 +319,9 @@ function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger): boolean 
     effect.damageType !== 'true' &&
     effect.condition === undefined &&
     effect.delayFrames === undefined &&
-    effect.perCount === undefined
+    effect.perCount === undefined &&
+    // 蓄積爆破（accumulate の self）は、1 パス目が付け方と爆発を決める
+    effect.accumulate === undefined
   );
 }
 
@@ -401,11 +406,20 @@ export function resolveDamageEffects(
               };
       }
       if (effect.gaugePerHit !== undefined) r.gaugePerHit = effect.gaugePerHit === true ? 1 : effect.gaugePerHit;
-      if (effect.accumulate !== undefined)
-        r.accumulate = {
-          durationFrames: gameSecondsToFrames(skillValue(skill, effect.accumulate.durationRef, levels[slot])),
-          releaseDelayFrames: effect.accumulate.releaseDelayFrames,
-        };
+      const acc = effect.accumulate;
+      if (acc !== undefined) {
+        const durationFrames = gameSecondsToFrames(skillValue(skill, acc.durationRef, levels[slot]));
+        r.accumulate =
+          acc.source === 'team'
+            ? { source: 'team', durationFrames, releaseDelayFrames: acc.releaseDelayFrames }
+            : {
+                source: 'self',
+                durationFrames,
+                releaseDelayFrames: acc.releaseDelayFrames,
+                capDelayFrames: acc.capDelayFrames,
+                ratio: skillValue(skill, acc.ratioRef, levels[slot]) / 100,
+              };
+      }
       if (effect.coreHit === true) {
         r.core = true;
         r.coreHit = true;
@@ -949,10 +963,26 @@ export function computeSkillHit(
 
 /**
  * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 値を式の外で決めたヒット（爆発の値には式の補正を掛けない。
- * C-0901）。内訳は computeSkillHit のまま、1 発動の値だけを value にする
+ * C-0901・C-0903）。内訳の乗数は computeSkillHit のまま、1 発動の値を value にし、補正（会心・フルバースト・コア・距離）を
+ * 掛けない形にする（会心やコアを指定した 1 ヒットの値も value）
  */
 export function withSkillHitValue(hit: SkillHitResult, value: number): SkillHitResult {
-  return { ...hit, perEffect: hit.perEffect.map((p) => ({ ...p, expected: value })), perActivation: value };
+  return {
+    ...hit,
+    boost: {
+      crit: 0,
+      critDamage: 1,
+      fullBurst: 0,
+      core: 0,
+      coreDamage: 0,
+      distance: 0,
+      distanceBonus: 0,
+      total: 1,
+      sustained: 0,
+    },
+    perEffect: hit.perEffect.map((p) => ({ ...p, expected: value })),
+    perActivation: value,
+  };
 }
 
 /**

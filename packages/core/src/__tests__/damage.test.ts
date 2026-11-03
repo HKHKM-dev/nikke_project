@@ -118,6 +118,7 @@ describe('computeDamage', () => {
       sustainedDamage: 0,
       burstGaugeSpeed: 0,
       sequentialAttackDamage: 0,
+      accumulateRatio: 0,
       burstCooldown: 0,
       maxAmmoRatio: 0,
       maxHpRatio: 0,

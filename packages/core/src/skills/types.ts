@@ -122,7 +122,8 @@ export type BuffStat =
   | 'burstCooldown'
   | 'sequentialAttackDamage'
   | 'spinUpSpeed'
-  | 'chargeSpeedOverflow';
+  | 'chargeSpeedOverflow'
+  | 'accumulateRatio';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -175,6 +176,9 @@ export const BUFF_STATS = [
   'spinUpSpeed',
   // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分のチャージダメージへの変換（passive の self だけ）
   'chargeSpeedOverflow',
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3 節）: 蓄積爆破のダメージ蓄積割合▲（比率）。damage の accumulate
+  // （capOrExpire）の割合（ratioRef）に、溜める発の時の値を足す（C-0903）。与ダメージの式は読まない
+  'accumulateRatio',
 ] as const satisfies readonly BuffStat[];
 
 /**
@@ -1224,18 +1228,35 @@ export type DamageEffect = {
 };
 
 /**
- * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1・2.2 節）。source team は、窓の間に的が受けた味方全員のダメージ（烙印。
- * C-0901）。release windowEnd は、窓の終わりの releaseDelayFrames 後に累計（最大量で切る）を 1 ヒット出す（C-0902）。最大量は、発火の
- * フレームの最終攻撃力 × ref% × (1 + 分配ダメージ▲)（C-0904 と同じ形とみた。烙印では録画で届いていない）
+ * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1〜2.3 節）。最大量は、付けたフレームの最終攻撃力 × ref% ×
+ * (1 + 分配ダメージ▲)（C-0904。烙印では録画で届いていないので同じ形とみた）。形は次の 2 つ:
+ * - source team・release windowEnd（烙印）: 窓の間に的が受けた味方全員のダメージ（C-0901）を、窓の終わりの releaseDelayFrames 後に
+ *   1 ヒット出す（最大量で切る。C-0902）
+ * - source self・release capOrExpire（蓄積爆破）: 付けた発の後の発動者の発の値 × (ratioRef% + 蓄積割合▲) を溜め（C-0903）、最大量に届いた
+ *   発の capDelayFrames 後に最大量を出して解除する（C-0904）。届かなければ、付けてから窓の長さ + releaseDelayFrames で切れ、溜めた値を出す
+ *   （C-0903）。切れる時に射手の 1 ヒットぶんのゲージを溜める（C-0430）。付いている間は付け直さない
  */
-export type AccumulateSpec = {
-  source: 'team';
-  release: 'windowEnd';
-  /** 窓の長さ（秒）の description_value_NN */
-  durationRef: number;
-  /** 窓の終わりから爆発のヒットまでのフレーム（録画で読んだ即値） */
-  releaseDelayFrames: number;
-};
+export type AccumulateSpec =
+  | {
+      source: 'team';
+      release: 'windowEnd';
+      /** 窓の長さ（秒）の description_value_NN */
+      durationRef: number;
+      /** 窓の終わりから爆発のヒットまでのフレーム（録画で読んだ即値） */
+      releaseDelayFrames: number;
+    }
+  | {
+      source: 'self';
+      release: 'capOrExpire';
+      /** 窓の長さ（秒）の description_value_NN */
+      durationRef: number;
+      /** 溜める割合（%）の description_value_NN */
+      ratioRef: number;
+      /** 窓の長さの後、切れるまでのフレーム（録画で読んだ即値） */
+      releaseDelayFrames: number;
+      /** 最大量に届いた発から爆発のヒットまでのフレーム（録画で読んだ即値） */
+      capDelayFrames: number;
+    };
 
 /**
  * 周期の短縮（damage の periodShorten）。N 秒は slot のスロットの description_value_NN（ref）。鍵は次のどちらか:

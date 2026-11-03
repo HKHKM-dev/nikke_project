@@ -1921,7 +1921,7 @@ function withArgs(ctx: MetricContext, args: Record<string, string | number | boo
 }
 
 /** eventFrames の出来事（モデルのフレームと、録画の動画のフレーム） */
-type EventPoint = { frame: number; video: number };
+type EventPoint = { frame: number; video: number; opened?: number };
 
 /** eventFrames の event: 枠の出来事の列（時刻の順） */
 function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
@@ -1930,7 +1930,9 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
   const at = (frame: number): EventPoint => ({ frame, video: videoFrameOf(schedule, frame) });
   const mine = () => (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
   const hits = (keep: (h: SimResult['skillHits'][number]) => boolean) =>
-    result.skillHits.filter((h) => h.slotIndex === slotIndex && keep(h) && hitMatches(h, ctx)).map((h) => at(h.frame));
+    result.skillHits
+      .filter((h) => h.slotIndex === slotIndex && keep(h) && hitMatches(h, ctx))
+      .map((h) => (h.accumulate === undefined ? at(h.frame) : { ...at(h.frame), opened: h.accumulate.opened }));
   switch (ctx.args.event) {
     case 'skillHit':
       return hits((h) => h.effect.dot === undefined);
@@ -1958,7 +1960,8 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
  * 差の列にする（フルバーストの入りの止まりを含む）。新しい「時刻の列」の比べは、指標を足さずにこれの引数で書く。
  * - anchor: start（戦闘の始まり。省略時）・fullBurst:<n>（n 回目のフルバーストの窓の始まり。III のタイマーの 00.00）・activation:<n>
  *   （枠の n 回目の発動。起点は activationVideoFrameOf）・prevBurstHit（出来事ごとに、その前の最後の自分のバーストの 1 ヒット目）・prevShot
- *   （出来事ごとに、その前の最後の自分の発。同じフレームの発を含む）
+ *   （出来事ごとに、その前の最後の自分の発。同じフレームの発を含む）・accumulateOpened（蓄積して爆発するダメージの爆発ごとに、その窓を
+ *   開けた（付けた）フレーム。plan/design-accumulate-explosion.md 3.2 節）
  * - within: window（フルバーストの窓の中）・afterWindow（窓の終わりから次の窓の始まりまで）・untilNext（基準から次の同じ基準まで）。
  *   省略すると基準から終わりまで（start は全部）
  * - skill・projectile・trigger は倍率ダメージと持続ダメージを hitMatches で絞る。skip の数だけ頭を飛ばし、count 個を返す（足りなければ誤り）
@@ -1969,7 +1972,13 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
   const within = ctx.args.within;
   const schedule = result.schedule;
   let offsets: number[];
-  if (anchor === 'start' || anchor === 'prevBurstHit' || anchor === 'prevShot') {
+  if (anchor === 'accumulateOpened') {
+    if (within !== undefined) throw new Error(`anchor ${anchor} に within は使えない`);
+    offsets = points.map((p) => {
+      if (p.opened === undefined) throw new Error(`フレーム ${p.frame} の出来事は蓄積の爆発でない`);
+      return p.video - videoFrameOf(schedule, p.opened);
+    });
+  } else if (anchor === 'start' || anchor === 'prevBurstHit' || anchor === 'prevShot') {
     if (within !== undefined) throw new Error(`anchor ${anchor} に within は使えない`);
     if (anchor === 'start') offsets = points.map((p) => p.video);
     else {
@@ -2080,6 +2089,9 @@ function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): bool
   if (ctx.args.projectile === 'explosion' && h.effect.projectileExplosion !== true) return false;
   if (ctx.args.trigger === 'fullBurstStart' && h.effect.trigger !== 'fullBurstStart') return false;
   if (ctx.args.trigger === 'shotCount' && !isResolvedShotCount(h.effect.trigger)) return false;
+  // 蓄積爆破（plan/design-accumulate-explosion.md 3.2 節）: 最大量に届いた爆発（cap）か、切れた時の爆発（expire）
+  if (ctx.args.release === 'cap' && h.accumulate?.capped !== true) return false;
+  if (ctx.args.release === 'expire' && (h.accumulate === undefined || h.accumulate.capped === true)) return false;
   return true;
 }
 

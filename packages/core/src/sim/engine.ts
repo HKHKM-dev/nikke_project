@@ -29,9 +29,6 @@ import {
 import {
   autoConditionSummary,
   hitRateUpSpansOf,
-  landingPartsWith,
-  weaponChangeParts,
-  landingTriggerDamage,
   slotConditionNotes,
   type AutoConditionSummary,
   type LandingFrameSpan,
@@ -50,6 +47,7 @@ import {
   burstHitBuffs,
   perShotDamageOf,
   planTeamRun,
+  slotTriggerDamage,
   sameActivationPiecesOf,
   type SkillHitEvent,
   type TeamPlan,
@@ -201,7 +199,13 @@ export function runSimulation(simInput: SimInput): SimResult {
   // 2 パス目の結果の倍率ダメージの列（1 パス目の列は書き換えない。蓄積して爆発するダメージの値は下で置き換える）
   const skillHits: SkillHitEvent[] = [...plannedHits];
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 爆発の窓が読む、2 パス目のヒットの記録（使う編成だけ）
-  const damageLog: DamageLogEntry[] | null = plannedHits.some((h) => h.accumulate !== undefined) ? [] : null;
+  const damageLog: DamageLogEntry[] | null = plannedHits.some((h) => h.accumulate?.source === 'team') ? [] : null;
+  // 蓄積爆破（同 2.3 節）: 爆発の窓が読む、発動者の発の値と、値 × 蓄積割合▲ の累計（使う枠だけ。発のフレーム順）
+  const ownShots = slots.map((_, i): OwnShotLog | null =>
+    plannedHits.some((h) => h.slotIndex === i && h.accumulate?.source === 'self')
+      ? { frames: [], value: [0], ratioValue: [0] }
+      : null,
+  );
   const addPerSecond = (slotIndex: number, frame: number, damage: number): void => {
     damageLog?.push({ slotIndex, frame, damage });
     const k = Math.floor(framesToGameSeconds(frame));
@@ -224,16 +228,16 @@ export function runSimulation(simInput: SimInput): SimResult {
     // 区間ごとの 1 トリガー値と発数。一本化の段 A-2: 発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
     const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
       const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
-      const trigger = landingTriggerDamage(
-        { ...base, buffs: state.buffs, perShot },
-        // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。2 段目の段 11: 即着弾に替えた使用武器の
-        // 変更の区間は、的の表の変更後の武器の行のコア命中率
-        weaponChangeParts(
-          enemy,
-          landingPartsWith(landing, slot, index, segment.landing, state.buffs.hitRate),
-          state.buffs.weapon?.targetRowKey,
-        ),
+      const trigger = slotTriggerDamage(
+        slot,
+        index,
+        enemy,
+        landing,
+        segment.landing,
+        state.buffs,
         segment.fullBurst,
+        perShot,
+        input.attackRounding,
       );
       const range = [{ start: segment.start, end: segment.end }];
       const triggers = countShotsInRanges(shotFrames, range);
@@ -367,12 +371,21 @@ export function runSimulation(simInput: SimInput): SimResult {
     for (const f of runner.shots) {
       if (f >= frames) break;
       while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
-      addPerSecond(runner.index, f, shotDamage(runner, runner.result.segments[segIndex]!, f));
+      const segment = runner.result.segments[segIndex]!;
+      const damage = shotDamage(runner, segment, f);
+      addPerSecond(runner.index, f, damage);
+      const own = ownShots[runner.index];
+      if (own) {
+        own.frames.push(f);
+        own.value.push(own.value.at(-1)! + damage);
+        own.ratioValue.push(own.ratioValue.at(-1)! + damage * segment.buffs.accumulateRatio);
+      }
     }
   }
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 爆発のヒットの値を、窓の中に的が受けたダメージの和
   // （最大量で切る）にする。爆発のフレーム順に決め、前の爆発の値も後の窓に入れる
-  if (damageLog !== null) settleAccumulates(skillHits, damageLog, addSkillHit);
+  if (damageLog !== null || ownShots.some((x) => x !== null))
+    settleAccumulates(skillHits, damageLog ?? [], ownShots, addSkillHit);
 
   const events = trace
     ? traceEvents(frames, schedule, timeline, history, burstHits, burstHitDamages, skillHits, instants, runners)
@@ -415,12 +428,21 @@ type BurstHitAt = { activation: BurstActivation; frame: number; share: number };
 /** 2 パス目のヒットの記録の 1 件（蓄積して爆発するダメージの窓が読む） */
 type DamageLogEntry = { slotIndex: number; frame: number; damage: number };
 
+/** 蓄積爆破の窓が読む、枠の発の記録（value・ratioValue は、frames の前から k 発の値と、値 × 蓄積割合▲ の和。先頭は 0） */
+type OwnShotLog = { frames: number[]; value: number[]; ratioValue: number[] };
+
 /**
- * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: skillHits の爆発のヒット（accumulate のあるもの）の値を、
- * 窓 [start, end) に的が受けた味方全員のダメージ（log。通常攻撃・バーストのヒット・ほかの倍率ダメージと持続ダメージ）と前の爆発の和を、
- * 最大量で切ったものにする（C-0901。式の補正は掛けない）。skillHits の要素を置き換え、値の決まった爆発を add に渡す
+ * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2・2.3 節）: skillHits の爆発のヒット（accumulate のあるもの）の値を、
+ * 窓 [start, end) の累計を最大量で切ったものにする（式の補正は掛けない。C-0901・C-0903）。累計は、team なら的が受けた味方全員のダメージ
+ * （log。通常攻撃・バーストのヒット・ほかの倍率ダメージと持続ダメージ）と前の爆発の和、self なら発動者の発の値 × (割合 + 蓄積割合▲) の和
+ * （ownShots）。skillHits の要素を置き換え、値の決まった爆発を add に渡す
  */
-function settleAccumulates(skillHits: SkillHitEvent[], log: DamageLogEntry[], add: (h: SkillHitEvent) => void): void {
+function settleAccumulates(
+  skillHits: SkillHitEvent[],
+  log: DamageLogEntry[],
+  ownShots: readonly (OwnShotLog | null)[],
+  add: (h: SkillHitEvent) => void,
+): void {
   log.sort((x, y) => x.frame - y.frame);
   const logFrames = log.map((x) => x.frame);
   const prefix = [0];
@@ -429,8 +451,16 @@ function settleAccumulates(skillHits: SkillHitEvent[], log: DamageLogEntry[], ad
   skillHits.forEach((h, i) => {
     const acc = h.accumulate;
     if (acc === undefined) return;
-    let sum = prefix[lowerBound(logFrames, acc.end)]! - prefix[lowerBound(logFrames, acc.start)]!;
-    for (const r of released) if (r.frame >= acc.start && r.frame < acc.end) sum += r.damage;
+    let sum: number;
+    if (acc.source === 'self') {
+      const own = ownShots[h.slotIndex]!;
+      const from = lowerBound(own.frames, acc.start);
+      const to = lowerBound(own.frames, acc.end);
+      sum = acc.ratio * (own.value[to]! - own.value[from]!) + (own.ratioValue[to]! - own.ratioValue[from]!);
+    } else {
+      sum = prefix[lowerBound(logFrames, acc.end)]! - prefix[lowerBound(logFrames, acc.start)]!;
+      for (const r of released) if (r.frame >= acc.start && r.frame < acc.end) sum += r.damage;
+    }
     const value = Math.min(acc.cap, sum);
     skillHits[i] = { ...h, hit: withSkillHitValue(h.hit, value) };
     released.push({ frame: h.frame, damage: value });

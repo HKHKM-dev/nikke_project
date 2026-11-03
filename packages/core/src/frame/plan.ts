@@ -17,7 +17,13 @@ import {
   type BurstSchedule,
   type BurstScheduleModel,
 } from '../burst/schedule.ts';
-import { computeTriggerDamage, type EnemyDebuffTiming, type EnemyInput } from '../damage.ts';
+import {
+  computeTriggerDamage,
+  partialChargeTriggerDamage,
+  type EnemyDebuffTiming,
+  type EnemyInput,
+  type TriggerDamage,
+} from '../damage.ts';
 import {
   SKILL_HIT_FULL_BURST_BONUS,
   computeSkillHit,
@@ -109,11 +115,14 @@ import {
   flightFramesAt,
   hitRateSpanWith,
   hitRateSpansOf,
+  landingPartsWith,
+  landingTriggerDamage,
   planLandings,
   slotAutoAttackCoreRatesOf,
   slotDistanceRatesOf,
   slotFlightsOf,
   slotWeaponChangeFirstHitsOf,
+  weaponChangeParts,
   type FlightFrameSpan,
   type LandingHitRateSpan,
   type LandingPlan,
@@ -135,8 +144,60 @@ export type SkillHitEvent = {
    * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 累計の窓 [start, end) と最大量。2 パス目（sim/engine.ts）が、
    * hit の値を窓の中に的が受けたダメージの和（最大量で切る）に置き換える（1 パス目の hit の値は式の値で、使わない）
    */
-  accumulate?: { start: number; end: number; cap: number };
+  accumulate?: AccumulateWindow;
 };
+
+/**
+ * 蓄積して爆発するダメージの累計の窓（plan/design-accumulate-explosion.md 2.2〜2.4 節）。source team は窓 [start, end) に的が受けた味方全員の
+ * ダメージ、self は窓の中の発動者の発の値 × (ratio + 蓄積割合▲)。2 パス目が、その和を最大量 cap で切って爆発の値にする
+ */
+export type AccumulateWindow = {
+  start: number;
+  end: number;
+  cap: number;
+  source: 'team' | 'self';
+  ratio: number;
+  /** 窓を開けた（付けた）フレーム。team は start、self は付けた発（溜めない） */
+  opened: number;
+  /** self: 最大量に届いた爆発か（届かなければ切れた時の爆発） */
+  capped?: true;
+};
+
+/**
+ * 枠 index の 1 発の値（区間の 1 トリガー値）。2 パス目の区間（sim/engine.ts）と、1 パス目の蓄積爆破の発の値（plan/design-accumulate-
+ * explosion.md 2.4 節）が同じ関数で出す。segmentLanding は区間の頭の着地点（frame/landing.ts の landingPartsWith）
+ */
+export function slotTriggerDamage(
+  slot: TeamSlotInput,
+  index: number,
+  enemy: EnemyInput,
+  landing: LandingPlan | null,
+  segmentLanding: string | null | undefined,
+  buffs: BuffTotals,
+  fullBurst: boolean,
+  perShot: ResolvedSkillDamage[],
+  attackRounding: AttackRounding | undefined,
+): TriggerDamage {
+  return landingTriggerDamage(
+    {
+      character: slot.character,
+      growth: slot.growth,
+      enemy,
+      attackOverride: slot.attackOverride,
+      attackRounding,
+      buffs,
+      perShot,
+    },
+    // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。2 段目の段 11: 即着弾に替えた使用武器の
+    // 変更の区間は、的の表の変更後の武器の行のコア命中率
+    weaponChangeParts(
+      enemy,
+      landingPartsWith(landing, slot, index, segmentLanding, buffs.hitRate),
+      buffs.weapon?.targetRowKey,
+    ),
+    fullBurst,
+  );
+}
 
 /** バーストの時刻表（sim と calc で共通）。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
 export function planTeamSchedule(
@@ -181,6 +242,8 @@ export type TeamPlan = {
   shotGauges: FirstPassResult['shotGauges'];
   /** フラワー編（V-0483）: 周期のゲージ（1 パス目の記録） */
   timerGauges: FirstPassResult['timerGauges'];
+  /** 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の爆発（1 パス目の記録。テスト用） */
+  accumulateReleases: FirstPassResult['accumulateReleases'];
   /** 持ち主ごとの一覧編（plan/design-holder-effects.md 2.9 節）: 1 パス目の件の一覧の履歴 */
   history: HolderHistory;
 };
@@ -203,6 +266,9 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
+  // 蓄積爆破の発の値（下の shotValueAt）: 枠ごとの着弾の区間のカーソルと、1 発の倍率ダメージの解決
+  const shotSpanAt: number[] = [];
+  const perShotOf: ResolvedSkillDamage[][] = [];
   const first = runFirstPass(timelineSlots, {
     frames,
     model,
@@ -228,6 +294,32 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
           hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up),
         }),
+    // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
+    shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {
+      const slot = slots[slotIndex]!;
+      // 溜める発のフレームは枠ごとに増えるだけなので、着弾の区間（[0, frames) を隙間なく覆う）は枠ごとのカーソルで進める
+      let segmentLanding;
+      if (landing !== null) {
+        let at = shotSpanAt[slotIndex] ?? 0;
+        while (at + 1 < landing.spans.length && landing.spans[at]!.end <= frame) at += 1;
+        shotSpanAt[slotIndex] = at;
+        segmentLanding = landing.spans[at]?.landing ?? null;
+      }
+      const trigger = slotTriggerDamage(
+        slot,
+        slotIndex,
+        enemy,
+        landing,
+        segmentLanding,
+        buffs,
+        fullBurst,
+        (perShotOf[slotIndex] ??= perShotDamageOf(slot)),
+        input.attackRounding,
+      );
+      const value =
+        progress === undefined ? trigger.perTrigger : partialChargeTriggerDamage(trigger, progress).perTrigger;
+      return { value, attack: trigger.attack };
+    },
   });
   const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges, timerGauges } = first;
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
@@ -241,7 +333,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     schedule,
     frames,
     shots,
-    first.summonHits,
+    first,
     input.sustainedDamagePlacement,
     slotAutoAttackCoreRatesOf(slots, enemy, frames),
     input.attackRounding,
@@ -260,6 +352,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     dotGauges,
     shotGauges,
     timerGauges,
+    accumulateReleases: first.accumulateReleases,
     history: first.history,
   };
 }
@@ -294,8 +387,11 @@ export function planSkillHits(
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
-  /** アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火 */
-  summonHits: FirstPassResult['summonHits'],
+  /**
+   * アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火。蓄積して爆発するダメージ
+   * （plan/design-accumulate-explosion.md 2.4 節）: 1 パス目が決めた蓄積爆破の爆発
+   */
+  { summonHits, accumulateReleases }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases'>,
   sustainedDamagePlacement?: SustainedDamagePlacement,
   /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
@@ -508,6 +604,26 @@ export function planSkillHits(
       // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
       // 次の発動までの秒を決めて並べる
       const shorten = effect.periodShorten;
+      // 蓄積爆破（plan/design-accumulate-explosion.md 2.3・2.4 節）: 1 パス目が決めた爆発のフレームに、1 パス目が付けた発のフレームで決めた最大量で
+      // 爆発のヒットを置く。ヒットの値は 2 パス目（sim/engine.ts）が窓の中の発の値から出す
+      const accumulate = effect.accumulate;
+      if (accumulate?.source === 'self') {
+        for (const r of accumulateReleases) {
+          if (r.slotIndex !== slotIndex || r.effect.source.skill !== effect.source.skill) continue;
+          if (r.effect.effectIndex !== effect.effectIndex) continue;
+          push(r.frame, effect, false, undefined, undefined, false, r.applied);
+          hits[hits.length - 1]!.accumulate = {
+            start: r.applied + 1,
+            end: r.end,
+            cap: r.cap,
+            source: 'self',
+            ratio: accumulate.ratio,
+            opened: r.applied,
+            ...(r.capped ? { capped: true as const } : {}),
+          };
+        }
+        continue;
+      }
       // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } はカウンタが上限に届いた次のフレーム（1 パス目の記録）
       const t = effect.trigger;
       // アインのニアフェザー編: 召喚の攻撃は 1 パス目が決めた発火のフレーム
@@ -528,7 +644,7 @@ export function planSkillHits(
         // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。ヒットの値は
         // 2 パス目（sim/engine.ts）が窓の中のダメージの和にする
         const acc = effect.accumulate;
-        if (acc !== undefined) {
+        if (acc?.source === 'team') {
           const end = frame + acc.durationFrames;
           if (end + acc.releaseDelayFrames >= frames) continue;
           const { trigger, hit } = push(
@@ -544,6 +660,9 @@ export function planSkillHits(
             start: frame,
             end,
             cap: trigger.attack * effect.multiplier * hit.distributedDamageMultiplier,
+            source: 'team',
+            ratio: 1,
+            opened: frame,
           };
           continue;
         }
