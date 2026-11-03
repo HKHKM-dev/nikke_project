@@ -1,0 +1,396 @@
+[
+  {
+    "id": "0956-01",
+    "recording": "0956",
+    "kind": "timing",
+    "use": "record",
+    "value": [1379, 2560, 3738, 4956, 6170, 7434, 8612, 9824, 11002],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・25・5・25・0・25・0・25f"
+    },
+    "source": "V-0669",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0956-02",
+    "recording": "0956",
+    "kind": "timing",
+    "use": "record",
+    "value": [1408, 3768, 6199, 8641, 11031],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・24・25・25・25f"
+    },
+    "source": "V-0669",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0956-03",
+    "recording": "0956",
+    "kind": "timing",
+    "use": "record",
+    "value": [1437, 3797, 6228, 8671, 11061],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0669",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0956-04",
+    "recording": "0956",
+    "kind": "timing",
+    "use": "record",
+    "value": [2045, 4406, 6826, 9279, 11586],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0669",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0956-05",
+    "recording": "0956",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 609, 598, 608, 525],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0669",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0956-06",
+    "recording": "0956",
+    "kind": "timing",
+    "use": "record",
+    "value": [3732, 8606, 10996],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0669",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0956-07",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 20411,
+    "description": "1 回目のフルバーストの窓の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスあり・フルバースト）。リターのバーストの攻撃力▲が切れた後で、アンカー：イノセントメイドのバーストの発動者基準の攻撃力 30.09%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。窓の始めの 260〜370f は、リターのバーストの攻撃力▲も乗った値になる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 0,
+        "frame": 450,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-08",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 20411,
+    "description": "2 回目のフルバーストの窓の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスあり・フルバースト）。リターのバーストの攻撃力▲が切れた後で、アンカー：イノセントメイドのバーストの発動者基準の攻撃力 30.09%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。窓の始めの 260〜370f は、リターのバーストの攻撃力▲も乗った値になる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 1,
+        "frame": 450,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-09",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 17009,
+    "description": "3 回目のフルバーストの窓の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスなし・フルバースト）。リターのバーストの攻撃力▲が切れた後で、アンカー：イノセントメイドのバーストの発動者基準の攻撃力 30.09%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。窓の始めの 260〜370f は、リターのバーストの攻撃力▲も乗った値になる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 2,
+        "frame": 450,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-10",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 17009,
+    "description": "4 回目のフルバーストの窓の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスなし・フルバースト）。リターのバーストの攻撃力▲が切れた後で、アンカー：イノセントメイドのバーストの発動者基準の攻撃力 30.09%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。窓の始めの 260〜370f は、リターのバーストの攻撃力▲も乗った値になる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 3,
+        "frame": 450,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-11",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 11329,
+    "description": "1 回目のフルバーストの終わりの後の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスあり）。攻撃力▲の無い値（S2 の攻撃力▲は 2 回目の終わりから）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。終わりの後、リターの次のバーストの▲が付くまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 0,
+        "frame": 750,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-12",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 15301,
+    "description": "2 回目のフルバーストの終わりの後の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスあり）。アンカー：イノセントメイドの S2 の発動者基準の攻撃力 35.02%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。終わりの後、リターの次のバーストの▲が付くまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 1,
+        "frame": 750,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-13",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 11770,
+    "description": "3 回目のフルバーストの終わりの後の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスなし）。アンカー：イノセントメイドの S2 の発動者基準の攻撃力 35.02%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。終わりの後、リターの次のバーストの▲が付くまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 2,
+        "frame": 750,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0956-14",
+    "recording": "0956",
+    "source": "V-0669",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 11770,
+    "description": "4 回目のフルバーストの終わりの後の、リターの 1 ヒットの値（胴体・会心なし・距離ボーナスなし）。アンカー：イノセントメイドの S2 の発動者基準の攻撃力 35.02%▲だけが乗る",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、リターの 1 ヒットの格子（胴体 8,714.6 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3 [+ フルバースト 0.5])。攻撃力の段は V-0669「読み方」）に当て、前のフレームが読めた増分のうち、その段・その距離の胴体の点に乗った値（どれも同じ値）。終わりの後、リターの次のバーストの▲が付くまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 3,
+        "frame": 750,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

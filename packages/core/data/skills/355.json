@@ -85,7 +85,10 @@
           "assumes": {
             "ja": "使用回数別の効果の 2 回目から",
             "en": "From the second use of the per-use effects"
-          }
+          },
+          "claims": [
+            "C-0944"
+          ]
         },
         {
           "kind": "timed",
@@ -123,7 +126,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0945"
+          ]
         }
       ],
       "notes": [
