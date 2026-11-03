@@ -24,10 +24,11 @@ export type CommitGeneratedInput = {
 const KEY_HELP = `鍵の組を作り直し、公開鍵を Settings → Deploy keys に「Allow write access」つきで、秘密鍵を Settings → Secrets and variables → Actions の ${DEPLOY_KEY_SECRET} に登録し直す（plan/design-pr-conflicts.md 5 節）`;
 
 /**
- * 生成物の差分を commit して main に push し、出すメッセージを返す。直す必要のある失敗（鍵が無い・鍵で origin に届かない・push が
- * main の進み以外で断られた）は投げる。差分が無くても先に鍵で origin に届くかを確かめる（鍵の壊れに、差分の出たマージで初めて
- * 気づかないように）。origin/main がこの commit でないか、push の間に main が進んで断られたら何もしない（後の commit の CI が全部を
- * 作り直す）
+ * 生成物の差分を commit して main に push し、出すメッセージを返す。直す必要のある失敗（鍵が無い・鍵で origin に届かない・鍵で
+ * 書き込めない・push が main の進み以外で断られた）は投げる。差分が無くても先に、鍵で origin を読めることと、書き込みの口
+ * （receive-pack）に入れること（push --dry-run）を確かめる（鍵の壊れや書き込みの権限の外れに、差分の出たマージで初めて気づかない
+ * ように）。ruleset の bypass は、本当に送るまで GitHub が見ないので、ここでは確かめられない（push の時に投げる）。origin/main が
+ * この commit でないか、push の間に main が進んで断られたら何もしない（後の commit の CI が全部を作り直す）
  */
 export function commitGenerated(input: CommitGeneratedInput): string {
   const { generated, sha, repo, key, git } = input;
@@ -41,7 +42,13 @@ export function commitGenerated(input: CommitGeneratedInput): string {
     throw new Error(
       `secret の ${DEPLOY_KEY_SECRET} の鍵で origin に届かない（git ls-remote が ${ls.status} で終わった）。${KEY_HELP}\n${ls.stderr.trim()}`,
     );
-  if (generated.length === 0) return '生成物は合っている（デプロイキーで origin に届くことは確かめた）';
+  // 書き込みの権限は receive-pack に入る時に見られる。main が進んでいて手元で断られた（non-fast-forward）のも、入れた後の話なので通す
+  const dry = git(['push', '--dry-run', '--quiet', remote, 'HEAD:refs/heads/main'], ssh);
+  if (dry.status !== 0 && !isNotFastForward(dry.stderr))
+    throw new Error(
+      `secret の ${DEPLOY_KEY_SECRET} の鍵で origin に書き込めない（git push --dry-run が ${dry.status} で終わった。デプロイキーの「Allow write access」が外れていないか）。${KEY_HELP}\n${dry.stderr.trim()}`,
+    );
+  if (generated.length === 0) return '生成物は合っている（デプロイキーで origin を読み書きできることは確かめた）';
   const head = ls.stdout.split('\t')[0] ?? '';
   if (head !== sha)
     return `origin/main が進んでいる（${head.slice(0, 8)}）。その commit の CI が作り直すので、ここでは commit しない`;

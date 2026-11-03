@@ -11,11 +11,14 @@ const REJECTED_FETCH_FIRST = [
   "error: failed to push some refs to 'github.com:o/r.git'",
 ].join('\n');
 
-/** git のコマンド（最初の引数。-c の後は commit）ごとの結果を返す偽物と、呼んだコマンドの列 */
-function fakeGit(results: Partial<Record<'ls-remote' | 'commit' | 'push', GitRun>>) {
-  const calls: string[] = [];
+type Command = 'ls-remote' | 'dry-run' | 'commit' | 'push';
+
+/** git のコマンド（最初の引数。-c の後は commit、--dry-run つきの push は dry-run）ごとの結果を返す偽物と、呼んだコマンドの列 */
+function fakeGit(results: Partial<Record<Command, GitRun>>) {
+  const calls: Command[] = [];
   const git = (args: readonly string[]): GitRun => {
-    const command = args[0] === '-c' ? 'commit' : args[0]!;
+    const command: Command =
+      args[0] === '-c' ? 'commit' : args.includes('--dry-run') ? 'dry-run' : (args[0] as Command);
     calls.push(command);
     return results[command as keyof typeof results] ?? ok();
   };
@@ -38,10 +41,33 @@ function input(
 }
 
 describe('commitGenerated', () => {
-  it('checks the deploy key against origin even when nothing changed', () => {
+  it('checks that the deploy key can read and write origin even when nothing changed', () => {
     const { calls, git } = fakeGit({ 'ls-remote': ok(`${SHA}\trefs/heads/main\n`) });
     expect(commitGenerated(input(git, { generated: [] }))).toMatch('生成物は合っている');
-    expect(calls).toEqual(['ls-remote']);
+    expect(calls).toEqual(['ls-remote', 'dry-run']);
+  });
+
+  it('fails naming the secret when the key can read but not write, even with no diff', () => {
+    const { git } = fakeGit({
+      'ls-remote': ok(`${SHA}\trefs/heads/main\n`),
+      'dry-run': {
+        status: 128,
+        stdout: '',
+        stderr: 'ERROR: The key you are authenticating with has been marked as read only.',
+      },
+    });
+    expect(() => commitGenerated(input(git, { generated: [] }))).toThrow(
+      new RegExp(`${DEPLOY_KEY_SECRET}[\\s\\S]*read only`),
+    );
+  });
+
+  it('lets the dry run through when it was refused only because main moved', () => {
+    const { calls, git } = fakeGit({
+      'ls-remote': ok(`${OTHER}\trefs/heads/main\n`),
+      'dry-run': { status: 1, stdout: '', stderr: REJECTED_FETCH_FIRST },
+    });
+    expect(commitGenerated(input(git))).toMatch('origin/main が進んでいる');
+    expect(calls).toEqual(['ls-remote', 'dry-run']);
   });
 
   it('fails naming the secret when the key is missing, before calling git', () => {
@@ -62,13 +88,13 @@ describe('commitGenerated', () => {
   it('does not commit when origin/main has moved past this commit', () => {
     const { calls, git } = fakeGit({ 'ls-remote': ok(`${OTHER}\trefs/heads/main\n`) });
     expect(commitGenerated(input(git))).toMatch('origin/main が進んでいる（bbbbbbbb）');
-    expect(calls).toEqual(['ls-remote']);
+    expect(calls).toEqual(['ls-remote', 'dry-run']);
   });
 
   it('commits and pushes the generated files', () => {
     const { calls, git } = fakeGit({ 'ls-remote': ok(`${SHA}\trefs/heads/main\n`) });
     expect(commitGenerated(input(git))).toBe('生成物を作り直して main に push した: plan/claims.md');
-    expect(calls).toEqual(['ls-remote', 'commit', 'push']);
+    expect(calls).toEqual(['ls-remote', 'dry-run', 'commit', 'push']);
   });
 
   it('gives up quietly when main moved between ls-remote and push', () => {

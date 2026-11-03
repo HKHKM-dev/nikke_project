@@ -85,6 +85,21 @@ describe('ソーダ：トゥインクルバニーの時間延長（ラム + デ�
     expect(lengths(team(raw)).slice(0, 5)).toEqual(Array(5).fill(gameSecondsToFrames(10)));
   });
 
+  // 3 段階に入って延長を予約した後、ソーダが III を撃つ前に戦闘が終わると、予約は窓に足されないまま残る。その延長も即時効果の記録
+  // （画面と trace）に残さない（frame/firstPass.ts の戦闘の終わりの pendingExtensions）
+  it('戦闘の終わりまで窓に足されずに残った延長は、即時効果の記録に残さない', () => {
+    const full = planTeamRun(team());
+    const reserved = full.instants.find((x) => x.effect.kind === 'fullBurstExtend')!.frame;
+    const firstWindow = full.schedule!.fullBurstWindows[0]!.start;
+    // 予約（3 段階突入）と最初の窓の間で終わる戦闘
+    const short = planTeamRun({ ...team(), durationSeconds: 6.6 });
+    expect(reserved).toBeLessThan(short.frames);
+    expect(short.frames).toBeLessThan(firstWindow);
+    expect(short.schedule!.activations.map((a) => a.enteredStep)).toEqual(['Step2', 'Step3']);
+    expect(short.schedule!.fullBurstWindows).toEqual([]);
+    expect(short.instants.filter((x) => x.effect.kind === 'fullBurstExtend')).toEqual([]);
+  });
+
   // 3 段階に入ってもソーダの CT が明けずにチェーンが切れると、状態機械は予約を捨てる（burst/controller.ts の resetChain）。捨てた延長は
   // 即時効果の記録（画面と trace）に残さない
   it('窓を作らずにチェーンが切れて捨てた延長は、即時効果の記録に残さない', () => {
