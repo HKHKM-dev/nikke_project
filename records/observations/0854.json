@@ -152,5 +152,115 @@
       "slot": 1,
       "source": "normal"
     }
+  },
+  {
+    "id": "0854-07",
+    "recording": "0854",
+    "source": "V-0648",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "value": [28.702, 30.702, 65.082, 67.082, 104.675, 106.675, 141.055, 143.055, 174.222, 176.222],
+    "description": "エーテル単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
+      "note": "戦闘開始は動画 f817（最初の増分 f829 の 12f 前。C-0114）。フレームは戦闘開始から数え、1f = 0.017 秒。窓の終わりは、ハイド中のリロードのバーが消えたフレーム（2 回目 f4763・3 回目 f7092・5 回目 f11183）。1 回目はマガジンの終わりのリロードと重なって明けが読めないので、2 回目の明けの 2140f 前に置いた。4 回目はマガジンの終わりのリロードと重なって明けが読めないので、3 回目の明けの 2140f 後に置いた（2140f・1952f は、この検証で読んだ録画の、明けが両方読めた 1→2・3→4 回目と 4→5 回目の間の長さ。C-0546）。始まりは終わりの 2 秒前"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0854-08",
+    "recording": "0854",
+    "source": "V-0648",
+    "readAt": "2026-11-03",
+    "kind": "interval",
+    "unit": "f",
+    "value": 111.05,
+    "description": "2 回目の敵のジャンプの、エーテル（SG）のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（マガジンの途中に来たジャンプ）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "0 の点 f4651.95 → 消えた 4763（動画）。ジャンプの前の最後の増分は f4638。モデルは録画の窓 `0854-07` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "use": "compare",
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0854-07"
+      }
+    }
+  },
+  {
+    "id": "0854-09",
+    "recording": "0854",
+    "source": "V-0648",
+    "readAt": "2026-11-03",
+    "kind": "interval",
+    "unit": "f",
+    "value": 110.11,
+    "description": "3 回目の敵のジャンプの、エーテル（SG）のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（マガジンの途中に来たジャンプ）（比べていない: モデルは弾切れのリロードが録画より約 100f 遅く、窓の始まりの直前にリロードを終えてマガジンが満ちたまま窓に入るのでハイド中のリロードが無い）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "0 の点 f6981.89 → 消えた 7092（動画）。ジャンプの前の最後の増分は f6976。モデルは録画の窓 `0854-07` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "use": "record"
+  },
+  {
+    "id": "0854-10",
+    "recording": "0854",
+    "source": "V-0648",
+    "readAt": "2026-11-03",
+    "kind": "interval",
+    "unit": "f",
+    "value": 110.15,
+    "description": "5 回目の敵のジャンプの、エーテル（SG）のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（マガジンの途中に来たジャンプ）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "0 の点 f11072.85 → 消えた 11183（動画）。ジャンプの前の最後の増分は f11067。モデルは録画の窓 `0854-07` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "use": "compare",
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0854-07"
+      }
+    }
   }
 ]
