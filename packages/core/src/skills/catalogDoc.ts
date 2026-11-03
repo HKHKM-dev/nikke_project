@@ -419,7 +419,8 @@ const SC: Record<string, Info> = {
   // 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: 最終最大HP の X% 分の攻撃力▲は語彙あり（casterFinalMaxHp）。ほかの stat は語彙なし
   'casterHp:ok': ['発動者の最大HP の X% 分の攻撃力▲（casterFinalMaxHp）', 'ok'],
   casterHp: ['発動者の最大HP 基準の、攻撃力のほかの値', 'gap'],
-  perStack: ['X% × 〈状態〉のスタック数', 'gap'],
+  // メイド編（plan/design-maids.md 2.1 節）: timed の perCount: { state }（付いた時の自分のスタック数を掛ける）
+  perStack: ['X% × 〈状態〉のスタック数', 'ok', 'timed の perCount: { state }'],
   lostHp: ['失った HP N% ごと（HP の経路の読む側）', 'indirect'],
   perMaxAmmo: ['最大装弾数 N 発ごと', 'gap'],
   casterDefense: ['発動者の防御力に比例（防御力の経路の動かす側。最終の付かない値を読む）', 'indirect'],
@@ -935,7 +936,7 @@ export function renderSkillCatalog(lines: readonly CatalogLine[], effects: reado
     for (const t of trigs) if (remains(TRIG_INFO[t]?.[1])) gaps.add(`きっかけ: ${TRIG_INFO[t]![0]}`);
     for (const c of condKeys(e)) if (remains(COND_INFO[c]?.[1])) gaps.add(`条件: ${COND_INFO[c]![0]}`);
     for (const t of tgtKeys(e)) if (remains(TGT_INFO[t]?.[1])) gaps.add(`対象: ${TGT_INFO[t]![0]}`);
-    if (e.kind === 'stat' && ['casterHp', 'perStack', 'perMaxAmmo'].includes(scalingKeyOf(e))) {
+    if (e.kind === 'stat' && ['casterHp', 'perMaxAmmo'].includes(scalingKeyOf(e))) {
       gaps.add(`算出: ${SC[scalingKeyOf(e)]![0]}`);
     }
   }
