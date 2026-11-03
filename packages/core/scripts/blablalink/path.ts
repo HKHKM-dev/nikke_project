@@ -106,3 +106,8 @@ export function cubePath(cubeId: number, locale: CdnLocale): string {
 export function equipOptionTablePath(locale: CdnLocale): string {
   return `/equip/equip_option_table_v2-${locale}.json`;
 }
+
+/** 画面のキャラ画像（顔のアイコン、128×128。モダン UI の CharacterVisual。plan/design-modern-ui.md） */
+export function characterIconPath(resourceId: number): string {
+  return `/character/si/si_c${String(resourceId).padStart(3, '0')}_00_s.webp`;
+}

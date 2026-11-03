@@ -1,7 +1,8 @@
 import {
   DndContext,
   DragOverlay,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -49,13 +50,11 @@ export function ModernView({
   // ドラッグ中のキャラクター情報（DragOverlay 用）
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
 
-  // 8px 移動して初めてドラッグと判定（通常のクリック操作との共存）
+  // マウスは 8px 動かして初めてドラッグと判定（通常のクリック操作との共存）。タッチは 250ms の長押しで持ち上げ、
+  // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
   const handleDragStart = (event: DragStartEvent) => {

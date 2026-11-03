@@ -21,6 +21,9 @@
    - **Step 5**: スタイリングとデザインのブラッシュアップ。
 3. **画像アセット**:
    - 自前静的アセット配信。現時点では画像が未取得のため、画像がない状態でもフォールバック表示によりすべての機能が完全に動作する設計とする。
+   - 2026-11-04（オーナーの指示）: 画像を取得して同梱した。Blablalink の公開 CDN の顔のアイコン（`/character/si/si_c{resourceId 3 桁}_00_s.webp`、128×128。`.char-visual` の正方形の枠に合う）を、`npm run fetch-images`（`packages/core/scripts/fetch-images.ts`）が `packages/core/data/characters/images/{resourceId}.webp` に置く。新しいキャラを取り込んだ（`fetch-data`）後に回す。画像の権利は README の「ライセンス」のとおり本リポジトリのライセンスの対象外。
+   - 画像が読めたキャラにはフォールバックの札（属性・名前）を重ねず、読めなかったキャラだけ札を出す（`CharacterVisual.tsx`）。
+   - アーティファクト（`npm run artifact:build`）からは `characters/images` を除く（1 版 511 ファイルまでで、データだけで 300 近い）。アーティファクトでは札で出る。
 4. **ドラッグ＆ドロップ**:
    - `@dnd-kit/core` を採用（モバイル/タッチ対応、React 19親和性）。
 
@@ -48,6 +51,7 @@
 - `ModernSlotCard.tsx`: `useDroppable` によるドロップ受け入れ（`isOver` 時のハイライト）と、配置済みキャラの `useDraggable`（スロット間スワップ用）。
 - `team.ts`: `swapSlots` アクション（スロット間の入れ替え、操作キャラの追従）を追加。
 - `ModernView.tsx`: `DndContext`、PointerSensor（8pxのしきい値でクリック操作と共存）、`DragOverlay`（カーソル追従プレビュー）を統合。
+- 2026-11-04: PointerSensor はタッチでもスワイプした瞬間に持ち上げるので、スマホでトレイの上をスワイプしてもページがスクロールしなかった（Playwright のタッチで確認）。MouseSensor（8px）と TouchSensor（250ms の長押しで持ち上げ、それまでに 8px より動いたらスクロール）に分けた。
 
 ---
 
@@ -56,3 +60,4 @@
 - 2026-11-03: オーナーとの対話により設計方針を承認。ブランチ `antigrav/modern-ui-foundation` にて Step 1 着手。PR #945 にて main にマージ完了。
 - 2026-11-03: ブランチ `antigrav/modern-ui-cards` にて Step 2 & 3（モダン編成カード・キャラトレイ・クリック配置）を着手。PR #946 にて main にマージ完了。
 - 2026-11-04: ブランチ `antigrav/modern-ui-dnd` にて Step 4（@dnd-kit/core によるドラッグ＆ドロップ）を着手。
+- 2026-11-04: キャラ画像の同梱（1 節 3）と、タッチの長押しでのドラッグ（2.3 節）を実装した。

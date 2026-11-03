@@ -1,4 +1,5 @@
 import type { CharacterIndexEntry } from '@nikke/core';
+import { useState } from 'react';
 
 export const BURST_STEP_LABEL: Record<CharacterIndexEntry['burstStep'], string> = {
   Step1: 'Ⅰ',
@@ -35,25 +36,32 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
   const elementColor = ELEMENT_COLOR[character.element] ?? '#757575';
   const burstLabel = BURST_STEP_LABEL[character.burstStep] ?? character.burstStep;
   const imageSrc = `${BASE_URL}characters/images/${character.resourceId}.webp`;
+  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、フォールバックの札（属性・名前）を出す。
+  // 読めた画像の上には札の文字を重ねない（npm run fetch-images。plan/design-modern-ui.md）
+  const [failedId, setFailedId] = useState<number | null>(null);
+  const failed = failedId === character.resourceId;
 
   return (
     <div
       className={`char-visual ${size === 'compact' ? 'char-visual-compact' : ''}`}
       style={{ '--char-elem-color': elementColor } as React.CSSProperties}
     >
-      <img
-        src={imageSrc}
-        alt=""
-        className="char-visual-img"
-        onError={(e) => {
-          // 画像が無い場合はフォールバックのCSS表示にする
-          (e.currentTarget as HTMLElement).style.display = 'none';
-        }}
-      />
-      <div className="char-visual-fallback" aria-hidden="true">
-        <span className="char-fallback-elem">{ELEMENT_LABEL[character.element]}</span>
-        <span className="char-fallback-name">{character.name.ja}</span>
-      </div>
+      {failed ? (
+        <div className="char-visual-fallback" aria-hidden="true">
+          <span className="char-fallback-elem">{ELEMENT_LABEL[character.element]}</span>
+          <span className="char-fallback-name">{character.name.ja}</span>
+        </div>
+      ) : (
+        <img
+          src={imageSrc}
+          alt=""
+          className="char-visual-img"
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          onError={() => setFailedId(character.resourceId)}
+        />
+      )}
       <div className="char-visual-badges">
         <span className="char-badge char-badge-burst" title={`バースト ${burstLabel}`}>
           {burstLabel}
