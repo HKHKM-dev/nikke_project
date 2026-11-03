@@ -2,7 +2,7 @@
 
 『勝利の女神：NIKKE』のダメージ算出ツール。
 
-- https://hkhkm-dev.github.io/nikke_project/（GitHub Pages）
+- https://hkhkm-dev.github.io/nikke_project/
 
 ## できること
 
