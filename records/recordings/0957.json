@@ -1,0 +1,46 @@
+{
+  "id": "0957",
+  "date": "2026-11-04",
+  "folder": "range",
+  "file": "20261104-0957_rl_anchor-innocent-maid.mp4",
+  "original": "2026-11-04_01-00-24.mp4",
+  "durationSec": 201.4,
+  "frames": 12083,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "1f9ac9476e81",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 355,
+      "name": "アンカー：イノセントメイド",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0669 の撮影 C。リター（I）・アンカー：イノセントメイド（II・操作）・I-DOLL・サン（III）（オート射撃 ON・オートバースト ON）。火の的",
+  "backup": {
+    "at": "2026-11-04T01:40+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
