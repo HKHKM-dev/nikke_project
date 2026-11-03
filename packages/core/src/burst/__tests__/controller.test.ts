@@ -161,6 +161,22 @@ describe('BurstController', () => {
     expect(starts(s)).toEqual([60, 2460]);
   });
 
+  it('times out a chain while the enemy cannot be aimed at, so II does not fire when the window ends (C-0908)', () => {
+    // I は 20f に撃つ。II の CT 明けは 500f。狙えない窓 [400, 700) の中で I から 600f（620f）を迎えるので、窓の明けに II は撃たない
+    const units = [unit('Step1', 1200), unit('Step2', 480), unit('Step3', 2400)];
+    const state = initialBurstController(units, TIMING_600);
+    state.cooldownEnd[1] = 500;
+    for (let f = 0; f < 1000; f++) stepBurstController(state, f, f === 0 ? FAST : 0, f >= 400 && f < 700);
+    const s = finishSchedule(state, 1000);
+    expect(summary(s)).toEqual(['20:Step1:0']);
+    expect(s.chainTimeouts).toEqual([620]);
+    // 窓が I から 600f より前に明けるなら、明けたフレームに II・III を撃つ（いままでどおり）
+    const early = initialBurstController(units, TIMING_600);
+    early.cooldownEnd[1] = 500;
+    for (let f = 0; f < 1000; f++) stepBurstController(early, f, f === 0 ? FAST : 0, f >= 400 && f < 600);
+    expect(summary(finishSchedule(early, 1000))).toEqual(['20:Step1:0', '600:Step2:1', '620:Step3:2']);
+  });
+
   it('handles re-entry (Step1 → Step1): two Is fire before II', () => {
     const s = run(
       [unit('Step1', 1200, 'Step1'), unit('Step1', 1200), unit('Step2', 1200), unit('Step3', 1200)],
