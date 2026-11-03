@@ -70,9 +70,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "最初の付与（3 秒）より前の胴体の 1 ヒット（読みの基準。どの仮説でも▲なし）",
@@ -93,9 +91,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "1 スタック・S1 の▲だけ（どの仮説でも同じ）",
@@ -116,9 +112,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "2 スタック（6 秒）の後・3 スタック（9 秒）の前。H1 は 1 段階の攻撃力▲あり、H2 はなし",
@@ -139,9 +133,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "10 スタック（30 秒）の後・11 スタックの前。H1 は 2 段階の攻撃ダメージ▲あり、H2 はなし",
@@ -162,9 +154,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "30 スタック（90 秒）の後・31 回目の付与（93 秒）の前のコアの 1 ヒット。H1 は 3 段階のコアダメージ▲あり。H2 は 93 秒から（予測ファイルでは表せないので、H2 の値は H1 と同じに出る。検証記録の「予測」）",
@@ -185,9 +175,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "note": "上限の後の胴体の 1 ヒット（S1 の▲が続くなら H1・H2 とも 4.5 秒の値に 1・2 段階を足した値。続かなければ下がる。検証記録の「予測」）",
