@@ -22,6 +22,7 @@ import {
   parseGaugeHits,
   parseLocalizedText,
   parseNamedStateId,
+  parseNonNegativeInt,
   parsePositiveInt,
   parseRef,
 } from './common.ts';
@@ -52,6 +53,29 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
         fail(`${path}.gaugePerHit`, `expected true or an integer of 2 or more, got ${JSON.stringify(v.gaugePerHit)}`);
       effect.gaugePerHit = v.gaugePerHit as true | number;
     }
+    if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+    return effect;
+  }
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 使い手の形（バースト使用時・分配ダメージ・窓の終わりの爆発）
+  // だけを許し、ほかの欄とは組まない
+  if (v.accumulate !== undefined) {
+    for (const key of Object.keys(v))
+      if (!['kind', 'trigger', 'ref', 'damageType', 'accumulate', 'assumes', 'claims', 'reads'].includes(key))
+        fail(`${path}.${key}`, 'not allowed with accumulate');
+    if (trigger !== 'burstUse') fail(`${path}.accumulate`, 'accumulate needs the trigger "burstUse"');
+    if (damageType !== 'distributed') fail(`${path}.accumulate`, 'accumulate needs the damageType "distributed"');
+    const a = v.accumulate;
+    const at = `${path}.accumulate`;
+    if (!isRecord(a)) fail(at, 'expected an object');
+    for (const key of Object.keys(a))
+      if (!['source', 'release', 'durationRef', 'releaseDelayFrames'].includes(key))
+        fail(`${at}.${key}`, 'unknown field');
+    effect.accumulate = {
+      source: oneOf(['team'] as const, a.source, `${at}.source`),
+      release: oneOf(['windowEnd'] as const, a.release, `${at}.release`),
+      durationRef: parseRef(a.durationRef, `${at}.durationRef`),
+      releaseDelayFrames: parseNonNegativeInt(a.releaseDelayFrames, `${at}.releaseDelayFrames`),
+    };
     if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
     return effect;
   }

@@ -62,7 +62,29 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "damageType": "distributed",
+          "ref": 3,
+          "accumulate": {
+            "source": "team",
+            "release": "windowEnd",
+            "durationRef": 4,
+            "releaseDelayFrames": 211
+          },
+          "assumes": {
+            "ja": "烙印。バーストの発動から 10 秒の間に的（敵 1 体）が受けた味方全員のダメージの和を、窓の終わりの 211f 後に 1 ヒットで出す。爆発の値には会心・属性・防御・分配ダメージ▲などの補正を掛けない。最大量（発動の時の最終攻撃力 × 8900.83% × (1 + 分配ダメージ▲)）で切る",
+            "en": "Brand. Deals, as one hit 211 frames after the window ends, the sum of all damage the target (the single enemy) took from all allies during the 10 s after the Burst. No modifiers (crit, element, defense, distributed damage increase, etc.) apply to the explosion. Capped at final ATK at the Burst × 8900.83% × (1 + distributed damage increase)"
+          },
+          "claims": [
+            "C-0901",
+            "C-0902",
+            "C-0906"
+          ]
+        }
+      ],
       "notes": [
         {
           "ja": "発現（スキル 2 のクールタイム 18 秒▼・10 秒）は、スキル 2 の焦土化の周期の短縮（skill2.effects[0] の periodShorten）に書いた",
@@ -84,17 +106,18 @@
           ]
         },
         {
-          "ja": "指定された敵 1 機への烙印（効果時間中に対象が受けたダメージを累計し、終了後に累計に応じて分配ダメージ。最大蓄積量は最終攻撃力の 8900.83%）は未対応（爆発の 1 ヒットは、烙印の 10 秒の間に的が受けた総ダメージ（味方の分を含む）の和そのもので、補正は掛からない（C-0901）。窓はバーストの発動から約 591f で、爆発は窓の終わりの約 209f 後（C-0902）。最大蓄積量に届いた時は確かめていない）",
-          "en": "Brand on one designated enemy (accumulates the damage the target takes during the effect and deals distributed damage according to it afterwards; the maximum is 8900.83% of final ATK) is not modeled (the explosion is one hit equal to the plain sum of all damage the target took during the 10 s of the Brand, allies included, with no modifiers (C-0901); the window starts at the Burst and lasts about 591 frames, and the explosion comes about 209 frames after it ends (C-0902); the cap has not been observed)",
+          "ja": "烙印の最大蓄積量に届く回は録画に無く、最大量の攻撃力と分配ダメージ▲を発動の時に読む形は、トロニーの蓄積爆破（C-0904）と同じとみた",
+          "en": "No recording reaches the Brand cap; reading final ATK and the distributed damage increase at the Burst follows Trony’s Accumulated Blast (C-0904)",
+          "kind": "modeling",
+          "refers": "effects[0]"
+        },
+        {
+          "ja": "烙印の爆発のヒットのバーストゲージは未実装（溜めない。爆発の前後は画面の光でゲージのバーが読めず、溜めても 1 ヒットぶん（0.4%）で前後の発と見分けられない）",
+          "en": "The burst gauge from the Brand explosion hit is not modeled (no gain; the gauge bar is unreadable around the explosion because of the screen flash, and one hit (0.4%) cannot be told apart from nearby shots)",
           "kind": "unimplemented",
           "effect": {
-            "kind": "damage",
-            "trigger": "burstUse"
-          },
-          "claims": [
-            "C-0901",
-            "C-0902"
-          ]
+            "kind": "burstGaugeHit"
+          }
         }
       ]
     }

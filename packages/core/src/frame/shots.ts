@@ -137,7 +137,7 @@ export function partialShotsInRanges(
 }
 
 /** frames の中で value 以上の最初の添字 */
-function lowerBound(frames: readonly number[], value: number): number {
+export function lowerBound(frames: readonly number[], value: number): number {
   let lo = 0;
   let hi = frames.length;
   while (lo < hi) {
