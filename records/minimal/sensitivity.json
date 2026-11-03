@@ -15489,214 +15489,6 @@
       "plus": 0
     },
     {
-      "observation": "0729-08",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "2cfb463d83938fde",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-09",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "4fcbe097dd696b5e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-10",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "4e576f3588801dc6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-11",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "b9325ef6b23694af",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-12",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "66b9a8a6ba07a3b3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-13",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "280f26e32c9c456c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-14",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "6d31cedd60a702d4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-15",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "3c039119738e23f4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-16",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "8d3d617ee1a29085",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-17",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "166485f49a26fc81",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-18",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "6196e1eca5f13705",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-19",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "7e9ab04529e51494",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0729-21",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "659580f9ca2a2db2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-08",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "4f27ddbdbbd6ae42",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-09",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "2fc59c17184a77fa",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-10",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "708406b57f82a54a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-11",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "b74ed2c7020f1ea0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-12",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "46b36426339c5b47",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-13",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "4a3bbe636ccb3250",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-14",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "4d2b8a5d798b08d0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-15",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "93cc789982b7d5d0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-16",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "6d371cfeec169769",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-17",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "2c86b07401beee0d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-18",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "4f58fc6cec466ef9",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-19",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "6c5ccac588559468",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0730-21",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "2f7f6c795a7a63ee",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0744-03",
       "element": "ドレイク burst.effects[0]",
       "key": "c3e97f78fbb8a57b",
@@ -15791,102 +15583,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0752-10",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "a167f52ea2c72ae3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-11",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "8955047d350b6858",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-12",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "3671d8cd4472e22c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-13",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "bf044562eac8ea11",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-14",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "c7649ff19134edcc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-15",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "e621a88e65bb2747",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-10",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "f8df2a6781d7de00",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-11",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "5fa7704214d51cc7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-12",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "a3d63ae62b1e9aab",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-13",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "3c211f8be2488782",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-14",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "86f61c6a59d0250b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-15",
-      "element": "ラプンツェル：サンクチュアリ skill1.effects[0]",
-      "key": "3b2ceb9da68f6a90",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0754-08",
@@ -22258,6 +21954,150 @@
       "observation": "0931-02",
       "element": "レッドフード burst.effects[3]",
       "key": "5bb565307074caf1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0932-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "fe71a289d1d01e28",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0932-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "fe71a289d1d01e28",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0932-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "cfd855c27e1c3557",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0932-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "cfd855c27e1c3557",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0932-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "8763e87041135455",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0932-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "8763e87041135455",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0933-03",
+      "element": "アスカ burst.effects[0]",
+      "key": "8d0caa1f3cb4a932",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0933-03",
+      "element": "アスカ burst.effects[2]",
+      "key": "8d0caa1f3cb4a932",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0933-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "c5c20c00b9e5b135",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0933-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "c5c20c00b9e5b135",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0933-05",
+      "element": "アスカ burst.effects[0]",
+      "key": "f7410ad24b498db7",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0933-05",
+      "element": "アスカ burst.effects[2]",
+      "key": "f7410ad24b498db7",
       "effective": false,
       "minus": 0,
       "plus": 0
