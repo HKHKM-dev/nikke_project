@@ -983,6 +983,12 @@ function shotFramesIn(result: SimResult, ctx: MetricContext): number[] {
   return log.frames.filter((f) => f >= from && f < to);
 }
 
+/** 引数 n（回・発の番号）がカンマ区切りの並び（"0,2,3"）なら回ごとの列、1 つなら 1 つの値 */
+function eachOrOne(n: unknown, at: (n: number) => number): number | number[] {
+  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
+  return at(Number(n));
+}
+
 /**
  * 1 ヒットの値。モデルは会心・コアを期待値で持っているので、その時点の区間の 1 トリガーの値から、
  * 倍率グループ（1 + コア + 会心 + 距離 + フルバースト）だけをパターンに差し替えて組み直す。通常攻撃の 1 ヒット。
@@ -1015,9 +1021,7 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
  */
 function hitDamageAtShot(result: SimResult, ctx: MetricContext): number | number[] {
   const at = (n: number): number => hitDamage(result, atShotFrame(result, ctx, n));
-  const n = ctx.args.shot;
-  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
-  return at(Number(n));
+  return eachOrOne(ctx.args.shot, at);
 }
 
 /**
@@ -1153,9 +1157,7 @@ function toWeaponChangeShot(
     if (shot === undefined) throw new Error(`${n} 回目の起点の後に変更後の武器の発が無い`);
     return videoFrameOf(schedule, shot) - videoFrameOf(schedule, origin);
   };
-  const n = ctx.args.n;
-  if (typeof n === 'string') return n.split(',').map((x) => at(Number(x.trim())));
-  return at(Number(n));
+  return eachOrOne(ctx.args.n, at);
 }
 
 /**
@@ -1189,6 +1191,25 @@ function fullBurstToWeaponChangeShot(result: SimResult, ctx: MetricContext): num
 }
 
 /**
+ * メイド編（V-0668）: n 回目（0 始まり）のフルバーストの窓の終わりから、その後の枠の最初の発（終わりのフレームより後）までの、録画の動画の
+ * フレーム（videoFrameOf）。n はカンマ区切りの並びも書け、そのときは回ごとの列。フルバーストの終わりに付く射撃の止まり（気絶）の長さを、
+ * HUD の増分の空きで比べる
+ */
+function fullBurstEndToNextShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const frames = slotOf(result.shots, ctx).frames;
+  const at = (n: number): number => {
+    const window = schedule.fullBurstWindows[n];
+    if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
+    const shot = frames.find((f) => f > window.end);
+    if (shot === undefined) throw new Error(`${n} 回目のフルバーストの終わりの後に発が無い`);
+    return videoFrameOf(schedule, shot) - videoFrameOf(schedule, window.end);
+  };
+  return eachOrOne(ctx.args.n, at);
+}
+
+/**
  * V-0359（リターの S1 の CT▼）: n 回目（0 始まり）のフルバーストの入りのフレームに、枠の残りのバーストスキル CT が縮んだフレーム数
  * （その枠が受けた即時効果の CT▼ の、実際に縮んだ量の和。CT が明けていた枠は 0。burst/controller.ts の reduceCooldown）。
  * n はカンマ区切りの並び（"0,2,3"）も書け、そのときは回ごとの列。録画では、右のバースト欄の CT の残り秒の切り替わりから読んだ
@@ -1205,9 +1226,7 @@ function cooldownCutFrames(result: { schedule: BurstSchedule | null }, ctx: Metr
       .filter((r) => r.slotIndex === slotIndex && r.frame === window.start)
       .reduce((sum, r) => sum + r.applied, 0);
   };
-  const n = ctx.args.n;
-  if (typeof n === 'string') return n.split(',').map((x) => cutAt(Number(x.trim())));
-  return cutAt(Number(n));
+  return eachOrOne(ctx.args.n, cutAt);
 }
 
 function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
@@ -1457,6 +1476,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   gaugeFullToWeaponChangeShot: { args: ['slot', 'n'], sim: gaugeFullToWeaponChangeShot },
   fullBurstToWeaponChangeShot: { args: ['slot', 'n'], sim: fullBurstToWeaponChangeShot },
+  fullBurstEndToNextShot: { args: ['slot', 'n'], sim: fullBurstEndToNextShot },
   // 2 段目の段 11 の PR 3（V-0530）: 枠のバーストの発動の回数（時刻表。burstCount は倍率ダメージのバーストの回数）
   burstActivationCount: {
     args: ['slot'],

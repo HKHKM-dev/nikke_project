@@ -23,6 +23,7 @@ import { applyCritBuffs, type BuffTotals } from './buffs.ts';
 import type { NamedStateId } from './states.ts';
 import type { CounterId } from './counters.ts';
 import {
+  isAppliedTrigger,
   isShotCountTrigger,
   isTimerTrigger,
   SKILL_SLOTS,
@@ -516,7 +517,7 @@ export function resolveShotPauses(
   const out: (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number; skill: SkillSlot })[] = [];
   for (const slot of SKILL_SLOTS) {
     for (const effect of def.skills[slot].effects) {
-      if (effect.kind !== 'shotPause' || effect.trigger === 'burstUse') continue;
+      if (effect.kind !== 'shotPause' || effect.trigger === 'burstUse' || isAppliedTrigger(effect.trigger)) continue;
       const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
       if (!isResolvedShotCount(trigger)) throw new RangeError('shotPause needs a shot count trigger');
       out.push({
@@ -525,6 +526,20 @@ export function resolveShotPauses(
         framesOnLastShot: effect.framesOnLastShot ?? effect.frames,
         skill: slot,
       });
+    }
+  }
+  return out;
+}
+
+/**
+ * メイド編（plan/design-maids.md 2.2 節）: 自分に状態が付いた時に射撃を止める（気絶）状態とフレーム数（{ applied } の shotPause）
+ */
+export function resolveAppliedPauses(def: SkillDefinition): { state: NamedStateId; frames: number }[] {
+  const out: { state: NamedStateId; frames: number }[] = [];
+  for (const slot of SKILL_SLOTS) {
+    for (const effect of def.skills[slot].effects) {
+      if (effect.kind === 'shotPause' && isAppliedTrigger(effect.trigger))
+        out.push({ state: effect.trigger.applied, frames: effect.frames });
     }
   }
   return out;

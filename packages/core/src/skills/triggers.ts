@@ -298,7 +298,11 @@ export function createTriggerTracker(
   if (isResolvedEventCount(t)) {
     return (ev) => {
       const happened =
-        t.count === 'burstUse' ? ev.burstEffects.some((a) => a.slotIndex === slotIndex) : ev.fullBurstStart;
+        t.count === 'burstUse'
+          ? ev.burstEffects.some((a) => a.slotIndex === slotIndex)
+          : t.count === 'fullBurstStart'
+            ? ev.fullBurstStart
+            : ev.fullBurstEnd;
       if (!happened) return false;
       // 回数は戦闘中ずっと数える。atLeast 回目以降の発動のたびに発火する（下位効果のスタック適用）。
       // V-0631: resetAfterSeconds を書いたものは、前の発動から N 秒より後の発動で数え直す

@@ -459,6 +459,8 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   edgeShift?: EdgeShift;
   /** 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 定義の delayFrames を写したもの（skills/holders.ts の startOfFire） */
   delayFrames?: number;
+  /** メイド編（plan/design-maids.md 2.1 節）: 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders.ts の fireTimed） */
+  perCount?: { state: NamedStateId };
 };
 
 /**
@@ -579,6 +581,7 @@ export function resolveTimed(
       if (effect.amplifies !== undefined) r.amplifies = effect.amplifies;
       if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
+      if (effect.perCount !== undefined) r.perCount = effect.perCount;
       resolved.push(r);
     });
   }

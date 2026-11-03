@@ -10,7 +10,7 @@ import {
   type SummonEffect,
 } from '../types.ts';
 import { fail, type Json, oneOf, parseDuration, parseLocalizedText, parseRef } from './common.ts';
-import { parseTrigger } from './trigger.ts';
+import { parseAppliedTrigger, parseTrigger } from './trigger.ts';
 
 /** アニス：スター S2・バースト編: 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
 export function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttackEffect {
@@ -87,7 +87,12 @@ export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot
     }
   }
   let trigger: ShotPauseEffect['trigger'];
-  if (v.trigger === 'burstUse') {
+  const applied = parseAppliedTrigger(v.trigger, `${path}.trigger`);
+  if (applied !== undefined) {
+    if (v.framesOnLastShot !== undefined)
+      fail(`${path}.framesOnLastShot`, 'framesOnLastShot needs a shot count trigger');
+    trigger = applied;
+  } else if (v.trigger === 'burstUse') {
     if (slot !== 'burst') fail(`${path}.trigger`, 'a shotPause on burstUse can only be written in the burst slot');
     if (v.framesOnLastShot !== undefined)
       fail(`${path}.framesOnLastShot`, 'framesOnLastShot needs a shot count trigger');
@@ -95,7 +100,7 @@ export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot
   } else {
     const parsed = parseTrigger(v.trigger, `${path}.trigger`);
     if (!isShotCountTrigger(parsed))
-      fail(`${path}.trigger`, 'shotPause needs a shot count trigger ({ count }) or "burstUse"');
+      fail(`${path}.trigger`, 'shotPause needs a shot count trigger ({ count }), "burstUse" or { applied }');
     for (const key of ['stacksRef', 'firesDuring'] as const) {
       if (parsed[key] !== undefined) fail(`${path}.trigger.${key}`, `${key} cannot be used in shotPause`);
     }

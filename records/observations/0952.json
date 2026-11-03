@@ -1,0 +1,172 @@
+[
+  {
+    "id": "0952-01",
+    "recording": "0952",
+    "kind": "total",
+    "use": "record",
+    "value": 70194364,
+    "description": "マスト：ロマンチックメイド の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11399。増分は 4970 個"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0952-02",
+    "recording": "0952",
+    "kind": "count",
+    "use": "record",
+    "value": 212,
+    "unit": "トリガー",
+    "description": "マスト：ロマンチックメイド のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 4970 個。前の増分から 30f 未満の増分（4943 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 36f）から発の数を決めた（2 発になった組 21 個）"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0952-03",
+    "recording": "0952",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "count",
+    "unit": "ヒット",
+    "value": 1000,
+    "description": "マスト：ロマンチックメイドの、ほろ酔いの乗った最初の 1 ヒット（f2817。1 回目のゲージの満タン）より前のヒットの数（1 フレームに 2 ヒットの増分と、読めなかった増分の空きのヒットを含む）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "増分を、マスト：RM の 1 ヒットの格子（胴体 6,116 × 攻撃力の段 × (1 + コア + 会心 0.5 + 距離 0.3)。攻撃力の段は▲なしとほろ酔い）に当てて数えた。読めなかった増分の空きは、発の間（2f〜3f）からヒットの数を決めた（V-0668「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0952-04",
+    "recording": "0952",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 6116,
+    "description": "マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスなし。ほろ酔いの前）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "中近の着地点の、前のフレームが読めた増分のうち一番多い値（ほかの値はコア・会心の組で格子に乗る）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0952-05",
+    "recording": "0952",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 8260,
+    "description": "マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスなし。ほろ酔いの間。S1 の発動者基準の攻撃力 35.02%▲）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "f2817 から後の、前のフレームが読めた増分のうち一番多い値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 6000,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0952-06",
+    "recording": "0952",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "rate",
+    "value": 0.3577,
+    "description": "マスト：ロマンチックメイドの、ほろ酔いの間の通常攻撃の会心率（f2817 から後の会心のヒット 1419 / ヒット 3967。S1 のクリティカル確率 20.05%▲）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "前のフレームが読めた増分（1 ヒット）を、ほろ酔いの格子に当てて会心の項を数えた。1 つの格子点にだけ乗るものを使った"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 6000
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

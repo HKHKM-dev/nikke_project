@@ -256,6 +256,13 @@ export const NAMED_STATES = {
   memoryAbsorption: { name: { ja: '記憶吸収', en: 'Memory Absorption' }, holder: 'ally' },
   /** ナユタ編（同 2.5 節）: バーストの「記憶燃焼：使用武器変更」の変更の窓の間の状態（weaponChange の state）。S1 の「記憶燃焼状態なら」が見る */
   memoryIncineration: { name: { ja: '記憶燃焼', en: 'Memory Incineration' }, holder: 'ally' },
+  /**
+   * メイド編（plan/design-maids.md 2.4 節）: ほろ酔い（マスト：ロマンチックメイドの S1。バースト 1 段階突入時に自分に付く命中率▼・3 スタック・持続。
+   * S1 の「ほろ酔い状態の時に限り」・S2 とバーストの「× ほろ酔いのスタック数」が見る）
+   */
+  drunken: { name: { ja: 'ほろ酔い', en: 'Drunken' }, holder: 'ally' },
+  /** 同: 二日酔い（マスト：ロマンチックメイドの S2。ほろ酔いのフルスタックのフルバーストの終わりに付く気絶。10 秒。射撃を止める shotPause が見る） */
+  hangover: { name: { ja: '二日酔い', en: 'Hangover' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

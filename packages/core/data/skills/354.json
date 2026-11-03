@@ -1,0 +1,181 @@
+{
+  "formatVersion": 1,
+  "resourceId": 354,
+  "checkedAt": "2026-11-03",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "drunken",
+          "trigger": "burstStage1Enter",
+          "target": "self",
+          "maxStacksRef": 2,
+          "durationUntil": "battleEnd",
+          "contents": [
+            {
+              "stat": "hitRate",
+              "decrease": true,
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "バースト 1 段階突入（ゲージの満タンと、チェーンが時間切れで 1 段階に戻った時）のたびに 1 スタック足す。命中率▼は、モデルではコア命中率・弾丸命中率に効かせていない（録画では着地点で違う割合でコア命中率が下がり、式か表が決まっていない。V-0668）",
+            "en": "One stack is added on every entry into Burst stage 1 (gauge full, and a timed-out chain returning to stage 1). The model does not apply the Hit Rate decrease to the core or bullet hit rate (in the recordings the core hit rate drops by a different ratio at each landing spot, and no formula or table is settled; V-0668)"
+          },
+          "claims": [
+            "C-0941",
+            "C-0942"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 3,
+          "while": {
+            "selfState": "drunken"
+          },
+          "claims": [
+            "C-0941"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "while": {
+            "selfState": "drunken"
+          },
+          "claims": [
+            "C-0941"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "stat": "distributedDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "condition": {
+            "selfState": "drunken"
+          },
+          "perCount": {
+            "state": "drunken"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": "drunken"
+          },
+          "perCount": {
+            "state": "drunken"
+          }
+        },
+        {
+          "kind": "removeState",
+          "state": "drunken",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "condition": {
+            "selfState": {
+              "state": "drunken",
+              "stacks": "full"
+            }
+          },
+          "claims": [
+            "C-0943"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "hangover",
+          "trigger": "fullBurstEnd",
+          "target": "self",
+          "durationRef": 5,
+          "condition": {
+            "selfState": {
+              "state": "drunken",
+              "stacks": "full"
+            }
+          },
+          "assumes": {
+            "ja": "気絶の名前（中身なし）。ほろ酔いの解除と同じフレームに、解除の前のスタックで条件を見る。射撃の止まりは effects[4]",
+            "en": "The name of the stun (no contents). The condition reads the stacks before the removal in the same frame. The firing stop is effects[4]"
+          },
+          "claims": [
+            "C-0943"
+          ]
+        },
+        {
+          "kind": "shotPause",
+          "trigger": {
+            "applied": "hangover"
+          },
+          "frames": 600,
+          "assumes": {
+            "ja": "二日酔い（気絶 10 秒 = 600f）の間は撃たない（V-0668）。待ち・リロードも進めず、バーストの候補にもならない扱い（plan/design-maids.md の論点 2）は、録画に出ていない（どの回もフルバーストの終わりまで撃っていて、気絶の間に II の番が来なかった）。明けは構え直す",
+            "en": "During Hangover (a 10 s = 600 f stun) the unit does not fire (V-0668). That its wait and reload do not advance and that it is not a burst candidate does not show in the recordings (it fired until each Full Burst ended, and its turn at stage II never came during a stun). It re-aims when the stun ends"
+          },
+          "claims": [
+            "C-0943"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "critDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-0942"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 5,
+          "durationRef": 6,
+          "condition": {
+            "selfState": "drunken"
+          },
+          "perCount": {
+            "state": "drunken"
+          },
+          "claims": [
+            "C-0942"
+          ]
+        }
+      ]
+    }
+  }
+}

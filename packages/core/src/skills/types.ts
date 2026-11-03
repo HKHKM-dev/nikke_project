@@ -594,10 +594,15 @@ export const SHOT_COUNT_RESETS = ['fullBurstStart', 'never'] as const satisfies 
 /**
  * Stage 8: 発動の回数の段階（「使用回数別の効果」「開始回数別の効果」、下位効果のスタック適用）。
  * atLeast 回目以降の発動のたびに発火する。burstUse = 自分がバーストスキルを使った回数、fullBurstStart = フルバーストの回数（編成全体）。
+ * メイド編（plan/design-maids.md 2.3 節）: fullBurstEnd = フルバーストタイムが終了した回数（編成全体。終わりのフレームで発火する）。
  * 回数は戦闘中ずっと数え、リセットしない（resetAfterSeconds を書いたものを除く）。
  */
-export type EventCountKind = 'burstUse' | 'fullBurstStart';
-export const EVENT_COUNT_KINDS = ['burstUse', 'fullBurstStart'] as const satisfies readonly EventCountKind[];
+export type EventCountKind = 'burstUse' | 'fullBurstStart' | 'fullBurstEnd';
+export const EVENT_COUNT_KINDS = [
+  'burstUse',
+  'fullBurstStart',
+  'fullBurstEnd',
+] as const satisfies readonly EventCountKind[];
 
 export type EventCountTrigger = {
   count: EventCountKind;
@@ -857,6 +862,13 @@ export type TimedEffect = TargetCountFields &
     edgeShift?: EdgeShift;
     /** ラム編: 同じ部隊の味方の条件 */
     squad?: SquadCondition;
+    /**
+     * メイド編（plan/design-maids.md 2.1 節）: 「X% × 〈状態〉のスタック数」。値に、発火のフレームの自分のその状態のスタック数（発火の
+     * フレームより前に付いた件。条件 selfState と同じ見え方。damage の perCount と同じ）を掛ける。0 なら出さない。掛けた値は付いた時に
+     * 決まり、維持の間は変えない。出来事のきっかけ（burstUse・バースト N 段階突入時・フルバーストの始まりと終わり）だけに書け、スタック・
+     * 確率・発数や出来事の維持・amplifies とは組まない
+     */
+    perCount?: { state: NamedStateId };
     /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */
     withCharacter?: WithCharacterCondition;
     /** 防御力無視ダメージ編: 敵の属性の条件 */
@@ -1778,7 +1790,11 @@ export type BurstGaugeHitEffect = {
  */
 export type ShotPauseEffect = {
   kind: 'shotPause';
-  trigger: ShotCountTrigger | 'burstUse';
+  /**
+   * メイド編（plan/design-maids.md 2.2 節）: { applied } は、その状態が自分に付いた時（付いていない所から付いた次のフレーム）から止める
+   * （気絶。マスト：ロマンチックメイドの二日酔い）。止めている間は、バーストの候補からも外す（論点 2）
+   */
+  trigger: ShotCountTrigger | 'burstUse' | AppliedTrigger;
   /** 止めるフレーム数（1 以上の整数。録画で読む） */
   frames: number;
   /** 発火した射撃がマガジンの最後の弾丸のときに止めるフレーム数（1 以上の整数。省略は frames） */

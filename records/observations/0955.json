@@ -1,0 +1,384 @@
+[
+  {
+    "id": "0955-01",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [1378, 2681, 3859, 5345, 6596, 7831, 9064, 10416],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・24・0・24・0f"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-02",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [1408, 3888, 6625, 9093, 10988],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・24・24・6f"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-03",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [1437, 3917, 6654, 9122, 11017],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-04",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [2046, 4526, 7263, 9731, 11561],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-05",
+    "recording": "0955",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 544],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-06",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [3852],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-07",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [10981],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f8801"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-08",
+    "recording": "0955",
+    "kind": "timing",
+    "use": "record",
+    "value": [11010],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0668",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0955-09",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 16373,
+    "description": "1 回目のフルバーストの窓の、マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスなし・フルバースト）。攻撃力は、ほろ酔いとバーストの発動者基準の攻撃力 20.06% × 1（スタック数）▲",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "窓（0955-03 から 0955-04）の中の、前のフレームが読めた増分のうち、格子（胴体 × 攻撃力の段 × 攻撃ダメージ 1.1504 × (1.5 + 距離 0.3)）の k = 1 の点に乗った値（どれも同じ値。窓の始めの 260f ほどは、リターのバーストの攻撃力▲の乗った値になる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 0,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-10",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 20612,
+    "description": "2 回目のフルバーストの窓の、マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスなし・フルバースト）。攻撃力は、ほろ酔いとバーストの発動者基準の攻撃力 20.06% × 3（スタック数）▲",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "窓（0955-03 から 0955-04）の中の、前のフレームが読めた増分のうち、格子（胴体 × 攻撃力の段 × 攻撃ダメージ 1.1504 × (1.5 + 距離 0.3)）の k = 3 の点に乗った値（どれも同じ値。窓の始めの 260f ほどは、リターのバーストの攻撃力▲の乗った値になる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 1,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-11",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 22191,
+    "description": "3 回目のフルバーストの窓の、マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスあり・フルバースト）。攻撃力は、ほろ酔いとバーストの発動者基準の攻撃力 20.06% × 2（スタック数）▲。モデルはこの回のチェーンが切れずにスタックが 1 で、比べない（V-0668「結果」）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "窓（0955-03 から 0955-04）の中の、前のフレームが読めた増分のうち、格子（胴体 × 攻撃力の段 × 攻撃ダメージ 1.1504 × (1.5 + 距離 0.3)）の k = 2 の点に乗った値（どれも同じ値。窓の始めの 260f ほどは、リターのバーストの攻撃力▲の乗った値になる）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-12",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 20612,
+    "description": "4 回目のフルバーストの窓の、マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスなし・フルバースト）。攻撃力は、ほろ酔いとバーストの発動者基準の攻撃力 20.06% × 3（スタック数）▲",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "窓（0955-03 から 0955-04）の中の、前のフレームが読めた増分のうち、格子（胴体 × 攻撃力の段 × 攻撃ダメージ 1.1504 × (1.5 + 距離 0.3)）の k = 3 の点に乗った値（どれも同じ値。窓の始めの 260f ほどは、リターのバーストの攻撃力▲の乗った値になる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 3,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-13",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 19648,
+    "description": "5 回目のフルバーストの窓の、マスト：ロマンチックメイドの 1 ヒットの値（胴体・会心なし・距離ボーナスあり・フルバースト）。攻撃力は、ほろ酔いとバーストの発動者基準の攻撃力 20.06% × 1（スタック数）▲",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "窓（0955-03 から 0955-04）の中の、前のフレームが読めた増分のうち、格子（胴体 × 攻撃力の段 × 攻撃ダメージ 1.1504 × (1.5 + 距離 0.3)）の k = 1 の点に乗った値（どれも同じ値。窓の始めの 260f ほどは、リターのバーストの攻撃力▲の乗った値になる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 4,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-14",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": 624,
+    "description": "3 スタックで迎えた 4 回目のフルバーストの終わり（0955-04 の f9731）から、マスト：ロマンチックメイドの次の 1 ヒット（f10355）までの動画のフレーム（二日酔いの気絶の 10 秒）。終わりのフレームの増分が気絶の前の最後のヒット",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "マスト：RM の格子に乗る増分の空き。明けのヒットは▲なしの値（ほろ酔いが外れた）で、次の 1 段階突入からほろ酔いの値に戻る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstEndToNextShot",
+      "args": {
+        "slot": 2,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 15
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-15",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "record",
+    "kind": "timing",
+    "unit": "f",
+    "value": 622,
+    "description": "3 スタックで迎えた 2 回目のフルバーストの終わり（0955-04 の f4526）から、マスト：ロマンチックメイドの次の 1 ヒット（f5148）までの動画のフレーム（二日酔いの気絶の 10 秒）。モデルはこの回の気絶の始まりにリロード中で、止まりの間はリロードも進めないので明けが遅れ、比べない（V-0668「結果」）",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "マスト：RM の格子に乗る増分の空き。録画ではフルバーストの終わりのフレームまで撃っていた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0955-16",
+    "recording": "0955",
+    "source": "V-0668",
+    "readAt": "2026-11-04",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 9174,
+    "description": "4 回目のフルバーストの終わりの気絶の明けの、マスト：ロマンチックメイドの最初の 1 ヒットの値（f10354。4 回目の 00.00 の 1232f 後。胴体・会心あり・距離ボーナスなし）。ほろ酔いの攻撃力▲の無い値",
+    "method": {
+      "tool": "レシピ hud-jumps のキャッシュ（hud-jumps@3）",
+      "note": "マスト：RM の格子（▲なしとほろ酔い）に乗る増分。明けから次の 1 段階突入までの増分はどれも▲なしの格子に乗り、コアのヒットの割合も、ほろ酔いの前の高さに戻る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 3,
+        "frame": 1210,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

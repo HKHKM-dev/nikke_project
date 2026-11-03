@@ -1,0 +1,139 @@
+{
+  "formatVersion": 1,
+  "resourceId": 355,
+  "checkedAt": "2026-11-03",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "distributedDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "使用回数別の効果（下位効果のスタック適用）の 2 回目から。回数はフルバーストの回数（編成全体）で数える",
+            "en": "From the second use of the per-use effects (lower effects stack). Uses are counted as full bursts (team-wide)"
+          }
+        },
+        {
+          "kind": "heal",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "ref": 6,
+          "durationRef": 7,
+          "squad": {
+            "present": true
+          },
+          "assumes": {
+            "ja": "同じ部隊（イージス）の味方がいる時だけの、8 秒の持続回復。付いた時に「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
+            "en": "An 8 s heal over time only when an ally of the same squad (Aegis) is present. It triggers \"when healed\" when applied. The healed amount does not affect damage"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "使用回数別の効果の 1 回目からの HP 回復量▲（5 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The Healing increase (5 s) from the first use of the per-use effects does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        },
+        {
+          "ja": "使用回数別の効果の 3 回目からのスタック可能デバフ効果のスタック量▼は、味方に付くデバフが敵の攻撃から来るので起きない（被弾を扱わない。要件 4.2 節）",
+          "en": "The stack count decrease of stackable debuffs from the third use does not occur, since debuffs on allies come from enemy attacks (taking hits is not modeled; requirements 4.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "unknown",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullBurstEnd",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "stat": "hitRate",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "使用回数別の効果（下位効果のスタック適用）の 1 回目から。回数はフルバーストの終わりの回数（編成全体）で数える",
+            "en": "From the first use of the per-use effects (lower effects stack). Uses are counted as full burst ends (team-wide)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullBurstEnd",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "使用回数別の効果の 2 回目から",
+            "en": "From the second use of the per-use effects"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullBurstEnd",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "使用回数別の効果の 3 回目から",
+            "en": "From the third use of the per-use effects"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 3,
+          "assumes": {
+            "ja": "味方全体への 1 回の回復で、HP が満タンの味方にも「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
+            "en": "A one-off heal on all allies that triggers \"when healed\" even on allies at full HP. The healed amount does not affect damage"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ],
+      "notes": [
+        {
+          "ja": "保存（超過した回復量を発動者の最大HP の X% まで保存・25 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Storage (stores excess healing up to X% of the caster's max HP for 25 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}

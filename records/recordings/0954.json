@@ -1,0 +1,46 @@
+{
+  "id": "0954",
+  "date": "2026-11-04",
+  "folder": "range",
+  "file": "20261104-0954_mg_mast-romantic-maid.mp4",
+  "original": "2026-11-04_00-49-40.mp4",
+  "durationSec": 205.1,
+  "frames": 12308,
+  "fps": 60,
+  "sizeMB": 248.8,
+  "sha256": "c051d05045fe",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": true
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0668 の撮影 B。リター（I）・マスト：ロマンチックメイド（II・操作）・I-DOLL・サン（III）（オート射撃 ON・オートバースト ON）。火の的",
+  "backup": {
+    "at": "2026-11-04T01:38+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
