@@ -70,17 +70,16 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     const allowed =
       source === 'team'
         ? ['source', 'release', 'durationRef', 'releaseDelayFrames']
-        : ['source', 'release', 'durationRef', 'ratioRef', 'releaseDelayFrames', 'capDelayFrames'];
+        : ['source', 'release', 'durationRef', 'ratioRef', 'applyDelayFrames', 'capDelayFrames'];
     for (const key of Object.keys(a)) if (!allowed.includes(key)) fail(`${at}.${key}`, 'unknown field');
     const durationRef = parseRef(a.durationRef, `${at}.durationRef`);
-    const releaseDelayFrames = parseNonNegativeInt(a.releaseDelayFrames, `${at}.releaseDelayFrames`);
     if (source === 'team') {
       if (trigger !== 'burstUse') fail(at, 'accumulate (team) needs the trigger "burstUse"');
       effect.accumulate = {
         source,
         release: oneOf(['windowEnd'] as const, a.release, `${at}.release`),
         durationRef,
-        releaseDelayFrames,
+        releaseDelayFrames: parseNonNegativeInt(a.releaseDelayFrames, `${at}.releaseDelayFrames`),
       };
     } else {
       // 1 パス目が、フルチャージの発ごとに付けるか（付いている間は付けない）を決める
@@ -92,7 +91,7 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
         release: oneOf(['capOrExpire'] as const, a.release, `${at}.release`),
         durationRef,
         ratioRef: parseRef(a.ratioRef, `${at}.ratioRef`),
-        releaseDelayFrames,
+        applyDelayFrames: parseNonNegativeInt(a.applyDelayFrames, `${at}.applyDelayFrames`),
         capDelayFrames: parsePositiveInt(a.capDelayFrames, `${at}.capDelayFrames`),
       };
     }

@@ -253,7 +253,7 @@ export type AccumulateRelease = {
   frame: number;
   /** 最大量に届いたか（届かなければ、切れる時に射手の 1 ヒットぶんのゲージを溜めた。C-0430） */
   capped: boolean;
-  /** 最大量（付けた発のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)。爆発のヒットの上限） */
+  /** 最大量（付いたフレーム（付けた発の applyDelayFrames 後）の最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)。爆発のヒットの上限） */
   cap: number;
   /** 1 パス目の溜めた値（2 パス目の値と突き合わせる。テスト用） */
   stored: number;
@@ -1007,8 +1007,9 @@ function runFirstPassOnce(
   const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3・2.4 節）: 蓄積爆破（damage の accumulate の self）。フルチャージの発で、
   // 付いていなければ付ける（付けた発は溜めない）。付けた後の発の値 × (割合 + 蓄積割合▲) を、次のフレームの頭に（その発のフレームまでに
-  // 付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の capDelayFrames 後に最大量を出して解除する。届かなければ
-  // 付けてから窓の長さ + releaseDelayFrames で切れ、射手の 1 ヒットぶんのゲージを溜める（C-0430）。最大量は付けた発のフレームの値で決める
+  // 付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の capDelayFrames 後に最大量を出して解除する。付くのは
+  // 付けた発の applyDelayFrames 後で、最大量はそのフレームの値で決め（C-0916）、届かなければ付いてから窓の長さで切れ、射手の 1 ヒットぶんの
+  // ゲージを溜める（C-0430）。付くまでの発は、最大量が決まってから溜める
   const accumulators = damageEffects.flatMap((effects, slotIndex) =>
     effects.flatMap((effect) => {
       const acc = effect.accumulate;
@@ -1047,7 +1048,9 @@ function runFirstPassOnce(
     const s = a.active;
     if (s === null) return 0;
     if (s.cap === null) {
-      const at = accumulateShotAt(a.slotIndex, s.applied, undefined);
+      const attached = s.applied + a.acc.applyDelayFrames;
+      if (f <= attached) return 0;
+      const at = accumulateShotAt(a.slotIndex, attached, undefined);
       s.cap = at.attack * a.effect.multiplier * (1 + at.buffs.distributedDamage);
     }
     for (const p of a.pending) {
@@ -1057,7 +1060,8 @@ function runFirstPassOnce(
       if (s.stored >= s.cap) s.reached = p.frame;
     }
     a.pending.length = 0;
-    const capped = s.reached !== null && f === s.reached + a.acc.capDelayFrames;
+    // 届いた発が付くより前でも、爆発は届いた発の capDelayFrames 後（最大量が決まったフレームより前なら、そのフレーム）
+    const capped = s.reached !== null && f >= s.reached + a.acc.capDelayFrames;
     if (!capped && (s.reached !== null || f !== s.expire)) return 0;
     accumulateReleases.push({
       slotIndex: a.slotIndex,
@@ -1428,7 +1432,7 @@ function runFirstPassOnce(
         if (shot.fullCharge)
           a.active = {
             applied: f,
-            expire: f + a.acc.durationFrames + a.acc.releaseDelayFrames,
+            expire: f + a.acc.applyDelayFrames + a.acc.durationFrames,
             cap: null,
             stored: 0,
             reached: null,

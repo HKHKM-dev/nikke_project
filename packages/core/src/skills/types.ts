@@ -1233,8 +1233,9 @@ export type DamageEffect = {
  * - source team・release windowEnd（烙印）: 窓の間に的が受けた味方全員のダメージ（C-0901）を、窓の終わりの releaseDelayFrames 後に
  *   1 ヒット出す（最大量で切る。C-0902）
  * - source self・release capOrExpire（蓄積爆破）: 付けた発の後の発動者の発の値 × (ratioRef% + 蓄積割合▲) を溜め（C-0903）、最大量に届いた
- *   発の capDelayFrames 後に最大量を出して解除する（C-0904）。届かなければ、付けてから窓の長さ + releaseDelayFrames で切れ、溜めた値を出す
- *   （C-0903）。切れる時に射手の 1 ヒットぶんのゲージを溜める（C-0430）。付いている間は付け直さない
+ *   発の capDelayFrames 後に最大量を出して解除する（C-0904）。付くのは付けた発の applyDelayFrames 後で、最大量はそのフレームの値で読み
+ *   （C-0916）、届かなければ付いてから窓の長さで切れ、溜めた値を出す（C-0903・C-0910）。切れる時に射手の 1 ヒットぶんのゲージを溜める
+ *   （C-0430・C-0911）。付いている間は付け直さない
  */
 export type AccumulateSpec =
   | {
@@ -1252,8 +1253,8 @@ export type AccumulateSpec =
       durationRef: number;
       /** 溜める割合（%）の description_value_NN */
       ratioRef: number;
-      /** 窓の長さの後、切れるまでのフレーム（録画で読んだ即値） */
-      releaseDelayFrames: number;
+      /** 付けた発から付くまでのフレーム（録画で読んだ即値）。窓の長さと最大量の読みはそこから */
+      applyDelayFrames: number;
       /** 最大量に届いた発から爆発のヒットまでのフレーム（録画で読んだ即値） */
       capDelayFrames: number;
     };
