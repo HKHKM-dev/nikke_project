@@ -7,15 +7,17 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃が命中した時の蓄積爆破（与えたダメージの一部を蓄積し、最大量で分配ダメージ）は未対応（付けたときはゲージを溜めず、最大量に届かずに切れるときに溜める。C-0430。リター・デルタと組んだ録画では、フルバーストの窓の中に 1 回だけ大きな 1 ヒットが出るが、値は最大量とも発の和の割合とも合わない。V-0613）",
-          "en": "Accumulated Blast on a fully charged hit (stores part of the damage dealt and deals distributed damage at the cap) is not modeled (it does not charge the gauge when applied, but does when it ends without reaching the cap; C-0430. With Liter and Delta, one large hit appears once in some Full Burst windows, but its value matches neither the cap nor a ratio of the summed shots; V-0613)",
+          "ja": "フルチャージ攻撃が命中した時の蓄積爆破は未対応（付けた発の後のトロニーの発の値 × 50%（バーストの蓄積割合▲の間は 50% + 62.83%）を溜め、付けてから約 5 秒で切れる時に溜めた値をそのまま 1 ヒットで出す（C-0903）。最大量（付けた時の最終攻撃力 × 1536% × (1 + 分配ダメージ▲)）に届けば、その 13f 後に最大量を出す（C-0904）。付けたときはゲージを溜めず、切れるときに溜める（C-0430））",
+          "en": "Accumulated Blast on a fully charged hit is not modeled (it stores 50% of each later Trony shot after the applying shot, 50% + 62.83% while the Burst ratio increase is active, and when it expires about 5 s after being applied it deals the stored amount as one hit (C-0903); if the stored amount reaches the cap (final ATK when applied × 1536% × (1 + distributed damage increase)) it deals the cap 13 frames later (C-0904); it does not charge the gauge when applied, but does when it expires (C-0430))",
           "kind": "unimplemented",
           "effect": {
             "kind": "damage",
             "trigger": "fullChargeShot"
           },
           "claims": [
-            "C-0430"
+            "C-0430",
+            "C-0903",
+            "C-0904"
           ]
         }
       ]
@@ -24,15 +26,18 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃 5 回ごとの自分の分配ダメージ▲（10 秒）は未対応（乗るのは未対応の蓄積爆破の爆発だけで、ほかのヒットの値を変えない）",
-          "en": "The distributed damage increase on self every 5 fully charged attacks (10 s) is not modeled (it applies only to the explosion of Accumulated Blast, which is not modeled, and changes no other hit)",
+          "ja": "フルチャージ攻撃 5 回ごとの自分の分配ダメージ▲（10 秒）は未対応（効くのは未対応の蓄積爆破の最大量だけで、切れる時の爆発とほかのヒットの値を変えない。C-0904）",
+          "en": "The distributed damage increase on self every 5 fully charged attacks (10 s) is not modeled (it only raises the cap of Accumulated Blast, which is not modeled, and changes neither the expiry explosion nor any other hit; C-0904)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
             "stat": "distributedDamage",
             "target": "self",
             "trigger": "fullChargeShot"
-          }
+          },
+          "claims": [
+            "C-0904"
+          ]
         },
         {
           "ja": "フルチャージ攻撃が 5 回命中した時の対象の防御力▼（10 秒）は未対応（録画では、▼の後に的の防御 100 が 0 になった値で、説明文の 9.59% を C-0556 の式で引いた値と合わない。V-0613）",
@@ -66,15 +71,18 @@
       ],
       "notes": [
         {
-          "ja": "蓄積爆破のダメージ蓄積割合▲（10 秒）は未対応",
-          "en": "The accumulation ratio increase of Accumulated Blast (10 s) is not modeled",
+          "ja": "蓄積爆破のダメージ蓄積割合▲（10 秒）は未対応（割合の 50% に足す。C-0903）",
+          "en": "The accumulation ratio increase of Accumulated Blast (10 s) is not modeled (it is added to the 50% ratio; C-0903)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
             "target": "self",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0903"
+          ]
         }
       ]
     }
