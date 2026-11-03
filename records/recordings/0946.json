@@ -1,0 +1,46 @@
+{
+  "id": "0946",
+  "date": "2026-11-03",
+  "folder": "range",
+  "file": "20261103-0946_smg_d-iron.mp4",
+  "original": "2026-11-03_21-18-02.mp4",
+  "durationSec": 201.8,
+  "frames": 12109,
+  "fps": 60,
+  "sizeMB": 244.8,
+  "sha256": "29e66967f5e5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 40,
+      "name": "D",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Iron"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0662 の撮影。リター（I）・デルタ（II）・D（III・操作）（オート射撃 ON・オートバースト ON）。鉄甲の的",
+  "backup": {
+    "at": "2026-11-03T21:26+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
