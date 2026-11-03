@@ -173,7 +173,10 @@
           "target": "self",
           "stat": "hitRate",
           "ref": 6,
-          "durationRef": 7
+          "durationRef": 7,
+          "claims": [
+            "C-0915"
+          ]
         },
         {
           "kind": "timed",

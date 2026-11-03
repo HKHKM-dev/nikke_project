@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 79・効果 505（根拠あり 477）・notes 197（根拠あり 88）
+件数: キャラ 79・効果 505（根拠あり 478）・notes 197（根拠あり 88）
 
 notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足 19・間接 56
 
@@ -1109,7 +1109,7 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
 - **burst**: supported
   - effects[0] timed・burstUse・reloadSpeed: C-0825（確定）
   - effects[1] ammoDecrease・burstUse: C-0825（確定）
-  - effects[2] timed・burstUse・hitRate: 根拠なし
+  - effects[2] timed・burstUse・hitRate: C-0915（確定）
   - effects[3] timed・burstUse・attackDamage: C-0825（確定）
   - effects[4] timed・burstUse・trueDamageConversion: C-0825（確定）
   - notes[0] 計算に無関係: リロード速度の「増加状態で固定」（窓の間、ほかのリロード速度▲▼を無視する）は、どの編成でも値に効かない。リロードの時間は 時間 × max(0, 1 − Σ速度)（C-0013）で、この▲にほかのリロード速度▲を足しても足さなくても 1 フレームに満たない。固定と足し合わせが分かれるのはジルにリロード速度▼が付く時だけで、味方に▼を付けるキャラはいない（plan/design-skill-stage20.md 2.3 節）: 根拠なし
