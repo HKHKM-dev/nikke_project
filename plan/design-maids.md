@@ -11,7 +11,7 @@
   - 命中率▲の効き方: C-0036・C-0192・C-0485（命中率▼は効かせていない。`frame/landing.ts` の `coreHitRateWithHitRateUp`）
   - 回復 `heal`・同じ部隊の条件 `squad`: [design-heal-vocabulary.md](design-heal-vocabulary.md)・[design-ram-s1.md](design-ram-s1.md)
 - 作成日: 2026-11-03
-- 状態: 撮影待ち（論点 1〜6 は推奨どおりに決定。V-0668・V-0669）
+- 状態: 撮影待ち（4 節）
 
 ## 0. 範囲
 
