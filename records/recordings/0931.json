@@ -1,0 +1,40 @@
+{
+  "id": "0931",
+  "date": "2026-11-03",
+  "folder": "range",
+  "file": "20261103-0931_rl+sr_uni+red-hood.mp4",
+  "original": "2026-11-03_14-50-29.mp4",
+  "durationSec": 37.1,
+  "frames": 2227,
+  "fps": 60,
+  "sizeMB": 45,
+  "sha256": "f6910f248368",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 470,
+      "name": "レッドフード",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0647 の撮影。ユニ（II）・レッドフード（全段階・操作）で、画面では 1・3 枠目（2 枠目は空き。台帳の枠は空きを詰めた並び）（オート射撃 ON・オートバースト ON）",
+  "backup": {
+    "at": "2026-11-03T14:52+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

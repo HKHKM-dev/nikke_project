@@ -25,11 +25,12 @@
           "stat": "chargeSpeedOverflow",
           "ref": 4,
           "assumes": {
-            "ja": "超過した値は、チャージ速度▲を効果ごと（スタックはまとめる）に整数の % に四捨五入してから足した和の、100% を超えた分（V-0640。チャージの長さは丸めない。丸めの単位が効果ごとかスキルごとかと、味方からの▲・発動者基準のチャージ時間▼を和に入れるかは未確定）。変換したチャージダメージ▲は足し算の▲（倍率▲の後に足す）",
-            "en": "The excess is the sum of Charge Speed ups, each effect (stacks combined) rounded to a whole percent before summing, above 100% (V-0640; the charge time is not rounded. Whether the rounding is per effect or per skill, and whether Charge Speed ups from allies and caster-based charge time reductions are included, is unverified). The converted Charge Damage up is additive (added after the multiplier ups)"
+            "ja": "超過した値は、チャージ速度▲を効果ごと（スタックはまとめる）に整数の % に四捨五入してから足した和の、100% を超えた分（V-0640。チャージの長さは丸めない）。味方からの▲も和に入る（V-0647。ユニの S1 で確かめた）。丸めの単位が効果ごとかスキルごとかと、発動者基準のチャージ時間▼を和に入れるかは未確定。変換したチャージダメージ▲は足し算の▲（倍率▲の後に足す）",
+            "en": "The excess is the sum of Charge Speed ups, each effect (stacks combined) rounded to a whole percent before summing, above 100% (V-0640; the charge time is not rounded). Charge Speed ups from allies are included too (V-0647; verified with Yuni's Skill 1). Whether the rounding is per effect or per skill, and whether caster-based charge time reductions are included, is unverified. The converted Charge Damage up is additive (added after the multiplier ups)"
           },
           "claims": [
-            "C-0899"
+            "C-0899",
+            "C-0909"
           ]
         }
       ],
