@@ -1,6 +1,6 @@
 // 名前の付いた状態の語彙編（plan/design-named-state.md 5.1 節）: 状態の目録。定義が状態を指すのはこの表の id だけ
 // （付与 kind: 'state'・トリガー { applied }・対象の絞り込み targetState・条件 enemyState・dot の state）。
-// 目録が持つのは、どの状態か（同一性）・画面の名前・持ち主の側だけ。スタックの上限・維持・中身は付与に書く（同 3.5 節）。
+// 目録が持つのは、どの状態か（同一性）・画面の名前・持ち主の側と、中身を書かない敵の状態の印（withoutContents）だけ。スタックの上限・維持・中身は付与に書く（同 3.5 節）。
 // id は英語版の説明文の状態名の lowerCamelCase（同 5.1 節の id の付け方）。一度付けた id は変えない
 import type { LocalizedText } from '../types.ts';
 
@@ -19,6 +19,11 @@ export type NamedStateInfo = {
   holder: StateHolder;
   /** 2 段目の段 5: 家族（任意） */
   family?: StateFamily;
+  /**
+   * プリバティ編: 中身がダメージに関係しない敵の状態（付与に中身を書かない。名前だけを条件が見る）。書かない敵の状態は、どれかの付与が中身を持つ
+   * （parse/crossChecks.ts の validateStateGrants）
+   */
+  withoutContents?: true;
 };
 
 export const NAMED_STATES = {
@@ -209,10 +214,10 @@ export const NAMED_STATES = {
    */
   seaBreeze: { name: { ja: '海風', en: 'Sea Breeze' }, holder: 'enemy' },
   /**
-   * プリバティ編: ターゲット指定（プリバティの宝物版バースト。敵全体に 10 秒。中身の攻撃力▼はダメージに関係しないので中身なし。
+   * プリバティ編: ターゲット指定（プリバティの宝物版バースト。敵全体に 10 秒。中身の攻撃力▼はダメージに関係しないので中身なし（withoutContents）。
    * 宝物版 S2 の「対象がターゲット指定状態なら」の追加ダメージが見る）
    */
-  designatedTarget: { name: { ja: 'ターゲット指定', en: 'Designated Target' }, holder: 'enemy' },
+  designatedTarget: { name: { ja: 'ターゲット指定', en: 'Designated Target' }, holder: 'enemy', withoutContents: true },
   /** 同 2.3 節: 暴風（マストのバースト。海風のスタック数を写す 1 秒ごとのダメージ・7 秒。持続ダメージではない） */
   storm: { name: { ja: '暴風', en: 'Storm' }, holder: 'enemy' },
   /**
@@ -258,6 +263,11 @@ export function namedStateName(id: NamedStateId): LocalizedText {
 /** 状態を持つ側 */
 export function namedStateHolder(id: NamedStateId): StateHolder {
   return NAMED_STATES[id].holder;
+}
+
+/** プリバティ編: 付与に中身を書かない敵の状態か */
+export function namedStateWithoutContents(id: NamedStateId): boolean {
+  return (NAMED_STATES[id] as NamedStateInfo).withoutContents === true;
 }
 
 /** 2 段目の段 5: 状態の家族（無ければ undefined） */

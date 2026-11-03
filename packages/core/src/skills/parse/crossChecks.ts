@@ -1,5 +1,5 @@
 // スキル定義の読み込みの検査のうち、定義 1 件の中の、スロットや効果をまたぐ検査。型は ../types.ts
-import { type NamedStateId, stateMatches } from '../states.ts';
+import { type NamedStateId, namedStateWithoutContents, stateMatches } from '../states.ts';
 import {
   type ClaimRefs,
   type CounterChangeEffect,
@@ -376,9 +376,9 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
     const bearers = grants.filter((g) => g.effect.contents !== undefined);
     // 敵に付く状態は、中身を読む側がまだ無いので、どれかの付与が中身を持つ（2026-10-29 のキャラの編（plan/design-new-chars-1029.md
     // 9 節）: 同じ状態のほかの付与は中身を共有する。マリアン：クイーンの S1 の弱点露出は、槍とバースト使用時の 2 つで付く）
-    // プリバティ編: 中身がダメージに関係しない敵の状態（ターゲット指定の攻撃力▼）は、同じ定義の条件 enemyState が読むなら中身なしで書ける
+    // プリバティ編: 目録で中身なしと決めた敵の状態（ターゲット指定。中身の攻撃力▼はダメージに関係しない）は、中身を書かない
     const enemyGrant = grants.find((g) => g.effect.enemy === true);
-    if (enemyGrant !== undefined && bearers.length === 0 && !readsEnemyState(entries, state)) {
+    if (enemyGrant !== undefined && bearers.length === 0 && !namedStateWithoutContents(state)) {
       fail(`${enemyGrant.path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
     }
     if (bearers.length > 1) {
@@ -409,13 +409,6 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
       });
     }
   }
-}
-
-/** プリバティ編: 定義のどれかの効果の条件 enemyState がその状態を見るか */
-function readsEnemyState(entries: Partial<Record<SkillSlot, SkillEntry>>, state: NamedStateId): boolean {
-  return SKILL_SLOTS.some((slot) =>
-    (entries[slot]?.effects ?? []).some((e) => 'condition' in e && e.condition?.enemyState === state),
-  );
 }
 
 /** 名前の付いた状態の語彙編: 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
