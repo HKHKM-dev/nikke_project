@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 643・仮説 95・棄却 131・範囲外 2（計 871）
+件数: 確定 647・仮説 95・棄却 131・範囲外 2（計 875）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -5716,6 +5716,36 @@
   - 合わせ込みの定数なし: 付く回は説明文の『バーストⅡで使用時：ハウリングエンド』の見出し。段の判定は確定の C-0894 のまま
   - 検証記録: V-0659
   - 定義: `data/skills/470.json` の burst の effects[3]
+- **C-0921** プリバティの宝物版 S2 は、最後の弾丸（残弾を 0 にした射撃）の命中で、敵に受けるダメージ▲（10 秒）と最終攻撃力の 256.17% の追加ダメージを出し、敵がターゲット指定状態なら最終攻撃力の 1687% の追加ダメージをもう 1 つ出す。受けるダメージ▲は同じ発火の追加ダメージに乗り（下位効果のスタック適用）、発火した発の通常攻撃には乗らない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-03
+  - 根拠: `0938-09`・`0938-10`・`0938-11`・`0939-10`・`0939-11`。V-0660
+  - モデル側: `data/skills/170.json` の treasureSkills.skill2（`sequential`。effects[0] の受けるダメージ▲・effects[1]・effects[2] の追加ダメージ）と、基礎版 skill2 の effects[0]
+  - 決めるのに使った録画: 0938（仮説の出どころ）、0939（仮説の出どころ）
+  - 合わせ込みの定数なし: C-0163・C-0645 と同じ下位効果のスタック適用（同じ発火で前に書いた timed を後の damage に足す）。値は説明文（Lv10）
+  - 検証記録: V-0660
+  - 定義: `data/skills/170.json` の skill2 の effects[0]、`data/skills/170.json` の treasureSkills.skill2 の effects[0]、`data/skills/170.json` の treasureSkills.skill2 の effects[1]、`data/skills/170.json` の treasureSkills.skill2 の effects[2]、`data/skills/170.json` の treasureSkills.burst の effects[0]
+- **C-0922** プリバティの宝物版バーストのターゲット指定は、バーストの発動の時に敵に付き、説明文の 10 秒（588f）続く（バーストスキルダメージのヒットからではない）
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-03
+  - 根拠: `0939-14`・`0938-11`・`0939-11`。V-0660
+  - モデル側: `data/skills/170.json` の treasureSkills.burst の effects[2]（ターゲット指定。きっかけ `burstUse`）。目録 `skills/states.ts` の `designatedTarget`
+  - 決めるのに使った録画: 0939（仮説の出どころ）
+  - 合わせ込みの定数なし: 発動から説明文の 10 秒。合わせ込みの定数なし
+  - 検証記録: V-0660
+  - 定義: `data/skills/170.json` の treasureSkills.burst の effects[2]
+- **C-0923** プリバティの宝物版バーストのバーストスキルダメージは、III のタイマーの 00.00 から 40f（動画で 62〜63f。止まり 22f を含む）、その 25f・55f 後の 3 ヒットに 3 等分して出る。どのヒットにも、同じ発動で自分に付く有利コードの攻撃ダメージ▲（10 秒）が乗る
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-03
+  - 根拠: `0938-12`・`0938-13`・`0938-14`・`0938-15`・`0939-12`・`0939-13`。V-0660
+  - モデル側: `data/skills/170.json` の treasureSkills.burst の effects[0]・effects[1] と基礎版 burst の effects[0]。遅れの表 `burst/landing.ts` の 170（宝物あり）の行（hitFrames 40・hitOffsets [0, 25, 55]・sameActivationBuffsOnHit）
+  - 決めるのに使った録画: 0938（値を合わせた）
+  - 検証記録: V-0660
+  - 定義: `data/skills/170.json` の burst の effects[0]、`data/skills/170.json` の treasureSkills.burst の effects[0]、`data/skills/170.json` の treasureSkills.burst の effects[1]
+- **C-0924** プリバティの宝物版 S1 は、フルバーストの始まりに味方全体（自分も）に、攻撃力▲・リロード速度▲・最大装弾数▼・攻撃ダメージ▲（どれも 10 秒）を付ける（説明文どおり）
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-03
+  - 根拠: `0938-10`・`0938-11`・`0939-11`・`0938-16`。V-0660
+  - モデル側: `data/skills/170.json` の treasureSkills.skill1 の effects[0]〜[3] と基礎版 skill1 の effects[0]〜[2]
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0660
+  - 定義: `data/skills/170.json` の skill1 の effects[0]、`data/skills/170.json` の skill1 の effects[1]、`data/skills/170.json` の skill1 の effects[2]、`data/skills/170.json` の treasureSkills.skill1 の effects[0]、`data/skills/170.json` の treasureSkills.skill1 の effects[1]、`data/skills/170.json` の treasureSkills.skill1 の effects[2]、`data/skills/170.json` の treasureSkills.skill1 の effects[3]
 
 ## 敵・的・場面
 

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 79・効果 505（根拠あり 482）・notes 197（根拠あり 91）
+件数: キャラ 80・効果 520（根拠あり 497）・notes 200（根拠あり 91）
 
-notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足 19・間接 56
+notes の種類: 未対応 40・前提の外 42・計算に無関係 43・補足 19・間接 56
 
-スロット: supported 189・partial 19・unsupported 12・noEffect 35
+スロット: supported 194・partial 20・unsupported 12・noEffect 35
 
 ## 10 ラピ
 
@@ -370,6 +370,33 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
 - **burst**: supported
   - effects[0] dot・burstUse: C-0746（確定）
   - effects[1] cancelState・burstUse: C-0746（確定）
+
+## 170 プリバティ
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・attack: C-0924（確定）
+  - effects[1] timed・fullBurstStart・reloadSpeed: C-0924（確定）
+  - effects[2] timed・fullBurstStart・maxAmmo: C-0924（確定）
+- **skill2**: partial
+  - effects[0] damage・lastShot・additional: C-0921（確定）
+  - notes[0] 未対応: 対象が気絶状態の時の追加ダメージは未対応（ボス・射撃場の的にバーストの気絶が付くかを確かめていない。基礎版は撮れない）: 根拠なし
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-0923（確定）
+  - notes[0] 計算に無関係: 敵全体の気絶はそれ自体ダメージに関係しない（S2 の気絶の条件は未対応）: 根拠なし
+- **宝物版 skill1**: supported
+  - effects[0] timed・fullBurstStart・attack: C-0924（確定）
+  - effects[1] timed・fullBurstStart・reloadSpeed: C-0924（確定）
+  - effects[2] timed・fullBurstStart・maxAmmo: C-0924（確定）
+  - effects[3] timed・fullBurstStart・attackDamage: C-0924（確定）
+- **宝物版 skill2**: supported
+  - effects[0] timed・lastShot・damageTaken: C-0921（確定）
+  - effects[1] damage・lastShot・additional: C-0921（確定）
+  - effects[2] damage・lastShot・additional: C-0921（確定）
+- **宝物版 burst**: supported
+  - effects[0] timed・burstUse・elementDamage: C-0923（確定）、C-0921（確定）
+  - effects[1] burstDamage・skill: C-0923（確定）
+  - effects[2] state・burstUse・designatedTarget: C-0922（確定）
+  - notes[0] 計算に無関係: 敵全体の気絶と、ターゲット指定の攻撃力▼はダメージに関係しない: 根拠なし
 
 ## 172 アドミ
 
