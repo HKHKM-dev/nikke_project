@@ -1,0 +1,202 @@
+{
+  "formatVersion": 1,
+  "resourceId": 223,
+  "checkedAt": "2026-11-03",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "applied": "memoryAbsorption"
+          },
+          "target": "allies",
+          "stat": "coreDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "記憶吸収（S2）が付くたび（3 秒ごと）に付き直す。上限の 30 スタックに届いた後も、周期の付与のたびに「適用される時」が起きるとみる（未確認。plan/design-nayuta.md 3.1 節の Q1）",
+            "en": "Reapplied each time Memory Absorption (Skill 2) is applied (every 3 s). Taken to keep firing on each periodic application after reaching the cap of 30 stacks (unverified; plan/design-nayuta.md 3.1 Q1)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "applied": "memoryAbsorption"
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "effects[0] と同じきっかけ（上限の後も起きるとみる。未確認）",
+            "en": "Same trigger as effects[0] (taken to keep firing after the cap; unverified)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時の不動心（不屈。戦闘中 1 回）はダメージに関係しない",
+          "en": "Unchanging Heart at the start of battle (Indomitability, once per battle) does not affect damage",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "記憶吸収が適用される時の味方全体への HP 回復均等分配は、被弾で HP が減った時に効く（被弾なしの前提の外）",
+          "en": "Equal sharing of HP recovery for all allies when Memory Absorption takes effect works only when HP drops from enemy hits (outside the no-damage-taken premise)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "heal",
+            "target": "allies",
+            "trigger": "damaged"
+          }
+        },
+        {
+          "ja": "記憶吸収が適用される時の自分の HP 回復（最終最大HP の 25%）は撮っていない。回復で、回復を受けた時を読む味方がいなければダメージに効かない（plan/design-nayuta.md の論点 3）",
+          "en": "The self heal (25% of final max HP) when Memory Absorption takes effect is not recorded yet. It is a heal and affects no damage unless an ally reads healing (plan/design-nayuta.md issue 3)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "heal",
+            "target": "self",
+            "trigger": "applied"
+          }
+        },
+        {
+          "ja": "記憶燃焼状態でフルチャージして攻撃した時の、敵全体への最終攻撃力の 150% のダメージは、記憶燃焼（バーストの使用武器変更）の変更後の武器の値（レート・解放・最初の発）を撮影で読むまで未対応（plan/design-nayuta.md 2.6 節・論点 4）",
+          "en": "The 150% final ATK damage to all enemies on a Full Charge attack in Memory Incineration is not modeled until the changed weapon of Memory Incineration (the burst's weapon change) is read from recordings (rate, release, first shot; plan/design-nayuta.md 2.6, issue 4)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "fullChargeShot"
+          }
+        },
+        {
+          "ja": "同じきっかけの、対象がターゲットならの最終攻撃力の 380.46% の追加ダメージも、同じ理由で未対応",
+          "en": "The 380.46% final ATK additional damage to the stage target on the same trigger is not modeled for the same reason",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "trigger": "fullChargeShot"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "memoryAbsorption",
+          "trigger": {
+            "everySeconds": 3
+          },
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "maxStacksRef": 2,
+          "undispellable": true,
+          "stackImmutable": true,
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 9
+            }
+          ],
+          "assumes": {
+            "ja": "戦闘開始から 3 秒ごと（3 秒・6 秒…。0 秒には付かない）に 1 スタック付き、30 スタックで止まる（511 の美しさと同じ数え方とみる。未確認）。命中率▲はスタックごとに足す",
+            "en": "One stack every 3 s from the start of battle (3 s, 6 s, ...; none at 0 s), stopping at 30 stacks (taken to count like Beautiful of resource 511; unverified). The Hit Rate increase adds per stack"
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attack",
+          "ref": 6,
+          "while": {
+            "selfState": {
+              "state": "memoryAbsorption",
+              "stacksRef": 5
+            }
+          },
+          "assumes": {
+            "ja": "1 段階（記憶吸収 2 スタック以上）。スタックは減らない（スタック量増減効果無効）ので、届いた後は戦闘の終わりまで続く。下位効果のスタック適用で、上の段階でも付いたまま",
+            "en": "Stage 1 (2 or more Memory Absorption stacks). The stacks never decrease (stack changes nullified), so it lasts to the end of battle once reached. Lower stages stay with higher ones"
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 8,
+          "while": {
+            "selfState": {
+              "state": "memoryAbsorption",
+              "stacksRef": 7
+            }
+          },
+          "assumes": {
+            "ja": "2 段階（記憶吸収 10 スタック以上）。effects[1] と同じ扱い",
+            "en": "Stage 2 (10 or more Memory Absorption stacks). Same as effects[1]"
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "coreDamage",
+          "ref": 4,
+          "while": {
+            "selfState": {
+              "state": "memoryAbsorption",
+              "stacksRef": 3
+            }
+          },
+          "assumes": {
+            "ja": "3 段階（記憶吸収 30 スタック以上）。effects[1] と同じ扱い",
+            "en": "Stage 3 (30 or more Memory Absorption stacks). Same as effects[1]"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は敵 1 体（パーツへのダメージは扱わない）",
+            "en": "All enemies means one enemy (damage to parts is not handled)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "記憶燃焼（使用武器変更。チャージ時間 1.8 秒固定・最終攻撃力の 275.18%・フルチャージダメージ 250%・10 秒）は、SMG からチャージ武器への変更で、変更後の発射レート・解放の長さ・最初の発・コア命中率が説明文にも CDN にも無い。撮影で読むまで未対応で、バーストの間も基礎の SMG で撃つ（plan/design-nayuta.md 2.6 節・論点 4）",
+          "en": "Memory Incineration (weapon change: charge time fixed at 1.8 s, 275.18% of final ATK, 250% Full Charge damage, 10 s) changes the SMG into a charge weapon whose rate of fire, release, first shot and core hit rate are neither in the description nor in CDN. Not modeled until read from recordings; the base SMG keeps firing during the burst (plan/design-nayuta.md 2.6, issue 4)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "weaponChange",
+            "trigger": "burstUse"
+          }
+        },
+        {
+          "ja": "記憶燃焼の追加効果の装弾数無限（10 秒）は、変更後の武器に付くので、記憶燃焼と一緒に未対応（基礎の SMG に付けない）",
+          "en": "Infinite ammo (10 s) as an additional effect of Memory Incineration belongs to the changed weapon, so it is not modeled together with Memory Incineration (not given to the base SMG)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "infiniteAmmo",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}

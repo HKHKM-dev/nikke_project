@@ -1529,6 +1529,12 @@ export type WeaponChangeEffect = {
   infiniteAmmo?: true;
   /** レッドフード編（plan/design-red-hood.md 2.1 節）: 発火の条件。鍵は使った段階（burstStep）だけ */
   condition?: EffectCondition;
+  /**
+   * ナユタ編（plan/design-nayuta.md 2.5 節。論点 2）: 変更の窓の間だけ自分に付く状態の id（「記憶燃焼：使用武器変更」の記憶燃焼）。
+   * 読み込み（parse/definition.ts の parseEntry）が、同じきっかけ・維持・条件の中身の無い付与（kind: 'state'・自分。weaponChangeOf の印）を
+   * 同じスロットの効果の終わりに足す。撃ち切りで終わる変更（maxAmmoRef）とは組まない
+   */
+  state?: NamedStateId;
   assumes?: LocalizedText;
 };
 
@@ -1931,6 +1937,17 @@ export type StateGrantEffect = Omit<
    * 撮影で数え方を見分ける予測の仮説（addEffects の replace）に使う
    */
   stackRefresh?: 'each';
+  /**
+   * ナユタ編（plan/design-nayuta.md 2.5 節。論点 1）: 説明文の「スタック量増減効果無効」。この状態のスタック量を変える効果（stackChange の
+   * 増加・減少）が効かない。stackChange は同じ定義の付与にしか書けないので、同じ定義の stackChange を読み込みで弾く（validateStackChanges）。
+   * 付与そのもの（発火ごとに付くスタック）と上限の▲（中身の maxStacksUp）は増減に数えない。maxStacks か maxStacksRef と組み、同じ状態の付与で揃える
+   */
+  stackImmutable?: true;
+  /**
+   * ナユタ編（plan/design-nayuta.md 2.5 節）: 使用武器の変更の state から読み込みが作った付与の印（値は同じスロットのその変更の効果の番号）。
+   * JSON には書けない（読み込みで決まる欄。JSON に戻すときは付与ごと外す）
+   */
+  weaponChangeOf?: number;
 };
 
 /** 2 段目の段 10: 付与のスタックの数の出どころ（カウンタの値か、自分の状態のスタック数） */

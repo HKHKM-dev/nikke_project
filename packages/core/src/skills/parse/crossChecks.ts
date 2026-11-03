@@ -244,6 +244,16 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `stackChange of "${e.state}" needs a grant of the same state on self with maxStacks in the definition`,
         );
       }
+      // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効の状態のスタック量は変わらない
+      const immutable = SKILL_SLOTS.flatMap((s) => entries[s]?.effects ?? []).some(
+        (g) => g.kind === 'state' && g.state === e.state && g.stackImmutable === true,
+      );
+      if (immutable) {
+        fail(
+          `${root}.${slot}.effects[${i}]`,
+          `stackChange of "${e.state}" has no effect (the state is stackImmutable)`,
+        );
+      }
     });
   }
 }
@@ -390,6 +400,10 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
       // （staticStatesOf）。解除不可は件の列ごとに見るので、同じ状態の付与で揃える
       if ((g.effect.undispellable === true) !== (first.effect.undispellable === true)) {
         fail(g.path, `grants of "${state}" need the same undispellable`);
+      }
+      // ナユタ編: スタック量増減効果無効も状態の印なので揃える
+      if ((g.effect.stackImmutable === true) !== (first.effect.stackImmutable === true)) {
+        fail(g.path, `grants of "${state}" need the same stackImmutable`);
       }
       if (durationFormOf(g.effect) !== durationFormOf(first.effect)) {
         fail(g.path, `grants of "${state}" need the same duration (${durationFormOf(first.effect)})`);

@@ -106,6 +106,7 @@ import {
 } from '../burst/schedule.ts';
 import { capCritRate, ZERO_BUFFS, type BuffTotals } from '../skills/buffs.ts';
 import {
+  firesChargeShots,
   isResolvedShotCount,
   isResolvedTimer,
   resolveCoverHeals,
@@ -502,7 +503,7 @@ function runFirstPassOnce(
       ? null
       : {
           frames: [],
-          fullCharge: isChargeWeapon(slot.character.shot),
+          fullCharge: firesChargeShots(slot.definition, slot.character, slot.levels),
           lastShotFrames: [],
           hits: [],
           coreHits: [],
@@ -1398,8 +1399,9 @@ function runFirstPassOnce(
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
-      // 2 段目の段 11: チャージしない変更後の武器の発は fullChargeShot に数えない
-      const uncharged = log.fullCharge && params.weapon !== null && !isChargeWeapon(params.weapon.shot);
+      // 2 段目の段 11: チャージしない変更後の武器の発は fullChargeShot に数えない。ナユタ編（plan/design-nayuta.md 2.6 節）: チャージ武器への
+      // 変更を持つチャージしない基礎の武器の発も数えない（どちらも、発の武器がチャージ武器でない）
+      const uncharged = log.fullCharge && !isChargeWeapon(shot);
       if (uncharged) (log.unchargedShotFrames ??= []).push(f);
       // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
       // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。件の終わりも同じ列から作る（skills/holders.ts）

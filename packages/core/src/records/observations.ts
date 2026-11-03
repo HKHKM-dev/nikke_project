@@ -253,6 +253,10 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
   for (const group of [json.skills, json.treasureSkills ?? {}]) {
     for (const slot of SKILL_SLOTS) {
       delete group[slot]?.support;
+      // ナユタ編: 使用武器の変更の state から読み込みが足した付与は、読み直しでもう一度足されるので外す
+      const entry = group[slot];
+      if (entry !== undefined)
+        entry.effects = entry.effects.filter((e) => (e as { weaponChangeOf?: number }).weaponChangeOf === undefined);
       for (const effect of (group[slot]?.effects ?? []) as Record<string, unknown>[]) {
         // 2 段目の段 12: バースト段階の変更の側（burstStepMode）も読み込みで書く欄
         delete effect.burstStepMode;

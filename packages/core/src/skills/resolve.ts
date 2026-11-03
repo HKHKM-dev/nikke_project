@@ -1136,6 +1136,11 @@ export type ChangedWeaponOverrides = {
   maxAmmo?: number;
   /** 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾でチャージしない武器にする（instantFire） */
   instantFire?: boolean;
+  /**
+   * ナユタ編（plan/design-nayuta.md 2.6 節）: チャージしない基礎の武器から、チャージ武器（入力 UP。chargeTime と組む）にする。
+   * フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
+   */
+  chargeInput?: boolean;
 };
 
 /** 変更後の武器の ShotParams（WEAPON_CHANGE_CORE と、スピンアップなし = rateOfFire と endRateOfFire を同じにする） */
@@ -1155,11 +1160,22 @@ export function changedWeaponShot(
     ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
     ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
+    ...(overrides.chargeInput === true ? { inputType: 'UP' } : {}),
     // 2 段目の段 11: 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
     ...(overrides.instantFire === true
       ? { chargeTime: 0, fullChargeDamage: 1, inputType: 'DOWN', fireType: 'Instant', projectile: undefined }
       : {}),
   };
+}
+
+/**
+ * ナユタ編（plan/design-nayuta.md 2.6 節）: 枠がフルチャージの発を撃ちうるか（基礎の武器か、使用武器の変更の武器がチャージ武器）。
+ * 1 パス目の発の記録（ShotLog.fullCharge）が見る。どの発がフルチャージかは、発の武器で決まる（frame/firstPass.ts）
+ */
+export function firesChargeShots(def: SkillDefinition | null, character: CharacterData, levels: SkillLevels): boolean {
+  if (isChargeWeapon(character.shot)) return true;
+  if (def === null) return false;
+  return resolveTimed(def, character, levels).some((r) => r.weapon !== undefined && isChargeWeapon(r.weapon.shot));
 }
 
 /** Stage 11 モダニア: 使用武器の変更を、自分に付く stat 'weapon' の持続効果に解決する */
@@ -1190,11 +1206,15 @@ function resolveWeaponChange(
     effect.fullChargeDamage !== undefined ||
     effect.chargeReleaseSeconds !== undefined
   ) {
-    if (!isChargeWeapon(character.shot)) {
+    // ナユタ編（plan/design-nayuta.md 2.6 節。論点 4）: チャージしない基礎の武器（SMG の記憶燃焼）は、チャージ時間を書けば変更後の武器を
+    // チャージ武器（入力 UP）にする
+    const toCharge = !isChargeWeapon(character.shot) && effect.chargeTimeSeconds !== undefined;
+    if (!isChargeWeapon(character.shot) && !toCharge) {
       throw new RangeError(
-        `skill ${skill.id}: chargeTimeSeconds/fullChargeDamage/chargeReleaseSeconds need a charge weapon`,
+        `skill ${skill.id}: fullChargeDamage/chargeReleaseSeconds need a charge weapon (or chargeTimeSeconds to make the changed weapon one)`,
       );
     }
+    if (toCharge) overrides.chargeInput = true;
     if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
     if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
   }

@@ -34,6 +34,32 @@ function markBurstStepModes(skills: Record<SkillSlot, SkillEntry>, change: Burst
   }
 }
 
+/**
+ * ナユタ編（plan/design-nayuta.md 2.5 節。論点 2）: 使用武器の変更の state を、同じきっかけ・維持・条件・根拠の、中身の無い自分への付与にする
+ * （状態を見る側は付与だけを見るので、変更の窓と同じ窓の付与を足す）。足した付与は weaponChangeOf の印を持ち、スロットの効果の終わりに並ぶ
+ * （手書きの効果の番号は変わらない）
+ */
+function weaponChangeGrantsOf(
+  raws: readonly Json[],
+  effects: readonly SkillEntry['effects'][number][],
+  path: string,
+  slot: SkillSlot,
+): SkillEntry['effects'][number][] {
+  const out: SkillEntry['effects'][number][] = [];
+  effects.forEach((e, i) => {
+    if (e.kind !== 'weaponChange' || e.state === undefined) return;
+    const raw = raws[i] as Record<string, Json>;
+    const grant: Record<string, Json> = { kind: 'state', state: e.state, trigger: raw.trigger!, target: 'self' };
+    for (const key of ['durationRef', 'durationSeconds', 'condition', 'claims'] as const)
+      if (raw[key] !== undefined) grant[key] = raw[key];
+    const parsed = parseEffect(grant, `${path}.effects[${i}].state`, slot);
+    if (parsed.kind !== 'state') throw new Error('unreachable: a state grant parsed to another kind');
+    parsed.weaponChangeOf = i;
+    out.push(parsed);
+  });
+  return out;
+}
+
 function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' = 'skills'): SkillEntry {
   const path = `${root}.${slot}`;
   if (!isRecord(v)) fail(path, 'expected an object');
@@ -41,6 +67,7 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
     fail(`${path}.support`, 'support is derived from effects and notes (plan/design-skill-note-kinds.md); remove it');
   if (!Array.isArray(v.effects)) fail(`${path}.effects`, 'expected an array');
   const effects = v.effects.map((e, i) => parseEffect(e, `${path}.effects[${i}]`, slot));
+  effects.push(...weaponChangeGrantsOf(v.effects, effects, path, slot));
   validateBurstHitTriggers(effects, slot, path);
   let notes: SkillNote[] | undefined;
   if (v.notes !== undefined) {

@@ -5,6 +5,7 @@ import {
   type Json,
   parseDuration,
   parseLocalizedText,
+  parseNamedStateId,
   parseNonNegativeInt,
   parsePositiveInt,
   parseRef,
@@ -34,6 +35,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
         'firstShotDelayFrames',
         'firstShotAfterSwapFrames',
         'infiniteAmmo',
+        'state',
         'condition',
         'assumes',
         'claims',
@@ -121,6 +123,12 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       fail(`${path}.projectileExplosion`, `expected true, got ${JSON.stringify(v.projectileExplosion)}`);
     }
     effect.projectileExplosion = true;
+  }
+  // ナユタ編（plan/design-nayuta.md 2.5 節）: 変更の窓の間の状態（付与は parse/definition.ts の parseEntry が足す）
+  if (v.state !== undefined) {
+    if (untilEmpty)
+      fail(`${path}.state`, 'state cannot be combined with maxAmmoRef (the window ends on the last shot)');
+    effect.state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

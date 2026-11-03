@@ -149,6 +149,11 @@ const KIND_INFO: Record<string, Info> = {
     '自分に付く▼（デバフ）を防ぎうる。気絶免疫は射撃場では防ぐものが無く、状態（stunImmunity）としてだけ読む（D。C-0886）',
   ],
   'buffOp:nullify': ['増減効果の無効', 'gap', 'なし（チャージ速度の増減を無効にする等）'],
+  'buffOp:nullifyStack': [
+    'スタック量の増減効果の無効',
+    'ok',
+    '付与の stackImmutable（同じ定義の stackChange を弾く。ナユタの記憶吸収。plan/design-nayuta.md 2.5 節）',
+  ],
   // 2 段目の段 10・13: 写す元は自分の状態・カウンタと、敵に付く持続ダメージのスタックだけ
   'buffOp:copy': [
     'スタックのコピー',

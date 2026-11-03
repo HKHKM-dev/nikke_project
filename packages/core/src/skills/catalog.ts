@@ -174,6 +174,8 @@ const KINDS: Rules = [
   [/警戒対象指定|ターゲット殲滅|^命中部位$/, 'control:mark'],
   [/効果解除/, 'buffOp:dispel'],
   [/免疫/, 'buffOp:immunity'],
+  // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量の増減の無効は、ほかの増減効果の無効（チャージ速度など）と分ける
+  [/スタック量増減効果無効/, 'buffOp:nullifyStack'],
   [/効果無効/, 'buffOp:nullify'],
   // 2 段目の段 19: 攻撃力のコピー（ギルティ。copyTopAttack）と最大HP のコピー（シン・クエンシー。間接の notes）はスタックのコピーと分ける
   [/攻撃力のコピー X％$/, 'buffOp:copyAttack'],
