@@ -11,7 +11,10 @@
             "count": "fullChargeShot"
           },
           "target": "allies",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0913"
+          ]
         },
         {
           "kind": "timed",
