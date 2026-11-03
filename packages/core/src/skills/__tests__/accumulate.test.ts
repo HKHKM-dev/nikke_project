@@ -135,8 +135,16 @@ describe('accumulate の読み込み', () => {
   });
   it('rejects the self source with the burstUse trigger', () => {
     const def = rawDefinition<Raw>(DOROTHY);
-    (def.skills.burst.effects[0]!.accumulate as Record<string, unknown>).source = 'self';
+    const acc = def.skills.burst.effects[0]!.accumulate as Record<string, unknown>;
+    acc.source = 'self';
+    acc.applyDelayFrames = acc.releaseDelayFrames;
+    delete acc.releaseDelayFrames;
     expect(() => parseSkillDefinition(def)).toThrow(/fullChargeShot/);
+  });
+  it('rejects releaseDelayFrames on the self source (it takes applyDelayFrames)', () => {
+    const def = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(TRONY);
+    (def.skills.skill1.effects[0]!.accumulate as Record<string, unknown>).releaseDelayFrames = 16;
+    expect(() => parseSkillDefinition(def)).toThrow(/releaseDelayFrames/);
   });
   type RawS1 = { skills: { skill1: { effects: Record<string, unknown>[] } } };
   it('rejects the team source with a shot count trigger', () => {
@@ -160,8 +168,9 @@ function shotsIn(r: SimResult, slot: number, start: number, end: number): number
   return sum;
 }
 
-/** 蓄積爆破の 5 秒（294f）と切れるまでの遅れ・届いた発からの遅れ（data/skills/501.json） */
-const BLAST = 294 + 16;
+/** 蓄積爆破の付くまでの遅れ（付けた発から）・5 秒（294f）・届いた発からの遅れ（data/skills/501.json） */
+const APPLY_DELAY = 16;
+const BLAST = APPLY_DELAY + 294;
 const CAP_DELAY = 13;
 
 describe('蓄積爆破（トロニー単騎）', () => {
@@ -232,6 +241,17 @@ describe('蓄積爆破（リター・デルタ・トロニー）', () => {
       expect(x.stored).toBeGreaterThanOrEqual(x.cap);
       expect(acc.end).toBe(h.frame - CAP_DELAY + 1);
     }
+  });
+
+  it('reads the cap at the frame it takes effect, 16 frames after the applying shot (C-0916)', () => {
+    const trony = r.slots[2]!.segments;
+    const capAt = (f: number) => {
+      const seg = trony.find((x) => x.start <= f && f < x.end)!;
+      return seg.trigger.attack * 15.36 * (1 + seg.buffs.distributedDamage);
+    };
+    for (const x of releases) expect(x.cap).toBeCloseTo(capAt(x.applied + APPLY_DELAY), 0);
+    // 付けた発と付いたフレームの間で最終攻撃力が替わる回があり、その回は付けた発の時の値と違う
+    expect(releases.some((x) => Math.abs(capAt(x.applied) - x.cap) > 1)).toBe(true);
   });
 
   it('adds the Burst accumulation ratio increase to 50% (C-0903)', () => {

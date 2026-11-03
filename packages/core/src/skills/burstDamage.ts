@@ -152,7 +152,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
    */
   accumulate?:
     | { source: 'team'; durationFrames: number; releaseDelayFrames: number }
-    | { source: 'self'; durationFrames: number; releaseDelayFrames: number; capDelayFrames: number; ratio: number };
+    | { source: 'self'; durationFrames: number; applyDelayFrames: number; capDelayFrames: number; ratio: number };
   /**
    * V-0545: 周期の発火のどのヒットも、射手の 1 ヒットぶん × この数のゲージを溜める（frame/firstPass.ts が予約する。定義の true は 1。
    * アインのニアフェザー編: 召喚の攻撃は 2 以上の数も書ける）
@@ -415,7 +415,7 @@ export function resolveDamageEffects(
             : {
                 source: 'self',
                 durationFrames,
-                releaseDelayFrames: acc.releaseDelayFrames,
+                applyDelayFrames: acc.applyDelayFrames,
                 capDelayFrames: acc.capDelayFrames,
                 ratio: skillValue(skill, acc.ratioRef, levels[slot]) / 100,
               };
