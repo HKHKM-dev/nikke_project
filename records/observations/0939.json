@@ -439,5 +439,97 @@
       "slot": 3,
       "source": "firing"
     }
+  },
+  {
+    "id": "0939-19",
+    "recording": "0939",
+    "source": "V-0663",
+    "readAt": "2026-11-03",
+    "use": "input",
+    "kind": "timing",
+    "unit": "s",
+    "value": [28.849, 30.855, 65.314, 67.32, 104.822, 106.76, 141.219, 143.038, 174.352, 176.341],
+    "description": "リター・デルタ・プリバティ の、的のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる。1〜5 回目）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "V-0086 の読み方（0916-08 と同じ）。HUD の総ダメージの増分が 100f 以上止まった所。終わりは着地の後の最初の増分の 12f 前、始まりは終わりの 118f 前と、止まる前の最後の増分の 1f 後の遅いほう。ゲーム内の秒は、戦闘開始からのフレームから、それより前のフルバーストの入りごとに 22f と、I・II の発動（六角形の替わり目の 6f 前）ごとに 1f を引き、1f = 0.017 秒で数えた"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "target"
+    }
+  },
+  {
+    "id": "0939-20",
+    "recording": "0939",
+    "source": "V-0663",
+    "readAt": "2026-11-03",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 17833384,
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "4 回目のフルバーストの最後の弾丸（f9642。III の 00.00 の +317f）の増分。会心でない S2（1,805,455.17）・会心のターゲット指定（15,853,029.22）・プリバティの発（174,899.64）の和（17,833,384.03）と合う",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "モデルの S2 の各回の状態の格子の和に当てた（V-0660「読み方」の 4）。setup（enemy range-bigarms-fire・events range-3min-jump・manualBursts 0939-09・jumpWindows 0939-19）。的のジャンプの窓を代表値のままにすると、どの格子の和にも合わない（V-0660「分からないこと」）"
+    }
+  },
+  {
+    "id": "0939-21",
+    "recording": "0939",
+    "source": "V-0663",
+    "readAt": "2026-11-03",
+    "use": "record",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 2842666,
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "3 回目のフルバーストの後の最後の弾丸（f7339。III の 00.00 の +615f。ターゲット指定の追加ダメージは出ない）の増分。モデルのどの回の状態の格子の和にも合わない（最も近い和との差 68）。モデルではこの時刻に、フルバースト・S1・有利コードの攻撃ダメージ▲・リターのバーストの攻撃力▲がどれも切れていて、▲の無い S2（会心で 557,040）よりずっと大きい",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "setup（enemy range-bigarms-fire・events range-3min-jump・manualBursts 0939-09・jumpWindows 0939-19）。▲の組を総当たりした最も近い組（S1・リターのバーストの攻撃力▲・攻撃ダメージ▲・有利コードの▲・会心）でも、残り 74,865 がプリバティとリターの発の格子に合わない"
+    }
+  },
+  {
+    "id": "0939-22",
+    "recording": "0939",
+    "source": "V-0663",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "count",
+    "unit": "枠",
+    "value": [1, 2, 3, 1, 1, 2, 3, 1, 1, 2, 3, 1, 1, 2, 3, 1, 2, 3],
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    },
+    "description": "バーストの発動の枠の並び（1 始まり。180 秒の 18 回）。I だけで途切れるチェーンと III まで撃つチェーンが交互で、最後のチェーン（I は f10531）は II（f11107）・III までつながる",
+    "method": {
+      "tool": "recipe:burst-panel@3 の観測値（0939-03・0939-04）",
+      "note": "I → II・II → III の替わり目を時刻の順に並べた。比べるモデルは、I の発動（0939-09）と的のジャンプの窓（0939-19）を録画の値にした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 18
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0939-09",
+        "jumpWindows": "0939-19"
+      },
+      "tolerance": {
+        "abs": 0
+      }
+    }
   }
 ]
