@@ -1014,10 +1014,10 @@ function runFirstPassOnce(
   /** 枠 i のヒットごとのゲージの、このフレームの 1 ヒットの量 */
   const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3・2.4 節）: 蓄積爆破（damage の accumulate の self）。フルチャージの発で、
-  // 付いていなければ付ける（付けた発は溜めない）。付けた後の発の値 × (割合 + 蓄積割合▲) を、次のフレームの頭に（その発のフレームまでに
-  // 付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の capDelayFrames 後に最大量を出して解除する。付くのは
-  // 付けた発の applyDelayFrames 後で、最大量はそのフレームの値で決め（C-0916）、届かなければ付いてから窓の長さで切れ、射手の 1 ヒットぶんの
-  // ゲージを溜める（C-0430）。付くまでの発は、最大量が決まってから溜める
+  // 付いていなければ付ける（付けた発は溜めない）。付けた後、切れる capDelayFrames 前までの発（C-0927）の値 × (割合 + 蓄積割合▲) を、
+  // 次のフレームの頭に（その発のフレームまでに付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の
+  // capDelayFrames 後に最大量を出して解除する。付くのは付けた発の applyDelayFrames 後で、最大量はそのフレームの値で決め（C-0916）、
+  // 届かなければ付いてから窓の長さで切れ、射手の 1 ヒットぶんのゲージを溜める（C-0430）。付くまでの発は、最大量が決まってから溜める
   const accumulators = damageEffects.flatMap((effects, slotIndex) =>
     effects.flatMap((effect) => {
       const acc = effect.accumulate;
@@ -1061,8 +1061,10 @@ function runFirstPassOnce(
       const at = accumulateShotAt(a.slotIndex, attached, undefined);
       s.cap = at.attack * a.effect.multiplier * (1 + at.buffs.distributedDamage);
     }
+    // 切れるフレームの capDelayFrames 前より後に撃った発は溜めない（C-0927。発が溜まるのは約 13f 後とみた形）
+    const lastStored = s.expire - a.acc.capDelayFrames;
     for (const p of a.pending) {
-      if (s.reached !== null) break;
+      if (s.reached !== null || p.frame > lastStored) break;
       const at = accumulateShotAt(a.slotIndex, p.frame, p.progress);
       s.stored += at.value * (a.acc.ratio + at.buffs.accumulateRatio);
       if (s.stored >= s.cap) s.reached = p.frame;
@@ -1075,7 +1077,7 @@ function runFirstPassOnce(
       slotIndex: a.slotIndex,
       effect: a.effect,
       applied: s.applied,
-      end: capped ? s.reached! + 1 : s.expire,
+      end: (capped ? s.reached! : lastStored) + 1,
       frame: f,
       capped,
       cap: s.cap,
