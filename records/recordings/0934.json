@@ -1,0 +1,40 @@
+{
+  "id": "0934",
+  "date": "2026-11-03",
+  "folder": "range",
+  "file": "20261103-0934_sr+smg_trony+liter.mp4",
+  "original": "2026-11-03_17-30-55.mp4",
+  "durationSec": 200.5,
+  "frames": 12029,
+  "fps": 60,
+  "sizeMB": 243,
+  "sha256": "908e387be5d1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 501,
+      "name": "トロニー",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0657 の撮影 P1。トロニー（III・操作）・リター（I）。オート射撃 ON・オートバースト ON。最後の戦闘履歴（キャラ名・枠順・Lv.400）で確かめた",
+  "backup": {
+    "at": "2026-11-03T18:21+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
