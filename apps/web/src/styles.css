@@ -412,6 +412,17 @@ header h1 {
   padding: 0 5px;
   font-size: 0.72rem;
   margin-right: 4px;
+  color: #fff;
+}
+/* 区分ごとの背景色（文字は白）。仮定は近似と同じ色 */
+.note.unsupported .badge {
+  background: #c62828;
+}
+.note.approx .badge {
+  background: #ef6c00;
+}
+.note.out-of-scope .badge {
+  background: #455a64;
 }
 
 .simple-breakdown-table {
