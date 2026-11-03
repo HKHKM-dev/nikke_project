@@ -886,7 +886,7 @@ notes の種類: 未対応 41・前提の外 42・計算に無関係 41・補足
 
 - **skill1**: supported
   - effects[0] timed・normalShot・chargeSpeed: C-0895（確定）
-  - effects[1] passive・chargeSpeedOverflow: C-0899（確定）
+  - effects[1] passive・chargeSpeedOverflow: C-0899（確定）、C-0909（確定）
 - **skill2**: supported
   - effects[0] timed・redWolf が適用された時・attack: C-0899（確定）
   - notes[0] 間接（貫通）: 戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）: 根拠なし

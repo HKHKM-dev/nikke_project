@@ -22251,6 +22251,22 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0930-02",
+      "element": "レッドフード burst.effects[3]",
+      "key": "9c3a016d12496a66",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0931-02",
+      "element": "レッドフード burst.effects[3]",
+      "key": "5bb565307074caf1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
