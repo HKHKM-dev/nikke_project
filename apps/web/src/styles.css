@@ -478,6 +478,16 @@ header h1 {
   cursor: pointer;
   font-size: 0.9rem;
 }
+/* 一覧の見出しと見出しの間（モデル全体・敵の出来事・各スロット）に区切りの線を引く */
+.notes-summary > h3 ~ h3,
+.notes-summary > section {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--app-border);
+}
+.notes-summary > section > h3 {
+  margin-top: 0;
+}
 .data-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14em, 1fr));
