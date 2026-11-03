@@ -1,0 +1,33 @@
+{
+  "id": "C-0906",
+  "text": "draft",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0870-07`・`0870-08`・`0871-07`・`0871-08`・`0872-07`・`0872-08`・`0873-07`・`0873-08`。V-0645",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": ["data/skills/233.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0870",
+      "role": "値を合わせた"
+    }
+  ],
+  "runs": [
+    {
+      "recording": "0870",
+      "decided": "1",
+      "reproduced": "2",
+      "observations": ["0870-08"]
+    },
+    {
+      "recording": "0871",
+      "reproduced": "1,2",
+      "observations": ["0871-07", "0871-08"]
+    }
+  ]
+}
