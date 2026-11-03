@@ -33,9 +33,7 @@
               },
               "damageType": "additional",
               "ref": 7,
-              "gaugeHits": [
-                0
-              ]
+              "gaugeHits": [0]
             }
           }
         ]
@@ -73,9 +71,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       },
       "note": "最初の満タンのフレーム（戦闘開始から）"
@@ -90,16 +86,11 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       },
       "note": "最初の満タンまでにラプンツェル：サンクチュアリが撃った発の数",
-      "observations": [
-        "0932-08",
-        "0933-08"
-      ]
+      "observations": ["0932-08", "0933-08"]
     },
     {
       "id": "asuka-shots-to-full",
@@ -111,16 +102,11 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true
       },
       "note": "最初の満タンまでにアスカが撃った発の数",
-      "observations": [
-        "0932-09",
-        "0933-09"
-      ]
+      "observations": ["0932-09", "0933-09"]
     }
   ],
   "predicted": {
