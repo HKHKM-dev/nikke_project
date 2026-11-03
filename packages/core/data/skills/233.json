@@ -84,13 +84,17 @@
           ]
         },
         {
-          "ja": "指定された敵 1 機への烙印（効果時間中に対象が受けたダメージを累計し、終了後に累計に応じて分配ダメージ。最大蓄積量は最終攻撃力の 8900.83%）は未対応（爆発はバーストの約 799 ティック後に 1 ヒット出るが、値と累計の関係が決まっていない。V-0612）",
-          "en": "Brand on one designated enemy (accumulates the damage the target takes during the effect and deals distributed damage according to it afterwards; the maximum is 8900.83% of final ATK) is not modeled (the explosion is one hit about 799 ticks after the Burst, but how its value relates to the accumulated damage is undetermined. V-0612)",
+          "ja": "指定された敵 1 機への烙印（効果時間中に対象が受けたダメージを累計し、終了後に累計に応じて分配ダメージ。最大蓄積量は最終攻撃力の 8900.83%）は未対応（爆発の 1 ヒットは、烙印の 10 秒の間に的が受けた総ダメージ（味方の分を含む）の和そのもので、補正は掛からない（C-0901）。窓はバーストの発動から約 591f で、爆発は窓の終わりの約 209f 後（C-0902）。最大蓄積量に届いた時は確かめていない）",
+          "en": "Brand on one designated enemy (accumulates the damage the target takes during the effect and deals distributed damage according to it afterwards; the maximum is 8900.83% of final ATK) is not modeled (the explosion is one hit equal to the plain sum of all damage the target took during the 10 s of the Brand, allies included, with no modifiers (C-0901); the window starts at the Burst and lasts about 591 frames, and the explosion comes about 209 frames after it ends (C-0902); the cap has not been observed)",
           "kind": "unimplemented",
           "effect": {
             "kind": "damage",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0901",
+            "C-0902"
+          ]
         }
       ]
     }
