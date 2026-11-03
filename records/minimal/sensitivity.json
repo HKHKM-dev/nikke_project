@@ -22449,6 +22449,318 @@
       "effective": true,
       "minus": -0.30500004822588733,
       "plus": -0.30500004822588733
+    },
+    {
+      "observation": "0954-08",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "8d98fc60ad203d11",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0954-08",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "8d98fc60ad203d11",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-08",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "8d98fc60ad203d11",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-09",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "89870525402dd100",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0954-09",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "89870525402dd100",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-09",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "89870525402dd100",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-11",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "4ca398f3b5428602",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0954-11",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "4ca398f3b5428602",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-11",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "4ca398f3b5428602",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-12",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "903bfbb474550efd",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0954-12",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "903bfbb474550efd",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-12",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "903bfbb474550efd",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-13",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "cf5fb46972e77b18",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0954-13",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "cf5fb46972e77b18",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-13",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "cf5fb46972e77b18",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-15",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "b9a86a8b598aeecc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0954-15",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "b9a86a8b598aeecc",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0954-15",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "b9a86a8b598aeecc",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-09",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "27bf2177c382b0aa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0955-09",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "27bf2177c382b0aa",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-09",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "27bf2177c382b0aa",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-10",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "44aa0ed27984301b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0955-10",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "44aa0ed27984301b",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-10",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "44aa0ed27984301b",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-12",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "29f5c3c49033ff19",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0955-12",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "29f5c3c49033ff19",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-12",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "29f5c3c49033ff19",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-13",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "9061c60a9d55ba0d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0955-13",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "9061c60a9d55ba0d",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-13",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "9061c60a9d55ba0d",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-14",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "0c015a64fcba6477",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0955-14",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "0c015a64fcba6477",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-14",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "0c015a64fcba6477",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-16",
+      "element": "マスト：ロマンチックメイド burst.effects[0]",
+      "key": "62ab6fb36ddd83a0",
+      "effective": true,
+      "minus": 0,
+      "plus": 2448.9576111000006
+    },
+    {
+      "observation": "0955-16",
+      "element": "マスト：ロマンチックメイド skill2.effects[0]",
+      "key": "62ab6fb36ddd83a0",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0955-16",
+      "element": "マスト：ロマンチックメイド skill2.effects[1]",
+      "key": "62ab6fb36ddd83a0",
+      "effective": true,
+      "minus": 0,
+      "plus": null,
+      "error": "plus: Cannot read properties of undefined (reading 'selfState')"
     }
   ]
 }
