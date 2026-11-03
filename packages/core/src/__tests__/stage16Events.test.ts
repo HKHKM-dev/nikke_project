@@ -14,6 +14,7 @@ import { enemyEventNotes, untargetableRanges } from '../frame/events.ts';
 import {
   beginHide,
   chargeProgressFrames,
+  firesUntilDetect,
   hideShooter,
   initialShooter,
   shotFramesUpTo,
@@ -26,7 +27,7 @@ import { runSimulation } from '../sim/engine.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
 import type { ShotParams } from '../types.ts';
-import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
 import { makeCharacter } from './fixtures.ts';
 import { characterOf } from './teamHelpers.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
@@ -111,7 +112,8 @@ describe('untargetableRanges', () => {
 
 /**
  * 射手を frames フレーム回し、窓の出入りで hide / unhide を呼ぶ（frame/firstPass.ts の手順 1 と同じ順）。窓の始まりに beginHide、
- * 窓の間は毎フレーム stepHide（待ちが無ければ何もしない。plan/design-hide-reload-detect.md 案 A）
+ * 窓の間は毎フレーム stepHide（待ちが無ければ何もしない。plan/design-hide-reload-detect.md 案 A）。チャージの無い武器は D まで撃てる
+ * （firesUntilDetect。同 10 節）
  */
 function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frames: number): number[] {
   const shot = makeCharacter(partial).shot;
@@ -123,20 +125,23 @@ function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frame
       if (beginHide(state, shot) !== null) fired.push(f);
     } else if (blocked && stepHide(state, shot) !== null) fired.push(f);
     if (f === window.end) unhideShooter(state, shot, window.end - window.start);
-    if (stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, blocked)) fired.push(f);
+    if (stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, blocked && !firesUntilDetect(state, shot))) fired.push(f);
   }
   return fired;
 }
 
 describe('射手（ハイドとリロード）', () => {
   it('AR (reload 1 s < 2 s jump): reloads while hiding and resumes with a full magazine at the end of the window', () => {
-    // 12…99 で 18 発（構え 12f の後から。Stage 21-C3 で 4〜5f 刻み）→ 100 でハイドしてリロード（159 で満タン、
-    // リロード明けの遅れは窓の中）→ 220 の明けから構え 12f の 232 で撃ち直し（Stage 22-C）、60 発を 522 まで撃って、
-    // リロード 59f（Stage 24: 58.8f の端数を持ち越す）+ 24f の 605 に次のマガジン
+    // 12…107 で 20 発（構え 12f の後から。Stage 21-C3 で 4〜5f 刻み。窓の始まり 100 から D（108）の前までも撃つ。
+    // plan/design-hide-reload-detect.md 10 節）→ 108 でハイドしてリロード（満タンとリロード明けの遅れは窓の中）→ 220 の明けから
+    // 構え 12f の 232 で撃ち直し（Stage 22-C）、60 発を 522 まで撃って、リロード 59f（Stage 24: 58.8f の端数を持ち越す）+ 24f の 605 に
+    // 次のマガジン
     const ar = computeCadence(makeCharacter({}).shot).shotFrames;
     const fired = shotsWithWindow({}, { start: 100, end: 220 }, 700);
-    const before = ar.map((f) => 12 + f).filter((f) => f < 100);
-    expect(before).toHaveLength(18);
+    const detect = 100 + DEFAULT_WEAPON_MODEL.hideDetectFrames;
+    const before = ar.map((f) => 12 + f).filter((f) => f < detect);
+    expect(before).toHaveLength(20);
+    expect(before.filter((f) => f >= 100)).toHaveLength(2);
     expect(fired).toEqual([...before, ...ar.map((f) => 232 + f), ...ar.map((f) => 605 + f).filter((f) => f < 700)]);
   });
 
@@ -150,9 +155,12 @@ describe('射手（ハイドとリロード）', () => {
       rateOfFireResetTime: 1,
     };
     const fired = shotsWithWindow(mg, { start: 200, end: 320 }, 1200);
-    const before = fired.filter((f) => f < 200);
+    // 窓の始まり 200 から D（208）の前までは撃ち続ける（plan/design-hide-reload-detect.md 10 節）
+    const detect = 200 + DEFAULT_WEAPON_MODEL.hideDetectFrames;
+    const before = fired.filter((f) => f < detect);
     const after = fired.filter((f) => f >= 320);
-    expect(fired.some((f) => f >= 200 && f < 320)).toBe(false);
+    expect(before.filter((f) => f >= 200).length).toBeGreaterThan(0);
+    expect(fired.some((f) => f >= detect && f < 320)).toBe(false);
     // 明けから構え 12f の後に撃つ（Stage 22-C。C-0114 の MG は明けから 11f）
     expect(after[0]).toBe(332);
     // 撃ち直しの間隔は戦闘開始のマガジンの間隔と同じ（スピンアップを最初から）
@@ -407,11 +415,13 @@ describe('編成', () => {
     const sim = runSimulation(input(jumps));
     // Stage 22-B: 窓の中に出るのは、窓の始まりにチャージが満ちていた発（窓の始まり）と、チャージの途中だった枠の部分チャージの発
     // （C-0109。窓の始まりの D + H 後。H はこの編成の SR で 1f。D の間に満ちていれば値はフルチャージ）だけ
-    // （plan/design-hide-reload-detect.md 案 A）。それ以外は撃たない
+    // （plan/design-hide-reload-detect.md 案 A）と、チャージの無い武器の窓の始まりから D の前までの発（同 10 節）。それ以外は撃たない
     const detect = DEFAULT_WEAPON_MODEL.hideDetectFrames;
     const allowed = (f: number) => windows.some((w) => f === w.start || f === w.start + detect + 1);
-    for (const log of sim.shots) {
-      expect(log!.frames.filter(inside).every(allowed)).toBe(true);
+    const beforeDetect = (f: number) => windows.some((w) => w.start <= f && f < w.start + detect);
+    for (const [i, log] of sim.shots.entries()) {
+      const noCharge = !isChargeWeapon(slots[i]!.character.shot);
+      expect(log!.frames.filter(inside).every((f) => allowed(f) || (noCharge && beforeDetect(f)))).toBe(true);
       for (const p of log!.partialShots ?? []) expect(allowed(p.frame)).toBe(true);
     }
     expect(sim.schedule!.activations.some((a) => inside(a.frame))).toBe(false);

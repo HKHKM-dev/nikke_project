@@ -657,6 +657,23 @@ function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
   return window.end - start;
 }
 
+/**
+ * V-0648（plan/design-hide-reload-detect.md 10 節）: window 回目の狙えない窓の、窓の終わり（明け）から見た、その窓の前の最後の発（窓の
+ * 始まりから D の前までの発を含む）までのフレーム。window はカンマ区切りの並び（"0,1,2"）も書け、そのときは窓ごとの列
+ */
+function lastShotToWindowEnd(result: SimResult, ctx: MetricContext): number | number[] {
+  const frames = result.shots[slotIndexOf(ctx)]?.frames ?? [];
+  const at = (index: number): number => {
+    const window = result.untargetable[index];
+    if (window === undefined) throw new Error(`${index} 回目の狙えない窓が無い`);
+    const last = frames.filter((f) => f < window.end).at(-1);
+    if (last === undefined) throw new Error(`${index} 回目の狙えない窓の前に発が無い`);
+    return window.end - last;
+  };
+  const w = ctx.args.window;
+  return typeof w === 'string' ? w.split(',').map((x) => at(Number(x.trim()))) : at(Number(w));
+}
+
 /** window 回目の狙えない窓の中の部分チャージの発の、チャージの進み（plan/design-hide-reload-detect.md 9 節） */
 function partialChargeProgressIn(result: SimResult, ctx: MetricContext): number {
   const { index, window } = untargetableWindowOf(result, ctx);
@@ -1524,6 +1541,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
+  lastShotToWindowEnd: { args: ['slot', 'window'], sim: lastShotToWindowEnd },
   partialChargeProgress: { args: ['slot', 'window'], sim: partialChargeProgressIn },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },

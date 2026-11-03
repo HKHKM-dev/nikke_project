@@ -122,7 +122,7 @@ V-0562 の案（A）から始め、ほかの案と比べた。
 | eun-round-ad-core（hitDamage）      | （実測なし）           | 3,157,062.912                   |
 | eun-round-ad-core-dist（hitDamage） | （実測なし）           | 3,630,622.349                   |
 | eun-round-ad-core-crit（hitDamage） | （実測なし）           | 4,317,441.386                   |
-| eun-round-core（hitDamage）         | 2,746,329（`0842-12`） | 2,746,328.784（-0.216、許容内） |
+| eun-round-core（hitDamage）         | （実測なし）           | 2,746,328.784                   |
 | flower-core-pre（hitDamage）        | 222,728（`0842-03`）   | 222,727.856（-0.144、許容内）   |
 | flower-ad-core（hitDamage）         | （実測なし）           | 287,438.239                     |
 | eun-pre-core（hitDamage）           | 713,539（`0842-04`）   | 713,539.504（+0.504、許容内）   |

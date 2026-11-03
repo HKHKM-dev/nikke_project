@@ -518,6 +518,8 @@ export function hideShooter(
  * 狙えない窓（敵のジャンプ）の始まりのフレーム（stepShooter の前に呼ぶ）。plan/design-hide-reload-detect.md 案 A:
  * - チャージが満ちている（満ちてから撃つまでの間か、このフレームに撃つはずだった）枠は、その場で撃ち（進み 1）、ハイドする。
  * - ほかの枠は D（WeaponModel.hideDetectFrames）まで待つ（stepHide）。チャージの途中だったかは、ここで決める。
+ * - チャージの無い武器は、D まで撃てる状態のまま（firesUntilDetect）で、弾切れのリロードの途中でも D まで待つ（込め終えれば撃つ）。
+ *   設計書 10 節（V-0648）
  * @returns このフレームに撃った発のチャージの進み（撃たなければ null）
  */
 export function beginHide(
@@ -531,10 +533,18 @@ export function beginHide(
     fireAndHide(state, shot, model, params);
     return 1;
   }
-  if (state.phase === 'reloading') return null;
+  if (state.phase === 'reloading' && isChargeWeapon(shot)) return null;
   const hold = progress > 0 ? holdFramesOf(params) : 0;
   state.hidePending = { framesLeft: model.hideDetectFrames + hold, progress };
   return settleHide(state, shot, model, params);
+}
+
+/**
+ * 狙えない窓の始まりから D までの間も撃ち続ける枠か（チャージの無い武器の、D までの待ちの間。1 パス目が stepShooter の blocked を外す）。
+ * 録画では、チャージの無い武器のジャンプの前の最後の発がハイド中のリロードの始まり（D）の 0〜3f 前にある（V-0648。設計書 10 節）
+ */
+export function firesUntilDetect(state: ShooterState, shot: ShotParams): boolean {
+  return state.hidePending !== undefined && !isChargeWeapon(shot);
 }
 
 /**

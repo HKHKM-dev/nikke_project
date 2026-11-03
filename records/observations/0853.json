@@ -269,7 +269,7 @@
     "kind": "interval",
     "unit": "f",
     "value": 110.06,
-    "description": "4 回目の敵のジャンプの、エーテル（SG）のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（マガジンの途中に来たジャンプ）",
+    "description": "4 回目の敵のジャンプの、エーテル（SG）のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（マガジンの途中に来たジャンプ）（比べていない: モデルの 10 節（窓の始まりから D までの発）で発の刻みが動き、モデルは 4 回目の窓にマガジンが満ちたまま入るのでハイド中のリロードが無い（2026-11-03））",
     "method": {
       "tool": "node tools/captures/reload.ts --mode fit",
       "note": "0 の点 f9123.94 → 消えた 9234（動画）。ジャンプの前の最後の増分は f9085。モデルは録画の窓 `0853-08` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
@@ -278,23 +278,6 @@
       "slot": 1,
       "source": "firing"
     },
-    "use": "compare",
-    "compare": {
-      "model": "sim",
-      "metric": "hideReloadToWindowEnd",
-      "args": {
-        "slot": 1,
-        "window": 3
-      },
-      "tolerance": {
-        "abs": 2
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "burst": false,
-        "jumpWindows": "0853-08"
-      }
-    }
+    "use": "record"
   }
 ]

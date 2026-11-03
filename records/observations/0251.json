@@ -258,17 +258,34 @@
     "source": "V-0648",
     "readAt": "2026-11-03",
     "kind": "interval",
-    "use": "record",
+    "use": "compare",
     "unit": "f",
     "value": [111, 111, 112],
-    "description": "マガジンの途中に来た敵のジャンプの、マナ（AR）のジャンプの前の最後の発（総ダメージの増分）から明け（ハイド中のリロードのバーが消えたフレーム）まで。モデルは窓の始まり（明けの約 118f 前）より後に撃たないので、録画の窓で回すと 119〜122f",
+    "description": "マガジンの途中に来た敵のジャンプの、マナ（AR）のジャンプの前の最後の発（総ダメージの増分）から明け（ハイド中のリロードのバーが消えたフレーム）まで。窓の始まり（明けの約 118f 前）で撃つのを止める形なら 119〜122f",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
-      "note": "回ごとに 0251-07 の回 111f・0251-08 の回 111f・0251-09 の回 112f（明けと最後の増分のフレームは各観測値の注記）。5 回目（0251-10）は HUD が明けの約 120f 前から 19f 読めず、最後の増分が決まらない。最後の増分は、バーの 0 の点とほぼ同じフレーム（0〜3f 前）"
+      "note": "回ごとに 0251-07 の回 111f・0251-08 の回 111f・0251-09 の回 112f（明けと最後の増分のフレームは各観測値の注記）。5 回目（0251-10）は HUD が明けの約 120f 前から 19f 読めず、最後の増分が決まらない。最後の増分は、バーの 0 の点とほぼ同じフレーム（0〜3f 前）。モデルは録画の窓 `0251-06` で回し、窓の前の最後の発から窓の終わりまで（lastShotToWindowEnd）。許容は AR の発と発の間（約 5f）の刻みのずれの分"
     },
     "scope": {
       "slot": 1,
       "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "lastShotToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": "0,2,3"
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0251-06"
+      }
     }
   },
   {
