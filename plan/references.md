@@ -44,6 +44,10 @@
   - Blablalink / Prydwen 由来の JSON を再配布しているページ。データ同梱可否の判断材料
 - fuwaguwa/NikkeAPI: https://github.com/fuwaguwa/NikkeAPI
   - prydwen.gg のデータを返す API
+- d34d633f/nikke-einkk: https://github.com/d34d633f/nikke-einkk
+  - NIKKE の戦闘シミュレータ（Dart。MIT）。ゲームの StaticData を落として復号し、スキルの関数の表（`function_type`・`function_value_type`・`function_standard` など）を読む。データは同梱しない。割合の効果の基準（`function_standard`）の扱いの参考（V-0642）
+- SharpnelXu/nikke-mpk-json-converter: https://github.com/SharpnelXu/nikke-mpk-json-converter
+  - StaticData の表（mpk）を JSON にする道具。復号を伴うので、開発は非公開に移したと README にある
 
 ## 検証の記録の仕方（2026-09-27 に調べた）
 
