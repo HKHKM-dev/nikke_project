@@ -208,6 +208,11 @@ export const NAMED_STATES = {
    * 中身は発動者基準の防御力▼（casterDefence）。バーストの暴風が写すスタックの元）
    */
   seaBreeze: { name: { ja: '海風', en: 'Sea Breeze' }, holder: 'enemy' },
+  /**
+   * プリバティ編: ターゲット指定（プリバティの宝物版バースト。敵全体に 10 秒。中身の攻撃力▼はダメージに関係しないので中身なし。
+   * 宝物版 S2 の「対象がターゲット指定状態なら」の追加ダメージが見る）
+   */
+  designatedTarget: { name: { ja: 'ターゲット指定', en: 'Designated Target' }, holder: 'enemy' },
   /** 同 2.3 節: 暴風（マストのバースト。海風のスタック数を写す 1 秒ごとのダメージ・7 秒。持続ダメージではない） */
   storm: { name: { ja: '暴風', en: 'Storm' }, holder: 'enemy' },
   /**

@@ -169,7 +169,8 @@ describe('エレグ（500）のバースト', () => {
     expect(withBurst([damage, grant({ contents: [{ stat: 'attack', ref: 4 }] })])).toThrow(/enemy-held stats/);
     expect(withBurst([damage, grant({ state: 'persona' })])).toThrow(/held by the ally/);
     expect(withBurst([damage, grant({ target: 'allies' })])).toThrow(/held by the enemy/);
-    expect(withBurst([damage, grant({ contents: undefined })])).toThrow(/needs contents/);
+    // プリバティ編: 同じ定義の条件 enemyState が読む状態（エレグの S1・S2 がブームインストールを読む）は、中身なしでも書ける
+    expect(withBurst([damage, grant({ contents: undefined })])).not.toThrow();
   });
 });
 

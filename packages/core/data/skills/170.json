@@ -1,0 +1,219 @@
+{
+  "formatVersion": 1,
+  "resourceId": 170,
+  "checkedAt": "2026-11-03",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "maxAmmo",
+          "decrease": true,
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "damageType": "additional",
+          "ref": 1,
+          "assumes": {
+            "ja": "「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（最後の弾丸はいつも命中する前提）。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "\"When the last bullet hits\" fires on the shot that empties the magazine (the last bullet is assumed to hit). The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "対象が気絶状態の時の追加ダメージは未対応（ボス・射撃場の的にバーストの気絶が付くかを確かめていない。基礎版は撮れない）",
+          "en": "The additional damage when the target is stunned is not modeled (whether the Burst's stun is applied to a boss or the range target is unverified; the base version cannot be recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "lastShot"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
+            "en": "All enemies means one hit on the single enemy. The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "敵全体の気絶はそれ自体ダメージに関係しない（S2 の気絶の条件は未対応）",
+          "en": "The stun on all enemies does not affect damage by itself (the stun condition of S2 is not modeled)",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attack",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "maxAmmo",
+          "decrease": true,
+          "ref": 5,
+          "durationRef": 6
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 7,
+          "durationRef": 8
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "敵 1 体。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（最後の弾丸はいつも命中する前提）。付き直しは窓を延ばすだけで重ならない。同じ発火の追加ダメージには乗り、発火した発の通常攻撃には乗らない（C-0645 と同じ扱い。仮説）",
+            "en": "One enemy. \"When the last bullet hits\" fires on the shot that empties the magazine (the last bullet is assumed to hit). Reapplying extends the window without stacking. The additional damage of the same trigger gets it; the triggering shot itself does not (as in C-0645; hypothesis)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "damageType": "additional",
+          "ref": 1
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "condition": {
+            "enemyState": "designatedTarget"
+          },
+          "assumes": {
+            "ja": "対象がターゲット指定状態（バーストで付く）の時だけ出る",
+            "en": "Fires only while the target is in Designated Target (applied by the Burst)"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "assumes": {
+            "ja": "有利コードの敵にだけ効く（水のプリバティには火の敵）",
+            "en": "Applies only against an enemy of the disadvantaged code (Fire for Water-code Privaty)"
+          }
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット。同じ発動の有利コードの攻撃ダメージ▲が乗るかは、着地点の表（burst/landing.ts）のとおり",
+            "en": "All enemies means one hit on the single enemy. Whether the same activation's Elemental Advantage Attack Damage up applies follows the landing table (burst/landing.ts)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "designatedTarget",
+          "trigger": "burstHit",
+          "target": "enemy",
+          "durationRef": 4,
+          "assumes": {
+            "ja": "ターゲット指定はバーストスキルダメージのヒットで敵に付き、値 04（10）秒続く。中身の攻撃力▼はダメージに関係しない（S2 の条件が見るだけ）",
+            "en": "Designated Target is applied to the enemy on the Burst Skill damage hit and lasts value 04 (10) s. Its ATK down does not affect damage (only the S2 condition reads it)"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "敵全体の気絶と、ターゲット指定の攻撃力▼はダメージに関係しない",
+          "en": "The stun on all enemies and the ATK down of Designated Target do not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    }
+  }
+}
