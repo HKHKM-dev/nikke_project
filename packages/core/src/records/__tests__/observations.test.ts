@@ -141,8 +141,7 @@ describe('records/claims・plan/claims.md', () => {
     // コア命中率・弾丸命中率の指標は、命中率▲が自動の条件でしか効かないので、確定の結論に結び付けてよい（同「経過」の 2026-11-03）
     const auto = residuals.filter(
       (r) =>
-        r.observation.compare?.setup.condition === 'auto' &&
-        !AUTO_GATEABLE_METRICS.has(r.observation.compare.metric),
+        r.observation.compare?.setup.condition === 'auto' && !AUTO_GATEABLE_METRICS.has(r.observation.compare.metric),
     );
     expect(auto.filter((r) => gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
   });
