@@ -1,6 +1,6 @@
 # 設計書: モダンUIとUIモード切り替えの段階的導入
 
-- 状態: **進行中（Step 1: UI切り替え基盤 & View層の分離）**
+- 状態: **進行中（Step 2 & 3: モダン編成カード・キャラトレイ・クリック配置）**
 - 関連: [design-unify-sim-calc.md](design-unify-sim-calc.md)
 - 作成日: 2026-11-03
 
@@ -14,7 +14,7 @@
    - `App.tsx` の状態管理（`team`, `parties`, `calc`, `shown`, `batch`, `totals` 等）を維持し、表示層を `<ClassicView />` と `<ModernView />` に分離する。
    - クラシックUIの既存コード・動作・テストには影響を与えず、独立性を保証する。
 2. **段階的な導入ステップ**:
-   - **Step 1**: UIモード切り替え基盤（`classic` / `modern`）と `ClassicView` への切り出し、`ModernView` の受け皿作成。
+   - **Step 1**: UIモード切り替え基盤（`classic` / `modern`）と `ClassicView` への切り出し、`ModernView` の受け皿作成（PR #945 完了）。
    - **Step 2**: 画像アセット配置構造とフォールバック表示（属性・バースト・武器・キャラ名）。
    - **Step 3**: モダン編成カード ＆ キャラトレイ（クリック配置＋育成詳細モーダル）。
    - **Step 4**: `@dnd-kit/core` によるドラッグ＆ドロップ（トレイ→スロット、スロット間スワップ）。
@@ -26,23 +26,24 @@
 
 ---
 
-## 2. Step 1 の設計
+## 2. 実装詳細
 
-### 2.1 UIモードの状態管理（`uiMode.ts`）
+### 2.1 Step 1: UIモードの状態管理とView層の分離
 
-- 型: `export type UiMode = 'classic' | 'modern';`
-- ストレージキー: `nikke-calc.ui-mode`
-- 既定値: `'classic'`（既存利用者の体験を維持）
-- 設定メニュー（`SettingsMenu`）に「表示モード: クラシック / モダン」のラジオボタンを追加。
+- `uiMode.ts`: `classic` / `modern` の状態管理と localStorage 保存。
+- `SettingsMenu.tsx`: 表示モード切り替えラジオを追加。
+- `ClassicView.tsx` / `ModernView.tsx`: 表示層を分離。
 
-### 2.2 View層の分離
+### 2.2 Step 2 & 3: モダン編成カードとキャラトレイ
 
-- `apps/web/src/views/ViewProps.ts`: 両Viewに渡す共通プロパティの型定義。
-- `apps/web/src/views/ClassicView.tsx`: 現行の `App.tsx` のメイン表示部分（設定フォーム、合計パネル、タブ、スロット、エラー境界、注記サマリー）をそのまま切り出し。
-- `apps/web/src/views/ModernView.tsx`: モダンUIの受け皿（Step 1 では ClassicView と同一のプロパティを受け取り、モダンUI枠組みとクラシック切り替え案内を表示）。
+- `CharacterVisual.tsx`: キャラクター画像（将来のアセット）および画像不在時のフォールバックCSSカード表示（属性グラデーション、バースト段階、武器種、キャラ名）。
+- `ModernSlotCard.tsx`: 5枠並びの編成カード。ダメージ量、ダメージ寄与度バー、フォーカス表示、空きスロット表示、育成・詳細設定ボタン。
+- `CharacterTray.tsx`: 属性・バースト段階・武器種・完全対応・検索キーワードによる絞り込みが可能なキャラクター選択パレット。クリックで対象スロットに配置。
+- `SlotBuildModal.tsx`: モーダルダイアログによる育成設定（好感度、限界突破、コア強化、スキルLv、装備、キューブ、コレクション、宝物）およびスロット詳細設定（フォーカス、撃たない、バーストしない）の編集。
 
 ---
 
 ## 経過
 
-- 2026-11-03: オーナーとの対話により設計方針を承認。ブランチ `antigrav/modern-ui-foundation` にて Step 1 着手。
+- 2026-11-03: オーナーとの対話により設計方針を承認。ブランチ `antigrav/modern-ui-foundation` にて Step 1 着手。PR #945 にて main にマージ完了。
+- 2026-11-03: ブランチ `antigrav/modern-ui-cards` にて Step 2 & 3（モダン編成カード・キャラトレイ・クリック配置）を着手。
