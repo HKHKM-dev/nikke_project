@@ -22031,6 +22031,54 @@
       "plus": 0
     },
     {
+      "observation": "0932-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "eb339a760aa6ee63",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0932-08",
+      "element": "アスカ burst.effects[2]",
+      "key": "eb339a760aa6ee63",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0932-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "420a0677ad0d4d52",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0932-09",
+      "element": "アスカ burst.effects[2]",
+      "key": "420a0677ad0d4d52",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "0933-03",
       "element": "アスカ burst.effects[0]",
       "key": "8d0caa1f3cb4a932",
@@ -22098,6 +22146,54 @@
       "observation": "0933-05",
       "element": "アスカ burst.effects[2]",
       "key": "f7410ad24b498db7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0933-08",
+      "element": "アスカ burst.effects[0]",
+      "key": "ab459914039acc41",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0933-08",
+      "element": "アスカ burst.effects[2]",
+      "key": "ab459914039acc41",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0933-09",
+      "element": "アスカ burst.effects[0]",
+      "key": "51d9b8cd442a59b0",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0933-09",
+      "element": "アスカ burst.effects[2]",
+      "key": "51d9b8cd442a59b0",
       "effective": false,
       "minus": 0,
       "plus": 0
