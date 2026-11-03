@@ -644,9 +644,13 @@ function untargetableWindowOf(
   ctx: MetricContext,
 ): { index: number; window: { start: number; end: number } } {
   const index = Number(ctx.args.window);
+  return { index, window: untargetableWindowAt(result, index) };
+}
+
+function untargetableWindowAt(result: SimResult, index: number): { start: number; end: number } {
   const window = result.untargetable[index];
   if (window === undefined) throw new Error(`${index} 回目の狙えない窓が無い`);
-  return { index, window };
+  return window;
 }
 
 function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
@@ -664,9 +668,8 @@ function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
 function lastShotToWindowEnd(result: SimResult, ctx: MetricContext): number | number[] {
   const frames = result.shots[slotIndexOf(ctx)]?.frames ?? [];
   const at = (index: number): number => {
-    const window = result.untargetable[index];
-    if (window === undefined) throw new Error(`${index} 回目の狙えない窓が無い`);
-    const last = frames.filter((f) => f < window.end).at(-1);
+    const window = untargetableWindowAt(result, index);
+    const last = frames.findLast((f) => f < window.end);
     if (last === undefined) throw new Error(`${index} 回目の狙えない窓の前に発が無い`);
     return window.end - last;
   };

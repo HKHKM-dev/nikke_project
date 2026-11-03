@@ -144,7 +144,6 @@ import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
   beginHide,
-  firesUntilDetect,
   hideShooter,
   initialShooter,
   refillAmmo,
@@ -1255,8 +1254,7 @@ function runFirstPassOnce(
         chargeWatches[i] !== null && isChargeWeapon(shot) && !reloading && !slotBlocked
           ? chargeProgressFrames(state, params, model)
           : null;
-      // 設計書 10 節（V-0648）: チャージの無い武器は、狙えない窓の始まりから D までは撃てる状態のまま
-      const fired = stepShooter(state, shot, model, params, slotBlocked && !firesUntilDetect(state, shot));
+      const fired = stepShooter(state, shot, model, params, slotBlocked);
       const log = logs[i]!;
       if (chargeWatches[i] !== null) {
         const shotNow = fired || partial !== null;

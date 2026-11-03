@@ -14,7 +14,6 @@ import { enemyEventNotes, untargetableRanges } from '../frame/events.ts';
 import {
   beginHide,
   chargeProgressFrames,
-  firesUntilDetect,
   hideShooter,
   initialShooter,
   shotFramesUpTo,
@@ -112,8 +111,7 @@ describe('untargetableRanges', () => {
 
 /**
  * 射手を frames フレーム回し、窓の出入りで hide / unhide を呼ぶ（frame/firstPass.ts の手順 1 と同じ順）。窓の始まりに beginHide、
- * 窓の間は毎フレーム stepHide（待ちが無ければ何もしない。plan/design-hide-reload-detect.md 案 A）。チャージの無い武器は D まで撃てる
- * （firesUntilDetect。同 10 節）
+ * 窓の間は毎フレーム stepHide（待ちが無ければ何もしない。plan/design-hide-reload-detect.md 案 A）
  */
 function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frames: number): number[] {
   const shot = makeCharacter(partial).shot;
@@ -125,7 +123,7 @@ function shotsWithWindow(partial: Partial<ShotParams>, window: FrameRange, frame
       if (beginHide(state, shot) !== null) fired.push(f);
     } else if (blocked && stepHide(state, shot) !== null) fired.push(f);
     if (f === window.end) unhideShooter(state, shot, window.end - window.start);
-    if (stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, blocked && !firesUntilDetect(state, shot))) fired.push(f);
+    if (stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, blocked)) fired.push(f);
   }
   return fired;
 }
