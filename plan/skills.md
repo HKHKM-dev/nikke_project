@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 80・効果 520（根拠あり 500）・notes 203（根拠あり 93）
+件数: キャラ 81・効果 533（根拠あり 513）・notes 206（根拠あり 93）
 
-notes の種類: 未対応 41・前提の外 43・計算に無関係 43・補足 20・間接 56
+notes の種類: 未対応 42・前提の外 44・計算に無関係 44・補足 20・間接 56
 
-スロット: supported 193・partial 21・unsupported 12・noEffect 35
+スロット: supported 195・partial 22・unsupported 12・noEffect 35
 
 ## 10 ラピ
 
@@ -469,6 +469,28 @@ notes の種類: 未対応 41・前提の外 43・計算に無関係 43・補足
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）、C-0510（確定）
   - effects[1] timed・burstUse・reloadSpeed: C-0250（仮説）、C-0252（確定）
+
+## 223 ナユタ
+
+- **skill1**: partial
+  - effects[0] timed・memoryAbsorption が適用された時・coreDamage: C-0940（確定）
+  - effects[1] timed・memoryAbsorption が適用された時・attack: C-0940（確定）
+  - effects[2] damage・fullChargeShot・skill: C-0937（確定）
+  - effects[3] damage・fullChargeShot・additional: C-0937（確定）
+  - notes[0] 計算に無関係: 戦闘開始時の不動心（不屈。戦闘中 1 回）はダメージに関係しない: 根拠なし
+  - notes[1] 前提の外: 記憶吸収が適用される時の味方全体への HP 回復均等分配は、被弾で HP が減った時に効く（被弾なしの前提の外）: 根拠なし
+  - notes[2] 未対応: 記憶吸収が適用される時の自分の HP 回復（最終最大HP の 25%）は撮っていない。回復で、回復を受けた時を読む味方がいなければダメージに効かない（plan/design-nayuta.md の論点 3）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・3 秒ごと・memoryAbsorption（hitRate）: C-0935（確定）、C-0939（仮説）
+  - effects[1] passive・memoryAbsorption の説明文の値（5）スタック以上の間・attack: C-0935（確定）
+  - effects[2] passive・memoryAbsorption の説明文の値（7）スタック以上の間・attackDamage: C-0935（確定）
+  - effects[3] passive・memoryAbsorption の説明文の値（3）スタック以上の間・coreDamage: C-0935（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-0938（確定）
+  - effects[1] burstDamage・skill: C-0938（確定）
+  - effects[2] weaponChange・burstUse: C-0936（確定）、C-0939（仮説）
+  - effects[3] timed・burstUse・infiniteAmmo: C-0936（確定）
+  - effects[4] state・burstUse・memoryIncineration: C-0936（確定）、C-0939（仮説）
 
 ## 225 紅蓮：ブラックシャドウ
 
