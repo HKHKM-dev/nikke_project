@@ -1,0 +1,20 @@
+{
+  "id": "C-0924",
+  "text": "プリバティの宝物版 S1 は、フルバーストの始まりに味方全体（自分も）に、攻撃力▲・リロード速度▲・最大装弾数▼・攻撃ダメージ▲（どれも 10 秒）を付ける（説明文どおり）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0938-10`・`0938-11`・`0939-11`・`0938-16`。V-0660",
+  "model": "`data/skills/170.json` の treasureSkills.skill1 の effects[0]〜[3] と基礎版 skill1 の effects[0]〜[2]",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": [
+      "data/skills/170.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/170.json の treasureSkills.skill1 の effects[1]",
+      "data/skills/170.json の treasureSkills.skill1 の effects[2]",
+      "data/skills/170.json の treasureSkills.skill1 の effects[3]"
+    ]
+  },
+  "decidedOn": []
+}

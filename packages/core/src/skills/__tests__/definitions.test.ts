@@ -159,6 +159,7 @@ describe('data/skills', () => {
                 // 158.4%（上限は 200% で見る）
                 // エイダ: バーストの特殊改造のチャージダメージ▲は Lv10 で 1500%（上限は 2000% で見る）・チャージ速度▼は 300%（上限は 1000% で見る）
                 // アークレンジャー・ブラック: バーストの持続ダメージ▲は Lv10 で 135.83%（上限は 200% で見る）
+                // プリバティ: 宝物版バーストの有利コードの攻撃ダメージ▲は Lv10 で 130%（上限は 200% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat
@@ -183,6 +184,7 @@ describe('data/skills', () => {
                             'hitRate',
                             'trueDamage',
                             'sustainedDamage',
+                            'elementDamage',
                           ].includes(stat)
                         ? 200
                         : 100;

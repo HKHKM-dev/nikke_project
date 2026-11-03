@@ -1,0 +1,391 @@
+[
+  {
+    "id": "0938-01",
+    "recording": "0938",
+    "kind": "total",
+    "use": "record",
+    "value": 371793873,
+    "description": "リター・デルタ・プリバティ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11520。増分は 3820 個"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-02",
+    "recording": "0938",
+    "kind": "count",
+    "use": "record",
+    "value": 207,
+    "unit": "トリガー",
+    "description": "リター・デルタ・プリバティ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3820 個。前の増分から 30f 未満の増分（3801 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 50f）から発の数を決めた（2 発になった組 19 個）"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-03",
+    "recording": "0938",
+    "kind": "timing",
+    "use": "record",
+    "value": [1385, 2716, 3920, 5297, 6545, 7827, 9116, 10361],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・5・24・0・25・0・25・0f"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-04",
+    "recording": "0938",
+    "kind": "timing",
+    "use": "record",
+    "value": [1414, 3949, 6574, 9145],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-05",
+    "recording": "0938",
+    "kind": "timing",
+    "use": "record",
+    "value": [1444, 3978, 6603, 9174],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-06",
+    "recording": "0938",
+    "kind": "timing",
+    "use": "record",
+    "value": [2053, 4587, 7212, 9783],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-07",
+    "recording": "0938",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0660",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0938-08",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "input",
+    "kind": "timing",
+    "unit": "f",
+    "value": [524, 1854, 3034, 4410, 5635, 6915, 8181, 9425],
+    "description": "チェーンの I の発動のゲーム内のフレーム（戦闘開始から。比べる指定の manualBursts）。オートバーストのチェーンの始まりを録画にそろえる（II・III はモデルのオートのまま）",
+    "method": {
+      "tool": "timer.ts --mode ticks",
+      "note": "右のバースト欄の I → II の替わり目（burst-panel の観測値）をゲーム内のティックに直し（戦闘開始 f834）、3 ティック引いた。3 は、III まで進んだチェーンで、III のタイマーの 00.00 のティックから 6 ティック（C-0512）とモデルの I → III の 56f を引いた I の発動と、I → II の替わり目のティックの差（4 回で 3.0〜4.0）"
+    }
+  },
+  {
+    "id": "0938-09",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 557040,
+    "description": "プリバティの最初の最後の弾丸（f1136）の S2 の追加ダメージ（会心・フルバーストの外）。増分 614,097 から、同じフレームのプリバティの発（41,370.95）とリターの発（15,686.5）を引いた。リターの発は、この増分の次から受けるダメージ▲（10.01%）の乗った 12,463 になる",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "増分を、モデルの S2・プリバティ・リターの 1 発の格子（指標 skillHitDamage・hitDamage）の和に当てた（±2.5。V-0660「読み方」）。▲の乗らない S2 の会心（506,354.33）では和が合わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0938-10",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 21012639,
+    "description": "フルバースト 1 回目の最初の最後の弾丸（f1639。III の 00.00 の +195f）の、S2 の追加ダメージとターゲット指定の追加ダメージの和（どちらも会心なし）。増分 21,278,303 から、同じフレームのプリバティの発（226,328.39）とリターの発（39,335.57）を引いた",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "V-0660「読み方」"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0938-11",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 13695226,
+    "description": "フルバースト 1 回目の 3 つ目の最後の弾丸（f2040。III の 00.00 の +596f。リターの▲の切れた後）の、S2 とターゲット指定の追加ダメージの和（会心なし）。増分 13,836,306 から、プリバティの発（115,444.26）とリターの発（25,636.21）を引いた",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "V-0660「読み方」"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0938-12",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 7393137,
+    "description": "プリバティの 1 回目のバーストスキルダメージ（3 ヒットの和。会心なし）。f1506・f1531 の増分 2,464,379 が 2 つと、f1561 の 2,525,568 からプリバティとリターの発（61,189）を引いた 2,464,379",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "1 ヒットは説明文の倍率の 1/3 で、同じ発動の有利コードの攻撃ダメージ▲（130%）が乗った値（V-0660「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0938-13",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": 8035683,
+    "description": "プリバティの 2 回目のバーストスキルダメージ（3 ヒットの和。会心なし）。f4041・f4066 の増分 2,678,561 が 2 つと、f4096 の 2,720,890 から発（42,329）を引いた 2,678,561",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "V-0660「読み方」"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0938-14",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [63, 63, 63, 63],
+    "description": "プリバティのバーストの、III のタイマーの 00.00 から 1 ヒット目（HUD の増分）までの動画のフレーム（4 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "00.00 は 0938-05"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0938-15",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "timing",
+    "unit": "f",
+    "value": [0, 25, 55],
+    "description": "プリバティの 1 回目のバーストの 1 ヒット目から各ヒットまでの動画のフレーム（2〜4 回目も同じ [0, 25, 55]）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitOffsets",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "manualBursts": "0938-08"
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "0938-16",
+    "recording": "0938",
+    "source": "V-0660",
+    "readAt": "2026-11-03",
+    "use": "record",
+    "kind": "interval",
+    "unit": "f",
+    "value": [205, 196, 229],
+    "description": "フルバーストの中の、プリバティの最後の弾丸（S2 の増分）の間の動画のフレーム（1 回目の f1639→f1844→f2040、2 回目の f4149→f4378）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ",
+      "note": "モデル（0938-08 のチェーン）のフルバーストの中の最後の弾丸の間は 195・196f（S1 の最大装弾数▼で 30 発、リロード速度▲）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]

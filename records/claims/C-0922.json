@@ -1,0 +1,21 @@
+{
+  "id": "C-0922",
+  "text": "プリバティの宝物版バーストのターゲット指定は、バーストの発動の時に敵に付き、説明文の 10 秒（588f）続く（バーストスキルダメージのヒットからではない）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0939-14`・`0938-11`・`0939-11`。V-0660",
+  "model": "`data/skills/170.json` の treasureSkills.burst の effects[2]（ターゲット指定。きっかけ `burstUse`）。目録 `skills/states.ts` の `designatedTarget`",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": ["data/skills/170.json の treasureSkills.burst の effects[2]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0939",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "parameterFree": "発動から説明文の 10 秒。合わせ込みの定数なし"
+}

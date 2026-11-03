@@ -1,0 +1,29 @@
+{
+  "id": "C-0921",
+  "text": "プリバティの宝物版 S2 は、最後の弾丸（残弾を 0 にした射撃）の命中で、敵に受けるダメージ▲（10 秒）と最終攻撃力の 256.17% の追加ダメージを出し、敵がターゲット指定状態なら最終攻撃力の 1687% の追加ダメージをもう 1 つ出す。受けるダメージ▲は同じ発火の追加ダメージに乗り（下位効果のスタック適用）、発火した発の通常攻撃には乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0938-09`・`0938-10`・`0938-11`・`0939-10`・`0939-11`。V-0660",
+  "model": "`data/skills/170.json` の treasureSkills.skill2（`sequential`。effects[0] の受けるダメージ▲・effects[1]・effects[2] の追加ダメージ）と、基礎版 skill2 の effects[0]",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": [
+      "data/skills/170.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/170.json の treasureSkills.skill2 の effects[1]",
+      "data/skills/170.json の treasureSkills.skill2 の effects[2]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0938",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "0939",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "parameterFree": "C-0163・C-0645 と同じ下位効果のスタック適用（同じ発火で前に書いた timed を後の damage に足す）。値は説明文（Lv10）"
+}

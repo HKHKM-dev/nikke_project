@@ -1,0 +1,23 @@
+{
+  "id": "C-0923",
+  "text": "プリバティの宝物版バーストのバーストスキルダメージは、III のタイマーの 00.00 から 40f（動画で 62〜63f。止まり 22f を含む）、その 25f・55f 後の 3 ヒットに 3 等分して出る。どのヒットにも、同じ発動で自分に付く有利コードの攻撃ダメージ▲（10 秒）が乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0938-12`・`0938-13`・`0938-14`・`0938-15`・`0939-12`・`0939-13`。V-0660",
+  "model": "`data/skills/170.json` の treasureSkills.burst の effects[0]・effects[1] と基礎版 burst の effects[0]。遅れの表 `burst/landing.ts` の 170（宝物あり）の行（hitFrames 40・hitOffsets [0, 25, 55]・sameActivationBuffsOnHit）",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": [
+      "data/skills/170.json の treasureSkills.burst の effects[0]",
+      "data/skills/170.json の treasureSkills.burst の effects[1]"
+    ]
+  },
+  "decidedOn": [
+    {
+      "recording": "0938",
+      "role": "値を合わせた"
+    }
+  ]
+}
