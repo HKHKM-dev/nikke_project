@@ -270,7 +270,10 @@
           "assumes": {
             "ja": "バーストの発動の次のフレームから 97f、撃たない（ミサイルの 3 ヒットが終わるまで。長さは録画で読んだ値で、説明文に無い）。明けは、狙えない窓の明けと同じく構え直してから撃つ（発の刻みを持ち越さない）。止めている間はリロードも進めない（未確定。録画ではどの回も発動の時に残弾があった）",
             "en": "Does not fire for 97 f from the frame after the Burst activation (until the three missile hits are over; the length is read from recordings and is not in the description). At the end she re-aims before firing, like the end of an untargetable window (the shot cadence is not carried over). Reload does not progress during the pause either (unverified; in the recordings she always had ammo left at the activation)"
-          }
+          },
+          "claims": [
+            "C-0925"
+          ]
         }
       ],
       "notes": [
