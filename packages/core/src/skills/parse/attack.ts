@@ -76,17 +76,30 @@ export function parseAutoAttackEffect(v: Record<string, Json>, path: string): Au
   return effect;
 }
 
-/** V-0534: 射撃の止まり（shotPause）。きっかけは射撃の回数だけ（during・firesDuring・stacksRef・確率は書けない） */
-export function parseShotPauseEffect(v: Record<string, Json>, path: string): ShotPauseEffect {
+/**
+ * V-0534: 射撃の止まり（shotPause）。きっかけは射撃の回数（during・firesDuring・stacksRef・確率は書けない）か、プリバティ編の 'burstUse'
+ * （burst スロットだけ。framesOnLastShot は書けない。plan/design-privaty-burst-pause.md 2 節）
+ */
+export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot: SkillSlot): ShotPauseEffect {
   for (const key of Object.keys(v)) {
     if (!['kind', 'trigger', 'frames', 'framesOnLastShot', 'assumes', 'claims'].includes(key)) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
-  const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  if (!isShotCountTrigger(trigger)) fail(`${path}.trigger`, 'shotPause needs a shot count trigger ({ count })');
-  for (const key of ['stacksRef', 'firesDuring'] as const) {
-    if (trigger[key] !== undefined) fail(`${path}.trigger.${key}`, `${key} cannot be used in shotPause`);
+  let trigger: ShotPauseEffect['trigger'];
+  if (v.trigger === 'burstUse') {
+    if (slot !== 'burst') fail(`${path}.trigger`, 'a shotPause on burstUse can only be written in the burst slot');
+    if (v.framesOnLastShot !== undefined)
+      fail(`${path}.framesOnLastShot`, 'framesOnLastShot needs a shot count trigger');
+    trigger = 'burstUse';
+  } else {
+    const parsed = parseTrigger(v.trigger, `${path}.trigger`);
+    if (!isShotCountTrigger(parsed))
+      fail(`${path}.trigger`, 'shotPause needs a shot count trigger ({ count }) or "burstUse"');
+    for (const key of ['stacksRef', 'firesDuring'] as const) {
+      if (parsed[key] !== undefined) fail(`${path}.trigger.${key}`, `${key} cannot be used in shotPause`);
+    }
+    trigger = parsed;
   }
   const positive = (x: Json, at: string): number => {
     if (typeof x !== 'number' || !Number.isInteger(x) || x < 1)

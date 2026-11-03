@@ -2,6 +2,7 @@
 // 追加ダメージ、ターゲット指定状態なら追加ダメージをもう 1 つ）、バースト（自分の有利コードの攻撃ダメージ▲・敵にターゲット指定）。
 // ターゲット指定は中身を持たない敵の状態（目録の withoutContents）で、S2 の条件 enemyState だけが読む（V-0660、C-0921〜C-0924）。
 import { describe, expect, it } from 'vitest';
+import { resolveBurstUsePause } from '../skills/burstDamage.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
@@ -29,7 +30,8 @@ describe('プリバティの定義', () => {
     const def = parseSkillDefinition(rawDefinition(PRIVATY));
     expect(def.skills.skill1.support).toBe('supported');
     expect(def.skills.skill2.support).toBe('partial');
-    expect(def.skills.burst.support).toBe('supported');
+    // 基礎版のバーストの撃たない間は未測定（宝物版だけ。plan/design-privaty-burst-pause.md 論点 2）
+    expect(def.skills.burst.support).toBe('partial');
     for (const slot of ['skill1', 'skill2', 'burst'] as const) {
       expect(def.treasureSkills?.[slot]?.support).toBe('supported');
     }
@@ -71,6 +73,17 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(expected.length).toBeGreaterThan(0);
     expect(expected.length).toBeLessThan(lastShots.length);
     expect(hitsOf(true).map((h) => h.frame)).toEqual(expected);
+  });
+
+  it('does not fire from her burst activation until the pause ends (V-0661)', () => {
+    const shots = plan.shots[PRIVATY_SLOT]!.frames;
+    const mine = plan.schedule!.activations.filter((a) => a.slotIndex === PRIVATY_SLOT);
+    expect(mine.length).toBeGreaterThan(0);
+    // 編成の枠の定義は基礎版（宝物版は 1 パス目で重ねる）なので、宝物版の burst から引く
+    const def = parseSkillDefinition(rawDefinition(PRIVATY));
+    const pause = resolveBurstUsePause({ ...def, skills: { ...def.skills, burst: def.treasureSkills!.burst! } });
+    expect(pause).toBeGreaterThan(0);
+    for (const a of mine) expect(shots.some((f) => f > a.frame && f <= a.frame + pause)).toBe(false);
   });
 
   it('applies Elemental Advantage Attack Damage only on herself', () => {

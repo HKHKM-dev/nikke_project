@@ -516,7 +516,7 @@ export function resolveShotPauses(
   const out: (ResolvedShotCountTrigger & { frames: number; framesOnLastShot: number; skill: SkillSlot })[] = [];
   for (const slot of SKILL_SLOTS) {
     for (const effect of def.skills[slot].effects) {
-      if (effect.kind !== 'shotPause') continue;
+      if (effect.kind !== 'shotPause' || effect.trigger === 'burstUse') continue;
       const trigger = resolveTrigger(effect.trigger, character.skills[slot], levels[slot]);
       if (!isResolvedShotCount(trigger)) throw new RangeError('shotPause needs a shot count trigger');
       out.push({
@@ -528,6 +528,18 @@ export function resolveShotPauses(
     }
   }
   return out;
+}
+
+/**
+ * プリバティ編（plan/design-privaty-burst-pause.md 2 節）: 自分のバーストの発動で射撃を止めるフレーム数（burstUse の shotPause。
+ * 無ければ 0。いくつもあれば長い方）
+ */
+export function resolveBurstUsePause(def: SkillDefinition): number {
+  let frames = 0;
+  for (const effect of def.skills.burst.effects) {
+    if (effect.kind === 'shotPause' && effect.trigger === 'burstUse') frames = Math.max(frames, effect.frames);
+  }
+  return frames;
 }
 
 /**

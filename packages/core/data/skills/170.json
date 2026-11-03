@@ -104,6 +104,16 @@
           "ja": "敵全体の気絶はそれ自体ダメージに関係しない（S2 の気絶の条件は未対応）",
           "en": "The stun on all enemies does not affect damage by itself (the stun condition of S2 is not modeled)",
           "kind": "noDamage"
+        },
+        {
+          "ja": "バーストの発動の後に撃たない間（宝物版は 97f）は、基礎版では未測定で入れていない（基礎版は撮れない）",
+          "en": "The pause in firing after the Burst activation (97 f for the treasure version) is unmeasured for the base version and not modeled (the base version cannot be recorded)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "shotPause",
+            "target": "self",
+            "trigger": "burstUse"
+          }
         }
       ]
     }
@@ -251,6 +261,18 @@
           },
           "claims": [
             "C-0922"
+          ]
+        },
+        {
+          "kind": "shotPause",
+          "trigger": "burstUse",
+          "frames": 97,
+          "assumes": {
+            "ja": "バーストの発動の次のフレームから 97f、撃たない（ミサイルの 3 ヒットが終わるまで。長さは録画で読んだ値で、説明文に無い）。明けは、狙えない窓の明けと同じく構え直してから撃つ（発の刻みを持ち越さない）。止めている間はリロードも進めない（未確定。録画ではどの回も発動の時に残弾があった）",
+            "en": "Does not fire for 97 f from the frame after the Burst activation (until the three missile hits are over; the length is read from recordings and is not in the description). At the end she re-aims before firing, like the end of an untargetable window (the shot cadence is not carried over). Reload does not progress during the pause either (unverified; in the recordings she always had ammo left at the activation)"
+          },
+          "claims": [
+            "C-0925"
           ]
         }
       ],

@@ -89,6 +89,7 @@ import {
   resolveAllyGaugeAdd,
   resolveDotEffects,
   resolveShotGauges,
+  resolveBurstUsePause,
   resolveShotPauses,
   resolveTimerGauges,
   type ResolvedDamageEffect,
@@ -153,6 +154,7 @@ import {
   chargeProgressFrames,
   stepShooter,
   stepHide,
+  reaimShooter,
   unhideShooter,
   weaponChangeShooter,
   weaponFreeFrameAtSwap,
@@ -833,6 +835,12 @@ function runFirstPassOnce(
     }
   });
   const pauseLeft = slots.map(() => 0);
+  // プリバティ編（plan/design-privaty-burst-pause.md 2 節）: 自分のバーストの発動の次のフレームから止めるフレーム数（手順 3 で立てる）
+  // 立っている止まりの、明けで構え直すときに unhideShooter に渡す止めたフレーム数（0 は立っていない。射撃の回数の止まりと区別する）
+  const burstPauseAim = slots.map(() => 0);
+  const burstUsePause = slots.map((slot) =>
+    slot === null || slot.definition === null ? 0 : resolveBurstUsePause(slot.definition),
+  );
   // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
@@ -1353,6 +1361,11 @@ function runFirstPassOnce(
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
       if (pauseLeft[i]! > 0) {
         pauseLeft[i]! -= 1;
+        // プリバティ編（plan/design-privaty-burst-pause.md 3 節の論点 4）: バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す
+        if (pauseLeft[i] === 0 && burstPauseAim[i]! > 0) {
+          reaimShooter(state, shot, burstPauseAim[i]!, model, params);
+          burstPauseAim[i] = 0;
+        }
         return;
       }
       const reloading = state.phase === 'reloading';
@@ -1595,6 +1608,11 @@ function runFirstPassOnce(
     const burstEffects: BurstActivation[] = pendingBurstEffects.get(f) ?? [];
     if (burstEffects.length > 0) pendingBurstEffects.delete(f);
     for (const a of now) {
+      const pause = burstUsePause[a.slotIndex]!;
+      if (pause > 0) {
+        pauseLeft[a.slotIndex] = Math.max(pauseLeft[a.slotIndex]!, pause);
+        burstPauseAim[a.slotIndex] = pause;
+      }
       const at = effectFrameOf(a);
       if (at === f) burstEffects.push(a);
       else if (at < frames) pendingBurstEffects.set(at, [...(pendingBurstEffects.get(at) ?? []), a]);

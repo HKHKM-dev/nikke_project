@@ -1,0 +1,20 @@
+{
+  "id": "C-0925",
+  "text": "プリバティの宝物版は、自分のバーストの発動の次のフレームから 97f 撃たず（ミサイルの 3 ヒットが終わるまで）、明けは狙えない窓の明けと同じく構え直してから撃つ（発の刻みを持ち越さない）。III のタイマーの 00.00 から、3 ヒット目の後の最初の発まではゲーム内で 103〜104f",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0938-17`・`0938-18`・`0938-19`・`0939-15`・`0939-16`・`0939-17`・`0939-18`。V-0661",
+  "model": "`data/skills/170.json` の treasureSkills.burst の effects[3]（`shotPause`・きっかけ `burstUse`・97f）。`frame/firstPass.ts` が発動で射手の止まり（`pauseLeft`）を立て、明けに `frame/shooter.ts` の `reaimShooter`（狙えない窓の明けの構え直しと同じ）で構え直す（plan/design-privaty-burst-pause.md）",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": ["data/skills/170.json の treasureSkills.burst の effects[3]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0938",
+      "role": "値を合わせた"
+    }
+  ]
+}

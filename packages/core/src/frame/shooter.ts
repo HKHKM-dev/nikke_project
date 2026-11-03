@@ -629,6 +629,20 @@ export function unhideShooter(
       state.wait = 0;
     }
   }
+  reaimShooter(state, shot, stoppedFrames, model, params);
+}
+
+/**
+ * 止まっていた射手の構え直し（狙えない窓の明けの後半。プリバティ編: バーストの発動の止まりの明けも。plan/design-privaty-burst-pause.md
+ * 論点 4）。リロード中なら何もしない。止まりが長ければレートの蓄積を戻し、チャージ武器はチャージし直し、ほかは構えから撃つ
+ */
+export function reaimShooter(
+  state: ShooterState,
+  shot: ShotParams,
+  stoppedFrames: number,
+  model: WeaponModel = DEFAULT_WEAPON_MODEL,
+  params: FiringParams = firingParams(shot),
+): void {
   if (state.phase === 'reloading') return;
   if (state.phase === 'ready' && stoppedFrames >= shot.rateOfFireResetTime * FRAMES_PER_GAME_SECOND) {
     state.shotsInMagazine = 0;
