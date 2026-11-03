@@ -32,7 +32,10 @@
           "assumes": {
             "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。V-0504）。「戦闘中 1 回発動」は、戦闘開始時の 1 回だけなので書かない",
             "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; V-0504). \"Once per battle\" needs nothing because it fires only at the start"
-          }
+          },
+          "claims": [
+            "C-0918"
+          ]
         },
         {
           "kind": "state",
@@ -98,7 +101,10 @@
         {
           "ja": "火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）",
           "en": "The Parts Damage increase for Attacker allies has no effect because parts are not modeled (outside the requirements)",
-          "kind": "outOfScope"
+          "kind": "outOfScope",
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }

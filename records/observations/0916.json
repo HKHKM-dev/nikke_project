@@ -242,5 +242,39 @@
       "tool": "tools/captures/gauge.ts --mode series --subpixel",
       "note": "前後 1f の中央値の、6f の差が 4px を超えた所の、1f の差が最も大きいフレーム（使い捨てのスクリプト）"
     }
+  },
+  {
+    "id": "0916-12",
+    "recording": "0916",
+    "source": "V-0653",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [49, 78, 107],
+    "unit": "f",
+    "description": "1 回目のチェーンの I → II・II → III の六角形の替わり目と III のタイマーの 00.00 の、戦闘開始（残り時間の表示が出たフレーム）からの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@3 の 1 つ目の値から戦闘開始のフレームを引いた",
+      "note": "戦闘開始は f829（timer.ts --mode changes の、最初の大きな変わり目（画面の切り替え）の次の変わり目。03:00 が 2f 出てから 02:59 になる。C-0078。plan/captures/guide.md）。替わり目は `0916-01`〜`0916-03` の 1 つ目（f878・907・936）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain",
+      "frames": [829, 936]
+    }
   }
 ]

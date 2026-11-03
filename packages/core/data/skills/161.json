@@ -13,7 +13,10 @@
           "target": "self",
           "stat": "critDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0917"
+          ]
         }
       ]
     },

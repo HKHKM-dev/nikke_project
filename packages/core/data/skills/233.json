@@ -11,7 +11,10 @@
             "count": "lastShot"
           },
           "target": "allies",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0919"
+          ]
         }
       ],
       "notes": [
