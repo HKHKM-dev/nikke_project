@@ -233,6 +233,14 @@ function resetChain(state: BurstControllerState): void {
   state.step = 'Step1';
 }
 
+/** チェーン中に最後の発動から chainTimeoutFrames たっていれば、チェーンを切ってゲージを 0 から溜め直す */
+function timeOutChain(state: BurstControllerState, frame: number): void {
+  if (state.phase !== 'chain' || frame - state.lastUseFrame < state.timing.chainTimeoutFrames) return;
+  state.chainTimeouts.push(frame);
+  state.phase = 'charging';
+  resetChain(state);
+}
+
 /**
  * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 窓の長さ。burst_duration に予約の延長の秒を足してからフレームにする
  * （延長が無ければいままでどおり）
@@ -286,7 +294,8 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
  * frame を 1 つ進める。gauge はこのフレームに当たった分のゲージ量（charging のときだけ足される）。
  * frame は 0 から 1 ずつ増やして呼ぶ。発動・フルバースト窓・満タン・タイムアウトは state に積まれる。
  * Stage 16-B: blocked（敵を狙えない）の間はオートバーストが発動しない（2026-09-26 ユーザー確認）。
- * 満タン・フルバーストの終わりは進み、明けたフレームで発動の判定を再開する（チェーンのタイムアウトは最後の発動から数えたまま）
+ * 満タン・フルバーストの終わりは進み、明けたフレームで発動の判定を再開する。チェーンのタイムアウトは最後の発動から数え、
+ * blocked の間も判定する（C-0908。2026-11-03 のオーナーの判断）
  */
 export function stepBurstController(state: BurstControllerState, frame: number, gauge: number, blocked = false): void {
   const { timing } = state;
@@ -308,16 +317,16 @@ export function stepBurstController(state: BurstControllerState, frame: number, 
     if (next === undefined) return;
     if (frame < next) return;
   }
-  if (blocked && !manualReady) return;
+  if (blocked && !manualReady) {
+    // 狙えない間も、チェーンのタイムアウトは判定する（窓の中で迎えたら、窓の明けに候補がいても続かない。C-0908）
+    if (frame >= state.nextAllowedFrame) timeOutChain(state, frame);
+    return;
+  }
   // 間隔 0 の設定では同じフレームに複数段階が撃てるのでループにする
   while ((state.phase === 'ready' || state.phase === 'chain') && frame >= state.nextAllowedFrame) {
     const candidate = pickCandidate(state, state.step, frame);
     if (candidate < 0) {
-      if (state.phase === 'chain' && frame - state.lastUseFrame >= timing.chainTimeoutFrames) {
-        state.chainTimeouts.push(frame);
-        state.phase = 'charging';
-        resetChain(state);
-      }
+      timeOutChain(state, frame);
       return;
     }
     activate(state, candidate, frame);
