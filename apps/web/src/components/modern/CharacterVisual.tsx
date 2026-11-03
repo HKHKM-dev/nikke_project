@@ -27,7 +27,8 @@ export const ELEMENT_COLOR: Record<CharacterIndexEntry['element'], string> = {
 type Props = {
   character: CharacterIndexEntry;
   isUnsupported?: boolean;
-  size?: 'normal' | 'compact';
+  /** normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード） */
+  size?: 'normal' | 'compact' | 'portrait';
 };
 
 const BASE_URL = import.meta.env.BASE_URL;
@@ -35,7 +36,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 export function CharacterVisual({ character, isUnsupported = false, size = 'normal' }: Props) {
   const elementColor = ELEMENT_COLOR[character.element] ?? '#757575';
   const burstLabel = BURST_STEP_LABEL[character.burstStep] ?? character.burstStep;
-  const imageSrc = `${BASE_URL}characters/images/${character.resourceId}.webp`;
+  const imageSrc = `${BASE_URL}characters/${size === 'portrait' ? 'portraits' : 'images'}/${character.resourceId}.webp`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、フォールバックの札（属性・名前）を出す。
   // 読めた画像の上には札の文字を重ねない（npm run fetch-images。plan/design-modern-ui.md）
   const [failedId, setFailedId] = useState<number | null>(null);
@@ -43,7 +44,7 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
 
   return (
     <div
-      className={`char-visual ${size === 'compact' ? 'char-visual-compact' : ''}`}
+      className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`}
       style={{ '--char-elem-color': elementColor } as React.CSSProperties}
     >
       {failed ? (

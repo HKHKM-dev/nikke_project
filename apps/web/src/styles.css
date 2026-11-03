@@ -798,6 +798,21 @@ header h1 {
 .char-visual-compact {
   max-width: 72px;
 }
+/* スロットのカードの縦長の絵（portraits）。顔が入るように上寄せで切り取る */
+.char-visual-portrait {
+  max-width: none;
+  aspect-ratio: 3 / 4;
+  max-height: 240px;
+}
+.char-visual-portrait .char-visual-img {
+  object-position: center 12%;
+}
+/* スロットが 1 列に並ぶ狭い画面では、横いっぱいに広げると顔が切れるので、幅を抑える */
+@media (max-width: 900px) {
+  .char-visual-portrait {
+    max-width: 200px;
+  }
+}
 .char-visual-img {
   width: 100%;
   height: 100%;
@@ -883,6 +898,15 @@ header h1 {
 .char-tray-target-slot {
   font-size: 0.85rem;
   opacity: 0.8;
+}
+.char-tray-hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+/* スロットのキャラを持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
+.char-tray-panel.char-tray-returning {
+  outline: 2px dashed Highlight;
+  outline-offset: -2px;
 }
 .char-tray-filters {
   display: flex;

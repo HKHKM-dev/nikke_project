@@ -73,6 +73,7 @@ export function ModernSlotCard({
   return (
     <div
       ref={setCardRef}
+      data-element={characterEntry?.element}
       className={`modern-slot-card ${isSelected ? 'modern-slot-selected' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       onClick={onSelectSlot}
       {...(characterEntry ? attributes : {})}
@@ -101,7 +102,7 @@ export function ModernSlotCard({
       <div className="modern-slot-body">
         {characterEntry ? (
           <div className="modern-slot-char-area">
-            <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} />
+            <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />
             <div className="modern-slot-char-name">{characterEntry.name.ja}</div>
           </div>
         ) : (

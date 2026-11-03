@@ -19,7 +19,7 @@
 ## 3. 構成
 
 - core（`packages/core`）: データの取得と正規化、キャラと育成のマスタ、ダメージの式、共通のフレームループ（1 パス目）と 2 パス目の集計（sim。用語は AGENTS.md）。ヘッドレス。メカニクスは 1 パス目に足す。
-- Web アプリ（`apps/web`）: 静的サイト（TypeScript + React + Vite）。計算は Web Worker で回す。キャラの画像は CDN から取って同梱する（`npm run fetch-images`）。
+- Web アプリ（`apps/web`）: 静的サイト（TypeScript + React + Vite）。計算は Web Worker で回す。キャラの画像（顔のアイコンと縦長の絵）は CDN から取って同梱する（`npm run fetch-images`）。
 - 検証の記録（`records/`）と道具（`tools/`・`packages/core/scripts/`）。
 
 ## 4. 範囲と前提

@@ -1,5 +1,7 @@
-import type { CharacterIndexEntry } from '@nikke/core';
+import { useDroppable } from '@dnd-kit/core';
+import { NIKKE_CLASSES, type CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
+import { CLASS_LABEL } from '../../skillLabels.ts';
 import { ELEMENT_LABEL } from './CharacterVisual.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 
@@ -26,6 +28,11 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
   const [burstFilter, setBurstFilter] = useState<CharacterIndexEntry['burstStep'] | 'All'>('All');
   const [elementFilter, setElementFilter] = useState<CharacterIndexEntry['element'] | 'All'>('All');
   const [weaponFilter, setWeaponFilter] = useState<CharacterIndexEntry['weaponType'] | 'All'>('All');
+  const [classFilter, setClassFilter] = useState<CharacterIndexEntry['class'] | 'All'>('All');
+
+  // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
+  const { isOver, active, setNodeRef } = useDroppable({ id: 'tray-drop', data: { type: 'tray' } });
+  const returning = isOver && active?.data.current?.type === 'slot-character';
   const [onlySupported, setOnlySupported] = useState(false);
 
   const filteredCharacters = useMemo(() => {
@@ -35,6 +42,7 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
         if (burstFilter !== 'All' && char.burstStep !== burstFilter) return false;
         if (elementFilter !== 'All' && char.element !== elementFilter) return false;
         if (weaponFilter !== 'All' && char.weaponType !== weaponFilter) return false;
+        if (classFilter !== 'All' && char.class !== classFilter) return false;
         if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
         if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
         return true;
@@ -46,16 +54,21 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
         if (aTaken !== bTaken) return aTaken ? 1 : -1;
         return a.name.ja.localeCompare(b.name.ja, 'ja');
       });
-  }, [index, burstFilter, elementFilter, weaponFilter, onlySupported, fullySupported, query, takenIds]);
+  }, [index, burstFilter, elementFilter, weaponFilter, classFilter, onlySupported, fullySupported, query, takenIds]);
 
   return (
-    <section className="char-tray-panel" aria-label="ニケ一覧パレット">
+    <section
+      ref={setNodeRef}
+      className={`char-tray-panel ${returning ? 'char-tray-returning' : ''}`}
+      aria-label="ニケ一覧パレット"
+    >
       <div className="char-tray-header">
         <div className="char-tray-title">
           <h3>ニケ一覧</h3>
           <span className="char-tray-target-slot">
             配置先: <strong>スロット {activeSlotIndex + 1}</strong>
           </span>
+          <span className="char-tray-hint">スロットのニケをここへ戻すと外す</span>
         </div>
         <div className="char-tray-filters">
           <input
@@ -98,6 +111,18 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
               {WEAPONS.filter((w) => w !== 'All').map((w) => (
                 <option key={w} value={w}>
                   {w}
+                </option>
+              ))}
+            </select>
+            <select
+              value={classFilter}
+              aria-label="クラスで絞り込み"
+              onChange={(e) => setClassFilter(e.target.value as typeof classFilter)}
+            >
+              <option value="All">クラス: 全て</option>
+              {NIKKE_CLASSES.map((c) => (
+                <option key={c} value={c}>
+                  {CLASS_LABEL[c]}
                 </option>
               ))}
             </select>

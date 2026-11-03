@@ -107,7 +107,9 @@ export function equipOptionTablePath(locale: CdnLocale): string {
   return `/equip/equip_option_table_v2-${locale}.json`;
 }
 
-/** 画面のキャラ画像（顔のアイコン、128×128。モダン UI の CharacterVisual。plan/design-modern-ui.md） */
-export function characterIconPath(resourceId: number): string {
-  return `/character/si/si_c${String(resourceId).padStart(3, '0')}_00_s.webp`;
+/** 画面のキャラ画像の種類。si は顔のアイコン（128×128）、mi は縦長の絵（256×512）（モダン UI の CharacterVisual。plan/design-modern-ui.md） */
+export type CharacterImageKind = 'si' | 'mi';
+
+export function characterImagePath(resourceId: number, kind: CharacterImageKind): string {
+  return `/character/${kind}/${kind}_c${String(resourceId).padStart(3, '0')}_00_s.webp`;
 }

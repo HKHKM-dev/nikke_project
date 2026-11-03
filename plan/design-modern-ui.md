@@ -1,6 +1,6 @@
 # 設計書: モダンUIとUIモード切り替えの段階的導入
 
-- 状態: **進行中（Step 4: @dnd-kit/core によるドラッグ＆ドロップ）**
+- 状態: **実装済み（Step 1〜5。Step 5 は 2.4 節の統合で行った）**
 - 関連: [design-unify-sim-calc.md](design-unify-sim-calc.md)
 - 作成日: 2026-11-03
 
@@ -55,9 +55,19 @@
 
 ---
 
+### 2.4 2 つのセッションの作業の統合（Step 5 を含む）
+
+- 経緯: 2026-11-03〜04 に、このモダン UI（Antigravity）と同じ機能を、Claude Code の別のセッションも別の作り（自前のドラッグ・ゲーム風の見た目・縦長の絵）で作っていた。オーナーは、こちらの作り（View の分離・`@dnd-kit`）を土台にし、別のセッションの版から次の 4 点を取り込むと決めた（2026-11-04）。別のセッションの版のほかの部分は使わない。
+- 配置済みのキャラを動かす: ほかのスロットにいるキャラをトレイからドラッグ・クリックすると、そのスロットからの移動（`swapSlots`）にする（`team.ts` の `placeCharacterAction`）。それまでは、同じニケは 1 枠までなので reducer が無視して何も起きなかった。
+- トレイへ戻して外す: トレイ（`CharacterTray.tsx`）を落とし先（`useDroppable`）にし、スロットのキャラを落とすと `clearSlot`（`ModernView.tsx` の `handleDragEnd`）。
+- クラスの絞り込み: トレイの select に「クラス」を足した。
+- ゲーム風の見た目（Step 5）: `uiMode.ts` がモダンのときにルート要素へ `data-app-ui="modern"` を付け、`modern.css` が `styles.css` の素の見た目の上に色と形を重ねる（暗い背景・角丸・影・属性の色の上の縁・合計ダメージの強調）。色は `light-dark()` でテーマの切り替えに従う。クラシックには効かない。
+- スロットの縦長の絵: CDN の mi（256×512）を `npm run fetch-images` が `packages/core/data/characters/portraits/{resourceId}.webp` に置き（同梱）、`CharacterVisual` の `size="portrait"` がスロットのカードで出す。アーティファクトからは `images` と同じく除く。
+
 ## 経過
 
 - 2026-11-03: オーナーとの対話により設計方針を承認。ブランチ `antigrav/modern-ui-foundation` にて Step 1 着手。PR #945 にて main にマージ完了。
 - 2026-11-03: ブランチ `antigrav/modern-ui-cards` にて Step 2 & 3（モダン編成カード・キャラトレイ・クリック配置）を着手。PR #946 にて main にマージ完了。
 - 2026-11-04: ブランチ `antigrav/modern-ui-dnd` にて Step 4（@dnd-kit/core によるドラッグ＆ドロップ）を着手。
 - 2026-11-04: キャラ画像の同梱（1 節 3）と、タッチの長押しでのドラッグ（2.3 節）を実装した。
+- 2026-11-04: 2 つのセッションの作業を統合し、Step 5 を含めて実装した（2.4 節）。
