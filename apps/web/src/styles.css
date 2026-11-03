@@ -53,6 +53,12 @@ input:not([type='radio'], [type='checkbox']) {
 input:not([type='radio'], [type='checkbox']) {
   border: 1px solid var(--app-border);
 }
+/* 入力欄の背景: ライトは白より少し灰色にする。ダークはブラウザの既定（Field）のまま */
+input:not([type='radio'], [type='checkbox']),
+select,
+textarea {
+  background-color: light-dark(#f0f0f0, Field);
+}
 /* フォーカスの枠も四角にする（ブラウザの既定の outline: auto は角が丸い） */
 :where(button, select, textarea, input, summary):focus-visible {
   outline: 2px solid Highlight;
@@ -406,6 +412,17 @@ header h1 {
   padding: 0 5px;
   font-size: 0.72rem;
   margin-right: 4px;
+  color: #fff;
+}
+/* 区分ごとの背景色（文字は白）。仮定は近似と同じ色 */
+.note.unsupported .badge {
+  background: #c62828;
+}
+.note.approx .badge {
+  background: #ef6c00;
+}
+.note.out-of-scope .badge {
+  background: #455a64;
 }
 
 .simple-breakdown-table {
@@ -471,6 +488,16 @@ header h1 {
 .data-panel > summary {
   cursor: pointer;
   font-size: 0.9rem;
+}
+/* 一覧の見出しと見出しの間（モデル全体・敵の出来事・各スロット）に区切りの線を引く */
+.notes-summary > h3 ~ h3,
+.notes-summary > section {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--app-border);
+}
+.notes-summary > section > h3 {
+  margin-top: 0;
 }
 .data-grid {
   display: grid;
