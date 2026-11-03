@@ -218,40 +218,6 @@
     "recording": "0916",
     "source": "V-0646",
     "readAt": "2026-11-03",
-    "kind": "interval",
-    "use": "compare",
-    "value": [2914, 2835, 2523],
-    "unit": "f",
-    "description": "フルバーストの入りどうしの間隔（値は 06 と同じ）を、的のジャンプの窓だけを録画の値（08）にして比べる（条件は 06 と同じ手入力。弾丸命中率 1）。ジャンプの窓と距離帯の命中率の効きを分けて見る",
-    "method": {
-      "tool": "recipe:burst-panel@3",
-      "note": "0916-03 の差（0916-06 と同じ値）"
-    },
-    "compare": {
-      "model": "sim",
-      "metric": "fullBurstStartIntervals",
-      "args": {
-        "n": 3
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "jumpWindows": "0916-08"
-      },
-      "tolerance": {
-        "abs": 90
-      }
-    },
-    "scope": {
-      "slot": "all",
-      "source": "burstChain"
-    }
-  },
-  {
-    "id": "0916-11",
-    "recording": "0916",
-    "source": "V-0646",
-    "readAt": "2026-11-03",
     "kind": "size",
     "use": "record",
     "value": [8, 16.8, 17.9, 17.8, 18.8, 34.6, 43.6, 59.4, 68, 84.3, 92.9],
@@ -263,7 +229,7 @@
     }
   },
   {
-    "id": "0916-12",
+    "id": "0916-11",
     "recording": "0916",
     "source": "V-0646",
     "readAt": "2026-11-03",
