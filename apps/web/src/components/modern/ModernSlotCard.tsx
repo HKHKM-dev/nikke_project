@@ -1,3 +1,4 @@
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
@@ -42,10 +43,40 @@ export function ModernSlotCard({
       ? Math.min(100, Math.round((currentDamage / partyTotalDamage) * 100))
       : 0;
 
+  // ドロップ受け入れ（トレイからの配置、または他スロットからのスワップ）
+  const { isOver, setNodeRef: setDropRef } = useDroppable({
+    id: `slot-drop-${slotIndex}`,
+    data: { slotIndex },
+  });
+
+  // キャラが配置されている場合、スロット間スワップ用のドラッグ
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setDragRef,
+    isDragging,
+  } = useDraggable({
+    id: `slot-drag-${slotIndex}`,
+    data: {
+      type: 'slot-character',
+      slotIndex,
+      character: characterEntry,
+    },
+    disabled: !characterEntry,
+  });
+
+  const setCardRef = (node: HTMLDivElement | null) => {
+    setDropRef(node);
+    setDragRef(node);
+  };
+
   return (
     <div
-      className={`modern-slot-card ${isSelected ? 'modern-slot-selected' : ''} ${focused ? 'modern-slot-focused' : ''}`}
+      ref={setCardRef}
+      className={`modern-slot-card ${isSelected ? 'modern-slot-selected' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       onClick={onSelectSlot}
+      {...(characterEntry ? attributes : {})}
+      {...(characterEntry ? listeners : {})}
     >
       <div className="modern-slot-header">
         <span className="modern-slot-label">スロット {slotIndex + 1}</span>
@@ -60,6 +91,7 @@ export function ModernSlotCard({
               e.stopPropagation();
               onClear();
             }}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             ✕
           </button>
@@ -103,6 +135,7 @@ export function ModernSlotCard({
               e.stopPropagation();
               onOpenBuildModal();
             }}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             ⚙️ 育成・設定
           </button>

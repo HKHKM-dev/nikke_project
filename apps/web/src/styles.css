@@ -616,6 +616,14 @@ header h1 {
 .modern-slot-card.modern-slot-focused {
   box-shadow: inset 0 0 0 1px Highlight;
 }
+.modern-slot-card.modern-slot-over {
+  outline: 2px dashed Highlight;
+  outline-offset: -2px;
+  background: color-mix(in srgb, Highlight 15%, var(--app-bg));
+}
+.modern-slot-card.modern-slot-dragging {
+  opacity: 0.35;
+}
 .modern-slot-header {
   display: flex;
   align-items: center;
@@ -987,4 +995,21 @@ header h1 {
 .modal-footer button {
   padding: 6px 16px;
   cursor: pointer;
+}
+
+/* ドラッグ＆ドロップ（DnD）状態・オーバーレイ */
+.char-tray-item.char-tray-item-dragging {
+  opacity: 0.3;
+}
+.char-drag-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  background: color-mix(in srgb, var(--app-bg) 90%, black);
+  border: 2px solid Highlight;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  transform: scale(1.05);
 }

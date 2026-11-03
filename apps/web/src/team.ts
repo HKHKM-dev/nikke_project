@@ -163,6 +163,7 @@ export function recycleRoomFromConsole(
 
 export type TeamAction =
   | { type: 'selectCharacter'; index: number; resourceId: number }
+  | { type: 'swapSlots'; fromIndex: number; toIndex: number }
   | { type: 'clearSlot'; index: number }
   | { type: 'setGrowth'; index: number; growth: GrowthInput }
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
@@ -251,6 +252,24 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
         treasurePhase: DEFAULT_TREASURE_PHASE,
         hpRatio: DEFAULT_HP_RATIO,
       }));
+    case 'swapSlots': {
+      if (action.fromIndex === action.toIndex) return state;
+      if (
+        action.fromIndex < 0 ||
+        action.fromIndex >= state.slots.length ||
+        action.toIndex < 0 ||
+        action.toIndex >= state.slots.length
+      )
+        return state;
+      const slots = [...state.slots];
+      const tmp = slots[action.fromIndex]!;
+      slots[action.fromIndex] = slots[action.toIndex]!;
+      slots[action.toIndex] = tmp;
+      let controlledSlot = state.controlledSlot;
+      if (controlledSlot === action.fromIndex) controlledSlot = action.toIndex;
+      else if (controlledSlot === action.toIndex) controlledSlot = action.fromIndex;
+      return { ...state, slots, controlledSlot };
+    }
     case 'setGrowth':
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
     case 'setSlotCondition':

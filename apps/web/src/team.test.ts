@@ -62,6 +62,18 @@ describe('teamReducer', () => {
     expect(s3.slots[0]?.resourceId).toBe(10);
   });
 
+  it('swaps two slots and updates controlledSlot if needed', () => {
+    let state = withCharacters([10, 20, null, null, null]);
+    state = { ...state, controlledSlot: 0 };
+    const swapped = teamReducer(state, { type: 'swapSlots', fromIndex: 0, toIndex: 1 });
+    expect(swapped.slots[0]?.resourceId).toBe(20);
+    expect(swapped.slots[1]?.resourceId).toBe(10);
+    expect(swapped.controlledSlot).toBe(1);
+
+    // 同じインデックスなら何もしない
+    expect(teamReducer(swapped, { type: 'swapSlots', fromIndex: 1, toIndex: 1 })).toBe(swapped);
+  });
+
   it('clearSlot keeps growth and condition of that slot', () => {
     let s = withCharacters([10, 20]);
     s = teamReducer(s, { type: 'setGrowth', index: 1, growth: { level: 150, grade: 1, core: 2 } });
