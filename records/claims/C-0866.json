@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`0902-06`・`0902-07`・`0903-06`・`0903-07`（バーストの持続ダメージの 10 回の tick の、III のタイマーの 00.00 からの動画のフレーム。どの回もモデルより 2〜3f 後で、間隔はモデルと同じ。付いた瞬間に出る形（マナ C-0300 の形）なら 00.00 の前に 1 回出て、2 回目まで 1.5 秒空く）。どちらの録画も 3・4 回目のフルバーストの tick が同じ列（観測値の note）。V-0626",
-  "model": "`data/skills/570.json` の burst の effects[3]（dot・burstUse・durationRef 9・firstTick afterInterval）。付く時刻は本当の発動のフレーム（`burst/landing.ts` の遅れの表に行が無い）で、録画より 2〜3f 早い（バースト使用時の効果の付き始めの数 f の差は直さない。plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）",
+  "model": "`data/skills/570.json` の burst の effects[2]（dot・burstUse・durationRef 9・firstTick afterInterval）。付く時刻は本当の発動のフレーム（`burst/landing.ts` の遅れの表に行が無い）で、録画より 2〜3f 早い（バースト使用時の効果の付き始めの数 f の差は直さない。plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）",
   "replaces": [],
   "updated": "2026-11-01",
   "subject": {
-    "places": ["data/skills/570.json の burst の effects[3]"]
+    "places": ["data/skills/570.json の burst の effects[2]"]
   },
   "decidedOn": [
     {

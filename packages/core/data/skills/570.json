@@ -136,16 +136,6 @@
           "counter": "battery",
           "trigger": "burstUse",
           "target": "self",
-          "amountRef": 3,
-          "condition": {
-            "selfState": "transformation"
-          }
-        },
-        {
-          "kind": "counterChange",
-          "counter": "battery",
-          "trigger": "burstUse",
-          "target": "self",
           "amount": 100,
           "condition": {
             "selfState": {
@@ -205,7 +195,19 @@
           ]
         }
       ],
-      "notes": []
+      "notes": [
+        {
+          "ja": "自分が変身状態ならバッテリー 50%▲は、射撃場では起きない。変身状態でバーストを使うには、バースト以外でバッテリーを満たす（味方のパーツの破壊。的にパーツが無い）必要がある。バーストの緊急チャージで付いた変身は約 10 秒で外れ、バーストの CT（40 秒）より短い",
+          "en": "Battery up 50% when the user is Transformed does not happen in the range. Using Burst while Transformed needs the battery filled by something other than Burst (an ally destroying a part; the target has no parts). Transformation from the Burst emergency charge ends in about 10 s, shorter than the 40 s Burst cooldown",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "counterChange"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
     }
   }
 }
