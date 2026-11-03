@@ -452,8 +452,8 @@ function settleAccumulates(
     const acc = h.accumulate;
     if (acc === undefined) return;
     let sum: number;
-    const own = ownShots[h.slotIndex];
-    if (acc.source === 'self' && own) {
+    if (acc.source === 'self') {
+      const own = ownShots[h.slotIndex]!;
       const from = lowerBound(own.frames, acc.start);
       const to = lowerBound(own.frames, acc.end);
       sum = acc.ratio * (own.value[to]! - own.value[from]!) + (own.ratioValue[to]! - own.ratioValue[from]!);

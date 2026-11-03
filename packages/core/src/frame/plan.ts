@@ -266,6 +266,9 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const untargetable = untargetableRanges(enemy.events, frames);
   // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
+  // 蓄積爆破の発の値（下の shotValueAt）: 枠ごとの着弾の区間のカーソルと、1 発の倍率ダメージの解決
+  const shotSpanAt: number[] = [];
+  const perShotOf: ResolvedSkillDamage[][] = [];
   const first = runFirstPass(timelineSlots, {
     frames,
     model,
@@ -294,8 +297,14 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
     shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {
       const slot = slots[slotIndex]!;
-      const segmentLanding =
-        landing === null ? undefined : (landing.spans.find((s) => s.start <= frame && frame < s.end)?.landing ?? null);
+      // 溜める発のフレームは枠ごとに増えるだけなので、着弾の区間（[0, frames) を隙間なく覆う）は枠ごとのカーソルで進める
+      let segmentLanding;
+      if (landing !== null) {
+        let at = shotSpanAt[slotIndex] ?? 0;
+        while (at + 1 < landing.spans.length && landing.spans[at]!.end <= frame) at += 1;
+        shotSpanAt[slotIndex] = at;
+        segmentLanding = landing.spans[at]?.landing ?? null;
+      }
       const trigger = slotTriggerDamage(
         slot,
         slotIndex,
@@ -304,7 +313,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
         segmentLanding,
         buffs,
         fullBurst,
-        perShotDamageOf(slot),
+        (perShotOf[slotIndex] ??= perShotDamageOf(slot)),
         input.attackRounding,
       );
       const value =
@@ -595,18 +604,18 @@ export function planSkillHits(
       // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
       // 次の発動までの秒を決めて並べる
       const shorten = effect.periodShorten;
-      // 蓄積爆破（plan/design-accumulate-explosion.md 2.3・2.4 節）: 1 パス目が決めた爆発のフレームに、付けた発のフレームの最大量で
+      // 蓄積爆破（plan/design-accumulate-explosion.md 2.3・2.4 節）: 1 パス目が決めた爆発のフレームに、1 パス目が付けた発のフレームで決めた最大量で
       // 爆発のヒットを置く。ヒットの値は 2 パス目（sim/engine.ts）が窓の中の発の値から出す
       const accumulate = effect.accumulate;
       if (accumulate?.source === 'self') {
         for (const r of accumulateReleases) {
           if (r.slotIndex !== slotIndex || r.effect.source.skill !== effect.source.skill) continue;
           if (r.effect.effectIndex !== effect.effectIndex) continue;
-          const { trigger, hit } = push(r.frame, effect, false, undefined, undefined, false, r.applied);
+          push(r.frame, effect, false, undefined, undefined, false, r.applied);
           hits[hits.length - 1]!.accumulate = {
             start: r.applied + 1,
             end: r.end,
-            cap: trigger.attack * effect.multiplier * hit.distributedDamageMultiplier,
+            cap: r.cap,
             source: 'self',
             ratio: accumulate.ratio,
             opened: r.applied,
