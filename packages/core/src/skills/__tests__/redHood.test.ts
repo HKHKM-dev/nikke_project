@@ -122,6 +122,15 @@ describe('チャージ速度の超過分の変換（applyChargeBuffs。V-0640）
     expect(chargeSpeedOverflowDamage(buffs(5, 2.4))).toBeCloseTo(0.48, 10);
   });
 
+  // 味方からの▲を和に入れること・丸めの単位は未確定（課題 2-53）。いまの定義の読み（効果ごとに丸め、出どころが違えば別の効果）を押さえる
+  it('rounds the stacks of one effect together, and a Charge Speed up from another source separately', () => {
+    // 同じ出どころの同じ値はスタックとしてまとめて丸める: 101% + 3 スタックの 11%（11.43%）→ 超過 12%（別々に丸めると 13%）
+    expect(chargeSpeedOverflowDamage(buffs(3, 2.4))).toBeCloseTo(0.12 * 2.4, 10);
+    // 味方の▲は別の効果として丸める: 101% + 11%（11.43%）+ 味方の 3%（3.43%）→ 超過 15%（S1 と味方の和 14.86% を丸めると 16%）
+    const withAlly = addRatioBuff(buffs(3, 2.4), 'chargeSpeed', 0.0343, '20.skill1');
+    expect(chargeSpeedOverflowDamage(withAlly)).toBeCloseTo(0.15 * 2.4, 10);
+  });
+
   it('keeps the charge speed itself unrounded', () => {
     expect(buffs(10, 2.4).chargeSpeed).toBeCloseTo(1.008 + 0.381, 10);
   });

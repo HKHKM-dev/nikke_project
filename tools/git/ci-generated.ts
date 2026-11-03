@@ -2,8 +2,8 @@
 // CI は確認の前に npm run records:minimal で作り直し、その後にこれを回す。
 //   node tools/git/ci-generated.ts            作り直しで生成物でないファイルが変わったら落とす（PR。records:check の書き換えを
 //                                             ブランチが入れていない。npm run pr:prep が入れる）。main への push では知らせるだけ
-//   node tools/git/ci-generated.ts --commit   main への push で、確認が通った後: 差分が無くてもデプロイキーで origin に届くかを
-//                                             確かめ、生成物の差分を commit し、origin/main がまだこの commit なら push する（進んで
+//   node tools/git/ci-generated.ts --commit   main への push で、確認が通った後: 差分が無くてもデプロイキーで origin を読み書き
+//                                             できるか（ls-remote と push --dry-run）を確かめ、生成物の差分を commit し、origin/main がまだこの commit なら push する（進んで
 //                                             いれば、後の commit の CI が全部を作り直すので何もしない）。決まりごとは ci-generated-lib.ts
 // push には、書き込みのできるデプロイキーの秘密鍵（環境変数 DEPLOY_KEY。secret の GENERATED_DEPLOY_KEY）を使う。main は PR 必須で、
 // GITHUB_TOKEN（github-actions[bot]）は ruleset の bypass に足せないので、デプロイキーを bypass に足してある。

@@ -124,3 +124,4 @@ PR 100 本ごと（#801〜#873 は 73 本）。「生成物」は `GENERATED_PAT
 - 2026-11-01: 案 1 を実施（5 節）。
 - 2026-11-01: 案 3 を実施（[design-backlog-files.md](design-backlog-files.md)）。
 - 2026-11-02: Pages は、main の先頭ではなく CI の通った commit を配り、それが main の先頭でなくなっていれば配らないようにした（CI の生成物の push はデプロイキーなので、その commit にも CI と Pages が回る）。`ci-generated.ts --commit` は、生成物の差分が無くても先にデプロイキーで origin に届くかを確かめ、ls-remote の後に main が進んで push が断られたら何もしない。
+- 2026-11-03: `ci-generated.ts --commit` の事前の確かめに `git push --dry-run` を足し、書き込みの権限の外れた鍵にも差分の無い CI で気づくようにした（ruleset の bypass は本当に送るまで GitHub が見ないので、push の時に分かる）。
