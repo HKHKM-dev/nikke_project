@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 80・効果 520（根拠あり 498）・notes 203（根拠あり 93）
+件数: キャラ 80・効果 520（根拠あり 500）・notes 203（根拠あり 93）
 
 notes の種類: 未対応 41・前提の外 43・計算に無関係 43・補足 20・間接 56
 
@@ -156,12 +156,12 @@ notes の種類: 未対応 41・前提の外 43・計算に無関係 43・補足
 ## 40 D
 
 - **skill1**: supported
-  - effects[0] timed・fullBurstStart・elementDamage: 根拠なし
+  - effects[0] timed・fullBurstStart・elementDamage: C-0928（確定）、C-0929（仮説）
   - notes[0] 計算に無関係: フルバーストタイムが発動した時（初回は追加で）の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない: 根拠なし
 - **skill2**: supported
   - effects[0] burstGauge・battleStart: C-0918（確定）
   - effects[1] state・battleStart・stunImmunity: C-0886（確定）
-  - effects[2] timed・battleStart・elementDamage: 根拠なし
+  - effects[2] timed・battleStart・elementDamage: C-0928（確定）、C-0929（仮説）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0887（確定）
   - effects[1] fullBurstExtend・burstUse: C-0886（確定）

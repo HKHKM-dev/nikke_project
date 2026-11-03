@@ -21725,6 +21725,134 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0946-08",
+      "element": "D skill1.effects[0]",
+      "key": "07f8e9838f4b16c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0946-08",
+      "element": "D skill2.effects[2]",
+      "key": "07f8e9838f4b16c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0946-11",
+      "element": "D skill1.effects[0]",
+      "key": "49d7222a0a64468b",
+      "effective": true,
+      "minus": 0,
+      "plus": 6380.437625171995
+    },
+    {
+      "observation": "0946-11",
+      "element": "D skill2.effects[2]",
+      "key": "49d7222a0a64468b",
+      "effective": true,
+      "minus": -12384.275799636001,
+      "plus": 0
+    },
+    {
+      "observation": "0946-12",
+      "element": "D skill1.effects[0]",
+      "key": "0696d6cab9e9fd3b",
+      "effective": true,
+      "minus": -4908.02894244,
+      "plus": 0
+    },
+    {
+      "observation": "0946-12",
+      "element": "D skill2.effects[2]",
+      "key": "0696d6cab9e9fd3b",
+      "effective": true,
+      "minus": 0,
+      "plus": 9526.365999719997
+    },
+    {
+      "observation": "0946-13",
+      "element": "D skill1.effects[0]",
+      "key": "603cc0c1a49d221a",
+      "effective": true,
+      "minus": 0,
+      "plus": 4908.02894244
+    },
+    {
+      "observation": "0946-13",
+      "element": "D skill2.effects[2]",
+      "key": "603cc0c1a49d221a",
+      "effective": true,
+      "minus": 0,
+      "plus": 9526.365999720001
+    },
+    {
+      "observation": "0947-08",
+      "element": "D skill1.effects[0]",
+      "key": "7bcc1d6924f1318e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0947-08",
+      "element": "D skill2.effects[2]",
+      "key": "7bcc1d6924f1318e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0947-11",
+      "element": "D skill1.effects[0]",
+      "key": "ce2fb134e4c8c3b3",
+      "effective": true,
+      "minus": 0,
+      "plus": 6380.437625171995
+    },
+    {
+      "observation": "0947-11",
+      "element": "D skill2.effects[2]",
+      "key": "ce2fb134e4c8c3b3",
+      "effective": true,
+      "minus": -12384.275799636001,
+      "plus": 0
+    },
+    {
+      "observation": "0947-12",
+      "element": "D skill1.effects[0]",
+      "key": "2fb49e28883ce653",
+      "effective": true,
+      "minus": -4908.02894244,
+      "plus": 0
+    },
+    {
+      "observation": "0947-12",
+      "element": "D skill2.effects[2]",
+      "key": "2fb49e28883ce653",
+      "effective": true,
+      "minus": 0,
+      "plus": 9526.365999719997
+    },
+    {
+      "observation": "0947-13",
+      "element": "D skill1.effects[0]",
+      "key": "94906757e51bcf22",
+      "effective": true,
+      "minus": 0,
+      "plus": 4908.02894244
+    },
+    {
+      "observation": "0947-13",
+      "element": "D skill2.effects[2]",
+      "key": "94906757e51bcf22",
+      "effective": true,
+      "minus": 0,
+      "plus": 9526.365999720001
     }
   ]
 }
