@@ -154,6 +154,7 @@ import {
   chargeProgressFrames,
   stepShooter,
   stepHide,
+  reaimShooter,
   unhideShooter,
   weaponChangeShooter,
   weaponFreeFrameAtSwap,
@@ -835,7 +836,8 @@ function runFirstPassOnce(
   });
   const pauseLeft = slots.map(() => 0);
   // プリバティ編（plan/design-privaty-burst-pause.md 2 節）: 自分のバーストの発動の次のフレームから止めるフレーム数（手順 3 で立てる）
-  const burstPauseAim = slots.map(() => false);
+  // 立っている止まりの、明けで構え直すときに unhideShooter に渡す止めたフレーム数（0 は立っていない。射撃の回数の止まりと区別する）
+  const burstPauseAim = slots.map(() => 0);
   const burstUsePause = slots.map((slot) =>
     slot === null || slot.definition === null ? 0 : resolveBurstUsePause(slot.definition),
   );
@@ -1360,9 +1362,9 @@ function runFirstPassOnce(
       if (pauseLeft[i]! > 0) {
         pauseLeft[i]! -= 1;
         // プリバティ編（plan/design-privaty-burst-pause.md 3 節の論点 4）: バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す
-        if (pauseLeft[i] === 0 && burstPauseAim[i]) {
-          burstPauseAim[i] = false;
-          unhideShooter(state, shot, burstUsePause[i]!, model, params);
+        if (pauseLeft[i] === 0 && burstPauseAim[i]! > 0) {
+          reaimShooter(state, shot, burstPauseAim[i]!, model, params);
+          burstPauseAim[i] = 0;
         }
         return;
       }
@@ -1609,10 +1611,8 @@ function runFirstPassOnce(
       const pause = burstUsePause[a.slotIndex]!;
       if (pause > 0) {
         pauseLeft[a.slotIndex] = Math.max(pauseLeft[a.slotIndex]!, pause);
-        burstPauseAim[a.slotIndex] = true;
+        burstPauseAim[a.slotIndex] = pause;
       }
-    }
-    for (const a of now) {
       const at = effectFrameOf(a);
       if (at === f) burstEffects.push(a);
       else if (at < frames) pendingBurstEffects.set(at, [...(pendingBurstEffects.get(at) ?? []), a]);
