@@ -1,0 +1,46 @@
+{
+  "id": "0951",
+  "date": "2026-11-03",
+  "folder": "range",
+  "file": "20261103-0951_nayuta.mp4",
+  "original": "2026-11-03_23-37-34.mp4",
+  "durationSec": 204.4,
+  "frames": 12263,
+  "fps": 60,
+  "sizeMB": 247.6,
+  "sha256": "9e37e86ea8a2",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 300,
+      "name": "ソルジャーE.G.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 223,
+      "name": "ナユタ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0666 の撮影 B。リター（AI）・ソルジャーE.G.（AI）・ナユタ（操作・オート射撃 ON）。オートバースト ON",
+  "backup": {
+    "at": "2026-11-04T00:32+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

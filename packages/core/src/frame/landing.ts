@@ -145,11 +145,16 @@ export function projectileRowListedUnmeasured(table: TargetRateTable, character:
   return key !== null && key in cell.byProjectile && cell.byProjectile[key] === null;
 }
 
+/** 行の値（着地点の id → 帯 → all の順）。無ければ undefined */
+function rateAtLanding(row: TargetRateRow, landing: Pick<LandingPoint, 'id' | 'band'>): number | undefined {
+  return row[landing.id] ?? row[landing.band] ?? row.all;
+}
+
 /** 表の値（着地点の id → 帯 → all の順）。null = 未測定 */
 export function targetRateOf(table: TargetRateTable, character: CharacterData, landing: LandingPoint): number | null {
   const row = rateRowOf(table, character);
   if (row === null) return null;
-  return row[landing.id] ?? row[landing.band] ?? row.all ?? null;
+  return rateAtLanding(row, landing) ?? null;
 }
 
 /**
@@ -376,7 +381,9 @@ export function landingPartsWith(
 /**
  * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾に替えた使用武器の変更（ChangedWeapon.targetRowKey）が効いている区間の
  * 配分。条件のコア命中率を、的の表の coreHitRate.weaponChanges の行（着地点の id → 帯 → all）に替える。行が無い・null、着地点の無い
- * 配分（手入力）はそのまま。命中率▲は掛けない（使い手のいる変更の行は 1 で、▲の効き方を確かめていない）
+ * 配分（手入力）はそのまま。命中率▲は掛けない（使い手のいる変更の行は 1 で、▲の効き方を確かめていない）。
+ * ナユタ編（plan/design-nayuta.md 2.6 節）: 弾丸命中率も、bulletHitRate.weaponChanges に行があればそれに替える（チャージ武器に替えた
+ * SMG の発。基礎の武器種の帯の値を使わない）
  */
 export function weaponChangeParts(
   enemy: EnemyInput,
@@ -384,12 +391,22 @@ export function weaponChangeParts(
   rowKey: string | undefined,
 ): readonly LandingPart[] {
   if (rowKey === undefined) return parts;
-  const row = enemy.target?.coreHitRate.weaponChanges?.[rowKey];
-  if (row === undefined || row === null) return parts;
+  const row = enemy.target?.coreHitRate.weaponChanges?.[rowKey] ?? null;
+  const bulletRow = enemy.target?.bulletHitRate.weaponChanges?.[rowKey] ?? null;
+  if (row === null && bulletRow === null) return parts;
   return parts.map((p) => {
     if (p.landing === null) return p;
-    const rate = row[p.landing.id] ?? row[p.landing.band] ?? row.all;
-    return rate === undefined ? p : { ...p, condition: { ...p.condition, coreHitRate: rate } };
+    const core = row === null ? undefined : rateAtLanding(row, p.landing);
+    const bullet = bulletRow === null ? undefined : rateAtLanding(bulletRow, p.landing);
+    if (core === undefined && bullet === undefined) return p;
+    return {
+      ...p,
+      condition: {
+        ...p.condition,
+        ...(core === undefined ? {} : { coreHitRate: core }),
+        ...(bullet === undefined ? {} : { hitRate: bullet }),
+      },
+    };
   });
 }
 

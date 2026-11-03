@@ -1,0 +1,34 @@
+{
+  "id": "C-0936",
+  "text": "ナユタのバーストの記憶燃焼は、SMG を押下チャージ型のチャージ武器（チャージ 1.8 秒・1 発は最終攻撃力の 275.18% × フルチャージ 250%）に 10 秒替える。最初の発はバースト欄の六角形の替わり目から 129f（フルバーストに入る回は、動画では入りの止まりの 22f の後）、発と発の間はチャージ時間だけの 106f で、10 秒の窓に 5 発。変更後の発は、的が狙える間はどれも当たり、どれもコアに当たる（弾丸命中率・コア命中率 1）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0950-07`・`0950-08`・`0950-09`・`0950-11`・`0950-13`・`0951-06`・`0951-07`・`0951-08`・`0951-10`・`0951-12`（チェーンの 2 本。最初の発・発の間・コアの値・外れた発の無いことを 0950 で読み、0951 で同じ値。変更後の発の 1 ヒットは 1 未満の差）。V-0666",
+  "model": "`data/skills/223.json`（burst の effects[2]・[3]）。チャージしない武器からの変更は `skills/resolve.ts` の resolveWeaponChange（入力 DOWN_Charge。発と発の間は `frame/firing.ts` の押下チャージ型）、最初の発は firstShotDelayFrames、コア命中率・弾丸命中率は `data/enemies.json` の coreHitRate.weaponChanges・bulletHitRate.weaponChanges の 223:burst（`frame/landing.ts` の weaponChangeParts）、変更の発のフルチャージの数え方は `frame/firstPass.ts`（firesChargeShots）",
+  "replaces": [],
+  "updated": "2026-11-04",
+  "subject": {
+    "places": ["data/skills/223.json の burst の effects[2]", "data/skills/223.json の burst の effects[3]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0950",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "ナユタ skill2.effects[0]",
+      "reason": "記憶吸収の命中率▲（C-0939）は当たる発の数を変えうるが、1 ヒットの値・発と▲の窓の時刻・倍率ダメージのヒットは変えない。記憶燃焼の発は的の表の変更後の武器の行で引き、命中率▲を掛けない",
+      "decided": "2026-11-04"
+    },
+    {
+      "observations": "*",
+      "element": ["ナユタ burst.effects[2]", "ナユタ burst.effects[4]"],
+      "reason": "記憶燃焼のチャージ時間の固定（C-0939）は、チャージ速度▲を受けないことだけを決め、チャージ速度▲を持つ味方のいないこの編成では効かない（effects[4] は記憶燃焼の状態の付与で、同じ根拠を写したもの）",
+      "decided": "2026-11-04"
+    }
+  ]
+}

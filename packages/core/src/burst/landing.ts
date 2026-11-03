@@ -132,6 +132,14 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 効果（命中率▲・攻撃力▲・ゴールデンチップの減少）はヒットより前に付く（発動から約 0.4 秒の一時停止画面で付いていた）ので 0。
   // ヒットに同じ発動の攻撃力▲が乗る（C-0582。ラピ・ヘルム・イサベルは乗らない）
   { resourceIds: [314], sameActivationBuffsOnHit: true, delays: { hitFrames: 96, effectFrames: 0 }, claim: 'C-0581' },
+  // ナユタ: II の発動（六角形の替わり目）からヒットまで 55f（フルバーストの外の回は動画で 55〜56f、入る回は止まり 22f を足して 76〜77f）。
+  // バーストスキルダメージに同じ発動の攻撃ダメージ▲が乗る（V-0666）
+  {
+    resourceIds: [223],
+    sameActivationBuffsOnHit: true,
+    delays: { hitFrames: 55, effectFrames: 0 },
+    claim: 'C-0938',
+  },
   // ルドミラ: I の発動（六角形が I から II に替わるフレーム）からヒットまで、動画で 96f（印からの動画のフレーム。hitFrames は本当の発動からの
   // ゲーム内のフレームで 73）。バースト使用時の効果（防御力▲。間接）の遅れは未測定（V-0509）
   { resourceIds: [190], delays: { hitFrames: 73, effectFrames: 0 }, claim: 'C-0675' },

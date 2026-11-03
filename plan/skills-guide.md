@@ -103,6 +103,10 @@
     | 『バースト〈段階〉で使用時：〈モード〉』／バーストスキルクールタイム X 秒▼「戦闘中 1 回発動」 | burstUse の効果の `condition.burstStep`（モードの名前は維持 0 秒の付与）／`cooldownReduction` の `maxFires: 1` | burstStep は全段階（AllStep）のキャラだけ（`definitions.test.ts`）。全段階の枠は CT が明けていれば同じチェーンで撃ち直す。例: レッドフードのバースト | [design-red-hood.md](design-red-hood.md) 2.1〜2.3 節・7.1 節 |
     | チャージ速度 100% を超えた場合、超過した値をチャージダメージに変換・超過した値の X% のチャージダメージ▲ | passive の stat `chargeSpeedOverflow`（`self` だけ） | フルチャージの発で、チャージ速度▲の比率の和の 1 を超えた分 × X をチャージダメージ▲に足す。例: レッドフードの S1 | 同 2.4 節 |
     | 使用武器変更の解放の長さ・装弾数無限（説明文に無く、録画で読む） | `weaponChange` の `chargeReleaseSeconds`・`infiniteAmmo` | 解放の秒の端数は射手が発ごとに持ち越す。確かめたのはチャージが 0 のときだけ。例: レッドフードのレッドウルフ | 同 7.1 節の論点 10・11 |
+    | 「スタック量増減効果無効」 | 付与の `stackImmutable: true` | スタックを持つ付与だけ。同じ定義のその状態への `stackChange` は読み込みで弾く。例: ナユタの記憶吸収 | [design-nayuta.md](design-nayuta.md) 2.5 節 |
+    | 「〈名前〉：使用武器変更」（自分が〈名前〉状態なら） | `weaponChange` の `state` と、読む側の `condition.selfState` | 読み込みが、同じきっかけ・維持・条件の中身の無い付与（`weaponChangeOf` の印）を足す。付与は発火のフレームから、変更は次のフレームから。`maxAmmoRef` とは組まない | 同上 |
+    | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | 変更後の武器を押下チャージ型（`DOWN_Charge`。発と発の間はチャージ時間だけ）にし、その発だけを `fullChargeShot` に数える。レートは書かない。例: ナユタの記憶燃焼（C-0936） | 同 2.6 節 |
+    | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | 変更後の武器のチャージ時間がチャージ速度▲を受けない（timed の `fixedChargeTime` と同じ読み。C-0214）。`chargeTimeSeconds` と組む。例: ナユタの記憶燃焼（確かめていない。C-0939） | 同 2.4 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

@@ -252,8 +252,12 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
   };
   for (const group of [json.skills, json.treasureSkills ?? {}]) {
     for (const slot of SKILL_SLOTS) {
-      delete group[slot]?.support;
-      for (const effect of (group[slot]?.effects ?? []) as Record<string, unknown>[]) {
+      const entry = group[slot];
+      if (entry === undefined) continue;
+      delete entry.support;
+      // ナユタ編: 使用武器の変更の state から読み込みが足した付与は、読み直しでもう一度足されるので外す
+      entry.effects = entry.effects.filter((e) => (e as { weaponChangeOf?: true }).weaponChangeOf !== true);
+      for (const effect of entry.effects as Record<string, unknown>[]) {
         // 2 段目の段 12: バースト段階の変更の側（burstStepMode）も読み込みで書く欄
         delete effect.burstStepMode;
         if (effect.kind !== 'state' || effect.enemy !== true) continue;
@@ -2274,7 +2278,9 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
   );
   const activation = mine[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
-  const frames = slotOf(result.shots, ctx).frames;
+  const log = slotOf(result.shots, ctx);
+  // ナユタ編（V-0666）: weaponChange が true なら、使用武器の変更の発だけを数える（変更の窓の前の基礎の武器の発を拾わない）
+  const frames = ctx.args.weaponChange === true ? (log.weaponChangeShotFrames ?? []) : log.frames;
   const firstFrom = (frame: number) => {
     const shot = frames.find((f) => f >= frame);
     if (shot === undefined) throw new Error(`フレーム ${frame} の後に発が無い`);

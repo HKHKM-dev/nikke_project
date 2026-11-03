@@ -1,0 +1,34 @@
+{
+  "id": "C-0938",
+  "text": "ナユタのバーストの味方全体の攻撃ダメージ▲（15 秒）は、自分の通常攻撃・S1 の倍率ダメージにも乗り、同じ発動のバーストスキルダメージ（最終攻撃力の 645.33%）にも乗る（同じ発動の▲がヒットに乗る）。バーストスキルダメージのヒットは、II の発動（六角形の替わり目）の 55f 後で、フルバーストに入る回も補正が乗らない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0950-11`・`0950-14`・`0950-15`・`0950-16`・`0951-10`・`0951-13`・`0951-14`・`0951-15`（チェーンの 2 本。同じ発動の攻撃ダメージ▲の乗った値を 0950 で読み（乗らない値は 22.77% 小さい）、0951 で同じ値。ナユタの通常攻撃・S1 の値にもこの▲が乗る）。V-0666",
+  "model": "`data/skills/223.json`（burst の effects[0]・[1]）、`burst/landing.ts` の MEASURED_BURST_DELAYS の 223 の行（sameActivationBuffsOnHit・hitFrames 55）、`frame/plan.ts` の withSameActivationEffects（同じ発動の使用武器の変更は飛ばす）",
+  "replaces": [],
+  "updated": "2026-11-04",
+  "subject": {
+    "places": ["data/skills/223.json の burst の effects[0]", "data/skills/223.json の burst の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0950",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": "*",
+      "element": "ナユタ skill2.effects[0]",
+      "reason": "記憶吸収の命中率▲（C-0939）は当たる発の数を変えうるが、1 ヒットの値・発と▲の窓の時刻・倍率ダメージのヒットは変えない。記憶燃焼の発は的の表の変更後の武器の行で引き、命中率▲を掛けない",
+      "decided": "2026-11-04"
+    },
+    {
+      "observations": "*",
+      "element": ["ナユタ burst.effects[2]", "ナユタ burst.effects[4]"],
+      "reason": "記憶燃焼のチャージ時間の固定（C-0939）は、チャージ速度▲を受けないことだけを決め、チャージ速度▲を持つ味方のいないこの編成では効かない（effects[4] は記憶燃焼の状態の付与で、同じ根拠を写したもの）",
+      "decided": "2026-11-04"
+    }
+  ]
+}

@@ -162,9 +162,11 @@ describe('解決', () => {
     expect(shot).toMatchObject({ maxAmmo: 3, chargeTime: character.shot.chargeTime });
     expect(shot.fullChargeDamage).toBe(character.shot.fullChargeDamage);
     const ar: CharacterData = { ...character, shot: { ...character.shot, chargeTime: 0 } };
+    // ナユタ編（plan/design-nayuta.md 2.6 節）: チャージしない基礎の武器でも、チャージ時間を書けばチャージ武器への変更になる。
+    // チャージ時間の無いフルチャージダメージは書けないまま
     expect(() =>
       resolveTimed(
-        parseSkillDefinition(withBurst({ ...BASE, maxAmmoRef: 2, chargeTimeSeconds: 0.3 })) as SkillDefinition,
+        parseSkillDefinition(withBurst({ ...BASE, maxAmmoRef: 2, fullChargeDamage: 300 })) as SkillDefinition,
         ar,
         MAX_SKILL_LEVELS,
       ),

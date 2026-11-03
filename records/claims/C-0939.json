@@ -1,0 +1,15 @@
+{
+  "id": "C-0939",
+  "text": "ナユタの記憶吸収の命中率▲（1 スタックごとに 1.4%）、スタック量増減効果無効、記憶燃焼のチャージ時間の「固定」（チャージ速度▲を受けない）は、確かめていない（V-0666 の録画では、命中率▲で当たる数の変わる帯が分けられず、スタックを増減させる味方とチャージ速度▲を持つ味方がいない）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文の解釈。V-0666 の単騎の録画（0948・0949）は、命中率▲で当たる数の変わる距離帯の、スタック数の違うマガジンを分けられない。チェーンの録画（0950・0951）には、記憶吸収のスタックを増減させる味方と、チャージ速度▲を持つ味方がいない。V-0666",
+  "model": "`data/skills/223.json`（skill2 の effects[0] の中身の hitRate と stackImmutable、burst の effects[2] の chargeTimeFixed）",
+  "replaces": [],
+  "updated": "2026-11-04",
+  "subject": {
+    "places": ["data/skills/223.json の skill2 の effects[0]", "data/skills/223.json の burst の effects[2]"]
+  },
+  "decidedOn": []
+}

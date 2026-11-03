@@ -249,6 +249,13 @@ export const NAMED_STATES = {
   beastCage: { name: { ja: 'ビーストケージ', en: 'Beast Cage' }, holder: 'ally' },
   theLastHowl: { name: { ja: 'ハウリングエンド', en: 'The Last Howl' }, holder: 'ally' },
   redWolf: { name: { ja: 'レッドウルフ', en: 'Red Wolf' }, holder: 'ally' },
+  /**
+   * ナユタ編（plan/design-nayuta.md 1 節）: S2 の記憶吸収（3 秒ごとに 1 スタック・スタック量増減効果無効）。S1 の「記憶吸収が適用される時」の
+   * { applied } と、S2 のスタック量別の効果の条件が見る
+   */
+  memoryAbsorption: { name: { ja: '記憶吸収', en: 'Memory Absorption' }, holder: 'ally' },
+  /** ナユタ編（同 2.5 節）: バーストの「記憶燃焼：使用武器変更」の変更の窓の間の状態（weaponChange の state）。S1 の「記憶燃焼状態なら」が見る */
+  memoryIncineration: { name: { ja: '記憶燃焼', en: 'Memory Incineration' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

@@ -71,6 +71,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       'targetCountRef',
       'undispellable',
       'stacksFrom',
+      'stackImmutable',
       'condition',
     ]) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'not allowed in a grant on the enemy (target "enemy")');
@@ -152,6 +153,14 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       fail(`${path}.stackRefresh`, 'stackRefresh needs maxStacks or maxStacksRef');
     effect.stackRefresh = 'each';
   }
+  // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効（同じ定義の stackChange は validateStackChanges が弾く）
+  if (v.stackImmutable !== undefined) {
+    if (v.stackImmutable !== true)
+      fail(`${path}.stackImmutable`, `expected true, got ${JSON.stringify(v.stackImmutable)}`);
+    if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
+      fail(`${path}.stackImmutable`, 'stackImmutable needs maxStacks or maxStacksRef');
+    effect.stackImmutable = true;
+  }
   // 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発の leadFrames 前から始める付与
   if (v.leadFrames !== undefined) {
     const t = fields.trigger;
@@ -231,6 +240,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
   'stacksPerFireRef',
   'leadFrames',
   'stackRefresh',
+  'stackImmutable',
   'condition',
   'burstStepMix',
   'squad',
