@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 79・効果 505（根拠あり 478）・notes 197（根拠あり 89）
+件数: キャラ 79・効果 505（根拠あり 482）・notes 197（根拠あり 91）
 
 notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足 19・間接 56
 
@@ -159,13 +159,13 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
   - effects[0] timed・fullBurstStart・elementDamage: 根拠なし
   - notes[0] 計算に無関係: フルバーストタイムが発動した時（初回は追加で）の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない: 根拠なし
 - **skill2**: supported
-  - effects[0] burstGauge・battleStart: 根拠なし
+  - effects[0] burstGauge・battleStart: C-0918（確定）
   - effects[1] state・battleStart・stunImmunity: C-0886（確定）
   - effects[2] timed・battleStart・elementDamage: 根拠なし
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0887（確定）
   - effects[1] fullBurstExtend・burstUse: C-0886（確定）
-  - notes[0] 前提の外: 火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）: 根拠なし
+  - notes[0] 前提の外: 火力型の味方全体へのパーツダメージ▲は、パーツを扱わないので効かない（要件の前提の外）: C-0443（範囲外）
 
 ## 60 ベロータ
 
@@ -345,7 +345,7 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
 ## 161 ミハラ
 
 - **skill1**: supported
-  - effects[0] timed・lastShot・critDamage: 根拠なし
+  - effects[0] timed・lastShot・critDamage: C-0917（確定）
 - **skill2**: supported
   - effects[0] state・burstUse・highwayToHell1（attack）: C-0563（確定）
   - effects[1] state・burstUse・highwayToHell2（critRate）: C-0566（確定）
@@ -485,7 +485,7 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
 ## 233 ドロシー
 
 - **skill1**: supported
-  - effects[0] cooldownReduction・lastShot: 根拠なし
+  - effects[0] cooldownReduction・lastShot: C-0919（確定）
   - notes[0] 前提の外: 最後の弾丸で攻撃した時、自分が発現状態なら味方全体のパーツダメージ▲は、射撃場の的にパーツが無いので効かない: C-0443（範囲外）
 - **skill2**: supported
   - effects[0] damage・20 秒ごと・distributed: C-0847（確定）、C-0848（確定）
@@ -896,7 +896,7 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
   - effects[0] state・burstUse・beastCage: C-0893（確定）
   - effects[1] timed・burstUse・attack: C-0893（確定）
   - effects[2] cooldownReduction・burstUse: C-0894（確定）
-  - effects[3] state・burstUse・theLastHowl: 根拠なし
+  - effects[3] state・burstUse・theLastHowl: C-0920（確定）
   - effects[4] cooldownReduction・burstUse: C-0894（確定）
   - effects[5] state・burstUse・redWolf: C-0899（確定）
   - effects[6] weaponChange・burstUse: C-0896（確定）、C-0897（確定）
@@ -904,7 +904,7 @@ notes の種類: 未対応 39・前提の外 42・計算に無関係 41・補足
   - notes[0] 補足: 使用武器変更の発射レートは、CDN のバーストが使用武器の変更の形（ChangeWeapon）でないので無い。チャージ武器の発の間隔はチャージ時間と解放で決まり、レートを読まないので、基礎の武器のレート（60）を書いた: 根拠なし
   - notes[1] 計算に無関係: バーストⅡの、自分にヘイト：敵全体を挑発は、ダメージに関係しない。付けたときにゲージを溜めても、チェーンの間はゲージを足さないので効かない: 根拠なし
   - notes[2] 間接（HP）: バーストⅡの、自分の受ける HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
-  - notes[3] 前提の外: バーストⅢの貫通範囲の拡張は、敵 1 体の前提では効かない（要件の前提の外）: 根拠なし
+  - notes[3] 前提の外: バーストⅢの貫通範囲の拡張は、敵 1 体の前提では効かない（要件の前提の外）: C-0443（範囲外）
 
 ## 471 スノーホワイト：ヘビーアームズ
 
