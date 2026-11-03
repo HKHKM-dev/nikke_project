@@ -19907,7 +19907,7 @@
     {
       "observation": "0870-02",
       "element": "ドロシー skill1.effects[0]",
-      "key": "12bfb7c93e20225a",
+      "key": "90257b69a70c42d0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19915,7 +19915,7 @@
     {
       "observation": "0870-03",
       "element": "ドロシー skill1.effects[0]",
-      "key": "e135541a29a4b1ad",
+      "key": "15819dea892e663f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19923,7 +19923,23 @@
     {
       "observation": "0870-04",
       "element": "ドロシー skill1.effects[0]",
-      "key": "898ce4074cb76cf8",
+      "key": "5929071be9d9eaf2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0870-07",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "044e9318d0c1f1bd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0870-08",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "b1d539b9ba71cd2c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19931,7 +19947,7 @@
     {
       "observation": "0871-02",
       "element": "ドロシー skill1.effects[0]",
-      "key": "171087e82aaec1c7",
+      "key": "36f31ea42848e515",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19939,7 +19955,7 @@
     {
       "observation": "0871-03",
       "element": "ドロシー skill1.effects[0]",
-      "key": "2ff183219246d574",
+      "key": "cb455c41db3f2b76",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19947,7 +19963,31 @@
     {
       "observation": "0871-04",
       "element": "ドロシー skill1.effects[0]",
-      "key": "431116842fb77ff9",
+      "key": "5ebed0a8e5287673",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0871-07",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "8f9b9f612182c940",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0871-08",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "9df46e40b77cfac1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0872-04",
+      "element": "ドロシー burst.effects[0]",
+      "key": "9284e0be88bfcd89",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19955,7 +19995,49 @@
     {
       "observation": "0872-04",
       "element": "ドロシー skill1.effects[0]",
-      "key": "3440d606d0fac04b",
+      "key": "9284e0be88bfcd89",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0872-07",
+      "element": "ドロシー burst.effects[0]",
+      "key": "32e288b51e148bbc",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0872-07",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "32e288b51e148bbc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0872-08",
+      "element": "ドロシー burst.effects[0]",
+      "key": "cc6468384fa0e21d",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0872-08",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "cc6468384fa0e21d",
+      "effective": false,
+      "minus": -1,
+      "plus": null
+    },
+    {
+      "observation": "0873-04",
+      "element": "ドロシー burst.effects[0]",
+      "key": "b10b8c68bd4c7295",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -19963,9 +20045,43 @@
     {
       "observation": "0873-04",
       "element": "ドロシー skill1.effects[0]",
-      "key": "b09d19ec1917a4ef",
+      "key": "b10b8c68bd4c7295",
       "effective": false,
       "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0873-07",
+      "element": "ドロシー burst.effects[0]",
+      "key": "ca009ebb063f9660",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0873-07",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "ca009ebb063f9660",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0873-08",
+      "element": "ドロシー burst.effects[0]",
+      "key": "7a74cbbe6b876631",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 出来事（skillHit）が 0 回しか無い"
+    },
+    {
+      "observation": "0873-08",
+      "element": "ドロシー skill1.effects[0]",
+      "key": "7a74cbbe6b876631",
+      "effective": false,
+      "minus": -1,
       "plus": null
     },
     {
