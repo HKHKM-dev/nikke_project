@@ -122,7 +122,9 @@ describe('the inputs of the memo key', () => {
     const entry = fileURLToPath(new URL('./residual-cache.ts', import.meta.url));
     const files = reachable(entry);
     expect(files.length).toBeGreaterThan(10);
-    const covered = (f: string) => MODEL_ROOTS.some((r) => (r.endsWith('/') ? f.startsWith(r) : f === r));
+    const norm = (p: string) => p.replaceAll('\\', '/');
+    const covered = (f: string) =>
+      MODEL_ROOTS.some((r) => (norm(r).endsWith('/') ? norm(f).startsWith(norm(r)) : norm(f) === norm(r)));
     expect(files.filter((f) => !covered(f))).toEqual([]);
   });
 

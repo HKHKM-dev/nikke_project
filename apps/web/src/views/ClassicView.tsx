@@ -1,0 +1,78 @@
+import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
+import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
+import { NotesSummary } from '../components/NotesSummary.tsx';
+import { PartyTabs } from '../components/PartyTabs.tsx';
+import { SlotCard } from '../components/SlotCard.tsx';
+import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
+import { takenResourceIds } from '../team.ts';
+import type { ViewProps } from './ViewProps.ts';
+
+export function ClassicView({
+  team,
+  dispatch,
+  index,
+  characterCache,
+  fullySupported,
+  masters,
+  mastersError,
+  calc,
+  shown,
+  slotResults,
+  parties,
+  selectParty,
+  totals,
+  totalsPending,
+  summarySlots,
+}: ViewProps) {
+  return (
+    <>
+      <TeamSettingsForm
+        element={team.enemy.element}
+        defence={team.enemy.defence}
+        fixedSpec={team.fixedSpec}
+        consoleInput={team.console}
+        synchroLevel={team.synchroLevel}
+        durationSeconds={team.durationSeconds}
+        rangeJump={team.rangeJump}
+        dispatch={dispatch}
+      />
+      {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
+      <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
+      <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
+      <section className="slots" aria-label="編成">
+        {team.slots.map((slot, i) => {
+          const { character, growth, build, skillLevels, treasurePhase } = calc.slots[i]!;
+          return (
+            <SlotCard
+              key={i}
+              slotIndex={i}
+              slot={slot}
+              index={index}
+              excludeIds={takenResourceIds(team, i)}
+              fullySupported={fullySupported}
+              character={character}
+              error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
+              fixedSpec={team.fixedSpec}
+              effectiveGrowth={growth}
+              effectiveBuild={build}
+              treasurePhase={treasurePhase}
+              masters={masters}
+              mastersError={mastersError}
+              effectiveSkillLevels={skillLevels}
+              slotResult={slotResults[i] ?? null}
+              focused={team.controlledSlot === i}
+              dispatch={dispatch}
+            />
+          );
+        })}
+      </section>
+      <ErrorBoundary
+        resetKeys={[shown]}
+        fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
+      >
+        {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
+        <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
+      </ErrorBoundary>
+    </>
+  );
+}
