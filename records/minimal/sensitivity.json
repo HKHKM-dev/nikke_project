@@ -22761,6 +22761,518 @@
       "minus": 0,
       "plus": null,
       "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "0956-07",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "0c0ee886e7e46c71",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-07",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "0c0ee886e7e46c71",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-07",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "0c0ee886e7e46c71",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-07",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "0c0ee886e7e46c71",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-08",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "bf5dfe597151d87c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-08",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "bf5dfe597151d87c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-08",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "bf5dfe597151d87c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-08",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "bf5dfe597151d87c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-09",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "b380d2971ec228b4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-09",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "b380d2971ec228b4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-09",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "b380d2971ec228b4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-09",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "b380d2971ec228b4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-10",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "f186bf36a5b512ad",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-10",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "f186bf36a5b512ad",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-10",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "f186bf36a5b512ad",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-10",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "f186bf36a5b512ad",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-11",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "0ff8e427120af206",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-11",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "0ff8e427120af206",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-11",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "0ff8e427120af206",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-11",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "0ff8e427120af206",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-12",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "ce7fcf14228f6b5b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-12",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "ce7fcf14228f6b5b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-12",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "ce7fcf14228f6b5b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-12",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "ce7fcf14228f6b5b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-13",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "b5097300ce01229f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-13",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "b5097300ce01229f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-13",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "b5097300ce01229f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-13",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "b5097300ce01229f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-14",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "96bbe7e1ec2d4b06",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0956-14",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "96bbe7e1ec2d4b06",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-14",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "96bbe7e1ec2d4b06",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0956-14",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "96bbe7e1ec2d4b06",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-07",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "5980961a762ceb63",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-07",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "5980961a762ceb63",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-07",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "5980961a762ceb63",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-07",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "5980961a762ceb63",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-08",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "5ba785ed43ef54ce",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-08",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "5ba785ed43ef54ce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-08",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "5ba785ed43ef54ce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-08",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "5ba785ed43ef54ce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-09",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "0c94ca63e3bd7ffe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-09",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "0c94ca63e3bd7ffe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-09",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "0c94ca63e3bd7ffe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-09",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "0c94ca63e3bd7ffe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-10",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "5b8603d2493ae257",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-10",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "5b8603d2493ae257",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-10",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "5b8603d2493ae257",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-10",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "5b8603d2493ae257",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-11",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "87962b9b1199c724",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-11",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "87962b9b1199c724",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-11",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "87962b9b1199c724",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-11",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "87962b9b1199c724",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-12",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "bb53eac864355119",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-12",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "bb53eac864355119",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-12",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "bb53eac864355119",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-12",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "bb53eac864355119",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-13",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "dcc677fcf88db025",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-13",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "dcc677fcf88db025",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-13",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "dcc677fcf88db025",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-13",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "dcc677fcf88db025",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-14",
+      "element": "アンカー：イノセントメイド burst.effects[0]",
+      "key": "e1b8ad4d51621bec",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0957-14",
+      "element": "アンカー：イノセントメイド skill1.effects[0]",
+      "key": "e1b8ad4d51621bec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-14",
+      "element": "アンカー：イノセントメイド skill2.effects[0]",
+      "key": "e1b8ad4d51621bec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0957-14",
+      "element": "アンカー：イノセントメイド skill2.effects[2]",
+      "key": "e1b8ad4d51621bec",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

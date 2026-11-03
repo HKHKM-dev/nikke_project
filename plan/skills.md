@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 83・効果 551（根拠あり 521）・notes 209（根拠あり 93）
+件数: キャラ 83・効果 551（根拠あり 523）・notes 209（根拠あり 93）
 
 notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足 20・間接 58
 
@@ -881,11 +881,11 @@ notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足
   - notes[1] 前提の外: 使用回数別の効果の 3 回目からのスタック可能デバフ効果のスタック量▼は、味方に付くデバフが敵の攻撃から来るので起きない（被弾を扱わない。要件 4.2 節）: 根拠なし
 - **skill2**: supported
   - effects[0] timed・fullBurstEnd・hitRate: 根拠なし
-  - effects[1] timed・fullBurstEnd・attack: 根拠なし
+  - effects[1] timed・fullBurstEnd・attack: C-0944（確定）
   - effects[2] timed・fullBurstEnd・reloadSpeed: 根拠なし
 - **burst**: supported
   - effects[0] heal・burstUse: 根拠なし
-  - effects[1] timed・burstUse・attack: 根拠なし
+  - effects[1] timed・burstUse・attack: C-0945（確定）
   - notes[0] 間接（HP）: 保存（超過した回復量を発動者の最大HP の X% まで保存・25 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
 ## 391 アイン
