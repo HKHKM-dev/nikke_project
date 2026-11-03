@@ -568,3 +568,14 @@ header h1 {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+/* モダン表示モード（Step 1 基盤） */
+.modern-view-container {
+  display: grid;
+  gap: 12px;
+}
+.modern-badge-banner {
+  padding: 6px 12px;
+  background: color-mix(in srgb, Highlight 15%, transparent);
+  border: 1px dashed Highlight;
+  font-size: 0.85rem;
+}

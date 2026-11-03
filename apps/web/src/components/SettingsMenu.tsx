@@ -1,8 +1,15 @@
-// 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く: テーマの切り替え
+// 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
+import { UI_MODE_LABEL, type UiMode } from '../uiMode.ts';
 import { Popover } from './Popover.tsx';
 
 const THEMES: readonly Theme[] = ['light', 'dark', 'system'];
+const UI_MODES: readonly UiMode[] = ['classic', 'modern'];
+
+type Props = {
+  uiMode: UiMode;
+  onSelectUiMode: (mode: UiMode) => void;
+};
 
 function GridIcon() {
   return (
@@ -15,10 +22,19 @@ function GridIcon() {
   );
 }
 
-export function SettingsMenu() {
+export function SettingsMenu({ uiMode, onSelectUiMode }: Props) {
   const [theme, setTheme] = useTheme();
   return (
     <Popover button={<GridIcon />} buttonClassName="settings-menu-button" label="設定" align="right">
+      <fieldset className="popover-group">
+        <legend>表示モード</legend>
+        {UI_MODES.map((m) => (
+          <label key={m} className="popover-option">
+            <input type="radio" name="uiMode" value={m} checked={uiMode === m} onChange={() => onSelectUiMode(m)} />
+            <span>{UI_MODE_LABEL[m]}</span>
+          </label>
+        ))}
+      </fieldset>
       <fieldset className="popover-group">
         <legend>テーマ</legend>
         {THEMES.map((t) => (

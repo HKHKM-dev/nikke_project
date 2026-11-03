@@ -9,21 +9,9 @@ import {
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { ComputeCache } from './compute.ts';
 import { buildCalcView, slotResultFor } from './calcView.ts';
-import { DamageTotalPanel } from './components/DamageTotalPanel.tsx';
-import { ErrorBoundary } from './components/ErrorBoundary.tsx';
-import { PartyTabs } from './components/PartyTabs.tsx';
-import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
+import { type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
-import { SlotCard } from './components/SlotCard.tsx';
-import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
-import {
-  INITIAL_TEAM_STATE,
-  STORAGE_KEY,
-  parseTeamState,
-  serializeTeamState,
-  takenResourceIds,
-  teamReducer,
-} from './team.ts';
+import { INITIAL_TEAM_STATE, STORAGE_KEY, parseTeamState, serializeTeamState, teamReducer } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
 import { readStorage, writeStorage } from './storage.ts';
 import {
@@ -40,10 +28,15 @@ import { partyInputs, partyTotals } from './partyTotals.ts';
 import { useBatchComputation } from './useBatchComputation.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
+import { useUiMode } from './uiMode.ts';
+import { ClassicView } from './views/ClassicView.tsx';
+import { ModernView } from './views/ModernView.tsx';
+import type { ViewProps } from './views/ViewProps.ts';
 
 const BASE_URL = import.meta.env.BASE_URL;
 
 export function App() {
+  const [uiMode, setUiMode] = useUiMode();
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
@@ -172,68 +165,35 @@ export function App() {
     [calc.slots, slotResults],
   );
 
+  const viewProps: ViewProps | null = index
+    ? {
+        team,
+        dispatch,
+        index,
+        characterCache: cache,
+        fullySupported: skills.fullySupported,
+        masters,
+        mastersError,
+        calc,
+        shown,
+        slotResults,
+        parties,
+        selectParty,
+        totals,
+        totalsPending,
+        summarySlots,
+      }
+    : null;
+
   return (
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu />
+        <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
-      {index && (
-        <>
-          <TeamSettingsForm
-            element={team.enemy.element}
-            defence={team.enemy.defence}
-            fixedSpec={team.fixedSpec}
-            consoleInput={team.console}
-            synchroLevel={team.synchroLevel}
-            durationSeconds={team.durationSeconds}
-            rangeJump={team.rangeJump}
-            dispatch={dispatch}
-          />
-          {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
-          <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
-          <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
-          <section className="slots" aria-label="編成">
-            {team.slots.map((slot, i) => {
-              const { character, growth, build, skillLevels, treasurePhase } = calc.slots[i]!;
-              return (
-                <SlotCard
-                  key={i}
-                  slotIndex={i}
-                  slot={slot}
-                  index={index}
-                  excludeIds={takenResourceIds(team, i)}
-                  fullySupported={skills.fullySupported}
-                  character={character}
-                  error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
-                  fixedSpec={team.fixedSpec}
-                  effectiveGrowth={growth}
-                  effectiveBuild={build}
-                  treasurePhase={treasurePhase}
-                  masters={masters}
-                  mastersError={mastersError}
-                  effectiveSkillLevels={skillLevels}
-                  slotResult={slotResults[i] ?? null}
-                  focused={team.controlledSlot === i}
-                  dispatch={dispatch}
-                />
-              );
-            })}
-          </section>
-          <ErrorBoundary
-            resetKeys={[shown]}
-            fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
-          >
-            {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
-            <NotesSummary
-              slots={summarySlots}
-              enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}
-            />
-          </ErrorBoundary>
-        </>
-      )}
+      {viewProps && (uiMode === 'modern' ? <ModernView {...viewProps} /> : <ClassicView {...viewProps} />)}
     </main>
   );
 }
