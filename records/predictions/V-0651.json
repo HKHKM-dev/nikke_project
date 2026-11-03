@@ -1,0 +1,128 @@
+{
+  "verification": "V-0651",
+  "note": "読み直し（録画 0932・0933。ラプンツェル：サンクチュアリ（AI）・アスカ（操作）。オートバースト OFF）。見るのは最初の満タン（BURST バーの消失）までの発の数で、S2 の追加ダメージ 1 回の溜める量の仮説を、フルチャージ倍率の無い 1 ヒット（28,000）の 2 回分・1 回分・0 回分に置き換えて比べる。ロケットの 0.8 倍（AI の枠ではフルチャージ倍率が乗らないので 22,400）の読みは、1 回分（H1）と 0 回分（H0）の間に来る",
+  "team": [
+    {
+      "rid": 473,
+      "controlled": false
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H2",
+      "note": "操作枠でなくても、追加ダメージ 1 回でフルチャージ倍率の無い 1 ヒットの 2 回分（56,000）を溜める（いまのモデル。C-0721 の操作枠の量と同じ）"
+    },
+    {
+      "id": "H1",
+      "note": "追加ダメージ 1 回で 1 ヒット分（28,000）を溜める（参考。ロケットの 0.8 倍の読み（22,400）は H1 と H0 の間）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 473,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "damageType": "additional",
+              "ref": 7,
+              "gaugeHits": [0]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0",
+      "note": "追加ダメージはゲージを溜めない（参考の下限）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 473,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "damageType": "additional",
+              "ref": 7
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "gauge-full-frame",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "最初の満タンのフレーム（戦闘開始から）"
+    },
+    {
+      "id": "rapunzel-shots-to-full",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "最初の満タンまでにラプンツェル：サンクチュアリが撃った発の数"
+    },
+    {
+      "id": "asuka-shots-to-full",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "note": "最初の満タンまでにアスカが撃った発の数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-03",
+    "commit": "0b1d465c94017d7579c92779b69987d3059a0322",
+    "values": {
+      "H2": {
+        "gauge-full-frame": 681,
+        "rapunzel-shots-to-full": 7,
+        "asuka-shots-to-full": 80
+      },
+      "H1": {
+        "gauge-full-frame": 773,
+        "rapunzel-shots-to-full": 8,
+        "asuka-shots-to-full": 92
+      },
+      "H0": {
+        "gauge-full-frame": 990,
+        "rapunzel-shots-to-full": 10,
+        "asuka-shots-to-full": 120
+      }
+    }
+  }
+}
