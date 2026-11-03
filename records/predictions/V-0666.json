@@ -1,0 +1,221 @@
+{
+  "verification": "V-0666",
+  "note": "撮影 A（ナユタ単騎・オート射撃 ON・オートバースト OFF）。S2 のスタック量別の効果（2・10・30 スタック）が付く時刻を、その段階に届いた付与の後の次の付与の前（7.5 秒・31.5 秒・91.5 秒）の 1 ヒットで見分ける。S1 の▲が上限（30 スタック・90 秒）の後も続くか（設計書 3.1 節の Q1）は定義の切り替えが要るので、検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 223,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義。段階の効果は、その段階のスタックが付いたフレームから付く（常時の効果の while）"
+    },
+    {
+      "id": "H2",
+      "note": "段階の効果は「記憶吸収が適用される時」に、付く前のスタック数で判定する（届いた次の付与から付く。3 秒遅れる）。1・2 段階は、付く前に N 以上 = N+1 スタック目が付いた時なので、常時の効果のスタックの条件を N+1 にして表す。3 段階（30 スタック。上限）はこの形で書けないので、検証記録の「予測」に手で書く（93 秒から）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 223,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attack",
+              "ref": 6,
+              "while": {
+                "selfState": {
+                  "state": "memoryAbsorption",
+                  "stacks": 3
+                }
+              }
+            }
+          },
+          {
+            "rid": 223,
+            "skill": "skill2",
+            "replace": 2,
+            "effect": {
+              "kind": "passive",
+              "target": "self",
+              "stat": "attackDamage",
+              "ref": 8,
+              "while": {
+                "selfState": {
+                  "state": "memoryAbsorption",
+                  "stacks": 11
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "nayuta-hit-1s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 59,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "最初の付与（3 秒）より前の胴体の 1 ヒット（読みの基準。どの仮説でも▲なし）",
+      "tolerance": {
+        "rel": 0.01
+      }
+    },
+    {
+      "id": "nayuta-hit-4.5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 265,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "1 スタック・S1 の▲だけ（どの仮説でも同じ）",
+      "tolerance": {
+        "rel": 0.01
+      }
+    },
+    {
+      "id": "nayuta-hit-7.5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 440,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "2 スタック（6 秒）の後・3 スタック（9 秒）の前。H1 は 1 段階の攻撃力▲あり、H2 はなし",
+      "tolerance": {
+        "rel": 0.01
+      }
+    },
+    {
+      "id": "nayuta-hit-31.5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1852,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "10 スタック（30 秒）の後・11 スタックの前。H1 は 2 段階の攻撃ダメージ▲あり、H2 はなし",
+      "tolerance": {
+        "rel": 0.01
+      }
+    },
+    {
+      "id": "nayuta-core-91.5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 5382,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "30 スタック（90 秒）の後・31 回目の付与（93 秒）の前のコアの 1 ヒット。H1 は 3 段階のコアダメージ▲あり。H2 は 93 秒から（予測ファイルでは表せないので、H2 の値は H1 と同じに出る。検証記録の「予測」）",
+      "tolerance": {
+        "rel": 0.01
+      }
+    },
+    {
+      "id": "nayuta-hit-120s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 7058,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "note": "上限の後の胴体の 1 ヒット（S1 の▲が続くなら H1・H2 とも 4.5 秒の値に 1・2 段階を足した値。続かなければ下がる。検証記録の「予測」）",
+      "tolerance": {
+        "rel": 0.01
+      }
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-03",
+    "commit": "e10c46340b2ee99853cd72ebb645096a600ae1d7",
+    "values": {
+      "H1": {
+        "nayuta-hit-1s": 8772.777,
+        "nayuta-hit-4.5s": 11421.2844,
+        "nayuta-hit-7.5s": 12756.101399999998,
+        "nayuta-hit-31.5s": 15341.763153779999,
+        "nayuta-core-91.5s": 37771.420884606356,
+        "nayuta-hit-120s": 15341.763153779999
+      },
+      "H2": {
+        "nayuta-hit-1s": 8772.777,
+        "nayuta-hit-4.5s": 11421.2844,
+        "nayuta-hit-7.5s": 11421.2844,
+        "nayuta-hit-31.5s": 12756.101399999998,
+        "nayuta-core-91.5s": 37771.420884606356,
+        "nayuta-hit-120s": 15341.763153779999
+      }
+    }
+  }
+}
