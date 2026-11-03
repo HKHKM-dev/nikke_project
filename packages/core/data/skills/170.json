@@ -15,7 +15,10 @@
           "assumes": {
             "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
             "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+          },
+          "claims": [
+            "C-0924"
+          ]
         },
         {
           "kind": "timed",
@@ -27,7 +30,10 @@
           "assumes": {
             "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
             "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+          },
+          "claims": [
+            "C-0924"
+          ]
         },
         {
           "kind": "timed",
@@ -40,7 +46,10 @@
           "assumes": {
             "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
             "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+          },
+          "claims": [
+            "C-0924"
+          ]
         }
       ]
     },
@@ -56,7 +65,10 @@
           "assumes": {
             "ja": "「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（最後の弾丸はいつも命中する前提）。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
             "en": "\"When the last bullet hits\" fires on the shot that empties the magazine (the last bullet is assumed to hit). The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+          },
+          "claims": [
+            "C-0921"
+          ]
         }
       ],
       "notes": [
@@ -79,9 +91,12 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
-            "en": "All enemies means one hit on the single enemy. The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
-          }
+            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット。基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画。宝物版の 3 ヒットの分かれ方と遅れは、基礎版では未測定（遅れの表の行は宝物版だけ）",
+            "en": "All enemies means one hit on the single enemy. The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version. The three-hit split and delay of the treasure version are unmeasured for the base version (the delay table row is treasure-only)"
+          },
+          "claims": [
+            "C-0923"
+          ]
         }
       ],
       "notes": [
@@ -102,7 +117,10 @@
           "target": "allies",
           "stat": "attack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0924"
+          ]
         },
         {
           "kind": "timed",
@@ -110,7 +128,10 @@
           "target": "allies",
           "stat": "reloadSpeed",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-0924"
+          ]
         },
         {
           "kind": "timed",
@@ -119,7 +140,10 @@
           "stat": "maxAmmo",
           "decrease": true,
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-0924"
+          ]
         },
         {
           "kind": "timed",
@@ -127,11 +151,15 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 7,
-          "durationRef": 8
+          "durationRef": 8,
+          "claims": [
+            "C-0924"
+          ]
         }
       ]
     },
     "skill2": {
+      "sequential": true,
       "effects": [
         {
           "kind": "timed",
@@ -143,9 +171,12 @@
           "ref": 3,
           "durationRef": 4,
           "assumes": {
-            "ja": "敵 1 体。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（最後の弾丸はいつも命中する前提）。付き直しは窓を延ばすだけで重ならない。同じ発火の追加ダメージには乗り、発火した発の通常攻撃には乗らない（C-0645 と同じ扱い。仮説）",
-            "en": "One enemy. \"When the last bullet hits\" fires on the shot that empties the magazine (the last bullet is assumed to hit). Reapplying extends the window without stacking. The additional damage of the same trigger gets it; the triggering shot itself does not (as in C-0645; hypothesis)"
-          }
+            "ja": "敵 1 体。「最後の弾丸が命中した時」は、残弾を 0 にした射撃で起こす（最後の弾丸はいつも命中する前提）。付き直しは窓を延ばすだけで重ならない。同じ発火の追加ダメージには乗り（下位効果のスタック適用）、発火した発の通常攻撃には乗らない",
+            "en": "One enemy. \"When the last bullet hits\" fires on the shot that empties the magazine (the last bullet is assumed to hit). Reapplying extends the window without stacking. The additional damage of the same trigger gets it (stacked lower effects); the triggering shot itself does not"
+          },
+          "claims": [
+            "C-0921"
+          ]
         },
         {
           "kind": "damage",
@@ -153,7 +184,10 @@
             "count": "lastShot"
           },
           "damageType": "additional",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-0921"
+          ]
         },
         {
           "kind": "damage",
@@ -168,7 +202,10 @@
           "assumes": {
             "ja": "対象がターゲット指定状態（バーストで付く）の時だけ出る",
             "en": "Fires only while the target is in Designated Target (applied by the Burst)"
-          }
+          },
+          "claims": [
+            "C-0921"
+          ]
         }
       ]
     },
@@ -182,29 +219,39 @@
           "ref": 5,
           "durationRef": 6,
           "assumes": {
-            "ja": "有利コードの敵にだけ効く（水のプリバティには火の敵）",
-            "en": "Applies only against an enemy of the disadvantaged code (Fire for Water-code Privaty)"
-          }
+            "ja": "有利コードの敵にだけ効く（水のプリバティには火の敵）。同じ発動のバーストスキルダメージの 3 ヒットにも乗る（遅れの表の同じ発動の▲）",
+            "en": "Applies only against an enemy of the disadvantaged code (Fire for Water-code Privaty). It also applies to the three Burst Skill damage hits of the same activation (same-activation buffs in the delay table)"
+          },
+          "claims": [
+            "C-0923",
+            "C-0921"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は、敵 1 体の前提でその敵に 1 ヒット。同じ発動の有利コードの攻撃ダメージ▲が乗るかは、着地点の表（burst/landing.ts）のとおり",
-            "en": "All enemies means one hit on the single enemy. Whether the same activation's Elemental Advantage Attack Damage up applies follows the landing table (burst/landing.ts)"
-          }
+            "ja": "敵全体は、敵 1 体の前提でその敵。III のタイマーの 00.00 から 40f・その 25f・55f 後の 3 ヒットに 3 等分する（遅れの表 burst/landing.ts）",
+            "en": "All enemies means the single enemy. Split into three equal hits 40 f after the Step III timer reaches 00.00 and 25 f and 55 f after that (delay table burst/landing.ts)"
+          },
+          "claims": [
+            "C-0923"
+          ]
         },
         {
           "kind": "state",
           "state": "designatedTarget",
-          "trigger": "burstHit",
+          "trigger": "burstUse",
           "target": "enemy",
           "durationRef": 4,
           "assumes": {
-            "ja": "ターゲット指定はバーストスキルダメージのヒットで敵に付き、値 04（10）秒続く。中身の攻撃力▼はダメージに関係しない（S2 の条件が見るだけ）",
-            "en": "Designated Target is applied to the enemy on the Burst Skill damage hit and lasts value 04 (10) s. Its ATK down does not affect damage (only the S2 condition reads it)"
-          }
+            "ja": "ターゲット指定はバーストの発動の時に敵に付き、値 04（10）秒続く（ヒットからではない）。中身の攻撃力▼はダメージに関係しない（S2 の条件が見るだけ）",
+            "en": "Designated Target is applied to the enemy when the Burst is activated and lasts value 04 (10) s (not from the hit). Its ATK down does not affect damage (only the S2 condition reads it)"
+          },
+          "claims": [
+            "C-0922"
+          ]
         }
       ],
       "notes": [
