@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   cdnUrl,
+  characterIconPath,
   djb2Int32,
   favoritePath,
   favoriteRareMapPath,
@@ -25,6 +26,13 @@ describe('obfuscatePath', () => {
 
   it('roledata (ja)', () => {
     expect(obfuscatePath(roleDataPath(90, 'ja'))).toBe('ze-80/b1e70181972316a2a591fe60c64aa3bd.json');
+  });
+
+  // 2026-11-03 に CDN から 200（image/webp）が返ることを確認した
+  it('キャラの顔のアイコン', () => {
+    expect(characterIconPath(10)).toBe('/character/si/si_c010_00_s.webp');
+    expect(obfuscatePath(characterIconPath(10))).toBe('gn-03/nj-68/48bc957318d19b4d873a9b423d6d51fa.webp');
+    expect(characterIconPath(872)).toBe('/character/si/si_c872_00_s.webp');
   });
 
   // Stage 9: 2026-09-23 に CDN から 200 が返ることを確認した

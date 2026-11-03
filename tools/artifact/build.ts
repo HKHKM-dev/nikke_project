@@ -2,7 +2,7 @@
 //   npm run artifact:build
 // 1. apps/web を base "./" で vite build し、dist/artifact/ に出す（データ packages/core/data も publicDir として入る）。
 // 2. index.html を、アーティファクトのページ（build-lib.ts の PAGE_FILE。中身だけで、公開のときに doctype などで包まれる）に置き換える。
-// 3. 公開するファイルを 1 回の上限（255）ごとに分けた一覧を dist/artifact/publish.json に書く。
+// 3. キャラ画像を除き、公開するファイルを 1 回の上限（255）ごとに分けた一覧を dist/artifact/publish.json に書く。
 // 公開は Claude Code の Artifact の道具で行う（この道具は公開しない）: file_path にページ、root に dist/artifact、files に
 // publish.json の batches の 1 回目を渡して出し、2 回目以降も同じ file_path で出す（同じ URL に files が足される）。
 // 既にあるアーティファクトを作り直すときは、その URL（Artifact の list で探す）を url に渡す。直すのは本体のソースで、
@@ -34,6 +34,9 @@ if (vite.status !== 0) {
 const indexPath = join(OUT, 'index.html');
 writeFileSync(join(OUT, PAGE_FILE), pageHtml(entryAssets(readFileSync(indexPath, 'utf8'))));
 rmSync(indexPath);
+// キャラ画像（characters/images。200 枚余り）は除く。アーティファクトは 1 版 511 ファイルまでで、データだけで 300 近くある。
+// 画面（CharacterVisual）は画像が無ければ属性の色の札で出す（plan/design-modern-ui.md）
+rmSync(join(OUT, 'characters', 'images'), { recursive: true, force: true });
 
 function listFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
