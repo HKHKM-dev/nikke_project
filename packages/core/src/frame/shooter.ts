@@ -243,7 +243,8 @@ function startMagazine(state: ShooterState): void {
 /**
  * 1 フレーム進める（state を書き換える）。このフレームに発射したら true。
  * params はこのフレームの射撃の実効値（省略は基礎値）。最大装弾数が残弾より小さくなっていたら先に削る（MAX_AMMO_CLAMP_ON_DECREASE）。
- * Stage 16-B: blocked（敵を狙えない）なら撃たない。待ち・リロードは進み、撃てる状態のまま明けるのを待つ
+ * Stage 16-B: blocked（敵を狙えない）なら撃たない。待ち・リロードは進み、撃てる状態のまま明けるのを待つ。ただしチャージの無い武器は、
+ * 窓の始まりから D までの待ちの間は撃つ（firesUntilDetect）
  */
 export function stepShooter(
   state: ShooterState,
@@ -274,7 +275,7 @@ export function stepShooter(
     // 1 回分を込め終えた。最大に届いて 1 発目の遅延が 0 ならこのフレームに撃つ（Stage 21-C3 からは AR・SMG・SG も 22f 待つ）
     if (!loadChunks(state, shot, model, params)) return false;
   }
-  if (blocked) return false;
+  if (blocked && !firesUntilDetect(state, shot)) return false;
   if (state.phase === 'priming') startMagazine(state);
   if (state.shotsInMagazine > 0 && !isChargeWeapon(shot)) {
     // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ。
@@ -518,6 +519,7 @@ export function hideShooter(
  * 狙えない窓（敵のジャンプ）の始まりのフレーム（stepShooter の前に呼ぶ）。plan/design-hide-reload-detect.md 案 A:
  * - チャージが満ちている（満ちてから撃つまでの間か、このフレームに撃つはずだった）枠は、その場で撃ち（進み 1）、ハイドする。
  * - ほかの枠は D（WeaponModel.hideDetectFrames）まで待つ（stepHide）。チャージの途中だったかは、ここで決める。
+ * - チャージの無い武器は、弾切れのリロードの途中でも D まで待つ（その間は撃てる。firesUntilDetect）
  * @returns このフレームに撃った発のチャージの進み（撃たなければ null）
  */
 export function beginHide(
@@ -531,10 +533,18 @@ export function beginHide(
     fireAndHide(state, shot, model, params);
     return 1;
   }
-  if (state.phase === 'reloading') return null;
+  if (state.phase === 'reloading' && isChargeWeapon(shot)) return null;
   const hold = progress > 0 ? holdFramesOf(params) : 0;
   state.hidePending = { framesLeft: model.hideDetectFrames + hold, progress };
   return settleHide(state, shot, model, params);
+}
+
+/**
+ * 狙えない窓の始まりから D までの間も撃ち続ける枠か（チャージの無い武器の、D までの待ちの間。stepShooter が blocked を外す）。
+ * 録画では、チャージの無い武器のジャンプの前の最後の発がハイド中のリロードの始まり（D）の 0〜3f 前にある（V-0648。設計書 10 節）
+ */
+function firesUntilDetect(state: ShooterState, shot: ShotParams): boolean {
+  return state.hidePending !== undefined && !isChargeWeapon(shot);
 }
 
 /**
