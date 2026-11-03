@@ -191,5 +191,95 @@
         "condition": "auto"
       }
     }
+  },
+  {
+    "id": "0932-08",
+    "recording": "0932",
+    "source": "V-0651",
+    "readAt": "2026-11-03",
+    "kind": "count",
+    "use": "compare",
+    "value": 7,
+    "unit": "発",
+    "description": "最初にバーストゲージが満タンになる（BURST バーが消える）までに、ラプンツェル：サンクチュアリ（AI の枠）が撃ったフルチャージの発の数（満タンの発を含む）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events・--mode series --subpixel（バーの消失）と hud.ts --mode jumps の増分（V-0650 で読んだもの。追加ダメージの増分が発射のフレーム。C-0720）を突き合わせた（V-0651「読み方」）",
+      "note": "バーの消失は f1466（戦闘開始 f780 から 686f。消失の前のフレームまでバーは 113px の満タンで、消失のフレームに I の段の六角形が出る（画で確かめた））。消失のフレームは 7 発目の追加ダメージの増分のフレームと同じ。発射のフレーム（追加ダメージの増分）は f856・938・1020・1102・1184・1266・1466"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0932-09",
+    "recording": "0932",
+    "source": "V-0651",
+    "readAt": "2026-11-03",
+    "kind": "count",
+    "use": "compare",
+    "value": 80,
+    "unit": "発",
+    "description": "同じ満タンまでに、アスカ（操作）の発が的に当たった数（HUD の増分でアスカの組に当たったもの）",
+    "method": {
+      "tool": "hud.ts --mode jumps（V-0650 の分け方。0932-01 の method）",
+      "note": "f1466 までの増分のうち、アスカの S1 なし・S1 ありの組に当たったもの。どの組にも当たらない 150,000 未満の増分は 0 件（アスカの発がラプンツェル：サンクチュアリの増分と同じフレームに重なった回は数えていない）"
+    },
+    "note": "モデルは弾丸命中率 99% の期待値でゲージを溜める。外れた発は HUD に出ない",
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0932-10",
+    "recording": "0932",
+    "source": "V-0651",
+    "readAt": "2026-11-03",
+    "kind": "gauge",
+    "use": "record",
+    "value": [7.49, 3.745],
+    "unit": "px",
+    "description": "バーストゲージのバーの、ラプンツェル：サンクチュアリ（AI の枠）の追加ダメージのフレームの増え（1 つ目）と、ロケットの命中のフレームの増え（2 つ目）の中央値（バーが見えている間の発）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel と hud.ts --mode jumps の増分（追加ダメージの増分と、その 10f 後のロケットの増分の組）を、使い捨てのスクリプトで突き合わせた（V-0651「読み方」）",
+      "note": "そのフレームと前のフレームのバーの px の差。追加ダメージ [7.77, 7.62, 7.49, 7.25, 7.31]、ロケット [3.52, 3.77, 3.74, 3.74, 3.75, 5.62]。1 発目の追加ダメージ（1.85px）はバーの映らない下の範囲（C-0084）に掛かるので除いた。バーの 1px は本当のゲージの約 0.74%（C-0084）で、56,000 は 7.6px、22,400 は 3.0px、AI の枠のロケット（フルチャージ倍率なし。28,000）は 3.8px にあたる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
   }
 ]

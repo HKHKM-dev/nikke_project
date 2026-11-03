@@ -96,12 +96,13 @@
             0
           ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。発射のフレームに出る（ロケットの命中はその 8f 後。V-0536）。バーストゲージを、フルチャージ倍率の無い 1 ヒット（target_burst_energy_pershot）の 2 回分溜める（操作枠で測った。操作枠でないときの量は確かめていない）",
-            "en": "Once per Full Charge shot (every shot is assumed to hit). It lands on the firing frame (the rocket hits 8 frames later; V-0536). It charges the Burst Gauge by two unmultiplied hits (target_burst_energy_pershot) (measured on the controlled slot; the amount when not controlled is unchecked)"
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。発射のフレームに出る（ロケットの命中はその 8f 後。V-0536）。バーストゲージを、フルチャージ倍率の無い 1 ヒット（target_burst_energy_pershot）の 2 回分溜める（操作枠でも AI の枠でも同じ量。フルチャージ倍率は乗らない）",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). It lands on the firing frame (the rocket hits 8 frames later; V-0536). It charges the Burst Gauge by two unmultiplied hits (target_burst_energy_pershot) (the same amount on the controlled slot and on AI slots; the Full Charge multiplier does not apply)"
           },
           "claims": [
             "C-0720",
-            "C-0721"
+            "C-0721",
+            "C-0914"
           ]
         }
       ],
