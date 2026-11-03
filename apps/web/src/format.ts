@@ -9,6 +9,18 @@ export function formatNumber(value: number, maximumFractionDigits = 0): string {
   return f.format(value);
 }
 
-export function formatPercent(ratio: number, maximumFractionDigits = 1): string {
-  return `${formatNumber(ratio * 100, maximumFractionDigits)}%`;
+const compactFormatter = new Intl.NumberFormat('ja-JP', { notation: 'compact', maximumFractionDigits: 2 });
+
+/** ダメージの短い表記（「21.01億」「1179.06万」）。全部の桁は formatNumber で title に出す */
+export function formatCompact(value: number): string {
+  return compactFormatter.format(value);
+}
+
+/**
+ * 画面のダメージの値。値が無い（計算中で前の結果も無い・エラー・空）か、ちょうど 0 なら「—」。丸めて 0 になる値は「0」のまま出す。
+ * title は全部の桁
+ */
+export function formatDamage(value: number | null): { text: string; title: string | undefined } {
+  if (value === null || value === 0) return { text: '—', title: undefined };
+  return { text: formatCompact(value), title: formatNumber(value) };
 }

@@ -7,13 +7,14 @@ import {
   type EnemyPresetMaster,
 } from '@nikke/core';
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { ComputeCache } from './compute.ts';
 import { buildCalcView, slotResultFor } from './calcView.ts';
+import { DamageTotalPanel } from './components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { PartyTabs } from './components/PartyTabs.tsx';
 import { NotesSummary, type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { SlotCard } from './components/SlotCard.tsx';
-import { TeamBreakdown } from './components/TeamBreakdown.tsx';
 import { TeamSettingsForm } from './components/TeamSettingsForm.tsx';
 import {
   INITIAL_TEAM_STATE,
@@ -24,16 +25,19 @@ import {
   teamReducer,
 } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
-import { useDetailed } from './detailed.ts';
 import { readStorage, writeStorage } from './storage.ts';
 import {
   INITIAL_PARTIES,
   PARTIES_STORAGE_KEY,
   parseParties,
   serializeParties,
+  sharedSettingsOf,
   switchParty,
   type PartiesState,
+  type SharedSettings,
 } from './parties.ts';
+import { partyInputs, partyTotals } from './partyTotals.ts';
+import { useBatchComputation } from './useBatchComputation.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 
@@ -43,7 +47,6 @@ export function App() {
   const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
-  const [detailed, setDetailed] = useDetailed();
   // ソロレイド用の編成 01〜05（parties.ts）。選んでいる編成の中身は team
   const [parties, setParties] = useState<PartiesState>(INITIAL_PARTIES);
   // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
@@ -94,7 +97,11 @@ export function App() {
     dispatch({ type: 'replace', state: next.team });
   };
 
-  const resourceIds = team.slots.map((s) => s.resourceId);
+  // ほかの編成のキャラも読む（全編成の合計ダメージ）
+  const resourceIds = useMemo(
+    () => [...team.slots, ...parties.parties.flatMap((p) => p?.slots ?? [])].map((s) => s.resourceId),
+    [team.slots, parties],
+  );
   const cache = useCharacterCache(resourceIds, BASE_URL);
   const skills = useSkillDefinitions(resourceIds, BASE_URL);
 
@@ -120,13 +127,31 @@ export function App() {
   // (B) の段 B-2（6.2 節）: 計算は Web Worker で回し、欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
   // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。B-1 の useDeferredValue では計算がメインスレッドを塞いでいた。
   // 結果はその計算の元（shown.source）と組で届く。結果の詳細はその元から読み、スロットの欄は slotResultFor で合わせる
-  const { shown, computing } = useTeamComputation(calc);
+  // 計算の結果を入力ごとに覚える（compute.ts の ComputeCache）。今の編成と全編成の合計で共有し、編成を切り替えたときや
+  // 今の編成だけを変えたときに、中身の変わらない編成を計算し直さない
+  const [computeCache] = useState(() => new ComputeCache());
+  const { shown, computing } = useTeamComputation(calc, computeCache);
   const slotResults = useMemo(() => calc.slots.map((_, i) => slotResultFor(shown, calc, i)), [calc, shown]);
 
-  const loadingCount = team.slots.filter(
-    (s) => s.resourceId !== null && !cache.characters.has(s.resourceId) && !cache.errors.has(s.resourceId),
-  ).length;
-  const skillsLoadingCount = skillsStatuses.filter((s) => s?.kind === 'loading').length;
+  // 全編成の合計ダメージ（partyTotals.ts）。ほかの編成は、共通の設定かほかの編成の中身が変わったときだけ計算し直す
+  // （共通の設定は文字列にして比べ、選んでいる編成のスロットを変えても作り直さない）
+  const sharedJson = JSON.stringify(sharedSettingsOf(team));
+  const allPartyInputs = useMemo(
+    () =>
+      partyInputs(parties, JSON.parse(sharedJson) as SharedSettings, {
+        characters: cache.characters,
+        characterErrors: cache.errors,
+        skills,
+        masters,
+        enemyMaster,
+      }),
+    [parties, sharedJson, cache.characters, cache.errors, skills, masters, enemyMaster],
+  );
+  const batchInputs = useMemo(() => allPartyInputs.map((p) => (p.kind === 'ready' ? p.input : null)), [allPartyInputs]);
+  const batch = useBatchComputation(batchInputs, computeCache);
+  const totals = partyTotals(allPartyInputs, { computed: shown?.computed ?? null, computing }, batch);
+  const totalsPending =
+    computing || batch.computing || shown === null || allPartyInputs.some((p) => p.kind === 'loading');
 
   // Stage 14: 未対応の一覧の材料（育成の注記は calcView が未対応だけにしたもの。スペック固定では効果層が空）
   const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
@@ -151,7 +176,7 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu detailed={detailed} onDetailedChange={setDetailed} />
+        <SettingsMenu />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
@@ -159,6 +184,7 @@ export function App() {
         <>
           <TeamSettingsForm
             element={team.enemy.element}
+            defence={team.enemy.defence}
             fixedSpec={team.fixedSpec}
             consoleInput={team.console}
             synchroLevel={team.synchroLevel}
@@ -166,7 +192,9 @@ export function App() {
             rangeJump={team.rangeJump}
             dispatch={dispatch}
           />
-          <PartyTabs active={parties.active} onSelect={selectParty} />
+          {/* 全編成の合計は、編成のタブの上（どの編成を開いていても見える） */}
+          <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
+          <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
           <section className="slots" aria-label="編成">
             {team.slots.map((slot, i) => {
               const { character, growth, build, skillLevels, treasurePhase } = calc.slots[i]!;
@@ -179,7 +207,6 @@ export function App() {
                   excludeIds={takenResourceIds(team, i)}
                   fullySupported={skills.fullySupported}
                   character={character}
-                  loading={slot.resourceId !== null && character === undefined && !cache.errors.has(slot.resourceId)}
                   error={slot.resourceId === null ? undefined : cache.errors.get(slot.resourceId)}
                   fixedSpec={team.fixedSpec}
                   effectiveGrowth={growth}
@@ -196,28 +223,10 @@ export function App() {
             })}
           </section>
           <ErrorBoundary
-            resetKeys={[shown, detailed]}
+            resetKeys={[shown]}
             fallback={(e) => <p className="error">計算の結果を表示できませんでした: {e.message}</p>}
           >
-            {shown === null ? (
-              <section className="panel result breakdown-panel">
-                <p className="hint">計算中…</p>
-              </section>
-            ) : shown.computed.ok ? (
-              <TeamBreakdown
-                result={shown.computed.result}
-                view={shown.source}
-                computing={computing}
-                loadingCount={loadingCount}
-                skillsLoadingCount={skillsLoadingCount}
-                detailed={detailed}
-              />
-            ) : (
-              <p className="error">
-                {shown.computed.error}
-                {computing && '（計算中…）'}
-              </p>
-            )}
+            {shown?.computed.ok === false && <p className="error">{shown.computed.error}</p>}
             <NotesSummary
               slots={summarySlots}
               enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []}

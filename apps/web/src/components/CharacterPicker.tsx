@@ -9,6 +9,7 @@ type Props = {
   fullySupported: ReadonlySet<number> | null;
   value: number | null;
   onSelect: (resourceId: number) => void;
+  /** 「なし」を選んだとき（スロットを空にする） */
   onClear: () => void;
 };
 
@@ -25,29 +26,24 @@ export function CharacterPicker({ index, excludeIds, fullySupported, value, onSe
 
   return (
     <div className="picker">
-      <div className="picker-row">
-        <select
-          value={value ?? ''}
-          aria-label="ニケを選択"
-          onChange={(e) => {
-            if (e.target.value === '') {
-              onClear();
-            } else {
-              onSelect(Number(e.target.value));
-            }
-          }}
-        >
-          <option value="">なし</option>
-          {options.map((entry) => (
-            <option key={entry.resourceId} value={entry.resourceId}>
-              {characterLabel(entry, fullySupported !== null && !fullySupported.has(entry.resourceId))}
-            </option>
-          ))}
-        </select>
-        <button type="button" onClick={onClear} disabled={value === null}>
-          外す
-        </button>
-      </div>
+      <select
+        value={value ?? ''}
+        aria-label="ニケを選択"
+        onChange={(e) => {
+          if (e.target.value === '') {
+            onClear();
+          } else {
+            onSelect(Number(e.target.value));
+          }
+        }}
+      >
+        <option value="">なし</option>
+        {options.map((entry) => (
+          <option key={entry.resourceId} value={entry.resourceId}>
+            {characterLabel(entry, fullySupported !== null && !fullySupported.has(entry.resourceId))}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

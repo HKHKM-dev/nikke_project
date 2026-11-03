@@ -35,6 +35,61 @@ export function respond(request: ComputeRequest, post: (response: ComputeRespons
   }
 }
 
+/**
+ * 入力の鍵（ComputeCache）。中身が同じ入力は同じ鍵になる。JSON に無い値（Map・Set・NaN・Infinity・undefined）も
+ * 取り違えないように印を付けて書く（JSON.stringify のままだと Map は {}、Infinity は null になり、違う入力が同じ鍵になる）
+ */
+export function inputKey(input: TeamInput): string {
+  return JSON.stringify(input, (_key, value: unknown) => {
+    if (value instanceof Map) return { $map: [...value.entries()] };
+    if (value instanceof Set) return { $set: [...value.values()] };
+    if (typeof value === 'number' && !Number.isFinite(value)) return { $number: String(value) };
+    if (value === undefined) return { $undefined: true };
+    return value;
+  });
+}
+
+/**
+ * 計算の結果を入力の鍵で覚える（編成を切り替えたとき・ほかの編成だけ変えたときに、同じ入力を計算し直さない）。
+ * 今の編成の計算（useTeamComputation）と全編成の合計（useBatchComputation）で 1 つを共有する。
+ * 鍵は入力のオブジェクトごとに 1 回だけ作り、結果は新しく使った順に limit 件まで残す
+ */
+export class ComputeCache {
+  readonly #results = new Map<string, Computed>();
+  readonly #keys = new WeakMap<TeamInput, string>();
+  readonly #limit: number;
+
+  constructor(limit = 16) {
+    this.#limit = limit;
+  }
+
+  #key(input: TeamInput): string {
+    let key = this.#keys.get(input);
+    if (key === undefined) {
+      key = inputKey(input);
+      this.#keys.set(input, key);
+    }
+    return key;
+  }
+
+  get(input: TeamInput): Computed | undefined {
+    const key = this.#key(input);
+    const hit = this.#results.get(key);
+    if (hit !== undefined) {
+      this.#results.delete(key);
+      this.#results.set(key, hit);
+    }
+    return hit;
+  }
+
+  set(input: TeamInput, computed: Computed): void {
+    const key = this.#key(input);
+    this.#results.delete(key);
+    this.#results.set(key, computed);
+    while (this.#results.size > this.#limit) this.#results.delete(this.#results.keys().next().value!);
+  }
+}
+
 /** 計算の要求の元。input を Worker に送り、結果はこの元と組にして返す（画面は、結果をその計算の入力と組で読む） */
 export type ComputeSource = { readonly input: TeamInput };
 
@@ -48,7 +103,8 @@ export type Shown<T> = { computed: Computed; source: T };
  */
 export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
   #seq = 0;
-  #inFlight: { seq: number; source: T } | null = null;
+  /** stale: 計算中に resolve で答えを出した要求（届いた結果は捨てる） */
+  #inFlight: { seq: number; source: T; stale: boolean } | null = null;
   #pending: T | null = null;
   /** 最後に受けた元。エラーと組にする（待ちのないときに Worker が止まっても、エラーを出すため） */
   #latest: T | null = null;
@@ -63,7 +119,7 @@ export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
 
   /** 計算中か（前の結果を出したまま「計算中」の印を出す） */
   get busy(): boolean {
-    return this.#inFlight !== null;
+    return this.#inFlight !== null && !this.#inFlight.stale;
   }
 
   request(source: T): void {
@@ -76,10 +132,22 @@ export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
     if (this.#inFlight === null) this.#flush();
   }
 
+  /**
+   * 計算せずに答えが分かった元（ComputeCache で覚えていた結果）。すぐ渡し、待っている入力は捨てる。計算中の要求の結果は、
+   * 届いても古いので捨てる
+   */
+  resolve(source: T, computed: Computed): void {
+    this.#latest = source;
+    this.#pending = null;
+    if (this.#inFlight !== null) this.#inFlight.stale = true;
+    this.#deliver(computed, source);
+  }
+
   receive(response: ComputeResponse): void {
     if (this.#inFlight === null || response.seq !== this.#inFlight.seq) return;
-    const { source } = this.#inFlight;
+    const { source, stale } = this.#inFlight;
     this.#inFlight = null;
+    if (stale && this.#pending === null) return;
     if (this.#pending !== null) {
       this.#flush();
       return;
@@ -89,7 +157,10 @@ export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
 
   /** 計算中の要求に答えが届かないとき（結果を受け取れないなど）。待っている入力も捨てて、エラーを出す。次の入力はまた送る */
   fail(error: string): void {
+    const stale = this.#inFlight?.stale === true && this.#pending === null;
     this.#inFlight = null;
+    // resolve で答えを出した後の古い要求の失敗は、出した答えを上書きしない
+    if (stale) return;
     this.#pending = null;
     if (this.#latest !== null) this.#deliver({ ok: false, error }, this.#latest);
   }
@@ -109,7 +180,7 @@ export class LatestComputeQueue<T extends ComputeSource = ComputeSource> {
     const seq = ++this.#seq;
     try {
       this.#send({ seq, input: source.input });
-      this.#inFlight = { seq, source };
+      this.#inFlight = { seq, source, stale: false };
     } catch (e) {
       // 構造化複製できない入力（DataCloneError）など
       this.#deliver({ ok: false, error: errorMessage(e) }, source);
