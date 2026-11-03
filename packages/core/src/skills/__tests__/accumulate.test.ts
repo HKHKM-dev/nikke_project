@@ -1,6 +1,7 @@
 // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2〜3 節）: ドロシー（233）の烙印。爆発の値は、窓の中に的が受けた
 // 味方全員のダメージの和（C-0901）で、最大量で切る。爆発は窓の終わりの releaseDelayFrames 後（C-0902）。トロニー（501）の蓄積爆破は、
-// 付けた後の自分の発の値 × 割合を溜め、最大量に届いた発の 13f 後か、切れる時に出す（C-0903・C-0904）。届いたかは 1 パス目が数える
+// 付けた後、切れる 13f 前までの自分の発の値 × 割合を溜め、最大量に届いた発の 13f 後か、切れる時に出す（C-0903・C-0904・C-0927）。
+// 届いたかは 1 パス目が数える
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../../damage.ts';
@@ -11,6 +12,7 @@ import { runSimulation, type SimInput, type SimResult } from '../../sim/engine.t
 import type { TeamSlotInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { rawDefinition } from '../../__tests__/teamHelpers.ts';
+import { framesToGameSeconds } from '../../time.ts';
 import { MAX_SKILL_LEVELS } from '../resolve.ts';
 import { parseSkillDefinition, type SkillDefinition } from '../types.ts';
 
@@ -192,6 +194,21 @@ describe('蓄積爆破（トロニー単騎）', () => {
       // 1 パス目が数えた値と同じ
       expect(releases[k]!.stored).toBeCloseTo(h.hit.perActivation, 4);
     });
+  });
+
+  it('does not store shots fired in the last 13 frames before the expiry (C-0927)', () => {
+    // 1 回目の切れる時の 15f 前から 2 秒ジャンプさせ、入りの部分チャージの発を切れる前の 13f に撃たせる
+    const expiry = explosions[0]!.frame;
+    const start = framesToGameSeconds(expiry - 15);
+    const jumped = runSimulation({
+      ...input,
+      enemy: { ...enemy, events: [{ kind: 'untargetable', start, end: start + 2 }] },
+    });
+    const h = explosionsOf(jumped).find((x) => x.frame === expiry)!;
+    const lastStored = expiry - CAP_DELAY;
+    expect(shotsIn(jumped, 0, lastStored + 1, expiry)).toBeGreaterThan(0);
+    expect(h.hit.perActivation).toBeCloseTo(0.5 * shotsIn(jumped, 0, h.accumulate!.opened + 1, lastStored + 1), 4);
+    expect(h.accumulate!.end).toBe(lastStored + 1);
   });
 
   it('applies again only after the explosion (no overlapping windows)', () => {

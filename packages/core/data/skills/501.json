@@ -21,8 +21,8 @@
             "capDelayFrames": 13
           },
           "assumes": {
-            "ja": "蓄積爆破。フルチャージの発で、付いていなければ付ける（全弾命中の前提。付けた発は溜めない）。付くのは付けた発の 16f 後で、そこから 5 秒で切れる。付けた後のトロニーの発（部分チャージの発を含む）の値 × (50% + 蓄積割合▲) を溜め、最大量（付いた時の最終攻撃力 × 1536% × (1 + 分配ダメージ▲)）に届いた発の 13f 後に最大量を 1 ヒットで出して解除する。届かなければ切れる時に溜めた値を 1 ヒットで出し、射手の 1 ヒットぶんのゲージを溜める。爆発の値には会心・フルバースト・分配ダメージ▲などの補正を掛けない。モデルの発の値は期待値なので、発ごとの切り上げはしない",
-            "en": "Accumulated Blast. A fully charged shot applies it when it is not active (assuming every shot hits; the applying shot does not store). It takes effect 16 frames after the applying shot and expires 5 s later. It stores each later Trony shot (partial-charge shots included) × (50% + accumulation ratio increase); once the stored amount reaches the cap (final ATK when it takes effect × 1536% × (1 + distributed damage increase)) it deals the cap as one hit 13 frames after that shot and is removed. Otherwise at expiry it deals the stored amount as one hit and charges one hit of the shooter’s gauge. No modifiers (crit, Full Burst, distributed damage increase, etc.) apply to the explosion. Model shot values are expected values, so there is no per-shot rounding up"
+            "ja": "蓄積爆破。フルチャージの発で、付いていなければ付ける（全弾命中の前提。付けた発は溜めない）。付くのは付けた発の 16f 後で、そこから 5 秒で切れる。付けた後、切れる 13f 前までに撃ったトロニーの発（部分チャージの発を含む）の値 × (50% + 蓄積割合▲) を溜め、最大量（付いた時の最終攻撃力 × 1536% × (1 + 分配ダメージ▲)）に届いた発の 13f 後に最大量を 1 ヒットで出して解除する。届かなければ切れる時に溜めた値を 1 ヒットで出し、射手の 1 ヒットぶんのゲージを溜める。爆発の値には会心・フルバースト・分配ダメージ▲などの補正を掛けない。モデルの発の値は期待値なので、発ごとの切り上げはしない",
+            "en": "Accumulated Blast. A fully charged shot applies it when it is not active (assuming every shot hits; the applying shot does not store). It takes effect 16 frames after the applying shot and expires 5 s later. It stores each later Trony shot fired up to 13 frames before expiry (partial-charge shots included) × (50% + accumulation ratio increase); once the stored amount reaches the cap (final ATK when it takes effect × 1536% × (1 + distributed damage increase)) it deals the cap as one hit 13 frames after that shot and is removed. Otherwise at expiry it deals the stored amount as one hit and charges one hit of the shooter’s gauge. No modifiers (crit, Full Burst, distributed damage increase, etc.) apply to the explosion. Model shot values are expected values, so there is no per-shot rounding up"
           },
           "claims": [
             "C-0430",
@@ -30,7 +30,8 @@
             "C-0904",
             "C-0910",
             "C-0911",
-            "C-0916"
+            "C-0916",
+            "C-0927"
           ]
         }
       ],
@@ -53,6 +54,15 @@
           },
           "claims": [
             "C-0904"
+          ]
+        },
+        {
+          "ja": "溜める発の締め切りは、切れるフレームの 13f 前（付けた発の 297f 後。最大量の爆発の遅れ 13f と同じ遅れとみた形）にした。録画で分かったのは、付けた発の 295f 後の発は溜まり、299f 後の発は溜まらないこと（C-0927）だけ",
+          "en": "Shots are stored up to 13 frames before expiry (297 frames after the applying shot; taken as the same delay as the 13-frame cap explosion). Recordings only show that a shot 295 frames after the applying shot is stored and one 299 frames after is not (C-0927)",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-0927"
           ]
         }
       ]
