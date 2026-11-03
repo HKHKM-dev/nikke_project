@@ -3,8 +3,7 @@
 - 問い: 説明文の値どおりに効く防御力▼（エーテル S2・エレグ バースト・ルドミラ S1）と、的の防御を 0 にする形で効く▼（トロニー S2・プロダクト23 バースト）は、公開 CDN のデータ（効果の関数の種類・値の種類など）で書き方が違うか
 - 話題: スキル・キャラ固有
 - 日付: 2026-11-03
-- 状態: 保留
-- 待ち: スキルの効果の関数の定義（`function_type`・`function_value_type` など）が取れる取得元
+- 状態: 打ち切り
 
 ## 条件
 
@@ -57,12 +56,29 @@ ja と en の `description_value_list` は、5 体とも同じ。
 | 持続（秒） | 6 | 10 | 10 | 10 | 5 | 分けない |
 | スキルのアイコン（`character_skill_map`） | atkup | — | atkdown | sharedamageincrease | — | 分けない（▼のアイコンの付いたスロットは 5 体とも無い） |
 
+### 関数の定義の取得元を探した（2026-11-03）
+
+<!-- prettier-ignore -->
+| 取得元 | スキルの関数 | 中身 |
+| --- | --- | --- |
+| Blablalink の画面の JS の全部（`index-*.js` と、そこから読む分割ファイル 196 個） | 無い | CDN のパスは「読み方」の 15 個だけ。Game の API の一覧にも、スキルの関数を返すものは無い |
+| GitHub のコード検索（`function_value_type`・`StateEffectTable`・`function_standard` など） | 型だけ | `d34d633f/nikke-einkk`（MIT。NIKKE の戦闘シミュレータ）と `SharpnelXu/nikke-mpk-json-converter` が関数の表（`FunctionData`）を扱う。どちらもデータは入っていない |
+| ゲームの StaticData | ある（einkk の型による） | einkk はゲームのロビーのサーバーから StaticData を落として復号し、関数の表を読む。converter の README は、復号を伴うので開発を非公開に移したと書く。この検証では取っていない |
+
+- einkk の関数の表の型の欄: `function_type`・`function_value_type`（None・Integer・Percent）・`function_standard`（User・FunctionTarget）・`function_target`・`function_value`・`duration_type`・`delay_type` など。
+- 防御に関わる `function_type`（einkk の列挙）: `StatDef`・`DefIgnoreDamage`・`DefIgnoreDamageRatio`・`ChangeNormalDefIgnoreDamage`・`DefIgnoreSkillDamageInstant` など。
+- einkk のコードの割合の効果は、`function_standard` の持ち主の値に掛ける（User は効果を付けた側、FunctionTarget は付けられた側。`lib/model/battle/buff.dart` の `getFunctionStandardId`・`battle_entity.dart` の `getBuffValueOfTypes`）。ゲームの挙動の根拠ではなく、einkk の作者の読み。
+- `function_standard` の欄はゲームのデータにある（ShiftyPad の API の装備の `state_effects` にも `function_standard: "User"` が入っている）。
+
 ## 分かったこと・分からないこと
 
 - 公開 CDN のデータの見えている欄は、説明文どおりに効く 3 体と、防御 0 で効く 2 体を分けない。
 - 「防御 0」になる説明は、データから立たない。説明文の値を 10 倍にしても、2 機分の和にしても 0 にならないことは C-0851・C-0777 にある。関数の値の種類（割合か実数か）が違うという読みは、公開データに値の種類の欄が無いので、確かめも否定もできない。
-- 違いがあるとすれば、公開データに無い関数の中身。比べるには、スキルの関数の定義が取れる取得元が要る（冒頭の「待ち」）。
+- 違いがあるとすれば、公開データに無い関数の中身。スキルの関数の定義は、公開の取得元には無い。ゲームの StaticData にあるが、取るには復号が要る。この検証では使わない（オーナーの判断 2026-11-03）。
+- 仮説（推論。外の OSS のコードの読みから立てた。5 体の欄は見ていない）: トロニーの S2 とプロダクト23 のバーストの▼は `function_standard` が User で、付けた側の防御力 × X を敵の防御から引き、0 で止まる。エーテル・エレグ・ルドミラの▼は FunctionTarget で、敵の防御力 × X を引く（C-0556）。どのキャラの防御力も、ふつうの育成ではトロニー・プロダクト23 の X を掛けて 100 を超えるので、防御 100 の的では 0 になる（C-0851・C-0777 と矛盾しない）。
+- 射撃場の的（防御 100）でこの仮説を見分けるには、付ける側の防御力 × X を 100 未満にする必要がある。説明文の値からは、トロニーは防御力がおよそ 1,043 未満（S2 Lv10）か 1,764 未満（Lv1）、プロダクト23 は 205 未満（バースト Lv10）か 2,053 未満（Lv1）。スペック固定 ON では届かない。スペック固定 OFF でも、Lv1・装備なしでの防御力（リサイクルルームの研究・好感度を含む）がこれを下回らないと見分けられない。
+- 打ち切る: 公開の取得元は無く、StaticData は使わず、射撃場では上の条件で撮れないので、仮説は推論のまま置く（オーナーの判断 2026-11-03）。C-0851・C-0777 は仮説のまま、定義（`501.json` の skill2.notes[1]・`307.json` の burst.notes[0]）は未対応のまま。
 
 ## 次に撮るもの
 
-なし（撮影で見分ける案は起案していない）
+なし（射撃場で見分けるには上の防御力の条件が要り、撮影の案は起案していない）
