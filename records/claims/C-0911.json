@@ -1,0 +1,16 @@
+{
+  "id": "C-0911",
+  "text": "トロニーの蓄積爆破が切れる時のバーストゲージは、溜めた値の爆発が出る回も、射手の target_burst_energy_pershot（56,000）の 1 回だけ（C-0430 の溜めた値 0 の回と同じ量で、爆発のヒットのぶんは足されない）",
+  "state": "仮説",
+  "topic": "バーストゲージ",
+  "grade": "厳密一致",
+  "basis": "`0874-04`・`0874-05`・`0875-04`・`0875-05`・`0876-10`・`0877-10`。V-0649",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-03",
+  "subject": {
+    "places": ["data/skills/501.json の skill1 の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "切れる時の 1 回ぶんの量は射手の target_burst_energy_pershot（CDN の値 56,000。C-0430）で、合わせ込みの定数を持たない"
+}
