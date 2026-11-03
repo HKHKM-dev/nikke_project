@@ -1,13 +1,12 @@
 // ナユタ編（plan/design-nayuta.md）: ナユタ（223）を含む編成で、S2 の記憶吸収（3 秒ごとのスタック）とスタック量別の効果、S1 の
-// 「記憶吸収が適用される時」の味方全体の▲、バーストの攻撃ダメージ▲が意図どおりに出るか。記憶燃焼（使用武器変更）は撮影で値を読むまで
-// 定義に入れない（設計書 2.6 節）ので、語彙（weaponChange の state・チャージ武器への変更）は仮の値の定義で別に確かめる
+// 「記憶吸収が適用される時」の味方全体の▲、バーストの攻撃ダメージ▲と記憶燃焼（使用武器変更）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
 import { appliedFrames, timerFrames } from '../skills/timeline.ts';
 import type { TeamInput } from '../team.ts';
 import { gameSecondsToFrames } from '../time.ts';
-import { describeEveryShotInOneGroup, fixedSlot, fixedTeam, rawDefinition } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedTeam } from './teamHelpers.ts';
 
 const NAYUTA = 223;
 const LITER = 82;
@@ -84,38 +83,19 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, nayuta }) =>
   });
 });
 
-// 語彙の確かめ（plan/design-nayuta.md 2.5・2.6 節）: 記憶燃焼を仮の値（レート・解放はテストの値で、撮影で読んだものではない）で定義し、
-// S1 の「記憶燃焼状態なら」のフルチャージの倍率ダメージを足すと、変更の窓の間の発だけがフルチャージになり、ダメージがそこにだけ出る
-describe('記憶燃焼の語彙（仮の値の定義）', () => {
-  type Raw = { skills: Record<'skill1' | 'burst', { effects: unknown[] }> };
-  const raw = structuredClone(rawDefinition<Raw>(NAYUTA));
-  raw.skills.burst.effects.push({
-    kind: 'weaponChange',
-    trigger: 'burstUse',
-    state: 'memoryIncineration',
-    damageRef: 3,
-    chargeTimeSeconds: 1.8,
-    fullChargeDamage: 250,
-    durationRef: 4,
-    rateOfFire: 60,
-    infiniteAmmo: true,
-  });
-  raw.skills.skill1.effects.push({
-    kind: 'damage',
-    trigger: { count: 'fullChargeShot' },
-    condition: { selfState: 'memoryIncineration' },
-    ref: 7,
-    damageType: 'skill',
-  });
+// 記憶燃焼（plan/design-nayuta.md 2.6 節。V-0666）: 変更の窓の間だけ記憶燃焼が付き、変更後の武器（押下チャージ型）の発はチャージ時間
+// おきで、S1 の「記憶燃焼状態でフルチャージして攻撃した時」の 2 ヒットが、変更後の発ごとに 37f 後に出る
+describe('記憶燃焼（リター・ナユタ・アリス）', () => {
   const input = fixedTeam([LITER, NAYUTA, ALICE], 1);
-  input.slots[1] = fixedSlot(NAYUTA, raw);
   const plan = planTeamRun(input);
   const weapon = itemsOf(plan.history, { holder: 1, kind: 'timed', stat: 'weapon' });
   const incineration = itemsOf(plan.history, { holder: 1, state: 'memoryIncineration' });
+  const changed = plan.shots[1]!.weaponChangeShotFrames ?? [];
   const inside = (f: number) => weapon.some((w) => w.start <= f && f < w.end);
 
   it('changes the weapon at least once', () => {
     expect(weapon.length).toBeGreaterThan(0);
+    expect(changed.length).toBeGreaterThan(0);
   });
 
   // 付与（burstUse の state）は発火のフレームから、使用武器の変更（burstUse の timed）は次のフレームから（レッドフードのレッドウルフと
@@ -124,15 +104,22 @@ describe('記憶燃焼の語彙（仮の値の定義）', () => {
     expect(incineration.map((i) => [i.start + 1, i.end])).toEqual(weapon.map((w) => [w.start, w.end]));
   });
 
-  it('fires the S1 damage only on full-charge shots of the changed weapon', () => {
-    const shots = plan.shots[1]!;
-    const changed = shots.weaponChangeShotFrames ?? [];
-    expect(changed.length).toBeGreaterThan(0);
+  // 的のジャンプの入りでは部分チャージの発が出て間が縮む（C-0840。録画 0951 にも同じ並びがある）ので、いちばん多い間で見る
+  it('fires the changed weapon only in the windows, a charge time apart', () => {
     expect(changed.every(inside)).toBe(true);
-    // 変更後の武器はチャージ武器（1.8 秒）なので、SMG のレートより間が空く
-    expect(changed[1]! - changed[0]!).toBeGreaterThanOrEqual(gameSecondsToFrames(1.8));
+    const gaps = weapon.flatMap((w) => {
+      const own = changed.filter((f) => w.start <= f && f < w.end);
+      return own.slice(1).map((f, i) => f - own[i]!);
+    });
+    const counts = new Map<number, number>();
+    for (const g of gaps) counts.set(g, (counts.get(g) ?? 0) + 1);
+    const mode = [...counts].sort((x, y) => y[1] - x[1])[0]![0];
+    expect(mode).toBeGreaterThanOrEqual(gameSecondsToFrames(1.8));
+    expect(mode).toBeLessThanOrEqual(gameSecondsToFrames(1.8) + 1);
+  });
+
+  it('fires the two S1 hits 37 frames after each changed shot', () => {
     const hits = plan.skillHits.filter((h) => h.slotIndex === 1 && h.effect.source.skill === 'skill1');
-    expect(hits.length).toBe(changed.length);
-    expect(hits.every((h) => inside(h.frame))).toBe(true);
+    expect(hits.map((h) => h.frame)).toEqual(changed.flatMap((f) => [f + 37, f + 37]));
   });
 });

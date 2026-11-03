@@ -2278,7 +2278,9 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
   );
   const activation = mine[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
-  const frames = slotOf(result.shots, ctx).frames;
+  const log = slotOf(result.shots, ctx);
+  // ナユタ編（V-0666）: weaponChange が true なら、使用武器の変更の発だけを数える（変更の窓の前の基礎の武器の発を拾わない）
+  const frames = ctx.args.weaponChange === true ? (log.weaponChangeShotFrames ?? []) : log.frames;
   const firstFrom = (frame: number) => {
     const shot = frames.find((f) => f >= frame);
     if (shot === undefined) throw new Error(`フレーム ${frame} の後に発が無い`);

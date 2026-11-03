@@ -205,10 +205,13 @@ export function chargeShotIntervalFrames(
 
 /**
  * チャージ時間の秒数。Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）。
- * アニス：スター編: チャージ時間の固定が効いていれば、チャージ速度を無視してその秒数（plan/design-anis-star-s2-burst.md 2.3 節）
+ * アニス：スター編: チャージ時間の固定が効いていれば、チャージ速度を無視してその秒数（plan/design-anis-star-s2-burst.md 2.3 節）。
+ * ナユタ編: 使用武器の変更の武器のチャージ時間の固定（ChangedWeapon.fixedChargeTime）も同じ
  */
 function chargeSecondsOf(shot: ShotParams, buffs: FiringBuffs): number {
   if (buffs.fixedChargeTime > 0) return buffs.fixedChargeTime;
+  // ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間を固定した使用武器の変更の武器も、チャージ速度▲を受けない
+  if (buffs.weapon?.fixedChargeTime !== undefined && shot === buffs.weapon.shot) return buffs.weapon.fixedChargeTime;
   return Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat);
 }
 

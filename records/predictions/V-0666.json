@@ -1,6 +1,6 @@
 {
   "verification": "V-0666",
-  "note": "撮影 A（ナユタ単騎・オート射撃 ON・オートバースト OFF）。S2 のスタック量別の効果（2・10・30 スタック）が付く時刻を、その段階に届いた付与の後の次の付与の前（7.5 秒・31.5 秒・91.5 秒）の 1 ヒットで見分ける。S1 の▲が上限（30 スタック・90 秒）の後も続くか（設計書 3.1 節の Q1）は定義の切り替えが要るので、検証記録の「予測」に手で書く",
+  "note": "撮影 A（ナユタ単騎・オート射撃 ON・オートバースト OFF）。S2 のスタック量別の効果（2・10・30 スタック）が付く時刻を、その段階に届いた付与の後の次の付与の前（7.5 秒・31.5 秒・91.5 秒）の 1 ヒットで見分ける。S1 の▲が上限（30 スタック・90 秒）の後も続くか（設計書 3.1 節の Q1）は定義の切り替えが要るので、検証記録の「予測」に手で書く。指標 nayuta-edge-tier1・nayuta-edge-tier2 は読んだ後に足した（7.5 秒・31.5 秒の 1 ヒットは録画では距離ボーナスの帯の発で、指標と同じ条件の発が無かったので、同じ仮説を段階の付き始めで見分ける指標にした）",
   "team": [
     {
       "rid": 223,
@@ -70,7 +70,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "note": "最初の付与（3 秒）より前の胴体の 1 ヒット（読みの基準。どの仮説でも▲なし）",
@@ -91,7 +93,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "note": "1 スタック・S1 の▲だけ（どの仮説でも同じ）",
@@ -112,7 +116,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "note": "2 スタック（6 秒）の後・3 スタック（9 秒）の前。H1 は 1 段階の攻撃力▲あり、H2 はなし",
@@ -133,7 +139,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "note": "10 スタック（30 秒）の後・11 スタックの前。H1 は 2 段階の攻撃ダメージ▲あり、H2 はなし",
@@ -154,7 +162,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "note": "30 スタック（90 秒）の後・31 回目の付与（93 秒）の前のコアの 1 ヒット。H1 は 3 段階のコアダメージ▲あり。H2 は 93 秒から（予測ファイルでは表せないので、H2 の値は H1 と同じに出る。検証記録の「予測」）",
@@ -175,18 +185,76 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "note": "上限の後の胴体の 1 ヒット（S1 の▲が続くなら H1・H2 とも 4.5 秒の値に 1・2 段階を足した値。続かなければ下がる。検証記録の「予測」）",
       "tolerance": {
         "rel": 0.01
       }
+    },
+    {
+      "id": "nayuta-edge-tier1",
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "from": 1,
+        "shot": 1,
+        "edge": "start"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 57.5
+      },
+      "note": "最初の発から 1 段階の攻撃力▲の付き始めまで（読んだ後に足した）",
+      "observations": [
+        "0948-02",
+        "0949-02"
+      ]
+    },
+    {
+      "id": "nayuta-edge-tier2",
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 1,
+        "shot": 1,
+        "edge": "start"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 3.5
+      },
+      "note": "最初の発から 2 段階の攻撃ダメージ▲の付き始めまで（読んだ後に足した）",
+      "observations": [
+        "0948-03",
+        "0949-03"
+      ]
     }
   ],
   "predicted": {
     "at": "2026-11-03",
-    "commit": "e10c46340b2ee99853cd72ebb645096a600ae1d7",
+    "commit": "2eba8d3a2843e9e9a40052a78d6dcd9b563ef1b2",
     "values": {
       "H1": {
         "nayuta-hit-1s": 8772.777,
@@ -194,7 +262,9 @@
         "nayuta-hit-7.5s": 12756.101399999998,
         "nayuta-hit-31.5s": 15341.763153779999,
         "nayuta-core-91.5s": 37771.420884606356,
-        "nayuta-hit-120s": 15341.763153779999
+        "nayuta-hit-120s": 15341.763153779999,
+        "nayuta-edge-tier1": 342,
+        "nayuta-edge-tier2": 1758
       },
       "H2": {
         "nayuta-hit-1s": 8772.777,
@@ -202,7 +272,9 @@
         "nayuta-hit-7.5s": 11421.2844,
         "nayuta-hit-31.5s": 12756.101399999998,
         "nayuta-core-91.5s": 37771.420884606356,
-        "nayuta-hit-120s": 15341.763153779999
+        "nayuta-hit-120s": 15341.763153779999,
+        "nayuta-edge-tier1": 519,
+        "nayuta-edge-tier2": 1935
       }
     }
   }

@@ -998,6 +998,8 @@ function withSameActivationEffects(
     if (w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex || w.effect.source.skill !== 'burst') continue;
     if (w.start < activationFrame || w.start > at || w.end <= at) continue;
     if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
+    // ナユタ編（V-0666）: 同じ発動の使用武器の変更（記憶燃焼）は通常攻撃の武器を替えるだけで、バーストの倍率ダメージの値に効かない
+    if (w.effect.stat === 'weapon') continue;
     assertPlainTimed(w, 'same-activation buffs on a burst hit');
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }

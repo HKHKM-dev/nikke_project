@@ -19,25 +19,19 @@ const raw = readJson<Raw>(`../../../data/skills/${NAYUTA}.json`);
 const character = readJson<CharacterData>(`../../../data/characters/${NAYUTA}.json`);
 const absorption = raw.skills.skill2.effects.findIndex((e) => e.state === 'memoryAbsorption');
 
-/** 記憶燃焼（仮の値。レートはテストの値で、撮影で読んだものではない） */
-const INCINERATION = {
-  kind: 'weaponChange',
-  trigger: 'burstUse',
-  state: 'memoryIncineration',
-  damageRef: 3,
-  chargeTimeSeconds: 1.8,
-  fullChargeDamage: 250,
-  durationRef: 4,
-  rateOfFire: 60,
-};
+/** 定義の記憶燃焼（使用武器の変更）の番号 */
+const incineration = raw.skills.burst.effects.findIndex((e) => e.kind === 'weaponChange');
 
 const edited = (edit: (copy: Raw) => void) => {
   const copy = structuredClone(raw);
   edit(copy);
   return copy;
 };
+/** 記憶燃焼の欄を書き換えた定義（undefined の欄は JSON に戻すと消える） */
 const withIncineration = (patch: Record<string, unknown> = {}) =>
-  edited((c) => c.skills.burst.effects.push({ ...INCINERATION, ...patch }));
+  edited((c) => {
+    c.skills.burst.effects[incineration] = { ...c.skills.burst.effects[incineration], ...patch };
+  });
 
 describe('スタック量増減効果無効（stackImmutable）', () => {
   it('accepts the definition, with the mark on Memory Absorption', () => {
@@ -87,7 +81,7 @@ describe('使用武器の変更の状態（weaponChange の state）', () => {
     const def = parseSkillDefinition(withIncineration());
     const effects = def.skills.burst.effects;
     const weaponIndex = effects.findIndex((e) => e.kind === 'weaponChange');
-    expect(effects.at(-1)).toEqual({
+    expect(effects.at(-1)).toMatchObject({
       kind: 'state',
       state: 'memoryIncineration',
       trigger: 'burstUse',
@@ -122,22 +116,37 @@ describe('チャージ武器への変更（SMG の記憶燃焼）', () => {
   const def = parseSkillDefinition(withIncineration());
   const weapon = resolveTimed(def, character, MAX_SKILL_LEVELS).find((t) => t.stat === 'weapon')!.weapon!;
 
-  it('makes the changed weapon a charge weapon of 1.8 s and 250% from a non-charge SMG', () => {
+  it('makes the changed weapon a press-and-hold charge weapon of 1.8 s and 250% from a non-charge SMG', () => {
     expect(isChargeWeapon(character.shot)).toBe(false);
-    expect(weapon.shot).toMatchObject({ inputType: 'UP', chargeTime: 1.8, fullChargeDamage: 2.5, rateOfFire: 60 });
+    // 押下チャージ型（発と発の間はチャージ時間だけ。V-0666）。レートは書かず、基礎の武器のまま（チャージ武器の発の間に使わない）
+    expect(weapon.shot).toMatchObject({
+      inputType: 'DOWN_Charge',
+      chargeTime: 1.8,
+      fullChargeDamage: 2.5,
+      rateOfFire: character.shot.rateOfFire,
+    });
     expect(isChargeWeapon(weapon.shot)).toBe(true);
     // 1 発のダメージは値 03（Lv10 で 275.18%）
     expect(weapon.shot.damage).toBe(27518);
   });
 
   it('lets the slot fire full-charge shots only through the change', () => {
-    expect(firesChargeShots(parseSkillDefinition(raw), character, MAX_SKILL_LEVELS)).toBe(false);
+    const without = edited((c) => c.skills.burst.effects.splice(incineration, 1));
+    expect(firesChargeShots(parseSkillDefinition(without), character, MAX_SKILL_LEVELS)).toBe(false);
     expect(firesChargeShots(def, character, MAX_SKILL_LEVELS)).toBe(true);
     expect(firesChargeShots(null, character, MAX_SKILL_LEVELS)).toBe(false);
   });
 
-  it('still rejects a full charge damage without the charge time on a non-charge weapon', () => {
+  it('keeps the fixed charge time (chargeTimeFixed) only with chargeTimeSeconds', () => {
+    expect(weapon.fixedChargeTime).toBe(1.8);
     const bad = withIncineration({ chargeTimeSeconds: undefined });
+    expect(() => parseSkillDefinition(JSON.parse(JSON.stringify(bad)))).toThrow(
+      /chargeTimeFixed needs chargeTimeSeconds/,
+    );
+  });
+
+  it('still rejects a full charge damage without the charge time on a non-charge weapon', () => {
+    const bad = withIncineration({ chargeTimeSeconds: undefined, chargeTimeFixed: undefined, rateOfFire: 60 });
     expect(() =>
       resolveTimed(parseSkillDefinition(JSON.parse(JSON.stringify(bad))), character, MAX_SKILL_LEVELS),
     ).toThrow(/charge weapon/);

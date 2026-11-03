@@ -1,0 +1,394 @@
+[
+  {
+    "id": "0950-01",
+    "recording": "0950",
+    "kind": "timing",
+    "use": "record",
+    "value": [1377, 2650, 3863, 5209, 6451, 7665, 8850, 10074, 11320],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・0・25・6・24f"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0950-02",
+    "recording": "0950",
+    "kind": "timing",
+    "use": "record",
+    "value": [1407, 2680, 3892, 5238, 6481, 7695, 8880, 10103, 11349],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・6・25・0・24・6・24・6・25f"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0950-03",
+    "recording": "0950",
+    "kind": "timing",
+    "use": "record",
+    "value": [1435, 3921, 6510, 8908, 11378],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0950-04",
+    "recording": "0950",
+    "kind": "timing",
+    "use": "record",
+    "value": [2044, 4529, 7118, 9517],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0950-05",
+    "recording": "0950",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 608, 608, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0950-06",
+    "recording": "0950",
+    "kind": "timing",
+    "use": "record",
+    "value": [8867],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0950-07",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 129,
+    "description": "ナユタの 1 回目のバースト（II。フルバーストに入る回）の六角形の替わり目 f1407 から、記憶燃焼の変更後の武器の最初の発 f1558 まで（フルバーストの入りの止まり 22f を引いたゲーム内のフレーム）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と、バースト欄の六角形の替わり目（0950-02）",
+      "note": "変更後の発は 300 万を超える増分（ナユタの胴体は 15 万前後で、ほかの 2 人の発も 15 万に届かない）。止まりの 22f は C-0260 の入りの止まり"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-08",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 129,
+    "description": "ナユタの 4 回目のバースト（フルバーストに入らない回）の六角形の替わり目 f5238 から、記憶燃焼の最初の発 f5367 まで",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と、バースト欄の六角形の替わり目（0950-02）",
+      "note": "どちらの回も発動から 129f（入る回は動画では入りの止まりの後）。的のジャンプと重なった窓（0950 の 5・7 回目、0951 の 5 回目）は使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectFirstShot",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "weaponChange": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-09",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [106, 106, 106, 106],
+    "description": "ナユタの 4 回目のバーストの記憶燃焼の 5 発の、発と発の間（f5367・5473・5579・5685・5791）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と、バースト欄の六角形の替わり目（0950-02）",
+      "note": "10 秒の窓の中は 5 発で、どれも 106f おき（チャージ 1.8 秒だけで、解放の分が足されない。ジャンプと重ならない窓はどれも同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervals",
+      "args": {
+        "slot": 3,
+        "burst": 3,
+        "from": 1,
+        "to": 588
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-10",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 37,
+    "description": "記憶燃焼の発から、S1 の「記憶燃焼状態でフルチャージして攻撃した時」の 2 ヒット（150% と 380.46%。HUD では 1 つの増分）までの最頻値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と、バースト欄の六角形の替わり目（0950-02）",
+      "note": "ジャンプと重ならない窓の発で 37f（1f の揺れは HUD の読みの揺れ）。モデルは 2 ヒットとも発の 37f 後（定義の delayFrames）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-11",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 4323432,
+    "description": "記憶燃焼の変更後の武器の 1 発（コア・距離ボーナスあり・非会心。リターのバーストの▲の切れた後。f10443・10656（8 回目の窓の 3・5 発目））",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と、バースト欄の六角形の替わり目（0950-02）",
+      "note": "変更後の発はどれもコアの値（胴体の値は窓のどの発にも無い）。同じ値が 2 回出た発"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 9540,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-12",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 1206981,
+    "description": "記憶燃焼の発の 37f 後の、S1 の 2 ヒット（最終攻撃力の 150% と、対象がターゲットならの 380.46% の追加ダメージ。非会心）の和の増分（f10480・10693（8 回目の窓の 3・5 発目の 37f 後））",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と、バースト欄の六角形の替わり目（0950-02）",
+      "note": "2 ヒットは同じフレームに出て、HUD では 1 つの増分になる。同じ値がほかの窓にも出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "frame": 9540,
+        "n": 0,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-13",
+    "recording": "0950",
+    "kind": "count",
+    "use": "record",
+    "unit": "発",
+    "value": [38, 0],
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "description": "記憶燃焼の変更後の武器の発のうち、HUD に出た発の数と、そのうちコアの値でない発（胴体の値）の数。的が狙える間の発はどれも出て（外れた発は無い）、どれもコアの値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "窓ごとに、六角形の替わり目の 129f 後（フルバーストに入る回は 22f の止まりの後）から 106f おきの増分を見た。予定の時刻に増分の無い発は、ほかの 2 人の増分も止まっている所（的のジャンプの間）で、どれも撃っていない。予定から 4〜13f 遅れて出た発が 3 つ（0950 の f7828、0951 の f8302・9588）。胴体なら同じ回のコアの値の約 0.51 倍（1.3 ÷ 2.5515）か、会心でも約 0.71 倍で、どの発もそれに当たらない。的の表の 223:burst の行（コア命中率・弾丸命中率 1）の根拠"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0950-14",
+    "recording": "0950",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 2281261,
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "description": "ナユタの 6 回目のバースト（フルバーストに入らない回）の、敵全体への最終攻撃力の 645.33% のバーストスキルダメージ（非会心。六角形の替わり目 f7695 の 55f 後の f7750 の増分）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "フルバーストの外の回の替わり目の 55〜56f 後に 1 ヒット。2,281,261 は 2 本の 30 秒より後の回に 4 回出る（ほかは会心の 3,706,137・3,769,654 と、2 段階の前の回）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 5,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-15",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [76, 56, 77, 56, 76, 55, 76, 55, 77],
+    "description": "ナユタのバースト（II）の六角形の替わり目から、バーストスキルダメージのヒットまでの動画のフレーム（発動の順。フルバーストに入る回は入りの止まり 22f を含む）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps と 0950-02",
+      "note": "替わり目の 40〜100f 後の 150 万を超える増分のうち、ナユタの値（2,281,261 とその会心・2 段階の前の値）。入る回の 57〜58f 後の増分はソルジャーE.G. のバーストのヒット"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 3,
+        "count": 9
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0950-16",
+    "recording": "0950",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 2281261,
+    "description": "ナユタの 7 回目のバースト（フルバーストに入る回）のバーストスキルダメージ（非会心。替わり目 f8880 の 76f 後の f8956 の増分）。フルバーストに入らない回と同じ値",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "ヒットはフルバーストの窓（III の 00.00 から）の中だが、フルバースト補正の乗らない値"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 6,
+        "crit": false
+      },
+      "tolerance": {
+        "rel": 0.0001
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

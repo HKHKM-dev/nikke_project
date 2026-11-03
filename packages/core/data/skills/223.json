@@ -17,7 +17,10 @@
           "assumes": {
             "ja": "記憶吸収（S2）が付くたび（3 秒ごと）に付き直す。上限の 30 スタックに届いた後も、周期の付与のたびに「適用される時」が起きるとみる（未確認。plan/design-nayuta.md 3.1 節の Q1）",
             "en": "Reapplied each time Memory Absorption (Skill 2) is applied (every 3 s). Taken to keep firing on each periodic application after reaching the cap of 30 stacks (unverified; plan/design-nayuta.md 3.1 Q1)"
-          }
+          },
+          "claims": [
+            "C-0940"
+          ]
         },
         {
           "kind": "timed",
@@ -32,7 +35,48 @@
           "assumes": {
             "ja": "effects[0] と同じきっかけ（上限の後も起きるとみる。未確認）",
             "en": "Same trigger as effects[0] (taken to keep firing after the cap; unverified)"
-          }
+          },
+          "claims": [
+            "C-0940"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "selfState": "memoryIncineration"
+          },
+          "ref": 7,
+          "damageType": "skill",
+          "delayFrames": 37,
+          "assumes": {
+            "ja": "記憶燃焼の変更後の武器のフルチャージの発ごとに 1 回（敵全体は敵 1 体）。発の 37f 後に、effects[3] と同じ増分に出る（V-0666）",
+            "en": "Once per Full Charge shot of the Memory Incineration weapon (all enemies means one enemy). It lands 37 frames after the shot, in the same HUD increment as effects[3] (V-0666)"
+          },
+          "claims": [
+            "C-0937"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "selfState": "memoryIncineration"
+          },
+          "ref": 10,
+          "damageType": "additional",
+          "delayFrames": 37,
+          "assumes": {
+            "ja": "射撃場の的は「ターゲット」とみる（ネオン：ビジョン・アイの S1 と同じ読み）。effects[2] と同じ発の 37f 後",
+            "en": "The range target is taken as the stage target (as for Neon: Vision Eye Skill 1). 37 frames after the same shot as effects[2]"
+          },
+          "claims": [
+            "C-0937"
+          ]
         }
       ],
       "notes": [
@@ -60,24 +104,6 @@
             "target": "self",
             "trigger": "applied"
           }
-        },
-        {
-          "ja": "記憶燃焼状態でフルチャージして攻撃した時の、敵全体への最終攻撃力の 150% のダメージは、記憶燃焼（バーストの使用武器変更）の変更後の武器の値（レート・解放・最初の発）を撮影で読むまで未対応（plan/design-nayuta.md 2.6 節・論点 4）",
-          "en": "The 150% final ATK damage to all enemies on a Full Charge attack in Memory Incineration is not modeled until the changed weapon of Memory Incineration (the burst's weapon change) is read from recordings (rate, release, first shot; plan/design-nayuta.md 2.6, issue 4)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "fullChargeShot"
-          }
-        },
-        {
-          "ja": "同じきっかけの、対象がターゲットならの最終攻撃力の 380.46% の追加ダメージも、同じ理由で未対応",
-          "en": "The 380.46% final ATK additional damage to the stage target on the same trigger is not modeled for the same reason",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "damage",
-            "trigger": "fullChargeShot"
-          }
         }
       ]
     },
@@ -103,7 +129,11 @@
           "assumes": {
             "ja": "戦闘開始から 3 秒ごと（3 秒・6 秒…。0 秒には付かない）に 1 スタック付き、30 スタックで止まる（511 の美しさと同じ数え方とみる。未確認）。命中率▲はスタックごとに足す",
             "en": "One stack every 3 s from the start of battle (3 s, 6 s, ...; none at 0 s), stopping at 30 stacks (taken to count like Beautiful of resource 511; unverified). The Hit Rate increase adds per stack"
-          }
+          },
+          "claims": [
+            "C-0935",
+            "C-0939"
+          ]
         },
         {
           "kind": "passive",
@@ -119,7 +149,10 @@
           "assumes": {
             "ja": "1 段階（記憶吸収 2 スタック以上）。スタックは減らない（スタック量増減効果無効）ので、届いた後は戦闘の終わりまで続く。下位効果のスタック適用で、上の段階でも付いたまま",
             "en": "Stage 1 (2 or more Memory Absorption stacks). The stacks never decrease (stack changes nullified), so it lasts to the end of battle once reached. Lower stages stay with higher ones"
-          }
+          },
+          "claims": [
+            "C-0935"
+          ]
         },
         {
           "kind": "passive",
@@ -135,7 +168,10 @@
           "assumes": {
             "ja": "2 段階（記憶吸収 10 スタック以上）。effects[1] と同じ扱い",
             "en": "Stage 2 (10 or more Memory Absorption stacks). Same as effects[1]"
-          }
+          },
+          "claims": [
+            "C-0935"
+          ]
         },
         {
           "kind": "passive",
@@ -151,7 +187,10 @@
           "assumes": {
             "ja": "3 段階（記憶吸収 30 スタック以上）。effects[1] と同じ扱い",
             "en": "Stage 3 (30 or more Memory Absorption stacks). Same as effects[1]"
-          }
+          },
+          "claims": [
+            "C-0935"
+          ]
         }
       ]
     },
@@ -163,7 +202,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0938"
+          ]
         },
         {
           "kind": "burstDamage",
@@ -172,29 +214,43 @@
           "assumes": {
             "ja": "敵全体は敵 1 体（パーツへのダメージは扱わない）",
             "en": "All enemies means one enemy (damage to parts is not handled)"
-          }
-        }
-      ],
-      "notes": [
-        {
-          "ja": "記憶燃焼（使用武器変更。チャージ時間 1.8 秒固定・最終攻撃力の 275.18%・フルチャージダメージ 250%・10 秒）は、SMG からチャージ武器への変更で、変更後の発射レート・解放の長さ・最初の発・コア命中率が説明文にも CDN にも無い。撮影で読むまで未対応で、バーストの間も基礎の SMG で撃つ（plan/design-nayuta.md 2.6 節・論点 4）",
-          "en": "Memory Incineration (weapon change: charge time fixed at 1.8 s, 275.18% of final ATK, 250% Full Charge damage, 10 s) changes the SMG into a charge weapon whose rate of fire, release, first shot and core hit rate are neither in the description nor in CDN. Not modeled until read from recordings; the base SMG keeps firing during the burst (plan/design-nayuta.md 2.6, issue 4)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "weaponChange",
-            "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0938"
+          ]
         },
         {
-          "ja": "記憶燃焼の追加効果の装弾数無限（10 秒）は、変更後の武器に付くので、記憶燃焼と一緒に未対応（基礎の SMG に付けない）",
-          "en": "Infinite ammo (10 s) as an additional effect of Memory Incineration belongs to the changed weapon, so it is not modeled together with Memory Incineration (not given to the base SMG)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "timed",
-            "stat": "infiniteAmmo",
-            "target": "self",
-            "trigger": "burstUse"
-          }
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "state": "memoryIncineration",
+          "damageRef": 3,
+          "chargeTimeSeconds": 1.8,
+          "chargeTimeFixed": true,
+          "fullChargeDamage": 250,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "SMG を押下チャージ型のチャージ武器（1.8 秒）に替える。発と発の間はチャージ時間だけ（106f）で、最初の発は、バースト欄の六角形の替わり目から 129f（替わり目はモデルの発動の 5f 後で、窓の始まりは発動の次のフレームなので、待ち 133f。フルバーストに入る回は、動画では入りの止まりの 22f の後）。コア命中率・弾丸命中率は的の表の 223:burst の行（V-0666）。「固定」は、チャージ速度▲を受けない読み（アニス：スターのチャージ時間の固定と同じ。C-0214）で、チャージ速度▲の無い編成でしか撮っていないので確かめていない",
+            "en": "Turns the SMG into a press-and-hold charge weapon (1.8 s). Shots are spaced by the charge time only (106 f), and the first shot comes 129 f after the hexagon change of the burst gauge (the change is 5 f after the model activation and the window starts on the frame after the activation, so the wait is 133 f; in the video, after the 22-frame entry stop when entering Full Burst). Core and bullet hit rates come from the 223:burst rows of the target table (V-0666). \"Fixed\" is read as unaffected by Charge Speed ups (as the fixed charge time of Anis: Sparkling Summer, C-0214); not verified, as it was recorded only without Charge Speed ups"
+          },
+          "firstShotDelayFrames": 133,
+          "claims": [
+            "C-0936",
+            "C-0939"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationRef": 6,
+          "assumes": {
+            "ja": "記憶燃焼の追加効果（モダニアと同じく武器の変更と別の効果）。10 秒の変更の窓の発は 5 発で、装弾数に届かないので、無限かどうかはダメージに効かない",
+            "en": "Additional effect of Memory Incineration (a separate effect from the weapon change, as for Modernia). The 10 s window has 5 shots, below the magazine, so infinite ammo does not affect damage"
+          },
+          "claims": [
+            "C-0936"
+          ]
         }
       ]
     }

@@ -29,10 +29,13 @@ export type ChangedWeapon = {
   /** レッドフード編: 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */
   chargeReleaseFrames?: number;
   /**
-   * 同: 的の表の変更後の武器の行の鍵（`<resourceId>:<スロット>`。coreHitRate.weaponChanges）。即着弾に替えた変更
-   * （instantFire）だけが持ち、通常攻撃のコア命中率をこの行から引く（行が無ければ基礎の武器の行のまま）
+   * 同: 的の表の変更後の武器の行の鍵（`<resourceId>:<スロット>`。coreHitRate.weaponChanges・bulletHitRate.weaponChanges）。即着弾に
+   * 替えた変更（instantFire）と、ナユタ編のチャージ武器に替えた変更（plan/design-nayuta.md 2.6 節）が持ち、通常攻撃のコア命中率・弾丸命中率を
+   * この行から引く（行が無ければ基礎の武器の行のまま）
    */
   targetRowKey?: string;
+  /** ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間の固定の秒（WeaponChangeEffect.chargeTimeFixed）。チャージ速度▲を受けない */
+  fixedChargeTime?: number;
 };
 
 /**

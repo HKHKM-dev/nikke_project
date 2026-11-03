@@ -10,6 +10,7 @@ import type {
   EnemyEventSpec,
   EnemyPreset,
   EnemyPresetMaster,
+  BulletHitRateTable,
   CoreHitRateTable,
   FlightFramesTable,
   LandingBand,
@@ -323,6 +324,16 @@ function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<strin
   return table;
 }
 
+/** 弾丸命中率の表（武器種の行と、使用武器の変更の行 weaponChanges。ナユタ編） */
+function parseBulletHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): BulletHitRateTable {
+  if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
+  const { weaponChanges, ...weapons } = v;
+  const table: BulletHitRateTable = parseRateTable(weapons, path, keys);
+  if (weaponChanges !== undefined)
+    table.weaponChanges = parseAutoAttackRows(weaponChanges, `${path}.weaponChanges`, keys, RATE);
+  return table;
+}
+
 function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>): FlightFramesTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   for (const key of Object.keys(v)) {
@@ -368,7 +379,7 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     landings,
     mixes,
     coreHitRate: parseCoreHitRateTable(v.coreHitRate, `${path}.coreHitRate`, keys),
-    bulletHitRate: parseRateTable(v.bulletHitRate, `${path}.bulletHitRate`, keys),
+    bulletHitRate: parseBulletHitRateTable(v.bulletHitRate, `${path}.bulletHitRate`, keys),
     ...(v.hitsPerShot === undefined
       ? {}
       : { hitsPerShot: parseRateTable(v.hitsPerShot, `${path}.hitsPerShot`, keys, HITS) }),

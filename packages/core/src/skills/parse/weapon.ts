@@ -25,6 +25,7 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
         'trueDamage',
         'projectileExplosion',
         'chargeTimeSeconds',
+        'chargeTimeFixed',
         'fullChargeDamage',
         'chargeReleaseSeconds',
         'maxAmmoRef',
@@ -65,6 +66,14 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
       fail(`${path}.chargeTimeSeconds`, `expected a positive finite number, got ${JSON.stringify(seconds)}`);
     }
     effect.chargeTimeSeconds = seconds;
+  }
+  // ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間の固定（チャージ速度▲を受けない）
+  if (v.chargeTimeFixed !== undefined) {
+    if (v.chargeTimeFixed !== true)
+      fail(`${path}.chargeTimeFixed`, `expected true, got ${JSON.stringify(v.chargeTimeFixed)}`);
+    if (effect.chargeTimeSeconds === undefined)
+      fail(`${path}.chargeTimeFixed`, 'chargeTimeFixed needs chargeTimeSeconds');
+    effect.chargeTimeFixed = true;
   }
   if (v.fullChargeDamage !== undefined) {
     const percent = v.fullChargeDamage;

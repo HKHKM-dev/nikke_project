@@ -1,0 +1,332 @@
+[
+  {
+    "id": "0949-01",
+    "recording": "0949",
+    "kind": "timing",
+    "use": "compare",
+    "value": 166.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 166,
+      "high": 167
+    },
+    "description": "S1 の攻撃力▲（記憶吸収が適用される時）（N → S）が ナユタ の 1 発で替わるまでの時刻の幅（1 番目の事象 f854 から数えた動画のフレーム）。Nの最後の発は 165f、Sの最初の発は 167f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は N: 枠 1（ナユタ）のモデルの f100、S: 枠 1（ナユタ）のモデルの f200。境は N → S（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 0〜400f。N 65・S 52・区別できない 0・外れ 0・食い違い（Sの最初の発より後のNの発） 0。記憶吸収の付与の時刻は録画に出ないので、ナユタの最初の発（事象）から数え、モデルの最初の発からの同じ幅と比べる（許容は幅の半分に、動画とゲームの時刻のずれの見込み 2f を足した値）"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03",
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "attack",
+        "from": 1,
+        "shot": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-02",
+    "recording": "0949",
+    "kind": "timing",
+    "use": "compare",
+    "value": 348.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 293,
+      "high": 404
+    },
+    "description": "S2 の 1 段階（記憶吸収 2 スタック以上）の攻撃力▲（S → T1）が ナユタ の 1 発で替わるまでの時刻の幅（1 番目の事象 f854 から数えた動画のフレーム）。Sの最後の発は 292f、T1の最初の発は 404f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S: 枠 1（ナユタ）のモデルの f300、T1: 枠 1（ナユタ）のモデルの f500。境は S → T1（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 250〜520f。S 18・T1 48・区別できない 0・外れ 0・食い違い（T1の最初の発より後のSの発） 0。記憶吸収の付与の時刻は録画に出ないので、ナユタの最初の発（事象）から数え、モデルの最初の発からの同じ幅と比べる（許容は幅の半分に、動画とゲームの時刻のずれの見込み 2f を足した値）"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03",
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "from": 1,
+        "shot": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 57.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-03",
+    "recording": "0949",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1754.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1753,
+      "high": 1756
+    },
+    "description": "S2 の 2 段階（記憶吸収 10 スタック以上）の攻撃ダメージ▲（T1 → T2）が ナユタ の 1 発で替わるまでの時刻の幅（1 番目の事象 f854 から数えた動画のフレーム）。T1の最後の発は 1752f、T2の最初の発は 1756f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は T1: 枠 1（ナユタ）のモデルの f1600、T2: 枠 1（ナユタ）のモデルの f1900。境は T1 → T2（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 1600〜1900f。T1 63・T2 55・区別できない 0・外れ 0・食い違い（T2の最初の発より後のT1の発） 0。記憶吸収の付与の時刻は録画に出ないので、ナユタの最初の発（事象）から数え、モデルの最初の発からの同じ幅と比べる（許容は幅の半分に、動画とゲームの時刻のずれの見込み 2f を足した値）"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03",
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 1,
+        "shot": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 3.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-04",
+    "recording": "0949",
+    "kind": "timing",
+    "use": "compare",
+    "value": 5312,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 5221,
+      "high": 5403
+    },
+    "description": "S2 の 3 段階（記憶吸収 30 スタック以上）のコアダメージ▲（T2 → T3）が ナユタ の 1 発で替わるまでの時刻の幅（1 番目の事象 f854 から数えた動画のフレーム）。T2の最後の発は 5220f、T3の最初の発は 5403f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-fire\",\"events\":[\"range-3min-jump\"],\"burst\":false}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は T2: 枠 1（ナユタ）のモデルの f5100、T3: 枠 1（ナユタ）のモデルの f5500。境は T2 → T3（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 5000〜5600f。T2 7・T3 5・区別できない 165・外れ 2・食い違い（T3の最初の発より後のT2の発） 0。記憶吸収の付与の時刻は録画に出ないので、ナユタの最初の発（事象）から数え、モデルの最初の発からの同じ幅と比べる（許容は幅の半分に、動画とゲームの時刻のずれの見込み 2f を足した値）"
+    },
+    "source": "V-0666",
+    "readAt": "2026-11-03",
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "coreDamage",
+        "from": 1,
+        "shot": 1,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 93
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-05",
+    "recording": "0949",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "value": 14848,
+    "description": "ナユタの S1 の▲（記憶吸収 1 スタックの後）だけの、距離ボーナスあり・コアなし・非会心の通常攻撃の 1 ヒット（最初の発 f854 から 150〜330f の増分 45 個。例 f1021・1024・1026）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "単騎なので増分がそのまま 1 ヒット。同じ値が続く区間の値。比べるのはモデルの f265"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 265,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-06",
+    "recording": "0949",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "value": 16583,
+    "description": "ナユタの S1 の▲と S2 の 1 段階（攻撃力▲）の、距離ボーナスあり・コアなし・非会心の通常攻撃の 1 ヒット（最初の発 f854 から 400〜530f の増分 43 個。例 f1258・1261・1263）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "単騎なので増分がそのまま 1 ヒット。同じ値が続く区間の値。比べるのはモデルの f440"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 440,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-07",
+    "recording": "0949",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "value": 19944,
+    "description": "ナユタの S1 の▲と S2 の 1・2 段階（攻撃ダメージ▲）の、距離ボーナスあり・コアなし・非会心の通常攻撃の 1 ヒット（最初の発 f854 から 1760〜1940f の増分 30 個。例 f2614・2616・2621）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "単騎なので増分がそのまま 1 ヒット。同じ値が続く区間の値。比べるのはモデルの f1852"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1852,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-08",
+    "recording": "0949",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "value": 37771,
+    "description": "ナユタの S1 の▲と S2 の 1〜3 段階（3 段階はコアダメージ▲）の、コア・距離ボーナスなし・非会心の通常攻撃の 1 ヒット（最初の発 f854 から 5390〜5700f の増分 6 個。例 f6257・6274・6294）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "単騎なので増分がそのまま 1 ヒット。同じ値が続く区間の値。比べるのはモデルの f5382（予測ファイルの指標 nayuta-core-91.5s と同じ指定）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 5382,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "0949-09",
+    "recording": "0949",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "source": "V-0666",
+    "readAt": "2026-11-04",
+    "value": 15342,
+    "description": "ナユタの 上限（30 スタック。90 秒）の後の、S1 の▲と S2 の 1・2 段階の、距離ボーナスなし・コアなし・非会心の通常攻撃の 1 ヒット（最初の発 f854 から 6900〜7200f の増分 79 個。例 f7768・7769・7774）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "単騎なので増分がそのまま 1 ヒット。同じ値が続く区間の値。比べるのはモデルの f7058（予測ファイルの指標 nayuta-hit-120s と同じ指定）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 7058,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]

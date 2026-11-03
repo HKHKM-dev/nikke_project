@@ -1484,6 +1484,11 @@ export type WeaponChangeEffect = {
    * 説明文に数字で書かれている（description_value でない）。省略は基礎の武器のまま。チャージ武器にだけ書ける
    */
   chargeTimeSeconds?: number;
+  /**
+   * ナユタ編（plan/design-nayuta.md 2.4 節。V-0666）: 説明文の「チャージ時間：N 秒固定」。変更後の武器のチャージ時間を、チャージ速度▲を受けずに
+   * chargeTimeSeconds のままにする（stat fixedChargeTime と同じ読み。C-0214）。chargeTimeSeconds と組む
+   */
+  chargeTimeFixed?: true;
   /** 同: 変更後の武器のフルチャージダメージ（%・即値。300 = 300%）。省略は基礎の武器のまま。チャージ武器にだけ書ける */
   fullChargeDamage?: number;
   /**

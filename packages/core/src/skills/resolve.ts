@@ -1137,8 +1137,9 @@ export type ChangedWeaponOverrides = {
   /** 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾でチャージしない武器にする（instantFire） */
   instantFire?: boolean;
   /**
-   * ナユタ編（plan/design-nayuta.md 2.6 節）: チャージしない基礎の武器から、チャージ武器（入力 UP。chargeTime と組む）にする。
-   * フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
+   * ナユタ編（plan/design-nayuta.md 2.6 節）: チャージしない基礎の武器から、押下チャージ型のチャージ武器（入力 DOWN_Charge。chargeTime と
+   * 組む）にする。発と発の間はチャージ時間だけで、持ち替えの後の最初の発だけ解放の分を足す（記憶燃焼の 106f おきの発と、持ち替えから 129f の
+   * 最初の発。V-0666）。フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
    */
   chargeInput?: boolean;
 };
@@ -1160,7 +1161,7 @@ export function changedWeaponShot(
     ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
     ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
-    ...(overrides.chargeInput === true ? { inputType: 'UP' } : {}),
+    ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
     // 2 段目の段 11: 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
     ...(overrides.instantFire === true
       ? { chargeTime: 0, fullChargeDamage: 1, inputType: 'DOWN', fireType: 'Instant', projectile: undefined }
@@ -1192,7 +1193,10 @@ function resolveWeaponChange(
   if (cdn != null && effect.rateOfFire !== undefined) {
     throw new RangeError(`skill ${skill.id}: rateOfFire is given by CDN (burstSkill.changeWeapon); do not write it`);
   }
-  const rateOfFire = cdn?.rateOfFire ?? effect.rateOfFire;
+  // ナユタ編（plan/design-nayuta.md 2.6 節）: チャージ武器にする変更は、発の間をチャージ時間で決める（レートを使わない）ので、レートは
+  // 基礎の武器のまま（書かない）
+  const toChargeWeapon = !isChargeWeapon(character.shot) && effect.chargeTimeSeconds !== undefined;
+  const rateOfFire = cdn?.rateOfFire ?? effect.rateOfFire ?? (toChargeWeapon ? character.shot.rateOfFire : undefined);
   if (rateOfFire === undefined) {
     throw new RangeError(
       `character ${character.resourceId}: weaponChange needs burstSkill.changeWeapon (CDN data) or rateOfFire`,
@@ -1208,13 +1212,12 @@ function resolveWeaponChange(
   ) {
     // ナユタ編（plan/design-nayuta.md 2.6 節。論点 4）: チャージしない基礎の武器（SMG の記憶燃焼）は、チャージ時間を書けば変更後の武器を
     // チャージ武器（入力 UP）にする
-    const toCharge = !isChargeWeapon(character.shot) && effect.chargeTimeSeconds !== undefined;
-    if (!isChargeWeapon(character.shot) && !toCharge) {
+    if (!isChargeWeapon(character.shot) && !toChargeWeapon) {
       throw new RangeError(
         `skill ${skill.id}: fullChargeDamage/chargeReleaseSeconds need a charge weapon (or chargeTimeSeconds to make the changed weapon one)`,
       );
     }
-    if (toCharge) overrides.chargeInput = true;
+    if (toChargeWeapon) overrides.chargeInput = true;
     if (effect.chargeTimeSeconds !== undefined) overrides.chargeTime = effect.chargeTimeSeconds;
     if (effect.fullChargeDamage !== undefined) overrides.fullChargeDamage = effect.fullChargeDamage / 100;
   }
@@ -1244,11 +1247,13 @@ function resolveWeaponChange(
         ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
         : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
+      ...(effect.chargeTimeFixed ? { fixedChargeTime: effect.chargeTimeSeconds! } : {}),
       // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す）
       ...(effect.chargeReleaseSeconds !== undefined
         ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }
         : {}),
-      ...(effect.instantFire ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
+      // ナユタ編: チャージ武器に替えた変更も、的の表の変更後の武器の行（コア命中率・弾丸命中率）で引く
+      ...(effect.instantFire || toChargeWeapon ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: untilEmpty ? 0 : gameSecondsToFrames(durationSecondsOf(effect, skill, level)),
