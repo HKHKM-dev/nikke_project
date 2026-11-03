@@ -145,11 +145,16 @@ export function projectileRowListedUnmeasured(table: TargetRateTable, character:
   return key !== null && key in cell.byProjectile && cell.byProjectile[key] === null;
 }
 
+/** 行の値（着地点の id → 帯 → all の順）。無ければ undefined */
+function rateAtLanding(row: TargetRateRow, landing: Pick<LandingPoint, 'id' | 'band'>): number | undefined {
+  return row[landing.id] ?? row[landing.band] ?? row.all;
+}
+
 /** 表の値（着地点の id → 帯 → all の順）。null = 未測定 */
 export function targetRateOf(table: TargetRateTable, character: CharacterData, landing: LandingPoint): number | null {
   const row = rateRowOf(table, character);
   if (row === null) return null;
-  return row[landing.id] ?? row[landing.band] ?? row.all ?? null;
+  return rateAtLanding(row, landing) ?? null;
 }
 
 /**
@@ -389,12 +394,10 @@ export function weaponChangeParts(
   const row = enemy.target?.coreHitRate.weaponChanges?.[rowKey] ?? null;
   const bulletRow = enemy.target?.bulletHitRate.weaponChanges?.[rowKey] ?? null;
   if (row === null && bulletRow === null) return parts;
-  const rateOf = (r: TargetRateRow | null, landing: NonNullable<LandingPart['landing']>) =>
-    r === null ? undefined : (r[landing.id] ?? r[landing.band] ?? r.all);
   return parts.map((p) => {
     if (p.landing === null) return p;
-    const core = rateOf(row, p.landing);
-    const bullet = rateOf(bulletRow, p.landing);
+    const core = row === null ? undefined : rateAtLanding(row, p.landing);
+    const bullet = bulletRow === null ? undefined : rateAtLanding(bulletRow, p.landing);
     if (core === undefined && bullet === undefined) return p;
     return {
       ...p,

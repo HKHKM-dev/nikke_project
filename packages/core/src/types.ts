@@ -371,25 +371,20 @@ export type FlightFramesTable = {
 };
 
 /**
- * コア命中率の表。武器種の行（通常攻撃）に、周期の自動攻撃のヒットの行 autoAttacks（キーは flightFrames.autoAttacks と同じ
- * `<resourceId>:<スキルのスロット>`）を足したもの。自動攻撃の行が無い・null はコアに当たらない（0。手入力の値は使わない）
+ * 武器種の行に、使用武器の変更の発の行 weaponChanges（キーは `<resourceId>:<スキルのスロット>`）を足した表。2 段目の段 11（plan/design-skill-stage11.md
+ * 2.1 節）: 即着弾に替えた変更（instantFire）の発のコア命中率。ナユタ編（plan/design-nayuta.md 2.6 節）: チャージ武器に替えた変更の発の
+ * コア命中率と弾丸命中率。変更の窓の通常攻撃の値をこの行から引く（行が無い・null は基礎の武器の行のまま。frame/landing.ts の weaponChangeParts）
  */
-export type CoreHitRateTable = TargetRateTable & {
-  autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
-  /**
-   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾に替えた使用武器の変更（instantFire）の発の行。ナユタ編: チャージ武器に
-   * 替えた変更（plan/design-nayuta.md 2.6 節）も。キーは
-   * `<resourceId>:<スキルのスロット>`。変更の窓の通常攻撃のコア命中率をこの行から引く（行が無い・null は基礎の武器の行のまま）
-   */
+export type RateTableWithWeaponChanges = TargetRateTable & {
   weaponChanges?: Readonly<Record<string, TargetRateRow | null>>;
 };
 
 /**
- * 弾丸命中率の表。武器種の行に、使用武器の変更の発の行 weaponChanges（キーは CoreHitRateTable.weaponChanges と同じ）を足したもの。
- * ナユタ編（plan/design-nayuta.md 2.6 節）: チャージしない武器からチャージ武器に替えた変更の発は、基礎の武器種（SMG）の帯の値でなく、この行で引く
+ * コア命中率の表。武器種の行（通常攻撃）と使用武器の変更の行に、周期の自動攻撃のヒットの行 autoAttacks（キーは flightFrames.autoAttacks と同じ
+ * `<resourceId>:<スキルのスロット>`）を足したもの。自動攻撃の行が無い・null はコアに当たらない（0。手入力の値は使わない）
  */
-export type BulletHitRateTable = TargetRateTable & {
-  weaponChanges?: Readonly<Record<string, TargetRateRow | null>>;
+export type CoreHitRateTable = RateTableWithWeaponChanges & {
+  autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
 };
 
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
@@ -403,8 +398,8 @@ export type TargetProfile = {
   mixes: Record<string, [string, number][]>;
   /** コア命中率 P(コア｜命中)。autoAttacks は周期の自動攻撃のヒットの行（plan/design-anis-star-core-path.md 3.2 節） */
   coreHitRate: CoreHitRateTable;
-  /** 弾丸命中率。weaponChanges はナユタ編（plan/design-nayuta.md 2.6 節）の使用武器の変更の発の行 */
-  bulletHitRate: BulletHitRateTable;
+  /** 弾丸命中率（weaponChanges はナユタ編の使用武器の変更の発の行） */
+  bulletHitRate: RateTableWithWeaponChanges;
   /**
    * V-0119: 1 発の通常攻撃のヒット数の期待値（1 以上。省略・null・表に無いキーは 1）。いまの実データに行は無い（誘導弾・爆発の範囲
    * 750 の RL の 2 ヒットは、コアの 1 ヒットだった。C-0424）

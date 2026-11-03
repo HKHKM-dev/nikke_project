@@ -1949,10 +1949,10 @@ export type StateGrantEffect = Omit<
    */
   stackImmutable?: true;
   /**
-   * ナユタ編（plan/design-nayuta.md 2.5 節）: 使用武器の変更の state から読み込みが作った付与の印（値は同じスロットのその変更の効果の番号）。
-   * JSON には書けない（読み込みで決まる欄。JSON に戻すときは付与ごと外す）
+   * ナユタ編（plan/design-nayuta.md 2.5 節）: 使用武器の変更の state から読み込みが作った付与の印。JSON には書けない（読み込みで決まる欄。
+   * JSON に戻すときは付与ごと外す）
    */
-  weaponChangeOf?: number;
+  weaponChangeOf?: true;
 };
 
 /** 2 段目の段 10: 付与のスタックの数の出どころ（カウンタの値か、自分の状態のスタック数） */

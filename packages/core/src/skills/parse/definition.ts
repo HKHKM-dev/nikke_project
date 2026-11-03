@@ -54,7 +54,7 @@ function weaponChangeGrantsOf(
       if (raw[key] !== undefined) grant[key] = raw[key];
     const parsed = parseEffect(grant, `${path}.effects[${i}].state`, slot);
     if (parsed.kind !== 'state') throw new Error('unreachable: a state grant parsed to another kind');
-    parsed.weaponChangeOf = i;
+    parsed.weaponChangeOf = true;
     out.push(parsed);
   });
   return out;

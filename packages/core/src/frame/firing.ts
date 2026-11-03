@@ -211,7 +211,7 @@ export function chargeShotIntervalFrames(
 function chargeSecondsOf(shot: ShotParams, buffs: FiringBuffs): number {
   if (buffs.fixedChargeTime > 0) return buffs.fixedChargeTime;
   // ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間を固定した使用武器の変更の武器も、チャージ速度▲を受けない
-  if (buffs.weapon?.fixedChargeTime !== undefined && shot === buffs.weapon.shot) return buffs.weapon.fixedChargeTime;
+  if (buffs.weapon?.fixedChargeTime === true) return shot.chargeTime;
   return Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat);
 }
 

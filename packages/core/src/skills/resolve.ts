@@ -1173,10 +1173,15 @@ export function changedWeaponShot(
  * ナユタ編（plan/design-nayuta.md 2.6 節）: 枠がフルチャージの発を撃ちうるか（基礎の武器か、使用武器の変更の武器がチャージ武器）。
  * 1 パス目の発の記録（ShotLog.fullCharge）が見る。どの発がフルチャージかは、発の武器で決まる（frame/firstPass.ts）
  */
-export function firesChargeShots(def: SkillDefinition | null, character: CharacterData, levels: SkillLevels): boolean {
+export function firesChargeShots(def: SkillDefinition | null, character: CharacterData): boolean {
   if (isChargeWeapon(character.shot)) return true;
-  if (def === null) return false;
-  return resolveTimed(def, character, levels).some((r) => r.weapon !== undefined && isChargeWeapon(r.weapon.shot));
+  // チャージしない基礎の武器は、チャージ時間を書いた使用武器の変更だけがチャージ武器になる（resolveWeaponChange の toChargeWeapon）
+  return (
+    def !== null &&
+    SKILL_SLOTS.some((slot) =>
+      def.skills[slot].effects.some((e) => e.kind === 'weaponChange' && e.chargeTimeSeconds !== undefined),
+    )
+  );
 }
 
 /** Stage 11 モダニア: 使用武器の変更を、自分に付く stat 'weapon' の持続効果に解決する */
@@ -1247,13 +1252,13 @@ function resolveWeaponChange(
         ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }
         : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
-      ...(effect.chargeTimeFixed ? { fixedChargeTime: effect.chargeTimeSeconds! } : {}),
+      ...(effect.chargeTimeFixed ? { fixedChargeTime: true as const } : {}),
       // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す）
       ...(effect.chargeReleaseSeconds !== undefined
         ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }
         : {}),
-      // ナユタ編: チャージ武器に替えた変更も、的の表の変更後の武器の行（コア命中率・弾丸命中率）で引く
-      ...(effect.instantFire || toChargeWeapon ? { targetRowKey: `${character.resourceId}:${slot}` } : {}),
+      // 的の表の変更後の武器の行（コア命中率・弾丸命中率）の鍵。行の無い変更は基礎の武器の行のまま（frame/landing.ts の weaponChangeParts）
+      targetRowKey: `${character.resourceId}:${slot}`,
     },
     trigger: resolveTrigger(effect.trigger, skill, level),
     durationFrames: untilEmpty ? 0 : gameSecondsToFrames(durationSecondsOf(effect, skill, level)),

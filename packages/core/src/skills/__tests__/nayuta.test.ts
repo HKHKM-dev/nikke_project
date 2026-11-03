@@ -80,14 +80,13 @@ describe('使用武器の変更の状態（weaponChange の state）', () => {
   it('adds a grant of the state on self with the same trigger and duration at the end of the slot', () => {
     const def = parseSkillDefinition(withIncineration());
     const effects = def.skills.burst.effects;
-    const weaponIndex = effects.findIndex((e) => e.kind === 'weaponChange');
     expect(effects.at(-1)).toMatchObject({
       kind: 'state',
       state: 'memoryIncineration',
       trigger: 'burstUse',
       target: 'self',
       durationRef: 4,
-      weaponChangeOf: weaponIndex,
+      weaponChangeOf: true,
     });
     const grant = resolveStateGrants(def, character, MAX_SKILL_LEVELS).find((g) => g.state === 'memoryIncineration')!;
     const weapon = resolveTimed(def, character, MAX_SKILL_LEVELS).find((t) => t.stat === 'weapon')!;
@@ -132,13 +131,13 @@ describe('チャージ武器への変更（SMG の記憶燃焼）', () => {
 
   it('lets the slot fire full-charge shots only through the change', () => {
     const without = edited((c) => c.skills.burst.effects.splice(incineration, 1));
-    expect(firesChargeShots(parseSkillDefinition(without), character, MAX_SKILL_LEVELS)).toBe(false);
-    expect(firesChargeShots(def, character, MAX_SKILL_LEVELS)).toBe(true);
-    expect(firesChargeShots(null, character, MAX_SKILL_LEVELS)).toBe(false);
+    expect(firesChargeShots(parseSkillDefinition(without), character)).toBe(false);
+    expect(firesChargeShots(def, character)).toBe(true);
+    expect(firesChargeShots(null, character)).toBe(false);
   });
 
   it('keeps the fixed charge time (chargeTimeFixed) only with chargeTimeSeconds', () => {
-    expect(weapon.fixedChargeTime).toBe(1.8);
+    expect(weapon.fixedChargeTime).toBe(true);
     const bad = withIncineration({ chargeTimeSeconds: undefined });
     expect(() => parseSkillDefinition(JSON.parse(JSON.stringify(bad)))).toThrow(
       /chargeTimeFixed needs chargeTimeSeconds/,

@@ -503,7 +503,7 @@ function runFirstPassOnce(
       ? null
       : {
           frames: [],
-          fullCharge: firesChargeShots(slot.definition, slot.character, slot.levels),
+          fullCharge: firesChargeShots(slot.definition, slot.character),
           lastShotFrames: [],
           hits: [],
           coreHits: [],

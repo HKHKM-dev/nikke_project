@@ -10,8 +10,8 @@ import type {
   EnemyEventSpec,
   EnemyPreset,
   EnemyPresetMaster,
-  BulletHitRateTable,
   CoreHitRateTable,
+  RateTableWithWeaponChanges,
   FlightFramesTable,
   LandingBand,
   LandingPoint,
@@ -311,26 +311,27 @@ function parseAutoAttackRows(
   return rows;
 }
 
-/** コア命中率の表（武器種の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
-function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
+/** 武器種の行と使用武器の変更の行 weaponChanges の表（2 段目の段 11・ナユタ編。キーは自動攻撃と同じ形） */
+function parseRateTableWithWeaponChanges(
+  v: unknown,
+  path: string,
+  keys: ReadonlySet<string>,
+): RateTableWithWeaponChanges {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
-  const { autoAttacks, weaponChanges, ...weapons } = v;
-  const table: CoreHitRateTable = parseRateTable(weapons, path, keys);
-  if (autoAttacks !== undefined)
-    table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
-  // 2 段目の段 11: 即着弾に替えた使用武器の変更の行（キーは自動攻撃と同じ形）
+  const { weaponChanges, ...weapons } = v;
+  const table: RateTableWithWeaponChanges = parseRateTable(weapons, path, keys);
   if (weaponChanges !== undefined)
     table.weaponChanges = parseAutoAttackRows(weaponChanges, `${path}.weaponChanges`, keys, RATE);
   return table;
 }
 
-/** 弾丸命中率の表（武器種の行と、使用武器の変更の行 weaponChanges。ナユタ編） */
-function parseBulletHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): BulletHitRateTable {
+/** コア命中率の表（武器種の行・使用武器の変更の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
+function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
-  const { weaponChanges, ...weapons } = v;
-  const table: BulletHitRateTable = parseRateTable(weapons, path, keys);
-  if (weaponChanges !== undefined)
-    table.weaponChanges = parseAutoAttackRows(weaponChanges, `${path}.weaponChanges`, keys, RATE);
+  const { autoAttacks, ...rest } = v;
+  const table: CoreHitRateTable = parseRateTableWithWeaponChanges(rest, path, keys);
+  if (autoAttacks !== undefined)
+    table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
   return table;
 }
 
@@ -379,7 +380,7 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
     landings,
     mixes,
     coreHitRate: parseCoreHitRateTable(v.coreHitRate, `${path}.coreHitRate`, keys),
-    bulletHitRate: parseBulletHitRateTable(v.bulletHitRate, `${path}.bulletHitRate`, keys),
+    bulletHitRate: parseRateTableWithWeaponChanges(v.bulletHitRate, `${path}.bulletHitRate`, keys),
     ...(v.hitsPerShot === undefined
       ? {}
       : { hitsPerShot: parseRateTable(v.hitsPerShot, `${path}.hitsPerShot`, keys, HITS) }),

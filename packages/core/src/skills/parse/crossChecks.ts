@@ -235,6 +235,12 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
  * 要る（上限・維持・中身は付与のもの）
  */
 function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効の状態（同じ状態の付与で揃う。validateStateGrants）
+  const immutable = new Set(
+    SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).flatMap((g) =>
+      g.kind === 'state' && g.stackImmutable === true ? [g.state] : [],
+    ),
+  );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'stackChange' || e.target === 'enemy') return;
@@ -244,11 +250,8 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `stackChange of "${e.state}" needs a grant of the same state on self with maxStacks in the definition`,
         );
       }
-      // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効の状態のスタック量は変わらない
-      const immutable = SKILL_SLOTS.flatMap((s) => entries[s]?.effects ?? []).some(
-        (g) => g.kind === 'state' && g.state === e.state && g.stackImmutable === true,
-      );
-      if (immutable) {
+      // スタック量増減効果無効の状態のスタック量は変わらない
+      if (immutable.has(e.state)) {
         fail(
           `${root}.${slot}.effects[${i}]`,
           `stackChange of "${e.state}" has no effect (the state is stackImmutable)`,

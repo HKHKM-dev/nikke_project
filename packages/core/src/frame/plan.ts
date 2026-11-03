@@ -873,20 +873,24 @@ export function enemyStateSpansHold(
 }
 
 /**
- * 発動の時点の値に足す小片は、スタック・固定加算の攻撃力・発動者基準の防御力▼・武器の替えの無い timed だけ（what は拒否の文言の主語）。
- * 足すときに発動者の攻撃力・防御力を渡さないので、それを読む小片は黙って誤らずにここで止める
+ * 発動の時点の値に足す小片は、スタック・固定加算の攻撃力・発動者基準の防御力▼の無い timed だけ（what は拒否の文言の主語）。
+ * 足すときに発動者の攻撃力・防御力を渡さないので、それを読む小片は黙って誤らずにここで止める。使用武器の変更の小片は、足す前に
+ * isWeaponPiece で飛ばす
  */
 function assertPlainTimed(w: ValuePiece, what: string): void {
-  if (
-    w.stack !== undefined ||
-    isFixedAttackScaling(w.effect.scaling) ||
-    w.effect.scaling === 'casterDefence' ||
-    w.effect.stat === 'weapon'
-  ) {
+  if (w.stack !== undefined || isFixedAttackScaling(w.effect.scaling) || w.effect.scaling === 'casterDefence') {
     throw new RangeError(
-      `${what} supports only plain timed effects (no stacks, fixed attack scalings, casterDefence or weapon)`,
+      `${what} supports only plain timed effects (no stacks, fixed attack scalings or casterDefence)`,
     );
   }
+}
+
+/**
+ * ナユタ編（V-0666）: 使用武器の変更の小片か。変更は通常攻撃の武器を替えるだけで、バーストの倍率ダメージの値に効かないので、
+ * 同じ発動・同じスロットの前の効果を足すときに飛ばす
+ */
+function isWeaponPiece(w: ValuePiece): boolean {
+  return w.effect.stat === 'weapon';
 }
 
 /**
@@ -913,6 +917,7 @@ function withEarlierSequentialEffects(
     if (w.start !== start || w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex) continue;
     if (w.effect.source.skill !== skill || w.effect.effectIndex >= effectIndex) continue;
     if (only !== undefined && !only(w.effect.stat)) continue;
+    if (isWeaponPiece(w)) continue;
     assertPlainTimed(w, 'a sequential burst');
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }
@@ -998,8 +1003,7 @@ function withSameActivationEffects(
     if (w.slotIndex !== slotIndex || w.sourceSlotIndex !== slotIndex || w.effect.source.skill !== 'burst') continue;
     if (w.start < activationFrame || w.start > at || w.end <= at) continue;
     if (isStateStat(w.effect.stat) || isEnemyHeldStat(w.effect.stat)) continue;
-    // ナユタ編（V-0666）: 同じ発動の使用武器の変更（記憶燃焼）は通常攻撃の武器を替えるだけで、バーストの倍率ダメージの値に効かない
-    if (w.effect.stat === 'weapon') continue;
+    if (isWeaponPiece(w)) continue;
     assertPlainTimed(w, 'same-activation buffs on a burst hit');
     out = applyResolvedEffect(out, w.effect, 0).totals;
   }
