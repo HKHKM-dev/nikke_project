@@ -53,6 +53,12 @@ input:not([type='radio'], [type='checkbox']) {
 input:not([type='radio'], [type='checkbox']) {
   border: 1px solid var(--app-border);
 }
+/* 入力欄の背景: ライトは白より少し灰色にする。ダークはブラウザの既定（Field）のまま */
+input:not([type='radio'], [type='checkbox']),
+select,
+textarea {
+  background-color: light-dark(#f0f0f0, Field);
+}
 /* フォーカスの枠も四角にする（ブラウザの既定の outline: auto は角が丸い） */
 :where(button, select, textarea, input, summary):focus-visible {
   outline: 2px solid Highlight;
