@@ -63,6 +63,8 @@ const residuals = runObservationsCached(observations, recordings, data);
 const claims = loadClaims();
 const invalidReasons = invalidReasonsOf(observations);
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
+/** 自動の条件でも、確定の結論に結び付けてよい指標（命中率▲が効くのは自動の条件だけ。design-stage18.md「経過」の 2026-11-03） */
+const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set(['coreHitRate', 'bulletHitRate']);
 
 describe('records/observations', () => {
   it('passes validation and each file holds only its own recording', () => {
@@ -135,8 +137,13 @@ describe('records/claims・plan/claims.md', () => {
   });
 
   it('does not gate the totals under automatic conditions by a claim (Stage 18-C)', () => {
-    // 自動の条件での単騎の与ダメージは、残差として並べるだけで結論には結び付けない（design-stage18.md 12.4 節）
-    const auto = residuals.filter((r) => r.observation.compare?.setup.condition === 'auto');
+    // 自動の条件での単騎の与ダメージは、残差として並べるだけで結論には結び付けない（design-stage18.md 12.4 節）。
+    // コア命中率・弾丸命中率の指標は、命中率▲が自動の条件でしか効かないので、確定の結論に結び付けてよい（同「経過」の 2026-11-03）
+    const auto = residuals.filter(
+      (r) =>
+        r.observation.compare?.setup.condition === 'auto' &&
+        !AUTO_GATEABLE_METRICS.has(r.observation.compare.metric),
+    );
     expect(auto.filter((r) => gated.has(r.observation.id)).map((r) => r.observation.id)).toEqual([]);
   });
 
