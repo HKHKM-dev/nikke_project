@@ -1,0 +1,299 @@
+[
+  {
+    "id": "0947-01",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": [893, 2563, 3821, 5270, 6609, 7924, 9148, 10541],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・6・25・0・25・0・24・5f"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-02",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": [922, 3850, 6638, 9176, 11071],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・0f"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-03",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": [951, 3879, 6667, 9206, 11101],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-04",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": [1856, 4488, 7276, 9814, 11559],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-05",
+    "recording": "0947",
+    "kind": "interval",
+    "use": "record",
+    "value": [905, 609, 609, 608, 458],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-06",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": [11065],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-07",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": [11094],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-08",
+    "recording": "0947",
+    "source": "V-0662",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [48, 77, 106],
+    "unit": "f",
+    "description": "1 回目のチェーンの I → II・II → III の六角形の替わり目と III のタイマーの 00.00 の、戦闘開始（残り時間の表示が出たフレーム）からの動画のフレーム",
+    "method": {
+      "tool": "recipe:burst-panel@3 の 1 つ目の値から戦闘開始のフレームを引いた",
+      "note": "戦闘開始は f845（timer.ts --mode changes の、最初の大きな変わり目の次の変わり目。C-0078）。替わり目は `0947-01`〜`0947-03` の 1 つ目（f893・922・951）。`0916-12`（V-0653）と同じ読み方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain",
+      "frames": [845, 951]
+    }
+  },
+  {
+    "id": "0947-09",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "compare",
+    "value": 902,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 900,
+      "high": 904
+    },
+    "description": "D の S1 の有利コードの攻撃ダメージ▲（D1 → D0）が D の 1 発で替わるまでの時刻の幅（1 番目の事象 f3879 から数えた動画のフレーム）。D1の最後の発は 899f、D0の最初の発は 904f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は D1: 枠 3（D）のモデルの f3500、D0: 枠 3（D）のモデルの f3800、L1: 枠 1（リター）のモデルの f3500、L0: 枠 1（リター）のモデルの f3800、Dl1: 枠 2（デルタ）のモデルの f3500、Dl0: 枠 2（デルタ）のモデルの f3800。境は D1 → D0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜1100f。D1 22・D0 19・区別できない 0・外れ 98・食い違い（D0の最初の発より後のD1の発） 0。2 回目のフルバースト（D の 2 回目の発動。III のタイマーの 00.00）から数えた、モデルの S1 の窓の切れ目と比べる（許容は幅の半分）"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03",
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "elementDamage",
+        "from": 3,
+        "n": 1,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0947-10",
+    "recording": "0947",
+    "kind": "timing",
+    "use": "record",
+    "value": 3.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 3,
+      "high": 4
+    },
+    "description": "D の S2 の有利コードの攻撃ダメージ▲（S・SL → N・NL）が D・リター の 1 発で替わるまでの時刻の幅（1 番目の事象 f1751 から数えた動画のフレーム）。S・SLの最後の発は 2f、N・NLの最初の発は 4f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は S: 枠 3（D）のモデルの f800、N: 枠 3（D）のモデルの f900、L1: 枠 1（リター）のモデルの f800、L0: 枠 1（リター）のモデルの f900、Dl1: 枠 2（デルタ）のモデルの f800、Dl0: 枠 2（デルタ）のモデルの f900、SL: S と L1 の和、NL: N と L0 の和。境は S・SL → N・NL（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -200〜90f。S・SL 38・N・NL 35・区別できない 0・外れ 2・食い違い（N・NLの最初の発より後のS・SLの発） 0。事象の f1751 は、戦闘開始（f845）からモデルの S2 の窓の切れ目の動画のフレーム（906f。I・II の発動の止まりと 1 回目のフルバーストの入りの止まりを含む）を足した所。録画の切れ目はその後にある（V-0662「結果」）"
+    },
+    "source": "V-0662",
+    "readAt": "2026-11-03"
+  },
+  {
+    "id": "0947-11",
+    "recording": "0947",
+    "source": "V-0662",
+    "readAt": "2026-11-03",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 27339,
+    "description": "D の戦闘開始から 1 回目の I までの、S2 の有利コードの攻撃ダメージ▲だけが乗った通常攻撃の 1 ヒット（距離ボーナスあり・コアなし・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "増分 38,668（f856・861・864・866・869・874 ほか。D とリターの SMG が同じフレームに当たった和）から、リターの距離ボーナスありの 1 ヒット 11,329（リターは確定のキャラで、この区間に▲なし。格子 L）を引いた値。和は格子 E2+L（D の f20 の 27,339.49 とリターの 11,329.14）に ±1.5 で合う。比べるのはモデルの f20"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 20,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0947-12",
+    "recording": "0947",
+    "source": "V-0662",
+    "readAt": "2026-11-03",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 16412,
+    "description": "D の 2 回目のフルバーストの終わりの後、S1 の窓（フルバーストから 15 秒）の切れ目の前の、S1 の有利コードの攻撃ダメージ▲だけが乗った通常攻撃の 1 ヒット（胴体）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "f4645・4648・4650・4653 ほかの増分（格子 E1。D のモデルの f3500 の胴体 16,412.04 にだけ合う）。2 回目のフルバーストの終わりは f4488（`0947-04`）。比べるのはモデルの f3500"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0947-13",
+    "recording": "0947",
+    "source": "V-0662",
+    "readAt": "2026-11-03",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 11504,
+    "description": "D の S1 の窓の切れ目の後の、有利コードの攻撃ダメージ▲が乗らない通常攻撃の 1 ヒット（胴体。属性の有利 1.1 だけ）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "f4783・4797・4800・4802 ほかの増分（格子 E0。D のモデルの f3800 の胴体 11,504.01 にだけ合う）。比べるのはモデルの f3800"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

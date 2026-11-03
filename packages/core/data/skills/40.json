@@ -11,7 +11,11 @@
           "target": "self",
           "stat": "elementDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-0928",
+            "C-0929"
+          ]
         }
       ],
       "notes": [
@@ -61,7 +65,11 @@
           "assumes": {
             "ja": "ターゲットが出現した時を、戦闘開始とみなす（射撃場の的はターゲットで、戦闘の始めからいる。V-0504）",
             "en": "Treats the appearance of the stage target as the start of battle (the shooting-range target is a stage target present from the start; V-0504)"
-          }
+          },
+          "claims": [
+            "C-0928",
+            "C-0929"
+          ]
         }
       ],
       "notes": []
