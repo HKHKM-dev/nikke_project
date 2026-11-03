@@ -1,0 +1,65 @@
+[
+  {
+    "id": "0931-01",
+    "recording": "0931",
+    "source": "V-0647",
+    "readAt": "2026-11-03",
+    "use": "input",
+    "kind": "count",
+    "unit": "個",
+    "value": 1,
+    "description": "レッドフードの 1 発目（932f）で、的の 1 ヒットのほかに溜まったゲージを、的以外の 1 ヒット（物 1 個と同じ量）と読んだ数。何に当たったかは画に見えない（C-0900）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode jumps",
+      "note": "1 発目のフレームのバーの伸び（0 → 9.7%）を、的の 1 ヒットだけ（バーの約 1.8%）と物 1 個分を足した量（バーの約 10.1%）に当てた（V-0647「読み方」）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0931-02",
+    "recording": "0931",
+    "source": "V-0647",
+    "readAt": "2026-11-03",
+    "use": "compare",
+    "kind": "hit",
+    "unit": "ダメージ",
+    "value": [1272207, 1309307, 1337132, 1374232, 1411331],
+    "description": "1 回目のレッドウルフの窓の入りの 5 発（窓の 1〜5 発目。S1 が 6〜10 スタック・コア・会心なし・フルバースト。ユニの S1 のチャージ速度▲・S2 の攻撃力▲・超過分の変換が乗る）。HUD の増分（1,434・1,452・1,470・1,487・1,505f）。モデルには、レッドフードの 1 発目の余分（0931-01）を入力する",
+    "method": {
+      "tool": "recipe:hud-jumps@3 のキャッシュ（--opt hud-fallback=1）",
+      "note": "増分を、モデルのレッドフードの発の値（コアあり・会心なし・会心あり）に発の順に当てた。ユニのヒットは、どの発とも同じフレームに重ならなかった（V-0647「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": "7,8,9,10,11",
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "obstacles": [
+          {
+            "slot": 2,
+            "shot": 1,
+            "count": "0931-01"
+          }
+        ]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]
