@@ -77,5 +77,65 @@
       "slot": 1,
       "source": "skill"
     }
+  },
+  {
+    "id": "0875-04",
+    "recording": "0875",
+    "source": "V-0649",
+    "readAt": "2026-11-03",
+    "kind": "timing",
+    "use": "compare",
+    "value": [
+      310, 309, 309, 310, 309, 309, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310, 310,
+      310
+    ],
+    "unit": "f",
+    "description": "トロニー単騎（操作・オートバースト OFF）の、蓄積爆破が切れる時の 1 ヒットの、付けたフルチャージの発からの動画のフレームの差（出た順）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps（総ダメージの増分。キャッシュ hud-jumps@3）と使い捨てのスクリプト（V-0649「読み方」）",
+      "note": "爆発は 0875-03 の 24 個。付けた発は、爆発の 305〜314f 前にある発の増分（どの爆発も 1 つだけ）。許容は ±1f（2 つの HUD の増分の読みの差で、増分は 1f 揺れる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "anchor": "accumulateOpened",
+        "release": "expire",
+        "count": 24
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0875-05",
+    "recording": "0875",
+    "source": "V-0649",
+    "readAt": "2026-11-03",
+    "kind": "gauge",
+    "use": "record",
+    "value": 7.57,
+    "unit": "px",
+    "description": "トロニー単騎（操作・オートバースト OFF）の、1 回目の蓄積爆破が切れる時（f1189。溜めた値 620,304 の爆発）のバースト欄のバーの伸び",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel（右のバースト欄のバー）",
+      "note": "伸びる前は 58.33px、伸びた後（f1189〜1207）は 65.90px。前後のフルチャージの発（f1125・1208）の伸びは 18.67・18.90px（140,000）。56,000 は約 7.6px（C-0430）。2 回目より後の爆発の前にバーが満ちるので、読めるのはこの 1 回"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]

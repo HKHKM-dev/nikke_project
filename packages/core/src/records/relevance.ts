@@ -63,6 +63,8 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   chargeDamage: 'damageValue',
   distributedDamage: 'damageValue',
   sequentialAttackDamage: 'damageValue',
+  // 蓄積爆破の蓄積割合▲: 爆発のヒットの値に効く
+  accumulateRatio: 'damageValue',
   burstGaugeSpeed: 'burstTiming',
   // 2 段目の段 11 の PR 3: バーストスキルのクールタイム▼（維持の付いた形）。バーストの時刻を変える
   burstCooldown: 'burstTiming',

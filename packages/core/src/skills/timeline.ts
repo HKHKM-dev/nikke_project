@@ -199,6 +199,8 @@ const BUFF_FIELDS = [
   // ヘルム編: チャージダメージ倍率
   'chargeDamageMultiplier',
   'distributedDamage',
+  // 蓄積して爆発するダメージ: 蓄積爆破の蓄積割合▲（2 パス目が溜める発の値に掛ける）
+  'accumulateRatio',
   // 受けるダメージ編: 敵の受けるダメージ▲
   'damageTaken',
   // 2 段目の段 2: 敵の防御力▼

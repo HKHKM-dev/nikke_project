@@ -56,26 +56,46 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
     return effect;
   }
-  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 使い手の形（バースト使用時・分配ダメージ・窓の終わりの爆発）
-  // だけを許し、ほかの欄とは組まない
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.1 節）: 使い手の形（バースト使用時・窓の終わりの爆発か、フルチャージの
+  // 発ごと・最大量か切れる時の爆発）だけを許し、ほかの欄とは組まない
   if (v.accumulate !== undefined) {
     for (const key of Object.keys(v))
       if (!['kind', 'trigger', 'ref', 'damageType', 'accumulate', 'assumes', 'claims', 'reads'].includes(key))
         fail(`${path}.${key}`, 'not allowed with accumulate');
-    if (trigger !== 'burstUse') fail(`${path}.accumulate`, 'accumulate needs the trigger "burstUse"');
     if (damageType !== 'distributed') fail(`${path}.accumulate`, 'accumulate needs the damageType "distributed"');
     const a = v.accumulate;
     const at = `${path}.accumulate`;
     if (!isRecord(a)) fail(at, 'expected an object');
-    for (const key of Object.keys(a))
-      if (!['source', 'release', 'durationRef', 'releaseDelayFrames'].includes(key))
-        fail(`${at}.${key}`, 'unknown field');
-    effect.accumulate = {
-      source: oneOf(['team'] as const, a.source, `${at}.source`),
-      release: oneOf(['windowEnd'] as const, a.release, `${at}.release`),
-      durationRef: parseRef(a.durationRef, `${at}.durationRef`),
-      releaseDelayFrames: parseNonNegativeInt(a.releaseDelayFrames, `${at}.releaseDelayFrames`),
-    };
+    const source = oneOf(['team', 'self'] as const, a.source, `${at}.source`);
+    const allowed =
+      source === 'team'
+        ? ['source', 'release', 'durationRef', 'releaseDelayFrames']
+        : ['source', 'release', 'durationRef', 'ratioRef', 'releaseDelayFrames', 'capDelayFrames'];
+    for (const key of Object.keys(a)) if (!allowed.includes(key)) fail(`${at}.${key}`, 'unknown field');
+    const durationRef = parseRef(a.durationRef, `${at}.durationRef`);
+    const releaseDelayFrames = parseNonNegativeInt(a.releaseDelayFrames, `${at}.releaseDelayFrames`);
+    if (source === 'team') {
+      if (trigger !== 'burstUse') fail(at, 'accumulate (team) needs the trigger "burstUse"');
+      effect.accumulate = {
+        source,
+        release: oneOf(['windowEnd'] as const, a.release, `${at}.release`),
+        durationRef,
+        releaseDelayFrames,
+      };
+    } else {
+      // 1 パス目が、フルチャージの発ごとに付けるか（付いている間は付けない）を決める
+      const everyShot =
+        isShotCountTrigger(trigger) && trigger.count === 'fullChargeShot' && Object.keys(trigger).length === 1;
+      if (!everyShot) fail(at, 'accumulate (self) needs the trigger { "count": "fullChargeShot" }');
+      effect.accumulate = {
+        source,
+        release: oneOf(['capOrExpire'] as const, a.release, `${at}.release`),
+        durationRef,
+        ratioRef: parseRef(a.ratioRef, `${at}.ratioRef`),
+        releaseDelayFrames,
+        capDelayFrames: parsePositiveInt(a.capDelayFrames, `${at}.capDelayFrames`),
+      };
+    }
     if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
     return effect;
   }

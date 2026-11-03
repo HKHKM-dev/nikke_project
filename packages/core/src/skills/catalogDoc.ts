@@ -102,10 +102,11 @@ const KIND_INFO: Record<string, Info> = {
   'damage:core': ['コア命中ダメージ', 'ok', 'damage の coreHit'],
   'damage:fixed': ['固定ダメージ', 'gap', 'なし'],
   'damage:hpScaled': ['最大HP を足した倍率ダメージ', 'gap', 'なし'],
+  // 蓄積して爆発するダメージの定義（plan/design-accumulate-explosion.md 2 節。C-0901・C-0903・C-0904）
   'damage:accumulate': [
     '蓄積して爆発するダメージ',
-    'check',
-    'damage の accumulate（窓の終わりに、窓の中の味方全員のダメージの和を出す形。ドロシーの烙印。最大量に届いた時の爆発（トロニーの蓄積爆破）は語彙なし）',
+    'ok',
+    'damage の accumulate（source team: 窓の終わりに窓の中の味方全員のダメージの和を出す。ドロシーの烙印。source self: 発動者の発の値 × 蓄積割合を溜め、最大量に届いたら最大量を、切れたら溜めた値を出す。トロニーの蓄積爆破。蓄積割合▲は accumulateRatio）',
   ],
   'heal:instant': ['回復（1 回）', 'ok', 'heal'],
   'heal:intervalForm': [

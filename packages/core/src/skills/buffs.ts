@@ -125,6 +125,8 @@ export type BuffTotals = {
    * 攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeBurstHit。V-0545）
    */
   sequentialAttackDamage: number;
+  /** 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3 節）: 蓄積爆破のダメージ蓄積割合の加算。accumulate（capOrExpire）の割合に足す（C-0903） */
+  accumulateRatio: number;
   /**
    * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節）: バーストスキルのクールタイム▼ の秒（維持の付いた形。T4。scaling 'flat'）。
    * 1 パス目が発動のフレームに件の一覧から読む（frame/firstPass.ts）。区間の合計は表示だけで、ダメージの式は読まない
@@ -218,6 +220,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   sustainedDamage: 0,
   burstGaugeSpeed: 0,
   sequentialAttackDamage: 0,
+  accumulateRatio: 0,
   burstCooldown: 0,
   maxAmmoRatio: 0,
   maxHpRatio: 0,
@@ -258,6 +261,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   elementAdvantage: 'elementAdvantage',
   sustainedDamage: 'sustainedDamage',
   sequentialAttackDamage: 'sequentialAttackDamage',
+  accumulateRatio: 'accumulateRatio',
   fixedChargeTime: 'fixedChargeTime',
   burstGaugeSpeed: 'burstGaugeSpeed',
   burstCooldown: 'burstCooldown',

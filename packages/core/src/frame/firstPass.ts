@@ -102,7 +102,7 @@ import {
   type BurstScheduleModel,
   type BurstStepKey,
 } from '../burst/schedule.ts';
-import { capCritRate, ZERO_BUFFS } from '../skills/buffs.ts';
+import { capCritRate, ZERO_BUFFS, type BuffTotals } from '../skills/buffs.ts';
 import {
   isResolvedShotCount,
   isResolvedTimer,
@@ -223,6 +223,38 @@ export type FirstPassOptions = {
     span: LandingHitRateSpan,
     timedHitRateUp: number,
   ) => { hitRate: number; coreHits: number };
+  /**
+   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 枠 slotIndex がフレーム frame に撃った 1 発の値（2 パス目と同じ
+   * 関数。progress は部分チャージの発の進み）と、そのフレームの最終攻撃力。buffs は、そのフレームに効いている件を常時の値に足した合計。
+   * 蓄積爆破（damage の accumulate の self）を持つ枠があれば要る（frame/plan.ts の planTeamRun が渡す）
+   */
+  shotValueAt?: (
+    slotIndex: number,
+    frame: number,
+    buffs: BuffTotals,
+    fullBurst: boolean,
+    progress: number | undefined,
+  ) => { value: number; attack: number };
+};
+
+/**
+ * 蓄積爆破の爆発（plan/design-accumulate-explosion.md 2.3・2.4 節）。1 パス目が付け方と爆発のフレームを決め、2 パス目（sim/engine.ts）が
+ * 溜めた発の窓 [applied + 1, end) の発の値から爆発の値を出す
+ */
+export type AccumulateRelease = {
+  slotIndex: number;
+  effect: ResolvedDamageEffect;
+  /** 付けたフルチャージの発のフレーム（この発は溜めない。C-0903） */
+  applied: number;
+  /** 溜めた発の窓の終わり（含まない）。最大量に届いたら届いた発の次のフレーム、届かなければ切れたフレーム */
+  end: number;
+  /** 爆発のヒットのフレーム（届いた発の capDelayFrames 後か、切れたフレーム） */
+  frame: number;
+  /** 最大量に届いたか（届かなければ、切れる時に射手の 1 ヒットぶんのゲージを溜めた。C-0430） */
+  capped: boolean;
+  /** 1 パス目の最大量と溜めた値（2 パス目の値と突き合わせる。テスト用） */
+  cap: number;
+  stored: number;
 };
 
 /** 即時効果を 1 枠に当てた記録 */
@@ -262,6 +294,8 @@ export type FirstPassResult = {
    * 1 パス目が機数と進みを追って決め、2 パス目（frame/plan.ts の planSkillHits）がこの列で倍率ダメージを出す
    */
   summonHits: { slotIndex: number; summon: SummonId; frame: number }[];
+  /** 蓄積爆破の爆発（発生順）。2 パス目（frame/plan.ts の planSkillHits）がこの列で爆発のヒットを出す */
+  accumulateReleases: AccumulateRelease[];
   /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が区間を作る
    * （skills/holders.ts の buffTimelineOf）
@@ -969,6 +1003,73 @@ function runFirstPassOnce(
   });
   /** 枠 i のヒットごとのゲージの、このフレームの 1 ヒットの量 */
   const hitGaugeEnergy = (i: number): number => targetEnergyNow(i, targetEnergies[i]! * (1 + gaugeSpeed[i]!));
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3・2.4 節）: 蓄積爆破（damage の accumulate の self）。フルチャージの発で、
+  // 付いていなければ付ける（付けた発は溜めない）。付けた後の発の値 × (割合 + 蓄積割合▲) を、次のフレームの頭に（その発のフレームまでに
+  // 付いた件と、2 パス目と同じ 1 発の値の関数で）数えて溜め、最大量に届いた発の capDelayFrames 後に最大量を出して解除する。届かなければ
+  // 付けてから窓の長さ + releaseDelayFrames で切れ、射手の 1 ヒットぶんのゲージを溜める（C-0430）。最大量は付けた発のフレームの値で決める
+  const accumulators = damageEffects.flatMap((effects, slotIndex) =>
+    effects.flatMap((effect) => {
+      const acc = effect.accumulate;
+      if (acc?.source !== 'self') return [];
+      return [
+        {
+          slotIndex,
+          effect,
+          acc,
+          active: null as null | {
+            applied: number;
+            expire: number;
+            cap: number | null;
+            stored: number;
+            reached: number | null;
+          },
+          pending: [] as { frame: number; progress: number | undefined }[],
+        },
+      ];
+    }),
+  );
+  const shotValueAt = options.shotValueAt;
+  if (accumulators.length > 0 && shotValueAt === undefined) throw new Error('accumulate (self) needs shotValueAt');
+  const accumulateReleases: AccumulateRelease[] = [];
+  /** 枠 i がフレーム frame に撃った発の値と最終攻撃力、そのフレームの件の合計（frame より後のフレームに呼ぶ） */
+  const accumulateShotAt = (i: number, frame: number, progress: number | undefined) => {
+    let buffs = lists.damageBuffsAt(i, frame, passive[i]?.buffs ?? ZERO_BUFFS);
+    // 持続の命中率▲を区間に足すとき（2 パス目の区間と同じ。frame/plan.ts の planTeamRun が hitRateWith を渡す時）
+    if (options.hitRateWith !== undefined && lists.hasHitTracks)
+      buffs = { ...buffs, hitRate: buffs.hitRate + lists.hitUpAt(i, frame) };
+    const fullBurst = windowsOf().some((w) => w.start <= frame && frame < w.end);
+    return { ...shotValueAt!(i, frame, buffs, fullBurst, progress), buffs };
+  };
+  /** フレーム f の頭: 前のフレームまでの発を溜め、爆発があれば記録する。切れたら溜めるゲージを返す */
+  const stepAccumulator = (a: (typeof accumulators)[number], f: number): number => {
+    const s = a.active;
+    if (s === null) return 0;
+    if (s.cap === null) {
+      const at = accumulateShotAt(a.slotIndex, s.applied, undefined);
+      s.cap = at.attack * a.effect.multiplier * (1 + at.buffs.distributedDamage);
+    }
+    for (const p of a.pending) {
+      if (s.reached !== null) break;
+      const at = accumulateShotAt(a.slotIndex, p.frame, p.progress);
+      s.stored += at.value * (a.acc.ratio + at.buffs.accumulateRatio);
+      if (s.stored >= s.cap) s.reached = p.frame;
+    }
+    a.pending.length = 0;
+    const capped = s.reached !== null && f === s.reached + a.acc.capDelayFrames;
+    if (!capped && (s.reached !== null || f !== s.expire)) return 0;
+    accumulateReleases.push({
+      slotIndex: a.slotIndex,
+      effect: a.effect,
+      applied: s.applied,
+      end: capped ? s.reached! + 1 : s.expire,
+      frame: f,
+      capped,
+      cap: s.cap,
+      stored: s.stored,
+    });
+    a.active = null;
+    return capped ? 0 : hitGaugeEnergy(a.slotIndex);
+  };
   // アインのニアフェザー編（plan/design-ein-near-feather.md 1.2・1.3 節）: 召喚の機数と攻撃の進み。展開（戦闘開始と、その枠のバーストの
   // 効果のフレーム）で組を置き換えて進みを 0 に戻し、フレームごとに、いまの機数の間隔の逆数を進みに積む。1 に届いたフレームに攻撃が
   // 発火し（余りは持ち越す）、gaugePerHit の効果はそのフレームのゲージに射手の 1 ヒットぶん × 倍数を足す
@@ -1192,6 +1293,7 @@ function runFirstPassOnce(
     // 1. 射手（V-0030: 前のフレームまでに予約した段のヒットのゲージも、このフレームのゲージに入れる）
     let gauge = pendingGauge.get(f) ?? 0;
     pendingGauge.delete(f);
+    for (const a of accumulators) gauge += stepAccumulator(a, f);
     slots.forEach((slot, i) => {
       shotEvents[i] = null;
       if (slot === null || !shooters[i]) return;
@@ -1316,6 +1418,24 @@ function runFirstPassOnce(
         (obstacles[i]!.get(shotCounts[i]!) ?? 0) * obstacleEnergyAt(i);
       gauge += landingGauge(i, f + shotFlightAt(i, f), f, energy, gaugeHitsOf(i, shotEnergy));
     });
+    // 蓄積爆破: 付いていなければフルチャージの発で付け、付いていれば発を次のフレームの頭に溜める（最大量に届いた後の発は溜めない）
+    for (const a of accumulators) {
+      const shot = shotEvents[a.slotIndex];
+      if (shot === null || shot === undefined) continue;
+      if (a.active === null) {
+        if (shot.fullCharge)
+          a.active = {
+            applied: f,
+            expire: f + a.acc.durationFrames + a.acc.releaseDelayFrames,
+            cap: null,
+            stored: 0,
+            reached: null,
+          };
+      } else if (a.active.reached === null) {
+        const last = logs[a.slotIndex]!.partialShots?.at(-1);
+        a.pending.push({ frame: f, progress: last?.frame === f ? last.progress : undefined });
+      }
+    }
     // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
@@ -1746,6 +1866,7 @@ function runFirstPassOnce(
     shotGauges,
     timerGauges,
     summonHits,
+    accumulateReleases,
     history,
   };
   return { result, leadShots };

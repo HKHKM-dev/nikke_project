@@ -382,6 +382,12 @@ export type HolderLists = {
   /** 時間で変わるバーストゲージのチャージ速度の件の列を持ちうるか */
   hasGaugeSpeedTracks(holder: number): boolean;
   /**
+   * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 枠 holder にフレーム frame に効いている件（timed・while・状態の
+   * 中身。状態だけの stat は除き、敵の件は効果の対象の味方に写す。区間の値の小片と同じ見え方）を、常時の値 base に足した合計。
+   * frame より後のフレームに呼べば、frame までに付いた件になる
+   */
+  damageBuffsAt(holder: number, frame: number, base: BuffTotals): BuffTotals;
+  /**
    * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節）: 枠 holder にフレーム frame に効いている、バーストスキルの
    * クールタイム▼ の秒の和（burstCooldown。timed・状態の中身）。発動したフレームに呼ぶ（frame/firstPass.ts）
    */
@@ -1456,6 +1462,28 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   // 射手: 射撃に効く stat（timed は段によらない。状態の中身も）
   const firingViews = viewsOf((_, e) => isFiringStat(e.stat));
+  // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 与ダメージの値に効く件（piecesOfTrack と同じ持ち主の写し方）。
+  // 読む枠だけ、初めて読むときに作る
+  const damageViews: (View[] | undefined)[] = slots.map(() => undefined);
+  const damageViewsOf = (holder: number): View[] => {
+    const views: View[] = [];
+    for (const track of tracks) {
+      const o = track.origin;
+      const contents = o.kind === 'timed' || o.kind === 'while' ? [o.effect] : o.kind === 'state' ? o.contents : [];
+      for (const effect of contents) {
+        if (isStateStat(effect.stat)) continue;
+        const holds =
+          track.holder === holder ||
+          (track.holder === ENEMY &&
+            (o.kind === 'state'
+              ? alliesOf(o.grant, track.sourceSlotIndex, slots)
+              : alliesOf(effect, track.sourceSlotIndex, slots)
+            ).includes(holder));
+        if (holds) views.push({ track, effect });
+      }
+    }
+    return views;
+  };
   // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身（段 A までの hitTrack・hitGroups）。2 段目の段 3: 条件つき（段 1.5）の
   // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
   const hitViews = viewsOf(
@@ -2312,6 +2340,21 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return sum;
     },
     hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
+    damageBuffsAt(holder, frame, base) {
+      let buffs = base;
+      for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
+        for (const it of activeAt(v.track, frame)) {
+          const effect = it.scale === undefined ? v.effect : { ...v.effect, value: valueOf(v.effect, it) };
+          buffs = applyResolvedEffect(
+            buffs,
+            effect,
+            fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
+            v.track.casterMaxHp,
+          ).totals;
+        }
+      }
+      return buffs;
+    },
     burstCooldownAt: (holder, frame) => cooldownSum(holder, (it) => it.start <= frame && frame < it.end),
     burstCooldownStartedAt: (holder, frame) => cooldownSum(holder, (it) => it.start === frame),
     hasBurstCooldownTracks: (holder) => (cooldownViews[holder] ?? []).length > 0,
