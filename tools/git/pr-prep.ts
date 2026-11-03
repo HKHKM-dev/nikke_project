@@ -151,8 +151,11 @@ if (!rebasing()) {
     );
     const dropped = handRemovedLines(removed, generated, branchText);
     if (edited.length > 0 || dropped.length > 0) {
+      // 戻す先は分かれ目の版。この検査はリベースの前に回り、差分は分かれ目から取るので、進んだ origin/main の版に戻すと、
+      // main で足した・閉じた課題の行が手の直しに見えて止まり続ける
+      const base = git(['merge-base', 'origin/main', 'HEAD']).slice(0, 12);
       console.error(
-        `${backlogPath} は生成物で、手で直しても PR に入らない（pr:prep は main の版に戻す）。足した行（+）は課題のファイル（records/backlog/）に移し、消した行（-）はその課題のファイルを消すか直してから、git checkout origin/main -- ${backlogPath} で戻して commit し、もう一度回す（作り直しを commit した後に課題のファイルを直しただけなら、戻して commit するだけでよい）:`,
+        `${backlogPath} は生成物で、手で直しても PR に入らない（pr:prep は main の版に戻す）。足した行（+）は課題のファイル（records/backlog/）に移し、消した行（-）はその課題のファイルを消すか直してから、git checkout ${base} -- ${backlogPath}（main から分かれた時の版）で戻して commit し、もう一度回す（作り直しを commit した後に課題のファイルを直しただけなら、戻して commit するだけでよい）:`,
       );
       for (const l of edited) console.error(`  + ${short(l)}`);
       for (const l of dropped) console.error(`  - ${short(l)}`);

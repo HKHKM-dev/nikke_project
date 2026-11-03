@@ -94,10 +94,12 @@ export function slotEffectSummaries(
   }
   const own = skips.filter((x) => x.sourceSlotIndex === slotIndex);
   for (const summary of byKey.values()) {
+    // ほかの枠から受けた効果の行は 0（その枠の不発は、その枠の行に出る）
+    if (summary.sourceSlotIndex !== slotIndex) continue;
     const effect = summary.effect;
     summary.skips = own.filter((x) =>
       isStateContent(effect)
-        ? x.state === effect.whileState && x.sourceSlotIndex === summary.sourceSlotIndex
+        ? x.state === effect.whileState
         : x.state === undefined &&
           x.effect.source.skill === effect.source.skill &&
           x.effect.effectIndex === effect.effectIndex,
