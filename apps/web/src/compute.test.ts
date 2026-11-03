@@ -17,8 +17,10 @@ import {
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
+  ComputeCache,
   LatestComputeQueue,
   compute,
+  inputKey,
   respond,
   type ComputeRequest,
   type ComputeResponse,
@@ -198,5 +200,59 @@ describe('LatestComputeQueue (B-2)', () => {
       { ok: false, error: 'worker stopped' },
       { ok: false, error: 'worker stopped' },
     ]);
+  });
+
+  it('delivers a remembered result at once, and drops the result of the request still in flight', () => {
+    const { sent, delivered, sources, queue } = setup();
+    queue.request(input(1));
+    const known = input(2);
+    queue.resolve(known, { ok: false, error: 'remembered 2' });
+    expect(sources).toEqual([known]);
+    expect(queue.busy).toBe(false);
+    // 1 の結果は届いても古いので捨てる（覚えていた 2 の答えを上書きしない）。失敗も同じ
+    queue.receive(done(sent[0]!.seq, 1));
+    expect(delivered).toEqual([{ ok: false, error: 'remembered 2' }]);
+    queue.request(input(3));
+    queue.resolve(input(4), { ok: false, error: 'remembered 4' });
+    queue.fail('lost');
+    expect(delivered.map((c) => !c.ok && c.error)).toEqual(['remembered 2', 'remembered 4']);
+  });
+
+  it('sends the input that came after a remembered one when the stale request answers', () => {
+    const { sent, delivered, queue } = setup();
+    queue.request(input(1));
+    queue.resolve(input(2), { ok: false, error: 'remembered 2' });
+    queue.request(input(3));
+    queue.receive(done(sent[0]!.seq, 1));
+    expect(sent.map((r) => r.input.durationSeconds)).toEqual([1, 3]);
+    queue.receive(done(sent[1]!.seq, 3));
+    expect(delivered.map((c) => !c.ok && c.error)).toEqual(['remembered 2', 'done 3']);
+  });
+});
+
+describe('ComputeCache', () => {
+  const input = (over: Partial<TeamInput>): TeamInput => ({ ...MAIN, ...over });
+  const result = (error: string): Computed => ({ ok: false, error });
+
+  it('gives the same key to inputs with the same contents, and different keys to values JSON would merge', () => {
+    expect(inputKey(input({}))).toBe(inputKey(structuredClone(input({}))));
+    const withValue = (value: unknown) => inputKey(input({ extra: value } as Partial<TeamInput>));
+    expect(withValue(new Map([[1, 2]]))).not.toBe(withValue(new Map()));
+    expect(withValue(new Set([1]))).not.toBe(withValue(new Set()));
+    expect(withValue(Infinity)).not.toBe(withValue(null));
+    expect(withValue(NaN)).not.toBe(withValue(null));
+    expect(withValue(undefined)).not.toBe(withValue(null));
+  });
+
+  it('finds a result by the contents of the input, and keeps the latest used ones', () => {
+    const cache = new ComputeCache(2);
+    cache.set(input({ durationSeconds: 1 }), result('1'));
+    cache.set(input({ durationSeconds: 2 }), result('2'));
+    // 別のオブジェクトでも中身が同じなら見つかる。見つけたものは新しく使ったことにする
+    expect(cache.get(input({ durationSeconds: 1 }))).toEqual(result('1'));
+    cache.set(input({ durationSeconds: 3 }), result('3'));
+    expect(cache.get(input({ durationSeconds: 2 }))).toBeUndefined();
+    expect(cache.get(input({ durationSeconds: 1 }))).toEqual(result('1'));
+    expect(cache.get(input({ durationSeconds: 3 }))).toEqual(result('3'));
   });
 });

@@ -23,8 +23,22 @@ export function partyOf(team: TeamState): Party {
   return { slots: team.slots, controlledSlot: team.controlledSlot };
 }
 
+/** ニケを 1 人でも選んでいる編成か */
+export function partyHasCharacters(party: Party): boolean {
+  return party.slots.some((s) => s.resourceId !== null);
+}
+
+/** 全編成で共通の設定だけを取り出す */
+export function sharedSettingsOf(team: TeamState): SharedSettings {
+  const { slots: _slots, controlledSlot: _controlledSlot, ...shared } = team;
+  return shared;
+}
+
+/** 全編成で共通の設定（編成ごとに持つ部分のほか） */
+export type SharedSettings = Omit<TeamState, keyof Party>;
+
 /** 共通の設定はそのままに、スロットとフォーカスを編成のものにする。null は空の編成 */
-function withParty(team: TeamState, party: Party | null): TeamState {
+export function withParty(team: SharedSettings, party: Party | null): TeamState {
   return {
     ...team,
     slots: party?.slots ?? INITIAL_TEAM_STATE.slots,
@@ -80,7 +94,12 @@ export function parseParties(json: string | null, index: readonly CharacterIndex
   };
 }
 
-/** 画面に出す編成の名前（01〜05） */
+/** 編成の番号（01〜05）。編成のタブはこれだけを出す */
+export function partyNumber(i: number): string {
+  return String(i + 1).padStart(2, '0');
+}
+
+/** 画面に出す編成の名前（編成01〜05） */
 export function partyLabel(i: number): string {
-  return `編成${String(i + 1).padStart(2, '0')}`;
+  return `編成${partyNumber(i)}`;
 }
