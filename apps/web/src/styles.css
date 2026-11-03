@@ -422,7 +422,6 @@ header h1 {
   grid-template-columns: auto minmax(0, 1fr);
 }
 
-
 /* Stage 12: 育成入力・射撃条件（折り畳み） */
 .build {
   margin: 5px 0 0;
