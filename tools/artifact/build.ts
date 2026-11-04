@@ -34,9 +34,9 @@ if (vite.status !== 0) {
 const indexPath = join(OUT, 'index.html');
 writeFileSync(join(OUT, PAGE_FILE), pageHtml(entryAssets(readFileSync(indexPath, 'utf8'))));
 rmSync(indexPath);
-// キャラ画像（characters/images。200 枚余り）は除く。アーティファクトは 1 版 511 ファイルまでで、データだけで 300 近くある。
-// 画面（CharacterVisual）は画像が無ければ属性の色の札で出す（plan/design-modern-ui.md）
-rmSync(join(OUT, 'characters', 'images'), { recursive: true, force: true });
+// キャラ画像（characters/images・portraits。400 枚余り）は除く。アーティファクトは 1 版 511 ファイルまでで、データだけで
+// 300 近くある。画面（CharacterVisual）は画像が無ければ属性の色の札で出す（plan/design-modern-ui.md）
+for (const dir of ['images', 'portraits']) rmSync(join(OUT, 'characters', dir), { recursive: true, force: true });
 
 function listFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>

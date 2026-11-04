@@ -11,6 +11,7 @@ import {
   TEAM_FORMAT_VERSION,
   initialTeamState,
   parseTeamState,
+  placeCharacterAction,
   readSlotBuildJson,
   readTeamJson,
   serializeSlotBuild,
@@ -72,6 +73,14 @@ describe('teamReducer', () => {
 
     // 同じインデックスなら何もしない
     expect(teamReducer(swapped, { type: 'swapSlots', fromIndex: 1, toIndex: 1 })).toBe(swapped);
+  });
+
+  it('placeCharacterAction selects a new character, moves one placed elsewhere, and skips the same slot', () => {
+    const state = withCharacters([10, null, 30]);
+    expect(placeCharacterAction(state, 20, 1)).toEqual({ type: 'selectCharacter', index: 1, resourceId: 20 });
+    expect(placeCharacterAction(state, 20, 0)).toEqual({ type: 'selectCharacter', index: 0, resourceId: 20 });
+    expect(placeCharacterAction(state, 30, 4)).toEqual({ type: 'swapSlots', fromIndex: 2, toIndex: 4 });
+    expect(placeCharacterAction(state, 30, 2)).toBeNull();
   });
 
   it('clearSlot keeps growth and condition of that slot', () => {

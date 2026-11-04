@@ -20,6 +20,7 @@ import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
+import { placeCharacterAction } from '../team.ts';
 
 export function ModernView({
   team,
@@ -70,15 +71,22 @@ export function ModernView({
     if (!over) return;
 
     const overData = over.data.current;
-    if (overData?.slotIndex === undefined) return;
-    const targetSlotIndex = overData.slotIndex as number;
-
     const activeData = active.data.current;
     if (!activeData) return;
 
+    // スロットのキャラをトレイへ戻したら、そのスロットを空にする
+    if (overData?.type === 'tray') {
+      if (activeData.type === 'slot-character') dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
+      return;
+    }
+    if (overData?.slotIndex === undefined) return;
+    const targetSlotIndex = overData.slotIndex as number;
+
     if (activeData.type === 'tray-character') {
+      // ほかのスロットにいるキャラなら、そこから動かす（placeCharacterAction）
       const char = activeData.character as CharacterIndexEntry;
-      dispatch({ type: 'selectCharacter', index: targetSlotIndex, resourceId: char.resourceId });
+      const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
+      if (action) dispatch(action);
       setActiveSlotIndex(targetSlotIndex);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
@@ -95,7 +103,8 @@ export function ModernView({
 
   // トレイでキャラがクリック選択されたときのハンドラ
   const handleSelectCharacter = (resourceId: number) => {
-    dispatch({ type: 'selectCharacter', index: activeSlotIndex, resourceId });
+    const action = placeCharacterAction(team, resourceId, activeSlotIndex);
+    if (action) dispatch(action);
     // 次の空きスロットがあれば自動的にアクティブスロットを進める
     const nextEmptyIndex = team.slots.findIndex((s, i) => i > activeSlotIndex && s.resourceId === null);
     if (nextEmptyIndex !== -1) {

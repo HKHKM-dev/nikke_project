@@ -317,6 +317,17 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
   }
 }
 
+/**
+ * ニケを枠に置く操作（モダン UI のトレイからのドラッグ・クリック。plan/design-modern-ui.md）。同じニケは 1 枠までなので、
+ * ほかの枠にいればそこから動かす（入れ替え）。もうその枠にいれば何もしない（null）
+ */
+export function placeCharacterAction(state: TeamState, resourceId: number, index: number): TeamAction | null {
+  const placed = state.slots.findIndex((s) => s.resourceId === resourceId);
+  if (placed === index) return null;
+  if (placed !== -1) return { type: 'swapSlots', fromIndex: placed, toIndex: index };
+  return { type: 'selectCharacter', index, resourceId };
+}
+
 /** 他の枠で選択中のニケ（index の枠自身は除く） */
 export function takenResourceIds(state: TeamState, index: number): Set<number> {
   const ids = new Set<number>();

@@ -1,0 +1,220 @@
+/* モダン表示のゲーム風の見た目（plan/design-modern-ui.md の Step 5）。ルート要素の data-app-ui="modern"（uiMode.ts）のときだけ効く。
+   styles.css のモダンの規則（素の見た目）の上に、色と形を重ねる。色は light-dark(ライト, ダーク) で書き、テーマの切り替え
+   （theme.ts の color-scheme）に従う。入力欄・ボタンの全体の規則は :where で詳細度を下げ、部品のクラスがそのまま勝つようにする */
+:root[data-app-ui='modern'] {
+  --app-bg: light-dark(#eef1f7, #0b0f17);
+  --app-fg: light-dark(#141a24, #e6eaf2);
+  --app-border: light-dark(#c8d0dd, #2a3448);
+  --m-surface: light-dark(#ffffff, #131a26);
+  --m-surface-2: light-dark(#f3f5f9, #1b2433);
+  --m-muted: light-dark(#5b6678, #8f9bb0);
+  --m-accent: light-dark(#0284c7, #38bdf8);
+  --m-accent-fg: light-dark(#ffffff, #04121c);
+  --m-gold: light-dark(#b7791f, #f6c453);
+  --m-shadow: 0 6px 20px light-dark(rgb(20 30 50 / 0.12), rgb(0 0 0 / 0.45));
+  --m-glow: light-dark(rgb(2 132 199 / 0.12), rgb(56 189 248 / 0.18));
+}
+:root[data-app-ui='modern'] body {
+  background:
+    radial-gradient(1200px 500px at 10% -10%, var(--m-glow), transparent 60%),
+    radial-gradient(900px 400px at 100% 0%, rgb(180 107 255 / 0.1), transparent 60%), var(--app-bg);
+  background-attachment: fixed;
+}
+
+/* 属性の色（スロットのカードの縁） */
+:root[data-app-ui='modern'] [data-element='Fire'] {
+  --el: #ff5b3d;
+}
+:root[data-app-ui='modern'] [data-element='Water'] {
+  --el: #3399ff;
+}
+:root[data-app-ui='modern'] [data-element='Wind'] {
+  --el: #2fd08f;
+}
+:root[data-app-ui='modern'] [data-element='Electronic'] {
+  --el: #b46bff;
+}
+:root[data-app-ui='modern'] [data-element='Iron'] {
+  --el: #f2a830;
+}
+
+/* 見出し・パネル */
+:root[data-app-ui='modern'] .app-header h1 {
+  font-size: 1.5rem;
+  letter-spacing: 0.04em;
+  padding-left: 12px;
+  border-left: 4px solid var(--m-accent);
+}
+:root[data-app-ui='modern'] .panel {
+  background: var(--m-surface);
+  border: 1px solid var(--app-border);
+  border-radius: 12px;
+  box-shadow: var(--m-shadow);
+}
+:root[data-app-ui='modern'] .panel legend {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--m-surface-2);
+  border: 1px solid var(--app-border);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+
+/* 入力欄・ボタン（:where で詳細度を下げる。styles.css の同じ要素の規則より後なので、そちらには勝つ） */
+:where(:root[data-app-ui='modern']) button,
+:where(:root[data-app-ui='modern']) select,
+:where(:root[data-app-ui='modern']) textarea,
+:where(:root[data-app-ui='modern']) input:not([type='radio'], [type='checkbox']) {
+  border-radius: 8px;
+  border: 1px solid var(--app-border);
+  background: var(--m-surface-2);
+  color: inherit;
+}
+:where(:root[data-app-ui='modern']) button {
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+:where(:root[data-app-ui='modern']) button:hover {
+  border-color: var(--m-accent);
+}
+:root[data-app-ui='modern'] :where(button, select, textarea, input, summary):focus-visible {
+  outline: 2px solid var(--m-accent);
+  outline-offset: 1px;
+}
+:root[data-app-ui='modern'] :is(input[type='radio'], input[type='checkbox']) {
+  accent-color: var(--m-accent);
+}
+:root[data-app-ui='modern'] .toggle-button[aria-pressed='true'] {
+  border-color: var(--m-accent);
+  background: var(--m-accent);
+  color: var(--m-accent-fg);
+}
+:root[data-app-ui='modern'] .popover-panel {
+  background: var(--m-surface);
+  border-radius: 12px;
+  box-shadow: var(--m-shadow);
+}
+
+/* 合計ダメージの帯と、編成のタブ */
+:root[data-app-ui='modern'] .team-total-bar {
+  border-radius: 10px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--m-accent) 16%, transparent), transparent 70%);
+}
+:root[data-app-ui='modern'] .team-total-val {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--m-gold);
+}
+:root[data-app-ui='modern'] .party-tab {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+:root[data-app-ui='modern'] .party-tab-total {
+  color: var(--m-muted);
+}
+
+/* スロットのカード: 角丸・影・属性の色の上の縁 */
+:root[data-app-ui='modern'] .modern-slot-card {
+  background: var(--m-surface);
+  border-radius: 12px;
+  border-color: color-mix(in srgb, var(--el, var(--app-border)) 55%, var(--app-border));
+  box-shadow:
+    inset 0 3px 0 var(--el, transparent),
+    var(--m-shadow);
+  padding: 10px;
+}
+:root[data-app-ui='modern'] .modern-slot-card:hover {
+  border-color: var(--m-accent);
+}
+:root[data-app-ui='modern'] .modern-slot-card.modern-slot-selected {
+  outline: 2px solid var(--m-gold);
+}
+:root[data-app-ui='modern'] .modern-slot-card.modern-slot-over {
+  outline: 3px solid var(--m-accent);
+  background: color-mix(in srgb, var(--m-accent) 10%, var(--m-surface));
+}
+:root[data-app-ui='modern'] .modern-slot-focus-badge {
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: var(--m-accent);
+  color: var(--m-accent-fg);
+}
+:root[data-app-ui='modern'] .modern-slot-empty-area {
+  width: 100%;
+  border: 2px dashed var(--app-border);
+  border-radius: 10px;
+  color: var(--m-muted);
+  opacity: 1;
+}
+:root[data-app-ui='modern'] .modern-slot-char-name {
+  font-size: 0.95rem;
+}
+:root[data-app-ui='modern'] .modern-slot-damage-section {
+  border: none;
+  border-radius: 8px;
+  background: var(--m-surface-2);
+}
+:root[data-app-ui='modern'] .modern-slot-damage-value {
+  color: var(--m-gold);
+}
+:root[data-app-ui='modern'] .modern-slot-damage-bar-track {
+  border-radius: 999px;
+}
+:root[data-app-ui='modern'] .modern-slot-damage-bar-fill {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--m-accent), var(--m-gold));
+}
+:root[data-app-ui='modern'] .modern-slot-action-button {
+  border-radius: 8px;
+}
+
+/* キャラの絵（CharacterVisual） */
+:root[data-app-ui='modern'] .char-visual {
+  border-radius: 10px;
+}
+:root[data-app-ui='modern'] .char-visual-portrait {
+  width: 100%;
+  border-width: 1px;
+  border-color: color-mix(in srgb, var(--char-elem-color) 60%, var(--app-border));
+}
+:root[data-app-ui='modern'] .char-badge {
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+/* ニケ一覧（トレイ） */
+:root[data-app-ui='modern'] .char-tray-panel {
+  background: var(--m-surface);
+  border-radius: 12px;
+  box-shadow: var(--m-shadow);
+}
+:root[data-app-ui='modern'] .char-tray-panel.char-tray-returning {
+  outline: 3px dashed var(--m-accent);
+}
+:root[data-app-ui='modern'] .char-tray-hint,
+:root[data-app-ui='modern'] .char-tray-target-slot {
+  color: var(--m-muted);
+  opacity: 1;
+}
+:root[data-app-ui='modern'] .char-tray-item {
+  border-radius: 10px;
+}
+:root[data-app-ui='modern'] .char-tray-item:hover {
+  border-color: var(--m-accent);
+  background: var(--m-surface-2);
+}
+:root[data-app-ui='modern'] .char-drag-overlay {
+  border-radius: 12px;
+  border-color: var(--m-accent);
+  background: var(--m-surface);
+  rotate: -3deg;
+}
+
+/* 育成・設定のモーダル */
+:root[data-app-ui='modern'] .modal-container {
+  background: var(--m-surface);
+  border-radius: 14px;
+  overflow: hidden;
+}
