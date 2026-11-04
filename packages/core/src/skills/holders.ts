@@ -2382,6 +2382,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
             effect,
             fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
             v.track.casterMaxHp,
+            // 発動者基準の防御力▼（casterDefence）は付けた枠の基礎防御力を読む（2 パス目の skills/timeline.ts と同じ）
+            slots[v.track.sourceSlotIndex]?.baseDefence,
           ).totals;
         }
       }

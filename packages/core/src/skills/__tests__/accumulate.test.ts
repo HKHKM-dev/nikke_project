@@ -24,6 +24,8 @@ const DOROTHY = 233;
 const DELTA = 20;
 const LITER = 82;
 const TRONY = 501;
+/** S1 の敵に付く状態の中身に、発動者の防御力を読む防御力▼（scaling casterDefence）を持つ */
+const MAST = 350;
 /** 烙印の 10 秒（588f）と、窓の終わりから爆発までの遅れ（data/skills/233.json） */
 const WINDOW = 588;
 const DELAY = 211;
@@ -283,4 +285,28 @@ describe('蓄積爆破（リター・デルタ・トロニー）', () => {
         (0.5 + 0.6283) * shotsIn(r, 2, h.accumulate!.start, h.accumulate!.end) + 1,
       );
   });
+});
+
+describe('蓄積爆破（トロニーとマスト）', () => {
+  // 1 パス目の発の値（HolderLists.damageBuffsAt）も、発動者の防御力を読む防御力▼に付けた枠の基礎防御力を渡す
+  for (const order of [
+    [TRONY, MAST],
+    [MAST, TRONY],
+  ]) {
+    it(`runs and agrees between the two passes (${order.join(', ')})`, () => {
+      const input = inputOf(
+        order.map((rid) => slotOf(rid)),
+        order.indexOf(TRONY),
+      );
+      const explosions = explosionsOf(runSimulation(input));
+      const releases = planTeamRun(input).accumulateReleases;
+      expect(explosions.length).toBeGreaterThan(0);
+      expect(releases.length).toBe(explosions.length);
+      explosions.forEach((h, k) => {
+        const x = releases[k]!;
+        expect(h.frame).toBe(x.frame);
+        expect(h.hit.perActivation).toBeCloseTo(x.capped ? x.cap : x.stored, 4);
+      });
+    });
+  }
 });
