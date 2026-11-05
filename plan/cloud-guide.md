@@ -11,7 +11,7 @@
 | `private/`・`scratch/`                   | Drive の `nikke_sync/private`・`scratch`            | メインのチェックアウト（`D:/nikke_project/`）の直下 | リポジトリの直下（`private/` はセッションの始めに、`scratch/` はその後に裏で置かれる）                        |
 | Claude のメモリと全体の指示（CLAUDE.md） | Drive の `nikke_sync/claude/`                       | Claude Code の設定のフォルダ（自動メモリ）          | `~/.claude/CLAUDE.md` に、全体の指示とメモリの索引・書き方が置かれる。本文は `~/.claude/projects/…/memory/`   |
 | 録画・スクショ・証拠フレーム・参照資料   | E: と Drive の `nikke_project_captures/`            | `E:/nikke_project_captures/`                        | 録画は `node tools/captures/fetch.ts <録画 id>` で取り寄せる。切り出した証拠フレームは応答の終わりに Drive へ |
-| 取り込む前の録画                         | `H:/record` と Drive の「マイ コンピュータ/record」 | Drive for desktop が上げる                          | Drive から取り込む（下の「クラウドで録画を取り込む」）                                                        |
+| 取り込む前の録画                         | `F:/record` と Drive の「マイ コンピュータ/record」 | Drive for desktop が上げる                          | Drive から取り込む（下の「クラウドで録画を取り込む」）                                                        |
 
 ## クラウドのセッションの始め方
 
@@ -32,7 +32,7 @@ PC が使えないときに撮った録画は、Drive for desktop が「マイ �
 
 1. `node tools/captures/intake.ts --list-record` で record の中を見る。
 2. `node tools/captures/intake.ts drive:<record の中のパス>... --name <識別子>,... ...`（ほかの引数はデスクトップと同じ。まとめて取り込める。`intake.ts` の冒頭のコメント。`--copy` は使えない）。録画を取り寄せて `~/nikke_project_captures/<種別>/` に規約名で置き、Drive の sha256 と突き合わせ、`records/recordings/<録画 id>.json` を書き、Drive の中で record から `nikke_project_captures/<種別>/` へ移し、録画の JSON に `backup`（置いた日時・経路・一致したハッシュ）を書き足す。
-3. PC を付けると、Drive for desktop が `H:/record` の写しを消し、デスクトップの同期が E: の種別フォルダに録画を降ろす（数百 MB。設計書 6.3 節）。
+3. PC を付けると、Drive for desktop が `F:/record` の写しを消し、デスクトップの同期が E: の種別フォルダに録画を降ろす（数百 MB。設計書 6.3 節）。
 
 録画の番号の振り直し（`npm run records:renumber`）も、クラウドでは Drive の名前を受け口で変える（E: は、PC を付けた後の同期で新しい名前のものを降ろし直し、古い名前のものを `E:/nikke_sync_trash/captures/` へ移す）。
 
