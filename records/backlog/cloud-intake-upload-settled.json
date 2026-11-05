@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 4,
+  "text": "クラウドでの取り込み（`intake.ts drive:`）は、Drive for desktop が録画を上げ終えたかを確かめずに取り寄せて移すので、撮り終わってすぐに取り込むと途中までの版を台帳に書く（録画 0939。[captures/backup-log.md](captures/backup-log.md) の 2026-11-05 の段落）。Drive for desktop は撮っている間から上げ、移した後も同じファイルに新しい版を上げる。直す案: 取り込み元の Drive の更新時刻が数分以内なら止めて待つように言う。移した後にもう一度 Drive の sha256 を読み、台帳の値と合うか確かめる"
+}
