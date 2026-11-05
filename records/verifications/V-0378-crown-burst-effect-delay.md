@@ -41,12 +41,12 @@
 
 予測は 2026-10-09（commit 79ec470）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| effect-delay-1（burstEffectDelay） | -2.5（`0302-14`） | 0（+2.5、許容内） |
-| effect-delay-2（burstEffectDelay） | -3（`0302-15`） | 0（+3、許容内） |
+| 指標                               | 実測              | 予測 H0               |
+| ---------------------------------- | ----------------- | --------------------- |
+| effect-delay-1（burstEffectDelay） | -2.5（`0302-14`） | 0（+2.5、許容内）     |
+| effect-delay-2（burstEffectDelay） | -3（`0302-15`）   | 0（+3、許容内）       |
 | effect-delay-3（burstEffectDelay） | -3.5（`0302-16`） | 0（+3.5、**許容外**） |
-| effect-delay-4（burstEffectDelay） | -4（`0302-17`） | 0（+4、許容内） |
+| effect-delay-4（burstEffectDelay） | -4（`0302-17`）   | 0（+4、許容内）       |
 
 <!-- records:predictions:end -->
 

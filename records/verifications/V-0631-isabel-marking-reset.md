@@ -81,39 +81,39 @@
 
 予測は 2026-11-01（commit 97348cf）に出した。
 
-| 指標 | 実測 | 予測 H-cum |
-| --- | --- | --- |
-| isabel-bursts-A（burstActivationCount） | （実測なし） | 4 |
-| gauge-full-1-A（gaugeFullFrame） | （実測なし） | 844 |
-| gauge-full-2-A（gaugeFullFrame） | （実測なし） | 3,298 |
-| gauge-full-3-A（gaugeFullFrame） | （実測なし） | 5,811 |
-| gauge-full-4-A（gaugeFullFrame） | （実測なし） | 8,681 |
-| isabel-hit-1-A（burstHitDamage） | （実測なし） | 180,710.109 |
-| isabel-hit-1-crit-A（burstHitDamage） | （実測なし） | 271,065.163 |
-| isabel-hit-2-A（burstHitDamage） | （実測なし） | 180,710.109 |
-| isabel-hit-2-crit-A（burstHitDamage） | （実測なし） | 271,065.164 |
-| isabel-hit-3-A（burstHitDamage） | （実測なし） | 180,710.109 |
-| isabel-hit-3-crit-A（burstHitDamage） | （実測なし） | 271,065.163 |
-| isabel-hit-4-A（burstHitDamage） | （実測なし） | 211,962.825 |
-| isabel-hit-4-crit-A（burstHitDamage） | （実測なし） | 356,161.135 |
-| isabel-add-3-A（skillHitDamage） | （実測なし） | 758,765.606 |
-| isabel-add-4-stage2-A（skillHitDamage） | （実測なし） | 889,989.51 |
+| 指標                                    | 実測         | 予測 H-cum    |
+| --------------------------------------- | ------------ | ------------- |
+| isabel-bursts-A（burstActivationCount） | （実測なし） | 4             |
+| gauge-full-1-A（gaugeFullFrame）        | （実測なし） | 844           |
+| gauge-full-2-A（gaugeFullFrame）        | （実測なし） | 3,298         |
+| gauge-full-3-A（gaugeFullFrame）        | （実測なし） | 5,811         |
+| gauge-full-4-A（gaugeFullFrame）        | （実測なし） | 8,681         |
+| isabel-hit-1-A（burstHitDamage）        | （実測なし） | 180,710.109   |
+| isabel-hit-1-crit-A（burstHitDamage）   | （実測なし） | 271,065.163   |
+| isabel-hit-2-A（burstHitDamage）        | （実測なし） | 180,710.109   |
+| isabel-hit-2-crit-A（burstHitDamage）   | （実測なし） | 271,065.164   |
+| isabel-hit-3-A（burstHitDamage）        | （実測なし） | 180,710.109   |
+| isabel-hit-3-crit-A（burstHitDamage）   | （実測なし） | 271,065.163   |
+| isabel-hit-4-A（burstHitDamage）        | （実測なし） | 211,962.825   |
+| isabel-hit-4-crit-A（burstHitDamage）   | （実測なし） | 356,161.135   |
+| isabel-add-3-A（skillHitDamage）        | （実測なし） | 758,765.606   |
+| isabel-add-4-stage2-A（skillHitDamage） | （実測なし） | 889,989.51    |
 | isabel-add-4-stage3-A（skillHitDamage） | （実測なし） | 1,038,321.095 |
-| isabel-bursts-B（burstActivationCount） | （実測なし） | 4 |
-| gauge-full-1-B（gaugeFullFrame） | （実測なし） | 844 |
-| gauge-full-2-B（gaugeFullFrame） | （実測なし） | 3,298 |
-| gauge-full-3-B（gaugeFullFrame） | （実測なし） | 6,057 |
-| gauge-full-4-B（gaugeFullFrame） | （実測なし） | 8,681 |
-| isabel-hit-1-B（burstHitDamage） | （実測なし） | 180,710.109 |
-| isabel-hit-1-crit-B（burstHitDamage） | （実測なし） | 271,065.163 |
-| isabel-hit-2-B（burstHitDamage） | （実測なし） | 180,710.109 |
-| isabel-hit-2-crit-B（burstHitDamage） | （実測なし） | 271,065.163 |
-| isabel-hit-3-B（burstHitDamage） | （実測なし） | 180,710.109 |
-| isabel-hit-3-crit-B（burstHitDamage） | （実測なし） | 303,647.196 |
-| isabel-hit-4-B（burstHitDamage） | （実測なし） | 211,962.825 |
-| isabel-hit-4-crit-B（burstHitDamage） | （実測なし） | 356,161.135 |
-| isabel-add-3-B（skillHitDamage） | （実測なし） | 758,765.606 |
-| isabel-add-4-stage2-B（skillHitDamage） | （実測なし） | 889,989.51 |
+| isabel-bursts-B（burstActivationCount） | （実測なし） | 4             |
+| gauge-full-1-B（gaugeFullFrame）        | （実測なし） | 844           |
+| gauge-full-2-B（gaugeFullFrame）        | （実測なし） | 3,298         |
+| gauge-full-3-B（gaugeFullFrame）        | （実測なし） | 6,057         |
+| gauge-full-4-B（gaugeFullFrame）        | （実測なし） | 8,681         |
+| isabel-hit-1-B（burstHitDamage）        | （実測なし） | 180,710.109   |
+| isabel-hit-1-crit-B（burstHitDamage）   | （実測なし） | 271,065.163   |
+| isabel-hit-2-B（burstHitDamage）        | （実測なし） | 180,710.109   |
+| isabel-hit-2-crit-B（burstHitDamage）   | （実測なし） | 271,065.163   |
+| isabel-hit-3-B（burstHitDamage）        | （実測なし） | 180,710.109   |
+| isabel-hit-3-crit-B（burstHitDamage）   | （実測なし） | 303,647.196   |
+| isabel-hit-4-B（burstHitDamage）        | （実測なし） | 211,962.825   |
+| isabel-hit-4-crit-B（burstHitDamage）   | （実測なし） | 356,161.135   |
+| isabel-add-3-B（skillHitDamage）        | （実測なし） | 758,765.606   |
+| isabel-add-4-stage2-B（skillHitDamage） | （実測なし） | 889,989.51    |
 | isabel-add-4-stage3-B（skillHitDamage） | （実測なし） | 1,038,321.095 |
 
 <!-- records:predictions:end -->

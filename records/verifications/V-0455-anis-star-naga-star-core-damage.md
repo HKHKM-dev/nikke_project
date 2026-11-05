@@ -45,13 +45,13 @@
 
 予測は 2026-10-18（commit c6665d3）に出した。
 
-| 指標 | 実測 | 予測 H-no |
-| --- | --- | --- |
-| star-body（dotHitDamage） | （実測なし） | 60,902.271 |
-| star-core（dotHitDamage） | （実測なし） | 121,804.543 |
+| 指標                           | 実測         | 予測 H-no   |
+| ------------------------------ | ------------ | ----------- |
+| star-body（dotHitDamage）      | （実測なし） | 60,902.271  |
+| star-core（dotHitDamage）      | （実測なし） | 121,804.543 |
 | star-core-crit（dotHitDamage） | （実測なし） | 152,255.678 |
-| shot-core（hitDamage） | （実測なし） | 414,215.764 |
-| shot-body（hitDamage） | （実測なし） | 172,539.578 |
+| shot-core（hitDamage）         | （実測なし） | 414,215.764 |
+| shot-body（hitDamage）         | （実測なし） | 172,539.578 |
 
 <!-- records:predictions:end -->
 

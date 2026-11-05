@@ -97,15 +97,15 @@
 
 予測は 2026-10-03（commit d785a77）に出した。
 
-| 指標 | 実測 | 予測 H1 |
-| --- | --- | --- |
-| miranda-body（hitDamage） | 10,781（`0144-05`） | 10,781.1（+0.1、許容内） |
-| miranda-core（hitDamage） | （実測なし） | 26,952.75 |
-| miranda-crit（hitDamage） | （実測なし） | 16,171.65 |
-| miranda-dist-body（hitDamage） | 14,015（`0144-06`） | 14,015.43（+0.43、許容内） |
-| miranda-atk-body（hitDamage） | 16,183（`0144-07`） | 16,183.525（+0.525、許容内） |
+| 指標                               | 実測                | 予測 H1                      |
+| ---------------------------------- | ------------------- | ---------------------------- |
+| miranda-body（hitDamage）          | 10,781（`0144-05`） | 10,781.1（+0.1、許容内）     |
+| miranda-core（hitDamage）          | （実測なし）        | 26,952.75                    |
+| miranda-crit（hitDamage）          | （実測なし）        | 16,171.65                    |
+| miranda-dist-body（hitDamage）     | 14,015（`0144-06`） | 14,015.43（+0.43、許容内）   |
+| miranda-atk-body（hitDamage）      | 16,183（`0144-07`） | 16,183.525（+0.525、許容内） |
 | miranda-atk-dist-body（hitDamage） | 21,039（`0144-08`） | 21,038.583（-0.417、許容内） |
-| miranda-total（slotTotalDamage） | （実測なし） | 69,931,647.508 |
+| miranda-total（slotTotalDamage）   | （実測なし）        | 69,931,647.508               |
 
 <!-- records:predictions:end -->
 

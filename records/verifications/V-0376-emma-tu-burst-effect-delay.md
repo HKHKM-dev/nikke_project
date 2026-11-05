@@ -41,8 +41,8 @@
 
 予測は 2026-10-09（commit 3896fb6）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
+| 指標                                   | 実測           | 予測 H0         |
+| -------------------------------------- | -------------- | --------------- |
 | buffed-first-1（burstEffectFirstShot） | 0（`0022-07`） | 0（+0、許容内） |
 | buffed-first-2（burstEffectFirstShot） | 0（`0022-08`） | 0（+0、許容内） |
 | buffed-first-3（burstEffectFirstShot） | 0（`0022-09`） | 0（+0、許容内） |

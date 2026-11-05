@@ -65,12 +65,12 @@
 
 予測は 2026-10-10（commit d7ec959）に出した。
 
-| 指標 | 実測 | 予測 H0 |
-| --- | --- | --- |
-| window-end-1（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
-| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
-| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
-| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし） | 0 |
+| 指標                                          | 実測         | 予測 H0 |
+| --------------------------------------------- | ------------ | ------- |
+| window-end-1（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-2（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-3（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
+| window-end-4（buffWindowEndFromFullBurstEnd） | （実測なし） | 0       |
 
 <!-- records:predictions:end -->
 
