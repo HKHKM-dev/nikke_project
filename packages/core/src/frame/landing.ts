@@ -809,13 +809,13 @@ export function landingNotes(
       },
     });
   }
-  if (weapon === 'AR' || weapon === 'SMG') {
+  if (weapon === 'AR' || weapon === 'SMG' || weapon === 'SG') {
     notes.push({
       level: 'unsupported',
       code: 'landing-aim-wait',
       message: {
-        ja: '着地の後、照準が的に掛かるまで撃たない（C-0291。操作キャラで確かめた）。モデルは窓の明けから構えの 12f で撃ち始めるので、通常攻撃の発の数が多めに出る。未実装',
-        en: 'After a landing, the character does not fire until the aim is on the target (C-0291; seen on the controlled character); the model starts firing 12 frames after the window, so it counts slightly more normal shots; not modeled',
+        ja: '着地の後、照準が的に掛かるまで撃たない（AR・SMG は C-0291、SG は C-0948。操作キャラで確かめた）。モデルは窓の明けから構えの 12f で撃ち始めるので、通常攻撃の発の数が多めに出る。未実装',
+        en: 'After a landing, the character does not fire until the aim is on the target (C-0291 for AR and SMG, C-0948 for SG; seen on the controlled character); the model starts firing 12 frames after the window, so it counts slightly more normal shots; not modeled',
       },
     });
   }
