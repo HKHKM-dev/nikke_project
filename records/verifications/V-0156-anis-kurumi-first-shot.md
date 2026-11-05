@@ -55,9 +55,9 @@
 
 予測は 2026-10-04（commit 97357cf）に出した。
 
-| 指標                                 | 実測         | 予測 H0 |
-| ------------------------------------ | ------------ | ------- |
-| gauge-full-frame-0（gaugeFullFrame） | （実測なし） | 655     |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| gauge-full-frame-0（gaugeFullFrame） | （実測なし） | 655 |
 
 <!-- records:predictions:end -->
 

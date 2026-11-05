@@ -61,13 +61,13 @@
 
 予測は 2026-11-01（commit 4ae2a16）に出した。
 
-| 指標                                    | 実測               | 予測 H0                  | 予測 H1                 |
-| --------------------------------------- | ------------------ | ------------------------ | ----------------------- |
-| A-inside（buffWindowShotIntervalMean）  | 94（`0880-07`）    | 94（+0、許容内）         | 83（-11、**許容外**）   |
-| A-outside（buffWindowShotIntervalMean） | 94（`0880-08`）    | 93.479（-0.521、許容内） | 94（+0、許容内）        |
-| A-shots（shotCount）                    | （実測なし）       | 90                       | 95                      |
-| B-inside（buffWindowShotIntervalMean）  | 94.18（`0882-07`） | 94（-0.18、許容内）      | 88（-6.18、**許容外**） |
-| B-outside（buffWindowShotIntervalMean） | 94.47（`0882-08`） | 94（-0.47、許容内）      | 94（-0.47、許容内）     |
+| 指標 | 実測 | 予測 H0 | 予測 H1 |
+| --- | --- | --- | --- |
+| A-inside（buffWindowShotIntervalMean） | 94（`0880-07`） | 94（+0、許容内） | 83（-11、**許容外**） |
+| A-outside（buffWindowShotIntervalMean） | 94（`0880-08`） | 93.479（-0.521、許容内） | 94（+0、許容内） |
+| A-shots（shotCount） | （実測なし） | 90 | 95 |
+| B-inside（buffWindowShotIntervalMean） | 94.18（`0882-07`） | 94（-0.18、許容内） | 88（-6.18、**許容外**） |
+| B-outside（buffWindowShotIntervalMean） | 94.47（`0882-08`） | 94（-0.47、許容内） | 94（-0.47、許容内） |
 
 <!-- records:predictions:end -->
 

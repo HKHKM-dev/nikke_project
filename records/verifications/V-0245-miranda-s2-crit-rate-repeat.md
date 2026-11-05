@@ -49,12 +49,12 @@
 
 予測は 2026-10-06（commit 57db642）に出した。
 
-| 指標                                     | 実測                | 予測 H1                      |
-| ---------------------------------------- | ------------------- | ---------------------------- |
-| fb-miranda-crit-rate（critRateAt）       | 0.439（`0285-10`）  | 0.451（+0.012、許容内）      |
-| after-fb-miranda-crit-rate（critRateAt） | 0.162（`0285-11`）  | 0.15（-0.012、許容内）       |
-| fb-miranda-body（hitDamage）             | 30,028（`0285-05`） | 30,028.44（+0.44、許容内）   |
-| fb-miranda-crit（hitDamage）             | 46,642（`0285-06`） | 46,642.174（+0.174、許容内） |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| fb-miranda-crit-rate（critRateAt） | 0.439（`0285-10`） | 0.451（+0.012、許容内） |
+| after-fb-miranda-crit-rate（critRateAt） | 0.162（`0285-11`） | 0.15（-0.012、許容内） |
+| fb-miranda-body（hitDamage） | 30,028（`0285-05`） | 30,028.44（+0.44、許容内） |
+| fb-miranda-crit（hitDamage） | 46,642（`0285-06`） | 46,642.174（+0.174、許容内） |
 
 <!-- records:predictions:end -->
 

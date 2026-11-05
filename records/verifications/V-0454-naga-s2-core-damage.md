@@ -46,15 +46,15 @@
 
 予測は 2026-10-18（commit c6665d3）に出した。
 
-| 指標                               | 実測                | 予測 H-on                    |
-| ---------------------------------- | ------------------- | ---------------------------- |
-| pellet-first-body（hitDamage）     | 20,444（`0505-01`） | 20,444.16（+0.16、許容内）   |
-| pellet-first-core（hitDamage）     | （実測なし）        | 40,888.32                    |
-| pellet-midnear-core（hitDamage）   | （実測なし）        | 49,080.295                   |
-| pellet-near-body（hitDamage）      | （実測なし）        | 26,577.408                   |
-| pellet-near-core（hitDamage）      | 55,214（`0505-03`） | 55,213.543（-0.457、許容内） |
+| 指標 | 実測 | 予測 H-on |
+| --- | --- | --- |
+| pellet-first-body（hitDamage） | 20,444（`0505-01`） | 20,444.16（+0.16、許容内） |
+| pellet-first-core（hitDamage） | （実測なし） | 40,888.32 |
+| pellet-midnear-core（hitDamage） | （実測なし） | 49,080.295 |
+| pellet-near-body（hitDamage） | （実測なし） | 26,577.408 |
+| pellet-near-core（hitDamage） | 55,214（`0505-03`） | 55,213.543（-0.457、許容内） |
 | pellet-near-core-crit（hitDamage） | 65,436（`0505-04`） | 65,435.623（-0.377、許容内） |
-| s2-first-start（buffWindowStarts） | （実測なし）        | [170]                        |
+| s2-first-start（buffWindowStarts） | （実測なし） | [170] |
 
 <!-- records:predictions:end -->
 

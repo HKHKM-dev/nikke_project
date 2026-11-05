@@ -127,10 +127,10 @@
 
 予測は 2026-10-04（commit aaf4d02）に出した。
 
-| 指標                                    | 実測         | 予測 H0 |
-| --------------------------------------- | ------------ | ------- |
-| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 10      |
-| gauge-full-frame-0（gaugeFullFrame）    | （実測なし） | 741     |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| gauge-full-shot-0（gaugeFullShotIndex） | （実測なし） | 10 |
+| gauge-full-frame-0（gaugeFullFrame） | （実測なし） | 741 |
 
 <!-- records:predictions:end -->
 

@@ -41,11 +41,11 @@
 
 予測は 2026-10-05（commit bfac9b9）に出した。
 
-| 指標                        | 実測             | 予測 H-body2          |
-| --------------------------- | ---------------- | --------------------- |
-| core-midnear（coreHitRate） | 1（`0161-18`）   | 0（-1、**許容外**）   |
-| core-near（coreHitRate）    | 1（`0161-19`）   | 0（-1、**許容外**）   |
-| core-far（coreHitRate）     | 0.5（`0161-20`） | 0（-0.5、**許容外**） |
+| 指標 | 実測 | 予測 H-body2 |
+| --- | --- | --- |
+| core-midnear（coreHitRate） | 1（`0161-18`） | 0（-1、**許容外**） |
+| core-near（coreHitRate） | 1（`0161-19`） | 0（-1、**許容外**） |
+| core-far（coreHitRate） | 0.5（`0161-20`） | 0（-0.5、**許容外**） |
 
 <!-- records:predictions:end -->
 

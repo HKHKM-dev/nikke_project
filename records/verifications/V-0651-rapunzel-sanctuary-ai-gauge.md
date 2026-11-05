@@ -41,11 +41,11 @@
 
 予測は 2026-11-03（commit 339d66c）に出した。
 
-| 指標                                         | 実測            | 予測 H2          | 予測 H1               | 予測 H0                |
-| -------------------------------------------- | --------------- | ---------------- | --------------------- | ---------------------- |
-| gauge-full-frame（gaugeFullFrame）           | （実測なし）    | 681              | 773                   | 990                    |
-| rapunzel-shots-to-full（gaugeFullShotIndex） | 7（`0932-08`）  | 7（+0、許容内）  | 8（+1、**許容外**）   | 10（+3、**許容外**）   |
-| asuka-shots-to-full（gaugeFullShotIndex）    | 80（`0932-09`） | 80（+0、許容内） | 92（+12、**許容外**） | 120（+40、**許容外**） |
+| 指標 | 実測 | 予測 H2 | 予測 H1 | 予測 H0 |
+| --- | --- | --- | --- | --- |
+| gauge-full-frame（gaugeFullFrame） | （実測なし） | 681 | 773 | 990 |
+| rapunzel-shots-to-full（gaugeFullShotIndex） | 7（`0932-08`） | 7（+0、許容内） | 8（+1、**許容外**） | 10（+3、**許容外**） |
+| asuka-shots-to-full（gaugeFullShotIndex） | 80（`0932-09`） | 80（+0、許容内） | 92（+12、**許容外**） | 120（+40、**許容外**） |
 
 <!-- records:predictions:end -->
 

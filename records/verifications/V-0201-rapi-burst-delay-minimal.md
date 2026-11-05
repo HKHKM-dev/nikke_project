@@ -69,16 +69,16 @@
 
 予測は 2026-10-05（commit ce342b1）に出した。
 
-| 指標                                  | 実測                    | 予測 H0                       |
-| ------------------------------------- | ----------------------- | ----------------------------- |
-| rapi-delays（burstHitDelays）         | （実測なし）            | [112, 112, 112, 112, 112]     |
-| rapi-offsets-1（burstHitOffsets）     | [0, 7, 14]（`0221-02`） | [0, 7, 14]（+0、許容内）      |
-| rapi-offsets-2（burstHitOffsets）     | [0, 8, 14]（`0221-03`） | [0, 7, 14]（-1、許容内）      |
-| rapi-offsets-3（burstHitOffsets）     | [0, 7, 14]（`0221-04`） | [0, 7, 14]（+0、許容内）      |
-| rapi-offsets-4（burstHitOffsets）     | [0, 7, 14]（`0221-05`） | [0, 7, 14]（+0、許容内）      |
-| rapi-offsets-5（burstHitOffsets）     | （実測なし）            | [0, 7, 14]                    |
-| rapi-burst-hit（burstHitDamage）      | 624,393（`0221-06`）    | 624,393.328（+0.328、許容内） |
-| rapi-burst-hit-crit（burstHitDamage） | （実測なし）            | 936,589.991                   |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| rapi-delays（burstHitDelays） | （実測なし） | [112, 112, 112, 112, 112] |
+| rapi-offsets-1（burstHitOffsets） | [0, 7, 14]（`0221-02`） | [0, 7, 14]（+0、許容内） |
+| rapi-offsets-2（burstHitOffsets） | [0, 8, 14]（`0221-03`） | [0, 7, 14]（-1、許容内） |
+| rapi-offsets-3（burstHitOffsets） | [0, 7, 14]（`0221-04`） | [0, 7, 14]（+0、許容内） |
+| rapi-offsets-4（burstHitOffsets） | [0, 7, 14]（`0221-05`） | [0, 7, 14]（+0、許容内） |
+| rapi-offsets-5（burstHitOffsets） | （実測なし） | [0, 7, 14] |
+| rapi-burst-hit（burstHitDamage） | 624,393（`0221-06`） | 624,393.328（+0.328、許容内） |
+| rapi-burst-hit-crit（burstHitDamage） | （実測なし） | 936,589.991 |
 
 <!-- records:predictions:end -->
 

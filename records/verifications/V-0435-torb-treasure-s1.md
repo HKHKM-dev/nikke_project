@@ -46,16 +46,16 @@
 
 予測は 2026-10-17（commit d4810b9）に出した。
 
-| 指標                              | 実測                                  | 予測 H1                                    |
-| --------------------------------- | ------------------------------------- | ------------------------------------------ |
-| max-ammo-shot-10（maxAmmoAtShot） | （実測なし）                          | 60                                         |
-| max-ammo-shot-11（maxAmmoAtShot） | （実測なし）                          | 62                                         |
-| max-ammo-shot-21（maxAmmoAtShot） | （実測なし）                          | 64                                         |
-| max-ammo-shot-31（maxAmmoAtShot） | （実測なし）                          | 66                                         |
-| refills（ammoRefillAmounts）      | [3, 3, 4, 4, 4, 4, 4, 4]（`0467-01`） | [3, 3, 3, 3, 3, 3, 3, 3]（-1、**許容外**） |
-| magazines（magazineShots）        | （実測なし）                          | [84, 93, 96]                               |
-| crit-ratio-start（critHitRatio）  | 1.385（`0467-04`）                    | 1.385（+0.00%、許容内）                    |
-| crit-ratio（critHitRatio）        | 1.425（`0467-05`）                    | 1.425（+0.00%、許容内）                    |
+| 指標 | 実測 | 予測 H1 |
+| --- | --- | --- |
+| max-ammo-shot-10（maxAmmoAtShot） | （実測なし） | 60 |
+| max-ammo-shot-11（maxAmmoAtShot） | （実測なし） | 62 |
+| max-ammo-shot-21（maxAmmoAtShot） | （実測なし） | 64 |
+| max-ammo-shot-31（maxAmmoAtShot） | （実測なし） | 66 |
+| refills（ammoRefillAmounts） | [3, 3, 4, 4, 4, 4, 4, 4]（`0467-01`） | [3, 3, 3, 3, 3, 3, 3, 3]（-1、**許容外**） |
+| magazines（magazineShots） | （実測なし） | [84, 93, 96] |
+| crit-ratio-start（critHitRatio） | 1.385（`0467-04`） | 1.385（+0.00%、許容内） |
+| crit-ratio（critHitRatio） | 1.425（`0467-05`） | 1.425（+0.00%、許容内） |
 
 <!-- records:predictions:end -->
 

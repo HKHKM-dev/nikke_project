@@ -71,30 +71,30 @@
 
 予測は 2026-11-01（commit f7eeaee）に出した。
 
-| 指標                                       | 実測                 | 予測 H-snap                         | 予測 H-hit                         |
-| ------------------------------------------ | -------------------- | ----------------------------------- | ---------------------------------- |
-| isabel-hit-1（burstHitDamage）             | 180,710（`0869-07`） | 180,710.109（+0.109、許容内）       | 180,764.055（+54.055、**許容外**） |
-| isabel-hit-1-crit（burstHitDamage）        | 271,065（`0868-07`） | 271,065.163（+0.163、許容内）       | 271,146.083（+81.083、**許容外**） |
-| isabel-hit-2（burstHitDamage）             | 180,710（`0868-08`） | 180,710.109（+0.109、許容内）       | 180,764.055（+54.055、**許容外**） |
-| isabel-hit-2-crit（burstHitDamage）        | （実測なし）         | 271,065.164                         | 271,146.083                        |
-| isabel-hit-3（burstHitDamage）             | （実測なし）         | 180,710.109                         | 180,764.055                        |
-| isabel-hit-3-crit（burstHitDamage）        | （実測なし）         | 303,647.196                         | 303,737.842                        |
-| isabel-hit-4（burstHitDamage）             | （実測なし）         | 211,962.825                         | 212,016.771                        |
-| isabel-hit-4-crit（burstHitDamage）        | （実測なし）         | 356,161.135                         | 356,251.78                         |
-| isabel-hit-5（burstHitDamage）             | （実測なし）         | 211,962.825                         | 212,016.771                        |
-| isabel-hit-5-crit（burstHitDamage）        | （実測なし）         | 356,161.135                         | 356,251.78                         |
-| isabel-add-3（skillHitDamage）             | 758,992（`0868-10`） | 758,765.606（-226.394、**許容外**） | 758,992.114（+0.114、許容内）      |
-| isabel-add-3-crit（skillHitDamage）        | （実測なし）         | 1,102,891.1                         | 1,103,220.338                      |
-| isabel-add-4-stage2（skillHitDamage）      | （実測なし）         | 889,989.51                          | 890,216.018                        |
-| isabel-add-4-stage2-crit（skillHitDamage） | （実測なし）         | 1,293,629.419                       | 1,293,958.656                      |
-| isabel-add-4-stage3（skillHitDamage）      | （実測なし）         | 1,038,321.095                       | 1,038,585.354                      |
-| isabel-add-4-stage3-crit（skillHitDamage） | （実測なし）         | 1,509,234.322                       | 1,509,618.432                      |
-| isabel-add-5-stage2（skillHitDamage）      | （実測なし）         | 889,989.51                          | 890,216.018                        |
-| isabel-add-5-stage2-crit（skillHitDamage） | （実測なし）         | 1,293,629.419                       | 1,293,958.656                      |
-| isabel-add-5-stage3（skillHitDamage）      | （実測なし）         | 1,038,321.095                       | 1,038,585.354                      |
-| isabel-add-5-stage3-crit（skillHitDamage） | （実測なし）         | 1,509,234.322                       | 1,509,618.432                      |
-| elegg-hit-1（burstHitDamage）              | （実測なし）         | 316,105.845                         | 316,105.845                        |
-| isabel-s2-3（skillHitDamage）              | 431,995（`0868-14`） | 431,994.911（-0.089、許容内）       | 431,994.911（-0.089、許容内）      |
+| 指標 | 実測 | 予測 H-snap | 予測 H-hit |
+| --- | --- | --- | --- |
+| isabel-hit-1（burstHitDamage） | 180,710（`0869-07`） | 180,710.109（+0.109、許容内） | 180,764.055（+54.055、**許容外**） |
+| isabel-hit-1-crit（burstHitDamage） | 271,065（`0868-07`） | 271,065.163（+0.163、許容内） | 271,146.083（+81.083、**許容外**） |
+| isabel-hit-2（burstHitDamage） | 180,710（`0868-08`） | 180,710.109（+0.109、許容内） | 180,764.055（+54.055、**許容外**） |
+| isabel-hit-2-crit（burstHitDamage） | （実測なし） | 271,065.164 | 271,146.083 |
+| isabel-hit-3（burstHitDamage） | （実測なし） | 180,710.109 | 180,764.055 |
+| isabel-hit-3-crit（burstHitDamage） | （実測なし） | 303,647.196 | 303,737.842 |
+| isabel-hit-4（burstHitDamage） | （実測なし） | 211,962.825 | 212,016.771 |
+| isabel-hit-4-crit（burstHitDamage） | （実測なし） | 356,161.135 | 356,251.78 |
+| isabel-hit-5（burstHitDamage） | （実測なし） | 211,962.825 | 212,016.771 |
+| isabel-hit-5-crit（burstHitDamage） | （実測なし） | 356,161.135 | 356,251.78 |
+| isabel-add-3（skillHitDamage） | 758,992（`0868-10`） | 758,765.606（-226.394、**許容外**） | 758,992.114（+0.114、許容内） |
+| isabel-add-3-crit（skillHitDamage） | （実測なし） | 1,102,891.1 | 1,103,220.338 |
+| isabel-add-4-stage2（skillHitDamage） | （実測なし） | 889,989.51 | 890,216.018 |
+| isabel-add-4-stage2-crit（skillHitDamage） | （実測なし） | 1,293,629.419 | 1,293,958.656 |
+| isabel-add-4-stage3（skillHitDamage） | （実測なし） | 1,038,321.095 | 1,038,585.354 |
+| isabel-add-4-stage3-crit（skillHitDamage） | （実測なし） | 1,509,234.322 | 1,509,618.432 |
+| isabel-add-5-stage2（skillHitDamage） | （実測なし） | 889,989.51 | 890,216.018 |
+| isabel-add-5-stage2-crit（skillHitDamage） | （実測なし） | 1,293,629.419 | 1,293,958.656 |
+| isabel-add-5-stage3（skillHitDamage） | （実測なし） | 1,038,321.095 | 1,038,585.354 |
+| isabel-add-5-stage3-crit（skillHitDamage） | （実測なし） | 1,509,234.322 | 1,509,618.432 |
+| elegg-hit-1（burstHitDamage） | （実測なし） | 316,105.845 | 316,105.845 |
+| isabel-s2-3（skillHitDamage） | 431,995（`0868-14`） | 431,994.911（-0.089、許容内） | 431,994.911（-0.089、許容内） |
 
 <!-- records:predictions:end -->
 

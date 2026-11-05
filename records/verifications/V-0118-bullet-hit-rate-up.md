@@ -122,13 +122,13 @@
 
 予測は 2026-10-03（commit c6e7632）に出した。
 
-| 指標                            | 実測                | 予測 H0                      |
-| ------------------------------- | ------------------- | ---------------------------- |
-| misato-body（hitDamage）        | 6,407（`0154-04`）  | 6,407.181（+0.181、許容内）  |
-| misato-core（hitDamage）        | 12,814（`0154-05`） | 12,814.362（+0.362、許容内） |
-| misato-crit（hitDamage）        | 9,611（`0154-06`）  | 9,610.772（-0.228、許容内）  |
-| misato-shots（shotCount）       | （実測なし）        | 3,237                        |
-| misato-total（slotTotalDamage） | （実測なし）        | 28,043,846.374               |
+| 指標 | 実測 | 予測 H0 |
+| --- | --- | --- |
+| misato-body（hitDamage） | 6,407（`0154-04`） | 6,407.181（+0.181、許容内） |
+| misato-core（hitDamage） | 12,814（`0154-05`） | 12,814.362（+0.362、許容内） |
+| misato-crit（hitDamage） | 9,611（`0154-06`） | 9,610.772（-0.228、許容内） |
+| misato-shots（shotCount） | （実測なし） | 3,237 |
+| misato-total（slotTotalDamage） | （実測なし） | 28,043,846.374 |
 
 <!-- records:predictions:end -->
 
