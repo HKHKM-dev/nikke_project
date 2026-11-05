@@ -1,0 +1,42 @@
+{
+  "id": "0273",
+  "date": "2026-10-06",
+  "folder": "range",
+  "file": "20261006-0273_smg+sr+ar_miranda+delta+idoll-sun_miranda-control.mp4",
+  "original": "2026-10-06_20-39-28.mp4",
+  "durationSec": 199.2,
+  "frames": 11954,
+  "fps": 60,
+  "sizeMB": 241.5,
+  "sha256": "c4443d2d31ec",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 32,
+      "name": "ミランダ",
+      "controlled": true,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": true,
+  "conditionNote": "V-0229 と同じ編成（録画 0262）でもう 1 本撮ったもの。ミランダ（I・宝物 3・操作・撃たない）・デルタ（II・AI）・I-DOLL・サン（III・AI）、オートバースト ON。出撃画面では 3〜5 枠目に置いた（1・2 枠目は空き。0262 は 1〜3 枠目。戦闘履歴のパネルでは 1〜3 枠目に出る）。出撃画面（f60）で灼熱タブ・3 分モード・スペック固定 ON、戦闘履歴のパネルで交戦時間 03:00 とミランダの与ダメージ 0 を確かめた。取り込んだが台帳に載っていなかった（plan/captures/backup-log.md の 2026-11-05 の段落）"
+}
