@@ -1,8 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
-import { NIKKE_CLASSES, type CharacterIndexEntry } from '@nikke/core';
+import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
-import { CLASS_LABEL } from '../../skillLabels.ts';
-import { ELEMENT_LABEL } from './CharacterVisual.tsx';
+import { BADGE_KINDS, type BadgeKey, type BadgeKind } from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 
 type Props = {
@@ -13,22 +12,41 @@ type Props = {
   activeSlotIndex: number;
 };
 
-const ELEMENTS: readonly (CharacterIndexEntry['element'] | 'All')[] = [
-  'All',
-  'Fire',
-  'Water',
-  'Wind',
-  'Iron',
-  'Electronic',
-];
-const WEAPONS: readonly (CharacterIndexEntry['weaponType'] | 'All')[] = ['All', 'AR', 'SMG', 'SG', 'SR', 'RL', 'MG'];
+/** 1 種類のバッジを並べた絞り込み。押すとその値で絞り、押されたものをもう一度押すと解除する */
+function BadgeFilter({
+  kind,
+  value,
+  onChange,
+}: {
+  kind: BadgeKind;
+  value: string | undefined;
+  onChange: (value: string | undefined) => void;
+}) {
+  return (
+    <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
+      {Object.entries(kind.badges).map(([v, { src, label }]) => {
+        const pressed = value === v;
+        return (
+          <button
+            key={v}
+            type="button"
+            className="char-tray-badge-button"
+            aria-pressed={pressed}
+            title={label}
+            onClick={() => onChange(pressed ? undefined : v)}
+          >
+            <img className="char-badge" src={src} alt={label} draggable={false} />
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function CharacterTray({ index, takenIds, fullySupported, onSelectCharacter, activeSlotIndex }: Props) {
   const [query, setQuery] = useState('');
-  const [burstFilter, setBurstFilter] = useState<CharacterIndexEntry['burstStep'] | 'All'>('All');
-  const [elementFilter, setElementFilter] = useState<CharacterIndexEntry['element'] | 'All'>('All');
-  const [weaponFilter, setWeaponFilter] = useState<CharacterIndexEntry['weaponType'] | 'All'>('All');
-  const [classFilter, setClassFilter] = useState<CharacterIndexEntry['class'] | 'All'>('All');
+  // バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない）
+  const [filters, setFilters] = useState<Partial<Record<BadgeKey, string>>>({});
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({ id: 'tray-drop', data: { type: 'tray' } });
@@ -39,10 +57,7 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
     const q = query.trim().toLowerCase();
     return index
       .filter((char) => {
-        if (burstFilter !== 'All' && char.burstStep !== burstFilter) return false;
-        if (elementFilter !== 'All' && char.element !== elementFilter) return false;
-        if (weaponFilter !== 'All' && char.weaponType !== weaponFilter) return false;
-        if (classFilter !== 'All' && char.class !== classFilter) return false;
+        if (BADGE_KINDS.some(({ key }) => filters[key] !== undefined && char[key] !== filters[key])) return false;
         if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
         if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
         return true;
@@ -54,7 +69,7 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
         if (aTaken !== bTaken) return aTaken ? 1 : -1;
         return a.name.ja.localeCompare(b.name.ja, 'ja');
       });
-  }, [index, burstFilter, elementFilter, weaponFilter, classFilter, onlySupported, fullySupported, query, takenIds]);
+  }, [index, filters, onlySupported, fullySupported, query, takenIds]);
 
   return (
     <section
@@ -79,53 +94,14 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
             onChange={(e) => setQuery(e.target.value)}
           />
           <div className="char-tray-filter-group">
-            <select
-              value={burstFilter}
-              aria-label="バースト段階で絞り込み"
-              onChange={(e) => setBurstFilter(e.target.value as typeof burstFilter)}
-            >
-              <option value="All">バースト: 全て</option>
-              <option value="Step1">バースト Ⅰ</option>
-              <option value="Step2">バースト Ⅱ</option>
-              <option value="Step3">バースト Ⅲ</option>
-              <option value="AllStep">バースト ALL</option>
-            </select>
-            <select
-              value={elementFilter}
-              aria-label="属性で絞り込み"
-              onChange={(e) => setElementFilter(e.target.value as typeof elementFilter)}
-            >
-              <option value="All">属性: 全て</option>
-              {ELEMENTS.filter((e) => e !== 'All').map((elem) => (
-                <option key={elem} value={elem}>
-                  {ELEMENT_LABEL[elem as CharacterIndexEntry['element']]}
-                </option>
-              ))}
-            </select>
-            <select
-              value={weaponFilter}
-              aria-label="武器種で絞り込み"
-              onChange={(e) => setWeaponFilter(e.target.value as typeof weaponFilter)}
-            >
-              <option value="All">武器: 全て</option>
-              {WEAPONS.filter((w) => w !== 'All').map((w) => (
-                <option key={w} value={w}>
-                  {w}
-                </option>
-              ))}
-            </select>
-            <select
-              value={classFilter}
-              aria-label="クラスで絞り込み"
-              onChange={(e) => setClassFilter(e.target.value as typeof classFilter)}
-            >
-              <option value="All">クラス: 全て</option>
-              {NIKKE_CLASSES.map((c) => (
-                <option key={c} value={c}>
-                  {CLASS_LABEL[c]}
-                </option>
-              ))}
-            </select>
+            {BADGE_KINDS.map((kind) => (
+              <BadgeFilter
+                key={kind.key}
+                kind={kind}
+                value={filters[kind.key]}
+                onChange={(value) => setFilters((f) => ({ ...f, [kind.key]: value }))}
+              />
+            ))}
             <label className="char-tray-checkbox-label">
               <input type="checkbox" checked={onlySupported} onChange={(e) => setOnlySupported(e.target.checked)} />
               <span>完全対応のみ</span>

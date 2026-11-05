@@ -782,27 +782,47 @@ header h1 {
   padding: 4px 0;
 }
 
+/* 属性の色（バッジの図柄の色。plan/design-modern-ui.md 2.5 節）。キャラの絵の枠とスロットのカードの縁が使う */
+[data-element='Fire'] {
+  --el: #ff0000;
+}
+[data-element='Water'] {
+  --el: #007cff;
+}
+[data-element='Wind'] {
+  --el: #00ff00;
+}
+[data-element='Iron'] {
+  --el: #feba02;
+}
+[data-element='Electronic'] {
+  --el: #ff02de;
+}
+
 /* CharacterVisual (カード/アセット/フォールバック) */
 .char-visual {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   max-width: 120px;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--char-elem-color) 45%, var(--app-bg)), var(--app-bg));
-  border: 2px solid var(--char-elem-color);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--el) 45%, var(--app-bg)), var(--app-bg));
+  border: 2px solid var(--el);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  --badge-w: 20px;
 }
 .char-visual-compact {
   max-width: 72px;
+  --badge-w: 14px;
 }
 /* スロットのカードの縦長の絵（portraits）。顔が入るように上寄せで切り取る */
 .char-visual-portrait {
   max-width: none;
   aspect-ratio: 3 / 4;
   max-height: 240px;
+  --badge-w: 24px;
 }
 .char-visual-portrait .char-visual-img {
   object-position: center 12%;
@@ -821,42 +841,28 @@ header h1 {
   inset: 0;
 }
 .char-visual-fallback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
+  /* 左のバッジの列に名前が重ならないように空ける */
+  padding: 4px 4px 4px calc(var(--badge-w) + 4px);
   text-align: center;
   z-index: 1;
-}
-.char-fallback-elem {
-  font-size: 0.7rem;
-  font-weight: bold;
-  opacity: 0.9;
-}
-.char-fallback-name {
   font-size: 0.8rem;
   font-weight: bold;
   line-height: 1.2;
 }
+/* 属性・バースト段階・クラス・武器種のバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w */
 .char-visual-badges {
   position: absolute;
   top: 2px;
   left: 2px;
   display: flex;
-  gap: 2px;
+  flex-direction: column;
+  gap: 1px;
   z-index: 2;
 }
 .char-badge {
-  font-size: 0.65rem;
-  font-weight: bold;
-  padding: 1px 4px;
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  border-radius: 2px;
-}
-.char-badge-burst {
-  background: color-mix(in srgb, var(--char-elem-color) 80%, black);
+  display: block;
+  width: var(--badge-w);
+  aspect-ratio: 130 / 150;
 }
 .char-unsupported-tag {
   position: absolute;
@@ -924,9 +930,27 @@ header h1 {
   align-items: center;
   gap: 6px;
 }
-.char-tray-filter-group select {
-  padding: 3px 6px;
-  font-size: 0.85rem;
+/* バッジの絞り込み。どれかを押している組では、押していないバッジを薄くする */
+.char-tray-badge-filter {
+  --badge-w: 24px;
+  display: flex;
+  gap: 2px;
+  padding-right: 6px;
+  border-right: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
+}
+.char-tray-badge-button {
+  padding: 1px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+.char-tray-badge-button[aria-pressed='true'] {
+  border-color: var(--app-fg);
+}
+.char-tray-badge-filter:has([aria-pressed='true']) .char-tray-badge-button[aria-pressed='false'] {
+  opacity: 0.35;
 }
 .char-tray-checkbox-label {
   display: flex;

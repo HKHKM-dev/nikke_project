@@ -1,8 +1,11 @@
 // スキルと育成の表示用ラベル（React 非依存）
-import type { BuildEffectSource, GearPart, NikkeClass, SkillSlot } from '@nikke/core';
+import type { BuildEffectSource, BurstStep, GearPart, NikkeClass, SkillSlot } from '@nikke/core';
 
 /** クラスの表示名（2 段目の段 9: 「〈クラス〉型の味方」の絞り込みにも使う） */
 export const CLASS_LABEL: Record<NikkeClass, string> = { Attacker: '火力型', Defender: '防御型', Supporter: '支援型' };
+
+/** バースト段階の表示名 */
+export const BURST_STEP_LABEL: Record<BurstStep, string> = { Step1: 'Ⅰ', Step2: 'Ⅱ', Step3: 'Ⅲ', AllStep: 'ALL' };
 
 export const SKILL_SLOT_LABEL: Record<SkillSlot, string> = {
   skill1: 'スキル 1',
