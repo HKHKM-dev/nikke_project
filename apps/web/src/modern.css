@@ -21,23 +21,6 @@
   background-attachment: fixed;
 }
 
-/* 属性の色（スロットのカードの縁） */
-:root[data-app-ui='modern'] [data-element='Fire'] {
-  --el: #ff5b3d;
-}
-:root[data-app-ui='modern'] [data-element='Water'] {
-  --el: #3399ff;
-}
-:root[data-app-ui='modern'] [data-element='Wind'] {
-  --el: #2fd08f;
-}
-:root[data-app-ui='modern'] [data-element='Electronic'] {
-  --el: #b46bff;
-}
-:root[data-app-ui='modern'] [data-element='Iron'] {
-  --el: #f2a830;
-}
-
 /* 見出し・パネル */
 :root[data-app-ui='modern'] .app-header h1 {
   font-size: 1.5rem;
@@ -115,7 +98,7 @@
   color: var(--m-muted);
 }
 
-/* スロットのカード: 角丸・影・属性の色の上の縁 */
+/* スロットのカード: 角丸・影・属性の色の上の縁（--el は styles.css の [data-element]） */
 :root[data-app-ui='modern'] .modern-slot-card {
   background: var(--m-surface);
   border-radius: 12px;
@@ -177,11 +160,7 @@
 :root[data-app-ui='modern'] .char-visual-portrait {
   width: 100%;
   border-width: 1px;
-  border-color: color-mix(in srgb, var(--char-elem-color) 60%, var(--app-border));
-}
-:root[data-app-ui='modern'] .char-badge {
-  border-radius: 999px;
-  padding: 1px 6px;
+  border-color: color-mix(in srgb, var(--el) 60%, var(--app-border));
 }
 
 /* ニケ一覧（トレイ） */

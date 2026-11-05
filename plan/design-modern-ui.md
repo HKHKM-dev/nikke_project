@@ -1,6 +1,6 @@
 # 設計書: モダンUIとUIモード切り替えの段階的導入
 
-- 状態: **実装済み（Step 1〜5。Step 5 は 2.4 節の統合で行った）**
+- 状態: **実装済み（Step 1〜5 と 2.5 節のバッジ。Step 5 は 2.4 節の統合で行った）**
 - 関連: [design-unify-sim-calc.md](design-unify-sim-calc.md)
 - 作成日: 2026-11-03
 
@@ -64,6 +64,22 @@
 - ゲーム風の見た目（Step 5）: `uiMode.ts` がモダンのときにルート要素へ `data-app-ui="modern"` を付け、`modern.css` が `styles.css` の素の見た目の上に色と形を重ねる（暗い背景・角丸・影・属性の色の上の縁・合計ダメージの強調）。色は `light-dark()` でテーマの切り替えに従う。クラシックには効かない。
 - スロットの縦長の絵: CDN の mi（256×512）を `npm run fetch-images` が `packages/core/data/characters/portraits/{resourceId}.webp` に置き（同梱）、`CharacterVisual` の `size="portrait"` がスロットのカードで出す。アーティファクトからは `images` と同じく除く。
 
+### 2.5 属性・バースト段階・クラス・武器のバッジ
+
+- 目的: モダン UI の文字の札（バースト段階のⅠ〜Ⅲ・属性名・武器種の略号）と色の札を、旧プロジェクト（old_nikkecalc）のバッジの画像に置き換える。
+- 出どころ: 旧プロジェクトの `resources/バッジ`（Inkscape で描いたベクター）。ローカルには 40 個あり、GitHub の版（34 個）との差は、`misc_collection` が `collection` に改名されたことと、`collection*` の 6 個（R・SR・SSR の色違いと、中が明るいものと暗いもの）が増えたこと。`collection*` と `misc_*` はこの変更では使わない。
+- 調べたこと（40 個すべて）:
+  - 埋め込みの画像（`<image>`）とグラデーションは無い。`collection*`・企業の一部・武器の一部はマスク、`collectionSSR*` はフィルタを使う。
+  - どれも 130×150 の六角形で、縦横の比が同じ（属性の 5 個だけ `viewBox` の単位が mm だが比は同じ）。
+  - 六角形の中が `#1a1a1a` で縁と外側の黒い線を持つので、ライト（#ffffff）とダーク（#0b0f17）のどちらでも見え方が変わらない。20×23 の小ささでも図柄を見分けられる。
+  - データの値との対応: `element`（5）・`burstStep`（4。`AllStep` は `burst_4special`）・`class`（3）・`weaponType`（6）・`rarity`（3）・`corporation`（5）は、どれもバッジと 1 対 1 に対応する。`bursttrigger_*`（AUTO/MANUAL/NONE）に対応するキャラのデータの項目は無い。
+- 小さくする: `svgo@3.3.2 --multipass` の `preset-default` のうち `convertTransform` を切る。切らないと `corp_3tetra` の反転を含む `matrix(-1,0,-0.447,0.894)` が 180° 回った別の変換に書き換わり、図柄が崩れる。切った設定で、元と小さくした後を白・#0b0f17・灰の背景で 260×300 に描いて画素を比べ、見て分かる差が無い（残る差は縁のアンチエイリアス）ことを確かめた。合計 165KB が 59KB、1 個の最大は 3.1KB（`rarity_1SSR`）。
+- 置き場所と読み方: 使う 18 個（属性 5・バースト段階 4・クラス 3・武器 6）だけを `apps/web/src/assets/badges/` に置き、`<img>` で読む。多色で背景を自前で持つので `currentColor` や CSS の `mask` は要らず、`<img>` なら `id` の重なりも起きない。どれも 4KB 未満なので Vite が束の中に埋め込み、アーティファクト（1 版 511 ファイルまで）のファイル数を使わない。レア度・企業・`misc_*`・`collection*` は、出す場所ができたときに同じ手順で足す。
+- 対応表: キャラの項目（`element`・`burstStep`・`class`・`weaponType`）ごとに、値からバッジとラベルを引く表を `apps/web/src/components/modern/badges.ts` の `BADGE_KINDS` 1 つに置き、絵とトレイの絞り込みが共有する。ラベルは既存の表（`ELEMENT_LABEL`・`WEAPON_LABEL`・`CLASS_LABEL`・`BURST_STEP_LABEL`）を引く。置いたファイルをどれも使うことと、属性の色がバッジの図柄の色であることは `badges.test.ts` が見る。
+- 置き換えた先: `CharacterVisual.tsx` の札（バースト段階・武器種の文字）を、属性・バースト段階・クラス・武器種の 4 つのバッジを左上に縦に並べたものにした。画像が読めないときの札は名前だけにした（属性はバッジで分かる）。`CharacterTray.tsx` の絞り込みの select 4 つを、バッジのボタン（押すと絞り、もう一度押すと解除）にした。`ModernSlotCard.tsx` の縁の色は下の決定 1 の色。クラシックの画面は変えない。
+- 決定 1（属性の色。2026-11-06、オーナー）: 属性の色の定義が 3 つあり、どれも違った（バッジ、`CharacterVisual.tsx` の `ELEMENT_COLOR`（札と絵の枠）、`modern.css` の `--el`（スロットのカードの縁））。バッジの図柄の色（`#ff0000`・`#007cff`・`#00ff00`・`#feba02`・`#ff02de`）にそろえ、定義を `styles.css` の `[data-element]`（CSS 変数 `--el`）1 か所にした。キャラの絵とスロットのカードが `data-element` を持つ。
+- 決定 2（公開。2026-11-06、オーナー）: 企業のロゴや、クラス・武器・属性の図柄はゲームのアイコンと同じに見えるが、公開リポジトリに入れてよい。キャラ画像と同じく README の「ライセンス」で本リポジトリのライセンスの対象外とする。
+
 ## 経過
 
 - 2026-11-03: オーナーとの対話により設計方針を承認。ブランチ `antigrav/modern-ui-foundation` にて Step 1 着手。PR #945 にて main にマージ完了。
@@ -71,3 +87,4 @@
 - 2026-11-04: ブランチ `antigrav/modern-ui-dnd` にて Step 4（@dnd-kit/core によるドラッグ＆ドロップ）を着手。
 - 2026-11-04: キャラ画像の同梱（1 節 3）と、タッチの長押しでのドラッグ（2.3 節）を実装した。
 - 2026-11-04: 2 つのセッションの作業を統合し、Step 5 を含めて実装した（2.4 節）。
+- 2026-11-06: 属性・バースト段階・クラス・武器の表示を旧プロジェクトのバッジに置き換え、属性の色をバッジの色にそろえた（2.5 節）。
