@@ -24,7 +24,7 @@
 // plan/design-workflow-simplification.md 2 節）。JSON は置く前に書くので、backup の無い JSON は置けたと確かめていない。
 // クラウド環境では、元ファイルを drive:<record の中の相対パス> で指す（plan/design-cloud-environment.md 6.3 節）。サービスアカウントで
 // record から取り寄せ（Drive の sha256 と突き合わせる）、受け口の move で種別フォルダへ規約名で移す（移せなければコピーと元のごみ箱への
-// 移動）。PC を付けると Drive for desktop が H:/record の写しを消し、bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
+// 移動）。PC を付けると Drive for desktop が F:/record の写しを消し、bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
 // 環境変数: NIKKE_DRIVE_SA_KEY・NIKKE_DRIVE_RECORD_FOLDER_ID・NIKKE_DRIVE_FOLDER_ID（drive.ts・fetch.ts）と受け口（gateway.ts）。
 // 取り込んだ後は、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import { spawnSync } from 'node:child_process';
@@ -392,7 +392,7 @@ if (drive !== null) {
   serverCopied = copyFromRecord(source);
 }
 
-/** 取り込み元が H:/record の下で、その写しが Drive の record に同じ大きさであれば、Drive の中で種別フォルダへ規約名でコピーする */
+/** 取り込み元が F:/record の下で、その写しが Drive の record に同じ大きさであれば、Drive の中で種別フォルダへ規約名でコピーする */
 function copyFromRecord(src: string): boolean {
   const root = recordDir();
   const folderId = process.env['NIKKE_DRIVE_RECORD_FOLDER_ID'];

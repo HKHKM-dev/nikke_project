@@ -21,14 +21,14 @@ export function legacyDir(): string {
 }
 
 /**
- * 撮った録画の取り込み元（NIKKE_RECORD_DIR。plan/captures/storage.md「置き場所」）。無ければ Windows（オーナーの手元）は H:/record、
+ * 撮った録画の取り込み元（NIKKE_RECORD_DIR。plan/captures/storage.md「置き場所」）。無ければ Windows（オーナーの手元）は F:/record、
  * それ以外（クラウド環境）は null。Drive for desktop が「マイ コンピュータ/record」として同期している
  * （plan/design-cloud-environment.md 2.9 節）。capturesDir() と Drive の同期は tools/drive/sync.ts
  */
 export function recordDir(): string | null {
   const fromEnv = process.env['NIKKE_RECORD_DIR'];
   if (fromEnv) return fromEnv;
-  return process.platform === 'win32' ? 'H:/record' : null;
+  return process.platform === 'win32' ? 'F:/record' : null;
 }
 
 /** 台帳の L- の録画の path の頭（オーナーの手元の置き場所。この下が legacyDir() と Drive の old_nikkecalc の下と同じ構成） */

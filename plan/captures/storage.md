@@ -7,7 +7,7 @@
 録画は容量が読めないので D: のリポジトリには置かず、**E:（2.8TB HDD）に集約する**。証拠フレームも E: に置き、公開しない。リポジトリ側に残すのは台帳と手引きだけ。
 
 ```
-H:/record/                      取り込み元: 撮った録画・スクショの保存先（元ファイル名のまま）
+F:/record/                      取り込み元: 撮った録画・スクショの保存先（元ファイル名のまま）
 E:/old_nikkecalc/               取り込み元: 未分類の生録画（旧プロジェクトのアーカイブ。元ファイル名のまま）
   動画/                         269 本・約 110GB
   命中/ リザルト/ …              過去の検証素材
@@ -31,7 +31,7 @@ E:/nikke_project_captures/      このプロジェクトが採用した録画（
 
 ### 運用
 
-取り込み元は `H:/record/` と `E:/old_nikkecalc/` の 2 つ。撮った録画とスクショはどちらかに置かれる。
+取り込み元は `F:/record/` と `E:/old_nikkecalc/` の 2 つ。撮った録画とスクショはどちらかに置かれる。
 
 1. 撮る → 取り込み元に保存される。読んでいないものはそのまま置いておく。
 2. 読み込んだ（解析に使った）録画とスクショは、検証に採用したかどうかにかかわらず `E:/nikke_project_captures/<種別>/` へ**移し**、規約名を付ける。取り込み元には残さない（同じ録画が 2 箇所にあって食い違う状態を作らない）。
@@ -69,8 +69,8 @@ E:/nikke_project_captures/      このプロジェクトが採用した録画（
 - `captures` と `private` の根には、両側に目印 `SYNC_MARKER_DO_NOT_DELETE.txt` がある（`--check-access` が見る。消すと同期が止まる）。無いと言われたら、ドライブがつながっているかを確かめてから、その対を `--resync --dry-run` で見て `--resync`（目印を置き直す）。
 - `Safety abort: all files were changed` で止まったら、片側で全部のファイルが変わっている。その側の中身を見てから直す（起きた例は [../design-cloud-environment-log.md](../design-cloud-environment-log.md) 12.2 節）。
 - Drive に同名の複製ができたら `rclone dedupe` で直す。
-- Drive for desktop の `I:` は見るためだけに使い、ここから書かない（2 つの道具で同じフォルダに書かない）。
-- 取り込み元の `H:/record/` は、Drive for desktop が「マイ コンピュータ/record」として同期している（rclone では扱わない）。
+- Drive for desktop の `G:` は見るためだけに使い、ここから書かない（2 つの道具で同じフォルダに書かない）。
+- 取り込み元の `F:/record/` は、Drive for desktop が「マイ コンピュータ/record」として同期している（rclone では扱わない）。
 - `intake.ts` で Drive に置いた録画は、`intake.ts` が録画の JSON（`records/recordings/<録画 id>.json`）に `backup`（置いた日時・経路・一致したハッシュ）を書く。`backup` の無い録画は、`intake.ts` が置けたと確かめていない。手で同期したとき・番号の振り直し・失敗と直しのような、ふだんと違う出来事は [backup-log.md](backup-log.md) に段落で足す（古い記録は [backup-log-old.md](backup-log-old.md)・[backup-log-old2.md](backup-log-old2.md)。凍結）。
 
 ### 準備（オーナーが 1 回だけ）
@@ -85,16 +85,16 @@ E:/nikke_project_captures/      このプロジェクトが採用した録画（
 
 ### 旧プロジェクトのアーカイブ
 
-`E:/old_nikkecalc/` は、今までどおり手の robocopy で Google Drive に写す（Drive 上は同じ名前のフォルダ）。Google Drive for desktop がストリーミングモードで 2 アカウント分マウントされている。**使うのはメインアカウント側の `I:`**（別アカウントの `J:` は使わない）。
+`E:/old_nikkecalc/` は、今までどおり手の robocopy で Google Drive に写す（Drive 上は同じ名前のフォルダ）。Google Drive for desktop がストリーミングモードでメインのアカウントのドライブを `G:` にマウントしている。**使うのは `G:`**（ほかのアカウントのドライブは使わない）。
 
 ```bash
-robocopy "E:/old_nikkecalc" "I:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
+robocopy "E:/old_nikkecalc" "G:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
 ```
 
 - `/E` はサブディレクトリを含めて差分コピーする。コピー元で消したファイルはコピー先に残る（`/MIR` のようにミスが伝播しない）。リネームすると**コピー先に旧名が残る**ので、必要なら手で消す。
 - **Git Bash から実行しない。** `/E` がパス `E:/` に変換されて「無効なパラメーター」になる。PowerShell か cmd から実行する（パスも `\` 区切りで渡す）。
 - robocopy の終了コードは 0〜7 が正常（1 = コピーした、0 = 差分なし）。8 以上が失敗。
-- 写したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える（`node tools/captures/probe.ts "I:/マイドライブ/old_nikkecalc"`）。見るのは `.mp4` だけなので、ほかは PowerShell の `Get-FileHash`（既定で SHA256）で突き合わせる。
+- 写したら sha256 で中身を突き合わせる。`probe.ts` はどのディレクトリにも使える（`node tools/captures/probe.ts "G:/マイドライブ/old_nikkecalc"`）。見るのは `.mp4` だけなので、ほかは PowerShell の `Get-FileHash`（既定で SHA256）で突き合わせる。
 
 ### 冗長性の現状と限界
 
@@ -102,9 +102,9 @@ robocopy "E:/old_nikkecalc" "I:/マイドライブ/old_nikkecalc" /E /R:1 /W:1
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 台帳               | Git → GitHub（`HKHKM-dev/nikke_project`）                                                                                                                                          |
 | 録画・証拠フレーム | E: の実体 + Google Drive（rclone の双方向同期。消したものは Drive のごみ箱と E: の退避フォルダに残る）。**別拠点にコピーがある**                                                   |
-| 取り込み元         | `H:/record/` にあるのは未読のものだけ（読んだものは移す）。Drive for desktop が「マイ コンピュータ/record」として同期している。`E:/old_nikkecalc/` は Google Drive（`I:`）にもある |
+| 取り込み元         | `F:/record/` にあるのは未読のものだけ（読んだものは移す）。Drive for desktop が「マイ コンピュータ/record」として同期している。`E:/old_nikkecalc/` は Google Drive（`G:`）にもある |
 
-**注意: `I:` のローカル表示の空きは Drive 本体の容量ではなく、Google Drive デスクトップアプリのローカルキャッシュ置き場の空きに連動する。** 表示が少なくなってきたら、まずキャッシュドライブの設定を疑うこと。
+**注意: `G:` のローカル表示の空きは Drive 本体の容量ではなく、Google Drive デスクトップアプリのローカルキャッシュ置き場の空きに連動する。** 表示が少なくなってきたら、まずキャッシュドライブの設定を疑うこと。
 
 ## クラウド環境での取り寄せ
 
