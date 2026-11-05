@@ -603,7 +603,7 @@ describe('編成（自動の条件）', () => {
       }).slots[0]!.notes.map((n) => n.code);
     expect(codes(AR)).toEqual(['hit-rate', 'auto-condition', 'landing-aim-wait']);
     expect(codes(RL)).not.toContain('hit-rate');
-    expect(codes(SG)).toEqual(['hit-rate', 'auto-condition']);
+    expect(codes(SG)).toEqual(['hit-rate', 'auto-condition', 'landing-aim-wait']);
     expect(codes(RL)).toContain('landing-first-shot-miss');
     // SR・RL の弾丸命中率は 1（C-0168）なので、未測定の注記は出ない
     expect(codes(RL)).not.toContain('auto-condition-unmeasured');
@@ -655,10 +655,10 @@ describe('編成（自動の条件）', () => {
     expect(codes(RL_HOMING)).toContain('landing-first-shot-excluded');
     expect(codes(rl('ProjectileDirect', 100))).toContain('landing-first-shot-excluded');
     expect(codes(slowRl)).not.toContain('landing-first-shot-excluded');
-    // C-0291: AR・SMG の撃ち始めの待ちは未実装の注記。MG・SG・RL には出さない
+    // C-0291・C-0948: AR・SMG・SG の撃ち始めの待ちは未実装の注記。MG・RL には出さない
     expect(codes(SMG)).toContain('landing-aim-wait');
     expect(codes(MG)).not.toContain('landing-aim-wait');
-    expect(codes(SG)).not.toContain('landing-aim-wait');
+    expect(codes(SG)).toContain('landing-aim-wait');
     expect(codes(scarlet)).not.toContain('landing-aim-wait');
   });
 
