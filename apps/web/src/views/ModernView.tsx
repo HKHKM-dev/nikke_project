@@ -229,8 +229,7 @@ export function ModernView({
           <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
         </ErrorBoundary>
 
-        {/* 離したときのアニメーションは付けない: 付けると、ドラッグ元の要素まで一覧がスクロールされることがある */}
-        <DragOverlay dropAnimation={null}>
+        <DragOverlay>
           {draggedCharacter && draggedPortrait ? (
             <div
               className="slot-drag-overlay"
