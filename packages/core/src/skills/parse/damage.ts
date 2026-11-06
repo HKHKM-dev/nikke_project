@@ -37,6 +37,9 @@ export function parseBurstDamageEffect(v: Record<string, Json>, path: string): B
   return effect;
 }
 
+/** gaugePerHit の数（射手の何ヒットぶんか。2 以上の整数） */
+const isGaugeScale = (x: Json): x is number => Number.isInteger(x) && (x as number) >= 2;
+
 export function parseDamageEffect(v: Record<string, Json>, path: string): DamageEffect {
   const trigger = parseDamageTrigger(v.trigger, `${path}.trigger`);
   // Stage 11 モダニア: 射撃ごと（every = 1）の倍率ダメージも書ける。1 トリガーの値に畳み込む（skills/burstDamage.ts の resolvePerShotDamage）
@@ -49,7 +52,7 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
       if (!['kind', 'trigger', 'ref', 'damageType', 'gaugePerHit', 'assumes', 'claims', 'reads'].includes(key))
         fail(`${path}.${key}`, 'not allowed with a summon trigger ({ summon })');
     if (v.gaugePerHit !== undefined) {
-      if (v.gaugePerHit !== true && !(Number.isInteger(v.gaugePerHit) && (v.gaugePerHit as number) >= 2))
+      if (v.gaugePerHit !== true && !isGaugeScale(v.gaugePerHit))
         fail(`${path}.gaugePerHit`, `expected true or an integer of 2 or more, got ${JSON.stringify(v.gaugePerHit)}`);
       effect.gaugePerHit = v.gaugePerHit as true | number;
     }
@@ -260,7 +263,7 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   if (v.gaugePerHit !== undefined) {
     // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の b）: 射撃の回数のきっかけなら、射手の何ヒットぶんかの数（2 以上の整数）も
     // （居合は 1 回で射手の 2 ヒットぶん。V-0675）
-    const scaled = isShotCountTrigger(trigger) && Number.isInteger(v.gaugePerHit) && (v.gaugePerHit as number) >= 2;
+    const scaled = isShotCountTrigger(trigger) && isGaugeScale(v.gaugePerHit);
     if (v.gaugePerHit !== true && !scaled)
       fail(
         `${path}.gaugePerHit`,

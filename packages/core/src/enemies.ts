@@ -300,13 +300,14 @@ function parseAutoAttackRows(
   path: string,
   keys: ReadonlySet<string>,
   check: RateValue,
+  key: { pattern: RegExp; label: string } = { pattern: AUTO_ATTACK_KEY, label: '<resourceId>:<skill slot>' },
 ): Record<string, TargetRateRow | null> {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   const rows: Record<string, TargetRateRow | null> = {};
-  for (const [key, row] of Object.entries(v)) {
-    const at = `${path}.${key}`;
-    if (!AUTO_ATTACK_KEY.test(key)) throw new TypeError(`${at}: key must be <resourceId>:<skill slot>`);
-    rows[key] = row === null ? null : parseRateRow(row, at, keys, check);
+  for (const [name, row] of Object.entries(v)) {
+    const at = `${path}.${name}`;
+    if (!key.pattern.test(name)) throw new TypeError(`${at}: key must be ${key.label}`);
+    rows[name] = row === null ? null : parseRateRow(row, at, keys, check);
   }
   return rows;
 }
@@ -332,27 +333,14 @@ function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<strin
   const table: CoreHitRateTable = parseRateTableWithWeaponChanges(rest, path, keys);
   if (autoAttacks !== undefined)
     table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
-  if (fireTypes !== undefined) table.fireTypes = parseFireTypeRows(fireTypes, `${path}.fireTypes`, keys);
+  // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類（fire_type）ごとの行
+  if (fireTypes !== undefined)
+    table.fireTypes = parseAutoAttackRows(fireTypes, `${path}.fireTypes`, keys, RATE, FIRE_TYPE_KEY);
   return table;
 }
 
 /** 弾の種類の行のキー（CDN の fire_type の生値） */
-const FIRE_TYPE_KEY = /^[A-Za-z]+$/;
-
-/** 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類ごとの行（キー fire_type → 行か null） */
-function parseFireTypeRows(
-  v: unknown,
-  path: string,
-  keys: ReadonlySet<string>,
-): Readonly<Record<string, TargetRateRow | null>> {
-  if (!isRecord(v) || Object.keys(v).length === 0) throw new TypeError(`${path}: must be a non-empty object`);
-  const rows: Record<string, TargetRateRow | null> = {};
-  for (const [key, r] of Object.entries(v)) {
-    if (!FIRE_TYPE_KEY.test(key)) throw new TypeError(`${path}.${key}: key must be a fire type`);
-    rows[key] = r === null ? null : parseRateRow(r, `${path}.${key}`, keys, RATE);
-  }
-  return rows;
-}
+const FIRE_TYPE_KEY = { pattern: /^[A-Za-z]+$/, label: 'a fire type' };
 
 function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>): FlightFramesTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);

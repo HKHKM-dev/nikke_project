@@ -31,7 +31,6 @@ import type { ShotParams } from '../types.ts';
 import {
   DEFAULT_WEAPON_MODEL,
   MAX_RPM,
-  aimLongerFrames,
   hasSpinUp,
   isChargeWeapon,
   windowEndShorterFrames,
@@ -613,9 +612,8 @@ export function windowEndFirstShotFrames(
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  return isChargeWeapon(shot)
-    ? Math.max(0, firstShotFrames(shot, model, params) - windowEndShorterFrames(shot, model))
-    : model.aimInFrames + aimLongerFrames(shot, model);
+  // チャージの無い武器は windowEndShorterFrames が 0 で、firstShotFrames は構え（C-0114。InstantBox は長い。V-0675）
+  return Math.max(0, firstShotFrames(shot, model, params) - windowEndShorterFrames(shot, model));
 }
 
 export function unhideShooter(
@@ -656,14 +654,12 @@ export function reaimShooter(
   // チャージは狙えない間には進まないので、込め終えて 1 発目を待っていた枠も明けからチャージする（入力が UP のチャージ武器は、
   // リロードの完了が窓の終わりに近く、残りの待ちのほうが長ければそちら。C-0537。押下チャージ型は確かめていない）
   delete state.chargeElapsed;
-  if (isChargeWeapon(shot)) {
-    // 入力が UP の RL は、明けの構えが戦闘開始より 1f 短い（C-0229。V-0143）
-    const first = windowEndFirstShotFrames(shot, model, params);
-    state.wait = state.phase === 'priming' && shot.inputType !== 'DOWN_Charge' ? Math.max(state.wait, first) : first;
-  } else {
-    const aim = model.aimInFrames + aimLongerFrames(shot, model);
-    state.wait = state.phase === 'ready' ? aim : Math.max(state.wait, aim);
-  }
+  // 入力が UP の RL は、明けの構えが戦闘開始より 1f 短い（C-0229。V-0143）。チャージの無い武器は構え（C-0114）
+  const first = windowEndFirstShotFrames(shot, model, params);
+  const keep = isChargeWeapon(shot)
+    ? state.phase === 'priming' && shot.inputType !== 'DOWN_Charge'
+    : state.phase !== 'ready';
+  state.wait = keep ? Math.max(state.wait, first) : first;
 }
 
 /** 最初の frames フレームで発射したフレームの列（テスト・CLI 用） */

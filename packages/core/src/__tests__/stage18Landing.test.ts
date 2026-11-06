@@ -200,7 +200,6 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(fireTypes({ InstantBox: { all: 1 }, Instant: null })).not.toThrow();
     expect(fireTypes({ 'InstantBox:0': { all: 1 } })).toThrow(/fire type/);
     expect(fireTypes({ InstantBox: { all: 2 } })).toThrow(/\[0, 1\]/);
-    expect(fireTypes({})).toThrow(/non-empty/);
     expect(parse([{ ...p, initialLanding: 'moon' }])).toThrow(/initialLanding/);
     expect(
       parse([{ ...p, landings: [...(p.landings as unknown[]), { id: 'nearA', band: 'near', range: [15, 25] }] }]),

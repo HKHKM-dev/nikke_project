@@ -122,6 +122,9 @@ function projectileRowKeyOf(by: TargetRateByProjectile['byProjectile'], characte
   return withRange !== null && withRange in by ? withRange : key;
 }
 
+/** 行を引く表（コア命中率の表だけ fire_type の行 fireTypes を持つ） */
+type RateTableLookup = TargetRateTable & Pick<CoreHitRateTable, 'fireTypes'>;
+
 function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is TargetRateByProjectile {
   return 'byProjectile' in cell;
 }
@@ -130,10 +133,7 @@ function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is T
  * キャラの行（武器種の行。弾の種類ごとの行なら、そのキャラの弾の種類の行）。null = 未測定。
  * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: コア命中率の表に fire_type の行（fireTypes）があれば、それを先に引く
  */
-export function rateRowOf(
-  table: TargetRateTable & Pick<CoreHitRateTable, 'fireTypes'>,
-  character: CharacterData,
-): TargetRateRow | null {
+export function rateRowOf(table: RateTableLookup, character: CharacterData): TargetRateRow | null {
   const byFireType = table.fireTypes?.[character.shot.fireType];
   if (byFireType !== undefined) return byFireType;
   const cell = table[character.weaponType];
@@ -160,11 +160,7 @@ function rateAtLanding(row: TargetRateRow, landing: Pick<LandingPoint, 'id' | 'b
 }
 
 /** 表の値（着地点の id → 帯 → all の順）。null = 未測定 */
-export function targetRateOf(
-  table: TargetRateTable & Pick<CoreHitRateTable, 'fireTypes'>,
-  character: CharacterData,
-  landing: LandingPoint,
-): number | null {
+export function targetRateOf(table: RateTableLookup, character: CharacterData, landing: LandingPoint): number | null {
   const row = rateRowOf(table, character);
   if (row === null) return null;
   return rateAtLanding(row, landing) ?? null;
