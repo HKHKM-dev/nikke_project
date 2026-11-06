@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
-import { BADGE_KINDS, type BadgeKey, type BadgeKind } from './badges.ts';
+import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 
 type Props = {
@@ -12,41 +12,37 @@ type Props = {
   activeSlotIndex: number;
 };
 
-/** 1 種類のバッジを並べた絞り込み。押すとその値で絞り、押されたものをもう一度押すと解除する */
+/** 1 種類のバッジを並べた絞り込み（押したときの切り替えは toggleBadgeFilter） */
 function BadgeFilter({
   kind,
   value,
-  onChange,
+  onToggle,
 }: {
   kind: BadgeKind;
   value: string | undefined;
-  onChange: (value: string | undefined) => void;
+  onToggle: (value: string) => void;
 }) {
   return (
     <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
-      {Object.entries(kind.badges).map(([v, { src, label }]) => {
-        const pressed = value === v;
-        return (
-          <button
-            key={v}
-            type="button"
-            className="char-tray-badge-button"
-            aria-pressed={pressed}
-            title={label}
-            onClick={() => onChange(pressed ? undefined : v)}
-          >
-            <img className="char-badge" src={src} alt={label} draggable={false} />
-          </button>
-        );
-      })}
+      {Object.entries(kind.badges).map(([v, { src, label }]) => (
+        <button
+          key={v}
+          type="button"
+          className="char-tray-badge-button"
+          aria-pressed={value === v}
+          title={label}
+          onClick={() => onToggle(v)}
+        >
+          <img className="char-badge" src={src} alt={label} draggable={false} />
+        </button>
+      ))}
     </div>
   );
 }
 
 export function CharacterTray({ index, takenIds, fullySupported, onSelectCharacter, activeSlotIndex }: Props) {
   const [query, setQuery] = useState('');
-  // バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない）
-  const [filters, setFilters] = useState<Partial<Record<BadgeKey, string>>>({});
+  const [filters, setFilters] = useState<BadgeFilters>({});
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({ id: 'tray-drop', data: { type: 'tray' } });
@@ -57,7 +53,7 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
     const q = query.trim().toLowerCase();
     return index
       .filter((char) => {
-        if (BADGE_KINDS.some(({ key }) => filters[key] !== undefined && char[key] !== filters[key])) return false;
+        if (!matchesBadgeFilters(char, filters)) return false;
         if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
         if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
         return true;
@@ -99,7 +95,7 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
                 key={kind.key}
                 kind={kind}
                 value={filters[kind.key]}
-                onChange={(value) => setFilters((f) => ({ ...f, [kind.key]: value }))}
+                onToggle={(value) => setFilters((f) => toggleBadgeFilter(f, kind.key, value))}
               />
             ))}
             <label className="char-tray-checkbox-label">
