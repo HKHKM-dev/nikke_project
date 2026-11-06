@@ -194,6 +194,12 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(byProjectile({ 'ProjectileDirect:400': { moon: 1 } })).toThrow(/not a landing/);
     expect(byProjectile({})).toThrow(/non-empty/);
     expect(byProjectile({ 'ProjectileDirect:400': { all: 1 } }, { all: 1 })).toThrow(/only key/);
+    // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類（fire_type）ごとの行
+    const fireTypes = (rows: unknown) =>
+      parse([{ ...p, coreHitRate: { ...(p.coreHitRate as object), fireTypes: rows } }]);
+    expect(fireTypes({ InstantBox: { all: 1 }, Instant: null })).not.toThrow();
+    expect(fireTypes({ 'InstantBox:0': { all: 1 } })).toThrow(/fire type/);
+    expect(fireTypes({ InstantBox: { all: 2 } })).toThrow(/\[0, 1\]/);
     expect(parse([{ ...p, initialLanding: 'moon' }])).toThrow(/initialLanding/);
     expect(
       parse([{ ...p, landings: [...(p.landings as unknown[]), { id: 'nearA', band: 'near', range: [15, 25] }] }]),
@@ -210,6 +216,16 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
 });
 
 describe('敵の値から的の条件の表を引く（18-C2）', () => {
+  it('reads the fire type row before the weapon type row (InstantBox. V-0675)', () => {
+    // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: InstantBox の AR はどの区間もコア 1、ほかの AR は武器種の行
+    const box = weapon('AR', { min: 25, max: 45 }, 1, { fireType: 'InstantBox' });
+    expect(rateRowOf(profile.coreHitRate, box)).toEqual({ all: 1 });
+    for (const l of profile.landings) expect(targetRateOf(profile.coreHitRate, box, l)).toBe(1);
+    expect(rateRowOf(profile.coreHitRate, AR)).toBe(profile.coreHitRate.AR);
+    // 弾丸命中率の表には弾の種類の行が無いので、武器種の行のまま
+    expect(rateRowOf(profile.bulletHitRate, box)).toBe(profile.bulletHitRate.AR);
+  });
+
   it('uses the preset table, and the range table for the shooting-range target without an element', () => {
     expect(targetProfileForEnemy(master, { defence: 100, element: 'Fire', hasCore: true })).toBe(profile);
     expect(targetProfileForEnemy(master, { defence: 100, element: null, hasCore: true })).toBe(profile);

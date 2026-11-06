@@ -151,8 +151,10 @@ describe('紅蓮：神殺（472）', () => {
 
   it('changes the weapon for 10 s on each burst', () => {
     expect(changes.length).toBeGreaterThan(0);
-    // 窓の頭は持ち替えのフレームまで削る（skills/timeline.ts の weaponStartTrim）ので、10 秒より数フレーム短い
-    const lengths = new Set(changes.map((p) => p.end - p.start));
+    // 窓の頭は持ち替えのフレームまで削る（skills/timeline.ts の weaponStartTrim）ので、10 秒より数フレーム短い。
+    // 戦闘の終わりで切れた窓（居合のゲージでバーストが早まり、最後の窓が終わりにかかる。V-0675）は数えない
+    const battleEnd = Math.max(...changes.map((p) => p.end));
+    const lengths = new Set(changes.filter((p) => p.end < battleEnd).map((p) => p.end - p.start));
     expect(lengths.size).toBe(1);
     expect([...lengths][0]).toBeGreaterThan(gameSecondsToFrames(10) - 5);
     expect([...lengths][0]).toBeLessThanOrEqual(gameSecondsToFrames(10) + 1);
@@ -186,5 +188,30 @@ describe('射撃の列', () => {
       const total = calc.slots[i]!.segments.reduce((sum, g) => sum + countShotsInRanges(frames, g.ranges), 0);
       expect(total).toBe(frames.length);
     });
+  });
+});
+
+describe('紅蓮：神殺の居合のゲージ（plan/design-new-chars-1029.md 12.2 節の b）', () => {
+  const raw = readJson<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>('../../data/skills/472.json');
+  const withIai = (patch: Record<string, unknown>) => {
+    const copy = JSON.parse(JSON.stringify(raw)) as typeof raw;
+    Object.assign(copy.skills.skill1.effects[2]!, patch);
+    return () => parseSkillDefinition(copy);
+  };
+
+  it('allows an integer of 2 or more for gaugePerHit with a shot count trigger', () => {
+    expect(withIai({ gaugePerHit: 2 })).not.toThrow();
+    expect(withIai({ gaugePerHit: 1 })).toThrow(/an integer of 2 or more with a shot count trigger/);
+    expect(withIai({ gaugePerHit: 2.5 })).toThrow(/an integer of 2 or more with a shot count trigger/);
+  });
+
+  it('charges two shooter hits of gauge 6 frames after each shot', () => {
+    // 単騎（スペック固定・射撃場の 3 分）: 通常攻撃 34,000 と居合 68,000 で、1 回目の満タンは 10 発目の居合（V-0675 の `0960-17`）
+    const c = character(SCARLET);
+    const solo: TeamInput = { ...input, slots: [fixedSlot(SCARLET)], controlledSlot: 0 };
+    const p = planTeamRun(solo);
+    const shots = p.shots[0]!.frames;
+    expect(p.schedule!.gaugeFullFrames[0]).toBe(shots[9]! + 6);
+    expect(c.shot.targetBurstEnergyPerShot).toBe(34000);
   });
 });

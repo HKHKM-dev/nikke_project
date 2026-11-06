@@ -385,6 +385,11 @@ export type RateTableWithWeaponChanges = TargetRateTable & {
  */
 export type CoreHitRateTable = RateTableWithWeaponChanges & {
   autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
+  /**
+   * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 通常攻撃の発の、弾の種類（キャラデータの shot.fireType の生値）ごとの行。
+   * 行があれば武器種の行より先に引く（InstantBox の AR は、どの区間もコアに当たる。V-0675）。表に無い種類は武器種の行
+   */
+  fireTypes?: Readonly<Record<string, TargetRateRow | null>>;
 };
 
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */

@@ -1,0 +1,250 @@
+{
+  "verification": "V-0675",
+  "note": "撮る前の予測。紅蓮：神殺（1 枠目・操作）単騎・スペック固定 ON・オートバースト OFF（バーストは撃てない）。仮説は、単騎で出る効果を dropEffects で外して、録画で見分けられるかを確かめる。弾丸チャージのきっかけ（クリティカル命中）は、モデルでは発ごとの会心率の期待値で数える（設計書 5.7 節）ので、録画の乱数の偏りの分だけ shotCount が揺れる",
+  "team": [
+    {
+      "rid": 472,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義（通常攻撃のクリティカル確率▲ 35%・居合 109%・クリティカル命中 2 回ごとに弾丸チャージ 1 発）",
+      "override": {}
+    },
+    {
+      "id": "H-noRefill",
+      "note": "S2 の弾丸チャージが出ない（skill2 の effects[0] を外す）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 472,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noCritUp",
+      "note": "S1 の通常攻撃のクリティカル確率▲が乗らない（skill1 の effects[1] を外す。会心率は素の 15%）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 472,
+            "skill": "skill1",
+            "index": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "shot-count",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "rel": 0.03
+      },
+      "note": "180 秒の発の数。弾丸チャージでマガジンが延び、リロードが減るほど多い。会心の乱数で 1 本ごとに揺れる（許容はその見込み）"
+    },
+    {
+      "id": "mags",
+      "model": "sim",
+      "metric": "magazineShots",
+      "args": {
+        "slot": 1,
+        "count": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "戦闘の始めから 3 本（1 回目の的のジャンプの前）のマガジンの発数（リロードからリロードまで）。弾丸チャージが無ければ最大装弾数のまま。会心の乱数で 1 本ごとに揺れる"
+    },
+    {
+      "id": "gauge-full",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "note": "1 回目の満タン（BURST バーが消えたフレーム）。単騎はここで止まる。居合のヒットはゲージを溜めない扱い（設計書 9 節の「撮影で確かめること」）"
+    },
+    {
+      "id": "gauge-full-shot",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目の満タンの発の番号（1 始まり）。居合のヒットもゲージを溜めるなら、ほぼ半分の番号になる"
+    },
+    {
+      "id": "crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.07
+      },
+      "note": "通常攻撃の会心率（素の 15% + 通常攻撃のクリティカル確率▲）。録画では通常攻撃のヒットのうち会心の割合（約 230 ヒットで 1σ 約 0.03）"
+    },
+    {
+      "id": "core-rate",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "中近の区間のコア命中率（AR の的の表）。広範囲の貫通攻撃（InstantBox）で変わるかを読む"
+    },
+    {
+      "id": "normal-body",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "通常攻撃の 1 ヒット（胴体・会心でない・距離ボーナスあり）。格子の基準"
+    },
+    {
+      "id": "iai",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "居合（最終攻撃力の 109% の追加ダメージ）の 1 回（会心でない）。いまは発と同じフレーム"
+    },
+    {
+      "id": "iai-crit",
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "居合の 1 回（会心）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-06",
+    "commit": "be068e6320fe1018c68bf062df82124562c818fc",
+    "values": {
+      "H-model": {
+        "shot-count": 233,
+        "mags": [11, 12, 12],
+        "gauge-full": 1259,
+        "gauge-full-shot": 30,
+        "crit-rate": 0.5,
+        "core-rate": 0.2281,
+        "normal-body": 168639.85554000002,
+        "iai": 131447.46,
+        "iai-crit": 197171.19
+      },
+      "H-noRefill": {
+        "shot-count": 225,
+        "mags": [9, 9, 9],
+        "gauge-full": 1311,
+        "gauge-full-shot": 30,
+        "crit-rate": 0.5,
+        "core-rate": 0.2281,
+        "normal-body": 168639.85554000002,
+        "iai": 131447.46,
+        "iai-crit": 197171.19
+      },
+      "H-noCritUp": {
+        "shot-count": 227,
+        "mags": [9, 10, 10],
+        "gauge-full": 1310,
+        "gauge-full-shot": 30,
+        "crit-rate": 0.15,
+        "core-rate": 0.2281,
+        "normal-body": 168639.85554000002,
+        "iai": 131447.46,
+        "iai-crit": 197171.19
+      }
+    }
+  }
+}

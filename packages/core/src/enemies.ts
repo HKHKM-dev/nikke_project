@@ -300,13 +300,14 @@ function parseAutoAttackRows(
   path: string,
   keys: ReadonlySet<string>,
   check: RateValue,
+  key: { pattern: RegExp; label: string } = { pattern: AUTO_ATTACK_KEY, label: '<resourceId>:<skill slot>' },
 ): Record<string, TargetRateRow | null> {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   const rows: Record<string, TargetRateRow | null> = {};
-  for (const [key, row] of Object.entries(v)) {
-    const at = `${path}.${key}`;
-    if (!AUTO_ATTACK_KEY.test(key)) throw new TypeError(`${at}: key must be <resourceId>:<skill slot>`);
-    rows[key] = row === null ? null : parseRateRow(row, at, keys, check);
+  for (const [name, row] of Object.entries(v)) {
+    const at = `${path}.${name}`;
+    if (!key.pattern.test(name)) throw new TypeError(`${at}: key must be ${key.label}`);
+    rows[name] = row === null ? null : parseRateRow(row, at, keys, check);
   }
   return rows;
 }
@@ -328,12 +329,18 @@ function parseRateTableWithWeaponChanges(
 /** コア命中率の表（武器種の行・使用武器の変更の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
 function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
-  const { autoAttacks, ...rest } = v;
+  const { autoAttacks, fireTypes, ...rest } = v;
   const table: CoreHitRateTable = parseRateTableWithWeaponChanges(rest, path, keys);
   if (autoAttacks !== undefined)
     table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
+  // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類（fire_type）ごとの行
+  if (fireTypes !== undefined)
+    table.fireTypes = parseAutoAttackRows(fireTypes, `${path}.fireTypes`, keys, RATE, FIRE_TYPE_KEY);
   return table;
 }
+
+/** 弾の種類の行のキー（CDN の fire_type の生値） */
+const FIRE_TYPE_KEY = { pattern: /^[A-Za-z]+$/, label: 'a fire type' };
 
 function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>): FlightFramesTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
