@@ -9,7 +9,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -64,7 +64,15 @@ export function ModernView({
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
+  // 離したときのアニメーション（DragOverlay）は、ドラッグ元が画面の外にあると、ドラッグ元の要素に scrollIntoView して画面を動かす（dnd-kit の既定）。
+  // アニメーションは残し、画面を動かすのだけ止めるため、持ち上げたドラッグ元の scrollIntoView を何もしない関数で隠す
+  const noScrollNodeRef = useRef<Element | null>(null);
+
   const handleDragStart = (event: DragStartEvent) => {
+    if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
+    const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
+    if (source) Object.assign(source, { scrollIntoView: () => undefined });
+    noScrollNodeRef.current = source ?? null;
     const data = event.active.data.current;
     if (data?.character) {
       setDraggedCharacter(data.character as CharacterIndexEntry);
