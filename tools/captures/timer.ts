@@ -1,7 +1,7 @@
 // 画面右上の残り時間（MM:SS）の秒の 1 の位が変わったフレームを拾い、残り時間 1 秒あたりの動画のフレーム数を出す
 // （V-0002・V-0003）。数字は読まず、2 値にした画像が変わったフレームだけを見る。秒の値は、離れた 2 フレームの
 // 表示を still.ts などで目で読んで決める。
-//   node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|ticks] [--crop 1852,26,14,18]
+//   node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|runs|ticks] [--crop 1852,26,14,18]
 //                                [--threshold 90] [--start N] [--at f1,f2,...] [--window 35,5]
 //
 // mode:
@@ -13,12 +13,24 @@
 //   stalls   止まりの区切り（変わり目ごとの (o − 1, o] の共通部分が空になった所。V-0379「読み方」2）と、その大きさ
 //            （前後の共通部分の差の両端と真ん中。負は読み違い）。--at を書くと、各フレームの --window（前,後。既定 35,5）
 //            に掛かる区切りの大きさの和（V-0379 の発動ごとの止まり）も出す
+//   runs     止まりの無い区間ごとに、変わり目 c = ceil(戦闘開始 + a + k × 58.8235) を満たす a の範囲（low〜high]。区間の中の
+//            フレーム f のティックは f − 戦闘開始 − a で、ticks（直後の 3 点の o の最小を引く）より細かい（2-56）。2 つの区間の a の
+//            差がそのあいだの止まり。採らなかった変わり目（フルバーストの表示の偽物と、フルバーストの直前の本物）の o も出す
+//            （a は (o − 1, o]。本物かは still.ts などの画で確かめる）
 //   ticks    --at のフレームを、戦闘開始からのゲーム内のティック（止まりを除く）に直す（V-0302）。隣どうしの差も出す。
 //            その秒の中に止まりがある（直前と直後の 3 つの変わり目で下の縁が違う）フレームには * を付ける
 //   --start  戦闘開始（02:59 が出たフレーム）。省略すると、最初の 250f 以上の間隔の次の変わり目（C-0078）
 import { parseArgs } from 'node:util';
 import { cropFilter, parseCrop, rawFrames } from './ffmpeg.ts';
-import { gameTicksAt, stallsAround, timerOffsets, timerStalls, timerSteps } from './timer-ticks.ts';
+import {
+  gameTicksAt,
+  stallsAround,
+  timerOffsets,
+  timerRuns,
+  timerStalls,
+  timerSteps,
+  unkeptOffsets,
+} from './timer-ticks.ts';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -33,7 +45,7 @@ const { values, positionals } = parseArgs({
 });
 if (positionals.length === 0) {
   console.error(
-    'usage: node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|ticks] [--crop x,y,w,h] [--threshold 90] [--start N] [--at f1,f2,...] [--window 35,5]',
+    'usage: node tools/captures/timer.ts <動画...> [--mode summary|changes|steps|stalls|runs|ticks] [--crop x,y,w,h] [--threshold 90] [--start N] [--at f1,f2,...] [--window 35,5]',
   );
   process.exit(1);
 }
@@ -104,7 +116,7 @@ for (const video of positionals) {
   const name = video.split(/[\\/]/).pop();
   if (values.mode === 'changes') {
     console.log(`${name}\n  ${frames.map((f, i) => (i === 0 ? `${f}` : `${f}(+${f - frames[i - 1]!})`)).join(' ')}`);
-  } else if (values.mode === 'steps' || values.mode === 'stalls' || values.mode === 'ticks') {
+  } else if (values.mode === 'steps' || values.mode === 'stalls' || values.mode === 'runs' || values.mode === 'ticks') {
     const start = values.start !== undefined ? Number(values.start) : battleStart(frames);
     const offsets = timerOffsets(frames, start);
     const at = (values.at ?? '')
@@ -125,6 +137,14 @@ for (const video of positionals) {
       });
       const head = `${name}（戦闘開始 f${start}・変わり目 ${offsets.length}・区切り ${stalls.length}）`;
       console.log([head, ...rows, ...around].join('\n  '));
+    } else if (values.mode === 'runs') {
+      const fmt = (x: number) => x.toFixed(2);
+      const rows = timerRuns(offsets).map((r) => {
+        const n = r.last - r.first + 1;
+        return `${offsets[r.first]!.c}-${offsets[r.last]!.c}（${n} 個）: a ${fmt(r.low)}〜${fmt(r.high)}`;
+      });
+      const unkept = unkeptOffsets(frames, offsets, start).map((x) => `採らない ${x.c}（k ${x.k}）: o ${fmt(x.o)}`);
+      console.log([`${name}（戦闘開始 f${start}）`, ...rows, ...unkept].join('\n  '));
     } else {
       const rows = at.map((f, i) => {
         const t = gameTicksAt(offsets, start, f);
