@@ -149,6 +149,8 @@ export function ModernView({
       onDragCancel={handleDragCancel}
       // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、その要素まで一覧がスクロールされることがある）
       accessibility={{ restoreFocus: false }}
+      // 画面の端の自動スクロールは、持ち上げた札が端にほとんど着いたときだけ、ゆっくり動かす（既定は端から 20% の幅で効き、少し動かしただけで画面が動く）
+      autoScroll={{ threshold: { x: 0.1, y: 0.04 }, acceleration: 5 }}
     >
       <div className="modern-view-container">
         <TeamSettingsForm
