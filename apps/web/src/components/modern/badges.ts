@@ -1,5 +1,5 @@
 // モダン UI のバッジ（旧プロジェクトの SVG。plan/design-modern-ui.md 2.5 節）。
-// どれも 4KB 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
+// どれも vite.config.ts の assetsInlineLimit 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
 // 属性の色はバッジの図柄の色で、styles.css の [data-element] が --el に置く。
 import { ELEMENT_LABEL, WEAPON_LABEL, type CharacterIndexEntry } from '@nikke/core';
 import burstStep1 from '../../assets/badges/burst_1I.svg';
@@ -73,3 +73,17 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
     ),
   },
 ];
+
+/** バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない） */
+export type BadgeFilters = Partial<Record<BadgeKey, string>>;
+
+/** キャラが選んだ値にすべて合うか（項目どうしは AND） */
+export function matchesBadgeFilters(char: Pick<CharacterIndexEntry, BadgeKey>, filters: BadgeFilters): boolean {
+  return BADGE_KINDS.every(({ key }) => filters[key] === undefined || char[key] === filters[key]);
+}
+
+/** バッジを押した後の絞り込み。押されていた値なら解除し、それ以外はその項目をその値にする */
+export function toggleBadgeFilter(filters: BadgeFilters, key: BadgeKey, value: string): BadgeFilters {
+  const { [key]: current, ...rest } = filters;
+  return current === value ? rest : { ...rest, [key]: value };
+}
