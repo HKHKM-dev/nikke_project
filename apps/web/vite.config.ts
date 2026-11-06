@@ -15,6 +15,9 @@ export default defineConfig({
     // これ未満の画像は束の中に埋め込む（Vite の既定と同じ値）。モダン UI のバッジはどれもこれ未満にして、
     // アーティファクトのファイル数を使わない（badges.test.ts が確かめる。plan/design-modern-ui.md 2.5 節）
     assetsInlineLimit: 4096,
+    // CSS の light-dark() をそのまま出す。既定の対象のままだと、変換で OS の設定（prefers-color-scheme）の切り替えに
+    // 書き換わり、右上のメニューのライト・ダークの個別設定（theme.ts の color-scheme）が効かなくなる
+    cssTarget: ['chrome123', 'safari17.5', 'firefox120'],
   },
   server: {
     fs: { allow: [monorepoRoot] },
