@@ -9,7 +9,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -64,29 +64,7 @@ export function ModernView({
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
-  // カーソルがニケ一覧の枠の中にあるあいだは、画面端の自動スクロールを止める（枠が画面の上端にあるとき、その上部で画面が上へ動き続けるため）。
-  // dnd-kit の delta はスクロールの分も含むので、カーソルの位置は pointermove から直接取る
-  const [pointerInTray, setPointerInTray] = useState(false);
-  const dragging = draggedCharacter !== null;
-  useEffect(() => {
-    if (!dragging) return;
-    const onMove = (e: PointerEvent | TouchEvent) => {
-      const tray = document.querySelector('.char-tray-panel');
-      const p = 'touches' in e ? e.touches[0] : e;
-      if (!tray || !p) return;
-      const r = tray.getBoundingClientRect();
-      setPointerInTray(p.clientX >= r.left && p.clientX <= r.right && p.clientY >= r.top && p.clientY <= r.bottom);
-    };
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('touchmove', onMove);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('touchmove', onMove);
-    };
-  }, [dragging]);
-
   const handleDragStart = (event: DragStartEvent) => {
-    setPointerInTray(false);
     const data = event.active.data.current;
     if (data?.character) {
       setDraggedCharacter(data.character as CharacterIndexEntry);
@@ -167,7 +145,8 @@ export function ModernView({
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
-      autoScroll={{ enabled: !(dragging && pointerInTray) }}
+      // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
+      autoScroll={false}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
       // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、その要素まで一覧がスクロールされることがある）
