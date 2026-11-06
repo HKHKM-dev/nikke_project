@@ -1,0 +1,243 @@
+{
+  "verification": "V-0679",
+  "note": "撮る前の予測。ココア（1 枠目・I）・ソルジャーF.A.（2 枠目・II）・紅蓮：神殺（3 枠目・III・操作）・I-DOLL・サン（4 枠目・III）、スペック固定 ON・オートバースト ON。III は紅蓮：神殺と I-DOLL・サンが交互で、紅蓮：神殺の 1 回目のバーストの窓は戦闘開始から約 5 秒、I-DOLL・サンの 1 回目は約 25 秒。仮説は、確かめたい効果を dropEffects で外して見分けられるかを見る",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 472,
+      "controlled": true
+    },
+    {
+      "rid": 308
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義（満開の発でも居合が出る（論点 H）、身剣合一の間は居合が 2 つ（論点 G）、どのフルバーストでもクリティカルダメージ▲）",
+      "override": {}
+    },
+    {
+      "id": "H-noDouble",
+      "note": "身剣合一の間も居合は 1 つ（skill1 の effects[3] を外す）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 472,
+            "skill": "skill1",
+            "index": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noFbCrit",
+      "note": "フルバースト発動時のクリティカルダメージ▲が乗らない（skill1 の effects[4] を外す）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 472,
+            "skill": "skill1",
+            "index": 4
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "bloom-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 500,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "紅蓮：神殺の 1 回目の窓（満開・身剣合一・攻撃力▲・クリティカルダメージ▲）の通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり。身剣合一の間は会心率 100%）"
+    },
+    {
+      "id": "idoll-hit-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1700,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "I-DOLL・サンの 1 回目の窓（クリティカルダメージ▲だけ）の通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）"
+    },
+    {
+      "id": "idoll-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1700,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ窓の会心でない 1 ヒット（クリティカルダメージ▲では変わらない。格子の基準）"
+    },
+    {
+      "id": "bloom-iai",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "frame": 500,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "紅蓮：神殺の 1 回目の窓の、満開の発の 6f 後の居合の 1 回（会心なし。身剣合一・攻撃力▲・フルバースト補正が乗る）"
+    },
+    {
+      "id": "iai-count",
+      "model": "sim",
+      "metric": "skillHitCount",
+      "args": {
+        "slot": 3,
+        "skill": "skill1"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "note": "180 秒の居合のヒットの数。身剣合一の間に居合が 2 つ出るなら、身剣合一の窓の発の数だけ多い（録画では同じフレームの 2 つの和を 1 つの増分として読み、値で 1 つか 2 つかを分ける）"
+    },
+    {
+      "id": "burst-add",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "バースト使用時の追加ダメージ（最終攻撃力の 3000%）の 1 回目（会心なし）"
+    },
+    {
+      "id": "bloom-shots",
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "from": 300,
+        "to": 880
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "1 回目の窓（満開の 10 秒）の発の数"
+    },
+    {
+      "id": "bloom-interval",
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 3,
+        "from": 300,
+        "to": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "満開の発と発の間の平均（CDN の changeWeapon のレート 90rpm）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-06",
+    "commit": "154510786085240ee3eeaca7d315ca44b7b5e5e7",
+    "values": {
+      "H-model": {
+        "bloom-hit": 2571350.6052,
+        "idoll-hit-crit": 505919.56662,
+        "idoll-hit": 363224.30423999997,
+        "bloom-iai": 937381.9932000001,
+        "iai-count": 303,
+        "burst-add": 3617819.9999999995,
+        "bloom-shots": 13,
+        "bloom-interval": 39.166666666666664
+      },
+      "H-noDouble": {
+        "bloom-hit": 2571350.6052,
+        "idoll-hit-crit": 505919.56662,
+        "idoll-hit": 363224.30423999997,
+        "bloom-iai": 937381.9932000001,
+        "iai-count": 233,
+        "burst-add": 3617819.9999999995,
+        "bloom-shots": 13,
+        "bloom-interval": 39.166666666666664
+      },
+      "H-noFbCrit": {
+        "bloom-hit": 2175758.2043999997,
+        "idoll-hit-crit": 428085.78714,
+        "idoll-hit": 363224.30423999997,
+        "bloom-iai": 937381.9932000001,
+        "iai-count": 303,
+        "burst-add": 3617819.9999999995,
+        "bloom-shots": 13,
+        "bloom-interval": 39.166666666666664
+      }
+    }
+  }
+}
