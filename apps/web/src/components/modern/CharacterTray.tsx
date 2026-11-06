@@ -58,14 +58,8 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
         if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
         return true;
       })
-      .sort((a, b) => {
-        // 編成中のキャラは後ろへ
-        const aTaken = takenIds.has(a.resourceId);
-        const bTaken = takenIds.has(b.resourceId);
-        if (aTaken !== bTaken) return aTaken ? 1 : -1;
-        return a.name.ja.localeCompare(b.name.ja, 'ja');
-      });
-  }, [index, filters, onlySupported, fullySupported, query, takenIds]);
+      .sort((a, b) => a.name.ja.localeCompare(b.name.ja, 'ja'));
+  }, [index, filters, onlySupported, fullySupported, query]);
 
   return (
     <section

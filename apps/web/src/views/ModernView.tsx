@@ -147,7 +147,7 @@ export function ModernView({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
-      // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、一覧の後ろへ移った要素まで一覧がスクロールしてしまう）
+      // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、その要素まで一覧がスクロールされることがある）
       accessibility={{ restoreFocus: false }}
     >
       <div className="modern-view-container">
@@ -227,7 +227,7 @@ export function ModernView({
           <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
         </ErrorBoundary>
 
-        {/* 離したときのアニメーションは付けない: 付けると、配置して一覧の後ろへ移ったドラッグ元の要素まで一覧がスクロールしてしまう */}
+        {/* 離したときのアニメーションは付けない: 付けると、ドラッグ元の要素まで一覧がスクロールされることがある */}
         <DragOverlay dropAnimation={null}>
           {draggedCharacter && draggedPortrait ? (
             <div
