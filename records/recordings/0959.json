@@ -1,0 +1,34 @@
+{
+  "id": "0959",
+  "date": "2026-11-06",
+  "folder": "range",
+  "file": "20261106-0959_smg_liter_tap.mp4",
+  "original": "2026-11-06 20-56-05.mp4",
+  "durationSec": 197.2,
+  "frames": 11833,
+  "fps": 60,
+  "sizeMB": 268.5,
+  "sha256": "1f45fa848ac7",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0673: 5 回の着地の直後にコアを 1 回タップした（K7）",
+  "backup": {
+    "at": "2026-11-06T21:08+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
