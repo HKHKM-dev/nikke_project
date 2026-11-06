@@ -1122,3 +1122,8 @@ header h1 {
   pointer-events: none;
   transform: scale(1.05);
 }
+/* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
+.slot-drag-overlay {
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}

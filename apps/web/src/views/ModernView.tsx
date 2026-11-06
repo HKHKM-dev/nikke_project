@@ -48,8 +48,14 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // ドラッグ中のキャラクター情報（DragOverlay 用）
+  // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、スロットの立ち絵の大きさと、カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
+  const [draggedPortrait, setDraggedPortrait] = useState<{
+    width: number;
+    height: number;
+    left: number;
+    top: number;
+  } | null>(null);
 
   // マウスは 8px 動かして初めてドラッグと判定（通常のクリック操作との共存）。タッチは 250ms の長押しで持ち上げ、
   // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
@@ -63,10 +69,24 @@ export function ModernView({
     if (data?.character) {
       setDraggedCharacter(data.character as CharacterIndexEntry);
     }
+    // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
+    const card =
+      event.active.data.current?.type === 'slot-character'
+        ? (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card')
+        : null;
+    const portrait = card?.querySelector('.char-visual-portrait');
+    if (card && portrait) {
+      const c = card.getBoundingClientRect();
+      const p = portrait.getBoundingClientRect();
+      setDraggedPortrait({ width: p.width, height: p.height, left: p.left - c.left, top: p.top - c.top });
+    } else {
+      setDraggedPortrait(null);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggedCharacter(null);
+    setDraggedPortrait(null);
     const { active, over } = event;
     if (!over) return;
 
@@ -99,6 +119,7 @@ export function ModernView({
 
   const handleDragCancel = () => {
     setDraggedCharacter(null);
+    setDraggedPortrait(null);
   };
 
   // トレイでキャラがクリック選択されたときのハンドラ
@@ -126,6 +147,8 @@ export function ModernView({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、一覧の後ろへ移った要素まで一覧がスクロールしてしまう）
+      accessibility={{ restoreFocus: false }}
     >
       <div className="modern-view-container">
         <TeamSettingsForm
@@ -204,8 +227,21 @@ export function ModernView({
           <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
         </ErrorBoundary>
 
-        <DragOverlay>
-          {draggedCharacter ? (
+        {/* 離したときのアニメーションは付けない: 付けると、配置して一覧の後ろへ移ったドラッグ元の要素まで一覧がスクロールしてしまう */}
+        <DragOverlay dropAnimation={null}>
+          {draggedCharacter && draggedPortrait ? (
+            <div
+              className="slot-drag-overlay"
+              style={{
+                width: draggedPortrait.width,
+                height: draggedPortrait.height,
+                marginLeft: draggedPortrait.left,
+                marginTop: draggedPortrait.top,
+              }}
+            >
+              <CharacterVisual character={draggedCharacter} size="portrait" />
+            </div>
+          ) : draggedCharacter ? (
             <div className="char-drag-overlay">
               <CharacterVisual character={draggedCharacter} size="compact" />
               <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>
