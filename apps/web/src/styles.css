@@ -657,6 +657,8 @@ header h1 {
   justify-content: space-between;
   font-size: 0.8rem;
   font-weight: bold;
+  /* 外すボタン（ニケがいるときだけ）の有無で高さを変えない */
+  min-height: 20px;
 }
 .modern-slot-label {
   opacity: 0.85;
@@ -710,7 +712,15 @@ header h1 {
   justify-content: center;
   gap: 4px;
   opacity: 0.5;
-  padding: 24px 0;
+  /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ */
+  box-sizing: content-box;
+  aspect-ratio: 3 / 4;
+  max-height: 240px;
+}
+@media (max-width: 900px) {
+  .modern-slot-empty-area {
+    max-width: 200px;
+  }
 }
 .modern-slot-empty-plus {
   font-size: 1.8rem;
@@ -761,6 +771,13 @@ header h1 {
 /* カードフッター */
 .modern-slot-footer {
   margin-top: auto;
+  /* ボタン（ニケがいるとき）と「未配置」の文字で高さを変えない */
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+.modern-slot-footer > * {
+  flex: 1;
 }
 .modern-slot-action-button {
   width: 100%;

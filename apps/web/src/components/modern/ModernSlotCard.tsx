@@ -106,9 +106,15 @@ export function ModernSlotCard({
             <div className="modern-slot-char-name">{characterEntry.name.ja}</div>
           </div>
         ) : (
-          <div className="modern-slot-empty-area">
-            <span className="modern-slot-empty-plus">＋</span>
-            <span className="modern-slot-empty-text">ニケを選択</span>
+          // ニケがいるときと同じ大きさ（絵の枠と名前の行）にして、選んでもカードの大きさが変わらないようにする
+          <div className="modern-slot-char-area">
+            <div className="modern-slot-empty-area">
+              <span className="modern-slot-empty-plus">＋</span>
+              <span className="modern-slot-empty-text">ニケを選択</span>
+            </div>
+            <div className="modern-slot-char-name" aria-hidden="true">
+              &nbsp;
+            </div>
           </div>
         )}
       </div>
