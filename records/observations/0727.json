@@ -427,5 +427,85 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "0727-18",
+    "recording": "0727",
+    "source": "V-0676",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [110.05, 110.05],
+    "description": "マガジンの途中に来た敵のジャンプ（1 回目・2 回目）の、ミハラ（AR・リロード 1.67 秒）のハイド中のリロードの RELOADING のバーの、長さ 0 に遡った点から消えたフレーム（明け）まで。どの回も満ちる前（溝 367px のうち 364・364px）に消え、残弾は戻らなかった（同じ録画のふだんのリロードは、0 の点から満ちて消えるまで平均 110.8f）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "0 の点 → 消えたフレーム（動画）: f2798.95 → 2909、f4962.95 → 5073。伸びの速さ（当てはめ）はふだんのリロードと同じ（溝の幅 ÷ 伸び ≈ 110f）。3〜5 回目はマガジンの終わりのリロードと重なったので入れない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0727-19",
+    "recording": "0727",
+    "source": "V-0676",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": 110.8,
+    "spread": {
+      "kind": "range",
+      "low": 109.9,
+      "high": 111.86
+    },
+    "description": "ミハラのふだんのリロード（最後の弾の後。窓・取り消しの回を除く 24 回）の、RELOADING のバーの長さ 0 に遡った点から、満ちて消えたフレーム（込め終わり）までの平均（リロードの秒 98.24f + 約 12.5f）。ハイド中のリロードが満ちるのに要る長さ",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit",
+      "note": "reload.ts --shots（hud.ts --mode jumps の増分）の集計の「完了 − 遡った 0 の点」。値の幅は回の範囲（重複フレームのある回を含む）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0727-20",
+    "recording": "0727",
+    "source": "V-0676",
+    "readAt": "2026-11-06",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2797, 2909, 2920, 4961, 5073, 5105],
+    "description": "マガジンの途中に来た敵のジャンプ（1 回目・2 回目）の、ミハラのジャンプの前の最後の発・明け（ハイド中のリロードのバーが消えたフレーム）・明けの後の最初の発（動画のフレーム。回ごとに 3 つずつ）。窓の始まりは明けの 2 秒（117.6f）前（C-0546）",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series・node tools/captures/reload.ts --mode fit・node tools/captures/hud.ts --mode jumps",
+      "note": "発は照準の残弾が減ったフレーム。ジャンプの前の最後の発は HUD の増分と 0〜1f で合う（明けの後は、HUD が最初の数発を読めない回がある）。窓（明けの 117.6f 前 → 明け）: f2791.4 → 2909、f4955.4 → 5073。最後の発からバーの 0 の点まで 1.95・1.95f（V-0648 の 0〜3f と同じ）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0727-21",
+    "recording": "0727",
+    "source": "V-0676",
+    "readAt": "2026-11-06",
+    "kind": "count",
+    "use": "record",
+    "value": [10, 18],
+    "description": "マガジンの途中に来た敵のジャンプ（1 回目・2 回目）の、ミハラの明けの後にリロードせず撃った発の数。どの回もジャンプの前の最後の発の後の残弾と同じで、残りを撃ち切ってから弾切れのリロードをした（ジャンプの間にリロードを終えていない。終えていれば 60 発）",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series",
+      "note": "ジャンプの前の最後の発の後の照準の残弾（10・18）が、明けの後の最初の発で 1 減り（9・17）、0 になってから RELOADING のバーが出た"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
   }
 ]
