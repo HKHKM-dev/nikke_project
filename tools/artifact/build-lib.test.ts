@@ -1,6 +1,6 @@
 // アーティファクトのページの組み立てと公開の分け方（build-lib.ts）
 import { describe, expect, it } from 'vitest';
-import { entryAssets, pageHtml, publishBatches } from './build-lib.ts';
+import { MAX_FILES_PER_VERSION, entryAssets, pageHtml, publishBatches, versionLimitError } from './build-lib.ts';
 
 const INDEX = `<!doctype html>
 <html lang="ja">
@@ -43,5 +43,15 @@ describe('publishBatches', () => {
   });
   it('空なら回は無い', () => {
     expect(publishBatches([])).toEqual([]);
+  });
+});
+
+describe('versionLimitError', () => {
+  const paths = (n: number) => Array.from({ length: n }, (_, i) => `skills/${i}.json`);
+  it('ページを含めて上限ちょうどなら通る', () => {
+    expect(versionLimitError(paths(MAX_FILES_PER_VERSION - 1))).toBeUndefined();
+  });
+  it('1 件超えると理由を返す', () => {
+    expect(versionLimitError(paths(MAX_FILES_PER_VERSION))).toContain(`上限（${MAX_FILES_PER_VERSION} 件）を 1 件超える`);
   });
 });

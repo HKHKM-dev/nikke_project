@@ -6,6 +6,11 @@ export const PAGE_FILE = 'nikke-damage.html';
 /** Artifact の公開 1 回で送れるファイルの数の上限（ページの外の files） */
 export const MAX_FILES_PER_PUBLISH = 255;
 
+/**
+ * Artifact の 1 版が持てるファイルの数の上限。ページも含む（Artifact の道具の説明「a version may hold up to 511 files ... in all」）
+ */
+export const MAX_FILES_PER_VERSION = 511;
+
 export type EntryAssets = { js: string; css: string };
 
 /**
@@ -42,6 +47,15 @@ export function pageHtml(assets: EntryAssets): string {
 <div id="root"></div>
 <script type="module" src="${assets.js}"></script>
 `;
+}
+
+/**
+ * 公開するファイル（ページの外）とページを合わせた数が 1 版の上限を超えるなら、その理由を返す（収まれば undefined）。
+ */
+export function versionLimitError(paths: readonly string[], max = MAX_FILES_PER_VERSION): string | undefined {
+  const total = paths.length + 1;
+  if (total <= max) return undefined;
+  return `公開するファイルがページを含めて ${total} 件あり、アーティファクトの 1 版の上限（${max} 件）を ${total - max} 件超える`;
 }
 
 /**
