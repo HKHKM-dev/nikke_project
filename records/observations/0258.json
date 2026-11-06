@@ -808,5 +808,82 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0258-31",
+    "recording": "0258",
+    "kind": "timing",
+    "use": "record",
+    "value": 0,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 0,
+      "high": 0
+    },
+    "description": "雪子の S1 の戦闘開始時の攻撃力▲（Y1 → Y0）が 雪子 の 1 発で替わるまでの時刻の幅（1 番目の事象 f1740 から数えた動画のフレーム）。Y1の最後の発は -1f、Y0の最初の発は 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-wind\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は Y1: 枠 3（雪子）のモデルの f800、Y0: 枠 3（雪子）のモデルの f1000、R1: 枠 1（ラム）のモデルの f800、R0: 枠 1（ラム）のモデルの f1000、T1: 枠 2（デルタ）のモデルの f800、T0: 枠 2（デルタ）のモデルの f1000。境は Y1 → Y0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -100〜80f。Y1 97・Y0 70・区別できない 0・外れ 5・食い違い（Y0の最初の発より後のY1の発） 0"
+    },
+    "source": "V-0678",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0258-32",
+    "recording": "0258",
+    "kind": "timing",
+    "use": "record",
+    "value": 0,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 0,
+      "high": 0
+    },
+    "description": "雪子の S1 の戦闘開始時の攻撃力▲（Y1 → Y0）が 雪子 の 1 発で替わるまでの時刻の幅の、1 回の事象（f1740）の共通部分（事象から数えた動画のフレーム）。Y1の最後の発の最も遅いものは -1f、Y0の最初の発の最も早いものは 0f（値は幅の真ん中）",
+    "method": {
+      "tool": "recipe:buff-edge@4",
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-wind\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は Y1: 枠 3（雪子）のモデルの f800、Y0: 枠 3（雪子）のモデルの f1000、R1: 枠 1（ラム）のモデルの f800、R0: 枠 1（ラム）のモデルの f1000、T1: 枠 2（デルタ）のモデルの f800、T0: 枠 2（デルタ）のモデルの f1000。境は Y1 → Y0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の -100〜80f。Y1 97・Y0 70・区別できない 0・外れ 5・食い違い（Y0の最初の発より後のY1の発） 0"
+    },
+    "source": "V-0678",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0258-33",
+    "recording": "0258",
+    "source": "V-0678",
+    "readAt": "2026-11-06",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "tick",
+    "value": [881.65],
+    "spread": {
+      "kind": "range",
+      "low": 881.06,
+      "high": 882.24
+    },
+    "description": "雪子の S1 の戦闘開始時の攻撃力▲の切れ目を、時計の起点（残り時間の秒の変わり目 c = ceil(戦闘開始 + a + k × 58.8235) の格子の 0。止まりを除く）から数えたゲーム内のティック。▲の乗った最後の発は 881.06、乗らない最初の発は 882.24（値は幅の真ん中）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode runs（`0258-31` の発のフレームを直した）",
+      "note": "1 回目のフルバーストの中で切れる（00.00 は f1574。`0258-12`）。発（f1739・f1740）は、1 回目のフルバーストの表示で残り時間が読めない所にあるので、フルバーストの後の止まりの無い区間 2211-2682 の a（25.76〜25.94）を引いた（f − 832 − a。切れ目とその区間のあいだに止まりがあれば、ティックはこれより大きい）。戦闘開始の a（時計の起点と戦闘開始のフレームの差）は、最初の秒の止まり（C-0262）で録画ごとに −1〜1 揺れて決めにくいので引かない。モデルのフレーム 0 を時計の起点とみて比べ、許容は幅の半分に起点の位相の 0.5 を足した"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "attack",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 1.09
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]

@@ -756,10 +756,13 @@ function buffPiecesFor(result: SimResult, ctx: MetricContext): ValuePiece[] {
 
 /**
  * 5-2 の撮影計画（V-0177）: その枠が受ける timed の効果の窓の終わり（モデルのフレーム。戦闘時間で切った窓は戦闘の終わり）。
- * skill（'skill1' | 'skill2' | 'burst'）と stat で絞る
+ * skill（'skill1' | 'skill2' | 'burst'）と stat で絞る。count を書くと、昇順で重複なしの最初の count 個（戦闘開始時の窓と
+ * フルバースト終了時の窓のように同じスロット・stat の窓が続くとき、録画で読めた最初の切れ目にそろえる。V-0678）
  */
 function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
-  return buffPiecesFor(result, ctx).map((w) => w.end);
+  const ends = buffPiecesFor(result, ctx).map((w) => w.end);
+  if (ctx.args.count === undefined) return ends;
+  return [...new Set(ends)].sort((a, b) => a - b).slice(0, Number(ctx.args.count));
 }
 
 /**
