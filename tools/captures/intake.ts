@@ -23,8 +23,9 @@
 // 置けなかったら終了コード 1。置けたら録画の JSON に backup（日時・経路・一致したハッシュ）を書き足す（backup-log.md には書かない。
 // plan/design-workflow-simplification.md 2 節）。JSON は置く前に書くので、backup の無い JSON は置けたと確かめていない。
 // クラウド環境では、元ファイルを drive:<record の中の相対パス> で指す（plan/design-cloud-environment.md 6.3 節）。サービスアカウントで
-// record から取り寄せ（Drive の sha256 と突き合わせる）、受け口の move で種別フォルダへ規約名で移す（移せなければコピーと元のごみ箱への
-// 移動）。PC を付けると Drive for desktop が F:/record の写しを消し、bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
+// record から取り寄せ（Drive for desktop が上げ終えるまで待ってから。waitUploaded。Drive の sha256 と突き合わせる）、受け口の
+// move で種別フォルダへ規約名で移す（移せなければコピーと元のごみ箱への移動）。PC を付けると Drive for desktop が F:/record の写しを消し、
+// bisync が E: に降ろす。--copy は使えない。record の一覧は --list-record。
 // 環境変数: NIKKE_DRIVE_SA_KEY・NIKKE_DRIVE_RECORD_FOLDER_ID・NIKKE_DRIVE_FOLDER_ID（drive.ts・fetch.ts）と受け口（gateway.ts）。
 // 取り込んだ後は、キャラの確かめに node tools/captures/probe-result.ts <動画> --list。
 import { spawnSync } from 'node:child_process';
@@ -45,6 +46,7 @@ import {
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createInterface } from 'node:readline/promises';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { parseArgs } from 'node:util';
 import {
   type BackupVia,
@@ -59,7 +61,7 @@ import type { CharacterData, Element } from '../../packages/core/src/types.ts';
 import { recordingIdsInBranches } from '../../packages/core/scripts/records-data.ts';
 import { reserve } from '../../packages/core/scripts/reserve.ts';
 import { buildsDir, readSnapshot, snapshotNames } from '../builds/dirs.ts';
-import { parseSnapshotAnswer, snapshotForRecording, treasureForSlots } from '../builds/import-lib.ts';
+import { jstDate, parseSnapshotAnswer, snapshotForRecording, treasureForSlots } from '../builds/import-lib.ts';
 import { gatewayUrl, move } from '../drive/gateway.ts';
 import { driveCaptures, driveHash, driveUnavailable, lsjson, rclone, remoteName } from '../drive/rclone.ts';
 import { relUnder, splitRel } from '../drive/sync-lib.ts';
@@ -73,6 +75,8 @@ import {
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
+  UPLOAD_POLL_MS,
+  uploadSettled,
 } from './intake-lib.ts';
 import { Drive, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
@@ -282,6 +286,35 @@ if (drive !== null) {
     fail(`${(e as Error).message}（--list-record で一覧）`);
   }
   if (drive.isFolder(driveSource)) fail(`drive:${fromDrive} はフォルダ`);
+  driveSource = await waitUploaded(drive, driveSource);
+}
+
+/**
+ * 取り込み元は、Drive for desktop が上げ終えるまで待つ（撮っている間から上げ、後で同じファイルに新しい版を上げる。途中までの版を
+ * 台帳に書かない）。UPLOAD_POLL_MS ごとにメタデータを読み直し、サイズが変わらなくなったら、読み直したものを返す
+ */
+async function waitUploaded(drive: Drive, file: DriveFile): Promise<DriveFile> {
+  const seconds = `${UPLOAD_POLL_MS / 1000} 秒`;
+  console.log(
+    `${file.name} を Drive for desktop が上げ終えるまで、${seconds}ごとにサイズを見る（いま ${file.size} バイト）`,
+  );
+  for (let before = file; ;) {
+    await sleep(UPLOAD_POLL_MS);
+    const now = await drive.file(file.id);
+    const settled = uploadSettled(before.size, now.size);
+    console.log(
+      `待っている: ${now.name}（保存日時 ${jst(now.modifiedTime)}・サイズ ${before.size} → ${now.size} バイト）` +
+        (settled ? '。変わらないので取り込む' : `。変わったので、もう ${seconds}待つ`),
+    );
+    if (settled) return now;
+    before = now;
+  }
+}
+
+/** Drive の時刻（UTC の ISO）を日本時間で（クラウドの時計は UTC） */
+function jst(iso: string | undefined): string {
+  if (iso === undefined) return '不明';
+  return `${new Date(Date.parse(iso) + 9 * 3600 * 1000).toISOString().slice(0, 19).replace('T', ' ')} JST`;
 }
 
 function dateOf(): string {
@@ -292,11 +325,8 @@ function dateOf(): string {
   const m = /(\d{4})[-_]?(\d{2})[-_]?(\d{2})/.exec(basename(fromDrive ?? source!));
   if (m) return `${m[1]}-${m[2]}-${m[3]}`;
   const pad = (n: number) => String(n).padStart(2, '0');
-  if (driveSource?.modifiedTime) {
-    // クラウドの時計は UTC なので、撮った場所（日本）の日付にする
-    const t = new Date(Date.parse(driveSource.modifiedTime) + 9 * 3600 * 1000);
-    return `${t.getUTCFullYear()}-${pad(t.getUTCMonth() + 1)}-${pad(t.getUTCDate())}`;
-  }
+  // クラウドの時計は UTC なので、撮った場所（日本）の日付にする
+  if (driveSource?.modifiedTime) return jstDate(driveSource.modifiedTime);
   const t = statSync(source!).mtime;
   return `${t.getFullYear()}-${pad(t.getMonth() + 1)}-${pad(t.getDate())}`;
 }
