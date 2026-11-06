@@ -4,7 +4,7 @@
 - 出どころ: 公式の告知画像（2026-10-28 公表。Drive の「マイ コンピュータ/record」の `HVtF8xnbkAAOpzG.jpg`・`HVtF8xoaoAA-PJo.jpg`（マリアン：クイーン）、`HVtMNI7bEAAA1vi.jpg`・`HVtMNJMbcAAxwPE.jpg`（ラプンツェル：サンクチュアリ）、`HVtQufQaQAAOEMK.jpg`・`HVtQuhHbMAAIAfm.jpg`（紅蓮：神殺））。値はスキル Lv10。画像の注記どおり、実装までに変わりうる
 - 関連: [skills-guide.md](skills-guide.md)（定義の手順）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md)（句の分類）、[design-named-state.md](design-named-state.md)（名前の付いた状態）、[design-skill-stage5.md](design-skill-stage5.md) 1.2 節（状態の家族）、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲）、[design-skill-stage11.md](design-skill-stage11.md)（使用武器の変更）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）
 - 作成日: 2026-10-28
-- 状態: 承認（2026-10-28。オーナーが 3 体とも定義すると決め、論点 B〜I を推奨どおり、J を「1 パス目に入れる」に決めた。7 節）。語彙（5 節）は実装した（8 節）。定義も書いた（9 節。CDN には 2026-10-29 に載った）。マリアン：クイーンの撮影で分かった直す案（10 節）も 2026-10-29 に承認し、実装した（V-0538。C-0734〜C-0743）。V-0545 の直す案（11 節）は 2026-10-31 に承認し、実装した。紅蓮：神殺の単騎の撮影で分かった直す案（12 節）は 2026-11-06 に承認し、実装した（V-0675。C-0954〜C-0958）
+- 状態: 承認・実装済み（論点は 7 節、語彙は 8 節、定義は 9 節、撮影で分かった直す案は 10・11・12 節）。紅蓮：神殺のバーストの撮影が残る
 
 ## 0. 仮実装の範囲
 
