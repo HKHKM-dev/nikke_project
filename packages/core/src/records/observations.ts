@@ -2097,26 +2097,29 @@ function spanOf(
   if (m === null)
     throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit・prevShot（${anchor}）`);
   const n = Number(m[2]);
+  // origin は起点のモデルのフレーム（フルバーストは窓の始まり、発動は hexagonFrameOf）、base はその動画のフレーム
+  const span = (origin: number, from: number, to: number) => ({
+    base: videoFrameOf(schedule, origin),
+    origin,
+    from,
+    to,
+  });
   if (m[1] === 'fullBurst') {
     const window = schedule.fullBurstWindows[n];
     if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
     const next = schedule.fullBurstWindows[n + 1]?.start ?? Number.POSITIVE_INFINITY;
-    const base = videoFrameOf(schedule, window.start);
-    const origin = window.start;
-    if (within === 'window') return { base, origin, from: window.start, to: window.end };
-    if (within === 'afterWindow') return { base, origin, from: window.end, to: next };
-    if (within === 'untilNext') return { base, origin, from: window.start, to: next };
-    if (within === undefined) return { base, origin, from: window.start, to: Number.POSITIVE_INFINITY };
+    if (within === 'window') return span(window.start, window.start, window.end);
+    if (within === 'afterWindow') return span(window.start, window.end, next);
+    if (within === 'untilNext') return span(window.start, window.start, next);
+    if (within === undefined) return span(window.start, window.start, Number.POSITIVE_INFINITY);
     throw new Error(`within は window・afterWindow・untilNext（${String(within)}）`);
   }
   const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
   const activation = mine[n];
   if (activation === undefined) throw new Error(`${n} 回目の発動が無い`);
-  const base = activationVideoFrameOf(schedule, activation);
   const origin = hexagonFrameOf(activation);
-  if (within === 'untilNext')
-    return { base, origin, from: activation.frame, to: mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY };
-  if (within === undefined) return { base, origin, from: activation.frame, to: Number.POSITIVE_INFINITY };
+  if (within === 'untilNext') return span(origin, activation.frame, mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY);
+  if (within === undefined) return span(origin, activation.frame, Number.POSITIVE_INFINITY);
   throw new Error(`activation の within は untilNext だけ（${String(within)}）`);
 }
 

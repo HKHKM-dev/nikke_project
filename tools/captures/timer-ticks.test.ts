@@ -107,8 +107,8 @@ describe('gameTicksAt と timerSteps', () => {
     const start = 800;
     const real = changes(start, 30);
     const stray = real[19]! + 25;
-    const offs = timerOffsets([...real.slice(0, 20), stray, ...real.slice(20)], start);
-    const unkept = unkeptOffsets([...real.slice(0, 20), stray, ...real.slice(20)], offs, start);
+    const all = [...real.slice(0, 20), stray, ...real.slice(20)];
+    const unkept = unkeptOffsets(all, timerOffsets(all, start), start);
     expect(unkept).toEqual([{ c: stray, k: 21, o: stray - start - 21 * TICKS_PER_SECOND }]);
   });
 

@@ -119,13 +119,19 @@ export function timerRuns(offsets: readonly TimerOffset[]): TimerRun[] {
  * timerOffsets が採らなかった変わり目（フルバーストの表示の偽物と、フルバーストの直前の、位相のそろう近くの変わり目が足りない本物）に、
  * 直前の採った変わり目から経過秒を振った o。本物かは画で確かめる（2-56 では、フルバーストの入りの直前の 1〜2 個が本物で落ちた）
  */
-export function unkeptOffsets(changes: readonly number[], offsets: readonly TimerOffset[], start: number): TimerOffset[] {
+export function unkeptOffsets(
+  changes: readonly number[],
+  offsets: readonly TimerOffset[],
+  start: number,
+): TimerOffset[] {
   const F = TICKS_PER_SECOND;
-  const kept = new Set(offsets.map((x) => x.c));
   const out: TimerOffset[] = [];
+  // changes も offsets も昇順なので、直前の採った変わり目は添字を進めて取る
+  let j = 0;
+  let prev: TimerOffset = { c: start, k: 0, o: 0 };
   for (const c of changes) {
-    if (c <= start + 20 || kept.has(c)) continue;
-    const prev = offsets.filter((x) => x.c < c).at(-1) ?? { c: start, k: 0, o: 0 };
+    while (j < offsets.length && offsets[j]!.c < c) prev = offsets[j++]!;
+    if (c <= start + 20 || offsets[j]?.c === c) continue;
     const k = prev.k + Math.max(1, Math.round((c - prev.c) / F));
     out.push({ c, k, o: c - start - F * k });
   }
