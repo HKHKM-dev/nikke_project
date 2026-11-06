@@ -1,15 +1,12 @@
 {
   "id": "C-0929",
   "text": "D の S1・S2 の有利コードの攻撃ダメージ▲の窓の端は、説明文の 15 秒から数 f の中で合うが、モデルと合いきらない。S2 の切れ目は録画がモデルより 3〜4f 遅く、S1 の切れ目（2 回目のフルバーストの 00.00 から）は 0〜1f 早い回がある。出どころ（フルバーストの入りの止まりと窓の起点の数え方）は確かめていない",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`0946-09`・`0947-09`（S1 の切れ目。0946 はモデルより 1f 早く許容外、0947 は許容内）、`0946-10`・`0947-10`（S2 の切れ目。2 本ともモデルより 3〜4f 遅い）。V-0662",
   "model": "`data/skills/40.json` の skill1 の effects[0]・skill2 の effects[2] の 15 秒（`time.ts` の gameSecondsToFrames で 882f）。窓の起点と、録画の動画のフレームへの直し方（フルバーストの入りの止まり 22f）は `burst/schedule.ts` の videoFrameOf。未反映（端の差の出どころは backlog の 2-56）",
   "replaces": [],
-  "updated": "2026-11-03",
-  "subject": {
-    "places": ["data/skills/40.json の skill1 の effects[0]", "data/skills/40.json の skill2 の effects[2]"]
-  },
+  "updated": "2026-11-06",
   "decidedOn": []
 }

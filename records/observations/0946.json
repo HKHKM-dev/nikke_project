@@ -142,7 +142,7 @@
     "id": "0946-09",
     "recording": "0946",
     "kind": "timing",
-    "use": "compare",
+    "use": "record",
     "value": 899.5,
     "unit": "f",
     "spread": {
@@ -153,29 +153,10 @@
     "description": "D の S1 の有利コードの攻撃ダメージ▲（D1 → D0）が D の 1 発で替わるまでの時刻の幅（1 番目の事象 f3837 から数えた動画のフレーム）。D1の最後の発は 895f、D0の最初の発は 903f（値は幅の真ん中）",
     "method": {
       "tool": "recipe:buff-edge@4",
-      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は D1: 枠 3（D）のモデルの f3500、D0: 枠 3（D）のモデルの f3800、L1: 枠 1（リター）のモデルの f3500、L0: 枠 1（リター）のモデルの f3800、Dl1: 枠 2（デルタ）のモデルの f3500、Dl0: 枠 2（デルタ）のモデルの f3800。境は D1 → D0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜1100f。D1 35・D0 45・区別できない 0・外れ 104・食い違い（D0の最初の発より後のD1の発） 0。2 回目のフルバースト（D の 2 回目の発動。III のタイマーの 00.00）から数えた、モデルの S1 の窓の切れ目と比べる（許容は幅の半分）"
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は D1: 枠 3（D）のモデルの f3500、D0: 枠 3（D）のモデルの f3800、L1: 枠 1（リター）のモデルの f3500、L0: 枠 1（リター）のモデルの f3800、Dl1: 枠 2（デルタ）のモデルの f3500、Dl0: 枠 2（デルタ）のモデルの f3800。境は D1 → D0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜1100f。D1 35・D0 45・区別できない 0・外れ 104・食い違い（D0の最初の発より後のD1の発） 0。2 回目のフルバースト（D の 2 回目の発動。III のタイマーの 00.00）から数えた、モデルの S1 の窓の切れ目と比べる（許容は幅の半分）。V-0677 で、モデルとはティックの `0946-16` で比べることにした（動画のフレームの差には、入りの止まりの回ごとの揺れ C-0069 が乗る。C-0960）"
     },
     "source": "V-0662",
-    "readAt": "2026-11-03",
-    "compare": {
-      "model": "sim",
-      "metric": "buffEdgeFromActivation",
-      "args": {
-        "slot": 3,
-        "skill": "skill1",
-        "stat": "elementDamage",
-        "from": 3,
-        "n": 1,
-        "edge": "end"
-      },
-      "tolerance": {
-        "abs": 3.5
-      },
-      "setup": {
-        "enemy": "range-bigarms-iron",
-        "events": ["range-3min-jump"]
-      }
-    }
+    "readAt": "2026-11-03"
   },
   {
     "id": "0946-10",
