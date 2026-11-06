@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { gameTicksAt, stallsAround, TICKS_PER_SECOND, timerOffsets, timerStalls, timerSteps } from './timer-ticks.ts';
+import {
+  gameTicksAt,
+  stallsAround,
+  TICKS_PER_SECOND,
+  timerOffsets,
+  timerRuns,
+  timerStalls,
+  timerSteps,
+  unkeptOffsets,
+} from './timer-ticks.ts';
 
 /** 戦闘開始 start から、stalls（[経過秒, 止まりのフレーム数]）の止まりを入れた秒の変わり目（整数フレーム。最初に達したフレーム） */
 function changes(start: number, seconds: number, stalls: [number, number][] = []): number[] {
@@ -72,6 +81,35 @@ describe('gameTicksAt と timerSteps', () => {
     // 発動の前後（35f 前〜5f 後）に掛かる区切りの和
     expect(stallsAround(stalls, stalls[2]!.at - 10).size).toBeCloseTo(stalls[2]!.size, 6);
     expect(stallsAround(stalls, c[55]!).size).toBe(0);
+  });
+
+  it('gives each run between stalls the range of a that holds the stalls so far (2-56)', () => {
+    const start = 800;
+    const c = changes(start, 90, [
+      [15, 1],
+      [50, 22],
+    ]);
+    const offs = timerOffsets(c, start);
+    const runs = timerRuns(offs);
+    expect(runs.map((r) => [offs[r.first]!.c, offs[r.last]!.c])).toEqual([
+      [c[0], c[13]],
+      [c[14], c[48]],
+      [c[49], c[89]],
+    ]);
+    // 変わり目は c = ceil(戦闘開始 + a + k × F) なので、a は (low, high] に入り、ここでは止まりの累計（0・1・23）に当たる
+    [0, 1, 23].forEach((s, i) => {
+      expect(runs[i]!.low).toBeLessThan(s + 1e-6);
+      expect(runs[i]!.high).toBeGreaterThanOrEqual(s - 1e-6);
+    });
+  });
+
+  it('numbers the changes timerOffsets did not keep from the last kept one', () => {
+    const start = 800;
+    const real = changes(start, 30);
+    const stray = real[19]! + 25;
+    const all = [...real.slice(0, 20), stray, ...real.slice(20)];
+    const unkept = unkeptOffsets(all, timerOffsets(all, start), start);
+    expect(unkept).toEqual([{ c: stray, k: 21, o: stray - start - 21 * TICKS_PER_SECOND }]);
   });
 
   it('reports a misread change below the intersection as a negative stall', () => {

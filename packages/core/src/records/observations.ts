@@ -856,7 +856,9 @@ function mergedBuffWindows(result: SimResult, ctx: MetricContext): { start: numb
  * フォルクヴァンのバーストの吸収回復の読み直し（V-0555）: 枠 from の n 回目（0 始まり）のバーストの発動の印（activationVideoFrameOf。
  * I・II は六角形の替わり目）から、その発動から次の発動までに始まった、枠 slot が受ける timed の効果（skill と stat で絞る）の窓の
  * 付き始め（edge: start）か切れ目（edge: end）までの動画のフレーム数。続いた小片は 1 つの窓にまとめる。味方の発動のきっかけで
- * 付く窓を、録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（レシピ buff-edge の観測値の spread）と比べる
+ * 付く窓を、録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（レシピ buff-edge の観測値の spread）と比べる。省略できる引数
+ * ticks が true なら、動画のフレームでなくモデルのフレーム（ゲーム内のティック。止まりを足さない）の差。録画の側を timer.ts の
+ * runs でティックに直して比べる（止まりの長さの回ごとの揺れ C-0069 を除く。backlog 2-56）
  */
 function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
   const edge = buffEdgeArg(ctx);
@@ -865,7 +867,8 @@ function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
   const window = mergedBuffWindows(result, ctx).find((w) => span.from <= w.start && w.start < span.to);
   if (window === undefined)
     throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の後に始まった窓が無い`);
-  return videoFrameOf(result.schedule, edge === 'start' ? window.start : window.end) - span.base;
+  const at = edge === 'start' ? window.start : window.end;
+  return ctx.args.ticks === true ? at - span.origin : videoFrameOf(result.schedule, at) - span.base;
 }
 
 /**
@@ -2087,31 +2090,36 @@ function spanOf(
   ctx: MetricContext,
   anchor: string,
   within: CompareSpec['args'][string] | undefined,
-): { base: number; from: number; to: number } {
+): { base: number; origin: number; from: number; to: number } {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const m = /^(fullBurst|activation):(\d+)$/.exec(anchor);
   if (m === null)
     throw new Error(`anchor は start・fullBurst:<n>・activation:<n>・prevBurstHit・prevShot（${anchor}）`);
   const n = Number(m[2]);
+  // origin は起点のモデルのフレーム（フルバーストは窓の始まり、発動は hexagonFrameOf）、base はその動画のフレーム
+  const span = (origin: number, from: number, to: number) => ({
+    base: videoFrameOf(schedule, origin),
+    origin,
+    from,
+    to,
+  });
   if (m[1] === 'fullBurst') {
     const window = schedule.fullBurstWindows[n];
     if (window === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
     const next = schedule.fullBurstWindows[n + 1]?.start ?? Number.POSITIVE_INFINITY;
-    const base = videoFrameOf(schedule, window.start);
-    if (within === 'window') return { base, from: window.start, to: window.end };
-    if (within === 'afterWindow') return { base, from: window.end, to: next };
-    if (within === 'untilNext') return { base, from: window.start, to: next };
-    if (within === undefined) return { base, from: window.start, to: Number.POSITIVE_INFINITY };
+    if (within === 'window') return span(window.start, window.start, window.end);
+    if (within === 'afterWindow') return span(window.start, window.end, next);
+    if (within === 'untilNext') return span(window.start, window.start, next);
+    if (within === undefined) return span(window.start, window.start, Number.POSITIVE_INFINITY);
     throw new Error(`within は window・afterWindow・untilNext（${String(within)}）`);
   }
   const mine = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx));
   const activation = mine[n];
   if (activation === undefined) throw new Error(`${n} 回目の発動が無い`);
-  const base = activationVideoFrameOf(schedule, activation);
-  if (within === 'untilNext')
-    return { base, from: activation.frame, to: mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY };
-  if (within === undefined) return { base, from: activation.frame, to: Number.POSITIVE_INFINITY };
+  const origin = hexagonFrameOf(activation);
+  if (within === 'untilNext') return span(origin, activation.frame, mine[n + 1]?.frame ?? Number.POSITIVE_INFINITY);
+  if (within === undefined) return span(origin, activation.frame, Number.POSITIVE_INFINITY);
   throw new Error(`activation の within は untilNext だけ（${String(within)}）`);
 }
 

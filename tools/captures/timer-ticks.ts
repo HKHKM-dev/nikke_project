@@ -80,25 +80,62 @@ const OVERLAP_EPS = 1e-6;
  * 止まりを取りこぼす（V-0286・C-0415）。この区切り方は、単騎のオートバーストの I の発動 19 回の止まりをすべて拾った（V-0379）
  */
 export function timerStalls(offsets: readonly TimerOffset[]): TimerStall[] {
-  const runs: { first: number; low: number; high: number }[] = [];
-  let cur: { first: number; low: number; high: number } | null = null;
-  for (let i = 0; i < offsets.length; i++) {
-    const { o, k } = offsets[i]!;
-    const gap = i > 0 && k - offsets[i - 1]!.k > 3;
-    if (cur !== null && !gap && o - 1 < cur.high + OVERLAP_EPS && o > cur.low - OVERLAP_EPS) {
-      cur.low = Math.max(cur.low, o - 1);
-      cur.high = Math.min(cur.high, o);
-    } else {
-      cur = { first: i, low: o - 1, high: o };
-      runs.push(cur);
-    }
-  }
+  const runs = timerRuns(offsets);
   return runs.slice(1).map((b, r) => {
     const a = runs[r]!;
     const low = b.low - a.high;
     const high = b.high - a.low;
     return { before: offsets[b.first - 1]!.c, at: offsets[b.first]!.c, size: (low + high) / 2, low, high };
   });
+}
+
+/**
+ * 止まりの無い区間 1 つ（timerStalls の区切りのあいだ）: offsets の first〜last 番目の変わり目。区間の中の変わり目はどれも
+ * c = ceil(戦闘開始 + a + k × 58.8235) を満たし、a（止まりの累計 + 時計の位相の定数）は (low, high] にある。区間の中のフレーム f の
+ * 戦闘開始からのゲーム内のティックは f − 戦闘開始 − a（2-56 の窓の端の読み）。2 つの区間の a の差が、そのあいだの止まり
+ */
+export type TimerRun = { first: number; last: number; low: number; high: number };
+
+/** 変わり目を、(o − 1, o] の共通部分が空にならない限り 1 つの区間にまとめる（4 秒以上飛んだ所でも区切る） */
+export function timerRuns(offsets: readonly TimerOffset[]): TimerRun[] {
+  const runs: TimerRun[] = [];
+  let cur: TimerRun | null = null;
+  for (let i = 0; i < offsets.length; i++) {
+    const { o, k } = offsets[i]!;
+    const gap = i > 0 && k - offsets[i - 1]!.k > 3;
+    if (cur !== null && !gap && o - 1 < cur.high + OVERLAP_EPS && o > cur.low - OVERLAP_EPS) {
+      cur.low = Math.max(cur.low, o - 1);
+      cur.high = Math.min(cur.high, o);
+      cur.last = i;
+    } else {
+      cur = { first: i, last: i, low: o - 1, high: o };
+      runs.push(cur);
+    }
+  }
+  return runs;
+}
+
+/**
+ * timerOffsets が採らなかった変わり目（フルバーストの表示の偽物と、フルバーストの直前の、位相のそろう近くの変わり目が足りない本物）に、
+ * 直前の採った変わり目から経過秒を振った o。本物かは画で確かめる（2-56 では、フルバーストの入りの直前の 1〜2 個が本物で落ちた）
+ */
+export function unkeptOffsets(
+  changes: readonly number[],
+  offsets: readonly TimerOffset[],
+  start: number,
+): TimerOffset[] {
+  const F = TICKS_PER_SECOND;
+  const out: TimerOffset[] = [];
+  // changes も offsets も昇順なので、直前の採った変わり目は添字を進めて取る
+  let j = 0;
+  let prev: TimerOffset = { c: start, k: 0, o: 0 };
+  for (const c of changes) {
+    while (j < offsets.length && offsets[j]!.c < c) prev = offsets[j++]!;
+    if (c <= start + 20 || offsets[j]?.c === c) continue;
+    const k = prev.k + Math.max(1, Math.round((c - prev.c) / F));
+    out.push({ c, k, o: c - start - F * k });
+  }
+  return out;
 }
 
 /**

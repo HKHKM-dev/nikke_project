@@ -142,7 +142,7 @@
     "id": "0947-09",
     "recording": "0947",
     "kind": "timing",
-    "use": "compare",
+    "use": "record",
     "value": 902,
     "unit": "f",
     "spread": {
@@ -153,29 +153,10 @@
     "description": "D の S1 の有利コードの攻撃ダメージ▲（D1 → D0）が D の 1 発で替わるまでの時刻の幅（1 番目の事象 f3879 から数えた動画のフレーム）。D1の最後の発は 899f、D0の最初の発は 904f（値は幅の真ん中）",
     "method": {
       "tool": "recipe:buff-edge@4",
-      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は D1: 枠 3（D）のモデルの f3500、D0: 枠 3（D）のモデルの f3800、L1: 枠 1（リター）のモデルの f3500、L0: 枠 1（リター）のモデルの f3800、Dl1: 枠 2（デルタ）のモデルの f3500、Dl0: 枠 2（デルタ）のモデルの f3800。境は D1 → D0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜1100f。D1 22・D0 19・区別できない 0・外れ 98・食い違い（D0の最初の発より後のD1の発） 0。2 回目のフルバースト（D の 2 回目の発動。III のタイマーの 00.00）から数えた、モデルの S1 の窓の切れ目と比べる（許容は幅の半分）"
+      "note": "HUD の増分を、モデル（setup {\"enemy\":\"range-bigarms-iron\",\"events\":[\"range-3min-jump\"]}）の 1 ヒットの格子（hitDamage・skillHitDamage・dotHitDamage・dotStackTickDamage）に ±1.5 で当てた。格子は D1: 枠 3（D）のモデルの f3500、D0: 枠 3（D）のモデルの f3800、L1: 枠 1（リター）のモデルの f3500、L0: 枠 1（リター）のモデルの f3800、Dl1: 枠 2（デルタ）のモデルの f3500、Dl0: 枠 2（デルタ）のモデルの f3800。境は D1 → D0（両方の組やほかの格子にも合う増分は区別できないとして外す）。範囲は事象の 600〜1100f。D1 22・D0 19・区別できない 0・外れ 98・食い違い（D0の最初の発より後のD1の発） 0。2 回目のフルバースト（D の 2 回目の発動。III のタイマーの 00.00）から数えた、モデルの S1 の窓の切れ目と比べる（許容は幅の半分）。V-0677 で、モデルとはティックの `0947-16` で比べることにした（動画のフレームの差には、入りの止まりの回ごとの揺れ C-0069 が乗る。C-0960）"
     },
     "source": "V-0662",
-    "readAt": "2026-11-03",
-    "compare": {
-      "model": "sim",
-      "metric": "buffEdgeFromActivation",
-      "args": {
-        "slot": 3,
-        "skill": "skill1",
-        "stat": "elementDamage",
-        "from": 3,
-        "n": 1,
-        "edge": "end"
-      },
-      "tolerance": {
-        "abs": 2
-      },
-      "setup": {
-        "enemy": "range-bigarms-iron",
-        "events": ["range-3min-jump"]
-      }
-    }
+    "readAt": "2026-11-03"
   },
   {
     "id": "0947-10",
@@ -286,6 +267,120 @@
         "core": false,
         "crit": false,
         "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0947-14",
+    "recording": "0947",
+    "source": "V-0677",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [1, 22],
+    "description": "戦闘開始（f845）から 1 回目のチェーンの I の発動の後の最初の変わり目までと、そこから 1 回目のフルバーストの後の区間までの、残り時間の止まりの累計の内訳（動画のフレーム）。後ろは II の発動の止まりと 1 回目のフルバーストの入りの止まりの和",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode runs",
+      "note": "区間 1869-2516 の a は 23.00〜23.06。採らない変わり目 f905（k 1。still の画で 02:59 → 02:58）の o は 1.18 で、a は (0.18, 1.18]。端数は近くの区間でそろう（23.00〜23.06・24.00〜24.12）ので、戦闘開始の a は 0.00、f905 までの止まりは 1f（I の発動の f893 の前）、その後 f1869 までは 22f。I の止まりを 2f とすると戦闘開始の a は −1.00 で、後ろは 21f。f1058〜1858 は 1 回目のフルバーストの表示で残り時間が読めない"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0947-15",
+    "recording": "0947",
+    "source": "V-0677",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [2, 21.9],
+    "description": "2 回目のフルバーストのチェーン（I f3821・II f3850・00.00 f3879。`0947-01`〜`0947-03`）の前後の、残り時間の止まりの内訳（動画のフレーム）: f3811〜3872 の変わり目のあいだ（I と II の発動）、f3872 からフルバーストの後の区間（f4540 から）まで（入りの止まり）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode runs",
+      "note": "区間 3222-3752 の a は 23.76〜24.06（その前の区間 2575-2870 は 24.00〜24.12）、区間 4540-5246 は 47.88〜47.94。採らない変わり目 f3811（k 50。still の画で 02:10 → 02:09）の o は 24.82 で a は 24.00〜24.06 のまま、f3872（k 51。02:09 → 02:08。00.00 の 7f 前）の o は 27.00 で a は 26.00〜26.06。入りの止まりは 47.88〜47.94 − 26.00〜26.06 = 21.82〜21.94（整数にならないのは、動画とゲームの時刻のずれ。captures/guide.md）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "clock"
+    }
+  },
+  {
+    "id": "0947-16",
+    "recording": "0947",
+    "source": "V-0677",
+    "readAt": "2026-11-06",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "tick",
+    "value": 879.6,
+    "spread": {
+      "kind": "range",
+      "low": 877.1,
+      "high": 882.1
+    },
+    "description": "D の S1 の有利コードの攻撃ダメージ▲の切れ目を、2 回目のフルバーストの 00.00（f3879）から数えたゲーム内のティック（止まりを除く）。D1 の最後の発は 877.1、D0 の最初の発は 882.1（値は幅の真ん中）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode runs（`0947-09` の発のフレームを直した）",
+      "note": "00.00（f3879）のティックは f3879 − 845 − a（f3872 の 26.00〜26.06。f3872〜3879 に発動は無い）。切れ目の前後の発（`0947-09` の D1 の最後 f4778・D0 の最初 f4783）は区間 4540-5246（a 47.88〜47.94）の中。差は 899 − 21.88 と 904 − 21.88。動画のフレームの `0947-09` と違い、入りの止まりの長さを含まない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "elementDamage",
+        "from": 3,
+        "n": 1,
+        "edge": "end",
+        "ticks": true
+      },
+      "tolerance": {
+        "abs": 2.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0947-17",
+    "recording": "0947",
+    "source": "V-0677",
+    "readAt": "2026-11-06",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "tick",
+    "value": [886],
+    "spread": {
+      "kind": "range",
+      "low": 885,
+      "high": 887
+    },
+    "description": "D の S2 の有利コードの攻撃ダメージ▲の切れ目を、戦闘開始（f845）から数えたゲーム内のティック（止まりを除く）。S・SL の最後の発は 885、N・NL の最初の発は 887（値は幅の真ん中）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode runs（`0947-10` の発のフレームを直した）",
+      "note": "切れ目の前後の発（`0947-10` の S・SL の最後 f1753・N・NL の最初 f1755）の、戦闘開始（f845）からのティック f − 845 − 23（`0947-14` の止まりの累計。区間 1869-2516 の a 23.00〜23.06 から戦闘開始の a 0.00 を引いた）。I の止まりを 2f とすると 884・886。切れ目と f1858 のあいだに止まりがあれば、ティックはこれより大きい"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowEnds",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "stat": "elementDamage"
       },
       "tolerance": {
         "abs": 1
