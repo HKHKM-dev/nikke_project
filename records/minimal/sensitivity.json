@@ -21287,8 +21287,24 @@
     },
     {
       "observation": "0916-05",
+      "element": "D skill1.effects[0]",
+      "key": "33a36c47aff4b43e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0916-05",
       "element": "D skill2.effects[2]",
       "key": "33a36c47aff4b43e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0916-07",
+      "element": "D skill1.effects[0]",
+      "key": "05fc9235d0deaabe",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21303,8 +21319,24 @@
     },
     {
       "observation": "0916-12",
+      "element": "D skill1.effects[0]",
+      "key": "3205baf0745f4433",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0916-12",
       "element": "D skill2.effects[2]",
       "key": "3205baf0745f4433",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0917-05",
+      "element": "D skill1.effects[0]",
+      "key": "0f49a64ac1e0215f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21319,8 +21351,24 @@
     },
     {
       "observation": "0917-07",
+      "element": "D skill1.effects[0]",
+      "key": "8928fdc57077f21c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0917-07",
       "element": "D skill2.effects[2]",
       "key": "8928fdc57077f21c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0917-12",
+      "element": "D skill1.effects[0]",
+      "key": "bc8a54a9e0af99ca",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21680,6 +21728,14 @@
     },
     {
       "observation": "0946-08",
+      "element": "D skill1.effects[0]",
+      "key": "71c127436b1ab0e8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0946-08",
       "element": "D skill2.effects[2]",
       "key": "71c127436b1ab0e8",
       "effective": false,
@@ -21688,10 +21744,26 @@
     },
     {
       "observation": "0946-11",
+      "element": "D skill1.effects[0]",
+      "key": "1873a1ee9a4f2bad",
+      "effective": true,
+      "minus": 0,
+      "plus": 6380.437625171995
+    },
+    {
+      "observation": "0946-11",
       "element": "D skill2.effects[2]",
       "key": "1873a1ee9a4f2bad",
       "effective": true,
       "minus": -12384.275799636001,
+      "plus": 0
+    },
+    {
+      "observation": "0946-12",
+      "element": "D skill1.effects[0]",
+      "key": "6002ca0e28db4f5d",
+      "effective": true,
+      "minus": -4908.02894244,
       "plus": 0
     },
     {
@@ -21704,6 +21776,14 @@
     },
     {
       "observation": "0946-13",
+      "element": "D skill1.effects[0]",
+      "key": "57458c3da15dfe0c",
+      "effective": true,
+      "minus": 0,
+      "plus": 4908.02894244
+    },
+    {
+      "observation": "0946-13",
       "element": "D skill2.effects[2]",
       "key": "57458c3da15dfe0c",
       "effective": true,
@@ -21711,9 +21791,9 @@
       "plus": 9526.365999720001
     },
     {
-      "observation": "0946-16",
-      "element": "D skill2.effects[2]",
-      "key": "611d3ef351276076",
+      "observation": "0947-08",
+      "element": "D skill1.effects[0]",
+      "key": "ce144a552c8f0ee0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -21728,10 +21808,26 @@
     },
     {
       "observation": "0947-11",
+      "element": "D skill1.effects[0]",
+      "key": "725f9cecfc5c3ee5",
+      "effective": true,
+      "minus": 0,
+      "plus": 6380.437625171995
+    },
+    {
+      "observation": "0947-11",
       "element": "D skill2.effects[2]",
       "key": "725f9cecfc5c3ee5",
       "effective": true,
       "minus": -12384.275799636001,
+      "plus": 0
+    },
+    {
+      "observation": "0947-12",
+      "element": "D skill1.effects[0]",
+      "key": "5c2b7810ef660d05",
+      "effective": true,
+      "minus": -4908.02894244,
       "plus": 0
     },
     {
@@ -21744,19 +21840,19 @@
     },
     {
       "observation": "0947-13",
+      "element": "D skill1.effects[0]",
+      "key": "a801b11703b68584",
+      "effective": true,
+      "minus": 0,
+      "plus": 4908.02894244
+    },
+    {
+      "observation": "0947-13",
       "element": "D skill2.effects[2]",
       "key": "a801b11703b68584",
       "effective": true,
       "minus": 0,
       "plus": 9526.365999720001
-    },
-    {
-      "observation": "0947-16",
-      "element": "D skill2.effects[2]",
-      "key": "581bd3ec77a62f4b",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
     },
     {
       "observation": "0948-01",
