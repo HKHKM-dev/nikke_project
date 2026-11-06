@@ -6,9 +6,7 @@ export const PAGE_FILE = 'nikke-damage.html';
 /** Artifact の公開 1 回で送れるファイルの数の上限（ページの外の files） */
 export const MAX_FILES_PER_PUBLISH = 255;
 
-/**
- * Artifact の 1 版が持てるファイルの数の上限。ページも含む（Artifact の道具の説明「a version may hold up to 511 files ... in all」）
- */
+/** Artifact の 1 版が持てるファイルの数の上限。ページも含む（Artifact の道具の説明「a version may hold up to 511 files ... in all」） */
 export const MAX_FILES_PER_VERSION = 511;
 
 export type EntryAssets = { js: string; css: string };
@@ -50,19 +48,17 @@ export function pageHtml(assets: EntryAssets): string {
 }
 
 /**
- * 公開するファイル（ページの外）とページを合わせた数が 1 版の上限を超えるなら、その理由を返す（収まれば undefined）。
- */
-export function versionLimitError(paths: readonly string[], max = MAX_FILES_PER_VERSION): string | undefined {
-  const total = paths.length + 1;
-  if (total <= max) return undefined;
-  return `公開するファイルがページを含めて ${total} 件あり、アーティファクトの 1 版の上限（${max} 件）を ${total - max} 件超える`;
-}
-
-/**
  * 公開するファイル（ページの外）を、1 回の公開の上限ごとに分ける。assets/ を先頭の回に置く
  * （先頭の回だけを出した時点でも、ページが読み込めてエラーの理由を出せるように）。
+ * ページと合わせて 1 版の上限を超えるなら、理由を投げる（どの回も出せないので）。
  */
 export function publishBatches(paths: readonly string[], max = MAX_FILES_PER_PUBLISH): string[][] {
+  const total = paths.length + 1;
+  if (total > MAX_FILES_PER_VERSION) {
+    throw new Error(
+      `公開するファイルがページを含めて ${total} 件あり、アーティファクトの 1 版の上限（${MAX_FILES_PER_VERSION} 件）を ${total - MAX_FILES_PER_VERSION} 件超える`,
+    );
+  }
   const sorted = [...paths].sort((a, b) => {
     const rank = (p: string) => (p.startsWith('assets/') ? 0 : 1);
     return rank(a) - rank(b) || (a < b ? -1 : a > b ? 1 : 0);
