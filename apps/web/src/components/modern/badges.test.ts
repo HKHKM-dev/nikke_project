@@ -6,23 +6,24 @@ import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters 
 
 const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 const BADGE_DIR = fileURLToPath(new URL('../../assets/badges', import.meta.url));
+const BADGE_FILES = readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'));
 
 describe('バッジの対応表', () => {
   it('値ごとに別のバッジを引き、置いたバッジをどれも使う（使わないファイルを置かない）', () => {
     const srcs = BADGE_KINDS.flatMap(({ badges }) => Object.values(badges).map((b) => b.src));
     expect(new Set(srcs).size).toBe(srcs.length);
-    expect(readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'))).toHaveLength(srcs.length);
+    expect(BADGE_FILES).toHaveLength(srcs.length);
   });
 
   it('どのバッジも assetsInlineLimit 未満（束の中に埋め込まれ、アーティファクトのファイル数を使わない）', () => {
     const limit = viteConfig.build?.assetsInlineLimit;
-    expect(typeof limit, 'vite.config.ts の build.assetsInlineLimit').toBe('number');
-    for (const file of readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'))) {
+    if (typeof limit !== 'number') throw new Error('vite.config.ts の build.assetsInlineLimit が数でない');
+    for (const file of BADGE_FILES) {
       const { size } = statSync(`${BADGE_DIR}/${file}`);
       expect(
         size,
-        `${file} が ${size} バイト。assetsInlineLimit（${limit} バイト）以上だと Vite が別のファイルとして出し、アーティファクトのファイル数が増える。svgo で縮めるか、上げるなら plan/design-modern-ui.md 2.5 節と合わせて決める`,
-      ).toBeLessThan(limit as number);
+        `${file} が assetsInlineLimit 以上。Vite が別のファイルとして出し、アーティファクトのファイル数が増える`,
+      ).toBeLessThan(limit);
     }
   });
 
