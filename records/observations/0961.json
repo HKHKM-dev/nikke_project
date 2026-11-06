@@ -1,0 +1,639 @@
+[
+  {
+    "id": "0961-01",
+    "recording": "0961",
+    "kind": "total",
+    "use": "record",
+    "value": 102882749,
+    "description": "紅蓮：神殺 の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11241。増分は 455 個"
+    },
+    "source": "V-0675",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0961-02",
+    "recording": "0961",
+    "kind": "count",
+    "use": "record",
+    "value": 231,
+    "unit": "トリガー",
+    "description": "紅蓮：神殺 のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 455 個。前の増分から 30f 未満の増分（230 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 33f）から発の数を決めた（2 発になった組 6 個）"
+    },
+    "source": "V-0675",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0961-03",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "count",
+    "use": "record",
+    "value": 231,
+    "unit": "発",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "紅蓮：神殺の 180 秒の発の数（外れた発を含む。外れ 1）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "当たった発は通常攻撃の格子の増分（居合と同じフレームに読めた和を含む）、外れた発は通常攻撃の増分の無い居合（f4984）。モデルは的のジャンプの明けで照準が掛かるまで撃たないこと（C-0291）を持たないので比べない"
+    }
+  },
+  {
+    "id": "0961-04",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "count",
+    "use": "record",
+    "value": [14, 12, 12],
+    "unit": "発",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "戦闘の始めから 3 本のマガジンの発数（1 回目の的のジャンプの前）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "発の間が 60f を越えた所でマガジンを切った（マガジンの中の発の間は 39・40f、リロードの空きは 99f 前後）。モデルの magazineShots は会心を期待値で数えるので、1 本ずつは比べない（会心の並びとの突き合わせは次の観測値）"
+    }
+  },
+  {
+    "id": "0961-05",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "count",
+    "use": "record",
+    "value": 16,
+    "unit": "本",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "リロードで終わったマガジン 16 本のうち、発ごとの会心の並びから「通常攻撃の会心 2 回ごとに弾丸 1 発（最大装弾数まで）、数えた回数は戦闘を通して持ち越す」で予測した発数と合った本数",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた。突き合わせは使い捨てのスクリプト",
+      "note": "マガジンの頭の残弾を 9 とし、発ごとに 1 減らし、その発が会心なら数えて偶数回目で 1 足し、0 になった発で終える。ほかの数え方で合った本数: マガジンごとに数え直す 11 本、居合の会心も数える 4 本、居合の会心だけ 1 本。外れた発（会心なし）も残弾を 1 減らす。的のジャンプで切れたマガジン（空きが 120f を越える）は数えない（明けは残弾 9 から始まる）"
+    }
+  },
+  {
+    "id": "0961-06",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.4739,
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の当たりのうち会心の割合（会心 109 / 当たり 230）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "素の会心率 15% + S1 の通常攻撃のクリティカル確率 35%▲ と比べる。2 本の和は 224 / 460（0.487）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.07
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-07",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "rate",
+    "use": "record",
+    "value": 0.1472,
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "description": "居合のうち会心の割合（会心 34 / 居合 231）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "素の会心率 15% に近く、通常攻撃のクリティカル確率▲（35%）は乗らない（乗れば 50%）。2 本の和は 71 / 461（0.154）"
+    }
+  },
+  {
+    "id": "0961-08",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 131447,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "description": "居合（S1 の追加ダメージ）の 1 回（会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "発の増分の 5〜6f 後の増分。180 秒のどの区間でも同じ値（距離ボーナス・コアは乗らない）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-09",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 197171,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "description": "居合の 1 回（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "perShotHitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-10",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 298363,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の 1 ヒット（コア・会心なし・距離ボーナスあり）。中近の区間",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-11",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "hit",
+    "use": "compare",
+    "value": 363224,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）。中近の区間",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-12",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1,
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の当たりのうちコアの割合（中近の区間）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "どの区間も当たりは全部コアの値（胴体の値は 1 つも無い）。区間ごとのコア / 当たり: 0.3 秒〜: 44/44・33.9 秒〜: 47/47・69.5 秒〜: 50/50・108.3 秒〜: 47/47・144.0 秒〜: 42/42。距離ボーナスの付いた当たり 91（中近と中遠の区間の全部）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-13",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1,
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の当たりのうちコアの割合（近の区間）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "どの区間も当たりは全部コアの値（胴体の値は 1 つも無い）。区間ごとのコア / 当たり: 0.3 秒〜: 44/44・33.9 秒〜: 47/47・69.5 秒〜: 50/50・108.3 秒〜: 47/47・144.0 秒〜: 42/42。距離ボーナスの付いた当たり 91（中近と中遠の区間の全部）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 3000
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-14",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1,
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の当たりのうちコアの割合（遠の区間）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "どの区間も当たりは全部コアの値（胴体の値は 1 つも無い）。区間ごとのコア / 当たり: 0.3 秒〜: 44/44・33.9 秒〜: 47/47・69.5 秒〜: 50/50・108.3 秒〜: 47/47・144.0 秒〜: 42/42。距離ボーナスの付いた当たり 91（中近と中遠の区間の全部）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5000
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-15",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "rate",
+    "use": "compare",
+    "value": 1,
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "description": "通常攻撃の当たりのうちコアの割合（中遠の区間）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "どの区間も当たりは全部コアの値（胴体の値は 1 つも無い）。区間ごとのコア / 当たり: 0.3 秒〜: 44/44・33.9 秒〜: 47/47・69.5 秒〜: 50/50・108.3 秒〜: 47/47・144.0 秒〜: 42/42。距離ボーナスの付いた当たり 91（中近と中遠の区間の全部）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7500
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-16",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "record",
+    "value": [5, 6],
+    "unit": "f",
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "description": "通常攻撃の発（総ダメージの増分）から居合の増分までの動画のフレーム（多くは 6f）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "前後のフレームが読めた組だけ。0960 は 6f が 205 組・5f が 13 組。外れた発でも居合は出る（0961 の f4984）"
+    }
+  },
+  {
+    "id": "0961-17",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "timing",
+    "use": "compare",
+    "value": 377,
+    "unit": "f",
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    },
+    "description": "戦闘開始から最初のゲージの満タン（BURST バーの消失）までのフレーム。10 発目の居合と同じフレーム",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode events",
+      "note": "バー消失の動画の f1183 − 戦闘開始 f806（C-0078）。的のジャンプの前"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-18",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "gauge",
+    "use": "record",
+    "value": [4.71, 9.27],
+    "unit": "px",
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "description": "1 回目の満タンまでの、通常攻撃の 1 発と居合の 1 回で BURST バーが伸びた長さの平均 [通常攻撃, 居合]（1px ≈ 本当のゲージの 0.74%。C-0084）",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel",
+      "note": "ヒットの 1f 前と 2f 後のバーの差。バーの見える範囲（C-0084）の前の 1 組と、113px に張り付いた最後の 1 組を除く。通常攻撃は 4〜6px、居合は 9〜10px で、会心かどうかでは変わらない。通常攻撃 34,000（C-0083）と居合 68,000 なら 10 発目の居合で 1,020,000、9 発目の居合と 10 発目の通常攻撃までで 986,000（満タンのフレームと合う）"
+    }
+  },
+  {
+    "id": "0961-19",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "compare",
+    "value": 39.231,
+    "unit": "f",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "1 本目のマガジンの発と発の間の平均（動画のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
+      "note": "マガジンの中の発の間は 39f と 40f。戦闘開始から最初の発までは 18f。モデルの 1 本目のマガジンの発（戦闘開始から 400f まで）の平均と比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 0,
+        "to": 400
+      },
+      "tolerance": {
+        "abs": 0.2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-20",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "compare",
+    "value": 99,
+    "unit": "f",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "リロード（マガジンの最終弾 → 次のマガジンの 1 発目）の動画のフレーム（的のジャンプの絡まないリロードの中央値）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）",
+      "note": "16 回のうち 99f が 15 回、109f が 1 回（1 本目の後。HUD の読めないフレームを挟む）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "0961-21",
+    "recording": "0961",
+    "kind": "interval",
+    "use": "record",
+    "value": [81],
+    "unit": "f",
+    "description": "紅蓮：神殺 のマガジンの最終弾（総ダメージの増分）からリロード完了（RELOADING のバーが消えたフレーム）まで（的のジャンプの絡まないリロード）",
+    "method": {
+      "tool": "recipe:reload-segments@2 と recipe:hud-jumps@3",
+      "note": "レシピは最終弾の 6f 後の居合の増分を最終弾と読み、多くの回を「最終弾の読み違い」で落とした（残った回は無い）。最終弾 → 次の 1 発目（0961-20 の 99f）− 完了 → 次の 1 発目（0961-22 の 18f）で決めた。CDN のリロード 1.17 秒をゲーム内の時計で数えた 68.8f に約 12f を足した長さ（C-0135）と合う"
+    },
+    "source": "V-0675",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0961-22",
+    "recording": "0961",
+    "kind": "interval",
+    "use": "record",
+    "value": [18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18],
+    "unit": "f",
+    "description": "紅蓮：神殺 のリロード完了から次の発（総ダメージの増分）まで（取り消し・窓をまたいだ回を除いた全部の回）",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 1415・2477・3351・4413・5412・5943・6395・6887・7859・8429・8921・10903"
+    },
+    "source": "V-0675",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0961-23",
+    "recording": "0961",
+    "kind": "interval",
+    "use": "record",
+    "value": [80.59, 80.66, 80.64, 80.63, 80.66, 80.67, 80.66, 80.66, 80.67, 80.66, 80.63, 80.66],
+    "unit": "f",
+    "description": "紅蓮：神殺 のリロードのバーが 0 から満ちるまでの長さ（溝の幅 ÷ バーの伸び。直線の当てはめ）",
+    "method": {
+      "tool": "recipe:reload-segments@2",
+      "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。当てはめの残差が 3px を超える回は除いた。取り消し・窓をまたいだ回も除いた"
+    },
+    "source": "V-0675",
+    "readAt": "2026-11-06"
+  },
+  {
+    "id": "0961-24",
+    "recording": "0961",
+    "source": "V-0675",
+    "readAt": "2026-11-06",
+    "kind": "interval",
+    "use": "record",
+    "value": 18,
+    "unit": "f",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "description": "戦闘開始から最初の発（総ダメージの増分）までの動画のフレーム",
+    "method": {
+      "tool": "timer.ts --mode changes（C-0078）と recipe:hud-jumps@3",
+      "note": "最初の発 f824 − 戦闘開始 f806。照準の下の残弾（AMMO 009 → 008）も同じフレームで減る（0960 の f890 の画）ので、HUD に出るのが遅れているのではなく、撃つのが遅い。ふだんの構えは約 12f（C-0114）で、リロード完了から次の 1 発目（0961-22）も 18f とふだん（約 12f。C-0135）より 6f 長い"
+    }
+  }
+]
