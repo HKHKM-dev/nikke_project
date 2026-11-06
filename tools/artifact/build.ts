@@ -2,7 +2,8 @@
 //   npm run artifact:build
 // 1. apps/web を base "./" で vite build し、dist/artifact/ に出す（データ packages/core/data も publicDir として入る）。
 // 2. index.html を、アーティファクトのページ（build-lib.ts の PAGE_FILE。中身だけで、公開のときに doctype などで包まれる）に置き換える。
-// 3. キャラ画像を除き、公開するファイルを 1 回の上限（255）ごとに分けた一覧を dist/artifact/publish.json に書く。
+// 3. キャラ画像を除き、公開するファイルを 1 回の上限（build-lib.ts の MAX_FILES_PER_PUBLISH）ごとに分けた一覧を
+//    dist/artifact/publish.json に書く。ページと合わせて 1 版の上限（MAX_FILES_PER_VERSION）を超えたら、理由を出して止まる。
 // 公開は Claude Code の Artifact の道具で行う（この道具は公開しない）: file_path にページ、root に dist/artifact、files に
 // publish.json の batches の 1 回目を渡して出し、2 回目以降も同じ file_path で出す（同じ URL に files が足される）。
 // 既にあるアーティファクトを作り直すときは、その URL（Artifact の list で探す）を url に渡す。直すのは本体のソースで、
@@ -34,7 +35,7 @@ if (vite.status !== 0) {
 const indexPath = join(OUT, 'index.html');
 writeFileSync(join(OUT, PAGE_FILE), pageHtml(entryAssets(readFileSync(indexPath, 'utf8'))));
 rmSync(indexPath);
-// キャラ画像（characters/images・portraits。400 枚余り）は除く。アーティファクトは 1 版 511 ファイルまでで、データだけで
+// キャラ画像（characters/images・portraits。400 枚余り）は除く。アーティファクトの 1 版のファイル数には上限があり、データだけで
 // 300 近くある。画面（CharacterVisual）は画像が無ければ属性の色の札で出す（plan/design-modern-ui.md）
 for (const dir of ['images', 'portraits']) rmSync(join(OUT, 'characters', dir), { recursive: true, force: true });
 
@@ -46,7 +47,15 @@ function listFiles(dir: string): string[] {
 const files = listFiles(OUT)
   .map((p) => relative(OUT, p).split(sep).join('/'))
   .filter((p) => p !== PAGE_FILE && p !== 'publish.json');
-const batches = publishBatches(files);
+let batches: string[][];
+try {
+  batches = publishBatches(files);
+} catch (e) {
+  console.error(
+    `artifact:build: ${(e as Error).message}。公開から除くもの（上のキャラ画像と同じ扱い）を増やすか、データのファイルを減らす`,
+  );
+  process.exit(1);
+}
 writeFileSync(
   join(OUT, 'publish.json'),
   `${JSON.stringify({ root: OUT, page: join(OUT, PAGE_FILE), batches }, null, 2)}\n`,
