@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "resourceId": 472,
-  "checkedAt": "2026-10-29",
+  "checkedAt": "2026-11-06",
   "skills": {
     "skill1": {
       "effects": [
@@ -18,7 +18,10 @@
           "target": "self",
           "stat": "normalCritRate",
           "ref": 1,
-          "durationUntil": "battleEnd"
+          "durationUntil": "battleEnd",
+          "claims": [
+            "C-0954"
+          ]
         },
         {
           "kind": "damage",
@@ -27,10 +30,15 @@
           },
           "damageType": "additional",
           "ref": 2,
+          "delayFrames": 6,
+          "gaugePerHit": 2,
           "assumes": {
-            "ja": "居合は通常攻撃の発ごとに 1 回（全弾命中の前提）。使用武器の変更（花無十一日紅・満開）の発でも出ると読む（plan/design-new-chars-1029.md 論点 H）。ヒットのフレームとゲージは確かめていない（発と同じフレーム）",
-            "en": "Iai fires once per normal attack shot (every shot is assumed to hit), read as also firing on the shots of the weapon change (Beyond the Fade: Full Bloom; plan/design-new-chars-1029.md issue H). The hit frame and gauge are unchecked (same frame as the shot)"
-          }
+            "ja": "居合は通常攻撃の発ごとに 1 回（外れた発でも出る）で、発の 6f 後に出て、射手の 2 ヒットぶんのゲージを溜める（V-0675。plan/design-new-chars-1029.md 12.2 節の b・c・e）。使用武器の変更（花無十一日紅・満開）の発でも出ると読む（論点 H。確かめていない）",
+            "en": "Iai fires once per normal attack shot (also on a missed shot), 6 frames after the shot, and charges two shooter hits of burst gauge (V-0675; plan/design-new-chars-1029.md 12.2 b, c, e). It is read as also firing on the shots of the weapon change (Beyond the Fade: Full Bloom; issue H; unchecked)"
+          },
+          "claims": [
+            "C-0955"
+          ]
         },
         {
           "kind": "damage",
@@ -42,9 +50,10 @@
           },
           "damageType": "additional",
           "ref": 2,
+          "delayFrames": 6,
           "assumes": {
-            "ja": "S2 の臨戦：身剣合一の効果 3「居合の追加ダメージ倍率が 100% 効果量に対し増加」を、身剣合一の間だけ居合と同じ値の追加ダメージがもう 1 つ出る（倍率 2 倍）と読む（値は S1 の居合。plan/design-new-chars-1029.md 論点 G）",
-            "en": "S2's Into the Fray: At One With the Sword Effect 3 ('Iai's additional damage is scaled by 100%') is read as one more additional damage of the Iai value while At One With the Sword lasts (twice the multiplier; the value is S1's Iai. plan/design-new-chars-1029.md issue G)"
+            "ja": "S2 の臨戦：身剣合一の効果 3「居合の追加ダメージ倍率が 100% 効果量に対し増加」を、身剣合一の間だけ居合と同じ値の追加ダメージがもう 1 つ出る（倍率 2 倍）と読む（値は S1 の居合。plan/design-new-chars-1029.md 論点 G。確かめていない）。出るフレームは居合と同じ発の 6f 後（V-0675）。ゲージは溜めない扱い（確かめていない）",
+            "en": "S2's Into the Fray: At One With the Sword Effect 3 ('Iai's additional damage is scaled by 100%') is read as one more additional damage of the Iai value while At One With the Sword lasts (twice the multiplier; the value is S1's Iai. plan/design-new-chars-1029.md issue G; unchecked). It lands 6 frames after the shot like Iai (V-0675). Treated as not charging burst gauge (unchecked)"
           }
         },
         {
@@ -73,14 +82,15 @@
           ]
         },
         {
-          "ja": "通常攻撃が広範囲の攻撃になることは、敵 1 体の前提では的の数を変えない（要件 5.2 節）。射撃場の的でコアに当たる割合が変わるかは録画で読む",
-          "en": "Normal attacks becoming wide-range attacks does not change the number of targets under the single-enemy premise (requirements 5.2). Whether the core hit rate on the range target changes is to be read from recordings",
+          "ja": "通常攻撃が広範囲の攻撃になることは、敵 1 体の前提では的の数を変えない（要件 5.2 節）。射撃場の的では、どの区間も通常攻撃がコアに当たる（的の表の弾の種類 InstantBox の行。V-0675）",
+          "en": "Normal attacks becoming wide-range attacks does not change the number of targets under the single-enemy premise (requirements 5.2). On the range target, every normal attack hits the core in every segment (the InstantBox row of the target table; V-0675)",
           "kind": "outOfScope",
           "effect": {
             "kind": "unknown"
           },
           "claims": [
-            "C-0443"
+            "C-0443",
+            "C-0957"
           ]
         }
       ]
@@ -100,7 +110,10 @@
           "assumes": {
             "ja": "クリティカル命中は、発ごとに命中の期待値 × その発の通常攻撃の会心率を足して数える（乱数を期待値で持つ）。花無十一日紅・満開（使用武器の変更）の発も数え、変更の発で届いた回は弾丸チャージしない（plan/design-new-chars-1029.md 5.7 節）",
             "en": "Critical hits are counted by adding, per shot, the expected hits times that shot's normal attack critical rate (the randomness is kept as an expectation). Shots of Beyond the Fade: Full Bloom (the weapon change) are counted too, and a count reached on such a shot does not reload (plan/design-new-chars-1029.md 5.7)"
-          }
+          },
+          "claims": [
+            "C-0956"
+          ]
         },
         {
           "kind": "state",

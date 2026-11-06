@@ -258,7 +258,14 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   // V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 周期の倍率ダメージのヒットごとのゲージ。2 段目の段 14 の PR 2（plan/design-skill-stage14.md
   // 2.5 節）: 射撃の回数のきっかけ（数える窓なし）も
   if (v.gaugePerHit !== undefined) {
-    if (v.gaugePerHit !== true) fail(`${path}.gaugePerHit`, `expected true, got ${JSON.stringify(v.gaugePerHit)}`);
+    // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の b）: 射撃の回数のきっかけなら、射手の何ヒットぶんかの数（2 以上の整数）も
+    // （居合は 1 回で射手の 2 ヒットぶん。V-0675）
+    const scaled = isShotCountTrigger(trigger) && Number.isInteger(v.gaugePerHit) && (v.gaugePerHit as number) >= 2;
+    if (v.gaugePerHit !== true && !scaled)
+      fail(
+        `${path}.gaugePerHit`,
+        `expected true (or an integer of 2 or more with a shot count trigger), got ${JSON.stringify(v.gaugePerHit)}`,
+      );
     if (!isTimerTrigger(trigger) && !(isShotCountTrigger(trigger) && !hasCountingWindow(trigger)))
       fail(
         `${path}.gaugePerHit`,
@@ -280,7 +287,7 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
         `${path}.gaugePerHit`,
         'gaugePerHit cannot be used with a condition (except enemyState with a shot count trigger)',
       );
-    effect.gaugePerHit = true;
+    effect.gaugePerHit = scaled ? (v.gaugePerHit as number) : true;
   }
   // 同 5.4 節: 「コア命中ダメージ」
   if (v.coreHit !== undefined) {
@@ -314,7 +321,7 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
     effect.sequentialAttack = true;
   }
   // 同: 射撃の回数のきっかけのヒットごとのゲージは、1 パス目が数えられるヒット（1 つずつ出すなら perCount の { state }）だけ
-  if (effect.gaugePerHit === true && isShotCountTrigger(trigger) && effect.perCount !== undefined) {
+  if (effect.gaugePerHit !== undefined && isShotCountTrigger(trigger) && effect.perCount !== undefined) {
     if (!('state' in effect.perCount) || !splitsPerCount(effect))
       fail(
         `${path}.gaugePerHit`,

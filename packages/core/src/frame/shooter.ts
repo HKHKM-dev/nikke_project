@@ -31,6 +31,7 @@ import type { ShotParams } from '../types.ts';
 import {
   DEFAULT_WEAPON_MODEL,
   MAX_RPM,
+  aimLongerFrames,
   hasSpinUp,
   isChargeWeapon,
   windowEndShorterFrames,
@@ -614,7 +615,7 @@ export function windowEndFirstShotFrames(
 ): number {
   return isChargeWeapon(shot)
     ? Math.max(0, firstShotFrames(shot, model, params) - windowEndShorterFrames(shot, model))
-    : model.aimInFrames;
+    : model.aimInFrames + aimLongerFrames(shot, model);
 }
 
 export function unhideShooter(
@@ -659,8 +660,10 @@ export function reaimShooter(
     // 入力が UP の RL は、明けの構えが戦闘開始より 1f 短い（C-0229。V-0143）
     const first = windowEndFirstShotFrames(shot, model, params);
     state.wait = state.phase === 'priming' && shot.inputType !== 'DOWN_Charge' ? Math.max(state.wait, first) : first;
-  } else if (state.phase === 'ready') state.wait = model.aimInFrames;
-  else state.wait = Math.max(state.wait, model.aimInFrames);
+  } else {
+    const aim = model.aimInFrames + aimLongerFrames(shot, model);
+    state.wait = state.phase === 'ready' ? aim : Math.max(state.wait, aim);
+  }
 }
 
 /** 最初の frames フレームで発射したフレームの列（テスト・CLI 用） */

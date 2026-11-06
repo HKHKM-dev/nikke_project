@@ -328,11 +328,30 @@ function parseRateTableWithWeaponChanges(
 /** コア命中率の表（武器種の行・使用武器の変更の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
 function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
-  const { autoAttacks, ...rest } = v;
+  const { autoAttacks, fireTypes, ...rest } = v;
   const table: CoreHitRateTable = parseRateTableWithWeaponChanges(rest, path, keys);
   if (autoAttacks !== undefined)
     table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
+  if (fireTypes !== undefined) table.fireTypes = parseFireTypeRows(fireTypes, `${path}.fireTypes`, keys);
   return table;
+}
+
+/** 弾の種類の行のキー（CDN の fire_type の生値） */
+const FIRE_TYPE_KEY = /^[A-Za-z]+$/;
+
+/** 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類ごとの行（キー fire_type → 行か null） */
+function parseFireTypeRows(
+  v: unknown,
+  path: string,
+  keys: ReadonlySet<string>,
+): Readonly<Record<string, TargetRateRow | null>> {
+  if (!isRecord(v) || Object.keys(v).length === 0) throw new TypeError(`${path}: must be a non-empty object`);
+  const rows: Record<string, TargetRateRow | null> = {};
+  for (const [key, r] of Object.entries(v)) {
+    if (!FIRE_TYPE_KEY.test(key)) throw new TypeError(`${path}.${key}: key must be a fire type`);
+    rows[key] = r === null ? null : parseRateRow(r, `${path}.${key}`, keys, RATE);
+  }
+  return rows;
 }
 
 function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>): FlightFramesTable {

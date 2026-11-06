@@ -98,6 +98,17 @@ describe('computeCadence (calibrated against recordings)', () => {
     expect(Math.abs(folkwang.reloadFrames + folkwang.reloadFirstShotFrames - 100)).toBeLessThanOrEqual(1);
   });
 
+  it('InstantBox (Scarlet: Goddeath): the aim takes 6f longer from hiding and after the reload (V-0675: 18f and 99f)', () => {
+    // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の d）: 戦闘開始 → 最初の発 18f（`0960-24`）、最終弾 → 次の 1 発目
+    // はリロード 1.17 秒 + 24f + 6f（`0960-20` の 99f）
+    const c = computeCadence(
+      shot({ fireType: 'InstantBox', rateOfFire: 90, endRateOfFire: 90, maxAmmo: 9, reloadTime: 1.17 }),
+    );
+    expect(c.firstShotFrames).toBe(18);
+    expect(c.reloadFirstShotFrames).toBe(30);
+    expect(Math.abs(c.reloadFrames + c.reloadFirstShotFrames - 99)).toBeLessThanOrEqual(1);
+  });
+
   it('SMG 1440 rpm: 120 rounds span 292f with 65 gaps of 2f and 54 of 3f (0005-01・0005-02); next magazine after 82.8f (measured 83f; 098: 82.9f)', () => {
     const c = computeCadence(shot({ maxAmmo: 120, rateOfFire: 1440, endRateOfFire: 1440 }));
     expect(c.magazineFrames).toBe(292);
@@ -210,6 +221,7 @@ describe('computeCadence (calibrated against recordings)', () => {
       rlWindowEndShorterFrames: 1,
       hideReloadExtraFrames: 12,
       hideDetectFrames: 8,
+      instantBoxAimLongerFrames: 6,
     });
     // Stage 23: 1 秒チャージは 1 ÷ 0.017 = 58.8 → 59f（C-0140）
     expect(f[1]).toBe(59);

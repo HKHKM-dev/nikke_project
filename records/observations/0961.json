@@ -158,10 +158,10 @@
     },
     "compare": {
       "model": "sim",
-      "metric": "perShotHitDamage",
+      "metric": "skillHitDamage",
       "args": {
         "slot": 1,
-        "frame": 600,
+        "n": 0,
         "crit": false
       },
       "tolerance": {
@@ -194,10 +194,10 @@
     },
     "compare": {
       "model": "sim",
-      "metric": "perShotHitDamage",
+      "metric": "skillHitDamage",
       "args": {
         "slot": 1,
-        "frame": 600,
+        "n": 0,
         "crit": true
       },
       "tolerance": {
@@ -433,17 +433,34 @@
     "source": "V-0675",
     "readAt": "2026-11-06",
     "kind": "interval",
-    "use": "record",
-    "value": [5, 6],
+    "use": "compare",
+    "value": 6,
     "unit": "f",
     "scope": {
       "slot": 1,
       "source": "skill"
     },
-    "description": "通常攻撃の発（総ダメージの増分）から居合の増分までの動画のフレーム（多くは 6f）",
+    "description": "通常攻撃の発（総ダメージの増分）から居合の増分までの動画のフレームの最頻値",
     "method": {
       "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子（通常攻撃: 倍率グループ 1 の値 129,723 × (1 + コア 1 + 会心 0.5 + 距離 0.3 の組)。居合: 131,447 × (1 + 会心 0.5 の組)）に当てた",
-      "note": "前後のフレームが読めた組だけ。0960 は 6f が 205 組・5f が 13 組。外れた発でも居合は出る（0961 の f4984）"
+      "note": "前後のフレームが読めた組だけ。6f が 220 組（ほかは HUD の読めないフレームを挟む組と、外れた発の f4984 の居合）。外れた発でも居合は出る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 1,
+        "skill": "skill1"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
     }
   },
   {
@@ -585,7 +602,11 @@
       "note": "レシピは最終弾の 6f 後の居合の増分を最終弾と読み、多くの回を「最終弾の読み違い」で落とした（残った回は無い）。最終弾 → 次の 1 発目（0961-20 の 99f）− 完了 → 次の 1 発目（0961-22 の 18f）で決めた。CDN のリロード 1.17 秒をゲーム内の時計で数えた 68.8f に約 12f を足した長さ（C-0135）と合う"
     },
     "source": "V-0675",
-    "readAt": "2026-11-06"
+    "readAt": "2026-11-06",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   },
   {
     "id": "0961-22",
@@ -600,7 +621,11 @@
       "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。完了のフレーム: 1415・2477・3351・4413・5412・5943・6395・6887・7859・8429・8921・10903"
     },
     "source": "V-0675",
-    "readAt": "2026-11-06"
+    "readAt": "2026-11-06",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   },
   {
     "id": "0961-23",
@@ -615,7 +640,11 @@
       "note": "tools/captures/reload.ts --mode fit --shots（hud-jumps のキャッシュ）。当てはめの残差が 3px を超える回は除いた。取り消し・窓をまたいだ回も除いた"
     },
     "source": "V-0675",
-    "readAt": "2026-11-06"
+    "readAt": "2026-11-06",
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   },
   {
     "id": "0961-24",

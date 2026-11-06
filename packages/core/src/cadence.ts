@@ -10,6 +10,7 @@ import { framesToGameSeconds } from './time.ts';
 import {
   DEFAULT_WEAPON_MODEL,
   MAX_RPM,
+  aimLongerFrames,
   hasSpinUp,
   hideAimShorterFrames,
   isChargeWeapon,
@@ -127,8 +128,8 @@ export function firstShotFrames(
   }
   // Stage 22-A: 押下チャージ型は確かめていないので、発と発の間から構え解除のぶんを引いたまま（C-0537）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
-  // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）
-  return model.aimInFrames;
+  // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）。InstantBox は構えが長い（V-0675）
+  return model.aimInFrames + aimLongerFrames(shot, model);
 }
 
 /** リロード完了から次のマガジンの 1 発目まで。Stage 24: チャージの無い武器は武器種によらず 24f（MG を含む。C-0148） */
@@ -144,8 +145,8 @@ export function reloadFirstShotFrames(
   if (params.stance !== null) return chargeShotIntervalFrames(params, model);
   // 押下チャージ型でも、リロードの後は解放を足す（C-0222）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
-  // Stage 24: MG も AR・SMG・SG と同じ（22 までは MG だけ初弾遅延 20f。C-0002）
-  return model.reloadFirstShotFrames;
+  // Stage 24: MG も AR・SMG・SG と同じ（22 までは MG だけ初弾遅延 20f。C-0002）。InstantBox は構えが長い（V-0675）
+  return model.reloadFirstShotFrames + aimLongerFrames(shot, model);
 }
 
 export function computeCadence(

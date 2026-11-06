@@ -25,6 +25,7 @@ import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type {
   CharacterData,
+  CoreHitRateTable,
   LandingBand,
   LandingPoint,
   SkillSlot,
@@ -125,8 +126,16 @@ function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is T
   return 'byProjectile' in cell;
 }
 
-/** キャラの行（武器種の行。弾の種類ごとの行なら、そのキャラの弾の種類の行）。null = 未測定 */
-export function rateRowOf(table: TargetRateTable, character: CharacterData): TargetRateRow | null {
+/**
+ * キャラの行（武器種の行。弾の種類ごとの行なら、そのキャラの弾の種類の行）。null = 未測定。
+ * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: コア命中率の表に fire_type の行（fireTypes）があれば、それを先に引く
+ */
+export function rateRowOf(
+  table: TargetRateTable & Pick<CoreHitRateTable, 'fireTypes'>,
+  character: CharacterData,
+): TargetRateRow | null {
+  const byFireType = table.fireTypes?.[character.shot.fireType];
+  if (byFireType !== undefined) return byFireType;
   const cell = table[character.weaponType];
   if (cell === null || cell === undefined) return null;
   if (!isByProjectile(cell)) return cell;
@@ -151,7 +160,11 @@ function rateAtLanding(row: TargetRateRow, landing: Pick<LandingPoint, 'id' | 'b
 }
 
 /** 表の値（着地点の id → 帯 → all の順）。null = 未測定 */
-export function targetRateOf(table: TargetRateTable, character: CharacterData, landing: LandingPoint): number | null {
+export function targetRateOf(
+  table: TargetRateTable & Pick<CoreHitRateTable, 'fireTypes'>,
+  character: CharacterData,
+  landing: LandingPoint,
+): number | null {
   const row = rateRowOf(table, character);
   if (row === null) return null;
   return rateAtLanding(row, landing) ?? null;

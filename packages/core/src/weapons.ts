@@ -103,6 +103,13 @@ export type WeaponModel = {
    * （plan/design-hide-reload-detect.md 案 A。V-0609・V-0610・V-0615）
    */
   hideDetectFrames: number;
+  /**
+   * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の d）: 弾の種類 InstantBox（紅蓮：神殺の AR）の、チャージの無い武器の構え
+   * （aimInFrames。戦闘開始・窓の明け）とリロードの明けの 1 発目（reloadFirstShotFrames）に足すフレーム。戦闘開始 → 最初の発と
+   * リロード完了 → 次の 1 発目が、どちらも 18f（ふだんは約 12f）。照準の下の残弾も同じフレームで減る（V-0675 の `0960-22`・`0960-24`）。
+   * 理由は分かっていない
+   */
+  instantBoxAimLongerFrames: number;
 };
 
 export const DEFAULT_WEAPON_MODEL: WeaponModel = {
@@ -117,6 +124,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   rlWindowEndShorterFrames: 1,
   hideReloadExtraFrames: 12,
   hideDetectFrames: 8,
+  instantBoxAimLongerFrames: 6,
 };
 
 /**
@@ -165,6 +173,17 @@ export function hideAimShorterFrames(
   return isChargeWeapon(shot) && shot.inputType === 'UP' && shot.fireType === 'Instant'
     ? model.srHideAimShorterFrames
     : 0;
+}
+
+/**
+ * チャージの無い武器の構え（戦闘開始・窓の明け）とリロードの明けの 1 発目に足すフレーム。弾の種類 InstantBox だけ
+ * WeaponModel.instantBoxAimLongerFrames（plan/design-new-chars-1029.md 12.2 節の d）。ほかは 0
+ */
+export function aimLongerFrames(
+  shot: Pick<ShotParams, 'fireType'>,
+  model: Pick<WeaponModel, 'instantBoxAimLongerFrames'>,
+): number {
+  return shot.fireType === 'InstantBox' ? model.instantBoxAimLongerFrames : 0;
 }
 
 export function hasSpinUp(shot: Pick<ShotParams, 'rateOfFireChangePerShot' | 'endRateOfFire' | 'rateOfFire'>): boolean {
