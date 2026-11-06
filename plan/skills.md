@@ -161,7 +161,7 @@ notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足
 - **skill2**: supported
   - effects[0] burstGauge・battleStart: C-0918（確定）
   - effects[1] state・battleStart・stunImmunity: C-0886（確定）
-  - effects[2] timed・battleStart・elementDamage: C-0928（確定）、C-0961（仮説）
+  - effects[2] timed・battleStart・elementDamage: C-0928（確定）、C-0963（仮説）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0887（確定）
   - effects[1] fullBurstExtend・burstUse: C-0886（確定）
@@ -1277,7 +1277,7 @@ notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足
 ## 871 雪子
 
 - **skill1**: supported
-  - effects[0] timed・battleStart・attack: C-0347（確定）
+  - effects[0] timed・battleStart・attack: C-0347（確定）、C-0962（確定）
   - effects[1] timed・fullBurstEnd・attack: C-0347（確定）
   - effects[2] damage・burstUse・distributed: C-0358（確定）、C-0428（確定）
   - effects[3] state・battleStart・persona: C-0354（確定）
