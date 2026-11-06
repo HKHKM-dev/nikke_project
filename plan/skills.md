@@ -156,12 +156,12 @@ notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足
 ## 40 D
 
 - **skill1**: supported
-  - effects[0] timed・fullBurstStart・elementDamage: C-0928（確定）、C-0929（仮説）
+  - effects[0] timed・fullBurstStart・elementDamage: C-0928（確定）、C-0960（確定）
   - notes[0] 計算に無関係: フルバーストタイムが発動した時（初回は追加で）の、攻撃ダメージの回復（吸収回復）は、回復で、回復を受けた時を読む味方がいなければダメージに効かない: 根拠なし
 - **skill2**: supported
   - effects[0] burstGauge・battleStart: C-0918（確定）
   - effects[1] state・battleStart・stunImmunity: C-0886（確定）
-  - effects[2] timed・battleStart・elementDamage: C-0928（確定）、C-0929（仮説）
+  - effects[2] timed・battleStart・elementDamage: C-0928（確定）、C-0961（仮説）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0887（確定）
   - effects[1] fullBurstExtend・burstUse: C-0886（確定）
