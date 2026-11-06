@@ -506,7 +506,11 @@ export function hideShooter(
   const stance = params.stance;
   const lead = stance === null ? 0 : Math.max(0, stance.frames - stance.holdFrames - (state.chargeElapsed ?? Infinity));
   state.hideReloadStartIn = lead - startedFramesAgo;
-  const chunk = startReload(state, params) + lead + hideReloadExtraFrames(model, params) - startedFramesAgo;
+  // C-0959（plan/design-hide-reload.md 10 節の案 D）: 分割リロードでない武器の 1 回分は、端数つきの長さを切り上げる（切り捨てると、
+  // リロード 1.67 秒が 118f の窓の明けの前に満ちてしまう）。端数の持ち越しは、ふだんのリロードと同じに進める
+  const started = startReload(state, params);
+  const reload = params.splitReload ? started : Math.ceil(params.reloadChunkFrames - 1e-9);
+  const chunk = reload + lead + hideReloadExtraFrames(model, params) - startedFramesAgo;
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える
     state.wait = chunk - 1;
