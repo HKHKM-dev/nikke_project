@@ -11,6 +11,8 @@ const SCOPE = 'https://www.googleapis.com/auth/drive.readonly';
 /** NIKKE_DRIVE_API はテストが偽の API を指すためのもの */
 const api = () => process.env.NIKKE_DRIVE_API ?? 'https://www.googleapis.com/drive/v3';
 export const FOLDER_MIME = 'application/vnd.google-apps.folder';
+/** DriveFile に読むフィールド */
+const FILE_FIELDS = 'id, name, mimeType, size, modifiedTime';
 
 type ServiceAccountKey = { client_email: string; private_key: string; token_uri?: string };
 
@@ -120,7 +122,7 @@ export class Drive {
     do {
       const res = await this.get('/files', {
         q,
-        fields: 'nextPageToken, files(id, name, mimeType, size, modifiedTime)',
+        fields: `nextPageToken, files(${FILE_FIELDS})`,
         pageSize: '1000',
         includeItemsFromAllDrives: 'true',
         orderBy: 'name',
@@ -144,6 +146,12 @@ export class Drive {
       current = hits[0]!;
     }
     return current;
+  }
+
+  /** 1 ファイルのメタデータを読み直す（クラウドでの取り込みで、上げ終えるのを待つときに使う） */
+  async file(fileId: string): Promise<DriveFile> {
+    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { fields: FILE_FIELDS });
+    return (await res.json()) as DriveFile;
   }
 
   /** 1 ファイルのハッシュ（Drive が持っている値。クラウドでの取り込みの突き合わせに使う） */

@@ -7,6 +7,8 @@ import {
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
+  UPLOAD_POLL_MS,
+  uploadSettled,
 } from './intake-lib.ts';
 
 describe('番号の割り当て', () => {
@@ -87,5 +89,14 @@ describe('引数の検査', () => {
     expect(() => parseTreasureArg('3:1', rids, hasTreasure)).toThrow(
       '--treasure の枠 3（rid 10）のキャラは宝物を持たない',
     );
+  });
+});
+
+describe('drive: の取り込み元を上げ終えるまで待つか', () => {
+  it('re-reads the size every 30 seconds and takes the upload as settled only when it did not change', () => {
+    expect(UPLOAD_POLL_MS).toBe(30_000);
+    expect(uploadSettled('245100000', '245100000')).toBe(true);
+    expect(uploadSettled('237600000', '245100000')).toBe(false);
+    expect(uploadSettled(undefined, '245100000')).toBe(false);
   });
 });

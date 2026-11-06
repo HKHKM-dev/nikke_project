@@ -83,3 +83,11 @@ export function parseTreasureArg(
 export function reservedLabel(ids: readonly string[]): string {
   return `録画 ${ids[0]}${ids.length > 1 ? `〜${ids[ids.length - 1]}` : ''}`;
 }
+
+/** drive: の取り込み元を取り寄せる前に待つ長さ。待った後にサイズが変わっていれば、また待つ（上げている途中の版を取り込まない） */
+export const UPLOAD_POLL_MS = 30_000;
+
+/** 待つ前と後のサイズ（Drive の size。文字列）が同じなら、上げ終えたと見なす */
+export function uploadSettled(before: string | undefined, after: string | undefined): boolean {
+  return before === after;
+}
