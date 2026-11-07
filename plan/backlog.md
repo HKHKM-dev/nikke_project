@@ -119,7 +119,6 @@
 
 - 全弾リロードの 1 回ごとの丸め（2026-11-07 起票）→ 実装済み（2026-11-07。案 E。残りは 2-59・2-60）: [design-reload-rounding.md](design-reload-rounding.md)
 - スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 完了（2026-11-07。段 1〜21 を閉じ、段 22 以降は起こさない。残りの未対応は 6 節と [skills.md](skills.md)）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)
-- 味方のデバフ解除（2026-11-07 起票）→ 完了（2026-11-07。ほろ酔いだけをデバフの印にし、ココアの定義に入れた）: [design-debuff-removal.md](design-debuff-removal.md)
 - 2026-10-29 のアップデートのキャラ（マリアン：クイーン・ラプンツェル：サンクチュアリ・紅蓮：神殺）の仮実装（2026-10-28 起票）→ 完了（2026-11-07。3 体とも撮影で確かめた）: [design-new-chars-1029.md](design-new-chars-1029.md) 10〜13 節
 - 敵のジャンプの始まりの部分チャージの発のコア命中率（2026-11-03 起票）→ 完了（2026-11-03。モデルに入れない）: [design-partial-charge-core.md](design-partial-charge-core.md)
 - PR の衝突（2026-11-01 起票）→ 完了（2026-11-01。案 1 と案 3 を実施した）: [design-pr-conflicts.md](design-pr-conflicts.md)・[design-backlog-files.md](design-backlog-files.md)
