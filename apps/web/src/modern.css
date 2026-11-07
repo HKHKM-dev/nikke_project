@@ -181,11 +181,6 @@
 :root[data-app-ui='modern'] .char-tray-panel.char-tray-returning {
   outline: 3px dashed var(--m-accent);
 }
-:root[data-app-ui='modern'] .char-tray-hint,
-:root[data-app-ui='modern'] .char-tray-target-slot {
-  color: var(--m-muted);
-  opacity: 1;
-}
 :root[data-app-ui='modern'] .char-tray-item {
   border-radius: 10px;
 }

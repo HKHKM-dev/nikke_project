@@ -118,7 +118,6 @@ export function ModernSlotCard({
           <div className="modern-slot-char-area">
             <div className="modern-slot-empty-area">
               <span className="modern-slot-empty-plus">＋</span>
-              <span className="modern-slot-empty-text">ニケを選択</span>
             </div>
             <div className="modern-slot-char-name" aria-hidden="true">
               &nbsp;
@@ -142,7 +141,7 @@ export function ModernSlotCard({
       </div>
 
       <div className="modern-slot-footer">
-        {characterEntry ? (
+        {characterEntry && (
           <button
             type="button"
             className="modern-slot-action-button"
@@ -154,8 +153,6 @@ export function ModernSlotCard({
           >
             ⚙️ 育成・設定
           </button>
-        ) : (
-          <span className="modern-slot-placeholder-footer">未配置</span>
         )}
       </div>
     </div>
