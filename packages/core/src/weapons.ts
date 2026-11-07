@@ -46,17 +46,23 @@ export type WeaponModel = {
    */
   reloadFirstShotFrames: number;
   /**
-   * 全弾リロード（分割でない）の 1 回分のフレーム数を、端数つきの長さ x（FiringParams.reloadChunkFrames）から決めるときに、x に足して
-   * 切り上げるフレーム（1 回分 = ⌈x + これ⌉。端数は次の回へ持ち越さない）。録画の最終弾 → 込め終わりは 1 回ごとに同じ ⌈x + c⌉ で、
-   * c は MG 以外で 10.76〜11.18f（V-0681・C-0964）。込め終えてから 1 発目までの reloadFirstShotFrames（24f）に込め終わりの約 12f を
-   * 入れてあるので、ここは c − 12（中ほどの 11.06 − 12）。MG は spinUpFullReloadCeilOffsetFrames（plan/design-reload-rounding.md 案 A）
+   * 全弾リロード（分割でない）の込め終わり（RELOADING のバーが消えて残弾が最大に戻る）までに、リロードの始まりからリロードの秒
+   * （FiringParams.reloadChunkFrames）へ足すフレーム（c）。込め終わりは ⌈始まり + reloadChunkFrames + c⌉ で、1 回ごとに丸め、端数を
+   * 次へ持ち越さない（V-0681。どの武器種も 11.78〜11.95f の幅に入る。cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）
    */
-  fullReloadCeilOffsetFrames: number;
+  reloadCompleteExtraFrames: number;
   /**
-   * fullReloadCeilOffsetFrames の、スピンアップのある武器（MG。データの MG はどれもスピンアップがあり、ほかの武器種には無い）の値。
-   * MG の c は 11.71〜11.94f（V-0681。エマ・モダニア・ルドミラ：ウィンターオーナー）で、中ほどの 11.8 − 12
+   * 込め終わりから次のマガジンの 1 発目までのうち、チャージの外の長さ。チャージの無い武器は込め終わり → 1 発目、チャージ武器は
+   * 込め終わり → 1 発目 − チャージ（V-0681。AR・SMG・MG・入力が UP・押下チャージ型）。射手は込め終わりより
+   * （リロード明けの待ち − これ）前に残弾を満たし、残りをリロード明けの待ちに入れてある（cadence.ts の fullReloadFrames）
    */
-  spinUpFullReloadCeilOffsetFrames: number;
+  reloadCompleteToShotFrames: number;
+  /**
+   * 入力が UP のチャージ武器（射撃姿勢維持型を含む）の、リロードの始まりの、最終弾のフレームからのずれ（負は前）。SR・RL、チャージの秒・
+   * リロードの秒によらない（V-0681）。満ちてから撃つまで 1f（chargeFullToShotFrames）に近いが、0.1f の差は分からない。
+   * 押下チャージ型は 0、チャージの無い武器は最終弾の発射レートの蓄積の余りから（cadence.ts の rateReloadStartOffset）
+   */
+  upChargeReloadStartFrames: number;
   /**
    * Stage 22-A: チャージ武器の構え解除モーション（紅蓮BS 等は射撃後の硬直を含む）のフレーム。発と発の間
    * （チャージ + chargeReleaseFrames）は「構え解除 → 構え → チャージ → 射撃」で、ハイドしていた状態（戦闘開始・窓の明け）からの
@@ -128,8 +134,9 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   chargeReleaseFrames: 23,
   spinUpFirstShotFrames: 20,
   reloadFirstShotFrames: 24,
-  fullReloadCeilOffsetFrames: -0.94,
-  spinUpFullReloadCeilOffsetFrames: -0.2,
+  reloadCompleteExtraFrames: 11.9,
+  reloadCompleteToShotFrames: 12,
+  upChargeReloadStartFrames: -1.1,
   aimOutFrames: 13,
   aimInFrames: 12,
   chargeFullToShotFrames: 1,
@@ -143,8 +150,8 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
 
 /**
  * Stage 24: リロードの秒 → フレーム（端数つき）。ゲーム内の時計（1 フレーム 0.017 秒）で数え、丸めない（C-0145・C-0142。
- * plan/design-weapon-seconds.md 10.5 節）。全弾リロードの 1 回分は、これに fullReloadCeilOffsetFrames を足して 1 回ごとに切り上げる
- * （frame/firing.ts の fullReloadFrames。plan/design-reload-rounding.md）。21-C〜23 は 1 秒 = 60f の切り上げだった。
+ * plan/design-weapon-seconds.md 10.5 節）。全弾リロードの 1 回分は、1 回ごとに丸める
+ * （cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）。21-C〜23 は 1 秒 = 60f の切り上げだった。
  * 分割リロードの段は、この長さを段ごとに切り上げる（C-0154）
  */
 export function reloadSecondsToFrames(seconds: number): number {

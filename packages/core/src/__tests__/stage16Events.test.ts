@@ -132,15 +132,15 @@ describe('射手（ハイドとリロード）', () => {
   it('AR (reload 1 s < 2 s jump): reloads while hiding and resumes with a full magazine at the end of the window', () => {
     // 12…107 で 20 発（構え 12f の後から。Stage 21-C3 で 4〜5f 刻み。窓の始まり 100 から D（108）の前までも撃つ。
     // plan/design-hide-reload-detect.md 10 節）→ 108 でハイドしてリロード（満タンとリロード明けの遅れは窓の中）→ 220 の明けから
-    // 構え 12f の 232 で撃ち直し（Stage 22-C）、60 発を 522 まで撃って、リロード 59f（Stage 24: 58.8f の端数を持ち越す）+ 24f の 605 に
-    // 次のマガジン
+    // 構え 12f の 232 で撃ち直し（Stage 22-C）、60 発を 522 まで撃って、リロード 58f（1 回ごとに丸める。plan/design-reload-rounding.md
+    // 案 E）+ 24f の 604 に次のマガジン
     const ar = computeCadence(makeCharacter({}).shot).shotFrames;
     const fired = shotsWithWindow({}, { start: 100, end: 220 }, 700);
     const detect = 100 + DEFAULT_WEAPON_MODEL.hideDetectFrames;
     const before = ar.map((f) => 12 + f).filter((f) => f < detect);
     expect(before).toHaveLength(20);
     expect(before.filter((f) => f >= 100)).toHaveLength(2);
-    expect(fired).toEqual([...before, ...ar.map((f) => 232 + f), ...ar.map((f) => 605 + f).filter((f) => f < 700)]);
+    expect(fired).toEqual([...before, ...ar.map((f) => 232 + f), ...ar.map((f) => 604 + f).filter((f) => f < 700)]);
   });
 
   it('MG (reload 2.5 s > 2 s jump): the reload is cancelled and the spin-up starts over', () => {

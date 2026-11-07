@@ -50,16 +50,11 @@ export type FiringParams = {
   maxAmmo: number;
   /**
    * 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数。Stage 24: 端数つき（reloadSecondsToFrames）。
-   * 射撃姿勢維持型は WeaponModel.stanceReloadExtraFrames を足した値（C-0149。plan/design-fire-stance-cadence.md 3.4 節）。
-   * 射手が待つ整数は reloadFrames
+   * 射手が待つ整数は、全弾リロードは 1 回ごとに丸める（cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）、
+   * 分割リロードは段ごとに切り上げる（C-0154）。
+   * 射撃姿勢維持型は WeaponModel.stanceReloadExtraFrames を足した値（C-0149。plan/design-fire-stance-cadence.md 3.4 節）
    */
   reloadChunkFrames: number;
-  /**
-   * 射手がリロードの 1 回分に待つフレーム数（整数）。全弾リロードは ⌈reloadChunkFrames + WeaponModel.fullReloadCeilOffsetFrames⌉
-   * （MG は spinUpFullReloadCeilOffsetFrames。1 回ごとに丸め、端数を持ち越さない。plan/design-reload-rounding.md 案 A）、分割リロードの
-   * 段は ⌈reloadChunkFrames⌉（C-0154）
-   */
-  reloadFrames: number;
   /**
    * 分割リロード（reloadBullet < 1）か。込め始めの前に弾を込めない 1 段を待ち、段の長さは切り上げた整数（C-0154。
    * plan/design-sg-split-reload.md）
@@ -167,28 +162,16 @@ export function effectiveMaxAmmo(baseMaxAmmo: number, buffs: FiringBuffs): numbe
 export function firingParams(
   base: ShotParams,
   buffs: FiringBuffs = ZERO_FIRING_BUFFS,
-  model: Pick<
-    WeaponModel,
-    'stanceReloadExtraFrames' | 'fullReloadCeilOffsetFrames' | 'spinUpFullReloadCeilOffsetFrames'
-  > = DEFAULT_WEAPON_MODEL,
+  model: Pick<WeaponModel, 'stanceReloadExtraFrames'> = DEFAULT_WEAPON_MODEL,
 ): FiringParams {
   const shot = buffs.weapon?.shot ?? base;
   const stance = stanceFrames(shot);
-  const reloadChunkFrames =
-    reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
-    (stance === null ? 0 : model.stanceReloadExtraFrames);
-  const splitReload = shot.reloadBullet < 1;
-  const offset = splitReload
-    ? 0
-    : hasSpinUp(shot)
-      ? model.spinUpFullReloadCeilOffsetFrames
-      : model.fullReloadCeilOffsetFrames;
   return {
     maxAmmo: effectiveMaxAmmo(shot.maxAmmo, buffs),
-    reloadChunkFrames,
-    // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く。max(0, …) はリロード速度 100% 以上の 0 と −0
-    reloadFrames: Math.max(0, Math.ceil(reloadChunkFrames + offset - 1e-9)),
-    splitReload,
+    reloadChunkFrames:
+      reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
+      (stance === null ? 0 : model.stanceReloadExtraFrames),
+    splitReload: shot.reloadBullet < 1,
     // max(0, …) は、0 秒のチャージで切り上げが −0 を出すのを 0 にそろえる
     chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
     stance,

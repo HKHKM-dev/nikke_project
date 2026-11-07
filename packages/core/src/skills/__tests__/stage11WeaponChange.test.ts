@@ -12,6 +12,7 @@ import type { TeamInput, TeamSlotInput } from '../../team.ts';
 import type { CharacterData } from '../../types.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
+import { DEFAULT_WEAPON_MODEL } from '../../weapons.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
@@ -106,7 +107,7 @@ describe('残弾数減少', () => {
     const state = initialShooter(shot, undefined, params);
     state.ammo = 115;
     state.wait = 0;
-    drainAmmo(state, 115, params);
+    drainAmmo(state, 115, shot, DEFAULT_WEAPON_MODEL, params);
     expect(state.ammo).toBe(0);
     expect(state.phase).toBe('reloading');
     expect(state.wait).toBeGreaterThan(0);

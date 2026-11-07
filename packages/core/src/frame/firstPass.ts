@@ -111,6 +111,7 @@ import {
   firesChargeShots,
   isResolvedShotCount,
   isResolvedTimer,
+  isResolvedWeaponChangeEnd,
   resolveCoverHeals,
   resolveInstant,
   type ResolvedCoverHeal,
@@ -1857,7 +1858,16 @@ function runFirstPassOnce(
         if (src.effect.kind === 'ammoDecrease') {
           const params = paramsAt(target, f);
           const before = state.ammo;
-          drainAmmo(state, Math.ceil(state.ammo * src.effect.value - 1e-9), params);
+          // 使用武器の変更の撃ち切りで起きる残弾数減少は、最後の発の次のフレーム（ShotLog.weaponChangeEnds）に来るが、ゲームの
+          // リロードは最後の発より前に始まる（V-0681 のラプラス）。始まりを 1 フレーム前（最後の発のフレーム）にする
+          drainAmmo(
+            state,
+            Math.ceil(state.ammo * src.effect.value - 1e-9),
+            params.weapon?.shot ?? slot.character.shot,
+            model,
+            params,
+            isResolvedWeaponChangeEnd(src.effect.trigger) ? -1 : 0,
+          );
           instants.push({
             frame: f,
             sourceSlotIndex: src.sourceSlotIndex,

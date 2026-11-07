@@ -81,11 +81,11 @@ describe('シンデレラの定義', () => {
     const plan = planTeamRun(team([CINDERELLA], false, 0));
     const frames = plan.shots[0]!.frames;
     const gaps = frames.slice(1).map((f, i) => f - frames[i]!);
-    // 1 本目のマガジン: 20・20・19f の繰り返し（間の数 23 で 451f）。リロードを挟んで 199〜200f
+    // 1 本目のマガジン: 20・20・19f の繰り返し（間の数 23 で 451f）。リロードを挟んで 201f（録画 0124-08 の 201f。全弾リロードを
+    // 1 回ごとに丸める形。plan/design-reload-rounding.md 案 E）
     expect(gaps.slice(0, 6)).toEqual([20, 20, 19, 20, 20, 19]);
     expect(frames[23]! - frames[0]!).toBe(451);
-    expect(gaps[23]).toBeGreaterThanOrEqual(199);
-    expect(gaps[23]).toBeLessThanOrEqual(200);
+    expect(gaps[23]).toBe(201);
     // 込め終わりで▲が切れるので、次のマガジンの 2 発目からまた 20f
     expect(gaps[24]).toBe(20);
   });

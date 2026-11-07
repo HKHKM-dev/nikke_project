@@ -749,15 +749,13 @@ describe('照合の部品', () => {
     const reload = mana.shot.reloadTime / 0.017;
     expect(METRICS.reloadFramesAt!.sim(runSimulation(input), ctx(input))).toBeCloseTo(reload * (1 - 0.2969), 6);
     expect(METRICS.reloadFramesAt!.sim(runSimulation(off), ctx(off))).toBeCloseTo(reload, 6);
-    // 最終弾 → 次の 1 発目（reloadToNextShotAt）は、リロード 1 回分 + 24f（C-0148）。sim の発の間の平均とも合う
-    expect(METRICS.reloadToNextShotAt!.sim(runSimulation(input), ctx(input))).toBeCloseTo(
-      reload * (1 - 0.2969) + 24,
-      6,
-    );
+    // 最終弾 → 次の 1 発目（reloadToNextShotAt）は、1 回ごとに丸めたリロード 1 回分 + 24f（C-0148。plan/design-reload-rounding.md
+    // 案 E: ⌈69.07 − 0.78 + 11.9⌉ − 12 + 24 = 93）。sim の発の間とも同じ
+    expect(METRICS.reloadToNextShotAt!.sim(runSimulation(input), ctx(input))).toBe(93);
     const shots = runSimulation(buildTeamInput(rec, { ...setup, durationSeconds: 180 }, withMana)).shots[0]!;
     const gaps = shots.lastShotFrames!.slice(0, -1).map((f) => shots.frames[shots.frames.indexOf(f) + 1]! - f);
     expect(gaps.length).toBeGreaterThan(1);
-    expect(gaps.reduce((a, b) => a + b, 0) / gaps.length).toBeCloseTo(reload * (1 - 0.2969) + 24, 0);
+    expect(new Set(gaps)).toEqual(new Set([93]));
     const olAmmo = data.buildMasters!.overload.options.find((o) => o.option === 'maxAmmo')!.values[10]! / 100;
     expect(METRICS.maxAmmoAt!.sim(runSimulation(input), ctx(input))).toBe(Math.round(60 * (1 + olAmmo)));
 
