@@ -36,6 +36,7 @@ import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount, resolveTimed } from '../skills/resolve.ts';
 import type { NamedStateId } from '../skills/states.ts';
+import type { FrameRange } from '../skills/timeline.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import {
@@ -695,11 +696,9 @@ function windowEndToFirstShot(result: SimResult, ctx: MetricContext): number | n
 function perWindow(
   result: SimResult,
   ctx: MetricContext,
-  at: (window: { start: number; end: number }, index: number) => number,
+  at: (window: FrameRange, index: number) => number,
 ): number | number[] {
-  const one = (index: number): number => at(untargetableWindowAt(result, index), index);
-  const w = ctx.args.window;
-  return typeof w === 'string' ? w.split(',').map((x) => one(Number(x.trim()))) : one(Number(w));
+  return eachOrOne(ctx.args.window, (index) => at(untargetableWindowAt(result, index), index));
 }
 
 /** window 回目の狙えない窓の中の部分チャージの発の、チャージの進み（plan/design-hide-reload-detect.md 9 節） */
