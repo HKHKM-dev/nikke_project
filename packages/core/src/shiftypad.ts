@@ -188,6 +188,21 @@ export function toBuildSnapshot(raw: ShiftyPadRaw, index: readonly CharacterInde
   };
 }
 
+/**
+ * ゲームの戦闘力（GetUserCharacterDetails の combat。キャラ一覧などに出る値と同じ。V-0685）。resourceId → 戦闘力。
+ * キャラの対応は toBuildSnapshot と同じ（name_code → CDN の nameCode）。data/characters に無いキャラは入れない
+ */
+export function gameCombatPowers(raw: ShiftyPadRaw, index: readonly CharacterIndexEntry[]): Map<number, number> {
+  const byCode = new Map(index.map((c) => [c.nameCode, c.resourceId]));
+  const out = new Map<number, number>();
+  for (const d of raw.details) {
+    const resourceId = byCode.get(d['name_code'] ?? 0);
+    const combat = d['combat'];
+    if (resourceId !== undefined && combat !== undefined) out.set(resourceId, combat);
+  }
+  return out;
+}
+
 /** --build の JSON がスナップショットなら characters を、そうでなければそのまま返す */
 export function buildEntriesOf(json: unknown): Record<string, unknown> {
   const obj = (json ?? {}) as Record<string, unknown>;

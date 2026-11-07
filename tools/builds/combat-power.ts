@@ -4,14 +4,13 @@
 //   npm run build:combat-power -- <スナップショット> [--actual <生の JSON>] [--list]
 // ゲームの戦闘力は、ShiftyPad の生のデータ（<スナップショットの名前>.raw.json）の combat（GetUserCharacterDetails）。
 // --list で、モデルの降順の並びと、実際の降順の並びの位置を全部出す。
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { computeCombatPower } from '../../packages/core/src/combatPower.ts';
-import { MASTER_FILES } from '../../packages/core/src/load.ts';
-import type { BuildSnapshot, ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
-import type { BuildMasters, CharacterData, CharacterIndex } from '../../packages/core/src/types.ts';
+import { gameCombatPowers, type BuildSnapshot, type ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { compareCombatPower, sortByCombatPower, type CombatPowerRow } from './combat-power-lib.ts';
+import { characterOf, index, masters, nameOf, readJson } from './data.ts';
 import { buildsDir, snapshotNames } from './dirs.ts';
 import { sortNames } from './import-lib.ts';
 
@@ -41,44 +40,33 @@ for (const path of [snapshotPath, actualPath]) {
   }
 }
 
-const DATA = join(import.meta.dirname, '../../packages/core/data');
-const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8')) as T;
-const masters = Object.fromEntries(
-  Object.entries(MASTER_FILES).map(([k, f]) => [k, readJson(join(DATA, 'masters', f))]),
-) as BuildMasters;
-const index = readJson<CharacterIndex>(join(DATA, 'characters/index.json')).characters;
 const snapshot = readJson<BuildSnapshot>(snapshotPath);
-const raw = readJson<ShiftyPadRaw & { details: Record<string, number>[] }>(actualPath);
-const actualByCode = new Map(raw.details.map((d) => [d['name_code'], d['combat']]));
+const actualById = gameCombatPowers(readJson<ShiftyPadRaw>(actualPath), index);
 
-const names = new Map<number, string>();
 const errors: string[] = [];
 const rows: CombatPowerRow[] = [];
 for (const [id, c] of Object.entries(snapshot.characters)) {
   const resourceId = Number(id);
-  const entry = index.find((e) => e.resourceId === resourceId);
-  const actual = entry === undefined ? undefined : actualByCode.get(entry.nameCode);
-  names.set(resourceId, entry?.name.ja ?? '（データに無い）');
+  const actual = actualById.get(resourceId);
   if (actual === undefined) {
-    errors.push(`${id} ${names.get(resourceId)}: 生のデータに戦闘力が無い（飛ばした）`);
+    errors.push(`${id} ${nameOf(resourceId)}: 生のデータに戦闘力が無い（飛ばした）`);
     continue;
   }
   let model: number | null = null;
   try {
-    const character = readJson<CharacterData>(join(DATA, `characters/${id}.json`));
     model = computeCombatPower(
-      character,
+      characterOf(resourceId),
       { growth: c.growth, build: c, skillLevels: c.skillLevels, treasure: c.treasure !== null },
       masters,
     ).value;
   } catch (e) {
-    errors.push(`${id} ${names.get(resourceId)}: ${(e as Error).message}`);
+    errors.push(`${id} ${nameOf(resourceId)}: ${(e as Error).message}`);
   }
   rows.push({ id: resourceId, model, actual });
 }
 
 const result = compareCombatPower(rows);
-const label = (r: CombatPowerRow) => `${r.id} ${names.get(r.id)}`;
+const label = (r: CombatPowerRow) => `${r.id} ${nameOf(r.id)}`;
 console.log(`${snapshotPath}（ゲームの戦闘力: ${actualPath}）`);
 console.log(`戦闘力: ${rows.length} 体中 ${result.matched} 体が一致`);
 for (const r of result.mismatched) console.log(`  ${label(r)}: モデル ${r.model ?? '出せない'}・ゲーム ${r.actual}`);

@@ -6,10 +6,9 @@
 //   private/builds/<名前>.diff.md   直前のスナップショットとの差
 //   private/roster.md               所持の一覧（いちばん新しいスナップショットから）
 // <名前> は取得の日（日本時間）。同じ日に別の取得があれば <日付>-2、-3 …（import-lib.ts）。
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { computeCombatAttack, validateBuild } from '../../packages/core/src/build.ts';
-import { MASTER_FILES } from '../../packages/core/src/load.ts';
 import {
   diffSnapshots,
   rosterMarkdown,
@@ -20,34 +19,17 @@ import {
   type SnapshotCharacter,
   type SnapshotLabels,
 } from '../../packages/core/src/shiftypad.ts';
-import type { BuildMasters, CharacterData, CharacterIndex, CubeMaster } from '../../packages/core/src/types.ts';
+import { characterOf, index, masters, nameOf, readJson } from './data.ts';
 import { buildsDir, namesIn, privateDir } from './dirs.ts';
 import { previousName, snapshotName, sortNames } from './import-lib.ts';
 
-const ROOT = join(import.meta.dirname, '../..');
-const DATA = join(ROOT, 'packages/core/data');
 const PRIVATE = privateDir();
 const DIR = buildsDir();
 
-const readJson = <T>(path: string): T => JSON.parse(readFileSync(path, 'utf8')) as T;
-const index = readJson<CharacterIndex>(join(DATA, 'characters/index.json')).characters;
-const masters = Object.fromEntries(
-  Object.entries(MASTER_FILES).map(([k, f]) => [k, readJson(join(DATA, 'masters', f))]),
-) as BuildMasters;
-const cubes = (masters.cubes as CubeMaster).cubes;
 const labels: SnapshotLabels = {
-  nameOf: (id) => index.find((c) => c.resourceId === id)?.name.ja ?? '（データに無い）',
-  cubeName: (id) => cubes.find((c) => c.id === id)?.name.ja,
+  nameOf,
+  cubeName: (id) => masters.cubes.cubes.find((c) => c.id === id)?.name.ja,
 };
-const characterCache = new Map<number, CharacterData>();
-function characterOf(id: number): CharacterData {
-  let c = characterCache.get(id);
-  if (c === undefined) {
-    c = readJson<CharacterData>(join(DATA, `characters/${id}.json`));
-    characterCache.set(id, c);
-  }
-  return c;
-}
 /** 戦闘中の攻撃力（バフ前）。宝物は段階 1〜3 で攻撃力が同じ（plan/design-stage12.md 11.1 節）なので、段階 1 で出す */
 function attackOf(id: number, c: SnapshotCharacter): number | null {
   try {

@@ -12,7 +12,8 @@ import {
   GEAR_PARTS,
   type BuildInput,
 } from './build.ts';
-import { SKILL_LEVEL_MAX, type SkillLevels } from './skills/resolve.ts';
+import { validateSkillLevel, type SkillLevels } from './skills/resolve.ts';
+import { SKILL_SLOTS } from './skills/types.ts';
 import type { GrowthInput } from './stats.ts';
 import type { BuildMasters, CharacterData, StatKind } from './types.ts';
 
@@ -53,12 +54,7 @@ export function computeCombatPower(
   masters: BuildMasters,
 ): CombatPower {
   const { growth, build, skillLevels } = input;
-  for (const slot of ['skill1', 'skill2', 'burst'] as const) {
-    const level = skillLevels[slot];
-    if (!Number.isInteger(level) || level < 1 || level > SKILL_LEVEL_MAX) {
-      throw new RangeError(`skillLevels.${slot} must be an integer in [1, ${SKILL_LEVEL_MAX}], got ${level}`);
-    }
-  }
+  for (const slot of SKILL_SLOTS) validateSkillLevel(skillLevels[slot]);
   // 宝物のステータスは段階 1..3 で同じ（treasureStats）なので、段階 1 として出す
   const options = { treasurePhase: input.treasure ? 1 : 0 };
   const stat = (kind: StatKind) => computeCombatStat(character, growth, build, masters, kind, options).value;
@@ -67,10 +63,7 @@ export function computeCombatPower(
   const crit = 1 + character.crit.rate * (character.crit.damage - 1);
   const statTerm = crit * stats.attack * 18 + (stats.hp + stats.defence * 100) * 0.7;
 
-  const skills =
-    SKILL_COEFFICIENT.skill1 * skillLevels.skill1 +
-    SKILL_COEFFICIENT.skill2 * skillLevels.skill2 +
-    SKILL_COEFFICIENT.burst * skillLevels.burst;
+  const skills = SKILL_SLOTS.reduce((sum, slot) => sum + SKILL_COEFFICIENT[slot] * skillLevels[slot], 0);
   let overload = 0;
   for (const part of GEAR_PARTS) {
     for (const line of build.gear[part]?.overload ?? []) {
