@@ -3,7 +3,7 @@
 - 別紙: [design-skill-catalog-tooltips.md](design-skill-catalog-tooltips.md)（ゲーム内の用語のツールチップとの突き合わせ。以下「ツールチップの別紙」。食い違いは T1〜T6）
 - 関連: [design-named-state.md](design-named-state.md)（8 節: 状態の後の拡張）、[design-heal-vocabulary.md](design-heal-vocabulary.md)（3 節: 回復の撮影待ち）、[design-skill-note-kinds.md](design-skill-note-kinds.md)（notes の種類）、[design-range-enemy-attacks.md](design-range-enemy-attacks.md)（被弾）、[design-minimal-relevance.md](design-minimal-relevance.md)（最小構成の検査）、[skills-guide.md](skills-guide.md)、[backlog.md](backlog.md) 6 節、[requirements.md](requirements.md) 5 節
 - 作成日: 2026-10-14
-- 状態: 決定（論点 7 は 2026-10-16 に推奨どおりに決め、[design-indirect-notes.md](design-indirect-notes.md) で実装した）。2026-10-14 にオーナーの指摘（解除不可の整理・防御と HP を間接に効くものとして整理・バリアをダメージに効くものとして扱う・HP は減りうるものとして扱う・ツールチップとの突き合わせ）と、改善提案書への判断（11 節）を入れた（経過）。2026-10-15 にオーナーが論点 1・2・3・5・9・10・11・12 を推奨どおりに、論点 4 を代わりの案（参照されない名前も目録に入れる）に、論点 8 を「解除と消去は別に実装する」に決めた（11 の直しは別のセッションに依頼）。2026-10-16 に論点 6 を推奨どおり（案 A）に決めた。分類の一覧は生成物にした（論点 2。いまは `npm run records:check` が作り直す）。段階の計画（2 段目）は [design-skill-stages.md](design-skill-stages.md)（2026-10-16 決定）
+- 状態: 閉じた（分類は決定・実装済み。段階の計画は [design-skill-stages.md](design-skill-stages.md) で閉じた）
 
 ## 0. 目的と進め方
 
@@ -174,3 +174,4 @@ Antigravity が分類の一覧の下書きとこの設計書を見て書いた�
 - 2026-10-15: オーナーの問いから、2 段目の語彙を足す前に、効果を持ち主ごとの一覧で持つ形へ組み直すことになった（9 節。[design-holder-effects.md](design-holder-effects.md)）。
 - 2026-10-16: 2 段目の計画を [design-skill-stages.md](design-skill-stages.md) に書いた。オーナーが論点 6 を推奨どおり（案 A）に決めた。論点 7 は、段 5（バリア・デコイ）の設計の前に決める（同 論点 5）。
 - 2026-10-16: オーナーが論点 7 を推奨どおりに決めた。notes の種類「間接」（`indirect`。経路 `path`）と読む側の印（`reads`）、最小構成の検査の規則、いまの notes の書き直しを [design-indirect-notes.md](design-indirect-notes.md) に書いて実装した。
+- 2026-11-07: 段階の計画（[design-skill-stages.md](design-skill-stages.md)）を閉じたのに合わせて閉じた。
