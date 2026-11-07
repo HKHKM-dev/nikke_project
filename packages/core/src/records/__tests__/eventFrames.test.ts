@@ -118,3 +118,33 @@ describe('eventTallies', () => {
     expect(() => tallies({ tally: 'shots', anchor: 'start' })).toThrow(/within は使えない/);
   });
 });
+
+// 課題 2-59（plan/design-debuff-removal.md 7.3 節）: 出来事 stateEnd・引数 modulo・別の枠の発動の基準（from）。V-0686 の撮影 C の編成
+// （クレア・I-DOLL・フラワー・マスト：ロマンチックメイド（操作））をオートバーストで回す。クレアは 1 つおきに撃ち、2 回目から 2 スタックを外す
+describe('eventFrames の stateEnd・modulo・from', () => {
+  const rids = [842, 304, 354];
+  const recording = {
+    ...recordingMap(file).get('0969')!,
+    team: rids.map((rid, i) => ({ slot: i + 1, rid, name: String(rid), controlled: i === 2 })),
+  };
+  const team = buildTeamInput(recording, setup, data);
+  const run = runSimulation(team);
+  const ev = (args: Record<string, number | string | boolean>) =>
+    METRICS.eventFrames!.sim(run, { args: { slot: 3, event: 'stateEnd', state: 'drunken', ...args }, input: team });
+
+  it('lists the frames where Drunken comes off, and their phase with modulo', () => {
+    const ends = ev({}) as number[];
+    expect(ends.length).toBeGreaterThan(0);
+    expect(ends).toEqual([...ends].sort((a, b) => a - b));
+    const phases = ev({ modulo: 1000 }) as number[];
+    expect(phases).toEqual(ends.map((f) => (f % 1000 > 500 ? (f % 1000) - 1000 : f % 1000)));
+  });
+
+  it('measures from the activation of another slot (from)', () => {
+    const claire = METRICS.eventFrames!.sim(run, { args: { slot: 1, event: 'activation' }, input: team }) as number[];
+    const after = ev({ anchor: 'activation:1', from: 1, within: 'untilNext' }) as number[];
+    expect(after.length).toBe(1);
+    expect(Math.abs(after[0]!)).toBeLessThan(10);
+    expect(claire.length).toBeGreaterThan(1);
+  });
+});

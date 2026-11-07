@@ -1,0 +1,190 @@
+[
+  {
+    "id": "0973-01",
+    "recording": "0973",
+    "kind": "timing",
+    "use": "record",
+    "value": [1712, 3181, 4513, 5856, 7237, 8704, 10010, 11420],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・24・25・25・26・24・24・25f"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0973-02",
+    "recording": "0973",
+    "kind": "timing",
+    "use": "record",
+    "value": [1741, 4542, 7266, 10039],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・24f"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0973-03",
+    "recording": "0973",
+    "kind": "total",
+    "use": "record",
+    "value": 150502357,
+    "description": "I-DOLL・フラワー・ココア・マスト：ロマンチックメイド の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11514。増分は 5252 個"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0973-04",
+    "recording": "0973",
+    "kind": "count",
+    "use": "record",
+    "value": 214,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・ココア・マスト：ロマンチックメイド のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 5252 個。前の増分から 30f 未満の増分（5209 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 43f）から発の数を決めた（2 発になった組 25 個）"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0973-05",
+    "recording": "0973",
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": 929,
+    "description": "戦闘開始（残り時間の 02:59 が出たフレーム）",
+    "method": {
+      "tool": "tools/captures/timer.ts --mode changes と画",
+      "note": "changes の最初の大きな変わり目 f840 は画面の切り替えで、次の変わり目 f929 に 02:59 が出た（f927 は表示なし、f931 は 02:59）"
+    }
+  },
+  {
+    "id": "0973-06",
+    "recording": "0973",
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [8],
+    "description": "マスト：ロマンチックメイドのほろ酔いが外れた 2 回目の、戦闘開始（0973-05）からのフレームを 883f（ココアの S1 の周期。C-0822）で割った余り",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "V-0683 の「読み方」3 の使い捨てのスクリプトで、増分をマスト：RM の格子に当てた。ほろ酔いの格子の最後のヒットが f3583、無い最初のヒットが f3586（戦闘開始から 2654・2657f）。値は無い最初のヒット（外れたのはその間）。ほかの回（1・4・5・7 回目）は、外れの前後のヒットの間が 8〜194f 開いて決まらないが、どれも S1 の時刻（戦闘開始から 883f の倍数の約 10f 後）を挟む。突入で付いたほろ酔いは、どれも次の S1 で外れた（I の段の替わり目は 0973-01）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "modulo": 883,
+        "skip": 1,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0973-07",
+    "recording": "0973",
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [10],
+    "description": "マスト：ロマンチックメイドのほろ酔いが外れた 3 回目の、戦闘開始（0973-05）からのフレームを 883f（ココアの S1 の周期。C-0822）で割った余り",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "V-0683 の「読み方」3 の使い捨てのスクリプトで、増分をマスト：RM の格子に当てた。ほろ酔いの格子の最後のヒットが f5353、無い最初のヒットが f5354（戦闘開始から 4424・4425f）。値は無い最初のヒット（外れたのはその間）。ほかの回（1・4・5・7 回目）は、外れの前後のヒットの間が 8〜194f 開いて決まらないが、どれも S1 の時刻（戦闘開始から 883f の倍数の約 10f 後）を挟む。突入で付いたほろ酔いは、どれも次の S1 で外れた（I の段の替わり目は 0973-01）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "modulo": 883,
+        "skip": 2,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0973-08",
+    "recording": "0973",
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [15],
+    "description": "マスト：ロマンチックメイドのほろ酔いが外れた 6 回目の、戦闘開始（0973-05）からのフレームを 883f（ココアの S1 の周期。C-0822）で割った余り",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "V-0683 の「読み方」3 の使い捨てのスクリプトで、増分をマスト：RM の格子に当てた。ほろ酔いの格子の最後のヒットが f8889、無い最初のヒットが f8891（戦闘開始から 7960・7962f）。値は無い最初のヒット（外れたのはその間）。ほかの回（1・4・5・7 回目）は、外れの前後のヒットの間が 8〜194f 開いて決まらないが、どれも S1 の時刻（戦闘開始から 883f の倍数の約 10f 後）を挟む。突入で付いたほろ酔いは、どれも次の S1 で外れた（I の段の替わり目は 0973-01）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "modulo": 883,
+        "skip": 5,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

@@ -1,0 +1,154 @@
+[
+  {
+    "id": "0975-01",
+    "recording": "0975",
+    "kind": "timing",
+    "use": "record",
+    "value": [1740, 3504, 5013, 6442, 8123, 9843, 11256],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25・24・26f"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0975-02",
+    "recording": "0975",
+    "kind": "timing",
+    "use": "record",
+    "value": [1769, 5042, 8152, 11285],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25f"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0975-03",
+    "recording": "0975",
+    "kind": "timing",
+    "use": "record",
+    "value": [6437, 6439, 9838, 9840],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0975-04",
+    "recording": "0975",
+    "kind": "total",
+    "use": "record",
+    "value": 123803514,
+    "description": "クレア・I-DOLL・フラワー・マスト：ロマンチックメイド の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11316。増分は 5215 個"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0975-05",
+    "recording": "0975",
+    "kind": "count",
+    "use": "record",
+    "value": 210,
+    "unit": "トリガー",
+    "description": "クレア・I-DOLL・フラワー・マスト：ロマンチックメイド のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 5215 個。前の増分から 30f 未満の増分（5174 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 42f）から発の数を決めた（2 発になった組 20 個）"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0975-06",
+    "recording": "0975",
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [-1],
+    "description": "クレアの 1 回目の発動の印（右のバースト欄の六角形が I から II に替わるフレーム。0975-01 の f1740）から、マスト：ロマンチックメイドのほろ酔い（1 スタック）が全部外れたフレームまで",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@3",
+      "note": "V-0683 の「読み方」3 の使い捨てのスクリプトで、増分をマスト：RM の格子に当てた。ほろ酔いの格子の最後のヒットが印の -2f、無い最初のヒットが -1f（値は無い最初のヒット。外れたのはその間）。その後は次の I-DOLL・フラワーの突入まで、ほろ酔いの格子は出ない（1 つだけ外れたなら続く）。ほかの回: 2 回目（f5013。2 スタック）は印の前 213f からヒットが無く決まらないが、印の 31f 後のヒットにはほろ酔いが無い。4 回目（f11256。2 スタック。モデルの 3 分の中に無い）は最後のほろ酔いが -5f、無い最初のヒットが -1f"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "anchor": "activation:0",
+        "from": 1,
+        "within": "untilNext",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0975-07",
+    "recording": "0975",
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": [0],
+    "description": "クレアの 3 回目の発動の印（右のバースト欄の六角形が I から II に替わるフレーム。0975-01 の f8123）から、マスト：ロマンチックメイドのほろ酔い（2 スタック）が全部外れたフレームまで",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@3",
+      "note": "V-0683 の「読み方」3 の使い捨てのスクリプトで、増分をマスト：RM の格子に当てた。ほろ酔いの格子の最後のヒットが印の -5f、無い最初のヒットが 0f（値は無い最初のヒット。外れたのはその間）。その後は次の I-DOLL・フラワーの突入まで、ほろ酔いの格子は出ない（1 つだけ外れたなら続く）。スタックは、フラワーの突入とクレアの突入の 2 回で、その間ほろ酔いの格子が途切れない。ほかの回: 2 回目（f5013。2 スタック）は印の前 213f からヒットが無く決まらないが、印の 31f 後のヒットにはほろ酔いが無い。4 回目（f11256。2 スタック。モデルの 3 分の中に無い）は最後のほろ酔いが -5f、無い最初のヒットが -1f"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "anchor": "activation:2",
+        "from": 1,
+        "within": "untilNext",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

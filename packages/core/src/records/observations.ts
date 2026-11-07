@@ -25,6 +25,7 @@ import {
 import { enemyEventsOf, enemyInputOf, enemyLandingsOf, targetProfileOf } from '../enemies.ts';
 import { GEAR_PARTS, emptyBuild, type BuildInput } from '../build.ts';
 import { resolveBuildEffects, type BuildEffectKind } from '../buildEffects.ts';
+import { unionRanges } from '../frame/events.ts';
 import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { landingFrameSpans } from '../frame/landing.ts';
 import { partialShotsInRanges } from '../frame/shots.ts';
@@ -2024,9 +2025,12 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
       return mine().map((a) => ({ frame: a.frame, video: activationVideoFrameOf(schedule!, a) }));
     case 'heal':
       return healFramesOf(result, ctx).map(at);
+    // 課題 2-59: 状態（引数 state）が外れたフレーム
+    case 'stateEnd':
+      return stateEndFramesOf(result, slotIndex, String(ctx.args.state)).map(at);
     default:
       throw new Error(
-        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal（${String(ctx.args.event)}）`,
+        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd（${String(ctx.args.event)}）`,
       );
   }
 }
@@ -2076,10 +2080,11 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
       });
     }
   } else {
-    const span = spanOf(result, ctx, anchor, within);
+    // 課題 2-59: 基準の発動を別の枠（from）から取る（その枠の発動から、この枠の出来事まで）
+    const span = spanOf(result, withArgs(ctx, { slot: ctx.args.from ?? ctx.args.slot }), anchor, within);
     offsets = pointsIn(points, span).map((p) => p.video - span.base);
   }
-  return firstCount(offsets, ctx, `出来事（${String(ctx.args.event)}）`);
+  return firstCount(offsets, ctx, `出来事（${String(ctx.args.event)}）`).map((v) => phaseOf(v, ctx));
 }
 
 /** spanOf の範囲 [from, to) に入る出来事 */
@@ -2103,13 +2108,31 @@ function eventTallies(result: SimResult, ctx: MetricContext): number[] {
   } else points = pointsIn(points, spanOf(result, ctx, anchor, ctx.args.within));
   const log = slotOf(result.shots, ctx);
   const weight = (k: number) => (tally === 'shots' ? 1 : (log.hits?.[k] ?? 1));
-  const modulo = ctx.args.modulo === undefined ? undefined : Number(ctx.args.modulo);
-  return firstCount(points, ctx, `出来事（${String(ctx.args.event)}）`).map((p) => {
-    const sum = log.frames.reduce((s, f, k) => (f <= p.frame ? s + weight(k) : s), 0);
-    if (modulo === undefined) return sum;
-    const r = ((sum % modulo) + modulo) % modulo;
-    return r > modulo / 2 ? r - modulo : r;
-  });
+  return firstCount(points, ctx, `出来事（${String(ctx.args.event)}）`).map((p) =>
+    phaseOf(
+      log.frames.reduce((s, f, k) => (f <= p.frame ? s + weight(k) : s), 0),
+      ctx,
+    ),
+  );
+}
+
+/** 引数 modulo があれば、値をその数で割った余りを (-modulo/2, modulo/2] に寄せた値（位相）にする。無ければそのまま */
+function phaseOf(value: number, ctx: MetricContext): number {
+  if (ctx.args.modulo === undefined) return value;
+  const modulo = Number(ctx.args.modulo);
+  const r = ((value % modulo) + modulo) % modulo;
+  return r > modulo / 2 ? r - modulo : r;
+}
+
+/**
+ * 課題 2-59（plan/design-debuff-removal.md 7.3 節）: 枠 slotIndex の状態 state が外れたフレーム（効いていたのが、そのフレームから効いて
+ * いない。続く件をつないだ塊の終わり。昇順）。戦闘の終わりで切れた塊は入れない
+ */
+function stateEndFramesOf(result: SimResult, slotIndex: number, state: string): number[] {
+  const items = itemsOf(result.history, { holder: slotIndex, state: state as NamedStateId });
+  return unionRanges(items)
+    .map((r) => r.end)
+    .filter((f) => f < result.frames);
 }
 
 /** eventFrames の基準（fullBurst:<n>・activation:<n>）の、動画のフレームと、数える範囲（モデルのフレーム） */
