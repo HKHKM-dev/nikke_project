@@ -1,0 +1,46 @@
+{
+  "id": "0973",
+  "date": "2026-11-07",
+  "folder": "range",
+  "file": "20261107-0973_mg_mast-romantic-maid_flower-cocoa-auto.mp4",
+  "original": "2026-11-07 21-53-12.mp4",
+  "durationSec": 200.5,
+  "frames": 12027,
+  "fps": 60,
+  "sizeMB": 337.6,
+  "sha256": "e675a8a0506f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0686 の撮影 B。I-DOLL・フラワー（I）・ココア（I）・マスト：ロマンチックメイド（II・操作）。III なし。オート射撃 ON・オートバースト ON。火の的",
+  "backup": {
+    "at": "2026-11-07T22:02+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
