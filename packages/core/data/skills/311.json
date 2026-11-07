@@ -33,9 +33,10 @@
           ]
         },
         {
-          "ja": "デバフ解除が、ダメージに効くデバフ（マスト：ロマンチックメイドのほろ酔い）を外すかは確かめていない（バーストのデバフ解除は外す。C-0976）。モデルは外さない（未実装）",
-          "en": "Whether this debuff removal also removes a damage-relevant debuff (Mast: Romantic Maid's Drunken) is not checked (the burst's removal does; C-0976). The model does not remove it (not implemented)",
-          "kind": "unimplemented"
+          "ja": "デバフのかかった味方のデバフ解除は、それ自体は与ダメージを変えない（デバフを読む効果のある編成でだけ効く。マスト：ロマンチックメイドのほろ酔いを外すかは確かめていない。バーストのデバフ解除は外す。C-0976）。モデルは外さない（未実装。課題 2-59）",
+          "en": "Debuff removal on debuffed allies does not change damage by itself (it matters only with an effect that reads debuffs; whether it removes Mast: Romantic Maid's Drunken is not checked, while the burst's removal does; C-0976). The model does not remove it (not implemented; backlog 2-59)",
+          "kind": "indirect",
+          "path": "debuff"
         }
       ]
     },
@@ -64,9 +65,10 @@
           ]
         },
         {
-          "ja": "味方全体のデバフ効果解除は、マスト：ロマンチックメイドのほろ酔い（命中率▼を中身に持つ状態）を外し、その間の▲も消える（次の 1 段階突入で付き直す）。モデルは外さない（未実装。デバフ解除の語彙が無い）",
-          "en": "Debuff removal on all allies removes Mast: Romantic Maid's Drunken (a state carrying Hit Rate down), and its buffs end with it (it comes back at the next Burst stage 1 entry). The model does not remove it (not implemented; no vocabulary for debuff removal)",
-          "kind": "unimplemented",
+          "ja": "味方全体のデバフ効果解除は、それ自体は与ダメージを変えない（デバフを読む効果のある編成でだけ効く）。マスト：ロマンチックメイドのほろ酔い（命中率▼を中身に持つ状態）を外し、その間の▲も消える（次の 1 段階突入で付き直す）。モデルは外さない（未実装。課題 2-59）",
+          "en": "Debuff removal on all allies does not change damage by itself (it matters only with an effect that reads debuffs). It removes Mast: Romantic Maid's Drunken (a state carrying Hit Rate down), and its buffs end with it (it comes back at the next Burst stage 1 entry). The model does not remove it (not implemented; backlog 2-59)",
+          "kind": "indirect",
+          "path": "debuff",
           "claims": [
             "C-0976"
           ]

@@ -395,7 +395,7 @@ export const SKILL_NOTE_KINDS = [
  * 分類の設計書の論点 7（plan/design-indirect-notes.md 1.3 節）: 間接に効く経路。間接の notes の path（動かす側）と、効果・notes の
  * reads（読む側）に書く
  */
-export const INDIRECT_PATHS = ['hp', 'defense', 'barrier', 'decoy', 'cover', 'pierce', 'pellet'] as const;
+export const INDIRECT_PATHS = ['hp', 'defense', 'barrier', 'decoy', 'cover', 'pierce', 'pellet', 'debuff'] as const;
 export type IndirectPath = (typeof INDIRECT_PATHS)[number];
 
 /** 経路の名前（plan/skills.md と画面） */
@@ -407,6 +407,8 @@ export const INDIRECT_PATH_NAMES: Record<IndirectPath, LocalizedText> = {
   cover: { ja: '遮蔽物', en: 'Cover' },
   pierce: { ja: '貫通', en: 'Pierce' },
   pellet: { ja: 'ペレット', en: 'Pellet' },
+  /** 課題 2-59: デバフ解除が動かし、デバフの状態（ほろ酔い）を付ける効果が読む（plan/design-indirect-notes.md の経過） */
+  debuff: { ja: 'デバフ', en: 'Debuff' },
 };
 
 export type PassiveEffect = FixedTargetFields & {
