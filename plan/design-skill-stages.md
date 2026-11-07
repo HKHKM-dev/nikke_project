@@ -4,7 +4,7 @@
 - 前提の組み直し: [design-holder-effects.md](design-holder-effects.md)（効果を持ち主ごとの一覧で持つ。段 A〜E 済み。6 節: 2 段目の語彙を一覧の操作で書く）
 - 関連: [design-named-state.md](design-named-state.md)（8 節: 状態の後の拡張の語彙の形）、[design-heal-vocabulary.md](design-heal-vocabulary.md)（回復の撮影 F1〜F5）、[skills-guide.md](skills-guide.md)（キャラの定義の手順）、[verification-guide.md](verification-guide.md)（検証の流れ）
 - 作成日: 2026-10-16
-- 状態: 決定。2026-10-16 にオーナーが、分類の設計書の論点 6（2 段目の立て方）を推奨の案 A（語彙の家族ごとに段を切る）に、この設計書の論点 1〜5 を推奨どおりに決めた。段 1 の設計に進む
+- 状態: 閉じた（段 1〜21 を閉じ、段 22 以降は起こさない。経過）
 
 ## 0. 目的と前提
 
@@ -127,3 +127,4 @@
 - 段 20: 2026-11-01 起案・決定・閉じた（[design-skill-stage20.md](design-skill-stage20.md)）。
 - 段 21: 2026-11-01 起案・決定・閉じた（[design-skill-stage21.md](design-skill-stage21.md)）。
 - 2026-11-01: オーナーの判断で、段 21 の後は段を起こさず、残りの家族はキャラ毎・効果毎の調査としてまとめる（[skills-guide.md](skills-guide.md) 1.3 節）。
+- 2026-11-07: 段を起こさない方針に合わせて閉じた（残りの未対応は [backlog.md](backlog.md) 6 節と [skills.md](skills.md)）。
