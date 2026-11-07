@@ -44,7 +44,7 @@ interception の例: 20261001-0066_special_boss-name.mp4 （種類_ボス英名�
 
 ### 旧プロジェクトの録画（参照のみ。移動しない）
 
-旧プロジェクト（`D:\NIKKE_Damage_Calculator`）で撮った録画。このリポジトリの読み方で読み直して使う。
+旧プロジェクト（`D:\old_nikkecalc`）で撮った録画。このリポジトリの読み方で読み直して使う。
 
 - 置き場所は `E:/old_nikkecalc/`（中の構成とファイル名は旧のまま。古い文書の `E:/record/nikke/` はここを指す）。
 - このプロジェクトの置き場所（`E:/nikke_project_captures/`）へは移動もコピーもしない（design-stage18.md 2 節。[storage.md](storage.md)「運用」の 2 の例外）。
