@@ -251,6 +251,7 @@
           "ja": "粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）",
           "en": "The burst gauge gained from a sticky grenade attach hit (solo recordings 0733 and 0734; observations 0733-08 and 0734-08) is not modeled. The amount is larger than one shooter hit (target_burst_energy_pershot) and does not grow on a critical attach (not proportional to the attach damage; 0733-06). Neither the description nor the data gives a value, so its source is unknown (plan/design-skill-stage12-leftovers.md section 2)",
           "kind": "unimplemented",
+          "claims": ["C-0990"],
           "effect": {
             "kind": "burstGaugeHit",
             "trigger": "normalShot"
