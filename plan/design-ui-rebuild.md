@@ -1,6 +1,6 @@
 # 設計書: UI の機能の棚卸しと作り直しの方針
 
-- 状態: 5.1・5.2・5.4 節を実装。5.3 節（ボス）は撮影待ち（決定は 3 節と 4 節。進み具合は経過）
+- 状態: 5.1・5.2・5.4 節を実装（決定は 3 節と 4 節。進み具合は経過）
 - 関連: [design-modern-ui.md](design-modern-ui.md)（モダンの画面）・[design-unify-sim-calc.md](design-unify-sim-calc.md)（Worker と 9 節の「やらないこと」）・[requirements.md](requirements.md)（目的と範囲）
 - 作成日: 2026-11-07
 - 調べた時点: main の dbe7533f。コードの行番号はこの版のもの
@@ -201,12 +201,6 @@
 - CLI（`packages/core/scripts/sim-run.ts`）の既定をジャンプありにする。
 - 未対応の一覧（`components/NotesSummary.tsx`）: 画面に無い入力の既定を出す。注記の種類 `noDamage`・`modeling` を出す。モデル全体の固定文と冒頭のコメントを直す（2.7 節）。
 
-### 5.3 ボス（撮影で測ってから）
-
-- 敵の選択に、ボスのプリセットを足す（`packages/core/data/enemies.json`）。値は撮影で測ってから入れる（`design-stage12.md` 16 節 2）。
-- カスタムの敵: ボスのプリセットの値を書き換えると「カスタム」にする（4 節の 3）。
-- ボスで要る入力（敵防御力・戦闘時間・コアの有無・手入力の命中の条件・敵の出来事のセット）は、残っている状態と reducer の操作（`enemy.hasCore`・`conditionMode`・`condition`・`enemyEventSets`・`setSlotCondition`・`setConditionMode`・`setEnemyEventSets`）で受ける。
-
 ### 5.4 文書
 
 - 実装のときに、`requirements.md` の 1 節（編成の数）・4.1 節・4.2 節を画面に合わせて直す。
@@ -218,3 +212,4 @@
 - 2026-11-07: オーナーの答えで 4 節の論点を決めた。
 - 2026-11-07: オーナーの指示で 5.1・5.2 節を実装した。保存形式は版 3（版 1・2 の消した項目は読み捨て、版の無い旧形式は読まない）。想定 HP の欄を出すのは、自分の HP の割合の条件（`condition.selfHp`・トリガー `{ selfHpAtMostRef }`）を持つ効果のあるスロットと、「残りの HP の割合が最も低い味方」を対象にする効果が編成にあるときのキャラのいるスロット（`apps/web/src/calcView.ts`）。CLI は `--events` を省くと敵のプリセットの出来事のセットを入れ、`--no-jump` で外す。
 - 2026-11-07: 5.4 節の文書を直した。「射撃場の既定値（AUTO の操作キャラの既定など）」の課題（`records/backlog/stage-17.json`）は閉じた。`design-stage17.md` 9.3 節の 2・3 は、18-C2 で条件の既定を自動（未測定の項目は手入力の値と注記）にし、操作キャラの枠も自動にしたこと（`design-stage18.md` 12.9 節の 5）で済んでおり、画面には手入力の条件の欄が無い。
+- 2026-11-07: オーナーの指示で、5.3 節（ボスのプリセット・カスタムの敵・ボスで要る入力をつなぐ段）を段取りから消した。
