@@ -48,10 +48,10 @@ const LEVEL_CLASS: Record<Item['level'], string> = {
   default: 'out-of-scope',
 };
 
-/** 一覧の戦闘力順で、戦闘力が同じキャラの順（plan/design-combat-power-sort.md 6.3 節） */
+/** 一覧の戦闘力順で、戦闘力が同じキャラの順（C-0989。plan/design-combat-power-sort.md 7 節） */
 const COMBAT_POWER_TIES: Item = {
   level: 'assumed',
-  text: '一覧の戦闘力順で、戦闘力が同じキャラは名前順に並べる。実機の一覧での順は分かっていないので、実機と違うことがある',
+  text: '一覧の戦闘力順で、戦闘力が同じキャラは名前順に並べる。実機の一覧での順は、育成データに出ない値で決まるので再現できず、実機と違うことがある',
 };
 
 /** 画面に欄の無い入力の既定（calcView.ts の冒頭）。欄が無いので変えられないことを知らせる */
