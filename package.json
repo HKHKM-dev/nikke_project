@@ -38,6 +38,7 @@
     "pr:prep": "node tools/git/pr-prep.ts",
     "build:import": "node tools/builds/import.ts",
     "build:fetch": "node tools/builds/fetch.ts",
+    "build:combat-power": "node tools/builds/combat-power.ts",
     "drive:sync": "node tools/drive/sync.ts",
     "drive:conflicts": "node tools/drive/sync.ts --conflicts",
     "drive:gateway-check": "node tools/drive/gateway-check.ts"

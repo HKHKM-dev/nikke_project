@@ -6,6 +6,7 @@ import { MASTER_FILES } from '../load.ts';
 import {
   buildEntriesOf,
   diffSnapshots,
+  gameCombatPowers,
   rosterMarkdown,
   stripAccountFields,
   toBuildSnapshot,
@@ -224,6 +225,26 @@ describe('toBuildSnapshot', () => {
     expect(s.unmapped.join('\n')).toMatch(/100103/);
     expect(s.unmapped.join('\n')).toMatch(/name_code 9999: data\/characters に無い/);
     expect(s.unmapped.join('\n')).toMatch(/name_code 3001: GetUserCharacterDetails に無い/);
+  });
+});
+
+describe('gameCombatPowers', () => {
+  it('maps the combat of each detail to the resourceId, skipping characters missing from data/characters', () => {
+    const raw: ShiftyPadRaw = {
+      ...RAW,
+      details: [
+        detail(5065, { combat: 600000 }),
+        detail(5016, { combat: 350000 }),
+        detail(9999, { combat: 1 }),
+        detail(3001),
+      ],
+    };
+    expect(gameCombatPowers(raw, INDEX)).toEqual(
+      new Map([
+        [82, 600000],
+        [30, 350000],
+      ]),
+    );
   });
 });
 

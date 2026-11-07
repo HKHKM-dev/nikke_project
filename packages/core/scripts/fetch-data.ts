@@ -35,6 +35,7 @@ import {
   toIndexEntry,
   toRecycleRoomMaster,
   toTreasureData,
+  toTreasurePower,
   toTreasureStats,
   type RawAttractiveTable,
   type RawCollection,
@@ -171,7 +172,12 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<FetchedMasters
   const ssrId = rareMap.SSR?.[0];
   if (ssrId === undefined) throw new Error('no SSR favorite for treasure stats');
   const ssr = await cachedJson<RawCollection>(`en/favorite-${ssrId}.json`, favoritePath(ssrId, 'en'));
-  const master: CollectionMaster = { formatVersion: 1, collections, treasureStats: toTreasureStats(ssr) };
+  const master: CollectionMaster = {
+    formatVersion: 1,
+    collections,
+    treasureStats: toTreasureStats(ssr),
+    treasurePower: toTreasurePower(ssr),
+  };
   console.log(`collections: ${collections.length} (R ${rareMap.R?.length ?? 0}, SR ${rareMap.SR?.length ?? 0})`);
   return { affection, recycleRoom, cubes, collections: master };
 }
