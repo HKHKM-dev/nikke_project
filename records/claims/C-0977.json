@@ -1,0 +1,20 @@
+{
+  "id": "C-0977",
+  "text": "ココアのスキル（S1 の遮蔽物HP回復とデバフ解除、S2 のフルチャージ攻撃時のプロケチャップ（受けるダメージ▼）、バーストのデバフ解除と敵全体の攻撃力▼）は、ココア自身と、ダメージに効くデバフを持たない味方の与ダメージを変えない（ダメージに効くデバフを持つ味方は、デバフ解除で変わる。C-0976）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`0081-01`・`0081-02`・`0081-03`・`0081-04`。V-0031",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": [
+      "data/skills/311.json の skill1 の effects[0]",
+      "data/skills/311.json の skill1 の notes[0]",
+      "data/skills/311.json の skill2 の notes[0]",
+      "data/skills/311.json の burst の notes[0]"
+    ]
+  },
+  "decidedOn": []
+}
