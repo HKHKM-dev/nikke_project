@@ -81,6 +81,16 @@
 - 決定 2（公開。2026-11-06、オーナー）: 企業のロゴや、クラス・武器・属性の図柄はゲームのアイコンと同じに見えるが、公開リポジトリに入れてよい。キャラ画像と同じく README の「ライセンス」で本リポジトリのライセンスの対象外とする。
 - 決定 3（使っていないバッジも置く。2026-11-08、オーナー）: 旧プロジェクトの 40 個を全部 `apps/web/src/assets/badges/` に置く。足した 22 個（レア度・企業・`bursttrigger_*`・`collection*`・`misc_*`）は上の「小さくする」と同じ設定で小さくした（この設定で、置いてあった 18 個がバイト単位で同じに出ることを確かめた）。Vite は読み込んだ画像だけを束に入れるので、使っていないファイルは束にもアーティファクトにも出ない。`badges.test.ts` の「置いたファイルをどれも使う」の検査はやめ、どれも `assetsInlineLimit` 未満であることの検査は残す（使い始めたときも束に埋め込まれる）。
 - 決定 4（元の SVG もリポジトリに置く。2026-11-08、オーナー）: 旧プロジェクトのフォルダが残る保証は無いので、元の 40 個（Inkscape の SVG。ローカルのパスなどの個人の情報は入っていない）を `apps/web/badges-src/` にそのまま置く。`src/` の外なので画面のコードからは読まれない。`npm run badges:build`（`apps/web/scripts/badges.ts`）が上の「小さくする」の設定で `src/assets/badges/` に書き出し、元の無い書き出しは消す。svgo は開発用の依存にした。書き出しが元を小さくしたものと同じことは `apps/web/scripts/badges.test.ts` が見る。バッジを直すときは `badges-src/` を Inkscape で直してこれを回す。
+- 決定 5（命名規則。2026-11-08、オーナー）: 旧プロジェクトの名前は、データの値と違う（`element_3electric` と `Electronic`、`burst_4special` と `AllStep`）、並びの番号を含む、大文字と小文字が混ざる、`collection*` の番号の意味が名前から分からない、の 4 点で足しにくかったので、`<グループ>_<値>[-<変種>].svg` に付け直した。グループと値は、キャラのデータにある項目なら項目名と値をそのまま使う。規則の全文は `apps/web/scripts/badges.ts` の冒頭に置く。`collection` は白背景が 1〜14、黒背景が 15（上限）なので、黒背景を `-max` にした（レア度ごとに上限の数が違うので数字にしない）。`badges.ts` は個別の import をやめ、使う項目のバッジを `import.meta.glob` で読んで `<項目名>_<値>.svg` を引く（同じ項目にバッジを足すときは、ファイルを置けばよい）。旧の名前との対応:
+  - `element_1fire`〜`element_5wind` → `element_Fire`・`element_Water`・`element_Electronic`・`element_Iron`・`element_Wind`
+  - `burst_1I`〜`burst_3III`・`burst_4special` → `burstStep_Step1`〜`burstStep_Step3`・`burstStep_AllStep`
+  - `class_1attacker`〜`class_3supporter` → `class_Attacker`・`class_Defender`・`class_Supporter`
+  - `weapon_1AR`〜`weapon_6MG` → `weaponType_AR`・`weaponType_SMG`・`weaponType_SG`・`weaponType_SR`・`weaponType_RL`・`weaponType_MG`
+  - `rarity_1SSR`〜`rarity_3R` → `rarity_SSR`・`rarity_SR`・`rarity_R`
+  - `corp_1elysion`〜`corp_5abnormal` → `corporation_ELYSION`・`corporation_MISSILIS`・`corporation_TETRA`・`corporation_PILGRIM`・`corporation_ABNORMAL`
+  - `bursttrigger_1AUTO`・`2MANUAL`・`3NONE` → `burst_auto`・`burst_manual`・`burst_none`
+  - `collection` → `collection_plain`。`collectionR14`・`R15` → `collection_R`・`collection_R-max`（`SR14`・`SR15` と `SSR2`・`SSR3` も同じ形）
+  - `misc_130x150badge`・`misc_delete`・`misc_favorite`・`misc_ring` → `ui_blank`・`ui_delete`・`ui_main`・`ui_ring`
 
 ## 経過
 
@@ -92,3 +102,4 @@
 - 2026-11-06: 属性・バースト段階・クラス・武器の表示を旧プロジェクトのバッジに置き換え、属性の色をバッジの色にそろえた（2.5 節）。
 - 2026-11-08: 使っていないバッジも含め、旧プロジェクトのバッジを全部置いた（2.5 節の決定 3）。
 - 2026-11-08: 元の SVG を `apps/web/badges-src/` に置き、書き出しのコマンド `npm run badges:build` を足した（2.5 節の決定 4）。
+- 2026-11-08: バッジを命名規則に付け直し、`badges.ts` を `import.meta.glob` で引く形にした（2.5 節の決定 5）。

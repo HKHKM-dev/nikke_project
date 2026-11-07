@@ -29,14 +29,8 @@ describe('バッジの対応表', () => {
 
   it('属性の色（styles.css の [data-element]）はバッジの図柄の色', () => {
     const css = read('../../styles.css');
-    const files = {
-      Fire: 'element_1fire.svg',
-      Water: 'element_2water.svg',
-      Electronic: 'element_3electric.svg',
-      Iron: 'element_4iron.svg',
-      Wind: 'element_5wind.svg',
-    };
-    for (const [element, file] of Object.entries(files)) {
+    for (const element of ['Fire', 'Water', 'Electronic', 'Iron', 'Wind']) {
+      const file = `element_${element}.svg`;
       const color = new RegExp(`\\[data-element='${element}'\\] \\{\\s*--el: (#[0-9a-f]{6});`).exec(css)?.[1];
       expect(color, element).toBeDefined();
       // svgo は色を短く書く（#ff0000 → red、#00ff00 → #0f0）ので、6 桁の 16 進に戻して比べる

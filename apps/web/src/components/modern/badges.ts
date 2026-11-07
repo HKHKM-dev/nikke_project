@@ -1,26 +1,19 @@
 // モダン UI のバッジ（plan/design-modern-ui.md 2.5 節）。assets/badges は apps/web/badges-src から npm run badges:build で書き出したもの。
+// ファイル名は <キャラのデータの項目名>_<その値>.svg（命名規則は apps/web/scripts/badges.ts の冒頭）なので、項目と値からファイルを引く。
 // どれも vite.config.ts の assetsInlineLimit 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
-// 属性の色はバッジの図柄の色で、styles.css の [data-element] が --el に置く。
+// 束に入るのは下の glob が読む項目のバッジだけ。属性の色はバッジの図柄の色で、styles.css の [data-element] が --el に置く。
 import { ELEMENT_LABEL, WEAPON_LABEL, type CharacterIndexEntry } from '@nikke/core';
-import burstStep1 from '../../assets/badges/burst_1I.svg';
-import burstStep2 from '../../assets/badges/burst_2II.svg';
-import burstStep3 from '../../assets/badges/burst_3III.svg';
-import burstAllStep from '../../assets/badges/burst_4special.svg';
-import classAttacker from '../../assets/badges/class_1attacker.svg';
-import classDefender from '../../assets/badges/class_2defender.svg';
-import classSupporter from '../../assets/badges/class_3supporter.svg';
-import elementFire from '../../assets/badges/element_1fire.svg';
-import elementWater from '../../assets/badges/element_2water.svg';
-import elementElectronic from '../../assets/badges/element_3electric.svg';
-import elementIron from '../../assets/badges/element_4iron.svg';
-import elementWind from '../../assets/badges/element_5wind.svg';
-import weaponAR from '../../assets/badges/weapon_1AR.svg';
-import weaponSMG from '../../assets/badges/weapon_2SMG.svg';
-import weaponSG from '../../assets/badges/weapon_3SG.svg';
-import weaponSR from '../../assets/badges/weapon_4SR.svg';
-import weaponRL from '../../assets/badges/weapon_5RL.svg';
-import weaponMG from '../../assets/badges/weapon_6MG.svg';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
+
+const BADGE_SRCS = import.meta.glob<string>(
+  [
+    '../../assets/badges/element_*.svg',
+    '../../assets/badges/burstStep_*.svg',
+    '../../assets/badges/class_*.svg',
+    '../../assets/badges/weaponType_*.svg',
+  ],
+  { eager: true, import: 'default' },
+);
 
 /** バッジを出すキャラの項目 */
 export type BadgeKey = 'element' | 'burstStep' | 'class' | 'weaponType';
@@ -33,9 +26,19 @@ export type BadgeKind = {
   badges: Readonly<Record<string, Badge>>;
 };
 
-function badgesOf<T extends string>(srcs: Record<T, string>, label: (value: T) => string): Record<T, Badge> {
-  const entries = Object.entries(srcs) as [T, string][];
-  return Object.fromEntries(entries.map(([value, src]) => [value, { src, label: label(value) }])) as Record<T, Badge>;
+/** 項目の値ごとのバッジ（values の順に並べる）。ファイルが無い値があれば読み込みで落とす */
+function badgesOf<K extends BadgeKey>(
+  key: K,
+  values: readonly CharacterIndexEntry[K][],
+  label: (value: CharacterIndexEntry[K]) => string,
+): Record<string, Badge> {
+  return Object.fromEntries(
+    values.map((value) => {
+      const src = BADGE_SRCS[`../../assets/badges/${key}_${value}.svg`];
+      if (src === undefined) throw new Error(`バッジ ${key}_${value}.svg が assets/badges に無い`);
+      return [value, { src, label: label(value) }];
+    }),
+  );
 }
 
 /** バッジの種類（並びは絵の左上に縦に並べる順と、トレイの絞り込みの順） */
@@ -43,34 +46,22 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
   {
     key: 'element',
     name: '属性',
-    badges: badgesOf<CharacterIndexEntry['element']>(
-      { Fire: elementFire, Water: elementWater, Wind: elementWind, Iron: elementIron, Electronic: elementElectronic },
-      (v) => ELEMENT_LABEL[v].ja,
-    ),
+    badges: badgesOf('element', ['Fire', 'Water', 'Wind', 'Iron', 'Electronic'], (v) => ELEMENT_LABEL[v].ja),
   },
   {
     key: 'burstStep',
     name: 'バースト段階',
-    badges: badgesOf<CharacterIndexEntry['burstStep']>(
-      { Step1: burstStep1, Step2: burstStep2, Step3: burstStep3, AllStep: burstAllStep },
-      (v) => `バースト ${BURST_STEP_LABEL[v]}`,
-    ),
+    badges: badgesOf('burstStep', ['Step1', 'Step2', 'Step3', 'AllStep'], (v) => `バースト ${BURST_STEP_LABEL[v]}`),
   },
   {
     key: 'class',
     name: 'クラス',
-    badges: badgesOf<CharacterIndexEntry['class']>(
-      { Attacker: classAttacker, Defender: classDefender, Supporter: classSupporter },
-      (v) => CLASS_LABEL[v],
-    ),
+    badges: badgesOf('class', ['Attacker', 'Defender', 'Supporter'], (v) => CLASS_LABEL[v]),
   },
   {
     key: 'weaponType',
     name: '武器種',
-    badges: badgesOf<CharacterIndexEntry['weaponType']>(
-      { AR: weaponAR, SMG: weaponSMG, SG: weaponSG, SR: weaponSR, RL: weaponRL, MG: weaponMG },
-      (v) => WEAPON_LABEL[v].ja,
-    ),
+    badges: badgesOf('weaponType', ['AR', 'SMG', 'SG', 'SR', 'RL', 'MG'], (v) => WEAPON_LABEL[v].ja),
   },
 ];
 
