@@ -1,5 +1,5 @@
 {
   "section": "8",
   "order": 10,
-  "text": "全弾リロードの 1 回ごとの丸め（2026-11-07 起票）→ 判断待ち: [design-reload-rounding.md](design-reload-rounding.md) 8 節"
+  "text": "全弾リロードの 1 回ごとの丸め（2026-11-07 起票）→ 承認待ち: [design-reload-rounding.md](design-reload-rounding.md) 12 節"
 }
