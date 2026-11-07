@@ -207,10 +207,11 @@ describe('射手（ハイドとリロード）', () => {
   // C-0828（plan/design-hide-reload.md）: ハイド中のリロードは、バーが満ちる（リロードの秒 + 12f。C-0135）前に明けると取り消す。
   // plan/design-hide-reload-detect.md 案 A: 窓の始まりにチャージが満ちていればその場で撃ってリロードし、ほかは D（8f）から。
   // チャージの途中なら D の H 後に部分チャージで撃ち、射撃姿勢維持型はその発の姿勢の終わりから。窓はマガジンの途中から 118f。
-  // startOf は窓の無い列（usual）から窓の始まりを決める
+  // startOf は窓の無い列（usual）から窓の始まりを決める。gap を書くと、それより長い間をリロードとみる
   const remainingAfter = (
     shot: ShotParams,
     startOf: (usual: number[]) => number = (usual) => usual[2]! + 30,
+    gap?: number,
   ): { before: number; after: number; inWindow: number[] } => {
     const usual = shotFramesUpTo(shot, 2000);
     const start = startOf(usual);
@@ -218,7 +219,7 @@ describe('射手（ハイドとリロード）', () => {
     const after = fired.filter((f) => f >= start + 118);
     // 明けの後、リロード（窓の無い列の、いちばん短い間といちばん長い間の中間を超える間）までに撃った数
     const gaps = usual.slice(1, 20).map((f, i) => f - usual[i]!);
-    const threshold = (Math.min(...gaps) + Math.max(...gaps)) / 2;
+    const threshold = gap ?? (Math.min(...gaps) + Math.max(...gaps)) / 2;
     const reload = after.findIndex((f, i) => i > 0 && f - after[i - 1]! > threshold);
     // 窓の中の発（窓の始まりのフルチャージの発・部分チャージの発）は、ジャンプの前に数える
     const inWindow = fired.filter((f) => f >= start && f < start + 118).map((f) => f - start);
@@ -324,14 +325,26 @@ describe('射手（ハイドとリロード）', () => {
     // ミハラ（AR・60 発・1.67 秒 = 98.24f）: D から ⌈98.24⌉ + 12 = 111f は、118f の窓（D の後 110f）に収まらない。切り捨ての 98f
     // （最初のリロードは端数の持ち越し 0.5 で 98f）なら明けの 1f 前に満ちていた（0469-15・0470-15・0727-21・0728-22）
     // AR の発と発の間は 4・5f で、remainingAfter の閾値（いちばん短い間と長い間の中間）では数えられないので、30f より長い間で切る
-    const shot = shotOf(161);
-    const start = shotFramesUpTo(shot, 2000)[2]! + 30;
-    const fired = shotsWithWindow(shot, { start, end: start + 118 }, start + 2000);
-    const before = fired.filter((f) => f < start + 118).length;
-    const after = fired.filter((f) => f >= start + 118);
-    const reload = after.findIndex((f, i) => i > 0 && f - after[i - 1]! > 30);
+    const { before, after } = remainingAfter(shotOf(161), undefined, 30);
     expect(before).toBeGreaterThan(0);
-    expect(reload).toBe(60 - before);
+    expect(after).toBe(60 - before);
+  });
+
+  it('C-0959: a 1.5 s AR reload still finishes in a 118f window after rounding up (design 10.3)', () => {
+    // リロード 1.5 秒 = 88.24f: D から ⌈88.24⌉ + 12 = 101f は、118f の窓（D の後 110f）に収まり、明けの後に満タンの 60 発を撃つ
+    expect(remainingAfter({ ...shotOf(161), reloadTime: 1.5 }, undefined, 30).after).toBe(60);
+  });
+
+  it('C-0958: InstantBox aims 6f longer at the end of the window too (V-0675 C: not measured yet)', () => {
+    // 紅蓮：神殺の AR（InstantBox）: 明けの構えは戦闘開始と同じ 18f（C-0114 の形に乗せた。V-0675「次に撮るもの」の C）。
+    // ほかの AR は 12f（220 の明けから 232。上の「AR (reload 1 s < 2 s jump)」）
+    const window = { start: 100, end: 220 };
+    const firstAfter = (partial: Partial<ShotParams>) =>
+      shotsWithWindow(partial, window, 400).find((f) => f >= window.end)! - window.end;
+    expect(firstAfter({})).toBe(DEFAULT_WEAPON_MODEL.aimInFrames);
+    expect(firstAfter({ fireType: 'InstantBox' })).toBe(
+      DEFAULT_WEAPON_MODEL.aimInFrames + DEFAULT_WEAPON_MODEL.instantBoxAimLongerFrames,
+    );
   });
 
   it('C-0817: a short reload still finishes in the window (reload 1.6 s + 12f < 118f; the magazine is full after it)', () => {

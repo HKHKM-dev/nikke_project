@@ -75,12 +75,11 @@ import {
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
-  transientDriveError,
   UPLOAD_POLL_LIMIT,
   UPLOAD_POLL_MS,
-  uploadSettled,
+  waitUploadSettled,
 } from './intake-lib.ts';
-import { Drive, type DriveFile } from './drive.ts';
+import { Drive, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -293,35 +292,33 @@ if (drive !== null) {
 
 /**
  * 取り込み元は、Drive for desktop が上げ終えるまで待つ（撮っている間から上げ、後で同じファイルに新しい版を上げる。途中までの版を
- * 台帳に書かない）。UPLOAD_POLL_MS ごとにメタデータを読み直し、サイズが変わらなくなったら、読み直したものを返す。読み直しは
- * UPLOAD_POLL_LIMIT 回まで。待てば直りうる読み直しの失敗（transientDriveError）は 1 回に数えて続け、ほかの失敗と上限で止まる
+ * 台帳に書かない）。待ち方は intake-lib.ts の waitUploadSettled。待てば直らない読み直しの失敗と、回数の上限で止まる
  */
 async function waitUploaded(drive: Drive, file: DriveFile): Promise<DriveFile> {
   const seconds = `${UPLOAD_POLL_MS / 1000} 秒`;
   console.log(
     `${file.name} を Drive for desktop が上げ終えるまで、${seconds}ごとに ${UPLOAD_POLL_LIMIT} 回までサイズを見る（いま ${file.size} バイト）`,
   );
-  let before = file;
-  for (let i = 1; i <= UPLOAD_POLL_LIMIT; i++) {
-    await sleep(UPLOAD_POLL_MS);
-    let now: DriveFile;
-    try {
-      now = await drive.file(file.id);
-    } catch (e) {
-      if (!transientDriveError(e)) fail(`${file.name} のメタデータを読み直せない: ${(e as Error).message}`);
-      console.error(`読み直しに失敗（${i}/${UPLOAD_POLL_LIMIT} 回目）。もう ${seconds}待つ: ${(e as Error).message}`);
-      continue;
-    }
-    const settled = uploadSettled(before.size, now.size);
-    console.log(
-      `待っている（${i}/${UPLOAD_POLL_LIMIT} 回目）: ${now.name}（保存日時 ${jst(now.modifiedTime)}・サイズ ${before.size} → ${now.size} バイト）` +
-        (settled ? '。変わらないので取り込む' : `。変わったので、もう ${seconds}待つ`),
-    );
-    if (settled) return now;
-    before = now;
-  }
-  return fail(
-    `${file.name} は ${UPLOAD_POLL_LIMIT} 回読み直してもサイズが定まらない（か、読み直せない）。Drive for desktop が上げ終えたのを確かめてから、もう一度回す`,
+  const uploaded = await waitUploadSettled(file, () => drive.file(file.id), {
+    sleep,
+    retryable: isTransientDriveError,
+    onPoll: (p) => {
+      const at = `${p.i}/${UPLOAD_POLL_LIMIT} 回目`;
+      if (p.now === undefined) {
+        console.error(`読み直しに失敗（${at}）。もう ${seconds}待つ: ${(p.error as Error).message}`);
+        return;
+      }
+      console.log(
+        `待っている（${at}）: ${p.now.name}（保存日時 ${jst(p.now.modifiedTime)}・サイズ ${p.before.size} → ${p.now.size} バイト）` +
+          (p.settled ? '。変わらないので取り込む' : `。変わったので、もう ${seconds}待つ`),
+      );
+    },
+  }).catch((e: unknown) => fail(`${file.name} のメタデータを読み直せない: ${(e as Error).message}`));
+  return (
+    uploaded ??
+    fail(
+      `${file.name} は ${UPLOAD_POLL_LIMIT} 回読み直してもサイズが定まらない（か、読み直せない）。Drive for desktop が上げ終えたのを確かめてから、もう一度回す`,
+    )
   );
 }
 

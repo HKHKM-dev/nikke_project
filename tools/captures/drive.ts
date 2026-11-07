@@ -69,6 +69,17 @@ export function driveQueryString(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
+/**
+ * Drive の呼び出しの失敗が、待てば直りうるものか: 通信の失敗（fetch の TypeError）・打ち切り（timeoutMs の TimeoutError）と、
+ * HTTP の 429・5xx（Drive.get の例外の status）。ほかの HTTP の失敗と、応答の読み違いなどは直らないとみる
+ */
+export function isTransientDriveError(e: unknown): boolean {
+  if (e instanceof TypeError) return true;
+  if ((e as { name?: unknown } | null)?.name === 'TimeoutError') return true;
+  const status = (e as { status?: unknown } | null)?.status;
+  return typeof status === 'number' && (status === 429 || status >= 500);
+}
+
 export class Drive {
   // node の型の除去だけで動かすので、パラメータプロパティは使わない。
   private readonly token: string;
