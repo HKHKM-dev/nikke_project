@@ -818,7 +818,8 @@ export function landingNotes(
       },
     });
   }
-  if (weapon === 'AR' || weapon === 'SMG' || weapon === 'SG') {
+  // 弾の種類 InstantBox（紅蓮：神殺の AR）は照準を待たない（C-0973）
+  if ((weapon === 'AR' || weapon === 'SMG' || weapon === 'SG') && slot.character.shot.fireType !== 'InstantBox') {
     notes.push({
       level: 'unsupported',
       code: 'landing-aim-wait',

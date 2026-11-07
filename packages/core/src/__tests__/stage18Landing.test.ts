@@ -676,6 +676,8 @@ describe('編成（自動の条件）', () => {
     expect(codes(MG)).not.toContain('landing-aim-wait');
     expect(codes(SG)).toContain('landing-aim-wait');
     expect(codes(scarlet)).not.toContain('landing-aim-wait');
+    // C-0973: 弾の種類 InstantBox の AR（紅蓮：神殺）は照準を待たないので出さない
+    expect(codes(weapon('AR', { min: 25, max: 45 }, 1, { fireType: 'InstantBox' }))).not.toContain('landing-aim-wait');
   });
 
   it('feeds the landing bullet hit rate to the gauge of the first pass', () => {

@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`0960-19`・`0960-20`・`0960-21`・`0960-22`・`0960-24`・`0961-19`・`0961-20`・`0961-21`・`0961-22`・`0961-24`。V-0675",
-  "model": "反映（`weapons.ts` の WeaponModel.instantBoxAimLongerFrames = 6。`cadence.ts` の firstShotFrames・reloadFirstShotFrames と `frame/shooter.ts` の windowEndFirstShotFrames・reaimShooter が、チャージの無い武器の構えに足す（aimLongerFrames）。plan/design-new-chars-1029.md 12.2 節の d）。的のジャンプの明けは録画で測っていない（明けの構えは戦闘開始と同じという C-0114 の形に乗せた。V-0675「次に撮るもの」の C）",
+  "model": "反映（`weapons.ts` の WeaponModel.instantBoxAimLongerFrames = 6。`cadence.ts` の firstShotFrames・reloadFirstShotFrames と `frame/shooter.ts` の windowEndFirstShotFrames・reaimShooter が、チャージの無い武器の構えに足す（aimLongerFrames）。plan/design-new-chars-1029.md 12.2 節の d）。的のジャンプの明けも同じだけ長い（C-0972）",
   "replaces": [],
   "updated": "2026-11-06",
   "subject": {
