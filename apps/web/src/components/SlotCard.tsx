@@ -13,18 +13,21 @@ import {
 import type { Dispatch } from 'react';
 import type { SlotResultView } from '../calcView.ts';
 import { formatDamage } from '../format.ts';
-import type { SlotState, TeamAction } from '../team.ts';
+import type { SlotGrowth, SlotState, TeamAction } from '../team.ts';
 import { BuildSection } from './BuildSection.tsx';
 import { CharacterPicker } from './CharacterPicker.tsx';
 import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { SkillSection } from './SkillSection.tsx';
+import { SlotOptions } from './SlotOptions.tsx';
 
 type Props = {
   slotIndex: number;
   slot: SlotState;
   index: readonly CharacterIndexEntry[];
   excludeIds: ReadonlySet<number>;
+  /** ほかの編成で選んでいるニケ（選択肢に印を付ける） */
+  otherPartyIds: ReadonlySet<number>;
   /** キャラの選択肢の印（useSkillDefinitions の fullySupported） */
   fullySupported: ReadonlySet<number> | null;
   character: CharacterData | undefined;
@@ -39,8 +42,8 @@ type Props = {
   mastersError: string | null;
   /** このスロットの計算の結果（calcView.ts の slotResultFor）。stale なら計算中の印を付けて出す */
   slotResult: SlotResultView | null;
-  /** 2026-10-31: このスロットがフォーカス（操作キャラ）か */
-  focused: boolean;
+  /** 想定 HP の欄を出すか（calcView.ts） */
+  usesHpRatio: boolean;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -49,6 +52,7 @@ export function SlotCard({
   slot,
   index,
   excludeIds,
+  otherPartyIds,
   fullySupported,
   character,
   error,
@@ -60,7 +64,7 @@ export function SlotCard({
   masters,
   mastersError,
   slotResult,
-  focused,
+  usesHpRatio,
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
@@ -69,9 +73,9 @@ export function SlotCard({
   // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
   // 折りたたみ 1 つにまとめた
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
-  // フルチャージ・想定 HP・手入力の値）を消した。射撃条件と想定 HP は既定値で計算する（calcView.ts）
+  // フルチャージ・手入力の値）を消した。射撃条件は既定値で計算する（calcView.ts）
 
-  const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
+  const growthField = (key: keyof SlotGrowth, name: string, min: number, max: number) => (
     <label className="field">
       <span>{name}</span>
       <IntInput
@@ -84,36 +88,18 @@ export function SlotCard({
     </label>
   );
 
-  // スロットの詳細設定のボタン。フォーカスは編成で 1 人なので、押すとこのスロットに移る（外すボタンにはならない）
-  const toggles = [
-    {
-      label: 'フォーカス',
-      pressed: focused,
-      onToggle: () => dispatch({ type: 'setControlledSlot', controlledSlot: slotIndex }),
-    },
-    {
-      label: '撃たない',
-      pressed: slot.noFire,
-      onToggle: () => dispatch({ type: 'setNoFire', index: slotIndex, noFire: !slot.noFire }),
-    },
-    {
-      label: 'バーストしない',
-      pressed: slot.noBurst,
-      onToggle: () => dispatch({ type: 'setNoBurst', index: slotIndex, noBurst: !slot.noBurst }),
-    },
-  ];
-
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
       <legend className="slot-legend">スロット {slotIndex + 1}</legend>
-      {/* キャラの選択の右に、スロットの詳細設定（フォーカス・撃たない・バーストしない）のポップアップ。設定は今後増やす。設定中の印と、
-          ポップアップの説明文はオーナーの指示で出さない（設定はポップアップのボタンの色で分かる。撃たないの近似は未対応の一覧に出す） */}
+      {/* キャラの選択の右に、スロットの詳細設定（バーストしない・想定 HP）のポップアップ。設定中の印と、ポップアップの説明文は
+          オーナーの指示で出さない（設定はポップアップのボタンの色で分かる） */}
       <div className="picker-row">
         <CharacterPicker
           index={index}
           excludeIds={excludeIds}
           fullySupported={fullySupported}
+          otherPartyIds={otherPartyIds}
           value={slot.resourceId}
           onSelect={(resourceId) => dispatch({ type: 'selectCharacter', index: slotIndex, resourceId })}
           onClear={() => dispatch({ type: 'clearSlot', index: slotIndex })}
@@ -124,19 +110,7 @@ export function SlotCard({
           label={`スロット ${slotIndex + 1} の詳細設定`}
           align="right"
         >
-          <div className="slot-toggles">
-            {toggles.map((t) => (
-              <button
-                key={t.label}
-                type="button"
-                className="toggle-button"
-                aria-pressed={t.pressed}
-                onClick={t.onToggle}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
+          <SlotOptions slotIndex={slotIndex} slot={slot} usesHpRatio={usesHpRatio} dispatch={dispatch} />
         </Popover>
       </div>
       {error && <p className="error">読み込みに失敗しました: {error}</p>}

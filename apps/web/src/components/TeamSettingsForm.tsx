@@ -22,8 +22,6 @@ const CORPORATION_LABEL: Record<ConsoleCorporation, string> = {
 
 type Props = {
   element: Element | null;
-  /** 敵の防御力（詳細設定）。的の動き（ジャンプ・的の条件の表）は射撃場の的のまま */
-  defence: number;
   fixedSpec: boolean;
   /** 2026-10-31: コンソール（リサイクルルームの研究 Lv）。スペック固定の間は使わない */
   consoleInput: ConsoleInput;
@@ -38,12 +36,11 @@ type Props = {
 /**
  * 編成共通の設定: 「敵情報」の枠（敵名・属性）と、「共通育成」の枠（スペック固定（ユニオン射撃場の固定値）・シンクロレベルと、折りたたみのリサイクルルーム（コンソール））。
  * 2026-10-31: オーナーの指示で詳細設定（折りたたみ）を消し、編成共通の育成を「共通育成」にまとめた。
- * 敵は射撃場の的だけで、選べるのは属性（コアありの欄は消した）。
- * 属性の右の「詳細設定」のポップアップで、敵防御力・ジャンプ移動（3 分モードの的のジャンプ）・戦闘時間を設定する（操作キャラ・バーストを使うかはスロットの詳細設定）
+ * 敵は射撃場の敵だけで、選べるのは属性（防御力 100・コアあり。team.ts の SHOOTING_RANGE_ENEMY）。
+ * 属性の右の「詳細設定」のポップアップで、ジャンプ移動（3 分モードの敵のジャンプ）・戦闘時間を設定する（バーストを使うかはスロットの詳細設定）
  */
 export function TeamSettingsForm({
   element,
-  defence,
   fixedSpec,
   consoleInput,
   synchroLevel,
@@ -80,7 +77,6 @@ export function TeamSettingsForm({
                   type: 'setEnemy',
                   enemy: {
                     ...SHOOTING_RANGE_ENEMY,
-                    defence,
                     element: e.target.value === '' ? null : (e.target.value as Element),
                   },
                 })
@@ -102,16 +98,6 @@ export function TeamSettingsForm({
                   value={durationSeconds}
                   min={1}
                   onCommit={(seconds) => dispatch({ type: 'setDuration', durationSeconds: seconds })}
-                />
-              </label>
-              <label className="field">
-                <span>敵防御力</span>
-                <IntInput
-                  value={defence}
-                  min={0}
-                  onCommit={(d) =>
-                    dispatch({ type: 'setEnemy', enemy: { ...SHOOTING_RANGE_ENEMY, element, defence: d } })
-                  }
                 />
               </label>
               <label className="field checkbox">

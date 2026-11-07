@@ -1,7 +1,8 @@
-import type { CharacterData, TeamResult } from '@nikke/core';
+import type { CharacterData } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { INITIAL_PARTIES, partyOf, sharedSettingsOf } from './parties.ts';
+import type { ScreenResult } from './compute.ts';
 import { partyInputs, partyTotals, type PartyInputDeps } from './partyTotals.ts';
 import { initialTeamState, teamReducer } from './team.ts';
 
@@ -56,7 +57,7 @@ describe('partyInputs', () => {
 });
 
 describe('partyTotals', () => {
-  const ok = (totalDamage: number) => ({ ok: true as const, result: { totalDamage } as TeamResult });
+  const ok = (totalDamage: number) => ({ ok: true as const, result: { totalDamage } as ScreenResult });
 
   it('adds the active party and the computed other parties', () => {
     const inputs = partyInputs(parties, sharedSettingsOf(team), deps());

@@ -1,5 +1,5 @@
 // (B) の段 B-2（plan/design-unify-sim-calc.md 6.2 節）: Worker が回す計算（compute.ts）。入力を構造化複製して渡しても
-// 結果が変わらないこと、結果（TeamResult）が構造化複製で崩れないこと、古い要求の結果を捨てる順番の決め方
+// 結果が変わらないこと、結果（ScreenResult）が構造化複製で崩れないこと、古い要求の結果を捨てる順番の決め方
 import {
   FIXED_SPEC_ENEMY_DEFENCE,
   MAX_SKILL_LEVELS,
@@ -22,6 +22,7 @@ import {
   compute,
   inputKey,
   respond,
+  screenResult,
   type ComputeRequest,
   type ComputeResponse,
   type Computed,
@@ -70,8 +71,11 @@ const MAIN: TeamInput = {
 describe('compute (B-2)', () => {
   const direct = compute(MAIN);
 
-  it('is the same as simTeamResult(runSimulation) on the main thread', () => {
-    expect(direct).toEqual({ ok: true, result: simTeamResult(MAIN, runSimulation(MAIN)) });
+  it('is the screen part of simTeamResult(runSimulation) on the main thread', () => {
+    const full = simTeamResult(MAIN, runSimulation(MAIN));
+    expect(direct).toEqual({ ok: true, result: screenResult(full) });
+    expect(direct.ok && direct.result.totalDamage).toBe(full.totalDamage);
+    expect(direct.ok && direct.result.slots.map((s) => s?.resourceId)).toEqual([82, 330, 271, 870, 225]);
   });
 
   it('gives the same result for a structured clone of the input, and the result survives a clone', () => {

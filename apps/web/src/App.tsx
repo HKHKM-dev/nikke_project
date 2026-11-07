@@ -17,6 +17,7 @@ import { readStorage, writeStorage } from './storage.ts';
 import {
   INITIAL_PARTIES,
   PARTIES_STORAGE_KEY,
+  otherPartyResourceIds,
   parseParties,
   serializeParties,
   sharedSettingsOf,
@@ -159,11 +160,12 @@ export function App() {
               treasurePhase: slot.treasurePhase,
               modelNotes: slotResults[i]?.result.notes ?? [],
               buildNotes: slot.buildNotes,
-              noFire: slot.noFire,
             },
       ),
     [calc.slots, slotResults],
   );
+
+  const otherPartyIds = useMemo(() => otherPartyResourceIds(parties), [parties]);
 
   const viewProps: ViewProps | null = index
     ? {
@@ -178,6 +180,7 @@ export function App() {
         shown,
         slotResults,
         parties,
+        otherPartyIds,
         selectParty,
         totals,
         totalsPending,

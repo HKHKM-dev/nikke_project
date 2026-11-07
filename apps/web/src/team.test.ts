@@ -12,9 +12,7 @@ import {
   initialTeamState,
   parseTeamState,
   placeCharacterAction,
-  readSlotBuildJson,
   readTeamJson,
-  serializeSlotBuild,
   serializeTeamState,
   takenResourceIds,
   teamReducer,
@@ -36,6 +34,11 @@ function entry(resourceId: number): CharacterIndexEntry {
 }
 const index = [10, 20, 30, 40, 50, 60].map(entry);
 
+/** 今の版を付けた JSON（手で組んだ保存データ） */
+function versioned(raw: object): string {
+  return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...raw });
+}
+
 function withCharacters(ids: (number | null)[]): TeamState {
   return ids.reduce(
     (state, id, i) => (id === null ? state : teamReducer(state, { type: 'selectCharacter', index: i, resourceId: id })),
@@ -44,13 +47,12 @@ function withCharacters(ids: (number | null)[]): TeamState {
 }
 
 describe('teamReducer', () => {
-  it('starts with five empty slots and the shooting-range enemy', () => {
+  it('starts with five empty slots and the fire shooting-range enemy', () => {
     expect(INITIAL_TEAM_STATE.slots).toHaveLength(5);
     expect(INITIAL_TEAM_STATE.slots.every((s) => s.resourceId === null)).toBe(true);
-    expect(INITIAL_TEAM_STATE.enemy).toEqual({ defence: 100, element: null, hasCore: true });
+    expect(INITIAL_TEAM_STATE.enemy).toEqual({ defence: 100, element: 'Fire', hasCore: true });
     expect(INITIAL_TEAM_STATE.durationSeconds).toBe(180);
     expect(INITIAL_TEAM_STATE.fixedSpec).toBe(false);
-    expect(INITIAL_TEAM_STATE.burst).toBe(true);
   });
 
   it('selects a character into a slot and ignores a duplicate in another slot', () => {
@@ -63,32 +65,30 @@ describe('teamReducer', () => {
     expect(s3.slots[0]?.resourceId).toBe(10);
   });
 
-  it('swaps two slots and updates controlledSlot if needed', () => {
-    let state = withCharacters([10, 20, null, null, null]);
-    state = { ...state, controlledSlot: 0 };
+  it('swaps two slots', () => {
+    const state = withCharacters([10, 20, null, null, null]);
     const swapped = teamReducer(state, { type: 'swapSlots', fromIndex: 0, toIndex: 1 });
     expect(swapped.slots[0]?.resourceId).toBe(20);
     expect(swapped.slots[1]?.resourceId).toBe(10);
-    expect(swapped.controlledSlot).toBe(1);
 
     // 同じインデックスなら何もしない
     expect(teamReducer(swapped, { type: 'swapSlots', fromIndex: 1, toIndex: 1 })).toBe(swapped);
   });
 
-  it('placeCharacterAction selects a new character, moves one placed elsewhere, and skips the same slot', () => {
+  it('placeCharacterAction selects a new character and does nothing for one already in a slot', () => {
     const state = withCharacters([10, null, 30]);
     expect(placeCharacterAction(state, 20, 1)).toEqual({ type: 'selectCharacter', index: 1, resourceId: 20 });
     expect(placeCharacterAction(state, 20, 0)).toEqual({ type: 'selectCharacter', index: 0, resourceId: 20 });
-    expect(placeCharacterAction(state, 30, 4)).toEqual({ type: 'swapSlots', fromIndex: 2, toIndex: 4 });
+    expect(placeCharacterAction(state, 30, 4)).toBeNull();
     expect(placeCharacterAction(state, 30, 2)).toBeNull();
   });
 
   it('clearSlot keeps growth and condition of that slot', () => {
     let s = withCharacters([10, 20]);
-    s = teamReducer(s, { type: 'setGrowth', index: 1, growth: { level: 150, grade: 1, core: 2 } });
+    s = teamReducer(s, { type: 'setGrowth', index: 1, growth: { grade: 1, core: 2 } });
     s = teamReducer(s, { type: 'clearSlot', index: 1 });
     expect(s.slots[1]?.resourceId).toBeNull();
-    expect(s.slots[1]?.growth).toEqual({ level: 150, grade: 1, core: 2 });
+    expect(s.slots[1]?.growth).toEqual({ grade: 1, core: 2 });
     expect(s.slots[0]?.resourceId).toBe(10);
   });
 
@@ -97,20 +97,14 @@ describe('teamReducer', () => {
     expect(teamReducer(s, { type: 'clearSlot', index: 7 })).toBe(s);
   });
 
-  it('setFixedSpec(true) switches to shooting-range defence but keeps the duration; false only turns it off', () => {
-    let s = teamReducer(initialTeamState(), {
-      type: 'setEnemy',
-      enemy: { defence: 140, element: 'Wind', hasCore: true },
-    });
+  it('setFixedSpec only switches the flag (the enemy and the duration stay)', () => {
+    let s = teamReducer(initialTeamState(), { type: 'setEnemy', enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Wind' } });
     s = teamReducer(s, { type: 'setDuration', durationSeconds: 120 });
     s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: true });
     expect(s.fixedSpec).toBe(true);
     expect(s.enemy).toEqual({ defence: 100, element: 'Wind', hasCore: true });
     expect(s.durationSeconds).toBe(120);
-    s = teamReducer(s, { type: 'setFixedSpec', fixedSpec: false });
-    expect(s.fixedSpec).toBe(false);
-    expect(s.enemy.defence).toBe(100);
-    expect(s.durationSeconds).toBe(120);
+    expect(teamReducer(s, { type: 'setFixedSpec', fixedSpec: false }).fixedSpec).toBe(false);
   });
 
   it('takenResourceIds excludes the slot itself', () => {
@@ -136,9 +130,9 @@ describe('parseTeamState', () => {
     expect(parseTeamState(null, index)).toBeNull();
     expect(parseTeamState('{not json', index)).toBeNull();
     expect(parseTeamState('[]', index)).toBeNull();
-    expect(parseTeamState(JSON.stringify({ ...initialTeamState(), slots: [] }), index)).toBeNull();
-    expect(parseTeamState(JSON.stringify({ ...initialTeamState(), durationSeconds: -1 }), index)).toBeNull();
-    expect(parseTeamState(JSON.stringify({ ...initialTeamState(), fixedSpec: 'yes' }), index)).toBeNull();
+    expect(parseTeamState(versioned({ ...initialTeamState(), slots: [] }), index)).toBeNull();
+    expect(parseTeamState(versioned({ ...initialTeamState(), durationSeconds: -1 }), index)).toBeNull();
+    expect(parseTeamState(versioned({ ...initialTeamState(), fixedSpec: 'yes' }), index)).toBeNull();
   });
 
   it('rejects unknown or duplicated resource ids and out-of-range values', () => {
@@ -155,47 +149,44 @@ describe('parseTeamState', () => {
     expect(parseTeamState(serializeTeamState(badRate), index)).toBeNull();
 
     const badElement = { ...initialTeamState(), enemy: { defence: 100, element: 'Plasma', hasCore: true } };
-    expect(parseTeamState(JSON.stringify(badElement), index)).toBeNull();
+    expect(parseTeamState(versioned(badElement), index)).toBeNull();
   });
 
   it('drops unknown fields instead of carrying them over', () => {
     const raw = { ...initialTeamState(), extra: 1 };
-    const parsed = parseTeamState(JSON.stringify(raw), index);
+    const parsed = parseTeamState(versioned(raw), index);
     expect(parsed).toEqual(initialTeamState());
   });
-});
 
-describe('burst toggle (Stage 5)', () => {
-  it('setBurst toggles the fixed cycle and round-trips', () => {
-    const off = teamReducer(initialTeamState(), { type: 'setBurst', burst: false });
-    expect(off.burst).toBe(false);
-    expect(parseTeamState(serializeTeamState(off), index)).toEqual(off);
-    expect(teamReducer(off, { type: 'setBurst', burst: true }).burst).toBe(true);
-  });
-
-  it('parseTeamState fills a missing burst flag (Stage 4 data) with true and rejects non-booleans', () => {
-    const stage4 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
-    delete stage4.burst;
-    expect(parseTeamState(JSON.stringify(stage4), index)?.burst).toBe(true);
-    expect(parseTeamState(JSON.stringify({ ...stage4, burst: 'on' }), index)).toBeNull();
+  it('puts the defence and core of a saved enemy back to the shooting-range enemy, keeping the element', () => {
+    const raw = { ...initialTeamState(), enemy: { defence: 140, element: 'Water', hasCore: false } };
+    expect(parseTeamState(versioned(raw), index)?.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Water' });
+    const none = { ...initialTeamState(), enemy: { ...SHOOTING_RANGE_ENEMY, element: null } };
+    expect(parseTeamState(versioned(none), index)?.enemy.element).toBeNull();
   });
 });
 
-describe('controlled slot (Stage 7)', () => {
-  it('defaults to slot 3, updates and round-trips', () => {
-    expect(INITIAL_TEAM_STATE.controlledSlot).toBe(2);
-    const s1 = teamReducer(withCharacters([10, 20]), { type: 'setControlledSlot', controlledSlot: 1 });
-    expect(s1.controlledSlot).toBe(1);
-    expect(parseTeamState(serializeTeamState(s1), index)).toEqual(s1);
-  });
-
-  it('parseTeamState fills a missing or null value with slot 3 and rejects out-of-range values', () => {
-    const stage6 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
-    delete stage6.controlledSlot;
-    expect(parseTeamState(JSON.stringify(stage6), index)?.controlledSlot).toBe(2);
-    expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: null }), index)?.controlledSlot).toBe(2);
-    expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: 5 }), index)).toBeNull();
-    expect(parseTeamState(JSON.stringify({ ...stage6, controlledSlot: '1' }), index)).toBeNull();
+describe('version 2 data (fields removed from the screen)', () => {
+  it('reads version 2 data, dropping the burst, the controlled slot, no fire, the slot level, the recycle room and the extra attack', () => {
+    const s = withCharacters([10, 20]);
+    const raw = JSON.parse(serializeTeamState(s)) as Record<string, unknown> & { slots: Record<string, unknown>[] };
+    const v2 = {
+      ...raw,
+      formatVersion: 2,
+      burst: false,
+      controlledSlot: 0,
+      slots: raw.slots.map((slot) => ({
+        ...slot,
+        noFire: true,
+        growth: { ...(slot.growth as object), level: 150 },
+        build: {
+          ...(slot.build as object),
+          recycleRoom: { personal: 1, class: 2, corporation: 3 },
+          extraAttack: 500,
+        },
+      })),
+    };
+    expect(parseTeamState(JSON.stringify(v2), index)).toEqual(s);
   });
 });
 
@@ -271,11 +262,10 @@ describe('skill levels (Stage 4)', () => {
     expect(s.slots[0]?.skillLevels).toEqual({ skill1: 3, skill2: 3, burst: 3 });
   });
 
-  it('parseTeamState fills missing skill levels (Stage 3 data) with 10 and rejects out-of-range ones', () => {
-    const stage3 = JSON.parse(serializeTeamState(withCharacters([10, 20]))) as { slots: Record<string, unknown>[] };
-    for (const s of stage3.slots) delete s.skillLevels;
-    const parsed = parseTeamState(JSON.stringify(stage3), index);
-    expect(parsed?.slots.every((s) => s.skillLevels.skill1 === 10)).toBe(true);
+  it('parseTeamState rejects missing or out-of-range skill levels', () => {
+    const missing = JSON.parse(serializeTeamState(withCharacters([10, 20]))) as { slots: Record<string, unknown>[] };
+    for (const s of missing.slots) delete s.skillLevels;
+    expect(parseTeamState(JSON.stringify(missing), index)).toBeNull();
 
     for (const bad of [0, 11, 2.5, '10']) {
       const raw = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
@@ -306,10 +296,10 @@ describe('treasure phase (Stage 9)', () => {
     expect(teamReducer(s, { type: 'clearSlot', index: 0 }).slots[0]!.treasurePhase).toBe(0);
   });
 
-  it('parseTeamState fills a missing phase (Stage 8 data) with 0, rejects out-of-range ones and round-trips', () => {
-    const stage8 = JSON.parse(serializeTeamState(withCharacters([10, 20]))) as { slots: Record<string, unknown>[] };
-    for (const slot of stage8.slots) delete slot.treasurePhase;
-    expect(parseTeamState(JSON.stringify(stage8), index)?.slots.every((slot) => slot.treasurePhase === 0)).toBe(true);
+  it('parseTeamState rejects a missing or out-of-range phase and round-trips', () => {
+    const missing = JSON.parse(serializeTeamState(withCharacters([10, 20]))) as { slots: Record<string, unknown>[] };
+    for (const slot of missing.slots) delete slot.treasurePhase;
+    expect(parseTeamState(JSON.stringify(missing), index)).toBeNull();
     for (const bad of [-1, 4, 1.5, '1']) {
       const raw = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
       raw.slots[0]!.treasurePhase = bad;
@@ -338,11 +328,11 @@ describe('build (Stage 12)', () => {
     expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
   });
 
-  it('parseTeamState fills a missing build (Stage 11 data) with an empty one and rejects bad values', () => {
-    const stage11 = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
-    const slots = stage11.slots as Record<string, unknown>[];
+  it('parseTeamState rejects a missing build and bad values', () => {
+    const missing = JSON.parse(serializeTeamState(withCharacters([10]))) as Record<string, unknown>;
+    const slots = missing.slots as Record<string, unknown>[];
     for (const slot of slots) delete slot.build;
-    expect(parseTeamState(JSON.stringify(stage11), index)?.slots[0]?.build.cube).toBeNull();
+    expect(parseTeamState(JSON.stringify(missing), index)).toBeNull();
     const bad = [
       { affectionRank: 0 },
       { affectionRank: 41 },
@@ -350,8 +340,6 @@ describe('build (Stage 12)', () => {
       { gear: { head: { type: 'T9', level: 6 }, body: null, arm: null, leg: null } },
       { cube: { id: 1000301, level: 16 } },
       { collection: { rarity: 'SSR', level: 1 } },
-      { recycleRoom: { personal: -1, class: 0, corporation: 0 } },
-      { extraAttack: -5 },
     ];
     const ok = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: { build: Record<string, unknown> }[] };
     for (const patch of bad) {
@@ -413,13 +401,13 @@ describe('OL lines (Stage 13)', () => {
 });
 
 describe('save format version (Stage 14)', () => {
-  it('writes formatVersion and reads it back; unversioned data (Stage 3〜13) still reads', () => {
+  it('writes formatVersion and reads it back; unversioned data (Stage 3〜13) is not read', () => {
     const s = withCharacters([10, 20]);
     const json = serializeTeamState(s);
     expect((JSON.parse(json) as { formatVersion: number }).formatVersion).toBe(TEAM_FORMAT_VERSION);
     expect(parseTeamState(json, index)).toEqual(s);
     const { formatVersion: _v, ...legacy } = JSON.parse(json) as Record<string, unknown>;
-    expect(parseTeamState(JSON.stringify(legacy), index)).toEqual(s);
+    expect(parseTeamState(JSON.stringify(legacy), index)).toBeNull();
   });
 
   it('readTeamJson says why a JSON cannot be read', () => {
@@ -431,42 +419,6 @@ describe('save format version (Stage 14)', () => {
     const unknown = JSON.stringify({ ...(JSON.parse(serializeTeamState(s)) as object), durationSeconds: -1 });
     expect(readTeamJson(unknown, index)).toEqual({ ok: false, error: expect.stringContaining('形が合いません') });
     expect(readTeamJson(serializeTeamState(s), index)).toEqual({ ok: true, value: s });
-  });
-});
-
-describe('slot build JSON (Stage 14)', () => {
-  const build = {
-    ...initialTeamState().slots[0]!.build,
-    affectionRank: 30,
-    gear: {
-      head: { type: 'OL' as const, level: 5, overload: [{ option: 'attack' as const, level: 15 }] },
-      body: { type: 'T9' as const, level: 5 },
-      arm: null,
-      leg: null,
-    },
-    cube: { id: 1000303, level: 15 },
-  };
-  const growth = { level: 400, grade: 3, core: 7 };
-
-  it('round-trips growth and build', () => {
-    expect(readSlotBuildJson(serializeSlotBuild({ growth, build }))).toEqual({ ok: true, value: { growth, build } });
-  });
-
-  it('reads a CLI --build entry (partial build, optional growth), filling the rest with an empty build', () => {
-    const cli = { affectionRank: 30, gear: { head: { type: 'T9', level: 5 } }, cube: { id: 1000303, level: 15 } };
-    const r = readSlotBuildJson(JSON.stringify(cli));
-    expect(r.ok && r.value.growth).toBeNull();
-    expect(r.ok && r.value.build.gear).toEqual({ head: { type: 'T9', level: 5 }, body: null, arm: null, leg: null });
-    expect(r.ok && r.value.build.recycleRoom).toEqual({ personal: 0, class: 0, corporation: 0 });
-    const withGrowth = readSlotBuildJson(JSON.stringify({ ...cli, growth }));
-    expect(withGrowth.ok && withGrowth.value.growth).toEqual(growth);
-  });
-
-  it('rejects unknown versions, bad values and bad growth', () => {
-    expect(readSlotBuildJson(JSON.stringify({ formatVersion: 2, build })).ok).toBe(false);
-    expect(readSlotBuildJson(JSON.stringify({ affectionRank: 41 })).ok).toBe(false);
-    expect(readSlotBuildJson(JSON.stringify({ build, growth: { level: 0 } })).ok).toBe(false);
-    expect(readSlotBuildJson('nope').ok).toBe(false);
   });
 });
 
@@ -502,11 +454,11 @@ describe('condition mode (Stage 18-C2)', () => {
     s = teamReducer(s, { type: 'clearSlot', index: 1 });
     expect(s.slots[1]?.conditionMode).toBe('manual');
     const json = serializeTeamState(s);
-    expect((JSON.parse(json) as { formatVersion: number }).formatVersion).toBe(2);
+    expect((JSON.parse(json) as { formatVersion: number }).formatVersion).toBe(TEAM_FORMAT_VERSION);
     expect(parseTeamState(json, index)).toEqual(s);
   });
 
-  it('reads version 0/1 slots as auto when the condition is untouched (1, on, 1 or missing), manual otherwise', () => {
+  it('reads version 1 slots as auto when the condition is untouched (1, on, 1 or missing), manual otherwise', () => {
     const raw = JSON.parse(serializeTeamState(withCharacters([10, 20, 30, 40, 50]))) as {
       formatVersion: number;
       slots: Record<string, unknown>[];
@@ -527,11 +479,6 @@ describe('condition mode (Stage 18-C2)', () => {
     expect(parsed.slots.map((x) => x.conditionMode)).toEqual(['auto', 'auto', 'manual', 'manual', 'manual']);
     // 手入力の値はそのまま残す
     expect(parsed.slots[2]?.condition.coreHitRate).toBe(0.4);
-    const unversioned: Record<string, unknown> = { ...raw };
-    delete unversioned.formatVersion;
-    expect(parseTeamState(JSON.stringify(unversioned), index)?.slots.map((x) => x.conditionMode)).toEqual(
-      parsed.slots.map((x) => x.conditionMode),
-    );
     raw.slots[0]!.conditionMode = 'maybe';
     expect(parseTeamState(JSON.stringify(raw), index)).toBeNull();
   });
@@ -590,17 +537,6 @@ describe('3-minute mode in the advanced settings (2026-10-31)', () => {
     const old = JSON.parse(serializeTeamState(initialTeamState())) as Record<string, unknown>;
     delete old.rangeJump;
     expect(parseTeamState(JSON.stringify(old), index)?.rangeJump).toBe(true);
-  });
-});
-
-describe('no fire (slot advanced settings, 2026-10-31)', () => {
-  it('round-trips the flag, and reads saved data without it as false', () => {
-    let s = withCharacters([10, 20]);
-    s = teamReducer(s, { type: 'setNoFire', index: 1, noFire: true });
-    expect(parseTeamState(serializeTeamState(s), index)).toEqual(s);
-    const old = JSON.parse(serializeTeamState(withCharacters([10]))) as { slots: Record<string, unknown>[] };
-    for (const slot of old.slots) delete slot.noFire;
-    expect(parseTeamState(JSON.stringify(old), index)?.slots[0]?.noFire).toBe(false);
   });
 });
 

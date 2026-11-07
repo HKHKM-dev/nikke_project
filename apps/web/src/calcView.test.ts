@@ -7,35 +7,45 @@ import {
   computeFixedSpecAttack,
   fixedSpecBuild,
   parseEnemyPresets,
+  parseSkillDefinition,
   resolveBuildEffects,
-  type BuildInput,
   type BuildMasters,
   type CharacterData,
-  type TeamResult,
 } from '@nikke/core';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { buildCalcView, slotResultFor, type CalcDeps, type CalcView } from './calcView.ts';
-import type { Shown } from './compute.ts';
+import type { ScreenResult, Shown } from './compute.ts';
 import {
+  DEFAULT_CONTROLLED_SLOT,
   DEFAULT_SLOT_CONDITION,
   SHOOTING_RANGE_ENEMY,
   emptyConsole,
   initialTeamState,
   teamReducer,
+  type SlotBuild,
   type TeamState,
 } from './team.ts';
+import type { SlotSkillsStatus } from './useSkillDefinitions.ts';
 
 function readJson<T>(path: string): T {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
 }
 const character = (id: number) => readJson<CharacterData>(`../../../packages/core/data/characters/${id}.json`);
 
-// ラピ（ELYSION・Attacker・宝物なし）、クラウン（PILGRIM・Defender・OVERSPEC）、ラプラス（宝物あり）
+// ラピ（ELYSION・Attacker・宝物なし）、クラウン（PILGRIM・Defender・OVERSPEC）、ラプラス（宝物あり）。
+// 想定 HP: ノワール（自分の HP の割合の条件）、マスト（HP の割合の窓のきっかけ）、I-DOLL・オーシャン（HP の割合が最も低い味方を回復）
 const LAPI = 10;
 const CROWN = 330;
 const LAPLACE = 100;
-const characters = new Map([LAPI, CROWN, LAPLACE].map((id) => [id, character(id)]));
+const NOIR = 271;
+const MAST = 350;
+const OCEAN = 305;
+const characters = new Map([LAPI, CROWN, LAPLACE, NOIR, MAST, OCEAN].map((id) => [id, character(id)]));
+const ready = (id: number): SlotSkillsStatus => ({
+  kind: 'ready',
+  definition: parseSkillDefinition(readJson<unknown>(`../../../packages/core/data/skills/${id}.json`)),
+});
 const enemyMaster = parseEnemyPresets(readJson<unknown>('../../../packages/core/data/enemies.json'));
 
 function deps(over: Partial<CalcDeps> = {}): CalcDeps {
@@ -65,16 +75,15 @@ describe('buildCalcView: inputs removed from the screen', () => {
       condition: { coreHitRate: 0.3, distanceBonus: false, fullCharge: false, hitRate: 0.5 },
     });
     s = teamReducer(s, { type: 'setHpRatio', index: 0, hpRatio: 0.4 });
-    const build = { ...s.slots[0]!.build, affectionRank: 20, extraAttack: 300 };
-    s = teamReducer(s, { type: 'setBuild', index: 0, build });
+    s = teamReducer(s, { type: 'setBuild', index: 0, build: { ...s.slots[0]!.build, affectionRank: 20 } });
 
     const slot = buildCalcView(s, deps()).slots[0]!;
     expect(slot.build.extraAttack).toBe(0);
     expect(slot.build.affectionRank).toBe(20);
+    expect(slot.usesHpRatio).toBe(false);
     expect(slot.input).toMatchObject({ conditionMode: 'auto', condition: DEFAULT_SLOT_CONDITION, hpRatio: 1 });
     // 保存している値は消さない
     expect(s.slots[0]!.conditionMode).toBe('manual');
-    expect(s.slots[0]!.build.extraAttack).toBe(300);
   });
 
   it('takes the recycle room from the console by class and corporation, and caps the affection rank per character', () => {
@@ -98,7 +107,7 @@ describe('buildCalcView: inputs removed from the screen', () => {
 
   it('puts the synchro level into every slot growth', () => {
     let s = withCharacters([LAPI, CROWN]);
-    s = teamReducer(s, { type: 'setGrowth', index: 1, growth: { level: 50, grade: 3, core: 2 } });
+    s = teamReducer(s, { type: 'setGrowth', index: 1, growth: { grade: 3, core: 2 } });
     s = teamReducer(s, { type: 'setSynchroLevel', synchroLevel: 160 });
     const view = buildCalcView(s, deps());
     expect(view.slots[1]!.growth).toEqual({ level: 160, grade: 3, core: 2 });
@@ -136,12 +145,21 @@ describe('buildCalcView: inputs removed from the screen', () => {
 });
 
 describe('buildCalcView: slot advanced settings', () => {
-  it('calculates a no-fire slot with the manual condition and a bullet hit rate of 0', () => {
-    const s = teamReducer(withCharacters([LAPI, CROWN]), { type: 'setNoFire', index: 1, noFire: true });
-    const view = buildCalcView(s, deps());
-    expect(view.slots[1]!.noFire).toBe(true);
-    expect(view.slots[1]!.input).toMatchObject({ conditionMode: 'manual', condition: { hitRate: 0 } });
-    expect(view.slots[0]!.input).toMatchObject({ conditionMode: 'auto' });
+  it('uses the assumed HP only in slots that have an HP-ratio condition, and full HP elsewhere', () => {
+    let s = withCharacters([LAPI, NOIR, MAST]);
+    for (const i of [0, 1, 2]) s = teamReducer(s, { type: 'setHpRatio', index: i, hpRatio: 0.5 });
+    const statuses = [ready(LAPI), ready(NOIR), ready(MAST), null, null];
+    const view = buildCalcView(s, deps({ skillsStatuses: statuses }));
+    expect(view.slots.map((x) => x.usesHpRatio)).toEqual([false, true, true, false, false]);
+    expect(view.input.slots.map((x) => x?.hpRatio)).toEqual([1, 0.5, 0.5, undefined, undefined]);
+    // スキル定義を読む前は欄を出さない
+    expect(buildCalcView(s, deps()).slots[1]!.usesHpRatio).toBe(false);
+  });
+
+  it('shows the assumed HP in every occupied slot when someone heals the ally with the lowest HP ratio', () => {
+    const s = withCharacters([LAPI, OCEAN]);
+    const view = buildCalcView(s, deps({ skillsStatuses: [ready(LAPI), ready(OCEAN), null, null, null] }));
+    expect(view.slots.map((x) => x.usesHpRatio)).toEqual([true, true, false, false, false]);
   });
 
   it('lists only the occupied no-burst slots, and leaves the list out when there are none', () => {
@@ -154,29 +172,17 @@ describe('buildCalcView: slot advanced settings', () => {
 });
 
 describe('buildCalcView: team settings', () => {
-  it('uses the shooting-range enemy with the saved element and defence, always bursts, and keeps the advanced settings', () => {
+  it('uses the shooting-range enemy with the saved element, always bursts, and controls slot 3', () => {
     let s = teamReducer(initialTeamState(), {
       type: 'setEnemy',
-      enemy: { defence: 140, element: 'Fire', hasCore: false },
+      enemy: { defence: 140, element: 'Wind', hasCore: false },
     });
     s = teamReducer(s, { type: 'setDuration', durationSeconds: 60 });
-    s = teamReducer(s, { type: 'setBurst', burst: false });
-    s = teamReducer(s, { type: 'setControlledSlot', controlledSlot: 0 });
     const { input } = buildCalcView(s, deps());
-    expect(input.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Fire', defence: 140 });
+    expect(input.enemy).toEqual({ ...SHOOTING_RANGE_ENEMY, element: 'Wind' });
     expect(input.durationSeconds).toBe(60);
     expect(input.burst).toBe(true);
-    expect(input.controlledSlot).toBe(0);
-  });
-
-  it('keeps the target conditions and the jumps of the shooting-range target when the defence is changed', () => {
-    const base = buildCalcView(initialTeamState(), deps({ enemyMaster })).input.enemy;
-    const s = teamReducer(initialTeamState(), {
-      type: 'setEnemy',
-      enemy: { ...SHOOTING_RANGE_ENEMY, defence: 500 },
-    });
-    const changed = buildCalcView(s, deps({ enemyMaster })).input.enemy;
-    expect(changed).toEqual({ ...base, defence: 500 });
+    expect(input.controlledSlot).toBe(DEFAULT_CONTROLLED_SLOT);
   });
 
   it('adds the jumps of the shooting-range target only while the 3-minute mode is on', () => {
@@ -203,7 +209,7 @@ const masters = Object.fromEntries(
 // クラッシュキューブ: 防御力無視ダメージ▲は未対応（未対応の一覧に出す育成の注記）
 const CRUSH_CUBE = 1000315;
 
-function withBuild(state: TeamState, index: number, patch: Partial<BuildInput>): TeamState {
+function withBuild(state: TeamState, index: number, patch: Partial<SlotBuild>): TeamState {
   return teamReducer(state, { type: 'setBuild', index, build: { ...state.slots[index]!.build, ...patch } });
 }
 
@@ -294,9 +300,10 @@ describe('slotResultFor: the result shown in a slot', () => {
   // 結果は、スロットのキャラと合計だけを持つ形にする（slotResultFor が読むのはそこだけ）
   function shownFor(view: CalcView): Shown<CalcView> {
     const slots = view.slots.map((s) =>
-      s.character === undefined ? null : { character: s.character, totalDamage: 100, notes: [] },
+      s.character === undefined ? null : { resourceId: s.character.resourceId, totalDamage: 100, notes: [] },
     );
-    return { computed: { ok: true, result: { slots } as unknown as TeamResult }, source: view };
+    const result: ScreenResult = { totalDamage: 100, slots, enemyNotes: [] };
+    return { computed: { ok: true, result }, source: view };
   }
   const party01 = withCharacters([LAPI]);
   const party02 = teamReducer(withCharacters([LAPLACE]), { type: 'setTreasurePhase', index: 0, treasurePhase: 1 });

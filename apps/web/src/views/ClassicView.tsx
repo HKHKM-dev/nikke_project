@@ -19,6 +19,7 @@ export function ClassicView({
   shown,
   slotResults,
   parties,
+  otherPartyIds,
   selectParty,
   totals,
   totalsPending,
@@ -28,7 +29,6 @@ export function ClassicView({
     <>
       <TeamSettingsForm
         element={team.enemy.element}
-        defence={team.enemy.defence}
         fixedSpec={team.fixedSpec}
         consoleInput={team.console}
         synchroLevel={team.synchroLevel}
@@ -41,7 +41,7 @@ export function ClassicView({
       <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
       <section className="slots" aria-label="編成">
         {team.slots.map((slot, i) => {
-          const { character, growth, build, skillLevels, treasurePhase } = calc.slots[i]!;
+          const { character, growth, build, skillLevels, treasurePhase, usesHpRatio } = calc.slots[i]!;
           return (
             <SlotCard
               key={i}
@@ -49,6 +49,7 @@ export function ClassicView({
               slot={slot}
               index={index}
               excludeIds={takenResourceIds(team, i)}
+              otherPartyIds={otherPartyIds}
               fullySupported={fullySupported}
               character={character}
               error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
@@ -60,7 +61,7 @@ export function ClassicView({
               mastersError={mastersError}
               effectiveSkillLevels={skillLevels}
               slotResult={slotResults[i] ?? null}
-              focused={team.controlledSlot === i}
+              usesHpRatio={usesHpRatio}
               dispatch={dispatch}
             />
           );

@@ -2,7 +2,7 @@ import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
-import type { SlotState } from '../../team.ts';
+import { DEFAULT_CONTROLLED_SLOT, type SlotState } from '../../team.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -13,7 +13,8 @@ type Props = {
   isUnsupported: boolean;
   error: string | undefined;
   slotResult: SlotResultView | null;
-  focused: boolean;
+  /** このスロットのニケがほかの編成でも使われている */
+  inOtherParty: boolean;
   isSelected: boolean;
   onSelectSlot: () => void;
   onOpenBuildModal: () => void;
@@ -29,13 +30,15 @@ export function ModernSlotCard({
   isUnsupported,
   error,
   slotResult,
-  focused,
+  inOtherParty,
   isSelected,
   onSelectSlot,
   onOpenBuildModal,
   onClear,
   partyTotalDamage,
 }: Props) {
+  /** 操作キャラのスロット（「操作」の印を付ける） */
+  const focused = slotIndex === DEFAULT_CONTROLLED_SLOT;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
   const formattedDamage = formatDamage(currentDamage);
   const damagePercent =
@@ -82,6 +85,11 @@ export function ModernSlotCard({
       <div className="modern-slot-header">
         <span className="modern-slot-label">スロット {slotIndex + 1}</span>
         {focused && <span className="modern-slot-focus-badge">操作</span>}
+        {inOtherParty && (
+          <span className="modern-slot-other-party-badge" title="ほかの編成で使用中">
+            他の編成
+          </span>
+        )}
         {slot.resourceId !== null && (
           <button
             type="button"
@@ -106,9 +114,15 @@ export function ModernSlotCard({
             <div className="modern-slot-char-name">{characterEntry.name.ja}</div>
           </div>
         ) : (
-          <div className="modern-slot-empty-area">
-            <span className="modern-slot-empty-plus">＋</span>
-            <span className="modern-slot-empty-text">ニケを選択</span>
+          // ニケがいるときと同じ大きさ（絵の枠と名前の行）にして、選んでもカードの大きさが変わらないようにする
+          <div className="modern-slot-char-area">
+            <div className="modern-slot-empty-area">
+              <span className="modern-slot-empty-plus">＋</span>
+              <span className="modern-slot-empty-text">ニケを選択</span>
+            </div>
+            <div className="modern-slot-char-name" aria-hidden="true">
+              &nbsp;
+            </div>
           </div>
         )}
       </div>

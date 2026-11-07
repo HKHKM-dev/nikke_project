@@ -10,10 +10,11 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { useEffect, type Dispatch } from 'react';
-import type { SlotState, TeamAction } from '../../team.ts';
+import type { SlotGrowth, SlotState, TeamAction } from '../../team.ts';
 import { BuildSection } from '../BuildSection.tsx';
 import { IntInput } from '../IntInput.tsx';
 import { SkillSection } from '../SkillSection.tsx';
+import { SlotOptions } from '../SlotOptions.tsx';
 
 type Props = {
   slotIndex: number;
@@ -26,7 +27,7 @@ type Props = {
   treasurePhase: TreasurePhase;
   masters: BuildMasters | null;
   mastersError: string | null;
-  focused: boolean;
+  usesHpRatio: boolean;
   dispatch: Dispatch<TeamAction>;
   onClose: () => void;
 };
@@ -42,7 +43,7 @@ export function SlotBuildModal({
   treasurePhase,
   masters,
   mastersError,
-  focused,
+  usesHpRatio,
   dispatch,
   onClose,
 }: Props) {
@@ -58,7 +59,7 @@ export function SlotBuildModal({
 
   const limits = growthLimits(character);
 
-  const growthField = (key: keyof GrowthInput, name: string, min: number, max: number) => (
+  const growthField = (key: keyof SlotGrowth, name: string, min: number, max: number) => (
     <label className="field">
       <span>{name}</span>
       <IntInput
@@ -70,24 +71,6 @@ export function SlotBuildModal({
       />
     </label>
   );
-
-  const toggles = [
-    {
-      label: 'フォーカス',
-      pressed: focused,
-      onToggle: () => dispatch({ type: 'setControlledSlot', controlledSlot: slotIndex }),
-    },
-    {
-      label: '撃たない',
-      pressed: slot.noFire,
-      onToggle: () => dispatch({ type: 'setNoFire', index: slotIndex, noFire: !slot.noFire }),
-    },
-    {
-      label: 'バーストしない',
-      pressed: slot.noBurst,
-      onToggle: () => dispatch({ type: 'setNoBurst', index: slotIndex, noBurst: !slot.noBurst }),
-    },
-  ];
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -110,19 +93,7 @@ export function SlotBuildModal({
         <div className="modal-body">
           <fieldset className="popover-group">
             <legend>スロット詳細設定</legend>
-            <div className="slot-toggles">
-              {toggles.map((t) => (
-                <button
-                  key={t.label}
-                  type="button"
-                  className="toggle-button"
-                  aria-pressed={t.pressed}
-                  onClick={t.onToggle}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
+            <SlotOptions slotIndex={slotIndex} slot={slot} usesHpRatio={usesHpRatio} dispatch={dispatch} />
           </fieldset>
 
           <div className="growth-row">

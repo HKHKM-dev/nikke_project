@@ -1,9 +1,29 @@
 // (B) の段 B-2（plan/design-unify-sim-calc.md 6.2 節）: 画面の計算。Web Worker（worker.ts）とテストの両方がこれを呼ぶ。
-// 使うのは core の関数だけ。入力（TeamInput）は構造化複製で Worker に渡り、返すのは画面が読む形（TeamResult）だけで、
-// SimResult（射撃の列・ゲージの記録）は返さない（3.5 節。複製が重い）
-import { runSimulation, simTeamResult, type TeamInput, type TeamResult } from '@nikke/core';
+// 使うのは core の関数だけ。入力（TeamInput）は構造化複製で Worker に渡り、返すのは画面が読むもの（ScreenResult）だけ
+// （plan/design-ui-rebuild.md 5.1 節。内訳は CLI の npm run sim で見る）
+import { runSimulation, simTeamResult, type ModelNote, type TeamInput, type TeamResult } from '@nikke/core';
 
-export type Computed = { ok: true; result: TeamResult } | { ok: false; error: string };
+/** スロットの結果のうち、画面が読むもの */
+export type ScreenSlotResult = { resourceId: number; totalDamage: number; notes: ModelNote[] };
+
+/** 計算の結果のうち、画面が読むもの（総ダメージ・スロットのダメージと注記・敵の出来事の注記） */
+export type ScreenResult = {
+  totalDamage: number;
+  slots: (ScreenSlotResult | null)[];
+  enemyNotes: ModelNote[];
+};
+
+export function screenResult(result: TeamResult): ScreenResult {
+  return {
+    totalDamage: result.totalDamage,
+    slots: result.slots.map((s) =>
+      s === null ? null : { resourceId: s.character.resourceId, totalDamage: s.totalDamage, notes: s.notes },
+    ),
+    enemyNotes: result.enemyNotes,
+  };
+}
+
+export type Computed = { ok: true; result: ScreenResult } | { ok: false; error: string };
 
 export function errorMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
@@ -11,7 +31,7 @@ export function errorMessage(e: unknown): string {
 
 export function compute(input: TeamInput): Computed {
   try {
-    return { ok: true, result: simTeamResult(input, runSimulation(input)) };
+    return { ok: true, result: screenResult(simTeamResult(input, runSimulation(input))) };
   } catch (e) {
     return { ok: false, error: errorMessage(e) };
   }

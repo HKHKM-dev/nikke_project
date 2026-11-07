@@ -9,7 +9,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -34,6 +34,7 @@ export function ModernView({
   shown,
   slotResults,
   parties,
+  otherPartyIds,
   selectParty,
   totals,
   totalsPending,
@@ -48,8 +49,14 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // ドラッグ中のキャラクター情報（DragOverlay 用）
+  // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、スロットの立ち絵の大きさと、カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
+  const [draggedPortrait, setDraggedPortrait] = useState<{
+    width: number;
+    height: number;
+    left: number;
+    top: number;
+  } | null>(null);
 
   // マウスは 8px 動かして初めてドラッグと判定（通常のクリック操作との共存）。タッチは 250ms の長押しで持ち上げ、
   // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
@@ -58,15 +65,37 @@ export function ModernView({
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
+  // 離したときのアニメーション（DragOverlay）は、ドラッグ元が画面の外にあると、ドラッグ元の要素に scrollIntoView して画面を動かす（dnd-kit の既定）。
+  // アニメーションは残し、画面を動かすのだけ止めるため、持ち上げたドラッグ元の scrollIntoView を何もしない関数で隠す
+  const noScrollNodeRef = useRef<Element | null>(null);
+
   const handleDragStart = (event: DragStartEvent) => {
+    if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
+    const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
+    if (source) Object.assign(source, { scrollIntoView: () => undefined });
+    noScrollNodeRef.current = source ?? null;
     const data = event.active.data.current;
     if (data?.character) {
       setDraggedCharacter(data.character as CharacterIndexEntry);
+    }
+    // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
+    const card =
+      event.active.data.current?.type === 'slot-character'
+        ? (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card')
+        : null;
+    const portrait = card?.querySelector('.char-visual-portrait');
+    if (card && portrait) {
+      const c = card.getBoundingClientRect();
+      const p = portrait.getBoundingClientRect();
+      setDraggedPortrait({ width: p.width, height: p.height, left: p.left - c.left, top: p.top - c.top });
+    } else {
+      setDraggedPortrait(null);
     }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggedCharacter(null);
+    setDraggedPortrait(null);
     const { active, over } = event;
     if (!over) return;
 
@@ -83,10 +112,11 @@ export function ModernView({
     const targetSlotIndex = overData.slotIndex as number;
 
     if (activeData.type === 'tray-character') {
-      // ほかのスロットにいるキャラなら、そこから動かす（placeCharacterAction）
+      // どこかのスロットにいるキャラは置かない（placeCharacterAction。トレイでも持ち上げられない）
       const char = activeData.character as CharacterIndexEntry;
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
-      if (action) dispatch(action);
+      if (!action) return;
+      dispatch(action);
       setActiveSlotIndex(targetSlotIndex);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
@@ -99,12 +129,14 @@ export function ModernView({
 
   const handleDragCancel = () => {
     setDraggedCharacter(null);
+    setDraggedPortrait(null);
   };
 
   // トレイでキャラがクリック選択されたときのハンドラ
   const handleSelectCharacter = (resourceId: number) => {
     const action = placeCharacterAction(team, resourceId, activeSlotIndex);
-    if (action) dispatch(action);
+    if (!action) return;
+    dispatch(action);
     // 次の空きスロットがあれば自動的にアクティブスロットを進める
     const nextEmptyIndex = team.slots.findIndex((s, i) => i > activeSlotIndex && s.resourceId === null);
     if (nextEmptyIndex !== -1) {
@@ -124,13 +156,16 @@ export function ModernView({
     <DndContext
       sensors={sensors}
       onDragStart={handleDragStart}
+      // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
+      autoScroll={false}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      // ドロップの後にドラッグ元へフォーカスを戻さない（戻すと、その要素まで一覧がスクロールされることがある）
+      accessibility={{ restoreFocus: false }}
     >
       <div className="modern-view-container">
         <TeamSettingsForm
           element={team.enemy.element}
-          defence={team.enemy.defence}
           fixedSpec={team.fixedSpec}
           consoleInput={team.console}
           synchroLevel={team.synchroLevel}
@@ -159,7 +194,7 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
-                focused={team.controlledSlot === i}
+                inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 isSelected={activeSlotIndex === i}
                 onSelectSlot={() => setActiveSlotIndex(i)}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
@@ -173,6 +208,7 @@ export function ModernView({
         <CharacterTray
           index={index}
           takenIds={allTakenIds}
+          otherPartyIds={otherPartyIds}
           fullySupported={fullySupported}
           onSelectCharacter={handleSelectCharacter}
           activeSlotIndex={activeSlotIndex}
@@ -190,7 +226,7 @@ export function ModernView({
             treasurePhase={editingCalcSlot.treasurePhase}
             masters={masters}
             mastersError={mastersError}
-            focused={team.controlledSlot === editingSlotIndex}
+            usesHpRatio={editingCalcSlot.usesHpRatio}
             dispatch={dispatch}
             onClose={() => setEditingSlotIndex(null)}
           />
@@ -205,7 +241,19 @@ export function ModernView({
         </ErrorBoundary>
 
         <DragOverlay>
-          {draggedCharacter ? (
+          {draggedCharacter && draggedPortrait ? (
+            <div
+              className="slot-drag-overlay"
+              style={{
+                width: draggedPortrait.width,
+                height: draggedPortrait.height,
+                marginLeft: draggedPortrait.left,
+                marginTop: draggedPortrait.top,
+              }}
+            >
+              <CharacterVisual character={draggedCharacter} size="portrait" />
+            </div>
+          ) : draggedCharacter ? (
             <div className="char-drag-overlay">
               <CharacterVisual character={draggedCharacter} size="compact" />
               <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>

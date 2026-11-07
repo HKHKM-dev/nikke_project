@@ -657,6 +657,8 @@ header h1 {
   justify-content: space-between;
   font-size: 0.8rem;
   font-weight: bold;
+  /* 外すボタン（ニケがいるときだけ）の有無で高さを変えない */
+  min-height: 20px;
 }
 .modern-slot-label {
   opacity: 0.85;
@@ -666,6 +668,12 @@ header h1 {
   color: HighlightText;
   padding: 1px 4px;
   font-size: 0.7rem;
+}
+.modern-slot-other-party-badge {
+  border: 1px solid currentColor;
+  padding: 0 4px;
+  font-size: 0.7rem;
+  font-weight: normal;
 }
 .modern-slot-clear-button {
   background: transparent;
@@ -710,7 +718,15 @@ header h1 {
   justify-content: center;
   gap: 4px;
   opacity: 0.5;
-  padding: 24px 0;
+  /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ */
+  box-sizing: content-box;
+  aspect-ratio: 3 / 4;
+  max-height: 240px;
+}
+@media (max-width: 900px) {
+  .modern-slot-empty-area {
+    max-width: 200px;
+  }
 }
 .modern-slot-empty-plus {
   font-size: 1.8rem;
@@ -761,6 +777,13 @@ header h1 {
 /* カードフッター */
 .modern-slot-footer {
   margin-top: auto;
+  /* ボタン（ニケがいるとき）と「未配置」の文字で高さを変えない */
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+.modern-slot-footer > * {
+  flex: 1;
 }
 .modern-slot-action-button {
   width: 100%;
@@ -817,6 +840,11 @@ header h1 {
   max-width: 72px;
   --badge-w: 14px;
 }
+.char-visual-compact .char-visual-fallback {
+  font-size: 0.65rem;
+  /* 右下の「未」の札に重ならないように下を空ける */
+  padding-bottom: 16px;
+}
 /* スロットのカードの縦長の絵（portraits）。顔が入るように上寄せで切り取る */
 .char-visual-portrait {
   max-width: none;
@@ -848,6 +876,14 @@ header h1 {
   font-size: 0.8rem;
   font-weight: bold;
   line-height: 1.2;
+  /* 名前の長いキャラは、枠の外へはみ出さずに行数で切る */
+  min-width: 0;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
 }
 /* 属性・バースト段階・クラス・武器種のバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w */
 .char-visual-badges {
@@ -897,9 +933,13 @@ header h1 {
   align-items: baseline;
   gap: 12px;
 }
+.char-tray-title {
+  flex-wrap: wrap;
+}
 .char-tray-title h3 {
   margin: 0;
   font-size: 1.1rem;
+  white-space: nowrap;
 }
 .char-tray-target-slot {
   font-size: 0.85rem;
@@ -963,7 +1003,7 @@ header h1 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
   gap: 8px;
-  max-height: 280px;
+  max-height: clamp(280px, 50vh, 520px);
   overflow-y: auto;
   padding: 4px;
   border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
@@ -1003,6 +1043,14 @@ header h1 {
 }
 .char-tray-item-taken {
   opacity: 0.45;
+}
+/* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
+.char-tray-item:disabled {
+  cursor: not-allowed;
+}
+.char-tray-item:disabled:hover {
+  transform: none;
+  border-color: transparent;
 }
 .char-tray-item-taken-badge {
   position: absolute;
@@ -1087,4 +1135,9 @@ header h1 {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
   pointer-events: none;
   transform: scale(1.05);
+}
+/* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
+.slot-drag-overlay {
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
