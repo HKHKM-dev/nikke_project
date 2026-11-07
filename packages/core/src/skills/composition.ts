@@ -22,6 +22,7 @@ import { matchesTargetFilter } from './targets.ts';
 import {
   SKILL_SLOTS,
   burstStepChangeOf,
+  isSelfHpAtMostTrigger,
   isStacksCondition,
   selfHpThreshold,
   staticStatesOf,
@@ -283,6 +284,22 @@ export function resolveSelfHp<E extends SkillEffect>(
   const { selfHp: _selfHp, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };
   return (Object.keys(rest).length > 0 ? { ...without, condition: rest } : without) as E;
+}
+
+/**
+ * 定義のうち、枠の HP の割合の想定（TeamSlotInput.hpRatio）を読む効果があるか。self は自分の HP の割合の条件（condition.selfHp・
+ * トリガー { selfHpAtMostRef }）、lowestHpRatioTarget は「残りの HP の割合が最も低い味方」が対象の回復（編成の全員の想定を読む。
+ * fixedTargetsOf）。画面は、これがあるスロットにだけ想定の欄を出す（apps/web/src/calcView.ts）
+ */
+export function hpRatioReadersOf(definition: SkillDefinition): { self: boolean; lowestHpRatioTarget: boolean } {
+  const effects = SKILL_SLOTS.flatMap((slot) => definition.skills[slot].effects);
+  return {
+    self: effects.some(
+      (e) =>
+        ('condition' in e && e.condition?.selfHp !== undefined) || ('trigger' in e && isSelfHpAtMostTrigger(e.trigger)),
+    ),
+    lowestHpRatioTarget: effects.some((e) => e.kind === 'heal' && e.target === 'lowestHpRatio'),
+  };
 }
 
 /**

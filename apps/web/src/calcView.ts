@@ -19,6 +19,7 @@ import {
   fixedSpecBuild,
   fixedSpecGrowth,
   growthLimits,
+  hpRatioReadersOf,
   isEmptyBuild,
   presetForEnemy,
   resolveBuildEffects,
@@ -29,7 +30,6 @@ import {
   type EnemyInput,
   type EnemyPresetMaster,
   type GrowthInput,
-  type SkillDefinition,
   type SkillLevels,
   type TeamInput,
   type TeamSlotInput,
@@ -102,10 +102,7 @@ function effectiveTreasurePhase(slot: SlotState, character: CharacterData): Trea
   return character.treasure === null ? 0 : slot.treasurePhase;
 }
 
-function slotBuild(team: TeamState, slot: SlotState, character: CharacterData | undefined): BuildInput {
-  if (character === undefined) {
-    return { ...slot.build, recycleRoom: EMPTY_BUILD.recycleRoom, extraAttack: EMPTY_BUILD.extraAttack };
-  }
+function slotBuild(team: TeamState, slot: SlotState, character: CharacterData): BuildInput {
   if (team.fixedSpec) return fixedSpecBuild(character);
   return {
     ...slot.build,
@@ -115,30 +112,15 @@ function slotBuild(team: TeamState, slot: SlotState, character: CharacterData | 
   };
 }
 
-/** 値（スキル定義の効果）のどこかに、pred に合うオブジェクトがあるか */
-function someObject(v: unknown, pred: (o: Record<string, unknown>) => boolean): boolean {
-  if (Array.isArray(v)) return v.some((x) => someObject(x, pred));
-  if (typeof v !== 'object' || v === null) return false;
-  const o = v as Record<string, unknown>;
-  return pred(o) || Object.values(o).some((x) => someObject(x, pred));
-}
-
-/** 宝物版に差し替えた後の、スロットの効果（スキル定義が読めていなければ空） */
-function slotEffects(slot: CalcSlot): unknown[] {
+/** 宝物版に差し替えた後のスキル定義が、枠の HP の割合の想定を読むか（スキル定義が読めていなければ読まない） */
+function hpRatioReaders(slot: CalcSlot): ReturnType<typeof hpRatioReadersOf> {
   const status = slot.skillsStatus;
-  if (slot.character === undefined || status?.kind !== 'ready') return [];
-  const definition: SkillDefinition | null = applyTreasure(
-    slot.character,
-    status.definition,
-    slot.treasurePhase,
-  ).definition;
-  return Object.values(definition?.skills ?? {}).flatMap((entry) => entry?.effects ?? []);
+  const definition =
+    slot.character !== undefined && status?.kind === 'ready'
+      ? applyTreasure(slot.character, status.definition, slot.treasurePhase).definition
+      : null;
+  return definition === null ? { self: false, lowestHpRatioTarget: false } : hpRatioReadersOf(definition);
 }
-
-/** 自分の HP の割合の条件（condition.selfHp・トリガー { selfHpAtMostRef }） */
-const hasSelfHpCondition = (o: Record<string, unknown>) => 'selfHp' in o || 'selfHpAtMostRef' in o;
-/** 「残りの HP の割合が最も低い味方」が対象 */
-const targetsLowestHpRatio = (o: Record<string, unknown>) => o.target === 'lowestHpRatio';
 
 /**
  * 育成入力から、攻撃力・HP・防御力と効果層（計算の上書き）と、未対応の育成の注記を作る。効果を解決できないときは
@@ -191,7 +173,7 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
     return {
       character,
       growth: synchroGrowth,
-      build: slotBuild(team, slot, character),
+      build: { ...EMPTY_BUILD, ...slot.build },
       skillLevels,
       treasurePhase: 0,
       usesHpRatio: false,
@@ -235,10 +217,10 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
 
 /** 想定 HP の欄を出すスロットを決め、欄のあるスロットだけ保存している想定を計算に入れる */
 function withHpRatios(team: TeamState, slots: CalcSlot[]): CalcSlot[] {
-  const effects = slots.map(slotEffects);
-  const lowestTargeted = effects.some((e) => someObject(e, targetsLowestHpRatio));
+  const readers = slots.map(hpRatioReaders);
+  const lowestTargeted = readers.some((r) => r.lowestHpRatioTarget);
   return slots.map((slot, i) => {
-    const usesHpRatio = slot.character !== undefined && (lowestTargeted || someObject(effects[i], hasSelfHpCondition));
+    const usesHpRatio = slot.character !== undefined && (lowestTargeted || readers[i]!.self);
     if (!usesHpRatio) return slot;
     const hpRatio = team.slots[i]!.hpRatio;
     return { ...slot, usesHpRatio, input: slot.input && { ...slot.input, hpRatio } };

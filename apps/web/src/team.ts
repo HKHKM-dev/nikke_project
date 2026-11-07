@@ -20,6 +20,7 @@ import {
   SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
+  emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
   overloadPositionsUnique,
@@ -65,12 +66,8 @@ export const DEFAULT_SLOT_GROWTH: SlotGrowth = { grade: 3, core: 0 };
 export const DEFAULT_SYNCHRO_LEVEL = 200;
 
 export function emptySlotBuild(): SlotBuild {
-  return {
-    affectionRank: AFFECTION_RANK_MIN,
-    gear: { head: null, body: null, arm: null, leg: null },
-    cube: null,
-    collection: null,
-  };
+  const { recycleRoom: _recycleRoom, extraAttack: _extraAttack, ...build } = emptyBuild();
+  return build;
 }
 /** Stage 15: hitRate（Stage 18 から「弾丸命中率」と表示。射撃場 = 1）を足した。18-C2 から、条件が手入力の枠でだけ使う */
 export const DEFAULT_SLOT_CONDITION: SlotCondition = {

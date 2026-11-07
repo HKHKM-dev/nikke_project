@@ -2,7 +2,7 @@ import { useDraggable, useDroppable } from '@dnd-kit/core';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
-import type { SlotState } from '../../team.ts';
+import { DEFAULT_CONTROLLED_SLOT, type SlotState } from '../../team.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -13,8 +13,6 @@ type Props = {
   isUnsupported: boolean;
   error: string | undefined;
   slotResult: SlotResultView | null;
-  /** 操作キャラのスロット（スロット 3。「操作」の印を付ける） */
-  focused: boolean;
   /** このスロットのニケがほかの編成でも使われている */
   inOtherParty: boolean;
   isSelected: boolean;
@@ -32,7 +30,6 @@ export function ModernSlotCard({
   isUnsupported,
   error,
   slotResult,
-  focused,
   inOtherParty,
   isSelected,
   onSelectSlot,
@@ -40,6 +37,8 @@ export function ModernSlotCard({
   onClear,
   partyTotalDamage,
 }: Props) {
+  /** 操作キャラのスロット（「操作」の印を付ける） */
+  const focused = slotIndex === DEFAULT_CONTROLLED_SLOT;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
   const formattedDamage = formatDamage(currentDamage);
   const damagePercent =

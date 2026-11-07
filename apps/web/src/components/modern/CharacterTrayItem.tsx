@@ -21,6 +21,11 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
     },
     disabled: isTaken,
   });
+  const mark = isTaken
+    ? { badge: '配置中', title: '（配置中）' }
+    : inOtherParty
+      ? { badge: '他の編成', title: '（ほかの編成で使用中）' }
+      : null;
 
   return (
     <button
@@ -29,17 +34,13 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
       className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''}`}
       onClick={onClick}
       disabled={isTaken}
-      title={`${character.name.ja}${isTaken ? '（配置中）' : inOtherParty ? '（ほかの編成で使用中）' : ''}`}
+      title={`${character.name.ja}${mark?.title ?? ''}`}
       {...attributes}
       {...listeners}
     >
       <CharacterVisual character={character} isUnsupported={isUnsupported} size="compact" />
       <span className="char-tray-item-name">{character.name.ja}</span>
-      {isTaken ? (
-        <span className="char-tray-item-taken-badge">配置中</span>
-      ) : (
-        inOtherParty && <span className="char-tray-item-taken-badge">他の編成</span>
-      )}
+      {mark && <span className="char-tray-item-taken-badge">{mark.badge}</span>}
     </button>
   );
 }

@@ -20,7 +20,7 @@ import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
-import { DEFAULT_CONTROLLED_SLOT, placeCharacterAction } from '../team.ts';
+import { placeCharacterAction } from '../team.ts';
 
 export function ModernView({
   team,
@@ -194,7 +194,6 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
-                focused={i === DEFAULT_CONTROLLED_SLOT}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 isSelected={activeSlotIndex === i}
                 onSelectSlot={() => setActiveSlotIndex(i)}
