@@ -403,6 +403,8 @@ export type RawCube = {
   level1: number[];
   level2: number[];
   level3: number[];
+  /** 戦闘力に足す値（index = Lv − 1） */
+  powers: number[];
   item_rare: string;
   /** スキル（末尾に null が入ることがある） */
   harmonycube_skill_group: (RawSkillDetail | null)[];
@@ -415,6 +417,8 @@ export type RawCollection = RawFavorite & {
   def: number[];
   level1: number[];
   level2: number[];
+  /** 戦闘力に足す値（index = Lv。宝物は段階 1..3） */
+  powers: number[];
   favorite_type: string;
   weapon_type: string;
   max_level: number;
@@ -502,7 +506,7 @@ export function toCubeData(en: RawCube, ja: RawCube): CubeData {
   if (en.id !== ja.id) throw new Error(`cube locale mismatch: en=${en.id} ja=${ja.id}`);
   const skills = toSkillList(en.harmonycube_skill_group, ja.harmonycube_skill_group, `cube ${en.id}`);
   const stageLists = [en.level1, en.level2, en.level3].slice(0, skills.length);
-  for (const list of [en.atk, en.hp, en.def, ...stageLists]) {
+  for (const list of [en.atk, en.hp, en.def, en.powers, ...stageLists]) {
     if (list.length !== 15) throw new Error(`cube ${en.id}: expected 15 levels, got ${list.length}`);
   }
   const data: CubeData = {
@@ -511,6 +515,7 @@ export function toCubeData(en: RawCube, ja: RawCube): CubeData {
     stats: { attack: en.atk, hp: en.hp, defence: en.def },
     skillStages: stageLists,
     skills,
+    powers: en.powers,
   };
   assertComplete(data, `cube ${en.id}`);
   return data;
@@ -523,7 +528,7 @@ export function toCollectionData(en: RawCollection, ja: RawCollection): Collecti
   }
   const skills = toSkillList(en.collection_skill_group_data, ja.collection_skill_group_data, `favorite ${en.id}`);
   const stageLists = [en.level1, en.level2].slice(0, skills.length);
-  for (const list of [en.atk, en.hp, en.def, ...stageLists]) {
+  for (const list of [en.atk, en.hp, en.def, en.powers, ...stageLists]) {
     if (list.length !== 16) throw new Error(`favorite ${en.id}: expected Lv0..15 (16 values), got ${list.length}`);
   }
   const data: CollectionData = {
@@ -534,6 +539,7 @@ export function toCollectionData(en: RawCollection, ja: RawCollection): Collecti
     stats: { attack: en.atk, hp: en.hp, defence: en.def },
     skillStages: stageLists,
     skills,
+    powers: en.powers,
   };
   assertComplete(data, `favorite ${en.id}`);
   return data;
@@ -546,6 +552,14 @@ export function toTreasureStats(ssr: Pick<RawCollection, 'id' | 'atk' | 'hp' | '
     throw new Error(`favorite ${ssr.id}: treasure stats differ by grade`);
   }
   return { attack: ssr.atk[0]!, hp: ssr.hp[0]!, defence: ssr.def[0]! };
+}
+
+/** SSR（宝物）の戦闘力に足す値。段階 1..3 で同じ値でなければ Error */
+export function toTreasurePower(ssr: Pick<RawCollection, 'id' | 'powers'>): number {
+  if (ssr.powers.length === 0 || !ssr.powers.every((v) => v === ssr.powers[0])) {
+    throw new Error(`favorite ${ssr.id}: treasure powers differ by grade`);
+  }
+  return ssr.powers[0]!;
 }
 
 export function toRecycleRoomMaster(table: RawRecycleTable): RecycleRoomMaster {

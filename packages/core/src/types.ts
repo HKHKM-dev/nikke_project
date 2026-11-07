@@ -219,6 +219,8 @@ export type CubeData = {
   stats: Record<StatKind, number[]>;
   skillStages: number[][];
   skills: SkillRaw[];
+  /** 戦闘力に足す値（CDN の powers。index = Lv − 1。C-0981） */
+  powers: number[];
 };
 export type CubeMaster = { formatVersion: 1; cubes: CubeData[] };
 
@@ -234,12 +236,16 @@ export type CollectionData = {
   stats: Record<StatKind, number[]>;
   skillStages: number[][];
   skills: SkillRaw[];
+  /** 戦闘力に足す値（CDN の powers。index = Lv（0..15）。C-0981） */
+  powers: number[];
 };
 export type CollectionMaster = {
   formatVersion: 1;
   collections: CollectionData[];
   /** 宝物（SSR）を解放しているときのステータス（段階 1..3 で同じ。SR Lv15 と同値） */
   treasureStats: Record<StatKind, number>;
+  /** 宝物を解放しているときに戦闘力に足す値（CDN の powers。段階 1..3 で同じ。C-0981） */
+  treasurePower: number;
 };
 
 /** リサイクルルーム研究の 1 Lv あたりの加算（CDN の RecycleResearchStatTable。仮定: Lv × 加算） */
@@ -273,6 +279,8 @@ export type OverloadOptionData = {
   values: number[];
   /** ユーザーの実装備の表示値で確かめた行か（plan/design-stage12.md 3.2 節） */
   verified: boolean;
+  /** Lv1..15 の戦闘力に足す値（function_battlepower。index = Lv − 1。CDN に無いので手書き。C-0981・C-0982） */
+  powers: number[];
 };
 
 /** OL オプションの上昇値の表（data/masters/overload.json、手書き） */
