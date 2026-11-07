@@ -157,14 +157,19 @@ export function NotesSummary({
 }) {
   const filled = slots.filter((s): s is NotesSummarySlot => s !== null);
   const { order } = useContext(ListOrderContext);
-  const modelWide = order === 'combatPower' ? [...MODEL_WIDE, COMBAT_POWER_TIES] : MODEL_WIDE;
   return (
     <details className="panel notes-summary">
       <summary>未対応・近似・仮定の一覧</summary>
       <h3>モデル全体</h3>
-      <ItemList items={modelWide} />
+      <ItemList items={MODEL_WIDE} />
       <h3>画面に無い入力の既定</h3>
       <ItemList items={INPUT_DEFAULTS} />
+      {order === 'combatPower' && (
+        <>
+          <h3>一覧の並び</h3>
+          <ItemList items={[COMBAT_POWER_TIES]} />
+        </>
+      )}
       {enemyNotes.length > 0 && (
         <>
           <h3>敵の出来事</h3>

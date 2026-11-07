@@ -2,6 +2,12 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emptyBuild } from '../build.ts';
+import {
+  snapshotCombatPower,
+  snapshotCombatPowers,
+  type BuildSnapshot,
+  type SnapshotCharacter,
+} from '../buildSnapshot.ts';
 import { computeCombatPower } from '../combatPower.ts';
 import { buildCombatPowerTable, combatCharacterOf, type CombatPowerTable } from '../combatTable.ts';
 import { MASTER_FILES } from '../load.ts';
@@ -37,4 +43,30 @@ describe('戦闘力の表', () => {
     expect(table.levelCurves.length).toBeLessThan(characters.length);
     expect(combatCharacterOf(table, -1)).toBeUndefined();
   });
+});
+
+it('snapshotCombatPowers: 表から引いて全キャラの戦闘力を出し、出せないキャラを理由つきで分ける', () => {
+  const ssr = characters.find((c) => c.rarity === 'SSR')!;
+  const sr = characters.find((c) => c.rarity === 'SR')!;
+  const entry = (over: Partial<SnapshotCharacter> = {}): SnapshotCharacter => ({
+    ...emptyBuild(),
+    growth: { level: 300, grade: 3, core: 2 },
+    affectionRank: 10,
+    skillLevels: { skill1: 10, skill2: 10, burst: 10 },
+    treasure: null,
+    ...over,
+  });
+  const snapshot: BuildSnapshot = {
+    formatVersion: 1,
+    fetchedAt: '2026-10-29T00:00:00Z',
+    synchroLevel: 300,
+    recycleRoom: {},
+    // SR の凸の上限は 2 なので、凸 3 は計算で止まる
+    characters: { [ssr.resourceId]: entry(), [sr.resourceId]: entry(), '-1': entry() },
+    unmapped: [],
+  };
+  const r = snapshotCombatPowers(snapshot, (id) => combatCharacterOf(table, id), masters);
+  expect([...r.powers]).toEqual([[ssr.resourceId, snapshotCombatPower(ssr, entry(), masters).value]]);
+  expect(r.failures.map((f) => f.id).sort()).toEqual([-1, sr.resourceId].sort());
+  expect(r.failures.find((f) => f.id === -1)?.message).toBe('キャラのデータに無い');
 });

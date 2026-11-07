@@ -7,7 +7,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { readBuildSnapshot, snapshotCombatPower } from '../../packages/core/src/buildSnapshot.ts';
+import { readBuildSnapshot, snapshotCombatPowers } from '../../packages/core/src/buildSnapshot.ts';
 import { gameCombatPowers, type ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { compareCombatPower, sortByCombatPower, type CombatPowerRow } from './combat-power-lib.ts';
 import { characterOf, index, masters, nameOf, readJson } from './data.ts';
@@ -51,22 +51,13 @@ const snapshot = read.snapshot;
 for (const n of read.notices) console.log(`注意: ${n}`);
 const actualById = gameCombatPowers(readJson<ShiftyPadRaw>(actualPath), index);
 
-const errors: string[] = [];
+const computed = snapshotCombatPowers(snapshot, characterOf, masters);
+const errors = computed.failures.map((f) => `${f.id} ${nameOf(f.id)}: ${f.message}`);
 const rows: CombatPowerRow[] = [];
-for (const [id, c] of Object.entries(snapshot.characters)) {
-  const resourceId = Number(id);
-  const actual = actualById.get(resourceId);
-  if (actual === undefined) {
-    errors.push(`${id} ${nameOf(resourceId)}: 生のデータに戦闘力が無い（飛ばした）`);
-    continue;
-  }
-  let model: number | null = null;
-  try {
-    model = snapshotCombatPower(characterOf(resourceId), c, masters).value;
-  } catch (e) {
-    errors.push(`${id} ${nameOf(resourceId)}: ${(e as Error).message}`);
-  }
-  rows.push({ id: resourceId, model, actual });
+for (const id of Object.keys(snapshot.characters).map(Number)) {
+  const actual = actualById.get(id);
+  if (actual === undefined) errors.push(`${id} ${nameOf(id)}: 生のデータに戦闘力が無い（飛ばした）`);
+  else rows.push({ id, model: computed.powers.get(id) ?? null, actual });
 }
 
 const result = compareCombatPower(rows);

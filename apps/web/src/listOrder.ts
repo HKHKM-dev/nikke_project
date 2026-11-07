@@ -1,14 +1,8 @@
 // キャラの一覧の並び（plan/design-combat-power-sort.md 6 節）。React に依存しない純関数だけを置く。
 // 名前順と戦闘力順。戦闘力順は、育成状況にいるキャラを戦闘力の降順で先に並べ、いないキャラ（と戦闘力を出せないキャラ）を
 // その後に名前順で並べる。戦闘力が同じキャラの実機の一覧での順は分かっていないので、仮に名前順にする（4 節）。
-import {
-  combatCharacterOf,
-  snapshotCombatPower,
-  type BuildMasters,
-  type BuildSnapshot,
-  type CharacterIndexEntry,
-  type CombatPowerTable,
-} from '@nikke/core';
+import type { CharacterIndexEntry } from '@nikke/core';
+import { formatNumber } from './format.ts';
 
 export type ListOrder = 'name' | 'combatPower';
 export const LIST_ORDERS: readonly ListOrder[] = ['name', 'combatPower'];
@@ -25,58 +19,22 @@ export function effectiveListOrder(saved: ListOrder | null, hasRoster: boolean):
   return hasRoster ? (saved ?? 'combatPower') : 'name';
 }
 
-export type RosterCombatPowers = {
-  /** resourceId → 戦闘力 */
-  powers: ReadonlyMap<number, number>;
-  /** 戦闘力を出せなかったキャラ（表に無い・育成状況の値がキャラに合わない） */
-  failed: readonly number[];
-};
+const collator = new Intl.Collator('ja');
+const byName = (a: CharacterIndexEntry, b: CharacterIndexEntry) => collator.compare(a.name.ja, b.name.ja);
 
-/** 育成状況の全キャラの戦闘力 */
-export function rosterCombatPowers(
-  roster: BuildSnapshot,
-  table: CombatPowerTable,
-  masters: BuildMasters,
-): RosterCombatPowers {
-  const powers = new Map<number, number>();
-  const failed: number[] = [];
-  for (const [id, entry] of Object.entries(roster.characters)) {
-    const resourceId = Number(id);
-    const character = combatCharacterOf(table, resourceId);
-    try {
-      if (character === undefined) throw new Error('not in the combat table');
-      powers.set(resourceId, snapshotCombatPower(character, entry, masters).value);
-    } catch {
-      failed.push(resourceId);
-    }
-  }
-  return { powers, failed };
-}
-
-const byName = (a: CharacterIndexEntry, b: CharacterIndexEntry) => a.name.ja.localeCompare(b.name.ja, 'ja');
-
-/** 一覧に出す順に並べたキャラ */
+/** 一覧に出す順に並べたキャラ（戦闘力は正の値なので、無いキャラを -1 として降順に並べると後ろに回る） */
 export function orderCharacters(
   index: readonly CharacterIndexEntry[],
   order: ListOrder,
   powers: ReadonlyMap<number, number>,
 ): CharacterIndexEntry[] {
   if (order === 'name') return [...index].sort(byName);
-  return [...index].sort((a, b) => {
-    const pa = powers.get(a.resourceId);
-    const pb = powers.get(b.resourceId);
-    if (pa !== undefined && pb !== undefined) return pb - pa || byName(a, b);
-    if (pa !== undefined || pb !== undefined) return pa !== undefined ? -1 : 1;
-    return byName(a, b);
-  });
+  const power = (c: CharacterIndexEntry) => powers.get(c.resourceId) ?? -1;
+  return [...index].sort((a, b) => power(b) - power(a) || byName(a, b));
 }
 
-/** 一覧に添える戦闘力（戦闘力順のときだけ。出せないキャラは null） */
-export function combatPowerNote(
-  order: ListOrder,
-  powers: ReadonlyMap<number, number>,
-  resourceId: number,
-): string | null {
+/** 一覧に添える戦闘力（戦闘力順のときだけ。出せないキャラは空） */
+export function combatPowerNote(order: ListOrder, powers: ReadonlyMap<number, number>, resourceId: number): string {
   const value = order === 'combatPower' ? powers.get(resourceId) : undefined;
-  return value === undefined ? null : `（戦闘力 ${value.toLocaleString('ja-JP')}）`;
+  return value === undefined ? '' : `（戦闘力 ${formatNumber(value)}）`;
 }

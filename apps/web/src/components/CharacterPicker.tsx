@@ -22,9 +22,9 @@ export function characterLabel(
   entry: CharacterIndexEntry,
   isUnsupported: boolean,
   inOtherParty = false,
-  power: string | null = null,
+  power = '',
 ): string {
-  return `${entry.name.ja}${power ?? ''}${isUnsupported ? '（未）' : ''}${inOtherParty ? '（ほかの編成で使用中）' : ''}`;
+  return `${entry.name.ja}${power}${isUnsupported ? '（未）' : ''}${inOtherParty ? '（ほかの編成で使用中）' : ''}`;
 }
 
 export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyIds, value, onSelect, onClear }: Props) {

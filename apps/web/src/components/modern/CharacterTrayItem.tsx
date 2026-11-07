@@ -1,8 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useContext } from 'react';
-import { combatPowerNote } from '../../listOrder.ts';
-import { ListOrderContext } from '../../useListOrder.ts';
+import { useCombatPowerNote } from '../../useListOrder.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -25,8 +23,7 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
     disabled: isTaken,
   });
   // 戦闘力順のときは、マウスを重ねたときの文に戦闘力を添える（plan/design-combat-power-sort.md 6 節の論点 4）
-  const { order, powers } = useContext(ListOrderContext);
-  const power = combatPowerNote(order, powers, character.resourceId) ?? '';
+  const power = useCombatPowerNote(character.resourceId);
   const mark = isTaken
     ? { badge: '配置中', title: '（配置中）' }
     : inOtherParty

@@ -1,12 +1,19 @@
 // キャラの一覧の並び（listOrder.ts）の状態: 選んだ並び（ブラウザに覚える）と、育成状況の戦闘力。
 // 戦闘力の表（data/characters/combat.json）は、育成状況があるときだけ読む
-import { loadCombatPowerTable, type BuildMasters, type BuildSnapshot, type CombatPowerTable } from '@nikke/core';
-import { createContext, useEffect, useMemo, useState } from 'react';
+import {
+  combatCharacterOf,
+  loadCombatPowerTable,
+  snapshotCombatPowers,
+  type BuildMasters,
+  type BuildSnapshot,
+  type CombatPowerTable,
+} from '@nikke/core';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   LIST_ORDER_STORAGE_KEY,
+  combatPowerNote,
   effectiveListOrder,
   parseListOrder,
-  rosterCombatPowers,
   type ListOrder,
 } from './listOrder.ts';
 import { readStorage, writeStorage } from './storage.ts';
@@ -14,6 +21,12 @@ import { readStorage, writeStorage } from './storage.ts';
 /** 一覧（トレイ・選択肢）と未対応の一覧が読む、いまの並びと戦闘力 */
 export type ListOrderState = { order: ListOrder; powers: ReadonlyMap<number, number> };
 export const ListOrderContext = createContext<ListOrderState>({ order: 'name', powers: new Map() });
+
+/** 一覧の項目に添える戦闘力（戦闘力順のときだけ。listOrder.ts の combatPowerNote） */
+export function useCombatPowerNote(resourceId: number): string {
+  const { order, powers } = useContext(ListOrderContext);
+  return combatPowerNote(order, powers, resourceId);
+}
 
 /** 設定のメニューの「一覧の並び」の欄 */
 export type ListOrderControls = {
@@ -45,7 +58,10 @@ export function useListOrder(
   }, [hasRoster, table, baseUrl]);
 
   const computed = useMemo(
-    () => (roster === null || table === null || masters === null ? null : rosterCombatPowers(roster, table, masters)),
+    () =>
+      roster === null || table === null || masters === null
+        ? null
+        : snapshotCombatPowers(roster, (id) => combatCharacterOf(table, id), masters),
     [roster, table, masters],
   );
   const order = effectiveListOrder(saved, hasRoster);
@@ -58,7 +74,7 @@ export function useListOrder(
   };
 
   return {
-    controls: { order, select, hasRoster, failedCount: computed?.failed.length ?? 0, tableError },
+    controls: { order, select, hasRoster, failedCount: computed?.failures.length ?? 0, tableError },
     state,
   };
 }

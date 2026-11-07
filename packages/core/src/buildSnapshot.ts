@@ -208,3 +208,34 @@ export function snapshotCombatPower(
     masters,
   );
 }
+
+export type SnapshotCombatPowers = {
+  /** resourceId → 戦闘力 */
+  powers: Map<number, number>;
+  /** 戦闘力を出せなかったキャラ（キャラの値が無い・育成の値がキャラに合わない）と理由 */
+  failures: { id: number; message: string }[];
+};
+
+/** スナップショットの全キャラの戦闘力。characterOf はキャラの値を引く（無ければ undefined） */
+export function snapshotCombatPowers(
+  snapshot: BuildSnapshot,
+  characterOf: (resourceId: number) => Parameters<typeof computeCombatPower>[0] | undefined,
+  masters: BuildMasters,
+): SnapshotCombatPowers {
+  const powers = new Map<number, number>();
+  const failures: SnapshotCombatPowers['failures'] = [];
+  for (const [key, entry] of Object.entries(snapshot.characters)) {
+    const id = Number(key);
+    const character = characterOf(id);
+    if (character === undefined) {
+      failures.push({ id, message: 'キャラのデータに無い' });
+      continue;
+    }
+    try {
+      powers.set(id, snapshotCombatPower(character, entry, masters).value);
+    } catch (e) {
+      failures.push({ id, message: e instanceof Error ? e.message : String(e) });
+    }
+  }
+  return { powers, failures };
+}

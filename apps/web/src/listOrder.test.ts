@@ -1,23 +1,7 @@
 // キャラの一覧の並び（listOrder.ts。plan/design-combat-power-sort.md 6 節）
-import {
-  combatCharacterOf,
-  emptyBuild,
-  snapshotCombatPower,
-  type BuildMasters,
-  type BuildSnapshot,
-  type CharacterIndexEntry,
-  type CombatPowerTable,
-  type SnapshotCharacter,
-} from '@nikke/core';
-import { readFileSync } from 'node:fs';
+import type { CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
-import {
-  combatPowerNote,
-  effectiveListOrder,
-  orderCharacters,
-  parseListOrder,
-  rosterCombatPowers,
-} from './listOrder.ts';
+import { combatPowerNote, effectiveListOrder, orderCharacters, parseListOrder } from './listOrder.ts';
 
 const entry = (resourceId: number, ja: string) => ({ resourceId, name: { ja, en: ja } }) as CharacterIndexEntry;
 const INDEX = [entry(1, 'ウ'), entry(2, 'ア'), entry(3, 'エ'), entry(4, 'イ'), entry(5, 'オ')];
@@ -63,46 +47,6 @@ describe('orderCharacters', () => {
 it('combatPowerNote: 戦闘力順のときだけ、出せたキャラに添える', () => {
   const powers = new Map([[1, 123456]]);
   expect(combatPowerNote('combatPower', powers, 1)).toBe('（戦闘力 123,456）');
-  expect(combatPowerNote('combatPower', powers, 2)).toBeNull();
-  expect(combatPowerNote('name', powers, 1)).toBeNull();
-});
-
-describe('rosterCombatPowers', () => {
-  const data = <T>(path: string): T =>
-    JSON.parse(readFileSync(new URL(`../../../packages/core/data/${path}`, import.meta.url), 'utf8')) as T;
-  const table = data<CombatPowerTable>('characters/combat.json');
-  const masters = Object.fromEntries(
-    ['gear', 'affection', 'cubes', 'collections', 'recycleRoom', 'overload'].map((k) => [k, data(`masters/${k}.json`)]),
-  ) as BuildMasters;
-  const [id] = Object.keys(table.characters).filter((k) => table.characters[k]!.rarity === 'SSR');
-  const character = (over: Partial<SnapshotCharacter> = {}): SnapshotCharacter => ({
-    ...emptyBuild(),
-    growth: { level: 300, grade: 3, core: 2 },
-    affectionRank: 10,
-    skillLevels: { skill1: 10, skill2: 10, burst: 10 },
-    treasure: null,
-    ...over,
-  });
-
-  it('育成状況のキャラの戦闘力を出し、出せないキャラ（表に無い・値が合わない）を分ける', () => {
-    const roster: BuildSnapshot = {
-      formatVersion: 1,
-      fetchedAt: '2026-10-29T00:00:00Z',
-      synchroLevel: 300,
-      recycleRoom: {},
-      characters: {
-        [id!]: character(),
-        '-1': character(),
-        // 存在しないキューブは計算で止まる
-        [Object.keys(table.characters).find((k) => k !== id)!]: character({ cube: { id: 1, level: 1 } }),
-      },
-      unmapped: [],
-    };
-    const r = rosterCombatPowers(roster, table, masters);
-    expect([...r.powers.keys()]).toEqual([Number(id)]);
-    expect(r.powers.get(Number(id))).toBe(
-      snapshotCombatPower(combatCharacterOf(table, Number(id))!, character(), masters).value,
-    );
-    expect(r.failed).toHaveLength(2);
-  });
+  expect(combatPowerNote('combatPower', powers, 2)).toBe('');
+  expect(combatPowerNote('name', powers, 1)).toBe('');
 });

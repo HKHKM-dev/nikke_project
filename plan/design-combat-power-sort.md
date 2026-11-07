@@ -1,7 +1,7 @@
 # 設計書: 戦闘力による一覧の並び替え
 
 - 対象: 戦闘力の計算（`packages/core/src/combatPower.ts`）、育成のマスタの戦闘力の値（`packages/core/data/masters/` の `cubes.json`・`collections.json`・`overload.json`）、オーナーの育成データでの突き合わせ（`tools/builds/combat-power.ts`）
-- 状態: 一部完了（段 1 と育成状況の JSON の入出力は実装済み（3・5 節）。一覧の並び替えは起案（6 節）。ほかは未起案（4 節））
+- 状態: 一部完了（段 1・育成状況の JSON の入出力・一覧の並び替えは実装済み（3・5・6 節）。ほかは未起案（4 節））
 - 関連: C-0981・C-0982（式。根拠は V-0685）、[design-build-snapshot.md](design-build-snapshot.md)（育成データのスナップショット）、[design-cdn-refresh.md](design-cdn-refresh.md)（CDN の取り直し）
 - 作成日: 2026-11-07
 
@@ -184,7 +184,16 @@
 
 - 決定（2026-11-07、オーナー）: 1〜4 とも推奨のとおり。
 
+### 6.6 実装（2026-11-07）
+
+- 戦闘力の表: `packages/core/src/combatTable.ts`（`buildCombatPowerTable`・`combatCharacterOf`・`loadCombatPowerTable`）と `packages/core/data/characters/combat.json`。`npm run fetch-data` がキャラのデータと一緒に書き、`npm run combat-table` が手元のキャラのデータから作り直す。基礎ステータスの曲線は前の Lv との差で持ち、37 通りを 1 回ずつ置く（今のデータで 0.9MB、gzip で 55KB）。表から出す戦闘力がキャラのデータから出すものと全キャラで同じことを、テストで確かめる。
+- 戦闘力の計算（`computeCombatStat`）は、宝物の中身を見ず有無だけを見るので、キャラの `treasure` の型を `unknown`（null なら無い）に広げた。
+- 育成状況の全キャラの戦闘力は core の `snapshotCombatPowers`（出せないキャラは理由つきで分ける）。画面と `build:combat-power` が使う。
+- 画面: 並べる処理は `apps/web/src/listOrder.ts`、状態は `useListOrder.ts`（並びはブラウザに覚える。表は育成状況があるときだけ読む）、切り替えは設定のメニューの「一覧の並び」（`components/ListOrderSettings.tsx`）。App が並べた一覧を画面に渡し、トレイと選択肢は名前順の並べ直しをやめた。戦闘力の添え書きと、未対応の一覧の「一覧の並び」の 1 行は、React の context（`ListOrderContext`）で渡す（モダン UI のブランチが直している `ModernView.tsx` を通さないため。そのブランチのマージの後に props にしてよい）。
+- 確かめたこと: オーナーの 2026-10-29 の育成状況を画面に読み込み、クラシックの選択肢の並びをゲームの戦闘力（生のデータの `combat`）と比べた。所持の 201 体が先に並び、隣どうしの高低の逆転は 0。所持していないキャラはその後に名前順。トレイの `title`・選択肢の名前の後ろの値・設定の切り替えと再読み込みの後の保存・未対応の一覧の 1 行も出た。
+
 ## 7. 経過
 
 - 2026-11-07: 起票。段 1（データ・計算・突き合わせの道具）を実装した。
 - 2026-11-07: 育成状況の JSON の入出力を起案し、オーナーが推奨のとおりに決めた。実装した（5.6 節）。
+- 2026-11-07: 一覧の並び替えを起案し、オーナーが推奨のとおりに決めた。実装した（6.6 節）。
