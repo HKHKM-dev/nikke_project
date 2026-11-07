@@ -53,7 +53,7 @@
 | `claude/inspiring-cannon-rv6bfs` | 2026-11-06（V-0673 の撮影の依頼。V-0673 は #964 で main に入った） | 何も変わらない |
 | `claude/stage17-read-v0598`〜`v0601`（4 本） | 2026-11-01（V-0598〜V-0601 の観測値の読み） | 変わる（同じ観測値が、後で直された形で main に入っている） |
 | `claude/nikke-damage-styling-lrz7em` | 2026-11-06 | 変わる（作業中） |
-| `claude/serene-gates-crrq79` | 2026-11-06（V-0679 の撮影計画。撮影待ち） | 変わる（撮影待ちの保持） |
+| `claude/serene-gates-crrq79` | 2026-11-06（紅蓮：神殺のバーストの撮影計画。撮影待ち） | 変わる（撮影待ちの保持） |
 
 **案**
 
