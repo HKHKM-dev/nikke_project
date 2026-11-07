@@ -532,5 +532,43 @@
         "events": ["range-3min-jump"]
       }
     }
+  },
+  {
+    "id": "0963-23",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "count",
+    "use": "record",
+    "value": [9, 9],
+    "unit": "発",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "description": "満開（使用武器の変更）が明けた後の、紅蓮：神殺の基礎の武器の残弾の表示（最大装弾数 9）",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --style box --mode series（照準の下の「AMMO | 008」）",
+      "note": "バーストの直前の表示 → 明けの最初の表示: f1120 の 3 → f1750 の 9、f8307 の 2 → f8965 の 9。直前の残弾によらず、最大で戻る（モデルの WEAPON_CHANGE_RESTORE の refill と同じ形）"
+    }
+  },
+  {
+    "id": "0963-24",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "count",
+    "use": "record",
+    "value": 2,
+    "unit": "回",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "description": "満開の窓の前後で、S2 の弾丸チャージの数え方を見分けられた窓のうち、「満開の発の会心も数え、満開の間は弾丸チャージだけ付かない」（いまのモデル。firesOutside）に合った窓の数（数えない形に合った窓は 0）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（発ごとの会心）と tools/captures/reticle-ammo.ts --style box（表示が減らなかった発 = 弾丸チャージ）を、使い捨てのスクリプトと手で並べた",
+      "note": "1・4 回目の紅蓮：神殺の窓（f1145・8352）。窓の前の最後の弾丸チャージの発の後の会心の数 j と、窓の後の最初の弾丸チャージまでの会心の数 r が、j + 15（満開の会心）+ r が偶数で最小になる所に弾丸チャージが付く。数えないなら j + r = 2 のはずで、どの窓でも合わない。ほかの窓は、窓の前後の発の会心がほかの枠のヒットと重なって決まらない"
+    }
   }
 ]

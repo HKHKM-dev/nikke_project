@@ -25,7 +25,7 @@
 | `hud.ts`           | HUD の総ダメージ（最後の値・増分）。`--screen interception` で迎撃戦の段階の数値（V-0462）                                                                                      |
 | `gauge.ts`         | 右の BURST バーの充填率（V-0483 の `--subpixel` も）                                                                                                                            |
 | `ammo.ts`          | 枠アイコンの上の「残弾/最大」（AI の味方の射撃フレームはこれでしか読めない）                                                                                                    |
-| `reticle-ammo.ts`  | 照準の左の残弾（操作キャラ。V-0163）                                                                                                                                            |
+| `reticle-ammo.ts`  | 照準の左の残弾（操作キャラ。V-0163）。照準の下の「AMMO \| 008」の表示（紅蓮：神殺）は `--style box`（V-0679）                                                                   |
 | `reload.ts`        | RELOADING のバーから、リロードごとの完了・伸び・最終弾 → 完了（V-0057）                                                                                                         |
 | `timer.ts`         | 残り時間の秒の変わり目・止まり・止まりの無い区間の a・ゲーム内のティック（V-0003・V-0302・V-0379・V-0677）                                                                      |
 | `fb-window-k.ts`   | レシピ `fb-window-cores` の観測値から、フルバーストの窓の中の率の比 K・K_out と σ（jackknife と 2 項分布）を出す。`--landings` で使う着地点を選ぶ（V-0492・V-0542）             |

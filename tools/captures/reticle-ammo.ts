@@ -1,8 +1,13 @@
 // 操作キャラの照準の左に出る残弾の表示（暗い四角に 3 桁の数字。000 埋め）を全フレーム読み、マガジンごとの発数と弾丸チャージを出す
 // （ルドミラ：ウィンターオーナー編。plan/design-ludmilla-wo.md 3 節、backlog 6 節）。枠アイコンの上の「残弾/最大」は
 // tools/captures/ammo.ts。単騎の操作キャラはそちらの表示が出ないので、こちらを読む。
-//   node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300]
-//   node tools/captures/reticle-ammo.ts <動画> --make-templates 1081:169,1082:168,...   # 見本を作り直す
+//   node tools/captures/reticle-ammo.ts <動画> [--mode mags|series] [--from N] [--to N] [--max 300] [--style box]
+//   node tools/captures/reticle-ammo.ts <動画> --make-templates 1081:169,1082:168,... [--style box]   # 見本を作り直す
+//
+// --style box: 照準の下に「AMMO | 008」の形で出る表示（紅蓮：神殺。射撃 UI が特殊なキャラ。V-0679）。3 桁の組の見つけ方は同じで、
+// 見本だけ別のファイル（reticle-ammo-box-templates.json）にする。見本は録画 0960 の 1 本目のマガジン（008〜001・リロードの明けの 009）
+// から作った。弾丸チャージは、減った発と同じフレームに足されるので表示が減らない（増えとしては出ない）。マガジンの発数は、
+// 減った量の合計に、減らなかった発（HUD の増分の発の数との差）を足して読む。0 の表示はリロード中に暗くなり読めない
 //
 // 表示は照準と一緒に動く（的を追う AUTO 射撃では 1 フレームごとに数 px）。そこで画面の中央付近（SEARCH）で、明るい（max(R,G,B)
 // が THRESHOLD より大きい）連結成分のうち数字の高さのものを探し、横に等間隔に 3 つ並んだ組を表示の 3 桁とする。残弾が少ないと
@@ -20,12 +25,16 @@ import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
 
 const TEMPLATE_FILE = new URL('./reticle-ammo-templates.json', import.meta.url);
+/** --style box（照準の下の「AMMO | 008」の表示）の見本 */
+const BOX_TEMPLATE_FILE = new URL('./reticle-ammo-box-templates.json', import.meta.url);
 /** 探す範囲（1920×1080）。照準は的を追うので広めに取る */
 const SEARCH = { x: 400, y: 250, w: 1200, h: 450 };
 /** 数字とみなす明るさ（max(R,G,B)） */
 const THRESHOLD = 200;
 /** 数字の連結成分の大きさ（録画 0099 で高さ 18〜20px・幅 4〜12px） */
 const DIGIT_H = { min: 17, max: 22 };
+/** --style box の数字の高さ。残弾が少ないと赤くなり、明るい芯だけが残って 15〜16px になる（録画 0960 の f1230） */
+const BOX_DIGIT_H = { min: 13, max: 22 };
 const DIGIT_W = { min: 3, max: 14 };
 /** 桁の中心の間隔（録画 0099 で 13〜15px）と、桁の上端のずれの許し */
 const PITCH = { min: 12, max: 17 };
@@ -55,8 +64,12 @@ const { values, positionals } = parseArgs({
     to: { type: 'string' },
     max: { type: 'string', default: '300' },
     'make-templates': { type: 'string' },
+    style: { type: 'string', default: 'default' },
   },
 });
+if (values.style !== 'default' && values.style !== 'box') throw new Error(`--style は default か box: ${values.style}`);
+const templateFile = values.style === 'box' ? BOX_TEMPLATE_FILE : TEMPLATE_FILE;
+const digitH = values.style === 'box' ? BOX_DIGIT_H : DIGIT_H;
 
 const video = positionals[0];
 if (!video) {
@@ -95,7 +108,7 @@ function digitComponents(bright: Uint8Array): Comp[] {
     }
     const ch = c.y1 - c.y0 + 1;
     const cw = c.x1 - c.x0 + 1;
-    if (ch >= DIGIT_H.min && ch <= DIGIT_H.max && cw >= DIGIT_W.min && cw <= DIGIT_W.max) comps.push(c);
+    if (ch >= digitH.min && ch <= digitH.max && cw >= DIGIT_W.min && cw <= DIGIT_W.max) comps.push(c);
   }
   return comps.sort((a, b) => a.x0 - b.x0);
 }
@@ -234,7 +247,11 @@ async function makeTemplates(spec: string): Promise<void> {
     const value = samples.get(frame);
     if (value === undefined) continue;
     const cells = cellsOf(rgb);
-    if (cells === null) throw new Error(`フレーム ${frame} で表示の 3 桁が見つからない`);
+    if (cells === null) {
+      // 照準にダメージの数字が重なったフレームなど。数字ごとの見本がそろえばよいので、飛ばして知らせる
+      console.error(`フレーム ${frame} で表示の 3 桁が見つからない（飛ばす）`);
+      continue;
+    }
     cells.patches.forEach((p, i) => {
       const d = value[i]!;
       sums[d] ??= p.map(() => 0);
@@ -253,8 +270,8 @@ async function makeTemplates(spec: string): Promise<void> {
         .map(([d, s]) => [d, s.map((v) => round(v / counts[d]!))]),
     ),
   };
-  writeFileSync(TEMPLATE_FILE, JSON.stringify(templates) + '\n');
-  console.log(`wrote ${TEMPLATE_FILE.pathname}（数字ごとの見本数 ${JSON.stringify(counts)}）`);
+  writeFileSync(templateFile, JSON.stringify(templates) + '\n');
+  console.log(`wrote ${templateFile.pathname}（数字ごとの見本数 ${JSON.stringify(counts)}）`);
 }
 
 async function readAll(first: number, last: number | undefined, t: Templates): Promise<Reading[]> {
@@ -295,6 +312,8 @@ function clean(readings: Reading[]): Reading[] {
       const offPrev = Math.abs(r.value - prev.value);
       const offNext = Math.abs(r.value - next.value);
       if (offPrev > 25 && offNext > 25) continue;
+      // --style box: 1 桁の表示は 8 と 9 などを読み違えやすい。前後が同じ値で、間の 1 フレームだけ違う読みは落とす
+      if (values.style === 'box' && prev.value === next.value && r.value !== prev.value) continue;
     }
     out.push(r);
   }
@@ -322,7 +341,8 @@ function magazines(readings: Reading[]): Magazine[] {
   let prev: Reading | null = null;
   for (const r of readings) {
     // リロードの後: 最大の表示が、前の読みより大きく、前の読みが小さい（0 か、読めない間の後）
-    const reloaded = prev !== null && r.value === max && (prev.value < max - 50 || r.frame - prev.frame > 60);
+    const reloaded =
+      prev !== null && r.value === max && (prev.value < max - Math.min(50, max - 1) || r.frame - prev.frame > 60);
     if (cur === null || reloaded) {
       if (cur !== null) mags.push(cur);
       cur = { start: r.frame, startValue: r.value, drops: 0, ups: [], gaps: 0 };
@@ -346,7 +366,7 @@ function magazines(readings: Reading[]): Magazine[] {
 if (values['make-templates'] !== undefined) {
   await makeTemplates(values['make-templates']);
 } else {
-  const t = JSON.parse(readFileSync(TEMPLATE_FILE, 'utf8')) as Templates;
+  const t = JSON.parse(readFileSync(templateFile, 'utf8')) as Templates;
   const from = Number(values.from);
   const to = values.to === undefined ? undefined : Number(values.to);
   const readings = clean(await readAll(from, to, t));
