@@ -35,7 +35,8 @@ import {
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
 import { type GrantTimedFields, parseTimedEffect, parseTimedFields } from './timed.ts';
-import { parseAppliedTrigger, parseCounterFullTrigger, parseTrigger } from './trigger.ts';
+import { parseTargetCount } from './target.ts';
+import { parseAppliedTrigger, parseCounterFullTrigger, parseTimerDelayFrames, parseTrigger } from './trigger.ts';
 
 /** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
 const STATE_GRANT_VALUE_KEYS = ['stat', 'ref', 'scaling', 'decrease'] as const;
@@ -516,26 +517,33 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
  */
 export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): RemoveDebuffEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'trigger', 'target', 'count', 'pick', 'delayFrames', 'assumes', 'claims'].includes(key)) {
+    if (
+      ![
+        'kind',
+        'trigger',
+        'target',
+        'count',
+        'targetCount',
+        'targetCountRef',
+        'delayFrames',
+        'assumes',
+        'claims',
+      ].includes(key)
+    ) {
       fail(`${path}.${key}`, 'unknown field');
     }
   }
   const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
-  if (v.target !== 'allies' && v.target !== 'debuffedRandom') {
-    fail(`${path}.target`, `expected "allies" or "debuffedRandom", got ${JSON.stringify(v.target)}`);
-  }
+  const target = oneOf(['allies', 'debuffedRandom'] as const, v.target, `${path}.target`);
   const effect: RemoveDebuffEffect = {
     kind: 'removeDebuff',
     trigger,
-    target: v.target,
+    target,
     count: parsePositiveInt(v.count, `${path}.count`),
+    ...parseTargetCount(v, target, path),
   };
-  if (v.target === 'debuffedRandom') effect.pick = parsePositiveInt(v.pick, `${path}.pick`);
-  else if (v.pick !== undefined) fail(`${path}.pick`, 'pick is only for target "debuffedRandom"');
-  if (v.delayFrames !== undefined) {
-    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
-    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
-  }
+  const delayFrames = parseTimerDelayFrames(v.delayFrames, trigger, `${path}.delayFrames`);
+  if (delayFrames !== undefined) effect.delayFrames = delayFrames;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

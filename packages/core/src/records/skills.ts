@@ -291,7 +291,7 @@ export function effectLabel(e: SkillEffect): string {
       : e.kind === 'removeState'
         ? e.state
         : e.kind === 'removeDebuff'
-          ? `デバフ ${e.count} 個${e.target === 'debuffedRandom' ? `（デバフのかかった味方 ${e.pick} 機）` : ''}`
+          ? `デバフ ${e.count} 個${e.target === 'debuffedRandom' ? `（デバフのかかった味方 ${e.targetCount ?? `値 ${e.targetCountRef}`} 機）` : ''}`
           : e.kind === 'stackChange'
             ? `${e.state}${e.decrease ? '（減少）' : ''}`
             : e.kind === 'counterChange'

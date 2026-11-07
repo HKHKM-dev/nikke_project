@@ -8,7 +8,6 @@ import {
   type HealEffect,
   type InstantEffect,
   type InstantKind,
-  isTimerTrigger,
   isWeaponChangeEndTrigger,
 } from '../types.ts';
 import { fail, type Json, oneOf, parseDuration, parseLocalizedText, parsePositiveInt, parseRef } from './common.ts';
@@ -22,7 +21,7 @@ import {
   parseTargetWeapon,
   validateBurstUsersTarget,
 } from './target.ts';
-import { parseShotCountDelay, parseTrigger } from './trigger.ts';
+import { parseShotCountDelay, parseTimerDelayFrames, parseTrigger } from './trigger.ts';
 
 /** 2 段目の段 15 の PR 2: 遮蔽物 HP 回復。段 17 の PR 1: 対象は自分か味方全体 */
 export function parseCoverHealEffect(v: Record<string, Json>, path: string): CoverHealEffect {
@@ -53,10 +52,8 @@ export function parseCoverHealEffect(v: Record<string, Json>, path: string): Cov
     ref: parseRef(v.ref, `${path}.ref`),
     ...parseTargetCount(v, v.target, path),
   };
-  if (v.delayFrames !== undefined) {
-    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
-    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
-  }
+  const delayFrames = parseTimerDelayFrames(v.delayFrames, trigger, `${path}.delayFrames`);
+  if (delayFrames !== undefined) effect.delayFrames = delayFrames;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

@@ -1858,25 +1858,34 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 課題 2-59: デバフ解除の発火 1 つ。発火のフレーム at に効いている、味方のデバフの印の付いた状態の件（解除不可を除く）を、対象の味方ごとに
    * 状態を count 個まで（付いたのが早い順）、スタックごと閉じる
    */
+  /** 課題 2-59: 持ち主ごとの、デバフの印の付いた状態（解除不可を除く）の件の列。件の列は組み立ての後に増えないので、初めての発火で作る */
+  let debuffTracks: Map<NamedStateId, HeldTrack[]>[] | undefined;
   const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
-    if (at >= frames) return;
-    const debuffsOf = (holder: number): Map<NamedStateId, HeldTrack[]> => {
-      const out = new Map<NamedStateId, HeldTrack[]>();
+    debuffTracks ??= slots.map((_, holder) => {
+      const byState = new Map<NamedStateId, HeldTrack[]>();
       for (const track of tracks) {
         const o = track.origin;
         if (track.holder !== holder || o.kind !== 'state' || !namedStateIsDebuff(o.state)) continue;
-        if (o.grant.undispellable === true || activeAt(track, at).length === 0) continue;
-        out.set(o.state, [...(out.get(o.state) ?? []), track]);
+        if (o.grant.undispellable === true) continue;
+        const list = byState.get(o.state);
+        if (list === undefined) byState.set(o.state, [track]);
+        else list.push(track);
       }
-      return out;
-    };
-    let holders = slots.flatMap((s, holder) => (s === null || debuffsOf(holder).size === 0 ? [] : [holder]));
-    if (src.effect.target === 'debuffedRandom') holders = holders.slice(0, src.effect.pick);
-    for (const holder of holders) {
-      const firstStart = (ts: HeldTrack[]): number =>
-        Math.min(...ts.flatMap((t) => activeAt(t, at).map((it) => it.start)));
-      const states = [...debuffsOf(holder).values()].sort((a, b) => firstStart(a) - firstStart(b));
-      for (const ts of states.slice(0, src.effect.count)) for (const track of ts) closeTrack(track, at);
+      return byState;
+    });
+    // 持ち主ごとに、at に効いている状態と、その最も早い始まり
+    let targets = debuffTracks
+      .map((byState) =>
+        [...byState.values()].flatMap((ts) => {
+          const starts = ts.flatMap((t) => activeAt(t, at).map((it) => it.start));
+          return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
+        }),
+      )
+      .filter((states) => states.length > 0);
+    if (src.effect.target === 'debuffedRandom') targets = targets.slice(0, src.effect.pick);
+    for (const states of targets) {
+      states.sort((a, b) => a.firstStart - b.firstStart);
+      for (const { tracks: ts } of states.slice(0, src.effect.count)) for (const track of ts) closeTrack(track, at);
     }
   };
   /**

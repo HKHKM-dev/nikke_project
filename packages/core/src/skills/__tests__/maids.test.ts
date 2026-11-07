@@ -73,10 +73,10 @@ describe('removeDebuff の検証', () => {
     expect(namedStateIsDebuff('hangover')).toBe(false);
   });
 
-  it('needs pick only for debuffedRandom, a known target, and delayFrames only with a timer trigger', () => {
-    expect(patched(COCOA, 'burst', burst, { pick: 2 })).toThrow(/pick is only for target "debuffedRandom"/);
-    expect(patched(COCOA, 'skill1', s1, { pick: undefined })).toThrow(/pick/);
-    expect(patched(COCOA, 'burst', burst, { target: 'self' })).toThrow(/expected "allies" or "debuffedRandom"/);
+  it('needs targetCount only for debuffedRandom, a known target, and delayFrames only with a timer trigger', () => {
+    expect(patched(COCOA, 'burst', burst, { targetCount: 2 })).toThrow(/targetCount \/ targetCountRef are only allowed/);
+    expect(patched(COCOA, 'skill1', s1, { targetCount: undefined })).toThrow(/exactly one of targetCount/);
+    expect(patched(COCOA, 'burst', burst, { target: 'self' })).toThrow(/target/);
     expect(patched(COCOA, 'burst', burst, { delayFrames: 3 })).toThrow(/delayFrames needs a timer trigger/);
     expect(patched(COCOA, 'burst', burst, { count: 0 })).toThrow(/count/);
   });

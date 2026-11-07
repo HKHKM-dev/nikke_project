@@ -28,7 +28,7 @@
             "everySeconds": 15
           },
           "target": "debuffedRandom",
-          "pick": 2,
+          "targetCount": 2,
           "count": 1,
           "delayFrames": 3,
           "assumes": {

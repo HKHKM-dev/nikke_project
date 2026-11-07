@@ -10,6 +10,7 @@ import {
   type BuffTarget,
   BURST_USERS_TRIGGERS,
   type CoverHealEffect,
+  type RemoveDebuffEffect,
   type EffectTrigger,
   isCountedTarget,
   isEnemyHeldStat,
@@ -133,7 +134,7 @@ export function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrig
 /** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime（対象の語彙編）のときだけ、ちょうど片方 */
 export function parseTargetCount(
   v: Record<string, Json>,
-  target: BuffTarget | CoverHealEffect['target'],
+  target: BuffTarget | CoverHealEffect['target'] | RemoveDebuffEffect['target'],
   path: string,
 ): TargetCountFields {
   const hasCount = v.targetCount !== undefined;
@@ -142,7 +143,7 @@ export function parseTargetCount(
     if (hasCount || hasRef)
       fail(
         path,
-        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime", "lowestHpRatio" or "lowestCoverHp", got "${target}"`,
+        `targetCount / targetCountRef are only allowed with target "topAttack", "longestChargeTime", "lowestHpRatio", "lowestCoverHp" or "debuffedRandom", got "${target}"`,
       );
     return {};
   }

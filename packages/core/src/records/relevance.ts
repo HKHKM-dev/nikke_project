@@ -19,7 +19,7 @@ import {
   type SkillEntry,
   type SkillNote,
 } from '../skills/types.ts';
-import type { NamedStateId } from '../skills/states.ts';
+import { namedStateIsDebuff, type NamedStateId } from '../skills/states.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import type { SkillSlot } from '../types.ts';
 import { markElements, type Claim, type ClaimState, type ClaimWhen } from './claims.ts';
@@ -291,7 +291,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
             skillSlot: slot,
             effectRef: { rid: member.rid, root, slot, index },
             claims: [...(e.claims ?? []), ...refs.flatMap(({ note }) => note.claims ?? [])],
-            ...(e.reads === undefined ? {} : { reads: e.reads }),
+            ...readsOf(e),
           });
           // 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 中身の項目に claims があれば、項目を 1 つの要素にする
           // （付与の要素は状態の窓。中身の値の根拠は項目の claims）
@@ -554,6 +554,22 @@ function elementsOfTeam(recording: RecordingEntry, ctx: RelevanceContext): Minim
 }
 
 /** 2 段目の段 7: 防御力▲ だけの効果（状態の中身が防御力▲ だけの付与も）。与ダメージの式を読まない */
+/**
+ * 効果の要素が間接の経路を動かす側なら、その経路（notes の path と違い、未確定の判定は効果の結論で見る）。防御力▲ だけの効果は defense
+ * （2 段目の段 7）、デバフ解除は debuff（課題 2-59。plan/design-debuff-removal.md 2.0 節）
+ */
+function effectMoverPathOf(element: MinimalElement): IndirectPath | undefined {
+  if (isDefenseOnly(element)) return 'defense';
+  return element.shape?.kind === 'removeDebuff' ? 'debuff' : undefined;
+}
+
+/** 効果の読む側の印。書いた reads に、デバフの印の付いた状態の付与は debuff を足す（課題 2-59。目録の印から導く） */
+function readsOf(e: SkillEffect): { reads?: IndirectPath[] } {
+  const reads = new Set(e.reads ?? []);
+  if (e.kind === 'state' && namedStateIsDebuff(e.state)) reads.add('debuff');
+  return reads.size === 0 ? {} : { reads: [...reads] };
+}
+
 function isDefenseOnly(element: MinimalElement): boolean {
   const shape = element.shape;
   if (element.type !== 'effect' || shape === undefined) return false;
@@ -576,10 +592,7 @@ export function notRelevantReason(
   // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素は、同じ経路を読む要素が編成にいて、その要素がこの録画で起きえて
   // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）。2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 防御力▲ の
   // 効果も与ダメージの式を読まず、防御力を読む側を通してだけ値に効くので、経路 defense の間接の要素と同じに見る
-  // 課題 2-59（plan/design-debuff-removal.md 2.0 節）: デバフ解除の効果も、デバフの状態を付ける側（経路 debuff を読む側）を通してだけ値に効く
-  const path =
-    element.path ??
-    (isDefenseOnly(element) ? 'defense' : element.shape?.kind === 'removeDebuff' ? 'debuff' : undefined);
+  const path = element.path ?? effectMoverPathOf(element);
   if (path !== undefined) {
     const readers = elementsOfTeam(recording, ctx).filter((r) => r.reads?.includes(path));
     const name = INDIRECT_PATH_NAMES[path].ja;

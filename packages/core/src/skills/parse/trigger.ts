@@ -16,6 +16,7 @@ import {
   FIRING_WINDOWS,
   isChanceTrigger,
   isShotCountTrigger,
+  isTimerTrigger,
   type SelfHpAtMostTrigger,
   SHOT_COUNT_KINDS,
   SHOT_COUNT_RESETS,
@@ -42,6 +43,13 @@ export function parseShotCountDelay(v: Json, trigger: EffectTrigger, path: strin
  * 文字列なら BuffTrigger、オブジェクトなら回数トリガー。時間の周期のトリガー（{ everySeconds }）は allowTimer のとき
  * （damage・dot・autoAttack・burstGaugeHit・timed・heal）だけ
  */
+/** 時間の周期のきっかけの発動から効果までのフレーム（delayFrames。coverHeal・removeDebuff）。書かなければ undefined */
+export function parseTimerDelayFrames(v: Json, trigger: EffectTrigger, path: string): number | undefined {
+  if (v === undefined) return undefined;
+  if (!isTimerTrigger(trigger)) fail(path, 'delayFrames needs a timer trigger ({ everySeconds })');
+  return parsePositiveInt(v, path);
+}
+
 export function parseTrigger(
   v: Json,
   path: string,
