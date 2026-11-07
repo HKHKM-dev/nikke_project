@@ -2,7 +2,7 @@
 
 - 何のための文書か: backlog 5 節の行（`records/backlog/split-skill-holders.json`。`holders.ts` と `types.ts` に残る型の部分を、並行する PR の衝突を減らすために分ける）について、衝突の実態を履歴から数え、分け方の案を比べて決める。
 - 関連: PR の衝突の頻度と原因のファイル（[design-pr-conflicts.md](design-pr-conflicts.md) 1・2 節。数え方もそこにならった）、読み込みの検査を `types.ts` から `skills/parse/` に分けた回（#911。設計書なし）。
-- 状態: 承認待ち
+- 状態: 完了（案 0。分けない）
 
 ## 1. 調べ方
 
@@ -144,3 +144,4 @@
 ## 6. 経過
 
 - 2026-11-07: 起案。
+- 2026-11-07: オーナーが案 0（分けない）に決めた。backlog の行を閉じた。
