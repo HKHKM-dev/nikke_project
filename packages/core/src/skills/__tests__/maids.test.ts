@@ -74,7 +74,9 @@ describe('removeDebuff の検証', () => {
   });
 
   it('needs targetCount only for debuffedRandom, a known target, and delayFrames only with a timer trigger', () => {
-    expect(patched(COCOA, 'burst', burst, { targetCount: 2 })).toThrow(/targetCount \/ targetCountRef are only allowed/);
+    expect(patched(COCOA, 'burst', burst, { targetCount: 2 })).toThrow(
+      /targetCount \/ targetCountRef are only allowed/,
+    );
     expect(patched(COCOA, 'skill1', s1, { targetCount: undefined })).toThrow(/exactly one of targetCount/);
     expect(patched(COCOA, 'burst', burst, { target: 'self' })).toThrow(/target/);
     expect(patched(COCOA, 'burst', burst, { delayFrames: 3 })).toThrow(/delayFrames needs a timer trigger/);
