@@ -61,10 +61,11 @@ describe('ココアの定義', () => {
   it('has only the S1 cover heal as an effect (the other slots are notes only)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
     expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal']);
-    for (const slot of ['skill2', 'burst'] as const) {
-      expect(def.skills[slot].support).toBe('noEffect');
-      expect(def.skills[slot].effects).toEqual([]);
-    }
+    for (const slot of ['skill2', 'burst'] as const) expect(def.skills[slot].effects).toEqual([]);
+    expect(def.skills.skill2.support).toBe('noEffect');
+    // デバフ解除がほろ酔いを外すこと（C-0976）は未対応の notes（課題 2-59）
+    expect(def.skills.skill1.support).toBe('partial');
+    expect(def.skills.burst.support).toBe('unsupported');
   });
 });
 
