@@ -37,7 +37,8 @@
             "en": "Iai fires once per normal attack shot (also on a missed shot), 6 frames after the shot, and charges two shooter hits of burst gauge (V-0675; plan/design-new-chars-1029.md 12.2 b, c, e). It is read as also firing on the shots of the weapon change (Beyond the Fade: Full Bloom; issue H; unchecked)"
           },
           "claims": [
-            "C-0955"
+            "C-0955",
+            "C-0969"
           ]
         },
         {
@@ -54,7 +55,10 @@
           "assumes": {
             "ja": "S2 の臨戦：身剣合一の効果 3「居合の追加ダメージ倍率が 100% 効果量に対し増加」は、身剣合一の間の居合を 1 つのヒットで倍率 2 倍（218%）にする（会心は 1 回だけ決まる。V-0679）。モデルは居合と同じ値・同じフレームの 2 つ目の効果の和で書く（期待値は同じ。フルバーストの間はゲージが溜まらないので、ヒットの数はモデルの値に効かない）",
             "en": "S2's Into the Fray: At One With the Sword Effect 3 makes Iai a single hit with twice the multiplier (218%) while At One With the Sword lasts (critical is rolled once; V-0679). The model writes it as a second effect of the same value on the same frame (same expectation; gauge does not fill during Full Burst, so the number of hits does not affect the model)"
-          }
+          },
+          "claims": [
+            "C-0969"
+          ]
         },
         {
           "kind": "timed",
@@ -62,7 +66,10 @@
           "target": "self",
           "stat": "critDamage",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-0970"
+          ]
         }
       ],
       "notes": [
@@ -112,7 +119,8 @@
             "en": "Critical hits are counted by adding, per shot, the expected hits times that shot's normal attack critical rate (the randomness is kept as an expectation). Shots of Beyond the Fade: Full Bloom (the weapon change) are counted too, and a count reached on such a shot does not reload (plan/design-new-chars-1029.md 5.7)"
           },
           "claims": [
-            "C-0956"
+            "C-0956",
+            "C-0971"
           ]
         },
         {
@@ -135,7 +143,10 @@
           "assumes": {
             "ja": "効果 1・2・3 の維持（description_value_04・06・07）はどれも 10 秒なので、状態の維持にそろえた。効果 3（居合の倍率の増加）は S1 の効果（身剣合一の間の居合）に書いた",
             "en": "The durations of Effects 1, 2 and 3 (description_value_04, 06 and 07) are all 10 s, so they follow the state's duration. Effect 3 (the Iai multiplier increase) is written in S1 (Iai while At One With the Sword lasts)"
-          }
+          },
+          "claims": [
+            "C-0968"
+          ]
         }
       ],
       "notes": []
@@ -152,7 +163,10 @@
           "assumes": {
             "ja": "変更後の武器のレートは CDN の changeWeapon（90rpm）。1 発 1 ヒットで、コアに当たる割合は基礎の武器と同じ弾の種類 InstantBox の行（どの区間もコア）。撃っても残弾を減らさない（10 秒の窓に 15 発をリロードなしで撃つ。装弾数が無限か 15 以上かは分けられない）。最初の発は持ち替え（フルバーストの始まり）の時の基礎の武器の状態から数える（firstShotAfterSwapFrames 0。III のタイマーの 00.00 の 35f 後。V-0679。plan/design-new-chars-1029.md 13.2 節の b・c）",
             "en": "The changed weapon fires at the CDN changeWeapon rate (90 rpm), one hit per shot, with the same InstantBox core row as the base weapon (core in every segment). Shots do not use ammo (15 shots without a reload in the 10 s window; infinite ammo and 15 or more cannot be told apart). The first shot is counted from the state of the base weapon at the swap (the start of Full Burst; firstShotAfterSwapFrames 0, 35 frames after the III timer shows 00.00) (V-0679; plan/design-new-chars-1029.md 13.2 b, c)"
-          }
+          },
+          "claims": [
+            "C-0965"
+          ]
         },
         {
           "kind": "timed",
@@ -160,7 +174,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-0966"
+          ]
         },
         {
           "kind": "damage",
@@ -171,7 +188,10 @@
           "assumes": {
             "ja": "照準線に最も近い敵 1 機（敵 1 体の前提で的）に 1 回。バースト使用の 11f 後（フルバーストの始まりの 5f 後。マリアン：クイーンのバーストスキルダメージと同じ読み）に出て、同じ発動の攻撃力▲・身剣合一の攻撃ダメージ▲とフルバースト補正が乗る（V-0679。plan/design-new-chars-1029.md 13.2 節の a）。出たフレームは HUD の読めない間のどこかまでしか決まらない。ゲージは読んでいない（フルバーストの間）",
             "en": "Once on the enemy nearest to the crosshair (the target under the single-enemy premise). It lands 11 frames after the burst use (5 frames after the start of Full Burst, read the same way as Marian: Queen's burst skill damage) and takes the ATK and Attack Damage buffs of the same activation and the Full Burst bonus (V-0679; plan/design-new-chars-1029.md 13.2 a). The frame is only bounded to the span where the HUD cannot be read. Gauge is not read (during Full Burst)"
-          }
+          },
+          "claims": [
+            "C-0967"
+          ]
         }
       ],
       "notes": [
