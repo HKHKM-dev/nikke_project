@@ -1,0 +1,40 @@
+{
+  "id": "0971",
+  "date": "2026-11-07",
+  "folder": "range",
+  "file": "20261107-0971_mg_mast-romantic-maid_cocoa-auto.mp4",
+  "original": "2026-11-07 21-44-30.mp4",
+  "durationSec": 199.7,
+  "frames": 11979,
+  "fps": 60,
+  "sizeMB": 288.2,
+  "sha256": "5b0e53a53c82",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0686 の撮影 A。ココア（I）・マスト：ロマンチックメイド（II・操作）。III なし。オート射撃 ON・オートバースト ON。火の的。編成画面では 1 枠目と 3 枠目に置いた（台帳の枠は詰めて 1・2）。戦闘履歴のパネルは無く、リザルト画面で止めた。枠は戦闘中の顔と属性（灼熱・水冷）で確かめた",
+  "backup": {
+    "at": "2026-11-07T21:54+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
