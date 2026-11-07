@@ -16,6 +16,7 @@ import {
   isCheckSetting,
   MAX_CHANGED_FILES,
   nulPaths,
+  oversizedDocs,
   pathListArgs,
   progressCopies,
   rebaseOutcome,
@@ -368,5 +369,28 @@ describe('checkSteps', () => {
     expect(() => checkSteps(`${ci} && tsc -b`)).toThrow('tsc -b');
     expect(() => checkSteps('npm run lint && npm test')).toThrow('format:check');
     expect(() => checkSteps(undefined)).toThrow('npm run ci の段が無い');
+  });
+});
+
+describe('oversizedDocs', () => {
+  const sizes: Record<string, number> = {
+    'plan/captures/guide.md': 50_001,
+    'plan/design-x.md': 50_000,
+    'records/verifications/V-0001-a.md': 30_001,
+    'records/verifications/README.md': 40_000,
+    'plan/claims.md': 900_000,
+    'tools/big.ts': 90_000,
+  };
+  const sizeOf = (p: string) => sizes[p];
+
+  it('lists hand-written markdown over 50KB, and verifications over 30KB', () => {
+    expect(oversizedDocs(Object.keys(sizes), ['plan/claims.md'], sizeOf)).toEqual([
+      { path: 'plan/captures/guide.md', size: 50_001, limit: 50_000 },
+      { path: 'records/verifications/V-0001-a.md', size: 30_001, limit: 30_000 },
+    ]);
+  });
+
+  it('skips files the branch deleted', () => {
+    expect(oversizedDocs(['plan/gone.md'], [], sizeOf)).toEqual([]);
   });
 });

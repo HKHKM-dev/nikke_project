@@ -276,3 +276,24 @@ export function checkSteps(ci: string | undefined): string[] {
     if (!steps.includes(s)) throw new Error(`npm run ci に ${s} の段が無い（pr:prep の絞り込みを見直す）`);
   return steps.filter((s) => !CHANGED_ONLY_STEPS.includes(s));
 }
+
+/** 手書きの文書の大きさの目安（バイト。AGENTS.md「文書の書き方」）。検証記録は 30KB、ほかは 50KB */
+export const DOC_SIZE_LIMIT = 50_000;
+export const VERIFICATION_SIZE_LIMIT = 30_000;
+
+/**
+ * ブランチで変えた手書きの .md のうち、大きさの目安を超えたもの（plan/design-workflow-simplification-10.md 1 節）。生成物は見ない。
+ * 凍結の文書はブランチで変えないので、変えたファイルだけを見れば入らない。sizeOf はファイルのバイト数（消したファイルは undefined）
+ */
+export function oversizedDocs(
+  changed: readonly string[],
+  generated: readonly string[],
+  sizeOf: (path: string) => number | undefined,
+): { path: string; size: number; limit: number }[] {
+  return changed.flatMap((path) => {
+    if (!path.endsWith('.md') || generated.includes(path)) return [];
+    const size = sizeOf(path);
+    const limit = /^records\/verifications\/V-[^/]+\.md$/.test(path) ? VERIFICATION_SIZE_LIMIT : DOC_SIZE_LIMIT;
+    return size !== undefined && size > limit ? [{ path, size, limit }] : [];
+  });
+}
