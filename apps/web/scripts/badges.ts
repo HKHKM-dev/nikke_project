@@ -2,6 +2,13 @@
 // （plan/design-modern-ui.md 2.5 節）。
 //   npm run badges:build
 // バッジを直すときは badges-src のほうを Inkscape で直し、これを回す。書き出したものが元と合っているかは badges.test.ts が見る。
+//
+// ファイル名の命名規則: <グループ>_<値>[-<変種>].svg
+// - グループ: キャラのデータ（CharacterIndexEntry）にある項目は、その項目名のまま（element・burstStep・class・weaponType・
+//   rarity・corporation）。データに無いものは camelCase の英単語（burst・collection・ui）
+// - 値: データにある項目は、データの値を大文字小文字までそのまま（Fire・Step1・AllStep・ELYSION など）。データに無いものは小文字の英語
+// - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（collection の上限に達した版は -max）
+// - 並びの番号は付けない（並びは使う側のコードが決める）
 import { readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { optimize } from 'svgo';
@@ -11,7 +18,7 @@ export const BADGE_OUT_DIR = fileURLToPath(new URL('../src/assets/badges', impor
 
 export const svgFiles = (dir: string): string[] => readdirSync(dir).filter((f) => f.endsWith('.svg'));
 
-/** 元の SVG を小さくする。convertTransform は切る（corp_3tetra の反転を含む変換が別の変換に書き換わり、図柄が崩れる） */
+/** 元の SVG を小さくする。convertTransform は切る（corporation_TETRA の反転を含む変換が別の変換に書き換わり、図柄が崩れる） */
 export function optimizeBadge(svg: string): string {
   return optimize(svg, {
     multipass: true,
