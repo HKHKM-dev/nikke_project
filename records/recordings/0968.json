@@ -1,0 +1,46 @@
+{
+  "id": "0968",
+  "date": "2026-11-07",
+  "folder": "range",
+  "file": "20261107-0968_mg_mast-romantic-maid_cocoa-dispel.mp4",
+  "original": "2026-11-07 19-34-56.mp4",
+  "durationSec": 200.4,
+  "frames": 12025,
+  "fps": 60,
+  "sizeMB": 279.5,
+  "sha256": "44741718d237",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0684 の撮影。I-DOLL・フラワー（I）・ココア（I）・マスト：ロマンチックメイド（II・操作）。III なし。オート射撃 ON・オートバースト OFF（I の段で押すキャラを手で選ぶ）。火の的。オーナーの報告: ほろ酔いのスタックが溜まらず、3 スタックの時のココアのバーストは撮れなかった",
+  "backup": {
+    "at": "2026-11-07T19:41+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
