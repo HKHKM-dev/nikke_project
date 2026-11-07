@@ -359,7 +359,8 @@ function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>):
 /** 命中率の和 N のキー（負の数の文字列） */
 function parseHitRateKey(key: string, path: string): void {
   const n = Number(key);
-  if (key.trim() === '' || !Number.isFinite(n) || n >= 0) throw new TypeError(`${path}.${key}: key must be a negative number`);
+  if (key.trim() === '' || !Number.isFinite(n) || n >= 0)
+    throw new TypeError(`${path}.${key}: key must be a negative number`);
 }
 
 /** 命中率▼の表（types.ts の HitRateDownTable） */
@@ -450,7 +451,9 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
             FRAMES,
           ),
         }),
-    ...(v.hitRateDown === undefined ? {} : { hitRateDown: parseHitRateDown(v.hitRateDown, `${path}.hitRateDown`, keys) }),
+    ...(v.hitRateDown === undefined
+      ? {}
+      : { hitRateDown: parseHitRateDown(v.hitRateDown, `${path}.hitRateDown`, keys) }),
     source: v.source,
   };
 }
