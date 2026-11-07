@@ -1,0 +1,12 @@
+{
+  "id": "C-0982",
+  "text": "OL のオプションの行の function_battlepower（戦闘力の K に足す値。C-0981）は、属性ダメージが round(82.8 × Lv)、ほかの 8 つが 69 × Lv",
+  "state": "仮説",
+  "topic": "育成・ステータス",
+  "grade": "推論",
+  "basis": "V-0685: 4 回の育成データの取得の stateEffects に出た OL のオプション × Lv の function_battlepower が全部この規則に合う。9 オプション × Lv 1〜15 のうち取得に出ていない組は、この規則からの予想",
+  "model": "未実装（戦闘力の計算と同じく、モデルに無い）",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "decidedOn": []
+}

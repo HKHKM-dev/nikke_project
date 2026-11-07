@@ -97,3 +97,7 @@
 - NIKKE wiki JP ゲームシステム: https://wiki3.jp/nikke/page/26
 - 射撃場の敵の防御力（はぴくろ）: https://note.com/hapiclo_leaves/n/nc37e129024a7
 - NIKKE 覚え書き「武器」（anaut）: https://note.com/unifla/n/nfcdb98ee9226
+
+## 戦闘力の式の解説
+
+- nikke.gg「Combat Power (CP)」: https://nikke.gg/combat-power-cp/ 。攻撃力・HP・防御力・会心・スキル Lv からの式（係数と取得の値との突き合わせは V-0685）
