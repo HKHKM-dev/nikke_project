@@ -1,4 +1,4 @@
-// モダン UI のバッジ（旧プロジェクトの SVG。plan/design-modern-ui.md 2.5 節）。
+// モダン UI のバッジ（plan/design-modern-ui.md 2.5 節）。assets/badges は apps/web/badges-src から npm run badges:build で書き出したもの。
 // どれも vite.config.ts の assetsInlineLimit 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
 // 属性の色はバッジの図柄の色で、styles.css の [data-element] が --el に置く。
 import { ELEMENT_LABEL, WEAPON_LABEL, type CharacterIndexEntry } from '@nikke/core';
