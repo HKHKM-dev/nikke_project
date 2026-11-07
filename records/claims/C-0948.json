@@ -5,9 +5,9 @@
   "topic": "射撃（間隔・リロード・チャージ）",
   "grade": "反復実測",
   "basis": "クイーン（真）（SG）単騎・AUTO の 2 本・8 回の窓の明けの最初の発（照準の横の残弾の減り）: `0103-23`・`0104-14`。構えの終わりに照準がもう的の上にあった 3 回は動き出しから 11f、的の外にあった 5 回は 17〜23f で撃ち、読めた 3 回は照準の中心が的の外接矩形に入ってから 0〜7f の後だった。問い（SG は AR・SMG のように待つか、MG のように待たないか）は読む前に固定した（plan/design-auto-aim.md 2 節 Q2）。ほかの SG のキャラは読んでいない。V-0670",
-  "model": "**未実装**（`frame/shooter.ts` の `unhideShooter` は明けから 12f で撃つ。SG の自動の枠にも、AR・SMG と同じ未実装の注記 `landing-aim-wait` を出す（`frame/landing.ts`））",
+  "model": "**未実装**（`frame/shooter.ts` の `unhideShooter` は明けから 12f で撃つ。AR・SMG（C-0291）と同じく、画面の「未対応・近似・仮定の一覧」の「モデル全体」に近似として 1 行だけ出す（`apps/web/src/components/NotesSummary.tsx` の `MODEL_WIDE`。2026-11-07 のオーナーの判断で、枠ごとの注記をやめた。plan/design-landing-aim.md 10 節））",
   "replaces": [],
-  "updated": "2026-11-05",
+  "updated": "2026-11-07",
   "subject": {
     "mechanism": "firing"
   },

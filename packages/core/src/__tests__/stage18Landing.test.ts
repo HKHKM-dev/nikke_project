@@ -637,7 +637,7 @@ describe('編成（自動の条件）', () => {
     }
   });
 
-  it('writes the notes: table, mix, unmeasured cells, RL/SR first shot, MG spin-up, and unmeasured landings', () => {
+  it('writes the notes: table, mix, unmeasured cells, MG spin-up, and unmeasured landings', () => {
     const codes = (c: CharacterData, duration = 180, target = profile) =>
       runTeam({
         slots: [slot(c, true)],
@@ -651,10 +651,9 @@ describe('編成（自動の条件）', () => {
         },
         durationSeconds: duration,
       }).slots[0]!.notes.map((n) => n.code);
-    expect(codes(AR)).toEqual(['hit-rate', 'auto-condition', 'landing-aim-wait']);
+    expect(codes(AR)).toEqual(['hit-rate', 'auto-condition']);
     expect(codes(RL)).not.toContain('hit-rate');
-    expect(codes(SG)).toEqual(['hit-rate', 'auto-condition', 'landing-aim-wait']);
-    expect(codes(RL)).toContain('landing-first-shot-miss');
+    expect(codes(SG)).toEqual(['hit-rate', 'auto-condition']);
     // SR・RL の弾丸命中率は 1（C-0168）なので、未測定の注記は出ない
     expect(codes(RL)).not.toContain('auto-condition-unmeasured');
     // C-0171: 外す側の弾の種類の RL で行が未測定（null と明記）なら、コア命中率が未測定で、遠で外す注記が出る。直進弾 400 には出ない。
@@ -681,8 +680,8 @@ describe('編成（自動の条件）', () => {
     expect(codes(MG)).toContain('mg-spin-up-core');
     expect(codes(AR, 240)).toContain('landing-unmeasured');
     expect(codes(SMG)).toContain('hit-rate');
-    // plan/design-landing-aim.md 4.1 節: 照準による 1 発目の外れは、窓の明けから 1 発目までが 50f 未満の RL・SR だけ（C-0194）。
-    // 紅蓮：ブラックシャドウ（チャージ 0.3 秒・射撃姿勢維持）は出し、チャージ 1 秒の RL・SR（明けから約 70f）には出さない
+    // plan/design-landing-aim.md 10 節: 着地の後の照準の動き（C-0194・C-0291・C-0948）は枠ごとに出さず、画面の一覧の
+    // 「モデル全体」に 1 行だけ出す。紅蓮：ブラックシャドウ（チャージ 0.3 秒）・誘導弾 100 の RL・SMG にも出ない
     const scarlet = weapon('RL', null, 1, {
       fireType: 'ProjectileDirect',
       projectile: { speed: 400, homing: 'lv1', radius: 50, explosionRange: 500 },
@@ -691,27 +690,9 @@ describe('編成（自動の条件）', () => {
       maintainFireStance: 23,
       uptypeFireTiming: 1,
     });
-    const slowRl = weapon('RL', null, 1, {
-      fireType: 'ProjectileDirect',
-      projectile: { speed: 400, homing: 'lv1', radius: 50, explosionRange: 500 },
-      chargeTime: 1,
-      inputType: 'UP',
-    });
-    const slowSr = weapon('SR', { min: 45, max: 100 }, 1, { chargeTime: 1, inputType: 'UP' });
-    expect(codes(scarlet)).toContain('landing-first-shot-miss');
-    expect(codes(slowRl)).not.toContain('landing-first-shot-miss');
-    expect(codes(slowSr)).not.toContain('landing-first-shot-miss');
-    // 着地の後の 1 発目を除いて決めた行（直進弾 100・誘導弾 100）は別の注記。直進弾 400 には出さない
-    expect(codes(RL_HOMING)).toContain('landing-first-shot-excluded');
-    expect(codes(rl('ProjectileDirect', 100))).toContain('landing-first-shot-excluded');
-    expect(codes(slowRl)).not.toContain('landing-first-shot-excluded');
-    // C-0291・C-0948: AR・SMG・SG の撃ち始めの待ちは未実装の注記。MG・RL には出さない
-    expect(codes(SMG)).toContain('landing-aim-wait');
-    expect(codes(MG)).not.toContain('landing-aim-wait');
-    expect(codes(SG)).toContain('landing-aim-wait');
-    expect(codes(scarlet)).not.toContain('landing-aim-wait');
-    // C-0973: 弾の種類 InstantBox の AR（紅蓮：神殺）は照準を待たないので出さない
-    expect(codes(weapon('AR', { min: 25, max: 45 }, 1, { fireType: 'InstantBox' }))).not.toContain('landing-aim-wait');
+    for (const c of [scarlet, RL, RL_HOMING, SMG]) {
+      expect(codes(c).filter((code) => code.startsWith('landing-') && code !== 'landing-unmeasured')).toEqual([]);
+    }
   });
 
   it('feeds the landing bullet hit rate to the gauge of the first pass', () => {
