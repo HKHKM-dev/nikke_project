@@ -188,6 +188,11 @@ export type HeldTrack = {
    * ほかは無い
    */
   startScales?: Map<number, number>;
+  /**
+   * 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: leadFrames のある付与の、件の始まり → きっかけの発のフレーム
+   * （昇順。戦闘の始まりで止まった始まりには、発が複数ありうる）。付けた枠の小片の始まり（piecesOfTrack）に使う。ほかは無い
+   */
+  leadFires?: Map<number, number[]>;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
 };
@@ -1765,8 +1770,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
     return targets;
   };
-  /** 状態の付与の発火 1 つを、対象の持ち主の状態の件の列と、付いた記録に足す */
-  const fireGrant = (g: GrantSource, start: number, context: FireContext): number[] => {
+  /**
+   * 状態の付与の発火 1 つを、対象の持ち主の状態の件の列と、付いた記録に足す。fire は leadFrames のある付与のきっかけの発のフレーム
+   * （件の列の leadFires に足す）
+   */
+  const fireGrant = (g: GrantSource, start: number, context: FireContext, fire?: number): number[] => {
     if (start >= frames) return [];
     const group = g.group;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。発火のフレームの
@@ -1780,6 +1788,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           ? counterValue(group.sourceSlotIndex, from.counter)
           : stackLevelAt(group.sourceSlotIndex, from.state, start);
     if (count <= 0) return [];
+    const addStart = (track: HeldTrack): void => {
+      for (let k = 0; k < count; k++) insertSorted(track.starts, start);
+      if (fire === undefined) return;
+      const fires = (track.leadFires ??= new Map()).get(start) ?? [];
+      for (let k = 0; k < count; k++) insertSorted(fires, fire);
+      track.leadFires.set(start, fires);
+    };
     const targets: number[] = [];
     // エレグのバースト編: 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
     // 語彙は味方の状態だけ）
@@ -1788,7 +1803,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         (target, holder) =>
           target !== null && isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context),
       );
-      if (on) for (let k = 0; k < count; k++) insertSorted(group.enemy.starts, start);
+      if (on) addStart(group.enemy);
       return targets;
     }
     slots.forEach((target, holder) => {
@@ -1796,7 +1811,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!isEffectTarget(g.grant, group.sourceSlotIndex, holder, target.character, context)) return;
       const track = group.tracks[holder];
       if (!track) throw new Error(`no state track for ${group.state} on slot ${holder}`);
-      for (let k = 0; k < count; k++) insertSorted(track.starts, start);
+      addStart(track);
       const record: AppliedRecord = {
         frame: start,
         state: group.state,
@@ -1955,10 +1970,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     stage1Grants.flatMap((g) => {
       if (g.grant.leadFrames === undefined) return [];
       const known = options.leadShots?.[leadShotKey(g)] ?? [];
-      const early = new Map<number, number>();
+      const early = new Map<number, number[]>();
       for (const shot of known) {
         const at = grantStartOf(g.grant, shot);
-        early.set(at, (early.get(at) ?? 0) + 1);
+        early.set(at, [...(early.get(at) ?? []), shot]);
       }
       return [[g, { known: new Set(known), early, fired: [] as number[] }] as const];
     }),
@@ -2074,7 +2089,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const lead = leads.size > 0 ? leads.get(g) : undefined;
       // 前の回の発の件は、その始まりのフレームに登録する（同じフレームの段 1.5 の enemyState が見る）
       if (lead !== undefined && !battleStartOnly) {
-        for (let k = lead.early.get(f) ?? 0; k > 0; k--) fireGrant(g, f, null);
+        for (const shot of lead.early.get(f) ?? []) fireGrant(g, f, null, shot);
       }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (!fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
@@ -2085,7 +2100,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         lead.fired.push(f);
         if (lead.known.has(f)) continue;
       }
-      fireGrant(g, battleStartOnly ? 0 : grantStartOf(g.grant, f), fireContextOf(g.grant.trigger, ev));
+      fireGrant(
+        g,
+        battleStartOnly ? 0 : grantStartOf(g.grant, f),
+        fireContextOf(g.grant.trigger, ev),
+        lead !== undefined ? f : undefined,
+      );
     }
     for (const src of stage1Timed) {
       if (src.chance) {
@@ -2547,8 +2567,18 @@ export type ValuePiece = {
 function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValuePiece[] {
   const pieces: ValuePiece[] = [];
   const o = track.origin;
-  const lead = o.kind === 'state' ? o.grant.leadFrames : undefined;
-  const push = (effect: ItemEffect, item: HeldItem): void => {
+  const leadFires = track.leadFires;
+  /** 始まりごとの、読んだ件の数（同じ始まりの件は、スタックの段の順に発を当てる） */
+  const seen = new Map<number, number>();
+  /** 件のきっかけの発のフレーム（leadFrames のある付与だけ） */
+  const fireOf = (item: HeldItem): number | undefined => {
+    const fires = leadFires?.get(item.start);
+    if (fires === undefined) return undefined;
+    const k = seen.get(item.start) ?? 0;
+    seen.set(item.start, k + 1);
+    return fires[Math.min(k, fires.length - 1)];
+  };
+  const push = (effect: ItemEffect, item: HeldItem, fire: number | undefined): void => {
     // 段 C: 敵の件は、効果の対象の味方の各枠に写す。エレグのバースト編: 敵に付く状態の中身も（対象は付与の対象）
     const holders =
       track.holder !== ENEMY
@@ -2560,12 +2590,10 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
             : [track.holder];
     for (const slotIndex of holders) {
       // 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発より前から始める付与の、付けた枠の小片は、いままでどおり
-      // 発の次のフレームから（きっかけの発自身には乗らない。C-0312）
+      // 発の次のフレームから（きっかけの発自身には乗らない。C-0312）。件の始まりが戦闘の始まりで止まっても、発から数える
       const start =
-        lead !== undefined && slotIndex === track.sourceSlotIndex
-          ? Math.min(item.end, item.start + lead + 1)
-          : item.start;
-      if (lead !== undefined && start >= item.end) continue;
+        fire !== undefined && slotIndex === track.sourceSlotIndex ? Math.min(item.end, fire + 1) : item.start;
+      if (fire !== undefined && start >= item.end) continue;
       const piece: ValuePiece = {
         slotIndex,
         sourceSlotIndex: track.sourceSlotIndex,
@@ -2579,8 +2607,12 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
     }
   };
   // 2 段目の段 9 の PR 2: while の効果は timed と同じく件ごとに 1 つ（値はスタックごとではない）
-  if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item);
-  if (o.kind === 'state') for (const item of track.items) for (const c of o.contents) push(c, item);
+  if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item, undefined);
+  if (o.kind === 'state')
+    for (const item of track.items) {
+      const fire = fireOf(item);
+      for (const c of o.contents) push(c, item, fire);
+    }
   return pieces;
 }
 
