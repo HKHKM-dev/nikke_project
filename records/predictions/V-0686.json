@@ -29,9 +29,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -64,9 +62,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -101,9 +97,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -118,17 +112,8 @@
     "values": {
       "H-model": {
         "A-effect-delay": 20,
-        "B-drunk-end-phase": [
-          6,
-          7,
-          9,
-          10,
-          12,
-          13
-        ],
-        "C-drunk-end-after-claire": [
-          -4
-        ]
+        "B-drunk-end-phase": [6, 7, 9, 10, 12, 13],
+        "C-drunk-end-after-claire": [-4]
       }
     }
   }
