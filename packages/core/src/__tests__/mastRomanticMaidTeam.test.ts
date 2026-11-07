@@ -1,14 +1,13 @@
 // マスト：ロマンチックメイド（354）を含む編成: S1 のほろ酔い（バースト 1 段階突入のたびに 1 スタック・最大 3・持続）と、その間の味方全体の
 // ▲、S2 とバーストの「X% × ほろ酔いのスタック数」（timed の perCount）、フルスタックのフルバーストの終わりの解除と二日酔い（気絶 10 秒。
 // shotPause の { applied }。気絶の間はバーストの候補にもならない）（plan/design-maids.md、V-0668）。
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, stateItemsOf, statePiecesOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam, skillValueOf, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedTeam, readJson, skillValueOf, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
 
 const MAST = 354;
 const MAST_SLOT = 1;
@@ -93,12 +92,12 @@ describeEveryShotInOneGroup(TEAMS);
 
 // plan/design-maids.md 8 節（C-0974・C-0975）: 条件が自動の枠で射撃場の的なら、ほろ酔いの区間のコア命中率・弾丸命中率は的の▼の表の値
 describe('ほろ酔いの命中率▼（的の▼の表）', () => {
-  const master = parseEnemyPresets(JSON.parse(readFileSync(new URL('../../data/enemies.json', import.meta.url), 'utf8')));
+  const master = parseEnemyPresets(readJson<unknown>('../../data/enemies.json'));
   const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
   const base = team([304, MAST]);
   const input: TeamInput = {
     ...base,
-    slots: base.slots.map((s) => ({ ...s, conditionMode: 'auto' as const })),
+    slots: base.slots.map((s) => (s === null ? null : { ...s, conditionMode: 'auto' as const })),
     enemy: {
       ...base.enemy,
       events: enemyEventsOf(master, ['range-3min-jump'], 180),
@@ -115,8 +114,8 @@ describe('ほろ酔いの命中率▼（的の▼の表）', () => {
     for (const s of slot.segments) {
       const n = s.buffs.hitRate;
       const band = result.landings.find((l) => l.start <= s.start && s.start < l.end)?.band;
-      if (n >= 0 || s.trigger.hitRate === 0 || band === undefined || band === null) continue;
-      const key = Object.keys(table.core!.ratio).find((k) => Math.abs(Number(k) - n) < 1e-9)!;
+      if (n >= 0 || s.trigger.hitRate === 0 || band == null) continue;
+      const key = Object.keys(table.core!.ratio).find((k) => close(Number(k), n))!;
       seen.add(Math.round(-n / 0.2));
       const core = s.trigger.boost.core / (slot.character.shot.coreDamageRate - 1 + s.buffs.coreDamage);
       expect(core).toBeCloseTo(table.core!.base[band]! * table.core!.ratio[key]!, 9);
