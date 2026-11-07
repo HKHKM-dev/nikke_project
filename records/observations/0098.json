@@ -319,5 +319,24 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0098-21",
+    "recording": "0098",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [12, 12, 12, 12, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 11],
+    "description": "チャイム（SMG・入力 DOWN）単騎の、全弾リロードの込め終わり（RELOADING のバーが消えたフレーム）から次のマガジンの 1 発目（照準の残弾が満タンから減ったフレーム）までの回ごとの値（回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "取り消し・窓をまたいだ回と、減る直前の満タンが読めていない回を除く。回ごとに（込め終わり → 1 発目）: f1198→f1210、f1573→f1585、f1948→f1960、f2323→f2335、f3004→f3015、f3379→f3391、f4129→f4141、f4504→f4516、f5156→f5168、f5531→f5543、f5906→f5918、f6281→f6293、f7478→f7490、f7853→f7865、f8228→f8240、f8603→f8615、f8978→f8990、f9620→f9632、f9995→f10007、f10371→f10382"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

@@ -681,8 +681,12 @@ export function sensitivityId(observation: string, element: string): string {
   return `${observation}|${element}`;
 }
 
-/** 感度の計算の仕方を変えたら上げる（鍵が変わり、結果は古いとみなされる） */
-export const SENSITIVITY_VERSION = 3;
+/**
+ * 感度の計算の仕方を変えたら上げる（鍵が変わり、結果は古いとみなされる）。鍵はモデルのコードを含まないので、モデルを組み直して
+ * `records:minimal -- --all` と差が出たときも上げる（plan/design-workflow-simplification-5.md 7.2 節。4: 全弾リロードを 1 回ごとに丸めた。
+ * plan/design-reload-rounding.md 案 E）
+ */
+export const SENSITIVITY_VERSION = 4;
 
 /** 感度を使う観測値（sim と比べるもの） */
 export function usesSensitivity(o: Observation): boolean {
