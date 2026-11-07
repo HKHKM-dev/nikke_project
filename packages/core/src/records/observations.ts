@@ -36,6 +36,7 @@ import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
 import { MAX_SKILL_LEVELS, isResolvedChance, isResolvedShotCount, resolveTimed } from '../skills/resolve.ts';
 import type { NamedStateId } from '../skills/states.ts';
+import type { FrameRange } from '../skills/timeline.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { gameSecondsToFrame, gameSecondsToFrames } from '../time.ts';
 import {
@@ -671,14 +672,33 @@ function hideReloadToWindowEnd(result: SimResult, ctx: MetricContext): number {
  */
 function lastShotToWindowEnd(result: SimResult, ctx: MetricContext): number | number[] {
   const frames = result.shots[slotIndexOf(ctx)]?.frames ?? [];
-  const at = (index: number): number => {
-    const window = untargetableWindowAt(result, index);
+  return perWindow(result, ctx, (window, index) => {
     const last = frames.findLast((f) => f < window.end);
     if (last === undefined) throw new Error(`${index} 回目の狙えない窓の前に発が無い`);
     return window.end - last;
-  };
-  const w = ctx.args.window;
-  return typeof w === 'string' ? w.split(',').map((x) => at(Number(x.trim()))) : at(Number(w));
+  });
+}
+
+/**
+ * V-0682: window 回目の狙えない窓の終わり（明け）から、その後の最初の発までのフレーム（明けの構え。C-0114・C-0972）。window は
+ * lastShotToWindowEnd と同じく並びも書ける
+ */
+function windowEndToFirstShot(result: SimResult, ctx: MetricContext): number | number[] {
+  const frames = result.shots[slotIndexOf(ctx)]?.frames ?? [];
+  return perWindow(result, ctx, (window, index) => {
+    const first = frames.find((f) => f >= window.end);
+    if (first === undefined) throw new Error(`${index} 回目の狙えない窓の後に発が無い`);
+    return first - window.end;
+  });
+}
+
+/** 引数 window（1 つの番号か、カンマ区切りの並び）の窓ごとに at を求める。並びなら窓ごとの列 */
+function perWindow(
+  result: SimResult,
+  ctx: MetricContext,
+  at: (window: FrameRange, index: number) => number,
+): number | number[] {
+  return eachOrOne(ctx.args.window, (index) => at(untargetableWindowAt(result, index), index));
 }
 
 /** window 回目の狙えない窓の中の部分チャージの発の、チャージの進み（plan/design-hide-reload-detect.md 9 節） */
@@ -1575,6 +1595,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   reloadToNextShotAt: { args: ['slot', 'frame'], sim: reloadToNextShotAt },
   hideReloadToWindowEnd: { args: ['slot', 'window'], sim: hideReloadToWindowEnd },
   lastShotToWindowEnd: { args: ['slot', 'window'], sim: lastShotToWindowEnd },
+  windowEndToFirstShot: { args: ['slot', 'window'], sim: windowEndToFirstShot },
   partialChargeProgress: { args: ['slot', 'window'], sim: partialChargeProgressIn },
   buffWindowEnds: { args: ['slot', 'skill', 'stat'], sim: buffWindowEnds },
   buffWindowStarts: { args: ['slot', 'skill', 'stat'], sim: buffWindowStarts },
