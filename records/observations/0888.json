@@ -108,5 +108,24 @@
       "tool": "node tools/captures/hud.ts --mode jumps",
       "note": "増分 f6780（前の発 f6739。Δ 41f。D の時点のモデルの溜めたフレーム数 16f = Δ − H 1f − 溜め始め 24f）。進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 0.3 秒"
     }
+  },
+  {
+    "id": "0888-05",
+    "recording": "0888",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [10.61, 11.84, 11.66, 11.74, 11.65, 11.84, 11.74, 11.93, 11.82, 11.89, 11.89, 11.92, 12.03, 12.27, 11.59],
+    "description": "紅蓮：ブラックシャドウ（RL・入力 UP・チャージ 0.3 秒・射撃姿勢維持型・リロード 2 秒）単騎の、マガジンの最終弾から、RELOADING のバーの伸びを長さ 0 に遡った点（リロードの始まり）までの回ごとの値（負は最終弾のフレームより前。回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "最終弾は照準の残弾の 1 が消えたフレーム。取り消し・窓をまたいだ回・当てはめの残差が 1.2 より大きい回を除く"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

@@ -727,5 +727,24 @@
       "slot": 1,
       "source": "normal"
     }
+  },
+  {
+    "id": "0130-26",
+    "recording": "0130",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [-1.53, -1.46, -1.07, -0.46, -1.75, -1.42, -1.13, -1.32],
+    "description": "ラプラス：アルティメットヒーロー（RL・入力 DOWN_Charge・チャージ 1 秒・リロード 2.5 秒）単騎の、マガジンの最終弾から、RELOADING のバーの伸びを長さ 0 に遡った点（リロードの始まり）までの回ごとの値（負は最終弾のフレームより前。回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "最終弾は照準の残弾の 1 が消えたフレーム。取り消し・窓をまたいだ回・当てはめの残差が 1.2 より大きい回を除く"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
