@@ -213,6 +213,8 @@ describe('computeCadence (calibrated against recordings)', () => {
       chargeReleaseFrames: 0,
       spinUpFirstShotFrames: 20,
       reloadFirstShotFrames: 22,
+      fullReloadCeilOffsetFrames: -0.94,
+      spinUpFullReloadCeilOffsetFrames: -0.2,
       aimOutFrames: 13,
       aimInFrames: 12,
       chargeFullToShotFrames: 1,

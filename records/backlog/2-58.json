@@ -3,7 +3,7 @@
   "cells": {
     "課題": "全弾リロードの端数の持ち越し（C-0145 の model。`frame/shooter.ts` の `nextChunkFrames`）が、録画の 1 回ずつの長さと合わない",
     "いま分かっていること": "全弾リロードの最終弾 → 込め終わりは、どのリロードの秒でも 1 回ごとに同じ整数で、端数を持ち越さない（C-0964。V-0680・V-0681）。丸めは四捨五入でなく ⌈x + c⌉ の形（c は MG 以外と MG で約 0.7f 違う）。モデルの変え方の案は [design-reload-rounding.md](design-reload-rounding.md)",
-    "次の 1 手": "[design-reload-rounding.md](design-reload-rounding.md) 6 節の判断（承認待ち）",
+    "次の 1 手": "[design-reload-rounding.md](design-reload-rounding.md) 8 節の判断",
     "要るもの": "判断"
   }
 }

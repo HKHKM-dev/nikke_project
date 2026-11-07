@@ -717,7 +717,7 @@ function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const shot = input.character.shot;
   const params = firingParams(shot, segment.trigger.buffs);
-  return params.reloadChunkFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
+  return params.reloadFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
 }
 
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {

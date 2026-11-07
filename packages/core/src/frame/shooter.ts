@@ -64,12 +64,6 @@ export type ShooterState = {
   acc: number;
   /** 直前に撃った射撃で残弾が 0 になったか（「最後の弾丸」の印。stepShooter が撃ったフレームだけ意味を持つ） */
   lastShot: boolean;
-  /**
-   * Stage 24: リロードの 1 回分のフレーム数の端数（0 以上 1 未満）。1 回分を始めるたびに端数つきのフレーム数に足して切り捨て、
-   * 残りを次の回へ持ち越す（nextChunkFrames。C-0145）。最初は 0.5 で、リロードの累積の長さを四捨五入するのと同じになる
-   * （最初のリロードが切り捨てに偏らない）
-   */
-  reloadCarry: number;
   /** 分割リロードの、込め始めの前の弾を込めない 1 段の最中（C-0154）。無ければキーごと無い */
   reloadLead?: true;
   /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
@@ -122,7 +116,6 @@ export function initialShooter(
     wait: firstShotFrames(shot, model, params),
     acc: 0,
     lastShot: false,
-    reloadCarry: 0.5,
   };
 }
 
@@ -142,31 +135,16 @@ export function weaponChangeShooter(
 }
 
 /**
- * Stage 24: リロードの 1 回分のフレーム数（整数）を決める。端数つきの 1 回分（params.reloadChunkFrames）に前の回の端数を足して
- * 切り捨て、残りを持ち越す（C-0145。長い目で見ると 1 回分の平均は端数つきの値になる）。録画の 1 回ずつの長さは持ち越す形と合わない
- * （C-0964。plan/backlog.md の 2-58）。
- * 分割リロードの段は、端数つきの長さを切り上げた整数で、端数を持ち越さない（C-0154）
- */
-function nextChunkFrames(state: ShooterState, params: FiringParams): number {
-  // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
-  if (params.splitReload) return Math.ceil(params.reloadChunkFrames - 1e-9);
-  const total = params.reloadChunkFrames + state.reloadCarry;
-  // 割り算の誤差で整数のすぐ下に出た値を切り捨てないよう、ごく小さな幅を足す
-  const frames = Math.floor(total + 1e-9);
-  state.reloadCarry = Math.max(0, total - frames);
-  return frames;
-}
-
-/**
  * リロードを始める（最終弾の直後・ハイド中のリロード）。分割リロードは、込め始めの前に弾を込めない 1 段を待つ
  * （最終弾 → 込め終わりが段の数 + 1 段ぶん。C-0154）。
+ * 1 回分は FiringParams.reloadFrames（1 回ごとに丸めた整数。plan/design-reload-rounding.md 案 A・C-0154）。
  * @returns 最初の 1 回分（分割リロードでは込めない 1 段）のフレーム数
  */
 function startReload(state: ShooterState, params: FiringParams): number {
   delete state.chargeElapsed;
   state.phase = 'reloading';
   if (params.splitReload) state.reloadLead = true;
-  return nextChunkFrames(state, params);
+  return params.reloadFrames;
 }
 
 /**
@@ -181,7 +159,7 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
     if (state.reloadLead) delete state.reloadLead;
     else state.ammo = Math.min(params.maxAmmo, state.ammo + reloadChunkAmmo(params.maxAmmo, shot.reloadBullet));
     if (state.ammo < params.maxAmmo) {
-      const chunk = nextChunkFrames(state, params);
+      const chunk = params.reloadFrames;
       if (chunk > 0) {
         state.wait = chunk - 1;
         return false;
@@ -508,8 +486,7 @@ export function hideShooter(
   const lead = stance === null ? 0 : Math.max(0, stance.frames - stance.holdFrames - (state.chargeElapsed ?? Infinity));
   state.hideReloadStartIn = lead - startedFramesAgo;
   // C-0959（plan/design-hide-reload.md 10 節の案 D）: 分割リロードでない武器の 1 回分は、端数つきの長さを切り上げる（切り捨てると、
-  // リロード 1.67 秒が 118f の窓の明けの前に満ちてしまう）。端数の持ち越しは、ふだんのリロードと同じに進める（ゲームは持ち越さない
-  // とみられ（C-0964）、ここで数え直すかは録画で見分けられない。同 11 節）
+  // リロード 1.67 秒が 118f の窓の明けの前に満ちてしまう）
   const started = startReload(state, params);
   const reload = params.splitReload ? started : Math.ceil(params.reloadChunkFrames - 1e-9);
   const chunk = reload + lead + hideReloadExtraFrames(model, params) - startedFramesAgo;
