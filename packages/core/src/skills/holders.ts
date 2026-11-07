@@ -11,7 +11,7 @@
 // 窓と記録の書き出し（BuffTimeline の窓と記録の欄）を消し、読む側は履歴を直接読む。
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import {
   ZERO_BUFFS,
@@ -21,7 +21,13 @@ import {
   statTotal,
   type BuffTotals,
 } from './buffs.ts';
-import { chancePieces, chanceValueOf, type ChanceOpportunity } from './chance.ts';
+import {
+  chancePieces,
+  chanceStackLevelsAt,
+  chanceStackPieces,
+  chanceValueOf,
+  type ChanceOpportunity,
+} from './chance.ts';
 import { resolveCycleEvery, type ResolvedCycleEvery } from './cycles.ts';
 import {
   isResolvedApplied,
@@ -51,6 +57,7 @@ import {
   type ResolvedRemoveState,
   type ResolvedStackChange,
   type ResolvedStateContent,
+  type ResolvedShotCountTrigger,
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
@@ -76,6 +83,7 @@ import {
   type FullStackEvent,
   type HealRecord,
   type ShotCountEveryAt,
+  type ShotEvent,
   type TriggerTracker,
 } from './triggers.ts';
 import {
@@ -195,6 +203,11 @@ export type HeldTrack = {
    * （昇順。戦闘の始まりで止まった始まりには、発が複数ありうる）。付けた枠の小片の始まり（piecesOfTrack）に使う。ほかは無い
    */
   leadFires?: Map<number, number[]>;
+  /**
+   * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: stacksFrom で確率の状態のスタック数を写した付与の、件の始まり → 段ごとの
+   * 「元のスタック数がその段以上の確率」（添字は段 − 1。件の段の scale にする）。ほかは無い
+   */
+  levelScales?: Map<number, number[]>;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
   items: HeldItem[];
 };
@@ -607,14 +620,37 @@ export function stacksHold(
 }
 
 /**
+ * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: stacksFrom で確率の状態のスタック数を写した件の、段 k の scale を「元のスタック数が
+ * k 以上の確率」にする。件の始まりより前でいちばん新しい写しの確率を使う（写しの維持が重ならない間は、その件を付けた写し）
+ */
+function scaleLevels(items: readonly HeldItem[], levelScales: ReadonlyMap<number, number[]>): HeldItem[] {
+  const keys = [...levelScales.keys()].sort((a, b) => a - b);
+  const out: HeldItem[] = [];
+  for (const it of items) {
+    const key = keys[lowerBound(keys, it.start + 1) - 1];
+    const scale = key === undefined ? undefined : levelScales.get(key)![(it.stack ?? 1) - 1];
+    if (scale !== undefined && scale > 0) out.push({ ...it, scale });
+  }
+  return out;
+}
+
+/**
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件。効果を出した枠のその状態の件（段 1）のうち、スタックの条件を満たす
  * 段の件（'full' は付与の上限の段、N は N 段以上、条件が無ければ全部）の和で、重なる件と接した件は 1 つにする（和集合の上書き延長と同じ
  * 見え方）。スタックの条件の見方は stacksHold と同じ
  */
 export function whileItems(
-  own: readonly { origin: HeldOrigin; items: readonly HeldItem[] }[],
+  own: readonly { origin: HeldOrigin; items: readonly HeldItem[]; chance?: boolean }[],
   stacks: 'full' | number | undefined,
 ): HeldItem[] {
+  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態の件の列（chance）は段ごとの期待値の小片なので、条件の段（条件が無ければ
+  // 段 1）の小片をそのまま出す（scale はその条件が成り立つ確率）。確率の状態の付与はその状態の 1 つだけ（skills/parse/crossChecks.ts）
+  const chance = own.find((o) => o.chance === true);
+  if (chance !== undefined) {
+    const max = chance.origin.kind === 'state' ? chance.origin.grant.maxStacks : undefined;
+    const level = stacks === undefined ? 1 : stacks === 'full' ? max : stacks;
+    return chance.items.filter((it) => it.stack === level);
+  }
   const spans: [number, number][] = [];
   for (const { origin, items } of own) {
     const max = origin.kind === 'state' ? origin.grant.maxStacks : undefined;
@@ -790,14 +826,20 @@ function buildTrackItems(
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
     case 'state': {
+      // トーブの基礎版編（plan/design-tove-base.md 2.2 節）: 確率のきっかけの付与は、スタック数の分布の期待値の小片（段 k の scale は
+      // スタック数が k 以上の確率）
+      if (track.opportunities !== null) {
+        return chanceStackPieces(track.opportunities, o.grant.durationFrames, frames, o.grant.maxStacks ?? 1);
+      }
       const ends = fullBurstWindows.map((w) => w.end);
-      return closedStateItems(
+      const items = closedStateItems(
         track.starts,
         track.closes,
         (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases, maxStacksAt),
         track.consumes,
         track.decreases,
       );
+      return track.levelScales === undefined ? items : scaleLevels(items, track.levelScales);
     }
     case 'cycleEvery':
       return itemsOfPairs(unionItems(track.starts, o.effect.durationFrames, frames));
@@ -1104,6 +1146,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       continue;
     }
+    // トーブの基礎版編: 確率のきっかけの付与は、機会を持ち主の件の列で共有する（付与はその状態の 1 つだけ。skills/parse/crossChecks.ts）
+    const opportunities: ChanceOpportunity[] | null = isResolvedChance(grant.trigger) ? [] : null;
     slots.forEach((target, holder) => {
       if (target === null) return;
       if (!group.grants.some((g) => canEverTarget(g.grant, group.sourceSlotIndex, holder, target.character))) return;
@@ -1112,6 +1156,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         group.sourceSlotIndex,
         { kind: 'state', state: group.state, grant, contents: group.contents },
         group.stage,
+        opportunities,
       );
     });
   }
@@ -1453,7 +1498,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (seen !== undefined && seen.length === deps.length && seen.every((d, i) => d === deps[i])) return track.items;
     whileSeen.set(track, deps);
     track.items = whileItems(
-      own.map((t, i) => ({ origin: t.origin, items: deps[i]! })),
+      own.map((t, i) => ({ origin: t.origin, items: deps[i]!, chance: t.opportunities !== null })),
       effect.whileStacks,
     );
     return track.items;
@@ -1581,6 +1626,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       for (const it of selfStateItemsAt(t, frame)) level = Math.max(level, it.stack ?? 1);
     }
     return level;
+  };
+  /**
+   * トーブの基礎版編: 枠のその状態が確率の状態なら、フレームの段ごとの「スタック数がその段以上の確率」（添字は段 − 1）。確率の状態で
+   * なければ undefined
+   */
+  const chanceLevelsAt = (holder: number, state: NamedStateId, frame: number): number[] | undefined => {
+    const track = (stateTracks[holder]?.get(state) ?? []).find((t) => t.opportunities !== null);
+    if (track === undefined || track.origin.kind !== 'state') return undefined;
+    return chanceStackLevelsAt(selfStateItemsAt(track, frame), frame, track.origin.grant.maxStacks ?? 1);
   };
 
   // エレグの段 3（plan/design-elegg-s3.md 3.2 節）: 条件 enemyState が見る、敵の状態の件の列（付与で付いた状態と、持続ダメージの状態）。
@@ -1757,6 +1811,21 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
   };
 
+  /**
+   * 確率のきっかけ（timed・付与）の機会を 1 つ貯める。発のフレーム f の次のフレームから、確率 × その発の回数の量（回数の量が 0 の発と、
+   * 戦闘の後に始まる機会は除く。plan/design-soldier-eg.md 3.1 節）
+   */
+  const pushChanceOpportunity = (
+    opportunities: ChanceOpportunity[] | null | undefined,
+    trigger: ResolvedShotCountTrigger & { chance: number },
+    shot: ShotEvent | null | undefined,
+    f: number,
+  ): void => {
+    if (!opportunities || !shot || f + 1 >= frames) return;
+    const weight = shotCountWeight(trigger.count, shot);
+    if (weight > 0) opportunities.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
+  };
+
   // ---- 登録 ----
   /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
   const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
@@ -1795,12 +1864,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 段の最大。条件 selfState と同じ件を見る）から取る（0 なら付けない）。付いた後は、数え元が変わっても段は変わらない（V-0523）
     const from = g.grant.stacksFrom;
     // 2 段目の段 14 の PR 3: 使用回数のある状態は、1 回の発火で stacksPerFire のスタック（セブンスドワーフ・フルアクティブの 2 回）
+    // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態から写すときは、段ごとの「元のスタック数がその段以上の確率」で
+    // 段を付け、件の段の scale にする（値はスタック数の期待値 × 値になる）
+    const levels =
+      from !== undefined && 'state' in from ? chanceLevelsAt(group.sourceSlotIndex, from.state, start) : undefined;
     const count =
       from === undefined
         ? (g.grant.stacksPerFire ?? 1)
         : 'counter' in from
           ? counterValue(group.sourceSlotIndex, from.counter)
-          : stackLevelAt(group.sourceSlotIndex, from.state, start);
+          : levels !== undefined
+            ? levels.filter((p) => p > 0).length
+            : stackLevelAt(group.sourceSlotIndex, from.state, start);
     if (count <= 0) return [];
     const addStart = (track: HeldTrack): void => {
       let fires: number[] | undefined;
@@ -1813,6 +1888,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         insertSorted(track.starts, start);
         if (fires !== undefined) insertSorted(fires, fire!);
       }
+      if (levels !== undefined) (track.levelScales ??= new Map()).set(start, levels);
     };
     const targets: number[] = [];
     // エレグのバースト編: 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
@@ -2147,6 +2223,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         const shots = lead.early.get(f);
         if (shots !== undefined) for (const shot of shots) fireGrant(g, f, null, shot);
       }
+      // トーブの基礎版編: 確率のきっかけの付与は、timed の確率と同じく機会を貯める（付いた記録は作らない）
+      if (isResolvedChance(g.grant.trigger)) {
+        if (!battleStartOnly) {
+          const track = g.group.tracks.find((t) => t !== null);
+          pushChanceOpportunity(track?.opportunities, g.grant.trigger, ev.shots[g.group.sourceSlotIndex], f);
+        }
+        continue;
+      }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (!fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
         skipGrant(g, f);
@@ -2165,14 +2249,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     for (const src of stage1Timed) {
       if (src.chance) {
-        if (battleStartOnly) continue;
-        const shot = ev.shots[src.sourceSlotIndex];
         const trigger = src.effect.trigger;
-        if (!shot || !isResolvedChance(trigger) || f + 1 >= frames) continue;
-        const weight = shotCountWeight(trigger.count, shot);
-        if (weight <= 0) continue;
-        const opportunities = (src.enemy ?? src.tracks.find((t) => t !== null))?.opportunities;
-        opportunities?.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
+        if (!battleStartOnly && isResolvedChance(trigger)) {
+          const track = src.enemy ?? src.tracks.find((t) => t !== null);
+          pushChanceOpportunity(track?.opportunities, trigger, ev.shots[src.sourceSlotIndex], f);
+        }
         continue;
       }
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;

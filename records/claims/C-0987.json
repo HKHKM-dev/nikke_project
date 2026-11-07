@@ -1,0 +1,22 @@
+{
+  "id": "C-0987",
+  "text": "トーブの基礎版の S1 の代用弾丸は、通常攻撃の 1 発ごと（攻撃した時 = normalShot）に、毎発独立に説明文の確率（値 1）で付く。モデルは期待値で持ち、代用弾丸で付く応急改造はスタック数の分布の期待値の小片、S2 はフルスタックの確率、バーストのコピーはバーストの時のスタック数が各段以上の確率で効かせる",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（「攻撃した時、{01}％の確率で」）からの読み。1 発ごと（宝物版の「通常攻撃を N 回行った時」と同じ normalShot）で毎発独立かは、基礎版の録画が撮れない（宝物を外せない）ので確かめられない。確率の値そのものは説明文の値。期待値の計算（スタック数の分布）は、乱数で多数回回した平均との突き合わせのテストで確かめた（`skills/chance.test.ts`）。確率の累計で決定的に付ける近似は、フルスタックの割合を大きく外す（plan/design-tove-base.md 3 節）。V-0687",
+  "model": "`data/skills/192.json` の skill1 の effects[0]（確率の付与 `temporaryModification`・`{ count: normalShot, chanceRef: 1 }`）・effects[1]（確率の timed）。スタック数の分布は `skills/chance.ts` の `chanceStackPieces`、while と stacksFrom の読み方は `skills/holders.ts` の `whileItems`・`chanceLevelsAt`・`scaleLevels`",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": [
+      "data/skills/192.json の skill1 の effects[0]",
+      "data/skills/192.json の skill1 の effects[1]",
+      "data/skills/192.json の skill2 の effects[0]",
+      "data/skills/192.json の burst の effects[0]",
+      "data/skills/192.json の burst の effects[1]"
+    ]
+  },
+  "decidedOn": [],
+  "gradeReason": "基礎版は撮れないので、確率の振る舞いの読みは仮説にとどめる（2026-11-07 のオーナーの判断。plan/design-tove-base.md 7 節の論点 3）"
+}

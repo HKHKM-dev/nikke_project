@@ -8,6 +8,7 @@ import {
   type DotEffect,
   type EffectTrigger,
   isAppliedTrigger,
+  isChanceTrigger,
   isEndedTrigger,
   isFullStackTrigger,
   isShotCountTrigger,
@@ -336,6 +337,34 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
  * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
  */
+/**
+ * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけで付く状態は、その状態の付与がその 1 つだけで、ほかの効果が見てよいのは
+ * while（スタックの条件の確率を値に掛ける）と stacksFrom（スタック数の期待値）だけ。件が期待値の小片なので、「付いているか」で決める条件・
+ * { applied }・{ fullStack }・スタックの増減などは意味が決まらない
+ */
+function validateChanceStates(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  const all = SKILL_SLOTS.flatMap((slot) =>
+    (entries[slot]?.effects ?? []).map((e, i) => ({ e, at: `${root}.${slot}.effects[${i}]` })),
+  );
+  const chanceStates = all.flatMap(({ e }) => (e.kind === 'state' && isChanceTrigger(e.trigger) ? [e.state] : []));
+  for (const state of chanceStates) {
+    const grants = all.filter(({ e }) => e.kind === 'state' && e.state === state);
+    if (grants.length !== 1)
+      fail(grants[1]!.at, `"${state}" is granted by a chance trigger, so it cannot have another grant`);
+    for (const { e, at } of all) {
+      if (e.kind === 'state' && e.state === state) continue;
+      // 許す読み方（while の selfState・stacksFrom の state）を除いて、状態の名前がどこかに出れば誤り
+      const rest: Record<string, unknown> = { ...e, claims: undefined, assumes: undefined };
+      if (e.kind === 'passive' && e.while !== undefined && 'selfState' in e.while && e.while.selfState.state === state)
+        rest.while = undefined;
+      if (e.kind === 'state' && e.stacksFrom !== undefined && 'state' in e.stacksFrom && e.stacksFrom.state === state)
+        rest.stacksFrom = undefined;
+      if (JSON.stringify(rest).includes(JSON.stringify(state)))
+        fail(at, `"${state}" is granted by a chance trigger, so it can only be read by while or stacksFrom`);
+    }
+  }
+}
+
 function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
     (e): e is StateGrantEffect & ClaimRefs => e.kind === 'state',
@@ -459,6 +488,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateAppliedTriggers,
     validateOwnStateTriggers,
     validateWhileEffects,
+    validateChanceStates,
     validateDotStateRefs,
     validateSummons,
   ])
