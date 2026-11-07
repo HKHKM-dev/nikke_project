@@ -972,8 +972,7 @@ header h1 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
   gap: 8px;
-  max-height: clamp(280px, 50vh, 520px);
-  overflow-y: auto;
+  /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
   border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
 }
