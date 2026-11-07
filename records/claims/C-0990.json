@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "単独実測",
   "basis": "`0733-09`・`0733-10`・`0734-09`・`0734-10`。V-0689",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "model": "未反映（`data/skills/16.json` の skill2 の notes[0] は未対応のまま。量は読めたが出どころが分からないので、モデルには入れない。plan/design-skill-stage12-leftovers.md 論点 2）",
   "replaces": [],
   "updated": "2026-11-07",
   "subject": {
