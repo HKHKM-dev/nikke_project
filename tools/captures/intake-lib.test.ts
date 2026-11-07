@@ -7,6 +7,8 @@ import {
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
+  transientDriveError,
+  UPLOAD_POLL_LIMIT,
   UPLOAD_POLL_MS,
   uploadSettled,
 } from './intake-lib.ts';
@@ -98,5 +100,19 @@ describe('drive: の取り込み元を上げ終えるまで待つか', () => {
     expect(uploadSettled('245100000', '245100000')).toBe(true);
     expect(uploadSettled('237600000', '245100000')).toBe(false);
     expect(uploadSettled(undefined, '245100000')).toBe(false);
+    expect(uploadSettled(undefined, undefined)).toBe(false);
+  });
+
+  it('gives up after 10 polls (5 minutes)', () => {
+    expect(UPLOAD_POLL_LIMIT).toBe(10);
+  });
+
+  it('keeps waiting on network failures, timeouts, 429 and 5xx, and stops on other HTTP errors', () => {
+    expect(transientDriveError(new TypeError('fetch failed'))).toBe(true);
+    expect(transientDriveError(Object.assign(new Error('timeout'), { name: 'TimeoutError' }))).toBe(true);
+    expect(transientDriveError(Object.assign(new Error('rate'), { status: 429 }))).toBe(true);
+    expect(transientDriveError(Object.assign(new Error('server'), { status: 503 }))).toBe(true);
+    expect(transientDriveError(Object.assign(new Error('auth'), { status: 401 }))).toBe(false);
+    expect(transientDriveError(Object.assign(new Error('gone'), { status: 404 }))).toBe(false);
   });
 });
