@@ -4,8 +4,8 @@
   "state": "仮説",
   "topic": "育成・ステータス",
   "grade": "推論",
-  "basis": "V-0685",
-  "model": "（モデル側を書く。未反映ならそう書く）",
+  "basis": "V-0685: 4 回の育成データの取得の stateEffects に出た OL のオプション × Lv の function_battlepower が全部この規則に合う。9 オプション × Lv 1〜15 のうち取得に出ていない組は、この規則からの予想",
+  "model": "未実装（戦闘力の計算と同じく、モデルに無い）",
   "replaces": [],
   "updated": "2026-11-07",
   "decidedOn": []
