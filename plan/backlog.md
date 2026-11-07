@@ -78,7 +78,7 @@
 
 ## 5. 道具・記録の整備
 
-- `packages/core/src/skills/holders.ts` と、`skills/types.ts` に残る型の部分（`DamageEffect`・`EffectTrigger` の和集合・`BuffStat` と `BUFF_STATS`・`SkillEffect` と `SKILL_EFFECT_KINDS` など）も、キャラのスキルの PR がほぼ全部同じあたりを書き換えるので、並行する PR の衝突の元になっている。分け方は未定（型を分けるなら、読み込む側の import は `skills/types.ts` からの再公開で変えない）
+（なし）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
