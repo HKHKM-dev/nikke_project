@@ -1,5 +1,5 @@
 // Stage 14: 未対応・近似・仮定の一覧を 1 画面にまとめる（plan/design-stage12.md 4.2 節。「未対応は明示」の原則）。
-// 枠ごとの内容は枠カード（スキル・育成・計算の内訳）に出しているものと同じで、ここでは編成全体を 1 か所で見渡せるようにする。
+// スキル・育成・計算の注記を出すのはここだけ。画面に欄の無い入力の既定もここに出す（plan/design-ui-rebuild.md 5.2 節）。
 import {
   SKILL_SLOTS,
   applyTreasure,
@@ -20,30 +20,49 @@ export type NotesSummarySlot = {
   modelNotes: readonly ModelNote[];
   /** 育成の効果層で計算に入らないもの（未対応だけ。ダメージに無関係なものは出さない） */
   buildNotes: readonly BuildEffectNote[];
-  /** 2026-10-31: 撃たない（スロットの詳細設定）。近似の注記を出す */
-  noFire: boolean;
 };
 
-type Item = { level: 'unsupported' | 'outOfScope' | 'approx' | 'assumed'; text: string };
+type Item = {
+  level: 'unsupported' | 'outOfScope' | 'approx' | 'assumed' | 'noDamage' | 'modeling' | 'default';
+  text: string;
+};
 
 const LEVEL_LABEL: Record<Item['level'], string> = {
   unsupported: '未対応',
   outOfScope: '前提の外',
   approx: '近似',
   assumed: '仮定',
+  noDamage: '計算に無関係',
+  modeling: '補足',
+  default: '既定',
 };
 const LEVEL_CLASS: Record<Item['level'], string> = {
   unsupported: 'unsupported',
   outOfScope: 'out-of-scope',
   approx: 'approx',
   assumed: 'approx',
+  noDamage: 'out-of-scope',
+  modeling: 'out-of-scope',
+  default: 'out-of-scope',
 };
+
+/** 画面に欄の無い入力の既定（calcView.ts の冒頭）。欄が無いので変えられないことを知らせる */
+const INPUT_DEFAULTS: Item[] = [
+  {
+    level: 'default',
+    text: '操作キャラはスロット 3（チャージ武器のフルチャージ倍率がバーストゲージに乗るのは操作キャラだけ）',
+  },
+  { level: 'default', text: '射撃条件（コア命中率・弾丸命中率・距離ボーナス）は、射撃場の敵の表から自動で決める' },
+  { level: 'default', text: '想定 HP は、欄の無いスロットでは満タン（被弾は計算に入れない）' },
+  { level: 'default', text: 'バーストはオートで回す（使わないスロットはスロットの詳細設定の「バーストしない」）' },
+  { level: 'default', text: 'その他攻撃加算（企業タワー・アウトポストなどの固定加算）は 0' },
+];
 
 /** 編成によらずモデル全体で扱わないもの・確かめていないもの（README の「精度と未対応」はここを指す） */
 const MODEL_WIDE: Item[] = [
   {
     level: 'assumed',
-    text: '実戦（迎撃戦・ソロレイド・ユニオンレイド）とは未照合。確かめたのはユニオン射撃場（スペック固定）の録画だけ',
+    text: '実戦（ソロレイド・ユニオンレイド）とは未照合。照合した録画は、ほとんどが射撃場の敵（スペック固定と育成あり）で、ほかは迎撃戦の特殊個体の一部だけ',
   },
   {
     level: 'unsupported',
@@ -62,20 +81,10 @@ const MODEL_WIDE: Item[] = [
     level: 'unsupported',
     text: '被弾・HP の変動・回復量・シールド（生存の計算）。回復は「回復を受けた時」のトリガーにだけ使う',
   },
-  {
-    level: 'assumed',
-    text: '育成（スペック固定 OFF）: AR のコレクションのコアダメージ▲と、キューブのリロード速度・最大装弾数は射撃場で未確認（OL・キューブの命中率とアンチコード・コレクションの倍率▲の掛かり方と丸め、攻撃力の合成順、OL の上昇値は確認済み）',
-  },
 ];
 
 function slotItems(slot: NotesSummarySlot): Item[] {
   const items: Item[] = [];
-  if (slot.noFire) {
-    items.push({
-      level: 'approx',
-      text: '撃たない: モデルに撃たないスロットが無いので、弾丸命中率を 0 にして通常攻撃のダメージとゲージを 0 にしている。射撃の回数で発動するスキルは、撃ったものとして発動する（未実装）',
-    });
-  }
   const { skills } = slot;
   if (skills.kind === 'undefined') {
     items.push({ level: 'unsupported', text: 'スキル定義なし（通常攻撃のみで計算。味方からのバフは受ける）' });
@@ -88,7 +97,8 @@ function slotItems(slot: NotesSummarySlot): Item[] {
       const entry = definition?.skills[s];
       if (!entry) continue;
       const name = `${SKILL_SLOT_LABEL[s]}「${character.skills[s].name.ja}」`;
-      // notes の種類で分ける（plan/design-skill-note-kinds.md 2.3 節）。計算に無関係・補足は画面に出さない（出していたスキル欄は 2026-10-31 に消した）
+      // notes の種類で分ける（plan/design-skill-note-kinds.md 2.3 節）。計算に無関係・補足も、スキル欄が無いのでここに出す
+      // （間接は、読む側のいる編成で最小構成の検査が見るもので、ここには出さない）
       const notes = entry.notes ?? [];
       if (entry.support === 'partial' || entry.support === 'unsupported') {
         const what = entry.support === 'partial' ? '一部対応' : '未対応';
@@ -98,7 +108,10 @@ function slotItems(slot: NotesSummarySlot): Item[] {
           .join('、');
         items.push({ level: 'unsupported', text: `${name}は${what}: ${text}` });
       }
-      for (const n of notes) if (n.kind === 'outOfScope') items.push({ level: 'outOfScope', text: `${name}: ${n.ja}` });
+      for (const n of notes) {
+        if (n.kind === 'outOfScope' || n.kind === 'noDamage' || n.kind === 'modeling')
+          items.push({ level: n.kind, text: `${name}: ${n.ja}` });
+      }
       for (const e of entry.effects) if (e.assumes) items.push({ level: 'assumed', text: `${name}: ${e.assumes.ja}` });
     }
   }
@@ -140,6 +153,8 @@ export function NotesSummary({
       <summary>未対応・近似・仮定の一覧</summary>
       <h3>モデル全体</h3>
       <ItemList items={MODEL_WIDE} />
+      <h3>画面に無い入力の既定</h3>
+      <ItemList items={INPUT_DEFAULTS} />
       {enemyNotes.length > 0 && (
         <>
           <h3>敵の出来事</h3>

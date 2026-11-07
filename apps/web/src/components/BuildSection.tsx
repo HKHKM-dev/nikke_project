@@ -31,7 +31,7 @@ import {
 import type { Dispatch } from 'react';
 import { collectionActions, treasureOptionValue } from '../collectionChoice.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
-import { clampInt, type TeamAction } from '../team.ts';
+import { clampInt, type SlotBuild, type TeamAction } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
@@ -50,7 +50,7 @@ type Props = {
   slotIndex: number;
   character: CharacterData;
   /** 保存している入力（スペック固定でも残す） */
-  build: BuildInput;
+  build: SlotBuild;
   /** 実際に計算へ渡す入力（スペック固定なら fixedSpecBuild） */
   effectiveBuild: BuildInput;
   /** 実際に計算へ渡す育成値 */
@@ -74,10 +74,9 @@ export function BuildSection({
   disabled,
   dispatch,
 }: Props) {
-  const set = (patch: Partial<BuildInput>) =>
+  const set = (patch: Partial<SlotBuild>) =>
     dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
-  const setGear = (part: GearPart, gear: BuildInput['gear'][GearPart]) =>
-    set({ gear: { ...build.gear, [part]: gear } });
+  const setGear = (part: GearPart, gear: SlotBuild['gear'][GearPart]) => set({ gear: { ...build.gear, [part]: gear } });
 
   const setOverload = (part: GearPart, gear: NonNullable<GearInput>, i: number, line: OverloadLine | null) => {
     const overload = withOverloadLine(gear.overload ?? [], i, line);

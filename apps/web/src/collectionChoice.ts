@@ -1,7 +1,7 @@
 // 育成の「コレクション」の欄（BuildSection.tsx）で選んだ値から、編成に出す操作を決める。欄は R・SR のコレクションと宝物の段階を
 // 1 つの選択にまとめている。スペック固定の間も宝物は選べるが、保存している育成（build）には触れない（固定を外すと戻るように）
-import type { BuildInput, TreasurePhase } from '@nikke/core';
-import type { TeamAction } from './team.ts';
+import type { TreasurePhase } from '@nikke/core';
+import type { SlotBuild, TeamAction } from './team.ts';
 
 /** 欄の宝物の選択肢の値（treasure-1 など） */
 const TREASURE_PREFIX = 'treasure-';
@@ -16,7 +16,7 @@ export type CollectionSelect = {
   /** いま宝物を選んでいるか */
   hasTreasure: boolean;
   /** 保存している育成入力 */
-  build: BuildInput;
+  build: SlotBuild;
   /** R・SR を選んだときの LV（いま出しているコレクションの LV） */
   level: number;
 };

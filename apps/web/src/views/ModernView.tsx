@@ -20,7 +20,7 @@ import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
-import { placeCharacterAction } from '../team.ts';
+import { DEFAULT_CONTROLLED_SLOT, placeCharacterAction } from '../team.ts';
 
 export function ModernView({
   team,
@@ -34,6 +34,7 @@ export function ModernView({
   shown,
   slotResults,
   parties,
+  otherPartyIds,
   selectParty,
   totals,
   totalsPending,
@@ -111,10 +112,11 @@ export function ModernView({
     const targetSlotIndex = overData.slotIndex as number;
 
     if (activeData.type === 'tray-character') {
-      // ほかのスロットにいるキャラなら、そこから動かす（placeCharacterAction）
+      // どこかのスロットにいるキャラは置かない（placeCharacterAction。トレイでも持ち上げられない）
       const char = activeData.character as CharacterIndexEntry;
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
-      if (action) dispatch(action);
+      if (!action) return;
+      dispatch(action);
       setActiveSlotIndex(targetSlotIndex);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
@@ -133,7 +135,8 @@ export function ModernView({
   // トレイでキャラがクリック選択されたときのハンドラ
   const handleSelectCharacter = (resourceId: number) => {
     const action = placeCharacterAction(team, resourceId, activeSlotIndex);
-    if (action) dispatch(action);
+    if (!action) return;
+    dispatch(action);
     // 次の空きスロットがあれば自動的にアクティブスロットを進める
     const nextEmptyIndex = team.slots.findIndex((s, i) => i > activeSlotIndex && s.resourceId === null);
     if (nextEmptyIndex !== -1) {
@@ -163,7 +166,6 @@ export function ModernView({
       <div className="modern-view-container">
         <TeamSettingsForm
           element={team.enemy.element}
-          defence={team.enemy.defence}
           fixedSpec={team.fixedSpec}
           consoleInput={team.console}
           synchroLevel={team.synchroLevel}
@@ -192,7 +194,8 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
-                focused={team.controlledSlot === i}
+                focused={i === DEFAULT_CONTROLLED_SLOT}
+                inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 isSelected={activeSlotIndex === i}
                 onSelectSlot={() => setActiveSlotIndex(i)}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
@@ -206,6 +209,7 @@ export function ModernView({
         <CharacterTray
           index={index}
           takenIds={allTakenIds}
+          otherPartyIds={otherPartyIds}
           fullySupported={fullySupported}
           onSelectCharacter={handleSelectCharacter}
           activeSlotIndex={activeSlotIndex}
@@ -223,7 +227,7 @@ export function ModernView({
             treasurePhase={editingCalcSlot.treasurePhase}
             masters={masters}
             mastersError={mastersError}
-            focused={team.controlledSlot === editingSlotIndex}
+            usesHpRatio={editingCalcSlot.usesHpRatio}
             dispatch={dispatch}
             onClose={() => setEditingSlotIndex(null)}
           />

@@ -13,7 +13,10 @@ type Props = {
   isUnsupported: boolean;
   error: string | undefined;
   slotResult: SlotResultView | null;
+  /** 操作キャラのスロット（スロット 3。「操作」の印を付ける） */
   focused: boolean;
+  /** このスロットのニケがほかの編成でも使われている */
+  inOtherParty: boolean;
   isSelected: boolean;
   onSelectSlot: () => void;
   onOpenBuildModal: () => void;
@@ -30,6 +33,7 @@ export function ModernSlotCard({
   error,
   slotResult,
   focused,
+  inOtherParty,
   isSelected,
   onSelectSlot,
   onOpenBuildModal,
@@ -82,6 +86,11 @@ export function ModernSlotCard({
       <div className="modern-slot-header">
         <span className="modern-slot-label">スロット {slotIndex + 1}</span>
         {focused && <span className="modern-slot-focus-badge">操作</span>}
+        {inOtherParty && (
+          <span className="modern-slot-other-party-badge" title="ほかの編成で使用中">
+            他の編成
+          </span>
+        )}
         {slot.resourceId !== null && (
           <button
             type="button"

@@ -1,15 +1,16 @@
 // 画面の編成（TeamState）から、計算の入力（TeamInput）と、画面に出す実効値（育成値・育成入力・スキル LV・宝物の段階）を作る。
 // 計算と画面の実効値はどちらもこの結果だけを読み、保存している編成（TeamState）は入力欄と dispatch だけが読む。
 //
-// 画面から消した入力は、ここで既定値にする。保存データの値は消さずに残すが、計算と画面の値には使わない（欄が無いので直せないため）。
-// - スロット: 射撃条件（自動。撃たないスロットは手入力の弾丸命中率 0。モデルに撃たないスロットが無いため）・想定 HP（満タン）・
+// 画面に欄の無い入力は、ここで既定値にする（未対応の一覧の「画面に無い入力の既定」に出す。components/NotesSummary.tsx）。
+// - スロット: 射撃条件（自動。保存データの conditionMode・condition は使わない）・想定 HP（欄の無いスロットは満タン）・
 //   その他攻撃加算（0）。リサイクルルームは編成共通のコンソールから取り、LV は編成共通のシンクロレベル。好感度はキャラごとの上限に収める
-// - 編成: 敵（射撃場の的にし、属性と防御力だけ残す。的の動き（出来事・的の条件の表・着地点）は射撃場の的のまま）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）。
-//   3 分モード（rangeJump）は、その的のプリセットの出来事のセットを入れる（保存データの enemyEventSets は使わない）
+// - 編成: 敵（射撃場の敵。属性だけを選ぶ）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）・操作キャラ（スロット 3）。
+//   ジャンプ移動（rangeJump）は、その敵のプリセットの出来事のセットを入れる（保存データの enemyEventSets は使わない）
 import {
   EMPTY_BUILD,
   MAX_SKILL_LEVELS,
   affectionRankMax,
+  applyTreasure,
   computeCombatAttack,
   computeCombatStat,
   computeFixedSpecAttack,
@@ -25,18 +26,19 @@ import {
   type BuildInput,
   type BuildMasters,
   type CharacterData,
+  type EnemyInput,
   type EnemyPresetMaster,
   type GrowthInput,
+  type SkillDefinition,
   type SkillLevels,
   type TeamInput,
   type TeamSlotInput,
-  type TeamSlotResult,
   type TreasurePhase,
 } from '@nikke/core';
-import type { Shown } from './compute.ts';
+import type { ScreenSlotResult, Shown } from './compute.ts';
 import {
-  DEFAULT_BURST,
   DEFAULT_CONDITION_MODE,
+  DEFAULT_CONTROLLED_SLOT,
   DEFAULT_HP_RATIO,
   DEFAULT_SLOT_CONDITION,
   SHOOTING_RANGE_ENEMY,
@@ -58,8 +60,11 @@ export type CalcSlot = {
   build: BuildInput;
   skillLevels: SkillLevels;
   treasurePhase: TreasurePhase;
-  /** 撃たない（スロットの詳細設定） */
-  noFire: boolean;
+  /**
+   * 想定 HP の欄を出すか。自分の HP の割合の条件を持つ効果があるスロットと、「HP の割合が最も低い味方」を対象にする効果が
+   * 編成にあるときのキャラのいるスロット（plan/design-skill-stage6.md 論点 5）。欄の無いスロットは満タンで計算する
+   */
+  usesHpRatio: boolean;
   /** スキル定義の状態（未選択は null） */
   skillsStatus: SlotSkillsStatus | null;
   /** 未対応・近似・仮定の一覧に出す育成の注記（未対応だけ。スペック固定では空） */
@@ -97,7 +102,10 @@ function effectiveTreasurePhase(slot: SlotState, character: CharacterData): Trea
   return character.treasure === null ? 0 : slot.treasurePhase;
 }
 
-function slotBuild(team: TeamState, slot: SlotState, character: CharacterData): BuildInput {
+function slotBuild(team: TeamState, slot: SlotState, character: CharacterData | undefined): BuildInput {
+  if (character === undefined) {
+    return { ...slot.build, recycleRoom: EMPTY_BUILD.recycleRoom, extraAttack: EMPTY_BUILD.extraAttack };
+  }
   if (team.fixedSpec) return fixedSpecBuild(character);
   return {
     ...slot.build,
@@ -106,6 +114,31 @@ function slotBuild(team: TeamState, slot: SlotState, character: CharacterData): 
     extraAttack: EMPTY_BUILD.extraAttack,
   };
 }
+
+/** 値（スキル定義の効果）のどこかに、pred に合うオブジェクトがあるか */
+function someObject(v: unknown, pred: (o: Record<string, unknown>) => boolean): boolean {
+  if (Array.isArray(v)) return v.some((x) => someObject(x, pred));
+  if (typeof v !== 'object' || v === null) return false;
+  const o = v as Record<string, unknown>;
+  return pred(o) || Object.values(o).some((x) => someObject(x, pred));
+}
+
+/** 宝物版に差し替えた後の、スロットの効果（スキル定義が読めていなければ空） */
+function slotEffects(slot: CalcSlot): unknown[] {
+  const status = slot.skillsStatus;
+  if (slot.character === undefined || status?.kind !== 'ready') return [];
+  const definition: SkillDefinition | null = applyTreasure(
+    slot.character,
+    status.definition,
+    slot.treasurePhase,
+  ).definition;
+  return Object.values(definition?.skills ?? {}).flatMap((entry) => entry?.effects ?? []);
+}
+
+/** 自分の HP の割合の条件（condition.selfHp・トリガー { selfHpAtMostRef }） */
+const hasSelfHpCondition = (o: Record<string, unknown>) => 'selfHp' in o || 'selfHpAtMostRef' in o;
+/** 「残りの HP の割合が最も低い味方」が対象 */
+const targetsLowestHpRatio = (o: Record<string, unknown>) => o.target === 'lowestHpRatio';
 
 /**
  * 育成入力から、攻撃力・HP・防御力と効果層（計算の上書き）と、未対応の育成の注記を作る。効果を解決できないときは
@@ -152,18 +185,16 @@ function fixedSpecOverrides(character: CharacterData): StatOverrides {
 function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDeps): CalcSlot {
   const character = slot.resourceId === null ? undefined : deps.characters.get(slot.resourceId);
   const skillLevels = team.fixedSpec ? MAX_SKILL_LEVELS : slot.skillLevels;
-  const hpRatio = DEFAULT_HP_RATIO;
-  const { noFire } = slot;
   const skillsStatus = deps.skillsStatuses[index] ?? null;
   const synchroGrowth = { ...slot.growth, level: team.synchroLevel };
   if (character === undefined) {
     return {
       character,
       growth: synchroGrowth,
-      build: slot.build,
+      build: slotBuild(team, slot, character),
       skillLevels,
       treasurePhase: 0,
-      noFire,
+      usesHpRatio: false,
       skillsStatus,
       buildNotes: [],
       input: null,
@@ -185,16 +216,16 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
     build,
     skillLevels,
     treasurePhase,
-    noFire,
+    usesHpRatio: false,
     skillsStatus,
     buildNotes: layer.notes,
     input: skills
       ? {
           character,
           growth,
-          conditionMode: noFire ? 'manual' : DEFAULT_CONDITION_MODE,
-          condition: noFire ? { ...DEFAULT_SLOT_CONDITION, hitRate: 0 } : DEFAULT_SLOT_CONDITION,
-          hpRatio,
+          conditionMode: DEFAULT_CONDITION_MODE,
+          condition: DEFAULT_SLOT_CONDITION,
+          hpRatio: DEFAULT_HP_RATIO,
           ...(team.fixedSpec ? fixedSpecOverrides(character) : layer.overrides),
           skills,
         }
@@ -202,9 +233,24 @@ function calcSlot(team: TeamState, slot: SlotState, index: number, deps: CalcDep
   };
 }
 
+/** 想定 HP の欄を出すスロットを決め、欄のあるスロットだけ保存している想定を計算に入れる */
+function withHpRatios(team: TeamState, slots: CalcSlot[]): CalcSlot[] {
+  const effects = slots.map(slotEffects);
+  const lowestTargeted = effects.some((e) => someObject(e, targetsLowestHpRatio));
+  return slots.map((slot, i) => {
+    const usesHpRatio = slot.character !== undefined && (lowestTargeted || someObject(effects[i], hasSelfHpCondition));
+    if (!usesHpRatio) return slot;
+    const hpRatio = team.slots[i]!.hpRatio;
+    return { ...slot, usesHpRatio, input: slot.input && { ...slot.input, hpRatio } };
+  });
+}
+
 export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
-  const slots = team.slots.map((slot, i) => calcSlot(team, slot, i, deps));
-  const enemy = { ...SHOOTING_RANGE_ENEMY, element: team.enemy.element };
+  const slots = withHpRatios(
+    team,
+    team.slots.map((slot, i) => calcSlot(team, slot, i, deps)),
+  );
+  const enemy: EnemyInput = { ...SHOOTING_RANGE_ENEMY, element: team.enemy.element };
   const preset = deps.enemyMaster === null ? undefined : presetForEnemy(deps.enemyMaster.enemies, enemy);
   const eventSets = team.rangeJump ? (preset?.eventSets ?? []) : [];
   const noBurstSlots = team.slots.flatMap((s, i) => (s.noBurst && s.resourceId !== null ? [i] : []));
@@ -212,17 +258,17 @@ export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
     slots,
     input: {
       slots: slots.map((s) => s.input),
-      enemy: { ...enemyForCalc(enemy, deps.enemyMaster, eventSets, team.durationSeconds), defence: team.enemy.defence },
+      enemy: enemyForCalc(enemy, deps.enemyMaster, eventSets, team.durationSeconds),
       durationSeconds: team.durationSeconds,
-      burst: DEFAULT_BURST,
+      burst: true,
       ...(noBurstSlots.length === 0 ? {} : { noBurstSlots }),
-      controlledSlot: team.controlledSlot,
+      controlledSlot: DEFAULT_CONTROLLED_SLOT,
     },
   };
 }
 
 /** スロットの欄に出す計算の結果。stale は、いまの入力の結果ではない（計算中。印を付けて出す） */
-export type SlotResultView = { result: TeamSlotResult; stale: boolean };
+export type SlotResultView = { result: ScreenSlotResult; stale: boolean };
 
 /**
  * いまの画面（view）のスロット index に出す計算の結果。結果の元でそのスロットにいたキャラが、いまのキャラと違うときは
@@ -231,6 +277,6 @@ export type SlotResultView = { result: TeamSlotResult; stale: boolean };
 export function slotResultFor(shown: Shown<CalcView> | null, view: CalcView, index: number): SlotResultView | null {
   if (shown === null || !shown.computed.ok) return null;
   const result = shown.computed.result.slots[index] ?? null;
-  if (result === null || result.character.resourceId !== view.slots[index]?.character?.resourceId) return null;
+  if (result === null || result.resourceId !== view.slots[index]?.character?.resourceId) return null;
   return { result, stale: shown.source !== view };
 }

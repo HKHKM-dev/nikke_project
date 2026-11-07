@@ -22,6 +22,8 @@ export type ViewProps = {
   shown: Shown<CalcView> | null;
   slotResults: readonly (SlotResultView | null)[];
   parties: PartiesState;
+  /** ほかの編成で選んでいるニケ（parties.ts の otherPartyResourceIds） */
+  otherPartyIds: ReadonlySet<number>;
   selectParty: (to: number) => void;
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;

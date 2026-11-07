@@ -7,17 +7,19 @@ type Props = {
   excludeIds: ReadonlySet<number>;
   /** すべてのスロットに未実装が無いキャラ。ほかのキャラの名前に「（未）」を付ける。読み込み前は null（印を付けない） */
   fullySupported: ReadonlySet<number> | null;
+  /** ほかの編成で選んでいるニケ。名前に「（ほかの編成で使用中）」を付ける（選べる） */
+  otherPartyIds: ReadonlySet<number>;
   value: number | null;
   onSelect: (resourceId: number) => void;
   /** 「なし」を選んだとき（スロットを空にする） */
   onClear: () => void;
 };
 
-export function characterLabel(entry: CharacterIndexEntry, isUnsupported: boolean): string {
-  return `${entry.name.ja}${isUnsupported ? '（未）' : ''}`;
+export function characterLabel(entry: CharacterIndexEntry, isUnsupported: boolean, inOtherParty = false): string {
+  return `${entry.name.ja}${isUnsupported ? '（未）' : ''}${inOtherParty ? '（ほかの編成で使用中）' : ''}`;
 }
 
-export function CharacterPicker({ index, excludeIds, fullySupported, value, onSelect, onClear }: Props) {
+export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyIds, value, onSelect, onClear }: Props) {
   const options = useMemo(() => {
     return index
       .filter((e) => e.resourceId === value || !excludeIds.has(e.resourceId))
@@ -40,7 +42,11 @@ export function CharacterPicker({ index, excludeIds, fullySupported, value, onSe
         <option value="">なし</option>
         {options.map((entry) => (
           <option key={entry.resourceId} value={entry.resourceId}>
-            {characterLabel(entry, fullySupported !== null && !fullySupported.has(entry.resourceId))}
+            {characterLabel(
+              entry,
+              fullySupported !== null && !fullySupported.has(entry.resourceId),
+              otherPartyIds.has(entry.resourceId),
+            )}
           </option>
         ))}
       </select>

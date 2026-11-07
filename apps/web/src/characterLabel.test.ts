@@ -18,5 +18,6 @@ describe('characterLabel', () => {
     };
     expect(characterLabel(dummy, false)).toBe('ラピ');
     expect(characterLabel(dummy, true)).toBe('ラピ（未）');
+    expect(characterLabel(dummy, true, true)).toBe('ラピ（未）（ほかの編成で使用中）');
   });
 });

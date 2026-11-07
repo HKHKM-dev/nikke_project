@@ -7,6 +7,7 @@ import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
+  otherPartyIds: ReadonlySet<number>;
   fullySupported: ReadonlySet<number> | null;
   onSelectCharacter: (resourceId: number) => void;
   activeSlotIndex: number;
@@ -40,7 +41,14 @@ function BadgeFilter({
   );
 }
 
-export function CharacterTray({ index, takenIds, fullySupported, onSelectCharacter, activeSlotIndex }: Props) {
+export function CharacterTray({
+  index,
+  takenIds,
+  otherPartyIds,
+  fullySupported,
+  onSelectCharacter,
+  activeSlotIndex,
+}: Props) {
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
@@ -112,6 +120,7 @@ export function CharacterTray({ index, takenIds, fullySupported, onSelectCharact
                 key={char.resourceId}
                 character={char}
                 isTaken={isTaken}
+                inOtherParty={otherPartyIds.has(char.resourceId)}
                 isUnsupported={isUnsupported}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />

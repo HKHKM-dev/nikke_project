@@ -9,7 +9,9 @@
 // 育成データのスナップショット（npm run build:import が private/builds/ に書くもの）もそのまま渡せる。1 件に skillLevels が
 // あればスキル Lv の既定にする（--skill-levels が優先。plan/design-build-snapshot.md 3 節）。
 // Stage 15: --hit-rate（命中率。射撃場 = 1）と --enemy（data/enemies.json のプリセット）。
-// Stage 16-B: --events range-3min-jump（data/enemies.json の出来事のセット。カンマ区切り）。--enemy のプリセットが持つものだけ効く。
+// Stage 16-B: --events range-3min-jump（data/enemies.json の出来事のセット。カンマ区切り）。敵のプリセット（--enemy か、--enemy を
+// 省いた敵にあたるプリセット。presetForEnemy）が持つものだけ効く。--events を省くと、そのプリセットの出来事のセットを全部入れる
+// （射撃場の敵ではジャンプあり。画面の既定と同じ。plan/design-ui-rebuild.md 5.2 節）。--no-jump で出来事を入れない。
 // Stage 13: gear の OL 装備に overload（[{ option, level }]、最大 3 行）を書ける。効果層（OL・キューブ・コレクション）を枠ごとに 1 行ずつ出す。
 // Stage 18-C: --condition auto|manual。auto は射撃場の表と着地点の時間割りで、コア命中率・距離ボーナス・弾丸命中率を決める
 // （射撃場のプリセットと、--enemy を省いた属性なしの射撃場の的で効く。ほかの敵では手入力の値と注記）。manual は --core-hit-rate・
@@ -44,6 +46,7 @@ import {
   enemyInputOf,
   enemyLandingsOf,
   parseEnemyPresets,
+  presetForEnemy,
   targetProfileForEnemy,
 } from '../src/enemies.ts';
 import {
@@ -132,6 +135,7 @@ const { values } = parseArgs({
     'hit-rate': { type: 'string' },
     enemy: { type: 'string' },
     events: { type: 'string' },
+    'no-jump': { type: 'boolean', default: false },
     // Stage 18-C: 条件の決め方（auto | manual。18-C2 から既定 auto）と、中遠の着地点の固定（A | B | C）
     condition: { type: 'string' },
     'mid-far': { type: 'string' },
@@ -146,7 +150,7 @@ const { values } = parseArgs({
 
 if (!values.ids) {
   console.error(
-    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--mid-far A] [--near A,B] [--far A,B] [--skill-levels 191:skill2=4] [--jump-windows 0056-11]',
+    'usage: node scripts/sim-run.ts --ids 271,870 [--fixed-spec] [--duration 180] [--no-burst] [--fixed-cycle] [--treasure 101:3] [--build builds.json] [--condition manual] [--hit-rate 0.8] [--enemy range-bigarms-wind] [--events range-3min-jump] [--no-jump] [--mid-far A] [--near A,B] [--far A,B] [--skill-levels 191:skill2=4] [--jump-windows 0056-11]',
   );
   process.exit(2);
 }
@@ -329,10 +333,22 @@ function withBuild(
   };
 }
 
-const eventSetIds = values.events?.split(',').map((s) => s.trim()) ?? [];
+const plainEnemy: EnemyInput = {
+  defence: Number(values.defence),
+  element: (values.element as Element | undefined) ?? null,
+  hasCore: true,
+};
+// 出来事のセットを持つプリセット。--enemy を省いたときは、敵の値にあたるプリセット（属性なしの射撃場の敵も射撃場のプリセット）
+const eventPreset = enemyPreset ?? presetForEnemy(enemyPresets.enemies, plainEnemy);
+if (values.events !== undefined && values['no-jump']) {
+  console.error('--events and --no-jump cannot be used together');
+  process.exit(2);
+}
+const eventSetIds =
+  values.events?.split(',').map((s) => s.trim()) ?? (values['no-jump'] ? [] : (eventPreset?.eventSets ?? []));
 for (const id of eventSetIds) {
-  if (!enemyPreset?.eventSets.includes(id)) {
-    console.error(`--events: ${id} is not an event set of --enemy ${values.enemy ?? '(none)'}`);
+  if (!eventPreset?.eventSets.includes(id)) {
+    console.error(`--events: ${id} is not an event set of the enemy ${values.enemy ?? '(no preset)'}`);
     process.exit(2);
   }
 }
@@ -361,13 +377,13 @@ function jumpWindowsArg(arg: string): { start: number; end: number }[] {
 }
 const jumpWindows = values['jump-windows'] === undefined ? undefined : jumpWindowsArg(values['jump-windows']);
 if (jumpWindows !== undefined && eventSetIds.length === 0) {
-  console.error('--jump-windows needs --events with an untargetable event set (e.g. range-3min-jump)');
+  console.error('--jump-windows needs an untargetable event set (e.g. range-3min-jump; drop --no-jump)');
   process.exit(2);
 }
 const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.duration), jumpWindows);
 const baseEnemy: EnemyInput = enemyPreset
   ? { ...enemyInputOf(enemyPreset), events: enemyEvents }
-  : { defence: Number(values.defence), element: (values.element as Element | undefined) ?? null, hasCore: true };
+  : { ...plainEnemy, ...(enemyEvents.length > 0 ? { events: enemyEvents } : {}) };
 // Stage 18-C: 的の条件の表（自動の条件のときだけ付ける）。18-C2: 射撃場のプリセットのほか、属性なしの射撃場の的（--enemy を
 // 省いた既定の敵）も射撃場の表を使う。表の無い敵では、自動でも手入力の値になり、注記が出る
 const target = conditionMode === 'auto' ? targetProfileForEnemy(enemyPresets, baseEnemy) : undefined;

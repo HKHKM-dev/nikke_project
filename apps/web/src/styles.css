@@ -669,6 +669,12 @@ header h1 {
   padding: 1px 4px;
   font-size: 0.7rem;
 }
+.modern-slot-other-party-badge {
+  border: 1px solid currentColor;
+  padding: 0 4px;
+  font-size: 0.7rem;
+  font-weight: normal;
+}
 .modern-slot-clear-button {
   background: transparent;
   border: none;
@@ -1037,6 +1043,14 @@ header h1 {
 }
 .char-tray-item-taken {
   opacity: 0.45;
+}
+/* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
+.char-tray-item:disabled {
+  cursor: not-allowed;
+}
+.char-tray-item:disabled:hover {
+  transform: none;
+  border-color: transparent;
 }
 .char-tray-item-taken-badge {
   position: absolute;

@@ -6,7 +6,6 @@ import {
   CUBE_LEVEL_MAX,
   CUBE_LEVEL_MIN,
   ELEMENTS,
-  FIXED_SPEC_ENEMY_DEFENCE,
   GEAR_LEVEL_MAX,
   GEAR_PARTS,
   GEAR_TYPES,
@@ -21,7 +20,6 @@ import {
   SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
-  emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
   overloadPositionsUnique,
@@ -46,8 +44,34 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 
+/**
+ * 射撃場の敵（防御力 100・コアあり）。画面で選べる敵はこれだけで、属性だけを選ぶ。ボスのプリセットを足すまでは、保存データの
+ * 防御力・コアの有無もこの値に戻す（plan/design-ui-rebuild.md 5.2 節）
+ */
 export const SHOOTING_RANGE_ENEMY: EnemyInput = { defence: 100, element: null, hasCore: true };
-export const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
+/** 敵の属性の既定。灼熱（plan/design-ui-rebuild.md 4 節の 1） */
+export const DEFAULT_ENEMY_ELEMENT: Element = 'Fire';
+
+/** スロットの育成値。LV は編成共通のシンクロレベル（TeamState.synchroLevel）を使うので持たない */
+export type SlotGrowth = Omit<GrowthInput, 'level'>;
+/**
+ * スロットの育成入力。リサイクルルームは編成共通のコンソールから取り、その他攻撃加算は 0 で計算するので持たない
+ * （calcView.ts）
+ */
+export type SlotBuild = Omit<BuildInput, 'recycleRoom' | 'extraAttack'>;
+
+export const DEFAULT_SLOT_GROWTH: SlotGrowth = { grade: 3, core: 0 };
+/** シンクロレベルの既定 */
+export const DEFAULT_SYNCHRO_LEVEL = 200;
+
+export function emptySlotBuild(): SlotBuild {
+  return {
+    affectionRank: AFFECTION_RANK_MIN,
+    gear: { head: null, body: null, arm: null, leg: null },
+    cube: null,
+    collection: null,
+  };
+}
 /** Stage 15: hitRate（Stage 18 から「弾丸命中率」と表示。射撃場 = 1）を足した。18-C2 から、条件が手入力の枠でだけ使う */
 export const DEFAULT_SLOT_CONDITION: SlotCondition = {
   coreHitRate: 1,
@@ -59,8 +83,6 @@ export const DEFAULT_SLOT_CONDITION: SlotCondition = {
 export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
-/** バーストの既定。ON */
-export const DEFAULT_BURST = true;
 /**
  * Stage 18-C2: 条件の決め方の既定。自動 = 射撃場の的の表と着地点の時間割り（plan/design-stage18.md 12.9 節の 5）。
  * 操作キャラの枠も自動（AUTO で撃つ前提）。人が狙う操作は手入力にしてもらう
@@ -76,25 +98,20 @@ export const DEFAULT_HP_RATIO = 1;
 
 export type SlotState = {
   resourceId: number | null;
-  growth: GrowthInput;
+  growth: SlotGrowth;
   /** Stage 18-C2: 条件の決め方。自動でも手入力の値（condition）は残し、未測定の項目・的の表の無い敵で使う */
   conditionMode: ConditionMode;
   condition: SlotCondition;
   skillLevels: SkillLevels;
   /** Stage 9: 宝物の段階。キャラを選び直すと 0 に戻る。スペック固定でも上書きしない */
   treasurePhase: TreasurePhase;
-  /** Stage 12: 育成入力（装備・キューブ・好感度・コレクション・リサイクルルーム・その他）。growth と同じくキャラを変えても残る */
-  build: BuildInput;
+  /** Stage 12: 育成入力（装備・キューブ・好感度・コレクション）。growth と同じくキャラを変えても残る */
+  build: SlotBuild;
   /**
    * 2 段目の段 6: HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。被弾の時刻は計算に入れず、戦闘中は一定とみなす。
    * 入力欄は HP の割合の条件を持つ効果のある枠にだけ出す（論点 5）。キャラを選び直すと既定（満タン）に戻る
    */
   hpRatio: number;
-  /**
-   * 2026-10-31: 撃たない（スロットの詳細設定）。モデルに撃たないスロットが無いので、計算では弾丸命中率を 0 にする（通常攻撃の
-   * ダメージとゲージが出ない。射撃の回数のきっかけは残る。records の noFireSlots と同じ扱い。calcView.ts）。既定は撃つ
-   */
-  noFire: boolean;
   /**
    * 2026-10-31: バーストしない（スロットの詳細設定）。バーストのチェーンの候補から外す（core の TeamInput.noBurstSlots。
    * calcView.ts）。既定は使う
@@ -109,10 +126,6 @@ export type TeamState = {
   durationSeconds: number;
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
-  /** バーストを回すか（Stage 5 で固定 20 秒サイクル、Stage 7 からゲージ・CT の動的サイクル）。画面に欄が無く、計算では常に回す（calcView.ts） */
-  burst: boolean;
-  /** 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ */
-  controlledSlot: number;
   /**
    * Stage 16-B: ON にした敵の出来事のセット（data/enemies.json の eventSets の id）。既定は空（OFF）。
    * 画面は使わず、rangeJump から出来事のセットを決める（calcView.ts）
@@ -165,20 +178,17 @@ export type TeamAction =
   | { type: 'selectCharacter'; index: number; resourceId: number }
   | { type: 'swapSlots'; fromIndex: number; toIndex: number }
   | { type: 'clearSlot'; index: number }
-  | { type: 'setGrowth'; index: number; growth: GrowthInput }
+  | { type: 'setGrowth'; index: number; growth: SlotGrowth }
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
   | { type: 'setConditionMode'; index: number; conditionMode: ConditionMode }
   | { type: 'setSkillLevels'; index: number; skillLevels: SkillLevels }
   | { type: 'setTreasurePhase'; index: number; treasurePhase: TreasurePhase }
-  | { type: 'setBuild'; index: number; build: BuildInput }
+  | { type: 'setBuild'; index: number; build: SlotBuild }
   | { type: 'setHpRatio'; index: number; hpRatio: number }
-  | { type: 'setNoFire'; index: number; noFire: boolean }
   | { type: 'setNoBurst'; index: number; noBurst: boolean }
   | { type: 'setEnemy'; enemy: EnemyInput }
   | { type: 'setDuration'; durationSeconds: number }
   | { type: 'setFixedSpec'; fixedSpec: boolean }
-  | { type: 'setBurst'; burst: boolean }
-  | { type: 'setControlledSlot'; controlledSlot: number }
   | { type: 'setEnemyEventSets'; enemyEventSets: string[] }
   | { type: 'setConsole'; console: ConsoleInput }
   | { type: 'setSynchroLevel'; synchroLevel: number }
@@ -188,32 +198,32 @@ export type TeamAction =
 export function emptySlot(): SlotState {
   return {
     resourceId: null,
-    growth: { ...DEFAULT_GROWTH },
+    growth: { ...DEFAULT_SLOT_GROWTH },
     conditionMode: DEFAULT_CONDITION_MODE,
     condition: { ...DEFAULT_SLOT_CONDITION },
     skillLevels: { ...DEFAULT_SKILL_LEVELS },
     treasurePhase: DEFAULT_TREASURE_PHASE,
-    build: emptyBuild(),
+    build: emptySlotBuild(),
     hpRatio: DEFAULT_HP_RATIO,
-    noFire: false,
     noBurst: false,
   };
 }
 
-/** 操作キャラの既定の枠（枠 3） */
+/**
+ * 操作キャラの枠（スロット 3）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ。画面では選ばない
+ * （plan/design-ui-rebuild.md 5.1 節）
+ */
 export const DEFAULT_CONTROLLED_SLOT = 2;
 
 export function initialTeamState(): TeamState {
   return {
     slots: Array.from({ length: TEAM_SIZE }, emptySlot),
-    enemy: { ...SHOOTING_RANGE_ENEMY },
+    enemy: { ...SHOOTING_RANGE_ENEMY, element: DEFAULT_ENEMY_ELEMENT },
     durationSeconds: DEFAULT_DURATION_SECONDS,
     fixedSpec: false,
-    burst: DEFAULT_BURST,
-    controlledSlot: DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: [],
     console: emptyConsole(),
-    synchroLevel: DEFAULT_GROWTH.level,
+    synchroLevel: DEFAULT_SYNCHRO_LEVEL,
     rangeJump: true,
   };
 }
@@ -265,10 +275,7 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       const tmp = slots[action.fromIndex]!;
       slots[action.fromIndex] = slots[action.toIndex]!;
       slots[action.toIndex] = tmp;
-      let controlledSlot = state.controlledSlot;
-      if (controlledSlot === action.fromIndex) controlledSlot = action.toIndex;
-      else if (controlledSlot === action.toIndex) controlledSlot = action.fromIndex;
-      return { ...state, slots, controlledSlot };
+      return { ...state, slots };
     }
     case 'setGrowth':
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
@@ -284,8 +291,6 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       return updateSlot(state, action.index, (s) => ({ ...s, build: action.build }));
     case 'setHpRatio':
       return updateSlot(state, action.index, (s) => ({ ...s, hpRatio: action.hpRatio }));
-    case 'setNoFire':
-      return updateSlot(state, action.index, (s) => ({ ...s, noFire: action.noFire }));
     case 'setNoBurst':
       return updateSlot(state, action.index, (s) => ({ ...s, noBurst: action.noBurst }));
     case 'setEnemy':
@@ -293,17 +298,7 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
     case 'setDuration':
       return { ...state, durationSeconds: action.durationSeconds };
     case 'setFixedSpec':
-      // ON で敵防御を射撃場の値に切り替える（戦闘時間は変えない）。OFF では戻さない
-      return action.fixedSpec
-        ? { ...state, fixedSpec: true, enemy: { ...state.enemy, defence: FIXED_SPEC_ENEMY_DEFENCE } }
-        : { ...state, fixedSpec: false };
-    case 'setBurst':
-      return { ...state, burst: action.burst };
-    case 'setControlledSlot':
-      // 押されているフォーカスをもう一度押しても計算し直さない
-      return state.controlledSlot === action.controlledSlot
-        ? state
-        : { ...state, controlledSlot: action.controlledSlot };
+      return { ...state, fixedSpec: action.fixedSpec };
     case 'setEnemyEventSets':
       return { ...state, enemyEventSets: action.enemyEventSets };
     case 'setConsole':
@@ -319,12 +314,11 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
 
 /**
  * ニケを枠に置く操作（モダン UI のトレイからのドラッグ・クリック。plan/design-modern-ui.md）。同じニケは 1 枠までなので、
- * ほかの枠にいればそこから動かす（入れ替え）。もうその枠にいれば何もしない（null）
+ * どこかの枠にいれば何もしない（null）。スロットどうしの入れ替えは、スロットのドラッグ（swapSlots）でする
+ * （plan/design-ui-rebuild.md 5.2 節）
  */
 export function placeCharacterAction(state: TeamState, resourceId: number, index: number): TeamAction | null {
-  const placed = state.slots.findIndex((s) => s.resourceId === resourceId);
-  if (placed === index) return null;
-  if (placed !== -1) return { type: 'swapSlots', fromIndex: placed, toIndex: index };
+  if (state.slots.some((s) => s.resourceId === resourceId)) return null;
   return { type: 'selectCharacter', index, resourceId };
 }
 
@@ -382,23 +376,22 @@ export function clampInt(value: number, min: number, max: number): number {
 
 // ---- 永続化 ----
 
-/** localStorage のキー。Stage 14 で formatVersion を付けたが、版のない旧形式もこのキーのまま読む */
+/** localStorage のキー */
 export const STORAGE_KEY = 'nikke-calc.team.v1';
 
 /**
- * Stage 14: 編成の保存形式の版。localStorage と「編成の JSON」の書き出しで共通。
- * 版のない JSON（Stage 3〜13 の保存データ）は版 0 として読み、欠落した項目を既定値で埋める（各 parse* の欠落互換）
+ * 編成の保存形式の版。版 3 で、画面から消した項目（バースト・操作キャラ・撃たない・スロットごとの LV・リサイクルルーム・
+ * その他攻撃加算）を書かなくした。版 1・2 の保存データのそれらは読み捨てる。版のない旧形式（Stage 3〜13）は読まない
  */
-export const TEAM_FORMAT_VERSION = 2;
+export const TEAM_FORMAT_VERSION = 3;
 
 export function serializeTeamState(state: TeamState): string {
   return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
 }
 
-/** 読めた版（版のない旧形式は 0）。未知の版・形が合わないものは null。保存した編成の一覧（parties.ts）も同じ版を使う */
+/** 読めた版。版のないもの・未知の版・形が合わないものは null。保存した編成の一覧（parties.ts）も同じ版を使う */
 export function formatVersionOf(raw: Record<string, unknown>): number | null {
   const v = raw.formatVersion;
-  if (v === undefined) return 0;
   return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= TEAM_FORMAT_VERSION ? v : null;
 }
 
@@ -417,13 +410,14 @@ function isBool(v: Json): v is boolean {
   return typeof v === 'boolean';
 }
 
-function parseGrowth(v: Json): GrowthInput | null {
-  if (!isRecord(v) || !isInt(v.level, 1) || !isInt(v.grade, 0) || !isInt(v.core, 0)) return null;
-  return { level: v.level, grade: v.grade, core: v.core };
+/** 版 2 までの保存データの level は読み捨てる */
+function parseGrowth(v: Json): SlotGrowth | null {
+  if (!isRecord(v) || !isInt(v.grade, 0) || !isInt(v.core, 0)) return null;
+  return { grade: v.grade, core: v.core };
 }
 
 /**
- * Stage 18-C2: 条件の決め方。版 2 から保存する。欠落（版 0・1）は、条件が既定のまま（コア命中率 1・距離ボーナスあり・弾丸命中率 1 か欠落）
+ * Stage 18-C2: 条件の決め方。版 2 から保存する。欠落（版 1）は、条件が既定のまま（コア命中率 1・距離ボーナスあり・弾丸命中率 1 か欠落）
  * なら自動に読み替え、それ以外は手入力として残す（Stage 17 の 8 節の 5・plan/design-stage18.md 12.9 節の 5）
  */
 function parseConditionMode(v: Json, condition: SlotCondition): ConditionMode | null {
@@ -453,9 +447,8 @@ function parseCondition(v: Json): SlotCondition | null {
   return condition;
 }
 
-/** Stage 3 の保存データには無いので、欠落は既定値（全部 10）。あれば 1..10 の整数だけ許す */
+/** 1..10 の整数だけ許す */
 function parseSkillLevels(v: Json): SkillLevels | null {
-  if (v === undefined) return { ...DEFAULT_SKILL_LEVELS };
   if (!isRecord(v)) return null;
   const levels = {} as SkillLevels;
   for (const slot of SKILL_SLOTS) {
@@ -466,9 +459,8 @@ function parseSkillLevels(v: Json): SkillLevels | null {
   return levels;
 }
 
-/** Stage 8 までの保存データには無いので、欠落は 0。あれば 0..3 の整数だけ許す */
+/** 0..3 の整数だけ許す */
 function parseTreasurePhase(v: Json): TreasurePhase | null {
-  if (v === undefined) return DEFAULT_TREASURE_PHASE;
   if (!isInt(v, 0) || v > TREASURE_PHASE_MAX) return null;
   return v as TreasurePhase;
 }
@@ -511,19 +503,20 @@ function parseGear(v: Json): GearInput | undefined {
   return overload.length === 0 ? { type, level: v.level } : { type, level: v.level, overload };
 }
 
-/** Stage 11 までの保存データには無いので、欠落は空（素のステータス）。あれば各項目の範囲だけ見る（マスタとの照合は計算時） */
-function parseBuild(v: Json): BuildInput | null {
-  if (v === undefined) return emptyBuild();
+/**
+ * 各項目の範囲だけ見る（マスタとの照合は計算時）。版 2 までの保存データのリサイクルルームとその他攻撃加算は読み捨てる
+ */
+function parseBuild(v: Json): SlotBuild | null {
   if (!isRecord(v)) return null;
   if (!isInt(v.affectionRank, AFFECTION_RANK_MIN) || v.affectionRank > AFFECTION_RANK_MAX) return null;
   if (!isRecord(v.gear)) return null;
-  const gear = {} as BuildInput['gear'];
+  const gear = {} as SlotBuild['gear'];
   for (const part of GEAR_PARTS) {
     const g = parseGear(v.gear[part]);
     if (g === undefined) return null;
     gear[part] = g;
   }
-  let cube: BuildInput['cube'] = null;
+  let cube: SlotBuild['cube'] = null;
   if (v.cube !== null) {
     if (
       !isRecord(v.cube) ||
@@ -534,32 +527,21 @@ function parseBuild(v: Json): BuildInput | null {
       return null;
     cube = { id: v.cube.id, level: v.cube.level };
   }
-  let collection: BuildInput['collection'] = null;
+  let collection: SlotBuild['collection'] = null;
   if (v.collection !== null) {
     if (!isRecord(v.collection) || (v.collection.rarity !== 'R' && v.collection.rarity !== 'SR')) return null;
     if (!isInt(v.collection.level, 0) || v.collection.level > COLLECTION_LEVEL_MAX) return null;
     collection = { rarity: v.collection.rarity, level: v.collection.level };
   }
-  const rr = v.recycleRoom;
-  if (!isRecord(rr) || !isInt(rr.personal, 0) || !isInt(rr.class, 0) || !isInt(rr.corporation, 0)) return null;
-  if (!isFinite_(v.extraAttack) || v.extraAttack < 0) return null;
-  return {
-    affectionRank: v.affectionRank,
-    gear,
-    cube,
-    collection,
-    recycleRoom: { personal: rr.personal, class: rr.class, corporation: rr.corporation },
-    extraAttack: v.extraAttack,
-  };
+  return { affectionRank: v.affectionRank, gear, cube, collection };
 }
 
+/** 属性だけを読み、防御力とコアの有無は射撃場の敵に戻す（SHOOTING_RANGE_ENEMY） */
 function parseEnemy(v: Json): EnemyInput | null {
   if (!isRecord(v)) return null;
-  if (!isFinite_(v.defence) || v.defence < 0) return null;
-  if (!isBool(v.hasCore)) return null;
   const element = v.element;
   if (element !== null && !(ELEMENTS as readonly string[]).includes(String(element))) return null;
-  return { defence: v.defence, element: element === null ? null : (element as Element), hasCore: v.hasCore };
+  return { ...SHOOTING_RANGE_ENEMY, element: element === null ? null : (element as Element) };
 }
 
 export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
@@ -620,8 +602,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
     const build = parseBuild(s.build);
     const hpRatio = parseHpRatio(s.hpRatio);
-    // 2026-10-31 までの保存データには無いので、欠落は撃つ
-    if (s.noFire !== undefined && !isBool(s.noFire)) return null;
+    // 2026-10-31 までの保存データには無いので、欠落は使う
     if (s.noBurst !== undefined && !isBool(s.noBurst)) return null;
     if (
       growth === null ||
@@ -643,7 +624,6 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
       treasurePhase,
       build,
       hpRatio,
-      noFire: s.noFire === true,
       noBurst: s.noBurst === true,
     });
   }
@@ -652,17 +632,6 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   if (enemy === null) return null;
   if (!isFinite_(raw.durationSeconds) || raw.durationSeconds < 0) return null;
   if (!isBool(raw.fixedSpec)) return null;
-  // Stage 4 までの保存データには無いので、欠落は既定値（ON）
-  if (raw.burst !== undefined && !isBool(raw.burst)) return null;
-  // Stage 6 までの保存データには無い。欠落と旧仕様の null（全員 AI）は既定の枠にする
-  const controlled = raw.controlledSlot;
-  if (
-    controlled !== undefined &&
-    controlled !== null &&
-    !(typeof controlled === 'number' && Number.isInteger(controlled) && controlled >= 0 && controlled < TEAM_SIZE)
-  ) {
-    return null;
-  }
   // Stage 16-B までの保存データには無いので、欠落は空（OFF）
   const eventSets = raw.enemyEventSets;
   if (eventSets !== undefined && !(Array.isArray(eventSets) && eventSets.every((id) => typeof id === 'string'))) {
@@ -672,7 +641,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   // 2026-10-31 までの保存データには無いので、欠落は全部 0
   const consoleInput = raw.console === undefined ? emptyConsole() : parseConsole(raw.console);
   if (consoleInput === null) return null;
-  // 2026-10-31 までの保存データには無いので、欠落は既定（Lv200）
+  // 2026-10-31 までの保存データには無いので、欠落は既定（LV200）
   if (raw.synchroLevel !== undefined && !isInt(raw.synchroLevel, 1)) return null;
   // 2026-10-31 までの保存データには無いので、欠落は既定（ON）
   if (raw.rangeJump !== undefined && !isBool(raw.rangeJump)) return null;
@@ -682,11 +651,9 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     enemy,
     durationSeconds: raw.durationSeconds,
     fixedSpec: raw.fixedSpec,
-    burst: raw.burst === undefined ? DEFAULT_BURST : raw.burst,
-    controlledSlot: typeof controlled === 'number' ? controlled : DEFAULT_CONTROLLED_SLOT,
     enemyEventSets: eventSets === undefined ? [] : (eventSets as string[]),
     console: consoleInput,
-    synchroLevel: raw.synchroLevel === undefined ? DEFAULT_GROWTH.level : raw.synchroLevel,
+    synchroLevel: raw.synchroLevel === undefined ? DEFAULT_SYNCHRO_LEVEL : raw.synchroLevel,
     rangeJump: raw.rangeJump === undefined ? true : raw.rangeJump,
   };
 }
@@ -712,47 +679,4 @@ function parseConsole(v: Json): ConsoleInput | null {
     result.corporation[c] = lv;
   }
   return result;
-}
-
-// ---- Stage 14: 枠ごとの育成の JSON（書き出し / 取り込み） ----
-
-/** 枠ごとの育成の JSON の版 */
-export const BUILD_FORMAT_VERSION = 1;
-
-export type SlotBuildJson = { growth: GrowthInput; build: BuildInput };
-
-/** 枠の育成値と育成入力を JSON にする（{ formatVersion, growth, build }） */
-export function serializeSlotBuild(slot: Pick<SlotState, 'growth' | 'build'>): string {
-  return JSON.stringify({ formatVersion: BUILD_FORMAT_VERSION, growth: slot.growth, build: slot.build }, null, 2);
-}
-
-/**
- * 枠ごとの育成の JSON を読む。書き出した形（{ formatVersion, growth, build }）のほか、CLI の --build の 1 枠分
- * （BuildInput の一部と任意の growth。欠けた項目は空の育成で埋める）も読む。growth が無ければ null（枠の育成値を変えない）
- */
-export function readSlotBuildJson(json: string): ReadResult<{ growth: GrowthInput | null; build: BuildInput }> {
-  let raw: Json;
-  try {
-    raw = JSON.parse(json);
-  } catch {
-    return { ok: false, error: 'JSON として読めません' };
-  }
-  if (!isRecord(raw)) return { ok: false, error: '育成の JSON ではありません' };
-  const version = raw.formatVersion;
-  if (version !== undefined && version !== BUILD_FORMAT_VERSION) {
-    return { ok: false, error: `この版の育成は読めません（formatVersion ${String(version)}）` };
-  }
-  const wrapped = version !== undefined || isRecord(raw.build);
-  const { growth: rawGrowth, formatVersion: _v, ...rest } = raw;
-  const buildRaw = wrapped ? raw.build : rest;
-  if (!isRecord(buildRaw)) return { ok: false, error: '育成（build）がありません' };
-  // 書かれていない項目・部位は空の育成で埋める（CLI の --build と同じ）
-  const empty = emptyBuild();
-  const gear = isRecord(buildRaw.gear) ? { ...empty.gear, ...buildRaw.gear } : buildRaw.gear;
-  const build = parseBuild({ ...empty, ...buildRaw, ...(gear === undefined ? {} : { gear }) });
-  if (build === null) return { ok: false, error: '育成の値が範囲外か、形が合いません' };
-  if (rawGrowth === undefined) return { ok: true, value: { growth: null, build } };
-  const growth = parseGrowth(rawGrowth);
-  if (growth === null) return { ok: false, error: '育成値（growth）の形が合いません' };
-  return { ok: true, value: { growth, build } };
 }
