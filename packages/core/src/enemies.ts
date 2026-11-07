@@ -13,6 +13,7 @@ import type {
   CoreHitRateTable,
   RateTableWithWeaponChanges,
   FlightFramesTable,
+  HitRateDownTable,
   LandingBand,
   LandingPoint,
   TargetProfile,
@@ -355,6 +356,52 @@ function parseFlightFrames(v: unknown, path: string, keys: ReadonlySet<string>):
   return table;
 }
 
+/** 命中率の和 N のキー（負の数の文字列） */
+function parseHitRateKey(key: string, path: string): void {
+  const n = Number(key);
+  if (key.trim() === '' || !Number.isFinite(n) || n >= 0)
+    throw new TypeError(`${path}.${key}: key must be a negative number`);
+}
+
+/** 命中率▼の表（types.ts の HitRateDownTable） */
+function parseHitRateDown(v: unknown, path: string, keys: ReadonlySet<string>): HitRateDownTable {
+  if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
+  const table: HitRateDownTable = {};
+  for (const [weapon, entry] of Object.entries(v)) {
+    const at = `${path}.${weapon}`;
+    if (!(WEAPON_TYPES as readonly string[]).includes(weapon)) throw new TypeError(`${at}: unknown weapon type`);
+    if (!isRecord(entry)) throw new TypeError(`${at}: must be an object`);
+    for (const key of Object.keys(entry)) {
+      if (key !== 'core' && key !== 'bullet') throw new TypeError(`${at}.${key}: unknown key`);
+    }
+    const out: NonNullable<HitRateDownTable[WeaponType]> = {};
+    if (entry.core !== undefined) {
+      const core = entry.core;
+      if (!isRecord(core) || !isRecord(core.ratio) || Object.keys(core).length !== 2) {
+        throw new TypeError(`${at}.core: must be { base, ratio }`);
+      }
+      const ratio: Record<string, number> = {};
+      for (const [key, r] of Object.entries(core.ratio)) {
+        parseHitRateKey(key, `${at}.core.ratio`);
+        if (!isRate(r)) throw new TypeError(`${at}.core.ratio.${key}: must be in [0, 1]`);
+        ratio[key] = r;
+      }
+      out.core = { base: parseRateRow(core.base, `${at}.core.base`, keys, RATE), ratio };
+    }
+    if (entry.bullet !== undefined) {
+      if (!isRecord(entry.bullet)) throw new TypeError(`${at}.bullet: must be an object`);
+      const bullet: Record<string, TargetRateRow> = {};
+      for (const [key, row] of Object.entries(entry.bullet)) {
+        parseHitRateKey(key, `${at}.bullet`);
+        bullet[key] = parseRateRow(row, `${at}.bullet.${key}`, keys, RATE);
+      }
+      out.bullet = bullet;
+    }
+    table[weapon as WeaponType] = out;
+  }
+  return table;
+}
+
 function parseTargetProfile(v: unknown, path: string): TargetProfile {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
   const name = v.name;
@@ -404,6 +451,9 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
             FRAMES,
           ),
         }),
+    ...(v.hitRateDown === undefined
+      ? {}
+      : { hitRateDown: parseHitRateDown(v.hitRateDown, `${path}.hitRateDown`, keys) }),
     source: v.source,
   };
 }

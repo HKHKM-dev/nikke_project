@@ -1,0 +1,40 @@
+{
+  "id": "0966",
+  "date": "2026-11-07",
+  "folder": "range",
+  "file": "20261107-0966_mg_mast-romantic-maid_flower.mp4",
+  "original": "2026-11-07 15-06-50.mp4",
+  "durationSec": 199,
+  "frames": 11940,
+  "fps": 60,
+  "sizeMB": 368.3,
+  "sha256": "dcfca293a154",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0683 の撮影 E。I-DOLL・フラワー（I）・マスト：ロマンチックメイド（II・操作）。III なし（オート射撃 ON・オートバースト ON）。火の的。編成画面では 1 枠目を空けて 2・3 枠目に置いた（台帳の枠は詰めて 1・2）。戦闘履歴のパネルは無く、リザルト画面の TOTAL DAMAGE まで。I の枠は、戦闘中の枠の属性（風）・RL の残弾（N/6）・顔で I-DOLL・フラワーとした",
+  "backup": {
+    "at": "2026-11-07T15:16+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

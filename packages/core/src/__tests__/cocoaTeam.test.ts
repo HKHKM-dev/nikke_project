@@ -1,5 +1,5 @@
 // ココア（311）を含む編成: 定義はダメージに効く効果を持たない（S1 の遮蔽物 HP 回復は、遮蔽物を読む味方がいる時だけ効く。段 17 の PR 3、
-// C-0822）。射撃の列のグループ分け（V-0031、C-0092）。
+// C-0822）。射撃の列のグループ分け（V-0031、C-0977）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -61,10 +61,11 @@ describe('ココアの定義', () => {
   it('has only the S1 cover heal as an effect (the other slots are notes only)', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
     expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal']);
-    for (const slot of ['skill2', 'burst'] as const) {
-      expect(def.skills[slot].support).toBe('noEffect');
-      expect(def.skills[slot].effects).toEqual([]);
-    }
+    for (const slot of ['skill2', 'burst'] as const) expect(def.skills[slot].effects).toEqual([]);
+    expect(def.skills.skill2.support).toBe('noEffect');
+    // デバフ解除がほろ酔いを外すこと（C-0976）は未対応の notes（課題 2-59）
+    expect(def.skills.skill1.support).toBe('partial');
+    expect(def.skills.burst.support).toBe('unsupported');
   });
 });
 
@@ -72,7 +73,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, cocoa }) => 
   const calc = runTeam(input);
   const plan = planTeamRun(input);
 
-  it('gives no buff windows or instants from Cocoa (C-0092)', () => {
+  it('gives no buff windows or instants from Cocoa (C-0977)', () => {
     expect(piecesOf(plan).filter((w) => w.sourceSlotIndex === cocoa)).toEqual([]);
     expect(plan.instants.filter((e) => e.sourceSlotIndex === cocoa)).toEqual([]);
   });

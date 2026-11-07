@@ -17,9 +17,12 @@ import {
 import { runFirstPass } from '../frame/firstPass.ts';
 import {
   autoConditionAt,
+  bulletHitRateAt,
+  coreHitRateAt,
   bulletHitRateWithHitRateUp,
   coreHitRateWithHitRateUp,
   distanceBonusAt,
+  hitRateDownAt,
   hitRateUpRaisesBulletHitRate,
   landingBandOf,
   landingMix,
@@ -370,7 +373,7 @@ describe('命中率▲（C-0036・C-0037）', () => {
     expect(coreHitRateWithHitRateUp(0.05, 1)).toBe(1);
     expect(coreHitRateWithHitRateUp(0.05, 1.0137)).toBe(1);
     expect(coreHitRateWithHitRateUp(0.2281, 0)).toBe(0.2281);
-    // 命中率▼は測っていないので変えない（注記を出す）
+    // 命中率▼の表を渡さなければ変えない
     expect(coreHitRateWithHitRateUp(0.2281, -0.2)).toBe(0.2281);
   });
 
@@ -384,6 +387,37 @@ describe('命中率▲（C-0036・C-0037）', () => {
     const unmeasured = { ...profile, coreHitRate: { ...profile.coreHitRate, SG: null } };
     const sg = autoConditionAt(unmeasured, near, SG, 0.5, { ...MANUAL, coreHitRate: 0.4 });
     expect(sg.coreHitRate).toBe(0.4);
+  });
+});
+
+describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）', () => {
+  const at = (id: string) => profile.landings.find((l) => l.id === id)!;
+  const down = (id: string) => hitRateDownAt(profile.hitRateDown, MG, at(id))!;
+
+  it('gives the MG core hit rate as the landing base × the ratio of N, for the N in the table only', () => {
+    expect(coreHitRateAt(0.9626, -0.2, down('nearA'))).toBeCloseTo(0.587, 12);
+    expect(coreHitRateAt(0.9626, -0.4, down('nearB'))).toBeCloseTo(0.587 * 0.46, 12);
+    expect(coreHitRateAt(0.9588, -0.6000000000000001, down('farA'))).toBeCloseTo(0.086 * 0.2, 12);
+    expect(coreHitRateAt(0.965, -0.4, down('midNear'))).toBeCloseTo(0.378 * 0.46, 12);
+    expect(coreHitRateAt(0.9614, -0.6, down('midFarC'))).toBeCloseTo(0.182 * 0.2, 12);
+    // 表に無い N（▲と同時の区間）は変えない
+    expect(coreHitRateAt(0.9626, -0.1, down('nearA'))).toBe(0.9626);
+  });
+
+  it('lowers the MG bullet hit rate at far and mid-far only; mid-far at −40% keeps the table value', () => {
+    expect(bulletHitRateAt(0.9917, -0.2, down('farB'))).toBe(0.958);
+    expect(bulletHitRateAt(0.9917, -0.4, down('farA'))).toBe(0.74);
+    expect(bulletHitRateAt(0.9945, -0.6, down('midFarA'))).toBe(0.718);
+    expect(bulletHitRateAt(0.9945, -0.4, down('midFarB'))).toBe(0.9945);
+    expect(bulletHitRateAt(0.9976, -0.6, down('nearA'))).toBe(0.9976);
+  });
+
+  it('has no rows for other weapon types, and autoConditionAt reads the table', () => {
+    expect(hitRateDownAt(profile.hitRateDown, AR, at('nearA'))).toBeUndefined();
+    expect(autoConditionAt(profile, at('nearA'), AR, -0.2, MANUAL).coreHitRate).toBe(0.4244);
+    const mg = autoConditionAt(profile, at('farA'), MG, -0.4, MANUAL);
+    expect(mg.coreHitRate).toBeCloseTo(0.086 * 0.46, 12);
+    expect(mg.hitRate).toBe(0.74);
   });
 });
 
