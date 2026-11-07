@@ -113,6 +113,7 @@
 - 対象の語彙（2026-10-05）→ 一部完了: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)。残りは 6 節
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
+- 戦闘力による一覧の並び替え（2026-11-07 起票）→ 未着手（設計書は未起案）。式は [claims.md](claims.md)「育成・ステータス」
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
