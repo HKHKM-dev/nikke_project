@@ -62,10 +62,10 @@ describe('ココアの定義', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
     expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal']);
     for (const slot of ['skill2', 'burst'] as const) expect(def.skills[slot].effects).toEqual([]);
-    expect(def.skills.skill2.support).toBe('noEffect');
-    // デバフ解除がほろ酔いを外すこと（C-0976）は未対応の notes（課題 2-59）
-    expect(def.skills.skill1.support).toBe('partial');
-    expect(def.skills.burst.support).toBe('unsupported');
+    // デバフ解除がほろ酔いを外すこと（C-0976）は間接（デバフ）の notes で、対応状況には数えない（課題 2-59。plan/design-indirect-notes.md の経過）
+    expect(def.skills.skill1.support).toBe('supported');
+    for (const slot of ['skill2', 'burst'] as const) expect(def.skills[slot].support).toBe('noEffect');
+    expect(def.skills.burst.notes?.map((n) => n.kind)).toEqual(['noDamage', 'indirect']);
   });
 });
 
