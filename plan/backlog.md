@@ -102,7 +102,6 @@
 
 1 行の形は「題名（起票日）→ 状態: 設計書（あれば）。残りの行き先（この文書の節か行）」。状態は「進行中」「一部完了」「保留」などの一語に、要るときだけ短い括弧（撮影待ちの部分など）を添える。進み具合は設計書の経過に書く。題名は変えない（開いている課題を記録が題名で指す）。行は状態が変わったときだけ直し、閉じたら消す。
 
-- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 一部完了（段 1〜21 は閉じた・段 22 以降は未起案）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)（段ごとの状態と設計書）
 - 単騎の与ダメージの許容外（2026-09-28 起票）→ 一部完了: [design-stage22.md](design-stage22.md) 8 節。残りは 3 節
 - 持続の命中率▲をコア命中率に効かせる（2026-09-28 起票）→ 一部完了: [design-sustained-hit-rate-core.md](design-sustained-hit-rate-core.md)。残りは 1.2 節
 - SG の命中率（2026-10-01）→ 一部完了: [design-sg-hit-rate.md](design-sg-hit-rate.md)。残りは 2-1
@@ -117,6 +116,7 @@
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
+- スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 完了（2026-11-07。段 1〜21 を閉じ、段 22 以降は起こさない。残りの未対応は 6 節と [skills.md](skills.md)）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)
 - 味方のデバフ解除（2026-11-07 起票）→ 完了（2026-11-07。ほろ酔いだけをデバフの印にし、ココアの定義に入れた）: [design-debuff-removal.md](design-debuff-removal.md)
 - 2026-10-29 のアップデートのキャラ（マリアン：クイーン・ラプンツェル：サンクチュアリ・紅蓮：神殺）の仮実装（2026-10-28 起票）→ 完了（2026-11-07。3 体とも撮影で確かめた）: [design-new-chars-1029.md](design-new-chars-1029.md) 10〜13 節
 - 敵のジャンプの始まりの部分チャージの発のコア命中率（2026-11-03 起票）→ 完了（2026-11-03。モデルに入れない）: [design-partial-charge-core.md](design-partial-charge-core.md)
