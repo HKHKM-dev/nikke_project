@@ -18,8 +18,10 @@
 // 6. 生成物を main の版に戻し、ブランチが変えていたら「生成物を main の版に戻す」の commit を足す（スカッシュマージなので、途中の
 //    コミットの生成物は合っていなくてよい）。作業ツリーの生成物も main の版になるので、手元で npm test を回すなら作り直す。
 //    --push なら git push --force-with-lease -u origin HEAD。
+// 7. push の前に、ブランチで変えた手書きの .md が大きさの目安（50KB。検証記録は 30KB）を超えていたら知らせる（止めない。
+//    plan/design-workflow-simplification-10.md 1 節）。
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -40,6 +42,7 @@ import {
   checkSteps,
   collisions,
   nulPaths,
+  oversizedDocs,
   pathListArgs,
   PROGRESS_PATHS,
   progressCopies,
@@ -268,6 +271,18 @@ if (tryGit(['diff', '--cached', '--quiet']) !== 0) {
   console.log('生成物を main の版に戻した（マージの後に CI が main で作り直す）');
 }
 console.log('作業ツリーの生成物は main の版。手元で npm test を回すなら npm run records:minimal で作り直す');
+
+const oversized = oversizedDocs(
+  gitPaths(['diff', '--name-only', '--diff-filter=AMR', 'origin/main...HEAD']),
+  GENERATED_PATHS,
+  (p) => (existsSync(join(ROOT, p)) ? statSync(join(ROOT, p)).size : undefined),
+);
+if (oversized.length > 0) {
+  console.warn(
+    '大きさの目安を超えた手書きの文書がある（AGENTS.md「文書の書き方」。分けるか、書き写しや長い項目を縮める）:',
+  );
+  for (const o of oversized) console.warn(`  ${o.path}: ${Math.round(o.size / 1000)}KB（目安 ${o.limit / 1000}KB）`);
+}
 
 if (values.push) {
   if (tryGit(['push', '--force-with-lease', '-u', 'origin', 'HEAD']) !== 0) fail('push が落ちた');
