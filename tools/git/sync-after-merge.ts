@@ -1,19 +1,25 @@
 // マージ済みの PR の後片付け。Claude Code のフック（.claude/settings.json の SessionStart・UserPromptSubmit・Stop）から呼ぶ。
-//   node tools/git/sync-after-merge.ts
+//   node tools/git/sync-after-merge.ts [--prune-branches]   --prune-branches は SessionStart だけで付ける
 //
 // スカッシュマージでは、ブランチのコミットと main 上のコミットが別物になるので、放っておくと差分の表示に
-// マージ済みの変更が残る。そこで次の 2 つを行う。
+// マージ済みの変更が残る。そこで次の 2 つ（--prune-branches なら 3 つ）を行う。
 //   1. メインのチェックアウトが main で作業中の変更が無ければ、origin/main へ早送りする
 //   2. いまのブランチの PR がマージ済みで（リモートのブランチは自動で消える）、PR の最後のコミットが HEAD と同じで、
 //      作業中の変更が無ければ、ブランチを origin/main に揃える（中身はマージ済みなので失うものは無い）
+//   3. デスクトップ（CLAUDE_CODE_REMOTE でない）で、origin の claude/・antigrav/ のブランチのうち、最後のコミットから 1 日以上
+//      たち、開いている PR が無く、main に合わせても木が変わらない（中身が全部 main に入っている）ものを origin から消す
+//      （PR を出さずに作業を移したブランチや、main に揃えて push したブランチが残るため。
+//      plan/design-workflow-simplification-10.md 2 節）。クラウドでは削除が安全確認で止まるので行わない。PR の一覧が取れなければ
+//      消さない
 // どちらも条件に合わなければ何もしない。ただし 1 の main が origin/main より遅れたまま早送りできないとき
 // （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
 import { execFileSync } from 'node:child_process';
+import { parseRemoteBranches, bringsNothing, prunableBranches } from './sync-after-merge-lib.ts';
 
 /** 成功したら標準出力（前後の空白を除く）、失敗したら null */
-function run(cmd: string, args: string[], cwd?: string): string | null {
+function run(cmd: string, args: readonly string[], cwd?: string): string | null {
   try {
     return execFileSync(cmd, args, {
       cwd,
@@ -26,7 +32,7 @@ function run(cmd: string, args: string[], cwd?: string): string | null {
   }
 }
 
-const git = (args: string[], cwd?: string) => run('git', args, cwd);
+const git = (args: readonly string[], cwd?: string) => run('git', args, cwd);
 /** 追跡中のファイルに作業中の変更が無い */
 const isClean = (cwd?: string) => git(['status', '--porcelain', '--untracked-files=no'], cwd) === '';
 
@@ -72,6 +78,22 @@ if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
     if (head && prHead === head && git(['reset', '--hard', '--quiet', 'origin/main']) !== null) {
       git(['branch', '--unset-upstream']);
       done.push(`マージ済みの ${branch} を origin/main に揃えた`);
+    }
+  }
+
+  // 3. 中身が main に入った origin のブランチ
+  if (process.argv.includes('--prune-branches') && process.env['CLAUDE_CODE_REMOTE'] !== 'true') {
+    const open = run('gh', ['pr', 'list', '--state', 'open', '--json', 'headRefName', '--limit', '200']);
+    if (open !== null) {
+      const openHeads = new Set((JSON.parse(open) as { headRefName: string }[]).map((p) => p.headRefName));
+      const branches = parseRemoteBranches(
+        git(['for-each-ref', '--format=%(refname:lstrip=3)%09%(committerdate:unix)', 'refs/remotes/origin']) ?? '',
+      );
+      for (const name of prunableBranches(branches, openHeads, Date.now(), (n) =>
+        bringsNothing(git, 'origin/main', `origin/${n}`),
+      ))
+        if (git(['push', '--quiet', 'origin', '--delete', name]) !== null)
+          done.push(`中身が main に入った origin の ${name} を消した`);
     }
   }
 }
