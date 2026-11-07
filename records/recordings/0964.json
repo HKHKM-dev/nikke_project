@@ -1,0 +1,40 @@
+{
+  "id": "0964",
+  "date": "2026-11-07",
+  "folder": "range",
+  "file": "20261107-0964_mg_mast-romantic-maid_cocoa.mp4",
+  "original": "2026-11-07 14-55-47.mp4",
+  "durationSec": 198.8,
+  "frames": 11930,
+  "fps": 60,
+  "sizeMB": 269,
+  "sha256": "42ffe1b36e45",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 354,
+      "name": "マスト：ロマンチックメイド",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0683 の撮影 D。ココア（I）・マスト：ロマンチックメイド（II・操作）。III なし（オート射撃 ON・オートバースト ON）。火の的",
+  "backup": {
+    "at": "2026-11-07T15:13+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
