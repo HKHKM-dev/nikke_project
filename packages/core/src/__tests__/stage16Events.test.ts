@@ -334,6 +334,28 @@ describe('射手（ハイドとリロード）', () => {
     expect(reload).toBe(60 - before);
   });
 
+  it('C-0959: a 1.5 s AR reload still finishes in a 118f window after rounding up (design 10.3)', () => {
+    // リロード 1.5 秒 = 88.24f: D から ⌈88.24⌉ + 12 = 101f は、118f の窓（D の後 110f）に収まり、明けの後に満タンの 60 発を撃つ
+    const shot: ShotParams = { ...shotOf(161), reloadTime: 1.5 };
+    const start = shotFramesUpTo(shot, 2000)[2]! + 30;
+    const fired = shotsWithWindow(shot, { start, end: start + 118 }, start + 2000);
+    const after = fired.filter((f) => f >= start + 118);
+    const reload = after.findIndex((f, i) => i > 0 && f - after[i - 1]! > 30);
+    expect(reload).toBe(60);
+  });
+
+  it('C-0958: InstantBox aims 6f longer at the end of the window too (V-0675 C: not measured yet)', () => {
+    // 紅蓮：神殺の AR（InstantBox）: 明けの構えは戦闘開始と同じ 18f（C-0114 の形に乗せた。V-0675「次に撮るもの」の C）。
+    // ほかの AR は 12f（220 の明けから 232。上の「AR (reload 1 s < 2 s jump)」）
+    const window = { start: 100, end: 220 };
+    const firstAfter = (partial: Partial<ShotParams>) =>
+      shotsWithWindow(partial, window, 400).find((f) => f >= window.end)! - window.end;
+    expect(firstAfter({})).toBe(DEFAULT_WEAPON_MODEL.aimInFrames);
+    expect(firstAfter({ fireType: 'InstantBox' })).toBe(
+      DEFAULT_WEAPON_MODEL.aimInFrames + DEFAULT_WEAPON_MODEL.instantBoxAimLongerFrames,
+    );
+  });
+
   it('C-0817: a short reload still finishes in the window (reload 1.6 s + 12f < 118f; the magazine is full after it)', () => {
     const shot: ShotParams = { ...shotOf(94), reloadTime: 1.6 };
     const { after } = remainingAfter(shot);

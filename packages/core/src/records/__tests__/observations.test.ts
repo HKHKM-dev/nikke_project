@@ -621,6 +621,52 @@ describe('照合の部品', () => {
     expect(() => value({ ...args, n: 2, edge: 'start' })).toThrow('2 回目の発動が無い');
     expect(() => value({ ...args, slot: 3, n: 1, edge: 'start' })).toThrow('始まった窓が無い');
     expect(() => value({ ...args, n: 0, edge: 'middle' })).toThrow('edge は start か end');
+    // V-0677: ticks は、印の動画のフレームでなく、印のモデルのフレーム（本当の発動の 5f 後）からの差（止まりを足さない）
+    expect(value({ ...args, n: 0, edge: 'start', ticks: true })).toBe(100 - 105);
+    expect(value({ ...args, n: 0, edge: 'end', ticks: true })).toBe(1570 - 105);
+    expect(value({ ...args, n: 1, edge: 'start', ticks: true })).toBe(2003 - 2005);
+    // V-0678: buffWindowEnds は、count を書くと昇順・重複なしの最初の count 個
+    const ends = (more: Record<string, unknown>) =>
+      METRICS.buffWindowEnds!.sim(result, {
+        args: { slot: 4, skill: 'skill1', stat: 'attack', ...more },
+        input: {} as TeamInput,
+      } as Parameters<typeof metric.sim>[1]);
+    expect(ends({})).toEqual([800, 1570, 3473]);
+    expect(ends({ count: 2 })).toEqual([800, 1570]);
+    expect(ends({ count: 5 })).toEqual([800, 1570, 3473]);
+  });
+
+  it('buffWindowEnds with count drops repeated ends and sorts them (V-0678)', () => {
+    const effect = { source: { skill: 'skill2' }, stat: 'elementDamage', effectIndex: 0, value: 0.1 };
+    const track = (items: { start: number; end: number }[]) => ({
+      holder: 3,
+      sourceSlotIndex: 3,
+      origin: { kind: 'timed', effect },
+      stage: 1,
+      items,
+    });
+    // 戦闘開始時の窓（0〜882）と、フルバースト終了時の窓が同じ切れ目で続く形
+    const result = {
+      schedule: { activations: [], fullBurstWindows: [] },
+      history: {
+        tracks: [
+          track([{ start: 1500, end: 2382 }]),
+          track([{ start: 0, end: 882 }]),
+          track([{ start: 600, end: 882 }]),
+        ],
+        amplified: [],
+        slots: [],
+      },
+    } as unknown as SimResult;
+    const metric = METRICS.buffWindowEnds!;
+    const ends = (more: Record<string, unknown>) =>
+      metric.sim(result, {
+        args: { slot: 4, skill: 'skill2', stat: 'elementDamage', ...more },
+        input: {} as TeamInput,
+      } as Parameters<typeof metric.sim>[1]);
+    expect([...(ends({}) as number[])].sort((a, b) => a - b)).toEqual([882, 882, 2382]);
+    expect(ends({ count: 1 })).toEqual([882]);
+    expect(ends({ count: 2 })).toEqual([882, 2382]);
   });
 
   it('reports unknown metrics, missing args, a model other than sim and unknown presets', () => {
