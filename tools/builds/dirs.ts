@@ -3,7 +3,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { SNAPSHOT_NAME } from '../../packages/core/src/records/ids.ts';
-import type { BuildSnapshot } from '../../packages/core/src/shiftypad.ts';
+import type { BuildSnapshot } from '../../packages/core/src/buildSnapshot.ts';
 import { mainCheckout } from '../git/main-checkout.ts';
 
 let privateCache: string | undefined;

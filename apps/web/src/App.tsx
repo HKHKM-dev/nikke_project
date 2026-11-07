@@ -28,6 +28,7 @@ import {
 import { partyInputs, partyTotals } from './partyTotals.ts';
 import { useBatchComputation } from './useBatchComputation.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
+import { useRoster } from './useRoster.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 import { useUiMode } from './uiMode.ts';
 import { ClassicView } from './views/ClassicView.tsx';
@@ -84,6 +85,9 @@ export function App() {
   useEffect(() => {
     if (restored) writeStorage(PARTIES_STORAGE_KEY, serializeParties(parties));
   }, [parties, restored]);
+
+  // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
+  const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
 
   const selectParty = (to: number) => {
     const next = switchParty(parties, team, to);
@@ -170,7 +174,7 @@ export function App() {
   const viewProps: ViewProps | null = index
     ? {
         team,
-        dispatch,
+        dispatch: dispatchWithRoster,
         index,
         characterCache: cache,
         fullySupported: skills.fullySupported,
@@ -192,7 +196,7 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} />
+        <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} roster={rosterControls} />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}

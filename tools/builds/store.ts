@@ -14,11 +14,10 @@ import {
   rosterMarkdown,
   stripAccountFields,
   toBuildSnapshot,
-  type BuildSnapshot,
   type ShiftyPadRaw,
-  type SnapshotCharacter,
   type SnapshotLabels,
 } from '../../packages/core/src/shiftypad.ts';
+import type { BuildSnapshot, SnapshotCharacter } from '../../packages/core/src/buildSnapshot.ts';
 import { characterOf, index, masters, nameOf, readJson } from './data.ts';
 import { buildsDir, namesIn, privateDir } from './dirs.ts';
 import { previousName, snapshotName, sortNames } from './import-lib.ts';

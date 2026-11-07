@@ -10,9 +10,8 @@
 //     Lv 0 の段階は未確定
 //   - リサイクルルーム: tid 1001 = 共通、1101〜1103 = クラス、1201〜1205 = 企業
 import { emptyBuild, OVERLOAD_OPTIONS, type BuildInput, type GearInput, type OverloadLine } from './build.ts';
-import type { SkillLevels } from './skills/resolve.ts';
+import type { BuildSnapshot, SnapshotCharacter, SnapshotTreasure } from './buildSnapshot.ts';
 import type { TreasurePhase } from './skills/treasure.ts';
-import type { GrowthInput } from './stats.ts';
 import type { CharacterIndexEntry, GearPart, NikkeClass } from './types.ts';
 
 /** GetUserCharacterDetails の character_details の 1 件（欄はどれも数） */
@@ -26,34 +25,12 @@ export type ShiftyPadRaw = {
   details: ShiftyPadDetail[];
 };
 
-/** 宝物（SSR のコレクション）。段階は API の Lv から決める（treasurePhaseOfLevel。決まらない Lv は null） */
-export type SnapshotTreasure = { tid: number; level: number; phase: Exclude<TreasurePhase, 0> | null };
-
 /** 宝物の favorite_item_lv → 段階。Lv 1 = 段階 2、Lv 2 = 段階 3（C-0744）。Lv 0 は画面で見ていないので未確定（null） */
 export function treasurePhaseOfLevel(level: number): Exclude<TreasurePhase, 0> | null {
   if (level === 1) return 2;
   if (level === 2) return 3;
   return null;
 }
-
-/** 1 体分。growth と BuildInput の項目は sim-run.ts の --build の 1 件と同じ形 */
-export type SnapshotCharacter = BuildInput & {
-  growth: GrowthInput;
-  skillLevels: SkillLevels;
-  treasure: SnapshotTreasure | null;
-};
-
-export type BuildSnapshot = {
-  formatVersion: 1;
-  fetchedAt: string;
-  synchroLevel: number;
-  /** リサイクルルームの研究の Lv（tid → Lv） */
-  recycleRoom: Record<string, number>;
-  /** resourceId → 1 体分 */
-  characters: Record<string, SnapshotCharacter>;
-  /** 写せなかった値（黙って捨てない） */
-  unmapped: string[];
-};
 
 /** アカウントを特定できる欄（取得の道具と同じ規則。取り込みでもう一度除く） */
 const ACCOUNT_KEY = /open_?id|^uid$|nickname|user_?name|avatar|role_?id|^area_?id$/i;
@@ -201,14 +178,6 @@ export function gameCombatPowers(raw: ShiftyPadRaw, index: readonly CharacterInd
     if (resourceId !== undefined && combat !== undefined) out.set(resourceId, combat);
   }
   return out;
-}
-
-/** --build の JSON がスナップショットなら characters を、そうでなければそのまま返す */
-export function buildEntriesOf(json: unknown): Record<string, unknown> {
-  const obj = (json ?? {}) as Record<string, unknown>;
-  return obj['formatVersion'] !== undefined && typeof obj['characters'] === 'object' && obj['characters'] !== null
-    ? (obj['characters'] as Record<string, unknown>)
-    : obj;
 }
 
 // ---- 表示（前回との差・所持の一覧） ----

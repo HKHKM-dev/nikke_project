@@ -1,29 +1,15 @@
 // 編成の状態と reducer。React に依存しない純関数だけを置き、node 環境の vitest でテストする。
 import {
-  AFFECTION_RANK_MAX,
-  AFFECTION_RANK_MIN,
-  COLLECTION_LEVEL_MAX,
-  CUBE_LEVEL_MAX,
-  CUBE_LEVEL_MIN,
   ELEMENTS,
-  GEAR_LEVEL_MAX,
-  GEAR_PARTS,
-  GEAR_TYPES,
   MAX_SKILL_LEVELS,
   NIKKE_CLASSES,
-  OVERLOAD_LEVEL_MAX,
-  OVERLOAD_LEVEL_MIN,
-  OVERLOAD_LINE_MAX,
-  OVERLOAD_OPTIONS,
-  SKILL_LEVEL_MAX,
-  SKILL_LEVEL_MIN,
-  SKILL_SLOTS,
   TEAM_SIZE,
   TREASURE_PHASE_MAX,
   emptyBuild,
   enemyEventsOf,
   enemyLandingsOf,
-  overloadPositionsUnique,
+  parseBuildFieldsJson,
+  parseSkillLevelsJson,
   presetForEnemy,
   targetProfileForEnemy,
   type BuildInput,
@@ -33,13 +19,9 @@ import {
   type Element,
   type EnemyInput,
   type EnemyPresetMaster,
-  type GearInput,
-  type GearType,
   type GrowthInput,
   type NikkeClass,
   type RecycleRoomInput,
-  type OverloadLine,
-  type OverloadOption,
   type SkillLevels,
   type SlotCondition,
   type TreasurePhase,
@@ -171,8 +153,12 @@ export function recycleRoomFromConsole(
   };
 }
 
+/** 育成状況（roster.ts）からスロットへ写す育成 */
+export type SlotGrowthFields = Pick<SlotState, 'growth' | 'build' | 'skillLevels' | 'treasurePhase'>;
+
 export type TeamAction =
-  | { type: 'selectCharacter'; index: number; resourceId: number }
+  /** fields: 育成状況（roster.ts）にいるキャラの育成。別のニケに変えたときだけ写す */
+  | { type: 'selectCharacter'; index: number; resourceId: number; fields?: SlotGrowthFields }
   | { type: 'swapSlots'; fromIndex: number; toIndex: number }
   | { type: 'clearSlot'; index: number }
   | { type: 'setGrowth'; index: number; growth: SlotGrowth }
@@ -249,6 +235,7 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
               resourceId: action.resourceId,
               treasurePhase: DEFAULT_TREASURE_PHASE,
               hpRatio: DEFAULT_HP_RATIO,
+              ...action.fields,
             },
       );
     }
@@ -446,14 +433,7 @@ function parseCondition(v: Json): SlotCondition | null {
 
 /** 1..10 の整数だけ許す */
 function parseSkillLevels(v: Json): SkillLevels | null {
-  if (!isRecord(v)) return null;
-  const levels = {} as SkillLevels;
-  for (const slot of SKILL_SLOTS) {
-    const level = v[slot];
-    if (!isInt(level, SKILL_LEVEL_MIN) || level > SKILL_LEVEL_MAX) return null;
-    levels[slot] = level;
-  }
-  return levels;
+  return parseSkillLevelsJson(v, 'skillLevels', []);
 }
 
 /** 0..3 の整数だけ許す */
@@ -469,68 +449,12 @@ function parseHpRatio(v: Json): number | null {
   return v;
 }
 
-/** Stage 13: OL のオプション行。Stage 12 の保存データには無いので、欠落は空（オプションなし） */
-function parseOverload(v: Json, type: GearType): OverloadLine[] | undefined {
-  if (v === undefined) return [];
-  if (!Array.isArray(v) || v.length > OVERLOAD_LINE_MAX || (v.length > 0 && type !== 'OL')) return undefined;
-  const lines: OverloadLine[] = [];
-  for (const line of v as Json[]) {
-    if (!isRecord(line) || !(OVERLOAD_OPTIONS as readonly string[]).includes(String(line.option))) return undefined;
-    if (!isInt(line.level, OVERLOAD_LEVEL_MIN) || line.level > OVERLOAD_LEVEL_MAX) return undefined;
-    // 2026-10-31 までの保存データには無いので、欠落は配列の並び
-    if (line.position !== undefined && !(isInt(line.position, 0) && line.position < OVERLOAD_LINE_MAX))
-      return undefined;
-    lines.push({
-      option: line.option as OverloadOption,
-      level: line.level,
-      ...(line.position === undefined ? {} : { position: line.position }),
-    });
-  }
-  return overloadPositionsUnique(lines) ? lines : undefined;
-}
-
-function parseGear(v: Json): GearInput | undefined {
-  if (v === null) return null;
-  if (!isRecord(v)) return undefined;
-  if (!(GEAR_TYPES as readonly string[]).includes(String(v.type))) return undefined;
-  if (!isInt(v.level, 0) || v.level > GEAR_LEVEL_MAX) return undefined;
-  const type = v.type as GearType;
-  const overload = parseOverload(v.overload, type);
-  if (overload === undefined) return undefined;
-  return overload.length === 0 ? { type, level: v.level } : { type, level: v.level, overload };
-}
-
 /**
- * 各項目の範囲だけ見る（マスタとの照合は計算時）。版 2 までの保存データのリサイクルルームとその他攻撃加算は読み捨てる
+ * 各項目の範囲だけ見る（マスタとの照合は計算時。core の buildJson.ts）。版 2 までの保存データのリサイクルルームとその他攻撃加算は
+ * 読み捨てる
  */
 function parseBuild(v: Json): SlotBuild | null {
-  if (!isRecord(v)) return null;
-  if (!isInt(v.affectionRank, AFFECTION_RANK_MIN) || v.affectionRank > AFFECTION_RANK_MAX) return null;
-  if (!isRecord(v.gear)) return null;
-  const gear = {} as SlotBuild['gear'];
-  for (const part of GEAR_PARTS) {
-    const g = parseGear(v.gear[part]);
-    if (g === undefined) return null;
-    gear[part] = g;
-  }
-  let cube: SlotBuild['cube'] = null;
-  if (v.cube !== null) {
-    if (
-      !isRecord(v.cube) ||
-      !isInt(v.cube.id, 1) ||
-      !isInt(v.cube.level, CUBE_LEVEL_MIN) ||
-      v.cube.level > CUBE_LEVEL_MAX
-    )
-      return null;
-    cube = { id: v.cube.id, level: v.cube.level };
-  }
-  let collection: SlotBuild['collection'] = null;
-  if (v.collection !== null) {
-    if (!isRecord(v.collection) || (v.collection.rarity !== 'R' && v.collection.rarity !== 'SR')) return null;
-    if (!isInt(v.collection.level, 0) || v.collection.level > COLLECTION_LEVEL_MAX) return null;
-    collection = { rarity: v.collection.rarity, level: v.collection.level };
-  }
-  return { affectionRank: v.affectionRank, gear, cube, collection };
+  return parseBuildFieldsJson(v, 'build', []);
 }
 
 /** 属性だけを読み、防御力とコアの有無は射撃場の敵に戻す（SHOOTING_RANGE_ENEMY） */
