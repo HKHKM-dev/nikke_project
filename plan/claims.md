@@ -5992,7 +5992,7 @@
 - **C-0958** 弾の種類 InstantBox の AR（紅蓮：神殺）は、ハイドからの構え（戦闘開始 → 最初の発）と、リロード完了 → 次のマガジンの 1 発目が、どちらも 18f で、ふだんの約 12f（C-0114・C-0135）より 6f 長い。最終弾 → 次の 1 発目はリロードの秒をゲーム内の時計で数えた長さ + 24f + 6f。発の間は rpm 90 の蓄積（C-0058）のまま、最終弾 → リロード完了は C-0135 の形
   - 状態: 確定・等級: 反復実測・更新日: 2026-11-06
   - 根拠: `0960-19`・`0960-20`・`0960-21`・`0960-22`・`0960-24`・`0961-19`・`0961-20`・`0961-21`・`0961-22`・`0961-24`。V-0675
-  - モデル側: 反映（`weapons.ts` の WeaponModel.instantBoxAimLongerFrames = 6。`cadence.ts` の firstShotFrames・reloadFirstShotFrames と `frame/shooter.ts` の windowEndFirstShotFrames・reaimShooter が、チャージの無い武器の構えに足す（aimLongerFrames）。plan/design-new-chars-1029.md 12.2 節の d）
+  - モデル側: 反映（`weapons.ts` の WeaponModel.instantBoxAimLongerFrames = 6。`cadence.ts` の firstShotFrames・reloadFirstShotFrames と `frame/shooter.ts` の windowEndFirstShotFrames・reaimShooter が、チャージの無い武器の構えに足す（aimLongerFrames）。plan/design-new-chars-1029.md 12.2 節の d）。的のジャンプの明けは録画で測っていない（明けの構えは戦闘開始と同じという C-0114 の形に乗せた。V-0675「次に撮るもの」の C）
   - 決めるのに使った録画: 0960（値を合わせた）
   - 検証記録: V-0675
 - **C-0960** D の S1 の有利コードの攻撃ダメージ▲の窓は、ゲーム内のティック（止まりを除く）で、2 回目以降のフルバーストの 00.00 から 882 ティック（15 秒）で切れる（モデルどおり）。V-0662 で動画のフレームの切れ目が 0946 だけモデルより 1f 早かったのは、その回の入りの止まりが 21f で、動画のフレームに直すときの 22f 一律（C-0069 の幅 21〜24f の代表）より短かったため。窓の起点や長さの差ではない
