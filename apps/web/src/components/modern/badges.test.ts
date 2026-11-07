@@ -9,10 +9,10 @@ const BADGE_DIR = fileURLToPath(new URL('../../assets/badges', import.meta.url))
 const BADGE_FILES = readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'));
 
 describe('バッジの対応表', () => {
-  it('値ごとに別のバッジを引き、置いたバッジをどれも使う（使わないファイルを置かない）', () => {
+  // 使っていないバッジも置く（読んだものだけを Vite が束に入れる。plan/design-modern-ui.md 2.5 節）
+  it('値ごとに別のバッジを引く', () => {
     const srcs = BADGE_KINDS.flatMap(({ badges }) => Object.values(badges).map((b) => b.src));
     expect(new Set(srcs).size).toBe(srcs.length);
-    expect(BADGE_FILES).toHaveLength(srcs.length);
   });
 
   it('どのバッジも assetsInlineLimit 未満（束の中に埋め込まれ、アーティファクトのファイル数を使わない）', () => {
