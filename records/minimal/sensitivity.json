@@ -23283,14 +23283,6 @@
       "plus": 0
     },
     {
-      "observation": "0960-28",
-      "element": "紅蓮：神殺 skill1.effects[0]",
-      "key": "a00b233716949902",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
       "observation": "0961-06",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "277d59416b84dce8",
@@ -23390,14 +23382,6 @@
       "observation": "0961-20",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "5c3904486a6e84b3",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0961-28",
-      "element": "紅蓮：神殺 skill1.effects[0]",
-      "key": "a6625c434194a9ba",
       "effective": false,
       "minus": 0,
       "plus": 0
