@@ -1,0 +1,109 @@
+{
+  "verification": "V-0683",
+  "note": "撮る前の予測。撮影 D（ココア（1 枠目・I）・マスト：ロマンチックメイド（2 枠目・II・操作））と撮影 E（I-DOLL・フラワー（1 枠目・I）・マスト：ロマンチックメイド（2 枠目・II・操作））、スペック固定 ON・オートバースト ON。III がいないのでフルバーストは起きず、ほろ酔いは 1 段階突入（満タンと、チェーンの時間切れの後の入り直し）のたびに増えて 3 で止まり、外れない。指標は、バーストを撃った枠の並び（I だけの発動は、マスト：RM の CT が明けておらず 2 段階で時間切れした回）。命中率▼の仮説（H-lin・H-geo・H-N）はモデルで切り替えられないので、検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 354,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義とチェーン（3 段階に III がいなければ時間切れして 1 段階に入り直す）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "D-activations",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 D: バーストを撃った枠の並び（1 = ココア、2 = マスト：RM）。I・II の組の後の 1 段階突入でほろ酔いが 1 つ増える"
+    },
+    {
+      "id": "D-activation-frames",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 8
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 D: 発動の動画のフレーム（戦闘開始から）"
+    },
+    {
+      "id": "E-activations",
+      "model": "sim",
+      "metric": "burstActivationSlots",
+      "args": {
+        "n": 8
+      },
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 354,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 E: バーストを撃った枠の並び（1 = I-DOLL・フラワー、2 = マスト：RM）"
+    },
+    {
+      "id": "E-activation-frames",
+      "model": "sim",
+      "metric": "burstActivationVideoFrames",
+      "args": {
+        "n": 8
+      },
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 354,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 E: 発動の動画のフレーム（戦闘開始から）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-07",
+    "commit": "c5da62c69a4fbd82d1459e8025207e50f456fbe3",
+    "values": {
+      "H-model": {
+        "D-activations": [1, 2, 1, 1, 2, 1, 1, 2],
+        "D-activation-frames": [885, 914, 2674, 4324, 4353, 5984, 7446, 7475],
+        "E-activations": [1, 2, 1, 2, 1, 2, 1, 2],
+        "E-activation-frames": [1285, 1314, 3293, 3668, 5460, 6022, 7815, 8376]
+      }
+    }
+  }
+}
