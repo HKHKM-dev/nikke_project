@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md) 0・1.3 節、[design-soldier-eg.md](design-soldier-eg.md) 3.1 節（確率のきっかけ・期待値の窓。timed だけ）、[design-skill-stage9.md](design-skill-stage9.md) 論点 7（基礎版の S2 を未対応にした理由）、[design-skill-stage10.md](design-skill-stage10.md) 3.3 節（応急改造スタックコピー）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）、V-0687（この調査の検証記録）
 - 作成日: 2026-11-07
 - 根拠: 宝物版の S1（C-0558〜C-0561）・S2（C-0599〜C-0602）・バースト（C-0668〜C-0670）、確率のきっかけの期待値の窓（C-0372）
-- 状態: オーナーの承認（2026-11-07「論点は 4 つとも推奨どおりで進めて」）で、案 A を実装し、192 の基礎版の定義を書いた（V-0687、C-0986、C-0987）。実装での差分は 6 節
+- 状態: 完了（6・8 節）
 
 ## 1. 何が困っているか
 
