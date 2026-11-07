@@ -300,8 +300,8 @@ describe('fullReloadFrames (design-reload-rounding 案 E)', () => {
     const ar = shot({});
     const params = firingParams(ar);
     // 720rpm（1 フレーム 0.204）で余り 0.159 なら、本当の発の時刻は 0.78f 前
-    expect(reloadStartOffset(ar, DEFAULT_WEAPON_MODEL, params, 0.159, 720 / (60 / 0.017))).toBeCloseTo(-0.779, 3);
-    expect(reloadStartOffset(MG, DEFAULT_WEAPON_MODEL, firingParams(MG), 0.504, 1)).toBe(0);
+    expect(reloadStartOffset(ar, DEFAULT_WEAPON_MODEL, params, 0.159, 0)).toBeCloseTo(-0.779, 3);
+    expect(reloadStartOffset(MG, DEFAULT_WEAPON_MODEL, firingParams(MG), 0.504, 299)).toBe(0);
   });
 
   it('uses −1.1f for UP charge weapons and 0 for DOWN charge weapons, with k = release − 12 = 11', () => {
@@ -314,6 +314,7 @@ describe('fullReloadFrames (design-reload-rounding 案 E)', () => {
     expect(fullReloadFrames(up, m, firingParams(up), -1.1)).toBe(118);
     expect(fullReloadFrames(down, m, firingParams(down), 0)).toBe(119);
     // チャージの無い武器は k = 24 − 12 = 12: ⌈117.65 + 11.9⌉ − 12 = 118
-    expect(fullReloadFrames(shot({ reloadTime: 2 }), m, firingParams(shot({ reloadTime: 2 })), 0)).toBe(118);
+    const ar2 = shot({ reloadTime: 2 });
+    expect(fullReloadFrames(ar2, m, firingParams(ar2), 0)).toBe(118);
   });
 });

@@ -27,6 +27,7 @@
 //   攻撃できる敵がいないとハイドし、できればリロードする。窓の間に込め終われば満タンで、終わらなければ込め直しは無かったことになる。
 import {
   ACC_EPSILON,
+  ceilChunkFrames,
   firstShotFrames,
   fullReloadFrames,
   rateAfterShots,
@@ -142,29 +143,21 @@ export function weaponChangeShooter(
 }
 
 /**
- * リロードを始める（最終弾の直後・残弾数減少・ハイド中のリロード）。分割リロードは、込め始めの前に弾を込めない 1 段を待つ
- * （最終弾 → 込め終わりが段の数 + 1 段ぶん。段は切り上げた整数。C-0154）。全弾リロードの 1 回分は 1 回ごとに丸める
- * （fullReloadFrames。startOffset はリロードの始まりの、このフレームからのずれ。plan/design-reload-rounding.md 案 E）。
- * @returns 最初の 1 回分（分割リロードでは込めない 1 段）のフレーム数
+ * リロードを始める（最終弾の直後・残弾数減少・ハイド中のリロード）。チャージを取りやめ、分割リロードは込め始めの前に弾を込めない
+ * 1 段（reloadLead）を待つ（最終弾 → 込め終わりが段の数 + 1 段ぶん。C-0154）
  */
-function startReload(
-  state: ShooterState,
-  shot: ShotParams,
-  model: WeaponModel,
-  params: FiringParams,
-  startOffset: number,
-): number {
+function beginReload(state: ShooterState, params: FiringParams): void {
   delete state.chargeElapsed;
   state.phase = 'reloading';
-  if (!params.splitReload) return fullReloadFrames(shot, model, params, startOffset);
-  state.reloadLead = true;
-  return splitChunkFrames(params);
+  if (params.splitReload) state.reloadLead = true;
 }
 
-/** 分割リロードの 1 段のフレーム数（端数つきの長さを切り上げた整数。C-0154） */
-function splitChunkFrames(params: FiringParams): number {
-  // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
-  return Math.ceil(params.reloadChunkFrames - 1e-9);
+/**
+ * 最終弾の直後・残弾数減少で始めたリロードの最初の 1 回分（分割リロードでは込めない 1 段）のフレーム数。全弾リロードは 1 回ごとに
+ * 丸める（fullReloadFrames。startOffset はリロードの始まりの、このフレームからのずれ。plan/design-reload-rounding.md 案 E）
+ */
+function firstChunkFrames(shot: ShotParams, model: WeaponModel, params: FiringParams, startOffset: number): number {
+  return params.splitReload ? ceilChunkFrames(params) : fullReloadFrames(shot, model, params, startOffset);
 }
 
 /**
@@ -179,7 +172,7 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
     if (state.reloadLead) delete state.reloadLead;
     else state.ammo = Math.min(params.maxAmmo, state.ammo + reloadChunkAmmo(params.maxAmmo, shot.reloadBullet));
     if (state.ammo < params.maxAmmo) {
-      const chunk = splitChunkFrames(params);
+      const chunk = ceilChunkFrames(params);
       if (chunk > 0) {
         state.wait = chunk - 1;
         return false;
@@ -217,8 +210,13 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
   if (state.ammo <= 0) {
     state.ammo = 0;
     // 最終弾の本当の発の時刻（発射レートの蓄積の余り）から、リロードの始まりのずれを決める（V-0681）
-    const inc = rateAfterShots(shot, state.shotsInMagazine - 1, params.rateScale, params.spinUpScale) / MAX_RPM;
-    const chunk = startReload(state, shot, model, params, reloadStartOffset(shot, model, params, state.acc, inc));
+    beginReload(state, params);
+    const chunk = firstChunkFrames(
+      shot,
+      model,
+      params,
+      reloadStartOffset(shot, model, params, state.acc, state.shotsInMagazine - 1),
+    );
     if (chunk > 0) {
       // 最終弾の直後の 1 回だけ −1 する（先に判定してから減らすため）。1 回分の完了は L + R、L + 2R…
       state.wait = chunk - 1;
@@ -332,7 +330,8 @@ export function drainAmmo(
   if (state.phase === 'priming') startMagazine(state);
   // このフレームの射手は進め終えているので、最終弾の直後と同じく −1 する（1 回分の完了は L フレーム後）。リロードの始まりは
   // このフレームから startOffset（呼ぶ側が決める）
-  state.wait = Math.max(0, startReload(state, shot, model, params, startOffset) - 1);
+  beginReload(state, params);
+  state.wait = Math.max(0, firstChunkFrames(shot, model, params, startOffset) - 1);
 }
 
 /**
@@ -518,8 +517,8 @@ export function hideShooter(
   state.hideReloadStartIn = lead - startedFramesAgo;
   // C-0959（plan/design-hide-reload.md 10 節の案 D）: 分割リロードでない武器の 1 回分は、端数つきの長さを切り上げる（切り捨てると、
   // リロード 1.67 秒が 118f の窓の明けの前に満ちてしまう）
-  const started = startReload(state, shot, model, params, 0);
-  const reload = params.splitReload ? started : splitChunkFrames(params);
+  beginReload(state, params);
+  const reload = ceilChunkFrames(params);
   const chunk = reload + lead + hideReloadExtraFrames(model, params) - startedFramesAgo;
   if (chunk > 0) {
     // 最終弾の直後のリロードと同じく、窓の最初のフレームを 1 フレーム目に数える

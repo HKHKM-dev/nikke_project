@@ -60,7 +60,7 @@ export type WeaponModel = {
   /**
    * 入力が UP のチャージ武器（射撃姿勢維持型を含む）の、リロードの始まりの、最終弾のフレームからのずれ（負は前）。SR・RL、チャージの秒・
    * リロードの秒によらない（V-0681）。満ちてから撃つまで 1f（chargeFullToShotFrames）に近いが、0.1f の差は分からない。
-   * 押下チャージ型は 0、チャージの無い武器は最終弾の発射レートの蓄積の余りから（cadence.ts の rateReloadStartOffset）
+   * 押下チャージ型は 0、チャージの無い武器は最終弾の発射レートの蓄積の余りから（cadence.ts の reloadStartOffset）
    */
   upChargeReloadStartFrames: number;
   /**

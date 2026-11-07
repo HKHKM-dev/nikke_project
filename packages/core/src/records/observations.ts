@@ -719,10 +719,9 @@ function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
   const params = firingParams(shot, segment.trigger.buffs);
   // 全弾リロードの 1 回分は、マガジンを撃ち切った最終弾の蓄積の余りから 1 回ごとに丸めた整数（cadence.ts の fullReloadFrames。
   // plan/design-reload-rounding.md 案 E）。分割リロードは 1 段の端数つきの長さのまま
-  const reload = params.splitReload
-    ? params.reloadChunkFrames
-    : computeCadence(shot, DEFAULT_WEAPON_MODEL, params).reloadFrames;
-  return reload + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
+  if (params.splitReload) return params.reloadChunkFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
+  const cadence = computeCadence(shot, DEFAULT_WEAPON_MODEL, params);
+  return cadence.reloadFrames + cadence.reloadFirstShotFrames;
 }
 
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {

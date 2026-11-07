@@ -75,8 +75,8 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
       } else {
         // 全弾リロードは 1 回ごとに丸める。リロードの始まりは最終弾の発射レートの蓄積の余りから（案 E）
         const params = firingParams(shot);
-        const inc = rateAfterShots(shot, state.shotsInMagazine - 1) / MAX_RPM;
-        reloadFrames = fullReloadFrames(shot, model, params, reloadStartOffset(shot, model, params, state.acc, inc));
+        const startOffset = reloadStartOffset(shot, model, params, state.acc, state.shotsInMagazine - 1);
+        reloadFrames = fullReloadFrames(shot, model, params, startOffset);
       }
       state.wait = Math.max(0, reloadFrames + reloadFirstShotFrames(shot, model) - 1);
     } else if (charge) {

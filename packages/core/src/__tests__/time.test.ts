@@ -49,7 +49,7 @@ describe('game time (Stage 21-B: 0.017 s per frame)', () => {
 
 describe('weapon conversion (rpm: 21-C3, charge: Stage 23, reload: Stage 24)', () => {
   it('counts CDN seconds and rpm on the game clock, with 1 shot per frame at most', () => {
-    // チャージは切り上げ（C-0140）、リロードは端数つき（射手が端数を持ち越す。C-0145）
+    // チャージは切り上げ（C-0140）、リロードは端数つき（射手が 1 回分ごとに丸める。plan/design-reload-rounding.md 案 E）
     expect(chargeSecondsToFrames(1)).toBe(59);
     expect(chargeSecondsToFrames(0.3)).toBe(18);
     expect(chargeSecondsToFrames(0.017 * 3)).toBe(3);

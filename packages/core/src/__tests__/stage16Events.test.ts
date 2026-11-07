@@ -323,7 +323,7 @@ describe('射手（ハイドとリロード）', () => {
 
   it('C-0959: a 1.67 s reload does not finish even in a 118f window; the hide reload rounds the reload up (Mihara, design 10)', () => {
     // ミハラ（AR・60 発・1.67 秒 = 98.24f）: D から ⌈98.24⌉ + 12 = 111f は、118f の窓（D の後 110f）に収まらない。切り捨ての 98f
-    // （最初のリロードは端数の持ち越し 0.5 で 98f）なら明けの 1f 前に満ちていた（0469-15・0470-15・0727-21・0728-22）
+    // なら明けの 1f 前に満ちていた（0469-15・0470-15・0727-21・0728-22）
     // AR の発と発の間は 4・5f で、remainingAfter の閾値（いちばん短い間と長い間の中間）では数えられないので、30f より長い間で切る
     const { before, after } = remainingAfter(shotOf(161), undefined, 30);
     expect(before).toBeGreaterThan(0);

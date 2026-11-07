@@ -17,15 +17,14 @@ const fixtures: Record<string, Partial<ShotParams>> = {
 };
 
 /**
- * cadence.ts から作った期待列: round(k × cycleFrames) + firstShotFrames + shotFrames[i]。
- * Stage 24: リロードのフレーム数は端数つきで、射手は 1 回分ごとに端数（最初は 0.5）を持ち越して切り捨てるので、k 番目のマガジンの
- * 始まりは k × 周期の四捨五入になる
+ * cadence.ts から作った期待列: k × cycleFrames + firstShotFrames + shotFrames[i]。全弾リロードの 1 回分は 1 回ごとに丸めた整数で
+ * 端数を持ち越さない（plan/design-reload-rounding.md 案 E）ので、k 番目のマガジンの始まりは周期の k 倍
  */
 function expectedFrames(shot: ShotParams, magazines: number): number[] {
   const c = computeCadence(shot);
   const frames: number[] = [];
   for (let k = 0; k < magazines; k++)
-    for (const f of c.shotFrames) frames.push(Math.floor(k * c.cycleFrames + 0.5 + 1e-9) + c.firstShotFrames + f);
+    for (const f of c.shotFrames) frames.push(k * c.cycleFrames + c.firstShotFrames + f);
   return frames;
 }
 

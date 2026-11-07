@@ -75,14 +75,14 @@ export function simulateShotFrames(
 }
 
 /**
- * simulateShotFrames の 1 マガジンと、最終弾のフレームの発射レートの蓄積の余り（lastAcc）と 1 フレームぶんの蓄積（lastInc）。
- * チャージ武器は lastAcc・lastInc を使わない（0）。全弾リロードの始まりのずれ（reloadStartOffset）に使う
+ * simulateShotFrames の 1 マガジンと、最終弾のフレームの発射レートの蓄積の余り（lastAcc。チャージ武器は使わないので 0）。
+ * 全弾リロードの始まりのずれ（reloadStartOffset）に使う
  */
-export function simulateMagazine(
+function simulateMagazine(
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
-): { frames: number[]; lastAcc: number; lastInc: number } {
+): { frames: number[]; lastAcc: number } {
   if (shot.maxAmmo < 1) throw new RangeError(`maxAmmo must be >= 1, got ${shot.maxAmmo}`);
   if (shot.rateOfFire <= 0) throw new RangeError(`rateOfFire must be positive, got ${shot.rateOfFire}`);
   const frames: number[] = [0];
@@ -91,7 +91,7 @@ export function simulateMagazine(
     const rate = rateAfterShots(shot, 1) / MAX_RPM;
     if (!params.downCharge || interval * rate >= 1 - ACC_EPSILON) {
       for (let i = 1; i < params.maxAmmo; i++) frames.push(i * interval);
-      return { frames, lastAcc: 0, lastInc: 0 };
+      return { frames, lastAcc: 0 };
     }
     let charged = 0;
     let gate = 0;
@@ -109,21 +109,19 @@ export function simulateMagazine(
       charged = 0;
       frames.push(t);
     }
-    return { frames, lastAcc: 0, lastInc: 0 };
+    return { frames, lastAcc: 0 };
   }
   let acc = 0;
-  let inc = 0;
   let t = 0;
   while (frames.length < params.maxAmmo) {
     t += 1;
-    inc = rateAfterShots(shot, frames.length, params.rateScale, params.spinUpScale) / MAX_RPM;
-    acc += inc;
+    acc += rateAfterShots(shot, frames.length, params.rateScale, params.spinUpScale) / MAX_RPM;
     if (acc >= 1 - ACC_EPSILON) {
       acc -= 1;
       frames.push(t);
     }
   }
-  return { frames, lastAcc: acc, lastInc: inc };
+  return { frames, lastAcc: acc };
 }
 
 export function firstShotFrames(
@@ -178,11 +176,7 @@ export function fullReloadFrames(
   params: FiringParams,
   startOffset: number,
 ): number {
-  const before = isChargeWeapon(shot)
-    ? (params.stance === null && !params.downCharge
-        ? (params.weapon?.chargeReleaseFrames ?? model.chargeReleaseFrames)
-        : model.chargeReleaseFrames) - model.reloadCompleteToShotFrames
-    : model.reloadFirstShotFrames - model.reloadCompleteToShotFrames;
+  const before = reloadWaitOutsideChargeFrames(shot, model, params) - model.reloadCompleteToShotFrames;
   // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く。max(0, …) はリロード速度 100% 以上の 0
   return Math.max(
     0,
@@ -190,20 +184,36 @@ export function fullReloadFrames(
   );
 }
 
+/** リロード明けの待ちのうちチャージの外の長さ（チャージの無い武器は reloadFirstShotFrames、チャージ武器は解放。fullReloadFrames の k） */
+function reloadWaitOutsideChargeFrames(shot: ShotParams, model: WeaponModel, params: FiringParams): number {
+  if (!isChargeWeapon(shot)) return model.reloadFirstShotFrames;
+  // 射撃姿勢維持型と押下チャージ型は解放を武器で変えない（射撃姿勢維持型の k が 11 になるのは設計書 10 節の打ち消し合い）
+  if (params.stance !== null || params.downCharge) return model.chargeReleaseFrames;
+  return params.weapon?.chargeReleaseFrames ?? model.chargeReleaseFrames;
+}
+
 /**
  * 全弾リロードの始まりの、最終弾のフレームからのずれ（負は前。V-0681）。入力が UP のチャージ武器（射撃姿勢維持型を含む）は
  * upChargeReloadStartFrames、押下チャージ型は 0。チャージの無い武器は、最終弾の本当の発の時刻（最終弾のフレームの発射レートの蓄積の
- * 余り acc を、そのフレームの 1 フレームぶんの蓄積 inc で割ったぶん前）。毎フレーム撃つ速さ（MG）では 0
+ * 余り acc を、そのフレームの 1 フレームぶんの蓄積で割ったぶん前。lastShotIndex は最終弾がマガジンの何発目か（0 始まり））。
+ * 毎フレーム撃つ速さ（MG）では 0
  */
 export function reloadStartOffset(
   shot: ShotParams,
   model: WeaponModel,
   params: FiringParams,
   acc: number,
-  inc: number,
+  lastShotIndex: number,
 ): number {
   if (isChargeWeapon(shot)) return params.downCharge ? 0 : model.upChargeReloadStartFrames;
+  const inc = rateAfterShots(shot, lastShotIndex, params.rateScale, params.spinUpScale) / MAX_RPM;
   return inc >= 1 - ACC_EPSILON || inc <= 0 ? 0 : -acc / inc;
+}
+
+/** 分割リロードの段と、ハイド中のリロードの 1 回分のフレーム数（端数つきの長さを切り上げた整数。C-0154・C-0959） */
+export function ceilChunkFrames(params: FiringParams): number {
+  // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
+  return Math.ceil(params.reloadChunkFrames - 1e-9);
 }
 
 export function computeCadence(
@@ -220,8 +230,13 @@ export function computeCadence(
   // 1 回分は射手と同じ整数。全弾リロードはマガジンの最終弾の蓄積の余りから（fullReloadFrames）、分割リロードは込めない 1 段 +
   // 段の数を、それぞれ切り上げた整数で数える（C-0154）
   const reloadFrames = params.splitReload
-    ? Math.ceil(params.reloadChunkFrames - 1e-9) * (chunks + 1)
-    : fullReloadFrames(shot, model, params, reloadStartOffset(shot, model, params, magazine.lastAcc, magazine.lastInc));
+    ? ceilChunkFrames(params) * (chunks + 1)
+    : fullReloadFrames(
+        shot,
+        model,
+        params,
+        reloadStartOffset(shot, model, params, magazine.lastAcc, shotFrames.length - 1),
+      );
   // 1 周期 = リロード明けの 1 発目の遅れ + マガジン + リロード。戦闘開始のマガジンだけ first から始まる
   const cycleFrames = reloadFirst + magazineFrames + reloadFrames;
   return {
