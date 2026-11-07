@@ -1,0 +1,16 @@
+{
+  "id": "C-0970",
+  "text": "紅蓮：神殺（472）の S1 のフルバースト発動時のクリティカルダメージ 60%▲（10 秒）は、ほかの III がバーストを撃った回の窓でも付き、紅蓮：神殺の通常攻撃と居合の会心に乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0962-21`・`0962-22`・`0963-21`・`0963-22`。V-0679",
+  "model": "反映（`data/skills/472.json` の skill1 の effects[4]（timed・fullBurstStart・critDamage・10 秒））",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": ["data/skills/472.json の skill1 の effects[4]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "値は説明文（Lv10）、式は確定のクリティカルダメージ▲の形"
+}

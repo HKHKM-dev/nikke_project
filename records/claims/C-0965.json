@@ -1,0 +1,28 @@
+{
+  "id": "C-0965",
+  "text": "紅蓮：神殺（472）のバーストの花無十一日紅・満開（使用武器の変更）は、10 秒のあいだ最終攻撃力の 115% の武器に持ち替える。発は CDN の changeWeapon のレート 90rpm で 1 発 1 ヒット、射撃場の敵のどの区間もコアに当たる。撃っても残弾を減らさず（10 秒に 15 発をリロードなしで撃つ）、最初の発は III のタイマーの 00.00 の 35f 後。明けると基礎の武器は直前の残弾によらず最大装弾数で戻る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0962-11`・`0962-12`・`0962-18`・`0962-19`・`0962-20`・`0962-23`・`0963-11`・`0963-12`・`0963-18`・`0963-19`・`0963-20`・`0963-23`。V-0679",
+  "model": "反映（`data/skills/472.json` の burst の effects[0]（weaponChange・damageRef・durationRef・infiniteAmmo・firstShotAfterSwapFrames 0）。コアは的の表の InstantBox の行（C-0957）、レートは CDN の changeWeapon。明けの最大装弾数での戻りは `frame/shooter.ts` の resumeShooter（WEAPON_CHANGE_RESTORE の refill）。plan/design-new-chars-1029.md 13.2 節の b・c）",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": ["data/skills/472.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "0962",
+      "role": "値を合わせた"
+    }
+  ],
+  "minimal": [
+    {
+      "observations": ["0962-23", "0963-23"],
+      "element": "紅蓮：神殺 skill1.effects[0]",
+      "reason": "臨戦：明鏡止水の付与は中身を持たず、読む側（ラプンツェル：サンクチュアリの臨戦の味方への▲）が編成にいない。録画の値にも時刻にも効かない",
+      "decided": "2026-11-07"
+    }
+  ]
+}

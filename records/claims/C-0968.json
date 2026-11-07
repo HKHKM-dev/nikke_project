@@ -1,0 +1,16 @@
+{
+  "id": "C-0968",
+  "text": "紅蓮：神殺（472）の S2 の臨戦：身剣合一（バースト使用から 10 秒）は、通常攻撃のクリティカル確率▲ 50% で会心率を 100% にし（満開の発は全部会心）、攻撃ダメージ▲ 116% を満開の発・居合・追加ダメージに乗せる",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`0962-11`・`0962-12`・`0962-13`・`0962-14`・`0963-11`・`0963-12`・`0963-13`・`0963-14`。V-0679",
+  "model": "反映（`data/skills/472.json` の skill2 の effects[1]（state・burstUse・中身 normalCritRate・attackDamage・10 秒））",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": ["data/skills/472.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "値は説明文（Lv10）。会心率 = 素の 15% + S1 の 35% + 50%（上限 1）"
+}

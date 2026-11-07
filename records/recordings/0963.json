@@ -1,0 +1,52 @@
+{
+  "id": "0963",
+  "date": "2026-11-07",
+  "folder": "range",
+  "file": "20261107-0963_sr+sg+ar+ar_cocoa+soldier-fa+scarlet-goddeath+idoll-sun.mp4",
+  "original": "2026-11-07 11-23-12.mp4",
+  "durationSec": 203.1,
+  "frames": 12183,
+  "fps": 60,
+  "sizeMB": 547.6,
+  "sha256": "a19346fe37a1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 472,
+      "name": "紅蓮：神殺",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0679 の撮影の依頼（ココア + ソルジャーF.A. + 紅蓮：神殺（操作）+ I-DOLL・サン・手動操作なし）。左上のボタンでオート射撃 ON・オートバースト ON、戦闘履歴のパネルで枠順と名前・Lv.400・交戦時間 03:00 を確かめた",
+  "backup": {
+    "at": "2026-11-07T11:33+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
