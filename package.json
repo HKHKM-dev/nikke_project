@@ -13,6 +13,7 @@
   "scripts": {
     "fetch-data": "npm run fetch-data -w @nikke/core --",
     "fetch-data:diff": "node packages/core/scripts/data-diff.ts",
+    "combat-table": "node packages/core/scripts/combat-table.ts",
     "fetch-images": "npm run fetch-images -w @nikke/core --",
     "test": "vitest run",
     "test:watch": "vitest",

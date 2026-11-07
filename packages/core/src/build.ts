@@ -274,10 +274,10 @@ export type CombatStat = Omit<CombatAttack, 'attack'> & { kind: StatKind; value:
  * コア倍率の丸めは偶数への丸め（applyCoreRatio）。攻撃力・HP・防御力とも 13 体のキャラ画面と差 0（plan/verification.md Stage 12 節）
  */
 export function computeCombatStat(
-  character: Pick<
-    CharacterData,
-    'rarity' | 'class' | 'corporation' | 'weaponType' | 'levelCurve' | 'statEnhance' | 'treasure'
-  >,
+  // treasure は宝物の有無だけを見る（null なら無い。戦闘力の表（combatTable.ts）は中身を持たない）
+  character: Pick<CharacterData, 'rarity' | 'class' | 'corporation' | 'weaponType' | 'levelCurve' | 'statEnhance'> & {
+    treasure: unknown;
+  },
   growth: GrowthInput,
   build: BuildInput,
   masters: BuildMasters,

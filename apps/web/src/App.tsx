@@ -28,6 +28,8 @@ import {
 import { partyInputs, partyTotals } from './partyTotals.ts';
 import { useBatchComputation } from './useBatchComputation.ts';
 import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
+import { orderCharacters } from './listOrder.ts';
+import { ListOrderContext, useListOrder } from './useListOrder.ts';
 import { useRoster } from './useRoster.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
 import { useUiMode } from './uiMode.ts';
@@ -88,6 +90,12 @@ export function App() {
 
   // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
   const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
+  // 一覧の並び（listOrder.ts）。並べたキャラの一覧を画面に渡し、トレイと選択肢はその順のまま出す
+  const { controls: listOrderControls, state: listOrder } = useListOrder(rosterControls.roster, masters, BASE_URL);
+  const orderedIndex = useMemo(
+    () => (index === null ? null : orderCharacters(index, listOrder.order, listOrder.powers)),
+    [index, listOrder],
+  );
 
   const selectParty = (to: number) => {
     const next = switchParty(parties, team, to);
@@ -171,11 +179,11 @@ export function App() {
 
   const otherPartyIds = useMemo(() => otherPartyResourceIds(parties), [parties]);
 
-  const viewProps: ViewProps | null = index
+  const viewProps: ViewProps | null = orderedIndex
     ? {
         team,
         dispatch: dispatchWithRoster,
-        index,
+        index: orderedIndex,
         characterCache: cache,
         fullySupported: skills.fullySupported,
         masters,
@@ -196,11 +204,20 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} roster={rosterControls} />
+        <SettingsMenu
+          uiMode={uiMode}
+          onSelectUiMode={setUiMode}
+          roster={rosterControls}
+          listOrder={listOrderControls}
+        />
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
-      {viewProps && (uiMode === 'modern' ? <ModernView {...viewProps} /> : <ClassicView {...viewProps} />)}
+      {viewProps && (
+        <ListOrderContext value={listOrder}>
+          {uiMode === 'modern' ? <ModernView {...viewProps} /> : <ClassicView {...viewProps} />}
+        </ListOrderContext>
+      )}
     </main>
   );
 }
