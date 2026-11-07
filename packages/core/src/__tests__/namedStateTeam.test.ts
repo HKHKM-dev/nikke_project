@@ -87,7 +87,10 @@ describe('状態の付与の検証（parseSkillDefinition）', () => {
       trigger: { applied: 'followUp' },
     });
     expect(() => parse([{ ...camouflage, trigger: { applied: 'camouflage' } }])).toThrow(/its own state/);
-    expect(() => parse([{ ...camouflage, trigger: { count: 'normalHit', chance: 0.5 } }])).toThrow(/chance/);
+    // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけも書ける（条件とは組み合わせない）
+    const chance = { count: 'normalHit', chance: 0.5 };
+    expect(parse([{ ...camouflage, trigger: chance }]).skills.skill1.effects[0]).toMatchObject({ trigger: chance });
+    expect(() => parse([{ ...camouflage, trigger: chance, condition: { inFullBurst: true } }])).toThrow(/chance/);
     expect(() => parse([{ ...camouflage, name: 'followUp' }])).toThrow(/unknown field/);
   });
 

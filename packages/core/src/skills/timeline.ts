@@ -671,12 +671,16 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
   let landingIndex = 0;
   const sorted = [...bounds].filter((b) => b >= 0 && b <= frames).sort((a, b) => a - b);
 
-  // 4〜5. 区間ごとに状態を組む
+  // 4〜5. 区間ごとに状態を組む。区間の頭で効いている小片は、始まりの順に入れて終わったものを外す走査で引き、足す順は並びの順にする
+  // （小片が多い確率の状態で、区間 × 小片の二重の走査にしない。plan/design-tove-base.md 6 節）
+  const buffActive = activePieceSweep(buffPieces);
+  const stateActive = activePieceSweep(statePieces);
   const segments: TimelineSegment[] = [];
   for (let i = 0; i + 1 < sorted.length; i++) {
     const start = sorted[i]!;
     const end = sorted[i + 1]!;
     if (start >= end) continue;
+    const activeBuffs = buffActive(start);
     // 境界にフルバースト区間の端が入っているので、区間の先頭で判定すれば区間全体で同じ値になる
     const fullBurst = schedule !== null && isInFullBurst(schedule, start);
     // Stage 18-C: 着地点の境目も境界に入っているので、区間の先頭の着地点が区間全体の着地点
@@ -696,8 +700,8 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 発動者の最終最大HP の読み直し。区間の頭の、枠ごとの最大HP▲ の和
     // （常時 + 区間の頭で効いている小片）。最大HP▲ の小片の端は区間の境目なので、区間の中では同じ値
     const maxHpUp = passive.map((base) => base?.buffs.maxHpRatio ?? 0);
-    for (const p of buffPieces) {
-      if (!isMaxHpStat(p.effect.stat) || p.start > start || p.end <= start) continue;
+    for (const p of activeBuffs) {
+      if (!isMaxHpStat(p.effect.stat)) continue;
       maxHpUp[p.slotIndex] = (maxHpUp[p.slotIndex] ?? 0) + p.effect.value;
     }
     const finalMaxHpOf = (slotIndex: number): number | undefined => {
@@ -705,8 +709,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
       return base === undefined ? undefined : base * (1 + (maxHpUp[slotIndex] ?? 0));
     };
     // 値の小片の並びの順に足して浮動小数の加算順を決定的にする（並びは時刻の順。plan/design-holder-effects.md 論点 5）
-    for (const p of buffPieces) {
-      if (p.start > start || p.end <= start) continue;
+    for (const p of activeBuffs) {
       const state = slotStates[p.slotIndex];
       if (!state) continue;
       const caster = slots[p.sourceSlotIndex];
@@ -726,8 +729,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     }
     // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate だけを足す
     if (timedHitRateUp) {
-      for (const p of statePieces) {
-        if (p.start > start || p.end <= start) continue;
+      for (const p of stateActive(start)) {
         const state = slotStates[p.slotIndex];
         if (!state) continue;
         state.buffs = applyResolvedEffect(
@@ -753,6 +755,27 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     segments.push(segment);
   }
   return segments;
+}
+
+/**
+ * 小片の列から、昇順に増えていくフレームを渡すと、そのフレームに効いている小片（start ≤ frame < end）を並びの順で返す関数を作る。
+ * フレームは前の呼び出し以上であること（buildSegments の区間の頭）
+ */
+function activePieceSweep(pieces: readonly SegmentPiece[]): (frame: number) => SegmentPiece[] {
+  const byStart = pieces.map((_, i) => i).sort((a, b) => pieces[a]!.start - pieces[b]!.start || a - b);
+  let next = 0;
+  let active: number[] = [];
+  return (frame) => {
+    let added = false;
+    while (next < byStart.length && pieces[byStart[next]!]!.start <= frame) {
+      active.push(byStart[next]!);
+      next += 1;
+      added = true;
+    }
+    active = active.filter((i) => pieces[i]!.end > frame);
+    if (added) active.sort((a, b) => a - b);
+    return active.map((i) => pieces[i]!);
+  };
 }
 
 /** 順位の材料（skills/ranking.ts）。常時パッシブは resolvePassiveStates の結果 */

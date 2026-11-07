@@ -3,7 +3,7 @@
 - 関連: [skills-guide.md](skills-guide.md) 0・1.3 節、[design-soldier-eg.md](design-soldier-eg.md) 3.1 節（確率のきっかけ・期待値の窓。timed だけ）、[design-skill-stage9.md](design-skill-stage9.md) 論点 7（基礎版の S2 を未対応にした理由）、[design-skill-stage10.md](design-skill-stage10.md) 3.3 節（応急改造スタックコピー）、[design-stage16.md](design-stage16.md) 10.0.2 節（乱数を起点にする効果）、V-0687（この調査の検証記録）
 - 作成日: 2026-11-07
 - 根拠: 宝物版の S1（C-0558〜C-0561）・S2（C-0599〜C-0602）・バースト（C-0668〜C-0670）、確率のきっかけの期待値の窓（C-0372）
-- 状態: 起案。論点はオーナーの判断待ち（7 節）
+- 状態: オーナーの承認（2026-11-07「論点は 4 つとも推奨どおりで進めて」）で、案 A を実装し、192 の基礎版の定義を書いた（V-0687、C-0986、C-0987）。実装での差分は 6 節
 
 ## 1. 何が困っているか
 
@@ -89,7 +89,10 @@
 
 ## 6. 実装での差分
 
-（実装したら書く）
+- **確率の付与の検査**（`skills/parse/state.ts` の `validateChanceGrant`）: 条件・発数や出来事の維持・stacksFrom・stacksPerFireRef・leadFrames・stackRefresh・stackImmutable・delayFrames・敵への付与・発火の文脈で決まる対象とは組み合わせない。中身の規則には付与のスタックの欄を渡さない（中身は段ごとの期待値の小片になる）。
+- **見る側の検査**（`skills/parse/crossChecks.ts` の `validateChanceStates`）: 確率で付く状態は、その付与が定義に 1 つだけで、ほかの効果は while の selfState と stacksFrom の state でしか見られない（条件・{ applied }・{ fullStack } などで見ると読み込みで止める）。1 パス目の `holdsAt`・`stackLevelAt` も、確率の状態を見たら止める。
+- **件**（`skills/holders.ts`）: 確率の付与の件の列は、機会を持ち主の件の列で共有し（1 パス目が発ごとに貯める。timed の確率と同じ）、件を `chanceStackPieces` の段の小片（`stack` と `scale`）にする。`whileItems` は、段の小片のうち条件の段（フルスタックなら上限の段）の小片を scale ごと出す。stacksFrom は `chanceLevelsAt` で段ごとの確率を取り、確率が正の段の数だけ段を付け、件の段に scale を掛ける（`scaleLevels`）。
+- **速さ**: 確率の状態は、段ごとの小片が持ち主ごとに付くので小片が多い。`chanceStackPieces` は、1 パス目が機会を足すたびに前から作り直さず、最後の機会までの状態を持って後ろだけを作り直す。区間を組む `buildSegments`（`skills/timeline.ts`）は、区間 × 小片の二重の走査をやめ、始まりの順に入れて終わったものを外す走査にした（足す順は並びの順のままで、数値は変わらない）。
 
 ## 7. 論点
 
@@ -101,3 +104,4 @@
 ## 8. 経過
 
 - 2026-11-07: 起案（V-0687）。基礎版は撮れない（宝物を外せない）とオーナーに確かめた。論点はオーナーの判断待ち。
+- 2026-11-07: オーナーの承認（論点は 4 つとも推奨どおり）。案 A を実装し、192 の基礎版の定義を書いた（C-0986、C-0987）。

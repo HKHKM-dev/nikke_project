@@ -81,10 +81,11 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     v = { ...v, target: 'allies' };
   }
   const state = parseNamedStateId(v.state, `${path}.state`, onEnemy ? 'enemy' : 'ally');
-  // トリガーの確率のきっかけは書けない（窓が期待値の小片になり、見る側の「付いているか」に使えない）。
-  // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）
-  const fields = parseTimedFields(v, path, undefined, false);
+  // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）。
+  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけも書ける（件はスタック数の分布の期待値の小片。validateChanceGrant）
+  const fields = parseTimedFields(v, path, undefined, true);
   validateCounterGrant(fields, path);
+  validateChanceGrant(fields, v, path);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
   }
@@ -197,6 +198,38 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
  * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: カウンタで続く状態の付与。{ counterFull } のきっかけと
  * durationUntil: { counterEmpty } は同じカウンタで組み（片方だけは書けない）、自分にだけ付け、スタックしない（閉じるのは持ち主の件の列ごと）
  */
+/**
+ * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけの付与。件は機会ごとのスタック数の分布から作る期待値の小片
+ * （skills/chance.ts の chanceStackPieces）で、付いた記録を作らない。秒の維持で、味方に付け、発火の文脈や条件では決めない。見る側は
+ * while（スタックの条件の確率）と stacksFrom（スタック数の期待値）だけ（skills/parse/crossChecks.ts の validateChanceStates）
+ */
+function validateChanceGrant(fields: GrantTimedFields, v: Record<string, Json>, path: string): void {
+  if (!isChanceTrigger(fields.trigger)) return;
+  for (const key of [
+    'condition',
+    'durationShots',
+    'durationShotsRef',
+    'durationUntil',
+    'stacksFrom',
+    'stacksPerFireRef',
+    'leadFrames',
+    'stackRefresh',
+    'stackImmutable',
+    'delayFrames',
+  ]) {
+    if (v[key] !== undefined)
+      fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key} in a state grant`);
+  }
+  if (v.target === 'enemy') fail(`${path}.target`, 'a chance trigger cannot grant a state on the enemy');
+  if (v.durationSeconds === 0)
+    fail(`${path}.durationSeconds`, 'a chance grant needs a duration (it records no application)');
+  if (dependsOnContext(fields as StateGrantEffect))
+    fail(
+      `${path}.target`,
+      `${fields.target} cannot be used with a chance trigger (the targets depend on the fire context)`,
+    );
+}
+
 function validateCounterGrant(fields: GrantTimedFields, path: string): void {
   const full = isCounterFullTrigger(fields.trigger) ? fields.trigger.counterFull : undefined;
   const until = fields.durationUntil;
@@ -336,6 +369,11 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
     ...fields
   } = grant;
   const { claims: _itemClaims, ...value } = item;
+  // トーブの基礎版編: 確率の付与の中身は、スタックの段ごとの期待値の小片になる（段の数は付与が持つ）ので、スタックの欄を中身の規則に渡さない
+  if (isRecord(fields.trigger) && (fields.trigger.chance !== undefined || fields.trigger.chanceRef !== undefined)) {
+    delete fields.maxStacks;
+    delete fields.maxStacksRef;
+  }
   // 2 段目の段 19 の PR 1: カウンタで続く状態（{ counterFull } で付き、0 になるまで）の中身の規則は、戦闘開始時から「持続」の付与と同じ
   // （付くフレームも窓も件の一覧が決める。きっかけ { counterFull } は timed には書けない）
   if (isRecord(fields.durationUntil) && 'counterEmpty' in fields.durationUntil) {

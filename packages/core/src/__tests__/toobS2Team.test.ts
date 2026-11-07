@@ -147,10 +147,12 @@ describe('while と attackSpeed の読み込み', () => {
     expect(whiles[1]!.value).toBeCloseTo(0.4224, 12);
   });
 
-  it('keeps the base S2 as notes (the base Temporary Modification comes by chance. 論点 7)', () => {
+  it('defines the base S2 Critical Rate up with while, and keeps the SG Attack Speed up as notes (plan/design-tove-base.md 論点 4)', () => {
     const def = definitionOf(TOOB);
-    expect(def.skills.skill2.effects).toEqual([]);
-    expect(def.skills.skill2.notes!.map((n) => n.effect?.stat)).toEqual(['critRate', 'attackSpeed']);
+    expect(def.skills.skill2.effects).toMatchObject([
+      { kind: 'passive', stat: 'critRate', while: { selfState: { state: 'temporaryModification', stacks: 'full' } } },
+    ]);
+    expect(def.skills.skill2.notes!.map((n) => n.effect?.stat)).toEqual(['attackSpeed']);
   });
 });
 
@@ -242,9 +244,12 @@ describe('トーブ（宝物の段階 3）+ ソルジャーF.A.', () => {
     expect(crit[0]!.effect.value).toBeCloseTo(0.1008, 12);
   });
 
-  it('has no S2 effect without the treasure (the base S2 stays notes)', () => {
+  it('has only the expected Critical Rate up without the treasure (no Attack Speed up. plan/design-tove-base.md 2.1 節)', () => {
     const base = planTeamRun(team(0));
-    expect(piecesOf(base).filter((p) => p.effect.stat === 'attackSpeed' || p.effect.stat === 'critRate')).toEqual([]);
+    expect(piecesOf(base).filter((p) => p.effect.stat === 'attackSpeed')).toEqual([]);
+    const critRate = piecesOf(base).filter((p) => p.effect.stat === 'critRate' && p.effect.source.skill === 'skill2');
+    expect(critRate.length).toBeGreaterThan(0);
+    for (const p of critRate) expect(p.effect.value).toBeLessThan(0.0332);
     const frames = base.shots[0]!.frames.slice(0, 9);
     expect(new Set(frames.slice(1).map((f, i) => f - frames[i]!))).toEqual(new Set([39, 40]));
   });
