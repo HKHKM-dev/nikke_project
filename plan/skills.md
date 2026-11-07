@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 83・効果 553（根拠あり 534）・notes 208（根拠あり 92）
+件数: キャラ 83・効果 558（根拠あり 539）・notes 204（根拠あり 92）
 
-notes の種類: 未対応 42・前提の外 45・計算に無関係 43・補足 20・間接 58
+notes の種類: 未対応 38・前提の外 45・計算に無関係 43・補足 20・間接 58
 
-スロット: supported 202・partial 22・unsupported 12・noEffect 34
+スロット: supported 203・partial 24・unsupported 9・noEffect 34
 
 ## 10 ラピ
 
@@ -435,16 +435,17 @@ notes の種類: 未対応 42・前提の外 45・計算に無関係 43・補足
 
 ## 192 トーブ
 
-- **skill1**: unsupported
-  - notes[0] 未対応: 攻撃した時の確率で自分に付く代用弾丸（弾丸チャージ）は未対応（確率のきっかけの即時効果と付与は書けない）: 根拠なし
-  - notes[1] 未対応: 代用弾丸が適用される時の、味方全体の応急改造（最大装弾数▲・3 スタック・5 秒）は未対応（代用弾丸が確率のきっかけで付くため）: 根拠なし
-  - notes[2] 未対応: 代用弾丸が適用される時の、味方全体のクリティカルダメージ▲（5 秒）は未対応（代用弾丸が確率のきっかけで付くため）: 根拠なし
-- **skill2**: unsupported
-  - notes[0] 未対応: 自分が応急改造のフルスタック状態の時のみの、味方全体のクリティカル確率▲（持続）は未対応（基礎版の応急改造は S1 の代用弾丸（攻撃した時の確率）から付き、確率のきっかけの付与は書けないので、モデルでは付かない。形は宝物版と同じ while で書ける。plan/design-skill-stage9.md 論点 7）: 根拠なし
-  - notes[1] 未対応: 自分が応急改造のフルスタック状態の時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（基礎版の応急改造は S1 の代用弾丸（攻撃した時の確率）から付き、確率のきっかけの付与は書けないので、モデルでは付かない。形は宝物版と同じ while で書ける。plan/design-skill-stage9.md 論点 7）: 根拠なし
-- **burst**: unsupported
-  - notes[0] 未対応: 味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・10 秒）は未対応（スタック数で決まる値）: 根拠なし
-  - notes[1] 未対応: ショットガンを所持する味方全体の、スキル発動者基準の攻撃力▲（応急改造スタックコピー・10 秒）は未対応（スタック数で決まる値）: 根拠なし
+- **skill1**: partial
+  - effects[0] state・normalShot・temporaryModification: C-0559（確定）、C-0561（確定）、C-0986（確定）、C-0987（仮説）
+  - effects[1] timed・normalShot・critDamage: C-0560（確定）、C-0986（確定）、C-0987（仮説）
+  - notes[0] 未対応: 攻撃した時の確率で自分に付く代用弾丸の弾丸チャージは未対応（確率の即時効果は射撃の列を変えるので期待値で持てない。plan/design-tove-base.md 論点 4）: 根拠なし
+  - notes[1] 未対応: 応急改造の最大装弾数▲（1 スタック {03} 発）は未対応（確率で付く状態の中身に、射撃の列を変える stat は書けない。plan/design-tove-base.md 論点 4）: 根拠なし
+- **skill2**: partial
+  - effects[0] passive・temporaryModification のフルスタックの間・critRate: C-0599（確定）、C-0601（確定）、C-0602（確定）、C-0986（確定）、C-0987（仮説）
+  - notes[0] 未対応: 自分が応急改造のフルスタック状態の時のみの、ショットガンを所持する味方全体の攻撃速度▲（持続）は未対応（応急改造が確率で付くので、射撃の列を変える stat は期待値で持てない。plan/design-tove-base.md 論点 4）: 根拠なし
+- **burst**: supported
+  - effects[0] state・burstUse・miracleOfMakeshifts（attack）: C-0668（確定）、C-0669（確定）、C-0670（確定）、C-0986（確定）、C-0987（仮説）
+  - effects[1] state・burstUse・miracleOfMakeshiftsShotgun（attack）: C-0669（確定）、C-0670（確定）、C-0986（確定）、C-0987（仮説）
 - **宝物版 skill1**: supported
   - effects[0] ammoRefill・normalShot: C-0558（確定）
   - effects[1] state・normalShot・emergencyCraftedBullets: C-0558（確定）
