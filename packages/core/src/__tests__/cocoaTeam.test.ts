@@ -1,5 +1,5 @@
 // ココア（311）を含む編成: 定義はダメージに効く効果を持たない（S1 の遮蔽物 HP 回復は、遮蔽物を読む味方がいる時だけ効く。段 17 の PR 3、
-// C-0822）。射撃の列のグループ分け（V-0031、C-0092）。
+// C-0822）。射撃の列のグループ分け（V-0031、C-0977）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -72,7 +72,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, cocoa }) => 
   const calc = runTeam(input);
   const plan = planTeamRun(input);
 
-  it('gives no buff windows or instants from Cocoa (C-0092)', () => {
+  it('gives no buff windows or instants from Cocoa (C-0977)', () => {
     expect(piecesOf(plan).filter((w) => w.sourceSlotIndex === cocoa)).toEqual([]);
     expect(plan.instants.filter((e) => e.sourceSlotIndex === cocoa)).toEqual([]);
   });

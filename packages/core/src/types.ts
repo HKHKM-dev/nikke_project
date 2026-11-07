@@ -392,6 +392,21 @@ export type CoreHitRateTable = RateTableWithWeaponChanges & {
   fireTypes?: Readonly<Record<string, TargetRateRow | null>>;
 };
 
+/**
+ * 命中率▼の表（plan/design-maids.md 8.2・8.3 節。V-0683）。武器種ごとに、命中率の和 N（負。キーは N の数の文字列、例 "-0.4"）の
+ * ときの値。core はコア命中率で、着地点の行 base（N = 最初の段の値）に、N ごとの倍率 ratio を掛ける（倍率は着地点によらない）。
+ * bullet は弾丸命中率の N ごとの行（行に無い着地点は表の値のまま）。表に無い N（▲と同時の区間など）は効かせない
+ */
+export type HitRateDownTable = Partial<
+  Record<
+    WeaponType,
+    {
+      core?: { base: TargetRateRow; ratio: Readonly<Record<string, number>> };
+      bullet?: Readonly<Record<string, TargetRateRow>>;
+    }
+  >
+>;
+
 /** 的の条件の表。射撃場の BigArms のように、属性だけ違う敵で 1 つを共有する */
 export type TargetProfile = {
   id: string;
@@ -422,6 +437,8 @@ export type TargetProfile = {
    * チャージ武器の最初の発の待ち（frame/shooter.ts の weaponChangeShooter）
    */
   weaponChangeFirstHitFrames?: Readonly<Record<string, TargetRateRow | null>>;
+  /** 命中率▼の表（省略・表に無い武器種は▼を効かせない） */
+  hitRateDown?: HitRateDownTable;
   /** セルごとの出どころ（verification.md の節・claims.md の ID） */
   source: string;
 };

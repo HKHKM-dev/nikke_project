@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "厳密一致",
   "basis": "`0952-03`〜`0952-06`・`0953-03`〜`0953-06`（単騎の 2 本。ほろ酔いの付く 1 回目の満タンまでのヒットの数、ほろ酔いの前と間の 1 ヒットの値、ほろ酔いの間の会心率が、どれもモデルと許容内）。V-0668",
-  "model": "反映（`data/skills/354.json` の skill1 の effects[0]（state・burstStage1Enter・自分・3 スタック・持続）・effects[1]・effects[2]（passive・味方全体・while.selfState drunken。攻撃力は casterAttack））。中身の命中率▼は効かせていない",
+  "model": "反映（`data/skills/354.json` の skill1 の effects[0]（state・burstStage1Enter・自分・3 スタック・持続）・effects[1]・effects[2]（passive・味方全体・while.selfState drunken。攻撃力は casterAttack））。中身の命中率▼は的の▼の表で効かせる（C-0974・C-0975）",
   "replaces": [],
   "updated": "2026-11-03",
   "subject": {

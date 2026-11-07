@@ -20,8 +20,8 @@
             }
           ],
           "assumes": {
-            "ja": "バースト 1 段階突入（ゲージの満タンと、チェーンが時間切れで 1 段階に戻った時）のたびに 1 スタック足す。命中率▼は、モデルではコア命中率・弾丸命中率に効かせていない（録画では着地点で違う割合でコア命中率が下がり、式か表が決まっていない。V-0668）",
-            "en": "One stack is added on every entry into Burst stage 1 (gauge full, and a timed-out chain returning to stage 1). The model does not apply the Hit Rate decrease to the core or bullet hit rate (in the recordings the core hit rate drops by a different ratio at each landing spot, and no formula or table is settled; V-0668)"
+            "ja": "バースト 1 段階突入（ゲージの満タンと、チェーンが時間切れで 1 段階に戻った時）のたびに 1 スタック足す。命中率▼は、条件が自動の枠で射撃場の的のとき、的の▼の表（MG・N が −20%・−40%・−60%）でコア命中率・弾丸命中率を下げる（C-0974・C-0975。仮説）。▲と同時の区間・ほかの的は効かせない（未実装）",
+            "en": "One stack is added on every entry into Burst stage 1 (gauge full, and a timed-out chain returning to stage 1). With automatic conditions on the Shooting range target, the Hit Rate decrease lowers core and bullet hit rate via the target's hit-rate-down table (MG at N = −20%, −40%, −60%; C-0974, C-0975; hypothesis). It is not applied while a Hit Rate increase is also active, nor on other targets (not implemented)"
           },
           "claims": [
             "C-0941",

@@ -9,6 +9,8 @@
 //   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192・C-0519。確かめたのは SMG の遠と中遠 B・C だけ。plan/design-hit-rate-up-bullet-h2.md）。
 //   SG は近（近 A・近 B）だけ同じ式にし（C-0631）、中近・中遠・遠は表の値のまま（C-0527）。
 //   コア命中率と同じく、計画は常時の N で出し、持続の▲の区間は landingPartsWith で出し直す（1 パス目のゲージは計画の値のまま）。
+// - 命中率▼（N < 0）: 的の▼の表（TargetProfile.hitRateDown。MG・N = −20%・−40%・−60%。plan/design-maids.md 8 節）にある N だけ、
+//   コア命中率を「着地点の最初の段の値 × N の倍率」に、弾丸命中率を表の行の値にする。表に無い N（▲と同時の区間など）・武器種は変えない。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
 import {
@@ -30,6 +32,7 @@ import type {
   LandingPoint,
   SkillSlot,
   TargetProfile,
+  HitRateDownTable,
   TargetRateByProjectile,
   TargetRateRow,
   TargetRateTable,
@@ -60,7 +63,8 @@ export function landingBandOf(
  * 着地点 1 か所ぶんの条件と重み。手入力の枠・未測定の区間は landing が null で重み 1。
  * measuredHitRate は弾丸命中率を的の表から取ったか（省略 false。SG のゲージの割合を決める。plan/design-sg-hit-rate.md 3 節）。
  * tableCoreHitRate は的の表のコア命中率（命中率▲を掛ける前。表が null・手入力は省略）。区間の N で出し直すのに使う。
- * tableBulletHitRate は的の表の弾丸命中率（命中率▲を掛ける前。▲を効かせる武器種で、表から取ったときだけ）
+ * tableBulletHitRate は的の表の弾丸命中率（命中率▲を掛ける前。▲を効かせる武器種で、表から取ったときだけ）。
+ * hitRateDown はその着地点の命中率▼の値（的の▼の表にその武器種の行があるときだけ）
  */
 export type LandingPart = {
   landing: LandingPoint | null;
@@ -69,6 +73,7 @@ export type LandingPart = {
   measuredHitRate?: boolean;
   tableCoreHitRate?: number;
   tableBulletHitRate?: number;
+  hitRateDown?: HitRateDownAt;
 };
 
 /** 着地点の計画（自動の枠が 1 つも無い、または的の表の無い敵では作らない） */
@@ -166,23 +171,57 @@ export function targetRateOf(table: RateTableLookup, character: CharacterData, l
   return rateAtLanding(row, landing) ?? null;
 }
 
+/** 1 か所の着地点の命中率▼の値（キーは命中率の和 N の数の文字列）。core はコア命中率、bullet は弾丸命中率 */
+export type HitRateDownAt = { core: Readonly<Record<string, number>>; bullet: Readonly<Record<string, number>> };
+
+/** N のキーの値（浮動小数の和のずれを見込んで 1e-9 で比べる）。無ければ undefined */
+function valueAtN(values: Readonly<Record<string, number>> | undefined, n: number): number | undefined {
+  if (values === undefined) return undefined;
+  for (const [key, v] of Object.entries(values)) if (Math.abs(Number(key) - n) < 1e-9) return v;
+  return undefined;
+}
+
+/**
+ * plan/design-maids.md 8.2・8.3 節（V-0683）: 武器種と着地点の命中率▼の値。コア命中率は着地点の最初の段の値 × N の倍率、
+ * 弾丸命中率は N の行の値（行に無い着地点は持たない）。的の▼の表にその武器種が無ければ undefined
+ */
+export function hitRateDownAt(
+  table: HitRateDownTable | undefined,
+  character: Pick<CharacterData, 'weaponType'>,
+  landing: Pick<LandingPoint, 'id' | 'band'>,
+): HitRateDownAt | undefined {
+  const entry = table?.[character.weaponType];
+  if (entry === undefined) return undefined;
+  const core: Record<string, number> = {};
+  const base = entry.core === undefined ? undefined : rateAtLanding(entry.core.base, landing);
+  if (base !== undefined) for (const [n, r] of Object.entries(entry.core!.ratio)) core[n] = base * r;
+  const bullet: Record<string, number> = {};
+  for (const [n, row] of Object.entries(entry.bullet ?? {})) {
+    const v = rateAtLanding(row, landing);
+    if (v !== undefined) bullet[n] = v;
+  }
+  return { core, bullet };
+}
+
 /**
  * C-0036・C-0037: 常時の命中率▲ N で、コア命中率 p を min(1, p ÷ (1 − N)²) にする。N ≥ 1 なら 1。
- * N ≤ 0 は変えない（命中率▼の効き方は測っていない。注記を出す）
+ * N < 0 は、命中率▼の値 down に N の値があればそれ（plan/design-maids.md 8.2 節）、無ければ変えない
  */
-export function coreHitRateWithHitRateUp(p: number, hitRateUp: number): number {
-  if (hitRateUp <= 0) return p;
+export function coreHitRateWithHitRateUp(p: number, hitRateUp: number, down?: HitRateDownAt): number {
+  if (hitRateUp < 0) return valueAtN(down?.core, hitRateUp) ?? p;
+  if (hitRateUp === 0) return p;
   if (hitRateUp >= 1) return 1;
   return Math.min(1, p / (1 - hitRateUp) ** 2);
 }
 
 /**
  * C-0192: 命中率▲ N で、弾丸命中率 p の外れの割合 1 − p を (1 − p) ^ (1 ÷ (1 − N)²) にする（H2）。N ≥ 1 なら 1。
- * N ≤ 0 は変えない（命中率▼の効き方は測っていない）。確かめたのは SMG の遠と中遠 B・C（C-0519）と SG の近（C-0631）だけ
- * （plan/design-hit-rate-up-bullet-h2.md）
+ * 確かめたのは SMG の遠と中遠 B・C（C-0519）と SG の近（C-0631）だけ（plan/design-hit-rate-up-bullet-h2.md）。
+ * N < 0 は、命中率▼の値 down に N の値があればそれ（plan/design-maids.md 8.3 節）、無ければ変えない
  */
-export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number): number {
-  if (hitRateUp <= 0) return p;
+export function bulletHitRateWithHitRateUp(p: number, hitRateUp: number, down?: HitRateDownAt): number {
+  if (hitRateUp < 0) return valueAtN(down?.bullet, hitRateUp) ?? p;
+  if (hitRateUp === 0) return p;
   if (hitRateUp >= 1) return 1;
   return 1 - (1 - p) ** (1 / (1 - hitRateUp) ** 2);
 }
@@ -219,15 +258,16 @@ export function autoConditionAt(
   const bullet = targetRateOf(profile.bulletHitRate, character, landing);
   // V-0119: 1 発のヒット数は表にある弾の種類だけ（無ければ 1 発 1 ヒット）。手入力の条件には無い
   const hits = profile.hitsPerShot === undefined ? null : targetRateOf(profile.hitsPerShot, character, landing);
+  const down = hitRateDownAt(profile.hitRateDown, character, landing);
   return {
-    coreHitRate: core === null ? manual.coreHitRate : coreHitRateWithHitRateUp(core, hitRateUp),
+    coreHitRate: core === null ? manual.coreHitRate : coreHitRateWithHitRateUp(core, hitRateUp, down),
     distanceBonus: distanceBonusAt(character, landing),
     fullCharge: manual.fullCharge,
     hitRate:
       bullet === null
         ? (manual.hitRate ?? 1)
         : hitRateUpRaisesBulletHitRate(character, landing)
-          ? bulletHitRateWithHitRateUp(bullet, hitRateUp)
+          ? bulletHitRateWithHitRateUp(bullet, hitRateUp, down)
           : bullet,
     ...(hits === null || hits === 1 ? {} : { hitsPerShot: hits }),
   };
@@ -304,6 +344,7 @@ export function planLandings(
           : landingMix(profile, id).map(({ landing, weight }) => {
               const table = targetRateOf(profile.coreHitRate, slot.character, landing);
               const bullet = targetRateOf(profile.bulletHitRate, slot.character, landing);
+              const down = hitRateDownAt(profile.hitRateDown, slot.character, landing);
               return {
                 landing,
                 weight,
@@ -313,6 +354,7 @@ export function planLandings(
                 ...(bullet === null || !hitRateUpRaisesBulletHitRate(slot.character, landing)
                   ? {}
                   : { tableBulletHitRate: bullet }),
+                ...(down === undefined ? {} : { hitRateDown: down }),
               };
             }),
       );
@@ -345,7 +387,8 @@ const PARTS_WITH_CACHE = new WeakMap<LandingPlan, Map<string, readonly LandingPa
 
 /**
  * C-0170: landingPartsOf の条件のコア命中率を、命中率▲ hitRateUp（常時 + その区間の持続の▲。区間の状態の buffs.hitRate）で
- * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。計画の常時の N と同じなら計画の配分をそのまま返す。
+ * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。N が負なら命中率▼の値（plan/design-maids.md 8 節）。
+ * 計画の常時の N と同じなら計画の配分をそのまま返す。
  * 距離ボーナスは変えない
  */
 export function landingPartsWith(
@@ -375,10 +418,10 @@ export function landingPartsWith(
               ...p.condition,
               ...(p.tableCoreHitRate === undefined
                 ? {}
-                : { coreHitRate: coreHitRateWithHitRateUp(p.tableCoreHitRate, hitRateUp) }),
+                : { coreHitRate: coreHitRateWithHitRateUp(p.tableCoreHitRate, hitRateUp, p.hitRateDown) }),
               ...(p.tableBulletHitRate === undefined
                 ? {}
-                : { hitRate: bulletHitRateWithHitRateUp(p.tableBulletHitRate, hitRateUp) }),
+                : { hitRate: bulletHitRateWithHitRateUp(p.tableBulletHitRate, hitRateUp, p.hitRateDown) }),
             },
           },
     );
@@ -745,8 +788,8 @@ export function landingNotes(
       level: 'unsupported',
       code: 'hit-rate-down',
       message: {
-        ja: `常時の命中率▼（${pct(n)}）はコア命中率・弾丸命中率に効かせていない（効き方を測っていない）`,
-        en: `Constant hit rate down (${pct(n)}) does not change core or bullet hit rate (not measured)`,
+        ja: `常時の命中率▼（${pct(n)}）は、的の▼の表（MG・N が −20%・−40%・−60%。plan/design-maids.md 8 節）にある値だけ効かせ、ほかはコア命中率・弾丸命中率に効かせていない（効き方を測っていない）`,
+        en: `Constant hit rate down (${pct(n)}) only applies where the target's hit-rate-down table has a value (MG at N = −20%, −40%, −60%); otherwise it does not change core or bullet hit rate (not measured)`,
       },
     });
   }
