@@ -1,0 +1,21 @@
+{
+  "id": "C-0986",
+  "text": "トーブの基礎版のスキルの説明文は、S1 のきっかけ（攻撃した時、値 1 の確率で代用弾丸）・S2 のクリティカル確率▲の値・バーストの維持の秒のほかは、宝物版と同じ文で、同じ形に読む（代用弾丸が適用される時の味方全体の応急改造とクリティカルダメージ▲、応急改造のフルスタックの時だけの S2、応急改造スタックコピーのバースト）。値はどれも説明文の値",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "V-0687",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": [
+      "data/skills/192.json の skill1 の effects[0]",
+      "data/skills/192.json の skill1 の effects[1]",
+      "data/skills/192.json の skill2 の effects[0]",
+      "data/skills/192.json の burst の effects[0]",
+      "data/skills/192.json の burst の effects[1]"
+    ]
+  },
+  "decidedOn": []
+}

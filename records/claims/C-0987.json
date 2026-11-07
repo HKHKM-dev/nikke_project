@@ -1,0 +1,21 @@
+{
+  "id": "C-0987",
+  "text": "トーブの基礎版の S1 の代用弾丸は、通常攻撃の 1 発ごと（攻撃した時 = normalShot）に、毎発独立に説明文の確率（値 1）で付く。モデルは期待値で持ち、代用弾丸で付く応急改造はスタック数の分布の期待値の小片、S2 はフルスタックの確率、バーストのコピーはバーストの時のスタック数が各段以上の確率で効かせる",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "V-0687",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-07",
+  "subject": {
+    "places": [
+      "data/skills/192.json の skill1 の effects[0]",
+      "data/skills/192.json の skill1 の effects[1]",
+      "data/skills/192.json の skill2 の effects[0]",
+      "data/skills/192.json の burst の effects[0]",
+      "data/skills/192.json の burst の effects[1]"
+    ]
+  },
+  "decidedOn": []
+}
