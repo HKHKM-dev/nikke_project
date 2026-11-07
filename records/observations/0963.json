@@ -1,0 +1,536 @@
+[
+  {
+    "id": "0963-01",
+    "recording": "0963",
+    "kind": "total",
+    "use": "record",
+    "value": 667557660,
+    "description": "ココア・ソルジャーF.A.・紅蓮：神殺・I-DOLL・サン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11533。増分は 2084 個"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-02",
+    "recording": "0963",
+    "kind": "count",
+    "use": "record",
+    "value": 314,
+    "unit": "トリガー",
+    "description": "ココア・ソルジャーF.A.・紅蓮：神殺・I-DOLL・サン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 2084 個。前の増分から 30f 未満の増分（2053 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 33f）から発の数を決めた（2 発になった組 23 個）"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-03",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [1087, 2288, 3489, 4690, 5891, 7092, 8294, 9495, 10696],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・0・0・0・0f"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-04",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [1116, 2317, 3518, 4719, 5920, 7121, 8323, 9524, 10725],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・0・0・0・0・0・0・0f"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-05",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [1145, 2346, 3547, 4748, 5949, 7150, 8352, 9652, 10754],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-06",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [1754, 2955, 4156, 5357, 6558, 7759, 8961, 10261, 11363],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-07",
+    "recording": "0963",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609, 609, 609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-08",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [2282, 3483, 4684, 5885, 7086, 8288, 9489, 10690],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-09",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [2311, 3512, 4713, 5914, 7115, 8317, 9518, 10719],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-10",
+    "recording": "0963",
+    "kind": "timing",
+    "use": "record",
+    "value": [3540, 5942, 8345, 9648, 10747],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0679",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0963-11",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2571350,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "description": "紅蓮：神殺のバーストの窓（1 回目。中近）の、満開の発の 1 ヒット（コア・会心・距離ボーナスあり）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "満開の発は 1 発に 1 つの増分（1 ヒット）。窓の中の満開の発はどれもコアの会心の値で、会心でない値は 1 つも無い（身剣合一の間の会心率 100%）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 500,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-12",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2373554,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "description": "紅蓮：神殺のバーストの窓（2 回目。近）の、満開の発の 1 ヒット（コア・会心・距離ボーナスなし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2900,
+        "core": true,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-13",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 1874764,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "紅蓮：神殺のバーストの窓の、満開の発の 6f 後の居合の増分（会心なし）。身剣合一の間の居合の 1 ヒット（倍率 218%）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "窓の外の居合（109%）に攻撃力▲・身剣合一の攻撃ダメージ▲・フルバースト補正を乗せた値のちょうど 2 倍。モデルは居合と身剣合一の居合（同じ値の 2 つの効果）の和で比べる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "frame": 500,
+        "n": 0,
+        "count": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-14",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 3249590,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "同じ居合の増分（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitsDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "frame": 500,
+        "n": 0,
+        "count": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-15",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "count",
+    "use": "record",
+    "value": [55, 8, 0],
+    "unit": "回",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "紅蓮：神殺のバーストの窓の居合の増分のうち、単独に読めたものの内訳 [会心なし 2 倍, 会心 2 倍, 会心なし + 会心]",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "「会心なし + 会心」（2,562,177）が 1 回も無いので、身剣合一の間の居合は 2 つのヒットではなく、1 つのヒット（倍率 2 倍）で会心も 1 回だけ決まる。会心の割合は素の会心率（15%）に近い。2 つの独立したヒットなら「会心なし + 会心」が約 4 回に 1 回出る"
+    }
+  },
+  {
+    "id": "0963-16",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "record",
+    "value": [25922022, 26075394, 44921688, 25827426, 25829421],
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "紅蓮：神殺のバーストの窓ごと（5 回）の、バースト使用時の追加ダメージ（最終攻撃力の 3000%）を含む増分",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "どの回も III のタイマーの 00.00 の 26〜27f 後の、読めないフレーム（25f 前後。バーストの演出）の明けの増分。攻撃力▲ 120%・身剣合一の攻撃ダメージ▲ 116%・フルバースト補正 50% を乗せた 3000%（25,799,504）に、同じ間のほかの枠のヒット（1 万〜3 万前後。0963 の 3 回目は大きい値が重なる）を足した値"
+    }
+  },
+  {
+    "id": "0963-17",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "value": [2, 27],
+    "unit": "f",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "追加ダメージ（3000%）が出たフレームの範囲（III のタイマーの 00.00 からの動画のフレーム。入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "00.00 の 2f 後から 26〜27f 後まで HUD が読めず、その明けの増分に追加ダメージが入っている。値にフルバースト補正が乗るので、フルバーストの始まりより後"
+    }
+  },
+  {
+    "id": "0963-18",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "compare",
+    "value": 35,
+    "unit": "f",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "description": "紅蓮：神殺のバーストの窓（3 回目のフルバースト）の、III のタイマーの 00.00 から満開の最初の発までの動画のフレーム",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "ほかの回も多くは 35f（ほかの枠の発が重なって読めない回を除く）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToWeaponChangeShot",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-19",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "count",
+    "use": "compare",
+    "value": 15,
+    "unit": "発",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "description": "紅蓮：神殺のバーストの窓（2 回目の紅蓮：神殺のバースト）の満開の発の数。リロードを挟まない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "00.00 の 35f 後から 39・40f おき。ほかの回も、ほかの枠の発が重ならずに読めた回は 15 発。モデルの比べはその回のバーストの発動から 0〜620f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotCount",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": 0,
+        "to": 620
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-20",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "compare",
+    "value": 39.214,
+    "unit": "f",
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    },
+    "description": "満開の発と発の間の平均（2 回目の紅蓮：神殺のバーストの窓の 15 発）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "最初の発から最後の発まで 549f（14 間）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 3,
+        "burst": 1,
+        "from": 30,
+        "to": 620
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-21",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 505919,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    },
+    "description": "I-DOLL・サンのバーストの窓（1 回目。中近）の、紅蓮：神殺の通常攻撃の 1 ヒット（コア・会心・距離ボーナスあり）。S1 のクリティカルダメージ▲ 60% が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "会心でない 1 ヒットは 363,224（窓の外の会心と同じ値）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1700,
+        "core": true,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "0963-22",
+    "recording": "0963",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 341763,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "I-DOLL・サンのバーストの窓の、紅蓮：神殺の居合の 1 回（会心）。クリティカルダメージ▲ 60% とフルバースト補正が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）を、使い捨てのスクリプトで紅蓮：神殺の 1 ヒットの格子に当てた（V-0679「読み方」）",
+      "note": "会心でない居合は 197,171（フルバースト補正だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "frame": 1700,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]
