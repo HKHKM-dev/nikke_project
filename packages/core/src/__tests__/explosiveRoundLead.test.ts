@@ -127,6 +127,25 @@ describe('leadFrames の境目（skills/holders.ts）', () => {
     expect(first.start).toBe(0);
   });
 
+  // 発が戦闘の始まりから leadFrames より前に来る付与（発が 0f・1f の場合と同じ形。backlog 5 節の行）: ほかの枠の小片は件の始まり（0）から、
+  // 付けた枠の小片は、件の始まり + leadFrames ではなく発の次のフレームから（C-0312）
+  it.each([10, 1])(
+    'starts the user piece on the frame after the round when the state start stops at 0 (leadFrames = round + %i)',
+    (extra) => {
+      // 件が発を覆うように、維持も延ばす
+      const grant = { leadFrames: round + extra, durationRef: undefined, durationSeconds: 30 };
+      const r = runWith(parseSkillDefinition(withGrant(grant) as never));
+      const shot = r.shots[EUNHWA]!.weaponChangeShotFrames![0]!;
+      expect(shot).toBe(round);
+      const damageTakenAt = (slotIndex: number, frame: number): number =>
+        burstSnapshotState(r.timeline, frame, slotIndex, false).buffs.damageTaken;
+      expect(damageTakenAt(BESTIE, 0)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+      expect(damageTakenAt(EUNHWA, 0)).toBe(0);
+      expect(damageTakenAt(EUNHWA, shot)).toBe(0);
+      expect(damageTakenAt(EUNHWA, shot + 1)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+    },
+  );
+
   it('throws when a grant with leadFrames is not in stage 1', () => {
     // 型の検証が条件を止めるので、検証の後の定義に件を見る条件を足して、1 パス目の段の検査に届かせる
     const definition = parseSkillDefinition(eunhwaJson as never);

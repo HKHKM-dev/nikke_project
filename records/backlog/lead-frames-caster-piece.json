@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 3,
-  "text": "`leadFrames` のある付与で、きっかけの発が戦闘の始まりから `leadFrames` より前に来ると、件の始まりは 0 で止まるのに、付けた枠の小片は発の次のフレームではなく `leadFrames + 1` のフレームから始まる（`packages/core/src/skills/holders.ts` の `piecesOfTrack` が、発のフレームを件の始まり + `leadFrames` で戻すため）。いまのデータ（ウンファ：タクティカル・アップの 2f）では起きない。直すなら、件に発のフレームを持たせる"
-}
