@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 84・効果 561（根拠あり 540）・notes 205（根拠あり 93）
+件数: キャラ 84・効果 561（根拠あり 540）・notes 205（根拠あり 92）
 
 notes の種類: 未対応 38・前提の外 45・計算に無関係 43・補足 20・間接 59
 
@@ -42,7 +42,7 @@ notes の種類: 未対応 38・前提の外 45・計算に無関係 43・補足
   - effects[6] damage・fullBurstStart・skill: C-0726（確定）、C-0725（確定）
   - effects[7] counterChange・fullBurstStart・stickyGrenade（減少）: C-0726（確定）
   - effects[8] passive・elementAdvantage: C-0723（確定）
-  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）: C-0990（仮説）
+  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）: 根拠なし
 - **burst**: supported
   - effects[0] damage・burstUse・additional: C-0716（確定）
   - effects[1] timed・burstUse・projectileStickDamage: C-0724（確定）
