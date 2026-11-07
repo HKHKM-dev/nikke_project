@@ -79,7 +79,7 @@ import {
   UPLOAD_POLL_MS,
   waitUploadSettled,
 } from './intake-lib.ts';
-import { Drive, type DriveFile } from './drive.ts';
+import { Drive, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -299,27 +299,23 @@ async function waitUploaded(drive: Drive, file: DriveFile): Promise<DriveFile> {
   console.log(
     `${file.name} を Drive for desktop が上げ終えるまで、${seconds}ごとに ${UPLOAD_POLL_LIMIT} 回までサイズを見る（いま ${file.size} バイト）`,
   );
-  let settled: DriveFile | null;
-  try {
-    settled = await waitUploadSettled(file, () => drive.file(file.id), {
-      sleep,
-      onPoll: (p) => {
-        const at = `${p.i}/${UPLOAD_POLL_LIMIT} 回目`;
-        if (p.now === undefined) {
-          console.error(`読み直しに失敗（${at}）。もう ${seconds}待つ: ${(p.error as Error).message}`);
-          return;
-        }
-        console.log(
-          `待っている（${at}）: ${p.now.name}（保存日時 ${jst(p.now.modifiedTime)}・サイズ ${p.before.size} → ${p.now.size} バイト）` +
-            (p.settled ? '。変わらないので取り込む' : `。変わったので、もう ${seconds}待つ`),
-        );
-      },
-    });
-  } catch (e) {
-    return fail(`${file.name} のメタデータを読み直せない: ${(e as Error).message}`);
-  }
+  const uploaded = await waitUploadSettled(file, () => drive.file(file.id), {
+    sleep,
+    retryable: isTransientDriveError,
+    onPoll: (p) => {
+      const at = `${p.i}/${UPLOAD_POLL_LIMIT} 回目`;
+      if (p.now === undefined) {
+        console.error(`読み直しに失敗（${at}）。もう ${seconds}待つ: ${(p.error as Error).message}`);
+        return;
+      }
+      console.log(
+        `待っている（${at}）: ${p.now.name}（保存日時 ${jst(p.now.modifiedTime)}・サイズ ${p.before.size} → ${p.now.size} バイト）` +
+          (p.settled ? '。変わらないので取り込む' : `。変わったので、もう ${seconds}待つ`),
+      );
+    },
+  }).catch((e: unknown) => fail(`${file.name} のメタデータを読み直せない: ${(e as Error).message}`));
   return (
-    settled ??
+    uploaded ??
     fail(
       `${file.name} は ${UPLOAD_POLL_LIMIT} 回読み直してもサイズが定まらない（か、読み直せない）。Drive for desktop が上げ終えたのを確かめてから、もう一度回す`,
     )

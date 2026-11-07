@@ -7,7 +7,6 @@ import {
   parseTreasureArg,
   reservedLabel,
   sequentialRecordingIds,
-  transientDriveError,
   UPLOAD_POLL_LIMIT,
   UPLOAD_POLL_MS,
   uploadSettled,
@@ -109,16 +108,7 @@ describe('drive: の取り込み元を上げ終えるまで待つか', () => {
     expect(UPLOAD_POLL_LIMIT).toBe(10);
   });
 
-  it('keeps waiting on network failures, timeouts, 429 and 5xx, and stops on other HTTP errors', () => {
-    expect(transientDriveError(new TypeError('fetch failed'))).toBe(true);
-    expect(transientDriveError(Object.assign(new Error('timeout'), { name: 'TimeoutError' }))).toBe(true);
-    expect(transientDriveError(Object.assign(new Error('rate'), { status: 429 }))).toBe(true);
-    expect(transientDriveError(Object.assign(new Error('server'), { status: 503 }))).toBe(true);
-    expect(transientDriveError(Object.assign(new Error('auth'), { status: 401 }))).toBe(false);
-    expect(transientDriveError(Object.assign(new Error('gone'), { status: 404 }))).toBe(false);
-  });
-
-  // read が返す（Error なら投げる）ものの列で、waitUploadSettled を回す。sleep は待たずに数える
+  // read が返す（Error なら投げる）ものの列で、waitUploadSettled を回す。sleep は待たずに数え、待てば直る失敗は TypeError だけ
   type File = { id: string; size?: string };
   const run = async (first: File, reads: (File | Error)[]) => {
     const queue = [...reads];
@@ -132,7 +122,11 @@ describe('drive: の取り込み元を上げ終えるまで待つか', () => {
         if (next instanceof Error) throw next;
         return next;
       },
-      { sleep: async (ms) => slept.push(ms), onPoll: (p) => polls.push(p) },
+      {
+        sleep: async (ms) => slept.push(ms),
+        retryable: (e) => e instanceof TypeError,
+        onPoll: (p) => polls.push(p),
+      },
     );
     return { result, slept, polls, left: queue.length };
   };
@@ -172,8 +166,8 @@ describe('drive: の取り込み元を上げ終えるまで待つか', () => {
     expect(polls).toHaveLength(UPLOAD_POLL_LIMIT);
   });
 
-  it('throws other HTTP errors at once', async () => {
-    const denied = Object.assign(new Error('Drive API が失敗（403）'), { status: 403 });
+  it('throws a failure that is not retryable at once', async () => {
+    const denied = new Error('denied');
     await expect(run(at('5'), [denied, at('5')])).rejects.toBe(denied);
   });
 

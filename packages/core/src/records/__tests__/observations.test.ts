@@ -625,18 +625,9 @@ describe('照合の部品', () => {
     expect(value({ ...args, n: 0, edge: 'start', ticks: true })).toBe(100 - 105);
     expect(value({ ...args, n: 0, edge: 'end', ticks: true })).toBe(1570 - 105);
     expect(value({ ...args, n: 1, edge: 'start', ticks: true })).toBe(2003 - 2005);
-    // V-0678: buffWindowEnds は、count を書くと昇順・重複なしの最初の count 個
-    const ends = (more: Record<string, unknown>) =>
-      METRICS.buffWindowEnds!.sim(result, {
-        args: { slot: 4, skill: 'skill1', stat: 'attack', ...more },
-        input: {} as TeamInput,
-      } as Parameters<typeof metric.sim>[1]);
-    expect(ends({})).toEqual([800, 1570, 3473]);
-    expect(ends({ count: 2 })).toEqual([800, 1570]);
-    expect(ends({ count: 5 })).toEqual([800, 1570, 3473]);
   });
 
-  it('buffWindowEnds with count drops repeated ends and sorts them (V-0678)', () => {
+  it('buffWindowEnds with count gives the first count ends, sorted and without repeats (V-0678)', () => {
     const effect = { source: { skill: 'skill2' }, stat: 'elementDamage', effectIndex: 0, value: 0.1 };
     const track = (items: { start: number; end: number }[]) => ({
       holder: 3,
@@ -667,6 +658,7 @@ describe('照合の部品', () => {
     expect([...(ends({}) as number[])].sort((a, b) => a - b)).toEqual([882, 882, 2382]);
     expect(ends({ count: 1 })).toEqual([882]);
     expect(ends({ count: 2 })).toEqual([882, 2382]);
+    expect(ends({ count: 5 })).toEqual([882, 2382]);
   });
 
   it('reports unknown metrics, missing args, a model other than sim and unknown presets', () => {

@@ -95,26 +95,28 @@ export function uploadSettled(before: string | undefined, after: string | undefi
   return before !== undefined && before === after;
 }
 
-/** 読み直しの失敗が、待てば直りうるもの（通信の失敗・時間切れで status が無い、429、5xx）か */
-export function transientDriveError(e: unknown): boolean {
-  const status = (e as { status?: unknown } | null)?.status;
-  return typeof status !== 'number' || status === 429 || status >= 500;
-}
-
-/** 1 回の読み直し（i は 1 始まり）。now は読めたもの、error は待てば直りうる読み直しの失敗 */
+/** 1 回の読み直し（i は 1 始まり）。now は読めたもの、error は待てば直りうる（retryable が true の）読み直しの失敗 */
 export type UploadPoll<T> = { i: number; before: T } & (
   { now: T; settled: boolean; error?: undefined } | { now?: undefined; settled: false; error: unknown }
 );
 
 /**
  * Drive for desktop が上げ終えるまで待つ（intake.ts の drive:）。UPLOAD_POLL_MS ごとに read で読み直し、サイズが変わらなくなったら
- * 読み直したものを返す。UPLOAD_POLL_LIMIT 回読んでも定まらなければ null。待てば直りうる失敗（transientDriveError）は 1 回に数えて
- * 続け、ほかの失敗はそのまま投げる
+ * 読み直したものを返す。UPLOAD_POLL_LIMIT 回読んでも定まらなければ null。retryable が true の失敗（Drive なら drive.ts の
+ * isTransientDriveError）は 1 回に数えて続け、ほかの失敗はそのまま投げる
  */
 export async function waitUploadSettled<T extends { size?: string }>(
   first: T,
   read: () => Promise<T>,
-  { sleep, onPoll }: { sleep: (ms: number) => Promise<unknown>; onPoll: (poll: UploadPoll<T>) => void },
+  {
+    sleep,
+    retryable,
+    onPoll,
+  }: {
+    sleep: (ms: number) => Promise<unknown>;
+    retryable: (error: unknown) => boolean;
+    onPoll: (poll: UploadPoll<T>) => void;
+  },
 ): Promise<T | null> {
   let before = first;
   for (let i = 1; i <= UPLOAD_POLL_LIMIT; i++) {
@@ -123,7 +125,7 @@ export async function waitUploadSettled<T extends { size?: string }>(
     try {
       now = await read();
     } catch (error) {
-      if (!transientDriveError(error)) throw error;
+      if (!retryable(error)) throw error;
       onPoll({ i, before, settled: false, error });
       continue;
     }
