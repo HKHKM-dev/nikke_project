@@ -1,0 +1,96 @@
+[
+  {
+    "id": "0971-01",
+    "recording": "0971",
+    "kind": "timing",
+    "use": "record",
+    "value": [1737, 3472, 5259, 6815, 8418, 10068],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・26・25f"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0971-02",
+    "recording": "0971",
+    "kind": "timing",
+    "use": "record",
+    "value": [1766, 5288, 8447],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25f"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0971-03",
+    "recording": "0971",
+    "kind": "total",
+    "use": "record",
+    "value": 108826339,
+    "description": "ココア・マスト：ロマンチックメイド の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11451。増分は 5082 個"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0971-04",
+    "recording": "0971",
+    "kind": "count",
+    "use": "record",
+    "value": 212,
+    "unit": "トリガー",
+    "description": "ココア・マスト：ロマンチックメイド のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 5082 個。前の増分から 30f 未満の増分（5034 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 42.5f）から発の数を決めた（2 発になった組 21 個）"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07"
+  },
+  {
+    "id": "0971-05",
+    "recording": "0971",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 20,
+    "description": "ココアのバーストの効果（味方全体のデバフ効果解除）の、I の発動の印（右のバースト欄の六角形が I から II に替わるフレーム）からのフレーム。ココアの S1 と重ならず、ヒットの詰まった回（f3472・8418・10068 の 3 回）で、マスト：ロマンチックメイドのほろ酔いの格子の最後のヒットが印の 20f 後、ほろ酔いの無い最初のヒットが 21f 後（外れたのは 20f 後の効果の次のフレーム）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と recipe:burst-panel@3（0971-01）",
+      "note": "V-0683 の「読み方」3 の使い捨てのスクリプトで、増分をマスト：RM の格子に当てた。ほかの回: f1737・5259 は印の 2〜15f 後に外れ、外れた 2 つの時刻の差 3535f が S1 の周期（883f）の 4 倍で、S1 で外れた（C-0978）。f6815 は最後のほろ酔いが +13f、次のヒットが +45f（間が開いて決まらない。20f と矛盾しない）"
+    },
+    "source": "V-0686",
+    "readAt": "2026-11-07",
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  }
+]
