@@ -1,5 +1,5 @@
 // ココア（311）を含む編成: 定義はダメージに効く効果を持たない（S1 の遮蔽物 HP 回復は、遮蔽物を読む味方がいる時だけ効く。段 17 の PR 3、
-// C-0822）。射撃の列のグループ分け（V-0031、C-0977）。
+// C-0822。デバフ解除は、デバフの状態を持つ味方がいる時だけ効く。課題 2-59）。射撃の列のグループ分け（V-0031、C-0977）。
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyInput } from '../damage.ts';
@@ -58,14 +58,12 @@ const TEAMS: Record<string, { input: TeamInput; cocoa: number }> = {
 };
 
 describe('ココアの定義', () => {
-  it('has only the S1 cover heal as an effect (the other slots are notes only)', () => {
+  it('has the S1 cover heal and the debuff removals (S1 and burst) as effects', () => {
     const def = parseSkillDefinition(readJson<unknown>(`../../data/skills/${COCOA}.json`));
-    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal']);
-    for (const slot of ['skill2', 'burst'] as const) expect(def.skills[slot].effects).toEqual([]);
-    // デバフ解除がほろ酔いを外すこと（C-0976）は間接（デバフ）の notes で、対応状況には数えない（課題 2-59。plan/design-indirect-notes.md の経過）
-    expect(def.skills.skill1.support).toBe('supported');
-    for (const slot of ['skill2', 'burst'] as const) expect(def.skills[slot].support).toBe('noEffect');
-    expect(def.skills.burst.notes?.map((n) => n.kind)).toEqual(['noDamage', 'indirect']);
+    expect(def.skills.skill1.effects.map((e) => e.kind)).toEqual(['coverHeal', 'removeDebuff']);
+    expect(def.skills.burst.effects.map((e) => e.kind)).toEqual(['removeDebuff']);
+    expect(def.skills.skill2.effects).toEqual([]);
+    expect(def.skills.skill2.support).toBe('noEffect');
   });
 });
 

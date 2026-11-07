@@ -64,6 +64,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ベスティー：タクティカル・アップ: III のタイマーの 00.00 からヒットまで 17f（動画で 39f。止まり 22f を含む）。防御力無視のバーストスキル
   // ダメージには同じ発動の防御力無視ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果の発火の遅れは 0（2 段目の段 16 の PR 2。V-0586）
   { resourceIds: [94], sameActivationBuffsOnHit: true, delays: { hitFrames: 17, effectFrames: 0 }, claim: 'C-0807' },
+  // ココア: I の発動（六角形が I から II に替わるフレーム）から効果（味方全体のデバフ効果解除）まで 20f。バーストの倍率ダメージは無い
+  // （課題 2-59。ほろ酔いの外れたヒットの間から）
+  { resourceIds: [311], delays: { hitFrames: 0, effectFrames: 20 }, claim: 'C-0980' },
   // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム。本当の発動の 5f 後）からヒットまで 14f。バースト使用時の効果は無い
   { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
   // ニヒリスター: II の発動（六角形の替わり目）からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f

@@ -15,6 +15,7 @@ import {
   isStacksCondition,
   isTimerTrigger,
   type MaxStacksUpContentItem,
+  type RemoveDebuffEffect,
   type RemoveStateEffect,
   type StackChangeEffect,
   type StatContentItem,
@@ -504,6 +505,36 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
     const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState, true);
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
+  }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/**
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除。target は allies か debuffedRandom（pick が要る）。delayFrames は時間の周期の
+ * きっかけにだけ書ける
+ */
+export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): RemoveDebuffEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'trigger', 'target', 'count', 'pick', 'delayFrames', 'assumes', 'claims'].includes(key)) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+  if (v.target !== 'allies' && v.target !== 'debuffedRandom') {
+    fail(`${path}.target`, `expected "allies" or "debuffedRandom", got ${JSON.stringify(v.target)}`);
+  }
+  const effect: RemoveDebuffEffect = {
+    kind: 'removeDebuff',
+    trigger,
+    target: v.target,
+    count: parsePositiveInt(v.count, `${path}.count`),
+  };
+  if (v.target === 'debuffedRandom') effect.pick = parsePositiveInt(v.pick, `${path}.pick`);
+  else if (v.pick !== undefined) fail(`${path}.pick`, 'pick is only for target "debuffedRandom"');
+  if (v.delayFrames !== undefined) {
+    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames needs a timer trigger ({ everySeconds })');
+    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

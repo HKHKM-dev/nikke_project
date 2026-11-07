@@ -126,6 +126,7 @@ describe('data/skills', () => {
                         effect.kind === 'burstReentry' ||
                         effect.kind === 'burstStepChange' ||
                         effect.kind === 'removeState' ||
+                        effect.kind === 'removeDebuff' ||
                         effect.kind === 'cancelState' ||
                         effect.kind === 'summon' ||
                         effect.ref === undefined

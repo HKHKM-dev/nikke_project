@@ -576,7 +576,10 @@ export function notRelevantReason(
   // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素は、同じ経路を読む要素が編成にいて、その要素がこの録画で起きえて
   // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）。2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 防御力▲ の
   // 効果も与ダメージの式を読まず、防御力を読む側を通してだけ値に効くので、経路 defense の間接の要素と同じに見る
-  const path = element.path ?? (isDefenseOnly(element) ? 'defense' : undefined);
+  // 課題 2-59（plan/design-debuff-removal.md 2.0 節）: デバフ解除の効果も、デバフの状態を付ける側（経路 debuff を読む側）を通してだけ値に効く
+  const path =
+    element.path ??
+    (isDefenseOnly(element) ? 'defense' : element.shape?.kind === 'removeDebuff' ? 'debuff' : undefined);
   if (path !== undefined) {
     const readers = elementsOfTeam(recording, ctx).filter((r) => r.reads?.includes(path));
     const name = INDIRECT_PATH_NAMES[path].ja;

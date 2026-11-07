@@ -3,6 +3,7 @@
 // shotPause の { applied }。気絶の間はバーストの候補にもならない）（plan/design-maids.md、V-0668）。
 import { describe, expect, it } from 'vitest';
 import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts';
+import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
@@ -123,5 +124,37 @@ describe('ほろ酔いの命中率▼（的の▼の表）', () => {
       if (bullet !== undefined) expect(s.trigger.hitRate).toBeCloseTo(bullet, 9);
     }
     expect([...seen].sort()).toEqual([1, 2, 3]);
+  });
+});
+
+// 課題 2-59（plan/design-debuff-removal.md 2 節。C-0976・C-0978〜C-0980）: ココアのデバフ解除（バーストと S1）はほろ酔いをスタックごと外す
+describe('ココアのデバフ解除（removeDebuff）', () => {
+  const COCOA = 311;
+  const input = team([COCOA, MAST]);
+  const plan = planTeamRun(input);
+  const drunken = stateItemsOf(plan).filter((s) => s.state === 'drunken' && s.slotIndex === MAST_SLOT);
+  const cocoaBursts = plan.schedule!.activations.filter((a) => a.slotIndex === 0);
+
+  it('closes Drunken on the frame after the burst effect (20f after the I mark) when she has it', () => {
+    let closed = 0;
+    for (const a of cocoaBursts) {
+      const at = effectFrameOf(a);
+      expect(at - a.frame).toBeGreaterThanOrEqual(20);
+      const active = drunken.filter((s) => s.start <= at && at < s.end);
+      for (const s of active) expect(s.end).toBe(at + 1);
+      closed += active.length;
+    }
+    expect(closed).toBeGreaterThan(0);
+  });
+
+  it('never stacks Drunken above 1 (every Burst stage 1 entry is followed by her burst or S1)', () => {
+    expect(Math.max(...drunken.map((s) => s.stack ?? 1))).toBe(1);
+  });
+
+  it('keeps Drunken stacking up to 3 without a debuff remover (I-DOLL Flower)', () => {
+    const other = stateItemsOf(planTeamRun(team([304, MAST]))).filter(
+      (s) => s.state === 'drunken' && s.slotIndex === MAST_SLOT,
+    );
+    expect(Math.max(...other.map((s) => s.stack ?? 1))).toBe(3);
   });
 });
