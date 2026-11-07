@@ -731,9 +731,6 @@ header h1 {
 .modern-slot-empty-plus {
   font-size: 1.8rem;
 }
-.modern-slot-empty-text {
-  font-size: 0.85rem;
-}
 .modern-slot-error {
   color: #e53935;
   font-size: 0.75rem;
@@ -777,7 +774,7 @@ header h1 {
 /* カードフッター */
 .modern-slot-footer {
   margin-top: auto;
-  /* ボタン（ニケがいるとき）と「未配置」の文字で高さを変えない */
+  /* ボタン（ニケがいるとき）があってもなくても高さを変えない */
   min-height: 2rem;
   display: flex;
   align-items: center;
@@ -796,13 +793,6 @@ header h1 {
 }
 .modern-slot-action-button:hover {
   background: color-mix(in srgb, var(--app-fg) 10%, transparent);
-}
-.modern-slot-placeholder-footer {
-  display: block;
-  text-align: center;
-  font-size: 0.75rem;
-  opacity: 0.4;
-  padding: 4px 0;
 }
 
 /* 属性の色（バッジの図柄の色。plan/design-modern-ui.md 2.5 節）。キャラの絵の枠とスロットのカードの縁が使う */
@@ -927,27 +917,6 @@ header h1 {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-}
-.char-tray-title {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-.char-tray-title {
-  flex-wrap: wrap;
-}
-.char-tray-title h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  white-space: nowrap;
-}
-.char-tray-target-slot {
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-.char-tray-hint {
-  font-size: 0.75rem;
-  opacity: 0.6;
 }
 /* スロットのキャラを持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
 .char-tray-panel.char-tray-returning {

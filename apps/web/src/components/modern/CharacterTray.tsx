@@ -10,7 +10,6 @@ type Props = {
   otherPartyIds: ReadonlySet<number>;
   fullySupported: ReadonlySet<number> | null;
   onSelectCharacter: (resourceId: number) => void;
-  activeSlotIndex: number;
 };
 
 /** 1 種類のバッジを並べた絞り込み（押したときの切り替えは toggleBadgeFilter） */
@@ -41,14 +40,7 @@ function BadgeFilter({
   );
 }
 
-export function CharacterTray({
-  index,
-  takenIds,
-  otherPartyIds,
-  fullySupported,
-  onSelectCharacter,
-  activeSlotIndex,
-}: Props) {
+export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, onSelectCharacter }: Props) {
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
@@ -76,13 +68,6 @@ export function CharacterTray({
       aria-label="ニケ一覧パレット"
     >
       <div className="char-tray-header">
-        <div className="char-tray-title">
-          <h3>ニケ一覧</h3>
-          <span className="char-tray-target-slot">
-            配置先: <strong>スロット {activeSlotIndex + 1}</strong>
-          </span>
-          <span className="char-tray-hint">スロットのニケをここへ戻すと外す</span>
-        </div>
         <div className="char-tray-filters">
           <input
             type="search"

@@ -211,7 +211,6 @@ export function ModernView({
           otherPartyIds={otherPartyIds}
           fullySupported={fullySupported}
           onSelectCharacter={handleSelectCharacter}
-          activeSlotIndex={activeSlotIndex}
         />
 
         {editingSlotIndex !== null && editingCalcSlot && (
