@@ -7,9 +7,11 @@ import {
   ACC_EPSILON,
   computeCadence,
   firstShotFrames as stage9FirstShotFrames,
+  fullReloadFrames,
   rateAfterShots,
   reloadChunks,
   reloadFirstShotFrames,
+  reloadStartOffset,
 } from '../../cadence.ts';
 import type { CharacterData, ShotParams } from '../../types.ts';
 import {
@@ -31,8 +33,9 @@ const characters: CharacterData[] = readdirSync(CHARACTERS_DIR)
 /**
  * Stage 9 の stepShooter の写し（リロードを「回数 × 時間」の 1 つの待ちにしていた版）。退化の基準として凍結する。
  * Stage 21-C3 で意図して変えた 2 点（rpm の蓄積はゲーム内の時計 = MAX_RPM の値と誤差の幅、リロード明けの 1 発目の遅れ）と、
- * Stage 23・24 で変えた 2 点（チャージの秒はゲーム内の時計 = chargeSecondsToFrames、リロードの秒はゲーム内の時計で端数を持ち越す
- * = reloadSecondsToFrames と carry）と、分割リロードの込めない 1 段と段の切り上げ（C-0154）だけ写しにも入れた
+ * Stage 23・24 で変えた 2 点（チャージの秒はゲーム内の時計 = chargeSecondsToFrames、リロードの秒はゲーム内の時計 = reloadSecondsToFrames）と、
+ * 分割リロードの込めない 1 段と段の切り上げ（C-0154）と、全弾リロードを 1 回ごとに丸める形（fullReloadFrames。
+ * plan/design-reload-rounding.md 案 E）だけ写しにも入れた
  */
 function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel = DEFAULT_WEAPON_MODEL): number[] {
   const state = {
@@ -41,7 +44,6 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
     wait: stage9FirstShotFrames(shot, model),
     acc: 0,
     reloading: false,
-    reloadCarry: 0.5,
   };
   const fired: number[] = [];
   for (let f = 0; f < frames; f++) {
@@ -71,10 +73,10 @@ function stage9ShotFrames(shot: ShotParams, frames: number, model: WeaponModel =
         // C-0154: 分割リロードは、込めない 1 段 + 段の数を、それぞれ切り上げた整数で（端数は持ち越さない）
         reloadFrames = Math.ceil(reloadSecondsToFrames(shot.reloadTime) - 1e-9) * (reloadChunks(shot) + 1);
       } else {
-        // Stage 24: 1 回分ごとに端数を持ち越して切り捨てた和は、回数 × 1 回分に端数を足して切り捨てた値と同じ
-        const exact = reloadSecondsToFrames(shot.reloadTime) * reloadChunks(shot) + state.reloadCarry;
-        reloadFrames = Math.floor(exact + 1e-9);
-        state.reloadCarry = Math.max(0, exact - reloadFrames);
+        // 全弾リロードは 1 回ごとに丸める。リロードの始まりは最終弾の発射レートの蓄積の余りから（案 E）
+        const params = firingParams(shot);
+        const startOffset = reloadStartOffset(shot, model, params, state.acc, state.shotsInMagazine - 1);
+        reloadFrames = fullReloadFrames(shot, model, params, startOffset);
       }
       state.wait = Math.max(0, reloadFrames + reloadFirstShotFrames(shot, model) - 1);
     } else if (charge) {
@@ -294,8 +296,14 @@ describe('stage 10 shooter: firing buffs (8.2)', () => {
   it('with a 0-frame reload chunk, the next magazine fires no earlier than the frame after the last shot', () => {
     const ar = makeCharacter({ maxAmmo: 3, reloadTime: 1, rateOfFire: 720, endRateOfFire: 720 }).shot;
     const params = firingParams(ar, { ...ZERO_FIRING_BUFFS, reloadSpeed: 1 });
-    // リロード明けの遅れ（C-0059）と戦闘開始の構え（Stage 22-C）も 0 にして、0 フレームのつなぎ目だけを見る
-    const model = { ...DEFAULT_WEAPON_MODEL, reloadFirstShotFrames: 0, aimInFrames: 0 };
+    // リロード明けの遅れ（C-0059）と戦闘開始の構え（Stage 22-C）も 0 にして、0 フレームのつなぎ目だけを見る（込め終わりの前後の長さも 0）
+    const model = {
+      ...DEFAULT_WEAPON_MODEL,
+      reloadFirstShotFrames: 0,
+      aimInFrames: 0,
+      reloadCompleteExtraFrames: 0,
+      reloadCompleteToShotFrames: 0,
+    };
     const state = initialShooter(ar, model, params);
     const fired: number[] = [];
     for (let f = 0; f < 20; f++) if (stepShooter(state, ar, model, params)) fired.push(f);

@@ -26,7 +26,8 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
     expect(c.shotFrames).toEqual([0, 119, 238, 357, 476, 595]);
     expect(c.firstShotFrames).toBe(86);
     expect(c.reloadFirstShotFrames).toBe(119);
-    expect(c.reloadFrames).toBeCloseTo(2 / 0.017 + 11, 9);
+    // 全弾リロードは 1 回ごとに丸める（案 E）: ⌈117.65 + 11 − 1.1 + 11.9⌉ − 11 = 129。リロードを挟む間は 129 + 119 = 248f
+    expect(c.reloadFrames).toBe(129);
   });
 
   it('fires A2 every 120f and 94f from hiding (0123-06・0123-07)', () => {
@@ -34,14 +35,16 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
     expect(c.shotFrames).toEqual([0, 120, 240, 360, 480, 600]);
     expect(c.firstShotFrames).toBe(94);
     expect(c.reloadFirstShotFrames).toBe(120);
-    expect(c.reloadFrames).toBeCloseTo(1.5 / 0.017 + 11, 9);
+    // ⌈88.24 + 11 − 1.1 + 11.9⌉ − 11 = 100。リロードを挟む間は 220f（録画の着弾から着弾 220f。V-0681）
+    expect(c.reloadFrames).toBe(100);
   });
 
   it('keeps 紅蓮BS at 43f, 30f from hiding and 172f across a reload (C-0149・C-0218)', () => {
     const c = computeCadence(character(225).shot);
     expect(c.shotFrames[1]).toBe(43);
     expect(c.firstShotFrames).toBe(30);
-    expect(c.reloadFrames).toBeCloseTo(2 / 0.017 + 11, 9);
+    // ⌈117.65 + 11 − 1.1 + 11.9⌉ − 11 = 129。リロードを挟む間は 129 + 43 = 172f（0046-21）
+    expect(c.reloadFrames).toBe(129);
   });
 
   it('crosses a reload in reload + 11f + the interval (レイヴン 247〜248f)', () => {
@@ -49,7 +52,7 @@ describe('発と発の間・ハイドからの 1 発目・リロード', () => {
     const gaps = frames.slice(1).map((f, i) => f - frames[i]!);
     expect(frames[0]).toBe(86);
     expect(gaps.slice(0, 5)).toEqual([119, 119, 119, 119, 119]);
-    expect([247, 248]).toContain(gaps[5]);
+    expect(gaps[5]).toBe(248);
   });
 });
 

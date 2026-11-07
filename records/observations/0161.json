@@ -582,5 +582,43 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0161-28",
+    "recording": "0161",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [1.07, -0.89, -0.61, 0.06, 0.06, 0.29, 0.05, 0.12, -0.94, -0.89, 0.26, 0.05, 3.04],
+    "description": "アニス：スター（RL・入力 DOWN_Charge・チャージ 1 秒・リロード 2 秒）単騎の、マガジンの最終弾から、RELOADING のバーの伸びを長さ 0 に遡った点（リロードの始まり）までの回ごとの値（負は最終弾のフレームより前。回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "最終弾は照準の残弾の 1 が消えたフレーム。取り消し・窓をまたいだ回・当てはめの残差が 1.2 より大きい回を除く"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0161-29",
+    "recording": "0161",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [72, 72, 71, 71, 71, 71, 71, 72, 71, 71, 71, 71],
+    "description": "アニス：スター（RL・入力 DOWN_Charge・チャージ 1 秒）単騎の、全弾リロードの込め終わり（RELOADING のバーが消えたフレーム）から次のマガジンの 1 発目（照準の残弾が満タンから減ったフレーム）までの回ごとの値（回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "取り消し・窓をまたいだ回と、減る直前の満タンが読めていない回を除く。回ごとに（込め終わり → 1 発目）: f2469→f2541、f2965→f3037、f3989→f4060、f4485→f4556、f4982→f5053、f8283→f8354、f8779→f8850、f9275→f9347、f9773→f9844、f10425→f10496、f10921→f10992、f11417→f11488"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

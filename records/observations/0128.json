@@ -125,5 +125,43 @@
       "tool": "tools/captures/aim.ts --from 4300 --to 7800 --step 35 --bg-step 240 + 使い捨てのスクリプト（V-0228「読み方」の 3 の規則）",
       "note": "使えたコマ 26 / 101。四分位: 足元 542〜542・高さ 158〜162。足元の y は半分の解像度で測るので 2px 刻み"
     }
+  },
+  {
+    "id": "0128-09",
+    "recording": "0128",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [-1.09, -1.09, -0.68, -1.17, -1.08, -0.75, -1],
+    "description": "ユニ（RL・入力 UP・チャージ 1.5 秒・リロード 2 秒）単騎の、マガジンの最終弾から、RELOADING のバーの伸びを長さ 0 に遡った点（リロードの始まり）までの回ごとの値（負は最終弾のフレームより前。回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "最終弾は照準の残弾の 1 が消えたフレーム。取り消し・窓をまたいだ回・当てはめの残差が 1.2 より大きい回を除く"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "0128-10",
+    "recording": "0128",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [101, 101, 101, 102, 81, 101, 101],
+    "description": "ユニ（RL・入力 UP・チャージ 1.5 秒）単騎の、全弾リロードの込め終わり（RELOADING のバーが消えたフレーム）から次のマガジンの 1 発目（照準の残弾が満タンから減ったフレーム）までの回ごとの値（回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "取り消し・窓をまたいだ回と、減る直前の満タンが読めていない回を除く。回ごとに（込め終わり → 1 発目）: f1638→f1739、f2540→f2641、f3540→f3641、f4442→f4544、f8254→f8335、f9233→f9334、f10135→f10236"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]

@@ -17,15 +17,14 @@ const fixtures: Record<string, Partial<ShotParams>> = {
 };
 
 /**
- * cadence.ts から作った期待列: round(k × cycleFrames) + firstShotFrames + shotFrames[i]。
- * Stage 24: リロードのフレーム数は端数つきで、射手は 1 回分ごとに端数（最初は 0.5）を持ち越して切り捨てるので、k 番目のマガジンの
- * 始まりは k × 周期の四捨五入になる
+ * cadence.ts から作った期待列: k × cycleFrames + firstShotFrames + shotFrames[i]。全弾リロードの 1 回分は 1 回ごとに丸めた整数で
+ * 端数を持ち越さない（plan/design-reload-rounding.md 案 E）ので、k 番目のマガジンの始まりは周期の k 倍
  */
 function expectedFrames(shot: ShotParams, magazines: number): number[] {
   const c = computeCadence(shot);
   const frames: number[] = [];
   for (let k = 0; k < magazines; k++)
-    for (const f of c.shotFrames) frames.push(Math.floor(k * c.cycleFrames + 0.5 + 1e-9) + c.firstShotFrames + f);
+    for (const f of c.shotFrames) frames.push(k * c.cycleFrames + c.firstShotFrames + f);
   return frames;
 }
 
@@ -41,16 +40,16 @@ describe('stepShooter', () => {
   });
 
   // Stage 21-C3: rpm はゲーム内の時計（C-0058）。SR の戦闘開始の 1 発目は構え 11f + チャージ 59f + 満ちてから撃つまで 1f − 1 = 70f（C-0232）。
-  // Stage 24: リロードはゲーム内の時計で端数つき（1 回目は四捨五入。AR 59f・SR 88f・MG 147f）、リロード明けは 24f（C-0148）
-  it('matches the absolute frames fixed in the design (AR 12…302 → 385, SR 70…480 → 650, MG 12…400 → 571)', () => {
+  // リロードはゲーム内の時計で数え、1 回ごとに丸める（plan/design-reload-rounding.md 案 E。AR 58f・SR 89f・MG 147f）、リロード明けは 24f（C-0148）
+  it('matches the absolute frames fixed in the design (AR 12…302 → 384, SR 70…480 → 651, MG 12…400 → 571)', () => {
     // Stage 22-C: チャージの無い武器は戦闘開始から構え 12f の後に撃つ
     const ar = shotFramesUpTo(makeCharacter(fixtures.AR).shot, 400);
     expect(ar.slice(0, 3)).toEqual([12, 17, 22]);
     expect(ar[59]).toBe(302);
-    expect(ar[60]).toBe(385);
+    expect(ar[60]).toBe(384);
 
     const sr = shotFramesUpTo(makeCharacter(fixtures.SR).shot, 700);
-    expect(sr).toEqual([70, 152, 234, 316, 398, 480, 650]);
+    expect(sr).toEqual([70, 152, 234, 316, 398, 480, 651]);
 
     const mg = shotFramesUpTo(makeCharacter(fixtures.MG).shot, 600);
     expect(mg[0]).toBe(12);

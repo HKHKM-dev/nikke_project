@@ -14,7 +14,7 @@ import {
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
-import { rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
+import { computeCadence, rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
 import {
   DISTANCE_BONUS,
   PER_SHOT_DAMAGE_CORE,
@@ -717,7 +717,11 @@ function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const shot = input.character.shot;
   const params = firingParams(shot, segment.trigger.buffs);
-  return params.reloadChunkFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
+  // 全弾リロードの 1 回分は、マガジンを撃ち切った最終弾の蓄積の余りから 1 回ごとに丸めた整数（cadence.ts の fullReloadFrames。
+  // plan/design-reload-rounding.md 案 E）。分割リロードは 1 段の端数つきの長さのまま
+  if (params.splitReload) return params.reloadChunkFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
+  const cadence = computeCadence(shot, DEFAULT_WEAPON_MODEL, params);
+  return cadence.reloadFrames + cadence.reloadFirstShotFrames;
 }
 
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {

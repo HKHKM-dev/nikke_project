@@ -111,6 +111,7 @@ import {
   firesChargeShots,
   isResolvedShotCount,
   isResolvedTimer,
+  isResolvedWeaponChangeEnd,
   resolveCoverHeals,
   resolveInstant,
   type ResolvedCoverHeal,
@@ -370,6 +371,9 @@ function slotBlockRanges(
 
 /** 回し直しの上限（plan/design-explosive-round-lead.md 5.2 節。ふつうは 2 回で揃う） */
 const MAX_LEAD_PASSES = 4;
+
+/** 撃ち切りで終わる使用武器の変更を、最後の発から何フレーム後に終えるか（ShotLog.weaponChangeEnds） */
+const WEAPON_CHANGE_END_DELAY = 1;
 
 /**
  * 1 パス目も件の始まりから見る（plan/design-explosive-round-lead.md 5.2 節の案 1）: leadFrames のある付与が発火したら、その発のフレームを
@@ -1423,8 +1427,12 @@ function runFirstPassOnce(
       if (uncharged) (log.unchargedShotFrames ??= []).push(f);
       // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
       // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。件の終わりも同じ列から作る（skills/holders.ts）
-      if (params.weapon !== null && state.lastShot && lists.openWeaponChange(i, params.weapon.id, f + 1)) {
-        (log.weaponChangeEnds ??= []).push(f + 1);
+      if (
+        params.weapon !== null &&
+        state.lastShot &&
+        lists.openWeaponChange(i, params.weapon.id, f + WEAPON_CHANGE_END_DELAY)
+      ) {
+        (log.weaponChangeEnds ??= []).push(f + WEAPON_CHANGE_END_DELAY);
       }
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
@@ -1857,7 +1865,16 @@ function runFirstPassOnce(
         if (src.effect.kind === 'ammoDecrease') {
           const params = paramsAt(target, f);
           const before = state.ammo;
-          drainAmmo(state, Math.ceil(state.ammo * src.effect.value - 1e-9), params);
+          // 使用武器の変更の撃ち切りで起きる残弾数減少は、最後の発の次のフレーム（ShotLog.weaponChangeEnds）に来るが、ゲームの
+          // リロードは最後の発より前に始まる（V-0681 のラプラス）。始まりを最後の発のフレームに戻す
+          drainAmmo(
+            state,
+            Math.ceil(state.ammo * src.effect.value - 1e-9),
+            params.weapon?.shot ?? slot.character.shot,
+            model,
+            params,
+            isResolvedWeaponChangeEnd(src.effect.trigger) ? -WEAPON_CHANGE_END_DELAY : 0,
+          );
           instants.push({
             frame: f,
             sourceSlotIndex: src.sourceSlotIndex,

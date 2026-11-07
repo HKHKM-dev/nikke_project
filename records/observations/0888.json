@@ -29,30 +29,13 @@
     "description": "3 回目の敵のジャンプの、紅蓮：ブラックシャドウのハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（部分チャージの発の回）",
     "method": {
       "tool": "node tools/captures/reload.ts --mode fit",
-      "note": "0 の点 f6784.74 → 消えた 6881（動画）。モデルは録画の窓 `0888-01` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+      "note": "0 の点 f6784.74 → 消えた 6881（動画）。モデルは録画の窓 `0888-01` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）。2026-11-07: 全弾リロードを 1 回ごとに丸める形（plan/design-reload-rounding.md 案 E）で、1 回ずつのリロードは録画と合った（モデルと録画の発の差がリロードを挟んでも増えない）が、敵のジャンプの明けの後、モデルの発が録画より約 4〜5f 遅い回がある（紅蓮BS・A2 は 2 回目、アドミは 3 回目のジャンプ。いまの形でも同じで、リロードのたびに約 1f 短い持ち越しの平均が打ち消していた）ので、この回の射手の状態が録画とずれる。比べる観測値から外した（backlog の 2-60）"
     },
     "scope": {
       "slot": 1,
       "source": "firing"
     },
-    "use": "compare",
-    "compare": {
-      "model": "sim",
-      "metric": "hideReloadToWindowEnd",
-      "args": {
-        "slot": 1,
-        "window": 2
-      },
-      "tolerance": {
-        "abs": 2
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
-        "burst": false,
-        "jumpWindows": "0888-01"
-      }
-    }
+    "use": "record"
   },
   {
     "id": "0888-03",
@@ -107,6 +90,25 @@
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps",
       "note": "増分 f6780（前の発 f6739。Δ 41f。D の時点のモデルの溜めたフレーム数 16f = Δ − H 1f − 溜め始め 24f）。進みは溜めたフレーム数 × 0.017 秒 ÷ チャージ時間 0.3 秒"
+    }
+  },
+  {
+    "id": "0888-05",
+    "recording": "0888",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [10.61, 11.84, 11.66, 11.74, 11.65, 11.84, 11.74, 11.93, 11.82, 11.89, 11.89, 11.92, 12.03, 12.27, 11.59],
+    "description": "紅蓮：ブラックシャドウ（RL・入力 UP・チャージ 0.3 秒・射撃姿勢維持型・リロード 2 秒）単騎の、マガジンの最終弾から、RELOADING のバーの伸びを長さ 0 に遡った点（リロードの始まり）までの回ごとの値（負は最終弾のフレームより前。回の順）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "最終弾は照準の残弾の 1 が消えたフレーム。取り消し・窓をまたいだ回・当てはめの残差が 1.2 より大きい回を除く"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
     }
   }
 ]

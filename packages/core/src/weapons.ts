@@ -46,6 +46,24 @@ export type WeaponModel = {
    */
   reloadFirstShotFrames: number;
   /**
+   * 全弾リロード（分割でない）の込め終わり（RELOADING のバーが消えて残弾が最大に戻る）までに、リロードの始まりからリロードの秒
+   * （FiringParams.reloadChunkFrames）へ足すフレーム（c）。込め終わりは ⌈始まり + reloadChunkFrames + c⌉ で、1 回ごとに丸め、端数を
+   * 次へ持ち越さない（V-0681。どの武器種も 11.78〜11.95f の幅に入る。cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）
+   */
+  reloadCompleteExtraFrames: number;
+  /**
+   * 込め終わりから次のマガジンの 1 発目までのうち、チャージの外の長さ。チャージの無い武器は込め終わり → 1 発目、チャージ武器は
+   * 込め終わり → 1 発目 − チャージ（V-0681。AR・SMG・MG・入力が UP・押下チャージ型）。射手は込め終わりより
+   * （リロード明けの待ち − これ）前に残弾を満たし、残りをリロード明けの待ちに入れてある（cadence.ts の fullReloadFrames）
+   */
+  reloadCompleteToShotFrames: number;
+  /**
+   * 入力が UP のチャージ武器（射撃姿勢維持型を含む）の、リロードの始まりの、最終弾のフレームからのずれ（負は前）。SR・RL、チャージの秒・
+   * リロードの秒によらない（V-0681）。満ちてから撃つまで 1f（chargeFullToShotFrames）に近いが、0.1f の差は分からない。
+   * 押下チャージ型は 0、チャージの無い武器は最終弾の発射レートの蓄積の余りから（cadence.ts の reloadStartOffset）
+   */
+  upChargeReloadStartFrames: number;
+  /**
    * Stage 22-A: チャージ武器の構え解除モーション（紅蓮BS 等は射撃後の硬直を含む）のフレーム。発と発の間
    * （チャージ + chargeReleaseFrames）は「構え解除 → 構え → チャージ → 射撃」で、ハイドしていた状態（戦闘開始・窓の明け）からの
    * 1 発目は構え解除が無いぶん早い（C-0537。紅蓮BS 43f → 30f、ラム 82f → 70f）。リロードの完了から 1 発目までも同じく
@@ -116,6 +134,9 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
   chargeReleaseFrames: 23,
   spinUpFirstShotFrames: 20,
   reloadFirstShotFrames: 24,
+  reloadCompleteExtraFrames: 11.9,
+  reloadCompleteToShotFrames: 12,
+  upChargeReloadStartFrames: -1.1,
   aimOutFrames: 13,
   aimInFrames: 12,
   chargeFullToShotFrames: 1,
@@ -129,8 +150,8 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
 
 /**
  * Stage 24: リロードの秒 → フレーム（端数つき）。ゲーム内の時計（1 フレーム 0.017 秒）で数え、丸めない（C-0145・C-0142。
- * plan/design-weapon-seconds.md 10.5 節）。射手は 1 回分ごとに、前の回の端数を足して切り捨て、残りを次へ持ち越す
- * （frame/shooter.ts の nextChunkFrames）。rpm の蓄積（C-0058）と同じ形。21-C〜23 は 1 秒 = 60f の切り上げだった。
+ * plan/design-weapon-seconds.md 10.5 節）。全弾リロードの 1 回分は、1 回ごとに丸める
+ * （cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）。21-C〜23 は 1 秒 = 60f の切り上げだった。
  * 分割リロードの段は、この長さを段ごとに切り上げる（C-0154）
  */
 export function reloadSecondsToFrames(seconds: number): number {

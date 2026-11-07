@@ -50,7 +50,8 @@ export type FiringParams = {
   maxAmmo: number;
   /**
    * 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数。Stage 24: 端数つき（reloadSecondsToFrames）。
-   * 射手は端数を持ち越して整数の待ちにする（frame/shooter.ts の nextChunkFrames）。分割リロードは段ごとに切り上げる（C-0154）。
+   * 射手が待つ整数は、全弾リロードは 1 回ごとに丸める（cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）、
+   * 分割リロードは段ごとに切り上げる（C-0154）。
    * 射撃姿勢維持型は WeaponModel.stanceReloadExtraFrames を足した値（C-0149。plan/design-fire-stance-cadence.md 3.4 節）
    */
   reloadChunkFrames: number;

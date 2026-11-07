@@ -13,5 +13,24 @@
     },
     "source": "V-0057",
     "readAt": "2026-09-30"
+  },
+  {
+    "id": "0032-02",
+    "recording": "0032",
+    "source": "V-0681",
+    "readAt": "2026-11-07",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": [129],
+    "description": "ベロータ（RL・リロード 2 秒 = 117.65f）単騎の、マガジンの最終弾（照準の残弾の 1 が消えたフレーム）からリロード完了（RELOADING のバーが消えたフレーム）までの回ごとの値（回の順）。いちばん多いのは 129f（⌊117.65⌋ + 12f）",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts --mode series・node tools/captures/reload.ts --mode fit",
+      "note": "取り消し・窓をまたいだ回・当てはめの残差が 1.2 より大きい回・最終弾の前の照準の残弾が読めない回を除く。回ごとに: f966→f1095 129f（0 の点 − 最終弾 -1.1f、0 の点 → 完了 130.13f）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
