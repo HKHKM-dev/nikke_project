@@ -1,0 +1,135 @@
+{
+  "verification": "V-0686",
+  "note": "撮る前の予測。撮影 A（ココア・マスト：RM（操作））・B（I-DOLL・フラワー・ココア・マスト：RM（操作））・C（クレア・I-DOLL・フラワー・マスト：RM（操作））、スペック固定 ON・オートバースト ON。仮説はいまの定義（C-0978〜C-0980）だけで、外れない形は値を手で書く（検証記録の「予測」）",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 354,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義（ココアの S1・バーストとクレアのバーストのデバフ解除。1 個はスタックごと）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-effect-delay",
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A: ココアのバーストの効果（デバフ解除）の、発動の印（I の替わり目）からのフレーム（C-0980）"
+    },
+    {
+      "id": "B-drunk-end-phase",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "modulo": 883,
+        "count": 6
+      },
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 311
+        },
+        {
+          "rid": 354,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "note": "撮影 B: ほろ酔いが外れたフレームの、戦闘開始から 883f（ココアの S1 の周期。C-0822）で割った余り（C-0978）。動画とゲーム内の時刻のずれはモデルも出す。S1 で外れないなら、外れない"
+    },
+    {
+      "id": "C-drunk-end-after-claire",
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 3,
+        "event": "stateEnd",
+        "state": "drunken",
+        "anchor": "activation:1",
+        "from": 1,
+        "within": "untilNext",
+        "count": 1
+      },
+      "team": [
+        {
+          "rid": 842
+        },
+        {
+          "rid": 304
+        },
+        {
+          "rid": 354,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 C: クレアの 2 回目の発動（ほろ酔い 2 スタック）の印から、ほろ酔いが外れたフレームまで（C-0979）。1 スタックだけ外すなら、外れない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-07",
+    "commit": "fd26376efa21ff59fdbffa9aeaae7e60913b74f5",
+    "values": {
+      "H-model": {
+        "A-effect-delay": 20,
+        "B-drunk-end-phase": [
+          6,
+          7,
+          9,
+          10,
+          12,
+          13
+        ],
+        "C-drunk-end-after-claire": [
+          -4
+        ]
+      }
+    }
+  }
+}

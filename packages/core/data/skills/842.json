@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "resourceId": 842,
+  "checkedAt": "2026-11-07",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": { "count": "fullChargeShot", "everyRef": 1 },
+          "target": "topAttack",
+          "targetCountRef": 2,
+          "ref": 3,
+          "assumes": {
+            "ja": "グリーンハーブ（スキル発動者の最終最大HP の X% の回復）。「フルチャージ攻撃が 3 回命中した時」は、RL の当たりは 1 発 1 ヒット（C-0168）なので、フルチャージの発の通算で数える。回復量はダメージに関係しない（確かめていない）",
+            "en": "Green Herb (heals X% of the caster's final max HP). \"When 3 fully charged attacks hit\" is counted as fully charged shots, since an RL shot is one hit (C-0168). The amount does not affect damage (not checked)"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "バーストスキルを使用した時の、味方全体へのブルーハーブ（スキル発動者の最終最大HP の X% のバリア・10 秒）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない）",
+          "en": "Blue Herb on all allies when she uses her Burst (a barrier of X% of her final max HP, 10 s) does not change damage by itself (it matters only with an effect reading barriers in the team; this grant is not defined, so allies never have a barrier in the model)",
+          "kind": "indirect",
+          "path": "barrier"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "assumes": {
+            "ja": "味方全体への 1 回の回復（スキル発動者の最終最大HP の X%）。回復量はダメージに関係しない（確かめていない）",
+            "en": "A one-off heal on all allies (X% of the caster's final max HP). The amount does not affect damage (not checked)"
+          }
+        },
+        {
+          "kind": "removeDebuff",
+          "trigger": "burstUse",
+          "target": "allies",
+          "count": 1,
+          "assumes": {
+            "ja": "味方全体の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す（2・3 スタックとも全部外れた。V-0684）。発火のフレームは、バーストの効果の遅れの表に無いので発動のフレーム（録画では I の替わり目の ±2f で外れた）",
+            "en": "Removes one debuff-flagged state (Drunken), with all its stacks, from every ally (2 and 3 stacks were removed alike; V-0684). It fires at the activation frame, since she is not in the burst effect delay table (in the recordings it came off within ±2 f of the I mark)"
+          },
+          "claims": ["C-0979"]
+        }
+      ]
+    }
+  }
+}
