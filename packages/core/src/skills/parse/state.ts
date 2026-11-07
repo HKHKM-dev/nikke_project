@@ -370,7 +370,7 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
   } = grant;
   const { claims: _itemClaims, ...value } = item;
   // トーブの基礎版編: 確率の付与の中身は、スタックの段ごとの期待値の小片になる（段の数は付与が持つ）ので、スタックの欄を中身の規則に渡さない
-  if (isRecord(fields.trigger) && (fields.trigger.chance !== undefined || fields.trigger.chanceRef !== undefined)) {
+  if (isRecord(fields.trigger) && isChanceTrigger(fields.trigger as EffectTrigger)) {
     delete fields.maxStacks;
     delete fields.maxStacksRef;
   }

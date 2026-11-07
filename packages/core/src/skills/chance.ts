@@ -92,18 +92,19 @@ type StackChain = { end: number; w: number[] };
  * 機会は 1 パス目が始まりの昇順に後ろへ足すので、足されたら now から先だけを進める
  */
 type StackRun = {
-  durationFrames: number;
-  frames: number;
   maxStacks: number;
   done: number;
   now: number;
   alive: StackChain[];
   pieces: ChanceStackPiece[];
-  /** 段 → まだ伸ばせる最後の小片の pieces の添字 */
-  open: Map<number, number>;
+  /** 段 − 1 → まだ伸ばせる最後の小片の pieces の添字（無ければ −1） */
+  open: number[];
 };
 
-/** 機会の列ごとの途中の状態（持ち主の件の列で機会の列を共有するので、作り直しも 1 回で済む） */
+/**
+ * 機会の列ごとの途中の状態（持ち主の件の列で機会の列を共有するので、作り直しも 1 回で済む）。1 つの機会の列は 1 つの付与のもので、
+ * 維持・上限・戦闘の長さは変わらない
+ */
 const stackRuns = new WeakMap<readonly ChanceOpportunity[], StackRun>();
 
 /** [run.now, to) の、段ごとの「スタック数が段以上の確率」の小片を足し（同じ確率で続けば伸ばす）、now を to にして切れた鎖を落とす */
@@ -120,35 +121,33 @@ function advanceStacks(run: StackRun, to: number): void {
     }
     for (let k = 1; k <= run.maxStacks; k++) {
       const scale = Math.min(1, atLeast[k - 1]!);
-      const at = run.open.get(k);
       if (scale <= 0) {
-        run.open.delete(k);
+        run.open[k - 1] = -1;
         continue;
       }
-      const last = at === undefined ? undefined : run.pieces[at];
+      const last = run.pieces[run.open[k - 1]!];
       if (last !== undefined && last.end === from && last.scale === scale) {
         last.end = to;
         continue;
       }
-      run.open.set(k, run.pieces.length);
+      run.open[k - 1] = run.pieces.length;
       run.pieces.push({ start: from, end: to, scale, stack: k });
     }
   }
   run.now = to;
-  run.alive = run.alive.filter((c) => c.end > to);
+  // 鎖は付いた順（= 窓の終わりの順）に並ぶので、切れたものは前から外す
+  let gone = 0;
+  while (gone < run.alive.length && run.alive[gone]!.end <= to) gone++;
+  if (gone > 0) run.alive.splice(0, gone);
 }
 
 /** 鎖の窓の終わりで区切りながら、時刻 until まで進める */
 function advanceUntil(run: StackRun, until: number): void {
-  while (run.now < until) {
-    let to = until;
-    for (const c of run.alive) to = Math.min(to, c.end);
-    advanceStacks(run, to);
-  }
+  while (run.now < until) advanceStacks(run, Math.min(until, run.alive[0]?.end ?? until));
 }
 
 /** 時刻 now に始まる機会 q を処理する（生きている鎖に 1 − q を掛け、付いた鎖を足す） */
-function applyOpportunity(run: StackRun, q: number): void {
+function applyOpportunity(run: StackRun, q: number, durationFrames: number): void {
   const next = new Array<number>(run.maxStacks).fill(0);
   let held = 0;
   for (const c of run.alive) {
@@ -160,7 +159,7 @@ function applyOpportunity(run: StackRun, q: number): void {
     }
   }
   next[0]! += q * Math.max(0, 1 - held);
-  run.alive.push({ end: run.now + run.durationFrames, w: next });
+  run.alive.push({ end: run.now + durationFrames, w: next });
 }
 
 /**
@@ -179,37 +178,29 @@ export function chanceStackPieces(
   maxStacks: number,
 ): ChanceStackPiece[] {
   if (durationFrames <= 0 || maxStacks < 1) return [];
-  const increasing = opportunities.every((o, i) => i === 0 || opportunities[i - 1]!.start < o.start);
-  const ops = increasing ? opportunities : [...opportunities].sort((a, b) => a.start - b.start);
-  const usable = ops.findIndex((o) => o.start >= frames);
-  const count = usable < 0 ? ops.length : usable;
-  if (count === 0) return [];
-  let run = increasing ? stackRuns.get(opportunities) : undefined;
-  if (
-    run === undefined ||
-    run.durationFrames !== durationFrames ||
-    run.frames !== frames ||
-    run.maxStacks !== maxStacks ||
-    run.done > count
-  ) {
-    run = { durationFrames, frames, maxStacks, done: 0, now: ops[0]!.start, alive: [], pieces: [], open: new Map() };
-    if (increasing) stackRuns.set(opportunities, run);
+  let run = stackRuns.get(opportunities);
+  if (run === undefined || run.done > opportunities.length) {
+    run = { maxStacks, done: 0, now: 0, alive: [], pieces: [], open: new Array<number>(maxStacks).fill(-1) };
+    stackRuns.set(opportunities, run);
   }
   // 確定する所: 次の機会の始まりまで進め、その機会を処理する（同じフレームの機会は、窓の終わりの後にまとめて）
-  while (run.done < count) {
-    const start = ops[run.done]!.start;
+  while (run.done < opportunities.length && opportunities[run.done]!.start < frames) {
+    const start = opportunities[run.done]!.start;
+    if (start < run.now) throw new RangeError('chance opportunities must be appended in order of their start');
     advanceUntil(run, start);
-    while (run.done < count && ops[run.done]!.start === start) applyOpportunity(run, ops[run.done++]!.q);
+    while (run.done < opportunities.length && opportunities[run.done]!.start === start) {
+      applyOpportunity(run, opportunities[run.done++]!.q, durationFrames);
+    }
   }
-  // 後ろ: 状態を写して戦闘の終わりまで進める（持っている小片は書き換えない）
+  // 後ろ: 状態を写して戦闘の終わりまで進める（持っている小片は書き換えない。開いている段の小片だけ写す）
   const tail: StackRun = {
     ...run,
     alive: run.alive.map((c) => ({ end: c.end, w: [...c.w] })),
     pieces: [...run.pieces],
-    open: new Map(run.open),
+    open: [...run.open],
   };
-  for (const i of tail.open.values()) tail.pieces[i] = { ...tail.pieces[i]! };
-  while (tail.now < frames && tail.alive.length > 0) advanceUntil(tail, frames);
+  for (const i of tail.open) if (i >= 0) tail.pieces[i] = { ...tail.pieces[i]! };
+  advanceUntil(tail, frames);
   return tail.pieces;
 }
 

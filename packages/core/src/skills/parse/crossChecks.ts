@@ -8,6 +8,7 @@ import {
   type DotEffect,
   type EffectTrigger,
   isAppliedTrigger,
+  isChanceTrigger,
   isEndedTrigger,
   isFullStackTrigger,
   isShotCountTrigger,
@@ -345,13 +346,7 @@ function validateChanceStates(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   const all = SKILL_SLOTS.flatMap((slot) =>
     (entries[slot]?.effects ?? []).map((e, i) => ({ e, at: `${root}.${slot}.effects[${i}]` })),
   );
-  const chanceStates = all.flatMap(({ e }) =>
-    e.kind === 'state' &&
-    isShotCountTrigger(e.trigger) &&
-    (e.trigger.chance !== undefined || e.trigger.chanceRef !== undefined)
-      ? [e.state]
-      : [],
-  );
+  const chanceStates = all.flatMap(({ e }) => (e.kind === 'state' && isChanceTrigger(e.trigger) ? [e.state] : []));
   for (const state of chanceStates) {
     const grants = all.filter(({ e }) => e.kind === 'state' && e.state === state);
     if (grants.length !== 1)

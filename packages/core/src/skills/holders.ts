@@ -11,7 +11,7 @@
 // 窓と記録の書き出し（BuffTimeline の窓と記録の欄）を消し、読む側は履歴を直接読む。
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import {
   ZERO_BUFFS,
@@ -57,6 +57,7 @@ import {
   type ResolvedRemoveState,
   type ResolvedStackChange,
   type ResolvedStateContent,
+  type ResolvedShotCountTrigger,
   type ResolvedStateGrant,
   type ResolvedTimedEffect,
   type ResolvedTrigger,
@@ -82,6 +83,7 @@ import {
   type FullStackEvent,
   type HealRecord,
   type ShotCountEveryAt,
+  type ShotEvent,
   type TriggerTracker,
 } from './triggers.ts';
 import {
@@ -625,8 +627,7 @@ function scaleLevels(items: readonly HeldItem[], levelScales: ReadonlyMap<number
   const keys = [...levelScales.keys()].sort((a, b) => a - b);
   const out: HeldItem[] = [];
   for (const it of items) {
-    let key: number | undefined;
-    for (const k of keys) if (k <= it.start) key = k;
+    const key = keys[lowerBound(keys, it.start + 1) - 1];
     const scale = key === undefined ? undefined : levelScales.get(key)![(it.stack ?? 1) - 1];
     if (scale !== undefined && scale > 0) out.push({ ...it, scale });
   }
@@ -639,30 +640,26 @@ function scaleLevels(items: readonly HeldItem[], levelScales: ReadonlyMap<number
  * 見え方）。スタックの条件の見方は stacksHold と同じ
  */
 export function whileItems(
-  own: readonly { origin: HeldOrigin; items: readonly HeldItem[] }[],
+  own: readonly { origin: HeldOrigin; items: readonly HeldItem[]; chance?: boolean }[],
   stacks: 'full' | number | undefined,
 ): HeldItem[] {
+  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態の件の列（chance）は段ごとの期待値の小片なので、条件の段（条件が無ければ
+  // 段 1）の小片をそのまま出す（scale はその条件が成り立つ確率）。確率の状態の付与はその状態の 1 つだけ（skills/parse/crossChecks.ts）
+  const chance = own.find((o) => o.chance === true);
+  if (chance !== undefined) {
+    const max = chance.origin.kind === 'state' ? chance.origin.grant.maxStacks : undefined;
+    const level = stacks === undefined ? 1 : stacks === 'full' ? max : stacks;
+    return chance.items.filter((it) => it.stack === level);
+  }
   const spans: [number, number][] = [];
-  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態の段の小片（scale のある件）は、条件の段の小片をそのまま出す（scale は
-  // その条件が成り立つ確率。確率の状態の付与はその状態の 1 つだけなので、ほかの件と重ならない。skills/parse/crossChecks.ts）。条件が無ければ段 1
-  const scaled: HeldItem[] = [];
   for (const { origin, items } of own) {
     const max = origin.kind === 'state' ? origin.grant.maxStacks : undefined;
     for (const it of items) {
       if (it.start >= it.end) continue;
-      if (it.scale !== undefined) {
-        const level = stacks === undefined ? 1 : stacks === 'full' ? max : stacks;
-        if (it.stack === level) scaled.push({ start: it.start, end: it.end, scale: it.scale });
-        continue;
-      }
       const holds =
         stacks === undefined || (stacks === 'full' ? max !== undefined && it.stack === max : (it.stack ?? 1) >= stacks);
       if (holds) spans.push([it.start, it.end]);
     }
-  }
-  if (scaled.length > 0) {
-    if (spans.length > 0) throw new Error('while cannot mix a chance state with another grant of the state');
-    return scaled;
   }
   spans.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
   const out: HeldItem[] = [];
@@ -832,9 +829,7 @@ function buildTrackItems(
       // トーブの基礎版編（plan/design-tove-base.md 2.2 節）: 確率のきっかけの付与は、スタック数の分布の期待値の小片（段 k の scale は
       // スタック数が k 以上の確率）
       if (track.opportunities !== null) {
-        return chanceStackPieces(track.opportunities, o.grant.durationFrames, frames, o.grant.maxStacks ?? 1).map(
-          (p) => ({ start: p.start, end: p.end, stack: p.stack, scale: p.scale }),
-        );
+        return chanceStackPieces(track.opportunities, o.grant.durationFrames, frames, o.grant.maxStacks ?? 1);
       }
       const ends = fullBurstWindows.map((w) => w.end);
       const items = closedStateItems(
@@ -1503,7 +1498,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (seen !== undefined && seen.length === deps.length && seen.every((d, i) => d === deps[i])) return track.items;
     whileSeen.set(track, deps);
     track.items = whileItems(
-      own.map((t, i) => ({ origin: t.origin, items: deps[i]! })),
+      own.map((t, i) => ({ origin: t.origin, items: deps[i]!, chance: t.opportunities !== null })),
       effect.whileStacks,
     );
     return track.items;
@@ -1628,7 +1623,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const stackLevelAt = (holder: number, state: NamedStateId, frame: number): number => {
     let level = 0;
     for (const t of stateTracks[holder]?.get(state) ?? []) {
-      if (t.opportunities !== null) throw new Error(`"${state}" is a chance state; its stack level is not an integer`);
       for (const it of selfStateItemsAt(t, frame)) level = Math.max(level, it.stack ?? 1);
     }
     return level;
@@ -1675,9 +1669,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const family = statesMatching(state);
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
       const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
-      // トーブの基礎版編: 確率の状態は条件で見られない（skills/parse/crossChecks.ts の validateChanceStates）
-      if (own.some((t) => t.opportunities !== null))
-        throw new Error(`"${state}" is a chance state; a condition cannot read it`);
       if (stacks === undefined) {
         const has = isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0);
         if (has !== present) return false;
@@ -1818,6 +1809,21 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (!dependsOnRank(e)) return context;
     const finalAttacks = finalAttacksAtFrame(frame);
     return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
+  };
+
+  /**
+   * 確率のきっかけ（timed・付与）の機会を 1 つ貯める。発のフレーム f の次のフレームから、確率 × その発の回数の量（回数の量が 0 の発と、
+   * 戦闘の後に始まる機会は除く。plan/design-soldier-eg.md 3.1 節）
+   */
+  const pushChanceOpportunity = (
+    opportunities: ChanceOpportunity[] | null | undefined,
+    trigger: ResolvedShotCountTrigger & { chance: number },
+    shot: ShotEvent | null | undefined,
+    f: number,
+  ): void => {
+    if (!opportunities || !shot || f + 1 >= frames) return;
+    const weight = shotCountWeight(trigger.count, shot);
+    if (weight > 0) opportunities.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
   };
 
   // ---- 登録 ----
@@ -2219,13 +2225,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       // トーブの基礎版編: 確率のきっかけの付与は、timed の確率と同じく機会を貯める（付いた記録は作らない）
       if (isResolvedChance(g.grant.trigger)) {
-        if (battleStartOnly) continue;
-        const shot = ev.shots[g.group.sourceSlotIndex];
-        if (!shot || f + 1 >= frames) continue;
-        const weight = shotCountWeight(g.grant.trigger.count, shot);
-        if (weight <= 0) continue;
-        const opportunities = g.group.tracks.find((t) => t !== null)?.opportunities;
-        opportunities?.push({ start: f + 1, q: Math.min(1, g.grant.trigger.chance * weight) });
+        if (!battleStartOnly) {
+          const track = g.group.tracks.find((t) => t !== null);
+          pushChanceOpportunity(track?.opportunities, g.grant.trigger, ev.shots[g.group.sourceSlotIndex], f);
+        }
         continue;
       }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
@@ -2246,14 +2249,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     for (const src of stage1Timed) {
       if (src.chance) {
-        if (battleStartOnly) continue;
-        const shot = ev.shots[src.sourceSlotIndex];
         const trigger = src.effect.trigger;
-        if (!shot || !isResolvedChance(trigger) || f + 1 >= frames) continue;
-        const weight = shotCountWeight(trigger.count, shot);
-        if (weight <= 0) continue;
-        const opportunities = (src.enemy ?? src.tracks.find((t) => t !== null))?.opportunities;
-        opportunities?.push({ start: f + 1, q: Math.min(1, trigger.chance * weight) });
+        if (!battleStartOnly && isResolvedChance(trigger)) {
+          const track = src.enemy ?? src.tracks.find((t) => t !== null);
+          pushChanceOpportunity(track?.opportunities, trigger, ev.shots[src.sourceSlotIndex], f);
+        }
         continue;
       }
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
