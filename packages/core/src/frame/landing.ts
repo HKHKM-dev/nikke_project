@@ -38,7 +38,6 @@ import type {
   TargetRateTable,
 } from '../types.ts';
 import { endSecondsToFrame, framesToGameSeconds, gameSecondsToFrame } from '../time.ts';
-import { windowEndFirstShotFrames } from './shooter.ts';
 
 export type ConditionMode = 'manual' | 'auto';
 
@@ -685,29 +684,6 @@ function mixLabel(profile: TargetProfile, id: string): { ja: string; en: string 
 }
 
 /**
- * plan/design-landing-aim.md 4.1 節: 窓の明けから 1 発目までがこれより短い RL・SR は、照準がコアに着く前に撃つ回がある
- * （C-0193・C-0194・C-0199。着く時刻の実測の最長は 42f）。注記を出す条件だけに使い、結論にはしない
- */
-export const LANDING_AIM_MISS_FRAMES = 50;
-
-/**
- * 着地の後の 1 発目を除いて決めた RL の弾の種類の行（直進弾 100・誘導弾 100・曲射 1500。C-0174・C-0175・C-0242）。
- * その 1 発目は遠・中遠の区間で外すことがあり（V-0097 の 0077-18・0121-05）、モデルに入っていない
- */
-const FIRST_SHOT_EXCLUDED_ROWS: ReadonlySet<string> = new Set([
-  'ProjectileDirect:100',
-  'HomingProjectile:100',
-  'ProjectileCurve:1500',
-]);
-
-/** キャラが引く RL の弾の種類の行のキー（弾の種類ごとの行でなければ null） */
-function rateRowKeyOf(table: TargetRateTable, character: CharacterData): string | null {
-  const cell = table[character.weaponType];
-  if (cell === null || cell === undefined || !isByProjectile(cell)) return null;
-  return projectileRowKeyOf(cell.byProjectile, character);
-}
-
-/**
  * 自動の枠の注記のうち、命中率▲を弾丸命中率に効かせたかの文。判定はモデルの値と同じ hitRateUpRaisesBulletHitRate で、
  * 帯のどれに効かせる武器種か（全部・一部・無し）と、枠の計画の着地点（parts。未測定の区間は除く）に効かせたものがあるかで分ける
  */
@@ -747,7 +723,8 @@ function bulletHitRateUpNote(
 
 /**
  * 自動の枠の注記。的の表が無い敵では「この敵の条件は未測定」、未測定の項目・区間は手入力の値を使ったこと、
- * 着地の後の照準（RL・SR の 1 発目の外れ、AR・SMG の撃ち始めの待ち）・MG の撃ち始めを未実装・近似として知らせる。自動でない枠は空
+ * MG の撃ち始めを近似として知らせる。自動でない枠は空。着地の後の照準の動きは枠ごとに出さず、画面の一覧の「モデル全体」に
+ * 1 行だけ出す（plan/design-landing-aim.md 10 節）
  */
 export function landingNotes(
   plan: LandingPlan | null,
@@ -850,39 +827,6 @@ export function landingNotes(
       message: {
         ja: `${framesToGameSeconds(unknown.start).toFixed(1)} 秒以降の着地点は未測定なので、手入力の値（${manualText.ja}）で計算した`,
         en: `Landing points after ${framesToGameSeconds(unknown.start).toFixed(1)} s are not measured; manual values are used (${manualText.en})`,
-      },
-    });
-  }
-  // plan/design-landing-aim.md 4.1 節（2026-10-05 オーナー承認。案 A・B-3）
-  if ((weapon === 'RL' || weapon === 'SR') && windowEndFirstShotFrames(slot.character.shot) < LANDING_AIM_MISS_FRAMES) {
-    notes.push({
-      level: 'unsupported',
-      code: 'landing-first-shot-miss',
-      message: {
-        ja: '着地の後の 1 発目は、照準がまだコアに着いていないとコアを外す（C-0194。照準は窓の明けから動き出す。C-0193・C-0199）。紅蓮：ブラックシャドウ単騎で 180 秒に 0〜2 発。未実装',
-        en: 'The first shot after a landing misses the core if the aim has not reached it yet (C-0194; the aim starts moving when the window ends, C-0193, C-0199); 0-2 shots in 180 s on a solo Scarlet: Black Shadow; not modeled',
-      },
-    });
-  }
-  const rowKey = weapon === 'RL' ? rateRowKeyOf(profile.coreHitRate, slot.character) : null;
-  if (rowKey !== null && FIRST_SHOT_EXCLUDED_ROWS.has(rowKey)) {
-    notes.push({
-      level: 'unsupported',
-      code: 'landing-first-shot-excluded',
-      message: {
-        ja: `この弾の種類（${rowKey}）のコア命中率は、着地の後の 1 発目を除いて決めた（C-0174・C-0175・C-0242）。その 1 発目は遠・中遠の区間で外すことがある。未実装`,
-        en: `The core hit rate of this projectile (${rowKey}) excludes the first shot after each landing (C-0174, C-0175, C-0242); that shot can miss the core at far and mid-far landings; not modeled`,
-      },
-    });
-  }
-  // 弾の種類 InstantBox（紅蓮：神殺の AR）は照準を待たない（C-0973）
-  if ((weapon === 'AR' || weapon === 'SMG' || weapon === 'SG') && slot.character.shot.fireType !== 'InstantBox') {
-    notes.push({
-      level: 'unsupported',
-      code: 'landing-aim-wait',
-      message: {
-        ja: '着地の後、照準が的に掛かるまで撃たない（AR・SMG は C-0291、SG は C-0948。操作キャラで確かめた）。モデルは窓の明けから構えの 12f で撃ち始めるので、通常攻撃の発の数が多めに出る。未実装',
-        en: 'After a landing, the character does not fire until the aim is on the target (C-0291 for AR and SMG, C-0948 for SG; seen on the controlled character); the model starts firing 12 frames after the window, so it counts slightly more normal shots; not modeled',
       },
     });
   }
