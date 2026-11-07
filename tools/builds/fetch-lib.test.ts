@@ -9,6 +9,7 @@ import {
   findDeep,
   outpostOf,
   pickHeaders,
+  isRateLimited,
   unwrapResponse,
 } from './fetch-lib.ts';
 
@@ -51,6 +52,15 @@ describe('unwrapResponse', () => {
     expect(() => unwrapResponse('p', { code: 1001, msg: 'login' })).toThrow('p: code 1001 login');
     expect(() => unwrapResponse('p', { data: {} })).toThrow('p: code undefined');
     expect(() => unwrapResponse('p', 'x')).toThrow();
+  });
+});
+
+describe('isRateLimited', () => {
+  it('is true only for code 212000', () => {
+    expect(isRateLimited({ code: 212000, msg: 'request too frequently' })).toBe(true);
+    expect(isRateLimited({ code: 0, data: {} })).toBe(false);
+    expect(isRateLimited({ code: 1001 })).toBe(false);
+    expect(isRateLimited(null)).toBe(false);
   });
 });
 
