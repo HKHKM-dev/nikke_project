@@ -8,7 +8,9 @@ import {
   type ModelNote,
   type TreasurePhase,
 } from '@nikke/core';
+import { useContext } from 'react';
 import { SKILL_SLOT_LABEL, formatBuildEffectSource } from '../skillLabels.ts';
+import { ListOrderContext } from '../useListOrder.ts';
 import type { SlotSkillsStatus } from '../useSkillDefinitions.ts';
 
 export type NotesSummarySlot = {
@@ -44,6 +46,12 @@ const LEVEL_CLASS: Record<Item['level'], string> = {
   noDamage: 'out-of-scope',
   modeling: 'out-of-scope',
   default: 'out-of-scope',
+};
+
+/** 一覧の戦闘力順で、戦闘力が同じキャラの順（plan/design-combat-power-sort.md 6.3 節） */
+const COMBAT_POWER_TIES: Item = {
+  level: 'assumed',
+  text: '一覧の戦闘力順で、戦闘力が同じキャラは名前順に並べる。実機の一覧での順は分かっていないので、実機と違うことがある',
 };
 
 /** 画面に欄の無い入力の既定（calcView.ts の冒頭）。欄が無いので変えられないことを知らせる */
@@ -148,6 +156,7 @@ export function NotesSummary({
   enemyNotes: readonly ModelNote[];
 }) {
   const filled = slots.filter((s): s is NotesSummarySlot => s !== null);
+  const { order } = useContext(ListOrderContext);
   return (
     <details className="panel notes-summary">
       <summary>未対応・近似・仮定の一覧</summary>
@@ -155,6 +164,12 @@ export function NotesSummary({
       <ItemList items={MODEL_WIDE} />
       <h3>画面に無い入力の既定</h3>
       <ItemList items={INPUT_DEFAULTS} />
+      {order === 'combatPower' && (
+        <>
+          <h3>一覧の並び</h3>
+          <ItemList items={[COMBAT_POWER_TIES]} />
+        </>
+      )}
       {enemyNotes.length > 0 && (
         <>
           <h3>敵の出来事</h3>

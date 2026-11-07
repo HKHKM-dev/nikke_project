@@ -8,6 +8,7 @@
   },
   "scripts": {
     "fetch-data": "node scripts/fetch-data.ts",
+    "combat-table": "node scripts/combat-table.ts",
     "fetch-images": "node scripts/fetch-images.ts",
     "typecheck": "tsc -p tsconfig.json"
   }

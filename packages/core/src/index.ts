@@ -13,6 +13,7 @@ export * from './fixedSpec.ts';
 export * from './build.ts';
 export * from './buildEffects.ts';
 export * from './combatPower.ts';
+export * from './combatTable.ts';
 export { parseBuildFieldsJson, parseSkillLevelsJson, type BuildFields } from './buildJson.ts';
 export * from './buildSnapshot.ts';
 export * from './shiftypad.ts';

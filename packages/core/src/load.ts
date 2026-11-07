@@ -1,3 +1,4 @@
+import { COMBAT_TABLE_FILE, type CombatPowerTable } from './combatTable.ts';
 import { parseEnemyPresets } from './enemies.ts';
 import {
   parseSkillDefinition,
@@ -44,6 +45,11 @@ export function characterDataPath(resourceId: number): string {
   return `${CHARACTER_DATA_DIR}/${resourceId}.json`;
 }
 
+/** 戦闘力の表（combatTable.ts） */
+export function combatTablePath(): string {
+  return `${CHARACTER_DATA_DIR}/${COMBAT_TABLE_FILE}`;
+}
+
 export function skillIndexPath(): string {
   return `${SKILL_DATA_DIR}/index.json`;
 }
@@ -84,6 +90,11 @@ export async function loadCharacterIndex(options: LoadOptions = {}): Promise<Cha
 export async function loadCharacter(resourceId: number, options: LoadOptions = {}): Promise<CharacterData> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   return fetchJson<CharacterData>(joinUrl(baseUrl, characterDataPath(resourceId)), fetchImpl);
+}
+
+export async function loadCombatPowerTable(options: LoadOptions = {}): Promise<CombatPowerTable> {
+  const { baseUrl = '/', fetchImpl = fetch } = options;
+  return fetchJson<CombatPowerTable>(joinUrl(baseUrl, combatTablePath()), fetchImpl);
 }
 
 /** 定義済みキャラの一覧。手書き JSON なので読み込み時に検証する */

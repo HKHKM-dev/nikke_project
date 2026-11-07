@@ -49,16 +49,15 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
   const returning = isOver && active?.data.current?.type === 'slot-character';
   const [onlySupported, setOnlySupported] = useState(false);
 
+  // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
   const filteredCharacters = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return index
-      .filter((char) => {
-        if (!matchesBadgeFilters(char, filters)) return false;
-        if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
-        if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
-        return true;
-      })
-      .sort((a, b) => a.name.ja.localeCompare(b.name.ja, 'ja'));
+    return index.filter((char) => {
+      if (!matchesBadgeFilters(char, filters)) return false;
+      if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
+      if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
+      return true;
+    });
   }, [index, filters, onlySupported, fullySupported, query]);
 
   return (

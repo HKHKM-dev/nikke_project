@@ -48,6 +48,7 @@ import {
   type RawRecycleTable,
   type RawRoleData,
 } from './normalize.ts';
+import { COMBAT_TABLE_FILE, buildCombatPowerTable } from '../src/combatTable.ts';
 import { MASTER_FILES } from '../src/load.ts';
 import type {
   BuildMasters,
@@ -258,11 +259,12 @@ async function main(): Promise<void> {
   await Promise.all([
     ...characters.map((data) => writeData(DATA_DIR, `${data.resourceId}.json`, data)),
     writeData(DATA_DIR, 'index.json', index),
+    writeData(DATA_DIR, COMBAT_TABLE_FILE, buildCombatPowerTable(characters)),
     ...Object.entries(masters!).map(([name, value]) =>
       writeData(MASTERS_DIR, MASTER_FILES[name as keyof FetchedMasters], value),
     ),
   ]);
-  console.log(`written: ${characters.length} characters + index.json -> ${DATA_DIR}`);
+  console.log(`written: ${characters.length} characters + index.json + ${COMBAT_TABLE_FILE} -> ${DATA_DIR}`);
   console.log(`written: masters -> ${MASTERS_DIR}`);
   console.log('diff: npm run fetch-data:diff (plan/design-cdn-refresh.md 4 節)');
 }

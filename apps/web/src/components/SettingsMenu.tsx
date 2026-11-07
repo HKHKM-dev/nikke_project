@@ -1,7 +1,9 @@
-// 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え・育成状況
+// 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え・育成状況・一覧の並び
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
 import { UI_MODE_LABEL, type UiMode } from '../uiMode.ts';
+import type { ListOrderControls } from '../useListOrder.ts';
 import type { RosterControls } from '../useRoster.ts';
+import { ListOrderSettings } from './ListOrderSettings.tsx';
 import { Popover } from './Popover.tsx';
 import { RosterSettings } from './RosterSettings.tsx';
 
@@ -12,6 +14,7 @@ type Props = {
   uiMode: UiMode;
   onSelectUiMode: (mode: UiMode) => void;
   roster: RosterControls;
+  listOrder: ListOrderControls;
 };
 
 function GridIcon() {
@@ -25,7 +28,7 @@ function GridIcon() {
   );
 }
 
-export function SettingsMenu({ uiMode, onSelectUiMode, roster }: Props) {
+export function SettingsMenu({ uiMode, onSelectUiMode, roster, listOrder }: Props) {
   const [theme, setTheme] = useTheme();
   return (
     <Popover button={<GridIcon />} buttonClassName="settings-menu-button" label="設定" align="right">
@@ -48,6 +51,7 @@ export function SettingsMenu({ uiMode, onSelectUiMode, roster }: Props) {
         ))}
       </fieldset>
       <RosterSettings {...roster} />
+      <ListOrderSettings {...listOrder} />
     </Popover>
   );
 }
