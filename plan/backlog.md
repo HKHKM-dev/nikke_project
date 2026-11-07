@@ -79,7 +79,6 @@
 ## 5. 道具・記録の整備
 
 - `packages/core/src/skills/holders.ts` と、`skills/types.ts` に残る型の部分（`DamageEffect`・`EffectTrigger` の和集合・`BuffStat` と `BUFF_STATS`・`SkillEffect` と `SKILL_EFFECT_KINDS` など）も、キャラのスキルの PR がほぼ全部同じあたりを書き換えるので、並行する PR の衝突の元になっている。分け方は未定（型を分けるなら、読み込む側の import は `skills/types.ts` からの再公開で変えない）
-- `leadFrames` のある付与で、きっかけの発が戦闘の始まりから `leadFrames` より前に来ると、件の始まりは 0 で止まるのに、付けた枠の小片は発の次のフレームではなく `leadFrames + 1` のフレームから始まる（`packages/core/src/skills/holders.ts` の `piecesOfTrack` が、発のフレームを件の始まり + `leadFrames` で戻すため）。いまのデータ（ウンファ：タクティカル・アップの 2f）では起きない。直すなら、件に発のフレームを持たせる
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
