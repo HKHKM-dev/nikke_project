@@ -1789,11 +1789,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           : stackLevelAt(group.sourceSlotIndex, from.state, start);
     if (count <= 0) return [];
     const addStart = (track: HeldTrack): void => {
-      for (let k = 0; k < count; k++) insertSorted(track.starts, start);
-      if (fire === undefined) return;
-      const fires = (track.leadFires ??= new Map()).get(start) ?? [];
-      for (let k = 0; k < count; k++) insertSorted(fires, fire);
-      track.leadFires.set(start, fires);
+      let fires: number[] | undefined;
+      if (fire !== undefined) {
+        const byStart = (track.leadFires ??= new Map());
+        fires = byStart.get(start);
+        if (fires === undefined) byStart.set(start, (fires = []));
+      }
+      for (let k = 0; k < count; k++) {
+        insertSorted(track.starts, start);
+        if (fires !== undefined) insertSorted(fires, fire!);
+      }
     };
     const targets: number[] = [];
     // エレグのバースト編: 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
@@ -1973,7 +1978,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const early = new Map<number, number[]>();
       for (const shot of known) {
         const at = grantStartOf(g.grant, shot);
-        early.set(at, [...(early.get(at) ?? []), shot]);
+        const shots = early.get(at);
+        if (shots === undefined) early.set(at, [shot]);
+        else shots.push(shot);
       }
       return [[g, { known: new Set(known), early, fired: [] as number[] }] as const];
     }),
@@ -2089,7 +2096,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const lead = leads.size > 0 ? leads.get(g) : undefined;
       // 前の回の発の件は、その始まりのフレームに登録する（同じフレームの段 1.5 の enemyState が見る）
       if (lead !== undefined && !battleStartOnly) {
-        for (const shot of lead.early.get(f) ?? []) fireGrant(g, f, null, shot);
+        const shots = lead.early.get(f);
+        if (shots !== undefined) for (const shot of shots) fireGrant(g, f, null, shot);
       }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (!fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
@@ -2568,7 +2576,9 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
   const pieces: ValuePiece[] = [];
   const o = track.origin;
   const leadFires = track.leadFires;
-  /** 始まりごとの、読んだ件の数（同じ始まりの件は、スタックの段の順に発を当てる） */
+  /**
+   * 始まりごとの、読んだ件の数。同じ始まりの件には、件を作る関数の並び（スタックの段の順）で発を当てる（和集合にまとまった件は最初の発）
+   */
   const seen = new Map<number, number>();
   /** 件のきっかけの発のフレーム（leadFrames のある付与だけ） */
   const fireOf = (item: HeldItem): number | undefined => {
@@ -2578,7 +2588,7 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
     seen.set(item.start, k + 1);
     return fires[Math.min(k, fires.length - 1)];
   };
-  const push = (effect: ItemEffect, item: HeldItem, fire: number | undefined): void => {
+  const push = (effect: ItemEffect, item: HeldItem, fire?: number): void => {
     // 段 C: 敵の件は、効果の対象の味方の各枠に写す。エレグのバースト編: 敵に付く状態の中身も（対象は付与の対象）
     const holders =
       track.holder !== ENEMY
@@ -2607,7 +2617,7 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
     }
   };
   // 2 段目の段 9 の PR 2: while の効果は timed と同じく件ごとに 1 つ（値はスタックごとではない）
-  if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item, undefined);
+  if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item);
   if (o.kind === 'state')
     for (const item of track.items) {
       const fire = fireOf(item);
