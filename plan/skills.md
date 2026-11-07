@@ -6,7 +6,7 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 83・効果 551（根拠あり 526）・notes 209（根拠あり 93）
+件数: キャラ 83・効果 551（根拠あり 532）・notes 209（根拠あり 93）
 
 notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足 20・間接 58
 
@@ -1019,18 +1019,18 @@ notes の種類: 未対応 42・前提の外 45・計算に無関係 44・補足
 - **skill1**: supported
   - effects[0] state・battleStart・intoTheFraySereneMind: 根拠なし
   - effects[1] timed・battleStart・normalCritRate: C-0954（確定）
-  - effects[2] damage・normalShot・additional: C-0955（確定）
-  - effects[3] damage・normalShot・additional: 根拠なし
-  - effects[4] timed・fullBurstStart・critDamage: 根拠なし
+  - effects[2] damage・normalShot・additional: C-0955（確定）、C-0969（確定）
+  - effects[3] damage・normalShot・additional: C-0969（確定）
+  - effects[4] timed・fullBurstStart・critDamage: C-0970（確定）
   - notes[0] 間接（貫通）: 臨戦：明鏡止水の貫通特化は、それ自体は与ダメージを変えない（貫通を読む効果のある編成でだけ効く）: C-0443（範囲外）
   - notes[1] 前提の外: 通常攻撃が広範囲の攻撃になることは、敵 1 体の前提では的の数を変えない（要件 5.2 節）。射撃場の的では、どの区間も通常攻撃がコアに当たる（的の表の弾の種類 InstantBox の行。V-0675）: C-0443（範囲外）、C-0957（確定）
 - **skill2**: supported
-  - effects[0] ammoRefill・critHit: C-0956（確定）
-  - effects[1] state・burstUse・intoTheFrayAtOneWithTheSword（normalCritRate・attackDamage）: 根拠なし
+  - effects[0] ammoRefill・critHit: C-0956（確定）、C-0971（確定）
+  - effects[1] state・burstUse・intoTheFrayAtOneWithTheSword（normalCritRate・attackDamage）: C-0968（確定）
 - **burst**: supported
-  - effects[0] weaponChange・burstUse: 根拠なし
-  - effects[1] timed・burstUse・attack: 根拠なし
-  - effects[2] damage・burstUse・additional: 根拠なし
+  - effects[0] weaponChange・burstUse: C-0965（確定）
+  - effects[1] timed・burstUse・attack: C-0966（確定）
+  - effects[2] damage・burstUse・additional: C-0967（確定）
   - notes[0] 前提の外: 通常攻撃の範囲 100%▲ は、敵 1 体の前提では的の数を変えない（要件 5.2 節）: C-0443（範囲外）
 
 ## 473 ラプンツェル：サンクチュアリ
