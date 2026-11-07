@@ -49,6 +49,16 @@ export function captureRequest(
   return { headers: pickHeaders(headers), account: { intl_open_id, nikke_area_id } };
 }
 
+/** 頻度の制限（request too frequently）の応答の code */
+const RATE_LIMIT_CODE = 212000;
+
+/** 頻度の制限で呼び直すまでの待ち（ミリ秒。1 回ごと）。尽きたら失敗にする */
+export const RATE_LIMIT_WAITS_MS: readonly number[] = [3e3, 10e3, 30e3];
+
+/** API の応答の JSON が頻度の制限か */
+export const isRateLimited = (json: unknown): boolean =>
+  json !== null && typeof json === 'object' && (json as Record<string, unknown>).code === RATE_LIMIT_CODE;
+
 /** API の応答の JSON。code が 0 でなければ失敗にし、data があればそれを返す */
 export function unwrapResponse(path: string, json: unknown): unknown {
   if (json === null || typeof json !== 'object') throw new Error(`${path}: 応答が JSON のオブジェクトでない`);
