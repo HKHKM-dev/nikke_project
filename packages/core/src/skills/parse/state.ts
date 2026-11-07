@@ -15,6 +15,7 @@ import {
   isStacksCondition,
   isTimerTrigger,
   type MaxStacksUpContentItem,
+  type RemoveDebuffEffect,
   type RemoveStateEffect,
   type StackChangeEffect,
   type StatContentItem,
@@ -34,7 +35,8 @@ import {
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
 import { type GrantTimedFields, parseTimedEffect, parseTimedFields } from './timed.ts';
-import { parseAppliedTrigger, parseCounterFullTrigger, parseTrigger } from './trigger.ts';
+import { parseTargetCount } from './target.ts';
+import { parseAppliedTrigger, parseCounterFullTrigger, parseTimerDelayFrames, parseTrigger } from './trigger.ts';
 
 /** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
 const STATE_GRANT_VALUE_KEYS = ['stat', 'ref', 'scaling', 'decrease'] as const;
@@ -505,6 +507,43 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
   }
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/**
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除。target は allies か debuffedRandom（pick が要る）。delayFrames は時間の周期の
+ * きっかけにだけ書ける
+ */
+export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): RemoveDebuffEffect {
+  for (const key of Object.keys(v)) {
+    if (
+      ![
+        'kind',
+        'trigger',
+        'target',
+        'count',
+        'targetCount',
+        'targetCountRef',
+        'delayFrames',
+        'assumes',
+        'claims',
+      ].includes(key)
+    ) {
+      fail(`${path}.${key}`, 'unknown field');
+    }
+  }
+  const trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+  const target = oneOf(['allies', 'debuffedRandom'] as const, v.target, `${path}.target`);
+  const effect: RemoveDebuffEffect = {
+    kind: 'removeDebuff',
+    trigger,
+    target,
+    count: parsePositiveInt(v.count, `${path}.count`),
+    ...parseTargetCount(v, target, path),
+  };
+  const delayFrames = parseTimerDelayFrames(v.delayFrames, trigger, `${path}.delayFrames`);
+  if (delayFrames !== undefined) effect.delayFrames = delayFrames;
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

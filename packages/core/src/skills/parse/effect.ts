@@ -18,6 +18,7 @@ import { parseIndirectReads } from './notes.ts';
 import {
   parseCancelStateEffect,
   parseCounterChangeEffect,
+  parseRemoveDebuffEffect,
   parseRemoveStateEffect,
   parseStackChangeEffect,
   parseStateGrantEffect,
@@ -110,6 +111,7 @@ const EFFECT_BODY_PARSERS = {
   allyGaugeAdd: (v, path) => parseAllyGaugeAddEffect(v, path),
   state: (v, path) => parseStateGrantEffect(v, path),
   removeState: (v, path) => parseRemoveStateEffect(v, path),
+  removeDebuff: (v, path) => parseRemoveDebuffEffect(v, path),
   cancelState: (v, path) => parseCancelStateEffect(v, path),
   stackChange: (v, path) => parseStackChangeEffect(v, path),
   counterChange: (v, path) => parseCounterChangeEffect(v, path),

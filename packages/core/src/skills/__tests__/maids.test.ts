@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { resolveAppliedPauses } from '../burstDamage.ts';
+import { namedStateIsDebuff } from '../states.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
@@ -57,5 +58,28 @@ describe('語彙の検証', () => {
     const hitRate = ANCHOR.skills.skill2.effects.findIndex((e) => e.stat === 'hitRate');
     expect(patched(ANCHOR, 'skill2', hitRate, { trigger: { count: 'fullBurstEnd', atLeast: 4 } })).not.toThrow();
     expect(patched(ANCHOR, 'skill2', hitRate, { trigger: { count: 'fullBurstStop', atLeast: 1 } })).toThrow();
+  });
+});
+
+// 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除（removeDebuff）の読み込み
+describe('removeDebuff の検証', () => {
+  const COCOA = readDef(311);
+  const burst = COCOA.skills.burst.effects.findIndex((e) => e.kind === 'removeDebuff');
+  const s1 = COCOA.skills.skill1.effects.findIndex((e) => e.kind === 'removeDebuff');
+
+  it('accepts the definition and marks only Drunken as a debuff state', () => {
+    expect(() => parseSkillDefinition(COCOA)).not.toThrow();
+    expect(namedStateIsDebuff('drunken')).toBe(true);
+    expect(namedStateIsDebuff('hangover')).toBe(false);
+  });
+
+  it('needs targetCount only for debuffedRandom, a known target, and delayFrames only with a timer trigger', () => {
+    expect(patched(COCOA, 'burst', burst, { targetCount: 2 })).toThrow(
+      /targetCount \/ targetCountRef are only allowed/,
+    );
+    expect(patched(COCOA, 'skill1', s1, { targetCount: undefined })).toThrow(/exactly one of targetCount/);
+    expect(patched(COCOA, 'burst', burst, { target: 'self' })).toThrow(/target/);
+    expect(patched(COCOA, 'burst', burst, { delayFrames: 3 })).toThrow(/delayFrames needs a timer trigger/);
+    expect(patched(COCOA, 'burst', burst, { count: 0 })).toThrow(/count/);
   });
 });

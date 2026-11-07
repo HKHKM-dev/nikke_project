@@ -290,17 +290,19 @@ export function effectLabel(e: SkillEffect): string {
       ? `${e.state}${e.contents === undefined ? '' : `（${e.contents.map(contentStatOf).join('・')}）`}`
       : e.kind === 'removeState'
         ? e.state
-        : e.kind === 'stackChange'
-          ? `${e.state}${e.decrease ? '（減少）' : ''}`
-          : e.kind === 'counterChange'
-            ? `${e.counter}${e.decrease ? '（減少）' : ''}`
-            : e.kind === 'summon'
-              ? `${e.summon} ${e.lifetimesSeconds.length} 機`
-              : 'stat' in e
-                ? e.stat
-                : 'damageType' in e
-                  ? e.damageType
-                  : undefined;
+        : e.kind === 'removeDebuff'
+          ? `デバフ ${e.count} 個${e.target === 'debuffedRandom' ? `（デバフのかかった味方 ${e.targetCount ?? `値 ${e.targetCountRef}`} 機）` : ''}`
+          : e.kind === 'stackChange'
+            ? `${e.state}${e.decrease ? '（減少）' : ''}`
+            : e.kind === 'counterChange'
+              ? `${e.counter}${e.decrease ? '（減少）' : ''}`
+              : e.kind === 'summon'
+                ? `${e.summon} ${e.lifetimesSeconds.length} 機`
+                : 'stat' in e
+                  ? e.stat
+                  : 'damageType' in e
+                    ? e.damageType
+                    : undefined;
   return [e.kind, triggerLabel(e), whileLabel(e), detail].filter((x) => x !== undefined).join('・');
 }
 

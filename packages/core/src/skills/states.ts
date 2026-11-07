@@ -24,6 +24,10 @@ export type NamedStateInfo = {
    * （parse/crossChecks.ts の validateStateGrants）
    */
   withoutContents?: true;
+  /**
+   * 課題 2-59（plan/design-debuff-removal.md 2.1 節）: デバフ解除（removeDebuff）で外れる味方の状態。録画で外れると確かめた状態だけに付ける
+   */
+  debuff?: true;
 };
 
 export const NAMED_STATES = {
@@ -260,7 +264,7 @@ export const NAMED_STATES = {
    * メイド編（plan/design-maids.md 2.4 節）: ほろ酔い（マスト：ロマンチックメイドの S1。バースト 1 段階突入時に自分に付く命中率▼・3 スタック・持続。
    * S1 の「ほろ酔い状態の時に限り」・S2 とバーストの「× ほろ酔いのスタック数」が見る）
    */
-  drunken: { name: { ja: 'ほろ酔い', en: 'Drunken' }, holder: 'ally' },
+  drunken: { name: { ja: 'ほろ酔い', en: 'Drunken' }, holder: 'ally', debuff: true },
   /** 同: 二日酔い（マスト：ロマンチックメイドの S2。ほろ酔いのフルスタックのフルバーストの終わりに付く気絶。10 秒。射撃を止める shotPause が見る） */
   hangover: { name: { ja: '二日酔い', en: 'Hangover' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
@@ -282,6 +286,11 @@ export function namedStateHolder(id: NamedStateId): StateHolder {
 /** プリバティ編: 付与に中身を書かない敵の状態か */
 export function namedStateWithoutContents(id: NamedStateId): boolean {
   return (NAMED_STATES[id] as NamedStateInfo).withoutContents === true;
+}
+
+/** 課題 2-59: デバフ解除で外れる状態か */
+export function namedStateIsDebuff(id: NamedStateId): boolean {
+  return (NAMED_STATES[id] as NamedStateInfo).debuff === true;
 }
 
 /** 2 段目の段 5: 状態の家族（無ければ undefined） */

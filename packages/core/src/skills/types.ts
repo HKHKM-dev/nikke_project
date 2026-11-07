@@ -304,9 +304,15 @@ export const BUFF_TARGETS = [
 ] as const satisfies readonly BuffTarget[];
 
 /** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ）。段 17 の PR 2: coverHeal の lowestCoverHp も */
-export function isCountedTarget(target: BuffTarget | CoverHealEffect['target']): boolean {
+export function isCountedTarget(
+  target: BuffTarget | CoverHealEffect['target'] | RemoveDebuffEffect['target'],
+): boolean {
   return (
-    target === 'topAttack' || target === 'longestChargeTime' || target === 'lowestHpRatio' || target === 'lowestCoverHp'
+    target === 'topAttack' ||
+    target === 'longestChargeTime' ||
+    target === 'lowestHpRatio' ||
+    target === 'lowestCoverHp' ||
+    target === 'debuffedRandom'
   );
 }
 
@@ -1994,6 +2000,23 @@ export type RemoveStateEffect = {
 };
 
 /**
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: 「デバフ効果解除 N 個」。発火のフレームに、対象の味方ごとに、デバフの印の付いた状態
+ * （skills/states.ts の debuff）を count 個、スタックごと外す（解除不可の件は外さない）。target は味方全体（allies）か、デバフのかかった
+ * 味方からランダムに N 機（debuffedRandom。N は targetCount / targetCountRef。デバフのかかった味方が N 機以下なら全員。より多いときは選び方を確かめていないので、
+ * 枠の若い順）。状態が count 個より多く付いた味方では、付いたのが早い順（確かめていない）
+ */
+export type RemoveDebuffEffect = TargetCountFields & {
+  kind: 'removeDebuff';
+  trigger: EffectTrigger;
+  target: 'allies' | 'debuffedRandom';
+  /** 外す個数（説明文の「N 個」） */
+  count: number;
+  /** 時間の周期のきっかけの発動から外すまでのフレーム（coverHeal の delayFrames と同じ） */
+  delayFrames?: number;
+  assumes?: LocalizedText;
+};
+
+/**
  * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 「〈名前〉消去」（Cancels）。発火のフレーム f の効果の判定（同じ発動の dot の
  * stacksFrom が写す数）の後に、敵に付いたその持続ダメージ（同じ定義の dot の state。解除不可も）を閉じる。f より後の tick は出ず、次に付けた時は
  * 1 スタックから。分類の設計書の論点 8 の「消去」（解除とは別）
@@ -2208,6 +2231,7 @@ export type SkillEffect = (
   | AllyGaugeAddEffect
   | StateGrantEffect
   | RemoveStateEffect
+  | RemoveDebuffEffect
   | CancelStateEffect
   | StackChangeEffect
   | CounterChangeEffect
@@ -2259,6 +2283,7 @@ export const SKILL_EFFECT_KINDS = [
   'allyGaugeAdd',
   'state',
   'removeState',
+  'removeDebuff',
   'cancelState',
   'stackChange',
   'counterChange',

@@ -21,22 +21,24 @@
             "C-0977",
             "C-0822"
           ]
-        }
-      ],
-      "notes": [
-        {
-          "ja": "デバフのかかった味方のデバフ解除は、ダメージに効くデバフを持たない味方の与ダメージを変えない",
-          "en": "Debuff removal on debuffed allies does not change the damage of allies without a damage-relevant debuff",
-          "kind": "noDamage",
-          "claims": [
-            "C-0977"
-          ]
         },
         {
-          "ja": "デバフのかかった味方のデバフ解除は、それ自体は与ダメージを変えない（デバフを読む効果のある編成でだけ効く。マスト：ロマンチックメイドのほろ酔いを外すかは確かめていない。バーストのデバフ解除は外す。C-0976）。モデルは外さない（未実装。課題 2-59）",
-          "en": "Debuff removal on debuffed allies does not change damage by itself (it matters only with an effect that reads debuffs; whether it removes Mast: Romantic Maid's Drunken is not checked, while the burst's removal does; C-0976). The model does not remove it (not implemented; backlog 2-59)",
-          "kind": "indirect",
-          "path": "debuff"
+          "kind": "removeDebuff",
+          "trigger": {
+            "everySeconds": 15
+          },
+          "target": "debuffedRandom",
+          "targetCount": 2,
+          "count": 1,
+          "delayFrames": 3,
+          "assumes": {
+            "ja": "遮蔽物 HP 回復と同じ CT ごとのアクティブ（C-0822 の時刻）で、デバフのかかった味方からランダムに 2 機の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す。二日酔い（気絶）と、名前の付いた状態でない味方の▼（プリバティの最大装弾数▼など）は、外れるかを確かめていないので外さない（未実装）",
+            "en": "On the same cooldown active as the cover heal (C-0822 timing), removes one debuff-flagged state (Drunken), with all its stacks, from 2 random debuffed allies. Hangover (stun) and ally debuffs that are not named states (e.g. Privaty's Max Ammo down) are not removed, since that has not been checked (not implemented)"
+          },
+          "claims": [
+            "C-0978",
+            "C-0979"
+          ]
         }
       ]
     },
@@ -54,23 +56,29 @@
       ]
     },
     "burst": {
-      "effects": [],
+      "effects": [
+        {
+          "kind": "removeDebuff",
+          "trigger": "burstUse",
+          "target": "allies",
+          "count": 1,
+          "assumes": {
+            "ja": "味方全体の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す（1 個は状態 1 つ。クレアのバーストで 2・3 スタックとも全部外れた）。二日酔い（気絶）と、名前の付いた状態でない味方の▼（プリバティの最大装弾数▼など）は、外れるかを確かめていないので外さない（未実装）",
+            "en": "Removes one debuff-flagged state (Drunken), with all its stacks, from every ally (one debuff = one state; Claire's burst removed 2 and 3 stacks alike). Hangover (stun) and ally debuffs that are not named states (e.g. Privaty's Max Ammo down) are not removed, since that has not been checked (not implemented)"
+          },
+          "claims": [
+            "C-0976",
+            "C-0979"
+          ]
+        }
+      ],
       "notes": [
         {
-          "ja": "プロケチャップがフルスタックのときの敵全体の攻撃力▼と、ダメージに効くデバフを持たない味方のデバフ解除は、ダメージに関係しない",
-          "en": "ATK down on all enemies at max Professional Tomato Sauce stacks, and debuff removal on allies without a damage-relevant debuff, do not affect damage",
+          "ja": "プロケチャップがフルスタックのときの敵全体の攻撃力▼は、ダメージに関係しない",
+          "en": "ATK down on all enemies at max Professional Tomato Sauce stacks does not affect damage",
           "kind": "noDamage",
           "claims": [
             "C-0977"
-          ]
-        },
-        {
-          "ja": "味方全体のデバフ効果解除は、それ自体は与ダメージを変えない（デバフを読む効果のある編成でだけ効く）。マスト：ロマンチックメイドのほろ酔い（命中率▼を中身に持つ状態）を外し、その間の▲も消える（次の 1 段階突入で付き直す）。モデルは外さない（未実装。課題 2-59）",
-          "en": "Debuff removal on all allies does not change damage by itself (it matters only with an effect that reads debuffs). It removes Mast: Romantic Maid's Drunken (a state carrying Hit Rate down), and its buffs end with it (it comes back at the next Burst stage 1 entry). The model does not remove it (not implemented; backlog 2-59)",
-          "kind": "indirect",
-          "path": "debuff",
-          "claims": [
-            "C-0976"
           ]
         }
       ]

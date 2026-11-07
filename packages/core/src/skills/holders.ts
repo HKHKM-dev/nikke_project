@@ -36,6 +36,7 @@ import {
   resolveInstant,
   resolveMaxStacksUps,
   resolvePassives,
+  resolveRemoveDebuffs,
   resolveRemoveStates,
   resolveStackChanges,
   resolveStateContents,
@@ -46,6 +47,7 @@ import {
   type ResolvedCounterChange,
   type ResolvedEffect,
   type ResolvedInstantEffect,
+  type ResolvedRemoveDebuff,
   type ResolvedRemoveState,
   type ResolvedStackChange,
   type ResolvedStateContent,
@@ -63,7 +65,7 @@ import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type Rank
 import { counterMax, type CounterId } from './counters.ts';
 import { createSpanMemo } from './spanMemo.ts';
 import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from './stacks.ts';
-import { stateMatches, statesMatching, type NamedStateId } from './states.ts';
+import { namedStateIsDebuff, stateMatches, statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
   createTriggerTracker,
@@ -332,6 +334,9 @@ type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: Trigg
 
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除 1 つ（対象は自分） */
 type RemoveSource = { sourceSlotIndex: number; effect: ResolvedRemoveState; stage: HeldStage; fires: TriggerTracker };
+
+/** 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除 1 つ */
+type RemoveDebuffSource = { sourceSlotIndex: number; effect: ResolvedRemoveDebuff; fires: TriggerTracker };
 
 /** 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減 1 つ（対象は自分。足す・減らす先は同じ定義の付与の状態の件の列） */
 type StackSource = {
@@ -1155,6 +1160,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除（対象は味方。段 1 の解除と同じ時に閉じる） ----
+  const removeDebuffSources: RemoveDebuffSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveRemoveDebuffs(slot.definition, slot.character, slot.levels)) {
+      removeDebuffSources.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex) });
+    }
+  });
+
   // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列） ----
   const stackSources: StackSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -1841,6 +1855,40 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   };
   /**
+   * 課題 2-59: デバフ解除の発火 1 つ。発火のフレーム at に効いている、味方のデバフの印の付いた状態の件（解除不可を除く）を、対象の味方ごとに
+   * 状態を count 個まで（付いたのが早い順）、スタックごと閉じる
+   */
+  /** 課題 2-59: 持ち主ごとの、デバフの印の付いた状態（解除不可を除く）の件の列。件の列は組み立ての後に増えないので、初めての発火で作る */
+  let debuffTracks: Map<NamedStateId, HeldTrack[]>[] | undefined;
+  const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
+    debuffTracks ??= slots.map((_, holder) => {
+      const byState = new Map<NamedStateId, HeldTrack[]>();
+      for (const track of tracks) {
+        const o = track.origin;
+        if (track.holder !== holder || o.kind !== 'state' || !namedStateIsDebuff(o.state)) continue;
+        if (o.grant.undispellable === true) continue;
+        const list = byState.get(o.state);
+        if (list === undefined) byState.set(o.state, [track]);
+        else list.push(track);
+      }
+      return byState;
+    });
+    // 持ち主ごとに、at に効いている状態と、その最も早い始まり
+    let targets = debuffTracks
+      .map((byState) =>
+        [...byState.values()].flatMap((ts) => {
+          const starts = ts.flatMap((t) => activeAt(t, at).map((it) => it.start));
+          return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
+        }),
+      )
+      .filter((states) => states.length > 0);
+    if (src.effect.target === 'debuffedRandom') targets = targets.slice(0, src.effect.pick);
+    for (const states of targets) {
+      states.sort((a, b) => a.firstStart - b.firstStart);
+      for (const { tracks: ts } of states.slice(0, src.effect.count)) for (const track of ts) closeTrack(track, at);
+    }
+  };
+  /**
    * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加の発火 1 つ。状態の件の列に、同じフレームの始まりを N 個入れる
    * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件。
    * 減少（同 1.5 節）は、件の列に減少（そのフレームに効いている段の上から N 段を次のフレームで切る）を入れる。付いた記録は作らない
@@ -2147,6 +2195,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
+    // 課題 2-59: デバフ解除（解除と同じく、閉じるのは発火の次のフレーム）
+    for (const r of removeDebuffSources) {
+      if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
+      fireRemoveDebuff(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f, r.effect.delayFrames));
+    }
     // 2 段目の段 3: スタック量の増減（増加は状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方。減少は次のフレームで切るので、
     // 段の中の順は同じフレームの判定に効かない）
     for (const x of stage1Stacks) {
@@ -2334,6 +2387,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       amplifiers.length > 0 ||
       enemyStateSources.length > 0 ||
       removeSources.length > 0 ||
+      removeDebuffSources.length > 0 ||
       stackSources.length > 0 ||
       whileTracks.length > 0 ||
       counterSources.length > 0,

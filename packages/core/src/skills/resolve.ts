@@ -36,6 +36,7 @@ import {
   type ReloadEndTrigger,
   type CoverHealedTrigger,
   type CoverHealEffect,
+  type RemoveDebuffEffect,
   type ChargeTickTrigger,
   type ChargeFullTrigger,
   type BasicBurstStep,
@@ -920,6 +921,42 @@ export function resolveRemoveStates(
       };
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       out.push(r);
+    });
+  }
+  return out;
+}
+
+/** 課題 2-59（plan/design-debuff-removal.md 2.2 節）: 解決したデバフ解除（removeDebuff）。対象と個数は定義のまま */
+export type ResolvedRemoveDebuff = Pick<RemoveDebuffEffect, 'target' | 'count'> & {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  trigger: ResolvedTrigger;
+  delayFrames?: number;
+  /** debuffedRandom の機数（resolveTargetCount） */
+  pick?: number;
+};
+
+/** 課題 2-59: 定義のデバフ解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
+export function resolveRemoveDebuffs(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedRemoveDebuff[] {
+  const out: ResolvedRemoveDebuff[] = [];
+  for (const slot of SKILL_SLOTS) {
+    const skill = character.skills[slot];
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'removeDebuff') return;
+      const pick = resolveTargetCount(effect, skill, levels[slot]);
+      out.push({
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: effect.target,
+        count: effect.count,
+        ...(pick === undefined ? {} : { pick }),
+        ...(effect.delayFrames === undefined ? {} : { delayFrames: effect.delayFrames }),
+      });
     });
   }
   return out;
