@@ -87,7 +87,16 @@ export function reservedLabel(ids: readonly string[]): string {
 /** drive: の取り込み元を取り寄せる前に待つ長さ。待った後にサイズが変わっていれば、また待つ（上げている途中の版を取り込まない） */
 export const UPLOAD_POLL_MS = 30_000;
 
-/** 待つ前と後のサイズ（Drive の size。文字列）が同じなら、上げ終えたと見なす */
+/** サイズを読み直す回数の上限（UPLOAD_POLL_MS × これ。超えたら止まる） */
+export const UPLOAD_POLL_LIMIT = 10;
+
+/** 待つ前と後のサイズ（Drive の size。文字列）が同じなら、上げ終えたと見なす（サイズが読めないうちは見なさない） */
 export function uploadSettled(before: string | undefined, after: string | undefined): boolean {
-  return before === after;
+  return before !== undefined && before === after;
+}
+
+/** 読み直しの失敗が、待てば直りうるもの（通信の失敗・時間切れで status が無い、429、5xx）か */
+export function transientDriveError(e: unknown): boolean {
+  const status = (e as { status?: unknown } | null)?.status;
+  return typeof status !== 'number' || status === 429 || status >= 500;
 }
