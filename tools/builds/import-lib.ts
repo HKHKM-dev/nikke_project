@@ -1,14 +1,9 @@
 // 育成データの取り込みの名前の決め方（plan/design-build-snapshot.md 2.2 節）と、録画に結び付けるスナップショットの選び方（同 6 節）。
 // store.ts と tools/captures/intake.ts から使う。
 import { SNAPSHOT_NAME } from '../../packages/core/src/records/ids.ts';
-import type { SnapshotTreasure } from '../../packages/core/src/buildSnapshot.ts';
+import { jstDate, type SnapshotTreasure } from '../../packages/core/src/buildSnapshot.ts';
 
-/** 取得の時刻（ISO）を日本時間の日付（YYYY-MM-DD）にする */
-export function jstDate(iso: string): string {
-  const t = Date.parse(iso);
-  if (Number.isNaN(t)) throw new Error(`fetchedAt が日時でない: ${iso}`);
-  return new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
-}
+export { jstDate };
 
 /**
  * 取り込む生のデータの名前。同じ日の同じ中身（fetchedAt で見る）が既にあればその名前、無ければ空いている名前

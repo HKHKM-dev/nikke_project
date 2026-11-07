@@ -20,15 +20,12 @@ import {
   type OverloadLine,
 } from './build.ts';
 import { SKILL_LEVEL_MAX, SKILL_LEVEL_MIN, type SkillLevels } from './skills/resolve.ts';
+import { isRecord } from './skills/parse/common.ts';
 import { SKILL_SLOTS } from './skills/types.ts';
 import type { GearType, OverloadOption } from './types.ts';
 
 /** スロットごとの育成の項目（リサイクルルームとその他攻撃加算を除いた BuildInput） */
 export type BuildFields = Pick<BuildInput, 'affectionRank' | 'gear' | 'cube' | 'collection'>;
-
-export function isJsonRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null && !Array.isArray(v);
-}
 
 /** min..max の整数か。違えば issues に足す */
 export function checkInt(v: unknown, min: number, max: number, path: string, issues: string[]): v is number {
@@ -52,7 +49,7 @@ function parseOverload(v: unknown, type: GearType, path: string, issues: string[
   const lines: OverloadLine[] = [];
   for (const [i, line] of (v as unknown[]).entries()) {
     const at = `${path}[${i}]`;
-    if (!isJsonRecord(line)) {
+    if (!isRecord(line)) {
       issues.push(`${at}: オブジェクトでない`);
       return undefined;
     }
@@ -78,9 +75,9 @@ function parseOverload(v: unknown, type: GearType, path: string, issues: string[
 }
 
 /** 装備 1 部位。null は未装備。形が合わなければ undefined */
-export function parseGearJson(v: unknown, path: string, issues: string[]): GearInput | undefined {
+function parseGearJson(v: unknown, path: string, issues: string[]): GearInput | undefined {
   if (v === null) return null;
-  if (!isJsonRecord(v)) {
+  if (!isRecord(v)) {
     issues.push(`${path}: オブジェクトか null でない`);
     return undefined;
   }
@@ -97,14 +94,14 @@ export function parseGearJson(v: unknown, path: string, issues: string[]): GearI
 
 /** 好感度・装備・キューブ・コレクション。ほかの欄（リサイクルルームなど）は読まない */
 export function parseBuildFieldsJson(v: unknown, path: string, issues: string[]): BuildFields | null {
-  if (!isJsonRecord(v)) {
+  if (!isRecord(v)) {
     issues.push(`${path}: オブジェクトでない`);
     return null;
   }
   const before = issues.length;
   checkInt(v.affectionRank, AFFECTION_RANK_MIN, AFFECTION_RANK_MAX, `${path}.affectionRank`, issues);
   const gear = {} as BuildFields['gear'];
-  if (!isJsonRecord(v.gear)) issues.push(`${path}.gear: オブジェクトでない`);
+  if (!isRecord(v.gear)) issues.push(`${path}.gear: オブジェクトでない`);
   else
     for (const part of GEAR_PARTS) {
       const g = parseGearJson(v.gear[part], `${path}.gear.${part}`, issues);
@@ -112,7 +109,7 @@ export function parseBuildFieldsJson(v: unknown, path: string, issues: string[])
     }
   let cube: BuildFields['cube'] = null;
   if (v.cube !== null) {
-    if (!isJsonRecord(v.cube)) issues.push(`${path}.cube: オブジェクトか null でない`);
+    if (!isRecord(v.cube)) issues.push(`${path}.cube: オブジェクトか null でない`);
     else if (
       checkInt(v.cube.id, 1, Infinity, `${path}.cube.id`, issues) &&
       checkInt(v.cube.level, CUBE_LEVEL_MIN, CUBE_LEVEL_MAX, `${path}.cube.level`, issues)
@@ -121,7 +118,7 @@ export function parseBuildFieldsJson(v: unknown, path: string, issues: string[])
   }
   let collection: BuildFields['collection'] = null;
   if (v.collection !== null) {
-    if (!isJsonRecord(v.collection)) issues.push(`${path}.collection: オブジェクトか null でない`);
+    if (!isRecord(v.collection)) issues.push(`${path}.collection: オブジェクトか null でない`);
     else if (v.collection.rarity !== 'R' && v.collection.rarity !== 'SR')
       issues.push(`${path}.collection.rarity: R・SR でない（${JSON.stringify(v.collection.rarity) ?? 'なし'}）`);
     else if (checkInt(v.collection.level, 0, COLLECTION_LEVEL_MAX, `${path}.collection.level`, issues))
@@ -133,7 +130,7 @@ export function parseBuildFieldsJson(v: unknown, path: string, issues: string[])
 
 /** スキル Lv（1..10 の整数） */
 export function parseSkillLevelsJson(v: unknown, path: string, issues: string[]): SkillLevels | null {
-  if (!isJsonRecord(v)) {
+  if (!isRecord(v)) {
     issues.push(`${path}: オブジェクトでない`);
     return null;
   }

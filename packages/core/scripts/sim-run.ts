@@ -33,7 +33,7 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
-import { isBuildSnapshotShaped, readBuildSnapshot, type SnapshotTreasure } from '../src/buildSnapshot.ts';
+import { isBuildSnapshotShaped, readBuildSnapshotValue, type SnapshotTreasure } from '../src/buildSnapshot.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -200,12 +200,11 @@ type BuildFile = Record<
   Partial<BuildInput> & { growth?: GrowthInput; skillLevels?: SkillLevels; treasure?: SnapshotTreasure | null }
 >;
 function readBuildFile(path: string): BuildFile {
-  const text = readFileSync(path, 'utf8');
-  const json: unknown = JSON.parse(text);
+  const json: unknown = readJson(path);
   if (!isBuildSnapshotShaped(json)) return json as BuildFile;
   // スナップショットは画面の育成状況の読み込みと同じ検査を通す（plan/design-combat-power-sort.md 5.3 節）
   const index = (readJson(join(DATA_DIR, 'characters/index.json')) as CharacterIndex).characters;
-  const read = readBuildSnapshot(text, index);
+  const read = readBuildSnapshotValue(json, index);
   if (!read.ok) {
     console.error(`--build ${path} を読めない:`);
     for (const e of read.errors) console.error(`  ${e}`);

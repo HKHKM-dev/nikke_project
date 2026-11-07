@@ -431,11 +431,6 @@ function parseCondition(v: Json): SlotCondition | null {
   return condition;
 }
 
-/** 1..10 の整数だけ許す */
-function parseSkillLevels(v: Json): SkillLevels | null {
-  return parseSkillLevelsJson(v, 'skillLevels', []);
-}
-
 /** 0..3 の整数だけ許す */
 function parseTreasurePhase(v: Json): TreasurePhase | null {
   if (!isInt(v, 0) || v > TREASURE_PHASE_MAX) return null;
@@ -447,14 +442,6 @@ function parseHpRatio(v: Json): number | null {
   if (v === undefined) return DEFAULT_HP_RATIO;
   if (!isFinite_(v) || v <= 0 || v > 1) return null;
   return v;
-}
-
-/**
- * 各項目の範囲だけ見る（マスタとの照合は計算時。core の buildJson.ts）。版 2 までの保存データのリサイクルルームとその他攻撃加算は
- * 読み捨てる
- */
-function parseBuild(v: Json): SlotBuild | null {
-  return parseBuildFieldsJson(v, 'build', []);
 }
 
 /** 属性だけを読み、防御力とコアの有無は射撃場の敵に戻す（SHOOTING_RANGE_ENEMY） */
@@ -519,9 +506,11 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const growth = parseGrowth(s.growth);
     const condition = parseCondition(s.condition);
     const conditionMode = condition === null ? null : parseConditionMode(s.conditionMode, condition);
-    const skillLevels = parseSkillLevels(s.skillLevels);
+    // スキル Lv と育成は範囲だけ見る（マスタとの照合は計算時。core の buildJson.ts）。版 2 までの保存データのリサイクルルームと
+    // その他攻撃加算は読み捨てる
+    const skillLevels = parseSkillLevelsJson(s.skillLevels, 'skillLevels', []);
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
-    const build = parseBuild(s.build);
+    const build = parseBuildFieldsJson(s.build, 'build', []);
     const hpRatio = parseHpRatio(s.hpRatio);
     // 2026-10-31 までの保存データには無いので、欠落は使う
     if (s.noBurst !== undefined && !isBool(s.noBurst)) return null;

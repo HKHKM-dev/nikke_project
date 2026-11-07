@@ -3,10 +3,9 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   BUILD_SNAPSHOT_FORMAT_VERSION,
-  buildEntriesOf,
   readBuildSnapshot,
   snapshotCombatPower,
-  unknownTreasurePhaseIds,
+  unknownTreasurePhaseCount,
   type BuildSnapshot,
   type SnapshotCharacter,
 } from '../buildSnapshot.ts';
@@ -106,9 +105,11 @@ describe('readBuildSnapshot', () => {
       treasure: { tid: 200101, level: 1, phase: 2 },
     });
     expect(errorsOf(s)).toEqual(['characters.82: 宝物とコレクションの両方がある']);
-    const bad = JSON.parse(JSON.stringify(snapshot())) as Record<string, any>;
-    bad.characters['82'].gear.head.overload[0].option = 'XXX';
-    bad.characters['10'].treasure = { tid: 200101, level: 0, phase: 1 };
+    const bad = snapshot();
+    bad.characters['82'] = character({
+      gear: { ...character().gear, head: { type: 'OL', level: 5, overload: [{ option: 'XXX' as never, level: 1 }] } },
+    });
+    bad.characters['10'] = { ...bad.characters['10']!, treasure: { tid: 200101, level: 0, phase: 1 as never } };
     expect(errorsOf(bad)).toEqual([
       'characters.10.treasure.phase: 2・3・null でない（1）',
       'characters.82.gear.head.overload[0].option: 知らない項目（"XXX"）',
@@ -127,13 +128,8 @@ describe('readBuildSnapshot', () => {
   });
 });
 
-it('unknownTreasurePhaseIds: 宝物の段階が未確定のキャラ', () => {
-  expect(unknownTreasurePhaseIds(snapshot())).toEqual([82]);
-});
-
-it('buildEntriesOf: スナップショットなら characters、そうでなければそのまま', () => {
-  expect(Object.keys(buildEntriesOf(snapshot()))).toEqual(['10', '82']);
-  expect(buildEntriesOf({ '82': { affectionRank: 3 } })).toEqual({ '82': { affectionRank: 3 } });
+it('unknownTreasurePhaseCount: 宝物の段階が未確定のキャラの数', () => {
+  expect(unknownTreasurePhaseCount(snapshot())).toBe(1);
 });
 
 it('snapshotCombatPower: 1 体分の育成で computeCombatPower を呼ぶ', () => {

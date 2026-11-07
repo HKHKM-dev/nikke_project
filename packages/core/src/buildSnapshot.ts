@@ -2,8 +2,9 @@
 // 画面（apps/web の育成状況）と CLI（sim-run.ts --build・build:combat-power）が同じものを使う。
 // ShiftyPad の生のデータからの写しは shiftypad.ts（plan/design-build-snapshot.md 3 節）。
 import type { BuildInput } from './build.ts';
-import { checkInt, isJsonRecord, parseBuildFieldsJson, parseSkillLevelsJson } from './buildJson.ts';
+import { checkInt, parseBuildFieldsJson, parseSkillLevelsJson } from './buildJson.ts';
 import { computeCombatPower, type CombatPower } from './combatPower.ts';
+import { isRecord } from './skills/parse/common.ts';
 import type { SkillLevels } from './skills/resolve.ts';
 import type { TreasurePhase } from './skills/treasure.ts';
 import { CORE_MAX, GRADE_MAX, type GrowthInput } from './stats.ts';
@@ -34,16 +35,9 @@ export type BuildSnapshot = {
   unmapped: string[];
 };
 
-/** --build の JSON がスナップショットなら characters を、そうでなければそのまま返す */
-export function buildEntriesOf(json: unknown): Record<string, unknown> {
-  return isBuildSnapshotShaped(json)
-    ? (json.characters as Record<string, unknown>)
-    : ((json ?? {}) as Record<string, unknown>);
-}
-
 /** formatVersion と characters を持つ（スナップショットのつもりの JSON か。版と中身は見ない） */
 export function isBuildSnapshotShaped(json: unknown): json is Record<string, unknown> {
-  return isJsonRecord(json) && json.formatVersion !== undefined && isJsonRecord(json.characters);
+  return isRecord(json) && json.formatVersion !== undefined && isRecord(json.characters);
 }
 
 export type BuildSnapshotRead =
@@ -54,7 +48,7 @@ const ERROR_LIMIT = 5;
 
 function parseTreasure(v: unknown, path: string, issues: string[]): SnapshotTreasure | null | undefined {
   if (v === null) return null;
-  if (!isJsonRecord(v)) {
+  if (!isRecord(v)) {
     issues.push(`${path}: オブジェクトか null でない`);
     return undefined;
   }
@@ -73,13 +67,13 @@ function parseCharacter(
   entry: Pick<CharacterIndexEntry, 'rarity'>,
   issues: string[],
 ): SnapshotCharacter | null {
-  if (!isJsonRecord(v)) {
+  if (!isRecord(v)) {
     issues.push(`${path}: オブジェクトでない`);
     return null;
   }
   const before = issues.length;
   const g = v.growth;
-  if (!isJsonRecord(g)) issues.push(`${path}.growth: オブジェクトでない`);
+  if (!isRecord(g)) issues.push(`${path}.growth: オブジェクトでない`);
   else {
     checkInt(g.level, 1, Infinity, `${path}.growth.level`, issues);
     checkInt(g.grade, 0, GRADE_MAX[entry.rarity], `${path}.growth.grade`, issues);
@@ -87,7 +81,7 @@ function parseCharacter(
   }
   const fields = parseBuildFieldsJson(v, path, issues);
   const r = v.recycleRoom;
-  if (!isJsonRecord(r)) issues.push(`${path}.recycleRoom: オブジェクトでない`);
+  if (!isRecord(r)) issues.push(`${path}.recycleRoom: オブジェクトでない`);
   else
     for (const key of ['personal', 'class', 'corporation'] as const)
       checkInt(r[key], 0, Infinity, `${path}.recycleRoom.${key}`, issues);
@@ -124,6 +118,14 @@ export function readBuildSnapshot(
   } catch {
     return { ok: false, errors: ['JSON として読めない'] };
   }
+  return readBuildSnapshotValue(raw, index);
+}
+
+/** readBuildSnapshot の parse の後（parse 済みの値を検査する） */
+export function readBuildSnapshotValue(
+  raw: unknown,
+  index: readonly Pick<CharacterIndexEntry, 'resourceId' | 'rarity'>[],
+): BuildSnapshotRead {
   if (!isBuildSnapshotShaped(raw))
     return { ok: false, errors: ['育成状況の JSON（formatVersion と characters を持つスナップショット）でない'] };
   if (raw.formatVersion !== BUILD_SNAPSHOT_FORMAT_VERSION)
@@ -133,7 +135,7 @@ export function readBuildSnapshot(
   if (typeof raw.fetchedAt !== 'string' || raw.fetchedAt === '') issues.push('fetchedAt: 文字列でない');
   checkInt(raw.synchroLevel, 1, Infinity, 'synchroLevel', issues);
   const recycleRoom: Record<string, number> = {};
-  if (!isJsonRecord(raw.recycleRoom)) issues.push('recycleRoom: オブジェクトでない');
+  if (!isRecord(raw.recycleRoom)) issues.push('recycleRoom: オブジェクトでない');
   else
     for (const [tid, lv] of Object.entries(raw.recycleRoom))
       if (checkInt(lv, 0, Infinity, `recycleRoom.${tid}`, issues)) recycleRoom[tid] = lv;
@@ -182,11 +184,16 @@ export function readBuildSnapshot(
   };
 }
 
-/** 宝物の段階が未確定（Lv 0。phase: null）のキャラの resourceId */
-export function unknownTreasurePhaseIds(snapshot: BuildSnapshot): number[] {
-  return Object.entries(snapshot.characters)
-    .filter(([, c]) => c.treasure !== null && c.treasure.phase === null)
-    .map(([id]) => Number(id));
+/** 宝物の段階が未確定（Lv 0。phase: null）のキャラの数 */
+export function unknownTreasurePhaseCount(snapshot: BuildSnapshot): number {
+  return Object.values(snapshot.characters).filter((c) => c.treasure !== null && c.treasure.phase === null).length;
+}
+
+/** 取得の時刻（ISO）を日本時間の日付（YYYY-MM-DD。スナップショットの名前の日付）にする */
+export function jstDate(iso: string): string {
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) throw new Error(`fetchedAt が日時でない: ${iso}`);
+  return new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
 }
 
 /** スナップショットの 1 体分の戦闘力（C-0981。宝物は解放しているかだけを見る） */

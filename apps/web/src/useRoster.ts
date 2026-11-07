@@ -67,7 +67,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
       return;
     }
     if (!window.confirm(importConfirmText(rosterSlotCount(team, parties, read.snapshot)))) return;
-    const json = serializeRoster(read.snapshot);
+    const json = JSON.stringify(read.snapshot);
     writeStorage(ROSTER_STORAGE_KEY, json);
     setSaved(json);
     const next = applyRoster(team, parties, read.snapshot);

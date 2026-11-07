@@ -1,7 +1,7 @@
 # 設計書: 戦闘力による一覧の並び替え
 
 - 対象: 戦闘力の計算（`packages/core/src/combatPower.ts`）、育成のマスタの戦闘力の値（`packages/core/data/masters/` の `cubes.json`・`collections.json`・`overload.json`）、オーナーの育成データでの突き合わせ（`tools/builds/combat-power.ts`）
-- 状態: 一部完了（段 1 は実装済み。育成状況の JSON の入出力は起案（5 節）。ほかは未起案（4 節））
+- 状態: 一部完了（段 1 と育成状況の JSON の入出力は実装済み（3・5 節）。ほかは未起案（4 節））
 - 関連: C-0981・C-0982（式。根拠は V-0685）、[design-build-snapshot.md](design-build-snapshot.md)（育成データのスナップショット）、[design-cdn-refresh.md](design-cdn-refresh.md)（CDN の取り直し）
 - 作成日: 2026-11-07
 
@@ -41,7 +41,7 @@
 - 戦闘力が同じキャラの、実機の一覧での順（並べる 2 つ目の鍵）。実機の一覧のスクショと突き合わせれば分かる。
 - 会心の項の形・取得に出ていない Lv（V-0685「分からないこと」）。次の育成データの取得で、`npm run build:combat-power` を回して確かめる。
 
-## 5. 育成状況の JSON の入出力（起案）
+## 5. 育成状況の JSON の入出力
 
 4 節の 1 項目目。調べた時点は main の 69494cc。
 
@@ -110,6 +110,14 @@
 
 - 決定（2026-11-07、オーナー）: 1〜4 とも推奨のとおり。
 
+### 5.6 実装（2026-11-07）
+
+- core: 形・読み込みの検査・戦闘力は `packages/core/src/buildSnapshot.ts`（`readBuildSnapshot`・`snapshotCombatPower`。型は `shiftypad.ts` から移した）。値の範囲の検査は `packages/core/src/buildJson.ts` に置き、画面の編成の保存の読み込み（`apps/web/src/team.ts`）もそれを使う。使われなくなった `buildEntriesOf` は消した。
+- CLI: `build:combat-power` と `sim-run.ts --build`（`formatVersion` を持つ JSON のとき）が同じ検査を通す。
+- 画面: 設定のメニューの「育成状況」（`components/RosterSettings.tsx`・`useRoster.ts`）。写し方と保存は `apps/web/src/roster.ts`（保存のキーは `nikke-calc.roster.v1`）。キャラをスロットに入れる操作は、育成状況の育成を付けて reducer に渡す（`selectCharacter` の `fields`。別のニケに変えたときだけ写す）。
+- 確かめたこと: オーナーの 2026-10-29 のスナップショットを、`build:combat-power`（201 体とも一致・並びの食い違い 0）・`sim-run.ts --build`・画面（読み込み・スロットへの写し・書き出し・再読み込みの後の保存）で読んだ。範囲の外の値は、CLI と画面の両方で欄の場所つきで止まった。
+
 ## 6. 経過
 
 - 2026-11-07: 起票。段 1（データ・計算・突き合わせの道具）を実装した。
+- 2026-11-07: 育成状況の JSON の入出力を起案し、オーナーが推奨のとおりに決めた。実装した（5.6 節）。

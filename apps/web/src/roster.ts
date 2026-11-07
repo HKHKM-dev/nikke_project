@@ -6,7 +6,8 @@ import {
   RECYCLE_CORPORATION_TID,
   RECYCLE_PERSONAL_TID,
   readBuildSnapshot,
-  unknownTreasurePhaseIds,
+  jstDate,
+  unknownTreasurePhaseCount,
   type BuildSnapshot,
   type CharacterIndexEntry,
   type SnapshotCharacter,
@@ -31,6 +32,7 @@ export function restoreRoster(json: string | null, index: readonly CharacterInde
   return read.ok ? read.snapshot : null;
 }
 
+/** 書き出すファイルの中身（読みやすいよう字下げする。ブラウザへの保存は詰めた JSON.stringify） */
 export function serializeRoster(roster: BuildSnapshot): string {
   return `${JSON.stringify(roster, null, 2)}\n`;
 }
@@ -110,8 +112,11 @@ export function rosterSlotCount(team: TeamState, parties: PartiesState, roster: 
 
 /** 取得の日（日本時間の YYYY-MM-DD。スナップショットの名前と同じ）。日時として読めなければそのまま */
 export function rosterDate(roster: BuildSnapshot): string {
-  const t = Date.parse(roster.fetchedAt);
-  return Number.isNaN(t) ? roster.fetchedAt : new Date(t + 9 * 3600 * 1000).toISOString().slice(0, 10);
+  try {
+    return jstDate(roster.fetchedAt);
+  } catch {
+    return roster.fetchedAt;
+  }
 }
 
 export function rosterLabel(roster: BuildSnapshot): string {
@@ -124,7 +129,7 @@ export function rosterFileName(roster: BuildSnapshot): string {
 
 /** 読み込んだ後に出す文（1 行目が結果、あとは知らせ） */
 export function importSummary(roster: BuildSnapshot, notices: readonly string[]): string[] {
-  const unknown = unknownTreasurePhaseIds(roster).length;
+  const unknown = unknownTreasurePhaseCount(roster);
   return [
     `${rosterLabel(roster)}を読み込んだ`,
     ...notices,
