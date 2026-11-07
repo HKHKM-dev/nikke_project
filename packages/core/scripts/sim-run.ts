@@ -33,7 +33,7 @@ import { parseArgs } from 'node:util';
 import { slotsByStep } from '../src/burst/schedule.ts';
 import { computeCombatAttack, computeCombatStat, emptyBuild, type BuildInput } from '../src/build.ts';
 import { resolveBuildEffects } from '../src/buildEffects.ts';
-import { buildEntriesOf, type SnapshotTreasure } from '../src/shiftypad.ts';
+import { isBuildSnapshotShaped, readBuildSnapshotValue, type SnapshotTreasure } from '../src/buildSnapshot.ts';
 import {
   computeFixedSpecAttack,
   computeFixedSpecDefence,
@@ -76,7 +76,7 @@ import type { TreasurePhase } from '../src/skills/treasure.ts';
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../src/skills/composition.ts';
 import { SKILL_SLOTS, parseSkillDefinition, parseSkillIndex } from '../src/skills/types.ts';
 import { TEAM_SIZE, type TeamSlotInput } from '../src/team.ts';
-import type { BuildMasters, CharacterData, Element } from '../src/types.ts';
+import type { BuildMasters, CharacterData, CharacterIndex, Element } from '../src/types.ts';
 import type { EnemyInput } from '../src/damage.ts';
 import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
 
@@ -199,7 +199,21 @@ type BuildFile = Record<
   string,
   Partial<BuildInput> & { growth?: GrowthInput; skillLevels?: SkillLevels; treasure?: SnapshotTreasure | null }
 >;
-const buildFile = (values.build === undefined ? {} : buildEntriesOf(readJson(values.build))) as BuildFile;
+function readBuildFile(path: string): BuildFile {
+  const json: unknown = readJson(path);
+  if (!isBuildSnapshotShaped(json)) return json as BuildFile;
+  // スナップショットは画面の育成状況の読み込みと同じ検査を通す（plan/design-combat-power-sort.md 5.3 節）
+  const index = (readJson(join(DATA_DIR, 'characters/index.json')) as CharacterIndex).characters;
+  const read = readBuildSnapshotValue(json, index);
+  if (!read.ok) {
+    console.error(`--build ${path} を読めない:`);
+    for (const e of read.errors) console.error(`  ${e}`);
+    process.exit(1);
+  }
+  for (const n of read.notices) console.warn(`--build: ${n}`);
+  return read.snapshot.characters;
+}
+const buildFile = values.build === undefined ? {} : readBuildFile(values.build);
 if (values.build !== undefined && fixedSpec) console.warn('--build is ignored under --fixed-spec');
 const masters = Object.fromEntries(
   Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),

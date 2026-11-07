@@ -14,3 +14,11 @@ export function writeStorage(key: string, value: string): void {
     // 保存できないときは黙って諦める
   }
 }
+
+export function removeStorage(key: string): void {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // 消せないときは黙って諦める
+  }
+}

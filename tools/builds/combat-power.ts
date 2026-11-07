@@ -4,11 +4,11 @@
 //   npm run build:combat-power -- <スナップショット> [--actual <生の JSON>] [--list]
 // ゲームの戦闘力は、ShiftyPad の生のデータ（<スナップショットの名前>.raw.json）の combat（GetUserCharacterDetails）。
 // --list で、モデルの降順の並びと、実際の降順の並びの位置を全部出す。
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { computeCombatPower } from '../../packages/core/src/combatPower.ts';
-import { gameCombatPowers, type BuildSnapshot, type ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
+import { readBuildSnapshot, snapshotCombatPower } from '../../packages/core/src/buildSnapshot.ts';
+import { gameCombatPowers, type ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { compareCombatPower, sortByCombatPower, type CombatPowerRow } from './combat-power-lib.ts';
 import { characterOf, index, masters, nameOf, readJson } from './data.ts';
 import { buildsDir, snapshotNames } from './dirs.ts';
@@ -40,7 +40,15 @@ for (const path of [snapshotPath, actualPath]) {
   }
 }
 
-const snapshot = readJson<BuildSnapshot>(snapshotPath);
+// 画面の育成状況の読み込みと同じ検査（plan/design-combat-power-sort.md 5.3 節）
+const read = readBuildSnapshot(readFileSync(snapshotPath, 'utf8'), index);
+if (!read.ok) {
+  console.error(`${snapshotPath} を読めない:`);
+  for (const e of read.errors) console.error(`  ${e}`);
+  process.exit(1);
+}
+const snapshot = read.snapshot;
+for (const n of read.notices) console.log(`注意: ${n}`);
 const actualById = gameCombatPowers(readJson<ShiftyPadRaw>(actualPath), index);
 
 const errors: string[] = [];
@@ -54,11 +62,7 @@ for (const [id, c] of Object.entries(snapshot.characters)) {
   }
   let model: number | null = null;
   try {
-    model = computeCombatPower(
-      characterOf(resourceId),
-      { growth: c.growth, build: c, skillLevels: c.skillLevels, treasure: c.treasure !== null },
-      masters,
-    ).value;
+    model = snapshotCombatPower(characterOf(resourceId), c, masters).value;
   } catch (e) {
     errors.push(`${id} ${nameOf(resourceId)}: ${(e as Error).message}`);
   }

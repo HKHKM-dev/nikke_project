@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { validateBuild } from '../build.ts';
 import { MASTER_FILES } from '../load.ts';
+import { readBuildSnapshot } from '../buildSnapshot.ts';
 import {
-  buildEntriesOf,
   diffSnapshots,
   gameCombatPowers,
   rosterMarkdown,
@@ -262,12 +262,9 @@ describe('stripAccountFields', () => {
   });
 });
 
-describe('buildEntriesOf', () => {
-  it('reads both a snapshot and a plain --build file', () => {
-    const snap = toBuildSnapshot(RAW, INDEX);
-    expect(Object.keys(buildEntriesOf(snap))).toEqual(['10', '30', '82']);
-    expect(buildEntriesOf({ '82': { affectionRank: 3 } })).toEqual({ '82': { affectionRank: 3 } });
-  });
+it('写したスナップショットは、育成状況の読み込みの検査（readBuildSnapshot）を通り、そのまま読み戻せる', () => {
+  const snap = toBuildSnapshot(RAW, INDEX);
+  expect(readBuildSnapshot(JSON.stringify(snap), INDEX)).toEqual({ ok: true, snapshot: snap, notices: [] });
 });
 
 describe('diffSnapshots and rosterMarkdown', () => {
