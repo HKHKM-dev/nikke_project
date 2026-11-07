@@ -570,5 +570,41 @@
       "tool": "recipe:hud-jumps@3 の増分（発ごとの会心）と tools/captures/reticle-ammo.ts --style box（表示が減らなかった発 = 弾丸チャージ）を、使い捨てのスクリプトと手で並べた",
       "note": "1・2・3 回目の紅蓮：神殺の窓（f1136・3538・5940）。窓の前の最後の弾丸チャージの発の後の会心の数 j と、窓の後の最初の弾丸チャージまでの会心の数 r が、j + 15（満開の会心）+ r が偶数で最小になる所に弾丸チャージが付く。数えないなら j + r = 2 のはずで、どの窓でも合わない。ほかの窓は、窓の前後の発の会心がほかの枠のヒットと重なって決まらない"
     }
+  },
+  {
+    "id": "0962-25",
+    "recording": "0962",
+    "source": "V-0679",
+    "readAt": "2026-11-07",
+    "kind": "hit",
+    "use": "compare",
+    "value": 25799503,
+    "unit": "ダメージ",
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    },
+    "description": "バースト使用時の追加ダメージ（最終攻撃力の 3000%）の 1 回（会心なし）。攻撃力▲・身剣合一の攻撃ダメージ▲・フルバースト補正が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（hud.ts --mode jumps）",
+      "note": "f1163 の 25,827,426 − 同じ間のほかの枠のヒット 27,923（ほかのフレームにも単独で出る値）。4 回目の窓（f8369 の 25,817,454 − 17,951）も同じ値。値が大きく（2,500 万台）、HUD の 1 ヒットごとの四捨五入と攻撃力▲の丸め（C-0027）で 1〜2 ずれうるので、許容を ±2 にした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    }
   }
 ]
