@@ -40,7 +40,12 @@ import { placeCharacterAction } from '../team.ts';
 const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
 
 /** 離したドロップでスロットを入れ替えたか（handleDragEnd が決め、DROP_ANIMATION が読む） */
-const dropState: { swapped: boolean; targetIndex: number | null } = { swapped: false, targetIndex: null };
+const dropState: { swapped: boolean; targetIndex: number | null; placed: boolean } = {
+  swapped: false,
+  targetIndex: null,
+  // 一覧のニケをスロットに置いた（一覧へ戻るアニメーションはしない）
+  placed: false,
+};
 
 const slotCardAt = (index: number | null) =>
   index === null ? null : (document.querySelectorAll('.modern-slots-grid > .modern-slot-card')[index] ?? null);
@@ -89,6 +94,13 @@ function slideInto(from: Element, target: Element): () => void {
  * 落とした先のスロットへ滑り込ませる（slideInto）。どちらも着くまで行き先の絵は隠す（modern-slot-arriving）
  */
 const DROP_ANIMATION: DropAnimation = {
+  // 一覧のニケをスロットに置いたときは動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
+  keyframes: ({ transform: { initial, final } }) => {
+    const at = (t: typeof initial) => ({
+      transform: `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`,
+    });
+    return [at(initial), at(dropState.placed ? initial : final)];
+  },
   sideEffects: (args) => {
     const holder = args.dragOverlay.node.querySelector('.slot-drag-overlay-portrait');
     // ドラッグ元へ戻っていく絵も、立ち絵の枠全体（名前などを含む）の写しにする
@@ -196,6 +208,7 @@ export function ModernView({
     setPendingId(null);
     dropState.swapped = false;
     dropState.targetIndex = null;
+    dropState.placed = false;
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -260,6 +273,7 @@ export function ModernView({
       const char = activeData.character as CharacterIndexEntry;
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
       if (!action) return;
+      dropState.placed = true;
       dispatch(action);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
