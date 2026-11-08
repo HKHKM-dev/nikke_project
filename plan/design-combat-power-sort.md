@@ -115,7 +115,7 @@
 - core: 形・読み込みの検査・戦闘力は `packages/core/src/buildSnapshot.ts`（`readBuildSnapshot`・`snapshotCombatPower`。型は `shiftypad.ts` から移した）。値の範囲の検査は `packages/core/src/buildJson.ts` に置き、画面の編成の保存の読み込み（`apps/web/src/team.ts`）もそれを使う。使われなくなった `buildEntriesOf` は消した。
 - CLI: `build:combat-power` と `sim-run.ts --build`（`formatVersion` を持つ JSON のとき）が同じ検査を通す。
 - 画面: 設定のメニューの「育成状況」（`components/RosterSettings.tsx`・`useRoster.ts`）。写し方と保存は `apps/web/src/roster.ts`（保存のキーは `nikke-calc.roster.v1`）。キャラをスロットに入れる操作は、育成状況の育成を付けて reducer に渡す（`selectCharacter` の `fields`。別のニケに変えたときだけ写す）。
-- 確かめたこと: オーナーの 2026-10-29 のスナップショットを、`build:combat-power`（201 体とも一致・並びの食い違い 0）・`sim-run.ts --build`・画面（読み込み・スロットへの写し・書き出し・再読み込みの後の保存）で読んだ。範囲の外の値は、CLI と画面の両方で欄の場所つきで止まった。
+- 確かめたこと: オーナーの 2026-10-29 のスナップショットを、`build:combat-power`（全キャラが一致・並びの食い違い 0）・`sim-run.ts --build`・画面（読み込み・スロットへの写し・書き出し・再読み込みの後の保存）で読んだ。範囲の外の値は、CLI と画面の両方で欄の場所つきで止まった。
 
 ## 6. 一覧の並び替え
 
@@ -190,7 +190,7 @@
 - 戦闘力の計算（`computeCombatStat`）は、宝物の中身を見ず有無だけを見るので、キャラの `treasure` の型を `unknown`（null なら無い）に広げた。
 - 育成状況の全キャラの戦闘力は core の `snapshotCombatPowers`（出せないキャラは理由つきで分ける）。画面と `build:combat-power` が使う。
 - 画面: 並べる処理は `apps/web/src/listOrder.ts`、状態は `useListOrder.ts`（並びはブラウザに覚える。表は育成状況があるときだけ読む）、切り替えは設定のメニューの「一覧の並び」（`components/ListOrderSettings.tsx`）。App が並べた一覧を画面に渡し、トレイと選択肢は名前順の並べ直しをやめた。戦闘力の添え書きと、未対応の一覧の「一覧の並び」の 1 行は、React の context（`ListOrderContext`）で渡す（モダン UI のブランチが直している `ModernView.tsx` を通さないため。そのブランチのマージの後に props にしてよい）。
-- 確かめたこと: オーナーの 2026-10-29 の育成状況を画面に読み込み、クラシックの選択肢の並びをゲームの戦闘力（生のデータの `combat`）と比べた。所持の 201 体が先に並び、隣どうしの高低の逆転は 0。所持していないキャラはその後に名前順。トレイの `title`・選択肢の名前の後ろの値・設定の切り替えと再読み込みの後の保存・未対応の一覧の 1 行も出た。
+- 確かめたこと: オーナーの 2026-10-29 の育成状況を画面に読み込み、クラシックの選択肢の並びをゲームの戦闘力（生のデータの `combat`）と比べた。育成状況にいるキャラが先に並び、隣どうしの高低の逆転は 0。所持していないキャラはその後に名前順。トレイの `title`・選択肢の名前の後ろの値・設定の切り替えと再読み込みの後の保存・未対応の一覧の 1 行も出た。
 
 ## 7. 戦闘力が同じキャラの順
 
