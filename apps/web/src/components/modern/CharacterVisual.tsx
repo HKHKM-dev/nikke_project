@@ -19,7 +19,7 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
   const failed = failedId === character.resourceId;
 
   return (
-    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-element={character.element}>
+    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`}>
       {failed ? (
         <span className="char-visual-fallback" aria-hidden="true">
           {character.name.ja}

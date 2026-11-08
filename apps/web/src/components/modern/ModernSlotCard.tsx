@@ -77,7 +77,6 @@ export function ModernSlotCard({
   return (
     <div
       ref={setCardRef}
-      data-element={characterEntry?.element}
       className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       onClick={awaitingPlacement ? onPlacePending : undefined}
       {...(characterEntry ? attributes : {})}

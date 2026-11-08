@@ -1,7 +1,7 @@
 // モダン UI のバッジ（plan/design-modern-ui.md 2.5 節）。assets/badges は apps/web/badges-src から npm run badges:build で書き出したもの。
 // ファイル名は <キャラのデータの項目名>_<その値>.svg（命名規則は apps/web/scripts/badges.ts の冒頭）なので、項目と値からファイルを引く。
 // どれも vite.config.ts の assetsInlineLimit 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
-// 束に入るのは下の glob が読む項目のバッジだけ。属性の色はバッジの図柄の色で、styles.css の [data-element] が --el に置く。
+// 束に入るのは下の glob が読む項目のバッジだけ。
 import { ELEMENT_LABEL, WEAPON_LABEL, type CharacterIndexEntry } from '@nikke/core';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 

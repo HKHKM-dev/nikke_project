@@ -1,10 +1,9 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import viteConfig from '../../../vite.config.ts';
 import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters } from './badges.ts';
 
-const read = (path: string) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
 const BADGE_DIR = fileURLToPath(new URL('../../assets/badges', import.meta.url));
 const BADGE_FILES = readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'));
 
@@ -24,21 +23,6 @@ describe('バッジの対応表', () => {
         size,
         `${file} が assetsInlineLimit 以上。Vite が別のファイルとして出し、アーティファクトのファイル数が増える`,
       ).toBeLessThan(limit);
-    }
-  });
-
-  it('属性の色（styles.css の [data-element]）はバッジの図柄の色', () => {
-    const css = read('../../styles.css');
-    for (const element of ['Fire', 'Water', 'Electronic', 'Iron', 'Wind']) {
-      const file = `element_${element}.svg`;
-      const color = new RegExp(`\\[data-element='${element}'\\] \\{\\s*--el: (#[0-9a-f]{6});`).exec(css)?.[1];
-      expect(color, element).toBeDefined();
-      // svgo は色を短く書く（#ff0000 → red、#00ff00 → #0f0）ので、6 桁の 16 進に戻して比べる
-      const svg = readFileSync(`${BADGE_DIR}/${file}`, 'utf8')
-        .toLowerCase()
-        .replaceAll(':red', ':#ff0000')
-        .replace(/#([0-9a-f])([0-9a-f])([0-9a-f])\b/g, '#$1$1$2$2$3$3');
-      expect(svg, file).toContain(color);
     }
   });
 });

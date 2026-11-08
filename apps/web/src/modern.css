@@ -98,14 +98,11 @@
   color: var(--m-muted);
 }
 
-/* スロットのカード: 角丸・影・属性の色の上の縁（--el は styles.css の [data-element]） */
+/* スロットのカード: 角丸・影 */
 :root[data-app-ui='modern'] .modern-slot-card {
   background: var(--m-surface);
   border-radius: 12px;
-  border-color: color-mix(in srgb, var(--el, var(--app-border)) 55%, var(--app-border));
-  box-shadow:
-    inset 0 3px 0 var(--el, transparent),
-    var(--m-shadow);
+  box-shadow: var(--m-shadow);
   padding: 10px;
 }
 :root[data-app-ui='modern'] .modern-slot-card:hover {
@@ -161,10 +158,6 @@
 /* キャラの絵（CharacterVisual） */
 :root[data-app-ui='modern'] .char-visual {
   border-radius: 10px;
-}
-:root[data-app-ui='modern'] .char-visual-portrait {
-  border-width: 1px;
-  border-color: color-mix(in srgb, var(--el) 60%, var(--app-border));
 }
 
 /* ニケ一覧（トレイ） */
