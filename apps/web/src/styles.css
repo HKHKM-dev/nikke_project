@@ -632,16 +632,17 @@ header h1 {
 }
 
 /* 5スロットグリッド */
-/* カードは立ち絵とボタンが収まる幅に固定し、入りきらなければ折り返す。余った幅は左右に分けて、各行を中央に寄せる */
+/* カードは固定の幅で並べ、入りきらなければ折り返す。余った幅は左右に分けて、各行を中央に寄せる */
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
 }
+/* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
   box-sizing: border-box;
-  width: 170px;
+  width: calc(var(--slot-portrait-h) / 2 + 2px + 16px);
 }
 
 /* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
@@ -971,6 +972,12 @@ header h1 {
   border: 1px solid var(--app-border);
   padding: 12px;
   background: color-mix(in srgb, var(--app-fg) 2%, var(--app-bg));
+}
+/* ニケ一覧の枠は、画面の幅の上限（.app の max-width）を越えて画面の左右いっぱいに広げる。
+   左右の余白は 24px（100vw がスクロールバーの幅を含むブラウザでも、画面の外にはみ出さないように body の 16px より広くとる）。
+   画面が上限より狭いときは広げない（min で 0 にとどめる） */
+.modern-view-container > .char-tray-panel {
+  margin-inline: min(0px, calc(50% - 50vw + 24px));
 }
 .char-tray-header {
   display: flex;
