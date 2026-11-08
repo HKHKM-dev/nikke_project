@@ -5,6 +5,7 @@ import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
 import controllerIcon from '../../assets/badges/ui_controller.svg';
+import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -14,6 +15,8 @@ type Props = {
   isUnsupported: boolean;
   error: string | undefined;
   slotResult: SlotResultView | null;
+  /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
+  collectionBadge: Badge | null;
   /** このスロットのニケがほかの編成でも使われている */
   inOtherParty: boolean;
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
@@ -30,6 +33,7 @@ export function ModernSlotCard({
   isUnsupported,
   error,
   slotResult,
+  collectionBadge,
   inOtherParty,
   onPlacePending,
   onOpenBuildModal,
@@ -107,7 +111,12 @@ export function ModernSlotCard({
         )}
         {characterEntry ? (
           <div className="modern-slot-char-area">
-            <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />
+            <CharacterVisual
+              character={characterEntry}
+              isUnsupported={isUnsupported}
+              size="portrait"
+              extraBadge={collectionBadge}
+            />
             <SlotCharName name={characterEntry.name.ja} />
             <button
               type="button"

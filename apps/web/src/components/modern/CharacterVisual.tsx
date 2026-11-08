@@ -1,17 +1,19 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useState } from 'react';
-import { VISUAL_BADGE_KINDS } from './badges.ts';
+import { VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
   character: CharacterIndexEntry;
   isUnsupported?: boolean;
   /** normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード） */
   size?: 'normal' | 'compact' | 'portrait';
+  /** バッジの列の最後に足すバッジ（スロットのコレクション） */
+  extraBadge?: Badge | null;
 };
 
 const BASE_URL = import.meta.env.BASE_URL;
 
-export function CharacterVisual({ character, isUnsupported = false, size = 'normal' }: Props) {
+export function CharacterVisual({ character, isUnsupported = false, size = 'normal', extraBadge = null }: Props) {
   const imageSrc = `${BASE_URL}characters/${size === 'portrait' ? 'portraits' : 'images'}/${character.resourceId}.webp`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。
   // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
@@ -52,6 +54,15 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
             )
           );
         })}
+        {extraBadge && (
+          <img
+            className="char-badge"
+            src={extraBadge.src}
+            alt={extraBadge.label}
+            title={extraBadge.label}
+            draggable={false}
+          />
+        )}
       </div>
       {isUnsupported && <span className="char-unsupported-tag">未</span>}
     </div>

@@ -2,7 +2,15 @@
 // ファイル名は <キャラのデータの項目名>_<その値>.svg（命名規則は apps/web/scripts/badges.ts の冒頭）なので、項目と値からファイルを引く。
 // どれも vite.config.ts の assetsInlineLimit 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
 // 束に入るのは下の glob が読む項目のバッジだけ。
-import { ELEMENT_LABEL, WEAPON_LABEL, type CharacterIndexEntry } from '@nikke/core';
+import {
+  COLLECTION_LEVEL_MAX,
+  ELEMENT_LABEL,
+  TREASURE_PHASE_MAX,
+  WEAPON_LABEL,
+  type CharacterIndexEntry,
+  type CollectionInput,
+  type TreasurePhase,
+} from '@nikke/core';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 
 const BADGE_SRCS = import.meta.glob<string>(
@@ -11,6 +19,7 @@ const BADGE_SRCS = import.meta.glob<string>(
     '../../assets/badges/burstStep_*.svg',
     '../../assets/badges/class_*.svg',
     '../../assets/badges/weaponType_*.svg',
+    '../../assets/badges/collection_*.svg',
   ],
   { eager: true, import: 'default' },
 );
@@ -65,8 +74,32 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
   },
 ];
 
-/** キャラの絵の左上に出すバッジ（クラスは出さず、トレイの絞り込みにだけ使う） */
-export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = BADGE_KINDS.filter(({ key }) => key !== 'class');
+/** キャラの絵の左上に縦に出すバッジの順（属性・武器種・バースト段階。クラスは出さず、トレイの絞り込みにだけ使う） */
+export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = (['element', 'weaponType', 'burstStep'] as const).map((key) =>
+  BADGE_KINDS.find((kind) => kind.key === key)!,
+);
+
+/**
+ * スロットの絵の左上（バースト段階の下）に出すコレクションのバッジ。宝物を付けていれば SSR（最後の段階は上限の黒の版）、
+ * R・SR のコレクションなら その色（LV が上限なら黒の版）、どちらも無ければ出さない
+ */
+export function collectionBadge(
+  collection: CollectionInput,
+  treasurePhase: TreasurePhase,
+  hasTreasure: boolean,
+): Badge | null {
+  const pick = (value: string, label: string): Badge => {
+    const src = BADGE_SRCS[`../../assets/badges/collection_${value}.svg`];
+    if (src === undefined) throw new Error(`バッジ collection_${value}.svg が assets/badges に無い`);
+    return { src, label };
+  };
+  if (hasTreasure && treasurePhase > 0) {
+    return pick(treasurePhase === TREASURE_PHASE_MAX ? 'SSR-max' : 'SSR', `宝物 段階 ${treasurePhase}`);
+  }
+  if (collection === null) return null;
+  const max = collection.level === COLLECTION_LEVEL_MAX;
+  return pick(`${collection.rarity}${max ? '-max' : ''}`, `コレクション ${collection.rarity} LV ${collection.level}`);
+}
 
 /** バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない） */
 export type BadgeFilters = Partial<Record<BadgeKey, string>>;

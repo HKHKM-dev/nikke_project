@@ -19,6 +19,7 @@ import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
+import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
@@ -208,7 +209,7 @@ export function ModernView({
 
         <section className="modern-slots-grid" aria-label="編成スロット一覧">
           {team.slots.map((slot, i) => {
-            const { character } = calc.slots[i]!;
+            const { character, build, treasurePhase } = calc.slots[i]!;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
             const isUnsupported =
               slot.resourceId !== null && fullySupported !== null && !fullySupported.has(slot.resourceId);
@@ -222,6 +223,11 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
+                collectionBadge={collectionBadge(
+                  build.collection,
+                  treasurePhase,
+                  (character?.treasure ?? null) !== null,
+                )}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
