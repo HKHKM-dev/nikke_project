@@ -1264,6 +1264,8 @@ header h1 {
   max-width: var(--tray-visual-w);
 }
 .char-tray-item-taken .char-tray-item-visual::after {
+  /* 絵の枠（1px の枠線と、外に足した 1px の線。.char-visual-compact など）とちょうど重なるように、1px 外へ広げて 2px で描く */
+  inset: -1px;
   border: 2px solid var(--placing-blue);
 }
 .char-tray-item-check {
