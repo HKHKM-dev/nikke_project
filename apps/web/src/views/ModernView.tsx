@@ -250,6 +250,7 @@ export function ModernView({
           fullySupported={fullySupported}
           pendingId={pendingId}
           roster={roster}
+          fixedSpec={team.fixedSpec}
           onSelectCharacter={handleSelectCharacter}
         />
 

@@ -1,5 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
-import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
+import { fixedSpecGrowth, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
@@ -14,6 +14,8 @@ type Props = {
   pendingId: number | null;
   /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
   roster: BuildSnapshot | null;
+  /** スペック固定（各ニケの限界突破・コア強化は、計算に使う固定の値を出す） */
+  fixedSpec: boolean;
   onSelectCharacter: (resourceId: number) => void;
 };
 
@@ -52,9 +54,12 @@ export function CharacterTray({
   fullySupported,
   pendingId,
   roster,
+  fixedSpec,
   onSelectCharacter,
 }: Props) {
   const growthOf = (char: CharacterIndexEntry) => {
+    // スペック固定のときはスロットと同じく固定の値（限界突破・コアとも上限）、ほかは育成状況の値（無ければ出さない）
+    if (fixedSpec) return growthMarksOf(char.rarity, fixedSpecGrowth(char));
     const entry = roster?.characters[String(char.resourceId)];
     return entry ? growthMarksOf(char.rarity, entry.growth) : null;
   };
