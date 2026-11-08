@@ -946,7 +946,7 @@ header h1 {
 }
 .char-visual-compact {
   max-width: var(--tray-visual-w);
-  --badge-w: 16px;
+  --badge-w: 20px;
 }
 .char-visual-compact .char-visual-fallback {
   font-size: 0.65rem;
