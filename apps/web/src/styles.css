@@ -1092,6 +1092,10 @@ header h1 {
   padding: 4px 10px;
   font-size: 0.85rem;
 }
+.char-tray-sort select {
+  font-size: 0.85rem;
+  padding: 1px 4px;
+}
 .char-tray-action-button[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.6;

@@ -198,6 +198,7 @@ export function App() {
         totalsPending,
         summarySlots,
         roster: rosterControls.roster,
+        listOrder: listOrderControls,
       }
     : null;
 

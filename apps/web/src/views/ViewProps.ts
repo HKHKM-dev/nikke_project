@@ -6,6 +6,7 @@ import type { NotesSummarySlot } from '../components/NotesSummary.tsx';
 import type { PartiesState } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 import type { TeamAction, TeamState } from '../team.ts';
+import type { ListOrderControls } from '../useListOrder.ts';
 
 export type ViewProps = {
   team: TeamState;
@@ -30,4 +31,6 @@ export type ViewProps = {
   summarySlots: readonly (NotesSummarySlot | null)[];
   /** 読み込んだ育成状況（roster.ts。無ければ null） */
   roster: BuildSnapshot | null;
+  /** 一覧の並び（設定のメニューと同じ。useListOrder.ts） */
+  listOrder: ListOrderControls;
 };

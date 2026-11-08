@@ -70,6 +70,7 @@ export function ModernView({
   totalsPending,
   summarySlots,
   roster,
+  listOrder,
 }: ViewProps) {
   // キャラクターインデックスを ID で引けるマップを作成
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
@@ -269,6 +270,7 @@ export function ModernView({
           pendingId={pendingId}
           roster={roster}
           fixedSpec={team.fixedSpec}
+          listOrder={listOrder}
           onSelectCharacter={handleSelectCharacter}
         />
 
