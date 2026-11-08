@@ -68,7 +68,7 @@ export function SlotCard({
   dispatch,
 }: Props) {
   const limits = character ? growthLimits(character) : null;
-  const damage = formatDamage(character && slotResult ? slotResult.result.totalDamage : null);
+  const damageText = formatDamage(character && slotResult ? slotResult.result.totalDamage : null);
 
   // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
   // 折りたたみ 1 つにまとめた
@@ -120,8 +120,8 @@ export function SlotCard({
         data-computing={slotResult?.stale ?? false}
         data-placeholder={character === undefined}
       >
-        <span className="slot-damage-val" aria-label={`ダメージ ${damage}`}>
-          {damage}
+        <span className="slot-damage-val" aria-label={`ダメージ ${damageText}`}>
+          {damageText}
         </span>
       </div>
       {!(character && limits) && (

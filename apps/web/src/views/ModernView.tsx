@@ -21,15 +21,14 @@ import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
-import { TrayVisual } from '../components/modern/CharacterTrayItem.tsx';
+import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
-import { readStorage, writeStorage } from '../storage.ts';
-import { TRAY_SHAPE_STORAGE_KEY, parseTrayShape } from '../trayShape.ts';
+import { useTrayShape } from '../trayShape.ts';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -198,12 +197,7 @@ export function ModernView({
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
 
   // ニケ一覧の立ち絵の形（四角・縦長）。ブラウザに覚える
-  const [trayShape, setTrayShape] = useState(() => parseTrayShape(readStorage(TRAY_SHAPE_STORAGE_KEY)));
-  const toggleTrayShape = () => {
-    const next = trayShape === 'tall' ? 'square' : 'tall';
-    setTrayShape(next);
-    writeStorage(TRAY_SHAPE_STORAGE_KEY, next);
-  };
+  const [trayShape, toggleTrayShape] = useTrayShape();
 
   // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
   const [pendingId, setPendingId] = useState<number | null>(null);
@@ -499,15 +493,12 @@ export function ModernView({
           ) : draggedCharacter ? (
             <div className="char-drag-overlay">
               {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
-              <span className="char-tray-item-visual">
-                <TrayVisual
-                  character={draggedCharacter}
-                  isUnsupported={false}
-                  growthMarks={draggedMarks}
-                  shape={trayShape}
-                />
-              </span>
-              {trayShape === 'square' && <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>}
+              <TrayItemFace
+                character={draggedCharacter}
+                isUnsupported={false}
+                growthMarks={draggedMarks}
+                shape={trayShape}
+              />
             </div>
           ) : null}
         </DragOverlay>

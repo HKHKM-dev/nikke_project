@@ -5,6 +5,7 @@ import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
 import controllerIcon from '../../assets/badges/ui_controller.svg';
+import { maskIconStyle } from '../maskIcon.ts';
 import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
@@ -48,7 +49,6 @@ export function ModernSlotCard({
   const focused = slotIndex === DEFAULT_CONTROLLED_SLOT;
   const awaitingPlacement = onPlacePending !== undefined;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
-  const formattedDamage = formatDamage(currentDamage);
   const damagePercent =
     partyTotalDamage && currentDamage && partyTotalDamage > 0
       ? Math.min(100, Math.round((currentDamage / partyTotalDamage) * 100))
@@ -91,10 +91,10 @@ export function ModernSlotCard({
       <div className="modern-slot-header">
         {focused && (
           <span
-            className="modern-slot-focus-icon"
+            className="modern-slot-focus-icon mask-icon"
             role="img"
             aria-label="操作"
-            style={{ '--icon': `url("${controllerIcon}")` } as CSSProperties}
+            style={maskIconStyle(controllerIcon)}
           />
         )}
         {inOtherParty && <span className="modern-slot-other-party-badge">他の編成</span>}
@@ -157,7 +157,7 @@ export function ModernSlotCard({
 
       <div className="modern-slot-damage-section">
         <div className="modern-slot-damage-row">
-          <span className="modern-slot-damage-value">{formattedDamage}</span>
+          <span className="modern-slot-damage-value">{formatDamage(currentDamage)}</span>
           {damagePercent > 0 && <span className="modern-slot-damage-percent">{damagePercent}%</span>}
         </div>
         <div className="modern-slot-damage-bar-track">

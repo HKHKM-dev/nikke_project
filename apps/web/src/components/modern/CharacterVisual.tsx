@@ -35,8 +35,8 @@ export function CharacterVisual({
   extraBadge = null,
   overlay = null,
 }: Props) {
-  const tallImage = size === 'portrait' || size === 'tall';
-  const imageSrc = `${BASE_URL}characters/${tallImage ? 'portraits' : 'images'}/${character.resourceId}.webp`;
+  const imageDir = size === 'portrait' || size === 'tall' ? 'portraits' : 'images';
+  const imageSrc = `${BASE_URL}characters/${imageDir}/${character.resourceId}.webp`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
   // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);

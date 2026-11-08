@@ -14,6 +14,7 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
   return (
     <div className="party-tabs" role="group" aria-label="ソロレイドの編成">
       {Array.from({ length: PARTY_COUNT }, (_, i) => {
+        const total = totals[i];
         return (
           <div className="party-tab-cell" key={i}>
             <button
@@ -28,10 +29,10 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
             {/* 値の欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す */}
             <span
               className="party-tab-total"
-              data-computing={totals[i]?.computing ?? false}
-              aria-label={totals[i]?.error === undefined ? undefined : `計算できない: ${totals[i]!.error}`}
+              data-computing={total?.computing ?? false}
+              aria-label={total?.error === undefined ? undefined : `計算できない: ${total.error}`}
             >
-              {formatDamage(totals[i]?.total ?? null)}
+              {formatDamage(total?.total ?? null)}
             </span>
           </div>
         );

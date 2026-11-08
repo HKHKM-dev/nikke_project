@@ -98,8 +98,8 @@ export function CharacterTray({
             ))}
           </div>
         </div>
-        {/* 並べ替え（名前順・戦闘力順）と、フィルター・立ち絵の縦長と四角の切り替えのボタンの置き場所（フィルターと切り替えは未実装。
-            押しても何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
+        {/* 並べ替え（名前順・戦闘力順）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
+            何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
         <div className="char-tray-actions">
           <label className="char-tray-action-button char-tray-sort">
             並べ替え

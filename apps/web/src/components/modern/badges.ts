@@ -115,9 +115,7 @@ export function collectionBadge(
   treasurePhase: TreasurePhase,
   hasTreasure: boolean,
 ): Badge | null {
-  const pick = (value: string, label: string): Badge => {
-    return { src: badgeSrc(`collection_${value}`), label };
-  };
+  const pick = (value: string, label: string): Badge => ({ src: badgeSrc(`collection_${value}`), label });
   if (hasTreasure && treasurePhase > 0) {
     return pick(treasurePhase === TREASURE_PHASE_MAX ? 'SSR-max' : 'SSR', `宝物 段階 ${treasurePhase}`);
   }

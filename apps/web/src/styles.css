@@ -750,12 +750,15 @@ header h1 {
   min-height: 30px;
 }
 /* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
-.modern-slot-focus-icon {
-  width: 30px;
-  height: 30px;
+/* 絵（SVG）を型にして文字の色で塗るアイコン（components/maskIcon.ts の maskIconStyle が --icon に絵を渡す） */
+.mask-icon {
   background-color: currentColor;
   -webkit-mask: var(--icon) center / contain no-repeat;
   mask: var(--icon) center / contain no-repeat;
+}
+.modern-slot-focus-icon {
+  width: 30px;
+  height: 30px;
 }
 .modern-slot-other-party-badge {
   border: 1px solid currentColor;
@@ -835,9 +838,7 @@ header h1 {
   font-size: 0.8rem;
   line-height: 1.1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-}
-/* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_filled・grade_empty・core_plain） */
-.growth-marks {
+  /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_filled・grade_empty・core_plain）。大きさは置き場所で変える */
   --growth-star-w: 13px;
   --growth-core-w: 20px;
 }
@@ -879,7 +880,8 @@ header h1 {
   --growth-star-w: 9px;
   --growth-core-w: 16px;
 }
-.char-tray-growth .growth-marks-core {
+.char-tray-growth .growth-marks-core,
+.char-tray-tall-area .growth-marks-core {
   font-size: 0.42rem;
 }
 .modern-slot-char-name-scroll {
@@ -1013,7 +1015,6 @@ header h1 {
   box-sizing: border-box;
   max-width: var(--tray-visual-w);
   aspect-ratio: 1 / 2;
-  /* バッジの大きさは四角（.char-visual の既定の 20px）と同じ */
 }
 /* 「未」の札は、下部に重ねる名前の行の上に出す */
 .char-visual-tall .char-unsupported-tag {
@@ -1026,12 +1027,10 @@ header h1 {
   padding: 6px 4px 2px;
   font-size: 0.7rem;
 }
+/* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
 .char-tray-tall-area .growth-marks {
   --growth-star-w: 9px;
-  --growth-core-w: 15px;
-}
-.char-tray-tall-area .growth-marks-core {
-  font-size: 0.42rem;
+  --growth-core-w: 16px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -1143,7 +1142,7 @@ header h1 {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
 }
-/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターと切り替えは未実装の置き場所） */
+/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターは未実装の置き場所） */
 .char-tray-actions {
   display: flex;
   gap: 6px;
@@ -1159,7 +1158,6 @@ header h1 {
   font-size: 0.85rem;
   padding: 1px 4px;
 }
-/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 /* 縦長・四角の切り替えで、いまの形を強く出す */
 .char-tray-shape-button > span:not(.char-tray-shape-current) {
   opacity: 0.45;
@@ -1167,6 +1165,7 @@ header h1 {
 .char-tray-shape-current {
   font-weight: bold;
 }
+/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
   cursor: default;
   opacity: 0.6;
@@ -1274,12 +1273,10 @@ header h1 {
   pointer-events: none;
   z-index: 3;
 }
-/* ✓ の中身。バッジの絵（ui_check.svg）を型にして水色で塗る（CharacterTrayItem.tsx が --icon に渡す） */
-.char-tray-item-check > span {
+/* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
+.char-tray-item-check > .mask-icon {
   flex: 1;
-  background-color: var(--placing-blue);
-  -webkit-mask: var(--icon) center / contain no-repeat;
-  mask: var(--icon) center / contain no-repeat;
+  color: var(--placing-blue);
 }
 .char-tray-item-other-badge {
   position: absolute;
