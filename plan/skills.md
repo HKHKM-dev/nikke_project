@@ -82,7 +82,7 @@ notes の種類: 未対応 35・前提の外 45・計算に無関係 43・補足
 ## 18 ネオン：ビジョン・アイ
 
 - **skill1**: supported
-  - effects[0] damage・fullChargeShot・additional: C-0410（確定）
+  - effects[0] damage・fullChargeShot・additional: C-0410（確定）、C-0995（確定）
   - effects[1] damage・fullChargeShot・additional: C-0410（確定）、C-0665（確定）
   - notes[0] 前提の外: 攻撃を受けた時の無敵・デバフ免疫・受けるHP回復量▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きる（C-0551）: 根拠なし
 - **skill2**: supported
