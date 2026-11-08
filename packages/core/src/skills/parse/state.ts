@@ -84,7 +84,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）。
   // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけも書ける（件はスタック数の分布の期待値の小片。validateChanceGrant）
   const fields = parseTimedFields(v, path, undefined, true);
-  validateCounterGrant(fields, path);
+  validateCounterGrant(fields, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
@@ -231,7 +231,7 @@ function validateChanceGrant(fields: GrantTimedFields, v: Record<string, Json>, 
     );
 }
 
-function validateCounterGrant(fields: GrantTimedFields, path: string): void {
+function validateCounterGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
   const full = isCounterFullTrigger(fields.trigger) ? fields.trigger.counterFull : undefined;
   const until = fields.durationUntil;
   const empty = typeof until === 'object' ? until.counterEmpty : undefined;
@@ -241,7 +241,14 @@ function validateCounterGrant(fields: GrantTimedFields, path: string): void {
       path,
       `a grant on { counterFull } lasts until the same counter is empty (durationUntil { counterEmpty }), got ${JSON.stringify(fields.trigger)} and ${JSON.stringify(until)}`,
     );
-  if (fields.target !== 'self') fail(`${path}.target`, 'a grant lasting until a counter is empty is only on "self"');
+  // fields は敵の付与を target: "allies" に読み替えた後なので、文言は読み替える前の target で出す
+  if (fields.target !== 'self') {
+    const written = onEnemy ? 'enemy' : fields.target;
+    fail(
+      `${path}.target`,
+      `a grant lasting until a counter is empty is only on "self", got ${JSON.stringify(written)}`,
+    );
+  }
   if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
     fail(path, 'a grant lasting until a counter is empty cannot stack');
   if (fields.condition !== undefined) fail(`${path}.condition`, 'a grant on { counterFull } cannot have a condition');
