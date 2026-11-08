@@ -6,7 +6,14 @@ import { inertControlProps } from './inertControl.ts';
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const NOTE = { maxWidth: '22em' } as const;
 
-export function ListOrderSettings({ order, select, hasRoster, failedCount, tableError }: ListOrderControls) {
+export function ListOrderSettings({
+  order,
+  select,
+  combatPowerAvailable,
+  fixedSpec,
+  failedCount,
+  tableError,
+}: ListOrderControls) {
   return (
     <fieldset className="popover-group">
       <legend>一覧の並び</legend>
@@ -17,15 +24,20 @@ export function ListOrderSettings({ order, select, hasRoster, failedCount, table
             name="listOrder"
             value={o}
             checked={order === o}
-            {...inertControlProps(o === 'combatPower' && !hasRoster)}
-            onChange={() => !(o === 'combatPower' && !hasRoster) && select(o)}
+            {...inertControlProps(o === 'combatPower' && !combatPowerAvailable)}
+            onChange={() => !(o === 'combatPower' && !combatPowerAvailable) && select(o)}
           />
           <span>{LIST_ORDER_LABEL[o]}</span>
         </label>
       ))}
-      {!hasRoster && (
+      {!combatPowerAvailable && (
         <p className="hint" style={NOTE}>
-          戦闘力順は、育成状況を読み込むと選べる
+          戦闘力順は、育成状況を読み込むか、スペック固定にすると選べる
+        </p>
+      )}
+      {fixedSpec && order === 'combatPower' && (
+        <p className="hint" style={NOTE}>
+          スペック固定の値で計算した戦闘力で並べる（実機とは照合していない）
         </p>
       )}
       {tableError !== null && (

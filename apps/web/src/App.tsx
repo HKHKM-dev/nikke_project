@@ -91,7 +91,12 @@ export function App() {
   // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
   const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
   // 一覧の並び（listOrder.ts）。並べたキャラの一覧を画面に渡し、トレイと選択肢はその順のまま出す
-  const { controls: listOrderControls, state: listOrder } = useListOrder(rosterControls.roster, masters, BASE_URL);
+  const { controls: listOrderControls, state: listOrder } = useListOrder(
+    rosterControls.roster,
+    masters,
+    BASE_URL,
+    team.fixedSpec,
+  );
   const orderedIndex = useMemo(
     () => (index === null ? null : orderCharacters(index, listOrder.order, listOrder.powers)),
     [index, listOrder],
