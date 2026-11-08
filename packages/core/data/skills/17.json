@@ -359,20 +359,6 @@
           ]
         },
         {
-          "ja": "爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない。射撃場の的では、窓の中の通常攻撃も外と同じ表の行でコアに当たる（C-0424）。遠の区間の窓の中と外の差は見分けられず（V-0297・V-0698）、窓でコアの割合が変わるという問いは、出どころ（窓の発の形の読み違いと、録画 0164 の遠の高さ）が無くなったので立てない（plan/design-anis-star-unimplemented.md 9.5 節）",
-          "en": "The Explosion Radius increase (10 s) only adds hits on more enemies, which does not happen against a single enemy. On the range target, normal attacks during her Burst hit the core with the same table row as outside it (C-0424); in the far segment no in/out difference is distinguishable (V-0297, V-0698), and the question of whether the window changes the core rate is dropped because its origins (a misread of the in-window shot shape and the high far rate of recording 0164) no longer hold (plan/design-anis-star-unimplemented.md 9.5)",
-          "kind": "outOfScope",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "burstUse"
-          },
-          "claims": [
-            "C-0424"
-          ]
-        },
-        {
           "ja": "みんなの星のときの味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
           "en": "Max HP up on all allies with Everyone's Star does not change damage by itself (it matters only with an effect reading HP in the team)",
           "kind": "indirect",
