@@ -608,6 +608,8 @@ header h1 {
 }
 
 :root {
+  /* 立ち絵の最下部のレア度の帯の太さ */
+  --rarity-band-h: 4px;
   /* ニケ一覧の正方形の立ち絵の一辺（.char-visual-compact） */
   --tray-visual-w: 84px;
   /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
@@ -779,7 +781,8 @@ header h1 {
   position: absolute;
   left: 1px;
   right: 1px;
-  bottom: 1px;
+  /* 最下部のレア度の帯の上に出す */
+  bottom: calc(1px + var(--rarity-band-h));
   padding: 10px 6px 3px;
   overflow: hidden;
   white-space: nowrap;
@@ -983,6 +986,27 @@ header h1 {
   gap: 1px;
   z-index: 2;
 }
+/* 絵の最下部のレア度の色の帯（SSR は黄色・SR は紫・R は青）。名前やバッジより上に重ねる */
+.char-visual::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--rarity-band-h);
+  background: var(--rarity-color, transparent);
+  z-index: 3;
+  pointer-events: none;
+}
+.char-visual[data-rarity='SSR'] {
+  --rarity-color: #facc15;
+}
+.char-visual[data-rarity='SR'] {
+  --rarity-color: #a855f7;
+}
+.char-visual[data-rarity='R'] {
+  --rarity-color: #3b82f6;
+}
 .char-badge {
   display: block;
   width: var(--badge-w);
@@ -992,7 +1016,7 @@ header h1 {
 .char-visual-corner-badge {
   position: absolute;
   right: 2px;
-  bottom: 2px;
+  bottom: calc(2px + var(--rarity-band-h));
   z-index: 2;
 }
 /* そのため「未」の札は左下に出す */
@@ -1002,11 +1026,11 @@ header h1 {
 }
 /* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す */
 .char-visual-portrait .char-unsupported-tag {
-  bottom: 44px;
+  bottom: calc(44px + var(--rarity-band-h));
 }
 .char-unsupported-tag {
   position: absolute;
-  bottom: 2px;
+  bottom: calc(2px + var(--rarity-band-h));
   right: 2px;
   background: #d32f2f;
   color: #fff;

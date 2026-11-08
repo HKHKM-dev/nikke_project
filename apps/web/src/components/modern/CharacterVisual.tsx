@@ -37,7 +37,7 @@ export function CharacterVisual({
   const elementBadge = compact ? ELEMENT_BADGE_KIND.badges[character.element] : undefined;
 
   return (
-    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`}>
+    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-rarity={character.rarity}>
       {failed ? (
         <span className="char-visual-fallback" aria-hidden="true">
           {character.name.ja}
