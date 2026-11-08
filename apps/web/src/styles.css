@@ -648,7 +648,9 @@ header h1 {
   outline-offset: -2px;
   background: color-mix(in srgb, Highlight 15%, var(--app-bg));
 }
-.modern-slot-card.modern-slot-dragging {
+/* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
+.modern-slot-card.modern-slot-dragging .char-visual-portrait,
+.modern-slot-card.drag-source-returning .char-visual-portrait {
   opacity: 0.35;
 }
 .modern-slot-header {
@@ -833,7 +835,7 @@ header h1 {
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める */
 :root {
-  --slot-portrait-h: 320px;
+  --slot-portrait-h: 240px;
 }
 .char-visual-portrait {
   max-width: none;
@@ -1111,7 +1113,8 @@ header h1 {
 }
 
 /* ドラッグ＆ドロップ（DnD）状態・オーバーレイ */
-.char-tray-item.char-tray-item-dragging {
+.char-tray-item.char-tray-item-dragging,
+.char-tray-item.drag-source-returning {
   opacity: 0.3;
 }
 .char-drag-overlay {

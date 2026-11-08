@@ -2,6 +2,7 @@ import {
   DndContext,
   DragOverlay,
   MouseSensor,
+  defaultDropAnimationSideEffects,
   TouchSensor,
   useSensor,
   useSensors,
@@ -21,6 +22,14 @@ import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
+
+/**
+ * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
+ * 代わりに印（drag-source-returning）を付け、ドラッグ中と同じ薄さで残す（styles.css）
+ */
+const DROP_ANIMATION = {
+  sideEffects: defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } }),
+};
 
 export function ModernView({
   team,
@@ -248,7 +257,7 @@ export function ModernView({
           <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
         </ErrorBoundary>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={DROP_ANIMATION}>
           {draggedCharacter && draggedPortrait ? (
             // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
             // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
