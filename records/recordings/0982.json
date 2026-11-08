@@ -1,0 +1,40 @@
+{
+  "id": "0982",
+  "date": "2026-11-08",
+  "folder": "range",
+  "file": "20261108-0982_mg_rapi-redhood_i-doll-sun.mp4",
+  "original": "2026-11-08 13-10-01.mp4",
+  "durationSec": 256.8,
+  "frames": 15410,
+  "fps": 60,
+  "sizeMB": 304.7,
+  "sha256": "2d16802cb00c",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "粘着榴弾の付着のゲージの量を、満タンの位相をずらして決めるために撮った（味方を足した 2 人編成。味方を操作し、ラピ：レッドフードは AI）",
+  "backup": {
+    "at": "2026-11-08T15:01+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
