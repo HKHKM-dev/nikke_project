@@ -8,9 +8,9 @@
 
 件数: キャラ 84・効果 561（根拠あり 540）・notes 204（根拠あり 92）
 
-notes の種類: 未対応 35・前提の外 45・計算に無関係 43・補足 22・間接 59
+notes の種類: 未対応 34・前提の外 46・計算に無関係 43・補足 22・間接 59
 
-スロット: supported 207・partial 22・unsupported 9・noEffect 35
+スロット: supported 208・partial 21・unsupported 9・noEffect 35
 
 ## 10 ラピ
 
@@ -68,7 +68,7 @@ notes の種類: 未対応 35・前提の外 45・計算に無関係 43・補足
   - effects[1] timed・fullBurstStart・projectileExplosionDamage（読む: 防御力）: C-0205（確定）、C-0587（確定）、C-0588（確定）
   - effects[2] timed・fullBurstStart・attackDamage: C-0204（確定）
   - effects[3] heal・fullChargeShot: C-0576（確定）
-- **burst**: partial
+- **burst**: supported
   - effects[0] autoAttack・burstUse: C-0211（確定）、C-0213（確定）、C-0207（確定）、C-0504（確定）、C-0297（確定）、C-0466（確定）、C-0521（仮説）、C-0594（確定）
   - effects[1] timed・burstUse・fixedChargeTime: C-0214（確定）、C-0520（仮説）
   - effects[2] timed・burstUse・attackDamage: C-0209（確定）、C-0203（確定）、C-0555（確定）、C-0520（仮説）
@@ -76,7 +76,7 @@ notes の種類: 未対応 35・前提の外 45・計算に無関係 43・補足
   - effects[4] timed・burstUse・defense: C-0587（確定）
   - notes[0] 補足: シューティングスターのコアに当たる割合は、敵の的の表の行（coreHitRate.autoAttacks の 17:burst）から引く。行は射撃場の的にだけあり（C-0466）、行の無い敵ではコアに当たらないとして計算し、結果の注記に出す（通常攻撃のコア命中率と同じく、敵を足すときに測る。plan/design-anis-star-unimplemented.md 4 節）: C-0466（確定）
   - notes[1] 補足: コアダメージ▲（味方の効果）は、シューティングスターのコアにも通常攻撃と同じ形で乗る（コアの項 +1 に足す。乗るかはヒットの時点で付いているかで決まる）: C-0594（確定）
-  - notes[2] 未対応: 爆発範囲▲が、遠の区間のバーストの窓の通常攻撃のコアに当たる割合を変えるか（近・中近・中遠は、窓の中も外と同じ表の行でコアに当たる。C-0424。遠は、単騎の録画 0320・0321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-unimplemented.md 5 節）: C-0424（確定）、C-0425（仮説）
+  - notes[2] 前提の外: 爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない。射撃場の的では、窓の中の通常攻撃も外と同じ表の行でコアに当たる（C-0424）。遠の区間の窓の中と外の差は見分けられず（V-0297・V-0698）、窓でコアの割合が変わるという問いは、出どころ（窓の発の形の読み違いと、録画 0164 の遠の高さ）が無くなったので立てない（plan/design-anis-star-unimplemented.md 9.5 節）: C-0424（確定）
   - notes[3] 間接（HP）: みんなの星のときの味方全体の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
 
 ## 18 ネオン：ビジョン・アイ

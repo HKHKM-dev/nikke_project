@@ -112,12 +112,12 @@
 - 対象の語彙（2026-10-05）→ 一部完了: [design-target-vocab.md](design-target-vocab.md)・[design-ranked-shot-duration.md](design-ranked-shot-duration.md)。残りは 6 節
 - アニス：スター（17）のバーストのコアの経路（2026-10-05）→ 一部完了: [design-anis-star-core-path.md](design-anis-star-core-path.md)。残りは 6 節
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
-- アニス：スター（17）の未対応の notes の解消（2026-11-08 起票）→ 一部完了: [design-anis-star-unimplemented.md](design-anis-star-unimplemented.md)。残りは 9.3 節の論点 2（C2 を撮るか。オーナーの判断待ち）
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
 - ネオン：ビジョン・アイの S1 の火力爆発のゲージ（2026-11-08 起票）→ 完了（2026-11-08。S1 の火力爆発のゲージと弾の飛ぶ時間を入れた。2-59 を閉じた。残りは 2-62）: [design-neon-ve-s1-gauge.md](design-neon-ve-s1-gauge.md) 5 節
+- アニス：スター（17）の未対応の notes の解消（2026-11-08 起票）→ 完了（2026-11-08。未対応の notes は無くなった。C2 は問い不成立で打ち切り）: [design-anis-star-unimplemented.md](design-anis-star-unimplemented.md)
 - 全弾リロードの 1 回ごとの丸め（2026-11-07 起票）→ 実装済み（2026-11-07。案 E。残りは 2-59・2-60）: [design-reload-rounding.md](design-reload-rounding.md)
 - スキルのバフ・状態・回復の分類と、2 段目の語彙の段階（2026-10-14 起票）→ 完了（2026-11-07。段 1〜21 を閉じ、段 22 以降は起こさない。残りの未対応は 6 節と [skills.md](skills.md)）: [design-skill-catalog.md](design-skill-catalog.md)・[design-skill-stages.md](design-skill-stages.md)
 - 2026-10-29 のアップデートのキャラ（マリアン：クイーン・ラプンツェル：サンクチュアリ・紅蓮：神殺）の仮実装（2026-10-28 起票）→ 完了（2026-11-07。3 体とも撮影で確かめた）: [design-new-chars-1029.md](design-new-chars-1029.md) 10〜13 節
