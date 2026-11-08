@@ -266,6 +266,13 @@ export function ModernView({
   // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ
   // （同じニケをもう一度クリックすると待つのをやめる）
   const handleSelectCharacter = (resourceId: number) => {
+    // いまの編成のスロットにいるニケをクリックしたら、そのスロットから外す
+    const takenIndex = team.slots.findIndex((s) => s.resourceId === resourceId);
+    if (takenIndex !== -1) {
+      dispatch({ type: 'clearSlot', index: takenIndex });
+      setPendingId(null);
+      return;
+    }
     const emptyIndex = team.slots.findIndex((s) => s.resourceId === null);
     if (emptyIndex === -1) {
       setPendingId((id) => (id === resourceId ? null : resourceId));

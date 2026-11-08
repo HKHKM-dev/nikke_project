@@ -40,10 +40,11 @@ export function CharacterTrayItem({
       ref={setNodeRef}
       type="button"
       className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
-      // 置けないときは押しても何もしない。aria-disabled は useDraggable の attributes が付ける（disabled にすると
-      // アーティファクトのコメントで選べない）
-      onClick={isTaken ? undefined : onClick}
+      // いまの編成にいるニケは、クリックでスロットから外す（ModernView）。ドラッグはできない（useDraggable の disabled）が、
+      // クリックはできるので aria-disabled は付けない（attributes が付けるものを打ち消す）
+      onClick={onClick}
       {...attributes}
+      aria-disabled={undefined}
       {...listeners}
     >
       <span className="char-tray-item-visual">

@@ -1243,10 +1243,6 @@ header h1 {
   pointer-events: none;
   z-index: 3;
 }
-/* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
-.char-tray-item[aria-disabled='true'] {
-  cursor: not-allowed;
-}
 .char-tray-item-other-badge {
   position: absolute;
   top: 6px;
