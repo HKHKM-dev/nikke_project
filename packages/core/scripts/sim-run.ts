@@ -306,6 +306,12 @@ function withBuild(
 ): TeamSlotInput {
   const growth = entry?.growth ?? DEFAULT_GROWTH;
   if (entry === undefined) return { character, growth, condition, skills };
+  // 宝物の無いキャラの treasure（読み込みの index は宝物の有無を持たないので、ここでキャラのデータと突き合わせる）。段階が未確定（null）だと
+  // 段階 0 で回り、runSimulation の検査を通ってしまう。--treasure で段階を指定したら、それに任せる
+  if (entry.treasure != null && character.treasure === null && !treasurePhases.has(character.resourceId)) {
+    console.error(`build ${character.name.ja}: 宝物の無いキャラに treasure がある`);
+    process.exit(1);
+  }
   const { growth: _growth, skillLevels: _skillLevels, treasure, ...rest } = entry;
   if (treasure != null && treasure.phase === null && !treasurePhases.has(character.resourceId))
     console.warn(

@@ -5,6 +5,7 @@ import {
   BUILD_SNAPSHOT_FORMAT_VERSION,
   readBuildSnapshot,
   snapshotCombatPower,
+  snapshotCombatPowers,
   unknownTreasurePhaseCount,
   type BuildSnapshot,
   type SnapshotCharacter,
@@ -111,9 +112,25 @@ describe('readBuildSnapshot', () => {
     });
     bad.characters['10'] = { ...bad.characters['10']!, treasure: { tid: 200101, level: 0, phase: 1 as never } };
     expect(errorsOf(bad)).toEqual([
-      'characters.10.treasure.phase: 2・3・null でない（1）',
+      'characters.10.treasure.phase: Lv 0 なら null（1）',
       'characters.82.gear.head.overload[0].option: 知らない項目（"XXX"）',
     ]);
+  });
+
+  it('宝物の段階が Lv に合わないものは止める（Lv 0 は null、Lv 1・2 は段階 2・3）', () => {
+    const s = snapshot();
+    s.characters['10'] = { ...s.characters['10']!, treasure: { tid: 200101, level: 0, phase: 3 } };
+    s.characters['82'] = character({ treasure: { tid: 200101, level: 2, phase: 2 } });
+    expect(errorsOf(s)).toEqual([
+      'characters.10.treasure.phase: Lv 0 なら null（3）',
+      'characters.82.treasure.phase: Lv 2 なら 3（2）',
+    ]);
+    const missing = snapshot();
+    missing.characters['82'] = character({ treasure: { tid: 200101, level: 1 } as never });
+    expect(errorsOf(missing)).toEqual(['characters.82.treasure.phase: Lv 1 なら 2（なし）']);
+    const ok = snapshot();
+    ok.characters['82'] = character({ treasure: { tid: 200101, level: 2, phase: 3 } });
+    expect(read(ok).ok).toBe(true);
   });
 
   it('キャラのデータに無いキャラは飛ばし、写せなかった値と合わせて知らせる', () => {
@@ -132,7 +149,7 @@ it('unknownTreasurePhaseCount: 宝物の段階が未確定のキャラの数', (
   expect(unknownTreasurePhaseCount(snapshot())).toBe(1);
 });
 
-it('snapshotCombatPower: 1 体分の育成で computeCombatPower を呼ぶ', () => {
+describe('snapshotCombatPower', () => {
   const data = (path: string) => JSON.parse(readFileSync(new URL(`../../data/${path}`, import.meta.url), 'utf8'));
   const masters = Object.fromEntries(
     Object.entries(MASTER_FILES).map(([k, f]) => [k, data(`masters/${f}`) as unknown]),
@@ -142,11 +159,23 @@ it('snapshotCombatPower: 1 体分の育成で computeCombatPower を呼ぶ', () 
   )!.resourceId;
   const c = data(`characters/${id}.json`) as CharacterData;
   const entry = character({ cube: null, gear: emptyBuild().gear, treasure: null });
-  expect(snapshotCombatPower(c, entry, masters)).toEqual(
-    computeCombatPower(
-      c,
-      { growth: entry.growth, build: entry, skillLevels: entry.skillLevels, treasure: false },
-      masters,
-    ),
-  );
+
+  it('1 体分の育成で computeCombatPower を呼ぶ', () => {
+    expect(snapshotCombatPower(c, entry, masters)).toEqual(
+      computeCombatPower(
+        c,
+        { growth: entry.growth, build: entry, skillLevels: entry.skillLevels, treasure: false },
+        masters,
+      ),
+    );
+  });
+
+  it('宝物の無いキャラに treasure があれば止め、snapshotCombatPowers は出せなかったキャラにする', () => {
+    expect(c.treasure).toBeNull();
+    const withTreasure = { ...entry, treasure: { tid: 200101, level: 1, phase: 2 as const } };
+    expect(() => snapshotCombatPower(c, withTreasure, masters)).toThrow(RangeError);
+    const r = snapshotCombatPowers(snapshot({ characters: { [String(id)]: withTreasure } }), () => c, masters);
+    expect(r.powers.size).toBe(0);
+    expect(r.failures.map((f) => f.id)).toEqual([id]);
+  });
 });

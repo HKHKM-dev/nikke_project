@@ -1,4 +1,4 @@
-import { COMBAT_TABLE_FILE, type CombatPowerTable } from './combatTable.ts';
+import { COMBAT_TABLE_FILE, parseCombatPowerTable, type CombatPowerTable } from './combatTable.ts';
 import { parseEnemyPresets } from './enemies.ts';
 import {
   parseSkillDefinition,
@@ -92,9 +92,10 @@ export async function loadCharacter(resourceId: number, options: LoadOptions = {
   return fetchJson<CharacterData>(joinUrl(baseUrl, characterDataPath(resourceId)), fetchImpl);
 }
 
+/** 戦闘力の表。版と形を読み込み時に検証する（不正なら Error） */
 export async function loadCombatPowerTable(options: LoadOptions = {}): Promise<CombatPowerTable> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
-  return fetchJson<CombatPowerTable>(joinUrl(baseUrl, combatTablePath()), fetchImpl);
+  return parseCombatPowerTable(await fetchJson<unknown>(joinUrl(baseUrl, combatTablePath()), fetchImpl));
 }
 
 /** 定義済みキャラの一覧。手書き JSON なので読み込み時に検証する */

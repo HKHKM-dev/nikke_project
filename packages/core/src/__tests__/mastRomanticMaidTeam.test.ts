@@ -100,6 +100,28 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
 describeEveryShotInOneGroup(TEAMS);
 
+// timed の perCount は condition が無くても読み込みを通る。スタック数 0 の発火は出さないので、条件 selfState（ほろ酔い）を外しても同じ件になる
+describe('condition の無い timed の perCount', () => {
+  it('runs the first pass and gives the same pieces as with the selfState condition', () => {
+    const raw = structuredClone(
+      rawDefinition<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(MAST),
+    );
+    let removed = 0;
+    for (const entry of Object.values(raw.skills))
+      for (const effect of entry.effects) if (effect.perCount !== undefined && delete effect.condition) removed++;
+    expect(removed).toBeGreaterThan(0);
+    const base = team([82, MAST, 308]);
+    const input: TeamInput = { ...base, slots: base.slots.map((s, i) => (i === MAST_SLOT ? fixedSlot(MAST, raw) : s)) };
+    const perCountPieces = (t: TeamInput) =>
+      piecesOf(planTeamRun(t))
+        .filter((p) => p.sourceSlotIndex === MAST_SLOT && p.effect.source.skill !== 'skill1')
+        .map((p) => ({ slot: p.slotIndex, start: p.start, end: p.end, stat: p.effect.stat, value: p.effect.value }));
+    const expected = perCountPieces(base);
+    expect(expected.length).toBeGreaterThan(0);
+    expect(perCountPieces(input)).toEqual(expected);
+  });
+});
+
 // plan/design-maids.md 8 節（C-0974・C-0975）: 条件が自動の枠で射撃場の的なら、ほろ酔いの区間のコア命中率・弾丸命中率は的の▼の表の値
 describe('ほろ酔いの命中率▼（的の▼の表）', () => {
   const master = parseEnemyPresets(readJson<unknown>('../../data/enemies.json'));
