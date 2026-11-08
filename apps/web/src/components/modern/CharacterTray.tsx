@@ -131,6 +131,13 @@ export function CharacterTray({
               ))}
             </select>
           </label>
+          {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
+          {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
+            <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
+          )}
+          {listOrder.order === 'combatPower' && listOrder.failedCount > 0 && (
+            <span className="hint">戦闘力を出せない {listOrder.failedCount} 体は後ろに名前順で並べる</span>
+          )}
           <button type="button" className="char-tray-action-button" aria-disabled="true" title="フィルター（未実装）">
             フィルター<span className="char-tray-unimplemented">未実装</span>
           </button>

@@ -51,7 +51,8 @@ export function SettingsMenu({ uiMode, onSelectUiMode, roster, listOrder }: Prop
         ))}
       </fieldset>
       <RosterSettings {...roster} />
-      <ListOrderSettings {...listOrder} />
+      {/* モダン UI では、一覧の並びはニケ一覧の「並べ替え」で選ぶ（オーナーの指示で設定のメニューから外した） */}
+      {uiMode === 'classic' && <ListOrderSettings {...listOrder} />}
     </Popover>
   );
 }
