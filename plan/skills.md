@@ -58,11 +58,11 @@ notes の種類: 未対応 36・前提の外 45・計算に無関係 43・補足
   - effects[1] state・battleStart・myOwnStar（attack）: C-0189（確定）、C-0203（確定）、C-0555（確定）
   - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（確定）、C-0555（確定）
   - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（確定）、C-0555（確定）
-  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0413（確定）、C-0461（確定）、C-0992（仮説）
+  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0413（確定）、C-0461（確定）、C-0992（確定）
   - effects[5] burstReentry: C-0201（確定）、C-0203（確定）、C-0555（確定）
   - effects[6] state・battleStart・everyonesStar: C-0201（確定）、C-0203（確定）、C-0555（確定）
   - effects[7] allyGaugeAdd: C-0244（確定）、C-0245（確定）、C-0246（確定）、C-0620（確定）、C-0627（確定）
-  - notes[0] 補足: 通常攻撃の本体のバフは発射のフレームで、S1 の追加ダメージのバフは着弾のフレームで決まる（▲の付き始め・切れ目を跨いで飛ぶ発は、本体と追加ダメージで▲が食い違う。plan/design-anis-star-unimplemented.md 3 節）: C-0992（仮説）
+  - notes[0] 補足: 通常攻撃の本体のバフは発射のフレームで、S1 の追加ダメージのバフは着弾のフレームで決まる（▲の付き始め・切れ目を跨いで飛ぶ発は、本体と追加ダメージで▲が食い違う。plan/design-anis-star-unimplemented.md 3 節）: C-0992（確定）
   - notes[1] 補足: 部隊構成による効果の「みんなの星消去」「私だけの星消去」と、フルバーストタイム終了時の付け直しは書かない。編成で決まる入れ替えで、戦闘中は片方しか付かず、付け直しは持続の状態を延ばすだけなので、値は変わらない（plan/design-skill-stage1.md 2.1 節）: C-0189（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・attack: C-0204（確定）、C-0203（確定）、C-0555（確定）

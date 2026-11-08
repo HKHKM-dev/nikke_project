@@ -137,6 +137,20 @@ describe('parseGrids（版 3）', () => {
   });
 });
 
+describe('parseGrids（版 5）', () => {
+  it('射撃ごとの倍率ダメージの格子を読み、スキルの名前は受けない', () => {
+    expect(parseGrids('A=1@shot@1000;B=1@1000;BA=B+A')[0]).toEqual({
+      kind: 'shot',
+      name: 'A',
+      slot: 1,
+      frame: 1000,
+      stacks: [],
+      scales: [],
+    });
+    expect(() => parseGrids('A=1@shot@1000:skill1')).toThrow(/shot の格子にスキルは書かない/);
+  });
+});
+
 describe('gridsOf・sumValues', () => {
   const cell = (core: boolean, crit: boolean, distance: boolean, value: number) => ({ core, crit, distance, value });
   const m = {

@@ -415,8 +415,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       const own = ownShots[runner.index];
       if (own) {
         own.frames.push(f);
-        const value =
-          late === null ? damage : damage - segment.trigger.perShot + (late.frame < frames ? late.damage : 0);
+        const value = late === null ? damage : damage - segment.trigger.perShot + late.damage;
         own.value.push(own.value.at(-1)! + value);
         own.ratioValue.push(own.ratioValue.at(-1)! + value * segment.buffs.accumulateRatio);
       }
@@ -508,9 +507,9 @@ function settleAccumulates(
   });
 }
 
-/** 1 発のダメージ（区間の 1 トリガー値。Stage 22-B: 部分チャージの発は、その発のチャージの進みで出し直す） */
 /**
- * 射撃ごとの倍率ダメージを着弾で出す枠の、その発の射撃ごとの倍率ダメージ（着弾のフレームと、その区間の値）。ほかの枠は null
+ * 射撃ごとの倍率ダメージを着弾で出す枠の、その発の射撃ごとの倍率ダメージ（着弾のフレームと、その区間の値。戦闘の終わりの後に着く発は 0）。
+ * ほかの枠は null
  */
 function lateShotDamage(
   runner: Runner,
@@ -525,6 +524,7 @@ function lateShotDamage(
   return { frame: at, damage: runner.result.segments[k]!.trigger.perShot };
 }
 
+/** 1 発のダメージ（区間の 1 トリガー値。Stage 22-B: 部分チャージの発は、その発のチャージの進みで出し直す） */
 function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {
   const progress = runner.partial.get(frame);
   return progress === undefined
