@@ -23,8 +23,7 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
     },
     disabled: isTaken,
   });
-  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）。
-  // マウスを重ねたときの文（名前・戦闘力の title）は出さない
+  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）
   return (
     <button
       ref={setNodeRef}
@@ -44,7 +43,7 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
         )}
       </span>
       <span className="char-tray-item-name">{character.name.ja}</span>
-      {inOtherParty && !isTaken && <span className="char-tray-item-taken-badge">他の編成</span>}
+      {inOtherParty && !isTaken && <span className="char-tray-item-other-badge">他の編成</span>}
     </button>
   );
 }

@@ -224,8 +224,7 @@ export function ModernView({
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
-                awaitingPlacement={pendingId !== null}
-                onPlacePending={() => handlePlacePending(i)}
+                onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
                 onClear={() => dispatch({ type: 'clearSlot', index: i })}
                 partyTotalDamage={totals.parties[parties.active]?.total ?? null}

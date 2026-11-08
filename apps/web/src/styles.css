@@ -607,9 +607,28 @@ header h1 {
   font-size: 0.85rem;
 }
 
-/* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
 :root {
+  /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
+  /* スロットのカードの縦長の絵の高さ（.char-visual-portrait と空のスロットの枠） */
+  --slot-portrait-h: 240px;
+}
+/* 置き先待ちのスロット・ニケの水色の実線の枠 */
+.modern-slot-card.modern-slot-awaiting,
+.char-tray-item.char-tray-item-pending {
+  outline: 3px solid var(--placing-blue);
+  outline-offset: -1px;
+}
+/* 置き先待ちのスロットと、いまの編成にいるニケの絵に重ねる薄い水色 */
+.modern-slot-card.modern-slot-awaiting::after,
+.char-tray-item-taken .char-tray-item-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* 5スロットグリッド */
@@ -642,17 +661,6 @@ header h1 {
    実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
 .modern-slot-card.modern-slot-awaiting {
   cursor: pointer;
-  outline: 3px solid var(--placing-blue);
-  outline-offset: -1px;
-}
-.modern-slot-card.modern-slot-awaiting::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
-  pointer-events: none;
-  z-index: 2;
 }
 .modern-slot-target {
   position: absolute;
@@ -661,37 +669,34 @@ header h1 {
   left: 50%;
   width: 96px;
   height: 96px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(0.92);
   fill: none;
   stroke: #fff;
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
   pointer-events: none;
   z-index: 3;
+  /* 2 つの輪を 1 枚ごと脈打たせる（輪ごとに動かすより描き直しが少ない） */
+  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
 }
 .modern-slot-target-outer {
   stroke-width: 4;
-  transform-origin: 50% 50%;
-  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
 }
 .modern-slot-target-inner {
   stroke-width: 5;
-  transform-origin: 50% 50%;
-  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
 }
 @keyframes modern-slot-target-pulse {
   0%,
   100% {
-    transform: scale(0.92);
+    transform: translate(-50%, -50%) scale(0.92);
     opacity: 1;
   }
   50% {
-    transform: scale(1.04);
+    transform: translate(-50%, -50%) scale(1.04);
     opacity: 0.8;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-target-outer,
-  .modern-slot-target-inner {
+  .modern-slot-target {
     animation: none;
   }
 }
@@ -776,11 +781,8 @@ header h1 {
   justify-content: center;
   gap: 4px;
   opacity: 0.5;
-  /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ */
+  /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
-  height: var(--slot-portrait-h);
-  width: auto;
-  aspect-ratio: 1 / 2;
 }
 .modern-slot-empty-plus {
   font-size: 1.8rem;
@@ -873,15 +875,16 @@ header h1 {
   /* 右下の「未」の札に重ならないように下を空ける */
   padding-bottom: 16px;
 }
-/* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める */
-:root {
-  --slot-portrait-h: 240px;
-}
-.char-visual-portrait {
-  max-width: none;
+/* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
+   空のスロットの枠も同じ大きさにする */
+.char-visual-portrait,
+.modern-slot-empty-area {
   height: var(--slot-portrait-h);
   width: auto;
   aspect-ratio: 1 / 2;
+}
+.char-visual-portrait {
+  max-width: none;
   --badge-w: 24px;
 }
 .char-visual-img {
@@ -1023,16 +1026,11 @@ header h1 {
   padding: 4px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 0;
   cursor: pointer;
   color: inherit;
   position: relative;
 }
-/* 置き先を待っている間は、待っているニケに水色の実線の枠を付け、ほかのニケを暗くする */
-.char-tray-item.char-tray-item-pending {
-  outline: 3px solid var(--placing-blue);
-  outline-offset: -1px;
-}
+/* 置き先を待っている間は、ほかのニケを暗くする（待っているニケの枠は上の共通の規則） */
 .char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
   filter: brightness(0.4);
 }
@@ -1053,13 +1051,7 @@ header h1 {
   max-width: 72px;
 }
 .char-tray-item-taken .char-tray-item-visual::after {
-  content: '';
-  position: absolute;
-  inset: 0;
   border: 2px solid var(--placing-blue);
-  background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
-  pointer-events: none;
-  z-index: 2;
 }
 .char-tray-item-check {
   position: absolute;
@@ -1081,7 +1073,7 @@ header h1 {
 .char-tray-item:disabled {
   cursor: not-allowed;
 }
-.char-tray-item-taken-badge {
+.char-tray-item-other-badge {
   position: absolute;
   top: 6px;
   background: rgba(0, 0, 0, 0.8);

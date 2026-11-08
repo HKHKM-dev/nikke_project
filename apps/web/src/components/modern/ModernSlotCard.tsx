@@ -15,9 +15,8 @@ type Props = {
   slotResult: SlotResultView | null;
   /** このスロットのニケがほかの編成でも使われている */
   inOtherParty: boolean;
-  /** 一覧でクリックしたニケが、置くスロットのクリックを待っている */
-  awaitingPlacement: boolean;
-  onPlacePending: () => void;
+  /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
+  onPlacePending?: () => void;
   onOpenBuildModal: () => void;
   onClear: () => void;
   partyTotalDamage: number | null;
@@ -32,7 +31,6 @@ export function ModernSlotCard({
   error,
   slotResult,
   inOtherParty,
-  awaitingPlacement,
   onPlacePending,
   onOpenBuildModal,
   onClear,
@@ -40,6 +38,7 @@ export function ModernSlotCard({
 }: Props) {
   /** 操作キャラのスロット（「操作」の印を付ける） */
   const focused = slotIndex === DEFAULT_CONTROLLED_SLOT;
+  const awaitingPlacement = onPlacePending !== undefined;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
   const formattedDamage = formatDamage(currentDamage);
   const damagePercent =
@@ -78,7 +77,7 @@ export function ModernSlotCard({
     <div
       ref={setCardRef}
       className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
-      onClick={awaitingPlacement ? onPlacePending : undefined}
+      onClick={onPlacePending}
       {...(characterEntry ? attributes : {})}
       {...(characterEntry ? listeners : {})}
     >

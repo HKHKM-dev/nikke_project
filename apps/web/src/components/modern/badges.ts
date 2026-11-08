@@ -65,6 +65,9 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
   },
 ];
 
+/** キャラの絵の左上に出すバッジ（クラスは出さず、トレイの絞り込みにだけ使う） */
+export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = BADGE_KINDS.filter(({ key }) => key !== 'class');
+
 /** バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない） */
 export type BadgeFilters = Partial<Record<BadgeKey, string>>;
 
