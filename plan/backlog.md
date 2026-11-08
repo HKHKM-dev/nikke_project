@@ -82,10 +82,6 @@
 - 育成状況の JSON の読み込みで、宝物の段階と Lv の整合（Lv 0 で段階が 1 以上・宝物の無いキャラの treasure）を検査しない（`packages/core/src/buildSnapshot.ts`）
 - 画面: 戦闘力の表（`data/characters/combat.json`）の版と形を検査しない。形が違うと一覧の計算の例外が画面全体を落とす（`apps/web/src/useListOrder.ts`・`packages/core/src/combatTable.ts`）。デプロイの直後に古い JS と新しい表が混ざると起きうる
 - モダン UI: ニケ一覧から選ぶと、選択中のスロットのキャラを置き換えるが、配置先のスロットを示す表示が無い（#994 で消した。`apps/web/src/views/ModernView.tsx`・`components/modern/CharacterTray.tsx`）
-- `build:fetch`: 頻度の制限が HTTP 429 で返ったときと、code が文字列のときは呼び直さない（`tools/builds/fetch-lib.ts`・`fetch.ts`）。呼び直しの繰り返し（`fetch.ts` の `call`）にテストが無い
-- Drive の待ち: TypeError をすべて「待てば直る」とみるので、中のバグが待ちの上限の後の別の失敗に隠れる（`tools/captures/drive.ts` の `isTransientDriveError`）。intake の `Drive.connect()` に打ち切りの時間が無く、TimeoutError の分岐が効かない（`tools/captures/intake.ts`）
-- `tools/captures/reticle-ammo.ts`: box の 0 が読めないため、マガジンの替わり目は「読めない間が長い」ときだけ数え、短いリロードの後の上がりを同じマガジンに数えうる（推定）。このファイルにテストが無い（1 フレームだけ違う読みを落とす分岐・替わり目の判定・見本を作るときに飛ばす分岐）
-- `npm run badges:build`: 元のフォルダ（`apps/web/badges-src/`）が空だと、書き出し（`src/assets/badges/`）を全部消す（`apps/web/scripts/badges.ts`）。消す分岐にテストが無い
 - スキル定義: timed の `perCount` は、condition の無い定義でも読み込みを通り、1 パス目で例外になる（`packages/core/src/skills/holders.ts` の `holdsAt`）。いまのデータはどれも condition を付けている。読み込みで止めるか、condition 無しを扱う
 - 2026-11-07 の変更のテストの不足: `enemies.ts` の `parseHitRateDown` の不正な入力・`records/observations.ts` の `windowEndToFirstShot`・`skills/holders.ts` の leadFrames で同じ始まりに発が 2 つ以上ある場合・`cadence.ts` の変更後の武器の解放と増分が 0 以下の枝・確率の分岐（`whileItems` の stacks が数のとき・`validateChanceGrant` の敵・文脈・確率の状態に付与が 2 つ）・`useRoster`・`useListOrder` のフック・`normalize.ts` の `toTreasurePower` の例外・`calcView.ts` の宝物版の HP の比・`pr-prep.ts` の名前を変えたファイル
 
