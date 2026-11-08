@@ -1009,6 +1009,8 @@ header h1 {
 /* ニケ一覧の縦長の絵（portraits を一覧の幅に縮める。元の絵と同じ 1:2 の枠）。見た目はスロットの立ち絵（.char-visual-portrait）と同じで、
    左上にバッジを縦に、下部に名前と限界突破・コア強化を重ねる（CharacterTrayItem.tsx の TrayVisual） */
 .char-visual-tall {
+  /* 枠線を含めて一覧の幅に収める（含めないと 1px ずつはみ出し、配置中の水色の枠とずれる） */
+  box-sizing: border-box;
   max-width: var(--tray-visual-w);
   aspect-ratio: 1 / 2;
   /* バッジの大きさは四角（.char-visual の既定の 20px）と同じ */
