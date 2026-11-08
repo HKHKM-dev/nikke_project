@@ -132,3 +132,43 @@ describe('トーブの基礎版（宝物なし）', () => {
     }
   });
 });
+
+describe('トーブの基礎版の確率の件を、1 パス目でも期待値で読む', () => {
+  it('counts the expected crit hits of each shot with the S2 Critical Rate up × the probability (as the second pass does)', () => {
+    const { plan } = run();
+    const fa = plan.shots[1]!;
+    const base = character(301).crit.rate;
+    const crit = piecesOf(plan).filter(
+      (p) => p.slotIndex === 1 && (p.effect.stat === 'critRate' || p.effect.stat === 'normalCritRate'),
+    );
+    expect(fa.critHits!.length).toBeGreaterThan(100);
+    fa.critHits!.forEach((critHits, i) => {
+      const f = fa.frames[i]!;
+      const second = crit.filter((p) => p.start <= f && f < p.end).reduce((s, p) => s + p.effect.value, 0);
+      expect(critHits / fa.hits![i]! - base).toBeCloseTo(second, 9);
+    });
+  });
+});
+
+describe('確率の状態を読む側の stat の検査', () => {
+  const definition = () =>
+    readJson<{ skills: Record<string, { effects: Record<string, unknown>[] }> }>(`../../data/skills/${TOVE}.json`);
+
+  it('rejects a while passive on the chance state with a stat that does not add up linearly', () => {
+    for (const stat of ['reloadSpeed', 'hitRate', 'chargeSpeed']) {
+      const d = definition();
+      d.skills.skill2!.effects[0]!.stat = stat;
+      expect(() => parseSkillDefinition(d)).toThrow(/skill2\.effects\[0\]\.stat.*adds up linearly/);
+    }
+  });
+
+  it('rejects such a stat in the contents of a state whose stacks come from the chance state', () => {
+    const d = definition();
+    d.skills.burst!.effects[0]!.contents = [{ stat: 'reloadSpeed', ref: 1 }];
+    expect(() => parseSkillDefinition(d)).toThrow(/burst\.effects\[0\]\.contents\[0\]\.stat.*adds up linearly/);
+  });
+
+  it('accepts the definition as it is', () => {
+    expect(() => parseSkillDefinition(definition())).not.toThrow();
+  });
+});

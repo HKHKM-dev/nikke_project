@@ -4,7 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { makeCharacter } from '../../__tests__/fixtures.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import type { SkillRaw } from '../../types.ts';
-import { createHolderLists, itemsOf } from '../holders.ts';
+import { createHolderLists, itemsOf, valuePiecesOf } from '../holders.ts';
+import { ZERO_BUFFS } from '../buffs.ts';
 import { MAX_SKILL_LEVELS, resolveStackChanges, resolveTimed } from '../resolve.ts';
 import { stackItems } from '../stacks.ts';
 import type { TimelineSlot } from '../timeline.ts';
@@ -263,5 +264,48 @@ describe('件の一覧でのスタック数の条件と減少（skills/holders.t
     // 命中率▲（フルスタックの時だけ。10 秒）の件は段 1.5 にあり、当たりの件として読む（区間と同じ N）
     expect(lists.hitUpAt(0, 199)).toBe(0);
     expect(lists.hitUpAt(0, 200)).toBeCloseTo(0.5, 12);
+  });
+});
+
+describe('perCount の件の値を 1 パス目でも掛ける（skills/holders.ts）', () => {
+  // 戦闘開始時に 3 スタック、フルバーストの開始で 4 スタック。同じフレームに、リロード速度▲・命中率▲・会心率▲（どれも 50% × 発火の
+  // フレームのスタック数 = 2）
+  const perCount = (stat: string) => ({
+    kind: 'timed',
+    trigger: 'fullBurstStart',
+    target: 'self',
+    stat,
+    ref: 1,
+    durationRef: 2,
+    condition: { selfState: 'camouflage' },
+    perCount: { state: 'camouflage' },
+  });
+  const run = () => {
+    const lists = listsOf(
+      slotWith(
+        parsedEffects([
+          grant,
+          { kind: 'stackChange', state: 'camouflage', trigger: 'battleStart', target: 'self', amount: 3 },
+          perCount('reloadSpeed'),
+          perCount('hitRate'),
+          perCount('critRate'),
+        ]),
+      ),
+    );
+    lists.registerBattleStart();
+    lists.registerFrame(events(100, { fullBurstStart: true }));
+    return lists;
+  };
+
+  it('reads value × stacks in the firing buffs, the hit rate and the crit rate, as the second pass does', () => {
+    const lists = run();
+    // 2 パス目の小片（piecesOfTrack）と同じ値
+    const pieces = valuePiecesOf(lists.history());
+    for (const stat of ['reloadSpeed', 'hitRate', 'critRate'] as const)
+      expect(pieces.filter((p) => p.effect.stat === stat).map((p) => p.effect.value)).toEqual([2]);
+    const at = 100 + 1;
+    expect(lists.firingBuffsAt(0, at, ZERO_BUFFS)?.reloadSpeed).toBeCloseTo(2, 12);
+    expect(lists.hitUpAt(0, at)).toBeCloseTo(2, 12);
+    expect(lists.critUpAt(0, at)).toBeCloseTo(2, 12);
   });
 });

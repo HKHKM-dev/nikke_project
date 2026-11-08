@@ -2427,12 +2427,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         let buffs = base;
         let changed = false;
         for (const v of views) {
-          // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す
-          for (let k = activeAt(v.track, frame).length; k > 0; k--) {
+          // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
+          // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
+          for (const it of activeAt(v.track, frame)) {
+            const effect = it.scale === undefined ? v.effect : { ...v.effect, value: valueOf(v.effect, it) };
             buffs = applyResolvedEffect(
               buffs,
-              v.effect,
-              fixedAttackBaseOf(v.effect, v.track.casterBaseAttack, slots),
+              effect,
+              fixedAttackBaseOf(effect, v.track.casterBaseAttack, slots),
               v.track.casterMaxHp,
             ).totals;
             changed = true;
@@ -2487,8 +2489,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     hasFiringTracks: (holder) => hasFiring[holder] === true,
     hitUpAt(holder, frame) {
       let sum = 0;
+      // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
       for (const v of hitViews[holder] ?? []) {
-        for (let k = activeAt(v.track, frame).length; k > 0; k--) sum += v.effect.value;
+        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
       }
       return sum;
     },
@@ -2496,7 +2499,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     critUpAt(holder, frame) {
       let sum = 0;
       for (const v of critViews[holder] ?? []) {
-        for (let k = activeAt(v.track, frame).length; k > 0; k--) sum += v.effect.value;
+        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
       }
       return sum;
     },
