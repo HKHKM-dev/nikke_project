@@ -5,6 +5,8 @@
   --app-bg: light-dark(#eef1f7, #0b0f17);
   --app-fg: light-dark(#141a24, #e6eaf2);
   --app-border: light-dark(#c8d0dd, #2a3448);
+  /* スロットの枠の線の色（空のスロットの枠と、ニケがいるときの立ち絵の枠） */
+  --slot-frame-line: color-mix(in srgb, var(--app-fg) 45%, transparent);
   --m-surface: light-dark(#ffffff, #131a26);
   --m-surface-2: light-dark(#f3f5f9, #1b2433);
   --m-muted: light-dark(#5b6678, #8f9bb0);
@@ -113,11 +115,15 @@
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさをそろえる。
      枠線は実線で、内側の影を 1px 足して 2px の太さに見せる（箱の大きさを変えない） */
   box-sizing: content-box;
-  border: 1px solid var(--empty-slot-line);
-  box-shadow: inset 0 0 0 1px var(--empty-slot-line);
-  color: var(--empty-slot-line);
+  border: 1px solid var(--slot-frame-line);
+  box-shadow: inset 0 0 0 1px var(--slot-frame-line);
+  color: var(--slot-frame-line);
   opacity: 1;
-  --empty-slot-line: color-mix(in srgb, var(--app-fg) 45%, transparent);
+}
+/* ニケがいるときの立ち絵の枠（枠線と、外に足した 1px の線。styles.css）も、空のスロットの枠と同じ色にする */
+:root[data-app-ui='modern'] .char-visual-portrait {
+  border-color: var(--slot-frame-line);
+  outline-color: var(--slot-frame-line);
 }
 :root[data-app-ui='modern'] .modern-slot-damage-section {
   border: none;
