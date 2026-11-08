@@ -3,7 +3,7 @@
 - 関連: [skills.md](skills.md) の 17、[design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md) 3 節（誘導弾の飛ぶ時間）、[design-anis-star-core-path.md](design-anis-star-core-path.md) 3.2 節・11 節（シューティングスターのコア・窓の発のコア）、[design-skill-note-kinds.md](design-skill-note-kinds.md) 2.1 節（notes の種類）、[requirements.md](requirements.md)（敵の範囲）
 - 対象の結論: C-0413・C-0461（誘導弾の飛ぶ時間。確定）、C-0466（シューティングスターのコアの割合。確定）、C-0424（窓の発の形と割合。確定）、C-0425（遠の割合。仮説）。読み直しの出どころ: `0165-14`・`0320-13`（どちらも記録）
 - 作成日: 2026-11-08
-- 状態: オーナーの承認（2026-11-08。7 節の論点 1〜5 は推奨どおり）。A1・B-i・C1 を実装した（8 節）。A3 は V-0691 で確かめて実装し、C-0992 を確定にした（9.1・9.4 節）。C2 は撮るかがオーナーの判断待ち（9.3 節の論点 2）
+- 状態: 一部完了（8・9 節。残りは 9.3 節の論点 2）
 
 ## 1. 何が残っているか
 
