@@ -1042,6 +1042,8 @@ header h1 {
 .char-visual-portrait {
   max-width: none;
   --badge-w: 24px;
+  /* 枠を 1px 太く見せる（枠線の外に同じ色の線を 1px 足す。outline は並びの大きさを変えないので、空のスロットの枠と大きさがそろったまま） */
+  outline: 1px solid var(--app-border);
 }
 .char-visual-img {
   width: 100%;
