@@ -12,6 +12,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
+import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
 
 const BADGE_SRCS = import.meta.glob<string>(
   [
@@ -19,13 +20,30 @@ const BADGE_SRCS = import.meta.glob<string>(
     '../../assets/badges/burstStep_*.svg',
     '../../assets/badges/class_*.svg',
     '../../assets/badges/weaponType_*.svg',
+    '../../assets/badges/corporation_*.svg',
     '../../assets/badges/collection_*.svg',
+    '../../assets/badges/grade_*.svg',
+    '../../assets/badges/core_*.svg',
   ],
   { eager: true, import: 'default' },
 );
 
+/** バッジのファイル（拡張子なしの名前）の URL。無ければ読み込みで落とす */
+function badgeSrc(name: string): string {
+  const src = BADGE_SRCS[`../../assets/badges/${name}.svg`];
+  if (src === undefined) throw new Error(`バッジ ${name}.svg が assets/badges に無い`);
+  return src;
+}
+
+/** 限界突破の星（1 回分が埋まっているか）とコア強化の印のバッジ（GrowthMarks.tsx） */
+export const GROWTH_BADGE_SRC = {
+  gradeFilled: badgeSrc('grade_filled'),
+  gradeEmpty: badgeSrc('grade_empty'),
+  core: badgeSrc('core_plain'),
+} as const;
+
 /** バッジを出すキャラの項目 */
-export type BadgeKey = 'element' | 'burstStep' | 'class' | 'weaponType';
+export type BadgeKey = 'element' | 'burstStep' | 'class' | 'weaponType' | 'corporation';
 export type Badge = { src: string; label: string };
 export type BadgeKind = {
   key: BadgeKey;
@@ -72,6 +90,11 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
     name: '武器種',
     badges: badgesOf('weaponType', ['AR', 'SMG', 'SG', 'SR', 'RL', 'MG'], (v) => WEAPON_LABEL[v].ja),
   },
+  {
+    key: 'corporation',
+    name: '企業',
+    badges: badgesOf('corporation', CONSOLE_CORPORATIONS, (v) => CORPORATION_LABEL[v as ConsoleCorporation]),
+  },
 ];
 
 const kindOf = (key: BadgeKey): BadgeKind => BADGE_KINDS.find((kind) => kind.key === key)!;
@@ -92,11 +115,7 @@ export function collectionBadge(
   treasurePhase: TreasurePhase,
   hasTreasure: boolean,
 ): Badge | null {
-  const pick = (value: string, label: string): Badge => {
-    const src = BADGE_SRCS[`../../assets/badges/collection_${value}.svg`];
-    if (src === undefined) throw new Error(`バッジ collection_${value}.svg が assets/badges に無い`);
-    return { src, label };
-  };
+  const pick = (value: string, label: string): Badge => ({ src: badgeSrc(`collection_${value}`), label });
   if (hasTreasure && treasurePhase > 0) {
     return pick(treasurePhase === TREASURE_PHASE_MAX ? 'SSR-max' : 'SSR', `宝物 段階 ${treasurePhase}`);
   }

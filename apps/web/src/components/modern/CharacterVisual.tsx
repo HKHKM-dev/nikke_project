@@ -5,8 +5,11 @@ import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge
 type Props = {
   character: CharacterIndexEntry;
   isUnsupported?: boolean;
-  /** normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード） */
-  size?: 'normal' | 'compact' | 'portrait';
+  /**
+   * normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード）、
+   * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は portrait と同じ）
+   */
+  size?: 'normal' | 'compact' | 'portrait' | 'tall';
   /** バッジの列の最後に足すバッジ（スロットのコレクション） */
   extraBadge?: Badge | null;
   /** 絵の上に重ねるもの（ニケ一覧の右上の限界突破・コア強化） */
@@ -17,12 +20,12 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 /**
  * 読めなかった画像（画像の無い配信。アーティファクトなど）。同じ絵を出し直すたびに読みに行くと、読めないと分かるまでの数フレームは
- * 画像も名前の札も無い枠だけになる（スロットを入れ替えた瞬間に、枠だけが一瞬見える）ので、覚えておいてすぐ名前の札を出す
+ * 壊れた画像の枠になる（スロットを入れ替えた瞬間に、枠が一瞬見える）ので、覚えておいて 2 回目からは読みに行かない
  */
 const failedImages = new Set<string>();
 
 function BadgeImg({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
-  return <img className={className} src={badge.src} alt={badge.label} title={badge.label} draggable={false} />;
+  return <img className={className} src={badge.src} alt={badge.label} draggable={false} />;
 }
 
 export function CharacterVisual({
@@ -32,9 +35,10 @@ export function CharacterVisual({
   extraBadge = null,
   overlay = null,
 }: Props) {
-  const imageSrc = `${BASE_URL}characters/${size === 'portrait' ? 'portraits' : 'images'}/${character.resourceId}.webp`;
-  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。
-  // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
+  const imageDir = size === 'portrait' || size === 'tall' ? 'portraits' : 'images';
+  const imageSrc = `${BASE_URL}characters/${imageDir}/${character.resourceId}.webp`;
+  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
+  // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
   const [, rerender] = useReducer((n: number) => n + 1, 0);
@@ -45,11 +49,7 @@ export function CharacterVisual({
 
   return (
     <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-rarity={character.rarity}>
-      {failed ? (
-        <span className="char-visual-fallback" aria-hidden="true">
-          {character.name.ja}
-        </span>
-      ) : (
+      {!failed && (
         <img
           src={imageSrc}
           alt=""

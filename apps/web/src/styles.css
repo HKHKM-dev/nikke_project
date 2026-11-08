@@ -150,6 +150,17 @@ header h1 {
   height: 34px;
   padding: 0;
 }
+/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* アカウントのボタン（育成状況の読み書き）。高さは設定のボタンにそろえる */
+.account-menu-button {
+  height: 34px;
+  padding: 0 10px;
+}
 /* 敵の詳細設定 */
 .advanced-settings-button {
   padding: 3px 10px;
@@ -739,12 +750,15 @@ header h1 {
   min-height: 30px;
 }
 /* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
-.modern-slot-focus-icon {
-  width: 30px;
-  height: 30px;
+/* 絵（SVG）を型にして文字の色で塗るアイコン（components/maskIcon.ts の maskIconStyle が --icon に絵を渡す） */
+.mask-icon {
   background-color: currentColor;
   -webkit-mask: var(--icon) center / contain no-repeat;
   mask: var(--icon) center / contain no-repeat;
+}
+.modern-slot-focus-icon {
+  width: 30px;
+  height: 30px;
 }
 .modern-slot-other-party-badge {
   border: 1px solid currentColor;
@@ -809,13 +823,13 @@ header h1 {
   color: #fff;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-  pointer-events: none;
+  /* マウスの操作は受ける（アーティファクトのコメントで名前と限界突破を選べるように）。押したときのドラッグ・クリックはカードに届く */
   z-index: 1;
 }
 .modern-slot-char-name-track {
   display: inline-block;
 }
-/* 限界突破（★）とコア強化（+N・MAX）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
+/* 限界突破（星）とコア強化（01〜07）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
 .growth-marks {
   display: flex;
   justify-content: flex-end;
@@ -824,20 +838,37 @@ header h1 {
   font-size: 0.8rem;
   line-height: 1.1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_filled・grade_empty・core_plain）。大きさは置き場所で変える */
+  --growth-star-w: 13px;
+  --growth-core-w: 20px;
 }
 .growth-marks-star {
-  color: rgba(255, 255, 255, 0.35);
+  width: var(--growth-star-w);
+  height: var(--growth-star-w);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.8));
 }
-.growth-marks-star-on {
-  color: #facc15;
-}
+/* コアの印の中央（黒い丸）に段階（01〜07）を重ねる */
 .growth-marks-core {
-  margin-left: 3px;
-  padding: 0 3px;
-  font-size: 0.7rem;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--growth-core-w);
+  height: var(--growth-core-w);
+  margin-left: 2px;
+  font-size: 0.6rem;
+  font-weight: bold;
   color: #fff;
-  background: #7c3aed;
   text-shadow: none;
+}
+.growth-marks-core > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.growth-marks-core > span {
+  position: relative;
+  letter-spacing: -0.02em;
 }
 .char-tray-growth {
   position: absolute;
@@ -845,9 +876,13 @@ header h1 {
   right: 2px;
   z-index: 2;
   font-size: 0.65rem;
+  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
+  --growth-star-w: 9px;
+  --growth-core-w: 16px;
 }
-.char-tray-growth .growth-marks-core {
-  font-size: 0.6rem;
+.char-tray-growth .growth-marks-core,
+.char-tray-tall-area .growth-marks-core {
+  font-size: 0.42rem;
 }
 .modern-slot-char-name-scroll {
   text-align: left;
@@ -973,10 +1008,29 @@ header h1 {
 .char-visual-compact {
   max-width: var(--tray-visual-w);
 }
-.char-visual-compact .char-visual-fallback {
-  font-size: 0.65rem;
-  /* 右下の「未」の札に重ならないように下を空ける */
-  padding-bottom: 16px;
+/* ニケ一覧の縦長の絵（portraits を一覧の幅に縮める。元の絵と同じ 1:2 の枠）。見た目はスロットの立ち絵（.char-visual-portrait）と同じで、
+   左上にバッジを縦に、下部に名前と限界突破・コア強化を重ねる（CharacterTrayItem.tsx の TrayVisual） */
+.char-visual-tall {
+  /* 枠線を含めて一覧の幅に収める（含めないと 1px ずつはみ出し、配置中の水色の枠とずれる） */
+  box-sizing: border-box;
+  max-width: var(--tray-visual-w);
+  aspect-ratio: 1 / 2;
+}
+/* 「未」の札は、下部に重ねる名前の行の上に出す */
+.char-visual-tall .char-unsupported-tag {
+  bottom: calc(40px + var(--rarity-band-h));
+}
+.char-tray-tall-area {
+  width: 100%;
+}
+.char-tray-tall-area .modern-slot-char-name {
+  padding: 6px 4px 2px;
+  font-size: 0.7rem;
+}
+/* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
+.char-tray-tall-area .growth-marks {
+  --growth-star-w: 9px;
+  --growth-core-w: 16px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -996,23 +1050,6 @@ header h1 {
   object-fit: cover;
   position: absolute;
   inset: 0;
-}
-.char-visual-fallback {
-  /* 左のバッジの列に名前が重ならないように空ける */
-  padding: 4px 4px 4px calc(var(--badge-w) + 4px);
-  text-align: center;
-  z-index: 1;
-  font-size: 0.8rem;
-  font-weight: bold;
-  line-height: 1.2;
-  /* 名前の長いキャラは、枠の外へはみ出さずに行数で切る */
-  min-width: 0;
-  overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
-  overflow: hidden;
 }
 /* 属性・バースト段階・クラス・武器種のバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w */
 .char-visual-badges {
@@ -1105,7 +1142,7 @@ header h1 {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
 }
-/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターと切り替えは未実装の置き場所） */
+/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターは未実装の置き場所） */
 .char-tray-actions {
   display: flex;
   gap: 6px;
@@ -1121,8 +1158,16 @@ header h1 {
   font-size: 0.85rem;
   padding: 1px 4px;
 }
+/* 縦長・四角の切り替えで、いまの形を強く出す */
+.char-tray-shape-button > span:not(.char-tray-shape-current) {
+  opacity: 0.45;
+}
+.char-tray-shape-current {
+  font-weight: bold;
+}
+/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
-  cursor: not-allowed;
+  cursor: default;
   opacity: 0.6;
 }
 .char-tray-unimplemented {
@@ -1135,10 +1180,6 @@ header h1 {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-}
-.char-tray-search {
-  padding: 4px 8px;
-  font-size: 0.85rem;
 }
 .char-tray-filter-group {
   display: flex;
@@ -1167,13 +1208,6 @@ header h1 {
 }
 .char-tray-badge-filter:has([aria-pressed='true']) .char-tray-badge-button[aria-pressed='false'] {
   opacity: 0.35;
-}
-.char-tray-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.85rem;
-  cursor: pointer;
 }
 /* 列は立ち絵の幅（と左右の余白 2px・枠線 1px）で固定し、間を詰めて中央に寄せる */
 .char-tray-list {
@@ -1224,6 +1258,7 @@ header h1 {
   max-width: var(--tray-visual-w);
 }
 .char-tray-item-taken .char-tray-item-visual::after {
+  /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
   border: 2px solid var(--placing-blue);
 }
 .char-tray-item-check {
@@ -1233,14 +1268,15 @@ header h1 {
   width: 60%;
   height: 60%;
   transform: translate(-50%, -50%);
-  fill: none;
-  stroke: var(--placing-blue);
-  stroke-width: 3.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: flex;
   filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
   pointer-events: none;
   z-index: 3;
+}
+/* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
+.char-tray-item-check > .mask-icon {
+  flex: 1;
+  color: var(--placing-blue);
 }
 .char-tray-item-other-badge {
   position: absolute;

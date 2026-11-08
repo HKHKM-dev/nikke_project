@@ -35,9 +35,27 @@ describe('バッジの対応表', () => {
 });
 
 describe('バッジの絞り込み', () => {
-  const fireAR = { element: 'Fire', burstStep: 'Step3', class: 'Attacker', weaponType: 'AR' } as const;
-  const electricSG = { element: 'Electronic', burstStep: 'Step3', class: 'Supporter', weaponType: 'SG' } as const;
-  const ironSMG = { element: 'Iron', burstStep: 'Step1', class: 'Supporter', weaponType: 'SMG' } as const;
+  const fireAR = {
+    element: 'Fire',
+    burstStep: 'Step3',
+    class: 'Attacker',
+    weaponType: 'AR',
+    corporation: 'ELYSION',
+  } as const;
+  const electricSG = {
+    element: 'Electronic',
+    burstStep: 'Step3',
+    class: 'Supporter',
+    weaponType: 'SG',
+    corporation: 'TETRA',
+  } as const;
+  const ironSMG = {
+    element: 'Iron',
+    burstStep: 'Step1',
+    class: 'Supporter',
+    weaponType: 'SMG',
+    corporation: 'TETRA',
+  } as const;
   const chars = [fireAR, electricSG, ironSMG];
   const pass = (filters: BadgeFilters) => chars.filter((c) => matchesBadgeFilters(c, filters));
 
@@ -47,6 +65,10 @@ describe('バッジの絞り込み', () => {
 
   it('1 つの値を選ぶと、その値のキャラだけが通る', () => {
     expect(pass(toggleBadgeFilter({}, 'weaponType', 'SG'))).toEqual([electricSG]);
+  });
+
+  it('企業でも絞れる', () => {
+    expect(pass(toggleBadgeFilter({}, 'corporation', 'TETRA'))).toEqual([electricSG, ironSMG]);
   });
 
   it('同じ値をもう一度押すと解除される', () => {

@@ -124,6 +124,14 @@ export type TeamState = {
 /** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
 export const CONSOLE_CORPORATIONS = ['ELYSION', 'MISSILIS', 'TETRA', 'PILGRIM', 'ABNORMAL'] as const;
 export type ConsoleCorporation = (typeof CONSOLE_CORPORATIONS)[number];
+/** 企業の名前（コンソールの企業研究・ニケ一覧の企業の絞り込み） */
+export const CORPORATION_LABEL: Record<ConsoleCorporation, string> = {
+  ELYSION: 'エリシオン',
+  MISSILIS: 'ミシリス',
+  TETRA: 'テトラ',
+  PILGRIM: 'ピルグリム',
+  ABNORMAL: 'アブノーマル',
+};
 export const CONSOLE_CLASSES: readonly NikkeClass[] = NIKKE_CLASSES;
 
 /** コンソール: 共通研究・クラス研究・企業研究の Lv */

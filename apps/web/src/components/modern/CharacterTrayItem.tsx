@@ -1,7 +1,12 @@
 import { useDraggable } from '@dnd-kit/core';
+import type { ReactNode } from 'react';
+import checkIcon from '../../assets/badges/ui_check.svg';
+import { maskIconStyle } from '../maskIcon.ts';
 import type { CharacterIndexEntry } from '@nikke/core';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
+import type { TrayShape } from '../../trayShape.ts';
+import { SlotCharName } from './ModernSlotCard.tsx';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -14,8 +19,72 @@ type Props = {
   isPending: boolean;
   /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
   growthMarks: GrowthMarks | null;
+  /** 立ち絵の形（四角・縦長） */
+  shape: TrayShape;
   onClick: () => void;
 };
+
+/**
+ * ニケ一覧の絵（一覧の項目と、一覧から持ち上げた絵）。四角は顔の絵に、右上の限界突破・コア強化。縦長はスロットと同じ見た目
+ * （左上に属性・武器種・バースト段階のバッジを縦に、下部に名前と限界突破・コア強化を重ねる）を一覧の幅に縮めたもの
+ */
+function TrayVisual({
+  character,
+  isUnsupported,
+  growthMarks,
+  shape,
+}: {
+  character: CharacterIndexEntry;
+  isUnsupported: boolean;
+  growthMarks: GrowthMarks | null;
+  shape: TrayShape;
+}) {
+  if (shape === 'tall') {
+    return (
+      <div className="modern-slot-char-area char-tray-tall-area">
+        <CharacterVisual character={character} isUnsupported={isUnsupported} size="tall" />
+        <SlotCharName name={character.name.ja} marks={growthMarks} />
+      </div>
+    );
+  }
+  return (
+    <CharacterVisual
+      character={character}
+      isUnsupported={isUnsupported}
+      size="compact"
+      overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
+    />
+  );
+}
+
+/**
+ * ニケ一覧の項目の見た目（絵の枠と、四角のときは絵の下の名前）。一覧の項目と、一覧から持ち上げた絵（ModernView）が使う。
+ * overlay は絵の上に重ねるもの（配置中の ✓）
+ */
+export function TrayItemFace({
+  character,
+  isUnsupported,
+  growthMarks,
+  shape,
+  overlay,
+}: {
+  character: CharacterIndexEntry;
+  isUnsupported: boolean;
+  growthMarks: GrowthMarks | null;
+  shape: TrayShape;
+  overlay?: ReactNode;
+}) {
+  return (
+    <>
+      <span className="char-tray-item-visual">
+        <TrayVisual character={character} isUnsupported={isUnsupported} growthMarks={growthMarks} shape={shape} />
+        {overlay}
+      </span>
+      {/* 縦長は名前を絵に重ねるので、下には出さない */}
+      {shape === 'square' && <span className="char-tray-item-name">{character.name.ja}</span>}
+    </>
+  );
+}
 
 export function CharacterTrayItem({
   character,
@@ -24,6 +93,7 @@ export function CharacterTrayItem({
   isUnsupported,
   isPending,
   growthMarks,
+  shape,
   onClick,
 }: Props) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -47,20 +117,20 @@ export function CharacterTrayItem({
       aria-disabled={undefined}
       {...listeners}
     >
-      <span className="char-tray-item-visual">
-        <CharacterVisual
-          character={character}
-          isUnsupported={isUnsupported}
-          size="compact"
-          overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
-        />
-        {isTaken && (
-          <svg className="char-tray-item-check" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 12.5l5 5L20 6.5" />
-          </svg>
-        )}
-      </span>
-      <span className="char-tray-item-name">{character.name.ja}</span>
+      <TrayItemFace
+        character={character}
+        isUnsupported={isUnsupported}
+        growthMarks={growthMarks}
+        shape={shape}
+        overlay={
+          isTaken && (
+            // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（白い縁取りは外側の箱に付ける。型で切ると縁取りも切れるので）
+            <span className="char-tray-item-check" aria-hidden="true">
+              <span className="mask-icon" style={maskIconStyle(checkIcon)} />
+            </span>
+          )
+        }
+      />
       {inOtherParty && !isTaken && <span className="char-tray-item-other-badge">他の編成</span>}
     </button>
   );

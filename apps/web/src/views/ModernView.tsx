@@ -21,17 +21,14 @@ import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
+import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
-import {
-  GrowthMarksView,
-  growthMarksOf,
-  trayGrowthMarks,
-  type GrowthMarks,
-} from '../components/modern/GrowthMarks.tsx';
+import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
+import { useTrayShape } from '../trayShape.ts';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -43,7 +40,7 @@ const returnSideEffects = defaultDropAnimationSideEffects({ className: { active:
 const dropState: { targetIndex: number | null; placed: boolean } = {
   // スロットどうしを入れ替えた先のスロット（入れ替えていなければ null）
   targetIndex: null,
-  // 一覧のニケをスロットに置いた（一覧へ戻るアニメーションはしない）
+  // 持ち上げたものの行き先が決まった（一覧のニケをスロットに置いた・スロットのニケを一覧へ戻して外した）。元へ戻るアニメーションはしない
   placed: false,
 };
 
@@ -126,7 +123,7 @@ function slideInto(from: Element, target: Element, ready: Promise<void>): () => 
  * 落とした先のスロットへ滑り込ませる（slideInto）。どちらも着くまで行き先の絵は隠す（modern-slot-arriving）
  */
 const DROP_ANIMATION: DropAnimation = {
-  // 一覧のニケをスロットに置いたときは動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
+  // 行き先が決まったとき（dropState.placed）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
   keyframes: ({ transform: { initial, final } }) => {
     const at = (t: typeof initial) => ({
       transform: `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`,
@@ -198,6 +195,9 @@ export function ModernView({
 }: ViewProps) {
   // キャラクターインデックスを ID で引けるマップを作成
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
+
+  // ニケ一覧の立ち絵の形（四角・縦長）。ブラウザに覚える
+  const [trayShape, toggleTrayShape] = useTrayShape();
 
   // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
   const [pendingId, setPendingId] = useState<number | null>(null);
@@ -296,6 +296,8 @@ export function ModernView({
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
       if (activeData.type === 'slot-character' && activeData.character) {
+        // 外したニケはスロットへ戻らないので、戻るアニメーションはしない
+        dropState.placed = true;
         dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
       }
       return;
@@ -429,6 +431,8 @@ export function ModernView({
           roster={roster}
           fixedSpec={team.fixedSpec}
           listOrder={listOrder}
+          shape={trayShape}
+          onToggleShape={toggleTrayShape}
           onSelectCharacter={handleSelectCharacter}
         />
 
@@ -489,14 +493,12 @@ export function ModernView({
           ) : draggedCharacter ? (
             <div className="char-drag-overlay">
               {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
-              <span className="char-tray-item-visual">
-                <CharacterVisual
-                  character={draggedCharacter}
-                  size="compact"
-                  overlay={draggedMarks && <GrowthMarksView {...draggedMarks} className="char-tray-growth" />}
-                />
-              </span>
-              <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>
+              <TrayItemFace
+                character={draggedCharacter}
+                isUnsupported={false}
+                growthMarks={draggedMarks}
+                shape={trayShape}
+              />
             </div>
           ) : null}
         </DragOverlay>

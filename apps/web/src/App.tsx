@@ -10,6 +10,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { ComputeCache } from './compute.ts';
 import { buildCalcView, slotResultFor } from './calcView.ts';
 import { type NotesSummarySlot } from './components/NotesSummary.tsx';
+import { AccountMenu } from './components/AccountMenu.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { INITIAL_TEAM_STATE, STORAGE_KEY, parseTeamState, serializeTeamState, teamReducer } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
@@ -211,12 +212,10 @@ export function App() {
     <main className="app">
       <header className="app-header">
         <h1>NIKKE ダメージ計算</h1>
-        <SettingsMenu
-          uiMode={uiMode}
-          onSelectUiMode={setUiMode}
-          roster={rosterControls}
-          listOrder={listOrderControls}
-        />
+        <div className="app-header-actions">
+          <AccountMenu roster={rosterControls} />
+          <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} listOrder={listOrderControls} />
+        </div>
       </header>
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}

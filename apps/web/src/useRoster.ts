@@ -92,7 +92,8 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     const next = applyRoster(team, parties, read.snapshot);
     dispatch({ type: 'replace', state: next.team });
     setParties(next.parties);
-    setMessage({ kind: 'ok', lines: importSummary(read.snapshot, read.notices) });
+    const lines = importSummary(read.snapshot, read.notices);
+    setMessage(lines.length > 0 ? { kind: 'ok', lines } : null);
   };
 
   const exportFile = () => {
