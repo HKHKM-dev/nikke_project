@@ -248,6 +248,8 @@ export type HolderHistory = {
   /** 条件を満たさずに発火しなかった記録（フレームの順。強化の受け付けなかった発火も入る） */
   conditionSkips: readonly ConditionSkip[];
   rankings: readonly RankingRecord[];
+  /** 課題 2-59: デバフ解除の対象を、選び方を確かめていない決め打ちで選んだ記録（フレームの順） */
+  removeDebuffGuesses: readonly RemoveDebuffGuessRecord[];
   /** 回復の記録（回復を起こした適用。吸収回復の付き直しは入らない） */
   heals: readonly HealRecord[];
   /** ループで分かったフルバーストの窓（終わりで閉じる件を作り直すのに使う） */
@@ -256,6 +258,48 @@ export type HolderHistory = {
   /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値が変わった記録（フレームの順。value は変わった後の値） */
   counters: readonly CounterRecord[];
 };
+
+/**
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除の選び方を確かめていない所。targets は debuffedRandom でデバフのかかった味方が
+ * N 機より多い（実機ではランダム）、states は味方に印の付いた状態が count 個より多く付いている
+ */
+export type RemoveDebuffGuess = 'targets' | 'states';
+
+/** 課題 2-59: デバフ解除の決め打ちの記録 1 つ。limit は、超えた数（targets なら N、states なら count） */
+export type RemoveDebuffGuessRecord = {
+  /** 効いたフレーム */
+  frame: number;
+  sourceSlotIndex: number;
+  effect: { source: ResolvedEffect['source']; effectIndex: number };
+  guess: RemoveDebuffGuess;
+  limit: number;
+};
+
+/**
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除で外す状態を選ぶ。held は枠ごとの、効いている印の付いた状態（とその最も早い
+ * 始まり）。pick（debuffedRandom の N）があれば状態のある枠から N 機、無ければ全員。枠ごとに状態を count 個。選び方を確かめていない所は
+ * 決め打ち（N 機より多ければ枠の若い順、count 個より多ければ付いたのが早い順）で、guesses に出す
+ */
+export function pickRemoveDebuff<T>(
+  held: readonly (readonly { tracks: T; firstStart: number }[])[],
+  count: number,
+  pick: number | undefined,
+): { chosen: T[]; guesses: RemoveDebuffGuess[] } {
+  const guesses: RemoveDebuffGuess[] = [];
+  let targets = held.filter((states) => states.length > 0);
+  if (pick !== undefined && targets.length > pick) {
+    guesses.push('targets');
+    targets = targets.slice(0, pick);
+  }
+  if (targets.some((states) => states.length > count)) guesses.push('states');
+  const chosen = targets.flatMap((states) =>
+    [...states]
+      .sort((a, b) => a.firstStart - b.firstStart)
+      .slice(0, count)
+      .map((s) => s.tracks),
+  );
+  return { chosen, guesses };
+}
 
 /** 2 段目の段 10: カウンタの値が変わった記録 1 つ */
 /**
@@ -997,6 +1041,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const applications: AppliedRecord[] = [];
   const conditionSkips: ConditionSkip[] = [];
   const rankings: RankingRecord[] = [];
+  const removeDebuffGuesses: RemoveDebuffGuessRecord[] = [];
   const heals: HealRecord[] = [];
   const amplifiers: AmplifierSource[] = [];
 
@@ -1948,12 +1993,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       closeTrack(track, frame);
     }
   };
-  /**
-   * 課題 2-59: デバフ解除の発火 1 つ。発火のフレーム at に効いている、味方のデバフの印の付いた状態の件（解除不可を除く）を、対象の味方ごとに
-   * 状態を count 個まで（付いたのが早い順）、スタックごと閉じる
-   */
   /** 課題 2-59: 持ち主ごとの、デバフの印の付いた状態（解除不可を除く）の件の列。件の列は組み立ての後に増えないので、初めての発火で作る */
   let debuffTracks: Map<NamedStateId, HeldTrack[]>[] | undefined;
+  /**
+   * 課題 2-59: 遅れ（delayFrames）のあるデバフ解除の予約（効くフレーム → 解除）。対象は、ループがそのフレームに来た時に、そのフレームまでに
+   * 付いた状態で選ぶ（発火のフレームで先読みすると、遅れの間に付いた状態が件の列にまだ無い）
+   */
+  const pendingRemoveDebuffs = new Map<number, RemoveDebuffSource[]>();
+  /**
+   * 課題 2-59: デバフ解除の効くフレーム at（ループがいるフレーム）に効いている、味方のデバフの印の付いた状態の件（解除不可を除く）を、
+   * 対象の味方ごとに状態を count 個まで、スタックごと閉じる（選び方は pickRemoveDebuff）
+   */
   const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
     debuffTracks ??= slots.map((_, holder) => {
       const byState = new Map<NamedStateId, HeldTrack[]>();
@@ -1968,18 +2018,24 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return byState;
     });
     // 持ち主ごとに、at に効いている状態と、その最も早い始まり
-    let targets = debuffTracks
-      .map((byState) =>
-        [...byState.values()].flatMap((ts) => {
-          const starts = ts.flatMap((t) => activeAt(t, at).map((it) => it.start));
-          return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
-        }),
-      )
-      .filter((states) => states.length > 0);
-    if (src.effect.target === 'debuffedRandom') targets = targets.slice(0, src.effect.pick);
-    for (const states of targets) {
-      states.sort((a, b) => a.firstStart - b.firstStart);
-      for (const { tracks: ts } of states.slice(0, src.effect.count)) for (const track of ts) closeTrack(track, at);
+    const held = debuffTracks.map((byState) =>
+      [...byState.values()].flatMap((ts) => {
+        const starts = ts.flatMap((t) => activeAt(t, at).map((it) => it.start));
+        return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
+      }),
+    );
+    const { effect } = src;
+    const pick = effect.target === 'debuffedRandom' ? effect.pick : undefined;
+    const { chosen, guesses } = pickRemoveDebuff(held, effect.count, pick);
+    for (const ts of chosen) for (const track of ts) closeTrack(track, at);
+    for (const guess of guesses) {
+      removeDebuffGuesses.push({
+        frame: at,
+        sourceSlotIndex: src.sourceSlotIndex,
+        effect: { source: effect.source, effectIndex: effect.effectIndex },
+        guess,
+        limit: guess === 'targets' ? pick! : effect.count,
+      });
     }
   };
   /**
@@ -2294,10 +2350,22 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
-    // 課題 2-59: デバフ解除（解除と同じく、閉じるのは発火の次のフレーム）
+    // 課題 2-59: デバフ解除（解除と同じく、閉じるのは効くフレームの次のフレーム）。遅れのある解除は効くフレームに予約し、そのフレームで
+    // 対象を選ぶ（予約した解除を先に）
+    const due = battleStartOnly ? undefined : pendingRemoveDebuffs.get(f);
+    if (due !== undefined) {
+      pendingRemoveDebuffs.delete(f);
+      for (const r of due) fireRemoveDebuff(r, f);
+    }
     for (const r of removeDebuffSources) {
       if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
-      fireRemoveDebuff(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f, r.effect.delayFrames));
+      const at = battleStartOnly ? 0 : startOfFire(r.effect.trigger, f, r.effect.delayFrames);
+      if (at === f) fireRemoveDebuff(r, at);
+      else if (at < frames) {
+        const list = pendingRemoveDebuffs.get(at);
+        if (list === undefined) pendingRemoveDebuffs.set(at, [r]);
+        else list.push(r);
+      }
     }
     // 2 段目の段 3: スタック量の増減（増加は状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方。減少は次のフレームで切るので、
     // 段の中の順は同じフレームの判定に効かない）
@@ -2603,6 +2671,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           .sort((a, b) => a.x.frame - b.x.frame || a.i - b.i)
           .map(({ x }) => x),
         rankings,
+        removeDebuffGuesses,
         heals,
         fullBurstWindows: [...options.fullBurstWindows()],
         logs,

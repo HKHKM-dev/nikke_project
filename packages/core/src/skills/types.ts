@@ -2002,10 +2002,11 @@ export type RemoveStateEffect = {
 };
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: 「デバフ効果解除 N 個」。発火のフレームに、対象の味方ごとに、デバフの印の付いた状態
- * （skills/states.ts の debuff）を count 個、スタックごと外す（解除不可の件は外さない）。target は味方全体（allies）か、デバフのかかった
- * 味方からランダムに N 機（debuffedRandom。N は targetCount / targetCountRef。デバフのかかった味方が N 機以下なら全員。より多いときは選び方を確かめていないので、
- * 枠の若い順）。状態が count 個より多く付いた味方では、付いたのが早い順（確かめていない）
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: 「デバフ効果解除 N 個」。効くフレーム（発火のフレーム。delayFrames があればその後）に、
+ * そのフレームまでに付いた状態から、対象の味方ごとに、デバフの印の付いた状態（skills/states.ts の debuff）を count 個、スタックごと外す
+ * （解除不可の件は外さない）。target は味方全体（allies）か、デバフのかかった味方からランダムに N 機（debuffedRandom。N は
+ * targetCount / targetCountRef。デバフのかかった味方が N 機以下なら全員。より多いときは選び方を確かめていないので、枠の若い順）。状態が
+ * count 個より多く付いた味方では、付いたのが早い順（確かめていない）。決め打ちで選んだ時は sim の枠の注記を出す
  */
 export type RemoveDebuffEffect = TargetCountFields & {
   kind: 'removeDebuff';

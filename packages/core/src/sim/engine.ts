@@ -37,7 +37,7 @@ import {
   type LandingFrameSpan,
 } from '../frame/landing.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type ItemEffect } from '../skills/resolve.ts';
-import { valuePiecesOf } from '../skills/holders.ts';
+import { valuePiecesOf, type RemoveDebuffGuessRecord } from '../skills/holders.ts';
 import { isStateStat } from '../skills/types.ts';
 import { combineBurstHitParts, slotBurstHit, withSkillHitValue, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
@@ -304,6 +304,7 @@ export function runSimulation(simInput: SimInput): SimResult {
           ...modelNotes(slot.character.shot),
           ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
           ...autoAttackCoreRowNotes(slot, enemy),
+          ...removeDebuffNotes(history, index),
         ],
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
@@ -530,6 +531,38 @@ function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): num
   return progress === undefined
     ? segment.trigger.perTrigger
     : partialChargeTriggerDamage(segment.trigger, progress).perTrigger;
+}
+
+/**
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: この枠のデバフ解除が、選び方を確かめていない決め打ちで対象を選んだ注記（効果と決め打ちの
+ * 種類ごとに 1 つ）。今の使い手では起きない
+ */
+function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): ModelNote[] {
+  const groups = new Map<string, { record: RemoveDebuffGuessRecord; times: number }>();
+  for (const record of history.removeDebuffGuesses) {
+    if (record.sourceSlotIndex !== slotIndex) continue;
+    const key = `${record.effect.source.skill}:${record.effect.effectIndex}:${record.guess}`;
+    const group = groups.get(key);
+    if (group === undefined) groups.set(key, { record, times: 1 });
+    else group.times++;
+  }
+  return [...groups.values()].map(({ record: { effect, guess, limit }, times }) => {
+    const { ja: nameJa, en: nameEn } = effect.source.name;
+    return {
+      level: 'approx',
+      code: `remove-debuff-${guess}`,
+      message:
+        guess === 'targets'
+          ? {
+              ja: `デバフ解除（${nameJa}）で、デバフのかかった味方が ${limit} 機より多い時が ${times} 回あった。実機ではランダムで、選び方を確かめていないので、枠の若い順に ${limit} 機を選んだ`,
+              en: `Debuff removal (${nameEn}) found more than ${limit} debuffed allies ${times} time(s). The game picks at random and the rule is unverified; the model picks the first ${limit} slots`,
+            }
+          : {
+              ja: `デバフ解除（${nameJa}）で、デバフの状態が ${limit} 個より多く付いた味方がいた時が ${times} 回あった。選び方を確かめていないので、付いたのが早い順に ${limit} 個を外した`,
+              en: `Debuff removal (${nameEn}) found an ally with more than ${limit} debuffs ${times} time(s). The rule is unverified; the model removes the ${limit} earliest`,
+            },
+    };
+  });
 }
 
 /**

@@ -9,7 +9,15 @@ import { runSimulation } from '../sim/engine.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, stateItemsOf, statePiecesOf } from './historyHelpers.ts';
-import { describeEveryShotInOneGroup, fixedTeam, readJson, skillValueOf, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
+import {
+  describeEveryShotInOneGroup,
+  fixedSlot,
+  fixedTeam,
+  rawDefinition,
+  readJson,
+  skillValueOf,
+  SHOOTING_RANGE_ENEMY,
+} from './teamHelpers.ts';
 
 const MAST = 354;
 const MAST_SLOT = 1;
@@ -184,5 +192,75 @@ describe('ココアのデバフ解除（removeDebuff）', () => {
       (s) => s.state === 'drunken' && s.slotIndex === MAST_SLOT,
     );
     expect(Math.max(...other.map((s) => s.stack ?? 1))).toBe(3);
+  });
+});
+
+// 遅れのあるデバフ解除（ココアの S1 の delayFrames）は、効くフレームの時点で対象を選ぶ（発火のフレームで先読みすると、遅れの間に付いた
+// 状態が漏れる）。遅れを 400f に広げた作った定義で、撮影 B の編成（フラワーが撃ち、ほろ酔いは S1 でだけ外れる）
+describe('遅れのあるデバフ解除の対象', () => {
+  const COCOA = 311;
+  const DELAY = 400;
+  const S1_PERIOD = 883;
+  const SLOT = 2;
+  const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(COCOA);
+  const s1 = raw.skills.skill1.effects.find((e) => e['kind'] === 'removeDebuff')!;
+  s1['delayFrames'] = DELAY;
+  const input: TeamInput = {
+    ...team([]),
+    slots: [fixedSlot(304), fixedSlot(COCOA, raw), fixedSlot(MAST)],
+    controlledSlot: SLOT,
+  };
+  const plan = planTeamRun(input);
+  const drunken = stateItemsOf(plan).filter((s) => s.state === 'drunken' && s.slotIndex === SLOT);
+  const removals: number[] = [];
+  for (let f = S1_PERIOD; f + DELAY < plan.frames; f += S1_PERIOD) removals.push(f + DELAY);
+
+  it('closes Drunken applied during the delay on the frame after the removal', () => {
+    let late = 0;
+    for (const at of removals) {
+      // 外すフレームちょうどに付いた件は外れない（付与が勝つ。下のテスト）
+      for (const s of drunken.filter((x) => x.start < at && at < x.end)) {
+        expect(s.end).toBe(at + 1);
+        if (s.start > at - DELAY) late++;
+      }
+    }
+    expect(late).toBeGreaterThan(0);
+  });
+
+  it('reads the same Drunken stacks inside the first pass (S2 reload × stacks) as the history items', () => {
+    const reload = skillValueOf(MAST, 'skill2', 3) / 100;
+    const levelAt = (f: number) =>
+      Math.max(0, ...drunken.filter((s) => s.start < f && f < s.end).map((s) => s.stack ?? 1));
+    const s2 = piecesOf(plan).filter(
+      (p) => p.sourceSlotIndex === SLOT && p.effect.source.skill === 'skill2' && p.effect.stat === 'reloadSpeed',
+    );
+    expect(s2.length).toBeGreaterThan(0);
+    for (const p of s2) expect(close(p.effect.value, reload * levelAt(p.start))).toBe(true);
+  });
+});
+
+// ココアの S1（デバフのかかった味方からランダムに 2 機）で、デバフのかかった味方が 2 機より多い時は、選び方を確かめていないので注記を出す。
+// 今の使い手（ほろ酔いはマスト：RM 自身にだけ付く）では起きないので、ほろ酔いを味方全体に付ける作った定義で起こす
+describe('デバフ解除の決め打ちの注記', () => {
+  const COCOA = 311;
+  const removalNotes = (input: TeamInput) =>
+    runSimulation(input).slots.map((s) => (s?.notes ?? []).filter((n) => n.code.startsWith('remove-debuff-')));
+
+  it('notes on her slot when more allies than 2 are debuffed', () => {
+    const raw = rawDefinition<{ skills: { skill1: { effects: Record<string, unknown>[] } } }>(MAST);
+    const grant = raw.skills.skill1.effects.find((e) => e['state'] === 'drunken')!;
+    grant['target'] = 'allies';
+    const notes = removalNotes({
+      ...team([]),
+      slots: [fixedSlot(304), fixedSlot(COCOA), fixedSlot(MAST, raw)],
+      controlledSlot: 2,
+    });
+    expect(notes[1]!.map((n) => [n.level, n.code])).toEqual([['approx', 'remove-debuff-targets']]);
+    expect(notes[0]).toEqual([]);
+    expect(notes[2]).toEqual([]);
+  });
+
+  it('does not note with the current definitions', () => {
+    expect(removalNotes(team([304, COCOA, MAST])).flat()).toEqual([]);
   });
 });
