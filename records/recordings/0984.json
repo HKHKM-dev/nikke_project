@@ -1,0 +1,40 @@
+{
+  "id": "0984",
+  "date": "2026-11-08",
+  "folder": "range",
+  "file": "20261108-0984_mg_rapi-redhood_yuni.mp4",
+  "original": "2026-11-08 13-31-40.mp4",
+  "durationSec": 198.9,
+  "frames": 11933,
+  "fps": 60,
+  "sizeMB": 284,
+  "sha256": "2b25ab7180d3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "粘着榴弾の付着のゲージの量を、満タンの位相をずらして決めるために撮った（味方を足した 2 人編成。味方を操作し、ラピ：レッドフードは AI）",
+  "backup": {
+    "at": "2026-11-08T15:02+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

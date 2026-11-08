@@ -1,0 +1,40 @@
+{
+  "id": "0980",
+  "date": "2026-11-08",
+  "folder": "range",
+  "file": "20261108-0980_mg_rapi-redhood_alice.mp4",
+  "original": "2026-11-08 13-02-11.mp4",
+  "durationSec": 198,
+  "frames": 11882,
+  "fps": 60,
+  "sizeMB": 301.4,
+  "sha256": "3e32c6de0ff5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "粘着榴弾の付着のゲージの量を、満タンの位相をずらして決めるために撮った（味方を足した 2 人編成。味方を操作し、ラピ：レッドフードは AI）",
+  "backup": {
+    "at": "2026-11-08T14:59+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
