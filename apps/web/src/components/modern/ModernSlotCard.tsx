@@ -147,7 +147,13 @@ export function ModernSlotCard({
           {damagePercent > 0 && <span className="modern-slot-damage-percent">{damagePercent}%</span>}
         </div>
         <div className="modern-slot-damage-bar-track">
-          <div className="modern-slot-damage-bar-fill" style={{ width: `${damagePercent}%` }} />
+          <div
+            className="modern-slot-damage-bar-fill"
+            style={{
+              width: `${damagePercent}%`,
+              backgroundSize: damagePercent > 0 ? `${10000 / damagePercent}% 100%` : undefined,
+            }}
+          />
         </div>
       </div>
     </div>

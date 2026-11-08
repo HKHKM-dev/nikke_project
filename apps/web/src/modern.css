@@ -136,7 +136,6 @@
 }
 :root[data-app-ui='modern'] .modern-slot-damage-bar-fill {
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--m-accent), var(--m-gold));
 }
 
 /* ニケ一覧（トレイ）。一覧のニケは角を丸めない（上のボタンの共通の角丸を打ち消す） */

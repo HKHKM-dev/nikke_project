@@ -862,13 +862,14 @@ header h1 {
   background: color-mix(in srgb, var(--app-fg) 12%, transparent);
   overflow: hidden;
 }
+/* 割合のバー。色はバーの長さでなく枠の位置で決める（左から水色・黄色、50% で赤、その先は赤のまま）。
+   塗る部分の背景の大きさを枠の幅にそろえる（ModernSlotCard.tsx が background-size を 100 / 割合 倍にする） */
 .modern-slot-damage-bar-fill {
   height: 100%;
-  background: Highlight;
+  background-image: linear-gradient(90deg, #38bdf8 0%, #facc15 25%, #ef4444 50%, #ef4444 100%);
+  background-repeat: no-repeat;
   transition: width 0.2s ease-out;
 }
-
-/* カードフッター */
 
 /* CharacterVisual (カード/アセット/フォールバック) */
 .char-visual {
