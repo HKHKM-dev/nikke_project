@@ -15,6 +15,8 @@
 //   plan/design-workflow-simplification-7.md 1 節）。
 // - 版 4（2 段目の段 21 の PR 2。V-0634）: 倍率ダメージの格子に、同じフレームの n ヒットの和（/h<ヒット数>。指標 skillHitsDamage）を足す
 //   （ソーダ：トゥインクルバニーの時間延長状態別のダメージの I と II は、同じ増分に乗る）。
+// - 版 5（plan/design-anis-star-unimplemented.md 3 節）: 格子に、射撃ごとの倍率ダメージ（@shot@<f>。指標 perShotHitDamage。アニス：スターの
+//   S1 の追加ダメージ）を足す。発の本体と同じ増分に乗るので、和の格子で本体と組む。
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -201,7 +203,10 @@ export type Cell = { core: boolean; crit: boolean; distance: boolean; value: num
 
 type Model = {
   cells: (slot: number, frame: number) => Cell[];
-  /** 枠の frame 以降の最初の倍率ダメージ（skill）か持続ダメージの tick（dot。stacks があればそのスタック数ごと）の、会心なし・ありの値 */
+  /**
+   * 枠の frame 以降の最初の倍率ダメージ（skill）か持続ダメージの tick（dot。stacks があればそのスタック数ごと）か、frame の射撃ごとの
+   * 倍率ダメージ（shot）の、会心なし・ありの値
+   */
   hits: (spec: HitGridSpec) => number[];
   segments: (slot: number) => string[];
 };
@@ -218,7 +223,8 @@ function model(recording: RecordingEntry, setup: CompareSetup): Model {
       const named: CompareSpec['args'] = skill === undefined ? {} : { skill };
       const out: number[] = [];
       for (const crit of [false, true]) {
-        if (stacks.length > 0)
+        if (kind === 'shot') out.push(value('perShotHitDamage', { slot, frame, crit }));
+        else if (stacks.length > 0)
           for (const k of stacks) out.push(value('dotStackTickDamage', { slot, frame, stacks: k, crit, ...named }));
         else if (kind === 'skill' && (hits ?? 1) > 1)
           out.push(value('skillHitsDamage', { slot, n: 0, count: hits!, frame, crit, ...named }));
@@ -263,7 +269,7 @@ export type NormalGridSpec = {
   scales: number[];
 };
 export type HitGridSpec = {
-  kind: 'skill' | 'dot';
+  kind: 'skill' | 'dot' | 'shot';
   name: string;
   slot: number;
   frame: number;
@@ -277,7 +283,7 @@ export type SumGridSpec = { kind: 'sum'; name: string; parts: [string, string]; 
 export type GridSpec = NormalGridSpec | HitGridSpec | SumGridSpec;
 
 const GRID_FORMS =
-  '<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]・<名前>=<枠>@skill@<f>[:<スキル>][/h<ヒット数>]・' +
+  '<名前>=<枠>@<f>[+<f>...][/x<ペレット数>][/*<倍率>]・<名前>=<枠>@skill@<f>[:<スキル>][/h<ヒット数>]・<名前>=<枠>@shot@<f>・' +
   '<名前>=<枠>@dot@<f>[:<スキル>][/s<スタック数>]・<名前>=<格子>+<格子>';
 
 export function parseGrids(text: string): GridSpec[] {
@@ -300,7 +306,7 @@ export function parseGrids(text: string): GridSpec[] {
         if (!ok) throw new Error(`--opt grid の ${what}: ${t}`);
       };
       const normal = /^(\d+)@(\d+(?:\+\d+)*)$/.exec(body);
-      const hit = /^(\d+)@(skill|dot)@(\d+)(?::(.+))?$/.exec(body);
+      const hit = /^(\d+)@(skill|dot|shot)@(\d+)(?::(.+))?$/.exec(body);
       const sum = /^([^@+]+)\+([^@+]+)$/.exec(body);
       const name = rawName.trim();
       only(stacks.length === 0 || hit?.[2] === 'dot', '/s は dot の格子だけ');
@@ -318,7 +324,8 @@ export function parseGrids(text: string): GridSpec[] {
       }
       only(pellets === undefined, '/x は通常攻撃の格子だけ');
       if (hit !== null) {
-        const kind = hit[2] as 'skill' | 'dot';
+        const kind = hit[2] as 'skill' | 'dot' | 'shot';
+        only(kind !== 'shot' || hit[4] === undefined, 'shot の格子にスキルは書かない');
         const skill = hit[4] === undefined ? {} : { skill: hit[4] };
         const hits = hitCount === undefined ? {} : { hits: Number(hitCount) };
         only(hitCount === undefined || (Number.isInteger(hits.hits) && hits.hits! >= 1), 'ヒット数は 1 以上の整数');
@@ -474,7 +481,7 @@ function edgeObservations(
 
 export const buffEdge: Recipe = {
   name: 'buff-edge',
-  version: 4,
+  version: 5,
   describe:
     '味方の 1 発の HUD の増分をモデルの 1 ヒットの格子に当てる。事象（II の発動など）の前後で、▲の無い最後の発と▲の乗った最初の発で付き始め（か切れ目）を挟んだ幅（事象ごとと全回の共通部分。timing）。' +
     '--opt grid で何人かの格子に当て、増分ごとに合う格子を出す（--opt pair で境を挟む）',
@@ -483,7 +490,7 @@ export const buffEdge: Recipe = {
     off: '▲の無い格子を取るモデルのフレーム（カンマ区切り）。省くと枠の区間の一覧を出して止まる',
     on: '▲の乗った格子を取るモデルのフレーム（カンマ区切り）',
     grid:
-      `格子の並び（; 区切り）: ${GRID_FORMS}（/x は同じフレームの数ヒットまでの和、/s は持続ダメージのスタック数、/h は同じフレームの倍率ダメージの n ヒットの和、/* は倍率の版）。` +
+      `格子の並び（; 区切り）: ${GRID_FORMS}（/x は同じフレームの数ヒットまでの和、@shot は射撃ごとの倍率ダメージ（S1 の追加ダメージなど）、/s は持続ダメージのスタック数、/h は同じフレームの倍率ダメージの n ヒットの和、/* は倍率の版）。` +
       '例 サン=2@1300;サン▲=2@380;ナガ=1@1300/x10;槍=1@skill@1000:skill1;槍+通常=槍+サン。slot・off・on の代わり',
     pair: '境を挟む格子の組: <前の格子>[,...]><後の格子>[,...]（付き始めなら ▲なし>▲あり、切れ目なら ▲あり>▲なし。何人かの発で挟むなら , で並べる）。省くと増分ごとの当て方だけを出す',
     segments: '区間の一覧を出して止まる枠（カンマ区切り。grid のフレームを選ぶため）',
@@ -602,6 +609,7 @@ async function runGrids(
       return `${whose(g.slot)} f${g.frames.join('・')}${g.pellets > 1 ? `のペレット ${g.pellets} 個までの和` : ''}`;
     const skill = g.skill === undefined ? '' : `（${g.skill}）`;
     if (g.kind === 'skill') return `${whose(g.slot)} f${g.frame} 以降の最初の倍率ダメージ${skill}`;
+    if (g.kind === 'shot') return `${whose(g.slot)} f${g.frame} の射撃ごとの倍率ダメージ`;
     const stacks = g.stacks.length > 0 ? `の ${g.stacks.join('・')} スタック` : '';
     return `${whose(g.slot)} f${g.frame} 以降の最初の持続ダメージの tick${skill}${stacks}`;
   };

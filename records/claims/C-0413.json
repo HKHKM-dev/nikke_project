@@ -9,7 +9,7 @@
   "replaces": ["C-0293"],
   "updated": "2026-11-08",
   "subject": {
-    "places": ["data/skills/17.json の skill1 の effects[4]", "data/skills/17.json の skill1 の notes[0]"]
+    "places": ["data/skills/17.json の skill1 の effects[4]"]
   },
   "decidedOn": [
     {
