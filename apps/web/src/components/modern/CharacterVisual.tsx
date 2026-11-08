@@ -37,7 +37,8 @@ export function CharacterVisual({
 }: Props) {
   const tallImage = size === 'portrait' || size === 'tall';
   const imageSrc = `${BASE_URL}characters/${tallImage ? 'portraits' : 'images'}/${character.resourceId}.webp`;
-  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。
+  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。ただし縦長の絵（スロットと、ニケ一覧の縦長）は、
+  // 下部に名前を重ねる（SlotCharName）ので、名前の札は出さない（オーナーの指示）。
   // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
   const failed = failedImages.has(imageSrc);
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
@@ -50,9 +51,11 @@ export function CharacterVisual({
   return (
     <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-rarity={character.rarity}>
       {failed ? (
-        <span className="char-visual-fallback" aria-hidden="true">
-          {character.name.ja}
-        </span>
+        !tallImage && (
+          <span className="char-visual-fallback" aria-hidden="true">
+            {character.name.ja}
+          </span>
+        )
       ) : (
         <img
           src={imageSrc}
