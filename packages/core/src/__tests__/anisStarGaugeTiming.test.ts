@@ -64,8 +64,11 @@ describe('飛ぶ時間の表（plan/design-anis-star-gauge-timing.md 3.2・4.2 �
     expect(anis?.shot?.[0]).toMatchObject({ start: 0, frames: 14 }); // 最初の区間は中近
     expect(anis?.autoAttacks.burst?.[0]).toMatchObject({ start: 0, frames: 12 });
     expect(anis?.shot?.map((s) => s.frames)).toEqual([14, 8, 28, 17, 8, 28]);
-    // 表に行の無い弾（I-DOLL・フラワーの誘導弾）・表の無い的は飛ぶ時間なし
-    expect(slotFlightsOf([fixedSlot(304)], withFlight, frames)).toEqual([null]);
+    // 爆発範囲 500 の誘導弾（I-DOLL・フラワー。ネオン：ビジョン・アイと同じ弾の種類）は :500 の行（C-0996）。着地点を固定しないので帯の値
+    const [flower] = slotFlightsOf([fixedSlot(304)], withFlight, frames);
+    expect(flower?.shot?.map((s) => s.frames)).toEqual([15, 7, 29, 21, 7, 29]);
+    // 表に行の無い武器（SR のデルタ）・表の無い的は飛ぶ時間なし
+    expect(slotFlightsOf([fixedSlot(20)], withFlight, frames)).toEqual([null]);
     expect(slotFlightsOf([fixedSlot(17)], withoutFlight, frames)).toEqual([null]);
     expect(slotFlightsOf([fixedSlot(17)], { defence: 100, element: null, hasCore: true }, frames)).toEqual([null]);
   });
