@@ -50,6 +50,8 @@ const DROP_ANIMATION: DropAnimation = {
     holder.replaceChildren(incoming.cloneNode(true));
     args.active.node.classList.add('modern-slot-arriving');
     return () => {
+      // 持ち上げた絵は直後に消える。元の中身へ戻すと、消えるまでの一瞬だけ持ち上げたニケの絵が見えるので、先に隠す
+      args.dragOverlay.node.style.visibility = 'hidden';
       holder.replaceChildren(...saved);
       args.active.node.classList.remove('modern-slot-arriving');
     };
