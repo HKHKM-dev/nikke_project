@@ -826,7 +826,8 @@ header h1 {
   box-sizing: content-box;
 }
 .modern-slot-empty-plus {
-  font-size: 1.8rem;
+  font-size: 3rem;
+  line-height: 1;
 }
 .modern-slot-error {
   color: #e53935;
