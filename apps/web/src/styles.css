@@ -991,6 +991,27 @@ header h1 {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
 }
+/* 並べ替えとフィルターのボタン（未実装の置き場所） */
+.char-tray-actions {
+  display: flex;
+  gap: 6px;
+}
+.char-tray-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+.char-tray-action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.char-tray-unimplemented {
+  font-size: 0.65rem;
+  padding: 0 4px;
+  border: 1px solid currentColor;
+}
 .char-tray-filters {
   display: flex;
   flex-wrap: wrap;

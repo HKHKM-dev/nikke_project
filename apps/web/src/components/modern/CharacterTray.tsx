@@ -92,6 +92,15 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
             </label>
           </div>
         </div>
+        {/* 並べ替えとフィルターのボタンの置き場所（未実装。押しても何も起きない） */}
+        <div className="char-tray-actions">
+          <button type="button" className="char-tray-action-button" disabled title="並べ替え（未実装）">
+            並べ替え<span className="char-tray-unimplemented">未実装</span>
+          </button>
+          <button type="button" className="char-tray-action-button" disabled title="フィルター（未実装）">
+            フィルター<span className="char-tray-unimplemented">未実装</span>
+          </button>
+        </div>
       </div>
 
       <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
