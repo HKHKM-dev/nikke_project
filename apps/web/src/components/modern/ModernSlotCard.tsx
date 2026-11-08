@@ -3,12 +3,11 @@ import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
-import { DEFAULT_CONTROLLED_SLOT, type SlotState } from '../../team.ts';
+import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
   slotIndex: number;
-  slot: SlotState;
   character: CharacterData | undefined;
   characterEntry: CharacterIndexEntry | undefined;
   isUnsupported: boolean;
@@ -25,7 +24,6 @@ type Props = {
 
 export function ModernSlotCard({
   slotIndex,
-  slot,
   character,
   characterEntry,
   isUnsupported,
@@ -77,33 +75,17 @@ export function ModernSlotCard({
   return (
     <div
       ref={setCardRef}
-      className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
+      className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       onClick={onPlacePending}
       {...(characterEntry ? attributes : {})}
       {...(characterEntry ? listeners : {})}
     >
       <div className="modern-slot-header">
-        <span className="modern-slot-label">スロット {slotIndex + 1}</span>
         {focused && <span className="modern-slot-focus-badge">操作</span>}
         {inOtherParty && (
           <span className="modern-slot-other-party-badge" title="ほかの編成で使用中">
             他の編成
           </span>
-        )}
-        {slot.resourceId !== null && (
-          <button
-            type="button"
-            className="modern-slot-clear-button"
-            title="スロットを空にする"
-            aria-label="スロットを空にする"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClear();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            ✕
-          </button>
         )}
       </div>
 
@@ -118,6 +100,19 @@ export function ModernSlotCard({
           <div className="modern-slot-char-area">
             <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />
             <SlotCharName name={characterEntry.name.ja} />
+            <button
+              type="button"
+              className="modern-slot-clear-button"
+              title="スロットを空にする"
+              aria-label="スロットを空にする"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClear();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              ✕
+            </button>
           </div>
         ) : (
           // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする

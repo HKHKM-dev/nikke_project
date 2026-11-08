@@ -99,16 +99,9 @@
   color: var(--m-muted);
 }
 
-/* スロットのカード: 角丸・影 */
-:root[data-app-ui='modern'] .modern-slot-card {
-  background: var(--m-surface);
-  border-radius: 12px;
-  box-shadow: var(--m-shadow);
-  padding: 10px;
-}
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over {
   outline: 3px solid var(--m-accent);
-  background: color-mix(in srgb, var(--m-accent) 10%, var(--m-surface));
+  background: color-mix(in srgb, var(--m-accent) 10%, transparent);
 }
 :root[data-app-ui='modern'] .modern-slot-focus-badge {
   border-radius: 999px;

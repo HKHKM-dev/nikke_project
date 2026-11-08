@@ -644,18 +644,13 @@ header h1 {
   width: 170px;
 }
 
-/* モダンカード */
+/* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
 .modern-slot-card {
   display: flex;
   flex-direction: column;
-  background: color-mix(in srgb, var(--app-fg) 4%, var(--app-bg));
-  border: 1px solid var(--app-border);
   padding: 8px;
   gap: 8px;
   position: relative;
-  transition:
-    border-color 0.15s,
-    box-shadow 0.15s;
 }
 /* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける。
    実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
@@ -700,9 +695,6 @@ header h1 {
     animation: none;
   }
 }
-.modern-slot-card.modern-slot-focused {
-  box-shadow: inset 0 0 0 1px Highlight;
-}
 .modern-slot-card.modern-slot-over {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
@@ -713,17 +705,14 @@ header h1 {
 .modern-slot-card.drag-source-returning .char-visual-portrait {
   opacity: 0.35;
 }
+/* 「操作」「他の編成」の札の行。札の有無でカードの高さを変えない */
 .modern-slot-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 4px;
   font-size: 0.8rem;
   font-weight: bold;
-  /* 外すボタン（ニケがいるときだけ）の有無で高さを変えない */
   min-height: 20px;
-}
-.modern-slot-label {
-  opacity: 0.85;
 }
 .modern-slot-focus-badge {
   background: Highlight;
@@ -737,17 +726,24 @@ header h1 {
   font-size: 0.7rem;
   font-weight: normal;
 }
+/* スロットを空にするボタン。立ち絵の右上に重ねる（置き先待ちの水色の重ね・◎ より上） */
 .modern-slot-clear-button {
-  background: transparent;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  z-index: 4;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  display: grid;
+  place-items: center;
   border: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1;
   cursor: pointer;
-  color: inherit;
-  opacity: 0.6;
-  padding: 2px 6px;
-  font-size: 0.9rem;
-}
-.modern-slot-clear-button:hover {
-  opacity: 1;
 }
 
 /* カードボディ・キャラ表示 */

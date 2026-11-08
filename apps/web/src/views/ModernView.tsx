@@ -217,7 +217,6 @@ export function ModernView({
               <ModernSlotCard
                 key={i}
                 slotIndex={i}
-                slot={slot}
                 character={character}
                 characterEntry={characterEntry}
                 isUnsupported={isUnsupported}
