@@ -21,7 +21,9 @@ NIKKE のダメージ計算ツール。
 - PR の単位は**実装・検証が完了した時点**（動作するコード・確定した結論・テストが揃った状態）。設計起案や撮影待ちの段階では PR を出さない。
 - 設計の承認は対話で得て、実装と同じ PR に含める。
 - 撮影待ちの間は、トピックブランチを保持する（撮影計画や予測の commit もそのブランチで行う）。
-- コード（`packages/`・`apps/`・`tools/`）を変えた PR は、出す前に（テストが通った後に）差分を整理の観点（再利用・簡素化・効率・深さ。バグは見ない）で見直し、直しを同じ PR に入れる。Claude Code では `/simplify`。文書・記録・データだけの PR と、数行の直しでは要らない。
+- コード（`packages/`・`apps/`・`tools/`）を変えた PR は、出す前に（テストが通った後に）差分を次の順に見直し、直しを同じ PR に入れる。文書・記録・データだけの PR と、数行の直しでは要らない。
+  1. 整理の観点（再利用・簡素化・効率・深さ。バグは見ない）。Claude Code では `/simplify`。
+  2. 1 の直しを入れた後の差分のバグ。Claude Code では `/code-review medium`（`packages/core/src/frame/`・`packages/core/src/sim/`・`tools/git/` を変えた PR は `high`）。指摘はコードと照らして確かめてから直し、直したらテストを回し直す。
 - PR を出す手順:
   1. commit してから `npm run pr:prep -- --push`: main をリベースで取り込み（マージはしない）、生成物の衝突は main の版を取って最後に 1 回だけ作り直し、CI と同じ確認（書式と lint はブランチで変えたファイルだけ。全部のファイルは GitHub の CI が見る）を通し、生成物を main の版に戻して push する（`tools/git/pr-prep.ts` の冒頭）。生成物は PR に入れず、マージの後に GitHub の CI が main で作り直して commit する（並行する PR どうしが生成物で衝突しないように。`plan/design-pr-conflicts.md` 3.1 節）。止まったら、道具が出す直し方に従い（生成物でないファイルの衝突は直して `git add` する。足した ID や録画の番号が main と重なったら、出た `npm run records:renumber` のコマンドで振り直して commit する）、もう一度回す
   2. `gh pr create`
