@@ -192,7 +192,7 @@ export function slotTriggerDamage(
     // 変更の区間は、的の表の変更後の武器の行のコア命中率
     weaponChangeParts(
       enemy,
-      landingPartsWith(landing, slot, index, segmentLanding, buffs.hitRate),
+      landingPartsWith(landing, slot, index, segmentLanding, buffs.hitRate, buffs.hitRateDown),
       buffs.weapon?.targetRowKey,
     ),
     fullBurst,
@@ -291,8 +291,8 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     ...(landing === null || input.sustainedHitRateUp === false
       ? {}
       : {
-          hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number) =>
-            hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up),
+          hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number, down: number) =>
+            hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up, down),
         }),
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
     shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {

@@ -199,7 +199,14 @@ describe('ヘルスアップ！の命中率▲（ミランダ単騎・条件は�
     const nearShot = shots.find((f) => segmentAt(f).landing === 'near' && n(f) > N - 1e-9)!;
     expect(nearShot).toBeDefined();
     const seg = segmentAt(nearShot);
-    const parts = landingPartsWith(plan.landing, slot, 0, seg.landing, seg.slots[0]!.buffs.hitRate);
+    const parts = landingPartsWith(
+      plan.landing,
+      slot,
+      0,
+      seg.landing,
+      seg.slots[0]!.buffs.hitRate,
+      seg.slots[0]!.buffs.hitRateDown,
+    );
     for (const p of parts) {
       expect(p.condition.coreHitRate).toBeCloseTo(coreHitRateWithHitRateUp(p.tableCoreHitRate!, N), 12);
     }

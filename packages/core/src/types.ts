@@ -403,7 +403,8 @@ export type CoreHitRateTable = RateTableWithWeaponChanges & {
 /**
  * 命中率▼の表（plan/design-maids.md 8.2・8.3 節。V-0683）。武器種ごとに、命中率の和 N（負。キーは N の数の文字列、例 "-0.4"）の
  * ときの値。core はコア命中率で、着地点の行 base（N = 最初の段の値）に、N ごとの倍率 ratio を掛ける（倍率は着地点によらない）。
- * bullet は弾丸命中率の N ごとの行（行に無い着地点は表の値のまま）。表に無い N（▲と同時の区間など）は効かせない
+ * bullet は弾丸命中率の N ごとの行（行に無い着地点は表の値のまま）。▼だけが効く区間の実測なので、表に無い N と、▲と同時に効く区間
+ * （和の N が表のキーでも）は効かせない（frame/landing.ts の coreHitRateAt）
  */
 export type HitRateDownTable = Partial<
   Record<

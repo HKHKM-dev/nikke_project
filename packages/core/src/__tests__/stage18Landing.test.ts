@@ -395,29 +395,42 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
   const down = (id: string) => hitRateDownAt(profile.hitRateDown, MG, at(id))!;
 
   it('gives the MG core hit rate as the landing base × the ratio of N, for the N in the table only', () => {
-    expect(coreHitRateAt(0.9626, -0.2, down('nearA'))).toBeCloseTo(0.587, 12);
-    expect(coreHitRateAt(0.9626, -0.4, down('nearB'))).toBeCloseTo(0.587 * 0.46, 12);
-    expect(coreHitRateAt(0.9588, -0.6000000000000001, down('farA'))).toBeCloseTo(0.086 * 0.2, 12);
-    expect(coreHitRateAt(0.965, -0.4, down('midNear'))).toBeCloseTo(0.378 * 0.46, 12);
-    expect(coreHitRateAt(0.9614, -0.6, down('midFarC'))).toBeCloseTo(0.182 * 0.2, 12);
-    // 表に無い N（▲と同時の区間）は変えない
-    expect(coreHitRateAt(0.9626, -0.1, down('nearA'))).toBe(0.9626);
+    expect(coreHitRateAt(0.9626, -0.2, down('nearA'), -0.2)).toBeCloseTo(0.587, 12);
+    expect(coreHitRateAt(0.9626, -0.4, down('nearB'), -0.4)).toBeCloseTo(0.587 * 0.46, 12);
+    expect(coreHitRateAt(0.9588, -0.6000000000000001, down('farA'), -0.6000000000000001)).toBeCloseTo(0.086 * 0.2, 12);
+    expect(coreHitRateAt(0.965, -0.4, down('midNear'), -0.4)).toBeCloseTo(0.378 * 0.46, 12);
+    expect(coreHitRateAt(0.9614, -0.6, down('midFarC'), -0.6)).toBeCloseTo(0.182 * 0.2, 12);
+    // 表に無い N は変えない
+    expect(coreHitRateAt(0.9626, -0.1, down('nearA'), -0.1)).toBe(0.9626);
   });
 
   it('lowers the MG bullet hit rate at far and mid-far only; mid-far at −40% keeps the table value', () => {
-    expect(bulletHitRateAt(0.9917, -0.2, down('farB'))).toBe(0.958);
-    expect(bulletHitRateAt(0.9917, -0.4, down('farA'))).toBe(0.74);
-    expect(bulletHitRateAt(0.9945, -0.6, down('midFarA'))).toBe(0.718);
-    expect(bulletHitRateAt(0.9945, -0.4, down('midFarB'))).toBe(0.9945);
-    expect(bulletHitRateAt(0.9976, -0.6, down('nearA'))).toBe(0.9976);
+    expect(bulletHitRateAt(0.9917, -0.2, down('farB'), -0.2)).toBe(0.958);
+    expect(bulletHitRateAt(0.9917, -0.4, down('farA'), -0.4)).toBe(0.74);
+    expect(bulletHitRateAt(0.9945, -0.6, down('midFarA'), -0.6)).toBe(0.718);
+    expect(bulletHitRateAt(0.9945, -0.4, down('midFarB'), -0.4)).toBe(0.9945);
+    expect(bulletHitRateAt(0.9976, -0.6, down('nearA'), -0.6)).toBe(0.9976);
   });
 
   it('has no rows for other weapon types, and autoConditionAt reads the table', () => {
     expect(hitRateDownAt(profile.hitRateDown, AR, at('nearA'))).toBeUndefined();
-    expect(autoConditionAt(profile, at('nearA'), AR, -0.2, MANUAL).coreHitRate).toBe(0.4244);
-    const mg = autoConditionAt(profile, at('farA'), MG, -0.4, MANUAL);
+    expect(autoConditionAt(profile, at('nearA'), AR, -0.2, MANUAL, -0.2).coreHitRate).toBe(0.4244);
+    const mg = autoConditionAt(profile, at('farA'), MG, -0.4, MANUAL, -0.4);
     expect(mg.coreHitRate).toBeCloseTo(0.086 * 0.46, 12);
     expect(mg.hitRate).toBe(0.74);
+  });
+
+  it('does not use the table while a Hit Rate increase is also active (8.4 節: the sum N goes through the ▲ formula)', () => {
+    // ▲ +20% と▼ 2 スタック（−40%）: 和の N = −0.2 は表のキーだが、▼だけの和でないので表を使わず、N ≤ 0 は表の値のまま
+    expect(coreHitRateAt(0.9626, 0.2 - 0.4, down('nearA'), -0.4)).toBe(0.9626);
+    expect(bulletHitRateAt(0.9917, 0.2 - 0.4, down('farB'), -0.4)).toBe(0.9917);
+    // 和が正なら▲の式（和の N）
+    expect(coreHitRateAt(0.9626, 0.4 - 0.2, down('nearA'), -0.2)).toBe(coreHitRateWithHitRateUp(0.9626, 0.4 - 0.2));
+    // ▼の和を渡さない（0）と▼が入っていない N として扱う
+    expect(coreHitRateAt(0.9626, -0.2, down('nearA'))).toBe(0.9626);
+    const mg = autoConditionAt(profile, at('farA'), MG, 0.2 - 0.6, MANUAL, -0.6);
+    expect(mg.coreHitRate).toBe(0.9588);
+    expect(mg.hitRate).toBe(0.9917);
   });
 });
 

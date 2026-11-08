@@ -183,6 +183,11 @@ export type BuffTotals = {
    * 「自分が命中率増加状態なら」の条件（timed の condition）と表示にだけ使う
    */
   hitRate: number;
+  /**
+   * 命中率▼（decrease。負の値）の和。hitRate はこれも含む和。条件が自動の枠で、▲と同時に効いている区間に的の▼の表を使わない
+   * のに使う（frame/landing.ts の coreHitRateAt。plan/design-maids.md 8.4 節）
+   */
+  hitRateDown: number;
   /** Stage 11 モダニア: 装弾数無限の窓の数（> 0 なら残弾を減らさない。射撃に効く） */
   infiniteAmmo: number;
   /** Stage 13: 有利コードの攻撃ダメージの加算。属性有利のときだけ (1.1 + elementDamage)（element.ts） */
@@ -238,6 +243,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
   hitRate: 0,
+  hitRateDown: 0,
   infiniteAmmo: 0,
   elementDamage: 0,
   coreDamage: 0,
@@ -303,6 +309,7 @@ export function addRatioBuff(
 ): BuffTotals {
   const field = RATIO_FIELD[stat];
   const next: BuffTotals = { ...totals, [field]: totals[field] + ratio };
+  if (stat === 'hitRate' && ratio < 0) next.hitRateDown = totals.hitRateDown + ratio;
   if (stat === 'chargeSpeed') next.chargeSpeedParts = [...totals.chargeSpeedParts, { source, ratio }];
   if (stat === 'attack') {
     next.attackParts = [...totals.attackParts, { source, ratio, flat: 0, ...(self ? { self } : {}) }];

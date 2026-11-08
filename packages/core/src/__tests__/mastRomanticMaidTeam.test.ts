@@ -6,6 +6,7 @@ import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts
 import { effectFrameOf } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
+import type { BuildEffect } from '../buildEffects.ts';
 import type { TeamInput } from '../team.ts';
 import { piecesOf, stateItemsOf, statePiecesOf } from './historyHelpers.ts';
 import { describeEveryShotInOneGroup, fixedTeam, readJson, skillValueOf, SHOOTING_RANGE_ENEMY } from './teamHelpers.ts';
@@ -124,6 +125,33 @@ describe('ほろ酔いの命中率▼（的の▼の表）', () => {
       if (bullet !== undefined) expect(s.trigger.hitRate).toBeCloseTo(bullet, 9);
     }
     expect([...seen].sort()).toEqual([1, 2, 3]);
+  });
+
+  // 8.4 節: ▲と同時に効く区間は▼の表を使わない。常時の命中率▲ +20%（OL）を持たせると、ほろ酔い 2・3 スタックの区間の和の N は
+  // −0.2・−0.4（表のキー）になるが、表の無い的と同じ値になる（1 パス目のゲージも 2 パス目のダメージも）
+  it('does not use the table while a Hit Rate increase is also active (both passes)', () => {
+    const up: BuildEffect = {
+      source: { kind: 'overload', name: { ja: '', en: '' }, level: 15 },
+      stat: 'hitRate',
+      value: 0.2,
+    };
+    const withUp = (target: typeof profile): TeamInput => ({
+      ...input,
+      slots: input.slots.map((s, i) => (s === null || i !== MAST_SLOT ? s : { ...s, buildEffects: [up] })),
+      enemy: { ...input.enemy, target },
+    });
+    const { hitRateDown: _, ...noTable } = profile;
+    const on = runSimulation(withUp(profile));
+    const off = runSimulation(withUp(noTable));
+    const keyed = on.slots[MAST_SLOT]!.segments.filter(
+      (s) => s.buffs.hitRateDown < 0 && Object.keys(table.core!.ratio).some((k) => close(Number(k), s.buffs.hitRate)),
+    );
+    expect(keyed.length).toBeGreaterThan(0);
+    expect(on.shotGauges).toEqual(off.shotGauges);
+    expect(on.slots[MAST_SLOT]!.segments.map((s) => s.trigger)).toEqual(
+      off.slots[MAST_SLOT]!.segments.map((s) => s.trigger),
+    );
+    expect(on.totalDamage).toBe(off.totalDamage);
   });
 });
 

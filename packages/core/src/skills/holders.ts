@@ -377,6 +377,8 @@ export type HolderLists = {
   hasFiringTracks(holder: number): boolean;
   /** 枠 holder にフレーム frame に効いている持続の命中率▲の和 */
   hitUpAt(holder: number, frame: number): number;
+  /** hitUpAt のうちの命中率▼（負の値）の和（BuffTotals.hitRateDown と同じ。▲と同時の区間に▼の表を使わないのに使う） */
+  hitDownAt(holder: number, frame: number): number;
   /** 当たりの stat の件の列があるか */
   readonly hasHitTracks: boolean;
   /**
@@ -1596,6 +1598,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (track, e) =>
       isHitStateStat(e.stat) && (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
   );
+  const hitDownViews = hitViews.map((views) => views.filter((v) => v.effect.value < 0));
   // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件）
   const critViews = viewsOf(
     (track, e) =>
@@ -2504,6 +2507,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     hasFiringTracks: (holder) => hasFiring[holder] === true,
     // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
     hitUpAt: (holder, frame) => sumAt(hitViews[holder], frame),
+    hitDownAt: (holder, frame) => sumAt(hitDownViews[holder], frame),
     hasHitTracks: hitViews.some((views) => views.length > 0),
     critUpAt: (holder, frame) => sumAt(critViews[holder], frame),
     rankContext,

@@ -9,8 +9,9 @@
 //   AR・SMG・MG は命中率▲ N で外れの割合を (1 − p) ^ (1 ÷ (1 − N)²) にする（C-0192・C-0519。確かめたのは SMG の遠と中遠 B・C だけ。plan/design-hit-rate-up-bullet-h2.md）。
 //   SG は近（近 A・近 B）だけ同じ式にし（C-0631）、中近・中遠・遠は表の値のまま（C-0527）。
 //   コア命中率と同じく、計画は常時の N で出し、持続の▲の区間は landingPartsWith で出し直す（1 パス目のゲージは計画の値のまま）。
-// - 命中率▼（N < 0）: 的の▼の表（TargetProfile.hitRateDown。MG・N = −20%・−40%・−60%。plan/design-maids.md 8 節）にある N だけ、
-//   コア命中率を「着地点の最初の段の値 × N の倍率」に、弾丸命中率を表の行の値にする。表に無い N（▲と同時の区間など）・武器種は変えない。
+// - 命中率▼（N < 0）: ▼だけが効く区間で、的の▼の表（TargetProfile.hitRateDown。MG・N = −20%・−40%・−60%。plan/design-maids.md 8 節）にある
+//   N だけ、コア命中率を「着地点の最初の段の値 × N の倍率」に、弾丸命中率を表の行の値にする。表に無い N・武器種は変えない。
+//   ▲と同時に効く区間は、和の N が表のキーに当たっても表を使わず、表に無い N と同じ扱い（和の N で▲の式。N ≤ 0 は変えない。8.4 節）。
 // - 表が null（未測定）の項目・的の表の無い敵・並びより後の区間は、手入力の値（slot.condition）を使い、注記を出す。
 // - 配分（中遠の 3 か所）の区間は、着地点ごとの 1 トリガーの値を重みで足す（Σ w_k × T_k）。
 import {
@@ -85,6 +86,8 @@ export type LandingPlan = {
   parts: (ReadonlyMap<string | null, readonly LandingPart[]> | null)[];
   /** 枠ごと: 掛けた常時の命中率▲ N（自動でない枠は 0） */
   hitRateUp: number[];
+  /** 枠ごと: hitRateUp のうちの命中率▼の和（BuffTotals.hitRateDown。自動でない枠は 0） */
+  hitRateDown: number[];
 };
 
 /** 自動で使った条件の平均（発数で重みを付けた）。画面の条件欄と CLI の表示用 */
@@ -206,16 +209,24 @@ export function hitRateDownAt(
 }
 
 /**
- * 的の表のコア命中率 p を、命中率の和 N で出し直す。N ≥ 0 は▲の式（coreHitRateWithHitRateUp）、N < 0 は命中率▼の値 down に
- * N の値があればそれ（plan/design-maids.md 8.2 節）、無ければ p のまま
+ * 命中率の和 N が▼だけの和（N < 0 で、▲が同時に効いていない）か。downSum は N のうちの▼の和（BuffTotals.hitRateDown）。
+ * ▼の表は▼だけが効く区間の実測（V-0683）で、▲と同時の区間は測っていないので、その区間には表を使わない（plan/design-maids.md 8.4 節）
  */
-export function coreHitRateAt(p: number, n: number, down?: HitRateDownAt): number {
-  return n < 0 ? (valueAtN(down?.core, n) ?? p) : coreHitRateWithHitRateUp(p, n);
+function downOnly(n: number, downSum: number): boolean {
+  return n < 0 && Math.abs(n - downSum) < 1e-9;
 }
 
-/** 弾丸命中率で coreHitRateAt と同じ（N ≥ 0 は bulletHitRateWithHitRateUp。plan/design-maids.md 8.3 節） */
-export function bulletHitRateAt(p: number, n: number, down?: HitRateDownAt): number {
-  return n < 0 ? (valueAtN(down?.bullet, n) ?? p) : bulletHitRateWithHitRateUp(p, n);
+/**
+ * 的の表のコア命中率 p を、命中率の和 N（うち▼の和 downSum）で出し直す。▼だけの N（downOnly）は命中率▼の値 down に N の値が
+ * あればそれ（plan/design-maids.md 8.2 節）、無ければ p のまま。ほかは▲の式（coreHitRateWithHitRateUp。N ≤ 0 は p のまま）
+ */
+export function coreHitRateAt(p: number, n: number, down?: HitRateDownAt, downSum = 0): number {
+  return downOnly(n, downSum) ? (valueAtN(down?.core, n) ?? p) : coreHitRateWithHitRateUp(p, n);
+}
+
+/** 弾丸命中率で coreHitRateAt と同じ（▲の式は bulletHitRateWithHitRateUp。plan/design-maids.md 8.3 節） */
+export function bulletHitRateAt(p: number, n: number, down?: HitRateDownAt, downSum = 0): number {
+  return downOnly(n, downSum) ? (valueAtN(down?.bullet, n) ?? p) : bulletHitRateWithHitRateUp(p, n);
 }
 
 /**
@@ -259,13 +270,14 @@ export function distanceBonusAt(character: CharacterData, landing: LandingPoint)
   return range.min <= landing.range[0] && landing.range[1] <= range.max;
 }
 
-/** 着地点 1 か所での自動の条件。表が null の項目は手入力の値 */
+/** 着地点 1 か所での自動の条件。表が null の項目は手入力の値。downSum は hitRateUp のうちの命中率▼の和（coreHitRateAt） */
 export function autoConditionAt(
   profile: TargetProfile,
   landing: LandingPoint,
   character: CharacterData,
   hitRateUp: number,
   manual: SlotCondition,
+  downSum = 0,
   down: HitRateDownAt | undefined = hitRateDownAt(profile.hitRateDown, character, landing),
 ): SlotCondition {
   const core = targetRateOf(profile.coreHitRate, character, landing);
@@ -273,14 +285,14 @@ export function autoConditionAt(
   // V-0119: 1 発のヒット数は表にある弾の種類だけ（無ければ 1 発 1 ヒット）。手入力の条件には無い
   const hits = profile.hitsPerShot === undefined ? null : targetRateOf(profile.hitsPerShot, character, landing);
   return {
-    coreHitRate: core === null ? manual.coreHitRate : coreHitRateAt(core, hitRateUp, down),
+    coreHitRate: core === null ? manual.coreHitRate : coreHitRateAt(core, hitRateUp, down, downSum),
     distanceBonus: distanceBonusAt(character, landing),
     fullCharge: manual.fullCharge,
     hitRate:
       bullet === null
         ? (manual.hitRate ?? 1)
         : hitRateUpRaisesBulletHitRate(character, landing)
-          ? bulletHitRateAt(bullet, hitRateUp, down)
+          ? bulletHitRateAt(bullet, hitRateUp, down, downSum)
           : bullet,
     ...(hits === null || hits === 1 ? {} : { hitsPerShot: hits }),
   };
@@ -346,6 +358,7 @@ export function planLandings(
   const spans = landingFrameSpans(enemy, frames);
   const ids = [...new Set(spans.map((s) => s.landing))];
   const hitRateUp = slots.map((_, i) => (autoSlots[i] ? (passive[i]?.buffs.hitRate ?? 0) : 0));
+  const hitRateDown = slots.map((_, i) => (autoSlots[i] ? (passive[i]?.buffs.hitRateDown ?? 0) : 0));
   const parts = slots.map((slot, i) => {
     if (slot === null || !autoSlots[i]) return null;
     const map = new Map<string | null, LandingPart[]>();
@@ -361,7 +374,15 @@ export function planLandings(
               return {
                 landing,
                 weight,
-                condition: autoConditionAt(profile, landing, slot.character, hitRateUp[i]!, slot.condition, down),
+                condition: autoConditionAt(
+                  profile,
+                  landing,
+                  slot.character,
+                  hitRateUp[i]!,
+                  slot.condition,
+                  hitRateDown[i]!,
+                  down,
+                ),
                 measuredHitRate: bullet !== null,
                 ...(table === null ? {} : { tableCoreHitRate: table }),
                 ...(bullet === null || !hitRateUpRaisesBulletHitRate(slot.character, landing)
@@ -374,7 +395,7 @@ export function planLandings(
     }
     return map;
   });
-  return { spans, autoSlots, parts, hitRateUp };
+  return { spans, autoSlots, parts, hitRateUp, hitRateDown };
 }
 
 const MANUAL_PART_CACHE = new WeakMap<SlotCondition, readonly LandingPart[]>();
@@ -400,8 +421,9 @@ const PARTS_WITH_CACHE = new WeakMap<LandingPlan, Map<string, readonly LandingPa
 
 /**
  * C-0170: landingPartsOf の条件のコア命中率を、命中率▲ hitRateUp（常時 + その区間の持続の▲。区間の状態の buffs.hitRate）で
- * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。N が負なら命中率▼の値（plan/design-maids.md 8 節）。
- * 計画の常時の N と同じなら計画の配分をそのまま返す。
+ * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。N が▼だけの和（hitRateDown は N のうちの▼の和。区間の状態の
+ * buffs.hitRateDown）なら命中率▼の値（plan/design-maids.md 8 節。coreHitRateAt）。
+ * 計画の常時の N と▼の和が同じなら計画の配分をそのまま返す。
  * 距離ボーナスは変えない
  */
 export function landingPartsWith(
@@ -410,16 +432,22 @@ export function landingPartsWith(
   slotIndex: number,
   landing: string | null | undefined,
   hitRateUp: number,
+  hitRateDown: number,
 ): readonly LandingPart[] {
   const parts = landingPartsOf(plan, slot, slotIndex, landing);
-  if (plan === null || !plan.autoSlots[slotIndex] || hitRateUp === (plan.hitRateUp[slotIndex] ?? 0)) return parts;
+  if (
+    plan === null ||
+    !plan.autoSlots[slotIndex] ||
+    (hitRateUp === (plan.hitRateUp[slotIndex] ?? 0) && hitRateDown === (plan.hitRateDown[slotIndex] ?? 0))
+  )
+    return parts;
   if (!parts.some((p) => p.tableCoreHitRate !== undefined || p.tableBulletHitRate !== undefined)) return parts;
   let cache = PARTS_WITH_CACHE.get(plan);
   if (cache === undefined) {
     cache = new Map();
     PARTS_WITH_CACHE.set(plan, cache);
   }
-  const key = `${slotIndex}|${landing === null || landing === undefined ? '' : `L:${landing}`}|${hitRateUp}`;
+  const key = `${slotIndex}|${landing === null || landing === undefined ? '' : `L:${landing}`}|${hitRateUp}|${hitRateDown}`;
   let found = cache.get(key);
   if (found === undefined) {
     found = parts.map((p) =>
@@ -431,10 +459,10 @@ export function landingPartsWith(
               ...p.condition,
               ...(p.tableCoreHitRate === undefined
                 ? {}
-                : { coreHitRate: coreHitRateAt(p.tableCoreHitRate, hitRateUp, p.hitRateDown) }),
+                : { coreHitRate: coreHitRateAt(p.tableCoreHitRate, hitRateUp, p.hitRateDown, hitRateDown) }),
               ...(p.tableBulletHitRate === undefined
                 ? {}
-                : { hitRate: bulletHitRateAt(p.tableBulletHitRate, hitRateUp, p.hitRateDown) }),
+                : { hitRate: bulletHitRateAt(p.tableBulletHitRate, hitRateUp, p.hitRateDown, hitRateDown) }),
             },
           },
     );
@@ -528,7 +556,8 @@ export type LandingHitRateSpan = {
 
 /**
  * plan/design-sustained-hit-rate-gauge.md: 区間 span の弾丸命中率とコアの命中の期待値を、計画の常時の N に持続の命中率▲
- * timedHitRateUp を足した N で出し直す（2 パス目の landingPartsWith と同じ式。C-0170・C-0192）。▲が 0 なら span の値のまま
+ * timedHitRateUp を足した N で出し直す（2 パス目の landingPartsWith と同じ式。C-0170・C-0192）。timedHitRateDown は timedHitRateUp の
+ * うちの▼の和（▲と同時の区間に▼の表を使わないのに使う）。どちらも 0 なら span の値のまま
  */
 export function hitRateSpanWith(
   plan: LandingPlan,
@@ -536,14 +565,16 @@ export function hitRateSpanWith(
   slotIndex: number,
   span: LandingHitRateSpan,
   timedHitRateUp: number,
+  timedHitRateDown: number,
 ): { hitRate: number; coreHits: number } {
-  if (timedHitRateUp === 0) return span;
+  if (timedHitRateUp === 0 && timedHitRateDown === 0) return span;
   const parts = landingPartsWith(
     plan,
     slot,
     slotIndex,
     span.landing ?? null,
     (plan.hitRateUp[slotIndex] ?? 0) + timedHitRateUp,
+    (plan.hitRateDown[slotIndex] ?? 0) + timedHitRateDown,
   );
   return { hitRate: mixedHitRate(parts), coreHits: mixedCoreHits(parts) };
 }
@@ -580,8 +611,8 @@ export function landingTriggerDamage(
   };
 }
 
-/** 区間ごとの命中率▲ N（区間の状態の buffs.hitRate）。autoConditionSummary に渡す */
-export type HitRateUpSpan = { start: number; end: number; hitRateUp: number };
+/** 区間ごとの命中率▲ N（区間の状態の buffs.hitRate）と、うちの▼の和（buffs.hitRateDown）。autoConditionSummary に渡す */
+export type HitRateUpSpan = { start: number; end: number; hitRateUp: number; hitRateDown: number };
 
 /** 持続バフの区間から、枠 slotIndex の区間ごとの N を取る */
 export function hitRateUpSpansOf(
@@ -592,6 +623,7 @@ export function hitRateUpSpansOf(
     start: s.start,
     end: s.end,
     hitRateUp: s.slots[slotIndex]?.buffs.hitRate ?? 0,
+    hitRateDown: s.slots[slotIndex]?.buffs.hitRateDown ?? 0,
   }));
 }
 
@@ -608,7 +640,7 @@ export function autoConditionSummary(
 ): AutoConditionSummary | null {
   const parts = plan?.parts[slotIndex];
   if (plan === null || parts === null || parts === undefined) return null;
-  const constant = plan.hitRateUp[slotIndex] ?? 0;
+  const constant = { hitRateUp: plan.hitRateUp[slotIndex] ?? 0, hitRateDown: plan.hitRateDown[slotIndex] ?? 0 };
   let shots = 0;
   let core = 0;
   let distance = 0;
@@ -617,29 +649,32 @@ export function autoConditionSummary(
   let timed = false;
   let k = 0;
   let h = 0;
-  const nAt = (frame: number): number => {
+  /** フレームの区間の N と、うちの▼の和 */
+  const nAt = (frame: number): { hitRateUp: number; hitRateDown: number } => {
     if (hitRateSpans === undefined) return constant;
     while (h < hitRateSpans.length && hitRateSpans[h]!.end <= frame) h += 1;
     const span = hitRateSpans[h];
-    return span !== undefined && span.start <= frame ? span.hitRateUp : constant;
+    return span !== undefined && span.start <= frame ? span : constant;
   };
+  const sameN = (a: { hitRateUp: number; hitRateDown: number }, b: typeof a): boolean =>
+    a.hitRateUp === b.hitRateUp && a.hitRateDown === b.hitRateDown;
   for (const span of plan.spans) {
     while (k < shotFrames.length && shotFrames[k]! < span.start) k += 1;
     // 同じ N が続く発をまとめて足す（持続の▲が無ければ着地点の区間ごとに 1 回で、今までと同じ足し方）
     while (k < shotFrames.length && shotFrames[k]! < span.end) {
-      const up = nAt(shotFrames[k]!);
+      const at = nAt(shotFrames[k]!);
       let n = 0;
-      while (k < shotFrames.length && shotFrames[k]! < span.end && nAt(shotFrames[k]!) === up) {
+      while (k < shotFrames.length && shotFrames[k]! < span.end && sameN(nAt(shotFrames[k]!), at)) {
         n += 1;
         k += 1;
       }
-      for (const p of landingPartsWith(plan, slot, slotIndex, span.landing, up)) {
+      for (const p of landingPartsWith(plan, slot, slotIndex, span.landing, at.hitRateUp, at.hitRateDown)) {
         core += n * p.weight * p.condition.coreHitRate;
         distance += n * p.weight * (p.condition.distanceBonus && slot.character.bonusRange !== null ? 1 : 0);
         hit += n * p.weight * (p.condition.hitRate ?? 1);
       }
-      if (up !== constant) timed = true;
-      upSum += n * up;
+      if (at.hitRateUp !== constant.hitRateUp) timed = true;
+      upSum += n * at.hitRateUp;
       shots += n;
     }
   }
@@ -649,7 +684,7 @@ export function autoConditionSummary(
     coreHitRate: mean(core),
     distanceBonus: mean(distance),
     hitRate: mean(hit),
-    hitRateUp: timed ? mean(upSum) : constant,
+    hitRateUp: timed ? mean(upSum) : constant.hitRateUp,
     timedHitRateUp: timed,
   };
 }
