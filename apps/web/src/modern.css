@@ -132,7 +132,6 @@
   color: var(--m-gold);
 }
 :root[data-app-ui='modern'] .modern-slot-empty-area {
-  width: 100%;
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさをそろえる */
   box-sizing: content-box;
   border: 1px dashed var(--app-border);
@@ -167,7 +166,6 @@
   border-radius: 10px;
 }
 :root[data-app-ui='modern'] .char-visual-portrait {
-  width: 100%;
   border-width: 1px;
   border-color: color-mix(in srgb, var(--el) 60%, var(--app-border));
 }

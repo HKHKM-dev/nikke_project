@@ -720,13 +720,9 @@ header h1 {
   opacity: 0.5;
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ */
   box-sizing: content-box;
-  aspect-ratio: 3 / 4;
-  max-height: 240px;
-}
-@media (max-width: 900px) {
-  .modern-slot-empty-area {
-    max-width: 200px;
-  }
+  height: var(--slot-portrait-h);
+  width: auto;
+  aspect-ratio: 1 / 2;
 }
 .modern-slot-empty-plus {
   font-size: 1.8rem;
@@ -835,21 +831,16 @@ header h1 {
   /* 右下の「未」の札に重ならないように下を空ける */
   padding-bottom: 16px;
 }
-/* スロットのカードの縦長の絵（portraits）。顔が入るように上寄せで切り取る */
+/* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める */
+:root {
+  --slot-portrait-h: 320px;
+}
 .char-visual-portrait {
   max-width: none;
-  aspect-ratio: 3 / 4;
-  max-height: 240px;
+  height: var(--slot-portrait-h);
+  width: auto;
+  aspect-ratio: 1 / 2;
   --badge-w: 24px;
-}
-.char-visual-portrait .char-visual-img {
-  object-position: center 12%;
-}
-/* スロットが 1 列に並ぶ狭い画面では、横いっぱいに広げると顔が切れるので、幅を抑える */
-@media (max-width: 900px) {
-  .char-visual-portrait {
-    max-width: 200px;
-  }
 }
 .char-visual-img {
   width: 100%;
