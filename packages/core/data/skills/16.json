@@ -146,12 +146,14 @@
           "distance": true,
           "projectileStick": true,
           "delayFrames": 5,
+          "gaugePerHit": 25,
           "assumes": {
-            "ja": "粘着榴弾の付着。射撃の止まり（effects[0]）と同じ 120 回目の発の 5f 後（止まりの 1f と、止まりから付着までの 4f。区間で 2〜8f の真ん中）に 1 ヒット。射撃場の的ではどの区間もコアに付き、会心・距離ボーナス・フルバースト補正も乗る。バーストゲージは溜めない（notes[0]）",
-            "en": "The sticky grenade attaches. One hit 5 frames after the 120th shot (1 frame of firing pause plus 4 frames from the pause to the attach, the middle of 2–8 by distance band). On the range target it always hits the core; crit, distance bonus and the Full Burst bonus apply. It does not charge the burst gauge (notes[0])"
+            "ja": "粘着榴弾の付着。射撃の止まり（effects[0]）と同じ 120 回目の発の 5f 後（止まりの 1f と、止まりから付着までの 4f。区間で 2〜8f の真ん中）に 1 ヒット。射撃場の的ではどの区間もコアに付き、会心・距離ボーナス・フルバースト補正も乗る。付着のヒットのフレームに、射手の 1 ヒットの 25 回ぶん（25,000）のバーストゲージを溜める。説明文・データに値が無く、実測の値をそのまま持つ（C-0991）。ゲージ速度▲は射手の 1 ヒットと同じに掛けるとみる（確かめていない）",
+            "en": "The sticky grenade attaches. One hit 5 frames after the 120th shot (1 frame of firing pause plus 4 frames from the pause to the attach, the middle of 2–8 by distance band). On the range target it always hits the core; crit, distance bonus and the Full Burst bonus apply. The attach hit charges 25 shooter hits worth of burst gauge (25,000) on its frame. Neither the description nor the data gives the value, so the measured value is held as is (C-0991). Burst gauge speed buffs are assumed to apply as for a shooter hit (not verified)"
           },
           "claims": [
-            "C-0724"
+            "C-0724",
+            "C-0991"
           ]
         },
         {
@@ -244,18 +246,6 @@
           "claims": [
             "C-0723"
           ]
-        }
-      ],
-      "notes": [
-        {
-          "ja": "粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）",
-          "en": "The burst gauge gained from a sticky grenade attach hit (solo recordings 0733 and 0734; observations 0733-08 and 0734-08) is not modeled. The amount is larger than one shooter hit (target_burst_energy_pershot) and does not grow on a critical attach (not proportional to the attach damage; 0733-06). Neither the description nor the data gives a value, so its source is unknown (plan/design-skill-stage12-leftovers.md section 2)",
-          "kind": "unimplemented",
-          "claims": ["C-0991"],
-          "effect": {
-            "kind": "burstGaugeHit",
-            "trigger": "normalShot"
-          }
         }
       ]
     },

@@ -992,6 +992,11 @@ function runFirstPassOnce(
     effect: ResolvedDamageEffect;
     count: ShotCountKind;
     every: number;
+    /**
+     * V-0692（ラピ：レッドフードの粘着榴弾の付着。C-0991）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中の間隔。射撃の止まり
+     * （shotPauseTrackers）と同じく、窓の中は通算の回数が窓の間隔の倍数に届いた発で発火する（C-0727）
+     */
+    everyAt: ShotCountEveryAt | undefined;
     n: number;
     /** エレグの S1（C-0773）: 条件 enemyState（発火のフレームに敵がその状態なら予約する） */
     enemyState?: NamedStateId;
@@ -1019,6 +1024,7 @@ function runFirstPassOnce(
           effect,
           count: trigger.count,
           every: trigger.every,
+          everyAt: lists.shotCountEveryOf(i, effect.source.skill),
           n: 0,
           ...(enemyState === undefined ? {} : { enemyState }),
         });
@@ -1195,7 +1201,7 @@ function runFirstPassOnce(
     for (const t of shotDamageGauges) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
-      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.every);
+      const counted = advanceShotCount(t.n, shotCountWeight(t.count, shot), t.everyAt?.(f) ?? t.every);
       t.n = counted.count;
       if (!counted.fired) continue;
       if (t.enemyState !== undefined && !lists.enemyStateAt(t.enemyState, f)) continue;
