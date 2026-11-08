@@ -5,7 +5,7 @@
   --app-bg: light-dark(#eef1f7, #0b0f17);
   --app-fg: light-dark(#141a24, #e6eaf2);
   --app-border: light-dark(#c8d0dd, #2a3448);
-  /* スロットの枠の線の色（空のスロットの枠と、ニケがいるときの立ち絵の枠） */
+  /* スロットとニケ一覧の絵の枠の線の色（空のスロットの枠・ニケがいるときの立ち絵の枠・ニケ一覧の四角と縦長の絵の枠） */
   --slot-frame-line: color-mix(in srgb, var(--app-fg) 45%, transparent);
   --m-surface: light-dark(#ffffff, #131a26);
   --m-surface-2: light-dark(#f3f5f9, #1b2433);
@@ -120,8 +120,8 @@
   color: var(--slot-frame-line);
   opacity: 1;
 }
-/* ニケがいるときの立ち絵の枠（枠線と、外に足した 1px の線。styles.css）も、空のスロットの枠と同じ色にする */
-:root[data-app-ui='modern'] .char-visual-portrait {
+/* ニケがいるときの立ち絵とニケ一覧の絵の枠（枠線と、外に足した 1px の線。styles.css）も、空のスロットの枠と同じ色にする */
+:root[data-app-ui='modern'] :is(.char-visual-portrait, .char-visual-compact, .char-visual-tall) {
   border-color: var(--slot-frame-line);
   outline-color: var(--slot-frame-line);
 }
