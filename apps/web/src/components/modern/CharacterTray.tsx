@@ -134,9 +134,6 @@ export function CharacterTray({
             </select>
           </label>
           {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
-          {listOrder.order === 'combatPower' && listOrder.fixedSpec && (
-            <span className="hint">スペック固定の値で計算した戦闘力（実機とは照合していない）</span>
-          )}
           {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
             <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
           )}
