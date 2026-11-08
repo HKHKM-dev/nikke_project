@@ -11,14 +11,16 @@ import {
   ENEMY,
   createHolderLists,
   itemsOf,
+  pickRemoveDebuff,
   valuePiecesOf,
   type HeldTrack,
+  type HolderHistory,
   type HolderListsOptions,
 } from '../holders.ts';
 import { MAX_SKILL_LEVELS, resolveInstant } from '../resolve.ts';
-import type { TimelineSlot } from '../timeline.ts';
+import { timerFramesOf, type TimelineSlot } from '../timeline.ts';
 import type { FrameEvents, ShotEvent } from '../triggers.ts';
-import type { SkillDefinition, SkillEntry, TimedEffect } from '../types.ts';
+import type { RemoveDebuffEffect, SkillDefinition, SkillEntry, StateGrantEffect, TimedEffect } from '../types.ts';
 
 const D10 = gameSecondsToFrames(10);
 const D5 = gameSecondsToFrames(5);
@@ -336,5 +338,106 @@ describe('敵の件（段 C。plan/design-holder-effects.md 2.8 節）', () => {
       dotActiveSpans([100, 150], 1, 5, 'afterInterval').map((sp) => [sp.start, sp.end]),
     );
     expect(items).toHaveLength(1);
+  });
+});
+
+// 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除。遅れ（delayFrames）のある解除は効くフレームで対象を選び、外すフレームちょうどの
+// 付与は付与が勝ち（removeState と同じ規則。実機の根拠なし）、選び方を確かめていない所は決め打ちを記録する
+describe('デバフ解除（removeDebuff）', () => {
+  const TIMER = { everySeconds: 10 };
+  const T = timerFramesOf(TIMER, FRAMES)[0]!;
+  const DELAY = 50;
+  const AT = T + DELAY;
+  /** ほろ酔い（デバフの印）を fullBurstStart で 10 秒・最大 3 スタック */
+  const drunken = (over: Partial<StateGrantEffect> = {}): StateGrantEffect => ({
+    kind: 'state',
+    state: 'drunken',
+    trigger: 'fullBurstStart',
+    target: 'self',
+    durationRef: 2,
+    maxStacks: 3,
+    ...over,
+  });
+  const removal = (over: Partial<RemoveDebuffEffect> = {}): RemoveDebuffEffect => ({
+    kind: 'removeDebuff',
+    trigger: TIMER,
+    target: 'allies',
+    count: 1,
+    delayFrames: DELAY,
+    ...over,
+  });
+  /** 毎フレームを回す（予約した解除は、ループがそのフレームに来た時に効く）。grants のフレームが fullBurstStart */
+  function run(slots: TimelineSlot[], grants: readonly number[]): HolderHistory {
+    const lists = listsOf(slots);
+    lists.registerBattleStart();
+    for (let f = 0; f <= AT + 10; f++) {
+      lists.registerFrame(events(f, { fullBurstStart: grants.includes(f) }, slots.length));
+    }
+    return lists.history();
+  }
+  const drunkenOf = (history: HolderHistory, holder: number) =>
+    history.tracks
+      .filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === 'drunken')
+      .flatMap((t) => t.items);
+
+  it('removes a state applied during the delay, choosing the targets on the frame the removal lands', () => {
+    const history = run([slotWith(1, [drunken(), removal()])], [T + 10]);
+    expect(drunkenOf(history, 0)).toEqual([{ start: T + 10, end: AT + 1, stack: 1 }]);
+  });
+
+  it('keeps every stack when a grant lands on the removal frame (the grant wins, like removeState)', () => {
+    const history = run([slotWith(1, [drunken(), removal()])], [T - 100, AT]);
+    expect(drunkenOf(history, 0)).toEqual([
+      { start: T - 100, end: AT + D10, stack: 1 },
+      { start: AT, end: AT + D10, stack: 2 },
+    ]);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  it('picks the first slots and records the guess when more allies are debuffed than the random N', () => {
+    const history = run(
+      [
+        slotWith(1, [drunken({ target: 'allies' }), removal({ target: 'debuffedRandom', targetCount: 2 })]),
+        slotWith(2, []),
+        slotWith(3, []),
+      ],
+      [T - 100],
+    );
+    expect(drunkenOf(history, 0).at(-1)!.end).toBe(AT + 1);
+    expect(drunkenOf(history, 1).at(-1)!.end).toBe(AT + 1);
+    expect(drunkenOf(history, 2).at(-1)!.end).toBe(T - 100 + D10);
+    expect(history.removeDebuffGuesses).toEqual([
+      expect.objectContaining({ frame: AT, sourceSlotIndex: 0, guess: 'targets', limit: 2 }),
+    ]);
+  });
+
+  it('records no guess when the debuffed allies are N or fewer', () => {
+    const history = run(
+      [slotWith(1, [drunken(), removal({ target: 'debuffedRandom', targetCount: 2 })]), slotWith(2, [])],
+      [T - 100],
+    );
+    expect(drunkenOf(history, 0).at(-1)!.end).toBe(AT + 1);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  // 印の付いた状態はいまほろ酔いだけなので、状態が count 個より多い味方は選び方の関数で確かめる
+  it('removes the earliest states and records the guess when an ally has more than count states', () => {
+    const held = [
+      [],
+      [
+        { tracks: 'late', firstStart: 20 },
+        { tracks: 'early', firstStart: 10 },
+      ],
+      [{ tracks: 'x', firstStart: 5 }],
+    ];
+    expect(pickRemoveDebuff(held, 1, undefined)).toEqual({
+      chosen: ['early', 'x'],
+      guesses: [{ guess: 'states', limit: 1 }],
+    });
+    expect(pickRemoveDebuff(held, 2, 1)).toEqual({
+      chosen: ['early', 'late'],
+      guesses: [{ guess: 'targets', limit: 1 }],
+    });
+    expect(pickRemoveDebuff(held, 2, undefined)).toEqual({ chosen: ['early', 'late', 'x'], guesses: [] });
   });
 });

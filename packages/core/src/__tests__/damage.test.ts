@@ -133,6 +133,7 @@ describe('computeDamage', () => {
       chargeTimeFlat: 0,
       fixedChargeTime: 0,
       hitRate: 0,
+      hitRateUp: 0,
       infiniteAmmo: 0,
       elementDamage: 0,
       coreDamage: 0,

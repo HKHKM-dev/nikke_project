@@ -75,7 +75,8 @@ describe('1 パス目で持続の命中率▲の窓を追う', () => {
      * 着地点 A だけ値が違う。C-0467）ので、モデルと同じ hitRateSpanWith で出す
      */
     const ratioWith = (frame: number, k: number) =>
-      hitRateSpanWith(on.landing!, misato, 0, spanAt(frame), k * MISATO_S1).hitRate / planned(frame);
+      hitRateSpanWith(on.landing!, misato, 0, spanAt(frame), { n: k * MISATO_S1, up: k * MISATO_S1 }).hitRate /
+      planned(frame);
 
     it('does not change the shot frames', () => {
       expect(on.shots[0]!.frames).toEqual(off.shots[0]!.frames);

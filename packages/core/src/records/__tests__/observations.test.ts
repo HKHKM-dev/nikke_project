@@ -744,11 +744,11 @@ describe('照合の部品', () => {
     expect(off.slots[0]!.buildEffects!.some((e) => e.source.kind === 'cube')).toBe(false);
     expect(off.slots[0]!.attackOverride).toBe(400000);
 
-    // リロード 1 回分の長さ（reloadFramesAt）と最大装弾数（maxAmmoAt）に、キューブと OL の行が効く
+    // 最終弾 → 込め終わり（reloadFramesAt）と最大装弾数（maxAmmoAt）に、キューブと OL の行が効く（plan/design-reload-rounding.md
+    // 案 E: キューブありは ⌈69.07 − 0.78 + 11.9⌉ = 81、なしは設計書 2 節の録画のマナと同じ 110）
     const ctx = (i: TeamInput) => ({ args: { slot: 1, frame: 100 }, input: i });
-    const reload = mana.shot.reloadTime / 0.017;
-    expect(METRICS.reloadFramesAt!.sim(runSimulation(input), ctx(input))).toBeCloseTo(reload * (1 - 0.2969), 6);
-    expect(METRICS.reloadFramesAt!.sim(runSimulation(off), ctx(off))).toBeCloseTo(reload, 6);
+    expect(METRICS.reloadFramesAt!.sim(runSimulation(input), ctx(input))).toBe(81);
+    expect(METRICS.reloadFramesAt!.sim(runSimulation(off), ctx(off))).toBe(110);
     // 最終弾 → 次の 1 発目（reloadToNextShotAt）は、1 回ごとに丸めたリロード 1 回分 + 24f（C-0148。plan/design-reload-rounding.md
     // 案 E: ⌈69.07 − 0.78 + 11.9⌉ − 12 + 24 = 93）。sim の発の間とも同じ
     expect(METRICS.reloadToNextShotAt!.sim(runSimulation(input), ctx(input))).toBe(93);
@@ -766,6 +766,27 @@ describe('照合の部品', () => {
     expect(() =>
       buildTeamInput(recordings.get('0047')!, { enemy: 'range-bigarms-fire', buildEffectsOff: ['cube'] }, data),
     ).toThrow(/buildEffectsOff/);
+  });
+
+  it('reads each reload from the sim shots (reloadToNextShotAt・reloadFramesAt。plan/design-reload-rounding.md 案 E)', () => {
+    // 0510-03 の条件: ソルジャーF.A. の 1 回ずつのリロードは最終弾の蓄積の余りで決まり、1 本目（9 発）のマガジンの後と 15 発の
+    // マガジンの後で 1f 違う
+    const setup = { enemy: 'range-bigarms-fire', events: ['range-3min-jump'], burst: false };
+    const input = buildTeamInput(recordings.get('0510')!, setup, data);
+    const result = runSimulation(input);
+    const at = (metric: string, args: Record<string, number> = {}) =>
+      METRICS[metric]!.sim(result, { args: { slot: 1, frame: 600, ...args }, input });
+    const log = result.shots[0]!;
+    const gaps = log.lastShotFrames!.slice(0, 2).map((f) => log.frames[log.frames.indexOf(f) + 1]! - f);
+    expect(gaps).toEqual([141, 142]);
+    expect(at('reloadToNextShotAt', { n: 0 })).toBe(141);
+    expect(at('reloadToNextShotAt', { n: 1 })).toBe(142);
+    // n の省略は、区間の中の回（狙えない窓に掛かる回を除く）の中央値
+    expect(at('reloadToNextShotAt')).toBe(142);
+    // 最終弾 → 込め終わりは、込め終わり → 1 発目（12f）を引いた ⌈ずれ + x + c⌉
+    expect(at('reloadFramesAt', { n: 0 })).toBe(129);
+    expect(at('reloadFramesAt', { n: 1 })).toBe(130);
+    expect(() => at('reloadToNextShotAt', { n: 99 })).toThrow(/99 回目のリロードが無い/);
   });
 
   it('reads the burst skill cooldown cut at the n-th full burst start (cooldownCutFrames。V-0359)', () => {

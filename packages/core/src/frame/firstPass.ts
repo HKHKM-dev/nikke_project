@@ -106,7 +106,7 @@ import {
   type BurstScheduleModel,
   type BurstStepKey,
 } from '../burst/schedule.ts';
-import { capCritRate, ZERO_BUFFS, type BuffTotals } from '../skills/buffs.ts';
+import { capCritRate, ZERO_BUFFS, type BuffTotals, type HitRateN } from '../skills/buffs.ts';
 import {
   firesChargeShots,
   isResolvedShotCount,
@@ -223,14 +223,11 @@ export type FirstPassOptions = {
    */
   pelletHits?: readonly PelletHits[];
   /**
-   * plan/design-sustained-hit-rate-gauge.md: 枠 slotIndex の区間 span の弾丸命中率とコアの命中の期待値を、持続の命中率▲
-   * timedHitRateUp を足した N で出し直す（frame/landing.ts の hitRateSpanWith）。省略なら持続の▲の窓を追わない（計画の値のまま）
+   * plan/design-sustained-hit-rate-gauge.md: 枠 slotIndex の区間 span の弾丸命中率とコアの命中の期待値を、持続の命中率▲▼の和
+   * timed を足した和で出し直す（frame/landing.ts の hitRateSpanWith。timed が▲も▼も 0 なら span の値のまま）。省略なら持続の▲の窓を
+   * 追わない（計画の値のまま）
    */
-  hitRateWith?: (
-    slotIndex: number,
-    span: LandingHitRateSpan,
-    timedHitRateUp: number,
-  ) => { hitRate: number; coreHits: number };
+  hitRateWith?: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) => { hitRate: number; coreHits: number };
   /**
    * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 枠 slotIndex がフレーム frame に撃った 1 発の値（2 パス目と同じ
    * 関数。progress は部分チャージの発の進み）と、そのフレームの最終攻撃力。buffs は、そのフレームに効いている件を常時の値に足した合計。
@@ -661,8 +658,7 @@ function runFirstPassOnce(
   ): LandingHitRateSpan | { hitRate: number; coreHits: number } | undefined => {
     const span = spanAt(i, f);
     if (span === undefined || options.hitRateWith === undefined || !lists.hasHitTracks) return span;
-    const up = lists.hitUpAt(i, f);
-    return up === 0 ? span : options.hitRateWith(i, span, up);
+    return options.hitRateWith(i, span, lists.hitRateAt(i, f));
   };
   /** 枠 i がフレーム f に撃った 1 発のゲージ */
   const energyAt = (i: number, f: number): number => {
@@ -1072,8 +1068,10 @@ function runFirstPassOnce(
   const accumulateShotAt = (i: number, frame: number, progress: number | undefined) => {
     let buffs = lists.damageBuffsAt(i, frame, passive[i]?.buffs ?? ZERO_BUFFS);
     // 持続の命中率▲を区間に足すとき（2 パス目の区間と同じ。frame/plan.ts の planTeamRun が hitRateWith を渡す時）
-    if (options.hitRateWith !== undefined && lists.hasHitTracks)
-      buffs = { ...buffs, hitRate: buffs.hitRate + lists.hitUpAt(i, frame) };
+    if (options.hitRateWith !== undefined && lists.hasHitTracks) {
+      const timed = lists.hitRateAt(i, frame);
+      buffs = { ...buffs, hitRate: buffs.hitRate + timed.n, hitRateUp: buffs.hitRateUp + timed.up };
+    }
     const fullBurst = windowsOf().some((w) => w.start <= frame && frame < w.end);
     return { ...shotValueAt!(i, frame, buffs, fullBurst, progress), buffs };
   };

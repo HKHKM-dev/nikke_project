@@ -19,6 +19,7 @@ import {
 } from '../frame/landing.ts';
 import { perShotDamageOf, planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
+import { hitRateNOf } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -90,7 +91,7 @@ describe('持続の命中率▲（C-0170）', () => {
     expect(n(nearFb.start + 10)).toBeCloseTo(MODERNIA_S2 + DRAKE_S1, 9);
     expect(n(nearFb.start + gameSecondsToFrames(12))).toBeCloseTo(MODERNIA_S2, 9);
     expect(n(nearFb.end + 10)).toBe(0);
-    expect(plan.landing!.hitRateUp[LITER]).toBe(0);
+    expect(plan.landing!.hitRate[LITER]).toEqual({ n: 0, up: 0 });
   });
 
   it('uses the segment N for the trigger, and keeps the plan value outside the buffs', () => {
@@ -99,7 +100,7 @@ describe('持続の命中率▲（C-0170）', () => {
     const frame = nearFb.start + 10;
     const seg = segmentAt(frame);
     const buffs = seg.slots[LITER]!.buffs;
-    const parts = landingPartsWith(plan.landing, slot, LITER, seg.landing, buffs.hitRate);
+    const parts = landingPartsWith(plan.landing, slot, LITER, seg.landing, hitRateNOf(buffs));
     for (const p of parts) {
       expect(p.condition.coreHitRate).toBe(coreHitRateWithHitRateUp(p.tableCoreHitRate!, MODERNIA_S2 + DRAKE_S1));
       // C-0192: リターは SMG なので弾丸命中率も区間の N で出し直す
@@ -117,7 +118,7 @@ describe('持続の命中率▲（C-0170）', () => {
     expect(simSeg.trigger.perTrigger).toBeGreaterThan(without.perTrigger);
     // 持続の▲の外は計画の配分のまま（同じ参照）
     const outside = segmentAt(nearFb.end + 10);
-    expect(landingPartsWith(plan.landing, slot, LITER, outside.landing, outside.slots[LITER]!.buffs.hitRate)).toBe(
+    expect(landingPartsWith(plan.landing, slot, LITER, outside.landing, hitRateNOf(outside.slots[LITER]!.buffs))).toBe(
       landingPartsOf(plan.landing, slot, LITER, outside.landing),
     );
   });

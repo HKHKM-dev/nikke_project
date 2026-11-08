@@ -262,8 +262,8 @@ describe('件の一覧でのスタック数の条件と減少（skills/holders.t
   it('reads a conditional hit rate increase in the hit view of the first pass', () => {
     const lists = run();
     // 命中率▲（フルスタックの時だけ。10 秒）の件は段 1.5 にあり、当たりの件として読む（区間と同じ N）
-    expect(lists.hitUpAt(0, 199)).toBe(0);
-    expect(lists.hitUpAt(0, 200)).toBeCloseTo(0.5, 12);
+    expect(lists.hitRateAt(0, 199).n).toBe(0);
+    expect(lists.hitRateAt(0, 200).n).toBeCloseTo(0.5, 12);
   });
 });
 
@@ -305,7 +305,7 @@ describe('perCount の件の値を 1 パス目でも掛ける（skills/holders.t
       expect(pieces.filter((p) => p.effect.stat === stat).map((p) => p.effect.value)).toEqual([2]);
     const at = 100 + 1;
     expect(lists.firingBuffsAt(0, at, ZERO_BUFFS)?.reloadSpeed).toBeCloseTo(2, 12);
-    expect(lists.hitUpAt(0, at)).toBeCloseTo(2, 12);
+    expect(lists.hitRateAt(0, at).n).toBeCloseTo(2, 12);
     expect(lists.critUpAt(0, at)).toBeCloseTo(2, 12);
   });
 });

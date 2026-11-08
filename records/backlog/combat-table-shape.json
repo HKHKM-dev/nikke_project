@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 3,
+  "text": "画面: 戦闘力の表（`data/characters/combat.json`）の版と形を検査しない。形が違うと一覧の計算の例外が画面全体を落とす（`apps/web/src/useListOrder.ts`・`packages/core/src/combatTable.ts`）。デプロイの直後に古い JS と新しい表が混ざると起きうる"
+}
