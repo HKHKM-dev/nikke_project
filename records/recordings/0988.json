@@ -1,0 +1,40 @@
+{
+  "id": "0988",
+  "date": "2026-11-08",
+  "folder": "range",
+  "file": "20261108-0988_mg_rapi-redhood_anis-star-oneshot.mp4",
+  "original": "2026-11-08_23-05-52.mp4",
+  "durationSec": 24.1,
+  "frames": 1445,
+  "fps": 60,
+  "sizeMB": 29.2,
+  "sha256": "06bd37ab5c55",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0699 の撮り直し。アニス：スター（操作）は戦闘開始の直後にフルチャージで 1 発だけ撃ち、その後は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた",
+  "backup": {
+    "at": "2026-11-08T23:07+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
