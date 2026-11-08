@@ -6,6 +6,7 @@ import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
+import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -20,6 +21,9 @@ type Props = {
   fixedSpec: boolean;
   /** 一覧の並び（名前順・戦闘力順。設定のメニューの「一覧の並び」と同じもの） */
   listOrder: ListOrderControls;
+  /** 立ち絵の形（四角・縦長）と、切り替え */
+  shape: TrayShape;
+  onToggleShape: () => void;
   onSelectCharacter: (resourceId: number) => void;
 };
 
@@ -41,7 +45,6 @@ function BadgeFilter({
           type="button"
           className="char-tray-badge-button"
           aria-pressed={value === v}
-          title={label}
           onClick={() => onToggle(v)}
         >
           <img className="char-badge" src={src} alt={label} draggable={false} />
@@ -60,6 +63,8 @@ export function CharacterTray({
   roster,
   fixedSpec,
   listOrder,
+  shape,
+  onToggleShape,
   onSelectCharacter,
 }: Props) {
   const [filters, setFilters] = useState<BadgeFilters>({});
@@ -113,16 +118,20 @@ export function CharacterTray({
           {listOrder.order === 'combatPower' && listOrder.failedCount > 0 && (
             <span className="hint">戦闘力を出せない {listOrder.failedCount} 体は後ろに名前順で並べる</span>
           )}
-          <button type="button" className="char-tray-action-button" aria-disabled="true" title="フィルター（未実装）">
+          <button type="button" className="char-tray-action-button" aria-disabled="true">
             フィルター<span className="char-tray-unimplemented">未実装</span>
           </button>
+          {/* 立ち絵の縦長・四角の切り替え。いまの形を強く出す */}
           <button
             type="button"
-            className="char-tray-action-button"
-            aria-disabled="true"
-            title="立ち絵の縦長・四角の切り替え（未実装）"
+            className="char-tray-action-button char-tray-shape-button"
+            aria-pressed={shape === 'tall'}
+            aria-label={`立ち絵の形: ${TRAY_SHAPE_LABEL[shape]}（押すと切り替える）`}
+            onClick={onToggleShape}
           >
-            縦長 / 四角<span className="char-tray-unimplemented">未実装</span>
+            <span className={shape === 'tall' ? 'char-tray-shape-current' : ''}>{TRAY_SHAPE_LABEL.tall}</span>
+            {' / '}
+            <span className={shape === 'square' ? 'char-tray-shape-current' : ''}>{TRAY_SHAPE_LABEL.square}</span>
           </button>
         </div>
       </div>
@@ -143,6 +152,7 @@ export function CharacterTray({
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
+                shape={shape}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />
             );

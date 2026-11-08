@@ -94,15 +94,10 @@ export function ModernSlotCard({
             className="modern-slot-focus-icon"
             role="img"
             aria-label="操作"
-            title="操作"
             style={{ '--icon': `url("${controllerIcon}")` } as CSSProperties}
           />
         )}
-        {inOtherParty && (
-          <span className="modern-slot-other-party-badge" title="ほかの編成で使用中">
-            他の編成
-          </span>
-        )}
+        {inOtherParty && <span className="modern-slot-other-party-badge">他の編成</span>}
       </div>
 
       <div className="modern-slot-body">
@@ -124,7 +119,6 @@ export function ModernSlotCard({
             <button
               type="button"
               className="modern-slot-icon-button modern-slot-clear-button"
-              title="スロットを空にする"
               aria-label="スロットを空にする"
               onClick={(e) => {
                 e.stopPropagation();
@@ -139,7 +133,6 @@ export function ModernSlotCard({
             <button
               type="button"
               className="modern-slot-icon-button modern-slot-build-button"
-              title="育成・設定"
               aria-label="育成・設定"
               onClick={(e) => {
                 e.stopPropagation();
@@ -164,9 +157,7 @@ export function ModernSlotCard({
 
       <div className="modern-slot-damage-section">
         <div className="modern-slot-damage-row">
-          <span className="modern-slot-damage-value" title={formattedDamage.title}>
-            {formattedDamage.text}
-          </span>
+          <span className="modern-slot-damage-value">{formattedDamage}</span>
           {damagePercent > 0 && <span className="modern-slot-damage-percent">{damagePercent}%</span>}
         </div>
         <div className="modern-slot-damage-bar-track">

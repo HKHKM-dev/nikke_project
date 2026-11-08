@@ -2,6 +2,7 @@ import { useDraggable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
+import type { TrayShape } from '../../trayShape.ts';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -14,6 +15,8 @@ type Props = {
   isPending: boolean;
   /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
   growthMarks: GrowthMarks | null;
+  /** 立ち絵の形（四角・縦長） */
+  shape: TrayShape;
   onClick: () => void;
 };
 
@@ -24,6 +27,7 @@ export function CharacterTrayItem({
   isUnsupported,
   isPending,
   growthMarks,
+  shape,
   onClick,
 }: Props) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -51,7 +55,7 @@ export function CharacterTrayItem({
         <CharacterVisual
           character={character}
           isUnsupported={isUnsupported}
-          size="compact"
+          size={shape === 'tall' ? 'tall' : 'compact'}
           overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
         />
         {isTaken && (

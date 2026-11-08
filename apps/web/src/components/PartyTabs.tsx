@@ -10,17 +10,10 @@ type Props = {
   totals: readonly PartyTotal[];
 };
 
-/** 値の欄の文言（format.ts の formatDamage。出せない値は「—」）。エラーの文は title に出す */
-function totalText(p: PartyTotal | undefined): { text: string; title: string | undefined } {
-  const shown = formatDamage(p?.total ?? null);
-  return p?.error === undefined ? shown : { ...shown, title: p.error };
-}
-
 export function PartyTabs({ active, onSelect, totals }: Props) {
   return (
     <div className="party-tabs" role="group" aria-label="ソロレイドの編成">
       {Array.from({ length: PARTY_COUNT }, (_, i) => {
-        const text = totalText(totals[i]);
         return (
           <div className="party-tab-cell" key={i}>
             <button
@@ -32,8 +25,13 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
             >
               {partyNumber(i)}
             </button>
-            <span className="party-tab-total" data-computing={totals[i]?.computing ?? false} title={text.title}>
-              {text.text}
+            {/* 値の欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す */}
+            <span
+              className="party-tab-total"
+              data-computing={totals[i]?.computing ?? false}
+              aria-label={totals[i]?.error === undefined ? undefined : `計算できない: ${totals[i]!.error}`}
+            >
+              {formatDamage(totals[i]?.total ?? null)}
             </span>
           </div>
         );

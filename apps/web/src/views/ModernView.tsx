@@ -32,6 +32,8 @@ import {
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
+import { readStorage, writeStorage } from '../storage.ts';
+import { TRAY_SHAPE_STORAGE_KEY, parseTrayShape } from '../trayShape.ts';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -198,6 +200,14 @@ export function ModernView({
 }: ViewProps) {
   // キャラクターインデックスを ID で引けるマップを作成
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
+
+  // ニケ一覧の立ち絵の形（四角・縦長）。ブラウザに覚える
+  const [trayShape, setTrayShape] = useState(() => parseTrayShape(readStorage(TRAY_SHAPE_STORAGE_KEY)));
+  const toggleTrayShape = () => {
+    const next = trayShape === 'tall' ? 'square' : 'tall';
+    setTrayShape(next);
+    writeStorage(TRAY_SHAPE_STORAGE_KEY, next);
+  };
 
   // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
   const [pendingId, setPendingId] = useState<number | null>(null);
@@ -431,6 +441,8 @@ export function ModernView({
           roster={roster}
           fixedSpec={team.fixedSpec}
           listOrder={listOrder}
+          shape={trayShape}
+          onToggleShape={toggleTrayShape}
           onSelectCharacter={handleSelectCharacter}
         />
 
@@ -494,7 +506,7 @@ export function ModernView({
               <span className="char-tray-item-visual">
                 <CharacterVisual
                   character={draggedCharacter}
-                  size="compact"
+                  size={trayShape === 'tall' ? 'tall' : 'compact'}
                   overlay={draggedMarks && <GrowthMarksView {...draggedMarks} className="char-tray-growth" />}
                 />
               </span>

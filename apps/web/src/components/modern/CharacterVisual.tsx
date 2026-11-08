@@ -5,8 +5,11 @@ import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge
 type Props = {
   character: CharacterIndexEntry;
   isUnsupported?: boolean;
-  /** normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード） */
-  size?: 'normal' | 'compact' | 'portrait';
+  /**
+   * normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード）、
+   * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は compact と同じ）
+   */
+  size?: 'normal' | 'compact' | 'portrait' | 'tall';
   /** バッジの列の最後に足すバッジ（スロットのコレクション） */
   extraBadge?: Badge | null;
   /** 絵の上に重ねるもの（ニケ一覧の右上の限界突破・コア強化） */
@@ -22,7 +25,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 const failedImages = new Set<string>();
 
 function BadgeImg({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
-  return <img className={className} src={badge.src} alt={badge.label} title={badge.label} draggable={false} />;
+  return <img className={className} src={badge.src} alt={badge.label} draggable={false} />;
 }
 
 export function CharacterVisual({
@@ -32,19 +35,23 @@ export function CharacterVisual({
   extraBadge = null,
   overlay = null,
 }: Props) {
-  const imageSrc = `${BASE_URL}characters/${size === 'portrait' ? 'portraits' : 'images'}/${character.resourceId}.webp`;
+  const tallImage = size === 'portrait' || size === 'tall';
+  const imageSrc = `${BASE_URL}characters/${tallImage ? 'portraits' : 'images'}/${character.resourceId}.webp`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。
   // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
   const failed = failedImages.has(imageSrc);
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
   const [, rerender] = useReducer((n: number) => n + 1, 0);
   // ニケ一覧の正方形の絵は、左上に武器種・バースト段階、右下に属性。ほかは左上に属性・武器種・バースト段階（2.5 節）
-  const compact = size === 'compact';
+  const compact = size === 'compact' || size === 'tall';
   const columnKinds = compact ? COMPACT_BADGE_KINDS : VISUAL_BADGE_KINDS;
   const elementBadge = compact ? ELEMENT_BADGE_KIND.badges[character.element] : undefined;
 
   return (
-    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-rarity={character.rarity}>
+    <div
+      className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`} ${size === 'tall' ? 'char-visual-compact' : ''}`}
+      data-rarity={character.rarity}
+    >
       {failed ? (
         <span className="char-visual-fallback" aria-hidden="true">
           {character.name.ja}

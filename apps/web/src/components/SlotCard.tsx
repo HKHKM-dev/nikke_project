@@ -120,8 +120,8 @@ export function SlotCard({
         data-computing={slotResult?.stale ?? false}
         data-placeholder={character === undefined}
       >
-        <span className="slot-damage-val" title={damage.title} aria-label={`ダメージ ${damage.text}`}>
-          {damage.text}
+        <span className="slot-damage-val" aria-label={`ダメージ ${damage}`}>
+          {damage}
         </span>
       </div>
       {!(character && limits) && (

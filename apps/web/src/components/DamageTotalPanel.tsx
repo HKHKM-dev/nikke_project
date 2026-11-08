@@ -11,15 +11,12 @@ type Props = {
 };
 
 export function DamageTotalPanel({ title, label, value, computing }: Props) {
-  const shownValue = formatDamage(value);
   return (
     <fieldset className="panel damage-total">
       <legend>{title}</legend>
       <div className="team-total-bar" data-computing={computing} data-centered={label === undefined}>
         {label !== undefined && <span className="team-total-label">{label}</span>}
-        <span className="team-total-val" title={shownValue.title}>
-          {shownValue.text}
-        </span>
+        <span className="team-total-val">{formatDamage(value)}</span>
       </div>
     </fieldset>
   );
