@@ -392,5 +392,105 @@
       "slot": 3,
       "source": "skill"
     }
+  },
+  {
+    "id": "0671-17",
+    "recording": "0671",
+    "source": "V-0694",
+    "readAt": "2026-11-08",
+    "kind": "count",
+    "use": "compare",
+    "value": 7,
+    "unit": "発",
+    "description": "ネオン：ビジョン・アイの通常攻撃の何発目で、1 回目に BURST バーが消えた（本当の満タン）か",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）・tools/captures/gauge.ts --mode series --subpixel",
+      "note": "戦闘開始は f874（残り時間の表示が出たフレーム。照準の左の残弾は f877 に出た）。ネオン：ビジョン・アイの発（残弾が 1 減ったフレーム）は 945・1004・1063・1122・1181・（1240。0 の表示は読めない）・1441。バーは f1456 に消え（その次のフレームから読めない。I → II の替わり目は f1485 で 29f 後。C-0220）、7 発目の着弾（発の 14f 後の f1455。ほかの発も、残弾が減ってから 14〜15f 後にバーが伸びる）で満タンになった。ラム・デルタの発は 82f ごとに同じフレームで、満タンの前の最後は 6 回目（バーは 113px のまま）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 3,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0671-18",
+    "recording": "0671",
+    "source": "V-0694",
+    "readAt": "2026-11-08",
+    "kind": "gauge",
+    "use": "compare",
+    "value": 5.31,
+    "unit": "%",
+    "description": "ネオン：ビジョン・アイの通常攻撃（フルチャージ・操作）の 1 発で溜まるバーストゲージ（最大に対する %）。1 回目の満タンまでの BURST バーの伸びを、同じフレームに当たるラム・デルタの 1 発ずつ（合わせて 109,000）と比べた",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel（BURST バーの px）",
+      "note": "1 回目の満タンまでの、バーの伸びの段ごとの中央値の差。ネオン：ビジョン・アイだけの段（f1018・1077・1137・1195・1254）は 7.06・7.24・7.00・7.00・7.02（平均 7.06）px、ラム・デルタが同じフレームに当たる段（f1027・1109・1191・1273）は 13.94・14.58・14.75・14.73（平均 14.50）px で、比は 0.487。ラム（56,000）・デルタ（53,000）の 1 発（AI なのでフルチャージ倍率なし。C-0007・C-0083）の和 109,000 に比を掛けた値。最初の段（バーが 0px から出る所。C-0084）と、113px に届く段は使わない。1px ≈ 0.74%（C-0084）で直しても 5.22%。許容 ±0.3 は 1 段の読みの揺れ（±0.4px）の幅"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotGauge",
+      "args": {
+        "slot": 3,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 0.3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    }
+  },
+  {
+    "id": "0671-19",
+    "recording": "0671",
+    "source": "V-0694",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "use": "record",
+    "value": [582, 611],
+    "unit": "f",
+    "description": "戦闘開始から、1 回目に BURST バーが消えたフレーム（本当の満タン）と、右のバースト欄が I から II に替わったフレームまでの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/gauge.ts --mode series --subpixel・tools/captures/timer.ts --mode changes",
+      "note": "戦闘開始 f874・バーの消失 f1456・I → II f1485（0671-01 の 1 つ目）。満タンはネオン：ビジョン・アイの 7 発目の着弾（0671-17）。比べない理由: モデルはネオン：ビジョン・アイの弾の飛ぶ時間（発から着弾まで 14〜15f）を持たない（的の表の飛ぶ時間の行に、この弾の種類が無い）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0671-20",
+    "recording": "0671",
+    "source": "V-0694",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "use": "record",
+    "value": 81,
+    "unit": "f",
+    "description": "2 回目のフルバーストの始まり（III のタイマーの 00.00）から、その後のネオン：ビジョン・アイの最初の発（照準の左の残弾が減ったフレーム）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts --mode series（照準の左の残弾）と、レシピ burst-panel@1 の 00.00",
+      "note": "00.00 は f3921（0671-03 の 2 つ目）。その前のマガジンは 3718 に 1（0 は 3777 ごろ。読めない）、リロードの明けの 6 の表示の後、f4002 に 6 → 5。マガジンの最後の発から次の発までは、入りの止まり（22f）と I・II の止まり（1f ずつ）を除いて 201f で、ふだんのリロードを挟む間と同じ。比べない理由: モデルはネオン：ビジョン・アイの弾の飛ぶ時間を持たないので、1 回目の満タン（と、CT が律速の 2 回目以降の発動）が録画より約 15f 早い（0671-19）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
   }
 ]
