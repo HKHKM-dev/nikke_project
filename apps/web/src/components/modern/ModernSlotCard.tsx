@@ -102,7 +102,7 @@ export function ModernSlotCard({
             <SlotCharName name={characterEntry.name.ja} />
             <button
               type="button"
-              className="modern-slot-clear-button"
+              className="modern-slot-icon-button modern-slot-clear-button"
               title="スロットを空にする"
               aria-label="スロットを空にする"
               onClick={(e) => {
@@ -112,6 +112,19 @@ export function ModernSlotCard({
               onPointerDown={(e) => e.stopPropagation()}
             >
               ✕
+            </button>
+            <button
+              type="button"
+              className="modern-slot-icon-button modern-slot-build-button"
+              title="育成・設定"
+              aria-label="育成・設定"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenBuildModal();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              ⚙
             </button>
           </div>
         ) : (
@@ -136,22 +149,6 @@ export function ModernSlotCard({
         <div className="modern-slot-damage-bar-track">
           <div className="modern-slot-damage-bar-fill" style={{ width: `${damagePercent}%` }} />
         </div>
-      </div>
-
-      <div className="modern-slot-footer">
-        {characterEntry && (
-          <button
-            type="button"
-            className="modern-slot-action-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenBuildModal();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            ⚙️ 育成・設定
-          </button>
-        )}
       </div>
     </div>
   );

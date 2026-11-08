@@ -138,9 +138,6 @@
   border-radius: 999px;
   background: linear-gradient(90deg, var(--m-accent), var(--m-gold));
 }
-:root[data-app-ui='modern'] .modern-slot-action-button {
-  border-radius: 8px;
-}
 
 /* ニケ一覧（トレイ）。一覧のニケは角を丸めない（上のボタンの共通の角丸を打ち消す） */
 :root[data-app-ui='modern'] .char-tray-item {

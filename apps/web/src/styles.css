@@ -726,10 +726,9 @@ header h1 {
   font-size: 0.7rem;
   font-weight: normal;
 }
-/* スロットを空にするボタン。立ち絵の右上に重ねる（置き先待ちの水色の重ね・◎ より上） */
-.modern-slot-clear-button {
+/* 立ち絵の右上に重ねるボタン（上から、空にする ✕・育成と設定の ⚙）。置き先待ちの水色の重ね・◎ より上 */
+.modern-slot-icon-button {
   position: absolute;
-  top: 3px;
   right: 3px;
   z-index: 4;
   width: 22px;
@@ -744,6 +743,13 @@ header h1 {
   font-size: 0.8rem;
   line-height: 1;
   cursor: pointer;
+}
+.modern-slot-clear-button {
+  top: 3px;
+}
+.modern-slot-build-button {
+  top: 28px;
+  font-size: 0.95rem;
 }
 
 /* カードボディ・キャラ表示 */
@@ -859,28 +865,6 @@ header h1 {
 }
 
 /* カードフッター */
-.modern-slot-footer {
-  margin-top: auto;
-  /* ボタン（ニケがいるとき）があってもなくても高さを変えない */
-  min-height: 2rem;
-  display: flex;
-  align-items: center;
-}
-.modern-slot-footer > * {
-  flex: 1;
-}
-.modern-slot-action-button {
-  width: 100%;
-  padding: 4px 8px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  background: transparent;
-  border: 1px solid var(--app-border);
-  color: inherit;
-}
-.modern-slot-action-button:hover {
-  background: color-mix(in srgb, var(--app-fg) 10%, transparent);
-}
 
 /* CharacterVisual (カード/アセット/フォールバック) */
 .char-visual {
