@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="100"
+   height="100"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="genkaitoppa.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   viewBox="0 0 100 100"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="4"
+     inkscape:cx="49.875"
+     inkscape:cy="50.125"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5">
+    <sodipodi:guide
+       position="0,100"
+       orientation="0,100"
+       id="guide1"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="100,100"
+       orientation="100,0"
+       id="guide2"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="100,0"
+       orientation="0,-100"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0,0"
+       orientation="-100,0"
+       id="guide4"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <path
+     style="fill:#e600e6;fill-opacity:1;stroke:#e500e5;stroke-width:7;stroke-dasharray:none;stroke-opacity:1"
+     d="M 93.49985,93.49985 53.346134,76.769151 H 46.653858 L 6.5001571,93.49985 23.230866,53.346132 V 46.653855 L 6.5001571,6.5001566 46.653858,23.230862 h 6.692276 L 93.49985,6.5001566 76.769152,46.653858 v 6.692272 z"
+     id="path1"
+     sodipodi:nodetypes="ccccccccccccc" />
+  <circle
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#e300e3;stroke-width:7;stroke-dasharray:none;stroke-opacity:1"
+     id="path4"
+     cx="50"
+     cy="50"
+     r="46.428562" />
+</svg>

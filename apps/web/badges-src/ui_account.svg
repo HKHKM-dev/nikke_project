@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="100"
+   height="100"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="account.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   viewBox="0 0 100 100"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs5" />
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="5.38"
+     inkscape:cx="51.394052"
+     inkscape:cy="51.951673"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5">
+    <sodipodi:guide
+       position="0,100"
+       orientation="0,100"
+       id="guide1"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="100,100"
+       orientation="100,0"
+       id="guide2"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="100,0"
+       orientation="0,-100"
+       id="guide3"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0,0"
+       orientation="-100,0"
+       id="guide4"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <rect
+     style="fill:none;stroke:#ffffff;stroke-width:6.54206"
+     id="rect4"
+     width="93.457947"
+     height="93.457947"
+     x="3.271028"
+     y="3.271028" />
+  <ellipse
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:7.65699"
+     id="path4"
+     cx="50"
+     cy="36"
+     rx="12"
+     ry="14" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:6.2707"
+     d="M 12.50128,85.168 H 87.49872 C 87.49872,85.168 88.297224,60 50,60 11.702776,60 12.50128,85.168 12.50128,85.168 Z"
+     id="path5"
+     sodipodi:nodetypes="cczc" />
+</svg>

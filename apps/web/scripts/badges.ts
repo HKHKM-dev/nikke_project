@@ -5,9 +5,11 @@
 //
 // ファイル名の命名規則: <グループ>_<値>[-<変種>].svg
 // - グループ: キャラのデータ（CharacterIndexEntry）にある項目は、その項目名のまま（element・burstStep・class・weaponType・
-//   rarity・corporation）。データに無いものは camelCase の英単語（burst・collection・ui）
-// - 値: データにある項目は、データの値を大文字小文字までそのまま（Fire・Step1・AllStep・ELYSION など）。データに無いものは小文字の英語
-// - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（collection の上限に達した版は -max）
+//   rarity・corporation）。育成の入力（GrowthInput）の項目も、その項目名のまま（grade・core）。どちらにも無いものは camelCase の
+//   英単語（burst・collection・ui）
+// - 値: データにある項目は、データの値を大文字小文字までそのまま（Fire・Step1・AllStep・ELYSION など）。値ごとの絵でないもの
+//   （grade の空いた星と埋まった星など）と、データに無いものは小文字の英語
+// - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（collection の上限に達した版は -max、背景の六角形を付けた版は -badge）
 // - 並びの番号は付けない（並びは使う側のコードが決める）
 import { readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
