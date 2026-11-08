@@ -43,7 +43,7 @@ const returnSideEffects = defaultDropAnimationSideEffects({ className: { active:
 const dropState: { targetIndex: number | null; placed: boolean } = {
   // スロットどうしを入れ替えた先のスロット（入れ替えていなければ null）
   targetIndex: null,
-  // 一覧のニケをスロットに置いた（一覧へ戻るアニメーションはしない）
+  // 持ち上げたものの行き先が決まった（一覧のニケをスロットに置いた・スロットのニケを一覧へ戻して外した）。元へ戻るアニメーションはしない
   placed: false,
 };
 
@@ -126,7 +126,7 @@ function slideInto(from: Element, target: Element, ready: Promise<void>): () => 
  * 落とした先のスロットへ滑り込ませる（slideInto）。どちらも着くまで行き先の絵は隠す（modern-slot-arriving）
  */
 const DROP_ANIMATION: DropAnimation = {
-  // 一覧のニケをスロットに置いたときは動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
+  // 行き先が決まったとき（dropState.placed）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
   keyframes: ({ transform: { initial, final } }) => {
     const at = (t: typeof initial) => ({
       transform: `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`,
@@ -296,6 +296,8 @@ export function ModernView({
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
       if (activeData.type === 'slot-character' && activeData.character) {
+        // 外したニケはスロットへ戻らないので、戻るアニメーションはしない
+        dropState.placed = true;
         dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
       }
       return;
