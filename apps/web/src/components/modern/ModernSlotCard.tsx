@@ -162,28 +162,49 @@ export function ModernSlotCard({
   );
 }
 
-/** 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、左右に往復して流す（はみ出す幅を --name-overflow に置く） */
+/** 名前が流れる速さ（px/秒）と、ループでつながる 2 つの名前の間（px。styles.css の .modern-slot-char-name-track の margin と同じ） */
+const NAME_SCROLL_SPEED = 40;
+const NAME_SCROLL_GAP = 32;
+
+/**
+ * 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、右から左へ一定の速さで流し続ける
+ * （名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）
+ */
 function SlotCharName({ name }: { name: string }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
-  const [overflow, setOverflow] = useState(0);
+  const [textWidth, setTextWidth] = useState<number | null>(null);
   useLayoutEffect(() => {
     const box = boxRef.current;
     const text = textRef.current;
     if (!box || !text) return;
-    const measure = () => setOverflow(Math.max(0, Math.ceil(text.scrollWidth - box.clientWidth)));
+    const measure = () => {
+      const style = getComputedStyle(box);
+      const room = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const width = text.getBoundingClientRect().width;
+      setTextWidth(width > room ? width : null);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(box);
     return () => observer.disconnect();
   }, [name]);
+  const shift = textWidth === null ? 0 : textWidth + NAME_SCROLL_GAP;
   return (
     <div
       ref={boxRef}
-      className={`modern-slot-char-name ${overflow > 0 ? 'modern-slot-char-name-scroll' : ''}`}
-      style={{ '--name-overflow': `${overflow}px` } as CSSProperties}
+      className={`modern-slot-char-name ${textWidth !== null ? 'modern-slot-char-name-scroll' : ''}`}
+      style={
+        {
+          '--name-shift': `${shift}px`,
+          '--name-duration': `${shift / NAME_SCROLL_SPEED}s`,
+        } as CSSProperties
+      }
     >
-      <span ref={textRef}>{name}</span>
+      <span className="modern-slot-char-name-track">
+        <span ref={textRef}>{name}</span>
+        {textWidth !== null && <span aria-hidden="true">{name}</span>}
+      </span>
     </div>
   );
 }

@@ -765,7 +765,7 @@ header h1 {
   flex-direction: column;
   align-items: center;
 }
-/* 立ち絵の下部に右詰めで重ねる名前。収まらないときは左右に往復して流す（ModernSlotCard.tsx の SlotCharName） */
+/* 立ち絵の下部に右詰めで重ねる名前。収まらないときは右から左へ一定の速さで流し続ける（ModernSlotCard.tsx の SlotCharName） */
 .modern-slot-char-name {
   position: absolute;
   left: 1px;
@@ -783,27 +783,29 @@ header h1 {
   pointer-events: none;
   z-index: 1;
 }
-.modern-slot-char-name > span {
+.modern-slot-char-name-track {
   display: inline-block;
 }
 .modern-slot-char-name-scroll {
   text-align: left;
 }
-.modern-slot-char-name-scroll > span {
-  animation: modern-slot-char-name-scroll 6s ease-in-out infinite alternate;
+/* 2 つ並べた名前の間（ModernSlotCard.tsx の NAME_SCROLL_GAP と同じ） */
+.modern-slot-char-name-scroll .modern-slot-char-name-track > span {
+  margin-right: 32px;
+}
+.modern-slot-char-name-scroll .modern-slot-char-name-track {
+  animation: modern-slot-char-name-scroll var(--name-duration) linear infinite;
 }
 @keyframes modern-slot-char-name-scroll {
-  0%,
-  15% {
+  from {
     transform: translateX(0);
   }
-  85%,
-  100% {
-    transform: translateX(calc(-1 * var(--name-overflow)));
+  to {
+    transform: translateX(calc(-1 * var(--name-shift)));
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-char-name-scroll > span {
+  .modern-slot-char-name-scroll .modern-slot-char-name-track {
     animation: none;
   }
 }
