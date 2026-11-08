@@ -7,18 +7,7 @@
     "kind": "timing",
     "use": "input",
     "unit": "秒",
-    "value": [
-      25.115,
-      27.115,
-      61.58,
-      63.58,
-      101.037,
-      103.037,
-      137.434,
-      139.434,
-      170.737,
-      172.737
-    ],
+    "value": [25.115, 27.115, 61.58, 63.58, 101.037, 103.037, 137.434, 139.434, 170.737, 172.737],
     "description": "紅蓮：ブラックシャドウ単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
@@ -63,9 +52,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "jumpWindows": "0888-06"
       }
@@ -101,9 +88,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false,
         "jumpWindows": "0888-06"
       }
@@ -136,23 +121,7 @@
     "kind": "interval",
     "use": "record",
     "unit": "f",
-    "value": [
-      10.61,
-      11.84,
-      11.66,
-      11.74,
-      11.65,
-      11.84,
-      11.74,
-      11.93,
-      11.82,
-      11.89,
-      11.89,
-      11.92,
-      12.03,
-      12.27,
-      11.59
-    ],
+    "value": [10.61, 11.84, 11.66, 11.74, 11.65, 11.84, 11.74, 11.93, 11.82, 11.89, 11.89, 11.92, 12.03, 12.27, 11.59],
     "description": "紅蓮：ブラックシャドウ（RL・入力 UP・チャージ 0.3 秒・射撃姿勢維持型・リロード 2 秒）単騎の、マガジンの最終弾から、RELOADING のバーの伸びを長さ 0 に遡った点（リロードの始まり）までの回ごとの値（負は最終弾のフレームより前。回の順）",
     "method": {
       "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
@@ -171,18 +140,7 @@
     "kind": "timing",
     "use": "input",
     "unit": "秒",
-    "value": [
-      25.132,
-      27.132,
-      61.512,
-      63.512,
-      101.105,
-      103.105,
-      137.502,
-      139.502,
-      170.669,
-      172.669
-    ],
+    "value": [25.132, 27.132, 61.512, 63.512, 101.105, 103.105, 137.502, 139.502, 170.669, 172.669],
     "description": "紅蓮：ブラックシャドウ単騎で、敵のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える。モデルの発は撃ったフレーム（総ダメージの増分から、区間ごとの飛ぶ時間を引いた時刻）にそろう",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reticle-ammo.ts --mode series・node tools/captures/reload.ts --mode fit",
@@ -201,14 +159,7 @@
     "kind": "interval",
     "use": "record",
     "unit": "f",
-    "value": [
-      4,
-      3,
-      8,
-      5,
-      2,
-      8
-    ],
+    "value": [4, 3, 8, 5, 2, 8],
     "description": "紅蓮：ブラックシャドウ（RL）単騎の、通常攻撃の発を撃ったフレーム（照準の残弾が減ったフレーム）から総ダメージの増分までのフレーム数（飛ぶ時間）。区間（着地点）の 1〜6（中近・近・遠・中遠・近・遠）ごとの値",
     "method": {
       "tool": "node tools/captures/reticle-ammo.ts --mode series・node tools/captures/hud.ts --mode jumps",
