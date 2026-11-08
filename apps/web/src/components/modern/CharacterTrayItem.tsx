@@ -3,6 +3,7 @@ import type { CharacterIndexEntry } from '@nikke/core';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { TrayShape } from '../../trayShape.ts';
+import { SlotCharName } from './ModernSlotCard.tsx';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -19,6 +20,39 @@ type Props = {
   shape: TrayShape;
   onClick: () => void;
 };
+
+/**
+ * ニケ一覧の絵（一覧の項目と、一覧から持ち上げた絵）。四角は顔の絵に、右上の限界突破・コア強化。縦長はスロットと同じ見た目
+ * （左上に属性・武器種・バースト段階のバッジを縦に、下部に名前と限界突破・コア強化を重ねる）を一覧の幅に縮めたもの
+ */
+export function TrayVisual({
+  character,
+  isUnsupported,
+  growthMarks,
+  shape,
+}: {
+  character: CharacterIndexEntry;
+  isUnsupported: boolean;
+  growthMarks: GrowthMarks | null;
+  shape: TrayShape;
+}) {
+  if (shape === 'tall') {
+    return (
+      <div className="modern-slot-char-area char-tray-tall-area">
+        <CharacterVisual character={character} isUnsupported={isUnsupported} size="tall" />
+        <SlotCharName name={character.name.ja} marks={growthMarks} />
+      </div>
+    );
+  }
+  return (
+    <CharacterVisual
+      character={character}
+      isUnsupported={isUnsupported}
+      size="compact"
+      overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
+    />
+  );
+}
 
 export function CharacterTrayItem({
   character,
@@ -52,19 +86,15 @@ export function CharacterTrayItem({
       {...listeners}
     >
       <span className="char-tray-item-visual">
-        <CharacterVisual
-          character={character}
-          isUnsupported={isUnsupported}
-          size={shape === 'tall' ? 'tall' : 'compact'}
-          overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
-        />
+        <TrayVisual character={character} isUnsupported={isUnsupported} growthMarks={growthMarks} shape={shape} />
         {isTaken && (
           <svg className="char-tray-item-check" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 12.5l5 5L20 6.5" />
           </svg>
         )}
       </span>
-      <span className="char-tray-item-name">{character.name.ja}</span>
+      {/* 縦長は名前を絵に重ねるので、下には出さない */}
+      {shape === 'square' && <span className="char-tray-item-name">{character.name.ja}</span>}
       {inOtherParty && !isTaken && <span className="char-tray-item-other-badge">他の編成</span>}
     </button>
   );

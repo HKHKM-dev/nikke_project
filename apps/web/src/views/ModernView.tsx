@@ -21,14 +21,10 @@ import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
+import { TrayVisual } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
-import {
-  GrowthMarksView,
-  growthMarksOf,
-  trayGrowthMarks,
-  type GrowthMarks,
-} from '../components/modern/GrowthMarks.tsx';
+import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
@@ -504,13 +500,14 @@ export function ModernView({
             <div className="char-drag-overlay">
               {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
               <span className="char-tray-item-visual">
-                <CharacterVisual
+                <TrayVisual
                   character={draggedCharacter}
-                  size={trayShape === 'tall' ? 'tall' : 'compact'}
-                  overlay={draggedMarks && <GrowthMarksView {...draggedMarks} className="char-tray-growth" />}
+                  isUnsupported={false}
+                  growthMarks={draggedMarks}
+                  shape={trayShape}
                 />
               </span>
-              <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>
+              {trayShape === 'square' && <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>}
             </div>
           ) : null}
         </DragOverlay>

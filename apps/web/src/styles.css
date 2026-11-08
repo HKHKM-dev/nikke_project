@@ -1006,9 +1006,33 @@ header h1 {
 .char-visual-compact {
   max-width: var(--tray-visual-w);
 }
-/* ニケ一覧の縦長の絵（portraits を一覧の幅に縮める。元の絵と同じ 1:2 の枠）。バッジなどの置き方は四角（.char-visual-compact）と同じ */
+/* ニケ一覧の縦長の絵（portraits を一覧の幅に縮める。元の絵と同じ 1:2 の枠）。見た目はスロットの立ち絵（.char-visual-portrait）と同じで、
+   左上にバッジを縦に、下部に名前と限界突破・コア強化を重ねる（CharacterTrayItem.tsx の TrayVisual） */
 .char-visual-tall {
+  max-width: var(--tray-visual-w);
   aspect-ratio: 1 / 2;
+  --badge-w: 17px;
+}
+.char-visual-tall .char-visual-fallback {
+  font-size: 0.65rem;
+}
+/* 「未」の札は、下部に重ねる名前の行の上に出す */
+.char-visual-tall .char-unsupported-tag {
+  bottom: calc(30px + var(--rarity-band-h));
+}
+.char-tray-tall-area {
+  width: 100%;
+}
+.char-tray-tall-area .modern-slot-char-name {
+  padding: 6px 4px 2px;
+  font-size: 0.7rem;
+}
+.char-tray-tall-area .growth-marks {
+  --growth-star-w: 9px;
+  --growth-core-w: 15px;
+}
+.char-tray-tall-area .growth-marks-core {
+  font-size: 0.42rem;
 }
 .char-visual-compact .char-visual-fallback {
   font-size: 0.65rem;

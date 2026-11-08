@@ -7,7 +7,7 @@ type Props = {
   isUnsupported?: boolean;
   /**
    * normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード）、
-   * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は compact と同じ）
+   * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は portrait と同じ）
    */
   size?: 'normal' | 'compact' | 'portrait' | 'tall';
   /** バッジの列の最後に足すバッジ（スロットのコレクション） */
@@ -43,15 +43,12 @@ export function CharacterVisual({
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
   const [, rerender] = useReducer((n: number) => n + 1, 0);
   // ニケ一覧の正方形の絵は、左上に武器種・バースト段階、右下に属性。ほかは左上に属性・武器種・バースト段階（2.5 節）
-  const compact = size === 'compact' || size === 'tall';
+  const compact = size === 'compact';
   const columnKinds = compact ? COMPACT_BADGE_KINDS : VISUAL_BADGE_KINDS;
   const elementBadge = compact ? ELEMENT_BADGE_KIND.badges[character.element] : undefined;
 
   return (
-    <div
-      className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`} ${size === 'tall' ? 'char-visual-compact' : ''}`}
-      data-rarity={character.rarity}
-    >
+    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-rarity={character.rarity}>
       {failed ? (
         <span className="char-visual-fallback" aria-hidden="true">
           {character.name.ja}
