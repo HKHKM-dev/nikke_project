@@ -360,5 +360,45 @@
       "slot": 1,
       "source": "gauge"
     }
+  },
+  {
+    "id": "0289-20",
+    "recording": "0289",
+    "source": "V-0691",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "unit": "f",
+    "use": "record",
+    "value": {
+      "hexagon": [1567, 3117, 4484, 7644, 9038, 10519],
+      "bodyOffAdditionalOn": [
+        {
+          "frame": 4484,
+          "fromHexagon": 0,
+          "increment": 527938
+        },
+        {
+          "frame": 7656,
+          "fromHexagon": 12,
+          "increment": 527938
+        }
+      ],
+      "bodyOnAdditionalOff": [
+        {
+          "frame": 5079,
+          "fromHexagon": 595,
+          "increment": 601798
+        }
+      ]
+    },
+    "description": "アニス：スター単騎の、発の着弾の増分のうち本体（B）と S1 の追加ダメージ（A）でバーストの攻撃ダメージ▲が食い違うもの（着いたフレームと、I の六角形の替わり目からのフレーム）。録画全体で、本体と追加ダメージの▲が食い違う増分は 3 つ。I の替わり目（f4484・f7644）の 0f・12f 後に着いた 527,938 は本体が▲なし・追加ダメージが▲あり（BA▲。本体のコア + 追加ダメージの会心）。3 回目の I（f4484）の 595f 後に着いた 601,798 は本体が▲あり・追加ダメージが▲なし（B▲A。本体のコア + 追加ダメージ）。逆向き（付き始めの B▲A・切れ目の BA▲）は無い",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid。増分は recipe:hud-jumps@3）、recipe:burst-panel@3（I の替わり目）",
+      "note": "格子は `--opt setup=0164-01 --opt grid=B▲=1@1000;B=1@500;A▲=1@shot@1000;A=1@shot@500;B▲A▲=B▲+A▲;B▲A=B▲+A;BA▲=B+A▲;BA=B+A`（B は本体、A は S1 の追加ダメージ、▲はバーストの攻撃ダメージ▲。モデルのフレーム 1000 は窓の中、500 は窓の外）。事象は I の六角形の替わり目（burst-panel@3）で、範囲は替わり目の 540〜680f 後（切れ目）と、録画全体の増分の当て方（buff-edge-grid.tsv）から B▲A・BA▲ に当たった増分を全部拾った"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
   }
 ]

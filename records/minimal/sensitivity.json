@@ -2020,7 +2020,7 @@
     {
       "observation": "0150-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "8fd34a6046620d1f",
+      "key": "19489e610a0a96ea",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2028,7 +2028,39 @@
     {
       "observation": "0150-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "8fd34a6046620d1f",
+      "key": "19489e610a0a96ea",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0150-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "19489e610a0a96ea",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0150-04",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "a0ee068a8dbfa595",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0150-04",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "a0ee068a8dbfa595",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2043,16 +2075,24 @@
     },
     {
       "observation": "0150-04",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "8b8f40bffd521880",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "a0ee068a8dbfa595",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
-      "observation": "0150-04",
+      "observation": "0150-06",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "f4e25d1a02cc8189",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0150-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "8b8f40bffd521880",
+      "key": "f4e25d1a02cc8189",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2067,16 +2107,25 @@
     },
     {
       "observation": "0150-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f4e25d1a02cc8189",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 命中率か射撃ごとの倍率ダメージが 0"
+    },
+    {
+      "observation": "0150-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3dedb9afea58de6c",
+      "key": "474000355fc9192e",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
-      "observation": "0150-06",
+      "observation": "0150-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3dedb9afea58de6c",
+      "key": "474000355fc9192e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2091,27 +2140,12 @@
     },
     {
       "observation": "0150-07",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "cd98e71ca2784d8b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0150-07",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "cd98e71ca2784d8b",
-      "effective": false,
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "474000355fc9192e",
+      "effective": true,
       "minus": null,
       "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "error": "minus: 命中率か射撃ごとの倍率ダメージが 0"
     },
     {
       "observation": "0154-04",
@@ -2138,9 +2172,51 @@
       "plus": 0
     },
     {
+      "observation": "0161-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "59478b69bc1dbb08",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0161-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ba7dafea12cba847",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0161-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "baa85e4ed6ade4e3",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 命中率か射撃ごとの倍率ダメージが 0"
+    },
+    {
+      "observation": "0161-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f8998641d60d00ac",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 命中率か射撃ごとの倍率ダメージが 0"
+    },
+    {
+      "observation": "0161-13",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "84171e866f4ec331",
+      "effective": true,
+      "minus": 4,
+      "plus": null
+    },
+    {
       "observation": "0162-02",
       "element": "アニス：スター burst.effects[0]",
-      "key": "8a59553c3beada95",
+      "key": "a6e89d159ca65f68",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2148,7 +2224,7 @@
     {
       "observation": "0162-02",
       "element": "アニス：スター burst.effects[1]",
-      "key": "8a59553c3beada95",
+      "key": "a6e89d159ca65f68",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2164,7 +2240,7 @@
     {
       "observation": "0162-02",
       "element": "アニス：スター burst.effects[2]",
-      "key": "8a59553c3beada95",
+      "key": "a6e89d159ca65f68",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2179,8 +2255,16 @@
     },
     {
       "observation": "0162-02",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "a6e89d159ca65f68",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-02",
       "element": "イサベル skill2.effects[1]",
-      "key": "8a59553c3beada95",
+      "key": "a6e89d159ca65f68",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2188,7 +2272,7 @@
     {
       "observation": "0162-04",
       "element": "アニス：スター burst.effects[0]",
-      "key": "99b6d948dee2ce73",
+      "key": "7d56e899d8c8d2ee",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2196,23 +2280,7 @@
     {
       "observation": "0162-04",
       "element": "アニス：スター burst.effects[1]",
-      "key": "99b6d948dee2ce73",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0162-04",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "99b6d948dee2ce73",
+      "key": "7d56e899d8c8d2ee",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2227,8 +2295,32 @@
     },
     {
       "observation": "0162-04",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "7d56e899d8c8d2ee",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0162-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "7d56e899d8c8d2ee",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-04",
       "element": "イサベル skill2.effects[1]",
-      "key": "99b6d948dee2ce73",
+      "key": "7d56e899d8c8d2ee",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2236,7 +2328,7 @@
     {
       "observation": "0162-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "f6978e929fcf95f7",
+      "key": "9c7abc0372fdbbaa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2244,23 +2336,7 @@
     {
       "observation": "0162-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "f6978e929fcf95f7",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0162-05",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "f6978e929fcf95f7",
+      "key": "9c7abc0372fdbbaa",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2275,8 +2351,32 @@
     },
     {
       "observation": "0162-05",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "9c7abc0372fdbbaa",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0162-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "9c7abc0372fdbbaa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-05",
       "element": "イサベル skill2.effects[1]",
-      "key": "f6978e929fcf95f7",
+      "key": "9c7abc0372fdbbaa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2284,7 +2384,7 @@
     {
       "observation": "0162-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "2a395df6dc091d01",
+      "key": "19e7c24f6dab1ddc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2292,7 +2392,7 @@
     {
       "observation": "0162-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "2a395df6dc091d01",
+      "key": "19e7c24f6dab1ddc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2308,7 +2408,7 @@
     {
       "observation": "0162-06",
       "element": "アニス：スター burst.effects[2]",
-      "key": "2a395df6dc091d01",
+      "key": "19e7c24f6dab1ddc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2323,8 +2423,16 @@
     },
     {
       "observation": "0162-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "19e7c24f6dab1ddc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-06",
       "element": "イサベル skill2.effects[1]",
-      "key": "2a395df6dc091d01",
+      "key": "19e7c24f6dab1ddc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2332,7 +2440,7 @@
     {
       "observation": "0162-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "a67cd64d8feb224e",
+      "key": "c9a12678df0aa423",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2340,7 +2448,7 @@
     {
       "observation": "0162-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "a67cd64d8feb224e",
+      "key": "c9a12678df0aa423",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2356,7 +2464,7 @@
     {
       "observation": "0162-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "a67cd64d8feb224e",
+      "key": "c9a12678df0aa423",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2371,8 +2479,17 @@
     },
     {
       "observation": "0162-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "c9a12678df0aa423",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 命中率か射撃ごとの倍率ダメージが 0"
+    },
+    {
+      "observation": "0162-07",
       "element": "イサベル skill2.effects[1]",
-      "key": "a67cd64d8feb224e",
+      "key": "c9a12678df0aa423",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2380,7 +2497,7 @@
     {
       "observation": "0162-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3cbf9bc9714be2c6",
+      "key": "afec48ac72804a4b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2388,7 +2505,7 @@
     {
       "observation": "0162-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3cbf9bc9714be2c6",
+      "key": "afec48ac72804a4b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2404,7 +2521,7 @@
     {
       "observation": "0162-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "3cbf9bc9714be2c6",
+      "key": "afec48ac72804a4b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2419,8 +2536,16 @@
     },
     {
       "observation": "0162-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "afec48ac72804a4b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-08",
       "element": "イサベル skill2.effects[1]",
-      "key": "3cbf9bc9714be2c6",
+      "key": "afec48ac72804a4b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2428,7 +2553,7 @@
     {
       "observation": "0162-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "f74090ab47f37db2",
+      "key": "9b065b4eb940c12f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2436,7 +2561,7 @@
     {
       "observation": "0162-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "f74090ab47f37db2",
+      "key": "9b065b4eb940c12f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2452,7 +2577,7 @@
     {
       "observation": "0162-09",
       "element": "アニス：スター burst.effects[2]",
-      "key": "f74090ab47f37db2",
+      "key": "9b065b4eb940c12f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2467,8 +2592,16 @@
     },
     {
       "observation": "0162-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "9b065b4eb940c12f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-09",
       "element": "イサベル skill2.effects[1]",
-      "key": "f74090ab47f37db2",
+      "key": "9b065b4eb940c12f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2476,7 +2609,7 @@
     {
       "observation": "0162-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "20080192fffe532b",
+      "key": "1867e7036c5d6296",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2485,7 +2618,7 @@
     {
       "observation": "0162-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "20080192fffe532b",
+      "key": "1867e7036c5d6296",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2501,7 +2634,7 @@
     {
       "observation": "0162-10",
       "element": "アニス：スター burst.effects[2]",
-      "key": "20080192fffe532b",
+      "key": "1867e7036c5d6296",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2516,8 +2649,16 @@
     },
     {
       "observation": "0162-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "1867e7036c5d6296",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-10",
       "element": "イサベル skill2.effects[1]",
-      "key": "20080192fffe532b",
+      "key": "1867e7036c5d6296",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2525,7 +2666,7 @@
     {
       "observation": "0162-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "14b8f32a2b7819d7",
+      "key": "17d4802bcc4ef70a",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2534,7 +2675,7 @@
     {
       "observation": "0162-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "14b8f32a2b7819d7",
+      "key": "17d4802bcc4ef70a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2550,7 +2691,7 @@
     {
       "observation": "0162-11",
       "element": "アニス：スター burst.effects[2]",
-      "key": "14b8f32a2b7819d7",
+      "key": "17d4802bcc4ef70a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2565,8 +2706,16 @@
     },
     {
       "observation": "0162-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "17d4802bcc4ef70a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-11",
       "element": "イサベル skill2.effects[1]",
-      "key": "14b8f32a2b7819d7",
+      "key": "17d4802bcc4ef70a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2574,7 +2723,7 @@
     {
       "observation": "0162-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "c91ea6e3e0e2236c",
+      "key": "73992556749bb7e1",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2583,7 +2732,7 @@
     {
       "observation": "0162-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "c91ea6e3e0e2236c",
+      "key": "73992556749bb7e1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2599,7 +2748,7 @@
     {
       "observation": "0162-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "c91ea6e3e0e2236c",
+      "key": "73992556749bb7e1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2614,8 +2763,16 @@
     },
     {
       "observation": "0162-12",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "73992556749bb7e1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-12",
       "element": "イサベル skill2.effects[1]",
-      "key": "c91ea6e3e0e2236c",
+      "key": "73992556749bb7e1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2623,7 +2780,7 @@
     {
       "observation": "0162-16",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4a162a81a7417858",
+      "key": "f3c41a14b584eb65",
       "effective": false,
       "minus": 5,
       "plus": null
@@ -2631,7 +2788,7 @@
     {
       "observation": "0162-16",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4a162a81a7417858",
+      "key": "f3c41a14b584eb65",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2647,7 +2804,7 @@
     {
       "observation": "0162-16",
       "element": "アニス：スター burst.effects[2]",
-      "key": "4a162a81a7417858",
+      "key": "f3c41a14b584eb65",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2662,8 +2819,16 @@
     },
     {
       "observation": "0162-16",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f3c41a14b584eb65",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-16",
       "element": "イサベル skill2.effects[1]",
-      "key": "4a162a81a7417858",
+      "key": "f3c41a14b584eb65",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2671,7 +2836,7 @@
     {
       "observation": "0162-17",
       "element": "アニス：スター burst.effects[0]",
-      "key": "0f255e8c1e43c205",
+      "key": "0b17f2c55f49dcb8",
       "effective": true,
       "minus": 132,
       "plus": null
@@ -2679,7 +2844,7 @@
     {
       "observation": "0162-17",
       "element": "アニス：スター burst.effects[1]",
-      "key": "0f255e8c1e43c205",
+      "key": "0b17f2c55f49dcb8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2695,7 +2860,7 @@
     {
       "observation": "0162-17",
       "element": "アニス：スター burst.effects[2]",
-      "key": "0f255e8c1e43c205",
+      "key": "0b17f2c55f49dcb8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2710,8 +2875,16 @@
     },
     {
       "observation": "0162-17",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0b17f2c55f49dcb8",
+      "effective": false,
+      "minus": 13,
+      "plus": null
+    },
+    {
+      "observation": "0162-17",
       "element": "イサベル skill2.effects[1]",
-      "key": "0f255e8c1e43c205",
+      "key": "0b17f2c55f49dcb8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2719,7 +2892,7 @@
     {
       "observation": "0162-18",
       "element": "アニス：スター burst.effects[0]",
-      "key": "268664b56499de20",
+      "key": "376d7bf07f8cefbd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2727,7 +2900,7 @@
     {
       "observation": "0162-18",
       "element": "アニス：スター burst.effects[1]",
-      "key": "268664b56499de20",
+      "key": "376d7bf07f8cefbd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2743,7 +2916,7 @@
     {
       "observation": "0162-18",
       "element": "アニス：スター burst.effects[2]",
-      "key": "268664b56499de20",
+      "key": "376d7bf07f8cefbd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2758,8 +2931,16 @@
     },
     {
       "observation": "0162-18",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "376d7bf07f8cefbd",
+      "effective": false,
+      "minus": -2.9700000000000006,
+      "plus": null
+    },
+    {
+      "observation": "0162-18",
       "element": "イサベル skill2.effects[1]",
-      "key": "268664b56499de20",
+      "key": "376d7bf07f8cefbd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2767,7 +2948,7 @@
     {
       "observation": "0162-25",
       "element": "アニス：スター burst.effects[0]",
-      "key": "d0fbb47e8175f693",
+      "key": "b074f967d3ab450e",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2776,7 +2957,7 @@
     {
       "observation": "0162-25",
       "element": "アニス：スター burst.effects[1]",
-      "key": "d0fbb47e8175f693",
+      "key": "b074f967d3ab450e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2792,7 +2973,7 @@
     {
       "observation": "0162-25",
       "element": "アニス：スター burst.effects[2]",
-      "key": "d0fbb47e8175f693",
+      "key": "b074f967d3ab450e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2807,8 +2988,16 @@
     },
     {
       "observation": "0162-25",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "b074f967d3ab450e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-25",
       "element": "イサベル skill2.effects[1]",
-      "key": "d0fbb47e8175f693",
+      "key": "b074f967d3ab450e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2816,7 +3005,7 @@
     {
       "observation": "0162-26",
       "element": "アニス：スター burst.effects[0]",
-      "key": "ea82ace7f9ad0230",
+      "key": "1bb8c2124710d96d",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2825,7 +3014,7 @@
     {
       "observation": "0162-26",
       "element": "アニス：スター burst.effects[1]",
-      "key": "ea82ace7f9ad0230",
+      "key": "1bb8c2124710d96d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2841,7 +3030,7 @@
     {
       "observation": "0162-26",
       "element": "アニス：スター burst.effects[2]",
-      "key": "ea82ace7f9ad0230",
+      "key": "1bb8c2124710d96d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2856,8 +3045,16 @@
     },
     {
       "observation": "0162-26",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "1bb8c2124710d96d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-26",
       "element": "イサベル skill2.effects[1]",
-      "key": "ea82ace7f9ad0230",
+      "key": "1bb8c2124710d96d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2865,7 +3062,7 @@
     {
       "observation": "0162-27",
       "element": "アニス：スター burst.effects[0]",
-      "key": "fa5d94eaa6a77c11",
+      "key": "518d37ebeb73184c",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2874,7 +3071,7 @@
     {
       "observation": "0162-27",
       "element": "アニス：スター burst.effects[1]",
-      "key": "fa5d94eaa6a77c11",
+      "key": "518d37ebeb73184c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2890,7 +3087,7 @@
     {
       "observation": "0162-27",
       "element": "アニス：スター burst.effects[2]",
-      "key": "fa5d94eaa6a77c11",
+      "key": "518d37ebeb73184c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2905,8 +3102,16 @@
     },
     {
       "observation": "0162-27",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "518d37ebeb73184c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-27",
       "element": "イサベル skill2.effects[1]",
-      "key": "fa5d94eaa6a77c11",
+      "key": "518d37ebeb73184c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2914,7 +3119,7 @@
     {
       "observation": "0162-28",
       "element": "アニス：スター burst.effects[0]",
-      "key": "1647da1b6f964d9a",
+      "key": "4a63a7de59ebf527",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -2923,7 +3128,7 @@
     {
       "observation": "0162-28",
       "element": "アニス：スター burst.effects[1]",
-      "key": "1647da1b6f964d9a",
+      "key": "4a63a7de59ebf527",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2939,7 +3144,7 @@
     {
       "observation": "0162-28",
       "element": "アニス：スター burst.effects[2]",
-      "key": "1647da1b6f964d9a",
+      "key": "4a63a7de59ebf527",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2954,8 +3159,16 @@
     },
     {
       "observation": "0162-28",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "4a63a7de59ebf527",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-28",
       "element": "イサベル skill2.effects[1]",
-      "key": "1647da1b6f964d9a",
+      "key": "4a63a7de59ebf527",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2963,7 +3176,7 @@
     {
       "observation": "0162-33",
       "element": "アニス：スター burst.effects[0]",
-      "key": "251faa62e6b60ebd",
+      "key": "5ed04ed964196874",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -2971,7 +3184,7 @@
     {
       "observation": "0162-33",
       "element": "アニス：スター burst.effects[1]",
-      "key": "251faa62e6b60ebd",
+      "key": "5ed04ed964196874",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -2987,7 +3200,7 @@
     {
       "observation": "0162-33",
       "element": "アニス：スター burst.effects[2]",
-      "key": "251faa62e6b60ebd",
+      "key": "5ed04ed964196874",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3002,8 +3215,16 @@
     },
     {
       "observation": "0162-33",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "5ed04ed964196874",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-33",
       "element": "イサベル skill2.effects[1]",
-      "key": "251faa62e6b60ebd",
+      "key": "5ed04ed964196874",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3011,7 +3232,7 @@
     {
       "observation": "0162-34",
       "element": "アニス：スター burst.effects[0]",
-      "key": "90425c383d65495b",
+      "key": "0057c55f1a57ca4a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3019,7 +3240,7 @@
     {
       "observation": "0162-34",
       "element": "アニス：スター burst.effects[1]",
-      "key": "90425c383d65495b",
+      "key": "0057c55f1a57ca4a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3035,7 +3256,7 @@
     {
       "observation": "0162-34",
       "element": "アニス：スター burst.effects[2]",
-      "key": "90425c383d65495b",
+      "key": "0057c55f1a57ca4a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3050,8 +3271,16 @@
     },
     {
       "observation": "0162-34",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0057c55f1a57ca4a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0162-34",
       "element": "イサベル skill2.effects[1]",
-      "key": "90425c383d65495b",
+      "key": "0057c55f1a57ca4a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3059,7 +3288,7 @@
     {
       "observation": "0163-01",
       "element": "アニス：スター burst.effects[0]",
-      "key": "823ec85aa2569825",
+      "key": "bc70cd3f84764028",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3067,7 +3296,7 @@
     {
       "observation": "0163-01",
       "element": "アニス：スター burst.effects[1]",
-      "key": "823ec85aa2569825",
+      "key": "bc70cd3f84764028",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3082,8 +3311,16 @@
     },
     {
       "observation": "0163-01",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "bc70cd3f84764028",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0163-01",
       "element": "イサベル skill2.effects[1]",
-      "key": "823ec85aa2569825",
+      "key": "bc70cd3f84764028",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3091,7 +3328,7 @@
     {
       "observation": "0163-04",
       "element": "アニス：スター burst.effects[0]",
-      "key": "6cff10c537e52dc0",
+      "key": "433ef3145898f1bd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3099,7 +3336,7 @@
     {
       "observation": "0163-04",
       "element": "アニス：スター burst.effects[1]",
-      "key": "6cff10c537e52dc0",
+      "key": "433ef3145898f1bd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3114,8 +3351,16 @@
     },
     {
       "observation": "0163-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "433ef3145898f1bd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0163-04",
       "element": "イサベル skill2.effects[1]",
-      "key": "6cff10c537e52dc0",
+      "key": "433ef3145898f1bd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3123,7 +3368,7 @@
     {
       "observation": "0163-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "bb2991cf19b3b2aa",
+      "key": "af6ecca6bd8a1817",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3131,7 +3376,7 @@
     {
       "observation": "0163-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "bb2991cf19b3b2aa",
+      "key": "af6ecca6bd8a1817",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3146,8 +3391,16 @@
     },
     {
       "observation": "0163-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "af6ecca6bd8a1817",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0163-05",
       "element": "イサベル skill2.effects[1]",
-      "key": "bb2991cf19b3b2aa",
+      "key": "af6ecca6bd8a1817",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3155,7 +3408,7 @@
     {
       "observation": "0163-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "bdf2492a57ae478d",
+      "key": "a9f62c2f0561bc20",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3163,7 +3416,7 @@
     {
       "observation": "0163-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "bdf2492a57ae478d",
+      "key": "a9f62c2f0561bc20",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3178,8 +3431,16 @@
     },
     {
       "observation": "0163-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "a9f62c2f0561bc20",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0163-06",
       "element": "イサベル skill2.effects[1]",
-      "key": "bdf2492a57ae478d",
+      "key": "a9f62c2f0561bc20",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3187,7 +3448,7 @@
     {
       "observation": "0163-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "01ed701a3f7dfe5f",
+      "key": "65bcf4fff8e60592",
       "effective": true,
       "minus": 114,
       "plus": null
@@ -3195,7 +3456,7 @@
     {
       "observation": "0163-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "01ed701a3f7dfe5f",
+      "key": "65bcf4fff8e60592",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3210,8 +3471,48 @@
     },
     {
       "observation": "0163-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "65bcf4fff8e60592",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0163-09",
       "element": "イサベル skill2.effects[1]",
-      "key": "01ed701a3f7dfe5f",
+      "key": "65bcf4fff8e60592",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0164-01",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "5f9a0003cd186b8e",
+      "effective": true,
+      "minus": -60733.93128000005,
+      "plus": null
+    },
+    {
+      "observation": "0164-02",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ec47b5bcd6928a61",
+      "effective": true,
+      "minus": -91100.89692000009,
+      "plus": null
+    },
+    {
+      "observation": "0164-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "d5fded5d4995b39c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0164-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "e1ac5974989d161f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3219,7 +3520,7 @@
     {
       "observation": "0165-01",
       "element": "アニス：スター burst.effects[0]",
-      "key": "119322cfdd87ffea",
+      "key": "eb50858ec49d3277",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3227,23 +3528,7 @@
     {
       "observation": "0165-01",
       "element": "アニス：スター burst.effects[1]",
-      "key": "119322cfdd87ffea",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0165-01",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "119322cfdd87ffea",
+      "key": "eb50858ec49d3277",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3258,8 +3543,32 @@
     },
     {
       "observation": "0165-01",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "eb50858ec49d3277",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0165-01",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "eb50858ec49d3277",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-01",
       "element": "イサベル skill2.effects[1]",
-      "key": "119322cfdd87ffea",
+      "key": "eb50858ec49d3277",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3267,7 +3576,7 @@
     {
       "observation": "0165-02",
       "element": "アニス：スター burst.effects[0]",
-      "key": "2d970f7f769eb942",
+      "key": "bb1df35eb6f28aff",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3275,7 +3584,7 @@
     {
       "observation": "0165-02",
       "element": "アニス：スター burst.effects[1]",
-      "key": "2d970f7f769eb942",
+      "key": "bb1df35eb6f28aff",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3291,7 +3600,7 @@
     {
       "observation": "0165-02",
       "element": "アニス：スター burst.effects[2]",
-      "key": "2d970f7f769eb942",
+      "key": "bb1df35eb6f28aff",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3306,8 +3615,16 @@
     },
     {
       "observation": "0165-02",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "bb1df35eb6f28aff",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-02",
       "element": "イサベル skill2.effects[1]",
-      "key": "2d970f7f769eb942",
+      "key": "bb1df35eb6f28aff",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3315,7 +3632,7 @@
     {
       "observation": "0165-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "db76f101b0bcdbf8",
+      "key": "45f2bea832fb6945",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3323,7 +3640,7 @@
     {
       "observation": "0165-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "db76f101b0bcdbf8",
+      "key": "45f2bea832fb6945",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3339,7 +3656,7 @@
     {
       "observation": "0165-03",
       "element": "アニス：スター burst.effects[2]",
-      "key": "db76f101b0bcdbf8",
+      "key": "45f2bea832fb6945",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3354,8 +3671,16 @@
     },
     {
       "observation": "0165-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "45f2bea832fb6945",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-03",
       "element": "イサベル skill2.effects[1]",
-      "key": "db76f101b0bcdbf8",
+      "key": "45f2bea832fb6945",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3363,7 +3688,7 @@
     {
       "observation": "0165-04",
       "element": "アニス：スター burst.effects[0]",
-      "key": "2e0b9a866cdff19f",
+      "key": "b5ca20b363024e22",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3371,7 +3696,7 @@
     {
       "observation": "0165-04",
       "element": "アニス：スター burst.effects[1]",
-      "key": "2e0b9a866cdff19f",
+      "key": "b5ca20b363024e22",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3387,7 +3712,7 @@
     {
       "observation": "0165-04",
       "element": "アニス：スター burst.effects[2]",
-      "key": "2e0b9a866cdff19f",
+      "key": "b5ca20b363024e22",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3402,8 +3727,17 @@
     },
     {
       "observation": "0165-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "b5ca20b363024e22",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 命中率か射撃ごとの倍率ダメージが 0"
+    },
+    {
+      "observation": "0165-04",
       "element": "イサベル skill2.effects[1]",
-      "key": "2e0b9a866cdff19f",
+      "key": "b5ca20b363024e22",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3411,7 +3745,7 @@
     {
       "observation": "0165-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "cb8d551902e061b2",
+      "key": "8b18b2700814e60f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3419,7 +3753,7 @@
     {
       "observation": "0165-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "cb8d551902e061b2",
+      "key": "8b18b2700814e60f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3435,7 +3769,7 @@
     {
       "observation": "0165-05",
       "element": "アニス：スター burst.effects[2]",
-      "key": "cb8d551902e061b2",
+      "key": "8b18b2700814e60f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3450,8 +3784,16 @@
     },
     {
       "observation": "0165-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "8b18b2700814e60f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-05",
       "element": "イサベル skill2.effects[1]",
-      "key": "cb8d551902e061b2",
+      "key": "8b18b2700814e60f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3459,7 +3801,7 @@
     {
       "observation": "0165-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "b042d611ba19eb0e",
+      "key": "ba43ac18af9b6873",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3468,7 +3810,7 @@
     {
       "observation": "0165-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "b042d611ba19eb0e",
+      "key": "ba43ac18af9b6873",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3484,7 +3826,7 @@
     {
       "observation": "0165-06",
       "element": "アニス：スター burst.effects[2]",
-      "key": "b042d611ba19eb0e",
+      "key": "ba43ac18af9b6873",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3499,8 +3841,16 @@
     },
     {
       "observation": "0165-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ba43ac18af9b6873",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-06",
       "element": "イサベル skill2.effects[1]",
-      "key": "b042d611ba19eb0e",
+      "key": "ba43ac18af9b6873",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3508,7 +3858,7 @@
     {
       "observation": "0165-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "e50c2ac2b54f3539",
+      "key": "95e1bd0766ddcf74",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3517,7 +3867,7 @@
     {
       "observation": "0165-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "e50c2ac2b54f3539",
+      "key": "95e1bd0766ddcf74",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3533,7 +3883,7 @@
     {
       "observation": "0165-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "e50c2ac2b54f3539",
+      "key": "95e1bd0766ddcf74",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3548,8 +3898,16 @@
     },
     {
       "observation": "0165-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "95e1bd0766ddcf74",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-07",
       "element": "イサベル skill2.effects[1]",
-      "key": "e50c2ac2b54f3539",
+      "key": "95e1bd0766ddcf74",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3557,7 +3915,7 @@
     {
       "observation": "0165-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "610d87eb1a263976",
+      "key": "ba5d51d26a6b0eab",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3566,7 +3924,7 @@
     {
       "observation": "0165-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "610d87eb1a263976",
+      "key": "ba5d51d26a6b0eab",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3582,7 +3940,7 @@
     {
       "observation": "0165-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "610d87eb1a263976",
+      "key": "ba5d51d26a6b0eab",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3597,8 +3955,16 @@
     },
     {
       "observation": "0165-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ba5d51d26a6b0eab",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-08",
       "element": "イサベル skill2.effects[1]",
-      "key": "610d87eb1a263976",
+      "key": "ba5d51d26a6b0eab",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3606,7 +3972,7 @@
     {
       "observation": "0165-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "dcef4073002baf7c",
+      "key": "b9ce1e8ab597c101",
       "effective": false,
       "minus": 5,
       "plus": null
@@ -3614,7 +3980,7 @@
     {
       "observation": "0165-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "dcef4073002baf7c",
+      "key": "b9ce1e8ab597c101",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3630,7 +3996,7 @@
     {
       "observation": "0165-11",
       "element": "アニス：スター burst.effects[2]",
-      "key": "dcef4073002baf7c",
+      "key": "b9ce1e8ab597c101",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3645,8 +4011,16 @@
     },
     {
       "observation": "0165-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "b9ce1e8ab597c101",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-11",
       "element": "イサベル skill2.effects[1]",
-      "key": "dcef4073002baf7c",
+      "key": "b9ce1e8ab597c101",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3654,7 +4028,7 @@
     {
       "observation": "0165-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "dec1a272d8c60691",
+      "key": "c47a5017501b68bc",
       "effective": false,
       "minus": 39,
       "plus": null
@@ -3662,7 +4036,7 @@
     {
       "observation": "0165-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "dec1a272d8c60691",
+      "key": "c47a5017501b68bc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3678,7 +4052,7 @@
     {
       "observation": "0165-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "dec1a272d8c60691",
+      "key": "c47a5017501b68bc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3693,8 +4067,16 @@
     },
     {
       "observation": "0165-12",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "c47a5017501b68bc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-12",
       "element": "イサベル skill2.effects[1]",
-      "key": "dec1a272d8c60691",
+      "key": "c47a5017501b68bc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3702,7 +4084,7 @@
     {
       "observation": "0165-15",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3710,7 +4092,7 @@
     {
       "observation": "0165-15",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3726,7 +4108,7 @@
     {
       "observation": "0165-15",
       "element": "アニス：スター burst.effects[2]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3741,8 +4123,16 @@
     },
     {
       "observation": "0165-15",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ca17dd847d3756a5",
+      "effective": false,
+      "minus": -2.9700000000000006,
+      "plus": null
+    },
+    {
+      "observation": "0165-15",
       "element": "イサベル skill2.effects[1]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3750,7 +4140,7 @@
     {
       "observation": "0165-16",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3758,7 +4148,7 @@
     {
       "observation": "0165-16",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3774,7 +4164,7 @@
     {
       "observation": "0165-16",
       "element": "アニス：スター burst.effects[2]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3789,8 +4179,16 @@
     },
     {
       "observation": "0165-16",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ca17dd847d3756a5",
+      "effective": false,
+      "minus": -2.9700000000000006,
+      "plus": null
+    },
+    {
+      "observation": "0165-16",
       "element": "イサベル skill2.effects[1]",
-      "key": "7e564ba51343e6d8",
+      "key": "ca17dd847d3756a5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3798,7 +4196,7 @@
     {
       "observation": "0165-25",
       "element": "アニス：スター burst.effects[0]",
-      "key": "ab440d23f01263be",
+      "key": "f7aece9aff835943",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3807,7 +4205,7 @@
     {
       "observation": "0165-25",
       "element": "アニス：スター burst.effects[1]",
-      "key": "ab440d23f01263be",
+      "key": "f7aece9aff835943",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3823,7 +4221,7 @@
     {
       "observation": "0165-25",
       "element": "アニス：スター burst.effects[2]",
-      "key": "ab440d23f01263be",
+      "key": "f7aece9aff835943",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3838,8 +4236,16 @@
     },
     {
       "observation": "0165-25",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f7aece9aff835943",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-25",
       "element": "イサベル skill2.effects[1]",
-      "key": "ab440d23f01263be",
+      "key": "f7aece9aff835943",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3847,7 +4253,7 @@
     {
       "observation": "0165-26",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3bdc485cd1b0ea81",
+      "key": "a5c0d6591b8cf7cc",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3856,7 +4262,7 @@
     {
       "observation": "0165-26",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3bdc485cd1b0ea81",
+      "key": "a5c0d6591b8cf7cc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3872,7 +4278,7 @@
     {
       "observation": "0165-26",
       "element": "アニス：スター burst.effects[2]",
-      "key": "3bdc485cd1b0ea81",
+      "key": "a5c0d6591b8cf7cc",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3887,8 +4293,16 @@
     },
     {
       "observation": "0165-26",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "a5c0d6591b8cf7cc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-26",
       "element": "イサベル skill2.effects[1]",
-      "key": "3bdc485cd1b0ea81",
+      "key": "a5c0d6591b8cf7cc",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3896,7 +4310,7 @@
     {
       "observation": "0165-27",
       "element": "アニス：スター burst.effects[0]",
-      "key": "e419ba9377bec2bc",
+      "key": "73d1442ad2e60041",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3905,7 +4319,7 @@
     {
       "observation": "0165-27",
       "element": "アニス：スター burst.effects[1]",
-      "key": "e419ba9377bec2bc",
+      "key": "73d1442ad2e60041",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3921,7 +4335,7 @@
     {
       "observation": "0165-27",
       "element": "アニス：スター burst.effects[2]",
-      "key": "e419ba9377bec2bc",
+      "key": "73d1442ad2e60041",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3936,8 +4350,16 @@
     },
     {
       "observation": "0165-27",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "73d1442ad2e60041",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-27",
       "element": "イサベル skill2.effects[1]",
-      "key": "e419ba9377bec2bc",
+      "key": "73d1442ad2e60041",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3945,7 +4367,7 @@
     {
       "observation": "0165-28",
       "element": "アニス：スター burst.effects[0]",
-      "key": "d57014ac7213c1cb",
+      "key": "befe29c91e14dc06",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -3954,7 +4376,7 @@
     {
       "observation": "0165-28",
       "element": "アニス：スター burst.effects[1]",
-      "key": "d57014ac7213c1cb",
+      "key": "befe29c91e14dc06",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3970,7 +4392,7 @@
     {
       "observation": "0165-28",
       "element": "アニス：スター burst.effects[2]",
-      "key": "d57014ac7213c1cb",
+      "key": "befe29c91e14dc06",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -3985,8 +4407,16 @@
     },
     {
       "observation": "0165-28",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "befe29c91e14dc06",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-28",
       "element": "イサベル skill2.effects[1]",
-      "key": "d57014ac7213c1cb",
+      "key": "befe29c91e14dc06",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -3994,7 +4424,7 @@
     {
       "observation": "0165-35",
       "element": "アニス：スター burst.effects[0]",
-      "key": "22a17148274107e1",
+      "key": "13a5260f1cee37d0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4002,7 +4432,7 @@
     {
       "observation": "0165-35",
       "element": "アニス：スター burst.effects[1]",
-      "key": "22a17148274107e1",
+      "key": "13a5260f1cee37d0",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -4018,7 +4448,7 @@
     {
       "observation": "0165-35",
       "element": "アニス：スター burst.effects[2]",
-      "key": "22a17148274107e1",
+      "key": "13a5260f1cee37d0",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -4033,8 +4463,16 @@
     },
     {
       "observation": "0165-35",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "13a5260f1cee37d0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-35",
       "element": "イサベル skill2.effects[1]",
-      "key": "22a17148274107e1",
+      "key": "13a5260f1cee37d0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4042,7 +4480,7 @@
     {
       "observation": "0165-36",
       "element": "アニス：スター burst.effects[0]",
-      "key": "52c1d460bd7f52ab",
+      "key": "67f564d7897a277a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4050,7 +4488,7 @@
     {
       "observation": "0165-36",
       "element": "アニス：スター burst.effects[1]",
-      "key": "52c1d460bd7f52ab",
+      "key": "67f564d7897a277a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -4066,7 +4504,7 @@
     {
       "observation": "0165-36",
       "element": "アニス：スター burst.effects[2]",
-      "key": "52c1d460bd7f52ab",
+      "key": "67f564d7897a277a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -4081,10 +4519,26 @@
     },
     {
       "observation": "0165-36",
-      "element": "イサベル skill2.effects[1]",
-      "key": "52c1d460bd7f52ab",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "67f564d7897a277a",
       "effective": false,
       "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0165-36",
+      "element": "イサベル skill2.effects[1]",
+      "key": "67f564d7897a277a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0181-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "82123a911bcf267c",
+      "effective": true,
+      "minus": 4,
       "plus": null
     },
     {
@@ -4198,6 +4652,30 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "0211-01",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "b66493a49c90112d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0211-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "863b748fca129072",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0211-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "fa85c0507240e035",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0212-01",
@@ -6923,6 +7401,38 @@
       "plus": null
     },
     {
+      "observation": "0288-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "5fe704eb78a7b5e4",
+      "effective": true,
+      "minus": null,
+      "plus": null
+    },
+    {
+      "observation": "0288-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0ebb5cb9e979628c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0289-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "8ea3f7a58c219102",
+      "effective": true,
+      "minus": null,
+      "plus": null
+    },
+    {
+      "observation": "0289-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f35bc92f4a89faf2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0301-01",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "d311db3a3c875e71",
@@ -8245,7 +8755,7 @@
     {
       "observation": "0460-01",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3d136ff0075ef5c1",
+      "key": "2f8185bf9607b288",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -8253,7 +8763,7 @@
     {
       "observation": "0460-01",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3d136ff0075ef5c1",
+      "key": "2f8185bf9607b288",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -8269,7 +8779,7 @@
     {
       "observation": "0460-01",
       "element": "アニス：スター burst.effects[2]",
-      "key": "3d136ff0075ef5c1",
+      "key": "2f8185bf9607b288",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -8281,6 +8791,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0460-01",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "2f8185bf9607b288",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0461-01",
@@ -9901,7 +10419,7 @@
     {
       "observation": "0478-03",
       "element": "アスカ burst.effects[0]",
-      "key": "a9712e1994bcdb26",
+      "key": "2f91b1de2a41df8f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -9917,7 +10435,7 @@
     {
       "observation": "0478-03",
       "element": "アスカ burst.effects[2]",
-      "key": "a9712e1994bcdb26",
+      "key": "2f91b1de2a41df8f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -9925,7 +10443,7 @@
     {
       "observation": "0478-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "a9712e1994bcdb26",
+      "key": "2f91b1de2a41df8f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -9933,7 +10451,63 @@
     {
       "observation": "0478-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "a9712e1994bcdb26",
+      "key": "2f91b1de2a41df8f",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0478-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "2f91b1de2a41df8f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0478-04",
+      "element": "アスカ burst.effects[0]",
+      "key": "3bedcb61d9220940",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 7],
+          "end": [0, 7]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0478-04",
+      "element": "アスカ burst.effects[2]",
+      "key": "3bedcb61d9220940",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "0478-04",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "3bedcb61d9220940",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0478-04",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "3bedcb61d9220940",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -9948,56 +10522,16 @@
     },
     {
       "observation": "0478-04",
-      "element": "アスカ burst.effects[0]",
-      "key": "121eb1c250a95511",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 7],
-          "end": [0, 7]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0478-04",
-      "element": "アスカ burst.effects[2]",
-      "key": "121eb1c250a95511",
-      "effective": false,
-      "minus": 0,
-      "plus": 0
-    },
-    {
-      "observation": "0478-04",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "121eb1c250a95511",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "3bedcb61d9220940",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
-      "observation": "0478-04",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "121eb1c250a95511",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
       "observation": "0478-05",
       "element": "アスカ burst.effects[0]",
-      "key": "4a457e7cfb53deab",
+      "key": "dc4d551b43cbf13a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10013,7 +10547,7 @@
     {
       "observation": "0478-05",
       "element": "アスカ burst.effects[2]",
-      "key": "4a457e7cfb53deab",
+      "key": "dc4d551b43cbf13a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10021,7 +10555,7 @@
     {
       "observation": "0478-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4a457e7cfb53deab",
+      "key": "dc4d551b43cbf13a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10029,7 +10563,7 @@
     {
       "observation": "0478-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4a457e7cfb53deab",
+      "key": "dc4d551b43cbf13a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10043,9 +10577,17 @@
       }
     },
     {
+      "observation": "0478-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "dc4d551b43cbf13a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0479-03",
       "element": "アスカ burst.effects[0]",
-      "key": "624ea2f0ed852785",
+      "key": "12108a37c157793c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10061,7 +10603,7 @@
     {
       "observation": "0479-03",
       "element": "アスカ burst.effects[2]",
-      "key": "624ea2f0ed852785",
+      "key": "12108a37c157793c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10069,7 +10611,7 @@
     {
       "observation": "0479-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "624ea2f0ed852785",
+      "key": "12108a37c157793c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10077,7 +10619,7 @@
     {
       "observation": "0479-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "624ea2f0ed852785",
+      "key": "12108a37c157793c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10091,9 +10633,17 @@
       }
     },
     {
+      "observation": "0479-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "12108a37c157793c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0479-04",
       "element": "アスカ burst.effects[0]",
-      "key": "22d9541d1f170ae6",
+      "key": "1f9523aa057ce24f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10109,7 +10659,7 @@
     {
       "observation": "0479-04",
       "element": "アスカ burst.effects[2]",
-      "key": "22d9541d1f170ae6",
+      "key": "1f9523aa057ce24f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10117,7 +10667,7 @@
     {
       "observation": "0479-04",
       "element": "アニス：スター burst.effects[0]",
-      "key": "22d9541d1f170ae6",
+      "key": "1f9523aa057ce24f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10125,7 +10675,7 @@
     {
       "observation": "0479-04",
       "element": "アニス：スター burst.effects[1]",
-      "key": "22d9541d1f170ae6",
+      "key": "1f9523aa057ce24f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10139,9 +10689,17 @@
       }
     },
     {
+      "observation": "0479-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "1f9523aa057ce24f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0479-05",
       "element": "アスカ burst.effects[0]",
-      "key": "38d7bfd3d6bbf51c",
+      "key": "4668744875e27f05",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10157,7 +10715,7 @@
     {
       "observation": "0479-05",
       "element": "アスカ burst.effects[2]",
-      "key": "38d7bfd3d6bbf51c",
+      "key": "4668744875e27f05",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10165,7 +10723,7 @@
     {
       "observation": "0479-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "38d7bfd3d6bbf51c",
+      "key": "4668744875e27f05",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10173,7 +10731,7 @@
     {
       "observation": "0479-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "38d7bfd3d6bbf51c",
+      "key": "4668744875e27f05",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10185,6 +10743,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0479-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "4668744875e27f05",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0480-05",
@@ -10429,7 +10995,7 @@
     {
       "observation": "0482-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "b5d7f57215b2461f",
+      "key": "8e0149c509364b16",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10437,7 +11003,7 @@
     {
       "observation": "0482-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "b5d7f57215b2461f",
+      "key": "8e0149c509364b16",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10452,8 +11018,16 @@
     },
     {
       "observation": "0482-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "8e0149c509364b16",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0482-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "b5d7f57215b2461f",
+      "key": "8e0149c509364b16",
       "effective": true,
       "minus": -206408.89190999998,
       "plus": 0
@@ -10461,7 +11035,7 @@
     {
       "observation": "0482-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "2ed9724cfbc775c7",
+      "key": "ce9b7aa78f9cbfae",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10469,7 +11043,7 @@
     {
       "observation": "0482-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "2ed9724cfbc775c7",
+      "key": "ce9b7aa78f9cbfae",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10484,8 +11058,16 @@
     },
     {
       "observation": "0482-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ce9b7aa78f9cbfae",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0482-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "2ed9724cfbc775c7",
+      "key": "ce9b7aa78f9cbfae",
       "effective": true,
       "minus": -263426.85737999994,
       "plus": 0
@@ -10493,7 +11075,7 @@
     {
       "observation": "0483-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4bf0f5e179311e62",
+      "key": "83daf93a64839ec3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10501,7 +11083,7 @@
     {
       "observation": "0483-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4bf0f5e179311e62",
+      "key": "83daf93a64839ec3",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10516,8 +11098,16 @@
     },
     {
       "observation": "0483-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "83daf93a64839ec3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0483-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "4bf0f5e179311e62",
+      "key": "83daf93a64839ec3",
       "effective": true,
       "minus": -206408.89190999998,
       "plus": 0
@@ -10525,7 +11115,7 @@
     {
       "observation": "0483-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "b3dd180b2ef1f80a",
+      "key": "23f67abcaf7f587b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10533,7 +11123,7 @@
     {
       "observation": "0483-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "b3dd180b2ef1f80a",
+      "key": "23f67abcaf7f587b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10548,8 +11138,16 @@
     },
     {
       "observation": "0483-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "23f67abcaf7f587b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0483-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "b3dd180b2ef1f80a",
+      "key": "23f67abcaf7f587b",
       "effective": true,
       "minus": -263426.85737999994,
       "plus": 0
@@ -10557,7 +11155,7 @@
     {
       "observation": "0484-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "a7d5560a180f0a35",
+      "key": "390efb2713d009c8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10565,7 +11163,7 @@
     {
       "observation": "0484-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "a7d5560a180f0a35",
+      "key": "390efb2713d009c8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10581,7 +11179,7 @@
     {
       "observation": "0484-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "a7d5560a180f0a35",
+      "key": "390efb2713d009c8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10596,8 +11194,16 @@
     },
     {
       "observation": "0484-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "390efb2713d009c8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0484-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "a7d5560a180f0a35",
+      "key": "390efb2713d009c8",
       "effective": true,
       "minus": -390053.5687002499,
       "plus": 0
@@ -10605,7 +11211,7 @@
     {
       "observation": "0484-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "a0ad0ff6e9b966d1",
+      "key": "f52b56cb4956a38c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10613,7 +11219,7 @@
     {
       "observation": "0484-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "a0ad0ff6e9b966d1",
+      "key": "f52b56cb4956a38c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10629,7 +11235,7 @@
     {
       "observation": "0484-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "a0ad0ff6e9b966d1",
+      "key": "f52b56cb4956a38c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10644,8 +11250,16 @@
     },
     {
       "observation": "0484-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f52b56cb4956a38c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0484-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "a0ad0ff6e9b966d1",
+      "key": "f52b56cb4956a38c",
       "effective": true,
       "minus": -295117.26509999996,
       "plus": 0
@@ -10653,7 +11267,7 @@
     {
       "observation": "0485-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "1dbc8579c6907268",
+      "key": "af96dea8ec89e4e5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10661,7 +11275,7 @@
     {
       "observation": "0485-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "1dbc8579c6907268",
+      "key": "af96dea8ec89e4e5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10677,7 +11291,7 @@
     {
       "observation": "0485-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "1dbc8579c6907268",
+      "key": "af96dea8ec89e4e5",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10692,8 +11306,16 @@
     },
     {
       "observation": "0485-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "af96dea8ec89e4e5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0485-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "1dbc8579c6907268",
+      "key": "af96dea8ec89e4e5",
       "effective": true,
       "minus": -390053.5687002499,
       "plus": 0
@@ -10701,7 +11323,7 @@
     {
       "observation": "0485-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "bb403b355a360e54",
+      "key": "d1956f9c64821389",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10709,7 +11331,7 @@
     {
       "observation": "0485-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "bb403b355a360e54",
+      "key": "d1956f9c64821389",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10725,7 +11347,7 @@
     {
       "observation": "0485-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "bb403b355a360e54",
+      "key": "d1956f9c64821389",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10740,8 +11362,16 @@
     },
     {
       "observation": "0485-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "d1956f9c64821389",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0485-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "bb403b355a360e54",
+      "key": "d1956f9c64821389",
       "effective": true,
       "minus": -295117.26509999996,
       "plus": 0
@@ -10749,7 +11379,7 @@
     {
       "observation": "0486-04",
       "element": "アニス：スター burst.effects[0]",
-      "key": "d9cf7069f31fae6c",
+      "key": "3d22bc128b252e65",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10757,7 +11387,7 @@
     {
       "observation": "0486-04",
       "element": "アニス：スター burst.effects[1]",
-      "key": "d9cf7069f31fae6c",
+      "key": "3d22bc128b252e65",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10772,8 +11402,16 @@
     },
     {
       "observation": "0486-04",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "3d22bc128b252e65",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0486-04",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "d9cf7069f31fae6c",
+      "key": "3d22bc128b252e65",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10781,7 +11419,7 @@
     {
       "observation": "0486-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "26f0cc8818e9ee0b",
+      "key": "307a6fabf09a98fa",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10789,7 +11427,7 @@
     {
       "observation": "0486-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "26f0cc8818e9ee0b",
+      "key": "307a6fabf09a98fa",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10804,8 +11442,16 @@
     },
     {
       "observation": "0486-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "307a6fabf09a98fa",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0486-05",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "26f0cc8818e9ee0b",
+      "key": "307a6fabf09a98fa",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10813,7 +11459,7 @@
     {
       "observation": "0486-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "5f3caa7b26169b46",
+      "key": "9d12d50c04c6d3ff",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10821,7 +11467,7 @@
     {
       "observation": "0486-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "5f3caa7b26169b46",
+      "key": "9d12d50c04c6d3ff",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10836,8 +11482,16 @@
     },
     {
       "observation": "0486-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "9d12d50c04c6d3ff",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0486-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "5f3caa7b26169b46",
+      "key": "9d12d50c04c6d3ff",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10845,7 +11499,7 @@
     {
       "observation": "0486-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4550e9d2104c578d",
+      "key": "07ec27a520fa7454",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10853,7 +11507,7 @@
     {
       "observation": "0486-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4550e9d2104c578d",
+      "key": "07ec27a520fa7454",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10868,8 +11522,16 @@
     },
     {
       "observation": "0486-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "07ec27a520fa7454",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0486-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "4550e9d2104c578d",
+      "key": "07ec27a520fa7454",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10877,7 +11539,7 @@
     {
       "observation": "0486-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "9c7f45ff569e06cc",
+      "key": "9c77b8785d811a45",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10885,7 +11547,7 @@
     {
       "observation": "0486-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "9c7f45ff569e06cc",
+      "key": "9c77b8785d811a45",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10900,8 +11562,16 @@
     },
     {
       "observation": "0486-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "9c77b8785d811a45",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0486-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "9c7f45ff569e06cc",
+      "key": "9c77b8785d811a45",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -10909,7 +11579,7 @@
     {
       "observation": "0487-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "dacf92de634dbeb9",
+      "key": "375d2ce38ac5b464",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10917,7 +11587,7 @@
     {
       "observation": "0487-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "dacf92de634dbeb9",
+      "key": "375d2ce38ac5b464",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10933,7 +11603,7 @@
     {
       "observation": "0487-09",
       "element": "アニス：スター burst.effects[2]",
-      "key": "dacf92de634dbeb9",
+      "key": "375d2ce38ac5b464",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10948,8 +11618,16 @@
     },
     {
       "observation": "0487-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "375d2ce38ac5b464",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0487-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "dacf92de634dbeb9",
+      "key": "375d2ce38ac5b464",
       "effective": true,
       "minus": 0,
       "plus": 390053.5687002499
@@ -10957,7 +11635,7 @@
     {
       "observation": "0487-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7605f40add156ac5",
+      "key": "324bc9271d99ba78",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -10965,7 +11643,7 @@
     {
       "observation": "0487-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7605f40add156ac5",
+      "key": "324bc9271d99ba78",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10981,7 +11659,7 @@
     {
       "observation": "0487-10",
       "element": "アニス：スター burst.effects[2]",
-      "key": "7605f40add156ac5",
+      "key": "324bc9271d99ba78",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -10996,8 +11674,16 @@
     },
     {
       "observation": "0487-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "324bc9271d99ba78",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0487-10",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "7605f40add156ac5",
+      "key": "324bc9271d99ba78",
       "effective": true,
       "minus": 0,
       "plus": 295117.26509999996
@@ -11005,7 +11691,7 @@
     {
       "observation": "0488-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "f916fbfdddad9bf0",
+      "key": "e829df74515bea9d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11013,7 +11699,7 @@
     {
       "observation": "0488-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "f916fbfdddad9bf0",
+      "key": "e829df74515bea9d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11029,7 +11715,7 @@
     {
       "observation": "0488-06",
       "element": "アニス：スター burst.effects[2]",
-      "key": "f916fbfdddad9bf0",
+      "key": "e829df74515bea9d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11044,8 +11730,16 @@
     },
     {
       "observation": "0488-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "e829df74515bea9d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0488-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "f916fbfdddad9bf0",
+      "key": "e829df74515bea9d",
       "effective": true,
       "minus": 0,
       "plus": 390053.5687002499
@@ -11053,7 +11747,7 @@
     {
       "observation": "0488-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "13a4a7f9c6145b14",
+      "key": "713e05280d945f49",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11061,7 +11755,7 @@
     {
       "observation": "0488-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "13a4a7f9c6145b14",
+      "key": "713e05280d945f49",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11077,7 +11771,7 @@
     {
       "observation": "0488-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "13a4a7f9c6145b14",
+      "key": "713e05280d945f49",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11092,8 +11786,16 @@
     },
     {
       "observation": "0488-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "713e05280d945f49",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0488-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "13a4a7f9c6145b14",
+      "key": "713e05280d945f49",
       "effective": true,
       "minus": 0,
       "plus": 295117.26509999996
@@ -11101,7 +11803,7 @@
     {
       "observation": "0488-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "53f64a93419c4fe0",
+      "key": "1ef7173a7e2b5e6d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11109,23 +11811,7 @@
     {
       "observation": "0488-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "53f64a93419c4fe0",
-      "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
-    },
-    {
-      "observation": "0488-11",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "53f64a93419c4fe0",
+      "key": "1ef7173a7e2b5e6d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11140,8 +11826,32 @@
     },
     {
       "observation": "0488-11",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "1ef7173a7e2b5e6d",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0488-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "1ef7173a7e2b5e6d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0488-11",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "53f64a93419c4fe0",
+      "key": "1ef7173a7e2b5e6d",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11149,7 +11859,7 @@
     {
       "observation": "0488-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "faa3459e6c2565b1",
+      "key": "4d75d9a3716ae66c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11157,7 +11867,7 @@
     {
       "observation": "0488-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "faa3459e6c2565b1",
+      "key": "4d75d9a3716ae66c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11173,7 +11883,7 @@
     {
       "observation": "0488-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "faa3459e6c2565b1",
+      "key": "4d75d9a3716ae66c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11188,8 +11898,16 @@
     },
     {
       "observation": "0488-12",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "4d75d9a3716ae66c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0488-12",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "faa3459e6c2565b1",
+      "key": "4d75d9a3716ae66c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11197,7 +11915,7 @@
     {
       "observation": "0488-13",
       "element": "アニス：スター burst.effects[0]",
-      "key": "02d55cc9f5fa8292",
+      "key": "eec79e98bb9c965f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11205,7 +11923,7 @@
     {
       "observation": "0488-13",
       "element": "アニス：スター burst.effects[1]",
-      "key": "02d55cc9f5fa8292",
+      "key": "eec79e98bb9c965f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11221,7 +11939,7 @@
     {
       "observation": "0488-13",
       "element": "アニス：スター burst.effects[2]",
-      "key": "02d55cc9f5fa8292",
+      "key": "eec79e98bb9c965f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11236,8 +11954,16 @@
     },
     {
       "observation": "0488-13",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "eec79e98bb9c965f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0488-13",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "02d55cc9f5fa8292",
+      "key": "eec79e98bb9c965f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11245,7 +11971,7 @@
     {
       "observation": "0488-14",
       "element": "アニス：スター burst.effects[0]",
-      "key": "ad8399661cb4ad2b",
+      "key": "28bee2db18f940d6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -11253,7 +11979,7 @@
     {
       "observation": "0488-14",
       "element": "アニス：スター burst.effects[1]",
-      "key": "ad8399661cb4ad2b",
+      "key": "28bee2db18f940d6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11269,7 +11995,7 @@
     {
       "observation": "0488-14",
       "element": "アニス：スター burst.effects[2]",
-      "key": "ad8399661cb4ad2b",
+      "key": "28bee2db18f940d6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11284,8 +12010,16 @@
     },
     {
       "observation": "0488-14",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "28bee2db18f940d6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0488-14",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "ad8399661cb4ad2b",
+      "key": "28bee2db18f940d6",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -11949,7 +12683,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[0]",
-      "key": "cae53f2737fa10fa",
+      "key": "1f6f4b086493b983",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -11958,7 +12692,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[1]",
-      "key": "cae53f2737fa10fa",
+      "key": "1f6f4b086493b983",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11974,7 +12708,7 @@
     {
       "observation": "0507-01",
       "element": "アニス：スター burst.effects[2]",
-      "key": "cae53f2737fa10fa",
+      "key": "1f6f4b086493b983",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -11988,9 +12722,17 @@
       }
     },
     {
+      "observation": "0507-01",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "1f6f4b086493b983",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[0]",
-      "key": "0db09e0ebabaecc1",
+      "key": "f0e16f89ee174178",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -11999,7 +12741,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[1]",
-      "key": "0db09e0ebabaecc1",
+      "key": "f0e16f89ee174178",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12015,7 +12757,7 @@
     {
       "observation": "0507-02",
       "element": "アニス：スター burst.effects[2]",
-      "key": "0db09e0ebabaecc1",
+      "key": "f0e16f89ee174178",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12029,9 +12771,17 @@
       }
     },
     {
+      "observation": "0507-02",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f0e16f89ee174178",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3f7bcd8b26a44662",
+      "key": "737d3484d461475b",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -12040,7 +12790,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3f7bcd8b26a44662",
+      "key": "737d3484d461475b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12056,7 +12806,7 @@
     {
       "observation": "0507-03",
       "element": "アニス：スター burst.effects[2]",
-      "key": "3f7bcd8b26a44662",
+      "key": "737d3484d461475b",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12068,6 +12818,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0507-03",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "737d3484d461475b",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0508-05",
@@ -12312,7 +13070,7 @@
     {
       "observation": "0513-05",
       "element": "アニス：スター burst.effects[0]",
-      "key": "967239c6fa81d665",
+      "key": "e9fcf31f2ab72ea0",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12320,7 +13078,7 @@
     {
       "observation": "0513-05",
       "element": "アニス：スター burst.effects[1]",
-      "key": "967239c6fa81d665",
+      "key": "e9fcf31f2ab72ea0",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12335,8 +13093,16 @@
     },
     {
       "observation": "0513-05",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "e9fcf31f2ab72ea0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0513-05",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "967239c6fa81d665",
+      "key": "e9fcf31f2ab72ea0",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -12344,7 +13110,7 @@
     {
       "observation": "0513-06",
       "element": "アニス：スター burst.effects[0]",
-      "key": "b936b38396c1596a",
+      "key": "0ace6a7697b9f18f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12352,7 +13118,7 @@
     {
       "observation": "0513-06",
       "element": "アニス：スター burst.effects[1]",
-      "key": "b936b38396c1596a",
+      "key": "0ace6a7697b9f18f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12367,8 +13133,16 @@
     },
     {
       "observation": "0513-06",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0ace6a7697b9f18f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0513-06",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "b936b38396c1596a",
+      "key": "0ace6a7697b9f18f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -12376,7 +13150,7 @@
     {
       "observation": "0513-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "2c232690e2bc7e6f",
+      "key": "1d64d1f1add7da7a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12384,7 +13158,7 @@
     {
       "observation": "0513-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "2c232690e2bc7e6f",
+      "key": "1d64d1f1add7da7a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12399,8 +13173,16 @@
     },
     {
       "observation": "0513-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "1d64d1f1add7da7a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0513-07",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "2c232690e2bc7e6f",
+      "key": "1d64d1f1add7da7a",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -12408,7 +13190,7 @@
     {
       "observation": "0513-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4666507d0ce5d9d4",
+      "key": "5f530288ef7558a1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12416,7 +13198,7 @@
     {
       "observation": "0513-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4666507d0ce5d9d4",
+      "key": "5f530288ef7558a1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12431,8 +13213,16 @@
     },
     {
       "observation": "0513-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "5f530288ef7558a1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0513-08",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "4666507d0ce5d9d4",
+      "key": "5f530288ef7558a1",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -12440,7 +13230,7 @@
     {
       "observation": "0513-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "a189aa4ad7f50759",
+      "key": "6ade48db4fa4ff5c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12448,7 +13238,7 @@
     {
       "observation": "0513-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "a189aa4ad7f50759",
+      "key": "6ade48db4fa4ff5c",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12463,8 +13253,16 @@
     },
     {
       "observation": "0513-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "6ade48db4fa4ff5c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0513-09",
       "element": "シンデレラ skill1.effects[1]",
-      "key": "a189aa4ad7f50759",
+      "key": "6ade48db4fa4ff5c",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -12472,7 +13270,7 @@
     {
       "observation": "0543-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "f0d4081d7321f120",
+      "key": "5604859002b08ddd",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12480,7 +13278,7 @@
     {
       "observation": "0543-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "f0d4081d7321f120",
+      "key": "5604859002b08ddd",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12496,7 +13294,39 @@
     {
       "observation": "0543-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "f0d4081d7321f120",
+      "key": "5604859002b08ddd",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0543-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "5604859002b08ddd",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0543-08",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "df99ef8ec54bd573",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0543-08",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "df99ef8ec54bd573",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12511,16 +13341,8 @@
     },
     {
       "observation": "0543-08",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "1230df7b4484c7be",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0543-08",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "1230df7b4484c7be",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "df99ef8ec54bd573",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12535,24 +13357,16 @@
     },
     {
       "observation": "0543-08",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "1230df7b4484c7be",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "df99ef8ec54bd573",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0543-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "e6c9c6ca3ed3140f",
+      "key": "61df76fbde22a5a2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12560,7 +13374,7 @@
     {
       "observation": "0543-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "e6c9c6ca3ed3140f",
+      "key": "61df76fbde22a5a2",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12576,7 +13390,39 @@
     {
       "observation": "0543-09",
       "element": "アニス：スター burst.effects[2]",
-      "key": "e6c9c6ca3ed3140f",
+      "key": "61df76fbde22a5a2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0543-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "61df76fbde22a5a2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0543-10",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "44c011d8f165db41",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0543-10",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "44c011d8f165db41",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12591,16 +13437,8 @@
     },
     {
       "observation": "0543-10",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "47d693b5cdbef86c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0543-10",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "47d693b5cdbef86c",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "44c011d8f165db41",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12615,24 +13453,16 @@
     },
     {
       "observation": "0543-10",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "47d693b5cdbef86c",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "44c011d8f165db41",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0543-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "82b2c7f4c73b717d",
+      "key": "591b1fc5c7190810",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12640,7 +13470,7 @@
     {
       "observation": "0543-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "82b2c7f4c73b717d",
+      "key": "591b1fc5c7190810",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12656,7 +13486,39 @@
     {
       "observation": "0543-11",
       "element": "アニス：スター burst.effects[2]",
-      "key": "82b2c7f4c73b717d",
+      "key": "591b1fc5c7190810",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0543-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "591b1fc5c7190810",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": null
+    },
+    {
+      "observation": "0543-12",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "0d5d42622c3e3d3f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0543-12",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "0d5d42622c3e3d3f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12671,16 +13533,8 @@
     },
     {
       "observation": "0543-12",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "2c44a12784da6282",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0543-12",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "2c44a12784da6282",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "0d5d42622c3e3d3f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12695,24 +13549,16 @@
     },
     {
       "observation": "0543-12",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "2c44a12784da6282",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0d5d42622c3e3d3f",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 1.1641532182693481e-10,
+      "plus": null
     },
     {
       "observation": "0543-14",
       "element": "アニス：スター burst.effects[0]",
-      "key": "d544615988426c8c",
+      "key": "9e302104047dc9e1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12720,7 +13566,7 @@
     {
       "observation": "0543-14",
       "element": "アニス：スター burst.effects[1]",
-      "key": "d544615988426c8c",
+      "key": "9e302104047dc9e1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12736,7 +13582,39 @@
     {
       "observation": "0543-14",
       "element": "アニス：スター burst.effects[2]",
-      "key": "d544615988426c8c",
+      "key": "9e302104047dc9e1",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0543-14",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "9e302104047dc9e1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0544-07",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "60a55543bc5a5764",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0544-07",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "60a55543bc5a5764",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12751,16 +13629,8 @@
     },
     {
       "observation": "0544-07",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "fe3fc4627b69aa89",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0544-07",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "fe3fc4627b69aa89",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "60a55543bc5a5764",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12775,24 +13645,16 @@
     },
     {
       "observation": "0544-07",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "fe3fc4627b69aa89",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "60a55543bc5a5764",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0544-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "742dd12e31010dbb",
+      "key": "78a3c0a7966d2956",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12800,7 +13662,7 @@
     {
       "observation": "0544-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "742dd12e31010dbb",
+      "key": "78a3c0a7966d2956",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12816,7 +13678,39 @@
     {
       "observation": "0544-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "742dd12e31010dbb",
+      "key": "78a3c0a7966d2956",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0544-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "78a3c0a7966d2956",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0544-09",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "74170b6af67545a7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0544-09",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "74170b6af67545a7",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12831,16 +13725,8 @@
     },
     {
       "observation": "0544-09",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "0880679f941282ba",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0544-09",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "0880679f941282ba",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "74170b6af67545a7",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12855,24 +13741,16 @@
     },
     {
       "observation": "0544-09",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "0880679f941282ba",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "74170b6af67545a7",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0544-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "ce66b808c05cb749",
+      "key": "6eb1a041c9aea924",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12880,7 +13758,7 @@
     {
       "observation": "0544-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "ce66b808c05cb749",
+      "key": "6eb1a041c9aea924",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12896,7 +13774,7 @@
     {
       "observation": "0544-10",
       "element": "アニス：スター burst.effects[2]",
-      "key": "ce66b808c05cb749",
+      "key": "6eb1a041c9aea924",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12910,9 +13788,17 @@
       }
     },
     {
+      "observation": "0544-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "6eb1a041c9aea924",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0544-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "16d6c359cb380ea8",
+      "key": "09ee53040688e075",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12920,7 +13806,7 @@
     {
       "observation": "0544-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "16d6c359cb380ea8",
+      "key": "09ee53040688e075",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12936,7 +13822,7 @@
     {
       "observation": "0544-11",
       "element": "アニス：スター burst.effects[2]",
-      "key": "16d6c359cb380ea8",
+      "key": "09ee53040688e075",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12950,9 +13836,17 @@
       }
     },
     {
+      "observation": "0544-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "09ee53040688e075",
+      "effective": false,
+      "minus": -1.1641532182693481e-10,
+      "plus": null
+    },
+    {
       "observation": "0544-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3b304562ae739fc7",
+      "key": "fec43e43a303d88a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -12960,7 +13854,7 @@
     {
       "observation": "0544-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3b304562ae739fc7",
+      "key": "fec43e43a303d88a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12976,7 +13870,7 @@
     {
       "observation": "0544-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "3b304562ae739fc7",
+      "key": "fec43e43a303d88a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -12990,9 +13884,17 @@
       }
     },
     {
+      "observation": "0544-12",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "fec43e43a303d88a",
+      "effective": false,
+      "minus": 1.1641532182693481e-10,
+      "plus": null
+    },
+    {
       "observation": "0544-14",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4343f138ddcafc09",
+      "key": "daaa571151863ce4",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -13000,7 +13902,7 @@
     {
       "observation": "0544-14",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4343f138ddcafc09",
+      "key": "daaa571151863ce4",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -13016,7 +13918,7 @@
     {
       "observation": "0544-14",
       "element": "アニス：スター burst.effects[2]",
-      "key": "4343f138ddcafc09",
+      "key": "daaa571151863ce4",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -13028,6 +13930,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0544-14",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "daaa571151863ce4",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0581-01",
@@ -14743,7 +15653,7 @@
     {
       "observation": "0727-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "5206fd71144729c0",
+      "key": "0a37426afff83019",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14751,7 +15661,7 @@
     {
       "observation": "0727-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "5206fd71144729c0",
+      "key": "0a37426afff83019",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14767,7 +15677,39 @@
     {
       "observation": "0727-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "5206fd71144729c0",
+      "key": "0a37426afff83019",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0a37426afff83019",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-08",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "ed351bbc3d9bf273",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-08",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "ed351bbc3d9bf273",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14782,16 +15724,8 @@
     },
     {
       "observation": "0727-08",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "0df6e2437ec19e3a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0727-08",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "0df6e2437ec19e3a",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "ed351bbc3d9bf273",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14806,24 +15740,16 @@
     },
     {
       "observation": "0727-08",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "0df6e2437ec19e3a",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "ed351bbc3d9bf273",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0727-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "ab73c7f76b2c4dae",
+      "key": "7ef17ce8762d0f9f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14831,7 +15757,7 @@
     {
       "observation": "0727-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "ab73c7f76b2c4dae",
+      "key": "7ef17ce8762d0f9f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14847,7 +15773,7 @@
     {
       "observation": "0727-09",
       "element": "アニス：スター burst.effects[2]",
-      "key": "ab73c7f76b2c4dae",
+      "key": "7ef17ce8762d0f9f",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14861,9 +15787,17 @@
       }
     },
     {
+      "observation": "0727-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "7ef17ce8762d0f9f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0727-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "b7f30b701ee26493",
+      "key": "6007009b9b03291a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14871,7 +15805,7 @@
     {
       "observation": "0727-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "b7f30b701ee26493",
+      "key": "6007009b9b03291a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14887,7 +15821,7 @@
     {
       "observation": "0727-10",
       "element": "アニス：スター burst.effects[2]",
-      "key": "b7f30b701ee26493",
+      "key": "6007009b9b03291a",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14901,9 +15835,17 @@
       }
     },
     {
+      "observation": "0727-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "6007009b9b03291a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0727-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "661636d91fdccce8",
+      "key": "7ea141c21e9dc751",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -14911,7 +15853,7 @@
     {
       "observation": "0727-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "661636d91fdccce8",
+      "key": "7ea141c21e9dc751",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14927,7 +15869,7 @@
     {
       "observation": "0727-11",
       "element": "アニス：スター burst.effects[2]",
-      "key": "661636d91fdccce8",
+      "key": "7ea141c21e9dc751",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14939,11 +15881,19 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0727-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "7ea141c21e9dc751",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0727-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "3f3bfb557420e234",
+      "key": "f59c952633504c25",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -14952,7 +15902,7 @@
     {
       "observation": "0727-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "3f3bfb557420e234",
+      "key": "f59c952633504c25",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14968,7 +15918,39 @@
     {
       "observation": "0727-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "3f3bfb557420e234",
+      "key": "f59c952633504c25",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-12",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "f59c952633504c25",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-15",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "41b306f71ccbd89e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-15",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "41b306f71ccbd89e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -14983,16 +15965,8 @@
     },
     {
       "observation": "0727-15",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "37dd12b4b04a961f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0727-15",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "37dd12b4b04a961f",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "41b306f71ccbd89e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15007,24 +15981,16 @@
     },
     {
       "observation": "0727-15",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "37dd12b4b04a961f",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "41b306f71ccbd89e",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0727-16",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7efb95248289540b",
+      "key": "0e7877c70d2294c2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15032,7 +15998,7 @@
     {
       "observation": "0727-16",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7efb95248289540b",
+      "key": "0e7877c70d2294c2",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15048,7 +16014,39 @@
     {
       "observation": "0727-16",
       "element": "アニス：スター burst.effects[2]",
-      "key": "7efb95248289540b",
+      "key": "0e7877c70d2294c2",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0727-16",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "0e7877c70d2294c2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-17",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "6ebcc9f812e3b723",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0727-17",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "6ebcc9f812e3b723",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15063,16 +16061,8 @@
     },
     {
       "observation": "0727-17",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "19da06e7e950b88a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0727-17",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "19da06e7e950b88a",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "6ebcc9f812e3b723",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15087,24 +16077,16 @@
     },
     {
       "observation": "0727-17",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "19da06e7e950b88a",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "6ebcc9f812e3b723",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0728-07",
       "element": "アニス：スター burst.effects[0]",
-      "key": "f142d3def91a9929",
+      "key": "75638be906b9f890",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15112,7 +16094,7 @@
     {
       "observation": "0728-07",
       "element": "アニス：スター burst.effects[1]",
-      "key": "f142d3def91a9929",
+      "key": "75638be906b9f890",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15128,7 +16110,7 @@
     {
       "observation": "0728-07",
       "element": "アニス：スター burst.effects[2]",
-      "key": "f142d3def91a9929",
+      "key": "75638be906b9f890",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15142,9 +16124,17 @@
       }
     },
     {
+      "observation": "0728-07",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "75638be906b9f890",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0728-08",
       "element": "アニス：スター burst.effects[0]",
-      "key": "7ac0023b0a8019aa",
+      "key": "d089af84441edd43",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15152,7 +16142,7 @@
     {
       "observation": "0728-08",
       "element": "アニス：スター burst.effects[1]",
-      "key": "7ac0023b0a8019aa",
+      "key": "d089af84441edd43",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15168,7 +16158,7 @@
     {
       "observation": "0728-08",
       "element": "アニス：スター burst.effects[2]",
-      "key": "7ac0023b0a8019aa",
+      "key": "d089af84441edd43",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15182,9 +16172,17 @@
       }
     },
     {
+      "observation": "0728-08",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "d089af84441edd43",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0728-09",
       "element": "アニス：スター burst.effects[0]",
-      "key": "4818deb6930e1bd1",
+      "key": "435c9b51e69664c8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15192,7 +16190,7 @@
     {
       "observation": "0728-09",
       "element": "アニス：スター burst.effects[1]",
-      "key": "4818deb6930e1bd1",
+      "key": "435c9b51e69664c8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15208,7 +16206,7 @@
     {
       "observation": "0728-09",
       "element": "アニス：スター burst.effects[2]",
-      "key": "4818deb6930e1bd1",
+      "key": "435c9b51e69664c8",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15220,11 +16218,19 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0728-09",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "435c9b51e69664c8",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0728-10",
       "element": "アニス：スター burst.effects[0]",
-      "key": "38d766753769ce8c",
+      "key": "3e4cd7c66987262d",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15233,7 +16239,7 @@
     {
       "observation": "0728-10",
       "element": "アニス：スター burst.effects[1]",
-      "key": "38d766753769ce8c",
+      "key": "3e4cd7c66987262d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15249,7 +16255,7 @@
     {
       "observation": "0728-10",
       "element": "アニス：スター burst.effects[2]",
-      "key": "38d766753769ce8c",
+      "key": "3e4cd7c66987262d",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15263,9 +16269,17 @@
       }
     },
     {
+      "observation": "0728-10",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "3e4cd7c66987262d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0728-11",
       "element": "アニス：スター burst.effects[0]",
-      "key": "0e43baa7b3fce044",
+      "key": "06a117b80d613615",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15274,7 +16288,7 @@
     {
       "observation": "0728-11",
       "element": "アニス：スター burst.effects[1]",
-      "key": "0e43baa7b3fce044",
+      "key": "06a117b80d613615",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15290,7 +16304,7 @@
     {
       "observation": "0728-11",
       "element": "アニス：スター burst.effects[2]",
-      "key": "0e43baa7b3fce044",
+      "key": "06a117b80d613615",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15304,9 +16318,17 @@
       }
     },
     {
+      "observation": "0728-11",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "06a117b80d613615",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0728-12",
       "element": "アニス：スター burst.effects[0]",
-      "key": "29436660701ca7a9",
+      "key": "cd721f2b305e7310",
       "effective": true,
       "minus": null,
       "plus": null,
@@ -15315,7 +16337,7 @@
     {
       "observation": "0728-12",
       "element": "アニス：スター burst.effects[1]",
-      "key": "29436660701ca7a9",
+      "key": "cd721f2b305e7310",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15331,7 +16353,39 @@
     {
       "observation": "0728-12",
       "element": "アニス：スター burst.effects[2]",
-      "key": "29436660701ca7a9",
+      "key": "cd721f2b305e7310",
+      "effective": false,
+      "minus": null,
+      "plus": null,
+      "edge": {
+        "range": {
+          "start": [0, 3],
+          "end": [0, 3]
+        },
+        "widen": 0,
+        "narrow": 0
+      }
+    },
+    {
+      "observation": "0728-12",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "cd721f2b305e7310",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0728-13",
+      "element": "アニス：スター burst.effects[0]",
+      "key": "9dd162849645a2c1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0728-13",
+      "element": "アニス：スター burst.effects[1]",
+      "key": "9dd162849645a2c1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15346,16 +16400,8 @@
     },
     {
       "observation": "0728-13",
-      "element": "アニス：スター burst.effects[0]",
-      "key": "ec15bd3bfb412ab8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0728-13",
-      "element": "アニス：スター burst.effects[1]",
-      "key": "ec15bd3bfb412ab8",
+      "element": "アニス：スター burst.effects[2]",
+      "key": "9dd162849645a2c1",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15370,24 +16416,16 @@
     },
     {
       "observation": "0728-13",
-      "element": "アニス：スター burst.effects[2]",
-      "key": "ec15bd3bfb412ab8",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "9dd162849645a2c1",
       "effective": false,
-      "minus": null,
-      "plus": null,
-      "edge": {
-        "range": {
-          "start": [0, 3],
-          "end": [0, 3]
-        },
-        "widen": 0,
-        "narrow": 0
-      }
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0728-16",
       "element": "アニス：スター burst.effects[0]",
-      "key": "bdeb563a6f6c5bb7",
+      "key": "61172ffdadadd4e6",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15395,7 +16433,7 @@
     {
       "observation": "0728-16",
       "element": "アニス：スター burst.effects[1]",
-      "key": "bdeb563a6f6c5bb7",
+      "key": "61172ffdadadd4e6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15411,7 +16449,7 @@
     {
       "observation": "0728-16",
       "element": "アニス：スター burst.effects[2]",
-      "key": "bdeb563a6f6c5bb7",
+      "key": "61172ffdadadd4e6",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15425,9 +16463,17 @@
       }
     },
     {
+      "observation": "0728-16",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "61172ffdadadd4e6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0728-17",
       "element": "アニス：スター burst.effects[0]",
-      "key": "56f4abc5c91d7f46",
+      "key": "2e19ee76ec348b27",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15435,7 +16481,7 @@
     {
       "observation": "0728-17",
       "element": "アニス：スター burst.effects[1]",
-      "key": "56f4abc5c91d7f46",
+      "key": "2e19ee76ec348b27",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15451,7 +16497,7 @@
     {
       "observation": "0728-17",
       "element": "アニス：スター burst.effects[2]",
-      "key": "56f4abc5c91d7f46",
+      "key": "2e19ee76ec348b27",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15465,9 +16511,17 @@
       }
     },
     {
+      "observation": "0728-17",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "2e19ee76ec348b27",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "0728-18",
       "element": "アニス：スター burst.effects[0]",
-      "key": "484c212a60e7821f",
+      "key": "4f733dcdbaf2649e",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -15475,7 +16529,7 @@
     {
       "observation": "0728-18",
       "element": "アニス：スター burst.effects[1]",
-      "key": "484c212a60e7821f",
+      "key": "4f733dcdbaf2649e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15491,7 +16545,7 @@
     {
       "observation": "0728-18",
       "element": "アニス：スター burst.effects[2]",
-      "key": "484c212a60e7821f",
+      "key": "4f733dcdbaf2649e",
       "effective": false,
       "minus": null,
       "plus": null,
@@ -15503,6 +16557,14 @@
         "widen": 0,
         "narrow": 0
       }
+    },
+    {
+      "observation": "0728-18",
+      "element": "アニス：スター skill1.effects[4]",
+      "key": "4f733dcdbaf2649e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     },
     {
       "observation": "0744-03",

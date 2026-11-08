@@ -29,6 +29,8 @@ import {
 import {
   autoAttackCoreRowNotes,
   autoConditionSummary,
+  flightFramesAt,
+  slotFlightsOf,
   hitRateUpSpansOf,
   slotConditionNotes,
   type AutoConditionSummary,
@@ -96,6 +98,11 @@ export type SimSlotSegment = {
   damage: number;
   /** Stage 22-B: triggers・damage のうち部分チャージの発。無ければキーごと無い */
   partialCharge?: PartialChargeTotals;
+  /**
+   * 射撃ごとの倍率ダメージを着弾のフレームで出す枠（飛ぶ時間のある枠。plan/design-anis-star-unimplemented.md 3 節。C-0992）: この区間に
+   * 着いた発の数。damage の射撃ごとの倍率ダメージは triggers ではなくこの数で数える。ほかの枠はキーごと無い
+   */
+  landedShots?: number;
 };
 
 export type SimSlotResult = {
@@ -161,6 +168,8 @@ type Runner = {
   shots: readonly number[];
   /** Stage 22-B: 部分チャージの発のフレーム → チャージの進み */
   partial: ReadonlyMap<number, number>;
+  /** 射撃ごとの倍率ダメージを着弾で出す枠の、発のフレーム → 着弾のフレーム（ほかの枠は null） */
+  landAt: ((frame: number) => number) | null;
   result: SimSlotResult;
 };
 
@@ -214,6 +223,10 @@ export function runSimulation(simInput: SimInput): SimResult {
     perSecond.slots[slotIndex]![k]! += damage;
   };
 
+  // plan/design-anis-star-unimplemented.md 3 節（C-0992）: 飛ぶ時間のある枠の射撃ごとの倍率ダメージ（S1 の追加ダメージ）は、着弾のフレームに
+  // 出し、バフも着弾のフレームの区間で引く（本体は発射のフレームのまま）
+  const flights = slotFlightsOf(slots, enemy, frames);
+  const segmentEnds = timeline.segments.map((s) => s.end);
   const runners: (Runner | null)[] = slots.map((slot, index) => {
     if (slot === null) return null;
     const base = {
@@ -226,6 +239,16 @@ export function runSimulation(simInput: SimInput): SimResult {
     const passive = timeline.passive[index] ?? EMPTY_BUFF_STATE;
     const perShot = perShotDamageOf(slot);
     const shotFrames = shots[index]?.frames ?? [];
+    const flight = flights[index]?.shot ?? null;
+    const landAt = flight === null || perShot.length === 0 ? null : (f: number) => f + flightFramesAt(flight, f);
+    // 戦闘の終わりの後に着く発の射撃ごとの倍率ダメージは出さない
+    const landings =
+      landAt === null
+        ? []
+        : shotFrames
+            .map(landAt)
+            .filter((f) => f < frames)
+            .sort((a, b) => a - b);
     // 区間ごとの 1 トリガー値と発数。一本化の段 A-2: 発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
     const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
       const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
@@ -245,6 +268,12 @@ export function runSimulation(simInput: SimInput): SimResult {
       // Stage 22-B: 部分チャージの発（C-0840。値は C-0843）は、その発のチャージの進みで値を出し直す
       const partial = partialShotsInRanges(shots[index]?.partialShots, range);
       const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
+      const landed = landAt === null ? undefined : countShotsInRanges(landings, range);
+      // 着弾で出す枠は、射撃ごとの倍率ダメージを撃った数から着いた数に置き換える
+      const damage =
+        trigger.perTrigger * (triggers - partial.length) +
+        partialDamage +
+        (landed === undefined ? 0 : trigger.perShot * (landed - triggers));
       return {
         start: segment.start,
         end: segment.end,
@@ -255,8 +284,9 @@ export function runSimulation(simInput: SimInput): SimResult {
         timedEffects: state.timedEffects,
         trigger,
         triggers,
-        damage: trigger.perTrigger * (triggers - partial.length) + partialDamage,
+        damage,
         ...(partial.length > 0 ? { partialCharge: { triggers: partial.length, damage: partialDamage } } : {}),
+        ...(landed === undefined ? {} : { landedShots: landed }),
       };
     });
     const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateUpSpansOf(timeline, index));
@@ -264,6 +294,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       index,
       shots: shotFrames,
       partial: new Map((shots[index]?.partialShots ?? []).map((p) => [p.frame, p.progress])),
+      landAt,
       result: {
         index,
         character: slot.character,
@@ -378,12 +409,16 @@ export function runSimulation(simInput: SimInput): SimResult {
       while (segIndex + 1 < timeline.segments.length && timeline.segments[segIndex]!.end <= f) segIndex += 1;
       const segment = runner.result.segments[segIndex]!;
       const damage = shotDamage(runner, segment, f);
-      addPerSecond(runner.index, f, damage);
+      const late = lateShotDamage(runner, segmentEnds, f, frames);
+      addPerSecond(runner.index, f, damage - (late === null ? 0 : segment.trigger.perShot));
+      if (late !== null && late.frame < frames) addPerSecond(runner.index, late.frame, late.damage);
       const own = ownShots[runner.index];
       if (own) {
         own.frames.push(f);
-        own.value.push(own.value.at(-1)! + damage);
-        own.ratioValue.push(own.ratioValue.at(-1)! + damage * segment.buffs.accumulateRatio);
+        const value =
+          late === null ? damage : damage - segment.trigger.perShot + (late.frame < frames ? late.damage : 0);
+        own.value.push(own.value.at(-1)! + value);
+        own.ratioValue.push(own.ratioValue.at(-1)! + value * segment.buffs.accumulateRatio);
       }
     }
   }
@@ -474,6 +509,22 @@ function settleAccumulates(
 }
 
 /** 1 発のダメージ（区間の 1 トリガー値。Stage 22-B: 部分チャージの発は、その発のチャージの進みで出し直す） */
+/**
+ * 射撃ごとの倍率ダメージを着弾で出す枠の、その発の射撃ごとの倍率ダメージ（着弾のフレームと、その区間の値）。ほかの枠は null
+ */
+function lateShotDamage(
+  runner: Runner,
+  segmentEnds: readonly number[],
+  frame: number,
+  frames: number,
+): { frame: number; damage: number } | null {
+  if (runner.landAt === null) return null;
+  const at = runner.landAt(frame);
+  if (at >= frames) return { frame: at, damage: 0 };
+  const k = lowerBound(segmentEnds, at + 1);
+  return { frame: at, damage: runner.result.segments[k]!.trigger.perShot };
+}
+
 function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {
   const progress = runner.partial.get(frame);
   return progress === undefined
@@ -498,6 +549,7 @@ function traceEvents(
   runners: readonly (Runner | null)[],
 ): SimEvent[] {
   const events: SimEvent[] = [];
+  const segmentEnds = timeline.segments.map((s) => s.end);
   const fullBurstWindows = schedule?.fullBurstWindows ?? [];
   const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
   const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
@@ -550,7 +602,9 @@ function traceEvents(
       const next = nextShot[runner.index]!;
       if (runner.shots[next] !== f) continue;
       nextShot[runner.index] = next + 1;
-      const damage = shotDamage(runner, runner.result.segments[segIndex]!, f);
+      const segment = runner.result.segments[segIndex]!;
+      const late = lateShotDamage(runner, segmentEnds, f, frames);
+      const damage = shotDamage(runner, segment, f) - (late === null ? 0 : segment.trigger.perShot - late.damage);
       events.push({ frame: f, kind: 'trigger', slot: runner.index, fullBurst: fb, damage });
     }
   }

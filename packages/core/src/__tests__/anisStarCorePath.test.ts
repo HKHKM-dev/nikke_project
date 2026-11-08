@@ -183,3 +183,51 @@ describe('的の表に行の無い敵の注記（plan/design-anis-star-unimpleme
     expect(codes(plain)).toContain('auto-attack-core-no-row');
   });
 });
+
+describe('S1 の追加ダメージは着弾のフレームのバフで出す（plan/design-anis-star-unimplemented.md 3 節）', () => {
+  const frames = gameSecondsToFrames(180);
+  const flightOf = (enemy: EnemyInput) => {
+    const spans = landingFrameSpans(enemy, frames);
+    const row = profile.flightFrames!.shots!.RL as { byProjectile: Record<string, TargetRateRow> };
+    const t = row.byProjectile['HomingProjectile:100:750']!;
+    return (f: number) => {
+      const s = spans.find((x) => f >= x.start && f < x.end);
+      return (s?.landing === null || s === undefined ? undefined : t[s.landing]) ?? (s?.band ? t[s.band] : undefined) ?? 0;
+    };
+  };
+
+  it('counts the additional damage by the landing segment and the body by the firing segment', () => {
+    const enemy = rangeEnemy(profile);
+    const result = runSimulation(solo(enemy));
+    const slot = result.slots[0]!;
+    const segs = slot.segments;
+    const segAt = (f: number) => segs.find((s) => f >= s.start && f < s.end)!;
+    const flight = flightOf(enemy);
+    const shots = result.shots[0]!.frames.filter((f) => f < frames);
+    let expected = 0;
+    let crossing = 0;
+    for (const f of shots) {
+      const fired = segAt(f);
+      expected += fired.trigger.normal;
+      const at = f + flight(f);
+      if (at >= frames) continue;
+      const landed = segAt(at);
+      expected += landed.trigger.perShot;
+      if (landed.trigger.perShot !== fired.trigger.perShot) crossing += 1;
+    }
+    // 180 秒の中に、▲の付き始めか切れ目を跨ぐ発がある（値が変わる発）
+    expect(crossing).toBeGreaterThan(0);
+    expect(slot.normalDamage).toBeCloseTo(expected, 3);
+    expect(segs.reduce((n, s) => n + (s.landedShots ?? 0), 0)).toBe(shots.filter((f) => f + flight(f) < frames).length);
+    const perSecond = result.damagePerSecond.total.reduce((a, b) => a + b, 0);
+    expect(perSecond).toBeCloseTo(result.totalDamage, 3);
+  });
+
+  it('keeps the firing frame on enemies without flight times', () => {
+    const { target: _, landings: __, ...plain } = rangeEnemy(profile);
+    const slot = runSimulation(solo(plain)).slots[0]!;
+    expect(slot.segments.every((s) => s.landedShots === undefined)).toBe(true);
+    const sum = slot.segments.reduce((n, s) => n + s.trigger.perTrigger * s.triggers, 0);
+    expect(slot.normalDamage).toBeCloseTo(sum, 3);
+  });
+});

@@ -95,14 +95,15 @@
             0
           ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレーム（射撃場の的では発射 + 飛ぶ時間。的の表の flightFrames の着地点ごとの値（無ければ距離帯の代表値）。表の無い敵では発と同じフレーム）に、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める。ダメージとバフの判定は発射のフレーム（notes[0]）",
-            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit charges the Burst Gauge by one unmultiplied hit (28,000) on the frame the shot lands (on the shooting range target: firing frame + flight time from the target table's flightFrames, per landing point or else the distance band's representative value; on enemies without the table: the firing frame). Damage and buff checks stay on the firing frame (notes[0])"
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレーム（射撃場の的では発射 + 飛ぶ時間。的の表の flightFrames の着地点ごとの値（無ければ距離帯の代表値）。表の無い敵では発と同じフレーム）に出し、そのフレームのバフで値を出して、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める（notes[0]）",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit happens on the frame the shot lands (on the shooting range target: firing frame + flight time from the target table's flightFrames, per landing point or else the distance band's representative value; on enemies without the table: the firing frame), takes the buffs active on that frame, and charges the Burst Gauge by one unmultiplied hit (28,000) (notes[0])"
           },
           "claims": [
             "C-0190",
             "C-0198",
             "C-0413",
-            "C-0461"
+            "C-0461",
+            "C-0992"
           ]
         },
         {
@@ -161,15 +162,12 @@
       ],
       "notes": [
         {
-          "ja": "S1 の追加ダメージ（effects[4]）は、ゲージだけを着弾のフレームに溜め、ダメージを置くフレームとバフの判定は発射のフレーム。発動に重なる発で、追加ダメージだけにバーストの攻撃ダメージ▲が乗った観測（0165-14・0320-13。どちらも記録）があり、追加ダメージを着弾の時刻で判定している兆しだが、結論にしていない（plan/design-anis-star-unimplemented.md 3 節）",
-          "en": "The S1 additional damage (effects[4]) charges only the gauge on the landing frame; its damage and buff checks stay on the firing frame. On shots overlapping her Burst activation, only the additional damage took the Burst ATK damage up (0165-14, 0320-13; both records), a sign that the additional damage is evaluated at landing, but there is no conclusion yet (plan/design-anis-star-unimplemented.md 3)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "unknown"
-          },
+          "ja": "通常攻撃の本体のバフは発射のフレームで、S1 の追加ダメージのバフは着弾のフレームで決まる（▲の付き始め・切れ目を跨いで飛ぶ発は、本体と追加ダメージで▲が食い違う。plan/design-anis-star-unimplemented.md 3 節）",
+          "en": "Buffs on the normal-attack body are taken on the firing frame, and buffs on the S1 additional damage on the landing frame (a shot in flight across the start or end of a buff gets it on only one of the two; plan/design-anis-star-unimplemented.md 3)",
+          "kind": "modeling",
+          "refers": "effects[4]",
           "claims": [
-            "C-0413",
-            "C-0461"
+            "C-0992"
           ]
         },
         {

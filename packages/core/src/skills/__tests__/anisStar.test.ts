@@ -71,11 +71,12 @@ describe('アニス：スター（17）の定義', () => {
     expect(lv1[0]!.multiplier).toBeCloseTo(0.71, 12);
   });
 
-  it('defines every line of S1, with the homing flight time noted as unimplemented', () => {
-    expect(def.skills.skill1.support).toBe('partial');
+  it('defines every line of S1, with the additional damage evaluated at landing as a modeling note', () => {
+    expect(def.skills.skill1.support).toBe('supported');
     // 誘導弾の飛ぶ時間の未実装の分（plan/design-anis-star-gauge-timing.md 3 節）。2 段目の段 1: 消去と
     // フルバースト終了時の付け直しを書かないことの補足（私だけの星の付与を指す）
-    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['unimplemented', 'modeling']);
+    expect(def.skills.skill1.notes?.map((n) => n.kind)).toEqual(['modeling', 'modeling']);
+    expect(def.skills.skill1.notes?.[0]?.refers).toBe('effects[4]');
     expect(def.skills.skill1.notes?.[1]?.refers).toBe('effects[1]');
   });
 
