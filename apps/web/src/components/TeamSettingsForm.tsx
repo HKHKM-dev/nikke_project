@@ -4,21 +4,13 @@ import { CLASS_LABEL } from '../skillLabels.ts';
 import {
   CONSOLE_CLASSES,
   CONSOLE_CORPORATIONS,
+  CORPORATION_LABEL,
   SHOOTING_RANGE_ENEMY,
-  type ConsoleCorporation,
   type ConsoleInput,
   type TeamAction,
 } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
-
-const CORPORATION_LABEL: Record<ConsoleCorporation, string> = {
-  ELYSION: 'エリシオン',
-  MISSILIS: 'ミシリス',
-  TETRA: 'テトラ',
-  PILGRIM: 'ピルグリム',
-  ABNORMAL: 'アブノーマル',
-};
 
 type Props = {
   element: Element | null;
