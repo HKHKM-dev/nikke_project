@@ -1769,9 +1769,10 @@
   - 結論: C-0282
   - 派生元: V-0175
   - 予測（2026-10-05、commit bfac9b9）との比べ:
-    - core-midnear（coreHitRate）: 実測なし。H-body2 0
-    - core-near（coreHitRate）: 実測なし。H-body2 0
-    - core-far（coreHitRate）: 実測なし。H-body2 0
+    - core-midnear（coreHitRate）: 実測 1（0161-18）。H-body2 0（-1、**許容外**）
+    - core-near（coreHitRate）: 実測 1（0161-19）。H-body2 0（-1、**許容外**）
+    - core-far（coreHitRate）: 実測 0.5（0161-20）。H-body2 0（-0.5、**許容外**）
+    - 許容内の指標: H-body2 0/3。合う仮説は無い
 - **[V-0187](../records/verifications/V-0187-anis-star-solo-core-shoot.md)** アニス：スター単騎の撮影: シューティングスターのコアの割合と形、通常攻撃のコアの割合（窓の中と外）
   - 問い: 単騎のアニス：スター（オートバースト）で、(1) シューティングスターのコアの会心は胴体の 2.5 倍（H-add）か 3 倍（H-mul）か、(2) シューティングスターのコアに当たる割合は距離帯ごとに 0164-07 と揃うか、(3) 通常攻撃のコアの割合は窓の中と外で同じか
   - 話題: スキル・キャラ固有・日付: 2026-10-05・状態: 完了・Stage: backlog 6 節（コアの経路の語彙）
