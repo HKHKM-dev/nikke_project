@@ -9,9 +9,10 @@ import {
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
+  type MouseSensorOptions,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -33,6 +34,23 @@ import { placeCharacterAction } from '../team.ts';
 const DROP_ANIMATION = {
   sideEffects: defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } }),
 };
+
+/**
+ * 左ボタンだけでドラッグを始めるマウスのセンサー。dnd-kit の MouseSensor は右ボタン以外（中ボタンも）で始めるので、
+ * ホイールを押して画面を流そうとすると立ち絵が動いてしまう
+ */
+class LeftButtonMouseSensor extends MouseSensor {
+  static activators = [
+    {
+      eventName: 'onMouseDown' as const,
+      handler: ({ nativeEvent }: ReactMouseEvent, { onActivation }: MouseSensorOptions) => {
+        if (nativeEvent.button !== 0) return false;
+        onActivation?.({ event: nativeEvent });
+        return true;
+      },
+    },
+  ];
+}
 
 export function ModernView({
   team,
@@ -76,7 +94,7 @@ export function ModernView({
   // マウスは 8px 動かして初めてドラッグと判定（通常のクリック操作との共存）。タッチは 250ms の長押しで持ち上げ、
   // それまでに 8px より動いたらスクロールにする（すぐ持ち上げると、トレイの上でページをスクロールできない）
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(LeftButtonMouseSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } }),
   );
 
