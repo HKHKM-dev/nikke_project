@@ -25,7 +25,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": false,
-  "conditionNote": "V-0692。アニス：スター単騎・操作（AUTO 射撃 ON・オートバースト OFF）。バーストは遠の区間でだけ手で使い、窓は 2 回",
+  "conditionNote": "V-0698。アニス：スター単騎・操作（AUTO 射撃 ON・オートバースト OFF）。バーストは遠の区間でだけ手で使い、窓は 2 回",
   "backup": {
     "at": "2026-11-08T19:19+09:00",
     "via": "cloud-move",
