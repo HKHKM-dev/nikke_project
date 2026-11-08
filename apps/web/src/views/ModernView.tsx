@@ -48,7 +48,9 @@ const dropState: { targetIndex: number | null; placed: boolean } = {
 };
 
 const slotCardAt = (index: number | null) =>
-  index === null ? null : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
+  index === null
+    ? null
+    : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
 
 /**
  * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
@@ -195,11 +197,13 @@ export function ModernView({
   // アニメーションは残し、画面を動かすのだけ止めるため、持ち上げたドラッグ元の scrollIntoView を何もしない関数で隠す
   const noScrollNodeRef = useRef<Element | null>(null);
 
-  // スロットの名前の上の限界突破・コア強化。育成状況を読み込んでいるとき（一覧と同じ。消すとスロットの育成も既定に戻る）と、
+  // スロットの名前の上の限界突破・コア強化。育成状況にいるニケ（一覧と同じ。消すとスロットの育成も既定に戻る）と、
   // スペック固定のとき（計算に使う固定の値。限界突破・コアとも上限）に出す
   const slotGrowthMarks = (i: number): GrowthMarks | null => {
     const { character, growth } = calc.slots[i]!;
-    return character && (roster || team.fixedSpec) ? growthMarksOf(character.rarity, growth) : null;
+    const resourceId = team.slots[i]!.resourceId;
+    const inRoster = resourceId !== null && roster?.characters[String(resourceId)] !== undefined;
+    return character && (inRoster || team.fixedSpec) ? growthMarksOf(character.rarity, growth) : null;
   };
   // 持ち上げたスロットの限界突破・コア強化（持ち上げた絵に名前と一緒に出す）
   const [draggedMarks, setDraggedMarks] = useState<GrowthMarks | null>(null);

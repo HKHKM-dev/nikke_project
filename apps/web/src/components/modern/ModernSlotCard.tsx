@@ -130,7 +130,9 @@ export function ModernSlotCard({
                 e.stopPropagation();
                 onClear();
               }}
-              onPointerDown={(e) => e.stopPropagation()}
+              // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
             >
               ✕
             </button>
@@ -143,7 +145,9 @@ export function ModernSlotCard({
                 e.stopPropagation();
                 onOpenBuildModal();
               }}
-              onPointerDown={(e) => e.stopPropagation()}
+              // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
             >
               ⚙
             </button>

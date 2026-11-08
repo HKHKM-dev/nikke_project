@@ -111,6 +111,8 @@ export function BuildSection({
                   value={gear?.type ?? ''}
                   {...inertControlProps(disabled)}
                   onChange={(e) => {
+                    // aria-disabled の欄も、タッチの端末では選択肢が開くことがある（inertControl.ts）
+                    if (disabled) return;
                     const type = e.target.value as GearType | '';
                     const overload = type === 'OL' ? gear?.overload : undefined;
                     setGear(
@@ -146,7 +148,7 @@ export function BuildSection({
                         value={line?.option ?? ''}
                         {...inertControlProps(disabled || !masters || !isOverload)}
                         onChange={(e) => {
-                          if (!isOverload) return;
+                          if (disabled || !masters || !isOverload) return;
                           const option = e.target.value as OverloadOption | '';
                           setOverload(
                             part,
@@ -169,6 +171,7 @@ export function BuildSection({
                         value={line?.level ?? OVERLOAD_LEVEL_MIN}
                         {...inertControlProps(disabled || line === undefined)}
                         onChange={(e) =>
+                          !disabled &&
                           isOverload &&
                           line &&
                           setOverload(part, gear, i, {
@@ -202,6 +205,7 @@ export function BuildSection({
               value={shown.cube?.id ?? ''}
               {...inertControlProps(disabled || !masters)}
               onChange={(e) => {
+                if (disabled || !masters) return;
                 const id = e.target.value === '' ? null : Number(e.target.value);
                 set({ cube: id === null ? null : { id, level: shown.cube?.level ?? CUBE_LEVEL_MIN } });
               }}
@@ -231,6 +235,7 @@ export function BuildSection({
               value={hasTreasure ? treasureOptionValue(treasurePhase) : (shown.collection?.rarity ?? '')}
               {...inertControlProps(disabled && character.treasure === null)}
               onChange={(e) => {
+                if (disabled && character.treasure === null) return;
                 // スペック固定の間（disabled）は宝物の段階だけを変え、保存している育成には触れない
                 const actions = collectionActions(slotIndex, e.target.value, {
                   fixedSpec: disabled,

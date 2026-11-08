@@ -98,10 +98,7 @@ export function combatCharacterOf(table: CombatPowerTable, resourceId: number): 
  * fixedSpec.ts・build.ts の fixedSpecBuild）で計算した、表の全キャラの戦闘力。一覧の戦闘力順に使う。
  * 実機のスペック固定の画面には戦闘力が出ないので、実機とは照合していない（モデルの値）
  */
-export function fixedSpecCombatPowers(
-  table: CombatPowerTable,
-  masters: BuildMasters,
-): SnapshotCombatPowers {
+export function fixedSpecCombatPowers(table: CombatPowerTable, masters: BuildMasters): SnapshotCombatPowers {
   const powers = new Map<number, number>();
   const failures: SnapshotCombatPowers['failures'] = [];
   for (const key of Object.keys(table.characters)) {
