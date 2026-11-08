@@ -949,6 +949,8 @@
 | 0974 | `20261107-0974_mg_mast-romantic-maid_flower-cocoa-auto.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ココア（311、SR・灼熱・SSR） + ◎マスト：ロマンチックメイド（354、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0686 の撮影 B。I-DOLL・フラワー（I）・ココア（I）・マスト：ロマンチックメイド（II・操作）。III なし。オート射撃 ON・オートバースト ON。火の的 |
 | 0975 | `20261107-0975_mg_mast-romantic-maid_claire-flower-auto.mp4` | クレア（842、RL・電撃・SR） + I-DOLL・フラワー（304、RL・風圧・R） + ◎マスト：ロマンチックメイド（354、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0686 の撮影 C。クレア（I）・I-DOLL・フラワー（I）・マスト：ロマンチックメイド（II・操作）。III なし。オート射撃 ON・オートバースト ON。火の的 |
 | 0976 | `20261107-0976_mg_mast-romantic-maid_claire-flower-auto.mp4` | クレア（842、RL・電撃・SR） + I-DOLL・フラワー（304、RL・風圧・R） + ◎マスト：ロマンチックメイド（354、MG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0686 の撮影 C。クレア（I）・I-DOLL・フラワー（I）・マスト：ロマンチックメイド（II・操作）。III なし。オート射撃 ON・オートバースト ON。火の的 |
+| 0977 | `20261108-0977_mg_rapi-redhood_fire-autoburst.mp4` | ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 粘着榴弾の付着のゲージの量の再現（V-0689 の続き）に撮った 1 本（ラピ：レッドフード単騎・灼熱の的・オートバースト ON） |
+| 0978 | `20261108-0978_mg_rapi-redhood_fire-autoburst.mp4` | ◎ラピ：レッドフード（16、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 粘着榴弾の付着のゲージの量の再現（V-0689 の続き）に撮った 1 本（ラピ：レッドフード単騎・灼熱の的・オートバースト ON） |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
