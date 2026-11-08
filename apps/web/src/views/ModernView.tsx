@@ -2,6 +2,8 @@ import {
   DndContext,
   DragOverlay,
   MouseSensor,
+  pointerWithin,
+  defaultDropAnimationSideEffects,
   TouchSensor,
   useSensor,
   useSensors,
@@ -21,6 +23,14 @@ import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
+
+/**
+ * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
+ * 代わりに印（drag-source-returning）を付け、ドラッグ中と同じ薄さで残す（styles.css）
+ */
+const DROP_ANIMATION = {
+  sideEffects: defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } }),
+};
 
 export function ModernView({
   team,
@@ -43,15 +53,17 @@ export function ModernView({
   // キャラクターインデックスを ID で引けるマップを作成
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
 
-  // 現在トレイからキャラを配置する対象のスロット（0〜4）
-  const [activeSlotIndex, setActiveSlotIndex] = useState(0);
+  // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
+  const [pendingId, setPendingId] = useState<number | null>(null);
 
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、スロットの立ち絵の大きさと、カードの左上からの位置も持つ
+  // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、カードの大きさと、立ち絵の大きさ・カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
   const [draggedPortrait, setDraggedPortrait] = useState<{
+    cardWidth: number;
+    cardHeight: number;
     width: number;
     height: number;
     left: number;
@@ -70,6 +82,7 @@ export function ModernView({
   const noScrollNodeRef = useRef<Element | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
+    setPendingId(null);
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -87,7 +100,14 @@ export function ModernView({
     if (card && portrait) {
       const c = card.getBoundingClientRect();
       const p = portrait.getBoundingClientRect();
-      setDraggedPortrait({ width: p.width, height: p.height, left: p.left - c.left, top: p.top - c.top });
+      setDraggedPortrait({
+        cardWidth: c.width,
+        cardHeight: c.height,
+        width: p.width,
+        height: p.height,
+        left: p.left - c.left,
+        top: p.top - c.top,
+      });
     } else {
       setDraggedPortrait(null);
     }
@@ -117,12 +137,10 @@ export function ModernView({
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
       if (!action) return;
       dispatch(action);
-      setActiveSlotIndex(targetSlotIndex);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
-        setActiveSlotIndex(targetSlotIndex);
       }
     }
   };
@@ -132,16 +150,25 @@ export function ModernView({
     setDraggedPortrait(null);
   };
 
-  // トレイでキャラがクリック選択されたときのハンドラ
+  // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ
+  // （同じニケをもう一度クリックすると待つのをやめる）
   const handleSelectCharacter = (resourceId: number) => {
-    const action = placeCharacterAction(team, resourceId, activeSlotIndex);
-    if (!action) return;
-    dispatch(action);
-    // 次の空きスロットがあれば自動的にアクティブスロットを進める
-    const nextEmptyIndex = team.slots.findIndex((s, i) => i > activeSlotIndex && s.resourceId === null);
-    if (nextEmptyIndex !== -1) {
-      setActiveSlotIndex(nextEmptyIndex);
+    const emptyIndex = team.slots.findIndex((s) => s.resourceId === null);
+    if (emptyIndex === -1) {
+      setPendingId((id) => (id === resourceId ? null : resourceId));
+      return;
     }
+    const action = placeCharacterAction(team, resourceId, emptyIndex);
+    if (action) dispatch(action);
+    setPendingId(null);
+  };
+
+  // 待っているニケを、クリックしたスロットに置く（いたニケは外れて一覧に戻る）
+  const handlePlacePending = (index: number) => {
+    if (pendingId === null) return;
+    const action = placeCharacterAction(team, pendingId, index);
+    if (action) dispatch(action);
+    setPendingId(null);
   };
 
   // 全スロットで配置済みのキャラ ID セット（他スロット配置中判定用）
@@ -155,6 +182,8 @@ export function ModernView({
   return (
     <DndContext
       sensors={sensors}
+      // 落とす先は、カーソル（指）の下の受け口で決める（既定は持ち上げた絵の外枠＝カード 1 枚分との重なりで、隣に少し掛かっただけで入れ替わる）
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
       autoScroll={false}
@@ -195,8 +224,7 @@ export function ModernView({
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
-                isSelected={activeSlotIndex === i}
-                onSelectSlot={() => setActiveSlotIndex(i)}
+                onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
                 onClear={() => dispatch({ type: 'clearSlot', index: i })}
                 partyTotalDamage={totals.parties[parties.active]?.total ?? null}
@@ -210,6 +238,7 @@ export function ModernView({
           takenIds={allTakenIds}
           otherPartyIds={otherPartyIds}
           fullySupported={fullySupported}
+          pendingId={pendingId}
           onSelectCharacter={handleSelectCharacter}
         />
 
@@ -239,18 +268,25 @@ export function ModernView({
           <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
         </ErrorBoundary>
 
-        <DragOverlay>
+        <DragOverlay dropAnimation={DROP_ANIMATION}>
           {draggedCharacter && draggedPortrait ? (
+            // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
+            // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
             <div
               className="slot-drag-overlay"
-              style={{
-                width: draggedPortrait.width,
-                height: draggedPortrait.height,
-                marginLeft: draggedPortrait.left,
-                marginTop: draggedPortrait.top,
-              }}
+              style={{ width: draggedPortrait.cardWidth, height: draggedPortrait.cardHeight }}
             >
-              <CharacterVisual character={draggedCharacter} size="portrait" />
+              <div
+                className="slot-drag-overlay-portrait"
+                style={{
+                  width: draggedPortrait.width,
+                  height: draggedPortrait.height,
+                  left: draggedPortrait.left,
+                  top: draggedPortrait.top,
+                }}
+              >
+                <CharacterVisual character={draggedCharacter} size="portrait" />
+              </div>
             </div>
           ) : draggedCharacter ? (
             <div className="char-drag-overlay">

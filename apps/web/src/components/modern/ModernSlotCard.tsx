@@ -15,8 +15,8 @@ type Props = {
   slotResult: SlotResultView | null;
   /** このスロットのニケがほかの編成でも使われている */
   inOtherParty: boolean;
-  isSelected: boolean;
-  onSelectSlot: () => void;
+  /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
+  onPlacePending?: () => void;
   onOpenBuildModal: () => void;
   onClear: () => void;
   partyTotalDamage: number | null;
@@ -31,14 +31,14 @@ export function ModernSlotCard({
   error,
   slotResult,
   inOtherParty,
-  isSelected,
-  onSelectSlot,
+  onPlacePending,
   onOpenBuildModal,
   onClear,
   partyTotalDamage,
 }: Props) {
   /** 操作キャラのスロット（「操作」の印を付ける） */
   const focused = slotIndex === DEFAULT_CONTROLLED_SLOT;
+  const awaitingPlacement = onPlacePending !== undefined;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
   const formattedDamage = formatDamage(currentDamage);
   const damagePercent =
@@ -76,9 +76,8 @@ export function ModernSlotCard({
   return (
     <div
       ref={setCardRef}
-      data-element={characterEntry?.element}
-      className={`modern-slot-card ${isSelected ? 'modern-slot-selected' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
-      onClick={onSelectSlot}
+      className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
+      onClick={onPlacePending}
       {...(characterEntry ? attributes : {})}
       {...(characterEntry ? listeners : {})}
     >
@@ -108,6 +107,12 @@ export function ModernSlotCard({
       </div>
 
       <div className="modern-slot-body">
+        {awaitingPlacement && (
+          <svg className="modern-slot-target" viewBox="0 0 100 100" aria-hidden="true">
+            <circle className="modern-slot-target-outer" cx="50" cy="50" r="40" />
+            <circle className="modern-slot-target-inner" cx="50" cy="50" r="22" />
+          </svg>
+        )}
         {characterEntry ? (
           <div className="modern-slot-char-area">
             <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />

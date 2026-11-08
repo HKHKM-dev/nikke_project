@@ -607,16 +607,41 @@ header h1 {
   font-size: 0.85rem;
 }
 
+:root {
+  /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
+  --placing-blue: light-dark(#0ea5e9, #38bdf8);
+  /* スロットのカードの縦長の絵の高さ（.char-visual-portrait と空のスロットの枠） */
+  --slot-portrait-h: 240px;
+}
+/* 置き先待ちのスロット・ニケの水色の実線の枠 */
+.modern-slot-card.modern-slot-awaiting,
+.char-tray-item.char-tray-item-pending {
+  outline: 3px solid var(--placing-blue);
+  outline-offset: -1px;
+}
+/* 置き先待ちのスロットと、いまの編成にいるニケの絵に重ねる薄い水色 */
+.modern-slot-card.modern-slot-awaiting::after,
+.char-tray-item-taken .char-tray-item-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* 5スロットグリッド */
+/* カードは立ち絵とボタンが収まる幅に固定し、入りきらなければ折り返す。余った幅は左右に分けて、各行を中央に寄せる */
 .modern-slots-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
 }
-@media (max-width: 900px) {
-  .modern-slots-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
+.modern-slots-grid > .modern-slot-card {
+  box-sizing: border-box;
+  width: 170px;
 }
 
 /* モダンカード */
@@ -625,7 +650,6 @@ header h1 {
   flex-direction: column;
   background: color-mix(in srgb, var(--app-fg) 4%, var(--app-bg));
   border: 1px solid var(--app-border);
-  cursor: pointer;
   padding: 8px;
   gap: 8px;
   position: relative;
@@ -633,12 +657,48 @@ header h1 {
     border-color 0.15s,
     box-shadow 0.15s;
 }
-.modern-slot-card:hover {
-  border-color: color-mix(in srgb, Highlight 60%, var(--app-border));
+/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける。
+   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
+.modern-slot-card.modern-slot-awaiting {
+  cursor: pointer;
 }
-.modern-slot-card.modern-slot-selected {
-  outline: 2px solid Highlight;
-  outline-offset: -1px;
+.modern-slot-target {
+  position: absolute;
+  /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
+  top: calc(var(--slot-portrait-h) / 2);
+  left: 50%;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -50%) scale(0.92);
+  fill: none;
+  stroke: #fff;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  z-index: 3;
+  /* 2 つの輪を 1 枚ごと脈打たせる（輪ごとに動かすより描き直しが少ない） */
+  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
+}
+.modern-slot-target-outer {
+  stroke-width: 4;
+}
+.modern-slot-target-inner {
+  stroke-width: 5;
+}
+@keyframes modern-slot-target-pulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.92);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modern-slot-target {
+    animation: none;
+  }
 }
 .modern-slot-card.modern-slot-focused {
   box-shadow: inset 0 0 0 1px Highlight;
@@ -648,7 +708,9 @@ header h1 {
   outline-offset: -2px;
   background: color-mix(in srgb, Highlight 15%, var(--app-bg));
 }
-.modern-slot-card.modern-slot-dragging {
+/* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
+.modern-slot-card.modern-slot-dragging .char-visual-portrait,
+.modern-slot-card.drag-source-returning .char-visual-portrait {
   opacity: 0.35;
 }
 .modern-slot-header {
@@ -690,6 +752,7 @@ header h1 {
 
 /* カードボディ・キャラ表示 */
 .modern-slot-body {
+  position: relative;
   min-height: 120px;
   display: flex;
   align-items: center;
@@ -718,15 +781,8 @@ header h1 {
   justify-content: center;
   gap: 4px;
   opacity: 0.5;
-  /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ */
+  /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
-  aspect-ratio: 3 / 4;
-  max-height: 240px;
-}
-@media (max-width: 900px) {
-  .modern-slot-empty-area {
-    max-width: 200px;
-  }
 }
 .modern-slot-empty-plus {
   font-size: 1.8rem;
@@ -795,31 +851,15 @@ header h1 {
   background: color-mix(in srgb, var(--app-fg) 10%, transparent);
 }
 
-/* 属性の色（バッジの図柄の色。plan/design-modern-ui.md 2.5 節）。キャラの絵の枠とスロットのカードの縁が使う */
-[data-element='Fire'] {
-  --el: #ff0000;
-}
-[data-element='Water'] {
-  --el: #007cff;
-}
-[data-element='Wind'] {
-  --el: #00ff00;
-}
-[data-element='Iron'] {
-  --el: #feba02;
-}
-[data-element='Electronic'] {
-  --el: #ff02de;
-}
-
 /* CharacterVisual (カード/アセット/フォールバック) */
 .char-visual {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   max-width: 120px;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--el) 45%, var(--app-bg)), var(--app-bg));
-  border: 2px solid var(--el);
+  /* 属性の色は使わない（属性は左上のバッジで示す） */
+  background: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  border: 1px solid var(--app-border);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -835,21 +875,17 @@ header h1 {
   /* 右下の「未」の札に重ならないように下を空ける */
   padding-bottom: 16px;
 }
-/* スロットのカードの縦長の絵（portraits）。顔が入るように上寄せで切り取る */
+/* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
+   空のスロットの枠も同じ大きさにする */
+.char-visual-portrait,
+.modern-slot-empty-area {
+  height: var(--slot-portrait-h);
+  width: auto;
+  aspect-ratio: 1 / 2;
+}
 .char-visual-portrait {
   max-width: none;
-  aspect-ratio: 3 / 4;
-  max-height: 240px;
   --badge-w: 24px;
-}
-.char-visual-portrait .char-visual-img {
-  object-position: center 12%;
-}
-/* スロットが 1 列に並ぶ狭い画面では、横いっぱいに広げると顔が切れるので、幅を抑える */
-@media (max-width: 900px) {
-  .char-visual-portrait {
-    max-width: 200px;
-  }
 }
 .char-visual-img {
   width: 100%;
@@ -992,14 +1028,11 @@ header h1 {
   border: 1px solid transparent;
   cursor: pointer;
   color: inherit;
-  transition:
-    transform 0.1s,
-    border-color 0.1s;
   position: relative;
 }
-.char-tray-item:hover {
-  transform: translateY(-2px);
-  border-color: Highlight;
+/* 置き先を待っている間は、ほかのニケを暗くする（待っているニケの枠は上の共通の規則） */
+.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
+  filter: brightness(0.4);
 }
 .char-tray-item-name {
   font-size: 0.75rem;
@@ -1009,18 +1042,38 @@ header h1 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.char-tray-item-taken {
-  opacity: 0.45;
+/* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
+.char-tray-item-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 72px;
+}
+.char-tray-item-taken .char-tray-item-visual::after {
+  border: 2px solid var(--placing-blue);
+}
+.char-tray-item-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: var(--placing-blue);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+  pointer-events: none;
+  z-index: 3;
 }
 /* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
 .char-tray-item:disabled {
   cursor: not-allowed;
 }
-.char-tray-item:disabled:hover {
-  transform: none;
-  border-color: transparent;
-}
-.char-tray-item-taken-badge {
+.char-tray-item-other-badge {
   position: absolute;
   top: 6px;
   background: rgba(0, 0, 0, 0.8);
@@ -1089,7 +1142,8 @@ header h1 {
 }
 
 /* ドラッグ＆ドロップ（DnD）状態・オーバーレイ */
-.char-tray-item.char-tray-item-dragging {
+.char-tray-item.char-tray-item-dragging,
+.char-tray-item.drag-source-returning {
   opacity: 0.3;
 }
 .char-drag-overlay {
@@ -1106,6 +1160,10 @@ header h1 {
 }
 /* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
 .slot-drag-overlay {
+  position: relative;
   pointer-events: none;
+}
+.slot-drag-overlay-portrait {
+  position: absolute;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }

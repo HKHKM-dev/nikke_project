@@ -1,6 +1,6 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useState } from 'react';
-import { BADGE_KINDS } from './badges.ts';
+import { VISUAL_BADGE_KINDS } from './badges.ts';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -19,7 +19,7 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
   const failed = failedId === character.resourceId;
 
   return (
-    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-element={character.element}>
+    <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`}>
       {failed ? (
         <span className="char-visual-fallback" aria-hidden="true">
           {character.name.ja}
@@ -35,9 +35,9 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
           onError={() => setFailedId(character.resourceId)}
         />
       )}
-      {/* 属性・バースト段階・クラス・武器種のバッジ（plan/design-modern-ui.md 2.5 節） */}
+      {/* 属性・バースト段階・武器種のバッジ（plan/design-modern-ui.md 2.5 節） */}
       <div className="char-visual-badges">
-        {BADGE_KINDS.map(({ key, badges }) => {
+        {VISUAL_BADGE_KINDS.map(({ key, badges }) => {
           const badge = badges[character[key]];
           return (
             badge && (

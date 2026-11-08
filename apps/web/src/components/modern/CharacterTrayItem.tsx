@@ -1,6 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useCombatPowerNote } from '../../useListOrder.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -10,10 +9,12 @@ type Props = {
   /** ほかの編成で使用中（置ける） */
   inOtherParty: boolean;
   isUnsupported: boolean;
+  /** 置くスロットのクリックを待っている */
+  isPending: boolean;
   onClick: () => void;
 };
 
-export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsupported, onClick }: Props) {
+export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsupported, isPending, onClick }: Props) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `tray-${character.resourceId}`,
     data: {
@@ -22,28 +23,27 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
     },
     disabled: isTaken,
   });
-  // 戦闘力順のときは、マウスを重ねたときの文に戦闘力を添える（plan/design-combat-power-sort.md 6 節の論点 4）
-  const power = useCombatPowerNote(character.resourceId);
-  const mark = isTaken
-    ? { badge: '配置中', title: '（配置中）' }
-    : inOtherParty
-      ? { badge: '他の編成', title: '（ほかの編成で使用中）' }
-      : null;
-
+  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）
   return (
     <button
       ref={setNodeRef}
       type="button"
-      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''}`}
+      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
       onClick={onClick}
       disabled={isTaken}
-      title={`${character.name.ja}${power}${mark?.title ?? ''}`}
       {...attributes}
       {...listeners}
     >
-      <CharacterVisual character={character} isUnsupported={isUnsupported} size="compact" />
+      <span className="char-tray-item-visual">
+        <CharacterVisual character={character} isUnsupported={isUnsupported} size="compact" />
+        {isTaken && (
+          <svg className="char-tray-item-check" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 12.5l5 5L20 6.5" />
+          </svg>
+        )}
+      </span>
       <span className="char-tray-item-name">{character.name.ja}</span>
-      {mark && <span className="char-tray-item-taken-badge">{mark.badge}</span>}
+      {inOtherParty && !isTaken && <span className="char-tray-item-other-badge">他の編成</span>}
     </button>
   );
 }

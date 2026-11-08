@@ -9,6 +9,8 @@ type Props = {
   takenIds: ReadonlySet<number>;
   otherPartyIds: ReadonlySet<number>;
   fullySupported: ReadonlySet<number> | null;
+  /** 置くスロットのクリックを待っているニケ */
+  pendingId: number | null;
   onSelectCharacter: (resourceId: number) => void;
 };
 
@@ -40,7 +42,7 @@ function BadgeFilter({
   );
 }
 
-export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, onSelectCharacter }: Props) {
+export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, pendingId, onSelectCharacter }: Props) {
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
@@ -92,7 +94,7 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
         </div>
       </div>
 
-      <div className="char-tray-list">
+      <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
         {filteredCharacters.length === 0 ? (
           <p className="char-tray-empty">該当するニケが見つかりませんでした。</p>
         ) : (
@@ -106,6 +108,7 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
                 isTaken={isTaken}
                 inOtherParty={otherPartyIds.has(char.resourceId)}
                 isUnsupported={isUnsupported}
+                isPending={pendingId === char.resourceId}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />
             );
