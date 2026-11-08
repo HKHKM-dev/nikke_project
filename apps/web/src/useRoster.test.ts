@@ -51,23 +51,22 @@ afterEach(() => {
 const TEAM = teamReducer(initialTeamState(), { type: 'selectCharacter', index: 0, resourceId: 82 });
 
 function render(index: readonly CharacterIndexEntry[] | null = INDEX) {
-  const team = TEAM;
   const dispatch = vi.fn<(action: TeamAction) => void>();
   const setParties = vi.fn<(parties: PartiesState) => void>();
-  const props = { index, team, parties: INITIAL_PARTIES, dispatch, setParties };
+  const props = { index, team: TEAM, parties: INITIAL_PARTIES, dispatch, setParties };
   const { result, rerender } = renderHook(useRoster, { initialProps: props });
-  return { result, rerender, team, dispatch, setParties, props };
+  return { result, rerender, dispatch, setParties, props };
 }
 
 const file = (text: string) => new File([text], 'builds.json', { type: 'application/json' });
 
 describe('useRoster', () => {
-  it('starts with no roster when nothing is saved', async () => {
+  it('starts with no roster when nothing is saved', () => {
     const { result } = render();
     expect(result.current.controls).toMatchObject({ roster: null, stored: false, message: null });
   });
 
-  it('restores the saved roster once the character index is loaded', async () => {
+  it('restores the saved roster once the character index is loaded', () => {
     localStorage.setItem(ROSTER_STORAGE_KEY, SAVED);
     const { result, rerender, props } = render(null);
     // キャラの一覧を読むまでは検査できないので、育成状況は無く、保存はある
@@ -76,7 +75,7 @@ describe('useRoster', () => {
     expect(result.current.controls).toMatchObject({ roster: ROSTER, stored: true, message: null });
   });
 
-  it('adds the roster build to selecting a character in it, and passes other actions through', async () => {
+  it('adds the roster build to selecting a character in it, and passes other actions through', () => {
     localStorage.setItem(ROSTER_STORAGE_KEY, SAVED);
     const { result, dispatch } = render();
     result.current.dispatchWithRoster({ type: 'selectCharacter', index: 0, resourceId: 82 });
@@ -91,7 +90,7 @@ describe('useRoster', () => {
     expect(dispatch).toHaveBeenLastCalledWith(other);
   });
 
-  it('keeps a saved roster that no longer reads, and shows why', async () => {
+  it('keeps a saved roster that no longer reads, and shows why', () => {
     localStorage.setItem(ROSTER_STORAGE_KEY, BROKEN);
     const { result } = render();
     const { controls } = result.current;
@@ -104,10 +103,10 @@ describe('useRoster', () => {
   });
 
   it('imports a file without asking: saves the text, overwrites the team and parties, and reports', async () => {
-    const { result, team, dispatch, setParties } = render();
+    const { result, dispatch, setParties } = render();
     await act(() => result.current.controls.importFile(file(SAVED)));
     expect(localStorage.getItem(ROSTER_STORAGE_KEY)).toBe(SAVED);
-    const next = applyRoster(team, INITIAL_PARTIES, ROSTER);
+    const next = applyRoster(TEAM, INITIAL_PARTIES, ROSTER);
     expect(dispatch).toHaveBeenCalledWith({ type: 'replace', state: next.team });
     expect(setParties).toHaveBeenCalledWith(next.parties);
     expect(result.current.controls).toMatchObject({
@@ -169,7 +168,7 @@ describe('useRoster', () => {
     expect(revoke).toHaveBeenCalledWith('blob:roster');
   });
 
-  it('asks in the settings before clearing, and does nothing when cancelled', async () => {
+  it('asks in the settings before clearing, and does nothing when cancelled', () => {
     localStorage.setItem(ROSTER_STORAGE_KEY, SAVED);
     const { result, dispatch, setParties } = render();
     expect(result.current.controls.clearPrompt).toBeNull();
@@ -183,19 +182,19 @@ describe('useRoster', () => {
     expect(setParties).not.toHaveBeenCalled();
   });
 
-  it('clears the saved roster and what it copied into the team after the confirmation', async () => {
+  it('clears the saved roster and what it copied into the team after the confirmation', () => {
     localStorage.setItem(ROSTER_STORAGE_KEY, SAVED);
-    const { result, team, dispatch, setParties } = render();
+    const { result, dispatch, setParties } = render();
     act(() => result.current.controls.clear());
     act(() => result.current.controls.confirmClear());
-    const next = clearRosterFromTeam(team, INITIAL_PARTIES, ROSTER);
+    const next = clearRosterFromTeam(TEAM, INITIAL_PARTIES, ROSTER);
     expect(dispatch).toHaveBeenCalledWith({ type: 'replace', state: next.team });
     expect(setParties).toHaveBeenCalledWith(next.parties);
     expect(localStorage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
     expect(result.current.controls).toMatchObject({ roster: null, stored: false, message: null, clearPrompt: null });
   });
 
-  it('clears a saved roster that no longer reads', async () => {
+  it('clears a saved roster that no longer reads', () => {
     localStorage.setItem(ROSTER_STORAGE_KEY, BROKEN);
     const { result } = render();
     act(() => result.current.controls.clear());

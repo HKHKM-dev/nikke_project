@@ -18,7 +18,7 @@ import {
   type CombatPowerTable,
   type SnapshotCharacter,
 } from '@nikke/core';
-import { act, cleanup, renderHook } from '@testing-library/react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
 import { useListOrder } from './useListOrder.ts';
@@ -67,7 +67,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-/** 表の読み込み（fetch の then）と、それが起こす更新を流す。読まないことを確かめるときも、待ってから見る */
+/** 保留中の読み込み（fetch の then）と、それが起こす更新を流す。何かが「起きない」ことを見る前に使う（起きるのを待つのは waitFor） */
 const settle = () =>
   act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -97,18 +97,18 @@ describe('useListOrder', () => {
   it('orders by the fixed-spec power without a roster once the combat power order is chosen', async () => {
     const { result } = render({ roster: null });
     act(() => result.current.controls.select('combatPower'));
-    await settle();
+    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers });
     expect(result.current.controls).toMatchObject({ fixedSpecPowers: true, failedCount: FIXED.failures.length });
   });
 
   it('loads the table once with a roster, defaults to the combat power order, and counts the failures', async () => {
     const { result, rerender } = render();
-    await settle();
+    await waitFor(() =>
+      expect(result.current.state).toEqual({ order: 'combatPower', powers: new Map([[ssr.resourceId, POWER]]) }),
+    );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]![0]).toMatch(/^\/base\/.*combat\.json$/);
-    expect(result.current.state).toEqual({ order: 'combatPower', powers: new Map([[ssr.resourceId, POWER]]) });
     expect(result.current.controls).toMatchObject({
       order: 'combatPower',
       fixedSpecPowers: false,
@@ -124,8 +124,7 @@ describe('useListOrder', () => {
 
   it('uses the fixed-spec power under the fixed spec even with a roster', async () => {
     const { result, rerender } = render({ fixedSpec: true });
-    await settle();
-    expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers });
+    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
     expect(result.current.controls.fixedSpecPowers).toBe(true);
     rerender(DEFAULTS);
     expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
@@ -134,6 +133,7 @@ describe('useListOrder', () => {
 
   it('waits for the masters before computing the powers', async () => {
     const { result, rerender } = render({ masters: null });
+    // 表は読み終えても、マスタが無ければ戦闘力は出ない
     await settle();
     expect(result.current.state.powers).toEqual(new Map());
     rerender(DEFAULTS);
@@ -145,8 +145,7 @@ describe('useListOrder', () => {
     const { result } = render();
     expect(result.current.controls.order).toBe('name');
     // 名前順でも、育成状況があれば表を読む
-    await settle();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     act(() => result.current.controls.select('combatPower'));
     expect(result.current.controls.order).toBe('combatPower');
     expect(localStorage.getItem(LIST_ORDER_STORAGE_KEY)).toBe('combatPower');
@@ -159,13 +158,11 @@ describe('useListOrder', () => {
   it('shows why the table did not load', async () => {
     fetchMock.mockResolvedValue(new Response('', { status: 404 }));
     const { result } = render();
-    await settle();
-    expect(result.current.controls.tableError).toMatch(/combat\.json -> HTTP 404$/);
+    await waitFor(() => expect(result.current.controls.tableError).toMatch(/combat\.json -> HTTP 404$/));
     expect(result.current.state.powers).toEqual(new Map());
     // Error でない理由は文字列にする
     fetchMock.mockRejectedValue('offline');
     const offline = render().result;
-    await settle();
-    expect(offline.current.controls.tableError).toBe('offline');
+    await waitFor(() => expect(offline.current.controls.tableError).toBe('offline'));
   });
 });
