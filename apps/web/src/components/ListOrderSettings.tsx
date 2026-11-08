@@ -1,6 +1,7 @@
 // 設定のメニューの「一覧の並び」の欄: 名前順・戦闘力順（plan/design-combat-power-sort.md 6 節）
 import { LIST_ORDERS, LIST_ORDER_LABEL } from '../listOrder.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
+import { inertControlProps } from './inertControl.ts';
 
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const NOTE = { maxWidth: '22em' } as const;
@@ -16,8 +17,8 @@ export function ListOrderSettings({ order, select, hasRoster, failedCount, table
             name="listOrder"
             value={o}
             checked={order === o}
-            disabled={o === 'combatPower' && !hasRoster}
-            onChange={() => select(o)}
+            {...inertControlProps(o === 'combatPower' && !hasRoster)}
+            onChange={() => !(o === 'combatPower' && !hasRoster) && select(o)}
           />
           <span>{LIST_ORDER_LABEL[o]}</span>
         </label>

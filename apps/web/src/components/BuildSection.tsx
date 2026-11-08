@@ -33,6 +33,7 @@ import { collectionActions, treasureOptionValue } from '../collectionChoice.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampInt, type SlotBuild, type TeamAction } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
+import { inertControlProps } from './inertControl.ts';
 
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
@@ -108,7 +109,7 @@ export function BuildSection({
               <span className="gear-inputs">
                 <select
                   value={gear?.type ?? ''}
-                  disabled={disabled}
+                  {...inertControlProps(disabled)}
                   onChange={(e) => {
                     const type = e.target.value as GearType | '';
                     const overload = type === 'OL' ? gear?.overload : undefined;
@@ -143,7 +144,7 @@ export function BuildSection({
                     <span className="gear-inputs" key={i}>
                       <select
                         value={line?.option ?? ''}
-                        disabled={disabled || !masters || !isOverload}
+                        {...inertControlProps(disabled || !masters || !isOverload)}
                         onChange={(e) => {
                           if (!isOverload) return;
                           const option = e.target.value as OverloadOption | '';
@@ -166,7 +167,7 @@ export function BuildSection({
                       <select
                         aria-label={`オプション ${i + 1} の上昇値`}
                         value={line?.level ?? OVERLOAD_LEVEL_MIN}
-                        disabled={disabled || line === undefined}
+                        {...inertControlProps(disabled || line === undefined)}
                         onChange={(e) =>
                           isOverload &&
                           line &&
@@ -199,7 +200,7 @@ export function BuildSection({
           <span className="gear-inputs">
             <select
               value={shown.cube?.id ?? ''}
-              disabled={disabled || !masters}
+              {...inertControlProps(disabled || !masters)}
               onChange={(e) => {
                 const id = e.target.value === '' ? null : Number(e.target.value);
                 set({ cube: id === null ? null : { id, level: shown.cube?.level ?? CUBE_LEVEL_MIN } });
@@ -228,7 +229,7 @@ export function BuildSection({
                 宝物はスペック固定でも選べる */}
             <select
               value={hasTreasure ? treasureOptionValue(treasurePhase) : (shown.collection?.rarity ?? '')}
-              disabled={disabled && character.treasure === null}
+              {...inertControlProps(disabled && character.treasure === null)}
               onChange={(e) => {
                 // スペック固定の間（disabled）は宝物の段階だけを変え、保存している育成には触れない
                 const actions = collectionActions(slotIndex, e.target.value, {

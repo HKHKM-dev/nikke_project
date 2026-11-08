@@ -157,6 +157,11 @@ header h1 {
   font-size: 0.85rem;
 }
 /* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
+/* 使えない入力欄・選択欄・ラジオボタン（disabled でなく aria-disabled。components/inertControl.ts） */
+:is(input, select, textarea)[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .advanced-settings-button[aria-disabled='true'],
 .advanced-settings-button[aria-disabled='true']:hover {
   color: color-mix(in srgb, var(--app-fg) 35%, transparent);

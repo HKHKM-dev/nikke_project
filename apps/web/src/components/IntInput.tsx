@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { parseIntDraft, settleIntDraft } from '../intDraft.ts';
+import { inertControlProps } from './inertControl.ts';
 
 type Props = {
   value: number;
@@ -29,13 +30,17 @@ export function IntInput({ value, min, max, disabled = false, onCommit }: Props)
       max={max}
       step={1}
       value={text}
-      disabled={disabled}
+      // 使えないときは読み取り専用（disabled でなく aria-disabled。inertControl.ts）
+      readOnly={disabled}
+      {...inertControlProps(disabled)}
       onChange={(e) => {
+        if (disabled) return;
         setText(e.target.value);
         const n = parseIntDraft(e.target.value, min, max ?? Infinity);
         if (n !== null && n !== value) onCommit(n);
       }}
       onBlur={(e) => {
+        if (disabled) return;
         const n = settleIntDraft(e.target.value, value, min, max ?? Infinity);
         setText(String(n));
         if (n !== value) onCommit(n);
