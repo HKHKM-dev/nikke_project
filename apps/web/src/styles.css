@@ -826,7 +826,7 @@ header h1 {
 .modern-slot-char-name-track {
   display: inline-block;
 }
-/* 限界突破（★）とコア強化（+N・MAX）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
+/* 限界突破（星）とコア強化（01〜07）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
 .growth-marks {
   display: flex;
   justify-content: flex-end;
@@ -846,7 +846,7 @@ header h1 {
   height: var(--growth-star-w);
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.8));
 }
-/* コアの印の中央（黒い丸）に段階（+1〜+6・MAX）を重ねる */
+/* コアの印の中央（黒い丸）に段階（01〜07）を重ねる */
 .growth-marks-core {
   position: relative;
   display: inline-grid;

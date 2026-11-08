@@ -31,13 +31,13 @@ export function trayGrowthMarks(
 }
 
 /**
- * 限界突破（星のバッジを上限の数だけ並べ、突破した数だけ金の星にする）とコア強化（コアの印のバッジに +1〜+6、上限は MAX を重ねる）。
+ * 限界突破（星のバッジを上限の数だけ並べ、突破した数だけ金の星にする）とコア強化（コアの印のバッジに段階を 2 桁の数で重ねる。01〜07。上限も数で出す）。
  * どちらも無いキャラ（R）は出さない。
  * 置き場所と大きさは className で決める（スロットは名前の上、ニケ一覧は絵の右上）
  */
 export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: GrowthMarks & { className: string }) {
   if (gradeMax === 0 && coreMax === 0) return null;
-  const coreLabel = core === 0 ? null : core === coreMax ? 'MAX' : `+${core}`;
+  const coreLabel = core === 0 ? null : String(core).padStart(2, '0');
   return (
     <div
       className={`growth-marks ${className}`}
