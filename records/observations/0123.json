@@ -598,5 +598,24 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0123-31",
+    "recording": "0123",
+    "source": "V-0697",
+    "readAt": "2026-11-08",
+    "kind": "interval",
+    "use": "record",
+    "unit": "f",
+    "value": 116,
+    "description": "A2単騎の、3 回目の敵のジャンプ（窓の始まりにチャージが満ちていて、満ちてから撃つまでの間に窓に入った回）の、フルチャージの発を撃ったフレームから明け（ハイド中のリロードのバーが消えたフレーム）まで。窓の長さ（約 117.65f）より約 2f 短く、発はふだんの刻みの時刻に出る",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
+      "note": "撃ったフレーム f7197（総ダメージの増分 f7206 から遠の飛ぶ時間 9f（`0123-30`）を引いた）→ 明け f7313（`0123-08`）。前の発から 120f（マガジンの中の刻み）。バーの 0 の点は増分の 17f 後（`0123-21`）で、撃ってから 26f（姿勢の終わり。C-0842）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
   }
 ]
