@@ -1,13 +1,14 @@
 // PR の前のリベースの決まりごと（plan/design-workflow-simplification-4.md 2 節）。git は、パスの一覧の読み方を見るところだけ一時のリポジトリで呼ぶ。
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import {
   addedLines,
   backlogProgressCopy,
   branchChangedChecks,
+  branchOversizedDocs,
   changedChecks,
   checkSteps,
   collisions,
@@ -31,6 +32,26 @@ const git = (cwd: string, args: readonly string[]) =>
     cwd,
     encoding: 'utf8',
   });
+
+/** 作った一時のリポジトリ（テストの後に消す） */
+const repos: string[] = [];
+afterEach(() => {
+  for (const cwd of repos.splice(0)) rmSync(cwd, { recursive: true, force: true });
+});
+
+/** files（パス → 中身）を最初のコミットにした一時のリポジトリと、そのコミット */
+function baseRepo(files: Record<string, string>): { cwd: string; base: string } {
+  const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
+  repos.push(cwd);
+  git(cwd, ['init', '-q']);
+  for (const [path, text] of Object.entries(files)) {
+    mkdirSync(join(cwd, path, '..'), { recursive: true });
+    writeFileSync(join(cwd, path), text);
+  }
+  git(cwd, ['add', '.']);
+  git(cwd, ['commit', '-q', '-m', 'base']);
+  return { cwd, base: git(cwd, ['rev-parse', 'HEAD']).trim() };
+}
 
 const GENERATED = ['plan/claims.md', 'plan/residuals.md', 'records/minimal/sensitivity.json'];
 
@@ -331,14 +352,11 @@ describe('pathListArgs and nulPaths', () => {
   });
 
   it('lists both paths of a renamed or deleted setting, so the branch checks every file', () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
-    git(cwd, ['init', '-q']);
-    writeFileSync(join(cwd, '.prettierignore'), 'plan/residuals.md\n');
-    writeFileSync(join(cwd, '.editorconfig'), 'root = true\n');
-    writeFileSync(join(cwd, 'a.ts'), 'export {};\n');
-    git(cwd, ['add', '.']);
-    git(cwd, ['commit', '-q', '-m', 'base']);
-    const base = git(cwd, ['rev-parse', 'HEAD']).trim();
+    const { cwd, base } = baseRepo({
+      '.prettierignore': 'plan/residuals.md\n',
+      '.editorconfig': 'root = true\n',
+      'a.ts': 'export {};\n',
+    });
     const exists = (path: string) => existsSync(join(cwd, path));
     const checks = () => branchChangedChecks(base, (args) => git(cwd, args), exists);
     git(cwd, ['mv', '.prettierignore', 'prettierignore.old']);
@@ -355,14 +373,7 @@ describe('pathListArgs and nulPaths', () => {
   });
 
   it('checks a renamed file by its new path only, and every file when a file is renamed to a setting', () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
-    git(cwd, ['init', '-q']);
-    writeFileSync(join(cwd, 'a.ts'), 'export const a = 1;\n');
-    writeFileSync(join(cwd, 'notes.md'), '# notes\n');
-    writeFileSync(join(cwd, 'rc.json'), '{}\n');
-    git(cwd, ['add', '.']);
-    git(cwd, ['commit', '-q', '-m', 'base']);
-    const base = git(cwd, ['rev-parse', 'HEAD']).trim();
+    const { cwd, base } = baseRepo({ 'a.ts': 'export const a = 1;\n', 'notes.md': '# notes\n', 'rc.json': '{}\n' });
     const exists = (path: string) => existsSync(join(cwd, path));
     const checks = () => branchChangedChecks(base, (args) => git(cwd, args), exists);
     // 前のパスは消えたファイルなので見ない。拡張子が替われば lint も替わる
@@ -418,22 +429,15 @@ describe('oversizedDocs', () => {
     expect(oversizedDocs(['plan/gone.md'], [], sizeOf)).toEqual([]);
   });
 
-  it('warns on a renamed document by its new path (pr-prep lists the changed files with --diff-filter=AMR)', () => {
-    const cwd = mkdtempSync(join(tmpdir(), 'pr-prep-'));
-    git(cwd, ['init', '-q']);
-    mkdirSync(join(cwd, 'plan'));
-    writeFileSync(join(cwd, 'plan', 'old.md'), `${'x'.repeat(DOC_SIZE_LIMIT)}\n`);
-    writeFileSync(join(cwd, 'plan', 'gone.md'), `${'y'.repeat(DOC_SIZE_LIMIT)}\n`);
-    git(cwd, ['add', '.']);
-    git(cwd, ['commit', '-q', '-m', 'base']);
-    const base = git(cwd, ['rev-parse', 'HEAD']).trim();
+  it('reads the branch with git and warns on a renamed document by its new path', () => {
+    const big = (c: string) => `${c.repeat(DOC_SIZE_LIMIT)}\n`;
+    const { cwd, base } = baseRepo({ 'plan/old.md': big('x'), 'plan/gone.md': big('y'), 'plan/generated.md': '' });
     git(cwd, ['mv', 'plan/old.md', 'plan/new.md']);
     git(cwd, ['rm', '-q', 'plan/gone.md']);
-    git(cwd, ['commit', '-q', '-m', 'rename']);
-    const changed = nulPaths(git(cwd, pathListArgs(['diff', '--name-only', '--diff-filter=AMR', `${base}...HEAD`])));
-    expect(changed).toEqual(['plan/new.md']);
+    writeFileSync(join(cwd, 'plan', 'generated.md'), big('z'));
+    git(cwd, ['commit', '-q', '-am', 'rename']);
     const size = (p: string) => (existsSync(join(cwd, p)) ? readFileSync(join(cwd, p)).length : undefined);
-    expect(oversizedDocs(changed, [], size)).toEqual([
+    expect(branchOversizedDocs(base, (args) => git(cwd, args), ['plan/generated.md'], size)).toEqual([
       { path: 'plan/new.md', size: DOC_SIZE_LIMIT + 1, limit: DOC_SIZE_LIMIT },
     ]);
   });

@@ -3,8 +3,11 @@
 import { readFileSync } from 'node:fs';
 import {
   MASTER_FILES,
+  characterIndexPath,
   combatCharacterOf,
+  combatTablePath,
   emptyBuild,
+  masterDataPath,
   snapshotCombatPower,
   type BuildMasters,
   type BuildSnapshot,
@@ -14,17 +17,20 @@ import {
 } from '@nikke/core';
 import { act } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { flush, memoryStorage, renderHook } from './hookHarness.ts';
+import { cleanupHooks, flush, memoryStorage, renderHook } from './hookHarness.ts';
 import { LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
 import { useListOrder } from './useListOrder.ts';
 
-const data = <T>(path: string): T =>
-  JSON.parse(readFileSync(new URL(`../../../packages/core/data/${path}`, import.meta.url), 'utf8')) as T;
-const table = data<CombatPowerTable>('characters/combat.json');
+/** 置いてあるデータの文（パスは画面が読むのと同じ。packages/core/src/load.ts） */
+const text = (path: string): string =>
+  readFileSync(new URL(`../../../packages/core/data/${path}`, import.meta.url), 'utf8');
+/** 表の文は fetch の返しにそのまま使う（読み込みのたびに直列化し直さない） */
+const tableText = text(combatTablePath());
+const table = JSON.parse(tableText) as CombatPowerTable;
 const masters = Object.fromEntries(
-  Object.entries(MASTER_FILES).map(([k, f]) => [k, data<unknown>(`masters/${f}`)]),
+  Object.keys(MASTER_FILES).map((k) => [k, JSON.parse(text(masterDataPath(k as keyof BuildMasters)))]),
 ) as BuildMasters;
-const ssr = data<CharacterIndex>('characters/index.json').characters.find((c) => c.rarity === 'SSR')!;
+const ssr = (JSON.parse(text(characterIndexPath())) as CharacterIndex).characters.find((c) => c.rarity === 'SSR')!;
 
 const entry: SnapshotCharacter = {
   ...emptyBuild(),
@@ -49,24 +55,21 @@ let fetchMock: ReturnType<typeof vi.fn<(url: string) => Promise<Response>>>;
 
 beforeEach(() => {
   storage = memoryStorage();
-  fetchMock = vi.fn(async () => Response.json(table));
+  fetchMock = vi.fn(async () => new Response(tableText, { headers: { 'content-type': 'application/json' } }));
   vi.stubGlobal('localStorage', storage);
   vi.stubGlobal('window', {});
   vi.stubGlobal('fetch', fetchMock);
 });
 
-afterEach(() => {
+afterEach(async () => {
+  await cleanupHooks();
   vi.unstubAllGlobals();
 });
 
 type Props = { roster: BuildSnapshot | null; masters: BuildMasters | null; baseUrl: string };
+const DEFAULTS: Props = { roster: ROSTER, masters, baseUrl: '/base' };
 const render = (props: Partial<Props> = {}) =>
-  renderHook((p: Props) => useListOrder(p.roster, p.masters, p.baseUrl), {
-    roster: ROSTER,
-    masters,
-    baseUrl: '/base',
-    ...props,
-  });
+  renderHook((p: Props) => useListOrder(p.roster, p.masters, p.baseUrl), { ...DEFAULTS, ...props });
 
 describe('useListOrder', () => {
   it('uses the name order without a roster, and does not load the table', async () => {
@@ -91,7 +94,7 @@ describe('useListOrder', () => {
       tableError: null,
     });
     // 育成状況が替わっても読み直さない
-    await hook.rerender({ roster: { ...ROSTER, characters: { [ssr.resourceId]: entry } }, masters, baseUrl: '/base' });
+    await hook.rerender({ ...DEFAULTS, roster: { ...ROSTER, characters: { [ssr.resourceId]: entry } } });
     await flush();
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(hook.current.controls.failedCount).toBe(0);
@@ -101,7 +104,7 @@ describe('useListOrder', () => {
     const hook = await render({ masters: null });
     await flush();
     expect(hook.current.state.powers).toEqual(new Map());
-    await hook.rerender({ roster: ROSTER, masters, baseUrl: '/base' });
+    await hook.rerender(DEFAULTS);
     expect(hook.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
   });
 

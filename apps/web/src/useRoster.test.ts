@@ -2,7 +2,7 @@
 import { emptyBuild, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from 'react';
-import { memoryStorage, renderHook } from './hookHarness.ts';
+import { cleanupHooks, memoryStorage, renderHook } from './hookHarness.ts';
 import { INITIAL_PARTIES, type PartiesState } from './parties.ts';
 import { ROSTER_STORAGE_KEY, applyRoster, rosterFields, serializeRoster } from './roster.ts';
 import { initialTeamState, type TeamAction } from './team.ts';
@@ -41,7 +41,8 @@ beforeEach(() => {
   vi.stubGlobal('window', { confirm });
 });
 
-afterEach(() => {
+afterEach(async () => {
+  await cleanupHooks();
   vi.unstubAllGlobals();
 });
 
