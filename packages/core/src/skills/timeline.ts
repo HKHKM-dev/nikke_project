@@ -262,11 +262,11 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
     parts.push(`${e.sourceSlotIndex}.${e.source.skill}.${e.effectIndex}${isStateContent(e) ? `.${e.subIndex}` : ''}`);
   }
   // Stage 18-C: 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）。
-  // 持続の命中率▲（C-0170）もコア命中率を変えるので、自動の枠だけ命中率の合計を鍵に入れる。▼があれば▼の和も入れる（和が同じでも
-  // ▲と同時かで▼の表を使うかが変わる。frame/landing.ts の coreHitRateAt）
+  // 持続の命中率▲（C-0170）もコア命中率を変えるので、自動の枠だけ命中率の合計を鍵に入れる。▲があれば▲の側の和も入れる（和が
+  // 同じでも▲と同時か▼だけかで▼の表を使うかが変わる。frame/landing.ts の coreHitRateAt）
   if (landing !== undefined) {
     parts.push(`L:${landing ?? '?'}`, `N:${state.buffs.hitRate.toFixed(KEY_DIGITS)}`);
-    if (state.buffs.hitRateDown !== 0) parts.push(`D:${state.buffs.hitRateDown.toFixed(KEY_DIGITS)}`);
+    if (state.buffs.hitRateUp !== 0) parts.push(`U:${state.buffs.hitRateUp.toFixed(KEY_DIGITS)}`);
   }
   return parts.join('|');
 }

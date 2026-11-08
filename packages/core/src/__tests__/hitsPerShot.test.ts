@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { computeTriggerDamage, hitsPerShotOf, type EnemyInput } from '../damage.ts';
 import { parseEnemyPresets } from '../enemies.ts';
 import { autoConditionAt, rateRowOf, targetRateOf } from '../frame/landing.ts';
+import { ZERO_HIT_RATE } from '../skills/buffs.ts';
 import type { SlotCondition } from '../team.ts';
 import type { CharacterData, LandingPoint } from '../types.ts';
 import { makeCharacter } from './fixtures.ts';
@@ -70,9 +71,12 @@ describe('爆発の範囲まで書いた弾の種類の行', () => {
 describe('自動の条件と 1 トリガーの式', () => {
   it('puts hits per shot into the auto condition only where the table has it', () => {
     const withHits = { ...profile, hitsPerShot: TEST_HITS };
-    expect(autoConditionAt(withHits, at('near'), R750, 0, MANUAL)).toMatchObject({ coreHitRate: 1, hitsPerShot: 2 });
-    expect(autoConditionAt(withHits, at('near'), R500, 0, MANUAL).hitsPerShot).toBeUndefined();
-    expect(autoConditionAt(profile, at('near'), R750, 0, MANUAL).hitsPerShot).toBeUndefined();
+    expect(autoConditionAt(withHits, at('near'), R750, ZERO_HIT_RATE, MANUAL)).toMatchObject({
+      coreHitRate: 1,
+      hitsPerShot: 2,
+    });
+    expect(autoConditionAt(withHits, at('near'), R500, ZERO_HIT_RATE, MANUAL).hitsPerShot).toBeUndefined();
+    expect(autoConditionAt(profile, at('near'), R750, ZERO_HIT_RATE, MANUAL).hitsPerShot).toBeUndefined();
   });
 
   it('multiplies the normal attack only (not the per-shot skill damage)', () => {

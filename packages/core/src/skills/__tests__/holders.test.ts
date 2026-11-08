@@ -430,8 +430,14 @@ describe('デバフ解除（removeDebuff）', () => {
       ],
       [{ tracks: 'x', firstStart: 5 }],
     ];
-    expect(pickRemoveDebuff(held, 1, undefined)).toEqual({ chosen: ['early', 'x'], guesses: ['states'] });
-    expect(pickRemoveDebuff(held, 2, 1)).toEqual({ chosen: ['early', 'late'], guesses: ['targets'] });
+    expect(pickRemoveDebuff(held, 1, undefined)).toEqual({
+      chosen: ['early', 'x'],
+      guesses: [{ guess: 'states', limit: 1 }],
+    });
+    expect(pickRemoveDebuff(held, 2, 1)).toEqual({
+      chosen: ['early', 'late'],
+      guesses: [{ guess: 'targets', limit: 1 }],
+    });
     expect(pickRemoveDebuff(held, 2, undefined)).toEqual({ chosen: ['early', 'late', 'x'], guesses: [] });
   });
 });

@@ -33,6 +33,7 @@ import {
 } from '../frame/landing.ts';
 import { runSimulation } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
+import type { HitRateN } from '../skills/buffs.ts';
 import type { TimelineSlot } from '../skills/timeline.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SlotCondition, TeamInput, TeamSlotInput } from '../team.ts';
@@ -49,6 +50,10 @@ const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
 const preset = master.enemies.find((e) => e.id === 'range-bigarms-fire')!;
 
 const MANUAL: SlotCondition = { coreHitRate: 1, distanceBonus: true, fullCharge: true, hitRate: 1 };
+/** 命中率▲だけの和 */
+const upOnly = (n: number): HitRateN => ({ n, up: n });
+/** 命中率▼だけの和 */
+const downOnly = (n: number): HitRateN => ({ n, up: 0 });
 
 /** 武器種と適正距離だけ変えたキャラ */
 function weapon(
@@ -379,13 +384,13 @@ describe('命中率▲（C-0036・C-0037）', () => {
 
   it('applies to the table value only; the manual value is kept as it is', () => {
     const near = profile.landings.find((l) => l.id === 'nearA')!;
-    const withUp = autoConditionAt(profile, near, SMG, 0.0509, MANUAL);
+    const withUp = autoConditionAt(profile, near, SMG, upOnly(0.0509), MANUAL);
     expect(withUp.coreHitRate).toBeCloseTo(0.2644 / 0.9491 ** 2, 12);
     const smgNear = (profile.bulletHitRate.SMG as Record<string, number>).near!;
     expect(withUp.hitRate).toBe(bulletHitRateWithHitRateUp(smgNear, 0.0509));
     expect(withUp.distanceBonus).toBe(true);
     const unmeasured = { ...profile, coreHitRate: { ...profile.coreHitRate, SG: null } };
-    const sg = autoConditionAt(unmeasured, near, SG, 0.5, { ...MANUAL, coreHitRate: 0.4 });
+    const sg = autoConditionAt(unmeasured, near, SG, upOnly(0.5), { ...MANUAL, coreHitRate: 0.4 });
     expect(sg.coreHitRate).toBe(0.4);
   });
 });
@@ -395,40 +400,40 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
   const down = (id: string) => hitRateDownAt(profile.hitRateDown, MG, at(id))!;
 
   it('gives the MG core hit rate as the landing base × the ratio of N, for the N in the table only', () => {
-    expect(coreHitRateAt(0.9626, -0.2, down('nearA'), -0.2)).toBeCloseTo(0.587, 12);
-    expect(coreHitRateAt(0.9626, -0.4, down('nearB'), -0.4)).toBeCloseTo(0.587 * 0.46, 12);
-    expect(coreHitRateAt(0.9588, -0.6000000000000001, down('farA'), -0.6000000000000001)).toBeCloseTo(0.086 * 0.2, 12);
-    expect(coreHitRateAt(0.965, -0.4, down('midNear'), -0.4)).toBeCloseTo(0.378 * 0.46, 12);
-    expect(coreHitRateAt(0.9614, -0.6, down('midFarC'), -0.6)).toBeCloseTo(0.182 * 0.2, 12);
+    expect(coreHitRateAt(0.9626, downOnly(-0.2), down('nearA'))).toBeCloseTo(0.587, 12);
+    expect(coreHitRateAt(0.9626, downOnly(-0.4), down('nearB'))).toBeCloseTo(0.587 * 0.46, 12);
+    expect(coreHitRateAt(0.9588, downOnly(-0.6000000000000001), down('farA'))).toBeCloseTo(0.086 * 0.2, 12);
+    expect(coreHitRateAt(0.965, downOnly(-0.4), down('midNear'))).toBeCloseTo(0.378 * 0.46, 12);
+    expect(coreHitRateAt(0.9614, downOnly(-0.6), down('midFarC'))).toBeCloseTo(0.182 * 0.2, 12);
     // 表に無い N は変えない
-    expect(coreHitRateAt(0.9626, -0.1, down('nearA'), -0.1)).toBe(0.9626);
+    expect(coreHitRateAt(0.9626, downOnly(-0.1), down('nearA'))).toBe(0.9626);
   });
 
   it('lowers the MG bullet hit rate at far and mid-far only; mid-far at −40% keeps the table value', () => {
-    expect(bulletHitRateAt(0.9917, -0.2, down('farB'), -0.2)).toBe(0.958);
-    expect(bulletHitRateAt(0.9917, -0.4, down('farA'), -0.4)).toBe(0.74);
-    expect(bulletHitRateAt(0.9945, -0.6, down('midFarA'), -0.6)).toBe(0.718);
-    expect(bulletHitRateAt(0.9945, -0.4, down('midFarB'), -0.4)).toBe(0.9945);
-    expect(bulletHitRateAt(0.9976, -0.6, down('nearA'), -0.6)).toBe(0.9976);
+    expect(bulletHitRateAt(0.9917, downOnly(-0.2), down('farB'))).toBe(0.958);
+    expect(bulletHitRateAt(0.9917, downOnly(-0.4), down('farA'))).toBe(0.74);
+    expect(bulletHitRateAt(0.9945, downOnly(-0.6), down('midFarA'))).toBe(0.718);
+    expect(bulletHitRateAt(0.9945, downOnly(-0.4), down('midFarB'))).toBe(0.9945);
+    expect(bulletHitRateAt(0.9976, downOnly(-0.6), down('nearA'))).toBe(0.9976);
   });
 
   it('has no rows for other weapon types, and autoConditionAt reads the table', () => {
     expect(hitRateDownAt(profile.hitRateDown, AR, at('nearA'))).toBeUndefined();
-    expect(autoConditionAt(profile, at('nearA'), AR, -0.2, MANUAL, -0.2).coreHitRate).toBe(0.4244);
-    const mg = autoConditionAt(profile, at('farA'), MG, -0.4, MANUAL, -0.4);
+    expect(autoConditionAt(profile, at('nearA'), AR, downOnly(-0.2), MANUAL).coreHitRate).toBe(0.4244);
+    const mg = autoConditionAt(profile, at('farA'), MG, downOnly(-0.4), MANUAL);
     expect(mg.coreHitRate).toBeCloseTo(0.086 * 0.46, 12);
     expect(mg.hitRate).toBe(0.74);
   });
 
   it('does not use the table while a Hit Rate increase is also active (8.4 節: the sum N goes through the ▲ formula)', () => {
     // ▲ +20% と▼ 2 スタック（−40%）: 和の N = −0.2 は表のキーだが、▼だけの和でないので表を使わず、N ≤ 0 は表の値のまま
-    expect(coreHitRateAt(0.9626, 0.2 - 0.4, down('nearA'), -0.4)).toBe(0.9626);
-    expect(bulletHitRateAt(0.9917, 0.2 - 0.4, down('farB'), -0.4)).toBe(0.9917);
+    expect(coreHitRateAt(0.9626, { n: 0.2 - 0.4, up: 0.2 }, down('nearA'))).toBe(0.9626);
+    expect(bulletHitRateAt(0.9917, { n: 0.2 - 0.4, up: 0.2 }, down('farB'))).toBe(0.9917);
     // 和が正なら▲の式（和の N）
-    expect(coreHitRateAt(0.9626, 0.4 - 0.2, down('nearA'), -0.2)).toBe(coreHitRateWithHitRateUp(0.9626, 0.4 - 0.2));
-    // ▼の和を渡さない（0）と▼が入っていない N として扱う
-    expect(coreHitRateAt(0.9626, -0.2, down('nearA'))).toBe(0.9626);
-    const mg = autoConditionAt(profile, at('farA'), MG, 0.2 - 0.6, MANUAL, -0.6);
+    expect(coreHitRateAt(0.9626, { n: 0.4 - 0.2, up: 0.4 }, down('nearA'))).toBe(
+      coreHitRateWithHitRateUp(0.9626, 0.4 - 0.2),
+    );
+    const mg = autoConditionAt(profile, at('farA'), MG, { n: 0.2 - 0.6, up: 0.2 }, MANUAL);
     expect(mg.coreHitRate).toBe(0.9588);
     expect(mg.hitRate).toBe(0.9917);
   });
@@ -454,16 +459,22 @@ describe('命中率▲と弾丸命中率（C-0192。plan/design-hit-rate-up-bull
     expect([AR, SMG, MG].every((c) => all.every((l) => hitRateUpRaisesBulletHitRate(c, l)))).toBe(true);
     expect([SR, RL].some((c) => all.some((l) => hitRateUpRaisesBulletHitRate(c, l)))).toBe(false);
     expect(all.filter((l) => hitRateUpRaisesBulletHitRate(SG, l)).map((l) => l.id)).toEqual(['nearA', 'nearB']);
-    expect(autoConditionAt(profile, far, SMG, 0.1512, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.8068, 0.1512));
+    expect(autoConditionAt(profile, far, SMG, upOnly(0.1512), MANUAL).hitRate).toBe(
+      bulletHitRateWithHitRateUp(0.8068, 0.1512),
+    );
     // SG: 近だけ式を当て、中近・遠は表の値のまま（C-0527）
-    expect(autoConditionAt(profile, nearA, SG, 0.0509, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.845, 0.0509));
-    expect(autoConditionAt(profile, nearB, SG, 0.0509, MANUAL).hitRate).toBe(bulletHitRateWithHitRateUp(0.951, 0.0509));
-    expect(autoConditionAt(profile, midNear, SG, 0.0509, MANUAL).hitRate).toBe(0.778);
-    expect(autoConditionAt(profile, far, SG, 0.0509, MANUAL).hitRate).toBe(0.668);
-    expect(autoConditionAt(profile, far, SR, 0.1512, MANUAL).hitRate).toBe(1);
+    expect(autoConditionAt(profile, nearA, SG, upOnly(0.0509), MANUAL).hitRate).toBe(
+      bulletHitRateWithHitRateUp(0.845, 0.0509),
+    );
+    expect(autoConditionAt(profile, nearB, SG, upOnly(0.0509), MANUAL).hitRate).toBe(
+      bulletHitRateWithHitRateUp(0.951, 0.0509),
+    );
+    expect(autoConditionAt(profile, midNear, SG, upOnly(0.0509), MANUAL).hitRate).toBe(0.778);
+    expect(autoConditionAt(profile, far, SG, upOnly(0.0509), MANUAL).hitRate).toBe(0.668);
+    expect(autoConditionAt(profile, far, SR, upOnly(0.1512), MANUAL).hitRate).toBe(1);
     // 表が null（未測定）なら手入力の値のまま
     const unmeasured = { ...profile, bulletHitRate: { ...profile.bulletHitRate, SMG: null } };
-    expect(autoConditionAt(unmeasured, far, SMG, 0.1512, { ...MANUAL, hitRate: 0.5 }).hitRate).toBe(0.5);
+    expect(autoConditionAt(unmeasured, far, SMG, upOnly(0.1512), { ...MANUAL, hitRate: 0.5 }).hitRate).toBe(0.5);
   });
 });
 

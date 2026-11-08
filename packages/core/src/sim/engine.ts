@@ -31,7 +31,7 @@ import {
   autoConditionSummary,
   flightFramesAt,
   slotFlightsOf,
-  hitRateUpSpansOf,
+  hitRateNSpansOf,
   slotConditionNotes,
   type AutoConditionSummary,
   type LandingFrameSpan,
@@ -289,7 +289,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         ...(landed === undefined ? {} : { landedShots: landed }),
       };
     });
-    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateUpSpansOf(timeline, index));
+    const autoCondition = autoConditionSummary(landing, slot, index, shotFrames, hitRateNSpansOf(timeline, index));
     return {
       index,
       shots: shotFrames,

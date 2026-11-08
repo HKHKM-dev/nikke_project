@@ -184,10 +184,10 @@ export type BuffTotals = {
    */
   hitRate: number;
   /**
-   * 命中率▼（decrease。負の値）の和。hitRate はこれも含む和。条件が自動の枠で、▲と同時に効いている区間に的の▼の表を使わない
-   * のに使う（frame/landing.ts の coreHitRateAt。plan/design-maids.md 8.4 節）
+   * hitRate のうちの命中率▲（正の値）の和。条件が自動の枠で、▲と同時に効いている区間に的の▼の表を使わないのに使う（HitRateN。
+   * plan/design-maids.md 8.4 節）
    */
-  hitRateDown: number;
+  hitRateUp: number;
   /** Stage 11 モダニア: 装弾数無限の窓の数（> 0 なら残弾を減らさない。射撃に効く） */
   infiniteAmmo: number;
   /** Stage 13: 有利コードの攻撃ダメージの加算。属性有利のときだけ (1.1 + elementDamage)（element.ts） */
@@ -208,6 +208,19 @@ export type BuffTotals = {
   /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
+
+/**
+ * 命中率の和（plan/design-maids.md 8.4 節）。n は▲▼を足した符号つきの和 N（BuffTotals.hitRate）、up はそのうちの▲の側（正の値）の和
+ * （BuffTotals.hitRateUp）。的の▼の表は、▼だけが効く N（up = 0 で n < 0）にだけ使う（frame/landing.ts の coreHitRateAt）
+ */
+export type HitRateN = { readonly n: number; readonly up: number };
+
+export const ZERO_HIT_RATE: HitRateN = Object.freeze({ n: 0, up: 0 });
+
+/** 状態の合計の命中率の和 */
+export function hitRateNOf(buffs: Pick<BuffTotals, 'hitRate' | 'hitRateUp'>): HitRateN {
+  return { n: buffs.hitRate, up: buffs.hitRateUp };
+}
 
 export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   attackRatio: 0,
@@ -243,7 +256,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   chargeTimeFlat: 0,
   fixedChargeTime: 0,
   hitRate: 0,
-  hitRateDown: 0,
+  hitRateUp: 0,
   infiniteAmmo: 0,
   elementDamage: 0,
   coreDamage: 0,
@@ -309,7 +322,7 @@ export function addRatioBuff(
 ): BuffTotals {
   const field = RATIO_FIELD[stat];
   const next: BuffTotals = { ...totals, [field]: totals[field] + ratio };
-  if (stat === 'hitRate' && ratio < 0) next.hitRateDown = totals.hitRateDown + ratio;
+  if (stat === 'hitRate' && ratio > 0) next.hitRateUp = totals.hitRateUp + ratio;
   if (stat === 'chargeSpeed') next.chargeSpeedParts = [...totals.chargeSpeedParts, { source, ratio }];
   if (stat === 'attack') {
     next.attackParts = [...totals.attackParts, { source, ratio, flat: 0, ...(self ? { self } : {}) }];

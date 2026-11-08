@@ -70,7 +70,13 @@ import {
   type HolderHistory,
   type ValuePiece,
 } from '../skills/holders.ts';
-import { applyResolvedEffect, type AttackRounding, type BuffTotals } from '../skills/buffs.ts';
+import {
+  applyResolvedEffect,
+  hitRateNOf,
+  type AttackRounding,
+  type BuffTotals,
+  type HitRateN,
+} from '../skills/buffs.ts';
 import type { CounterId } from '../skills/counters.ts';
 import { stateMatches, statesMatching, type NamedStateId } from '../skills/states.ts';
 import { everyAtOf, type ShotCountEveryAt } from '../skills/triggers.ts';
@@ -192,7 +198,7 @@ export function slotTriggerDamage(
     // 変更の区間は、的の表の変更後の武器の行のコア命中率
     weaponChangeParts(
       enemy,
-      landingPartsWith(landing, slot, index, segmentLanding, buffs.hitRate, buffs.hitRateDown),
+      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs)),
       buffs.weapon?.targetRowKey,
     ),
     fullBurst,
@@ -291,8 +297,8 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     ...(landing === null || input.sustainedHitRateUp === false
       ? {}
       : {
-          hitRateWith: (slotIndex: number, span: LandingHitRateSpan, up: number, down: number) =>
-            hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, up, down),
+          hitRateWith: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) =>
+            hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
         }),
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
     shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {

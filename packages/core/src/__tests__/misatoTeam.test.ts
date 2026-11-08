@@ -11,6 +11,7 @@ import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.t
 import { coreHitRateWithHitRateUp, landingPartsWith } from '../frame/landing.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { runSimulation } from '../sim/engine.ts';
+import { hitRateNOf } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
@@ -132,14 +133,7 @@ describe('射撃マニュアルのスタック（ミサト単騎・条件は自�
     const nearShot = shots.find((f) => segmentAt(f).landing === 'near' && n(f) > 3 * STACK - 1e-9)!;
     expect(nearShot).toBeDefined();
     const seg = segmentAt(nearShot);
-    const parts = landingPartsWith(
-      plan.landing,
-      slot,
-      0,
-      seg.landing,
-      seg.slots[0]!.buffs.hitRate,
-      seg.slots[0]!.buffs.hitRateDown,
-    );
+    const parts = landingPartsWith(plan.landing, slot, 0, seg.landing, hitRateNOf(seg.slots[0]!.buffs));
     for (const p of parts) {
       expect(p.condition.coreHitRate).toBeCloseTo(coreHitRateWithHitRateUp(p.tableCoreHitRate!, 3 * STACK), 12);
     }

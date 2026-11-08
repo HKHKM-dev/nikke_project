@@ -152,7 +152,7 @@ describe('ほろ酔いの命中率▼（的の▼の表）', () => {
     const on = runSimulation(withUp(profile));
     const off = runSimulation(withUp(noTable));
     const keyed = on.slots[MAST_SLOT]!.segments.filter(
-      (s) => s.buffs.hitRateDown < 0 && Object.keys(table.core!.ratio).some((k) => close(Number(k), s.buffs.hitRate)),
+      (s) => s.buffs.hitRateUp > 0 && Object.keys(table.core!.ratio).some((k) => close(Number(k), s.buffs.hitRate)),
     );
     expect(keyed.length).toBeGreaterThan(0);
     expect(on.shotGauges).toEqual(off.shotGauges);

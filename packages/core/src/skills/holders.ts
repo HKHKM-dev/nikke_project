@@ -15,11 +15,13 @@ import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import { resolveDotEffects, type ResolvedDamageEffect } from './burstDamage.ts';
 import {
   ZERO_BUFFS,
+  ZERO_HIT_RATE,
   addRatioBuff,
   applyResolvedEffect,
   fixedAttackBaseOf,
   statTotal,
   type BuffTotals,
+  type HitRateN,
 } from './buffs.ts';
 import {
   chancePieces,
@@ -270,7 +272,7 @@ export type RemoveDebuffGuessRecord = {
   /** 効いたフレーム */
   frame: number;
   sourceSlotIndex: number;
-  effect: { source: ResolvedEffect['source']; effectIndex: number };
+  effect: RankingRecord['effect'];
   guess: RemoveDebuffGuess;
   limit: number;
 };
@@ -278,20 +280,20 @@ export type RemoveDebuffGuessRecord = {
 /**
  * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除で外す状態を選ぶ。held は枠ごとの、効いている印の付いた状態（とその最も早い
  * 始まり）。pick（debuffedRandom の N）があれば状態のある枠から N 機、無ければ全員。枠ごとに状態を count 個。選び方を確かめていない所は
- * 決め打ち（N 機より多ければ枠の若い順、count 個より多ければ付いたのが早い順）で、guesses に出す
+ * 決め打ち（N 機より多ければ枠の若い順、count 個より多ければ付いたのが早い順）で、guesses に超えた数と出す
  */
 export function pickRemoveDebuff<T>(
   held: readonly (readonly { tracks: T; firstStart: number }[])[],
   count: number,
   pick: number | undefined,
-): { chosen: T[]; guesses: RemoveDebuffGuess[] } {
-  const guesses: RemoveDebuffGuess[] = [];
+): { chosen: T[]; guesses: Pick<RemoveDebuffGuessRecord, 'guess' | 'limit'>[] } {
+  const guesses: Pick<RemoveDebuffGuessRecord, 'guess' | 'limit'>[] = [];
   let targets = held.filter((states) => states.length > 0);
   if (pick !== undefined && targets.length > pick) {
-    guesses.push('targets');
+    guesses.push({ guess: 'targets', limit: pick });
     targets = targets.slice(0, pick);
   }
-  if (targets.some((states) => states.length > count)) guesses.push('states');
+  if (targets.some((states) => states.length > count)) guesses.push({ guess: 'states', limit: count });
   const chosen = targets.flatMap((states) =>
     [...states]
       .sort((a, b) => a.firstStart - b.firstStart)
@@ -419,10 +421,8 @@ export type HolderLists = {
   firingBuffsAt(holder: number, frame: number, base: BuffTotals): BuffTotals | null;
   /** 射撃に効く件を持ちうるか */
   hasFiringTracks(holder: number): boolean;
-  /** 枠 holder にフレーム frame に効いている持続の命中率▲の和 */
-  hitUpAt(holder: number, frame: number): number;
-  /** hitUpAt のうちの命中率▼（負の値）の和（BuffTotals.hitRateDown と同じ。▲と同時の区間に▼の表を使わないのに使う） */
-  hitDownAt(holder: number, frame: number): number;
+  /** 枠 holder にフレーム frame に効いている持続の命中率▲▼の和（▲の側の和も。BuffTotals の hitRate・hitRateUp と同じ） */
+  hitRateAt(holder: number, frame: number): HitRateN;
   /** 当たりの stat の件の列があるか */
   readonly hasHitTracks: boolean;
   /**
@@ -1643,7 +1643,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (track, e) =>
       isHitStateStat(e.stat) && (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
   );
-  const hitDownViews = hitViews.map((views) => views.filter((v) => v.effect.value < 0));
   // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件）
   const critViews = viewsOf(
     (track, e) =>
@@ -2025,16 +2024,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }),
     );
     const { effect } = src;
-    const pick = effect.target === 'debuffedRandom' ? effect.pick : undefined;
-    const { chosen, guesses } = pickRemoveDebuff(held, effect.count, pick);
+    const { chosen, guesses } = pickRemoveDebuff(
+      held,
+      effect.count,
+      effect.target === 'debuffedRandom' ? effect.pick : undefined,
+    );
     for (const ts of chosen) for (const track of ts) closeTrack(track, at);
     for (const guess of guesses) {
       removeDebuffGuesses.push({
         frame: at,
         sourceSlotIndex: src.sourceSlotIndex,
         effect: { source: effect.source, effectIndex: effect.effectIndex },
-        guess,
-        limit: guess === 'targets' ? pick! : effect.count,
+        ...guess,
       });
     }
   };
@@ -2352,7 +2353,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     // 課題 2-59: デバフ解除（解除と同じく、閉じるのは効くフレームの次のフレーム）。遅れのある解除は効くフレームに予約し、そのフレームで
     // 対象を選ぶ（予約した解除を先に）
-    const due = battleStartOnly ? undefined : pendingRemoveDebuffs.get(f);
+    const due = battleStartOnly || pendingRemoveDebuffs.size === 0 ? undefined : pendingRemoveDebuffs.get(f);
     if (due !== undefined) {
       pendingRemoveDebuffs.delete(f);
       for (const r of due) fireRemoveDebuff(r, f);
@@ -2574,8 +2575,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     hasFiringTracks: (holder) => hasFiring[holder] === true,
     // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
-    hitUpAt: (holder, frame) => sumAt(hitViews[holder], frame),
-    hitDownAt: (holder, frame) => sumAt(hitDownViews[holder], frame),
+    hitRateAt: (holder, frame) => {
+      let n = 0;
+      let up = 0;
+      for (const v of hitViews[holder] ?? []) {
+        for (const it of activeAt(v.track, frame)) {
+          const value = valueOf(v.effect, it);
+          n += value;
+          if (v.effect.value > 0) up += value;
+        }
+      }
+      return n === 0 && up === 0 ? ZERO_HIT_RATE : { n, up };
+    },
     hasHitTracks: hitViews.some((views) => views.length > 0),
     critUpAt: (holder, frame) => sumAt(critViews[holder], frame),
     rankContext,
