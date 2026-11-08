@@ -16107,7 +16107,31 @@
     {
       "observation": "0789-06",
       "element": "エイダ skill1.effects[2]",
-      "key": "c52457c3c4f04a2a",
+      "key": "78337e39e90514cc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-07",
+      "element": "エイダ skill1.effects[2]",
+      "key": "98ab4696a644695d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-08",
+      "element": "エイダ skill1.effects[2]",
+      "key": "3fb34efbf1f7662a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-09",
+      "element": "エイダ skill1.effects[2]",
+      "key": "ead3288cf4c30757",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16115,7 +16139,7 @@
     {
       "observation": "0789-10",
       "element": "エイダ skill1.effects[2]",
-      "key": "dc47e493c8815ffe",
+      "key": "947fb24903100660",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16123,7 +16147,7 @@
     {
       "observation": "0789-11",
       "element": "エイダ skill1.effects[2]",
-      "key": "3904a7ada0b02ebc",
+      "key": "669f74e3a6af0c8a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16131,7 +16155,7 @@
     {
       "observation": "0789-12",
       "element": "エイダ skill1.effects[2]",
-      "key": "29cb5a4ef298ba1d",
+      "key": "cd66e09a24bf83cf",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16139,7 +16163,7 @@
     {
       "observation": "0789-13",
       "element": "エイダ skill1.effects[2]",
-      "key": "9148ecacd871b1eb",
+      "key": "30ccd848b081c9f1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16147,7 +16171,7 @@
     {
       "observation": "0789-14",
       "element": "エイダ skill1.effects[2]",
-      "key": "ad487269db138224",
+      "key": "8330388788dcaef2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16155,7 +16179,7 @@
     {
       "observation": "0789-15",
       "element": "エイダ skill1.effects[2]",
-      "key": "d623bfe983caf89c",
+      "key": "98e3850713b6876a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16163,7 +16187,23 @@
     {
       "observation": "0789-16",
       "element": "エイダ skill1.effects[2]",
-      "key": "3b1c388a615f7615",
+      "key": "f8c68a4e024629c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-20",
+      "element": "エイダ skill1.effects[2]",
+      "key": "91f81e313aed8852",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0789-21",
+      "element": "エイダ skill1.effects[2]",
+      "key": "ab4e39f0a43b5655",
       "effective": false,
       "minus": 0,
       "plus": null
