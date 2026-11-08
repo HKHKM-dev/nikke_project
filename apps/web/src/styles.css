@@ -661,6 +661,10 @@ header h1 {
   box-sizing: border-box;
   width: calc(var(--slot-portrait-h) / 2 + 2px + 16px);
 }
+/* 後列（REAR。偶数のスロット）のカードは、前列より少し下げて並べる */
+.modern-slots-grid > .modern-slot-card.modern-slot-rear {
+  margin-top: 32px;
+}
 
 /* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
 .modern-slot-card {
