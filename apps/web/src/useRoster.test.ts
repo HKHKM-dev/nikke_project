@@ -4,8 +4,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act } from 'react';
 import { cleanupHooks, memoryStorage, renderHook } from './hookHarness.ts';
 import { INITIAL_PARTIES, type PartiesState } from './parties.ts';
-import { ROSTER_STORAGE_KEY, applyRoster, rosterFields, serializeRoster } from './roster.ts';
-import { initialTeamState, type TeamAction } from './team.ts';
+import {
+  ROSTER_STORAGE_KEY,
+  applyRoster,
+  clearConfirmText,
+  clearRosterFromTeam,
+  rosterFields,
+  serializeRoster,
+} from './roster.ts';
+import { initialTeamState, teamReducer, type TeamAction } from './team.ts';
 import { useRoster } from './useRoster.ts';
 
 const INDEX = [{ resourceId: 82, rarity: 'SSR' }] as CharacterIndexEntry[];
@@ -32,13 +39,12 @@ const BROKEN = JSON.stringify({
 });
 
 let storage: Storage;
-let confirm: ReturnType<typeof vi.fn<(text: string) => boolean>>;
 
 beforeEach(() => {
   storage = memoryStorage();
-  confirm = vi.fn(() => true);
   vi.stubGlobal('localStorage', storage);
-  vi.stubGlobal('window', { confirm });
+  // 確かめの窓（window.confirm）は使わない。window は React が読む（hookHarness.ts）
+  vi.stubGlobal('window', {});
 });
 
 afterEach(async () => {
@@ -47,8 +53,11 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
+/** スロット 1 に育成状況にいるキャラ（82）を入れた編成 */
+const TEAM = teamReducer(initialTeamState(), { type: 'selectCharacter', index: 0, resourceId: 82 });
+
 async function render(index: readonly CharacterIndexEntry[] | null = INDEX) {
-  const team = initialTeamState();
+  const team = TEAM;
   const dispatch = vi.fn<(action: TeamAction) => void>();
   const setParties = vi.fn<(parties: PartiesState) => void>();
   const props = { index, team, parties: INITIAL_PARTIES, dispatch, setParties };
@@ -100,10 +109,9 @@ describe('useRoster', () => {
     expect(storage.getItem(ROSTER_STORAGE_KEY)).toBe(BROKEN);
   });
 
-  it('imports a file after the confirmation: saves the text, overwrites the team and parties, and reports', async () => {
+  it('imports a file without asking: saves the text, overwrites the team and parties, and reports', async () => {
     const { hook, team, dispatch, setParties } = await render();
     await act(() => hook.current.controls.importFile(file(SAVED)));
-    expect(confirm).toHaveBeenCalledTimes(1);
     expect(storage.getItem(ROSTER_STORAGE_KEY)).toBe(SAVED);
     const next = applyRoster(team, INITIAL_PARTIES, ROSTER);
     expect(dispatch).toHaveBeenCalledWith({ type: 'replace', state: next.team });
@@ -115,20 +123,18 @@ describe('useRoster', () => {
     });
   });
 
-  it('does nothing when the confirmation is declined', async () => {
-    confirm.mockReturnValue(false);
-    const { hook, dispatch, setParties } = await render();
+  it('drops a pending clear when a file is imported', async () => {
+    storage.setItem(ROSTER_STORAGE_KEY, SAVED);
+    const { hook } = await render();
+    await act(() => hook.current.controls.clear());
+    expect(hook.current.controls.clearPrompt).not.toBeNull();
     await act(() => hook.current.controls.importFile(file(SAVED)));
-    expect(storage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
-    expect(dispatch).not.toHaveBeenCalled();
-    expect(setParties).not.toHaveBeenCalled();
-    expect(hook.current.controls).toMatchObject({ roster: null, stored: false, message: null });
+    expect(hook.current.controls.clearPrompt).toBeNull();
   });
 
-  it('shows the errors of a file that does not read, without asking or saving', async () => {
+  it('shows the errors of a file that does not read, without saving', async () => {
     const { hook, dispatch } = await render();
     await act(() => hook.current.controls.importFile(file('{"formatVersion":2,"characters":{}}')));
-    expect(confirm).not.toHaveBeenCalled();
     expect(storage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
     expect(dispatch).not.toHaveBeenCalled();
     expect(hook.current.controls.message).toEqual({
@@ -140,7 +146,6 @@ describe('useRoster', () => {
   it('ignores a file before the character index is loaded', async () => {
     const { hook, dispatch } = await render(null);
     await act(() => hook.current.controls.importFile(file(SAVED)));
-    expect(confirm).not.toHaveBeenCalled();
     expect(dispatch).not.toHaveBeenCalled();
     expect(storage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
   });
@@ -174,16 +179,39 @@ describe('useRoster', () => {
     expect(revoke).toHaveBeenCalledWith('blob:roster');
   });
 
-  it('clears the saved roster and the message after the confirmation', async () => {
+  it('asks in the settings before clearing, and does nothing when cancelled', async () => {
+    storage.setItem(ROSTER_STORAGE_KEY, SAVED);
+    const { hook, dispatch, setParties } = await render();
+    expect(hook.current.controls.clearPrompt).toBeNull();
+    await act(() => hook.current.controls.clear());
+    // 戻すスロットの数は、いまの編成の育成状況にいるキャラのスロット
+    expect(hook.current.controls.clearPrompt).toBe(clearConfirmText(1));
+    await act(() => hook.current.controls.cancelClear());
+    expect(hook.current.controls.clearPrompt).toBeNull();
+    expect(storage.getItem(ROSTER_STORAGE_KEY)).toBe(SAVED);
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(setParties).not.toHaveBeenCalled();
+  });
+
+  it('clears the saved roster and what it copied into the team after the confirmation', async () => {
+    storage.setItem(ROSTER_STORAGE_KEY, SAVED);
+    const { hook, team, dispatch, setParties } = await render();
+    await act(() => hook.current.controls.clear());
+    await act(() => hook.current.controls.confirmClear());
+    const next = clearRosterFromTeam(team, INITIAL_PARTIES, ROSTER);
+    expect(dispatch).toHaveBeenCalledWith({ type: 'replace', state: next.team });
+    expect(setParties).toHaveBeenCalledWith(next.parties);
+    expect(storage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
+    expect(hook.current.controls).toMatchObject({ roster: null, stored: false, message: null, clearPrompt: null });
+  });
+
+  it('clears a saved roster that no longer reads', async () => {
     storage.setItem(ROSTER_STORAGE_KEY, BROKEN);
     const { hook } = await render();
-    confirm.mockReturnValue(false);
     await act(() => hook.current.controls.clear());
-    expect(storage.getItem(ROSTER_STORAGE_KEY)).toBe(BROKEN);
-    expect(hook.current.controls.stored).toBe(true);
-
-    confirm.mockReturnValue(true);
-    await act(() => hook.current.controls.clear());
+    // 読めない保存は戻すスロットが無い
+    expect(hook.current.controls.clearPrompt).toBe(clearConfirmText(0));
+    await act(() => hook.current.controls.confirmClear());
     expect(storage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
     expect(hook.current.controls).toMatchObject({ roster: null, stored: false, message: null });
   });
