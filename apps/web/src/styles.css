@@ -150,6 +150,17 @@ header h1 {
   height: 34px;
   padding: 0;
 }
+/* 見出しの行の右の、アカウントと設定のボタンを横に並べる */
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* アカウントのボタン（育成状況の読み書き）。高さは設定のボタンにそろえる */
+.account-menu-button {
+  height: 34px;
+  padding: 0 10px;
+}
 /* 敵の詳細設定 */
 .advanced-settings-button {
   padding: 3px 10px;
