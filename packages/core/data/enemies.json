@@ -295,6 +295,17 @@
                 "farA": 26,
                 "farB": 28
               },
+              "HomingProjectile:100:500": {
+                "near": 7,
+                "nearA": 9,
+                "nearB": 7,
+                "midNear": 15,
+                "midFar": 21,
+                "midFarA": 18,
+                "midFarC": 22,
+                "far": 29,
+                "farB": 29
+              },
               "ProjectileCurve:1500": {
                 "near": 6,
                 "midNear": 11,

@@ -105,6 +105,7 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"]
       },
+      "observations": ["0752-12"],
       "tolerance": {
         "abs": 1
       }
