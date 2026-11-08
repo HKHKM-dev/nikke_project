@@ -15,6 +15,12 @@ type Props = {
 
 const BASE_URL = import.meta.env.BASE_URL;
 
+/**
+ * 読めなかった画像（画像の無い配信。アーティファクトなど）。同じ絵を出し直すたびに読みに行くと、読めないと分かるまでの数フレームは
+ * 画像も名前の札も無い枠だけになる（スロットを入れ替えた瞬間に、枠だけが一瞬見える）ので、覚えておいてすぐ名前の札を出す
+ */
+const failedImages = new Set<string>();
+
 function BadgeImg({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
   return <img className={className} src={badge.src} alt={badge.label} title={badge.label} draggable={false} />;
 }
@@ -30,7 +36,7 @@ export function CharacterVisual({
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。
   // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
   const [failedId, setFailedId] = useState<number | null>(null);
-  const failed = failedId === character.resourceId;
+  const failed = failedId === character.resourceId || failedImages.has(imageSrc);
   // ニケ一覧の正方形の絵は、左上に武器種・バースト段階、右下に属性。ほかは左上に属性・武器種・バースト段階（2.5 節）
   const compact = size === 'compact';
   const columnKinds = compact ? COMPACT_BADGE_KINDS : VISUAL_BADGE_KINDS;
@@ -52,7 +58,10 @@ export function CharacterVisual({
           loading={size === 'portrait' ? 'eager' : 'lazy'}
           decoding={size === 'portrait' ? 'sync' : 'async'}
           draggable={false}
-          onError={() => setFailedId(character.resourceId)}
+          onError={() => {
+            failedImages.add(imageSrc);
+            setFailedId(character.resourceId);
+          }}
         />
       )}
       <div className="char-visual-badges">
