@@ -795,6 +795,28 @@ header h1 {
 .modern-slot-char-name-track {
   display: inline-block;
 }
+/* 名前の上の限界突破（★）とコア強化（+N・MAX）。右詰め */
+.modern-slot-growth {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1px;
+  font-size: 0.8rem;
+  line-height: 1.1;
+}
+.modern-slot-growth-star {
+  color: rgba(255, 255, 255, 0.35);
+}
+.modern-slot-growth-star-on {
+  color: #facc15;
+}
+.modern-slot-growth-core {
+  margin-left: 4px;
+  padding: 0 4px;
+  font-size: 0.7rem;
+  color: #fff;
+  background: #7c3aed;
+}
 .modern-slot-char-name-scroll {
   text-align: left;
 }
@@ -954,9 +976,9 @@ header h1 {
   width: var(--badge-w);
   aspect-ratio: 130 / 150;
 }
-/* スロットの立ち絵では、下部に重ねる名前（.modern-slot-char-name）の上に出す */
+/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す */
 .char-visual-portrait .char-unsupported-tag {
-  bottom: 28px;
+  bottom: 44px;
 }
 .char-unsupported-tag {
   position: absolute;

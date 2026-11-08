@@ -10,7 +10,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import type { CharacterIndexEntry } from '@nikke/core';
+import { CORE_MAX, GRADE_MAX, type CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
@@ -209,7 +209,10 @@ export function ModernView({
 
         <section className="modern-slots-grid" aria-label="編成スロット一覧">
           {team.slots.map((slot, i) => {
-            const { character, build, treasurePhase } = calc.slots[i]!;
+            const { character, build, treasurePhase, growth } = calc.slots[i]!;
+            const limits = character
+              ? { gradeMax: GRADE_MAX[character.rarity], coreMax: CORE_MAX[character.rarity] }
+              : null;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
             const isUnsupported =
               slot.resourceId !== null && fullySupported !== null && !fullySupported.has(slot.resourceId);
@@ -223,6 +226,7 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
+                growthMarks={limits && { grade: growth.grade, core: growth.core, ...limits }}
                 collectionBadge={collectionBadge(
                   build.collection,
                   treasurePhase,

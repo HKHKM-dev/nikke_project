@@ -8,6 +8,9 @@ import controllerIcon from '../../assets/badges/ui_controller.svg';
 import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
+/** 限界突破の回数とコア強化の段階（育成値）と、そのキャラの上限 */
+export type GrowthMarks = { grade: number; gradeMax: number; core: number; coreMax: number };
+
 type Props = {
   slotIndex: number;
   character: CharacterData | undefined;
@@ -15,6 +18,8 @@ type Props = {
   isUnsupported: boolean;
   error: string | undefined;
   slotResult: SlotResultView | null;
+  /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */
+  growthMarks: GrowthMarks | null;
   /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
   collectionBadge: Badge | null;
   /** このスロットのニケがほかの編成でも使われている */
@@ -34,6 +39,7 @@ export function ModernSlotCard({
   error,
   slotResult,
   collectionBadge,
+  growthMarks,
   inOtherParty,
   onPlacePending,
   onOpenBuildModal,
@@ -117,7 +123,7 @@ export function ModernSlotCard({
               size="portrait"
               extraBadge={collectionBadge}
             />
-            <SlotCharName name={characterEntry.name.ja} />
+            <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
             <button
               type="button"
               className="modern-slot-icon-button modern-slot-clear-button"
@@ -186,7 +192,7 @@ const NAME_SCROLL_GAP = 32;
  * 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、右から左へ一定の速さで流し続ける
  * （名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）
  */
-function SlotCharName({ name }: { name: string }) {
+function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [textWidth, setTextWidth] = useState<number | null>(null);
@@ -217,10 +223,38 @@ function SlotCharName({ name }: { name: string }) {
         } as CSSProperties
       }
     >
+      {marks && <SlotGrowthMarks {...marks} />}
       <span className="modern-slot-char-name-track">
         <span ref={textRef}>{name}</span>
         {textWidth !== null && <span aria-hidden="true">{name}</span>}
       </span>
+    </div>
+  );
+}
+
+/** 限界突破（★ を上限の数だけ並べ、突破した数を塗る）とコア強化（+1〜+6、上限は MAX）。どちらも無いキャラ（R）は出さない */
+function SlotGrowthMarks({ grade, gradeMax, core, coreMax }: GrowthMarks) {
+  if (gradeMax === 0 && coreMax === 0) return null;
+  const coreLabel = core === 0 ? null : core === coreMax ? 'MAX' : `+${core}`;
+  return (
+    <div
+      className="modern-slot-growth"
+      aria-label={`限界突破 ${grade}/${gradeMax}${coreMax > 0 ? `・コア強化 ${core}/${coreMax}` : ''}`}
+    >
+      {Array.from({ length: gradeMax }, (_, i) => (
+        <span
+          key={i}
+          className={`modern-slot-growth-star ${i < grade ? 'modern-slot-growth-star-on' : ''}`}
+          aria-hidden="true"
+        >
+          ★
+        </span>
+      ))}
+      {coreLabel && (
+        <span className="modern-slot-growth-core" aria-hidden="true">
+          {coreLabel}
+        </span>
+      )}
     </div>
   );
 }
