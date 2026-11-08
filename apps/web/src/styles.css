@@ -1011,7 +1011,7 @@ header h1 {
 .char-visual-tall {
   max-width: var(--tray-visual-w);
   aspect-ratio: 1 / 2;
-  --badge-w: 17px;
+  /* バッジの大きさは四角（.char-visual の既定の 20px）と同じ */
 }
 .char-visual-tall .char-visual-fallback {
   font-size: 0.65rem;
