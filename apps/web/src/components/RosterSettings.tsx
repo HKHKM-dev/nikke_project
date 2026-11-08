@@ -7,7 +7,17 @@ const BUTTON_ROW = { display: 'flex', gap: 6, flexWrap: 'wrap' } as const;
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const MESSAGES = { maxWidth: '22em' } as const;
 
-export function RosterSettings({ roster, stored, message, importFile, exportFile, clear }: RosterControls) {
+export function RosterSettings({
+  roster,
+  stored,
+  message,
+  pending,
+  importFile,
+  exportFile,
+  clear,
+  confirmPending,
+  cancelPending,
+}: RosterControls) {
   const fileRef = useRef<HTMLInputElement>(null);
   return (
     <fieldset className="popover-group">
@@ -35,6 +45,19 @@ export function RosterSettings({ roster, stored, message, importFile, exportFile
           if (file !== undefined) void importFile(file);
         }}
       />
+      {pending !== null && (
+        <div style={MESSAGES} role="alertdialog" aria-label="確かめ">
+          <p className="note">{pending.prompt}</p>
+          <div style={BUTTON_ROW}>
+            <button type="button" className="advanced-settings-button" onClick={confirmPending}>
+              {pending.kind === 'import' ? '読み込む' : '消す'}
+            </button>
+            <button type="button" className="advanced-settings-button" onClick={cancelPending}>
+              やめる
+            </button>
+          </div>
+        </div>
+      )}
       {message !== null && (
         <ul className="notes" style={MESSAGES} aria-live="polite">
           {message.kind === 'error' && <li className="note">読み込めなかった:</li>}
