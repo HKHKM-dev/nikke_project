@@ -626,7 +626,6 @@ header h1 {
   flex-direction: column;
   background: color-mix(in srgb, var(--app-fg) 4%, var(--app-bg));
   border: 1px solid var(--app-border);
-  cursor: pointer;
   padding: 8px;
   gap: 8px;
   position: relative;
@@ -637,8 +636,10 @@ header h1 {
 .modern-slot-card:hover {
   border-color: color-mix(in srgb, Highlight 60%, var(--app-border));
 }
-.modern-slot-card.modern-slot-selected {
-  outline: 2px solid Highlight;
+/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける */
+.modern-slot-card.modern-slot-awaiting {
+  cursor: pointer;
+  outline: 2px dashed Highlight;
   outline-offset: -1px;
 }
 .modern-slot-card.modern-slot-focused {
@@ -994,6 +995,10 @@ header h1 {
 .char-tray-item:hover {
   transform: translateY(-2px);
   border-color: Highlight;
+}
+.char-tray-item.char-tray-item-pending {
+  border-color: Highlight;
+  background: color-mix(in srgb, Highlight 15%, transparent);
 }
 .char-tray-item-name {
   font-size: 0.75rem;

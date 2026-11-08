@@ -10,10 +10,12 @@ type Props = {
   /** ほかの編成で使用中（置ける） */
   inOtherParty: boolean;
   isUnsupported: boolean;
+  /** 置くスロットのクリックを待っている */
+  isPending: boolean;
   onClick: () => void;
 };
 
-export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsupported, onClick }: Props) {
+export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsupported, isPending, onClick }: Props) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `tray-${character.resourceId}`,
     data: {
@@ -31,7 +33,7 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
     <button
       ref={setNodeRef}
       type="button"
-      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''}`}
+      className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
       onClick={onClick}
       disabled={isTaken}
       title={`${character.name.ja}${power}${title}`}

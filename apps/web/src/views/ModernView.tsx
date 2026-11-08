@@ -53,8 +53,8 @@ export function ModernView({
   // キャラクターインデックスを ID で引けるマップを作成
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
 
-  // 現在トレイからキャラを配置する対象のスロット（0〜4）
-  const [activeSlotIndex, setActiveSlotIndex] = useState(0);
+  // 枠が埋まっているときに一覧でクリックしたニケ。次にクリックしたスロットに置く（null なら待っていない）
+  const [pendingId, setPendingId] = useState<number | null>(null);
 
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
@@ -82,6 +82,7 @@ export function ModernView({
   const noScrollNodeRef = useRef<Element | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
+    setPendingId(null);
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -136,12 +137,10 @@ export function ModernView({
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
       if (!action) return;
       dispatch(action);
-      setActiveSlotIndex(targetSlotIndex);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
-        setActiveSlotIndex(targetSlotIndex);
       }
     }
   };
@@ -151,16 +150,25 @@ export function ModernView({
     setDraggedPortrait(null);
   };
 
-  // トレイでキャラがクリック選択されたときのハンドラ
+  // 一覧でニケをクリックしたとき: 空き枠があれば最も左の空き枠に置く。なければ、次にクリックしたスロットに置くまで待つ
+  // （同じニケをもう一度クリックすると待つのをやめる）
   const handleSelectCharacter = (resourceId: number) => {
-    const action = placeCharacterAction(team, resourceId, activeSlotIndex);
-    if (!action) return;
-    dispatch(action);
-    // 次の空きスロットがあれば自動的にアクティブスロットを進める
-    const nextEmptyIndex = team.slots.findIndex((s, i) => i > activeSlotIndex && s.resourceId === null);
-    if (nextEmptyIndex !== -1) {
-      setActiveSlotIndex(nextEmptyIndex);
+    const emptyIndex = team.slots.findIndex((s) => s.resourceId === null);
+    if (emptyIndex === -1) {
+      setPendingId((id) => (id === resourceId ? null : resourceId));
+      return;
     }
+    const action = placeCharacterAction(team, resourceId, emptyIndex);
+    if (action) dispatch(action);
+    setPendingId(null);
+  };
+
+  // 待っているニケを、クリックしたスロットに置く（いたニケは外れて一覧に戻る）
+  const handlePlacePending = (index: number) => {
+    if (pendingId === null) return;
+    const action = placeCharacterAction(team, pendingId, index);
+    if (action) dispatch(action);
+    setPendingId(null);
   };
 
   // 全スロットで配置済みのキャラ ID セット（他スロット配置中判定用）
@@ -216,8 +224,8 @@ export function ModernView({
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
-                isSelected={activeSlotIndex === i}
-                onSelectSlot={() => setActiveSlotIndex(i)}
+                awaitingPlacement={pendingId !== null}
+                onPlacePending={() => handlePlacePending(i)}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
                 onClear={() => dispatch({ type: 'clearSlot', index: i })}
                 partyTotalDamage={totals.parties[parties.active]?.total ?? null}
@@ -231,6 +239,7 @@ export function ModernView({
           takenIds={allTakenIds}
           otherPartyIds={otherPartyIds}
           fullySupported={fullySupported}
+          pendingId={pendingId}
           onSelectCharacter={handleSelectCharacter}
         />
 

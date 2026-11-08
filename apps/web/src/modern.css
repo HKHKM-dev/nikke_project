@@ -111,8 +111,8 @@
 :root[data-app-ui='modern'] .modern-slot-card:hover {
   border-color: var(--m-accent);
 }
-:root[data-app-ui='modern'] .modern-slot-card.modern-slot-selected {
-  outline: 2px solid var(--m-gold);
+:root[data-app-ui='modern'] .modern-slot-card.modern-slot-awaiting {
+  outline: 2px dashed var(--m-gold);
 }
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over {
   outline: 3px solid var(--m-accent);
@@ -185,6 +185,10 @@
 :root[data-app-ui='modern'] .char-tray-item:hover {
   border-color: var(--m-accent);
   background: var(--m-surface-2);
+}
+:root[data-app-ui='modern'] .char-tray-item.char-tray-item-pending {
+  border-color: var(--m-gold);
+  background: color-mix(in srgb, var(--m-gold) 18%, var(--m-surface));
 }
 :root[data-app-ui='modern'] .char-drag-overlay {
   border-radius: 12px;
