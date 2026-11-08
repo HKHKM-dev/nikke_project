@@ -35,17 +35,54 @@ import { placeCharacterAction } from '../team.ts';
 const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
 
 /** 離したドロップでスロットを入れ替えたか（handleDragEnd が決め、DROP_ANIMATION が読む） */
-const dropState = { swapped: false };
+const dropState: { swapped: boolean; targetIndex: number | null } = { swapped: false, targetIndex: null };
+
+const slotCardAt = (index: number | null) =>
+  index === null ? null : (document.querySelectorAll('.modern-slots-grid > .modern-slot-card')[index] ?? null);
+
+/** 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方） */
+function slideInto(ghostSource: Element, target: Element): () => void {
+  const from = ghostSource.getBoundingClientRect();
+  const to = (target.querySelector('.char-visual-portrait, .modern-slot-empty-area') ?? target).getBoundingClientRect();
+  const ghost = ghostSource.cloneNode(true) as HTMLElement;
+  Object.assign(ghost.style, {
+    position: 'fixed',
+    left: `${from.left}px`,
+    top: `${from.top}px`,
+    width: `${from.width}px`,
+    height: `${from.height}px`,
+    margin: '0',
+    zIndex: '9999',
+    pointerEvents: 'none',
+  });
+  document.body.appendChild(ghost);
+  target.classList.add('modern-slot-arriving');
+  const done = () => {
+    ghost.remove();
+    target.classList.remove('modern-slot-arriving');
+  };
+  ghost
+    .animate(
+      [{ transform: 'translate(0, 0)' }, { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px)` }],
+      { duration: 250, easing: 'ease' },
+    )
+    .finished.then(done, done);
+  return done;
+}
 
 /**
  * 入れ替えたときは、ドラッグ元へ戻っていく絵を、ドラッグ元に新しく入ったもの（空のスロット・入れ替わったニケ）の絵に差し替える
- * （持ち上げたニケの絵のままだと、そのニケがドラッグ元へ戻るように見える）。着くまでドラッグ元の絵は隠す（modern-slot-arriving）
+ * （持ち上げたニケの絵のままだと、そのニケがドラッグ元へ戻るように見える）。持ち上げたもの（動かした側）は、離した位置から
+ * 落とした先のスロットへ滑り込ませる（slideInto）。どちらも着くまで行き先の絵は隠す（modern-slot-arriving）
  */
 const DROP_ANIMATION: DropAnimation = {
   sideEffects: (args) => {
     const holder = args.dragOverlay.node.querySelector('.slot-drag-overlay-portrait');
     const incoming = args.active.node.querySelector('.char-visual-portrait, .modern-slot-empty-area');
     if (!dropState.swapped || !holder || !incoming) return returnSideEffects(args);
+    // 持ち上げたもの（動かした側）は、落とした先のスロットへ滑り込ませる
+    const target = slotCardAt(dropState.targetIndex);
+    const finishSlide = target ? slideInto(holder, target) : () => undefined;
     const saved = [...holder.childNodes];
     holder.replaceChildren(incoming.cloneNode(true));
     args.active.node.classList.add('modern-slot-arriving');
@@ -54,6 +91,7 @@ const DROP_ANIMATION: DropAnimation = {
       args.dragOverlay.node.style.visibility = 'hidden';
       holder.replaceChildren(...saved);
       args.active.node.classList.remove('modern-slot-arriving');
+      finishSlide();
     };
   },
 };
@@ -131,6 +169,7 @@ export function ModernView({
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
     dropState.swapped = false;
+    dropState.targetIndex = null;
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -193,6 +232,7 @@ export function ModernView({
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
         dropState.swapped = true;
+        dropState.targetIndex = targetSlotIndex;
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
       }
     }
