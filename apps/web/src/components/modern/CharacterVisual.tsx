@@ -1,5 +1,5 @@
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useState, type ReactNode } from 'react';
+import { useReducer, type ReactNode } from 'react';
 import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
@@ -35,8 +35,9 @@ export function CharacterVisual({
   const imageSrc = `${BASE_URL}characters/${size === 'portrait' ? 'portraits' : 'images'}/${character.resourceId}.webp`;
   // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。
   // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
-  const [failedId, setFailedId] = useState<number | null>(null);
-  const failed = failedId === character.resourceId || failedImages.has(imageSrc);
+  const failed = failedImages.has(imageSrc);
+  // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
+  const [, rerender] = useReducer((n: number) => n + 1, 0);
   // ニケ一覧の正方形の絵は、左上に武器種・バースト段階、右下に属性。ほかは左上に属性・武器種・バースト段階（2.5 節）
   const compact = size === 'compact';
   const columnKinds = compact ? COMPACT_BADGE_KINDS : VISUAL_BADGE_KINDS;
@@ -53,14 +54,12 @@ export function CharacterVisual({
           src={imageSrc}
           alt=""
           className="char-visual-img"
-          // スロットの縦長の絵（5 枚）はすぐ読み、描けるまで待って描く（入れ替えで隠しを外した瞬間に、画像が空で枠だけ見えないように）。
-          // ニケ一覧の絵は数が多いので、見えてから読み、描くのは後回しにしてよい
-          loading={size === 'portrait' ? 'eager' : 'lazy'}
-          decoding={size === 'portrait' ? 'sync' : 'async'}
+          loading="lazy"
+          decoding="async"
           draggable={false}
           onError={() => {
             failedImages.add(imageSrc);
-            setFailedId(character.resourceId);
+            rerender();
           }}
         />
       )}
