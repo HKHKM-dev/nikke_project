@@ -24,11 +24,8 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
   });
   // 戦闘力順のときは、マウスを重ねたときの文に戦闘力を添える（plan/design-combat-power-sort.md 6 節の論点 4）
   const power = useCombatPowerNote(character.resourceId);
-  const mark = isTaken
-    ? { badge: '配置中', title: '（配置中）' }
-    : inOtherParty
-      ? { badge: '他の編成', title: '（ほかの編成で使用中）' }
-      : null;
+  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）
+  const title = isTaken ? '（配置中）' : inOtherParty ? '（ほかの編成で使用中）' : '';
 
   return (
     <button
@@ -37,13 +34,20 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
       className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''}`}
       onClick={onClick}
       disabled={isTaken}
-      title={`${character.name.ja}${power}${mark?.title ?? ''}`}
+      title={`${character.name.ja}${power}${title}`}
       {...attributes}
       {...listeners}
     >
-      <CharacterVisual character={character} isUnsupported={isUnsupported} size="compact" />
+      <span className="char-tray-item-visual">
+        <CharacterVisual character={character} isUnsupported={isUnsupported} size="compact" />
+        {isTaken && (
+          <svg className="char-tray-item-check" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 12.5l5 5L20 6.5" />
+          </svg>
+        )}
+      </span>
       <span className="char-tray-item-name">{character.name.ja}</span>
-      {mark && <span className="char-tray-item-taken-badge">{mark.badge}</span>}
+      {inOtherParty && !isTaken && <span className="char-tray-item-taken-badge">他の編成</span>}
     </button>
   );
 }
