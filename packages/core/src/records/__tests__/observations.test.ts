@@ -983,7 +983,7 @@ describe('照合の部品', () => {
     expect(helm.treasureSkills!.skill1!.effects.map((e) => e.kind)).toEqual(['timed', 'burstGauge']);
   });
 
-  it('reports a mid-far, near or far landing without automatic conditions, or an unknown one', () => {
+  it('reports an unknown mid-far, near or far landing (manual conditions may fix landings too)', () => {
     const base = observations.find((o) => o.id === '0054-02')!;
     const withSetup = (setup: Record<string, unknown>, id: string): Observation => ({
       ...base,
@@ -1008,13 +1008,10 @@ describe('照合の部品', () => {
         data.enemies,
       ),
     ).toEqual([
-      '0054-91: midFarLanding は condition が auto のときだけ',
       '0054-92: midFarLanding は A・B・C',
       '0054-93: condition は auto か manual',
       '0054-94: nearLanding は A・B の並び（1 回目・2 回目の順）',
-      '0054-95: nearLanding は condition が auto のときだけ',
       '0054-96: farLanding は A・B の並び（1 回目・2 回目の順）',
-      '0054-97: farLanding は condition が auto のときだけ',
     ]);
   });
 

@@ -308,7 +308,9 @@
             "shot": 1,
             "count": "0161-16"
           }
-        ]
+        ],
+        "farLanding": ["B"],
+        "midFarLanding": "A"
       }
     }
   },
@@ -399,7 +401,9 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "farLanding": ["B"],
+        "midFarLanding": "A"
       }
     }
   },
@@ -430,7 +434,9 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "farLanding": ["B"],
+        "midFarLanding": "A"
       }
     }
   },
@@ -461,7 +467,9 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": false,
-        "condition": "auto"
+        "condition": "auto",
+        "farLanding": ["B"],
+        "midFarLanding": "A"
       }
     }
   },

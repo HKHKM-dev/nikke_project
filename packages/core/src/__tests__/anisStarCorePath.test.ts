@@ -172,3 +172,14 @@ describe('的の表の coreHitRate.autoAttacks（3.2 節）', () => {
     expect(() => parseSkillDefinition(copy)).toThrow(/core/);
   });
 });
+
+describe('的の表に行の無い敵の注記（plan/design-anis-star-unimplemented.md 4 節）', () => {
+  const codes = (enemy: EnemyInput) => runSimulation(solo(enemy)).slots[0]!.notes.map((n) => n.code);
+
+  it('notes the Shooting Star core only when the enemy has no row', () => {
+    expect(codes(rangeEnemy(profile))).not.toContain('auto-attack-core-no-row');
+    expect(codes(rangeEnemy(withoutStarRow()))).toContain('auto-attack-core-no-row');
+    const { target: _, landings: __, ...plain } = rangeEnemy(profile);
+    expect(codes(plain)).toContain('auto-attack-core-no-row');
+  });
+});
