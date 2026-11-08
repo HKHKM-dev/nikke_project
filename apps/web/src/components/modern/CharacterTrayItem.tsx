@@ -1,6 +1,5 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useCombatPowerNote } from '../../useListOrder.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -24,11 +23,8 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
     },
     disabled: isTaken,
   });
-  // 戦闘力順のときは、マウスを重ねたときの文に戦闘力を添える（plan/design-combat-power-sort.md 6 節の論点 4）
-  const power = useCombatPowerNote(character.resourceId);
-  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）
-  const title = isTaken ? '（配置中）' : inOtherParty ? '（ほかの編成で使用中）' : '';
-
+  // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）。
+  // マウスを重ねたときの文（名前・戦闘力の title）は出さない
   return (
     <button
       ref={setNodeRef}
@@ -36,7 +32,6 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
       className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
       onClick={onClick}
       disabled={isTaken}
-      title={`${character.name.ja}${power}${title}`}
       {...attributes}
       {...listeners}
     >

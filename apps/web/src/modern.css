@@ -59,7 +59,8 @@
     border-color 0.15s,
     background 0.15s;
 }
-:where(:root[data-app-ui='modern']) button:hover {
+/* 一覧のニケと編成のタブは、マウスを重ねても枠を変えない */
+:where(:root[data-app-ui='modern']) button:where(:not(.char-tray-item, .party-tab)):hover {
   border-color: var(--m-accent);
 }
 :root[data-app-ui='modern'] :where(button, select, textarea, input, summary):focus-visible {
@@ -105,9 +106,6 @@
   box-shadow: var(--m-shadow);
   padding: 10px;
 }
-:root[data-app-ui='modern'] .modern-slot-card:hover {
-  border-color: var(--m-accent);
-}
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over {
   outline: 3px solid var(--m-accent);
   background: color-mix(in srgb, var(--m-accent) 10%, var(--m-surface));
@@ -129,7 +127,6 @@
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさをそろえる */
   box-sizing: content-box;
   border: 1px dashed var(--app-border);
-  border-radius: 10px;
   color: var(--m-muted);
   opacity: 1;
 }
@@ -155,11 +152,6 @@
   border-radius: 8px;
 }
 
-/* キャラの絵（CharacterVisual） */
-:root[data-app-ui='modern'] .char-visual {
-  border-radius: 10px;
-}
-
 /* ニケ一覧（トレイ） */
 :root[data-app-ui='modern'] .char-tray-panel {
   background: var(--m-surface);
@@ -169,18 +161,10 @@
 :root[data-app-ui='modern'] .char-tray-panel.char-tray-returning {
   outline: 3px dashed var(--m-accent);
 }
-:root[data-app-ui='modern'] .char-tray-item {
-  border-radius: 10px;
-}
-:root[data-app-ui='modern'] .char-tray-item:hover {
-  border-color: var(--m-accent);
-  background: var(--m-surface-2);
-}
 :root[data-app-ui='modern'] .char-drag-overlay {
   border-radius: 12px;
   border-color: var(--m-accent);
   background: var(--m-surface);
-  rotate: -3deg;
 }
 
 /* 育成・設定のモーダル */

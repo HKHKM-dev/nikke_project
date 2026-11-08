@@ -638,11 +638,8 @@ header h1 {
     border-color 0.15s,
     box-shadow 0.15s;
 }
-.modern-slot-card:hover {
-  border-color: color-mix(in srgb, Highlight 60%, var(--app-border));
-}
 /* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける。
-   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（外の輪が脈打つ）を重ねる */
+   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
 .modern-slot-card.modern-slot-awaiting {
   cursor: pointer;
   outline: 3px solid var(--placing-blue);
@@ -678,6 +675,8 @@ header h1 {
 }
 .modern-slot-target-inner {
   stroke-width: 5;
+  transform-origin: 50% 50%;
+  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
 }
 @keyframes modern-slot-target-pulse {
   0%,
@@ -691,7 +690,8 @@ header h1 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-target-outer {
+  .modern-slot-target-outer,
+  .modern-slot-target-inner {
     animation: none;
   }
 }
@@ -1023,16 +1023,10 @@ header h1 {
   padding: 4px;
   background: transparent;
   border: 1px solid transparent;
+  border-radius: 0;
   cursor: pointer;
   color: inherit;
-  transition:
-    transform 0.1s,
-    border-color 0.1s;
   position: relative;
-}
-.char-tray-item:hover {
-  transform: translateY(-2px);
-  border-color: Highlight;
 }
 /* 置き先を待っている間は、待っているニケに水色の実線の枠を付け、ほかのニケを暗くする */
 .char-tray-item.char-tray-item-pending {
@@ -1086,10 +1080,6 @@ header h1 {
 /* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
 .char-tray-item:disabled {
   cursor: not-allowed;
-}
-.char-tray-item:disabled:hover {
-  transform: none;
-  border-color: transparent;
 }
 .char-tray-item-taken-badge {
   position: absolute;

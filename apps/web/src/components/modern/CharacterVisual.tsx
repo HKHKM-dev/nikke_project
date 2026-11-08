@@ -35,9 +35,9 @@ export function CharacterVisual({ character, isUnsupported = false, size = 'norm
           onError={() => setFailedId(character.resourceId)}
         />
       )}
-      {/* 属性・バースト段階・クラス・武器種のバッジ（plan/design-modern-ui.md 2.5 節） */}
+      {/* 属性・バースト段階・武器種のバッジ（plan/design-modern-ui.md 2.5 節）。クラスは絵には出さない（一覧の絞り込みにだけ使う） */}
       <div className="char-visual-badges">
-        {BADGE_KINDS.map(({ key, badges }) => {
+        {BADGE_KINDS.filter(({ key }) => key !== 'class').map(({ key, badges }) => {
           const badge = badges[character[key]];
           return (
             badge && (
