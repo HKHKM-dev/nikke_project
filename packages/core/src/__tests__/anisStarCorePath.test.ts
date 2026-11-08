@@ -192,7 +192,9 @@ describe('S1 の追加ダメージは着弾のフレームのバフで出す（p
     const t = row.byProjectile['HomingProjectile:100:750']!;
     return (f: number) => {
       const s = spans.find((x) => f >= x.start && f < x.end);
-      return (s?.landing === null || s === undefined ? undefined : t[s.landing]) ?? (s?.band ? t[s.band] : undefined) ?? 0;
+      return (
+        (s?.landing === null || s === undefined ? undefined : t[s.landing]) ?? (s?.band ? t[s.band] : undefined) ?? 0
+      );
     };
   };
 
