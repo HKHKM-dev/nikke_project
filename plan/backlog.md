@@ -79,10 +79,7 @@
 ## 5. 道具・記録の整備
 
 - 画面: 版の無い古い編成の保存（Stage 3〜13）を、知らせずに初期値で上書きする（`apps/web/src/team.ts` の復元・`App.tsx`）。上書きする前に知らせるか
-- 育成状況の JSON の読み込みで、宝物の段階と Lv の整合（Lv 0 で段階が 1 以上・宝物の無いキャラの treasure）を検査しない（`packages/core/src/buildSnapshot.ts`）
-- 画面: 戦闘力の表（`data/characters/combat.json`）の版と形を検査しない。形が違うと一覧の計算の例外が画面全体を落とす（`apps/web/src/useListOrder.ts`・`packages/core/src/combatTable.ts`）。デプロイの直後に古い JS と新しい表が混ざると起きうる
 - モダン UI: ニケ一覧から選ぶと、選択中のスロットのキャラを置き換えるが、配置先のスロットを示す表示が無い（#994 で消した。`apps/web/src/views/ModernView.tsx`・`components/modern/CharacterTray.tsx`）
-- スキル定義: timed の `perCount` は、condition の無い定義でも読み込みを通り、1 パス目で例外になる（`packages/core/src/skills/holders.ts` の `holdsAt`）。いまのデータはどれも condition を付けている。読み込みで止めるか、condition 無しを扱う
 - 2026-11-07 の変更のテストの不足: `enemies.ts` の `parseHitRateDown` の不正な入力・`records/observations.ts` の `windowEndToFirstShot`・`skills/holders.ts` の leadFrames で同じ始まりに発が 2 つ以上ある場合・`cadence.ts` の変更後の武器の解放と増分が 0 以下の枝・確率の分岐（`whileItems` の stacks が数のとき・`validateChanceGrant` の敵・文脈・確率の状態に付与が 2 つ）・`useRoster`・`useListOrder` のフック・`normalize.ts` の `toTreasurePower` の例外・`calcView.ts` の宝物版の HP の比・`pr-prep.ts` の名前を変えたファイル
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
