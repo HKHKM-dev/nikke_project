@@ -1,6 +1,8 @@
+// @vitest-environment happy-dom
 // キャラの一覧の並びのフック（useListOrder.ts。plan/design-combat-power-sort.md 6 節）: 覚えた並びと、育成状況かスペック固定の戦闘力。
 // 戦闘力の表とマスタは置いてあるデータ（packages/core/data）を読む
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   MASTER_FILES,
   characterIndexPath,
@@ -16,15 +18,14 @@ import {
   type CombatPowerTable,
   type SnapshotCharacter,
 } from '@nikke/core';
-import { act } from 'react';
+import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { cleanupHooks, flush, memoryStorage, renderHook } from './hookHarness.ts';
 import { LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
 import { useListOrder } from './useListOrder.ts';
 
-/** 置いてあるデータの文（パスは画面が読むのと同じ。packages/core/src/load.ts） */
+/** 置いてあるデータの文（パスは画面が読むのと同じ。packages/core/src/load.ts）。happy-dom の URL は fs が読めないので、パスで組む */
 const text = (path: string): string =>
-  readFileSync(new URL(`../../../packages/core/data/${path}`, import.meta.url), 'utf8');
+  readFileSync(join(import.meta.dirname, '../../../packages/core/data', path), 'utf8');
 /** 表の文は fetch の返しにそのまま使う（読み込みのたびに直列化し直さない） */
 const tableText = text(combatTablePath());
 const table = JSON.parse(tableText) as CombatPowerTable;
@@ -53,113 +54,117 @@ const POWER = snapshotCombatPower(combatCharacterOf(table, ssr.resourceId)!, ent
 /** スペック固定の値で計算した戦闘力（スペック固定のときと、育成状況が無いとき） */
 const FIXED = fixedSpecCombatPowers(table, masters);
 
-let storage: Storage;
 let fetchMock: ReturnType<typeof vi.fn<(url: string) => Promise<Response>>>;
 
 beforeEach(() => {
-  storage = memoryStorage();
+  localStorage.clear();
   fetchMock = vi.fn(async () => new Response(tableText, { headers: { 'content-type': 'application/json' } }));
-  vi.stubGlobal('localStorage', storage);
-  vi.stubGlobal('window', {});
   vi.stubGlobal('fetch', fetchMock);
 });
 
-afterEach(async () => {
-  await cleanupHooks();
+afterEach(() => {
+  cleanup();
   vi.unstubAllGlobals();
 });
+
+/** 保留中の読み込み（fetch の then）と、それが起こす更新を流す。何かが「起きない」ことを見る前に使う（起きるのを待つのは waitFor） */
+const settle = () =>
+  act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
 
 type Props = { roster: BuildSnapshot | null; masters: BuildMasters | null; baseUrl: string; fixedSpec: boolean };
 const DEFAULTS: Props = { roster: ROSTER, masters, baseUrl: '/base', fixedSpec: false };
 const render = (props: Partial<Props> = {}) =>
-  renderHook((p: Props) => useListOrder(p.roster, p.masters, p.baseUrl, p.fixedSpec), { ...DEFAULTS, ...props });
+  renderHook((p: Props) => useListOrder(p.roster, p.masters, p.baseUrl, p.fixedSpec), {
+    initialProps: { ...DEFAULTS, ...props },
+  });
 
 describe('useListOrder', () => {
   it('uses the name order without a roster or a saved order, and does not load the table', async () => {
-    const hook = await render({ roster: null });
-    await flush();
-    expect(hook.current.controls).toMatchObject({
+    const { result } = render({ roster: null });
+    await settle();
+    expect(result.current.controls).toMatchObject({
       order: 'name',
       fixedSpecPowers: true,
       failedCount: 0,
       tableError: null,
     });
-    expect(hook.current.state).toEqual({ order: 'name', powers: new Map() });
+    expect(result.current.state).toEqual({ order: 'name', powers: new Map() });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('orders by the fixed-spec power without a roster once the combat power order is chosen', async () => {
-    const hook = await render({ roster: null });
-    await act(() => hook.current.controls.select('combatPower'));
-    await flush();
+    const { result } = render({ roster: null });
+    act(() => result.current.controls.select('combatPower'));
+    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(hook.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers });
-    expect(hook.current.controls).toMatchObject({ fixedSpecPowers: true, failedCount: FIXED.failures.length });
+    expect(result.current.controls).toMatchObject({ fixedSpecPowers: true, failedCount: FIXED.failures.length });
   });
 
   it('loads the table once with a roster, defaults to the combat power order, and counts the failures', async () => {
-    const hook = await render();
-    await flush();
+    const { result, rerender } = render();
+    await waitFor(() =>
+      expect(result.current.state).toEqual({ order: 'combatPower', powers: new Map([[ssr.resourceId, POWER]]) }),
+    );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]![0]).toMatch(/^\/base\/.*combat\.json$/);
-    expect(hook.current.state).toEqual({ order: 'combatPower', powers: new Map([[ssr.resourceId, POWER]]) });
-    expect(hook.current.controls).toMatchObject({
+    expect(result.current.controls).toMatchObject({
       order: 'combatPower',
       fixedSpecPowers: false,
       failedCount: 1,
       tableError: null,
     });
     // 育成状況が替わっても読み直さない
-    await hook.rerender({ ...DEFAULTS, roster: { ...ROSTER, characters: { [ssr.resourceId]: entry } } });
-    await flush();
+    rerender({ ...DEFAULTS, roster: { ...ROSTER, characters: { [ssr.resourceId]: entry } } });
+    await settle();
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(hook.current.controls.failedCount).toBe(0);
+    expect(result.current.controls.failedCount).toBe(0);
   });
 
   it('uses the fixed-spec power under the fixed spec even with a roster', async () => {
-    const hook = await render({ fixedSpec: true });
-    await flush();
-    expect(hook.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers });
-    expect(hook.current.controls.fixedSpecPowers).toBe(true);
-    await hook.rerender(DEFAULTS);
-    expect(hook.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
-    expect(hook.current.controls.fixedSpecPowers).toBe(false);
+    const { result, rerender } = render({ fixedSpec: true });
+    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
+    expect(result.current.controls.fixedSpecPowers).toBe(true);
+    rerender(DEFAULTS);
+    expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
+    expect(result.current.controls.fixedSpecPowers).toBe(false);
   });
 
   it('waits for the masters before computing the powers', async () => {
-    const hook = await render({ masters: null });
-    await flush();
-    expect(hook.current.state.powers).toEqual(new Map());
-    await hook.rerender(DEFAULTS);
-    expect(hook.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
+    const { result, rerender } = render({ masters: null });
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    await settle();
+    expect(result.current.state.powers).toEqual(new Map());
+    rerender(DEFAULTS);
+    await waitFor(() => expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]])));
   });
 
   it('keeps the selected order in the browser, and ignores an unknown saved value', async () => {
-    storage.setItem(LIST_ORDER_STORAGE_KEY, 'name');
-    const hook = await render();
-    expect(hook.current.controls.order).toBe('name');
+    localStorage.setItem(LIST_ORDER_STORAGE_KEY, 'name');
+    const { result } = render();
+    expect(result.current.controls.order).toBe('name');
     // 名前順でも、育成状況があれば表を読む
-    await flush();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    await act(() => hook.current.controls.select('combatPower'));
-    expect(hook.current.controls.order).toBe('combatPower');
-    expect(storage.getItem(LIST_ORDER_STORAGE_KEY)).toBe('combatPower');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    act(() => result.current.controls.select('combatPower'));
+    expect(result.current.controls.order).toBe('combatPower');
+    expect(localStorage.getItem(LIST_ORDER_STORAGE_KEY)).toBe('combatPower');
 
-    storage.setItem(LIST_ORDER_STORAGE_KEY, 'level');
-    expect((await render()).current.controls.order).toBe('combatPower');
-    expect((await render({ roster: null })).current.controls.order).toBe('name');
+    localStorage.setItem(LIST_ORDER_STORAGE_KEY, 'level');
+    expect(render().result.current.controls.order).toBe('combatPower');
+    expect(render({ roster: null }).result.current.controls.order).toBe('name');
+    // 育成状況のある描画が始めた読み込みを、テストの中で終わらせる
+    await settle();
   });
 
   it('shows why the table did not load', async () => {
     fetchMock.mockResolvedValue(new Response('', { status: 404 }));
-    const hook = await render();
-    await flush();
-    expect(hook.current.controls.tableError).toMatch(/combat\.json -> HTTP 404$/);
-    expect(hook.current.state.powers).toEqual(new Map());
+    const { result } = render();
+    await waitFor(() => expect(result.current.controls.tableError).toMatch(/combat\.json -> HTTP 404$/));
+    expect(result.current.state.powers).toEqual(new Map());
     // Error でない理由は文字列にする
     fetchMock.mockRejectedValue('offline');
-    const offline = await render();
-    await flush();
-    expect(offline.current.controls.tableError).toBe('offline');
+    const offline = render().result;
+    await waitFor(() => expect(offline.current.controls.tableError).toBe('offline'));
   });
 });
