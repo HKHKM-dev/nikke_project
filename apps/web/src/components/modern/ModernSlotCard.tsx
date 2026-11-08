@@ -4,6 +4,7 @@ import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
 import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
+import controllerIcon from '../../assets/badges/ui_controller.svg';
 import { CharacterVisual } from './CharacterVisual.tsx';
 
 type Props = {
@@ -81,7 +82,15 @@ export function ModernSlotCard({
       {...(characterEntry ? listeners : {})}
     >
       <div className="modern-slot-header">
-        {focused && <span className="modern-slot-focus-badge">操作</span>}
+        {focused && (
+          <span
+            className="modern-slot-focus-icon"
+            role="img"
+            aria-label="操作"
+            title="操作"
+            style={{ '--icon': `url("${controllerIcon}")` } as CSSProperties}
+          />
+        )}
         {inOtherParty && (
           <span className="modern-slot-other-party-badge" title="ほかの編成で使用中">
             他の編成

@@ -716,13 +716,16 @@ header h1 {
   gap: 4px;
   font-size: 0.8rem;
   font-weight: bold;
-  min-height: 20px;
+  /* 操作の印（30px）の有無で高さを変えない */
+  min-height: 30px;
 }
-.modern-slot-focus-badge {
-  background: Highlight;
-  color: HighlightText;
-  padding: 1px 4px;
-  font-size: 0.7rem;
+/* 操作キャラの印（コントローラーの絵。badges-src/ui_controller.svg）。白一色の絵を形だけ使い、文字色で塗る（テーマに従う） */
+.modern-slot-focus-icon {
+  width: 30px;
+  height: 30px;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
 }
 .modern-slot-other-party-badge {
   border: 1px solid currentColor;
