@@ -437,11 +437,14 @@ export function ModernView({
             </div>
           ) : draggedCharacter ? (
             <div className="char-drag-overlay">
-              <CharacterVisual
-                character={draggedCharacter}
-                size="compact"
-                overlay={draggedMarks && <GrowthMarksView {...draggedMarks} className="char-tray-growth" />}
-              />
+              {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
+              <span className="char-tray-item-visual">
+                <CharacterVisual
+                  character={draggedCharacter}
+                  size="compact"
+                  overlay={draggedMarks && <GrowthMarksView {...draggedMarks} className="char-tray-growth" />}
+                />
+              </span>
               <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>
             </div>
           ) : null}

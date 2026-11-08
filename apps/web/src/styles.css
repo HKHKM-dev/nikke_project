@@ -1316,17 +1316,18 @@ header h1 {
 .char-tray-item.drag-source-returning {
   opacity: 0.3;
 }
+/* 一覧から持ち上げた絵。一覧の項目（.char-tray-item）と同じ大きさ・余白にし、枠や背景は付けない（絵にだけ影を付ける） */
 .char-drag-overlay {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 6px;
-  background: color-mix(in srgb, var(--app-bg) 90%, black);
-  border: 2px solid Highlight;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+  padding: 2px;
+  border: 1px solid transparent;
   pointer-events: none;
-  transform: scale(1.05);
+}
+.char-drag-overlay .char-visual {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
 /* スロットから持ち上げた立ち絵（スロットの絵と同じ大きさ。位置はカードの中の絵の位置に合わせる） */
 .slot-drag-overlay {

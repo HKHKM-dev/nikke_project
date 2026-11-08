@@ -147,11 +147,6 @@
 :root[data-app-ui='modern'] .char-tray-panel.char-tray-returning {
   outline: 3px dashed var(--m-accent);
 }
-:root[data-app-ui='modern'] .char-drag-overlay {
-  border-radius: 12px;
-  border-color: var(--m-accent);
-  background: var(--m-surface);
-}
 
 /* 育成・設定のモーダル */
 :root[data-app-ui='modern'] .modal-container {
