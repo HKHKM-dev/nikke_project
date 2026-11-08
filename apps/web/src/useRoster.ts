@@ -5,7 +5,8 @@ import type { PartiesState } from './parties.ts';
 import {
   ROSTER_STORAGE_KEY,
   applyRoster,
-  importConfirmText,
+  clearConfirmText,
+  clearRosterFromTeam,
   importSummary,
   restoreRoster,
   rosterFileName,
@@ -24,9 +25,16 @@ export type RosterControls = {
   /** ブラウザに保存した育成状況がある（読めないものも。消せるように） */
   stored: boolean;
   message: RosterMessage | null;
+  /**
+   * 「消す」の確かめの文（確かめを待っていなければ null）。ブラウザの確認の窓（window.confirm）は使わず、設定の欄の中で確かめる
+   * （claude.ai のアーティファクトの枠の中では窓を出せず、confirm がすぐ false を返して何も起きない）。読み込むときは確かめない
+   */
+  clearPrompt: string | null;
   importFile: (file: File) => Promise<void>;
   exportFile: () => void;
   clear: () => void;
+  confirmClear: () => void;
+  cancelClear: () => void;
 };
 
 type Args = {
@@ -56,6 +64,8 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   const restored = useMemo(() => (index === null ? null : restoreRoster(saved, index)), [saved, index]);
   const roster = restored?.ok ? restored.snapshot : null;
   const [message, setMessage] = useState<RosterMessage | null>(null);
+  // 「消す」の確かめを待っているか。文は描くたびにいまの編成で作る（確かめの間に編成を変えても、戻すスロットの数と合う）
+  const [clearPending, setClearPending] = useState(false);
   // 読めない保存は消さずに理由を出す
   const restoreError: RosterMessage | null =
     restored?.ok === false
@@ -75,8 +85,8 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
       setMessage({ kind: 'error', lines: read.errors });
       return;
     }
-    if (!window.confirm(importConfirmText(rosterSlotCount(team, parties, read.snapshot)))) return;
-    // 検査を通った元の文を保存する（read.snapshot はキャラのデータに無いキャラを飛ばしている）
+    setClearPending(false);
+    // 確かめずにすぐ写す（オーナーの指示）。検査を通った元の文を保存する（read.snapshot はキャラのデータに無いキャラを飛ばしている）
     writeStorage(ROSTER_STORAGE_KEY, text);
     setSaved(text);
     const next = applyRoster(team, parties, read.snapshot);
@@ -90,14 +100,33 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   };
 
   const clear = () => {
-    if (!window.confirm('育成状況を消します（スロットの育成はそのまま）。')) return;
+    setMessage(null);
+    setClearPending(true);
+  };
+
+  const confirmClear = () => {
+    setClearPending(false);
+    // 育成状況から写したもの（シンクロ LV・コンソール・スロットの育成）も既定に戻す
+    const next = clearRosterFromTeam(team, parties, roster);
+    dispatch({ type: 'replace', state: next.team });
+    setParties(next.parties);
     removeStorage(ROSTER_STORAGE_KEY);
     setSaved(null);
     setMessage(null);
   };
 
   return {
-    controls: { roster, stored: saved !== null, message: message ?? restoreError, importFile, exportFile, clear },
+    controls: {
+      roster,
+      stored: saved !== null,
+      message: message ?? restoreError,
+      clearPrompt: clearPending ? clearConfirmText(roster === null ? 0 : rosterSlotCount(team, parties, roster)) : null,
+      importFile,
+      exportFile,
+      clear,
+      confirmClear,
+      cancelClear: () => setClearPending(false),
+    },
     dispatchWithRoster,
   };
 }

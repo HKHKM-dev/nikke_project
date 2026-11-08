@@ -1,8 +1,11 @@
 import { useDroppable } from '@dnd-kit/core';
-import type { CharacterIndexEntry } from '@nikke/core';
+import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
+import { trayGrowthMarks } from './GrowthMarks.tsx';
+import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
+import type { ListOrderControls } from '../../useListOrder.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -11,6 +14,12 @@ type Props = {
   fullySupported: ReadonlySet<number> | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
+  /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
+  roster: BuildSnapshot | null;
+  /** スペック固定（各ニケの限界突破・コア強化は、計算に使う固定の値を出す） */
+  fixedSpec: boolean;
+  /** 一覧の並び（名前順・戦闘力順。設定のメニューの「一覧の並び」と同じもの） */
+  listOrder: ListOrderControls;
   onSelectCharacter: (resourceId: number) => void;
 };
 
@@ -42,7 +51,17 @@ function BadgeFilter({
   );
 }
 
-export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, pendingId, onSelectCharacter }: Props) {
+export function CharacterTray({
+  index,
+  takenIds,
+  otherPartyIds,
+  fullySupported,
+  pendingId,
+  roster,
+  fixedSpec,
+  listOrder,
+  onSelectCharacter,
+}: Props) {
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
@@ -92,6 +111,38 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
             </label>
           </div>
         </div>
+        {/* 並べ替え（名前順・戦闘力順）と、フィルター・立ち絵の縦長と四角の切り替えのボタンの置き場所（フィルターと切り替えは未実装。
+            押しても何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
+        <div className="char-tray-actions">
+          <label className="char-tray-action-button char-tray-sort">
+            並べ替え
+            <select value={listOrder.order} onChange={(e) => listOrder.select(e.target.value as ListOrder)}>
+              {LIST_ORDERS.map((o) => (
+                <option key={o} value={o}>
+                  {LIST_ORDER_LABEL[o]}
+                </option>
+              ))}
+            </select>
+          </label>
+          {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
+          {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
+            <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
+          )}
+          {listOrder.order === 'combatPower' && listOrder.failedCount > 0 && (
+            <span className="hint">戦闘力を出せない {listOrder.failedCount} 体は後ろに名前順で並べる</span>
+          )}
+          <button type="button" className="char-tray-action-button" aria-disabled="true" title="フィルター（未実装）">
+            フィルター<span className="char-tray-unimplemented">未実装</span>
+          </button>
+          <button
+            type="button"
+            className="char-tray-action-button"
+            aria-disabled="true"
+            title="立ち絵の縦長・四角の切り替え（未実装）"
+          >
+            縦長 / 四角<span className="char-tray-unimplemented">未実装</span>
+          </button>
+        </div>
       </div>
 
       <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
@@ -109,6 +160,7 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
                 inOtherParty={otherPartyIds.has(char.resourceId)}
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
+                growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />
             );

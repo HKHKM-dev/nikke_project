@@ -19,6 +19,9 @@ import type { PartiesState } from './parties.ts';
 import {
   CONSOLE_CLASSES,
   CONSOLE_CORPORATIONS,
+  DEFAULT_SYNCHRO_LEVEL,
+  emptyConsole,
+  emptySlot,
   type ConsoleInput,
   type SlotGrowthFields,
   type SlotState,
@@ -108,6 +111,42 @@ export function applyRoster(
   };
 }
 
+/** 写した育成を消したスロットの育成（スロットの既定。キャラはそのまま） */
+function defaultFields(): SlotGrowthFields {
+  const { growth, build, skillLevels, treasurePhase } = emptySlot();
+  return { growth, build, skillLevels, treasurePhase };
+}
+
+/**
+ * 育成状況を消したときに戻す（読み込んだとき・置いたときに写したものを残さない）: シンクロ LV・コンソールと、
+ * 全部の編成のスロットのうち育成状況にいるキャラの育成を既定にする（スロットで変えた値も戻る）。
+ * 保存が読めない（roster が null）ときは、写したキャラが分からないのでスロットはそのまま
+ */
+export function clearRosterFromTeam(
+  team: TeamState,
+  parties: PartiesState,
+  roster: BuildSnapshot | null,
+): { team: TeamState; parties: PartiesState } {
+  const reset = (slots: SlotState[]) =>
+    slots.map((s) => (entryOf(roster, s.resourceId) === undefined ? s : { ...s, ...defaultFields() }));
+  return {
+    team: { ...team, synchroLevel: DEFAULT_SYNCHRO_LEVEL, console: emptyConsole(), slots: reset(team.slots) },
+    parties: {
+      ...parties,
+      parties: parties.parties.map((p) => (p === null ? null : { ...p, slots: reset(p.slots) })),
+    },
+  };
+}
+
+/** 消すときの確かめの文 */
+export function clearConfirmText(slotCount: number): string {
+  return (
+    '育成状況を消し、シンクロ LV・リサイクルルーム' +
+    (slotCount > 0 ? `と、育成状況にいるキャラの ${slotCount} スロット（全部の編成）の育成` : '') +
+    'を既定に戻します。'
+  );
+}
+
 /** 読み込むと育成が上書きされるスロットの数（全部の編成） */
 export function rosterSlotCount(team: TeamState, parties: PartiesState, roster: BuildSnapshot): number {
   const slots = [...team.slots, ...parties.parties.flatMap((p) => p?.slots ?? [])];
@@ -141,12 +180,4 @@ export function importSummary(roster: BuildSnapshot, notices: readonly string[])
       ? [`宝物の段階が未確定（Lv 0）の ${unknown} 体は、宝物なしでスロットへ写す（スロットで選ぶ）`]
       : []),
   ];
-}
-
-export function importConfirmText(slotCount: number): string {
-  return (
-    'シンクロ LV・リサイクルルーム' +
-    (slotCount > 0 ? `と、育成状況にいるキャラの ${slotCount} スロット（全部の編成）の育成` : '') +
-    'を、読み込む育成状況で上書きします。'
-  );
 }

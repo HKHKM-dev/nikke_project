@@ -3,17 +3,21 @@
 // 基礎ステータスの曲線（levelCurve）は多くのキャラで同じなので、表の中に 1 回ずつ置き、キャラは番号で指す。曲線は前の Lv との差で
 // 持つ（ほぼ等差なので gzip がよく効く。今のデータで 400KB → 50KB 前後）。
 // 書くのは fetch-data（キャラのデータと一緒に）と scripts/combat-table.ts（手元のキャラのデータから作り直す）。
-import type { computeCombatPower } from './combatPower.ts';
-import type { CharacterData, StatKind } from './types.ts';
+import { fixedSpecBuild } from './build.ts';
+import type { SnapshotCombatPowers } from './buildSnapshot.ts';
+import { computeCombatPower } from './combatPower.ts';
+import { fixedSpecGrowth } from './fixedSpec.ts';
+import { MAX_SKILL_LEVELS } from './skills/resolve.ts';
+import type { BuildMasters, CharacterData, StatKind } from './types.ts';
 
 export const COMBAT_TABLE_FILE = 'combat.json';
 
 /** 戦闘力の計算に要るキャラの値 */
-export type CombatCharacter = Parameters<typeof computeCombatPower>[0];
+export type CombatCharacter = Parameters<typeof computeCombatPower>[0] & Pick<CharacterData, 'corporationSubType'>;
 
 type CombatTableEntry = Pick<
   CharacterData,
-  'rarity' | 'class' | 'corporation' | 'weaponType' | 'statEnhance' | 'crit'
+  'rarity' | 'class' | 'corporation' | 'corporationSubType' | 'weaponType' | 'statEnhance' | 'crit'
 > & {
   /** levelCurves の番号 */
   levelCurve: number;
@@ -68,6 +72,8 @@ export function buildCombatPowerTable(characters: readonly CharacterData[]): Com
         rarity: c.rarity,
         class: c.class,
         corporation: c.corporation,
+        // スペック固定の好感度の上限（fixedSpecAffectionRank）に要る
+        corporationSubType: c.corporationSubType,
         weaponType: c.weaponType,
         statEnhance: c.statEnhance,
         crit: c.crit,
@@ -85,4 +91,34 @@ export function combatCharacterOf(table: CombatPowerTable, resourceId: number): 
   const levelCurve = entry === undefined ? undefined : curvesOf(table)[entry.levelCurve];
   if (entry === undefined || levelCurve === undefined) return undefined;
   return { ...entry, levelCurve, treasure: entry.treasure ? true : null };
+}
+
+/**
+ * スペック固定（Lv400・限界突破とコアは上限・好感度は上限・T9 Lv5 の装備・スキル Lv10・キューブとコレクションと宝物なし。
+ * fixedSpec.ts・build.ts の fixedSpecBuild）で計算した、表の全キャラの戦闘力。一覧の戦闘力順に使う。
+ * 実機のスペック固定の画面には戦闘力が出ないので、実機とは照合していない（モデルの値）
+ */
+export function fixedSpecCombatPowers(table: CombatPowerTable, masters: BuildMasters): SnapshotCombatPowers {
+  const powers = new Map<number, number>();
+  const failures: SnapshotCombatPowers['failures'] = [];
+  for (const key of Object.keys(table.characters)) {
+    const id = Number(key);
+    const character = combatCharacterOf(table, id);
+    if (character === undefined) {
+      failures.push({ id, message: 'キャラの値が表に無い' });
+      continue;
+    }
+    try {
+      const input = {
+        growth: fixedSpecGrowth(character),
+        build: fixedSpecBuild(character),
+        skillLevels: MAX_SKILL_LEVELS,
+        treasure: false,
+      };
+      powers.set(id, computeCombatPower(character, input, masters).value);
+    } catch (e) {
+      failures.push({ id, message: e instanceof Error ? e.message : String(e) });
+    }
+  }
+  return { powers, failures };
 }

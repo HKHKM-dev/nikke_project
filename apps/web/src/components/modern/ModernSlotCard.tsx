@@ -1,18 +1,25 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
-import { DEFAULT_CONTROLLED_SLOT, type SlotState } from '../../team.ts';
+import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
+import controllerIcon from '../../assets/badges/ui_controller.svg';
+import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
+import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 
 type Props = {
   slotIndex: number;
-  slot: SlotState;
   character: CharacterData | undefined;
   characterEntry: CharacterIndexEntry | undefined;
   isUnsupported: boolean;
   error: string | undefined;
   slotResult: SlotResultView | null;
+  /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */
+  growthMarks: GrowthMarks | null;
+  /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
+  collectionBadge: Badge | null;
   /** このスロットのニケがほかの編成でも使われている */
   inOtherParty: boolean;
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
@@ -24,12 +31,13 @@ type Props = {
 
 export function ModernSlotCard({
   slotIndex,
-  slot,
   character,
   characterEntry,
   isUnsupported,
   error,
   slotResult,
+  collectionBadge,
+  growthMarks,
   inOtherParty,
   onPlacePending,
   onOpenBuildModal,
@@ -52,7 +60,7 @@ export function ModernSlotCard({
     data: { slotIndex },
   });
 
-  // キャラが配置されている場合、スロット間スワップ用のドラッグ
+  // スロット間の入れ替えのドラッグ（空のスロットも持ち上げて入れ替えられる）
   const {
     attributes,
     listeners,
@@ -65,7 +73,6 @@ export function ModernSlotCard({
       slotIndex,
       character: characterEntry,
     },
-    disabled: !characterEntry,
   });
 
   const setCardRef = (node: HTMLDivElement | null) => {
@@ -76,33 +83,25 @@ export function ModernSlotCard({
   return (
     <div
       ref={setCardRef}
-      className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${focused ? 'modern-slot-focused' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
+      className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       onClick={onPlacePending}
-      {...(characterEntry ? attributes : {})}
-      {...(characterEntry ? listeners : {})}
+      {...attributes}
+      {...listeners}
     >
       <div className="modern-slot-header">
-        <span className="modern-slot-label">スロット {slotIndex + 1}</span>
-        {focused && <span className="modern-slot-focus-badge">操作</span>}
+        {focused && (
+          <span
+            className="modern-slot-focus-icon"
+            role="img"
+            aria-label="操作"
+            title="操作"
+            style={{ '--icon': `url("${controllerIcon}")` } as CSSProperties}
+          />
+        )}
         {inOtherParty && (
           <span className="modern-slot-other-party-badge" title="ほかの編成で使用中">
             他の編成
           </span>
-        )}
-        {slot.resourceId !== null && (
-          <button
-            type="button"
-            className="modern-slot-clear-button"
-            title="スロットを空にする"
-            aria-label="スロットを空にする"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClear();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            ✕
-          </button>
         )}
       </div>
 
@@ -115,18 +114,48 @@ export function ModernSlotCard({
         )}
         {characterEntry ? (
           <div className="modern-slot-char-area">
-            <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />
-            <div className="modern-slot-char-name">{characterEntry.name.ja}</div>
+            <CharacterVisual
+              character={characterEntry}
+              isUnsupported={isUnsupported}
+              size="portrait"
+              extraBadge={collectionBadge}
+            />
+            <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
+            <button
+              type="button"
+              className="modern-slot-icon-button modern-slot-clear-button"
+              title="スロットを空にする"
+              aria-label="スロットを空にする"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClear();
+              }}
+              // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+            >
+              ✕
+            </button>
+            <button
+              type="button"
+              className="modern-slot-icon-button modern-slot-build-button"
+              title="育成・設定"
+              aria-label="育成・設定"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenBuildModal();
+              }}
+              // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+            >
+              ⚙
+            </button>
           </div>
         ) : (
-          // ニケがいるときと同じ大きさ（絵の枠と名前の行）にして、選んでもカードの大きさが変わらないようにする
+          // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
           <div className="modern-slot-char-area">
-            <div className="modern-slot-empty-area">
-              <span className="modern-slot-empty-plus">＋</span>
-            </div>
-            <div className="modern-slot-char-name" aria-hidden="true">
-              &nbsp;
-            </div>
+            <EmptySlotFace slotIndex={slotIndex} />
           </div>
         )}
       </div>
@@ -141,25 +170,78 @@ export function ModernSlotCard({
           {damagePercent > 0 && <span className="modern-slot-damage-percent">{damagePercent}%</span>}
         </div>
         <div className="modern-slot-damage-bar-track">
-          <div className="modern-slot-damage-bar-fill" style={{ width: `${damagePercent}%` }} />
+          <div
+            className="modern-slot-damage-bar-fill"
+            style={{
+              width: `${damagePercent}%`,
+              backgroundSize: damagePercent > 0 ? `${10000 / damagePercent}% 100%` : undefined,
+            }}
+          />
         </div>
       </div>
+    </div>
+  );
+}
 
-      <div className="modern-slot-footer">
-        {characterEntry && (
-          <button
-            type="button"
-            className="modern-slot-action-button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenBuildModal();
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
-            ⚙️ 育成・設定
-          </button>
-        )}
-      </div>
+/** 名前が流れる速さ（px/秒）と、ループでつながる 2 つの名前の間（px。styles.css の .modern-slot-char-name-track の margin と同じ） */
+const NAME_SCROLL_SPEED = 40;
+const NAME_SCROLL_GAP = 32;
+
+/**
+ * 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、右から左へ一定の速さで流し続ける
+ * （名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）
+ */
+export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [textWidth, setTextWidth] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    const text = textRef.current;
+    if (!box || !text) return;
+    const measure = () => {
+      const style = getComputedStyle(box);
+      const room = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const width = text.getBoundingClientRect().width;
+      setTextWidth(width > room ? width : null);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [name]);
+  const shift = textWidth === null ? 0 : textWidth + NAME_SCROLL_GAP;
+  return (
+    <div
+      ref={boxRef}
+      className={`modern-slot-char-name ${textWidth !== null ? 'modern-slot-char-name-scroll' : ''}`}
+      style={
+        {
+          '--name-shift': `${shift}px`,
+          '--name-duration': `${shift / NAME_SCROLL_SPEED}s`,
+        } as CSSProperties
+      }
+    >
+      {marks && <GrowthMarksView {...marks} className="modern-slot-growth" />}
+      <span className="modern-slot-char-name-track">
+        <span ref={textRef}>{name}</span>
+        {textWidth !== null && <span aria-hidden="true">{name}</span>}
+      </span>
+    </div>
+  );
+}
+
+/** 空のスロットの枠（＋・番号・FRONT か REAR・EMPTY SLOT・5 つのうちの位置）。持ち上げたときの絵（ModernView の DragOverlay）にも使う */
+export function EmptySlotFace({ slotIndex }: { slotIndex: number }) {
+  return (
+    <div className="modern-slot-empty-area">
+      <span className="modern-slot-empty-plus">＋</span>
+      <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
+      <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>
+      <span className="modern-slot-empty-label">EMPTY SLOT</span>
+      <span className="modern-slot-empty-position" aria-hidden="true">
+        {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
+      </span>
     </div>
   );
 }

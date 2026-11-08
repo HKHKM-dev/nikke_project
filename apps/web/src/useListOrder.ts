@@ -1,7 +1,9 @@
 // キャラの一覧の並び（listOrder.ts）の状態: 選んだ並び（ブラウザに覚える）と、育成状況の戦闘力。
-// 戦闘力の表（data/characters/combat.json）は、育成状況があるときだけ読む
+// 戦闘力の表（data/characters/combat.json）は、戦闘力順のとき（と、育成状況があるとき）に読む。戦闘力順はいつも選べ、
+// スペック固定のときと育成状況が無いときは、スペック固定の値で計算した戦闘力（core の fixedSpecCombatPowers）で並べる
 import {
   combatCharacterOf,
+  fixedSpecCombatPowers,
   loadCombatPowerTable,
   snapshotCombatPowers,
   type BuildMasters,
@@ -20,8 +22,8 @@ export const ListOrderContext = createContext<ListOrderState>({ order: 'name', p
 export type ListOrderControls = {
   order: ListOrder;
   select: (order: ListOrder) => void;
-  /** 育成状況があるか（無ければ戦闘力順は選べない） */
-  hasRoster: boolean;
+  /** 戦闘力がスペック固定の値で計算したものか（スペック固定のときと、育成状況が無いとき） */
+  fixedSpecPowers: boolean;
   /** 戦闘力を出せなかったキャラの数 */
   failedCount: number;
   /** 戦闘力の表を読めなかった理由 */
@@ -32,27 +34,35 @@ export function useListOrder(
   roster: BuildSnapshot | null,
   masters: BuildMasters | null,
   baseUrl: string,
+  fixedSpec: boolean,
 ): { controls: ListOrderControls; state: ListOrderState } {
   const [saved, setSaved] = useState(() => parseListOrder(readStorage(LIST_ORDER_STORAGE_KEY)));
   const [table, setTable] = useState<CombatPowerTable | null>(null);
   const [tableError, setTableError] = useState<string | null>(null);
 
-  const hasRoster = roster !== null;
+  const order = effectiveListOrder(saved, roster !== null);
+  const fixedSpecPowers = fixedSpec || roster === null;
+  const needTable = order === 'combatPower' || roster !== null;
   useEffect(() => {
-    if (!hasRoster || table !== null) return;
+    if (!needTable || table !== null) return;
     loadCombatPowerTable({ baseUrl }).then(setTable, (e: unknown) =>
       setTableError(e instanceof Error ? e.message : String(e)),
     );
-  }, [hasRoster, table, baseUrl]);
+  }, [needTable, table, baseUrl]);
 
-  const computed = useMemo(
+  // スペック固定の戦闘力は育成状況に依らないので、育成状況を読み込み直しても計算し直さない
+  const fixedComputed = useMemo(
+    () => (table === null || masters === null ? null : fixedSpecCombatPowers(table, masters)),
+    [table, masters],
+  );
+  const rosterComputed = useMemo(
     () =>
-      roster === null || table === null || masters === null
+      table === null || masters === null || roster === null
         ? null
         : snapshotCombatPowers(roster, (id) => combatCharacterOf(table, id), masters),
     [roster, table, masters],
   );
-  const order = effectiveListOrder(saved, hasRoster);
+  const computed = fixedSpecPowers ? fixedComputed : rosterComputed;
   const powers = computed?.powers;
   const state = useMemo<ListOrderState>(() => ({ order, powers: powers ?? new Map() }), [order, powers]);
 
@@ -62,7 +72,13 @@ export function useListOrder(
   };
 
   return {
-    controls: { order, select, hasRoster, failedCount: computed?.failures.length ?? 0, tableError },
+    controls: {
+      order,
+      select,
+      fixedSpecPowers,
+      failedCount: computed?.failures.length ?? 0,
+      tableError,
+    },
     state,
   };
 }

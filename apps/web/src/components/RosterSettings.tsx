@@ -7,7 +7,17 @@ const BUTTON_ROW = { display: 'flex', gap: 6, flexWrap: 'wrap' } as const;
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const MESSAGES = { maxWidth: '22em' } as const;
 
-export function RosterSettings({ roster, stored, message, importFile, exportFile, clear }: RosterControls) {
+export function RosterSettings({
+  roster,
+  stored,
+  message,
+  clearPrompt,
+  importFile,
+  exportFile,
+  clear,
+  confirmClear,
+  cancelClear,
+}: RosterControls) {
   const fileRef = useRef<HTMLInputElement>(null);
   return (
     <fieldset className="popover-group">
@@ -17,10 +27,20 @@ export function RosterSettings({ roster, stored, message, importFile, exportFile
         <button type="button" className="advanced-settings-button" onClick={() => fileRef.current?.click()}>
           読み込む
         </button>
-        <button type="button" className="advanced-settings-button" disabled={roster === null} onClick={exportFile}>
+        <button
+          type="button"
+          className="advanced-settings-button"
+          aria-disabled={roster === null}
+          onClick={() => roster !== null && exportFile()}
+        >
           書き出す
         </button>
-        <button type="button" className="advanced-settings-button" disabled={!stored} onClick={clear}>
+        <button
+          type="button"
+          className="advanced-settings-button"
+          aria-disabled={!stored}
+          onClick={() => stored && clear()}
+        >
           消す
         </button>
       </div>
@@ -35,6 +55,19 @@ export function RosterSettings({ roster, stored, message, importFile, exportFile
           if (file !== undefined) void importFile(file);
         }}
       />
+      {clearPrompt !== null && (
+        <div style={MESSAGES} role="alertdialog" aria-label="確かめ">
+          <p className="note">{clearPrompt}</p>
+          <div style={BUTTON_ROW}>
+            <button type="button" className="advanced-settings-button" onClick={confirmClear}>
+              消す
+            </button>
+            <button type="button" className="advanced-settings-button" onClick={cancelClear}>
+              やめる
+            </button>
+          </div>
+        </div>
+      )}
       {message !== null && (
         <ul className="notes" style={MESSAGES} aria-live="polite">
           {message.kind === 'error' && <li className="note">読み込めなかった:</li>}

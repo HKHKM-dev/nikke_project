@@ -9,7 +9,15 @@ import {
   type SnapshotCharacter,
 } from '../buildSnapshot.ts';
 import { computeCombatPower } from '../combatPower.ts';
-import { buildCombatPowerTable, combatCharacterOf, type CombatPowerTable } from '../combatTable.ts';
+import { fixedSpecBuild } from '../build.ts';
+import {
+  buildCombatPowerTable,
+  combatCharacterOf,
+  fixedSpecCombatPowers,
+  type CombatPowerTable,
+} from '../combatTable.ts';
+import { fixedSpecGrowth } from '../fixedSpec.ts';
+import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import { MASTER_FILES } from '../load.ts';
 import type { BuildMasters, CharacterData, CharacterIndex } from '../types.ts';
 
@@ -23,6 +31,21 @@ const masters = Object.fromEntries(
 const table = data<CombatPowerTable>('characters/combat.json');
 
 describe('戦闘力の表', () => {
+  it('スペック固定の戦闘力は、キャラのデータにスペック固定の育成を入れて出すものと同じ（全キャラ・失敗なし）', () => {
+    const { powers, failures } = fixedSpecCombatPowers(table, masters);
+    expect(failures).toEqual([]);
+    expect(powers.size).toBe(characters.length);
+    for (const c of characters) {
+      const input = {
+        growth: fixedSpecGrowth(c),
+        build: fixedSpecBuild(c),
+        skillLevels: MAX_SKILL_LEVELS,
+        treasure: false,
+      };
+      expect(powers.get(c.resourceId)).toBe(computeCombatPower(c, input, masters).value);
+    }
+  });
+
   it('置いてある表は、キャラのデータから作ったものと同じ（違えば npm run combat-table で作り直す）', () => {
     expect(table).toEqual(buildCombatPowerTable(characters));
   });

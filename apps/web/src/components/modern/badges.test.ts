@@ -2,7 +2,14 @@ import { readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import viteConfig from '../../../vite.config.ts';
-import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters } from './badges.ts';
+import {
+  BADGE_KINDS,
+  VISUAL_BADGE_KINDS,
+  collectionBadge,
+  matchesBadgeFilters,
+  toggleBadgeFilter,
+  type BadgeFilters,
+} from './badges.ts';
 
 const BADGE_DIR = fileURLToPath(new URL('../../assets/badges', import.meta.url));
 const BADGE_FILES = readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'));
@@ -64,5 +71,26 @@ describe('バッジの絞り込み', () => {
     toggleBadgeFilter(filters, 'element', 'Fire');
     toggleBadgeFilter(filters, 'class', 'Attacker');
     expect(filters).toEqual({ element: 'Fire' });
+  });
+});
+
+describe('絵のバッジ', () => {
+  it('左上に縦に、属性・武器種・バースト段階の順に出す（クラスは出さない）', () => {
+    expect(VISUAL_BADGE_KINDS.map(({ key }) => key)).toEqual(['element', 'weaponType', 'burstStep']);
+  });
+
+  it('コレクションは、宝物・R・SR と LV の上限でバッジを選び、無ければ出さない', () => {
+    const file = (b: ReturnType<typeof collectionBadge>) => b?.src ?? null;
+    expect(collectionBadge(null, 0, false)).toBeNull();
+    expect(collectionBadge({ rarity: 'R', level: 14 }, 0, false)?.label).toBe('コレクション R LV 14');
+    expect(collectionBadge({ rarity: 'SR', level: 15 }, 0, false)?.label).toBe('コレクション SR LV 15');
+    expect(collectionBadge({ rarity: 'SR', level: 15 }, 2, true)?.label).toBe('宝物 段階 2');
+    // 宝物の無いキャラは段階を見ない
+    expect(collectionBadge(null, 3, false)).toBeNull();
+    // 上限の版と通常の版は別のバッジ
+    expect(file(collectionBadge({ rarity: 'R', level: 15 }, 0, false))).not.toBe(
+      file(collectionBadge({ rarity: 'R', level: 14 }, 0, false)),
+    );
+    expect(file(collectionBadge(null, 3, true))).not.toBe(file(collectionBadge(null, 1, true)));
   });
 });

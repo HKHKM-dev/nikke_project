@@ -14,9 +14,9 @@ export function parseListOrder(v: string | null): ListOrder | null {
   return (LIST_ORDERS as readonly (string | null)[]).includes(v) ? (v as ListOrder) : null;
 }
 
-/** 使う並び。既定は、育成状況があれば戦闘力順、無ければ名前順。育成状況が無ければ戦闘力順は選べない */
+/** 使う並び。選んだ並びがあればそれ。無ければ、育成状況があれば戦闘力順、無ければ名前順（戦闘力順はいつも選べる） */
 export function effectiveListOrder(saved: ListOrder | null, hasRoster: boolean): ListOrder {
-  return hasRoster ? (saved ?? 'combatPower') : 'name';
+  return saved ?? (hasRoster ? 'combatPower' : 'name');
 }
 
 const collator = new Intl.Collator('ja');
