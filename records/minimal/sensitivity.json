@@ -1820,7 +1820,15 @@
     {
       "observation": "0123-24",
       "element": "A2 skill2.effects[0]",
-      "key": "9c779b16dbd677b3",
+      "key": "9f514dec262fa8c7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0123-25",
+      "element": "A2 skill2.effects[0]",
+      "key": "545d5e01c7c15aa8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18943,7 +18951,7 @@
     {
       "observation": "0864-05",
       "element": "A2 skill2.effects[0]",
-      "key": "78a617c10909e61a",
+      "key": "9726245d305150c2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18951,7 +18959,7 @@
     {
       "observation": "0864-06",
       "element": "A2 skill2.effects[0]",
-      "key": "7d841b375a6cd358",
+      "key": "0d764a0b24ef6d10",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18959,7 +18967,15 @@
     {
       "observation": "0864-08",
       "element": "A2 skill2.effects[0]",
-      "key": "25bb8b4784f5f746",
+      "key": "ea68ef1b88e74dbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0864-09",
+      "element": "A2 skill2.effects[0]",
+      "key": "43b2b6127e677469",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18967,7 +18983,7 @@
     {
       "observation": "0865-05",
       "element": "A2 skill2.effects[0]",
-      "key": "f729283d8abecaf4",
+      "key": "d95c0b8b0fc9a890",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18975,7 +18991,7 @@
     {
       "observation": "0865-06",
       "element": "A2 skill2.effects[0]",
-      "key": "7b3028eb439a9226",
+      "key": "589c7ce17970b6e2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -18983,7 +18999,15 @@
     {
       "observation": "0865-08",
       "element": "A2 skill2.effects[0]",
-      "key": "5b741d9b37a359e0",
+      "key": "042ebed1b03446ac",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "0865-09",
+      "element": "A2 skill2.effects[0]",
+      "key": "768c140413936f7b",
       "effective": false,
       "minus": 0,
       "plus": null
