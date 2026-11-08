@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 10,
+  "text": "2026-11-07 の変更のテストの不足: `enemies.ts` の `parseHitRateDown` の不正な入力・`records/observations.ts` の `windowEndToFirstShot`・`skills/holders.ts` の leadFrames で同じ始まりに発が 2 つ以上ある場合・`cadence.ts` の変更後の武器の解放と増分が 0 以下の枝・確率の分岐（`whileItems` の stacks が数のとき・`validateChanceGrant` の敵・文脈・確率の状態に付与が 2 つ）・`useRoster`・`useListOrder` のフック・`normalize.ts` の `toTreasurePower` の例外・`calcView.ts` の宝物版の HP の比・`pr-prep.ts` の名前を変えたファイル"
+}

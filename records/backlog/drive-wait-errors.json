@@ -1,0 +1,5 @@
+{
+  "section": "5",
+  "order": 6,
+  "text": "Drive の待ち: TypeError をすべて「待てば直る」とみるので、中のバグが待ちの上限の後の別の失敗に隠れる（`tools/captures/drive.ts` の `isTransientDriveError`）。intake の `Drive.connect()` に打ち切りの時間が無く、TimeoutError の分岐が効かない（`tools/captures/intake.ts`）"
+}
