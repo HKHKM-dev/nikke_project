@@ -95,7 +95,10 @@ export type CompareSetup = {
    * hitRate は、表が未測定の項目にだけ使う）。**省略は 'manual'**（Stage 19-B の観測値は手入力のまま）
    */
   condition?: 'auto' | 'manual';
-  /** Stage 18-C: 中遠の着地点を 1 か所に固定する（録画で読んだ着地点。plan/verification.md「実距離への換算」）。省略は配分 */
+  /**
+   * Stage 18-C: 中遠の着地点を 1 か所に固定する（録画で読んだ着地点。plan/verification.md「実距離への換算」）。省略は配分。
+   * 条件が手入力でも書ける（飛ぶ時間・スキルのヒットのコアの割合は条件の決め方に依らず着地点で引く。plan/design-anis-star-unimplemented.md 2 節）
+   */
   midFarLanding?: MidFarLanding;
   /** 近の着地点を、並びの 1 回目・2 回目の順に固定する（録画で読んだ着地点。C-0155）。省略は配分 */
   nearLanding?: NearLanding[];
@@ -2502,21 +2505,18 @@ export function validateObservations(
     const midFar = c.setup.midFarLanding;
     if (midFar !== undefined) {
       if (!MID_FAR_LANDINGS.includes(midFar)) errors.push(`${at}: midFarLanding は A・B・C`);
-      if (condition !== 'auto') errors.push(`${at}: midFarLanding は condition が auto のときだけ`);
     }
     const near = c.setup.nearLanding;
     if (near !== undefined) {
       if (!Array.isArray(near) || near.length === 0 || !near.every((n) => NEAR_LANDINGS.includes(n))) {
         errors.push(`${at}: nearLanding は A・B の並び（1 回目・2 回目の順）`);
       }
-      if (condition !== 'auto') errors.push(`${at}: nearLanding は condition が auto のときだけ`);
     }
     const far = c.setup.farLanding;
     if (far !== undefined) {
       if (!Array.isArray(far) || far.length === 0 || !far.every((n) => FAR_LANDINGS.includes(n))) {
         errors.push(`${at}: farLanding は A・B の並び（1 回目・2 回目の順）`);
       }
-      if (condition !== 'auto') errors.push(`${at}: farLanding は condition が auto のときだけ`);
     }
     if (condition === 'auto' && preset !== undefined && preset.targetProfile === undefined) {
       errors.push(`${at}: 敵のプリセット ${c.setup.enemy} には的の条件の表が無い`);

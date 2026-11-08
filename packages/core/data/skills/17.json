@@ -95,8 +95,8 @@
             0
           ],
           "assumes": {
-            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレーム（射撃場の的では発射 + 飛ぶ時間。的の表の flightFrames。表の無い敵では発と同じフレーム）に、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める",
-            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit charges the Burst Gauge by one unmultiplied hit (28,000) on the frame the shot lands (on the shooting range target: firing frame + flight time from the target table's flightFrames; on enemies without the table: the firing frame)"
+            "ja": "フルチャージの発ごとに 1 回（全弾命中の前提）。コアの補正は乗らない。ヒットは発の着弾のフレーム（射撃場の的では発射 + 飛ぶ時間。的の表の flightFrames の着地点ごとの値（無ければ距離帯の代表値）。表の無い敵では発と同じフレーム）に、倍率の乗らない 1 ヒットのゲージ（28,000）を溜める。ダメージとバフの判定は発射のフレーム（notes[0]）",
+            "en": "Once per Full Charge shot (every shot is assumed to hit). The core bonus does not apply. The hit charges the Burst Gauge by one unmultiplied hit (28,000) on the frame the shot lands (on the shooting range target: firing frame + flight time from the target table's flightFrames, per landing point or else the distance band's representative value; on enemies without the table: the firing frame). Damage and buff checks stay on the firing frame (notes[0])"
           },
           "claims": [
             "C-0190",
@@ -161,8 +161,8 @@
       ],
       "notes": [
         {
-          "ja": "誘導弾の飛ぶ時間（ゲージが着弾で溜まる分）は、射撃場の的の距離帯ごとの代表値だけ。的の表の無い敵では 0（発射のフレームに溜まる）。着地点ごとの値、ダメージを置くフレームとバフの判定を着弾の時刻にすること（発動に重なる発の追加ダメージだけにバーストの攻撃ダメージ▲が乗る分）は未実装（plan/design-anis-star-gauge-timing.md 3 節）",
-          "en": "Homing projectile flight time (the gauge charges on landing) uses per-distance-band representative values on the shooting range target only; on enemies without the table it is 0 (charged on the firing frame). Per-landing-point values, and placing damage and buff checks at landing time (only the additional damage of a shot overlapping her Burst activation takes the Burst ATK damage up), are not modeled (plan/design-anis-star-gauge-timing.md 3)",
+          "ja": "S1 の追加ダメージ（effects[4]）は、ゲージだけを着弾のフレームに溜め、ダメージを置くフレームとバフの判定は発射のフレーム。発動に重なる発で、追加ダメージだけにバーストの攻撃ダメージ▲が乗った観測（0165-14・0320-13。どちらも記録）があり、追加ダメージを着弾の時刻で判定している兆しだが、結論にしていない（plan/design-anis-star-unimplemented.md 3 節）",
+          "en": "The S1 additional damage (effects[4]) charges only the gauge on the landing frame; its damage and buff checks stay on the firing frame. On shots overlapping her Burst activation, only the additional damage took the Burst ATK damage up (0165-14, 0320-13; both records), a sign that the additional damage is evaluated at landing, but there is no conclusion yet (plan/design-anis-star-unimplemented.md 3)",
           "kind": "unimplemented",
           "effect": {
             "kind": "unknown"
@@ -343,13 +343,10 @@
       ],
       "notes": [
         {
-          "ja": "シューティングスターのコアに当たる割合は射撃場の的でしか測っていない。的の表に行の無い敵では、モデルのシューティングスターはコアに当たらない（plan/design-anis-star-core-path.md 3.2 節）",
-          "en": "The Shooting Star core hit rate is measured only on the shooting range target. On enemies without a target table row, Shooting Stars never hit the core in the model (plan/design-anis-star-core-path.md 3.2)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "autoAttack",
-            "trigger": "burstUse"
-          },
+          "ja": "シューティングスターのコアに当たる割合は、敵の的の表の行（coreHitRate.autoAttacks の 17:burst）から引く。行は射撃場の的にだけあり（C-0466）、行の無い敵ではコアに当たらないとして計算し、結果の注記に出す（通常攻撃のコア命中率と同じく、敵を足すときに測る。plan/design-anis-star-unimplemented.md 4 節）",
+          "en": "The Shooting Star core hit rate is looked up from the enemy's target table row (coreHitRate.autoAttacks, 17:burst). Only the shooting range target has the row (C-0466); on enemies without it, Shooting Stars are treated as never hitting the core and the result shows a note (like normal-attack core hit rates, it is measured when an enemy is added; plan/design-anis-star-unimplemented.md 4)",
+          "kind": "modeling",
+          "refers": "effects[0]",
           "claims": [
             "C-0466"
           ]
@@ -364,8 +361,8 @@
           ]
         },
         {
-          "ja": "爆発範囲▲がバーストの窓の通常攻撃のコアに当たる割合を変えるか（窓の中も外も同じ表の行でコアに当たる。C-0424。単騎の録画 0320・0321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-core-path.md 11 節）",
-          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst (inside and outside the Burst the same table row applies, C-0424; on the solo recordings 320 and 321 the in/out difference within the same far segment is not distinguishable, and the far rate differs between recordings (C-0425, V-0297). A difference of about 0.1-0.2 is not ruled out. plan/design-anis-star-core-path.md 11)",
+          "ja": "爆発範囲▲が、遠の区間のバーストの窓の通常攻撃のコアに当たる割合を変えるか（近・中近・中遠は、窓の中も外と同じ表の行でコアに当たる。C-0424。遠は、単騎の録画 0320・0321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-unimplemented.md 5 節）",
+          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst in the far segment (at near, mid-near and mid-far range the same table row applies inside and outside the Burst, C-0424; at far range, on the solo recordings 320 and 321 the in/out difference within the same far segment is not distinguishable, and the far rate differs between recordings (C-0425, V-0297). A difference of about 0.1-0.2 is not ruled out. plan/design-anis-star-unimplemented.md 5)",
           "kind": "unimplemented",
           "effect": {
             "kind": "timed",

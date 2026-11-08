@@ -917,6 +917,42 @@ export function slotAutoAttackCoreRatesOf(
   });
 }
 
+/** 注記のスキルのスロットの名前（日本語・英語） */
+const SKILL_SLOT_TEXT = {
+  skill1: ['スキル 1', 'Skill 1'],
+  skill2: ['スキル 2', 'Skill 2'],
+  burst: ['バースト', 'Burst'],
+} as const;
+
+/**
+ * plan/design-anis-star-unimplemented.md 4 節: コアに当たりうるスキルのヒット（効果の core）のうち、敵の的の表に
+ * coreHitRate.autoAttacks の行が無いスロットを知らせる（コアに当たらないとして計算した）。行のある敵・コアの無い敵・該当の効果の無い枠は空
+ */
+export function autoAttackCoreRowNotes(
+  slot: Pick<TeamSlotInput, 'character' | 'skills'>,
+  enemy: EnemyInput,
+): ModelNote[] {
+  const definition = slot.skills?.definition;
+  if (!definition || !enemy.hasCore) return [];
+  const rows = enemy.target?.coreHitRate.autoAttacks;
+  const missing = SKILL_SLOTS.filter(
+    (skill) =>
+      definition.skills[skill].effects.some((e) => 'core' in e && e.core === true) &&
+      (rows?.[`${slot.character.resourceId}:${skill}`] ?? null) === null,
+  );
+  if (missing.length === 0) return [];
+  return [
+    {
+      level: 'unsupported',
+      code: 'auto-attack-core-no-row',
+      message: {
+        ja: `この敵の表に、${missing.map((m) => SKILL_SLOT_TEXT[m][0]).join('・')}のヒットがコアに当たる割合が無い（未測定）。コアに当たらないとして計算した`,
+        en: `This enemy's table has no core hit rate for the ${missing.map((m) => SKILL_SLOT_TEXT[m][1]).join(' and ')} hits (not measured); they are treated as never hitting the core`,
+      },
+    },
+  ];
+}
+
 /**
  * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（倍率ダメージの distance の
  * ヒットが読む。値は frames に入れる）。条件が自動の枠は着地点の計画の配分（autoConditionSummary と同じ足し方）、手入力の枠は条件の

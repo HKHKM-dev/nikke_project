@@ -27,6 +27,7 @@ import {
   type TriggerDamage,
 } from '../damage.ts';
 import {
+  autoAttackCoreRowNotes,
   autoConditionSummary,
   hitRateUpSpansOf,
   slotConditionNotes,
@@ -268,7 +269,11 @@ export function runSimulation(simInput: SimInput): SimResult {
         character: slot.character,
         baseAttack: baseAttackOf(slot),
         cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
-        notes: [...modelNotes(slot.character.shot), ...slotConditionNotes(landing, slot, index, enemy, autoCondition)],
+        notes: [
+          ...modelNotes(slot.character.shot),
+          ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
+          ...autoAttackCoreRowNotes(slot, enemy),
+        ],
         passiveBuffs: passive.buffs,
         passiveEffects: passive.passiveEffects,
         buildEffects: passive.buildEffects,
