@@ -67,16 +67,12 @@ export function CharacterTray({
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({ id: 'tray-drop', data: { type: 'tray' } });
   const returning = isOver && active?.data.current?.type === 'slot-character';
-  const [onlySupported, setOnlySupported] = useState(false);
 
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
-  const filteredCharacters = useMemo(() => {
-    return index.filter((char) => {
-      if (!matchesBadgeFilters(char, filters)) return false;
-      if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
-      return true;
-    });
-  }, [index, filters, onlySupported, fullySupported]);
+  const filteredCharacters = useMemo(
+    () => index.filter((char) => matchesBadgeFilters(char, filters)),
+    [index, filters],
+  );
 
   return (
     <section
@@ -95,10 +91,6 @@ export function CharacterTray({
                 onToggle={(value) => setFilters((f) => toggleBadgeFilter(f, kind.key, value))}
               />
             ))}
-            <label className="char-tray-checkbox-label">
-              <input type="checkbox" checked={onlySupported} onChange={(e) => setOnlySupported(e.target.checked)} />
-              <span>完全対応のみ</span>
-            </label>
           </div>
         </div>
         {/* 並べ替え（名前順・戦闘力順）と、フィルター・立ち絵の縦長と四角の切り替えのボタンの置き場所（フィルターと切り替えは未実装。

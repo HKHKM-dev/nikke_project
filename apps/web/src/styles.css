@@ -1198,13 +1198,6 @@ header h1 {
 .char-tray-badge-filter:has([aria-pressed='true']) .char-tray-badge-button[aria-pressed='false'] {
   opacity: 0.35;
 }
-.char-tray-checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
 /* 列は立ち絵の幅（と左右の余白 2px・枠線 1px）で固定し、間を詰めて中央に寄せる */
 .char-tray-list {
   display: grid;
