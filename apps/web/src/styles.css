@@ -1013,9 +1013,6 @@ header h1 {
   aspect-ratio: 1 / 2;
   /* バッジの大きさは四角（.char-visual の既定の 20px）と同じ */
 }
-.char-visual-tall .char-visual-fallback {
-  font-size: 0.65rem;
-}
 /* 「未」の札は、下部に重ねる名前の行の上に出す */
 .char-visual-tall .char-unsupported-tag {
   bottom: calc(30px + var(--rarity-band-h));
@@ -1033,11 +1030,6 @@ header h1 {
 }
 .char-tray-tall-area .growth-marks-core {
   font-size: 0.42rem;
-}
-.char-visual-compact .char-visual-fallback {
-  font-size: 0.65rem;
-  /* 右下の「未」の札に重ならないように下を空ける */
-  padding-bottom: 16px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -1057,23 +1049,6 @@ header h1 {
   object-fit: cover;
   position: absolute;
   inset: 0;
-}
-.char-visual-fallback {
-  /* 左のバッジの列に名前が重ならないように空ける */
-  padding: 4px 4px 4px calc(var(--badge-w) + 4px);
-  text-align: center;
-  z-index: 1;
-  font-size: 0.8rem;
-  font-weight: bold;
-  line-height: 1.2;
-  /* 名前の長いキャラは、枠の外へはみ出さずに行数で切る */
-  min-width: 0;
-  overflow-wrap: anywhere;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  line-clamp: 4;
-  overflow: hidden;
 }
 /* 属性・バースト段階・クラス・武器種のバッジ（130×150 の六角形）を左上に縦に並べる。幅は --badge-w */
 .char-visual-badges {

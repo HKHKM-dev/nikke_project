@@ -20,7 +20,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 /**
  * 読めなかった画像（画像の無い配信。アーティファクトなど）。同じ絵を出し直すたびに読みに行くと、読めないと分かるまでの数フレームは
- * 画像も名前の札も無い枠だけになる（スロットを入れ替えた瞬間に、枠だけが一瞬見える）ので、覚えておいてすぐ名前の札を出す
+ * 壊れた画像の枠になる（スロットを入れ替えた瞬間に、枠が一瞬見える）ので、覚えておいて 2 回目からは読みに行かない
  */
 const failedImages = new Set<string>();
 
@@ -37,9 +37,8 @@ export function CharacterVisual({
 }: Props) {
   const tallImage = size === 'portrait' || size === 'tall';
   const imageSrc = `${BASE_URL}characters/${tallImage ? 'portraits' : 'images'}/${character.resourceId}.webp`;
-  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）だけ、名前の札を出す。ただし縦長の絵（スロットと、ニケ一覧の縦長）は、
-  // 下部に名前を重ねる（SlotCharName）ので、名前の札は出さない（オーナーの指示）。
-  // 読めた画像の上には名前を重ねない（npm run fetch-images。plan/design-modern-ui.md）
+  // 画像が読めなかったキャラ（画像の無い配信・CDN に無いキャラ）は、絵の枠とバッジだけを出す。名前は絵の外（ニケ一覧の四角は絵の下、
+  // 縦長は下部に重ねる名前）にあるので、絵の中には出さない（オーナーの指示）
   const failed = failedImages.has(imageSrc);
   // 読めなかったときに描き直す（読めたかどうかは failedImages が持つ）
   const [, rerender] = useReducer((n: number) => n + 1, 0);
@@ -50,13 +49,7 @@ export function CharacterVisual({
 
   return (
     <div className={`char-visual ${size === 'normal' ? '' : `char-visual-${size}`}`} data-rarity={character.rarity}>
-      {failed ? (
-        !tallImage && (
-          <span className="char-visual-fallback" aria-hidden="true">
-            {character.name.ja}
-          </span>
-        )
-      ) : (
+      {!failed && (
         <img
           src={imageSrc}
           alt=""
