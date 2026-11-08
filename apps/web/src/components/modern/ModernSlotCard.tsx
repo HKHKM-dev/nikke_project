@@ -109,6 +109,12 @@ export function ModernSlotCard({
       </div>
 
       <div className="modern-slot-body">
+        {awaitingPlacement && (
+          <svg className="modern-slot-target" viewBox="0 0 100 100" aria-hidden="true">
+            <circle className="modern-slot-target-outer" cx="50" cy="50" r="40" />
+            <circle className="modern-slot-target-inner" cx="50" cy="50" r="22" />
+          </svg>
+        )}
         {characterEntry ? (
           <div className="modern-slot-char-area">
             <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />

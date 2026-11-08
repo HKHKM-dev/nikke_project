@@ -111,9 +111,6 @@
 :root[data-app-ui='modern'] .modern-slot-card:hover {
   border-color: var(--m-accent);
 }
-:root[data-app-ui='modern'] .modern-slot-card.modern-slot-awaiting {
-  outline: 2px dashed var(--m-gold);
-}
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over {
   outline: 3px solid var(--m-accent);
   background: color-mix(in srgb, var(--m-accent) 10%, var(--m-surface));

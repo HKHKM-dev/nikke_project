@@ -607,6 +607,11 @@ header h1 {
   font-size: 0.85rem;
 }
 
+/* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
+:root {
+  --placing-blue: light-dark(#0ea5e9, #38bdf8);
+}
+
 /* 5スロットグリッド */
 /* カードは立ち絵とボタンが収まる幅に固定し、入りきらなければ折り返す。余った幅は左右に分けて、各行を中央に寄せる */
 .modern-slots-grid {
@@ -636,11 +641,59 @@ header h1 {
 .modern-slot-card:hover {
   border-color: color-mix(in srgb, Highlight 60%, var(--app-border));
 }
-/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける */
+/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける。
+   実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（外の輪が脈打つ）を重ねる */
 .modern-slot-card.modern-slot-awaiting {
   cursor: pointer;
-  outline: 2px dashed Highlight;
+  outline: 3px solid var(--placing-blue);
   outline-offset: -1px;
+}
+.modern-slot-card.modern-slot-awaiting::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+.modern-slot-target {
+  position: absolute;
+  /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
+  top: calc(var(--slot-portrait-h) / 2);
+  left: 50%;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: #fff;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+  z-index: 3;
+}
+.modern-slot-target-outer {
+  stroke-width: 4;
+  transform-origin: 50% 50%;
+  animation: modern-slot-target-pulse 1.2s ease-in-out infinite;
+}
+.modern-slot-target-inner {
+  stroke-width: 5;
+}
+@keyframes modern-slot-target-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modern-slot-target-outer {
+    animation: none;
+  }
 }
 .modern-slot-card.modern-slot-focused {
   box-shadow: inset 0 0 0 1px Highlight;
@@ -694,6 +747,7 @@ header h1 {
 
 /* カードボディ・キャラ表示 */
 .modern-slot-body {
+  position: relative;
   min-height: 120px;
   display: flex;
   align-items: center;
@@ -998,7 +1052,7 @@ header h1 {
 }
 /* 置き先を待っている間は、待っているニケに水色の実線の枠を付け、ほかのニケを暗くする */
 .char-tray-item.char-tray-item-pending {
-  outline: 3px solid light-dark(#0ea5e9, #38bdf8);
+  outline: 3px solid var(--placing-blue);
   outline-offset: -1px;
 }
 .char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
@@ -1019,14 +1073,13 @@ header h1 {
   justify-content: center;
   width: 100%;
   max-width: 72px;
-  --tray-taken: light-dark(#0ea5e9, #38bdf8);
 }
 .char-tray-item-taken .char-tray-item-visual::after {
   content: '';
   position: absolute;
   inset: 0;
-  border: 2px solid var(--tray-taken);
-  background: color-mix(in srgb, var(--tray-taken) 30%, transparent);
+  border: 2px solid var(--placing-blue);
+  background: color-mix(in srgb, var(--placing-blue) 30%, transparent);
   pointer-events: none;
   z-index: 2;
 }
@@ -1038,7 +1091,7 @@ header h1 {
   height: 60%;
   transform: translate(-50%, -50%);
   fill: none;
-  stroke: var(--tray-taken);
+  stroke: var(--placing-blue);
   stroke-width: 3.2;
   stroke-linecap: round;
   stroke-linejoin: round;
