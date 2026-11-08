@@ -69,7 +69,6 @@ import { capturesDir, recordDir } from './dirs.ts';
 import {
   batchNamesAndNotes,
   checkRecordingId,
-  DRIVE_CALL_MS,
   isRecordingName,
   nextRecordingIds,
   parseOnOff,
@@ -80,7 +79,7 @@ import {
   UPLOAD_POLL_MS,
   waitUploadSettled,
 } from './intake-lib.ts';
-import { Drive, isTransientDriveError, type DriveFile } from './drive.ts';
+import { Drive, DRIVE_CALL_MS, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));

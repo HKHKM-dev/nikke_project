@@ -49,11 +49,14 @@ describe('unwrapResponse', () => {
   it('returns data when code is 0', () => {
     expect(unwrapResponse('p', { code: 0, data: { a: 1 } })).toEqual({ a: 1 });
     expect(unwrapResponse('p', { code: 0, a: 1 })).toEqual({ code: 0, a: 1 });
+    expect(unwrapResponse('p', { code: '0', data: { a: 1 } })).toEqual({ a: 1 });
   });
 
   it('fails when code is not 0', () => {
     expect(() => unwrapResponse('p', { code: 1001, msg: 'login' })).toThrow('p: code 1001 login');
     expect(() => unwrapResponse('p', { data: {} })).toThrow('p: code undefined');
+    expect(() => unwrapResponse('p', { code: null })).toThrow('p: code null');
+    expect(() => unwrapResponse('p', { code: '' })).toThrow('p: code');
     expect(() => unwrapResponse('p', 'x')).toThrow();
   });
 });

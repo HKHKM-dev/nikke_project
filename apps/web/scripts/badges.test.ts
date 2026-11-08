@@ -40,7 +40,9 @@ describe('buildBadges', () => {
 
   it('writes every source and removes outputs whose source is gone', () => {
     const { srcDir, outDir } = setup(['a_x.svg', 'b_y.svg'], ['a_x.svg', 'old_z.svg']);
-    expect(buildBadges(srcDir, outDir)).toEqual({ written: ['a_x.svg', 'b_y.svg'], removed: ['old_z.svg'] });
+    const { written, removed } = buildBadges(srcDir, outDir);
+    expect(written.sort()).toEqual(['a_x.svg', 'b_y.svg']);
+    expect(removed).toEqual(['old_z.svg']);
     expect(svgFiles(outDir).sort()).toEqual(['a_x.svg', 'b_y.svg']);
     expect(readFileSync(join(outDir, 'b_y.svg'), 'utf8')).toBe(optimizeBadge(svg));
   });

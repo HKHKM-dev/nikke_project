@@ -11,6 +11,8 @@ describe('Drive の呼び出しの失敗が、待てば直りうるものか', (
   it('keeps waiting on network failures, timeouts, 429 and 5xx', () => {
     expect(isTransientDriveError(new TypeError('fetch failed', { cause: new Error('ECONNRESET') }))).toBe(true);
     expect(isTransientDriveError(new TypeError('terminated'))).toBe(true);
+    const reset = Object.assign(new Error('read ECONNRESET'), { code: 'ECONNRESET' });
+    expect(isTransientDriveError(new TypeError('network error', { cause: reset }))).toBe(true);
     expect(isTransientDriveError(new DOMException('The operation timed out.', 'TimeoutError'))).toBe(true);
     expect(isTransientDriveError(Object.assign(new Error('rate'), { status: 429 }))).toBe(true);
     expect(isTransientDriveError(Object.assign(new Error('server'), { status: 503 }))).toBe(true);
@@ -101,6 +103,19 @@ describe('Drive の打ち切り（手元のサーバーをトークンと API �
       const out = outFile();
       await (await Drive.connect(100)).download('f', out);
       expect(readFileSync(out, 'utf8')).toBe('abcd');
+    });
+
+    it('times out a failed response whose body stalls', async () => {
+      pointTo(
+        await serve(
+          tokenThen((res) => {
+            res.writeHead(500);
+            res.write('a');
+          }),
+        ),
+      );
+      const e: unknown = await (await Drive.connect(100)).download('f', outFile()).catch((x: unknown) => x);
+      expect((e as Error).name).toBe('TimeoutError');
     });
 
     it('times out when the headers do not come', async () => {

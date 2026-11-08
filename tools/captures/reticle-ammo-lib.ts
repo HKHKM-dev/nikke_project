@@ -76,9 +76,9 @@ export function magazines(readings: readonly Reading[], max: number, reloadBelow
 /**
  * リロードの後とみる、最大の表示の前の読みの上限。ふだんは最大より 50（max が小さければ max - 1）小さい読み（0 か、それに近い。
  * 弾丸チャージで最大に戻ったのと分ける）。box は 0 がリロード中に暗くなって読めず（前の読みは 1 以上）、弾丸チャージは増えとして
- * 出ない（V-0679）ので、最大への上がりはどれもリロード（か満開の明けの補充）
+ * 出ない（V-0679）ので、最大への上がりはリロード（か満開の明けの補充）。ただし 1 つ下（8 と 9 など）からの上がりは読み違えとみる
  */
-export const reloadBelowOf = (max: number, box: boolean): number => (box ? max : max - Math.min(50, max - 1));
+export const reloadBelowOf = (max: number, box: boolean): number => (box ? max - 1 : max - Math.min(50, max - 1));
 
 /** --make-templates の「frame:3 桁の値,...」を、フレーム → 値にする */
 export function parseTemplateSpec(spec: string): Map<number, string> {

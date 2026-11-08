@@ -149,6 +149,20 @@ describe('magazines', () => {
       [70, 1, 0],
     ]);
   });
+
+  it('with box, takes a rise to the full value from one below (8 and 9) as a misread', () => {
+    const m = magazines(
+      rs([
+        [0, 9],
+        [10, 8],
+        [20, 9],
+        [30, 7],
+      ]),
+      9,
+      reloadBelowOf(9, true),
+    );
+    expect(m).toHaveLength(1);
+  });
 });
 
 describe('parseTemplateSpec', () => {

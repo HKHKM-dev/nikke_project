@@ -64,6 +64,12 @@ async function accessToken(timeoutMs?: number): Promise<string> {
   return ((await res.json()) as { access_token: string }).access_token;
 }
 
+/**
+ * 道具（intake.ts・fetch.ts）が Drive API を 1 回呼んで待つ長さ（トークンの取得と一覧・メタデータ。download は応答の頭が届くまで）。
+ * 止まった呼び出しを打ち切り、待てば直る失敗（isTransientDriveError の TimeoutError）にする
+ */
+export const DRIVE_CALL_MS = 60_000;
+
 /** Drive の検索式の文字列リテラル（\ と ' をエスケープする） */
 export function driveQueryString(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
@@ -71,7 +77,8 @@ export function driveQueryString(value: string): string {
 
 /**
  * Node の fetch（undici）が通信の失敗で投げる TypeError の文: つなげない・切れた（fetch failed）と、応答の本体を読む途中で
- * 切れた（terminated）。ほかの TypeError（中のバグ）は待っても直らない
+ * 切れた（terminated）。文の違う実装に備えて、cause に通信の失敗の code（ECONNRESET・UND_ERR_SOCKET など）があるものも
+ * 通信の失敗とみる。ほかの TypeError（中のバグ）は待っても直らない
  */
 const NETWORK_FAILURE_MESSAGES: ReadonlySet<string> = new Set(['fetch failed', 'terminated']);
 
@@ -81,7 +88,10 @@ const NETWORK_FAILURE_MESSAGES: ReadonlySet<string> = new Set(['fetch failed', '
  * 応答の読み違い・中のバグなどは直らないとみる
  */
 export function isTransientDriveError(e: unknown): boolean {
-  if (e instanceof TypeError) return NETWORK_FAILURE_MESSAGES.has(e.message);
+  if (e instanceof TypeError)
+    return (
+      NETWORK_FAILURE_MESSAGES.has(e.message) || typeof (e.cause as { code?: unknown } | undefined)?.code === 'string'
+    );
   if ((e as { name?: unknown } | null)?.name === 'TimeoutError') return true;
   const status = (e as { status?: unknown } | null)?.status;
   return typeof status === 'number' && (status === 429 || status >= 500);
@@ -109,22 +119,23 @@ export class Drive {
    */
   private async get(path: string, params: Record<string, string>, headersOnly = false): Promise<Response> {
     const url = `${api()}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
-    const init = { headers: { authorization: `Bearer ${this.token}` } };
-    let res: Response;
-    if (headersOnly && this.timeoutMs !== undefined) {
-      const ctl = new AbortController();
-      const timer = setTimeout(() => ctl.abort(new DOMException('応答の頭が届かない', 'TimeoutError')), this.timeoutMs);
-      try {
-        res = await fetch(url, { ...init, signal: ctl.signal });
-      } finally {
-        clearTimeout(timer);
-      }
-    } else res = await fetch(url, { ...init, ...deadline(this.timeoutMs) });
-    if (!res.ok)
-      throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
-        status: res.status,
+    const ms = this.timeoutMs;
+    // headersOnly の打ち切りは、ok の応答を返すまで（失敗の本体を読む間も含む）
+    const ctl = headersOnly && ms !== undefined ? new AbortController() : undefined;
+    const timer = ctl && setTimeout(() => ctl.abort(new DOMException('応答の頭が届かない', 'TimeoutError')), ms);
+    try {
+      const res = await fetch(url, {
+        headers: { authorization: `Bearer ${this.token}` },
+        ...(ctl ? { signal: ctl.signal } : deadline(ms)),
       });
-    return res;
+      if (!res.ok)
+        throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
+          status: res.status,
+        });
+      return res;
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   /** フォルダの直下（ゴミ箱は除く）。name を渡すとその名前のものだけ */

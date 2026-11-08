@@ -49,8 +49,11 @@ export function captureRequest(
   return { headers: pickHeaders(headers), account: { intl_open_id, nikke_area_id } };
 }
 
-/** 頻度の制限（request too frequently）の応答の code（数でも文字列でも来うる） */
+/** 頻度の制限（request too frequently）の応答の code */
 const RATE_LIMIT_CODE = 212000;
+
+/** 応答の JSON の code が c か（code は数でも文字列でも来うる） */
+const codeIs = (json: Record<string, unknown>, c: number): boolean => String(json.code) === String(c);
 /** 頻度の制限を HTTP の状態で返すとき（Too Many Requests） */
 const HTTP_TOO_MANY_REQUESTS = 429;
 
@@ -64,9 +67,7 @@ export type PostResult = { json: unknown } | { status: number };
 export function isRateLimited(r: PostResult): boolean {
   if ('status' in r) return r.status === HTTP_TOO_MANY_REQUESTS;
   const { json } = r;
-  return (
-    json !== null && typeof json === 'object' && Number((json as Record<string, unknown>).code) === RATE_LIMIT_CODE
-  );
+  return json !== null && typeof json === 'object' && codeIs(json as Record<string, unknown>, RATE_LIMIT_CODE);
 }
 
 /**
@@ -97,7 +98,8 @@ export async function callWithRetry(
 export function unwrapResponse(path: string, json: unknown): unknown {
   if (json === null || typeof json !== 'object') throw new Error(`${path}: 応答が JSON のオブジェクトでない`);
   const { code, msg, data } = json as Record<string, unknown>;
-  if (code !== 0) throw new Error(`${path}: code ${String(code)} ${typeof msg === 'string' ? msg : ''}`.trimEnd());
+  if (!codeIs(json as Record<string, unknown>, 0))
+    throw new Error(`${path}: code ${String(code)} ${typeof msg === 'string' ? msg : ''}`.trimEnd());
   return data ?? json;
 }
 
