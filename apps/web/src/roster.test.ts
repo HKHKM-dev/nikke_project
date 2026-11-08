@@ -148,10 +148,37 @@ describe('applyRoster と rosterSlotCount', () => {
 });
 
 describe('保存と表示', () => {
-  it('保存した JSON を読み戻す。読めないものは null', () => {
-    expect(restoreRoster(serializeRoster(ROSTER), INDEX)).toEqual(ROSTER);
+  it('保存した JSON を読み戻す。無ければ null', () => {
+    expect(restoreRoster(JSON.stringify(ROSTER), INDEX)).toEqual({ ok: true, snapshot: ROSTER, notices: [] });
     expect(restoreRoster(null, INDEX)).toBeNull();
-    expect(restoreRoster('{"formatVersion":2,"characters":{}}', INDEX)).toBeNull();
+  });
+
+  it('キャラのデータに無いキャラは、読み込み → 保存 → 復元 → 書き出しで残る（計算には使わない）', () => {
+    // 読み込んだファイルの文（中身はキャラのデータが追いつくまで検査しない）
+    const unknownChar = { growth: { level: 1, grade: 99, core: 99 }, future: 'field' };
+    const file = serializeRoster(
+      JSON.stringify({ ...ROSTER, characters: { ...ROSTER.characters, '999': unknownChar } }),
+    );
+    // 保存は読み込んだ文のまま（useRoster の importFile）。復元は同じ検査で、無いキャラを飛ばす
+    const restored = restoreRoster(file, INDEX);
+    expect(restored).toEqual({ ok: true, snapshot: ROSTER, notices: [expect.stringMatching(/999/)] });
+    const exported = JSON.parse(serializeRoster(file)) as BuildSnapshot;
+    expect(exported.characters['999']).toEqual(unknownChar);
+    expect(exported.characters['82']).toEqual(ROSTER.characters['82']);
+  });
+
+  it('読めない保存は理由を返す（キャラのデータが追いつき、前は飛ばしたキャラが検査に掛かったときなど）', () => {
+    const saved = JSON.stringify({
+      ...ROSTER,
+      characters: { '82': character({ growth: { level: 1, grade: 99, core: 0 } }) },
+    });
+    const restored = restoreRoster(saved, INDEX);
+    expect(restored?.ok).toBe(false);
+    expect(restored?.ok === false && restored.errors).toEqual([expect.stringMatching(/characters\.82\.growth\.grade/)]);
+    expect(restoreRoster('{"formatVersion":2,"characters":{}}', INDEX)).toEqual({
+      ok: false,
+      errors: ['この版の育成状況は読めない（formatVersion 2）'],
+    });
   });
 
   it('取得の日は日本時間', () => {

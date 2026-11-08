@@ -21,6 +21,8 @@ export type RosterMessage = { kind: 'ok' | 'error'; lines: string[] };
 
 export type RosterControls = {
   roster: BuildSnapshot | null;
+  /** ブラウザに保存した育成状況がある（読めないものも。消せるように） */
+  stored: boolean;
   message: RosterMessage | null;
   importFile: (file: File) => Promise<void>;
   exportFile: () => void;
@@ -49,10 +51,16 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   controls: RosterControls;
   dispatchWithRoster: Dispatch<TeamAction>;
 } {
-  // 保存してある JSON。育成状況はキャラの一覧を読んでから、それで検査して読む
+  // 保存してある JSON（読み込んだファイルのまま）。育成状況はキャラの一覧を読んでから、それで検査して読む
   const [saved, setSaved] = useState(() => readStorage(ROSTER_STORAGE_KEY));
-  const roster = useMemo(() => (index === null ? null : restoreRoster(saved, index)), [saved, index]);
+  const restored = useMemo(() => (index === null ? null : restoreRoster(saved, index)), [saved, index]);
+  const roster = restored?.ok ? restored.snapshot : null;
   const [message, setMessage] = useState<RosterMessage | null>(null);
+  // 読めない保存は消さずに理由を出す
+  const restoreError: RosterMessage | null =
+    restored?.ok === false
+      ? { kind: 'error', lines: ['ブラウザに保存した育成状況（読み込み直すか消す）', ...restored.errors] }
+      : null;
 
   const dispatchWithRoster = useCallback(
     (action: TeamAction) => dispatch(withRosterFields(action, roster)),
@@ -61,15 +69,16 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
 
   const importFile = async (file: File) => {
     if (index === null) return;
-    const read = readBuildSnapshot(await file.text(), index);
+    const text = await file.text();
+    const read = readBuildSnapshot(text, index);
     if (!read.ok) {
       setMessage({ kind: 'error', lines: read.errors });
       return;
     }
     if (!window.confirm(importConfirmText(rosterSlotCount(team, parties, read.snapshot)))) return;
-    const json = JSON.stringify(read.snapshot);
-    writeStorage(ROSTER_STORAGE_KEY, json);
-    setSaved(json);
+    // 検査を通った元の文を保存する（read.snapshot はキャラのデータに無いキャラを飛ばしている）
+    writeStorage(ROSTER_STORAGE_KEY, text);
+    setSaved(text);
     const next = applyRoster(team, parties, read.snapshot);
     dispatch({ type: 'replace', state: next.team });
     setParties(next.parties);
@@ -77,7 +86,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   };
 
   const exportFile = () => {
-    if (roster !== null) download(rosterFileName(roster), serializeRoster(roster));
+    if (roster !== null && saved !== null) download(rosterFileName(roster), serializeRoster(saved));
   };
 
   const clear = () => {
@@ -87,5 +96,8 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     setMessage(null);
   };
 
-  return { controls: { roster, message, importFile, exportFile, clear }, dispatchWithRoster };
+  return {
+    controls: { roster, stored: saved !== null, message: message ?? restoreError, importFile, exportFile, clear },
+    dispatchWithRoster,
+  };
 }
