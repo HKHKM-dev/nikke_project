@@ -836,19 +836,38 @@ header h1 {
   line-height: 1.1;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
+/* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_filled・grade_empty・core_plain） */
+.growth-marks {
+  --growth-star-w: 13px;
+  --growth-core-w: 20px;
+}
 .growth-marks-star {
-  color: rgba(255, 255, 255, 0.35);
+  width: var(--growth-star-w);
+  height: var(--growth-star-w);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.8));
 }
-.growth-marks-star-on {
-  color: #facc15;
-}
+/* コアの印の中央（黒い丸）に段階（+1〜+6・MAX）を重ねる */
 .growth-marks-core {
-  margin-left: 3px;
-  padding: 0 3px;
-  font-size: 0.7rem;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--growth-core-w);
+  height: var(--growth-core-w);
+  margin-left: 2px;
+  font-size: 0.5rem;
+  font-weight: bold;
   color: #fff;
-  background: #7c3aed;
   text-shadow: none;
+}
+.growth-marks-core > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.growth-marks-core > span {
+  position: relative;
+  letter-spacing: -0.02em;
 }
 .char-tray-growth {
   position: absolute;
@@ -856,9 +875,12 @@ header h1 {
   right: 2px;
   z-index: 2;
   font-size: 0.65rem;
+  /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
+  --growth-star-w: 9px;
+  --growth-core-w: 16px;
 }
 .char-tray-growth .growth-marks-core {
-  font-size: 0.6rem;
+  font-size: 0.42rem;
 }
 .modern-slot-char-name-scroll {
   text-align: left;
