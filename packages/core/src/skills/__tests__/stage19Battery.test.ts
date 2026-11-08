@@ -99,7 +99,12 @@ describe('語彙の検証', () => {
     expect(parse([{ ...transform, durationUntil: { counterEmpty: 'extrasensory' } }])).toThrow(
       /lasts until the same counter/,
     );
-    expect(parse([{ ...transform, target: 'allies' }])).toThrow(/only on "self"/);
+    expect(parse([{ ...transform, target: 'allies' }])).toThrow(/only on "self", got "allies"/);
+    // 敵の付与は target: "allies" に読み替えてから残りの欄を読むが、文言は書いた target で出す
+    const onEnemy = { ...transform, state: 'explosiveRound', target: 'enemy', undispellable: undefined };
+    expect(parse([onEnemy])).toThrow(
+      /skill1\.effects\[0\]\.target: a grant lasting until a counter is empty is only on "self", got "enemy"/,
+    );
     expect(parse([{ ...transform, maxStacks: 2 }])).toThrow(/cannot stack/);
     expect(parse([{ ...transform, durationSeconds: 10 }])).toThrow(/cannot be combined with another duration/);
     expect(parse([{ ...transform, durationUntil: { counterEmpty: 'battery', x: 1 } }])).toThrow(/unknown field/);
