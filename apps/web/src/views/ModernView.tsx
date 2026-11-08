@@ -9,7 +9,6 @@ import {
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
-  type DropAnimation,
   type MouseSensorOptions,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
@@ -28,43 +27,12 @@ import { EmptySlotFace, ModernSlotCard } from '../components/modern/ModernSlotCa
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
 
-/** 離したときに、持ち上げた絵が向かうスロット（null はドラッグ元へ戻す）。handleDragEnd が決め、DROP_ANIMATION が読む */
-const dropTarget: { slotIndex: number | null } = { slotIndex: null };
-
-const slotCardAt = (index: number | null) =>
-  index === null ? null : (document.querySelectorAll('.modern-slots-grid > .modern-slot-card')[index] ?? null);
-
-const transformString = (t: { x: number; y: number; scaleX: number; scaleY: number }) =>
-  `translate3d(${t.x}px, ${t.y}px, 0) scaleX(${t.scaleX}) scaleY(${t.scaleY})`;
-
-/** ドラッグ元へ戻るときの見た目（dnd-kit の既定はドラッグ元を透明にして消すので、ドラッグ中と同じ薄さで残す。styles.css） */
-const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
-
 /**
- * 離したときのアニメーション。dnd-kit は持ち上げた絵をドラッグ元へ戻すが、入れ替えたとき・一覧から置いたときは、
- * 落とした先のスロット（いまそこにいる）へ向かわせる。着くまで、そのスロットの絵は隠す（modern-slot-arriving）
+ * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
+ * 代わりに印（drag-source-returning）を付け、ドラッグ中と同じ薄さで残す（styles.css）
  */
-const DROP_ANIMATION: DropAnimation = {
-  keyframes: ({ transform: { initial, final }, dragOverlay }) => {
-    const target = slotCardAt(dropTarget.slotIndex);
-    let end = final;
-    if (target) {
-      const t = target.getBoundingClientRect();
-      const o = dragOverlay.rect;
-      end = {
-        ...initial,
-        x: initial.x + (t.left + t.width / 2) - (o.left + o.width / 2),
-        y: initial.y + (t.top + t.height / 2) - (o.top + o.height / 2),
-      };
-    }
-    return [{ transform: transformString(initial) }, { transform: transformString(end) }];
-  },
-  sideEffects: (args) => {
-    const target = slotCardAt(dropTarget.slotIndex);
-    if (!target) return returnSideEffects(args);
-    target.classList.add('modern-slot-arriving');
-    return () => target.classList.remove('modern-slot-arriving');
-  },
+const DROP_ANIMATION = {
+  sideEffects: defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } }),
 };
 
 /**
@@ -137,12 +105,11 @@ export function ModernView({
   // アニメーションは残し、画面を動かすのだけ止めるため、持ち上げたドラッグ元の scrollIntoView を何もしない関数で隠す
   const noScrollNodeRef = useRef<Element | null>(null);
   // 離したときのアニメーション。並びが変わったドロップでは null にする（handleDragEnd）
-  const [dropAnimation, setDropAnimation] = useState<DropAnimation | null>(DROP_ANIMATION);
+  const [dropAnimation, setDropAnimation] = useState<typeof DROP_ANIMATION | null>(DROP_ANIMATION);
 
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
     setDropAnimation(DROP_ANIMATION);
-    dropTarget.slotIndex = null;
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -180,11 +147,9 @@ export function ModernView({
     setDraggedPortrait(null);
     const { active, over } = event;
     if (!over) return;
-    // 離したときのアニメーション: 入れ替え・一覧から置くときは落とした先のスロットへ向かう。一覧へ戻すときはしない。
-    // 何も変わらないとき（元のスロット・置けない所）は、ドラッグ元へ戻る
-    const landOn = (slotIndex: number) => {
-      dropTarget.slotIndex = slotIndex;
-    };
+    // 並びが変わるとき（入れ替え・置く・一覧へ戻す）は、離したときのアニメーション（ドラッグ元へ戻る）をしない。
+    // 何も変わらないとき（元のスロット・置けない所）だけ、ドラッグ元へ戻す
+    const changed = () => setDropAnimation(null);
 
     const overData = over.data.current;
     const activeData = active.data.current;
@@ -193,7 +158,7 @@ export function ModernView({
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
       if (activeData.type === 'slot-character' && activeData.character) {
-        setDropAnimation(null);
+        changed();
         dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
       }
       return;
@@ -206,12 +171,12 @@ export function ModernView({
       const char = activeData.character as CharacterIndexEntry;
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
       if (!action) return;
-      landOn(targetSlotIndex);
+      changed();
       dispatch(action);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
-        landOn(targetSlotIndex);
+        changed();
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
       }
     }
