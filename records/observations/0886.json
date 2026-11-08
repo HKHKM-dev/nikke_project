@@ -39,7 +39,11 @@
       "slot": 1,
       "source": "firing"
     },
-    "use": "record"
+    "use": "record",
+    "invalid": {
+      "reason": "バーの 0 の点の当てはめが、バーの頭に数フレーム出る別の白（約 118px）と表示の詰まりで崩れ、約 3f 早く出ていた。当てはめ直した値は 0886-10（V-0697）",
+      "date": "2026-11-08"
+    }
   },
   {
     "id": "0886-03",
@@ -240,6 +244,42 @@
     "scope": {
       "slot": 1,
       "source": "firing"
+    }
+  },
+  {
+    "id": "0886-10",
+    "recording": "0886",
+    "source": "V-0697",
+    "readAt": "2026-11-08",
+    "kind": "interval",
+    "unit": "f",
+    "value": 91.49,
+    "description": "1 回目の敵のジャンプの、レイヴンのハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（窓の始まりの約 6f 前のフルチャージの発の姿勢の終わりから始まる回）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode series",
+      "note": "0 の点 f2765.51 → 消えた 2857（動画）。reload.ts --mode series のバーの長さのうち 25〜255px を直線に当てはめ、残差の大きい点（バーの頭に数フレーム出る別の白（約 118px）・表示の詰まりの後の跳ね）を落として当てはめ直した（伸び 2.84px/f）。0 の点は窓の前のフルチャージの発（撃ったフレーム f2733。照準の残弾が 005 → 004。増分 f2737）の約 32.5〜32.9f 後で、その発の姿勢の終わり（撃ってから 33f。C-0842）。モデルは録画の窓 `0886-09` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "use": "compare",
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0886-09"
+      }
     }
   }
 ]
