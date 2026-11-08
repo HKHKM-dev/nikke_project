@@ -98,18 +98,28 @@ export class Drive {
     this.timeoutMs = timeoutMs;
   }
 
-  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は除く） */
+  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は応答の頭が届くまで） */
   static async connect(timeoutMs?: number): Promise<Drive> {
     return new Drive(await accessToken(timeoutMs), timeoutMs);
   }
 
-  /** 失敗の例外は status（HTTP の状態）を持つ。timed が false なら打ち切らない */
-  private async get(path: string, params: Record<string, string>, timed = true): Promise<Response> {
+  /**
+   * 失敗の例外は status（HTTP の状態）を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
+   * 届くまでにだけ掛ける（本体は読み終えるまで待つ）
+   */
+  private async get(path: string, params: Record<string, string>, headersOnly = false): Promise<Response> {
     const url = `${api()}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
-    const res = await fetch(url, {
-      headers: { authorization: `Bearer ${this.token}` },
-      ...deadline(timed ? this.timeoutMs : undefined),
-    });
+    const init = { headers: { authorization: `Bearer ${this.token}` } };
+    let res: Response;
+    if (headersOnly && this.timeoutMs !== undefined) {
+      const ctl = new AbortController();
+      const timer = setTimeout(() => ctl.abort(new DOMException('応答の頭が届かない', 'TimeoutError')), this.timeoutMs);
+      try {
+        res = await fetch(url, { ...init, signal: ctl.signal });
+      } finally {
+        clearTimeout(timer);
+      }
+    } else res = await fetch(url, { ...init, ...deadline(this.timeoutMs) });
     if (!res.ok)
       throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
         status: res.status,
@@ -194,9 +204,9 @@ export class Drive {
     }
   }
 
-  /** ファイルの中身を out に書く。録画は大きく、読み終えるまでの長さが決まらないので、timeoutMs では打ち切らない */
+  /** ファイルの中身を out に書く。録画は大きく、読み終えるまでの長さが決まらないので、timeoutMs は応答の頭が届くまでにだけ掛ける */
   async download(fileId: string, out: string): Promise<void> {
-    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' }, false);
+    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' }, true);
     if (!res.body) throw new Error(`${fileId}: 中身が空です`);
     await pipeline(Readable.fromWeb(res.body as NodeReadableStream), createWriteStream(out));
   }

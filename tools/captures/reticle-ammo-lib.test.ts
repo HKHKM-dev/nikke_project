@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { averageTemplates, clean, magazines, parseTemplateSpec, type Reading } from './reticle-ammo-lib.ts';
+import {
+  averageTemplates,
+  clean,
+  magazines,
+  parseTemplateSpec,
+  reloadBelowOf,
+  type Reading,
+} from './reticle-ammo-lib.ts';
 
 /** [フレーム, 値] の列を読みにする */
 const rs = (pairs: [number, number][]): Reading[] =>
@@ -68,7 +75,7 @@ describe('magazines', () => {
         [50, 295],
       ]),
       300,
-      false,
+      reloadBelowOf(300, false),
     );
     expect(m.map((x) => [x.start, x.drops, x.zero])).toEqual([
       [0, 300, 20],
@@ -85,7 +92,7 @@ describe('magazines', () => {
         [7, 9],
       ]),
       300,
-      false,
+      reloadBelowOf(300, false),
     );
     expect(m).toHaveLength(1);
     expect(m[0]!.ups).toEqual([{ frame: 6, from: 0, to: 10 }]);
@@ -102,7 +109,7 @@ describe('magazines', () => {
         [7, 299],
       ]),
       300,
-      false,
+      reloadBelowOf(300, false),
     );
     expect(m).toHaveLength(1);
     expect(m[0]!.ups).toEqual([{ frame: 6, from: 290, to: 300 }]);
@@ -116,7 +123,7 @@ describe('magazines', () => {
         [200, 300],
       ]),
       300,
-      false,
+      reloadBelowOf(300, false),
     );
     expect(m.map((x) => [x.start, x.gaps])).toEqual([
       [0, 1],
@@ -135,7 +142,7 @@ describe('magazines', () => {
         [80, 8],
       ]),
       9,
-      true,
+      reloadBelowOf(9, true),
     );
     expect(m.map((x) => [x.start, x.drops, x.ups.length])).toEqual([
       [0, 8, 0],

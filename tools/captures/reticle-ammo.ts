@@ -27,6 +27,7 @@ import {
   averageTemplates,
   clean,
   magazines,
+  reloadBelowOf,
   parseTemplateSpec,
   type Reading,
   type TemplateSample,
@@ -288,7 +289,7 @@ if (values['make-templates'] !== undefined) {
     for (const r of readings) console.log(`${r.frame}\t${r.value}\t${r.score}\t${r.x}\t${r.y}`);
   } else {
     console.log('start\tstartValue\tzero\tafterZero\tdrops\tups\tgaps\tupFrames');
-    for (const m of magazines(readings, max, box)) {
+    for (const m of magazines(readings, max, reloadBelowOf(max, box))) {
       console.log(
         [
           m.start,

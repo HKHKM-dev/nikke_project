@@ -4,13 +4,14 @@
 export type Reading = { frame: number; value: number; score: number; x: number; y: number };
 
 /** 弾丸チャージとみなす増え（1 フレームの間で） */
-export const STEP_UP = 5;
+const STEP_UP = 5;
 
 /**
  * 前後の読みのどちらとも大きく違う 1 フレームだけの読み（誤読）を落とす。弾丸チャージの増え（STEP_UP 以上）は、
- * 次の読みも増えた値の近くなら残す
+ * 次の読みも増えた値の近くなら残す。dropFlicker なら、前後が同じ値で間の 1 フレームだけ違う読みも落とす
+ * （--style box: 1 桁の表示は 8 と 9 などを読み違えやすい）
  */
-export function clean(readings: readonly Reading[], box: boolean): Reading[] {
+export function clean(readings: readonly Reading[], dropFlicker: boolean): Reading[] {
   const out: Reading[] = [];
   for (let i = 0; i < readings.length; i++) {
     const r = readings[i]!;
@@ -20,8 +21,7 @@ export function clean(readings: readonly Reading[], box: boolean): Reading[] {
       const offPrev = Math.abs(r.value - prev.value);
       const offNext = Math.abs(r.value - next.value);
       if (offPrev > 25 && offNext > 25) continue;
-      // --style box: 1 桁の表示は 8 と 9 などを読み違えやすい。前後が同じ値で、間の 1 フレームだけ違う読みは落とす
-      if (box && prev.value === next.value && r.value !== prev.value) continue;
+      if (dropFlicker && prev.value === next.value && r.value !== prev.value) continue;
     }
     out.push(r);
   }
@@ -43,17 +43,16 @@ export type Magazine = {
   gaps: number;
 };
 
-export function magazines(readings: readonly Reading[], max: number, box: boolean): Magazine[] {
+/**
+ * 読みをマガジンに分ける。最大（max）の表示が、reloadBelow より小さい読みか、読めない間（60 フレーム超）の後に出たらリロードの後
+ * （reloadBelow は reloadBelowOf）
+ */
+export function magazines(readings: readonly Reading[], max: number, reloadBelow: number): Magazine[] {
   const mags: Magazine[] = [];
   let cur: Magazine | null = null;
   let prev: Reading | null = null;
   for (const r of readings) {
-    // リロードの後: 最大の表示が、前の読みより大きく、前の読みが小さい（0 か、読めない間の後）。box は 0 がリロード中に暗くなって
-    // 読めず（前の読みは 1 以上）、弾丸チャージは増えとして出ない（V-0679）ので、最大への上がりはどれもリロード（か満開の明けの補充）
-    const reloaded =
-      prev !== null &&
-      r.value === max &&
-      (prev.value < max - Math.min(50, max - 1) || r.frame - prev.frame > 60 || (box && prev.value < max));
+    const reloaded = prev !== null && r.value === max && (prev.value < reloadBelow || r.frame - prev.frame > 60);
     if (cur === null || reloaded) {
       if (cur !== null) mags.push(cur);
       cur = { start: r.frame, startValue: r.value, drops: 0, ups: [], gaps: 0 };
@@ -73,6 +72,13 @@ export function magazines(readings: readonly Reading[], max: number, box: boolea
   if (cur !== null) mags.push(cur);
   return mags;
 }
+
+/**
+ * リロードの後とみる、最大の表示の前の読みの上限。ふだんは最大より 50（max が小さければ max - 1）小さい読み（0 か、それに近い。
+ * 弾丸チャージで最大に戻ったのと分ける）。box は 0 がリロード中に暗くなって読めず（前の読みは 1 以上）、弾丸チャージは増えとして
+ * 出ない（V-0679）ので、最大への上がりはどれもリロード（か満開の明けの補充）
+ */
+export const reloadBelowOf = (max: number, box: boolean): number => (box ? max : max - Math.min(50, max - 1));
 
 /** --make-templates の「frame:3 桁の値,...」を、フレーム → 値にする */
 export function parseTemplateSpec(spec: string): Map<number, string> {
