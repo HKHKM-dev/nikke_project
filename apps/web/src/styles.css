@@ -884,7 +884,7 @@ header h1 {
 }
 /* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
 .modern-slot-empty-number {
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   font-weight: bold;
   line-height: 1.1;
 }
