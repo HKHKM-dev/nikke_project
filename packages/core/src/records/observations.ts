@@ -14,7 +14,7 @@ import {
   videoFrameOf,
   type BurstSchedule,
 } from '../burst/schedule.ts';
-import { computeCadence, rateAfterShots, reloadFirstShotFrames } from '../cadence.ts';
+import { rateAfterShots, reloadCompleteToFirstShotFrames } from '../cadence.ts';
 import {
   DISTANCE_BONUS,
   PER_SHOT_DAMAGE_CORE,
@@ -30,7 +30,7 @@ import { effectiveMaxAmmo, firingParams } from '../frame/firing.ts';
 import { landingFrameSpans } from '../frame/landing.ts';
 import { partialShotsInRanges } from '../frame/shots.ts';
 import { computeFixedSpecAttack, computeFixedSpecDefence, computeFixedSpecHp, fixedSpecGrowth } from '../fixedSpec.ts';
-import { runSimulation, type SimResult } from '../sim/engine.ts';
+import { runSimulation, type SimResult, type SimSlotSegment } from '../sim/engine.ts';
 import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
@@ -621,27 +621,72 @@ function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * モダニア編（V-0179）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
- * 照準の横の残弾と比べる
+ * 枠のリロードの回（1 パス目の射撃の列の、基礎の武器のマガジンの最終弾 → 次のマガジンの 1 発目）のうち、最終弾が引数 frame の区間に
+ * ある回の長さ（時刻の順）。録画の読みと同じく、狙えない窓に掛かる回（ハイド中のリロード・明けの構え）と、バーストの止まりに掛かる回（動画の
+ * フレームがゲーム内の時計より進む）は除く。使用武器の変更の最後の発は、基礎の武器のマガジンの最終弾でないので除く
  */
-/**
- * Stage 13 の残り（キューブのリロード速度▲）: そのフレームの区間の、リロード 1 回分の長さ（動画のフレーム。ゲーム内の時計で数えた
- * 端数つきの値。C-0145）。録画では、RELOADING のバーが 0 から満ちるまでの長さ（レシピ reload-segments のバーの長さ）と比べる
- */
-function reloadFramesAt(result: SimResult, ctx: MetricContext): number {
-  const slot = slotOf(result.slots, ctx);
-  const input = slotOf(ctx.input.slots, ctx);
+function reloadsAt(result: SimResult, ctx: MetricContext): { segment: SimSlotSegment; reloads: number[] } {
+  const log = slotOf(result.shots, ctx);
   const frame = Number(ctx.args.frame);
-  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
+  const segment = slotOf(result.slots, ctx).segments.find((s) => s.start <= frame && frame < s.end);
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
-  return firingParams(input.character.shot, segment.trigger.buffs).reloadChunkFrames;
+  const changed = new Set(log.weaponChangeShotFrames ?? []);
+  const reloads: number[] = [];
+  for (const last of log.lastShotFrames ?? []) {
+    if (last < segment.start || last >= segment.end || changed.has(last)) continue;
+    const next = log.frames[log.frames.indexOf(last) + 1];
+    if (next === undefined || result.untargetable.some((w) => w.start <= next && last < w.end)) continue;
+    const frames = next - last;
+    if (videoFrameOf(result.schedule, next) - videoFrameOf(result.schedule, last) === frames) reloads.push(frames);
+  }
+  return { segment, reloads };
 }
 
 /**
- * V-0264（キューブのリロード速度▲の残差）: そのフレームの区間の、マガジンの最終弾から次のマガジンの 1 発目までの長さ（動画のフレーム。
- * リロード 1 回分の端数つきの長さ + リロード明けの 1 発目まで。C-0148）。録画では、レシピ reload-segments の最終弾 → 完了と
- * 完了 → 次の増分の和（リロードごと）と比べる。バーの長さと違い、武器種ごとの切片（C-0135）を含まない形で比べられる
+ * 全弾リロードの 1 回分は最終弾の蓄積の余りで決まり、マガジンの発数・窓・途中のバフで 1 回ごとに違う（plan/design-reload-rounding.md
+ * 案 E）ので、sim の射撃の列の回を読む。引数 n（0 始まり）があれば reloadsAt の n 回目、無ければ回ごとの値の中央値（録画の多くは
+ * 区間の中の回の中央値を読む）。区間に読める回が無ければ、モデルにその回が無いので比べられない（定常のマガジンの周期で埋めない）
  */
+function perReloadAt(
+  result: SimResult,
+  ctx: MetricContext,
+  at: (frames: number, segment: SimSlotSegment) => number,
+): number {
+  const { segment, reloads } = reloadsAt(result, ctx);
+  const where = `枠 ${String(ctx.args.slot)} のフレーム ${String(ctx.args.frame)} の区間`;
+  if (ctx.args.n === undefined) {
+    if (reloads.length === 0) throw new Error(`${where}にリロードが無い`);
+    return median(reloads.map((r) => at(r, segment)));
+  }
+  const reload = reloads[Number(ctx.args.n)];
+  if (reload === undefined) throw new Error(`${where}に ${String(ctx.args.n)} 回目のリロードが無い`);
+  return at(reload, segment);
+}
+
+/**
+ * Stage 13 の残り（キューブのリロード速度▲）: そのフレームの区間のリロードの回の、最終弾から込め終わり（RELOADING のバーが消える）までの
+ * フレーム（全弾リロードは ⌈ずれ + x + c⌉、分割リロードは段の数 + 1 段。perReloadAt）。sim の最終弾 → 次の 1 発目から、込め終わり → 1 発目
+ * を引く。録画では、レシピ reload-segments の最終弾 → 完了と比べる
+ */
+function reloadFramesAt(result: SimResult, ctx: MetricContext): number {
+  const shot = slotOf(ctx.input.slots, ctx).character.shot;
+  return perReloadAt(
+    result,
+    ctx,
+    (frames, segment) =>
+      frames - reloadCompleteToFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, firingParams(shot, segment.trigger.buffs)),
+  );
+}
+
+/**
+ * V-0264（キューブのリロード速度▲の残差）: そのフレームの区間のリロードの回の、マガジンの最終弾から次のマガジンの 1 発目までのフレーム
+ * （perReloadAt）。録画では、レシピ reload-segments の最終弾 → 完了と完了 → 次の増分の和（リロードごと）か、HUD の増分の空きと比べる。
+ * バーの長さと違い、武器種ごとの切片（C-0135）を含まない形で比べられる
+ */
+function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
+  return perReloadAt(result, ctx, (frames) => frames);
+}
+
 /**
  * V-0621: window 回目（0 始まり）の狙えない窓の中で始めたハイド中のリロードの、始まり（RELOADING のバーの 0 の点）から窓の終わり（明け）
  * までのフレーム数（C-0842・C-0844）。録画では、reload.ts --mode fit のバーの長さ 0 に遡った点から、バーが消えたフレーム（明けで取り消された
@@ -713,21 +758,10 @@ function partialChargeProgressIn(result: SimResult, ctx: MetricContext): number 
   return progress;
 }
 
-function reloadToNextShotAt(result: SimResult, ctx: MetricContext): number {
-  const slot = slotOf(result.slots, ctx);
-  const input = slotOf(ctx.input.slots, ctx);
-  const frame = Number(ctx.args.frame);
-  const segment = slot.segments.find((s) => s.start <= frame && frame < s.end);
-  if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
-  const shot = input.character.shot;
-  const params = firingParams(shot, segment.trigger.buffs);
-  // 全弾リロードの 1 回分は、マガジンを撃ち切った最終弾の蓄積の余りから 1 回ごとに丸めた整数（cadence.ts の fullReloadFrames。
-  // plan/design-reload-rounding.md 案 E）。分割リロードは 1 段の端数つきの長さのまま
-  if (params.splitReload) return params.reloadChunkFrames + reloadFirstShotFrames(shot, DEFAULT_WEAPON_MODEL, params);
-  const cadence = computeCadence(shot, DEFAULT_WEAPON_MODEL, params);
-  return cadence.reloadFrames + cadence.reloadFirstShotFrames;
-}
-
+/**
+ * モダニア編（V-0179）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
+ * 照準の横の残弾と比べる
+ */
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
   const slot = slotOf(result.slots, ctx);
   const input = slotOf(ctx.input.slots, ctx);

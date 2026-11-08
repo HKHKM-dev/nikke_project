@@ -176,12 +176,26 @@ export function fullReloadFrames(
   params: FiringParams,
   startOffset: number,
 ): number {
-  const before = reloadWaitOutsideChargeFrames(shot, model, params) - model.reloadCompleteToShotFrames;
+  const before = fullReloadLeadFrames(shot, model, params);
   // 割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く。max(0, …) はリロード速度 100% 以上の 0
   return Math.max(
     0,
     Math.ceil(startOffset + params.reloadChunkFrames + model.reloadCompleteExtraFrames - before - 1e-9),
   );
+}
+
+/** 全弾リロードの k（射手が残弾を満たしてから込め終わりまで。fullReloadFrames） */
+function fullReloadLeadFrames(shot: ShotParams, model: WeaponModel, params: FiringParams): number {
+  return reloadWaitOutsideChargeFrames(shot, model, params) - model.reloadCompleteToShotFrames;
+}
+
+/**
+ * 込め終わり（RELOADING のバーが消える）から次のマガジンの 1 発目までのフレーム数。射手は、全弾リロードでは込め終わりの k 前に
+ * 残弾を満たしてリロード明けの待ち（reloadFirstShotFrames）に入り、分割リロードでは込め終わりに満たす（C-0154）
+ */
+export function reloadCompleteToFirstShotFrames(shot: ShotParams, model: WeaponModel, params: FiringParams): number {
+  const wait = reloadFirstShotFrames(shot, model, params);
+  return params.splitReload ? wait : wait - fullReloadLeadFrames(shot, model, params);
 }
 
 /** リロード明けの待ちのうちチャージの外の長さ（チャージの無い武器は reloadFirstShotFrames、チャージ武器は解放。fullReloadFrames の k） */
