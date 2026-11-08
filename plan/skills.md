@@ -42,7 +42,7 @@ notes の種類: 未対応 37・前提の外 45・計算に無関係 43・補足
   - effects[6] damage・fullBurstStart・skill: C-0726（確定）、C-0725（確定）
   - effects[7] counterChange・fullBurstStart・stickyGrenade（減少）: C-0726（確定）
   - effects[8] passive・elementAdvantage: C-0723（確定）
-  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）: C-0991（仮説）
+  - notes[0] 未対応: 粘着榴弾の付着のヒットでバーストゲージが溜まる（単騎の録画 0733・0734。観測値 0733-08・0734-08）のは未対応。量は射手の 1 ヒットぶん（target_burst_energy_pershot）より大きく、会心の付着でも増えない（付着のダメージに比例しない。0733-06）。説明文にもデータにも値が無く、出どころが分からない（plan/design-skill-stage12-leftovers.md 2 節）: C-0990（仮説）
 - **burst**: supported
   - effects[0] damage・burstUse・additional: C-0716（確定）
   - effects[1] timed・burstUse・projectileStickDamage: C-0724（確定）
