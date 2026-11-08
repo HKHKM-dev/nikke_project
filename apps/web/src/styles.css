@@ -1018,7 +1018,7 @@ header h1 {
 }
 /* 「未」の札は、下部に重ねる名前の行の上に出す */
 .char-visual-tall .char-unsupported-tag {
-  bottom: calc(30px + var(--rarity-band-h));
+  bottom: calc(40px + var(--rarity-band-h));
 }
 .char-tray-tall-area {
   width: 100%;

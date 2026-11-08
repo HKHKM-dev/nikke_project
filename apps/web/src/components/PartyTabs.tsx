@@ -26,10 +26,11 @@ export function PartyTabs({ active, onSelect, totals }: Props) {
             >
               {partyNumber(i)}
             </button>
-            {/* 値の欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す */}
+            {/* 値の欄（format.ts の formatDamage。出せない値は「—」）。エラーの文は読み上げにだけ渡す（名前を読ませるため role を付ける） */}
             <span
               className="party-tab-total"
               data-computing={total?.computing ?? false}
+              role={total?.error === undefined ? undefined : 'img'}
               aria-label={total?.error === undefined ? undefined : `計算できない: ${total.error}`}
             >
               {formatDamage(total?.total ?? null)}
