@@ -359,9 +359,9 @@
           ]
         },
         {
-          "ja": "爆発範囲▲が、遠の区間のバーストの窓の通常攻撃のコアに当たる割合を変えるか（近・中近・中遠は、窓の中も外と同じ表の行でコアに当たる。C-0424。遠は、単騎の録画 0320・0321 で同じ遠の区間の窓の中と外を比べても差は見分けられず、遠の割合は録画どうしで食い違う（C-0425。V-0297）。0.1〜0.2 程度の差は否定できない。plan/design-anis-star-unimplemented.md 5 節）",
-          "en": "Whether the Explosion Radius increase changes the core hit rate of normal attacks during her Burst in the far segment (at near, mid-near and mid-far range the same table row applies inside and outside the Burst, C-0424; at far range, on the solo recordings 320 and 321 the in/out difference within the same far segment is not distinguishable, and the far rate differs between recordings (C-0425, V-0297). A difference of about 0.1-0.2 is not ruled out. plan/design-anis-star-unimplemented.md 5)",
-          "kind": "unimplemented",
+          "ja": "爆発範囲▲（10 秒）は、敵 1 体では複数の敵へのヒットを増やすだけで起きない。射撃場の的では、窓の中の通常攻撃も外と同じ表の行でコアに当たる（C-0424）。遠の区間の窓の中と外の差は見分けられず（V-0297・V-0692）、窓でコアの割合が変わるという問いは、出どころ（窓の発の形の読み違いと、録画 0164 の遠の高さ）が無くなったので立てない（plan/design-anis-star-unimplemented.md 9.5 節）",
+          "en": "The Explosion Radius increase (10 s) only adds hits on more enemies, which does not happen against a single enemy. On the range target, normal attacks during her Burst hit the core with the same table row as outside it (C-0424); in the far segment no in/out difference is distinguishable (V-0297, V-0692), and the question of whether the window changes the core rate is dropped because its origins (a misread of the in-window shot shape and the high far rate of recording 0164) no longer hold (plan/design-anis-star-unimplemented.md 9.5)",
+          "kind": "outOfScope",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
@@ -369,8 +369,7 @@
             "trigger": "burstUse"
           },
           "claims": [
-            "C-0424",
-            "C-0425"
+            "C-0424"
           ]
         },
         {
