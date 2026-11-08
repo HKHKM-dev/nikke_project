@@ -996,9 +996,13 @@ header h1 {
   transform: translateY(-2px);
   border-color: Highlight;
 }
+/* 置き先を待っている間は、待っているニケに水色の実線の枠を付け、ほかのニケを暗くする */
 .char-tray-item.char-tray-item-pending {
-  border-color: Highlight;
-  background: color-mix(in srgb, Highlight 15%, transparent);
+  outline: 3px solid light-dark(#0ea5e9, #38bdf8);
+  outline-offset: -1px;
+}
+.char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
+  filter: brightness(0.4);
 }
 .char-tray-item-name {
   font-size: 0.75rem;

@@ -94,7 +94,7 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
         </div>
       </div>
 
-      <div className="char-tray-list">
+      <div className={`char-tray-list ${pendingId !== null ? 'char-tray-list-pending' : ''}`}>
         {filteredCharacters.length === 0 ? (
           <p className="char-tray-empty">該当するニケが見つかりませんでした。</p>
         ) : (

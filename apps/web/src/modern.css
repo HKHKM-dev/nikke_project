@@ -186,10 +186,6 @@
   border-color: var(--m-accent);
   background: var(--m-surface-2);
 }
-:root[data-app-ui='modern'] .char-tray-item.char-tray-item-pending {
-  border-color: var(--m-gold);
-  background: color-mix(in srgb, var(--m-gold) 18%, var(--m-surface));
-}
 :root[data-app-ui='modern'] .char-drag-overlay {
   border-radius: 12px;
   border-color: var(--m-accent);
