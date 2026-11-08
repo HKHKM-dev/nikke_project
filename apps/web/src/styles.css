@@ -723,6 +723,11 @@ header h1 {
   background: color-mix(in srgb, Highlight 15%, var(--app-bg));
 }
 /* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
+/* 離したときのアニメーションで持ち上げた絵が向かっている間、落とした先のスロットの絵を隠す（ModernView の DROP_ANIMATION） */
+.modern-slot-card.modern-slot-arriving .char-visual-portrait,
+.modern-slot-card.modern-slot-arriving .modern-slot-empty-area {
+  visibility: hidden;
+}
 .modern-slot-card.modern-slot-dragging .char-visual-portrait,
 .modern-slot-card.drag-source-returning .char-visual-portrait,
 .modern-slot-card.modern-slot-dragging .modern-slot-empty-area,
