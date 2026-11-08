@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence, fullReloadFrames, reloadChunks, reloadStartOffset, simulateShotFrames } from '../cadence.ts';
 import { shotFramesUpTo } from '../frame/shooter.ts';
-import { firingParams, ZERO_FIRING_BUFFS } from '../frame/firing.ts';
+import { firingParams, ZERO_FIRING_BUFFS, type StanceFrames } from '../frame/firing.ts';
+import type { ChangedWeapon } from '../skills/buffs.ts';
 import type { CharacterData, ShotParams } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
@@ -302,6 +303,31 @@ describe('fullReloadFrames (design-reload-rounding 案 E)', () => {
     // 720rpm（1 フレーム 0.204）で余り 0.159 なら、本当の発の時刻は 0.78f 前
     expect(reloadStartOffset(ar, DEFAULT_WEAPON_MODEL, params, 0.159, 0)).toBeCloseTo(-0.779, 3);
     expect(reloadStartOffset(MG, DEFAULT_WEAPON_MODEL, firingParams(MG), 0.504, 299)).toBe(0);
+  });
+
+  it('gives 0 when the accumulation per frame is 0 or less (Attack Speed −100%)', () => {
+    const ar = shot({});
+    const stopped = firingParams(ar, { ...ZERO_FIRING_BUFFS, attackSpeed: -1 });
+    expect(stopped.rateScale).toBe(0);
+    expect(reloadStartOffset(ar, DEFAULT_WEAPON_MODEL, stopped, 0.159, 0)).toBe(0);
+    expect(reloadStartOffset(ar, DEFAULT_WEAPON_MODEL, { ...stopped, rateScale: -0.5 }, 0.159, 0)).toBe(0);
+  });
+
+  it("uses the changed weapon's charge release for k, except for stance and DOWN charge weapons", () => {
+    const up = RL;
+    const down = shot({ ...RL, inputType: 'DOWN_Charge' });
+    const m = DEFAULT_WEAPON_MODEL;
+    const weapon = { id: 'w', hits: 1, shot: RL, chargeReleaseFrames: 30 } as ChangedWeapon;
+    // 変更後の武器の解放 30f: k = 30 − 12 = 18 で ⌈117.65 − 1.1 + 11.9⌉ − 18 = 111（解放の無い変更は k = 11 で 118）
+    expect(fullReloadFrames(up, m, { ...firingParams(up), weapon }, -1.1)).toBe(111);
+    expect(
+      fullReloadFrames(up, m, { ...firingParams(up), weapon: { ...weapon, chargeReleaseFrames: undefined } }, -1.1),
+    ).toBe(118);
+    // 押下チャージ型と射撃姿勢維持型は武器の解放を見ない
+    expect(fullReloadFrames(down, m, { ...firingParams(down), weapon }, 0)).toBe(119);
+    const withStance = { ...firingParams(up), stance: {} as StanceFrames };
+    expect(fullReloadFrames(up, m, { ...withStance, weapon }, -1.1)).toBe(fullReloadFrames(up, m, withStance, -1.1));
+    expect(fullReloadFrames(up, m, withStance, -1.1)).toBe(118);
   });
 
   it('uses −1.1f for UP charge weapons and 0 for DOWN charge weapons, with k = release − 12 = 11', () => {

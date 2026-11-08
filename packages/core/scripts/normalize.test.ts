@@ -7,6 +7,7 @@ import {
   toCharacterData,
   toIndexEntry,
   toTreasureData,
+  toTreasurePower,
   type RawEquipOption,
   type RawFavorite,
   type RawRoleData,
@@ -320,6 +321,16 @@ describe('toTreasureData (Stage 9)', () => {
     expect(findTreasureOwner({ id: 1, name_code: 9999 }, roles)).toBeNull();
     expect(() => findTreasureOwner(favorite('en'), [...roles, { resource_id: 92, name_code: 5001 }])).toThrow(
       /several characters \(90, 92\)/,
+    );
+  });
+
+  it('takes the treasure power that is the same for grades 1..3, and rejects one that differs or is missing', () => {
+    expect(toTreasurePower({ id: 209901, powers: [1200, 1200, 1200] })).toBe(1200);
+    expect(() => toTreasurePower({ id: 209901, powers: [1200, 1300, 1200] })).toThrow(
+      'favorite 209901: treasure powers differ by grade',
+    );
+    expect(() => toTreasurePower({ id: 209901, powers: [] })).toThrow(
+      'favorite 209901: treasure powers differ by grade',
     );
   });
 });

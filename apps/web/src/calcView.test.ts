@@ -34,6 +34,7 @@ function readJson<T>(path: string): T {
 const character = (id: number) => readJson<CharacterData>(`../../../packages/core/data/characters/${id}.json`);
 
 // ラピ（ELYSION・Attacker・宝物なし）、クラウン（PILGRIM・Defender・OVERSPEC）、ラプラス（宝物あり）。
+// ドレイク（宝物と、宝物版の定義あり）。
 // 想定 HP: ノワール（自分の HP の割合の条件）、マスト（HP の割合の窓のきっかけ）、I-DOLL・オーシャン（HP の割合が最も低い味方を回復）
 const LAPI = 10;
 const CROWN = 330;
@@ -41,11 +42,11 @@ const LAPLACE = 100;
 const NOIR = 271;
 const MAST = 350;
 const OCEAN = 305;
-const characters = new Map([LAPI, CROWN, LAPLACE, NOIR, MAST, OCEAN].map((id) => [id, character(id)]));
-const ready = (id: number): SlotSkillsStatus => ({
-  kind: 'ready',
-  definition: parseSkillDefinition(readJson<unknown>(`../../../packages/core/data/skills/${id}.json`)),
-});
+const DRAKE = 101;
+const characters = new Map([LAPI, CROWN, LAPLACE, NOIR, MAST, OCEAN, DRAKE].map((id) => [id, character(id)]));
+const definitionOf = (id: number) =>
+  parseSkillDefinition(readJson<unknown>(`../../../packages/core/data/skills/${id}.json`));
+const ready = (id: number): SlotSkillsStatus => ({ kind: 'ready', definition: definitionOf(id) });
 const enemyMaster = parseEnemyPresets(readJson<unknown>('../../../packages/core/data/enemies.json'));
 
 function deps(over: Partial<CalcDeps> = {}): CalcDeps {
@@ -160,6 +161,29 @@ describe('buildCalcView: slot advanced settings', () => {
     const s = withCharacters([LAPI, OCEAN]);
     const view = buildCalcView(s, deps({ skillsStatuses: [ready(LAPI), ready(OCEAN), null, null, null] }));
     expect(view.slots.map((x) => x.usesHpRatio)).toEqual([true, true, false, false, false]);
+  });
+
+  // 宝物版に差し替えた後の定義で決める（ドレイクの定義の S1 を、ノワールの S1 の自分の HP の割合の条件と入れ替えて見る。
+  // ドレイクの宝物は段階 1 で S1 が替わる）
+  it('decides the assumed HP from the definition after the treasure version replaces the skills', () => {
+    const noirSkill1 = definitionOf(NOIR).skills.skill1;
+    const base = definitionOf(DRAKE);
+    const view = (treasurePhase: 0 | 1, definition: typeof base) => {
+      let s = teamReducer(withCharacters([DRAKE]), { type: 'setTreasurePhase', index: 0, treasurePhase });
+      s = teamReducer(s, { type: 'setHpRatio', index: 0, hpRatio: 0.5 });
+      const v = buildCalcView(s, deps({ skillsStatuses: [{ kind: 'ready', definition }, null, null, null, null] }));
+      return [v.slots[0]!.usesHpRatio, v.input.slots[0]?.hpRatio];
+    };
+    expect(view(0, base)).toEqual([false, 1]);
+    expect(view(1, base)).toEqual([false, 1]);
+    // 宝物版の S1 だけが読む
+    const treasureReads = { ...base, treasureSkills: { ...base.treasureSkills, skill1: noirSkill1 } };
+    expect(view(0, treasureReads)).toEqual([false, 1]);
+    expect(view(1, treasureReads)).toEqual([true, 0.5]);
+    // 基礎の S1 だけが読む（宝物版に替わると読まない）
+    const baseReads = { ...base, skills: { ...base.skills, skill1: noirSkill1 } };
+    expect(view(0, baseReads)).toEqual([true, 0.5]);
+    expect(view(1, baseReads)).toEqual([false, 1]);
   });
 
   it('lists only the occupied no-burst slots, and leaves the list out when there are none', () => {

@@ -189,6 +189,25 @@ describe('whileItems', () => {
       ),
     ).toEqual([{ start: 110, end: 450 }]);
   });
+
+  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態の件の列は段ごとの期待値の小片で、条件の段の小片をそのまま出す
+  it('takes the pieces of exactly the condition level from a chance track, keeping the scale', () => {
+    const pieces = [
+      { start: 10, end: 100, stack: 1, scale: 0.6 },
+      { start: 10, end: 100, stack: 2, scale: 0.3 },
+      { start: 10, end: 100, stack: 3, scale: 0.1 },
+      { start: 100, end: 200, stack: 2, scale: 0.4 },
+    ];
+    const chance = [{ origin: origin(3), items: pieces, chance: true }];
+    expect(whileItems(chance, 2)).toEqual([pieces[1], pieces[3]]);
+    expect(whileItems(chance, 3)).toEqual([pieces[2]]);
+    expect(whileItems(chance, 'full')).toEqual([pieces[2]]);
+    expect(whileItems(chance, undefined)).toEqual([pieces[0]]);
+    // 上限より上の段の小片は無い
+    expect(whileItems(chance, 4)).toEqual([]);
+    // 確率の状態の列があれば、ほかの列は見ない（確率の状態の付与はその状態の 1 つだけ）
+    expect(whileItems([{ origin: origin(3), items }, ...chance], 2)).toEqual([pieces[1], pieces[3]]);
+  });
 });
 
 describe('攻撃速度の刻み（C-0600）', () => {

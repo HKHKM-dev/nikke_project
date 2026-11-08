@@ -85,7 +85,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけも書ける（件はスタック数の分布の期待値の小片。validateChanceGrant）
   const fields = parseTimedFields(v, path, undefined, true);
   validateCounterGrant(fields, path);
-  validateChanceGrant(fields, v, path);
+  validateChanceGrant(fields, v, path, onEnemy);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
   }
@@ -203,7 +203,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
  * （skills/chance.ts の chanceStackPieces）で、付いた記録を作らない。秒の維持で、味方に付け、発火の文脈や条件では決めない。見る側は
  * while（スタックの条件の確率）と stacksFrom（スタック数の期待値）だけ（skills/parse/crossChecks.ts の validateChanceStates）
  */
-function validateChanceGrant(fields: GrantTimedFields, v: Record<string, Json>, path: string): void {
+function validateChanceGrant(fields: GrantTimedFields, v: Record<string, Json>, path: string, onEnemy: boolean): void {
   if (!isChanceTrigger(fields.trigger)) return;
   for (const key of [
     'condition',
@@ -220,7 +220,8 @@ function validateChanceGrant(fields: GrantTimedFields, v: Record<string, Json>, 
     if (v[key] !== undefined)
       fail(`${path}.${key}`, `a chance trigger cannot be combined with ${key} in a state grant`);
   }
-  if (v.target === 'enemy') fail(`${path}.target`, 'a chance trigger cannot grant a state on the enemy');
+  // v は敵の付与を target: "allies" に読み替えた後なので、読み替える前の印で見る
+  if (onEnemy) fail(`${path}.target`, 'a chance trigger cannot grant a state on the enemy');
   if (v.durationSeconds === 0)
     fail(`${path}.durationSeconds`, 'a chance grant needs a duration (it records no application)');
   if (dependsOnContext(fields as StateGrantEffect))

@@ -437,6 +437,41 @@ describe('命中率▼の表（C-0974・C-0975。plan/design-maids.md 8 節）',
     expect(mg.coreHitRate).toBe(0.9588);
     expect(mg.hitRate).toBe(0.9917);
   });
+
+  it('rejects malformed Hit Rate decrease tables', () => {
+    const base = raw.targetProfiles as Record<string, unknown>[];
+    const bigarms = base.find((p) => p.id === 'range-bigarms')!;
+    const parse = (hitRateDown: unknown) => () =>
+      parseEnemyPresets({ ...raw, targetProfiles: base.map((p) => (p === bigarms ? { ...p, hitRateDown } : p)) });
+    const core = { base: { near: 0.5 }, ratio: { '-0.2': 1 } };
+    expect(parse({ MG: { core, bullet: { '-0.2': { far: 0.9 } } } })).not.toThrow();
+    expect(parse({})).not.toThrow();
+    expect(parse(null)).toThrow(/hitRateDown: must be an object/);
+    expect(parse([])).toThrow(/hitRateDown: must be an object/);
+    expect(parse({ XX: { core } })).toThrow(/hitRateDown\.XX: unknown weapon type/);
+    expect(parse({ MG: 1 })).toThrow(/hitRateDown\.MG: must be an object/);
+    expect(parse({ MG: { core, extra: {} } })).toThrow(/hitRateDown\.MG\.extra: unknown key/);
+    // core は { base, ratio } だけ
+    expect(parse({ MG: { core: 1 } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
+    expect(parse({ MG: { core: { base: { near: 0.5 } } } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
+    expect(parse({ MG: { core: { ...core, extra: 1 } } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
+    expect(parse({ MG: { core: { base: { near: 0.5 }, ratio: 1 } } })).toThrow(/MG\.core: must be \{ base, ratio \}/);
+    // 和 N のキーは負の数
+    for (const key of ['0.2', '0', '', ' ', 'x', 'Infinity']) {
+      expect(parse({ MG: { core: { ...core, ratio: { [key]: 1 } } } })).toThrow(/key must be a negative number/);
+      expect(parse({ MG: { bullet: { [key]: { far: 0.9 } } } })).toThrow(/key must be a negative number/);
+    }
+    expect(parse({ MG: { core: { ...core, ratio: { '-0.2': 1.5 } } } })).toThrow(
+      /MG\.core\.ratio\.-0\.2: must be in \[0, 1\]/,
+    );
+    expect(parse({ MG: { core: { ...core, ratio: { '-0.2': '1' } } } })).toThrow(/must be in \[0, 1\]/);
+    expect(parse({ MG: { core: { ...core, base: { moon: 0.5 } } } })).toThrow(/not a landing/);
+    expect(parse({ MG: { core: { ...core, base: { near: 2 } } } })).toThrow(/\[0, 1\]/);
+    expect(parse({ MG: { bullet: 1 } })).toThrow(/MG\.bullet: must be an object/);
+    expect(parse({ MG: { bullet: { '-0.2': { moon: 0.9 } } } })).toThrow(/not a landing/);
+    expect(parse({ MG: { bullet: { '-0.2': {} } } })).toThrow(/MG\.bullet\.-0\.2: must be a non-empty object/);
+    expect(parse({ MG: { bullet: { '-0.2': { far: -0.1 } } } })).toThrow(/\[0, 1\]/);
+  });
 });
 
 describe('命中率▲と弾丸命中率（C-0192。plan/design-hit-rate-up-bullet-h2.md）', () => {

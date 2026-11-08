@@ -150,6 +150,41 @@ describe('確率のきっかけの付与の読み込み', () => {
     ).toThrow(/needs a duration|holds nothing/);
   });
 
+  it('rejects a chance grant on the enemy or on targets chosen by the fire context', () => {
+    const rest = raw.skills.skill1!.effects.slice(1);
+    const read = (patch: Record<string, unknown>) => () =>
+      parseSkillDefinition(withEffects('skill1', [{ ...grant, ...patch }, ...rest]));
+    // 敵の付与は target: "allies" に読み替えてから残りの欄を読むが、確率のきっかけは読み替える前の target で止める
+    const onEnemy = {
+      ...grant,
+      state: 'explosiveRound',
+      target: 'enemy',
+      maxStacksRef: undefined,
+      contents: [{ stat: 'damageTaken', ref: 6 }],
+    };
+    expect(() => parseSkillDefinition(withEffects('skill1', [...raw.skills.skill1!.effects, onEnemy]))).toThrow(
+      /skill1\.effects\[2\]\.target: a chance trigger cannot grant a state on the enemy/,
+    );
+    expect(read({ target: 'topAttack', targetCount: 1 })).toThrow(
+      /topAttack cannot be used with a chance trigger \(the targets depend on the fire context\)/,
+    );
+  });
+
+  it('rejects another grant of the chance state', () => {
+    const other = {
+      kind: 'state',
+      state: 'temporaryModification',
+      trigger: 'fullBurstStart',
+      target: 'self',
+      durationRef: 5,
+      maxStacksRef: 4,
+      claims: ['C-0987'],
+    };
+    expect(() => parseSkillDefinition(withEffects('skill2', [...raw.skills.skill2!.effects, other]))).toThrow(
+      /"temporaryModification" is granted by a chance trigger, so it cannot have another grant/,
+    );
+  });
+
   it('rejects a reader of the chance state other than while and stacksFrom', () => {
     const reader = {
       kind: 'timed',

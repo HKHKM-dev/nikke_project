@@ -37,12 +37,12 @@ import {
   addedLines,
   backlogProgressCopy,
   branchChangedChecks,
+  branchOversizedDocs,
   handEditedLines,
   handRemovedLines,
   checkSteps,
   collisions,
   nulPaths,
-  oversizedDocs,
   pathListArgs,
   PROGRESS_PATHS,
   progressCopies,
@@ -272,10 +272,8 @@ if (tryGit(['diff', '--cached', '--quiet']) !== 0) {
 }
 console.log('作業ツリーの生成物は main の版。手元で npm test を回すなら npm run records:minimal で作り直す');
 
-const oversized = oversizedDocs(
-  gitPaths(['diff', '--name-only', '--diff-filter=AMR', 'origin/main...HEAD']),
-  GENERATED_PATHS,
-  (p) => (existsSync(join(ROOT, p)) ? statSync(join(ROOT, p)).size : undefined),
+const oversized = branchOversizedDocs('origin/main', gitRaw, GENERATED_PATHS, (p) =>
+  existsSync(join(ROOT, p)) ? statSync(join(ROOT, p)).size : undefined,
 );
 if (oversized.length > 0) {
   console.warn(

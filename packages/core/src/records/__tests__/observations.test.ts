@@ -517,6 +517,27 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, n: 2 })).toThrow('2 回目の発動が無い');
   });
 
+  it('measures the first shot at or after the end of the n-th untargetable window, per window for a list (V-0682)', () => {
+    const result = {
+      shots: [{ frames: [80, 99, 100, 130, 250, 290, 300] }, { frames: [] }],
+      untargetable: [
+        { start: 90, end: 100 },
+        { start: 200, end: 260 },
+        { start: 310, end: 400 },
+      ],
+    } as unknown as SimResult;
+    const metric = METRICS.windowEndToFirstShot!;
+    const value = (args: Record<string, unknown>) =>
+      metric.sim(result, { args, input: {} as TeamInput } as Parameters<typeof metric.sim>[1]);
+    // 明けのフレームちょうどの発は 0（明けより前の 99 は数えない）
+    expect(value({ slot: 1, window: 0 })).toBe(0);
+    expect(value({ slot: 1, window: 1 })).toBe(30);
+    expect(value({ slot: 1, window: '0, 1' })).toEqual([0, 30]);
+    expect(() => value({ slot: 1, window: 2 })).toThrow('2 回目の狙えない窓の後に発が無い');
+    expect(() => value({ slot: 1, window: 3 })).toThrow('3 回目の狙えない窓が無い');
+    expect(() => value({ slot: 2, window: 0 })).toThrow('0 回目の狙えない窓の後に発が無い');
+  });
+
   it('measures the end of a timed window started in the n-th full burst, from the end of the full burst (backlog 2-4, V-0392)', () => {
     const effect = (skill: string, stat: string) => ({ source: { skill }, stat, effectIndex: 0, value: 0.1 });
     // 持ち主ごとの一覧編（段 D の 5）: 指標は履歴の件（timed の件の列）を読む

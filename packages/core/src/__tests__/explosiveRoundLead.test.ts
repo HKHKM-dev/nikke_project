@@ -146,6 +146,53 @@ describe('leadFrames の境目（skills/holders.ts）', () => {
     },
   );
 
+  // 2 つの発の件の始まりが、どちらも戦闘の始まり（0）で止まる付与: 同じ始まりに発が 2 つある。付けた枠の小片は、件を作る関数の並び
+  // （スタックの段の順）で発を当て、和集合にまとまった件は最初の発から
+  describe('two rounds whose state starts both stop at 0', () => {
+    const second = result.shots[EUNHWA]!.weaponChangeShotFrames![1]!;
+    const run = (extra: Record<string, unknown>) => {
+      const grant = { leadFrames: second + 10, durationRef: undefined, durationSeconds: 60, ...extra };
+      const r = runWith(parseSkillDefinition(withGrant(grant) as never));
+      const [first, next] = r.shots[EUNHWA]!.weaponChangeShotFrames!;
+      expect([first, next]).toEqual([round, second]);
+      const damageTakenAt = (slotIndex: number, frame: number): number =>
+        burstSnapshotState(r.timeline, frame, slotIndex, false).buffs.damageTaken;
+      return { r, damageTakenAt };
+    };
+
+    it('gives each stack of a stacking state its own round for the user piece', () => {
+      const { r, damageTakenAt } = run({ maxStacks: 2 });
+      const items = itemsOf(r.history, { state: 'explosiveRound' });
+      expect(items.slice(0, 2).map((it) => [it.start, it.stack])).toEqual([
+        [0, 1],
+        [0, 2],
+      ]);
+      // ほかの枠は 0 から 2 スタック
+      expect(damageTakenAt(BESTIE, 0)).toBeCloseTo(2 * EXPLOSIVE_ROUND, 12);
+      // 付けた枠は、1 段目が 1 つ目の発の次、2 段目が 2 つ目の発の次から
+      expect(damageTakenAt(EUNHWA, round)).toBe(0);
+      expect(damageTakenAt(EUNHWA, round + 1)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+      expect(damageTakenAt(EUNHWA, second)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+      expect(damageTakenAt(EUNHWA, second + 1)).toBeCloseTo(2 * EXPLOSIVE_ROUND, 12);
+      // 1 パス目も、2 つの発の件を 0 に登録する: ベスティーの最初のフルチャージ（1 つ目の発より前）の次のフレームから S2 の▲
+      const shot = r.shots[BESTIE]!.frames[0]!;
+      expect(shot).toBeLessThan(round);
+      const projectileAt = (frame: number) =>
+        burstSnapshotState(r.timeline, frame, BESTIE, false).buffs.projectileExplosionDamage;
+      expect(projectileAt(shot)).toBe(0);
+      expect(projectileAt(shot + 1)).toBeCloseTo(0.2, 12);
+    });
+
+    it('starts the user piece of a merged item on the frame after the first round', () => {
+      const { r, damageTakenAt } = run({});
+      expect(itemsOf(r.history, { state: 'explosiveRound' })[0]!.start).toBe(0);
+      expect(damageTakenAt(BESTIE, 0)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+      expect(damageTakenAt(EUNHWA, round)).toBe(0);
+      expect(damageTakenAt(EUNHWA, round + 1)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+      expect(damageTakenAt(EUNHWA, second + 1)).toBeCloseTo(EXPLOSIVE_ROUND, 12);
+    });
+  });
+
   it('throws when a grant with leadFrames is not in stage 1', () => {
     // 型の検証が条件を止めるので、検証の後の定義に件を見る条件を足して、1 パス目の段の検査に届かせる
     const definition = parseSkillDefinition(eunhwaJson as never);

@@ -297,3 +297,17 @@ export function oversizedDocs(
     return size !== undefined && size > limit ? [{ path, size, limit }] : [];
   });
 }
+
+/**
+ * ブランチ（base...HEAD）で足した・変えた・名前を変えたファイルを git で読んで、oversizedDocs で決める。run は git を引数で呼んで標準出力を
+ * 返すもの。名前を変えた文書は新しいパスで見る（消したファイルは入れない）
+ */
+export function branchOversizedDocs(
+  base: string,
+  run: (args: readonly string[]) => string,
+  generated: readonly string[],
+  sizeOf: (path: string) => number | undefined,
+): { path: string; size: number; limit: number }[] {
+  const changed = nulPaths(run(pathListArgs(['diff', '--name-only', '--diff-filter=AMR', `${base}...HEAD`])));
+  return oversizedDocs(changed, generated, sizeOf);
+}
