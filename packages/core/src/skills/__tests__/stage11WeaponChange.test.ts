@@ -140,6 +140,10 @@ describe('ラプラス：アルティメットヒーローの S1（V-0528）', (
     expect(window).toHaveLength(120);
     expect(window[0]! - first[4]!).toBe(27);
     expect(base[5]! - window[119]!).toBe(230);
+    // V-0695: 120 発目は最初の発の 292f 後（1440rpm の蓄積の上の時刻は 291.67f）。リロードはその時刻から始まり、込め終わり 451f
+    // （⌈291.67 + 147.06 + 11.9⌉）の後、チャージ（59f）と込め終わり → 1 発目の 12f で次の変更前の武器の発は 522f 後
+    expect(window[119]! - window[0]!).toBe(292);
+    expect(base[5]! - window[0]!).toBe(522);
     // 変更後の武器の発は fullChargeShot に数えない（ウォームアップは次のマガジンで 0 から）
     expect(log.unchargedShotFrames).toEqual(changedShots);
     expect(

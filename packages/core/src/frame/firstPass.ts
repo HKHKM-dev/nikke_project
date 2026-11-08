@@ -170,6 +170,7 @@ import type { SkillSlot } from '../types.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { HoldFire, ObstacleBreak, PelletHits } from '../team.ts';
 import { unionRanges } from './events.ts';
+import { reloadStartOffset } from '../cadence.ts';
 
 export type FirstPassOptions = {
   frames: number;
@@ -614,6 +615,11 @@ function runFirstPassOnce(
   /** Stage 11 モダニア: 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
+  /**
+   * 撃ち切りで終わった使用武器の変更の、最後の発の本当の発の時刻の、そのフレームからのずれ（変更後の武器の発射レートの蓄積の余りから。
+   * 撃ち切りの残弾数減少のリロードの始まりに使う。plan/design-reload-rounding.md 案 F）
+   */
+  const weaponChangeEndOffset: number[] = slots.map(() => 0);
 
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
@@ -1439,6 +1445,7 @@ function runFirstPassOnce(
         lists.openWeaponChange(i, params.weapon.id, f + WEAPON_CHANGE_END_DELAY)
       ) {
         (log.weaponChangeEnds ??= []).push(f + WEAPON_CHANGE_END_DELAY);
+        weaponChangeEndOffset[i] = reloadStartOffset(shot, model, params, state.acc, state.shotsInMagazine - 1);
       }
       const isPartial = partial !== null && partial < 1;
       if (isPartial) (log.partialShots ??= []).push({ frame: f, progress: partial });
@@ -1872,14 +1879,17 @@ function runFirstPassOnce(
           const params = paramsAt(target, f);
           const before = state.ammo;
           // 使用武器の変更の撃ち切りで起きる残弾数減少は、最後の発の次のフレーム（ShotLog.weaponChangeEnds）に来るが、ゲームの
-          // リロードは最後の発より前に始まる（V-0681 のラプラス）。始まりを最後の発のフレームに戻す
+          // リロードは変更後の武器の最後の発の本当の発の時刻（発射レートの蓄積の上の時刻。見える最終弾は 0〜1f 遅れることがある）から
+          // 始まる（V-0695 のラプラス）。始まりを最後の発のフレームに戻し、その発の蓄積の余りのぶん前にする
           drainAmmo(
             state,
             Math.ceil(state.ammo * src.effect.value - 1e-9),
             params.weapon?.shot ?? slot.character.shot,
             model,
             params,
-            isResolvedWeaponChangeEnd(src.effect.trigger) ? -WEAPON_CHANGE_END_DELAY : 0,
+            isResolvedWeaponChangeEnd(src.effect.trigger)
+              ? weaponChangeEndOffset[target]! - WEAPON_CHANGE_END_DELAY
+              : 0,
           );
           instants.push({
             frame: f,
