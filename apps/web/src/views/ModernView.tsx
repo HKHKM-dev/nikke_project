@@ -102,9 +102,12 @@ export function ModernView({
   // 離したときのアニメーション（DragOverlay）は、ドラッグ元が画面の外にあると、ドラッグ元の要素に scrollIntoView して画面を動かす（dnd-kit の既定）。
   // アニメーションは残し、画面を動かすのだけ止めるため、持ち上げたドラッグ元の scrollIntoView を何もしない関数で隠す
   const noScrollNodeRef = useRef<Element | null>(null);
+  // 離したときのアニメーション。並びが変わったドロップでは null にする（handleDragEnd）
+  const [dropAnimation, setDropAnimation] = useState<typeof DROP_ANIMATION | null>(DROP_ANIMATION);
 
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
+    setDropAnimation(DROP_ANIMATION);
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -140,6 +143,9 @@ export function ModernView({
     setDraggedPortrait(null);
     const { active, over } = event;
     if (!over) return;
+    // 並びが変わるとき（入れ替え・置く・一覧へ戻す）は、離したときのアニメーション（ドラッグ元へ戻る）をしない。
+    // 何も変わらないとき（元のスロット・置けない所）だけ、ドラッグ元へ戻す
+    const changed = () => setDropAnimation(null);
 
     const overData = over.data.current;
     const activeData = active.data.current;
@@ -147,7 +153,10 @@ export function ModernView({
 
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
-      if (activeData.type === 'slot-character') dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
+      if (activeData.type === 'slot-character') {
+        changed();
+        dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
+      }
       return;
     }
     if (overData?.slotIndex === undefined) return;
@@ -158,10 +167,12 @@ export function ModernView({
       const char = activeData.character as CharacterIndexEntry;
       const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
       if (!action) return;
+      changed();
       dispatch(action);
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
+        changed();
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
       }
     }
@@ -300,7 +311,7 @@ export function ModernView({
           <NotesSummary slots={summarySlots} enemyNotes={shown?.computed.ok ? shown.computed.result.enemyNotes : []} />
         </ErrorBoundary>
 
-        <DragOverlay dropAnimation={DROP_ANIMATION}>
+        <DragOverlay dropAnimation={dropAnimation}>
           {draggedCharacter && draggedPortrait ? (
             // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
             // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
