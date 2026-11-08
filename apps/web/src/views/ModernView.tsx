@@ -49,9 +49,11 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
-  // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、スロットの立ち絵の大きさと、カードの左上からの位置も持つ
+  // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、カードの大きさと、立ち絵の大きさ・カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
   const [draggedPortrait, setDraggedPortrait] = useState<{
+    cardWidth: number;
+    cardHeight: number;
     width: number;
     height: number;
     left: number;
@@ -87,7 +89,14 @@ export function ModernView({
     if (card && portrait) {
       const c = card.getBoundingClientRect();
       const p = portrait.getBoundingClientRect();
-      setDraggedPortrait({ width: p.width, height: p.height, left: p.left - c.left, top: p.top - c.top });
+      setDraggedPortrait({
+        cardWidth: c.width,
+        cardHeight: c.height,
+        width: p.width,
+        height: p.height,
+        left: p.left - c.left,
+        top: p.top - c.top,
+      });
     } else {
       setDraggedPortrait(null);
     }
@@ -241,16 +250,23 @@ export function ModernView({
 
         <DragOverlay>
           {draggedCharacter && draggedPortrait ? (
+            // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
+            // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
             <div
               className="slot-drag-overlay"
-              style={{
-                width: draggedPortrait.width,
-                height: draggedPortrait.height,
-                marginLeft: draggedPortrait.left,
-                marginTop: draggedPortrait.top,
-              }}
+              style={{ width: draggedPortrait.cardWidth, height: draggedPortrait.cardHeight }}
             >
-              <CharacterVisual character={draggedCharacter} size="portrait" />
+              <div
+                className="slot-drag-overlay-portrait"
+                style={{
+                  width: draggedPortrait.width,
+                  height: draggedPortrait.height,
+                  left: draggedPortrait.left,
+                  top: draggedPortrait.top,
+                }}
+              >
+                <CharacterVisual character={draggedCharacter} size="portrait" />
+              </div>
             </div>
           ) : draggedCharacter ? (
             <div className="char-drag-overlay">
