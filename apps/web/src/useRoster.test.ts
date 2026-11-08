@@ -112,7 +112,8 @@ describe('useRoster', () => {
     expect(result.current.controls).toMatchObject({
       roster: ROSTER,
       stored: true,
-      message: { kind: 'ok', lines: ['2026-10-29 の育成・1 体を読み込んだ'] },
+      // 知らせが無ければ何も出さない（読み込んだこと自体は出さない）
+      message: null,
     });
   });
 

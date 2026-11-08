@@ -162,19 +162,14 @@ export function rosterDate(roster: BuildSnapshot): string {
   }
 }
 
-export function rosterLabel(roster: BuildSnapshot): string {
-  return `${rosterDate(roster)} の育成・${Object.keys(roster.characters).length} 体`;
-}
-
 export function rosterFileName(roster: BuildSnapshot): string {
   return `nikke-builds-${rosterDate(roster)}.json`;
 }
 
-/** 読み込んだ後に出す文（1 行目が結果、あとは知らせ） */
+/** 読み込んだ後に出す知らせ（無ければ空。読み込んだこと自体は出さない） */
 export function importSummary(roster: BuildSnapshot, notices: readonly string[]): string[] {
   const unknown = unknownTreasurePhaseCount(roster);
   return [
-    `${rosterLabel(roster)}を読み込んだ`,
     ...notices,
     ...(unknown > 0
       ? [`宝物の段階が未確定（Lv 0）の ${unknown} 体は、宝物なしでスロットへ写す（スロットで選ぶ）`]

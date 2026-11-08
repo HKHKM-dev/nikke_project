@@ -1,6 +1,5 @@
 // 設定のメニューの「育成状況」の欄: 読み込む・書き出す・消す（plan/design-combat-power-sort.md 5 節）
 import { useRef } from 'react';
-import { rosterLabel } from '../roster.ts';
 import type { RosterControls } from '../useRoster.ts';
 
 const BUTTON_ROW = { display: 'flex', gap: 6, flexWrap: 'wrap' } as const;
@@ -22,7 +21,6 @@ export function RosterSettings({
   return (
     <fieldset className="popover-group">
       <legend>育成状況</legend>
-      <p className="hint">{roster === null ? '読み込んでいない' : rosterLabel(roster)}</p>
       <div style={BUTTON_ROW}>
         <button type="button" className="advanced-settings-button" onClick={() => fileRef.current?.click()}>
           読み込む

@@ -12,7 +12,6 @@ import {
   rosterDate,
   rosterFields,
   rosterFileName,
-  rosterLabel,
   rosterSlotCount,
   serializeRoster,
   withRosterFields,
@@ -228,7 +227,6 @@ describe('保存と表示', () => {
   it('取得の日は日本時間', () => {
     expect(rosterDate(ROSTER)).toBe('2026-10-29');
     expect(rosterDate({ ...ROSTER, fetchedAt: 'unknown' })).toBe('unknown');
-    expect(rosterLabel(ROSTER)).toBe('2026-10-29 の育成・2 体');
     expect(rosterFileName(ROSTER)).toBe('nikke-builds-2026-10-29.json');
   });
 
@@ -238,10 +236,9 @@ describe('保存と表示', () => {
       characters: { ...ROSTER.characters, '82': character({ treasure: { tid: 200101, level: 0, phase: null } }) },
     };
     expect(importSummary(unknown, ['知らせ'])).toEqual([
-      '2026-10-29 の育成・2 体を読み込んだ',
       '知らせ',
       '宝物の段階が未確定（Lv 0）の 1 体は、宝物なしでスロットへ写す（スロットで選ぶ）',
     ]);
-    expect(importSummary(ROSTER, [])).toEqual(['2026-10-29 の育成・2 体を読み込んだ']);
+    expect(importSummary(ROSTER, [])).toEqual([]);
   });
 });
