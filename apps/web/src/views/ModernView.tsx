@@ -40,17 +40,22 @@ const dropState: { swapped: boolean; targetIndex: number | null } = { swapped: f
 const slotCardAt = (index: number | null) =>
   index === null ? null : (document.querySelectorAll('.modern-slots-grid > .modern-slot-card')[index] ?? null);
 
-/** 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方） */
-function slideInto(ghostSource: Element, target: Element): () => void {
-  const from = ghostSource.getBoundingClientRect();
-  const to = (target.querySelector('.char-visual-portrait, .modern-slot-empty-area') ?? target).getBoundingClientRect();
-  const ghost = ghostSource.cloneNode(true) as HTMLElement;
+/**
+ * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
+ * 立ち絵の枠全体（名前・限界突破・✕ などを含む）の写しで、離した位置（from の要素の位置）から行き先まで動かす
+ */
+function slideInto(from: Element, target: Element): () => void {
+  const content = target.querySelector('.modern-slot-char-area');
+  if (!content) return () => undefined;
+  const start = from.getBoundingClientRect();
+  const to = content.getBoundingClientRect();
+  const ghost = content.cloneNode(true) as HTMLElement;
   Object.assign(ghost.style, {
     position: 'fixed',
-    left: `${from.left}px`,
-    top: `${from.top}px`,
-    width: `${from.width}px`,
-    height: `${from.height}px`,
+    left: `${start.left}px`,
+    top: `${start.top}px`,
+    width: `${to.width}px`,
+    height: `${to.height}px`,
     margin: '0',
     zIndex: '9999',
     pointerEvents: 'none',
@@ -63,7 +68,10 @@ function slideInto(ghostSource: Element, target: Element): () => void {
   };
   ghost
     .animate(
-      [{ transform: 'translate(0, 0)' }, { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px)` }],
+      [
+        { transform: 'translate(0, 0)' },
+        { transform: `translate(${to.left - start.left}px, ${to.top - start.top}px)` },
+      ],
       { duration: 250, easing: 'ease' },
     )
     .finished.then(done, done);
@@ -78,7 +86,8 @@ function slideInto(ghostSource: Element, target: Element): () => void {
 const DROP_ANIMATION: DropAnimation = {
   sideEffects: (args) => {
     const holder = args.dragOverlay.node.querySelector('.slot-drag-overlay-portrait');
-    const incoming = args.active.node.querySelector('.char-visual-portrait, .modern-slot-empty-area');
+    // ドラッグ元へ戻っていく絵も、立ち絵の枠全体（名前などを含む）の写しにする
+    const incoming = args.active.node.querySelector('.modern-slot-char-area');
     if (!dropState.swapped || !holder || !incoming) return returnSideEffects(args);
     // 持ち上げたもの（動かした側）は、落とした先のスロットへ滑り込ませる
     const target = slotCardAt(dropState.targetIndex);

@@ -718,12 +718,11 @@ header h1 {
   outline-offset: -2px;
   background: color-mix(in srgb, Highlight 15%, var(--app-bg));
 }
-/* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
-/* 入れ替えた後、ドラッグ元へ戻っていく絵が着くまで、ドラッグ元の絵を隠す（ModernView の DROP_ANIMATION） */
-.modern-slot-card.modern-slot-arriving .char-visual-portrait,
-.modern-slot-card.modern-slot-arriving .modern-slot-empty-area {
+/* 入れ替えた後、動く絵が着くまで、ドラッグ元と落とした先の立ち絵の枠全体（名前・限界突破・✕ などを含む）を隠す（ModernView の DROP_ANIMATION） */
+.modern-slot-card.modern-slot-arriving .modern-slot-char-area {
   visibility: hidden;
 }
+/* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
 .modern-slot-card.modern-slot-dragging .char-visual-portrait,
 .modern-slot-card.drag-source-returning .char-visual-portrait,
 .modern-slot-card.modern-slot-dragging .modern-slot-empty-area,
