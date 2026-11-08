@@ -53,15 +53,40 @@ const slotCardAt = (index: number | null) =>
     : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
 
 /**
- * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
- * 立ち絵の枠全体（名前・限界突破・✕ などを含む）の写しで、離した位置（from の要素の位置）から行き先まで動かす
+ * アニメーションで動かす立ち絵の枠の写し。立ち絵の画像は遅延読み込み・非同期の描画（CharacterVisual）なので、写しのままだと
+ * 動き始めの数フレームは画像が空で、立ち絵の枠（明るい背景と枠線）だけが白い枠のように見える。写しの画像はすぐ読んで描く
  */
-function slideInto(from: Element, target: Element): () => void {
+function cloneForAnimation(node: Element): HTMLElement {
+  const copy = node.cloneNode(true) as HTMLElement;
+  for (const img of copy.querySelectorAll('img')) {
+    img.loading = 'eager';
+    img.decoding = 'sync';
+  }
+  return copy;
+}
+
+/**
+ * 要素の中の画像を描ける状態にする（デコードを済ませる）。入れ替えたスロットは着くまで隠すので（modern-slot-arriving）、新しい画像は
+ * 描かれずデコードもされない。画像は非同期の描画（decoding="async"）なので、そのまま隠しを外すと最初のフレームは画像が空で、
+ * 立ち絵の枠（明るい背景と枠線）だけが白い枠のように見える。隠しを外すのは、これが済んでから
+ */
+function decodeImages(node: Element): Promise<void> {
+  return Promise.all([...node.querySelectorAll('img')].map((img) => img.decode().catch(() => undefined))).then(
+    () => undefined,
+  );
+}
+
+/**
+ * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
+ * 立ち絵の枠全体（名前・限界突破・✕ などを含む）の写しで、離した位置（from の要素の位置）から行き先まで動かす。
+ * 着いたら、行き先の画像が描ける（ready）まで写しをその場に残してから、本物に切り替える
+ */
+function slideInto(from: Element, target: Element, ready: Promise<void>): () => void {
   const content = target.querySelector('.modern-slot-char-area');
   if (!content) return () => undefined;
   const start = from.getBoundingClientRect();
   const to = content.getBoundingClientRect();
-  const ghost = content.cloneNode(true) as HTMLElement;
+  const ghost = cloneForAnimation(content);
   Object.assign(ghost.style, {
     position: 'fixed',
     left: `${start.left}px`,
@@ -74,9 +99,14 @@ function slideInto(from: Element, target: Element): () => void {
   });
   document.body.appendChild(ghost);
   target.classList.add('modern-slot-arriving');
+  let finished = false;
   const done = () => {
-    ghost.remove();
-    target.classList.remove('modern-slot-arriving');
+    if (finished) return;
+    finished = true;
+    void ready.then(() => {
+      ghost.remove();
+      target.classList.remove('modern-slot-arriving');
+    });
   };
   ghost
     .animate(
@@ -84,7 +114,7 @@ function slideInto(from: Element, target: Element): () => void {
         { transform: 'translate(0, 0)' },
         { transform: `translate(${to.left - start.left}px, ${to.top - start.top}px)` },
       ],
-      { duration: 250, easing: 'ease' },
+      { duration: 250, easing: 'ease', fill: 'forwards' },
     )
     .finished.then(done, done);
   return done;
@@ -110,9 +140,10 @@ const DROP_ANIMATION: DropAnimation = {
     if (dropState.targetIndex === null || !holder || !incoming) return returnSideEffects(args);
     // 持ち上げたもの（動かした側）は、落とした先のスロットへ滑り込ませる
     const target = slotCardAt(dropState.targetIndex);
-    const finishSlide = target ? slideInto(holder, target) : () => undefined;
+    const sourceReady = decodeImages(args.active.node);
+    const finishSlide = target ? slideInto(holder, target, decodeImages(target)) : () => undefined;
     const saved = [...holder.childNodes];
-    holder.replaceChildren(incoming.cloneNode(true));
+    holder.replaceChildren(cloneForAnimation(incoming));
     // 持ち上げたときの影は付けない（収まった瞬間に影が消えて、枠のように見える。滑り込む側にも影は無い）
     holder.style.boxShadow = 'none';
     args.active.node.classList.add('modern-slot-arriving');
@@ -121,7 +152,8 @@ const DROP_ANIMATION: DropAnimation = {
       args.dragOverlay.node.style.visibility = 'hidden';
       holder.replaceChildren(...saved);
       holder.style.boxShadow = '';
-      args.active.node.classList.remove('modern-slot-arriving');
+      // ドラッグ元も、新しく入ったものの画像が描けるようになってから見せる
+      void sourceReady.then(() => args.active.node.classList.remove('modern-slot-arriving'));
       finishSlide();
     };
   },
