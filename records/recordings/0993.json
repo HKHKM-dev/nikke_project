@@ -1,0 +1,46 @@
+{
+  "id": "0993",
+  "date": "2026-11-09",
+  "folder": "range",
+  "file": "20261109-0993_mg_rapi-redhood_anis-star-nofire_quency.mp4",
+  "original": "2026-11-09_02-40-44.mp4",
+  "durationSec": 23.5,
+  "frames": 1410,
+  "fps": 60,
+  "sizeMB": 28.4,
+  "sha256": "dcdeab9c9303",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true
+    },
+    {
+      "slot": 2,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 402,
+      "name": "クエンシー",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた",
+  "backup": {
+    "at": "2026-11-09T02:46+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
