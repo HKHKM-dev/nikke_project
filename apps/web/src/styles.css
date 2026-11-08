@@ -709,6 +709,7 @@ header h1 {
 .modern-slot-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   font-size: 0.8rem;
   font-weight: bold;
