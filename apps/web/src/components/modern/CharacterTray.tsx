@@ -1,8 +1,9 @@
 import { useDroppable } from '@dnd-kit/core';
-import type { CharacterIndexEntry } from '@nikke/core';
+import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
+import { growthMarksOf } from './GrowthMarks.tsx';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -11,6 +12,8 @@ type Props = {
   fullySupported: ReadonlySet<number> | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
+  /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
+  roster: BuildSnapshot | null;
   onSelectCharacter: (resourceId: number) => void;
 };
 
@@ -42,7 +45,19 @@ function BadgeFilter({
   );
 }
 
-export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, pendingId, onSelectCharacter }: Props) {
+export function CharacterTray({
+  index,
+  takenIds,
+  otherPartyIds,
+  fullySupported,
+  pendingId,
+  roster,
+  onSelectCharacter,
+}: Props) {
+  const growthOf = (char: CharacterIndexEntry) => {
+    const entry = roster?.characters[String(char.resourceId)];
+    return entry ? growthMarksOf(char.rarity, entry.growth) : null;
+  };
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
@@ -92,13 +107,21 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
             </label>
           </div>
         </div>
-        {/* 並べ替えとフィルターのボタンの置き場所（未実装。押しても何も起きない） */}
+        {/* 並べ替え・フィルター・立ち絵の縦長と四角の切り替えのボタンの置き場所（未実装。押しても何も起きない） */}
         <div className="char-tray-actions">
           <button type="button" className="char-tray-action-button" disabled title="並べ替え（未実装）">
             並べ替え<span className="char-tray-unimplemented">未実装</span>
           </button>
           <button type="button" className="char-tray-action-button" disabled title="フィルター（未実装）">
             フィルター<span className="char-tray-unimplemented">未実装</span>
+          </button>
+          <button
+            type="button"
+            className="char-tray-action-button"
+            disabled
+            title="立ち絵の縦長・四角の切り替え（未実装）"
+          >
+            縦長 / 四角<span className="char-tray-unimplemented">未実装</span>
           </button>
         </div>
       </div>
@@ -118,6 +141,7 @@ export function CharacterTray({ index, takenIds, otherPartyIds, fullySupported, 
                 inOtherParty={otherPartyIds.has(char.resourceId)}
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
+                growthMarks={growthOf(char)}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />
             );

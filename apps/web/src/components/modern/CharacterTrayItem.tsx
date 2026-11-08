@@ -1,6 +1,7 @@
 import { useDraggable } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
 import { CharacterVisual } from './CharacterVisual.tsx';
+import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -11,10 +12,20 @@ type Props = {
   isUnsupported: boolean;
   /** 置くスロットのクリックを待っている */
   isPending: boolean;
+  /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
+  growthMarks: GrowthMarks | null;
   onClick: () => void;
 };
 
-export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsupported, isPending, onClick }: Props) {
+export function CharacterTrayItem({
+  character,
+  isTaken,
+  inOtherParty,
+  isUnsupported,
+  isPending,
+  growthMarks,
+  onClick,
+}: Props) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `tray-${character.resourceId}`,
     data: {
@@ -35,7 +46,12 @@ export function CharacterTrayItem({ character, isTaken, inOtherParty, isUnsuppor
       {...listeners}
     >
       <span className="char-tray-item-visual">
-        <CharacterVisual character={character} isUnsupported={isUnsupported} size="compact" />
+        <CharacterVisual
+          character={character}
+          isUnsupported={isUnsupported}
+          size="compact"
+          overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
+        />
         {isTaken && (
           <svg className="char-tray-item-check" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 12.5l5 5L20 6.5" />

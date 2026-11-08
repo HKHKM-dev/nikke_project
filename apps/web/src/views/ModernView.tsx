@@ -10,7 +10,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { CORE_MAX, GRADE_MAX, type CharacterIndexEntry } from '@nikke/core';
+import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useRef, useState } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
@@ -21,6 +21,7 @@ import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
+import { growthMarksOf } from '../components/modern/GrowthMarks.tsx';
 import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
@@ -50,6 +51,7 @@ export function ModernView({
   totals,
   totalsPending,
   summarySlots,
+  roster,
 }: ViewProps) {
   // キャラクターインデックスを ID で引けるマップを作成
   const indexMap = useMemo(() => new Map(index.map((c) => [c.resourceId, c])), [index]);
@@ -210,9 +212,6 @@ export function ModernView({
         <section className="modern-slots-grid" aria-label="編成スロット一覧">
           {team.slots.map((slot, i) => {
             const { character, build, treasurePhase, growth } = calc.slots[i]!;
-            const limits = character
-              ? { gradeMax: GRADE_MAX[character.rarity], coreMax: CORE_MAX[character.rarity] }
-              : null;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
             const isUnsupported =
               slot.resourceId !== null && fullySupported !== null && !fullySupported.has(slot.resourceId);
@@ -226,7 +225,7 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
-                growthMarks={limits && { grade: growth.grade, core: growth.core, ...limits }}
+                growthMarks={character ? growthMarksOf(character.rarity, growth) : null}
                 collectionBadge={collectionBadge(
                   build.collection,
                   treasurePhase,
@@ -248,6 +247,7 @@ export function ModernView({
           otherPartyIds={otherPartyIds}
           fullySupported={fullySupported}
           pendingId={pendingId}
+          roster={roster}
           onSelectCharacter={handleSelectCharacter}
         />
 

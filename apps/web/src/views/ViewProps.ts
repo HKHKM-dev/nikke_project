@@ -1,4 +1,4 @@
-import type { BuildMasters, CharacterData, CharacterIndexEntry } from '@nikke/core';
+import type { BuildMasters, BuildSnapshot, CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { CalcView, SlotResultView } from '../calcView.ts';
 import type { Shown } from '../compute.ts';
@@ -28,4 +28,6 @@ export type ViewProps = {
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;
   summarySlots: readonly (NotesSummarySlot | null)[];
+  /** 読み込んだ育成状況（roster.ts。無ければ null） */
+  roster: BuildSnapshot | null;
 };

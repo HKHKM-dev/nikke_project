@@ -795,27 +795,39 @@ header h1 {
 .modern-slot-char-name-track {
   display: inline-block;
 }
-/* 名前の上の限界突破（★）とコア強化（+N・MAX）。右詰め */
-.modern-slot-growth {
+/* 限界突破（★）とコア強化（+N・MAX）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
+.growth-marks {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 1px;
   font-size: 0.8rem;
   line-height: 1.1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
 }
-.modern-slot-growth-star {
+.growth-marks-star {
   color: rgba(255, 255, 255, 0.35);
 }
-.modern-slot-growth-star-on {
+.growth-marks-star-on {
   color: #facc15;
 }
-.modern-slot-growth-core {
-  margin-left: 4px;
-  padding: 0 4px;
+.growth-marks-core {
+  margin-left: 3px;
+  padding: 0 3px;
   font-size: 0.7rem;
   color: #fff;
   background: #7c3aed;
+  text-shadow: none;
+}
+.char-tray-growth {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 2;
+  font-size: 0.65rem;
+}
+.char-tray-growth .growth-marks-core {
+  font-size: 0.6rem;
 }
 .modern-slot-char-name-scroll {
   text-align: left;
@@ -975,6 +987,18 @@ header h1 {
   display: block;
   width: var(--badge-w);
   aspect-ratio: 130 / 150;
+}
+/* ニケ一覧の正方形の絵では、属性のバッジを右下に出す */
+.char-visual-corner-badge {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  z-index: 2;
+}
+/* そのため「未」の札は左下に出す */
+.char-visual-compact .char-unsupported-tag {
+  right: auto;
+  left: 2px;
 }
 /* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す */
 .char-visual-portrait .char-unsupported-tag {

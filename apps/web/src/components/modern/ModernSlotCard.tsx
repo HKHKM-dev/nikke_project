@@ -7,9 +7,7 @@ import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
 import controllerIcon from '../../assets/badges/ui_controller.svg';
 import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
-
-/** 限界突破の回数とコア強化の段階（育成値）と、そのキャラの上限 */
-export type GrowthMarks = { grade: number; gradeMax: number; core: number; coreMax: number };
+import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 
 type Props = {
   slotIndex: number;
@@ -223,38 +221,11 @@ function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null
         } as CSSProperties
       }
     >
-      {marks && <SlotGrowthMarks {...marks} />}
+      {marks && <GrowthMarksView {...marks} className="modern-slot-growth" />}
       <span className="modern-slot-char-name-track">
         <span ref={textRef}>{name}</span>
         {textWidth !== null && <span aria-hidden="true">{name}</span>}
       </span>
-    </div>
-  );
-}
-
-/** 限界突破（★ を上限の数だけ並べ、突破した数を塗る）とコア強化（+1〜+6、上限は MAX）。どちらも無いキャラ（R）は出さない */
-function SlotGrowthMarks({ grade, gradeMax, core, coreMax }: GrowthMarks) {
-  if (gradeMax === 0 && coreMax === 0) return null;
-  const coreLabel = core === 0 ? null : core === coreMax ? 'MAX' : `+${core}`;
-  return (
-    <div
-      className="modern-slot-growth"
-      aria-label={`限界突破 ${grade}/${gradeMax}${coreMax > 0 ? `・コア強化 ${core}/${coreMax}` : ''}`}
-    >
-      {Array.from({ length: gradeMax }, (_, i) => (
-        <span
-          key={i}
-          className={`modern-slot-growth-star ${i < grade ? 'modern-slot-growth-star-on' : ''}`}
-          aria-hidden="true"
-        >
-          ★
-        </span>
-      ))}
-      {coreLabel && (
-        <span className="modern-slot-growth-core" aria-hidden="true">
-          {coreLabel}
-        </span>
-      )}
     </div>
   );
 }
