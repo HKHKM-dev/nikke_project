@@ -154,6 +154,13 @@ export function ModernSlotCard({
           <div className="modern-slot-char-area">
             <div className="modern-slot-empty-area">
               <span className="modern-slot-empty-plus">＋</span>
+              {/* スロットの番号・前列（奇数）か後列（偶数）か・EMPTY SLOT・5 つのうちの位置（●） */}
+              <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
+              <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>
+              <span className="modern-slot-empty-label">EMPTY SLOT</span>
+              <span className="modern-slot-empty-position" aria-hidden="true">
+                {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
+              </span>
             </div>
           </div>
         )}
