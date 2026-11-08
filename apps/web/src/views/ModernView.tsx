@@ -225,8 +225,9 @@ export function ModernView({
                 isUnsupported={isUnsupported}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
-                // 限界突破・コア強化は育成状況を読み込んでいるときだけ出す（一覧と同じ。消すとスロットの育成も既定に戻る）
-                growthMarks={character && roster ? growthMarksOf(character.rarity, growth) : null}
+                // 限界突破・コア強化は、育成状況を読み込んでいるとき（一覧と同じ。消すとスロットの育成も既定に戻る）と、
+                // スペック固定のとき（計算に使う固定の値。限界突破・コアとも上限）に出す
+                growthMarks={character && (roster || team.fixedSpec) ? growthMarksOf(character.rarity, growth) : null}
                 collectionBadge={collectionBadge(
                   build.collection,
                   treasurePhase,

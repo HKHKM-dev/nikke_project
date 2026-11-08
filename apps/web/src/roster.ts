@@ -19,6 +19,8 @@ import type { PartiesState } from './parties.ts';
 import {
   CONSOLE_CLASSES,
   CONSOLE_CORPORATIONS,
+  DEFAULT_SYNCHRO_LEVEL,
+  emptyConsole,
   emptySlot,
   type ConsoleInput,
   type SlotGrowthFields,
@@ -116,18 +118,19 @@ function defaultFields(): SlotGrowthFields {
 }
 
 /**
- * 育成状況を消したときに戻す: 全部の編成のスロットのうち育成状況にいるキャラの育成を、スロットの既定にする
- * （読み込んだときと置いたときに写した育成を残さない。スロットで変えた値も戻る）。シンクロ LV・コンソールはそのまま
+ * 育成状況を消したときに戻す（読み込んだとき・置いたときに写したものを残さない）: シンクロ LV・コンソールと、
+ * 全部の編成のスロットのうち育成状況にいるキャラの育成を既定にする（スロットで変えた値も戻る）。
+ * 保存が読めない（roster が null）ときは、写したキャラが分からないのでスロットはそのまま
  */
-export function clearRosterFromSlots(
+export function clearRosterFromTeam(
   team: TeamState,
   parties: PartiesState,
-  roster: BuildSnapshot,
+  roster: BuildSnapshot | null,
 ): { team: TeamState; parties: PartiesState } {
   const reset = (slots: SlotState[]) =>
     slots.map((s) => (entryOf(roster, s.resourceId) === undefined ? s : { ...s, ...defaultFields() }));
   return {
-    team: { ...team, slots: reset(team.slots) },
+    team: { ...team, synchroLevel: DEFAULT_SYNCHRO_LEVEL, console: emptyConsole(), slots: reset(team.slots) },
     parties: {
       ...parties,
       parties: parties.parties.map((p) => (p === null ? null : { ...p, slots: reset(p.slots) })),
@@ -138,9 +141,9 @@ export function clearRosterFromSlots(
 /** 消すときの確かめの文 */
 export function clearConfirmText(slotCount: number): string {
   return (
-    '育成状況を消します' +
-    (slotCount > 0 ? `。育成状況にいるキャラの ${slotCount} スロット（全部の編成）の育成も既定に戻します` : '') +
-    '。'
+    '育成状況を消し、シンクロ LV・リサイクルルーム' +
+    (slotCount > 0 ? `と、育成状況にいるキャラの ${slotCount} スロット（全部の編成）の育成` : '') +
+    'を既定に戻します。'
   );
 }
 

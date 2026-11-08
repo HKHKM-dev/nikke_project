@@ -6,7 +6,7 @@ import {
   ROSTER_STORAGE_KEY,
   applyRoster,
   clearConfirmText,
-  clearRosterFromSlots,
+  clearRosterFromTeam,
   importConfirmText,
   importSummary,
   restoreRoster,
@@ -130,12 +130,10 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
       applyImport(pending.text, pending.read);
       return;
     }
-    // 育成状況から写したスロットの育成も既定に戻す（読めない保存のときは、写したキャラが分からないのでスロットはそのまま）
-    if (roster !== null) {
-      const next = clearRosterFromSlots(team, parties, roster);
-      dispatch({ type: 'replace', state: next.team });
-      setParties(next.parties);
-    }
+    // 育成状況から写したもの（シンクロ LV・コンソール・スロットの育成）も既定に戻す
+    const next = clearRosterFromTeam(team, parties, roster);
+    dispatch({ type: 'replace', state: next.team });
+    setParties(next.parties);
     removeStorage(ROSTER_STORAGE_KEY);
     setSaved(null);
     setMessage(null);
