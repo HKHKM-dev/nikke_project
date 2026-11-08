@@ -608,15 +608,16 @@ header h1 {
 }
 
 /* 5スロットグリッド */
+/* カードは立ち絵とボタンが収まる幅に固定し、入りきらなければ折り返す。余った幅は左右に分けて、各行を中央に寄せる */
 .modern-slots-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
 }
-@media (max-width: 900px) {
-  .modern-slots-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  }
+.modern-slots-grid > .modern-slot-card {
+  box-sizing: border-box;
+  width: 170px;
 }
 
 /* モダンカード */

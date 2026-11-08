@@ -2,6 +2,7 @@ import {
   DndContext,
   DragOverlay,
   MouseSensor,
+  pointerWithin,
   defaultDropAnimationSideEffects,
   TouchSensor,
   useSensor,
@@ -173,6 +174,8 @@ export function ModernView({
   return (
     <DndContext
       sensors={sensors}
+      // 落とす先は、カーソル（指）の下の受け口で決める（既定は持ち上げた絵の外枠＝カード 1 枚分との重なりで、隣に少し掛かっただけで入れ替わる）
+      collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
       // ドラッグ中の画面端の自動スクロールは使わない（画面は、ホイールやタッチのスクロールで動かす）
       autoScroll={false}
