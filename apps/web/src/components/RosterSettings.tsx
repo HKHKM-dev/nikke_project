@@ -27,10 +27,20 @@ export function RosterSettings({
         <button type="button" className="advanced-settings-button" onClick={() => fileRef.current?.click()}>
           読み込む
         </button>
-        <button type="button" className="advanced-settings-button" disabled={roster === null} onClick={exportFile}>
+        <button
+          type="button"
+          className="advanced-settings-button"
+          aria-disabled={roster === null}
+          onClick={() => roster !== null && exportFile()}
+        >
           書き出す
         </button>
-        <button type="button" className="advanced-settings-button" disabled={!stored} onClick={clear}>
+        <button
+          type="button"
+          className="advanced-settings-button"
+          aria-disabled={!stored}
+          onClick={() => stored && clear()}
+        >
           消す
         </button>
       </div>

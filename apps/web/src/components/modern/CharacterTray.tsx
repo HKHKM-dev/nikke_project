@@ -112,18 +112,19 @@ export function CharacterTray({
             </label>
           </div>
         </div>
-        {/* 並べ替え・フィルター・立ち絵の縦長と四角の切り替えのボタンの置き場所（未実装。押しても何も起きない） */}
+        {/* 並べ替え・フィルター・立ち絵の縦長と四角の切り替えのボタンの置き場所（未実装。押しても何も起きない）。
+            disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする */}
         <div className="char-tray-actions">
-          <button type="button" className="char-tray-action-button" disabled title="並べ替え（未実装）">
+          <button type="button" className="char-tray-action-button" aria-disabled="true" title="並べ替え（未実装）">
             並べ替え<span className="char-tray-unimplemented">未実装</span>
           </button>
-          <button type="button" className="char-tray-action-button" disabled title="フィルター（未実装）">
+          <button type="button" className="char-tray-action-button" aria-disabled="true" title="フィルター（未実装）">
             フィルター<span className="char-tray-unimplemented">未実装</span>
           </button>
           <button
             type="button"
             className="char-tray-action-button"
-            disabled
+            aria-disabled="true"
             title="立ち絵の縦長・四角の切り替え（未実装）"
           >
             縦長 / 四角<span className="char-tray-unimplemented">未実装</span>

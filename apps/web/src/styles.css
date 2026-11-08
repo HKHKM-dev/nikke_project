@@ -157,8 +157,8 @@ header h1 {
   font-size: 0.85rem;
 }
 /* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
-.advanced-settings-button:disabled,
-.advanced-settings-button:disabled:hover {
+.advanced-settings-button[aria-disabled='true'],
+.advanced-settings-button[aria-disabled='true']:hover {
   color: color-mix(in srgb, var(--app-fg) 35%, transparent);
   background: color-mix(in srgb, var(--app-fg) 6%, var(--app-bg));
   border-color: color-mix(in srgb, var(--app-fg) 12%, transparent);
@@ -1087,7 +1087,7 @@ header h1 {
   padding: 4px 10px;
   font-size: 0.85rem;
 }
-.char-tray-action-button:disabled {
+.char-tray-action-button[aria-disabled='true'] {
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -1209,7 +1209,7 @@ header h1 {
   z-index: 3;
 }
 /* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
-.char-tray-item:disabled {
+.char-tray-item[aria-disabled='true'] {
   cursor: not-allowed;
 }
 .char-tray-item-other-badge {

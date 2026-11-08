@@ -40,8 +40,9 @@ export function CharacterTrayItem({
       ref={setNodeRef}
       type="button"
       className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
-      onClick={onClick}
-      disabled={isTaken}
+      // 置けないときは押しても何もしない。aria-disabled は useDraggable の attributes が付ける（disabled にすると
+      // アーティファクトのコメントで選べない）
+      onClick={isTaken ? undefined : onClick}
       {...attributes}
       {...listeners}
     >
