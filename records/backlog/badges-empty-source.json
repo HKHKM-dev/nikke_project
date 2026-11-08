@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 8,
-  "text": "`npm run badges:build`: 元のフォルダ（`apps/web/badges-src/`）が空だと、書き出し（`src/assets/badges/`）を全部消す（`apps/web/scripts/badges.ts`）。消す分岐にテストが無い"
-}

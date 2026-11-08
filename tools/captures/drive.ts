@@ -70,11 +70,18 @@ export function driveQueryString(value: string): string {
 }
 
 /**
- * Drive の呼び出しの失敗が、待てば直りうるものか: 通信の失敗（fetch の TypeError）・打ち切り（timeoutMs の TimeoutError）と、
- * HTTP の 429・5xx（Drive.get の例外の status）。ほかの HTTP の失敗と、応答の読み違いなどは直らないとみる
+ * Node の fetch（undici）が通信の失敗で投げる TypeError の文: つなげない・切れた（fetch failed）と、応答の本体を読む途中で
+ * 切れた（terminated）。ほかの TypeError（中のバグ）は待っても直らない
+ */
+const NETWORK_FAILURE_MESSAGES: ReadonlySet<string> = new Set(['fetch failed', 'terminated']);
+
+/**
+ * Drive の呼び出しの失敗が、待てば直りうるものか: 通信の失敗（fetch の TypeError のうち NETWORK_FAILURE_MESSAGES）・
+ * 打ち切り（timeoutMs の TimeoutError）と、HTTP の 429・5xx（Drive.get の例外の status）。ほかの HTTP の失敗と、
+ * 応答の読み違い・中のバグなどは直らないとみる
  */
 export function isTransientDriveError(e: unknown): boolean {
-  if (e instanceof TypeError) return true;
+  if (e instanceof TypeError) return NETWORK_FAILURE_MESSAGES.has(e.message);
   if ((e as { name?: unknown } | null)?.name === 'TimeoutError') return true;
   const status = (e as { status?: unknown } | null)?.status;
   return typeof status === 'number' && (status === 429 || status >= 500);
@@ -91,17 +98,17 @@ export class Drive {
     this.timeoutMs = timeoutMs;
   }
 
-  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る */
+  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は除く） */
   static async connect(timeoutMs?: number): Promise<Drive> {
     return new Drive(await accessToken(timeoutMs), timeoutMs);
   }
 
-  /** 失敗の例外は status（HTTP の状態）を持つ */
-  private async get(path: string, params: Record<string, string>): Promise<Response> {
+  /** 失敗の例外は status（HTTP の状態）を持つ。timed が false なら打ち切らない */
+  private async get(path: string, params: Record<string, string>, timed = true): Promise<Response> {
     const url = `${api()}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
     const res = await fetch(url, {
       headers: { authorization: `Bearer ${this.token}` },
-      ...deadline(this.timeoutMs),
+      ...deadline(timed ? this.timeoutMs : undefined),
     });
     if (!res.ok)
       throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
@@ -187,9 +194,9 @@ export class Drive {
     }
   }
 
-  /** ファイルの中身を out に書く */
+  /** ファイルの中身を out に書く。録画は大きく、読み終えるまでの長さが決まらないので、timeoutMs では打ち切らない */
   async download(fileId: string, out: string): Promise<void> {
-    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' });
+    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' }, false);
     if (!res.body) throw new Error(`${fileId}: 中身が空です`);
     await pipeline(Readable.fromWeb(res.body as NodeReadableStream), createWriteStream(out));
   }

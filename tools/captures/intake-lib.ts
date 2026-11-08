@@ -87,6 +87,12 @@ export function reservedLabel(ids: readonly string[]): string {
 /** drive: の取り込み元を取り寄せる前に待つ長さ。待った後にサイズが変わっていれば、また待つ（上げている途中の版を取り込まない） */
 export const UPLOAD_POLL_MS = 30_000;
 
+/**
+ * Drive API を 1 回呼んで待つ長さ（トークンの取得と一覧・メタデータ。録画の取り寄せは打ち切らない）。止まった呼び出しを打ち切り、
+ * 上げ終えるのを待つ間なら読み直す（drive.ts の isTransientDriveError の TimeoutError）
+ */
+export const DRIVE_CALL_MS = 60_000;
+
 /** サイズを読み直す回数の上限（UPLOAD_POLL_MS × これ。超えたら止まる） */
 export const UPLOAD_POLL_LIMIT = 10;
 

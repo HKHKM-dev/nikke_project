@@ -23,6 +23,14 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 import { rawFrames } from './ffmpeg.ts';
+import {
+  averageTemplates,
+  clean,
+  magazines,
+  parseTemplateSpec,
+  type Reading,
+  type TemplateSample,
+} from './reticle-ammo-lib.ts';
 
 const TEMPLATE_FILE = new URL('./reticle-ammo-templates.json', import.meta.url);
 /** --style box（照準の下の「AMMO | 008」の表示）の見本 */
@@ -49,12 +57,9 @@ const NORM_W = 10;
 const NORM_H = 16;
 /** これより照合が悪い桁を含む読みは捨てる */
 const MIN_SCORE = 0.7;
-/** 弾丸チャージとみなす増え（1 フレームの間で） */
-const STEP_UP = 5;
 
 type Templates = { search: typeof SEARCH; digits: Record<string, number[]> };
 type Comp = { x0: number; x1: number; y0: number; y1: number };
-export type Reading = { frame: number; value: number; score: number; x: number; y: number };
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -68,8 +73,9 @@ const { values, positionals } = parseArgs({
   },
 });
 if (values.style !== 'default' && values.style !== 'box') throw new Error(`--style は default か box: ${values.style}`);
-const templateFile = values.style === 'box' ? BOX_TEMPLATE_FILE : TEMPLATE_FILE;
-const digitH = values.style === 'box' ? BOX_DIGIT_H : DIGIT_H;
+const box = values.style === 'box';
+const templateFile = box ? BOX_TEMPLATE_FILE : TEMPLATE_FILE;
+const digitH = box ? BOX_DIGIT_H : DIGIT_H;
 
 const video = positionals[0];
 if (!video) {
@@ -232,44 +238,16 @@ async function* frames(first: number, last: number | undefined): AsyncGenerator<
 }
 
 async function makeTemplates(spec: string): Promise<void> {
-  const samples = new Map(
-    spec.split(',').map((s) => {
-      const [frame, value] = s.split(':');
-      if (!frame || !value || !/^\d{3}$/.test(value)) throw new Error(`見本は frame:3 桁の値 で指定する: ${s}`);
-      return [Number(frame), value] as const;
-    }),
-  );
-  const sums: Record<string, number[]> = {};
-  const counts: Record<string, number> = {};
-  const lo = Math.min(...samples.keys());
-  const hi = Math.max(...samples.keys());
-  for await (const { frame, rgb } of frames(lo, hi)) {
+  const samples = parseTemplateSpec(spec);
+  const picked: TemplateSample[] = [];
+  for await (const { frame, rgb } of frames(Math.min(...samples.keys()), Math.max(...samples.keys()))) {
     const value = samples.get(frame);
-    if (value === undefined) continue;
-    const cells = cellsOf(rgb);
-    if (cells === null) {
-      // 照準にダメージの数字が重なったフレームなど。数字ごとの見本がそろえばよいので、飛ばして知らせる
-      console.error(`フレーム ${frame} で表示の 3 桁が見つからない（飛ばす）`);
-      continue;
-    }
-    cells.patches.forEach((p, i) => {
-      const d = value[i]!;
-      sums[d] ??= p.map(() => 0);
-      p.forEach((v, k) => (sums[d]![k]! += v));
-      counts[d] = (counts[d] ?? 0) + 1;
-    });
+    if (value !== undefined) picked.push({ frame, value, patches: cellsOf(rgb)?.patches ?? null });
   }
-  const missing = [...'0123456789'].filter((d) => !sums[d]);
-  if (missing.length > 0) throw new Error(`見本に無い数字: ${missing.join('')}`);
-  const round = (v: number) => Math.round(v * 10) / 10;
-  const templates: Templates = {
-    search: SEARCH,
-    digits: Object.fromEntries(
-      Object.entries(sums)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([d, s]) => [d, s.map((v) => round(v / counts[d]!))]),
-    ),
-  };
+  const { digits, counts } = averageTemplates(picked, (frame) =>
+    console.error(`フレーム ${frame} で表示の 3 桁が見つからない（飛ばす）`),
+  );
+  const templates: Templates = { search: SEARCH, digits };
   writeFileSync(templateFile, JSON.stringify(templates) + '\n');
   console.log(`wrote ${templateFile.pathname}（数字ごとの見本数 ${JSON.stringify(counts)}）`);
 }
@@ -298,84 +276,19 @@ async function readAll(first: number, last: number | undefined, t: Templates): P
   return out;
 }
 
-/**
- * 前後の読みのどちらとも大きく違う 1 フレームだけの読み（誤読）を落とす。弾丸チャージの増え（STEP_UP 以上）は、
- * 次の読みも増えた値の近くなら残す
- */
-function clean(readings: Reading[]): Reading[] {
-  const out: Reading[] = [];
-  for (let i = 0; i < readings.length; i++) {
-    const r = readings[i]!;
-    const prev = out[out.length - 1];
-    const next = readings[i + 1];
-    if (prev !== undefined && next !== undefined && r.frame - prev.frame <= 3 && next.frame - r.frame <= 3) {
-      const offPrev = Math.abs(r.value - prev.value);
-      const offNext = Math.abs(r.value - next.value);
-      if (offPrev > 25 && offNext > 25) continue;
-      // --style box: 1 桁の表示は 8 と 9 などを読み違えやすい。前後が同じ値で、間の 1 フレームだけ違う読みは落とす
-      if (values.style === 'box' && prev.value === next.value && r.value !== prev.value) continue;
-    }
-    out.push(r);
-  }
-  return out;
-}
-
-type Magazine = {
-  /** 最大の表示（またはこの読みの区間の最初の読み）のフレーム */
-  start: number;
-  startValue: number;
-  /** 0 の表示が最初に出たフレーム（撃ち切らなければ無し） */
-  zero?: number;
-  /** 0 の表示の後に増えたか（最後の弾丸と同じ発の弾丸チャージが残ったか）と、その値 */
-  afterZero?: number;
-  /** 減った量の合計（発数）と、増え（弾丸チャージ）のフレームと量 */
-  drops: number;
-  ups: { frame: number; from: number; to: number }[];
-  /** 区間の中の、読みの間が 10 フレームを超えた所の数（その間の増えは数えられない） */
-  gaps: number;
-};
-
-function magazines(readings: Reading[]): Magazine[] {
-  const mags: Magazine[] = [];
-  let cur: Magazine | null = null;
-  let prev: Reading | null = null;
-  for (const r of readings) {
-    // リロードの後: 最大の表示が、前の読みより大きく、前の読みが小さい（0 か、読めない間の後）
-    const reloaded =
-      prev !== null && r.value === max && (prev.value < max - Math.min(50, max - 1) || r.frame - prev.frame > 60);
-    if (cur === null || reloaded) {
-      if (cur !== null) mags.push(cur);
-      cur = { start: r.frame, startValue: r.value, drops: 0, ups: [], gaps: 0 };
-      prev = r;
-      continue;
-    }
-    if (r.frame - prev!.frame > 10) cur.gaps += 1;
-    const d = r.value - prev!.value;
-    if (d < 0) cur.drops += -d;
-    else if (d >= STEP_UP) {
-      cur.ups.push({ frame: r.frame, from: prev!.value, to: r.value });
-      if (cur.zero !== undefined && cur.afterZero === undefined) cur.afterZero = r.value;
-    }
-    if (r.value === 0 && cur.zero === undefined) cur.zero = r.frame;
-    prev = r;
-  }
-  if (cur !== null) mags.push(cur);
-  return mags;
-}
-
 if (values['make-templates'] !== undefined) {
   await makeTemplates(values['make-templates']);
 } else {
   const t = JSON.parse(readFileSync(templateFile, 'utf8')) as Templates;
   const from = Number(values.from);
   const to = values.to === undefined ? undefined : Number(values.to);
-  const readings = clean(await readAll(from, to, t));
+  const readings = clean(await readAll(from, to, t), box);
   if (values.mode === 'series') {
     console.log('frame\tvalue\tscore\tx\ty');
     for (const r of readings) console.log(`${r.frame}\t${r.value}\t${r.score}\t${r.x}\t${r.y}`);
   } else {
     console.log('start\tstartValue\tzero\tafterZero\tdrops\tups\tgaps\tupFrames');
-    for (const m of magazines(readings)) {
+    for (const m of magazines(readings, max, box)) {
       console.log(
         [
           m.start,

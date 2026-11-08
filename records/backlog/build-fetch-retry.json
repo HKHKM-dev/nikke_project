@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 5,
-  "text": "`build:fetch`: 頻度の制限が HTTP 429 で返ったときと、code が文字列のときは呼び直さない（`tools/builds/fetch-lib.ts`・`fetch.ts`）。呼び直しの繰り返し（`fetch.ts` の `call`）にテストが無い"
-}
