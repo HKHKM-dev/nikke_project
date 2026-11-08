@@ -108,7 +108,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -122,17 +130,44 @@
     "source": "V-0569",
     "readAt": "2026-10-31",
     "kind": "timing",
-    "use": "record",
+    "use": "compare",
     "value": [3055, 3114, 3173, 3232, 3291, 3350, 3408, 3467, 3526, 3585],
     "unit": "f",
     "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f864 から）。2 回目のフルバースト（f3887）の 10 発。51〜60 秒（0788 より 1 秒早い。バースト使用が 0788 より早い）",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps",
-      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた。2026-11-08: RL の弾の飛ぶ時間（plan/design-neon-ve-s1-gauge.md。V-0694）を入れると、モデルの 2・3 回目の I の発動がゲージ待ちで録画の時刻（0789-05）より 4〜7f 遅れ、フルバーストの頭の閃光手榴弾が窓の外に出る（エイダの弾も、発から着弾まで中近で 13〜14f。満タンの直前の発だけ約 3f で、モデルのゲージの足りない所は分かっていない）。比べる観測値から外した（backlog の 2-62）"
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた。2026-11-08: RL の弾の飛ぶ時間（plan/design-neon-ve-s1-gauge.md。V-0694）を入れると、モデルの 2・3 回目の I の発動がゲージ待ちで録画の時刻（0789-05）より 4〜7f 遅れ、フルバーストの頭の閃光手榴弾が窓の外に出る（エイダの弾も、発から着弾まで中近で 13〜14f。満タンの直前の発だけ約 3f で、モデルのゲージの足りない所は分かっていない）。比べる観測値から外した（backlog の 2-62）。2026-11-08: 2・3 回目の満タンのずれは、エイダの 13 発目の爆発が崩した的以外の物（`0789-18`。C-0177）と、この録画のジャンプの時刻（`0789-19`）で説明がついた（V-0700）。比べる指定に obstacles・jumpWindows を足して比べる観測値に戻した"
     },
     "scope": {
       "slot": 3,
       "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 10,
+        "count": 10
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
+      }
     }
   },
   {
@@ -141,17 +176,44 @@
     "source": "V-0569",
     "readAt": "2026-10-31",
     "kind": "timing",
-    "use": "record",
+    "use": "compare",
     "value": [5668, 5727, 5786, 5846, 5905, 5963, 6021, 6080, 6139, 6198],
     "unit": "f",
     "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f864 から）。3 回目のフルバースト（f6472）の 10 発",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps",
-      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた。2026-11-08: RL の弾の飛ぶ時間（plan/design-neon-ve-s1-gauge.md。V-0694）を入れると、モデルの 2・3 回目の I の発動がゲージ待ちで録画の時刻（0789-05）より 4〜7f 遅れ、フルバーストの頭の閃光手榴弾が窓の外に出る（エイダの弾も、発から着弾まで中近で 13〜14f。満タンの直前の発だけ約 3f で、モデルのゲージの足りない所は分かっていない）。比べる観測値から外した（backlog の 2-62）"
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた。2026-11-08: RL の弾の飛ぶ時間（plan/design-neon-ve-s1-gauge.md。V-0694）を入れると、モデルの 2・3 回目の I の発動がゲージ待ちで録画の時刻（0789-05）より 4〜7f 遅れ、フルバーストの頭の閃光手榴弾が窓の外に出る（エイダの弾も、発から着弾まで中近で 13〜14f。満タンの直前の発だけ約 3f で、モデルのゲージの足りない所は分かっていない）。比べる観測値から外した（backlog の 2-62）。2026-11-08: 2・3 回目の満タンのずれは、エイダの 13 発目の爆発が崩した的以外の物（`0789-18`。C-0177）と、この録画のジャンプの時刻（`0789-19`）で説明がついた（V-0700）。比べる指定に obstacles・jumpWindows を足して比べる観測値に戻した"
     },
     "scope": {
       "slot": 3,
       "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 20,
+        "count": 10
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
+      }
     }
   },
   {
@@ -160,17 +222,44 @@
     "source": "V-0569",
     "readAt": "2026-10-31",
     "kind": "timing",
-    "use": "record",
+    "use": "compare",
     "value": [10601, 10660],
     "unit": "f",
     "description": "エイダの S2 の閃光手榴弾投擲のヒットが出た動画のフレーム（戦闘開始 f864 から）。5 回目のフルバースト（f11398）の 2 発",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps",
-      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた。2026-11-08: RL の弾の飛ぶ時間（plan/design-neon-ve-s1-gauge.md。V-0694）を入れると、モデルの 2・3 回目の I の発動がゲージ待ちで録画の時刻（0789-05）より 4〜7f 遅れ、フルバーストの頭の閃光手榴弾が窓の外に出る（エイダの弾も、発から着弾まで中近で 13〜14f。満タンの直前の発だけ約 3f で、モデルのゲージの足りない所は分かっていない）。比べる観測値から外した（backlog の 2-62）"
+      "note": "閃光手榴弾は、モデルの 1 ヒット（防御力無視の倍率ダメージ。会心でない・コアなし）と 1 以内の増分。リター・デルタの小さいヒット（15,686・26,050 など）が同じフレームに重なった増分は、その分を引いて当てた。2026-11-08: RL の弾の飛ぶ時間（plan/design-neon-ve-s1-gauge.md。V-0694）を入れると、モデルの 2・3 回目の I の発動がゲージ待ちで録画の時刻（0789-05）より 4〜7f 遅れ、フルバーストの頭の閃光手榴弾が窓の外に出る（エイダの弾も、発から着弾まで中近で 13〜14f。満タンの直前の発だけ約 3f で、モデルのゲージの足りない所は分かっていない）。比べる観測値から外した（backlog の 2-62）。2026-11-08: 2・3 回目の満タンのずれは、エイダの 13 発目の爆発が崩した的以外の物（`0789-18`。C-0177）と、この録画のジャンプの時刻（`0789-19`）で説明がついた（V-0700）。比べる指定に obstacles・jumpWindows を足して比べる観測値に戻した"
     },
     "scope": {
       "slot": 3,
       "source": "skill"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitVideoFrameList",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "skip": 40,
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
+      }
     }
   },
   {
@@ -200,7 +289,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -235,7 +332,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -273,7 +378,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -311,7 +424,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -350,7 +471,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -389,7 +518,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -428,7 +565,15 @@
         "enemy": "range-bigarms-fire",
         "events": ["range-3min-jump"],
         "burst": true,
-        "manualBursts": "0789-05"
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
       }
     },
     "scope": {
@@ -453,6 +598,149 @@
     "scope": {
       "slot": 3,
       "source": "skill"
+    }
+  },
+  {
+    "id": "0789-18",
+    "recording": "0789",
+    "source": "V-0700",
+    "readAt": "2026-11-08",
+    "kind": "count",
+    "use": "input",
+    "unit": "個",
+    "value": 1,
+    "description": "エイダの 13 発目（戦闘の通し。照準の左の残弾が 6 → 5 になったのが f2356、着弾 f2371）の爆発で崩れた、的以外の物の数。的の左足の左の小さな箱（f2365 では有り、f2440 では無く煙だけ）。比べる指定の obstacles に使う",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode series --subpixel・node tools/captures/hud.ts --mode jumps・録画の画を目で見た（ffmpeg の select=eq(n,N) の切り出し）",
+      "note": "f2371 のバーの伸びは 14.27px で、ほかのエイダの 1 ヒットの伸び（2 回目の満タンまでの 2453・2535 で 9.37・9.72px）より 4.8px 多い。物 1 個の 4.73px（14,000 × 2.5。C-0177）と合う。同じフレームに、リター・デルタの増分は無い（f2370・2372 にリター）"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0789-19",
+    "recording": "0789",
+    "source": "V-0700",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "use": "input",
+    "unit": "秒",
+    "value": [32.238, 34.238, 68.635, 70.635, 108.194, 110.194, 144.574, 146.574, 177.86, 179.86],
+    "description": "リター・デルタ・エイダの、的のジャンプで撃てなかった窓（ゲーム内の秒。始まり・終わりの組を順に並べる。1〜5 回目）。照合の setup.jumpWindows で、モデルの狙えない窓と着地点の区間の切れ目をこれに置き換える。窓はデルタ・エイダの明けの 1 発目にそろえて置いた",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/gauge.ts --mode series --subpixel・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "戦闘開始は動画 f864（`0789-05` と同じ）。1〜4 回目の終わりは、着地の後のデルタの最初の発（総ダメージの増分とバーの 7px の伸び。動画 f2973・5138・7490・9655）の 70f 前（モデルの明けから SR・RL の 1 発目まで。windowEndFirstShotFrames）。1 回目はエイダも同じ f2973 に撃った（照準の残弾 6 → 5。着弾 f2981）。始まりは終わりの 2 秒前。5 回目は戦闘の終わりと重なり明けの後の発が無いので、代表値（data/enemies.json の 177.86 秒）から 2 秒（リターの止まる前の最後の増分 f11451 はゲーム内の 177.87 秒で、代表値と 1f 違い）。ゲーム内の秒は、戦闘開始からのフレームから、それより前のフルバーストの入り（`0789-03`）ごとに 22f と、I・II の発動（`0789-01`・`0789-02`）ごとに 1f を引き、1f = 0.017 秒で数えた。リターの明けの 1 発目（f2931・5090・7447・9606）は、この窓の終わりから 28・22・27・21f 後で、モデルの 12f（構え。C-0114）より遅い（照準が的に掛かるまで撃たない。C-0114 の注記）。リターに合わせて置くと、デルタ・エイダの明けの発がモデルで 9〜16f 遅れ、3 回目の満タンがずれる（V-0700「結果」）"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "target"
+    }
+  },
+  {
+    "id": "0789-20",
+    "recording": "0789",
+    "source": "V-0700",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 1725,
+    "description": "2 回目に BURST バーが消えたフレーム（ゲージの満タン）の、戦闘開始からのゲーム内のフレーム（止まりを除く）。動画の f2613 で、満タンにしたのはデルタの発（総ダメージの増分 208,626 が同じフレーム）。エイダの直前の着弾は f2535（`0789-22`）",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode events・--mode series --subpixel・node tools/captures/hud.ts --mode jumps",
+      "note": "バーは f2612 に 112.98px で、f2613 に消えた。動画のフレームから、戦闘開始（f864）と、それより前の 1 回目のフルバーストの入りの 22f・I・II の発動の 1f ずつを引いた。モデルは、物の分（`0789-18`）が無いとデルタの発で 988,000 に届かず（12,000 足りない）、エイダの次の着弾（f2617）で満タンになる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0789-21",
+    "recording": "0789",
+    "source": "V-0700",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": 2911,
+    "description": "3 回目に BURST バーが消えたフレーム（ゲージの満タン）の、戦闘開始からのゲーム内のフレーム（止まりを除く）。動画の f3800 で、満タンにしたのはデルタの発（総ダメージの増分 208,626 が同じフレーム）。エイダの直前の着弾は f3756（`0789-22`）",
+    "method": {
+      "tool": "node tools/captures/gauge.ts --mode events・--mode series --subpixel・node tools/captures/hud.ts --mode jumps",
+      "note": "バーは f3797〜3799 に 113.00px（バーが映す上限）で、f3800 に消えた。動画のフレームから、戦闘開始（f864）と、それより前の 1 回目のフルバーストの入りの 22f・I・II の発動の 1f ずつを引いた。溜め始めは 2 回目のチェーン（I だけ）が切れた後で、その直前のデルタの発（f3219）は数えない。代表値のジャンプの窓では、1 回目のジャンプの明けのデルタ・エイダの発がモデルで 6〜7f 遅く、デルタの f3219 の発がチェーンの切れの後に入る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "manualBursts": "0789-05",
+        "obstacles": [
+          {
+            "slot": 3,
+            "shot": 13,
+            "count": "0789-18"
+          }
+        ],
+        "jumpWindows": "0789-19"
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "0789-22",
+    "recording": "0789",
+    "source": "V-0700",
+    "readAt": "2026-11-08",
+    "kind": "timing",
+    "use": "record",
+    "unit": "f",
+    "value": [2535, 3756],
+    "description": "2・3 回目の満タン（`0789-20`・`0789-21`）の前の、エイダの最後の着弾の動画のフレーム（エイダの 1 ヒットの総ダメージの増分 367,175）。撃ったのは f2520・3747（照準の左の残弾の減り）で、飛ぶ時間は 15f（中近）・9f（1 回目のジャンプの後の近）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "2 回目の満タンの前のエイダの次の発は、照準の残弾が f2601 まで 3、f2614 から 2（間の f2602〜2613 は読めない）で、発の間 82f から f2602 に撃ち、f2617（満タンの 4f 後）に着弾した（増分 378,504 = エイダ 367,175 + リター 11,329）。課題 2-62 の「着弾が約 3f 後に見え」は、この読めない間の後の減り（f2614）から数えたもの"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
     }
   }
 ]
