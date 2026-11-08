@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 9,
-  "text": "スキル定義: timed の `perCount` は、condition の無い定義でも読み込みを通り、1 パス目で例外になる（`packages/core/src/skills/holders.ts` の `holdsAt`）。いまのデータはどれも condition を付けている。読み込みで止めるか、condition 無しを扱う"
-}

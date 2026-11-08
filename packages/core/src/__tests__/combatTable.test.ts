@@ -14,11 +14,12 @@ import {
   buildCombatPowerTable,
   combatCharacterOf,
   fixedSpecCombatPowers,
+  parseCombatPowerTable,
   type CombatPowerTable,
 } from '../combatTable.ts';
 import { fixedSpecGrowth } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
-import { MASTER_FILES } from '../load.ts';
+import { loadCombatPowerTable, MASTER_FILES } from '../load.ts';
 import type { BuildMasters, CharacterData, CharacterIndex } from '../types.ts';
 
 const data = <T>(path: string): T =>
@@ -92,4 +93,61 @@ it('snapshotCombatPowers: 表から引いて全キャラの戦闘力を出し、
   expect([...r.powers]).toEqual([[ssr.resourceId, snapshotCombatPower(ssr, entry(), masters).value]]);
   expect(r.failures.map((f) => f.id).sort()).toEqual([-1, sr.resourceId].sort());
   expect(r.failures.find((f) => f.id === -1)?.message).toBe('キャラのデータに無い');
+});
+
+describe('parseCombatPowerTable（デプロイの直後に古い JS と新しい表が混ざる場合）', () => {
+  const id = Object.keys(table.characters)[0]!;
+  /** 置いてある表の 1 体分を書き換えたもの */
+  const withEntry = (over: Record<string, unknown>) => ({
+    ...table,
+    characters: { ...table.characters, [id]: { ...table.characters[id]!, ...over } },
+  });
+
+  it('置いてある表はそのまま通す', () => {
+    expect(parseCombatPowerTable(table)).toBe(table);
+  });
+
+  it('知らない版・形の違う表は、場所つきの Error にする', () => {
+    expect(() => parseCombatPowerTable({ ...table, formatVersion: 2 })).toThrow(
+      'この版の戦闘力の表は読めない（formatVersion 2）',
+    );
+    expect(() => parseCombatPowerTable([])).toThrow('戦闘力の表: オブジェクトでない');
+    expect(() => parseCombatPowerTable({ ...table, levelCurves: {} })).toThrow('levelCurves: 配列でない');
+    expect(() => parseCombatPowerTable({ ...table, levelCurves: [{ attack: [1], hp: [1] }] })).toThrow(
+      'levelCurves[0]: attack・hp・defence の数の配列だけを持つのでない',
+    );
+    expect(() => parseCombatPowerTable({ ...table, characters: null })).toThrow('characters: オブジェクトでない');
+    expect(() => parseCombatPowerTable(withEntry({ levelCurve: table.levelCurves.length }))).toThrow(
+      `characters.${id}.levelCurve: levelCurves の番号でない（${table.levelCurves.length}）`,
+    );
+    expect(() => parseCombatPowerTable(withEntry({ treasure: null }))).toThrow(
+      `characters.${id}.treasure: 真偽値でない`,
+    );
+    expect(() => parseCombatPowerTable(withEntry({ statEnhance: {} }))).toThrow(`characters.${id}.statEnhance`);
+    expect(() => parseCombatPowerTable(withEntry({ crit: { rate: 1 } }))).toThrow(`characters.${id}.crit`);
+    const curve = table.levelCurves[0]!;
+    expect(() => parseCombatPowerTable({ ...table, levelCurves: [{ ...curve, max: 200 }] })).toThrow(
+      'levelCurves[0]: attack・hp・defence の数の配列だけを持つのでない',
+    );
+    expect(() => parseCombatPowerTable(withEntry({ rarity: 'UR' }))).toThrow(
+      `characters.${id}.rarity: 知らない値（"UR"）`,
+    );
+    expect(() => parseCombatPowerTable(withEntry({ weaponType: 'BOW' }))).toThrow(
+      `characters.${id}.weaponType: 知らない値（"BOW"）`,
+    );
+    expect(() => parseCombatPowerTable(withEntry({ corporationSubType: undefined }))).toThrow(
+      `characters.${id}.corporationSubType: 文字列か null でない`,
+    );
+    expect(() => parseCombatPowerTable(withEntry({ corporation: 1 }))).toThrow(
+      `characters.${id}.corporation: 文字列でない`,
+    );
+  });
+
+  it('loadCombatPowerTable は形の違う表を読み込みの失敗にする（画面は「戦闘力の表を読めない」と出す）', async () => {
+    const fetchOf = (json: unknown) => (async () => new Response(JSON.stringify(json))) as typeof fetch;
+    await expect(loadCombatPowerTable({ fetchImpl: fetchOf(table) })).resolves.toEqual(table);
+    await expect(loadCombatPowerTable({ fetchImpl: fetchOf({ ...table, formatVersion: 2 }) })).rejects.toThrow(
+      'この版の戦闘力の表は読めない（formatVersion 2）',
+    );
+  });
 });

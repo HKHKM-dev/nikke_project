@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 2,
-  "text": "育成状況の JSON の読み込みで、宝物の段階と Lv の整合（Lv 0 で段階が 1 以上・宝物の無いキャラの treasure）を検査しない（`packages/core/src/buildSnapshot.ts`）"
-}

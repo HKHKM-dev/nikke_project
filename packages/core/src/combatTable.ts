@@ -7,8 +7,12 @@ import { fixedSpecBuild } from './build.ts';
 import type { SnapshotCombatPowers } from './buildSnapshot.ts';
 import { computeCombatPower } from './combatPower.ts';
 import { fixedSpecGrowth } from './fixedSpec.ts';
+import { isRecord } from './skills/parse/common.ts';
 import { MAX_SKILL_LEVELS } from './skills/resolve.ts';
-import type { BuildMasters, CharacterData, StatKind } from './types.ts';
+import { NIKKE_CLASSES } from './skills/types.ts';
+import { GRADE_MAX } from './stats.ts';
+import type { BuildMasters, CharacterData, StatEnhance, StatKind } from './types.ts';
+import { WEAPON_TYPES } from './weapons.ts';
 
 export const COMBAT_TABLE_FILE = 'combat.json';
 
@@ -83,6 +87,64 @@ export function buildCombatPowerTable(characters: readonly CharacterData[]): Com
     ]);
   }
   return { formatVersion: 1, levelCurves, characters: Object.fromEntries(entries) };
+}
+
+const STAT_KINDS = ['attack', 'hp', 'defence'] as const satisfies readonly StatKind[];
+const STAT_ENHANCE_KEYS = [
+  'gradeRatio',
+  'gradeAttack',
+  'gradeHp',
+  'gradeDefence',
+  'coreAttack',
+  'coreHp',
+  'coreDefence',
+] as const satisfies readonly (keyof StatEnhance)[];
+
+function fail(path: string, what: string): never {
+  throw new Error(`${path}: ${what}`);
+}
+
+const isNumbers = (v: unknown): boolean => Array.isArray(v) && v.every((n) => Number.isFinite(n));
+const hasNumbers = (v: unknown, keys: readonly string[]): boolean =>
+  isRecord(v) && keys.every((k) => Number.isFinite(v[k]));
+
+/**
+ * 読んだ JSON が、この版の戦闘力の表の形かを確かめる（不正なら Error）。デプロイの直後に古い JS と新しい表が混ざっても、
+ * 違う意味の値で計算せず、読めないと知らせる
+ */
+export function parseCombatPowerTable(raw: unknown): CombatPowerTable {
+  if (!isRecord(raw)) fail('戦闘力の表', 'オブジェクトでない');
+  if (raw.formatVersion !== 1)
+    throw new Error(`この版の戦闘力の表は読めない（formatVersion ${JSON.stringify(raw.formatVersion) ?? 'なし'}）`);
+  const curves = raw.levelCurves;
+  if (!Array.isArray(curves)) fail('levelCurves', '配列でない');
+  // 戻すとき（curvesOf）は全部のキーを曲線として読むので、ほかのキーも止める
+  curves.forEach((c, i) => {
+    if (!isRecord(c) || Object.keys(c).length !== STAT_KINDS.length || !STAT_KINDS.every((k) => isNumbers(c[k])))
+      fail(`levelCurves[${i}]`, `${STAT_KINDS.join('・')} の数の配列だけを持つのでない`);
+  });
+  if (!isRecord(raw.characters)) fail('characters', 'オブジェクトでない');
+  for (const [id, e] of Object.entries(raw.characters)) {
+    const at = `characters.${id}`;
+    if (!isRecord(e)) fail(at, 'オブジェクトでない');
+    // 知らない値は止める（コレクション・リサイクルルームの寄与が黙って 0 になる）。企業は表に無いものもあるので文字列かだけを見る
+    for (const [key, known] of [
+      ['rarity', Object.keys(GRADE_MAX)],
+      ['class', NIKKE_CLASSES],
+      ['weaponType', WEAPON_TYPES],
+    ] as const)
+      if (!(known as readonly unknown[]).includes(e[key]))
+        fail(`${at}.${key}`, `知らない値（${JSON.stringify(e[key]) ?? 'なし'}）`);
+    if (typeof e.corporation !== 'string') fail(`${at}.corporation`, '文字列でない');
+    if (e.corporationSubType !== null && typeof e.corporationSubType !== 'string')
+      fail(`${at}.corporationSubType`, '文字列か null でない');
+    if (!hasNumbers(e.statEnhance, STAT_ENHANCE_KEYS)) fail(`${at}.statEnhance`, '係数の数がそろわない');
+    if (!hasNumbers(e.crit, ['rate', 'damage'])) fail(`${at}.crit`, 'rate・damage の数がそろわない');
+    if (!Number.isInteger(e.levelCurve) || curves[e.levelCurve as number] === undefined)
+      fail(`${at}.levelCurve`, `levelCurves の番号でない（${JSON.stringify(e.levelCurve) ?? 'なし'}）`);
+    if (typeof e.treasure !== 'boolean') fail(`${at}.treasure`, '真偽値でない');
+  }
+  return raw as CombatPowerTable;
 }
 
 /** 表から 1 体分を computeCombatPower に渡せる形で引く。表に無いキャラは undefined */

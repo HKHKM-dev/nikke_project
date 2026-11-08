@@ -1724,7 +1724,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return sum;
   };
 
-  const holdsAt = (condition: EffectCondition, sourceSlotIndex: number, frame: number): boolean => {
+  /** 条件が無ければ成り立つ（段 1.5 には、条件の無い perCount の timed も入る。stageOfTimed） */
+  const holdsAt = (condition: EffectCondition | undefined, sourceSlotIndex: number, frame: number): boolean => {
+    if (condition === undefined) return true;
     if (condition.selfState !== undefined) {
       const { state, present, stacks } = condition.selfState;
       // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
@@ -2404,7 +2406,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (
         !fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex) ||
-        (g.grant.condition !== undefined && !holdsAt(g.grant.condition, g.group.sourceSlotIndex, f))
+        !holdsAt(g.grant.condition, g.group.sourceSlotIndex, f)
       ) {
         skipGrant(g, f);
         continue;
@@ -2415,7 +2417,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
       if (
         !fireContextHolds(src.effect.condition, src.effect.trigger, ev, src.sourceSlotIndex) ||
-        !holdsAt(src.effect.condition!, src.sourceSlotIndex, f)
+        !holdsAt(src.effect.condition, src.sourceSlotIndex, f)
       ) {
         skipEffect(src.sourceSlotIndex, src.effect, f);
         continue;
@@ -2430,7 +2432,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
       if (
         !fireContextHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex) ||
-        !holdsAt(r.effect.condition!, r.sourceSlotIndex, f)
+        !holdsAt(r.effect.condition, r.sourceSlotIndex, f)
       ) {
         skipEffect(r.sourceSlotIndex, r.effect, f);
         continue;
@@ -2441,7 +2443,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
       if (
         !fireContextHolds(x.effect.condition, x.effect.trigger, ev, x.sourceSlotIndex) ||
-        !holdsAt(x.effect.condition!, x.sourceSlotIndex, f)
+        !holdsAt(x.effect.condition, x.sourceSlotIndex, f)
       ) {
         skipEffect(x.sourceSlotIndex, x.effect, f);
         continue;
@@ -2644,7 +2646,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     selfStackCountAt,
     enemyStateAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {
-      if (effect.condition === undefined || holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
+      if (holdsAt(effect.condition, sourceSlotIndex, frame)) return true;
       skipEffect(sourceSlotIndex, effect, frame);
       return false;
     },

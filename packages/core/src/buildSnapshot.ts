@@ -4,6 +4,7 @@
 import type { BuildInput } from './build.ts';
 import { checkInt, parseBuildFieldsJson, parseSkillLevelsJson } from './buildJson.ts';
 import { computeCombatPower, type CombatPower } from './combatPower.ts';
+import { treasurePhaseOfLevel } from './shiftypad.ts';
 import { isRecord } from './skills/parse/common.ts';
 import type { SkillLevels } from './skills/resolve.ts';
 import type { TreasurePhase } from './skills/treasure.ts';
@@ -52,13 +53,15 @@ function parseTreasure(v: unknown, path: string, issues: string[]): SnapshotTrea
     issues.push(`${path}: オブジェクトか null でない`);
     return undefined;
   }
-  const before = issues.length;
-  checkInt(v.tid, 1, Infinity, `${path}.tid`, issues);
-  checkInt(v.level, 0, Infinity, `${path}.level`, issues);
-  if (v.phase !== null && v.phase !== 2 && v.phase !== 3)
-    issues.push(`${path}.phase: 2・3・null でない（${JSON.stringify(v.phase) ?? 'なし'}）`);
-  if (issues.length > before) return undefined;
-  return { tid: v.tid as number, level: v.level as number, phase: v.phase as SnapshotTreasure['phase'] };
+  const tidOk = checkInt(v.tid, 1, Infinity, `${path}.tid`, issues);
+  if (!checkInt(v.level, 0, Infinity, `${path}.level`, issues) || !tidOk) return undefined;
+  // 段階は API の Lv から決まる（Lv 0 は未確定の null）。合わない段階（Lv 0 の段階 3 など）は止める
+  const phase = treasurePhaseOfLevel(v.level);
+  if (v.phase !== phase) {
+    issues.push(`${path}.phase: Lv ${v.level} なら ${phase ?? 'null'}（${JSON.stringify(v.phase) ?? 'なし'}）`);
+    return undefined;
+  }
+  return { tid: v.tid as number, level: v.level, phase };
 }
 
 function parseCharacter(
@@ -197,7 +200,10 @@ export function jstDate(iso: string): string {
   return new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
 }
 
-/** スナップショットの 1 体分の戦闘力（C-0981。宝物は解放しているかだけを見る） */
+/**
+ * スナップショットの 1 体分の戦闘力（C-0981。宝物は解放しているかだけを見る）。宝物の無いキャラに treasure があれば RangeError
+ * （computeCombatStat。読み込みの index は宝物の有無を持たないので、readBuildSnapshot はここを見ない）
+ */
 export function snapshotCombatPower(
   character: Parameters<typeof computeCombatPower>[0],
   entry: SnapshotCharacter,

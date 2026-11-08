@@ -1,6 +1,8 @@
 // キャラの一覧の並び（listOrder.ts）の状態: 選んだ並び（ブラウザに覚える）と、育成状況の戦闘力。
 // 戦闘力の表（data/characters/combat.json）は、戦闘力順のとき（と、育成状況があるとき）に読む。戦闘力順はいつも選べ、
-// スペック固定のときと育成状況が無いときは、スペック固定の値で計算した戦闘力（core の fixedSpecCombatPowers）で並べる
+// スペック固定のときと育成状況が無いときは、スペック固定の値で計算した戦闘力（core の fixedSpecCombatPowers）で並べる。
+// 版と形は読み込み（loadCombatPowerTable）が確かめ、違えば tableError にする（デプロイの直後に古い JS と新しい表が混ざっても、
+// 画面全体を落とさない）
 import {
   combatCharacterOf,
   fixedSpecCombatPowers,
