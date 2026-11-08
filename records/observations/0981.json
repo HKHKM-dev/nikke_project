@@ -17,5 +17,39 @@
       "slot": 2,
       "source": "gauge"
     }
+  },
+  {
+    "recording": "0981",
+    "source": "V-0692",
+    "readAt": "2026-11-08",
+    "id": "0981-02",
+    "kind": "count",
+    "use": "compare",
+    "value": 297,
+    "unit": "発",
+    "description": "最初のヒットから本当の満タン（バーが消えた f1283）までのラピ：レッドフードの通常攻撃のヒットの数（`0981-01` の 1 つ目の値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "`0981-01` と同じ分け方。`0980-02` と同じ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 2,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "gauge"
+    }
   }
 ]

@@ -2,6 +2,7 @@
   "formatVersion": 1,
   "fullySupported": [
     10,
+    16,
     19,
     20,
     32,

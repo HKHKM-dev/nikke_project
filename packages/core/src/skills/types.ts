@@ -1119,6 +1119,8 @@ export type DamageEffect = {
    * ゲージに予約する（オートファイアのどのヒットも射手の target_burst_energy_pershot を溜める）。
    * アインのニアフェザー編（plan/design-ein-near-feather.md 1.2 節）: 召喚の攻撃（{ summon }）のきっかけなら、射手の何ヒットぶん溜めるかの
    * 数（2 以上の整数）も書ける（true は 1 ヒットぶん）
+   * V-0692（ラピ：レッドフードの粘着榴弾の付着は 25。C-0991）: 射撃の回数のきっかけは、回数の間隔の変更（cycleEvery の shotCounts）の窓の
+   * 中は窓の間隔で数える（射撃の止まりと同じ。C-0727）
    */
   gaugePerHit?: true | number;
   /** 防御力無視ダメージ編: 編成に特定のキャラがいる条件 */

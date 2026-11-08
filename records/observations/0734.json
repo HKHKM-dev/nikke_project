@@ -316,5 +316,39 @@
       "slot": 1,
       "source": "gauge"
     }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0692",
+    "readAt": "2026-11-08",
+    "id": "0734-12",
+    "kind": "count",
+    "use": "compare",
+    "value": 841,
+    "unit": "発",
+    "description": "最初のヒットから本当の満タン（バーが消えた f2320）までのラピ：レッドフードの通常攻撃のヒットの数（`0734-10` の 1 つ目の値）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps",
+      "note": "`0734-10` と同じ分け方。モデルは全発が当たるので発の数、実測は HUD で数えた当たったヒットの数（外れた発の分だけ実測が少ない。付着は撃った発の数で決まる）。許容 ±5 は、近の区間の MG の外れの数の揺れ（0733〜0978 の 5 本で 839〜842）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
   }
 ]

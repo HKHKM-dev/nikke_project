@@ -128,6 +128,11 @@ describe('粘着榴弾とバースト III の付着▲・回数条件▼（灼�
     expect(fired.some((f) => inWindow(f) && shots.filter((s) => s <= f).length % 120 !== 0)).toBe(true);
   });
 
+  it('charges 25 shooter hits of burst gauge on every attach frame, also every 60 shots inside the window (V-0692)', () => {
+    const stickGauges = r.shotGauges.filter((g) => g.slotIndex === m && g.energy === 25 * 1000);
+    expect(stickGauges.map((g) => g.frame)).toEqual(attaches.map((h) => h.frame));
+  });
+
   it('pauses her firing on every grenade, also every 60 shots inside the window', () => {
     for (const h of attaches) {
       const f = h.frame - 5;
