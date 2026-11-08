@@ -1170,10 +1170,6 @@ header h1 {
   align-items: center;
   gap: 8px;
 }
-.char-tray-search {
-  padding: 4px 8px;
-  font-size: 0.85rem;
-}
 .char-tray-filter-group {
   display: flex;
   flex-wrap: wrap;

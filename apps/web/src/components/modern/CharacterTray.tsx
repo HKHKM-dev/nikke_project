@@ -62,7 +62,6 @@ export function CharacterTray({
   listOrder,
   onSelectCharacter,
 }: Props) {
-  const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
@@ -72,14 +71,12 @@ export function CharacterTray({
 
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
   const filteredCharacters = useMemo(() => {
-    const q = query.trim().toLowerCase();
     return index.filter((char) => {
       if (!matchesBadgeFilters(char, filters)) return false;
       if (onlySupported && fullySupported && !fullySupported.has(char.resourceId)) return false;
-      if (q && !char.name.ja.toLowerCase().includes(q) && !char.name.en.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [index, filters, onlySupported, fullySupported, query]);
+  }, [index, filters, onlySupported, fullySupported]);
 
   return (
     <section
@@ -89,13 +86,6 @@ export function CharacterTray({
     >
       <div className="char-tray-header">
         <div className="char-tray-filters">
-          <input
-            type="search"
-            className="char-tray-search"
-            placeholder="名前で検索…"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
           <div className="char-tray-filter-group">
             {BADGE_KINDS.map((kind) => (
               <BadgeFilter
