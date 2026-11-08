@@ -148,12 +148,13 @@
           "delayFrames": 5,
           "gaugePerHit": 25,
           "assumes": {
-            "ja": "粘着榴弾の付着。射撃の止まり（effects[0]）と同じ 120 回目の発の 5f 後（止まりの 1f と、止まりから付着までの 4f。区間で 2〜8f の真ん中）に 1 ヒット。射撃場の的ではどの区間もコアに付き、会心・距離ボーナス・フルバースト補正も乗る。付着のヒットのフレームに、射手の 1 ヒットの 25 回ぶん（25,000）のバーストゲージを溜める。説明文・データに値が無く、実測の値をそのまま持つ（C-0991）。ゲージ速度▲は射手の 1 ヒットと同じに掛けるとみる（確かめていない）",
-            "en": "The sticky grenade attaches. One hit 5 frames after the 120th shot (1 frame of firing pause plus 4 frames from the pause to the attach, the middle of 2–8 by distance band). On the range target it always hits the core; crit, distance bonus and the Full Burst bonus apply. The attach hit charges 25 shooter hits worth of burst gauge (25,000) on its frame. Neither the description nor the data gives the value, so the measured value is held as is (C-0991). Burst gauge speed buffs are assumed to apply as for a shooter hit (not verified)"
+            "ja": "粘着榴弾の付着。射撃の止まり（effects[0]）と同じ 120 回目の発の 5f 後（止まりの 1f と、止まりから付着までの 4f。区間で 2〜8f の真ん中）に 1 ヒット。射撃場の的ではどの区間もコアに付き、会心・距離ボーナス・フルバースト補正も乗る。付着のヒットのフレームに、射手の 1 ヒットの 25 回ぶん（25,000）のバーストゲージを溜める。説明文・データに値が無く、実測の値をそのまま持つ（C-0991）。付着のヒットは、アニス：スターの S1 の味方のゲージの加算の回数にも数える（C-0998）。自分のゲージ速度▲（いまは付ける効果が無い）は、射手の 1 ヒットと同じに掛けるとみる（確かめていない）",
+            "en": "The sticky grenade attaches. One hit 5 frames after the 120th shot (1 frame of firing pause plus 4 frames from the pause to the attach, the middle of 2–8 by distance band). On the range target it always hits the core; crit, distance bonus and the Full Burst bonus apply. The attach hit charges 25 shooter hits worth of burst gauge (25,000) on its frame. Neither the description nor the data gives the value, so the measured value is held as is (C-0991). The attach hit also counts as an ally gauge event for Anis: Star’s S1 per-event addition (C-0998). Her own burst gauge speed buffs (none exist now) are assumed to apply as for a shooter hit (not verified)"
           },
           "claims": [
             "C-0724",
-            "C-0991"
+            "C-0991",
+            "C-0998"
           ]
         },
         {

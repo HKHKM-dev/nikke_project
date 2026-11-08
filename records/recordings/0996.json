@@ -1,0 +1,47 @@
+{
+  "id": "0996",
+  "date": "2026-11-09",
+  "folder": "range",
+  "file": "20261109-0996_mg_rapi-redhood_anis-star-nofire_i-doll-ocean.mp4",
+  "original": "2026-11-09_02-42-31.mp4",
+  "durationSec": 25.6,
+  "frames": 1537,
+  "fps": 60,
+  "sizeMB": 31.1,
+  "sha256": "771b2cf5f365",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 17,
+      "name": "アニス：スター",
+      "controlled": true,
+      "fires": false
+    },
+    {
+      "slot": 2,
+      "rid": 16,
+      "name": "ラピ：レッドフード",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 305,
+      "name": "I-DOLL・オーシャン",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": false,
+  "autoBurst": false,
+  "conditionNote": "V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた",
+  "backup": {
+    "at": "2026-11-09T02:48+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
