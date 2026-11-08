@@ -5,6 +5,8 @@ import type { PartiesState } from './parties.ts';
 import {
   ROSTER_STORAGE_KEY,
   applyRoster,
+  clearConfirmText,
+  clearRosterFromSlots,
   importConfirmText,
   importSummary,
   restoreRoster,
@@ -115,7 +117,10 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
 
   const clear = () => {
     setMessage(null);
-    setPending({ kind: 'clear', prompt: '育成状況を消します（スロットの育成はそのまま）。' });
+    setPending({
+      kind: 'clear',
+      prompt: clearConfirmText(roster === null ? 0 : rosterSlotCount(team, parties, roster)),
+    });
   };
 
   const confirmPending = () => {
@@ -124,6 +129,12 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     if (pending.kind === 'import') {
       applyImport(pending.text, pending.read);
       return;
+    }
+    // 育成状況から写したスロットの育成も既定に戻す（読めない保存のときは、写したキャラが分からないのでスロットはそのまま）
+    if (roster !== null) {
+      const next = clearRosterFromSlots(team, parties, roster);
+      dispatch({ type: 'replace', state: next.team });
+      setParties(next.parties);
     }
     removeStorage(ROSTER_STORAGE_KEY);
     setSaved(null);

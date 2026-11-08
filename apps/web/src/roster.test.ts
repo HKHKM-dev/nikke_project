@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { INITIAL_PARTIES, type PartiesState } from './parties.ts';
 import {
   applyRoster,
+  clearConfirmText,
+  clearRosterFromSlots,
   consoleFromRoster,
   importConfirmText,
   importSummary,
@@ -144,6 +146,34 @@ describe('applyRoster と rosterSlotCount', () => {
   it('上書きされるスロットの数', () => {
     expect(rosterSlotCount(team, parties, ROSTER)).toBe(3);
     expect(rosterSlotCount(teamWith(30), INITIAL_PARTIES, ROSTER)).toBe(0);
+  });
+});
+
+describe('clearRosterFromSlots（育成状況を消すとき）', () => {
+  const team = teamWith(82, null, 30);
+  const parties: PartiesState = {
+    active: 0,
+    parties: [null, { slots: teamWith(10, 82).slots }, null, null, null],
+  };
+
+  it('全部の編成の育成状況にいるキャラのスロットの育成を既定に戻し、キャラ・ほかのスロット・シンクロ LV は変えない', () => {
+    const loaded = applyRoster(team, parties, ROSTER);
+    const next = clearRosterFromSlots(loaded.team, loaded.parties, ROSTER);
+    const { growth, build, skillLevels, treasurePhase } = emptySlot();
+    const defaults = { growth, build, skillLevels, treasurePhase };
+    expect(next.team.slots[0]).toEqual({ ...loaded.team.slots[0], ...defaults });
+    expect(next.team.slots[0]!.resourceId).toBe(82);
+    expect(next.team.slots[2]).toBe(loaded.team.slots[2]);
+    expect(next.team.synchroLevel).toBe(loaded.team.synchroLevel);
+    expect(next.parties.parties[1]!.slots[0]).toEqual({ ...loaded.parties.parties[1]!.slots[0], ...defaults });
+    expect(next.parties.parties[0]).toBeNull();
+  });
+
+  it('確かめの文は、戻すスロットがあるときだけ数を出す', () => {
+    expect(clearConfirmText(3)).toBe(
+      '育成状況を消します。育成状況にいるキャラの 3 スロット（全部の編成）の育成も既定に戻します。',
+    );
+    expect(clearConfirmText(0)).toBe('育成状況を消します。');
   });
 });
 
