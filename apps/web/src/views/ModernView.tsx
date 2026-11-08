@@ -99,11 +99,14 @@ const DROP_ANIMATION: DropAnimation = {
     const finishSlide = target ? slideInto(holder, target) : () => undefined;
     const saved = [...holder.childNodes];
     holder.replaceChildren(incoming.cloneNode(true));
+    // 持ち上げたときの影は付けない（収まった瞬間に影が消えて、枠のように見える。滑り込む側にも影は無い）
+    (holder as HTMLElement).style.boxShadow = 'none';
     args.active.node.classList.add('modern-slot-arriving');
     return () => {
       // 持ち上げた絵は直後に消える。元の中身へ戻すと、消えるまでの一瞬だけ持ち上げたニケの絵が見えるので、先に隠す
       args.dragOverlay.node.style.visibility = 'hidden';
       holder.replaceChildren(...saved);
+      (holder as HTMLElement).style.boxShadow = '';
       args.active.node.classList.remove('modern-slot-arriving');
       finishSlide();
     };
