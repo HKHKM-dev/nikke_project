@@ -2,12 +2,14 @@
 
 /** 消してよいかを見るブランチ（origin/ の後の名前の頭） */
 export const PRUNE_PREFIXES = ['claude/', 'antigrav/'] as const;
-/** 最後のコミットからこれだけたったブランチだけを消す（いま動いているセッションの足元を消さない） */
+/** 最後のコミットと、この手元が今の先端を見た時刻の両方からこれだけたったブランチだけを消す（いま動いているセッションの足元を消さない） */
 export const PRUNE_AGE_MS = 24 * 60 * 60 * 1000;
 
 export interface RemoteBranch {
   /** origin/ の後の名前（claude/xxx） */
   name: string;
+  /** 先端のコミット（消すときのリースに使う） */
+  sha: string;
   /** 最後のコミットの時刻（ミリ秒） */
   committedAt: number;
 }
@@ -15,13 +17,42 @@ export interface RemoteBranch {
 /** git を引数で呼んで標準出力（前後の空白を除く）を返す。失敗したら null */
 export type GitRun = (args: readonly string[]) => string | null;
 
-/** for-each-ref の出力（名前 TAB コミットの時刻（秒））を読む。origin/HEAD のような頭の合わないものは除く */
+/** for-each-ref の出力（名前 TAB 先端 TAB コミットの時刻（秒））を読む。origin/HEAD のような頭の合わないものは除く */
 export function parseRemoteBranches(stdout: string): RemoteBranch[] {
   return stdout
     .split('\n')
     .map((line) => line.split('\t'))
-    .filter(([name, at]) => name && at && PRUNE_PREFIXES.some((p) => name.startsWith(p)))
-    .map(([name, at]) => ({ name: name!, committedAt: Number(at) * 1000 }));
+    .filter(([name, sha, at]) => name && sha && at && PRUNE_PREFIXES.some((p) => name.startsWith(p)))
+    .map(([name, sha, at]) => ({ name: name!, sha: sha!, committedAt: Number(at) * 1000 }));
+}
+
+/** JSON を読む。読めなければ null（gh がエラーの文を標準出力に出したときなど。フックを止めない） */
+export function parseJson<T>(text: string | null): T | null {
+  if (text === null) return null;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * gh pr list --json headRefName,baseRefName の出力から、残すブランチ（開いている PR の head と base）を出す。base も残すのは、
+ * 積んだ PR の土台を消すとその PR が閉じるため。読めなければ null（何も消さない）
+ */
+export function openPrBranches(stdout: string | null): Set<string> | null {
+  const prs = parseJson<{ headRefName?: unknown; baseRefName?: unknown }[]>(stdout);
+  if (!Array.isArray(prs)) return null;
+  return new Set(prs.flatMap((p) => [p.headRefName, p.baseRefName]).filter((n): n is string => typeof n === 'string'));
+}
+
+/**
+ * git reflog show --date=unix --format=%gd <ref> -n 1 の出力（origin/claude/x@{秒}）から、この手元が今の先端を見た時刻（ミリ秒）を読む。
+ * 読めなければ null
+ */
+export function parseReflogTime(stdout: string | null): number | null {
+  const m = stdout === null ? null : /@\{(\d+)\}$/.exec(stdout);
+  return m ? Number(m[1]) * 1000 : null;
 }
 
 /**
@@ -35,17 +66,32 @@ export function bringsNothing(git: GitRun, main: string, ref: string): boolean {
 }
 
 /**
- * 消すブランチ: 最後のコミットから PRUNE_AGE_MS 以上たち、開いている PR の head でなく、main に合わせても何も変わらないもの。
- * 木の比べ（git を呼ぶ）は、ほかの条件に合ったものだけで行う
+ * 消すブランチ: 最後のコミットと、手元が今の先端を見た時刻（seenAt。main から作って push しただけのブランチは、コミットが古くても
+ * 今 push されたもの）の両方から PRUNE_AGE_MS 以上たち、残すもの（開いている PR の head・base）でなく、main に合わせても何も
+ * 変わらないもの。seenAt と木の比べ（git を呼ぶ）は、ほかの条件に合ったものだけで行う
  */
 export function prunableBranches(
   branches: readonly RemoteBranch[],
-  openHeads: ReadonlySet<string>,
+  keep: ReadonlySet<string>,
   now: number,
+  seenAt: (name: string) => number | null,
   nothingNew: (name: string) => boolean,
-): string[] {
+): RemoteBranch[] {
+  const aged = (at: number | null) => at === null || now - at >= PRUNE_AGE_MS;
   return branches
-    .filter((b) => now - b.committedAt >= PRUNE_AGE_MS && !openHeads.has(b.name))
-    .filter((b) => nothingNew(b.name))
-    .map((b) => b.name);
+    .filter((b) => aged(b.committedAt) && !keep.has(b.name))
+    .filter((b) => aged(seenAt(b.name)))
+    .filter((b) => nothingNew(b.name));
+}
+
+/** リースを付けて origin のブランチを消す git の引数（判定した後に別のところから push された先端は消さない） */
+export function deleteArgs(branch: RemoteBranch): string[] {
+  return [
+    'push',
+    '--quiet',
+    `--force-with-lease=refs/heads/${branch.name}:${branch.sha}`,
+    'origin',
+    '--delete',
+    branch.name,
+  ];
 }
