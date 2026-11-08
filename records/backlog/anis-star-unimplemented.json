@@ -1,5 +1,5 @@
 {
-  "section": "8",
-  "order": 135,
-  "text": "アニス：スター（17）の未対応の notes の解消（2026-11-08 起票）→ 一部完了: [design-anis-star-unimplemented.md](design-anis-star-unimplemented.md)。残りは 9.3 節の論点 2（C2 を撮るか。オーナーの判断待ち）"
+  "section": "8.2",
+  "order": -11,
+  "text": "アニス：スター（17）の未対応の notes の解消（2026-11-08 起票）→ 完了（2026-11-08。未対応の notes は無くなった。C2 は問い不成立で打ち切り）: [design-anis-star-unimplemented.md](design-anis-star-unimplemented.md)"
 }
