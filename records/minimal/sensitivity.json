@@ -15507,7 +15507,7 @@
     {
       "observation": "0744-03",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "147ad8699a4fba4c",
+      "key": "c53c334a21cab54f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15515,7 +15515,7 @@
     {
       "observation": "0744-03",
       "element": "ノワール burst.effects[1]",
-      "key": "147ad8699a4fba4c",
+      "key": "c53c334a21cab54f",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15523,7 +15523,7 @@
     {
       "observation": "0745-03",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
-      "key": "4d9b2c140c7b42cd",
+      "key": "c6a8fa0911e14462",
       "effective": false,
       "minus": 0,
       "plus": 0
@@ -15531,7 +15531,7 @@
     {
       "observation": "0745-03",
       "element": "ノワール burst.effects[1]",
-      "key": "4d9b2c140c7b42cd",
+      "key": "c6a8fa0911e14462",
       "effective": false,
       "minus": 0,
       "plus": 0
