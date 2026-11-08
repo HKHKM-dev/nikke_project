@@ -1,9 +1,9 @@
 import { useDroppable } from '@dnd-kit/core';
-import { fixedSpecGrowth, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
+import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
-import { growthMarksOf } from './GrowthMarks.tsx';
+import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
 
@@ -62,12 +62,6 @@ export function CharacterTray({
   listOrder,
   onSelectCharacter,
 }: Props) {
-  const growthOf = (char: CharacterIndexEntry) => {
-    // スペック固定のときはスロットと同じく固定の値（限界突破・コアとも上限）、ほかは育成状況の値（無ければ出さない）
-    if (fixedSpec) return growthMarksOf(char.rarity, fixedSpecGrowth(char));
-    const entry = roster?.characters[String(char.resourceId)];
-    return entry ? growthMarksOf(char.rarity, entry.growth) : null;
-  };
   const [query, setQuery] = useState('');
   const [filters, setFilters] = useState<BadgeFilters>({});
 
@@ -166,7 +160,7 @@ export function CharacterTray({
                 inOtherParty={otherPartyIds.has(char.resourceId)}
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
-                growthMarks={growthOf(char)}
+                growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />
             );

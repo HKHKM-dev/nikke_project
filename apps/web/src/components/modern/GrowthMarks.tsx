@@ -1,10 +1,32 @@
-import { CORE_MAX, GRADE_MAX, type GrowthInput, type Rarity } from '@nikke/core';
+import {
+  CORE_MAX,
+  GRADE_MAX,
+  fixedSpecGrowth,
+  type BuildSnapshot,
+  type CharacterIndexEntry,
+  type GrowthInput,
+  type Rarity,
+} from '@nikke/core';
 
 /** 限界突破の回数とコア強化の段階（育成値）と、そのキャラの上限 */
 export type GrowthMarks = { grade: number; gradeMax: number; core: number; coreMax: number };
 
 export function growthMarksOf(rarity: Rarity, growth: Pick<GrowthInput, 'grade' | 'core'>): GrowthMarks {
   return { grade: growth.grade, gradeMax: GRADE_MAX[rarity], core: growth.core, coreMax: CORE_MAX[rarity] };
+}
+
+/**
+ * ニケ一覧（と一覧から持ち上げた絵）の限界突破・コア強化。スペック固定のときはスロットと同じく固定の値（限界突破・コアとも上限）、
+ * ほかは育成状況の値（育成状況にいなければ出さない）
+ */
+export function trayGrowthMarks(
+  char: CharacterIndexEntry,
+  roster: BuildSnapshot | null,
+  fixedSpec: boolean,
+): GrowthMarks | null {
+  if (fixedSpec) return growthMarksOf(char.rarity, fixedSpecGrowth(char));
+  const entry = roster?.characters[String(char.resourceId)];
+  return entry ? growthMarksOf(char.rarity, entry.growth) : null;
 }
 
 /**

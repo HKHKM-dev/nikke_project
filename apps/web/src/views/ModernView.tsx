@@ -23,7 +23,12 @@ import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
-import { growthMarksOf, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
+import {
+  GrowthMarksView,
+  growthMarksOf,
+  trayGrowthMarks,
+  type GrowthMarks,
+} from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
@@ -197,7 +202,13 @@ export function ModernView({
       setDraggedCharacter(data.character as CharacterIndexEntry);
     }
     setDraggedEmptyIndex(data?.type === 'slot-character' && !data.character ? (data.slotIndex as number) : null);
-    setDraggedMarks(data?.type === 'slot-character' ? slotGrowthMarks(data.slotIndex as number) : null);
+    setDraggedMarks(
+      data?.type === 'slot-character'
+        ? slotGrowthMarks(data.slotIndex as number)
+        : data?.character
+          ? trayGrowthMarks(data.character as CharacterIndexEntry, roster, team.fixedSpec)
+          : null,
+    );
     // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
     const card =
       event.active.data.current?.type === 'slot-character'
@@ -426,7 +437,11 @@ export function ModernView({
             </div>
           ) : draggedCharacter ? (
             <div className="char-drag-overlay">
-              <CharacterVisual character={draggedCharacter} size="compact" />
+              <CharacterVisual
+                character={draggedCharacter}
+                size="compact"
+                overlay={draggedMarks && <GrowthMarksView {...draggedMarks} className="char-tray-growth" />}
+              />
               <span className="char-tray-item-name">{draggedCharacter.name.ja}</span>
             </div>
           ) : null}
