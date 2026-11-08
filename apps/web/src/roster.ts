@@ -1,6 +1,8 @@
 // 育成状況（アカウントの全キャラの育成。plan/design-combat-power-sort.md 5 節）。React に依存しない純関数だけを置く。
 // 形は CLI の育成データのスナップショット（core の BuildSnapshot）そのもので、ブラウザの中（ROSTER_STORAGE_KEY）にだけ置く。
-// 読み込んだ育成状況は書き換えない。育成状況にいるキャラをスロットに入れたときと、読み込んだときに、スロットへ写す。
+// 読み込んだ育成状況は書き換えない: 保存と書き出しは読み込んだファイルの JSON のまま（キャラのデータに無いキャラも残す）。
+// 計算とスロットへの写しには、それをキャラのデータで検査した BuildSnapshot（無いキャラは飛ばす）を使う。
+// 育成状況にいるキャラをスロットに入れたときと、読み込んだときに、スロットへ写す。
 import {
   RECYCLE_CLASS_TID,
   RECYCLE_CORPORATION_TID,
@@ -9,6 +11,7 @@ import {
   jstDate,
   unknownTreasurePhaseCount,
   type BuildSnapshot,
+  type BuildSnapshotRead,
   type CharacterIndexEntry,
   type SnapshotCharacter,
 } from '@nikke/core';
@@ -25,16 +28,17 @@ import {
 
 export const ROSTER_STORAGE_KEY = 'nikke-calc.roster.v1';
 
-/** 保存した育成状況を読む。無い・読めないときは null（読めないものは、保存のときに検査を通っているので起きないはず） */
-export function restoreRoster(json: string | null, index: readonly CharacterIndexEntry[]): BuildSnapshot | null {
-  if (json === null) return null;
-  const read = readBuildSnapshot(json, index);
-  return read.ok ? read.snapshot : null;
+/**
+ * 保存した育成状況（読み込んだファイルの JSON）を、読み込みと同じ検査で読む。無いときは null。
+ * 読めない（ok: false）のは、保存の後にキャラのデータ（前は飛ばしたキャラが入る）か検査が変わったとき
+ */
+export function restoreRoster(json: string | null, index: readonly CharacterIndexEntry[]): BuildSnapshotRead | null {
+  return json === null ? null : readBuildSnapshot(json, index);
 }
 
-/** 書き出すファイルの中身（読みやすいよう字下げする。ブラウザへの保存は詰めた JSON.stringify） */
-export function serializeRoster(roster: BuildSnapshot): string {
-  return `${JSON.stringify(roster, null, 2)}\n`;
+/** 書き出すファイルの中身: 保存した JSON をそのまま、読みやすいよう字下げして書く */
+export function serializeRoster(saved: string): string {
+  return `${JSON.stringify(JSON.parse(saved), null, 2)}\n`;
 }
 
 /**

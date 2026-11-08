@@ -6,8 +6,9 @@
 //   1. メインのチェックアウトが main で作業中の変更が無ければ、origin/main へ早送りする
 //   2. いまのブランチの PR がマージ済みで（リモートのブランチは自動で消える）、PR の最後のコミットが HEAD と同じで、
 //      作業中の変更が無ければ、ブランチを origin/main に揃える（中身はマージ済みなので失うものは無い）
-//   3. デスクトップ（CLAUDE_CODE_REMOTE でない）で、origin の claude/・antigrav/ のブランチのうち、最後のコミットから 1 日以上
-//      たち、開いている PR が無く、main に合わせても木が変わらない（中身が全部 main に入っている）ものを origin から消す
+//   3. デスクトップ（CLAUDE_CODE_REMOTE でない）で、origin の claude/・antigrav/ のブランチのうち、最後のコミットと手元が今の先端を
+//      見た時刻（リモートの追跡ブランチの reflog）の両方から 1 日以上たち、開いている PR の head でも base でもなく、main に
+//      合わせても木が変わらない（中身が全部 main に入っている）ものを、判定した先端へのリースを付けて origin から消す
 //      （PR を出さずに作業を移したブランチや、main に揃えて push したブランチが残るため。
 //      plan/design-workflow-simplification-10.md 2 節）。クラウドでは削除が安全確認で止まるので行わない。PR の一覧が取れなければ
 //      消さない
@@ -16,7 +17,15 @@
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
 import { execFileSync } from 'node:child_process';
-import { parseRemoteBranches, bringsNothing, prunableBranches } from './sync-after-merge-lib.ts';
+import {
+  bringsNothing,
+  deleteArgs,
+  openPrBranches,
+  parseJson,
+  parseRemoteBranches,
+  prunableBranches,
+  seenAt,
+} from './sync-after-merge-lib.ts';
 
 /** 成功したら標準出力（前後の空白を除く）、失敗したら null */
 function run(cmd: string, args: readonly string[], cwd?: string): string | null {
@@ -74,7 +83,7 @@ if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
       '1',
     ]);
     const head = git(['rev-parse', 'HEAD']);
-    const prHead = merged ? (JSON.parse(merged) as { headRefOid: string }[])[0]?.headRefOid : undefined;
+    const prHead = parseJson<{ headRefOid?: string }[]>(merged)?.[0]?.headRefOid;
     if (head && prHead === head && git(['reset', '--hard', '--quiet', 'origin/main']) !== null) {
       git(['branch', '--unset-upstream']);
       done.push(`マージ済みの ${branch} を origin/main に揃えた`);
@@ -83,17 +92,26 @@ if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
 
   // 3. 中身が main に入った origin のブランチ
   if (process.argv.includes('--prune-branches') && process.env['CLAUDE_CODE_REMOTE'] !== 'true') {
-    const open = run('gh', ['pr', 'list', '--state', 'open', '--json', 'headRefName', '--limit', '200']);
-    if (open !== null) {
-      const openHeads = new Set((JSON.parse(open) as { headRefName: string }[]).map((p) => p.headRefName));
+    const keep = openPrBranches(
+      run('gh', ['pr', 'list', '--state', 'open', '--json', 'headRefName,baseRefName', '--limit', '200']),
+    );
+    if (keep !== null) {
       const branches = parseRemoteBranches(
-        git(['for-each-ref', '--format=%(refname:lstrip=3)%09%(committerdate:unix)', 'refs/remotes/origin']) ?? '',
+        git([
+          'for-each-ref',
+          '--format=%(refname:lstrip=3)%09%(objectname)%09%(committerdate:unix)',
+          'refs/remotes/origin',
+        ]) ?? '',
       );
-      for (const name of prunableBranches(branches, openHeads, Date.now(), (n) =>
-        bringsNothing(git, 'origin/main', `origin/${n}`),
-      ))
-        if (git(['push', '--quiet', 'origin', '--delete', name]) !== null)
-          done.push(`中身が main に入った origin の ${name} を消した`);
+      const pruned = prunableBranches(
+        branches,
+        keep,
+        Date.now(),
+        (n) => seenAt(git, `origin/${n}`),
+        (n) => bringsNothing(git, 'origin/main', `origin/${n}`),
+      );
+      for (const b of pruned)
+        if (git(deleteArgs(b)) !== null) done.push(`中身が main に入った origin の ${b.name} を消した`);
     }
   }
 }

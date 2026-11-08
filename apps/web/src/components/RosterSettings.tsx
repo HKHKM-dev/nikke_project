@@ -7,7 +7,7 @@ const BUTTON_ROW = { display: 'flex', gap: 6, flexWrap: 'wrap' } as const;
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const MESSAGES = { maxWidth: '22em' } as const;
 
-export function RosterSettings({ roster, message, importFile, exportFile, clear }: RosterControls) {
+export function RosterSettings({ roster, stored, message, importFile, exportFile, clear }: RosterControls) {
   const fileRef = useRef<HTMLInputElement>(null);
   return (
     <fieldset className="popover-group">
@@ -20,7 +20,7 @@ export function RosterSettings({ roster, message, importFile, exportFile, clear 
         <button type="button" className="advanced-settings-button" disabled={roster === null} onClick={exportFile}>
           書き出す
         </button>
-        <button type="button" className="advanced-settings-button" disabled={roster === null} onClick={clear}>
+        <button type="button" className="advanced-settings-button" disabled={!stored} onClick={clear}>
           消す
         </button>
       </div>

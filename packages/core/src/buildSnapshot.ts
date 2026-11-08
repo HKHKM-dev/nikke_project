@@ -151,6 +151,7 @@ export function readBuildSnapshotValue(
   const skipped: string[] = [];
   for (const [id, v] of Object.entries(raw.characters as Record<string, unknown>)) {
     const entry = byId.get(id);
+    // 中身は検査しない: レア度が分からず凸・コアの範囲を決められない（キャラのデータが追いついた版で読めば検査する）
     if (entry === undefined) {
       skipped.push(id);
       continue;

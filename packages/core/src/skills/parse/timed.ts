@@ -381,24 +381,31 @@ export function parseTimedFields(
 }
 
 /**
+ * 確率で決まる件（期待値の小片）に書ける stat か。値を足し合わせて意味のあるもの（射撃に効かない・状態でない・フラグでない・当たりの
+ * stat でない）だけ。確率の timed と、確率の状態を読む while・stacksFrom の中身（skills/parse/crossChecks.ts の validateChanceStates）で使う
+ */
+export function validateChanceStat(stat: BuffStat, path: string): void {
+  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat)) {
+    fail(path, `a chance trigger is not supported for "${stat}" (it needs a value that adds up linearly)`);
+  }
+  // T4 の▼は、件の始まりごとに走っている CT を縮める（frame/firstPass.ts の burstCooldownStartedAt）。期待値の窓は機会の始まりと終わりで
+  // 小片に割る（skills/chance.ts）ので、小片の始まりのたびに縮め直してしまう
+  if (stat === 'burstCooldown') {
+    fail(
+      path,
+      'a chance trigger is not supported for "burstCooldown" (each piece of the expected window would shorten the running cooldown again)',
+    );
+  }
+}
+
+/**
  * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの timed は、窓を期待値の小片にするので、値を足し合わせて
  * 意味のある stat（射撃に効かない・状態でない・フラグでない）だけに書け、スタック・条件・発数や出来事の維持・amplifies・名前・
  * 順位の対象とは組み合わせない（意味が決まっていない。使うキャラが出たら足す）
  */
 function validateChanceTimed(effect: TimedEffect, path: string): void {
   if (!isChanceTrigger(effect.trigger)) return;
-  const stat = effect.stat;
-  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat)) {
-    fail(`${path}.stat`, `a chance trigger is not supported for "${stat}" (it needs a value that adds up linearly)`);
-  }
-  // T4 の▼は、件の始まりごとに走っている CT を縮める（frame/firstPass.ts の burstCooldownStartedAt）。期待値の窓は機会の始まりと終わりで
-  // 小片に割る（skills/chance.ts）ので、小片の始まりのたびに縮め直してしまう
-  if (stat === 'burstCooldown') {
-    fail(
-      `${path}.stat`,
-      'a chance trigger is not supported for "burstCooldown" (each piece of the expected window would shorten the running cooldown again)',
-    );
-  }
+  validateChanceStat(effect.stat, `${path}.stat`);
   if (effect.target === 'topAttack') fail(`${path}.target`, 'a chance trigger cannot target "topAttack"');
   const forbidden: [unknown, string][] = [
     [effect.maxStacks ?? effect.maxStacksRef, 'maxStacks'],

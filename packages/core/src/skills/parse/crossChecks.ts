@@ -28,7 +28,7 @@ import {
 } from '../types.ts';
 import { fail } from './common.ts';
 import { contentAsTimed } from './state.ts';
-import { parseTimedEffect } from './timed.ts';
+import { parseTimedEffect, validateChanceStat } from './timed.ts';
 
 /**
  * エレグのバースト編（plan/design-elegg.md 8.9 節）: トリガー burstHit は、バーストの倍率ダメージ（burstDamage）のある burst スロットの
@@ -354,11 +354,21 @@ function validateChanceStates(entries: Partial<Record<SkillSlot, SkillEntry>>, r
     for (const { e, at } of all) {
       if (e.kind === 'state' && e.state === state) continue;
       // 許す読み方（while の selfState・stacksFrom の state）を除いて、状態の名前がどこかに出れば誤り
+      // 読む側の値も期待値（確率 × 値）になるので、確率の timed と同じく足し合わせて意味のある stat だけ
       const rest: Record<string, unknown> = { ...e, claims: undefined, assumes: undefined };
-      if (e.kind === 'passive' && e.while !== undefined && 'selfState' in e.while && e.while.selfState.state === state)
+      if (
+        e.kind === 'passive' &&
+        e.while !== undefined &&
+        'selfState' in e.while &&
+        e.while.selfState.state === state
+      ) {
+        validateChanceStat(e.stat, `${at}.stat`);
         rest.while = undefined;
-      if (e.kind === 'state' && e.stacksFrom !== undefined && 'state' in e.stacksFrom && e.stacksFrom.state === state)
+      }
+      if (e.kind === 'state' && e.stacksFrom !== undefined && 'state' in e.stacksFrom && e.stacksFrom.state === state) {
+        statContentsOf(e.contents).forEach((c, k) => validateChanceStat(c.stat, `${at}.contents[${k}].stat`));
         rest.stacksFrom = undefined;
+      }
       if (JSON.stringify(rest).includes(JSON.stringify(state)))
         fail(at, `"${state}" is granted by a chance trigger, so it can only be read by while or stacksFrom`);
     }
