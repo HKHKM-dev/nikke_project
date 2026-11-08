@@ -1009,8 +1009,39 @@ header h1 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.char-tray-item-taken {
-  opacity: 0.45;
+/* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
+.char-tray-item-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 72px;
+  --tray-taken: light-dark(#0ea5e9, #38bdf8);
+}
+.char-tray-item-taken .char-tray-item-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--tray-taken);
+  background: color-mix(in srgb, var(--tray-taken) 30%, transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+.char-tray-item-check {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: var(--tray-taken);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+  pointer-events: none;
+  z-index: 3;
 }
 /* いまの編成にいるニケは置けない（クリック・ドラッグとも） */
 .char-tray-item:disabled {
