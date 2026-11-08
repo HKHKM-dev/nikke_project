@@ -43,6 +43,7 @@ beforeEach(() => {
 
 afterEach(async () => {
   await cleanupHooks();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -159,22 +160,18 @@ describe('useRoster', () => {
       return 'blob:roster';
     });
     const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
-    try {
-      // 読めない保存は書き出さない
-      storage.setItem(ROSTER_STORAGE_KEY, BROKEN);
-      (await render()).hook.current.controls.exportFile();
-      expect(anchors).toEqual([]);
+    // 読めない保存は書き出さない
+    storage.setItem(ROSTER_STORAGE_KEY, BROKEN);
+    (await render()).hook.current.controls.exportFile();
+    expect(anchors).toEqual([]);
 
-      storage.setItem(ROSTER_STORAGE_KEY, SAVED);
-      (await render()).hook.current.controls.exportFile();
-      expect(anchors).toHaveLength(1);
-      expect(anchors[0]).toMatchObject({ href: 'blob:roster', download: 'nikke-builds-2026-10-29.json' });
-      expect(anchors[0]!.click).toHaveBeenCalledTimes(1);
-      expect(await blobs[0]!.text()).toBe(serializeRoster(SAVED));
-      expect(revoke).toHaveBeenCalledWith('blob:roster');
-    } finally {
-      vi.restoreAllMocks();
-    }
+    storage.setItem(ROSTER_STORAGE_KEY, SAVED);
+    (await render()).hook.current.controls.exportFile();
+    expect(anchors).toHaveLength(1);
+    expect(anchors[0]).toMatchObject({ href: 'blob:roster', download: 'nikke-builds-2026-10-29.json' });
+    expect(anchors[0]!.click).toHaveBeenCalledTimes(1);
+    expect(await blobs[0]!.text()).toBe(serializeRoster(SAVED));
+    expect(revoke).toHaveBeenCalledWith('blob:roster');
   });
 
   it('clears the saved roster and the message after the confirmation', async () => {

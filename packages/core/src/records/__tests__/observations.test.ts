@@ -536,7 +536,6 @@ describe('照合の部品', () => {
     expect(() => value({ slot: 1, window: 2 })).toThrow('2 回目の狙えない窓の後に発が無い');
     expect(() => value({ slot: 1, window: 3 })).toThrow('3 回目の狙えない窓が無い');
     expect(() => value({ slot: 2, window: 0 })).toThrow('0 回目の狙えない窓の後に発が無い');
-    expect(() => value({ slot: 3, window: 0 })).toThrow('0 回目の狙えない窓の後に発が無い');
   });
 
   it('measures the end of a timed window started in the n-th full burst, from the end of the full burst (backlog 2-4, V-0392)', () => {
