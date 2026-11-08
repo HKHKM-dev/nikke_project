@@ -133,11 +133,11 @@ describe('useListOrder', () => {
 
   it('waits for the masters before computing the powers', async () => {
     const { result, rerender } = render({ masters: null });
-    // 表は読み終えても、マスタが無ければ戦闘力は出ない
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     await settle();
     expect(result.current.state.powers).toEqual(new Map());
     rerender(DEFAULTS);
-    expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
+    await waitFor(() => expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]])));
   });
 
   it('keeps the selected order in the browser, and ignores an unknown saved value', async () => {
@@ -153,6 +153,8 @@ describe('useListOrder', () => {
     localStorage.setItem(LIST_ORDER_STORAGE_KEY, 'level');
     expect(render().result.current.controls.order).toBe('combatPower');
     expect(render({ roster: null }).result.current.controls.order).toBe('name');
+    // 育成状況のある描画が始めた読み込みを、テストの中で終わらせる
+    await settle();
   });
 
   it('shows why the table did not load', async () => {
