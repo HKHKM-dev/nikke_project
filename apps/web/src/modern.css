@@ -112,18 +112,15 @@
   color: var(--m-gold);
 }
 :root[data-app-ui='modern'] .modern-slot-empty-area {
-  /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさをそろえる。
-     枠線は実線で、ニケがいるときの絵と同じく外に 1px の線（outline）を足して 2px の太さに見せる（枠の外形もそろう） */
+  /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさと枠の太さをそろえる */
   box-sizing: content-box;
   border: 1px solid var(--slot-frame-line);
-  outline: 1px solid var(--slot-frame-line);
   color: var(--slot-frame-line);
   opacity: 1;
 }
-/* ニケがいるときの立ち絵とニケ一覧の絵の枠（枠線と、外に足した 1px の線。styles.css）も、空のスロットの枠と同じ色にする */
+/* ニケがいるときの立ち絵とニケ一覧の絵の枠も、空のスロットの枠と同じ色にする */
 :root[data-app-ui='modern'] :is(.char-visual-portrait, .char-visual-compact, .char-visual-tall) {
   border-color: var(--slot-frame-line);
-  outline-color: var(--slot-frame-line);
 }
 :root[data-app-ui='modern'] .modern-slot-damage-section {
   border: none;

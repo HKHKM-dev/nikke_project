@@ -1045,13 +1045,6 @@ header h1 {
   max-width: none;
   --badge-w: 24px;
 }
-/* スロットとニケ一覧（四角・縦長）の絵の枠を 1px 太く見せる（枠線の外に同じ色の線を 1px 足す。outline は並びの大きさを変えないので、
-   空のスロットの枠や一覧の列の幅とそろったまま） */
-.char-visual-portrait,
-.char-visual-compact,
-.char-visual-tall {
-  outline: 1px solid var(--app-border);
-}
 .char-visual-img {
   width: 100%;
   height: 100%;
@@ -1266,8 +1259,7 @@ header h1 {
   max-width: var(--tray-visual-w);
 }
 .char-tray-item-taken .char-tray-item-visual::after {
-  /* 絵の枠（1px の枠線と、外に足した 1px の線。.char-visual-compact など）とちょうど重なるように、1px 外へ広げて 2px で描く */
-  inset: -1px;
+  /* 絵の枠（1px の枠線）と外形がそろうように、絵の箱と同じ大きさに描く */
   border: 2px solid var(--placing-blue);
 }
 .char-tray-item-check {
