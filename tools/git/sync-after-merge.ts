@@ -22,9 +22,9 @@ import {
   deleteArgs,
   openPrBranches,
   parseJson,
-  parseReflogTime,
   parseRemoteBranches,
   prunableBranches,
+  seenAt,
 } from './sync-after-merge-lib.ts';
 
 /** 成功したら標準出力（前後の空白を除く）、失敗したら null */
@@ -107,10 +107,7 @@ if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
         branches,
         keep,
         Date.now(),
-        (n) =>
-          parseReflogTime(
-            git(['reflog', 'show', '--date=unix', '--format=%gd', '-n', '1', `refs/remotes/origin/${n}`]),
-          ),
+        (n) => seenAt(git, `origin/${n}`),
         (n) => bringsNothing(git, 'origin/main', `origin/${n}`),
       );
       for (const b of pruned)

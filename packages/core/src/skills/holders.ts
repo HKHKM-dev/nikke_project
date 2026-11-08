@@ -620,6 +620,19 @@ export function stacksHold(
 }
 
 /**
+ * 件の効いている値。件の scale（perCount の発火のフレームのスタック数・確率のきっかけの付いている確率）を掛けて丸める。値を読む所は
+ * 1 パス目も 2 パス目もこれ（か scaledEffect）を通し、件の数で値を数えない
+ */
+function valueOf(effect: { value: number }, item: HeldItem): number {
+  return item.scale === undefined ? effect.value : chanceValueOf(effect.value, item.scale);
+}
+
+/** 件の scale を値に掛けた効果（scale が無ければそのまま） */
+function scaledEffect<E extends { value: number }>(effect: E, item: HeldItem): E {
+  return item.scale === undefined ? effect : { ...effect, value: chanceValueOf(effect.value, item.scale) };
+}
+
+/**
  * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: stacksFrom で確率の状態のスタック数を写した件の、段 k の scale を「元のスタック数が
  * k 以上の確率」にする。件の始まりより前でいちばん新しい写しの確率を使う（写しの維持が重ならない間は、その件を付けた写し）
  */
@@ -1530,10 +1543,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return track.items;
   };
 
-  /** 件の効いている値（確率のきっかけは付いている確率を掛けて丸めた値） */
-  const valueOf = (effect: ItemEffect, item: HeldItem): number =>
-    item.scale === undefined ? effect.value : chanceValueOf(effect.value, item.scale);
-
   // ---- 読む側の索引（持ち主ごと。並びは作った順 = 段 A までの 1 パス目の窓を読む順） ----
   type View = { track: HeldTrack; effect: ItemEffect };
   const viewsOf = (test: (track: HeldTrack, effect: ItemEffect) => boolean): View[][] =>
@@ -1551,6 +1560,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       return views;
     });
+  /** views の件の、フレーム frame に効いている値の和（件の scale を掛ける） */
+  const sumAt = (views: readonly View[] | undefined, frame: number): number => {
+    let sum = 0;
+    for (const v of views ?? []) for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
+    return sum;
+  };
   // 射手: 射撃に効く stat（timed は段によらない。状態の中身も）
   const firingViews = viewsOf((_, e) => isFiringStat(e.stat));
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 与ダメージの値に効く件（piecesOfTrack と同じ持ち主の写し方）。
@@ -2430,7 +2445,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           // 和集合の窓は重ならないので効いているのは多くて 1 つ。スタックする効果は効いている段の数だけ足す。件の scale（perCount の
           // スタック数）は 2 パス目（piecesOfTrack）と同じく値に掛ける
           for (const it of activeAt(v.track, frame)) {
-            const effect = it.scale === undefined ? v.effect : { ...v.effect, value: valueOf(v.effect, it) };
+            const effect = scaledEffect(v.effect, it);
             buffs = applyResolvedEffect(
               buffs,
               effect,
@@ -2487,22 +2502,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return hasFiring[holder] ? firingBuffs[holder]!(frame, base) : null;
     },
     hasFiringTracks: (holder) => hasFiring[holder] === true,
-    hitUpAt(holder, frame) {
-      let sum = 0;
-      // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
-      for (const v of hitViews[holder] ?? []) {
-        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
-      }
-      return sum;
-    },
+    // 件の scale（perCount のスタック数・確率）は 2 パス目と同じく値に掛ける
+    hitUpAt: (holder, frame) => sumAt(hitViews[holder], frame),
     hasHitTracks: hitViews.some((views) => views.length > 0),
-    critUpAt(holder, frame) {
-      let sum = 0;
-      for (const v of critViews[holder] ?? []) {
-        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
-      }
-      return sum;
-    },
+    critUpAt: (holder, frame) => sumAt(critViews[holder], frame),
     rankContext,
     applyHeal(effect, sourceSlotIndex, holder, frame) {
       const track = healTracks.get(healKey(sourceSlotIndex, effect))?.[holder] ?? null;
@@ -2530,19 +2533,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         .flatMap((c) => activeAt(c.track, frame).map(() => c.effect.every));
     },
     shotCountEveryOf,
-    gaugeSpeedAt(holder, frame) {
-      let sum = 0;
-      for (const v of gaugeViews[holder] ?? []) {
-        for (const it of activeAt(v.track, frame)) sum += valueOf(v.effect, it);
-      }
-      return sum;
-    },
+    gaugeSpeedAt: (holder, frame) => sumAt(gaugeViews[holder], frame),
     hasGaugeSpeedTracks: (holder) => (gaugeViews[holder] ?? []).length > 0,
     damageBuffsAt(holder, frame, base) {
       let buffs = base;
       for (const v of (damageViews[holder] ??= damageViewsOf(holder))) {
         for (const it of activeAt(v.track, frame)) {
-          const effect = it.scale === undefined ? v.effect : { ...v.effect, value: valueOf(v.effect, it) };
+          const effect = scaledEffect(v.effect, it);
           buffs = applyResolvedEffect(
             buffs,
             effect,
@@ -2745,7 +2742,7 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
       const piece: ValuePiece = {
         slotIndex,
         sourceSlotIndex: track.sourceSlotIndex,
-        effect: item.scale === undefined ? effect : { ...effect, value: chanceValueOf(effect.value, item.scale) },
+        effect: scaledEffect(effect, item),
         start,
         end: item.end,
         stage: track.stage,
@@ -2797,7 +2794,7 @@ function amplify(
     for (const item of track.items) {
       for (const effect of effects) {
         if (isStateStat(effect.stat)) continue;
-        const value = item.scale === undefined ? effect.value : chanceValueOf(effect.value, item.scale);
+        const value = valueOf(effect, item);
         references.push({ holder: track.holder, sourceSlotIndex: track.sourceSlotIndex, effect, item, value });
       }
     }

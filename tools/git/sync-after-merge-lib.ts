@@ -55,6 +55,11 @@ export function parseReflogTime(stdout: string | null): number | null {
   return m ? Number(m[1]) * 1000 : null;
 }
 
+/** この手元がリモートの追跡ブランチ ref（origin/claude/x）の今の先端を見た時刻（ミリ秒）。reflog が無ければ null */
+export function seenAt(git: GitRun, ref: string): number | null {
+  return parseReflogTime(git(['reflog', 'show', '--date=unix', '--format=%gd', '-n', '1', `refs/remotes/${ref}`]));
+}
+
 /**
  * main に合わせても木が変わらない（ブランチの中身が全部 main に入っている。main の祖先も含む）か。git merge-tree --write-tree
  * （git 2.38 から）の木を main の木と比べる。衝突・共通の祖先が無い（浅いクローン）・古い git のときは null が返り、false

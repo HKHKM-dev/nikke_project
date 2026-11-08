@@ -13,8 +13,22 @@ import {
   parseRemoteBranches,
   PRUNE_AGE_MS,
   prunableBranches,
+  seenAt,
   type GitRun,
 } from './sync-after-merge-lib.ts';
+
+/** 一時のリポジトリ cwd で git を呼ぶ（失敗したら null） */
+const gitAt =
+  (cwd: string): GitRun =>
+  (args) => {
+    try {
+      return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    } catch {
+      return null;
+    }
+  };
+/** テストのコミットの作者 */
+const AUTHOR = ['-c', 'user.name=t', '-c', 'user.email=t@t'];
 
 describe('parseRemoteBranches', () => {
   it('reads the branches of claude/ and antigrav/ with their tip and commit time, and skips the others', () => {
@@ -102,17 +116,11 @@ describe('prunableBranches', () => {
 
 describe('bringsNothing', () => {
   const dir = mkdtempSync(join(tmpdir(), 'sync-after-merge-'));
-  const git: GitRun = (args) => {
-    try {
-      return execFileSync('git', args, { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-    } catch {
-      return null;
-    }
-  };
+  const git = gitAt(dir);
   const commit = (file: string, text: string, message: string) => {
     writeFileSync(join(dir, file), text);
     git(['add', file]);
-    git(['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '--quiet', '-m', message]);
+    git([...AUTHOR, 'commit', '--quiet', '-m', message]);
   };
 
   git(['init', '--quiet', '-b', 'main']);
@@ -154,23 +162,13 @@ describe('bringsNothing', () => {
 
 describe('deleteArgs', () => {
   const root = mkdtempSync(join(tmpdir(), 'sync-after-merge-lease-'));
-  const at =
-    (cwd: string): GitRun =>
-    (args) => {
-      try {
-        return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-      } catch {
-        return null;
-      }
-    };
-  const top = at(root);
-  const ci = ['-c', 'user.name=t', '-c', 'user.email=t@t'];
+  const top = gitAt(root);
   top(['init', '--quiet', '--bare', '-b', 'main', 'origin.git']);
   top(['clone', '--quiet', 'origin.git', 'a']);
   top(['clone', '--quiet', 'origin.git', 'b']);
-  const a = at(join(root, 'a'));
-  const b = at(join(root, 'b'));
-  a([...ci, 'commit', '--quiet', '--allow-empty', '-m', 'base']);
+  const a = gitAt(join(root, 'a'));
+  const b = gitAt(join(root, 'b'));
+  a([...AUTHOR, 'commit', '--quiet', '--allow-empty', '-m', 'base']);
   a(['push', '--quiet', 'origin', 'HEAD:refs/heads/main', 'HEAD:refs/heads/claude/x']);
   const remoteHas = () => top(['--git-dir', 'origin.git', 'rev-parse', '--verify', '--quiet', 'refs/heads/claude/x']);
 
@@ -178,7 +176,7 @@ describe('deleteArgs', () => {
     const checked = a(['rev-parse', 'HEAD'])!;
     b(['fetch', '--quiet', 'origin']);
     b(['checkout', '--quiet', '-b', 'claude/x', 'origin/claude/x']);
-    b([...ci, 'commit', '--quiet', '--allow-empty', '-m', 'new work']);
+    b([...AUTHOR, 'commit', '--quiet', '--allow-empty', '-m', 'new work']);
     b(['push', '--quiet', 'origin', 'claude/x']);
     const pushed = b(['rev-parse', 'HEAD'])!;
 
@@ -186,6 +184,9 @@ describe('deleteArgs', () => {
     expect(remoteHas()).toBe(pushed);
 
     a(['fetch', '--quiet', 'origin']);
+    // reflog から、fetch で今の先端を見た時刻を読む。追跡ブランチの無い名前は null
+    expect(Math.abs(seenAt(a, 'origin/claude/x')! - Date.now())).toBeLessThan(60_000);
+    expect(seenAt(a, 'origin/claude/none')).toBeNull();
     expect(a(deleteArgs({ name: 'claude/x', sha: pushed, committedAt: 0 }))).not.toBeNull();
     expect(remoteHas()).toBeNull();
   });
