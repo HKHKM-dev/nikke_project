@@ -1,4 +1,6 @@
 import { useDraggable } from '@dnd-kit/core';
+import type { CSSProperties } from 'react';
+import checkIcon from '../../assets/badges/ui_check.svg';
 import type { CharacterIndexEntry } from '@nikke/core';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
@@ -88,9 +90,10 @@ export function CharacterTrayItem({
       <span className="char-tray-item-visual">
         <TrayVisual character={character} isUnsupported={isUnsupported} growthMarks={growthMarks} shape={shape} />
         {isTaken && (
-          <svg className="char-tray-item-check" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 12.5l5 5L20 6.5" />
-          </svg>
+          // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（白い縁取りは外側の箱に付ける。型で切ると縁取りも切れるので）
+          <span className="char-tray-item-check" aria-hidden="true">
+            <span style={{ '--icon': `url("${checkIcon}")` } as CSSProperties} />
+          </span>
         )}
       </span>
       {/* 縦長は名前を絵に重ねるので、下には出さない */}

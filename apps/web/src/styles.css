@@ -1266,14 +1266,17 @@ header h1 {
   width: 60%;
   height: 60%;
   transform: translate(-50%, -50%);
-  fill: none;
-  stroke: var(--placing-blue);
-  stroke-width: 3.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: flex;
   filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
   pointer-events: none;
   z-index: 3;
+}
+/* ✓ の中身。バッジの絵（ui_check.svg）を型にして水色で塗る（CharacterTrayItem.tsx が --icon に渡す） */
+.char-tray-item-check > span {
+  flex: 1;
+  background-color: var(--placing-blue);
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
 }
 .char-tray-item-other-badge {
   position: absolute;
