@@ -822,19 +822,15 @@ header h1 {
   background: #7c3aed;
   text-shadow: none;
 }
-/* ニケ一覧では小さい絵の上でも読めるように、黒い下地を敷き、配置中の水色の重ね（z-index 2）より上に出す */
 .char-tray-growth {
   position: absolute;
   top: 2px;
   right: 2px;
-  z-index: 4;
-  padding: 1px 2px;
-  background: rgba(0, 0, 0, 0.6);
-  font-size: 0.75rem;
+  z-index: 2;
+  font-size: 0.65rem;
 }
 .char-tray-growth .growth-marks-core {
-  font-size: 0.7rem;
-  font-weight: bold;
+  font-size: 0.6rem;
 }
 .modern-slot-char-name-scroll {
   text-align: left;
