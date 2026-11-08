@@ -187,7 +187,7 @@ const NAME_SCROLL_GAP = 32;
  * 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、右から左へ一定の速さで流し続ける
  * （名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）
  */
-function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null }) {
+export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [textWidth, setTextWidth] = useState<number | null>(null);

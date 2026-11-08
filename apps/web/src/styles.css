@@ -723,10 +723,8 @@ header h1 {
   visibility: hidden;
 }
 /* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
-.modern-slot-card.modern-slot-dragging .char-visual-portrait,
-.modern-slot-card.drag-source-returning .char-visual-portrait,
-.modern-slot-card.modern-slot-dragging .modern-slot-empty-area,
-.modern-slot-card.drag-source-returning .modern-slot-empty-area {
+.modern-slot-card.modern-slot-dragging .modern-slot-char-area,
+.modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
 }
 /* 「操作」「他の編成」の札の行。札の有無でカードの高さを変えない */
