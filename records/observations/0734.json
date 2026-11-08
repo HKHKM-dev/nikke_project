@@ -268,6 +268,10 @@
     "scope": {
       "slot": 1,
       "source": "gauge"
+    },
+    "invalid": {
+      "reason": "f1644 の増分（読めなかった 18f を挟む）を 14 ヒットと数えていた（正しくは 18 ヒット）。数え直した値は `0734-11`（V-0690）",
+      "date": "2026-11-08"
     }
   },
   {
@@ -283,6 +287,30 @@
     "method": {
       "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
       "note": "`0734-09` と同じ分け方（f1644 の 18 ヒットを入れる）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "recording": "0734",
+    "source": "V-0690",
+    "readAt": "2026-11-08",
+    "id": "0734-11",
+    "kind": "gauge",
+    "use": "record",
+    "value": 24.6,
+    "unit": "倍（付着 1 回のゲージ ÷ 通常攻撃の的の 1 ヒットのゲージ 1,000）",
+    "spread": {
+      "kind": "range",
+      "low": 24.19,
+      "high": 25.83
+    },
+    "description": "`0734-09` の値の数え直し。f1644 の増分（読めなかった 18f を挟む）を 18 ヒットと数えた（`0734-09` は 14 ヒットと数えていた。付着ごとの幅は段差の当てはめなので変わらない）",
+    "method": {
+      "tool": "tools/captures/hud.ts・tools/captures/gauge.ts",
+      "note": "V-0689 の `0733-09` と同じ当てはめ（hud.ts --mode jumps の増分をヒットに分け、gauge.ts --mode series --subpixel の 6〜107px のフレームに px = a + b ×（H + r × K）。灼熱の的なので格子は胴体 6,717・付着 532,807）。読めなかったフレームを挟む増分は、和が差 0 で合うヒット数のうち、読めなかったフレーム数に最も近いものと数えた（MG はほぼ 1 フレームに 1 発。V-0689 の当てはめはここを少なく数えていた）。画面の乱れ（バーが約 48px の所で 100f ほど読みが崩れる）の区間は除いた。幅は、付着ごとに前後 40f・60f で段差を当てはめた d ÷ b の最小〜最大（1 回目の付着はバーが 0px の所なので除いた）"
     },
     "scope": {
       "slot": 1,

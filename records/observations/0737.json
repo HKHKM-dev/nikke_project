@@ -65,5 +65,48 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "recording": "0737",
+    "source": "V-0690",
+    "readAt": "2026-11-08",
+    "id": "0737-03",
+    "kind": "gauge",
+    "use": "record",
+    "value": 24.25,
+    "unit": "倍（付着 1 回のゲージ ÷ 通常攻撃の的の 1 ヒットのゲージ 1,000）",
+    "spread": {
+      "kind": "range",
+      "low": 23.08,
+      "high": 26.39
+    },
+    "description": "1 周目（戦闘開始から最初の満タン）の付着 1 回のゲージ（`0733-09` と同じもの。灼熱の的・オートバースト ON）",
+    "method": {
+      "tool": "tools/captures/hud.ts・tools/captures/gauge.ts",
+      "note": "V-0689 の `0733-09` と同じ当てはめ（hud.ts --mode jumps の増分をヒットに分け、gauge.ts --mode series --subpixel の 6〜107px のフレームに px = a + b ×（H + r × K）。灼熱の的なので格子は胴体 6,717・付着 532,807）。読めなかったフレームを挟む増分は、和が差 0 で合うヒット数のうち、読めなかったフレーム数に最も近いものと数えた（MG はほぼ 1 フレームに 1 発。V-0689 の当てはめはここを少なく数えていた）。画面の乱れ（バーが約 48px の所で 100f ほど読みが崩れる）の区間は除いた。幅は、付着ごとに前後 40f・60f で段差を当てはめた d ÷ b の最小〜最大（1 回目の付着はバーが 0px の所なので除いた）。除いた区間は f1563〜1700"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "recording": "0737",
+    "source": "V-0690",
+    "readAt": "2026-11-08",
+    "id": "0737-04",
+    "kind": "count",
+    "use": "record",
+    "value": [842, 7],
+    "unit": "回（[通常攻撃のヒット, 付着]）",
+    "description": "最初のヒットから本当の満タン（f2267）までの、通常攻撃のヒットと付着の数。7 回目の付着が満タンのフレームに当たり、付着 1 回は 22,571 以上 26,500 未満",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "最初のヒットから本当の満タン（バーが消えた f2267。C-0083）までの数。読めなかったフレームを挟む増分の数え方は `0737-03` と同じ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
   }
 ]
