@@ -9,6 +9,7 @@ import {
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
+  type DropAnimation,
   type MouseSensorOptions,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
@@ -31,8 +32,28 @@ import { placeCharacterAction } from '../team.ts';
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
  * 代わりに印（drag-source-returning）を付け、ドラッグ中と同じ薄さで残す（styles.css）
  */
-const DROP_ANIMATION = {
-  sideEffects: defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } }),
+const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
+
+/** 離したドロップでスロットを入れ替えたか（handleDragEnd が決め、DROP_ANIMATION が読む） */
+const dropState = { swapped: false };
+
+/**
+ * 入れ替えたときは、ドラッグ元へ戻っていく絵を、ドラッグ元に新しく入ったもの（空のスロット・入れ替わったニケ）の絵に差し替える
+ * （持ち上げたニケの絵のままだと、そのニケがドラッグ元へ戻るように見える）。着くまでドラッグ元の絵は隠す（modern-slot-arriving）
+ */
+const DROP_ANIMATION: DropAnimation = {
+  sideEffects: (args) => {
+    const holder = args.dragOverlay.node.querySelector('.slot-drag-overlay-portrait');
+    const incoming = args.active.node.querySelector('.char-visual-portrait, .modern-slot-empty-area');
+    if (!dropState.swapped || !holder || !incoming) return returnSideEffects(args);
+    const saved = [...holder.childNodes];
+    holder.replaceChildren(incoming.cloneNode(true));
+    args.active.node.classList.add('modern-slot-arriving');
+    return () => {
+      holder.replaceChildren(...saved);
+      args.active.node.classList.remove('modern-slot-arriving');
+    };
+  },
 };
 
 /**
@@ -107,6 +128,7 @@ export function ModernView({
 
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
+    dropState.swapped = false;
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -168,6 +190,7 @@ export function ModernView({
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
+        dropState.swapped = true;
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
       }
     }
