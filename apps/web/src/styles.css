@@ -831,7 +831,11 @@ header h1 {
 }
 
 /* ダメージ表示 & 割合バー */
+/* 幅は立ち絵（.char-visual-portrait。1:2 の枠と 1px の枠線）と同じにし、中央にそろえる */
 .modern-slot-damage-section {
+  box-sizing: border-box;
+  width: calc(var(--slot-portrait-h) / 2 + 2px);
+  align-self: center;
   display: flex;
   flex-direction: column;
   gap: 3px;
