@@ -713,10 +713,10 @@ header h1 {
     animation: none;
   }
 }
-.modern-slot-card.modern-slot-over {
-  outline: 2px dashed Highlight;
-  outline-offset: -2px;
-  background: color-mix(in srgb, Highlight 15%, var(--app-bg));
+/* 持ち上げたものを重ねているスロット（落とす先）は、カードでなく立ち絵の枠に印を付ける */
+.modern-slot-card.modern-slot-over .modern-slot-char-area {
+  outline: 3px solid Highlight;
+  outline-offset: -1px;
 }
 /* 入れ替えた後、動く絵が着くまで、ドラッグ元と落とした先の立ち絵の枠全体（名前・限界突破・✕ などを含む）を隠す（ModernView の DROP_ANIMATION） */
 .modern-slot-card.modern-slot-arriving .modern-slot-char-area {
