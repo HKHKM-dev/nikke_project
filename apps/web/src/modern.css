@@ -130,9 +130,6 @@
   color: var(--m-muted);
   opacity: 1;
 }
-:root[data-app-ui='modern'] .modern-slot-char-name {
-  font-size: 0.95rem;
-}
 :root[data-app-ui='modern'] .modern-slot-damage-section {
   border: none;
   border-radius: 8px;

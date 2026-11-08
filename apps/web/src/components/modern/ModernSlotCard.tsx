@@ -1,4 +1,5 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
@@ -116,16 +117,13 @@ export function ModernSlotCard({
         {characterEntry ? (
           <div className="modern-slot-char-area">
             <CharacterVisual character={characterEntry} isUnsupported={isUnsupported} size="portrait" />
-            <div className="modern-slot-char-name">{characterEntry.name.ja}</div>
+            <SlotCharName name={characterEntry.name.ja} />
           </div>
         ) : (
-          // ニケがいるときと同じ大きさ（絵の枠と名前の行）にして、選んでもカードの大きさが変わらないようにする
+          // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
           <div className="modern-slot-char-area">
             <div className="modern-slot-empty-area">
               <span className="modern-slot-empty-plus">＋</span>
-            </div>
-            <div className="modern-slot-char-name" aria-hidden="true">
-              &nbsp;
             </div>
           </div>
         )}
@@ -160,6 +158,32 @@ export function ModernSlotCard({
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+/** 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、左右に往復して流す（はみ出す幅を --name-overflow に置く） */
+function SlotCharName({ name }: { name: string }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [overflow, setOverflow] = useState(0);
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    const text = textRef.current;
+    if (!box || !text) return;
+    const measure = () => setOverflow(Math.max(0, Math.ceil(text.scrollWidth - box.clientWidth)));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(box);
+    return () => observer.disconnect();
+  }, [name]);
+  return (
+    <div
+      ref={boxRef}
+      className={`modern-slot-char-name ${overflow > 0 ? 'modern-slot-char-name-scroll' : ''}`}
+      style={{ '--name-overflow': `${overflow}px` } as CSSProperties}
+    >
+      <span ref={textRef}>{name}</span>
     </div>
   );
 }

@@ -758,21 +758,54 @@ header h1 {
   align-items: center;
   justify-content: center;
 }
+/* 立ち絵の枠。名前は立ち絵の下部に重ねる */
 .modern-slot-char-area {
-  width: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
 }
+/* 立ち絵の下部に右詰めで重ねる名前。収まらないときは左右に往復して流す（ModernSlotCard.tsx の SlotCharName） */
 .modern-slot-char-name {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  padding: 10px 6px 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: right;
   font-weight: bold;
   font-size: 0.9rem;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  pointer-events: none;
+  z-index: 1;
+}
+.modern-slot-char-name > span {
+  display: inline-block;
+}
+.modern-slot-char-name-scroll {
+  text-align: left;
+}
+.modern-slot-char-name-scroll > span {
+  animation: modern-slot-char-name-scroll 6s ease-in-out infinite alternate;
+}
+@keyframes modern-slot-char-name-scroll {
+  0%,
+  15% {
+    transform: translateX(0);
+  }
+  85%,
+  100% {
+    transform: translateX(calc(-1 * var(--name-overflow)));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modern-slot-char-name-scroll > span {
+    animation: none;
+  }
 }
 .modern-slot-empty-area {
   display: flex;
@@ -925,6 +958,10 @@ header h1 {
   display: block;
   width: var(--badge-w);
   aspect-ratio: 130 / 150;
+}
+/* スロットの立ち絵では、下部に重ねる名前（.modern-slot-char-name）の上に出す */
+.char-visual-portrait .char-unsupported-tag {
+  bottom: 28px;
 }
 .char-unsupported-tag {
   position: absolute;
