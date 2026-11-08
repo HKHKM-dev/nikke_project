@@ -50,15 +50,19 @@ export function useListOrder(
     );
   }, [needTable, table, baseUrl]);
 
-  const computed = useMemo(
-    () =>
-      table === null || masters === null
-        ? null
-        : fixedSpecPowers || roster === null
-          ? fixedSpecCombatPowers(table, masters)
-          : snapshotCombatPowers(roster, (id) => combatCharacterOf(table, id), masters),
-    [roster, table, masters, fixedSpecPowers],
+  // スペック固定の戦闘力は育成状況に依らないので、育成状況を読み込み直しても計算し直さない
+  const fixedComputed = useMemo(
+    () => (table === null || masters === null ? null : fixedSpecCombatPowers(table, masters)),
+    [table, masters],
   );
+  const rosterComputed = useMemo(
+    () =>
+      table === null || masters === null || roster === null
+        ? null
+        : snapshotCombatPowers(roster, (id) => combatCharacterOf(table, id), masters),
+    [roster, table, masters],
+  );
+  const computed = fixedSpecPowers ? fixedComputed : rosterComputed;
   const powers = computed?.powers;
   const state = useMemo<ListOrderState>(() => ({ order, powers: powers ?? new Map() }), [order, powers]);
 

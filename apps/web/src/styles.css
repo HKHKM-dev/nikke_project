@@ -156,12 +156,12 @@ header h1 {
   font: inherit;
   font-size: 0.85rem;
 }
-/* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
 /* 使えない入力欄・選択欄・ラジオボタン（disabled でなく aria-disabled。components/inertControl.ts） */
 :is(input, select, textarea)[aria-disabled='true'] {
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
 .advanced-settings-button[aria-disabled='true'],
 .advanced-settings-button[aria-disabled='true']:hover {
   color: color-mix(in srgb, var(--app-fg) 35%, transparent);
@@ -722,7 +722,7 @@ header h1 {
 .modern-slot-card.modern-slot-arriving .modern-slot-char-area {
   visibility: hidden;
 }
-/* 持ち上げている間と戻る間は、カードの枠は残し、立ち絵だけを薄くする */
+/* 持ち上げている間と戻る間は、立ち絵の枠だけを薄くする */
 .modern-slot-card.modern-slot-dragging .modern-slot-char-area,
 .modern-slot-card.drag-source-returning .modern-slot-char-area {
   opacity: 0.35;
@@ -972,7 +972,6 @@ header h1 {
 }
 .char-visual-compact {
   max-width: var(--tray-visual-w);
-  --badge-w: 20px;
 }
 .char-visual-compact .char-visual-fallback {
   font-size: 0.65rem;
@@ -1106,7 +1105,7 @@ header h1 {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
 }
-/* 並べ替えとフィルターのボタン（未実装の置き場所） */
+/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターと切り替えは未実装の置き場所） */
 .char-tray-actions {
   display: flex;
   gap: 6px;

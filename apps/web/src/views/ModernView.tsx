@@ -39,16 +39,16 @@ import { placeCharacterAction } from '../team.ts';
  */
 const returnSideEffects = defaultDropAnimationSideEffects({ className: { active: 'drag-source-returning' } });
 
-/** 離したドロップでスロットを入れ替えたか（handleDragEnd が決め、DROP_ANIMATION が読む） */
-const dropState: { swapped: boolean; targetIndex: number | null; placed: boolean } = {
-  swapped: false,
+/** 離したドロップの結果（handleDragEnd が決め、DROP_ANIMATION が読む） */
+const dropState: { targetIndex: number | null; placed: boolean } = {
+  // スロットどうしを入れ替えた先のスロット（入れ替えていなければ null）
   targetIndex: null,
   // 一覧のニケをスロットに置いた（一覧へ戻るアニメーションはしない）
   placed: false,
 };
 
 const slotCardAt = (index: number | null) =>
-  index === null ? null : (document.querySelectorAll('.modern-slots-grid > .modern-slot-card')[index] ?? null);
+  index === null ? null : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
 
 /**
  * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
@@ -102,23 +102,23 @@ const DROP_ANIMATION: DropAnimation = {
     return [at(initial), at(dropState.placed ? initial : final)];
   },
   sideEffects: (args) => {
-    const holder = args.dragOverlay.node.querySelector('.slot-drag-overlay-portrait');
+    const holder = args.dragOverlay.node.querySelector<HTMLElement>('.slot-drag-overlay-portrait');
     // ドラッグ元へ戻っていく絵も、立ち絵の枠全体（名前などを含む）の写しにする
     const incoming = args.active.node.querySelector('.modern-slot-char-area');
-    if (!dropState.swapped || !holder || !incoming) return returnSideEffects(args);
+    if (dropState.targetIndex === null || !holder || !incoming) return returnSideEffects(args);
     // 持ち上げたもの（動かした側）は、落とした先のスロットへ滑り込ませる
     const target = slotCardAt(dropState.targetIndex);
     const finishSlide = target ? slideInto(holder, target) : () => undefined;
     const saved = [...holder.childNodes];
     holder.replaceChildren(incoming.cloneNode(true));
     // 持ち上げたときの影は付けない（収まった瞬間に影が消えて、枠のように見える。滑り込む側にも影は無い）
-    (holder as HTMLElement).style.boxShadow = 'none';
+    holder.style.boxShadow = 'none';
     args.active.node.classList.add('modern-slot-arriving');
     return () => {
       // 持ち上げた絵は直後に消える。元の中身へ戻すと、消えるまでの一瞬だけ持ち上げたニケの絵が見えるので、先に隠す
       args.dragOverlay.node.style.visibility = 'hidden';
       holder.replaceChildren(...saved);
-      (holder as HTMLElement).style.boxShadow = '';
+      holder.style.boxShadow = '';
       args.active.node.classList.remove('modern-slot-arriving');
       finishSlide();
     };
@@ -206,7 +206,6 @@ export function ModernView({
 
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
-    dropState.swapped = false;
     dropState.targetIndex = null;
     dropState.placed = false;
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
@@ -278,7 +277,6 @@ export function ModernView({
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
-        dropState.swapped = true;
         dropState.targetIndex = targetSlotIndex;
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
       }

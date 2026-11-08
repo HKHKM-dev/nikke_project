@@ -4,6 +4,7 @@
 // 持つ（ほぼ等差なので gzip がよく効く。今のデータで 400KB → 50KB 前後）。
 // 書くのは fetch-data（キャラのデータと一緒に）と scripts/combat-table.ts（手元のキャラのデータから作り直す）。
 import { fixedSpecBuild } from './build.ts';
+import type { SnapshotCombatPowers } from './buildSnapshot.ts';
 import { computeCombatPower } from './combatPower.ts';
 import { fixedSpecGrowth } from './fixedSpec.ts';
 import { MAX_SKILL_LEVELS } from './skills/resolve.ts';
@@ -100,9 +101,9 @@ export function combatCharacterOf(table: CombatPowerTable, resourceId: number): 
 export function fixedSpecCombatPowers(
   table: CombatPowerTable,
   masters: BuildMasters,
-): { powers: Map<number, number>; failures: { id: number; message: string }[] } {
+): SnapshotCombatPowers {
   const powers = new Map<number, number>();
-  const failures: { id: number; message: string }[] = [];
+  const failures: SnapshotCombatPowers['failures'] = [];
   for (const key of Object.keys(table.characters)) {
     const id = Number(key);
     const character = combatCharacterOf(table, id);

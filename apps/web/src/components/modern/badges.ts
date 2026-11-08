@@ -74,12 +74,10 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
   },
 ];
 
-/** キャラの絵の左上に縦に出すバッジの順（属性・武器種・バースト段階。クラスは出さず、トレイの絞り込みにだけ使う） */
-export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = (['element', 'weaponType', 'burstStep'] as const).map((key) =>
-  BADGE_KINDS.find((kind) => kind.key === key)!,
-);
-
 const kindOf = (key: BadgeKey): BadgeKind => BADGE_KINDS.find((kind) => kind.key === key)!;
+
+/** キャラの絵の左上に縦に出すバッジの順（属性・武器種・バースト段階。クラスは出さず、トレイの絞り込みにだけ使う） */
+export const VISUAL_BADGE_KINDS: readonly BadgeKind[] = [kindOf('element'), kindOf('weaponType'), kindOf('burstStep')];
 
 /** ニケ一覧の正方形の絵の左上に縦に出すバッジの順（武器種・バースト段階）。属性は右下に別に出す（ELEMENT_BADGE_KIND） */
 export const COMPACT_BADGE_KINDS: readonly BadgeKind[] = [kindOf('weaponType'), kindOf('burstStep')];
