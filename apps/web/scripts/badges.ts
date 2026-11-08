@@ -28,13 +28,21 @@ export function optimizeBadge(svg: string): string {
   }).data;
 }
 
+/**
+ * srcDir の SVG を小さくして outDir に書き、元の無い書き出しを消す（元を消したときや名前を変えたとき）。
+ * srcDir に SVG が 1 つも無ければ、何も書かず消さずに止める（取り違えたフォルダや取り出し損ねで、書き出しを全部消さない）
+ */
+export function buildBadges(srcDir: string, outDir: string): { written: string[]; removed: string[] } {
+  const written = svgFiles(srcDir);
+  if (written.length === 0) throw new Error(`${srcDir} に SVG が無い（書き出しの ${outDir} は消さない）`);
+  for (const file of written)
+    writeFileSync(`${outDir}/${file}`, optimizeBadge(readFileSync(`${srcDir}/${file}`, 'utf8')));
+  const removed = svgFiles(outDir).filter((f) => !written.includes(f));
+  for (const file of removed) rmSync(`${outDir}/${file}`);
+  return { written, removed };
+}
+
 if (import.meta.main) {
-  const sources = svgFiles(BADGE_SRC_DIR);
-  for (const file of sources) {
-    writeFileSync(`${BADGE_OUT_DIR}/${file}`, optimizeBadge(readFileSync(`${BADGE_SRC_DIR}/${file}`, 'utf8')));
-  }
-  // 元の無い書き出しを消す（元を消したときや名前を変えたとき）
-  const stale = svgFiles(BADGE_OUT_DIR).filter((f) => !sources.includes(f));
-  for (const file of stale) rmSync(`${BADGE_OUT_DIR}/${file}`);
-  console.log(`badges: ${sources.length} written${stale.length > 0 ? `, removed ${stale.join(', ')}` : ''}`);
+  const { written, removed } = buildBadges(BADGE_SRC_DIR, BADGE_OUT_DIR);
+  console.log(`badges: ${written.length} written${removed.length > 0 ? `, removed ${removed.join(', ')}` : ''}`);
 }

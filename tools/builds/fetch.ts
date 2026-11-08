@@ -12,6 +12,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { isAbsolute, join, relative, resolve } from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { chromium, type BrowserContext, type Page, type Request } from 'playwright-core';
 import type { ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import {
@@ -22,12 +23,11 @@ import {
   dedupe,
   DETAILS_CHUNK,
   detailsOf,
-  isRateLimited,
-  RATE_LIMIT_WAITS_MS,
+  callWithRetry,
   outpostOf,
-  unwrapResponse,
   captureRequest,
   type Captured,
+  type PostResult,
 } from './fetch-lib.ts';
 import { privateDir } from './dirs.ts';
 import { importRaw } from './store.ts';
@@ -99,18 +99,12 @@ function waitForCapture(context: BrowserContext): Promise<{ captured: Captured; 
 }
 
 /** ページの文脈で API を 1 つ POST で呼ぶ（Cookie はブラウザが付ける）。応答の data を返す。頻度の制限なら待って呼び直す */
-async function call(page: Page, c: Captured, path: string, extra: Record<string, unknown> = {}): Promise<unknown> {
-  for (const wait of RATE_LIMIT_WAITS_MS) {
-    const json = await post(page, c, path, extra);
-    if (!isRateLimited(json)) return unwrapResponse(path, json);
-    log(`${path}: 頻度の制限。${wait / 1e3} 秒待って呼び直す`);
-    await new Promise((r) => setTimeout(r, wait));
-  }
-  return unwrapResponse(path, await post(page, c, path, extra));
+function call(page: Page, c: Captured, path: string, extra: Record<string, unknown> = {}): Promise<unknown> {
+  return callWithRetry(path, () => post(page, c, path, extra), { sleep, log });
 }
 
-async function post(page: Page, c: Captured, path: string, extra: Record<string, unknown>): Promise<unknown> {
-  const r = await page.evaluate(
+function post(page: Page, c: Captured, path: string, extra: Record<string, unknown>): Promise<PostResult> {
+  return page.evaluate(
     async ({ url, headers, body }) => {
       const res = await fetch(url, {
         method: 'POST',
@@ -122,8 +116,6 @@ async function post(page: Page, c: Captured, path: string, extra: Record<string,
     },
     { url: API_BASE + path, headers: c.headers, body: JSON.stringify({ ...c.account, ...extra }) },
   );
-  if ('status' in r) throw new Error(`${path}: HTTP ${r.status}`);
-  return r.json;
 }
 
 async function fetchRaw(page: Page, c: Captured): Promise<ShiftyPadRaw> {

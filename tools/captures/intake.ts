@@ -79,7 +79,7 @@ import {
   UPLOAD_POLL_MS,
   waitUploadSettled,
 } from './intake-lib.ts';
-import { Drive, isTransientDriveError, type DriveFile } from './drive.ts';
+import { Drive, DRIVE_CALL_MS, isTransientDriveError, type DriveFile } from './drive.ts';
 import { ffprobe, sha256 } from './ffmpeg.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
@@ -141,7 +141,7 @@ function envId(name: string): string {
 }
 
 if (values['list-record']) {
-  const drive = await Drive.connect();
+  const drive = await Drive.connect(DRIVE_CALL_MS);
   const files = await drive.tree(envId('NIKKE_DRIVE_RECORD_FOLDER_ID'));
   for (const f of files)
     console.log(`${f.path}\t${(Number(f.size ?? 0) / 1024 / 1024).toFixed(1)}MB\t${f.modifiedTime ?? ''}`);
@@ -278,7 +278,7 @@ if (branches.ids.some((x) => /^\d+$/.test(x) && Number(x) === Number(values.id))
 }
 
 // Drive の record の取り込み元（drive: のとき）
-const drive = fromDrive === null ? null : await Drive.connect();
+const drive = fromDrive === null ? null : await Drive.connect(DRIVE_CALL_MS);
 let driveSource: DriveFile | null = null;
 if (drive !== null) {
   try {

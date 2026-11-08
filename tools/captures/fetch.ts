@@ -16,7 +16,7 @@ import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import type { RecordingEntry } from '../../packages/core/src/records/recordings.ts';
 import { LEGACY_PREFIX, capturesDir, legacyDir } from './dirs.ts';
-import { Drive, type DriveFile } from './drive.ts';
+import { Drive, DRIVE_CALL_MS, type DriveFile } from './drive.ts';
 import { sha256 } from './ffmpeg.ts';
 
 const RECORDINGS_DIR = new URL('../../records/recordings/', import.meta.url);
@@ -66,7 +66,7 @@ const message = (error: unknown) => (error instanceof Error ? error.message : St
 
 let drive: Drive;
 try {
-  drive = await Drive.connect();
+  drive = await Drive.connect(DRIVE_CALL_MS);
 } catch (error) {
   console.error(message(error));
   process.exit(1);

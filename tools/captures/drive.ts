@@ -64,17 +64,34 @@ async function accessToken(timeoutMs?: number): Promise<string> {
   return ((await res.json()) as { access_token: string }).access_token;
 }
 
+/**
+ * 道具（intake.ts・fetch.ts）が Drive API を 1 回呼んで待つ長さ（トークンの取得と一覧・メタデータ。download は応答の頭が届くまで）。
+ * 止まった呼び出しを打ち切り、待てば直る失敗（isTransientDriveError の TimeoutError）にする
+ */
+export const DRIVE_CALL_MS = 60_000;
+
 /** Drive の検索式の文字列リテラル（\ と ' をエスケープする） */
 export function driveQueryString(value: string): string {
   return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 }
 
 /**
- * Drive の呼び出しの失敗が、待てば直りうるものか: 通信の失敗（fetch の TypeError）・打ち切り（timeoutMs の TimeoutError）と、
- * HTTP の 429・5xx（Drive.get の例外の status）。ほかの HTTP の失敗と、応答の読み違いなどは直らないとみる
+ * Node の fetch（undici）が通信の失敗で投げる TypeError の文: つなげない・切れた（fetch failed）と、応答の本体を読む途中で
+ * 切れた（terminated）。文の違う実装に備えて、cause に通信の失敗の code（ECONNRESET・UND_ERR_SOCKET など）があるものも
+ * 通信の失敗とみる。ほかの TypeError（中のバグ）は待っても直らない
+ */
+const NETWORK_FAILURE_MESSAGES: ReadonlySet<string> = new Set(['fetch failed', 'terminated']);
+
+/**
+ * Drive の呼び出しの失敗が、待てば直りうるものか: 通信の失敗（fetch の TypeError のうち NETWORK_FAILURE_MESSAGES）・
+ * 打ち切り（timeoutMs の TimeoutError）と、HTTP の 429・5xx（Drive.get の例外の status）。ほかの HTTP の失敗と、
+ * 応答の読み違い・中のバグなどは直らないとみる
  */
 export function isTransientDriveError(e: unknown): boolean {
-  if (e instanceof TypeError) return true;
+  if (e instanceof TypeError)
+    return (
+      NETWORK_FAILURE_MESSAGES.has(e.message) || typeof (e.cause as { code?: unknown } | undefined)?.code === 'string'
+    );
   if ((e as { name?: unknown } | null)?.name === 'TimeoutError') return true;
   const status = (e as { status?: unknown } | null)?.status;
   return typeof status === 'number' && (status === 429 || status >= 500);
@@ -91,23 +108,34 @@ export class Drive {
     this.timeoutMs = timeoutMs;
   }
 
-  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る */
+  /** timeoutMs を渡すと、トークンの取得とどの呼び出しも、その長さで打ち切る（download は応答の頭が届くまで） */
   static async connect(timeoutMs?: number): Promise<Drive> {
     return new Drive(await accessToken(timeoutMs), timeoutMs);
   }
 
-  /** 失敗の例外は status（HTTP の状態）を持つ */
-  private async get(path: string, params: Record<string, string>): Promise<Response> {
+  /**
+   * 失敗の例外は status（HTTP の状態）を持つ。timeoutMs は、ふだんは本体を読み終えるまでに掛け、headersOnly なら応答の頭が
+   * 届くまでにだけ掛ける（本体は読み終えるまで待つ）
+   */
+  private async get(path: string, params: Record<string, string>, headersOnly = false): Promise<Response> {
     const url = `${api()}${path}?${new URLSearchParams({ supportsAllDrives: 'true', ...params })}`;
-    const res = await fetch(url, {
-      headers: { authorization: `Bearer ${this.token}` },
-      ...deadline(this.timeoutMs),
-    });
-    if (!res.ok)
-      throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
-        status: res.status,
+    const ms = this.timeoutMs;
+    // headersOnly の打ち切りは、ok の応答を返すまで（失敗の本体を読む間も含む）
+    const ctl = headersOnly && ms !== undefined ? new AbortController() : undefined;
+    const timer = ctl && setTimeout(() => ctl.abort(new DOMException('応答の頭が届かない', 'TimeoutError')), ms);
+    try {
+      const res = await fetch(url, {
+        headers: { authorization: `Bearer ${this.token}` },
+        ...(ctl ? { signal: ctl.signal } : deadline(ms)),
       });
-    return res;
+      if (!res.ok)
+        throw Object.assign(new Error(`Drive API ${path} が失敗（${res.status}）: ${await res.text()}`), {
+          status: res.status,
+        });
+      return res;
+    } finally {
+      clearTimeout(timer);
+    }
   }
 
   /** フォルダの直下（ゴミ箱は除く）。name を渡すとその名前のものだけ */
@@ -187,9 +215,9 @@ export class Drive {
     }
   }
 
-  /** ファイルの中身を out に書く */
+  /** ファイルの中身を out に書く。録画は大きく、読み終えるまでの長さが決まらないので、timeoutMs は応答の頭が届くまでにだけ掛ける */
   async download(fileId: string, out: string): Promise<void> {
-    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' });
+    const res = await this.get(`/files/${encodeURIComponent(fileId)}`, { alt: 'media' }, true);
     if (!res.body) throw new Error(`${fileId}: 中身が空です`);
     await pipeline(Readable.fromWeb(res.body as NodeReadableStream), createWriteStream(out));
   }

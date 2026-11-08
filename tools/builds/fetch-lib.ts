@@ -52,18 +52,54 @@ export function captureRequest(
 /** 頻度の制限（request too frequently）の応答の code */
 const RATE_LIMIT_CODE = 212000;
 
+/** 応答の JSON の code が c か（code は数でも文字列でも来うる） */
+const codeIs = (json: Record<string, unknown>, c: number): boolean => String(json.code) === String(c);
+/** 頻度の制限を HTTP の状態で返すとき（Too Many Requests） */
+const HTTP_TOO_MANY_REQUESTS = 429;
+
 /** 頻度の制限で呼び直すまでの待ち（ミリ秒。1 回ごと）。尽きたら失敗にする */
 export const RATE_LIMIT_WAITS_MS: readonly number[] = [3e3, 10e3, 30e3];
 
-/** API の応答の JSON が頻度の制限か */
-export const isRateLimited = (json: unknown): boolean =>
-  json !== null && typeof json === 'object' && (json as Record<string, unknown>).code === RATE_LIMIT_CODE;
+/** API を 1 回 POST した結果: 応答が ok なら JSON、そうでなければ HTTP の状態 */
+export type PostResult = { json: unknown } | { status: number };
+
+/** 1 回の POST の結果が頻度の制限か（HTTP 429 か、応答の JSON の code が 212000） */
+export function isRateLimited(r: PostResult): boolean {
+  if ('status' in r) return r.status === HTTP_TOO_MANY_REQUESTS;
+  const { json } = r;
+  return json !== null && typeof json === 'object' && codeIs(json as Record<string, unknown>, RATE_LIMIT_CODE);
+}
+
+/**
+ * post を呼び、頻度の制限なら waitsMs の長さずつ待って呼び直す（待ちが尽きたら最後の結果で決める）。
+ * HTTP の失敗は例外、応答の JSON は unwrapResponse で data にする
+ */
+export async function callWithRetry(
+  path: string,
+  post: () => Promise<PostResult>,
+  {
+    sleep,
+    log,
+    waitsMs = RATE_LIMIT_WAITS_MS,
+  }: { sleep: (ms: number) => Promise<unknown>; log: (s: string) => void; waitsMs?: readonly number[] },
+): Promise<unknown> {
+  let r = await post();
+  for (const wait of waitsMs) {
+    if (!isRateLimited(r)) break;
+    log(`${path}: 頻度の制限。${wait / 1e3} 秒待って呼び直す`);
+    await sleep(wait);
+    r = await post();
+  }
+  if ('status' in r) throw new Error(`${path}: HTTP ${r.status}`);
+  return unwrapResponse(path, r.json);
+}
 
 /** API の応答の JSON。code が 0 でなければ失敗にし、data があればそれを返す */
 export function unwrapResponse(path: string, json: unknown): unknown {
   if (json === null || typeof json !== 'object') throw new Error(`${path}: 応答が JSON のオブジェクトでない`);
   const { code, msg, data } = json as Record<string, unknown>;
-  if (code !== 0) throw new Error(`${path}: code ${String(code)} ${typeof msg === 'string' ? msg : ''}`.trimEnd());
+  if (!codeIs(json as Record<string, unknown>, 0))
+    throw new Error(`${path}: code ${String(code)} ${typeof msg === 'string' ? msg : ''}`.trimEnd());
   return data ?? json;
 }
 

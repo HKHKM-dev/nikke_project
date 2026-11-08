@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   API_BASE,
+  callWithRetry,
   captureRequest,
   charactersOf,
   chunks,
@@ -10,7 +11,9 @@ import {
   outpostOf,
   pickHeaders,
   isRateLimited,
+  RATE_LIMIT_WAITS_MS,
   unwrapResponse,
+  type PostResult,
 } from './fetch-lib.ts';
 
 describe('pickHeaders', () => {
@@ -46,21 +49,80 @@ describe('unwrapResponse', () => {
   it('returns data when code is 0', () => {
     expect(unwrapResponse('p', { code: 0, data: { a: 1 } })).toEqual({ a: 1 });
     expect(unwrapResponse('p', { code: 0, a: 1 })).toEqual({ code: 0, a: 1 });
+    expect(unwrapResponse('p', { code: '0', data: { a: 1 } })).toEqual({ a: 1 });
   });
 
   it('fails when code is not 0', () => {
     expect(() => unwrapResponse('p', { code: 1001, msg: 'login' })).toThrow('p: code 1001 login');
     expect(() => unwrapResponse('p', { data: {} })).toThrow('p: code undefined');
+    expect(() => unwrapResponse('p', { code: null })).toThrow('p: code null');
+    expect(() => unwrapResponse('p', { code: '' })).toThrow('p: code');
     expect(() => unwrapResponse('p', 'x')).toThrow();
   });
 });
 
 describe('isRateLimited', () => {
-  it('is true only for code 212000', () => {
-    expect(isRateLimited({ code: 212000, msg: 'request too frequently' })).toBe(true);
-    expect(isRateLimited({ code: 0, data: {} })).toBe(false);
-    expect(isRateLimited({ code: 1001 })).toBe(false);
-    expect(isRateLimited(null)).toBe(false);
+  it('is true for code 212000 (number or string) and for HTTP 429', () => {
+    expect(isRateLimited({ json: { code: 212000, msg: 'request too frequently' } })).toBe(true);
+    expect(isRateLimited({ json: { code: '212000' } })).toBe(true);
+    expect(isRateLimited({ status: 429 })).toBe(true);
+  });
+
+  it('is false for other codes and HTTP states', () => {
+    expect(isRateLimited({ json: { code: 0, data: {} } })).toBe(false);
+    expect(isRateLimited({ json: { code: 1001 } })).toBe(false);
+    expect(isRateLimited({ json: { code: '' } })).toBe(false);
+    expect(isRateLimited({ json: null })).toBe(false);
+    expect(isRateLimited({ status: 500 })).toBe(false);
+  });
+});
+
+describe('callWithRetry', () => {
+  /** results を順に返す post と、待った長さ・知らせの記録 */
+  function setup(results: PostResult[]) {
+    const waits: number[] = [];
+    const logs: string[] = [];
+    let calls = 0;
+    const post = () => {
+      const r = results[calls++];
+      if (r === undefined) throw new Error('呼びすぎ');
+      return Promise.resolve(r);
+    };
+    const opts = { sleep: (ms: number) => Promise.resolve(waits.push(ms)), log: (s: string) => logs.push(s) };
+    return { post, opts, waits, logs, calls: () => calls };
+  }
+  const ok: PostResult = { json: { code: 0, data: { a: 1 } } };
+  const limited: PostResult = { json: { code: 212000 } };
+
+  it('returns data on the first call without waiting', async () => {
+    const t = setup([ok]);
+    await expect(callWithRetry('p', t.post, t.opts)).resolves.toEqual({ a: 1 });
+    expect(t.waits).toEqual([]);
+    expect(t.calls()).toBe(1);
+  });
+
+  it('waits and calls again on code 212000, a string code and HTTP 429', async () => {
+    const t = setup([limited, { json: { code: '212000' } }, { status: 429 }, ok]);
+    await expect(callWithRetry('p', t.post, t.opts)).resolves.toEqual({ a: 1 });
+    expect(t.waits).toEqual([...RATE_LIMIT_WAITS_MS]);
+    expect(t.logs).toHaveLength(3);
+  });
+
+  it('fails with the last result when the waits run out', async () => {
+    const a = setup([limited, limited, limited, limited]);
+    await expect(callWithRetry('p', a.post, a.opts)).rejects.toThrow('p: code 212000');
+    expect(a.calls()).toBe(RATE_LIMIT_WAITS_MS.length + 1);
+    const b = setup([{ status: 429 }, { status: 429 }]);
+    await expect(callWithRetry('p', b.post, { ...b.opts, waitsMs: [1] })).rejects.toThrow('p: HTTP 429');
+  });
+
+  it('does not call again on other failures', async () => {
+    const a = setup([{ status: 500 }]);
+    await expect(callWithRetry('p', a.post, a.opts)).rejects.toThrow('p: HTTP 500');
+    const b = setup([{ json: { code: 1001, msg: 'login' } }]);
+    await expect(callWithRetry('p', b.post, b.opts)).rejects.toThrow('p: code 1001 login');
+    expect(a.waits).toEqual([]);
+    expect(b.waits).toEqual([]);
   });
 });
 
