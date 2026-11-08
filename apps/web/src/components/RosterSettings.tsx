@@ -11,12 +11,12 @@ export function RosterSettings({
   roster,
   stored,
   message,
-  pending,
+  clearPrompt,
   importFile,
   exportFile,
   clear,
-  confirmPending,
-  cancelPending,
+  confirmClear,
+  cancelClear,
 }: RosterControls) {
   const fileRef = useRef<HTMLInputElement>(null);
   return (
@@ -45,14 +45,14 @@ export function RosterSettings({
           if (file !== undefined) void importFile(file);
         }}
       />
-      {pending !== null && (
+      {clearPrompt !== null && (
         <div style={MESSAGES} role="alertdialog" aria-label="確かめ">
-          <p className="note">{pending.prompt}</p>
+          <p className="note">{clearPrompt}</p>
           <div style={BUTTON_ROW}>
-            <button type="button" className="advanced-settings-button" onClick={confirmPending}>
-              {pending.kind === 'import' ? '読み込む' : '消す'}
+            <button type="button" className="advanced-settings-button" onClick={confirmClear}>
+              消す
             </button>
-            <button type="button" className="advanced-settings-button" onClick={cancelPending}>
+            <button type="button" className="advanced-settings-button" onClick={cancelClear}>
               やめる
             </button>
           </div>

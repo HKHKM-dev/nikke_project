@@ -7,7 +7,6 @@ import {
   clearConfirmText,
   clearRosterFromTeam,
   consoleFromRoster,
-  importConfirmText,
   importSummary,
   restoreRoster,
   rosterDate,
@@ -244,7 +243,5 @@ describe('保存と表示', () => {
       '宝物の段階が未確定（Lv 0）の 1 体は、宝物なしでスロットへ写す（スロットで選ぶ）',
     ]);
     expect(importSummary(ROSTER, [])).toEqual(['2026-10-29 の育成・2 体を読み込んだ']);
-    expect(importConfirmText(0)).toBe('シンクロ LV・リサイクルルームを、読み込む育成状況で上書きします。');
-    expect(importConfirmText(3)).toMatch(/3 スロット（全部の編成）の育成を/);
   });
 });

@@ -181,11 +181,3 @@ export function importSummary(roster: BuildSnapshot, notices: readonly string[])
       : []),
   ];
 }
-
-export function importConfirmText(slotCount: number): string {
-  return (
-    'シンクロ LV・リサイクルルーム' +
-    (slotCount > 0 ? `と、育成状況にいるキャラの ${slotCount} スロット（全部の編成）の育成` : '') +
-    'を、読み込む育成状況で上書きします。'
-  );
-}

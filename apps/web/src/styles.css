@@ -156,6 +156,14 @@ header h1 {
   font: inherit;
   font-size: 0.85rem;
 }
+/* 使えないとき（育成状況が無いときの「書き出す」「消す」など）は色を変えて、押せないと分かるようにする */
+.advanced-settings-button:disabled,
+.advanced-settings-button:disabled:hover {
+  color: color-mix(in srgb, var(--app-fg) 35%, transparent);
+  background: color-mix(in srgb, var(--app-fg) 6%, var(--app-bg));
+  border-color: color-mix(in srgb, var(--app-fg) 12%, transparent);
+  cursor: not-allowed;
+}
 .advanced-settings {
   width: 20em;
 }
