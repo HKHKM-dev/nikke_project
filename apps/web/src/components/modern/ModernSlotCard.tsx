@@ -60,7 +60,7 @@ export function ModernSlotCard({
     data: { slotIndex },
   });
 
-  // キャラが配置されている場合、スロット間スワップ用のドラッグ
+  // スロット間の入れ替えのドラッグ（空のスロットも持ち上げて入れ替えられる）
   const {
     attributes,
     listeners,
@@ -73,7 +73,6 @@ export function ModernSlotCard({
       slotIndex,
       character: characterEntry,
     },
-    disabled: !characterEntry,
   });
 
   const setCardRef = (node: HTMLDivElement | null) => {
@@ -86,8 +85,8 @@ export function ModernSlotCard({
       ref={setCardRef}
       className={`modern-slot-card ${slotIndex % 2 === 1 ? 'modern-slot-rear' : ''} ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
       onClick={onPlacePending}
-      {...(characterEntry ? attributes : {})}
-      {...(characterEntry ? listeners : {})}
+      {...attributes}
+      {...listeners}
     >
       <div className="modern-slot-header">
         {focused && (
@@ -152,16 +151,7 @@ export function ModernSlotCard({
         ) : (
           // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
           <div className="modern-slot-char-area">
-            <div className="modern-slot-empty-area">
-              <span className="modern-slot-empty-plus">＋</span>
-              {/* スロットの番号・前列（奇数）か後列（偶数）か・EMPTY SLOT・5 つのうちの位置（●） */}
-              <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
-              <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>
-              <span className="modern-slot-empty-label">EMPTY SLOT</span>
-              <span className="modern-slot-empty-position" aria-hidden="true">
-                {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
-              </span>
-            </div>
+            <EmptySlotFace slotIndex={slotIndex} />
           </div>
         )}
       </div>
@@ -232,6 +222,21 @@ function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null
       <span className="modern-slot-char-name-track">
         <span ref={textRef}>{name}</span>
         {textWidth !== null && <span aria-hidden="true">{name}</span>}
+      </span>
+    </div>
+  );
+}
+
+/** 空のスロットの枠（＋・番号・FRONT か REAR・EMPTY SLOT・5 つのうちの位置）。持ち上げたときの絵（ModernView の DragOverlay）にも使う */
+export function EmptySlotFace({ slotIndex }: { slotIndex: number }) {
+  return (
+    <div className="modern-slot-empty-area">
+      <span className="modern-slot-empty-plus">＋</span>
+      <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
+      <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>
+      <span className="modern-slot-empty-label">EMPTY SLOT</span>
+      <span className="modern-slot-empty-position" aria-hidden="true">
+        {Array.from({ length: 5 }, (_, i) => (i === slotIndex ? '●' : '○')).join('')}
       </span>
     </div>
   );

@@ -23,7 +23,7 @@ import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { collectionBadge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf } from '../components/modern/GrowthMarks.tsx';
-import { ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
+import { EmptySlotFace, ModernSlotCard } from '../components/modern/ModernSlotCard.tsx';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
 
@@ -83,6 +83,8 @@ export function ModernView({
 
   // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、カードの大きさと、立ち絵の大きさ・カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
+  // 持ち上げた空のスロットの番号（空のスロットを持ち上げていなければ null）
+  const [draggedEmptyIndex, setDraggedEmptyIndex] = useState<number | null>(null);
   const [draggedPortrait, setDraggedPortrait] = useState<{
     cardWidth: number;
     cardHeight: number;
@@ -116,12 +118,13 @@ export function ModernView({
     if (data?.character) {
       setDraggedCharacter(data.character as CharacterIndexEntry);
     }
+    setDraggedEmptyIndex(data?.type === 'slot-character' && !data.character ? (data.slotIndex as number) : null);
     // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
     const card =
       event.active.data.current?.type === 'slot-character'
         ? (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card')
         : null;
-    const portrait = card?.querySelector('.char-visual-portrait');
+    const portrait = card?.querySelector('.char-visual-portrait, .modern-slot-empty-area');
     if (card && portrait) {
       const c = card.getBoundingClientRect();
       const p = portrait.getBoundingClientRect();
@@ -140,6 +143,7 @@ export function ModernView({
 
   const handleDragEnd = (event: DragEndEvent) => {
     setDraggedCharacter(null);
+    setDraggedEmptyIndex(null);
     setDraggedPortrait(null);
     const { active, over } = event;
     if (!over) return;
@@ -153,7 +157,7 @@ export function ModernView({
 
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
-      if (activeData.type === 'slot-character') {
+      if (activeData.type === 'slot-character' && activeData.character) {
         changed();
         dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
       }
@@ -180,6 +184,7 @@ export function ModernView({
 
   const handleDragCancel = () => {
     setDraggedCharacter(null);
+    setDraggedEmptyIndex(null);
     setDraggedPortrait(null);
   };
 
@@ -312,7 +317,7 @@ export function ModernView({
         </ErrorBoundary>
 
         <DragOverlay dropAnimation={dropAnimation}>
-          {draggedCharacter && draggedPortrait ? (
+          {(draggedCharacter || draggedEmptyIndex !== null) && draggedPortrait ? (
             // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
             // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
             <div
@@ -328,7 +333,11 @@ export function ModernView({
                   top: draggedPortrait.top,
                 }}
               >
-                <CharacterVisual character={draggedCharacter} size="portrait" />
+                {draggedCharacter ? (
+                  <CharacterVisual character={draggedCharacter} size="portrait" />
+                ) : (
+                  <EmptySlotFace slotIndex={draggedEmptyIndex!} />
+                )}
               </div>
             </div>
           ) : draggedCharacter ? (
