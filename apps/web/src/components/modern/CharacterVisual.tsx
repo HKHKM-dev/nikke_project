@@ -47,8 +47,10 @@ export function CharacterVisual({
           src={imageSrc}
           alt=""
           className="char-visual-img"
-          loading="lazy"
-          decoding="async"
+          // スロットの縦長の絵（5 枚）はすぐ読み、描けるまで待って描く（入れ替えで隠しを外した瞬間に、画像が空で枠だけ見えないように）。
+          // ニケ一覧の絵は数が多いので、見えてから読み、描くのは後回しにしてよい
+          loading={size === 'portrait' ? 'eager' : 'lazy'}
+          decoding={size === 'portrait' ? 'sync' : 'async'}
           draggable={false}
           onError={() => setFailedId(character.resourceId)}
         />

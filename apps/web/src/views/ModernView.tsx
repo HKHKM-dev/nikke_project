@@ -76,6 +76,18 @@ function decodeImages(node: Element): Promise<void> {
   );
 }
 
+/** 次の次のフレームで呼ぶ（本物を見せたフレームが描かれた後に、上に重ねた写しを外す） */
+const afterNextFrame = (fn: () => void) => requestAnimationFrame(() => requestAnimationFrame(fn));
+
+/**
+ * 着いた写しを外して本物（隠していたスロット）を見せる。本物を先に見せ、写しは本物が描かれた後のフレームで外す
+ * （同じフレームで入れ替えると、本物の最初のフレームの描き方次第で、立ち絵の枠だけが一瞬見える）
+ */
+function revealUnder(cover: HTMLElement, slot: Element): void {
+  slot.classList.remove('modern-slot-arriving');
+  afterNextFrame(() => cover.remove());
+}
+
 /**
  * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
  * 立ち絵の枠全体（名前・限界突破・✕ などを含む）の写しで、離した位置（from の要素の位置）から行き先まで動かす。
@@ -103,10 +115,7 @@ function slideInto(from: Element, target: Element, ready: Promise<void>): () => 
   const done = () => {
     if (finished) return;
     finished = true;
-    void ready.then(() => {
-      ghost.remove();
-      target.classList.remove('modern-slot-arriving');
-    });
+    void ready.then(() => revealUnder(ghost, target));
   };
   ghost
     .animate(
@@ -148,12 +157,26 @@ const DROP_ANIMATION: DropAnimation = {
     holder.style.boxShadow = 'none';
     args.active.node.classList.add('modern-slot-arriving');
     return () => {
-      // 持ち上げた絵は直後に消える。元の中身へ戻すと、消えるまでの一瞬だけ持ち上げたニケの絵が見えるので、先に隠す
+      // 戻ってきた絵（持ち上げた絵）は直後に消えるので、同じ位置に写しを置き、ドラッグ元を見せてから外す（revealUnder）
+      const at = holder.getBoundingClientRect();
+      const cover = cloneForAnimation(holder.firstElementChild ?? holder);
+      Object.assign(cover.style, {
+        position: 'fixed',
+        left: `${at.left}px`,
+        top: `${at.top}px`,
+        width: `${at.width}px`,
+        height: `${at.height}px`,
+        margin: '0',
+        zIndex: '9999',
+        pointerEvents: 'none',
+      });
+      document.body.appendChild(cover);
+      // 持ち上げた絵を元の中身へ戻すと、消えるまでの一瞬だけ持ち上げたニケの絵が見えるので、先に隠す
       args.dragOverlay.node.style.visibility = 'hidden';
       holder.replaceChildren(...saved);
       holder.style.boxShadow = '';
       // ドラッグ元も、新しく入ったものの画像が描けるようになってから見せる
-      void sourceReady.then(() => args.active.node.classList.remove('modern-slot-arriving'));
+      void sourceReady.then(() => revealUnder(cover, args.active.node));
       finishSlide();
     };
   },
