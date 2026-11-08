@@ -630,14 +630,14 @@ header h1 {
   /* スロットのカードの縦長の絵の高さ（.char-visual-portrait と空のスロットの枠） */
   --slot-portrait-h: 240px;
 }
-/* 置き先待ちのスロット・ニケの水色の実線の枠 */
-.modern-slot-card.modern-slot-awaiting,
+/* 置き先待ちのスロット（カードでなく立ち絵の枠）・ニケの水色の実線の枠 */
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area,
 .char-tray-item.char-tray-item-pending {
   outline: 3px solid var(--placing-blue);
   outline-offset: -1px;
 }
-/* 置き先待ちのスロットと、いまの編成にいるニケの絵に重ねる薄い水色 */
-.modern-slot-card.modern-slot-awaiting::after,
+/* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after {
   content: '';
   position: absolute;
