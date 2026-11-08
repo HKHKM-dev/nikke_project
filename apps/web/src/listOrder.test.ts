@@ -15,11 +15,11 @@ describe('並びの選び方', () => {
     expect(parseListOrder(null)).toBeNull();
   });
 
-  it('育成状況があれば既定は戦闘力順、無ければいつも名前順', () => {
+  it('選んだ並びに従う。選んでいなければ、育成状況があれば戦闘力順、無ければ名前順', () => {
     expect(effectiveListOrder(null, true)).toBe('combatPower');
     expect(effectiveListOrder('name', true)).toBe('name');
     expect(effectiveListOrder(null, false)).toBe('name');
-    expect(effectiveListOrder('combatPower', false)).toBe('name');
+    expect(effectiveListOrder('combatPower', false)).toBe('combatPower');
   });
 });
 

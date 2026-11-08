@@ -124,11 +124,8 @@ export function CharacterTray({
             並べ替え
             <select value={listOrder.order} onChange={(e) => listOrder.select(e.target.value as ListOrder)}>
               {LIST_ORDERS.map((o) => (
-                <option key={o} value={o} disabled={o === 'combatPower' && !listOrder.combatPowerAvailable}>
+                <option key={o} value={o}>
                   {LIST_ORDER_LABEL[o]}
-                  {o === 'combatPower' && !listOrder.combatPowerAvailable
-                    ? '（育成状況の読み込みかスペック固定で選べる）'
-                    : ''}
                 </option>
               ))}
             </select>
