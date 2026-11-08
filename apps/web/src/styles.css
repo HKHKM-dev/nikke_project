@@ -1042,7 +1042,12 @@ header h1 {
 .char-visual-portrait {
   max-width: none;
   --badge-w: 24px;
-  /* 枠を 1px 太く見せる（枠線の外に同じ色の線を 1px 足す。outline は並びの大きさを変えないので、空のスロットの枠と大きさがそろったまま） */
+}
+/* スロットとニケ一覧（四角・縦長）の絵の枠を 1px 太く見せる（枠線の外に同じ色の線を 1px 足す。outline は並びの大きさを変えないので、
+   空のスロットの枠や一覧の列の幅とそろったまま） */
+.char-visual-portrait,
+.char-visual-compact,
+.char-visual-tall {
   outline: 1px solid var(--app-border);
 }
 .char-visual-img {
