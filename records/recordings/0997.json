@@ -14,7 +14,8 @@
       "slot": 1,
       "rid": 17,
       "name": "アニス：スター",
-      "controlled": true
+      "controlled": true,
+      "fires": false
     },
     {
       "slot": 2,
