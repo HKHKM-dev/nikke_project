@@ -3,7 +3,7 @@
 - 何のための文書か: 画面がブラウザに保存した編成（選んでいる編成と、保存した編成の一覧）を起動時に読めなかったとき、どう扱うかを決める
 - 関連: 課題 `records/backlog/web-legacy-team-save.json`、[design-ui-rebuild.md](design-ui-rebuild.md) 5.1 節（版の無い旧形式の読み込みを消した）、[design-combat-power-sort.md](design-combat-power-sort.md) 8 節の 2026-11-08 の行（育成状況の読めない保存は、消さずに理由を出す）
 - 起案: 2026-11-09
-- 状態: 実装済み（案 A と 4 節の論点は、オーナーの承認で推奨どおり）
+- 状態: 実装済み（4 節の決定・5 節）
 
 ## 1. いまの動き
 

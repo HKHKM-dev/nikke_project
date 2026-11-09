@@ -382,7 +382,7 @@ export function serializeTeamState(state: TeamState): string {
 }
 
 /** 読めた版。版のないもの・未知の版・形が合わないものは null。保存した編成の一覧（parties.ts）も同じ版を使う */
-export function formatVersionOf(raw: Record<string, unknown>): number | null {
+function formatVersionOf(raw: Record<string, unknown>): number | null {
   const v = raw.formatVersion;
   return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= TEAM_FORMAT_VERSION ? v : null;
 }

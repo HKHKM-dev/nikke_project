@@ -17,12 +17,18 @@ export function UnreadableSavesNotice({ saves, exportSave, remove }: UnreadableC
           return (
             <li key={key ?? `unsaved-${save.kind}`} className="note">
               <p>{unreadableMessage(save)}</p>
-              <p>理由: {save.error}</p>
-              <p>
-                {key === null
-                  ? '元の保存を退避できなかったので、この画面の変更は保存しません（元の保存は残っています）。'
-                  : '元の保存は残してあります。'}
-              </p>
+              {save.broken ? (
+                <p>退避した中身は、書き出すとそのまま見られます。</p>
+              ) : (
+                <>
+                  <p>理由: {save.error}</p>
+                  <p>
+                    {key === null
+                      ? '元の保存を退避できなかったので、この画面の変更は保存しません（元の保存は残っています）。'
+                      : '元の保存は残してあります。'}
+                  </p>
+                </>
+              )}
               <div className="button-row">
                 <button type="button" className="advanced-settings-button" onClick={() => exportSave(save)}>
                   書き出す

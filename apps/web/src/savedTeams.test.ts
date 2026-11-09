@@ -134,6 +134,41 @@ describe('backupUnreadable', () => {
   });
 });
 
+describe('backup keys', () => {
+  it('does not overwrite a backup that has the same time, and makes room before writing', () => {
+    const store = memoryStore();
+    backupUnreadable(store, { kind: 'team', raw: 'a', error: 'e' }, NOW);
+    backupUnreadable(store, { kind: 'team', raw: 'b', error: 'e' }, NOW);
+    expect(listUnreadable(store).map((s) => [s.raw, s.savedAt])).toEqual([
+      ['a', NOW],
+      ['b', NOW + 1],
+    ]);
+
+    // 満杯（上限の件数の退避がある）でも、古いものを消してから書く
+    let room = MAX_UNREADABLE_PER_KIND;
+    const full = memoryStore();
+    for (let i = 0; i < MAX_UNREADABLE_PER_KIND; i++)
+      backupUnreadable(full, { kind: 'team', raw: `t${i}`, error: 'e' }, i);
+    const quota: SaveStore = {
+      ...full,
+      write: (key, value) => full.keys(UNREADABLE_KEY_PREFIX).length < room && full.write(key, value),
+    };
+    expect(backupUnreadable(quota, { kind: 'team', raw: 'new', error: 'e' }, NOW)).toBe(true);
+    expect(listUnreadable(full).map((s) => s.raw)).toEqual(['t1', 't2', 't3', 't4', 'new']);
+    room = 0;
+    expect(backupUnreadable(quota, { kind: 'team', raw: 'newer', error: 'e' }, NOW + 1)).toBe(false);
+  });
+
+  it('reads a time that a Date cannot hold as unknown', () => {
+    const store = memoryStore({
+      [`${UNREADABLE_KEY_PREFIX}team.9000000000000000`]: JSON.stringify({ raw: 'x', error: 'e' }),
+    });
+    const [save] = listUnreadable(store);
+    expect(save?.savedAt).toBeNull();
+    expect(unreadableMessage(save!)).toContain('以前に');
+  });
+});
+
 describe('the notice', () => {
   const save = { kind: 'team', raw: LEGACY, error: 'e', key: 'k', savedAt: NOW } as const;
 
@@ -148,7 +183,7 @@ describe('the notice', () => {
       '2026-11-09 12:34 に、ブラウザに保存した編成03・編成05 を読めなかったので、空にしました。',
     );
     expect(unreadableMessage({ ...save, savedAt: null, broken: true })).toBe(
-      '以前に退避した、読めなかった編成の保存の中身を読めません。',
+      '以前に退避した、読めなかった編成の保存の中身を読めません（壊れています）。',
     );
   });
 

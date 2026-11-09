@@ -10,6 +10,8 @@ import { STORAGE_KEY, isRecord, readTeamJson, type TeamState } from './team.ts';
 export const UNREADABLE_KEY_PREFIX = 'nikke-calc.unreadable.';
 /** 種類ごとに新しいほうから持つ件数。版の違う画面を行き来すると、編集のたびに文字列が変わって増え続けるため */
 export const MAX_UNREADABLE_PER_KIND = 5;
+/** Date で表せる最大の時刻（ミリ秒） */
+const MAX_DATE_MS = 8.64e15;
 
 /** 編成（team.ts の STORAGE_KEY）か、保存した編成の一覧（parties.ts） */
 export type SaveKind = 'team' | 'parties';
@@ -60,7 +62,8 @@ export function listUnreadable(store: SaveStore): UnreadableSave[] {
     const value = store.read(key);
     if (value === null) continue;
     const ms = Number(time);
-    const savedAt = time !== '' && Number.isSafeInteger(ms) ? ms : null;
+    // Date で表せる時刻だけ（大きすぎる値は日時にすると例外になる）
+    const savedAt = time !== '' && Number.isInteger(ms) && ms >= 0 && ms <= MAX_DATE_MS ? ms : null;
     const entry = parseEntry(kind, value);
     saves.push(
       entry === null
@@ -73,18 +76,19 @@ export function listUnreadable(store: SaveStore): UnreadableSave[] {
 
 /**
  * 読めなかった保存を退避する。同じ種類で同じ文字列の退避がもうあれば足さない。種類ごとに MAX_UNREADABLE_PER_KIND 件を超えたら
- * 古いものを消す。書けたか（もうあった場合も true）を返す
+ * 古いものを消す（書く前に消し、保存が満杯でも場所を空ける）。時刻の同じキーがあれば、空いている時刻まで進める（上書きしない）。
+ * 書けたか（もうあった場合も true）を返す
  */
 export function backupUnreadable(store: SaveStore, entry: UnreadableEntry, now: number): boolean {
   const same = listUnreadable(store).filter((s) => s.kind === entry.kind);
   if (same.some((s) => !s.broken && s.raw === entry.raw)) return true;
-  const key = `${UNREADABLE_KEY_PREFIX}${entry.kind}.${now}`;
-  const { raw, error, dropped } = entry;
-  if (!store.write(key, JSON.stringify({ raw, error, dropped }))) return false;
   for (const old of same.slice(0, Math.max(0, same.length + 1 - MAX_UNREADABLE_PER_KIND))) {
     if (old.key !== null) store.remove(old.key);
   }
-  return true;
+  let time = now;
+  while (store.read(`${UNREADABLE_KEY_PREFIX}${entry.kind}.${time}`) !== null) time++;
+  const { raw, error, dropped } = entry;
+  return store.write(`${UNREADABLE_KEY_PREFIX}${entry.kind}.${time}`, JSON.stringify({ raw, error, dropped }));
 }
 
 export type RestoredSaves = {
@@ -132,7 +136,7 @@ export function restoreSaves(store: SaveStore, index: readonly CharacterIndexEnt
 /** 知らせの文（何を戻したか）。退避した起動にも、その後の起動にも合うよう過去のこととして書く */
 export function unreadableMessage(save: UnreadableSave): string {
   const when = save.savedAt === null ? '以前に' : `${jstDateTime(save.savedAt)} に`;
-  if (save.broken) return `${when}退避した、読めなかった編成の保存の中身を読めません。`;
+  if (save.broken) return `${when}退避した、読めなかった編成の保存の中身を読めません（壊れています）。`;
   const head = `${when}、ブラウザに保存した`;
   if (save.kind === 'team') {
     return `${head}編成を読めなかったので、選んでいた編成と共通の設定（敵・コンソールなど）を初期値に戻しました。`;
