@@ -113,7 +113,7 @@ function triggerLabel(t: ResolvedTrigger): string {
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;
   if ('every' in t)
     return `${t.count}/${t.every}${t.during ? `@${t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;
-  return `${t.count}≥${t.atLeast}`;
+  return `${t.count}≥${t.atLeast}${t.atMost !== undefined ? `≤${t.atMost}` : ''}`;
 }
 
 const { values } = parseArgs({

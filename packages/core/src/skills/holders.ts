@@ -1781,7 +1781,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     ev: FrameEvents,
     sourceSlotIndex: number,
   ): boolean =>
-    (condition?.usedBurst !== true || (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false)) &&
+    (condition?.usedBurst === undefined ||
+      (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false) === condition.usedBurst) &&
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex);
 

@@ -2219,10 +2219,12 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
 /**
  * 2 段目の段 12 の PR 2（V-0537）: 倍率ダメージの発動を、省略できる引数で絞る。skill = スロット、projectile = 発射体の付着（stick）か
  * 爆発（explosion）のヒット、trigger = きっかけがフルバーストの始まり（fullBurstStart）か射撃の回数（shotCount）。効果の番号では
- * 絞らない（編成の条件と最小構成の検査が効果を外すと、番号がずれる）
+ * 絞らない（編成の条件と最小構成の検査が効果を外すと、番号がずれる）。ディーゼル：ウィンタースイーツ編（V-0703）: percent = 1 ヒットの
+ * 倍率（%。説明文の値）。同じスロットの 2 つの持続ダメージ（バーストの 18.43% と 181.2%）を分ける
  */
 function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): boolean {
   if (ctx.args.skill !== undefined && h.effect.source.skill !== ctx.args.skill) return false;
+  if (ctx.args.percent !== undefined && Math.abs(h.effect.multiplier * 100 - Number(ctx.args.percent)) > 1e-6) return false;
   if (ctx.args.projectile === 'stick' && h.effect.projectileStick !== true) return false;
   if (ctx.args.projectile === 'explosion' && h.effect.projectileExplosion !== true) return false;
   if (ctx.args.trigger === 'fullBurstStart' && h.effect.trigger !== 'fullBurstStart') return false;

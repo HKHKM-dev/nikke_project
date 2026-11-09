@@ -212,12 +212,18 @@ export function parseTrigger(
   }
   if ((EVENT_COUNT_KINDS as readonly string[]).includes(v.count as string)) {
     for (const key of Object.keys(v)) {
-      if (!['count', 'atLeast', 'resetAfterSeconds'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+      if (!['count', 'atLeast', 'atMost', 'resetAfterSeconds'].includes(key)) fail(`${path}.${key}`, 'unknown field');
     }
     const trigger: EventCountTrigger = {
       count: v.count as EventCountKind,
       atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`),
     };
+    // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.1 節）: 何回目まで（atLeast 以上）
+    if (v.atMost !== undefined) {
+      const atMost = parsePositiveInt(v.atMost, `${path}.atMost`);
+      if (atMost < trigger.atLeast) fail(`${path}.atMost`, `expected at least atLeast (${trigger.atLeast}), got ${atMost}`);
+      trigger.atMost = atMost;
+    }
     if (v.resetAfterSeconds !== undefined) {
       const at = `${path}.resetAfterSeconds`;
       if (trigger.count !== 'burstUse') fail(at, 'resetAfterSeconds needs count burstUse');

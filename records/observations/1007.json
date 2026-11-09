@@ -1,0 +1,345 @@
+[
+  {
+    "id": "1007-01",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "record",
+    "value": [1348, 2593, 3773, 5142, 6366, 7660, 8881, 10099, 11299],
+    "unit": "f",
+    "description": "左のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・24・0・25・0・25・0・24f"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-02",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "record",
+    "value": [1377, 3802, 6395, 8910, 11328],
+    "unit": "f",
+    "description": "左のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・25・25・24f"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-03",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "record",
+    "value": [1406, 3831, 6424, 8939, 11357],
+    "unit": "f",
+    "description": "左のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@3",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-04",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [79, 138, 197, 256, 315, 373, 432, 491, 550],
+    "description": "2 回目のフルバースト（00.00 は f3831。`1007-03`。ディーゼルがバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）の 9 回の tick の、III のタイマーの 00.00 からの動画のフレーム数（入りの止まりを含む）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "S2 のフルバーストの持続ダメージ（63.33%）の 1 tick の値（モデルの tick の非会心・会心の値か、同じフレームのほかの発との和）の増分のフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "percent": 63.33,
+        "fullBurst": 1,
+        "count": 9,
+        "kind": "tick"
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-05",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 59, 118, 177, 236, 294, 353, 412, 471],
+    "description": "2 回目のフルバースト（00.00 は f3831。`1007-03`。ディーゼルがバーストを撃った回）の、バーストの敵全体の持続ダメージ（18.43%）の 9 回の tick の、1 回目の tick からの動画のフレーム数（入りの止まりを含む）。1 回目は 00.00 から +81f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "バーストの敵全体の持続ダメージ（18.43%）の 1 tick の値（モデルの tick の非会心・会心の値か、同じフレームのほかの発との和）の増分のフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "percent": 18.43,
+        "fullBurst": 1,
+        "count": 9,
+        "kind": "tick",
+        "relative": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-06",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "compare",
+    "unit": "f",
+    "value": [0, 59, 118, 177, 236, 294, 353, 412, 471],
+    "description": "2 回目のフルバースト（00.00 は f3831。`1007-03`。ディーゼルがバーストを撃った回）の、バーストのターゲットの持続ダメージ（181.2%）の 9 回の tick の、1 回目の tick からの動画のフレーム数（入りの止まりを含む）。1 回目は 00.00 から +87f",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "バーストのターゲットの持続ダメージ（181.2%）の 1 tick の値（モデルの tick の非会心・会心の値か、同じフレームのほかの発との和）の増分のフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitFramesFromFullBurst",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "percent": 181.2,
+        "fullBurst": 1,
+        "count": 9,
+        "kind": "tick",
+        "relative": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-07",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1130693,
+    "description": "1 回目のフルバースト（00.00 は f1406。`1007-03`。ディーゼルがバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）の 3 回目の tick（非会心。00.00 から +196f。イントロの持続ダメージ▲・S2 のフルチャージのスタック・フルバースト補正・受けるダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "percent": 63.33,
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-08",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 1665018,
+    "description": "1 回目のフルバースト（00.00 は f1406。`1007-03`。ディーゼルがバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）の 5 回目の tick（会心。00.00 から +314f。イントロの持続ダメージ▲・S2 のフルチャージのスタック・フルバースト補正・受けるダメージ▲の中。会心はイントロのクリティカルダメージ▲とリターのバーストのクリティカルダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "percent": 63.33,
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 4,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-09",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 329049,
+    "description": "1 回目のフルバースト（00.00 は f1406。`1007-03`。ディーゼルがバーストを撃った回）の、バーストの敵全体の持続ダメージ（18.43%）の 3 回目の tick（非会心。00.00 から +198f。イントロの持続ダメージ▲・S2 のフルチャージのスタック・フルバースト補正・受けるダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "percent": 18.43,
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-10",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 3235142,
+    "description": "1 回目のフルバースト（00.00 は f1406。`1007-03`。ディーゼルがバーストを撃った回）の、バーストのターゲットの持続ダメージ（181.2%）の 2 回目の tick（非会心。00.00 から +145f。イントロの持続ダメージ▲・S2 のフルチャージのスタック・フルバースト補正・受けるダメージ▲の中）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "増分そのまま（同じフレームにほかのヒットが無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "percent": 181.2,
+        "fullBurst": 0,
+        "frame": 0,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-11",
+    "recording": "1007",
+    "kind": "timing",
+    "use": "record",
+    "value": [79, 81, 87],
+    "unit": "f",
+    "description": "2 回目のフルバースト（00.00 は f3831。`1007-03`。ディーゼルがバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）・バーストの敵全体の持続ダメージ（18.43%）・バーストのターゲットの持続ダメージ（181.2%）の 1 回目の tick の、III のタイマーの 00.00 からの動画のフレーム数。モデルは +81・+75・+75（バーストの 2 つは本当の発動に付けている）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "それぞれの 1 tick の値の増分のフレーム。3 つとも読めた回（4 本で 10 回）は、どれも +78〜79・+80〜81・+86〜87"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0703",
+    "readAt": "2026-11-09"
+  }
+]

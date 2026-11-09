@@ -3,14 +3,12 @@
 // 事象は burst-panel-lib.ts で決める。欄を左に出した録画（guide.md「バーストの欄の左右」）には使わない。
 import { cropFilter, rawFrames } from '../ffmpeg.ts';
 import {
-  BAR_BOX,
   CT_END_LEAD_MAX,
-  FACE_BOX,
   FB_END_BLUE_JUMP,
   FB_END_GREEN_JUMP,
   FB_END_MIN_FRAMES,
-  HEXAGON_BOX,
-  PANEL_CROP,
+  PANEL_GEOMETRY,
+  type PanelSide,
   WHITE_MIN,
   formatPanelTsv,
   isMagenta,
@@ -23,10 +21,12 @@ import { derived } from './cache.ts';
 import { observation, type Recipe, type RecipeObservation } from './types.ts';
 
 const VERSION = 3;
-/** 特徴のキャッシュの名前（特徴の測り方を変えたら上げる） */
+/** 特徴のキャッシュの名前（特徴の測り方を変えたら上げる）。左の欄は別の名前 */
 const CACHE_KEY = 'burst-panel@1';
+const cacheKeyOf = (side: PanelSide) => (side === 'right' ? CACHE_KEY : `burst-panel-left@1`);
 
-async function measure(video: string): Promise<string> {
+async function measure(video: string, side: PanelSide): Promise<string> {
+  const { crop: PANEL_CROP, hexagon: HEXAGON_BOX, bar: BAR_BOX, face: FACE_BOX } = PANEL_GEOMETRY[side];
   const { x: X, y: Y, w: W, h: H } = PANEL_CROP;
   const args = ['-v', 'error', '-i', video, '-vf', cropFilter(PANEL_CROP), '-fps_mode', 'passthrough'];
   args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1');
@@ -90,13 +90,20 @@ export const burstPanel: Recipe = {
   name: 'burst-panel',
   version: VERSION,
   describe:
-    '右のバースト欄の I → II・II → III の六角形の替わり目、III のタイマーの 00.00、フルバーストの終わりと長さ、I・II・III の段の CT の明けのフレーム（timing・interval。事象のある件だけ）',
-  options: {},
+    'バースト欄（右か左。--opt side）の I → II・II → III の六角形の替わり目、III のタイマーの 00.00、フルバーストの終わりと長さ、I・II・III の段の CT の明けのフレーム（timing・interval。事象のある件だけ）',
+  options: {
+    side: 'バースト欄の左右（right（既定）か left。ゲームのオプションで欄を左に出した録画は left）',
+  },
   async run(ctx) {
+    const side = ctx.options.side ?? 'right';
+    if (side !== 'right' && side !== 'left') throw new Error(`side は right か left: ${side}`);
+    const { crop } = PANEL_GEOMETRY[side];
+    const key = cacheKeyOf(side);
     const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
-    const text = await derived(ctx.derivedDir, CACHE_KEY, ctx.video, sha, () => measure(ctx.video), ctx.log);
+    const text = await derived(ctx.derivedDir, key, ctx.video, sha, () => measure(ctx.video, side), ctx.log);
     const ev = panelEvents(parsePanelTsv(text));
-    const how = `欄（${PANEL_CROP.x},${PANEL_CROP.y} から ${PANEL_CROP.w}×${PANEL_CROP.h}）のフレームごとの特徴（キャッシュ ${CACHE_KEY}）。`;
+    const sideName = side === 'right' ? '右' : '左';
+    const how = `${sideName}の欄（${crop.x},${crop.y} から ${crop.w}×${crop.h}）のフレームごとの特徴（キャッシュ ${key}）。`;
     const out: RecipeObservation[] = [];
     const change = (list: readonly StageChange[], from: string, to: string) => {
       if (list.length === 0) return;
@@ -105,7 +112,7 @@ export const burstPanel: Recipe = {
           this,
           'timing',
           list.map((c) => c.frame),
-          `右のバースト欄の六角形が ${from} から ${to} に替わったフレーム（${from} の色の最後のフレームの次）`,
+          `${sideName}のバースト欄の六角形が ${from} から ${to} に替わったフレーム（${from} の色の最後のフレームの次）`,
           `${how}${to} の色が出るまでの読めないフレーム（白い光り）: ${gaps(list)}f`,
           { unit: 'f' },
         ),
@@ -119,7 +126,7 @@ export const burstPanel: Recipe = {
           this,
           'timing',
           ev.fullBurst,
-          '右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）',
+          `${sideName}のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）`,
           `${how}II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム`,
           { unit: 'f' },
         ),
@@ -134,7 +141,7 @@ export const burstPanel: Recipe = {
           this,
           'timing',
           ends,
-          '右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）',
+          `${sideName}のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）`,
           `${how}00.00 の ${FB_END_MIN_FRAMES}f 後から、青と緑が一度に上がり（青 ${FB_END_BLUE_JUMP}・緑 ${FB_END_GREEN_JUMP} 以上）、バーの紫が 0 になったフレーム${rest}`,
           { unit: 'f' },
         ),
@@ -144,7 +151,7 @@ export const burstPanel: Recipe = {
           this,
           'interval',
           ends.map((e, k) => e - ev.fullBurst[k]!),
-          '右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）',
+          `${sideName}のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）`,
           `${how}上の 00.00 と終わりの差${rest}`,
           { unit: 'f' },
         ),
@@ -160,7 +167,7 @@ export const burstPanel: Recipe = {
           this,
           'timing',
           frames,
-          `右のバースト欄の ${s} の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、` +
+          `${sideName}のバースト欄の ${s} の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、` +
             `${next[i]}の ${CT_END_LEAD_MAX}f 前までにあるもの（CT が律速の発動の明け）`,
           `${how}顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。` +
             `${next[i]}の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: ` +
