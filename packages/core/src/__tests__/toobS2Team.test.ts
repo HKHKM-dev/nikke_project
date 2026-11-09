@@ -116,6 +116,11 @@ describe('while と attackSpeed の読み込み', () => {
     }
     const { targetWeapon: _w, ...noWeapon } = SPEED;
     expect(() => definitionWith([noWeapon])).toThrow(/attackSpeed needs targetWeapon/);
+    // シュガー編（plan/design-sugar.md 2.1 節）: 自分には targetWeapon なしで書ける（武器は definitions.test.ts が見る）
+    expect(definitionWith([{ ...noWeapon, target: 'self' }]).skills.skill2.effects).toHaveLength(1);
+    expect(() => definitionWith([{ ...noWeapon, target: 'self', decrease: true }])).toThrow(
+      /attackSpeed cannot decrease/,
+    );
     expect(() => definitionWith([{ ...SPEED, decrease: true }])).toThrow(/attackSpeed cannot decrease/);
     expect(
       definitionWith([

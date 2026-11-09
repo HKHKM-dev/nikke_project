@@ -113,21 +113,24 @@ function validateFlatChargeTime(
 const NAME_REPLACED = 'name was replaced by a state grant (kind "state". plan/design-named-state.md)';
 
 /** 2 段目の段 9 の PR 2: 攻撃速度▲を書ける武器種（レートを蓄積して撃ち、立ち上げの無い武器） */
-const ATTACK_SPEED_WEAPONS = ['AR', 'SMG', 'SG'] as const satisfies readonly WeaponType[];
+export const ATTACK_SPEED_WEAPONS = ['AR', 'SMG', 'SG'] as const satisfies readonly WeaponType[];
 
 /**
  * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度▲は、AR・SMG・SG を所持する味方にだけ書ける（targetWeapon が要る）。
- * チャージ武器（チャージの秒）・MG（立ち上げのレート）への効き方と「▼」は、使い手がいないので書けない
+ * チャージ武器（チャージの秒）・MG（立ち上げのレート）への効き方と「▼」は、使い手がいないので書けない。
+ * シュガー編（plan/design-sugar.md 2.1 節）: 自分（target self）には targetWeapon なしで書ける。自分の武器が AR・SMG・SG であることは、
+ * 定義とキャラのデータを突き合わせるテスト（skills/__tests__/definitions.test.ts）が見る
  */
-function validateAttackSpeed(stat: BuffStat, v: Record<string, Json>, path: string): void {
+function validateAttackSpeed(stat: BuffStat, target: BuffTarget, v: Record<string, Json>, path: string): void {
   if (stat !== 'attackSpeed') return;
+  if (v.decrease !== undefined) fail(`${path}.decrease`, 'attackSpeed cannot decrease (no user)');
+  if (target === 'self') return;
   if (!(ATTACK_SPEED_WEAPONS as readonly Json[]).includes(v.targetWeapon ?? null)) {
     fail(
       `${path}.targetWeapon`,
-      `attackSpeed needs targetWeapon ${ATTACK_SPEED_WEAPONS.join(', ')} (charge weapons and MG are not supported)`,
+      `attackSpeed needs targetWeapon ${ATTACK_SPEED_WEAPONS.join(', ')} (charge weapons and MG are not supported) or target "self"`,
     );
   }
-  if (v.decrease !== undefined) fail(`${path}.decrease`, 'attackSpeed cannot decrease (no user)');
 }
 
 /** Stage 11 モダニア: decrease（「▼」）は true だけ・scaling が ratio / flat のときだけ */
@@ -250,7 +253,7 @@ export function parseTimedFields(
     validateScaling(scaling, stat, path);
     validateFlatChargeTime(stat, scaling, v, path);
     validateDamageTaken(stat, target, v, path);
-    validateAttackSpeed(stat, v, path);
+    validateAttackSpeed(stat, target, v, path);
   }
   const effect: GrantTimedFields = { trigger, target };
   if (stat !== undefined) {
@@ -598,7 +601,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま
   // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
   validateDamageTaken(stat, target, v, path);
-  validateAttackSpeed(stat, v, path);
+  validateAttackSpeed(stat, target, v, path);
   // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 有利コードのダメージ適用は値を持たないフラグで、自分だけ。
   // レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換も自分だけ（持ち主の発にだけ効く。比率の scaling だけ）
   const overflow = stat === 'chargeSpeedOverflow';
