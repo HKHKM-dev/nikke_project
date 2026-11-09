@@ -69,7 +69,11 @@ export function parseFrame(svg: string): Frame {
   return { viewBox: viewBoxOf(svg), outer: element(pair[1]!, 'hex-out'), inner: element(pair[2]!, 'hex-in') };
 }
 
-const viewBoxOf = (svg: string): string => /<svg\b[^>]*\sviewBox="([^"]*)"/.exec(svg)?.[1] ?? '';
+function viewBoxOf(svg: string): string {
+  const viewBox = /<svg\b[^>]*\sviewBox="([^"]*)"/.exec(svg)?.[1];
+  if (!viewBox) throw new Error('badges: viewBox が無い');
+  return viewBox;
+}
 
 /** 要素の style を、宣言の Map にする */
 function styleOf(el: string): Map<string, string> {
