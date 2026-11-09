@@ -57,6 +57,26 @@ describe('selfState.sameFiring', () => {
     ).toThrow(/needs an earlier grant/);
   });
 
+  it('needs every grant of the state to share the trigger and refresh all stacks', () => {
+    expect(() =>
+      parse([
+        stage('exploreRouteStage1'),
+        {
+          kind: 'state',
+          state: 'exploreRouteStage1',
+          trigger: 'burstUse',
+          target: 'self',
+          maxStacks: 10,
+          durationSeconds: 1,
+        },
+        stage('exploreRouteStage2', onLower()),
+      ]),
+    ).toThrow(/same trigger and refresh all stacks/);
+    expect(() =>
+      parse([stage('exploreRouteStage1', { stackRefresh: 'each' }), stage('exploreRouteStage2', onLower())]),
+    ).toThrow(/same trigger and refresh all stacks/);
+  });
+
   it('is allowed only in a state grant', () => {
     expect(() =>
       parse([

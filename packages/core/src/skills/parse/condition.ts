@@ -167,11 +167,13 @@ function parseSelfStateCondition(v: Json, path: string): SelfStateCondition {
   if (typeof v === 'string') return { state: parseNamedStateId(v, path, 'ally'), present: true };
   if (!isRecord(v)) fail(path, 'expected a state id or { state, present } or { state, stacks }');
   for (const key of Object.keys(v)) {
-    if (!['state', 'present', 'stacks', 'stacksRef', 'sameFiring'].includes(key)) fail(`${path}.${key}`, 'unknown field');
+    if (!['state', 'present', 'stacks', 'stacksRef', 'sameFiring'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
   }
   if (v.sameFiring !== undefined) {
     if (v.sameFiring !== true) fail(`${path}.sameFiring`, 'expected true');
-    if (v.stacks === undefined && v.stacksRef === undefined) fail(`${path}.sameFiring`, 'needs a stack count (stacks or stacksRef)');
+    if (v.stacks === undefined && v.stacksRef === undefined)
+      fail(`${path}.sameFiring`, 'needs a stack count (stacks or stacksRef)');
   }
   const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
   if (v.stacks === undefined && v.stacksRef === undefined) {

@@ -343,8 +343,8 @@ function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<strin
     const rows: Partial<Record<WeaponType, TargetRateRow>> = {};
     for (const [weapon, row] of Object.entries(dualWield)) {
       const at = `${path}.dualWield.${weapon}`;
-      if (!(WEAPON_TYPES as readonly string[]).includes(weapon))
-        throw new TypeError(`${at}: key must be a weapon type`);
+      // 二丁持ちを扱うのは SMG だけ（weapons.ts の muzzleHitsOf）。ほかの武器種の行は読まれないので書かせない
+      if (weapon !== 'SMG') throw new TypeError(`${at}: only SMG is supported`);
       rows[weapon as WeaponType] = parseRateRow(row, at, keys, RATE);
     }
     table.dualWield = rows;

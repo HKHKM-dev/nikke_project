@@ -510,8 +510,9 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const trueMultiplier = trueDamageMultiplier(shot, buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage, buffs.elementAdvantage > 0);
-  // 二丁持ちの SMG は 1 発 2 ヒット（muzzleHitsOf）。的の表の 1 発のヒット数（V-0119）と掛ける
-  const hitsPerShot = hitsPerShotOf(condition) * muzzleHitsOf(character.weaponType, shot);
+  // 二丁持ちの SMG は 1 発 2 ヒット（muzzleHitsOf）。的の表の 1 発のヒット数（V-0119）と掛ける。銃口の数は、1 パス目（ゲージ・命中の数え）と
+  // 同じく基礎の武器のもの（使用武器の変更の武器の銃口は確かめていない）
+  const hitsPerShot = hitsPerShotOf(condition) * muzzleHitsOf(character.weaponType, character.shot);
   const normal =
     hitRate *
     hitsPerShot *

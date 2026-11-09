@@ -212,7 +212,9 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
 
 /**
  * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: 条件 selfState の sameFiring は、状態の付与にだけ書け、同じ
- * スロットのそれより前に、見る状態を同じきっかけで付ける付与が要る（その付与が同じ発火で付ける分を数える）。while には書けない
+ * スロットのそれより前に、見る状態を同じきっかけで付ける付与が要る（その付与が同じ発火で付ける分を数える）。次のフレームの件を見るので、
+ * 見る状態の付与は定義の中でどれも同じきっかけで、スタックごとの維持（stackRefresh: each）でないこと（ほかの出どころの件や、
+ * 次のフレームに切れる古いスタックを数えない）。while には書けない
  */
 function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
@@ -223,7 +225,8 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
         fail(`${path}.while.selfState.sameFiring`, 'sameFiring is not allowed in while');
       const self = 'condition' in e ? e.condition?.selfState : undefined;
       if (self?.sameFiring !== true) return;
-      if (e.kind !== 'state') fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant');
+      if (e.kind !== 'state')
+        fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant');
       const trigger = JSON.stringify(e.trigger);
       const lower = effects
         .slice(0, i)
@@ -232,6 +235,16 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
         fail(
           `${path}.condition.selfState.sameFiring`,
           `needs an earlier grant of "${self.state}" with the same trigger in the same slot`,
+        );
+      const others = SKILL_SLOTS.flatMap((x) => entries[x]?.effects ?? []).filter(
+        (g) => g.kind === 'state' && g.state === self.state,
+      );
+      if (
+        others.some((g) => g.kind === 'state' && (JSON.stringify(g.trigger) !== trigger || g.stackRefresh === 'each'))
+      )
+        fail(
+          `${path}.condition.selfState.sameFiring`,
+          `every grant of "${self.state}" must have the same trigger and refresh all stacks`,
         );
     });
   }

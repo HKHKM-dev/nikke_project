@@ -7,6 +7,8 @@ import type { ShotParams, WeaponType } from './types.ts';
  * 21-C3: rpm はゲーム内の時計で進む（C-0058。AR 720 rpm は 60 発で 290f、SMG 1440 rpm は 120 発で 292f）。
  * 21-B までは 3600（1 秒 = 60f）だった
  */
+export const MAX_RPM = 60 * FRAMES_PER_GAME_SECOND;
+
 /**
  * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（銃口 2 つ）の SMG の 1 発のヒット数。1 発で両方の銃口が
  * 当たり（V-0702）、ヒットごとにダメージ・ゲージ・命中の数え（コア・会心はヒットごと）になる。SMG のほかの二丁持ち（ノア・ツバイ）は
@@ -15,8 +17,6 @@ import type { ShotParams, WeaponType } from './types.ts';
 export function muzzleHitsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muzzleCount'>): number {
   return weaponType === 'SMG' && shot.muzzleCount > 1 ? shot.muzzleCount : 1;
 }
-
-export const MAX_RPM = 60 * FRAMES_PER_GAME_SECOND;
 
 export const WEAPON_TYPES = ['AR', 'SMG', 'SR', 'RL', 'SG', 'MG'] as const satisfies readonly WeaponType[];
 

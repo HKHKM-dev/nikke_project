@@ -1536,7 +1536,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /**
    * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件の列が見る、出どころの枠のその状態（家族の根なら家族のどれか）の
    * 段 1 の件の列（出どころは問わない。条件の selfState が見るものと同じ）。クエンシー：エスケープクイーン編（V-0702）: 段 1.5（条件つきの
-   * 付与）の状態の件の列も見る（S1 の「ルート探索 2 段階フルスタック状態の時のみ」。2 段階の付与は 1 段階のフルスタックの条件つき）
+   * 付与）の状態の件の列も見る（S1 の「ルート探索 2 段階フルスタック状態の時のみ」。2 段階の付与は 1 段階のフルスタックの条件つき）。件の列は
+   * 条件の selfState と同じ stateTracks から引く。段 1.5 の件も付いたフレームから効かせる（while は stat を出すだけで状態を付けないので連鎖しない）
    */
   const whileOwn = new Map<HeldTrack, HeldTrack[]>();
   /** while の件を作った時の、元の状態の件（件の列ごとの items。作り直すと別の配列になる） */
