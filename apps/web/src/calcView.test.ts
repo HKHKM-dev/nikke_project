@@ -207,6 +207,9 @@ describe('buildCalcView: team settings', () => {
     expect(input.durationSeconds).toBe(60);
     expect(input.burst).toBe(true);
     expect(input.controlledSlot).toBe(DEFAULT_CONTROLLED_SLOT);
+    // 操作の印を移したら、計算の操作キャラも移る
+    const moved = teamReducer(s, { type: 'setControlledSlot', index: 0 });
+    expect(buildCalcView(moved, deps()).input.controlledSlot).toBe(0);
   });
 
   it('adds the jumps of the shooting-range target only while the 3-minute mode is on', () => {

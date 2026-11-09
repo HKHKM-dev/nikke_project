@@ -35,7 +35,6 @@ function DraggableControllerIcon({ slotIndex }: { slotIndex: number }) {
     <span
       ref={setNodeRef}
       className={`modern-slot-focus-handle ${isDragging ? 'modern-slot-focus-dragging' : ''}`}
-      onClick={(e) => e.stopPropagation()}
       {...attributes}
       aria-label="操作キャラ（ドラッグして別のスロットへ移す）"
       {...listeners}
