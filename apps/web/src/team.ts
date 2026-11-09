@@ -462,6 +462,9 @@ function parseEnemy(v: Json): EnemyInput | null {
 
 export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
+/** 編成の中身の形が合わないときの理由（保存した編成の一覧の 1 つの編成にも使う。parties.ts） */
+export const TEAM_SHAPE_ERROR = '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 スロットなど）';
+
 /**
  * Stage 14: 編成の JSON（localStorage・書き出したファイル・貼り付け）を検証して復元する。失敗の理由を返す（取り込み欄に出す）。
  * 未知の formatVersion（新しい版で書き出したもの）・形が合わない・index に存在しないニケ・同じニケが 2 枠は失敗
@@ -478,15 +481,10 @@ export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]
     return { ok: false, error: `この版の編成は読めません（formatVersion ${String(raw.formatVersion)}）` };
   }
   const state = parseTeamFields(raw, index);
-  return state === null
-    ? { ok: false, error: '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 スロットなど）' }
-    : { ok: true, value: state };
+  return state === null ? { ok: false, error: TEAM_SHAPE_ERROR } : { ok: true, value: state };
 }
 
-/**
- * localStorage に保存した JSON を検証して復元する。
- * 形が合わない・index に存在しないニケを指す・同じニケが 2 枠にある場合は null（呼び出し側で初期値に落とす）。
- */
+/** readTeamJson の結果だけを見る（無い・読めないは null）。起動時の復元は理由も使うので readTeamJson を呼ぶ（savedTeams.ts） */
 export function parseTeamState(json: string | null, index: readonly CharacterIndexEntry[]): TeamState | null {
   if (json === null) return null;
   const result = readTeamJson(json, index);

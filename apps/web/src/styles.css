@@ -1373,3 +1373,23 @@ header h1 {
   position: absolute;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
 }
+
+/* 読めなかった編成の保存の知らせ（components/UnreadableSavesNotice.tsx） */
+.unreadable-saves {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border: 1px solid #ef6c00;
+  border-radius: 4px;
+}
+.unreadable-saves .notes {
+  margin: 0;
+  gap: 10px;
+}
+.unreadable-saves p {
+  margin: 0 0 4px;
+}
+.unreadable-saves-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}

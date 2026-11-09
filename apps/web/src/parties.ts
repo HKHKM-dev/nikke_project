@@ -74,33 +74,64 @@ export function serializeParties(state: PartiesState): string {
 }
 
 /**
- * 保存した編成の一覧を読む。読めないもの全体は null（初期値に落とす）。1 つの編成だけ形が合わないときは、その編成を空にする。
+ * 保存した編成の一覧を読んだ結果。読めたときの dropped は、形が合わず空にした編成の番号（0 から）。
+ * 未使用の編成（null）と、選んでいる編成の欄（中身は編成の保存が持つので見ない）は数えない
+ */
+export type PartiesRead = { ok: true; value: PartiesState; dropped: number[] } | { ok: false; error: string };
+
+/**
+ * 保存した編成の一覧を読む。全体が読めなければ理由を返す。1 つの編成だけ形が合わないときは、その編成を空にして dropped に数える。
  * 版は編成（team.ts）と同じで、版のないものと未知の版（新しい版で書き出したもの）は読まない。
  * 編成の中身の検証は、共通の設定を既定値で埋めて編成の検証（team.ts の parseTeamObject）に任せる。
- * 画面は復元の直後に読めたものを書き戻す（App.tsx）ので、読めなかった編成は空になって残らない
+ * 画面は読めなかった保存を退避してから、読めたものを書き戻す（savedTeams.ts・App.tsx）
  */
-export function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
-  if (json === null) return null;
+export function readParties(json: string, index: readonly CharacterIndexEntry[]): PartiesRead {
   let raw: unknown;
   try {
     raw = JSON.parse(json);
   } catch {
-    return null;
+    return { ok: false, error: 'JSON として読めません' };
   }
-  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
-  if (formatVersionOf(raw as Record<string, unknown>) === null) return null;
-  const { active, parties } = raw as { active?: unknown; parties?: unknown };
-  if (typeof active !== 'number' || !Number.isInteger(active) || active < 0 || active >= PARTY_COUNT) return null;
-  if (!Array.isArray(parties) || parties.length !== PARTY_COUNT) return null;
-  return {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    return { ok: false, error: '編成の一覧の JSON ではありません' };
+  }
+  const record = raw as Record<string, unknown>;
+  if (formatVersionOf(record) === null) {
+    return { ok: false, error: `この版の編成の一覧は読めません（formatVersion ${String(record.formatVersion)}）` };
+  }
+  const { active, parties } = record;
+  if (
+    typeof active !== 'number' ||
+    !Number.isInteger(active) ||
+    active < 0 ||
+    active >= PARTY_COUNT ||
+    !Array.isArray(parties) ||
+    parties.length !== PARTY_COUNT
+  ) {
+    return { ok: false, error: '編成の一覧の形が合いません（選んでいる編成の番号・編成の数）' };
+  }
+  const dropped: number[] = [];
+  const value: PartiesState = {
     active,
     parties: parties.map((p: unknown, i) => {
-      if (i === active || typeof p !== 'object' || p === null) return null;
-      const { slots } = p as { slots?: unknown };
+      if (i === active || p === null) return null;
+      const slots = typeof p === 'object' ? (p as { slots?: unknown }).slots : undefined;
       const team = parseTeamObject({ ...INITIAL_TEAM_STATE, slots }, index);
-      return team === null ? null : partyOf(team);
+      if (team === null) {
+        dropped.push(i);
+        return null;
+      }
+      return partyOf(team);
     }),
   };
+  return { ok: true, value, dropped };
+}
+
+/** readParties の読めた中身だけ（無い・全体が読めないは null） */
+export function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
+  if (json === null) return null;
+  const read = readParties(json, index);
+  return read.ok ? read.value : null;
 }
 
 /** 編成の番号（01〜05）。編成のタブはこれだけを出す */

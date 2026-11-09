@@ -12,14 +12,14 @@ import { buildCalcView, slotResultFor } from './calcView.ts';
 import { type NotesSummarySlot } from './components/NotesSummary.tsx';
 import { AccountMenu } from './components/AccountMenu.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
-import { INITIAL_TEAM_STATE, STORAGE_KEY, parseTeamState, serializeTeamState, teamReducer } from './team.ts';
+import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
+import { INITIAL_TEAM_STATE, STORAGE_KEY, serializeTeamState, teamReducer } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
-import { readStorage, writeStorage } from './storage.ts';
+import { writeStorage } from './storage.ts';
 import {
   INITIAL_PARTIES,
   PARTIES_STORAGE_KEY,
   otherPartyResourceIds,
-  parseParties,
   serializeParties,
   sharedSettingsOf,
   switchParty,
@@ -33,6 +33,7 @@ import { orderCharacters } from './listOrder.ts';
 import { ListOrderContext, useListOrder } from './useListOrder.ts';
 import { useRoster } from './useRoster.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
+import { useUnreadableSaves } from './useUnreadableSaves.ts';
 import { useUiMode } from './uiMode.ts';
 import { ClassicView } from './views/ClassicView.tsx';
 import { ModernView } from './views/ModernView.tsx';
@@ -47,8 +48,10 @@ export function App() {
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
   // ソロレイド用の編成 01〜05（parties.ts）。選んでいる編成の中身は team
   const [parties, setParties] = useState<PartiesState>(INITIAL_PARTIES);
-  // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）
+  // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）。読めなかった保存を退避できなかったときも保存しない
   const [restored, setRestored] = useState(false);
+  // 読めなかった編成の保存の退避と知らせ（savedTeams.ts。plan/design-unreadable-team-save.md）
+  const { controls: unreadableControls, restore } = useUnreadableSaves();
   // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
   const [masters, setMasters] = useState<BuildMasters | null>(null);
   const [mastersError, setMastersError] = useState<string | null>(null);
@@ -68,17 +71,25 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    // StrictMode で 2 回走るので、片付けた後の結果は捨てる（読めなかった保存の退避も 1 回だけ）
+    let cancelled = false;
     loadCharacterIndex({ baseUrl: BASE_URL })
       .then((i) => {
+        if (cancelled) return;
         setIndex(i.characters);
-        const saved = parseTeamState(readStorage(STORAGE_KEY), i.characters);
-        if (saved) dispatch({ type: 'replace', state: saved });
-        const savedParties = parseParties(readStorage(PARTIES_STORAGE_KEY), i.characters);
-        if (savedParties) setParties(savedParties);
-        setRestored(true);
+        // 読めなかった保存は、ここで同期して退避してから保存を始める（下の effect が上書きする前に）
+        const saved = restore(i.characters);
+        if (saved.team) dispatch({ type: 'replace', state: saved.team });
+        if (saved.parties) setParties(saved.parties);
+        if (saved.unsaved.length === 0) setRestored(true);
       })
-      .catch((e: unknown) => setLoadError(String(e)));
-  }, []);
+      .catch((e: unknown) => {
+        if (!cancelled) setLoadError(String(e));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [restore]);
 
   useEffect(() => {
     if (!restored) return;
@@ -217,6 +228,7 @@ export function App() {
           <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} listOrder={listOrderControls} />
         </div>
       </header>
+      <UnreadableSavesNotice {...unreadableControls} />
       {loadError && <p className="error">データの読み込みに失敗しました: {loadError}</p>}
       {index === null && !loadError && <p>キャラ一覧を読み込み中…</p>}
       {viewProps && (

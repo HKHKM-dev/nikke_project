@@ -5,6 +5,7 @@ import {
   otherPartyResourceIds,
   parseParties,
   partyOf,
+  readParties,
   serializeParties,
   switchParty,
 } from './parties.ts';
@@ -59,6 +60,28 @@ describe('parties', () => {
     expect(parseParties(JSON.stringify({ ...raw, parties: [] }), index)).toBeNull();
     expect(parseParties('{', index)).toBeNull();
     expect(parseParties(null, index)).toBeNull();
+  });
+
+  it('readParties gives the reason for a broken list and the parties it emptied', () => {
+    const { parties } = switchParty(INITIAL_PARTIES, withCharacter(INITIAL_TEAM_STATE, 0, 10), 1);
+    const raw = JSON.parse(serializeParties(parties));
+    expect(readParties('{', index)).toEqual({ ok: false, error: 'JSON として読めません' });
+    expect(readParties('[]', index)).toEqual({ ok: false, error: '編成の一覧の JSON ではありません' });
+    expect(readParties(JSON.stringify({ ...raw, formatVersion: undefined }), index)).toEqual({
+      ok: false,
+      error: 'この版の編成の一覧は読めません（formatVersion undefined）',
+    });
+    expect(readParties(JSON.stringify({ ...raw, active: 5 }), index).ok).toBe(false);
+    expect(readParties(JSON.stringify({ ...raw, parties: [] }), index).ok).toBe(false);
+
+    // 未使用の編成（null）と選んでいる編成の欄は数えない。オブジェクトでない値と形が合わないものは空にして数える
+    expect(readParties(serializeParties(parties), index)).toEqual({ ok: true, value: parties, dropped: [] });
+    raw.parties[1] = { slots: 'ignored' };
+    raw.parties[2] = { slots: 'x' };
+    raw.parties[4] = 5;
+    const read = readParties(JSON.stringify(raw), index);
+    expect(read.ok && read.dropped).toEqual([2, 4]);
+    expect(read.ok && read.value.parties[0]?.slots[0]?.resourceId).toBe(10);
   });
 
   it('reads the versions the team reads, and rejects an unknown (newer) formatVersion', () => {
