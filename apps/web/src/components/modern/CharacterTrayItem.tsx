@@ -13,8 +13,8 @@ type Props = {
   character: CharacterIndexEntry;
   /** いまの編成のどこかのスロットにいる（置けない。plan/design-ui-rebuild.md 5.2 節） */
   isTaken: boolean;
-  /** ほかの編成で使用中（置ける） */
-  inOtherParty: boolean;
+  /** このニケを選んでいるほかの編成の番号（1 から。置ける）。右上（限界突破・コア強化の下）に P1・P2 と出す */
+  otherParties: readonly number[];
   isUnsupported: boolean;
   /** 置くスロットのクリックを待っている */
   isPending: boolean;
@@ -102,7 +102,7 @@ export function TrayItemFace({
 export function CharacterTrayItem({
   character,
   isTaken,
-  inOtherParty,
+  otherParties,
   isUnsupported,
   isPending,
   growthMarks,
@@ -140,15 +140,28 @@ export function CharacterTrayItem({
         collectionBadge={collectionBadge}
         shape={shape}
         overlay={
-          isTaken && (
+          isTaken ? (
             // ✓ はバッジの絵（ui_check.svg）を型に、水色で塗る（白い縁取りは外側の箱に付ける。型で切ると縁取りも切れるので）
             <span className="char-tray-item-check" aria-hidden="true">
               <span className="mask-icon" style={maskIconStyle(checkIcon)} />
             </span>
+          ) : (
+            otherParties.length > 0 && (
+              // 四角の絵で限界突破・コア強化を出すときは、その下に置く
+              <span
+                className={`char-tray-item-parties ${shape === 'square' && growthMarks ? 'char-tray-item-parties-below-growth' : ''}`}
+                aria-label={`ほかの編成で使用中: ${otherParties.map((n) => `P${n}`).join('・')}`}
+              >
+                {otherParties.map((n) => (
+                  <span key={n} className="char-tray-item-party">
+                    P{n}
+                  </span>
+                ))}
+              </span>
+            )
           )
         }
       />
-      {inOtherParty && !isTaken && <span className="char-tray-item-other-badge">他の編成</span>}
     </button>
   );
 }

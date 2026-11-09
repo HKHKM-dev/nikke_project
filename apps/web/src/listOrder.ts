@@ -2,7 +2,6 @@
 // 名前順と戦闘力順。戦闘力順は、育成状況にいるキャラを戦闘力の降順で先に並べ、いないキャラ（と戦闘力を出せないキャラ）を
 // その後に名前順で並べる。戦闘力が同じキャラの実機の一覧での順は、育成データに出ない値で決まるので（C-0989）、名前順にする（7 節）。
 import type { CharacterIndexEntry } from '@nikke/core';
-import { formatNumber } from './format.ts';
 
 export type ListOrder = 'name' | 'combatPower';
 export const LIST_ORDERS: readonly ListOrder[] = ['name', 'combatPower'];
@@ -31,10 +30,4 @@ export function orderCharacters(
   if (order === 'name') return [...index].sort(byName);
   const power = (c: CharacterIndexEntry) => powers.get(c.resourceId) ?? -1;
   return [...index].sort((a, b) => power(b) - power(a) || byName(a, b));
-}
-
-/** 一覧に添える戦闘力（戦闘力順のときだけ。出せないキャラは空） */
-export function combatPowerNote(order: ListOrder, powers: ReadonlyMap<number, number>, resourceId: number): string {
-  const value = order === 'combatPower' ? powers.get(resourceId) : undefined;
-  return value === undefined ? '' : `（戦闘力 ${formatNumber(value)}）`;
 }

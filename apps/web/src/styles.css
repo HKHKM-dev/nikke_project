@@ -1291,13 +1291,29 @@ html:has(.modern-view-container) {
   flex: 1;
   color: var(--placing-blue);
 }
-.char-tray-item-other-badge {
+/* ほかの編成で使用中のニケの編成の番号（P1・P2）。絵の右上に縦に並べ、四角の絵で限界突破・コア強化を出すときはその下に置く */
+.char-tray-item-parties {
   position: absolute;
-  top: 6px;
-  background: rgba(0, 0, 0, 0.8);
+  top: 2px;
+  right: 2px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  pointer-events: none;
+}
+.char-tray-item-parties-below-growth {
+  /* .char-tray-growth（top 2px・コアの印の高さ 16px）の下 */
+  top: 20px;
+}
+.char-tray-item-party {
+  background: var(--placing-blue);
   color: #fff;
-  font-size: 0.65rem;
-  padding: 1px 4px;
+  font-size: 0.6rem;
+  font-weight: bold;
+  line-height: 1.2;
+  padding: 0 3px;
 }
 
 /* Modal ダイアログ */

@@ -36,15 +36,22 @@ export function partyHasCharacters(party: Party): boolean {
   return party.slots.some((s) => s.resourceId !== null);
 }
 
+/** ニケ → そのニケを選んでいるほかの編成の番号（1 から。小さい順） */
+export type OtherParties = ReadonlyMap<number, readonly number[]>;
 /**
  * ほかの編成（選んでいる編成のほか）で選んでいるニケ。キャラの選択肢とトレイに「ほかの編成で使用中」の印を出す
  * （ソロレイドでは同じニケを 2 つの編成に入れられない。plan/design-ui-rebuild.md 5.2 節）
  */
-export function otherPartyResourceIds(state: PartiesState): Set<number> {
-  const ids = new Set<number>();
+export function otherPartyResourceIds(state: PartiesState): OtherParties {
+  const ids = new Map<number, number[]>();
   state.parties.forEach((p, i) => {
     if (i === state.active || p === null) return;
-    for (const s of p.slots) if (s.resourceId !== null) ids.add(s.resourceId);
+    for (const s of p.slots) {
+      if (s.resourceId === null) continue;
+      const numbers = ids.get(s.resourceId) ?? [];
+      if (!numbers.includes(i + 1)) numbers.push(i + 1);
+      ids.set(s.resourceId, numbers);
+    }
   });
   return ids;
 }
