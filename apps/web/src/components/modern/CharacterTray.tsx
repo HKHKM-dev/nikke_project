@@ -1,7 +1,14 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
-import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
+import {
+  BADGE_KINDS,
+  matchesBadgeFilters,
+  toggleBadgeFilter,
+  trayCollectionBadge,
+  type BadgeFilters,
+  type BadgeKind,
+} from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
@@ -27,29 +34,32 @@ type Props = {
   onSelectCharacter: (resourceId: number) => void;
 };
 
-/** 1 種類のバッジを並べた絞り込み（押したときの切り替えは toggleBadgeFilter） */
+/** 1 種類のバッジを並べた絞り込み（同じ種類でも複数選べる。押したときの切り替えは toggleBadgeFilter） */
 function BadgeFilter({
   kind,
-  value,
+  values,
   onToggle,
 }: {
   kind: BadgeKind;
-  value: string | undefined;
+  values: readonly string[] | undefined;
   onToggle: (value: string) => void;
 }) {
   return (
     <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
-      {Object.entries(kind.badges).map(([v, { src, label }]) => (
-        <button
-          key={v}
-          type="button"
-          className="char-tray-badge-button"
-          aria-pressed={value === v}
-          onClick={() => onToggle(v)}
-        >
-          <img className="char-badge" src={src} alt={label} draggable={false} />
-        </button>
-      ))}
+      {(kind.filterValues ?? Object.keys(kind.badges)).map((v) => {
+        const { src, label } = kind.badges[v]!;
+        return (
+          <button
+            key={v}
+            type="button"
+            className="char-tray-badge-button"
+            aria-pressed={values?.includes(v) ?? false}
+            onClick={() => onToggle(v)}
+          >
+            <img className="char-badge" src={src} alt={label} draggable={false} />
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -92,10 +102,19 @@ export function CharacterTray({
               <BadgeFilter
                 key={kind.key}
                 kind={kind}
-                value={filters[kind.key]}
+                values={filters[kind.key]}
                 onToggle={(value) => setFilters((f) => toggleBadgeFilter(f, kind.key, value))}
               />
             ))}
+            {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない） */}
+            <button
+              type="button"
+              className="char-tray-action-button char-tray-filter-clear"
+              aria-disabled={Object.keys(filters).length === 0}
+              onClick={() => setFilters((f) => (Object.keys(f).length === 0 ? f : {}))}
+            >
+              クリア
+            </button>
           </div>
         </div>
         {/* 並べ替え（名前順・戦闘力順）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
@@ -152,6 +171,8 @@ export function CharacterTray({
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
+                // コレクションのバッジは縦長の絵にだけ出す
+                collectionBadge={shape === 'tall' ? trayCollectionBadge(char, roster, fixedSpec) : null}
                 shape={shape}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />

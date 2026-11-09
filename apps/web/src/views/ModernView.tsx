@@ -13,7 +13,7 @@ import {
   type MouseSensorOptions,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -22,10 +22,11 @@ import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
-import { collectionBadge } from '../components/modern/badges.ts';
+import { collectionBadge, trayCollectionBadge, type Badge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
+import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } from '../components/modern/flight.ts';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
 import { useTrayShape } from '../trayShape.ts';
@@ -44,83 +45,28 @@ const dropState: { targetIndex: number | null; placed: boolean } = {
   placed: false,
 };
 
+/** 一覧のそのニケの絵（一覧に出ていなければ null） */
+const trayVisualAt = (resourceId: number) =>
+  document.querySelector(`.char-tray-item[data-resource-id="${resourceId}"] .char-tray-item-visual`);
+
+/** 離したドロップの結果を書く（ドロップの処理から、描画の外の dropState を書き換える） */
+function setDropState(next: Partial<typeof dropState>): void {
+  Object.assign(dropState, next);
+}
+
+/** 置いたニケのスロットに絵が入るのを待つ長さ（ms） */
+const ARRIVAL_WAIT_MS = 1000;
+const arrivalDeadline = () => performance.now() + ARRIVAL_WAIT_MS;
+
 const slotCardAt = (index: number | null) =>
   index === null
     ? null
     : (document.querySelectorAll<HTMLElement>('.modern-slots-grid > .modern-slot-card')[index] ?? null);
 
 /**
- * アニメーションで動かす立ち絵の枠の写し。立ち絵の画像は遅延読み込み・非同期の描画（CharacterVisual）なので、写しのままだと
- * 動き始めの数フレームは画像が空で、立ち絵の枠（明るい背景と枠線）だけが白い枠のように見える。写しの画像はすぐ読んで描く
- */
-function cloneForAnimation(node: Element): HTMLElement {
-  const copy = node.cloneNode(true) as HTMLElement;
-  for (const img of copy.querySelectorAll('img')) {
-    img.loading = 'eager';
-    img.decoding = 'sync';
-  }
-  return copy;
-}
-
-/**
- * 要素の中の画像を描ける状態にする（デコードを済ませる）。入れ替えたスロットは着くまで隠すので（modern-slot-arriving）、新しい画像は
- * 描かれずデコードもされない。画像は非同期の描画（decoding="async"）なので、そのまま隠しを外すと最初のフレームは画像が空で、
- * 立ち絵の枠（明るい背景と枠線）だけが白い枠のように見える。隠しを外すのは、これが済んでから
- */
-function decodeImages(node: Element): Promise<void> {
-  return Promise.all([...node.querySelectorAll('img')].map((img) => img.decode().catch(() => undefined))).then(
-    () => undefined,
-  );
-}
-
-/**
- * 持ち上げたものが落とした先のスロットへ滑り込む動き（DROP_ANIMATION と同じ長さ・動き方）。動くのは、落とした先のスロットの
- * 立ち絵の枠全体（名前・限界突破・✕ などを含む）の写しで、離した位置（from の要素の位置）から行き先まで動かす。
- * 着いたら、行き先の画像が描ける（ready）まで写しをその場に残してから、本物に切り替える
- */
-function slideInto(from: Element, target: Element, ready: Promise<void>): () => void {
-  const content = target.querySelector('.modern-slot-char-area');
-  if (!content) return () => undefined;
-  const start = from.getBoundingClientRect();
-  const to = content.getBoundingClientRect();
-  const ghost = cloneForAnimation(content);
-  Object.assign(ghost.style, {
-    position: 'fixed',
-    left: `${start.left}px`,
-    top: `${start.top}px`,
-    width: `${to.width}px`,
-    height: `${to.height}px`,
-    margin: '0',
-    zIndex: '9999',
-    pointerEvents: 'none',
-  });
-  document.body.appendChild(ghost);
-  target.classList.add('modern-slot-arriving');
-  let finished = false;
-  const done = () => {
-    if (finished) return;
-    finished = true;
-    void ready.then(() => {
-      ghost.remove();
-      target.classList.remove('modern-slot-arriving');
-    });
-  };
-  ghost
-    .animate(
-      [
-        { transform: 'translate(0, 0)' },
-        { transform: `translate(${to.left - start.left}px, ${to.top - start.top}px)` },
-      ],
-      { duration: 250, easing: 'ease', fill: 'forwards' },
-    )
-    .finished.then(done, done);
-  return done;
-}
-
-/**
  * 入れ替えたときは、ドラッグ元へ戻っていく絵を、ドラッグ元に新しく入ったもの（空のスロット・入れ替わったニケ）の絵に差し替える
  * （持ち上げたニケの絵のままだと、そのニケがドラッグ元へ戻るように見える）。持ち上げたもの（動かした側）は、離した位置から
- * 落とした先のスロットへ滑り込ませる（slideInto）。どちらも着くまで行き先の絵は隠す（modern-slot-arriving）
+ * 落とした先のスロットへ滑り込ませる（flyIntoSlot）。どちらも着くまで行き先の絵は隠す（modern-slot-arriving）
  */
 const DROP_ANIMATION: DropAnimation = {
   // 行き先が決まったとき（dropState.placed）は動かさない（始めと終わりが同じなら、dnd-kit はアニメーションをしない）
@@ -138,7 +84,7 @@ const DROP_ANIMATION: DropAnimation = {
     // 持ち上げたもの（動かした側）は、落とした先のスロットへ滑り込ませる
     const target = slotCardAt(dropState.targetIndex);
     const sourceReady = decodeImages(args.active.node);
-    const finishSlide = target ? slideInto(holder, target, decodeImages(target)) : () => undefined;
+    const finishSlide = target ? flyIntoSlot(holder.getBoundingClientRect(), target) : () => undefined;
     const saved = [...holder.childNodes];
     holder.replaceChildren(cloneForAnimation(incoming));
     // 持ち上げたときの影は付けない（収まった瞬間に影が消えて、枠のように見える。滑り込む側にも影は無い）
@@ -237,13 +183,69 @@ export function ModernView({
     const inRoster = resourceId !== null && roster?.characters[String(resourceId)] !== undefined;
     return character && (inRoster || team.fixedSpec) ? growthMarksOf(character.rarity, growth) : null;
   };
-  // 持ち上げたスロットの限界突破・コア強化（持ち上げた絵に名前と一緒に出す）
-  const [draggedMarks, setDraggedMarks] = useState<GrowthMarks | null>(null);
+  // スロットの絵のバッジの列の最後に出すコレクション（宝物を付けていれば宝物）
+  const slotCollectionBadge = (i: number): Badge | null => {
+    const { character, build, treasurePhase } = calc.slots[i]!;
+    return collectionBadge(build.collection, treasurePhase, (character?.treasure ?? null) !== null);
+  };
+  // 持ち上げたものの限界突破・コア強化とコレクションのバッジ（持ち上げた絵に、名前と一緒に出す）
+  const [draggedExtras, setDraggedExtras] = useState<{ marks: GrowthMarks | null; collection: Badge | null }>({
+    marks: null,
+    collection: null,
+  });
+  const { marks: draggedMarks, collection: draggedCollection } = draggedExtras;
+
+  // 置いたニケがスロットへ動き始める位置。置いた後の描画（スロットに絵が入った後）で動かし始める
+  // スロットにまだ絵が入っていない描画（置く操作と別の描画が先に来たとき）では動かさず、次の描画を待つ（ARRIVAL_WAIT_MS まで）
+  const arrivalsRef = useRef<{ index: number; from: DOMRect; until: number }[]>([]);
+  useLayoutEffect(() => {
+    arrivalsRef.current = arrivalsRef.current.filter(({ index, from, until }) => {
+      const card = slotCardAt(index);
+      if (card?.querySelector('.modern-slot-char-area .char-visual')) {
+        flyIntoSlot(from, card);
+        return false;
+      }
+      return performance.now() < until;
+    });
+  });
+
+  /**
+   * スロット index のニケを外す直前に、その立ち絵を一覧のそのニケの絵へ動かす。content は動かす絵（無ければスロットの立ち絵の枠。
+   * 持ち上げて一覧へ落としたときは、持ち上げた絵）
+   */
+  const sendToTray = (index: number, content = slotCardAt(index)?.querySelector('.modern-slot-char-area') ?? null) => {
+    const id = team.slots[index]?.resourceId;
+    if (id === null || id === undefined || !content) return;
+    flyToTray(content, trayVisualAt(id)?.getBoundingClientRect() ?? null);
+  };
+
+  /** スロット index を空にし、外したニケの立ち絵を一覧へ動かす（content は sendToTray と同じ） */
+  const clearSlot = (index: number, content?: Element | null) => {
+    sendToTray(index, content ?? undefined);
+    stopArrival(slotCardAt(index));
+    dispatch({ type: 'clearSlot', index });
+  };
+
+  /**
+   * 一覧のニケをスロット index に置く。いたニケは一覧へ、置いたニケは from（無ければ一覧のそのニケの絵）からスロットへ動かす。
+   * 置けない（どこかのスロットにいる）ときは何もしない。置いたかを返す
+   */
+  const placeFromTray = (
+    resourceId: number,
+    index: number,
+    from = trayVisualAt(resourceId)?.getBoundingClientRect(),
+  ): boolean => {
+    const action = placeCharacterAction(team, resourceId, index);
+    if (!action) return false;
+    sendToTray(index);
+    if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline() });
+    dispatch(action);
+    return true;
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
-    dropState.targetIndex = null;
-    dropState.placed = false;
+    setDropState({ targetIndex: null, placed: false });
     if (noScrollNodeRef.current) Reflect.deleteProperty(noScrollNodeRef.current, 'scrollIntoView');
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
@@ -253,13 +255,18 @@ export function ModernView({
       setDraggedCharacter(data.character as CharacterIndexEntry);
     }
     setDraggedEmptyIndex(data?.type === 'slot-character' && !data.character ? (data.slotIndex as number) : null);
-    setDraggedMarks(
-      data?.type === 'slot-character'
-        ? slotGrowthMarks(data.slotIndex as number)
-        : data?.character
-          ? trayGrowthMarks(data.character as CharacterIndexEntry, roster, team.fixedSpec)
-          : null,
-    );
+    if (data?.type === 'slot-character') {
+      const i = data.slotIndex as number;
+      setDraggedExtras({ marks: slotGrowthMarks(i), collection: slotCollectionBadge(i) });
+    } else if (data?.character) {
+      const char = data.character as CharacterIndexEntry;
+      setDraggedExtras({
+        marks: trayGrowthMarks(char, roster, team.fixedSpec),
+        collection: trayCollectionBadge(char, roster, team.fixedSpec),
+      });
+    } else {
+      setDraggedExtras({ marks: null, collection: null });
+    }
     // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
     const card =
       event.active.data.current?.type === 'slot-character'
@@ -296,9 +303,12 @@ export function ModernView({
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
       if (activeData.type === 'slot-character' && activeData.character) {
-        // 外したニケはスロットへ戻らないので、戻るアニメーションはしない
-        dropState.placed = true;
-        dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
+        // 外したニケはスロットへ戻らないので、戻るアニメーションはしない。持ち上げた絵を一覧のそのニケの絵へ動かす
+        setDropState({ placed: true });
+        clearSlot(
+          activeData.slotIndex as number,
+          document.querySelector('.slot-drag-overlay-portrait .modern-slot-char-area'),
+        );
       }
       return;
     }
@@ -307,15 +317,14 @@ export function ModernView({
 
     if (activeData.type === 'tray-character') {
       // どこかのスロットにいるキャラは置かない（placeCharacterAction。トレイでも持ち上げられない）
+      // 持ち上げた絵は、離した位置からスロットへ動かす
       const char = activeData.character as CharacterIndexEntry;
-      const action = placeCharacterAction(team, char.resourceId, targetSlotIndex);
-      if (!action) return;
-      dropState.placed = true;
-      dispatch(action);
+      const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+      if (placeFromTray(char.resourceId, targetSlotIndex, from)) setDropState({ placed: true });
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
-        dropState.targetIndex = targetSlotIndex;
+        setDropState({ targetIndex: targetSlotIndex });
         dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
       }
     }
@@ -333,7 +342,7 @@ export function ModernView({
     // いまの編成のスロットにいるニケをクリックしたら、そのスロットから外す
     const takenIndex = team.slots.findIndex((s) => s.resourceId === resourceId);
     if (takenIndex !== -1) {
-      dispatch({ type: 'clearSlot', index: takenIndex });
+      clearSlot(takenIndex);
       setPendingId(null);
       return;
     }
@@ -342,16 +351,14 @@ export function ModernView({
       setPendingId((id) => (id === resourceId ? null : resourceId));
       return;
     }
-    const action = placeCharacterAction(team, resourceId, emptyIndex);
-    if (action) dispatch(action);
+    placeFromTray(resourceId, emptyIndex);
     setPendingId(null);
   };
 
   // 待っているニケを、クリックしたスロットに置く（いたニケは外れて一覧に戻る）
   const handlePlacePending = (index: number) => {
     if (pendingId === null) return;
-    const action = placeCharacterAction(team, pendingId, index);
-    if (action) dispatch(action);
+    placeFromTray(pendingId, index);
     setPendingId(null);
   };
 
@@ -392,7 +399,7 @@ export function ModernView({
 
         <section className="modern-slots-grid" aria-label="編成スロット一覧">
           {team.slots.map((slot, i) => {
-            const { character, build, treasurePhase } = calc.slots[i]!;
+            const { character } = calc.slots[i]!;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
             const isUnsupported =
               slot.resourceId !== null && fullySupported !== null && !fullySupported.has(slot.resourceId);
@@ -407,15 +414,11 @@ export function ModernView({
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
                 growthMarks={slotGrowthMarks(i)}
-                collectionBadge={collectionBadge(
-                  build.collection,
-                  treasurePhase,
-                  (character?.treasure ?? null) !== null,
-                )}
+                collectionBadge={slotCollectionBadge(i)}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
-                onClear={() => dispatch({ type: 'clearSlot', index: i })}
+                onClear={() => clearSlot(i)}
                 partyTotalDamage={totals.parties[parties.active]?.total ?? null}
               />
             );
@@ -482,7 +485,7 @@ export function ModernView({
                 {draggedCharacter ? (
                   // スロットと同じく、名前と限界突破・コア強化も一緒に持ち上げる
                   <div className="modern-slot-char-area">
-                    <CharacterVisual character={draggedCharacter} size="portrait" />
+                    <CharacterVisual character={draggedCharacter} size="portrait" extraBadge={draggedCollection} />
                     <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
                   </div>
                 ) : (
@@ -497,6 +500,7 @@ export function ModernView({
                 character={draggedCharacter}
                 isUnsupported={false}
                 growthMarks={draggedMarks}
+                collectionBadge={draggedCollection}
                 shape={trayShape}
               />
             </div>

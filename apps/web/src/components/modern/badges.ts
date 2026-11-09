@@ -7,10 +7,12 @@ import {
   ELEMENT_LABEL,
   TREASURE_PHASE_MAX,
   WEAPON_LABEL,
+  type BuildSnapshot,
   type CharacterIndexEntry,
   type CollectionInput,
   type TreasurePhase,
 } from '@nikke/core';
+import { rosterFields } from '../../roster.ts';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
 
@@ -51,6 +53,8 @@ export type BadgeKind = {
   name: string;
   /** 項目の値 → バッジ（並びはゲームの表示の順） */
   badges: Readonly<Record<string, Badge>>;
+  /** トレイの絞り込みのボタンに出す値（無ければ badges の全部） */
+  filterValues?: readonly string[];
 };
 
 /** 項目の値ごとのバッジ（values の順に並べる）。ファイルが無い値があれば読み込みで落とす */
@@ -79,6 +83,8 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
     key: 'burstStep',
     name: 'バースト段階',
     badges: badgesOf('burstStep', ['Step1', 'Step2', 'Step3', 'AllStep'], (v) => `バースト ${BURST_STEP_LABEL[v]}`),
+    // 全段階（AllStep）のボタンは出さない。全段階のニケは、どの段階で絞っても出す（matchesBadgeFilters）
+    filterValues: ['Step1', 'Step2', 'Step3'],
   },
   {
     key: 'class',
@@ -124,16 +130,38 @@ export function collectionBadge(
   return pick(`${collection.rarity}${max ? '-max' : ''}`, `コレクション ${collection.rarity} LV ${collection.level}`);
 }
 
-/** バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない） */
-export type BadgeFilters = Partial<Record<BadgeKey, string>>;
-
-/** キャラが選んだ値にすべて合うか（項目どうしは AND） */
-export function matchesBadgeFilters(char: Pick<CharacterIndexEntry, BadgeKey>, filters: BadgeFilters): boolean {
-  return BADGE_KINDS.every(({ key }) => filters[key] === undefined || char[key] === filters[key]);
+/**
+ * ニケ一覧（縦長）のコレクションのバッジ。育成状況にいるニケだけ、スロットに写すのと同じコレクション・宝物で出す
+ * （rosterFields。宝物の段階が未確定なら宝物なし）。スペック固定はコレクションを使わないので出さない
+ */
+export function trayCollectionBadge(
+  char: Pick<CharacterIndexEntry, 'resourceId'>,
+  roster: BuildSnapshot | null,
+  fixedSpec: boolean,
+): Badge | null {
+  const entry = fixedSpec ? undefined : roster?.characters[String(char.resourceId)];
+  if (!entry) return null;
+  const { build, treasurePhase } = rosterFields(entry);
+  return collectionBadge(build.collection, treasurePhase, entry.treasure !== null);
 }
 
-/** バッジを押した後の絞り込み。押されていた値なら解除し、それ以外はその項目をその値にする */
+/** バッジの絞り込み（項目 → 選んだ値。1 つも選んでいない項目は持たず、絞らない） */
+export type BadgeFilters = Partial<Record<BadgeKey, readonly string[]>>;
+
+/**
+ * キャラが選んだ値に合うか。同じ項目で選んだ値どうしは OR（どれか 1 つに合えばよい）、項目どうしは AND。
+ * バースト段階が全段階のキャラは、どの段階にも合う
+ */
+export function matchesBadgeFilters(char: Pick<CharacterIndexEntry, BadgeKey>, filters: BadgeFilters): boolean {
+  return BADGE_KINDS.every(({ key }) => {
+    const values = filters[key];
+    return values === undefined || values.includes(char[key]) || (key === 'burstStep' && char.burstStep === 'AllStep');
+  });
+}
+
+/** バッジを押した後の絞り込み。選んでいた値なら外し、それ以外はその項目の選んだ値に足す */
 export function toggleBadgeFilter(filters: BadgeFilters, key: BadgeKey, value: string): BadgeFilters {
-  const { [key]: current, ...rest } = filters;
-  return current === value ? rest : { ...rest, [key]: value };
+  const { [key]: current = [], ...rest } = filters;
+  const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+  return next.length === 0 ? rest : { ...rest, [key]: next };
 }
