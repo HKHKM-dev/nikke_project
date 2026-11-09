@@ -38,7 +38,11 @@
           "target": "self",
           "stat": "critRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1007",
+            "C-1008"
+          ]
         },
         {
           "kind": "timed",
@@ -47,7 +51,11 @@
           "targetWeapon": "SG",
           "stat": "maxAmmo",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1004",
+            "C-1008"
+          ]
         }
       ]
     },
@@ -59,7 +67,11 @@
           "target": "self",
           "stat": "attackSpeed",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1005",
+            "C-1008"
+          ]
         },
         {
           "kind": "timed",
@@ -71,7 +83,11 @@
           "assumes": {
             "ja": "SG の命中率▲は、近（近 A・近 B）でだけ弾丸命中率を上げる形で回す（C-0631）。中近・中遠・遠は上げない形（C-0527。m × (1 − N) の形とは見分けていない）",
             "en": "Hit Rate up on an SG raises the pellet hit rate only at near (near A/B) (C-0631). At mid-near, mid-far and far it is run as having no effect (C-0527; not distinguished from the m × (1 − N) form)"
-          }
+          },
+          "claims": [
+            "C-1007",
+            "C-1008"
+          ]
         }
       ]
     }
@@ -84,11 +100,16 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 7,
-          "reads": ["cover"],
+          "reads": [
+            "cover"
+          ],
           "assumes": {
             "ja": "自分の遮蔽物は破壊されない（被弾を扱わない。要件 5.2 節）ので、戦闘のはじめから終わりまで効く",
             "en": "Her cover is never destroyed (taking hits is not modeled; requirements 5.2), so it applies from start to end of battle"
-          }
+          },
+          "claims": [
+            "C-1002"
+          ]
         },
         {
           "kind": "passive",
@@ -98,7 +119,10 @@
           "assumes": {
             "ja": "灼熱コードの敵を、自分のコード（鉄甲）の有利として扱う（有利の 1.1 倍。有利コードの攻撃ダメージ▲も有利の時と同じに乗る）",
             "en": "Fire Code enemies are treated as weak to her code (Iron): the 1.1 advantage multiplier applies, and Elemental Advantage damage buffs apply as for an advantage"
-          }
+          },
+          "claims": [
+            "C-1002"
+          ]
         }
       ],
       "notes": [
@@ -144,7 +168,10 @@
           "target": "self",
           "stat": "critRate",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1007"
+          ]
         },
         {
           "kind": "timed",
@@ -152,7 +179,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1003"
+          ]
         },
         {
           "kind": "timed",
@@ -161,7 +191,10 @@
           "targetWeapon": "SG",
           "stat": "maxAmmo",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-1004"
+          ]
         },
         {
           "kind": "timed",
@@ -175,7 +208,10 @@
           "assumes": {
             "ja": "「水冷コードまたは鉄甲コードのショットガンを所持する味方全体」は、水冷の SG と鉄甲の SG の 2 つの効果に分けて書く（どの味方もどちらか 1 つにだけ当たる）",
             "en": "\"All Water Code and Iron Code allies with shotguns\" is written as two effects, one for Water SG and one for Iron SG (each ally matches only one)"
-          }
+          },
+          "claims": [
+            "C-1006"
+          ]
         },
         {
           "kind": "timed",
@@ -189,7 +225,10 @@
           "assumes": {
             "ja": "「水冷コードまたは鉄甲コードのショットガンを所持する味方全体」の鉄甲の側（自分を含む）",
             "en": "The Iron side of \"all Water Code and Iron Code allies with shotguns\" (including herself)"
-          }
+          },
+          "claims": [
+            "C-1003"
+          ]
         }
       ]
     },
@@ -201,7 +240,10 @@
           "target": "self",
           "stat": "attackSpeed",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1005"
+          ]
         },
         {
           "kind": "timed",
@@ -213,7 +255,10 @@
           "assumes": {
             "ja": "SG の命中率▲は、近（近 A・近 B）でだけ弾丸命中率を上げる形で回す（C-0631）。中近・中遠・遠は上げない形（C-0527。m × (1 − N) の形とは見分けていない）",
             "en": "Hit Rate up on an SG raises the pellet hit rate only at near (near A/B) (C-0631). At mid-near, mid-far and far it is run as having no effect (C-0527; not distinguished from the m × (1 − N) form)"
-          }
+          },
+          "claims": [
+            "C-1007"
+          ]
         },
         {
           "kind": "timed",
@@ -221,7 +266,10 @@
           "target": "self",
           "stat": "attack",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-1003"
+          ]
         },
         {
           "kind": "timed",
@@ -235,7 +283,10 @@
           "assumes": {
             "ja": "「水冷コードまたは鉄甲コードのショットガンを所持する味方全体」は、水冷の SG と鉄甲の SG の 2 つの効果に分けて書く（どの味方もどちらか 1 つにだけ当たる）",
             "en": "\"All Water Code and Iron Code allies with shotguns\" is written as two effects, one for Water SG and one for Iron SG (each ally matches only one)"
-          }
+          },
+          "claims": [
+            "C-1006"
+          ]
         },
         {
           "kind": "timed",
@@ -249,7 +300,10 @@
           "assumes": {
             "ja": "「水冷コードまたは鉄甲コードのショットガンを所持する味方全体」の鉄甲の側（自分を含む）",
             "en": "The Iron side of \"all Water Code and Iron Code allies with shotguns\" (including herself)"
-          }
+          },
+          "claims": [
+            "C-1003"
+          ]
         }
       ]
     }
