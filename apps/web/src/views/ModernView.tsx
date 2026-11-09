@@ -26,7 +26,7 @@ import { collectionBadge, trayCollectionBadge, type Badge } from '../components/
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
-import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray } from '../components/modern/flight.ts';
+import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } from '../components/modern/flight.ts';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
 import { useTrayShape } from '../trayShape.ts';
@@ -53,6 +53,10 @@ const trayVisualAt = (resourceId: number) =>
 function setDropState(next: Partial<typeof dropState>): void {
   Object.assign(dropState, next);
 }
+
+/** 置いたニケのスロットに絵が入るのを待つ長さ（ms） */
+const ARRIVAL_WAIT_MS = 1000;
+const arrivalDeadline = () => performance.now() + ARRIVAL_WAIT_MS;
 
 const slotCardAt = (index: number | null) =>
   index === null
@@ -192,12 +196,17 @@ export function ModernView({
   const { marks: draggedMarks, collection: draggedCollection } = draggedExtras;
 
   // 置いたニケがスロットへ動き始める位置。置いた後の描画（スロットに絵が入った後）で動かし始める
-  const arrivalsRef = useRef<{ index: number; from: DOMRect }[]>([]);
+  // スロットにまだ絵が入っていない描画（置く操作と別の描画が先に来たとき）では動かさず、次の描画を待つ（ARRIVAL_WAIT_MS まで）
+  const arrivalsRef = useRef<{ index: number; from: DOMRect; until: number }[]>([]);
   useLayoutEffect(() => {
-    for (const { index, from } of arrivalsRef.current.splice(0)) {
+    arrivalsRef.current = arrivalsRef.current.filter(({ index, from, until }) => {
       const card = slotCardAt(index);
-      if (card) flyIntoSlot(from, card);
-    }
+      if (card?.querySelector('.modern-slot-char-area .char-visual')) {
+        flyIntoSlot(from, card);
+        return false;
+      }
+      return performance.now() < until;
+    });
   });
 
   /**
@@ -208,6 +217,13 @@ export function ModernView({
     const id = team.slots[index]?.resourceId;
     if (id === null || id === undefined || !content) return;
     flyToTray(content, trayVisualAt(id)?.getBoundingClientRect() ?? null);
+  };
+
+  /** スロット index を空にし、外したニケの立ち絵を一覧へ動かす（content は sendToTray と同じ） */
+  const clearSlot = (index: number, content?: Element | null) => {
+    sendToTray(index, content ?? undefined);
+    stopArrival(slotCardAt(index));
+    dispatch({ type: 'clearSlot', index });
   };
 
   /**
@@ -222,7 +238,7 @@ export function ModernView({
     const action = placeCharacterAction(team, resourceId, index);
     if (!action) return false;
     sendToTray(index);
-    if (from) arrivalsRef.current.push({ index, from });
+    if (from) arrivalsRef.current.push({ index, from, until: arrivalDeadline() });
     dispatch(action);
     return true;
   };
@@ -289,11 +305,10 @@ export function ModernView({
       if (activeData.type === 'slot-character' && activeData.character) {
         // 外したニケはスロットへ戻らないので、戻るアニメーションはしない。持ち上げた絵を一覧のそのニケの絵へ動かす
         setDropState({ placed: true });
-        sendToTray(
+        clearSlot(
           activeData.slotIndex as number,
           document.querySelector('.slot-drag-overlay-portrait .modern-slot-char-area'),
         );
-        dispatch({ type: 'clearSlot', index: activeData.slotIndex as number });
       }
       return;
     }
@@ -327,8 +342,7 @@ export function ModernView({
     // いまの編成のスロットにいるニケをクリックしたら、そのスロットから外す
     const takenIndex = team.slots.findIndex((s) => s.resourceId === resourceId);
     if (takenIndex !== -1) {
-      sendToTray(takenIndex);
-      dispatch({ type: 'clearSlot', index: takenIndex });
+      clearSlot(takenIndex);
       setPendingId(null);
       return;
     }
@@ -404,10 +418,7 @@ export function ModernView({
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
-                onClear={() => {
-                  sendToTray(i);
-                  dispatch({ type: 'clearSlot', index: i });
-                }}
+                onClear={() => clearSlot(i)}
                 partyTotalDamage={totals.parties[parties.active]?.total ?? null}
               />
             );

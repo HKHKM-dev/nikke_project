@@ -111,7 +111,7 @@ export function CharacterTray({
               type="button"
               className="char-tray-action-button char-tray-filter-clear"
               aria-disabled={Object.keys(filters).length === 0}
-              onClick={() => setFilters({})}
+              onClick={() => setFilters((f) => (Object.keys(f).length === 0 ? f : {}))}
             >
               クリア
             </button>
