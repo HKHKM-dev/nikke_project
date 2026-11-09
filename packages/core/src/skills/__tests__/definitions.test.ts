@@ -179,6 +179,7 @@ describe('data/skills', () => {
                 // エイダ: バーストの特殊改造のチャージダメージ▲は Lv10 で 1500%（上限は 2000% で見る）・チャージ速度▼は 300%（上限は 1000% で見る）
                 // アークレンジャー・ブラック: バーストの持続ダメージ▲は Lv10 で 135.83%（上限は 200% で見る）
                 // プリバティ: 宝物版バーストの有利コードの攻撃ダメージ▲は Lv10 で 130%（上限は 200% で見る）
+                // ディーゼル：ウィンタースイーツ: S2 のフルチャージの持続ダメージ▲は Lv10 で 318.14%（持続ダメージ▲の上限は 400% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat
@@ -189,24 +190,25 @@ describe('data/skills', () => {
                 const limit =
                   stat === 'chargeDamage' || stat === 'chargeSpeedOverflow'
                     ? 2000
-                    : stat === 'maxAmmo' ||
-                        stat === 'projectileStickDamage' ||
-                        stat === 'projectileExplosionDamage' ||
-                        stat === 'chargeSpeed'
-                      ? 1000
-                      : stat !== undefined &&
-                          [
-                            'attack',
-                            'chargeDamageMultiplier',
-                            'sequentialAttackDamage',
-                            'attackDamage',
-                            'hitRate',
-                            'trueDamage',
-                            'sustainedDamage',
-                            'elementDamage',
-                          ].includes(stat)
-                        ? 200
-                        : 100;
+                    : stat === 'sustainedDamage'
+                      ? 400
+                      : stat === 'maxAmmo' ||
+                          stat === 'projectileStickDamage' ||
+                          stat === 'projectileExplosionDamage' ||
+                          stat === 'chargeSpeed'
+                        ? 1000
+                        : stat !== undefined &&
+                            [
+                              'attack',
+                              'chargeDamageMultiplier',
+                              'sequentialAttackDamage',
+                              'attackDamage',
+                              'hitRate',
+                              'trueDamage',
+                              'elementDamage',
+                            ].includes(stat)
+                          ? 200
+                          : 100;
                 expect(v).toBeLessThanOrEqual(limit);
               }
             }

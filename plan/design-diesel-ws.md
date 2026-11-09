@@ -5,7 +5,7 @@
 - 前提の語彙: [design-skill-stage1.md](design-skill-stage1.md) 1.1・1.3〜1.5 節（`selfState`・`undispellable`・状態の付与・`usedBurst`・段 1.5）、[design-nihilister.md](design-nihilister.md) 2.1 節（持続ダメージ `dot`）、[design-sustained-damage-up.md](design-sustained-damage-up.md)（持続ダメージ▲ `sustainedDamage`）、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲）、[design-maids.md](design-maids.md) 2.3・8 節（出来事の回数のきっかけ・命中率▼の表）
 - 検証記録: V-0703
 - 作成日: 2026-11-09
-- 状態: 起案（7 節の論点をオーナーに諮る）
+- 状態: 完了（V-0703。C-1016〜C-1018）
 
 ## 0. 範囲
 
@@ -116,3 +116,5 @@ S1 の 2 つの状態の名前は、英語版の状態名（Intro・Highlight）
 ## 経過
 
 - 2026-11-09: 起案。V-0703 を起こし、撮影を依頼した。
+- 2026-11-09: 7 節の論点をオーナーの承認で推奨どおりに決めた。2 節の語彙と定義 `data/skills/75.json` を実装した。
+- 2026-11-09: 録画 1007〜1010 を読み、H-A・F1・T-after・G1 と決めた（C-1016〜C-1018）。バーストの 2 つの持続ダメージの付き始めがモデルより 6f・12f 遅いのは直さない（plan/burst-effect-delay-candidates.md 2.7.2 節の案 C）。V-0703 を閉じた。

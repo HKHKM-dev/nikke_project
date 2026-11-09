@@ -28,7 +28,10 @@
           "assumes": {
             "ja": "「初めてフルバーストタイムが発動した時」は戦闘で初めてのフルバーストの開始だけ（その後のフルバーストでは付かない）。「直前に自分がバーストスキルを使用していれば」は、そのフルバーストを開いたチェーンで自分がバーストを撃ったか。「復活後も維持」は味方が倒れない前提で何もしない",
             "en": "\"When Full Burst activates for the first time\" is only the start of the first Full Burst of the battle (it is not applied at later Full Bursts). \"If she used her Burst Skill just before\" is whether she fired her Burst in the chain that opened that Full Burst. \"Persists after revival\" does nothing, since allies are assumed not to fall"
-          }
+          },
+          "claims": [
+            "C-1016"
+          ]
         },
         {
           "kind": "state",
@@ -53,7 +56,10 @@
           "assumes": {
             "ja": "イントロと同じ読みで、初めてのフルバーストを開いたチェーンで自分がバーストを撃っていなければ付く（イントロとどちらか 1 つだけ）",
             "en": "Read like Intro: applied if she did not fire her Burst in the chain that opened the first Full Burst (exactly one of Intro and Highlight)"
-          }
+          },
+          "claims": [
+            "C-1016"
+          ]
         },
         {
           "kind": "timed",
@@ -68,7 +74,10 @@
           "assumes": {
             "ja": "初めてのフルバーストでは、同じフレームに付いたイントロを見る（付与の後に判定する）",
             "en": "At the first Full Burst it sees Intro applied on the same frame (judged after the application)"
-          }
+          },
+          "claims": [
+            "C-1016"
+          ]
         },
         {
           "kind": "timed",
@@ -83,7 +92,10 @@
           "assumes": {
             "ja": "初めてのフルバーストでは、同じフレームに付いたクライマックスを見る（付与の後に判定する）",
             "en": "At the first Full Burst it sees Highlight applied on the same frame (judged after the application)"
-          }
+          },
+          "claims": [
+            "C-1016"
+          ]
         }
       ],
       "notes": []
@@ -103,7 +115,10 @@
           "assumes": {
             "ja": "フルチャージの発ごとに 1 スタック足し（上限 2）、付けるたびに全スタックの維持を数え直す",
             "en": "Each full-charge shot adds a stack (up to 2), and each application restarts the duration of all stacks"
-          }
+          },
+          "claims": [
+            "C-1017"
+          ]
         },
         {
           "kind": "dot",
@@ -115,7 +130,10 @@
           "assumes": {
             "ja": "ターゲットは射撃場の的（敵 1 体）。フルバーストの開始に付き、その 1 秒後から 1 秒ごとに 9 回。フルバースト補正・攻撃ダメージ▲・持続ダメージ▲は tick ごとにその時点の状態で乗る",
             "en": "The target is the range target (one enemy). Applied at the start of Full Burst; ticks 9 times every second from 1 s after. The Full Burst bonus, ATK damage up and sustained damage up apply per tick by the state at that tick"
-          }
+          },
+          "claims": [
+            "C-1017"
+          ]
         }
       ],
       "notes": [
@@ -127,7 +145,10 @@
             "kind": "state",
             "target": "allies",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         },
         {
           "ja": "味方の誰かがパーツを破壊した時の、自分の持続ダメージ▲（15 秒）は、射撃場の的にパーツが無いので起きない",
@@ -138,7 +159,10 @@
             "stat": "sustainedDamage",
             "target": "self",
             "trigger": "unknown"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -154,7 +178,10 @@
           "assumes": {
             "ja": "敵全体は敵 1 体。敵の受けるダメージ▲を、味方全体の与ダメージの乗数として持つ",
             "en": "All enemies is the single enemy. The enemy's damage taken up is held as a multiplier on all allies' damage"
-          }
+          },
+          "claims": [
+            "C-1018"
+          ]
         },
         {
           "kind": "dot",
@@ -166,7 +193,10 @@
           "assumes": {
             "ja": "敵全体は敵 1 体。付いた 1 秒後から 1 秒ごとに 9 回",
             "en": "All enemies is the single enemy. Ticks 9 times every second from 1 s after it is applied"
-          }
+          },
+          "claims": [
+            "C-1018"
+          ]
         },
         {
           "kind": "dot",
@@ -178,7 +208,10 @@
           "assumes": {
             "ja": "射撃場の的はターゲットとみる。上の持続ダメージとは別の持続ダメージで、付いた 1 秒後から 1 秒ごとに 9 回",
             "en": "The range target is taken as the stage target. A separate damage-over-time from the one above; ticks 9 times every second from 1 s after it is applied"
-          }
+          },
+          "claims": [
+            "C-1018"
+          ]
         }
       ],
       "notes": [
@@ -201,7 +234,10 @@
             "kind": "stackChange",
             "target": "allies",
             "trigger": "burstUse"
-          }
+          },
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }
