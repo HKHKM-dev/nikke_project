@@ -78,7 +78,7 @@ describe('バッジの絞り込み', () => {
       expect(matchesBadgeFilters(allStep, { burstStep: [step] })).toBe(true);
     }
     expect(matchesBadgeFilters(allStep, { burstStep: ['Step1'], weaponType: ['SG'] })).toBe(false);
-    expect(BADGE_KINDS.find((k) => k.key === 'burstStep')?.filterValues).not.toContain('AllStep');
+    expect(BADGE_KINDS.find((k) => k.key === 'burstStep')?.matchesAll).toBe('AllStep');
   });
 
   it('同じ値をもう一度押すと解除される', () => {

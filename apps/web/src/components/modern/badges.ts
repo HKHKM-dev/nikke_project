@@ -53,9 +53,7 @@ export type BadgeKind = {
   name: string;
   /** 項目の値 → バッジ（並びはゲームの表示の順） */
   badges: Readonly<Record<string, Badge>>;
-  /** トレイの絞り込みのボタンに出す値（無ければ badges の全部） */
-  filterValues?: readonly string[];
-  /** どの値で絞っても合う値（絞り込みのボタンは出さない。バースト段階の全段階） */
+  /** どの値で絞っても合う値（トレイの絞り込みのボタンは出さない。バースト段階の全段階） */
   matchesAll?: string;
 };
 
@@ -86,7 +84,6 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
     name: 'バースト段階',
     badges: badgesOf('burstStep', ['Step1', 'Step2', 'Step3', 'AllStep'], (v) => `バースト ${BURST_STEP_LABEL[v]}`),
     // 全段階（AllStep）のボタンは出さず、全段階のニケは、どの段階で絞っても出す
-    filterValues: ['Step1', 'Step2', 'Step3'],
     matchesAll: 'AllStep',
   },
   {

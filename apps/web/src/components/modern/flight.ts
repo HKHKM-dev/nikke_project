@@ -45,7 +45,7 @@ export function stopArrival(card: Element | null): void {
 function frameAt(rect: DOMRect, base: DOMRect): Keyframe {
   const scale = rect.width / base.width;
   const shown = Math.min(base.height, rect.height / scale);
-  const top = shown < base.height ? rect.top : rect.top + (rect.height - base.height * scale) / 2;
+  const top = rect.top + (rect.height - shown * scale) / 2;
   return {
     transform: `translate(${rect.left - base.left}px, ${top - base.top}px) scale(${scale})`,
     clipPath: `inset(0 0 ${base.height - shown}px 0)`,
