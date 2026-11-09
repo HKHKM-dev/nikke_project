@@ -1,7 +1,7 @@
 // キャラの一覧の並び（listOrder.ts。plan/design-combat-power-sort.md 6 節）
 import type { CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
-import { combatPowerNote, effectiveListOrder, orderCharacters, parseListOrder } from './listOrder.ts';
+import { effectiveListOrder, orderCharacters, parseListOrder } from './listOrder.ts';
 
 const entry = (resourceId: number, ja: string) => ({ resourceId, name: { ja, en: ja } }) as CharacterIndexEntry;
 const INDEX = [entry(1, 'ウ'), entry(2, 'ア'), entry(3, 'エ'), entry(4, 'イ'), entry(5, 'オ')];
@@ -42,11 +42,4 @@ describe('orderCharacters', () => {
     orderCharacters(INDEX, 'name', new Map());
     expect(ids(INDEX)).toEqual(before);
   });
-});
-
-it('combatPowerNote: 戦闘力順のときだけ、出せたキャラに添える', () => {
-  const powers = new Map([[1, 123456]]);
-  expect(combatPowerNote('combatPower', powers, 1)).toBe('（戦闘力 123,456）');
-  expect(combatPowerNote('combatPower', powers, 2)).toBe('');
-  expect(combatPowerNote('name', powers, 1)).toBe('');
 });

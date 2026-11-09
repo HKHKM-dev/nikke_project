@@ -1,7 +1,5 @@
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useContext, useMemo } from 'react';
-import { combatPowerNote } from '../listOrder.ts';
-import { ListOrderContext } from '../useListOrder.ts';
+import { useMemo } from 'react';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -17,14 +15,8 @@ type Props = {
   onClear: () => void;
 };
 
-/** power: 戦闘力順のときに添える戦闘力（listOrder.ts の combatPowerNote） */
-export function characterLabel(
-  entry: CharacterIndexEntry,
-  isUnsupported: boolean,
-  inOtherParty = false,
-  power = '',
-): string {
-  return `${entry.name.ja}${power}${isUnsupported ? '（未）' : ''}${inOtherParty ? '（ほかの編成で使用中）' : ''}`;
+export function characterLabel(entry: CharacterIndexEntry, isUnsupported: boolean, inOtherParty = false): string {
+  return `${entry.name.ja}${isUnsupported ? '（未）' : ''}${inOtherParty ? '（ほかの編成で使用中）' : ''}`;
 }
 
 export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyIds, value, onSelect, onClear }: Props) {
@@ -33,7 +25,6 @@ export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyI
     () => index.filter((e) => e.resourceId === value || !excludeIds.has(e.resourceId)),
     [index, excludeIds, value],
   );
-  const { order, powers } = useContext(ListOrderContext);
 
   return (
     <div className="picker">
@@ -55,7 +46,6 @@ export function CharacterPicker({ index, excludeIds, fullySupported, otherPartyI
               entry,
               fullySupported !== null && !fullySupported.has(entry.resourceId),
               otherPartyIds.has(entry.resourceId),
-              combatPowerNote(order, powers, entry.resourceId),
             )}
           </option>
         ))}
