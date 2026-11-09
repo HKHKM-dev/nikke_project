@@ -1,6 +1,7 @@
 // 育成状況の読み込み・書き出し・消す（roster.ts。plan/design-combat-power-sort.md 5 節）と、ブラウザへの保存
 import { readBuildSnapshot, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { useCallback, useMemo, useState, type Dispatch } from 'react';
+import { downloadText } from './download.ts';
 import type { PartiesState } from './parties.ts';
 import {
   ROSTER_STORAGE_KEY,
@@ -45,15 +46,6 @@ type Args = {
   setParties: (parties: PartiesState) => void;
 };
 
-function download(name: string, text: string) {
-  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = name;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 /** 育成状況と、キャラをスロットに入れたときに育成状況の育成を写す dispatch */
 export function useRoster({ index, team, parties, dispatch, setParties }: Args): {
   controls: RosterControls;
@@ -97,7 +89,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   };
 
   const exportFile = () => {
-    if (roster !== null && saved !== null) download(rosterFileName(roster), serializeRoster(saved));
+    if (roster !== null && saved !== null) downloadText(rosterFileName(roster), serializeRoster(saved));
   };
 
   const clear = () => {

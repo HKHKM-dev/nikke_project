@@ -167,6 +167,12 @@ header h1 {
   font: inherit;
   font-size: 0.85rem;
 }
+/* ボタンの横の並び（育成状況・読めなかった編成の保存の知らせ） */
+.button-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 /* 使えない入力欄・選択欄・ラジオボタン（disabled でなく aria-disabled。components/inertControl.ts） */
 :is(input, select, textarea)[aria-disabled='true'] {
   opacity: 0.5;
@@ -1372,4 +1378,19 @@ header h1 {
 .slot-drag-overlay-portrait {
   position: absolute;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+}
+
+/* 読めなかった編成の保存の知らせ（components/UnreadableSavesNotice.tsx） */
+.unreadable-saves {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border: 1px solid #ef6c00;
+  border-radius: 4px;
+}
+.unreadable-saves .notes {
+  margin: 0;
+  gap: 10px;
+}
+.unreadable-saves p {
+  margin: 0 0 4px;
 }

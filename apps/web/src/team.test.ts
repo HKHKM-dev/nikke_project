@@ -10,7 +10,6 @@ import {
   SHOOTING_RANGE_ENEMY,
   TEAM_FORMAT_VERSION,
   initialTeamState,
-  parseTeamState,
   placeCharacterAction,
   readTeamJson,
   serializeTeamState,
@@ -18,6 +17,13 @@ import {
   teamReducer,
   type TeamState,
 } from './team.ts';
+
+/** readTeamJson の読めた中身だけ（無い・読めないは null） */
+function parseTeamState(json: string | null, index: readonly CharacterIndexEntry[]): TeamState | null {
+  if (json === null) return null;
+  const result = readTeamJson(json, index);
+  return result.ok ? result.value : null;
+}
 
 function entry(resourceId: number): CharacterIndexEntry {
   return {

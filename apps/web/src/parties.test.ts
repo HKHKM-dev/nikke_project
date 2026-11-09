@@ -3,12 +3,20 @@ import type { CharacterIndexEntry } from '@nikke/core';
 import {
   INITIAL_PARTIES,
   otherPartyResourceIds,
-  parseParties,
   partyOf,
+  readParties,
+  type PartiesState,
   serializeParties,
   switchParty,
 } from './parties.ts';
-import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, teamReducer, type TeamState } from './team.ts';
+import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, TEAM_SHAPE_ERROR, teamReducer, type TeamState } from './team.ts';
+
+/** readParties の読めた中身だけ（無い・全体が読めないは null） */
+function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
+  if (json === null) return null;
+  const read = readParties(json, index);
+  return read.ok ? read.value : null;
+}
 
 const index = [{ resourceId: 10 }, { resourceId: 11 }] as unknown as CharacterIndexEntry[];
 
@@ -59,6 +67,28 @@ describe('parties', () => {
     expect(parseParties(JSON.stringify({ ...raw, parties: [] }), index)).toBeNull();
     expect(parseParties('{', index)).toBeNull();
     expect(parseParties(null, index)).toBeNull();
+  });
+
+  it('readParties gives the reason for a broken list and the parties it emptied', () => {
+    const { parties } = switchParty(INITIAL_PARTIES, withCharacter(INITIAL_TEAM_STATE, 0, 10), 1);
+    const raw = JSON.parse(serializeParties(parties));
+    expect(readParties('{', index)).toEqual({ ok: false, error: 'JSON として読めません' });
+    expect(readParties('[]', index)).toEqual({ ok: false, error: '編成の一覧の JSON ではありません' });
+    expect(readParties(JSON.stringify({ ...raw, formatVersion: undefined }), index)).toEqual({
+      ok: false,
+      error: 'この版の編成の一覧は読めません（formatVersion undefined）',
+    });
+    expect(readParties(JSON.stringify({ ...raw, active: 5 }), index).ok).toBe(false);
+    expect(readParties(JSON.stringify({ ...raw, parties: [] }), index).ok).toBe(false);
+
+    // 未使用の編成（null）と選んでいる編成の欄は数えない。オブジェクトでない値と形が合わないものは空にして数える
+    expect(readParties(serializeParties(parties), index)).toEqual({ ok: true, value: parties, dropped: null });
+    raw.parties[1] = { slots: 'ignored' };
+    raw.parties[2] = { slots: 'x' };
+    raw.parties[4] = 5;
+    const read = readParties(JSON.stringify(raw), index);
+    expect(read.ok && read.dropped).toEqual({ indices: [2, 4], error: TEAM_SHAPE_ERROR });
+    expect(read.ok && read.value.parties[0]?.slots[0]?.resourceId).toBe(10);
   });
 
   it('reads the versions the team reads, and rejects an unknown (newer) formatVersion', () => {

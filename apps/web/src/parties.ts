@@ -3,7 +3,15 @@
 // チームの詳細設定（3 分モード・戦闘時間）・スペック固定は全編成で共通にする（ソロレイドは 5 編成で同じボスに挑む）。
 // 選んでいる編成は、これまでどおり STORAGE_KEY（team.ts）の編成そのもの。ほかの編成をこのキーに保存する（切り替えたときだけ書く）
 import type { CharacterIndexEntry } from '@nikke/core';
-import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, formatVersionOf, parseTeamObject, type TeamState } from './team.ts';
+import {
+  INITIAL_TEAM_STATE,
+  TEAM_FORMAT_VERSION,
+  TEAM_SHAPE_ERROR,
+  isRecord,
+  parseTeamObject,
+  readVersionedJson,
+  type TeamState,
+} from './team.ts';
 
 export const PARTY_COUNT = 5;
 export const PARTIES_STORAGE_KEY = 'nikke-calc.parties.v1';
@@ -74,33 +82,47 @@ export function serializeParties(state: PartiesState): string {
 }
 
 /**
- * 保存した編成の一覧を読む。読めないもの全体は null（初期値に落とす）。1 つの編成だけ形が合わないときは、その編成を空にする。
+ * 保存した編成の一覧を読んだ結果。読めたときの dropped は、形が合わず空にした編成の番号（0 から）とその理由（無ければ null）。
+ * 未使用の編成（null）と、選んでいる編成の欄（中身は編成の保存が持つので見ない）は数えない
+ */
+export type PartiesRead =
+  | { ok: true; value: PartiesState; dropped: { indices: number[]; error: string } | null }
+  | { ok: false; error: string };
+
+/**
+ * 保存した編成の一覧を読む。全体が読めなければ理由を返す。1 つの編成だけ形が合わないときは、その編成を空にして dropped に数える。
  * 版は編成（team.ts）と同じで、版のないものと未知の版（新しい版で書き出したもの）は読まない。
  * 編成の中身の検証は、共通の設定を既定値で埋めて編成の検証（team.ts の parseTeamObject）に任せる。
- * 画面は復元の直後に読めたものを書き戻す（App.tsx）ので、読めなかった編成は空になって残らない
+ * 画面は読めなかった保存を退避してから、読めたものを書き戻す（savedTeams.ts・App.tsx）
  */
-export function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
-  if (json === null) return null;
-  let raw: unknown;
-  try {
-    raw = JSON.parse(json);
-  } catch {
-    return null;
+export function readParties(json: string, index: readonly CharacterIndexEntry[]): PartiesRead {
+  const raw = readVersionedJson(json, '編成の一覧');
+  if (!raw.ok) return raw;
+  const { active, parties } = raw.value;
+  if (
+    typeof active !== 'number' ||
+    !Number.isInteger(active) ||
+    active < 0 ||
+    active >= PARTY_COUNT ||
+    !Array.isArray(parties) ||
+    parties.length !== PARTY_COUNT
+  ) {
+    return { ok: false, error: '編成の一覧の形が合いません（選んでいる編成の番号・編成の数）' };
   }
-  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
-  if (formatVersionOf(raw as Record<string, unknown>) === null) return null;
-  const { active, parties } = raw as { active?: unknown; parties?: unknown };
-  if (typeof active !== 'number' || !Number.isInteger(active) || active < 0 || active >= PARTY_COUNT) return null;
-  if (!Array.isArray(parties) || parties.length !== PARTY_COUNT) return null;
-  return {
+  const indices: number[] = [];
+  const value: PartiesState = {
     active,
     parties: parties.map((p: unknown, i) => {
-      if (i === active || typeof p !== 'object' || p === null) return null;
-      const { slots } = p as { slots?: unknown };
-      const team = parseTeamObject({ ...INITIAL_TEAM_STATE, slots }, index);
-      return team === null ? null : partyOf(team);
+      if (i === active || p === null) return null;
+      const team = parseTeamObject({ ...INITIAL_TEAM_STATE, slots: isRecord(p) ? p.slots : undefined }, index);
+      if (team === null) {
+        indices.push(i);
+        return null;
+      }
+      return partyOf(team);
     }),
   };
+  return { ok: true, value, dropped: indices.length === 0 ? null : { indices, error: TEAM_SHAPE_ERROR } };
 }
 
 /** 編成の番号（01〜05）。編成のタブはこれだけを出す */

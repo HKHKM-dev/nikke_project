@@ -193,11 +193,16 @@ export function unknownTreasurePhaseCount(snapshot: BuildSnapshot): number {
   return Object.values(snapshot.characters).filter((c) => c.treasure !== null && c.treasure.phase === null).length;
 }
 
+/** 時刻（ミリ秒）を日本時間の日時（YYYY-MM-DD HH:mm）にする */
+export function jstDateTime(ms: number): string {
+  return new Date(ms + 9 * 3600e3).toISOString().slice(0, 16).replace('T', ' ');
+}
+
 /** 取得の時刻（ISO）を日本時間の日付（YYYY-MM-DD。スナップショットの名前の日付）にする */
 export function jstDate(iso: string): string {
   const t = Date.parse(iso);
   if (Number.isNaN(t)) throw new Error(`fetchedAt が日時でない: ${iso}`);
-  return new Date(t + 9 * 3600e3).toISOString().slice(0, 10);
+  return jstDateTime(t).slice(0, 10);
 }
 
 /**

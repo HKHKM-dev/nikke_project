@@ -7,11 +7,13 @@ export function readStorage(key: string): string | null {
   }
 }
 
-export function writeStorage(key: string, value: string): void {
+/** 書けたか。書けないとき（使えない・満杯）は false */
+export function writeStorage(key: string, value: string): boolean {
   try {
     localStorage.setItem(key, value);
+    return true;
   } catch {
-    // 保存できないときは黙って諦める
+    return false;
   }
 }
 
@@ -22,3 +24,32 @@ export function removeStorage(key: string): void {
     // 消せないときは黙って諦める
   }
 }
+
+/** prefix で始まるキー。使えないときは空 */
+function storageKeys(prefix: string): string[] {
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith(prefix)) keys.push(key);
+    }
+    return keys;
+  } catch {
+    return [];
+  }
+}
+
+/** 保存の読み書き（テストで差し替える） */
+export type SaveStore = {
+  read: (key: string) => string | null;
+  write: (key: string, value: string) => boolean;
+  remove: (key: string) => void;
+  keys: (prefix: string) => string[];
+};
+
+export const BROWSER_STORE: SaveStore = {
+  read: readStorage,
+  write: writeStorage,
+  remove: removeStorage,
+  keys: storageKeys,
+};
