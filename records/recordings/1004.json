@@ -1,0 +1,47 @@
+{
+  "id": "1004",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1004_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4",
+  "original": "2026-11-10_02-36-46.mp4",
+  "durationSec": 201.2,
+  "frames": 12070,
+  "fps": 60,
+  "sizeMB": 243.7,
+  "sha256": "4291e52e21bf",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 140,
+      "name": "シュガー",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の的・オートバースト ON",
+  "backup": {
+    "at": "2026-11-10T02:52+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -972,6 +972,8 @@
 | 0997 | `20261109-0997_mg_rapi-redhood_anis-star-nofire_ludmilla.mp4` | ◎アニス：スター（17、RL・電撃・SSR） + ラピ：レッドフード（16、MG・灼熱・SSR） + ルドミラ（190、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた |
 | 0998 | `20261109-0998_mg_rapi-redhood_anis-star-nofire_ludmilla.mp4` | ◎アニス：スター（17、RL・電撃・SSR） + ラピ：レッドフード（16、MG・灼熱・SSR） + ルドミラ（190、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた |
 | 1003 | `20261110-1003_sg_sugar_fire.mp4` | ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0704 の撮影 A。シュガー単騎（操作）・灼熱の的・オートバースト OFF |
+| 1004 | `20261110-1004_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の的・オートバースト ON |
+| 1005 | `20261110-1005_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の的・オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
