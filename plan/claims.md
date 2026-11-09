@@ -15,7 +15,7 @@
 - 根拠の `0010-01` などは観測値の ID（`records/observations/<録画 id>.json`）。モデル側が「未反映」のものは、結論は確かだがモデルの既定などにまだ入れていない。
 - 関連: [design-stage19.md](design-stage19.md) 2.4 節、[verification.md](verification.md)（2026-09-26 までの根拠の記録）、[residuals.md](residuals.md)（残差の一覧）
 
-件数: 確定 697・仮説 116・棄却 137・範囲外 2（計 952）
+件数: 確定 702・仮説 118・棄却 137・範囲外 2（計 959）
 
 ## 射撃（間隔・リロード・チャージ）
 
@@ -6311,6 +6311,59 @@
   - 決めるのに使った録画: なし
   - 検証記録: V-0699
   - 定義: `data/skills/16.json` の skill2 の effects[3]、`data/skills/17.json` の skill1 の effects[7]
+- **C-1002** シュガーの宝物版 S1 の「自分の遮蔽物が破壊されていない限り、攻撃ダメージ▲（持続）」と「戦闘開始時、灼熱コードの敵に有利コードのダメージ適用（持続・解除不可）」は、戦闘の始めから終わりまで、灼熱の敵への通常攻撃の 1 ペレットを、攻撃ダメージ▲（スキル Lv10 で 19.98%）と属性有利の 1.1 倍の乗った値にする。射撃場 3 分モードの敵の反撃では、遮蔽物は壊れない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-10
+  - 根拠: `1003-03`（単騎・オートバースト OFF。189 個の増分すべてが、攻撃ダメージ▲と有利の 1.1 倍の乗った 1 ペレット 36,617 の格子に乗り、有利なしの 33,288 には 37 個、▲なしの 30,519 には 5 個。最後の増分 f11283 まで同じ値）・`1004-03`・`1005-03`（3 人・灼熱の、フルバーストの外の同じ値）。値は説明文と有利の乗数で決まり、合わせ込みの定数は無い。V-0704
+  - モデル側: `data/skills/140.json` の treasureSkills.skill1 の effects[0]（passive・self・attackDamage。遮蔽物が壊れない前提を assumes に書いた）と effects[1]（passive・self・elementAdvantage・enemyElement Fire。`element.ts` の elementMultiplier。C-0723 と同じ）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の攻撃ダメージ▲の値（値 07）と、属性有利の乗数 1.1（element.ts の ELEMENT_ADVANTAGE_MULTIPLIER。C-0723 と同じ有利の適用）
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の treasureSkills.skill1 の effects[0]、`data/skills/140.json` の treasureSkills.skill1 の effects[1]
+- **C-1003** シュガーの宝物版 S2 の「フルバーストタイムが発動した時、自分に攻撃力▲（10 秒）」とバーストの「自分に攻撃力▲（15 秒）」、S2 とバーストの「水冷コードまたは鉄甲コードの SG を所持する味方全体に有利コードの攻撃ダメージ▲（15 秒）」は、説明文どおりに付く。鉄甲の SG（シュガー自身とソルジャーF.A.）の 1 ペレットに、フルバーストの窓では全部が、その後のバーストの▲の残る間はバーストの攻撃力▲と両方の有利コードの攻撃ダメージ▲が乗る。有利コードの攻撃ダメージ▲は有利の時だけ乗り、シュガーには灼熱の敵への有利の適用（宝物版 S1）で灼熱でも乗り、ソルジャーF.A. には電撃では乗り灼熱では乗らない
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-10
+  - 根拠: `1004-04`・`1005-04`・`1006-06`（フルバーストの窓の中のシュガーの 1 ペレット 152,115。有利コードの攻撃ダメージ▲なし・有利なし・攻撃力▲の片方なしの単位には、大きな増分が 0〜1 個しか乗らない）・`1004-05`・`1005-05`（その後のバーストの▲の残る間の 83,910。S2 の有利コードの攻撃ダメージ▲が 10 秒で切れる単位・S2 の攻撃力▲が残る単位には 0〜1 個）・`1006-04`・`1006-05`（電撃の敵のソルジャーF.A. の窓の中 36,603 と後 24,402。▲なしの単位には 0 個）・`1004-06`・`1005-06`（灼熱の敵のソルジャーF.A. の窓の中 17,428。▲が乗る単位には 0 個）・`1006-03`（電撃の敵のフルバーストの外のソルジャーF.A. 12,780。対照）。値は説明文とフルバースト補正・有利の乗数で決まり、合わせ込みの定数は無い。V-0704
+  - モデル側: `data/skills/140.json` の treasureSkills.skill2 の effects[1]・[4] と treasureSkills.burst の effects[2]・[4]（timed。有利コードの攻撃ダメージ▲は targetWeapon SG・targetElement Iron。「水冷または鉄甲」は水冷の側（C-1006）と 2 つの効果に分けた）。有利の時だけ乗るのは `element.ts` の elementMultiplier
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の値（S2 の値 03・07、バーストの値 05・07）と維持の秒、フルバースト補正と属性有利の乗数（element.ts）
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の treasureSkills.skill2 の effects[1]、`data/skills/140.json` の treasureSkills.skill2 の effects[4]、`data/skills/140.json` の treasureSkills.burst の effects[2]、`data/skills/140.json` の treasureSkills.burst の effects[4]
+- **C-1004** シュガーの S2・宝物版 S2 の「フルバーストタイムが発動した時、SG を所持する味方全体に最大装弾数▲」は、自分とソルジャーF.A.（SG の味方）の最大装弾数を上げる（スペック固定で 9 → 17。フルバーストの窓の中でリロードなしで 17 発を撃つ）
+  - 状態: 確定・等級: 厳密一致・更新日: 2026-11-10
+  - 根拠: `1004-07`・`1005-07`（フルバーストの窓の中のシュガーのマガジン。5 回の窓とも 17 発。▲なしなら 9）・`1006-07`（電撃の敵の 1 回目の窓の中で、ソルジャーF.A. がリロードなしで 16 発。▲なしなら 9 発で止まる）。値は説明文の値で、合わせ込みの定数は無い。V-0704
+  - モデル側: `data/skills/140.json` の treasureSkills.skill2 の effects[2]（timed・fullBurstStart・allies・targetWeapon SG・maxAmmo。ドレイクの宝物版 S1 と同じ形。C-0471）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の値（値 05）と最大装弾数の丸め（C-0471 と同じ形）
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の skill2 の effects[1]、`data/skills/140.json` の treasureSkills.skill2 の effects[2]
+- **C-1005** シュガーのバーストの「自分に攻撃速度▲（15 秒）」は、マガジンの中の発と発の間を レート × (1 + X)（C-0600 の形。スキル Lv10 の 66% で 90 rpm の 40f が 23・24f）にする
+  - 状態: 確定・等級: 反復実測・更新日: 2026-11-10
+  - 根拠: `1004-08`・`1005-08`・`1006-08`（バーストの窓の中のシュガーの発と発の間の平均 23.70〜23.72f。23・24f の並び。モデルは 23.64f。窓の外は 39・40f）。式は C-0600 のトーブの録画で決めたもので、この録画からは決めていない。V-0704
+  - モデル側: `data/skills/140.json` の treasureSkills.burst の effects[0]（timed・burstUse・self・attackSpeed。自分への攻撃速度▲は targetWeapon なしで書ける。plan/design-sugar.md 2.1 節）。効き方は `frame/firing.ts` の rateScale（C-0600）
+  - 決めるのに使った録画: なし
+  - 合わせ込みの定数なし: 説明文の値（値 01）と、トーブで確かめた攻撃速度の式（C-0600）
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の burst の effects[0]、`data/skills/140.json` の treasureSkills.burst の effects[0]
+- **C-1006** シュガーの S2・バーストの「水冷コードまたは鉄甲コードの SG を所持する味方全体に有利コードの攻撃ダメージ▲」の水冷の側（水冷の SG の味方）も、鉄甲の側と同じに付く（同じ行の読み。水冷の SG の味方の録画は無い）
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-10
+  - 根拠: 説明文（`data/characters/140.json` の treasure.skills の skill2・burst）。水冷の側は鉄甲の側（C-1003）と同じ行の読みで、水冷の SG の味方を入れた録画は無い。V-0704
+  - モデル側: `data/skills/140.json` の treasureSkills.skill2 の effects[3] と treasureSkills.burst の effects[3]（timed・targetWeapon SG・targetElement Water・elementDamage）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の treasureSkills.skill2 の effects[3]、`data/skills/140.json` の treasureSkills.burst の effects[3]
+- **C-1007** シュガーの S2 の「フルバーストタイムが発動した時、自分にクリティカル確率▲（10 秒）」とバーストの「自分に命中率▲（15 秒）」は、説明文どおりに付く（会心の割合とペレットの当たりの割合は、録画では見分けていない。SG の命中率▲は近だけ弾丸命中率に効かせる C-0631・C-0527 の扱い）
+  - 状態: 仮説・等級: 推論・更新日: 2026-11-10
+  - 根拠: 説明文（`data/characters/140.json` の skills と treasure.skills の skill2・burst）。録画 1004〜1006 で、窓の中のシュガーの増分は会心とコアのペレットの組が分けられず（会心 2 個とコア 1 個が同じ値）、ペレットの当たりの数も組で決まらないので、会心の割合と当たりの割合は読んでいない。V-0704
+  - モデル側: `data/skills/140.json` の skill2・treasureSkills.skill2 の effects[0]（timed・fullBurstStart・self・critRate）と burst・treasureSkills.burst の effects[1]（timed・burstUse・self・hitRate。SG は近でだけ弾丸命中率を上げる。`frame/landing.ts`。C-0631・C-0527）
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の skill2 の effects[0]、`data/skills/140.json` の burst の effects[1]、`data/skills/140.json` の treasureSkills.skill2 の effects[0]、`data/skills/140.json` の treasureSkills.burst の effects[1]
+- **C-1008** シュガーの基礎版のスキルの説明文は、S1 のきっかけ（遮蔽物が攻撃を受けた時、値 01 の確率で）と、宝物版で足された行（S1 の遮蔽物 HP 回復・攻撃ダメージ▲・有利の適用、S2 の攻撃力▲・有利コードの攻撃ダメージ▲、バーストの攻撃力▲・有利コードの攻撃ダメージ▲）と、S2 の最大装弾数▲の維持（基礎版 10 秒・宝物版 15 秒）のほかは、宝物版と同じ文で、同じ形に読む。値はどれも説明文の値
+  - 状態: 確定・等級: データ明記・更新日: 2026-11-10
+  - 根拠: 説明文（`data/characters/140.json` の skills と treasure.skills）。基礎版と宝物版の文の違いは、S1 のきっかけの確率と、宝物版で足された行と、S2 の最大装弾数▲の維持の値だけで、ほかの行は同じ文（plan/design-sugar.md 1 節の表）。同じ文の読みは、宝物版の録画で確かめてある（C-1004・C-1005。会心率▲・命中率▲は C-1007 の仮説のまま）。基礎版の録画は撮れない（宝物は外せず、スペック固定でも宝物版で戦う。C-0030）。V-0704
+  - モデル側: `data/skills/140.json` の skills（skill2 の effects[0]・[1]、burst の effects[0]・[1]）。形は treasureSkills と同じで、値は基礎版の説明文の値
+  - 決めるのに使った録画: なし
+  - 検証記録: V-0704
+  - 定義: `data/skills/140.json` の skill2 の effects[0]、`data/skills/140.json` の skill2 の effects[1]、`data/skills/140.json` の burst の effects[0]、`data/skills/140.json` の burst の effects[1]
 
 ## 敵・的・場面
 

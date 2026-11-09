@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 84・効果 561（根拠あり 540）・notes 203（根拠あり 91）
+件数: キャラ 85・効果 577（根拠あり 556）・notes 208（根拠あり 91）
 
-notes の種類: 未対応 34・前提の外 45・計算に無関係 43・補足 22・間接 59
+notes の種類: 未対応 34・前提の外 50・計算に無関係 43・補足 22・間接 59
 
-スロット: supported 208・partial 21・unsupported 9・noEffect 35
+スロット: supported 213・partial 21・unsupported 9・noEffect 36
 
 ## 10 ラピ
 
@@ -307,6 +307,36 @@ notes の種類: 未対応 34・前提の外 45・計算に無関係 43・補足
   - effects[0] heal・burstUse: C-0618（確定）、C-0845（確定）、C-0846（仮説）
   - effects[1] timed・burstUse・attack: C-0595（確定）、C-0596（確定）
   - notes[0] 前提の外: 戦闘不能の火力型の味方の復活は、味方が倒れないので起きない（要件 5.2 節）: C-0443（範囲外）
+
+## 140 シュガー
+
+- **skill1**: noEffect
+  - notes[0] 前提の外: 遮蔽物が攻撃を受けた時（確率）の自分のクリティカルダメージ▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
+  - notes[1] 前提の外: 遮蔽物が攻撃を受けた時（確率）の自分のリロード速度▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・critRate: C-1007（仮説）、C-1008（確定）
+  - effects[1] timed・fullBurstStart・maxAmmo: C-1004（確定）、C-1008（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackSpeed: C-1005（確定）、C-1008（確定）
+  - effects[1] timed・burstUse・hitRate: C-1007（仮説）、C-1008（確定）
+- **宝物版 skill1**: supported
+  - effects[0] passive・attackDamage（読む: 遮蔽物）: C-1002（確定）
+  - effects[1] passive・elementAdvantage: C-1002（確定）
+  - notes[0] 前提の外: 遮蔽物が攻撃を受けた時の自分のクリティカルダメージ▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
+  - notes[1] 前提の外: 遮蔽物が攻撃を受けた時の自分のリロード速度▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）: 根拠なし
+  - notes[2] 前提の外: 遮蔽物が攻撃を受けた時の自分の遮蔽物 HP 回復は、被弾を扱わないので起きない（要件 4.2 節）。起きても遮蔽物が壊れない前提では与ダメージを変えない: 根拠なし
+- **宝物版 skill2**: supported
+  - effects[0] timed・fullBurstStart・critRate: C-1007（仮説）
+  - effects[1] timed・fullBurstStart・attack: C-1003（確定）
+  - effects[2] timed・fullBurstStart・maxAmmo: C-1004（確定）
+  - effects[3] timed・fullBurstStart・elementDamage: C-1006（仮説）
+  - effects[4] timed・fullBurstStart・elementDamage: C-1003（確定）
+- **宝物版 burst**: supported
+  - effects[0] timed・burstUse・attackSpeed: C-1005（確定）
+  - effects[1] timed・burstUse・hitRate: C-1007（仮説）
+  - effects[2] timed・burstUse・attack: C-1003（確定）
+  - effects[3] timed・burstUse・elementDamage: C-1006（仮説）
+  - effects[4] timed・burstUse・elementDamage: C-1003（確定）
 
 ## 141 ミルク
 

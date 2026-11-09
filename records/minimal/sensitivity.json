@@ -24189,6 +24189,550 @@
       "minus": 0,
       "plus": null,
       "error": "plus: Cannot read properties of undefined (reading 'selfState')"
+    },
+    {
+      "observation": "1004-03",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "59ac81fe8a8b4087",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-03",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "59ac81fe8a8b4087",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-03",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "59ac81fe8a8b4087",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-03",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "59ac81fe8a8b4087",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-04",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "67db769168f855de",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-04",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "67db769168f855de",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-04",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "67db769168f855de",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-04",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "67db769168f855de",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-05",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "d387360d42c7d078",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-05",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "d387360d42c7d078",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-05",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "d387360d42c7d078",
+      "effective": false,
+      "minus": 0,
+      "plus": -1.4551915228366852e-11
+    },
+    {
+      "observation": "1004-05",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "d387360d42c7d078",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-06",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "a23005320e5cfa9b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-06",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "a23005320e5cfa9b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-06",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "a23005320e5cfa9b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-06",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "a23005320e5cfa9b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-07",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "7bef33597ba84c12",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-07",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "7bef33597ba84c12",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-07",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "7bef33597ba84c12",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-07",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "7bef33597ba84c12",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-08",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "27fd362c1da7be57",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-08",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "27fd362c1da7be57",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-08",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "27fd362c1da7be57",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1004-08",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "27fd362c1da7be57",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-03",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "d8efa6d2bdb42fa5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-03",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "d8efa6d2bdb42fa5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-03",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "d8efa6d2bdb42fa5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-03",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "d8efa6d2bdb42fa5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-04",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "221015ed930d0bbc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-04",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "221015ed930d0bbc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-04",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "221015ed930d0bbc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-04",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "221015ed930d0bbc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-05",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "08f1beb94cf5d062",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-05",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "08f1beb94cf5d062",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-05",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "08f1beb94cf5d062",
+      "effective": false,
+      "minus": 0,
+      "plus": -1.4551915228366852e-11
+    },
+    {
+      "observation": "1005-05",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "08f1beb94cf5d062",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-06",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "133181fefc1fa399",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-06",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "133181fefc1fa399",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-06",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "133181fefc1fa399",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-06",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "133181fefc1fa399",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-07",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "b06b4aed8c2ce3a8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-07",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "b06b4aed8c2ce3a8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-07",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "b06b4aed8c2ce3a8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-07",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "b06b4aed8c2ce3a8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-08",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "a4b584186a379c95",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-08",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "a4b584186a379c95",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-08",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "a4b584186a379c95",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1005-08",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "a4b584186a379c95",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-03",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "6a5cf4378fe6149c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-03",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "6a5cf4378fe6149c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-03",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "6a5cf4378fe6149c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-03",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "6a5cf4378fe6149c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-04",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "33ad5c889b925a75",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-04",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "33ad5c889b925a75",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-04",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "33ad5c889b925a75",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-04",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "33ad5c889b925a75",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-05",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "7a239564d738ea3b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-05",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "7a239564d738ea3b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-05",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "7a239564d738ea3b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-05",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "7a239564d738ea3b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-06",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "e0defa4b117e1f98",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-06",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "e0defa4b117e1f98",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-06",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "e0defa4b117e1f98",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-06",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "e0defa4b117e1f98",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-08",
+      "element": "シュガー treasureSkills.burst.effects[1]",
+      "key": "a53b2ddea8aec7e9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-08",
+      "element": "シュガー treasureSkills.burst.effects[3]",
+      "key": "a53b2ddea8aec7e9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-08",
+      "element": "シュガー treasureSkills.skill2.effects[0]",
+      "key": "a53b2ddea8aec7e9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1006-08",
+      "element": "シュガー treasureSkills.skill2.effects[3]",
+      "key": "a53b2ddea8aec7e9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }

@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 637・打ち切り 27（計 664）
+件数: 調査中 0・保留 0・完了 638・打ち切り 27（計 665）
 
 ## 開いている検証
 
@@ -6404,3 +6404,31 @@
   - 観測値: 0123-32、0123-33、0123-34、0864-17、0864-18、0864-19、0865-17、0865-18、0865-19、0940-04、0941-04、0942-04、0943-03、0944-03、0945-03
   - 結論: C-1000
   - 派生元: V-0697
+- **[V-0704](../records/verifications/V-0704-sugar-skills.md)** シュガーのスキル（基礎版・宝物版）
+  - 問い: シュガーのスキルを説明文どおり（宝物版 S1 の常時の攻撃ダメージ▲と灼熱の敵への有利コードのダメージ適用、S2・バーストの自分と SG の味方への効果）と読んで、モデルは実測と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-11-09・状態: 完了・Stage: [plan/design-sugar.md](../../plan/design-sugar.md)（キャラ毎の調査）
+  - 録画: 1003、1004、1005、1006
+  - 観測値: 1003-01、1003-02、1003-03、1004-01、1004-02、1004-03、1004-04、1004-05、1004-06、1004-07、1004-08、1005-01、1005-02、1005-03、1005-04、1005-05、1005-06、1005-07、1005-08、1006-01、1006-02、1006-03、1006-04、1006-05、1006-06、1006-07、1006-08
+  - 結論: C-1002、C-1003、C-1004、C-1005、C-1006、C-1007、C-1008
+  - 予測（2026-11-09、commit 22661f6）との比べ:
+    - A-sugar-pellet（hitDamage）: 実測 36,617（1003-03）。H-model 36,616.971（-0.029、許容内）
+    - B-sugar-pellet-before（hitDamage）: 実測 36,617（1004-03）。H-model 36,616.971（-0.029、許容内）
+    - B-sugar-pellet-fb（hitDamage）: 実測 152,115（1004-04）。H-model 152,115.094（+0.094、許容内）
+    - B-fa-pellet-before（hitDamage）: 実測なし。H-model 11,618.489
+    - B-fa-pellet-fb（hitDamage）: 実測 17,428（1004-06）。H-model 17,427.733（-0.267、許容内）
+    - B-sugar-max-ammo-fb（maxAmmoAt）: 実測 17（1004-07）。H-model 17（+0、許容内）
+    - B-fa-max-ammo-fb（maxAmmoAt）: 実測なし。H-model 17
+    - B-sugar-attack-speed（buffWindowShotIntervalMean）: 実測 23.7（1004-08）。H-model 23.636（-0.064、許容内）
+    - C-fa-pellet-before（hitDamage）: 実測 12,780（1006-03）。H-model 12,780.338（+0.338、許容内）
+    - C-fa-pellet-fb（hitDamage）: 実測 36,603（1006-04）。H-model 36,603.468（+0.468、許容内）
+    - C-sugar-pellet-before（hitDamage）: 実測なし。H-model 36,616.971
+    - B-sugar-pellet-after-fb（hitDamage）: 実測 83,910（1004-05）。H-model 83,909.691（-0.309、許容内）
+    - B-fa-pellet-after-fb（hitDamage）: 実測なし。H-model 11,618.489
+    - B-cocoa-before（hitDamage）: 実測なし。H-model 172,297.95
+    - B-cocoa-fb（hitDamage）: 実測なし。H-model 258,446.925
+    - C-sugar-pellet-fb（hitDamage）: 実測 152,115（1006-06）。H-model 152,115.094（+0.094、許容内）
+    - C-sugar-pellet-after-fb（hitDamage）: 実測なし。H-model 83,909.691
+    - C-fa-pellet-after-fb（hitDamage）: 実測 24,402（1006-05）。H-model 24,402.312（+0.312、許容内）
+    - C-cocoa-before（hitDamage）: 実測なし。H-model 172,297.95
+    - C-cocoa-fb（hitDamage）: 実測なし。H-model 258,446.925
+    - 許容内の指標: H-model 11/11。合う仮説は H-model だけ
