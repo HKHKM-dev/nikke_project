@@ -640,12 +640,13 @@ header h1 {
 :root {
   /* 立ち絵の最下部のレア度の帯の太さ */
   --rarity-band-h: 4px;
-  /* ニケ一覧の正方形の立ち絵の一辺（.char-visual-compact） */
-  --tray-visual-w: 84px;
+  /* ニケ一覧の立ち絵の幅（枠線 1px ずつを含む。.char-visual-compact と縦長）。絵の部分は縦長の立ち絵（256×512）の 1/3、
+     四角の顔の絵（128×128）の 2/3 で、どちらも 256/3 px。3 倍の画面で立ち絵が、1.5 倍の画面で顔の絵が画素どおりになるので、端数は丸めない */
+  --tray-visual-w: calc(256px / 3 + 2px);
   /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
-  /* スロットのカードの縦長の絵の高さ（.char-visual-portrait と空のスロットの枠） */
-  --slot-portrait-h: 240px;
+  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2 */
+  --slot-portrait-h: 256px;
 }
 /* 置き先待ちのスロット（カードでなく立ち絵の枠）・ニケの水色の実線の枠 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area,
@@ -1020,7 +1021,8 @@ header h1 {
   /* 枠線を含めて一覧の幅に収める（含めないと 1px ずつはみ出し、配置中の水色の枠とずれる） */
   box-sizing: border-box;
   max-width: var(--tray-visual-w);
-  aspect-ratio: 1 / 2;
+  /* 絵の部分（枠線の内側）を 1:2 にする（枠線込みの箱を 1:2 にすると、絵の部分が 2px 縦に長くなる） */
+  height: calc((var(--tray-visual-w) - 2px) * 2 + 2px);
 }
 /* 「未」の札は、下部に重ねる名前の行の上に出す */
 .char-visual-tall .char-unsupported-tag {
