@@ -126,6 +126,8 @@ export function CharacterTrayItem({
       className={`char-tray-item ${isTaken ? 'char-tray-item-taken' : ''} ${isDragging ? 'char-tray-item-dragging' : ''} ${isPending ? 'char-tray-item-pending' : ''}`}
       // いまの編成にいるニケは、クリックでスロットから外す（ModernView）。ドラッグはできない（useDraggable の disabled）が、
       // クリックはできるので aria-disabled は付けない（attributes が付けるものを打ち消す）
+      // スロットとの間を動くアニメーションが、このニケの絵を探す（ModernView の trayVisualAt）
+      data-resource-id={character.resourceId}
       onClick={onClick}
       {...attributes}
       aria-disabled={undefined}
