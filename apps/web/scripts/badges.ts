@@ -1,9 +1,12 @@
 // モダン UI のバッジを、元の SVG（apps/web/badges-src。Inkscape で描いたもの）から小さくして src/assets/badges に書き出す
-// （plan/design-modern-ui.md 2.5 節）。六角形の枠は badges-src/frame/hex.svg の 1 つだけで、枠のあるバッジの元は中身だけを持ち、
-// 書き出しで枠を合成する（plan/design-badge-frame.md）。
+// （plan/design-modern-ui.md 2.5 節）。
 //   npm run badges:build
 // バッジを直すときは badges-src のほうを Inkscape で直し、これを回す。書き出したものが元と合っているかは badges.test.ts が見る。
-// 枠のある新しいバッジは frame/hex.svg を写して中身を描き、枠の 2 つの要素（hex-out・hex-in）を消して保存し、下の FRAMES に載せる。
+//
+// 六角形の枠（plan/design-badge-frame.md 7 節）: 枠のあるバッジの元は、枠の 2 つの要素（hex-out・hex-in。Inkscape でロックしてある）
+// を持つ。書き出しは、まず元の枠を badges-src/frame/hex.svg の形にそろえて元に書き戻し（色は元の hex-in の塗りと縁のまま）、
+// そのあと元を小さくする。枠の形は frame/hex.svg だけを直す。枠のある新しいバッジは、枠のあるどれか（ui_blank など）を写して
+// 中身を描く。枠の色を変えるときは hex-in の塗りと縁を変える。
 //
 // ファイル名の命名規則: <グループ>_<値>[-<変種>].svg
 // - グループ: キャラのデータ（CharacterIndexEntry）にある項目は、その項目名のまま（element・burstStep・class・weaponType・
@@ -24,119 +27,82 @@ export const FRAME_FILE = `${BADGE_SRC_DIR}/frame/hex.svg`;
 
 export const svgFiles = (dir: string): string[] => readdirSync(dir).filter((f) => f.endsWith('.svg'));
 
-/** 枠の内側の六角形（hex-in）の塗りと縁の色 */
-export type FrameColors = { fill: string; stroke: string };
+/** 枠の要素（ラベルの大文字小文字は問わない。burstStep の元は Hex- と書いていた） */
+const frameElements = (svg: string, label: string): RegExpExecArray[] => [
+  ...svg.matchAll(new RegExp(`<(?:polygon|path)\\b[^<>]*inkscape:label="${label}"[^<>]*/>`, 'gi')),
+];
 
-const DEFAULT_FRAME: FrameColors = { fill: '#1a1a1a', stroke: '#ffffff' };
+/** 枠の 2 つの要素の、元に入れる形（id はラベルと同じにし、Inkscape のロックを付ける）と viewBox */
+export type Frame = { viewBox: string; outer: string; inner: string };
 
-/**
- * 枠を付けるバッジと、既定の色（DEFAULT_FRAME）から変える色。キーはファイル名（拡張子なし）か、グループ全部（<グループ>_*）か、
- * 変種全部（*-<変種>）。ファイル名・グループ・変種の順に引く。載らないバッジには枠を付けない。
- * 属性の縁の色は属性の図柄の色と少し違う。collection は中が白で、上限に達した版（-max）は既定の暗い色。
- */
-export const FRAMES: Record<string, Partial<FrameColors>> = {
-  'burst_*': {},
-  'class_*': {},
-  'corporation_*': {},
-  'weaponType_*': {},
-  '*-badge': {},
-  ui_blank: {},
-  ui_delete: {},
-  ui_ring: {},
-  element_Electronic: { stroke: '#f70ad8' },
-  element_Fire: { stroke: '#ff0000' },
-  element_Iron: { stroke: '#feb902' },
-  element_Water: { stroke: '#007dfd' },
-  element_Wind: { stroke: '#00ff00' },
-  burstStep_Step1: { fill: '#008000' },
-  burstStep_Step2: { fill: '#b27800' },
-  burstStep_Step3: { fill: '#cc0000' },
-  burstStep_AllStep: { fill: '#8b00cc' },
-  collection_plain: {},
-  collection_R: { fill: '#ffffff', stroke: '#00a8ff' },
-  'collection_R-max': { stroke: '#00a8ff' },
-  collection_SR: { fill: '#ffffff', stroke: '#df20df' },
-  'collection_SR-max': { stroke: '#df20df' },
-  collection_SSR: { fill: '#ffffff', stroke: '#ff8000' },
-  'collection_SSR-max': { stroke: '#ff8000' },
-};
-
-/** ファイル名（拡張子は有っても無くてもよい）から枠の色を引く。枠を付けないバッジは null */
-export function frameOf(file: string): FrameColors | null {
-  const name = file.replace(/\.svg$/, '');
-  const m = /^(?<group>[^_]+)_[^-]+(?:-(?<variant>.+))?$/.exec(name);
-  if (!m?.groups) throw new Error(`badges: 命名規則に合わない ${name}`);
-  const { group, variant } = m.groups;
-  const colors = FRAMES[name] ?? FRAMES[`${group}_*`] ?? (variant ? FRAMES[`*-${variant}`] : undefined);
-  return colors ? { ...DEFAULT_FRAME, ...colors } : null;
-}
-
-/** 枠の要素のラベル。元に枠が残っていないかもこれで見る（burstStep の元は Hex- と大文字で書いていた） */
-export const FRAME_LABEL = /inkscape:label="hex-(?:out|in)"/i;
-
-type ViewBox = [x: number, y: number, width: number, height: number];
-/** 枠の 2 つの要素（hex-out・hex-in）と viewBox */
-export type Frame = { viewBox: ViewBox; outer: string; inner: string };
-
-/** 枠の SVG から、枠の 2 つの要素と viewBox を取る。要素の id は外す（中身の id と重ならないように） */
+/** 枠の SVG（frame/hex.svg）から、枠の 2 つの要素と viewBox を取る */
 export function parseFrame(svg: string): Frame {
   // 要素だけを抜くので、g（Inkscape のレイヤー）に入れると親の transform が落ちる
   if (/<g\b/.test(svg)) throw new Error('badges: 枠の hex-out・hex-in を g に入れない（svg の直下に置く）');
   const element = (label: string): string => {
-    const el = new RegExp(`<(?:polygon|path)\\b[^<>]*inkscape:label="${label}"[^<>]*/>`).exec(svg)?.[0];
-    if (!el) throw new Error(`badges: 枠に ${label} が無い`);
-    return el.replace(/\sid="[^"]*"/g, '');
+    const [el, ...rest] = frameElements(svg, label);
+    if (!el || rest.length > 0) throw new Error(`badges: 枠に ${label} が 1 つでない`);
+    return el[0]
+      .replace(/\sid="[^"]*"/, ` id="${label}"`)
+      .replace(/\ssodipodi:insensitive="[^"]*"/, '')
+      .replace(/\s*\/>$/, '\n     sodipodi:insensitive="true" />');
   };
   return { viewBox: viewBoxOf(svg), outer: element('hex-out'), inner: element('hex-in') };
 }
 
-function viewBoxOf(svg: string): ViewBox {
-  const viewBox = /<svg\b[^>]*\sviewBox="([^"]*)"/.exec(svg)?.[1];
-  if (!viewBox) throw new Error('badges: viewBox が無い');
-  return viewBox.split(/[\s,]+/).map(Number) as ViewBox;
-}
+const viewBoxOf = (svg: string): string => /<svg\b[^>]*\sviewBox="([^"]*)"/.exec(svg)?.[1] ?? '';
 
-/** 要素の style の fill と stroke を差し替える（どちらも style に無ければ止める） */
-function setStyleColors(el: string, colors: FrameColors): string {
-  return el.replace(/\sstyle="([^"]*)"/, (_, style: string) => {
-    const decls = new Map(
-      style
-        .split(';')
-        .filter(Boolean)
-        .map((d) => [d.slice(0, d.indexOf(':')), d.slice(d.indexOf(':') + 1)] as const),
-    );
-    if (!decls.has('fill') || !decls.has('stroke'))
-      throw new Error('badges: 枠の hex-in の style に fill か stroke が無い');
-    decls.set('fill', colors.fill).set('stroke', colors.stroke);
-    return ` style="${[...decls].map(([k, v]) => `${k}:${v}`).join(';')}"`;
-  });
-}
-
-/** 枠の後に中身を置いた SVG にする。中身の viewBox が枠と違えば、枠の viewBox に合わせて拡大縮小する（縦横の比が違えば止める） */
-export function composeBadge(content: string, frame: Frame, colors: FrameColors): string {
-  if (FRAME_LABEL.test(content)) throw new Error('badges: 中身の元に枠が残っている（hex-out・hex-in を消す）');
-  const root = /<svg\b[^>]*>/.exec(content);
-  const close = content.lastIndexOf('</svg>');
-  if (!root || close < 0) throw new Error('badges: svg 要素が無い');
-  const [fx, fy, fw, fh] = frame.viewBox;
-  const [cx, cy, cw, ch] = viewBoxOf(content);
-  const sx = fw / cw;
-  const sy = fh / ch;
-  if (Math.abs(sx / sy - 1) > 1e-4) throw new Error(`badges: 中身の縦横の比が枠と違う（${cw}×${ch}）`);
-  const body = content.slice(root.index + root[0].length, close);
-  const scaled =
-    sx === 1 && cx === fx && cy === fy
-      ? body
-      : `<g transform="matrix(${sx},0,0,${sy},${fx - cx * sx},${fy - cy * sy})">${body}</g>`;
-  // 大きさも枠に合わせる（mm の文書の width="34.4mm" などを残さない）
-  const rootTag = Object.entries({ viewBox: frame.viewBox.join(' '), width: fw, height: fh }).reduce(
-    (tag, [k, v]) =>
-      new RegExp(`\\s${k}="`).test(tag)
-        ? tag.replace(new RegExp(`\\s${k}="[^"]*"`), ` ${k}="${v}"`)
-        : tag.replace(/^<svg\b/, `<svg ${k}="${v}"`),
-    root[0],
+/** 要素の style を、宣言の Map にする */
+function styleOf(el: string): Map<string, string> {
+  const style = /\sstyle="([^"]*)"/.exec(el)?.[1] ?? '';
+  return new Map(
+    style
+      .split(';')
+      .filter(Boolean)
+      .map((d) => [d.slice(0, d.indexOf(':')), d.slice(d.indexOf(':') + 1)] as const),
   );
-  return `${content.slice(0, root.index)}${rootTag}${frame.outer}${setStyleColors(frame.inner, colors)}${scaled}</svg>\n`;
+}
+
+/** 枠の hex-in の色を、元の hex-in の塗りと縁の色にする */
+function recolorInner(inner: string, source: string): string {
+  const from = styleOf(source);
+  const fill = from.get('fill');
+  const stroke = from.get('stroke');
+  if (!fill || !stroke) throw new Error('badges: 元の hex-in の style に fill か stroke が無い');
+  const decls = styleOf(inner).set('fill', fill).set('stroke', stroke);
+  return inner.replace(/\sstyle="[^"]*"/, ` style="${[...decls].map(([k, v]) => `${k}:${v}`).join(';')}"`);
+}
+
+/** svg の index の位置が、g の中にあるか */
+const insideG = (svg: string, index: number): boolean => {
+  const before = svg.slice(0, index);
+  return (before.match(/<g\b(?![^>]*\/>)/g)?.length ?? 0) > (before.match(/<\/g>/g)?.length ?? 0);
+};
+
+/**
+ * 元の枠の 2 つの要素を、枠（frame）の要素に置き換える（色は元の hex-in のまま）。枠の無い元はそのまま返す。
+ * 枠は要るときだけ getFrame で読む。
+ */
+export function syncFrame(svg: string, getFrame: () => Frame): string {
+  const outs = frameElements(svg, 'hex-out');
+  const ins = frameElements(svg, 'hex-in');
+  if (outs.length === 0 && ins.length === 0) return svg;
+  const [out] = outs;
+  const [inn] = ins;
+  if (outs.length !== 1 || ins.length !== 1 || !out || !inn)
+    throw new Error('badges: 枠の hex-out と hex-in を 1 つずつ持たせる');
+  if (out.index > inn.index) throw new Error('badges: 枠は hex-out を hex-in の前に置く');
+  if (insideG(svg, out.index) || insideG(svg, inn.index))
+    throw new Error('badges: 枠の hex-out・hex-in を g に入れない（svg の直下に置く）');
+  const frame = getFrame();
+  if (viewBoxOf(svg) !== frame.viewBox) throw new Error(`badges: 枠のある元の viewBox は ${frame.viewBox} にする`);
+  return (
+    svg.slice(0, out.index) +
+    frame.outer +
+    svg.slice(out.index + out[0].length, inn.index) +
+    recolorInner(frame.inner, inn[0]) +
+    svg.slice(inn.index + inn[0].length)
+  );
 }
 
 /** 元の SVG を小さくする。convertTransform は切る（corporation_TETRA の反転を含む変換が別の変換に書き換わり、図柄が崩れる） */
@@ -147,30 +113,41 @@ export function optimizeBadge(svg: string): string {
   }).data;
 }
 
-/** 元の 1 つから書き出しの中身を作る（枠を付けるものは合成してから小さくする）。枠は要るときだけ getFrame で読む */
-export function buildBadge(file: string, source: string, getFrame: () => Frame): string {
-  const colors = frameOf(file);
-  return optimizeBadge(colors ? composeBadge(source, getFrame(), colors) : source);
-}
-
 /**
- * srcDir の SVG を書き出し（枠を合成して小さくし）て outDir に書き、元の無い書き出しを消す（元を消したときや名前を変えたとき）。
- * 枠は srcDir/frame/hex.svg。srcDir に SVG が 1 つも無ければ、何も書かず消さずに止める（取り違えたフォルダや取り出し損ねで、
- * 書き出しを全部消さない）
+ * srcDir の元の枠をそろえて書き戻し（synced）、元を小さくして outDir に書き（written）、元の無い書き出しを消す（removed。
+ * 元を消したときや名前を変えたとき）。枠は srcDir/frame/hex.svg。srcDir に SVG が 1 つも無ければ、何も書かず消さずに止める
+ * （取り違えたフォルダや取り出し損ねで、書き出しを全部消さない）
  */
-export function buildBadges(srcDir: string, outDir: string): { written: string[]; removed: string[] } {
+export function buildBadges(
+  srcDir: string,
+  outDir: string,
+): { written: string[]; removed: string[]; synced: string[] } {
   const written = svgFiles(srcDir);
   if (written.length === 0) throw new Error(`${srcDir} に SVG が無い（書き出しの ${outDir} は消さない）`);
+  const misnamed = written.filter((f) => !/^[^_]+_[^-]+(?:-.+)?\.svg$/.test(f));
+  if (misnamed.length > 0) throw new Error(`badges: 命名規則に合わない ${misnamed.join(', ')}`);
   let frame: Frame | undefined;
   const getFrame = () => (frame ??= parseFrame(readFileSync(`${srcDir}/frame/hex.svg`, 'utf8')));
-  for (const file of written)
-    writeFileSync(`${outDir}/${file}`, buildBadge(file, readFileSync(`${srcDir}/${file}`, 'utf8'), getFrame));
+  const synced: string[] = [];
+  for (const file of written) {
+    const source = readFileSync(`${srcDir}/${file}`, 'utf8');
+    const svg = syncFrame(source, getFrame);
+    if (svg !== source) {
+      writeFileSync(`${srcDir}/${file}`, svg);
+      synced.push(file);
+    }
+    writeFileSync(`${outDir}/${file}`, optimizeBadge(svg));
+  }
   const removed = svgFiles(outDir).filter((f) => !written.includes(f));
   for (const file of removed) rmSync(`${outDir}/${file}`);
-  return { written, removed };
+  return { written, removed, synced };
 }
 
 if (import.meta.main) {
-  const { written, removed } = buildBadges(BADGE_SRC_DIR, BADGE_OUT_DIR);
-  console.log(`badges: ${written.length} written${removed.length > 0 ? `, removed ${removed.join(', ')}` : ''}`);
+  const { written, removed, synced } = buildBadges(BADGE_SRC_DIR, BADGE_OUT_DIR);
+  console.log(
+    `badges: ${written.length} written` +
+      (synced.length > 0 ? `, frame synced ${synced.join(', ')}` : '') +
+      (removed.length > 0 ? `, removed ${removed.join(', ')}` : ''),
+  );
 }
