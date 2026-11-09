@@ -236,6 +236,14 @@
           "InstantBox": {
             "all": 1
           }
+        },
+        "dualWield": {
+          "SMG": {
+            "near": 0.1415,
+            "midNear": 0.081,
+            "midFar": 0.046,
+            "far": 0.019
+          }
         }
       },
       "bulletHitRate": {

@@ -145,6 +145,7 @@ import {
 import type { SummonId } from '../skills/summons.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
+import { muzzleHitsOf } from '../damage.ts';
 import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
@@ -635,12 +636,15 @@ function runFirstPassOnce(
   // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
   const hitRateAt = slots.map(() => 0);
-  const baseEnergies = slots.map((slot, i) =>
-    slot === null
-      ? 0
-      : hitRateSpans[i]
-        ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1)
-        : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1),
+  // 二丁持ちの SMG は 1 発 2 ヒットで、2 ヒット目もゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。仮説）
+  const muzzleHits = slots.map((slot) => (slot === null ? 1 : muzzleHitsOf(slot.character.weaponType, slot.character.shot)));
+  const baseEnergies = slots.map(
+    (slot, i) =>
+      (slot === null
+        ? 0
+        : hitRateSpans[i]
+          ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1)
+          : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1)) * muzzleHits[i]!,
   );
   const energies = baseEnergies.map((e, i) => e * (1 + gaugeSpeed[i]!));
   const pellets = slots.map((slot) => slot !== null && slot.character.shot.shotCount > 1);
@@ -725,7 +729,9 @@ function runFirstPassOnce(
     const span = spanValueAt(i, f);
     const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
     const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
-    return { hits: pellets[i] ? 1 : hitRate, coreHits: enemyHasCore ? coreHits : 0 };
+    // 二丁持ちの SMG は 1 発 2 ヒット（命中・コアの命中の期待値もヒットごと）
+    const m = muzzleHits[i]!;
+    return { hits: pellets[i] ? 1 : hitRate * m, coreHits: enemyHasCore ? coreHits * m : 0 };
   };
   // ペレットの命中編（plan/design-pellet-hit.md 2・3 節）: 発ごとに的に当たったペレットの数。録画で数えた入力があればその数、
   // 無ければ期待値（SG は shotCount × 当たったペレットの割合。割合はゲージと同じ: 的の表の区間はその値、手入力は

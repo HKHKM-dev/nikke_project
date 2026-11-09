@@ -19,7 +19,7 @@ import {
   type BuffTotals,
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
-import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile } from './types.ts';
+import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile, WeaponType } from './types.ts';
 import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
@@ -347,7 +347,7 @@ export function baseDefenceOf(input: {
 /** 弾の種類（CDN の fire_type）のうち、モデルが知っているもの（types.ts の ShotParams.fireType） */
 const KNOWN_FIRE_TYPES: readonly string[] = ['Instant', 'ProjectileDirect', 'HomingProjectile', 'ProjectileCurve'];
 
-export function modelNotes(shot: ShotParams): ModelNote[] {
+export function modelNotes(shot: ShotParams, weaponType: WeaponType): ModelNote[] {
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {
     notes.push({ level: 'unsupported', code, message: { ja, en } });
@@ -355,8 +355,18 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   const approx = (code: string, ja: string, en: string): void => {
     notes.push({ level: 'approx', code, message: { ja, en } });
   };
-  if (shot.muzzleCount !== 1)
-    unsupported('multi-muzzle', '複数銃口（二丁持ち）は未対応', 'Multiple muzzles not modeled');
+  if (muzzleHitsOf(weaponType, shot) !== shot.muzzleCount)
+    unsupported(
+      'multi-muzzle',
+      '複数銃口（SMG 以外の二丁持ち。ノア・ツバイ）は未対応',
+      'Multiple muzzles not modeled (except dual-wield SMGs)',
+    );
+  else if (shot.muzzleCount > 1)
+    approx(
+      'dual-wield',
+      '二丁持ちの SMG は 1 発 2 ヒット（V-0702）。2 ヒット目もゲージを溜めるのは仮説',
+      'Dual-wield SMG: 2 hits per shot (V-0702); gauge from the second hit is a hypothesis',
+    );
   if (shot.inputType === 'DOWN_Charge')
     unsupported(
       'down-charge',
@@ -403,6 +413,15 @@ export function hitRateOf(condition: Pick<TriggerCondition, 'hitRate'>): number 
     throw new RangeError(`hitRate must be in [0, 1], got ${hitRate}`);
   }
   return hitRate;
+}
+
+/**
+ * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（銃口 2 つ）の SMG の 1 発のヒット数。1 発で両方の銃口が
+ * 当たり（V-0702）、ヒットごとにダメージ・ゲージ・命中の数え（コア・会心はヒットごと）になる。SMG のほかの二丁持ち（ノア・ツバイ）は
+ * 確かめていないので 1（modelNotes の未対応）
+ */
+export function muzzleHitsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muzzleCount'>): number {
+  return weaponType === 'SMG' && shot.muzzleCount > 1 ? shot.muzzleCount : 1;
 }
 
 /** V-0119: 条件の 1 発のヒット数（省略は 1）。1 未満・有限でない値は RangeError */
@@ -496,7 +515,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const trueMultiplier = trueDamageMultiplier(shot, buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage, buffs.elementAdvantage > 0);
-  const hitsPerShot = hitsPerShotOf(condition);
+  // 二丁持ちの SMG は 1 発 2 ヒット（muzzleHitsOf）。的の表の 1 発のヒット数（V-0119）と掛ける
+  const hitsPerShot = hitsPerShotOf(condition) * muzzleHitsOf(character.weaponType, shot);
   const normal =
     hitRate *
     hitsPerShot *
@@ -602,6 +622,6 @@ export function computeDamage(input: DamageInput): DamageResult {
     cadence,
     dps,
     totalDamage: dps * condition.durationSeconds,
-    notes: modelNotes(character.shot),
+    notes: modelNotes(character.shot, character.weaponType),
   };
 }

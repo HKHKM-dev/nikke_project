@@ -5,6 +5,7 @@ import {
   computeDamage,
   computeTriggerDamage,
   modelNotes,
+  muzzleHitsOf,
   type DamageInput,
 } from '../damage.ts';
 import { ZERO_BUFFS, type BuffTotals } from '../skills/buffs.ts';
@@ -261,19 +262,28 @@ describe('computeTriggerDamage', () => {
 
 describe('modelNotes', () => {
   it('flags unsupported and approximated mechanics', () => {
-    const codes = modelNotes(makeCharacter({ muzzleCount: 2, reloadBullet: 0.33, penetration: 1 }).shot).map(
+    const codes = modelNotes(makeCharacter({ muzzleCount: 2, reloadBullet: 0.33, penetration: 1 }).shot, 'RL').map(
       (n) => `${n.level}:${n.code}`,
     );
     expect(codes).toEqual(['unsupported:multi-muzzle', 'unsupported:penetration', 'approx:chunked-reload']);
   });
 
+  // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの SMG は 1 発 2 ヒットで扱う（近似の注記）
+  it('treats a dual-wield SMG as 2 hits per shot', () => {
+    const shot = makeCharacter({ muzzleCount: 2 }).shot;
+    expect(modelNotes(shot, 'SMG').map((n) => `${n.level}:${n.code}`)).toEqual(['approx:dual-wield']);
+    expect(muzzleHitsOf('SMG', shot)).toBe(2);
+    expect(muzzleHitsOf('SG', shot)).toBe(1);
+    expect(muzzleHitsOf('SMG', makeCharacter().shot)).toBe(1);
+  });
+
   it('is empty for a plain AR', () => {
-    expect(modelNotes(makeCharacter().shot)).toEqual([]);
+    expect(modelNotes(makeCharacter().shot, 'AR')).toEqual([]);
   });
 
   // 2026-10-29: 紅蓮：神殺の InstantBox（plan/design-cdn-refresh.md 5 節）
   it('flags a fire type the model does not know, and not the known ones', () => {
-    const codes = (fireType: string) => modelNotes(makeCharacter({ fireType }).shot).map((n) => n.code);
+    const codes = (fireType: string) => modelNotes(makeCharacter({ fireType }).shot, 'AR').map((n) => n.code);
     expect(codes('InstantBox')).toEqual(['fire-type-unknown']);
     expect(codes('HomingProjectile')).toEqual([]);
     expect(codes('ProjectileDirect')).toEqual([]);

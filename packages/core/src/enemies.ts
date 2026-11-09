@@ -330,15 +330,25 @@ function parseRateTableWithWeaponChanges(
 /** コア命中率の表（武器種の行・使用武器の変更の行と、自動攻撃の行 autoAttacks。plan/design-anis-star-core-path.md 3.2 節） */
 function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<string>): CoreHitRateTable {
   if (!isRecord(v)) throw new TypeError(`${path}: must be an object`);
-  const { autoAttacks, fireTypes, ...rest } = v;
+  const { autoAttacks, fireTypes, dualWield, ...rest } = v;
   const table: CoreHitRateTable = parseRateTableWithWeaponChanges(rest, path, keys);
   if (autoAttacks !== undefined)
     table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
   // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類（fire_type）ごとの行
   if (fireTypes !== undefined)
     table.fireTypes = parseAutoAttackRows(fireTypes, `${path}.fireTypes`, keys, RATE, FIRE_TYPE_KEY);
+  // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの武器種ごとの行（未測定の null は書かない）
+  if (dualWield !== undefined) {
+    const rows = parseAutoAttackRows(dualWield, `${path}.dualWield`, keys, RATE, WEAPON_TYPE_KEY);
+    for (const [weapon, row] of Object.entries(rows))
+      if (row === null) throw new TypeError(`${path}.dualWield.${weapon}: must be a row`);
+    table.dualWield = rows as Partial<Record<WeaponType, TargetRateRow>>;
+  }
   return table;
 }
+
+/** 二丁持ちの行のキー（武器種） */
+const WEAPON_TYPE_KEY = { pattern: /^(AR|SMG|SR|RL|SG|MG)$/, label: 'a weapon type' };
 
 /** 弾の種類の行のキー（CDN の fire_type の生値） */
 const FIRE_TYPE_KEY = { pattern: /^[A-Za-z]+$/, label: 'a fire type' };

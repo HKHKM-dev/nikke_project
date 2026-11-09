@@ -301,7 +301,7 @@ export function runSimulation(simInput: SimInput): SimResult {
         baseAttack: baseAttackOf(slot),
         cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
         notes: [
-          ...modelNotes(slot.character.shot),
+          ...modelNotes(slot.character.shot, slot.character.weaponType),
           ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
           ...autoAttackCoreRowNotes(slot, enemy),
           ...removeDebuffNotes(history, index),
