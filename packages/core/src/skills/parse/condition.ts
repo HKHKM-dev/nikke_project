@@ -87,7 +87,7 @@ export function validateUsedBurst(
   if (burstUsersEventOf(trigger) !== undefined) return;
   fail(
     `${path}.usedBurst`,
-    `usedBurst is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,
+    `usedBurst is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')} (or { count } of them), got ${JSON.stringify(trigger)}`,
   );
 }
 

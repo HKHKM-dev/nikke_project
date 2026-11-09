@@ -25,6 +25,8 @@ type Box = { x0: number; x1: number; y0: number; y1: number };
 export type PanelGeometry = {
   label: string;
   cacheKey: string;
+  /** 顔の枠の位置を録画で確かめたか。確かめていない側は CT の明けの観測値を出さない */
+  faceVerified: boolean;
   crop: { x: number; y: number; w: number; h: number };
   hexagon: Box;
   bar: Box;
@@ -38,6 +40,7 @@ export const PANEL_GEOMETRY: Record<PanelSide, PanelGeometry> = {
   right: {
     label: '右',
     cacheKey: 'burst-panel@1',
+    faceVerified: true,
     crop: { x: 1740, y: 400, w: 180, h: 180 },
     hexagon: { x0: 1754, x1: 1780, y0: 428, y1: 452 },
     bar: { x0: 1800, x1: 1900, y0: 438, y1: 447 },
@@ -46,6 +49,7 @@ export const PANEL_GEOMETRY: Record<PanelSide, PanelGeometry> = {
   left: {
     label: '左',
     cacheKey: 'burst-panel-left@1',
+    faceVerified: false,
     crop: { x: 0, y: 400, w: 180, h: 180 },
     hexagon: { x0: 134, x1: 160, y0: 428, y1: 452 },
     bar: { x0: 15, x1: 115, y0: 438, y1: 447 },

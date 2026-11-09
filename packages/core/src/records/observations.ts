@@ -2224,7 +2224,11 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
  */
 function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): boolean {
   if (ctx.args.skill !== undefined && h.effect.source.skill !== ctx.args.skill) return false;
-  if (ctx.args.percent !== undefined && Math.abs(h.effect.multiplier * 100 - Number(ctx.args.percent)) > 1e-6) return false;
+  if (ctx.args.percent !== undefined) {
+    const percent = Number(ctx.args.percent);
+    if (!Number.isFinite(percent)) throw new Error(`percent は数: ${String(ctx.args.percent)}`);
+    if (Math.abs(h.effect.multiplier * 100 - percent) > 1e-6) return false;
+  }
   if (ctx.args.projectile === 'stick' && h.effect.projectileStick !== true) return false;
   if (ctx.args.projectile === 'explosion' && h.effect.projectileExplosion !== true) return false;
   if (ctx.args.trigger === 'fullBurstStart' && h.effect.trigger !== 'fullBurstStart') return false;

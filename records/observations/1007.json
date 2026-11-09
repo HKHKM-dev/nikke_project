@@ -8,7 +8,7 @@
     "unit": "f",
     "description": "左のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
     "method": {
-      "tool": "recipe:burst-panel@3",
+      "tool": "recipe:burst-panel@4",
       "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・24・0・25・0・25・0・24f"
     },
     "source": "V-0703",
@@ -23,7 +23,7 @@
     "unit": "f",
     "description": "左のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
     "method": {
-      "tool": "recipe:burst-panel@3",
+      "tool": "recipe:burst-panel@4",
       "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・24・25・25・24f"
     },
     "source": "V-0703",
@@ -38,7 +38,7 @@
     "unit": "f",
     "description": "左のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
     "method": {
-      "tool": "recipe:burst-panel@3",
+      "tool": "recipe:burst-panel@4",
       "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
     },
     "source": "V-0703",

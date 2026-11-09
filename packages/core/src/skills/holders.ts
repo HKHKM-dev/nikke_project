@@ -1781,8 +1781,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     ev: FrameEvents,
     sourceSlotIndex: number,
   ): boolean =>
+    // 文脈の無い出来事では、true も false も成り立たない（「使っていなければ」の側に倒さない）
     (condition?.usedBurst === undefined ||
-      (fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) ?? false) === condition.usedBurst) &&
+      fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) === condition.usedBurst) &&
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex);
 

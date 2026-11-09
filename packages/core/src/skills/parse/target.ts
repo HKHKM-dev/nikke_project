@@ -128,7 +128,7 @@ export function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrig
   if (burstUsersEventOf(trigger) !== undefined) return;
   fail(
     `${path}.target`,
-    `burstUsers is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,
+    `burstUsers is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')} (or { count } of them), got ${JSON.stringify(trigger)}`,
   );
 }
 

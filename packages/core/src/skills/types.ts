@@ -811,7 +811,7 @@ export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
  */
 export function burstUsersEventOf(trigger: object | string): (typeof BURST_USERS_TRIGGERS)[number] | undefined {
   const kind =
-    typeof trigger === 'object' && isEventCountTrigger(trigger as EffectTrigger)
+    typeof trigger === 'object' && trigger !== null && isEventCountTrigger(trigger as EffectTrigger)
       ? (trigger as EventCountTrigger).count
       : trigger;
   return (BURST_USERS_TRIGGERS as readonly unknown[]).includes(kind)

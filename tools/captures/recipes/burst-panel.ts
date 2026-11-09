@@ -20,7 +20,8 @@ import {
 import { derived } from './cache.ts';
 import { observation, type Recipe, type RecipeObservation } from './types.ts';
 
-const VERSION = 3;
+/** 4: 欄の左右（--opt side）と、確かめていない左の欄では CT の明けを出さない（V-0703） */
+const VERSION = 4;
 async function measure(video: string, panel: PanelGeometry): Promise<string> {
   const { x: X, y: Y, w: W, h: H } = panel.crop;
   const args = ['-v', 'error', '-i', video, '-vf', cropFilter(panel.crop), '-fps_mode', 'passthrough'];
@@ -153,7 +154,7 @@ export const burstPanel: Recipe = {
     }
     const next = ['I → II の替わり目', 'II → III の替わり目', '00.00'];
     ev.ctEnd.forEach((frames, i) => {
-      if (frames.length === 0) return;
+      if (frames.length === 0 || !panel.faceVerified) return;
       const s = ['I', 'II', 'III'][i]!;
       const other = ev.ctEndOther[i]!;
       out.push(
