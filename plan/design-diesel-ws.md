@@ -5,7 +5,7 @@
 - 前提の語彙: [design-skill-stage1.md](design-skill-stage1.md) 1.1・1.3〜1.5 節（`selfState`・`undispellable`・状態の付与・`usedBurst`・段 1.5）、[design-nihilister.md](design-nihilister.md) 2.1 節（持続ダメージ `dot`）、[design-sustained-damage-up.md](design-sustained-damage-up.md)（持続ダメージ▲ `sustainedDamage`）、[design-damage-taken.md](design-damage-taken.md)（受けるダメージ▲）、[design-maids.md](design-maids.md) 2.3・8 節（出来事の回数のきっかけ・命中率▼の表）
 - 検証記録: V-0703
 - 作成日: 2026-11-09
-- 状態: 完了（V-0703。C-1016〜C-1018）
+- 状態: 完了（4・7 節）
 
 ## 0. 範囲
 
