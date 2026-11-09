@@ -16,7 +16,10 @@
               "present": true,
               "stacks": "full"
             }
-          }
+          },
+          "claims": [
+            "C-1010"
+          ]
         },
         {
           "kind": "passive",
@@ -29,7 +32,10 @@
               "present": true,
               "stacks": "full"
             }
-          }
+          },
+          "claims": [
+            "C-1010"
+          ]
         },
         {
           "kind": "passive",
@@ -42,7 +48,10 @@
               "present": true,
               "stacks": "full"
             }
-          }
+          },
+          "claims": [
+            "C-1010"
+          ]
         }
       ],
       "notes": []
@@ -70,9 +79,13 @@
             }
           ],
           "assumes": {
-            "ja": "「通常攻撃で 2 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、2 発ごとに 1 段階を 1 スタック足す（下位効果のスタック適用で、2・3 段階が付く発火でも付く）。付くたびに全スタックの維持を付け直す（skills/stacks.ts の STACK_REFRESH）。命中率▲はスタックごとに足し、2・3 段階の命中率▲と N の和で効く（C-0486 と同じ扱い）",
-            "en": "\"After performing 2 normal attacks\" counts every normal shot fired (hit or miss); every 2nd shot adds a Stage 1 stack (also on firings that add Stage 2 or 3, as each subsequent effect triggers the ones before it). Each new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts). Hit Rate adds per stack and sums with the Stage 2 and 3 Hit Rate increases into one N (as in C-0486)"
-          }
+            "ja": "「通常攻撃で 2 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、2 発ごとに 1 段階を 1 スタック足す（下位効果のスタック適用で、2・3 段階が付く発火でも付く）。付くたびに全スタックの維持を付け直す（skills/stacks.ts の STACK_REFRESH）。実機では付けた発の 2 ヒット目（二丁持ちの 2 つ目の銃口）から乗るが、モデルは次の発から（1 回のきっかけで 1 ヒットだけ 1 段遅れる。plan/design-quency-eq.md 2 節の論点 2）。命中率▲はスタックごとに足し、2・3 段階の命中率▲と N の和で効く（和か積かは見分けていない）",
+            "en": "\"After performing 2 normal attacks\" counts every normal shot fired (hit or miss); every 2nd shot adds a Stage 1 stack (also on firings that add Stage 2 or 3, as each subsequent effect triggers the ones before it). Each new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts). In game the stack already applies to the second hit (second muzzle) of the firing shot; the model applies it from the next shot (one hit per trigger lags one step; plan/design-quency-eq.md section 2, issue 2). Hit Rate adds per stack and sums with the Stage 2 and 3 Hit Rate increases into one N (sum vs product not distinguished)"
+          },
+          "claims": [
+            "C-1009",
+            "C-1014"
+          ]
         },
         {
           "kind": "state",
@@ -105,7 +118,10 @@
           "assumes": {
             "ja": "「1 段階フルスタック状態なら」は、同じ発火で 1 段階が付けた分も数える（1 段階が満ちた発火で 2 段階も付く。下位効果のスタック適用）。3 段階（effects[2]）の「2 段階フルスタック状態なら」も同じ",
             "en": "\"When Stage 1 is at max stacks\" also counts the Stage 1 stack added by the same firing (Stage 2 starts on the firing that fills Stage 1; each subsequent effect triggers the ones before it). Stage 3 (effects[2]) reads Stage 2 the same way"
-          }
+          },
+          "claims": [
+            "C-1009"
+          ]
         },
         {
           "kind": "state",
@@ -134,6 +150,9 @@
               "stat": "attack",
               "ref": 7
             }
+          ],
+          "claims": [
+            "C-1009"
           ]
         }
       ],
@@ -147,7 +166,10 @@
           "target": "self",
           "stat": "attackDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1011"
+          ]
         },
         {
           "kind": "timed",
@@ -155,16 +177,22 @@
           "target": "self",
           "stat": "reloadSpeed",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1015"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 5,
           "damageType": "distributed",
           "assumes": {
-            "ja": "敵全体への分配ダメージは、的 1 体では全額が当たる。同じ発動の攻撃ダメージ▲（effects[0]）は乗せない（着地点の表に行が無い）",
-            "en": "The distributed damage to all enemies lands in full on the lone target. The Attack Damage increase of the same Burst (effects[0]) is not applied (no row in the landing table)"
-          }
+            "ja": "敵全体への分配ダメージは、的 1 体では全額が当たる。III のタイマーの 00.00 から 11f と、その 19f 後の 2 ヒットに等分し、どちらにも同じ発動の攻撃ダメージ▲（effects[0]）が乗る（着地点の表 burst/landing.ts の行）",
+            "en": "The distributed damage to all enemies lands in full on the lone target. It is split evenly into two hits, 11 frames after the Burst III timer reads 00.00 and 19 frames later, and both carry the Attack Damage increase of the same Burst (effects[0]) (row in burst/landing.ts)"
+          },
+          "claims": [
+            "C-1011"
+          ]
         }
       ],
       "notes": []

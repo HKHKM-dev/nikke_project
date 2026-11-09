@@ -5,7 +5,7 @@
 - 検証: V-0702（撮影 S: 単騎 0999・1000、撮影 B: リター・デルタ・クエンシー：エスケープクイーン 1001・1002）
 - 前提の語彙: 名前の付いた状態の付与とスタック（[design-named-state.md](design-named-state.md)）、条件の `selfState` の `stacks: "full"`（[design-skill-stage3.md](design-skill-stage3.md) 1.4 節）、`passive` の `while`（[design-skill-stage9.md](design-skill-stage9.md) 1.3 節）、着地点の表の分かれたヒットと同じ発動の▲（[design-burst-split-hits.md](design-burst-split-hits.md)・[design-burst-landing.md](design-burst-landing.md) 10 節）
 - 作成日: 2026-11-10
-- 状態: 起案（論点 1〜4 のオーナーの判断待ち）
+- 状態: 実装済み（論点 1〜4 は推奨どおり。5 節）
 
 ## 0. 範囲
 
@@ -63,6 +63,15 @@
 - 論点 1 の案 A は、二丁持ちの 6 体のいまの値を 2 倍近くにする。6 体のうち定義のあるのは 402 だけ（V-0629 の比べは格子で 2 ペレットとして読んでいた）。402 の既存の観測値が変わらないか、`records:check` で見る。
 - 二丁持ちのコア命中率の行は、命中率▲の重なりの形（論点 4）と組で決まる。
 
+## 5. 決定と実装
+
+- 2026-11-10: オーナーが論点 1〜4 をすべて推奨（案 A）で決めた。
+- 論点 3: 条件 `selfState` の `sameFiring`（`skills/types.ts`・`skills/parse/condition.ts`・`skills/parse/crossChecks.ts` の `validateSameFiring`・`skills/holders.ts` の `holdsAt`。次のフレームに効いている件でスタックを見る）。
+- 論点 1: `damage.ts` の `muzzleHitsOf`（二丁持ちの SMG だけ 2）を、通常攻撃の値と `frame/firstPass.ts` の 1 発のゲージ・命中とコアの命中の期待値に掛けた。2 ヒット目もゲージを溜める形は、満タンになった発の番号で確かめた（C-1012）。的の表のコア命中率に `dualWield` の行を足した（C-1013。仮説）。弾丸命中率は SMG の行のまま。
+- 着地点の表に 403 の行（`hitFrames` 11・`hitOffsets` [0, 19]・`sameActivationBuffsOnHit`。C-1011）。
+- 論点 2・4: 扱わない（定義の `assumes` と C-1014）。
+
 ## 経過
 
 - 2026-11-10: 起案した。撮影 S・B（0999〜1002）の頭の探索で、二丁持ちの 1 発 2 ヒット・段階の同じ発火の連鎖・バーストの 2 ヒットが分かった（1 節）。論点 1〜4 をオーナーに出した。
+- 2026-11-10: 論点 1〜4 が推奨どおりに決まり、実装した（5 節。V-0702、C-1009〜C-1015）。

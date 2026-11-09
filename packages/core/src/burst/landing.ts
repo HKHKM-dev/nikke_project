@@ -70,7 +70,7 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     resourceIds: [403],
     sameActivationBuffsOnHit: true,
     delays: { hitFrames: 11, effectFrames: 0, hitOffsets: [0, 19] },
-    claim: 'C-PENDING-403-BURST',
+    claim: 'C-1011',
   },
   // ココア: I の発動（六角形が I から II に替わるフレーム）から効果（味方全体のデバフ効果解除）まで 20f。バーストの倍率ダメージは無い
   // （課題 2-59。ほろ酔いの外れたヒットの間から）

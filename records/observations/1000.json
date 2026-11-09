@@ -153,7 +153,8 @@
       }
     },
     "scope": {
-      "slot": 1
+      "slot": 1,
+      "source": "gauge"
     },
     "source": "V-0702",
     "readAt": "2026-11-10"
