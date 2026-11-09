@@ -37,11 +37,25 @@ export function stopArrival(card: Element | null): void {
   if (card) arrivals.get(card)?.();
 }
 
-/** base の位置・大きさに置いた要素を、rect の位置・大きさ（幅で縮め、中心をそろえる）に見せる transform */
-function transformTo(rect: DOMRect, base: DOMRect): string {
-  const dx = rect.left + rect.width / 2 - (base.left + base.width / 2);
-  const dy = rect.top + rect.height / 2 - (base.top + base.height / 2);
-  return `translate(${dx}px, ${dy}px) scale(${rect.width / base.width})`;
+/**
+ * base の位置・大きさに置いた立ち絵の写しを、rect の位置・大きさに見せるキーフレーム。幅をそろえて縮め、rect が写しより横長なら
+ * （ニケ一覧の四角の絵）、写しの上から rect の形の分だけを残して下を切る（顔のある上の部分を四角に切り抜く）。
+ * 写しのほうが横長なら、切らずに上下の中央をそろえる。切るのは下だけで、ほかの 3 辺は枠の外（影など）も見せる（CLIP_OUTSET）。
+ * 大きさの無い rect（配置されていない要素）は、base のまま動かさない
+ */
+const CLIP_OUTSET = 40;
+function frameAt(target: DOMRect, base: DOMRect): Keyframe {
+  const rect = target.width > 0 && target.height > 0 ? target : base;
+  const scale = rect.width / base.width;
+  const shown = Math.min(base.height, rect.height / scale);
+  const top = rect.top + (rect.height - shown * scale) / 2;
+  return {
+    transform: `translate(${rect.left - base.left}px, ${top - base.top}px) scale(${scale})`,
+    clipPath:
+      shown < base.height
+        ? `inset(-${CLIP_OUTSET}px -${CLIP_OUTSET}px ${base.height - shown}px -${CLIP_OUTSET}px)`
+        : `inset(-${CLIP_OUTSET}px)`,
+  };
 }
 
 /** node の写しを、いまの node の位置・大きさで画面に重ねる */
@@ -54,7 +68,7 @@ function ghostOf(node: Element, base: DOMRect): HTMLElement {
     width: `${base.width}px`,
     height: `${base.height}px`,
     margin: '0',
-    transformOrigin: 'center',
+    transformOrigin: 'top left',
     zIndex: '9999',
     pointerEvents: 'none',
   });
@@ -89,13 +103,13 @@ export function flyIntoSlot(from: DOMRect, card: Element): () => void {
     finished = true;
     void ready.then(remove);
   };
-  ghost.animate([{ transform: transformTo(from, base) }, { transform: 'none' }], FLIGHT).finished.then(done, done);
+  ghost.animate([frameAt(from, base), frameAt(base, base)], FLIGHT).finished.then(done, done);
   return done;
 }
 
 /**
  * 外したニケの立ち絵の枠（content。外す前のスロットか持ち上げた絵）を、その位置から一覧のそのニケの絵（to）へ動かし、
- * 着く前に薄くして消す（一覧の絵は四角のこともあり、形が違う）。一覧に出ていない（絞り込みで外れた）ときは、その場で縮めながら消す
+ * 少し薄くして消す（一覧の絵が四角なら、四角に切り抜きながら動かす。frameAt）。一覧に出ていない（絞り込みで外れた）ときは、その場で縮めながら消す
  */
 export function flyToTray(content: Element, to: DOMRect | null): void {
   const base = content.getBoundingClientRect();
@@ -106,8 +120,8 @@ export function flyToTray(content: Element, to: DOMRect | null): void {
   ghost
     .animate(
       [
-        { transform: 'none', opacity: 1 },
-        { transform: transformTo(end, base), opacity: to ? 0.6 : 0, offset: 1 },
+        { ...frameAt(base, base), opacity: 1 },
+        { ...frameAt(end, base), opacity: to ? 0.6 : 0 },
       ],
       FLIGHT,
     )

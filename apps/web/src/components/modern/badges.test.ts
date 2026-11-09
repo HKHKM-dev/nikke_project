@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import viteConfig from '../../../vite.config.ts';
 import {
   BADGE_KINDS,
+  filterButtonValues,
   VISUAL_BADGE_KINDS,
   collectionBadge,
   trayCollectionBadge,
@@ -78,7 +79,7 @@ describe('バッジの絞り込み', () => {
       expect(matchesBadgeFilters(allStep, { burstStep: [step] })).toBe(true);
     }
     expect(matchesBadgeFilters(allStep, { burstStep: ['Step1'], weaponType: ['SG'] })).toBe(false);
-    expect(BADGE_KINDS.find((k) => k.key === 'burstStep')?.filterValues).not.toContain('AllStep');
+    expect(filterButtonValues(BADGE_KINDS.find((k) => k.key === 'burstStep')!)).toEqual(['Step1', 'Step2', 'Step3']);
   });
 
   it('同じ値をもう一度押すと解除される', () => {

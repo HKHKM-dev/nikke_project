@@ -3,6 +3,7 @@ import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import {
   BADGE_KINDS,
+  filterButtonValues,
   matchesBadgeFilters,
   toggleBadgeFilter,
   trayCollectionBadge,
@@ -46,7 +47,7 @@ function BadgeFilter({
 }) {
   return (
     <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
-      {(kind.filterValues ?? Object.keys(kind.badges)).map((v) => {
+      {filterButtonValues(kind).map((v) => {
         const { src, label } = kind.badges[v]!;
         return (
           <button
