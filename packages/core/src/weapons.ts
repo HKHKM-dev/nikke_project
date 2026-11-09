@@ -9,6 +9,15 @@ import type { ShotParams, WeaponType } from './types.ts';
  */
 export const MAX_RPM = 60 * FRAMES_PER_GAME_SECOND;
 
+/**
+ * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（銃口 2 つ）の SMG の 1 発のヒット数。1 発で両方の銃口が
+ * 当たり（V-0702）、ヒットごとにダメージ・ゲージ・命中の数え（コア・会心はヒットごと）になる。SMG のほかの二丁持ち（ノア・ツバイ）は
+ * 確かめていないので 1（modelNotes の未対応）
+ */
+export function muzzleHitsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muzzleCount'>): number {
+  return weaponType === 'SMG' && shot.muzzleCount > 1 ? shot.muzzleCount : 1;
+}
+
 export const WEAPON_TYPES = ['AR', 'SMG', 'SR', 'RL', 'SG', 'MG'] as const satisfies readonly WeaponType[];
 
 export const WEAPON_LABEL: Record<WeaponType, { ja: string; en: string }> = {

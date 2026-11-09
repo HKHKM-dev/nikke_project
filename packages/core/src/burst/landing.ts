@@ -64,6 +64,14 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // ベスティー：タクティカル・アップ: III のタイマーの 00.00 からヒットまで 17f（動画で 39f。止まり 22f を含む）。防御力無視のバーストスキル
   // ダメージには同じ発動の防御力無視ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果の発火の遅れは 0（2 段目の段 16 の PR 2。V-0586）
   { resourceIds: [94], sameActivationBuffsOnHit: true, delays: { hitFrames: 17, effectFrames: 0 }, claim: 'C-0807' },
+  // クエンシー：エスケープクイーン: III のタイマーの 00.00 から 1 ヒット目まで 11f（動画で 33f。止まり 22f を含む）、19f 後に 2 ヒット目
+  // （二丁持ちの 2 ヒットに等分）。分配ダメージには同じ発動の攻撃ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果の発火の遅れは 0（V-0702）
+  {
+    resourceIds: [403],
+    sameActivationBuffsOnHit: true,
+    delays: { hitFrames: 11, effectFrames: 0, hitOffsets: [0, 19] },
+    claim: 'C-1011',
+  },
   // ココア: I の発動（六角形が I から II に替わるフレーム）から効果（味方全体のデバフ効果解除）まで 20f。バーストの倍率ダメージは無い
   // （課題 2-59。ほろ酔いの外れたヒットの間から）
   { resourceIds: [311], delays: { hitFrames: 0, effectFrames: 20 }, claim: 'C-0980' },

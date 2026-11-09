@@ -20,7 +20,7 @@ import {
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
 import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile } from './types.ts';
-import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
+import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, muzzleHitsOf, type WeaponModel } from './weapons.ts';
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
 export const FULL_BURST_BOOST = 0.5;
@@ -308,7 +308,10 @@ export type TriggerDamage = {
   perTrigger: number;
   /** Stage 15: 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
   hitRate: number;
-  /** V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）。normal にだけ含まれている */
+  /**
+   * V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）× 二丁持ちの SMG のヒット数（muzzleHitsOf）。normal にだけ含まれている。
+   * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1012）
+   */
   hitsPerShot: number;
 };
 
@@ -347,7 +350,8 @@ export function baseDefenceOf(input: {
 /** 弾の種類（CDN の fire_type）のうち、モデルが知っているもの（types.ts の ShotParams.fireType） */
 const KNOWN_FIRE_TYPES: readonly string[] = ['Instant', 'ProjectileDirect', 'HomingProjectile', 'ProjectileCurve'];
 
-export function modelNotes(shot: ShotParams): ModelNote[] {
+export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>): ModelNote[] {
+  const { shot, weaponType } = character;
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {
     notes.push({ level: 'unsupported', code, message: { ja, en } });
@@ -355,8 +359,18 @@ export function modelNotes(shot: ShotParams): ModelNote[] {
   const approx = (code: string, ja: string, en: string): void => {
     notes.push({ level: 'approx', code, message: { ja, en } });
   };
-  if (shot.muzzleCount !== 1)
-    unsupported('multi-muzzle', '複数銃口（二丁持ち）は未対応', 'Multiple muzzles not modeled');
+  if (muzzleHitsOf(weaponType, shot) !== shot.muzzleCount)
+    unsupported(
+      'multi-muzzle',
+      '複数銃口（SMG 以外の二丁持ち。ノア・ツバイ）は未対応',
+      'Multiple muzzles not modeled (except dual-wield SMGs)',
+    );
+  else if (shot.muzzleCount > 1)
+    approx(
+      'dual-wield',
+      '二丁持ちの SMG は 1 発 2 ヒット（V-0702）。2 ヒット目もゲージを溜めるのは仮説',
+      'Dual-wield SMG: 2 hits per shot (V-0702); gauge from the second hit is a hypothesis',
+    );
   if (shot.inputType === 'DOWN_Charge')
     unsupported(
       'down-charge',
@@ -496,7 +510,9 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const trueMultiplier = trueDamageMultiplier(shot, buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage, buffs.elementAdvantage > 0);
-  const hitsPerShot = hitsPerShotOf(condition);
+  // 二丁持ちの SMG は 1 発 2 ヒット（muzzleHitsOf）。的の表の 1 発のヒット数（V-0119）と掛ける。銃口の数は、1 パス目（ゲージ・命中の数え）と
+  // 同じく基礎の武器のもの（使用武器の変更の武器の銃口は確かめていない）
+  const hitsPerShot = hitsPerShotOf(condition) * muzzleHitsOf(character.weaponType, character.shot);
   const normal =
     hitRate *
     hitsPerShot *
@@ -602,6 +618,6 @@ export function computeDamage(input: DamageInput): DamageResult {
     cadence,
     dps,
     totalDamage: dps * condition.durationSeconds,
-    notes: modelNotes(character.shot),
+    notes: modelNotes(character),
   };
 }

@@ -1535,7 +1535,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   /**
    * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件の列が見る、出どころの枠のその状態（家族の根なら家族のどれか）の
-   * 段 1 の件の列（出どころは問わない。条件の selfState が見るものと同じ）
+   * 段 1 の件の列（出どころは問わない。条件の selfState が見るものと同じ）。クエンシー：エスケープクイーン編（V-0702）: 段 1.5（条件つきの
+   * 付与）の状態の件の列も見る（S1 の「ルート探索 2 段階フルスタック状態の時のみ」。2 段階の付与は 1 段階のフルスタックの条件つき）。件の列は
+   * 条件の selfState と同じ stateTracks から引く。段 1.5 の件も付いたフレームから効かせる（while は stat を出すだけで状態を付けないので連鎖しない）
    */
   const whileOwn = new Map<HeldTrack, HeldTrack[]>();
   /** while の件を作った時の、元の状態の件（件の列ごとの items。作り直すと別の配列になる） */
@@ -1544,13 +1546,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     let own = whileOwn.get(track);
     if (own === undefined) {
       const family = statesMatching(effect.whileState);
-      own = tracks.filter(
-        (t) =>
-          t.holder === track.sourceSlotIndex &&
-          t.stage === 1 &&
-          t.origin.kind === 'state' &&
-          family.includes(t.origin.state),
-      );
+      own = family.flatMap((s) => stateTracks[track.sourceSlotIndex]?.get(s) ?? []);
       whileOwn.set(track, own);
     }
     const deps = own.map((t) => readItems(t));
@@ -1728,7 +1724,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const holdsAt = (condition: EffectCondition | undefined, sourceSlotIndex: number, frame: number): boolean => {
     if (condition === undefined) return true;
     if (condition.selfState !== undefined) {
-      const { state, present, stacks } = condition.selfState;
+      const { state, present, stacks, sameFiring } = condition.selfState;
       // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
       const family = statesMatching(state);
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
@@ -1740,7 +1736,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         !stacksHold(
           stacks,
           isStatic,
-          own.map((t) => ({ origin: t.origin, items: selfStateItemsAt(t, frame) })),
+          // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: sameFiring は、同じ発火で前に書いた付与が付けた分
+          // （射撃の回数のきっかけの件は次のフレームから）も数えるので、段によらず次のフレームに効いている件を見る
+          own.map((t) => ({
+            origin: t.origin,
+            items: sameFiring ? activeAt(t, frame + 1) : selfStateItemsAt(t, frame),
+          })),
         )
       ) {
         // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件（段 1 の状態の件の、そのフレームの段の最大）

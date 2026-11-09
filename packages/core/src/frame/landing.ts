@@ -25,6 +25,7 @@ import {
 import { LANDING_BAND_LABEL, LANDING_BANDS } from '../enemies.ts';
 import { ZERO_HIT_RATE, hitRateNOf, type HitRateN } from '../skills/buffs.ts';
 import { SKILL_SLOTS } from '../skills/types.ts';
+import { muzzleHitsOf } from '../weapons.ts';
 import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type {
@@ -129,7 +130,7 @@ function projectileRowKeyOf(by: TargetRateByProjectile['byProjectile'], characte
 }
 
 /** 行を引く表（コア命中率の表だけ fire_type の行 fireTypes を持つ） */
-type RateTableLookup = TargetRateTable & Pick<CoreHitRateTable, 'fireTypes'>;
+type RateTableLookup = TargetRateTable & Pick<CoreHitRateTable, 'fireTypes' | 'dualWield'>;
 
 function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is TargetRateByProjectile {
   return 'byProjectile' in cell;
@@ -137,11 +138,16 @@ function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is T
 
 /**
  * キャラの行（武器種の行。弾の種類ごとの行なら、そのキャラの弾の種類の行）。null = 未測定。
- * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: コア命中率の表に fire_type の行（fireTypes）があれば、それを先に引く
+ * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: コア命中率の表に fire_type の行（fireTypes）があれば、それを先に引く。
+ * 次に、二丁持ちなら二丁持ちの行（dualWield）
  */
 export function rateRowOf(table: RateTableLookup, character: CharacterData): TargetRateRow | null {
   const byFireType = table.fireTypes?.[character.shot.fireType];
   if (byFireType !== undefined) return byFireType;
+  // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの行（コア命中率の表だけ）
+  const dual =
+    muzzleHitsOf(character.weaponType, character.shot) > 1 ? table.dualWield?.[character.weaponType] : undefined;
+  if (dual !== undefined) return dual;
   const cell = table[character.weaponType];
   if (cell === null || cell === undefined) return null;
   if (!isByProjectile(cell)) return cell;

@@ -1,0 +1,159 @@
+[
+  {
+    "id": "1000-01",
+    "recording": "1000",
+    "kind": "total",
+    "use": "record",
+    "value": 190608369,
+    "description": "クエンシー：エスケープクイーン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11387。増分は 3101 個"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1000-02",
+    "recording": "1000",
+    "kind": "hit",
+    "use": "compare",
+    "value": [
+      8667.8, 8881.27, 10581.25, 11219.06, 14619.73, 15683.13, 17598.63, 18237.28, 18237.05, 10794.28, 10794.39
+    ],
+    "unit": "ダメージ",
+    "description": "クエンシー：エスケープクイーンの通常攻撃の 1,4,20,22,38,40,46,47,60,121,122 発目の、1 ヒット目（二丁の 2 ヒットのうち段の低い方）の胴体（非会心・非コア・距離ボーナスあり）の値。ルート探索の段（1 段階 0・1・9・10、2 段階 1・9・10、3 段階 1・4・5、リロードの後の 1 段階 10）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "1 発の増分（2.5f ごと）を二丁の 2 ヒットの和として、段の番号（1 段階 → 2 段階 → 3 段階の順に 1 ずつ。2 ヒット目は 1 ヒット目と同じか 2 つ先まで）× コア × 会心 × 距離の格子に ±2 で当て、増分から 2 ヒット目の格子の値を引いて 1 ヒット目の倍率で割り、胴体に直した。格子が 2 通りに合う発は平均。2 ヒットとも当たらなかった発は、122 発目までは無い（段の並びが発の番号と合う）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,4,20,22,38,40,46,47,60,121,122",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1000-03",
+    "recording": "1000",
+    "kind": "count",
+    "use": "record",
+    "value": 1643,
+    "unit": "増分",
+    "description": "フルスタック（3 段階まで満ちた）の 2 ヒットの増分のうち、コアのヒットを含むもので、コアの上乗せを 1.5 + S1 のコアダメージ▲（値 02 %）にした格子に合った数。▲なし（1.5）の格子にだけ合う増分と、両方に合う増分は 0",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "2 ヒットの和をコア × 会心 × 距離（0.3 か 0）の格子に ±2 で当てた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1000-04",
+    "recording": "1000",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.3261,
+    "description": "フルスタック（3 段階まで満ちた）の間の通常攻撃のヒットのうち、会心の割合（1482 / 4544。全区間）。S1 のクリティカル確率▲（3 段階フルスタック）が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "フルスタックの格子に合う増分を 1〜2 ヒットに分け、会心のヒットを数えた（σ は約 0.007）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1000-05",
+    "recording": "1000",
+    "kind": "rate",
+    "use": "record",
+    "value": [0.539, 0.991, 0.171, 0.364, 0.996],
+    "description": "フルスタックの間のコア命中率（コアのヒット / 当たったヒット）を、射撃場の区間（中近・近・遠・中遠・近）の順に（459/852・902/910・169/986・343/942・851/854）。片方だけ外れた発（1 ヒットの増分）は無い",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "区間は増分の 100f を超える空き（狙えない窓）で区切った"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1000-06",
+    "recording": "1000",
+    "kind": "count",
+    "use": "compare",
+    "value": 339,
+    "unit": "発",
+    "description": "戦闘開始から BURST のバーが消えた（ゲージが満タンになった）発の番号",
+    "method": {
+      "tool": "gauge.ts --side left --mode events と recipe:hud-jumps@3 の増分",
+      "note": "BURST のバー（左の欄。gauge.ts --side left --mode events）が消えた f1799 までの増分は 332 個。HUD の数字が読めずにまとまった f1591 の増分（263,488。前の増分から 20f）を 8 発（20f ÷ 2.5f）と数えて 7 発を足した。2 ヒットとも外れた発があれば、それより後ろ"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  }
+]
