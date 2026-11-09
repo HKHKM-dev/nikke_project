@@ -559,6 +559,11 @@ export function beginHide(
 ): number | null {
   const progress = partialChargeProgress(state, shot, model, params) ?? 0;
   if (progress >= 1) {
+    // 待つのは満ちてから撃つまで（H）の間の枠だけ。チャージ 0 の武器（進みがいつも 1）の H より先の発は、根拠が無いので窓の始まりに撃つ
+    if (framesToNextShot(state, params, model) > holdFramesOf(params)) {
+      fireAndHide(state, shot, model, params);
+      return 1;
+    }
     state.hidePending = { framesLeft: 0, progress: 1, full: true };
     return settleHide(state, shot, model, params);
   }
@@ -604,6 +609,10 @@ function settleHide(state: ShooterState, shot: ShotParams, model: WeaponModel, p
   if (pending.full) {
     // 満ちていた枠: 待ちを数えず、このフレームの stepShooter が決める待ち（前の発からの経過とこのフレームのチャージ時間）が 0 の
     // フレームに撃つ（ふだんの刻みと同じ時刻）。リロードは、射撃姿勢維持型はこの発の姿勢の終わりから、ほかの武器はこの発から
+    if (state.phase === 'reloading') {
+      delete state.hidePending;
+      return null;
+    }
     if (framesToNextShot(state, params, model) > 0) return null;
     delete state.hidePending;
     fireAndHide(state, shot, model, params);

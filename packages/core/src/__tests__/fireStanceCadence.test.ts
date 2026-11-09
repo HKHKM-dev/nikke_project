@@ -97,6 +97,31 @@ describe('部分チャージ（設計書 3.2 節）', () => {
     expect(state.hideReloadStartIn).toBe(26);
   });
 
+  it('fires on the same frame as an unblocked shooter, even when the charge time changes during the wait', () => {
+    // 満ちていた枠の撃つ時刻は、待ちを窓の始まりに決めず、毎フレーム射手と同じ見方（前の発からの経過とそのフレームのチャージ時間）で
+    // 決める。途中でチャージ時間が 5f 短くなっても、窓で止めない射手と同じフレームに撃つ
+    const { state, shot, params } = afterShot(811, 100);
+    const twin = structuredClone(state);
+    const faster = { ...params, chargeFrames: params.chargeFrames - 5 };
+    const paramsAt = (k: number) => (k < 3 ? params : faster);
+    let twinShot = -1;
+    for (let k = 0; twinShot < 0 && k < 40; k++) {
+      if (stepShooter(twin, shot, DEFAULT_WEAPON_MODEL, paramsAt(k), false)) twinShot = k;
+    }
+    expect(twinShot).toBeGreaterThan(0);
+    expect(twinShot).toBeLessThan(19);
+    let windowShot = -1;
+    for (let k = 0; windowShot < 0 && k < 40; k++) {
+      const fired =
+        k === 0
+          ? beginHide(state, shot, DEFAULT_WEAPON_MODEL, paramsAt(k))
+          : stepHide(state, shot, DEFAULT_WEAPON_MODEL, paramsAt(k));
+      if (fired === 1) windowShot = k;
+      else stepShooter(state, shot, DEFAULT_WEAPON_MODEL, paramsAt(k), true);
+    }
+    expect(windowShot).toBe(twinShot);
+  });
+
   it('fires at full charge while waiting to fire after the charge is full (レイヴン H = 16)', () => {
     // 撃った後 119 − 16 = 103f で満ち、そこから撃つまでの間は p = 1
     const { state, shot, params } = afterShot(851, 110);
