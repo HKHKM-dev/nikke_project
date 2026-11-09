@@ -4,7 +4,7 @@
 // 画面に欄の無い入力は、ここで既定値にする（未対応の一覧の「画面に無い入力の既定」に出す。components/NotesSummary.tsx）。
 // - スロット: 射撃条件（自動。保存データの conditionMode・condition は使わない）・想定 HP（欄の無いスロットは満タン）・
 //   その他攻撃加算（0）。リサイクルルームは編成共通のコンソールから取り、LV は編成共通のシンクロレベル。好感度はキャラごとの上限に収める
-// - 編成: 敵（射撃場の敵。属性だけを選ぶ）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）・操作キャラ（スロット 3）。
+// - 編成: 敵（射撃場の敵。属性だけを選ぶ）・バースト（回す。使わないスロットはスロットの詳細設定の noBurst）・操作キャラ（既定はスロット 3。モダン UI の操作の印のドラッグで変える）。
 //   ジャンプ移動（rangeJump）は、その敵のプリセットの出来事のセットを入れる（保存データの enemyEventSets は使わない）
 import {
   EMPTY_BUILD,
@@ -38,7 +38,6 @@ import {
 import type { ScreenSlotResult, Shown } from './compute.ts';
 import {
   DEFAULT_CONDITION_MODE,
-  DEFAULT_CONTROLLED_SLOT,
   DEFAULT_HP_RATIO,
   DEFAULT_SLOT_CONDITION,
   SHOOTING_RANGE_ENEMY,
@@ -244,7 +243,7 @@ export function buildCalcView(team: TeamState, deps: CalcDeps): CalcView {
       durationSeconds: team.durationSeconds,
       burst: true,
       ...(noBurstSlots.length === 0 ? {} : { noBurstSlots }),
-      controlledSlot: DEFAULT_CONTROLLED_SLOT,
+      controlledSlot: team.controlledSlot,
     },
   };
 }

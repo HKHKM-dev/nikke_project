@@ -16,6 +16,7 @@ import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.t
 import type { ListOrderControls } from '../../useListOrder.ts';
 import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
+import { NO_PARTIES } from './OtherPartyBadges.tsx';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -37,9 +38,6 @@ type Props = {
 };
 
 /** 1 種類のバッジを並べた絞り込み（同じ種類でも複数選べる。押したときの切り替えは toggleBadgeFilter） */
-/** ほかの編成にいないニケの編成の番号（毎回新しい配列を作らない） */
-const NO_PARTIES: readonly number[] = [];
-
 function BadgeFilter({
   kind,
   values,

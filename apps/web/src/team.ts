@@ -119,6 +119,11 @@ export type TeamState = {
    * （calcView.ts）
    */
   rangeJump: boolean;
+  /**
+   * 操作キャラのスロット（0 から。編成ごと）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ（core の TeamInput.controlledSlot）。
+   * モダン UI のカードの操作の印をドラッグして別のスロットへ移す。スロットどうしの入れ替えでは動かない（位置に残る）
+   */
+  controlledSlot: number;
 };
 
 /** コンソールの企業研究の企業（data/masters/recycleRoom.json の corporation と同じ） */
@@ -168,6 +173,7 @@ export type TeamAction =
   /** fields: 育成状況（roster.ts）にいるキャラの育成。別のニケに変えたときだけ写す */
   | { type: 'selectCharacter'; index: number; resourceId: number; fields?: SlotGrowthFields }
   | { type: 'swapSlots'; fromIndex: number; toIndex: number }
+  | { type: 'setControlledSlot'; index: number }
   | { type: 'clearSlot'; index: number }
   | { type: 'setGrowth'; index: number; growth: SlotGrowth }
   | { type: 'setSlotCondition'; index: number; condition: SlotCondition }
@@ -200,10 +206,7 @@ export function emptySlot(): SlotState {
   };
 }
 
-/**
- * 操作キャラの枠（スロット 3）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ。画面では選ばない
- * （plan/design-ui-rebuild.md 5.1 節）
- */
+/** 操作キャラのスロットの既定（スロット 3） */
 export const DEFAULT_CONTROLLED_SLOT = 2;
 
 export function initialTeamState(): TeamState {
@@ -216,6 +219,7 @@ export function initialTeamState(): TeamState {
     console: emptyConsole(),
     synchroLevel: DEFAULT_SYNCHRO_LEVEL,
     rangeJump: true,
+    controlledSlot: DEFAULT_CONTROLLED_SLOT,
   };
 }
 
@@ -269,6 +273,9 @@ export function teamReducer(state: TeamState, action: TeamAction): TeamState {
       slots[action.toIndex] = tmp;
       return { ...state, slots };
     }
+    case 'setControlledSlot':
+      if (!Number.isInteger(action.index) || action.index < 0 || action.index >= state.slots.length) return state;
+      return action.index === state.controlledSlot ? state : { ...state, controlledSlot: action.index };
     case 'setGrowth':
       return updateSlot(state, action.index, (s) => ({ ...s, growth: action.growth }));
     case 'setSlotCondition':
@@ -373,9 +380,10 @@ export const STORAGE_KEY = 'nikke-calc.team.v1';
 
 /**
  * 編成の保存形式の版。版 3 で、画面から消した項目（バースト・操作キャラ・撃たない・スロットごとの LV・リサイクルルーム・
- * その他攻撃加算）を書かなくした。版 1・2 の保存データのそれらは読み捨てる。版のない旧形式（Stage 3〜13）は読まない
+ * その他攻撃加算）を書かなくした。版 1・2 の保存データのそれらは読み捨てる。版 4 で操作キャラ（controlledSlot）を戻した
+ * （版 3 までの保存データは既定のスロット 3）。版のない旧形式（Stage 3〜13）は読まない
  */
-export const TEAM_FORMAT_VERSION = 3;
+export const TEAM_FORMAT_VERSION = 4;
 
 export function serializeTeamState(state: TeamState): string {
   return JSON.stringify({ formatVersion: TEAM_FORMAT_VERSION, ...state });
@@ -564,6 +572,10 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   if (raw.synchroLevel !== undefined && !isInt(raw.synchroLevel, 1)) return null;
   // 2026-10-31 までの保存データには無いので、欠落は既定（ON）
   if (raw.rangeJump !== undefined && !isBool(raw.rangeJump)) return null;
+  // 操作キャラは版 4 から読む（版 1・2 の値は、画面で選べなかった頃のものなので読み捨てる）。欠落は既定
+  const readsControlled = typeof raw.formatVersion === 'number' && raw.formatVersion >= 4;
+  const controlled = readsControlled ? raw.controlledSlot : undefined;
+  if (controlled !== undefined && !(isInt(controlled, 0) && controlled < TEAM_SIZE)) return null;
 
   return {
     slots,
@@ -574,6 +586,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     console: consoleInput,
     synchroLevel: raw.synchroLevel === undefined ? DEFAULT_SYNCHRO_LEVEL : raw.synchroLevel,
     rangeJump: raw.rangeJump === undefined ? true : raw.rangeJump,
+    controlledSlot: controlled === undefined ? DEFAULT_CONTROLLED_SLOT : controlled,
   };
 }
 

@@ -1,7 +1,7 @@
 // 育成状況（roster.ts。plan/design-combat-power-sort.md 5 節）。データは作った値
 import { emptyBuild, type BuildSnapshot, type CharacterIndexEntry, type SnapshotCharacter } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
-import { INITIAL_PARTIES, type PartiesState } from './parties.ts';
+import { INITIAL_PARTIES, partyOf, type PartiesState } from './parties.ts';
 import {
   applyRoster,
   clearConfirmText,
@@ -132,7 +132,7 @@ describe('applyRoster と rosterSlotCount', () => {
   const team = teamWith(82, null, 30);
   const parties: PartiesState = {
     active: 0,
-    parties: [null, { slots: teamWith(10, 82).slots }, null, null, null],
+    parties: [null, partyOf(teamWith(10, 82)), null, null, null],
   };
 
   it('シンクロ LV・コンソールと、全部の編成の育成状況にいるキャラのスロットに写す', () => {
@@ -158,7 +158,7 @@ describe('clearRosterFromTeam（育成状況を消すとき）', () => {
   const team = teamWith(82, null, 30);
   const parties: PartiesState = {
     active: 0,
-    parties: [null, { slots: teamWith(10, 82).slots }, null, null, null],
+    parties: [null, partyOf(teamWith(10, 82)), null, null, null],
   };
 
   it('シンクロ LV・コンソールと、全部の編成の育成状況にいるキャラのスロットの育成を既定に戻す。キャラとほかのスロットは変えない', () => {

@@ -15,6 +15,7 @@ import {
   serializeTeamState,
   takenResourceIds,
   teamReducer,
+  DEFAULT_CONTROLLED_SLOT,
   type TeamState,
 } from './team.ts';
 
@@ -193,6 +194,31 @@ describe('version 2 data (fields removed from the screen)', () => {
       })),
     };
     expect(parseTeamState(JSON.stringify(v2), index)).toEqual(s);
+  });
+});
+
+describe('controlled slot (version 4)', () => {
+  it('moves the controlled slot, and keeps it at its position when slots are swapped', () => {
+    const s = withCharacters([10, 20]);
+    expect(s.controlledSlot).toBe(DEFAULT_CONTROLLED_SLOT);
+    const moved = teamReducer(s, { type: 'setControlledSlot', index: 0 });
+    expect(moved.controlledSlot).toBe(0);
+    expect(teamReducer(moved, { type: 'swapSlots', fromIndex: 0, toIndex: 1 }).controlledSlot).toBe(0);
+    expect(teamReducer(moved, { type: 'setControlledSlot', index: 5 })).toBe(moved);
+  });
+
+  it('saves and reads it; version 3 data and a missing value read as the default, an out-of-range value is rejected', () => {
+    const s = teamReducer(withCharacters([10]), { type: 'setControlledSlot', index: 4 });
+    expect(parseTeamState(serializeTeamState(s), index)?.controlledSlot).toBe(4);
+    const raw = JSON.parse(serializeTeamState(s));
+    expect(parseTeamState(JSON.stringify({ ...raw, formatVersion: 3 }), index)?.controlledSlot).toBe(
+      DEFAULT_CONTROLLED_SLOT,
+    );
+    const { controlledSlot: _c, ...missing } = raw;
+    expect(parseTeamState(JSON.stringify(missing), index)?.controlledSlot).toBe(DEFAULT_CONTROLLED_SLOT);
+    for (const controlledSlot of [5, -1, 1.5, '0']) {
+      expect(parseTeamState(JSON.stringify({ ...raw, controlledSlot }), index)).toBeNull();
+    }
   });
 });
 

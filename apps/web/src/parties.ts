@@ -17,7 +17,7 @@ export const PARTY_COUNT = 5;
 export const PARTIES_STORAGE_KEY = 'nikke-calc.parties.v1';
 
 /** 編成ごとに持つ部分 */
-export type Party = Pick<TeamState, 'slots'>;
+export type Party = Pick<TeamState, 'slots' | 'controlledSlot'>;
 
 /**
  * 選んでいる編成の番号（0 から）と、ほかの編成の中身。選んでいる編成の中身は画面の編成（TeamState）が正で、
@@ -28,7 +28,7 @@ export type PartiesState = { active: number; parties: (Party | null)[] };
 export const INITIAL_PARTIES: PartiesState = { active: 0, parties: Array.from({ length: PARTY_COUNT }, () => null) };
 
 export function partyOf(team: TeamState): Party {
-  return { slots: team.slots };
+  return { slots: team.slots, controlledSlot: team.controlledSlot };
 }
 
 /** ニケを 1 人でも選んでいる編成か */
@@ -58,7 +58,7 @@ export function otherPartyResourceIds(state: PartiesState): OtherParties {
 
 /** 全編成で共通の設定だけを取り出す */
 export function sharedSettingsOf(team: TeamState): SharedSettings {
-  const { slots: _slots, ...shared } = team;
+  const { slots: _slots, controlledSlot: _controlled, ...shared } = team;
   return shared;
 }
 
@@ -67,7 +67,7 @@ export type SharedSettings = Omit<TeamState, keyof Party>;
 
 /** 共通の設定はそのままに、スロットを編成のものにする。null は空の編成 */
 export function withParty(team: SharedSettings, party: Party | null): TeamState {
-  return { ...team, slots: party?.slots ?? INITIAL_TEAM_STATE.slots };
+  return { ...team, ...(party ?? partyOf(INITIAL_TEAM_STATE)) };
 }
 
 /** 編成 to に切り替える。いまの画面の編成を active に書き戻し、to の中身を画面の編成にする */
@@ -121,7 +121,15 @@ export function readParties(json: string, index: readonly CharacterIndexEntry[])
     active,
     parties: parties.map((p: unknown, i) => {
       if (i === active || p === null) return null;
-      const team = parseTeamObject({ ...INITIAL_TEAM_STATE, slots: isRecord(p) ? p.slots : undefined }, index);
+      const team = parseTeamObject(
+        {
+          ...INITIAL_TEAM_STATE,
+          formatVersion: raw.value.formatVersion,
+          slots: isRecord(p) ? p.slots : undefined,
+          controlledSlot: isRecord(p) ? p.controlledSlot : undefined,
+        },
+        index,
+      );
       if (team === null) {
         indices.push(i);
         return null;

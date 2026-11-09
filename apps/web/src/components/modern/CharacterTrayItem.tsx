@@ -8,6 +8,7 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { TrayShape } from '../../trayShape.ts';
 import { SlotCharName } from './ModernSlotCard.tsx';
+import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 
 type Props = {
   character: CharacterIndexEntry;
@@ -146,19 +147,11 @@ export function CharacterTrayItem({
               <span className="mask-icon" style={maskIconStyle(checkIcon)} />
             </span>
           ) : (
-            otherParties.length > 0 && (
-              // 四角の絵で限界突破・コア強化を出すときは、その下に置く
-              <span
-                className={`char-tray-item-parties ${shape === 'square' && growthMarks ? 'char-tray-item-parties-below-growth' : ''}`}
-                aria-label={`ほかの編成で使用中: ${otherParties.map((n) => `P${n}`).join('・')}`}
-              >
-                {otherParties.map((n) => (
-                  <span key={n} className="char-tray-item-party">
-                    P{n}
-                  </span>
-                ))}
-              </span>
-            )
+            // 四角の絵で限界突破・コア強化を出すときは、その下に置く
+            <OtherPartyBadges
+              parties={otherParties}
+              className={`char-tray-item-parties ${shape === 'square' && growthMarks ? 'char-tray-item-parties-below-growth' : ''}`}
+            />
           )
         }
       />

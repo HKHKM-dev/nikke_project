@@ -769,11 +769,22 @@ header h1 {
   width: 30px;
   height: 30px;
 }
-.modern-slot-other-party-badge {
-  border: 1px solid currentColor;
-  padding: 0 4px;
-  font-size: 0.7rem;
-  font-weight: normal;
+/* 操作の印はドラッグして別のスロットへ移せる。持ち上げている間、元の印は薄くする */
+.modern-slot-focus-handle {
+  display: inline-flex;
+  cursor: grab;
+  touch-action: none;
+}
+.modern-slot-focus-dragging {
+  opacity: 0.3;
+}
+.controller-drag-overlay {
+  display: inline-flex;
+  cursor: grabbing;
+}
+.modern-slot-other-parties {
+  display: flex;
+  gap: 2px;
 }
 /* 立ち絵の右上に重ねるボタン（上から、空にする ✕・育成と設定の ⚙）。置き先待ちの水色の重ね・◎ より上 */
 .modern-slot-icon-button {
@@ -1307,13 +1318,13 @@ html:has(.modern-view-container) {
   /* .char-tray-growth（top 2px・コアの印の高さ 16px）の下 */
   top: 20px;
 }
-.char-tray-item-party {
+.party-number-badge {
   background: var(--placing-blue);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: bold;
-  line-height: 1.2;
-  padding: 0 3px;
+  line-height: 1.25;
+  padding: 0 7px;
 }
 
 /* Modal ダイアログ */
