@@ -1134,14 +1134,15 @@ header h1 {
   padding: 12px;
   background: color-mix(in srgb, var(--app-fg) 2%, var(--app-bg));
 }
-/* ニケ一覧の枠は、画面の幅の上限（.app の max-width）と body の左右の余白を越えて、画面の左右の端まで広げる（枠線は付けない）。
-   100vw がスクロールバーの幅を含むブラウザでは、その分だけ画面の外へはみ出すので、モダン UI では横にはみ出した分を切る（スクロールさせない） */
-.modern-view-container > .char-tray-panel {
-  margin-inline: calc(50% - 50vw);
-  border: none;
-}
+/* ニケ一覧の枠は、画面の幅の上限（.app の max-width）と body の左右の余白を越えて、画面の左右の端まで広げ、四辺を枠線で囲む。
+   画面の幅は、スクロールバーを除いた html の幅（cqw。html を幅のコンテナにする）で測る（100vw はスクロールバーの幅を含むブラウザがあり、
+   右の枠線がスクロールバーの下に、左の枠線が画面の外に出てしまう） */
 html:has(.modern-view-container) {
-  overflow-x: clip;
+  container-type: inline-size;
+}
+.modern-view-container > .char-tray-panel {
+  margin-inline: calc(50% - 50cqw);
+  border: 1px solid var(--slot-frame-line, var(--app-border));
 }
 /* 絞り込みと、並べ替え・切り替えのボタンを中央にそろえて並べる（折り返したときもそれぞれの行で中央） */
 .char-tray-header {
