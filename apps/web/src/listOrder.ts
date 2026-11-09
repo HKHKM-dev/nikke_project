@@ -31,4 +31,3 @@ export function orderCharacters(
   const power = (c: CharacterIndexEntry) => powers.get(c.resourceId) ?? -1;
   return [...index].sort((a, b) => power(b) - power(a) || byName(a, b));
 }
-
