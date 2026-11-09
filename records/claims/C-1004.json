@@ -1,0 +1,30 @@
+{
+  "id": "C-1004",
+  "text": "シュガーの S2・宝物版 S2 の「フルバーストタイムが発動した時、SG を所持する味方全体に最大装弾数▲」は、自分とソルジャーF.A.（SG の味方）の最大装弾数を上げる（スペック固定で 9 → 17。フルバーストの窓の中でリロードなしで 17 発を撃つ）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1004-07`・`1005-07`（フルバーストの窓の中のシュガーのマガジン。5 回の窓とも 17 発。▲なしなら 9）・`1006-07`（電撃の敵の 1 回目の窓の中で、ソルジャーF.A. がリロードなしで 16 発。▲なしなら 9 発で止まる）。値は説明文の値で、合わせ込みの定数は無い。V-0704",
+  "model": "`data/skills/140.json` の treasureSkills.skill2 の effects[2]（timed・fullBurstStart・allies・targetWeapon SG・maxAmmo。ドレイクの宝物版 S1 と同じ形。C-0471）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/140.json の treasureSkills.skill2 の effects[2]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（値 05）と最大装弾数の丸め（C-0471 と同じ形）",
+  "minimal": [
+    {
+      "observations": ["1004-07", "1005-07"],
+      "element": "シュガー treasureSkills.skill1.notes[1]",
+      "reason": "S1 の被弾のリロード速度▲（モデルは扱わない）はリロードの長さだけを変え、マガジンの中の発と発の間（C-0600 でリロードと別に確かめた）とマガジンの発の数（最大装弾数）は変えない",
+      "decided": "2026-11-10"
+    },
+    {
+      "observations": ["1006-07"],
+      "element": ["シュガー treasureSkills.skill1.notes[1]", "シュガー treasureSkills.burst.effects[1]"],
+      "reason": "どちらもシュガー自身にだけ付く効果（S1 の被弾のリロード速度▲、バーストの命中率▲）で、ソルジャーF.A. のリロードなしの発の数には効かない",
+      "decided": "2026-11-10"
+    }
+  ]
+}

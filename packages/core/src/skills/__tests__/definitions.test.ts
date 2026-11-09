@@ -24,8 +24,9 @@ import {
   resolveTimed,
   skillValue,
 } from '../resolve.ts';
-import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
+import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
+import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
 import { isStatContent, parseSkillDefinition, parseSkillIndex, SKILL_SLOTS, statContentsOf } from '../types.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../../../data');
@@ -83,6 +84,23 @@ describe('data/skills', () => {
           const condition = 'condition' in effect ? effect.condition : undefined;
           if (condition?.burstStep === undefined) continue;
           expect(character.burstStep, `${slot}: burstStep needs an AllStep character`).toBe('AllStep');
+        }
+      }
+    });
+
+    // シュガー編（plan/design-sugar.md 2.1 節）: 自分への攻撃速度▲は、自分の武器が AR・SMG・SG のときだけ（読み込みは武器を知らない）
+    it('writes attackSpeed on self only for an AR, SMG or SG character', () => {
+      for (const slot of SKILL_SLOTS) {
+        for (const effect of def.skills[slot].effects) {
+          if (!('target' in effect) || effect.target !== 'self') continue;
+          // 自分に付く状態の中身も、付与の target で読み込みを通る（parse/state.ts）
+          const speed =
+            ('stat' in effect && effect.stat === 'attackSpeed') ||
+            (effect.kind === 'state' && statContentsOf(effect.contents).some((c) => c.stat === 'attackSpeed'));
+          if (!speed) continue;
+          expect(ATTACK_SPEED_WEAPONS as readonly string[], `${slot}: attackSpeed on self`).toContain(
+            character.weaponType,
+          );
         }
       }
     });

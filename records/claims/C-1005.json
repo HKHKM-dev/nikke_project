@@ -1,0 +1,24 @@
+{
+  "id": "C-1005",
+  "text": "シュガーのバーストの「自分に攻撃速度▲（15 秒）」は、マガジンの中の発と発の間を レート × (1 + X)（C-0600 の形。スキル Lv10 の 66% で 90 rpm の 40f が 23・24f）にする",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1004-08`・`1005-08`・`1006-08`（バーストの窓の中のシュガーの発と発の間の平均 23.70〜23.72f。23・24f の並び。モデルは 23.64f。窓の外は 39・40f）。式は C-0600 のトーブの録画で決めたもので、この録画からは決めていない。V-0704",
+  "model": "`data/skills/140.json` の treasureSkills.burst の effects[0]（timed・burstUse・self・attackSpeed。自分への攻撃速度▲は targetWeapon なしで書ける。plan/design-sugar.md 2.1 節）。効き方は `frame/firing.ts` の rateScale（C-0600）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/140.json の treasureSkills.burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の値（値 01）と、トーブで確かめた攻撃速度の式（C-0600）",
+  "minimal": [
+    {
+      "observations": ["1004-08", "1005-08", "1006-08"],
+      "element": "シュガー treasureSkills.skill1.notes[1]",
+      "reason": "S1 の被弾のリロード速度▲（モデルは扱わない）はリロードの長さだけを変え、マガジンの中の発と発の間（C-0600 でリロードと別に確かめた）とマガジンの発の数（最大装弾数）は変えない",
+      "decided": "2026-11-10"
+    }
+  ]
+}

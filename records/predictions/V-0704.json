@@ -1,0 +1,458 @@
+{
+  "verification": "V-0704",
+  "note": "撮った後に書いた予測（語彙の実装が撮影の後になった）。読む値の見当と、比べる指標の setup の元",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 301
+    },
+    {
+      "rid": 140,
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義（plan/design-sugar.md 1 節の表）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-sugar-pellet",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 140,
+          "controlled": true,
+          "treasurePhase": 3
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（シュガー単騎・灼熱・オートバースト OFF）: シュガーの 1 ペレット（胴体）。宝物版 S1 の攻撃ダメージ▲と灼熱の敵への有利の適用（1.1 倍）が乗った値"
+    },
+    {
+      "id": "B-sugar-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（3 人・灼熱）: 1 回目のフルバーストより前のシュガーの 1 ペレット（胴体）"
+    },
+    {
+      "id": "B-sugar-pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの中のシュガーの 1 ペレット（胴体。S2 とバーストの攻撃力▲・有利コードの攻撃ダメージ▲・フルバースト補正）"
+    },
+    {
+      "id": "B-fa-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストより前のソルジャーF.A. の 1 ペレット（胴体。灼熱には有利でない）"
+    },
+    {
+      "id": "B-fa-pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの中のソルジャーF.A. の 1 ペレット（胴体。有利コードの攻撃ダメージ▲は有利でないので乗らない）"
+    },
+    {
+      "id": "B-sugar-max-ammo-fb",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 B: フルバーストの中で終わったリロードの後のシュガーの最大装弾数（S2 の SG の味方への最大装弾数▲）"
+    },
+    {
+      "id": "B-fa-max-ammo-fb",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 2,
+        "frame": 900
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 B: 同じ時のソルジャーF.A. の最大装弾数"
+    },
+    {
+      "id": "B-sugar-attack-speed",
+      "model": "sim",
+      "metric": "buffWindowShotIntervalMean",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attackSpeed",
+        "inside": true,
+        "minGap": 20,
+        "maxGap": 30
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 B: バーストの攻撃速度▲の窓の中の、シュガーのマガジンの中の発と発の間の平均"
+    },
+    {
+      "id": "C-fa-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C（3 人・電撃）: フルバーストより前のソルジャーF.A. の 1 ペレット（胴体。電撃に有利）"
+    },
+    {
+      "id": "C-fa-pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストの中のソルジャーF.A. の 1 ペレット（胴体。S2 とバーストの有利コードの攻撃ダメージ▲が乗る）"
+    },
+    {
+      "id": "C-sugar-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストより前のシュガーの 1 ペレット（胴体。電撃に有利）"
+    },
+    {
+      "id": "B-sugar-pellet-after-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの後、バーストの▲（15 秒）が残る間のシュガーの 1 ペレット（胴体。S2 の攻撃力▲は切れ、S2・バーストの有利コードの攻撃ダメージ▲とバーストの攻撃力▲が残る）"
+    },
+    {
+      "id": "B-fa-pellet-after-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 同じ時のソルジャーF.A. の 1 ペレット（胴体）"
+    },
+    {
+      "id": "B-cocoa-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストより前のココアの 1 発（胴体）"
+    },
+    {
+      "id": "B-cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの中のココアの 1 発（胴体）"
+    },
+    {
+      "id": "C-sugar-pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストの中のシュガーの 1 ペレット（胴体）"
+    },
+    {
+      "id": "C-sugar-pellet-after-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストの後のバーストの▲の残る間のシュガーの 1 ペレット（胴体）"
+    },
+    {
+      "id": "C-fa-pellet-after-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストの後のバーストの▲の残る間のソルジャーF.A. の 1 ペレット（胴体）"
+    },
+    {
+      "id": "C-cocoa-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストより前のココアの 1 発（胴体）"
+    },
+    {
+      "id": "C-cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: フルバーストの中のココアの 1 発（胴体）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-09",
+    "commit": "22661f68d14abe0cb09b48ef3929ce3745494884",
+    "values": {
+      "H-model": {
+        "A-sugar-pellet": 36616.97090620799,
+        "B-sugar-pellet-before": 36616.97090620799,
+        "B-sugar-pellet-fb": 152115.0944318417,
+        "B-fa-pellet-before": 11618.4888,
+        "B-fa-pellet-fb": 17427.7332,
+        "B-sugar-max-ammo-fb": 17,
+        "B-fa-max-ammo-fb": 17,
+        "B-sugar-attack-speed": 23.636363636363637,
+        "C-fa-pellet-before": 12780.33768,
+        "C-fa-pellet-fb": 36603.46803996,
+        "C-sugar-pellet-before": 36616.97090620799,
+        "B-sugar-pellet-after-fb": 83909.69090470258,
+        "B-fa-pellet-after-fb": 11618.4888,
+        "B-cocoa-before": 172297.95,
+        "B-cocoa-fb": 258446.92500000002,
+        "C-sugar-pellet-fb": 152115.0944318417,
+        "C-sugar-pellet-after-fb": 83909.69090470258,
+        "C-fa-pellet-after-fb": 24402.31202664,
+        "C-cocoa-before": 172297.95,
+        "C-cocoa-fb": 258446.92500000002
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "C-1002",
+  "text": "シュガーの宝物版 S1 の「自分の遮蔽物が破壊されていない限り、攻撃ダメージ▲（持続）」と「戦闘開始時、灼熱コードの敵に有利コードのダメージ適用（持続・解除不可）」は、戦闘の始めから終わりまで、灼熱の敵への通常攻撃の 1 ペレットを、攻撃ダメージ▲（スキル Lv10 で 19.98%）と属性有利の 1.1 倍の乗った値にする。射撃場 3 分モードの敵の反撃では、遮蔽物は壊れない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1003-03`（単騎・オートバースト OFF。189 個の増分すべてが、攻撃ダメージ▲と有利の 1.1 倍の乗った 1 ペレット 36,617 の格子に乗り、有利なしの 33,288 には 37 個、▲なしの 30,519 には 5 個。最後の増分 f11283 まで同じ値）・`1004-03`・`1005-03`（3 人・灼熱の、フルバーストの外の同じ値）。値は説明文と有利の乗数で決まり、合わせ込みの定数は無い。V-0704",
+  "model": "`data/skills/140.json` の treasureSkills.skill1 の effects[0]（passive・self・attackDamage。遮蔽物が壊れない前提を assumes に書いた）と effects[1]（passive・self・elementAdvantage・enemyElement Fire。`element.ts` の elementMultiplier。C-0723 と同じ）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": [
+      "data/skills/140.json の treasureSkills.skill1 の effects[0]",
+      "data/skills/140.json の treasureSkills.skill1 の effects[1]"
+    ]
+  },
+  "decidedOn": [],
+  "parameterFree": "説明文の攻撃ダメージ▲の値（値 07）と、属性有利の乗数 1.1（element.ts の ELEMENT_ADVANTAGE_MULTIPLIER。C-0723 と同じ有利の適用）",
+  "minimal": [
+    {
+      "observations": ["1003-03", "1004-03", "1005-03"],
+      "element": "シュガー treasureSkills.skill1.notes[0]",
+      "reason": "比べる値は会心でない胴体の 1 ペレットで、S1 の被弾のクリティカルダメージ▲（射撃場の敵の反撃で付く。モデルは扱わない）は会心のペレットにだけ乗る。読みでは会心の格子に▲の版を足して、増分を分けた",
+      "decided": "2026-11-10"
+    }
+  ]
+}

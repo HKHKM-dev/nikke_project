@@ -1,0 +1,47 @@
+{
+  "id": "1006",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1006_sr+sg+sg_cocoa+soldier-fa+sugar_electric.mp4",
+  "original": "2026-11-10_02-43-47.mp4",
+  "durationSec": 203.5,
+  "frames": 12207,
+  "fps": 60,
+  "sizeMB": 246.4,
+  "sha256": "1c183db52ffd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 301,
+      "name": "ソルジャーF.A.",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 140,
+      "name": "シュガー",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Electronic"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0704 の撮影 C。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・電撃の敵・オートバースト ON",
+  "backup": {
+    "at": "2026-11-10T02:53+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

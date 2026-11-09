@@ -1,0 +1,21 @@
+{
+  "id": "C-1007",
+  "text": "シュガーの S2 の「フルバーストタイムが発動した時、自分にクリティカル確率▲（10 秒）」とバーストの「自分に命中率▲（15 秒）」は、説明文どおりに付く（会心の割合とペレットの当たりの割合は、録画では見分けていない。SG の命中率▲は近だけ弾丸命中率に効かせる C-0631・C-0527 の扱い）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/140.json` の skills と treasure.skills の skill2・burst）。録画 1004〜1006 で、窓の中のシュガーの増分は会心とコアのペレットの組が分けられず（会心 2 個とコア 1 個が同じ値）、ペレットの当たりの数も組で決まらないので、会心の割合と当たりの割合は読んでいない。V-0704",
+  "model": "`data/skills/140.json` の skill2・treasureSkills.skill2 の effects[0]（timed・fullBurstStart・self・critRate）と burst・treasureSkills.burst の effects[1]（timed・burstUse・self・hitRate。SG は近でだけ弾丸命中率を上げる。`frame/landing.ts`。C-0631・C-0527）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": [
+      "data/skills/140.json の treasureSkills.skill2 の effects[0]",
+      "data/skills/140.json の treasureSkills.burst の effects[1]",
+      "data/skills/140.json の skill2 の effects[0]",
+      "data/skills/140.json の burst の effects[1]"
+    ]
+  },
+  "decidedOn": [],
+  "gradeReason": "録画で見分けていない（会心の割合・ペレットの当たりの割合は、窓の中の増分から決まらない）"
+}

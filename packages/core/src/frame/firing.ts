@@ -176,7 +176,8 @@ export function firingParams(
     chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
     stance,
     downCharge: isChargeWeapon(shot) && shot.inputType === 'DOWN_Charge',
-    // 2 段目の段 9 の PR 2: 攻撃速度▲は AR・SMG・SG にだけ書ける（skills/parse/timed.ts の validateAttackSpeed）。チャージ武器は発と発の間を
+    // 2 段目の段 9 の PR 2: 攻撃速度▲は AR・SMG・SG にだけ書ける（味方へは skills/parse/timed.ts の validateAttackSpeed、自分へは
+    // skills/__tests__/definitions.test.ts がキャラの武器で見る。plan/design-sugar.md 2.1 節）。チャージ武器は発と発の間を
     // チャージで決めるので掛けない
     rateScale: isChargeWeapon(shot) ? 1 : Math.max(0, 1 + buffs.attackSpeed),
     spinUpScale: hasSpinUp(shot) ? Math.max(0, 1 + buffs.spinUpSpeed) : 1,

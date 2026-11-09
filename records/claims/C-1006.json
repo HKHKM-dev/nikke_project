@@ -1,0 +1,19 @@
+{
+  "id": "C-1006",
+  "text": "シュガーの S2・バーストの「水冷コードまたは鉄甲コードの SG を所持する味方全体に有利コードの攻撃ダメージ▲」の水冷の側（水冷の SG の味方）も、鉄甲の側と同じに付く（同じ行の読み。水冷の SG の味方の録画は無い）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "説明文（`data/characters/140.json` の treasure.skills の skill2・burst）。水冷の側は鉄甲の側（C-1003）と同じ行の読みで、水冷の SG の味方を入れた録画は無い。V-0704",
+  "model": "`data/skills/140.json` の treasureSkills.skill2 の effects[3] と treasureSkills.burst の effects[3]（timed・targetWeapon SG・targetElement Water・elementDamage）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": [
+      "data/skills/140.json の treasureSkills.skill2 の effects[3]",
+      "data/skills/140.json の treasureSkills.burst の effects[3]"
+    ]
+  },
+  "decidedOn": [],
+  "gradeReason": "水冷の SG の味方で撮っていない。同じ行の鉄甲の側は C-1003 で確かめた"
+}
