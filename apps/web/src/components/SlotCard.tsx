@@ -20,6 +20,7 @@ import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
 import { SkillSection } from './SkillSection.tsx';
 import { SlotOptions } from './SlotOptions.tsx';
+import type { OtherParties } from '../parties.ts';
 
 type Props = {
   slotIndex: number;
@@ -27,7 +28,7 @@ type Props = {
   index: readonly CharacterIndexEntry[];
   excludeIds: ReadonlySet<number>;
   /** ほかの編成で選んでいるニケ（選択肢に印を付ける） */
-  otherPartyIds: ReadonlySet<number>;
+  otherPartyIds: OtherParties;
   /** キャラの選択肢の印（useSkillDefinitions の fullySupported） */
   fullySupported: ReadonlySet<number> | null;
   character: CharacterData | undefined;

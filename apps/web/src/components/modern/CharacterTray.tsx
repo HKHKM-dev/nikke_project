@@ -15,11 +15,12 @@ import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
 import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
+import type { OtherParties } from '../../parties.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
-  otherPartyIds: ReadonlySet<number>;
+  otherPartyIds: OtherParties;
   fullySupported: ReadonlySet<number> | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
@@ -36,6 +37,9 @@ type Props = {
 };
 
 /** 1 種類のバッジを並べた絞り込み（同じ種類でも複数選べる。押したときの切り替えは toggleBadgeFilter） */
+/** ほかの編成にいないニケの編成の番号（毎回新しい配列を作らない） */
+const NO_PARTIES: readonly number[] = [];
+
 function BadgeFilter({
   kind,
   values,
@@ -168,7 +172,7 @@ export function CharacterTray({
                 key={char.resourceId}
                 character={char}
                 isTaken={isTaken}
-                inOtherParty={otherPartyIds.has(char.resourceId)}
+                otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}

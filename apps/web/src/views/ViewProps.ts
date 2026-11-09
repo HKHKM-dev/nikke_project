@@ -3,7 +3,7 @@ import type { Dispatch } from 'react';
 import type { CalcView, SlotResultView } from '../calcView.ts';
 import type { Shown } from '../compute.ts';
 import type { NotesSummarySlot } from '../components/NotesSummary.tsx';
-import type { PartiesState } from '../parties.ts';
+import type { OtherParties, PartiesState } from '../parties.ts';
 import type { PartyTotal } from '../partyTotals.ts';
 import type { TeamAction, TeamState } from '../team.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
@@ -24,7 +24,7 @@ export type ViewProps = {
   slotResults: readonly (SlotResultView | null)[];
   parties: PartiesState;
   /** ほかの編成で選んでいるニケ（parties.ts の otherPartyResourceIds） */
-  otherPartyIds: ReadonlySet<number>;
+  otherPartyIds: OtherParties;
   selectParty: (to: number) => void;
   totals: { parties: PartyTotal[]; total: number | null };
   totalsPending: boolean;

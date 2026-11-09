@@ -132,10 +132,10 @@ describe('parties', () => {
 
   it('lists the characters chosen in the other parties, leaving out the active one', () => {
     let { parties } = switchParty(INITIAL_PARTIES, withCharacter(INITIAL_TEAM_STATE, 0, 10), 1);
-    expect([...otherPartyResourceIds(parties)]).toEqual([10]);
+    expect([...otherPartyResourceIds(parties)]).toEqual([[10, [1]]]);
     ({ parties } = switchParty(parties, withCharacter(INITIAL_TEAM_STATE, 2, 11), 0));
     // 選んでいる編成（0）のニケ 10 は数えない
-    expect([...otherPartyResourceIds(parties)]).toEqual([11]);
+    expect([...otherPartyResourceIds(parties)]).toEqual([[11, [2]]]);
     expect(otherPartyResourceIds(INITIAL_PARTIES).size).toBe(0);
   });
 });

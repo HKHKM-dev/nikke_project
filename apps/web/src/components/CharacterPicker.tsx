@@ -1,5 +1,6 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useMemo } from 'react';
+import type { OtherParties } from '../parties.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -8,7 +9,7 @@ type Props = {
   /** すべてのスロットに未実装が無いキャラ。ほかのキャラの名前に「（未）」を付ける。読み込み前は null（印を付けない） */
   fullySupported: ReadonlySet<number> | null;
   /** ほかの編成で選んでいるニケ。名前に「（ほかの編成で使用中）」を付ける（選べる） */
-  otherPartyIds: ReadonlySet<number>;
+  otherPartyIds: OtherParties;
   value: number | null;
   onSelect: (resourceId: number) => void;
   /** 「なし」を選んだとき（スロットを空にする） */
