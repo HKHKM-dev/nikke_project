@@ -114,13 +114,6 @@
 :root[data-app-ui='modern'] .modern-slot-card.modern-slot-over .modern-slot-char-area {
   outline-color: var(--m-accent);
 }
-/* ほかの編成でも使っているニケ（選べるが、ソロレイドでは同じニケを 2 つの編成に入れられない） */
-:root[data-app-ui='modern'] .modern-slot-other-party-badge {
-  border-radius: 999px;
-  padding: 1px 8px;
-  border: 1px solid var(--m-gold);
-  color: var(--m-gold);
-}
 :root[data-app-ui='modern'] .modern-slot-empty-area {
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさと枠の太さをそろえる */
   box-sizing: content-box;

@@ -9,6 +9,7 @@ import { maskIconStyle } from '../maskIcon.ts';
 import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
+import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 
 type Props = {
   slotIndex: number;
@@ -21,8 +22,8 @@ type Props = {
   growthMarks: GrowthMarks | null;
   /** 絵のバッジの列の最後に出すコレクション（宝物）のバッジ */
   collectionBadge: Badge | null;
-  /** このスロットのニケがほかの編成でも使われている */
-  inOtherParty: boolean;
+  /** このスロットのニケを選んでいるほかの編成の番号（1 から）。上の段に P1・P2 と出す */
+  otherParties: readonly number[];
   /** 一覧でクリックしたニケが、置くスロットのクリックを待っているときだけ渡す（このスロットに置く） */
   onPlacePending?: () => void;
   onOpenBuildModal: () => void;
@@ -39,7 +40,7 @@ export function ModernSlotCard({
   slotResult,
   collectionBadge,
   growthMarks,
-  inOtherParty,
+  otherParties,
   onPlacePending,
   onOpenBuildModal,
   onClear,
@@ -97,7 +98,7 @@ export function ModernSlotCard({
             style={maskIconStyle(controllerIcon)}
           />
         )}
-        {inOtherParty && <span className="modern-slot-other-party-badge">他の編成</span>}
+        <OtherPartyBadges parties={otherParties} className="modern-slot-other-parties" />
       </div>
 
       <div className="modern-slot-body">

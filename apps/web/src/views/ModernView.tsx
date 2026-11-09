@@ -30,6 +30,7 @@ import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } 
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
 import { useTrayShape } from '../trayShape.ts';
+import { NO_PARTIES } from '../components/modern/OtherPartyBadges.tsx';
 
 /**
  * 離したときのアニメーション。dnd-kit の既定は、戻る間ドラッグ元（スロットのカード・一覧の項目）を透明にして消すので、
@@ -415,7 +416,7 @@ export function ModernView({
                 slotResult={slotResults[i] ?? null}
                 growthMarks={slotGrowthMarks(i)}
                 collectionBadge={slotCollectionBadge(i)}
-                inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
+                otherParties={(slot.resourceId !== null && otherPartyIds.get(slot.resourceId)) || NO_PARTIES}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
                 onClear={() => clearSlot(i)}
