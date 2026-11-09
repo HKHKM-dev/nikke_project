@@ -128,19 +128,23 @@ export function collectionBadge(
   return pick(`${collection.rarity}${max ? '-max' : ''}`, `コレクション ${collection.rarity} LV ${collection.level}`);
 }
 
-/** バッジの絞り込み（項目 → 選んだ値。無い項目は絞らない） */
-export type BadgeFilters = Partial<Record<BadgeKey, string>>;
+/** バッジの絞り込み（項目 → 選んだ値。1 つも選んでいない項目は持たず、絞らない） */
+export type BadgeFilters = Partial<Record<BadgeKey, readonly string[]>>;
 
-/** キャラが選んだ値にすべて合うか（項目どうしは AND）。バースト段階が全段階のキャラは、どの段階にも合う */
+/**
+ * キャラが選んだ値に合うか。同じ項目で選んだ値どうしは OR（どれか 1 つに合えばよい）、項目どうしは AND。
+ * バースト段階が全段階のキャラは、どの段階にも合う
+ */
 export function matchesBadgeFilters(char: Pick<CharacterIndexEntry, BadgeKey>, filters: BadgeFilters): boolean {
-  return BADGE_KINDS.every(
-    ({ key }) =>
-      filters[key] === undefined || char[key] === filters[key] || (key === 'burstStep' && char.burstStep === 'AllStep'),
-  );
+  return BADGE_KINDS.every(({ key }) => {
+    const values = filters[key];
+    return values === undefined || values.includes(char[key]) || (key === 'burstStep' && char.burstStep === 'AllStep');
+  });
 }
 
-/** バッジを押した後の絞り込み。押されていた値なら解除し、それ以外はその項目をその値にする */
+/** バッジを押した後の絞り込み。選んでいた値なら外し、それ以外はその項目の選んだ値に足す */
 export function toggleBadgeFilter(filters: BadgeFilters, key: BadgeKey, value: string): BadgeFilters {
-  const { [key]: current, ...rest } = filters;
-  return current === value ? rest : { ...rest, [key]: value };
+  const { [key]: current = [], ...rest } = filters;
+  const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+  return next.length === 0 ? rest : { ...rest, [key]: next };
 }

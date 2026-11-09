@@ -74,9 +74,9 @@ describe('バッジの絞り込み', () => {
   it('バースト段階が全段階のキャラは、どの段階で絞っても通る（全段階のボタンは出さない）', () => {
     const allStep = { ...ironSMG, burstStep: 'AllStep' } as const;
     for (const step of ['Step1', 'Step2', 'Step3']) {
-      expect(matchesBadgeFilters(allStep, { burstStep: step })).toBe(true);
+      expect(matchesBadgeFilters(allStep, { burstStep: [step] })).toBe(true);
     }
-    expect(matchesBadgeFilters(allStep, { burstStep: 'Step1', weaponType: 'SG' })).toBe(false);
+    expect(matchesBadgeFilters(allStep, { burstStep: ['Step1'], weaponType: ['SG'] })).toBe(false);
     expect(BADGE_KINDS.find((k) => k.key === 'burstStep')?.filterValues).not.toContain('AllStep');
   });
 
@@ -85,23 +85,33 @@ describe('バッジの絞り込み', () => {
     expect(toggleBadgeFilter(selected, 'class', 'Supporter')).toEqual({});
   });
 
-  it('同じ項目で別の値を押すと、その値に切り替わる', () => {
-    const filters = toggleBadgeFilter(toggleBadgeFilter({}, 'burstStep', 'Step1'), 'burstStep', 'Step3');
-    expect(filters).toEqual({ burstStep: 'Step3' });
-    expect(pass(filters)).toEqual([fireAR, electricSG]);
+  it('同じ項目で別の値を押すと、その値も選び、どれかに合えば通る（OR）', () => {
+    const filters = toggleBadgeFilter(toggleBadgeFilter({}, 'weaponType', 'SG'), 'weaponType', 'SMG');
+    expect(filters).toEqual({ weaponType: ['SG', 'SMG'] });
+    expect(pass(filters)).toEqual([electricSG, ironSMG]);
   });
 
-  it('2 つの項目は AND で絞る', () => {
-    const filters = toggleBadgeFilter(toggleBadgeFilter({}, 'burstStep', 'Step3'), 'class', 'Supporter');
-    expect(filters).toEqual({ burstStep: 'Step3', class: 'Supporter' });
-    expect(pass(filters)).toEqual([electricSG]);
+  it('選んだ値を 1 つ外すと残りで絞り、全部外すとその項目は絞らない', () => {
+    const both = toggleBadgeFilter(toggleBadgeFilter({}, 'weaponType', 'SG'), 'weaponType', 'SMG');
+    const one = toggleBadgeFilter(both, 'weaponType', 'SG');
+    expect(one).toEqual({ weaponType: ['SMG'] });
+    expect(toggleBadgeFilter(one, 'weaponType', 'SMG')).toEqual({});
+  });
+
+  it('項目どうしは AND で絞る', () => {
+    let filters = toggleBadgeFilter({}, 'burstStep', 'Step3');
+    filters = toggleBadgeFilter(filters, 'burstStep', 'Step1');
+    filters = toggleBadgeFilter(filters, 'class', 'Supporter');
+    expect(filters).toEqual({ burstStep: ['Step3', 'Step1'], class: ['Supporter'] });
+    expect(pass(filters)).toEqual([electricSG, ironSMG]);
   });
 
   it('押しても元の絞り込みは変えない', () => {
-    const filters: BadgeFilters = { element: 'Fire' };
+    const filters: BadgeFilters = { element: ['Fire'] };
     toggleBadgeFilter(filters, 'element', 'Fire');
+    toggleBadgeFilter(filters, 'element', 'Water');
     toggleBadgeFilter(filters, 'class', 'Attacker');
-    expect(filters).toEqual({ element: 'Fire' });
+    expect(filters).toEqual({ element: ['Fire'] });
   });
 });
 
