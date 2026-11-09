@@ -274,6 +274,13 @@ export const NAMED_STATES = {
   exploreRouteStage1: { name: { ja: 'ルート探索1段階', en: 'Explore Route Stage 1' }, holder: 'ally' },
   exploreRouteStage2: { name: { ja: 'ルート探索2段階', en: 'Explore Route Stage 2' }, holder: 'ally' },
   exploreRouteStage3: { name: { ja: 'ルート探索3段階', en: 'Explore Route Stage 3' }, holder: 'ally' },
+  /**
+   * ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 1 節）: イントロ（S1。初めてのフルバーストで、直前に自分がバーストを使っていれば
+   * 付く。クリティカルダメージ▲・持続・解除不可。S1 の「イントロ状態なら」が見る）
+   */
+  intro: { name: { ja: 'イントロ', en: 'Intro' }, holder: 'ally' },
+  /** 同: クライマックス（S1。使っていなければ付く。S1 とバーストの「クライマックス状態なら」が見る） */
+  highlight: { name: { ja: 'クライマックス', en: 'Highlight' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

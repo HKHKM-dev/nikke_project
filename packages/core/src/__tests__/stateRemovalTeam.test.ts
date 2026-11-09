@@ -98,7 +98,9 @@ describe('解除と usedBurst の読み込み', () => {
     });
     expect(parse([remove('camouflage', { condition: { usedBurst: true } })]).skills.skill1.effects).toHaveLength(1);
     expect(() => parse([{ ...regrant, trigger: 'burstUse' }])).toThrow(/usedBurst is only allowed with trigger/);
-    expect(() => parse([{ ...regrant, condition: { usedBurst: false } }])).toThrow(/usedBurst: expected true/);
+    // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.2 節）: false（使用していなければ）も書ける。真偽でない値は弾く
+    expect(() => parse([{ ...regrant, condition: { usedBurst: false } }])).not.toThrow();
+    expect(() => parse([{ ...regrant, condition: { usedBurst: 1 } }])).toThrow(/usedBurst: expected a boolean/);
     const timed = {
       kind: 'timed',
       trigger: 'fullBurstStart',

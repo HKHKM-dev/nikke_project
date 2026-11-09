@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { classOf, formatPanelTsv, panelEvents, parsePanelTsv, type PanelRow } from '../burst-panel-lib.ts';
+import {
+  classOf,
+  formatPanelTsv,
+  PANEL_GEOMETRY,
+  panelEvents,
+  parsePanelTsv,
+  type PanelRow,
+} from '../burst-panel-lib.ts';
 
 // 試作で録画から測った特徴の値（plan/design-burst-panel-recipe.md 1 節）
 const GREEN = { r: 66, g: 174, b: 72 };
@@ -200,5 +207,17 @@ describe('panelEvents のフルバーストの終わり（2 段目の段 21）',
   it('00.00 の 300f 前までの色の上がりは終わりにしない', () => {
     const ev = panelEvents(rows(...chain(), [FB_BACK, 100, { magenta: 300 }], [GREY, 5], [FB_BACK, 400], [GREY, 5]));
     expect(ev.fullBurstEnd).toEqual([568]);
+  });
+});
+
+// V-0703: 欄を左に出した録画（--opt side=left）。どちらの側も、六角形・バー・顔の枠が欄の切り出しの中にある
+describe('PANEL_GEOMETRY', () => {
+  it.each(Object.entries(PANEL_GEOMETRY))('keeps the boxes inside the crop (%s)', (_side, g) => {
+    for (const box of [g.hexagon, g.bar, g.face]) {
+      expect(box.x0).toBeGreaterThanOrEqual(g.crop.x);
+      expect(box.x1).toBeLessThanOrEqual(g.crop.x + g.crop.w);
+      expect(box.y0).toBeGreaterThanOrEqual(g.crop.y);
+      expect(box.y1).toBeLessThanOrEqual(g.crop.y + g.crop.h);
+    }
   });
 });

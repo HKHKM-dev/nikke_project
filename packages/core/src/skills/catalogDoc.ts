@@ -354,7 +354,16 @@ const COND_INFO: Record<string, Info> = {
   ],
   squad: ['同じ部隊の味方がいれば', 'ok', 'squad'],
   burstStepMix: ['部隊構成（基本バースト段階）', 'ok', 'burstStepMix'],
-  usedBurst: ['直前に自分がバーストを使用していれば', 'ok', 'usedBurst（2 段目の段 1）'],
+  usedBurst: [
+    '直前に自分がバーストを使用していれば・いなければ',
+    'ok',
+    'usedBurst（2 段目の段 1。いなければは false。ディーゼル：ウィンタースイーツ編）',
+  ],
+  firstEvent: [
+    '初めてフルバーストタイムが発動した時',
+    'ok',
+    '出来事の回数のきっかけの atMost（ディーゼル：ウィンタースイーツ編）',
+  ],
   inFullBurst: ['フルバーストタイム中なら', 'ok', 'inFullBurst'],
   enemyCount: ['敵が N 機以上', 'premise', '敵 1 体'],
   alive: ['生存している限り', 'premise', '倒れない'],

@@ -30,6 +30,7 @@ import {
 } from './resolve.ts';
 import type { FireContext } from './targets.ts';
 import {
+  burstUsersEventOf,
   isChargeFullTrigger,
   isChargeTickTrigger,
   isCounterFullTrigger,
@@ -314,7 +315,8 @@ export function createTriggerTracker(
         count = 0;
       lastEventFrame = ev.frame;
       count += 1;
-      return count >= t.atLeast;
+      // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.1 節）: atMost 回目まで
+      return count >= t.atLeast && (t.atMost === undefined || count <= t.atMost);
     };
   }
   switch (t) {
@@ -358,8 +360,10 @@ export function burstStepHolds(
 
 /** Stage 11: 発火したトリガーの文脈（対象 burstUsers の判定に使う）。フルバーストの開始・終了だけが枠の列を持つ */
 export function fireContextOf(trigger: ResolvedTrigger | EndedTrigger, ev: FrameEvents): FireContext {
-  if (trigger === 'fullBurstStart') return { burstUsers: ev.fullBurstStartUsers };
-  if (trigger === 'fullBurstEnd') return { burstUsers: ev.fullBurstEndUsers };
+  // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.2 節）: その出来事の回数のきっかけも同じ文脈
+  const kind = burstUsersEventOf(trigger);
+  if (kind === 'fullBurstStart') return { burstUsers: ev.fullBurstStartUsers };
+  if (kind === 'fullBurstEnd') return { burstUsers: ev.fullBurstEndUsers };
   return null;
 }
 

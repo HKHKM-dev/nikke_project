@@ -617,6 +617,11 @@ export type EventCountTrigger = {
   /** 何回目以降か（1 始まりの即値。説明文の「1 回 / 2 回 / 3 回」） */
   atLeast: number;
   /**
+   * ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.1 節）: 何回目までか（1 始まりの即値。atLeast 以上）。
+   * 「初めて〈出来事〉が発動した時」は atLeast: 1・atMost: 1。回数は条件と関係なく数える（maxFires とは別物）。省略は上限なし
+   */
+  atMost?: number;
+  /**
    * V-0631（イサベルのターゲットマーキング）: 前の発動から N 秒（ゲーム内の秒）より後に次の発動が来たら、その発動から数え直す
    * （その発動が 1 回目になる）。burstUse にだけ書ける
    */
@@ -799,6 +804,21 @@ export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
   return typeof t === 'object' && 'count' in t && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
+/**
+ * Stage 11: 発火の文脈 burstUsers を持つきっかけ（フルバーストの開始・終了）なら、その出来事。ディーゼル：ウィンタースイーツ編
+ * （plan/design-diesel-ws.md 2.2 節）: その出来事の回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）も。ほかは undefined。
+ * 解決済みのきっかけ（skills/resolve.ts）も同じ形なので、読み込みと発火の両方が使う
+ */
+export function burstUsersEventOf(trigger: object | string): (typeof BURST_USERS_TRIGGERS)[number] | undefined {
+  const kind =
+    typeof trigger === 'object' && trigger !== null && isEventCountTrigger(trigger as EffectTrigger)
+      ? (trigger as EventCountTrigger).count
+      : trigger;
+  return (BURST_USERS_TRIGGERS as readonly unknown[]).includes(kind)
+    ? (kind as (typeof BURST_USERS_TRIGGERS)[number])
+    : undefined;
+}
+
 /** 最小構成の検査の窓の端編: 件の始まり・終わりを動かすフレーム */
 export type EdgeShift = { start: number; end: number };
 
@@ -963,7 +983,9 @@ export type StateEndUntil = { stateEnd: NamedStateId };
  * timed・付与にも書けるようにし、敵に付く状態の付与（エレグのブームインストール）の窓も見る（damage も同じ。そのフレームに付いた件も入れる）。
  * selfState = 自分（効果を出した枠）にその状態が付いているか（2 段目の段 1。plan/design-skill-stage1.md 1.1 節。timed・付与・damage）。
  * usedBurst = 直前に自分がバーストスキルを使用していれば（同 1.5 節。timed・付与・解除。フルバーストの開始・終了のきっかけだけ。
- * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。
+ * 発火の文脈の burstUsers に自分がいるか。件を見ないので、これだけの条件は効果の段を上げない）。ディーゼル：ウィンタースイーツ編
+ * （plan/design-diesel-ws.md 2.2 節）: false = 使用していなければ（burstUsers に自分がいない）。フルバーストの開始・終了の出来事の
+ * 回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも書ける。
  * selfHp = 自分の HP の割合が閾値以上なら（2 段目の段 6。plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
  * 戦闘中一定なので、編成の段で決まる）。
  * burstStep = この発動を撃った段階が N なら（レッドフード編。plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
@@ -979,7 +1001,7 @@ export type EffectCondition = {
   inFullBurst?: boolean;
   enemyState?: NamedStateId;
   selfState?: SelfStateCondition;
-  usedBurst?: true;
+  usedBurst?: boolean;
   selfHp?: SelfHpCondition;
   selfCounter?: SelfCounterCondition;
   burstStep?: BasicBurstStep;

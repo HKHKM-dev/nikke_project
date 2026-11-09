@@ -45,6 +45,30 @@ const files = readdirSync(SKILLS_DIR)
 /** 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ */
 const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3']);
 
+/**
+ * 値の上限（%。既定 100）。上限の理由はキャラごとの注記（下の it の中）。レッドフード編: チャージ速度の超過分の変換の割合（240%）も
+ * チャージダメージと同じ幅
+ */
+const VALUE_LIMITS: Partial<Record<string, number>> = {
+  chargeDamage: 2000,
+  chargeSpeedOverflow: 2000,
+  maxAmmo: 1000,
+  projectileStickDamage: 1000,
+  projectileExplosionDamage: 1000,
+  chargeSpeed: 1000,
+  attack: 200,
+  chargeDamageMultiplier: 200,
+  sequentialAttackDamage: 200,
+  attackDamage: 200,
+  hitRate: 200,
+  trueDamage: 200,
+  sustainedDamage: 200,
+  elementDamage: 200,
+};
+
+/** 上の上限を超える値（resourceId:スロット:ref → 上限）。ディーゼル：ウィンタースイーツ: S1 のクライマックスの持続ダメージ▲は Lv10 で 235.03%、S2 のフルチャージの持続ダメージ▲は 318.14% */
+const VALUE_LIMIT_EXCEPTIONS: Partial<Record<string, number>> = { '75:skill1:5': 300, '75:skill2:2': 400 };
+
 describe('data/skills', () => {
   it('index lists exactly the definition files, sorted and without duplicates', () => {
     expect([...index.resourceIds].sort((a, b) => a - b)).toEqual(files);
@@ -185,28 +209,10 @@ describe('data/skills', () => {
                     : effect.kind === 'state'
                       ? statContentsOf(effect.contents).find((c) => c.ref === ref)?.stat
                       : undefined;
-                // レッドフード編: チャージ速度の超過分の変換の割合（240%）もチャージダメージと同じ幅
                 const limit =
-                  stat === 'chargeDamage' || stat === 'chargeSpeedOverflow'
-                    ? 2000
-                    : stat === 'maxAmmo' ||
-                        stat === 'projectileStickDamage' ||
-                        stat === 'projectileExplosionDamage' ||
-                        stat === 'chargeSpeed'
-                      ? 1000
-                      : stat !== undefined &&
-                          [
-                            'attack',
-                            'chargeDamageMultiplier',
-                            'sequentialAttackDamage',
-                            'attackDamage',
-                            'hitRate',
-                            'trueDamage',
-                            'sustainedDamage',
-                            'elementDamage',
-                          ].includes(stat)
-                        ? 200
-                        : 100;
+                  VALUE_LIMIT_EXCEPTIONS[`${resourceId}:${slot}:${ref}`] ??
+                  (stat === undefined ? undefined : VALUE_LIMITS[stat]) ??
+                  100;
                 expect(v).toBeLessThanOrEqual(limit);
               }
             }

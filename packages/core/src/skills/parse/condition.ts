@@ -4,6 +4,7 @@ import {
   BASIC_BURST_STEPS,
   BUFF_STATS,
   BURST_USERS_TRIGGERS,
+  burstUsersEventOf,
   type BurstStepMixCondition,
   type ConditionKey,
   type CounterChangeEffect,
@@ -73,17 +74,20 @@ export function validateBurstStep(condition: EffectCondition, trigger: unknown, 
   }
 }
 
-/** 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける */
+/**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: usedBurst はフルバーストの開始・終了のきっかけにだけ書ける。ディーゼル：ウィンタースイーツ編
+ * （plan/design-diesel-ws.md 2.2 節）: その出来事の回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも
+ */
 export function validateUsedBurst(
   condition: EffectCondition,
   trigger: CounterChangeEffect['trigger'],
   path: string,
 ): void {
   if (condition.usedBurst === undefined) return;
-  if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
+  if (burstUsersEventOf(trigger) !== undefined) return;
   fail(
     `${path}.usedBurst`,
-    `usedBurst is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,
+    `usedBurst is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')} (or { count } of them), got ${JSON.stringify(trigger)}`,
   );
 }
 
@@ -119,8 +123,8 @@ export function parseCondition(
   if (c.enemyState !== undefined) condition.enemyState = parseNamedStateId(c.enemyState, `${path}.enemyState`, 'enemy');
   if (c.selfState !== undefined) condition.selfState = parseSelfStateCondition(c.selfState, `${path}.selfState`);
   if (c.usedBurst !== undefined) {
-    if (c.usedBurst !== true) fail(`${path}.usedBurst`, 'expected true');
-    condition.usedBurst = true;
+    if (typeof c.usedBurst !== 'boolean') fail(`${path}.usedBurst`, 'expected a boolean');
+    condition.usedBurst = c.usedBurst;
   }
   if (c.selfHp !== undefined) condition.selfHp = parseSelfHpCondition(c.selfHp, `${path}.selfHp`);
   if (c.selfCounter !== undefined)
