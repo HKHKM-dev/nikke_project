@@ -78,7 +78,6 @@
 ## 5. 道具・記録の整備
 
 - 画面: 版の無い古い編成の保存（Stage 3〜13）を、知らせずに初期値で上書きする（`apps/web/src/team.ts` の復元・`App.tsx`）。上書きする前に知らせるか
-- モダン UI: ニケ一覧から選ぶと、選択中のスロットのキャラを置き換えるが、配置先のスロットを示す表示が無い（#994 で消した。`apps/web/src/views/ModernView.tsx`・`components/modern/CharacterTray.tsx`）
 
 ## 6. スキル定義の未対応（ダメージに効くもの）
 
