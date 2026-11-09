@@ -39,17 +39,20 @@ function BadgeFilter({
 }) {
   return (
     <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
-      {Object.entries(kind.badges).map(([v, { src, label }]) => (
-        <button
-          key={v}
-          type="button"
-          className="char-tray-badge-button"
-          aria-pressed={value === v}
-          onClick={() => onToggle(v)}
-        >
-          <img className="char-badge" src={src} alt={label} draggable={false} />
-        </button>
-      ))}
+      {(kind.filterValues ?? Object.keys(kind.badges)).map((v) => {
+        const { src, label } = kind.badges[v]!;
+        return (
+          <button
+            key={v}
+            type="button"
+            className="char-tray-badge-button"
+            aria-pressed={value === v}
+            onClick={() => onToggle(v)}
+          >
+            <img className="char-badge" src={src} alt={label} draggable={false} />
+          </button>
+        );
+      })}
     </div>
   );
 }

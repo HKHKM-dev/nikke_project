@@ -71,6 +71,15 @@ describe('バッジの絞り込み', () => {
     expect(pass(toggleBadgeFilter({}, 'corporation', 'TETRA'))).toEqual([electricSG, ironSMG]);
   });
 
+  it('バースト段階が全段階のキャラは、どの段階で絞っても通る（全段階のボタンは出さない）', () => {
+    const allStep = { ...ironSMG, burstStep: 'AllStep' } as const;
+    for (const step of ['Step1', 'Step2', 'Step3']) {
+      expect(matchesBadgeFilters(allStep, { burstStep: step })).toBe(true);
+    }
+    expect(matchesBadgeFilters(allStep, { burstStep: 'Step1', weaponType: 'SG' })).toBe(false);
+    expect(BADGE_KINDS.find((k) => k.key === 'burstStep')?.filterValues).not.toContain('AllStep');
+  });
+
   it('同じ値をもう一度押すと解除される', () => {
     const selected = toggleBadgeFilter({}, 'class', 'Supporter');
     expect(toggleBadgeFilter(selected, 'class', 'Supporter')).toEqual({});
