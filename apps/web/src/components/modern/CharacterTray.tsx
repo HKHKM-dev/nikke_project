@@ -171,7 +171,8 @@ export function CharacterTray({
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
-                collectionBadge={trayCollectionBadge(char, roster, fixedSpec)}
+                // コレクションのバッジは縦長の絵にだけ出す
+                collectionBadge={shape === 'tall' ? trayCollectionBadge(char, roster, fixedSpec) : null}
                 shape={shape}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />

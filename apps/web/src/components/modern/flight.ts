@@ -58,9 +58,10 @@ function ghostOf(node: Element, base: DOMRect): HTMLElement {
  * 入れ替えた）。着くまでスロットの立ち絵の枠は隠し、着いたら、スロットの画像が描ける（ready）まで写しをその場に残してから本物に切り替える。
  * 返す関数は、着くのを待たずに切り替える
  */
-export function flyIntoSlot(from: DOMRect, card: Element, ready: Promise<void> = decodeImages(card)): () => void {
+export function flyIntoSlot(from: DOMRect, card: Element): () => void {
   const content = card.querySelector('.modern-slot-char-area');
   if (!content) return () => undefined;
+  const ready = decodeImages(card);
   const base = content.getBoundingClientRect();
   const ghost = ghostOf(content, base);
   card.classList.add('modern-slot-arriving');
@@ -78,21 +79,19 @@ export function flyIntoSlot(from: DOMRect, card: Element, ready: Promise<void> =
 }
 
 /**
- * 外したニケの立ち絵の枠（content。外す前のスロットか持ち上げた絵）を、from（無ければ content の位置）から一覧のそのニケの絵（to）へ動かし、
+ * 外したニケの立ち絵の枠（content。外す前のスロットか持ち上げた絵）を、その位置から一覧のそのニケの絵（to）へ動かし、
  * 着く前に薄くして消す（一覧の絵は四角のこともあり、形が違う）。一覧に出ていない（絞り込みで外れた）ときは、その場で縮めながら消す
  */
-export function flyToTray(content: Element, from: DOMRect | null, to: DOMRect | null): void {
+export function flyToTray(content: Element, to: DOMRect | null): void {
   const base = content.getBoundingClientRect();
-  const start = from ?? base;
   const end =
-    to ??
-    new DOMRect(start.left + start.width * 0.1, start.top + start.height * 0.1, start.width * 0.8, start.height * 0.8);
+    to ?? new DOMRect(base.left + base.width * 0.1, base.top + base.height * 0.1, base.width * 0.8, base.height * 0.8);
   const ghost = ghostOf(content, base);
   const remove = () => ghost.remove();
   ghost
     .animate(
       [
-        { transform: transformTo(start, base), opacity: 1 },
+        { transform: 'none', opacity: 1 },
         { transform: transformTo(end, base), opacity: to ? 0.6 : 0, offset: 1 },
       ],
       FLIGHT,

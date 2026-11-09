@@ -1130,11 +1130,9 @@ header h1 {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  border: 1px solid var(--app-border);
   padding: 12px;
-  background: color-mix(in srgb, var(--app-fg) 2%, var(--app-bg));
 }
-/* ニケ一覧の枠は、画面の幅の上限（.app の max-width）と body の左右の余白を越えて、画面の左右の端まで広げる（枠線は付けない）。
+/* ニケ一覧（枠線・背景なし）は、画面の幅の上限（.app の max-width）と body の左右の余白を越えて、画面の左右の端まで広げる。
    画面の幅は、スクロールバーを除いた html の幅（cqw。html を幅のコンテナにする）で測る（100vw はスクロールバーの幅を含むブラウザがあり、
    画面の外へはみ出してしまう） */
 html:has(.modern-view-container) {
@@ -1142,7 +1140,6 @@ html:has(.modern-view-container) {
 }
 .modern-view-container > .char-tray-panel {
   margin-inline: calc(50% - 50cqw);
-  border: none;
 }
 /* 絞り込みと、並べ替え・切り替えのボタンを中央にそろえて並べる（折り返したときもそれぞれの行で中央） */
 .char-tray-header {

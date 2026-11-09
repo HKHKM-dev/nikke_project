@@ -141,10 +141,6 @@
 :root[data-app-ui='modern'] .char-tray-item {
   border-radius: 0;
 }
-/* ニケ一覧は画面の左右の端まで広げるので、ほかの枠のような面（背景・角丸・影）にせず、ページの背景にじかに並べる */
-:root[data-app-ui='modern'] .char-tray-panel {
-  background: none;
-}
 :root[data-app-ui='modern'] .char-tray-panel.char-tray-returning {
   outline: 3px dashed var(--m-accent);
 }

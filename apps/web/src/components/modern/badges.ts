@@ -12,6 +12,7 @@ import {
   type CollectionInput,
   type TreasurePhase,
 } from '@nikke/core';
+import { rosterFields } from '../../roster.ts';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
 
@@ -131,7 +132,7 @@ export function collectionBadge(
 
 /**
  * ニケ一覧（縦長）のコレクションのバッジ。育成状況にいるニケだけ、スロットに写すのと同じコレクション・宝物で出す
- * （宝物の段階が未確定なら宝物なし。roster.ts の rosterFields）。スペック固定はコレクションを使わないので出さない
+ * （rosterFields。宝物の段階が未確定なら宝物なし）。スペック固定はコレクションを使わないので出さない
  */
 export function trayCollectionBadge(
   char: Pick<CharacterIndexEntry, 'resourceId'>,
@@ -139,7 +140,9 @@ export function trayCollectionBadge(
   fixedSpec: boolean,
 ): Badge | null {
   const entry = fixedSpec ? undefined : roster?.characters[String(char.resourceId)];
-  return entry ? collectionBadge(entry.collection, entry.treasure?.phase ?? 0, entry.treasure !== null) : null;
+  if (!entry) return null;
+  const { build, treasurePhase } = rosterFields(entry);
+  return collectionBadge(build.collection, treasurePhase, entry.treasure !== null);
 }
 
 /** バッジの絞り込み（項目 → 選んだ値。1 つも選んでいない項目は持たず、絞らない） */

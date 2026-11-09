@@ -137,7 +137,15 @@ describe('絵のバッジ', () => {
   });
 
   it('ニケ一覧は、育成状況にいるニケだけ、そのコレクション・宝物で出す（スペック固定では出さない）', () => {
-    const entry = (collection: unknown, treasure: unknown) => ({ collection, treasure });
+    const entry = (collection: unknown, treasure: unknown) => ({
+      collection,
+      treasure,
+      affectionRank: 0,
+      gear: {},
+      cube: null,
+      growth: { level: 1, grade: 0, core: 0 },
+      skillLevels: {},
+    });
     const roster = {
       characters: {
         '1': entry({ rarity: 'SR', level: 15 }, null),

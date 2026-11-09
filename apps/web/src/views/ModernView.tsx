@@ -185,8 +185,11 @@ export function ModernView({
     return collectionBadge(build.collection, treasurePhase, (character?.treasure ?? null) !== null);
   };
   // 持ち上げたものの限界突破・コア強化とコレクションのバッジ（持ち上げた絵に、名前と一緒に出す）
-  const [draggedMarks, setDraggedMarks] = useState<GrowthMarks | null>(null);
-  const [draggedCollection, setDraggedCollection] = useState<Badge | null>(null);
+  const [draggedExtras, setDraggedExtras] = useState<{ marks: GrowthMarks | null; collection: Badge | null }>({
+    marks: null,
+    collection: null,
+  });
+  const { marks: draggedMarks, collection: draggedCollection } = draggedExtras;
 
   // 置いたニケがスロットへ動き始める位置。置いた後の描画（スロットに絵が入った後）で動かし始める
   const arrivalsRef = useRef<{ index: number; from: DOMRect }[]>([]);
@@ -204,23 +207,24 @@ export function ModernView({
   const sendToTray = (index: number, content = slotCardAt(index)?.querySelector('.modern-slot-char-area') ?? null) => {
     const id = team.slots[index]?.resourceId;
     if (id === null || id === undefined || !content) return;
-    flyToTray(content, null, trayVisualAt(id)?.getBoundingClientRect() ?? null);
+    flyToTray(content, trayVisualAt(id)?.getBoundingClientRect() ?? null);
   };
 
   /**
    * 一覧のニケをスロット index に置く。いたニケは一覧へ、置いたニケは from（無ければ一覧のそのニケの絵）からスロットへ動かす。
-   * 置けない（どこかのスロットにいる）ときは何もしない
+   * 置けない（どこかのスロットにいる）ときは何もしない。置いたかを返す
    */
   const placeFromTray = (
     resourceId: number,
     index: number,
     from = trayVisualAt(resourceId)?.getBoundingClientRect(),
-  ) => {
+  ): boolean => {
     const action = placeCharacterAction(team, resourceId, index);
-    if (!action) return;
+    if (!action) return false;
     sendToTray(index);
     if (from) arrivalsRef.current.push({ index, from });
     dispatch(action);
+    return true;
   };
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -235,20 +239,18 @@ export function ModernView({
       setDraggedCharacter(data.character as CharacterIndexEntry);
     }
     setDraggedEmptyIndex(data?.type === 'slot-character' && !data.character ? (data.slotIndex as number) : null);
-    setDraggedMarks(
-      data?.type === 'slot-character'
-        ? slotGrowthMarks(data.slotIndex as number)
-        : data?.character
-          ? trayGrowthMarks(data.character as CharacterIndexEntry, roster, team.fixedSpec)
-          : null,
-    );
-    setDraggedCollection(
-      data?.type === 'slot-character'
-        ? slotCollectionBadge(data.slotIndex as number)
-        : data?.character
-          ? trayCollectionBadge(data.character as CharacterIndexEntry, roster, team.fixedSpec)
-          : null,
-    );
+    if (data?.type === 'slot-character') {
+      const i = data.slotIndex as number;
+      setDraggedExtras({ marks: slotGrowthMarks(i), collection: slotCollectionBadge(i) });
+    } else if (data?.character) {
+      const char = data.character as CharacterIndexEntry;
+      setDraggedExtras({
+        marks: trayGrowthMarks(char, roster, team.fixedSpec),
+        collection: trayCollectionBadge(char, roster, team.fixedSpec),
+      });
+    } else {
+      setDraggedExtras({ marks: null, collection: null });
+    }
     // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
     const card =
       event.active.data.current?.type === 'slot-character'
@@ -302,13 +304,8 @@ export function ModernView({
       // どこかのスロットにいるキャラは置かない（placeCharacterAction。トレイでも持ち上げられない）
       // 持ち上げた絵は、離した位置からスロットへ動かす
       const char = activeData.character as CharacterIndexEntry;
-      if (team.slots.some((s) => s.resourceId === char.resourceId)) return;
-      setDropState({ placed: true });
-      placeFromTray(
-        char.resourceId,
-        targetSlotIndex,
-        document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect(),
-      );
+      const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+      if (placeFromTray(char.resourceId, targetSlotIndex, from)) setDropState({ placed: true });
     } else if (activeData.type === 'slot-character') {
       const fromSlotIndex = activeData.slotIndex as number;
       if (fromSlotIndex !== targetSlotIndex) {
