@@ -221,7 +221,8 @@ export function parseTrigger(
     // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.1 節）: 何回目まで（atLeast 以上）
     if (v.atMost !== undefined) {
       const atMost = parsePositiveInt(v.atMost, `${path}.atMost`);
-      if (atMost < trigger.atLeast) fail(`${path}.atMost`, `expected at least atLeast (${trigger.atLeast}), got ${atMost}`);
+      if (atMost < trigger.atLeast)
+        fail(`${path}.atMost`, `expected at least atLeast (${trigger.atLeast}), got ${atMost}`);
       trigger.atMost = atMost;
     }
     if (v.resetAfterSeconds !== undefined) {

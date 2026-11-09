@@ -359,7 +359,11 @@ const COND_INFO: Record<string, Info> = {
     'ok',
     'usedBurst（2 段目の段 1。いなければは false。ディーゼル：ウィンタースイーツ編）',
   ],
-  firstEvent: ['初めてフルバーストタイムが発動した時', 'ok', '出来事の回数のきっかけの atMost（ディーゼル：ウィンタースイーツ編）'],
+  firstEvent: [
+    '初めてフルバーストタイムが発動した時',
+    'ok',
+    '出来事の回数のきっかけの atMost（ディーゼル：ウィンタースイーツ編）',
+  ],
   inFullBurst: ['フルバーストタイム中なら', 'ok', 'inFullBurst'],
   enemyCount: ['敵が N 機以上', 'premise', '敵 1 体'],
   alive: ['生存している限り', 'premise', '倒れない'],
