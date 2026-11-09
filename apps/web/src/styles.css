@@ -672,19 +672,21 @@ header h1 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  /* 立ち絵どうしの横の間は 14px（カードの左右の余白 4px ×2 と、この 6px） */
+  gap: 12px 6px;
 }
 /* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
   box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) / 2 + 2px + 16px);
+  width: calc(var(--slot-portrait-h) / 2 + 2px + 8px);
 }
 
 /* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
 .modern-slot-card {
   display: flex;
   flex-direction: column;
-  padding: 8px;
+  /* 左右は、置き先待ちの水色の枠（立ち絵の外へ 2px 出る）が収まるだけ空ける */
+  padding: 8px 4px;
   gap: 8px;
   position: relative;
 }
