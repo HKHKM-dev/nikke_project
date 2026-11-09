@@ -1,0 +1,46 @@
+{
+  "id": "1002",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1002_smg_liter_delta_quency-eq.mp4",
+  "original": "2026-11-10_02-28-48.mp4",
+  "durationSec": 204.7,
+  "frames": 12282,
+  "fps": 60,
+  "sizeMB": 248.2,
+  "sha256": "66db19397956",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 403,
+      "name": "クエンシー：エスケープクイーン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-10T02:36+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
