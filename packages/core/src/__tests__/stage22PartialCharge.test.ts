@@ -71,6 +71,21 @@ describe('partialChargeProgress（射手）', () => {
     expect(state.ammo).toBe(5);
   });
 
+  it('fires at full charge one frame later when the charge filled just before the window (H = 1。設計書 11 節)', () => {
+    // 満ちたフレームに窓に入った（撃つのは次のフレーム）: 窓の始まりには撃たず、ふだんの刻みの時刻（1f 後）に撃ってハイドする
+    const state = shooterAfter(shot, 69);
+    expect(state.wait).toBe(1);
+    expect(partialChargeProgress(state, shot)).toBe(1);
+    expect(beginHide(state, shot)).toBeNull();
+    expect(state.ammo).toBe(6);
+    expect(stepShooter(state, shot, DEFAULT_WEAPON_MODEL, undefined, true)).toBe(false);
+    expect(stepHide(state, shot)).toBe(1);
+    expect(state.ammo).toBe(5);
+    expect(state.hideReload).toBe(true);
+    // リロードはその発から（D から数えない）
+    expect(state.hideReloadStartIn).toBe(0);
+  });
+
   it('ignores DOWN_Charge and non-charge weapons (design-stage22.md 0.4 節)', () => {
     const down = makeCharacter({ ...SR, inputType: 'DOWN_Charge' }).shot;
     expect(partialChargeProgress(shooterAfter(down, 60), down)).toBeNull();

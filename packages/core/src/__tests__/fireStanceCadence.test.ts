@@ -3,7 +3,15 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { computeCadence } from '../cadence.ts';
 import { firingParams, stanceFrames } from '../frame/firing.ts';
-import { hideShooter, initialShooter, partialChargeProgress, stepShooter, unhideShooter } from '../frame/shooter.ts';
+import {
+  beginHide,
+  hideShooter,
+  initialShooter,
+  partialChargeProgress,
+  stepHide,
+  stepShooter,
+  unhideShooter,
+} from '../frame/shooter.ts';
 import { planShots } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon } from '../weapons.ts';
@@ -66,6 +74,53 @@ describe('部分チャージ（設計書 3.2 節）', () => {
     for (let i = 0; i < n; i++) stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, false);
     return { state, shot, params };
   };
+
+  it('fires at the usual time when the window starts after the charge is full, even after D (A2 H = 24。V-0701)', () => {
+    // 0123・0864・0865 の 5 回目の形: 前の発の 101f 後に窓に入る（満ちたのは 96f 後）。ふだんの刻み（120f）の窓の始まりの 19f 後に
+    // フルチャージで撃ち、その発の姿勢の終わり（撃ってから ⌈S⌉ − H = 26f）からハイド中のリロードを始める（設計書 11 節の案 1）
+    const { state, shot, params } = afterShot(811, 100);
+    const ammo = state.ammo;
+    expect(beginHide(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeNull();
+    expect(state.hidePending).toMatchObject({ progress: 1, full: true });
+    // 1 パス目と同じ順（窓の中のフレームごとに stepHide → 窓で止めた stepShooter）
+    expect(stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, true)).toBe(false);
+    for (let k = 1; k < 19; k++) {
+      expect(stepHide(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeNull();
+      expect(stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, true)).toBe(false);
+    }
+    // D（8f）の後に撃つ
+    expect(DEFAULT_WEAPON_MODEL.hideDetectFrames).toBeLessThan(19);
+    expect(stepHide(state, shot, DEFAULT_WEAPON_MODEL, params)).toBe(1);
+    expect(state.ammo).toBe(ammo - 1);
+    expect(state.hidePending).toBeUndefined();
+    expect(state.hideReload).toBe(true);
+    expect(state.hideReloadStartIn).toBe(26);
+  });
+
+  it('fires on the same frame as an unblocked shooter, even when the charge time changes during the wait', () => {
+    // 満ちていた枠の撃つ時刻は、待ちを窓の始まりに決めず、毎フレーム射手と同じ見方（前の発からの経過とそのフレームのチャージ時間）で
+    // 決める。途中でチャージ時間が 5f 短くなっても、窓で止めない射手と同じフレームに撃つ
+    const { state, shot, params } = afterShot(811, 100);
+    const twin = structuredClone(state);
+    const faster = { ...params, chargeFrames: params.chargeFrames - 5 };
+    const paramsAt = (k: number) => (k < 3 ? params : faster);
+    let twinShot = -1;
+    for (let k = 0; twinShot < 0 && k < 40; k++) {
+      if (stepShooter(twin, shot, DEFAULT_WEAPON_MODEL, paramsAt(k), false)) twinShot = k;
+    }
+    expect(twinShot).toBeGreaterThan(0);
+    expect(twinShot).toBeLessThan(19);
+    let windowShot = -1;
+    for (let k = 0; windowShot < 0 && k < 40; k++) {
+      const fired =
+        k === 0
+          ? beginHide(state, shot, DEFAULT_WEAPON_MODEL, paramsAt(k))
+          : stepHide(state, shot, DEFAULT_WEAPON_MODEL, paramsAt(k));
+      if (fired === 1) windowShot = k;
+      else stepShooter(state, shot, DEFAULT_WEAPON_MODEL, paramsAt(k), true);
+    }
+    expect(windowShot).toBe(twinShot);
+  });
 
   it('fires at full charge while waiting to fire after the charge is full (レイヴン H = 16)', () => {
     // 撃った後 119 − 16 = 103f で満ち、そこから撃つまでの間は p = 1

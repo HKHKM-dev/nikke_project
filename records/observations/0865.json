@@ -365,17 +365,142 @@
     "source": "V-0697",
     "readAt": "2026-11-08",
     "kind": "interval",
-    "use": "record",
+    "use": "compare",
     "unit": "f",
     "value": 116,
     "description": "A2単騎の、3 回目の敵のジャンプ（窓の始まりにチャージが満ちていて、満ちてから撃つまでの間に窓に入った回）の、フルチャージの発を撃ったフレームから明け（ハイド中のリロードのバーが消えたフレーム）まで。窓の長さ（約 117.65f）より約 2f 短く、発はふだんの刻みの時刻に出る",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
-      "note": "撃ったフレーム f7142（増分 f7151 から遠の飛ぶ時間 9f（`0865-15`）を引いた）→ 明け f7258（`0865-14`）。前の発から 120f。バーの 0 の点は増分の 17.04f 後（`0865-02`）で、撃ってから 26f"
+      "note": "撃ったフレーム f7142（増分 f7151 から遠の飛ぶ時間 9f（`0865-15`）を引いた）→ 明け f7258（`0865-14`）。前の発から 120f。バーの 0 の点は増分の 17.04f 後（`0865-02`）で、撃ってから 26f。2026-11-09: 窓の始まりに満ちていた枠をふだんの刻みの時刻に撃つモデル（plan/design-hide-reload-detect.md 11 節の案 1）を入れて、比べる観測値にした（V-0701）。モデルは録画の窓 `0865-14` で回し、窓の前（窓の中の発を含む）の最後の発から明けまで（lastShotToWindowEnd）"
     },
     "scope": {
       "slot": 1,
       "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "lastShotToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0865-14"
+      }
+    }
+  },
+  {
+    "id": "0865-17",
+    "recording": "0865",
+    "source": "V-0701",
+    "readAt": "2026-11-09",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 98,
+    "description": "A2単騎の、5 回目の敵のジャンプ（窓の始まりの約 4f 前にチャージが満ち、満ちてから撃つまで（24f）の間に窓に入った回）の、フルチャージの発を撃ったフレームから明け（ハイド中のリロードのバーが消えたフレーム）まで。発はふだんの刻みの時刻（窓の始まりの約 20f 後）に出る",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "撃ったフレーム f11251（照準の残弾が 003 → 002。切り出して目で読んだ）。前の発 f11131（004 → 003）から 120f（マガジンの中のふだんの刻み）。バーの 0 の点 f11277.26（撃ってから 26.26f。姿勢の終わり。C-0842）→ 消えた f11349（明け。取り消し）。5 回目の窓の明けは `0865-14` の 5 回目の終わり（4 回目の始まりから敵のジャンプの間隔で置いた窓）と同じフレーム（動画 f11349。戦闘開始 f773）。モデルは録画の窓で回し、窓の前（窓の中の発を含む）の最後の発から明けまで（lastShotToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "lastShotToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0865-14"
+      }
+    }
+  },
+  {
+    "id": "0865-18",
+    "recording": "0865",
+    "source": "V-0701",
+    "readAt": "2026-11-09",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 71.74,
+    "description": "同じ 5 回目の敵のジャンプの、A2 のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（`0865-17` の発の姿勢の終わりから始まる）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "撃ったフレーム f11251（照準の残弾が 003 → 002。切り出して目で読んだ）。前の発 f11131（004 → 003）から 120f（マガジンの中のふだんの刻み）。バーの 0 の点 f11277.26（撃ってから 26.26f。姿勢の終わり。C-0842）→ 消えた f11349（明け。取り消し）。モデルは録画の窓で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0865-14"
+      }
+    }
+  },
+  {
+    "id": "0865-19",
+    "recording": "0865",
+    "source": "V-0701",
+    "readAt": "2026-11-09",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 89.96,
+    "description": "A2単騎の、3 回目の敵のジャンプ（窓の始まりにチャージが満ちていて、満ちてから撃つまでの間に窓に入った回）の、ハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（`0865-02` の 3 回目の値。その回の発の姿勢の終わりから始まる）",
+    "method": {
+      "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
+      "note": "`0865-02` の並びの 3 回目を、窓の始まりに満ちていた枠をふだんの刻みの時刻に撃つモデル（plan/design-hide-reload-detect.md 11 節の案 1）で比べる観測値にした。モデルは録画の窓 `0865-14` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0865-14"
+      }
     }
   }
 ]
