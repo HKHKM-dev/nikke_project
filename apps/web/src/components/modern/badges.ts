@@ -55,6 +55,8 @@ export type BadgeKind = {
   badges: Readonly<Record<string, Badge>>;
   /** トレイの絞り込みのボタンに出す値（無ければ badges の全部） */
   filterValues?: readonly string[];
+  /** どの値で絞っても合う値（絞り込みのボタンは出さない。バースト段階の全段階） */
+  matchesAll?: string;
 };
 
 /** 項目の値ごとのバッジ（values の順に並べる）。ファイルが無い値があれば読み込みで落とす */
@@ -83,8 +85,9 @@ export const BADGE_KINDS: readonly BadgeKind[] = [
     key: 'burstStep',
     name: 'バースト段階',
     badges: badgesOf('burstStep', ['Step1', 'Step2', 'Step3', 'AllStep'], (v) => `バースト ${BURST_STEP_LABEL[v]}`),
-    // 全段階（AllStep）のボタンは出さない。全段階のニケは、どの段階で絞っても出す（matchesBadgeFilters）
+    // 全段階（AllStep）のボタンは出さず、全段階のニケは、どの段階で絞っても出す
     filterValues: ['Step1', 'Step2', 'Step3'],
+    matchesAll: 'AllStep',
   },
   {
     key: 'class',
@@ -150,12 +153,12 @@ export type BadgeFilters = Partial<Record<BadgeKey, readonly string[]>>;
 
 /**
  * キャラが選んだ値に合うか。同じ項目で選んだ値どうしは OR（どれか 1 つに合えばよい）、項目どうしは AND。
- * バースト段階が全段階のキャラは、どの段階にも合う
+ * どの値で絞っても合う値（matchesAll。バースト段階の全段階）のキャラは、その項目ではいつも合う
  */
 export function matchesBadgeFilters(char: Pick<CharacterIndexEntry, BadgeKey>, filters: BadgeFilters): boolean {
-  return BADGE_KINDS.every(({ key }) => {
+  return BADGE_KINDS.every(({ key, matchesAll }) => {
     const values = filters[key];
-    return values === undefined || values.includes(char[key]) || (key === 'burstStep' && char.burstStep === 'AllStep');
+    return values === undefined || values.includes(char[key]) || char[key] === matchesAll;
   });
 }
 
