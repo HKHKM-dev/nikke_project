@@ -81,7 +81,9 @@ describe('部分チャージ（設計書 3.2 節）', () => {
     const { state, shot, params } = afterShot(811, 100);
     const ammo = state.ammo;
     expect(beginHide(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeNull();
-    expect(state.hidePending).toEqual({ framesLeft: 19, progress: 1, full: true });
+    expect(state.hidePending).toMatchObject({ progress: 1, full: true });
+    // 1 パス目と同じ順（窓の中のフレームごとに stepHide → 窓で止めた stepShooter）
+    expect(stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, true)).toBe(false);
     for (let k = 1; k < 19; k++) {
       expect(stepHide(state, shot, DEFAULT_WEAPON_MODEL, params)).toBeNull();
       expect(stepShooter(state, shot, DEFAULT_WEAPON_MODEL, params, true)).toBe(false);
