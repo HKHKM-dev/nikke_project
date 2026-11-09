@@ -339,16 +339,18 @@ function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<strin
     table.fireTypes = parseAutoAttackRows(fireTypes, `${path}.fireTypes`, keys, RATE, FIRE_TYPE_KEY);
   // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの武器種ごとの行（未測定の null は書かない）
   if (dualWield !== undefined) {
-    const rows = parseAutoAttackRows(dualWield, `${path}.dualWield`, keys, RATE, WEAPON_TYPE_KEY);
-    for (const [weapon, row] of Object.entries(rows))
-      if (row === null) throw new TypeError(`${path}.dualWield.${weapon}: must be a row`);
-    table.dualWield = rows as Partial<Record<WeaponType, TargetRateRow>>;
+    if (!isRecord(dualWield)) throw new TypeError(`${path}.dualWield: must be an object`);
+    const rows: Partial<Record<WeaponType, TargetRateRow>> = {};
+    for (const [weapon, row] of Object.entries(dualWield)) {
+      const at = `${path}.dualWield.${weapon}`;
+      if (!(WEAPON_TYPES as readonly string[]).includes(weapon))
+        throw new TypeError(`${at}: key must be a weapon type`);
+      rows[weapon as WeaponType] = parseRateRow(row, at, keys, RATE);
+    }
+    table.dualWield = rows;
   }
   return table;
 }
-
-/** 二丁持ちの行のキー（武器種） */
-const WEAPON_TYPE_KEY = { pattern: /^(AR|SMG|SR|RL|SG|MG)$/, label: 'a weapon type' };
 
 /** 弾の種類の行のキー（CDN の fire_type の生値） */
 const FIRE_TYPE_KEY = { pattern: /^[A-Za-z]+$/, label: 'a fire type' };

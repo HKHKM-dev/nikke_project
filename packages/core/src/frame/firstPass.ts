@@ -144,8 +144,7 @@ import {
 } from '../skills/types.ts';
 import type { SummonId } from '../skills/summons.ts';
 import { dotTickTracker, groupDotsByState, type DotTickTracker } from './dot.ts';
-import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
-import { muzzleHitsOf } from '../damage.ts';
+import { DEFAULT_WEAPON_MODEL, isChargeWeapon, muzzleHitsOf, type WeaponModel } from '../weapons.ts';
 import { timerFramesOf, type FrameRange } from '../skills/timeline.ts';
 import { firingParams, isZeroFiring, type FiringParams } from './firing.ts';
 import {
@@ -637,14 +636,21 @@ function runFirstPassOnce(
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
   const hitRateAt = slots.map(() => 0);
   // 二丁持ちの SMG は 1 発 2 ヒットで、2 ヒット目もゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。仮説）
-  const muzzleHits = slots.map((slot) => (slot === null ? 1 : muzzleHitsOf(slot.character.weaponType, slot.character.shot)));
-  const baseEnergies = slots.map(
-    (slot, i) =>
-      (slot === null
-        ? 0
-        : hitRateSpans[i]
-          ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1)
-          : energyPerTrigger(slot.character.shot, i === controlledSlot, slot.hitRate ?? 1)) * muzzleHits[i]!,
+  const muzzleHits = slots.map((slot) =>
+    slot === null ? 1 : muzzleHitsOf(slot.character.weaponType, slot.character.shot),
+  );
+  const baseEnergies = slots.map((slot, i) =>
+    slot === null
+      ? 0
+      : hitRateSpans[i]
+        ? energyPerTrigger(slot.character.shot, i === controlledSlot, 1, 1, muzzleHits[i])
+        : energyPerTrigger(
+            slot.character.shot,
+            i === controlledSlot,
+            slot.hitRate ?? 1,
+            SG_PELLET_GAUGE_HIT_RATE,
+            muzzleHits[i],
+          ),
   );
   const energies = baseEnergies.map((e, i) => e * (1 + gaugeSpeed[i]!));
   const pellets = slots.map((slot) => slot !== null && slot.character.shot.shotCount > 1);

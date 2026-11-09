@@ -19,8 +19,8 @@ import {
   type BuffTotals,
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
-import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile, WeaponType } from './types.ts';
-import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, type WeaponModel } from './weapons.ts';
+import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile } from './types.ts';
+import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, muzzleHitsOf, type WeaponModel } from './weapons.ts';
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
 export const FULL_BURST_BOOST = 0.5;
@@ -308,7 +308,10 @@ export type TriggerDamage = {
   perTrigger: number;
   /** Stage 15: 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
   hitRate: number;
-  /** V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）。normal にだけ含まれている */
+  /**
+   * V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）× 二丁持ちの SMG のヒット数（muzzleHitsOf）。normal にだけ含まれている。
+   * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1012）
+   */
   hitsPerShot: number;
 };
 
@@ -347,7 +350,8 @@ export function baseDefenceOf(input: {
 /** 弾の種類（CDN の fire_type）のうち、モデルが知っているもの（types.ts の ShotParams.fireType） */
 const KNOWN_FIRE_TYPES: readonly string[] = ['Instant', 'ProjectileDirect', 'HomingProjectile', 'ProjectileCurve'];
 
-export function modelNotes(shot: ShotParams, weaponType: WeaponType): ModelNote[] {
+export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>): ModelNote[] {
+  const { shot, weaponType } = character;
   const notes: ModelNote[] = [];
   const unsupported = (code: string, ja: string, en: string): void => {
     notes.push({ level: 'unsupported', code, message: { ja, en } });
@@ -413,15 +417,6 @@ export function hitRateOf(condition: Pick<TriggerCondition, 'hitRate'>): number 
     throw new RangeError(`hitRate must be in [0, 1], got ${hitRate}`);
   }
   return hitRate;
-}
-
-/**
- * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（銃口 2 つ）の SMG の 1 発のヒット数。1 発で両方の銃口が
- * 当たり（V-0702）、ヒットごとにダメージ・ゲージ・命中の数え（コア・会心はヒットごと）になる。SMG のほかの二丁持ち（ノア・ツバイ）は
- * 確かめていないので 1（modelNotes の未対応）
- */
-export function muzzleHitsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muzzleCount'>): number {
-  return weaponType === 'SMG' && shot.muzzleCount > 1 ? shot.muzzleCount : 1;
 }
 
 /** V-0119: 条件の 1 発のヒット数（省略は 1）。1 未満・有限でない値は RangeError */
@@ -622,6 +617,6 @@ export function computeDamage(input: DamageInput): DamageResult {
     cadence,
     dps,
     totalDamage: dps * condition.durationSeconds,
-    notes: modelNotes(character.shot, character.weaponType),
+    notes: modelNotes(character),
   };
 }

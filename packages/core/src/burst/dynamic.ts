@@ -8,7 +8,7 @@
 import { planShots, type ShotLog } from '../frame/shots.ts';
 import type { BurstStep, CharacterData, ShotParams } from '../types.ts';
 import { burstReentryStepOf, burstStepChangeOf, type SkillDefinition } from '../skills/types.ts';
-import { DEFAULT_WEAPON_MODEL, type WeaponModel } from '../weapons.ts';
+import { DEFAULT_WEAPON_MODEL, muzzleHitsOf, type WeaponModel } from '../weapons.ts';
 import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
@@ -39,7 +39,7 @@ export function fullChargeGaugeOf(shot: ShotParams, controlled: boolean): number
  * 1 トリガーで溜まるゲージ量。1 発は CDN の targetBurstEnergyPerShot そのまま（C-0083。Stage 7 の ×1.2 は
  * BURST バーの表示の縮尺を読んだものだった。V-0028）。targetBurstEnergyPerShot は 1 ペレットあたりなので
  * shotCount（SG のペレット数）を掛ける。フルチャージ倍率（fullChargeBurstEnergy）は**操作キャラのチャージ武器にだけ**乗る
- * （C-0007）。二丁持ちの SMG のヒット数（muzzleHitsOf）は呼ぶ側（frame/firstPass.ts）が掛ける。Stage 15: hitRate（省略 1）を掛ける。
+ * （C-0007）。muzzleHits は二丁持ちの SMG の 1 発のヒット数（muzzleHitsOf。2 ヒットともゲージを溜める。C-1012）。Stage 15: hitRate（省略 1）を掛ける。
  * pelletGaugeRate は SG のペレットのうちゲージになる割合（省略は手入力の置き値 SG_PELLET_GAUGE_HIT_RATE。表の弾丸命中率を使う枠は 1）
  */
 export function energyPerTrigger(
@@ -47,10 +47,11 @@ export function energyPerTrigger(
   controlled: boolean,
   hitRate = 1,
   pelletGaugeRate = SG_PELLET_GAUGE_HIT_RATE,
+  muzzleHits = 1,
 ): number {
   const pellets = shot.shotCount > 1 ? shot.shotCount * pelletGaugeRate : shot.shotCount;
   // Stage 15: 命中率（射撃場 = 1 の相対値）。外れた弾はゲージにならない
-  return shot.targetBurstEnergyPerShot * pellets * fullChargeGaugeOf(shot, controlled) * hitRate;
+  return shot.targetBurstEnergyPerShot * pellets * muzzleHits * fullChargeGaugeOf(shot, controlled) * hitRate;
 }
 
 /**
@@ -135,7 +136,15 @@ export function planDynamicSchedule(
     return {
       frames: log.frames,
       next: 0,
-      energy: energyPerTrigger(s.character.shot, index === controlledSlot, s.condition?.hitRate ?? 1) * (1 + speed),
+      energy:
+        energyPerTrigger(
+          s.character.shot,
+          index === controlledSlot,
+          s.condition?.hitRate ?? 1,
+          SG_PELLET_GAUGE_HIT_RATE,
+          muzzleHitsOf(s.character.weaponType, s.character.shot),
+        ) *
+        (1 + speed),
     };
   });
   for (let f = 0; f < frames; f++) {

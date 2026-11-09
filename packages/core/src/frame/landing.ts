@@ -25,6 +25,7 @@ import {
 import { LANDING_BAND_LABEL, LANDING_BANDS } from '../enemies.ts';
 import { ZERO_HIT_RATE, hitRateNOf, type HitRateN } from '../skills/buffs.ts';
 import { SKILL_SLOTS } from '../skills/types.ts';
+import { muzzleHitsOf } from '../weapons.ts';
 import type { SlotBuffState } from '../skills/timeline.ts';
 import type { SlotCondition, TeamSlotInput } from '../team.ts';
 import type {
@@ -144,7 +145,8 @@ export function rateRowOf(table: RateTableLookup, character: CharacterData): Tar
   const byFireType = table.fireTypes?.[character.shot.fireType];
   if (byFireType !== undefined) return byFireType;
   // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの行（コア命中率の表だけ）
-  const dual = character.shot.muzzleCount > 1 ? table.dualWield?.[character.weaponType] : undefined;
+  const dual =
+    muzzleHitsOf(character.weaponType, character.shot) > 1 ? table.dualWield?.[character.weaponType] : undefined;
   if (dual !== undefined) return dual;
   const cell = table[character.weaponType];
   if (cell === null || cell === undefined) return null;

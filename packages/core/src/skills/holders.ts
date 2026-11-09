@@ -1545,13 +1545,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     let own = whileOwn.get(track);
     if (own === undefined) {
       const family = statesMatching(effect.whileState);
-      own = tracks.filter(
-        (t) =>
-          t.holder === track.sourceSlotIndex &&
-          (t.stage === 1 || t.stage === 1.5) &&
-          t.origin.kind === 'state' &&
-          family.includes(t.origin.state),
-      );
+      own = family.flatMap((s) => stateTracks[track.sourceSlotIndex]?.get(s) ?? []);
       whileOwn.set(track, own);
     }
     const deps = own.map((t) => readItems(t));
@@ -1734,9 +1728,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const family = statesMatching(state);
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
       const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
-      // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: sameFiring は、同じ発火で前に書いた付与が付けた分
-      // （射撃の回数のきっかけの件は次のフレームから）も数えるので、段によらず次のフレームに効いている件を見る
-      const itemsOf = (t: HeldTrack): HeldItem[] => (sameFiring ? activeAt(t, frame + 1) : selfStateItemsAt(t, frame));
       if (stacks === undefined) {
         const has = isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0);
         if (has !== present) return false;
@@ -1744,7 +1735,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         !stacksHold(
           stacks,
           isStatic,
-          own.map((t) => ({ origin: t.origin, items: itemsOf(t) })),
+          // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: sameFiring は、同じ発火で前に書いた付与が付けた分
+          // （射撃の回数のきっかけの件は次のフレームから）も数えるので、段によらず次のフレームに効いている件を見る
+          own.map((t) => ({
+            origin: t.origin,
+            items: sameFiring ? activeAt(t, frame + 1) : selfStateItemsAt(t, frame),
+          })),
         )
       ) {
         // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件（段 1 の状態の件の、そのフレームの段の最大）
