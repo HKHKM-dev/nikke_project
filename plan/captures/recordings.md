@@ -979,6 +979,10 @@
 | 1004 | `20261110-1004_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の敵・オートバースト ON |
 | 1005 | `20261110-1005_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の敵・オートバースト ON |
 | 1006 | `20261110-1006_sr+sg+sg_cocoa+soldier-fa+sugar_electric.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・電撃 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 C。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・電撃の敵・オートバースト ON |
+| 1007 | `20261110-1007_rl_diesel-winter-sweets.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0703 の撮影 A。リター（I）・デルタ（II）・ディーゼル：ウィンタースイーツ（III・操作）（オート射撃 ON・オートバースト ON）。火の的 |
+| 1008 | `20261110-1008_rl_diesel-winter-sweets.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0703 の撮影 A。リター（I）・デルタ（II）・ディーゼル：ウィンタースイーツ（III・操作）（オート射撃 ON・オートバースト ON）。火の的 |
+| 1009 | `20261110-1009_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0703 の撮影 B。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
+| 1010 | `20261110-1010_rl_diesel-winter-sweets-sun-uni.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ディーゼル：ウィンタースイーツ（75、RL・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0703 の撮影 B。リター（I）・I-DOLL・サン（III）・ディーゼル：ウィンタースイーツ（III・操作）・ユニ（II）（オート射撃 ON・オートバースト ON）。火の的 |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

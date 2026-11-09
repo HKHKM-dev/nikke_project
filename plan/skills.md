@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 86・効果 586（根拠あり 565）・notes 208（根拠あり 91）
+件数: キャラ 87・効果 595（根拠あり 574）・notes 212（根拠あり 94）
 
-notes の種類: 未対応 34・前提の外 50・計算に無関係 43・補足 22・間接 59
+notes の種類: 未対応 35・前提の外 53・計算に無関係 43・補足 22・間接 59
 
-スロット: supported 216・partial 21・unsupported 9・noEffect 36
+スロット: supported 218・partial 22・unsupported 9・noEffect 36
 
 ## 10 ラピ
 
@@ -174,6 +174,25 @@ notes の種類: 未対応 34・前提の外 50・計算に無関係 43・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0676（確定）、C-0677（確定）
   - effects[1] timed・burstUse・chargeSpeed: C-0678（確定）
+
+## 75 ディーゼル：ウィンタースイーツ
+
+- **skill1**: supported
+  - effects[0] state・fullBurstStart・intro（critDamage）: C-1016（確定）
+  - effects[1] state・fullBurstStart・highlight（critDamage）: C-1016（確定）
+  - effects[2] timed・fullBurstStart・sustainedDamage: C-1016（確定）
+  - effects[3] timed・fullBurstStart・sustainedDamage: C-1016（確定）
+- **skill2**: supported
+  - effects[0] timed・fullChargeShot・sustainedDamage: C-1017（確定）
+  - effects[1] dot・fullBurstStart: C-1017（確定）
+  - notes[0] 前提の外: 味方の誰かがパーツを破壊した時の、自分を除く味方全体への消音（騒音公害免疫・3 スタック・持続）は、射撃場の的にパーツが無いので起きない: C-0443（範囲外）
+  - notes[1] 前提の外: 味方の誰かがパーツを破壊した時の、自分の持続ダメージ▲（15 秒）は、射撃場の的にパーツが無いので起きない: C-0443（範囲外）
+- **burst**: partial
+  - effects[0] timed・burstUse・damageTaken: C-1018（確定）
+  - effects[1] dot・burstUse: C-1018（確定）
+  - effects[2] dot・burstUse: C-1018（確定）
+  - notes[0] 未対応: 自分がクライマックス状態なら、自分を除く味方全体に「騒音公害：命中率 100%▼」（1 秒）は未対応。命中率▼の効き方は MG のほろ酔い（−20% × 1〜3 スタック）しか測っておらず、ほかの武器種と −100% の効き方が無い（plan/design-diesel-ws.md 2.4 節）。消音（免疫）はパーツの破壊でしか付かないので、射撃場では常に効く: 根拠なし
+  - notes[1] 前提の外: 自分がクライマックス状態なら、味方全体の消音スタック量 1 個▼は、消音がパーツの破壊でしか付かず射撃場では無いので、何もしない: C-0443（範囲外）
 
 ## 82 リター
 
