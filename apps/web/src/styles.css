@@ -1230,7 +1230,6 @@ html:has(.modern-view-container) {
   gap: 4px;
   /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
-  border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
 }
 .char-tray-empty {
   grid-column: 1 / -1;
