@@ -1231,8 +1231,11 @@ html:has(.modern-view-container) {
   grid-template-columns: repeat(auto-fill, calc(var(--tray-visual-w) + 6px));
   justify-content: center;
   gap: 4px;
-  /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
-  padding: 4px;
+  /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする）。
+     上下は横線で区切る。線は一覧の枠（.char-tray-panel）の左右の余白 12px まで延ばし、画面の端から端まで引く */
+  margin-inline: -12px;
+  padding: 4px 16px;
+  border-block: 1px solid color-mix(in srgb, var(--app-fg) 15%, transparent);
 }
 .char-tray-empty {
   grid-column: 1 / -1;
