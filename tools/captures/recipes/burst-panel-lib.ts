@@ -1,7 +1,7 @@
-// 右のバースト欄の表示の時刻を、フレームごとの特徴から決める純粋な部分（レシピ burst-panel。plan/design-burst-panel-recipe.md
+// バースト欄の表示の時刻を、フレームごとの特徴から決める純粋な部分（レシピ burst-panel。plan/design-burst-panel-recipe.md
 // 2 節）。特徴は burst-panel.ts が録画から出し、キャッシュ burst-panel@<版>.tsv に置く。
 
-/** 1 フレームの特徴（座標は 1920×1080） */
+/** 1 フレームの特徴（座標は 1920×1080。下の範囲は右の欄。左の欄は PANEL_GEOMETRY.left） */
 export type PanelRow = {
   frame: number;
   /** 六角形（x 1754〜1779・y 428〜451）の平均の色（整数） */
@@ -16,22 +16,36 @@ export type PanelRow = {
   dim: number;
 };
 
-/** 切り出す欄と、特徴を測る所（1920×1080） */
-export const PANEL_CROP = { x: 1740, y: 400, w: 180, h: 180 };
-export const HEXAGON_BOX = { x0: 1754, x1: 1780, y0: 428, y1: 452 };
-export const BAR_BOX = { x0: 1800, x1: 1900, y0: 438, y1: 447 };
-export const FACE_BOX = { x0: 1785, x1: 1885, y0: 465, y1: 555 };
 /** 欄の左右（ゲームのオプション。plan/captures/guide.md「バーストの欄の左右」） */
 export type PanelSide = 'right' | 'left';
 type Box = { x0: number; x1: number; y0: number; y1: number };
-export type PanelGeometry = { crop: { x: number; y: number; w: number; h: number }; hexagon: Box; bar: Box; face: Box };
+/**
+ * 切り出す欄と特徴を測る所（1920×1080）、観測値の説明の名前、特徴のキャッシュの名前（特徴の測り方を変えたら上げる）
+ */
+export type PanelGeometry = {
+  label: string;
+  cacheKey: string;
+  crop: { x: number; y: number; w: number; h: number };
+  hexagon: Box;
+  bar: Box;
+  face: Box;
+};
 /**
  * 欄の位置。左は V-0703 の録画 1007 で測った（六角形の外形 x 128〜166・y 424〜456、フルバーストのバーの紫 x 10〜143・y 440〜447）。
  * 縦の位置と大きさは右と同じで、六角形とバーの左右が入れ替わる。顔の枠は右を左右に写した位置（CT の明けは確かめていない）
  */
 export const PANEL_GEOMETRY: Record<PanelSide, PanelGeometry> = {
-  right: { crop: PANEL_CROP, hexagon: HEXAGON_BOX, bar: BAR_BOX, face: FACE_BOX },
+  right: {
+    label: '右',
+    cacheKey: 'burst-panel@1',
+    crop: { x: 1740, y: 400, w: 180, h: 180 },
+    hexagon: { x0: 1754, x1: 1780, y0: 428, y1: 452 },
+    bar: { x0: 1800, x1: 1900, y0: 438, y1: 447 },
+    face: { x0: 1785, x1: 1885, y0: 465, y1: 555 },
+  },
   left: {
+    label: '左',
+    cacheKey: 'burst-panel-left@1',
     crop: { x: 0, y: 400, w: 180, h: 180 },
     hexagon: { x0: 134, x1: 160, y0: 428, y1: 452 },
     bar: { x0: 15, x1: 115, y0: 438, y1: 447 },

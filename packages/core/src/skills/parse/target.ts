@@ -9,6 +9,7 @@ import {
   type BuffStat,
   type BuffTarget,
   BURST_USERS_TRIGGERS,
+  burstUsersEventOf,
   type CoverHealEffect,
   type RemoveDebuffEffect,
   type EffectTrigger,
@@ -121,10 +122,10 @@ export function parseTargetClass(v: Record<string, Json>, target: BuffTarget, pa
   return nikkeClass;
 }
 
-/** Stage 11: burstUsers はトリガーが fullBurstStart / fullBurstEnd のときだけ */
+/** Stage 11: burstUsers はトリガーが fullBurstStart / fullBurstEnd（とその出来事の回数のきっかけ。burstUsersEventOf）のときだけ */
 export function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, path: string): void {
   if (target !== 'burstUsers') return;
-  if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
+  if (burstUsersEventOf(trigger) !== undefined) return;
   fail(
     `${path}.target`,
     `burstUsers is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,

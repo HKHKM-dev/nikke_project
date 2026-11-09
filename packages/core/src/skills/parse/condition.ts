@@ -4,6 +4,7 @@ import {
   BASIC_BURST_STEPS,
   BUFF_STATS,
   BURST_USERS_TRIGGERS,
+  burstUsersEventOf,
   type BurstStepMixCondition,
   type ConditionKey,
   type CounterChangeEffect,
@@ -83,9 +84,7 @@ export function validateUsedBurst(
   path: string,
 ): void {
   if (condition.usedBurst === undefined) return;
-  if (typeof trigger === 'string' && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger)) return;
-  if (typeof trigger === 'object' && 'atLeast' in trigger && (BURST_USERS_TRIGGERS as readonly string[]).includes(trigger.count))
-    return;
+  if (burstUsersEventOf(trigger) !== undefined) return;
   fail(
     `${path}.usedBurst`,
     `usedBurst is only allowed with trigger ${BURST_USERS_TRIGGERS.join(' or ')}, got ${JSON.stringify(trigger)}`,

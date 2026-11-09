@@ -804,6 +804,21 @@ export function isEventCountTrigger(t: EffectTrigger): t is EventCountTrigger {
   return typeof t === 'object' && 'count' in t && (EVENT_COUNT_KINDS as readonly string[]).includes(t.count);
 }
 
+/**
+ * Stage 11: 発火の文脈 burstUsers を持つきっかけ（フルバーストの開始・終了）なら、その出来事。ディーゼル：ウィンタースイーツ編
+ * （plan/design-diesel-ws.md 2.2 節）: その出来事の回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）も。ほかは undefined。
+ * 解決済みのきっかけ（skills/resolve.ts）も同じ形なので、読み込みと発火の両方が使う
+ */
+export function burstUsersEventOf(trigger: object | string): (typeof BURST_USERS_TRIGGERS)[number] | undefined {
+  const kind =
+    typeof trigger === 'object' && isEventCountTrigger(trigger as EffectTrigger)
+      ? (trigger as EventCountTrigger).count
+      : trigger;
+  return (BURST_USERS_TRIGGERS as readonly unknown[]).includes(kind)
+    ? (kind as (typeof BURST_USERS_TRIGGERS)[number])
+    : undefined;
+}
+
 /** 最小構成の検査の窓の端編: 件の始まり・終わりを動かすフレーム */
 export type EdgeShift = { start: number; end: number };
 

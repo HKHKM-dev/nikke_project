@@ -1,6 +1,6 @@
-// レシピ burst-panel: 右のバースト欄の表示の時刻（I・II の六角形の替わり目、III のタイマーの 00.00、段ごとの CT の明け）を
+// レシピ burst-panel: バースト欄の表示の時刻（I・II の六角形の替わり目、III のタイマーの 00.00、段ごとの CT の明け）を
 // 観測値にする（plan/design-burst-panel-recipe.md）。欄を全フレーム切り出して特徴をキャッシュし（burst-panel@<版>.tsv）、
-// 事象は burst-panel-lib.ts で決める。欄を左に出した録画（guide.md「バーストの欄の左右」）には使わない。
+// 事象は burst-panel-lib.ts で決める。欄を左に出した録画（guide.md「バーストの欄の左右」）は --opt side=left で読む。
 import { cropFilter, rawFrames } from '../ffmpeg.ts';
 import {
   CT_END_LEAD_MAX,
@@ -8,7 +8,7 @@ import {
   FB_END_GREEN_JUMP,
   FB_END_MIN_FRAMES,
   PANEL_GEOMETRY,
-  type PanelSide,
+  type PanelGeometry,
   WHITE_MIN,
   formatPanelTsv,
   isMagenta,
@@ -21,14 +21,9 @@ import { derived } from './cache.ts';
 import { observation, type Recipe, type RecipeObservation } from './types.ts';
 
 const VERSION = 3;
-/** 特徴のキャッシュの名前（特徴の測り方を変えたら上げる）。左の欄は別の名前 */
-const CACHE_KEY = 'burst-panel@1';
-const cacheKeyOf = (side: PanelSide) => (side === 'right' ? CACHE_KEY : `burst-panel-left@1`);
-
-async function measure(video: string, side: PanelSide): Promise<string> {
-  const { crop: PANEL_CROP, hexagon: HEXAGON_BOX, bar: BAR_BOX, face: FACE_BOX } = PANEL_GEOMETRY[side];
-  const { x: X, y: Y, w: W, h: H } = PANEL_CROP;
-  const args = ['-v', 'error', '-i', video, '-vf', cropFilter(PANEL_CROP), '-fps_mode', 'passthrough'];
+async function measure(video: string, panel: PanelGeometry): Promise<string> {
+  const { x: X, y: Y, w: W, h: H } = panel.crop;
+  const args = ['-v', 'error', '-i', video, '-vf', cropFilter(panel.crop), '-fps_mode', 'passthrough'];
   args.push('-f', 'rawvideo', '-pix_fmt', 'rgb24', 'pipe:1');
   const rows: PanelRow[] = [];
   let frame = 0;
@@ -38,8 +33,8 @@ async function measure(video: string, side: PanelSide): Promise<string> {
     let g = 0;
     let b = 0;
     let n = 0;
-    for (let y = HEXAGON_BOX.y0; y < HEXAGON_BOX.y1; y++)
-      for (let x = HEXAGON_BOX.x0; x < HEXAGON_BOX.x1; x++) {
+    for (let y = panel.hexagon.y0; y < panel.hexagon.y1; y++)
+      for (let x = panel.hexagon.x0; x < panel.hexagon.x1; x++) {
         const i = at(x, y);
         r += buf[i]!;
         g += buf[i + 1]!;
@@ -47,16 +42,16 @@ async function measure(video: string, side: PanelSide): Promise<string> {
         n++;
       }
     let magenta = 0;
-    for (let y = BAR_BOX.y0; y < BAR_BOX.y1; y++)
-      for (let x = BAR_BOX.x0; x < BAR_BOX.x1; x++) {
+    for (let y = panel.bar.y0; y < panel.bar.y1; y++)
+      for (let x = panel.bar.x0; x < panel.bar.x1; x++) {
         const i = at(x, y);
         if (isMagenta(buf[i]!, buf[i + 1]!, buf[i + 2]!)) magenta++;
       }
     let white = 0;
     let other = 0;
     let otherSum = 0;
-    for (let y = FACE_BOX.y0; y < FACE_BOX.y1; y++)
-      for (let x = FACE_BOX.x0; x < FACE_BOX.x1; x++) {
+    for (let y = panel.face.y0; y < panel.face.y1; y++)
+      for (let x = panel.face.x0; x < panel.face.x1; x++) {
         const i = at(x, y);
         const p0 = buf[i]!;
         const p1 = buf[i + 1]!;
@@ -97,13 +92,12 @@ export const burstPanel: Recipe = {
   async run(ctx) {
     const side = ctx.options.side ?? 'right';
     if (side !== 'right' && side !== 'left') throw new Error(`side は right か left: ${side}`);
-    const { crop } = PANEL_GEOMETRY[side];
-    const key = cacheKeyOf(side);
+    const panel = PANEL_GEOMETRY[side];
+    const { crop, cacheKey, label: sideName } = panel;
     const sha = 'sha256' in ctx.recording ? ctx.recording.sha256 : undefined;
-    const text = await derived(ctx.derivedDir, key, ctx.video, sha, () => measure(ctx.video, side), ctx.log);
+    const text = await derived(ctx.derivedDir, cacheKey, ctx.video, sha, () => measure(ctx.video, panel), ctx.log);
     const ev = panelEvents(parsePanelTsv(text));
-    const sideName = side === 'right' ? '右' : '左';
-    const how = `${sideName}の欄（${crop.x},${crop.y} から ${crop.w}×${crop.h}）のフレームごとの特徴（キャッシュ ${key}）。`;
+    const how = `${sideName}の欄（${crop.x},${crop.y} から ${crop.w}×${crop.h}）のフレームごとの特徴（キャッシュ ${cacheKey}）。`;
     const out: RecipeObservation[] = [];
     const change = (list: readonly StageChange[], from: string, to: string) => {
       if (list.length === 0) return;

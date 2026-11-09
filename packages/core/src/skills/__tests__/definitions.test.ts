@@ -45,6 +45,27 @@ const files = readdirSync(SKILLS_DIR)
 /** 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ */
 const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3']);
 
+/**
+ * 値の上限（%。既定 100）。上限の理由はキャラごとの注記（下の it の中）。レッドフード編: チャージ速度の超過分の変換の割合（240%）も
+ * チャージダメージと同じ幅。ディーゼル：ウィンタースイーツ: S2 のフルチャージの持続ダメージ▲は Lv10 で 318.14%
+ */
+const VALUE_LIMITS: Partial<Record<string, number>> = {
+  chargeDamage: 2000,
+  chargeSpeedOverflow: 2000,
+  sustainedDamage: 400,
+  maxAmmo: 1000,
+  projectileStickDamage: 1000,
+  projectileExplosionDamage: 1000,
+  chargeSpeed: 1000,
+  attack: 200,
+  chargeDamageMultiplier: 200,
+  sequentialAttackDamage: 200,
+  attackDamage: 200,
+  hitRate: 200,
+  trueDamage: 200,
+  elementDamage: 200,
+};
+
 describe('data/skills', () => {
   it('index lists exactly the definition files, sorted and without duplicates', () => {
     expect([...index.resourceIds].sort((a, b) => a - b)).toEqual(files);
@@ -179,36 +200,13 @@ describe('data/skills', () => {
                 // エイダ: バーストの特殊改造のチャージダメージ▲は Lv10 で 1500%（上限は 2000% で見る）・チャージ速度▼は 300%（上限は 1000% で見る）
                 // アークレンジャー・ブラック: バーストの持続ダメージ▲は Lv10 で 135.83%（上限は 200% で見る）
                 // プリバティ: 宝物版バーストの有利コードの攻撃ダメージ▲は Lv10 で 130%（上限は 200% で見る）
-                // ディーゼル：ウィンタースイーツ: S2 のフルチャージの持続ダメージ▲は Lv10 で 318.14%（持続ダメージ▲の上限は 400% で見る）
                 const stat =
                   effect.kind === 'timed' || effect.kind === 'passive'
                     ? effect.stat
                     : effect.kind === 'state'
                       ? statContentsOf(effect.contents).find((c) => c.ref === ref)?.stat
                       : undefined;
-                // レッドフード編: チャージ速度の超過分の変換の割合（240%）もチャージダメージと同じ幅
-                const limit =
-                  stat === 'chargeDamage' || stat === 'chargeSpeedOverflow'
-                    ? 2000
-                    : stat === 'sustainedDamage'
-                      ? 400
-                      : stat === 'maxAmmo' ||
-                          stat === 'projectileStickDamage' ||
-                          stat === 'projectileExplosionDamage' ||
-                          stat === 'chargeSpeed'
-                        ? 1000
-                        : stat !== undefined &&
-                            [
-                              'attack',
-                              'chargeDamageMultiplier',
-                              'sequentialAttackDamage',
-                              'attackDamage',
-                              'hitRate',
-                              'trueDamage',
-                              'elementDamage',
-                            ].includes(stat)
-                          ? 200
-                          : 100;
+                const limit = (stat === undefined ? undefined : VALUE_LIMITS[stat]) ?? 100;
                 expect(v).toBeLessThanOrEqual(limit);
               }
             }
