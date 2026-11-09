@@ -1,0 +1,268 @@
+{
+  "verification": "V-0702",
+  "note": "撮る前の予測。撮影 S（クエンシー：エスケープクイーン単騎・操作）と撮影 B（リター・デルタ・クエンシー：エスケープクイーン（操作）・オートバースト ON）、射撃場の BigArms（灼熱）・スペック固定 ON。仮説はいまの定義（3 つの段階の命中率▲は和）だけで、和でない形の値は検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 403,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義（ルート探索 1〜3 段階は通常攻撃 2 発ごとに付く状態のスタック。2・3 段階は前のフレームまでに下の段階がフルスタックの時だけ付く。S1 は段階のフルスタックの間だけ効く。3 つの段階の命中率▲は和）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "S-stack-steps",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,2,3,4,5,19,20,21,22,23,24,25,39,40,41,42,43,44,45,49,50,51,52,53,54,55,60",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 S: 1 発目から 60 発目までの、コアでない・会心でない 1 ヒットの値（距離ボーナスあり）。攻撃力▲の段（2 発ごとに 1 段階の 1 スタック、満ちた次の発火から 2 段階、2 段階が満ちた次の発火から 3 段階）で上がる"
+    },
+    {
+      "id": "S-after-reload",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "119,120,121,122,123,124,125,141,142,143,151",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 S: 1 回目のリロードを挟む発の 1 ヒット（コアでない・会心でない）。1 段階（2 秒）はリロードを越えて残り、3 段階（0.5 秒）は切れる。2 段階（1 秒）が切れるかはリロードの長さで決まる"
+    },
+    {
+      "id": "S-core-damage",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "21,41,51",
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 S: コアに当たった 1 ヒット（会心でない）。41 発目から S1 のコアダメージ▲（2 段階のフルスタック）が乗る"
+    },
+    {
+      "id": "S-core-rate-midnear",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "撮影 S: 中近（戦闘開始から 34 秒まで）の、3 段階までフルスタックの区間のコア命中率（コア / 当たった数）"
+    },
+    {
+      "id": "S-core-rate-near",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "撮影 S: 近（1 回目のジャンプの後）の、フルスタックの区間のコア命中率"
+    },
+    {
+      "id": "S-core-rate-far",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "撮影 S: 遠（2 回目のジャンプの後）の、フルスタックの区間のコア命中率"
+    },
+    {
+      "id": "S-bullet-rate-far",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.03
+      },
+      "note": "撮影 S: 遠の、フルスタックの区間の弾丸命中率（当たった数 / 撃った数）"
+    },
+    {
+      "id": "S-crit-rate",
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.04
+      },
+      "note": "撮影 S: 3 段階のフルスタックの区間の通常攻撃の会心率（S1 のクリティカル確率▲が乗る）"
+    },
+    {
+      "id": "B-burst-hit",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 403,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: 1 回目のバーストの分配ダメージの 1 ヒット（会心でない）。S1 の分配ダメージ▲（1 段階のフルスタック）が乗る。同じ発動の攻撃ダメージ▲は乗せない（表に行が無い）"
+    },
+    {
+      "id": "B-atkdmg-end",
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "attackDamage",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 403,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 B: 1 回目のバーストの発動の印（III は 00.00）から、攻撃ダメージ▲の窓の切れ目までの動画のフレーム"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-09",
+    "commit": "21c34412813e85792f03f74ce6927d5cb2bb6162",
+    "values": {
+      "H-model": {
+        "S-stack-steps": [
+          8668.198967999999, 8668.198967999999, 8880.714414000002, 8880.714414000002, 9093.302218, 10581.127414,
+          10581.127414, 10793.715218000001, 10793.715218000001, 11218.818468000001, 11218.818468000001,
+          11643.921718000001, 14619.57211, 14619.57211, 15044.675359999997, 15044.675359999997, 15683.162352000003,
+          15683.162352000003, 16321.721701999999, 17598.695686000003, 17598.695686000003, 18237.255036000002,
+          18237.255036000002, 18237.255036000002, 18237.255036000002, 18237.255036000002, 18237.255036000002
+        ],
+        "S-after-reload": [
+          18237.255036000002, 18237.255036000002, 10793.715218000001, 10793.715218000001, 11218.818468000001,
+          11218.818468000001, 11643.921718000001, 15044.675359999997, 15044.675359999997, 15683.162352000003,
+          18237.255036000002
+        ],
+        "S-core-damage": [23248.002008, 35326.05502799999, 42822.4776903],
+        "S-core-rate-midnear": 0.7791383879302939,
+        "S-core-rate-near": 1,
+        "S-core-rate-far": 0.2260096087126043,
+        "S-bullet-rate-far": 0.9999524016058485,
+        "S-crit-rate": 0.3173,
+        "B-burst-hit": 9461247.484481696,
+        "B-atkdmg-end": 604
+      }
+    }
+  }
+}

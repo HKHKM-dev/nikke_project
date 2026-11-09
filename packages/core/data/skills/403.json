@@ -1,0 +1,171 @@
+{
+  "formatVersion": 1,
+  "resourceId": 403,
+  "checkedAt": "2026-11-09",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "distributedDamage",
+          "ref": 1,
+          "while": {
+            "selfState": {
+              "state": "exploreRouteStage1",
+              "present": true,
+              "stacks": "full"
+            }
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "coreDamage",
+          "ref": 2,
+          "while": {
+            "selfState": {
+              "state": "exploreRouteStage2",
+              "present": true,
+              "stacks": "full"
+            }
+          }
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 3,
+          "while": {
+            "selfState": {
+              "state": "exploreRouteStage3",
+              "present": true,
+              "stacks": "full"
+            }
+          }
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "exploreRouteStage1",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacks": 10,
+          "durationSeconds": 2,
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 2
+            },
+            {
+              "stat": "attack",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "「通常攻撃で 2 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、2 発ごとに 1 段階を 1 スタック足す（下位効果のスタック適用で、2・3 段階が付く発火でも付く）。付くたびに全スタックの維持を付け直す（skills/stacks.ts の STACK_REFRESH）。命中率▲はスタックごとに足し、2・3 段階の命中率▲と N の和で効く（C-0486 と同じ扱い）",
+            "en": "\"After performing 2 normal attacks\" counts every normal shot fired (hit or miss); every 2nd shot adds a Stage 1 stack (also on firings that add Stage 2 or 3, as each subsequent effect triggers the ones before it). Each new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts). Hit Rate adds per stack and sums with the Stage 2 and 3 Hit Rate increases into one N (as in C-0486)"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "exploreRouteStage2",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacks": 10,
+          "durationSeconds": 1,
+          "condition": {
+            "selfState": {
+              "state": "exploreRouteStage1",
+              "present": true,
+              "stacks": "full"
+            }
+          },
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 4
+            },
+            {
+              "stat": "attack",
+              "ref": 5
+            }
+          ],
+          "assumes": {
+            "ja": "「1 段階フルスタック状態なら」は前のフレームまでに満ちた 1 段階を見る（1 段階が満ちた発火では付かず、次の発火から付く）。3 段階（effects[2]）の「2 段階フルスタック状態なら」も同じ",
+            "en": "\"When Stage 1 is at max stacks\" looks at Stage 1 filled by the previous frame (not on the firing that fills Stage 1, but from the next firing). Stage 3 (effects[2]) reads Stage 2 the same way"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "exploreRouteStage3",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "maxStacks": 5,
+          "durationSeconds": 0.5,
+          "condition": {
+            "selfState": {
+              "state": "exploreRouteStage2",
+              "present": true,
+              "stacks": "full"
+            }
+          },
+          "contents": [
+            {
+              "stat": "hitRate",
+              "ref": 6
+            },
+            {
+              "stat": "attack",
+              "ref": 7
+            }
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "attackDamage",
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "distributed",
+          "assumes": {
+            "ja": "敵全体への分配ダメージは、的 1 体では全額が当たる。同じ発動の攻撃ダメージ▲（effects[0]）は乗せない（着地点の表に行が無い）",
+            "en": "The distributed damage to all enemies lands in full on the lone target. The Attack Damage increase of the same Burst (effects[0]) is not applied (no row in the landing table)"
+          }
+        }
+      ],
+      "notes": []
+    }
+  }
+}

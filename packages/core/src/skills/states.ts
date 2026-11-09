@@ -267,6 +267,13 @@ export const NAMED_STATES = {
   drunken: { name: { ja: 'ほろ酔い', en: 'Drunken' }, holder: 'ally', debuff: true },
   /** 同: 二日酔い（マスト：ロマンチックメイドの S2。ほろ酔いのフルスタックのフルバーストの終わりに付く気絶。10 秒。射撃を止める shotPause が見る） */
   hangover: { name: { ja: '二日酔い', en: 'Hangover' }, holder: 'ally' },
+  /**
+   * クエンシー：エスケープクイーン編: ルート探索 1〜3 段階（S2。通常攻撃 2 回ごとに付く命中率▲・攻撃力▲のスタック。2 段階は 1 段階の、
+   * 3 段階は 2 段階のフルスタックの時だけ付く。S1 の「ルート探索 N 段階フルスタック状態の時のみ」が見る）
+   */
+  exploreRouteStage1: { name: { ja: 'ルート探索1段階', en: 'Explore Route Stage 1' }, holder: 'ally' },
+  exploreRouteStage2: { name: { ja: 'ルート探索2段階', en: 'Explore Route Stage 2' }, holder: 'ally' },
+  exploreRouteStage3: { name: { ja: 'ルート探索3段階', en: 'Explore Route Stage 3' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
