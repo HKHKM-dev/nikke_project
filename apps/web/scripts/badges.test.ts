@@ -9,6 +9,7 @@ import {
   BADGE_SRC_DIR,
   FRAME_FILE,
   buildBadges,
+  findFrame,
   optimizeBadge,
   parseFrame,
   svgFiles,
@@ -17,9 +18,7 @@ import {
 
 const frameSvg = readFileSync(FRAME_FILE, 'utf8');
 const frame = parseFrame(frameSvg);
-const getFrame = () => frame;
 const sources = new Map(svgFiles(BADGE_SRC_DIR).map((f) => [f, readFileSync(`${BADGE_SRC_DIR}/${f}`, 'utf8')]));
-const hasFrame = (svg: string) => /inkscape:label="hex-in"/i.test(svg);
 
 describe('バッジの書き出し', () => {
   it('元と書き出しのファイルが同じ顔ぶれ', () => {
@@ -30,32 +29,38 @@ describe('バッジの書き出し', () => {
     '%s は元の枠がそろい、書き出しは元を小さくしたもの（違うなら npm run badges:build）',
     (file) => {
       const source = sources.get(file)!;
-      expect(syncFrame(source, getFrame)).toBe(source);
+      expect(syncFrame(source, frame)).toBe(source);
       expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(optimizeBadge(source));
     },
   );
 
-  it('element・burstStep・collection の元は、どれも枠を持つ', () => {
-    const groups = new Set(['element', 'burstStep', 'collection']);
-    const unframed = [...sources].filter(([f, svg]) => groups.has(f.split('_')[0]!) && !hasFrame(svg)).map(([f]) => f);
-    expect(unframed).toEqual([]);
+  it('グループと変種が同じ元は、枠の有無がそろう（ui は除く）', () => {
+    const framed = new Map<string, Set<boolean>>();
+    for (const [file, svg] of sources) {
+      const [, group, variant = ''] = /^([^_]+)_[^-]+(?:-(.+))?\.svg$/.exec(file)!;
+      if (group === 'ui') continue;
+      const key = `${group}-${variant}`;
+      framed.set(key, (framed.get(key) ?? new Set()).add(findFrame(svg) !== null));
+    }
+    expect([...framed].filter(([, has]) => has.size > 1).map(([key]) => key)).toEqual([]);
   });
 });
 
 describe('枠をそろえる', () => {
-  const inner = (style: string, extra = '') => `<path${extra} style="${style}" d="m 0,0 z" inkscape:label="hex-in" />`;
+  const style = 'fill:#1a1a1a;stroke:#ffffff';
+  const inner = (s = style, label = 'hex-in') => `<path style="${s}" d="m 0,0 z" inkscape:label="${label}" />`;
   const outer = '<polygon points="0,0 1,1" style="fill:none;stroke:#000000" inkscape:label="hex-out" />';
   const doc = (body: string, viewBox = '0 0 130 150') =>
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">${body}<circle r="1"/></svg>`;
 
   it('枠の要素を frame/hex.svg のものにし、色は元の hex-in のまま', () => {
-    const out = syncFrame(doc(outer + inner('fill:#123456;stroke:#abcdef;stroke-width:9')), getFrame);
+    const out = syncFrame(doc(outer + inner('fill:#123456;stroke:#abcdef;stroke-width:9')), frame);
     expect(out).toContain(frame.outer);
     expect(out).toContain('fill:#123456');
     expect(out).toContain('stroke:#abcdef');
     expect(out).not.toContain('stroke-width:9');
     expect(out).toContain('<circle r="1"/>');
-    expect(syncFrame(out, getFrame)).toBe(out);
+    expect(syncFrame(out, frame)).toBe(out);
   });
 
   it('枠の要素はロックし、id をラベルと同じにする', () => {
@@ -66,28 +71,29 @@ describe('枠をそろえる', () => {
 
   it('枠の無い元はそのまま', () => {
     const svg = doc('');
-    expect(
-      syncFrame(svg, () => {
-        throw new Error('読まない');
-      }),
-    ).toBe(svg);
+    expect(syncFrame(svg, frame)).toBe(svg);
   });
 
-  it('枠の形が崩れていれば止める', () => {
-    const style = 'fill:#1a1a1a;stroke:#ffffff';
-    expect(() => syncFrame(doc(inner(style)), getFrame)).toThrow(/1 つずつ/);
-    expect(() => syncFrame(doc(outer + outer + inner(style)), getFrame)).toThrow(/1 つずつ/);
-    expect(() => syncFrame(doc(inner(style) + outer), getFrame)).toThrow(/前に置く/);
-    expect(() => syncFrame(doc(`<g transform="scale(2)">${outer}${inner(style)}</g>`), getFrame)).toThrow(
-      /g に入れない/,
-    );
-    expect(() => syncFrame(doc(outer + inner(style), '0 0 13 15'), getFrame)).toThrow(/viewBox/);
-    expect(() => syncFrame(doc(outer + inner('fill:#1a1a1a')), getFrame)).toThrow(/fill か stroke/);
+  it('枠が 1 組になっていなければ止める', () => {
+    for (const body of [
+      inner(),
+      outer + outer + inner(),
+      outer + inner() + outer + inner(),
+      inner() + outer,
+      `${outer}<rect/>${inner()}`,
+      outer + inner(style, 'Hex-in'),
+    ])
+      expect(() => syncFrame(doc(body), frame)).toThrow(/1 組/);
+  });
+
+  it('枠が g の中・viewBox が枠と違う・hex-in に色が無いときは止める', () => {
+    expect(() => syncFrame(doc(`<g transform="scale(2)">${outer}${inner()}</g>`), frame)).toThrow(/g に入れない/);
+    expect(() => syncFrame(doc(outer + inner(), '0 0 13 15'), frame)).toThrow(/viewBox/);
+    expect(() => syncFrame(doc(outer + inner('fill:#1a1a1a')), frame)).toThrow(/fill か stroke/);
   });
 
   it('閉じた g の後の枠は g の中と見なさない', () => {
-    const svg = doc(`<g><rect/></g><g/>${outer}${inner('fill:#1a1a1a;stroke:#ffffff')}`);
-    expect(() => syncFrame(svg, getFrame)).not.toThrow();
+    expect(() => syncFrame(doc(`<g><rect/></g><g/>${outer}${inner()}`), frame)).not.toThrow();
   });
 
   it('枠の SVG の要素を g に入れると止める', () => {
@@ -103,7 +109,7 @@ describe('buildBadges', () => {
   afterEach(() => {
     for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
   });
-  /** 元と書き出しのフォルダを作り、それぞれに files の SVG を置く */
+  /** 元（枠の frame/hex.svg も置く）と書き出しのフォルダを作り、それぞれに files の SVG を置く */
   function setup(src: string[], out: string[]) {
     const root = mkdtempSync(join(tmpdir(), 'badges-'));
     dirs.push(root);
@@ -116,6 +122,8 @@ describe('buildBadges', () => {
       mkdirSync(dir);
       for (const f of files) writeFileSync(join(dir, f), svg);
     }
+    mkdirSync(join(srcDir, 'frame'));
+    writeFileSync(join(srcDir, 'frame', 'hex.svg'), frameSvg);
     return { srcDir, outDir };
   }
 
@@ -131,8 +139,6 @@ describe('buildBadges', () => {
 
   it('writes the synced frame back to the source', () => {
     const { srcDir, outDir } = setup([], []);
-    mkdirSync(join(srcDir, 'frame'));
-    writeFileSync(join(srcDir, 'frame', 'hex.svg'), frameSvg);
     const moved = frameSvg.replace('stroke:#ffffff', 'stroke:#ff0000').replace('m 7.500021,', 'm 7.6,');
     writeFileSync(join(srcDir, 'c_z.svg'), moved);
     expect(buildBadges(srcDir, outDir).synced).toEqual(['c_z.svg']);

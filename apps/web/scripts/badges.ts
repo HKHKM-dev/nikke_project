@@ -17,7 +17,7 @@
 // - 変種: 同じ値の別の版は後ろに -<小文字> を付ける（collection の上限に達した版は -max、背景の六角形を付けた版は -badge）
 // - 並びの番号は付けない（並びは使う側のコードが決める）
 // - 規則に合わない名前（<グループ>_ の無いもの）があると、書き出しは止まる
-import { readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { optimize } from 'svgo';
 
@@ -27,27 +27,46 @@ export const FRAME_FILE = `${BADGE_SRC_DIR}/frame/hex.svg`;
 
 export const svgFiles = (dir: string): string[] => readdirSync(dir).filter((f) => f.endsWith('.svg'));
 
-/** 枠の要素（ラベルの大文字小文字は問わない。burstStep の元は Hex- と書いていた） */
-const frameElements = (svg: string, label: string): RegExpExecArray[] => [
-  ...svg.matchAll(new RegExp(`<(?:polygon|path)\\b[^<>]*inkscape:label="${label}"[^<>]*/>`, 'gi')),
-];
+const frameElement = (label: string) => `<(?:polygon|path)\\b[^<>]*inkscape:label="${label}"[^<>]*/>`;
+/** 枠: hex-out の直後に hex-in が続く 2 つの要素の組 */
+const FRAME_PAIR = new RegExp(`(${frameElement('hex-out')})\\s*(${frameElement('hex-in')})`, 'g');
+/** 枠の要素のラベル（大文字小文字の揺れも拾い、組になっていなければ止めるのに使う） */
+const FRAME_LABEL = /inkscape:label="hex-(?:out|in)"/gi;
+
+/** svg の index の位置が、g の中にあるか */
+const insideG = (svg: string, index: number): boolean => {
+  const before = svg.slice(0, index);
+  return (before.match(/<g\b(?![^>]*\/>)/g)?.length ?? 0) > (before.match(/<\/g>/g)?.length ?? 0);
+};
+
+/**
+ * svg の枠の組を取る（枠が無ければ null）。枠の組が 1 つでない・要素が組になっていない（順が逆・間に別の要素・ラベルの揺れ）・
+ * g の中にある（要素だけを置き換えるので、親の transform とずれる）ときは止める
+ */
+export function findFrame(svg: string): RegExpExecArray | null {
+  const pairs = [...svg.matchAll(FRAME_PAIR)];
+  const labels = svg.match(FRAME_LABEL)?.length ?? 0;
+  if (labels === 0) return null;
+  const [pair] = pairs;
+  if (!pair || pairs.length !== 1 || labels !== 2)
+    throw new Error('badges: 枠は hex-out の直後に hex-in を置いた 1 組にする（ラベルは小文字）');
+  if (insideG(svg, pair.index)) throw new Error('badges: 枠の hex-out・hex-in を g に入れない（svg の直下に置く）');
+  return pair;
+}
 
 /** 枠の 2 つの要素の、元に入れる形（id はラベルと同じにし、Inkscape のロックを付ける）と viewBox */
 export type Frame = { viewBox: string; outer: string; inner: string };
 
 /** 枠の SVG（frame/hex.svg）から、枠の 2 つの要素と viewBox を取る */
 export function parseFrame(svg: string): Frame {
-  // 要素だけを抜くので、g（Inkscape のレイヤー）に入れると親の transform が落ちる
-  if (/<g\b/.test(svg)) throw new Error('badges: 枠の hex-out・hex-in を g に入れない（svg の直下に置く）');
-  const element = (label: string): string => {
-    const [el, ...rest] = frameElements(svg, label);
-    if (!el || rest.length > 0) throw new Error(`badges: 枠に ${label} が 1 つでない`);
-    return el[0]
+  const pair = findFrame(svg);
+  if (!pair) throw new Error('badges: 枠の SVG に hex-out・hex-in が無い');
+  const element = (el: string, label: string): string =>
+    el
       .replace(/\sid="[^"]*"/, ` id="${label}"`)
       .replace(/\ssodipodi:insensitive="[^"]*"/, '')
       .replace(/\s*\/>$/, '\n     sodipodi:insensitive="true" />');
-  };
-  return { viewBox: viewBoxOf(svg), outer: element('hex-out'), inner: element('hex-in') };
+  return { viewBox: viewBoxOf(svg), outer: element(pair[1]!, 'hex-out'), inner: element(pair[2]!, 'hex-in') };
 }
 
 const viewBoxOf = (svg: string): string => /<svg\b[^>]*\sviewBox="([^"]*)"/.exec(svg)?.[1] ?? '';
@@ -73,35 +92,16 @@ function recolorInner(inner: string, source: string): string {
   return inner.replace(/\sstyle="[^"]*"/, ` style="${[...decls].map(([k, v]) => `${k}:${v}`).join(';')}"`);
 }
 
-/** svg の index の位置が、g の中にあるか */
-const insideG = (svg: string, index: number): boolean => {
-  const before = svg.slice(0, index);
-  return (before.match(/<g\b(?![^>]*\/>)/g)?.length ?? 0) > (before.match(/<\/g>/g)?.length ?? 0);
-};
-
-/**
- * 元の枠の 2 つの要素を、枠（frame）の要素に置き換える（色は元の hex-in のまま）。枠の無い元はそのまま返す。
- * 枠は要るときだけ getFrame で読む。
- */
-export function syncFrame(svg: string, getFrame: () => Frame): string {
-  const outs = frameElements(svg, 'hex-out');
-  const ins = frameElements(svg, 'hex-in');
-  if (outs.length === 0 && ins.length === 0) return svg;
-  const [out] = outs;
-  const [inn] = ins;
-  if (outs.length !== 1 || ins.length !== 1 || !out || !inn)
-    throw new Error('badges: 枠の hex-out と hex-in を 1 つずつ持たせる');
-  if (out.index > inn.index) throw new Error('badges: 枠は hex-out を hex-in の前に置く');
-  if (insideG(svg, out.index) || insideG(svg, inn.index))
-    throw new Error('badges: 枠の hex-out・hex-in を g に入れない（svg の直下に置く）');
-  const frame = getFrame();
+/** 元の枠の 2 つの要素を、枠（frame）の要素に置き換える（色は元の hex-in のまま）。枠の無い元はそのまま返す */
+export function syncFrame(svg: string, frame: Frame): string {
+  const pair = findFrame(svg);
+  if (!pair) return svg;
   if (viewBoxOf(svg) !== frame.viewBox) throw new Error(`badges: 枠のある元の viewBox は ${frame.viewBox} にする`);
   return (
-    svg.slice(0, out.index) +
+    svg.slice(0, pair.index) +
     frame.outer +
-    svg.slice(out.index + out[0].length, inn.index) +
-    recolorInner(frame.inner, inn[0]) +
-    svg.slice(inn.index + inn[0].length)
+    recolorInner(frame.inner, pair[2]!) +
+    svg.slice(pair.index + pair[0].length)
   );
 }
 
@@ -124,19 +124,22 @@ export function buildBadges(
 ): { written: string[]; removed: string[]; synced: string[] } {
   const written = svgFiles(srcDir);
   if (written.length === 0) throw new Error(`${srcDir} に SVG が無い（書き出しの ${outDir} は消さない）`);
+  // 画面（src/components/modern/badges.ts）は <グループ>_<値> の名前でバッジを引く
   const misnamed = written.filter((f) => !/^[^_]+_[^-]+(?:-.+)?\.svg$/.test(f));
   if (misnamed.length > 0) throw new Error(`badges: 命名規則に合わない ${misnamed.join(', ')}`);
-  let frame: Frame | undefined;
-  const getFrame = () => (frame ??= parseFrame(readFileSync(`${srcDir}/frame/hex.svg`, 'utf8')));
+  const frame = parseFrame(readFileSync(`${srcDir}/frame/hex.svg`, 'utf8'));
   const synced: string[] = [];
   for (const file of written) {
     const source = readFileSync(`${srcDir}/${file}`, 'utf8');
-    const svg = syncFrame(source, getFrame);
+    const svg = syncFrame(source, frame);
     if (svg !== source) {
       writeFileSync(`${srcDir}/${file}`, svg);
       synced.push(file);
     }
-    writeFileSync(`${outDir}/${file}`, optimizeBadge(svg));
+    // 中身が変わらない書き出しは書かない（dev サーバーの監視を無駄に起こさない）
+    const out = optimizeBadge(svg);
+    const outPath = `${outDir}/${file}`;
+    if (!existsSync(outPath) || readFileSync(outPath, 'utf8') !== out) writeFileSync(outPath, out);
   }
   const removed = svgFiles(outDir).filter((f) => !written.includes(f));
   for (const file of removed) rmSync(`${outDir}/${file}`);
