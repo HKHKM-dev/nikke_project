@@ -1031,7 +1031,7 @@ header h1 {
 }
 .char-tray-tall-area .modern-slot-char-name {
   padding: 6px 4px 2px;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 /* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
 .char-tray-tall-area .growth-marks {
