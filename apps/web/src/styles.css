@@ -1143,11 +1143,12 @@ header h1 {
 html:has(.modern-view-container) {
   overflow-x: clip;
 }
+/* 絞り込みと、並べ替え・切り替えのボタンを中央にそろえて並べる（折り返したときもそれぞれの行で中央） */
 .char-tray-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 8px;
 }
 /* スロットのキャラを持ち上げてトレイの上に来たとき（離すとそのスロットを外す） */
@@ -1192,12 +1193,14 @@ html:has(.modern-view-container) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 .char-tray-filter-group {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 /* バッジの絞り込み。どれかを押している組では、押していないバッジを薄くする */
