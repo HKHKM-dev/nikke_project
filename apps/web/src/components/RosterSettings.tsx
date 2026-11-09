@@ -1,8 +1,8 @@
 // 設定のメニューの「育成状況」の欄: 読み込む・書き出す・消す（plan/design-combat-power-sort.md 5 節）
 import { useRef } from 'react';
 import type { RosterControls } from '../useRoster.ts';
+import { InlineConfirm } from './InlineConfirm.tsx';
 
-const BUTTON_ROW = { display: 'flex', gap: 6, flexWrap: 'wrap' } as const;
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const MESSAGES = { maxWidth: '22em' } as const;
 
@@ -21,7 +21,7 @@ export function RosterSettings({
   return (
     <fieldset className="popover-group">
       <legend>育成状況</legend>
-      <div style={BUTTON_ROW}>
+      <div className="button-row">
         <button type="button" className="advanced-settings-button" onClick={() => fileRef.current?.click()}>
           読み込む
         </button>
@@ -54,17 +54,13 @@ export function RosterSettings({
         }}
       />
       {clearPrompt !== null && (
-        <div style={MESSAGES} role="alertdialog" aria-label="確かめ">
-          <p className="note">{clearPrompt}</p>
-          <div style={BUTTON_ROW}>
-            <button type="button" className="advanced-settings-button" onClick={confirmClear}>
-              消す
-            </button>
-            <button type="button" className="advanced-settings-button" onClick={cancelClear}>
-              やめる
-            </button>
-          </div>
-        </div>
+        <InlineConfirm
+          style={MESSAGES}
+          prompt={clearPrompt}
+          confirmLabel="消す"
+          onConfirm={confirmClear}
+          onCancel={cancelClear}
+        />
       )}
       {message !== null && (
         <ul className="notes" style={MESSAGES} aria-live="polite">

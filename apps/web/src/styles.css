@@ -167,6 +167,12 @@ header h1 {
   font: inherit;
   font-size: 0.85rem;
 }
+/* ボタンの横の並び（育成状況・読めなかった編成の保存の知らせ） */
+.button-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 /* 使えない入力欄・選択欄・ラジオボタン（disabled でなく aria-disabled。components/inertControl.ts） */
 :is(input, select, textarea)[aria-disabled='true'] {
   opacity: 0.5;
@@ -1387,9 +1393,4 @@ header h1 {
 }
 .unreadable-saves p {
   margin: 0 0 4px;
-}
-.unreadable-saves-actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
 }

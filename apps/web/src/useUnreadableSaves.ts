@@ -43,7 +43,7 @@ export function useUnreadableSaves(store: SaveStore = BROWSER_STORE): {
       exportSave: (save) => downloadText(unreadableFileName(save), save.raw),
       remove: (key) => {
         store.remove(key);
-        setStored(listUnreadable(store));
+        setStored((saves) => saves.filter((s) => s.key !== key));
       },
     },
     restore,

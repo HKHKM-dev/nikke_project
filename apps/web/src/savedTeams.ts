@@ -1,10 +1,10 @@
 // 起動時の編成の保存の復元と、読めなかった保存の退避（plan/design-unreadable-team-save.md 5 節）。React に依存しない純関数だけを置く。
 // 読めなかった保存は、上書きする前に 1 件ずつ別のキーへ元の文字列のまま退避し、退避がある間は画面の上に知らせを出す
 // （components/UnreadableSavesNotice.tsx）。退避を書けなかったら、画面は編成を保存しない（App.tsx）
-import type { CharacterIndexEntry } from '@nikke/core';
+import { jstDateTime, type CharacterIndexEntry } from '@nikke/core';
 import { PARTIES_STORAGE_KEY, partyLabel, readParties, type PartiesState } from './parties.ts';
 import type { SaveStore } from './storage.ts';
-import { STORAGE_KEY, TEAM_SHAPE_ERROR, readTeamJson, type TeamState } from './team.ts';
+import { STORAGE_KEY, isRecord, readTeamJson, type TeamState } from './team.ts';
 
 /** 退避のキーは `<prefix><種類>.<退避した時刻のミリ秒>`。1 件を 1 つのキーに置く（1 つのキーの一覧だと、壊れたときに足すと消える） */
 export const UNREADABLE_KEY_PREFIX = 'nikke-calc.unreadable.';
@@ -13,7 +13,9 @@ export const MAX_UNREADABLE_PER_KIND = 5;
 
 /** 編成（team.ts の STORAGE_KEY）か、保存した編成の一覧（parties.ts） */
 export type SaveKind = 'team' | 'parties';
-const KINDS: readonly SaveKind[] = ['team', 'parties'];
+function isSaveKind(v: string): v is SaveKind {
+  return v === 'team' || v === 'parties';
+}
 
 export type UnreadableEntry = {
   kind: SaveKind;
@@ -41,8 +43,8 @@ function parseEntry(kind: SaveKind, value: string): UnreadableEntry | null {
   } catch {
     return null;
   }
-  if (typeof v !== 'object' || v === null) return null;
-  const { raw, error, dropped } = v as Record<string, unknown>;
+  if (!isRecord(v)) return null;
+  const { raw, error, dropped } = v;
   if (typeof raw !== 'string' || typeof error !== 'string') return null;
   if (dropped === undefined) return { kind, raw, error };
   if (!Array.isArray(dropped) || !dropped.every((i) => Number.isInteger(i) && i >= 0)) return null;
@@ -54,15 +56,15 @@ export function listUnreadable(store: SaveStore): UnreadableSave[] {
   const saves: UnreadableSave[] = [];
   for (const key of store.keys(UNREADABLE_KEY_PREFIX)) {
     const [kind, time, ...rest] = key.slice(UNREADABLE_KEY_PREFIX.length).split('.');
-    if (!KINDS.includes(kind as SaveKind) || rest.length > 0) continue;
+    if (kind === undefined || !isSaveKind(kind) || rest.length > 0) continue;
     const value = store.read(key);
     if (value === null) continue;
     const ms = Number(time);
     const savedAt = time !== '' && Number.isSafeInteger(ms) ? ms : null;
-    const entry = parseEntry(kind as SaveKind, value);
+    const entry = parseEntry(kind, value);
     saves.push(
       entry === null
-        ? { kind: kind as SaveKind, raw: value, error: '退避の中身を読めません', key, savedAt, broken: true }
+        ? { kind, raw: value, error: '退避の中身を読めません', key, savedAt, broken: true }
         : { ...entry, key, savedAt },
     );
   }
@@ -119,17 +121,12 @@ export function restoreSaves(store: SaveStore, index: readonly CharacterIndexEnt
     if (!read.ok) keep({ kind: 'parties', raw: partiesRaw, error: read.error });
     else {
       parties = read.value;
-      if (read.dropped.length > 0) {
-        keep({ kind: 'parties', raw: partiesRaw, error: TEAM_SHAPE_ERROR, dropped: read.dropped });
+      if (read.dropped !== null) {
+        keep({ kind: 'parties', raw: partiesRaw, error: read.dropped.error, dropped: read.dropped.indices });
       }
     }
   }
   return { team, parties, unsaved };
-}
-
-/** 日本時間の日時（YYYY-MM-DD HH:mm） */
-function jstDateTime(ms: number): string {
-  return new Date(ms + 9 * 3600e3).toISOString().slice(0, 16).replace('T', ' ');
 }
 
 /** 知らせの文（何を戻したか）。退避した起動にも、その後の起動にも合うよう過去のこととして書く */

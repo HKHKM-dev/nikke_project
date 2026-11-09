@@ -26,7 +26,7 @@ export function removeStorage(key: string): void {
 }
 
 /** prefix で始まるキー。使えないときは空 */
-export function storageKeys(prefix: string): string[] {
+function storageKeys(prefix: string): string[] {
   try {
     const keys: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {

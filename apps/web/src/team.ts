@@ -389,7 +389,7 @@ export function formatVersionOf(raw: Record<string, unknown>): number | null {
 
 type Json = unknown;
 
-function isRecord(v: Json): v is Record<string, Json> {
+export function isRecord(v: Json): v is Record<string, Json> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
 function isFinite_(v: Json): v is number {
@@ -462,6 +462,24 @@ function parseEnemy(v: Json): EnemyInput | null {
 
 export type ReadResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
+/**
+ * 版つきの JSON（編成・保存した編成の一覧）の前置き: JSON として読め、オブジェクトで、読める版か。what は理由の文の名前
+ * （「編成」「編成の一覧」）
+ */
+export function readVersionedJson(json: string, what: string): ReadResult<Record<string, Json>> {
+  let raw: Json;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return { ok: false, error: 'JSON として読めません' };
+  }
+  if (!isRecord(raw)) return { ok: false, error: `${what}の JSON ではありません` };
+  if (formatVersionOf(raw) === null) {
+    return { ok: false, error: `この版の${what}は読めません（formatVersion ${String(raw.formatVersion)}）` };
+  }
+  return { ok: true, value: raw };
+}
+
 /** 編成の中身の形が合わないときの理由（保存した編成の一覧の 1 つの編成にも使う。parties.ts） */
 export const TEAM_SHAPE_ERROR = '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 スロットなど）';
 
@@ -470,28 +488,13 @@ export const TEAM_SHAPE_ERROR = '編成の JSON の形が合いません（範�
  * 未知の formatVersion（新しい版で書き出したもの）・形が合わない・index に存在しないニケ・同じニケが 2 枠は失敗
  */
 export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]): ReadResult<TeamState> {
-  let raw: Json;
-  try {
-    raw = JSON.parse(json);
-  } catch {
-    return { ok: false, error: 'JSON として読めません' };
-  }
-  if (!isRecord(raw)) return { ok: false, error: '編成の JSON ではありません' };
-  if (formatVersionOf(raw) === null) {
-    return { ok: false, error: `この版の編成は読めません（formatVersion ${String(raw.formatVersion)}）` };
-  }
-  const state = parseTeamFields(raw, index);
+  const raw = readVersionedJson(json, '編成');
+  if (!raw.ok) return raw;
+  const state = parseTeamFields(raw.value, index);
   return state === null ? { ok: false, error: TEAM_SHAPE_ERROR } : { ok: true, value: state };
 }
 
-/** readTeamJson の結果だけを見る（無い・読めないは null）。起動時の復元は理由も使うので readTeamJson を呼ぶ（savedTeams.ts） */
-export function parseTeamState(json: string | null, index: readonly CharacterIndexEntry[]): TeamState | null {
-  if (json === null) return null;
-  const result = readTeamJson(json, index);
-  return result.ok ? result.value : null;
-}
-
-/** JSON.parse した値を編成として検証する（parseTeamState の中身。版は見ない）。形が合わなければ null */
+/** JSON.parse した値を編成として検証する（readTeamJson の中身。版は見ない）。形が合わなければ null */
 export function parseTeamObject(raw: Json, index: readonly CharacterIndexEntry[]): TeamState | null {
   return isRecord(raw) ? parseTeamFields(raw, index) : null;
 }

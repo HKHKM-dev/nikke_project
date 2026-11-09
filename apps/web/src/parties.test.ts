@@ -3,13 +3,20 @@ import type { CharacterIndexEntry } from '@nikke/core';
 import {
   INITIAL_PARTIES,
   otherPartyResourceIds,
-  parseParties,
   partyOf,
   readParties,
+  type PartiesState,
   serializeParties,
   switchParty,
 } from './parties.ts';
-import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, teamReducer, type TeamState } from './team.ts';
+import { INITIAL_TEAM_STATE, TEAM_FORMAT_VERSION, TEAM_SHAPE_ERROR, teamReducer, type TeamState } from './team.ts';
+
+/** readParties の読めた中身だけ（無い・全体が読めないは null） */
+function parseParties(json: string | null, index: readonly CharacterIndexEntry[]): PartiesState | null {
+  if (json === null) return null;
+  const read = readParties(json, index);
+  return read.ok ? read.value : null;
+}
 
 const index = [{ resourceId: 10 }, { resourceId: 11 }] as unknown as CharacterIndexEntry[];
 
@@ -75,12 +82,12 @@ describe('parties', () => {
     expect(readParties(JSON.stringify({ ...raw, parties: [] }), index).ok).toBe(false);
 
     // 未使用の編成（null）と選んでいる編成の欄は数えない。オブジェクトでない値と形が合わないものは空にして数える
-    expect(readParties(serializeParties(parties), index)).toEqual({ ok: true, value: parties, dropped: [] });
+    expect(readParties(serializeParties(parties), index)).toEqual({ ok: true, value: parties, dropped: null });
     raw.parties[1] = { slots: 'ignored' };
     raw.parties[2] = { slots: 'x' };
     raw.parties[4] = 5;
     const read = readParties(JSON.stringify(raw), index);
-    expect(read.ok && read.dropped).toEqual([2, 4]);
+    expect(read.ok && read.dropped).toEqual({ indices: [2, 4], error: TEAM_SHAPE_ERROR });
     expect(read.ok && read.value.parties[0]?.slots[0]?.resourceId).toBe(10);
   });
 
