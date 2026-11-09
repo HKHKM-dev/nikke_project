@@ -107,6 +107,7 @@
     | 「〈名前〉：使用武器変更」（自分が〈名前〉状態なら） | `weaponChange` の `state` と、読む側の `condition.selfState` | 読み込みが、同じきっかけ・維持・条件の中身の無い付与（`weaponChangeOf` の印）を足す。付与は発火のフレームから、変更は次のフレームから。`maxAmmoRef` とは組まない | 同上 |
     | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | 変更後の武器を押下チャージ型（`DOWN_Charge`。発と発の間はチャージ時間だけ）にし、その発だけを `fullChargeShot` に数える。レートは書かない。例: ナユタの記憶燃焼（C-0936） | 同 2.6 節 |
     | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | 変更後の武器のチャージ時間がチャージ速度▲を受けない（timed の `fixedChargeTime` と同じ読み。C-0214）。`chargeTimeSeconds` と組む。例: ナユタの記憶燃焼（確かめていない。C-0939） | 同 2.4 節 |
+    | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | 下の段階が満ちた発火で上の段階も付く（同じスロットの前に書いた同じきっかけの付与の分を数える）。例: クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

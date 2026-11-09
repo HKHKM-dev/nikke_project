@@ -95,30 +95,31 @@ describe('ルート探索の段（単騎）', () => {
   /** 段階ごとのスタック数から、攻撃力▲の和 */
   const attackOf = (s1: number, s2: number, s3: number) => s1 * ATK[0]! + s2 * ATK[1]! + s3 * ATK[2]!;
 
-  it('adds a Stage 1 stack every 2 shots, then Stage 2 and Stage 3 from the firing after the lower stage fills', () => {
+  it('adds a Stage 1 stack every 2 shots, with Stage 2 and Stage 3 starting on the firing that fills the lower stage', () => {
     expect(buffsAtShot(2).attackRatio).toBe(0);
     expect(buffsAtShot(3).attackRatio).toBeCloseTo(attackOf(1, 0, 0), 12);
-    expect(buffsAtShot(21).attackRatio).toBeCloseTo(attackOf(10, 0, 0), 12);
-    expect(buffsAtShot(22).attackRatio).toBeCloseTo(attackOf(10, 0, 0), 12);
-    expect(buffsAtShot(23).attackRatio).toBeCloseTo(attackOf(10, 1, 0), 12);
-    expect(buffsAtShot(41).attackRatio).toBeCloseTo(attackOf(10, 10, 0), 12);
-    expect(buffsAtShot(43).attackRatio).toBeCloseTo(attackOf(10, 10, 1), 12);
-    expect(buffsAtShot(51).attackRatio).toBeCloseTo(attackOf(10, 10, 5), 12);
+    expect(buffsAtShot(19).attackRatio).toBeCloseTo(attackOf(9, 0, 0), 12);
+    // 1 段階が満ちた発火（20 発目）で 2 段階も付き、2 段階が満ちた発火（38 発目）で 3 段階も付く（sameFiring）
+    expect(buffsAtShot(21).attackRatio).toBeCloseTo(attackOf(10, 1, 0), 12);
+    expect(buffsAtShot(37).attackRatio).toBeCloseTo(attackOf(10, 9, 0), 12);
+    expect(buffsAtShot(39).attackRatio).toBeCloseTo(attackOf(10, 10, 1), 12);
+    expect(buffsAtShot(45).attackRatio).toBeCloseTo(attackOf(10, 10, 4), 12);
+    expect(buffsAtShot(47).attackRatio).toBeCloseTo(attackOf(10, 10, 5), 12);
   });
 
   it('sums the three stages into the hit rate N at full stacks', () => {
     const full = HIT.reduce((sum, v, i) => sum + v * STACKS[i]!, 0);
-    expect(buffsAtShot(51).hitRate).toBeCloseTo(full, 12);
-    expect(buffsAtShot(21).hitRate).toBeCloseTo(10 * HIT[0]!, 12);
+    expect(buffsAtShot(47).hitRate).toBeCloseTo(full, 12);
+    expect(buffsAtShot(19).hitRate).toBeCloseTo(9 * HIT[0]!, 12);
   });
 
   it('applies the Skill 1 increases only while each stage is at max stacks (Stage 2 and 3 are conditional grants)', () => {
     expect(buffsAtShot(19).distributedDamage).toBe(0);
     expect(buffsAtShot(21).distributedDamage).toBeCloseTo(0.4958, 12);
-    expect(buffsAtShot(39).coreDamage).toBe(0);
-    expect(buffsAtShot(41).coreDamage).toBeCloseTo(0.2525, 12);
-    expect(buffsAtShot(49).critRate).toBe(0);
-    expect(buffsAtShot(51).critRate).toBeCloseTo(0.1673, 12);
+    expect(buffsAtShot(37).coreDamage).toBe(0);
+    expect(buffsAtShot(39).coreDamage).toBeCloseTo(0.2525, 12);
+    expect(buffsAtShot(45).critRate).toBe(0);
+    expect(buffsAtShot(47).critRate).toBeCloseTo(0.1673, 12);
   });
 
   it('keeps Stage 1 over the reload and drops Stage 2 and 3', () => {

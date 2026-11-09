@@ -88,7 +88,8 @@
             "selfState": {
               "state": "exploreRouteStage1",
               "present": true,
-              "stacks": "full"
+              "stacks": "full",
+              "sameFiring": true
             }
           },
           "contents": [
@@ -102,8 +103,8 @@
             }
           ],
           "assumes": {
-            "ja": "「1 段階フルスタック状態なら」は前のフレームまでに満ちた 1 段階を見る（1 段階が満ちた発火では付かず、次の発火から付く）。3 段階（effects[2]）の「2 段階フルスタック状態なら」も同じ",
-            "en": "\"When Stage 1 is at max stacks\" looks at Stage 1 filled by the previous frame (not on the firing that fills Stage 1, but from the next firing). Stage 3 (effects[2]) reads Stage 2 the same way"
+            "ja": "「1 段階フルスタック状態なら」は、同じ発火で 1 段階が付けた分も数える（1 段階が満ちた発火で 2 段階も付く。下位効果のスタック適用）。3 段階（effects[2]）の「2 段階フルスタック状態なら」も同じ",
+            "en": "\"When Stage 1 is at max stacks\" also counts the Stage 1 stack added by the same firing (Stage 2 starts on the firing that fills Stage 1; each subsequent effect triggers the ones before it). Stage 3 (effects[2]) reads Stage 2 the same way"
           }
         },
         {
@@ -120,7 +121,8 @@
             "selfState": {
               "state": "exploreRouteStage2",
               "present": true,
-              "stacks": "full"
+              "stacks": "full",
+              "sameFiring": true
             }
           },
           "contents": [

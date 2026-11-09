@@ -211,6 +211,33 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
 }
 
 /**
+ * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: 条件 selfState の sameFiring は、状態の付与にだけ書け、同じ
+ * スロットのそれより前に、見る状態を同じきっかけで付ける付与が要る（その付与が同じ発火で付ける分を数える）。while には書けない
+ */
+function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    const effects = entries[slot]?.effects ?? [];
+    effects.forEach((e, i) => {
+      const path = `${root}.${slot}.effects[${i}]`;
+      if (e.kind === 'passive' && e.while !== undefined && 'selfState' in e.while && e.while.selfState.sameFiring)
+        fail(`${path}.while.selfState.sameFiring`, 'sameFiring is not allowed in while');
+      const self = 'condition' in e ? e.condition?.selfState : undefined;
+      if (self?.sameFiring !== true) return;
+      if (e.kind !== 'state') fail(`${path}.condition.selfState.sameFiring`, 'sameFiring is allowed only in a state grant');
+      const trigger = JSON.stringify(e.trigger);
+      const lower = effects
+        .slice(0, i)
+        .some((g) => g.kind === 'state' && g.state === self.state && JSON.stringify(g.trigger) === trigger);
+      if (!lower)
+        fail(
+          `${path}.condition.selfState.sameFiring`,
+          `needs an earlier grant of "${self.state}" with the same trigger in the same slot`,
+        );
+    });
+  }
+}
+
+/**
  * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
  * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）
  */
@@ -496,6 +523,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateStateContentKinds,
     validateFullStackTriggers,
     validateAppliedTriggers,
+    validateSameFiring,
     validateOwnStateTriggers,
     validateWhileEffects,
     validateChanceStates,

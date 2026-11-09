@@ -1729,11 +1729,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const holdsAt = (condition: EffectCondition | undefined, sourceSlotIndex: number, frame: number): boolean => {
     if (condition === undefined) return true;
     if (condition.selfState !== undefined) {
-      const { state, present, stacks } = condition.selfState;
+      const { state, present, stacks, sameFiring } = condition.selfState;
       // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
       const family = statesMatching(state);
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
       const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
+      // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: sameFiring は、同じ発火で前に書いた付与が付けた分
+      // （射撃の回数のきっかけの件は次のフレームから）も数えるので、段によらず次のフレームに効いている件を見る
+      const itemsOf = (t: HeldTrack): HeldItem[] => (sameFiring ? activeAt(t, frame + 1) : selfStateItemsAt(t, frame));
       if (stacks === undefined) {
         const has = isStatic || own.some((t) => selfStateItemsAt(t, frame).length > 0);
         if (has !== present) return false;
@@ -1741,7 +1744,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         !stacksHold(
           stacks,
           isStatic,
-          own.map((t) => ({ origin: t.origin, items: selfStateItemsAt(t, frame) })),
+          own.map((t) => ({ origin: t.origin, items: itemsOf(t) })),
         )
       ) {
         // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件（段 1 の状態の件の、そのフレームの段の最大）

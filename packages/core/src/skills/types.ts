@@ -1029,6 +1029,12 @@ export type SelfStateCondition = {
   present: boolean;
   stacks?: 'full' | number;
   stacksRef?: number;
+  /**
+   * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: 「下位効果のスタック適用」の段階。同じ発火で、同じスロットの
+   * 前に書いた同じきっかけの付与が付ける分も数えてスタックを見る（下の段階が満ちた発火で上の段階も付く）。状態の付与の、スタックの
+   * 条件にだけ書ける（parse/crossChecks.ts の validateSameFiring）
+   */
+  sameFiring?: true;
 };
 
 /** 2 段目の段 3: スタック数を見る自分の状態の条件か（stacks か stacksRef を持つ） */
