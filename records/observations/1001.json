@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1001-01",
+    "recording": "1001",
+    "kind": "total",
+    "use": "record",
+    "value": 430661414,
+    "description": "リター・デルタ・クエンシー：エスケープクイーン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11580。増分は 4666 個"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-09"
+  },
+  {
+    "id": "1001-02",
+    "recording": "1001",
+    "kind": "timing",
+    "use": "record",
+    "value": [33, 33],
+    "unit": "動画のフレーム",
+    "description": "III のタイマーの 00.00（フルバーストの紫が出た最初のフレーム。f1427・f3795）から、クエンシー：エスケープクイーンのバーストの 1 つ目のヒット（f1460・f3828）まで。2 つ目のヒットはその 19f 後",
+    "method": {
+      "tool": "ffmpeg で左のバーストの欄を切り出して目で読んだ",
+      "note": "バーストの欄が左に出た録画なので burst-panel は使えない。間に入りの止まり（黄色の表示）がある"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1001-03",
+    "recording": "1001",
+    "kind": "hit",
+    "use": "compare",
+    "value": 14861728,
+    "unit": "ダメージ",
+    "description": "クエンシー：エスケープクイーンの 1 回目（0 始まりで 0）のバーストの分配ダメージ（非会心）。f1460 の 1 つ目の増分（7,430,864）の 2 倍。2 つ目（f1479）は通常攻撃の増分と重なって 7,575,628",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "発動の後の 1 回だけの大きい 2 つの増分（19f 離れる）。1 つ目は同じフレームに通常攻撃の増分が重なっていない。2 ヒットは等分（1002-02 と同じ形）とみて 2 倍にした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto",
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    },
+    "source": "V-0702",
+    "readAt": "2026-11-10"
+  }
+]
