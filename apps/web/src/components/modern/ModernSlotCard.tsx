@@ -3,7 +3,6 @@ import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
-import { DEFAULT_CONTROLLED_SLOT } from '../../team.ts';
 import controllerIcon from '../../assets/badges/ui_controller.svg';
 import { maskIconStyle } from '../maskIcon.ts';
 import type { Badge } from './badges.ts';
@@ -11,8 +10,45 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 
+/** 操作キャラの印（コントローラーの絵）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
+export function ControllerIcon() {
+  return (
+    <span
+      className="modern-slot-focus-icon mask-icon"
+      role="img"
+      aria-label="操作"
+      style={maskIconStyle(controllerIcon)}
+    />
+  );
+}
+
+/**
+ * 操作キャラのスロットの印。ドラッグして別のスロットに離すと、そのスロットを操作キャラにする（ModernView の handleDragEnd）。
+ * カードの中にあるが、印の上で押したときは印のドラッグになる（dnd-kit は内側のドラッグを先に取る）
+ */
+function DraggableControllerIcon({ slotIndex }: { slotIndex: number }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: 'controller',
+    data: { type: 'controller', slotIndex },
+  });
+  return (
+    <span
+      ref={setNodeRef}
+      className={`modern-slot-focus-handle ${isDragging ? 'modern-slot-focus-dragging' : ''}`}
+      onClick={(e) => e.stopPropagation()}
+      {...attributes}
+      aria-label="操作キャラ（ドラッグして別のスロットへ移す）"
+      {...listeners}
+    >
+      <ControllerIcon />
+    </span>
+  );
+}
+
 type Props = {
   slotIndex: number;
+  /** 操作キャラのスロット（操作の印を付ける） */
+  controlled: boolean;
   character: CharacterData | undefined;
   characterEntry: CharacterIndexEntry | undefined;
   isUnsupported: boolean;
@@ -33,6 +69,7 @@ type Props = {
 
 export function ModernSlotCard({
   slotIndex,
+  controlled,
   character,
   characterEntry,
   isUnsupported,
@@ -46,8 +83,6 @@ export function ModernSlotCard({
   onClear,
   partyTotalDamage,
 }: Props) {
-  /** 操作キャラのスロット（「操作」の印を付ける） */
-  const focused = slotIndex === DEFAULT_CONTROLLED_SLOT;
   const awaitingPlacement = onPlacePending !== undefined;
   const currentDamage = character && slotResult ? slotResult.result.totalDamage : null;
   const damagePercent =
@@ -90,14 +125,7 @@ export function ModernSlotCard({
       {...listeners}
     >
       <div className="modern-slot-header">
-        {focused && (
-          <span
-            className="modern-slot-focus-icon mask-icon"
-            role="img"
-            aria-label="操作"
-            style={maskIconStyle(controllerIcon)}
-          />
-        )}
+        {controlled && <DraggableControllerIcon slotIndex={slotIndex} />}
         <OtherPartyBadges parties={otherParties} className="modern-slot-other-parties" />
       </div>
 

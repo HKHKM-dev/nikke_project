@@ -91,6 +91,14 @@ describe('parties', () => {
     expect(read.ok && read.value.parties[0]?.slots[0]?.resourceId).toBe(10);
   });
 
+  it('keeps the controlled slot per party', () => {
+    const moved = { ...withCharacter(INITIAL_TEAM_STATE, 0, 10), controlledSlot: 0 };
+    const { parties, team } = switchParty(INITIAL_PARTIES, moved, 1);
+    expect(team.controlledSlot).toBe(INITIAL_TEAM_STATE.controlledSlot);
+    expect(parseParties(serializeParties(parties), index)?.parties[0]?.controlledSlot).toBe(0);
+    expect(switchParty(parties, team, 0).team.controlledSlot).toBe(0);
+  });
+
   it('reads the versions the team reads, and rejects an unknown (newer) formatVersion', () => {
     const { parties } = switchParty(INITIAL_PARTIES, withCharacter(INITIAL_TEAM_STATE, 0, 10), 1);
     const raw = JSON.parse(serializeParties(parties));

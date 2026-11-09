@@ -769,6 +769,19 @@ header h1 {
   width: 30px;
   height: 30px;
 }
+/* 操作の印はドラッグして別のスロットへ移せる。持ち上げている間、元の印は薄くする */
+.modern-slot-focus-handle {
+  display: inline-flex;
+  cursor: grab;
+  touch-action: none;
+}
+.modern-slot-focus-dragging {
+  opacity: 0.3;
+}
+.controller-drag-overlay {
+  display: inline-flex;
+  cursor: grabbing;
+}
 .modern-slot-other-parties {
   display: flex;
   gap: 2px;
@@ -1308,10 +1321,10 @@ html:has(.modern-view-container) {
 .party-number-badge {
   background: var(--placing-blue);
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: bold;
-  line-height: 1.2;
-  padding: 0 3px;
+  line-height: 1.25;
+  padding: 0 7px;
 }
 
 /* Modal ダイアログ */

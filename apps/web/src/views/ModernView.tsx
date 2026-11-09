@@ -25,7 +25,7 @@ import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge, trayCollectionBadge, type Badge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
-import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
+import { ControllerIcon, EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } from '../components/modern/flight.ts';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
@@ -154,6 +154,8 @@ export function ModernView({
 
   // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、カードの大きさと、立ち絵の大きさ・カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
+  // 操作の印を持ち上げている（DragOverlay に印を出す）
+  const [draggingController, setDraggingController] = useState(false);
   // 持ち上げた空のスロットの番号（空のスロットを持ち上げていなければ null）
   const [draggedEmptyIndex, setDraggedEmptyIndex] = useState<number | null>(null);
   const [draggedPortrait, setDraggedPortrait] = useState<{
@@ -252,6 +254,10 @@ export function ModernView({
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
     noScrollNodeRef.current = source ?? null;
     const data = event.active.data.current;
+    if (data?.type === 'controller') {
+      setDraggingController(true);
+      return;
+    }
     if (data?.character) {
       setDraggedCharacter(data.character as CharacterIndexEntry);
     }
@@ -291,6 +297,7 @@ export function ModernView({
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
+    setDraggingController(false);
     setDraggedCharacter(null);
     setDraggedEmptyIndex(null);
     setDraggedPortrait(null);
@@ -300,6 +307,15 @@ export function ModernView({
     const overData = over.data.current;
     const activeData = active.data.current;
     if (!activeData) return;
+
+    // 操作の印をスロットに離したら、そのスロットを操作キャラにする（印は離した所で消え、元へ戻らない）
+    if (activeData.type === 'controller') {
+      if (overData?.slotIndex !== undefined) {
+        setDropState({ placed: true });
+        dispatch({ type: 'setControlledSlot', index: overData.slotIndex as number });
+      }
+      return;
+    }
 
     // スロットのキャラをトレイへ戻したら、そのスロットを空にする
     if (overData?.type === 'tray') {
@@ -332,6 +348,7 @@ export function ModernView({
   };
 
   const handleDragCancel = () => {
+    setDraggingController(false);
     setDraggedCharacter(null);
     setDraggedEmptyIndex(null);
     setDraggedPortrait(null);
@@ -416,6 +433,7 @@ export function ModernView({
                 slotResult={slotResults[i] ?? null}
                 growthMarks={slotGrowthMarks(i)}
                 collectionBadge={slotCollectionBadge(i)}
+                controlled={team.controlledSlot === i}
                 otherParties={(slot.resourceId !== null && otherPartyIds.get(slot.resourceId)) || NO_PARTIES}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
@@ -467,7 +485,11 @@ export function ModernView({
         </ErrorBoundary>
 
         <DragOverlay dropAnimation={DROP_ANIMATION}>
-          {(draggedCharacter || draggedEmptyIndex !== null) && draggedPortrait ? (
+          {draggingController ? (
+            <span className="controller-drag-overlay">
+              <ControllerIcon />
+            </span>
+          ) : (draggedCharacter || draggedEmptyIndex !== null) && draggedPortrait ? (
             // 離したときのアニメーションは、この外側の箱をドラッグ元（カード）の位置へ戻す。外側をカードと同じ大きさにし、
             // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
             <div
