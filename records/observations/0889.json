@@ -69,13 +69,30 @@
     "description": "5 回目の敵のジャンプの、紅蓮：ブラックシャドウのハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（録画は窓の始まりの直前のフルチャージの発の姿勢の終わりから始まる回で、モデルの発は数 f ずれてチャージの途中で窓に入る（部分チャージの発の回になり 96f））",
     "method": {
       "tool": "node tools/captures/reload.ts --mode fit",
-      "note": "0 の点 f10631.05 → 消えた 10734（動画）。モデルは録画の窓 `0889-01` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）。2026-11-08: 置き直した窓 `0889-06` では、モデルも窓の始まりにフルチャージの発を撃ち、その姿勢の終わりから始まる回になって 105f（録画の発は窓の始まりの 2f 後で、バーの 0 の点はその姿勢の終わりと合う）（V-0696）。記録のまま"
+      "note": "0 の点 f10631.05 → 消えた 10734（動画）。モデルは録画の窓 `0889-01` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）。2026-11-08: 置き直した窓 `0889-06` では、モデルも窓の始まりにフルチャージの発を撃ち、その姿勢の終わりから始まる回になって 105f（録画の発は窓の始まりの 2f 後で、バーの 0 の点はその姿勢の終わりと合う）（V-0696）。記録のまま。2026-11-09: 窓の始まりに満ちていた枠をふだんの刻みの時刻に撃つモデル（plan/design-hide-reload-detect.md 11 節の案 1）を入れて、比べる観測値にした（V-0701）。モデルは録画の窓 `0889-06` で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
     },
     "scope": {
       "slot": 1,
       "source": "firing"
     },
-    "use": "record"
+    "use": "compare",
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0889-06"
+      }
+    }
   },
   {
     "id": "0889-04",
@@ -161,17 +178,34 @@
     "source": "V-0697",
     "readAt": "2026-11-08",
     "kind": "interval",
-    "use": "record",
+    "use": "compare",
     "unit": "f",
     "value": 116,
     "description": "紅蓮：ブラックシャドウ単騎の、5 回目の敵のジャンプ（窓の始まりにチャージが満ちていて、満ちてから撃つまでの間に窓に入った回）の、フルチャージの発を撃ったフレームから明け（ハイド中のリロードのバーが消えたフレーム）まで。窓の長さ（約 117.65f）より約 2f 短く、発はふだんの刻みの時刻に出る",
     "method": {
       "tool": "node tools/captures/hud.ts --mode jumps・node tools/captures/reload.ts --mode fit",
-      "note": "撃ったフレーム f10618（増分 f10620（207,265。フルチャージのコア）から近の飛ぶ時間 2f（`0889-07`）を引いた）→ 明け f10734（`0889-06`）。前の発から 43f（マガジンの中の刻み）。バーの 0 の点 f10631.05（`0889-03`）は撃ってから 13f（姿勢の終わり）"
+      "note": "撃ったフレーム f10618（増分 f10620（207,265。フルチャージのコア）から近の飛ぶ時間 2f（`0889-07`）を引いた）→ 明け f10734（`0889-06`）。前の発から 43f（マガジンの中の刻み）。バーの 0 の点 f10631.05（`0889-03`）は撃ってから 13f（姿勢の終わり）。2026-11-09: 窓の始まりに満ちていた枠をふだんの刻みの時刻に撃つモデル（plan/design-hide-reload-detect.md 11 節の案 1）を入れて、比べる観測値にした（V-0701）。モデルは録画の窓 `0889-06` で回し、窓の前（窓の中の発を含む）の最後の発から明けまで（lastShotToWindowEnd）"
     },
     "scope": {
       "slot": 1,
       "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "lastShotToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0889-06"
+      }
     }
   }
 ]

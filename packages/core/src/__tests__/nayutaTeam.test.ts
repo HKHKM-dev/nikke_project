@@ -104,7 +104,7 @@ describe('記憶燃焼（リター・ナユタ・アリス）', () => {
     expect(incineration.map((i) => [i.start + 1, i.end])).toEqual(weapon.map((w) => [w.start, w.end]));
   });
 
-  // 的のジャンプの入りでは部分チャージの発が出て間が縮む（C-0840。録画 0951 にも同じ並びがある）ので、いちばん多い間で見る
+  // 的のジャンプの入りでは部分チャージの発が出て間が縮む（C-1001。録画 0951 にも同じ並びがある）ので、いちばん多い間で見る
   it('fires the changed weapon only in the windows, a charge time apart', () => {
     expect(changed.every(inside)).toBe(true);
     const gaps = weapon.flatMap((w) => {

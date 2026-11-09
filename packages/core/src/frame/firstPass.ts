@@ -1371,8 +1371,8 @@ function runFirstPassOnce(
       const ownBlock = own[k];
       const slotBlocked = ownBlock !== undefined && ownBlock.start <= f && f < ownBlock.end;
       const slotHideNow = slotBlocked && ownBlock.start === f;
-      // 狙えない窓（plan/design-hide-reload-detect.md 案 A）: 入るフレームにチャージが満ちていればその場で撃ってハイドし、ほかの枠は
-      // D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ。C-0840）。holdFire の区間は待たずにハイドする（V-0605）
+      // 狙えない窓（plan/design-hide-reload-detect.md 案 A）: 入るフレームにチャージが満ちていればふだんの刻みの時刻に撃って
+      // ハイドし（設計書 11 節）、ほかの枠は D まで待つ（チャージの途中なら D の H 後に部分チャージで撃つ）。holdFire の区間は待たずにハイドする（V-0605）
       let windowShot: number | null = null;
       if (slotHideNow && ownBlock.untargetable) windowShot = beginHide(state, shot, model, params);
       else if (slotHideNow) hideShooter(state, shot, model, params);
