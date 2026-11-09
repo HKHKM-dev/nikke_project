@@ -16,11 +16,21 @@
   --m-shadow: 0 6px 20px light-dark(rgb(20 30 50 / 0.12), rgb(0 0 0 / 0.45));
   --m-glow: light-dark(rgb(2 132 199 / 0.12), rgb(56 189 248 / 0.18));
 }
+/* 画面に固定した光の模様。body の背景に background-attachment: fixed で描くと、スクロールのたびに画面全体を描き直すので、
+   固定した別の層（::before）に描き、スクロールでは動かさない。body の背景は透明にする（下地の色は html の背景。body の背景の色は
+   z-index が負の層より上に描かれ、模様を隠す） */
 :root[data-app-ui='modern'] body {
+  background: transparent;
+}
+:root[data-app-ui='modern'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     radial-gradient(1200px 500px at 10% -10%, var(--m-glow), transparent 60%),
-    radial-gradient(900px 400px at 100% 0%, rgb(180 107 255 / 0.1), transparent 60%), var(--app-bg);
-  background-attachment: fixed;
+    radial-gradient(900px 400px at 100% 0%, rgb(180 107 255 / 0.1), transparent 60%);
 }
 
 /* 見出し・パネル */
