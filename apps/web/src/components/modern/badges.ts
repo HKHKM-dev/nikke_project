@@ -145,6 +145,11 @@ export function trayCollectionBadge(
   return collectionBadge(build.collection, treasurePhase, entry.treasure !== null);
 }
 
+/** トレイの絞り込みのボタンに出す値（どの値で絞っても合う値 matchesAll は出さない） */
+export function filterButtonValues(kind: BadgeKind): string[] {
+  return Object.keys(kind.badges).filter((v) => v !== kind.matchesAll);
+}
+
 /** バッジの絞り込み（項目 → 選んだ値。1 つも選んでいない項目は持たず、絞らない） */
 export type BadgeFilters = Partial<Record<BadgeKey, readonly string[]>>;
 
@@ -155,7 +160,7 @@ export type BadgeFilters = Partial<Record<BadgeKey, readonly string[]>>;
 export function matchesBadgeFilters(char: Pick<CharacterIndexEntry, BadgeKey>, filters: BadgeFilters): boolean {
   return BADGE_KINDS.every(({ key, matchesAll }) => {
     const values = filters[key];
-    return values === undefined || values.includes(char[key]) || char[key] === matchesAll;
+    return values === undefined || values.includes(char[key]) || (matchesAll !== undefined && char[key] === matchesAll);
   });
 }
 

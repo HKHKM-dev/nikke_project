@@ -3,6 +3,7 @@ import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
 import {
   BADGE_KINDS,
+  filterButtonValues,
   matchesBadgeFilters,
   toggleBadgeFilter,
   trayCollectionBadge,
@@ -46,22 +47,20 @@ function BadgeFilter({
 }) {
   return (
     <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
-      {Object.keys(kind.badges)
-        .filter((v) => v !== kind.matchesAll)
-        .map((v) => {
-          const { src, label } = kind.badges[v]!;
-          return (
-            <button
-              key={v}
-              type="button"
-              className="char-tray-badge-button"
-              aria-pressed={values?.includes(v) ?? false}
-              onClick={() => onToggle(v)}
-            >
-              <img className="char-badge" src={src} alt={label} draggable={false} />
-            </button>
-          );
-        })}
+      {filterButtonValues(kind).map((v) => {
+        const { src, label } = kind.badges[v]!;
+        return (
+          <button
+            key={v}
+            type="button"
+            className="char-tray-badge-button"
+            aria-pressed={values?.includes(v) ?? false}
+            onClick={() => onToggle(v)}
+          >
+            <img className="char-badge" src={src} alt={label} draggable={false} />
+          </button>
+        );
+      })}
     </div>
   );
 }

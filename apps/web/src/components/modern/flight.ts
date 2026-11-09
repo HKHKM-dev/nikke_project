@@ -40,15 +40,21 @@ export function stopArrival(card: Element | null): void {
 /**
  * base の位置・大きさに置いた立ち絵の写しを、rect の位置・大きさに見せるキーフレーム。幅をそろえて縮め、rect が写しより横長なら
  * （ニケ一覧の四角の絵）、写しの上から rect の形の分だけを残して下を切る（顔のある上の部分を四角に切り抜く）。
- * 写しのほうが横長なら、切らずに上下の中央をそろえる
+ * 写しのほうが横長なら、切らずに上下の中央をそろえる。切るのは下だけで、ほかの 3 辺は枠の外（影など）も見せる（CLIP_OUTSET）。
+ * 大きさの無い rect（配置されていない要素）は、base のまま動かさない
  */
-function frameAt(rect: DOMRect, base: DOMRect): Keyframe {
+const CLIP_OUTSET = 40;
+function frameAt(target: DOMRect, base: DOMRect): Keyframe {
+  const rect = target.width > 0 && target.height > 0 ? target : base;
   const scale = rect.width / base.width;
   const shown = Math.min(base.height, rect.height / scale);
   const top = rect.top + (rect.height - shown * scale) / 2;
   return {
     transform: `translate(${rect.left - base.left}px, ${top - base.top}px) scale(${scale})`,
-    clipPath: `inset(0 0 ${base.height - shown}px 0)`,
+    clipPath:
+      shown < base.height
+        ? `inset(-${CLIP_OUTSET}px -${CLIP_OUTSET}px ${base.height - shown}px -${CLIP_OUTSET}px)`
+        : `inset(-${CLIP_OUTSET}px)`,
   };
 }
 
