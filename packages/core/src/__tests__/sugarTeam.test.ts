@@ -37,19 +37,31 @@ function team(ids: readonly number[], controlled: number, element: Element, trea
   return input;
 }
 
+const TRIO = [COCOA, SOLDIER_FA, SUGAR] as const;
+const TREASURE_FIRE = team(TRIO, SUGAR_SLOT, 'Fire', 3);
+const TREASURE_ELECTRONIC = team(TRIO, SUGAR_SLOT, 'Electronic', 3);
+const BASE_FIRE = team(TRIO, SUGAR_SLOT, 'Fire', 0);
+
 const TEAMS = {
   '単騎（宝物版・灼熱）': team([SUGAR], 0, 'Fire', 3),
-  'ココア + ソルジャーF.A. + シュガー（宝物版・灼熱）': team([COCOA, SOLDIER_FA, SUGAR], SUGAR_SLOT, 'Fire', 3),
-  'ココア + ソルジャーF.A. + シュガー（宝物版・電撃）': team([COCOA, SOLDIER_FA, SUGAR], SUGAR_SLOT, 'Electronic', 3),
-  'ココア + ソルジャーF.A. + シュガー（基礎版・灼熱）': team([COCOA, SOLDIER_FA, SUGAR], SUGAR_SLOT, 'Fire', 0),
+  'ココア + ソルジャーF.A. + シュガー（宝物版・灼熱）': TREASURE_FIRE,
+  'ココア + ソルジャーF.A. + シュガー（宝物版・電撃）': TREASURE_ELECTRONIC,
+  'ココア + ソルジャーF.A. + シュガー（基礎版・灼熱）': BASE_FIRE,
 };
 
+// 1 パス目は編成ごとに 1 回だけ回す（下の 2 つの describe が同じ編成を使う）
+const plans = new Map<TeamInput, ReturnType<typeof planTeamRun>>();
+function planOf(input: TeamInput): ReturnType<typeof planTeamRun> {
+  let plan = plans.get(input);
+  if (plan === undefined) plans.set(input, (plan = planTeamRun(input)));
+  return plan;
+}
+
 describe.each([
-  ['宝物版', 3],
-  ['基礎版', 0],
-] as const)('ココア + ソルジャーF.A. + シュガー（%s）', (_label, phase) => {
-  const input = TEAMS[`ココア + ソルジャーF.A. + シュガー（${_label}・灼熱）`];
-  const plan = planTeamRun(input);
+  ['宝物版', 3, TREASURE_FIRE],
+  ['基礎版', 0, BASE_FIRE],
+] as const)('ココア + ソルジャーF.A. + シュガー（%s・灼熱）', (_label, phase, input) => {
+  const plan = planOf(input);
   const uses = activationFramesOfSlot(plan.schedule!, SUGAR_SLOT);
   const fullBursts = plan.schedule!.fullBurstWindows.map((w) => w.start);
   const windows = (slot: number, skill: string, stat: string) =>
@@ -103,11 +115,10 @@ describe.each([
 });
 
 describe.each([
-  ['Fire', true],
-  ['Electronic', false],
-] as const)('宝物版 S1（敵 %s）', (element, forced) => {
-  const input = TEAMS[`ココア + ソルジャーF.A. + シュガー（宝物版・${element === 'Fire' ? '灼熱' : '電撃'}）`];
-  const plan = planTeamRun(input);
+  ['Fire', true, TREASURE_FIRE],
+  ['Electronic', false, TREASURE_ELECTRONIC],
+] as const)('宝物版 S1（敵 %s）', (_element, forced, input) => {
+  const plan = planOf(input);
 
   it('raises her attack damage for the whole battle and forces the advantage only against Fire', () => {
     // 宝物版 S1 の値 07（Lv10）
@@ -128,7 +139,7 @@ describe.each([
 describe('バーストの命中率▲（射撃場の的・条件は自動）', () => {
   const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
   const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
-  const input = team([COCOA, SOLDIER_FA, SUGAR], SUGAR_SLOT, 'Fire', 3);
+  const input = team(TRIO, SUGAR_SLOT, 'Fire', 3);
   input.enemy = {
     ...input.enemy,
     events: enemyEventsOf(master, ['range-3min-jump'], 180),
