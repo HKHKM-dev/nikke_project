@@ -134,9 +134,9 @@ describe.each([
   });
 });
 
-// バーストの命中率▲は区間の状態でなく、条件が自動の枠の着地点の命中率に入る（frame/landing.ts）。録画と同じ射撃場の的で、
+// バーストの命中率▲は区間の状態でなく、条件が自動の枠の着地点の命中率に入る（frame/landing.ts）。録画と同じ射撃場の敵で、
 // 平均の命中率▲が自分にだけ乗ることを見る
-describe('バーストの命中率▲（射撃場の的・条件は自動）', () => {
+describe('バーストの命中率▲（射撃場の敵・条件は自動）', () => {
   const master = parseEnemyPresets(readJson<Record<string, unknown>>('../../data/enemies.json'));
   const profile = master.targetProfiles.find((p) => p.id === 'range-bigarms')!;
   const input = team(TRIO, SUGAR_SLOT, 'Fire', 3);

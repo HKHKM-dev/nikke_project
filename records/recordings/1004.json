@@ -38,7 +38,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の的・オートバースト ON",
+  "conditionNote": "V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の敵・オートバースト ON",
   "backup": {
     "at": "2026-11-10T02:52+09:00",
     "via": "cloud-move",

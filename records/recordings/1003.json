@@ -26,7 +26,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": false,
-  "conditionNote": "V-0704 の撮影 A。シュガー単騎（操作）・灼熱の的・オートバースト OFF",
+  "conditionNote": "V-0704 の撮影 A。シュガー単騎（操作）・灼熱の敵・オートバースト OFF",
   "backup": {
     "at": "2026-11-10T02:48+09:00",
     "via": "cloud-move",

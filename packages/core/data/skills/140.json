@@ -7,8 +7,8 @@
       "effects": [],
       "notes": [
         {
-          "ja": "遮蔽物が攻撃を受けた時（確率）の自分のクリティカルダメージ▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
-          "en": "Critical Damage up when cover is attacked (chance) does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it can occur from the target's attacks",
+          "ja": "遮蔽物が攻撃を受けた時（確率）の自分のクリティカルダメージ▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）",
+          "en": "Critical Damage up when cover is attacked (chance) does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the enemy's attacks",
           "kind": "outOfScope",
           "effect": {
             "kind": "timed",
@@ -18,8 +18,8 @@
           }
         },
         {
-          "ja": "遮蔽物が攻撃を受けた時（確率）の自分のリロード速度▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
-          "en": "Reload Speed up when cover is attacked (chance) does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it can occur from the target's attacks",
+          "ja": "遮蔽物が攻撃を受けた時（確率）の自分のリロード速度▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）",
+          "en": "Reload Speed up when cover is attacked (chance) does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the enemy's attacks",
           "kind": "outOfScope",
           "effect": {
             "kind": "timed",
@@ -104,8 +104,8 @@
             "cover"
           ],
           "assumes": {
-            "ja": "自分の遮蔽物は破壊されない（被弾を扱わない。要件 5.2 節）ので、戦闘のはじめから終わりまで効く",
-            "en": "Her cover is never destroyed (taking hits is not modeled; requirements 5.2), so it applies from start to end of battle"
+            "ja": "自分の遮蔽物は破壊されない（被弾を扱わない。要件 4.2 節）ので、戦闘のはじめから終わりまで効く",
+            "en": "Her cover is never destroyed (taking hits is not modeled; requirements 4.2), so it applies from start to end of battle"
           },
           "claims": [
             "C-1002"
@@ -127,8 +127,8 @@
       ],
       "notes": [
         {
-          "ja": "遮蔽物が攻撃を受けた時の自分のクリティカルダメージ▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
-          "en": "Critical Damage up when cover is attacked does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it can occur from the target's attacks",
+          "ja": "遮蔽物が攻撃を受けた時の自分のクリティカルダメージ▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）",
+          "en": "Critical Damage up when cover is attacked does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the enemy's attacks",
           "kind": "outOfScope",
           "effect": {
             "kind": "timed",
@@ -138,8 +138,8 @@
           }
         },
         {
-          "ja": "遮蔽物が攻撃を受けた時の自分のリロード速度▲は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
-          "en": "Reload Speed up when cover is attacked does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it can occur from the target's attacks",
+          "ja": "遮蔽物が攻撃を受けた時の自分のリロード速度▲は、被弾を扱わないので起きない（要件 4.2 節）。射撃場の 3 分モードでは敵の攻撃で起きうる（C-0551）",
+          "en": "Reload Speed up when cover is attacked does not occur because taking hits is not modeled (requirements 4.2). In the 3-minute range mode it can occur from the enemy's attacks",
           "kind": "outOfScope",
           "effect": {
             "kind": "timed",
@@ -149,8 +149,8 @@
           }
         },
         {
-          "ja": "遮蔽物が攻撃を受けた時の自分の遮蔽物 HP 回復は、被弾を扱わないので起きない（要件 5.2 節）。起きても遮蔽物が壊れない前提では与ダメージを変えない",
-          "en": "The cover HP restore when cover is attacked does not occur because taking hits is not modeled (requirements 5.2). Even if it did, it would not change damage while cover is assumed intact",
+          "ja": "遮蔽物が攻撃を受けた時の自分の遮蔽物 HP 回復は、被弾を扱わないので起きない（要件 4.2 節）。起きても遮蔽物が壊れない前提では与ダメージを変えない",
+          "en": "The cover HP restore when cover is attacked does not occur because taking hits is not modeled (requirements 4.2). Even if it did, it would not change damage while cover is assumed intact",
           "kind": "outOfScope",
           "effect": {
             "kind": "coverHeal",
