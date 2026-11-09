@@ -1,5 +1,0 @@
-{
-  "section": "5",
-  "order": 4,
-  "text": "モダン UI: ニケ一覧から選ぶと、選択中のスロットのキャラを置き換えるが、配置先のスロットを示す表示が無い（#994 で消した。`apps/web/src/views/ModernView.tsx`・`components/modern/CharacterTray.tsx`）"
-}
