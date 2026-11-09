@@ -6,6 +6,7 @@ import {
   BADGE_KINDS,
   VISUAL_BADGE_KINDS,
   collectionBadge,
+  trayCollectionBadge,
   matchesBadgeFilters,
   toggleBadgeFilter,
   type BadgeFilters,
@@ -133,5 +134,25 @@ describe('絵のバッジ', () => {
       file(collectionBadge({ rarity: 'R', level: 14 }, 0, false)),
     );
     expect(file(collectionBadge(null, 3, true))).not.toBe(file(collectionBadge(null, 1, true)));
+  });
+
+  it('ニケ一覧は、育成状況にいるニケだけ、そのコレクション・宝物で出す（スペック固定では出さない）', () => {
+    const entry = (collection: unknown, treasure: unknown) => ({ collection, treasure });
+    const roster = {
+      characters: {
+        '1': entry({ rarity: 'SR', level: 15 }, null),
+        '2': entry(null, { tid: 1, level: 10, phase: 2 }),
+        // 宝物の段階が未確定なら宝物なし（スロットに写すのと同じ）
+        '3': entry({ rarity: 'R', level: 5 }, { tid: 1, level: 0, phase: null }),
+      },
+    } as unknown as Parameters<typeof trayCollectionBadge>[1];
+    const label = (id: number, fixedSpec = false) =>
+      trayCollectionBadge({ resourceId: id }, roster, fixedSpec)?.label ?? null;
+    expect(label(1)).toBe('コレクション SR LV 15');
+    expect(label(2)).toBe('宝物 段階 2');
+    expect(label(3)).toBe('コレクション R LV 5');
+    expect(label(4)).toBeNull();
+    expect(label(1, true)).toBeNull();
+    expect(trayCollectionBadge({ resourceId: 1 }, null, false)).toBeNull();
   });
 });

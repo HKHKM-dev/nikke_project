@@ -7,6 +7,7 @@ import {
   ELEMENT_LABEL,
   TREASURE_PHASE_MAX,
   WEAPON_LABEL,
+  type BuildSnapshot,
   type CharacterIndexEntry,
   type CollectionInput,
   type TreasurePhase,
@@ -126,6 +127,19 @@ export function collectionBadge(
   if (collection === null) return null;
   const max = collection.level === COLLECTION_LEVEL_MAX;
   return pick(`${collection.rarity}${max ? '-max' : ''}`, `コレクション ${collection.rarity} LV ${collection.level}`);
+}
+
+/**
+ * ニケ一覧（縦長）のコレクションのバッジ。育成状況にいるニケだけ、スロットに写すのと同じコレクション・宝物で出す
+ * （宝物の段階が未確定なら宝物なし。roster.ts の rosterFields）。スペック固定はコレクションを使わないので出さない
+ */
+export function trayCollectionBadge(
+  char: Pick<CharacterIndexEntry, 'resourceId'>,
+  roster: BuildSnapshot | null,
+  fixedSpec: boolean,
+): Badge | null {
+  const entry = fixedSpec ? undefined : roster?.characters[String(char.resourceId)];
+  return entry ? collectionBadge(entry.collection, entry.treasure?.phase ?? 0, entry.treasure !== null) : null;
 }
 
 /** バッジの絞り込み（項目 → 選んだ値。1 つも選んでいない項目は持たず、絞らない） */

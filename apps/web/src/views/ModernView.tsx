@@ -22,7 +22,7 @@ import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
-import { collectionBadge } from '../components/modern/badges.ts';
+import { collectionBadge, trayCollectionBadge, type Badge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
@@ -237,8 +237,14 @@ export function ModernView({
     const inRoster = resourceId !== null && roster?.characters[String(resourceId)] !== undefined;
     return character && (inRoster || team.fixedSpec) ? growthMarksOf(character.rarity, growth) : null;
   };
-  // 持ち上げたスロットの限界突破・コア強化（持ち上げた絵に名前と一緒に出す）
+  // スロットの絵のバッジの列の最後に出すコレクション（宝物を付けていれば宝物）
+  const slotCollectionBadge = (i: number): Badge | null => {
+    const { character, build, treasurePhase } = calc.slots[i]!;
+    return collectionBadge(build.collection, treasurePhase, (character?.treasure ?? null) !== null);
+  };
+  // 持ち上げたものの限界突破・コア強化とコレクションのバッジ（持ち上げた絵に、名前と一緒に出す）
   const [draggedMarks, setDraggedMarks] = useState<GrowthMarks | null>(null);
+  const [draggedCollection, setDraggedCollection] = useState<Badge | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
     setPendingId(null);
@@ -258,6 +264,13 @@ export function ModernView({
         ? slotGrowthMarks(data.slotIndex as number)
         : data?.character
           ? trayGrowthMarks(data.character as CharacterIndexEntry, roster, team.fixedSpec)
+          : null,
+    );
+    setDraggedCollection(
+      data?.type === 'slot-character'
+        ? slotCollectionBadge(data.slotIndex as number)
+        : data?.character
+          ? trayCollectionBadge(data.character as CharacterIndexEntry, roster, team.fixedSpec)
           : null,
     );
     // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
@@ -392,7 +405,7 @@ export function ModernView({
 
         <section className="modern-slots-grid" aria-label="編成スロット一覧">
           {team.slots.map((slot, i) => {
-            const { character, build, treasurePhase } = calc.slots[i]!;
+            const { character } = calc.slots[i]!;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
             const isUnsupported =
               slot.resourceId !== null && fullySupported !== null && !fullySupported.has(slot.resourceId);
@@ -407,11 +420,7 @@ export function ModernView({
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
                 growthMarks={slotGrowthMarks(i)}
-                collectionBadge={collectionBadge(
-                  build.collection,
-                  treasurePhase,
-                  (character?.treasure ?? null) !== null,
-                )}
+                collectionBadge={slotCollectionBadge(i)}
                 inOtherParty={slot.resourceId !== null && otherPartyIds.has(slot.resourceId)}
                 onPlacePending={pendingId !== null ? () => handlePlacePending(i) : undefined}
                 onOpenBuildModal={() => setEditingSlotIndex(i)}
@@ -482,7 +491,7 @@ export function ModernView({
                 {draggedCharacter ? (
                   // スロットと同じく、名前と限界突破・コア強化も一緒に持ち上げる
                   <div className="modern-slot-char-area">
-                    <CharacterVisual character={draggedCharacter} size="portrait" />
+                    <CharacterVisual character={draggedCharacter} size="portrait" extraBadge={draggedCollection} />
                     <SlotCharName name={draggedCharacter.name.ja} marks={draggedMarks} />
                   </div>
                 ) : (
@@ -497,6 +506,7 @@ export function ModernView({
                 character={draggedCharacter}
                 isUnsupported={false}
                 growthMarks={draggedMarks}
+                collectionBadge={draggedCollection}
                 shape={trayShape}
               />
             </div>

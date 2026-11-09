@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import checkIcon from '../../assets/badges/ui_check.svg';
 import { maskIconStyle } from '../maskIcon.ts';
 import type { CharacterIndexEntry } from '@nikke/core';
+import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { TrayShape } from '../../trayShape.ts';
@@ -19,6 +20,8 @@ type Props = {
   isPending: boolean;
   /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
   growthMarks: GrowthMarks | null;
+  /** 縦長の絵のバッジの列の最後に出すコレクション（trayCollectionBadge。無ければ null） */
+  collectionBadge: Badge | null;
   /** 立ち絵の形（四角・縦長） */
   shape: TrayShape;
   onClick: () => void;
@@ -32,17 +35,19 @@ function TrayVisual({
   character,
   isUnsupported,
   growthMarks,
+  collectionBadge,
   shape,
 }: {
   character: CharacterIndexEntry;
   isUnsupported: boolean;
   growthMarks: GrowthMarks | null;
+  collectionBadge: Badge | null;
   shape: TrayShape;
 }) {
   if (shape === 'tall') {
     return (
       <div className="modern-slot-char-area char-tray-tall-area">
-        <CharacterVisual character={character} isUnsupported={isUnsupported} size="tall" />
+        <CharacterVisual character={character} isUnsupported={isUnsupported} size="tall" extraBadge={collectionBadge} />
         <SlotCharName name={character.name.ja} marks={growthMarks} />
       </div>
     );
@@ -65,19 +70,27 @@ export function TrayItemFace({
   character,
   isUnsupported,
   growthMarks,
+  collectionBadge,
   shape,
   overlay,
 }: {
   character: CharacterIndexEntry;
   isUnsupported: boolean;
   growthMarks: GrowthMarks | null;
+  collectionBadge: Badge | null;
   shape: TrayShape;
   overlay?: ReactNode;
 }) {
   return (
     <>
       <span className="char-tray-item-visual">
-        <TrayVisual character={character} isUnsupported={isUnsupported} growthMarks={growthMarks} shape={shape} />
+        <TrayVisual
+          character={character}
+          isUnsupported={isUnsupported}
+          growthMarks={growthMarks}
+          collectionBadge={collectionBadge}
+          shape={shape}
+        />
         {overlay}
       </span>
       {/* 縦長は名前を絵に重ねるので、下には出さない */}
@@ -93,6 +106,7 @@ export function CharacterTrayItem({
   isUnsupported,
   isPending,
   growthMarks,
+  collectionBadge,
   shape,
   onClick,
 }: Props) {
@@ -121,6 +135,7 @@ export function CharacterTrayItem({
         character={character}
         isUnsupported={isUnsupported}
         growthMarks={growthMarks}
+        collectionBadge={collectionBadge}
         shape={shape}
         overlay={
           isTaken && (

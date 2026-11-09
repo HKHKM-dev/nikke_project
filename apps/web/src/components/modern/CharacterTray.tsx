@@ -1,7 +1,14 @@
 import { useDroppable } from '@dnd-kit/core';
 import type { BuildSnapshot, CharacterIndexEntry } from '@nikke/core';
 import { useMemo, useState } from 'react';
-import { BADGE_KINDS, matchesBadgeFilters, toggleBadgeFilter, type BadgeFilters, type BadgeKind } from './badges.ts';
+import {
+  BADGE_KINDS,
+  matchesBadgeFilters,
+  toggleBadgeFilter,
+  trayCollectionBadge,
+  type BadgeFilters,
+  type BadgeKind,
+} from './badges.ts';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
@@ -164,6 +171,7 @@ export function CharacterTray({
                 isUnsupported={isUnsupported}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
+                collectionBadge={trayCollectionBadge(char, roster, fixedSpec)}
                 shape={shape}
                 onClick={() => onSelectCharacter(char.resourceId)}
               />
