@@ -971,6 +971,10 @@
 | 0996 | `20261109-0996_mg_rapi-redhood_anis-star-nofire_i-doll-ocean.mp4` | ◎アニス：スター（17、RL・電撃・SSR） + ラピ：レッドフード（16、MG・灼熱・SSR） + I-DOLL・オーシャン（305、SMG・水冷・R） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた |
 | 0997 | `20261109-0997_mg_rapi-redhood_anis-star-nofire_ludmilla.mp4` | ◎アニス：スター（17、RL・電撃・SSR） + ラピ：レッドフード（16、MG・灼熱・SSR） + ルドミラ（190、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた |
 | 0998 | `20261109-0998_mg_rapi-redhood_anis-star-nofire_ludmilla.mp4` | ◎アニス：スター（17、RL・電撃・SSR） + ラピ：レッドフード（16、MG・灼熱・SSR） + ルドミラ（190、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | OFF / OFF | V-0699 の 4 回目の撮影。アニス：スター（操作）は撃たない（オート射撃 OFF）。バーストの欄は画面の左。最初の満タンの後に止めた |
+| 0999 | `20261110-0999_smg_quency-eq.mp4` | ◎クエンシー：エスケープクイーン（403、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1000 | `20261110-1000_smg_quency-eq.mp4` | ◎クエンシー：エスケープクイーン（403、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1001 | `20261110-1001_smg_liter_delta_quency-eq.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎クエンシー：エスケープクイーン（403、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1002 | `20261110-1002_smg_liter_delta_quency-eq.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎クエンシー：エスケープクイーン（403、SMG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1003 | `20261110-1003_sg_sugar_fire.mp4` | ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0704 の撮影 A。シュガー単騎（操作）・灼熱の敵・オートバースト OFF |
 | 1004 | `20261110-1004_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の敵・オートバースト ON |
 | 1005 | `20261110-1005_sr+sg+sg_cocoa+soldier-fa+sugar_fire.mp4` | ココア（311、SR・灼熱・SSR） + ソルジャーF.A.（301、SG・鉄甲・R） + ◎シュガー（140、SG・鉄甲・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0704 の撮影 B。ココア（I）+ ソルジャーF.A.（II）+ シュガー（III・宝物あり・操作）・灼熱の敵・オートバースト ON |

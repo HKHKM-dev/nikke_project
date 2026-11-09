@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 85・効果 577（根拠あり 556）・notes 208（根拠あり 91）
+件数: キャラ 86・効果 586（根拠あり 565）・notes 208（根拠あり 91）
 
 notes の種類: 未対応 34・前提の外 50・計算に無関係 43・補足 22・間接 59
 
-スロット: supported 213・partial 21・unsupported 9・noEffect 36
+スロット: supported 216・partial 21・unsupported 9・noEffect 36
 
 ## 10 ラピ
 
@@ -968,6 +968,21 @@ notes の種類: 未対応 34・前提の外 50・計算に無関係 43・補足
 - **burst**: supported
   - effects[0] timed・burstUse・critDamage: C-0879（確定）
   - notes[0] 間接（HP）: 最終攻撃力が最も高い味方 2 機への最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 403 クエンシー：エスケープクイーン
+
+- **skill1**: supported
+  - effects[0] passive・exploreRouteStage1 のフルスタックの間・distributedDamage: C-1010（確定）
+  - effects[1] passive・exploreRouteStage2 のフルスタックの間・coreDamage: C-1010（確定）
+  - effects[2] passive・exploreRouteStage3 のフルスタックの間・critRate: C-1010（確定）
+- **skill2**: supported
+  - effects[0] state・normalShot・exploreRouteStage1（hitRate・attack）: C-1009（確定）、C-1014（仮説）
+  - effects[1] state・normalShot・exploreRouteStage2（hitRate・attack）: C-1009（確定）
+  - effects[2] state・normalShot・exploreRouteStage3（hitRate・attack）: C-1009（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackDamage: C-1011（確定）
+  - effects[1] timed・burstUse・reloadSpeed: C-1015（確定）
+  - effects[2] burstDamage・distributed: C-1011（確定）
 
 ## 450 ナガ
 
