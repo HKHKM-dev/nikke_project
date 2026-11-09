@@ -469,7 +469,7 @@
   ],
   "predicted": {
     "at": "2026-11-09",
-    "commit": "6f6984a42f4e1dd30d882abb869a1de20f26aace",
+    "commit": "22661f68d14abe0cb09b48ef3929ce3745494884",
     "values": {
       "H-model": {
         "A-sugar-pellet": 36616.97090620799,
