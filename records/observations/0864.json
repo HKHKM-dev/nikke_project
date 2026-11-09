@@ -377,5 +377,77 @@
       "slot": 1,
       "source": "firing"
     }
+  },
+  {
+    "id": "0864-17",
+    "recording": "0864",
+    "source": "V-0701",
+    "readAt": "2026-11-09",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 98,
+    "description": "A2単騎の、5 回目の敵のジャンプ（窓の始まりの約 4f 前にチャージが満ち、満ちてから撃つまで（24f）の間に窓に入った回）の、フルチャージの発を撃ったフレームから明け（ハイド中のリロードのバーが消えたフレーム）まで。発はふだんの刻みの時刻（窓の始まりの約 20f 後）に出る",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "撃ったフレーム f11257（照準の残弾が 003 → 002。切り出して目で読んだ）。前の発 f11137（004 → 003）から 120f（マガジンの中のふだんの刻み）。バーの 0 の点 f11283.10（撃ってから 26.10f。姿勢の終わり。C-0842）→ 消えた f11355（明け。取り消し）。5 回目の窓の明けは `0864-14` の 5 回目の終わり（4 回目の始まりから敵のジャンプの間隔で置いた窓）と同じフレーム（動画 f11355。戦闘開始 f779）。モデルは録画の窓で回し、窓の前（窓の中の発を含む）の最後の発から明けまで（lastShotToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "lastShotToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0864-14"
+      }
+    }
+  },
+  {
+    "id": "0864-18",
+    "recording": "0864",
+    "source": "V-0701",
+    "readAt": "2026-11-09",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 71.9,
+    "description": "同じ 5 回目の敵のジャンプの、A2 のハイド中のリロードの RELOADING のバーの長さ 0 に遡った点から、消えたフレーム（明け。取り消し）まで（`0864-17` の発の姿勢の終わりから始まる）",
+    "method": {
+      "tool": "node tools/captures/reload.ts --mode fit・node tools/captures/reticle-ammo.ts --mode series",
+      "note": "撃ったフレーム f11257（照準の残弾が 003 → 002。切り出して目で読んだ）。前の発 f11137（004 → 003）から 120f（マガジンの中のふだんの刻み）。バーの 0 の点 f11283.10（撃ってから 26.10f。姿勢の終わり。C-0842）→ 消えた f11355（明け。取り消し）。モデルは録画の窓で回し、窓の中のハイド中のリロードの始まりから窓の終わりまで（hideReloadToWindowEnd）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hideReloadToWindowEnd",
+      "args": {
+        "slot": 1,
+        "window": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "jumpWindows": "0864-14"
+      }
+    }
   }
 ]
