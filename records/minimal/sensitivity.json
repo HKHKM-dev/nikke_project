@@ -27159,6 +27159,136 @@
       "plus": -7947.545000000013
     },
     {
+      "observation": "1025-01",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "0193df44ea54ff35",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1025-02",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "02437d4f034ac230",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1025-03",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "3d8fbd7dd4e24ef8",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1025-04",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "1037e2820288fe6f",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 発動が無い"
+    },
+    {
+      "observation": "1026-01",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "fde35759f8f1b8f4",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1026-02",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "8563553654f403a9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1026-03",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "f45abf9f04bbd2f6",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 発動が無い"
+    },
+    {
+      "observation": "1027-01",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "266ea10c61239253",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1027-02",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "21d0b103ffb7bc76",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 1 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1027-03",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "68737cd6773756f9",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 発動が無い"
+    },
+    {
+      "observation": "1028-06",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "96725a9153ee39cc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1028-08",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "5489ae06fd2238d7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1028-09",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "c5f083d7b5855ae6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1029-06",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "8b7ec0472f46fa88",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1029-08",
+      "element": "ブリッド：サイレントトラック skill2.effects[1]",
+      "key": "39a7f0fa27f45f23",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
       "observation": "1032-08",
       "element": "ココア skill1.effects[1]",
       "key": "7fec6cfe9370cbff",

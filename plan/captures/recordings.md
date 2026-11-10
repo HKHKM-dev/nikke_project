@@ -993,6 +993,11 @@
 | 1018 | `20261110-1018_ar_ade_wind.mp4` | ◎エード（310、AR・風圧・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1019 | `20261110-1019_rl+ar_i-doll-flower+ade_wind.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎エード（310、AR・風圧・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 1020 | `20261110-1020_rl+ar_i-doll-flower+ade_wind.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎エード（310、AR・風圧・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1025 | `20261110-1025_brid-st-wind.mp4` | ◎ブリッド：サイレントトラック（73、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON | 撮影の依頼はオートバースト OFF だったが、画（左上の AUTO）では ON。単騎の II なのでチェーンは III で切れる。バーストは自分を除く味方にだけ付く |
+| 1026 | `20261110-1026_brid-st-wind.mp4` | ◎ブリッド：サイレントトラック（73、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON | 撮影の依頼はオートバースト OFF だったが、画（左上の AUTO）では ON。単騎の II なのでチェーンは III で切れる。バーストは自分を除く味方にだけ付く |
+| 1027 | `20261110-1027_brid-st-fire.mp4` | ◎ブリッド：サイレントトラック（73、SG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 撮影の依頼はオートバースト OFF だったが、画（左上の AUTO）では ON。単騎の II なのでチェーンは III で切れる。バーストは自分を除く味方にだけ付く |
+| 1028 | `20261110-1028_liter-sun-brid-st.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ブリッド：サイレントトラック（73、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1029 | `20261110-1029_liter-sun-brid-st.mp4` | リター（82、SMG・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ブリッド：サイレントトラック（73、SG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 1030 | `20261110-1030_sg_anis-sparkling-summer_fire.mp4` | ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF |
 | 1031 | `20261110-1031_sg_anis-sparkling-summer_fire.mp4` | ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF |
 | 1032 | `20261110-1032_sg_anis-sparkling-summer_water.mp4` | ココア（311、SR・灼熱・SSR） + シン（401、AR・電撃・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0712 の撮影 B。ココア（I）+ シン（II）+ アニス：スパークリングサマー（III・操作）・水冷の敵・オートバースト ON |

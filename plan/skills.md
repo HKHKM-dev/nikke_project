@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 90・効果 605（根拠あり 584）・notes 222（根拠あり 97）
+件数: キャラ 91・効果 610（根拠あり 589）・notes 222（根拠あり 97）
 
 notes の種類: 未対応 36・前提の外 54・計算に無関係 47・補足 23・間接 62
 
-スロット: supported 223・partial 23・unsupported 9・noEffect 39
+スロット: supported 226・partial 23・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -188,6 +188,17 @@ notes の種類: 未対応 36・前提の外 54・計算に無関係 47・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0676（確定）、C-0677（確定）
   - effects[1] timed・burstUse・chargeSpeed: C-0678（確定）
+
+## 73 ブリッド：サイレントトラック
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・damageTaken: C-1041（確定）
+  - effects[1] damage・fullBurstStart・skill: C-1041（確定）
+- **skill2**: supported
+  - effects[0] timed・normalShot・damageTaken: C-1039（確定）
+  - effects[1] damage・normalShot・skill: C-1039（確定）、C-1040（仮説）
+- **burst**: supported
+  - effects[0] timed・burstUse・attack: C-1042（確定）
 
 ## 75 ディーゼル：ウィンタースイーツ
 
