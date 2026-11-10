@@ -1,0 +1,46 @@
+{
+  "id": "1067",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1067_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_water.mp4",
+  "original": "2026-11-11_01-40-41.mp4",
+  "durationSec": 203.6,
+  "frames": 12217,
+  "fps": 60,
+  "sizeMB": 246.7,
+  "sha256": "c8acd6ff19d1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 234,
+      "name": "ドロシー：セレンディピティ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "編成と枠順は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-11T01:52+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
