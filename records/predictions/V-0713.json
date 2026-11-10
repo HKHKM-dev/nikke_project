@@ -137,7 +137,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -169,7 +169,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -201,7 +201,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -233,7 +233,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -265,7 +265,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -297,7 +297,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -329,7 +329,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -361,7 +361,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -393,7 +393,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -421,7 +421,7 @@
         "n": 4
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -453,7 +453,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -485,7 +485,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -517,7 +517,7 @@
         "distance": false
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -545,7 +545,7 @@
         "n": 3
       },
       "setup": {
-        "enemy": "range-bigarms-fire",
+        "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       },
       "tolerance": {
@@ -556,22 +556,22 @@
   ],
   "predicted": {
     "at": "2026-11-10",
-    "commit": "0bc8aef881cdeb234b632e00321a2da3a98ad15d",
+    "commit": "9e1cff047fcae7c956d94f7f46c2030ad6bbc7c9",
     "values": {
       "H1": {
         "A-liter-base": 8714.7225,
         "A-liter-judgment": 14379.292125,
         "A-liter-death": 15978.700584000004,
         "A-liter-after": 9837.188797499999,
-        "A-arcana-base": 159819.825,
-        "A-arcana-wheel": 481714.3874400001,
-        "A-isabel-base": 25409.1558,
-        "A-isabel-death": 245066.30883350005,
-        "A-isabel-after": 185033.18443750002,
+        "A-arcana-base": 175801.8075,
+        "A-arcana-wheel": 529885.8261840001,
+        "A-isabel-base": 27950.07138,
+        "A-isabel-death": 269572.93971685006,
+        "A-isabel-after": 203536.50288125002,
         "A-fb-intervals": [2355, 2356, 1543, 1543],
         "B-liter-after": 9837.188797499999,
-        "B-neon-base": 184810.305,
-        "B-neon-after": 206901.675625,
+        "B-neon-base": 203291.3355,
+        "B-neon-after": 227591.8431875,
         "B-fb-intervals": [2720, 2471, 2265]
       },
       "H-cond0": {
@@ -579,15 +579,15 @@
         "A-liter-judgment": 14379.292125,
         "A-liter-death": 10820.907677250001,
         "A-liter-after": 9837.188797499999,
-        "A-arcana-base": 159819.825,
-        "A-arcana-wheel": 481714.3874400001,
-        "A-isabel-base": 25409.1558,
-        "A-isabel-death": 34201.8933025,
-        "A-isabel-after": 28446.448975,
+        "A-arcana-base": 175801.8075,
+        "A-arcana-wheel": 529885.8261840001,
+        "A-isabel-base": 27950.07138,
+        "A-isabel-death": 37622.08263275001,
+        "A-isabel-after": 31291.0938725,
         "A-fb-intervals": [2379, 2372, 2340, 2466],
         "B-liter-after": 9837.188797499999,
-        "B-neon-base": 184810.305,
-        "B-neon-after": 206901.675625,
+        "B-neon-base": 203291.3355,
+        "B-neon-after": 227591.8431875,
         "B-fb-intervals": [2720, 2471, 2265]
       },
       "H-keep": {
@@ -595,15 +595,15 @@
         "A-liter-judgment": 14379.292125,
         "A-liter-death": 15978.700584000004,
         "A-liter-after": 9837.188797499999,
-        "A-arcana-base": 159819.825,
-        "A-arcana-wheel": 481714.3874400001,
-        "A-isabel-base": 25409.1558,
-        "A-isabel-death": 245066.30883350005,
-        "A-isabel-after": 185033.18443750002,
+        "A-arcana-base": 175801.8075,
+        "A-arcana-wheel": 529885.8261840001,
+        "A-isabel-base": 27950.07138,
+        "A-isabel-death": 269572.93971685006,
+        "A-isabel-after": 203536.50288125002,
         "A-fb-intervals": [2355, 2356, 1543, 1543],
         "B-liter-after": 14526.091440000002,
-        "B-neon-base": 184810.305,
-        "B-neon-after": 1565949.494375,
+        "B-neon-base": 203291.3355,
+        "B-neon-after": 1722544.4438125,
         "B-fb-intervals": [1887, 2275, 1543]
       }
     }
