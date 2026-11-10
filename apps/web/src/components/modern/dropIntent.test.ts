@@ -1,19 +1,19 @@
 // モダン UI のドラッグを離したときの判定（dropIntent.ts）。持ち上げたもの × 離した所の組ごとに、何をするかを確かめる
 import type { CharacterIndexEntry } from '@nikke/core';
 import { describe, expect, it } from 'vitest';
-import { dropIntentOf } from './dropIntent.ts';
+import { dropIntentOf, type ActiveDragData, type OverDragData } from './dropIntent.ts';
 
 const nikke = { resourceId: 10 } as CharacterIndexEntry;
-const slot = (slotIndex: number) => ({ slotIndex });
-const TRAY = { type: 'tray' };
-const controller = { type: 'controller', slotIndex: 2 };
-const slotNikke = (slotIndex: number) => ({ type: 'slot-character', slotIndex, character: nikke });
-const emptySlot = (slotIndex: number) => ({ type: 'slot-character', slotIndex, character: undefined });
-const trayNikke = { type: 'tray-character', character: nikke };
+const slot = (slotIndex: number): OverDragData => ({ type: 'slot', slotIndex });
+const TRAY: OverDragData = { type: 'tray' };
+const controller: ActiveDragData = { type: 'controller', slotIndex: 2 };
+const slotNikke = (slotIndex: number): ActiveDragData => ({ type: 'slot-character', slotIndex, character: nikke });
+const emptySlot = (slotIndex: number): ActiveDragData => ({ type: 'slot-character', slotIndex, character: undefined });
+const trayNikke: ActiveDragData = { type: 'tray-character', character: nikke };
 
 describe('dropIntentOf', () => {
   it('離した所が無ければ何もしない', () => {
-    expect(dropIntentOf(controller, null)).toEqual({ kind: 'none' });
+    expect(dropIntentOf(controller, undefined)).toEqual({ kind: 'none' });
     expect(dropIntentOf(trayNikke, undefined)).toEqual({ kind: 'none' });
     expect(dropIntentOf(undefined, slot(0))).toEqual({ kind: 'none' });
   });

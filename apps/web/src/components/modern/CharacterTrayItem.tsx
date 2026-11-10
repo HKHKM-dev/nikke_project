@@ -8,6 +8,7 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { TrayShape } from '../../trayShape.ts';
 import { SlotCharName } from './ModernSlotCard.tsx';
+import type { ActiveDragData } from './dropIntent.ts';
 import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 
 type Props = {
@@ -116,7 +117,7 @@ export function CharacterTrayItem({
     data: {
       type: 'tray-character',
       character,
-    },
+    } satisfies ActiveDragData,
     disabled: isTaken,
   });
   // いまの編成にいるニケは、実機の部隊編成と同じく水色の枠と ✓ を重ねて示す（文字の札は出さない）

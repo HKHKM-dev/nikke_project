@@ -8,6 +8,7 @@ import { maskIconStyle } from '../maskIcon.ts';
 import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
+import type { ActiveDragData, OverDragData } from './dropIntent.ts';
 import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 
 /** 操作キャラの印（コントローラーの絵）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
@@ -29,7 +30,7 @@ export function ControllerIcon() {
 function DraggableControllerIcon({ slotIndex }: { slotIndex: number }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: 'controller',
-    data: { type: 'controller', slotIndex },
+    data: { type: 'controller', slotIndex } satisfies ActiveDragData,
   });
   return (
     <span
@@ -92,7 +93,7 @@ export function ModernSlotCard({
   // ドロップ受け入れ（トレイからの配置、または他スロットからのスワップ）
   const { isOver, setNodeRef: setDropRef } = useDroppable({
     id: `slot-drop-${slotIndex}`,
-    data: { slotIndex },
+    data: { type: 'slot', slotIndex } satisfies OverDragData,
   });
 
   // スロット間の入れ替えのドラッグ（空のスロットも持ち上げて入れ替えられる）
@@ -107,7 +108,7 @@ export function ModernSlotCard({
       type: 'slot-character',
       slotIndex,
       character: characterEntry,
-    },
+    } satisfies ActiveDragData,
   });
 
   const setCardRef = (node: HTMLDivElement | null) => {
