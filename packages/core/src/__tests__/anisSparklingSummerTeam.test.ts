@@ -1,7 +1,7 @@
 // アニス：スパークリングサマー（15）を含む編成（V-0712）。撮影と同じ、ココア（I・灼熱）+ シン（II・電撃）+ アニス（III）の水冷の敵で:
 // S1: フルバーストの開始から、電撃の味方（自分とシン）に発動者基準の攻撃力▲・リロード速度▲（10 秒）。
-// S2: 最後の弾丸で攻撃した時の倍率ダメージ。バースト: 自分に最大装弾数▼（5 → 1）・リロード速度▲・有利コードの攻撃ダメージ▲（10 秒）。
-// 最大装弾数 1 の窓の中は毎発が最後の弾丸なので、S2 が毎発出る。射撃の列のグループ分け。
+// S2: 最後の弾丸で攻撃した時の倍率ダメージ（最終弾の 74f 後）。バースト: 自分に最大装弾数▼（5 → 1）・リロード速度▲・有利コードの攻撃ダメージ▲（10 秒）。
+// 最大装弾数 1 の窓の中は毎発が最後の弾丸なので、S2 が毎発出る。モデルはココアの S1 のデバフ解除で最大装弾数▼を外さない（C-1038。未反映）。射撃の列のグループ分け。
 import { describe, expect, it } from 'vitest';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
@@ -60,9 +60,10 @@ describe('ココア + シン + アニス：スパークリングサマー（水�
     }
   });
 
-  it('fires the S2 damage on every last bullet: every 5th shot outside the burst, every shot inside (max ammo 1)', () => {
+  it('fires the S2 damage 74f after every last bullet: every 5th shot outside the burst, every shot inside (max ammo 1)', () => {
     const hits = plan.skillHits.filter((h) => h.slotIndex === ANIS_SLOT && h.effect.source.skill === 'skill2');
-    expect(hits.map((h) => h.frame)).toEqual(lastShots);
+    // ミサイルの着弾（C-1032）。戦闘の終わりを越えるヒットは出ない
+    expect(hits.map((h) => h.frame)).toEqual(lastShots.map((f) => f + 74).filter((f) => f < plan.frames));
     const inside = shots.filter(inBurst);
     expect(inside.length).toBeGreaterThan(10);
     expect(inside.every((f) => lastShots.includes(f))).toBe(true);
