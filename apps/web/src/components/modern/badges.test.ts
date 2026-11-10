@@ -32,11 +32,21 @@ describe('バッジの対応表', () => {
   });
 
   // 名前を変えたり打ち間違えたりすると、そのバッジは差し色の既定の灰のままになる
+  const css = readFileSync(fileURLToPath(new URL('../../styles.css', import.meta.url)), 'utf8');
   it('styles.css の値ごとの色（.badge-<名前>）は、スプライトにあるバッジを指す', () => {
-    const css = readFileSync(fileURLToPath(new URL('../../styles.css', import.meta.url)), 'utf8');
-    const named = [...css.matchAll(/\.badge-([\w-]+)/g)].map(([, name]) => name);
+    const named = [...css.matchAll(/\.badge-(?!tone-)([\w-]+)/g)].map(([, name]) => name);
     expect(named).toContain('element_Fire');
     expect(named.filter((name) => !BADGE_SYMBOLS.includes(`id="badge-${name}"`))).toEqual([]);
+  });
+
+  it('styles.css の tone の色（.badge-tone-<値>）は、コレクションのバッジの出す tone と同じ', () => {
+    const tones = [...css.matchAll(/\.badge-tone-([\w-]+)/g)].map(([, tone]) => tone);
+    const used = [
+      collectionBadge({ rarity: 'R', level: 1 }, 0, false),
+      collectionBadge({ rarity: 'SR', level: 1 }, 0, false),
+      collectionBadge(null, 1, true),
+    ].map((b) => b?.tone);
+    expect(tones.sort()).toEqual(used.sort());
   });
 
   // スプライトのバッジは文字列で束に入るが、URL で読むもの（マスクの形に使う ui_check など）は、これ未満なら束に埋め込まれる
@@ -152,6 +162,12 @@ describe('絵のバッジ', () => {
       file(collectionBadge({ rarity: 'R', level: 14 }, 0, false)),
     );
     expect(file(collectionBadge(null, 3, true))).not.toBe(file(collectionBadge(null, 1, true)));
+    // 絵はレア度によらず同じで、色は tone（宝物は SSR）
+    expect(file(collectionBadge({ rarity: 'SR', level: 14 }, 0, false))).toBe(
+      file(collectionBadge({ rarity: 'R', level: 14 }, 0, false)),
+    );
+    expect(collectionBadge({ rarity: 'SR', level: 14 }, 0, false)?.tone).toBe('SR');
+    expect(collectionBadge(null, 1, true)?.tone).toBe('SSR');
   });
 
   it('ニケ一覧は、育成状況にいるニケだけ、そのコレクション・宝物で出す（スペック固定では出さない）', () => {

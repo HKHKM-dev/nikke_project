@@ -65,10 +65,19 @@ function badgeName(name: string): string {
  */
 export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('core_plain') } as const;
 
+/** コレクションのバッジ（通常の版と、LV が上限・宝物が最後の段階の版） */
+const COLLECTION_BADGES = {
+  plain: badgeName('collection_rarity'),
+  max: badgeName('collection_rarity-max'),
+} as const;
+
 /** バッジを出すキャラの項目 */
 export type BadgeKey = 'element' | 'burstStep' | 'class' | 'weaponType' | 'corporation';
-/** name はバッジの拡張子なしの名前 */
-export type Badge = { name: string; label: string };
+/**
+ * name はバッジの拡張子なしの名前。tone は同じ絵に値ごとの差し色を付けるときの値（BadgeIcon が badge-tone-<tone> のクラスを付け、
+ * styles.css が色を決める。コレクションのレア度）
+ */
+export type Badge = { name: string; label: string; tone?: string };
 export type BadgeKind = {
   key: BadgeKey;
   /** 絞り込みの名前 */
@@ -132,20 +141,24 @@ export const ELEMENT_BADGE_KIND: BadgeKind = kindOf('element');
 
 /**
  * スロットの絵の左上（バースト段階の下）に出すコレクションのバッジ。宝物を付けていれば SSR（最後の段階は上限の黒の版）、
- * R・SR のコレクションなら その色（LV が上限なら黒の版）、どちらも無ければ出さない
+ * R・SR のコレクションなら その色（LV が上限なら黒の版）、どちらも無ければ出さない。絵はレア度によらず同じで、レア度の色は tone
  */
 export function collectionBadge(
   collection: CollectionInput,
   treasurePhase: TreasurePhase,
   hasTreasure: boolean,
 ): Badge | null {
-  const pick = (value: string, label: string): Badge => ({ name: badgeName(`collection_${value}`), label });
+  const pick = (tone: string, max: boolean, label: string): Badge => ({
+    name: max ? COLLECTION_BADGES.max : COLLECTION_BADGES.plain,
+    label,
+    tone,
+  });
   if (hasTreasure && treasurePhase > 0) {
-    return pick(treasurePhase === TREASURE_PHASE_MAX ? 'SSR-max' : 'SSR', `宝物 段階 ${treasurePhase}`);
+    return pick('SSR', treasurePhase === TREASURE_PHASE_MAX, `宝物 段階 ${treasurePhase}`);
   }
   if (collection === null) return null;
   const max = collection.level === COLLECTION_LEVEL_MAX;
-  return pick(`${collection.rarity}${max ? '-max' : ''}`, `コレクション ${collection.rarity} LV ${collection.level}`);
+  return pick(collection.rarity, max, `コレクション ${collection.rarity} LV ${collection.level}`);
 }
 
 /**

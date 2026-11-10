@@ -26,7 +26,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 const failedImages = new Set<string>();
 
 function CharBadge({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
-  return <BadgeIcon className={className} name={badge.name} label={badge.label} />;
+  return <BadgeIcon className={className} name={badge.name} label={badge.label} tone={badge.tone} />;
 }
 
 export function CharacterVisual({

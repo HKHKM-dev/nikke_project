@@ -912,16 +912,13 @@ header h1 {
 .badge-burstStep_AllStep {
   --badge-accent: #8b00cc;
 }
-.badge-collection_R,
-.badge-collection_R-max {
+.badge-tone-R {
   --badge-accent: #19a2e6;
 }
-.badge-collection_SR,
-.badge-collection_SR-max {
+.badge-tone-SR {
   --badge-accent: #bf40bf;
 }
-.badge-collection_SSR,
-.badge-collection_SSR-max {
+.badge-tone-SSR {
   --badge-accent: #ff8000;
 }
 .badge-core_plain {
