@@ -56,18 +56,20 @@
                 "percentRef": 2
               },
               "claims": [
-                "C-1055"
+                "C-1055",
+                "C-1086"
               ]
             }
           ],
           "assumes": {
-            "ja": "魔術師のカード。条件と対象は effects[0] と同じ。付いている間、持ち主の S2 のクールタイムの周期（印 cooldown）を 25% にし、付いたフレームから縮めた周期で次の発動が来る。付いた時に残りの CT が縮めた周期より短い時は、短い方（もとの予定）を取るとみた（確かめていない）",
-            "en": "The Magician. Same condition and targets as effects[0]. While active, the holder's S2 cooldown period (marked cooldown) becomes 25%, and the next activation comes one shortened period after it is applied. When the remaining cooldown is already shorter than the shortened period, the earlier (original) timing is kept (unverified)"
+            "ja": "魔術師のカード。条件と対象は effects[0] と同じ。付いている間、持ち主の S2 のクールタイムの周期（印 cooldown）を 25% にし、付いたフレームから縮めた周期で次の発動が来る。付いた時に残りの CT が縮めた周期より短い時は、短い方（もとの予定）を取る（C-1086）",
+            "en": "The Magician. Same condition and targets as effects[0]. While active, the holder's S2 cooldown period (marked cooldown) becomes 25%, and the next activation comes one shortened period after it is applied. When the remaining cooldown is already shorter than the shortened period, the earlier (original) timing is kept (C-1086)"
           },
           "claims": [
             "C-1053",
             "C-1054",
-            "C-1055"
+            "C-1055",
+            "C-1086"
           ]
         }
       ],
