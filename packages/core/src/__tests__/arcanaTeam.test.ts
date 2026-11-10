@@ -106,6 +106,25 @@ describe('魔術師のカード（plan/design-arcana-magician.md。C-1055）', (
       Array.from({ length: Math.floor(ends[0]! / LONG) }, (_, k) => (k + 1) * LONG),
     );
   });
+
+  it('keeps the earlier original S2 when the card is applied shortly before it (C-1086)', () => {
+    // 手で撃つ 1 回のチェーン（V-0721 の撮影の形）。まず置いてみて、フルバーストの終わりが付く前の予定の S2（戦闘開始から 15 秒ごと）の
+    // 100f 前に来るように撃ち直す
+    const team = TEAMS['リター + アルカナ + イサベル（撮影 A）'];
+    const firstEnd = (p: Plan) => fullBurstEnds(p)[0]!;
+    const probe = planTeamRun({ ...team, manualBursts: [3000] });
+    const target = Math.ceil((firstEnd(probe) + 200) / LONG) * LONG;
+    const at = 3000 + target - 100 - firstEnd(probe);
+    const run = planTeamRun({ ...team, manualBursts: [at] });
+    const end = firstEnd(run);
+    const all = s2Fires(run, 2);
+    const after = all.filter((f) => f > end);
+    const before = all.filter((f) => f <= end).at(-1)!;
+    // 付く前の予定（前の S2 から 15 秒）のまま来る。置き直す形なら end + SHORT
+    expect(after[0]).toBe(before + LONG);
+    expect(after[0]).toBeLessThan(end + SHORT);
+    expect(after.slice(1, 4)).toEqual([1, 2, 3].map((k) => after[0]! + k * SHORT));
+  });
 });
 
 describe('リター + アルカナ + ネオン：ビジョン・アイ（フルバーストタイム 10 秒）', () => {

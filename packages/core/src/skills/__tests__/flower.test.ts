@@ -54,7 +54,7 @@ describe('I-DOLL・フラワー（304）', () => {
   it('models only the S2 gauge on S1 and S2', () => {
     expect(def.skills.skill1).toMatchObject({ support: 'noEffect', effects: [] });
     expect(def.skills.skill2).toMatchObject({ support: 'supported', effects: [GAUGE] });
-    expect(resolveTimerGauges(def)).toEqual([{ everySeconds: 15, delayFrames: 0, skill: 'skill2' }]);
+    expect(resolveTimerGauges(def)).toEqual([{ everySeconds: 15, delayFrames: 0 }]);
   });
 
   it('resolves the burst to one skill-damage hit of the final ATK', () => {
@@ -94,7 +94,7 @@ describe('burstGaugeHit の検証', () => {
   it('takes a positive integer delayFrames with a timer or shot count trigger', () => {
     const delayed = parseSkillDefinition(entry({ ...GAUGE, delayFrames: 101 }));
     expect(delayed.skills.skill2.effects[0]).toMatchObject({ kind: 'burstGaugeHit', delayFrames: 101 });
-    expect(resolveTimerGauges(delayed)).toEqual([{ everySeconds: 15, delayFrames: 101, skill: 'skill2' }]);
+    expect(resolveTimerGauges(delayed)).toEqual([{ everySeconds: 15, delayFrames: 101 }]);
     const shot = parseSkillDefinition(entry({ ...GAUGE, trigger: { count: 'normalShot', every: 10 }, delayFrames: 6 }));
     expect(shot.skills.skill2.effects[0]).toMatchObject({ kind: 'burstGaugeHit', delayFrames: 6 });
     expect(resolveTimerGauges(shot)).toEqual([]);

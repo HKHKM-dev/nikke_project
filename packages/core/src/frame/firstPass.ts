@@ -1007,8 +1007,9 @@ function runFirstPassOnce(
       dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy });
     }
   };
-  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 編成のどの定義かの状態の中身の「スキル N クールタイム X%▼」と、その N の
-  // スロットにクールタイムの印のある周期を持つ枠ごとに、発火をフレームの順に追う（cooldownTimer。そのフレームまでに登録した状態の件で決める）
+  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムの印のある周期は、枠 × スロットごとに発火をフレームの順に追う
+  // （cooldownTimer）。縮めるのは、編成のどれかの定義の状態の中身の「スキル N クールタイム X%▼」で、そのフレームまでに登録した状態の件で決める。
+  // 縮める状態が無ければ静的な周期と同じ列になる。2 パス目とゲージはこの記録だけを読む
   const cooldownDowns = slots.flatMap((slot) =>
     slot === null || slot.definition === null
       ? []
@@ -1017,8 +1018,9 @@ function runFirstPassOnce(
   const cooldownTrackers: {
     slotIndex: number;
     skill: SkillSlot;
-    state: NamedStateId;
-    tick: (f: number, started: boolean, held: () => boolean) => boolean;
+    /** そのスロットを縮める状態と、その縮めた周期（フレーム） */
+    downs: { state: NamedStateId; short: number }[];
+    tick: (f: number, started: number | undefined, held: () => number | undefined) => boolean;
     /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
     gaugeDelays: number[];
     fires: number[];
@@ -1026,26 +1028,20 @@ function runFirstPassOnce(
   slots.forEach((slot, slotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const skill of SKILL_SLOTS) {
-      const timer = slot.definition.skills[skill].effects
-        .map((e) => ('trigger' in e && isTimerTrigger(e.trigger) ? e.trigger : undefined))
-        .find((t) => t?.cooldown === true);
-      const downs = cooldownDowns.filter((d) => d.slot === skill);
-      if (timer === undefined || downs.length === 0) continue;
-      // 同じスロットを縮める状態が 2 つ以上ある時の重ね方は確かめていない（使い手がいない。設計書 2.1 節）
-      if (new Set(downs.map((d) => d.state)).size > 1)
-        throw new RangeError(`two or more states shorten the cooldown of ${skill} (not implemented)`);
-      const down = downs[0]!;
+      const marked = slot.definition.skills[skill].effects.filter(
+        (e) => 'trigger' in e && isTimerTrigger(e.trigger) && e.trigger.cooldown === true,
+      );
+      const first = marked[0];
+      if (first === undefined || !('trigger' in first) || !isTimerTrigger(first.trigger)) continue;
+      const { everySeconds } = first.trigger;
       cooldownTrackers.push({
         slotIndex,
         skill,
-        state: down.state,
-        tick: cooldownTimer(
-          gameSecondsToFirstFrame(timer.everySeconds),
-          gameSecondsToFirstFrame(timer.everySeconds * (1 - down.percent / 100)),
-        ),
-        gaugeDelays: resolveTimerGauges(slot.definition)
-          .filter((g) => g.cooldown === true && g.skill === skill)
-          .map((g) => g.delayFrames),
+        downs: cooldownDowns
+          .filter((d) => d.slot === skill)
+          .map((d) => ({ state: d.state, short: gameSecondsToFirstFrame(everySeconds * (1 - d.percent / 100)) })),
+        tick: cooldownTimer(gameSecondsToFirstFrame(everySeconds)),
+        gaugeDelays: marked.flatMap((e) => (e.kind === 'burstGaugeHit' ? [e.delayFrames!] : [])),
         fires: [],
       });
     }
@@ -1063,9 +1059,9 @@ function runFirstPassOnce(
   slots.forEach((slot, i) => {
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
-    for (const { delayFrames, skill, ...timer } of resolveTimerGauges(slot.definition)) {
-      // 魔術師のカード編: 縮める状態のある印の周期は、ループの中で発火を追って予約する（countCooldownTimers）
-      if (timer.cooldown === true && cooldownTrackers.some((t) => t.slotIndex === i && t.skill === skill)) continue;
+    for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
+      // 魔術師のカード編: クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
+      if (timer.cooldown === true) continue;
       for (const fire of timerFramesOf(timer, frames)) {
         const at = fire + delayFrames;
         if (at >= frames) continue;
@@ -1300,7 +1296,15 @@ function runFirstPassOnce(
   const countCooldownTimers = (f: number): void => {
     for (const t of cooldownTrackers) {
       const i = t.slotIndex;
-      if (!t.tick(f, lists.stateStartedAt(i, t.state, f), () => lists.stateHeldAt(i, t.state, f))) continue;
+      const started = t.downs.find((d) => lists.stateStartedAt(i, d.state, f))?.short;
+      const held = (): number | undefined => {
+        const on = t.downs.filter((d) => lists.stateHeldAt(i, d.state, f));
+        // 同じスロットを縮める状態が 2 つ同時に効く時の重ね方は確かめていない（使い手がいない。設計書 2.1 節）
+        if (on.length > 1)
+          throw new RangeError(`two or more states shorten the cooldown of ${t.skill} at once (not implemented)`);
+        return on[0]?.short;
+      };
+      if (!t.tick(f, started, held)) continue;
       t.fires.push(f);
       const energy = hitGaugeEnergy(i);
       for (const d of t.gaugeDelays) if (f + d < frames) reserveTimerGauge(i, f, f + d, energy);

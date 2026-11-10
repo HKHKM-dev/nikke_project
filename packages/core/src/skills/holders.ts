@@ -521,7 +521,7 @@ export type HolderLists = {
   /**
    * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 枠 holder の状態 state（出どころは問わない）の件が、フレーム frame に
    * 始まったか（stateStartedAt）・効いているか（stateHeldAt。そのフレームに付いた件も入れる）。1 パス目が、クールタイムを縮める状態の
-   * 付いたフレームと窓を見るのに、frame までに登録した件で毎フレーム呼ぶ（配列を作らない）
+   * 付いたフレームと窓を見るのに、frame までに登録した件で呼ぶ（stateStartedAt は毎フレーム呼ぶので配列を作らない）
    */
   stateStartedAt(holder: number, state: NamedStateId, frame: number): boolean;
   stateHeldAt(holder: number, state: NamedStateId, frame: number): boolean;
@@ -1726,11 +1726,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
   const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
     track.stage === 1 ? activeAt(track, frame) : activeAt(track, frame).filter((it) => it.start < frame);
-  /** 魔術師のカード編: 枠のその状態の件（段 1・1.5。出どころは問わない）のどれかが pick に合うか */
-  const someStateItem = (holder: number, state: NamedStateId, pick: (it: HeldItem) => boolean): boolean => {
-    for (const t of stateTracks[holder]?.get(state) ?? []) for (const it of readItems(t)) if (pick(it)) return true;
-    return false;
-  };
   /** 2 段目の段 10 の PR 3: 枠のその状態の、フレームのスタックの段の最大（selfState と同じ件。無ければ 0） */
   const stackLevelAt = (holder: number, state: NamedStateId, frame: number): number => {
     let level = 0;
@@ -2747,8 +2742,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）。
     // 段は 1 始まりなので、付いていればスタック数は 1 以上
     selfStateAt: (holder, state, frame) => selfStackCountAt(holder, state, frame) > 0,
-    stateStartedAt: (holder, state, frame) => someStateItem(holder, state, (it) => it.start === frame),
-    stateHeldAt: (holder, state, frame) => someStateItem(holder, state, (it) => it.start <= frame && frame < it.end),
+    stateStartedAt: (holder, state, frame) => {
+      for (const t of stateTracks[holder]?.get(state) ?? [])
+        for (const it of readItems(t)) if (it.start === frame) return true;
+      return false;
+    },
+    stateHeldAt: ownStateActive,
     selfStackCountAt,
     enemyStateAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {

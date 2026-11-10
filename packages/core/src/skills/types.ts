@@ -2035,7 +2035,7 @@ export type MaxStacksUpContentItem = { maxStacksUp: { state: NamedStateId; amoun
  * （frame/firstPass.ts）が発火を追って記録する。C-1055（アルカナの S1）
  */
 export type SkillCooldownDownContentItem = {
-  skillCooldownDown: { slot: SkillSlot; percentRef: number };
+  skillCooldownDown: { slot: 'skill1' | 'skill2'; percentRef: number };
 } & ClaimRefs;
 
 /** 2 段目の段 14 の PR 3: 中身の項目が stat の▲▼か（maxStacksUp でない） */

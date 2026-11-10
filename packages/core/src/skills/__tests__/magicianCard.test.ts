@@ -48,6 +48,7 @@ describe('読み込み', () => {
       parseSkillDefinition(def([card({ skillCooldownDown: { slot: 'skill2', percentRef: 2, x: 1 } })])),
     ).toThrow(/unknown field/);
     expect(() => parseSkillDefinition(def([card({ ...down, stat: 'attack' })]))).toThrow(/unknown field/);
+    expect(() => parseSkillDefinition(def([card(down, { maxStacks: 3 })]))).toThrow(/stacking grant/);
   });
 
   it('takes the cooldown mark on damage and burstGaugeHit timers', () => {
@@ -99,11 +100,11 @@ describe('読み込み', () => {
 describe('クールタイムを縮める窓（cooldownTimer）', () => {
   /** 窓 [start, end) の列で、1 から frames − 1 まで回した発火 */
   const run = (long: number, short: number, windows: [number, number][], frames: number) => {
-    const tick = cooldownTimer(long, short);
+    const tick = cooldownTimer(long);
     const out: number[] = [];
     for (let f = 1; f < frames; f++) {
-      const started = windows.some(([s]) => s === f);
-      if (tick(f, started, () => windows.some(([s, e]) => s <= f && f < e))) out.push(f);
+      const started = windows.some(([s]) => s === f) ? short : undefined;
+      if (tick(f, started, () => (windows.some(([s, e]) => s <= f && f < e) ? short : undefined))) out.push(f);
     }
     return out;
   };
