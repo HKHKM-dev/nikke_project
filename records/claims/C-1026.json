@@ -1,0 +1,24 @@
+{
+  "id": "C-1026",
+  "text": "エードの S2 の最大HP のみ▲（15.62%。Lv10）は通常攻撃 120 発ごとに 5 秒、バーストの最大HP のみ▲（25.15%）は使用から 10 秒付き、どちらもエード自身の HP の割合を 90% 以下に下げる（現在の HP は増えない）。S2 は 120 発目の発の後から付く",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1017-03`・`1017-04`・`1018-03`・`1018-04`（単騎。S1 の▲が、通常攻撃 120 発ごとに、120 発目の後から 5 秒だけ乗る。S2 の最大HP のみ▲ が HP の割合を 90% 以下に下げた時と読む）・`1019-06`・`1020-06`（2 人。どちらの窓も切れた後のバーストの使用で S1 の▲が新たに付き、バーストの最大HP のみ▲ も HP の割合を 90% 以下に下げる。バーストの窓（10 秒）の中に来た S2 では付かない）。V-0707",
+  "model": "反映（data/skills/310.json の skill2 の effects[0]・burst の effects[0]。timed・maxHpOnly。HP の割合は skills/holders.ts の selfHpRatioAt）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/310.json の skill2 の effects[0]", "data/skills/310.json の burst の effects[0]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "HP の割合の式は plan/design-skill-stage6.md 2.4 節（論点 8 の決定）、最大HP のみ 15.62%・25.15%・維持 5 秒・10 秒・120 発・閾値 90% は説明文の Lv10 の値",
+  "minimal": [
+    {
+      "observations": ["1017-03", "1017-04", "1018-03", "1018-04", "1019-06", "1020-06"],
+      "element": "エード skill1.notes[1]",
+      "reason": "回復で現在の HP が戻る分の未対応の notes。編成（エード単騎・I-DOLL・フラワー + エード）に HP の回復が無いので起きない",
+      "decided": "2026-11-10"
+    }
+  ]
+}

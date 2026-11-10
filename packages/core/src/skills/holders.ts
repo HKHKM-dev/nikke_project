@@ -1181,8 +1181,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
             ? newTrack(ENEMY, sourceSlotIndex, { kind: 'timed', effect }, stage, opportunities)
             : null,
       };
-      // マスト編: HP の割合の窓の終わりは、発動者 × 閾値の追跡と共有する
-      if (isResolvedSelfHpAtMost(effect.trigger)) {
+      // マスト編: HP の割合の窓の終わりは、発動者 × 閾値の追跡と共有する（秒の維持の件は読まない。エード編）
+      if (isResolvedSelfHpAtMost(effect.trigger) && effect.durationUntil === 'selfHpAbove') {
         const ends = selfHpStateOf(sourceSlotIndex, effect.trigger.selfHpAtMost).ends;
         for (const track of [...src.tracks, src.enemy]) if (track !== null) track.untilEnds = ends;
       }

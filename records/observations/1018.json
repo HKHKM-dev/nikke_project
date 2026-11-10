@@ -1,0 +1,103 @@
+[
+  {
+    "id": "1018-01",
+    "recording": "1018",
+    "kind": "total",
+    "use": "record",
+    "value": 31956048,
+    "description": "HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11380。増分は 1468 個"
+    },
+    "source": "V-0707",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1018-02",
+    "recording": "1018",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14684,
+    "unit": "ダメージ",
+    "description": "エード単騎・風圧の敵の 1 ヒット（胴体・会心なし・距離なし）。S1 の▲の無い発。増分 1468 個のうち 943 個がこの値の格子に乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのエードの 1 ヒット（胴体・距離なし・会心なし。▲なしは f300、S1 の攻撃力▲ありは f800）から作った格子（会心・コア・距離の組。--opt grid=無=1@300;S1=1@800）に ±1.5 で当てた。外れは 15 個"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1018-03",
+    "recording": "1018",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 15447,
+    "unit": "ダメージ",
+    "description": "エード単騎の、S2 の最大HP のみ▲ の間の 1 ヒット（S1 の攻撃力▲あり）。510 個がこの値の格子に乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのエードの 1 ヒット（胴体・距離なし・会心なし。▲なしは f300、S1 の攻撃力▲ありは f800）から作った格子（会心・コア・距離の組。--opt grid=無=1@300;S1=1@800）に ±1.5 で当てた。"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1018-04",
+    "recording": "1018",
+    "kind": "count",
+    "use": "record",
+    "value": 12,
+    "unit": "回",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "description": "エード単騎の、S1 の攻撃力▲の乗った発の固まりの数。どの固まりも、▲の無い発（S2 の 120 発目とみた発）の直後の発から始まり、その発から 293〜294f 目の発まで▲が乗り、▲の無い次の発は 294〜392f 目（リロードを挟む回）。▲は S2 の最大HP のみ▲（5 秒）が切れた後の発には乗らない。固まりの端の共通部分は、1 回（f7382 の回。▲なしの次の発が 294f 目）を除いて (294, 296]。動画のフレームのずれ（1f）とみた",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（固まりの端の数え）",
+      "note": "増分ごとの格子の当て方（buff-edge-grid.tsv）を時刻の順に並べ、▲なし → ▲ありの替わり目の前の▲なしの発を S2 の 120 発目とみて、そこから▲ありの最後の発と▲なしの次の発までのフレームを数えた。どちらの格子にも当たらない増分（外れ）は飛ばした。固まりの間の▲なしの発の数は、外れた発を除いて約 120 発ごとになる"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

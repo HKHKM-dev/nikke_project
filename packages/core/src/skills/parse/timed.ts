@@ -286,9 +286,21 @@ export function parseTimedFields(
     }
   }
   Object.assign(effect, parseTimedDuration(v, stat, target, path));
-  // マスト編（plan/design-mast.md 8 節）: HP の割合の窓は、きっかけと維持を組で書く
-  if (isSelfHpAtMostTrigger(trigger) !== (effect.durationUntil === 'selfHpAbove'))
-    fail(path, 'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" (and only with it)');
+  // マスト編（plan/design-mast.md 8 節）: HP の割合の窓は、きっかけと維持を組で書く。エード編（plan/design-ade.md 2.1 節）: きっかけは
+  // 秒の維持（durationRef・durationSeconds）とも組める（下がったフレームに発火して N 秒。維持の終わりが発火の時に決まるので、攻撃力にも書ける）
+  const hpTrigger = isSelfHpAtMostTrigger(trigger);
+  const untilHpAbove = effect.durationUntil === 'selfHpAbove';
+  const inSeconds = effect.durationRef !== undefined || effect.durationSeconds !== undefined;
+  if (untilHpAbove && !hpTrigger)
+    fail(path, 'durationUntil "selfHpAbove" goes only with the trigger { selfHpAtMostRef }');
+  if (hpTrigger && !untilHpAbove && !inSeconds)
+    fail(path, 'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" or a duration in seconds');
+  // 最大HP▲・最大HP のみ▲ は HP の割合そのものを動かす（自分の発火で割合が動き直す）ので、このきっかけには書かない
+  if (hpTrigger && stat !== undefined && isMaxHpStat(stat))
+    fail(
+      `${path}.stat`,
+      `the trigger { selfHpAtMostRef } cannot carry "${stat}" (it moves the HP ratio the trigger reads)`,
+    );
   // Stage 11 モダニア: 効果のあるスタック
   if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
     fail(path, 'at most one of maxStacks and maxStacksRef');

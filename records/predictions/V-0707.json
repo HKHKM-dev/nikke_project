@@ -1,0 +1,214 @@
+{
+  "verification": "V-0707",
+  "note": "H1 は語彙の実装（plan/design-ade.md 2.1 節）の後に、撮った後で出した。H1b・H2 は override で書けないので検証記録の「予測」に手で書いた",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 310,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（下がった時に 1 回発火して 5 秒）",
+      "override": {}
+    },
+    {
+      "id": "H0",
+      "note": "S1 の攻撃力▲が付かない（最大HP のみ▲ では発火しない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 310,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-ade-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 310,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎）: S2 の窓の前のエードの 1 ヒット（胴体）"
+    },
+    {
+      "id": "A-ade-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 310,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目の S2 の最大HP のみ▲ の間のエードの 1 ヒット（S1 の攻撃力▲）"
+    },
+    {
+      "id": "B-ade-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（2 人）: バーストの前のエードの 1 ヒット"
+    },
+    {
+      "id": "B-ade-burst-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 2 回目のバーストの窓の前半（S2 の窓の外で付いた回）のエードの 1 ヒット（バーストと S1 の攻撃力▲）"
+    },
+    {
+      "id": "B-ade-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 2 回目のバーストの窓の後半のエードの 1 ヒット（バーストの攻撃力▲だけ）"
+    },
+    {
+      "id": "B-flower-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: バーストの前の I-DOLL・フラワーの 1 ヒット"
+    },
+    {
+      "id": "B-flower-burst-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 2 回目のバーストの窓の前半の I-DOLL・フラワーの 1 ヒット（エードのバーストと S1 の攻撃力▲）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "2bc62646d6858ba65f83953515e288408f8fd0fb",
+    "values": {
+      "H1": {
+        "A-ade-base": 14684.257500000002,
+        "A-ade-s1": 15447.1181,
+        "B-ade-base": 14684.257500000002,
+        "B-ade-burst-s1": 16939.0063,
+        "B-ade-burst": 16176.1457,
+        "B-flower-base": 83086.01999999999,
+        "B-flower-burst-s1": 106576.18000000001
+      },
+      "H0": {
+        "A-ade-base": 14684.257500000002,
+        "A-ade-s1": 14684.257500000002,
+        "B-ade-base": 14684.257500000002,
+        "B-ade-burst-s1": 16176.1457,
+        "B-ade-burst": 16176.1457,
+        "B-flower-base": 83086.01999999999,
+        "B-flower-burst-s1": 98628.635
+      }
+    }
+  }
+}
