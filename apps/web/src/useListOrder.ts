@@ -7,6 +7,7 @@ import {
   combatCharacterOf,
   fixedSpecCombatPowers,
   loadCombatPowerTable,
+  overloadTotal,
   snapshotCombatPowers,
   type BuildMasters,
   type BuildSnapshot,
@@ -15,6 +16,7 @@ import {
 import { createContext, useEffect, useMemo, useState } from 'react';
 import {
   LIST_DIRECTION_STORAGE_KEY,
+  OVERLOAD_ORDER_OPTIONS,
   LIST_ORDER_STORAGE_KEY,
   defaultListDirection,
   effectiveListOrder,
@@ -25,9 +27,9 @@ import {
 } from './listOrder.ts';
 import { readStorage, removeStorage, writeStorage } from './storage.ts';
 
-/** 一覧（トレイ・選択肢）と未対応の一覧が読む、いまの並びと戦闘力 */
-export type ListOrderState = { order: ListOrder; direction: ListDirection; powers: ReadonlyMap<number, number> };
-export const ListOrderContext = createContext<ListOrderState>({ order: 'name', direction: 'asc', powers: new Map() });
+/** 一覧（トレイ・選択肢）と未対応の一覧が読む、いまの並びと、値で並べる順の値（戦闘力・OP の合計。名前順・ID 順は空） */
+export type ListOrderState = { order: ListOrder; direction: ListDirection; values: ReadonlyMap<number, number> };
+export const ListOrderContext = createContext<ListOrderState>({ order: 'name', direction: 'asc', values: new Map() });
 
 /** 設定のメニューの「一覧の並び」の欄 */
 export type ListOrderControls = {
@@ -43,6 +45,8 @@ export type ListOrderControls = {
   failedCount: number;
   /** 戦闘力の表を読めなかった理由 */
   tableError: string | null;
+  /** OP 順を選んでいるが、育成状況が無い（全員を名前順で並べる） */
+  overloadWithoutRoster: boolean;
 };
 
 export function useListOrder(
@@ -83,9 +87,24 @@ export function useListOrder(
   );
   const computed = fixedSpecPowers ? fixedComputed : rosterComputed;
   const powers = computed?.powers;
+  // OP 順の値は、スペック固定でも育成状況の装備から出す（スペック固定の装備に OL は無い）。出せないキャラは値なし（後ろに回る）
+  const overloadOptions = OVERLOAD_ORDER_OPTIONS[order];
+  const overloads = useMemo(() => {
+    if (overloadOptions === undefined || roster === null || masters === null) return undefined;
+    const out = new Map<number, number>();
+    for (const [id, character] of Object.entries(roster.characters)) {
+      try {
+        out.set(Number(id), overloadTotal(character, masters, overloadOptions));
+      } catch {
+        // 知らないオプション・Lv の行があるキャラは並べない
+      }
+    }
+    return out;
+  }, [overloadOptions, roster, masters]);
+  const values = order === 'combatPower' ? powers : overloads;
   const state = useMemo<ListOrderState>(
-    () => ({ order, direction, powers: powers ?? new Map() }),
-    [order, direction, powers],
+    () => ({ order, direction, values: values ?? new Map() }),
+    [order, direction, values],
   );
 
   const select = (next: ListOrder) => {
@@ -108,6 +127,7 @@ export function useListOrder(
       toggleDirection,
       fixedSpecPowers,
       failedCount: computed?.failures.length ?? 0,
+      overloadWithoutRoster: overloadOptions !== undefined && roster === null,
       tableError,
     },
     state,

@@ -90,7 +90,7 @@ describe('useListOrder', () => {
       failedCount: 0,
       tableError: null,
     });
-    expect(result.current.state).toEqual({ order: 'name', direction: 'asc', powers: new Map() });
+    expect(result.current.state).toEqual({ order: 'name', direction: 'asc', values: new Map() });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -98,7 +98,7 @@ describe('useListOrder', () => {
     const { result } = render({ roster: null });
     act(() => result.current.controls.select('combatPower'));
     await waitFor(() =>
-      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', powers: FIXED.powers }),
+      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', values: FIXED.powers }),
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.current.controls).toMatchObject({ fixedSpecPowers: true, failedCount: FIXED.failures.length });
@@ -110,7 +110,7 @@ describe('useListOrder', () => {
       expect(result.current.state).toEqual({
         order: 'combatPower',
         direction: 'desc',
-        powers: new Map([[ssr.resourceId, POWER]]),
+        values: new Map([[ssr.resourceId, POWER]]),
       }),
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -131,11 +131,11 @@ describe('useListOrder', () => {
   it('uses the fixed-spec power under the fixed spec even with a roster', async () => {
     const { result, rerender } = render({ fixedSpec: true });
     await waitFor(() =>
-      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', powers: FIXED.powers }),
+      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', values: FIXED.powers }),
     );
     expect(result.current.controls.fixedSpecPowers).toBe(true);
     rerender(DEFAULTS);
-    expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
+    expect(result.current.state.values).toEqual(new Map([[ssr.resourceId, POWER]]));
     expect(result.current.controls.fixedSpecPowers).toBe(false);
   });
 
@@ -143,9 +143,9 @@ describe('useListOrder', () => {
     const { result, rerender } = render({ masters: null });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     await settle();
-    expect(result.current.state.powers).toEqual(new Map());
+    expect(result.current.state.values).toEqual(new Map());
     rerender(DEFAULTS);
-    await waitFor(() => expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]])));
+    await waitFor(() => expect(result.current.state.values).toEqual(new Map([[ssr.resourceId, POWER]])));
   });
 
   it('keeps the selected order in the browser, and ignores an unknown saved value', async () => {
@@ -181,11 +181,30 @@ describe('useListOrder', () => {
     await settle();
   });
 
+  it('orders by the overload total of the roster gear, and flags the overload order without a roster', async () => {
+    const { result } = render();
+    act(() => result.current.controls.select('attackOverload'));
+    // 育成状況の 2 体とも OL 装備が無いので 0
+    expect(result.current.state).toEqual({
+      order: 'attackOverload',
+      direction: 'desc',
+      values: new Map([
+        [ssr.resourceId, 0],
+        [-1, 0],
+      ]),
+    });
+    expect(result.current.controls.overloadWithoutRoster).toBe(false);
+    const noRoster = render({ roster: null }).result;
+    expect(noRoster.current.state.values).toEqual(new Map());
+    expect(noRoster.current.controls.overloadWithoutRoster).toBe(true);
+    await settle();
+  });
+
   it('shows why the table did not load', async () => {
     fetchMock.mockResolvedValue(new Response('', { status: 404 }));
     const { result } = render();
     await waitFor(() => expect(result.current.controls.tableError).toMatch(/combat\.json -> HTTP 404$/));
-    expect(result.current.state.powers).toEqual(new Map());
+    expect(result.current.state.values).toEqual(new Map());
     // Error でない理由は文字列にする
     fetchMock.mockRejectedValue('offline');
     const offline = render().result;

@@ -5,7 +5,14 @@ import type { ListOrderControls } from '../useListOrder.ts';
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const NOTE = { maxWidth: '22em' } as const;
 
-export function ListOrderSettings({ order, select, fixedSpecPowers, failedCount, tableError }: ListOrderControls) {
+export function ListOrderSettings({
+  order,
+  select,
+  fixedSpecPowers,
+  failedCount,
+  tableError,
+  overloadWithoutRoster,
+}: ListOrderControls) {
   return (
     <fieldset className="popover-group">
       <legend>一覧の並び</legend>
@@ -23,6 +30,11 @@ export function ListOrderSettings({ order, select, fixedSpecPowers, failedCount,
       {tableError !== null && (
         <p className="hint" style={NOTE}>
           戦闘力の表を読めない: {tableError}
+        </p>
+      )}
+      {overloadWithoutRoster && (
+        <p className="hint" style={NOTE}>
+          育成状況を読み込んでいないので、OP 順は名前順で並べる
         </p>
       )}
       {failedCount > 0 && (

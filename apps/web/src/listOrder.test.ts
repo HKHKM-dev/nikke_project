@@ -39,7 +39,9 @@ describe('並びの向き', () => {
 
   it('既定は名前順が昇順、戦闘力順が降順', () => {
     expect(defaultListDirection('name')).toBe('asc');
+    expect(defaultListDirection('id')).toBe('asc');
     expect(defaultListDirection('combatPower')).toBe('desc');
+    expect(defaultListDirection('attackElementOverload')).toBe('desc');
   });
 });
 
@@ -68,6 +70,19 @@ describe('orderCharacters', () => {
       [3, 100],
     ]);
     expect(ids(orderCharacters(INDEX, 'combatPower', powers, 'asc'))).toEqual([3, 5, 1, 2, 4]);
+  });
+
+  it('ID 順: 昇順と降順', () => {
+    expect(ids(orderCharacters(INDEX, 'id', new Map()))).toEqual([1, 2, 3, 4, 5]);
+    expect(ids(orderCharacters(INDEX, 'id', new Map(), 'desc'))).toEqual([5, 4, 3, 2, 1]);
+  });
+
+  it('OP 順も値で並べる: 値のあるキャラを降順で先に、ほかを名前順で後に', () => {
+    const values = new Map([
+      [3, 0],
+      [4, 26.36],
+    ]);
+    expect(ids(orderCharacters(INDEX, 'elementOverload', values))).toEqual([4, 3, 2, 1, 5]);
   });
 
   it('元の一覧は並べ替えない', () => {

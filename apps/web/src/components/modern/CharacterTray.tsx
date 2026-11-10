@@ -172,6 +172,9 @@ export function CharacterTray({
           {listOrder.order === 'combatPower' && listOrder.failedCount > 0 && (
             <span className="hint">戦闘力を出せない {listOrder.failedCount} 体は後ろに名前順で並べる</span>
           )}
+          {listOrder.overloadWithoutRoster && (
+            <span className="hint">育成状況を読み込んでいないので、OP 順は名前順で並べる</span>
+          )}
           <button type="button" className="char-tray-action-button" aria-disabled="true">
             フィルター<span className="char-tray-unimplemented">未実装</span>
           </button>
