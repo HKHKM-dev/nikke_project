@@ -1,0 +1,92 @@
+{
+  "formatVersion": 1,
+  "resourceId": 222,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "maxStacksRef": 4,
+          "durationRef": 3
+        }
+      ],
+      "notes": [
+        {
+          "ja": "現在の HP 4.01%▼ は未対応（語彙が無い。plan/design-scarlet.md 2.1 節で起案中）。S2・バーストの HP の条件はこれで満たされる",
+          "en": "Current HP down 4.01% is not modeled (no vocabulary yet; proposed in plan/design-scarlet.md 2.1). It is what meets the HP conditions of S2 and the burst",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "unknown",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "normalHit"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "selfHpAtMostRef": 3
+          },
+          "durationUntil": "selfHpAbove",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "攻撃を受けた時、30% の確率の追加ダメージは、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
+          "en": "The 30% chance additional damage when attacked does not occur because damage taken is not modeled (requirements 5.2). In the 3-minute shooting range it can occur from the target attacks (C-0551)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "damaged"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 4,
+          "damageType": "skill"
+        }
+      ],
+      "notes": [
+        {
+          "ja": "クリティカル確率▲の「自分の HP が 50% 以下の場合」は未対応（条件の語彙が無いので毎回付けている。plan/design-scarlet.md 2.2 節で起案中）",
+          "en": "The \"if own HP is 50% or less\" condition of the critical rate up is not modeled (no condition vocabulary yet, so it is always applied; proposed in plan/design-scarlet.md 2.2)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "critRate",
+            "target": "self",
+            "trigger": "burstUse"
+          }
+        }
+      ]
+    }
+  }
+}
