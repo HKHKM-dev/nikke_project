@@ -11,6 +11,7 @@ import {
   SKILL_SLOTS,
   contentStatOf,
   isCoverHealedTrigger,
+  isEnemyHeldStat,
   type BuffStat,
   type IndirectPath,
   type NoteEffect,
@@ -569,10 +570,14 @@ function effectMoverPathOf(element: MinimalElement): IndirectPath | undefined {
   return element.shape?.kind === 'removeDebuff' ? 'debuff' : undefined;
 }
 
-/** 効果の読む側の印。書いた reads に、デバフの印の付いた状態の付与は debuff を足す（課題 2-59。目録の印から導く） */
+/**
+ * 効果の読む側の印。書いた reads に、デバフの印の付いた状態の付与（課題 2-59。目録の印から導く）と、味方に付く timed の▼（課題 2-64。
+ * plan/design-debuff-removal-timed.md 2.6 節）は debuff を足す
+ */
 function readsOf(e: SkillEffect): { reads?: IndirectPath[] } {
   const reads = new Set(e.reads ?? []);
   if (e.kind === 'state' && namedStateIsDebuff(e.state)) reads.add('debuff');
+  if (e.kind === 'timed' && e.decrease === true && !isEnemyHeldStat(e.stat)) reads.add('debuff');
   return reads.size === 0 ? {} : { reads: [...reads] };
 }
 

@@ -851,6 +851,23 @@ describe('照合の部品', () => {
     expect(cuts[3]).toBe(cuts[2]);
   });
 
+  it('counts the shots in a full burst window before the max ammo comes back (issue 2-64)', () => {
+    // 録画 1032（ココア + シン + アニス：スパークリングサマー）: ココアの S1 のデバフ解除が、1 回目の窓の途中でアニスのバーストの最大装弾数▼を
+    // 外す（C-1038）。2 回目の窓には S1 が来ないので、窓の終わりまで 1 発のマガジン
+    const input = buildTeamInput(
+      recordings.get('1032')!,
+      { enemy: 'range-bigarms-water', events: ['range-3min-jump'] },
+      data,
+    );
+    const result = runSimulation(input);
+    const metric = METRICS.fullBurstShotsBeforeAmmoRestore!;
+    const at = (n: number) => metric.sim(result, { args: { slot: 3, n }, input });
+    expect(at(0)).toBe(6);
+    const second = result.schedule!.fullBurstWindows[1]!;
+    expect(at(1)).toBe(result.shots[2]!.frames.filter((f) => f >= second.start && f < second.end).length);
+    expect(() => at(9)).toThrow(/10 回目のフルバーストが無い/);
+  });
+
   it('reads the magazine after each full burst start and the cycle counter residue per window (V-0356)', () => {
     const input = {} as TeamInput;
     // フルバーストの開始から、その後で最初に撃ち切った発まで（開始のフレームの発を含む）。撃ち切る前に終わった回は数えない

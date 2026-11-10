@@ -554,6 +554,23 @@ function fullBurstMagazineShots(result: SimResult, ctx: MetricContext): number[]
 }
 
 /**
+ * 課題 2-64（plan/design-debuff-removal-timed.md 2.8 節。V-0712 の録画 1032・1033）: n 回目（0 始まり）のフルバーストの窓の中で、枠の最大装弾数が
+ * 窓の最初の発より大きくなった最初の発の前までに撃った発の数（戻らなければ窓の中の発の全部）。デバフ解除が最大装弾数▼を外し、
+ * 1 発のマガジンが何回続いてから素のマガジンに戻るかを見る。録画では、窓の中のミサイル（最終弾の 74f 後）の並びで読む
+ */
+function fullBurstShotsBeforeAmmoRestore(result: SimResult, ctx: MetricContext): number {
+  const n = Number(ctx.args.n);
+  const w = result.schedule?.fullBurstWindows[n];
+  if (w === undefined) throw new Error(`${n + 1} 回目のフルバーストが無い`);
+  const shots = slotOf(result.shots, ctx).frames.filter((f) => f >= w.start && f < w.end);
+  if (shots.length === 0) throw new Error(`${n + 1} 回目のフルバーストの窓に枠 ${String(ctx.args.slot)} の発が無い`);
+  const ammoAt = (frame: number): number => maxAmmoAt(result, { ...ctx, args: { ...ctx.args, frame } });
+  const first = ammoAt(shots[0]!);
+  const restored = shots.findIndex((f) => ammoAt(f) > first);
+  return restored === -1 ? shots.length : restored;
+}
+
+/**
  * V-0356（紅蓮：ブラックシャドウのバースト）: 段の間隔の変更の窓ごとに、窓の前の最後の段の後の段なしの発の数 p・窓の中の発の数 n・
  * 窓の後で最初に段が出たのが何発目か k の和を every（窓の外の段の間隔）で割った余り。通算のカウンタなら 0 になり、射撃の位相に依らない。
  * 窓の前に段が無い窓と、窓の後に段が出る前に戦闘が終わった窓は除く
@@ -1663,6 +1680,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   steadyPauseShots: { args: ['slot'], sim: steadyPauseShots },
   lastShotGapMedians: { args: ['slot', 'every'], sim: lastShotGapMedians },
   fullBurstMagazineShots: { args: ['slot'], sim: fullBurstMagazineShots },
+  fullBurstShotsBeforeAmmoRestore: { args: ['slot', 'n'], sim: fullBurstShotsBeforeAmmoRestore },
   cycleWindowResidues: { args: ['slot', 'every'], sim: cycleWindowResidues },
   // 2 段目の段 15 の PR 3（V-0569）: 省略できる引数 video が true なら、録画の動画のフレームの間隔（フルバーストの入りの止まり・発動の止まりを
   // 含む。videoFrameOf）。HUD の増分どうしの間隔と比べる（入りの止まりを挟む発の間隔）

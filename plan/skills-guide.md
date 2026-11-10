@@ -116,6 +116,7 @@
     | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | 貫通ダメージ▲は、貫通特化の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和で乗る（C-1031）。読む側に `reads: ["pierce"]`。例: エード：エージェントバニーの S2・バースト | 同 2.3 節 |
     | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | 変更後の武器の発に貫通ダメージ▲が乗る。銃口の数は基礎の武器のまま（二丁持ちの SG の 1 弾 × 2 銃口）。例: ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
     | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | 付くたびに 1 段増え、持ち主の N 発目で全部切れる（持ち主の発で数える）。例: ツバイの宝物版 S1 | 同 2.3 節 |
+    | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | 外すのは、目録でデバフの印の付いた状態と、味方に付く timed の▼（`decrease`）。1 個は状態か▼の効果 1 つで、スタックごと外す。▲は外れない。恩恵の▼（受けるダメージ▼など）を味方の timed の `decrease` で書くと外れてしまうので、notes か状態の中身で書く。例: ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

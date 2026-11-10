@@ -177,7 +177,8 @@ export type HeldTrack = {
   starts: number[];
   /**
    * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 状態の件の列を閉じる解除の発火のフレーム（昇順・重なりなし）。発火の f に
-   * 効いている件を f + 1 で切る（同じフレーム f に始まりのある列は閉じない）。状態のほかは空
+   * 効いている件を f + 1 で切る（同じフレーム f に始まりのある列は閉じない）。状態と、デバフ解除で外れる味方の timed の▼（課題 2-64）と、
+   * 敵の状態の消去のほかは空
    */
   closes: number[];
   /**
@@ -265,7 +266,7 @@ export type HolderHistory = {
 
 /**
  * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除の選び方を確かめていない所。targets は debuffedRandom でデバフのかかった味方が
- * N 機より多い（実機ではランダム）、states は味方に印の付いた状態が count 個より多く付いている
+ * N 機より多い（実機ではランダム）、states は味方にデバフ（印の付いた状態と、課題 2-64 の timed の▼）が count 個より多く付いている
  */
 export type RemoveDebuffGuess = 'targets' | 'states';
 
@@ -280,8 +281,8 @@ export type RemoveDebuffGuessRecord = {
 };
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除で外す状態を選ぶ。held は枠ごとの、効いている印の付いた状態（とその最も早い
- * 始まり）。pick（debuffedRandom の N）があれば状態のある枠から N 機、無ければ全員。枠ごとに状態を count 個。選び方を確かめていない所は
+ * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除で外すデバフを選ぶ。held は枠ごとの、効いているデバフ（印の付いた状態と、
+ * 課題 2-64 の timed の▼。とその最も早い始まり）。pick（debuffedRandom の N）があればデバフのある枠から N 機、無ければ全員。枠ごとに count 個。選び方を確かめていない所は
  * 決め打ち（N 機より多ければ枠の若い順、count 個より多ければ付いたのが早い順）で、guesses に超えた数と出す
  */
 export function pickRemoveDebuff<T>(
@@ -896,13 +897,9 @@ function buildTrackItems(
                 end: p.end,
                 scale: p.scale,
               }))
-            : timedItems(
-                o.effect,
-                track.starts,
-                log,
-                fullBurstWindows.map((w) => w.end),
-                frames,
-                track.untilEnds,
+            : // 課題 2-64（plan/design-debuff-removal-timed.md 2.4 節）: デバフ解除で閉じた味方の▼は、状態と同じ規則で切る
+              closedStateItems(track.starts, track.closes, (starts) =>
+                timedItems(o.effect, starts, log, fullBurstWindows.map((w) => w.end), frames, track.untilEnds),
               );
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
@@ -2054,33 +2051,42 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       closeTrack(track, frame);
     }
   };
-  /** 課題 2-59: 持ち主ごとの、デバフの印の付いた状態（解除不可を除く）の件の列。件の列は組み立ての後に増えないので、初めての発火で作る */
-  let debuffTracks: Map<NamedStateId, HeldTrack[]>[] | undefined;
+  /**
+   * 課題 2-59: 持ち主ごとの、デバフ 1 個ごとの件の列。デバフの印の付いた状態（解除不可を除く）は状態ごと、課題 2-64
+   * （plan/design-debuff-removal-timed.md 2.1・2.2 節）の味方の timed の▼は効果ごと。件の列は組み立ての後に増えないので、初めての発火で作る
+   */
+  let debuffTracks: HeldTrack[][][] | undefined;
   /**
    * 課題 2-59: 遅れ（delayFrames）のあるデバフ解除の予約（効くフレーム → 解除）。対象は、ループがそのフレームに来た時に、そのフレームまでに
    * 付いた状態で選ぶ（発火のフレームで先読みすると、遅れの間に付いた状態が件の列にまだ無い）
    */
   const pendingRemoveDebuffs = new Map<number, RemoveDebuffSource[]>();
   /**
-   * 課題 2-59: デバフ解除の効くフレーム at（ループがいるフレーム）に効いている、味方のデバフの印の付いた状態の件（解除不可を除く）を、
-   * 対象の味方ごとに状態を count 個まで、スタックごと閉じる（選び方は pickRemoveDebuff）
+   * 課題 2-59: デバフ解除の効くフレーム at（ループがいるフレーム）に効いている、味方のデバフ（印の付いた状態と、課題 2-64 の timed の▼）の
+   * 件を、対象の味方ごとに count 個まで、スタックごと閉じる（選び方は pickRemoveDebuff）
    */
   const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
     debuffTracks ??= slots.map((_, holder) => {
       const byState = new Map<NamedStateId, HeldTrack[]>();
+      const decreases: HeldTrack[][] = [];
       for (const track of tracks) {
         const o = track.origin;
-        if (track.holder !== holder || o.kind !== 'state' || !namedStateIsDebuff(o.state)) continue;
+        if (track.holder !== holder) continue;
+        if (o.kind === 'timed' && o.effect.decrease === true) {
+          decreases.push([track]);
+          continue;
+        }
+        if (o.kind !== 'state' || !namedStateIsDebuff(o.state)) continue;
         if (o.grant.undispellable === true) continue;
         const list = byState.get(o.state);
         if (list === undefined) byState.set(o.state, [track]);
         else list.push(track);
       }
-      return byState;
+      return [...byState.values(), ...decreases];
     });
-    // 持ち主ごとに、at に効いている状態と、その最も早い始まり
-    const held = debuffTracks.map((byState) =>
-      [...byState.values()].flatMap((ts) => {
+    // 持ち主ごとに、at に効いているデバフと、その最も早い始まり
+    const held = debuffTracks.map((debuffs) =>
+      debuffs.flatMap((ts) => {
         const starts = ts.flatMap((t) => activeAt(t, at).map((it) => it.start));
         return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
       }),

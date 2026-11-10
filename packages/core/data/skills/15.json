@@ -75,8 +75,8 @@
           ]
         },
         {
-          "ja": "ミサイルのヒットがバーストゲージを溜めるかは確かめていない（溜めない形で回す）。3 人の録画のフルバーストの間隔は、ココアのデバフ解除で窓の中の発の数が変わる分と分けられなかった",
-          "en": "Whether the missile hits charge the Burst gauge has not been checked (run as not charging). In the three-member recordings the Full Burst intervals could not be separated from the change in shot count caused by Cocoa removing the debuff",
+          "ja": "ミサイルのヒットがバーストゲージを溜めるかは確かめていない（溜めない形で回す）。3 人の録画のフルバーストの入りどうしの間隔はモデルと 22〜62f 違い、ココアのデバフ解除を入れても 1〜4 回目の入りは変わらないので、違いの原因は分からない",
+          "en": "Whether the missile hits charge the Burst gauge has not been checked (run as not charging). In the three-member recordings the intervals between Full Burst starts differ from the model by 22-62f, and modeling Cocoa's debuff removal does not move the 1st-4th starts, so the cause is unknown",
           "kind": "modeling",
           "refers": "effects[0]"
         }

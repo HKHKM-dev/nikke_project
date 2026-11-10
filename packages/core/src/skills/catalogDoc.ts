@@ -158,7 +158,7 @@ const KIND_INFO: Record<string, Info> = {
   'buffOp:dispel': [
     'バフ・デバフ効果の解除',
     'check',
-    '味方のデバフ効果解除は removeDebuff（デバフの印の付いた状態（いまはほろ酔い）を 1 個につき 1 状態、スタックごと外す。解除不可は外れない。課題 2-59）。印の無い▼と、バフ効果解除は語彙なし',
+    '味方のデバフ効果解除は removeDebuff（デバフの印の付いた状態（いまはほろ酔い）と、味方に付く timed の▼を、1 個につき 1 状態か 1 効果、スタックごと外す。解除不可は外れない。課題 2-59・2-64）。バフ効果解除は語彙なし',
   ],
   'buffOp:immunity': [
     '効果の免疫',
@@ -412,7 +412,7 @@ const TGT_INFO: Record<string, Info> = {
   'ally:neighbors': ['両隣の味方', 'gap'],
   'ally:random': ['ランダムな味方', 'check'],
   'ally:debuffed': [
-    'デバフのかかった味方のうちランダムな N 機（デバフの印の付いた状態のある味方から選ぶ。removeDebuff の target debuffedRandom。N 機より多いときの選び方は未確認）',
+    'デバフのかかった味方のうちランダムな N 機（デバフの印の付いた状態か timed の▼のある味方から選ぶ。removeDebuff の target debuffedRandom。N 機より多いときの選び方は未確認）',
     'check',
   ],
   'ally:specific': ['特定のキャラ（自分の王＝クラウン・自分のアイドル＝アニス：スター）', 'gap'],
