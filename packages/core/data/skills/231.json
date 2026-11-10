@@ -60,7 +60,8 @@
         {
           "kind": "damage",
           "trigger": {
-            "everySeconds": 15
+            "everySeconds": 15,
+            "cooldown": true
           },
           "ref": 2,
           "damageType": "skill",
@@ -80,7 +81,8 @@
         {
           "kind": "burstGaugeHit",
           "trigger": {
-            "everySeconds": 15
+            "everySeconds": 15,
+            "cooldown": true
           },
           "delayFrames": 45,
           "assumes": {

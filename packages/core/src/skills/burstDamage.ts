@@ -468,13 +468,13 @@ export function resolveDamageGauges(
  * フラワー編: 周期でゲージだけを溜める効果（burstGaugeHit）の、周期の秒と発火からの遅れ（delayFrames。無ければ 0）の列（効果ごとに 1 つ）。
  * unsupported なら空。1 回の量は射手の targetBurstEnergyPerShot（frame/firstPass.ts。plan/design-flower-s2-gauge.md 2 節）
  */
-export function resolveTimerGauges(def: SkillDefinition): (TimerTrigger & { delayFrames: number })[] {
-  const out: (TimerTrigger & { delayFrames: number })[] = [];
+export function resolveTimerGauges(def: SkillDefinition): (TimerTrigger & { delayFrames: number; skill: SkillSlot })[] {
+  const out: (TimerTrigger & { delayFrames: number; skill: SkillSlot })[] = [];
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind === 'burstGaugeHit' && isTimerTrigger(effect.trigger)) {
-        out.push({ ...effect.trigger, delayFrames: effect.delayFrames ?? 0 });
+        out.push({ ...effect.trigger, delayFrames: effect.delayFrames ?? 0, skill: slot });
       }
     }
   }

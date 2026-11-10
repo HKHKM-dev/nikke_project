@@ -401,7 +401,11 @@ export function planSkillHits(
    * アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火。蓄積して爆発するダメージ
    * （plan/design-accumulate-explosion.md 2.4 節）: 1 パス目が決めた蓄積爆破の爆発
    */
-  { summonHits, accumulateReleases }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases'>,
+  {
+    summonHits,
+    accumulateReleases,
+    cooldownTimerFires,
+  }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases' | 'cooldownTimerFires'>,
   sustainedDamagePlacement?: SustainedDamagePlacement,
   /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
@@ -644,9 +648,13 @@ export function planSkillHits(
           : isResolvedApplied(t)
             ? appliedFrames(history, t.applied, slotIndex)
             : isResolvedTimer(t)
-              ? timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
+              ? // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムの印のある周期は、縮める状態があれば 1 パス目の記録
+                ((t.cooldown === true
+                  ? cooldownTimerFires.find((c) => c.slotIndex === slotIndex && c.skill === effect.source.skill)?.frames
+                  : undefined) ??
+                timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
                   selfStateHolds({ state, present: true }, f),
-                )
+                ))
               : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;

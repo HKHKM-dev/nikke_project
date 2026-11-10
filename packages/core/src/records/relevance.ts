@@ -494,6 +494,8 @@ function statClassOf(stat: string | undefined): ElementClass {
   if (stat === undefined || stat === 'unknown') return 'unknown';
   // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の最大スタック数▲（オートファイアの順番の攻撃の数を変える）
   if (stat === 'maxStacksUp') return 'otherHit';
+  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 状態の中身のスキルのクールタイム▼（持ち主の周期のスキルの発動の数と時刻を変える）
+  if (stat === 'skillCooldownDown') return 'otherHit';
   return STAT_CLASS[stat as BuffStat] ?? 'unknown';
 }
 

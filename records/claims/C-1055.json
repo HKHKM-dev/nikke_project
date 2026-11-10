@@ -5,11 +5,11 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1034-19`・`1035-19`（イサベルの S2 の帯の出たフレーム）。どのフルバーストの終わり（魔術師のカードの付いたフレーム）の後も、最初の S2 は 226〜229f 後（1034 の 5 回・1035 の 4 回。帯が重なって拾えない回を除く）で、その後は約 221f（3.75 秒）ごとに 15 秒の間に 4 回出て、カードが切れた後は最後の S2 から 883〜885f（15 秒）。付く前の S2 からの経過（107〜651f）に依らず付いた時から数える。1034 の 1 回目で読み方を決め、1034 の 2〜5 回目と 1035 で同じ形が出た。V-0713",
-  "model": "未反映（data/skills/581.json の skill1 の notes の未対応。味方の S2 の周期を割合で縮める語彙が無い。モデルのイサベルの S2 は 15 秒ごとのまま）",
+  "model": "data/skills/581.json の skill1 の effects[2]（魔術師のカードの状態。中身の skillCooldownDown）と、イサベルの S2 の周期の印 cooldown。1 パス目（frame/firstPass.ts の countCooldownTimers）が skills/timeline.ts の cooldownTimer でイサベルの S2 の発火を追う。付いた時に残りの CT が縮めた周期より短い時は短い方を取る形（確かめていない。plan/design-arcana-magician.md 6 節の論点 1）",
   "replaces": [],
   "updated": "2026-11-10",
   "subject": {
-    "places": ["data/skills/581.json の skill1 の notes[0]"]
+    "places": ["data/skills/581.json の skill1 の effects[2]"]
   },
   "decidedOn": [
     {

@@ -466,19 +466,35 @@ export function elapsedShortenedTimerFrames(
   windowStarts: readonly number[],
   durationFrames: number,
 ): number[] {
-  const long = gameSecondsToFirstFrame(trigger.everySeconds);
   const short = gameSecondsToFirstFrame(trigger.everySeconds - shortenSeconds);
   const inWindow = (f: number) => windowStarts.some((s) => s <= f && f < s + durationFrames);
   const starts = new Set(windowStarts);
+  const tick = cooldownTimer(gameSecondsToFirstFrame(trigger.everySeconds));
   const out: number[] = [];
-  let next = long;
   for (let f = 1; f < frames; f++) {
-    if (starts.has(f)) next = Math.min(next, f + short);
-    if (f !== next) continue;
-    out.push(f);
-    next = f + (inWindow(f) ? short : long);
+    if (tick(f, starts.has(f) ? short : undefined, inWindow(f) ? short : undefined)) out.push(f);
   }
   return out;
+}
+
+/**
+ * クールタイムを縮める窓の規則（ドロシーの発現の elapsed・魔術師のカードの skillCooldownDown。plan/design-arcana-magician.md 2.1・2.3 節）を、
+ * フレームの順に決める形にしたもの。返す関数は 1 から順にフレームごとに呼び、そのフレームに発動すれば true。started はそのフレームに
+ * 窓が始まった（縮める状態が付いた）ならその縮めた周期のフレーム数、held はそのフレームに窓の中ならその縮めた周期のフレーム数（どちらも
+ * 無ければ undefined）。次の発動（初めは long）を、窓が始まったフレーム s で s + started に早め（もっと早い予定ならそのまま）、発動の
+ * フレーム f の次は f + held（窓の外なら f + long）。同じフレームは始まりを先に見る。窓の終わりを越えた発動も、窓の中の発動から縮めた周期で
+ * 来る（T4 の「終わっても残りは戻らず」。C-0848・C-1055）
+ */
+export function cooldownTimer(
+  long: number,
+): (f: number, started: number | undefined, held: number | undefined) => boolean {
+  let next = long;
+  return (f, started, held) => {
+    if (started !== undefined) next = Math.min(next, f + started);
+    if (f !== next) return false;
+    next = f + (held ?? long);
+    return true;
+  };
 }
 
 /**

@@ -37,22 +37,46 @@
           "claims": [
             "C-1052"
           ]
+        },
+        {
+          "kind": "state",
+          "state": "magician",
+          "trigger": "fullBurstEnd",
+          "target": "burstUsers",
+          "targetBurstStep": "Step3",
+          "targetElement": "Electronic",
+          "condition": {
+            "selfState": "wheelOfFortune"
+          },
+          "durationRef": 3,
+          "contents": [
+            {
+              "skillCooldownDown": {
+                "slot": "skill2",
+                "percentRef": 2
+              },
+              "claims": [
+                "C-1055"
+              ]
+            }
+          ],
+          "assumes": {
+            "ja": "魔術師のカード。条件と対象は effects[0] と同じ。付いている間、持ち主の S2 のクールタイムの周期（印 cooldown）を 25% にし、付いたフレームから縮めた周期で次の発動が来る。付いた時に残りの CT が縮めた周期より短い時は、短い方（もとの予定）を取るとみた（確かめていない）",
+            "en": "The Magician. Same condition and targets as effects[0]. While active, the holder's S2 cooldown period (marked cooldown) becomes 25%, and the next activation comes one shortened period after it is applied. When the remaining cooldown is already shorter than the shortened period, the earlier (original) timing is kept (unverified)"
+          },
+          "claims": [
+            "C-1053",
+            "C-1054",
+            "C-1055"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "フルバーストの終わりに、運命の輪のカード状態なら、直前にバーストを使った III の電撃コードの味方に付く「魔術師のカード：スキル 2 クールタイム 75%▼（15 秒）」は未対応（味方の S2 の周期を割合で縮める語彙が無い。効いている間は S2 の周期が 25% になり、付いた時から数え直す）",
-          "en": "\"The Magician: Skill 2 cooldown ▼ 75% (15 s)\", given at the end of Full Burst to Burst III Electric allies that just used their Burst while she has Wheel of Fortune, is not implemented (no vocabulary for shortening an ally's S2 interval by a ratio; while active the S2 interval becomes 25%, counted again from when it is applied)",
-          "kind": "unimplemented",
-          "effect": {
-            "kind": "state",
-            "stat": "unknown",
-            "target": "burstUsers",
-            "trigger": "fullBurstEnd"
-          },
-          "claims": [
-            "C-1055"
-          ]
+          "ja": "魔術師のカードは、相手の S2 のクールタイムの周期（印 cooldown のある周期。イサベルの S2）にだけ効かせ、印の無い周期（説明文の発動間隔・召喚の攻撃）や、印を付けていない味方の周期は縮めない。フルバーストタイムが 10 秒の III では付かない（C-1054）ので、いまの編成で付く相手はイサベルだけ",
+          "en": "The Magician only shortens cooldown periods marked cooldown (Isabel's S2); periods without the mark (intervals from the description, summon attacks) and unmarked allies are not shortened. It is not applied with a Burst III whose Full Burst lasts 10 s (C-1054), so in the current teams only Isabel receives it",
+          "kind": "modeling",
+          "refers": "effects[2]"
         }
       ]
     },

@@ -153,7 +153,13 @@ describe('data/skills', () => {
                   ? // 2 段目の段 14 の PR 3: 最大スタック数▲の項目の amountRef と、1 回に付けるスタックの数の stacksPerFireRef も
                     [
                       ...(effect.contents ?? []).flatMap((c) =>
-                        isStatContent(c) ? (c.ref === undefined ? [] : [c.ref]) : [c.maxStacksUp.amountRef],
+                        isStatContent(c)
+                          ? c.ref === undefined
+                            ? []
+                            : [c.ref]
+                          : 'maxStacksUp' in c
+                            ? [c.maxStacksUp.amountRef]
+                            : [c.skillCooldownDown.percentRef],
                       ),
                       ...(effect.stacksPerFireRef === undefined ? [] : [effect.stacksPerFireRef]),
                     ]

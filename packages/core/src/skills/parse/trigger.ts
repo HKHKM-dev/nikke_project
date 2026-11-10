@@ -103,7 +103,10 @@ export function parseTrigger(
         path,
         'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed, heal and counterChange',
       );
-    const flags = allowTimer === 'withStart' ? (['atStart', 'carry'] as const) : (['carry'] as const);
+    // 魔術師のカード編（plan/design-arcana-magician.md 2.2 節）: クールタイムの印（cooldown）。書ける効果の種類と組み合わせは
+    // parse/crossChecks.ts の validateCooldownTimers が見る
+    const flags =
+      allowTimer === 'withStart' ? (['atStart', 'carry', 'cooldown'] as const) : (['carry', 'cooldown'] as const);
     for (const key of Object.keys(v)) {
       if (key !== 'everySeconds' && !(flags as readonly string[]).includes(key))
         fail(`${path}.${key}`, 'unknown field');

@@ -217,7 +217,7 @@ const KIND_INFO: Record<string, Info> = {
   'sustained:cooldown': [
     'クールタイムの増減（維持の付いた形。その間スキル自体のクールタイムを変える。T4）',
     'check',
-    '状態の中身か timed の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血・ミルクの宝物版の S1・ティアの S1。2 段目の段 11・15。C-0706・C-0769・C-0775）と、周期の damage の periodShorten の window（名前の無い窓の発動間隔▼。エイダの S2。C-0788。elapsed はクールタイムを縮める窓で、ドロシーの発現。2 段目の段 18。C-0848）だけ',
+    '状態の中身か timed の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血・ミルクの宝物版の S1・ティアの S1。2 段目の段 11・15。C-0706・C-0769・C-0775）と、周期の damage の periodShorten の window（名前の無い窓の発動間隔▼。エイダの S2。C-0788。elapsed はクールタイムを縮める窓で、ドロシーの発現。2 段目の段 18。C-0848）と、状態の中身の skillCooldownDown（味方のスキルのクールタイム X%▼。アルカナの魔術師のカード。C-1055）だけ',
   ],
   'instant:forceSkill': ['スキルの強制使用', 'gap', 'なし'],
   // 2 段目の段 12 の PR 2: cycle の無いスロットの射撃の回数のきっかけの N▼（decreaseRef。ラピ：レッドフードのバースト III）も

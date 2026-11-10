@@ -519,6 +519,12 @@ export type HolderLists = {
    */
   selfStateAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
+   * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 枠 holder の状態 state（出どころは問わない）の件のうち、フレーム frame に
+   * 効いているもの（そのフレームに付いた件も入れる）。1 パス目が、クールタイムを縮める状態の付いたフレームと窓を見るのに、frame までに
+   * 登録した件で呼ぶ
+   */
+  stateItemsAt(holder: number, state: NamedStateId, frame: number): HeldItem[];
+  /**
    * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
    * 静的な状態は 1、無ければ 0）。frame/plan.ts の damage の perCount { state } と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
    * ヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
@@ -2735,6 +2741,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // holdsAt の selfState と違い、段によらず frame より前に付いた件だけを見る（frame/plan.ts の selfStateHolds と同じ規則にする）。
     // 段は 1 始まりなので、付いていればスタック数は 1 以上
     selfStateAt: (holder, state, frame) => selfStackCountAt(holder, state, frame) > 0,
+    stateItemsAt: (holder, state, frame) => (stateTracks[holder]?.get(state) ?? []).flatMap((t) => activeAt(t, frame)),
     selfStackCountAt,
     enemyStateAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {

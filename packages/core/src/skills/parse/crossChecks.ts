@@ -311,7 +311,7 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'state') return;
       e.contents?.forEach((item, j) => {
-        if (isStatContent(item)) return;
+        if (isStatContent(item) || !('maxStacksUp' in item)) return;
         const target = item.maxStacksUp.state;
         if (!hasSelfStackingGrant(entries, target))
           fail(
@@ -319,6 +319,32 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
             `maxStacksUp of "${target}" needs a grant of the same state on self with maxStacks in the definition`,
           );
       });
+    });
+  }
+}
+
+/**
+ * 魔術師のカード編（plan/design-arcana-magician.md 2.2 節）: 周期のクールタイムの印（cooldown）は damage と burstGaugeHit にだけ書け、
+ * carry・atStart・periodShorten・gaugePerHit とは組まない。burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
+ * 後で予約するので、発火と同じフレームのゲージには足せない）。同じスロットの印のある周期は同じ秒（1 つのスキルのクールタイム）
+ */
+function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
+  for (const slot of SKILL_SLOTS) {
+    let seconds: number | undefined;
+    entries[slot]?.effects.forEach((e, i) => {
+      if (!('trigger' in e) || !isTimerTrigger(e.trigger) || e.trigger.cooldown !== true) return;
+      const path = `${root}.${slot}.effects[${i}].trigger.cooldown`;
+      if (e.kind !== 'damage' && e.kind !== 'burstGaugeHit')
+        fail(path, `cooldown is only allowed in damage and burstGaugeHit, got ${e.kind}`);
+      if (e.trigger.carry === true || e.trigger.atStart === true)
+        fail(path, 'cooldown cannot be used with carry or atStart');
+      if (e.kind === 'damage' && (e.periodShorten !== undefined || e.gaugePerHit !== undefined))
+        fail(path, 'cooldown cannot be used with periodShorten or gaugePerHit');
+      if (e.kind === 'burstGaugeHit' && e.delayFrames === undefined)
+        fail(path, 'cooldown in burstGaugeHit needs delayFrames');
+      if (seconds !== undefined && seconds !== e.trigger.everySeconds)
+        fail(path, `cooldown timers in one slot need the same everySeconds (${seconds} and ${e.trigger.everySeconds})`);
+      seconds = e.trigger.everySeconds;
     });
   }
 }
@@ -542,6 +568,7 @@ export function validateCrossChecks(entries: Partial<Record<SkillSlot, SkillEntr
     validateChanceStates,
     validateDotStateRefs,
     validateSummons,
+    validateCooldownTimers,
   ])
     check(entries, root);
 }
