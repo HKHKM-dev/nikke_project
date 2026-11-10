@@ -1,0 +1,335 @@
+{
+  "verification": "V-0712",
+  "note": "撮る前の予測。撮影 A（単騎・灼熱・オートバースト OFF）と撮影 B（ココア + シン + アニス：スパークリングサマー・水冷・オートバースト ON）。B の frame は sim の 1 回目のフルバースト（9.6 秒前後）の中・前に置いた。録画の窓に合わせて読む",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 401
+    },
+    {
+      "rid": 15,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまの定義（説明文どおり。リロード速度▲は S1 とバーストの和を C-0013 の形で掛ける）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-anis-pellet",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 15,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: アニスの 1 ペレット（胴体）。読みの単位"
+    },
+    {
+      "id": "A-anis-missile",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 15,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S2 の倍率ダメージの 1 ヒット（会心なし）。最終攻撃力の値 01 %"
+    },
+    {
+      "id": "A-anis-missile-shots",
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 4
+      },
+      "team": [
+        {
+          "rid": 15,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 A: S2 の倍率ダメージが何発目の射撃で出るか（マガジン 5 発の最終弾）"
+    },
+    {
+      "id": "A-anis-missile-delay",
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "team": [
+        {
+          "rid": 15,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A: 最終弾から S2 の倍率ダメージのヒットまでのフレーム（定義は遅れなし。ミサイルの飛ぶ時間があれば録画で読んで足す）"
+    },
+    {
+      "id": "B-anis-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストより前のアニスの 1 ペレット（胴体。水冷の敵への有利の 1.1 倍）"
+    },
+    {
+      "id": "B-anis-pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの窓の中のアニスの 1 ペレット。S1 の発動者基準の攻撃力▲とバーストの有利コードの攻撃ダメージ▲が乗る"
+    },
+    {
+      "id": "B-anis-missile-fb",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの窓の中の S2 の倍率ダメージの 1 ヒット（攻撃力▲・有利コードの攻撃ダメージ▲・フルバースト補正が乗る）"
+    },
+    {
+      "id": "B-anis-max-ammo-fb",
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "撮影 B: バーストの窓の中の最大装弾数（round(5 × (1 − 値 01 %))）。窓の中は毎発が最後の弾丸で、S2 が毎発出る"
+    },
+    {
+      "id": "B-anis-reload-before",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: 窓の前のアニスの最終弾から次のマガジンの 1 発目まで（リロード 2 秒 + 24f。C-0148）"
+    },
+    {
+      "id": "B-anis-reload-fb",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: 窓の中のアニスの最終弾から次の 1 発目まで。S1 とバーストのリロード速度▲の和で縮む。÷ (1 + Σ) の形なら約 92f（検証記録の予測）"
+    },
+    {
+      "id": "B-sin-pellet-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストより前のシンの 1 ヒット（胴体・水冷の敵への有利）"
+    },
+    {
+      "id": "B-sin-pellet-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの窓の中のシンの 1 ヒット。S1 の発動者基準の攻撃力▲（電撃の味方）が乗る。有利コードの攻撃ダメージ▲は自分だけなので乗らない"
+    },
+    {
+      "id": "B-full-burst-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 B: フルバーストの入りどうしの間隔（動画のフレーム）。定義は S2 の倍率ダメージがゲージを溜めない形。溜めるなら窓の中の毎発の分だけ早まる"
+    },
+    {
+      "id": "B-cocoa-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの窓の中のココアの 1 発（コア）。灼熱なので S1 の▲は乗らない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "913535aa177c1f16fa6cfdb01e03581c17444f97",
+    "values": {
+      "H-model": {
+        "A-anis-pellet": 25874.64,
+        "A-anis-missile": 381750.7650000001,
+        "A-anis-missile-shots": [5, 10, 15, 20],
+        "A-anis-missile-delay": 0,
+        "B-anis-pellet-before": 28462.104,
+        "B-anis-pellet-fb": 91801.55305728002,
+        "B-anis-missile-fb": 1354427.0802532805,
+        "B-anis-max-ammo-fb": 1,
+        "B-anis-reload-before": 142,
+        "B-anis-reload-fb": 51,
+        "B-sin-pellet-before": 11990.078099999999,
+        "B-sin-pellet-fb": 30433.07767500001,
+        "B-full-burst-intervals": [2411, 2516, 2477],
+        "B-cocoa-fb": 430744.875
+      }
+    }
+  }
+}

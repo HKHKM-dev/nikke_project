@@ -1,0 +1,99 @@
+{
+  "formatVersion": 1,
+  "resourceId": 15,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetElement": "Electronic",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「電撃コードの味方全体」は自分（電撃）を含む",
+            "en": "\"All Electric Code allies\" includes herself (Electric)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetElement": "Electronic",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "「電撃コードの味方全体」は自分（電撃）を含む",
+            "en": "\"All Electric Code allies\" includes herself (Electric)"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "lastShot"
+          },
+          "damageType": "skill",
+          "ref": 1,
+          "assumes": {
+            "ja": "「最後の弾丸で攻撃した時」は、残弾を 0 にした射撃で起こす。「最終攻撃力が最も高い敵 2 機」は、敵 1 体の前提でその敵に 1 ヒット",
+            "en": "\"When firing the last bullet\" fires on the shot that empties the magazine. \"The 2 enemies with the highest final ATK\" means one hit on the single enemy"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "最後の弾丸で攻撃した時の自分への阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）",
+          "en": "The damage increase against blocking parts on self when firing the last bullet does not affect damage, since the range enemy has no blocking parts (requirements 5.2)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "lastShot"
+          },
+          "claims": [
+            "C-0443"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "maxAmmo",
+          "decrease": true,
+          "ref": 1,
+          "durationRef": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "reloadSpeed",
+          "ref": 3,
+          "durationRef": 4
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 5,
+          "durationRef": 6
+        }
+      ]
+    }
+  }
+}
