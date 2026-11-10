@@ -1,0 +1,103 @@
+{
+  "formatVersion": 1,
+  "resourceId": 353,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "damageType": "additional",
+          "ref": 2,
+          "assumes": {
+            "ja": "対象は的（敵 1 体）。通常攻撃の命中は期待値で数え、戦闘中ずっと数え直さない。追加ダメージにはコア・距離ボーナスが乗らない",
+            "en": "The target is the range target (one enemy). Normal-attack hits are counted as expected hits and never reset during the battle. The additional damage gets no core or range bonus"
+          }
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 1
+          },
+          "target": "allies",
+          "ref": 3
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 2
+          },
+          "target": "allies",
+          "ref": 4
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "count": "fullBurstStart",
+            "atLeast": 3
+          },
+          "target": "allies",
+          "ref": 5
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": {
+            "everySeconds": 4
+          },
+          "ref": 2,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "戦闘開始から 4 秒ごと（CT 4 秒は外部の資料の値。録画で読む）。「ランダムに敵 1 機」は、敵 1 体の前提ではその敵",
+            "en": "Every 4 s from the start of combat (the 4 s cooldown is from external sources; read from recordings). \"1 random enemy\" is that enemy under the single-enemy premise"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "everySeconds": 4
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 3,
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "enemyElement": "Electronic",
+          "assumes": {
+            "ja": "電撃コードの敵にだけ付く。敵 1 体の前提で、味方全体の与ダメージに掛ける。付けるたびに全スタックの維持を数え直す",
+            "en": "Applies only to an Electric Code enemy. Under the single-enemy premise it scales all allies' damage. Each application refreshes the duration of all stacks"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill"
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 2,
+          "damageType": "additional",
+          "enemyElement": "Electronic",
+          "assumes": {
+            "ja": "電撃コードの敵にだけ出る。敵全体は、敵 1 体の前提ではその敵",
+            "en": "Dealt only to an Electric Code enemy. All enemies means that enemy under the single-enemy premise"
+          }
+        }
+      ]
+    }
+  }
+}
