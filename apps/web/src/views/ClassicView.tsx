@@ -47,6 +47,7 @@ export function ClassicView({
               key={i}
               slotIndex={i}
               slot={slot}
+              controlled={team.controlledSlot === i}
               index={index}
               excludeIds={takenResourceIds(team, i)}
               otherPartyIds={otherPartyIds}
