@@ -1131,7 +1131,8 @@ header h1 {
   max-width: none;
   --badge-w: 24px;
   /* 枠線は上を消し、横は上の 2 割で上へ行くほど薄くして一番上で消す（下は実線）。枠線の太さは変えないので、絵の大きさは同じ */
-  border-image: linear-gradient(to bottom, transparent, var(--app-border) 20%) 1;
+  /* 色は枠線の色と同じ（モダン UI は modern.css の --slot-frame-line） */
+  border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line, var(--app-border)) 20%) 1;
 }
 .char-visual-img {
   width: 100%;
