@@ -25,6 +25,8 @@ import {
   isFlagStat,
   isSelfHpAtMostTrigger,
   isShotCountTrigger,
+  isMaxStacksUpContent,
+  isSkillCooldownDownContent,
   isStatContent,
   statContentsOf,
   type BuffScaling,
@@ -794,7 +796,7 @@ export function resolveMaxStacksUps(
     for (const effect of def.skills[slot].effects) {
       if (effect.kind !== 'state' || statics.has(effect.state)) continue;
       for (const item of effect.contents ?? []) {
-        if (isStatContent(item) || !('maxStacksUp' in item)) continue;
+        if (!isMaxStacksUpContent(item)) continue;
         const amount = amountOf(item.maxStacksUp, character.skills[slot], levels[slot]);
         out.push({ whileState: effect.state, state: item.maxStacksUp.state, amount });
       }
@@ -824,7 +826,7 @@ export function resolveSkillCooldownDowns(
     for (const effect of def.skills[slot].effects) {
       if (effect.kind !== 'state') continue;
       for (const item of effect.contents ?? []) {
-        if (isStatContent(item) || !('skillCooldownDown' in item)) continue;
+        if (!isSkillCooldownDownContent(item)) continue;
         if (statics.has(effect.state))
           throw new RangeError(`skillCooldownDown cannot be in a static state (${effect.state})`);
         const percent = skillValue(character.skills[slot], item.skillCooldownDown.percentRef, levels[slot]);

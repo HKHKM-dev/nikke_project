@@ -1018,8 +1018,8 @@ function runFirstPassOnce(
     slotIndex: number;
     skill: SkillSlot;
     state: NamedStateId;
-    short: number;
-    tick: (f: number, started: number | undefined, held: number | undefined) => boolean;
+    tick: (f: number, started: boolean, held: () => boolean) => boolean;
+    /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
     gaugeDelays: number[];
     fires: number[];
   }[] = [];
@@ -1039,9 +1039,13 @@ function runFirstPassOnce(
         slotIndex,
         skill,
         state: down.state,
-        short: gameSecondsToFirstFrame(timer.everySeconds * (1 - down.percent / 100)),
-        tick: cooldownTimer(gameSecondsToFirstFrame(timer.everySeconds)),
-        gaugeDelays: [],
+        tick: cooldownTimer(
+          gameSecondsToFirstFrame(timer.everySeconds),
+          gameSecondsToFirstFrame(timer.everySeconds * (1 - down.percent / 100)),
+        ),
+        gaugeDelays: resolveTimerGauges(slot.definition)
+          .filter((g) => g.cooldown === true && g.skill === skill)
+          .map((g) => g.delayFrames),
         fires: [],
       });
     }
@@ -1061,10 +1065,7 @@ function runFirstPassOnce(
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
     for (const { delayFrames, skill, ...timer } of resolveTimerGauges(slot.definition)) {
       // 魔術師のカード編: 縮める状態のある印の周期は、ループの中で発火を追って予約する（countCooldownTimers）
-      if (timer.cooldown === true && cooldownTrackers.some((t) => t.slotIndex === i && t.skill === skill)) {
-        cooldownTrackers.find((t) => t.slotIndex === i && t.skill === skill)!.gaugeDelays.push(delayFrames);
-        continue;
-      }
+      if (timer.cooldown === true && cooldownTrackers.some((t) => t.slotIndex === i && t.skill === skill)) continue;
       for (const fire of timerFramesOf(timer, frames)) {
         const at = fire + delayFrames;
         if (at >= frames) continue;
@@ -1298,14 +1299,10 @@ function runFirstPassOnce(
    */
   const countCooldownTimers = (f: number): void => {
     for (const t of cooldownTrackers) {
-      const items = lists.stateItemsAt(t.slotIndex, t.state, f);
-      const started = items.some((it) => it.start === f) ? t.short : undefined;
-      if (!t.tick(f, started, items.length > 0 ? t.short : undefined)) continue;
-      t.fires.push(f);
       const i = t.slotIndex;
-      const energy = timedGauge[i]
-        ? targetEnergies[i]! * gaugeScale[i]!
-        : slots[i]!.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
+      if (!t.tick(f, lists.stateStartedAt(i, t.state, f), () => lists.stateHeldAt(i, t.state, f))) continue;
+      t.fires.push(f);
+      const energy = hitGaugeEnergy(i);
       for (const d of t.gaugeDelays) if (f + d < frames) reserveTimerGauge(i, f, f + d, energy);
     }
   };

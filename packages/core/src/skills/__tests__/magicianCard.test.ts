@@ -99,12 +99,11 @@ describe('読み込み', () => {
 describe('クールタイムを縮める窓（cooldownTimer）', () => {
   /** 窓 [start, end) の列で、1 から frames − 1 まで回した発火 */
   const run = (long: number, short: number, windows: [number, number][], frames: number) => {
-    const tick = cooldownTimer(long);
+    const tick = cooldownTimer(long, short);
     const out: number[] = [];
     for (let f = 1; f < frames; f++) {
-      const started = windows.some(([s]) => s === f) ? short : undefined;
-      const held = windows.some(([s, e]) => s <= f && f < e) ? short : undefined;
-      if (tick(f, started, held)) out.push(f);
+      const started = windows.some(([s]) => s === f);
+      if (tick(f, started, () => windows.some(([s, e]) => s <= f && f < e))) out.push(f);
     }
     return out;
   };

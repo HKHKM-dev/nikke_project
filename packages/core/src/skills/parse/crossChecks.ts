@@ -11,6 +11,7 @@ import {
   isChanceTrigger,
   isEndedTrigger,
   isFullStackTrigger,
+  isMaxStacksUpContent,
   isShotCountTrigger,
   isStatContent,
   isStaticStateGrant,
@@ -311,7 +312,7 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'state') return;
       e.contents?.forEach((item, j) => {
-        if (isStatContent(item) || !('maxStacksUp' in item)) return;
+        if (!isMaxStacksUpContent(item)) return;
         const target = item.maxStacksUp.state;
         if (!hasSelfStackingGrant(entries, target))
           fail(

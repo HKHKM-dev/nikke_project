@@ -2040,7 +2040,7 @@ export type SkillCooldownDownContentItem = {
 
 /** 2 段目の段 14 の PR 3: 中身の項目が stat の▲▼か（maxStacksUp でない） */
 export function isStatContent(item: StateContentItem): item is StatContentItem {
-  return !('maxStacksUp' in item) && !('skillCooldownDown' in item);
+  return !isMaxStacksUpContent(item) && !isSkillCooldownDownContent(item);
 }
 
 /**
@@ -2048,8 +2048,19 @@ export function isStatContent(item: StateContentItem): item is StatContentItem {
  * 'skillCooldownDown'。最小構成の検査の形・一覧の表示）
  */
 export function contentStatOf(item: StateContentItem): BuffStat | 'maxStacksUp' | 'skillCooldownDown' {
-  if (isStatContent(item)) return item.stat;
-  return 'maxStacksUp' in item ? 'maxStacksUp' : 'skillCooldownDown';
+  if (isMaxStacksUpContent(item)) return 'maxStacksUp';
+  if (isSkillCooldownDownContent(item)) return 'skillCooldownDown';
+  return item.stat;
+}
+
+/** 2 段目の段 14 の PR 3: 中身の項目が最大スタック数▲か */
+export function isMaxStacksUpContent(item: StateContentItem): item is MaxStacksUpContentItem {
+  return 'maxStacksUp' in item;
+}
+
+/** 魔術師のカード編: 中身の項目がスキルのクールタイム▼か */
+export function isSkillCooldownDownContent(item: StateContentItem): item is SkillCooldownDownContentItem {
+  return 'skillCooldownDown' in item;
 }
 
 /** 2 段目の段 14 の PR 3: 中身の項目のうち stat の▲▼だけ（並びは保つ） */
