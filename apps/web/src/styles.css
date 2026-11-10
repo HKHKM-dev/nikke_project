@@ -1226,6 +1226,17 @@ html:has(.modern-view-container) {
   font-weight: bold;
 }
 /* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
+/* 並べ替えを開くボタンの名前。全部の並びの名前を 1 つのマスに重ねて幅を一番長い名前に合わせ、いまの並びだけを見せる */
+.char-tray-sort-label {
+  display: inline-grid;
+}
+.char-tray-sort-label > span {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.char-tray-sort-label > .char-tray-sort-current {
+  visibility: visible;
+}
 /* 並べ替えのポップアップの並びのボタン。いまの並びを強く出す */
 .char-tray-sort-options {
   display: grid;

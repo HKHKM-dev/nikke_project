@@ -135,7 +135,16 @@ export function CharacterTray({
           {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
               （続けて押せるように、押しても閉じない） */}
           <Popover
-            button={`${LIST_ORDER_LABEL[listOrder.order]} ${DIRECTION_MARK[listOrder.direction]}`}
+            button={
+              // 全部の並びの名前を同じ所に重ね、いまの並びだけを見せる（ボタンの幅を一番長い名前に合わせ、切り替えても変えない）
+              <span className="char-tray-sort-label">
+                {LIST_ORDERS.map((o) => (
+                  <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
+                    {LIST_ORDER_LABEL[o]} {DIRECTION_MARK[listOrder.direction]}
+                  </span>
+                ))}
+              </span>
+            }
             buttonClassName="char-tray-action-button"
             label="並べ替え"
             align="left"
