@@ -15,6 +15,7 @@ import {
   EXCLUDE_SELF,
   type ExcludeSelf,
   isAppliedTrigger,
+  isAllyDecrease,
   isEnemyHeldStat,
   isChanceTrigger,
   isFiringStat,
@@ -161,6 +162,11 @@ export function parseTimedEffect(v: Record<string, Json>, path: string): TimedEf
   // 防御力無視ダメージ編: 周期のトリガー（ソルジャーE.G. 編で、1 パス目で窓を追う stat にも）。ソルジャーE.G. 編: 確率のきっかけ
   // 鍵の順は今までの timed と同じ（kind・trigger・target・stat の後に残りの欄）。最小構成の感度の鍵が定義の JSON から作られるので
   const { trigger, target, ...rest } = parseTimedFields(v, path, stat, true);
+  // 課題 2-64（plan/design-debuff-removal-timed.md 2.1 節）: 味方の▼はデバフ解除で外れる（件の列を閉じる）。確率のきっかけと perCount の
+  // 件は閉じるフレームを読まないので、味方の▼には書けない
+  if (isAllyDecrease({ stat, ...rest }) && (isChanceTrigger(trigger) || rest.perCount !== undefined)) {
+    fail(path, 'an ally decrease (removed by debuff removal) cannot have a chance trigger or perCount');
+  }
   return { kind: 'timed', trigger, target, stat, ...rest } as TimedEffect;
 }
 

@@ -420,6 +420,60 @@ describe('デバフ解除（removeDebuff）', () => {
     expect(history.removeDebuffGuesses).toEqual([]);
   });
 
+  // 課題 2-64（plan/design-debuff-removal-timed.md 2.1〜2.4 節）: 味方に付く timed の▼
+  const ammoDown = (over: Partial<TimedEffect> = {}) => timed({ stat: 'maxAmmo', decrease: true, ...over });
+  const timedOf = (history: HolderHistory, holder: number, stat: string) =>
+    history.tracks
+      .filter((t) => t.holder === holder && t.origin.kind === 'timed' && t.origin.effect.stat === stat)
+      .flatMap((t) => t.items);
+
+  it('removes a timed decrease on an ally and keeps the buffs (C-1038)', () => {
+    const history = run([slotWith(1, [ammoDown(), timed({ stat: 'reloadSpeed' }), removal()])], [T - 100]);
+    expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + 1 }]);
+    expect(timedOf(history, 0, 'reloadSpeed')).toEqual([{ start: T - 100, end: T - 100 + D10 }]);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  it('removes every stack of a stacking decrease as one debuff', () => {
+    const history = run([slotWith(1, [ammoDown({ maxStacks: 3 }), removal()])], [T - 100, T - 50]);
+    expect(timedOf(history, 0, 'maxAmmo')).toEqual([
+      { start: T - 100, end: AT + 1, stack: 1 },
+      { start: T - 50, end: AT + 1, stack: 2 },
+    ]);
+  });
+
+  it('keeps a decrease applied on the removal frame (the grant wins)', () => {
+    const history = run([slotWith(1, [ammoDown(), removal()])], [T - 100, AT]);
+    expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + D10 }]);
+  });
+
+  it('counts an ally with a decrease as debuffed for the random N, and picks the earliest of a state and a decrease', () => {
+    const history = run(
+      [
+        slotWith(1, [drunken(), removal({ target: 'debuffedRandom', targetCount: 1 })]),
+        slotWith(2, [ammoDown({ trigger: 'burstUse' })]),
+      ],
+      [T - 100],
+    );
+    // 枠 2 の▼は付いていない（burstUse が来ない）ので、デバフのかかった味方は枠 1 だけ
+    expect(drunkenOf(history, 0).at(-1)!.end).toBe(AT + 1);
+    expect(history.removeDebuffGuesses).toEqual([]);
+
+    // ▼だけが付いた枠 2 も対象に選ばれる
+    const downOnly = run(
+      [slotWith(1, [removal({ target: 'debuffedRandom', targetCount: 1 })]), slotWith(2, [ammoDown()])],
+      [T - 100],
+    );
+    expect(timedOf(downOnly, 1, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + 1 }]);
+    expect(downOnly.removeDebuffGuesses).toEqual([]);
+
+    const both = run([slotWith(1, [ammoDown({ trigger: { everySeconds: 1 } }), drunken(), removal()])], [T - 100]);
+    // ▼は戦闘の始めから 1 秒ごとに付き直していて始まりが早いので、▼を外し（次の発火で付き直す）、ほろ酔いは残る
+    expect(timedOf(both, 0, 'maxAmmo').some((it) => it.end === AT + 1)).toBe(true);
+    expect(drunkenOf(both, 0).at(-1)!.end).toBe(T - 100 + D10);
+    expect(both.removeDebuffGuesses).toEqual([expect.objectContaining({ frame: AT, guess: 'states', limit: 1 })]);
+  });
+
   // 印の付いた状態はいまほろ酔いだけなので、状態が count 個より多い味方は選び方の関数で確かめる
   it('removes the earliest states and records the guess when an ally has more than count states', () => {
     const held = [

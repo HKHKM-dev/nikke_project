@@ -558,7 +558,7 @@ function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): Mod
               en: `Debuff removal (${nameEn}) found more than ${limit} debuffed allies ${times} time(s). The game picks at random and the rule is unverified; the model picks the first ${limit} slots`,
             }
           : {
-              ja: `デバフ解除（${nameJa}）で、デバフの状態が ${limit} 個より多く付いた味方がいた時が ${times} 回あった。選び方を確かめていないので、付いたのが早い順に ${limit} 個を外した`,
+              ja: `デバフ解除（${nameJa}）で、デバフ（状態と▼）が ${limit} 個より多く付いた味方がいた時が ${times} 回あった。選び方を確かめていないので、付いたのが早い順に ${limit} 個を外した`,
               en: `Debuff removal (${nameEn}) found an ally with more than ${limit} debuffs ${times} time(s). The rule is unverified; the model removes the ${limit} earliest`,
             },
     };

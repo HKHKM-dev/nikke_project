@@ -32,8 +32,8 @@
           "count": 1,
           "delayFrames": 3,
           "assumes": {
-            "ja": "遮蔽物 HP 回復と同じ CT ごとのアクティブ（C-0822 の時刻）で、デバフのかかった味方からランダムに 2 機の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）。名前の付いた状態でない味方の▼は、録画ではアニス：スパークリングサマーのバーストの最大装弾数▼が外れた（▲は残る）が、モデルは外さない（未実装）",
-            "en": "On the same cooldown active as the cover heal (C-0822 timing), removes one debuff-flagged state (Drunken), with all its stacks, from 2 random debuffed allies. Hangover (stun) is not removed, since that has not been checked (not implemented). Ally debuffs that are not named states were removed in the recordings (Anis: Sparkling Summer's burst Max Ammo down; buffs stayed), but the model does not remove them (not implemented)"
+            "ja": "遮蔽物 HP 回復と同じ CT ごとのアクティブ（C-0822 の時刻）で、デバフのかかった味方からランダムに 2 機の、デバフを 1 個外す。デバフは、デバフの印の付いた状態（ほろ酔い）と、味方に付く時間の▼（アニス：スパークリングサマーのバーストの最大装弾数▼など。▲は外さない）で、1 個は状態か▼の効果 1 つをスタックごと。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）",
+            "en": "On the same cooldown active as the cover heal (C-0822 timing), removes one debuff from 2 random debuffed allies. Debuffs are debuff-flagged states (Drunken) and timed debuffs on allies (e.g. Anis: Sparkling Summer's burst Max Ammo down; buffs stay); one debuff is one state or one debuff effect, with all its stacks. Hangover (stun) is not removed, since that has not been checked (not implemented)"
           },
           "claims": [
             "C-0978",
@@ -64,8 +64,8 @@
           "target": "allies",
           "count": 1,
           "assumes": {
-            "ja": "味方全体の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す（1 個は状態 1 つ。クレアのバーストで 2・3 スタックとも全部外れた）。二日酔い（気絶）と、名前の付いた状態でない味方の▼（プリバティの最大装弾数▼など）は、外れるかを確かめていないので外さない（未実装）",
-            "en": "Removes one debuff-flagged state (Drunken), with all its stacks, from every ally (one debuff = one state; Claire's burst removed 2 and 3 stacks alike). Hangover (stun) and ally debuffs that are not named states (e.g. Privaty's Max Ammo down) are not removed, since that has not been checked (not implemented)"
+            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（1 個は状態か▼の効果 1 つ。クレアのバーストで 2・3 スタックとも全部外れた）。時間の▼も外す形は S1 の録画（C-1038）からの類推で、バーストでは確かめていない。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）",
+            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (one debuff = one state or one debuff effect; Claire's burst removed 2 and 3 stacks alike). Removing timed debuffs is carried over from the S1 recordings (C-1038) and is not checked for the burst. Hangover (stun) is not removed, since that has not been checked (not implemented)"
           },
           "claims": [
             "C-0976",

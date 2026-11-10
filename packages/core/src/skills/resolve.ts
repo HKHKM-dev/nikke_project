@@ -468,6 +468,11 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   delayFrames?: number;
   /** メイド編（plan/design-maids.md 2.1 節）: 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders.ts の fireTimed） */
   perCount?: { state: NamedStateId };
+  /**
+   * 課題 2-64（plan/design-debuff-removal-timed.md 2.1 節）: 定義の decrease（▼）を写したもの（値は負にした後）。味方に付く▼はデバフ
+   * 解除で外れる（skills/holders.ts の fireRemoveDebuff）
+   */
+  decrease?: true;
 };
 
 /**
@@ -589,6 +594,7 @@ export function resolveTimed(
       if (effect.edgeShift !== undefined) r.edgeShift = effect.edgeShift;
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.perCount !== undefined) r.perCount = effect.perCount;
+      if (effect.decrease === true) r.decrease = true;
       resolved.push(r);
     });
   }
