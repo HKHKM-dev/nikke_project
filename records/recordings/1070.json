@@ -1,0 +1,46 @@
+{
+  "id": "1070",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1070_sr+ar+sr_delta+idoll-sun+killer-wife_fire.mp4",
+  "original": "2026-11-11_01-52-55.mp4",
+  "durationSec": 204.5,
+  "frames": 12272,
+  "fps": 60,
+  "sizeMB": 247.9,
+  "sha256": "fc635a2550e3",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 43,
+      "name": "D：キラーワイフ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-11T02:05+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
