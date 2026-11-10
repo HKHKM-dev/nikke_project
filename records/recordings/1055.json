@@ -1,0 +1,46 @@
+{
+  "id": "1055",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1055_sr+rl+mg_cocoa+uni+rei_fire.mp4",
+  "original": "2026-11-11_00-54-24.mp4",
+  "durationSec": 203.8,
+  "frames": 12226,
+  "fps": 60,
+  "sizeMB": 247,
+  "sha256": "148dfce0ccbd",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 831,
+      "name": "レイ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0716 の撮影 C。ココア（I）+ ユニ（II）+ レイ（III・操作）・灼熱の的・オートバースト ON",
+  "backup": {
+    "at": "2026-11-11T01:04+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
