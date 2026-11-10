@@ -143,7 +143,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: バーストの前のリターの 1 ヒット（胴体）"
+      "note": "撮影 A: バーストの前のリターの 1 ヒット（胴体）",
+      "observations": ["1034-08", "1035-08"]
     },
     {
       "id": "A-liter-judgment",
@@ -175,7 +176,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: 1 回目のフルバーストの終わりの前（リターのバーストの攻撃力▲の後）。審判のカードの受けるダメージ▲だけ。リターは鉄甲で運命の輪のカードが付かない"
+      "note": "撮影 A: 1 回目のフルバーストの終わりの前（リターのバーストの攻撃力▲の後）。審判のカードの受けるダメージ▲だけ。リターは鉄甲で運命の輪のカードが付かない",
+      "observations": ["1034-09", "1035-09"]
     },
     {
       "id": "A-liter-death",
@@ -207,7 +209,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: 1 回目のフルバースト終了の後 5 秒の中。S1 の攻撃力▲・S2 の攻撃ダメージ▲・死神のカードの攻撃力▲・審判のカード"
+      "note": "撮影 A: 1 回目のフルバースト終了の後 5 秒の中。S1 の攻撃力▲・S2 の攻撃ダメージ▲・死神のカードの攻撃力▲・審判のカード",
+      "observations": ["1034-10", "1035-10"]
     },
     {
       "id": "A-liter-after",
@@ -239,7 +242,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: 死神のカードの切れた後、S1・S2 の▲（10 秒）の中"
+      "note": "撮影 A: 死神のカードの切れた後、S1・S2 の▲（10 秒）の中",
+      "observations": ["1034-11", "1035-11"]
     },
     {
       "id": "A-arcana-base",
@@ -271,7 +275,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: バーストの前のアルカナの 1 ヒット（胴体）"
+      "note": "撮影 A: バーストの前のアルカナの 1 ヒット（胴体）",
+      "observations": ["1034-12", "1035-12"]
     },
     {
       "id": "A-arcana-wheel",
@@ -303,7 +308,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: 1 回目のフルバーストの中のアルカナ。運命の輪のカード・審判のカード"
+      "note": "撮影 A: 1 回目のフルバーストの中のアルカナ。運命の輪のカード・審判のカード",
+      "observations": []
     },
     {
       "id": "A-isabel-base",
@@ -335,7 +341,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: バーストの前のイサベルの 1 ヒット（胴体）"
+      "note": "撮影 A: バーストの前のイサベルの 1 ヒット（胴体）",
+      "observations": []
     },
     {
       "id": "A-isabel-death",
@@ -367,7 +374,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: 1 回目のフルバースト終了の後 5 秒の中のイサベル。S1 の攻撃ダメージ▲・力のカード・死神のカードなど"
+      "note": "撮影 A: 1 回目のフルバースト終了の後 5 秒の中のイサベル。S1 の攻撃ダメージ▲・力のカード・死神のカードなど",
+      "observations": ["1034-14", "1035-14"]
     },
     {
       "id": "A-isabel-after",
@@ -399,7 +407,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 A: 死神のカードの切れた後、力のカード・S1 の攻撃ダメージ▲（15 秒）の中のイサベル"
+      "note": "撮影 A: 死神のカードの切れた後、力のカード・S1 の攻撃ダメージ▲（15 秒）の中のイサベル",
+      "observations": ["1034-15", "1035-15"]
     },
     {
       "id": "A-fb-intervals",
@@ -427,7 +436,8 @@
       "tolerance": {
         "abs": 30
       },
-      "note": "撮影 A: フルバーストの入りどうしの間隔（動画のフレーム）。死神のカードのバーストスキルクールタイム▼が効くと短い"
+      "note": "撮影 A: フルバーストの入りどうしの間隔（動画のフレーム）。死神のカードのバーストスキルクールタイム▼が効くと短い",
+      "observations": []
     },
     {
       "id": "B-liter-after",
@@ -459,7 +469,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 B: 1 回目のフルバースト（10 秒）の終わりの後。死神のカードが付けば攻撃力▲"
+      "note": "撮影 B: 1 回目のフルバースト（10 秒）の終わりの後。死神のカードが付けば攻撃力▲",
+      "observations": ["1036-09", "1037-07"]
     },
     {
       "id": "B-neon-base",
@@ -491,7 +502,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 B: バーストの前のネオン：ビジョン・アイの 1 ヒット（胴体）"
+      "note": "撮影 B: バーストの前のネオン：ビジョン・アイの 1 ヒット（胴体）",
+      "observations": []
     },
     {
       "id": "B-neon-after",
@@ -523,7 +535,8 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 B: 1 回目のフルバースト（10 秒）の終わりの後のネオン：ビジョン・アイ。条件付きの効果が付けば攻撃ダメージ▲・力のカード"
+      "note": "撮影 B: 1 回目のフルバースト（10 秒）の終わりの後のネオン：ビジョン・アイ。条件付きの効果が付けば攻撃ダメージ▲・力のカード",
+      "observations": []
     },
     {
       "id": "B-fb-intervals",
@@ -551,12 +564,106 @@
       "tolerance": {
         "abs": 30
       },
-      "note": "撮影 B: フルバーストの入りどうしの間隔（動画のフレーム）"
+      "note": "撮影 B: フルバーストの入りどうしの間隔（動画のフレーム）",
+      "observations": []
+    },
+    {
+      "id": "A-arcana-burst-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: アルカナの 1 回目のバーストスキルダメージのヒット（会心なし）",
+      "observations": []
+    },
+    {
+      "id": "A-arcana-burst-2",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: アルカナの 2 回目のバーストスキルダメージのヒット（会心なし）",
+      "observations": []
+    },
+    {
+      "id": "A-arcana-burst-3",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: アルカナの 3 回目のバーストスキルダメージのヒット（会心なし）",
+      "observations": []
     }
   ],
   "predicted": {
     "at": "2026-11-10",
-    "commit": "9e1cff047fcae7c956d94f7f46c2030ad6bbc7c9",
+    "commit": "76da77872e942dd58aba6af561c476ad176aca88",
     "values": {
       "H1": {
         "A-liter-base": 8714.7225,
@@ -572,7 +679,10 @@
         "B-liter-after": 9837.188797499999,
         "B-neon-base": 203291.3355,
         "B-neon-after": 227591.8431875,
-        "B-fb-intervals": [2720, 2471, 2265]
+        "B-fb-intervals": [2720, 2471, 2265],
+        "A-arcana-burst-1": 594610.5000000001,
+        "A-arcana-burst-2": 594610.5000000001,
+        "A-arcana-burst-3": 329422.50000000006
       },
       "H-cond0": {
         "A-liter-base": 8714.7225,
@@ -588,7 +698,10 @@
         "B-liter-after": 9837.188797499999,
         "B-neon-base": 203291.3355,
         "B-neon-after": 227591.8431875,
-        "B-fb-intervals": [2720, 2471, 2265]
+        "B-fb-intervals": [2720, 2471, 2265],
+        "A-arcana-burst-1": 594610.5000000001,
+        "A-arcana-burst-2": 594610.5000000001,
+        "A-arcana-burst-3": 594610.5000000001
       },
       "H-keep": {
         "A-liter-base": 8714.7225,
@@ -604,7 +717,10 @@
         "B-liter-after": 14526.091440000002,
         "B-neon-base": 203291.3355,
         "B-neon-after": 1722544.4438125,
-        "B-fb-intervals": [1887, 2275, 1543]
+        "B-fb-intervals": [1887, 2275, 1543],
+        "A-arcana-burst-1": 594610.5000000001,
+        "A-arcana-burst-2": 594610.5000000001,
+        "A-arcana-burst-3": 329422.50000000006
       }
     }
   }

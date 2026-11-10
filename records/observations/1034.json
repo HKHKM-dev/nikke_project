@@ -1,0 +1,462 @@
+[
+  {
+    "id": "1034-01",
+    "recording": "1034",
+    "kind": "timing",
+    "use": "record",
+    "value": [1576, 2597, 3883, 4870, 6249, 7493, 8911, 10306],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・25・0・5・0f"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-02",
+    "recording": "1034",
+    "kind": "timing",
+    "use": "record",
+    "value": [1605, 3912, 6278, 7819, 9361],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・24・25・0・0f"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-03",
+    "recording": "1034",
+    "kind": "timing",
+    "use": "record",
+    "value": [1635, 3941, 6307, 7849, 9391],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-04",
+    "recording": "1034",
+    "kind": "timing",
+    "use": "record",
+    "value": [1950, 4256, 6622, 8163, 9706],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム 5 回目はレシピが 10277（長さ 886f）と読んだが、読み違い。00.00 の 315f 後（ほかの回の長さ）の 9706 に手で直した（リターの発が、フルバーストの終わりの後の格子に替わるのが 9716 からで、これと合う）"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-05",
+    "recording": "1034",
+    "kind": "interval",
+    "use": "record",
+    "value": [315, 315, 315, 314, 315],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差 5 回目はレシピが 10277（長さ 886f）と読んだが、読み違い。00.00 の 315f 後（ほかの回の長さ）の 9706 に手で直した（リターの発が、フルバーストの終わりの後の格子に替わるのが 9716 からで、これと合う）"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-06",
+    "recording": "1034",
+    "kind": "timing",
+    "use": "record",
+    "value": [7813, 9355],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-07",
+    "recording": "1034",
+    "kind": "timing",
+    "use": "record",
+    "value": [7842, 9384],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1034-08",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 8715,
+    "unit": "ダメージ",
+    "description": "リターの▲の無い 1 ヒット（胴体・会心なし・距離なし）。344 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-09",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14379,
+    "unit": "ダメージ",
+    "description": "リターの、フルバーストの終わりの前（リターのバーストの攻撃力▲の切れた後）の 1 ヒット。審判のカードの受けるダメージ 10%▲ とフルバースト補正だけ（運命の輪のカードは乗らない）。46 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 960,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-10",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 15979,
+    "unit": "ダメージ",
+    "description": "リターの、フルバーストの終わりから約 5 秒の 1 ヒット（死神のカードのアルカナの攻撃力の 50%・S1 の 5%・S2 の攻撃ダメージ 7.5%・審判のカード）。49 個。どのフルバーストの後も、約 5 秒はこの区間（リターのバーストの攻撃力▲の残る回はそれも乗った区間）、その後フルバーストの終わりから約 10 秒まで S1・S2 の▲だけの区間、その後▲なしの格子に当たる。攻撃ダメージ 180%▲ と力のカードの乗った値は無い",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-11",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 9837,
+    "unit": "ダメージ",
+    "description": "リターの、死神のカードの切れた後、フルバーストの終わりから 10 秒までの 1 ヒット（S1 の攻撃力 5%▲・S2 の攻撃ダメージ 7.5%▲）。117 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-12",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 175802,
+    "unit": "ダメージ",
+    "description": "アルカナの▲の無い 1 ヒット（胴体・会心なし）。9 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-13",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 883143,
+    "unit": "ダメージ",
+    "description": "アルカナのフルバーストの中のコアの 1 ヒット（運命の輪のカードの攻撃ダメージ 10%▲・審判のカード・リターのバーストの攻撃力▲・フルバースト補正）。3 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-14",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 269573,
+    "unit": "ダメージ",
+    "description": "イサベルの、フルバーストの終わりから約 5 秒の 1 ペレット（攻撃ダメージ 180%▲・力のカード・死神のカード・S1・S2 の▲・運命の輪のカード・審判のカード）。f2137 の増分 1,887,011 を胴体 7 ペレット（7 × 269,572.94 = 1,887,010.6）と読んだ値",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-15",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 203536,
+    "unit": "ダメージ",
+    "description": "イサベルの、死神のカードと運命の輪のカードの切れた後の 1 ペレット（攻撃ダメージ 180%▲・力のカード・S1・S2 の▲）。f2505 の増分 1,831,826 を胴体 9 ペレットと読んだ値（÷ 9 = 203,536.2）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-16",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 601767,
+    "unit": "ダメージ",
+    "description": "アルカナの 1 回目のバーストスキルダメージのヒット（会心なし）。III のタイマーの 00.00 の 40f 後",
+    "method": {
+      "tool": "hud-jumps@3 の増分を目で拾った",
+      "note": "II の発動の印（`1034-01`）から 98〜100f、00.00（`1034-03`）から 40〜41f の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1034-17",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "hit",
+    "value": [601767, 702521, 654072, 543547, 362365],
+    "unit": "ダメージ",
+    "description": "アルカナのバーストスキルダメージのヒットの、フルバーストごとの増分（00.00 の 40〜41f 後）。1 回目 601,767・3 回目 654,072・5 回目 362,365 はアルカナのヒットだけ。2 回目 702,521 は 654,072 と同じフレームのリターの発 48,449 の和、4 回目 543,547 は 362,365 とほかの発の和",
+    "method": {
+      "tool": "hud-jumps@3 の増分を目で拾った",
+      "note": "00.00（`1034-03`）の 36〜46f 後の増分を並べた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1034-18",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "interval",
+    "value": [2306, 2366, 1542, 1542],
+    "unit": "f",
+    "description": "III のタイマーの 00.00（フルバーストの始まり。`1034-03`）どうしの間隔（動画のフレーム）。3 回目からは II・III の CT で決まり、モデル（H1）の 1,543f と 1f 以内（死神のカードの CT▼ の無い H-cond0 は約 2,340〜2,470f）。1・2 回目はゲージの満タンとリターの単独のバーストで決まる",
+    "method": {
+      "tool": "recipe:burst-panel@4 の観測値の差",
+      "note": "`1034-03` の隣どうしの差"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1034-19",
+    "recording": "1034",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "timing",
+    "value": [
+      1843, 2176, 2396, 2621, 2840, 3724, 4485, 4928, 5147, 6032, 6849, 7293, 7515, 8391, 8834, 9055, 9933, 10153,
+      10376, 10599
+    ],
+    "unit": "f",
+    "description": "イサベルの S2（フェザー・イジェクション）の左の帯が出たフレーム。フルバーストの終わり（`1034-04`。5 回目は 00.00 の 315f 後の 9706 とみた）E の後、E+226・+229・+227・+228・+227f に最初の S2 が出て、その後は約 221f ごと（帯の重なりで拾えなかった回は間が約 2 倍）。カードの 15 秒の後は、最後の S2 から 884〜885f（ふだんの 15 秒）。フルバーストの外の S2 の間隔も 884f",
+    "method": {
+      "tool": "tools/captures/banner.ts --mode white と、帯の文字を目で確かめた",
+      "note": "帯の立ち上がりの 8f 後のフレームを切り出し、帯の名前でイサベルの S2 だけを残した"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "skill"
+    }
+  }
+]
