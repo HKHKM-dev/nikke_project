@@ -1125,7 +1125,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
   const selfHpDropped = (state: SelfHpState, frame: number): boolean => {
     if (state.frame !== frame) {
-      const low = selfHpRatioAt(state.slotIndex, frame) <= state.threshold + 1e-9;
+      const low = selfHpAtMostAt(state.slotIndex, frame, state.threshold);
       if (state.low && !low && frame < frames) state.ends.push(frame);
       state.dropped = low && !state.low;
       state.low = low;
@@ -1804,7 +1804,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   /**
    * 発火の文脈だけで決まる条件。2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件の usedBurst（直前に自分がバーストスキルを使用していれば）。発火の文脈の
-   * burstUsers に自分がいるか。件を見ないので、段 1 の効果でも発火の前に見る。鍵が無ければ true
+   * burstUsers に自分がいるか。件を見ないので、段 1 の効果でも発火の前に見る。鍵が無ければ true。
+   * 紅蓮編（plan/design-scarlet.md 2.2 節）: selfHp の atMost も見る。こちらは最大HP の件の列を読むが、発火のフレームより前に始まった件と
+   * 前の現在の HP▼ だけなので、同じフレームの登録の順に依らない
    */
   const fireContextHolds = (
     condition: EffectCondition | undefined,
@@ -1817,10 +1819,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) === condition.usedBurst) &&
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex) &&
-    // 紅蓮編（plan/design-scarlet.md 2.2 節）: 自分の HP の割合が閾値以下か。発火のフレームより前の件・発火だけで決まる（resolveCondition が
-    // atMostRef を atMost にしてある）
+    // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）
     (condition?.selfHp?.atMost === undefined ||
-      selfHpRatioAt(sourceSlotIndex, ev.frame) <= condition.selfHp.atMost / 100 + 1e-9);
+      selfHpAtMostAt(sourceSlotIndex, ev.frame, condition.selfHp.atMost / 100));
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -1857,38 +1858,27 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (state) =>
       state?.passiveEffects.filter((e) => e.stat === 'maxHpOnly').reduce((sum, e) => sum + e.appliedAmount, 0) ?? 0,
   );
-  // 最大HP のみ▲ を持ちうる枠（常時か件の列）だけ割合が動く。ほかの枠は想定の割合のまま（毎フレームの走査を省く）
-  // 紅蓮編（plan/design-scarlet.md 2.1 節）: 現在の HP▼ の発火（フレームの昇順）と、その発火までの 1 − ratio の積
-  const hpDowns = slots.map((): { frame: number; product: number }[] => []);
-  const lowersCurrentHp = slots.map(
-    (slot) =>
-      slot?.definition != null &&
-      SKILL_SLOTS.some((s) => slot.definition!.skills[s].effects.some((e) => e.kind === 'currentHpDown')),
+  // 最大HP のみ▲ を持ちうる枠（常時か件の列）だけ、最大HP の件で割合が動く。ほかの枠は件を見ない（毎フレームの走査を省く）
+  const hpRatioMoves = slots.map(
+    (_, i) => (passiveMaxHpOnly[i] ?? 0) > 0 || (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly'),
   );
+  // 紅蓮編（plan/design-scarlet.md 2.1 節）: 枠ごとの現在の HP▼ の発火のフレーム（昇順）と、その発火までの 1 − ratio の積
+  const hpDowns = slots.map(() => ({ frames: [] as number[], products: [] as number[] }));
   /** 枠の frame より前の現在の HP▼ の積（無ければ 1） */
   const hpDownProductBefore = (slotIndex: number, frame: number): number => {
-    const downs = hpDowns[slotIndex] ?? [];
-    let product = 1;
-    for (let i = downs.length - 1; i >= 0; i -= 1) {
-      if (downs[i]!.frame < frame) {
-        product = downs[i]!.product;
-        break;
-      }
-    }
-    return product;
+    const downs = hpDowns[slotIndex];
+    const i = downs === undefined ? 0 : lowerBound(downs.frames, frame);
+    return i === 0 ? 1 : downs!.products[i - 1]!;
   };
-  const hpRatioMoves = slots.map(
-    (_, i) =>
-      (passiveMaxHpOnly[i] ?? 0) > 0 ||
-      (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly') ||
-      lowersCurrentHp[i] === true,
-  );
   const selfHpRatioAt = (slotIndex: number, frame: number): number => {
-    const assumed = slots[slotIndex]?.hpRatio ?? 1;
-    if (!hpRatioMoves[slotIndex]) return assumed;
+    const ratio = (slots[slotIndex]?.hpRatio ?? 1) * hpDownProductBefore(slotIndex, frame);
+    if (!hpRatioMoves[slotIndex]) return ratio;
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
-    return (assumed * hpDownProductBefore(slotIndex, frame) * (1 + up - only)) / (1 + up);
+    return (ratio * (1 + up - only)) / (1 + up);
   };
+  /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と条件 selfHp の atMost が読む） */
+  const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
+    selfHpRatioAt(slotIndex, frame) <= threshold + 1e-9;
   // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   // 発動者より低い枠（同値は含まない）と発動者自身
   const defenseViews = viewsOf((_, e) => e.stat === 'defense');
@@ -2715,10 +2705,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     lowerCurrentHp(slotIndex, frame, ratio) {
       const downs = hpDowns[slotIndex];
       if (downs === undefined) return;
-      const last = downs[downs.length - 1];
-      if (last !== undefined && last.frame > frame)
-        throw new RangeError('lowerCurrentHp must be called in frame order');
-      downs.push({ frame, product: (last?.product ?? 1) * (1 - ratio) });
+      const n = downs.frames.length;
+      if (n > 0 && downs.frames[n - 1]! > frame) throw new RangeError('lowerCurrentHp must be called in frame order');
+      downs.frames.push(frame);
+      downs.products.push((n > 0 ? downs.products[n - 1]! : 1) * (1 - ratio));
     },
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];

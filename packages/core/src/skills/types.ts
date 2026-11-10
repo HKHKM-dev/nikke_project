@@ -166,8 +166,8 @@ export const BUFF_STATS = [
   // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」はこの stat では書かない（definitions.test.ts）
   'maxHp',
   // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 最大HP のみ▲（比率）。最終最大HP への足し方は maxHp と同じ。効いている
-  // 間は HP の割合を下げ（段 6 の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef。マスト編・エード編）が読む。条件の selfHp と
-  // 対象の lowestHpRatio は枠の想定で一定のまま（下がる分は未実装。plan/design-ade.md 6 節）
+  // 間は HP の割合を下げ（段 6 の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef。マスト編・エード編）と、timed の条件 selfHp の
+  // atMost（紅蓮編）が読む。passive の条件 selfHp と対象の lowestHpRatio は枠の想定で一定のまま（下がる分は未実装。plan/design-ade.md 6 節）
   'maxHpOnly',
   // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
@@ -1062,10 +1062,8 @@ export function isSelfHpAtMost(hp: SelfHpCondition): boolean {
   return hp.atMostRef !== undefined || hp.atMost !== undefined;
 }
 
-/** 2 段目の段 15: selfHp の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
+/** 2 段目の段 15: selfHp の「以上」の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
 export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => number): number {
-  if (hp.atMost !== undefined) return hp.atMost / 100;
-  if (hp.atMostRef !== undefined) return valueOf(hp.atMostRef) / 100;
   return (hp.atLeast ?? valueOf(hp.atLeastRef!)) / 100;
 }
 
@@ -1515,18 +1513,7 @@ export type AmmoDecreaseEffect = TargetCountFields & {
  * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
  * から読む（skills/holders.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ
  */
-export type CurrentHpDownEffect = TargetCountFields & {
-  kind: 'currentHpDown';
-  trigger: EffectTrigger;
-  target: 'self';
-  /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
-  targetWeapon?: WeaponType;
-  targetElement?: Element;
-  targetClass?: NikkeClass;
-  /** % の description_value_NN */
-  ref: number;
-  assumes?: LocalizedText;
-};
+export type CurrentHpDownEffect = Omit<AmmoDecreaseEffect, 'kind'> & { kind: 'currentHpDown' };
 
 /**
  * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 「フルバーストタイム（の持続時間）X 秒▲」。フルバーストの窓を X 秒延ばす
