@@ -82,11 +82,12 @@ describe('parseSkillDefinition（ヘルム編）', () => {
     );
   });
 
-  it('rejects a duration in shots mixed with seconds, stacks, conditions or stats tracked in the first pass', () => {
+  it('rejects a duration in shots mixed with seconds, conditions or stats tracked in the first pass', () => {
     const timed = { kind: 'timed', trigger: 'burstUse', target: 'self', stat: 'chargeDamage', ref: 1 };
     expect(parseOne({ ...timed, durationShots: 10, durationRef: 2 })).toThrow(/either in seconds or in shots/);
     expect(parseOne({ ...timed, durationShots: 10, durationShotsRef: 2 })).toThrow(/at most one/);
-    expect(parseOne({ ...timed, durationShots: 10, maxStacks: 3 })).toThrow(/cannot stack/);
+    // ツバイ編（plan/design-zwei.md 2.3 節）: スタックとは組める（付くたびに 1 段増え、持ち主の N 発目で全部切れる）
+    expect(parseOne({ ...timed, durationShots: 10, maxStacks: 3 })).not.toThrow();
     expect(parseOne({ ...timed, durationShots: 10, condition: { selfBuffed: 'attack' } })).toThrow(/condition/);
     for (const stat of ['attack', 'reloadSpeed', 'hitRate']) {
       expect(parseOne({ ...timed, stat, durationShots: 10 })).toThrow(/first pass/);

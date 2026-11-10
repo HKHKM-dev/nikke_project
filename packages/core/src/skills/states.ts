@@ -296,6 +296,11 @@ export const NAMED_STATES = {
   strength: { name: { ja: '力のカード', en: 'Strength' }, holder: 'ally' },
   /** 同: 死神のカード（S2。味方全体に付くバーストスキルクールタイム▼とスキル発動者基準の攻撃力▲・5 秒。C-1053） */
   death: { name: { ja: '死神のカード', en: 'Death' }, holder: 'ally' },
+  /**
+   * ツバイ編（plan/design-zwei.md 2.5 節）: ツバイの宝物版のバースト「貫通学概論：貫通ダメージ▲」（味方全体・10 秒）。
+   * 中身は貫通ダメージ▲。宝物版 S2 の「自分が貫通学概論状態なら」が見る
+   */
+  pierceAttacks101: { name: { ja: '貫通学概論', en: 'Pierce Attacks 101' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

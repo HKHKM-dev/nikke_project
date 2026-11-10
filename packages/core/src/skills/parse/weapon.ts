@@ -24,6 +24,8 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
         'hitsPerShot',
         'trueDamage',
         'projectileExplosion',
+        'pierce',
+        'shotCount',
         'chargeTimeSeconds',
         'chargeTimeFixed',
         'fullChargeDamage',
@@ -123,16 +125,14 @@ export function parseWeaponChangeEffect(v: Record<string, Json>, path: string): 
     if (untilEmpty) fail(`${path}.infiniteAmmo`, 'infiniteAmmo cannot be combined with maxAmmoRef');
     effect.infiniteAmmo = true;
   }
-  if (v.trueDamage !== undefined) {
-    if (v.trueDamage !== true) fail(`${path}.trueDamage`, `expected true, got ${JSON.stringify(v.trueDamage)}`);
-    effect.trueDamage = true;
+  // ツバイ編（plan/design-zwei.md 2.1 節）: 追加効果「貫通特化」（pierce）も、true だけを受ける旗
+  for (const key of ['trueDamage', 'projectileExplosion', 'pierce'] as const) {
+    if (v[key] === undefined) continue;
+    if (v[key] !== true) fail(`${path}.${key}`, `expected true, got ${JSON.stringify(v[key])}`);
+    effect[key] = true;
   }
-  if (v.projectileExplosion !== undefined) {
-    if (v.projectileExplosion !== true) {
-      fail(`${path}.projectileExplosion`, `expected true, got ${JSON.stringify(v.projectileExplosion)}`);
-    }
-    effect.projectileExplosion = true;
-  }
+  // ツバイ編（plan/design-zwei.md 2.2 節）: 持ち替えた武器の弾の数（録画で読む即値）
+  if (v.shotCount !== undefined) effect.shotCount = parsePositiveInt(v.shotCount, `${path}.shotCount`);
   // ナユタ編（plan/design-nayuta.md 2.5 節）: 変更の窓の間の状態（付与は parse/definition.ts の parseEntry が足す）
   if (v.state !== undefined) {
     if (untilEmpty)

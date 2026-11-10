@@ -44,18 +44,25 @@ export function stackItems(
   if (durationFrames <= 0 || (typeof maxStacks === 'number' && maxStacks < 1)) return [];
   const sorted = starts.filter((s) => s < frames).sort((a, b) => a - b);
   if (mode === 'each' && decreases.length > 0) throw new RangeError('a stack decrease needs STACK_REFRESH "all"');
-  if (mode === 'all') return refreshAll(sorted, durationFrames, frames, maxStacks, decreases);
+  if (mode === 'all')
+    return refreshAll(sorted, (start) => Math.min(start + durationFrames, frames), frames, maxStacks, decreases);
   if (typeof maxStacks !== 'number')
     throw new RangeError('a max stacks that changes by frame needs STACK_REFRESH "all"');
   return eachOwn(sorted, durationFrames, frames, maxStacks);
 }
 
-function refreshAll(
+/**
+ * 'all' の件（発火のたびに 1 段足し、全段を最後の発火の終わりにそろえる）。endOf は始まり s の件の終わり（秒の維持なら s + 維持）。
+ * ツバイ編（plan/design-zwei.md 2.3 節）: strict なら、前の終わりちょうどの発火は続きとみなさず段 1 から数え直す（発数の維持で、持ち主の
+ * N 発目で切れたスタックを持ち越さない。秒の維持は、ちょうど切れたフレームの発火も続き）
+ */
+export function refreshAll(
   sorted: readonly number[],
-  durationFrames: number,
+  endOf: (start: number) => number,
   frames: number,
   maxStacks: MaxStacksAt,
-  decreases: readonly StackDecrease[],
+  decreases: readonly StackDecrease[] = [],
+  strict = false,
 ): StackItem[] {
   const capAt = typeof maxStacks === 'number' ? () => maxStacks : maxStacks;
   const out: StackItem[] = [];
@@ -78,9 +85,9 @@ function refreshAll(
   };
   for (const s of sorted) {
     cutBefore(s);
-    const end = Math.min(s + durationFrames, frames);
-    // 和集合（unionItems）と同じく、ちょうど切れたフレームの発火も続きとみなす
-    if (chain.length > 0 && s <= chainEnd) {
+    const end = endOf(s);
+    // 和集合（unionItems）と同じく、ちょうど切れたフレームの発火も続きとみなす（strict でなければ）
+    if (chain.length > 0 && (strict ? s < chainEnd : s <= chainEnd)) {
       if (chain.length < capAt(s)) {
         const w = { stack: chain.length + 1, start: s, end };
         chain.push(w);

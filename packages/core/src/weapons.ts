@@ -10,10 +10,9 @@ import type { ShotParams, WeaponType } from './types.ts';
 export const MAX_RPM = 60 * FRAMES_PER_GAME_SECOND;
 
 /**
- * 二丁持ちを 1 発 N ヒットで扱う武器種。SMG（V-0702）と RL（ノア。V-0706）で確かめた。SG の二丁持ち（ツバイ）は確かめていない
- * （modelNotes の未対応）
+ * 二丁持ちを 1 発 N ヒットで扱う武器種。SMG（V-0702）と RL（ノア。V-0706）と SG（ツバイ。1 発 2 × 5 ペレット。C-1068）で確かめた
  */
-export const DUAL_WIELD_WEAPONS = ['SMG', 'RL'] as const satisfies readonly WeaponType[];
+export const DUAL_WIELD_WEAPONS = ['SMG', 'RL', 'SG'] as const satisfies readonly WeaponType[];
 export type DualWieldWeapon = (typeof DUAL_WIELD_WEAPONS)[number];
 
 export function isDualWieldWeapon(weaponType: WeaponType): weaponType is DualWieldWeapon {

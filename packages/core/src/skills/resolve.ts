@@ -1180,6 +1180,8 @@ export type ChangedWeaponOverrides = {
   /** フルチャージダメージ（倍率。3 = 300%） */
   fullChargeDamage?: number;
   maxAmmo?: number;
+  /** ツバイ編（plan/design-zwei.md 2.2 節）: 1 発の弾の数（ペレット数） */
+  shotCount?: number;
   /** 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾でチャージしない武器にする（instantFire） */
   instantFire?: boolean;
   /**
@@ -1207,6 +1209,7 @@ export function changedWeaponShot(
     ...(overrides.chargeTime !== undefined ? { chargeTime: overrides.chargeTime } : {}),
     ...(overrides.fullChargeDamage !== undefined ? { fullChargeDamage: overrides.fullChargeDamage } : {}),
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
+    ...(overrides.shotCount !== undefined ? { shotCount: overrides.shotCount } : {}),
     ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
     // 2 段目の段 11: 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
     ...(overrides.instantFire === true
@@ -1280,6 +1283,7 @@ function resolveWeaponChange(
     overrides.maxAmmo = n;
   }
   if (effect.instantFire === true) overrides.instantFire = true;
+  if (effect.shotCount !== undefined) overrides.shotCount = effect.shotCount;
   const untilEmpty = effect.maxAmmoRef !== undefined;
   const r: ResolvedTimedEffect = {
     source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1293,6 +1297,7 @@ function resolveWeaponChange(
       shot: changedWeaponShot(character.shot, damage, rateOfFire, hits, overrides),
       ...(effect.trueDamage ? { trueDamage: true as const } : {}),
       ...(effect.projectileExplosion ? { projectileExplosion: true as const } : {}),
+      ...(effect.pierce ? { pierce: true as const } : {}),
       ...(effect.firstShotDelayFrames !== undefined ? { firstShotDelayFrames: effect.firstShotDelayFrames } : {}),
       ...(effect.firstShotAfterSwapFrames !== undefined
         ? { firstShotAfterSwapFrames: effect.firstShotAfterSwapFrames }

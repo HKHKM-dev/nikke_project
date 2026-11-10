@@ -1,0 +1,422 @@
+[
+  {
+    "id": "1057-01",
+    "recording": "1057",
+    "kind": "total",
+    "use": "record",
+    "value": 50946945,
+    "description": "ツバイ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11412。増分は 212 個"
+    },
+    "source": "V-0718",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1057-02",
+    "recording": "1057",
+    "kind": "count",
+    "use": "record",
+    "value": 212,
+    "unit": "トリガー",
+    "description": "ツバイ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 212 個。前の増分から 30f 未満の増分（4 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 4 個）"
+    },
+    "source": "V-0718",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1057-03",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 19,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、戦闘の始まりから 1 回目にゲージが満タンになった（BURST バーが消えた）発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）。最初の増分から、満タンのフレームまでの増分の数。1 発の増分はペレットの和の格子（20,114.7 × (ペレット数 + 0.5 × 会心の数 + …)）に乗り、10.5 ペレットぶんの値まで出る（1 発 10 ペレット。二丁持ち）。比べるモデルは手入力の条件（SG のペレットの割合は置き値 0.75）。録画の中近の当たりの割合（0.778）に近い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-04",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 17,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、1 回目のチェーン切れ（BURST バーが戻ったフレーム）の後から、次に BURST バーが消えた発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）（--mode series）。チェーン切れは、バーストの発動の約 600f 後に BURST バーが戻ったフレーム、満タンはバーが消えたフレーム（C-0083）で、その間の増分の数（回ごとの組: f2350→3157, f3789→4451, f5082→6079, f6705→7631, f8261→9155, f9785→10508）。戻ったバーは 16〜21% 溜まって見える。--mode events の「満タン」はバーが 96% に届いたフレームで、的のジャンプの間に読み違える（1056 の f7306 はバーが 49% のまま）ので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-05",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 15,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、2 回目のチェーン切れ（BURST バーが戻ったフレーム）の後から、次に BURST バーが消えた発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）（--mode series）。チェーン切れは、バーストの発動の約 600f 後に BURST バーが戻ったフレーム、満タンはバーが消えたフレーム（C-0083）で、その間の増分の数（回ごとの組: f2350→3157, f3789→4451, f5082→6079, f6705→7631, f8261→9155, f9785→10508）。戻ったバーは 16〜21% 溜まって見える。--mode events の「満タン」はバーが 96% に届いたフレームで、的のジャンプの間に読み違える（1056 の f7306 はバーが 49% のまま）ので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-06",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 22,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、3 回目のチェーン切れ（BURST バーが戻ったフレーム）の後から、次に BURST バーが消えた発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）（--mode series）。チェーン切れは、バーストの発動の約 600f 後に BURST バーが戻ったフレーム、満タンはバーが消えたフレーム（C-0083）で、その間の増分の数（回ごとの組: f2350→3157, f3789→4451, f5082→6079, f6705→7631, f8261→9155, f9785→10508）。戻ったバーは 16〜21% 溜まって見える。--mode events の「満タン」はバーが 96% に届いたフレームで、的のジャンプの間に読み違える（1056 の f7306 はバーが 49% のまま）ので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 2
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-07",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 20,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、4 回目のチェーン切れ（BURST バーが戻ったフレーム）の後から、次に BURST バーが消えた発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）（--mode series）。チェーン切れは、バーストの発動の約 600f 後に BURST バーが戻ったフレーム、満タンはバーが消えたフレーム（C-0083）で、その間の増分の数（回ごとの組: f2350→3157, f3789→4451, f5082→6079, f6705→7631, f8261→9155, f9785→10508）。戻ったバーは 16〜21% 溜まって見える。--mode events の「満タン」はバーが 96% に届いたフレームで、的のジャンプの間に読み違える（1056 の f7306 はバーが 49% のまま）ので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 3
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-08",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 20,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、5 回目のチェーン切れ（BURST バーが戻ったフレーム）の後から、次に BURST バーが消えた発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）（--mode series）。チェーン切れは、バーストの発動の約 600f 後に BURST バーが戻ったフレーム、満タンはバーが消えたフレーム（C-0083）で、その間の増分の数（回ごとの組: f2350→3157, f3789→4451, f5082→6079, f6705→7631, f8261→9155, f9785→10508）。戻ったバーは 16〜21% 溜まって見える。--mode events の「満タン」はバーが 96% に届いたフレームで、的のジャンプの間に読み違える（1056 の f7306 はバーが 49% のまま）ので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-09",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "count",
+    "value": 14,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、6 回目のチェーン切れ（BURST バーが戻ったフレーム）の後から、次に BURST バーが消えた発までの、総ダメージの増えた発の数",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）と、BURST バーの出来事（gauge.ts --mode events）（--mode series）。チェーン切れは、バーストの発動の約 600f 後に BURST バーが戻ったフレーム、満タンはバーが消えたフレーム（C-0083）で、その間の増分の数（回ごとの組: f2350→3157, f3789→4451, f5082→6079, f6705→7631, f8261→9155, f9785→10508）。戻ったバーは 16〜21% 溜まって見える。--mode events の「満タン」はバーが 96% に届いたフレームで、的のジャンプの間に読み違える（1056 の f7306 はバーが 49% のまま）ので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "chainTimeoutToGaugeFullShots",
+      "args": {
+        "slot": 1,
+        "n": 5
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    }
+  },
+  {
+    "id": "1057-10",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "timing",
+    "value": [
+      108,
+      108,
+      108,
+      108,
+      108
+    ],
+    "unit": "f",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、ゲージの満タン（BURST バーが消えたフレーム）から、バーストの使用武器変更の発（増分が 759,202 前後の発）までの動画のフレーム数（回ごと）",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps・tools/captures/gauge.ts --mode events",
+      "note": "バーの消失 → 変更後の武器の増分: f1720→1828, f3157→3265, f4451→4559, f6079→6187, f7631→7739, f9155→9263。7 回目（f10508→10584、76f）は 2 回目の近の区間の終わり近くで、ほかより 32f 早い（バーの消失の読みか、的のジャンプの前後の待ちの違い。読み切れていない）ので比べない。比べるのは、モデル（手入力の条件）で変更の窓が的のジャンプにかからない回（モデルの 3 回目はジャンプにかかるので除いた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullToWeaponChangeShot",
+      "args": {
+        "slot": 1,
+        "n": "0,1,3,4,5"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "firing"
+    }
+  },
+  {
+    "id": "1057-11",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "hit",
+    "value": 379601,
+    "unit": "ダメージ",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・オートバースト ON・スペック固定 ON・灼熱）の、バーストの使用武器変更の発の 1 ヒット（距離ボーナスなし・コア・会心なし）。増分は 2 ヒットで 759,202（f1828・f6187・f7739）。貫通学概論の貫通ダメージ▲（25.03%）が乗る（乗らなければ 1 ヒット 303,608）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）。バーストの後の、増分が 2 ヒットの和の格子（151,804 × 1.2503 × (1 + コア 1.0 + 距離 0.3 + 会心 0.5) × 2）に乗る発。値は 1 ヒット（増分の半分）。2 つの銃口が 1 弾ずつ撃ち、どちらもコアに当たる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 900,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1057-12",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "hit",
+    "value": 436541,
+    "unit": "ダメージ",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・オートバースト ON・スペック固定 ON・灼熱）の、近の区間のバーストの使用武器変更の発の 1 ヒット（距離ボーナス・コア・会心なし）。増分は 2 ヒットで 873,082（f3265・f4559・f10584）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）。バーストの後の、増分が 2 ヒットの和の格子（151,804 × 1.2503 × (1 + コア 1.0 + 距離 0.3 + 会心 0.5) × 2）に乗る発。値は 1 ヒット（増分の半分）。2 つの銃口が 1 弾ずつ撃ち、どちらもコアに当たる"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3660,
+        "core": true,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1057-13",
+    "recording": "1057",
+    "source": "V-0718",
+    "readAt": "2026-11-11",
+    "use": "record",
+    "kind": "count",
+    "value": 9,
+    "unit": "発",
+    "description": "ツバイ単騎（宝物版・段階 3。操作・オートバースト ON・スペック固定 ON・灼熱）の、戦闘の始まりから 1 回目のバーストまで（中近・会心率 15%）の 19 発のうち、1 発の増分が 7.5 ペレットぶん（150,861）を超えた発の数。19 発の増分は 1 ペレット（20,114.7）の 8.5・9.5・5・8.5・9・7.5・8.5・6・8.5・7・7.5・6・6.5・5.5・7.5・8.5・7.5・11・9.5 倍（平均 7.9）",
+    "method": {
+      "tool": "hud.ts --mode jumps",
+      "note": "1 発の増分を 1 ペレットの和の格子（ペレット数 + 0.5 × 会心の数 + コアの数）に当てた。1 発 5 ペレットなら、中近のコア命中率 0.026 でコアに当たらない限り 7.5 を超えない（10 ペレットなら当たったペレットの数だけで超える）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

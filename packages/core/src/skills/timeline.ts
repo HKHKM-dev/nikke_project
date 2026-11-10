@@ -28,7 +28,7 @@
 // 書き出し（BuffTimeline の windows・stateWindows・namedStateWindows・cycleWindows と記録の欄）を消した（読む側は履歴を読む）。
 import { effectFrameOf, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
-import type { ShotLog } from '../frame/shots.ts';
+import { lowerBound, type ShotLog } from '../frame/shots.ts';
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFirstFrame } from '../time.ts';
 import { ZERO_BUFFS, addRatioBuff, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
@@ -48,7 +48,7 @@ import {
 import type { RankSlot } from './ranking.ts';
 import type { TimerTrigger } from './types.ts';
 import type { ResolvedPeriodShorten } from './burstDamage.ts';
-import { stackItems } from './stacks.ts';
+import { refreshAll, stackItems, type StackItem } from './stacks.ts';
 import { isEffectTarget } from './targets.ts';
 import {
   replayEvents,
@@ -501,9 +501,15 @@ export function effectItems(
     .filter((w) => w.start < w.end);
 }
 
+/** ヘルム編: 始まり s から数えた持ち主の N 発目の射撃のフレーム + 1（N 発目にも効く）。N 発を撃つ前に戦闘が終われば frames */
+function nthShotEnd(s: number, shotFrames: readonly number[], shots: number, frames: number): number {
+  const nth = shotFrames[lowerBound(shotFrames, s) + shots - 1];
+  return nth === undefined ? frames : Math.min(nth + 1, frames);
+}
+
 /**
- * ヘルム編: 「N 発間維持」の件。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（N 発目にも効く）。
- * N 発を撃つ前に戦闘が終われば frames まで。維持中にまた付いたら、そこから数え直す（和集合。秒の維持の上書き延長に合わせる）
+ * ヘルム編: 「N 発間維持」の件。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（nthShotEnd）。
+ * 維持中にまた付いたら、そこから数え直す（和集合。秒の維持の上書き延長に合わせる）
  */
 export function shotCountItems(
   starts: readonly number[],
@@ -514,9 +520,7 @@ export function shotCountItems(
   const merged: [number, number][] = [];
   for (const s of [...starts].sort((a, b) => a - b)) {
     if (s >= frames) continue;
-    const first = shotFrames.findIndex((f) => f >= s);
-    const nth = first < 0 ? undefined : shotFrames[first + shots - 1];
-    const end = nth === undefined ? frames : Math.min(nth + 1, frames);
+    const end = nthShotEnd(s, shotFrames, shots, frames);
     const last = merged[merged.length - 1];
     if (last !== undefined && s <= last[1]) {
       if (end > last[1]) last[1] = end;
@@ -525,6 +529,21 @@ export function shotCountItems(
     merged.push([s, end]);
   }
   return merged;
+}
+
+/**
+ * ツバイ編（plan/design-zwei.md 2.3 節の L1。V-0718）: スタックする「N 発間維持」の件。秒の維持のスタックと同じ規則（refreshAll）で、
+ * 件の終わりを持ち主の N 発目 + 1 にする。前の件の終わり（持ち主の N 発目の次のフレーム）以降に付いたものは、段 1 から数え直す
+ */
+export function shotCountStackItems(
+  starts: readonly number[],
+  shotFrames: readonly number[],
+  shots: number,
+  frames: number,
+  maxStacks: number,
+): StackItem[] {
+  const sorted = starts.filter((s) => s < frames).sort((a, b) => a - b);
+  return refreshAll(sorted, (s) => nthShotEnd(s, shotFrames, shots, frames), frames, maxStacks, [], true);
 }
 
 /**

@@ -84,6 +84,11 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）。
   // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけも書ける（件はスタック数の分布の期待値の小片。validateChanceGrant）
   const fields = parseTimedFields(v, path, undefined, true);
+  // ツバイ編（plan/design-zwei.md 2.3 節）: 発数の維持のスタックは timed だけ（状態の件は holders.ts の stateItems が作らない）
+  if (fields.durationShots !== undefined || fields.durationShotsRef !== undefined) {
+    if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
+      fail(path, 'a state grant with a duration in shots cannot stack');
+  }
   validateCounterGrant(fields, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {

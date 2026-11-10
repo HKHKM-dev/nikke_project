@@ -81,10 +81,11 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
 /**
  * 通常攻撃の攻撃ダメージ▲の和の乗数 (1 + Σ攻撃ダメージ)。エード：エージェントバニー編（plan/design-agent-bunny.md 2.3 節）: 貫通特化の
  * 効いている枠は、貫通ダメージ▲も同じ和に足す（P1。C-1031）。発射体爆発ダメージ▲・防御力無視ダメージ▲の乗数の分母もこの和にし、
- * 積が 1 つの和になるようにする
+ * 積が 1 つの和になるようにする。ツバイ編（plan/design-zwei.md 2.1 節）: 追加効果「貫通特化」の使用武器変更の発も、貫通特化の発
  */
 export function normalAttackDamageGroup(buffs: BuffTotals): number {
-  return applyAttackDamageBuffs(buffs) + (buffs.pierce > 0 ? buffs.pierceDamage : 0);
+  const pierce = buffs.pierce > 0 || buffs.weapon?.pierce === true;
+  return applyAttackDamageBuffs(buffs) + (pierce ? buffs.pierceDamage : 0);
 }
 
 /**
@@ -389,6 +390,10 @@ const DUAL_WIELD_NOTES: Record<DualWieldWeapon, { ja: string; en: string }> = {
   RL: {
     ja: '二丁持ちの RL は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。コア命中率は銃口 1 つの RL の行（着地点ごとに見分けられない。C-1030 は仮説）',
     en: 'Dual-wield RL: 2 hits per shot, both building burst gauge (C-1019); core hit rate uses the single-muzzle RL row (indistinguishable by landing; C-1030 is a hypothesis)',
+  },
+  SG: {
+    ja: '二丁持ちの SG は 1 発 2 ヒット（2 × ペレット数）で、どのペレットもゲージを溜める（C-1068）。当たりの割合とコア命中率は銃口 1 つの SG の行',
+    en: 'Dual-wield SG: 2 hits per shot (2 × pellets), every pellet building burst gauge (V-0718); hit and core rates use the single-muzzle SG row',
   },
 };
 
