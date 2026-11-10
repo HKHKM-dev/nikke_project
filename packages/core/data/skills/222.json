@@ -1,0 +1,118 @@
+{
+  "formatVersion": 1,
+  "resourceId": 222,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "attack",
+          "ref": 2,
+          "maxStacksRef": 4,
+          "durationRef": 3,
+          "claims": [
+            "C-1048"
+          ]
+        },
+        {
+          "kind": "currentHpDown",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "ref": 5,
+          "assumes": {
+            "ja": "攻撃力▲と同じ発火（通常攻撃の命中 10 回ごと。命中は期待値で数える）で、自分の現在の HP を 4.01% 下げる（HP の割合に 1 − 0.0401 を掛ける。最大HP は変えない）。HP の割合を読む S2・バーストの▲は次のフレームから読む。回復で戻る分は扱わない（紅蓮は回復を持たない）",
+            "en": "On the same trigger as the ATK up (every 10 normal-attack hits, counted as expected hits), lowers own current HP by 4.01% (the HP ratio is multiplied by 1 − 0.0401; max HP is unchanged). The S2 and burst effects that read the HP ratio see it from the next frame. HP restored by heals is not modeled (Scarlet has no heal)"
+          },
+          "claims": [
+            "C-1044"
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "selfHpAtMostRef": 3
+          },
+          "durationUntil": "selfHpAbove",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 4,
+          "assumes": {
+            "ja": "自分の HP の割合が 60% 以下に下がったフレームの次から付き、上回るまで続く。被弾の無い前提では、S1 の現在の HP▼ だけで下がり、戻らない（射撃場の的の攻撃で減る分は扱わない。plan/design-scarlet.md 2.1 節）",
+            "en": "Applied from the frame after own HP ratio falls to 60% or lower, until it rises above. With no damage taken, only S1's current HP down lowers it and it never recovers (the small loss from the shooting range target attacks is not modeled; plan/design-scarlet.md 2.1)"
+          },
+          "claims": [
+            "C-1045",
+            "C-1044"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "攻撃を受けた時、30% の確率の追加ダメージは、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
+          "en": "The 30% chance additional damage when attacked does not occur because damage taken is not modeled (requirements 5.2). In the 3-minute shooting range it can occur from the target attacks (C-0551)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "damage",
+            "target": "enemy",
+            "trigger": "damaged"
+          },
+          "claims": [
+            "C-1049"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 2,
+          "durationRef": 3,
+          "condition": {
+            "selfHp": {
+              "atMostRef": 1
+            }
+          },
+          "assumes": {
+            "ja": "バーストの使用のフレームに、自分の HP の割合（そのフレームより前の S1 の現在の HP▼ で下げた値）が 50% 以下なら付く。付いた後は維持の終わりまで続く（plan/design-scarlet.md 2.2 節）",
+            "en": "Applied if own HP ratio at the burst-use frame (lowered by S1's current HP down before that frame) is 50% or lower. Once applied it lasts its full duration (plan/design-scarlet.md 2.2)"
+          },
+          "claims": [
+            "C-1046",
+            "C-1044"
+          ]
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 4,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は単体ボス 1 体",
+            "en": "All enemies is the single boss"
+          },
+          "claims": [
+            "C-1047"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

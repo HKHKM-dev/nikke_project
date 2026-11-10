@@ -24,6 +24,7 @@ import {
   burstStepChangeOf,
   isSelfHpAtMostTrigger,
   isStacksCondition,
+  isSelfHpAtMost,
   selfHpThreshold,
   staticStatesOf,
   type BurstStepMixCondition,
@@ -279,7 +280,8 @@ export function resolveSelfHp<E extends SkillEffect>(
 ): E | null {
   const condition = 'condition' in effect ? effect.condition : undefined;
   const hp = condition?.selfHp;
-  if (condition === undefined || hp === undefined) return effect;
+  // 紅蓮編（plan/design-scarlet.md 2.2 節）: 「以下」の形は発火のフレームの HP の割合で見る（skills/holders.ts）ので、ここでは決めない
+  if (condition === undefined || hp === undefined || isSelfHpAtMost(hp)) return effect;
   if (hpRatio < threshold(hp)) return null;
   const { selfHp: _selfHp, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };

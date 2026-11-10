@@ -1,0 +1,279 @@
+{
+  "verification": "V-0714",
+  "note": "S1 の現在の HP▼は語彙が無いので、S2 のクリティカルダメージ▲を、読みごとに HP が 60% 以下に下がる S1 の発火の次のフレーム（下書きの定義の sim。H1 は 13 回目の 1581f、H2 は 10 回目の 1278f）からの時間の周期の timed で置き換えて出した。語彙の実装の後に、いまの定義で出し直す",
+  "team": [
+    {
+      "rid": 222,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "現在の HP の 4.01% を引く（13 回目の発火で 60% 以下）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 222,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 26.894
+              },
+              "target": "self",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationSeconds": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "最大HP の 4.01% を引く（10 回目の発火で 60% 以下）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 222,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 21.743
+              },
+              "target": "self",
+              "stat": "critDamage",
+              "ref": 4,
+              "durationSeconds": 200
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0",
+      "note": "S2 のクリティカルダメージ▲が付かない（HP が下がらない・下がっても付かない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 222,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-crit-before",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎）: S1 が 5 スタックで、どの読みでも S2 の▲の前の会心の 1 ヒット（胴体・距離あり）"
+    },
+    {
+      "id": "A-crit-between",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 101 発目から 131 発目の間の会心の 1 ヒット（H2 だけ S2 の▲が乗る）"
+    },
+    {
+      "id": "A-crit-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 132 発目より後の会心の 1 ヒット（H1・H2 とも S2 の▲が乗る）"
+    },
+    {
+      "id": "A-noncrit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 会心でない 1 ヒット（S2 の▲は乗らない。どの読みでも同じ）"
+    },
+    {
+      "id": "B-burst-hit-1",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 222,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（リター・デルタ・紅蓮）: 1 回目のバーストスキルダメージ（会心なし）"
+    },
+    {
+      "id": "B-crit-rate-1",
+      "model": "sim",
+      "metric": "critRateAt",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 222,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.01
+      },
+      "note": "撮影 B: 1 回目のバーストの後の紅蓮の会心率（HP 約 81%。Hb1 なら▲なしの 0.15。いまの下書きは条件が無いので Hb0 の値）"
+    },
+    {
+      "id": "B-crit-rate-2",
+      "model": "sim",
+      "metric": "critRateAt",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 20
+        },
+        {
+          "rid": 222,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 3200
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 0.01
+      },
+      "note": "撮影 B: 2 回目のバーストの後の紅蓮の会心率（HP は 50% 以下。Hb1・Hb0 とも▲あり）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "173cd37258b7ec8d89e1c3c1e6d57ad0131667af",
+    "values": {
+      "H1": {
+        "A-crit-before": 126879.16967999999,
+        "A-crit-between": 126879.16967999999,
+        "A-crit-after": 131538.45474436,
+        "A-noncrit": 91634.95588,
+        "B-burst-hit-1": 2886727.8825000003,
+        "B-crit-rate-1": 0.3457,
+        "B-crit-rate-2": 0.3457
+      },
+      "H2": {
+        "A-crit-before": 126879.16967999999,
+        "A-crit-between": 131538.45474436,
+        "A-crit-after": 131538.45474436,
+        "A-noncrit": 91634.95588,
+        "B-burst-hit-1": 2886727.8825000003,
+        "B-crit-rate-1": 0.3457,
+        "B-crit-rate-2": 0.3457
+      },
+      "H0": {
+        "A-crit-before": 126879.16967999999,
+        "A-crit-between": 126879.16967999999,
+        "A-crit-after": 126879.16967999999,
+        "A-noncrit": 91634.95588,
+        "B-burst-hit-1": 2886727.8825000003,
+        "B-crit-rate-1": 0.3457,
+        "B-crit-rate-2": 0.3457
+      }
+    }
+  }
+}

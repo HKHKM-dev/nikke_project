@@ -1,0 +1,221 @@
+[
+  {
+    "id": "1039-01",
+    "recording": "1039",
+    "kind": "total",
+    "use": "record",
+    "value": 81669688,
+    "description": "紅蓮 の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11388。増分は 620 個"
+    },
+    "source": "V-0714",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1039-02",
+    "recording": "1039",
+    "kind": "count",
+    "use": "record",
+    "value": 122,
+    "unit": "トリガー",
+    "description": "紅蓮 のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 620 個。前の増分から 30f 未満の増分（569 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 50.5f）から発の数を決めた（2 発になった組 40 個）"
+    },
+    "source": "V-0714",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1039-03",
+    "recording": "1039",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 42454,
+    "unit": "ダメージ",
+    "description": "紅蓮単騎の、S1 の攻撃力▲の付く前（1 マガジン目の最初の 10 発）の 1 ヒット（胴体・距離あり・会心なし）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの紅蓮の 1 ヒット（S1 の攻撃力▲ 0〜5 スタックと、5 スタックの S2 のクリティカルダメージ▲あり。--opt grid=s0=1@30;s1=1@200;s2=1@290;s3=1@400;s4=1@540;s5=1@1000;s5c=1@1700）の会心・コア・距離の組に ±1.5 で当てた（recipe:buff-edge@5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 30,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1039-04",
+    "recording": "1039",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 126879,
+    "unit": "ダメージ",
+    "description": "紅蓮単騎の、S1 の攻撃力▲ 5 スタックで、S2 のクリティカルダメージ▲の付く前の会心の 1 ヒット（胴体・距離あり）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの紅蓮の 1 ヒット（S1 の攻撃力▲ 0〜5 スタックと、5 スタックの S2 のクリティカルダメージ▲あり。--opt grid=s0=1@30;s1=1@200;s2=1@290;s3=1@400;s4=1@540;s5=1@1000;s5c=1@1700）の会心・コア・距離の組に ±1.5 で当てた（recipe:buff-edge@5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1000,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1039-05",
+    "recording": "1039",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 131538,
+    "unit": "ダメージ",
+    "description": "紅蓮単騎の、S2 のクリティカルダメージ 6.61%▲ の乗った会心の 1 ヒット（胴体・距離あり・5 スタック）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの紅蓮の 1 ヒット（S1 の攻撃力▲ 0〜5 スタックと、5 スタックの S2 のクリティカルダメージ▲あり。--opt grid=s0=1@30;s1=1@200;s2=1@290;s3=1@400;s4=1@540;s5=1@1000;s5c=1@1700）の会心・コア・距離の組に ±1.5 で当てた（recipe:buff-edge@5）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1700,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1039-06",
+    "recording": "1039",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "count",
+    "use": "record",
+    "value": 139,
+    "unit": "命中目",
+    "description": "紅蓮単騎の、S2 のクリティカルダメージ▲の乗った最初の会心の命中の番号（139）。▲の乗らない最後の会心は 130 命中目で、間（131〜138 命中目）に会心は無い。S1 は 1・2 マガジン目は同じく 10 命中ごとにスタックが増える（3 マガジン目に HUD の読みの途切れが 1 つあり、命中の番号は ±2 ほど揺れうる）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（命中の数え）",
+      "note": "格子の当て方を時刻の順に並べ、20f 以上空いたらマガジンの区切りとした。HUD の読みが途切れて数発の和になった増分は、間隔 ÷ 5f 発の和とみて格子の値の組み合わせに分解し、命中の番号を数えた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1039-07",
+    "recording": "1039",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "count",
+    "use": "record",
+    "value": 4,
+    "unit": "回",
+    "description": "紅蓮単騎の、S2 の「攻撃を受けた時」の追加ダメージ（359,835 = (260,397 − 100) × 138.24%）の回数（読みの途切れた数発の和の中に隠れたものは数えていないので、少なくともこの回数）。動画の f2132・f2935・f5859・f11257。S1 の発火（10 命中ごと。180 秒で約 80 回）の 30% で起きるなら約 24 回になる",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、画",
+      "note": "増分のうち 359,835（と、それを含む数発の和）を数えた。f2321（1038）と f2132（1039）は、的の光線が紅蓮に当たっている間で、直後に被弾の赤い画面が出る（画で確かめた）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "1039-08",
+    "recording": "1039",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 126879,
+    "unit": "ダメージ",
+    "description": "紅蓮単騎の、S1 の 10 回目より後で 13 回目より前（101〜130 命中目）の会心の 1 ヒット（胴体・距離あり・5 スタック）。129・130 命中目の会心で、S2 のクリティカルダメージ▲が乗っていない。最大HP の 4.01% を引く読み（H2）なら 101 命中目から▲が乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの紅蓮の 1 ヒット（S1 の攻撃力▲ 0〜5 スタックと、5 スタックの S2 のクリティカルダメージ▲あり。--opt grid=s0=1@30;s1=1@200;s2=1@290;s3=1@400;s4=1@540;s5=1@1000;s5c=1@1700）の会心・コア・距離の組に ±1.5 で当てた（recipe:buff-edge@5）。命中の番号は 1039-06 と同じ数え方"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1450,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

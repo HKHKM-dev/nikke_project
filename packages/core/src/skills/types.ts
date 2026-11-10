@@ -166,8 +166,8 @@ export const BUFF_STATS = [
   // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」はこの stat では書かない（definitions.test.ts）
   'maxHp',
   // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 最大HP のみ▲（比率）。最終最大HP への足し方は maxHp と同じ。効いている
-  // 間は HP の割合を下げ（段 6 の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef。マスト編・エード編）が読む。条件の selfHp と
-  // 対象の lowestHpRatio は枠の想定で一定のまま（下がる分は未実装。plan/design-ade.md 6 節）
+  // 間は HP の割合を下げ（段 6 の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef。マスト編・エード編）と、timed の条件 selfHp の
+  // atMost（紅蓮編）が読む。passive の条件 selfHp と対象の lowestHpRatio は枠の想定で一定のまま（下がる分は未実装。plan/design-ade.md 6 節）
   'maxHpOnly',
   // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
@@ -1012,7 +1012,8 @@ export type StateEndUntil = { stateEnd: NamedStateId };
  * （plan/design-diesel-ws.md 2.2 節）: false = 使用していなければ（burstUsers に自分がいない）。フルバーストの開始・終了の出来事の
  * 回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも書ける。
  * selfHp = 自分の HP の割合が閾値以上なら（2 段目の段 6。plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
- * 戦闘中一定なので、編成の段で決まる）。
+ * 戦闘中一定なので、編成の段で決まる）。紅蓮編（plan/design-scarlet.md 2.2 節）: 閾値以下なら（atMost の形。timed だけ。発火のフレームの
+ * HP の割合で見る。件の一覧が発火の文脈の条件と同じ所で見る）。
  * burstStep = この発動を撃った段階が N なら（レッドフード編。plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
@@ -1046,11 +1047,22 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件。atLeastRef = 「自分の HP が X% 以上なら」の X の
  * description_value の番号（値は % 表記）。「以下」「未満」「最大の時のみ」は使い手を定義する時に足す。
  * 2 段目の段 15 の PR 1（plan/design-skill-stage15.md 2.1 節）: atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
- * 「自分の HP が 80% 以上の時のみ」）。atLeastRef とちょうど 1 つ
+ * 「自分の HP が 80% 以上の時のみ」）。atLeastRef とちょうど 1 つ。
+ * 紅蓮編（plan/design-scarlet.md 2.2 節）: atMostRef・atMost = 「自分の HP が X% 以下の場合」（timed だけ。発火のフレームの HP の割合
+ * （skills/holders.ts の selfHpRatioAt）で見る。編成の段では決めない）。passive は atLeast の形だけ、timed は atMost の形だけ書ける
  */
-export type SelfHpCondition = { atLeastRef: number; atLeast?: never } | { atLeast: number; atLeastRef?: never };
+export type SelfHpCondition =
+  | { atLeastRef: number; atLeast?: never; atMostRef?: never; atMost?: never }
+  | { atLeast: number; atLeastRef?: never; atMostRef?: never; atMost?: never }
+  | { atMostRef: number; atMost?: never; atLeastRef?: never; atLeast?: never }
+  | { atMost: number; atMostRef?: never; atLeastRef?: never; atLeast?: never };
 
-/** 2 段目の段 15: selfHp の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
+/** 紅蓮編: 「以下」の形（発火のフレームの HP の割合で見る）か */
+export function isSelfHpAtMost(hp: SelfHpCondition): boolean {
+  return hp.atMostRef !== undefined || hp.atMost !== undefined;
+}
+
+/** 2 段目の段 15: selfHp の「以上」の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
 export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => number): number {
   return (hp.atLeast ?? valueOf(hp.atLeastRef!)) / 100;
 }
@@ -1061,7 +1073,8 @@ export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => n
  */
 export function conditionReadsItems(condition: EffectCondition | undefined): boolean {
   if (condition === undefined) return false;
-  // 2 段目の段 6: selfHp は編成の段で決まる（件を見ない）
+  // 2 段目の段 6: passive の selfHp は編成の段で決まる（件を見ない）。紅蓮編: timed の selfHp（以下）は最大HP の件の列を読むが、発火のフレームより
+  // 前に始まった件だけなので段を上げない（skills/holders.ts の fireContextHolds）
   // レッドフード編: burstStep も発火の文脈だけで決まる
   return Object.keys(condition).some((key) => key !== 'usedBurst' && key !== 'selfHp' && key !== 'burstStep');
 }
@@ -1497,6 +1510,13 @@ export type AmmoDecreaseEffect = TargetCountFields & {
 };
 
 /**
+ * 紅蓮編（plan/design-scarlet.md 2.1 節）: 「現在のHP X%▼」。発火のたびに、自分の現在の HP を X% 下げる（HP の割合に (1 − X) を掛ける。
+ * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
+ * から読む（skills/holders.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ
+ */
+export type CurrentHpDownEffect = Omit<AmmoDecreaseEffect, 'kind'> & { kind: 'currentHpDown' };
+
+/**
  * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 「フルバーストタイム（の持続時間）X 秒▲」。フルバーストの窓を X 秒延ばす
  * （即時効果）。窓の外の発火（バースト 3 段階突入時。ソーダ：トゥインクルバニー）は次に作る窓に予約し、窓を作る発動のバースト使用時の
  * 発火（D）はその発動が作る窓に足す。件の一覧が窓の終わりを読むので、窓の終わりは窓を作る時に決め、後から動かさない。窓は編成で
@@ -1525,7 +1545,8 @@ export type InstantEffect =
   | HealEffect
   | BurstGaugeEffect
   | AmmoDecreaseEffect
-  | FullBurstExtendEffect;
+  | FullBurstExtendEffect
+  | CurrentHpDownEffect;
 export type InstantKind = InstantEffect['kind'];
 export const INSTANT_KINDS = [
   'cooldownReduction',
@@ -1534,6 +1555,7 @@ export const INSTANT_KINDS = [
   'burstGauge',
   'ammoDecrease',
   'fullBurstExtend',
+  'currentHpDown',
 ] as const satisfies readonly InstantKind[];
 
 /**
