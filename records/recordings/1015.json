@@ -1,0 +1,34 @@
+{
+  "id": "1015",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1015_rl_noah.mp4",
+  "original": "2026-11-10_18-46-38.mp4",
+  "durationSec": 198.2,
+  "frames": 11891,
+  "fps": 60,
+  "sizeMB": 240.4,
+  "sha256": "fcdee1d4320b",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 232,
+      "name": "ノア",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0706。ノア単騎（操作）。左上のオート射撃・オートバーストは両方 ON（依頼は OFF）。II だけなのでバーストは起きない",
+  "backup": {
+    "at": "2026-11-10T18:59+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
