@@ -365,8 +365,8 @@ const DUAL_WIELD_NOTES: Record<DualWieldWeapon, { ja: string; en: string }> = {
     en: 'Dual-wield SMG: 2 hits per shot, both building burst gauge (C-1023); its near-range core hit rate is a hypothesis (C-1022)',
   },
   RL: {
-    ja: '二丁持ちの RL は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。コア命中率は銃口 1 つの RL の行（二丁持ちでは確かめていない）',
-    en: 'Dual-wield RL: 2 hits per shot, both building burst gauge (C-1019); core hit rate uses the single-muzzle RL row (unverified for dual wield)',
+    ja: '二丁持ちの RL は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。コア命中率は銃口 1 つの RL の行（着地点ごとに見分けられない。C-1030 は仮説）',
+    en: 'Dual-wield RL: 2 hits per shot, both building burst gauge (C-1019); core hit rate uses the single-muzzle RL row (indistinguishable by landing; C-1030 is a hypothesis)',
   },
 };
 
