@@ -699,9 +699,9 @@ header h1 {
   gap: 8px;
   position: relative;
 }
-/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける。
+/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットも立ち絵の枠のクリックで置ける。
    実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
-.modern-slot-card.modern-slot-awaiting {
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
   cursor: pointer;
 }
 .modern-slot-target {

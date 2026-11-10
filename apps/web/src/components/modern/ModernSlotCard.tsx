@@ -121,7 +121,6 @@ export function ModernSlotCard({
     <div
       ref={setCardRef}
       className={`modern-slot-card ${awaitingPlacement ? 'modern-slot-awaiting' : ''} ${isOver ? 'modern-slot-over' : ''} ${isDragging ? 'modern-slot-dragging' : ''}`}
-      onClick={onPlacePending}
       {...attributes}
       {...listeners}
     >
@@ -137,8 +136,9 @@ export function ModernSlotCard({
             <circle className="modern-slot-target-inner" cx="50" cy="50" r="22" />
           </svg>
         )}
+        {/* 置き先待ちのクリックは立ち絵の枠でだけ受ける（カードの上下の段・ダメージの欄では置かない） */}
         {characterEntry ? (
-          <div className="modern-slot-char-area">
+          <div className="modern-slot-char-area" onClick={onPlacePending}>
             <CharacterVisual
               character={characterEntry}
               isUnsupported={isUnsupported}
@@ -177,7 +177,7 @@ export function ModernSlotCard({
           </div>
         ) : (
           // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
-          <div className="modern-slot-char-area">
+          <div className="modern-slot-char-area" onClick={onPlacePending}>
             <EmptySlotFace slotIndex={slotIndex} />
           </div>
         )}
