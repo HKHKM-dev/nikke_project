@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 97・効果 657（根拠あり 636）・notes 231（根拠あり 105）
+件数: キャラ 98・効果 667（根拠あり 646）・notes 232（根拠あり 105）
 
-notes の種類: 未対応 39・前提の外 55・計算に無関係 47・補足 24・間接 66
+notes の種類: 未対応 39・前提の外 56・計算に無関係 47・補足 24・間接 66
 
-スロット: supported 244・partial 26・unsupported 9・noEffect 39
+スロット: supported 247・partial 26・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -642,6 +642,23 @@ notes の種類: 未対応 39・前提の外 55・計算に無関係 47・補足
   - notes[1] 間接（貫通）: 発現の間の自分の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）: C-0443（範囲外）、C-1031（確定）
   - notes[2] 補足: 烙印の最大蓄積量に届く回は録画に無く、最大量の攻撃力と分配ダメージ▲を発動の時に読む形は、トロニーの蓄積爆破（C-0904）と同じとみた: 根拠なし
   - notes[3] 未対応: 烙印の爆発のヒットのバーストゲージは未実装（溜めない。爆発の前後は画面の光でゲージのバーが読めず、溜めても 1 ヒットぶん（0.4%）で前後の発と見分けられない）: 根拠なし
+
+## 234 ドロシー：セレンディピティ
+
+- **skill1**: supported
+  - effects[0] timed・pelletHit・pierce: C-1075（仮説）、C-1074（確定）
+  - effects[1] timed・pelletHit・hitRate: C-1075（仮説）、C-1074（確定）
+  - effects[2] timed・pelletHit・attackDamage: C-1074（確定）
+  - effects[3] timed・pelletHit・singlePellet: C-1074（確定）、C-1075（仮説）、C-1077（確定）
+  - notes[0] 前提の外: ペレットが 160 回命中した時の貫通範囲の拡大は、敵 1 体ではダメージに関係しない: 根拠なし
+- **skill2**: supported
+  - effects[0] passive・pierceDamage（読む: 貫通）: C-1074（確定）
+  - effects[1] timed・fullBurstStart・attack: C-1078（確定）
+  - effects[2] timed・fullBurstStart・hitRate: C-1079（仮説）
+- **burst**: supported
+  - effects[0] timed・burstUse・attackSpeed: C-1078（確定）
+  - effects[1] timed・burstUse・attack: C-1078（確定）
+  - effects[2] timed・burstUse・pelletCount: C-1076（確定）、C-1077（確定）
 
 ## 242 フォルクヴァン
 

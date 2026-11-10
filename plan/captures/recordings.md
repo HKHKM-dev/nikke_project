@@ -1032,6 +1032,14 @@
 | 1057 | `20261111-1057_sg_zwei_fire.mp4` | ◎ツバイ（390、SG・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた |
 | 1058 | `20261111-1058_sg_zwei_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + I-DOLL・サン（308、AR・鉄甲・R） + ◎エード：エージェントバニー（315、SR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた |
 | 1059 | `20261111-1059_sg_zwei_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + I-DOLL・サン（308、AR・鉄甲・R） + ◎エード：エージェントバニー（315、SR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた |
+| 1060 | `20261111-1060_sg_dorothy-serendipity_fire.mp4` | ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | 編成と枠順は戦闘履歴のパネルで確かめた（出撃画面では 3 枠目に置いた単騎） |
+| 1061 | `20261111-1061_sg_dorothy-serendipity_fire.mp4` | ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | 編成と枠順は戦闘履歴のパネルで確かめた（出撃画面では 3 枠目に置いた単騎） |
+| 1062 | `20261111-1062_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 編成と枠順は戦闘履歴のパネルで確かめた |
+| 1063 | `20261111-1063_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 編成と枠順は戦闘履歴のパネルで確かめた |
+| 1064 | `20261111-1064_sg_dorothy-serendipity_water.mp4` | ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | 編成と枠順は戦闘履歴のパネルで確かめた（出撃画面では 3 枠目に置いた単騎） |
+| 1065 | `20261111-1065_sg_dorothy-serendipity_water.mp4` | ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | 編成と枠順は戦闘履歴のパネルで確かめた（出撃画面では 3 枠目に置いた単騎） |
+| 1066 | `20261111-1066_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_water.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | 編成と枠順は戦闘履歴のパネルで確かめた |
+| 1067 | `20261111-1067_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_water.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | 編成と枠順は戦闘履歴のパネルで確かめた |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

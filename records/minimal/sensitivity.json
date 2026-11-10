@@ -25703,6 +25703,582 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1060-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "174321a5b9bacc76",
+      "effective": true,
+      "minus": -294453.9356616001,
+      "plus": 0
+    },
+    {
+      "observation": "1060-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "174321a5b9bacc76",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1060-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "174321a5b9bacc76",
+      "effective": true,
+      "minus": -1092558.81879144,
+      "plus": -679361.0411015999
+    },
+    {
+      "observation": "1060-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "310e2797473a54de",
+      "effective": true,
+      "minus": -338622.02601083973,
+      "plus": 0
+    },
+    {
+      "observation": "1060-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "310e2797473a54de",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1060-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "310e2797473a54de",
+      "effective": true,
+      "minus": -1256442.6416101558,
+      "plus": -781265.1972668397
+    },
+    {
+      "observation": "1061-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "4d862d39adf0a986",
+      "effective": true,
+      "minus": -294453.9356616001,
+      "plus": 0
+    },
+    {
+      "observation": "1061-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "4d862d39adf0a986",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1061-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "4d862d39adf0a986",
+      "effective": true,
+      "minus": -1092558.81879144,
+      "plus": -679361.0411015999
+    },
+    {
+      "observation": "1061-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "917954931e31b20e",
+      "effective": true,
+      "minus": -338622.02601083973,
+      "plus": 0
+    },
+    {
+      "observation": "1061-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "917954931e31b20e",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1061-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "917954931e31b20e",
+      "effective": true,
+      "minus": -1256442.6416101558,
+      "plus": -781265.1972668397
+    },
+    {
+      "observation": "1062-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "15ab868c972c615b",
+      "effective": true,
+      "minus": -969841.8100800002,
+      "plus": 0
+    },
+    {
+      "observation": "1062-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "15ab868c972c615b",
+      "effective": false,
+      "minus": -4.656612873077393e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1062-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "15ab868c972c615b",
+      "effective": true,
+      "minus": -3881010.6420800006,
+      "plus": -3463803.2800800004
+    },
+    {
+      "observation": "1062-03",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "15ab868c972c615b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1062-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "d33852efd15c5b7a",
+      "effective": true,
+      "minus": -554142.9979799998,
+      "plus": 0
+    },
+    {
+      "observation": "1062-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "d33852efd15c5b7a",
+      "effective": false,
+      "minus": 4.656612873077393e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1062-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "d33852efd15c5b7a",
+      "effective": true,
+      "minus": -2132276.794648,
+      "plus": -523794.67998
+    },
+    {
+      "observation": "1062-04",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "d33852efd15c5b7a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1062-05",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "872ef0e5ea79748e",
+      "effective": true,
+      "minus": 0,
+      "plus": 38793.672403200006
+    },
+    {
+      "observation": "1062-05",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "872ef0e5ea79748e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1062-05",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "872ef0e5ea79748e",
+      "effective": true,
+      "minus": 0,
+      "plus": 196865.09700000007
+    },
+    {
+      "observation": "1062-05",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "872ef0e5ea79748e",
+      "effective": false,
+      "minus": 1.4551915228366852e-11,
+      "plus": 0
+    },
+    {
+      "observation": "1062-06",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "a75b200e37b4182d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1062-06",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "a75b200e37b4182d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1062-06",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "a75b200e37b4182d",
+      "effective": true,
+      "minus": 0.16666666666666785,
+      "plus": 29.500000000000004
+    },
+    {
+      "observation": "1062-06",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "a75b200e37b4182d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1063-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "5b842b57972e958c",
+      "effective": true,
+      "minus": -969841.8100800002,
+      "plus": 0
+    },
+    {
+      "observation": "1063-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "5b842b57972e958c",
+      "effective": false,
+      "minus": -4.656612873077393e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1063-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "5b842b57972e958c",
+      "effective": true,
+      "minus": -3881010.6420800006,
+      "plus": -3463803.2800800004
+    },
+    {
+      "observation": "1063-03",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "5b842b57972e958c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1063-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "7e54a57a64f11931",
+      "effective": true,
+      "minus": -554142.9979799998,
+      "plus": 0
+    },
+    {
+      "observation": "1063-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "7e54a57a64f11931",
+      "effective": false,
+      "minus": 4.656612873077393e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1063-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "7e54a57a64f11931",
+      "effective": true,
+      "minus": -2132276.794648,
+      "plus": -523794.67998
+    },
+    {
+      "observation": "1063-04",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "7e54a57a64f11931",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1064-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "f574f239a3aa9bfe",
+      "effective": true,
+      "minus": -267685.39605600014,
+      "plus": 0
+    },
+    {
+      "observation": "1064-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "f574f239a3aa9bfe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1064-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "f574f239a3aa9bfe",
+      "effective": true,
+      "minus": -993235.2898104,
+      "plus": -617600.946456
+    },
+    {
+      "observation": "1064-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "6c6110b11c1848f2",
+      "effective": true,
+      "minus": -307838.20546439965,
+      "plus": 0
+    },
+    {
+      "observation": "1064-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "6c6110b11c1848f2",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1064-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "6c6110b11c1848f2",
+      "effective": true,
+      "minus": -1142220.5832819596,
+      "plus": -710241.0884243997
+    },
+    {
+      "observation": "1065-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "c3d200da76f89417",
+      "effective": true,
+      "minus": -267685.39605600014,
+      "plus": 0
+    },
+    {
+      "observation": "1065-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "c3d200da76f89417",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1065-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "c3d200da76f89417",
+      "effective": true,
+      "minus": -993235.2898104,
+      "plus": -617600.946456
+    },
+    {
+      "observation": "1065-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "af50b998fb4a5bef",
+      "effective": true,
+      "minus": -307838.20546439965,
+      "plus": 0
+    },
+    {
+      "observation": "1065-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "af50b998fb4a5bef",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1065-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "af50b998fb4a5bef",
+      "effective": true,
+      "minus": -1142220.5832819596,
+      "plus": -710241.0884243997
+    },
+    {
+      "observation": "1066-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "524ea332194e2cb1",
+      "effective": true,
+      "minus": -881674.3728000005,
+      "plus": 0
+    },
+    {
+      "observation": "1066-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "524ea332194e2cb1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "524ea332194e2cb1",
+      "effective": true,
+      "minus": -3528191.4928,
+      "plus": -3148912.0728
+    },
+    {
+      "observation": "1066-03",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "524ea332194e2cb1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "e505826d6c77e7b8",
+      "effective": true,
+      "minus": -503766.3618000001,
+      "plus": 0
+    },
+    {
+      "observation": "1066-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "e505826d6c77e7b8",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1066-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "e505826d6c77e7b8",
+      "effective": true,
+      "minus": -1938433.44968,
+      "plus": -476176.9818000002
+    },
+    {
+      "observation": "1066-04",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "e505826d6c77e7b8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-05",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "77bf73bfc98c21d4",
+      "effective": true,
+      "minus": 0,
+      "plus": 35266.97491199998
+    },
+    {
+      "observation": "1066-05",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "77bf73bfc98c21d4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-05",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "77bf73bfc98c21d4",
+      "effective": true,
+      "minus": 0,
+      "plus": 178968.27
+    },
+    {
+      "observation": "1066-05",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "77bf73bfc98c21d4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-06",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "602945de0bc1b66b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-06",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "602945de0bc1b66b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1066-06",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "602945de0bc1b66b",
+      "effective": true,
+      "minus": 0.16666666666666785,
+      "plus": 29.500000000000004
+    },
+    {
+      "observation": "1066-06",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "602945de0bc1b66b",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1067-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "d362e7659d11d6fe",
+      "effective": true,
+      "minus": -881674.3728000005,
+      "plus": 0
+    },
+    {
+      "observation": "1067-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "d362e7659d11d6fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1067-03",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "d362e7659d11d6fe",
+      "effective": true,
+      "minus": -3528191.4928,
+      "plus": -3148912.0728
+    },
+    {
+      "observation": "1067-03",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "d362e7659d11d6fe",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1067-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[0]",
+      "key": "2e8d4d98f39606e3",
+      "effective": true,
+      "minus": -503766.3618000001,
+      "plus": 0
+    },
+    {
+      "observation": "1067-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[1]",
+      "key": "2e8d4d98f39606e3",
+      "effective": false,
+      "minus": 2.3283064365386963e-10,
+      "plus": 0
+    },
+    {
+      "observation": "1067-04",
+      "element": "ドロシー：セレンディピティ skill1.effects[3]",
+      "key": "2e8d4d98f39606e3",
+      "effective": true,
+      "minus": -1938433.44968,
+      "plus": -476176.9818000002
+    },
+    {
+      "observation": "1067-04",
+      "element": "ドロシー：セレンディピティ skill2.effects[2]",
+      "key": "2e8d4d98f39606e3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
