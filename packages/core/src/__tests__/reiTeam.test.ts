@@ -26,9 +26,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   it('gives the S1 elemental advantage damage up only to Rei, from every 100th shot', () => {
     const s1 = windows(rei, 'skill1', 'elementDamage');
     expect(s1.length).toBeGreaterThan(0);
-    // 窓は 100 の倍数の発の次のフレームのどれかから始まる（付き直しで続いた窓は 1 つにまとまる）
+    // 100 の倍数の発の次のフレームから 3 秒。付き直しで続いた窓は 1 つにまとまる（C-1063）
     const hundredth = plan.shots[rei]!.frames.filter((_, i) => (i + 1) % 100 === 0).map((f) => f + 1);
-    for (const w of s1) expect(hundredth).toContain(w.start);
+    const merged: { start: number; end: number }[] = [];
+    for (const w of windowsFrom(hundredth, 3, plan.frames)) {
+      const last = merged.at(-1);
+      if (last !== undefined && w.start <= last.end) last.end = Math.max(last.end, w.end);
+      else merged.push({ ...w });
+    }
+    expect(s1).toEqual(merged);
     input.slots.forEach((_, slot) => {
       if (slot !== rei) expect(windows(slot, 'skill1', 'elementDamage')).toEqual([]);
     });
@@ -43,17 +49,19 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   });
 
-  it('deals the S1 damage as two hits of one activation, 16 and 30 frames after a shot (C-1066)', () => {
+  it('deals the S1 damage as two hits, 16 and 30 frames after the shot of every 100th hit (C-1066)', () => {
     const hits = plan.skillHits.filter((h) => h.slotIndex === rei && h.effect.dot === undefined);
+    // 命中の期待値の累計が 100 の倍数を越えた発（きっかけ）から、16f 後と 30f 後（戦闘の終わりより後は出ない）
+    const log = plan.shots[rei]!;
+    let total = 0;
+    const expected: number[] = [];
+    log.frames.forEach((f, i) => {
+      const before = Math.floor(total / 100);
+      total += log.hits?.[i] ?? 1;
+      if (Math.floor(total / 100) > before) expected.push(f + 16, f + 30);
+    });
     expect(hits.length).toBeGreaterThan(0);
-    const shots = new Set(plan.shots[rei]!.frames);
-    // 戦闘の終わりで 2 ヒット目が切れた組は数えない
-    for (let k = 0; k + 1 < hits.length; k += 2) {
-      const [first, second] = [hits[k]!, hits[k + 1]!];
-      expect(second.frame - first.frame).toBe(14);
-      expect(second.effect).toBe(first.effect);
-      expect(shots.has(first.frame - 16)).toBe(true);
-    }
+    expect(hits.map((h) => h.frame)).toEqual(expected.filter((f) => f < plan.frames));
   });
 
   it('gives the burst attack damage up to every Fire ally for 10 s from each Rei burst', () => {

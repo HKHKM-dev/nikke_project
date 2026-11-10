@@ -37,12 +37,20 @@
             14
           ],
           "assumes": {
-            "ja": "対象「照準線に最も近い攻撃範囲内の敵」は、敵 1 体の前提ではその敵。命中は期待値で数える（1 発ごとにその発の弾丸命中率）。1 回の発動は、命中 100 回目の発の 16f 後と、その 14f 後の 2 ヒットに値を等分して出る（どちらも会心しうる）。バーストゲージは確かめていない（溜めないとした）",
-            "en": "The target (the enemy within attack range nearest the crosshair) is the lone enemy. Hits are counted as expected values (each shot adds its bullet hit rate). Each activation deals the value split equally into two hits, 16 frames after the shot of the 100th hit and 14 frames after that (both can crit). The burst gauge is not verified (taken as none)"
+            "ja": "対象「照準線に最も近い攻撃範囲内の敵」は、敵 1 体の前提ではその敵。命中は期待値で数える（1 発ごとにその発の弾丸命中率）。1 回の発動は、命中 100 回目の発の 16f 後と、その 14f 後の 2 ヒットに値を等分して出る（どちらも会心しうる）",
+            "en": "The target (the enemy within attack range nearest the crosshair) is the lone enemy. Hits are counted as expected values (each shot adds its bullet hit rate). Each activation deals the value split equally into two hits, 16 frames after the shot of the 100th hit and 14 frames after that (both can crit)"
           },
           "claims": [
             "C-1066"
           ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "S1 の倍率ダメージがバーストゲージを溜めるかは確かめていない（溜めないとした。溜めても 1 回で射手の 2 ヒットぶん）。2 ヒット目の値は、そのヒットのフレームのバフで出す（発動の時点の値で出るかは、2 ヒットの間にバフの替わる回を読んでいないので確かめていない）",
+          "en": "Whether the S1 damage charges the burst gauge is not verified (taken as none; it would be two shooter hits per activation at most). The second hit uses the buffs at its own frame (whether the game uses the values at activation is not verified: no recorded pair had a buff change between the two hits)",
+          "kind": "modeling",
+          "refers": "effects[1]"
         }
       ]
     },
