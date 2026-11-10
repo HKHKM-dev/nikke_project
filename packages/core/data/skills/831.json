@@ -7,7 +7,10 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": { "count": "normalShot", "everyRef": 1 },
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
           "target": "self",
           "stat": "elementDamage",
           "ref": 2,
@@ -19,12 +22,20 @@
         },
         {
           "kind": "damage",
-          "trigger": { "count": "normalHit", "everyRef": 4 },
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 4
+          },
           "ref": 5,
           "damageType": "skill",
+          "delayFrames": 16,
+          "hitOffsetFrames": [
+            0,
+            14
+          ],
           "assumes": {
-            "ja": "対象「照準線に最も近い攻撃範囲内の敵」は、敵 1 体の前提ではその敵で 1 ヒット。命中は期待値で数える（1 発ごとにその発の弾丸命中率）。ヒットの遅れとバーストゲージは撮影で読む（下書きでは遅れ 0・ゲージなし）",
-            "en": "The target (the enemy within attack range nearest the crosshair) is the lone enemy, one hit. Hits are counted as expected values (each shot adds its bullet hit rate). The hit delay and burst gauge are to be read from recordings (the draft uses no delay and no gauge)"
+            "ja": "対象「照準線に最も近い攻撃範囲内の敵」は、敵 1 体の前提ではその敵。命中は期待値で数える（1 発ごとにその発の弾丸命中率）。1 回の発動は、命中 100 回目の発の 16f 後と、その 14f 後の 2 ヒットに値を等分して出る（どちらも会心しうる）。バーストゲージは確かめていない（溜めないとした）",
+            "en": "The target (the enemy within attack range nearest the crosshair) is the lone enemy. Hits are counted as expected values (each shot adds its bullet hit rate). Each activation deals the value split equally into two hits, 16 frames after the shot of the 100th hit and 14 frames after that (both can crit). The burst gauge is not verified (taken as none)"
           }
         }
       ]
@@ -57,7 +68,9 @@
             "target": "self",
             "trigger": "battleStart"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     },
@@ -90,7 +103,9 @@
             "target": "allies",
             "trigger": "burstUse"
           },
-          "claims": ["C-0443"]
+          "claims": [
+            "C-0443"
+          ]
         }
       ]
     }

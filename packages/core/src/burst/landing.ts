@@ -102,6 +102,9 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // レイヴン: III のタイマーの 00.00 からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モードの持続ダメージ▲）はヒットより前に
   // 付き、止まりの明けの後の最初の S1 の tick から乗る（C-0421）ので 0
   { resourceIds: [851], delays: { hitFrames: 43, effectFrames: 0 }, claim: 'C-0233' },
+  // レイ: III のタイマーの 00.00 からヒットまで 46f（動画で 68f の最も多い値。止まり 22f を含む）。バーストの倍率ダメージに同じ発動の
+  // 攻撃ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果（灼熱の味方全体の攻撃ダメージ▲）は 00.00 の 5f 前の発から乗り、遅れは 0
+  { resourceIds: [831], sameActivationBuffsOnHit: true, delays: { hitFrames: 46, effectFrames: 0 }, claim: 'C-REI' },
   // マナ: III のタイマーの 00.00 から効果（持続ダメージの付与と 1 回目の tick・持続ダメージ▲）まで 2f（動画で 24f。止まり 22f を含む）。
   // バーストの倍率ダメージは無い
   { resourceIds: [290], delays: { hitFrames: 0, effectFrames: 2 }, claim: 'C-0301' },

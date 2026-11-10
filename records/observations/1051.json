@@ -1,0 +1,112 @@
+[
+  {
+    "id": "1051-01",
+    "recording": "1051",
+    "kind": "total",
+    "use": "record",
+    "value": 81793635,
+    "description": "レイ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11396。増分は 5115 個"
+    },
+    "source": "V-0716",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1051-02",
+    "recording": "1051",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 13345,
+    "unit": "ダメージ",
+    "description": "レイ単騎・灼熱の敵の 1 ヒット（コア・会心なし・距離なし）。有利が無いので S1 の▲は乗らない",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットの格子（会心・コア・距離の組。MG は同じフレームの 3 ヒットまでの和）に ±1.5 で当てた（--opt grid=無=1@100/x3;S1撃=1@skill@300:skill1;S1撃+無=S1撃+無）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1051-03",
+    "recording": "1051",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 67307,
+    "unit": "ダメージ",
+    "description": "S1 の命中 100 回ごとの倍率ダメージの 1 ヒット（会心なし）。モデルの値（最終攻撃力の 112.37%）のちょうど半分で、1 回の発動が 2 ヒットに等分されて出る（会心は 100,961）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットの格子（会心・コア・距離の組。MG は同じフレームの 3 ヒットまでの和）に ±1.5 で当てた（--opt grid=無=1@100/x3;S1撃=1@skill@300:skill1;S1撃+無=S1撃+無）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1051-04",
+    "recording": "1051",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "count",
+    "value": 50,
+    "unit": "回",
+    "description": "S1 の倍率ダメージの組（半分の値の 2 ヒット）の数。2 ヒットの間はどの組も 14f（全組）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と使い捨てのスクリプト（組の数え）",
+      "note": "倍率ダメージの格子（S1撃・S1撃+無）に当たった増分を時刻の順に並べ、40f 未満で続く 2 つを 1 組とした"
+    }
+  },
+  {
+    "id": "1051-05",
+    "recording": "1051",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "timing",
+    "value": 16,
+    "unit": "f",
+    "description": "S1 の倍率ダメージの組の 1 ヒット目の、きっかけの発（命中の発）からの動画のフレーム。マガジンの頭の 4 組（f1451・2018・2708・3272）は、どれも 16f 前（f1435・2002・2692・3256）に命中の発がある。4 組とも命中の発に当たる遅れは 2f と 16f だけで、1050 の f1410 の組（2f 前に発が無い）と合わせると 16f だけになる",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts（--mode series）と recipe:buff-edge@5（--opt grid）",
+      "note": "照準の左の残弾の表示で発のフレームを取り、同じフレームの HUD の増分の有無で命中か外れかを分けた"
+    }
+  }
+]

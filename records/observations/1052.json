@@ -1,0 +1,166 @@
+[
+  {
+    "id": "1052-01",
+    "recording": "1052",
+    "kind": "total",
+    "use": "record",
+    "value": 108903967,
+    "description": "レイ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11395。増分は 5129 個"
+    },
+    "source": "V-0716",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1052-02",
+    "recording": "1052",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14680,
+    "unit": "ダメージ",
+    "description": "レイ単騎・風圧の敵の、S1 の▲の無い 1 ヒット（コア・会心なし・距離なし。有利の 1.1 倍）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットの格子（会心・コア・距離の組。MG は同じフレームの 3 ヒットまでの和）に ±1.5 で当てた（--opt grid=無=1@100/x3;有=1@400/x3;有+無=有+無;撃=1@skill@300:skill1;撃+有=撃+有;撃+無=撃+無）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1052-03",
+    "recording": "1052",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 18714,
+    "unit": "ダメージ",
+    "description": "S1 の有利コードの攻撃ダメージ▲の乗った 1 ヒット（コア）。属性の倍率は 1.1 + 0.3023",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットの格子（会心・コア・距離の組。MG は同じフレームの 3 ヒットまでの和）に ±1.5 で当てた（--opt grid=無=1@100/x3;有=1@400/x3;有+無=有+無;撃=1@skill@300:skill1;撃+有=撃+有;撃+無=撃+無）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1052-04",
+    "recording": "1052",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 94385,
+    "unit": "ダメージ",
+    "description": "S1 の倍率ダメージの 1 ヒット（会心なし）に、S1 の有利コードの攻撃ダメージ▲（と有利の 1.1 倍）が乗った値",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットの格子（会心・コア・距離の組。MG は同じフレームの 3 ヒットまでの和）に ±1.5 で当てた（--opt grid=無=1@100/x3;有=1@400/x3;有+無=有+無;撃=1@skill@300:skill1;撃+有=撃+有;撃+無=撃+無）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1052-05",
+    "recording": "1052",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "hit",
+    "value": 74038,
+    "unit": "ダメージ",
+    "description": "S1 の倍率ダメージの 1 ヒットで、S1 の▲が乗っていないもの（有利の 1.1 倍だけ。HUD では同じフレームの通常攻撃との和 88,718・90,920 などで出る）。マガジンの頭（300 発目の▲が切れた後）に出た組",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の外れの読み",
+      "note": "外れの増分から、▲の無い通常攻撃の 1 ヒットの格子（14,680・16,882 など）を引いた値"
+    }
+  },
+  {
+    "id": "1052-06",
+    "recording": "1052",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "timing",
+    "value": 1,
+    "unit": "発",
+    "description": "S1 の有利コードの攻撃ダメージ▲が乗る最初の発の、そのマガジンの 100 発目からの発の数。どのマガジン（4 本）でも、残弾の表示が 200 になった発（100 発目）は▲なしで、次の発（199）から▲あり。▲は撃った数（外れを含む）で数える",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts（--mode series）と recipe:buff-edge@5（--opt grid）",
+      "note": "残弾の表示の替わり目と、同じフレームの増分の格子（無・有）を並べた。f1003・1560・2117・2806 の 100 発目"
+    }
+  },
+  {
+    "id": "1052-07",
+    "recording": "1052",
+    "source": "V-0716",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "timing",
+    "value": 182.5,
+    "spread": {
+      "kind": "range",
+      "low": 172,
+      "high": 194
+    },
+    "unit": "f",
+    "description": "S1 の▲の切れ目の、マガジンの 300 発目（残弾 0 の発）からの動画のフレーム。3 マガジンとも、次のマガジンの 1 発目（171f）は▲あり、▲なしの最初の発は 194・194・340f。共通部分は (171, 194]",
+    "method": {
+      "tool": "tools/captures/reticle-ammo.ts（--mode series）と recipe:buff-edge@5（--opt grid）",
+      "note": "300 発目は f1203・1760・2317"
+    }
+  }
+]
