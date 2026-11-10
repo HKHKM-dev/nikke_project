@@ -658,6 +658,10 @@ header h1 {
   outline: 3px solid var(--placing-blue);
   outline-offset: -1px;
 }
+/* ニケ一覧の枠は、項目の間が狭いので 1px 内側に寄せる */
+.char-tray-item.char-tray-item-pending {
+  outline-offset: -2px;
+}
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
 .char-tray-item-taken .char-tray-item-visual::after {
