@@ -229,6 +229,11 @@ export type FirstPassOptions = {
    */
   hitRateWith?: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) => { hitRate: number; coreHits: number };
   /**
+   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件 inEffectiveRange の判定（skills/holders.ts の
+   * HolderListsOptions.effectiveRangeAt にそのまま渡す。frame/landing.ts の inEffectiveRangeAt）
+   */
+  effectiveRangeAt?: (slotIndex: number, frame: number, minRange: number) => boolean;
+  /**
    * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 枠 slotIndex がフレーム frame に撃った 1 発の値（2 パス目と同じ
    * 関数。progress は部分チャージの発の進み）と、そのフレームの最終攻撃力。buffs は、そのフレームに効いている件を常時の値に足した合計。
    * 蓄積爆破（damage の accumulate の self）を持つ枠があれば要る（frame/plan.ts の planTeamRun が渡す）
@@ -585,6 +590,7 @@ function runFirstPassOnce(
     fullBurstWindows: windowsOf,
     verifyItems: options.verifyItems,
     leadShots: known,
+    ...(options.effectiveRangeAt === undefined ? {} : { effectiveRangeAt: options.effectiveRangeAt }),
   });
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
@@ -1084,6 +1090,9 @@ function runFirstPassOnce(
       const timed = lists.hitRateAt(i, frame);
       buffs = { ...buffs, hitRate: buffs.hitRate + timed.n, hitRateUp: buffs.hitRateUp + timed.up };
     }
+    // エード：エージェントバニー編: 時間で変わる適正最小射程距離▲も、2 パス目の区間と同じに足す（距離ボーナスの出し直し）
+    const range = lists.minEffectiveRangeAt(i, frame);
+    if (range !== 0) buffs = { ...buffs, minEffectiveRange: buffs.minEffectiveRange + range };
     const fullBurst = windowsOf().some((w) => w.start <= frame && frame < w.end);
     return { ...shotValueAt!(i, frame, buffs, fullBurst, progress), buffs };
   };

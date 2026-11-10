@@ -1073,7 +1073,14 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const shot = t.buffs.weapon?.shot ?? character.shot;
   const core = ctx.args.core === true && ctx.input.enemy.hasCore ? shot.coreDamageRate - 1 + t.buffs.coreDamage : 0;
   const crit = ctx.args.crit === true ? applyCritBuffs(character.crit, t.buffs).damage - 1 : 0;
-  const distance = ctx.args.distance === true && character.bonusRange !== null ? DISTANCE_BONUS : 0;
+  // エード：エージェントバニー編（plan/design-agent-bunny.md 10 節）: distance 'model' は、その区間のモデルの距離ボーナス（条件が自動の枠では、
+  // 着地点と適正最小射程距離▲ で決まる。配分の区間は重みの平均）。帯の中か外かもモデルと比べる
+  const distance =
+    ctx.args.distance === 'model'
+      ? t.boost.distance
+      : ctx.args.distance === true && character.bonusRange !== null
+        ? DISTANCE_BONUS
+        : 0;
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
   // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
   return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / shot.shotCount;

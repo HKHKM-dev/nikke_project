@@ -122,6 +122,7 @@ import {
   hitRateSpanWith,
   hitRateSpansOf,
   landingPartsWith,
+  inEffectiveRangeAt,
   landingTriggerDamage,
   planLandings,
   slotAutoAttackCoreRatesOf,
@@ -195,10 +196,10 @@ export function slotTriggerDamage(
       perShot,
     },
     // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。2 段目の段 11: 即着弾に替えた使用武器の
-    // 変更の区間は、的の表の変更後の武器の行のコア命中率
+    // 変更の区間は、的の表の変更後の武器の行のコア命中率。エード：エージェントバニー編: 適正最小射程距離▲ の区間は距離ボーナスも出し直す
     weaponChangeParts(
       enemy,
-      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs)),
+      landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs), buffs.minEffectiveRange),
       buffs.weapon?.targetRowKey,
     ),
     fullBurst,
@@ -300,6 +301,9 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
           hitRateWith: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
         }),
+    // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件「適正射程距離内なら」（着地点の計画が無ければ手入力の距離ボーナス）
+    effectiveRangeAt: (slotIndex: number, frame: number, minRange: number) =>
+      inEffectiveRangeAt(landing, slots[slotIndex]!, slotIndex, frame, minRange),
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
     shotValueAt: (slotIndex, frame, buffs, fullBurst, progress) => {
       const slot = slots[slotIndex]!;

@@ -281,6 +281,11 @@ export const NAMED_STATES = {
   intro: { name: { ja: 'イントロ', en: 'Intro' }, holder: 'ally' },
   /** 同: クライマックス（S1。使っていなければ付く。S1 とバーストの「クライマックス状態なら」が見る） */
   highlight: { name: { ja: 'クライマックス', en: 'Highlight' }, holder: 'ally' },
+  /**
+   * エード：エージェントバニー編（plan/design-agent-bunny.md 1 節）: 隠しレンズ（S1。フルチャージの発ごとに 1 スタック・10 スタック・5 秒。
+   * 中身は適正最小射程距離▲。S2 の「隠しレンズのフルスタック状態時のみ」が見る）
+   */
+  spyLens: { name: { ja: '隠しレンズ', en: 'Spy Lens' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

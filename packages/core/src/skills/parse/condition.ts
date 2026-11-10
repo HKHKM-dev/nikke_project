@@ -45,7 +45,17 @@ export function parseWhileCondition(v: Json, path: string): WhileCondition {
 export const CONDITION_KEYS_OF = {
   // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）。エレグの段 3（plan/design-elegg-s3.md 3.2 節）: enemyState
   // レッドフード編（plan/design-red-hood.md 2.1 節）: burstStep（使った段階）
-  timed: ['selfBuffed', 'inFullBurst', 'enemyState', 'selfState', 'usedBurst', 'selfCounter', 'burstStep'],
+  // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: inEffectiveRange（適正射程距離内なら）
+  timed: [
+    'selfBuffed',
+    'inFullBurst',
+    'enemyState',
+    'selfState',
+    'usedBurst',
+    'selfCounter',
+    'burstStep',
+    'inEffectiveRange',
+  ],
   // 2 段目の段 11 の PR 5: damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
   damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter'],
   // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 持続ダメージは付くフレームの自分の状態だけ（ジルの硫酸弾）
@@ -130,6 +140,10 @@ export function parseCondition(
   if (c.selfCounter !== undefined)
     condition.selfCounter = parseSelfCounterCondition(c.selfCounter, `${path}.selfCounter`);
   if (c.burstStep !== undefined) condition.burstStep = oneOf(BASIC_BURST_STEPS, c.burstStep, `${path}.burstStep`);
+  if (c.inEffectiveRange !== undefined) {
+    if (c.inEffectiveRange !== true) fail(`${path}.inEffectiveRange`, 'expected true');
+    condition.inEffectiveRange = true;
+  }
   if (Object.keys(condition).length === 0) fail(path, `expected at least one of ${allowed.join(', ')}`);
   return condition;
 }

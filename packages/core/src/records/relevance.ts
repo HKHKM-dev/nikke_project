@@ -100,6 +100,10 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   // 2 段目の段 7: 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
   // 間接の要素と同じに見る。notRelevantReason）
   defense: 'damageValue',
+  // エード：エージェントバニー編: 適正最小射程距離▲（距離ボーナスと、適正射程距離内のきっかけ）・貫通特化・貫通ダメージ▲は 1 ヒットの値に効く
+  minEffectiveRange: 'damageValue',
+  pierce: 'damageValue',
+  pierceDamage: 'damageValue',
 };
 
 const KIND_CLASS: Record<string, ElementClass> = {

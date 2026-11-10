@@ -110,6 +110,8 @@
     | チャージしない武器から、チャージ時間 N 秒のチャージ武器への使用武器変更 | `weaponChange` の `chargeTimeSeconds`（基礎の武器がチャージしなくても書ける）と、最初の発の `firstShotDelayFrames`・的の表の `coreHitRate.weaponChanges`・`bulletHitRate.weaponChanges` の行 | 変更後の武器を押下チャージ型（`DOWN_Charge`。発と発の間はチャージ時間だけ）にし、その発だけを `fullChargeShot` に数える。レートは書かない。例: ナユタの記憶燃焼（C-0936） | 同 2.6 節 |
     | 「チャージ時間：N 秒固定」（使用武器変更の武器） | `weaponChange` の `chargeTimeFixed: true` | 変更後の武器のチャージ時間がチャージ速度▲を受けない（timed の `fixedChargeTime` と同じ読み。C-0214）。`chargeTimeSeconds` と組む。例: ナユタの記憶燃焼（確かめていない。C-0939） | 同 2.4 節 |
     | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | 下の段階が満ちた発火で上の段階も付く（同じスロットの前に書いた同じきっかけの付与の分を数える）。例: クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
+    | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | 下端を 下端 × (1 − Σ) に縮め、着地点の代表の距離で距離ボーナスと条件を決める（式は仮説 C-1033）。条件は距離ボーナスの乗る着地点と同じ判定。例: エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
+    | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | 貫通ダメージ▲は、貫通特化の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和で乗る（C-1031）。読む側に `reads: ["pierce"]`。例: エード：エージェントバニーの S2・バースト | 同 2.3 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

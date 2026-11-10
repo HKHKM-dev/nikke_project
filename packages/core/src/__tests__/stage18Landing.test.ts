@@ -210,8 +210,18 @@ describe('データ（data/enemies.json の的の条件の表）', () => {
     expect(fireTypes({ InstantBox: { all: 2 } })).toThrow(/\[0, 1\]/);
     expect(parse([{ ...p, initialLanding: 'moon' }])).toThrow(/initialLanding/);
     expect(
-      parse([{ ...p, landings: [...(p.landings as unknown[]), { id: 'nearA', band: 'near', range: [15, 25] }] }]),
+      parse([
+        {
+          ...p,
+          landings: [...(p.landings as unknown[]), { id: 'nearA', band: 'near', range: [15, 25], distance: 18 }],
+        },
+      ]),
     ).toThrow(/duplicate landing/);
+    // エード：エージェントバニー編: 代表の距離は必須で、範囲の中
+    const landingsWith = (distance: unknown) =>
+      parse([{ ...p, landings: [{ id: 'nearA', band: 'near', range: [15, 25], distance }] }]);
+    expect(landingsWith(undefined)).toThrow(/distance/);
+    expect(landingsWith(30)).toThrow(/distance/);
     expect(parse([p, p])).toThrow(/duplicate target profile/);
     expect(parse([])).toThrow(/unknown target profile/);
     const sets = raw.eventSets as Record<string, unknown>[];

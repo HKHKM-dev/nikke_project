@@ -69,7 +69,22 @@ export function hasProjectileExplosion(shot: ShotParams, buffs?: BuffTotals): bo
  * (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ) ÷ (1 + Σ攻撃ダメージ)）。爆発の無い武器と▲の無いときは 1
  */
 export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotals): number {
-  return hasProjectileExplosion(shot, buffs) ? explosionHitMultiplier(buffs) : 1;
+  return hasProjectileExplosion(shot, buffs)
+    ? projectileHitMultiplier(
+        buffs.projectileExplosionDamage,
+        PROJECTILE_EXPLOSION_BUCKET,
+        normalAttackDamageGroup(buffs),
+      )
+    : 1;
+}
+
+/**
+ * 通常攻撃の攻撃ダメージ▲の和の乗数 (1 + Σ攻撃ダメージ)。エード：エージェントバニー編（plan/design-agent-bunny.md 2.3 節）: 貫通特化の
+ * 効いている枠は、貫通ダメージ▲も同じ和に足す（P1。C-1031）。発射体爆発ダメージ▲・防御力無視ダメージ▲の乗数の分母もこの和にし、
+ * 積が 1 つの和になるようにする
+ */
+export function normalAttackDamageGroup(buffs: BuffTotals): number {
+  return applyAttackDamageBuffs(buffs) + (buffs.pierce > 0 ? buffs.pierceDamage : 0);
 }
 
 /**
@@ -87,17 +102,24 @@ export function distributedHitMultiplier(distributedMultiplier: number, damageTa
  * 発射体の爆発の自動攻撃（autoAttack の projectileExplosion。V-0124 の 0162-12）で使う
  */
 export function explosionHitMultiplier(buffs: BuffTotals): number {
-  return projectileHitMultiplier(buffs.projectileExplosionDamage, PROJECTILE_EXPLOSION_BUCKET, buffs);
+  return projectileHitMultiplier(
+    buffs.projectileExplosionDamage,
+    PROJECTILE_EXPLOSION_BUCKET,
+    applyAttackDamageBuffs(buffs),
+  );
 }
 
 /**
  * 発射体の▲ up の、置き場所 bucket での乗数（攻撃ダメージ▲の乗数とは別に掛ける形）。attackDamage は
- * (1 + Σ攻撃ダメージ + up) ÷ (1 + Σ攻撃ダメージ)、separate は 1 + up、none と▲の無いときは 1
+ * (attackDamage + up) ÷ attackDamage（attackDamage はそのヒットの攻撃ダメージ▲の和の乗数）、separate は 1 + up、none と▲の無いときは 1
  */
-function projectileHitMultiplier(up: number, bucket: 'attackDamage' | 'separate' | 'none', buffs: BuffTotals): number {
+function projectileHitMultiplier(
+  up: number,
+  bucket: 'attackDamage' | 'separate' | 'none',
+  attackDamage: number,
+): number {
   if (up === 0 || bucket === 'none') return 1;
   if (bucket === 'separate') return 1 + up;
-  const attackDamage = applyAttackDamageBuffs(buffs);
   return (attackDamage + up) / attackDamage;
 }
 
@@ -113,7 +135,7 @@ export const PROJECTILE_STICK_BUCKET: 'attackDamage' | 'separate' = 'attackDamag
  * 発射体の付着のヒット 1 つに掛ける、発射体付着ダメージ▲の乗数（damage の projectileStick。粘着榴弾の付着）。形は explosionHitMultiplier と同じ
  */
 export function stickHitMultiplier(buffs: BuffTotals): number {
-  return projectileHitMultiplier(buffs.projectileStickDamage, PROJECTILE_STICK_BUCKET, buffs);
+  return projectileHitMultiplier(buffs.projectileStickDamage, PROJECTILE_STICK_BUCKET, applyAttackDamageBuffs(buffs));
 }
 
 /**
@@ -144,7 +166,7 @@ export function trueDamageMultiplier(shot: ShotParams, buffs: BuffTotals): numbe
     PROJECTILE_EXPLOSION_BUCKET === 'attackDamage' && hasProjectileExplosion(shot, buffs)
       ? buffs.projectileExplosionDamage
       : 0;
-  return trueDamageBucketMultiplier(applyAttackDamageBuffs(buffs) + explosion, up);
+  return trueDamageBucketMultiplier(normalAttackDamageGroup(buffs) + explosion, up);
 }
 
 /**
@@ -519,7 +541,8 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? DISTANCE_BONUS : 0;
   const boostFullBurst = condition.fullBurst ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
-  const attackDamageMultiplier = applyAttackDamageBuffs(buffs);
+  // エード：エージェントバニー編: 貫通特化の効いている枠は、貫通ダメージ▲も同じ和（normalAttackDamageGroup）
+  const attackDamageMultiplier = normalAttackDamageGroup(buffs);
   const damageTakenMultiplier = 1 + buffs.damageTaken;
   const explosionMultiplier = projectileExplosionMultiplier(shot, buffs);
   // 防御力無視ダメージ編: 通常攻撃だけ、防御力を引かない基礎と▲の乗数（射撃ごとの倍率ダメージは baseHit のまま）

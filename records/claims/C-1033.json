@@ -1,0 +1,15 @@
+{
+  "id": "C-1033",
+  "text": "適正最小射程距離▲で縮めた帯の下端は、下端 × (1 − Σ)（Σ は適正最小射程距離▲の和。R1）。下端 − Σ × (上端 − 下端)（R3）とは V-0710 の録画で見分けていない（分かれるのは、隠しレンズが満ちていない時のバーストの間の近だけ）",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "推論",
+  "basis": "なし（V-0710 の録画では、R1 と R3 の予測が同じ。隠しレンズ 4.44% × 10 とバーストの 55.56% の和がほぼ 100% で、R1 なら両方で下端が 0 になる、という説明文の値の形からの推論。plan/design-agent-bunny.md 2.1・10 節）",
+  "model": "反映（`frame/landing.ts` の distanceBonusAt の 下端 × (1 − Σ)）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/315.json の skill1 の effects[1]", "data/skills/315.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}

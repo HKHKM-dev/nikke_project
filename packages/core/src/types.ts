@@ -352,8 +352,12 @@ export type EnemyEventSet = {
 /** 射撃場の距離帯（近 / 中近 / 中遠 / 遠） */
 export type LandingBand = 'near' | 'midNear' | 'midFar' | 'far';
 
-/** 的の着地点 1 か所。range は距離の範囲（m）で、距離ボーナスは range が bonusRange に丸ごと入るかで決める */
-export type LandingPoint = { id: string; band: LandingBand; range: [number, number] };
+/**
+ * 的の着地点 1 か所。range は距離の範囲（m）で、距離ボーナスは range が bonusRange に丸ごと入るかで決める。distance は代表の距離（m。
+ * C-0045 の推定）で、適正最小射程距離▲ で bonusRange の下端を縮めた区間だけ、range の代わりにこの値で決める（plan/design-agent-bunny.md
+ * 2.1 節の案 A。frame/landing.ts の distanceBonusAt）
+ */
+export type LandingPoint = { id: string; band: LandingBand; range: [number, number]; distance?: number };
 
 /** 着地点ごとの値（0..1）。キーは着地点の id、帯、または all の順で引く */
 export type TargetRateRow = Readonly<Record<string, number>>;

@@ -268,10 +268,22 @@ export function hitRateUpRaisesBulletHitRate(
   return weapon === 'AR' || weapon === 'SMG' || weapon === 'MG';
 }
 
-/** 着地点の距離の範囲が bonusRange に丸ごと入るか（RL のように bonusRange が無ければ false） */
-export function distanceBonusAt(character: CharacterData, landing: LandingPoint): boolean {
+/**
+ * 着地点の距離の範囲が bonusRange に丸ごと入るか（RL のように bonusRange が無ければ false）。エード：エージェントバニー編
+ * （plan/design-agent-bunny.md 2.1 節）: 適正最小射程距離▲ の和 minRange が正で着地点に代表の距離があれば、下端を 下端 × (1 − minRange)
+ * に縮め、下端は代表の距離で比べる（上端はいまと同じく範囲で比べる。C-1043。式は R1 の仮説 C-1033）
+ */
+export function distanceBonusAt(
+  character: Pick<CharacterData, 'bonusRange'>,
+  landing: LandingPoint,
+  minRange = 0,
+): boolean {
   const range = character.bonusRange;
   if (range === null) return false;
+  if (minRange > 0 && landing.distance !== undefined) {
+    const min = range.min * (1 - Math.min(1, minRange));
+    return min <= landing.distance && landing.range[1] <= range.max;
+  }
   return range.min <= landing.range[0] && landing.range[1] <= range.max;
 }
 
@@ -426,46 +438,70 @@ function sameHitRate(a: HitRateN, b: HitRateN): boolean {
  * C-0170: landingPartsOf の条件のコア命中率を、命中率の和 hitRate（常時 + その区間の持続の▲▼。区間の状態の hitRateNOf）で
  * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。▼だけの和なら命中率▼の値（plan/design-maids.md 8 節。coreHitRateAt）。
  * 計画の常時の和と同じなら計画の配分をそのまま返す。
- * 距離ボーナスは変えない
+ * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 適正最小射程距離▲ の和 minRange（区間の状態の minEffectiveRange）が
+ * 正なら、着地点のある配分の距離ボーナスを縮めた適正射程距離で出し直す（distanceBonusAt）。0 なら距離ボーナスは変えない
  */
 export function landingPartsWith(
   plan: LandingPlan | null,
-  slot: Pick<TeamSlotInput, 'condition'>,
+  slot: Pick<TeamSlotInput, 'condition' | 'character'>,
   slotIndex: number,
   landing: string | null | undefined,
   hitRate: HitRateN,
+  minRange = 0,
 ): readonly LandingPart[] {
   const parts = landingPartsOf(plan, slot, slotIndex, landing);
-  if (plan === null || !plan.autoSlots[slotIndex] || sameHitRate(hitRate, plan.hitRate[slotIndex] ?? ZERO_HIT_RATE))
-    return parts;
-  if (!parts.some((p) => p.tableCoreHitRate !== undefined || p.tableBulletHitRate !== undefined)) return parts;
+  if (plan === null || !plan.autoSlots[slotIndex]) return parts;
+  const rehit =
+    !sameHitRate(hitRate, plan.hitRate[slotIndex] ?? ZERO_HIT_RATE) &&
+    parts.some((p) => p.tableCoreHitRate !== undefined || p.tableBulletHitRate !== undefined);
+  const redistance = minRange > 0 && slot.character.bonusRange !== null && parts.some((p) => p.landing !== null);
+  if (!rehit && !redistance) return parts;
   let cache = PARTS_WITH_CACHE.get(plan);
   if (cache === undefined) {
     cache = new Map();
     PARTS_WITH_CACHE.set(plan, cache);
   }
-  const key = `${slotIndex}|${landing === null || landing === undefined ? '' : `L:${landing}`}|${hitRate.n}|${hitRate.up}`;
+  const key = `${slotIndex}|${landing === null || landing === undefined ? '' : `L:${landing}`}|${rehit ? `${hitRate.n}|${hitRate.up}` : ''}|${redistance ? minRange : 0}`;
   let found = cache.get(key);
   if (found === undefined) {
-    found = parts.map((p) =>
-      p.tableCoreHitRate === undefined && p.tableBulletHitRate === undefined
-        ? p
-        : {
-            ...p,
-            condition: {
-              ...p.condition,
-              ...(p.tableCoreHitRate === undefined
-                ? {}
-                : { coreHitRate: coreHitRateAt(p.tableCoreHitRate, hitRate, p.hitRateDown) }),
-              ...(p.tableBulletHitRate === undefined
-                ? {}
-                : { hitRate: bulletHitRateAt(p.tableBulletHitRate, hitRate, p.hitRateDown) }),
-            },
-          },
-    );
+    found = parts.map((p) => {
+      const core = rehit && p.tableCoreHitRate !== undefined;
+      const bullet = rehit && p.tableBulletHitRate !== undefined;
+      const distance = redistance && p.landing !== null;
+      if (!core && !bullet && !distance) return p;
+      return {
+        ...p,
+        condition: {
+          ...p.condition,
+          ...(core ? { coreHitRate: coreHitRateAt(p.tableCoreHitRate!, hitRate, p.hitRateDown) } : {}),
+          ...(bullet ? { hitRate: bulletHitRateAt(p.tableBulletHitRate!, hitRate, p.hitRateDown) } : {}),
+          ...(distance ? { distanceBonus: distanceBonusAt(slot.character, p.landing!, minRange) } : {}),
+        },
+      };
+    });
     cache.set(key, found);
   }
   return found;
+}
+
+/**
+ * エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件「適正射程距離内なら」（inEffectiveRange）。枠 slotIndex のフレーム
+ * frame の着地点が、適正最小射程距離▲ の和 minRange で縮めた適正射程距離の中か（距離ボーナスと同じ判定。distanceBonusAt）。配分の着地点で
+ * 割れたら重みの和が 0.5 以上の側。計画が無い・自動でない枠と、着地点の無い配分（未測定）は手入力の距離ボーナスの有無
+ */
+export function inEffectiveRangeAt(
+  plan: LandingPlan | null,
+  slot: Pick<TeamSlotInput, 'condition' | 'character'>,
+  slotIndex: number,
+  frame: number,
+  minRange: number,
+): boolean {
+  if (plan === null || !plan.autoSlots[slotIndex]) return slot.condition.distanceBonus;
+  const landing = spanAt(plan.spans, frame)?.landing ?? null;
+  let weight = 0;
+  for (const p of landingPartsWith(plan, slot, slotIndex, landing, plan.hitRate[slotIndex] ?? ZERO_HIT_RATE, minRange))
+    if (p.condition.distanceBonus) weight += p.weight;
+  return weight >= 0.5;
 }
 
 /**
@@ -557,7 +593,7 @@ export type LandingHitRateSpan = {
  */
 export function hitRateSpanWith(
   plan: LandingPlan,
-  slot: Pick<TeamSlotInput, 'condition'>,
+  slot: Pick<TeamSlotInput, 'condition' | 'character'>,
   slotIndex: number,
   span: LandingHitRateSpan,
   timed: HitRateN,
@@ -603,8 +639,11 @@ export function landingTriggerDamage(
   };
 }
 
-/** 区間ごとの命中率の和（区間の状態の hitRateNOf）。autoConditionSummary に渡す */
-export type HitRateNSpan = { start: number; end: number; hitRate: HitRateN };
+/**
+ * 区間ごとの命中率の和（区間の状態の hitRateNOf）と、適正最小射程距離▲ の和（区間の状態の minEffectiveRange。エード：エージェントバニー編）。
+ * autoConditionSummary に渡す
+ */
+export type HitRateNSpan = { start: number; end: number; hitRate: HitRateN; minRange: number };
 
 /** 持続バフの区間から、枠 slotIndex の区間ごとの命中率の和を取る */
 export function hitRateNSpansOf(
@@ -613,13 +652,19 @@ export function hitRateNSpansOf(
 ): HitRateNSpan[] {
   return timeline.segments.map((s) => {
     const buffs = s.slots[slotIndex]?.buffs;
-    return { start: s.start, end: s.end, hitRate: buffs === undefined ? ZERO_HIT_RATE : hitRateNOf(buffs) };
+    return {
+      start: s.start,
+      end: s.end,
+      hitRate: buffs === undefined ? ZERO_HIT_RATE : hitRateNOf(buffs),
+      minRange: buffs?.minEffectiveRange ?? 0,
+    };
   });
 }
 
 /**
  * 自動で使った条件の平均（1 パス目の射撃の列で発数の重みを付ける）。自動でない枠は null。
- * hitRateSpans（区間ごとの N。省略は計画の常時の N）を渡すと、持続の命中率▲が効いている発のコア命中率をその N で出す
+ * hitRateSpans（区間ごとの N。省略は計画の常時の N）を渡すと、持続の命中率▲が効いている発のコア命中率をその N で出す。
+ * 適正最小射程距離▲ の効いている発の距離ボーナスは、区間の minRange で出し直す
  */
 export function autoConditionSummary(
   plan: LandingPlan | null,
@@ -639,24 +684,29 @@ export function autoConditionSummary(
   let timed = false;
   let k = 0;
   let h = 0;
-  /** フレームの区間の命中率の和 */
-  const nAt = (frame: number): HitRateN => {
-    if (hitRateSpans === undefined) return constant;
+  /** フレームの区間（命中率の和と適正最小射程距離▲ の和）。区間の外は計画の常時の N */
+  const timedAt = (frame: number): HitRateNSpan | undefined => {
+    if (hitRateSpans === undefined) return undefined;
     while (h < hitRateSpans.length && hitRateSpans[h]!.end <= frame) h += 1;
     const span = hitRateSpans[h];
-    return span !== undefined && span.start <= frame ? span.hitRate : constant;
+    return span !== undefined && span.start <= frame ? span : undefined;
   };
+
   for (const span of plan.spans) {
     while (k < shotFrames.length && shotFrames[k]! < span.start) k += 1;
-    // 同じ N が続く発をまとめて足す（持続の▲が無ければ着地点の区間ごとに 1 回で、今までと同じ足し方）
+    // 同じ N（と適正最小射程距離▲ の和）が続く発をまとめて足す（持続の▲が無ければ着地点の区間ごとに 1 回で、今までと同じ足し方）
     while (k < shotFrames.length && shotFrames[k]! < span.end) {
-      const at = nAt(shotFrames[k]!);
+      const first = timedAt(shotFrames[k]!);
+      const at = first?.hitRate ?? constant;
+      const range = first?.minRange ?? 0;
       let n = 0;
-      while (k < shotFrames.length && shotFrames[k]! < span.end && sameHitRate(nAt(shotFrames[k]!), at)) {
+      while (k < shotFrames.length && shotFrames[k]! < span.end) {
+        const t = timedAt(shotFrames[k]!);
+        if (!sameHitRate(t?.hitRate ?? constant, at) || (t?.minRange ?? 0) !== range) break;
         n += 1;
         k += 1;
       }
-      for (const p of landingPartsWith(plan, slot, slotIndex, span.landing, at)) {
+      for (const p of landingPartsWith(plan, slot, slotIndex, span.landing, at, range)) {
         core += n * p.weight * p.condition.coreHitRate;
         distance += n * p.weight * (p.condition.distanceBonus && slot.character.bonusRange !== null ? 1 : 0);
         hit += n * p.weight * (p.condition.hitRate ?? 1);
@@ -1028,7 +1078,11 @@ export function slotWeaponChangeFirstHitsOf(
 
 /** フレーム frame に撃った発・刻みのヒットの飛ぶ時間（区間の外・spans なしは 0） */
 export function flightFramesAt(spans: readonly FlightFrameSpan[] | null | undefined, frame: number): number {
-  if (!spans) return 0;
+  return (spans && spanAt(spans, frame)?.frames) ?? 0;
+}
+
+/** 始まりの順に並んだ重ならない区間 [start, end) のうち、frame を含むもの（二分探索。無ければ undefined） */
+export function spanAt<T extends { start: number; end: number }>(spans: readonly T[], frame: number): T | undefined {
   let lo = 0;
   let hi = spans.length - 1;
   while (lo <= hi) {
@@ -1036,7 +1090,7 @@ export function flightFramesAt(spans: readonly FlightFrameSpan[] | null | undefi
     const s = spans[mid]!;
     if (frame < s.start) hi = mid - 1;
     else if (frame >= s.end) lo = mid + 1;
-    else return s.frames;
+    else return s;
   }
-  return 0;
+  return undefined;
 }
