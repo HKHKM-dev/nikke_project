@@ -1040,6 +1040,10 @@
 | 1065 | `20261111-1065_sg_dorothy-serendipity_water.mp4` | ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | 編成と枠順は戦闘履歴のパネルで確かめた（出撃画面では 3 枠目に置いた単騎） |
 | 1066 | `20261111-1066_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_water.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | 編成と枠順は戦闘履歴のパネルで確かめた |
 | 1067 | `20261111-1067_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_water.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ドロシー：セレンディピティ（234、SG・水冷・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | 編成と枠順は戦闘履歴のパネルで確かめた |
+| 1068 | `20261111-1068_sr_killer-wife_fire.mp4` | ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1069 | `20261111-1069_sr_killer-wife_fire.mp4` | ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1070 | `20261111-1070_sr+ar+sr_delta+idoll-sun+killer-wife_fire.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1071 | `20261111-1071_sr+ar+sr_delta+idoll-sun+killer-wife_fire.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

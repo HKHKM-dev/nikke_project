@@ -26279,6 +26279,190 @@
       "effective": false,
       "minus": 0,
       "plus": 0
+    },
+    {
+      "observation": "1068-03",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "b916841f405bdfe6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1068-04",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "0afbdf1d9d521822",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1068-05",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "786bd6d91c8c3e58",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1068-06",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "290e0291973f6e12",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1068-07",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "5c809ac4afc06d2d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1068-08",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "f52534cdddbdcd26",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1069-03",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "510a00137b8460ca",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1069-04",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "6a0d8a41ab649996",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1069-05",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "e978c235b9af7724",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1069-06",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "7c961565220718c6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1069-07",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "20bd27d851fa61f1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1069-08",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "6a96ba199902bdc2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1070-03",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "7c976ba85cdad863",
+      "effective": true,
+      "minus": -65487.94809500006,
+      "plus": 0
+    },
+    {
+      "observation": "1070-04",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "350b0f859e33b590",
+      "effective": true,
+      "minus": 0,
+      "plus": 65487.94809500006
+    },
+    {
+      "observation": "1070-05",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "78fd0c898cd113c8",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1070-06",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "0c0daaca4f15ee23",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1070-07",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "55cd4813e6a9c772",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1070-08",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "ca9c5273f375dbb4",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1071-03",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "810f946c002c9325",
+      "effective": true,
+      "minus": -65487.94809500006,
+      "plus": 0
+    },
+    {
+      "observation": "1071-04",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "49f625811d759b4e",
+      "effective": true,
+      "minus": 0,
+      "plus": 65487.94809500006
+    },
+    {
+      "observation": "1071-05",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "0d64bbf5b9e01d66",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1071-06",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "e6b86346a1d6870d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1071-07",
+      "element": "D：キラーワイフ skill1.effects[0]",
+      "key": "68945fef574587b2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     }
   ]
 }
