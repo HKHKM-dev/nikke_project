@@ -1083,7 +1083,8 @@ header h1 {
   aspect-ratio: 1 / 1;
   max-width: 120px;
   /* 属性の色は使わない（属性は左上のバッジで示す） */
-  background: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  background: var(--char-visual-fill);
   border: 1px solid var(--app-border);
   overflow: hidden;
   display: flex;
@@ -1131,11 +1132,11 @@ header h1 {
   max-width: none;
   --badge-w: 24px;
 }
-/* スロットの立ち絵とニケ一覧の縦長の絵は、背景を透明にする（立ち絵の周りに画面の背景が見える）。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+/* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色と同じ（モダン UI は modern.css の --slot-frame-line） */
 .char-visual-portrait,
 .char-visual-tall {
-  background: transparent;
+  background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%);
   border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line, var(--app-border)) 50%) 1;
 }
 .char-visual-img {
