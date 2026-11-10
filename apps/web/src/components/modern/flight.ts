@@ -38,15 +38,17 @@ export function stopArrival(card: Element | null): void {
   if (card) arrivals.get(card)?.();
 }
 
+/** 切り抜きで、下のほかの 3 辺に見せる枠の外（影など）の幅（px） */
+const CLIP_OUTSET = 40;
+/** 位置と大きさ（DOMRect のうち frameAt が読むもの） */
+type Box = Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+
 /**
  * base の位置・大きさに置いた立ち絵の写しを、rect の位置・大きさに見せるキーフレーム。幅をそろえて縮め、rect が写しより横長なら
  * （ニケ一覧の四角の絵）、写しの上から rect の形の分だけを残して下を切る（顔のある上の部分を四角に切り抜く）。
  * 写しのほうが横長なら、切らずに上下の中央をそろえる。切るのは下だけで、ほかの 3 辺は枠の外（影など）も見せる（CLIP_OUTSET）。
  * 大きさの無い rect（配置されていない要素）は、base のまま動かさない
  */
-const CLIP_OUTSET = 40;
-/** 位置と大きさ（DOMRect のうち frameAt が読むもの） */
-type Box = Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
 export function frameAt(target: Box, base: Box): Keyframe {
   const rect = target.width > 0 && target.height > 0 ? target : base;
   const scale = rect.width / base.width;

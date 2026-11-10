@@ -15,7 +15,10 @@ export type ActiveDragData =
 /** 離す所の data（useDroppable の data）: スロット（ModernSlotCard）・ニケ一覧（CharacterTray） */
 export type OverDragData = { type: 'slot'; slotIndex: number } | { type: 'tray' };
 
-/** dnd-kit の data（Active・Over の data.current）を、作る側がそろえた形として読む */
+/**
+ * dnd-kit の data（Active・Over の data.current）に型を付け直す。中身は確かめない（形は作る側の satisfies が保つ。
+ * 型に無い形の data は、dropIntentOf では何もしない）
+ */
 export const activeDragData = (data: Data | undefined) => data as ActiveDragData | undefined;
 const overDragData = (data: Data | undefined) => data as OverDragData | undefined;
 
@@ -40,6 +43,7 @@ export function dropIntentOf(activeData: Data | undefined, overData: Data | unde
   if (over.type === 'tray') {
     return active.type === 'slot-character' && active.character ? { kind: 'unplace', index: active.slotIndex } : NONE;
   }
+  if (over.type !== 'slot') return NONE;
   const to = over.slotIndex;
   switch (active.type) {
     case 'controller':
@@ -48,5 +52,7 @@ export function dropIntentOf(activeData: Data | undefined, overData: Data | unde
       return { kind: 'place', character: active.character, index: to };
     case 'slot-character':
       return active.slotIndex === to ? NONE : { kind: 'swap', from: active.slotIndex, to };
+    default:
+      return NONE;
   }
 }

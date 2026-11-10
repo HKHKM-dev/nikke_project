@@ -24,6 +24,12 @@ describe('dropIntentOf', () => {
     expect(dropIntentOf(controller, slot(2))).toEqual({ kind: 'controller', index: 2 });
   });
 
+  it('型に無い data（受け口の data が無い・知らない種類）では何もしない', () => {
+    expect(dropIntentOf(controller, {})).toEqual({ kind: 'none' });
+    expect(dropIntentOf(trayNikke, { type: 'other', slotIndex: 1 })).toEqual({ kind: 'none' });
+    expect(dropIntentOf({ type: 'other' }, slot(1))).toEqual({ kind: 'none' });
+  });
+
   it('操作の印を一覧に離しても何もしない', () => {
     expect(dropIntentOf(controller, TRAY)).toEqual({ kind: 'none' });
   });
