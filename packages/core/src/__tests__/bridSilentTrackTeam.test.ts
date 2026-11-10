@@ -39,7 +39,7 @@ const TEAMS: Record<string, TeamInput> = Object.fromEntries(
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const sim = runSimulation(input);
-  const brid = input.slots.findIndex((s) => s.character.resourceId === BRID);
+  const brid = input.slots.findIndex((s) => s?.character.resourceId === BRID);
   const windEnemy = input.enemy.element === 'Wind';
   const windows = sim.schedule?.fullBurstWindows ?? [];
   const shots = sim.shots[brid]!.frames;
