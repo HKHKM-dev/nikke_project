@@ -74,8 +74,8 @@
           "damageType": "skill",
           "delayFrames": 13,
           "assumes": {
-            "ja": "戦闘開始から 4 秒ごと（ceil の周期 236f。CT 4 秒は録画から読んだ値）。発動からヒットまで 13f。「ランダムに敵 1 機」は、敵 1 体の前提ではその敵",
-            "en": "Every 4 s from the start of combat (ceil period of 236 f; the 4 s cooldown is read from recordings). 13 f from activation to hit. \"1 random enemy\" is that enemy under the single-enemy premise"
+            "ja": "戦闘開始から 4 秒ごと（ceil の周期 236f。CT 4 秒は外部の資料の値で、録画で確かめた）。発動からヒットまで 13f。「ランダムに敵 1 機」は、敵 1 体の前提ではその敵",
+            "en": "Every 4 s from the start of combat (ceil period of 236 f; the 4 s cooldown is from external sources and confirmed by recordings). 13 f from activation to hit. \"1 random enemy\" is that enemy under the single-enemy premise"
           },
           "claims": [
             "C-1058"

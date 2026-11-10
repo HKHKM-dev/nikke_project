@@ -1958,7 +1958,8 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
 /**
  * V-0715（ヘルム：アクアマリンのバーストの電撃の敵への追加ダメージ）: 枠の n 回目（0 始まり）のバーストの倍率ダメージ（burstHitDamage）と、
  * そのヒットと同じフレームに出る同じ枠の burst スロットの倍率ダメージ（持続ダメージを除く）の和。録画では HUD の 1 つの増分に合わさる。
- * 会心（crit）はバーストの倍率ダメージにだけ当て、倍率ダメージは会心なしの値で足す
+ * 会心（crit）はバーストの倍率ダメージにだけ当て、倍率ダメージは会心なしの値で足す。2 つが同じ値なら、録画の会心の増分はどちらが会心したかを
+ * 見分けない
  */
 function burstHitWithSkillHits(result: SimResult, ctx: MetricContext): number {
   const frame = hitFrameOf(nthActivationOf(result, ctx).activation);
