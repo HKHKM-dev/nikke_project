@@ -75,21 +75,36 @@ describe('ココア + シン + アニス：スパークリングサマー（水�
     expect(hits.map((h) => h.frame)).toEqual(lastShots.map((f) => f + missileDelay).filter((f) => f < plan.frames));
     const inside = shots.filter(inBurst);
     expect(inside.length).toBeGreaterThan(10);
+    // いまのモデル: 窓の終わりまで毎発が最終弾。録画ではココアの S1 のデバフ解除が▼を外して 5 発に戻る窓がある
+    // （C-1038。未反映）ので、反映したらここを直す
     expect(inside.every((f) => isLastShot.has(f))).toBe(true);
-    // 窓の外は素の最大装弾数ごと（最初のマガジン）
-    expect(lastShots[0]).toBe(shots[characterOf(ANIS).shot.maxAmmo - 1]);
+    // 窓にかからないマガジンは、どれも素の最大装弾数の発
+    const maxAmmo = characterOf(ANIS).shot.maxAmmo;
+    const ends = lastShots.map((f) => shots.indexOf(f));
+    const outside = ends
+      .slice(1)
+      .map((end, i) => shots.slice(ends[i]! + 1, end + 1))
+      .filter((mag) => !mag.some(inBurst) && !burstWindows.some((w) => mag[0]! < w.start && w.start <= mag.at(-1)!));
+    expect(outside.length).toBeGreaterThan(10);
+    expect(outside.every((mag) => mag.length === maxAmmo)).toBe(true);
+    expect(ends[0]).toBe(maxAmmo - 1);
   });
 
   it('reloads faster inside the first burst window than before it', () => {
-    const gaps = shots.slice(1).map((f, i) => ({ prev: shots[i]!, f }));
-    const before = Math.max(...gaps.filter(({ f }) => f < uses[0]!).map(({ prev, f }) => f - prev));
+    // 最終弾から次のマガジンの 1 発目まで（リロード）
+    const reloads = shots
+      .slice(1)
+      .map((f, i) => ({ prev: shots[i]!, f }))
+      .filter(({ prev }) => isLastShot.has(prev));
+    const before = reloads.filter(({ f }) => f < uses[0]!).map(({ prev, f }) => f - prev);
+    expect(before.length).toBeGreaterThan(0);
     const [first] = burstWindows;
-    // 窓の中の最終弾から始まったリロードだけを見る（使った時点で走っていたリロードは素の長さ）
-    const inside = gaps
-      .filter(({ prev, f }) => prev >= first!.start && f < first!.end && isLastShot.has(prev))
+    // 窓の中で始まったリロードだけを見る（使った時点で走っていたリロードは素の長さ）
+    const inside = reloads
+      .filter(({ prev, f }) => prev >= first!.start && f < first!.end)
       .map(({ prev, f }) => f - prev);
     expect(inside.length).toBeGreaterThan(5);
-    expect(Math.max(...inside)).toBeLessThan(before / 2);
+    expect(Math.max(...inside)).toBeLessThan(Math.min(...before) / 2);
   });
 });
 

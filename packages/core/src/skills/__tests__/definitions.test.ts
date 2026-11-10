@@ -329,12 +329,16 @@ describe('data/skills', () => {
         expect(e.multiplier).toBeGreaterThanOrEqual(dot1[i]!.multiplier);
         expect(e.dot).toEqual(dot1[i]!.dot);
       });
-      // ▼（decrease）は負の値で、Lv とともに大きさが増える（timed と同じ見方）
-      lv10.forEach((e, i) => expect(Math.abs(e.value)).toBeGreaterThanOrEqual(Math.abs(lv1[i]!.value)));
+      // ▼（decrease）は負の値で、Lv とともに大きさが増える。符号は Lv で変わらない
+      const growsWithLevel = (v10: number, v1: number) => {
+        expect(Math.sign(v10)).toBe(Math.sign(v1));
+        expect(Math.abs(v10)).toBeGreaterThanOrEqual(Math.abs(v1));
+      };
+      lv10.forEach((e, i) => growsWithLevel(e.value, lv1[i]!.value));
       burst10.forEach((e, i) => expect(e.multiplier).toBeGreaterThanOrEqual(burst1[i]!.multiplier));
       timed10.forEach((e, i) => {
-        // ▼（decrease）は負の値で、Lv とともに大きさが増える（アニス：スパークリングサマーのバーストの最大装弾数▼）
-        expect(Math.abs(e.value)).toBeGreaterThanOrEqual(Math.abs(timed1[i]!.value));
+        // アニス：スパークリングサマーのバーストの最大装弾数▼は、Lv とともに負に大きくなる
+        growsWithLevel(e.value, timed1[i]!.value);
         expect(e.durationFrames).toBe(timed1[i]!.durationFrames);
       });
     });
