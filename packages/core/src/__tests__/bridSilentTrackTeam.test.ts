@@ -3,6 +3,7 @@
 // 風圧の敵のときだけ付く
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
+import { runSimulation } from '../sim/engine.ts';
 import { itemsOf } from '../skills/holders.ts';
 import type { SkillSlot } from '../types.ts';
 import type { TeamInput } from '../team.ts';
@@ -29,6 +30,7 @@ const TEAMS: Record<string, { input: TeamInput; brid: number; windEnemy: boolean
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, brid, windEnemy }) => {
   const plan = planTeamRun(input);
+  const sim = runSimulation(input);
   const windows = plan.schedule?.fullBurstWindows ?? [];
   const shots = plan.shots[brid]!.frames;
   const hits = (skill: string) =>
@@ -36,9 +38,15 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, { input, brid, windEn
   const damageTaken = (skill: SkillSlot) =>
     itemsOf(plan.history, { sourceSlotIndex: brid, kind: 'timed', skill, stat: 'damageTaken' });
 
-  it('hits with S2 on every 5th normal attack', () => {
+  it('hits with S2 6 frames after every 5th normal attack, with the Damage Taken up from the 2nd hit only against a Wind enemy', () => {
     const fifth = shots.filter((_, i) => (i + 1) % 5 === 0);
-    expect(hits('skill2')).toEqual(fifth);
+    expect(hits('skill2')).toEqual(fifth.map((f) => f + 6).filter((f) => f < plan.frames));
+    // 10 発目のきっかけのヒットは 6f 後なので、同じ発で付いた受けるダメージ▲が乗る（C-1039）
+    const taken = sim.skillHits
+      .filter((h) => h.slotIndex === brid && h.effect.source.skill === 'skill2')
+      .map((h) => h.hit.damageTakenMultiplier);
+    expect(taken[0]).toBe(1);
+    expect(taken[1]! > 1).toBe(windEnemy);
   });
 
   it('gives the S2 Damage Taken up on every 10th normal attack only against a Wind enemy', () => {

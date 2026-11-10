@@ -16,7 +16,10 @@
           "assumes": {
             "ja": "風圧コードの敵全体は敵 1 体（風圧の敵のときだけ付く）。敵の受けるダメージ▲を、味方全体の与ダメージの乗数として持つ",
             "en": "All Wind Code enemies is the single enemy (applied only when it is Wind). The enemy's damage taken up is held as a multiplier on all allies' damage"
-          }
+          },
+          "claims": [
+            "C-1041"
+          ]
         },
         {
           "kind": "damage",
@@ -24,9 +27,12 @@
           "ref": 3,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は敵 1 体で 1 ヒット",
-            "en": "All enemies is the single enemy, so it lands once"
-          }
+            "ja": "敵全体は敵 1 体で 1 ヒット。ヒットはフルバーストの始まりのフレームに置く（録画では III のタイマーの 00.00 の 79f 後（動画のフレーム）。遅れは未実装）",
+            "en": "All enemies is the single enemy, so it lands once. The hit is placed on the Full Burst start frame (recordings show it 79 video frames after the III timer reads 00.00; the delay is not implemented)"
+          },
+          "claims": [
+            "C-1041"
+          ]
         }
       ]
     },
@@ -46,7 +52,10 @@
           "assumes": {
             "ja": "「残りの HP の数値が最も低い風圧コードの敵 1 機」は敵 1 体（風圧の敵のときだけ付く）。敵の受けるダメージ▲を、味方全体の与ダメージの乗数として持つ",
             "en": "The lowest-HP Wind Code enemy is the single enemy (applied only when it is Wind). The enemy's damage taken up is held as a multiplier on all allies' damage"
-          }
+          },
+          "claims": [
+            "C-1039"
+          ]
         },
         {
           "kind": "damage",
@@ -54,12 +63,18 @@
             "count": "normalShot",
             "everyRef": 5
           },
+          "delayFrames": 6,
           "ref": 7,
           "damageType": "skill",
+          "gaugePerHit": true,
           "assumes": {
-            "ja": "「残りの HP の数値が最も低い敵 1 機」は敵 1 体で 1 ヒット。ヒットは発のフレームに置く",
-            "en": "The lowest-HP enemy is the single enemy, so it lands once. The hit is placed on the shot frame"
-          }
+            "ja": "「残りの HP の数値が最も低い敵 1 機」は敵 1 体で 1 ヒット。ヒットはきっかけの発の 6f 後で、射手の 1 ヒットぶん（target_burst_energy_pershot）のバーストゲージを溜める",
+            "en": "The lowest-HP enemy is the single enemy, so it lands once. The hit lands 6 frames after the triggering shot and charges one of the shooter's hits worth of Burst gauge (target_burst_energy_pershot)"
+          },
+          "claims": [
+            "C-1039",
+            "C-1040"
+          ]
         }
       ]
     },
@@ -73,7 +88,10 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1042"
+          ]
         }
       ]
     }

@@ -1,0 +1,15 @@
+{
+  "id": "C-1042",
+  "text": "ブリッド：サイレントトラックのバーストは説明文どおり。自分を除く味方全体に、スキル発動者（ブリッド）の攻撃力の 66.52% の攻撃力▲（10 秒）を付ける。自分には付かない",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1028-08`（フルバーストにならなかったチェーンで、リターの 1 ヒットがリターのバーストの後は 21,094（▲なし）、ブリッドのバーストの後の 10 秒は 29,552（▲あり）だけ。モデルと ±1）・`1028-06`・`1029-06`（ブリッドの S1 の倍率ダメージは、自分に▲の付かないモデルの値と ±1。自分にも付くなら 3,293,477）。V-0711",
+  "model": "`data/skills/73.json` の burst の effects[0]（timed・burstUse・allies・excludeSelf always・attack・scaling casterAttack）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/73.json の burst の effects[0]"]
+  },
+  "decidedOn": []
+}

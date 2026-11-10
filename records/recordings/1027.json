@@ -24,8 +24,8 @@
   "mode": "range-3min",
   "fixedSpec": true,
   "autoFire": true,
-  "autoBurst": false,
-  "conditionNote": "",
+  "autoBurst": true,
+  "conditionNote": "撮影の依頼はオートバースト OFF だったが、画（左上の AUTO）では ON。単騎の II なのでチェーンは III で切れる。バーストは自分を除く味方にだけ付く",
   "backup": {
     "at": "2026-11-10T21:53+09:00",
     "via": "cloud-move",

@@ -1,6 +1,6 @@
 {
   "verification": "V-0711",
-  "note": "撮る前の予測。撮影 A はブリッド：サイレントトラック単騎（操作）、撮影 B はリター・I-DOLL・サン・ブリッド：サイレントトラック（操作）。どちらもスペック固定 ON・オート射撃 ON。A はオートバースト OFF、B は ON",
+  "note": "撮る前の予測（2026-11-10）は、ゲージの 3 つの仮説（S2 は溜めない・倍率ダメージで溜める・付与で溜める）で出した。撮った後、S2 のヒットの遅れ（6f）とゲージ（1 ヒット）を定義に足し、仮説を観測値で見分けられる形に組み直した（形の確かめ。撮った後に書いた）。撮影 A はブリッド：サイレントトラック単騎（操作）、撮影 B はリター・I-DOLL・サン・ブリッド：サイレントトラック（操作）。どちらもスペック固定 ON・オート射撃 ON・オートバースト ON（A は依頼では OFF だったが、画では ON。単騎の II なのでバーストは撃たれない）",
   "team": [
     {
       "rid": 73,
@@ -11,42 +11,86 @@
   "hypotheses": [
     {
       "id": "H-model",
-      "note": "いまのモデル（説明文どおり。S2 の付与と倍率ダメージはゲージを溜めない）",
+      "note": "いまの定義（説明文どおり。S2 の倍率ダメージは発の 6f 後に出て、射手の 1 ヒットぶんのゲージを溜める）",
       "override": {}
     },
     {
-      "id": "H-gauge-dmg",
-      "note": "S2 の倍率ダメージ（5 回攻撃ごと）が、射手の target_burst_energy_pershot を 1 回溜める",
+      "id": "H-noDelay",
+      "note": "S2 の倍率ダメージがきっかけの発のフレームに出る（10 発目のヒットに、その発で付いた受けるダメージ▲が乗らない。遅れの無いヒットにはゲージの印を書けないので、ゲージも溜めない）",
       "override": {
+        "dropEffects": [
+          {
+            "rid": 73,
+            "skill": "skill2",
+            "index": 1
+          }
+        ],
         "addEffects": [
           {
             "rid": 73,
             "skill": "skill2",
             "effect": {
-              "kind": "burstGaugeHit",
+              "kind": "damage",
               "trigger": {
                 "count": "normalShot",
                 "everyRef": 5
-              }
+              },
+              "ref": 7,
+              "damageType": "skill"
             }
           }
         ]
       }
     },
     {
-      "id": "H-gauge-debuff",
-      "note": "S2 の受けるダメージ▲の付与（10 回攻撃ごと）が、射手の target_burst_energy_pershot を 1 回溜める（C-0422 の形）",
+      "id": "H-noS1Up",
+      "note": "S1 の受けるダメージ▲が付かない",
       "override": {
+        "dropEffects": [
+          {
+            "rid": 73,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-noBurst",
+      "note": "バーストの攻撃力▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 73,
+            "skill": "burst",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-selfBurst",
+      "note": "バーストの攻撃力▲が自分にも付く",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 73,
+            "skill": "burst",
+            "index": 0
+          }
+        ],
         "addEffects": [
           {
             "rid": 73,
-            "skill": "skill2",
+            "skill": "burst",
             "effect": {
-              "kind": "burstGaugeHit",
-              "trigger": {
-                "count": "normalShot",
-                "everyRef": 1
-              }
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1,
+              "durationRef": 2
             }
           }
         ]
@@ -55,30 +99,7 @@
   ],
   "targets": [
     {
-      "id": "A-hit",
-      "model": "sim",
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": "1,10,11",
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
-        "condition": "auto"
-      },
-      "tolerance": {
-        "abs": 1
-      },
-      "note": "撮影 A（風圧）: 1・10・11 発目の、胴体（非会心・非コア）の 1 ペレットの値。11 発目から S2 の受けるダメージ▲が乗る"
-    },
-    {
-      "id": "A-skill2",
+      "id": "A-s2-1",
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
@@ -91,139 +112,122 @@
         "enemy": "range-bigarms-wind",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "tolerance": {
-        "abs": 1
+        "abs": 2
       },
-      "note": "撮影 A（風圧）: S2 の倍率ダメージの 1 回目（5 発目。受けるダメージ▲の前）の非会心の値"
+      "note": "撮影 A（風圧）: S2 の倍率ダメージの 1 回目（5 発目）の非会心",
+      "observations": [
+        "1025-01",
+        "1026-01"
+      ]
     },
     {
-      "id": "A-skill2-up",
+      "id": "A-s2-2",
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
         "slot": 1,
         "skill": "skill2",
-        "n": 2,
+        "n": 1,
         "crit": false
       },
       "setup": {
         "enemy": "range-bigarms-wind",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "tolerance": {
-        "abs": 1
+        "abs": 2
       },
-      "note": "撮影 A（風圧）: S2 の倍率ダメージの 3 回目（15 発目。受けるダメージ▲の中）の非会心の値"
+      "note": "撮影 A（風圧）: S2 の倍率ダメージの 2 回目（10 発目）の非会心。受けるダメージ▲が乗るか",
+      "observations": [
+        "1025-02",
+        "1026-02"
+      ]
     },
     {
-      "id": "A-gauge",
-      "model": "sim",
-      "metric": "gaugeFullShotIndex",
-      "args": {
-        "slot": 1,
-        "n": 0
-      },
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
-        "condition": "auto"
-      },
-      "tolerance": {
-        "abs": 0.5
-      },
-      "note": "撮影 A（風圧）: 戦闘開始から BURST のバーが消えた（ゲージが満タンになった）発の番号"
-    },
-    {
-      "id": "A-fire-hit",
-      "model": "sim",
-      "metric": "hitDamageAtShot",
-      "args": {
-        "slot": 1,
-        "shot": "11",
-        "core": false,
-        "crit": false,
-        "distance": true
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
-        "condition": "auto"
-      },
-      "tolerance": {
-        "abs": 1
-      },
-      "note": "撮影 A（灼熱）: 11 発目の胴体の 1 ペレット。受けるダメージ▲は付かない"
-    },
-    {
-      "id": "A-fire-skill2",
+      "id": "A-s2-3c",
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
         "slot": 1,
         "skill": "skill2",
         "n": 2,
+        "crit": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 A（風圧）: S2 の倍率ダメージの 3 回目（15 発目）の会心",
+      "observations": [
+        "1025-03"
+      ]
+    },
+    {
+      "id": "A-s2-delay",
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（風圧）: S2 の倍率ダメージのヒットの、きっかけの発からのフレーム数の最頻値",
+      "observations": [
+        "1025-04",
+        "1026-03"
+      ]
+    },
+    {
+      "id": "A-fire-s2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 1,
         "crit": false
       },
       "setup": {
         "enemy": "range-bigarms-fire",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "tolerance": {
-        "abs": 1
+        "abs": 2
       },
-      "note": "撮影 A（灼熱）: S2 の倍率ダメージの 3 回目（15 発目）の非会心の値。受けるダメージ▲は付かない"
+      "note": "撮影 A（灼熱）: S2 の倍率ダメージの 2 回目（10 発目）の非会心。受けるダメージ▲は付かない",
+      "observations": [
+        "1027-02"
+      ]
     },
     {
-      "id": "B-fb-starts",
-      "model": "sim",
-      "metric": "fullBurstStarts",
-      "args": {},
-      "team": [
-        {
-          "rid": 82
-        },
-        {
-          "rid": 308
-        },
-        {
-          "rid": 73,
-          "controlled": true
-        }
-      ],
-      "setup": {
-        "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ],
-        "condition": "auto"
-      },
-      "tolerance": {
-        "abs": 6
-      },
-      "note": "撮影 B: フルバーストの始まりのフレーム（III のタイマーの 00.00）の列"
-    },
-    {
-      "id": "B-skill1",
+      "id": "B-s1-2",
       "model": "sim",
       "metric": "skillHitDamage",
       "args": {
         "slot": 3,
         "skill": "skill1",
         "trigger": "fullBurstStart",
-        "n": 0,
+        "n": 1,
         "crit": false
       },
       "team": [
@@ -242,16 +246,55 @@
         "enemy": "range-bigarms-wind",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "tolerance": {
-        "abs": 1
+        "abs": 2
       },
-      "note": "撮影 B: 1 回目のフルバーストの始まりの S1 の倍率ダメージ（非会心）"
+      "note": "撮影 B: 2 回目のフルバーストの S1 の倍率ダメージの非会心",
+      "observations": [
+        "1029-06"
+      ]
     },
     {
-      "id": "B-liter-in-burst",
+      "id": "B-s1-5",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "trigger": "fullBurstStart",
+        "n": 4,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 73,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: 5 回目のフルバーストの S1 の倍率ダメージの非会心",
+      "observations": [
+        "1028-06"
+      ]
+    },
+    {
+      "id": "B-liter-burst",
       "model": "sim",
       "metric": "hitDamage",
       "args": {
@@ -277,87 +320,113 @@
         "enemy": "range-bigarms-wind",
         "events": [
           "range-3min-jump"
-        ],
-        "condition": "auto"
+        ]
       },
       "tolerance": {
-        "abs": 1
+        "abs": 2
       },
-      "note": "撮影 B: 2 回目のチェーン（III が CT でフルバーストにならない回）でブリッドがバーストを撃った後の、リターの胴体の 1 発。バーストの攻撃力▲（自分を除く味方）だけが乗る（S1 は乗らない）"
+      "note": "撮影 B: フルバーストにならなかった 2 回目のチェーンでブリッドがバーストを撃った後の、リターの胴体の 1 ヒット",
+      "observations": [
+        "1028-08"
+      ]
+    },
+    {
+      "id": "B-liter-fb2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 3031,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 73,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: 2 回目のフルバーストの中のリターの胴体の 1 ヒット",
+      "observations": [
+        "1028-09",
+        "1029-08"
+      ]
     }
   ],
   "predicted": {
     "at": "2026-11-10",
-    "commit": "756b07047f33f95db7f7eaceb57be94ff6402d2f",
+    "commit": "3c36300c8e5e9178af4c98deaf54843783182ea3",
     "values": {
       "H-model": {
-        "A-hit": [
-          28764.07462500001,
-          28764.07462500001,
-          32250.28046955
-        ],
-        "A-skill2": 741200.6250000001,
-        "A-skill2-up": 831034.1407500001,
-        "A-gauge": 33,
-        "A-fire-hit": [
-          26149.158750000006
-        ],
-        "A-fire-skill2": 673818.75,
-        "B-fb-starts": [
-          563,
-          2961,
-          5477,
-          7922,
-          10359
-        ],
-        "B-skill1": 2213534.9149056002,
-        "B-liter-in-burst": 29552.139483048
+        "A-s2-1": 741200.6250000001,
+        "A-s2-2": 831034.1407500001,
+        "A-s2-3c": 1246551.2111250001,
+        "A-s2-delay": 6,
+        "A-fire-s2": 673818.75,
+        "B-s1-2": 2405932.032636,
+        "B-s1-5": 2405932.032636,
+        "B-liter-burst": 29552.139483048006,
+        "B-liter-fb2": 49317.41818908
       },
-      "H-gauge-dmg": {
-        "A-hit": [
-          28764.07462500001,
-          28764.07462500001,
-          32250.28046955
-        ],
-        "A-skill2": 741200.6250000001,
-        "A-skill2-up": 831034.1407500001,
-        "A-gauge": 32,
-        "A-fire-hit": [
-          26149.158750000006
-        ],
-        "A-fire-skill2": 673818.75,
-        "B-fb-starts": [
-          563,
-          2931,
-          5309,
-          7180,
-          9508
-        ],
-        "B-skill1": 2213534.9149056002,
-        "B-liter-in-burst": 29552.139483048
+      "H-noDelay": {
+        "A-s2-1": 741200.6250000001,
+        "A-s2-2": 741200.6250000001,
+        "A-s2-3c": 1246551.2111250001,
+        "A-s2-delay": 0,
+        "A-fire-s2": 673818.75,
+        "B-s1-2": 2405932.032636,
+        "B-s1-5": 2405932.032636,
+        "B-liter-burst": 29552.139483048006,
+        "B-liter-fb2": 49317.41818908
       },
-      "H-gauge-debuff": {
-        "A-hit": [
-          28764.07462500001,
-          28764.07462500001,
-          32250.28046955
-        ],
-        "A-skill2": 741200.6250000001,
-        "A-skill2-up": 831034.1407500001,
-        "A-gauge": 32,
-        "A-fire-hit": [
-          26149.158750000006
-        ],
-        "A-fire-skill2": 673818.75,
-        "B-fb-starts": [
-          563,
-          2934,
-          5368,
-          7873,
-          10324
-        ],
-        "B-skill1": 2213534.9149056002,
-        "B-liter-in-burst": 29552.139483048
+      "H-noS1Up": {
+        "A-s2-1": 741200.6250000001,
+        "A-s2-2": 831034.1407500001,
+        "A-s2-3c": 1246551.2111250001,
+        "A-s2-delay": 6,
+        "A-fire-s2": 673818.75,
+        "B-s1-2": 2120033.790468001,
+        "B-s1-5": 2120033.790468001,
+        "B-liter-burst": 29552.139483048006,
+        "B-liter-fb2": 43457.00194404001
+      },
+      "H-noBurst": {
+        "A-s2-1": 741200.6250000001,
+        "A-s2-2": 831034.1407500001,
+        "A-s2-3c": 1246551.2111250001,
+        "A-s2-delay": 6,
+        "A-fire-s2": 673818.75,
+        "B-s1-2": 2405932.032636,
+        "B-s1-5": 2405932.032636,
+        "B-liter-burst": 21094.165130688,
+        "B-liter-fb2": 36027.078293160004
+      },
+      "H-selfBurst": {
+        "A-s2-1": 741200.6250000001,
+        "A-s2-2": 831034.1407500001,
+        "A-s2-3c": 1246551.2111250001,
+        "A-s2-delay": 6,
+        "A-fire-s2": 673818.75,
+        "B-s1-2": 3293477.0680680005,
+        "B-s1-5": 3293477.0680680005,
+        "B-liter-burst": 29552.139483048006,
+        "B-liter-fb2": 49317.41818908
       }
     }
   }

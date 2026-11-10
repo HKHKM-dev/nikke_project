@@ -1,0 +1,127 @@
+[
+  {
+    "id": "1026-01",
+    "recording": "1026",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 741201,
+    "description": "S2 の倍率ダメージ（5 回攻撃ごと・675%）の 1 回目（5 発目がきっかけ。f964）の非会心の 1 ヒット。受けるダメージ▲の前",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "きっかけの発の増分の 6f 後の、その増分だけのフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0711",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1026-02",
+    "recording": "1026",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "damage",
+    "value": 831034,
+    "description": "S2 の倍率ダメージ（5 回攻撃ごと・675%）の 2 回目（10 発目がきっかけ。f1233）の非会心の 1 ヒット。きっかけの 10 発目で付いた受けるダメージ▲が乗る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "きっかけの発の増分の 6f 後の、その増分だけのフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0711",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1026-03",
+    "recording": "1026",
+    "kind": "interval",
+    "use": "compare",
+    "unit": "f",
+    "value": 6,
+    "description": "S2 の倍率ダメージのヒットの、きっかけの発（5 の倍数の発）の HUD の増分からのフレーム数の最頻値（42 回のうち 6f が 39 回・5f が 2 回・19f が 1 回（きっかけの発の増分が読めなかった回））",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "モデルの値（非会心・会心、▲の有無）と ±2 で合う増分を拾い、その直前の発の増分からの差"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    },
+    "source": "V-0711",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1026-04",
+    "recording": "1026",
+    "kind": "gauge",
+    "use": "record",
+    "unit": "px",
+    "value": [1, 2.26, 0.97, 0.95, 0.96],
+    "description": "1 回目の満タンの前の S2 の倍率ダメージのヒットのフレームの、左の BURST バーの伸び（サブピクセル。ヒットの前 4f と後 4f の中央値の差）。発の増分の無いフレーム",
+    "method": {
+      "tool": "tools/captures/gauge.ts --side left --mode series --subpixel",
+      "note": "1px ≈ 7,400（0367-01）。射手の 1 ヒット（4,000）は約 0.54px"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "gauge"
+    },
+    "source": "V-0711",
+    "readAt": "2026-11-10"
+  }
+]
