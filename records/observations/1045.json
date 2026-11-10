@@ -1,0 +1,293 @@
+[
+  {
+    "id": "1045-01",
+    "recording": "1045",
+    "kind": "total",
+    "use": "record",
+    "value": 73258715,
+    "description": "ヘルム：アクアマリン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11395。増分は 1602 個"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1045-02",
+    "recording": "1045",
+    "kind": "count",
+    "use": "record",
+    "value": 200,
+    "unit": "トリガー",
+    "description": "ヘルム：アクアマリン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1602 個。前の増分から 30f 未満の増分（1571 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 46.5f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1045-03",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 17987,
+    "unit": "ダメージ",
+    "description": "ヘルム：アクアマリン単騎・電撃の敵（有利 1.1 倍）の、1 回目の S2 のヒットより前の通常攻撃の 1 ヒット（胴体・会心なし・距離なし。受けるダメージ▲なし）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットから作った格子（会心・コア・距離の組）に ±1.5 で当てた（recipe buff-edge@5 の --opt grid=N<k>=1@100/*(1+0.0564k);A<k>=1@skill@100:skill1/*(1+0.0564k);B<k>=1@skill@100:skill2/*(1+0.0564k);A<k>+N<k>;B<k>+N<k>（k = 0〜5）。setup は V-0715 の予測ファイルの指標）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-04",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 23060,
+    "unit": "ダメージ",
+    "description": "S2 が 5 回出た後の通常攻撃の 1 ヒット（S2 の受けるダメージ▲ 5 スタック。5.64% × 5）。増分 1602 個のうち 1309 個が 5 スタックの格子に乗り、5 回目の S2 のヒットの後は録画の終わりまで、的のジャンプをまたいでも 5 スタックのまま（外れ 21）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットから作った格子（会心・コア・距離の組）に ±1.5 で当てた（recipe buff-edge@5 の --opt grid=N<k>=1@100/*(1+0.0564k);A<k>=1@skill@100:skill1/*(1+0.0564k);B<k>=1@skill@100:skill2/*(1+0.0564k);A<k>+N<k>;B<k>+N<k>（k = 0〜5）。setup は V-0715 の予測ファイルの指標）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-05",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 139129,
+    "unit": "ダメージ",
+    "description": "1 回目の S2 のヒット（会心なし）。受けるダメージ▲が乗っていない（自分の発動の▲は自分のヒットに乗らない）。次の通常攻撃の発（ヒットの 4f 後）から 1 スタックの格子に乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットから作った格子（会心・コア・距離の組）に ±1.5 で当てた（recipe buff-edge@5 の --opt grid=N<k>=1@100/*(1+0.0564k);A<k>=1@skill@100:skill1/*(1+0.0564k);B<k>=1@skill@100:skill2/*(1+0.0564k);A<k>+N<k>;B<k>+N<k>（k = 0〜5）。setup は V-0715 の予測ファイルの指標）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-06",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 146976,
+    "unit": "ダメージ",
+    "description": "2 回目の S2 のヒット（会心なし）。1 スタック（1 回目の分）だけが乗る。3・5 回目も 2・4 スタックの格子に乗る（4 回目は通常攻撃との和で外れ）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットから作った格子（会心・コア・距離の組）に ±1.5 で当てた（recipe buff-edge@5 の --opt grid=N<k>=1@100/*(1+0.0564k);A<k>=1@skill@100:skill1/*(1+0.0564k);B<k>=1@skill@100:skill2/*(1+0.0564k);A<k>+N<k>;B<k>+N<k>（k = 0〜5）。setup は V-0715 の予測ファイルの指標）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-07",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 178363,
+    "unit": "ダメージ",
+    "description": "9 回目の S2 のヒット（会心なし。5 スタック）。6 回目以降の S2 のヒットは、どれも 5 スタックの格子に乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 1 ヒットから作った格子（会心・コア・距離の組）に ±1.5 で当てた（recipe buff-edge@5 の --opt grid=N<k>=1@100/*(1+0.0564k);A<k>=1@skill@100:skill1/*(1+0.0564k);B<k>=1@skill@100:skill2/*(1+0.0564k);A<k>+N<k>;B<k>+N<k>（k = 0〜5）。setup は V-0715 の予測ファイルの指標）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 8,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-08",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "timing",
+    "value": [249, 485, 721, 957, 1193, 1429, 1665, 1901, 2137, 2373],
+    "unit": "f",
+    "description": "1〜10 回目の S2 のヒットの増分の、戦闘開始（timer.ts）からの動画のフレーム（236f ごと。電撃の 4 回目は通常攻撃との和で格子に乗らず、その増分のフレームを読んだ）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）・timer.ts",
+      "note": "戦闘開始は f806（timer.ts）。S2 の格子に乗った増分のフレーム − 戦闘開始"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill2",
+        "count": 10
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-09",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "timing",
+    "value": [155, 302, 527, 674],
+    "unit": "f",
+    "description": "1〜4 回目の S1 の追加ダメージの増分（30・60・90・120 命中目の発と同じ増分）の、戦闘開始からの動画のフレーム。5 回目からは、外れた発の数の違いでモデルと 1 発ずれうる",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）・timer.ts",
+      "note": "戦闘開始は f806（timer.ts）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 1,
+        "event": "skillHit",
+        "skill": "skill1",
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1045-10",
+    "recording": "1045",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "timing",
+    "value": 1413,
+    "unit": "f",
+    "description": "戦闘開始から、1 回目にバーストゲージが満タンになる（BURST バーが消える。C-0083）までの動画のフレーム（オートバースト OFF の単騎。的のジャンプより前）",
+    "method": {
+      "tool": "gauge.ts --mode events・timer.ts",
+      "note": "バー消失 f2219 − 戦闘開始 f806。S1 の追加ダメージと S2 のヒットがゲージを溜めないモデルでは 1545、S1 だけなら 1505、S2 だけなら 1515（満タンがリロードの後になる）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      }
+    }
+  }
+]

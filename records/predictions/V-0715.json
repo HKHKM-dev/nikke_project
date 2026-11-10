@@ -1,0 +1,526 @@
+{
+  "verification": "V-0715",
+  "note": "定義の下書き（S2 の周期 4 秒は外部の資料の値）で出した。スタックごとに独立の維持（each）は timed で書けないので検証記録に手で書いた。バーストの追加ダメージの値は H0 で出ないので指標にせず、検証記録に手で書いた",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 353
+    },
+    {
+      "rid": 308,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（説明文どおり。受けるダメージ▲は付けるたびに全スタックの維持を数え直す）",
+      "override": {}
+    },
+    {
+      "id": "H0",
+      "note": "電撃の敵の効果（S2 の受けるダメージ▲・バーストの追加ダメージ）が出ない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 353,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 353,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H1s",
+      "note": "S2 の受けるダメージ▲が重ならない（1 スタック）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 353,
+            "skill": "skill2",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "everySeconds": 4
+              },
+              "target": "allies",
+              "stat": "damageTaken",
+              "ref": 3,
+              "maxStacks": 1,
+              "durationRef": 5,
+              "enemyElement": "Electronic"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2",
+      "note": "S1 の CT▼ が下位効果を含まない（2 回目は 2 回の値だけ、3 回目以降は 3 回の値だけ）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 353,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "cooldownReduction",
+              "trigger": {
+                "count": "fullBurstStart",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "allies",
+              "ref": 3
+            }
+          },
+          {
+            "rid": 353,
+            "skill": "skill1",
+            "replace": 2,
+            "effect": {
+              "kind": "cooldownReduction",
+              "trigger": {
+                "count": "fullBurstStart",
+                "atLeast": 2,
+                "atMost": 2
+              },
+              "target": "allies",
+              "ref": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-hit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎・灼熱）: ヘルム：AM の通常攻撃の 1 ヒット（胴体）"
+    },
+    {
+      "id": "A-s1",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S1 の 30 命中ごとの追加ダメージの 1 ヒット"
+    },
+    {
+      "id": "A-s2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 6,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S2 の倍率ダメージの 1 ヒット（灼熱の敵には受けるダメージ▲が付かない）"
+    },
+    {
+      "id": "A-s2-interval",
+      "model": "sim",
+      "metric": "skillHitMeanInterval",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "note": "撮影 A: S2 のヒットの間隔の平均（動画のフレーム）。周期の値は録画で読む"
+    },
+    {
+      "id": "B-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（単騎・電撃）: 1 回目の S2 の前の 1 ヒット（有利コードの 1.1 倍だけ）"
+    },
+    {
+      "id": "B-hit-stack",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1500,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: S2 が 6 回出た後の 1 ヒット（受けるダメージ▲のスタックの数が見える）"
+    },
+    {
+      "id": "B-s1-stack",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "n": 10,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: スタックの乗った後の S1 の追加ダメージ"
+    },
+    {
+      "id": "B-s2-first",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目の S2 のヒット（同じ発動の受けるダメージ▲が乗るか）"
+    },
+    {
+      "id": "B-s2-stack",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 353,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 8,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 9 回目の S2 のヒット"
+    },
+    {
+      "id": "C-ct-cut",
+      "model": "sim",
+      "metric": "cooldownCutFrames",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 353
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 C（3 人・灼熱）: 1〜4 回目のフルバーストの入りに、III（I-DOLL・サン）の残りの CT が縮んだフレーム数"
+    },
+    {
+      "id": "C-burst",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 353
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: ヘルム：AM のバーストスキルダメージ（1 回目）"
+    },
+    {
+      "id": "D-ct-cut",
+      "model": "sim",
+      "metric": "cooldownCutFrames",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 353
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 D（3 人・電撃）: C と同じ"
+    },
+    {
+      "id": "D-burst",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "team": [
+        {
+          "rid": 304
+        },
+        {
+          "rid": 353
+        },
+        {
+          "rid": 308,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 D: ヘルム：AM のバーストスキルダメージ（1 回目。S2 の受けるダメージ▲が乗る）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "28f61cbaee59399c0edf4ee91340e9186e1755fc",
+    "values": {
+      "H1": {
+        "A-hit": 16352.154000000002,
+        "A-s1": 157340.0664,
+        "A-s2": 126480.6168,
+        "A-s2-interval": 236,
+        "B-hit-base": 17987.369400000003,
+        "B-hit-stack": 23059.807570800003,
+        "B-s1-stack": 221880.96163728004,
+        "B-s2-first": 146975.53594627202,
+        "B-s2-stack": 178362.96581136005,
+        "C-ct-cut": [107, 236, 388, 388],
+        "C-burst": 197459.74680000002,
+        "D-ct-cut": [107, 236, 388, 388],
+        "D-burst": 241706.52686294404
+      },
+      "H0": {
+        "A-hit": 16352.154000000002,
+        "A-s1": 157340.0664,
+        "A-s2": 126480.6168,
+        "A-s2-interval": 236,
+        "B-hit-base": 17987.369400000003,
+        "B-hit-stack": 17987.369400000003,
+        "B-s1-stack": 173074.07304000002,
+        "B-s2-first": 139128.67848,
+        "B-s2-stack": 139128.67848,
+        "C-ct-cut": [107, 236, 388, 388],
+        "C-burst": 197459.74680000002,
+        "D-ct-cut": [107, 236, 388, 388],
+        "D-burst": 217205.72148
+      },
+      "H1s": {
+        "A-hit": 16352.154000000002,
+        "A-s1": 157340.0664,
+        "A-s2": 126480.6168,
+        "A-s2-interval": 236,
+        "B-hit-base": 17987.369400000003,
+        "B-hit-stack": 19001.857034160006,
+        "B-s1-stack": 182835.45075945603,
+        "B-s2-first": 146975.53594627202,
+        "B-s2-stack": 146975.53594627202,
+        "C-ct-cut": [107, 236, 388, 388],
+        "C-burst": 197459.74680000002,
+        "D-ct-cut": [107, 236, 388, 388],
+        "D-burst": 229456.12417147204
+      },
+      "H2": {
+        "A-hit": 16352.154000000002,
+        "A-s1": 157340.0664,
+        "A-s2": 126480.6168,
+        "A-s2-interval": 236,
+        "B-hit-base": 17987.369400000003,
+        "B-hit-stack": 23059.807570800003,
+        "B-s1-stack": 221880.96163728004,
+        "B-s2-first": 146975.53594627202,
+        "B-s2-stack": 178362.96581136005,
+        "C-ct-cut": [107, 129, 152, 152],
+        "C-burst": 197459.74680000002,
+        "D-ct-cut": [107, 129, 152, 152],
+        "D-burst": 241706.52686294404
+      }
+    }
+  }
+}

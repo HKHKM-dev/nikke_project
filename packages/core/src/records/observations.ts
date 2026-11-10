@@ -12,6 +12,7 @@ import {
   hitFramesOf,
   isInFullBurst,
   videoFrameOf,
+  type BurstActivation,
   type BurstSchedule,
 } from '../burst/schedule.ts';
 import { rateAfterShots, reloadCompleteToFirstShotFrames } from '../cadence.ts';
@@ -1715,6 +1716,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   perShotHitDamage: { args: ['slot', 'frame', 'crit'], sim: perShotHitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
+  burstHitWithSkillHits: { args: ['slot', 'n', 'crit'], sim: burstHitWithSkillHits },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   // 2 段目の段 13 の PR 1（V-0546）: 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
@@ -1951,6 +1953,18 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
   const hit = slotOf(result.slots, ctx).burst.hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目のバーストの倍率ダメージが無い`);
   return oneHitValue(hit, ctx.args.crit === true);
+}
+
+/**
+ * V-0715（ヘルム：アクアマリンのバーストの電撃の敵への追加ダメージ）: 枠の n 回目（0 始まり）のバーストの倍率ダメージ（burstHitDamage）と、
+ * そのヒットと同じフレームに出る同じ枠の burst スロットの倍率ダメージ（持続ダメージを除く）の和。録画では HUD の 1 つの増分に合わさる。
+ * 会心（crit）はバーストの倍率ダメージにだけ当て、倍率ダメージは会心なしの値で足す。2 つが同じ値なら、録画の会心の増分はどちらが会心したかを
+ * 見分けない
+ */
+function burstHitWithSkillHits(result: SimResult, ctx: MetricContext): number {
+  const frame = hitFrameOf(nthActivationOf(result, ctx).activation);
+  const skills = slotSkillHits(result, withArgs(ctx, { skill: 'burst' })).filter((h) => h.frame === frame);
+  return burstHitDamage(result, ctx) + skills.reduce((sum, h) => sum + oneHitValue(h.hit, false), 0);
 }
 
 /**
@@ -2469,11 +2483,20 @@ function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
  * 分かれたヒット編（plan/design-burst-split-hits.md 4.4 節）: n 回目（0 始まり）の発動の、1 ヒット目から各ヒットまでの動画のフレーム数
  * （先頭は 0。1 ヒットなら [0]）
  */
-function burstHitOffsets(result: SimResult, ctx: MetricContext): number[] {
+/** 枠の n 回目（ctx.args.n。0 始まり）の発動と、その時刻表 */
+function nthActivationOf(
+  result: SimResult,
+  ctx: MetricContext,
+): { schedule: BurstSchedule; activation: BurstActivation } {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const activation = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx))[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
+  return { schedule, activation };
+}
+
+function burstHitOffsets(result: SimResult, ctx: MetricContext): number[] {
+  const { schedule, activation } = nthActivationOf(result, ctx);
   const frames = hitFramesOf(activation).map((f) => videoFrameOf(schedule, f));
   return frames.map((f) => f - frames[0]!);
 }

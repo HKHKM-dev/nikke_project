@@ -1,0 +1,21 @@
+{
+  "id": "C-1059",
+  "text": "ヘルム：アクアマリンの S1 の追加ダメージと S2 のヒットは、どちらも 1 ヒットで射手の 1 発ぶん（フルチャージ倍率なし）のバーストゲージを溜める",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1042-08`・`1043-08`・`1044-10`・`1045-10`（単騎・オートバースト OFF の 4 本。戦闘開始から 1 回目の満タン（BURST バーの消失）まで 1412〜1413f。モデルは S1 の追加ダメージと S2 のヒットがどちらも 1 発ぶんを溜めると 1408f、溜めないと 1545f、S1 だけなら 1505f、S2 だけなら 1515f（満タンがリロードの後になる））。仮説は 1042 の満タンを見て立てた。V-0715",
+  "model": "反映（data/skills/353.json の skill1 の effects[0] の gaugeHits [0]（30 命中目の発のフレームに射手の targetBurstEnergyPerShot）と、skill2 の effects[1]（burstGaugeHit・everySeconds 4・delayFrames 13。ヒットのフレームに足す。frame/firstPass.ts））",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/353.json の skill1 の effects[0]", "data/skills/353.json の skill2 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1042",
+      "role": "仮説の出どころ"
+    }
+  ],
+  "parameterFree": "1 ヒットで射手の 1 発ぶん（targetBurstEnergyPerShot。フルチャージ倍率なし）は、ほかのキャラの追加ダメージと同じ量（C-0251）で、撮る前から決まっている"
+}
