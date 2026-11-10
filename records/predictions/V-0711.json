@@ -110,18 +110,13 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 A（風圧）: S2 の倍率ダメージの 1 回目（5 発目）の非会心",
-      "observations": [
-        "1025-01",
-        "1026-01"
-      ]
+      "observations": ["1025-01", "1026-01"]
     },
     {
       "id": "A-s2-2",
@@ -135,18 +130,13 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 A（風圧）: S2 の倍率ダメージの 2 回目（10 発目）の非会心。受けるダメージ▲が乗るか",
-      "observations": [
-        "1025-02",
-        "1026-02"
-      ]
+      "observations": ["1025-02", "1026-02"]
     },
     {
       "id": "A-s2-3c",
@@ -160,17 +150,13 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 A（風圧）: S2 の倍率ダメージの 3 回目（15 発目）の会心",
-      "observations": [
-        "1025-03"
-      ]
+      "observations": ["1025-03"]
     },
     {
       "id": "A-s2-delay",
@@ -182,18 +168,13 @@
       },
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
       },
       "note": "撮影 A（風圧）: S2 の倍率ダメージのヒットの、きっかけの発からのフレーム数の最頻値",
-      "observations": [
-        "1025-04",
-        "1026-03"
-      ]
+      "observations": ["1025-04", "1026-03"]
     },
     {
       "id": "A-fire-s2",
@@ -207,17 +188,13 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 A（灼熱）: S2 の倍率ダメージの 2 回目（10 発目）の非会心。受けるダメージ▲は付かない",
-      "observations": [
-        "1027-02"
-      ]
+      "observations": ["1027-02"]
     },
     {
       "id": "B-s1-2",
@@ -244,17 +221,13 @@
       ],
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 B: 2 回目のフルバーストの S1 の倍率ダメージの非会心",
-      "observations": [
-        "1029-06"
-      ]
+      "observations": ["1029-06"]
     },
     {
       "id": "B-s1-5",
@@ -281,17 +254,13 @@
       ],
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 B: 5 回目のフルバーストの S1 の倍率ダメージの非会心",
-      "observations": [
-        "1028-06"
-      ]
+      "observations": ["1028-06"]
     },
     {
       "id": "B-liter-burst",
@@ -318,17 +287,13 @@
       ],
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 B: フルバーストにならなかった 2 回目のチェーンでブリッドがバーストを撃った後の、リターの胴体の 1 ヒット",
-      "observations": [
-        "1028-08"
-      ]
+      "observations": ["1028-08"]
     },
     {
       "id": "B-liter-fb2",
@@ -355,18 +320,13 @@
       ],
       "setup": {
         "enemy": "range-bigarms-wind",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
       },
       "note": "撮影 B: 2 回目のフルバーストの中のリターの胴体の 1 ヒット",
-      "observations": [
-        "1028-09",
-        "1029-08"
-      ]
+      "observations": ["1028-09", "1029-08"]
     }
   ],
   "predicted": {
