@@ -332,7 +332,8 @@ describe('data/skills', () => {
       lv10.forEach((e, i) => expect(e.value).toBeGreaterThanOrEqual(lv1[i]!.value));
       burst10.forEach((e, i) => expect(e.multiplier).toBeGreaterThanOrEqual(burst1[i]!.multiplier));
       timed10.forEach((e, i) => {
-        expect(e.value).toBeGreaterThanOrEqual(timed1[i]!.value);
+        // ▼（decrease）は負の値で、Lv とともに大きさが増える（アニス：スパークリングサマーのバーストの最大装弾数▼）
+        expect(Math.abs(e.value)).toBeGreaterThanOrEqual(Math.abs(timed1[i]!.value));
         expect(e.durationFrames).toBe(timed1[i]!.durationFrames);
       });
     });
