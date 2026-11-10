@@ -27,8 +27,8 @@
           "ref": 3,
           "damageType": "skill",
           "assumes": {
-            "ja": "敵全体は敵 1 体で 1 ヒット。ヒットはフルバーストの始まりのフレームに置く（録画では III のタイマーの 00.00 の 79f 後（動画のフレーム）。遅れは未実装）",
-            "en": "All enemies is the single enemy, so it lands once. The hit is placed on the Full Burst start frame (recordings show it 79 video frames after the III timer reads 00.00; the delay is not implemented)"
+            "ja": "敵全体は敵 1 体で 1 ヒット。ヒットはフルバーストの始まりのフレームに置く（録画では III のタイマーの 00.00 の 78〜79f 後（動画のフレーム）。遅れは未実装）",
+            "en": "All enemies is the single enemy, so it lands once. The hit is placed on the Full Burst start frame (recordings show it 78-79 video frames after the III timer reads 00.00; the delay is not implemented)"
           },
           "claims": [
             "C-1041"

@@ -17,22 +17,17 @@ const BRID = 73;
 const LITER = 82;
 const SUN = 308;
 
-// 撮影 A（単騎。II の自分だけなのでバーストは撃たない）と撮影 B（リター・I-DOLL・サン・ブリッド：サイレントトラック）の編成を、
+// 撮影 A（単騎。録画と同じくオートバースト ON。II の自分だけではチェーンが始まらない）と撮影 B（リター・I-DOLL・サン・ブリッド：サイレントトラック）の編成を、
 // 風圧の的（受けるダメージ▲が付く）と灼熱の的（付かない）で回す
 const SETUPS = [
-  { name: '撮影 A（単騎）', ids: [BRID], controlled: 0, burst: false },
-  {
-    name: '撮影 B（リター・I-DOLL・サン・ブリッド：サイレントトラック）',
-    ids: [LITER, SUN, BRID],
-    controlled: 2,
-    burst: true,
-  },
+  { name: '撮影 A（単騎）', ids: [BRID], controlled: 0 },
+  { name: '撮影 B（リター・I-DOLL・サン・ブリッド：サイレントトラック）', ids: [LITER, SUN, BRID], controlled: 2 },
 ];
 const TEAMS: Record<string, TeamInput> = Object.fromEntries(
-  SETUPS.flatMap(({ name, ids, controlled, burst }) =>
+  SETUPS.flatMap(({ name, ids, controlled }) =>
     (['Wind', 'Fire'] as const).map((element) => [
       `${name}・${element}`,
-      fixedTeam(ids, controlled, { enemy: { ...SHOOTING_RANGE_ENEMY, element }, burst }),
+      fixedTeam(ids, controlled, { enemy: { ...SHOOTING_RANGE_ENEMY, element } }),
     ]),
   ),
 );
@@ -66,14 +61,19 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   });
 
   it('hits with S1 at every Full Burst start, with Damage Taken up only against a Wind enemy', () => {
-    expect(hitsOf('skill1').map((h) => h.frame)).toEqual(windows.map((w) => w.start));
+    const hits = hitsOf('skill1');
+    expect(hits.map((h) => h.frame)).toEqual(windows.map((w) => w.start));
+    // 単騎ではフルバーストにならない
+    if (input.slots.length === 1) expect(windows).toEqual([]);
+    // S1 のヒットには、同じフレームに付いた S1 の受けるダメージ▲（15.12%）と S2 の▲（12.12%）が乗る（C-1041）
+    for (const h of hits) expect(h.hit.damageTakenMultiplier).toBeCloseTo(windEnemy ? 1.2724 : 1, 6);
     expect(held('skill1', 'damageTaken').map((w) => w.start)).toEqual(windEnemy ? windows.map((w) => w.start) : []);
   });
 
   it('gives the Burst ATK up to the allies but not to herself', () => {
     input.slots.forEach((_, i) => {
-      const windows = effectWindows(sim, i, { resourceId: BRID, skill: 'burst', stat: 'attack' });
-      expect(windows.length > 0).toBe(i !== brid && input.burst !== false);
+      const atkWindows = effectWindows(sim, i, { resourceId: BRID, skill: 'burst', stat: 'attack' });
+      expect(atkWindows.length > 0).toBe(i !== brid);
     });
   });
 });
