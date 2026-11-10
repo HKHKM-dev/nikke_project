@@ -759,7 +759,7 @@ export function isChargeFullTrigger(t: unknown): t is ChargeFullTrigger {
  * Σ 最大HP のみ▲) ÷ (1 + Σ 最大HP▲)（Σ 最大HP▲ は最大HP のみ▲ も含む。plan/design-skill-stage6.md 2.4 節の式）で、そのフレームより前に
  * 始まった件から求める（同じフレームに付いた最大HP のみ▲ は次のフレームから。論点 8）。1 パス目の件の一覧が追う（skills/holders.ts）ので、
  * timed にだけ書ける。回復で現在の HP が戻る分は扱わない。
- * エード編（plan/design-ade.md 2.1 節）: 「自分の HP が X% 以下の時」「N 秒間維持」は、同じきっかけを durationRef と組む（下がったフレームに
+ * エード編（plan/design-ade.md 2.1 節）: 「自分の HP が X% 以下の時」「N 秒間維持」は、同じきっかけを秒の維持（durationRef・durationSeconds）と組む（下がったフレームに
  * 1 回発火して N 秒。閾値以下のまま続く間は発火しない。C-1025）
  */
 export type SelfHpAtMostTrigger = { selfHpAtMostRef: number };

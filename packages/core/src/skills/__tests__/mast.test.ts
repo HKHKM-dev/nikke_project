@@ -73,12 +73,13 @@ describe('語彙の検証', () => {
   it('pairs the trigger { selfHpAtMostRef } with durationUntil "selfHpAbove" or durationRef, also on topAttack', () => {
     const hpCrit = raw.skills.skill1.effects.findIndex((e) => e.target === 'topAttack');
     expect(raw.skills.skill1.effects[hpCrit]).toMatchObject({ durationUntil: 'selfHpAbove' });
-    expect(patched('skill1', hpCrit, { durationUntil: undefined, durationSeconds: 7 })).toThrow(
+    expect(patched('skill1', hpCrit, { durationUntil: undefined, durationShotsRef: 1 })).toThrow(
       /the trigger \{ selfHpAtMostRef \} goes with durationUntil "selfHpAbove"/,
     );
-    expect(patched('skill1', hpCrit, { trigger: 'burstUse' })).toThrow(/durationUntil "selfHpAbove" goes only with/);
-    // エード編: 秒の維持（durationRef）とも組める
+    expect(patched('skill1', hpCrit, { trigger: 'burstUse' })).toThrow(/goes with durationUntil "selfHpAbove"/);
+    // エード編: 秒の維持（durationRef・durationSeconds）とも組める
     expect(patched('skill1', hpCrit, { durationUntil: undefined, durationRef: 5 })).not.toThrow();
+    expect(patched('skill1', hpCrit, { durationUntil: undefined, durationSeconds: 7 })).not.toThrow();
     expect(patched('skill1', hpCrit, { stat: 'attack' })).toThrow(/a duration until the HP rises is only supported/);
     expect(patched('skill1', hpCrit, { trigger: { selfHpAtMostRef: 5, extra: 1 } })).toThrow(/unknown field/);
   });

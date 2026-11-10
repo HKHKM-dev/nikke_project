@@ -24775,6 +24775,14 @@
       "plus": 0
     },
     {
+      "observation": "1017-02",
+      "element": "エード skill2.effects[0]",
+      "key": "a8e598a7a6d524c2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "1017-03",
       "element": "エード skill2.effects[0]",
       "key": "396c33bca0178519",
@@ -24783,12 +24791,36 @@
       "plus": -762.8605999999982
     },
     {
+      "observation": "1018-02",
+      "element": "エード skill2.effects[0]",
+      "key": "a0d590c4d91d7687",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
       "observation": "1018-03",
       "element": "エード skill2.effects[0]",
       "key": "1224593fe34503cc",
       "effective": true,
       "minus": -762.8605999999982,
       "plus": -762.8605999999982
+    },
+    {
+      "observation": "1019-02",
+      "element": "エード burst.effects[0]",
+      "key": "765ea22b722f6c08",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1019-02",
+      "element": "エード skill2.effects[0]",
+      "key": "765ea22b722f6c08",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "1019-03",
@@ -24837,6 +24869,22 @@
       "effective": true,
       "minus": 0,
       "plus": -7947.545000000013
+    },
+    {
+      "observation": "1020-02",
+      "element": "エード burst.effects[0]",
+      "key": "6999e3b3fa19216e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1020-02",
+      "element": "エード skill2.effects[0]",
+      "key": "6999e3b3fa19216e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
     },
     {
       "observation": "1020-03",
