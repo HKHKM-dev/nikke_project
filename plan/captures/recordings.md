@@ -1006,6 +1006,10 @@
 | 1031 | `20261110-1031_sg_anis-sparkling-summer_fire.mp4` | ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF |
 | 1032 | `20261110-1032_sg_anis-sparkling-summer_water.mp4` | ココア（311、SR・灼熱・SSR） + シン（401、AR・電撃・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0712 の撮影 B。ココア（I）+ シン（II）+ アニス：スパークリングサマー（III・操作）・水冷の敵・オートバースト ON |
 | 1033 | `20261110-1033_sg_anis-sparkling-summer_water.mp4` | ココア（311、SR・灼熱・SSR） + シン（401、AR・電撃・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0712 の撮影 B。ココア（I）+ シン（II）+ アニス：スパークリングサマー（III・操作）・水冷の敵・オートバースト ON |
+| 1038 | `20261110-1038_ar_scarlet_fire.mp4` | ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1039 | `20261110-1039_ar_scarlet_fire.mp4` | ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1040 | `20261110-1040_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1041 | `20261110-1041_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 92・効果 618（根拠あり 597）・notes 224（根拠あり 101）
+件数: キャラ 93・効果 623（根拠あり 602）・notes 225（根拠あり 102）
 
-notes の種類: 未対応 38・前提の外 53・計算に無関係 47・補足 23・間接 63
+notes の種類: 未対応 38・前提の外 54・計算に無関係 47・補足 23・間接 63
 
-スロット: supported 227・partial 25・unsupported 9・noEffect 39
+スロット: supported 230・partial 25・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -542,6 +542,18 @@ notes の種類: 未対応 38・前提の外 53・計算に無関係 47・補足
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0250（仮説）、C-0252（確定）、C-0510（確定）
   - effects[1] timed・burstUse・reloadSpeed: C-0250（仮説）、C-0252（確定）
+
+## 222 紅蓮
+
+- **skill1**: supported
+  - effects[0] timed・normalHit・attack: C-1048（確定）
+  - effects[1] currentHpDown・normalHit: C-1044（確定）
+- **skill2**: supported
+  - effects[0] timed・自分の HP が閾値以下に下がった時・critDamage: C-1045（確定）、C-1044（確定）
+  - notes[0] 前提の外: 攻撃を受けた時、30% の確率の追加ダメージは、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）: C-1049（確定）
+- **burst**: supported
+  - effects[0] timed・burstUse・critRate: C-1046（確定）、C-1044（確定）
+  - effects[1] burstDamage・skill: C-1047（確定）
 
 ## 223 ナユタ
 
@@ -1246,7 +1258,7 @@ notes の種類: 未対応 38・前提の外 53・計算に無関係 47・補足
   - effects[0] damage・fullChargeShot・additional: C-0407（仮説）
   - notes[0] 前提の外: パーツダメージ▲はパーツを扱わないので効かない: C-0443（範囲外）
 - **burst**: unsupported
-  - notes[0] 未対応（読む: HP）: B モード（1 秒ごとに現在の HP▼、攻撃力▲・チャージ速度▲。HP 40% 以下で解除）は未対応（HP を持たないので解除の時刻が決まらない）: 根拠なし
+  - notes[0] 未対応（読む: HP）: B モード（1 秒ごとに現在の HP▼、攻撃力▲・チャージ速度▲。HP 40% 以下で解除）は未対応（1 秒間隔の現在の HP▼ と、HP 40% 以下での解除を書く語彙が無い）: 根拠なし
 
 ## 822 ラム
 
