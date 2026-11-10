@@ -12,6 +12,7 @@ import {
   badgeNameOf,
   buildBadges,
   findFrame,
+  MONOCHROME_GROUPS,
   isMonochrome,
   optimizeBadge,
   parseFrame,
@@ -147,6 +148,13 @@ describe('白黒のバッジ', () => {
     expect(applyColorRoles(doc(mask + '<path style="fill:#808080" mask="url(#m)"/>'), 'x_y')).toBe(
       doc(mask + '<path style="fill:var(--badge-accent,#808080)" mask="url(#m)"/>'),
     );
+  });
+
+  // 画面のスプライトに入るグループ（画面の badges.ts の glob）を足したのに白黒に足し忘れると、色が変数にならない
+  it('白黒のグループは、画面のスプライトに入るグループと同じ', () => {
+    const screen = readFileSync(new URL('../src/components/modern/badges.ts', import.meta.url), 'utf8');
+    const globbed = [...screen.matchAll(/'\.\.\/\.\.\/assets\/badges\/([^_]+)_\*\.svg'/g)].map(([, group]) => group);
+    expect(globbed.sort()).toEqual([...MONOCHROME_GROUPS].sort());
   });
 
   it('書き出しは、白黒のグループのバッジの色を変数にし、id の前に名前を付ける', () => {
