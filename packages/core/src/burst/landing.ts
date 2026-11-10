@@ -151,6 +151,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     delays: { hitFrames: 55, effectFrames: 0 },
     claim: 'C-0938',
   },
+  // アルカナ: II の発動（六角形の替わり目）からヒットまで 77f（動画で 98〜100f。フルバーストの入りの止まり 22f を含む）。バーストスキルダメージに
+  // 同じ発動の運命の輪のカード（攻撃ダメージ▲）か審判のカード（受けるダメージ▲）の 10% が乗る（値が同じで分けられないので、同じ発動の▲がヒットに
+  // 乗る行で書く）。効果の発火の遅れは 0（V-0713）
+  { resourceIds: [581], sameActivationBuffsOnHit: true, delays: { hitFrames: 77, effectFrames: 0 }, claim: 'C-1051' },
   // ルドミラ: I の発動（六角形が I から II に替わるフレーム）からヒットまで、動画で 96f（印からの動画のフレーム。hitFrames は本当の発動からの
   // ゲーム内のフレームで 73）。バースト使用時の効果（防御力▲。間接）の遅れは未測定（V-0509）
   { resourceIds: [190], delays: { hitFrames: 73, effectFrames: 0 }, claim: 'C-0675' },

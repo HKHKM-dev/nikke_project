@@ -1,0 +1,46 @@
+{
+  "id": "1035",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1035_rl_arcana_liter_isabel_water.mp4",
+  "original": "2026-11-10_22-09-01.mp4",
+  "durationSec": 201.6,
+  "frames": 12098,
+  "fps": 60,
+  "sizeMB": 244.4,
+  "sha256": "cc3f5d5a152a",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 581,
+      "name": "アルカナ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0713 の撮影 A（リター・アルカナ・イサベル。水冷）",
+  "backup": {
+    "at": "2026-11-10T22:35+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -1,0 +1,240 @@
+[
+  {
+    "id": "1037-01",
+    "recording": "1037",
+    "kind": "timing",
+    "use": "record",
+    "value": [1506, 2969, 4210, 5405, 6776, 7631, 9003, 10305],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・24・5・15・0f"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-02",
+    "recording": "1037",
+    "kind": "timing",
+    "use": "record",
+    "value": [1535, 4239, 6805, 9032],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24・25f"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-03",
+    "recording": "1037",
+    "kind": "timing",
+    "use": "record",
+    "value": [1564, 4269, 6834, 9061],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-04",
+    "recording": "1037",
+    "kind": "timing",
+    "use": "record",
+    "value": [2173, 4878, 7443, 9670],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-05",
+    "recording": "1037",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-06",
+    "recording": "1037",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 8715,
+    "unit": "ダメージ",
+    "description": "リターの▲の無い 1 ヒット（胴体・会心なし・距離なし）。429 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-07",
+    "recording": "1037",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 9837,
+    "unit": "ダメージ",
+    "description": "リターの、フルバースト（10 秒）の終わりから 10 秒までの 1 ヒット（S1 の攻撃力 5%▲・S2 の攻撃ダメージ 7.5%▲）。141 個。どのフルバーストの後も、終わりの直後からこの区間に当たり、死神のカードの乗った値（14,526。距離ボーナスで 18,884）は 1 個も無い",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（区間ごとの中点のフレームの胴体・会心・コア・距離ボーナス。イサベルはペレット 10 個までの和）の格子に ±1.5 で当てた（区間の一覧は --opt segments=1,2,3、格子の並びは使い捨てのスクリプトで区間から作った）。値は、そのうち胴体・会心なし・距離なしの格子に当たった増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "1037-08",
+    "recording": "1037",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 601767,
+    "unit": "ダメージ",
+    "description": "アルカナの 1 回目のバーストスキルダメージのヒット（会心なし）。III のタイマーの 00.00 の 40〜41f 後",
+    "method": {
+      "tool": "hud-jumps@3 の増分を目で拾った",
+      "note": "II の発動の印（`1037-01`）から 98〜100f、00.00（`1037-03`）から 40〜41f の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1037-09",
+    "recording": "1037",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "hit",
+    "value": [987578, 1278076],
+    "unit": "ダメージ",
+    "description": "ネオン：ビジョン・アイの 1 発（通常攻撃と S1 の追加ダメージの和）の、1 回目のフルバーストの終わりの後の増分は 2,435〜2,730 の 1,118,417・1,219,425・878,037・1,105,629（フルバーストの前は 987,578・1,278,076 など）。条件付きの効果（攻撃ダメージ 180%▲・力のカード）が付けば約 7.6 倍（H-keep）になるが、そうした値は無い。値はフルバーストの前の代表の増分",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）の外れの増分を目で見た",
+      "note": "ネオン：ビジョン・アイの発（約 59f おき）の増分。追加ダメージとの和なので格子には当てていない"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1037-10",
+    "recording": "1037",
+    "source": "V-0713",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "interval",
+    "value": [2705, 2565, 2227],
+    "unit": "f",
+    "description": "III のタイマーの 00.00（`1037-03`）どうしの間隔（動画のフレーム）。モデル（H1）は 2,720・2,471・2,265f、死神のカードが付く H-keep は 1,887・2,275・1,543f",
+    "method": {
+      "tool": "recipe:burst-panel@4 の観測値の差",
+      "note": "`1037-03` の隣どうしの差"
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
+  }
+]
