@@ -26,19 +26,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
         "abs": 0.02
       },
       "note": "クエンシー単騎: 中近（戦闘開始から 1 回目のジャンプまで）の区間のコア命中率（コアのヒット / 当たったヒット）",
-      "observations": [
-        "1011-09",
-        "1012-09"
-      ]
+      "observations": ["1011-09", "1012-09"]
     },
     {
       "id": "Q-core-near",
@@ -50,9 +45,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -70,19 +63,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
         "abs": 0.02
       },
       "note": "クエンシー単騎: 遠（2 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）",
-      "observations": [
-        "1011-11",
-        "1012-11"
-      ]
+      "observations": ["1011-11", "1012-11"]
     },
     {
       "id": "Q-core-midfar",
@@ -94,19 +82,14 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
         "abs": 0.02
       },
       "note": "クエンシー単騎: 中遠（3 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）",
-      "observations": [
-        "1011-10",
-        "1012-10"
-      ]
+      "observations": ["1011-10", "1012-10"]
     },
     {
       "id": "Q-bullet-far",
@@ -118,9 +101,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -138,9 +119,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -153,10 +132,7 @@
           "controlled": true
         }
       ],
-      "observations": [
-        "1013-09",
-        "1014-09"
-      ]
+      "observations": ["1013-09", "1014-09"]
     },
     {
       "id": "S-core-near",
@@ -168,9 +144,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -194,9 +168,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -209,10 +181,7 @@
           "controlled": true
         }
       ],
-      "observations": [
-        "1013-11",
-        "1014-11"
-      ]
+      "observations": ["1013-11", "1014-11"]
     },
     {
       "id": "S-core-midfar",
@@ -224,9 +193,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
@@ -239,10 +206,7 @@
           "controlled": true
         }
       ],
-      "observations": [
-        "1013-10",
-        "1014-10"
-      ]
+      "observations": ["1013-10", "1014-10"]
     },
     {
       "id": "S-bullet-far",
@@ -254,9 +218,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       },
       "tolerance": {
