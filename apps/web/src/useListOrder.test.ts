@@ -181,6 +181,22 @@ describe('useListOrder', () => {
     await settle();
   });
 
+  it('keeps the toggled order when the roster comes, and does not carry a direction to another order', async () => {
+    const { result, rerender } = render({ roster: null });
+    act(() => result.current.controls.toggleDirection());
+    expect(localStorage.getItem(LIST_ORDER_STORAGE_KEY)).toBe('name');
+    rerender({ ...DEFAULTS });
+    expect(result.current.state).toMatchObject({ order: 'name', direction: 'desc' });
+    await settle();
+
+    // 並びを覚えていない向きは使わない（育成状況で決まる並びの既定の向き）
+    localStorage.clear();
+    localStorage.setItem(LIST_DIRECTION_STORAGE_KEY, 'asc');
+    const other = render();
+    expect(other.result.current.state).toMatchObject({ order: 'combatPower', direction: 'desc' });
+    await settle();
+  });
+
   it('orders by the overload total of the roster gear, and flags the overload order without a roster', async () => {
     const { result } = render();
     act(() => result.current.controls.select('attackOverload'));

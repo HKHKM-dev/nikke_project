@@ -63,7 +63,8 @@ export function useListOrder(
   const [tableError, setTableError] = useState<string | null>(null);
 
   const order = effectiveListOrder(saved, roster !== null);
-  const direction = savedDirection ?? defaultListDirection(order);
+  // 覚えた向きは、覚えた並びのときだけ使う（育成状況の有無で並びが変わったときに、別の並びへ持ち越さない）
+  const direction = (saved === order ? savedDirection : null) ?? defaultListDirection(order);
   const fixedSpecPowers = fixedSpec || roster === null;
   const needTable = order === 'combatPower' || roster !== null;
   useEffect(() => {
@@ -115,6 +116,8 @@ export function useListOrder(
   };
   const toggleDirection = () => {
     const next = direction === 'asc' ? 'desc' : 'asc';
+    setSaved(order);
+    writeStorage(LIST_ORDER_STORAGE_KEY, order);
     setSavedDirection(next);
     writeStorage(LIST_DIRECTION_STORAGE_KEY, next);
   };

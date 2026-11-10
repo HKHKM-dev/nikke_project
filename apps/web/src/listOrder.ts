@@ -33,6 +33,10 @@ export const LIST_ORDER_STORAGE_KEY = 'nikke-calc.listOrder';
 /** 並びの向き（昇順・降順）。モダン UI のニケ一覧の ▲▼ のボタンで切り替える */
 export type ListDirection = 'asc' | 'desc';
 export const LIST_DIRECTION_LABEL: Record<ListDirection, string> = { asc: '昇順', desc: '降順' };
+/** 並びの向きの印 */
+export const LIST_DIRECTION_MARK: Record<ListDirection, string> = { asc: '▲', desc: '▼' };
+/** OP 順を選んでいるが育成状況が無いときの知らせ */
+export const OVERLOAD_WITHOUT_ROSTER_HINT = '育成状況を読み込んでいないので、OP 順は名前順で並べる';
 export const LIST_DIRECTION_STORAGE_KEY = 'nikke-calc.listDirection';
 
 /** 保存した向き。無い・知らない値は null（並びの既定の向きに従う） */

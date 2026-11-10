@@ -14,15 +14,18 @@ import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
-import { LIST_DIRECTION_LABEL, LIST_ORDERS, LIST_ORDER_LABEL } from '../../listOrder.ts';
+import {
+  LIST_DIRECTION_LABEL,
+  LIST_DIRECTION_MARK,
+  LIST_ORDERS,
+  LIST_ORDER_LABEL,
+  OVERLOAD_WITHOUT_ROSTER_HINT,
+} from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
 import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './OtherPartyBadges.tsx';
 import { Popover } from '../Popover.tsx';
-
-/** 並びの向きの印 */
-const DIRECTION_MARK = { asc: '▲', desc: '▼' } as const;
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -140,13 +143,13 @@ export function CharacterTray({
               <span className="char-tray-sort-label">
                 {LIST_ORDERS.map((o) => (
                   <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
-                    {LIST_ORDER_LABEL[o]} {DIRECTION_MARK[listOrder.direction]}
+                    {LIST_ORDER_LABEL[o]} {LIST_DIRECTION_MARK[listOrder.direction]}
                   </span>
                 ))}
               </span>
             }
             buttonClassName="char-tray-action-button"
-            label="並べ替え"
+            label={`並べ替え: ${LIST_ORDER_LABEL[listOrder.order]}（${LIST_DIRECTION_LABEL[listOrder.direction]}）`}
             align="left"
           >
             <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
@@ -163,7 +166,7 @@ export function CharacterTray({
                   >
                     {LIST_ORDER_LABEL[o]}
                     <span className="char-tray-sort-mark" aria-hidden="true">
-                      {DIRECTION_MARK[listOrder.direction]}
+                      {LIST_DIRECTION_MARK[listOrder.direction]}
                     </span>
                   </button>
                 );
@@ -177,9 +180,7 @@ export function CharacterTray({
           {listOrder.order === 'combatPower' && listOrder.failedCount > 0 && (
             <span className="hint">戦闘力を出せない {listOrder.failedCount} 体は後ろに名前順で並べる</span>
           )}
-          {listOrder.overloadWithoutRoster && (
-            <span className="hint">育成状況を読み込んでいないので、OP 順は名前順で並べる</span>
-          )}
+          {listOrder.overloadWithoutRoster && <span className="hint">{OVERLOAD_WITHOUT_ROSTER_HINT}</span>}
           <button type="button" className="char-tray-action-button" aria-disabled="true">
             フィルター<span className="char-tray-unimplemented">未実装</span>
           </button>

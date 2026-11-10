@@ -174,7 +174,7 @@ export function findOverloadOption(
 
 /**
  * 4 部位の OL 装備の行のうち、options に挙げたオプションの上昇値（%）の合計（一覧の OP 順。Lv の値は data/masters/overload.json。
- * 知らないオプション・Lv は投げる（validateBuild と同じ）
+ * options に挙げたオプションの行で、マスターに無いオプション・Lv は投げる（ほかの行は見ない）
  */
 export function overloadTotal(
   build: Pick<BuildInput, 'gear'>,

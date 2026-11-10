@@ -7,7 +7,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode }
 const NAME_SCROLL_SPEED = 40;
 const NAME_SCROLL_GAP = 32;
 
-/** 枠ごとの測り直し。一覧は 200 体ほどあるので、ResizeObserver は全部の枠で 1 つを使う（最初の通知で測る） */
+/** 枠ごとの測り直し。一覧は 200 体ほどあるので、ResizeObserver は全部の枠で 1 つを使う */
 const remeasure = new Map<Element, () => void>();
 let sharedObserver: ResizeObserver | null = null;
 function observe(box: Element, measure: () => void): () => void {
@@ -33,12 +33,15 @@ export function useScrollingName<T extends HTMLElement>(
     const box = boxRef.current;
     const text = textRef.current;
     if (!box || !text) return;
-    return observe(box, () => {
+    const measure = () => {
       const style = getComputedStyle(box);
       const room = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
       const width = text.getBoundingClientRect().width;
       setTextWidth(width > room ? width : null);
-    });
+    };
+    // 描く前に 1 度測る（ResizeObserver の最初の通知は描いた後に届くので、待つと流れない名前が 1 度見える）
+    measure();
+    return observe(box, measure);
   }, [name]);
   const shift = textWidth === null ? 0 : textWidth + NAME_SCROLL_GAP;
   return {
