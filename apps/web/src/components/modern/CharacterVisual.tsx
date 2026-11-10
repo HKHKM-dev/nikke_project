@@ -1,5 +1,6 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
+import { BadgeIcon } from './BadgeIcon.tsx';
 import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
@@ -24,8 +25,8 @@ const BASE_URL = import.meta.env.BASE_URL;
  */
 const failedImages = new Set<string>();
 
-function BadgeImg({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
-  return <img className={className} src={badge.src} alt={badge.label} draggable={false} />;
+function CharBadge({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
+  return <BadgeIcon className={className} name={badge.name} label={badge.label} />;
 }
 
 export function CharacterVisual({
@@ -66,11 +67,11 @@ export function CharacterVisual({
       <div className="char-visual-badges">
         {columnKinds.map(({ key, badges }) => {
           const badge = badges[character[key]];
-          return badge && <BadgeImg key={key} badge={badge} />;
+          return badge && <CharBadge key={key} badge={badge} />;
         })}
-        {extraBadge && <BadgeImg badge={extraBadge} />}
+        {extraBadge && <CharBadge badge={extraBadge} />}
       </div>
-      {elementBadge && <BadgeImg badge={elementBadge} className="char-badge char-visual-corner-badge" />}
+      {elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
       {overlay}
       {isUnsupported && <span className="char-unsupported-tag">未</span>}
     </div>

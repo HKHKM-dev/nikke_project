@@ -27,6 +27,7 @@ import { NotesSummary } from '../components/NotesSummary.tsx';
 import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
+import { BadgeSprite } from '../components/modern/BadgeIcon.tsx';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge, trayCollectionBadge, type Badge } from '../components/modern/badges.ts';
@@ -417,6 +418,8 @@ export function ModernView({
       accessibility={{ restoreFocus: false }}
     >
       <div className="modern-view-container">
+        {/* バッジ（BadgeIcon）が <use> で引くスプライト */}
+        <BadgeSprite />
         <TeamSettingsForm
           element={team.enemy.element}
           fixedSpec={team.fixedSpec}

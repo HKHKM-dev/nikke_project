@@ -7,7 +7,8 @@ import {
   type GrowthInput,
   type Rarity,
 } from '@nikke/core';
-import { GROWTH_BADGE_SRC } from './badges.ts';
+import { BadgeIcon } from './BadgeIcon.tsx';
+import { GROWTH_BADGES } from './badges.ts';
 
 /** 限界突破の回数とコア強化の段階（育成値）と、そのキャラの上限 */
 export type GrowthMarks = { grade: number; gradeMax: number; core: number; coreMax: number };
@@ -31,7 +32,7 @@ export function trayGrowthMarks(
 }
 
 /**
- * 限界突破（星のバッジを上限の数だけ並べ、突破した数だけ金の星にする）とコア強化（コアの印のバッジに段階を 2 桁の数で重ねる。01〜07。0 は出さない）。
+ * 限界突破（星のバッジを上限の数だけ並べ、突破した数だけ is-filled にして金の星にする）とコア強化（コアの印のバッジに段階を 2 桁の数で重ねる。01〜07。0 は出さない）。
  * どちらも無いキャラ（R）は出さない。
  * 置き場所と大きさは className で決める（スロットは名前の上、ニケ一覧は絵の右上）
  */
@@ -44,17 +45,11 @@ export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: G
       aria-label={`限界突破 ${grade}/${gradeMax}${coreMax > 0 ? `・コア強化 ${core}/${coreMax}` : ''}`}
     >
       {Array.from({ length: gradeMax }, (_, i) => (
-        <img
-          key={i}
-          className="growth-marks-star"
-          src={i < grade ? GROWTH_BADGE_SRC.gradeFilled : GROWTH_BADGE_SRC.gradeEmpty}
-          alt=""
-          draggable={false}
-        />
+        <BadgeIcon key={i} className={`growth-marks-star${i < grade ? ' is-filled' : ''}`} name={GROWTH_BADGES.star} />
       ))}
       {coreLabel && (
         <span className="growth-marks-core" aria-hidden="true">
-          <img src={GROWTH_BADGE_SRC.core} alt="" draggable={false} />
+          <BadgeIcon name={GROWTH_BADGES.core} />
           <span>{coreLabel}</span>
         </span>
       )}

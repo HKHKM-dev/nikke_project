@@ -1,7 +1,8 @@
 // モダン UI のバッジ（plan/design-modern-ui.md 2.5 節）。assets/badges は apps/web/badges-src から npm run badges:build で書き出したもの。
 // ファイル名は <キャラのデータの項目名>_<その値>.svg（命名規則は apps/web/scripts/badges.ts の冒頭）なので、項目と値からファイルを引く。
-// どれも vite.config.ts の assetsInlineLimit 未満なので Vite が束の中に埋め込む（アーティファクトのファイル数を使わない）。
-// 束に入るのは下の glob が読む項目のバッジだけ。
+// 画面は読んだバッジを 1 つのスプライト（BadgeSprite）にして文書に 1 度だけ置き、バッジは <use> で出す（BadgeIcon。
+// plan/design-badge-color.md）。色の役の CSS の変数（--badge-<役>）が <use> の中まで届くので、白黒のバッジの色は CSS で決まる。
+// 束に入るのは下の glob が読む項目のバッジだけ（文字列で束に入る。アーティファクトのファイル数を使わない）。
 import {
   COLLECTION_LEVEL_MAX,
   ELEMENT_LABEL,
@@ -16,7 +17,7 @@ import { rosterFields } from '../../roster.ts';
 import { BURST_STEP_LABEL, CLASS_LABEL } from '../../skillLabels.ts';
 import { CONSOLE_CORPORATIONS, CORPORATION_LABEL, type ConsoleCorporation } from '../../team.ts';
 
-const BADGE_SRCS = import.meta.glob<string>(
+const BADGE_SVGS = import.meta.glob<string>(
   [
     '../../assets/badges/element_*.svg',
     '../../assets/badges/burstStep_*.svg',
@@ -27,26 +28,47 @@ const BADGE_SRCS = import.meta.glob<string>(
     '../../assets/badges/grade_*.svg',
     '../../assets/badges/core_*.svg',
   ],
-  { eager: true, import: 'default' },
+  { eager: true, query: '?raw', import: 'default' },
 );
 
-/** バッジのファイル（拡張子なしの名前）の URL。無ければ読み込みで落とす */
-function badgeSrc(name: string): string {
-  const src = BADGE_SRCS[`../../assets/badges/${name}.svg`];
-  if (src === undefined) throw new Error(`バッジ ${name}.svg が assets/badges に無い`);
-  return src;
+/** 読んだバッジの viewBox（拡張子なしの名前 → viewBox） */
+const VIEW_BOXES = new Map<string, string>();
+
+/** スプライトの中身（読んだバッジごとの <symbol id="badge-<名前>">） */
+export const BADGE_SYMBOLS = Object.entries(BADGE_SVGS)
+  .map(([path, svg]) => {
+    const name = path.slice(path.lastIndexOf('/') + 1, -'.svg'.length);
+    const [, attrs = '', body = ''] = /^<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/.exec(svg) ?? [];
+    const viewBox = /\sviewBox="([^"]+)"/.exec(attrs)?.[1];
+    if (viewBox === undefined) throw new Error(`バッジ ${name}.svg に viewBox が無い`);
+    VIEW_BOXES.set(name, viewBox);
+    return `<symbol id="badge-${name}" viewBox="${viewBox}">${body}</symbol>`;
+  })
+  .join('');
+
+/** バッジ（拡張子なしの名前）の viewBox。無ければ落とす */
+export function badgeViewBox(name: string): string {
+  const viewBox = VIEW_BOXES.get(name);
+  if (viewBox === undefined) throw new Error(`バッジ ${name}.svg が assets/badges に無い（か glob で読んでいない）`);
+  return viewBox;
 }
 
-/** 限界突破の星（1 回分が埋まっているか）とコア強化の印のバッジ（GrowthMarks.tsx） */
-export const GROWTH_BADGE_SRC = {
-  gradeFilled: badgeSrc('grade_filled'),
-  gradeEmpty: badgeSrc('grade_empty'),
-  core: badgeSrc('core_plain'),
-} as const;
+/** 名前のバッジがあることを確かめて返す（無ければ読み込みで落とす） */
+function badgeName(name: string): string {
+  badgeViewBox(name);
+  return name;
+}
+
+/**
+ * 限界突破の星とコア強化の印のバッジ（GrowthMarks.tsx）。星は白黒で、突破したかどうかで色を CSS で変える
+ * （styles.css の .growth-marks-star）
+ */
+export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('core_plain') } as const;
 
 /** バッジを出すキャラの項目 */
 export type BadgeKey = 'element' | 'burstStep' | 'class' | 'weaponType' | 'corporation';
-export type Badge = { src: string; label: string };
+/** name はバッジの拡張子なしの名前 */
+export type Badge = { name: string; label: string };
 export type BadgeKind = {
   key: BadgeKey;
   /** 絞り込みの名前 */
@@ -64,11 +86,7 @@ function badgesOf<K extends BadgeKey>(
   label: (value: CharacterIndexEntry[K]) => string,
 ): Record<string, Badge> {
   return Object.fromEntries(
-    values.map((value) => {
-      const src = BADGE_SRCS[`../../assets/badges/${key}_${value}.svg`];
-      if (src === undefined) throw new Error(`バッジ ${key}_${value}.svg が assets/badges に無い`);
-      return [value, { src, label: label(value) }];
-    }),
+    values.map((value) => [value, { name: badgeName(`${key}_${value}`), label: label(value) }]),
   );
 }
 
@@ -121,7 +139,7 @@ export function collectionBadge(
   treasurePhase: TreasurePhase,
   hasTreasure: boolean,
 ): Badge | null {
-  const pick = (value: string, label: string): Badge => ({ src: badgeSrc(`collection_${value}`), label });
+  const pick = (value: string, label: string): Badge => ({ name: badgeName(`collection_${value}`), label });
   if (hasTreasure && treasurePhase > 0) {
     return pick(treasurePhase === TREASURE_PHASE_MAX ? 'SSR-max' : 'SSR', `宝物 段階 ${treasurePhase}`);
   }

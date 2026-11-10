@@ -8,6 +8,12 @@
 // そのあと元を小さくする。枠の形は frame/hex.svg だけを直す。枠のある新しいバッジは、枠のあるどれか（ui_blank など）を写して
 // 中身を描く。枠の色を変えるときは hex-in の塗りと縁を変える。
 //
+// 白黒のバッジ（plan/design-badge-color.md）: MONOCHROME に挙げたバッジは、色の役（COLOR_ROLES）の色だけで描き、書き出しで
+// 塗りと縁の色を CSS の変数（--badge-<役>）にする。色は画面の CSS が決める（状態のクラス・light-dark() でテーマ）。
+// グラデーションの色は画面から変えられない（<use> で出すと、グラデーションは置いた場所の色のまま）ので、グラデーションは陰
+// （白か黒の不透明度）にだけ使う。白黒に描き直したバッジは MONOCHROME に足す。
+// 画面は全部のバッジを 1 つの文書に置く（スプライト）ので、書き出しは id の前にバッジの名前を付け、viewBox を残す。
+//
 // ファイル名の命名規則: <グループ>_<値>[-<変種>].svg
 // - グループ: キャラのデータ（CharacterIndexEntry）にある項目は、その項目名のまま（element・burstStep・class・weaponType・
 //   rarity・corporation）。育成の入力（GrowthInput）の項目も、その項目名のまま（grade・core）。どちらにも無いものは camelCase の
@@ -75,9 +81,8 @@ function viewBoxOf(svg: string): string {
   return viewBox;
 }
 
-/** 要素の style を、宣言の Map にする */
-function styleOf(el: string): Map<string, string> {
-  const style = /\sstyle="([^"]*)"/.exec(el)?.[1] ?? '';
+/** style の値を、宣言の Map にする */
+function declsOf(style: string): Map<string, string> {
   return new Map(
     style
       .split(';')
@@ -85,6 +90,9 @@ function styleOf(el: string): Map<string, string> {
       .map((d) => [d.slice(0, d.indexOf(':')), d.slice(d.indexOf(':') + 1)] as const),
   );
 }
+
+/** 要素の style を、宣言の Map にする */
+const styleOf = (el: string): Map<string, string> => declsOf(/\sstyle="([^"]*)"/.exec(el)?.[1] ?? '');
 
 /** 枠の hex-in の色を、元の hex-in の塗りと縁の色にする */
 function recolorInner(inner: string, source: string): string {
@@ -109,12 +117,122 @@ export function syncFrame(svg: string, frame: Frame): string {
   );
 }
 
-/** 元の SVG を小さくする。convertTransform は切る（corporation_TETRA の反転を含む変換が別の変換に書き換わり、図柄が崩れる） */
-export function optimizeBadge(svg: string): string {
-  return optimize(svg, {
+/** 色の役: 白黒のバッジの元の色 → 画面の CSS の変数 --badge-<役>（既定の値は元の色） */
+export const COLOR_ROLES: Readonly<Record<string, string>> = {
+  '#000000': 'line',
+  '#1a1a1a': 'ground',
+  '#ffffff': 'main',
+  '#808080': 'accent',
+};
+
+/** 白黒で描いたバッジ（拡張子なしの名前）。色は画面の CSS で付ける */
+export const MONOCHROME: ReadonlySet<string> = new Set(['grade_star']);
+
+/** 塗りと縁の色 */
+const PAINT = new Set(['fill', 'stroke']);
+/** グラデーションとフィルタの色（画面から変えられないので、陰の白か黒だけにする） */
+const SHADE = new Set(['stop-color', 'flood-color', 'lighting-color']);
+const SHADE_COLORS = new Set(['#000000', '#ffffff']);
+/** 色を見る属性（style と、塗り・縁・陰の色の属性） */
+const COLOR_ATTRS = new RegExp(`(\\s)(style|${[...PAINT, ...SHADE].join('|')})="([^"]*)"`, 'g');
+
+function roleColor(name: string, prop: string, value: string): string {
+  if (SHADE.has(prop) && !SHADE_COLORS.has(value.toLowerCase()))
+    throw new Error(`badges: 白黒のバッジ ${name} の ${prop} が ${value}（陰の #000000 か #ffffff にする）`);
+  if (!PAINT.has(prop) || ['none', 'currentColor'].includes(value) || value.startsWith('url(')) return value;
+  const role = COLOR_ROLES[value.toLowerCase()];
+  if (!role) throw new Error(`badges: 白黒のバッジ ${name} の ${prop} の ${value} は色の役（COLOR_ROLES）に無い`);
+  return `var(--badge-${role},${value})`;
+}
+
+/**
+ * 白黒のバッジの塗りと縁の色を、色の役の CSS の変数にする。役に無い色・陰でないグラデーションの色・<style> の要素があれば
+ * 止める。style が同じ性質を決める要素の属性（枠の hex-out の stroke="#ff3b57" など）は描かれないので、見ずにそのまま残す
+ */
+export function applyColorRoles(svg: string, name: string): string {
+  if (/<style\b/.test(svg)) throw new Error(`badges: 白黒のバッジ ${name} に <style> がある（色は style 属性に書く）`);
+  return svg.replace(/<[^!?/][^>]*>/g, (tag) => {
+    const styled = new Set([...styleOf(tag).keys()].map((prop) => prop.trim()));
+    return tag.replace(COLOR_ATTRS, (attrText: string, space: string, attr: string, value: string) => {
+      if (attr === 'style')
+        return `${space}style="${[...declsOf(value)].map(([prop, v]) => `${prop}:${roleColor(name, prop.trim(), v.trim())}`).join(';')}"`;
+      return styled.has(attr) ? attrText : `${space}${attr}="${roleColor(name, attr, value)}"`;
+    });
+  });
+}
+
+type Axis = 'x' | 'y';
+const REGION: Record<string, readonly [string, Axis]> = {
+  x: ['-10%', 'x'],
+  y: ['-10%', 'y'],
+  width: ['120%', 'x'],
+  height: ['120%', 'y'],
+};
+/** userSpaceOnUse のときに、% と既定の値が viewport で決まる属性（要素 → 単位の属性・属性ごとの既定の値と向き） */
+const USER_SPACE: Record<string, { units: string; attrs: Record<string, readonly [string, Axis]> }> = {
+  mask: { units: 'maskUnits', attrs: REGION },
+  filter: { units: 'filterUnits', attrs: REGION },
+  linearGradient: {
+    units: 'gradientUnits',
+    attrs: { x1: ['0%', 'x'], y1: ['0%', 'y'], x2: ['100%', 'x'], y2: ['0%', 'y'] },
+  },
+};
+
+/**
+ * userSpaceOnUse のマスク・フィルタ・グラデーションの範囲と座標の % と既定の値を、その SVG の viewBox で数にする（svgo の
+ * 部品）。% は一番近い viewport で決まり、<img> ではバッジの viewBox だが、<use> ではスプライトを置いた（0×0 の）svg に
+ * なり、マスクが消える（Inkscape のマスクは maskUnits="userSpaceOnUse" で、範囲を書かない）。
+ * href で別のグラデーションを引くものは、引いた先から受け継ぐので既定の値を足さない
+ */
+const resolveUserSpace = (size: Record<Axis, number>) => ({
+  name: 'resolveUserSpace',
+  fn: () => ({
+    element: {
+      enter: (node: { name: string; attributes: Record<string, string> }) => {
+        const { attributes: a } = node;
+        if (node.name === 'radialGradient' || node.name === 'pattern') {
+          if (Object.values(a).includes('userSpaceOnUse'))
+            throw new Error(`badges: userSpaceOnUse の ${node.name} は書き出しが扱わない`);
+          return;
+        }
+        const spec = USER_SPACE[node.name];
+        if (!spec || a[spec.units] !== 'userSpaceOnUse') return;
+        const inherits = a.href !== undefined || a['xlink:href'] !== undefined;
+        for (const [attr, [fallback, axis]] of Object.entries(spec.attrs)) {
+          const value = a[attr] ?? (inherits ? undefined : fallback);
+          if (value?.endsWith('%')) a[attr] = String(+((parseFloat(value) / 100) * size[axis]).toFixed(3));
+        }
+      },
+    },
+  }),
+});
+
+/** 元の SVG のファイル名から、拡張子なしの名前（画面がバッジを引く名前） */
+export const badgeNameOf = (file: string): string => file.slice(0, -'.svg'.length);
+
+/**
+ * 元の SVG（拡張子なしの名前が name）を書き出しにする。白黒のバッジは色を CSS の変数にしてから小さくする。
+ * - convertTransform は切る（corporation_TETRA の反転を含む変換が別の変換に書き換わり、図柄が崩れる）
+ * - removeViewBox は切る（画面はスプライトの symbol に viewBox を写す）
+ * - userSpaceOnUse の範囲を数にする（resolveUserSpace）
+ * - id の前にバッジの名前を付ける（スプライトで、ほかのバッジの id と重ならないように）
+ */
+export function optimizeBadge(svg: string, name: string): string {
+  const [, , w = 0, h = 0] = viewBoxOf(svg)
+    .split(/[\s,]+/)
+    .map(Number);
+  const out = optimize(MONOCHROME.has(name) ? applyColorRoles(svg, name) : svg, {
     multipass: true,
-    plugins: [{ name: 'preset-default', params: { overrides: { convertTransform: false } } }],
+    plugins: [
+      resolveUserSpace({ x: w, y: h }),
+      { name: 'preset-default', params: { overrides: { convertTransform: false, removeViewBox: false } } },
+      { name: 'prefixIds', params: { prefix: name } },
+    ],
   }).data;
+  // resolveUserSpace が扱わない % の長さは、<use> ではスプライトの 0×0 の svg で決まって消える（グラデーションの offset は除く）
+  const percent = /\s(?!offset=)[\w:-]+="[^"]*%"/.exec(out);
+  if (percent) throw new Error(`badges: ${name} に % の値がある（${percent[0].trim()}。数で書く）`);
+  return out;
 }
 
 /**
@@ -141,7 +259,7 @@ export function buildBadges(
       synced.push(file);
     }
     // 中身が変わらない書き出しは書かない（dev サーバーの監視を無駄に起こさない）
-    const out = optimizeBadge(svg);
+    const out = optimizeBadge(svg, badgeNameOf(file));
     const outPath = `${outDir}/${file}`;
     if (!existsSync(outPath) || readFileSync(outPath, 'utf8') !== out) writeFileSync(outPath, out);
   }

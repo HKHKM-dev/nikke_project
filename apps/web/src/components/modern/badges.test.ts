@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import viteConfig from '../../../vite.config.ts';
 import {
   BADGE_KINDS,
+  BADGE_SYMBOLS,
+  GROWTH_BADGES,
   filterButtonValues,
   VISUAL_BADGE_KINDS,
   collectionBadge,
@@ -19,10 +21,17 @@ const BADGE_FILES = readdirSync(BADGE_DIR).filter((f) => f.endsWith('.svg'));
 describe('バッジの対応表', () => {
   // 使っていないバッジも置く（読んだものだけを Vite が束に入れる。plan/design-modern-ui.md 2.5 節）
   it('値ごとに別のバッジを引く', () => {
-    const srcs = BADGE_KINDS.flatMap(({ badges }) => Object.values(badges).map((b) => b.src));
-    expect(new Set(srcs).size).toBe(srcs.length);
+    const names = BADGE_KINDS.flatMap(({ badges }) => Object.values(badges).map((b) => b.name));
+    expect(new Set(names).size).toBe(names.length);
   });
 
+  it('スプライトの id が重ならない（書き出しが id の前にバッジの名前を付ける）', () => {
+    const ids = [...BADGE_SYMBOLS.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => id);
+    expect(ids).toContain(`badge-${GROWTH_BADGES.star}`);
+    expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
+  });
+
+  // スプライトのバッジは文字列で束に入るが、URL で読むもの（マスクの形に使う ui_check など）は、これ未満なら束に埋め込まれる
   it('どのバッジも assetsInlineLimit 未満（束の中に埋め込まれ、アーティファクトのファイル数を使わない）', () => {
     const limit = viteConfig.build?.assetsInlineLimit;
     if (typeof limit !== 'number') throw new Error('vite.config.ts の build.assetsInlineLimit が数でない');
@@ -123,7 +132,7 @@ describe('絵のバッジ', () => {
   });
 
   it('コレクションは、宝物・R・SR と LV の上限でバッジを選び、無ければ出さない', () => {
-    const file = (b: ReturnType<typeof collectionBadge>) => b?.src ?? null;
+    const file = (b: ReturnType<typeof collectionBadge>) => b?.name ?? null;
     expect(collectionBadge(null, 0, false)).toBeNull();
     expect(collectionBadge({ rarity: 'R', level: 14 }, 0, false)?.label).toBe('コレクション R LV 14');
     expect(collectionBadge({ rarity: 'SR', level: 15 }, 0, false)?.label).toBe('コレクション SR LV 15');
