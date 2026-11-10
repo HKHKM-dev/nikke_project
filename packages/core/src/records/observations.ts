@@ -12,6 +12,7 @@ import {
   hitFramesOf,
   isInFullBurst,
   videoFrameOf,
+  type BurstActivation,
   type BurstSchedule,
 } from '../burst/schedule.ts';
 import { rateAfterShots, reloadCompleteToFirstShotFrames } from '../cadence.ts';
@@ -1960,16 +1961,8 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
  * 会心（crit）はバーストの倍率ダメージにだけ当て、倍率ダメージは会心なしの値で足す
  */
 function burstHitWithSkillHits(result: SimResult, ctx: MetricContext): number {
-  const schedule = result.schedule;
-  if (schedule === null) throw new Error('バーストの時刻表が無い');
-  const n = Number(ctx.args.n);
-  const activation = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx))[n];
-  if (activation === undefined) throw new Error(`${n} 回目の発動が無い`);
-  const frame = hitFrameOf(activation);
-  const skills = result.skillHits.filter(
-    (h) =>
-      h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined && h.effect.source.skill === 'burst' && h.frame === frame,
-  );
+  const frame = hitFrameOf(nthActivationOf(result, ctx).activation);
+  const skills = slotSkillHits(result, withArgs(ctx, { skill: 'burst' })).filter((h) => h.frame === frame);
   return burstHitDamage(result, ctx) + skills.reduce((sum, h) => sum + oneHitValue(h.hit, false), 0);
 }
 
@@ -2489,11 +2482,20 @@ function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
  * 分かれたヒット編（plan/design-burst-split-hits.md 4.4 節）: n 回目（0 始まり）の発動の、1 ヒット目から各ヒットまでの動画のフレーム数
  * （先頭は 0。1 ヒットなら [0]）
  */
-function burstHitOffsets(result: SimResult, ctx: MetricContext): number[] {
+/** 枠の n 回目（ctx.args.n。0 始まり）の発動と、その時刻表 */
+function nthActivationOf(
+  result: SimResult,
+  ctx: MetricContext,
+): { schedule: BurstSchedule; activation: BurstActivation } {
   const schedule = result.schedule;
   if (schedule === null) throw new Error('バーストの時刻表が無い');
   const activation = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx))[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
+  return { schedule, activation };
+}
+
+function burstHitOffsets(result: SimResult, ctx: MetricContext): number[] {
+  const { schedule, activation } = nthActivationOf(result, ctx);
   const frames = hitFramesOf(activation).map((f) => videoFrameOf(schedule, f));
   return frames.map((f) => f - frames[0]!);
 }
