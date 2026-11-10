@@ -7,10 +7,21 @@
       "effects": [
         {
           "kind": "timed",
-          "trigger": { "count": "fullChargeShot", "everyRef": 1 },
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 1
+          },
           "target": "self",
           "stat": "pierce",
-          "durationSeconds": 0.5
+          "durationShots": 1,
+          "assumes": {
+            "ja": "フルチャージ 3 回ごとに、次の 1 発に貫通特化が付く（3 回目の発自身には付かない）。数えはどの発も数える（射撃場の的のミサイルに当たった発は数えないと見られるが、モデルはミサイルを扱わない）",
+            "en": "Every third Full Charge shot gives Pierce to the next shot (not to the third shot itself). Every shot is counted (shots that hit the range target's missile appear not to count, but the model has no missiles)"
+          },
+          "claims": [
+            "C-1080",
+            "C-1085"
+          ]
         },
         {
           "kind": "timed",
@@ -20,7 +31,12 @@
           "stat": "pierceDamage",
           "ref": 2,
           "durationRef": 3,
-          "reads": ["pierce"]
+          "reads": [
+            "pierce"
+          ],
+          "claims": [
+            "C-1080"
+          ]
         }
       ],
       "notes": []
@@ -29,17 +45,29 @@
       "effects": [
         {
           "kind": "cooldownReduction",
-          "trigger": { "count": "fullChargeShot", "everyRef": 1 },
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 1
+          },
           "target": "allies",
-          "ref": 2
+          "ref": 2,
+          "claims": [
+            "C-1082"
+          ]
         },
         {
           "kind": "timed",
-          "trigger": { "count": "fullChargeShot", "everyRef": 3 },
+          "trigger": {
+            "count": "fullChargeShot",
+            "everyRef": 3
+          },
           "target": "allies",
           "stat": "attackDamage",
           "ref": 4,
-          "durationRef": 5
+          "durationRef": 5,
+          "claims": [
+            "C-1081"
+          ]
         }
       ],
       "notes": []
@@ -50,7 +78,14 @@
           "kind": "damage",
           "trigger": "burstUse",
           "ref": 1,
-          "damageType": "additional"
+          "damageType": "additional",
+          "assumes": {
+            "ja": "対象「照準線に最も近い敵 1 機」は、敵 1 体の前提ではその敵。発動のフレームに 1 回出る",
+            "en": "The target (the enemy nearest to the crosshair) is that enemy under the single-enemy premise. One hit on the activation frame"
+          },
+          "claims": [
+            "C-1083"
+          ]
         },
         {
           "kind": "timed",
@@ -59,10 +94,38 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 4,
-          "durationSeconds": 20
+          "durationRef": 5,
+          "holderHit": {
+            "withinRef": 3
+          },
+          "assumes": {
+            "ja": "「ターゲット殲滅状態の対象の本体に命中させた味方」は、殲滅の 10 秒の間に通常攻撃を撃った味方（自分も）とみなし、その最初の発の次のフレームから 10 秒付く（その後の命中では付き直さない）。射撃場の的の当たりはどれも本体（パーツなし）",
+            "en": "\"Allies that hit the body of the target afflicted with Wipe Out\" is read as allies (including self) that fire a normal attack within the 10 s of Wipe Out; the buff lasts 10 s from the frame after that first shot (later hits do not reapply it). Every hit on the range target is on the body (no parts)"
+          },
+          "claims": [
+            "C-1084"
+          ]
         }
       ],
-      "notes": []
+      "notes": [
+        {
+          "ja": "ターゲット殲滅（照準線に最も近い敵 1 機に 10 秒）は、命中させた味方への攻撃力▲（effects[1]）の holderHit が表す（敵に付く状態の付与は書かない。ほかに読む効果が無い）",
+          "en": "Wipe Out (10 s on the enemy nearest to the crosshair) is represented by holderHit of the ATK up for allies that hit it (effects[1]); no enemy state grant is written, as nothing else reads it",
+          "kind": "modeling",
+          "refers": "effects[1]"
+        },
+        {
+          "ja": "パーツに命中させた味方のコアダメージ▲は、パーツを扱わないので起きない（要件 4.2 節）。射撃場の的のミサイルがパーツに当たるかは確かめていない",
+          "en": "Core Damage up for allies that hit parts does not occur because parts are not modeled (requirements 4.2). Whether the range target's missiles count as parts is not checked",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "coreDamage",
+            "target": "unknown",
+            "trigger": "unknown"
+          }
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,215 @@
+[
+  {
+    "id": "1071-01",
+    "recording": "1071",
+    "kind": "total",
+    "use": "record",
+    "value": 106004384,
+    "description": "デルタ・I-DOLL・サン・D：キラーワイフ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11604。増分は 1772 個"
+    },
+    "source": "V-0717",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1071-02",
+    "recording": "1071",
+    "kind": "count",
+    "use": "record",
+    "value": 220,
+    "unit": "トリガー",
+    "description": "デルタ・I-DOLL・サン・D：キラーワイフ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1772 個。前の増分から 30f 未満の増分（1742 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 46f）から発の数を決めた（2 発になった組 25 個）"
+    },
+    "source": "V-0717",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1071-03",
+    "recording": "1071",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 573249,
+    "unit": "ダメージ",
+    "description": "3 人（デルタ・I-DOLL・サン・KW）の、1 回目のフルバーストの間の KW の 7 発目（f1558）の 1 ヒット（コア・距離なし・会心なし）。S2 の▲・バーストの攻撃力▲と、S1 の貫通ダメージ 13.55%▲ が攻撃ダメージ▲の和で乗る（貫通特化。6 発目 = 3 回目のフルチャージの次の発）。10 発目（f1804）も同じ値で、8・9 発目（f1640・f1722）は貫通ダメージ▲なしの 507,761",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（KW の S2 の▲・バーストの▲・貫通特化の有無 × フルバーストの内外 × 会心・コア・距離）の格子で「KW 0〜1 発 + デルタ 0〜1 発 + I-DOLL・サン 0〜2 ヒット」の和に ±3 で分解した（1070 は 1811 個のうち 1744 個、1071 は 1772 個のうち 1765 個が分解できた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 7,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1071-04",
+    "recording": "1071",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 507761,
+    "unit": "ダメージ",
+    "description": "3 人の、1 回目のフルバーストの間の KW の 8 発目（f1640）の 1 ヒット（貫通特化なし。S2 の▲・バーストの▲あり・コア・距離なし・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（KW の S2 の▲・バーストの▲・貫通特化の有無 × フルバーストの内外 × 会心・コア・距離）の格子で「KW 0〜1 発 + デルタ 0〜1 発 + I-DOLL・サン 0〜2 ヒット」の和に ±3 で分解した（1070 は 1811 個のうち 1744 個、1071 は 1772 個のうち 1765 個が分解できた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 8,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1071-05",
+    "recording": "1071",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 326728,
+    "unit": "ダメージ",
+    "description": "3 人の、フルバーストの間のデルタの 1 ヒット（S2 の▲・バーストの攻撃力▲あり・コア・距離なし・会心なし）。デルタは SR で S1 の貫通ダメージ▲を受けるが、貫通特化が無いので乗らない（どのフルバーストのデルタの発も、貫通ダメージ▲の乗った値にならない）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（KW の S2 の▲・バーストの▲・貫通特化の有無 × フルバーストの内外 × 会心・コア・距離）の格子で「KW 0〜1 発 + デルタ 0〜1 発 + I-DOLL・サン 0〜2 ヒット」の和に ±3 で分解した（1070 は 1811 個のうち 1744 個、1071 は 1772 個のうち 1765 個が分解できた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1071-06",
+    "recording": "1071",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 22248,
+    "unit": "ダメージ",
+    "description": "3 人の、1 回目のフルバーストの間の I-DOLL・サンの 1 ヒット（S2 の▲・バーストの攻撃力▲あり・距離あり・コアなし・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの 3 人の 1 ヒット（KW の S2 の▲・バーストの▲・貫通特化の有無 × フルバーストの内外 × 会心・コア・距離）の格子で「KW 0〜1 発 + デルタ 0〜1 発 + I-DOLL・サン 0〜2 ヒット」の和に ±3 で分解した（1070 は 1811 個のうち 1744 個、1071 は 1772 個のうち 1765 個が分解できた）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 600,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1071-07",
+    "recording": "1071",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "timing",
+    "use": "compare",
+    "value": [0, 1554],
+    "unit": "f",
+    "description": "3 人の、I-DOLL・サン（III・CT 40 秒）の 1 回目と 2 回目の III の発動（00.00 の 6f 前。f1251・f2805）の動画のフレーム（1 回目から数えた差）。2 回目は III の段の顔の CT の明け（f2804）の直後で、間に KW の S2 の CT▼（7 秒）が 2 回入って縮んだ CT の明けで撃った（CT▼ が無ければ約 2,380f）。モデルは的のジャンプ（狙えない窓）を入れると 2 回目の III が窓の明けまで待ち、録画（2 本とも窓の頃に III を使った）と合わないので、ジャンプを入れない設定で比べる（この編成のジャンプの時刻は読んでいない）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "III の発動は III のタイマーの 00.00（フルバーストの始まり）の 6f 前（FULL_BURST_AFTER_ACTIVATION_FRAMES）。CT の明けは III の段の顔の CT の秒の表示が消えたフレーム"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "burstChain"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 2,
+        "event": "activation",
+        "anchor": "activation:0",
+        "count": 2
+      },
+      "tolerance": {
+        "abs": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": []
+      }
+    }
+  }
+]

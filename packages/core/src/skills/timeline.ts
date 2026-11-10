@@ -550,6 +550,35 @@ export function shotCountStackItems(
 }
 
 /**
+ * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」の件。発火 s ごとに、[s, s + withinFrames) の持ち主の
+ * 最初の射撃 f の次のフレームから durationFrames だけ（f 自身には乗らない。その後の射撃では付き直さない）。無ければ付かない。
+ * 重なった件は和集合
+ */
+export function holderHitItems(
+  starts: readonly number[],
+  shotFrames: readonly number[],
+  withinFrames: number,
+  durationFrames: number,
+  frames: number,
+): [number, number][] {
+  const merged: [number, number][] = [];
+  for (const s of [...starts].sort((a, b) => a - b)) {
+    const hit = shotFrames[lowerBound(shotFrames, s)];
+    if (hit === undefined || hit >= s + withinFrames) continue;
+    const start = hit + 1;
+    const end = Math.min(start + durationFrames, frames);
+    if (start >= end) continue;
+    const last = merged[merged.length - 1];
+    if (last !== undefined && start <= last[1]) {
+      if (end > last[1]) last[1] = end;
+      continue;
+    }
+    merged.push([start, end]);
+  }
+  return merged;
+}
+
+/**
  * 出来事で終わる件。始まり s から、s より後の最初の終わり（ends。昇順）まで（無ければ frames まで）。維持中にまた付いたら和集合。
  * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更（ends は 1 パス目の
  * ShotLog.weaponChangeEnds。1 パス目は開いている件に重ねて付いても撃ち切りまで変えない）。
