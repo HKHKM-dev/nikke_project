@@ -1,0 +1,35 @@
+{
+  "id": "1056",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1056_sg_zwei_fire.mp4",
+  "original": "2026-11-11_00-58-26.mp4",
+  "durationSec": 198.6,
+  "frames": 11915,
+  "fps": 60,
+  "sizeMB": 240.8,
+  "sha256": "20bce995cce5",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": true,
+      "treasurePhase": 3
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-11T01:18+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -269,7 +269,12 @@ describe('modelNotes', () => {
       ...makeCharacter({ muzzleCount: 2, reloadBullet: 0.33, penetration: 1 }),
       weaponType: 'SG',
     }).map((n) => `${n.level}:${n.code}`);
-    expect(codes).toEqual(['unsupported:multi-muzzle', 'unsupported:penetration', 'approx:chunked-reload']);
+    // ツバイ編（C-1068）: 二丁持ちの SG も 1 発 2 ヒット（近似の注記）
+    expect(codes).toEqual(['approx:dual-wield', 'unsupported:penetration', 'approx:chunked-reload']);
+    // 二丁持ちを確かめていない武器種（AR）は未対応のまま
+    expect(
+      modelNotes({ ...makeCharacter({ muzzleCount: 2 }), weaponType: 'AR' }).map((n) => `${n.level}:${n.code}`),
+    ).toEqual(['unsupported:multi-muzzle']);
   });
 
   // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの SMG は 1 発 2 ヒットで扱う（近似の注記）
@@ -279,7 +284,8 @@ describe('modelNotes', () => {
       modelNotes({ ...makeCharacter({ muzzleCount: 2 }), weaponType: 'SMG' }).map((n) => `${n.level}:${n.code}`),
     ).toEqual(['approx:dual-wield']);
     expect(muzzleHitsOf('SMG', shot)).toBe(2);
-    expect(muzzleHitsOf('SG', shot)).toBe(1);
+    expect(muzzleHitsOf('SG', shot)).toBe(2);
+    expect(muzzleHitsOf('AR', shot)).toBe(1);
     // ノア編（V-0706）: 二丁持ちの RL も 1 発 2 ヒット（C-1019）
     expect(muzzleHitsOf('RL', shot)).toBe(2);
     expect(

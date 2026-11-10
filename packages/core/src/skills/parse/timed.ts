@@ -312,9 +312,8 @@ export function parseTimedFields(
     fail(path, `${stat} cannot stack`);
   }
   const byShots = effect.durationShots !== undefined || effect.durationShotsRef !== undefined;
-  if (byShots && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
-    fail(path, 'a duration in shots cannot stack');
-  }
+  // ツバイ編（plan/design-zwei.md 2.3 節）: 発数の維持のスタックは、付き直すたびに 1 段増え、持ち主の N 発目で全部切れる（timed だけ。
+  // 状態の付与は parse/state.ts が弾く）
   // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 条件は自分の状態（selfState）だけ組める（発火のフレームで判定し、窓は
   // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲）
   if (byShots && isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))

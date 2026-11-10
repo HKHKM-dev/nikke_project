@@ -1581,6 +1581,16 @@ export type WeaponChangeEffect = {
    */
   projectileExplosion?: true;
   /**
+   * ツバイ編（plan/design-zwei.md 2.1 節。V-0718）: 追加効果「貫通特化」。変更後の武器の発（通常攻撃）を貫通特化の発にし、貫通ダメージ▲
+   * （pierceDamage）を攻撃ダメージ▲と同じ和に足す（C-1031 の形）
+   */
+  pierce?: true;
+  /**
+   * 同 2.2 節: 変更後の武器の 1 発の弾の数（SG のペレット数 shotCount の即値。録画で読む）。省略は基礎の武器のまま。
+   * 二丁持ちの銃口の数（muzzleCount）は基礎の武器のまま（ツバイのバーストは 1 弾 × 2 銃口）
+   */
+  shotCount?: number;
+  /**
    * 使用武器変更の武器のパラメータ（plan/design-true-damage-element.md 9 節）: 変更後の武器のチャージ時間（秒・即値）。
    * 説明文に数字で書かれている（description_value でない）。省略は基礎の武器のまま。チャージ武器にだけ書ける
    */

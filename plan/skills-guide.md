@@ -114,6 +114,8 @@
     | 段階別の効果・下位効果のスタック適用（N 段階：N−1 段階フルスタック状態なら） | 段階ごとの状態の付与（同じきっかけ）と、上の段階の条件 `selfState` の `stacks: "full"`・`sameFiring: true` | 下の段階が満ちた発火で上の段階も付く（同じスロットの前に書いた同じきっかけの付与の分を数える）。例: クエンシー：エスケープクイーンの S2 | [design-quency-eq.md](design-quency-eq.md) 2 節の論点 3 |
     | 適正最小射程距離 X%▲／フルチャージ攻撃が適正射程距離内の対象に命中した時 | stat `minEffectiveRange`（状態だけの stat）／fullChargeShot の timed の `condition.inEffectiveRange: true` | 下端を 下端 × (1 − Σ) に縮め、着地点の代表の距離で距離ボーナスと条件を決める（式は仮説 C-1033）。条件は距離ボーナスの乗る着地点と同じ判定。例: エード：エージェントバニーの S1・S2・バースト | [design-agent-bunny.md](design-agent-bunny.md) 2.1・2.2 節 |
     | 貫通特化／貫通ダメージ X%▲ | フラグの stat `pierce`（timed・passive（`while` も書ける）・状態の中身）／stat `pierceDamage` | 貫通ダメージ▲は、貫通特化の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和で乗る（C-1031）。読む側に `reads: ["pierce"]`。例: エード：エージェントバニーの S2・バースト | 同 2.3 節 |
+    | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | 変更後の武器の発に貫通ダメージ▲が乗る。銃口の数は基礎の武器のまま（二丁持ちの SG の 1 弾 × 2 銃口）。例: ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
+    | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | 付くたびに 1 段増え、持ち主の N 発目で全部切れる（持ち主の発で数える）。例: ツバイの宝物版 S1 | 同 2.3 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

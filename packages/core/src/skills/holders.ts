@@ -113,6 +113,7 @@ import {
   rankSlotsOf,
   resolvePassiveStates,
   shotCountItems,
+  shotCountStackItems,
   timerFramesOf,
   unionItems,
   untilNextEndItems,
@@ -779,7 +780,11 @@ function timedItems(
   // マスト編（plan/design-mast.md 8 節）: HP の割合が閾値を上回るフレームまで
   if (effect.durationUntil === 'selfHpAbove') return itemsOfPairs(untilNextEndItems(starts, untilEnds, frames));
   if (effect.durationShots !== undefined) {
-    return itemsOfPairs(shotCountItems(starts, log?.frames ?? [], effect.durationShots, frames));
+    const shotFrames = log?.frames ?? [];
+    // ツバイ編（plan/design-zwei.md 2.3 節）: スタックする N 発間維持
+    return effect.maxStacks !== undefined
+      ? shotCountStackItems(starts, shotFrames, effect.durationShots, frames, effect.maxStacks)
+      : itemsOfPairs(shotCountItems(starts, shotFrames, effect.durationShots, frames));
   }
   if (effect.durationUntil === 'ammoSpent') {
     // 和集合は発火のフレームで取り、頭は後で削る（段 A までの planBuffTimeline・1 パス目の register と同じ順）

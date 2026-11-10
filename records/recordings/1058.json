@@ -1,0 +1,47 @@
+{
+  "id": "1058",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1058_sg_zwei_fire.mp4",
+  "original": "2026-11-11_01-06-06.mp4",
+  "durationSec": 222.1,
+  "frames": 13325,
+  "fps": 60,
+  "sizeMB": 268.9,
+  "sha256": "da06fac256df",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 315,
+      "name": "エード：エージェントバニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-11T01:20+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

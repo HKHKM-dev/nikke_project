@@ -17,6 +17,8 @@ export type ChangedWeapon = {
   trueDamage?: true;
   /** 変更後の武器の発が発射体の爆発を持つか（WeaponChangeEffect.projectileExplosion。発射体爆発ダメージ▲が乗る） */
   projectileExplosion?: true;
+  /** ツバイ編: 変更後の武器の発が貫通特化か（WeaponChangeEffect.pierce。貫通ダメージ▲が乗る） */
+  pierce?: true;
   /**
    * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 変更の窓が射手に見える最初のフレームから最初の発までの待ち
    * （WeaponChangeEffect.firstShotDelayFrames）。省略は weaponChangeShooter の待ち

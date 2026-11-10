@@ -1,0 +1,20 @@
+{
+  "id": "C-1070",
+  "text": "ツバイ単騎のオートバーストで、ゲージの満タン（BURST バーが消えたフレーム）から、バーストの使用武器変更の発までは 108f（動画）。モデルでは、変更の窓が射手に見える最初のフレームから最初の発までの待ち firstShotDelayFrames 83（チャージ 1.2 秒を含む）。基礎版（チャージ 1.5 秒）の待ちは撮れていない（チャージの差 0.3 秒ぶん長い 101 とみた）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1056-10`・`1057-10`。V-0718",
+  "model": "data/skills/390.json（weaponChange の firstShotDelayFrames。宝物版 83・基礎版 101）",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/390.json の treasureSkills.burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1056",
+      "role": "値を合わせた"
+    }
+  ]
+}

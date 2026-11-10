@@ -1,0 +1,209 @@
+{
+  "formatVersion": 1,
+  "resourceId": 390,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "reads": ["pierce"],
+          "claims": ["C-1071"],
+          "assumes": {
+            "ja": "「1 発間維持」は受け手ごとに、受け手の通常攻撃の 1 発目まで（ヘルムの N 発間維持と同じ数え方）",
+            "en": "\"For 1 round\" is counted per recipient, lasting until the recipient’s first normal attack (as Helm’s N-round duration)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": ["pierce"],
+          "claims": ["C-1071"]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": ["C-1073"]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃で 5 回攻撃した時の、味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "Restoring all allies’ cover HP after 5 normal attacks does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "chargeTimeSeconds": 1.5,
+          "fullChargeDamage": 300,
+          "maxAmmoRef": 2,
+          "shotCount": 1,
+          "pierce": true,
+          "firstShotDelayFrames": 101,
+          "assumes": {
+            "ja": "基礎版は撮れていない。宝物版（V-0718）で確かめた形の、チャージ時間だけ違う読み（チャージ 1.5 秒。最初の発の待ちは宝物版の 83f にチャージの差 0.3 秒ぶんの 18f を足した 101f）",
+            "en": "The base version was not recorded. It is read as the shape verified on the Treasure version (V-0718) with only the charge time changed (1.5 s; the first-shot wait is the Treasure 83 f plus 18 f for the 0.3 s longer charge)"
+          },
+          "claims": ["C-1069", "C-1070"]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": ["pierce"],
+          "claims": ["C-1071"]
+        }
+      ],
+      "notes": []
+    }
+  },
+  "treasureSkills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 1,
+          "durationShotsRef": 2,
+          "reads": ["pierce"],
+          "claims": ["C-1071"],
+          "assumes": {
+            "ja": "「1 発間維持」は受け手ごとに、受け手の通常攻撃の 1 発目まで（ヘルムの N 発間維持と同じ数え方）",
+            "en": "\"For 1 round\" is counted per recipient, lasting until the recipient’s first normal attack (as Helm’s N-round duration)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": ["pierce"],
+          "claims": ["C-1071"]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "firesDuring": "fullBurst"
+          },
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 5,
+          "maxStacksRef": 6,
+          "durationShotsRef": 7,
+          "reads": ["pierce"],
+          "claims": ["C-1072"],
+          "assumes": {
+            "ja": "フルバーストの中のツバイの通常攻撃ごとに 1 スタック付き直し（上限 3）、受け手の次の通常攻撃の 1 発で全部切れる（受け手の発には、前の自分の発の後のツバイの発の数のスタックが乗る）",
+            "en": "Each of Zwei’s normal attacks during Full Burst adds a stack (up to 3); all stacks end on the recipient’s next normal attack (a recipient’s shot carries one stack per Zwei shot since its own previous shot)"
+          }
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": ["C-1073"]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot"
+          },
+          "condition": {
+            "selfState": "pierceAttacks101"
+          },
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 5,
+          "maxStacksRef": 6,
+          "durationRef": 7,
+          "claims": ["C-1073"]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃で 5 回攻撃した時の、味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）",
+          "en": "Restoring all allies’ cover HP after 5 normal attacks does not change damage by itself (it matters only with an effect reading cover in the team)",
+          "kind": "indirect",
+          "path": "cover"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "weaponChange",
+          "trigger": "burstUse",
+          "damageRef": 1,
+          "chargeTimeSeconds": 1.2,
+          "fullChargeDamage": 300,
+          "maxAmmoRef": 2,
+          "shotCount": 1,
+          "pierce": true,
+          "firstShotDelayFrames": 83,
+          "assumes": {
+            "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0718）: 1 発は 2 つの銃口の 1 弾ずつで 2 ヒット（shotCount 1。銃口の数は基礎の SG のまま）、どちらもコアに当たる（的の表の 390:burst の行）。最初の発は、変更の窓が射手に見えてから 83f（チャージ 1.2 秒を含む）。1 発撃つと基礎の SG に戻る（最大装弾数 1 の撃ち切り）。追加効果の貫通特化で、その発に貫通ダメージ▲が乗る。変更後の発のゲージは確かめていない（モデルは基礎の SG の 1 発の量）",
+            "en": "The changed weapon is not in CDN, so it was read from recordings (V-0718): each shot is one bullet from each of the two muzzles (2 hits; shotCount 1, base SG muzzles), both hitting the core (target table row 390:burst). The first shot comes 83 f after the change becomes visible to the shooter (including the 1.2 s charge). After one shot it returns to the base SG (max ammo 1). The added Pierce makes Pierce Damage ups apply to that shot. Burst gauge from the changed shot is unverified (the model uses one base SG shot)"
+          },
+          "claims": ["C-1069", "C-1070"]
+        },
+        {
+          "kind": "state",
+          "state": "pierceAttacks101",
+          "trigger": "burstUse",
+          "target": "allies",
+          "durationRef": 4,
+          "contents": [
+            {
+              "stat": "pierceDamage",
+              "ref": 3
+            }
+          ],
+          "reads": ["pierce"],
+          "claims": ["C-1071"]
+        }
+      ],
+      "notes": []
+    }
+  }
+}
