@@ -1226,6 +1226,16 @@ html:has(.modern-view-container) {
   font-weight: bold;
 }
 /* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
+/* 並べ替えのポップアップの並びのボタン。いまの並びを強く出す */
+.char-tray-sort-options {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 6px;
+}
+.char-tray-sort-option[aria-pressed='true'] {
+  outline: 2px solid var(--placing-blue);
+  font-weight: bold;
+}
 .char-tray-action-button[aria-disabled='true'] {
   cursor: default;
   opacity: 0.6;

@@ -21,6 +21,9 @@ import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './OtherPartyBadges.tsx';
 import { Popover } from '../Popover.tsx';
 
+/** 並びの向きの印 */
+const DIRECTION_MARK = { asc: '▲', desc: '▼' } as const;
+
 type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
@@ -126,45 +129,36 @@ export function CharacterTray({
             </button>
           </div>
         </div>
-        {/* 並べ替え（ボタンで開くポップアップで名前順・戦闘力順を選ぶ。向きは隣の ▲▼ のボタン）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
+        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
             何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
         <div className="char-tray-actions">
+          {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
+              （続けて押せるように、押しても閉じない） */}
           <Popover
-            button={LIST_ORDER_LABEL[listOrder.order]}
+            button={`${LIST_ORDER_LABEL[listOrder.order]} ${DIRECTION_MARK[listOrder.direction]}`}
             buttonClassName="char-tray-action-button"
             label="並べ替え"
             align="left"
           >
-            {(close) => (
-              <fieldset className="popover-group">
-                <legend>並べ替え</legend>
-                {LIST_ORDERS.map((o) => (
-                  <label key={o} className="popover-option">
-                    <input
-                      type="radio"
-                      name="trayListOrder"
-                      value={o}
-                      checked={listOrder.order === o}
-                      onChange={() => {
-                        listOrder.select(o);
-                        close();
-                      }}
-                    />
-                    <span>{LIST_ORDER_LABEL[o]}</span>
-                  </label>
-                ))}
-              </fieldset>
-            )}
+            <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
+              {LIST_ORDERS.map((o) => {
+                const current = listOrder.order === o;
+                return (
+                  <button
+                    key={o}
+                    type="button"
+                    className="char-tray-action-button char-tray-sort-option"
+                    aria-pressed={current}
+                    title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
+                    onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
+                  >
+                    {LIST_ORDER_LABEL[o]}
+                    {current && <span aria-hidden="true">{DIRECTION_MARK[listOrder.direction]}</span>}
+                  </button>
+                );
+              })}
+            </div>
           </Popover>
-          <button
-            type="button"
-            className="char-tray-action-button"
-            aria-label={`${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと${LIST_DIRECTION_LABEL[listOrder.direction === 'asc' ? 'desc' : 'asc']}）`}
-            title={LIST_DIRECTION_LABEL[listOrder.direction]}
-            onClick={listOrder.toggleDirection}
-          >
-            {listOrder.direction === 'asc' ? '▲' : '▼'}
-          </button>
           {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
           {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
             <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
