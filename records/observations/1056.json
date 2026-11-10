@@ -54,9 +54,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -90,9 +88,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     },
@@ -127,9 +123,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     },
@@ -164,9 +158,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     },
@@ -201,9 +193,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     },
@@ -238,9 +228,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     },
@@ -275,9 +263,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     },
@@ -293,12 +279,7 @@
     "readAt": "2026-11-11",
     "use": "compare",
     "kind": "timing",
-    "value": [
-      108,
-      108,
-      108,
-      108
-    ],
+    "value": [108, 108, 108, 108],
     "unit": "f",
     "description": "ツバイ単騎（宝物版・段階 3。操作・AUTO 射撃・オートバースト ON・スペック固定 ON）の、ゲージの満タン（BURST バーが消えたフレーム）から、バーストの使用武器変更の発（増分が 759,202 前後の発）までの動画のフレーム数（回ごと）",
     "method": {
@@ -317,9 +298,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     },
     "scope": {
@@ -356,9 +335,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     }
@@ -392,9 +369,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "condition": "auto"
       }
     }
