@@ -1,10 +1,10 @@
 // レイ（831。V-0716）を含む編成で、S1 の 100 発ごとの有利コードの攻撃ダメージ▲（自分・3 秒）、S2 のバースト 3 段階突入時の攻撃力▲
 // （灼熱の味方全体・10 秒）、バーストの攻撃ダメージ▲（灼熱の味方全体・10 秒）が意図どおりに出るか
 import { describe, expect, it } from 'vitest';
-import { stageEnterFrames } from '../burst/schedule.ts';
+import { activationFramesOfSlot, stageEnterFrames } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
-import { characterOf, describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const REI = 831;
 
@@ -17,7 +17,9 @@ const TEAMS: Record<string, TeamInput> = {
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const rei = input.slots.findIndex((s) => s?.character.resourceId === REI);
   const plan = planTeamRun(input);
-  const isFire = (slot: number) => characterOf(input.slots[slot]!.character.resourceId).element === 'Fire';
+  const isFire = (slot: number) => input.slots[slot]!.character.element === 'Fire';
+  // バーストを使わない編成（単騎）では、S2・バーストの効果の窓は空
+  const schedule = input.burst ? plan.schedule! : null;
   const windows = (slot: number, skill: string, stat: string) =>
     effectWindows(plan, slot, { resourceId: REI, skill, stat });
 
@@ -34,8 +36,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
   it('gives the S2 ATK up to every Fire ally for 10 s from each entry to Burst Stage 3, and nothing without one', () => {
     // 段階 3 への突入は II の発動の六角形の替わり目（stageEnterFrames）。レイの CT が明けずに II で切れたチェーンでも起きる
-    const expected = input.burst ? windowsFrom(stageEnterFrames(plan.schedule!, 'Step3'), 10, plan.frames) : [];
-    if (input.burst) expect(expected.length).toBeGreaterThan(0);
+    const expected = schedule ? windowsFrom(stageEnterFrames(schedule, 'Step3'), 10, plan.frames) : [];
+    expect(expected.length > 0).toBe(input.burst);
     input.slots.forEach((_, slot) => {
       expect(windows(slot, 'skill2', 'attack')).toEqual(isFire(slot) ? expected : []);
     });
@@ -55,9 +57,8 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   });
 
   it('gives the burst attack damage up to every Fire ally for 10 s from each Rei burst', () => {
-    const uses = input.burst ? plan.schedule!.activations.filter((a) => a.slotIndex === rei).map((a) => a.frame) : [];
-    if (input.burst) expect(uses.length).toBeGreaterThan(0);
-    const expected = windowsFrom(uses, 10, plan.frames);
+    const expected = schedule ? windowsFrom(activationFramesOfSlot(schedule, rei), 10, plan.frames) : [];
+    expect(expected.length > 0).toBe(input.burst);
     input.slots.forEach((_, slot) => {
       expect(windows(slot, 'burst', 'attackDamage')).toEqual(isFire(slot) ? expected : []);
     });
