@@ -1073,7 +1073,8 @@ export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => n
  */
 export function conditionReadsItems(condition: EffectCondition | undefined): boolean {
   if (condition === undefined) return false;
-  // 2 段目の段 6: selfHp は編成の段で決まる（件を見ない）
+  // 2 段目の段 6: passive の selfHp は編成の段で決まる（件を見ない）。紅蓮編: timed の selfHp（以下）は最大HP の件の列を読むが、発火のフレームより
+  // 前に始まった件だけなので段を上げない（skills/holders.ts の fireContextHolds）
   // レッドフード編: burstStep も発火の文脈だけで決まる
   return Object.keys(condition).some((key) => key !== 'usedBurst' && key !== 'selfHp' && key !== 'burstStep');
 }

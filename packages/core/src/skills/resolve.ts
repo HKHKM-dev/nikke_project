@@ -1385,6 +1385,9 @@ export function resolveInstant(
       // 2 段目の段 12: cooldownReduction の直書きの秒数（seconds）は Lv に依らない
       const raw = effect.ref === undefined ? effect.seconds : skillValue(skill, effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
+      // 紅蓮編: 現在の HP▼ は 100% 未満（HP の割合に 1 − X を掛けるので、0 以下にしない）
+      if (effect.kind === 'currentHpDown' && raw >= 100)
+        throw new RangeError(`skill ${skill.id}: currentHpDown must be < 100, got ${raw}`);
       const r: ResolvedInstantEffect = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         kind: effect.kind,

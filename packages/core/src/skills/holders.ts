@@ -103,6 +103,7 @@ import {
   type EndedTrigger,
   type EdgeShift,
   type EffectCondition,
+  type SelfHpCondition,
   type TimerTrigger,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
@@ -1820,8 +1821,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex) &&
     // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）
-    (condition?.selfHp?.atMost === undefined ||
-      selfHpAtMostAt(sourceSlotIndex, ev.frame, condition.selfHp.atMost / 100));
+    (condition?.selfHp === undefined || selfHpAtMostAt(sourceSlotIndex, ev.frame, selfHpAtMostOf(condition.selfHp)));
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -1859,22 +1859,27 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       state?.passiveEffects.filter((e) => e.stat === 'maxHpOnly').reduce((sum, e) => sum + e.appliedAmount, 0) ?? 0,
   );
   // 最大HP のみ▲ を持ちうる枠（常時か件の列）だけ、最大HP の件で割合が動く。ほかの枠は件を見ない（毎フレームの走査を省く）
-  const hpRatioMoves = slots.map(
+  const maxHpOnlyMoves = slots.map(
     (_, i) => (passiveMaxHpOnly[i] ?? 0) > 0 || (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly'),
   );
   // 紅蓮編（plan/design-scarlet.md 2.1 節）: 枠ごとの現在の HP▼ の発火のフレーム（昇順）と、その発火までの 1 − ratio の積
   const hpDowns = slots.map(() => ({ frames: [] as number[], products: [] as number[] }));
   /** 枠の frame より前の現在の HP▼ の積（無ければ 1） */
   const hpDownProductBefore = (slotIndex: number, frame: number): number => {
-    const downs = hpDowns[slotIndex];
-    const i = downs === undefined ? 0 : lowerBound(downs.frames, frame);
-    return i === 0 ? 1 : downs!.products[i - 1]!;
+    const downs = hpDowns[slotIndex]!;
+    const i = lowerBound(downs.frames, frame);
+    return i === 0 ? 1 : downs.products[i - 1]!;
   };
   const selfHpRatioAt = (slotIndex: number, frame: number): number => {
     const ratio = (slots[slotIndex]?.hpRatio ?? 1) * hpDownProductBefore(slotIndex, frame);
-    if (!hpRatioMoves[slotIndex]) return ratio;
+    if (!maxHpOnlyMoves[slotIndex]) return ratio;
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
     return (ratio * (1 + up - only)) / (1 + up);
+  };
+  /** 解いた条件 selfHp の atMost の閾値（割合）。解いていない形（atMostRef・以上の形）は件の一覧に来ない */
+  const selfHpAtMostOf = (hp: SelfHpCondition): number => {
+    if (hp.atMost === undefined) throw new RangeError(`selfHp ${JSON.stringify(hp)} is not resolved to atMost`);
+    return hp.atMost / 100;
   };
   /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と条件 selfHp の atMost が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
@@ -2704,7 +2709,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     skipInstant: (effect, sourceSlotIndex, frame) => skipEffect(sourceSlotIndex, effect, frame),
     lowerCurrentHp(slotIndex, frame, ratio) {
       const downs = hpDowns[slotIndex];
-      if (downs === undefined) return;
+      if (downs === undefined) throw new RangeError(`lowerCurrentHp: no slot ${slotIndex}`);
       const n = downs.frames.length;
       if (n > 0 && downs.frames[n - 1]! > frame) throw new RangeError('lowerCurrentHp must be called in frame order');
       downs.frames.push(frame);

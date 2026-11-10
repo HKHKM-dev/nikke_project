@@ -344,16 +344,17 @@ export function parseTimedFields(
       fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
-    // 紅蓮編（plan/design-scarlet.md 2.2 節）: timed の selfHp は「以下」の形だけ（発火のフレームの HP の割合で見る）。1 パス目で窓を
-    // 追う stat は、1 パス目の窓の登録が件の一覧の判定と別に回るので書けない（使い手がいない）
+    // 紅蓮編（plan/design-scarlet.md 2.2 節）: timed の selfHp は「以下」の形だけ（発火のフレームの HP の割合で見る。件の一覧の
+    // fireContextHolds）。使い手のいない形は書けない: 状態の付与（中身の stat を見ない）、最終防御力の比べの対象（段 2 は fireContextHolds を
+    // 通らない）、1 パス目で窓を追う stat（1 パス目の窓の登録が件の一覧の判定と別に回る）、HP の割合を動かす stat（自分の条件を自分で満たす）
     if (condition.selfHp !== undefined) {
+      const at = `${path}.condition.selfHp`;
       if (!isSelfHpAtMost(condition.selfHp))
-        fail(`${path}.condition.selfHp`, 'timed only takes { atMostRef } or { atMost } (judged at the firing frame)');
-      if (stat !== undefined && isFirstPassTrackedStat(stat))
-        fail(
-          `${path}.condition.selfHp`,
-          `selfHp is not supported for "${stat}" (its window is tracked inside the first pass)`,
-        );
+        fail(at, 'timed only takes { atMostRef } or { atMost } (judged at the firing frame)');
+      if (stat === undefined) fail(at, 'selfHp is only supported on a timed effect with a stat, not on a grant');
+      if (isFirstPassTrackedStat(stat) || isMaxHpStat(stat))
+        fail(at, `selfHp is not supported for "${stat}" (tracked in the first pass, or it moves the HP ratio)`);
+      if (v.targetDefense !== undefined) fail(at, 'selfHp cannot be combined with targetDefense');
     }
     validateUsedBurst(condition, trigger, `${path}.condition`);
     validateBurstStep(condition, trigger, `${path}.condition`);

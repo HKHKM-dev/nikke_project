@@ -43,6 +43,10 @@ describe('語彙の検証', () => {
       /write exactly one of/,
     );
     expect(patched('burst', critRate, { stat: 'attack' })).toThrow(/selfHp is not supported for "attack"/);
+    expect(patched('burst', critRate, { stat: 'maxHpOnly' })).toThrow(/selfHp is not supported for "maxHpOnly"/);
+    expect(patched('burst', critRate, { targetDefense: 'lowerThanSelf', target: 'allies' })).toThrow(
+      /selfHp cannot be combined with targetDefense/,
+    );
   });
 
   it('takes only the at-least selfHp on passive', () => {
