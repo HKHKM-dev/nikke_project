@@ -183,7 +183,7 @@ export function fitDual(rows: readonly DualRow[], muzzles: number, critVersions:
     });
     critRate = s.crits.map((c, v) => (s.critHits[v]! > 0 ? c / s.critHits[v]! : critRate[v]!));
     const total = s.share.reduce((a, b) => a + b, 0);
-    critShare = s.share.map((x) => x / total);
+    if (total > 0) critShare = s.share.map((x) => x / total);
   }
   const last = step((r) => bandP[bandOf(r.segment)]);
   // 区間ごとの p は、距離帯ごとの値から始める
@@ -208,19 +208,21 @@ export function fitDual(rows: readonly DualRow[], muzzles: number, critVersions:
 
 /**
  * 2 ヒットとも外れた発の数。前のフレームも読めた増分どうしの、limit 未満の空き（マガジンの中）を発の刻みで割り、
- * 間に挟まる発を数える。区間ごとに [外れた発, 撃った発（読めた増分 + 外れた発）]
+ * 間に挟まる発を数える（skip の範囲に掛かる空きは数えない）。区間ごとに [外れた発, 撃った発（読めた増分 + 外れた発）]
  */
 export function missedShots(
   rows: readonly HudIncrement[],
   cuts: readonly number[],
   interval: number,
+  skip: readonly (readonly [number, number])[] = [],
   limit = 20,
 ): { missed: number; shots: number }[] {
   const out = BANDS.map(() => ({ missed: 0, shots: 0 }));
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i]!;
     const prev = rows[i - 1]!;
-    if (r.readGap !== 1 || prev.readGap !== 1) continue;
+    // 数えない範囲に掛かる空きは、間の発を外れと数えない
+    if (r.readGap !== 1 || prev.readGap !== 1 || inSkip(r.frame, skip) || inSkip(prev.frame, skip)) continue;
     const seg = segmentIn(r.frame, cuts);
     const gap = r.frame - prev.frame;
     if (gap >= limit) continue;
@@ -296,7 +298,7 @@ export const dualSmgCores: Recipe = {
       else read.push({ segment, candidates });
     }
     const fit = fitDual(read, grid.muzzles, grid.crits.length);
-    const missed = missedShots(kept, cuts, interval);
+    const missed = missedShots(rows, cuts, interval, skip);
     const missedByBand = BAND_ORDER.map((b) => {
       const inBand = missed.filter((_, k) => bandOf(k) === b);
       return { m: inBand.reduce((a, x) => a + x.missed, 0), n: inBand.reduce((a, x) => a + x.shots, 0) };

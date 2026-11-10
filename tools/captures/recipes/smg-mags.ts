@@ -15,6 +15,7 @@ import { loadHudJumps } from './hud-jumps.ts';
 import {
   detectBuffWindows,
   detectCuts,
+  estimateInterval,
   fixedSpecGrid,
   groupMagazines,
   parseAmmoSeries,

@@ -286,7 +286,6 @@ export function splitHits(
   return { increments: out, unfit };
 }
 
-/** ヒットのある増分を、空きが gap（f）を超える所でまとまり（マガジン）に分ける */
 /** 増分から距離ボーナスの有無を読む（1 発の増分と決まらなければ undefined）。detectCuts は既定で singleHitDistance */
 export type DistanceReader = (increment: number) => 0 | 1 | undefined;
 
@@ -301,6 +300,7 @@ export function estimateInterval(rows: readonly HudIncrement[], mag: number, fal
   return spans.length > 0 ? spans[Math.floor(spans.length / 2)]! : fallback;
 }
 
+/** ヒットのある増分を、空きが gap（f）を超える所でまとまり（マガジン）に分ける */
 export function groupMagazines<T extends { frame: number }>(items: readonly T[], gap = 40): T[][] {
   const groups: T[][] = [];
   for (const it of items) {
