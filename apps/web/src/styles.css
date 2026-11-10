@@ -1131,10 +1131,11 @@ header h1 {
   max-width: none;
   --badge-w: 24px;
 }
-/* スロットの立ち絵とニケ一覧の縦長の絵の枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+/* スロットの立ち絵とニケ一覧の縦長の絵は、背景を透明にする（立ち絵の周りに画面の背景が見える）。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色と同じ（モダン UI は modern.css の --slot-frame-line） */
 .char-visual-portrait,
 .char-visual-tall {
+  background: transparent;
   border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line, var(--app-border)) 50%) 1;
 }
 .char-visual-img {
