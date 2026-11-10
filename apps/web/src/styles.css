@@ -780,8 +780,13 @@ header h1 {
 /* 操作の印はドラッグして別のスロットへ移せる。持ち上げている間、元の印は薄くする */
 .modern-slot-focus-handle {
   display: inline-flex;
+  border-radius: 4px;
   cursor: grab;
   touch-action: none;
+}
+/* マウスを載せると水色の枠で囲む（載せ続けると title の「操作」が出る） */
+.modern-slot-focus-handle:hover {
+  outline: 2px solid var(--placing-blue);
 }
 .modern-slot-focus-dragging {
   opacity: 0.3;
