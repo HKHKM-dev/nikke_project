@@ -993,6 +993,8 @@
 | 1018 | `20261110-1018_ar_ade_wind.mp4` | ◎エード（310、AR・風圧・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1019 | `20261110-1019_rl+ar_i-doll-flower+ade_wind.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎エード（310、AR・風圧・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 1020 | `20261110-1020_rl+ar_i-doll-flower+ade_wind.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ◎エード（310、AR・風圧・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1030 | `20261110-1030_sg_anis-sparkling-summer_fire.mp4` | ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF |
+| 1031 | `20261110-1031_sg_anis-sparkling-summer_fire.mp4` | ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

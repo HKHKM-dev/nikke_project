@@ -1,0 +1,34 @@
+{
+  "id": "1030",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1030_sg_anis-sparkling-summer_fire.mp4",
+  "original": "2026-11-10_21-50-22.mp4",
+  "durationSec": 202,
+  "frames": 12122,
+  "fps": 60,
+  "sizeMB": 244.9,
+  "sha256": "f7a74d32cf56",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 15,
+      "name": "アニス：スパークリングサマー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF",
+  "backup": {
+    "at": "2026-11-10T22:07+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
