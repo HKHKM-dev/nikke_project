@@ -4,7 +4,7 @@
 - 関連: [design-mast.md](design-mast.md) 8 節（HP の割合の窓のきっかけ `{ selfHpAtMostRef }`）、[design-skill-stage6.md](design-skill-stage6.md) 2.4 節（論点 8。最大HP のみ▲ の間は HP の割合を下げる式）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md) 4.6・6.2 節（条件の判定のタイミング・HP の経路）、[design-indirect-notes.md](design-indirect-notes.md)・[design-debuff-removal.md](design-debuff-removal.md)（間接の notes の経路 `debuff`）
 - 検証: V-0707
 - 作成日: 2026-11-10
-- 状態: 決定・実装（7 節の論点は推奨どおり。H1 を V-0707 で確かめた）
+- 状態: 決定・実装（7 節）
 
 ## 0. 範囲
 
