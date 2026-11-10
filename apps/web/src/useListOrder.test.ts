@@ -20,7 +20,7 @@ import {
 } from '@nikke/core';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
+import { LIST_DIRECTION_STORAGE_KEY, LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
 import { useListOrder } from './useListOrder.ts';
 
 /** 置いてあるデータの文（パスは画面が読むのと同じ。packages/core/src/load.ts）。happy-dom の URL は fs が読めないので、パスで組む */
@@ -90,14 +90,16 @@ describe('useListOrder', () => {
       failedCount: 0,
       tableError: null,
     });
-    expect(result.current.state).toEqual({ order: 'name', powers: new Map() });
+    expect(result.current.state).toEqual({ order: 'name', direction: 'asc', powers: new Map() });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('orders by the fixed-spec power without a roster once the combat power order is chosen', async () => {
     const { result } = render({ roster: null });
     act(() => result.current.controls.select('combatPower'));
-    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
+    await waitFor(() =>
+      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', powers: FIXED.powers }),
+    );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.current.controls).toMatchObject({ fixedSpecPowers: true, failedCount: FIXED.failures.length });
   });
@@ -105,7 +107,11 @@ describe('useListOrder', () => {
   it('loads the table once with a roster, defaults to the combat power order, and counts the failures', async () => {
     const { result, rerender } = render();
     await waitFor(() =>
-      expect(result.current.state).toEqual({ order: 'combatPower', powers: new Map([[ssr.resourceId, POWER]]) }),
+      expect(result.current.state).toEqual({
+        order: 'combatPower',
+        direction: 'desc',
+        powers: new Map([[ssr.resourceId, POWER]]),
+      }),
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]![0]).toMatch(/^\/base\/.*combat\.json$/);
@@ -124,7 +130,9 @@ describe('useListOrder', () => {
 
   it('uses the fixed-spec power under the fixed spec even with a roster', async () => {
     const { result, rerender } = render({ fixedSpec: true });
-    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
+    await waitFor(() =>
+      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', powers: FIXED.powers }),
+    );
     expect(result.current.controls.fixedSpecPowers).toBe(true);
     rerender(DEFAULTS);
     expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
@@ -154,6 +162,22 @@ describe('useListOrder', () => {
     expect(render().result.current.controls.order).toBe('combatPower');
     expect(render({ roster: null }).result.current.controls.order).toBe('name');
     // 育成状況のある描画が始めた読み込みを、テストの中で終わらせる
+    await settle();
+  });
+
+  it('toggles the direction and keeps it in the browser, and resets it to the default when the order is selected', async () => {
+    const { result } = render({ roster: null });
+    expect(result.current.controls.direction).toBe('asc');
+    act(() => result.current.controls.toggleDirection());
+    expect(result.current.state.direction).toBe('desc');
+    expect(localStorage.getItem(LIST_DIRECTION_STORAGE_KEY)).toBe('desc');
+    expect(render({ roster: null }).result.current.controls.direction).toBe('desc');
+
+    act(() => result.current.controls.select('combatPower'));
+    expect(result.current.controls.direction).toBe('desc');
+    expect(localStorage.getItem(LIST_DIRECTION_STORAGE_KEY)).toBeNull();
+    act(() => result.current.controls.toggleDirection());
+    expect(result.current.controls.direction).toBe('asc');
     await settle();
   });
 

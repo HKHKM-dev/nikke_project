@@ -13,17 +13,30 @@ import {
   type CombatPowerTable,
 } from '@nikke/core';
 import { createContext, useEffect, useMemo, useState } from 'react';
-import { LIST_ORDER_STORAGE_KEY, effectiveListOrder, parseListOrder, type ListOrder } from './listOrder.ts';
-import { readStorage, writeStorage } from './storage.ts';
+import {
+  LIST_DIRECTION_STORAGE_KEY,
+  LIST_ORDER_STORAGE_KEY,
+  defaultListDirection,
+  effectiveListOrder,
+  parseListDirection,
+  parseListOrder,
+  type ListDirection,
+  type ListOrder,
+} from './listOrder.ts';
+import { readStorage, removeStorage, writeStorage } from './storage.ts';
 
 /** 一覧（トレイ・選択肢）と未対応の一覧が読む、いまの並びと戦闘力 */
-export type ListOrderState = { order: ListOrder; powers: ReadonlyMap<number, number> };
-export const ListOrderContext = createContext<ListOrderState>({ order: 'name', powers: new Map() });
+export type ListOrderState = { order: ListOrder; direction: ListDirection; powers: ReadonlyMap<number, number> };
+export const ListOrderContext = createContext<ListOrderState>({ order: 'name', direction: 'asc', powers: new Map() });
 
 /** 設定のメニューの「一覧の並び」の欄 */
 export type ListOrderControls = {
   order: ListOrder;
+  /** 並びを選ぶ。向きは、その並びの既定の向きに戻す */
   select: (order: ListOrder) => void;
+  direction: ListDirection;
+  /** 昇順と降順を入れ替える */
+  toggleDirection: () => void;
   /** 戦闘力がスペック固定の値で計算したものか（スペック固定のときと、育成状況が無いとき） */
   fixedSpecPowers: boolean;
   /** 戦闘力を出せなかったキャラの数 */
@@ -39,10 +52,14 @@ export function useListOrder(
   fixedSpec: boolean,
 ): { controls: ListOrderControls; state: ListOrderState } {
   const [saved, setSaved] = useState(() => parseListOrder(readStorage(LIST_ORDER_STORAGE_KEY)));
+  const [savedDirection, setSavedDirection] = useState(() =>
+    parseListDirection(readStorage(LIST_DIRECTION_STORAGE_KEY)),
+  );
   const [table, setTable] = useState<CombatPowerTable | null>(null);
   const [tableError, setTableError] = useState<string | null>(null);
 
   const order = effectiveListOrder(saved, roster !== null);
+  const direction = savedDirection ?? defaultListDirection(order);
   const fixedSpecPowers = fixedSpec || roster === null;
   const needTable = order === 'combatPower' || roster !== null;
   useEffect(() => {
@@ -66,17 +83,29 @@ export function useListOrder(
   );
   const computed = fixedSpecPowers ? fixedComputed : rosterComputed;
   const powers = computed?.powers;
-  const state = useMemo<ListOrderState>(() => ({ order, powers: powers ?? new Map() }), [order, powers]);
+  const state = useMemo<ListOrderState>(
+    () => ({ order, direction, powers: powers ?? new Map() }),
+    [order, direction, powers],
+  );
 
   const select = (next: ListOrder) => {
     setSaved(next);
     writeStorage(LIST_ORDER_STORAGE_KEY, next);
+    setSavedDirection(null);
+    removeStorage(LIST_DIRECTION_STORAGE_KEY);
+  };
+  const toggleDirection = () => {
+    const next = direction === 'asc' ? 'desc' : 'asc';
+    setSavedDirection(next);
+    writeStorage(LIST_DIRECTION_STORAGE_KEY, next);
   };
 
   return {
     controls: {
       order,
       select,
+      direction,
+      toggleDirection,
       fixedSpecPowers,
       failedCount: computed?.failures.length ?? 0,
       tableError,

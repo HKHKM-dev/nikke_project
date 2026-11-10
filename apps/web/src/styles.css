@@ -1242,10 +1242,6 @@ html:has(.modern-view-container) {
   padding: 4px 10px;
   font-size: 0.85rem;
 }
-.char-tray-sort select {
-  font-size: 0.85rem;
-  padding: 1px 4px;
-}
 /* 縦長・四角の切り替えで、いまの形を強く出す */
 .char-tray-shape-button > span:not(.char-tray-shape-current) {
   opacity: 0.45;
