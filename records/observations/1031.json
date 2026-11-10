@@ -1,0 +1,160 @@
+[
+  {
+    "id": "1031-01",
+    "recording": "1031",
+    "kind": "total",
+    "use": "record",
+    "value": 57808330,
+    "description": "アニス：スパークリングサマー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11234。増分は 202 個"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1031-02",
+    "recording": "1031",
+    "kind": "count",
+    "use": "record",
+    "value": 202,
+    "unit": "トリガー",
+    "description": "アニス：スパークリングサマー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 202 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1031-03",
+    "recording": "1031",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 25875,
+    "unit": "ダメージ",
+    "description": "アニス：スパークリングサマー単騎（操作）・灼熱の敵の 1 ペレット（胴体・会心なし・距離なし。胴体 6 ペレットの 155,250 など）。ミサイルでない増分 169 個がすべてこの値の格子に乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分を、モデルの f300 のアニスのペレット 10 個までの和（会心・コア・距離の組み合わせ）と、S2 の倍率ダメージの 1 ヒット（会心なし・あり）の格子に当てた（--opt grid=アニス=1@300/x10;ミサイル=1@skill@1000:skill2、setup は V-0712:A-anis-pellet）。202 個すべてがどちらかに乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1031-04",
+    "recording": "1031",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 381751,
+    "unit": "ダメージ",
+    "description": "同じ録画の、S2 の倍率ダメージ（ミサイル）の 1 ヒット（会心なし。会心は 572,626）。33 回出て、どれもこの 2 つの値のどちらか。最終攻撃力の値 01 %（スキル Lv10 で 382.42%）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分を、モデルの f300 のアニスのペレット 10 個までの和（会心・コア・距離の組み合わせ）と、S2 の倍率ダメージの 1 ヒット（会心なし・あり）の格子に当てた（--opt grid=アニス=1@300/x10;ミサイル=1@skill@1000:skill2、setup は V-0712:A-anis-pellet）。202 個すべてがどちらかに乗る"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1031-05",
+    "recording": "1031",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "count",
+    "value": [5, 10, 15, 20],
+    "unit": "発目",
+    "description": "同じ録画の、S2 の倍率ダメージが出た射撃（1 始まり。最初の 4 回）。戦闘の終わりまで 33 回とも、前のミサイルから 5 発目（マガジン 5 発の最終弾）の後に出る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分を、モデルの f300 のアニスのペレット 10 個までの和（会心・コア・距離の組み合わせ）と、S2 の倍率ダメージの 1 ヒット（会心なし・あり）の格子に当てた（--opt grid=アニス=1@300/x10;ミサイル=1@skill@1000:skill2、setup は V-0712:A-anis-pellet）。202 個すべてがどちらかに乗る。ミサイルとミサイルの間のアニスの増分を数えた（33 回とも 5 個）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotIndices",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "count": 4
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  },
+  {
+    "id": "1031-06",
+    "recording": "1031",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": 74,
+    "unit": "f",
+    "description": "同じ録画の、最終弾の増分から S2 の倍率ダメージの増分までの動画のフレーム数の最頻値（74f が 23 回・73f が 9 回・71f が 1 回）。中近・近・遠・中遠のどの区間でも同じ",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分を、モデルの f300 のアニスのペレット 10 個までの和（会心・コア・距離の組み合わせ）と、S2 の倍率ダメージの 1 ヒット（会心なし・あり）の格子に当てた（--opt grid=アニス=1@300/x10;ミサイル=1@skill@1000:skill2、setup は V-0712:A-anis-pellet）。202 個すべてがどちらかに乗る。ミサイルの増分と、その直前の増分（最終弾）のフレームの差"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitShotDelay",
+      "args": {
+        "slot": 1,
+        "skill": "skill2"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      }
+    }
+  }
+]

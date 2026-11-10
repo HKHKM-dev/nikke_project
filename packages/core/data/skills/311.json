@@ -32,12 +32,13 @@
           "count": 1,
           "delayFrames": 3,
           "assumes": {
-            "ja": "遮蔽物 HP 回復と同じ CT ごとのアクティブ（C-0822 の時刻）で、デバフのかかった味方からランダムに 2 機の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す。二日酔い（気絶）と、名前の付いた状態でない味方の▼（プリバティの最大装弾数▼など）は、外れるかを確かめていないので外さない（未実装）",
-            "en": "On the same cooldown active as the cover heal (C-0822 timing), removes one debuff-flagged state (Drunken), with all its stacks, from 2 random debuffed allies. Hangover (stun) and ally debuffs that are not named states (e.g. Privaty's Max Ammo down) are not removed, since that has not been checked (not implemented)"
+            "ja": "遮蔽物 HP 回復と同じ CT ごとのアクティブ（C-0822 の時刻）で、デバフのかかった味方からランダムに 2 機の、デバフの印の付いた状態（ほろ酔い）を 1 つ、スタックごと外す。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）。名前の付いた状態でない味方の▼は、録画ではアニス：スパークリングサマーのバーストの最大装弾数▼が外れた（▲は残る）が、モデルは外さない（未実装）",
+            "en": "On the same cooldown active as the cover heal (C-0822 timing), removes one debuff-flagged state (Drunken), with all its stacks, from 2 random debuffed allies. Hangover (stun) is not removed, since that has not been checked (not implemented). Ally debuffs that are not named states were removed in the recordings (Anis: Sparkling Summer's burst Max Ammo down; buffs stayed), but the model does not remove them (not implemented)"
           },
           "claims": [
             "C-0978",
-            "C-0979"
+            "C-0979",
+            "C-1038"
           ]
         }
       ]

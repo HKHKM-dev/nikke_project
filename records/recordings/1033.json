@@ -1,0 +1,46 @@
+{
+  "id": "1033",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1033_sg_anis-sparkling-summer_water.mp4",
+  "original": "2026-11-10_22-01-17.mp4",
+  "durationSec": 201.4,
+  "frames": 12085,
+  "fps": 60,
+  "sizeMB": 244.2,
+  "sha256": "3e0fb04db782",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 311,
+      "name": "ココア",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 401,
+      "name": "シン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 15,
+      "name": "アニス：スパークリングサマー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0712 の撮影 B。ココア（I）+ シン（II）+ アニス：スパークリングサマー（III・操作）・水冷の敵・オートバースト ON",
+  "backup": {
+    "at": "2026-11-10T22:10+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

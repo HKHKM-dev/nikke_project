@@ -1,0 +1,468 @@
+[
+  {
+    "id": "1033-01",
+    "recording": "1033",
+    "kind": "timing",
+    "use": "record",
+    "value": [1385, 2586, 3765, 4966, 6256, 7598, 8795, 10075, 11254],
+    "unit": "f",
+    "description": "左のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・25・0・26・5・25・0・25f"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-02",
+    "recording": "1033",
+    "kind": "timing",
+    "use": "record",
+    "value": [1414, 2615, 3794, 5085, 6285, 7626, 8824, 10104, 11283],
+    "unit": "f",
+    "description": "左のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・25・0・25・0・25・0・25f"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-03",
+    "recording": "1033",
+    "kind": "timing",
+    "use": "record",
+    "value": [1443, 3824, 6314, 8853, 11313],
+    "unit": "f",
+    "description": "左のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-04",
+    "recording": "1033",
+    "kind": "timing",
+    "use": "record",
+    "value": [2051, 4432, 6923, 9462],
+    "unit": "f",
+    "description": "左のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-05",
+    "recording": "1033",
+    "kind": "interval",
+    "use": "record",
+    "value": [608, 608, 609, 609],
+    "unit": "f",
+    "description": "左のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "左の欄（0,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel-left@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-06",
+    "recording": "1033",
+    "kind": "total",
+    "use": "record",
+    "value": 219689846,
+    "description": "ココア・シン・アニス：スパークリングサマー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11528。増分は 1923 個"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-07",
+    "recording": "1033",
+    "kind": "count",
+    "use": "record",
+    "value": 274,
+    "unit": "トリガー",
+    "description": "ココア・シン・アニス：スパークリングサマー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1923 個。前の増分から 30f 未満の増分（1888 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 38f）から発の数を決めた（2 発になった組 27 個）"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1033-08",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 28462,
+    "unit": "ダメージ",
+    "description": "ココア + シン + アニス：スパークリングサマー（操作）・水冷の敵の、フルバーストの外（バーストを使う前）のアニスの 1 ペレット（胴体・会心なし・距離なし）。水冷の敵への有利の 1.1 倍だけが乗った値（単騎・灼熱の 25,875 の 1.1 倍）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-09",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 91802,
+    "unit": "ダメージ",
+    "description": "同じ録画の、フルバーストの窓の中のアニスの 1 ペレット（胴体。HUD の上のペレットの数字にも 91802 と出る）。S1 の発動者基準の攻撃力▲・バーストの有利コードの攻撃ダメージ▲・フルバースト補正が乗った値。5 回の窓の発はどれもこの格子に乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-10",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1354427,
+    "unit": "ダメージ",
+    "description": "同じ録画の、フルバーストの窓の中の S2 の倍率ダメージ（ミサイル）の 1 ヒット（会心なし。会心は 1,805,903）。S1 の攻撃力▲・バーストの有利コードの攻撃ダメージ▲・フルバースト補正が乗る。窓の外は 419,926（有利の 1.1 倍だけ。会心は 629,889）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 600,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-11",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "count",
+    "value": 1,
+    "unit": "発",
+    "description": "同じ録画の、バーストの窓の中のアニスのマガジンの発の数。2 回目・3 回目の窓は、窓の終わりまでどの発もリロードを挟み、どの発の 74f 後にもミサイルが出る（3853〜4415 の 12 発、6368〜6878 の 11 発）。1 回目の窓は途中の 1813 から、4 回目の窓は最初の発の 8971 から 5 発のマガジンに戻る（ココアの S1 のデバフ解除が最大装弾数▼を外した。検証記録の結果）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "maxAmmoAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-12",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": 142,
+    "unit": "f",
+    "description": "同じ録画の、フルバーストの外のアニスの最終弾から次のマガジンの 1 発目までの増分の間（リロード 2 秒 + 24f）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 3,
+        "frame": 300
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-13",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": 51,
+    "unit": "f",
+    "description": "同じ録画の、バーストの窓の中（マガジン 1 発の間）のアニスの発と発の間（= 最終弾から次の 1 発目まで。2・3 回目の窓のどの間も 51f）。S1 とバーストのリロード速度▲の和（77%）を C-0013 の形（× (1 − Σ)）で掛けた長さ。÷ (1 + Σ) の形なら約 91f。最大装弾数▼が外れた後の窓でも 51f のまま",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-14",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 11990,
+    "unit": "ダメージ",
+    "description": "同じ録画の、フルバーストの外のシン（電撃の AR）の 1 ヒット（胴体・会心なし・距離なし。距離ありの 15,587 などで出る）。水冷の敵への有利の 1.1 倍だけ",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-15",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 30433,
+    "unit": "ダメージ",
+    "description": "同じ録画の、フルバーストの窓の中のシンの 1 ヒット（胴体。距離ありの 36,520・会心と距離の 46,664・コアと距離の 56,808 などで出る）。アニスの S1 の攻撃力▲（アニスの攻撃力の 55.31%。シン自身の攻撃力基準なら別の値）とフルバースト補正が乗り、バーストの有利コードの攻撃ダメージ▲は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 700,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-16",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": 82,
+    "unit": "f",
+    "description": "同じ録画の、フルバーストの外のシンの最終弾から次のマガジンの 1 発目まで（シンの増分の 40f を超える空き。ジャンプとバーストの止まりを跨ぐ回を除き 81〜83f）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 2,
+        "frame": 300
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-17",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": 53,
+    "unit": "f",
+    "description": "同じ録画の、フルバーストの窓の中のシンの最終弾から次のマガジンの 1 発目まで（1〜4 回目の窓の中のリロード 8 回とも 53〜54f）。S1 のリロード速度▲（49.28%）だけを C-0013 の形で掛けた長さ",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 2,
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-18",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 430745,
+    "unit": "ダメージ",
+    "description": "同じ録画の、フルバーストの窓の中のココア（灼熱の SR）の 1 発（コア・会心なし・距離なし）。フルバースト補正だけの値で、S1 の攻撃力▲（電撃の味方だけ）は乗らない（乗る値の格子には 0 個）。窓の外の値と重なる値があり、ココアの発の多くは窓の中か外か決まらない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 700,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1033-19",
+    "recording": "1033",
+    "source": "V-0712",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "timing",
+    "value": [1813, 8971],
+    "unit": "動画のフレーム",
+    "description": "同じ録画の、バーストの窓の中でアニスのマガジンが 5 発に戻った最初の発（1 回目の窓と 4 回目の窓）。直前のリロードの間に、モデルのココアの S1 の発動（戦闘開始から 883 ティックごと、その 3 ティック後。C-0822）の 1 回目と 9 回目が来る。2 回目・3 回目の窓の中には S1 の発動が無く、窓の終わりまで 1 発のまま",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分（キャッシュ）と recipe:buff-edge@5 の --opt grid",
+      "note": "HUD の総ダメージの増分 1923 個を、モデルの 1 ヒットの格子（--opt grid=アニス=3@300/x10;アニスB=3@562/x10;アニスFB=3@700/x10;シン=2@300/x2;シンFB=2@700/x2;ココア=1@300;ココアFB=1@700;ミサイル=3@skill@300:skill2;ミサイルFB=3@skill@600:skill2 と、2 人の同じフレームの和。setup は V-0712:B-anis-pellet-before。モデルのフレームは窓の前 300・バーストの後で窓の前 562・窓の中 700）に ±1.5 で当てた: アニス 98・アニスFB 42・ミサイル 23・ミサイルFB 28・シン 1181・シンFB 393・2 人の和 63・ココアかココアFB 77・外れ 18（ほとんどがシンのバーストのダメージ 154,878。格子に入れていない）。フルバーストの窓は左のバースト欄（burst-panel@4 の side=left）の III のタイマーの 00.00 から六角形が灰色に替わるまで"
+    }
+  }
+]
