@@ -645,7 +645,8 @@ header h1 {
   --tray-visual-w: calc(256px / 3 + 2px);
   /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
-  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2 */
+  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2。狭い画面では
+     useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
   --slot-portrait-h: 256px;
 }
 /* 置き先待ちのスロット（カードでなく立ち絵の枠）・ニケの水色の実線の枠 */
@@ -667,18 +668,18 @@ header h1 {
 }
 
 /* 5スロットグリッド */
-/* カードは固定の幅で並べ、入りきらなければ折り返す。余った幅は左右に分けて、各行を中央に寄せる */
+/* 5 枚を 1 段に並べ、余った幅は左右に分けて中央に寄せる。幅が足りなければ立ち絵を縮めて収める（useSlotFit.ts が --slot-portrait-h を置く） */
 .modern-slots-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* 立ち絵どうしの横の間は 14px（カードの左右の余白 4px ×2 と、この 6px） */
-  gap: 12px 6px;
+  /* 立ち絵どうしの横の間は 8px（カードの左右の余白 2px ×2 と、この 4px） */
+  gap: 12px 4px;
 }
 /* カードの幅は立ち絵（1:2 の枠と 1px の枠線）と左右の余白（.modern-slot-card の padding）だけにして、スロットの間を詰める */
 .modern-slots-grid > .modern-slot-card {
   box-sizing: border-box;
-  width: calc(var(--slot-portrait-h) / 2 + 2px + 8px);
+  width: calc(var(--slot-portrait-h) / 2 + 2px + 2 * var(--slot-card-pad-x));
 }
 
 /* モダンカード。カードの枠と背景は出さない（立ち絵とダメージの欄だけを並べる） */
@@ -686,7 +687,8 @@ header h1 {
   display: flex;
   flex-direction: column;
   /* 左右は、置き先待ちの水色の枠（立ち絵の外へ 2px 出る）が収まるだけ空ける */
-  padding: 8px 4px;
+  --slot-card-pad-x: 2px;
+  padding: 8px var(--slot-card-pad-x);
   gap: 8px;
   position: relative;
 }
@@ -700,8 +702,9 @@ header h1 {
   /* 立ち絵（.modern-slot-char-area の先頭、高さ --slot-portrait-h）の中央 */
   top: calc(var(--slot-portrait-h) / 2);
   left: 50%;
-  width: 96px;
-  height: 96px;
+  /* 立ち絵の幅の 3/4（元の大きさで 96px）。立ち絵が縮むと一緒に縮む */
+  width: calc(var(--slot-portrait-h) * 3 / 8);
+  height: calc(var(--slot-portrait-h) * 3 / 8);
   transform: translate(-50%, -50%) scale(0.92);
   fill: none;
   stroke: #fff;
@@ -932,35 +935,37 @@ header h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 0.25em;
   opacity: 0.5;
+  /* 中の文字の大きさの基準（元の大きさで 16px。立ち絵の高さに比べて縮める。中の文字と余白は em で書く） */
+  font-size: calc(var(--slot-portrait-h) / 16);
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
 }
 .modern-slot-empty-plus {
-  font-size: 3rem;
+  font-size: 3em;
   line-height: 1;
   /* 枠の中の表示（＋・番号など）を中央より下げる（FRONT・REAR とも）。中身の列は上下の中央に置いているので、上の余白を 64px 足すと 32px 下がる */
-  margin-top: 64px;
+  margin-top: calc(var(--slot-portrait-h) / 4);
 }
 /* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
 .modern-slot-empty-number {
-  font-size: 1.8rem;
+  font-size: 1.8em;
   font-weight: bold;
   line-height: 1.1;
 }
 .modern-slot-empty-row {
-  font-size: 0.75rem;
+  font-size: 0.75em;
   font-weight: bold;
   letter-spacing: 0.08em;
 }
 .modern-slot-empty-label {
-  margin-top: 4px;
-  font-size: 0.7rem;
+  margin-top: calc(var(--slot-portrait-h) / 64);
+  font-size: 0.7em;
   letter-spacing: 0.06em;
 }
 .modern-slot-empty-position {
-  font-size: 0.7rem;
+  font-size: 0.7em;
   letter-spacing: 0.1em;
 }
 .modern-slot-error {
@@ -969,7 +974,7 @@ header h1 {
   margin: 0;
 }
 
-/* ダメージ表示 & 割合バー */
+/* ダメージ表示 & 割合バー（文字の大きさと余白は em で書き、立ち絵の高さに比べて縮める。空のスロットの文字も同じ） */
 /* 幅は立ち絵（.char-visual-portrait。1:2 の枠と 1px の枠線）と同じにし、中央にそろえる */
 .modern-slot-damage-section {
   box-sizing: border-box;
@@ -977,8 +982,9 @@ header h1 {
   align-self: center;
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 4px 6px;
+  gap: 0.1875em;
+  padding: 0.25em 0.375em;
+  font-size: calc(var(--slot-portrait-h) / 16);
   background: color-mix(in srgb, var(--app-fg) 5%, transparent);
   border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
 }
@@ -988,12 +994,12 @@ header h1 {
   align-items: baseline;
 }
 .modern-slot-damage-value {
-  font-size: 0.95rem;
+  font-size: 0.95em;
   font-weight: bold;
   font-variant-numeric: tabular-nums;
 }
 .modern-slot-damage-percent {
-  font-size: 0.75rem;
+  font-size: 0.75em;
   opacity: 0.7;
 }
 .modern-slot-damage-bar-track {

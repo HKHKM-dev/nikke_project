@@ -1,5 +1,6 @@
 // スロットとニケ一覧の間を立ち絵が動くアニメーション（置く・外す・入れ替える）。動くのは立ち絵の枠の写しで、本物の上に重ねて動かし、
 // 着いたら消す。どれも同じ長さ・動き方（離したときの DragOverlay の動きとそろえる。ModernView の DROP_ANIMATION）
+import { slotSizeVars } from './useSlotFit.ts';
 
 /** 動く時間（ms）と動き方 */
 const FLIGHT = { duration: 250, easing: 'ease', fill: 'forwards' } as const;
@@ -61,6 +62,8 @@ function frameAt(target: DOMRect, base: DOMRect): Keyframe {
 /** node の写しを、いまの node の位置・大きさで画面に重ねる */
 function ghostOf(node: Element, base: DOMRect): HTMLElement {
   const ghost = cloneForAnimation(node);
+  // スロットの立ち絵は並びの幅で縮む（useSlotFit）。写しを置く body の外でも同じ大きさにする
+  for (const [name, value] of Object.entries(slotSizeVars(node))) ghost.style.setProperty(name, value);
   Object.assign(ghost.style, {
     position: 'fixed',
     left: `${base.left}px`,
