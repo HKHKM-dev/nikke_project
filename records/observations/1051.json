@@ -92,6 +92,10 @@
     "method": {
       "tool": "recipe:buff-edge@5（--opt grid）と使い捨てのスクリプト（組の数え）",
       "note": "倍率ダメージの格子（S1撃・S1撃+無）に当たった増分を時刻の順に並べ、40f 未満で続く 2 つを 1 組とした"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -107,6 +111,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts（--mode series）と recipe:buff-edge@5（--opt grid）",
       "note": "照準の左の残弾の表示で発のフレームを取り、同じフレームの HUD の増分の有無で命中か外れかを分けた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   }
 ]

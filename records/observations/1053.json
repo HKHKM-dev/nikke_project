@@ -126,6 +126,10 @@
     "method": {
       "tool": "recipe:buff-edge@5（--opt grid）の外れの読み",
       "note": "外れの増分から、▲の無い通常攻撃の 1 ヒットの格子（14,680・16,882 など）を引いた値"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   }
 ]

@@ -92,6 +92,10 @@
     "method": {
       "tool": "recipe:buff-edge@5（--opt grid）と使い捨てのスクリプト（組の数え）",
       "note": "倍率ダメージの格子（S1撃・S1撃+無）に当たった増分を時刻の順に並べ、40f 未満で続く 2 つを 1 組とした"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -107,6 +111,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts（--mode series）と使い捨てのスクリプト（命中の数え）",
       "note": "照準の左の残弾の表示で発のフレームを取り、同じフレームに HUD の増分の無い発を外れとした。連射の途中では 1 フレームに 2 発出ることがあり外れを見落としうる（マガジンが進むほど、数えた命中 100 回目と組の差が 21・27f に開く）ので、遅れはまばらな発で決まる組で読んだ"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   },
   {
@@ -122,6 +130,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts（--mode series）と使い捨てのスクリプト",
       "note": "残弾の表示の減りと、同じフレームの HUD の増分の有無から数えた"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   }
 ]

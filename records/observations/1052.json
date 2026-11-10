@@ -126,6 +126,10 @@
     "method": {
       "tool": "recipe:buff-edge@5（--opt grid）の外れの読み",
       "note": "外れの増分から、▲の無い通常攻撃の 1 ヒットの格子（14,680・16,882 など）を引いた値"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
     }
   },
   {
@@ -141,6 +145,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts（--mode series）と recipe:buff-edge@5（--opt grid）",
       "note": "残弾の表示の替わり目と、同じフレームの増分の格子（無・有）を並べた。f1003・1560・2117・2806 の 100 発目"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
     }
   },
   {
@@ -161,6 +169,10 @@
     "method": {
       "tool": "tools/captures/reticle-ammo.ts（--mode series）と recipe:buff-edge@5（--opt grid）",
       "note": "300 発目は f1203・1760・2317"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
     }
   }
 ]

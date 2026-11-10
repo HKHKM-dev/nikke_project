@@ -41,6 +41,19 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     });
   });
 
+  it('deals the S1 damage as two hits of one activation, 16 and 30 frames after a shot (C-1066)', () => {
+    const hits = plan.skillHits.filter((h) => h.slotIndex === rei && h.effect.dot === undefined);
+    expect(hits.length).toBeGreaterThan(0);
+    const shots = new Set(plan.shots[rei]!.frames);
+    // 戦闘の終わりで 2 ヒット目が切れた組は数えない
+    for (let k = 0; k + 1 < hits.length; k += 2) {
+      const [first, second] = [hits[k]!, hits[k + 1]!];
+      expect(second.frame - first.frame).toBe(14);
+      expect(second.effect).toBe(first.effect);
+      expect(shots.has(first.frame - 16)).toBe(true);
+    }
+  });
+
   it('gives the burst attack damage up to every Fire ally for 10 s from each Rei burst', () => {
     const uses = input.burst ? plan.schedule!.activations.filter((a) => a.slotIndex === rei).map((a) => a.frame) : [];
     if (input.burst) expect(uses.length).toBeGreaterThan(0);

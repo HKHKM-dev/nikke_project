@@ -18,7 +18,10 @@
           "assumes": {
             "ja": "通常攻撃の発（弾薬 1 消費）を戦闘を通して数え（リロードで 0 に戻さない）、100 の倍数の発で付き、3 秒の間に次の 100 発目が来れば付き直す。乗るのは自分のコードが有利な敵（灼熱には風圧）だけ",
             "en": "Normal attack shots (1 ammo each) are counted through the battle (not reset on reload); it applies on every 100th shot and is refreshed if the next 100th shot comes within 3 s. It only applies against enemies her code is strong against (Wind for Fire)"
-          }
+          },
+          "claims": [
+            "C-1063"
+          ]
         },
         {
           "kind": "damage",
@@ -36,7 +39,10 @@
           "assumes": {
             "ja": "対象「照準線に最も近い攻撃範囲内の敵」は、敵 1 体の前提ではその敵。命中は期待値で数える（1 発ごとにその発の弾丸命中率）。1 回の発動は、命中 100 回目の発の 16f 後と、その 14f 後の 2 ヒットに値を等分して出る（どちらも会心しうる）。バーストゲージは確かめていない（溜めないとした）",
             "en": "The target (the enemy within attack range nearest the crosshair) is the lone enemy. Hits are counted as expected values (each shot adds its bullet hit rate). Each activation deals the value split equally into two hits, 16 frames after the shot of the 100th hit and 14 frames after that (both can crit). The burst gauge is not verified (taken as none)"
-          }
+          },
+          "claims": [
+            "C-1066"
+          ]
         }
       ]
     },
@@ -54,7 +60,10 @@
           "assumes": {
             "ja": "バースト 3 段階突入時は、II の発動でバースト 3 段階に進んだ時（III の自分の発動の前）。III の自分だけの編成では起きない。灼熱コードの味方全体に自分も入る",
             "en": "Entering Burst Stage 3 is when a Burst II activation advances the chain to Stage 3 (before her own Burst III). It does not occur with no Burst I/II allies. All Fire Code allies include herself"
-          }
+          },
+          "claims": [
+            "C-1064"
+          ]
         }
       ],
       "notes": [
@@ -79,7 +88,10 @@
         {
           "kind": "burstDamage",
           "ref": 5,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": [
+            "C-1067"
+          ]
         },
         {
           "kind": "timed",
@@ -88,7 +100,10 @@
           "targetElement": "Fire",
           "stat": "attackDamage",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1065"
+          ]
         }
       ],
       "notes": [

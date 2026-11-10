@@ -355,7 +355,7 @@
       "metric": "burstHitDamage",
       "args": {
         "slot": 3,
-        "n": 0,
+        "n": 3,
         "crit": false
       },
       "setup": {
@@ -367,12 +367,12 @@
       "tolerance": {
         "abs": 1
       },
-      "note": "撮影 C: レイのバーストの倍率ダメージ（1 回目）"
+      "note": "撮影 C: レイのバーストの倍率ダメージ（4 回目）"
     }
   ],
   "predicted": {
     "at": "2026-11-10",
-    "commit": "cee05f54e203aa4b101fa74c9f50f77102c8f887",
+    "commit": "6379b90acf07056e6b67bccec97f374a97e8a705",
     "values": {
       "H1": {
         "A-rei-base": 13345.2744,
