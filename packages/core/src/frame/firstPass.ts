@@ -635,7 +635,7 @@ function runFirstPassOnce(
   // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
   const hitRateAt = slots.map(() => 0);
-  // 二丁持ちの SMG は 1 発 2 ヒットで、2 ヒットともゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。C-1012）
+  // 二丁持ち（SMG・RL）は 1 発 2 ヒットで、2 ヒットともゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。C-1012・V-0706）
   const muzzleHits = slots.map((slot) =>
     slot === null ? 1 : muzzleHitsOf(slot.character.weaponType, slot.character.shot),
   );
@@ -735,7 +735,7 @@ function runFirstPassOnce(
     const span = spanValueAt(i, f);
     const hitRate = span?.hitRate ?? slot.hitRate ?? 1;
     const coreHits = span !== undefined ? span.coreHits : (slot.hitRate ?? 1) * (slot.coreHitRate ?? 0);
-    // 二丁持ちの SMG は 1 発 2 ヒット（命中・コアの命中の期待値もヒットごと）
+    // 二丁持ち（SMG・RL）は 1 発 2 ヒット（命中・コアの命中の期待値もヒットごと）
     const m = muzzleHits[i]!;
     return { hits: pellets[i] ? 1 : hitRate * m, coreHits: enemyHasCore ? coreHits * m : 0 };
   };

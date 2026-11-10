@@ -17,9 +17,10 @@
       "effects": [],
       "notes": [
         {
-          "ja": "フルチャージ攻撃が命中した時の、対象への挑発（2 秒）はダメージに関係しない。付けたときにゲージを溜めるかは確かめていない",
-          "en": "The taunt (2 s) on the target when a Full Charge attack hits does not affect damage. Whether applying it charges the burst gauge is unverified",
-          "kind": "noDamage"
+          "ja": "フルチャージ攻撃が命中した時の、対象への挑発（2 秒）はダメージに関係しない（付けてもゲージを溜めない）",
+          "en": "The taunt (2 s) on the target when a Full Charge attack hits does not affect damage (applying it does not charge the burst gauge)",
+          "kind": "noDamage",
+          "claims": ["C-1020"]
         },
         {
           "ja": "フルチャージ攻撃が命中した時の、対象の攻撃力▼は敵の攻撃力でダメージに関係しない",

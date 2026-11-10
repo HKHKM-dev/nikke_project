@@ -25,7 +25,7 @@
   "fixedSpec": true,
   "autoFire": true,
   "autoBurst": true,
-  "conditionNote": "V-0706。ノア単騎（操作）。左上のオート射撃・オートバーストは両方 ON（依頼は OFF）。II だけなのでバーストは起きない",
+  "conditionNote": "V-0706。ノア単騎（操作）。左上のオート射撃・オートバーストは両方 ON（依頼は OFF）。II だけなのでバーストは起きない。バーストの欄は左",
   "backup": {
     "at": "2026-11-10T18:59+09:00",
     "via": "cloud-move",
