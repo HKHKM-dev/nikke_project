@@ -1322,7 +1322,8 @@ html:has(.modern-view-container) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  /* 四角の絵と、その下の名前の間（名前を絵に寄せる） */
+  gap: 0;
   padding: 2px;
   background: transparent;
   border: none;
@@ -1334,13 +1335,14 @@ html:has(.modern-view-container) {
 .char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
   filter: brightness(0.4);
 }
+/* 四角の絵の下の名前。収まらない名前は流す（.modern-slot-char-name-scroll。ModernSlotCard.tsx の useScrollingName） */
 .char-tray-item-name {
   font-size: 0.75rem;
+  line-height: 1.2;
   text-align: center;
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 /* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
 .char-tray-item-visual {
@@ -1465,7 +1467,7 @@ html:has(.modern-view-container) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
   padding: 2px;
   pointer-events: none;
 }

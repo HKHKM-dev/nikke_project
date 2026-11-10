@@ -213,7 +213,21 @@ const NAME_SCROLL_GAP = 32;
  * （名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）
  */
 export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks | null }) {
-  const boxRef = useRef<HTMLDivElement>(null);
+  const { boxRef, scrollClass, style, track } = useScrollingName<HTMLDivElement>(name);
+  return (
+    <div ref={boxRef} className={`modern-slot-char-name ${scrollClass}`} style={style}>
+      {marks && <GrowthMarksView {...marks} className="modern-slot-growth" />}
+      {track}
+    </div>
+  );
+}
+
+/**
+ * 枠に収まらない名前を、右から左へ一定の速さで流し続ける（名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）。
+ * 枠（boxRef）に scrollClass と style を付け、中に track を置く。スロットと一覧の立ち絵の名前、一覧の四角の絵の下の名前が使う
+ */
+export function useScrollingName<T extends HTMLElement>(name: string) {
+  const boxRef = useRef<T>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [textWidth, setTextWidth] = useState<number | null>(null);
   useLayoutEffect(() => {
@@ -232,24 +246,20 @@ export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks
     return () => observer.disconnect();
   }, [name]);
   const shift = textWidth === null ? 0 : textWidth + NAME_SCROLL_GAP;
-  return (
-    <div
-      ref={boxRef}
-      className={`modern-slot-char-name ${textWidth !== null ? 'modern-slot-char-name-scroll' : ''}`}
-      style={
-        {
-          '--name-shift': `${shift}px`,
-          '--name-duration': `${shift / NAME_SCROLL_SPEED}s`,
-        } as CSSProperties
-      }
-    >
-      {marks && <GrowthMarksView {...marks} className="modern-slot-growth" />}
+  return {
+    boxRef,
+    scrollClass: textWidth !== null ? 'modern-slot-char-name-scroll' : '',
+    style: {
+      '--name-shift': `${shift}px`,
+      '--name-duration': `${shift / NAME_SCROLL_SPEED}s`,
+    } as CSSProperties,
+    track: (
       <span className="modern-slot-char-name-track">
         <span ref={textRef}>{name}</span>
         {textWidth !== null && <span aria-hidden="true">{name}</span>}
       </span>
-    </div>
-  );
+    ),
+  };
 }
 
 /** 空のスロットの枠（＋・番号・FRONT か REAR・EMPTY SLOT・5 つのうちの位置）。持ち上げたときの絵（ModernView の DragOverlay）にも使う */

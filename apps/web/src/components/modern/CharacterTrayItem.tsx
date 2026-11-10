@@ -7,7 +7,7 @@ import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { TrayShape } from '../../trayShape.ts';
-import { SlotCharName } from './ModernSlotCard.tsx';
+import { SlotCharName, useScrollingName } from './ModernSlotCard.tsx';
 import type { ActiveDragData } from './dropIntent.ts';
 import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 
@@ -64,6 +64,16 @@ function TrayVisual({
   );
 }
 
+/** 四角の絵の下の名前。収まらない名前はスロットの名前と同じく流す */
+function TrayItemName({ name }: { name: string }) {
+  const { boxRef, scrollClass, style, track } = useScrollingName<HTMLSpanElement>(name);
+  return (
+    <span ref={boxRef} className={`char-tray-item-name ${scrollClass}`} style={style}>
+      {track}
+    </span>
+  );
+}
+
 /**
  * ニケ一覧の項目の見た目（絵の枠と、四角のときは絵の下の名前）。一覧の項目と、一覧から持ち上げた絵（ModernView）が使う。
  * overlay は絵の上に重ねるもの（配置中の ✓）
@@ -96,7 +106,7 @@ export function TrayItemFace({
         {overlay}
       </span>
       {/* 縦長は名前を絵に重ねるので、下には出さない */}
-      {shape === 'square' && <span className="char-tray-item-name">{character.name.ja}</span>}
+      {shape === 'square' && <TrayItemName name={character.name.ja} />}
     </>
   );
 }
