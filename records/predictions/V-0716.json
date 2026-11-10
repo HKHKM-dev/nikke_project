@@ -1,0 +1,425 @@
+{
+  "verification": "V-0716",
+  "note": "撮る前に、下書きの定義（data/skills/831.json）で出した。S2 を自分の III の発動の時と読む仮説は override で書けないので、検証記録の「予測」に手で書いた。撮った後、S1 の倍率ダメージの形（2 ヒットに等分）とバーストの遅れを定義に入れて出し直し、1 ヒットの指標を録画に多いコアの値にした。バーストの遅れの表に行を入れた後、Hsame（同じ発動の▲が乗る）は H1 に入ったので、乗らない側の H0-same に置き換えた",
+  "team": [
+    {
+      "rid": 311
+    },
+    {
+      "rid": 160
+    },
+    {
+      "rid": 831,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義",
+      "override": {}
+    },
+    {
+      "id": "H0-s1",
+      "note": "S1 の有利コードの攻撃ダメージ▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 831,
+            "skill": "skill1",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-s2",
+      "note": "S2 の攻撃力▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 831,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-burst",
+      "note": "バーストの攻撃ダメージ▲が付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 831,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0-same",
+      "note": "バーストの倍率ダメージに、同じ発動の攻撃ダメージ▲が乗らない（遅れは表の 46f のまま）",
+      "override": {
+        "burstDelays": [
+          {
+            "rid": 831,
+            "row": {
+              "hitFrames": 46,
+              "effectFrames": 0
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-rei-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 831,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎・灼熱）: レイの 1 ヒット（コア）。有利が無いので S1 の▲は乗らない"
+    },
+    {
+      "id": "A-rei-skill",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 831,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: S1 の命中 100 回目の倍率ダメージ（1 回目の 1 ヒット目。2 ヒットに等分）"
+    },
+    {
+      "id": "B-rei-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 831,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（単騎・風圧）: 100 発目の前のレイの 1 ヒット（コア）（有利の 1.1 倍だけ）"
+    },
+    {
+      "id": "B-rei-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 831,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 マガジン目の 100 発目の後のレイの 1 ヒット（コア）（S1 の▲あり）"
+    },
+    {
+      "id": "B-rei-skill",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "team": [
+        {
+          "rid": 831,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"],
+        "burst": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: S1 の倍率ダメージの 2 回目の 1 ヒット目（命中 200 回目。S1 の▲の窓の中）"
+    },
+    {
+      "id": "C-rei-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C（ココア・ユニ・レイ・灼熱）: 1 回目のチェーンの前のレイの 1 ヒット（コア）"
+    },
+    {
+      "id": "C-rei-s2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 2500,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: レイの CT が明けず II で切れたチェーン（モデルの 2 回目）の後のレイの 1 ヒット（コア）（S2 の▲だけ）"
+    },
+    {
+      "id": "C-rei-s2-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: 1 回目のフルバーストの中のレイの 1 ヒット（コア）（S2 とバーストの▲）"
+    },
+    {
+      "id": "C-uni-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: 1 回目のチェーンの前のユニの 1 ヒット（コア）"
+    },
+    {
+      "id": "C-uni-s2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2500,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: II で切れたチェーンの後のユニの 1 ヒット（コア）（レイの S2 の▲だけ）"
+    },
+    {
+      "id": "C-uni-s2-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: 1 回目のフルバーストの中のユニの 1 ヒット（コア）（レイの S2 とバーストの▲）"
+    },
+    {
+      "id": "C-rei-burst",
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 3,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: レイのバーストの倍率ダメージ（4 回目）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "6379b90acf07056e6b67bccec97f374a97e8a705",
+    "values": {
+      "H1": {
+        "A-rei-base": 13345.2744,
+        "A-rei-skill": 67307.38260000001,
+        "B-rei-base": 14679.801840000002,
+        "B-rei-s1": 18714.07829112,
+        "B-rei-skill": 94385.14261998002,
+        "C-rei-base": 13345.2744,
+        "C-rei-s2": 16688.3884,
+        "C-rei-s2-burst": 30877.690637099993,
+        "C-uni-base": 342653.514,
+        "C-uni-s2": 471426.424,
+        "C-uni-s2-burst": 872256.741006,
+        "C-rei-burst": 2195697.6135624
+      },
+      "H0-s1": {
+        "A-rei-base": 13345.2744,
+        "A-rei-skill": 67307.38260000001,
+        "B-rei-base": 14679.801840000002,
+        "B-rei-s1": 14679.801840000002,
+        "B-rei-skill": 74038.12086000001,
+        "C-rei-base": 13345.2744,
+        "C-rei-s2": 16688.3884,
+        "C-rei-s2-burst": 30877.690637099993,
+        "C-uni-base": 342653.514,
+        "C-uni-s2": 471426.424,
+        "C-uni-s2-burst": 872256.741006,
+        "C-rei-burst": 2195697.6135624
+      },
+      "H0-s2": {
+        "A-rei-base": 13345.2744,
+        "A-rei-skill": 67307.38260000001,
+        "B-rei-base": 14679.801840000002,
+        "B-rei-s1": 18714.07829112,
+        "B-rei-skill": 94385.14261998002,
+        "C-rei-base": 13345.2744,
+        "C-rei-s2": 13345.2744,
+        "C-rei-s2-burst": 24692.0939586,
+        "C-uni-base": 342653.514,
+        "C-uni-s2": 342653.514,
+        "C-uni-s2-burst": 633994.6642785,
+        "C-rei-burst": 1755842.8321584002
+      },
+      "H0-burst": {
+        "A-rei-base": 13345.2744,
+        "A-rei-skill": 67307.38260000001,
+        "B-rei-base": 14679.801840000002,
+        "B-rei-s1": 18714.07829112,
+        "B-rei-skill": 94385.14261998002,
+        "C-rei-base": 13345.2744,
+        "C-rei-s2": 16688.3884,
+        "C-rei-s2-burst": 20860.4855,
+        "C-uni-base": 342653.514,
+        "C-uni-s2": 471426.424,
+        "C-uni-s2-burst": 589283.0299999999,
+        "C-rei-burst": 1483379.012
+      },
+      "H0-same": {
+        "A-rei-base": 13345.2744,
+        "A-rei-skill": 67307.38260000001,
+        "B-rei-base": 14679.801840000002,
+        "B-rei-s1": 18714.07829112,
+        "B-rei-skill": 94385.14261998002,
+        "C-rei-base": 13345.2744,
+        "C-rei-s2": 16688.3884,
+        "C-rei-s2-burst": 30877.690637099993,
+        "C-uni-base": 342653.514,
+        "C-uni-s2": 471426.424,
+        "C-uni-s2-burst": 872256.741006,
+        "C-rei-burst": 1483379.012
+      }
+    }
+  }
+}

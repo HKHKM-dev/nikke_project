@@ -1,0 +1,16 @@
+{
+  "id": "C-1065",
+  "text": "レイのバーストの攻撃ダメージ▲（48.02%。Lv10・10 秒）は、バーストの発動から灼熱コードの味方全体（自分・ココア・ユニ）に付く（III のタイマーの 00.00 の 5f 前の発から乗る）",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1054-23`・`1055-23`・`1054-25`・`1055-25`（ココア + ユニ + レイの 2 本。フルバーストの中のレイ・ユニの発に、S2 の▲と合わせて乗る（30,878・872,257））・`1054-20`・`1055-20`（4 回とも、00.00 の 6f 前の発は▲なし、5f 前の発から▲あり）・`1054-04`・`1055-04`（00.00）。H1 の予測と、H0-burst の外れる 2 指標とも 1 未満で合う。V-0716",
+  "model": "反映（data/skills/831.json の burst の effects[1]。timed・burstUse・allies・targetElement Fire・attackDamage。効果の遅れは 0（遅れの表 burst/landing.ts の行の effectFrames））",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/831.json の burst の effects[1]"]
+  },
+  "decidedOn": [],
+  "parameterFree": "攻撃ダメージ 48.02%・維持 10 秒は説明文の Lv10 の値。発動は 00.00 の 6f 前（FULL_BURST_AFTER_ACTIVATION_FRAMES）で、遅れ 0 は表に無いキャラの既定"
+}

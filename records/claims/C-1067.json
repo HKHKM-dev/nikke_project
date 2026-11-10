@@ -1,0 +1,20 @@
+{
+  "id": "C-1067",
+  "text": "レイのバーストの倍率ダメージ（最終攻撃力の 990.2%。Lv10）は、III のタイマーの 00.00 から 46f（動画で 68f。入りの止まり 22f を含む）に 1 ヒットで出て、同じ発動の攻撃ダメージ▲と、直前に付いた S2 の攻撃力▲が乗る",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "厳密一致",
+  "basis": "`1054-26`・`1055-26`（4 回目のバーストの倍率ダメージは 2,195,697・会心 3,293,546 で、同じ発動の攻撃ダメージ▲が乗る値。H0-same の 1,483,379 には合わない）・`1054-27`（00.00 から 67〜69f。これで遅れを決めた）・`1055-27`（68〜69f で再現）・`1054-04`・`1055-04`（00.00）。V-0716",
+  "model": "反映（data/skills/831.json の burst の effects[0]。burstDamage・skill。遅れの表 burst/landing.ts の行（hitFrames 46・sameActivationBuffsOnHit））",
+  "replaces": [],
+  "updated": "2026-11-10",
+  "subject": {
+    "places": ["data/skills/831.json の burst の effects[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1054",
+      "role": "値を合わせた"
+    }
+  ]
+}
