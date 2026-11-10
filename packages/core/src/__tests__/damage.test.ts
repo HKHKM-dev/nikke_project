@@ -264,7 +264,7 @@ describe('modelNotes', () => {
   it('flags unsupported and approximated mechanics', () => {
     const codes = modelNotes({
       ...makeCharacter({ muzzleCount: 2, reloadBullet: 0.33, penetration: 1 }),
-      weaponType: 'RL',
+      weaponType: 'SG',
     }).map((n) => `${n.level}:${n.code}`);
     expect(codes).toEqual(['unsupported:multi-muzzle', 'unsupported:penetration', 'approx:chunked-reload']);
   });
@@ -277,6 +277,11 @@ describe('modelNotes', () => {
     ).toEqual(['approx:dual-wield']);
     expect(muzzleHitsOf('SMG', shot)).toBe(2);
     expect(muzzleHitsOf('SG', shot)).toBe(1);
+    // ノア編（V-0706）: 二丁持ちの RL も 1 発 2 ヒット（C-1019）
+    expect(muzzleHitsOf('RL', shot)).toBe(2);
+    expect(
+      modelNotes({ ...makeCharacter({ muzzleCount: 2 }), weaponType: 'RL' }).map((n) => `${n.level}:${n.code}`),
+    ).toEqual(['approx:dual-wield']);
     expect(muzzleHitsOf('SMG', makeCharacter().shot)).toBe(1);
   });
 

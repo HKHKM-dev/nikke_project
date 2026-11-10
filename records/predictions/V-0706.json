@@ -1,0 +1,254 @@
+{
+  "verification": "V-0706",
+  "note": "撮る前の予測。ノア単騎（操作）、射撃場の BigArms（灼熱）・スペック固定 ON・オート射撃 ON・オートバースト OFF。1 発 2 ヒットの仮説はコードの切り替えが要るので、検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 232,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまのモデル（二丁持ちの RL は 1 発 1 ヒット・S2 の挑発はゲージを溜めない）",
+      "override": {}
+    },
+    {
+      "id": "H-taunt",
+      "note": "1 発 1 ヒットで、S2 の挑発がフルチャージの発のたびに射手の target_burst_energy_pershot を 1 回溜める（C-0480 の形。着弾の約 15f 後）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 232,
+            "skill": "skill2",
+            "effect": {
+              "kind": "burstGaugeHit",
+              "trigger": {
+                "count": "fullChargeShot"
+              },
+              "delayFrames": 15
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "N-hit",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,2,7,13",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "ノア単騎: 1・2・7・13 発目（フルチャージ）の、胴体（非会心・非コア）の 1 ヒットの値。2 ヒットなら 1 発の増分はこの値の 2 つの和（コア・会心の組み合わせ）",
+      "observations": ["1015-03", "1016-03"]
+    },
+    {
+      "id": "N-gauge-full",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "ノア単騎: 戦闘開始から BURST のバーが消えた（ゲージが満タンになった）発の番号",
+      "observations": ["1015-05", "1016-05"]
+    },
+    {
+      "id": "N-core-midnear",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "ノア単騎: 中近（戦闘開始から 1 回目のジャンプまで）の区間のコア命中率（コアのヒット / 当たったヒット）。的の表の RL の HomingProjectile:100 の行（銃口 1 つで測った値）"
+    },
+    {
+      "id": "N-core-near",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "ノア単騎: 近（1 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）。的の表の RL の HomingProjectile:100 の行（銃口 1 つで測った値）"
+    },
+    {
+      "id": "N-core-far",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "ノア単騎: 遠（2 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）。的の表の RL の HomingProjectile:100 の行（銃口 1 つで測った値）"
+    },
+    {
+      "id": "N-core-midfar",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7680
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.05
+      },
+      "note": "ノア単騎: 中遠（3 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）。的の表の RL の HomingProjectile:100 の行（銃口 1 つで測った値）"
+    },
+    {
+      "id": "N-flight-midnear",
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ノア単騎: 中近（戦闘開始から 1 回目のジャンプまで）の発の、発射（照準の横の残弾が減るフレーム）から着弾（総ダメージの増分）まで。的の表の HomingProjectile:100:500 の行"
+    },
+    {
+      "id": "N-flight-near",
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 2588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ノア単騎: 近（1 回目のジャンプの後）の発の、発射（照準の横の残弾が減るフレーム）から着弾（総ダメージの増分）まで。的の表の HomingProjectile:100:500 の行"
+    },
+    {
+      "id": "N-flight-far",
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ノア単騎: 遠（2 回目のジャンプの後）の発の、発射（照準の横の残弾が減るフレーム）から着弾（総ダメージの増分）まで。的の表の HomingProjectile:100:500 の行"
+    },
+    {
+      "id": "N-flight-midfar",
+      "model": "sim",
+      "metric": "shotFlightAt",
+      "args": {
+        "slot": 1,
+        "frame": 7680
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "ノア単騎: 中遠（3 回目のジャンプの後）の発の、発射（照準の横の残弾が減るフレーム）から着弾（総ダメージの増分）まで。的の表の HomingProjectile:100:500 の行"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "63cf4cc30fb3d9ef2e59a76985c7d62420116a75",
+    "values": {
+      "H-model": {
+        "N-hit": [64348.1925, 64348.1925, 64348.1925, 64348.1925],
+        "N-gauge-full": 14,
+        "N-core-midnear": 0.8851,
+        "N-core-near": 0.9817,
+        "N-core-far": 0.5914,
+        "N-core-midfar": 0.7424,
+        "N-flight-midnear": 15,
+        "N-flight-near": 7,
+        "N-flight-far": 29,
+        "N-flight-midfar": 21
+      },
+      "H-taunt": {
+        "N-hit": [64348.1925, 64348.1925, 64348.1925, 64348.1925],
+        "N-gauge-full": 10,
+        "N-core-midnear": 0.8851,
+        "N-core-near": 0.9817,
+        "N-core-far": 0.5914,
+        "N-core-midfar": 0.7424,
+        "N-flight-midnear": 15,
+        "N-flight-near": 7,
+        "N-flight-far": 29,
+        "N-flight-midfar": 21
+      }
+    }
+  }
+}

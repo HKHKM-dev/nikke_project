@@ -399,7 +399,7 @@ export type CoreHitRateTable = RateTableWithWeaponChanges & {
    */
   fireTypes?: Readonly<Record<string, TargetRateRow | null>>;
   /**
-   * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（muzzleHitsOf が 2 以上。SMG だけ）の武器種ごとの行。行があれば
+   * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（muzzleHitsOf が 2 以上）の武器種ごとの行。行があれば
    * 武器種の行より先に引く（二丁持ちの SMG のコア命中率は、銃口 1 つの SMG の行より低い。V-0702）。弾丸命中率は武器種の行のまま
    */
   dualWield?: Readonly<Partial<Record<WeaponType, TargetRateRow>>>;

@@ -39,7 +39,7 @@ export function fullChargeGaugeOf(shot: ShotParams, controlled: boolean): number
  * 1 トリガーで溜まるゲージ量。1 発は CDN の targetBurstEnergyPerShot そのまま（C-0083。Stage 7 の ×1.2 は
  * BURST バーの表示の縮尺を読んだものだった。V-0028）。targetBurstEnergyPerShot は 1 ペレットあたりなので
  * shotCount（SG のペレット数）を掛ける。フルチャージ倍率（fullChargeBurstEnergy）は**操作キャラのチャージ武器にだけ**乗る
- * （C-0007）。muzzleHits は二丁持ちの SMG の 1 発のヒット数（muzzleHitsOf。2 ヒットともゲージを溜める。C-1012）。Stage 15: hitRate（省略 1）を掛ける。
+ * （C-0007）。muzzleHits は二丁持ちの 1 発のヒット数（muzzleHitsOf。2 ヒットともゲージを溜める。C-1012・C-1019）。Stage 15: hitRate（省略 1）を掛ける。
  * pelletGaugeRate は SG のペレットのうちゲージになる割合（省略は手入力の置き値 SG_PELLET_GAUGE_HIT_RATE。表の弾丸命中率を使う枠は 1）
  */
 export function energyPerTrigger(

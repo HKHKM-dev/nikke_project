@@ -1,0 +1,50 @@
+{
+  "formatVersion": 1,
+  "resourceId": 232,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "攻撃を受けた時（確率）の味方全体の受けるダメージ▼は防御系でダメージに関係しない（被弾を扱わないので起きもしない。射撃場の 3 分モードでは敵の攻撃で起きうる）",
+          "en": "The damage-taken decrease on all allies when attacked (chance) is defensive and does not affect damage (taking hits is not modeled, so it does not occur either; in the 3-minute range mode it can occur from the enemy's attacks)",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が命中した時の、対象への挑発（2 秒）はダメージに関係しない（付けてもゲージを溜めない）",
+          "en": "The taunt (2 s) on the target when a Full Charge attack hits does not affect damage (applying it does not charge the burst gauge)",
+          "kind": "noDamage",
+          "claims": ["C-1020"]
+        },
+        {
+          "ja": "フルチャージ攻撃が命中した時の、対象の攻撃力▼は敵の攻撃力でダメージに関係しない",
+          "en": "The ATK decrease on the target when a Full Charge attack hits lowers the enemy's ATK and does not affect damage",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "自分へのヘイト（敵全体を挑発。10 秒）と、味方全体の無敵（3 秒）はダメージに関係しない。付けるのはチェーンの間で、その間とフルバーストの間はゲージが溜まらないので、ゲージにも出ない",
+          "en": "Attract (taunting all enemies, 10 s) on self and Invulnerable (3 s) on all allies do not affect damage. They are applied during the burst chain, and the gauge does not charge during the chain or Full Burst, so they do not show in the gauge either",
+          "kind": "noDamage",
+          "claims": ["C-0264", "C-0316"]
+        },
+        {
+          "ja": "味方全体の防御力▲（10 秒）は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
+          "en": "The DEF increase on all allies (10 s) does not change damage by itself (it matters only with an effect reading DEF in the team)",
+          "kind": "indirect",
+          "path": "defense"
+        }
+      ]
+    }
+  }
+}
