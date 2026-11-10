@@ -1,0 +1,46 @@
+{
+  "id": "1062",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1062_rl+sr+sg_i-doll-flower+delta+dorothy-serendipity_fire.mp4",
+  "original": "2026-11-11_01-20-53.mp4",
+  "durationSec": 200.7,
+  "frames": 12039,
+  "fps": 60,
+  "sizeMB": 243.3,
+  "sha256": "0e2b7b741684",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 234,
+      "name": "ドロシー：セレンディピティ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "編成と枠順は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-11T01:49+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
