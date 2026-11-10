@@ -1,0 +1,68 @@
+{
+  "formatVersion": 1,
+  "resourceId": 43,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "fullChargeShot", "everyRef": 1 },
+          "target": "self",
+          "stat": "pierce",
+          "durationSeconds": 0.5
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "targetWeapon": "SR",
+          "stat": "pierceDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "reads": ["pierce"]
+        }
+      ],
+      "notes": []
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "cooldownReduction",
+          "trigger": { "count": "fullChargeShot", "everyRef": 1 },
+          "target": "allies",
+          "ref": 2
+        },
+        {
+          "kind": "timed",
+          "trigger": { "count": "fullChargeShot", "everyRef": 3 },
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 4,
+          "durationRef": 5
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 1,
+          "damageType": "additional"
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 4,
+          "durationSeconds": 20
+        }
+      ],
+      "notes": []
+    }
+  }
+}

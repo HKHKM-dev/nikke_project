@@ -1,0 +1,374 @@
+{
+  "verification": "V-0717",
+  "note": "バーストの「ターゲット殲滅の対象に命中させた味方に攻撃力▲」と S1 の「貫通特化 1 発間維持」は語彙が無い（plan/design-killer-wife.md 2 節）。下書きの定義（data/skills/43.json）では、バーストの▲を、殲滅の 10 秒の間に当て続けた味方の窓の終わり（バーストの約 20 秒後）までの、バースト使用時の味方全体の timed で置き換え（Hb1 の近似。付き始めは発動のフレームで、命中の次のフレームではない）、貫通特化をフルチャージ 3 回ごとの 0.5 秒の窓で置き換えた（どの発に乗るかは手で書く）。語彙の実装の後に、いまの定義で出し直す",
+  "team": [
+    {
+      "rid": 43,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "Hb1",
+      "note": "殲滅の 10 秒の間に命中させた味方ごとに、命中から 10 秒の攻撃力▲（当て続ければバーストの約 20 秒後まで）。自分の命中も数える",
+      "override": {}
+    },
+    {
+      "id": "Hb2",
+      "note": "バーストを使った時に味方全体へ 10 秒の攻撃力▲（命中に依らない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 43,
+            "skill": "burst",
+            "replace": 1,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 4,
+              "durationRef": 5
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Hb0",
+      "note": "バーストの攻撃力▲が付かない（射撃場の的が「本体」にならない・自分の命中を数えない）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 43,
+            "skill": "burst",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "Hc0",
+      "note": "S2 のバーストの CT▼ が無い（ほかは Hb1 と同じ）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 43,
+            "skill": "skill2",
+            "index": 0
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-hit-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（単騎）: 最初の 5 発（S2 の攻撃ダメージ▲の前）の 1 ヒット（コア・距離なし・会心なし）"
+    },
+    {
+      "id": "A-hit-s2",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 600,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 6 発目から（S2 の攻撃ダメージ▲あり、バーストの攻撃力▲なし）の 1 ヒット"
+    },
+    {
+      "id": "A-hit-burst-5s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1085,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のバーストの約 5 秒後の 1 ヒット（Hb1・Hb2 は攻撃力▲あり、Hb0 はなし）"
+    },
+    {
+      "id": "A-hit-burst-15s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1685,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のバーストの約 15 秒後の 1 ヒット（Hb1 だけ攻撃力▲あり）"
+    },
+    {
+      "id": "A-add-dmg",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のバーストの追加ダメージ（会心なし。遅れは未測定で、発動と同じフレームのバフで出す）"
+    },
+    {
+      "id": "B-kw-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 43,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B（デルタ・I-DOLL・サン・キラーワイフ）: フルバーストの間の、貫通特化の無いキラーワイフの 1 ヒット（S1 の貫通ダメージ▲は乗らない）"
+    },
+    {
+      "id": "B-kw-fb-pierce",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 43,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 504,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの間の、貫通特化の付いたキラーワイフの 1 ヒット（S1 の貫通ダメージ▲が乗る。どの発に付くかは検証記録の「予測」）"
+    },
+    {
+      "id": "B-delta-fb",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 43,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 504,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: フルバーストの間のデルタの 1 ヒット（SR だが貫通特化が無いので、S1 の貫通ダメージ▲は乗らない）"
+    },
+    {
+      "id": "B-sun-15s",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 43,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 1239,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: キラーワイフの 1 回目のバーストの約 15 秒後の I-DOLL・サンの 1 ヒット（Hb1 だけ攻撃力▲あり）"
+    },
+    {
+      "id": "B-fb-starts",
+      "model": "sim",
+      "metric": "fullBurstStarts",
+      "team": [
+        {
+          "rid": 20
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 43,
+          "controlled": true
+        }
+      ],
+      "args": {},
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "撮影 B: フルバーストの始まりのフレーム（Hc0 は S2 のバーストの CT▼ が無い）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "d4f6ede0091e8ad32bd2c7220d9557aa96e6ca5b",
+    "values": {
+      "Hb1": {
+        "A-hit-base": 344595.9,
+        "A-hit-s2": 362032.45254,
+        "A-hit-burst-5s": 406208.9344272,
+        "A-hit-burst-15s": 406208.9344272,
+        "A-add-dmg": 282410.483256,
+        "B-kw-fb": 507761.1680339999,
+        "B-kw-fb-pierce": 573249.116129,
+        "B-delta-fb": 326727.509026875,
+        "B-sun-15s": 24719.50352352,
+        "B-fb-starts": [401, 2027, 3557, 5155, 7174, 9148]
+      },
+      "Hb2": {
+        "A-hit-base": 344595.9,
+        "A-hit-s2": 362032.45254,
+        "A-hit-burst-5s": 406208.9344272,
+        "A-hit-burst-15s": 362032.45254,
+        "A-add-dmg": 282410.483256,
+        "B-kw-fb": 507761.1680339999,
+        "B-kw-fb-pierce": 573249.116129,
+        "B-delta-fb": 326727.509026875,
+        "B-sun-15s": 20954.520623400003,
+        "B-fb-starts": [401, 2027, 3557, 5155, 7174, 9148]
+      },
+      "Hb0": {
+        "A-hit-base": 344595.9,
+        "A-hit-s2": 362032.45254,
+        "A-hit-burst-5s": 362032.45254,
+        "A-hit-burst-15s": 362032.45254,
+        "A-add-dmg": 282410.483256,
+        "B-kw-fb": 452540.565675,
+        "B-kw-fb-pierce": 510906.49623750005,
+        "B-delta-fb": 273978.3965474999,
+        "B-sun-15s": 20954.520623400003,
+        "B-fb-starts": [401, 2027, 3557, 5155, 7174, 9148]
+      },
+      "Hc0": {
+        "A-hit-base": 344595.9,
+        "A-hit-s2": 362032.45254,
+        "A-hit-burst-5s": 406208.9344272,
+        "A-hit-burst-15s": 406208.9344272,
+        "A-add-dmg": 282410.483256,
+        "B-kw-fb": 507761.1680339999,
+        "B-kw-fb-pierce": 573249.116129,
+        "B-delta-fb": 326727.509026875,
+        "B-sun-15s": 24719.50352352,
+        "B-fb-starts": [401, 2753, 5105, 7457, 9867]
+      }
+    }
+  }
+}
