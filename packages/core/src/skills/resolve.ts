@@ -473,6 +473,11 @@ export type ResolvedTimedEffect = ResolvedEffect & {
    * 解除で外れる（skills/holders.ts の fireRemoveDebuff）
    */
   decrease?: true;
+  /**
+   * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 定義の holderHit の秒を解いたフレーム。有れば件は、発火からこのフレーム数の間の
+   * 持ち主の最初の射撃の次のフレームから durationFrames（skills/holders.ts の timedItems）
+   */
+  holderHitWithinFrames?: number;
 };
 
 /**
@@ -595,6 +600,8 @@ export function resolveTimed(
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.perCount !== undefined) r.perCount = effect.perCount;
       if (effect.decrease === true) r.decrease = true;
+      if (effect.holderHit !== undefined)
+        r.holderHitWithinFrames = gameSecondsToFrames(skillValue(skill, effect.holderHit.withinRef, levels[slot]));
       resolved.push(r);
     });
   }
@@ -603,7 +610,10 @@ export function resolveTimed(
   const trim = burstWindowTrimOf(character);
   if (trim === 0) return resolved;
   return resolved.map((r) =>
-    isBurstUseTrigger(r.trigger) && r.durationFrames > 0 && r.durationFrames !== BATTLE_END_FRAMES
+    isBurstUseTrigger(r.trigger) &&
+    r.holderHitWithinFrames === undefined &&
+    r.durationFrames > 0 &&
+    r.durationFrames !== BATTLE_END_FRAMES
       ? { ...r, durationFrames: Math.max(0, r.durationFrames - trim) }
       : r,
   );

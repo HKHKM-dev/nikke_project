@@ -111,6 +111,7 @@ import type { SkillSlot } from '../types.ts';
 import {
   buildSegments,
   effectItems,
+  holderHitStarts,
   rankSlotsOf,
   resolvePassiveStates,
   shotCountItems,
@@ -810,7 +811,12 @@ function timedItems(
   if (effect.durationUntil === 'reloadEnd') {
     return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
   }
-  return effectItems(starts, effect, frames).map((w) => {
+  // キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」は、持ち主の射撃の記録から始まりを決める
+  const from =
+    effect.holderHitWithinFrames !== undefined
+      ? holderHitStarts(starts, log?.frames ?? [], effect.holderHitWithinFrames)
+      : starts;
+  return effectItems(from, effect, frames).map((w) => {
     const item: HeldItem = { start: w.start, end: w.end };
     if (w.stack !== undefined) item.stack = w.stack;
     return item;
@@ -832,8 +838,9 @@ type TrackReads = {
 function trackReadsOf(origin: HeldOrigin): TrackReads {
   const reads = { shots: false, weaponChangeEnds: false, reloadEnds: false, fullBurstWindows: false, untilEnds: false };
   if (origin.kind !== 'timed' && origin.kind !== 'state') return reads;
-  const { durationShots, durationUntil } = origin.kind === 'timed' ? origin.effect : origin.grant;
-  if (durationShots !== undefined) {
+  const item = origin.kind === 'timed' ? origin.effect : origin.grant;
+  const { durationShots, durationUntil } = item;
+  if (durationShots !== undefined || ('holderHitWithinFrames' in item && item.holderHitWithinFrames !== undefined)) {
     reads.shots = true;
     return reads;
   }

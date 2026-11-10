@@ -420,6 +420,23 @@ export function parseTimedFields(
     }
     effect.perCount = { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
   }
+  // キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「〈状態〉の対象に命中させた味方に」
+  if (v.holderHit !== undefined) {
+    const at = `${path}.holderHit`;
+    const hit = v.holderHit;
+    if (stat === undefined) fail(at, 'holderHit in a state grant is not supported');
+    if (!isRecord(hit) || Object.keys(hit).length !== 1 || hit.withinRef === undefined)
+      fail(at, 'expected { withinRef }');
+    if (target !== 'self' && target !== 'allies')
+      fail(at, `only allowed with target "self" or "allies", got "${target}"`);
+    if (effect.durationRef === undefined && effect.durationSeconds === undefined)
+      fail(at, 'holderHit needs a duration in seconds (durationRef or durationSeconds)');
+    if (isChanceTrigger(trigger)) fail(at, 'holderHit cannot be combined with a chance trigger');
+    for (const key of ['maxStacks', 'maxStacksRef', 'condition', 'amplifies', 'delayFrames', 'perCount'] as const) {
+      if (v[key] !== undefined) fail(at, `holderHit cannot be combined with ${key}`);
+    }
+    effect.holderHit = { withinRef: parseRef(hit.withinRef, `${at}.withinRef`) };
+  }
   if (stat !== undefined) {
     // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
     const timed = { kind: 'timed', ...(effect as TimedFields), stat } as const;

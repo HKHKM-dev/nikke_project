@@ -970,6 +970,13 @@ export type TimedEffect = TargetCountFields &
     /** ヘルム編: 「N 発間維持」の N の description_value_NN */
     durationShotsRef?: number;
     /**
+     * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「〈状態〉の対象に命中させた味方に」。発火のフレームから withinRef（秒の
+     * description_value_NN。対象に付く状態の維持）の間に、対象の枠（持ち主）が撃った最初の通常攻撃の次のフレームから、維持の秒数だけ付く。
+     * その発自身には乗らず、同じ発火の後の命中では付き直さない（V-0717）。命中は持ち主の射撃のフレームで数える（外れと的の部位は見ない）。
+     * 秒の維持（durationRef・durationSeconds）とだけ組み、スタック・条件・発数や出来事の維持・強化・確率・遅れ・perCount とは組まない
+     */
+    holderHit?: { withinRef: number };
+    /**
      * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.2 節）: 「解除条件：フルバーストタイムが終了した時」。付いたフレームから
      * 次のフルバースト終了のフレームまで続く（無ければ戦闘の終わりまで）。1 パス目で窓を追う stat と、スタック・順位の対象には書けない
      */

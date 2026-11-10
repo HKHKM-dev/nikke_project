@@ -1,0 +1,263 @@
+[
+  {
+    "id": "1068-01",
+    "recording": "1068",
+    "kind": "total",
+    "use": "record",
+    "value": 42610687,
+    "description": "D：キラーワイフ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11409。増分は 109 個"
+    },
+    "source": "V-0717",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1068-02",
+    "recording": "1068",
+    "kind": "count",
+    "use": "record",
+    "value": 101,
+    "unit": "トリガー",
+    "description": "D：キラーワイフ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 109 個。前の増分から 30f 未満の増分（8 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 59f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0717",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1068-03",
+    "recording": "1068",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "unit": "ダメージ",
+    "description": "KW 単騎の、S2 の攻撃ダメージ▲の付く前（最初の 5 発）の 1 ヒット（コア・距離なし・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの KW の 1 ヒット（S2 の攻撃ダメージ▲・バーストの攻撃力▲の有無 × 会心・コア・距離）の格子に ±1.5 で当てた。どの増分も格子の値か追加ダメージに 1 の位まで乗る（外れ値は「結果」に書いた数個だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1068-04",
+    "recording": "1068",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 362032,
+    "unit": "ダメージ",
+    "description": "KW 単騎の、S2 の攻撃ダメージ 5.06%▲ の乗った 1 ヒット（コア・距離なし・会心なし）。6 発目（f1327）から乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの KW の 1 ヒット（S2 の攻撃ダメージ▲・バーストの攻撃力▲の有無 × 会心・コア・距離）の格子に ±1.5 で当てた。どの増分も格子の値か追加ダメージに 1 の位まで乗る（外れ値は「結果」に書いた数個だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 450,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1068-05",
+    "recording": "1068",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 406209,
+    "unit": "ダメージ",
+    "description": "KW 単騎の、S2 の▲とバーストの攻撃力 12.19%▲（発動者基準 = 自分）の乗った 1 ヒット（コア・距離なし・会心なし）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの KW の 1 ヒット（S2 の攻撃ダメージ▲・バーストの攻撃力▲の有無 × 会心・コア・距離）の格子に ±1.5 で当てた。どの増分も格子の値か追加ダメージに 1 の位まで乗る（外れ値は「結果」に書いた数個だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 960,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1068-06",
+    "recording": "1068",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 282410,
+    "unit": "ダメージ",
+    "description": "KW 単騎の、1 回目のバーストの追加ダメージ（最終攻撃力の 269.28%。会心なし）。I → II の六角形の替わり目の 5f 前（モデルの発動のフレーム）に出て、S2 の攻撃ダメージ▲が乗り、同じバーストの攻撃力▲は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの KW の 1 ヒット（S2 の攻撃ダメージ▲・バーストの攻撃力▲の有無 × 会心・コア・距離）の格子に ±1.5 で当てた。どの増分も格子の値か追加ダメージに 1 の位まで乗る（外れ値は「結果」に書いた数個だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "skill"
+    }
+  },
+  {
+    "id": "1068-07",
+    "recording": "1068",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "timing",
+    "use": "compare",
+    "value": 568,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 527,
+      "high": 609
+    },
+    "description": "KW 単騎の、2 回目のバースト（六角形の替わり目 f3070）の後の最初の発（f3125。▲なし）から、バーストの攻撃力▲の切れ目までの動画のフレーム。▲の乗った最後の発は 527f、▲の無い最初の発は 609f（値は幅の真ん中）。殲滅の 10 秒の間の後の発（2〜6 発目）で付き直していれば、最後の命中から 10 秒（約 1,100f）まで続く",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの KW の 1 ヒット（S2 の攻撃ダメージ▲・バーストの攻撃力▲の有無 × 会心・コア・距離）の格子に ±1.5 で当てた。どの増分も格子の値か追加ダメージに 1 の位まで乗る（外れ値は「結果」に書いた数個だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 1,
+        "shot": 23,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 41
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1068-08",
+    "recording": "1068",
+    "source": "V-0717",
+    "readAt": "2026-11-10",
+    "kind": "timing",
+    "use": "compare",
+    "value": 41,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 0,
+      "high": 82
+    },
+    "description": "KW 単騎の、2 回目のバーストの後の最初の発（f3125）から、バーストの攻撃力▲の付き始めまでの動画のフレーム。その発には▲が無く、次の発（82f 後）から乗る（値は幅の真ん中）。どのバーストも同じ（1068 は 8 回、1069 は 8 回）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（格子への当てはめ）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの KW の 1 ヒット（S2 の攻撃ダメージ▲・バーストの攻撃力▲の有無 × 会心・コア・距離）の格子に ±1.5 で当てた。どの増分も格子の値か追加ダメージに 1 の位まで乗る（外れ値は「結果」に書いた数個だけ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "burst",
+        "stat": "attack",
+        "from": 1,
+        "shot": 23,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 41
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "id": "1068",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1068_sr_killer-wife_fire.mp4",
+  "original": "2026-11-11_01-45-41.mp4",
+  "durationSec": 203.1,
+  "frames": 12186,
+  "fps": 60,
+  "sizeMB": 246.5,
+  "sha256": "8409d1aeb433",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 43,
+      "name": "D：キラーワイフ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-11T02:04+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
