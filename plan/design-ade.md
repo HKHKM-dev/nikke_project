@@ -4,7 +4,7 @@
 - 関連: [design-mast.md](design-mast.md) 8 節（HP の割合の窓のきっかけ `{ selfHpAtMostRef }`）、[design-skill-stage6.md](design-skill-stage6.md) 2.4 節（論点 8。最大HP のみ▲ の間は HP の割合を下げる式）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md) 4.6・6.2 節（条件の判定のタイミング・HP の経路）、[design-indirect-notes.md](design-indirect-notes.md)・[design-debuff-removal.md](design-debuff-removal.md)（間接の notes の経路 `debuff`）
 - 検証: V-0707
 - 作成日: 2026-11-10
-- 状態: 起案（7 節の論点をオーナーに諮る）
+- 状態: 決定・実装（7 節の論点は推奨どおり。H1 を V-0707 で確かめた）
 
 ## 0. 範囲
 
@@ -126,3 +126,4 @@
 ## 経過
 
 - 2026-11-10: 起案。説明文とコードを照らし、足りない形は S1 のきっかけと維持の組だけと分かった（0 節）。論点 1〜6 をオーナーに諮る。撮影 A・B を V-0707 に計画した。
+- 2026-11-10: オーナーが論点 1〜6 を推奨どおりに決めた。撮影 A・B（録画 1017〜1020）は H1 と合い、H1b・H2・H0 は合わなかった。2.1 節の形（`{ selfHpAtMostRef }` と `durationRef` の組）を足し、定義 `data/skills/310.json` を書いた。結論は C-1025〜C-1028。8 節の 2 つは backlog 1.3 節に起こした。ラプラス：UH の notes と backlog 6 節の行を 6 節のとおり直した。

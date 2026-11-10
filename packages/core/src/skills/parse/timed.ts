@@ -286,9 +286,12 @@ export function parseTimedFields(
     }
   }
   Object.assign(effect, parseTimedDuration(v, stat, target, path));
-  // マスト編（plan/design-mast.md 8 節）: HP の割合の窓は、きっかけと維持を組で書く
-  if (isSelfHpAtMostTrigger(trigger) !== (effect.durationUntil === 'selfHpAbove'))
-    fail(path, 'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" (and only with it)');
+  // マスト編（plan/design-mast.md 8 節）: HP の割合の窓は、きっかけと維持を組で書く。エード編（plan/design-ade.md 2.1 節）: きっかけは
+  // 秒の維持（durationRef）とも組める（下がったフレームに発火して N 秒。維持の終わりが発火の時に決まるので、攻撃力にも書ける）
+  if (effect.durationUntil === 'selfHpAbove' && !isSelfHpAtMostTrigger(trigger))
+    fail(path, 'durationUntil "selfHpAbove" goes only with the trigger { selfHpAtMostRef }');
+  if (isSelfHpAtMostTrigger(trigger) && effect.durationUntil !== 'selfHpAbove' && effect.durationRef === undefined)
+    fail(path, 'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" or durationRef');
   // Stage 11 モダニア: 効果のあるスタック
   if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
     fail(path, 'at most one of maxStacks and maxStacksRef');

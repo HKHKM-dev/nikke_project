@@ -157,7 +157,8 @@ export const BUFF_STATS = [
   // 攻撃力▲（casterFinalMaxHp）だけが読む。「最大HP のみ▲」はこの stat では書かない（definitions.test.ts）
   'maxHp',
   // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 最大HP のみ▲（比率）。最終最大HP への足し方は maxHp と同じ。効いている
-  // 間 HP の割合を下げる読み（段 6 の論点 8）は、HP の割合を読む側（selfHp・lowestHpRatio）が枠の想定で一定のままなので未実装
+  // 間は HP の割合を下げ（段 6 の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef。マスト編・エード編）が読む。条件の selfHp と
+  // 対象の lowestHpRatio は枠の想定で一定のまま（下がる分は未実装。plan/design-ade.md 6 節）
   'maxHpOnly',
   // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
@@ -757,7 +758,9 @@ export function isChargeFullTrigger(t: unknown): t is ChargeFullTrigger {
  * 下がったフレームに発火し、durationUntil: "selfHpAbove" で閾値を上回るフレームまで続く。HP の割合 = 枠の想定の割合 × (1 + Σ 最大HP▲ −
  * Σ 最大HP のみ▲) ÷ (1 + Σ 最大HP▲)（Σ 最大HP▲ は最大HP のみ▲ も含む。plan/design-skill-stage6.md 2.4 節の式）で、そのフレームより前に
  * 始まった件から求める（同じフレームに付いた最大HP のみ▲ は次のフレームから。論点 8）。1 パス目の件の一覧が追う（skills/holders.ts）ので、
- * timed にだけ書ける。回復で現在の HP が戻る分は扱わない
+ * timed にだけ書ける。回復で現在の HP が戻る分は扱わない。
+ * エード編（plan/design-ade.md 2.1 節）: 「自分の HP が X% 以下の時」「N 秒間維持」は、同じきっかけを durationRef と組む（下がったフレームに
+ * 1 回発火して N 秒。閾値以下のまま続く間は発火しない。C-1025）
  */
 export type SelfHpAtMostTrigger = { selfHpAtMostRef: number };
 

@@ -1,0 +1,167 @@
+[
+  {
+    "id": "1020-01",
+    "recording": "1020",
+    "kind": "total",
+    "use": "record",
+    "value": 51835924,
+    "description": "HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11409。増分は 1600 個"
+    },
+    "source": "V-0707",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1020-02",
+    "recording": "1020",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 14684,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワー + エードの、エードの▲の無い 1 ヒット（胴体・会心なし・距離なし）。594 個がこの値の格子に乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのエード（枠 2）と I-DOLL・フラワー（枠 1）の 1 ヒット（胴体・距離なし・会心なし）から作った格子（▲なし f300・S1 の▲だけ f800・バーストの攻撃力▲だけ f3100・両方 f2800。--opt grid=無=2@300;S1=2@800;B=2@3100;BS1=2@2800;花=1@300;花S1=1@800;花B=1@3100;花BS1=1@2800）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1020-03",
+    "recording": "1020",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 16939,
+    "unit": "ダメージ",
+    "description": "エードの、バーストの攻撃力 10.15%▲ と S1 の攻撃力 5.19%▲（どちらもスキル発動者基準）が乗った 1 ヒット。109 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのエード（枠 2）と I-DOLL・フラワー（枠 1）の 1 ヒット（胴体・距離なし・会心なし）から作った格子（▲なし f300・S1 の▲だけ f800・バーストの攻撃力▲だけ f3100・両方 f2800。--opt grid=無=2@300;S1=2@800;B=2@3100;BS1=2@2800;花=1@300;花S1=1@800;花B=1@3100;花BS1=1@2800）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 2800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1020-04",
+    "recording": "1020",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 16176,
+    "unit": "ダメージ",
+    "description": "エードの、バーストの攻撃力▲だけが乗った 1 ヒット（バーストの窓のうち S1 の▲の切れた後）。389 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのエード（枠 2）と I-DOLL・フラワー（枠 1）の 1 ヒット（胴体・距離なし・会心なし）から作った格子（▲なし f300・S1 の▲だけ f800・バーストの攻撃力▲だけ f3100・両方 f2800。--opt grid=無=2@300;S1=2@800;B=2@3100;BS1=2@2800;花=1@300;花S1=1@800;花B=1@3100;花BS1=1@2800）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1020-05",
+    "recording": "1020",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 106576,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワーの、エードのバーストと S1 の攻撃力▲（味方全体）が乗った 1 ヒット。4 個（S1 の▲だけは 19 個、バーストの▲だけは 24 個、▲なしは 37 個がそれぞれの格子に乗る）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのエード（枠 2）と I-DOLL・フラワー（枠 1）の 1 ヒット（胴体・距離なし・会心なし）から作った格子（▲なし f300・S1 の▲だけ f800・バーストの攻撃力▲だけ f3100・両方 f2800。--opt grid=無=2@300;S1=2@800;B=2@3100;BS1=2@2800;花=1@300;花S1=1@800;花B=1@3100;花BS1=1@2800）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    }
+  },
+  {
+    "id": "1020-06",
+    "recording": "1020",
+    "kind": "count",
+    "use": "record",
+    "value": 3,
+    "unit": "回",
+    "source": "V-0707",
+    "readAt": "2026-11-10",
+    "description": "エードの HP の割合が下がる出来事ごとの、S1 の攻撃力▲の付き方（エードのバーストの使用は、バーストの攻撃力▲の乗った最初の発の直前とした。S2 の 120 発目は、▲なし → ▲ありの替わり目と発の数から決めた）: S2 の窓の中でバーストを使った 4 回（f1786・f3448・f6786・f8413 ごろ）は、S1 の▲が S2 の 120 発目から約 5 秒で切れ、バーストでは付き直さない。f10094 ごろの回は、S2 の 120 発目（f9867）から 296f 目の発まで▲が乗り、f10168 から後はバーストの分だけ。どちらの窓も切れた後の S2 の 120 発目（f7444 ごろ。増分の出なかったマガジンの最初の発）では付き、f7734 の発まで乗る（f7846 は▲なし）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（格子の当て方を固まりに分けた）",
+      "note": "S2 の 120 発目が的の狙えない窓（ジャンプ）か外れた発に当たり、増分から決まらない回は数えない"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

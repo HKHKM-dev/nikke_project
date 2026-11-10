@@ -1,0 +1,122 @@
+{
+  "formatVersion": 1,
+  "resourceId": 310,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "selfHpAtMostRef": 2
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "自分の HP の割合は、枠の想定の割合を最大HP▲・最大HP のみ▲ で下げた値。被弾の無い前提では、S2・バーストの最大HP のみ▲ で 90% 以下に下がった時に付く（下がったまま、さらに下がっても付き直さない。plan/design-ade.md 2.1 節）",
+            "en": "Own HP ratio is the slot's assumed ratio lowered by max HP up and max-HP-only up. With no damage taken, it fires when the S2 or burst max-HP-only up lowers it to 90% or below (not again while it stays at or below 90%, even if it falls further; plan/design-ade.md 2.1)"
+          },
+          "claims": [
+            "C-1025"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時に味方全体に付く「完璧なメイド：デバフ効果免疫 1 個」は、それ自体は与ダメージを変えない（味方にデバフを付ける味方（マスト：ロマンチックメイドのほろ酔い）のいる編成でだけ効く。防ぐ数え方・自分で付けるデバフを防ぐかは確かめていないので、モデルでは防がない）",
+          "en": "The \"Perfect Maid: debuff immunity ×1\" given to all allies at the start of combat does not change damage by itself (it matters only with an ally that puts a debuff on allies, such as Mast: Romantic Maid's Drunken; how it counts and whether it blocks a self-applied debuff are not verified, so the model does not block)",
+          "kind": "indirect",
+          "path": "debuff",
+          "effect": {
+            "kind": "state",
+            "target": "allies",
+            "trigger": "battleStart"
+          }
+        },
+        {
+          "ja": "回復で現在の HP が戻って HP の割合が 90% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）",
+          "en": "The HP ratio rising above 90% because a heal restores current HP (a heal received during max-HP-only up) is not modeled (the ratio is lowered only by max HP up and max-HP-only up)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 3
+          },
+          "target": "allies",
+          "stat": "maxHpOnly",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "「通常攻撃で 120 回攻撃した時」は撃った発の通算で数える。「スキル発動者基準」の量は、対象の枠のバフ前の最大HP の比率として足す（マストのバーストと同じ読み。発動者の最大HP 基準で足す読みとは、エード自身では同じで、クラスの違う味方では違う。plan/design-ade.md 2.3 節）。読むのは HP の割合と最終最大HP だけ",
+            "en": "\"After 120 normal attacks\" counts every normal shot fired. The caster-based amount is added as a ratio of the target slot's pre-buff max HP (the same reading as Mast's burst; it equals the caster-max-HP reading for Ade herself and differs for allies of another class; plan/design-ade.md 2.3). Only the HP ratio and the final max HP read it"
+          },
+          "claims": [
+            "C-1026",
+            "C-1028"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "通常攻撃 420 回ごとに味方全体に付く「完璧なメイド：デバフ効果免疫 1 個」は、それ自体は与ダメージを変えない（味方にデバフを付ける味方（マスト：ロマンチックメイドのほろ酔い）のいる編成でだけ効く。防ぐ数え方・自分で付けるデバフを防ぐかは確かめていないので、モデルでは防がない）",
+          "en": "The \"Perfect Maid: debuff immunity ×1\" given to all allies every 420 normal attacks does not change damage by itself (it matters only with an ally that puts a debuff on allies, such as Mast: Romantic Maid's Drunken; how it counts and whether it blocks a self-applied debuff are not verified, so the model does not block)",
+          "kind": "indirect",
+          "path": "debuff",
+          "effect": {
+            "kind": "state",
+            "target": "allies",
+            "trigger": "unknown"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "maxHpOnly",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「スキル発動者基準」の量は、対象の枠のバフ前の最大HP の比率として足す（マストのバーストと同じ読み。発動者の最大HP 基準で足す読みとは、エード自身では同じで、クラスの違う味方では違う。plan/design-ade.md 2.3 節）。読むのは HP の割合と最終最大HP だけ",
+            "en": "The caster-based amount is added as a ratio of the target slot's pre-buff max HP (the same reading as Mast's burst; it equals the caster-max-HP reading for Ade herself and differs for allies of another class; plan/design-ade.md 2.3). Only the HP ratio and the final max HP read it"
+          },
+          "claims": [
+            "C-1026",
+            "C-1028"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1027"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}
