@@ -45,7 +45,9 @@ export function stopArrival(card: Element | null): void {
  * 大きさの無い rect（配置されていない要素）は、base のまま動かさない
  */
 const CLIP_OUTSET = 40;
-function frameAt(target: DOMRect, base: DOMRect): Keyframe {
+/** 位置と大きさ（DOMRect のうち frameAt が読むもの） */
+type Box = Pick<DOMRect, 'left' | 'top' | 'width' | 'height'>;
+export function frameAt(target: Box, base: Box): Keyframe {
   const rect = target.width > 0 && target.height > 0 ? target : base;
   const scale = rect.width / base.width;
   const shown = Math.min(base.height, rect.height / scale);
