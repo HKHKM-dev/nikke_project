@@ -1,0 +1,46 @@
+{
+  "id": "1046",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1046_rl+ar+ar_i-doll-flower+helm-aquamarine+i-doll-sun_fire.mp4",
+  "original": "2026-11-11_00-20-28.mp4",
+  "durationSec": 203.4,
+  "frames": 12204,
+  "fps": 60,
+  "sizeMB": 246.8,
+  "sha256": "c10ccd62f06d",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 353,
+      "name": "ヘルム：アクアマリン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-11T00:40+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
