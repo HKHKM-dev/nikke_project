@@ -645,7 +645,8 @@ header h1 {
   --tray-visual-w: calc(256px / 3 + 2px);
   /* 置き先待ち・配置中の印の水色（実機の部隊編成の色） */
   --placing-blue: light-dark(#0ea5e9, #38bdf8);
-  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2 */
+  /* スロットのカードの縦長の絵の高さ（枠線の内側。.char-visual-portrait と空のスロットの枠）。立ち絵（256×512）の 1/2。狭い画面では
+     useSlotFit が並びに縮めた値を置く（上限は useSlotFit.ts の PORTRAIT_MAX_H と同じ） */
   --slot-portrait-h: 256px;
 }
 /* 置き先待ちのスロット（カードでなく立ち絵の枠）・ニケの水色の実線の枠 */
@@ -933,35 +934,37 @@ header h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(4px * var(--slot-scale, 1));
+  gap: 0.25em;
   opacity: 0.5;
+  /* 中の文字の大きさの基準（元の大きさで 16px。立ち絵の高さに比べて縮める。中の文字と余白は em で書く） */
+  font-size: calc(var(--slot-portrait-h) / 16);
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
 }
 .modern-slot-empty-plus {
-  font-size: calc(3rem * var(--slot-scale, 1));
+  font-size: 3em;
   line-height: 1;
   /* 枠の中の表示（＋・番号など）を中央より下げる（FRONT・REAR とも）。中身の列は上下の中央に置いているので、上の余白を 64px 足すと 32px 下がる */
-  margin-top: calc(64px * var(--slot-scale, 1));
+  margin-top: calc(var(--slot-portrait-h) / 4);
 }
 /* 空のスロットの ＋ の下: 番号（01〜05）・FRONT / REAR・EMPTY SLOT・位置（○○●○○） */
 .modern-slot-empty-number {
-  font-size: calc(1.8rem * var(--slot-scale, 1));
+  font-size: 1.8em;
   font-weight: bold;
   line-height: 1.1;
 }
 .modern-slot-empty-row {
-  font-size: calc(0.75rem * var(--slot-scale, 1));
+  font-size: 0.75em;
   font-weight: bold;
   letter-spacing: 0.08em;
 }
 .modern-slot-empty-label {
-  margin-top: calc(4px * var(--slot-scale, 1));
-  font-size: calc(0.7rem * var(--slot-scale, 1));
+  margin-top: calc(var(--slot-portrait-h) / 64);
+  font-size: 0.7em;
   letter-spacing: 0.06em;
 }
 .modern-slot-empty-position {
-  font-size: calc(0.7rem * var(--slot-scale, 1));
+  font-size: 0.7em;
   letter-spacing: 0.1em;
 }
 .modern-slot-error {
@@ -970,7 +973,7 @@ header h1 {
   margin: 0;
 }
 
-/* ダメージ表示 & 割合バー（文字の大きさと余白は、立ち絵の縮みの比 --slot-scale（useSlotFit）を掛ける。空のスロットの文字も同じ） */
+/* ダメージ表示 & 割合バー（文字の大きさと余白は em で書き、立ち絵の高さに比べて縮める。空のスロットの文字も同じ） */
 /* 幅は立ち絵（.char-visual-portrait。1:2 の枠と 1px の枠線）と同じにし、中央にそろえる */
 .modern-slot-damage-section {
   box-sizing: border-box;
@@ -978,8 +981,9 @@ header h1 {
   align-self: center;
   display: flex;
   flex-direction: column;
-  gap: calc(3px * var(--slot-scale, 1));
-  padding: calc(4px * var(--slot-scale, 1)) calc(6px * var(--slot-scale, 1));
+  gap: 0.1875em;
+  padding: 0.25em 0.375em;
+  font-size: calc(var(--slot-portrait-h) / 16);
   background: color-mix(in srgb, var(--app-fg) 5%, transparent);
   border: 1px solid color-mix(in srgb, var(--app-fg) 10%, transparent);
 }
@@ -989,12 +993,12 @@ header h1 {
   align-items: baseline;
 }
 .modern-slot-damage-value {
-  font-size: calc(0.95rem * var(--slot-scale, 1));
+  font-size: 0.95em;
   font-weight: bold;
   font-variant-numeric: tabular-nums;
 }
 .modern-slot-damage-percent {
-  font-size: calc(0.75rem * var(--slot-scale, 1));
+  font-size: 0.75em;
   opacity: 0.7;
 }
 .modern-slot-damage-bar-track {
