@@ -1,0 +1,268 @@
+{
+  "verification": "V-0705",
+  "note": "撮る前の予測。クエンシー単騎（操作）とクロウ単騎（操作）、射撃場の BigArms（灼熱）・スペック固定 ON・オート射撃 ON・オートバースト OFF。仮説はいまのモデル（的の表の二丁持ちの SMG の行。C-1013 の和の形で合わせた値）だけで、積の形で 403 に合わせた値は検証記録の「予測」に手で書く",
+  "team": [
+    {
+      "rid": 402,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまのモデル（的の表の dualWield.SMG の行。C-1013）",
+      "override": {}
+    }
+  ],
+  "targets": [
+    {
+      "id": "Q-core-midnear",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クエンシー単騎: 中近（戦闘開始から 1 回目のジャンプまで）の区間のコア命中率（コアのヒット / 当たったヒット）"
+    },
+    {
+      "id": "Q-core-near",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クエンシー単騎: 近（1 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）"
+    },
+    {
+      "id": "Q-core-far",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クエンシー単騎: 遠（2 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）"
+    },
+    {
+      "id": "Q-core-midfar",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7680
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クエンシー単騎: 中遠（3 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）"
+    },
+    {
+      "id": "Q-bullet-far",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クエンシー単騎: 遠の区間の弾丸命中率（当たった発 / 撃った発。二丁持ちは 2 ヒットとも外れる発を外れと数える）"
+    },
+    {
+      "id": "C-core-midnear",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 600
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クロウ単騎: 中近（戦闘開始から 1 回目のジャンプまで）の区間のコア命中率（コアのヒット / 当たったヒット）",
+      "team": [
+        {
+          "rid": 110,
+          "controlled": true
+        }
+      ]
+    },
+    {
+      "id": "C-core-near",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 2588
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クロウ単騎: 近（1 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）",
+      "team": [
+        {
+          "rid": 110,
+          "controlled": true
+        }
+      ]
+    },
+    {
+      "id": "C-core-far",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クロウ単騎: 遠（2 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）",
+      "team": [
+        {
+          "rid": 110,
+          "controlled": true
+        }
+      ]
+    },
+    {
+      "id": "C-core-midfar",
+      "model": "sim",
+      "metric": "coreHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 7680
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クロウ単騎: 中遠（3 回目のジャンプの後）の区間のコア命中率（コアのヒット / 当たったヒット）",
+      "team": [
+        {
+          "rid": 110,
+          "controlled": true
+        }
+      ]
+    },
+    {
+      "id": "C-bullet-far",
+      "model": "sim",
+      "metric": "bulletHitRate",
+      "args": {
+        "slot": 1,
+        "frame": 5118
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.02
+      },
+      "note": "クロウ単騎: 遠の区間の弾丸命中率（当たった発 / 撃った発。二丁持ちは 2 ヒットとも外れる発を外れと数える）",
+      "team": [
+        {
+          "rid": 110,
+          "controlled": true
+        }
+      ]
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "90dc8bf4aff726b86fa38f2fb1a5fe7af1438e5a",
+    "values": {
+      "H-model": {
+        "Q-core-midnear": 0.081,
+        "Q-core-near": 0.1415,
+        "Q-core-far": 0.019,
+        "Q-core-midfar": 0.046,
+        "Q-bullet-far": 0.7847200000000001,
+        "C-core-midnear": 0.081,
+        "C-core-near": 0.1415,
+        "C-core-far": 0.019,
+        "C-core-midfar": 0.046000000000000006,
+        "C-bullet-far": 0.7847200000000001
+      }
+    }
+  }
+}
