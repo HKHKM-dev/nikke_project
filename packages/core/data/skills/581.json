@@ -20,7 +20,11 @@
           "assumes": {
             "ja": "フルバーストの終わりのフレームに、自分（アルカナ）に運命の輪のカード（自分のバーストで付く）が付いていれば、そのフルバーストを開いたチェーンでバーストを使った枠のうち、基本バースト段階 III の電撃コードの枠に付く",
             "en": "If she (Arcana) has Wheel of Fortune (from her own Burst) on the frame Full Burst ends, applies to the Burst III Electric units among those that used their Burst in the chain that opened that Full Burst"
-          }
+          },
+          "claims": [
+            "C-1053",
+            "C-1054"
+          ]
         },
         {
           "kind": "timed",
@@ -29,20 +33,26 @@
           "stat": "attack",
           "scaling": "casterAttack",
           "ref": 6,
-          "durationRef": 7
+          "durationRef": 7,
+          "claims": [
+            "C-1052"
+          ]
         }
       ],
       "notes": [
         {
-          "ja": "フルバーストの終わりに、運命の輪のカード状態なら、直前にバーストを使った III の電撃コードの味方に付く「魔術師のカード：スキル 2 クールタイム 75%▼（15 秒）」は未対応（味方の S2 の周期を割合で縮める語彙が無い。縮むのが残りの CT か周期の長さかを確かめていない）",
-          "en": "\"The Magician: Skill 2 cooldown ▼ 75% (15 s)\", given at the end of Full Burst to Burst III Electric allies that just used their Burst while she has Wheel of Fortune, is not implemented (no vocabulary for shortening an ally's S2 interval by a ratio; whether it shortens the remaining cooldown or the interval itself is unverified)",
+          "ja": "フルバーストの終わりに、運命の輪のカード状態なら、直前にバーストを使った III の電撃コードの味方に付く「魔術師のカード：スキル 2 クールタイム 75%▼（15 秒）」は未対応（味方の S2 の周期を割合で縮める語彙が無い。効いている間は S2 の周期が 25% になり、付いた時から数え直す）",
+          "en": "\"The Magician: Skill 2 cooldown ▼ 75% (15 s)\", given at the end of Full Burst to Burst III Electric allies that just used their Burst while she has Wheel of Fortune, is not implemented (no vocabulary for shortening an ally's S2 interval by a ratio; while active the S2 interval becomes 25%, counted again from when it is applied)",
           "kind": "unimplemented",
           "effect": {
             "kind": "state",
             "stat": "unknown",
             "target": "burstUsers",
             "trigger": "fullBurstEnd"
-          }
+          },
+          "claims": [
+            "C-1055"
+          ]
         }
       ]
     },
@@ -69,7 +79,11 @@
           "assumes": {
             "ja": "力のカード。条件と対象は skill1 の effects[0] と同じ",
             "en": "Strength. Same condition and targets as skill1 effects[0]"
-          }
+          },
+          "claims": [
+            "C-1053",
+            "C-1054"
+          ]
         },
         {
           "kind": "state",
@@ -95,7 +109,11 @@
           "assumes": {
             "ja": "死神のカード。条件は skill1 の effects[0] と同じ。バーストスキルクールタイム▼は T4 の形で、付いた時に走っている CT と、効いている間（5 秒）に使ったバーストの CT を 値 04（6）秒縮める（効いている間にバーストを使わなければ、即時の CT▼ と同じ）",
             "en": "Death. Same condition as skill1 effects[0]. The Burst cooldown decrease is the T4 shape: it shortens the running cooldown when applied, and that of a Burst used while active (5 s), by value 04 (6) s (without a Burst used while active, it equals an instant cooldown decrease)"
-          }
+          },
+          "claims": [
+            "C-1053",
+            "C-1054"
+          ]
         },
         {
           "kind": "timed",
@@ -103,7 +121,10 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 7,
-          "durationRef": 8
+          "durationRef": 8,
+          "claims": [
+            "C-1052"
+          ]
         }
       ]
     },
@@ -125,12 +146,19 @@
           "assumes": {
             "ja": "運命の輪のカード。電撃コードの味方全体（自分も電撃コード）に付く",
             "en": "Wheel of Fortune. Applies to all Electric allies (she is Electric too)"
-          }
+          },
+          "claims": [
+            "C-1050",
+            "C-1054"
+          ]
         },
         {
           "kind": "burstDamage",
           "ref": 3,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": [
+            "C-1051"
+          ]
         },
         {
           "kind": "state",
@@ -147,7 +175,10 @@
           "assumes": {
             "ja": "審判のカード。敵（1 体の前提）に付く",
             "en": "Judgment. Applies to the enemy (a single enemy is assumed)"
-          }
+          },
+          "claims": [
+            "C-1050"
+          ]
         }
       ]
     }

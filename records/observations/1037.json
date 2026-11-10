@@ -12,7 +12,11 @@
       "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・24・5・15・0f"
     },
     "source": "V-0713",
-    "readAt": "2026-11-10"
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "1037-02",
@@ -27,7 +31,11 @@
       "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・24・25f"
     },
     "source": "V-0713",
-    "readAt": "2026-11-10"
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "1037-03",
@@ -42,7 +50,11 @@
       "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
     },
     "source": "V-0713",
-    "readAt": "2026-11-10"
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "1037-04",
@@ -57,7 +69,11 @@
       "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
     },
     "source": "V-0713",
-    "readAt": "2026-11-10"
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "1037-05",
@@ -72,7 +88,11 @@
       "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
     },
     "source": "V-0713",
-    "readAt": "2026-11-10"
+    "readAt": "2026-11-10",
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
+    }
   },
   {
     "id": "1037-06",
@@ -105,6 +125,10 @@
         "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
@@ -138,6 +162,10 @@
         "enemy": "range-bigarms-water",
         "events": ["range-3min-jump"]
       }
+    },
+    "scope": {
+      "slot": "all",
+      "source": "burstChain"
     }
   },
   {
