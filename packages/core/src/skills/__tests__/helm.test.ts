@@ -89,7 +89,7 @@ describe('parseSkillDefinition（ヘルム編）', () => {
     // ツバイ編（plan/design-zwei.md 2.3 節）: スタックとは組める（付くたびに 1 段増え、持ち主の N 発目で全部切れる）
     expect(parseOne({ ...timed, durationShots: 10, maxStacks: 3 })).not.toThrow();
     expect(parseOne({ ...timed, durationShots: 10, condition: { selfBuffed: 'attack' } })).toThrow(/condition/);
-    for (const stat of ['attack', 'reloadSpeed', 'hitRate']) {
+    for (const stat of ['attack', 'reloadSpeed', 'minEffectiveRange']) {
       expect(parseOne({ ...timed, stat, durationShots: 10 })).toThrow(/first pass/);
     }
     expect(parseOne({ ...timed, durationShots: 0 })).toThrow();

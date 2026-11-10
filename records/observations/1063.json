@@ -1,0 +1,119 @@
+[
+  {
+    "id": "1063-01",
+    "recording": "1063",
+    "kind": "total",
+    "use": "record",
+    "value": 312249173,
+    "description": "I-DOLL・フラワー・デルタ・ドロシー：セレンディピティ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11404。増分は 457 個"
+    },
+    "source": "V-0719",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1063-02",
+    "recording": "1063",
+    "kind": "count",
+    "use": "record",
+    "value": 247,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・デルタ・ドロシー：セレンディピティ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 457 個。前の増分から 30f 未満の増分（327 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 58 個）"
+    },
+    "source": "V-0719",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1063-03",
+    "recording": "1063",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "hit",
+    "value": 3998397,
+    "unit": "ダメージ",
+    "description": "I-DOLL・フラワー + デルタ + ドロシー：セレンディピティの、フルバーストの間（ドロシー：セレンディピティのバーストの攻撃力▲ 88.12%・S2 の攻撃力▲ 75.24%・ペレット数 5 個▲）の S1 の固定の発（コア・会心なし）。固定がペレット数▲に勝つ（1 個。F-A）。6 個の和（コアの和に会心の数 × 1 個の会心ぶんを足した値）は出ない",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、ドロシー：セレンディピティの 1 ペレットの格子（胴体・コア × 会心 × 距離ボーナス）と、固定の発の格子（D-A・D-B）に ±4 で当てた（使い捨てのスクリプト。V-0719「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 970,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1063-04",
+    "recording": "1063",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "hit",
+    "value": 2284582,
+    "unit": "ダメージ",
+    "description": "同じ編成の、フルバーストの後（バーストの残り約 5 秒。攻撃力▲ 88.12% とペレット数▲だけ）の S1 の固定の発（コア・会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、ドロシー：セレンディピティの 1 ペレットの格子（胴体・コア × 会心 × 距離ボーナス）と、固定の発の格子（D-A・D-B）に ±4 で当てた（使い捨てのスクリプト。V-0719「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1600,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1063-05",
+    "recording": "1063",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "record",
+    "kind": "rate",
+    "value": 0.667,
+    "description": "I-DOLL・フラワー + デルタ + ドロシー：セレンディピティの、フルバーストの間のドロシー：セレンディピティのふだんの発（15 個。42 発）のうち、15 個とも当たった発の割合（28 / 42）。S2 の命中率▲ 40.68% が付いている。命中率▲の無い中近の割合 0.778 なら、15 個とも当たるのは約 2%",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト",
+      "note": "増分を「1 ペレットの胴体 ÷ 3」（フルバーストの間・E-A）の刻みで割り、整数に乗る発を数えた。45 刻み以上（15 個 × 3）の発を 15 個とも当たった発とした"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]

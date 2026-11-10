@@ -24,6 +24,7 @@ import {
   isHitStateStat,
   isMaxHpStat,
   isPassiveFlagStat,
+  isPelletStat,
   STATIC_PASSIVE_FLAG_STATS,
   isSelfHpAtMostTrigger,
   isSelfHpAtMost,
@@ -89,16 +90,27 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
-  if (scaling === 'flat' && stat !== 'maxAmmo' && stat !== 'chargeSpeed' && stat !== 'burstCooldown') {
+  if (scaling === 'flat' && !FLAT_STATS.includes(stat)) {
+    const names = FLAT_STATS.map((s) => `"${s}"`);
     fail(
       `${path}.scaling`,
-      `flat is only allowed with stat "maxAmmo", "chargeSpeed" or "burstCooldown", got "${stat}"`,
+      `flat is only allowed with stat ${names.slice(0, -1).join(', ')} or ${names.at(-1)}, got "${stat}"`,
     );
   }
-  if (stat === 'burstCooldown' && scaling !== 'flat') {
-    fail(`${path}.scaling`, 'burstCooldown needs scaling "flat" (the value is seconds)');
+  const unit = FLAT_ONLY_UNITS[stat];
+  if (unit !== undefined && scaling !== 'flat') {
+    fail(`${path}.scaling`, `${stat} needs scaling "flat" (the value is ${unit})`);
   }
 }
+
+/** scaling 'flat'（値を 100 で割らない）を書ける stat */
+const FLAT_STATS: readonly BuffStat[] = ['maxAmmo', 'chargeSpeed', 'burstCooldown', 'pelletCount'];
+
+/** flat にしか書けない stat と、その値の単位。ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.2 節）でペレット数▲を足した */
+const FLAT_ONLY_UNITS: Partial<Record<BuffStat, string>> = {
+  burstCooldown: 'seconds',
+  pelletCount: 'a number of pellets',
+};
 
 /** 対象の語彙編: chargeSpeed の flat は「チャージ時間 X 秒▼」で、正の値が縮める秒数。▼（decrease）は書かない（burstCooldown も同じ） */
 function validateFlatChargeTime(
@@ -254,6 +266,10 @@ export function parseTimedFields(
   }
   if (stat === 'trueDamageConversion' && target !== 'self') {
     fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
+  }
+  // ドロシー：セレンディピティ編: ペレットの数の stat は自分にだけ（1 パス目が持ち主の発の数え方とゲージに読む）
+  if (stat !== undefined && isPelletStat(stat) && target !== 'self') {
+    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
   }
   let scaling: BuffScaling | undefined;
   if (stat !== undefined) {
@@ -419,7 +435,7 @@ export function parseTimedFields(
  * stat でない）だけ。確率の timed と、確率の状態を読む while・stacksFrom の中身（skills/parse/crossChecks.ts の validateChanceStates）で使う
  */
 export function validateChanceStat(stat: BuffStat, path: string): void {
-  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat)) {
+  if (isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isHitStateStat(stat) || isPelletStat(stat)) {
     fail(path, `a chance trigger is not supported for "${stat}" (it needs a value that adds up linearly)`);
   }
   // T4 の▼は、件の始まりごとに走っている CT を縮める（frame/firstPass.ts の burstCooldownStartedAt）。期待値の窓は機会の始まりと終わりで
@@ -568,10 +584,11 @@ function parseTimedDuration(
   // 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。V-0569）: チャージ速度は、1 パス目の件の列が持ち主の発で窓を閉じる
   // （発数の維持の件は射撃の記録が伸びるたびに作り直す。skills/holders.ts の trackReadsOf）ので書ける。溜めの途中で付いても、それまでに
   // 溜めたフレームは残り、伸びたチャージ時間まで溜める（frame/shooter.ts の chargeProgressFrames。エイダの特殊改造）
+  // ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.3 節）: 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける
   if (
     stat !== undefined &&
-    stat !== 'chargeSpeed' &&
-    (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat))
+    !SHOT_DURATION_TRACKED_STATS.includes(stat) &&
+    (stat === 'attack' || isFiringStat(stat) || isStateStat(stat) || isFlagStat(stat) || isPelletStat(stat))
   ) {
     fail(
       `${path}.stat`,
@@ -582,6 +599,12 @@ function parseTimedDuration(
   if (hasShots) return { durationShots: parsePositiveInt(v.durationShots, `${path}.durationShots`) };
   return { durationShotsRef: parseRef(v.durationShotsRef, `${path}.durationShotsRef`) };
 }
+
+/**
+ * 1 パス目で窓を追う stat のうち、発数の維持を書けるもの。どれも 1 パス目の件の列が持ち主の発で窓を閉じる。同じ閉じ方で書ける stat は
+ * ほかにもある（ペレット数▲・適正最小射程距離▲など）が、使い手のいるものだけ許す（ドロシー：セレンディピティ編。plan/design-dorothy-serendipity.md 2.3 節）
+ */
+const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet'];
 
 /**
  * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
@@ -599,7 +622,8 @@ function isFirstPassTrackedStat(stat: BuffStat): boolean {
     stat === 'burstGaugeSpeed' ||
     stat === 'burstCooldown' ||
     isFiringStat(stat) ||
-    isStateStat(stat)
+    isStateStat(stat) ||
+    isPelletStat(stat)
   );
 }
 
@@ -624,7 +648,7 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   const stat = oneOf(BUFF_STATS, v.stat, `${path}.stat`);
   const passiveFlag = isPassiveFlagStat(stat);
-  if ((isFlagStat(stat) && !passiveFlag) || stat === 'fixedChargeTime')
+  if ((isFlagStat(stat) && !passiveFlag) || stat === 'fixedChargeTime' || isPelletStat(stat))
     fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);

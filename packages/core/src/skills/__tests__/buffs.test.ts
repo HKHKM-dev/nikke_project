@@ -58,6 +58,8 @@ const buffs: BuffTotals = {
   minEffectiveRange: 0,
   pierce: 0,
   pierceDamage: 0,
+  pelletCount: 0,
+  singlePellet: 0,
   weapon: null,
 };
 
@@ -245,6 +247,8 @@ describe('addRatioBuff / addFlatAttack', () => {
       minEffectiveRange: 0,
       pierce: 0,
       pierceDamage: 0,
+      pelletCount: 0,
+      singlePellet: 0,
       weapon: null,
     });
     expect(d).toEqual({
@@ -295,6 +299,8 @@ describe('addRatioBuff / addFlatAttack', () => {
       minEffectiveRange: 0,
       pierce: 0,
       pierceDamage: 0,
+      pelletCount: 0,
+      singlePellet: 0,
       weapon: null,
     });
     // Stage 8 の 2 つもそれぞれのフィールドへ

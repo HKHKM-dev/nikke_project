@@ -32,7 +32,7 @@ import { landingFrameSpans } from '../frame/landing.ts';
 import { lowerBound, partialShotsInRanges } from '../frame/shots.ts';
 import { computeFixedSpecAttack, computeFixedSpecDefence, computeFixedSpecHp, fixedSpecGrowth } from '../fixedSpec.ts';
 import { runSimulation, type SimResult, type SimSlotSegment } from '../sim/engine.ts';
-import { applyCritBuffs, capCritRate, type AttackRounding } from '../skills/buffs.ts';
+import { applyCritBuffs, capCritRate, pelletsPerShot, type AttackRounding } from '../skills/buffs.ts';
 import { oneHitValue, type SustainedDamagePlacement } from '../skills/burstDamage.ts';
 import { chanceScaleAt, type ChanceOpportunity } from '../skills/chance.ts';
 import { itemsOf, valuePiecesOf, type ValuePiece } from '../skills/holders.ts';
@@ -1077,7 +1077,8 @@ function eachOrOne(n: unknown, at: (n: number) => number): number | number[] {
 /**
  * 1 ヒットの値。モデルは会心・コアを期待値で持っているので、その時点の区間の 1 トリガーの値から、
  * 倍率グループ（1 + コア + 会心 + 距離 + フルバースト）だけをパターンに差し替えて組み直す。通常攻撃の 1 ヒット。
- * SG は 1 トリガー（武器倍率 = 全ペレットの合計）を shotCount で割った 1 ペレットの値
+ * SG は 1 トリガー（武器倍率 = 全ペレットの合計）を、その区間の 1 発のペレットの数（shotCount。ドロシー：セレンディピティ編の固定と
+ * ペレット数▲を入れた数。skills/buffs.ts の pelletsPerShot）で割った 1 ペレットの値
  */
 function hitDamage(result: SimResult, ctx: MetricContext): number {
   if ((ctx.args.source ?? 'normal') !== 'normal')
@@ -1103,7 +1104,7 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
         : 0;
   const boost = 1 + core + crit + distance + t.boost.fullBurst;
   // V-0119: 1 発のヒット数（的の表の hitsPerShot）は 1 ヒットの値に含めない
-  return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / shot.shotCount;
+  return ((t.normal / t.hitRate / t.hitsPerShot / t.boost.total) * boost) / pelletsPerShot(shot.shotCount, t.buffs);
 }
 
 /**

@@ -93,6 +93,9 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * pierce = 貫通特化。値を持たないフラグ（ref を書かない）。それ自体は与ダメージを変えず、pierceDamage の乗る発にする。
  * pierceDamage = 貫通ダメージ▲（比率）。貫通特化（pierce）の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和に足す（P1。C-1031）。
  * 倍率ダメージ・バーストのダメージには足さない（確かめていない）
+ * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）:
+ * pelletCount = ペレット数 N 個▲（scaling 'flat'。値は個の数）。singlePellet = 「ペレットの数を 1 個に固定」。値を持たないフラグ
+ * （ref を書かない）。効いていれば 1 発のペレットは 1 個で、▲より勝つ（C-1077）。どちらも timed の self だけ（PELLET_STATS）
  */
 export type BuffStat =
   | 'attack'
@@ -132,7 +135,9 @@ export type BuffStat =
   | 'accumulateRatio'
   | 'minEffectiveRange'
   | 'pierce'
-  | 'pierceDamage';
+  | 'pierceDamage'
+  | 'pelletCount'
+  | 'singlePellet';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -193,6 +198,9 @@ export const BUFF_STATS = [
   'minEffectiveRange',
   'pierce',
   'pierceDamage',
+  // ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: ペレット数▲（個。flat）・ペレットの数を 1 個に固定（フラグ）
+  'pelletCount',
+  'singlePellet',
 ] as const satisfies readonly BuffStat[];
 
 /**
@@ -243,7 +251,20 @@ export const FLAG_STATS = [
   'trueDamageConversion',
   'elementAdvantage',
   'pierce',
+  'singlePellet',
 ] as const satisfies readonly BuffStat[];
+
+/**
+ * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 1 発のペレットの数を変える stat。timed の self だけに書ける。
+ * 1 パス目（frame/firstPass.ts）が窓を追い、ペレットの命中の量（pelletHit）とゲージを実効のペレットの数で数える。1 発の総ダメージは
+ * 変えない（固定は 1 個に総ダメージが乗り C-1074、▲は総ダメージをペレットで分ける C-1076）。区間の buffs にも入り、照合の 1 ペレットの値
+ * （records/observations.ts の hitDamage）が割る数を決める
+ */
+export const PELLET_STATS = ['pelletCount', 'singlePellet'] as const satisfies readonly BuffStat[];
+
+export function isPelletStat(stat: BuffStat | 'weapon'): boolean {
+  return (PELLET_STATS as readonly string[]).includes(stat);
+}
 
 /** 2 段目の段 12 の PR 2: passive に書けるフラグの stat（ref を書かない。値 1） */
 export const PASSIVE_FLAG_STATS = ['elementAdvantage', 'pierce'] as const satisfies readonly BuffStat[];
@@ -941,7 +962,9 @@ export type TimedEffect = TargetCountFields &
     /**
      * ヘルム編: 「N 発間維持」の N の即値。付いたフレームから、対象の枠の N 発目の通常攻撃まで続く（N 発目にも効く）。
      * 対象ごとにその枠の射撃を数え、維持中にまた付いたら数え直す。窓は 1 パス目の射撃の列で決まるので、
-     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）と、スタック・条件・順位の対象には書けない
+     * 1 パス目のループの中で窓を追う stat（攻撃力・射撃に効く stat・状態の stat）と、スタック・条件・順位の対象には書けない。
+     * 例外は、1 パス目の件の列が持ち主の発で窓を閉じる stat（チャージ速度、ドロシー：セレンディピティ編の命中率▲・貫通特化・
+     * ペレットの数の固定。plan/design-dorothy-serendipity.md 2.3 節）
      */
     durationShots?: number;
     /** ヘルム編: 「N 発間維持」の N の description_value_NN */

@@ -117,6 +117,7 @@
     | 使用武器変更の「追加効果：貫通特化」／変更後の武器の 1 発の弾の数（説明文に無く、録画で読む） | `weaponChange` の `pierce: true`／`shotCount` | 変更後の武器の発に貫通ダメージ▲が乗る。銃口の数は基礎の武器のまま（二丁持ちの SG の 1 弾 × 2 銃口）。例: ツバイのバースト | [design-zwei.md](design-zwei.md) 2.1・2.2 節 |
     | 「N スタック」「N 発間維持」 | timed の `maxStacksRef` と `durationShotsRef` | 付くたびに 1 段増え、持ち主の N 発目で全部切れる（持ち主の発で数える）。例: ツバイの宝物版 S1 | 同 2.3 節 |
     | デバフ効果解除 N 個（味方全体／デバフのかかった味方からランダムに N 機） | `removeDebuff`（`target: "allies"`／`"debuffedRandom"` と `targetCount`） | 外すのは、目録でデバフの印の付いた状態と、味方に付く timed の▼（`decrease`）。1 個は状態か▼の効果 1 つで、スタックごと外す。▲は外れない。恩恵の▼（受けるダメージ▼など）を味方の timed の `decrease` で書くと外れてしまうので、notes か状態の中身で書く。例: ココアの S1・バースト | [design-debuff-removal.md](design-debuff-removal.md) 2.2 節・[design-debuff-removal-timed.md](design-debuff-removal-timed.md) 2.1 節 |
+    | ペレットの数を 1 個に固定／ペレット数 N 個▲（N 発間維持の貫通特化・命中率▲） | フラグの stat `singlePellet`／stat `pelletCount` と `scaling: "flat"`（どちらも timed の self だけ）／`durationShotsRef` を `hitRate`・`pierce`・`singlePellet` にも書ける | 固定の発は 1 個のペレットに 1 発の総ダメージが乗り、ペレットの命中とゲージは 1 個と数える（C-1074・C-1075）。▲は総ダメージを変えずペレットで分け、固定は▲に勝つ（C-1076・C-1077）。例: ドロシー：セレンディピティの S1・バースト | [design-dorothy-serendipity.md](design-dorothy-serendipity.md) 2 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。
