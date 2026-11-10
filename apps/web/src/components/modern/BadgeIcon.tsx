@@ -1,5 +1,5 @@
 // バッジのスプライトと、それを <use> で出す部品（plan/design-badge-color.md）
-import { BADGE_SYMBOLS, badgeViewBox } from './badges.ts';
+import { BADGE_SYMBOLS, badgeViewBox, type Badge } from './badges.ts';
 
 const HIDDEN = { position: 'absolute', width: 0, height: 0, overflow: 'hidden' } as const;
 const SPRITE_HTML = { __html: BADGE_SYMBOLS };
@@ -25,7 +25,7 @@ export function BadgeIcon({
 }: {
   name: string;
   label?: string;
-  tone?: string | undefined;
+  tone?: Badge['tone'];
   className?: string;
 }) {
   const a11y = label === undefined ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label };
