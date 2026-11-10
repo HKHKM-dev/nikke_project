@@ -7,9 +7,11 @@ import { activationFramesOfSlot } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import type { TeamInput } from '../team.ts';
 import {
+  characterOf,
   describeEveryShotInOneGroup,
   effectWindows,
   fixedTeam,
+  rawDefinition,
   SHOOTING_RANGE_ENEMY,
   windowsFrom,
 } from './teamHelpers.ts';
@@ -21,16 +23,21 @@ const COCOA_SLOT = 0;
 const SIN_SLOT = 1;
 const ANIS_SLOT = 2;
 
-const RECORDED = fixedTeam([COCOA, SIN, ANIS], ANIS_SLOT, { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Water' } });
+const WATER = { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Water' as const } };
+const RECORDED = fixedTeam([COCOA, SIN, ANIS], ANIS_SLOT, WATER);
 const TEAMS: Record<string, TeamInput> = {
   '撮影の編成（ココア + シン + アニス：スパークリングサマー・水冷）': RECORDED,
   '単騎（灼熱）': fixedTeam([ANIS], 0, { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Fire' } }),
   '実戦寄り（リター + シン + アニス：スパークリングサマー + クエンシー + ナガ・水冷）': fixedTeam(
     [82, SIN, ANIS, 402, 450],
     ANIS_SLOT,
-    { enemy: { ...SHOOTING_RANGE_ENEMY, element: 'Water' } },
+    WATER,
   ),
 };
+
+// S2 のミサイルの着弾の遅れ（C-1032）
+const missileDelay = rawDefinition<{ skills: { skill2: { effects: { delayFrames: number }[] } } }>(ANIS).skills.skill2
+  .effects[0]!.delayFrames;
 
 describe('ココア + シン + アニス：スパークリングサマー（水冷）', () => {
   const plan = planTeamRun(RECORDED);
@@ -40,6 +47,7 @@ describe('ココア + シン + アニス：スパークリングサマー（水�
     effectWindows(plan, slot, { resourceId: ANIS, skill, stat });
   const shots = plan.shots[ANIS_SLOT]!.frames;
   const lastShots = plan.shots[ANIS_SLOT]!.lastShotFrames!;
+  const isLastShot = new Set(lastShots);
   const burstWindows = windowsFrom(uses, 10, plan.frames);
   const inBurst = (f: number) => burstWindows.some((w) => w.start <= f && f < w.end);
 
@@ -60,23 +68,26 @@ describe('ココア + シン + アニス：スパークリングサマー（水�
     }
   });
 
-  it('fires the S2 damage 74f after every last bullet: every 5th shot outside the burst, every shot inside (max ammo 1)', () => {
+  it('fires the S2 damage after every last bullet: every magazine outside the burst, every shot inside (max ammo 1)', () => {
+    expect(missileDelay).toBeGreaterThan(0);
     const hits = plan.skillHits.filter((h) => h.slotIndex === ANIS_SLOT && h.effect.source.skill === 'skill2');
-    // ミサイルの着弾（C-1032）。戦闘の終わりを越えるヒットは出ない
-    expect(hits.map((h) => h.frame)).toEqual(lastShots.map((f) => f + 74).filter((f) => f < plan.frames));
+    // 戦闘の終わりを越えるヒットは出ない
+    expect(hits.map((h) => h.frame)).toEqual(lastShots.map((f) => f + missileDelay).filter((f) => f < plan.frames));
     const inside = shots.filter(inBurst);
     expect(inside.length).toBeGreaterThan(10);
-    expect(inside.every((f) => lastShots.includes(f))).toBe(true);
-    // 窓の外は 5 発ごと（最初のマガジン）
-    expect(lastShots[0]).toBe(shots[4]);
+    expect(inside.every((f) => isLastShot.has(f))).toBe(true);
+    // 窓の外は素の最大装弾数ごと（最初のマガジン）
+    expect(lastShots[0]).toBe(shots[characterOf(ANIS).shot.maxAmmo - 1]);
   });
 
   it('reloads faster inside the first burst window than before it', () => {
-    const gaps = shots.slice(1).map((f, i) => ({ f, gap: f - shots[i]! }));
-    const before = Math.max(...gaps.filter(({ f }) => f < uses[0]!).map(({ gap }) => gap));
+    const gaps = shots.slice(1).map((f, i) => ({ prev: shots[i]!, f }));
+    const before = Math.max(...gaps.filter(({ f }) => f < uses[0]!).map(({ prev, f }) => f - prev));
     const [first] = burstWindows;
-    // 窓の始まりのマガジンの残り（使った時点でリロード中かもしれない）を外し、窓の中で始まったリロードだけを見る
-    const inside = gaps.filter(({ f, gap }) => f - gap > first!.start + 60 && f < first!.end).map(({ gap }) => gap);
+    // 窓の中の最終弾から始まったリロードだけを見る（使った時点で走っていたリロードは素の長さ）
+    const inside = gaps
+      .filter(({ prev, f }) => prev >= first!.start && f < first!.end && isLastShot.has(prev))
+      .map(({ prev, f }) => f - prev);
     expect(inside.length).toBeGreaterThan(5);
     expect(Math.max(...inside)).toBeLessThan(before / 2);
   });
