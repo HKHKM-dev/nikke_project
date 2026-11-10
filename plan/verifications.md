@@ -5,7 +5,7 @@
 - 観測値は、観測値の `source` にその検証記録の ID を書いたもの。止めている検証・派生した検証・訂正された記録は、相手の冒頭から逆に引いたもの。
 - 2026-09-26 までの実測は [verification.md](verification.md)（凍結）にある。
 
-件数: 調査中 0・保留 0・完了 640・打ち切り 27（計 667）
+件数: 調査中 0・保留 0・完了 641・打ち切り 27（計 668）
 
 ## 開いている検証
 
@@ -6455,3 +6455,21 @@
     - C-cocoa-before（hitDamage）: 実測なし。H-model 172,297.95
     - C-cocoa-fb（hitDamage）: 実測なし。H-model 258,446.925
     - 許容内の指標: H-model 11/11。合う仮説は H-model だけ
+- **[V-0706](../records/verifications/V-0706-noah.md)** ノアの全スロットと二丁持ちの RL の 1 発のヒット数・ゲージ
+  - 問い: ノアの S1・S2・バーストを、与ダメージとゲージに効く効果なし（S2 の挑発は付けてもゲージを溜めない）と読み、二丁持ちの RL の通常攻撃を 1 発 2 ヒット（2 ヒットともその発の値で、2 ヒットともゲージを溜める）と読んで、モデルは単騎の撮影と合うか
+  - 話題: スキル・キャラ固有・日付: 2026-11-10・状態: 完了
+  - 録画: 1015、1016
+  - 観測値: 1015-01、1015-02、1015-03、1015-04、1015-05、1015-06、1015-07、1015-08、1016-01、1016-02、1016-03、1016-04、1016-05、1016-06、1016-07、1016-08
+  - 結論: C-1019、C-1020
+  - 予測（2026-11-10、commit 63cf4cc）との比べ:
+    - N-hit（hitDamageAtShot）: 実測 [64,348, 64,348, 64,348, 64,348]（1015-03）。H-model [64,348.193, 64,348.193, 64,348.193, 64,348.193]（+0.192、許容内）、H-taunt [64,348.193, 64,348.193, 64,348.193, 64,348.193]（+0.192、許容内）
+    - N-gauge-full（gaugeFullShotIndex）: 実測 7（1015-05）。H-model 14（+7、**許容外**）、H-taunt 10（+3、**許容外**）
+    - N-core-midnear（coreHitRate）: 実測なし。H-model 0.885、H-taunt 0.885
+    - N-core-near（coreHitRate）: 実測なし。H-model 0.982、H-taunt 0.982
+    - N-core-far（coreHitRate）: 実測なし。H-model 0.591、H-taunt 0.591
+    - N-core-midfar（coreHitRate）: 実測なし。H-model 0.742、H-taunt 0.742
+    - N-flight-midnear（shotFlightAt）: 実測なし。H-model 15、H-taunt 15
+    - N-flight-near（shotFlightAt）: 実測なし。H-model 7、H-taunt 7
+    - N-flight-far（shotFlightAt）: 実測なし。H-model 29、H-taunt 29
+    - N-flight-midfar（shotFlightAt）: 実測なし。H-model 21、H-taunt 21
+    - 許容内の指標: H-model 1/2・H-taunt 1/2。合う仮説は無い
