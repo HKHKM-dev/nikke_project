@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 89・効果 599（根拠あり 578）・notes 220（根拠あり 96）
+件数: キャラ 90・効果 605（根拠あり 584）・notes 222（根拠あり 97）
 
-notes の種類: 未対応 36・前提の外 53・計算に無関係 47・補足 22・間接 62
+notes の種類: 未対応 36・前提の外 54・計算に無関係 47・補足 23・間接 62
 
-スロット: supported 220・partial 23・unsupported 9・noEffect 39
+スロット: supported 223・partial 23・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -23,6 +23,20 @@ notes の種類: 未対応 36・前提の外 53・計算に無関係 47・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0227（確定）
   - effects[1] timed・burstUse・attack: C-0457（確定）、C-0469（確定）、C-0513（仮説）、C-0611（確定）
+
+## 15 アニス：スパークリングサマー
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・attack: C-1036（確定）
+  - effects[1] timed・fullBurstStart・reloadSpeed: C-1036（確定）
+- **skill2**: supported
+  - effects[0] damage・lastShot・skill: C-1032（確定）
+  - notes[0] 前提の外: 最後の弾丸で攻撃した時の自分への阻止部位の攻撃ダメージ▲は、射撃場の敵に阻止部位が無いのでダメージに関係しない（要件 5.2 節）: C-0443（範囲外）
+  - notes[1] 補足: ミサイルのヒットがバーストゲージを溜めるかは確かめていない（溜めない形で回す）。3 人の録画のフルバーストの間隔は、ココアのデバフ解除で窓の中の発の数が変わる分と分けられなかった: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・maxAmmo: C-1037（確定）
+  - effects[1] timed・burstUse・reloadSpeed: C-1037（確定）
+  - effects[2] timed・burstUse・elementDamage: C-1037（確定）
 
 ## 16 ラピ：レッドフード
 
@@ -818,7 +832,7 @@ notes の種類: 未対応 36・前提の外 53・計算に無関係 47・補足
 
 - **skill1**: supported
   - effects[0] coverHeal・15 秒ごと: C-0977（確定）、C-0822（確定）
-  - effects[1] removeDebuff・15 秒ごと・デバフ 1 個（デバフのかかった味方 2 機）: C-0978（確定）、C-0979（確定）
+  - effects[1] removeDebuff・15 秒ごと・デバフ 1 個（デバフのかかった味方 2 機）: C-0978（確定）、C-0979（確定）、C-1038（仮説）
 - **skill2**: noEffect
   - notes[0] 計算に無関係: フルチャージ攻撃時に自分に付くプロケチャップ（受けるダメージ▼）は、ダメージに関係しない: C-0977（確定）
 - **burst**: supported
