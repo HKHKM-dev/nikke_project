@@ -162,7 +162,9 @@ export function CharacterTray({
                     onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
                   >
                     {LIST_ORDER_LABEL[o]}
-                    {current && <span aria-hidden="true">{DIRECTION_MARK[listOrder.direction]}</span>}
+                    <span className="char-tray-sort-mark" aria-hidden="true">
+                      {DIRECTION_MARK[listOrder.direction]}
+                    </span>
                   </button>
                 );
               })}

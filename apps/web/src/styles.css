@@ -1237,15 +1237,21 @@ html:has(.modern-view-container) {
 .char-tray-sort-label > .char-tray-sort-current {
   visibility: visible;
 }
-/* 並べ替えのポップアップの並びのボタン。いまの並びを強く出す */
+/* 並べ替えのポップアップの並びのボタン。どれも一番長いボタンの幅にそろえ、向きの印の場所はどのボタンにも取っておく
+   （いまの並びを切り替えても幅が変わらない。太字にすると幅が変わるので、いまの並びは枠だけで示す） */
 .char-tray-sort-options {
   display: grid;
-  grid-template-columns: repeat(2, max-content);
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
+}
+.char-tray-sort-option {
+  justify-content: space-between;
 }
 .char-tray-sort-option[aria-pressed='true'] {
   outline: 2px solid var(--placing-blue);
-  font-weight: bold;
+}
+.char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
+  visibility: hidden;
 }
 .char-tray-action-button[aria-disabled='true'] {
   cursor: default;
