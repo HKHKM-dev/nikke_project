@@ -76,7 +76,10 @@ describe('語彙の検証', () => {
     expect(patched('skill1', hpCrit, { durationUntil: undefined, durationShotsRef: 1 })).toThrow(
       /the trigger \{ selfHpAtMostRef \} goes with durationUntil "selfHpAbove"/,
     );
-    expect(patched('skill1', hpCrit, { trigger: 'burstUse' })).toThrow(/goes with durationUntil "selfHpAbove"/);
+    expect(patched('skill1', hpCrit, { trigger: 'burstUse' })).toThrow(/durationUntil "selfHpAbove" goes only with/);
+    expect(patched('skill1', hpCrit, { durationUntil: undefined, durationRef: 5, stat: 'maxHpOnly' })).toThrow(
+      /cannot carry "maxHpOnly"/,
+    );
     // エード編: 秒の維持（durationRef・durationSeconds）とも組める
     expect(patched('skill1', hpCrit, { durationUntil: undefined, durationRef: 5 })).not.toThrow();
     expect(patched('skill1', hpCrit, { durationUntil: undefined, durationSeconds: 7 })).not.toThrow();

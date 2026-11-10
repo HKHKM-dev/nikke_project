@@ -263,7 +263,8 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('chargeTick' in t) return `チャージ中の ${t.chargeTick.everySeconds} 秒ごと`;
   if ('chargeFull' in t) return 'フルチャージした時';
   // マスト編
-  if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下の間';
+  // エード編: 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）
+  if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下に下がった時';
   // アインのニアフェザー編
   if ('summon' in t) return `${t.summon} の攻撃（機数で決まる間隔）`;
   return t.count;

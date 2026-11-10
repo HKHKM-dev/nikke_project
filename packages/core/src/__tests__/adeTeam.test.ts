@@ -38,17 +38,22 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const timed = { sourceSlotIndex: ade, kind: 'timed' } as const;
   const windows = (filter: Parameters<typeof itemsOf>[1]) =>
     itemsOf(plan.history, filter).map(({ start, end }) => ({ start, end }));
-  // S2 とバーストの最大HP のみ▲、バーストの攻撃力▲、S1 の攻撃力▲（単騎はバーストを使わないが、件の列は作る）
+  // S2 の最大HP のみ▲、S1 の攻撃力▲と、バーストを使う編成ではバーストの最大HP のみ▲・攻撃力▲
   const effects = [
     { ...timed, skill: 'skill2', stat: 'maxHpOnly' },
-    { ...timed, skill: 'burst', stat: 'maxHpOnly' },
-    { ...timed, skill: 'burst', stat: 'attack' },
     { ...timed, skill: 'skill1', stat: 'attack' },
+    ...(input.burst
+      ? ([
+          { ...timed, skill: 'burst', stat: 'maxHpOnly' },
+          { ...timed, skill: 'burst', stat: 'attack' },
+        ] as const)
+      : []),
   ] as const;
 
   it('gives each max-HP-only up, ATK up and the S1 ATK up to every ally, in the same windows', () => {
     for (const filter of effects) {
       const own = windows({ ...filter, holder: ade });
+      expect(own.length).toBeGreaterThan(0);
       input.slots.forEach((_, holder) => expect(windows({ ...filter, holder })).toEqual(own));
     }
   });
@@ -57,9 +62,11 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     const maxHpOnly = windows({ ...timed, holder: ade, stat: 'maxHpOnly' });
     expect(maxHpOnly.length).toBeGreaterThan(0);
     // S2 のスキル Lv10 の最大HP のみ 15.62%▲ だけで 1 ÷ 1.1562 ≒ 86.5% に下がるので、どの件の始まりも、ほかの件が効いていなければ下がった時になる
-    const drops = maxHpOnly
-      .filter((w) => !maxHpOnly.some((o) => o !== w && o.start < w.start && w.start < o.end))
-      .map((w) => w.start + 1);
+    const drops = [
+      ...new Set(
+        maxHpOnly.filter((w) => !maxHpOnly.some((o) => o.start < w.start && w.start < o.end)).map((w) => w.start + 1),
+      ),
+    ];
     const s1 = windows({ ...timed, holder: ade, skill: 'skill1', stat: 'attack' });
     expect(s1.map((w) => w.start)).toEqual(drops);
     // 戦闘の終わりで切れる件のほかは 5 秒

@@ -291,10 +291,15 @@ export function parseTimedFields(
   const hpTrigger = isSelfHpAtMostTrigger(trigger);
   const untilHpAbove = effect.durationUntil === 'selfHpAbove';
   const inSeconds = effect.durationRef !== undefined || effect.durationSeconds !== undefined;
-  if (untilHpAbove ? !hpTrigger : hpTrigger && !inSeconds)
+  if (untilHpAbove && !hpTrigger)
+    fail(path, 'durationUntil "selfHpAbove" goes only with the trigger { selfHpAtMostRef }');
+  if (hpTrigger && !untilHpAbove && !inSeconds)
+    fail(path, 'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" or a duration in seconds');
+  // 最大HP▲・最大HP のみ▲ は HP の割合そのものを動かす（自分の発火で割合が動き直す）ので、このきっかけには書かない
+  if (hpTrigger && stat !== undefined && isMaxHpStat(stat))
     fail(
-      path,
-      'the trigger { selfHpAtMostRef } goes with durationUntil "selfHpAbove" (and only with it) or a duration in seconds',
+      `${path}.stat`,
+      `the trigger { selfHpAtMostRef } cannot carry "${stat}" (it moves the HP ratio the trigger reads)`,
     );
   // Stage 11 モダニア: 効果のあるスタック
   if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
