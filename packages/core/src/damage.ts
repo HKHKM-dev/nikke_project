@@ -393,7 +393,7 @@ const DUAL_WIELD_NOTES: Record<DualWieldWeapon, { ja: string; en: string }> = {
   },
   SG: {
     ja: '二丁持ちの SG は 1 発 2 ヒット（2 × ペレット数）で、どのペレットもゲージを溜める（C-1068）。当たりの割合とコア命中率は銃口 1 つの SG の行',
-    en: 'Dual-wield SG: 2 hits per shot (2 × pellets), every pellet building burst gauge (V-0718); hit and core rates use the single-muzzle SG row',
+    en: 'Dual-wield SG: 2 hits per shot (2 × pellets), every pellet building burst gauge (C-1068); hit and core rates use the single-muzzle SG row',
   },
 };
 
