@@ -656,9 +656,11 @@ header h1 {
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area,
 .char-tray-item.char-tray-item-pending {
   outline: 3px solid var(--placing-blue);
+}
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
   outline-offset: -1px;
 }
-/* ニケ一覧の枠は、項目の間が狭いので 1px 内側に寄せる */
+/* ニケ一覧の枠は、項目の間が狭いのでスロットより 1px 内側に寄せる */
 .char-tray-item.char-tray-item-pending {
   outline-offset: -2px;
 }
@@ -860,7 +862,7 @@ header h1 {
   /* マウスの操作は受ける（アーティファクトのコメントで名前と限界突破を選べるように）。押したときのドラッグ・クリックはカードに届く */
   z-index: 1;
 }
-.modern-slot-char-name-track {
+.scrolling-name-track {
   display: inline-block;
 }
 /* 限界突破（星）とコア強化（01〜07）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
@@ -967,17 +969,17 @@ header h1 {
 .char-tray-tall-area .growth-marks-core {
   font-size: 0.42rem;
 }
-.modern-slot-char-name-scroll {
+.scrolling-name {
   text-align: left;
 }
-/* 2 つ並べた名前の間（ModernSlotCard.tsx の NAME_SCROLL_GAP と同じ） */
-.modern-slot-char-name-scroll .modern-slot-char-name-track > span {
+/* 2 つ並べた名前の間（useScrollingName.tsx の NAME_SCROLL_GAP と同じ） */
+.scrolling-name .scrolling-name-track > span {
   margin-right: 32px;
 }
-.modern-slot-char-name-scroll .modern-slot-char-name-track {
-  animation: modern-slot-char-name-scroll var(--name-duration) linear infinite;
+.scrolling-name .scrolling-name-track {
+  animation: scrolling-name var(--name-duration) linear infinite;
 }
-@keyframes modern-slot-char-name-scroll {
+@keyframes scrolling-name {
   from {
     transform: translateX(0);
   }
@@ -986,7 +988,7 @@ header h1 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-char-name-scroll .modern-slot-char-name-track {
+  .scrolling-name .scrolling-name-track {
     animation: none;
   }
 }
@@ -1084,8 +1086,10 @@ header h1 {
   max-width: 120px;
   /* 属性の色は使わない（属性は左上のバッジで示す） */
   --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  /* 枠線の色（モダン UI は modern.css で変える。立ち絵の border-image も同じ色） */
+  --char-visual-line: var(--app-border);
   background: var(--char-visual-fill);
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--char-visual-line);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -1133,12 +1137,12 @@ header h1 {
   --badge-w: 24px;
 }
 /* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
-   枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色と同じ（モダン UI は modern.css の --slot-frame-line） */
+   枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
 .char-visual-portrait,
 .char-visual-tall {
   /* 基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
-  border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line, var(--app-border)) 50%) 1;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
 }
 .char-visual-img {
   width: 100%;
@@ -1238,7 +1242,6 @@ html:has(.modern-view-container) {
 .char-tray-shape-current {
   font-weight: bold;
 }
-/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 /* 並べ替えを開くボタンの名前。全部の並びの名前を 1 つのマスに重ねて幅を一番長い名前に合わせ、いまの並びだけを見せる */
 .char-tray-sort-label {
   display: inline-grid;
@@ -1266,6 +1269,7 @@ html:has(.modern-view-container) {
 .char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
   visibility: hidden;
 }
+/* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
   cursor: default;
   opacity: 0.6;
@@ -1344,7 +1348,7 @@ html:has(.modern-view-container) {
 .char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
   filter: brightness(0.4);
 }
-/* 四角の絵の下の名前。収まらない名前は流す（.modern-slot-char-name-scroll。ModernSlotCard.tsx の useScrollingName） */
+/* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
 .char-tray-item-name {
   font-size: 0.75rem;
   line-height: 1.2;

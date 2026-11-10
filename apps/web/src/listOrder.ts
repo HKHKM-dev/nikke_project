@@ -75,7 +75,7 @@ export function orderCharacters(
     const pa = values.get(a.resourceId);
     const pb = values.get(b.resourceId);
     if (pa === undefined || pb === undefined)
-      return (pa === undefined ? 1 : 0) - (pb === undefined ? 1 : 0) || byName(a, b);
+      return Number(pa === undefined) - Number(pb === undefined) || byName(a, b);
     return sign * (pa - pb) || byName(a, b);
   });
 }

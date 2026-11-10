@@ -126,7 +126,7 @@
 }
 /* ニケがいるときの立ち絵とニケ一覧の絵の枠も、空のスロットの枠と同じ色にする */
 :root[data-app-ui='modern'] .char-visual {
-  border-color: var(--slot-frame-line);
+  --char-visual-line: var(--slot-frame-line);
 }
 :root[data-app-ui='modern'] .modern-slot-damage-section {
   border: none;

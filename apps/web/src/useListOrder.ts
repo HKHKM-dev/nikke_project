@@ -16,8 +16,8 @@ import {
 import { createContext, useEffect, useMemo, useState } from 'react';
 import {
   LIST_DIRECTION_STORAGE_KEY,
-  OVERLOAD_ORDER_OPTIONS,
   LIST_ORDER_STORAGE_KEY,
+  OVERLOAD_ORDER_OPTIONS,
   defaultListDirection,
   effectiveListOrder,
   parseListDirection,

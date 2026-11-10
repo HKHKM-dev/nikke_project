@@ -7,7 +7,8 @@ import type { Badge } from './badges.ts';
 import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { TrayShape } from '../../trayShape.ts';
-import { SlotCharName, useScrollingName } from './ModernSlotCard.tsx';
+import { SlotCharName } from './ModernSlotCard.tsx';
+import { useScrollingName } from './useScrollingName.tsx';
 import type { ActiveDragData } from './dropIntent.ts';
 import { OtherPartyBadges } from './OtherPartyBadges.tsx';
 

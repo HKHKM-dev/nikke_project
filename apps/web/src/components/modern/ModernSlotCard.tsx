@@ -1,5 +1,4 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import type { CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { SlotResultView } from '../../calcView.ts';
 import { formatDamage } from '../../format.ts';
@@ -10,6 +9,7 @@ import { CharacterVisual } from './CharacterVisual.tsx';
 import { GrowthMarksView, type GrowthMarks } from './GrowthMarks.tsx';
 import type { ActiveDragData, OverDragData } from './dropIntent.ts';
 import { OtherPartyBadges } from './OtherPartyBadges.tsx';
+import { useScrollingName } from './useScrollingName.tsx';
 
 /** 操作キャラの印（コントローラーの絵）。ModernSlotCard の上の段と、ドラッグ中の重ねる絵（ModernView）が使う */
 export function ControllerIcon() {
@@ -137,50 +137,50 @@ export function ModernSlotCard({
           </svg>
         )}
         {/* 置き先待ちのクリックは立ち絵の枠でだけ受ける（カードの上下の段・ダメージの欄では置かない） */}
-        {characterEntry ? (
-          <div className="modern-slot-char-area" onClick={onPlacePending}>
-            <CharacterVisual
-              character={characterEntry}
-              isUnsupported={isUnsupported}
-              size="portrait"
-              extraBadge={collectionBadge}
-            />
-            <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
-            <button
-              type="button"
-              className="modern-slot-icon-button modern-slot-clear-button"
-              aria-label="スロットを空にする"
-              onClick={(e) => {
-                e.stopPropagation();
-                onClear();
-              }}
-              // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              ✕
-            </button>
-            <button
-              type="button"
-              className="modern-slot-icon-button modern-slot-build-button"
-              aria-label="育成・設定"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenBuildModal();
-              }}
-              // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              ⚙
-            </button>
-          </div>
-        ) : (
-          // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
-          <div className="modern-slot-char-area" onClick={onPlacePending}>
+        <div className="modern-slot-char-area" onClick={onPlacePending}>
+          {characterEntry ? (
+            <>
+              <CharacterVisual
+                character={characterEntry}
+                isUnsupported={isUnsupported}
+                size="portrait"
+                extraBadge={collectionBadge}
+              />
+              <SlotCharName name={characterEntry.name.ja} marks={growthMarks} />
+              <button
+                type="button"
+                className="modern-slot-icon-button modern-slot-clear-button"
+                aria-label="スロットを空にする"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClear();
+                }}
+                // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+              >
+                ✕
+              </button>
+              <button
+                type="button"
+                className="modern-slot-icon-button modern-slot-build-button"
+                aria-label="育成・設定"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenBuildModal();
+                }}
+                // ボタンの上で押してもカードのドラッグを始めない（センサーは mousedown・touchstart で始まる）
+                onMouseDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+              >
+                ⚙
+              </button>
+            </>
+          ) : (
+            // ニケがいるときの絵と同じ大きさにして、選んでもカードの大きさが変わらないようにする
             <EmptySlotFace slotIndex={slotIndex} />
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {error && <p className="modern-slot-error">{error}</p>}
@@ -204,10 +204,6 @@ export function ModernSlotCard({
   );
 }
 
-/** 名前が流れる速さ（px/秒）と、ループでつながる 2 つの名前の間（px。styles.css の .modern-slot-char-name-track の margin と同じ） */
-const NAME_SCROLL_SPEED = 40;
-const NAME_SCROLL_GAP = 32;
-
 /**
  * 立ち絵の下部に右詰めで重ねる名前。枠に収まらないときは、右から左へ一定の速さで流し続ける
  * （名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）
@@ -220,46 +216,6 @@ export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks
       {track}
     </div>
   );
-}
-
-/**
- * 枠に収まらない名前を、右から左へ一定の速さで流し続ける（名前を 2 つ並べ、1 つ分と間だけ動かしてループをつなぐ）。
- * 枠（boxRef）に scrollClass と style を付け、中に track を置く。スロットと一覧の立ち絵の名前、一覧の四角の絵の下の名前が使う
- */
-export function useScrollingName<T extends HTMLElement>(name: string) {
-  const boxRef = useRef<T>(null);
-  const textRef = useRef<HTMLSpanElement>(null);
-  const [textWidth, setTextWidth] = useState<number | null>(null);
-  useLayoutEffect(() => {
-    const box = boxRef.current;
-    const text = textRef.current;
-    if (!box || !text) return;
-    const measure = () => {
-      const style = getComputedStyle(box);
-      const room = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
-      const width = text.getBoundingClientRect().width;
-      setTextWidth(width > room ? width : null);
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(box);
-    return () => observer.disconnect();
-  }, [name]);
-  const shift = textWidth === null ? 0 : textWidth + NAME_SCROLL_GAP;
-  return {
-    boxRef,
-    scrollClass: textWidth !== null ? 'modern-slot-char-name-scroll' : '',
-    style: {
-      '--name-shift': `${shift}px`,
-      '--name-duration': `${shift / NAME_SCROLL_SPEED}s`,
-    } as CSSProperties,
-    track: (
-      <span className="modern-slot-char-name-track">
-        <span ref={textRef}>{name}</span>
-        {textWidth !== null && <span aria-hidden="true">{name}</span>}
-      </span>
-    ),
-  };
 }
 
 /** 空のスロットの枠（＋・番号・FRONT か REAR・EMPTY SLOT・5 つのうちの位置）。持ち上げたときの絵（ModernView の DragOverlay）にも使う */

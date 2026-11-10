@@ -185,9 +185,7 @@ export function overloadTotal(
   for (const part of GEAR_PARTS) {
     for (const line of build.gear[part]?.overload ?? []) {
       if (!options.includes(line.option)) continue;
-      const value = findOverloadOption(masters, line.option)?.values[line.level - 1];
-      if (value === undefined) throw new RangeError(`overload ${line.option}: no value at Lv${line.level}`);
-      total += value;
+      total += statOf(findOverloadOption(masters, line.option)?.values, line.level - 1, `overload ${line.option}`);
     }
   }
   return total;
