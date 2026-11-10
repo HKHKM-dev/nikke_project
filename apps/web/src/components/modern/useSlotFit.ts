@@ -12,6 +12,7 @@ const SLOT_SIZE_VAR = '--slot-portrait-h';
 
 /** 並びの幅 width に count 枚を 1 段で収める立ち絵の高さ（偶数の px に切り下げる。上限 PORTRAIT_MAX_H） */
 export function fitPortraitHeight(width: number, count: number, gap: number, cardPaddingX: number): number {
+  if (count <= 0) return PORTRAIT_MAX_H;
   const cardWidth = (width - gap * (count - 1)) / count;
   const h = 2 * (cardWidth - cardPaddingX - PORTRAIT_BORDER_X);
   return Math.max(0, Math.min(PORTRAIT_MAX_H, Math.floor(h / 2) * 2));
@@ -21,17 +22,20 @@ export function useSlotFit(gridRef: RefObject<HTMLElement | null>, count: number
   useLayoutEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
-    // 並びの高さだけが変わったとき（立ち絵を縮めた直後・ダメージの値の更新など）は測り直さない
-    let lastWidth = -1;
+    // 並びの高さだけが変わったとき（立ち絵を縮めた直後・ダメージの値の更新など）は、値が同じなので書き直さない
+    let last = '';
     const fit = () => {
-      const width = grid.clientWidth;
       const card = grid.firstElementChild;
-      if (!card || width === lastWidth) return;
-      lastWidth = width;
+      if (!card) return;
+      // 端数の幅（拡大率など）で clientWidth が切り上がると 1 段に収まらないので、実際の幅を切り下げて使う
+      const width = Math.floor(grid.getBoundingClientRect().width);
       const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
       const cardStyle = getComputedStyle(card);
       const paddingX = (parseFloat(cardStyle.paddingLeft) || 0) + (parseFloat(cardStyle.paddingRight) || 0);
-      grid.style.setProperty(SLOT_SIZE_VAR, `${fitPortraitHeight(width, count, gap, paddingX)}px`);
+      const value = `${fitPortraitHeight(width, count, gap, paddingX)}px`;
+      if (value === last) return;
+      last = value;
+      grid.style.setProperty(SLOT_SIZE_VAR, value);
     };
     fit();
     const observer = new ResizeObserver(fit);
@@ -40,7 +44,7 @@ export function useSlotFit(gridRef: RefObject<HTMLElement | null>, count: number
   }, [gridRef, count]);
 }
 
-/** node（スロットの中の要素）のいまのスロットの大きさの変数（並びの外に写す絵の style に置く。値が無ければ空） */
+/** node のいまのスロットの大きさの変数（並びの外に写す絵の style に置く。並びの外の node では :root の元の大きさ） */
 export function slotSizeVars(node: Element): Record<string, string> {
   const value = getComputedStyle(node).getPropertyValue(SLOT_SIZE_VAR).trim();
   return value ? { [SLOT_SIZE_VAR]: value } : {};
