@@ -287,6 +287,20 @@ export function splitHits(
 }
 
 /** ヒットのある増分を、空きが gap（f）を超える所でまとまり（マガジン）に分ける */
+/** 増分から距離ボーナスの有無を読む（1 発の増分と決まらなければ undefined）。detectCuts は既定で singleHitDistance */
+export type DistanceReader = (increment: number) => 0 | 1 | undefined;
+
+/**
+ * 発の刻み（f）。満タンに近いマガジン（(最後 − 最初) ÷ (装弾数 − 1) が 2.1〜2.8f）の中央値。無ければ fallback
+ */
+export function estimateInterval(rows: readonly HudIncrement[], mag: number, fallback = 2.43): number {
+  const spans = groupMagazines(rows)
+    .map((g) => (g.at(-1)!.frame - g[0]!.frame) / (mag - 1))
+    .filter((d) => d > 2.1 && d < 2.8)
+    .sort((a, b) => a - b);
+  return spans.length > 0 ? spans[Math.floor(spans.length / 2)]! : fallback;
+}
+
 export function groupMagazines<T extends { frame: number }>(items: readonly T[], gap = 40): T[][] {
   const groups: T[][] = [];
   for (const it of items) {
@@ -317,11 +331,12 @@ export function segmentOf(frame: number, cuts: readonly number[]): number {
  */
 export function detectCuts(
   rows: readonly HudIncrement[],
-  grid: HitGrid,
+  grid: HitGrid | DistanceReader,
   mag: number,
   interval: number,
   offsets: readonly number[] = [2037, 2432, 2032, 2061],
 ): number[] {
+  const distanceOf = typeof grid === 'function' ? grid : (inc: number) => singleHitDistance(inc, grid);
   // 最後のまとまりは切れ目にならないが、距離ボーナスの替わり目を見るのに使う
   const groups = groupMagazines(rows);
   const info = groups.map((g, i) => {
@@ -329,7 +344,7 @@ export function detectCuts(
     let d0 = 0;
     for (const r of g) {
       if (r.readGap !== 1) continue;
-      const d = singleHitDistance(r.increment, grid);
+      const d = distanceOf(r.increment);
       if (d === 1) d1++;
       if (d === 0) d0++;
     }

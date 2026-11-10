@@ -79,11 +79,7 @@ export const smgMags: Recipe = {
     const rows = (await loadHudJumps(ctx)).rows.map((r) => ({ ...r, readGap: r.readGap ?? 1 }));
     const ammo = await loadAmmo(ctx);
     const who = ctx.recording.team.map((m) => m.name).join('・');
-    const spans = groupMagazines(rows)
-      .map((g) => (g.at(-1)!.frame - g[0]!.frame) / (mag - 1))
-      .filter((d) => d > 2.1 && d < 2.8)
-      .sort((a, b) => a - b);
-    const interval = spans.length > 0 ? spans[Math.floor(spans.length / 2)]! : 2.43;
+    const interval = estimateInterval(rows, mag);
     const given = (ctx.options.cuts ?? '')
       .split(',')
       .filter((x) => x !== '')
