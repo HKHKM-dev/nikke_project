@@ -1130,8 +1130,11 @@ header h1 {
 .char-visual-portrait {
   max-width: none;
   --badge-w: 24px;
-  /* 枠線は上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。枠線の太さは変えないので、絵の大きさは同じ */
-  /* 色は枠線の色と同じ（モダン UI は modern.css の --slot-frame-line） */
+}
+/* スロットの立ち絵とニケ一覧の縦長の絵の枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+   枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色と同じ（モダン UI は modern.css の --slot-frame-line） */
+.char-visual-portrait,
+.char-visual-tall {
   border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line, var(--app-border)) 50%) 1;
 }
 .char-visual-img {
