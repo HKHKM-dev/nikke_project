@@ -1,0 +1,167 @@
+[
+  {
+    "id": "1041-01",
+    "recording": "1041",
+    "kind": "total",
+    "use": "record",
+    "value": 195522873,
+    "description": "リター・デルタ・紅蓮 の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11537。増分は 3472 個"
+    },
+    "source": "V-0714",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1041-02",
+    "recording": "1041",
+    "kind": "count",
+    "use": "record",
+    "value": 233,
+    "unit": "トリガー",
+    "description": "リター・デルタ・紅蓮 のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 3472 個。前の増分から 30f 未満の増分（3445 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 43f）から発の数を決めた（2 発になった組 24 個）"
+    },
+    "source": "V-0714",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1041-03",
+    "recording": "1041",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 4330092,
+    "unit": "ダメージ",
+    "description": "リター・デルタ・紅蓮の、紅蓮の 1 回目のバーストスキルダメージ（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "バーストの後の 1 回だけの大きい増分。f1552 の増分（会心）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 0,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1041-04",
+    "recording": "1041",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "hit",
+    "use": "compare",
+    "value": 5130453,
+    "unit": "ダメージ",
+    "description": "リター・デルタ・紅蓮の、紅蓮の 2 回目のバーストスキルダメージ（会心）",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分",
+      "note": "バーストの後の 1 回だけの大きい増分。f4105 の増分（会心）。3・4 回目（f6634・f9107）は非会心の 3,034,514"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDamage",
+      "args": {
+        "slot": 3,
+        "n": 1,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "burst"
+    }
+  },
+  {
+    "id": "1041-05",
+    "recording": "1041",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.2045,
+    "description": "リター・デルタ・紅蓮の、紅蓮の 1 回目のバースト（HP 約 81%）の後 10 秒の通常攻撃の 1 ヒットのうち会心の割合（9 ÷ 44）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（会心の数え）",
+      "note": "フルバーストの始まり（burst-panel の II → III の後の紫のバー。動画の f1452）から 600f の増分を、モデルのその窓の中の 2 つのフレーム（フルバーストの入りの 100f・400f 後）の紅蓮・リター・デルタの 1 ヒットの格子で、紅蓮 0〜1 発 + リター 0〜1 発 + デルタ 0〜1 発の和に ±2.5 で分解し、分解がどれも紅蓮の会心（か非会心）で一致した増分だけ数えた（決まらない増分は 0）。標準誤差は約 0.061。許容は標準誤差の約 2 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 700
+      },
+      "tolerance": {
+        "abs": 0.1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1041-06",
+    "recording": "1041",
+    "source": "V-0714",
+    "readAt": "2026-11-10",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.3679,
+    "description": "リター・デルタ・紅蓮の、紅蓮の 2〜4 回目のバースト（HP 50% 以下）の後 10 秒（3 回の合計）の通常攻撃の 1 ヒットのうち会心の割合（39 ÷ 106）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（会心の数え）",
+      "note": "フルバーストの始まり（burst-panel の II → III の後の紫のバー。動画の f4005・6534・9008）から 600f の増分を、モデルのその窓の中の 2 つのフレーム（フルバーストの入りの 100f・400f 後）の紅蓮・リター・デルタの 1 ヒットの格子で、紅蓮 0〜1 発 + リター 0〜1 発 + デルタ 0〜1 発の和に ±2.5 で分解し、分解がどれも紅蓮の会心（か非会心）で一致した増分だけ数えた（決まらない増分は 0）。標準誤差は約 0.047。許容は標準誤差の約 2 倍"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 3,
+        "frame": 3200
+      },
+      "tolerance": {
+        "abs": 0.09
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]

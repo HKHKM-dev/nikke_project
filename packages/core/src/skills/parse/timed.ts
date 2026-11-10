@@ -25,6 +25,7 @@ import {
   isPassiveFlagStat,
   STATIC_PASSIVE_FLAG_STATS,
   isSelfHpAtMostTrigger,
+  isSelfHpAtMost,
   isStateStat,
   isTimerTrigger,
   SKILL_SLOTS,
@@ -343,6 +344,17 @@ export function parseTimedFields(
       fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
     }
     if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
+    // 紅蓮編（plan/design-scarlet.md 2.2 節）: timed の selfHp は「以下」の形だけ（発火のフレームの HP の割合で見る）。1 パス目で窓を
+    // 追う stat は、1 パス目の窓の登録が件の一覧の判定と別に回るので書けない（使い手がいない）
+    if (condition.selfHp !== undefined) {
+      if (!isSelfHpAtMost(condition.selfHp))
+        fail(`${path}.condition.selfHp`, 'timed only takes { atMostRef } or { atMost } (judged at the firing frame)');
+      if (stat !== undefined && isFirstPassTrackedStat(stat))
+        fail(
+          `${path}.condition.selfHp`,
+          `selfHp is not supported for "${stat}" (its window is tracked inside the first pass)`,
+        );
+    }
     validateUsedBurst(condition, trigger, `${path}.condition`);
     validateBurstStep(condition, trigger, `${path}.condition`);
     effect.condition = condition;
@@ -636,8 +648,12 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (targetSquad !== undefined) effect.targetSquad = targetSquad;
   if (scaling !== undefined) effect.scaling = scaling;
   if (parseDecrease(v, scaling, path)) effect.decrease = true;
-  if (v.condition !== undefined)
+  if (v.condition !== undefined) {
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.passive);
+    // 紅蓮編: 常時の効果の selfHp は「以上」の形だけ（編成の段で、枠の HP の割合の想定から決める）
+    if (effect.condition.selfHp !== undefined && isSelfHpAtMost(effect.condition.selfHp))
+      fail(`${path}.condition.selfHp`, 'passive only takes { atLeastRef } or { atLeast }');
+  }
   if (v.while !== undefined) {
     // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: HP の条件（編成の段で決まる）とは組み合わせない（使い手がいない）。
     // 敵が持つ stat は、敵の件に写すので、自分の状態の件で切れない

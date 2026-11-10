@@ -496,6 +496,11 @@ export type HolderLists = {
    */
   skipInstant(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): void;
   /**
+   * 紅蓮編（plan/design-scarlet.md 2.1 節）: 枠 slotIndex の現在の HP を、フレーム frame に割合 ratio だけ下げる（HP の割合に 1 − ratio を
+   * 掛ける）。selfHpRatioAt は frame より後のフレームから読む。フレームの昇順に呼ぶ
+   */
+  lowerCurrentHp(slotIndex: number, frame: number, ratio: number): void;
+  /**
    * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: 枠 holder が自分の状態 state（家族の根なら家族のどれか）をフレーム frame に
    * 持つか。frame/plan.ts の damage の selfState と同じく、静的な状態か、frame より前に付いて frame に続いている件を見る。1 パス目が
    * 周期の短縮（periodShorten）を追うのに、frame までに登録した件で呼ぶ
@@ -1811,7 +1816,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (condition?.usedBurst === undefined ||
       fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) === condition.usedBurst) &&
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
-    burstStepHolds(condition, ev, sourceSlotIndex);
+    burstStepHolds(condition, ev, sourceSlotIndex) &&
+    // 紅蓮編（plan/design-scarlet.md 2.2 節）: 自分の HP の割合が閾値以下か。発火のフレームより前の件・発火だけで決まる（resolveCondition が
+    // atMostRef を atMost にしてある）
+    (condition?.selfHp?.atMost === undefined ||
+      selfHpRatioAt(sourceSlotIndex, ev.frame) <= condition.selfHp.atMost / 100 + 1e-9);
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -1849,14 +1858,36 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       state?.passiveEffects.filter((e) => e.stat === 'maxHpOnly').reduce((sum, e) => sum + e.appliedAmount, 0) ?? 0,
   );
   // 最大HP のみ▲ を持ちうる枠（常時か件の列）だけ割合が動く。ほかの枠は想定の割合のまま（毎フレームの走査を省く）
+  // 紅蓮編（plan/design-scarlet.md 2.1 節）: 現在の HP▼ の発火（フレームの昇順）と、その発火までの 1 − ratio の積
+  const hpDowns = slots.map((): { frame: number; product: number }[] => []);
+  const lowersCurrentHp = slots.map(
+    (slot) =>
+      slot?.definition != null &&
+      SKILL_SLOTS.some((s) => slot.definition!.skills[s].effects.some((e) => e.kind === 'currentHpDown')),
+  );
+  /** 枠の frame より前の現在の HP▼ の積（無ければ 1） */
+  const hpDownProductBefore = (slotIndex: number, frame: number): number => {
+    const downs = hpDowns[slotIndex] ?? [];
+    let product = 1;
+    for (let i = downs.length - 1; i >= 0; i -= 1) {
+      if (downs[i]!.frame < frame) {
+        product = downs[i]!.product;
+        break;
+      }
+    }
+    return product;
+  };
   const hpRatioMoves = slots.map(
-    (_, i) => (passiveMaxHpOnly[i] ?? 0) > 0 || (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly'),
+    (_, i) =>
+      (passiveMaxHpOnly[i] ?? 0) > 0 ||
+      (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly') ||
+      lowersCurrentHp[i] === true,
   );
   const selfHpRatioAt = (slotIndex: number, frame: number): number => {
     const assumed = slots[slotIndex]?.hpRatio ?? 1;
     if (!hpRatioMoves[slotIndex]) return assumed;
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
-    return (assumed * (1 + up - only)) / (1 + up);
+    return (assumed * hpDownProductBefore(slotIndex, frame) * (1 + up - only)) / (1 + up);
   };
   // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
   // 発動者より低い枠（同値は含まない）と発動者自身
@@ -2681,6 +2712,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return false;
     },
     skipInstant: (effect, sourceSlotIndex, frame) => skipEffect(sourceSlotIndex, effect, frame),
+    lowerCurrentHp(slotIndex, frame, ratio) {
+      const downs = hpDowns[slotIndex];
+      if (downs === undefined) return;
+      const last = downs[downs.length - 1];
+      if (last !== undefined && last.frame > frame)
+        throw new RangeError('lowerCurrentHp must be called in frame order');
+      downs.push({ frame, product: (last?.product ?? 1) * (1 - ratio) });
+    },
     consumeFullStacks(frame) {
       const out: FullStackEvent[] = [];
       for (const { holder, state, own } of consumingTracks) {

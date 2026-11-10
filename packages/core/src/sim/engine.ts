@@ -38,7 +38,7 @@ import {
 } from '../frame/landing.ts';
 import { MAX_SKILL_LEVELS, type AppliedEffect, type AppliedTimedEffect, type ItemEffect } from '../skills/resolve.ts';
 import { valuePiecesOf, type RemoveDebuffGuessRecord } from '../skills/holders.ts';
-import { isStateStat } from '../skills/types.ts';
+import { isStateStat, type InstantKind } from '../skills/types.ts';
 import { combineBurstHitParts, slotBurstHit, withSkillHitValue, type BurstHitResult } from '../skills/burstDamage.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
@@ -77,7 +77,7 @@ export type SimEvent =
   | { frame: number; kind: 'skillHit'; slot: number; effect: SkillHitEvent['effect']; damage: number }
   | {
       frame: number;
-      kind: 'cooldownReduction' | 'ammoRefill' | 'heal' | 'burstGauge' | 'ammoDecrease' | 'fullBurstExtend';
+      kind: InstantKind;
       slot: number;
       source: number;
       amount: number;

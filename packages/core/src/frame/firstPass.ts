@@ -1874,6 +1874,18 @@ function runFirstPassOnce(
         });
         continue;
       }
+      // 紅蓮編（plan/design-scarlet.md 2.1 節）: 現在の HP▼ は自分の HP の割合を下げるだけ（次のフレームから読む）
+      if (src.effect.kind === 'currentHpDown') {
+        lists.lowerCurrentHp(src.sourceSlotIndex, f, src.effect.value);
+        instants.push({
+          frame: f,
+          sourceSlotIndex: src.sourceSlotIndex,
+          slotIndex: src.sourceSlotIndex,
+          effect: src.effect,
+          amount: src.effect.value,
+        });
+        continue;
+      }
       const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         if (src.effect.kind === 'cooldownReduction') {

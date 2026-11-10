@@ -4,7 +4,7 @@
 - 関連: [design-mast.md](design-mast.md) 8 節（HP の割合の窓のきっかけ `{ selfHpAtMostRef }`・維持 `selfHpAbove`）、[design-ade.md](design-ade.md) 2.1 節（同じきっかけの固定の秒の維持）、[design-skill-stage6.md](design-skill-stage6.md) 2.4 節（HP の割合の式）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md) 4.6・6.2 節（条件の判定のタイミング・HP の経路）、[design-range-enemy-attacks.md](design-range-enemy-attacks.md)（射撃場の敵の攻撃）
 - 検証: V-0714
 - 作成日: 2026-11-10
-- 状態: 決定・撮影待ち（7 節）
+- 状態: 決定・実装（7 節）
 
 ## 0. 範囲
 
@@ -121,3 +121,4 @@
 
 - 2026-11-10: 起案。説明文とコードを照らし、語彙が 2 つ足りないと分かった（0 節）。論点 1〜5 と撮影 A・B（V-0714）をオーナーに諮る。
 - 2026-11-10: オーナーが論点 1〜5 を推奨どおりに決めた。撮影 A・B（V-0714）を依頼した。
+- 2026-11-10: 撮影 A・B（録画 1038〜1041）は H1・Hb1 と合い、H2・H0・Hb0 は合わなかった。S2 の被弾の追加ダメージは的の攻撃の時だけ出た。2.1・2.2 節の語彙（`currentHpDown`・timed の `selfHp` の `atMostRef`）と定義 `data/skills/222.json` を実装した。現在の HP▼ はきっかけの発のフレームに起き、HP の割合を読む▲は次のフレームから付く（攻撃力▲の窓と同じフレーム）。結論は C-1044〜C-1049。6 節の候補は backlog 6 節に起こした。

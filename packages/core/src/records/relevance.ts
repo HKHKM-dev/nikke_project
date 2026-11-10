@@ -124,6 +124,8 @@ const KIND_CLASS: Record<string, ElementClass> = {
   burstStepChange: 'burstTiming',
   allyGaugeAdd: 'burstTiming',
   ammoRefill: 'firing',
+  // 紅蓮編（plan/design-scarlet.md 2.1 節）: 現在の HP▼ は、HP の割合を読む▲（クリティカルダメージ▲など）の付く時刻を通して値に効く
+  currentHpDown: 'damageValue',
   cycle: 'firing',
   cycleEvery: 'firing',
   // アインのニアフェザー編: 召喚の展開は、機数を通して召喚の攻撃（damage のきっかけ { summon }）のヒットにだけ効く

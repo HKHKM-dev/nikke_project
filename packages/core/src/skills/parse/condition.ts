@@ -46,6 +46,7 @@ export const CONDITION_KEYS_OF = {
   // 2 段目の段 10: selfCounter（カウンタの値。付与の条件にも使う）。エレグの段 3（plan/design-elegg-s3.md 3.2 節）: enemyState
   // レッドフード編（plan/design-red-hood.md 2.1 節）: burstStep（使った段階）
   // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: inEffectiveRange（適正射程距離内なら）
+  // 紅蓮編（plan/design-scarlet.md 2.2 節）: selfHp（以下の形だけ。parse/timed.ts）
   timed: [
     'selfBuffed',
     'inFullBurst',
@@ -55,6 +56,7 @@ export const CONDITION_KEYS_OF = {
     'selfCounter',
     'burstStep',
     'inEffectiveRange',
+    'selfHp',
   ],
   // 2 段目の段 11 の PR 5: damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
   damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter'],
@@ -163,18 +165,22 @@ function parseSelfCounterCondition(v: Json, path: string): SelfCounterCondition 
 }
 
 /** 2 段目の段 6: 自分の HP の割合の条件。{ atLeastRef }（「自分の HP が X% 以上なら」）。段 15: { atLeast }（即値の %） */
+// 紅蓮編（plan/design-scarlet.md 2.2 節）: atMostRef・atMost（以下）も。どちらの向きを書けるかは効果の種類ごとに呼ぶ側で見る
 function parseSelfHpCondition(v: Json, path: string): SelfHpCondition {
-  if (!isRecord(v)) fail(path, 'expected { atLeastRef } or { atLeast }');
+  const keys = ['atLeastRef', 'atLeast', 'atMostRef', 'atMost'] as const;
+  if (!isRecord(v)) fail(path, 'expected { atLeastRef }, { atLeast }, { atMostRef } or { atMost }');
   for (const key of Object.keys(v))
-    if (key !== 'atLeastRef' && key !== 'atLeast') fail(`${path}.${key}`, 'unknown field');
-  if ((v.atLeastRef === undefined) === (v.atLeast === undefined))
-    fail(path, 'write exactly one of atLeastRef and atLeast');
-  if (v.atLeast !== undefined) {
-    if (typeof v.atLeast !== 'number' || !(v.atLeast > 0 && v.atLeast <= 100))
-      fail(`${path}.atLeast`, 'expected a percent in (0, 100]');
-    return { atLeast: v.atLeast };
+    if (!(keys as readonly string[]).includes(key)) fail(`${path}.${key}`, 'unknown field');
+  const present = keys.filter((key) => v[key] !== undefined);
+  if (present.length !== 1) fail(path, `write exactly one of ${keys.join(', ')}`);
+  const key = present[0]!;
+  if (key === 'atLeast' || key === 'atMost') {
+    const x = v[key];
+    if (typeof x !== 'number' || !(x > 0 && x <= 100)) fail(`${path}.${key}`, 'expected a percent in (0, 100]');
+    return key === 'atLeast' ? { atLeast: x } : { atMost: x };
   }
-  return { atLeastRef: parseRef(v.atLeastRef, `${path}.atLeastRef`) };
+  const ref = parseRef(v[key], `${path}.${key}`);
+  return key === 'atLeastRef' ? { atLeastRef: ref } : { atMostRef: ref };
 }
 
 /**

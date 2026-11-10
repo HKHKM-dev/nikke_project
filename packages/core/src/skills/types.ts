@@ -1012,7 +1012,8 @@ export type StateEndUntil = { stateEnd: NamedStateId };
  * （plan/design-diesel-ws.md 2.2 節）: false = 使用していなければ（burstUsers に自分がいない）。フルバーストの開始・終了の出来事の
  * 回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも書ける。
  * selfHp = 自分の HP の割合が閾値以上なら（2 段目の段 6。plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
- * 戦闘中一定なので、編成の段で決まる）。
+ * 戦闘中一定なので、編成の段で決まる）。紅蓮編（plan/design-scarlet.md 2.2 節）: 閾値以下なら（atMost の形。timed だけ。発火のフレームの
+ * HP の割合で見る。件の一覧が発火の文脈の条件と同じ所で見る）。
  * burstStep = この発動を撃った段階が N なら（レッドフード編。plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
@@ -1046,12 +1047,25 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件。atLeastRef = 「自分の HP が X% 以上なら」の X の
  * description_value の番号（値は % 表記）。「以下」「未満」「最大の時のみ」は使い手を定義する時に足す。
  * 2 段目の段 15 の PR 1（plan/design-skill-stage15.md 2.1 節）: atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
- * 「自分の HP が 80% 以上の時のみ」）。atLeastRef とちょうど 1 つ
+ * 「自分の HP が 80% 以上の時のみ」）。atLeastRef とちょうど 1 つ。
+ * 紅蓮編（plan/design-scarlet.md 2.2 節）: atMostRef・atMost = 「自分の HP が X% 以下の場合」（timed だけ。発火のフレームの HP の割合
+ * （skills/holders.ts の selfHpRatioAt）で見る。編成の段では決めない）。passive は atLeast の形だけ、timed は atMost の形だけ書ける
  */
-export type SelfHpCondition = { atLeastRef: number; atLeast?: never } | { atLeast: number; atLeastRef?: never };
+export type SelfHpCondition =
+  | { atLeastRef: number; atLeast?: never; atMostRef?: never; atMost?: never }
+  | { atLeast: number; atLeastRef?: never; atMostRef?: never; atMost?: never }
+  | { atMostRef: number; atMost?: never; atLeastRef?: never; atLeast?: never }
+  | { atMost: number; atMostRef?: never; atLeastRef?: never; atLeast?: never };
+
+/** 紅蓮編: 「以下」の形（発火のフレームの HP の割合で見る）か */
+export function isSelfHpAtMost(hp: SelfHpCondition): boolean {
+  return hp.atMostRef !== undefined || hp.atMost !== undefined;
+}
 
 /** 2 段目の段 15: selfHp の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
 export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => number): number {
+  if (hp.atMost !== undefined) return hp.atMost / 100;
+  if (hp.atMostRef !== undefined) return valueOf(hp.atMostRef) / 100;
   return (hp.atLeast ?? valueOf(hp.atLeastRef!)) / 100;
 }
 
@@ -1497,6 +1511,24 @@ export type AmmoDecreaseEffect = TargetCountFields & {
 };
 
 /**
+ * 紅蓮編（plan/design-scarlet.md 2.1 節）: 「現在のHP X%▼」。発火のたびに、自分の現在の HP を X% 下げる（HP の割合に (1 − X) を掛ける。
+ * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
+ * から読む（skills/holders.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ
+ */
+export type CurrentHpDownEffect = TargetCountFields & {
+  kind: 'currentHpDown';
+  trigger: EffectTrigger;
+  target: 'self';
+  /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
+  targetWeapon?: WeaponType;
+  targetElement?: Element;
+  targetClass?: NikkeClass;
+  /** % の description_value_NN */
+  ref: number;
+  assumes?: LocalizedText;
+};
+
+/**
  * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 「フルバーストタイム（の持続時間）X 秒▲」。フルバーストの窓を X 秒延ばす
  * （即時効果）。窓の外の発火（バースト 3 段階突入時。ソーダ：トゥインクルバニー）は次に作る窓に予約し、窓を作る発動のバースト使用時の
  * 発火（D）はその発動が作る窓に足す。件の一覧が窓の終わりを読むので、窓の終わりは窓を作る時に決め、後から動かさない。窓は編成で
@@ -1525,7 +1557,8 @@ export type InstantEffect =
   | HealEffect
   | BurstGaugeEffect
   | AmmoDecreaseEffect
-  | FullBurstExtendEffect;
+  | FullBurstExtendEffect
+  | CurrentHpDownEffect;
 export type InstantKind = InstantEffect['kind'];
 export const INSTANT_KINDS = [
   'cooldownReduction',
@@ -1534,6 +1567,7 @@ export const INSTANT_KINDS = [
   'burstGauge',
   'ammoDecrease',
   'fullBurstExtend',
+  'currentHpDown',
 ] as const satisfies readonly InstantKind[];
 
 /**
