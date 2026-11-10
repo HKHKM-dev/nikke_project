@@ -554,19 +554,21 @@ function fullBurstMagazineShots(result: SimResult, ctx: MetricContext): number[]
 }
 
 /**
- * 課題 2-64（plan/design-debuff-removal-timed.md 2.8 節。V-0712 の録画 1032・1033）: n 回目（0 始まり）のフルバーストの窓の中で、枠の最大装弾数が
- * 窓の最初の発より大きくなった最初の発の前までに撃った発の数（戻らなければ窓の中の発の全部）。デバフ解除が最大装弾数▼を外し、
- * 1 発のマガジンが何回続いてから素のマガジンに戻るかを見る。録画では、窓の中のミサイル（最終弾の 74f 後）の並びで読む
+ * 課題 2-64（plan/design-debuff-removal-timed.md 2.8 節。V-0712 の録画 1032・1033）: n 回目（0 始まり）のフルバーストの窓の中で、最終弾でない
+ * 最初の発（2 発以上のマガジンの発）の前までに撃った発の数。最大装弾数▼で 1 発のマガジンが何回続いてから、デバフ解除で素のマガジンに
+ * 戻るかを見る（窓の最初の発から戻っていれば 0、窓の終わりまで戻らなければ窓の中の発の全部）。最大装弾数の stat でなく込めたマガジンで
+ * 数える（込め終わりの後・1 発目の前に外れると、その発はまだ 1 発のマガジン。C-0934）。録画では、窓の中のミサイル（最終弾の 74f 後）の
+ * 並びで読む
  */
 function fullBurstShotsBeforeAmmoRestore(result: SimResult, ctx: MetricContext): number {
   const n = Number(ctx.args.n);
   const w = result.schedule?.fullBurstWindows[n];
   if (w === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
-  const shots = slotOf(result.shots, ctx).frames.filter((f) => f >= w.start && f < w.end);
+  const log = slotOf(result.shots, ctx);
+  const shots = log.frames.filter((f) => f >= w.start && f < w.end);
   if (shots.length === 0) throw new Error(`${n} 回目のフルバーストの窓に枠 ${String(ctx.args.slot)} の発が無い`);
-  const ammoAt = (frame: number): number => maxAmmoAt(result, withArgs(ctx, { frame }));
-  const first = ammoAt(shots[0]!);
-  const restored = shots.findIndex((f) => ammoAt(f) > first);
+  const last = new Set(log.lastShotFrames ?? []);
+  const restored = shots.findIndex((f) => !last.has(f));
   return restored === -1 ? shots.length : restored;
 }
 

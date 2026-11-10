@@ -459,6 +459,14 @@ describe('デバフ解除（removeDebuff）', () => {
     expect(drunkenOf(history, 0).at(-1)!.end).toBe(AT + 1);
     expect(history.removeDebuffGuesses).toEqual([]);
 
+    // ▼だけが付いた枠 2 も対象に選ばれる
+    const downOnly = run(
+      [slotWith(1, [removal({ target: 'debuffedRandom', targetCount: 1 })]), slotWith(2, [ammoDown()])],
+      [T - 100],
+    );
+    expect(timedOf(downOnly, 1, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + 1 }]);
+    expect(downOnly.removeDebuffGuesses).toEqual([]);
+
     const both = run([slotWith(1, [ammoDown({ trigger: { everySeconds: 1 } }), drunken(), removal()])], [T - 100]);
     // ▼は戦闘の始めから 1 秒ごとに付き直していて始まりが早いので、▼を外し（次の発火で付き直す）、ほろ酔いは残る
     expect(timedOf(both, 0, 'maxAmmo').some((it) => it.end === AT + 1)).toBe(true);
