@@ -298,11 +298,12 @@
       "note": "撮影 B: フルバーストの窓の中のシンの 1 ヒット。S1 の発動者基準の攻撃力▲（電撃の味方）が乗る。有利コードの攻撃ダメージ▲は自分だけなので乗らない"
     },
     {
-      "id": "B-full-burst-intervals",
+      "id": "B-sin-reload-before",
       "model": "sim",
-      "metric": "fullBurstStartIntervals",
+      "metric": "reloadToNextShotAt",
       "args": {
-        "n": 3
+        "slot": 2,
+        "frame": 300
       },
       "setup": {
         "enemy": "range-bigarms-water",
@@ -311,9 +312,28 @@
         ]
       },
       "tolerance": {
-        "abs": 6
+        "abs": 2
       },
-      "note": "撮影 B: フルバーストの入りどうしの間隔（動画のフレーム）。定義は S2 の倍率ダメージがゲージを溜めない形。溜めるなら窓の中の毎発の分だけ早まる"
+      "note": "撮影 B: 窓の外のシンの最終弾から次のマガジンの 1 発目まで"
+    },
+    {
+      "id": "B-sin-reload-fb",
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 2,
+        "frame": 700
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": [
+          "range-3min-jump"
+        ]
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "note": "撮影 B: フルバーストの窓の中のシンの最終弾から次の 1 発目まで（S1 のリロード速度▲だけ）"
     },
     {
       "id": "B-cocoa-fb",
@@ -340,7 +360,7 @@
   ],
   "predicted": {
     "at": "2026-11-10",
-    "commit": "52083de2296475e8ec722d6dd70f47be1fd133b5",
+    "commit": "2f7f6681656ceb6c0d60be6007fc6d0dadb65ab1",
     "values": {
       "H-model": {
         "A-anis-pellet": 25874.64,
@@ -360,11 +380,8 @@
         "B-anis-reload-fb": 51,
         "B-sin-pellet-before": 11990.078099999999,
         "B-sin-pellet-fb": 30433.07767500001,
-        "B-full-burst-intervals": [
-          2411,
-          2516,
-          2477
-        ],
+        "B-sin-reload-before": 82,
+        "B-sin-reload-fb": 53,
         "B-cocoa-fb": 430744.875
       }
     }
