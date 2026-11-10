@@ -21,6 +21,9 @@
    z-index が負の層より上に描かれ、模様を隠す） */
 :root[data-app-ui='modern'] body {
   background: transparent;
+  /* 画面の左右の余白（スロットを狭い画面でも 1 段に収めるため、クラシックより狭くする。切り欠きのある画面ではその分は空ける） */
+  padding-left: max(8px, env(safe-area-inset-left, 0px));
+  padding-right: max(8px, env(safe-area-inset-right, 0px));
 }
 :root[data-app-ui='modern'] body::before {
   content: '';

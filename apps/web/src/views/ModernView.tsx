@@ -13,7 +13,14 @@ import {
   type MouseSensorOptions,
 } from '@dnd-kit/core';
 import type { CharacterIndexEntry } from '@nikke/core';
-import { useLayoutEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
+} from 'react';
 import { DamageTotalPanel } from '../components/DamageTotalPanel.tsx';
 import { ErrorBoundary } from '../components/ErrorBoundary.tsx';
 import { NotesSummary } from '../components/NotesSummary.tsx';
@@ -25,6 +32,7 @@ import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge, trayCollectionBadge, type Badge } from '../components/modern/badges.ts';
 import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
+import { slotSizeVars, useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ControllerIcon, EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
 import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } from '../components/modern/flight.ts';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
@@ -152,6 +160,10 @@ export function ModernView({
   // 育成モーダルを開いているスロット（null なら閉じた状態）
   const [editingSlotIndex, setEditingSlotIndex] = useState<number | null>(null);
 
+  // スロット 5 枚を画面の幅に収める（足りなければ立ち絵を縮める）
+  const slotsGridRef = useRef<HTMLElement>(null);
+  useSlotFit(slotsGridRef, team.slots.length);
+
   // ドラッグ中のキャラクター情報（DragOverlay 用）。スロットから持ち上げたときは、カードの大きさと、立ち絵の大きさ・カードの左上からの位置も持つ
   const [draggedCharacter, setDraggedCharacter] = useState<CharacterIndexEntry | null>(null);
   // 操作の印を持ち上げている（DragOverlay に印を出す）
@@ -165,6 +177,8 @@ export function ModernView({
     height: number;
     left: number;
     top: number;
+    /** スロットの大きさの変数（--slot-portrait-h など。並びの幅で縮む。useSlotFit） */
+    sizeVars: Record<string, string>;
   } | null>(null);
 
   // マウスは 8px 動かして初めてドラッグと判定（通常のクリック操作との共存）。タッチは 250ms の長押しで持ち上げ、
@@ -290,6 +304,7 @@ export function ModernView({
         height: p.height,
         left: p.left - c.left,
         top: p.top - c.top,
+        sizeVars: slotSizeVars(card),
       });
     } else {
       setDraggedPortrait(null);
@@ -415,7 +430,7 @@ export function ModernView({
         <DamageTotalPanel title="合計ダメージ" value={totals.total} computing={totalsPending} />
         <PartyTabs active={parties.active} onSelect={selectParty} totals={totals.parties} />
 
-        <section className="modern-slots-grid" aria-label="編成スロット一覧">
+        <section ref={slotsGridRef} className="modern-slots-grid" aria-label="編成スロット一覧">
           {team.slots.map((slot, i) => {
             const { character } = calc.slots[i]!;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
@@ -494,7 +509,13 @@ export function ModernView({
             // 立ち絵をカードの中と同じ位置に置くと、立ち絵が元あった場所へ戻る
             <div
               className="slot-drag-overlay"
-              style={{ width: draggedPortrait.cardWidth, height: draggedPortrait.cardHeight }}
+              style={
+                {
+                  width: draggedPortrait.cardWidth,
+                  height: draggedPortrait.cardHeight,
+                  ...draggedPortrait.sizeVars,
+                } as CSSProperties
+              }
             >
               <div
                 className="slot-drag-overlay-portrait"
