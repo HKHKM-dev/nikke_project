@@ -4,7 +4,7 @@
 - 関連: [design-mast.md](design-mast.md) 8 節（HP の割合の窓のきっかけ `{ selfHpAtMostRef }`・維持 `selfHpAbove`）、[design-ade.md](design-ade.md) 2.1 節（同じきっかけの固定の秒の維持）、[design-skill-stage6.md](design-skill-stage6.md) 2.4 節（HP の割合の式）、[design-skill-catalog-classes.md](design-skill-catalog-classes.md) 4.6・6.2 節（条件の判定のタイミング・HP の経路）、[design-range-enemy-attacks.md](design-range-enemy-attacks.md)（射撃場の敵の攻撃）
 - 検証: V-0714
 - 作成日: 2026-11-10
-- 状態: 起案（7 節の論点をオーナーに諮る）
+- 状態: 決定・撮影待ち（7 節）
 
 ## 0. 範囲
 
@@ -120,3 +120,4 @@
 ## 経過
 
 - 2026-11-10: 起案。説明文とコードを照らし、語彙が 2 つ足りないと分かった（0 節）。論点 1〜5 と撮影 A・B（V-0714）をオーナーに諮る。
+- 2026-11-10: オーナーが論点 1〜5 を推奨どおりに決めた。撮影 A・B（V-0714）を依頼した。
