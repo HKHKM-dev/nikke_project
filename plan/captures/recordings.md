@@ -1006,6 +1006,10 @@
 | 1031 | `20261110-1031_sg_anis-sparkling-summer_fire.mp4` | ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0712 の撮影 A。アニス：スパークリングサマー単騎（操作）・灼熱の敵・オートバースト OFF |
 | 1032 | `20261110-1032_sg_anis-sparkling-summer_water.mp4` | ココア（311、SR・灼熱・SSR） + シン（401、AR・電撃・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0712 の撮影 B。ココア（I）+ シン（II）+ アニス：スパークリングサマー（III・操作）・水冷の敵・オートバースト ON |
 | 1033 | `20261110-1033_sg_anis-sparkling-summer_water.mp4` | ココア（311、SR・灼熱・SSR） + シン（401、AR・電撃・SSR） + ◎アニス：スパークリングサマー（15、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0712 の撮影 B。ココア（I）+ シン（II）+ アニス：スパークリングサマー（III・操作）・水冷の敵・オートバースト ON |
+| 1034 | `20261110-1034_rl_arcana_liter_isabel_water.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎イサベル（231、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0713 の撮影 A（リター・アルカナ・イサベル。水冷）。この録画は終わりに戦闘履歴のパネルが映っておらず、編成は出撃画面の 3 枚のカードと戦闘中の下の顔の欄、イサベルの 1 ヒット（27,950。モデルの▲なしの値と合う）で確かめた |
+| 1035 | `20261110-1035_rl_arcana_liter_isabel_water.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎イサベル（231、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0713 の撮影 A（リター・アルカナ・イサベル。水冷） |
+| 1036 | `20261110-1036_rl_arcana_liter_neon-ve_water.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎ネオン：ビジョン・アイ（18、RL・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0713 の撮影 B（リター・アルカナ・ネオン：ビジョン・アイ。水冷） |
+| 1037 | `20261110-1037_rl_arcana_liter_neon-ve_water.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎ネオン：ビジョン・アイ（18、RL・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / ON | V-0713 の撮影 B（リター・アルカナ・ネオン：ビジョン・アイ。水冷） |
 | 1038 | `20261110-1038_ar_scarlet_fire.mp4` | ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1039 | `20261110-1039_ar_scarlet_fire.mp4` | ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1040 | `20261110-1040_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |

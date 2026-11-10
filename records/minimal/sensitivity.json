@@ -27671,6 +27671,166 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1034-08",
+      "element": "イサベル skill2.effects[1]",
+      "key": "ce27b0b451aea41f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-09",
+      "element": "イサベル skill2.effects[1]",
+      "key": "87d4086cb53f2943",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-10",
+      "element": "イサベル skill2.effects[1]",
+      "key": "a33950d92236730c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-11",
+      "element": "イサベル skill2.effects[1]",
+      "key": "3f3b4c1a92054d05",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-12",
+      "element": "イサベル skill2.effects[1]",
+      "key": "d9cd56e9c09320d0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-13",
+      "element": "イサベル skill2.effects[1]",
+      "key": "21f9efaecb78d041",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "3e66a6f33de3633e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-15",
+      "element": "イサベル skill2.effects[1]",
+      "key": "5b9a6204fe855a17",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-16",
+      "element": "イサベル skill2.effects[1]",
+      "key": "e9b9128fa74a3206",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1034-20",
+      "element": "イサベル skill2.effects[1]",
+      "key": "043d04dd939d37b0",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-08",
+      "element": "イサベル skill2.effects[1]",
+      "key": "3c7a1a206d76ce9f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-09",
+      "element": "イサベル skill2.effects[1]",
+      "key": "351086e0d10753c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-10",
+      "element": "イサベル skill2.effects[1]",
+      "key": "1872f03daee5af8c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-11",
+      "element": "イサベル skill2.effects[1]",
+      "key": "198dc5f61eb48985",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-12",
+      "element": "イサベル skill2.effects[1]",
+      "key": "4e3dc415dc5b4b50",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-13",
+      "element": "イサベル skill2.effects[1]",
+      "key": "cdc2fd0215e6b0c1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-14",
+      "element": "イサベル skill2.effects[1]",
+      "key": "d49103b7ca929fbe",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-15",
+      "element": "イサベル skill2.effects[1]",
+      "key": "07e2a6008b349697",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-16",
+      "element": "イサベル skill2.effects[1]",
+      "key": "53971bd3bd2aae86",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1035-20",
+      "element": "イサベル skill2.effects[1]",
+      "key": "0ae2cf29af656230",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

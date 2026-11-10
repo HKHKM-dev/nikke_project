@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 93・効果 623（根拠あり 602）・notes 225（根拠あり 102）
+件数: キャラ 94・効果 631（根拠あり 610）・notes 226（根拠あり 103）
 
-notes の種類: 未対応 38・前提の外 54・計算に無関係 47・補足 23・間接 63
+notes の種類: 未対応 39・前提の外 54・計算に無関係 47・補足 23・間接 63
 
-スロット: supported 230・partial 25・unsupported 9・noEffect 39
+スロット: supported 232・partial 26・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -1248,6 +1248,21 @@ notes の種類: 未対応 38・前提の外 54・計算に無関係 47・補足
   - effects[2] dot・burstUse: C-0866（確定）
   - effects[3] timed・burstUse・sustainedDamage: C-0867（確定）
   - notes[0] 前提の外: 自分が変身状態ならバッテリー 50%▲は、射撃場では起きない。変身状態でバーストを使うには、バースト以外でバッテリーを満たす（味方のパーツの破壊。的にパーツが無い）必要がある。バーストの緊急チャージで付いた変身は約 10 秒で外れ、バーストの CT（40 秒）より短い: C-0443（範囲外）
+
+## 581 アルカナ
+
+- **skill1**: partial
+  - effects[0] timed・fullBurstEnd・attackDamage: C-1053（確定）、C-1054（確定）
+  - effects[1] timed・fullBurstEnd・attack: C-1052（確定）
+  - notes[0] 未対応: フルバーストの終わりに、運命の輪のカード状態なら、直前にバーストを使った III の電撃コードの味方に付く「魔術師のカード：スキル 2 クールタイム 75%▼（15 秒）」は未対応（味方の S2 の周期を割合で縮める語彙が無い。効いている間は S2 の周期が 25% になり、付いた時から数え直す）: C-1055（仮説）
+- **skill2**: supported
+  - effects[0] state・fullBurstEnd・strength（attack）: C-1053（確定）、C-1054（確定）
+  - effects[1] state・fullBurstEnd・death（burstCooldown・attack）: C-1053（確定）、C-1054（確定）
+  - effects[2] timed・fullBurstEnd・attackDamage: C-1052（確定）
+- **burst**: supported
+  - effects[0] state・burstUse・wheelOfFortune（attackDamage）: C-1050（確定）、C-1054（確定）
+  - effects[1] burstDamage・skill: C-1051（確定）
+  - effects[2] state・burstUse・judgment（damageTaken）: C-1050（確定）
 
 ## 811 A2
 
