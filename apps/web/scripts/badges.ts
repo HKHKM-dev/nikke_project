@@ -133,6 +133,8 @@ const PAINT = new Set(['fill', 'stroke']);
 /** グラデーションとフィルタの色（画面から変えられないので、陰の白か黒だけにする） */
 const SHADE = new Set(['stop-color', 'flood-color', 'lighting-color']);
 const SHADE_COLORS = new Set(['#000000', '#ffffff']);
+/** 色を見る属性（style と、塗り・縁・陰の色の属性） */
+const COLOR_ATTRS = new RegExp(`(\\s)(style|${[...PAINT, ...SHADE].join('|')})="([^"]*)"`, 'g');
 
 function roleColor(name: string, prop: string, value: string): string {
   if (SHADE.has(prop) && !SHADE_COLORS.has(value.toLowerCase()))
@@ -145,16 +147,13 @@ function roleColor(name: string, prop: string, value: string): string {
 
 /** 白黒のバッジの塗りと縁の色を、色の役の CSS の変数にする。役に無い色・陰でないグラデーションの色があれば止める */
 export function applyColorRoles(svg: string, name: string): string {
-  return svg.replace(
-    /(\s)(style|fill|stroke|stop-color|flood-color|lighting-color)="([^"]*)"/g,
-    (_, space: string, attr: string, value: string) => {
-      const out =
-        attr === 'style'
-          ? [...declsOf(value)].map(([prop, v]) => `${prop}:${roleColor(name, prop.trim(), v.trim())}`).join(';')
-          : roleColor(name, attr, value);
-      return `${space}${attr}="${out}"`;
-    },
-  );
+  return svg.replace(COLOR_ATTRS, (_, space: string, attr: string, value: string) => {
+    const out =
+      attr === 'style'
+        ? [...declsOf(value)].map(([prop, v]) => `${prop}:${roleColor(name, prop.trim(), v.trim())}`).join(';')
+        : roleColor(name, attr, value);
+    return `${space}${attr}="${out}"`;
+  });
 }
 
 type Axis = 'x' | 'y';
@@ -180,36 +179,31 @@ const USER_SPACE: Record<string, { units: string; attrs: Record<string, readonly
  * なり、マスクが消える（Inkscape のマスクは maskUnits="userSpaceOnUse" で、範囲を書かない）。
  * href で別のグラデーションを引くものは、引いた先から受け継ぐので既定の値を足さない
  */
-const resolveUserSpace = {
+const resolveUserSpace = (size: Record<Axis, number>) => ({
   name: 'resolveUserSpace',
-  fn: () => {
-    let size: Record<Axis, number> | undefined;
-    return {
-      element: {
-        enter: (node: { name: string; attributes: Record<string, string> }) => {
-          const { attributes: a } = node;
-          if (node.name === 'svg' && size === undefined) {
-            const [, , w, h] = (a.viewBox ?? '').split(/[\s,]+/).map(Number);
-            if (!w || !h) throw new Error('badges: viewBox が無い');
-            size = { x: w, y: h };
-          }
-          if (node.name === 'radialGradient' || node.name === 'pattern') {
-            if (Object.values(a).includes('userSpaceOnUse'))
-              throw new Error(`badges: userSpaceOnUse の ${node.name} は書き出しが扱わない`);
-            return;
-          }
-          const spec = USER_SPACE[node.name];
-          if (!spec || a[spec.units] !== 'userSpaceOnUse' || !size) return;
-          const inherits = a.href !== undefined || a['xlink:href'] !== undefined;
-          for (const [attr, [fallback, axis]] of Object.entries(spec.attrs)) {
-            const value = a[attr] ?? (inherits ? undefined : fallback);
-            if (value?.endsWith('%')) a[attr] = String(+((parseFloat(value) / 100) * size[axis]).toFixed(3));
-          }
-        },
+  fn: () => ({
+    element: {
+      enter: (node: { name: string; attributes: Record<string, string> }) => {
+        const { attributes: a } = node;
+        if (node.name === 'radialGradient' || node.name === 'pattern') {
+          if (Object.values(a).includes('userSpaceOnUse'))
+            throw new Error(`badges: userSpaceOnUse の ${node.name} は書き出しが扱わない`);
+          return;
+        }
+        const spec = USER_SPACE[node.name];
+        if (!spec || a[spec.units] !== 'userSpaceOnUse') return;
+        const inherits = a.href !== undefined || a['xlink:href'] !== undefined;
+        for (const [attr, [fallback, axis]] of Object.entries(spec.attrs)) {
+          const value = a[attr] ?? (inherits ? undefined : fallback);
+          if (value?.endsWith('%')) a[attr] = String(+((parseFloat(value) / 100) * size[axis]).toFixed(3));
+        }
       },
-    };
-  },
-};
+    },
+  }),
+});
+
+/** 元の SVG のファイル名から、拡張子なしの名前（画面がバッジを引く名前） */
+export const badgeNameOf = (file: string): string => file.slice(0, -'.svg'.length);
 
 /**
  * 元の SVG（拡張子なしの名前が name）を書き出しにする。白黒のバッジは色を CSS の変数にしてから小さくする。
@@ -219,10 +213,13 @@ const resolveUserSpace = {
  * - id の前にバッジの名前を付ける（スプライトで、ほかのバッジの id と重ならないように）
  */
 export function optimizeBadge(svg: string, name: string): string {
+  const [, , w = 0, h = 0] = viewBoxOf(svg)
+    .split(/[\s,]+/)
+    .map(Number);
   return optimize(MONOCHROME.has(name) ? applyColorRoles(svg, name) : svg, {
     multipass: true,
     plugins: [
-      resolveUserSpace,
+      resolveUserSpace({ x: w, y: h }),
       { name: 'preset-default', params: { overrides: { convertTransform: false, removeViewBox: false } } },
       { name: 'prefixIds', params: { prefix: name } },
     ],
@@ -253,7 +250,7 @@ export function buildBadges(
       synced.push(file);
     }
     // 中身が変わらない書き出しは書かない（dev サーバーの監視を無駄に起こさない）
-    const out = optimizeBadge(svg, file.slice(0, -'.svg'.length));
+    const out = optimizeBadge(svg, badgeNameOf(file));
     const outPath = `${outDir}/${file}`;
     if (!existsSync(outPath) || readFileSync(outPath, 'utf8') !== out) writeFileSync(outPath, out);
   }

@@ -7,10 +7,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   BADGE_OUT_DIR,
   BADGE_SRC_DIR,
-  COLOR_ROLES,
   FRAME_FILE,
   MONOCHROME,
   applyColorRoles,
+  badgeNameOf,
   buildBadges,
   findFrame,
   optimizeBadge,
@@ -33,9 +33,7 @@ describe('バッジの書き出し', () => {
     (file) => {
       const source = sources.get(file)!;
       expect(syncFrame(source, frame)).toBe(source);
-      expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(
-        optimizeBadge(source, file.slice(0, -'.svg'.length)),
-      );
+      expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(optimizeBadge(source, badgeNameOf(file)));
     },
   );
 
@@ -136,7 +134,6 @@ describe('白黒のバッジ', () => {
       expect(out).toMatch(/var\(--badge-/);
       for (const [, id] of out.matchAll(/\sid="([^"]+)"/g)) expect(id).toMatch(new RegExp(`^${name}__`));
     }
-    expect(Object.values(COLOR_ROLES)).toEqual(['line', 'ground', 'main', 'accent']);
   });
 });
 

@@ -870,7 +870,7 @@ header h1 {
   --growth-star-w: 13px;
   --growth-core-w: 20px;
 }
-/* 星は白黒の絵（grade_star）で、色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
+/* 星の色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
    グラデーションになる。突破していない星は灰、突破した星（.is-filled）は金。テーマで変えるときは light-dark(ライト, ダーク) で書く */
 .growth-marks-star {
   width: var(--growth-star-w);

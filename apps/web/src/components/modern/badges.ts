@@ -31,28 +31,27 @@ const BADGE_SVGS = import.meta.glob<string>(
   { eager: true, query: '?raw', import: 'default' },
 );
 
-/** 読んだバッジ（拡張子なしの名前 → viewBox と中身） */
-const BADGES = new Map(
-  Object.entries(BADGE_SVGS).map(([path, svg]) => {
+/** 読んだバッジの viewBox（拡張子なしの名前 → viewBox） */
+const VIEW_BOXES = new Map<string, string>();
+
+/** スプライトの中身（読んだバッジごとの <symbol id="badge-<名前>">） */
+export const BADGE_SYMBOLS = Object.entries(BADGE_SVGS)
+  .map(([path, svg]) => {
     const name = path.slice(path.lastIndexOf('/') + 1, -'.svg'.length);
     const [, attrs = '', body = ''] = /^<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/.exec(svg) ?? [];
     const viewBox = /\sviewBox="([^"]+)"/.exec(attrs)?.[1];
     if (viewBox === undefined) throw new Error(`バッジ ${name}.svg に viewBox が無い`);
-    return [name, { viewBox, body }] as const;
-  }),
-);
+    VIEW_BOXES.set(name, viewBox);
+    return `<symbol id="badge-${name}" viewBox="${viewBox}">${body}</symbol>`;
+  })
+  .join('');
 
 /** バッジ（拡張子なしの名前）の viewBox。無ければ落とす */
 export function badgeViewBox(name: string): string {
-  const badge = BADGES.get(name);
-  if (badge === undefined) throw new Error(`バッジ ${name}.svg が assets/badges に無い（か glob で読んでいない）`);
-  return badge.viewBox;
+  const viewBox = VIEW_BOXES.get(name);
+  if (viewBox === undefined) throw new Error(`バッジ ${name}.svg が assets/badges に無い（か glob で読んでいない）`);
+  return viewBox;
 }
-
-/** スプライトの中身（読んだバッジごとの <symbol id="badge-<名前>">） */
-export const BADGE_SYMBOLS = [...BADGES]
-  .map(([name, { viewBox, body }]) => `<symbol id="badge-${name}" viewBox="${viewBox}">${body}</symbol>`)
-  .join('');
 
 /** 名前のバッジがあることを確かめて返す（無ければ読み込みで落とす） */
 function badgeName(name: string): string {
@@ -87,9 +86,7 @@ function badgesOf<K extends BadgeKey>(
   label: (value: CharacterIndexEntry[K]) => string,
 ): Record<string, Badge> {
   return Object.fromEntries(
-    values.map((value) => {
-      return [value, { name: badgeName(`${key}_${value}`), label: label(value) }];
-    }),
+    values.map((value) => [value, { name: badgeName(`${key}_${value}`), label: label(value) }]),
   );
 }
 

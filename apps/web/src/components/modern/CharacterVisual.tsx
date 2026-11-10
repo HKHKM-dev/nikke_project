@@ -25,7 +25,7 @@ const BASE_URL = import.meta.env.BASE_URL;
  */
 const failedImages = new Set<string>();
 
-function BadgeImg({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
+function CharBadge({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
   return <BadgeIcon className={className} name={badge.name} label={badge.label} />;
 }
 
@@ -67,11 +67,11 @@ export function CharacterVisual({
       <div className="char-visual-badges">
         {columnKinds.map(({ key, badges }) => {
           const badge = badges[character[key]];
-          return badge && <BadgeImg key={key} badge={badge} />;
+          return badge && <CharBadge key={key} badge={badge} />;
         })}
-        {extraBadge && <BadgeImg badge={extraBadge} />}
+        {extraBadge && <CharBadge badge={extraBadge} />}
       </div>
-      {elementBadge && <BadgeImg badge={elementBadge} className="char-badge char-visual-corner-badge" />}
+      {elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
       {overlay}
       {isUnsupported && <span className="char-unsupported-tag">未</span>}
     </div>
