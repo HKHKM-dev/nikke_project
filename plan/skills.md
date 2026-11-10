@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 94・効果 631（根拠あり 610）・notes 226（根拠あり 103）
+件数: キャラ 96・効果 645（根拠あり 624）・notes 229（根拠あり 105）
 
-notes の種類: 未対応 39・前提の外 54・計算に無関係 47・補足 23・間接 63
+notes の種類: 未対応 39・前提の外 55・計算に無関係 47・補足 24・間接 64
 
-スロット: supported 232・partial 26・unsupported 9・noEffect 39
+スロット: supported 238・partial 26・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -981,6 +981,21 @@ notes の種類: 未対応 39・前提の外 54・計算に無関係 47・補足
   - effects[1] timed・burstUse・chargeDamageMultiplier: C-0099（確定）
   - effects[2] heal・burstUse: C-0346（仮説）
 
+## 353 ヘルム：アクアマリン
+
+- **skill1**: supported
+  - effects[0] damage・normalHit・additional: C-1056（確定）、C-1059（確定）
+  - effects[1] cooldownReduction・fullBurstStart: C-1057（確定）
+  - effects[2] cooldownReduction・fullBurstStart: C-1057（確定）
+  - effects[3] cooldownReduction・fullBurstStart: C-1057（確定）
+- **skill2**: supported
+  - effects[0] damage・4 秒ごと・skill: C-1058（確定）
+  - effects[1] burstGaugeHit・4 秒ごと: C-1059（確定）、C-1058（確定）
+  - effects[2] timed・4 秒ごと・damageTaken: C-1060（確定）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1061（確定）
+  - effects[1] damage・burstUse・additional: C-1062（確定）、C-1061（確定）
+
 ## 354 マスト：ロマンチックメイド
 
 - **skill1**: supported
@@ -1300,6 +1315,20 @@ notes の種類: 未対応 39・前提の外 54・計算に無関係 47・補足
   - effects[2] timed・burstUse・hitRate: C-0076（確定）
   - notes[0] 間接（貫通）: 貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）: C-0076（確定）、C-1031（確定）
   - notes[1] 補足: 命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）: C-0037（確定）、C-0192（確定）、C-0011（確定）、C-0264（仮説）、C-0362（確定）、C-0363（仮説）
+
+## 831 レイ
+
+- **skill1**: supported
+  - effects[0] timed・normalShot・elementDamage: C-1063（確定）
+  - effects[1] damage・normalHit・skill: C-1066（確定）
+  - notes[0] 補足: S1 の倍率ダメージがバーストゲージを溜めるかは確かめていない（溜めないとした。溜めても 1 回で射手の 2 ヒットぶん）。2 ヒット目の値は、そのヒットのフレームのバフで出す（発動の時点の値で出るかは、2 ヒットの間にバフの替わる回を読んでいないので確かめていない）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・burstStage3Enter・attack: C-1064（確定）
+  - notes[0] 前提の外: 戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない: C-0443（範囲外）
+- **burst**: supported
+  - effects[0] burstDamage・skill: C-1067（確定）
+  - effects[1] timed・burstUse・attackDamage: C-1065（確定）
+  - notes[0] 間接（バリア）: 灼熱コードの味方全体へのバリア（最終最大HP の X%）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）: C-0443（範囲外）
 
 ## 833 ミサト
 

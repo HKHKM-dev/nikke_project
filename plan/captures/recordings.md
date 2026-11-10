@@ -1014,6 +1014,20 @@
 | 1039 | `20261110-1039_ar_scarlet_fire.mp4` | ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1040 | `20261110-1040_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1041 | `20261110-1041_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1042 | `20261111-1042_ar_helm-aquamarine_fire.mp4` | ◎ヘルム：アクアマリン（353、AR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1043 | `20261111-1043_ar_helm-aquamarine_fire.mp4` | ◎ヘルム：アクアマリン（353、AR・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1044 | `20261111-1044_ar_helm-aquamarine_electric.mp4` | ◎ヘルム：アクアマリン（353、AR・鉄甲・SSR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1045 | `20261111-1045_ar_helm-aquamarine_electric.mp4` | ◎ヘルム：アクアマリン（353、AR・鉄甲・SSR） | BigArms・電撃 | 射撃場 3 分 | ON | ON / OFF |  |
+| 1046 | `20261111-1046_rl+ar+ar_i-doll-flower+helm-aquamarine+i-doll-sun_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ヘルム：アクアマリン（353、AR・鉄甲・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1047 | `20261111-1047_rl+ar+ar_i-doll-flower+helm-aquamarine+i-doll-sun_fire.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ヘルム：アクアマリン（353、AR・鉄甲・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1048 | `20261111-1048_rl+ar+ar_i-doll-flower+helm-aquamarine+i-doll-sun_electric.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ヘルム：アクアマリン（353、AR・鉄甲・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・電撃 | 射撃場 3 分 | ON | ON / ON |  |
+| 1049 | `20261111-1049_rl+ar+ar_i-doll-flower+helm-aquamarine+i-doll-sun_electric.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ヘルム：アクアマリン（353、AR・鉄甲・SSR） + ◎I-DOLL・サン（308、AR・鉄甲・R） | BigArms・電撃 | 射撃場 3 分 | ON | ON / ON |  |
+| 1050 | `20261111-1050_mg_rei_fire.mp4` | ◎レイ（831、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0716 の撮影 A。レイ単騎（操作）・灼熱の的・オートバースト OFF |
+| 1051 | `20261111-1051_mg_rei_fire.mp4` | ◎レイ（831、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF | V-0716 の撮影 A。レイ単騎（操作）・灼熱の的・オートバースト OFF |
+| 1052 | `20261111-1052_mg_rei_wind.mp4` | ◎レイ（831、MG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / OFF | V-0716 の撮影 B。レイ単騎（操作）・風圧の的・オートバースト OFF |
+| 1053 | `20261111-1053_mg_rei_wind.mp4` | ◎レイ（831、MG・灼熱・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / OFF | V-0716 の撮影 B。レイ単騎（操作）・風圧の的・オートバースト OFF |
+| 1054 | `20261111-1054_sr+rl+mg_cocoa+uni+rei_fire.mp4` | ココア（311、SR・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） + ◎レイ（831、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0716 の撮影 C。ココア（I）+ ユニ（II）+ レイ（III・操作）・灼熱の的・オートバースト ON |
+| 1055 | `20261111-1055_sr+rl+mg_cocoa+uni+rei_fire.mp4` | ココア（311、SR・灼熱・SSR） + ユニ（160、RL・灼熱・SSR） + ◎レイ（831、MG・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | V-0716 の撮影 C。ココア（I）+ ユニ（II）+ レイ（III・操作）・灼熱の的・オートバースト ON |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
