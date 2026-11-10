@@ -41,7 +41,9 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "tolerance": {
@@ -66,7 +68,9 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "tolerance": {
@@ -91,7 +95,9 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "tolerance": {
@@ -115,7 +121,9 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"],
+        "events": [
+          "range-3min-jump"
+        ],
         "burst": false
       },
       "tolerance": {
@@ -136,7 +144,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 1
@@ -156,7 +166,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 1
@@ -175,7 +187,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 1
@@ -192,7 +206,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 0
@@ -209,7 +225,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 2
@@ -226,7 +244,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 2
@@ -246,7 +266,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 1
@@ -266,7 +288,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 1
@@ -282,7 +306,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 6
@@ -302,7 +328,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": ["range-3min-jump"]
+        "events": [
+          "range-3min-jump"
+        ]
       },
       "tolerance": {
         "abs": 1
@@ -312,13 +340,18 @@
   ],
   "predicted": {
     "at": "2026-11-10",
-    "commit": "913535aa177c1f16fa6cfdb01e03581c17444f97",
+    "commit": "52083de2296475e8ec722d6dd70f47be1fd133b5",
     "values": {
       "H-model": {
         "A-anis-pellet": 25874.64,
         "A-anis-missile": 381750.7650000001,
-        "A-anis-missile-shots": [5, 10, 15, 20],
-        "A-anis-missile-delay": 0,
+        "A-anis-missile-shots": [
+          5,
+          10,
+          15,
+          20
+        ],
+        "A-anis-missile-delay": 74,
         "B-anis-pellet-before": 28462.104,
         "B-anis-pellet-fb": 91801.55305728002,
         "B-anis-missile-fb": 1354427.0802532805,
@@ -327,7 +360,11 @@
         "B-anis-reload-fb": 51,
         "B-sin-pellet-before": 11990.078099999999,
         "B-sin-pellet-fb": 30433.07767500001,
-        "B-full-burst-intervals": [2411, 2516, 2477],
+        "B-full-burst-intervals": [
+          2411,
+          2516,
+          2477
+        ],
         "B-cocoa-fb": 430744.875
       }
     }

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "1030-01",
+    "recording": "1030",
+    "kind": "total",
+    "use": "record",
+    "value": 55925253,
+    "description": "アニス：スパークリングサマー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11262。増分は 202 個"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1030-02",
+    "recording": "1030",
+    "kind": "count",
+    "use": "record",
+    "value": 202,
+    "unit": "トリガー",
+    "description": "アニス：スパークリングサマー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 202 個。前の増分から 30f 未満の増分（1 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 1 個）"
+    },
+    "source": "V-0712",
+    "readAt": "2026-11-10"
+  }
+]

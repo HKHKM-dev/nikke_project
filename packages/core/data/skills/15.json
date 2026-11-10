@@ -43,9 +43,10 @@
           },
           "damageType": "skill",
           "ref": 1,
+          "delayFrames": 74,
           "assumes": {
-            "ja": "「最後の弾丸で攻撃した時」は、残弾を 0 にした射撃で起こす。「最終攻撃力が最も高い敵 2 機」は、敵 1 体の前提でその敵に 1 ヒット",
-            "en": "\"When firing the last bullet\" fires on the shot that empties the magazine. \"The 2 enemies with the highest final ATK\" means one hit on the single enemy"
+            "ja": "「最後の弾丸で攻撃した時」は、残弾を 0 にした射撃で起こす。「最終攻撃力が最も高い敵 2 機」は、敵 1 体の前提でその敵に 1 ヒット。ヒットは最終弾の 74f 後（ミサイルの着弾。距離帯によらない）",
+            "en": "\"When firing the last bullet\" fires on the shot that empties the magazine. \"The 2 enemies with the highest final ATK\" means one hit on the single enemy. The hit lands 74 frames after the last bullet (missile impact; independent of the distance band)"
           }
         }
       ],
