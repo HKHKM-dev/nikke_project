@@ -8,10 +8,11 @@
 // そのあと元を小さくする。枠の形は frame/hex.svg だけを直す。枠のある新しいバッジは、枠のあるどれか（ui_blank など）を写して
 // 中身を描く。枠の色を変えるときは hex-in の塗りと縁を変える。
 //
-// 白黒のバッジ（plan/design-badge-color.md）: MONOCHROME に挙げたバッジは、色の役（COLOR_ROLES）の色だけで描き、書き出しで
-// 塗りと縁の色を CSS の変数（--badge-<役>）にする。色は画面の CSS が決める（状態のクラス・light-dark() でテーマ）。
+// 白黒のバッジ（plan/design-badge-color.md）: MONOCHROME_GROUPS のグループのバッジは、色の役（COLOR_ROLES）の色だけで描き、
+// 書き出しで塗りと縁の色を CSS の変数（--badge-<役>）にする。色は画面の CSS が決める（値ごとの色・状態のクラス・
+// light-dark() でテーマ）。値ごとに色の違う部分（属性の図柄など）は差し色（#808080）で描く。
 // グラデーションの色は画面から変えられない（<use> で出すと、グラデーションは置いた場所の色のまま）ので、グラデーションは陰
-// （白か黒の不透明度）にだけ使う。白黒に描き直したバッジは MONOCHROME に足す。
+// （白か黒の不透明度）にだけ使う。マスクの中の色は形（明るさ）なので、そのまま残す。
 // 画面は全部のバッジを 1 つの文書に置く（スプライト）ので、書き出しは id の前にバッジの名前を付け、viewBox を残す。
 //
 // ファイル名の命名規則: <グループ>_<値>[-<変種>].svg
@@ -125,8 +126,20 @@ export const COLOR_ROLES: Readonly<Record<string, string>> = {
   '#808080': 'accent',
 };
 
-/** 白黒で描いたバッジ（拡張子なしの名前）。色は画面の CSS で付ける */
-export const MONOCHROME: ReadonlySet<string> = new Set(['grade_star']);
+/** 白黒で描くバッジのグループ（画面のスプライトに入るもの）。色は画面の CSS で付ける */
+export const MONOCHROME_GROUPS: ReadonlySet<string> = new Set([
+  'element',
+  'burstStep',
+  'class',
+  'weaponType',
+  'corporation',
+  'collection',
+  'grade',
+  'core',
+]);
+
+/** バッジ（拡張子なしの名前）が白黒で描くものか */
+export const isMonochrome = (name: string): boolean => MONOCHROME_GROUPS.has(name.slice(0, name.indexOf('_')));
 
 /** 塗りと縁の色 */
 const PAINT = new Set(['fill', 'stroke']);
@@ -147,10 +160,18 @@ function roleColor(name: string, prop: string, value: string): string {
 
 /**
  * 白黒のバッジの塗りと縁の色を、色の役の CSS の変数にする。役に無い色・陰でないグラデーションの色・<style> の要素があれば
- * 止める。style が同じ性質を決める要素の属性（枠の hex-out の stroke="#ff3b57" など）は描かれないので、見ずにそのまま残す
+ * 止める。style が同じ性質を決める要素の属性（枠の hex-out の stroke="#ff3b57" など）は描かれないので、見ずにそのまま残す。
+ * マスクの中（<mask>〜</mask>）は、色が形（明るさ）なのでそのまま残す
  */
 export function applyColorRoles(svg: string, name: string): string {
   if (/<style\b/.test(svg)) throw new Error(`badges: 白黒のバッジ ${name} に <style> がある（色は style 属性に書く）`);
+  return svg
+    .split(/(<mask\b[\s\S]*?<\/mask>)/)
+    .map((part, i) => (i % 2 === 1 ? part : applyRolesOutsideMasks(part, name)))
+    .join('');
+}
+
+function applyRolesOutsideMasks(svg: string, name: string): string {
   return svg.replace(/<[^!?/][^>]*>/g, (tag) => {
     const styled = new Set([...styleOf(tag).keys()].map((prop) => prop.trim()));
     return tag.replace(COLOR_ATTRS, (attrText: string, space: string, attr: string, value: string) => {
@@ -221,7 +242,7 @@ export function optimizeBadge(svg: string, name: string): string {
   const [, , w = 0, h = 0] = viewBoxOf(svg)
     .split(/[\s,]+/)
     .map(Number);
-  const out = optimize(MONOCHROME.has(name) ? applyColorRoles(svg, name) : svg, {
+  const out = optimize(isMonochrome(name) ? applyColorRoles(svg, name) : svg, {
     multipass: true,
     plugins: [
       resolveUserSpace({ x: w, y: h }),

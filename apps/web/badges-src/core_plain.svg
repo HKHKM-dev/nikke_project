@@ -53,12 +53,12 @@
        inkscape:locked="false" />
   </sodipodi:namedview>
   <path
-     style="fill:#e600e6;fill-opacity:1;stroke:#e500e5;stroke-width:7;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:#808080;fill-opacity:1;stroke:#808080;stroke-width:7;stroke-dasharray:none;stroke-opacity:1"
      d="M 93.49985,93.49985 53.346134,76.769151 H 46.653858 L 6.5001571,93.49985 23.230866,53.346132 V 46.653855 L 6.5001571,6.5001566 46.653858,23.230862 h 6.692276 L 93.49985,6.5001566 76.769152,46.653858 v 6.692272 z"
      id="path1"
      sodipodi:nodetypes="ccccccccccccc" />
   <circle
-     style="display:inline;fill:#000000;fill-opacity:1;stroke:#e300e3;stroke-width:7;stroke-dasharray:none;stroke-opacity:1"
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#808080;stroke-width:7;stroke-dasharray:none;stroke-opacity:1"
      id="path4"
      cx="50"
      cy="50"

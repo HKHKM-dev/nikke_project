@@ -12,11 +12,14 @@ export function BadgeSprite() {
   return <svg aria-hidden="true" focusable="false" style={HIDDEN} dangerouslySetInnerHTML={SPRITE_HTML} />;
 }
 
-/** バッジ（name は拡張子なしの名前）。label が無ければ読み上げない。大きさは className の CSS で決める */
+/**
+ * バッジ（name は拡張子なしの名前）。label が無ければ読み上げない。大きさは className の CSS で決める。
+ * 値ごとの色は、名前のクラス（badge-<名前>）に styles.css が色の役の変数を決める
+ */
 export function BadgeIcon({ name, label, className }: { name: string; label?: string; className?: string }) {
   const a11y = label === undefined ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label };
   return (
-    <svg className={className} viewBox={badgeViewBox(name)} {...a11y}>
+    <svg className={`badge-${name}${className ? ` ${className}` : ''}`} viewBox={badgeViewBox(name)} {...a11y}>
       <use href={`#badge-${name}`} />
     </svg>
   );

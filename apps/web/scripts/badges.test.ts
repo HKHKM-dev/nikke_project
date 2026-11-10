@@ -8,11 +8,11 @@ import {
   BADGE_OUT_DIR,
   BADGE_SRC_DIR,
   FRAME_FILE,
-  MONOCHROME,
   applyColorRoles,
   badgeNameOf,
   buildBadges,
   findFrame,
+  isMonochrome,
   optimizeBadge,
   parseFrame,
   svgFiles,
@@ -142,9 +142,17 @@ describe('白黒のバッジ', () => {
     expect(() => optimizeBadge(svg, 'x_y')).toThrow(/% の値/);
   });
 
-  // MONOCHROME の名前の元が無い（名前を変えた）ときも、ここで落ちる
-  it('書き出しは、白黒のバッジの色を変数にし、id の前に名前を付ける', () => {
-    for (const name of MONOCHROME) {
+  it('マスクの中の色は形なので、そのまま残す', () => {
+    const mask = '<mask id="m"><path style="fill:#ffffff"/><path style="stroke:#000000;fill:#123456"/></mask>';
+    expect(applyColorRoles(doc(mask + '<path style="fill:#808080" mask="url(#m)"/>'), 'x_y')).toBe(
+      doc(mask + '<path style="fill:var(--badge-accent,#808080)" mask="url(#m)"/>'),
+    );
+  });
+
+  it('書き出しは、白黒のグループのバッジの色を変数にし、id の前に名前を付ける', () => {
+    const names = [...sources.keys()].map(badgeNameOf).filter(isMonochrome);
+    expect(names).toContain('element_Fire');
+    for (const name of names) {
       const out = readFileSync(`${BADGE_OUT_DIR}/${name}.svg`, 'utf8');
       expect(out).toMatch(/var\(--badge-/);
       for (const [, id] of out.matchAll(/\sid="([^"]+)"/g)) expect(id).toMatch(new RegExp(`^${name}__`));
