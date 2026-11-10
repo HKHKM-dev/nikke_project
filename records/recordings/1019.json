@@ -1,0 +1,40 @@
+{
+  "id": "1019",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1019_rl+ar_i-doll-flower+ade_wind.mp4",
+  "original": "2026-11-10_19-00-45.mp4",
+  "durationSec": 207.1,
+  "frames": 12426,
+  "fps": 60,
+  "sizeMB": 251.1,
+  "sha256": "54e0e8a60e40",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 310,
+      "name": "エード",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-10T19:10+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
