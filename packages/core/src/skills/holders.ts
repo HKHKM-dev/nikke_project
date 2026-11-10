@@ -111,7 +111,7 @@ import type { SkillSlot } from '../types.ts';
 import {
   buildSegments,
   effectItems,
-  holderHitItems,
+  holderHitStarts,
   rankSlotsOf,
   resolvePassiveStates,
   shotCountItems,
@@ -796,12 +796,6 @@ function timedItems(
       ? shotCountStackItems(starts, shotFrames, effect.durationShots, frames, effect.maxStacks)
       : itemsOfPairs(shotCountItems(starts, shotFrames, effect.durationShots, frames));
   }
-  // キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」。持ち主の射撃の記録から始まりを決める
-  if (effect.holderHitWithinFrames !== undefined) {
-    return itemsOfPairs(
-      holderHitItems(starts, log?.frames ?? [], effect.holderHitWithinFrames, effect.durationFrames, frames),
-    );
-  }
   if (effect.durationUntil === 'ammoSpent') {
     // 和集合は発火のフレームで取り、頭は後で削る（段 A までの planBuffTimeline・1 パス目の register と同じ順）
     const trim = weaponStartTrim(effect);
@@ -817,7 +811,12 @@ function timedItems(
   if (effect.durationUntil === 'reloadEnd') {
     return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
   }
-  return effectItems(starts, effect, frames).map((w) => {
+  // キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」は、持ち主の射撃の記録から始まりを決める
+  const from =
+    effect.holderHitWithinFrames !== undefined
+      ? holderHitStarts(starts, log?.frames ?? [], effect.holderHitWithinFrames)
+      : starts;
+  return effectItems(from, effect, frames).map((w) => {
     const item: HeldItem = { start: w.start, end: w.end };
     if (w.stack !== undefined) item.stack = w.stack;
     return item;
@@ -839,8 +838,9 @@ type TrackReads = {
 function trackReadsOf(origin: HeldOrigin): TrackReads {
   const reads = { shots: false, weaponChangeEnds: false, reloadEnds: false, fullBurstWindows: false, untilEnds: false };
   if (origin.kind !== 'timed' && origin.kind !== 'state') return reads;
-  const { durationShots, durationUntil } = origin.kind === 'timed' ? origin.effect : origin.grant;
-  if (durationShots !== undefined || (origin.kind === 'timed' && origin.effect.holderHitWithinFrames !== undefined)) {
+  const item = origin.kind === 'timed' ? origin.effect : origin.grant;
+  const { durationShots, durationUntil } = item;
+  if (durationShots !== undefined || ('holderHitWithinFrames' in item && item.holderHitWithinFrames !== undefined)) {
     reads.shots = true;
     return reads;
   }

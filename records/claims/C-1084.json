@@ -5,7 +5,7 @@
   "topic": "スキル・キャラ固有",
   "grade": "反復実測",
   "basis": "`1068-05`・`1069-05`（▲の乗った KW の 1 ヒット 406,209。値はモデルと 1 未満）、`1068-08`・`1069-08`（どのバーストも、後の最初の発には▲が無く、次の発から乗る）、`1068-07`・`1069-07`（▲は最初の発から 527〜609f・528〜610f の間に切れる。殲滅の 10 秒の間の 2〜6 発目で付き直していれば約 1,100f まで続く）、`1070-07`（I-DOLL・サンも、バーストの後の最初の命中には▲が無く次の命中から乗り、584〜589f で切れる。モデル 589f）、`1070-06`・`1071-06`・`1070-05`・`1071-05`（I-DOLL・サンとデルタの発に▲が乗る）。仮説（付き直さない）は 1068 で立て、1069・1070・1071 で再現した。撮る前の予測の Hb1（命中ごとに付き直す）・Hb2（バーストの時に味方全体へ 10 秒）・Hb0（付かない）はどれも合わない。V-0717",
-  "model": "反映（`skills/timeline.ts` の holderHitItems・`skills/holders.ts` の timedItems、data/skills/43.json の burst の effects[1]（holderHit））",
+  "model": "反映（`skills/timeline.ts` の holderHitStarts・`skills/holders.ts` の timedItems、data/skills/43.json の burst の effects[1]（holderHit））",
   "replaces": [],
   "updated": "2026-11-10",
   "subject": {

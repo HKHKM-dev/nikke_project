@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { gameSecondsToFrames } from '../../time.ts';
 import { MAX_SKILL_LEVELS, resolveTimed } from '../resolve.ts';
-import { holderHitItems } from '../timeline.ts';
+import { holderHitStarts } from '../timeline.ts';
 import { parseSkillDefinition } from '../types.ts';
 
 type Effects = { effects: Record<string, unknown>[] };
@@ -75,17 +75,13 @@ describe('解決', () => {
   });
 });
 
-describe('holderHitItems', () => {
-  it('opens the window on the frame after the holder’s first shot from the fire, and later shots do not extend it', () => {
-    expect(holderHitItems([100], [90, 150, 230, 400], 587, 587, 10000)).toEqual([[151, 738]]);
+describe('holderHitStarts', () => {
+  it('starts on the frame after the holder’s first shot from the fire (a shot on the fire frame counts)', () => {
+    expect(holderHitStarts([100], [90, 150, 230, 400], 587)).toEqual([151]);
+    expect(holderHitStarts([100], [100], 587)).toEqual([101]);
   });
 
-  it('counts a shot on the fire frame, but not one after the Wipe Out ends', () => {
-    expect(holderHitItems([100], [100], 587, 587, 10000)).toEqual([[101, 688]]);
-    expect(holderHitItems([100], [90, 687], 587, 587, 10000)).toEqual([]);
-  });
-
-  it('merges overlapping windows and stops at the end of the battle', () => {
-    expect(holderHitItems([300, 100], [150, 320], 587, 587, 800)).toEqual([[151, 800]]);
+  it('drops a fire without a shot before the Wipe Out ends', () => {
+    expect(holderHitStarts([100, 300], [90, 687, 700], 587)).toEqual([688]);
   });
 });

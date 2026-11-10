@@ -550,32 +550,19 @@ export function shotCountStackItems(
 }
 
 /**
- * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」の件。発火 s ごとに、[s, s + withinFrames) の持ち主の
- * 最初の射撃 f の次のフレームから durationFrames だけ（f 自身には乗らない。その後の射撃では付き直さない）。無ければ付かない。
- * 重なった件は和集合
+ * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」の件の始まり。発火 s ごとに、[s, s + withinFrames) の持ち主の
+ * 最初の射撃 f の次のフレーム（f 自身には乗らない）。無ければ付かない。件は秒の維持の件（effectItems）と同じに作るので、その後の
+ * 射撃では付き直さない
  */
-export function holderHitItems(
+export function holderHitStarts(
   starts: readonly number[],
   shotFrames: readonly number[],
   withinFrames: number,
-  durationFrames: number,
-  frames: number,
-): [number, number][] {
-  const merged: [number, number][] = [];
-  for (const s of [...starts].sort((a, b) => a - b)) {
+): number[] {
+  return starts.flatMap((s) => {
     const hit = shotFrames[lowerBound(shotFrames, s)];
-    if (hit === undefined || hit >= s + withinFrames) continue;
-    const start = hit + 1;
-    const end = Math.min(start + durationFrames, frames);
-    if (start >= end) continue;
-    const last = merged[merged.length - 1];
-    if (last !== undefined && start <= last[1]) {
-      if (end > last[1]) last[1] = end;
-      continue;
-    }
-    merged.push([start, end]);
-  }
-  return merged;
+    return hit !== undefined && hit < s + withinFrames ? [hit + 1] : [];
+  });
 }
 
 /**

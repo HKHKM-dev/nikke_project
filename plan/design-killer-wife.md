@@ -130,7 +130,7 @@
   3. 追加ダメージは発動のフレームに出る（遅れの表の行は要らない。C-1083）。S2 の▲・CT▼ は説明文どおり（C-1081・C-1082）。
   4. 的のミサイルに当たったと見られる発は、S1 の 3 回の数えに入らないように見える（C-1085。仮説。モデルはミサイルを扱わない）。
 - 2.2 節の語彙を、読みに合わせて小さくした:
-  - きっかけ `{ allyHit }`・対象 `hitter` は足さない。timed の印 `holderHit: { withinRef }` を足す: 発火から withinRef 秒（ターゲット殲滅の 10 秒）の間の、持ち主（対象の枠）の最初の射撃の次のフレームから、維持の秒だけ付く（`skills/timeline.ts` の holderHitItems）。件は持ち主の射撃の記録から作る（発数の維持と同じ読み。`skills/holders.ts` の trackReadsOf）。秒の維持とだけ組み、スタック・条件・強化・確率・遅れ・perCount とは組まない。
+  - きっかけ `{ allyHit }`・対象 `hitter` は足さない。timed の印 `holderHit: { withinRef }` を足す: 発火から withinRef 秒（ターゲット殲滅の 10 秒）の間の、持ち主（対象の枠）の最初の射撃の次のフレームから、維持の秒だけ付く（`skills/timeline.ts` の holderHitStarts）。件は持ち主の射撃の記録から作る（発数の維持と同じ読み。`skills/holders.ts` の trackReadsOf）。秒の維持とだけ組み、スタック・条件・強化・確率・遅れ・perCount とは組まない。
   - 状態 `wipeOut` は足さない。敵に付く状態の付与は、読む効果の無い中身なしの付与を弾く（`contents` が要る）ので、ターゲット殲滅は modeling の notes にし、`holderHit.withinRef` が表す。
   - 命中は持ち主の射撃のフレームで数える（外れと的の部位は見ない）。RL の発射体の着弾の遅れは見ない。
 

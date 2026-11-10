@@ -425,12 +425,13 @@ export function parseTimedFields(
     const at = `${path}.holderHit`;
     const hit = v.holderHit;
     if (stat === undefined) fail(at, 'holderHit in a state grant is not supported');
-    if (!isRecord(hit) || Object.keys(hit).length !== 1 || hit.withinRef === undefined) fail(at, 'expected { withinRef }');
-    if (target !== 'self' && target !== 'allies') fail(at, `only allowed with target "self" or "allies", got "${target}"`);
+    if (!isRecord(hit) || Object.keys(hit).length !== 1 || hit.withinRef === undefined)
+      fail(at, 'expected { withinRef }');
+    if (target !== 'self' && target !== 'allies')
+      fail(at, `only allowed with target "self" or "allies", got "${target}"`);
     if (effect.durationRef === undefined && effect.durationSeconds === undefined)
       fail(at, 'holderHit needs a duration in seconds (durationRef or durationSeconds)');
-    if (isRecord(v.trigger) && (v.trigger.chance !== undefined || v.trigger.chanceRef !== undefined))
-      fail(at, 'holderHit cannot be combined with a chance trigger');
+    if (isChanceTrigger(trigger)) fail(at, 'holderHit cannot be combined with a chance trigger');
     for (const key of ['maxStacks', 'maxStacksRef', 'condition', 'amplifies', 'delayFrames', 'perCount'] as const) {
       if (v[key] !== undefined) fail(at, `holderHit cannot be combined with ${key}`);
     }
