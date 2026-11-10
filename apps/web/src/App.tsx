@@ -110,7 +110,7 @@ export function App() {
     team.fixedSpec,
   );
   const orderedIndex = useMemo(
-    () => (index === null ? null : orderCharacters(index, listOrder.order, listOrder.powers)),
+    () => (index === null ? null : orderCharacters(index, listOrder.order, listOrder.values, listOrder.direction)),
     [index, listOrder],
   );
 

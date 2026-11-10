@@ -643,8 +643,6 @@ header h1 {
 }
 
 :root {
-  /* 立ち絵の最下部のレア度の帯の太さ */
-  --rarity-band-h: 4px;
   /* ニケ一覧の立ち絵の幅（枠線 1px ずつを含む。.char-visual-compact と縦長）。絵の部分は縦長の立ち絵（256×512）の 1/3、
      四角の顔の絵（128×128）の 2/3 で、どちらも 256/3 px。3 倍の画面で立ち絵が、1.5 倍の画面で顔の絵が画素どおりになるので、端数は丸めない */
   --tray-visual-w: calc(256px / 3 + 2px);
@@ -658,7 +656,13 @@ header h1 {
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area,
 .char-tray-item.char-tray-item-pending {
   outline: 3px solid var(--placing-blue);
+}
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
   outline-offset: -1px;
+}
+/* ニケ一覧の枠は、項目の間が狭いのでスロットより 1px 内側に寄せる */
+.char-tray-item.char-tray-item-pending {
+  outline-offset: -2px;
 }
 /* 置き先待ちのスロットの立ち絵と、いまの編成にいるニケの絵に重ねる薄い水色 */
 .modern-slot-card.modern-slot-awaiting .modern-slot-char-area::after,
@@ -697,9 +701,9 @@ header h1 {
   gap: 8px;
   position: relative;
 }
-/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットもクリックで置ける。
+/* 一覧でクリックしたニケの置き先を待っている間は、どのスロットも立ち絵の枠のクリックで置ける。
    実機の部隊編成と同じく、水色の実線の枠・水色の重ね・◎（内と外の輪が脈打つ）を重ねる */
-.modern-slot-card.modern-slot-awaiting {
+.modern-slot-card.modern-slot-awaiting .modern-slot-char-area {
   cursor: pointer;
 }
 .modern-slot-target {
@@ -780,8 +784,13 @@ header h1 {
 /* 操作の印はドラッグして別のスロットへ移せる。持ち上げている間、元の印は薄くする */
 .modern-slot-focus-handle {
   display: inline-flex;
+  border-radius: 4px;
   cursor: grab;
   touch-action: none;
+}
+/* マウスを載せると水色の枠で囲む（載せ続けると title の「操作」が出る） */
+.modern-slot-focus-handle:hover {
+  outline: 2px solid var(--placing-blue);
 }
 .modern-slot-focus-dragging {
   opacity: 0.3;
@@ -840,8 +849,7 @@ header h1 {
   position: absolute;
   left: 1px;
   right: 1px;
-  /* 最下部のレア度の帯の上に出す */
-  bottom: calc(1px + var(--rarity-band-h));
+  bottom: 1px;
   padding: 10px 6px 3px;
   overflow: hidden;
   white-space: nowrap;
@@ -854,7 +862,7 @@ header h1 {
   /* マウスの操作は受ける（アーティファクトのコメントで名前と限界突破を選べるように）。押したときのドラッグ・クリックはカードに届く */
   z-index: 1;
 }
-.modern-slot-char-name-track {
+.scrolling-name-track {
   display: inline-block;
 }
 /* 限界突破（星）とコア強化（01〜07）。GrowthMarks.tsx。スロットは名前の上に右詰め、ニケ一覧は絵の右上 */
@@ -961,17 +969,17 @@ header h1 {
 .char-tray-tall-area .growth-marks-core {
   font-size: 0.42rem;
 }
-.modern-slot-char-name-scroll {
+.scrolling-name {
   text-align: left;
 }
-/* 2 つ並べた名前の間（ModernSlotCard.tsx の NAME_SCROLL_GAP と同じ） */
-.modern-slot-char-name-scroll .modern-slot-char-name-track > span {
+/* 2 つ並べた名前の間（useScrollingName.tsx の NAME_SCROLL_GAP と同じ） */
+.scrolling-name .scrolling-name-track > span {
   margin-right: 32px;
 }
-.modern-slot-char-name-scroll .modern-slot-char-name-track {
-  animation: modern-slot-char-name-scroll var(--name-duration) linear infinite;
+.scrolling-name .scrolling-name-track {
+  animation: scrolling-name var(--name-duration) linear infinite;
 }
-@keyframes modern-slot-char-name-scroll {
+@keyframes scrolling-name {
   from {
     transform: translateX(0);
   }
@@ -980,7 +988,7 @@ header h1 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .modern-slot-char-name-scroll .modern-slot-char-name-track {
+  .scrolling-name .scrolling-name-track {
     animation: none;
   }
 }
@@ -1077,8 +1085,11 @@ header h1 {
   aspect-ratio: 1 / 1;
   max-width: 120px;
   /* 属性の色は使わない（属性は左上のバッジで示す） */
-  background: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
-  border: 1px solid var(--app-border);
+  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  /* 枠線の色（モダン UI は modern.css で変える。立ち絵の border-image も同じ色） */
+  --char-visual-line: var(--app-border);
+  background: var(--char-visual-fill);
+  border: 1px solid var(--char-visual-line);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -1099,7 +1110,7 @@ header h1 {
 }
 /* 「未」の札は、下部に重ねる名前の行の上に出す */
 .char-visual-tall .char-unsupported-tag {
-  bottom: calc(40px + var(--rarity-band-h));
+  bottom: 40px;
 }
 .char-tray-tall-area {
   width: 100%;
@@ -1125,6 +1136,14 @@ header h1 {
   max-width: none;
   --badge-w: 24px;
 }
+/* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
+   枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
+.char-visual-portrait,
+.char-visual-tall {
+  /* 基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
+  background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
+}
 .char-visual-img {
   width: 100%;
   height: 100%;
@@ -1142,27 +1161,6 @@ header h1 {
   gap: 1px;
   z-index: 2;
 }
-/* 絵の最下部のレア度の色の帯（SSR は黄色・SR は紫・R は青）。名前やバッジより上に重ねる */
-.char-visual::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--rarity-band-h);
-  background: var(--rarity-color, transparent);
-  z-index: 3;
-  pointer-events: none;
-}
-.char-visual[data-rarity='SSR'] {
-  --rarity-color: #facc15;
-}
-.char-visual[data-rarity='SR'] {
-  --rarity-color: #a855f7;
-}
-.char-visual[data-rarity='R'] {
-  --rarity-color: #3b82f6;
-}
 .char-badge {
   display: block;
   width: var(--badge-w);
@@ -1172,7 +1170,7 @@ header h1 {
 .char-visual-corner-badge {
   position: absolute;
   right: 2px;
-  bottom: calc(2px + var(--rarity-band-h));
+  bottom: 2px;
   z-index: 2;
 }
 /* そのため「未」の札は左下に出す */
@@ -1182,11 +1180,11 @@ header h1 {
 }
 /* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す */
 .char-visual-portrait .char-unsupported-tag {
-  bottom: calc(44px + var(--rarity-band-h));
+  bottom: 44px;
 }
 .char-unsupported-tag {
   position: absolute;
-  bottom: calc(2px + var(--rarity-band-h));
+  bottom: 2px;
   right: 2px;
   background: #d32f2f;
   color: #fff;
@@ -1237,16 +1235,39 @@ html:has(.modern-view-container) {
   padding: 4px 10px;
   font-size: 0.85rem;
 }
-.char-tray-sort select {
-  font-size: 0.85rem;
-  padding: 1px 4px;
-}
 /* 縦長・四角の切り替えで、いまの形を強く出す */
 .char-tray-shape-button > span:not(.char-tray-shape-current) {
   opacity: 0.45;
 }
 .char-tray-shape-current {
   font-weight: bold;
+}
+/* 並べ替えを開くボタンの名前。全部の並びの名前を 1 つのマスに重ねて幅を一番長い名前に合わせ、いまの並びだけを見せる */
+.char-tray-sort-label {
+  display: inline-grid;
+}
+.char-tray-sort-label > span {
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+.char-tray-sort-label > .char-tray-sort-current {
+  visibility: visible;
+}
+/* 並べ替えのポップアップの並びのボタン。どれも一番長いボタンの幅にそろえ、向きの印の場所はどのボタンにも取っておく
+   （いまの並びを切り替えても幅が変わらない。太字にすると幅が変わるので、いまの並びは枠だけで示す） */
+.char-tray-sort-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.char-tray-sort-option {
+  justify-content: space-between;
+}
+.char-tray-sort-option[aria-pressed='true'] {
+  outline: 2px solid var(--placing-blue);
+}
+.char-tray-sort-option[aria-pressed='false'] .char-tray-sort-mark {
+  visibility: hidden;
 }
 /* 未実装の置き場所のボタン。マウスを重ねても禁止の印（〇に斜線）は出さない（オーナーの指示）。押せる印（指の形）も出さない */
 .char-tray-action-button[aria-disabled='true'] {
@@ -1297,9 +1318,10 @@ html:has(.modern-view-container) {
 /* 列は立ち絵の幅（と左右の余白 2px・枠線 1px）で固定し、間を詰めて中央に寄せる */
 .char-tray-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, calc(var(--tray-visual-w) + 6px));
+  /* 列の幅は、絵と項目の余白（左右 2px ずつ） */
+  grid-template-columns: repeat(auto-fill, calc(var(--tray-visual-w) + 4px));
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   /* 全キャラを出し、枠の中ではスクロールしない（ページのスクロールだけにする） */
   padding: 4px;
 }
@@ -1313,10 +1335,11 @@ html:has(.modern-view-container) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  /* 四角の絵と、その下の名前の間（名前を絵に寄せる） */
+  gap: 0;
   padding: 2px;
   background: transparent;
-  border: 1px solid transparent;
+  border: none;
   cursor: pointer;
   color: inherit;
   position: relative;
@@ -1325,13 +1348,14 @@ html:has(.modern-view-container) {
 .char-tray-list-pending .char-tray-item:not(.char-tray-item-pending) {
   filter: brightness(0.4);
 }
+/* 四角の絵の下の名前。収まらない名前は流す（.scrolling-name。useScrollingName.tsx） */
 .char-tray-item-name {
   font-size: 0.75rem;
+  line-height: 1.2;
   text-align: center;
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 /* 絵の枠。いまの編成にいるニケは、実機の部隊編成と同じく水色の枠・薄い水色の重ね・✓ を絵に重ねる */
 .char-tray-item-visual {
@@ -1456,9 +1480,8 @@ html:has(.modern-view-container) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
   padding: 2px;
-  border: 1px solid transparent;
   pointer-events: none;
 }
 .char-drag-overlay .char-visual {

@@ -10,6 +10,7 @@ import {
   emptyBuild,
   fixedSpecBuild,
   isEmptyBuild,
+  overloadTotal,
   validateBuild,
   type BuildInput,
 } from '../build.ts';
@@ -249,5 +250,50 @@ describe('computeCombatAttack', () => {
     expect(bad({ extraAttack: -1 })).toThrow(RangeError);
     expect(bad({ recycleRoom: { personal: 1.5, class: 0, corporation: 0 } })).toThrow(RangeError);
     expect(bad({})).not.toThrow();
+  });
+});
+
+describe('overloadTotal（一覧の OP 順）', () => {
+  const values = (option: string) => masters.overload.options.find((o) => o.option === option)!.values;
+  const build: Pick<BuildInput, 'gear'> = {
+    gear: {
+      head: {
+        type: 'OL',
+        level: 5,
+        overload: [
+          { option: 'attack', level: 13 },
+          { option: 'elementDamage', level: 1 },
+        ],
+      },
+      body: {
+        type: 'OL',
+        level: 5,
+        overload: [
+          { option: 'attack', level: 1 },
+          { option: 'maxAmmo', level: 15 },
+        ],
+      },
+      arm: null,
+      leg: { type: 'OL', level: 5 },
+    },
+  };
+
+  it('挙げたオプションの上昇値（%）を 4 部位で足す', () => {
+    expect(overloadTotal(build, masters, ['attack'])).toBeCloseTo(values('attack')[12]! + values('attack')[0]!);
+    expect(overloadTotal(build, masters, ['elementDamage'])).toBeCloseTo(values('elementDamage')[0]!);
+    expect(overloadTotal(build, masters, ['attack', 'elementDamage'])).toBeCloseTo(
+      values('attack')[12]! + values('attack')[0]! + values('elementDamage')[0]!,
+    );
+    expect(overloadTotal(emptyBuild(), masters, ['attack'])).toBe(0);
+  });
+
+  it('知らない Lv は投げる', () => {
+    expect(() =>
+      overloadTotal(
+        { gear: { ...build.gear, arm: { type: 'OL', level: 5, overload: [{ option: 'attack', level: 16 }] } } },
+        masters,
+        ['attack'],
+      ),
+    ).toThrow(RangeError);
   });
 });

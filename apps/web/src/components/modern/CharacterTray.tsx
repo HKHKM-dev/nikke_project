@@ -14,11 +14,18 @@ import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { activeDragData, type OverDragData } from './dropIntent.ts';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
-import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
+import {
+  LIST_DIRECTION_LABEL,
+  LIST_DIRECTION_MARK,
+  LIST_ORDERS,
+  LIST_ORDER_LABEL,
+  OVERLOAD_WITHOUT_ROSTER_HINT,
+} from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
 import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './OtherPartyBadges.tsx';
+import { Popover } from '../Popover.tsx';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -125,19 +132,47 @@ export function CharacterTray({
             </button>
           </div>
         </div>
-        {/* 並べ替え（名前順・戦闘力順）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
+        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
             何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
         <div className="char-tray-actions">
-          <label className="char-tray-action-button char-tray-sort">
-            並べ替え
-            <select value={listOrder.order} onChange={(e) => listOrder.select(e.target.value as ListOrder)}>
-              {LIST_ORDERS.map((o) => (
-                <option key={o} value={o}>
-                  {LIST_ORDER_LABEL[o]}
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
+              （続けて押せるように、押しても閉じない） */}
+          <Popover
+            button={
+              // 全部の並びの名前を同じ所に重ね、いまの並びだけを見せる（ボタンの幅を一番長い名前に合わせ、切り替えても変えない）
+              <span className="char-tray-sort-label">
+                {LIST_ORDERS.map((o) => (
+                  <span key={o} className={o === listOrder.order ? 'char-tray-sort-current' : undefined}>
+                    {LIST_ORDER_LABEL[o]} {LIST_DIRECTION_MARK[listOrder.direction]}
+                  </span>
+                ))}
+              </span>
+            }
+            buttonClassName="char-tray-action-button"
+            label={`並べ替え: ${LIST_ORDER_LABEL[listOrder.order]}（${LIST_DIRECTION_LABEL[listOrder.direction]}）`}
+            align="left"
+          >
+            <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
+              {LIST_ORDERS.map((o) => {
+                const current = listOrder.order === o;
+                return (
+                  <button
+                    key={o}
+                    type="button"
+                    className="char-tray-action-button char-tray-sort-option"
+                    aria-pressed={current}
+                    title={current ? `${LIST_DIRECTION_LABEL[listOrder.direction]}（押すと入れ替える）` : undefined}
+                    onClick={() => (current ? listOrder.toggleDirection() : listOrder.select(o))}
+                  >
+                    {LIST_ORDER_LABEL[o]}
+                    <span className="char-tray-sort-mark" aria-hidden="true">
+                      {LIST_DIRECTION_MARK[listOrder.direction]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </Popover>
           {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
           {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
             <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
@@ -145,6 +180,7 @@ export function CharacterTray({
           {listOrder.order === 'combatPower' && listOrder.failedCount > 0 && (
             <span className="hint">戦闘力を出せない {listOrder.failedCount} 体は後ろに名前順で並べる</span>
           )}
+          {listOrder.overloadWithoutRoster && <span className="hint">{OVERLOAD_WITHOUT_ROSTER_HINT}</span>}
           <button type="button" className="char-tray-action-button" aria-disabled="true">
             フィルター<span className="char-tray-unimplemented">未実装</span>
           </button>

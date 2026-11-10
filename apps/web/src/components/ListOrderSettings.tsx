@@ -1,18 +1,49 @@
 // 設定のメニューの「一覧の並び」の欄: 名前順・戦闘力順（plan/design-combat-power-sort.md 6 節）
-import { LIST_ORDERS, LIST_ORDER_LABEL } from '../listOrder.ts';
+import {
+  LIST_DIRECTION_LABEL,
+  LIST_DIRECTION_MARK,
+  LIST_ORDERS,
+  LIST_ORDER_LABEL,
+  OVERLOAD_WITHOUT_ROSTER_HINT,
+} from '../listOrder.ts';
 import type { ListOrderControls } from '../useListOrder.ts';
 
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const NOTE = { maxWidth: '22em' } as const;
 
-export function ListOrderSettings({ order, select, fixedSpecPowers, failedCount, tableError }: ListOrderControls) {
+export function ListOrderSettings({
+  order,
+  select,
+  direction,
+  toggleDirection,
+  fixedSpecPowers,
+  failedCount,
+  tableError,
+  overloadWithoutRoster,
+}: ListOrderControls) {
   return (
     <fieldset className="popover-group">
       <legend>一覧の並び</legend>
       {LIST_ORDERS.map((o) => (
         <label key={o} className="popover-option">
-          <input type="radio" name="listOrder" value={o} checked={order === o} onChange={() => select(o)} />
-          <span>{LIST_ORDER_LABEL[o]}</span>
+          {/* 選んでいる並びをもう一度押すと、昇順と降順を入れ替える（モダン UI の並べ替えと同じ） */}
+          <input
+            type="radio"
+            name="listOrder"
+            value={o}
+            checked={order === o}
+            onChange={() => select(o)}
+            onClick={() => order === o && toggleDirection()}
+          />
+          <span>
+            {LIST_ORDER_LABEL[o]}
+            {order === o && (
+              <span title={`${LIST_DIRECTION_LABEL[direction]}（押すと入れ替える）`}>
+                {' '}
+                {LIST_DIRECTION_MARK[direction]}
+              </span>
+            )}
+          </span>
         </label>
       ))}
       {fixedSpecPowers && order === 'combatPower' && (
@@ -25,7 +56,12 @@ export function ListOrderSettings({ order, select, fixedSpecPowers, failedCount,
           戦闘力の表を読めない: {tableError}
         </p>
       )}
-      {failedCount > 0 && (
+      {overloadWithoutRoster && (
+        <p className="hint" style={NOTE}>
+          {OVERLOAD_WITHOUT_ROSTER_HINT}
+        </p>
+      )}
+      {order === 'combatPower' && failedCount > 0 && (
         <p className="hint" style={NOTE}>
           戦闘力を出せない {failedCount} 体は、育成状況にいないキャラと同じ所（後ろ）に名前順で並べる
         </p>

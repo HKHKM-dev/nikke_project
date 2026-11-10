@@ -20,7 +20,7 @@ import {
 } from '@nikke/core';
 import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
+import { LIST_DIRECTION_STORAGE_KEY, LIST_ORDER_STORAGE_KEY } from './listOrder.ts';
 import { useListOrder } from './useListOrder.ts';
 
 /** 置いてあるデータの文（パスは画面が読むのと同じ。packages/core/src/load.ts）。happy-dom の URL は fs が読めないので、パスで組む */
@@ -90,14 +90,16 @@ describe('useListOrder', () => {
       failedCount: 0,
       tableError: null,
     });
-    expect(result.current.state).toEqual({ order: 'name', powers: new Map() });
+    expect(result.current.state).toEqual({ order: 'name', direction: 'asc', values: new Map() });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('orders by the fixed-spec power without a roster once the combat power order is chosen', async () => {
     const { result } = render({ roster: null });
     act(() => result.current.controls.select('combatPower'));
-    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
+    await waitFor(() =>
+      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', values: FIXED.powers }),
+    );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(result.current.controls).toMatchObject({ fixedSpecPowers: true, failedCount: FIXED.failures.length });
   });
@@ -105,7 +107,11 @@ describe('useListOrder', () => {
   it('loads the table once with a roster, defaults to the combat power order, and counts the failures', async () => {
     const { result, rerender } = render();
     await waitFor(() =>
-      expect(result.current.state).toEqual({ order: 'combatPower', powers: new Map([[ssr.resourceId, POWER]]) }),
+      expect(result.current.state).toEqual({
+        order: 'combatPower',
+        direction: 'desc',
+        values: new Map([[ssr.resourceId, POWER]]),
+      }),
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]![0]).toMatch(/^\/base\/.*combat\.json$/);
@@ -124,10 +130,12 @@ describe('useListOrder', () => {
 
   it('uses the fixed-spec power under the fixed spec even with a roster', async () => {
     const { result, rerender } = render({ fixedSpec: true });
-    await waitFor(() => expect(result.current.state).toEqual({ order: 'combatPower', powers: FIXED.powers }));
+    await waitFor(() =>
+      expect(result.current.state).toEqual({ order: 'combatPower', direction: 'desc', values: FIXED.powers }),
+    );
     expect(result.current.controls.fixedSpecPowers).toBe(true);
     rerender(DEFAULTS);
-    expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]]));
+    expect(result.current.state.values).toEqual(new Map([[ssr.resourceId, POWER]]));
     expect(result.current.controls.fixedSpecPowers).toBe(false);
   });
 
@@ -135,9 +143,9 @@ describe('useListOrder', () => {
     const { result, rerender } = render({ masters: null });
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
     await settle();
-    expect(result.current.state.powers).toEqual(new Map());
+    expect(result.current.state.values).toEqual(new Map());
     rerender(DEFAULTS);
-    await waitFor(() => expect(result.current.state.powers).toEqual(new Map([[ssr.resourceId, POWER]])));
+    await waitFor(() => expect(result.current.state.values).toEqual(new Map([[ssr.resourceId, POWER]])));
   });
 
   it('keeps the selected order in the browser, and ignores an unknown saved value', async () => {
@@ -157,11 +165,62 @@ describe('useListOrder', () => {
     await settle();
   });
 
+  it('toggles the direction and keeps it in the browser, and resets it to the default when the order is selected', async () => {
+    const { result } = render({ roster: null });
+    expect(result.current.controls.direction).toBe('asc');
+    act(() => result.current.controls.toggleDirection());
+    expect(result.current.state.direction).toBe('desc');
+    expect(localStorage.getItem(LIST_DIRECTION_STORAGE_KEY)).toBe('desc');
+    expect(render({ roster: null }).result.current.controls.direction).toBe('desc');
+
+    act(() => result.current.controls.select('combatPower'));
+    expect(result.current.controls.direction).toBe('desc');
+    expect(localStorage.getItem(LIST_DIRECTION_STORAGE_KEY)).toBeNull();
+    act(() => result.current.controls.toggleDirection());
+    expect(result.current.controls.direction).toBe('asc');
+    await settle();
+  });
+
+  it('keeps the toggled order when the roster comes, and does not carry a direction to another order', async () => {
+    const { result, rerender } = render({ roster: null });
+    act(() => result.current.controls.toggleDirection());
+    expect(localStorage.getItem(LIST_ORDER_STORAGE_KEY)).toBe('name');
+    rerender({ ...DEFAULTS });
+    expect(result.current.state).toMatchObject({ order: 'name', direction: 'desc' });
+    await settle();
+
+    // 並びを覚えていない向きは使わない（育成状況で決まる並びの既定の向き）
+    localStorage.clear();
+    localStorage.setItem(LIST_DIRECTION_STORAGE_KEY, 'asc');
+    const other = render();
+    expect(other.result.current.state).toMatchObject({ order: 'combatPower', direction: 'desc' });
+    await settle();
+  });
+
+  it('orders by the overload total of the roster gear, and flags the overload order without a roster', async () => {
+    const { result } = render();
+    act(() => result.current.controls.select('attackOverload'));
+    // 育成状況の 2 体とも OL 装備が無いので 0
+    expect(result.current.state).toEqual({
+      order: 'attackOverload',
+      direction: 'desc',
+      values: new Map([
+        [ssr.resourceId, 0],
+        [-1, 0],
+      ]),
+    });
+    expect(result.current.controls.overloadWithoutRoster).toBe(false);
+    const noRoster = render({ roster: null }).result;
+    expect(noRoster.current.state.values).toEqual(new Map());
+    expect(noRoster.current.controls.overloadWithoutRoster).toBe(true);
+    await settle();
+  });
+
   it('shows why the table did not load', async () => {
     fetchMock.mockResolvedValue(new Response('', { status: 404 }));
     const { result } = render();
     await waitFor(() => expect(result.current.controls.tableError).toMatch(/combat\.json -> HTTP 404$/));
-    expect(result.current.state.powers).toEqual(new Map());
+    expect(result.current.state.values).toEqual(new Map());
     // Error でない理由は文字列にする
     fetchMock.mockRejectedValue('offline');
     const offline = render().result;
