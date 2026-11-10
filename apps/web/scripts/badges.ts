@@ -139,20 +139,25 @@ const COLOR_ATTRS = new RegExp(`(\\s)(style|${[...PAINT, ...SHADE].join('|')})="
 function roleColor(name: string, prop: string, value: string): string {
   if (SHADE.has(prop) && !SHADE_COLORS.has(value.toLowerCase()))
     throw new Error(`badges: 白黒のバッジ ${name} の ${prop} が ${value}（陰の #000000 か #ffffff にする）`);
-  if (!PAINT.has(prop) || value === 'none' || value.startsWith('url(')) return value;
+  if (!PAINT.has(prop) || ['none', 'currentColor'].includes(value) || value.startsWith('url(')) return value;
   const role = COLOR_ROLES[value.toLowerCase()];
   if (!role) throw new Error(`badges: 白黒のバッジ ${name} の ${prop} の ${value} は色の役（COLOR_ROLES）に無い`);
   return `var(--badge-${role},${value})`;
 }
 
-/** 白黒のバッジの塗りと縁の色を、色の役の CSS の変数にする。役に無い色・陰でないグラデーションの色があれば止める */
+/**
+ * 白黒のバッジの塗りと縁の色を、色の役の CSS の変数にする。役に無い色・陰でないグラデーションの色・<style> の要素があれば
+ * 止める。style が同じ性質を決める要素の属性（枠の hex-out の stroke="#ff3b57" など）は描かれないので、見ずにそのまま残す
+ */
 export function applyColorRoles(svg: string, name: string): string {
-  return svg.replace(COLOR_ATTRS, (_, space: string, attr: string, value: string) => {
-    const out =
-      attr === 'style'
-        ? [...declsOf(value)].map(([prop, v]) => `${prop}:${roleColor(name, prop.trim(), v.trim())}`).join(';')
-        : roleColor(name, attr, value);
-    return `${space}${attr}="${out}"`;
+  if (/<style\b/.test(svg)) throw new Error(`badges: 白黒のバッジ ${name} に <style> がある（色は style 属性に書く）`);
+  return svg.replace(/<[^!?/][^>]*>/g, (tag) => {
+    const styled = new Set([...styleOf(tag).keys()].map((prop) => prop.trim()));
+    return tag.replace(COLOR_ATTRS, (attrText: string, space: string, attr: string, value: string) => {
+      if (attr === 'style')
+        return `${space}style="${[...declsOf(value)].map(([prop, v]) => `${prop}:${roleColor(name, prop.trim(), v.trim())}`).join(';')}"`;
+      return styled.has(attr) ? attrText : `${space}${attr}="${roleColor(name, attr, value)}"`;
+    });
   });
 }
 
@@ -216,7 +221,7 @@ export function optimizeBadge(svg: string, name: string): string {
   const [, , w = 0, h = 0] = viewBoxOf(svg)
     .split(/[\s,]+/)
     .map(Number);
-  return optimize(MONOCHROME.has(name) ? applyColorRoles(svg, name) : svg, {
+  const out = optimize(MONOCHROME.has(name) ? applyColorRoles(svg, name) : svg, {
     multipass: true,
     plugins: [
       resolveUserSpace({ x: w, y: h }),
@@ -224,6 +229,10 @@ export function optimizeBadge(svg: string, name: string): string {
       { name: 'prefixIds', params: { prefix: name } },
     ],
   }).data;
+  // resolveUserSpace が扱わない % の長さは、<use> ではスプライトの 0×0 の svg で決まって消える（グラデーションの offset は除く）
+  const percent = /\s(?!offset=)[\w:-]+="[^"]*%"/.exec(out);
+  if (percent) throw new Error(`badges: ${name} に % の値がある（${percent[0].trim()}。数で書く）`);
+  return out;
 }
 
 /**

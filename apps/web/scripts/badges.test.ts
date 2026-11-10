@@ -112,7 +112,7 @@ describe('白黒のバッジ', () => {
   it('塗りと縁の色の役を CSS の変数にし、ほかはそのまま', () => {
     const out = applyColorRoles(
       doc(
-        '<path style="fill:#FFFFFF;stroke:#000000;stroke-width:2" fill="#808080"/><rect style="fill:url(#g);stroke:none"/>',
+        '<path style="fill:#FFFFFF;stroke:#000000;stroke-width:2"/><circle fill="#808080"/><rect style="fill:url(#g);stroke:none"/>',
       ),
       'x_y',
     );
@@ -125,6 +125,21 @@ describe('白黒のバッジ', () => {
     expect(() => applyColorRoles(doc('<path style="fill:#ff0000"/>'), 'x_y')).toThrow(/x_y の fill の #ff0000/);
     expect(() => applyColorRoles(doc('<stop style="stop-color:#808080"/>'), 'x_y')).toThrow(/陰の/);
     expect(() => applyColorRoles(doc('<stop style="stop-color:#ffffff;stop-opacity:0"/>'), 'x_y')).not.toThrow();
+    expect(() => applyColorRoles(doc('<style>path{fill:#fff}</style>'), 'x_y')).toThrow(/<style>/);
+  });
+
+  it('style が決める性質の属性は見ずに残す（枠の hex-out の stroke="#ff3b57"）', () => {
+    const tag = '<polygon fill="none" stroke="#ff3b57" style="fill:none;stroke:#000000"/>';
+    expect(applyColorRoles(doc(tag), 'x_y')).toContain(
+      '<polygon fill="none" stroke="#ff3b57" style="fill:none;stroke:var(--badge-line,#000000)"/>',
+    );
+    expect(() => applyColorRoles(syncFrame(doc(''), frame), 'x_y')).not.toThrow();
+    expect(() => applyColorRoles(frameSvg, 'x_y')).not.toThrow();
+  });
+
+  it('書き出しに % の長さが残れば止める', () => {
+    const svg = doc('<rect width="50%" height="1"/>');
+    expect(() => optimizeBadge(svg, 'x_y')).toThrow(/% の値/);
   });
 
   // MONOCHROME の名前の元が無い（名前を変えた）ときも、ここで落ちる
