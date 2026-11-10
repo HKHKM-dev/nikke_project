@@ -1674,118 +1674,6 @@
       "plus": 0
     },
     {
-      "observation": "0081-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "e09611927ab58f49",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "c9daa6bf5547ce7a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "2c9fa2fc903efedb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "bb7d37e9a1b3c89c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "c824b29f9850b9ac",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "0734b9fdd5c342ca",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "c10bb8c081d08935",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "d354b6ea82edd9ab",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "f17142a8b8b2ea91",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "85360558ed92073d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "84db27a59378fbd0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-20",
-      "element": "ココア skill1.effects[1]",
-      "key": "b633a42a9ba63c7f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0081-22",
-      "element": "ココア skill1.effects[1]",
-      "key": "6c98de8abe864cb3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0084-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "5f482967681ac3be",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0084-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "5f482967681ac3be",
@@ -1800,14 +1688,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0084-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "b61484c402de492b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0084-02",
@@ -1827,14 +1707,6 @@
     },
     {
       "observation": "0084-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "e28dfc14b390a5d7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0084-03",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "e28dfc14b390a5d7",
       "effective": false,
@@ -1848,14 +1720,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0084-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "406b5ff26d8121ad",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0084-07",
@@ -1875,14 +1739,6 @@
     },
     {
       "observation": "0084-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "606c92da8114bae7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0084-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "606c92da8114bae7",
       "effective": false,
@@ -1896,14 +1752,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0084-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "ba4439167e7aed5b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0084-10",
@@ -1923,14 +1771,6 @@
     },
     {
       "observation": "0084-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "70bbae6ba09c2796",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0084-11",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "70bbae6ba09c2796",
       "effective": false,
@@ -1944,14 +1784,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0085-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "7a2c23ef8ec754f0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0099-04",
@@ -4540,14 +4372,6 @@
     },
     {
       "observation": "0221-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "6937c7e4e50da241",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-01",
       "element": "ラピ burst.effects[1]",
       "key": "6937c7e4e50da241",
       "effective": false,
@@ -4572,14 +4396,6 @@
     },
     {
       "observation": "0221-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "a66469a52a14b9bc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-02",
       "element": "ラピ burst.effects[1]",
       "key": "a66469a52a14b9bc",
       "effective": false,
@@ -4604,14 +4420,6 @@
     },
     {
       "observation": "0221-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "962aaceecc68df01",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-03",
       "element": "ラピ burst.effects[1]",
       "key": "962aaceecc68df01",
       "effective": false,
@@ -4636,14 +4444,6 @@
     },
     {
       "observation": "0221-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "a9506f2389e384d6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-04",
       "element": "ラピ burst.effects[1]",
       "key": "a9506f2389e384d6",
       "effective": false,
@@ -4668,14 +4468,6 @@
     },
     {
       "observation": "0221-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "d89cdcd4568b4b1b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-05",
       "element": "ラピ burst.effects[1]",
       "key": "d89cdcd4568b4b1b",
       "effective": false,
@@ -4700,14 +4492,6 @@
     },
     {
       "observation": "0221-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "45502f2151548fba",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-06",
       "element": "ラピ burst.effects[1]",
       "key": "45502f2151548fba",
       "effective": false,
@@ -4732,14 +4516,6 @@
     },
     {
       "observation": "0221-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "0f7226eac5a081fb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-10",
       "element": "ラピ burst.effects[1]",
       "key": "0f7226eac5a081fb",
       "effective": false,
@@ -4764,14 +4540,6 @@
     },
     {
       "observation": "0221-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "52f3a4291193ba8a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-11",
       "element": "ラピ burst.effects[1]",
       "key": "52f3a4291193ba8a",
       "effective": false,
@@ -4796,14 +4564,6 @@
     },
     {
       "observation": "0221-16",
-      "element": "ココア skill1.effects[1]",
-      "key": "c191ff44886f2d2b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-16",
       "element": "ラピ burst.effects[1]",
       "key": "c191ff44886f2d2b",
       "effective": false,
@@ -4828,14 +4588,6 @@
     },
     {
       "observation": "0221-17",
-      "element": "ココア skill1.effects[1]",
-      "key": "e2795f16e116f5e3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-17",
       "element": "ラピ burst.effects[1]",
       "key": "e2795f16e116f5e3",
       "effective": false,
@@ -4860,14 +4612,6 @@
     },
     {
       "observation": "0221-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "ea2340eaef06fa7b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-18",
       "element": "ラピ burst.effects[1]",
       "key": "ea2340eaef06fa7b",
       "effective": false,
@@ -4886,14 +4630,6 @@
       "observation": "0221-18",
       "element": "ラピ skill2.effects[1]",
       "key": "ea2340eaef06fa7b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0221-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "3bb3ec7120616530",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -4924,27 +4660,11 @@
     },
     {
       "observation": "0222-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "cf5d2cb61bb5f13b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-01",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "cf5d2cb61bb5f13b",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "cfe57fb5e8830902",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-03",
@@ -4956,27 +4676,11 @@
     },
     {
       "observation": "0222-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "69286554e3721955",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-04",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "69286554e3721955",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "e2fb82a375bff278",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-05",
@@ -4988,27 +4692,11 @@
     },
     {
       "observation": "0222-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "27404c326894915b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-06",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "27404c326894915b",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "f9d2ddb9df6d0c26",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-07",
@@ -5020,27 +4708,11 @@
     },
     {
       "observation": "0222-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "ad1aeed8a6d1790f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-08",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "ad1aeed8a6d1790f",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "8d6953cbf16184e2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-09",
@@ -5052,27 +4724,11 @@
     },
     {
       "observation": "0222-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "9565e8c2e6198805",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-10",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "9565e8c2e6198805",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "91ff64754f1470b8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-11",
@@ -5084,27 +4740,11 @@
     },
     {
       "observation": "0222-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "850727949fe72ccb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-12",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "850727949fe72ccb",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "cedf8c04b31f6c7f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-15",
@@ -5116,27 +4756,11 @@
     },
     {
       "observation": "0222-16",
-      "element": "ココア skill1.effects[1]",
-      "key": "516a1b2d920f20a0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-16",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "516a1b2d920f20a0",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-17",
-      "element": "ココア skill1.effects[1]",
-      "key": "283f439c24173459",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-17",
@@ -5148,27 +4772,11 @@
     },
     {
       "observation": "0222-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "595206e98a7f2f68",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-18",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "595206e98a7f2f68",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0222-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "4b250af6c55ed06b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0222-19",
@@ -5180,43 +4788,11 @@
     },
     {
       "observation": "0222-21",
-      "element": "ココア skill1.effects[1]",
-      "key": "83e6df98bf6bcc83",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0222-21",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "83e6df98bf6bcc83",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0223-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "0334b4f66b735795",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0223-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "93f0756eecf52649",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0223-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "428984c7e1149a9c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0224-01",
@@ -5235,14 +4811,6 @@
       }
     },
     {
-      "observation": "0224-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "3d837d6054d1e81f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0224-02",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "b3c1f3d561e1bee4",
@@ -5259,14 +4827,6 @@
       }
     },
     {
-      "observation": "0224-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "b3c1f3d561e1bee4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0224-04",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "abe96317774bee20",
@@ -5281,86 +4841,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0224-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "abe96317774bee20",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "9d847ef280d03a83",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "e1f6e8750a31d116",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "532b2ec1d5a301ea",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "97f4f1ad64b2a47e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "79223e18757fdcd7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "a6cb603b72a9d366",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "058de10f491f984e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "57a9894ba606a170",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0225-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "ff70a1787f0fc2ff",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0226-01",
@@ -6219,14 +5699,6 @@
       }
     },
     {
-      "observation": "0259-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "1736a1b65a26b787",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0259-02",
       "element": "クイーン（真） burst.effects[1]",
       "key": "efa730a3b73cd44c",
@@ -6257,14 +5729,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "efa730a3b73cd44c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-03",
@@ -6299,14 +5763,6 @@
       }
     },
     {
-      "observation": "0259-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "c286e49ddb80dc52",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0259-04",
       "element": "クイーン（真） burst.effects[1]",
       "key": "475dd9109d5497db",
@@ -6337,14 +5793,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "475dd9109d5497db",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-05",
@@ -6379,14 +5827,6 @@
       }
     },
     {
-      "observation": "0259-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "605a4d6faf8ed14e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0259-06",
       "element": "クイーン（真） burst.effects[1]",
       "key": "6b48d25818080de9",
@@ -6417,14 +5857,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "6b48d25818080de9",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-07",
@@ -6459,14 +5891,6 @@
       }
     },
     {
-      "observation": "0259-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "dec06c304c134555",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0259-08",
       "element": "クイーン（真） burst.effects[1]",
       "key": "32f0474825aad83d",
@@ -6497,14 +5921,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "32f0474825aad83d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-09",
@@ -6539,14 +5955,6 @@
       }
     },
     {
-      "observation": "0259-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "fc14bcba6fc65447",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0259-11",
       "element": "クイーン（真） burst.effects[1]",
       "key": "4bf31685762fc942",
@@ -6577,14 +5985,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "4bf31685762fc942",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0259-12",
@@ -6619,14 +6019,6 @@
       }
     },
     {
-      "observation": "0259-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "9f335c7b997a2f2e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0259-13",
       "element": "クイーン（真） burst.effects[1]",
       "key": "24205b7f02813f1c",
@@ -6657,14 +6049,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0259-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "24205b7f02813f1c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0261-01",
@@ -6683,14 +6067,6 @@
       }
     },
     {
-      "observation": "0261-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "bc81fb951254fa80",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0261-02",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "e6f8ac74708720a9",
@@ -6707,14 +6083,6 @@
       }
     },
     {
-      "observation": "0261-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "e6f8ac74708720a9",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0261-03",
       "element": "クイーン（真） skill2.effects[2]",
       "key": "d2464cdc73acbf39",
@@ -6729,14 +6097,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0261-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "d2464cdc73acbf39",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0262-03",
@@ -7715,188 +7075,12 @@
       }
     },
     {
-      "observation": "0302-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "5da5eac089755c05",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "c7de949bc4708576",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "c46c02de801df923",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "7f9b4b336fa0b3e2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "ab80c3a0689ace2b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "dd03542c97554e69",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "736bc37723f65bc0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "a619c5a7ddf4cab4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "4c253ce20a2b2425",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "8eb69fc9ab7ba60a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "44ea0196cc74ade1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "c523c7da4b5c9767",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "1da1b5f21a7ffdfb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-16",
-      "element": "ココア skill1.effects[1]",
-      "key": "af869b7129590496",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-17",
-      "element": "ココア skill1.effects[1]",
-      "key": "18e8f706f631b407",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "d9c6f9c1d1af09f2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "5db82f0035663e6d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-20",
-      "element": "ココア skill1.effects[1]",
-      "key": "4f17c23d21eb8992",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-21",
-      "element": "ココア skill1.effects[1]",
-      "key": "dedbb1fe1dc17177",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0302-22",
-      "element": "ココア skill1.effects[1]",
-      "key": "a64ab2d391749604",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0304-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "f33b45fed5c5aa85",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0304-03",
       "element": "ノワール burst.effects[1]",
       "key": "f33b45fed5c5aa85",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0304-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "98ecedb1192e1ab0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0304-04",
@@ -8003,46 +7187,6 @@
       "plus": 0
     },
     {
-      "observation": "0317-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "d904783d1fe64a34",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0317-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "205b20dae9a71181",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0317-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "12f0f4cb8e6f7b6e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0317-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "e9ed5d306e6bbd3b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0317-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "41011efd42d7f2ca",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0318-03",
       "element": "ミランダ treasureSkills.skill1.effects[0]",
       "key": "78949e9422d7ce2d",
@@ -8635,110 +7779,6 @@
       "plus": 0
     },
     {
-      "observation": "0362-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "4b11b3aec96ba81d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "c632927a14d6f789",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "9dbbd12ea63e5d5d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "ebba3268fc1387fb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "3ff2914593208352",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "e6f720a97466d616",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "1331692c45ae243f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "9cdaa468ff9fd96b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "1d58d4c09fee58a1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "28f53089b2b4ea00",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "54acb41bab59ffee",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0362-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "b49739b689736f83",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "645b059e15469929",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0363-01",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "645b059e15469929",
@@ -8753,14 +7793,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "c92f0c9a6fc996ed",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-02",
@@ -8780,14 +7812,6 @@
     },
     {
       "observation": "0363-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "00ce8014892c7921",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-03",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "00ce8014892c7921",
       "effective": false,
@@ -8801,14 +7825,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "9da17b42bf3acdef",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-04",
@@ -8828,14 +7844,6 @@
     },
     {
       "observation": "0363-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "a4e511e7a0d3e228",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-05",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "a4e511e7a0d3e228",
       "effective": false,
@@ -8849,14 +7857,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "a8a23e4d4586597e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-06",
@@ -8876,14 +7876,6 @@
     },
     {
       "observation": "0363-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "2203e6c601ac2add",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-07",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "2203e6c601ac2add",
       "effective": false,
@@ -8897,14 +7889,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "a969ccaaded464f1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-08",
@@ -8924,14 +7908,6 @@
     },
     {
       "observation": "0363-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "f905be2a92e110a9",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-09",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "f905be2a92e110a9",
       "effective": false,
@@ -8945,14 +7921,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "d43397130b6650cc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-10",
@@ -8972,14 +7940,6 @@
     },
     {
       "observation": "0363-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "f84e2d2fc5751852",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-11",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "f84e2d2fc5751852",
       "effective": false,
@@ -8993,14 +7953,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "bcbc8e5e1b0deee3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-12",
@@ -9020,14 +7972,6 @@
     },
     {
       "observation": "0363-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "58e3a95af42dec8f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-13",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "58e3a95af42dec8f",
       "effective": false,
@@ -9041,14 +7985,6 @@
         "widen": 0,
         "narrow": 0
       }
-    },
-    {
-      "observation": "0363-17",
-      "element": "ココア skill1.effects[1]",
-      "key": "3cc85438455cb577",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0363-17",
@@ -9068,14 +8004,6 @@
     },
     {
       "observation": "0363-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "e7610b3bf9b1fc54",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0363-18",
       "element": "紅蓮：ブラックシャドウ burst.effects[1]",
       "key": "e7610b3bf9b1fc54",
       "effective": false,
@@ -9092,27 +8020,11 @@
     },
     {
       "observation": "0365-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "e77c2bc291e0e949",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0365-01",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "e77c2bc291e0e949",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0365-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "a234cc6b4f9accbc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0365-02",
@@ -9124,27 +8036,11 @@
     },
     {
       "observation": "0365-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "998d281fe2b38c36",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0365-03",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "998d281fe2b38c36",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0365-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "fffb04497253c344",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0365-04",
@@ -9156,14 +8052,6 @@
     },
     {
       "observation": "0366-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "752ee15572a19c78",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0366-01",
       "element": "ラピ burst.effects[1]",
       "key": "752ee15572a19c78",
       "effective": false,
@@ -9188,14 +8076,6 @@
     },
     {
       "observation": "0366-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "4d726cf8c3feadbf",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0366-02",
       "element": "ラピ burst.effects[1]",
       "key": "4d726cf8c3feadbf",
       "effective": false,
@@ -9220,14 +8100,6 @@
     },
     {
       "observation": "0366-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "a4e22cc44c7d31d3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0366-03",
       "element": "ラピ burst.effects[1]",
       "key": "a4e22cc44c7d31d3",
       "effective": false,
@@ -9252,14 +8124,6 @@
     },
     {
       "observation": "0366-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "c5c98c966d3c228b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0366-04",
       "element": "ラピ burst.effects[1]",
       "key": "c5c98c966d3c228b",
       "effective": false,
@@ -9278,14 +8142,6 @@
       "observation": "0366-04",
       "element": "ラピ skill2.effects[1]",
       "key": "c5c98c966d3c228b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0366-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "415ae16ac035a523",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -9342,78 +8198,6 @@
       "observation": "0401-04",
       "element": "ウンファ：タクティカル・アップ skill2.effects[0]",
       "key": "1df7b33a128f2445",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "80e5dc8f5ae04792",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-02",
-      "element": "ココア skill1.effects[1]",
-      "key": "46a30235057240ac",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "00db6add4e37a56c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "a1a31eefc7dfd236",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "28f9768a077b618d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "c3003a5dba78596a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "96b8c0acf5502917",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "22c0325364b2bc32",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0402-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "ee766c807d8a96a3",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -16761,262 +15545,6 @@
       }
     },
     {
-      "observation": "0740-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "6f083fc9c5787126",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-20",
-      "element": "ココア skill1.effects[1]",
-      "key": "8256e5480b4aa0bd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-21",
-      "element": "ココア skill1.effects[1]",
-      "key": "c37c4eae28fd74ed",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-22",
-      "element": "ココア skill1.effects[1]",
-      "key": "b8c1a620276b6c8f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-23",
-      "element": "ココア skill1.effects[1]",
-      "key": "eca0b96141c03348",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-24",
-      "element": "ココア skill1.effects[1]",
-      "key": "d8e54ebb3c12e584",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-25",
-      "element": "ココア skill1.effects[1]",
-      "key": "8275fbe48ba7d953",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-26",
-      "element": "ココア skill1.effects[1]",
-      "key": "0c48db0998d552ce",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-27",
-      "element": "ココア skill1.effects[1]",
-      "key": "297d4061469407e2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-28",
-      "element": "ココア skill1.effects[1]",
-      "key": "03b2068ca40c48a5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-29",
-      "element": "ココア skill1.effects[1]",
-      "key": "e6f58bf4791c2417",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-30",
-      "element": "ココア skill1.effects[1]",
-      "key": "7a37e048d2760ae5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-31",
-      "element": "ココア skill1.effects[1]",
-      "key": "d1ecfcb30539c1f8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-32",
-      "element": "ココア skill1.effects[1]",
-      "key": "02968c65081cea50",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-33",
-      "element": "ココア skill1.effects[1]",
-      "key": "da756f3b241e2db4",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0740-34",
-      "element": "ココア skill1.effects[1]",
-      "key": "538a4e24121b0c97",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "665e589bf8d27ce0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-20",
-      "element": "ココア skill1.effects[1]",
-      "key": "452b8422cf6f28e3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-21",
-      "element": "ココア skill1.effects[1]",
-      "key": "b85285e0b8007bdb",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-22",
-      "element": "ココア skill1.effects[1]",
-      "key": "0f455e1ea35df909",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-23",
-      "element": "ココア skill1.effects[1]",
-      "key": "8e2a5c335ed32a86",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-24",
-      "element": "ココア skill1.effects[1]",
-      "key": "c529be0921df5a92",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-25",
-      "element": "ココア skill1.effects[1]",
-      "key": "3071328a56b1e8b5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-26",
-      "element": "ココア skill1.effects[1]",
-      "key": "449468dfd8cdb528",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-27",
-      "element": "ココア skill1.effects[1]",
-      "key": "e58103bf0102b534",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-28",
-      "element": "ココア skill1.effects[1]",
-      "key": "29e36d2ef7a08a6b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-29",
-      "element": "ココア skill1.effects[1]",
-      "key": "3f46d8e69c3b0de1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-30",
-      "element": "ココア skill1.effects[1]",
-      "key": "fb151b9e093a862b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-31",
-      "element": "ココア skill1.effects[1]",
-      "key": "3ff854d1a7b70d0e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-32",
-      "element": "ココア skill1.effects[1]",
-      "key": "a43a9e03b3efe43e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-33",
-      "element": "ココア skill1.effects[1]",
-      "key": "0009ec0938471152",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0741-34",
-      "element": "ココア skill1.effects[1]",
-      "key": "518e53528bb95691",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0744-03",
       "element": "ドレイク treasureSkills.skill1.effects[3]",
       "key": "da203431cf23089e",
@@ -17047,102 +15575,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0752-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "f5c0d18440486c6d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "25e3c0631f38eea6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "1fc913e6bfde8a4d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "1616876874f23fb7",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "dd732f6b4f4b7c82",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0752-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "872a8c069bc11dfd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "fffe99e79d9870ba",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "69d6d16e81ee3f35",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "a9cdbf2fe0f81406",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "4be5e03b928bf120",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "40b569f28b3cd7e1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0753-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "365bc0f77d16f286",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0754-08",
@@ -19517,54 +17949,6 @@
       }
     },
     {
-      "observation": "0826-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "b7982cc207ca236d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0826-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "9c7b12458a0380be",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0826-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "e0193c973ed1182a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0826-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "277a532a60d9499d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0826-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "b4c250ccfacb072f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0826-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "466f4b3d04bb238e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0830-12",
       "element": "ノワール burst.effects[1]",
       "key": "c029fc7d361d898a",
@@ -19683,54 +18067,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0835-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "26f9d5c787b86a12",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0835-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "852985f0dc04cd99",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0835-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "22a794c662c7d52d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0835-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "1b82e2cf48cfa03a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0835-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "b0a57e57979579ac",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0835-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "af17653e82dd6bc5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0836-06",
@@ -20222,24 +18558,8 @@
     },
     {
       "observation": "0847-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "5490d991adcaea6e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-03",
       "element": "ティア skill2.effects[1]",
       "key": "5490d991adcaea6e",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "c7b93326e0f205c1",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20254,24 +18574,8 @@
     },
     {
       "observation": "0847-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "0a5206edf1802084",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-10",
       "element": "ティア skill2.effects[1]",
       "key": "0a5206edf1802084",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "693c8a02e2fa7a77",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20286,24 +18590,8 @@
     },
     {
       "observation": "0847-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "c21b6468d750fe57",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-12",
       "element": "ティア skill2.effects[1]",
       "key": "c21b6468d750fe57",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "a3156b290e2409c8",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20318,24 +18606,8 @@
     },
     {
       "observation": "0847-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "f4793b8f76ee87ea",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-14",
       "element": "ティア skill2.effects[1]",
       "key": "f4793b8f76ee87ea",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0847-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "ccba559acadd212d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20350,24 +18622,8 @@
     },
     {
       "observation": "0848-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "965ee5dfffe3a71c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-03",
       "element": "ティア skill2.effects[1]",
       "key": "965ee5dfffe3a71c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "394bd3d4879268ab",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20382,24 +18638,8 @@
     },
     {
       "observation": "0848-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "2bae667f39ff8536",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-10",
       "element": "ティア skill2.effects[1]",
       "key": "2bae667f39ff8536",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "bd07f2e84aa49c45",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20414,24 +18654,8 @@
     },
     {
       "observation": "0848-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "42b568f2a140c6bd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-12",
       "element": "ティア skill2.effects[1]",
       "key": "42b568f2a140c6bd",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "d90af3f786823bc2",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20446,24 +18670,8 @@
     },
     {
       "observation": "0848-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "dba48ae55972fec8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-14",
       "element": "ティア skill2.effects[1]",
       "key": "dba48ae55972fec8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0848-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "397dfd04a187161f",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20677,24 +18885,8 @@
       "plus": null
     },
     {
-      "observation": "0858-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "fdd1b9d19e9292cc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0858-02",
       "element": "エレグ skill1.effects[0]",
-      "key": "5b795c7770900f6a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0858-02",
-      "element": "ココア skill1.effects[1]",
       "key": "5b795c7770900f6a",
       "effective": false,
       "minus": 0,
@@ -20709,24 +18901,8 @@
       "plus": null
     },
     {
-      "observation": "0859-01",
-      "element": "ココア skill1.effects[1]",
-      "key": "b4f99baa694942e3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
       "observation": "0859-02",
       "element": "エレグ skill1.effects[0]",
-      "key": "710f624cbe1adc2d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0859-02",
-      "element": "ココア skill1.effects[1]",
       "key": "710f624cbe1adc2d",
       "effective": false,
       "minus": 0,
@@ -25316,27 +23492,11 @@
     },
     {
       "observation": "0962-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "f1a2706bb1209f06",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0962-11",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "f1a2706bb1209f06",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0962-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "a7939f32d24f1d13",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0962-12",
@@ -25348,27 +23508,11 @@
     },
     {
       "observation": "0962-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "d14c238ecda6f997",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0962-13",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "d14c238ecda6f997",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0962-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "3396d1d1c9451b68",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0962-14",
@@ -25380,27 +23524,11 @@
     },
     {
       "observation": "0962-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "5357d08ae18ed7a1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0962-18",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "5357d08ae18ed7a1",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0962-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "e5e4535f96c797d0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0962-19",
@@ -25412,27 +23540,11 @@
     },
     {
       "observation": "0962-20",
-      "element": "ココア skill1.effects[1]",
-      "key": "ed89e82460105c81",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0962-20",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "ed89e82460105c81",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0962-21",
-      "element": "ココア skill1.effects[1]",
-      "key": "f1100c3acf071b7d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0962-21",
@@ -25444,27 +23556,11 @@
     },
     {
       "observation": "0962-22",
-      "element": "ココア skill1.effects[1]",
-      "key": "31563c92619392af",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0962-22",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "31563c92619392af",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0962-25",
-      "element": "ココア skill1.effects[1]",
-      "key": "9ef6c921f5abb754",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0962-25",
@@ -25476,27 +23572,11 @@
     },
     {
       "observation": "0963-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "2ad95e81fb3e10e6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0963-11",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "2ad95e81fb3e10e6",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0963-12",
-      "element": "ココア skill1.effects[1]",
-      "key": "5aeab49863fa5c73",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0963-12",
@@ -25508,27 +23588,11 @@
     },
     {
       "observation": "0963-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "0ca426e42c32a937",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0963-13",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "0ca426e42c32a937",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0963-14",
-      "element": "ココア skill1.effects[1]",
-      "key": "ae078117692e7bc8",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0963-14",
@@ -25540,27 +23604,11 @@
     },
     {
       "observation": "0963-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "7b4832447186ac81",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0963-18",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "7b4832447186ac81",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0963-19",
-      "element": "ココア skill1.effects[1]",
-      "key": "95d590f1f9518630",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0963-19",
@@ -25572,27 +23620,11 @@
     },
     {
       "observation": "0963-20",
-      "element": "ココア skill1.effects[1]",
-      "key": "592b61c60dfcd2a1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0963-20",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "592b61c60dfcd2a1",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0963-21",
-      "element": "ココア skill1.effects[1]",
-      "key": "ae0a2af836b2389d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0963-21",
@@ -25604,27 +23636,11 @@
     },
     {
       "observation": "0963-22",
-      "element": "ココア skill1.effects[1]",
-      "key": "c6ed170c8ac6040f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0963-22",
       "element": "紅蓮：神殺 skill1.effects[0]",
       "key": "c6ed170c8ac6040f",
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0963-25",
-      "element": "ココア skill1.effects[1]",
-      "key": "5c90cb6e69e99563",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "0963-25",
@@ -25636,14 +23652,6 @@
     },
     {
       "observation": "0971-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "c34ec8520a19b31d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0971-05",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "c34ec8520a19b31d",
       "effective": false,
@@ -25668,14 +23676,6 @@
     },
     {
       "observation": "0971-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "3ba301d13503fb94",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0971-06",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "3ba301d13503fb94",
       "effective": false,
@@ -25700,14 +23700,6 @@
     },
     {
       "observation": "0972-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "90d1e88223fa8b6f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0972-05",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "90d1e88223fa8b6f",
       "effective": false,
@@ -25732,14 +23724,6 @@
     },
     {
       "observation": "0972-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "2db02ae1550bdd76",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "0972-06",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "2db02ae1550bdd76",
       "effective": false,
@@ -25764,15 +23748,6 @@
     },
     {
       "observation": "0973-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "7d922831cd91d91c",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
-    },
-    {
-      "observation": "0973-06",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "7d922831cd91d91c",
       "effective": false,
@@ -25797,15 +23772,6 @@
     },
     {
       "observation": "0973-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "0048413e1c105227",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
-    },
-    {
-      "observation": "0973-07",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "0048413e1c105227",
       "effective": false,
@@ -25830,15 +23796,6 @@
     },
     {
       "observation": "0973-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "e4f75aedf00ae328",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
-    },
-    {
-      "observation": "0973-08",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "e4f75aedf00ae328",
       "effective": false,
@@ -25863,15 +23820,6 @@
     },
     {
       "observation": "0974-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "43f2ba4080f3befd",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
-    },
-    {
-      "observation": "0974-06",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "43f2ba4080f3befd",
       "effective": false,
@@ -25896,15 +23844,6 @@
     },
     {
       "observation": "0974-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "3371b5d7c96b3dd6",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
-    },
-    {
-      "observation": "0974-07",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "3371b5d7c96b3dd6",
       "effective": false,
@@ -25926,15 +23865,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0974-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "2527d941f0f4bdc0",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
     },
     {
       "observation": "0974-08",
@@ -25962,15 +23892,6 @@
     },
     {
       "observation": "0974-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "aafc4db4bbeb1fa9",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
-    },
-    {
-      "observation": "0974-09",
       "element": "マスト：ロマンチックメイド burst.effects[0]",
       "key": "aafc4db4bbeb1fa9",
       "effective": false,
@@ -25992,15 +23913,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "0974-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "bc18838b750da3c2",
-      "effective": true,
-      "minus": null,
-      "plus": null,
-      "error": "minus: 出来事（stateEnd）が 0 回しか無い"
     },
     {
       "observation": "0974-10",
@@ -26320,14 +24232,6 @@
     },
     {
       "observation": "1004-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "0bb491b024155cb1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1004-03",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "0bb491b024155cb1",
       "effective": false,
@@ -26360,14 +24264,6 @@
     },
     {
       "observation": "1004-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "952f8777ff88dae0",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1004-04",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "952f8777ff88dae0",
       "effective": false,
@@ -26397,14 +24293,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "1004-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "1d0991cb62f19506",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "1004-05",
@@ -26440,14 +24328,6 @@
     },
     {
       "observation": "1004-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "6eee91dc9704969d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1004-06",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "6eee91dc9704969d",
       "effective": false,
@@ -26480,14 +24360,6 @@
     },
     {
       "observation": "1004-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "be38691f6958af6c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1004-07",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "be38691f6958af6c",
       "effective": false,
@@ -26517,14 +24389,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "1004-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "4b6e9c22f684ece1",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "1004-08",
@@ -26560,14 +24424,6 @@
     },
     {
       "observation": "1005-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "835f5b7c10bcc963",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1005-03",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "835f5b7c10bcc963",
       "effective": false,
@@ -26600,14 +24456,6 @@
     },
     {
       "observation": "1005-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "6b47692bbb6fa7b2",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1005-04",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "6b47692bbb6fa7b2",
       "effective": false,
@@ -26637,14 +24485,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "1005-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "27339e7fcafa715c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "1005-05",
@@ -26680,14 +24520,6 @@
     },
     {
       "observation": "1005-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "c53991b0a693bf2f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1005-06",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "c53991b0a693bf2f",
       "effective": false,
@@ -26720,14 +24552,6 @@
     },
     {
       "observation": "1005-07",
-      "element": "ココア skill1.effects[1]",
-      "key": "f9a29e2bfd2a7216",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1005-07",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "f9a29e2bfd2a7216",
       "effective": false,
@@ -26760,14 +24584,6 @@
     },
     {
       "observation": "1005-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "a2fbd29641c8ccb3",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1005-08",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "a2fbd29641c8ccb3",
       "effective": false,
@@ -26800,14 +24616,6 @@
     },
     {
       "observation": "1006-03",
-      "element": "ココア skill1.effects[1]",
-      "key": "024541f9443fc992",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1006-03",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "024541f9443fc992",
       "effective": false,
@@ -26837,14 +24645,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "1006-04",
-      "element": "ココア skill1.effects[1]",
-      "key": "555eb526cfe87d13",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "1006-04",
@@ -26880,14 +24680,6 @@
     },
     {
       "observation": "1006-05",
-      "element": "ココア skill1.effects[1]",
-      "key": "6aa9869a7039133d",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1006-05",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "6aa9869a7039133d",
       "effective": false,
@@ -26920,14 +24712,6 @@
     },
     {
       "observation": "1006-06",
-      "element": "ココア skill1.effects[1]",
-      "key": "c4ed2f25d763eaa6",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1006-06",
       "element": "シュガー treasureSkills.burst.effects[1]",
       "key": "c4ed2f25d763eaa6",
       "effective": false,
@@ -26957,14 +24741,6 @@
       "effective": false,
       "minus": 0,
       "plus": 0
-    },
-    {
-      "observation": "1006-08",
-      "element": "ココア skill1.effects[1]",
-      "key": "8f6e1e90f672a1df",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     },
     {
       "observation": "1006-08",
@@ -27157,118 +24933,6 @@
       "effective": true,
       "minus": 0,
       "plus": -7947.545000000013
-    },
-    {
-      "observation": "1032-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "2bb7f97af80b3093",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1032-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "04c8054edff2f23f",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1032-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "ea78800f7993ae34",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1032-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "2058ff8e518d4bb5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1032-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "dba7ef9fa089671a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1032-17",
-      "element": "ココア skill1.effects[1]",
-      "key": "a9fd890909bdda28",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1032-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "d5db035d6333f752",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-09",
-      "element": "ココア skill1.effects[1]",
-      "key": "a5dd2fb0084887f5",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-10",
-      "element": "ココア skill1.effects[1]",
-      "key": "21b4a1d8404ac0f9",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-11",
-      "element": "ココア skill1.effects[1]",
-      "key": "a2d82ca5c431c95a",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-13",
-      "element": "ココア skill1.effects[1]",
-      "key": "ff0f5fa840599e4b",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-15",
-      "element": "ココア skill1.effects[1]",
-      "key": "9455a585aa7271bc",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-17",
-      "element": "ココア skill1.effects[1]",
-      "key": "dc30e4fb5a792cde",
-      "effective": false,
-      "minus": 0,
-      "plus": null
-    },
-    {
-      "observation": "1033-18",
-      "element": "ココア skill1.effects[1]",
-      "key": "9634501fa95c2c2c",
-      "effective": false,
-      "minus": 0,
-      "plus": null
     }
   ]
 }
