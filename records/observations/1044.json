@@ -57,9 +57,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -93,9 +91,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -128,9 +124,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -163,9 +157,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -198,9 +190,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -212,18 +202,7 @@
     "readAt": "2026-11-10",
     "use": "compare",
     "kind": "timing",
-    "value": [
-      248,
-      484,
-      721,
-      957,
-      1193,
-      1429,
-      1665,
-      1901,
-      2137,
-      2373
-    ],
+    "value": [248, 484, 721, 957, 1193, 1429, 1665, 1901, 2137, 2373],
     "unit": "f",
     "description": "1〜10 回目の S2 のヒットの増分の、戦闘開始（timer.ts）からの動画のフレーム（236f ごと。電撃の 4 回目は通常攻撃との和で格子に乗らず、その増分のフレームを読んだ）",
     "method": {
@@ -244,9 +223,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -258,12 +235,7 @@
     "readAt": "2026-11-10",
     "use": "compare",
     "kind": "timing",
-    "value": [
-      155,
-      302,
-      527,
-      674
-    ],
+    "value": [155, 302, 527, 674],
     "unit": "f",
     "description": "1〜4 回目の S1 の追加ダメージの増分（30・60・90・120 命中目の発と同じ増分）の、戦闘開始からの動画のフレーム。5 回目からは、外れた発の数の違いでモデルと 1 発ずれうる",
     "method": {
@@ -284,9 +256,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       }
     }
@@ -316,9 +286,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   }

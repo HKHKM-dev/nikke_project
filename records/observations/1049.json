@@ -4,16 +4,7 @@
     "recording": "1049",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1406,
-      2732,
-      3989,
-      5342,
-      6587,
-      7830,
-      9037,
-      10265
-    ],
+    "value": [1406, 2732, 3989, 5342, 6587, 7830, 9037, 10265],
     "unit": "f",
     "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
     "method": {
@@ -28,16 +19,7 @@
     "recording": "1049",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1435,
-      2761,
-      4018,
-      5372,
-      6616,
-      7859,
-      9066,
-      10294
-    ],
+    "value": [1435, 2761, 4018, 5372, 6616, 7859, 9066, 10294],
     "unit": "f",
     "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
     "method": {
@@ -52,12 +34,7 @@
     "recording": "1049",
     "kind": "timing",
     "use": "record",
-    "value": [
-      1464,
-      4047,
-      6645,
-      9095
-    ],
+    "value": [1464, 4047, 6645, 9095],
     "unit": "f",
     "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
     "method": {
@@ -72,12 +49,7 @@
     "recording": "1049",
     "kind": "timing",
     "use": "record",
-    "value": [
-      2073,
-      4656,
-      7254,
-      9704
-    ],
+    "value": [2073, 4656, 7254, 9704],
     "unit": "f",
     "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
     "method": {
@@ -92,12 +64,7 @@
     "recording": "1049",
     "kind": "interval",
     "use": "record",
-    "value": [
-      609,
-      609,
-      609,
-      609
-    ],
+    "value": [609, 609, 609, 609],
     "unit": "f",
     "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
     "method": {
@@ -143,12 +110,7 @@
     "readAt": "2026-11-10",
     "use": "compare",
     "kind": "interval",
-    "value": [
-      105.9,
-      235.3,
-      390,
-      387.1
-    ],
+    "value": [105.9, 235.3, 390, 387.1],
     "unit": "f",
     "description": "1〜4 回目のフルバースト（00.00 は 1049-03）の始まりに縮んだ、I-DOLL・サン（III）のバーストスキルクールタイム。チェーンが III で I-DOLL・サンの CT を待つ間（チェーンが切れるまで）の、欄の顔の残り秒の切り替わりから読んだ。「40」f1461・4044・6642・9092、切り替わり 16 → 15（f2816）・15 → 14（f2875）、13 → 12（f5446）・12 → 11（f5505）、12 → 11（f7950）・11 → 10（f8009）、13 → 12（f10342）・12 → 11（f10400）",
     "method": {
@@ -167,9 +129,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -180,16 +140,7 @@
     "readAt": "2026-11-10",
     "use": "compare",
     "kind": "interval",
-    "value": [
-      85,
-      64,
-      85,
-      63,
-      85,
-      64,
-      85,
-      64
-    ],
+    "value": [85, 64, 85, 63, 85, 64, 85, 64],
     "unit": "f",
     "description": "ヘルム：アクアマリン（II）の 1〜8 回目のバーストの、六角形の替わり目（1049-02）からバーストスキルダメージの増分までの動画のフレーム。フルバーストに入る回（1・3・5・7 回目）は III の 00.00 の後の入りの止まりを挟む",
     "method": {
@@ -208,9 +159,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -241,9 +190,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -274,9 +221,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -307,9 +252,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   },
@@ -340,9 +283,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-electric",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       }
     }
   }
