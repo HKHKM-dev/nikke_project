@@ -1,0 +1,46 @@
+{
+  "id": "1034",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1034_rl_arcana_liter_isabel_water.mp4",
+  "original": "2026-11-10_22-05-34.mp4",
+  "durationSec": 202.3,
+  "frames": 12136,
+  "fps": 60,
+  "sizeMB": 245.2,
+  "sha256": "2ee9cd99058e",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 581,
+      "name": "アルカナ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 231,
+      "name": "イサベル",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Water"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "V-0713 の撮影 A（リター・アルカナ・イサベル。水冷）。この録画は終わりに戦闘履歴のパネルが映っておらず、編成は出撃画面の 3 枚のカードと戦闘中の下の顔の欄、イサベルの 1 ヒット（27,950。モデルの▲なしの値と合う）で確かめた",
+  "backup": {
+    "at": "2026-11-10T22:35+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
