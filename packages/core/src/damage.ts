@@ -318,7 +318,7 @@ export type TriggerDamage = {
   hitRate: number;
   /**
    * V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）× 二丁持ちのヒット数（muzzleHitsOf）。normal にだけ含まれている。
-   * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1012・C-1019）
+   * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1023・C-1019）
    */
   hitsPerShot: number;
 };
