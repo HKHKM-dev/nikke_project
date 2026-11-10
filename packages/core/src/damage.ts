@@ -20,7 +20,15 @@ import {
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
 import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile } from './types.ts';
-import { DEFAULT_WEAPON_MODEL, hasSpinUp, isChargeWeapon, muzzleHitsOf, type WeaponModel } from './weapons.ts';
+import {
+  DEFAULT_WEAPON_MODEL,
+  hasSpinUp,
+  isChargeWeapon,
+  isDualWieldWeapon,
+  muzzleHitsOf,
+  type DualWieldWeapon,
+  type WeaponModel,
+} from './weapons.ts';
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
 export const FULL_BURST_BOOST = 0.5;
@@ -310,7 +318,7 @@ export type TriggerDamage = {
   hitRate: number;
   /**
    * V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）× 二丁持ちのヒット数（muzzleHitsOf）。normal にだけ含まれている。
-   * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1012・V-0706）
+   * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1012）
    */
   hitsPerShot: number;
 };
@@ -350,6 +358,18 @@ export function baseDefenceOf(input: {
 /** 弾の種類（CDN の fire_type）のうち、モデルが知っているもの（types.ts の ShotParams.fireType） */
 const KNOWN_FIRE_TYPES: readonly string[] = ['Instant', 'ProjectileDirect', 'HomingProjectile', 'ProjectileCurve'];
 
+/** 二丁持ち（weapons.ts の DUAL_WIELD_WEAPONS）の近似の注記 */
+const DUAL_WIELD_NOTES: Record<DualWieldWeapon, { ja: string; en: string }> = {
+  SMG: {
+    ja: '二丁持ちの SMG は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1012）。二丁持ちのコア命中率の行は仮説（C-1013）',
+    en: 'Dual-wield SMG: 2 hits per shot, both building burst gauge (C-1012); its core hit rate row is a hypothesis (C-1013)',
+  },
+  RL: {
+    ja: '二丁持ちの RL は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。コア命中率は銃口 1 つの RL の行（二丁持ちでは確かめていない）',
+    en: 'Dual-wield RL: 2 hits per shot, both building burst gauge (C-1019); core hit rate uses the single-muzzle RL row (unverified for dual wield)',
+  },
+};
+
 export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>): ModelNote[] {
   const { shot, weaponType } = character;
   const notes: ModelNote[] = [];
@@ -365,18 +385,10 @@ export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>
       '複数銃口（SG の二丁持ち。ツバイ）は未対応',
       'Multiple muzzles not modeled (dual-wield SG)',
     );
-  else if (shot.muzzleCount > 1 && weaponType === 'RL')
-    approx(
-      'dual-wield',
-      '二丁持ちの RL は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1019）。コア命中率は銃口 1 つの RL の行（二丁持ちでは確かめていない）',
-      'Dual-wield RL: 2 hits per shot, both building burst gauge (C-1019); core hit rate uses the single-muzzle RL row (unverified for dual wield)',
-    );
-  else if (shot.muzzleCount > 1)
-    approx(
-      'dual-wield',
-      '二丁持ちの SMG は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1012）。二丁持ちのコア命中率の行は仮説（C-1013）',
-      'Dual-wield SMG: 2 hits per shot, both building burst gauge (C-1012); its core hit rate row is a hypothesis (C-1013)',
-    );
+  else if (shot.muzzleCount > 1 && isDualWieldWeapon(weaponType)) {
+    const note = DUAL_WIELD_NOTES[weaponType];
+    approx('dual-wield', note.ja, note.en);
+  }
   if (shot.inputType === 'DOWN_Charge')
     unsupported(
       'down-charge',
@@ -516,7 +528,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const trueMultiplier = trueDamageMultiplier(shot, buffs);
 
   const element = elementMultiplier(character.element, enemy.element, buffs.elementDamage, buffs.elementAdvantage > 0);
-  // 二丁持ち（SMG・RL）は 1 発 2 ヒット（muzzleHitsOf）。的の表の 1 発のヒット数（V-0119）と掛ける。銃口の数は、1 パス目（ゲージ・命中の数え）と
+  // 二丁持ちは 1 発 2 ヒット（muzzleHitsOf）。的の表の 1 発のヒット数（V-0119）と掛ける。銃口の数は、1 パス目（ゲージ・命中の数え）と
   // 同じく基礎の武器のもの（使用武器の変更の武器の銃口は確かめていない）
   const hitsPerShot = hitsPerShotOf(condition) * muzzleHitsOf(character.weaponType, character.shot);
   const normal =

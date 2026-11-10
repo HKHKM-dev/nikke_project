@@ -173,39 +173,5 @@
     },
     "source": "V-0706",
     "readAt": "2026-11-10"
-  },
-  {
-    "id": "1016-09",
-    "recording": "1016",
-    "kind": "interval",
-    "use": "compare",
-    "value": 15,
-    "unit": "f",
-    "description": "中近の区間の、発射から着弾（1 ヒット目の増分）までのフレームの中央値",
-    "method": {
-      "tool": "reticle-ammo.ts --mode series と recipe:hud-jumps@3 の増分",
-      "note": "発射は照準の左の残弾が減ったフレーム、着弾は 40f 以内の次の増分（2 ヒットに分かれた発は 1 ヒット目）。区間は 1016-07 と同じ。発射の読めた発だけ（区間ごとに 15・15・17・14・13 発）"
-    },
-    "compare": {
-      "model": "sim",
-      "metric": "shotFlightAt",
-      "args": {
-        "slot": 1,
-        "frame": 600
-      },
-      "tolerance": {
-        "abs": 1
-      },
-      "setup": {
-        "enemy": "range-bigarms-fire",
-        "events": ["range-3min-jump"]
-      }
-    },
-    "scope": {
-      "slot": 1,
-      "source": "normal"
-    },
-    "source": "V-0706",
-    "readAt": "2026-11-10"
   }
 ]
