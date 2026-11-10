@@ -610,7 +610,10 @@ export function resolveTimed(
   const trim = burstWindowTrimOf(character);
   if (trim === 0) return resolved;
   return resolved.map((r) =>
-    isBurstUseTrigger(r.trigger) && r.durationFrames > 0 && r.durationFrames !== BATTLE_END_FRAMES
+    isBurstUseTrigger(r.trigger) &&
+    r.holderHitWithinFrames === undefined &&
+    r.durationFrames > 0 &&
+    r.durationFrames !== BATTLE_END_FRAMES
       ? { ...r, durationFrames: Math.max(0, r.durationFrames - trim) }
       : r,
   );
