@@ -83,6 +83,19 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     if (input.burst) expect(Math.max(...burst)).toBeGreaterThan(10);
   });
 
+  it('fills the gauge in proportion to the pellets that hit (one pellet on the fixed shots. C-1075)', () => {
+    // 発のゲージ ÷ 当たったペレットの数（期待値）は、固定の発でもふだんの発でも同じ（1 ペレットぶんのゲージ）
+    const perPellet = plan.shotGauges
+      .filter((g) => g.slotIndex === me)
+      .map((g) => {
+        const k = shots.indexOf(g.shotFrame);
+        return { fixed: fixedShot(k), value: g.energy / log.pelletHits![k]! };
+      });
+    const unit = perPellet.find((g) => !g.fixed)!.value;
+    expect(perPellet.some((g) => g.fixed)).toBe(true);
+    for (const g of perPellet) expect(g.value).toBeCloseTo(unit, 6);
+  });
+
   it('fires S1 on the shot whose running pellet total passes a multiple of 80', () => {
     const first = single[0]!.start - 1;
     const k = shots.indexOf(first);

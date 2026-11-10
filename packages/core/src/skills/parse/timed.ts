@@ -611,7 +611,6 @@ const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRat
  * planBuffTimeline だけが作ったので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける。持ち主ごとの一覧編
  * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
  */
-
 function isFirstPassTrackedStat(stat: BuffStat): boolean {
   // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。
   // 2 段目の段 6 の PR 2: 最大HP▲ は、1 パス目の順位（攻撃力）が発動者の最終最大HP として読むので、攻撃力と同じに扱う
