@@ -883,6 +883,50 @@ header h1 {
   --badge-accent: #ffa900;
   --badge-main: #ffd500;
 }
+/* バッジの値ごとの色（差し色。BadgeIcon が名前のクラス badge-<名前> を付ける）。元の SVG では #808080 で描いてある。
+   テーマで変えるときは light-dark(ライト, ダーク) で書く */
+.badge-element_Fire {
+  --badge-accent: #ff0000;
+}
+.badge-element_Water {
+  --badge-accent: #007cff;
+}
+.badge-element_Wind {
+  --badge-accent: #00ff00;
+}
+.badge-element_Iron {
+  --badge-accent: #feba02;
+}
+.badge-element_Electronic {
+  --badge-accent: #ff02de;
+}
+.badge-burstStep_Step1 {
+  --badge-accent: #008000;
+}
+.badge-burstStep_Step2 {
+  --badge-accent: #b27800;
+}
+.badge-burstStep_Step3 {
+  --badge-accent: #cc0000;
+}
+.badge-burstStep_AllStep {
+  --badge-accent: #8b00cc;
+}
+.badge-collection_R,
+.badge-collection_R-max {
+  --badge-accent: #19a2e6;
+}
+.badge-collection_SR,
+.badge-collection_SR-max {
+  --badge-accent: #bf40bf;
+}
+.badge-collection_SSR,
+.badge-collection_SSR-max {
+  --badge-accent: #ff8000;
+}
+.badge-core_plain {
+  --badge-accent: #e600e6;
+}
 /* コアの印の中央（黒い丸）に段階（01〜07）を重ねる */
 .growth-marks-core {
   position: relative;

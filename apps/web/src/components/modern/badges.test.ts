@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import viteConfig from '../../../vite.config.ts';
@@ -29,6 +29,14 @@ describe('バッジの対応表', () => {
     const ids = [...BADGE_SYMBOLS.matchAll(/\sid="([^"]+)"/g)].map(([, id]) => id);
     expect(ids).toContain(`badge-${GROWTH_BADGES.star}`);
     expect(ids.filter((id, i) => ids.indexOf(id) !== i)).toEqual([]);
+  });
+
+  // 名前を変えたり打ち間違えたりすると、そのバッジは差し色の既定の灰のままになる
+  it('styles.css の値ごとの色（.badge-<名前>）は、スプライトにあるバッジを指す', () => {
+    const css = readFileSync(fileURLToPath(new URL('../../styles.css', import.meta.url)), 'utf8');
+    const named = [...css.matchAll(/\.badge-([\w-]+)/g)].map(([, name]) => name);
+    expect(named).toContain('element_Fire');
+    expect(named.filter((name) => !BADGE_SYMBOLS.includes(`id="badge-${name}"`))).toEqual([]);
   });
 
   // スプライトのバッジは文字列で束に入るが、URL で読むもの（マスクの形に使う ui_check など）は、これ未満なら束に埋め込まれる
