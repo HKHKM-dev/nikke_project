@@ -239,10 +239,10 @@
         },
         "dualWield": {
           "SMG": {
-            "near": 0.1415,
-            "midNear": 0.081,
-            "midFar": 0.046,
-            "far": 0.019
+            "near": 0.2854,
+            "midNear": 0.1233,
+            "midFar": 0.0459,
+            "far": 0.0408
           }
         }
       },

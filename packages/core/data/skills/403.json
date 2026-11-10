@@ -79,12 +79,12 @@
             }
           ],
           "assumes": {
-            "ja": "「通常攻撃で 2 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、2 発ごとに 1 段階を 1 スタック足す（下位効果のスタック適用で、2・3 段階が付く発火でも付く）。付くたびに全スタックの維持を付け直す（skills/stacks.ts の STACK_REFRESH）。実機では付けた発の 2 ヒット目（二丁持ちの 2 つ目の銃口）から乗るが、モデルは次の発から（1 回のきっかけで 1 ヒットだけ 1 段遅れる。plan/design-quency-eq.md 2 節の論点 2）。命中率▲はスタックごとに足し、2・3 段階の命中率▲と N の和で効く（和か積かは見分けていない）",
-            "en": "\"After performing 2 normal attacks\" counts every normal shot fired (hit or miss); every 2nd shot adds a Stage 1 stack (also on firings that add Stage 2 or 3, as each subsequent effect triggers the ones before it). Each new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts). In game the stack already applies to the second hit (second muzzle) of the firing shot; the model applies it from the next shot (one hit per trigger lags one step; plan/design-quency-eq.md section 2, issue 2). Hit Rate adds per stack and sums with the Stage 2 and 3 Hit Rate increases into one N (sum vs product not distinguished)"
+            "ja": "「通常攻撃で 2 回攻撃した時」は撃った発の通算（当たったかに依らない）で数え、2 発ごとに 1 段階を 1 スタック足す（下位効果のスタック適用で、2・3 段階が付く発火でも付く）。付くたびに全スタックの維持を付け直す（skills/stacks.ts の STACK_REFRESH）。実機では付けた発の 2 ヒット目（二丁持ちの 2 つ目の銃口）から乗るが、モデルは次の発から（1 回のきっかけで 1 ヒットだけ 1 段遅れる。plan/design-quency-eq.md 2 節の論点 2）。命中率▲はスタックごとに足し、2・3 段階の命中率▲と N の和で効く（和・積のどちらの形でもすべての区間には合わない。C-1024）",
+            "en": "\"After performing 2 normal attacks\" counts every normal shot fired (hit or miss); every 2nd shot adds a Stage 1 stack (also on firings that add Stage 2 or 3, as each subsequent effect triggers the ones before it). Each new stack restarts the duration of all stacks (STACK_REFRESH in skills/stacks.ts). In game the stack already applies to the second hit (second muzzle) of the firing shot; the model applies it from the next shot (one hit per trigger lags one step; plan/design-quency-eq.md section 2, issue 2). Hit Rate adds per stack and sums with the Stage 2 and 3 Hit Rate increases into one N (neither sum nor product fits every range band; C-1024)"
           },
           "claims": [
             "C-1009",
-            "C-1014"
+            "C-1024"
           ]
         },
         {

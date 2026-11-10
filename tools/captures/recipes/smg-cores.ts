@@ -11,7 +11,7 @@
 // - 判定の窓: 各区間の頭の head ヒット（既定 30）を除いた残り（V-0114 のミランダの S1 の▲の窓と同じ切り方）。
 // - --opt skip の範囲の増分は数えない（V-0114 のミランダの中近 → 近の切れ目の、2 つの候補の間の 1 マガジン）。
 import { loadHudJumps } from './hud-jumps.ts';
-import { detectCuts, groupMagazines, segmentOf, type HudIncrement } from './smg-hits.ts';
+import { detectCuts, estimateInterval, segmentOf, type HudIncrement } from './smg-hits.ts';
 import { observation, roundTo, type Recipe, type RecipeObservation } from './types.ts';
 
 /** 1 ヒットの格子。atk は攻撃力▲の倍率（1 を含む） */
@@ -68,7 +68,7 @@ export const BANDS = ['midNear', 'near', 'far', 'midFar', 'near', 'far'] as cons
 export type Band = (typeof BANDS)[number];
 /** 観測値の並び（V-0110 から同じ） */
 export const BAND_ORDER = ['near', 'midNear', 'midFar', 'far'] as const;
-const BAND_JA: Record<Band, string> = { midNear: '中近', near: '近', far: '遠', midFar: '中遠' };
+export const BAND_JA: Record<Band, string> = { midNear: '中近', near: '近', far: '遠', midFar: '中遠' };
 
 export type BandCount = { hits: number; cores: number; crits: number };
 export type CoreTally = {
@@ -115,7 +115,7 @@ export function tallyCores(
     skipped: 0,
   };
   for (const r of rows) {
-    if (skip.some(([a, b]) => r.frame >= a && r.frame <= b)) {
+    if (inSkip(r.frame, skip)) {
       t.skipped++;
       continue;
     }
@@ -163,13 +163,30 @@ export function longGaps(
   return out;
 }
 
-function parseList(text: string | undefined, name: string): number[] {
+export function parseList(text: string | undefined, name: string): number[] {
   const xs = (text ?? '')
     .split(',')
     .filter((x) => x !== '')
     .map(Number);
   if (xs.some((x) => !Number.isFinite(x))) throw new Error(`--opt ${name}=<数>,<数>,... の形が違う`);
   return xs;
+}
+
+/** --opt skip の <f>-<f>,... を範囲の並びに */
+export function parseSkip(text: string | undefined): (readonly [number, number])[] {
+  return (text ?? '')
+    .split(',')
+    .filter((x) => x !== '')
+    .map((s) => {
+      const m = /^(\d+)-(\d+)$/.exec(s);
+      if (m === null) throw new Error('--opt skip=<f>-<f>,... の形が違う');
+      return [Number(m[1]), Number(m[2])] as const;
+    });
+}
+
+/** フレームが skip の範囲のどれかに入るか */
+export function inSkip(frame: number, skip: readonly (readonly [number, number])[]): boolean {
+  return skip.some(([a, b]) => frame >= a && frame <= b);
 }
 
 const ratio = (c: BandCount) => (c.hits > 0 ? roundTo(c.cores / c.hits, 3) : 0);
@@ -206,20 +223,9 @@ export const smgCores: Recipe = {
     const head = num('head', 30);
     const tol = num('tol', 2);
     const mag = num('mag', 120);
-    const skip = (ctx.options.skip ?? '')
-      .split(',')
-      .filter((x) => x !== '')
-      .map((s) => {
-        const m = /^(\d+)-(\d+)$/.exec(s);
-        if (m === null) throw new Error('--opt skip=<f>-<f>,... の形が違う');
-        return [Number(m[1]), Number(m[2])] as const;
-      });
+    const skip = parseSkip(ctx.options.skip);
     const rows = (await loadHudJumps(ctx)).rows.map((r) => ({ ...r, readGap: r.readGap ?? 1 }));
-    const spans = groupMagazines(rows)
-      .map((g) => (g.at(-1)!.frame - g[0]!.frame) / (mag - 1))
-      .filter((d) => d > 2.1 && d < 2.8)
-      .sort((a, b) => a - b);
-    const interval = spans.length > 0 ? spans[Math.floor(spans.length / 2)]! : 2.43;
+    const interval = estimateInterval(rows, mag);
     const given = parseList(ctx.options.cuts, 'cuts');
     // detectCuts は距離ボーナスを 1 ヒットの増分で見るので、ヒットの多い攻撃力▲の段（最後の段）の胴体で探す
     const cutGrid = { body: body * grid.atk.at(-1)!, core: grid.core, crit: grid.crit, distance: grid.distance };

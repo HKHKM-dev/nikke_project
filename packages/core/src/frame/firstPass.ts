@@ -635,7 +635,7 @@ function runFirstPassOnce(
   // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
   const hitRateAt = slots.map(() => 0);
-  // 二丁持ち（muzzleHitsOf）は 1 発 2 ヒットで、2 ヒットともゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。SMG は C-1012、RL は C-1019）
+  // 二丁持ち（muzzleHitsOf）は 1 発 2 ヒットで、2 ヒットともゲージを溜める（plan/design-quency-eq.md 2 節の論点 1。SMG は C-1023、RL は C-1019）
   const muzzleHits = slots.map((slot) =>
     slot === null ? 1 : muzzleHitsOf(slot.character.weaponType, slot.character.shot),
   );
