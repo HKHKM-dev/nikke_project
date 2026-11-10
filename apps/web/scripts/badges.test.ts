@@ -7,7 +7,10 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   BADGE_OUT_DIR,
   BADGE_SRC_DIR,
+  COLOR_ROLES,
   FRAME_FILE,
+  MONOCHROME,
+  applyColorRoles,
   buildBadges,
   findFrame,
   optimizeBadge,
@@ -30,7 +33,9 @@ describe('バッジの書き出し', () => {
     (file) => {
       const source = sources.get(file)!;
       expect(syncFrame(source, frame)).toBe(source);
-      expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(optimizeBadge(source));
+      expect(readFileSync(`${BADGE_OUT_DIR}/${file}`, 'utf8')).toBe(
+        optimizeBadge(source, file.slice(0, -'.svg'.length)),
+      );
     },
   );
 
@@ -103,8 +108,40 @@ describe('枠をそろえる', () => {
   });
 });
 
+describe('白黒のバッジ', () => {
+  const doc = (body: string) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">${body}</svg>`;
+
+  it('塗りと縁の色の役を CSS の変数にし、ほかはそのまま', () => {
+    const out = applyColorRoles(
+      doc(
+        '<path style="fill:#FFFFFF;stroke:#000000;stroke-width:2" fill="#808080"/><rect style="fill:url(#g);stroke:none"/>',
+      ),
+      'x_y',
+    );
+    expect(out).toContain('style="fill:var(--badge-main,#FFFFFF);stroke:var(--badge-line,#000000);stroke-width:2"');
+    expect(out).toContain('fill="var(--badge-accent,#808080)"');
+    expect(out).toContain('style="fill:url(#g);stroke:none"');
+  });
+
+  it('色の役に無い色・陰でないグラデーションの色があれば止める', () => {
+    expect(() => applyColorRoles(doc('<path style="fill:#ff0000"/>'), 'x_y')).toThrow(/x_y の fill の #ff0000/);
+    expect(() => applyColorRoles(doc('<stop style="stop-color:#808080"/>'), 'x_y')).toThrow(/陰の/);
+    expect(() => applyColorRoles(doc('<stop style="stop-color:#ffffff;stop-opacity:0"/>'), 'x_y')).not.toThrow();
+  });
+
+  // MONOCHROME の名前の元が無い（名前を変えた）ときも、ここで落ちる
+  it('書き出しは、白黒のバッジの色を変数にし、id の前に名前を付ける', () => {
+    for (const name of MONOCHROME) {
+      const out = readFileSync(`${BADGE_OUT_DIR}/${name}.svg`, 'utf8');
+      expect(out).toMatch(/var\(--badge-/);
+      for (const [, id] of out.matchAll(/\sid="([^"]+)"/g)) expect(id).toMatch(new RegExp(`^${name}__`));
+    }
+    expect(Object.values(COLOR_ROLES)).toEqual(['line', 'ground', 'main', 'accent']);
+  });
+});
+
 describe('buildBadges', () => {
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>';
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><rect width="1" height="1"/></svg>';
   const dirs: string[] = [];
   afterEach(() => {
     for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true });
@@ -134,7 +171,7 @@ describe('buildBadges', () => {
     expect(removed).toEqual(['old_z.svg']);
     expect(synced).toEqual([]);
     expect(svgFiles(outDir).sort()).toEqual(['a_x.svg', 'b_y.svg']);
-    expect(readFileSync(join(outDir, 'b_y.svg'), 'utf8')).toBe(optimizeBadge(svg));
+    expect(readFileSync(join(outDir, 'b_y.svg'), 'utf8')).toBe(optimizeBadge(svg, 'b_y'));
   });
 
   it('writes the synced frame back to the source', () => {
@@ -145,7 +182,7 @@ describe('buildBadges', () => {
     const synced = readFileSync(join(srcDir, 'c_z.svg'), 'utf8');
     expect(synced).toContain('m 7.500021,');
     expect(synced).toContain('stroke:#ff0000');
-    expect(readFileSync(join(outDir, 'c_z.svg'), 'utf8')).toBe(optimizeBadge(synced));
+    expect(readFileSync(join(outDir, 'c_z.svg'), 'utf8')).toBe(optimizeBadge(synced, 'c_z'));
   });
 
   it('stops without removing anything when the source folder has no SVG', () => {
@@ -158,5 +195,12 @@ describe('buildBadges', () => {
   it('stops on a name that does not follow the naming rule', () => {
     const { srcDir, outDir } = setup(['a_x.svg', 'plain.svg'], []);
     expect(() => buildBadges(srcDir, outDir)).toThrow(/命名規則に合わない plain\.svg/);
+  });
+
+  // 画面はスプライトの symbol に viewBox を写す
+  it('stops on a source without viewBox', () => {
+    const { srcDir, outDir } = setup([], []);
+    writeFileSync(join(srcDir, 'a_x.svg'), svg.replace(' viewBox="0 0 1 1"', ''));
+    expect(() => buildBadges(srcDir, outDir)).toThrow(/viewBox が無い/);
   });
 });

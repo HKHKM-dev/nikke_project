@@ -10,6 +10,7 @@ import {
   type BadgeFilters,
   type BadgeKind,
 } from './badges.ts';
+import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
@@ -50,7 +51,7 @@ function BadgeFilter({
   return (
     <div className="char-tray-badge-filter" role="group" aria-label={`${kind.name}で絞り込み`}>
       {filterButtonValues(kind).map((v) => {
-        const { src, label } = kind.badges[v]!;
+        const { name, label } = kind.badges[v]!;
         return (
           <button
             key={v}
@@ -59,7 +60,7 @@ function BadgeFilter({
             aria-pressed={values?.includes(v) ?? false}
             onClick={() => onToggle(v)}
           >
-            <img className="char-badge" src={src} alt={label} draggable={false} />
+            <BadgeIcon className="char-badge" name={name} label={label} />
           </button>
         );
       })}

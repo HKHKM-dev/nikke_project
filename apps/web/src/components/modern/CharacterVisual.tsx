@@ -1,5 +1,6 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
+import { BadgeIcon } from './BadgeIcon.tsx';
 import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
@@ -25,7 +26,7 @@ const BASE_URL = import.meta.env.BASE_URL;
 const failedImages = new Set<string>();
 
 function BadgeImg({ badge, className = 'char-badge' }: { badge: Badge; className?: string }) {
-  return <img className={className} src={badge.src} alt={badge.label} draggable={false} />;
+  return <BadgeIcon className={className} name={badge.name} label={badge.label} />;
 }
 
 export function CharacterVisual({
