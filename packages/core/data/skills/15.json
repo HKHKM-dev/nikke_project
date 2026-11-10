@@ -17,7 +17,10 @@
           "assumes": {
             "ja": "「電撃コードの味方全体」は自分（電撃）を含む",
             "en": "\"All Electric Code allies\" includes herself (Electric)"
-          }
+          },
+          "claims": [
+            "C-1036"
+          ]
         },
         {
           "kind": "timed",
@@ -30,7 +33,10 @@
           "assumes": {
             "ja": "「電撃コードの味方全体」は自分（電撃）を含む",
             "en": "\"All Electric Code allies\" includes herself (Electric)"
-          }
+          },
+          "claims": [
+            "C-1036"
+          ]
         }
       ]
     },
@@ -47,7 +53,10 @@
           "assumes": {
             "ja": "「最後の弾丸で攻撃した時」は、残弾を 0 にした射撃で起こす。「最終攻撃力が最も高い敵 2 機」は、敵 1 体の前提でその敵に 1 ヒット。ヒットは最終弾の 74f 後（ミサイルの着弾。距離帯によらない）",
             "en": "\"When firing the last bullet\" fires on the shot that empties the magazine. \"The 2 enemies with the highest final ATK\" means one hit on the single enemy. The hit lands 74 frames after the last bullet (missile impact; independent of the distance band)"
-          }
+          },
+          "claims": [
+            "C-1032"
+          ]
         }
       ],
       "notes": [
@@ -64,6 +73,12 @@
           "claims": [
             "C-0443"
           ]
+        },
+        {
+          "ja": "ミサイルのヒットがバーストゲージを溜めるかは確かめていない（溜めない形で回す）。3 人の録画のフルバーストの間隔は、ココアのデバフ解除で窓の中の発の数が変わる分と分けられなかった",
+          "en": "Whether the missile hits charge the Burst gauge has not been checked (run as not charging). In the three-member recordings the Full Burst intervals could not be separated from the change in shot count caused by Cocoa removing the debuff",
+          "kind": "modeling",
+          "refers": "effects[0]"
         }
       ]
     },
@@ -76,7 +91,10 @@
           "stat": "maxAmmo",
           "decrease": true,
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1037"
+          ]
         },
         {
           "kind": "timed",
@@ -84,7 +102,10 @@
           "target": "self",
           "stat": "reloadSpeed",
           "ref": 3,
-          "durationRef": 4
+          "durationRef": 4,
+          "claims": [
+            "C-1037"
+          ]
         },
         {
           "kind": "timed",
@@ -92,7 +113,10 @@
           "target": "self",
           "stat": "elementDamage",
           "ref": 5,
-          "durationRef": 6
+          "durationRef": 6,
+          "claims": [
+            "C-1037"
+          ]
         }
       ]
     }
