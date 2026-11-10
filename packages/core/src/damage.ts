@@ -368,8 +368,8 @@ export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>
   else if (shot.muzzleCount > 1)
     approx(
       'dual-wield',
-      '二丁持ちの SMG は 1 発 2 ヒット（V-0702）。2 ヒット目もゲージを溜めるのは仮説',
-      'Dual-wield SMG: 2 hits per shot (V-0702); gauge from the second hit is a hypothesis',
+      '二丁持ちの SMG は 1 発 2 ヒットで、2 ヒットともゲージを溜める（C-1012）。二丁持ちのコア命中率の行は仮説（C-1013）',
+      'Dual-wield SMG: 2 hits per shot, both building burst gauge (C-1012); its core hit rate row is a hypothesis (C-1013)',
     );
   if (shot.inputType === 'DOWN_Charge')
     unsupported(
