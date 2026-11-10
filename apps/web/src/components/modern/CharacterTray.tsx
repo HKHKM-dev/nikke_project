@@ -12,6 +12,7 @@ import {
 } from './badges.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
+import { activeDragData, type OverDragData } from './dropIntent.ts';
 import { trayGrowthMarks } from './GrowthMarks.tsx';
 import { LIST_ORDERS, LIST_ORDER_LABEL, type ListOrder } from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
@@ -84,8 +85,11 @@ export function CharacterTray({
   const [filters, setFilters] = useState<BadgeFilters>({});
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
-  const { isOver, active, setNodeRef } = useDroppable({ id: 'tray-drop', data: { type: 'tray' } });
-  const returning = isOver && active?.data.current?.type === 'slot-character';
+  const { isOver, active, setNodeRef } = useDroppable({
+    id: 'tray-drop',
+    data: { type: 'tray' } satisfies OverDragData,
+  });
+  const returning = isOver && activeDragData(active?.data.current)?.type === 'slot-character';
 
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
   const filteredCharacters = useMemo(

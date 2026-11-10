@@ -35,6 +35,7 @@ import { CharacterVisual } from '../components/modern/CharacterVisual.tsx';
 import { growthMarksOf, trayGrowthMarks, type GrowthMarks } from '../components/modern/GrowthMarks.tsx';
 import { slotSizeVars, useSlotFit } from '../components/modern/useSlotFit.ts';
 import { ControllerIcon, EmptySlotFace, ModernSlotCard, SlotCharName } from '../components/modern/ModernSlotCard.tsx';
+import { activeDragData, dropIntentOf } from '../components/modern/dropIntent.ts';
 import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } from '../components/modern/flight.ts';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
 import { placeCharacterAction } from '../team.ts';
@@ -268,32 +269,29 @@ export function ModernView({
     const source = (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card, .char-tray-item');
     if (source) Object.assign(source, { scrollIntoView: () => undefined });
     noScrollNodeRef.current = source ?? null;
-    const data = event.active.data.current;
+    const data = activeDragData(event.active.data.current);
     if (data?.type === 'controller') {
       setDraggingController(true);
       return;
     }
-    if (data?.character) {
-      setDraggedCharacter(data.character as CharacterIndexEntry);
-    }
-    setDraggedEmptyIndex(data?.type === 'slot-character' && !data.character ? (data.slotIndex as number) : null);
-    if (data?.type === 'slot-character') {
-      const i = data.slotIndex as number;
-      setDraggedExtras({ marks: slotGrowthMarks(i), collection: slotCollectionBadge(i) });
-    } else if (data?.character) {
-      const char = data.character as CharacterIndexEntry;
+    if (data?.character) setDraggedCharacter(data.character);
+    const fromSlot = data?.type === 'slot-character' ? data : null;
+    setDraggedEmptyIndex(fromSlot && !fromSlot.character ? fromSlot.slotIndex : null);
+    if (fromSlot) {
       setDraggedExtras({
-        marks: trayGrowthMarks(char, roster, team.fixedSpec),
-        collection: trayCollectionBadge(char, roster, team.fixedSpec),
+        marks: slotGrowthMarks(fromSlot.slotIndex),
+        collection: slotCollectionBadge(fromSlot.slotIndex),
+      });
+    } else if (data?.type === 'tray-character') {
+      setDraggedExtras({
+        marks: trayGrowthMarks(data.character, roster, team.fixedSpec),
+        collection: trayCollectionBadge(data.character, roster, team.fixedSpec),
       });
     } else {
       setDraggedExtras({ marks: null, collection: null });
     }
     // スロットのカードから持ち上げたら、立ち絵を今の大きさのまま持ち上げる
-    const card =
-      event.active.data.current?.type === 'slot-character'
-        ? (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card')
-        : null;
+    const card = fromSlot ? (event.activatorEvent.target as Element | null)?.closest('.modern-slot-card') : null;
     const portrait = card?.querySelector('.char-visual-portrait, .modern-slot-empty-area');
     if (card && portrait) {
       const c = card.getBoundingClientRect();
@@ -317,49 +315,27 @@ export function ModernView({
     setDraggedCharacter(null);
     setDraggedEmptyIndex(null);
     setDraggedPortrait(null);
-    const { active, over } = event;
-    if (!over) return;
-
-    const overData = over.data.current;
-    const activeData = active.data.current;
-    if (!activeData) return;
-
-    // 操作の印をスロットに離したら、そのスロットを操作キャラにする（印は離した所で消え、元へ戻らない）
-    if (activeData.type === 'controller') {
-      if (overData?.slotIndex !== undefined) {
+    const intent = dropIntentOf(event.active.data.current, event.over?.data.current);
+    switch (intent.kind) {
+      case 'controller':
         setDropState({ placed: true });
-        dispatch({ type: 'setControlledSlot', index: overData.slotIndex as number });
-      }
-      return;
-    }
-
-    // スロットのキャラをトレイへ戻したら、そのスロットを空にする
-    if (overData?.type === 'tray') {
-      if (activeData.type === 'slot-character' && activeData.character) {
+        dispatch({ type: 'setControlledSlot', index: intent.index });
+        break;
+      case 'unplace':
         // 外したニケはスロットへ戻らないので、戻るアニメーションはしない。持ち上げた絵を一覧のそのニケの絵へ動かす
         setDropState({ placed: true });
-        clearSlot(
-          activeData.slotIndex as number,
-          document.querySelector('.slot-drag-overlay-portrait .modern-slot-char-area'),
-        );
+        clearSlot(intent.index, document.querySelector('.slot-drag-overlay-portrait .modern-slot-char-area'));
+        break;
+      case 'place': {
+        // 持ち上げた絵は、離した位置からスロットへ動かす
+        const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
+        if (placeFromTray(intent.character.resourceId, intent.index, from)) setDropState({ placed: true });
+        break;
       }
-      return;
-    }
-    if (overData?.slotIndex === undefined) return;
-    const targetSlotIndex = overData.slotIndex as number;
-
-    if (activeData.type === 'tray-character') {
-      // どこかのスロットにいるキャラは置かない（placeCharacterAction。トレイでも持ち上げられない）
-      // 持ち上げた絵は、離した位置からスロットへ動かす
-      const char = activeData.character as CharacterIndexEntry;
-      const from = document.querySelector('.char-drag-overlay .char-tray-item-visual')?.getBoundingClientRect();
-      if (placeFromTray(char.resourceId, targetSlotIndex, from)) setDropState({ placed: true });
-    } else if (activeData.type === 'slot-character') {
-      const fromSlotIndex = activeData.slotIndex as number;
-      if (fromSlotIndex !== targetSlotIndex) {
-        setDropState({ targetIndex: targetSlotIndex });
-        dispatch({ type: 'swapSlots', fromIndex: fromSlotIndex, toIndex: targetSlotIndex });
-      }
+      case 'swap':
+        setDropState({ targetIndex: intent.to });
+        dispatch({ type: 'swapSlots', fromIndex: intent.from, toIndex: intent.to });
+        break;
     }
   };
 
