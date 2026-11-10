@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 88・効果 595（根拠あり 574）・notes 217（根拠あり 96）
+件数: キャラ 89・効果 599（根拠あり 578）・notes 220（根拠あり 96）
 
-notes の種類: 未対応 35・前提の外 53・計算に無関係 47・補足 22・間接 60
+notes の種類: 未対応 36・前提の外 53・計算に無関係 47・補足 22・間接 62
 
-スロット: supported 218・partial 22・unsupported 9・noEffect 39
+スロット: supported 220・partial 23・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -309,7 +309,7 @@ notes の種類: 未対応 35・前提の外 53・計算に無関係 47・補足
   - effects[5] passive・overEnergyStage 2 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
   - effects[6] passive・overEnergyStage 3 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
   - effects[7] passive・overEnergyStage 4 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
-  - notes[0] 間接（HP）: 最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。モデルは HP の割合を読む効果（自分の HP の割合の条件・HP の割合の低い味方を対象にする効果）に、枠の HP の割合の想定のまま渡す（下がる分は未実装）: 根拠なし
+  - notes[0] 間接（HP）: 最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。下がった割合は、自分の HP の割合のきっかけ（「HP が X% 以下」）には届くが、ラプラス：UH にはそのきっかけが無い。自分の HP の割合の条件（「HP が X% 以上なら」）と、HP の割合の低い味方を対象にする効果は、枠の HP の割合の想定のまま読む（下がる分は未実装）: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0682（確定）
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）
@@ -801,6 +801,19 @@ notes の種類: 未対応 35・前提の外 53・計算に無関係 47・補足
 - **burst**: supported
   - effects[0] timed・burstUse・maxAmmo: C-0364（確定）、C-0616（確定）、C-0017（確定）、C-0275（確定）
 
+## 310 エード
+
+- **skill1**: partial
+  - effects[0] timed・自分の HP が閾値以下に下がった時・attack: C-1025（確定）
+  - notes[0] 間接（デバフ）: 戦闘開始時に味方全体に付く「完璧なメイド：デバフ効果免疫 1 個」は、それ自体は与ダメージを変えない（味方にデバフを付ける味方（マスト：ロマンチックメイドのほろ酔い）のいる編成でだけ効く。防ぐ数え方・自分で付けるデバフを防ぐかは確かめていないので、モデルでは防がない）: 根拠なし
+  - notes[1] 未対応: 回復で現在の HP が戻って HP の割合が 90% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）: 根拠なし
+- **skill2**: supported
+  - effects[0] timed・normalShot・maxHpOnly: C-1026（確定）、C-1028（仮説）
+  - notes[0] 間接（デバフ）: 通常攻撃 420 回ごとに味方全体に付く「完璧なメイド：デバフ効果免疫 1 個」は、それ自体は与ダメージを変えない（味方にデバフを付ける味方（マスト：ロマンチックメイドのほろ酔い）のいる編成でだけ効く。防ぐ数え方・自分で付けるデバフを防ぐかは確かめていないので、モデルでは防がない）: 根拠なし
+- **burst**: supported
+  - effects[0] timed・burstUse・maxHpOnly: C-1026（確定）、C-1028（仮説）
+  - effects[1] timed・burstUse・attack: C-1027（確定）
+
 ## 311 ココア
 
 - **skill1**: supported
@@ -876,8 +889,8 @@ notes の種類: 未対応 35・前提の外 53・計算に無関係 47・補足
 
 - **skill1**: partial
   - effects[0] state・critHit・seaBreeze（enemyDefenseDown）: C-0858（確定）
-  - effects[1] timed・自分の HP が閾値以下の間・critDamage: C-0862（確定）
-  - effects[2] timed・自分の HP が閾値以下の間・critDamage: C-0862（確定）
+  - effects[1] timed・自分の HP が閾値以下に下がった時・critDamage: C-0862（確定）
+  - effects[2] timed・自分の HP が閾値以下に下がった時・critDamage: C-0862（確定）
   - notes[0] 補足: 海風は通常攻撃のクリティカルの命中 2 回ごとに付き、最後の付与から約 3 秒で全スタックが切れる。実機では会心が 3 秒の間に 2 回無いと途切れて 0 から積み直すが、モデルはクリティカルを期待値で数えるので途切れず、暴風が写すスタックを多めに出す（V-0623）: 根拠なし
   - notes[1] 未対応: 回復で現在の HP が戻って HP の割合が 70% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）: 根拠なし
 - **skill2**: supported
@@ -1006,7 +1019,7 @@ notes の種類: 未対応 35・前提の外 53・計算に無関係 47・補足
   - effects[1] passive・exploreRouteStage2 のフルスタックの間・coreDamage: C-1010（確定）
   - effects[2] passive・exploreRouteStage3 のフルスタックの間・critRate: C-1010（確定）
 - **skill2**: supported
-  - effects[0] state・normalShot・exploreRouteStage1（hitRate・attack）: C-1009（確定）、C-1014（仮説）
+  - effects[0] state・normalShot・exploreRouteStage1（hitRate・attack）: C-1009（確定）、C-1024（仮説）
   - effects[1] state・normalShot・exploreRouteStage2（hitRate・attack）: C-1009（確定）
   - effects[2] state・normalShot・exploreRouteStage3（hitRate・attack）: C-1009（確定）
 - **burst**: supported
