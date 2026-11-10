@@ -1,0 +1,155 @@
+{
+  "formatVersion": 1,
+  "resourceId": 581,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "burstUsers",
+          "targetBurstStep": "Step3",
+          "targetElement": "Electronic",
+          "condition": {
+            "selfState": "wheelOfFortune"
+          },
+          "stat": "attackDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "assumes": {
+            "ja": "フルバーストの終わりのフレームに、自分（アルカナ）に運命の輪のカード（自分のバーストで付く）が付いていれば、そのフルバーストを開いたチェーンでバーストを使った枠のうち、基本バースト段階 III の電撃コードの枠に付く",
+            "en": "If she (Arcana) has Wheel of Fortune (from her own Burst) on the frame Full Burst ends, applies to the Burst III Electric units among those that used their Burst in the chain that opened that Full Burst"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 6,
+          "durationRef": 7
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストの終わりに、運命の輪のカード状態なら、直前にバーストを使った III の電撃コードの味方に付く「魔術師のカード：スキル 2 クールタイム 75%▼（15 秒）」は未対応（味方の S2 の周期を割合で縮める語彙が無い。縮むのが残りの CT か周期の長さかを確かめていない）",
+          "en": "\"The Magician: Skill 2 cooldown ▼ 75% (15 s)\", given at the end of Full Burst to Burst III Electric allies that just used their Burst while she has Wheel of Fortune, is not implemented (no vocabulary for shortening an ally's S2 interval by a ratio; whether it shortens the remaining cooldown or the interval itself is unverified)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "state",
+            "stat": "unknown",
+            "target": "burstUsers",
+            "trigger": "fullBurstEnd"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "strength",
+          "trigger": "fullBurstEnd",
+          "target": "burstUsers",
+          "targetBurstStep": "Step3",
+          "targetElement": "Electronic",
+          "condition": {
+            "selfState": "wheelOfFortune"
+          },
+          "durationRef": 3,
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 2
+            }
+          ],
+          "assumes": {
+            "ja": "力のカード。条件と対象は skill1 の effects[0] と同じ",
+            "en": "Strength. Same condition and targets as skill1 effects[0]"
+          }
+        },
+        {
+          "kind": "state",
+          "state": "death",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "condition": {
+            "selfState": "wheelOfFortune"
+          },
+          "durationRef": 6,
+          "contents": [
+            {
+              "stat": "burstCooldown",
+              "scaling": "flat",
+              "ref": 4
+            },
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 5
+            }
+          ],
+          "assumes": {
+            "ja": "死神のカード。条件は skill1 の effects[0] と同じ。バーストスキルクールタイム▼は T4 の形で、付いた時に走っている CT と、効いている間（5 秒）に使ったバーストの CT を 値 04（6）秒縮める（効いている間にバーストを使わなければ、即時の CT▼ と同じ）",
+            "en": "Death. Same condition as skill1 effects[0]. The Burst cooldown decrease is the T4 shape: it shortens the running cooldown when applied, and that of a Burst used while active (5 s), by value 04 (6) s (without a Burst used while active, it equals an instant cooldown decrease)"
+          }
+        },
+        {
+          "kind": "timed",
+          "trigger": "fullBurstEnd",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 7,
+          "durationRef": 8
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "wheelOfFortune",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetElement": "Electronic",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 1
+            }
+          ],
+          "assumes": {
+            "ja": "運命の輪のカード。電撃コードの味方全体（自分も電撃コード）に付く",
+            "en": "Wheel of Fortune. Applies to all Electric allies (she is Electric too)"
+          }
+        },
+        {
+          "kind": "burstDamage",
+          "ref": 3,
+          "damageType": "skill"
+        },
+        {
+          "kind": "state",
+          "state": "judgment",
+          "trigger": "burstUse",
+          "target": "enemy",
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "damageTaken",
+              "ref": 4
+            }
+          ],
+          "assumes": {
+            "ja": "審判のカード。敵（1 体の前提）に付く",
+            "en": "Judgment. Applies to the enemy (a single enemy is assumed)"
+          }
+        }
+      ]
+    }
+  }
+}

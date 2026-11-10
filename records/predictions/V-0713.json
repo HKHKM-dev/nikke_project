@@ -1,0 +1,611 @@
+{
+  "verification": "V-0713",
+  "note": "撮る前に出した。H-cond0 と H-keep は、条件付きの 3 つの効果を外す・条件を外して置き換える形で書いた（いまの定義は H1）",
+  "team": [
+    {
+      "rid": 82
+    },
+    {
+      "rid": 581
+    },
+    {
+      "rid": 231,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "いまの定義（運命の輪のカードは自分のバーストから 10 秒。フルバースト終了のフレームに残っていれば、条件付きの効果が付く）",
+      "override": {}
+    },
+    {
+      "id": "H-cond0",
+      "note": "条件付きの効果（S1 の攻撃ダメージ▲・力のカード・死神のカード）がどの回も付かない",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 581,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 581,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 581,
+            "skill": "skill2",
+            "index": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-keep",
+      "note": "運命の輪のカードの残り方に依らず、フルバースト終了時に条件付きの効果が付く（10 秒のフルバーストの終わりにも残っているとみなす形）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 581,
+            "skill": "skill1",
+            "effect": {
+              "kind": "timed",
+              "trigger": "fullBurstEnd",
+              "target": "burstUsers",
+              "targetBurstStep": "Step3",
+              "targetElement": "Electronic",
+              "stat": "attackDamage",
+              "ref": 4,
+              "durationRef": 5
+            },
+            "replace": 0
+          },
+          {
+            "rid": 581,
+            "skill": "skill2",
+            "effect": {
+              "kind": "state",
+              "state": "strength",
+              "trigger": "fullBurstEnd",
+              "target": "burstUsers",
+              "targetBurstStep": "Step3",
+              "targetElement": "Electronic",
+              "durationRef": 3,
+              "contents": [
+                {
+                  "stat": "attack",
+                  "scaling": "casterAttack",
+                  "ref": 2
+                }
+              ]
+            },
+            "replace": 0
+          },
+          {
+            "rid": 581,
+            "skill": "skill2",
+            "effect": {
+              "kind": "state",
+              "state": "death",
+              "trigger": "fullBurstEnd",
+              "target": "allies",
+              "durationRef": 6,
+              "contents": [
+                {
+                  "stat": "burstCooldown",
+                  "scaling": "flat",
+                  "ref": 4
+                },
+                {
+                  "stat": "attack",
+                  "scaling": "casterAttack",
+                  "ref": 5
+                }
+              ]
+            },
+            "replace": 1
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-liter-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: バーストの前のリターの 1 ヒット（胴体）"
+    },
+    {
+      "id": "A-liter-judgment",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 960,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のフルバーストの終わりの前（リターのバーストの攻撃力▲の後）。審判のカードの受けるダメージ▲だけ。リターは鉄甲で運命の輪のカードが付かない"
+    },
+    {
+      "id": "A-liter-death",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のフルバースト終了の後 5 秒の中。S1 の攻撃力▲・S2 の攻撃ダメージ▲・死神のカードの攻撃力▲・審判のカード"
+    },
+    {
+      "id": "A-liter-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 死神のカードの切れた後、S1・S2 の▲（10 秒）の中"
+    },
+    {
+      "id": "A-arcana-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: バーストの前のアルカナの 1 ヒット（胴体）"
+    },
+    {
+      "id": "A-arcana-wheel",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 2,
+        "frame": 900,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のフルバーストの中のアルカナ。運命の輪のカード・審判のカード"
+    },
+    {
+      "id": "A-isabel-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: バーストの前のイサベルの 1 ヒット（胴体）"
+    },
+    {
+      "id": "A-isabel-death",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 1100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のフルバースト終了の後 5 秒の中のイサベル。S1 の攻撃ダメージ▲・力のカード・死神のカードなど"
+    },
+    {
+      "id": "A-isabel-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 死神のカードの切れた後、力のカード・S1 の攻撃ダメージ▲（15 秒）の中のイサベル"
+    },
+    {
+      "id": "A-fb-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 231,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "n": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "撮影 A: フルバーストの入りどうしの間隔（動画のフレーム）。死神のカードのバーストスキルクールタイム▼が効くと短い"
+    },
+    {
+      "id": "B-liter-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 18,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 1,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバースト（10 秒）の終わりの後。死神のカードが付けば攻撃力▲"
+    },
+    {
+      "id": "B-neon-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 18,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 300,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: バーストの前のネオン：ビジョン・アイの 1 ヒット（胴体）"
+    },
+    {
+      "id": "B-neon-after",
+      "model": "sim",
+      "metric": "hitDamage",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 18,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "slot": 3,
+        "frame": 1400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバースト（10 秒）の終わりの後のネオン：ビジョン・アイ。条件付きの効果が付けば攻撃ダメージ▲・力のカード"
+    },
+    {
+      "id": "B-fb-intervals",
+      "model": "sim",
+      "metric": "fullBurstStartIntervals",
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 581
+        },
+        {
+          "rid": 18,
+          "controlled": true
+        }
+      ],
+      "args": {
+        "n": 3
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "撮影 B: フルバーストの入りどうしの間隔（動画のフレーム）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "0bc8aef881cdeb234b632e00321a2da3a98ad15d",
+    "values": {
+      "H1": {
+        "A-liter-base": 8714.7225,
+        "A-liter-judgment": 14379.292125,
+        "A-liter-death": 15978.700584000004,
+        "A-liter-after": 9837.188797499999,
+        "A-arcana-base": 159819.825,
+        "A-arcana-wheel": 481714.3874400001,
+        "A-isabel-base": 25409.1558,
+        "A-isabel-death": 245066.30883350005,
+        "A-isabel-after": 185033.18443750002,
+        "A-fb-intervals": [2355, 2356, 1543, 1543],
+        "B-liter-after": 9837.188797499999,
+        "B-neon-base": 184810.305,
+        "B-neon-after": 206901.675625,
+        "B-fb-intervals": [2720, 2471, 2265]
+      },
+      "H-cond0": {
+        "A-liter-base": 8714.7225,
+        "A-liter-judgment": 14379.292125,
+        "A-liter-death": 10820.907677250001,
+        "A-liter-after": 9837.188797499999,
+        "A-arcana-base": 159819.825,
+        "A-arcana-wheel": 481714.3874400001,
+        "A-isabel-base": 25409.1558,
+        "A-isabel-death": 34201.8933025,
+        "A-isabel-after": 28446.448975,
+        "A-fb-intervals": [2379, 2372, 2340, 2466],
+        "B-liter-after": 9837.188797499999,
+        "B-neon-base": 184810.305,
+        "B-neon-after": 206901.675625,
+        "B-fb-intervals": [2720, 2471, 2265]
+      },
+      "H-keep": {
+        "A-liter-base": 8714.7225,
+        "A-liter-judgment": 14379.292125,
+        "A-liter-death": 15978.700584000004,
+        "A-liter-after": 9837.188797499999,
+        "A-arcana-base": 159819.825,
+        "A-arcana-wheel": 481714.3874400001,
+        "A-isabel-base": 25409.1558,
+        "A-isabel-death": 245066.30883350005,
+        "A-isabel-after": 185033.18443750002,
+        "A-fb-intervals": [2355, 2356, 1543, 1543],
+        "B-liter-after": 14526.091440000002,
+        "B-neon-base": 184810.305,
+        "B-neon-after": 1565949.494375,
+        "B-fb-intervals": [1887, 2275, 1543]
+      }
+    }
+  }
+}

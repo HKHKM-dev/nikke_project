@@ -286,6 +286,16 @@ export const NAMED_STATES = {
    * 中身は適正最小射程距離▲。S2 の「隠しレンズのフルスタック状態時のみ」が見る）
    */
   spyLens: { name: { ja: '隠しレンズ', en: 'Spy Lens' }, holder: 'ally' },
+  /**
+   * アルカナ: 運命の輪のカード（バースト。電撃コードの味方全体に付く攻撃ダメージ▲・10 秒。S1・S2 の「自分が運命の輪のカード状態なら」が見る）
+   */
+  wheelOfFortune: { name: { ja: '運命の輪のカード', en: 'Wheel of Fortune' }, holder: 'ally' },
+  /** 同: 審判のカード（バースト。敵全体に付く受けるダメージ▲・10 秒） */
+  judgment: { name: { ja: '審判のカード', en: 'Judgment' }, holder: 'enemy' },
+  /** 同: 力のカード（S2。直前にバーストを使った III の電撃コードの味方に付くスキル発動者基準の攻撃力▲・15 秒） */
+  strength: { name: { ja: '力のカード', en: 'Strength' }, holder: 'ally' },
+  /** 同: 死神のカード（S2。味方全体に付くバーストスキルクールタイム▼とスキル発動者基準の攻撃力▲・5 秒） */
+  death: { name: { ja: '死神のカード', en: 'Death' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
