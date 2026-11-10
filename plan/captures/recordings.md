@@ -1014,6 +1014,8 @@
 | 1039 | `20261110-1039_ar_scarlet_fire.mp4` | ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1040 | `20261110-1040_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1041 | `20261110-1041_smg+sr+ar_liter+delta+scarlet_fire.mp4` | リター（82、SMG・鉄甲・SSR） + デルタ（20、SR・風圧・SR） + ◎紅蓮（222、AR・電撃・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1056 | `20261111-1056_sg_zwei_fire.mp4` | ◎ツバイ（390、SG・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた |
+| 1057 | `20261111-1057_sg_zwei_fire.mp4` | ◎ツバイ（390、SG・電撃・SSR、宝物 3） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON | 撮った順は単騎 2 本 → 3 人 2 本（撮影の依頼の表のとおり）。編成は戦闘履歴のパネルで確かめた |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
