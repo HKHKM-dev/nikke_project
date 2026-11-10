@@ -238,6 +238,9 @@ const BUFF_FIELDS = [
   // エード：エージェントバニー編: 貫通特化と貫通ダメージ▲（適正最小射程距離▲ は条件が自動の枠だけ keyOf で足す）
   'pierce',
   'pierceDamage',
+  // ドロシー：セレンディピティ編: ペレットの数（与ダメージは変えないが、照合の 1 ペレットの値が区間ごとに読む）
+  'pelletCount',
+  'singlePellet',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */

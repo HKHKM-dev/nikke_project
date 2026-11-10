@@ -1,0 +1,154 @@
+[
+  {
+    "id": "1065-01",
+    "recording": "1065",
+    "kind": "total",
+    "use": "record",
+    "value": 96595677,
+    "description": "ドロシー：セレンディピティ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11268。増分は 217 個"
+    },
+    "source": "V-0719",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1065-02",
+    "recording": "1065",
+    "kind": "count",
+    "use": "record",
+    "value": 217,
+    "unit": "トリガー",
+    "description": "ドロシー：セレンディピティ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 217 個。前の増分から 30f 未満の増分（3 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 3 個）"
+    },
+    "source": "V-0719",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1065-03",
+    "recording": "1065",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1103595,
+    "unit": "ダメージ",
+    "description": "ドロシー：セレンディピティ単騎の、中近の S1 の固定の発（ペレットの数を 1 個に固定）の 1 発（コア・会心なし）。1 個のペレットに 1 発の総ダメージ（武器倍率 201.5%）と、攻撃ダメージ▲ 72%・S2 の貫通ダメージ▲ 55.08%（同じ和）が乗る（D-A）。D-B（1/10）の値は出ない",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、ドロシー：セレンディピティの 1 ペレットの格子（胴体・コア × 会心 × 距離ボーナス）と、固定の発の格子（D-A・D-B）に ±4 で当てた（使い捨てのスクリプト。V-0719「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 530,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1065-04",
+    "recording": "1065",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "hit",
+    "value": 1269134,
+    "unit": "ダメージ",
+    "description": "ドロシー：セレンディピティ単騎の、近の S1 の固定の発の 1 発（コア・距離ボーナス・会心なし）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、ドロシー：セレンディピティの 1 ペレットの格子（胴体・コア × 会心 × 距離ボーナス）と、固定の発の格子（D-A・D-B）に ±4 で当てた（使い捨てのスクリプト。V-0719「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2400,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1065-05",
+    "recording": "1065",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "record",
+    "kind": "count",
+    "value": 16,
+    "unit": "回",
+    "description": "ドロシー：セレンディピティ単騎の、180 秒の S1 の固定の窓の数（固定の発が続く組の数）。最初の窓は戦闘開始から 11 発のふだんの発の後。固定の発はどの窓も 3 発まで（的のジャンプに掛かった窓は 2 発）。2026-11-11 のモデル（固定の 3 発をペレット 1 個と数える K-A）は 17 回、10 個と数える K-B なら約 24 回",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、ドロシー：セレンディピティの 1 ペレットの格子（胴体・コア × 会心 × 距離ボーナス）と、固定の発の格子（D-A・D-B）に ±4 で当てた（使い捨てのスクリプト。V-0719「読み方」）。固定の発の増分を時刻の順に組にした"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1065-06",
+    "recording": "1065",
+    "source": "V-0719",
+    "readAt": "2026-11-11",
+    "use": "compare",
+    "kind": "interval",
+    "value": 631.73,
+    "unit": "f",
+    "description": "ドロシー：セレンディピティ単騎の、S1 の固定の窓の始まり（窓の最初の固定の発）の、最初の 16 個の隣どうしの間の平均（(f10803 − f1327) ÷ 15）。窓と窓の間は、当たったペレットの累計 80 を、固定の 3 発を 1 個ずつ（K-A）と数えて進む。10 個ずつ（K-B）なら窓の間のふだんの発が約 3 割少なく、間の平均は約 450f。許容は、4 本の値の揺れ（609〜634f）と、録画のフレーム（60f/秒）とモデルのフレームの違い（約 2%）を入れた 5%",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "固定の発（D-A の格子に ±4 で乗る増分）が続く組を窓とし、組の最初の発のフレームを窓の始まりとした"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffWindowStartIntervalMean",
+      "args": {
+        "slot": 1,
+        "skill": "skill1",
+        "stat": "singlePellet",
+        "count": 16
+      },
+      "tolerance": {
+        "rel": 0.05
+      },
+      "setup": {
+        "enemy": "range-bigarms-water",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  }
+]

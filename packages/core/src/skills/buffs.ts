@@ -216,6 +216,13 @@ export type BuffTotals = {
   pierce: number;
   /** 同: 貫通ダメージ▲の和（貫通特化の効いている通常攻撃にだけ。damage.ts） */
   pierceDamage: number;
+  /**
+   * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.2 節）: ペレット数▲の和（個）。与ダメージの式は読まない（1 発の
+   * 総ダメージは変わらない）。1 パス目のペレットの命中の量・ゲージと、照合の 1 ペレットの値が読む（pelletsPerShot）
+   */
+  pelletCount: number;
+  /** 同 2.1 節: 「ペレットの数を 1 個に固定」の窓の数（> 0 なら 1 発のペレットは 1 個。ペレット数▲より勝つ） */
+  singlePellet: number;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
@@ -278,6 +285,8 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   minEffectiveRange: 0,
   pierce: 0,
   pierceDamage: 0,
+  pelletCount: 0,
+  singlePellet: 0,
   weapon: null,
 });
 
@@ -322,6 +331,8 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   minEffectiveRange: 'minEffectiveRange',
   pierce: 'pierce',
   pierceDamage: 'pierceDamage',
+  pelletCount: 'pelletCount',
+  singlePellet: 'singlePellet',
 };
 
 /** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
@@ -464,6 +475,10 @@ export function applyResolvedEffect(
   if (effect.scaling === 'flat' && effect.stat === 'burstCooldown') {
     return { totals: { ...totals, burstCooldown: totals.burstCooldown + effect.value }, appliedAmount: effect.value };
   }
+  // ドロシー：セレンディピティ編: ペレット数▲（flat。個の数）
+  if (effect.scaling === 'flat' && effect.stat === 'pelletCount') {
+    return { totals: { ...totals, pelletCount: totals.pelletCount + effect.value }, appliedAmount: effect.value };
+  }
   if (effect.scaling === 'flat') {
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };
   }
@@ -471,6 +486,15 @@ export function applyResolvedEffect(
     totals: addRatioBuff(totals, effect.stat as BuffStat, effect.value, sourceKeyOf(effect), effect.target === 'self'),
     appliedAmount: effect.value,
   };
+}
+
+/**
+ * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 1 発のペレットの数。固定（singlePellet）が効いていれば 1、
+ * 無ければ基礎の数にペレット数▲を足す（固定は▲より勝つ。C-1077）。ペレットが 1 個の武器（SG 以外）には▲を足さない
+ */
+export function pelletsPerShot(shotCount: number, buffs: Pick<BuffTotals, 'pelletCount' | 'singlePellet'>): number {
+  if (shotCount <= 1) return shotCount;
+  return buffs.singlePellet > 0 ? 1 : shotCount + buffs.pelletCount;
 }
 
 /** base × (1 + attackRatio) + attackFlat */

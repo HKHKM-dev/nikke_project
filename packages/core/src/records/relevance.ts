@@ -105,6 +105,10 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   minEffectiveRange: 'damageValue',
   pierce: 'damageValue',
   pierceDamage: 'damageValue',
+  // ドロシー：セレンディピティ編: ペレットの数は、1 ペレットの値（hit）・ペレットの命中の回数（count）・ゲージ（gauge）のどれにも効くので、
+  // 分類を 1 つに決めない（どの観測値にも効きうるとみる）
+  pelletCount: 'unknown',
+  singlePellet: 'unknown',
 };
 
 const KIND_CLASS: Record<string, ElementClass> = {

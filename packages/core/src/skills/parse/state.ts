@@ -12,6 +12,7 @@ import {
   isChanceTrigger,
   isCounterFullTrigger,
   isEnemyHeldStat,
+  isPelletStat,
   isStacksCondition,
   isTimerTrigger,
   type MaxStacksUpContentItem,
@@ -324,6 +325,8 @@ function parseStateContentItem(
   } else if (timed.stat === 'damageTaken') {
     fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
   }
+  // ドロシー：セレンディピティ編: ペレットの数の stat は timed にだけ書ける（使い手がいない）
+  if (isPelletStat(timed.stat)) fail(`${path}.stat`, `${timed.stat} is only allowed in timed`);
   const out: StatContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.scaling !== undefined) out.scaling = timed.scaling;

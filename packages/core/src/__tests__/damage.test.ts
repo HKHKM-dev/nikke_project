@@ -145,6 +145,8 @@ describe('computeDamage', () => {
       minEffectiveRange: 0,
       pierce: 0,
       pierceDamage: 0,
+      pelletCount: 0,
+      singlePellet: 0,
       weapon: null,
     };
     const r = computeDamage(input({ buffs }));
