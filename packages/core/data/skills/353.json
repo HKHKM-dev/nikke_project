@@ -19,7 +19,11 @@
           "assumes": {
             "ja": "対象は的（敵 1 体）。通常攻撃の命中は期待値で数え、戦闘中ずっと数え直さない。追加ダメージは 30 命中目の発と同じフレームに出て、コア・距離ボーナスが乗らない。1 ヒットで射手の 1 発ぶんのゲージを溜める",
             "en": "The target is the range target (one enemy). Normal-attack hits are counted as expected hits and never reset during the battle. The additional damage lands on the same frame as the 30th hit and gets no core or range bonus. One hit charges the shooter's per-shot gauge"
-          }
+          },
+          "claims": [
+            "C-1056",
+            "C-1059"
+          ]
         },
         {
           "kind": "cooldownReduction",
@@ -28,7 +32,10 @@
             "atLeast": 1
           },
           "target": "allies",
-          "ref": 3
+          "ref": 3,
+          "claims": [
+            "C-1057"
+          ]
         },
         {
           "kind": "cooldownReduction",
@@ -37,7 +44,10 @@
             "atLeast": 2
           },
           "target": "allies",
-          "ref": 4
+          "ref": 4,
+          "claims": [
+            "C-1057"
+          ]
         },
         {
           "kind": "cooldownReduction",
@@ -46,7 +56,10 @@
             "atLeast": 3
           },
           "target": "allies",
-          "ref": 5
+          "ref": 5,
+          "claims": [
+            "C-1057"
+          ]
         }
       ]
     },
@@ -63,7 +76,10 @@
           "assumes": {
             "ja": "戦闘開始から 4 秒ごと（ceil の周期 236f。CT 4 秒は録画から読んだ値）。発動からヒットまで 13f。「ランダムに敵 1 機」は、敵 1 体の前提ではその敵",
             "en": "Every 4 s from the start of combat (ceil period of 236 f; the 4 s cooldown is read from recordings). 13 f from activation to hit. \"1 random enemy\" is that enemy under the single-enemy premise"
-          }
+          },
+          "claims": [
+            "C-1058"
+          ]
         },
         {
           "kind": "burstGaugeHit",
@@ -74,7 +90,11 @@
           "assumes": {
             "ja": "S2 のヒットも 1 回につき的の 1 ヒットぶん（フルチャージ倍率なし）のゲージを溜め、ダメージと同じく発動の 13f 後のヒットのフレームに足す",
             "en": "Each S2 hit also builds gauge equal to one target hit (no full-charge multiplier), added at the hit frame 13 f after activation like the damage"
-          }
+          },
+          "claims": [
+            "C-1059",
+            "C-1058"
+          ]
         },
         {
           "kind": "timed",
@@ -91,7 +111,10 @@
           "assumes": {
             "ja": "電撃コードの敵にだけ付く。S2 のヒットの次のフレームから付き、そのヒット自身には乗らない。敵 1 体の前提で、味方全体の与ダメージに掛ける。付けるたびに全スタックの維持を数え直す",
             "en": "Applies only to an Electric Code enemy. It applies from the frame after the S2 hit and does not apply to that hit itself. Under the single-enemy premise it scales all allies' damage. Each application refreshes the duration of all stacks"
-          }
+          },
+          "claims": [
+            "C-1060"
+          ]
         }
       ]
     },
@@ -100,7 +123,10 @@
         {
           "kind": "burstDamage",
           "ref": 1,
-          "damageType": "skill"
+          "damageType": "skill",
+          "claims": [
+            "C-1061"
+          ]
         },
         {
           "kind": "damage",
@@ -111,7 +137,11 @@
           "assumes": {
             "ja": "電撃コードの敵にだけ出る。敵全体は、敵 1 体の前提ではその敵",
             "en": "Dealt only to an Electric Code enemy. All enemies means that enemy under the single-enemy premise"
-          }
+          },
+          "claims": [
+            "C-1062",
+            "C-1061"
+          ]
         }
       ]
     }
