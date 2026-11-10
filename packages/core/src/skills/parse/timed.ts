@@ -90,26 +90,27 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
-  if (
-    scaling === 'flat' &&
-    stat !== 'maxAmmo' &&
-    stat !== 'chargeSpeed' &&
-    stat !== 'burstCooldown' &&
-    stat !== 'pelletCount'
-  ) {
+  if (scaling === 'flat' && !FLAT_STATS.includes(stat)) {
+    const names = FLAT_STATS.map((s) => `"${s}"`);
     fail(
       `${path}.scaling`,
-      `flat is only allowed with stat "maxAmmo", "chargeSpeed", "burstCooldown" or "pelletCount", got "${stat}"`,
+      `flat is only allowed with stat ${names.slice(0, -1).join(', ')} or ${names.at(-1)}, got "${stat}"`,
     );
   }
-  if (stat === 'burstCooldown' && scaling !== 'flat') {
-    fail(`${path}.scaling`, 'burstCooldown needs scaling "flat" (the value is seconds)');
-  }
-  // ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.2 節）: ペレット数▲は個の数
-  if (stat === 'pelletCount' && scaling !== 'flat') {
-    fail(`${path}.scaling`, 'pelletCount needs scaling "flat" (the value is a number of pellets)');
+  const unit = FLAT_ONLY_UNITS[stat];
+  if (unit !== undefined && scaling !== 'flat') {
+    fail(`${path}.scaling`, `${stat} needs scaling "flat" (the value is ${unit})`);
   }
 }
+
+/** scaling 'flat'（値を 100 で割らない）を書ける stat */
+const FLAT_STATS: readonly BuffStat[] = ['maxAmmo', 'chargeSpeed', 'burstCooldown', 'pelletCount'];
+
+/** flat にしか書けない stat と、その値の単位。ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.2 節）でペレット数▲を足した */
+const FLAT_ONLY_UNITS: Partial<Record<BuffStat, string>> = {
+  burstCooldown: 'seconds',
+  pelletCount: 'a number of pellets',
+};
 
 /** 対象の語彙編: chargeSpeed の flat は「チャージ時間 X 秒▼」で、正の値が縮める秒数。▼（decrease）は書かない（burstCooldown も同じ） */
 function validateFlatChargeTime(
@@ -600,12 +601,16 @@ function parseTimedDuration(
 }
 
 /**
+ * 1 パス目で窓を追う stat のうち、発数の維持を書けるもの。どれも 1 パス目の件の列が持ち主の発で窓を閉じる。同じ閉じ方で書ける stat は
+ * ほかにもある（ペレット数▲・適正最小射程距離▲など）が、使い手のいるものだけ許す（ドロシー：セレンディピティ編。plan/design-dorothy-serendipity.md 2.3 節）
+ */
+const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet'];
+
+/**
  * 防御力無視ダメージ編: 1 パス目のループで窓を追う stat か（攻撃力・射撃に効く stat・状態の stat）。追わない stat の窓は
  * planBuffTimeline だけが作ったので、durationShots・durationUntil・条件 inFullBurst はそちらにだけ書ける。持ち主ごとの一覧編
  * （plan/design-holder-effects.md 2.7 節）で窓を作るコードは 1 つになった。この制限は、使うキャラの定義を足す時に外す
  */
-/** 1 パス目で窓を追う stat のうち、発数の維持を書けるもの（件の列が持ち主の発で窓を閉じる） */
-const SHOT_DURATION_TRACKED_STATS: readonly BuffStat[] = ['chargeSpeed', 'hitRate', 'pierce', 'singlePellet'];
 
 function isFirstPassTrackedStat(stat: BuffStat): boolean {
   // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるバーストゲージのチャージ速度は、1 パス目がゲージに読む。

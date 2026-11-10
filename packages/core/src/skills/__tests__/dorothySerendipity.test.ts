@@ -1,21 +1,16 @@
 // ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2 節）: ペレット数▲（pelletCount）・ペレットの数の固定（singlePellet）と、
 // 発数の維持を命中率▲・貫通特化・固定に広げた語彙の検証と、1 発のペレットの数（pelletsPerShot）
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { characterOf, rawDefinition } from '../../__tests__/teamHelpers.ts';
 import { pelletsPerShot, ZERO_BUFFS } from '../buffs.ts';
 import { resolveTimed } from '../resolve.ts';
 import { parseSkillDefinition } from '../types.ts';
-import type { CharacterData } from '../../types.ts';
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8')) as T;
-}
 
 type Effects = { effects: Record<string, unknown>[] };
 type Slot = 'skill1' | 'skill2' | 'burst';
 const DOROTHY_S = 234;
-const raw = readJson<{ skills: Record<Slot, Effects> }>(`../../../data/skills/${DOROTHY_S}.json`);
-const character = readJson<CharacterData>(`../../../data/characters/${DOROTHY_S}.json`);
+const raw = rawDefinition<{ skills: Record<Slot, Effects> }>(DOROTHY_S);
+const character = characterOf(DOROTHY_S);
 
 const indexOf = (slot: Slot, stat: string) => raw.skills[slot].effects.findIndex((e) => e.stat === stat);
 const patched = (slot: Slot, index: number, patch: Record<string, unknown>) => {

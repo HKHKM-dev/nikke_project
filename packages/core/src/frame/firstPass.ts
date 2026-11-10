@@ -679,12 +679,19 @@ function runFirstPassOnce(
   /**
    * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 枠 i のフレーム f の発の、基礎のペレットの数に対する
    * 実効のペレットの数の比（固定なら 1 ÷ 基礎、▲なら (基礎 + Σ) ÷ 基礎）。ゲージとペレットの命中の量は、当たったペレットの数に比例する
-   * （C-0150・C-1075）。ペレットの数の件の無い枠は 1
+   * （C-0150・C-1075）。ペレットの数の件の無い枠は 1。同じ発のゲージとペレットの命中の量が同じフレームで読むので、枠ごとに最後の値を覚える
    */
+  const pelletTracked = slots.map((_, i) => pellets[i]! && lists.hasPelletTracks(i));
+  const lastPelletRatio = slots.map(() => ({ frame: -1, ratio: 1 }));
   const pelletRatioAt = (i: number, f: number): number => {
-    if (!pellets[i] || !lists.hasPelletTracks(i)) return 1;
-    const count = slots[i]!.character.shot.shotCount;
-    return pelletsPerShot(count, lists.pelletsAt(i, f)) / count;
+    if (!pelletTracked[i]) return 1;
+    const last = lastPelletRatio[i]!;
+    if (last.frame !== f) {
+      const count = slots[i]!.character.shot.shotCount;
+      last.frame = f;
+      last.ratio = pelletsPerShot(count, lists.pelletsAt(i, f)) / count;
+    }
+    return last.ratio;
   };
   /** 枠 i がフレーム f に撃った 1 発のゲージ */
   const energyAt = (i: number, f: number): number => {

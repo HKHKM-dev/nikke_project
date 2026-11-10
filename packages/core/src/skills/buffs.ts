@@ -471,13 +471,11 @@ export function applyResolvedEffect(
       effect.whileState !== undefined || totals.fixedChargeTime === 0 ? effect.value : totals.fixedChargeTime;
     return { totals: { ...totals, fixedChargeTime: fixed }, appliedAmount: effect.value };
   }
-  // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）
-  if (effect.scaling === 'flat' && effect.stat === 'burstCooldown') {
-    return { totals: { ...totals, burstCooldown: totals.burstCooldown + effect.value }, appliedAmount: effect.value };
-  }
-  // ドロシー：セレンディピティ編: ペレット数▲（flat。個の数）
-  if (effect.scaling === 'flat' && effect.stat === 'pelletCount') {
-    return { totals: { ...totals, pelletCount: totals.pelletCount + effect.value }, appliedAmount: effect.value };
+  // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）。ドロシー：セレンディピティ編: ペレット数▲
+  // （pelletCount の flat。値は個の数）。どちらも同じ名前の欄に足す
+  if (effect.scaling === 'flat' && (effect.stat === 'burstCooldown' || effect.stat === 'pelletCount')) {
+    const stat = effect.stat;
+    return { totals: { ...totals, [stat]: totals[stat] + effect.value }, appliedAmount: effect.value };
   }
   if (effect.scaling === 'flat') {
     return { totals: { ...totals, maxAmmoFlat: totals.maxAmmoFlat + effect.value }, appliedAmount: effect.value };

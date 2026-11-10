@@ -6,7 +6,9 @@ import { enemyEventsOf, enemyLandingsOf, parseEnemyPresets } from '../enemies.ts
 import type { EnemyInput } from '../damage.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { itemsOf } from '../skills/holders.ts';
+import type { BuffStat } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
+import type { SkillSlot } from '../types.ts';
 import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
 
 const DOROTHY_S = 234;
@@ -43,7 +45,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const plan = planTeamRun(input);
   const log = plan.shots[me]!;
   const shots = log.frames;
-  const windows = (skill: string, stat: string) =>
+  const windows = (skill: SkillSlot, stat: BuffStat) =>
     itemsOf(plan.history, { sourceSlotIndex: me, holder: me, kind: 'timed', skill, stat }).map(({ start, end }) => ({
       start,
       end,
@@ -56,7 +58,7 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
 
   it('gives Pierce, Hit Rate up and Attack Damage up in the same windows as the single pellet', () => {
     expect(single.length).toBeGreaterThan(10);
-    for (const stat of ['pierce', 'hitRate', 'attackDamage']) expect(windows('skill1', stat)).toEqual(single);
+    for (const stat of ['pierce', 'hitRate', 'attackDamage'] as const) expect(windows('skill1', stat)).toEqual(single);
   });
 
   it('opens each window on the frame after a shot and keeps it for exactly the next 3 shots', () => {

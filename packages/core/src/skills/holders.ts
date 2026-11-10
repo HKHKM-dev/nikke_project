@@ -449,7 +449,7 @@ export type HolderLists = {
    * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 枠 holder にフレーム frame に効いている、ペレット数▲の和と
    * ペレットの数の固定の窓の数（timed。常時の値は無い）。ペレットの命中の量とゲージが読む（skills/buffs.ts の pelletsPerShot）
    */
-  pelletsAt(holder: number, frame: number): { pelletCount: number; singlePellet: number };
+  pelletsAt(holder: number, frame: number): Pick<BuffTotals, 'pelletCount' | 'singlePellet'>;
   /** ペレットの数の stat の件の列を持ちうるか */
   hasPelletTracks(holder: number): boolean;
   /** 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ） */
@@ -1679,6 +1679,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   // ドロシー：セレンディピティ編: ペレット数▲・ペレットの数の固定（当たりと同じ段の件）
   const pelletCountViews = hitStageViewsOf('pelletCount');
   const singlePelletViews = hitStageViewsOf('singlePellet');
+  const hasPellets = slots.map((_, h) => pelletCountViews[h]!.length > 0 || singlePelletViews[h]!.length > 0);
   // 条件 selfBuffed: 段 1 の件（段 A までの 1.5 段目の判定に入る窓）
   const conditionViews = viewsOf((track) => track.stage === 1);
   // 順位: 段 1・1.5 の攻撃力の件（段 A までの 2 段目の材料）
@@ -2673,8 +2674,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       pelletCount: sumAt(pelletCountViews[holder], frame),
       singlePellet: sumAt(singlePelletViews[holder], frame),
     }),
-    hasPelletTracks: (holder) =>
-      (pelletCountViews[holder]?.length ?? 0) > 0 || (singlePelletViews[holder]?.length ?? 0) > 0,
+    hasPelletTracks: (holder) => hasPellets[holder] === true,
     minEffectiveRangeAt,
     rankContext,
     applyHeal(effect, sourceSlotIndex, holder, frame) {
