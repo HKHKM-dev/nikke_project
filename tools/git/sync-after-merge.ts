@@ -1,5 +1,6 @@
 // マージ済みの PR の後片付け。Claude Code のフック（.claude/settings.json の SessionStart・UserPromptSubmit・Stop）から呼ぶ。
-//   node tools/git/sync-after-merge.ts [--prune-branches]   --prune-branches は SessionStart だけで付ける
+//   node tools/git/sync-after-merge.ts [--prune-branches] [--wait-merge]
+//     --prune-branches は SessionStart だけ、--wait-merge は Stop だけで付ける
 //
 // スカッシュマージでは、ブランチのコミットと main 上のコミットが別物になるので、放っておくと差分の表示に
 // マージ済みの変更が残る。そこで次の 2 つ（--prune-branches なら 3 つ）を行う。
@@ -16,15 +17,30 @@
 // （作業中の変更がある・早送りに失敗した）は、黙っていると気づかれないので知らせる。早送りは Windows で途中で
 // 失敗すると、作業ツリーのファイルだけが書き換わり HEAD と index が残ることがある（2026-09-28、#54 の早送り）。
 // 失敗してもフックを止めない（常に終了コード 0）。
-import { execFileSync } from 'node:child_process';
+//
+// --wait-merge: 応答の終わりには、自動マージを予約した PR はたいてい CI を待っていてまだマージされていない。そこで、いまの
+// ブランチの PR が shouldWaitMerge に合えば、マージと main の CI（生成物の commit）の終わりを待って 1・2 を行う裏の処理
+// （--wait-pr <番号>）を、切り離して起こす（次の発言を待たずに揃えるため。plan/design-sync-wait-merge.md）。同じ PR を待つ
+// 裏の処理が動いていれば起こさない。裏の処理の結果は知らせられない（次のフックは、もう揃っているので何も言わない）。
+import { execFileSync, spawn } from 'node:child_process';
+import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { setTimeout as sleep } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
+import { alive, type Lock, lockIsLive } from '../drive/sync-lib.ts';
 import {
   bringsNothing,
+  ciSettled,
   deleteArgs,
+  mergeWaitState,
   openPrBranches,
   parseJson,
   parseRemoteBranches,
   prunableBranches,
   seenAt,
+  shouldWaitMerge,
+  WAIT_CI_MS,
+  type PrView,
 } from './sync-after-merge-lib.ts';
 
 /** 成功したら標準出力（前後の空白を除く）、失敗したら null */
@@ -44,10 +60,13 @@ function run(cmd: string, args: readonly string[], cwd?: string): string | null 
 const git = (args: readonly string[], cwd?: string) => run('git', args, cwd);
 /** 追跡中のファイルに作業中の変更が無い */
 const isClean = (cwd?: string) => git(['status', '--porcelain', '--untracked-files=no'], cwd) === '';
+const PR_FIELDS = 'number,state,autoMergeRequest,mergedAt,mergeCommit';
 
-const done: string[] = [];
+/** 1・2（prune なら 3 も）を行い、知らせることを返す */
+function syncAfterMerge(prune: boolean): string[] {
+  const done: string[] = [];
+  if (git(['fetch', '--quiet', '--prune', 'origin']) === null) return done;
 
-if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
   // 1. メインのチェックアウト（git worktree list の先頭）
   const list = git(['worktree', 'list', '--porcelain']) ?? '';
   const main = /^worktree (.+)\nHEAD [0-9a-f]+\nbranch refs\/heads\/main$/m.exec(list.split('\n\n')[0] ?? '');
@@ -91,7 +110,7 @@ if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
   }
 
   // 3. 中身が main に入った origin のブランチ
-  if (process.argv.includes('--prune-branches') && process.env['CLAUDE_CODE_REMOTE'] !== 'true') {
+  if (prune && process.env['CLAUDE_CODE_REMOTE'] !== 'true') {
     const keep = openPrBranches(
       run('gh', ['pr', 'list', '--state', 'open', '--json', 'headRefName,baseRefName', '--limit', '200']),
     );
@@ -114,6 +133,88 @@ if (git(['fetch', '--quiet', '--prune', 'origin']) !== null) {
         if (git(deleteArgs(b)) !== null) done.push(`中身が main に入った origin の ${b.name} を消した`);
     }
   }
+  return done;
 }
 
-if (done.length > 0) console.log(JSON.stringify({ systemMessage: `後片付け: ${done.join('。')}` }));
+/** マージを待つ長さ（plan/design-sync-wait-merge.md） */
+const WAIT_MERGE_MS = 3 * 60 * 60 * 1000;
+/** PR と CI を見る間隔 */
+const WAIT_POLL_MS = 60 * 1000;
+
+/** PR 番号 n を待つ裏の処理の印（Lock）。worktree どうしで共有する .git に置く */
+function waitLock(n: number): string | null {
+  const dir = git(['rev-parse', '--git-common-dir']);
+  return dir === null ? null : resolve(dir, `sync-after-merge-wait-${n}.json`);
+}
+
+/** いまのブランチが push してある（追跡先がある）なら、その名前。main・ブランチの外・push していないブランチは null */
+function pushedBranch(): string | null {
+  const branch = git(['symbolic-ref', '--short', '-q', 'HEAD']);
+  if (!branch || branch === 'main') return null;
+  return git(['for-each-ref', '--format=%(upstream)', `refs/heads/${branch}`]) ? branch : null;
+}
+
+/** ブランチ branch の PR を待つ裏の処理を、要るなら切り離して起こす */
+function startWaiter(branch: string): void {
+  const pr = parseJson<PrView>(run('gh', ['pr', 'view', branch, '--json', PR_FIELDS]));
+  const n = pr?.number;
+  if (n === undefined || !shouldWaitMerge(pr, Date.now())) return;
+  const lock = waitLock(n);
+  if (lock === null || lockIsLive(parseJson<Lock>(readText(lock)), Date.now(), alive, WAIT_MERGE_MS + WAIT_CI_MS))
+    return;
+  spawn(process.execPath, [...process.execArgv, fileURLToPath(import.meta.url), '--wait-pr', String(n)], {
+    detached: true,
+    stdio: 'ignore',
+    windowsHide: true,
+  })
+    .on('error', () => {})
+    .unref();
+}
+
+/** ファイルの中身。読めなければ null */
+function readText(path: string): string | null {
+  try {
+    return readFileSync(path, 'utf8');
+  } catch {
+    return null;
+  }
+}
+
+/** PR n のマージ（WAIT_MERGE_MS まで）と、マージのコミットの CI の終わり（マージから WAIT_CI_MS まで）を待って 1・2 を行う */
+async function waitPr(n: number): Promise<void> {
+  const lock = Number.isInteger(n) ? waitLock(n) : null;
+  if (lock === null) return;
+  writeFileSync(lock, JSON.stringify({ pid: process.pid, time: Date.now() } satisfies Lock));
+  try {
+    const start = Date.now();
+    let pr = parseJson<PrView>(run('gh', ['pr', 'view', String(n), '--json', PR_FIELDS]));
+    for (let state = mergeWaitState(pr); state !== 'merged'; state = mergeWaitState(pr)) {
+      if (state === 'stop' || Date.now() - start > WAIT_MERGE_MS) return;
+      await sleep(WAIT_POLL_MS);
+      pr = parseJson<PrView>(run('gh', ['pr', 'view', String(n), '--json', PR_FIELDS]));
+    }
+    syncAfterMerge(false);
+    const mergedAt = pr?.mergedAt ? Date.parse(pr.mergedAt) : Date.now();
+    const sha = pr?.mergeCommit?.oid;
+    while (
+      sha &&
+      Date.now() - mergedAt < WAIT_CI_MS &&
+      !ciSettled(run('gh', ['run', 'list', '--commit', sha, '--json', 'status']))
+    )
+      await sleep(WAIT_POLL_MS);
+    syncAfterMerge(false);
+  } finally {
+    rmSync(lock, { force: true });
+  }
+}
+
+const waitArg = process.argv.indexOf('--wait-pr');
+if (waitArg >= 0) {
+  await waitPr(Number(process.argv[waitArg + 1]));
+} else {
+  // 追跡先は、2 でマージ済みのブランチを揃えると外れるので、その前に見る（マージの直後でも main の CI を待つため）
+  const branch = process.argv.includes('--wait-merge') ? pushedBranch() : null;
+  const done = syncAfterMerge(process.argv.includes('--prune-branches'));
+  if (branch) startWaiter(branch);
+  if (done.length > 0) console.log(JSON.stringify({ systemMessage: `後片付け: ${done.join('。')}` }));
+}

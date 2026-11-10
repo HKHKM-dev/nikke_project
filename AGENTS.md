@@ -29,7 +29,7 @@ NIKKE のダメージ計算ツール。
   1. commit してから `npm run pr:prep -- --push`: main をリベースで取り込み（マージはしない）、生成物の衝突は main の版を取って最後に 1 回だけ作り直し、CI と同じ確認（書式と lint はブランチで変えたファイルだけ。全部のファイルは GitHub の CI が見る）を通し、生成物を main の版に戻して push する（`tools/git/pr-prep.ts` の冒頭）。生成物は PR に入れず、マージの後に GitHub の CI が main で作り直して commit する（並行する PR どうしが生成物で衝突しないように。`plan/design-pr-conflicts.md` 3.1 節）。止まったら、道具が出す直し方に従い（生成物でないファイルの衝突は直して `git add` する。足した ID や録画の番号が main と重なったら、出た `npm run records:renumber` のコマンドで振り直して commit する）、もう一度回す
   2. `gh pr create`
   3. `gh pr merge --auto --squash`（作成直後に自動マージを予約する。マージ方式はスカッシュ）
-- マージの後は、メインのチェックアウトの main を origin/main へ早送りし、マージ済みのブランチを origin/main に揃える（スカッシュマージでは、揃えないと差分の表示にマージ済みの変更が残る）。Claude Code ではフック（`.claude/settings.json` → `tools/git/sync-after-merge.ts`）が、セッションの開始・発言・応答の終わりに行う。
+- マージの後は、メインのチェックアウトの main を origin/main へ早送りし、マージ済みのブランチを origin/main に揃える（スカッシュマージでは、揃えないと差分の表示にマージ済みの変更が残る）。Claude Code ではフック（`.claude/settings.json` → `tools/git/sync-after-merge.ts`）が、セッションの開始・発言・応答の終わりに行い、応答の終わりに自動マージを予約した PR があれば、マージと main の CI を待って行う。
 - worktree では最初に `npm ci`。
 
 ## 併用ルール（Claude Code / Antigravity）

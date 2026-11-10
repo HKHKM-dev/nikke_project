@@ -100,6 +100,16 @@ export function hookShouldSkip(lastOk: number | null, now: number, bootAt: numbe
 
 export type Lock = { pid: number; time: number };
 
+/** プロセス pid が動いているか（別の利用者のプロセスで調べる権限が無いときも動いているとみる） */
+export const alive = (pid: number): boolean => {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (e) {
+    return (e as NodeJS.ErrnoException).code === 'EPERM';
+  }
+};
+
 /** ロックがまだ効いているか（持ち主のプロセスが生きていて、staleMs を過ぎていない） */
 export function lockIsLive(
   lock: Lock | null,

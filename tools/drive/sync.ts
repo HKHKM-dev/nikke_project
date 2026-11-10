@@ -16,6 +16,7 @@ import { capturesDir } from '../captures/dirs.ts';
 import { mainCheckout } from '../git/main-checkout.ts';
 import { driveCaptures, driveSync, driveUnavailable, lsjson, rclone } from './rclone.ts';
 import {
+  alive,
   bisyncArgs,
   hookShouldSkip,
   isConflictName,
@@ -98,15 +99,6 @@ function readJson<T>(path: string): T | null {
     return null;
   }
 }
-
-const alive = (pid: number) => {
-  try {
-    process.kill(pid, 0);
-    return true;
-  } catch (e) {
-    return (e as NodeJS.ErrnoException).code === 'EPERM';
-  }
-};
 
 /** ロックを取る。取れなければ false（フックはすぐ諦め、手で回したときは 10 分まで待つ） */
 async function takeLock(): Promise<boolean> {
