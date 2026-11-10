@@ -6,7 +6,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   bringsNothing,
+  ciSettled,
   deleteArgs,
+  mergeWaitState,
   openPrBranches,
   parseJson,
   parseReflogTime,
@@ -14,6 +16,8 @@ import {
   PRUNE_AGE_MS,
   prunableBranches,
   seenAt,
+  shouldWaitMerge,
+  WAIT_CI_MS,
   type GitRun,
 } from './sync-after-merge-lib.ts';
 
@@ -189,5 +193,46 @@ describe('deleteArgs', () => {
     expect(seenAt(a, 'origin/claude/none')).toBeNull();
     expect(a(deleteArgs({ name: 'claude/x', sha: pushed, committedAt: 0 }))).not.toBeNull();
     expect(remoteHas()).toBeNull();
+  });
+});
+
+describe('shouldWaitMerge', () => {
+  const now = Date.parse('2026-11-10T12:00:00Z');
+  const ago = (ms: number) => new Date(now - ms).toISOString();
+
+  it('waits for an open PR only while auto-merge is reserved', () => {
+    expect(shouldWaitMerge({ number: 1, state: 'OPEN', autoMergeRequest: { mergeMethod: 'SQUASH' } }, now)).toBe(true);
+    expect(shouldWaitMerge({ number: 1, state: 'OPEN', autoMergeRequest: null }, now)).toBe(false);
+  });
+
+  it('waits for a merged PR while the CI on main may still be committing the generated files', () => {
+    expect(shouldWaitMerge({ number: 1, state: 'MERGED', mergedAt: ago(WAIT_CI_MS - 1000) }, now)).toBe(true);
+    expect(shouldWaitMerge({ number: 1, state: 'MERGED', mergedAt: ago(WAIT_CI_MS + 1000) }, now)).toBe(false);
+  });
+
+  it('does not wait for a closed PR, a missing PR or an unreadable answer', () => {
+    expect(shouldWaitMerge({ number: 1, state: 'CLOSED', autoMergeRequest: {} }, now)).toBe(false);
+    expect(shouldWaitMerge({ state: 'OPEN', autoMergeRequest: {} }, now)).toBe(false);
+    expect(shouldWaitMerge(null, now)).toBe(false);
+  });
+});
+
+describe('mergeWaitState', () => {
+  it('reads merged, waiting (also when gh failed) and stopped', () => {
+    expect(mergeWaitState({ state: 'MERGED', autoMergeRequest: {} })).toBe('merged');
+    expect(mergeWaitState({ state: 'OPEN', autoMergeRequest: {} })).toBe('wait');
+    expect(mergeWaitState(null)).toBe('wait');
+    expect(mergeWaitState({ state: 'OPEN', autoMergeRequest: null })).toBe('stop');
+    expect(mergeWaitState({ state: 'CLOSED' })).toBe('stop');
+  });
+});
+
+describe('ciSettled', () => {
+  it('is settled only when the commit has runs and all of them completed', () => {
+    expect(ciSettled('[{"status":"completed"},{"status":"completed"}]')).toBe(true);
+    expect(ciSettled('[{"status":"completed"},{"status":"in_progress"}]')).toBe(false);
+    expect(ciSettled('[]')).toBe(false);
+    expect(ciSettled(null)).toBe(false);
+    expect(ciSettled('not json')).toBe(false);
   });
 });

@@ -100,3 +100,41 @@ export function deleteArgs(branch: RemoteBranch): string[] {
     branch.name,
   ];
 }
+
+/** マージの後、main の CI（生成物を作り直して commit する）の終わりを待つ長さ */
+export const WAIT_CI_MS = 30 * 60 * 1000;
+
+/** gh pr view --json number,state,autoMergeRequest,mergedAt,mergeCommit の出力 */
+export interface PrView {
+  number?: number;
+  state?: string;
+  autoMergeRequest?: unknown;
+  mergedAt?: string | null;
+  mergeCommit?: { oid?: string } | null;
+}
+
+/**
+ * 応答の終わりに、マージを待つ裏の処理を起こすか: 自動マージを予約した開いている PR か、マージしてから WAIT_CI_MS たっていない
+ * （main の CI がまだ生成物を作り直しているかもしれない）PR
+ */
+export function shouldWaitMerge(pr: PrView | null, now: number): boolean {
+  if (!pr || typeof pr.number !== 'number') return false;
+  if (pr.state === 'OPEN') return !!pr.autoMergeRequest;
+  return pr.state === 'MERGED' && !!pr.mergedAt && now - Date.parse(pr.mergedAt) < WAIT_CI_MS;
+}
+
+/**
+ * 待っている PR のいま: merged（マージした）・wait（自動マージの予約が残っている。gh が失敗したときも、通信の一時の失敗とみて待つ）・
+ * stop（閉じた・予約を外した）
+ */
+export function mergeWaitState(pr: PrView | null): 'merged' | 'wait' | 'stop' {
+  if (pr === null) return 'wait';
+  if (pr.state === 'MERGED') return 'merged';
+  return pr.state === 'OPEN' && pr.autoMergeRequest ? 'wait' : 'stop';
+}
+
+/** gh run list --commit <マージのコミット> --json status の出力から、そのコミットの CI がすべて終わったか（まだ 1 つも無ければ false） */
+export function ciSettled(stdout: string | null): boolean {
+  const runs = parseJson<{ status?: unknown }[]>(stdout);
+  return Array.isArray(runs) && runs.length > 0 && runs.every((r) => r.status === 'completed');
+}

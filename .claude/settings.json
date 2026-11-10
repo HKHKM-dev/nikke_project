@@ -57,7 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tools/git/sync-after-merge.ts\" --wait-merge",
             "timeout": 60
           }
         ]
