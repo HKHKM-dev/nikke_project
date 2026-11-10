@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 96・効果 645（根拠あり 624）・notes 229（根拠あり 105）
+件数: キャラ 97・効果 657（根拠あり 636）・notes 231（根拠あり 105）
 
-notes の種類: 未対応 39・前提の外 55・計算に無関係 47・補足 24・間接 64
+notes の種類: 未対応 39・前提の外 55・計算に無関係 47・補足 24・間接 66
 
-スロット: supported 238・partial 26・unsupported 9・noEffect 39
+スロット: supported 244・partial 26・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -1028,6 +1028,29 @@ notes の種類: 未対応 39・前提の外 55・計算に無関係 47・補足
   - effects[0] heal・burstUse: 根拠なし
   - effects[1] timed・burstUse・attack: C-0945（確定）
   - notes[0] 間接（HP）: 保存（超過した回復量を発動者の最大HP の X% まで保存・25 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+
+## 390 ツバイ
+
+- **skill1**: supported
+  - effects[0] timed・fullBurstStart・pierceDamage（読む: 貫通）: C-1071（確定）
+  - effects[1] timed・fullBurstStart・pierceDamage（読む: 貫通）: C-1071（確定）
+- **skill2**: supported
+  - effects[0] timed・fullBurstStart・critRate: C-1073（確定）
+  - notes[0] 間接（遮蔽物）: 通常攻撃で 5 回攻撃した時の、味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）: 根拠なし
+- **burst**: supported
+  - effects[0] weaponChange・burstUse: C-1069（確定）、C-1070（確定）
+  - effects[1] timed・burstUse・pierceDamage（読む: 貫通）: C-1071（確定）
+- **宝物版 skill1**: supported
+  - effects[0] timed・fullBurstStart・pierceDamage（読む: 貫通）: C-1071（確定）
+  - effects[1] timed・fullBurstStart・pierceDamage（読む: 貫通）: C-1071（確定）
+  - effects[2] timed・normalShot・pierceDamage（読む: 貫通）: C-1072（確定）
+- **宝物版 skill2**: supported
+  - effects[0] timed・fullBurstStart・critRate: C-1073（確定）
+  - effects[1] timed・normalShot・critRate: C-1073（確定）
+  - notes[0] 間接（遮蔽物）: 通常攻撃で 5 回攻撃した時の、味方全体の遮蔽物 HP 回復は、それ自体は与ダメージを変えない（遮蔽物を読む効果のある編成でだけ効く）: 根拠なし
+- **宝物版 burst**: supported
+  - effects[0] weaponChange・burstUse: C-1069（確定）、C-1070（確定）
+  - effects[1] state・burstUse・pierceAttacks101（pierceDamage）（読む: 貫通）: C-1071（確定）
 
 ## 391 アイン
 
