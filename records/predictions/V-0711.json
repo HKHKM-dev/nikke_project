@@ -1,0 +1,364 @@
+{
+  "verification": "V-0711",
+  "note": "撮る前の予測。撮影 A はブリッド：サイレントトラック単騎（操作）、撮影 B はリター・I-DOLL・サン・ブリッド：サイレントトラック（操作）。どちらもスペック固定 ON・オート射撃 ON。A はオートバースト OFF、B は ON",
+  "team": [
+    {
+      "rid": 73,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H-model",
+      "note": "いまのモデル（説明文どおり。S2 の付与と倍率ダメージはゲージを溜めない）",
+      "override": {}
+    },
+    {
+      "id": "H-gauge-dmg",
+      "note": "S2 の倍率ダメージ（5 回攻撃ごと）が、射手の target_burst_energy_pershot を 1 回溜める",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 73,
+            "skill": "skill2",
+            "effect": {
+              "kind": "burstGaugeHit",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 5
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H-gauge-debuff",
+      "note": "S2 の受けるダメージ▲の付与（10 回攻撃ごと）が、射手の target_burst_energy_pershot を 1 回溜める（C-0422 の形）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 73,
+            "skill": "skill2",
+            "effect": {
+              "kind": "burstGaugeHit",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-hit",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "1,10,11",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（風圧）: 1・10・11 発目の、胴体（非会心・非コア）の 1 ペレットの値。11 発目から S2 の受けるダメージ▲が乗る"
+    },
+    {
+      "id": "A-skill2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 0,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（風圧）: S2 の倍率ダメージの 1 回目（5 発目。受けるダメージ▲の前）の非会心の値"
+    },
+    {
+      "id": "A-skill2-up",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（風圧）: S2 の倍率ダメージの 3 回目（15 発目。受けるダメージ▲の中）の非会心の値"
+    },
+    {
+      "id": "A-gauge",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "note": "撮影 A（風圧）: 戦闘開始から BURST のバーが消えた（ゲージが満タンになった）発の番号"
+    },
+    {
+      "id": "A-fire-hit",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": "11",
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（灼熱）: 11 発目の胴体の 1 ペレット。受けるダメージ▲は付かない"
+    },
+    {
+      "id": "A-fire-skill2",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "n": 2,
+        "crit": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A（灼熱）: S2 の倍率ダメージの 3 回目（15 発目）の非会心の値。受けるダメージ▲は付かない"
+    },
+    {
+      "id": "B-fb-starts",
+      "model": "sim",
+      "metric": "fullBurstStarts",
+      "args": {},
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 73,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 6
+      },
+      "note": "撮影 B: フルバーストの始まりのフレーム（III のタイマーの 00.00）の列"
+    },
+    {
+      "id": "B-skill1",
+      "model": "sim",
+      "metric": "skillHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "trigger": "fullBurstStart",
+        "n": 0,
+        "crit": false
+      },
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 73,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの始まりの S1 の倍率ダメージ（非会心）"
+    },
+    {
+      "id": "B-liter-in-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 1760,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "team": [
+        {
+          "rid": 82
+        },
+        {
+          "rid": 308
+        },
+        {
+          "rid": 73,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": [
+          "range-3min-jump"
+        ],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 2 回目のチェーン（III が CT でフルバーストにならない回）でブリッドがバーストを撃った後の、リターの胴体の 1 発。バーストの攻撃力▲（自分を除く味方）だけが乗る（S1 は乗らない）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-10",
+    "commit": "756b07047f33f95db7f7eaceb57be94ff6402d2f",
+    "values": {
+      "H-model": {
+        "A-hit": [
+          28764.07462500001,
+          28764.07462500001,
+          32250.28046955
+        ],
+        "A-skill2": 741200.6250000001,
+        "A-skill2-up": 831034.1407500001,
+        "A-gauge": 33,
+        "A-fire-hit": [
+          26149.158750000006
+        ],
+        "A-fire-skill2": 673818.75,
+        "B-fb-starts": [
+          563,
+          2961,
+          5477,
+          7922,
+          10359
+        ],
+        "B-skill1": 2213534.9149056002,
+        "B-liter-in-burst": 29552.139483048
+      },
+      "H-gauge-dmg": {
+        "A-hit": [
+          28764.07462500001,
+          28764.07462500001,
+          32250.28046955
+        ],
+        "A-skill2": 741200.6250000001,
+        "A-skill2-up": 831034.1407500001,
+        "A-gauge": 32,
+        "A-fire-hit": [
+          26149.158750000006
+        ],
+        "A-fire-skill2": 673818.75,
+        "B-fb-starts": [
+          563,
+          2931,
+          5309,
+          7180,
+          9508
+        ],
+        "B-skill1": 2213534.9149056002,
+        "B-liter-in-burst": 29552.139483048
+      },
+      "H-gauge-debuff": {
+        "A-hit": [
+          28764.07462500001,
+          28764.07462500001,
+          32250.28046955
+        ],
+        "A-skill2": 741200.6250000001,
+        "A-skill2-up": 831034.1407500001,
+        "A-gauge": 32,
+        "A-fire-hit": [
+          26149.158750000006
+        ],
+        "A-fire-skill2": 673818.75,
+        "B-fb-starts": [
+          563,
+          2934,
+          5368,
+          7873,
+          10324
+        ],
+        "B-skill1": 2213534.9149056002,
+        "B-liter-in-burst": 29552.139483048
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "formatVersion": 1,
+  "resourceId": 73,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "fullBurstStart",
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 1,
+          "durationRef": 2,
+          "enemyElement": "Wind",
+          "assumes": {
+            "ja": "風圧コードの敵全体は敵 1 体（風圧の敵のときだけ付く）。敵の受けるダメージ▲を、味方全体の与ダメージの乗数として持つ",
+            "en": "All Wind Code enemies is the single enemy (applied only when it is Wind). The enemy's damage taken up is held as a multiplier on all allies' damage"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": "fullBurstStart",
+          "ref": 3,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "敵全体は敵 1 体で 1 ヒット",
+            "en": "All enemies is the single enemy, so it lands once"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "allies",
+          "stat": "damageTaken",
+          "ref": 3,
+          "durationRef": 4,
+          "enemyElement": "Wind",
+          "assumes": {
+            "ja": "「残りの HP の数値が最も低い風圧コードの敵 1 機」は敵 1 体（風圧の敵のときだけ付く）。敵の受けるダメージ▲を、味方全体の与ダメージの乗数として持つ",
+            "en": "The lowest-HP Wind Code enemy is the single enemy (applied only when it is Wind). The enemy's damage taken up is held as a multiplier on all allies' damage"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 5
+          },
+          "ref": 7,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "「残りの HP の数値が最も低い敵 1 機」は敵 1 体で 1 ヒット。ヒットは発のフレームに置く",
+            "en": "The lowest-HP enemy is the single enemy, so it lands once. The hit is placed on the shot frame"
+          }
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "excludeSelf": "always",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2
+        }
+      ]
+    }
+  }
+}
