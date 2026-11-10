@@ -1,0 +1,98 @@
+{
+  "formatVersion": 1,
+  "resourceId": 831,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": { "count": "normalShot", "everyRef": 1 },
+          "target": "self",
+          "stat": "elementDamage",
+          "ref": 2,
+          "durationRef": 3,
+          "assumes": {
+            "ja": "通常攻撃の発（弾薬 1 消費）を戦闘を通して数え（リロードで 0 に戻さない）、100 の倍数の発で付き、3 秒の間に次の 100 発目が来れば付き直す。乗るのは自分のコードが有利な敵（灼熱には風圧）だけ",
+            "en": "Normal attack shots (1 ammo each) are counted through the battle (not reset on reload); it applies on every 100th shot and is refreshed if the next 100th shot comes within 3 s. It only applies against enemies her code is strong against (Wind for Fire)"
+          }
+        },
+        {
+          "kind": "damage",
+          "trigger": { "count": "normalHit", "everyRef": 4 },
+          "ref": 5,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "対象「照準線に最も近い攻撃範囲内の敵」は、敵 1 体の前提ではその敵で 1 ヒット。命中は期待値で数える（1 発ごとにその発の弾丸命中率）。ヒットの遅れとバーストゲージは撮影で読む（下書きでは遅れ 0・ゲージなし）",
+            "en": "The target (the enemy within attack range nearest the crosshair) is the lone enemy, one hit. Hits are counted as expected values (each shot adds its bullet hit rate). The hit delay and burst gauge are to be read from recordings (the draft uses no delay and no gauge)"
+          }
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "targetElement": "Fire",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 3,
+          "durationRef": 4,
+          "assumes": {
+            "ja": "バースト 3 段階突入時は、II の発動でバースト 3 段階に進んだ時（III の自分の発動の前）。III の自分だけの編成では起きない。灼熱コードの味方全体に自分も入る",
+            "en": "Entering Burst Stage 3 is when a Burst II activation advances the chain to Stage 3 (before her own Burst III). It does not occur with no Burst I/II allies. All Fire Code allies include herself"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "戦闘開始時のバリアに与えるダメージ▲は、射撃場の敵にバリアが無いのでダメージに関係しない",
+          "en": "Damage to barriers up from the start of battle does not affect damage (the shooting range enemy has no barrier)",
+          "kind": "outOfScope",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "self",
+            "trigger": "battleStart"
+          },
+          "claims": ["C-0443"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 5,
+          "damageType": "skill"
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "targetElement": "Fire",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4
+        }
+      ],
+      "notes": [
+        {
+          "ja": "灼熱コードの味方全体へのバリア（最終最大HP の X%）は、それ自体は与ダメージを変えない（バリアを読む効果のある編成でだけ効く。この付与は定義していないので、モデルでは味方がバリア適用状態にならない。バリアの量は要件 5.2 節の外）",
+          "en": "The barrier on all Fire Code allies (X% of final max HP) does not change damage by itself (it matters only with an effect reading barriers in the team; this barrier is not defined, so the model does not put allies in a barrier state; the barrier amount is out of scope, requirements 5.2)",
+          "kind": "indirect",
+          "path": "barrier",
+          "effect": {
+            "kind": "timed",
+            "stat": "unknown",
+            "target": "allies",
+            "trigger": "burstUse"
+          },
+          "claims": ["C-0443"]
+        }
+      ]
+    }
+  }
+}
