@@ -41,9 +41,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -68,9 +66,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -95,9 +91,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -121,9 +115,7 @@
       ],
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": false
       },
       "tolerance": {
@@ -144,9 +136,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -166,9 +156,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -187,9 +175,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -206,9 +192,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 0
@@ -225,9 +209,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
@@ -244,9 +226,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
@@ -266,9 +246,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -288,9 +266,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -307,9 +283,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
@@ -326,9 +300,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 2
@@ -348,9 +320,7 @@
       },
       "setup": {
         "enemy": "range-bigarms-water",
-        "events": [
-          "range-3min-jump"
-        ]
+        "events": ["range-3min-jump"]
       },
       "tolerance": {
         "abs": 1
@@ -365,12 +335,7 @@
       "H-model": {
         "A-anis-pellet": 25874.64,
         "A-anis-missile": 381750.7650000001,
-        "A-anis-missile-shots": [
-          5,
-          10,
-          15,
-          20
-        ],
+        "A-anis-missile-shots": [5, 10, 15, 20],
         "A-anis-missile-delay": 74,
         "B-anis-pellet-before": 28462.104,
         "B-anis-pellet-fb": 91801.55305728002,
