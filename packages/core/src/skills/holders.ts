@@ -94,6 +94,7 @@ import {
   isEndedTrigger,
   isMaxHpStat,
   isCounterFullTrigger,
+  isAllyDecrease,
   isEnemyHeldStat,
   isFiringStat,
   HIT_STATE_STATS,
@@ -888,6 +889,7 @@ function buildTrackItems(
     case 'passive':
       return track.starts.length > 0 ? [{ start: 0, end: frames }] : [];
     case 'timed': {
+      const ends = fullBurstWindows.map((w) => w.end);
       const items =
         o.effect.perCount !== undefined
           ? perCountItems(track.starts, track.startScales ?? new Map(), o.effect.durationFrames, frames)
@@ -899,7 +901,7 @@ function buildTrackItems(
               }))
             : // 課題 2-64（plan/design-debuff-removal-timed.md 2.4 節）: デバフ解除で閉じた味方の▼は、状態と同じ規則で切る
               closedStateItems(track.starts, track.closes, (starts) =>
-                timedItems(o.effect, starts, log, fullBurstWindows.map((w) => w.end), frames, track.untilEnds),
+                timedItems(o.effect, starts, log, ends, frames, track.untilEnds),
               );
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
@@ -2068,12 +2070,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
     debuffTracks ??= slots.map((_, holder) => {
       const byState = new Map<NamedStateId, HeldTrack[]>();
-      const decreases: HeldTrack[][] = [];
+      const allyDecreases: HeldTrack[][] = [];
       for (const track of tracks) {
         const o = track.origin;
         if (track.holder !== holder) continue;
-        if (o.kind === 'timed' && o.effect.decrease === true) {
-          decreases.push([track]);
+        if (o.kind === 'timed' && isAllyDecrease(o.effect)) {
+          allyDecreases.push([track]);
           continue;
         }
         if (o.kind !== 'state' || !namedStateIsDebuff(o.state)) continue;
@@ -2082,7 +2084,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         if (list === undefined) byState.set(o.state, [track]);
         else list.push(track);
       }
-      return [...byState.values(), ...decreases];
+      return [...byState.values(), ...allyDecreases];
     });
     // 持ち主ごとに、at に効いているデバフと、その最も早い始まり
     const held = debuffTracks.map((debuffs) =>

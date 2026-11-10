@@ -561,10 +561,10 @@ function fullBurstMagazineShots(result: SimResult, ctx: MetricContext): number[]
 function fullBurstShotsBeforeAmmoRestore(result: SimResult, ctx: MetricContext): number {
   const n = Number(ctx.args.n);
   const w = result.schedule?.fullBurstWindows[n];
-  if (w === undefined) throw new Error(`${n + 1} 回目のフルバーストが無い`);
+  if (w === undefined) throw new Error(`${n} 回目のフルバーストが無い`);
   const shots = slotOf(result.shots, ctx).frames.filter((f) => f >= w.start && f < w.end);
-  if (shots.length === 0) throw new Error(`${n + 1} 回目のフルバーストの窓に枠 ${String(ctx.args.slot)} の発が無い`);
-  const ammoAt = (frame: number): number => maxAmmoAt(result, { ...ctx, args: { ...ctx.args, frame } });
+  if (shots.length === 0) throw new Error(`${n} 回目のフルバーストの窓に枠 ${String(ctx.args.slot)} の発が無い`);
+  const ammoAt = (frame: number): number => maxAmmoAt(result, withArgs(ctx, { frame }));
   const first = ammoAt(shots[0]!);
   const restored = shots.findIndex((f) => ammoAt(f) > first);
   return restored === -1 ? shots.length : restored;

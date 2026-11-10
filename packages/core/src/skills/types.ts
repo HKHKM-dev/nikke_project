@@ -275,6 +275,14 @@ export function isEnemyHeldStat(stat: string): boolean {
 }
 
 /**
+ * 課題 2-64（plan/design-debuff-removal-timed.md 2.1 節）: 味方に付く▼（decrease で、敵が持つ stat でない）か。timed のこれはデバフ解除で
+ * 外れる（定義の検証・skills/holders.ts の fireRemoveDebuff・最小構成の読む側の印）
+ */
+export function isAllyDecrease(effect: { stat: string; decrease?: true }): boolean {
+  return effect.decrease === true && !isEnemyHeldStat(effect.stat);
+}
+
+/**
  * どう算出するか。ratio = 対象自身の基礎値に対する比率、casterAttack = 発動者のバフ前攻撃力 × 比率の固定加算、
  * flat = 実数の固定加算（Stage 10。stat が maxAmmo のときだけ。値は発数で 100 で割らない）、
  * casterChargeTime = 発動者の基礎チャージ時間 × 比率の秒数を対象のチャージ時間から引く（Stage 11 アリス編。stat が chargeSpeed のときだけ。

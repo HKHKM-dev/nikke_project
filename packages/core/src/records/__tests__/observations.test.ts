@@ -865,7 +865,7 @@ describe('照合の部品', () => {
     expect(at(0)).toBe(6);
     const second = result.schedule!.fullBurstWindows[1]!;
     expect(at(1)).toBe(result.shots[2]!.frames.filter((f) => f >= second.start && f < second.end).length);
-    expect(() => at(9)).toThrow(/10 回目のフルバーストが無い/);
+    expect(() => at(9)).toThrow(/9 回目のフルバーストが無い/);
   });
 
   it('reads the magazine after each full burst start and the cycle counter residue per window (V-0356)', () => {

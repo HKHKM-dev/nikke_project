@@ -15,6 +15,7 @@ import {
   EXCLUDE_SELF,
   type ExcludeSelf,
   isAppliedTrigger,
+  isAllyDecrease,
   isEnemyHeldStat,
   isChanceTrigger,
   isFiringStat,
@@ -163,7 +164,7 @@ export function parseTimedEffect(v: Record<string, Json>, path: string): TimedEf
   const { trigger, target, ...rest } = parseTimedFields(v, path, stat, true);
   // 課題 2-64（plan/design-debuff-removal-timed.md 2.1 節）: 味方の▼はデバフ解除で外れる（件の列を閉じる）。確率のきっかけと perCount の
   // 件は閉じるフレームを読まないので、味方の▼には書けない
-  if (rest.decrease === true && !isEnemyHeldStat(stat) && (isChanceTrigger(trigger) || rest.perCount !== undefined)) {
+  if (isAllyDecrease({ stat, ...rest }) && (isChanceTrigger(trigger) || rest.perCount !== undefined)) {
     fail(path, 'an ally decrease (removed by debuff removal) cannot have a chance trigger or perCount');
   }
   return { kind: 'timed', trigger, target, stat, ...rest } as TimedEffect;

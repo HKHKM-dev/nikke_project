@@ -11,7 +11,7 @@ import {
   SKILL_SLOTS,
   contentStatOf,
   isCoverHealedTrigger,
-  isEnemyHeldStat,
+  isAllyDecrease,
   type BuffStat,
   type IndirectPath,
   type NoteEffect,
@@ -577,7 +577,7 @@ function effectMoverPathOf(element: MinimalElement): IndirectPath | undefined {
 function readsOf(e: SkillEffect): { reads?: IndirectPath[] } {
   const reads = new Set(e.reads ?? []);
   if (e.kind === 'state' && namedStateIsDebuff(e.state)) reads.add('debuff');
-  if (e.kind === 'timed' && e.decrease === true && !isEnemyHeldStat(e.stat)) reads.add('debuff');
+  if (e.kind === 'timed' && isAllyDecrease(e)) reads.add('debuff');
   return reads.size === 0 ? {} : { reads: [...reads] };
 }
 

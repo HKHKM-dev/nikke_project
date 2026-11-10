@@ -39,8 +39,9 @@ const TEAMS: Record<string, TeamInput> = {
 };
 
 // ココアの S1 のデバフ解除の効くフレーム（CT ごとの発動の delayFrames 後。C-0822）
-const cocoaS1 = rawDefinition<{ skills: { skill1: { effects: { kind: string; delayFrames: number }[] } } }>(COCOA).skills
-  .skill1.effects.find((e) => e.kind === 'removeDebuff')!;
+const cocoaS1 = rawDefinition<{
+  skills: { skill1: { effects: { kind: string; trigger: { everySeconds: number }; delayFrames: number }[] } };
+}>(COCOA).skills.skill1.effects.find((e) => e.kind === 'removeDebuff')!;
 
 // S2 のミサイルの着弾の遅れ（C-1032）
 const missileDelay = rawDefinition<{ skills: { skill2: { effects: { delayFrames: number }[] } } }>(ANIS).skills.skill2
@@ -57,7 +58,7 @@ describe('ココア + シン + アニス：スパークリングサマー（水�
   const isLastShot = new Set(lastShots);
   const burstWindows = windowsFrom(uses, 10, plan.frames);
   const inBurst = (f: number) => burstWindows.some((w) => w.start <= f && f < w.end);
-  const removals = timerFramesOf({ everySeconds: 15 }, plan.frames).map((f) => f + cocoaS1.delayFrames);
+  const removals = timerFramesOf(cocoaS1.trigger, plan.frames).map((f) => f + cocoaS1.delayFrames);
   /** バーストの窓ごとの、窓の中の最初のデバフ解除（無ければ undefined） */
   const removalIn = (w: { start: number; end: number }) => removals.find((r) => w.start <= r && r < w.end);
 
