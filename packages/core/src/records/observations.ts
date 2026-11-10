@@ -1715,6 +1715,7 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   },
   perShotHitDamage: { args: ['slot', 'frame', 'crit'], sim: perShotHitDamage },
   burstHitDamage: { args: ['slot', 'n', 'crit'], sim: burstHitDamage },
+  burstHitWithSkillHits: { args: ['slot', 'n', 'crit'], sim: burstHitWithSkillHits },
   dotHitDamage: { args: ['slot', 'n', 'crit'], sim: dotHitDamage },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
   // 2 段目の段 13 の PR 1（V-0546）: 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
@@ -1951,6 +1952,25 @@ function burstHitDamage(result: SimResult, ctx: MetricContext): number {
   const hit = slotOf(result.slots, ctx).burst.hits[Number(ctx.args.n)];
   if (hit === undefined) throw new Error(`${String(ctx.args.n)} 回目のバーストの倍率ダメージが無い`);
   return oneHitValue(hit, ctx.args.crit === true);
+}
+
+/**
+ * V-0715（ヘルム：アクアマリンのバーストの電撃の敵への追加ダメージ）: 枠の n 回目（0 始まり）のバーストの倍率ダメージ（burstHitDamage）と、
+ * そのヒットと同じフレームに出る同じ枠の burst スロットの倍率ダメージ（持続ダメージを除く）の和。録画では HUD の 1 つの増分に合わさる。
+ * 会心（crit）はバーストの倍率ダメージにだけ当て、倍率ダメージは会心なしの値で足す
+ */
+function burstHitWithSkillHits(result: SimResult, ctx: MetricContext): number {
+  const schedule = result.schedule;
+  if (schedule === null) throw new Error('バーストの時刻表が無い');
+  const n = Number(ctx.args.n);
+  const activation = schedule.activations.filter((a) => a.slotIndex === slotIndexOf(ctx))[n];
+  if (activation === undefined) throw new Error(`${n} 回目の発動が無い`);
+  const frame = hitFrameOf(activation);
+  const skills = result.skillHits.filter(
+    (h) =>
+      h.slotIndex === slotIndexOf(ctx) && h.effect.dot === undefined && h.effect.source.skill === 'burst' && h.frame === frame,
+  );
+  return burstHitDamage(result, ctx) + skills.reduce((sum, h) => sum + oneHitValue(h.hit, false), 0);
 }
 
 /**

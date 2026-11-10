@@ -1,0 +1,349 @@
+[
+  {
+    "id": "1049-01",
+    "recording": "1049",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      1406,
+      2732,
+      3989,
+      5342,
+      6587,
+      7830,
+      9037,
+      10265
+    ],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・25・0・24・0・25・0f"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-02",
+    "recording": "1049",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      1435,
+      2761,
+      4018,
+      5372,
+      6616,
+      7859,
+      9066,
+      10294
+    ],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・0・25・6・24・0・25・0f"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-03",
+    "recording": "1049",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      1464,
+      4047,
+      6645,
+      9095
+    ],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-04",
+    "recording": "1049",
+    "kind": "timing",
+    "use": "record",
+    "value": [
+      2073,
+      4656,
+      7254,
+      9704
+    ],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-05",
+    "recording": "1049",
+    "kind": "interval",
+    "use": "record",
+    "value": [
+      609,
+      609,
+      609,
+      609
+    ],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-06",
+    "recording": "1049",
+    "kind": "total",
+    "use": "record",
+    "value": 141490509,
+    "description": "I-DOLL・フラワー・ヘルム：アクアマリン・I-DOLL・サン の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11518。増分は 2764 個"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-07",
+    "recording": "1049",
+    "kind": "count",
+    "use": "record",
+    "value": 225,
+    "unit": "トリガー",
+    "description": "I-DOLL・フラワー・ヘルム：アクアマリン・I-DOLL・サン のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 2764 個。前の増分から 30f 未満の増分（2748 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 46f）から発の数を決めた（2 発になった組 15 個）"
+    },
+    "source": "V-0715",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1049-08",
+    "recording": "1049",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": [
+      105.9,
+      235.3,
+      390,
+      387.1
+    ],
+    "unit": "f",
+    "description": "1〜4 回目のフルバースト（00.00 は 1049-03）の始まりに縮んだ、I-DOLL・サン（III）のバーストスキルクールタイム。チェーンが III で I-DOLL・サンの CT を待つ間（チェーンが切れるまで）の、欄の顔の残り秒の切り替わりから読んだ。「40」f1461・4044・6642・9092、切り替わり 16 → 15（f2816）・15 → 14（f2875）、13 → 12（f5446）・12 → 11（f5505）、12 → 11（f7950）・11 → 10（f8009）、13 → 12（f10342）・12 → 11（f10400）",
+    "method": {
+      "tool": "ffmpeg の select・crop・drawtext・tile で並べた右のバースト欄・数字の領域（1812,488 から 45×40）の白い画素の変化・timer.ts --mode stalls",
+      "note": "発動は欄の顔に「40」が出たフレーム − 2.7（C-0258）。残り秒は 1 秒以上は四捨五入の整数なので、v → v − 1 の最初のフレームの 0.5f 前を残り v − 0.5 秒とし、CT▼ = 40 − (v − 0.5) − (切り替わり − 0.5 − 発動 − 間の止まり) × 0.017 秒（0114-08・0736-05 と同じ）。止まりは timer.ts --mode stalls の 2f 以上の区切り（フルバーストの入りと、ほかに 2f を超えた区切り）。値は回ごとに 2 つの切り替わりの平均を小数 2 桁に丸めた秒を 0.017 秒で割ったゲーム内のフレーム（小数 1 桁）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "cooldownCutFrames",
+      "args": {
+        "slot": 3,
+        "n": "0,1,2,3"
+      },
+      "tolerance": {
+        "abs": 4
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "1049-09",
+    "recording": "1049",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "interval",
+    "value": [
+      85,
+      64,
+      85,
+      63,
+      85,
+      64,
+      85,
+      64
+    ],
+    "unit": "f",
+    "description": "ヘルム：アクアマリン（II）の 1〜8 回目のバーストの、六角形の替わり目（1049-02）からバーストスキルダメージの増分までの動画のフレーム。フルバーストに入る回（1・3・5・7 回目）は III の 00.00 の後の入りの止まりを挟む",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目の 50〜100f 後の、15 万を超える増分のうち、バーストスキルダメージ（追加ダメージとの和）の増分のフレーム"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitDelays",
+      "args": {
+        "slot": 2,
+        "count": 8
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "1049-10",
+    "recording": "1049",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 604267,
+    "unit": "ダメージ",
+    "description": "ヘルム：アクアマリンの 1 回目のバーストの増分（会心なし）。バーストスキルダメージと電撃の敵への追加ダメージが同じフレームの 1 つの増分に合わさる。S2 の受けるダメージ▲は 2 スタック、フルバーストの中で、追加ダメージにだけフルバースト補正が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目（1049-02）の 85f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 2,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "1049-11",
+    "recording": "1049",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 556916,
+    "unit": "ダメージ",
+    "description": "ヘルム：アクアマリンの 2 回目のバーストの増分（会心なし）。バーストスキルダメージと電撃の敵への追加ダメージが同じフレームの 1 つの増分に合わさる。5 スタック、フルバーストの外で、2 つは同じ値",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目（1049-02）の 64f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 2,
+        "n": 1,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "1049-12",
+    "recording": "1049",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 835373,
+    "unit": "ダメージ",
+    "description": "ヘルム：アクアマリンの 3 回目のバーストの増分（バーストスキルダメージが会心）。バーストスキルダメージと電撃の敵への追加ダメージが同じフレームの 1 つの増分に合わさる。5 スタック、フルバーストの中",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目（1049-02）の 85f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 2,
+        "n": 2,
+        "crit": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  },
+  {
+    "id": "1049-13",
+    "recording": "1049",
+    "source": "V-0715",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 696145,
+    "unit": "ダメージ",
+    "description": "ヘルム：アクアマリンの 5 回目のバーストの増分（会心なし）。バーストスキルダメージと電撃の敵への追加ダメージが同じフレームの 1 つの増分に合わさる。5 スタック、フルバーストの中",
+    "method": {
+      "tool": "recipe:hud-jumps@3・recipe:burst-panel@4",
+      "note": "替わり目（1049-02）の 85f 後の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstHitWithSkillHits",
+      "args": {
+        "slot": 2,
+        "n": 4,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-electric",
+        "events": [
+          "range-3min-jump"
+        ]
+      }
+    }
+  }
+]
