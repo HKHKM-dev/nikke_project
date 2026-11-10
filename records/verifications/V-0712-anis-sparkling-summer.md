@@ -48,7 +48,24 @@
 
 <!-- records:predictions:start -->
 
-（予測との比べの表は npm run records:check が書き込む）
+予測は 2026-11-10（commit 913535a）に出した。
+
+| 指標                                              | 実測         | 予測 H-model          |
+| ------------------------------------------------- | ------------ | --------------------- |
+| A-anis-pellet（hitDamage）                        | （実測なし） | 25,874.64             |
+| A-anis-missile（skillHitDamage）                  | （実測なし） | 381,750.765           |
+| A-anis-missile-shots（skillHitShotIndices）       | （実測なし） | [5, 10, 15, 20]       |
+| A-anis-missile-delay（skillHitShotDelay）         | （実測なし） | 0                     |
+| B-anis-pellet-before（hitDamage）                 | （実測なし） | 28,462.104            |
+| B-anis-pellet-fb（hitDamage）                     | （実測なし） | 91,801.553            |
+| B-anis-missile-fb（skillHitDamage）               | （実測なし） | 1,354,427.08          |
+| B-anis-max-ammo-fb（maxAmmoAt）                   | （実測なし） | 1                     |
+| B-anis-reload-before（reloadToNextShotAt）        | （実測なし） | 142                   |
+| B-anis-reload-fb（reloadToNextShotAt）            | （実測なし） | 51                    |
+| B-sin-pellet-before（hitDamage）                  | （実測なし） | 11,990.078            |
+| B-sin-pellet-fb（hitDamage）                      | （実測なし） | 30,433.078            |
+| B-full-burst-intervals（fullBurstStartIntervals） | （実測なし） | [2,411, 2,516, 2,477] |
+| B-cocoa-fb（hitDamage）                           | （実測なし） | 430,744.875           |
 
 <!-- records:predictions:end -->
 
