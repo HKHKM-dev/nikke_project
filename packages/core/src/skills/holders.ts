@@ -96,7 +96,7 @@ import {
   isCounterFullTrigger,
   isEnemyHeldStat,
   isFiringStat,
-  isHitStateStat,
+  HIT_STATE_STATS,
   isStateStat,
   staticStatesOf,
   type BuffStat,
@@ -344,6 +344,12 @@ export type HolderListsOptions = {
    * runFirstPass が回し直すときに渡す）
    */
   leadShots?: LeadShots;
+  /**
+   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件 inEffectiveRange の判定。枠 slotIndex のフレーム frame の着地点が、
+   * 適正最小射程距離▲ の和 minRange で縮めた適正射程距離の中か（frame/landing.ts の inEffectiveRangeAt）。省略は成り立つ（距離ボーナスあり
+   * の手入力の条件の既定と同じ）
+   */
+  effectiveRangeAt?: (slotIndex: number, frame: number, minRange: number) => boolean;
 };
 
 /** leadFrames のある付与ごとの、発火した発のフレーム（昇順。leadShotKey ごと。発火の無い付与は入らない） */
@@ -425,6 +431,11 @@ export type HolderLists = {
   hitRateAt(holder: number, frame: number): HitRateN;
   /** 当たりの stat の件の列があるか */
   readonly hasHitTracks: boolean;
+  /**
+   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 枠 holder にフレーム frame に効いている、時間で変わる適正最小射程距離▲の和
+   * （timed・状態の中身。常時の値は含まない）。条件 inEffectiveRange と、蓄積爆破の 1 パス目の発の値が読む
+   */
+  minEffectiveRangeAt(holder: number, frame: number): number;
   /**
    * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 枠 holder にフレーム frame に効いている、時間で変わる会心率▲と
    * 通常攻撃のクリティカル確率▲の和（timed・状態の中身。常時の値は含まない）。critHit の回数の量に使う
@@ -1633,18 +1644,21 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     return views;
   };
+  /** 当たりと同じ段の件（状態の中身か、段 1.5 までの timed・while）で、stat が stats のどれかの件の索引 */
+  const hitStageViewsOf = (...stats: readonly BuffStat[]): View[][] =>
+    viewsOf(
+      (track, e) =>
+        (stats as readonly string[]).includes(e.stat) &&
+        (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
+    );
   // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身（段 A までの hitTrack・hitGroups）。2 段目の段 3: 条件つき（段 1.5）の
   // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
-  const hitViews = viewsOf(
-    (track, e) =>
-      isHitStateStat(e.stat) && (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
-  );
+  const hitViews = hitStageViewsOf(...HIT_STATE_STATS);
+  // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件 inEffectiveRange が読む適正最小射程距離▲（当たりと同じ段の件）
+  const rangeViews = hitStageViewsOf('minEffectiveRange');
+  const minEffectiveRangeAt = (holder: number, frame: number): number => sumAt(rangeViews[holder], frame);
   // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件）
-  const critViews = viewsOf(
-    (track, e) =>
-      (e.stat === 'critRate' || e.stat === 'normalCritRate') &&
-      (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
-  );
+  const critViews = hitStageViewsOf('critRate', 'normalCritRate');
   // 条件 selfBuffed: 段 1 の件（段 A までの 1.5 段目の判定に入る窓）
   const conditionViews = viewsOf((track) => track.stage === 1);
   // 順位: 段 1・1.5 の攻撃力の件（段 A までの 2 段目の材料）
@@ -1761,6 +1775,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 14 の PR 3: 解除の「フルバースト状態でなければ」（inFullBurst: false）も
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
     if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
+    // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 適正射程距離内なら（発火のフレームの着地点と、常時の値とそのフレームに
+    // 効いている件の適正最小射程距離▲。射撃の回数のきっかけの付与は次のフレームから効くので、その発自身のスタックは入らない）
+    if (
+      condition.inEffectiveRange === true &&
+      options.effectiveRangeAt !== undefined &&
+      !options.effectiveRangeAt(
+        sourceSlotIndex,
+        frame,
+        (passive[sourceSlotIndex]?.buffs.minEffectiveRange ?? 0) + minEffectiveRangeAt(sourceSlotIndex, frame),
+      )
+    )
+      return false;
     // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値（前のフレームの終わりの値）
     if (condition.selfCounter !== undefined) {
       const { counter, atLeast, below } = condition.selfCounter;
@@ -2594,6 +2620,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     hasHitTracks: hitViews.some((views) => views.length > 0),
     critUpAt: (holder, frame) => sumAt(critViews[holder], frame),
+    minEffectiveRangeAt,
     rankContext,
     applyHeal(effect, sourceSlotIndex, holder, frame) {
       const track = healTracks.get(healKey(sourceSlotIndex, effect))?.[holder] ?? null;

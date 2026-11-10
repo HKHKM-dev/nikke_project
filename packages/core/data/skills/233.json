@@ -95,9 +95,9 @@
           "kind": "modeling"
         },
         {
-          "ja": "発現の間の自分の貫通特化は、敵 1 体の前提では効かない（要件 4.2 節）",
-          "en": "Pierce specialization on self during Manifestation does not apply under the single-enemy premise (requirements 4.2)",
-          "kind": "outOfScope",
+          "ja": "発現の間の自分の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
+          "en": "Pierce specialization on self during Manifestation does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
+          "kind": "indirect",
           "effect": {
             "kind": "timed",
             "stat": "unknown",
@@ -105,8 +105,10 @@
             "trigger": "burstUse"
           },
           "claims": [
-            "C-0443"
-          ]
+            "C-0443",
+            "C-1031"
+          ],
+          "path": "pierce"
         },
         {
           "ja": "烙印の最大蓄積量に届く回は録画に無く、最大量の攻撃力と分配ダメージ▲を発動の時に読む形は、トロニーの蓄積爆破（C-0904）と同じとみた",

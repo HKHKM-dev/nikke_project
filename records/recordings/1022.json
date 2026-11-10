@@ -1,0 +1,40 @@
+{
+  "id": "1022",
+  "date": "2026-11-10",
+  "folder": "range",
+  "file": "20261110-1022_sr_ade-agent-bunny_fire.mp4",
+  "original": "2026-11-10_21-22-04.mp4",
+  "durationSec": 204,
+  "frames": 12239,
+  "fps": 60,
+  "sizeMB": 247.4,
+  "sha256": "0e8940a21097",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 315,
+      "name": "エード：エージェントバニー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "撮った順は 2 人 2 本 → 単騎 2 本（撮影の依頼の表と逆）。編成は戦闘履歴のパネルで確かめた",
+  "backup": {
+    "at": "2026-11-10T21:35+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

@@ -205,6 +205,15 @@ export type BuffTotals = {
   trueDamage: number;
   /** 防御力無視ダメージ編: 「通常攻撃が防御力無視ダメージに変化」の窓の数（> 0 なら通常攻撃の基礎に防御力を引かない） */
   trueDamageConversion: number;
+  /**
+   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 適正最小射程距離▲の和。状態だけの stat で、条件が自動の枠の
+   * 距離ボーナスを出し直すのに使う（frame/landing.ts の landingPartsWith）
+   */
+  minEffectiveRange: number;
+  /** 同 2.3 節: 貫通特化の窓の数（> 0 なら通常攻撃に pierceDamage を攻撃ダメージ▲の和に足す） */
+  pierce: number;
+  /** 同: 貫通ダメージ▲の和（貫通特化の効いている通常攻撃にだけ。damage.ts） */
+  pierceDamage: number;
   /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
@@ -264,6 +273,9 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   normalCritRate: 0,
   trueDamage: 0,
   trueDamageConversion: 0,
+  minEffectiveRange: 0,
+  pierce: 0,
+  pierceDamage: 0,
   weapon: null,
 });
 
@@ -305,6 +317,9 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   normalCritRate: 'normalCritRate',
   trueDamage: 'trueDamage',
   trueDamageConversion: 'trueDamageConversion',
+  minEffectiveRange: 'minEffectiveRange',
+  pierce: 'pierce',
+  pierceDamage: 'pierceDamage',
 };
 
 /** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */

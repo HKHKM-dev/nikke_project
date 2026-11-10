@@ -54,13 +54,16 @@
       ],
       "notes": [
         {
-          "ja": "戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体に乗るかは確かめていない）",
-          "en": "Pierce at the start of battle does not change damage by itself (it matters only with a Pierce Damage increase in the team; whether it applies against a single enemy is not verified)",
+          "ja": "戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
+          "en": "Pierce at the start of battle does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
           "kind": "indirect",
           "path": "pierce",
           "effect": {
             "kind": "unknown"
-          }
+          },
+          "claims": [
+            "C-1031"
+          ]
         },
         {
           "ja": "ビーストケージを適用時の、味方全体へのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",

@@ -1,0 +1,187 @@
+{
+  "formatVersion": 1,
+  "resourceId": 315,
+  "checkedAt": "2026-11-10",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "inEffectiveRange": true
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「フルチャージ攻撃が適正射程距離内の対象に命中した時」は、フルチャージの発が当たるとみなし、発のフレームの自分の着地点が、隠しレンズとバーストの適正最小射程距離▲で縮めた適正射程距離の中なら（距離ボーナスが乗る着地点と同じ判定）",
+            "en": "\"When a Full Charge attack hits a target within the effective range\" assumes the full-charge shot hits, and checks that this unit's landing point at the shot frame is within the effective range shortened by Spy Lens and the Burst's Minimum Effective Range up (the same check as the range bonus)"
+          },
+          "claims": [
+            "C-1034"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "spyLens",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "maxStacksRef": 4,
+          "durationRef": 5,
+          "contents": [
+            {
+              "stat": "minEffectiveRange",
+              "ref": 3
+            }
+          ],
+          "assumes": {
+            "ja": "フルチャージの発ごとに 1 スタック付き、付き直す。スタックは次のフレームから効き、付けた発自身の命中には効かない",
+            "en": "Each full-charge shot adds one stack and refreshes it. A stack works from the next frame, not on the hit of the shot that added it"
+          },
+          "claims": [
+            "C-1043",
+            "C-1033"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "近（帯の外）でも、隠しレンズがフルスタック（貫通特化）の間は、攻撃力▲がときどき付き直す（距離ボーナスの乗らない発がきっかけになる）。きっかけの規則が分からないので未対応（plan/design-agent-bunny.md 10 節の 6）",
+          "en": "At the near landing (outside the range), the ATK up is sometimes reapplied while Spy Lens is at max stacks (with Pierce), triggered by shots without the range bonus. The rule for which shot triggers it is unknown, so it is not modeled (plan/design-agent-bunny.md section 10, item 6)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "attack",
+            "target": "allies",
+            "trigger": "fullChargeShot"
+          },
+          "claims": [
+            "C-1035"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "condition": {
+            "inEffectiveRange": true
+          },
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "きっかけと「適正射程距離内」の判定は S1 の攻撃力▲と同じ。貫通特化の無い味方の発には乗らない",
+            "en": "The trigger and the effective-range check are the same as the Skill 1 ATK up. It does not apply to shots of allies without Pierce"
+          },
+          "reads": [
+            "pierce"
+          ],
+          "claims": [
+            "C-1031",
+            "C-1034"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "pierce",
+          "while": {
+            "selfState": {
+              "state": "spyLens",
+              "stacks": "full"
+            }
+          },
+          "claims": [
+            "C-1031"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "attack",
+          "ref": 3,
+          "while": {
+            "selfState": {
+              "state": "spyLens",
+              "stacks": "full"
+            }
+          },
+          "claims": [
+            "C-1034"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "近（帯の外）でも、貫通特化の間は貫通ダメージ▲がときどき付き直す。S1 の攻撃力▲と同じく未対応（plan/design-agent-bunny.md 10 節の 6）",
+          "en": "At the near landing (outside the range), the Pierce Damage up is sometimes reapplied while this unit has Pierce. Not modeled, as with the Skill 1 ATK up (plan/design-agent-bunny.md section 10, item 6)",
+          "kind": "unimplemented",
+          "effect": {
+            "kind": "timed",
+            "stat": "pierceDamage",
+            "target": "allies",
+            "trigger": "fullChargeShot"
+          },
+          "claims": [
+            "C-1035"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "minEffectiveRange",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1043",
+            "C-1033"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "claims": [
+            "C-1034"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "reads": [
+            "pierce"
+          ],
+          "claims": [
+            "C-1031"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

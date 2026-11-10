@@ -59,7 +59,7 @@ import {
   type TriggerFire,
 } from './triggers.ts';
 import type { NamedStateId } from './states.ts';
-import { SKILL_SLOTS, isMaxHpStat, isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
+import { SKILL_SLOTS, isHitStateStat, isMaxHpStat, isStateStat, type BuffStat, type SkillDefinition } from './types.ts';
 
 /** 枠 1 つ分の入力。TeamSlotInput ではなく必要な情報だけを受けて循環 import を避ける（planFixedCycle と同じ流儀） */
 export type TimelineSlot = {
@@ -235,6 +235,9 @@ const BUFF_FIELDS = [
   'normalAttackDamage',
   // ヘルム編: 通常攻撃のクリティカル確率
   'normalCritRate',
+  // エード：エージェントバニー編: 貫通特化と貫通ダメージ▲（適正最小射程距離▲ は条件が自動の枠だけ keyOf で足す）
+  'pierce',
+  'pierceDamage',
 ] as const satisfies readonly (keyof BuffTotals)[];
 
 /** key の桁数。最下位ビットのずれで同一状態が別グループに割れないよう固定桁で文字列化する */
@@ -267,6 +270,8 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
   if (landing !== undefined) {
     parts.push(`L:${landing ?? '?'}`, `N:${state.buffs.hitRate.toFixed(KEY_DIGITS)}`);
     if (state.buffs.hitRateUp !== 0) parts.push(`U:${state.buffs.hitRateUp.toFixed(KEY_DIGITS)}`);
+    // エード：エージェントバニー編: 適正最小射程距離▲ も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
+    if (state.buffs.minEffectiveRange !== 0) parts.push(`R:${state.buffs.minEffectiveRange.toFixed(KEY_DIGITS)}`);
   }
   return parts.join('|');
 }
@@ -664,13 +669,13 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     bounds.add(s.end);
   }
   // 持続の命中率▲（C-0170）: 条件が自動の枠では、コア命中率の N に区間ごとの命中率を使う。着地点の計画があるときだけ、
-  // 状態だけの stat（命中率）の小片の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）
-  const timedHitRateUp = landings !== null && sustainedHitRateUp;
-  if (timedHitRateUp) {
-    for (const p of statePieces) {
-      bounds.add(p.start);
-      bounds.add(p.end);
-    }
+  // 状態だけの stat（命中率）の小片の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）。
+  // エード：エージェントバニー編: 適正最小射程距離▲ も、着地点の計画があれば同じに足す（命中率の切り替え sustainedHitRateUp には依らない）
+  const landingStatePieces =
+    landings === null ? [] : statePieces.filter((p) => sustainedHitRateUp || !isHitStateStat(p.effect.stat));
+  for (const p of landingStatePieces) {
+    bounds.add(p.start);
+    bounds.add(p.end);
   }
   let landingIndex = 0;
   const sorted = [...bounds].filter((b) => b >= 0 && b <= frames).sort((a, b) => a - b);
@@ -678,7 +683,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
   // 4〜5. 区間ごとに状態を組む。区間の頭で効いている小片は、始まりの順に入れて終わったものを外す走査で引き、足す順は並びの順にする
   // （小片が多い確率の状態で、区間 × 小片の二重の走査にしない。plan/design-tove-base.md 6 節）
   const buffActive = activePieceSweep(buffPieces);
-  const stateActive = activePieceSweep(statePieces);
+  const stateActive = activePieceSweep(landingStatePieces);
   const segments: TimelineSegment[] = [];
   for (let i = 0; i + 1 < sorted.length; i++) {
     const start = sorted[i]!;
@@ -731,19 +736,17 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
         appliedAmount: applied.appliedAmount,
       });
     }
-    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate だけを足す
-    if (timedHitRateUp) {
-      for (const p of stateActive(start)) {
-        const state = slotStates[p.slotIndex];
-        if (!state) continue;
-        state.buffs = applyResolvedEffect(
-          state.buffs,
-          p.effect,
-          fixedAttackBaseOf(p.effect, slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0, slots),
-          finalMaxHpOf(p.sourceSlotIndex),
-          slots[p.sourceSlotIndex]?.baseDefence,
-        ).totals;
-      }
+    // 状態だけの stat の小片は timedEffects には入れない（表示は履歴の値の小片から作る）。buffs.hitRate・minEffectiveRange だけを足す
+    for (const p of stateActive(start)) {
+      const state = slotStates[p.slotIndex];
+      if (!state) continue;
+      state.buffs = applyResolvedEffect(
+        state.buffs,
+        p.effect,
+        fixedAttackBaseOf(p.effect, slots[p.sourceSlotIndex]?.casterBaseAttack ?? 0, slots),
+        finalMaxHpOf(p.sourceSlotIndex),
+        slots[p.sourceSlotIndex]?.baseDefence,
+      ).totals;
     }
     const segment: TimelineSegment = {
       start,

@@ -142,6 +142,9 @@ describe('computeDamage', () => {
       normalCritRate: 0,
       trueDamage: 0,
       trueDamageConversion: 0,
+      minEffectiveRange: 0,
+      pierce: 0,
+      pierceDamage: 0,
       weapon: null,
     };
     const r = computeDamage(input({ buffs }));

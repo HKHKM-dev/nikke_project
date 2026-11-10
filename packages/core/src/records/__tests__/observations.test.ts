@@ -63,8 +63,17 @@ const residuals = runObservationsCached(observations, recordings, data);
 const claims = loadClaims();
 const invalidReasons = invalidReasonsOf(observations);
 const gated = gatedObservations(claims, new Set(invalidReasons.keys()));
-/** 自動の条件でも、確定の結論に結び付けてよい指標（命中率▲が効くのは自動の条件だけ。design-stage18.md「経過」の 2026-11-03） */
-const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set(['coreHitRate', 'bulletHitRate']);
+/**
+ * 自動の条件でも、確定の結論に結び付けてよい指標（命中率▲が効くのは自動の条件だけ。design-stage18.md「経過」の 2026-11-03）。
+ * 1 ヒットの値はコア・会心を引数で決め、自動の条件で変わるのは着地点で決まる距離ボーナスだけなので、的の表の割合に左右されない
+ * （適正最小射程距離▲が効くのは自動の条件だけ。plan/design-agent-bunny.md 10 節）
+ */
+const AUTO_GATEABLE_METRICS: ReadonlySet<string> = new Set([
+  'coreHitRate',
+  'bulletHitRate',
+  'hitDamage',
+  'hitDamageAtShot',
+]);
 
 describe('records/observations', () => {
   it('passes validation and each file holds only its own recording', () => {

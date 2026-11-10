@@ -87,6 +87,12 @@ export const SKILL_SLOTS = ['skill1', 'skill2', 'burst'] as const satisfies read
  * 変換」「超過した値の X% のチャージダメージ▲」（比率。passive の self だけ）。フルチャージの発で、その発のチャージ速度▲の和 Σ（比率の和。
  * 発動者基準のチャージ時間▼は入れない。未確定）の 1 を超えた分 × X をチャージダメージ▲（chargeDamage）に足す（skills/buffs.ts の
  * applyChargeBuffs）
+ * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1・2.3 節）:
+ * minEffectiveRange = 適正最小射程距離▲（比率）。状態だけの stat（STATE_STATS）。適正射程距離（bonusRange）の下端を 下端 × (1 − Σ) に
+ * 縮める（C-1043。式は R1 の仮説 C-1033）。条件が自動の枠の距離ボーナス（frame/landing.ts の distanceBonusAt）と、条件 inEffectiveRange が読む。射撃は変えない。
+ * pierce = 貫通特化。値を持たないフラグ（ref を書かない）。それ自体は与ダメージを変えず、pierceDamage の乗る発にする。
+ * pierceDamage = 貫通ダメージ▲（比率）。貫通特化（pierce）の効いている枠の通常攻撃にだけ、攻撃ダメージ▲と同じ和に足す（P1。C-1031）。
+ * 倍率ダメージ・バーストのダメージには足さない（確かめていない）
  */
 export type BuffStat =
   | 'attack'
@@ -123,7 +129,10 @@ export type BuffStat =
   | 'sequentialAttackDamage'
   | 'spinUpSpeed'
   | 'chargeSpeedOverflow'
-  | 'accumulateRatio';
+  | 'accumulateRatio'
+  | 'minEffectiveRange'
+  | 'pierce'
+  | 'pierceDamage';
 export const BUFF_STATS = [
   'attack',
   'critRate',
@@ -180,6 +189,10 @@ export const BUFF_STATS = [
   // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3 節）: 蓄積爆破のダメージ蓄積割合▲（比率）。damage の accumulate
   // （capOrExpire）の割合（ratioRef）に、溜める発の時の値を足す（C-0903）。与ダメージの式は読まない
   'accumulateRatio',
+  // エード：エージェントバニー編（plan/design-agent-bunny.md 2.1・2.3 節）: 適正最小射程距離▲・貫通特化（フラグ）・貫通ダメージ▲
+  'minEffectiveRange',
+  'pierce',
+  'pierceDamage',
 ] as const satisfies readonly BuffStat[];
 
 /**
@@ -205,7 +218,7 @@ export function isFiringStat(stat: BuffStat | 'weapon'): boolean {
  * Stage 11 モダニア: 状態だけを表す stat（射撃に効かない）。timed の件は区間の timedEffects に入れない。区間を割り、区間の
  * buffs と鍵に入るのは、着地点の計画（条件が自動の枠）があるときだけ（C-0170。手入力の枠の区間・グループは変わらない）
  */
-export const STATE_STATS = ['hitRate'] as const satisfies readonly BuffStat[];
+export const STATE_STATS = ['hitRate', 'minEffectiveRange'] as const satisfies readonly BuffStat[];
 
 export function isStateStat(stat: BuffStat | 'weapon'): boolean {
   return (STATE_STATS as readonly string[]).includes(stat);
@@ -229,10 +242,19 @@ export const FLAG_STATS = [
   'infiniteAmmo',
   'trueDamageConversion',
   'elementAdvantage',
+  'pierce',
 ] as const satisfies readonly BuffStat[];
 
 /** 2 段目の段 12 の PR 2: passive に書けるフラグの stat（ref を書かない。値 1） */
-export const PASSIVE_FLAG_STATS = ['elementAdvantage'] as const satisfies readonly BuffStat[];
+export const PASSIVE_FLAG_STATS = ['elementAdvantage', 'pierce'] as const satisfies readonly BuffStat[];
+
+/**
+ * passive のフラグのうち、編成の段で静的に読むもの（while を書けない）。有利コードのダメージ適用は composition.ts が常時の値から読む。
+ * 貫通特化（エード：エージェントバニー編）は区間の値で読むので while を書ける
+ */
+export const STATIC_PASSIVE_FLAG_STATS = [
+  'elementAdvantage',
+] as const satisfies readonly (typeof PASSIVE_FLAG_STATS)[number][];
 
 export function isPassiveFlagStat(stat: BuffStat): boolean {
   return (PASSIVE_FLAG_STATS as readonly string[]).includes(stat);
@@ -994,6 +1016,9 @@ export type StateEndUntil = { stateEnd: NamedStateId };
  * burstStep = この発動を撃った段階が N なら（レッドフード編。plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
+ * inEffectiveRange = 発火のフレームの自分の着地点が、適正最小射程距離▲（minEffectiveRange）で縮めた適正射程距離の中なら（エード：
+ * エージェントバニー編。plan/design-agent-bunny.md 2.2 節。距離ボーナスが乗る着地点と同じ判定。timed だけ）。条件が手入力の枠は、
+ * 手入力の距離ボーナスの有無で決める
  */
 export type EffectCondition = {
   selfBuffed?: BuffStat;
@@ -1008,6 +1033,7 @@ export type EffectCondition = {
   selfHp?: SelfHpCondition;
   selfCounter?: SelfCounterCondition;
   burstStep?: BasicBurstStep;
+  inEffectiveRange?: true;
 };
 
 /**

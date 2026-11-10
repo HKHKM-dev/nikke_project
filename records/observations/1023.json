@@ -1,0 +1,221 @@
+[
+  {
+    "id": "1023-01",
+    "recording": "1023",
+    "kind": "total",
+    "use": "record",
+    "value": 53360706,
+    "description": "エード：エージェントバニー の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11377。増分は 101 個"
+    },
+    "source": "V-0710",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1023-02",
+    "recording": "1023",
+    "kind": "count",
+    "use": "record",
+    "value": 101,
+    "unit": "トリガー",
+    "description": "エード：エージェントバニー のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 101 個。前の増分から 30f 未満の増分（0 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 31f）から発の数を決めた（2 発になった組 0 個）"
+    },
+    "source": "V-0710",
+    "readAt": "2026-11-10"
+  },
+  {
+    "id": "1023-03",
+    "recording": "1023",
+    "source": "V-0710",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 430745,
+    "unit": "ダメージ",
+    "description": "エード：エージェントバニー単騎の 8 発目（中近・隠しレンズ 7 スタックで撃った発。コア・会心）。距離ボーナスも S1 の▲も乗らない",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、エード：エージェントバニーの 1 ヒット（コア・会心の有無 × 距離ボーナス × S1・S2 の攻撃力▲ × バーストの攻撃ダメージ▲ × 貫通ダメージ▲の P1〜P3）と I-DOLL・フラワーの 1 ヒット（胴体・コア × 会心 × S1 × バースト × 貫通ダメージ▲）の格子に ±3 で当て、時刻の順に並べた（使い捨てのスクリプト。V-0710「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 8,
+        "core": true,
+        "crit": true,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1023-04",
+    "recording": "1023",
+    "source": "V-0710",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 396285,
+    "unit": "ダメージ",
+    "description": "エード：エージェントバニー単騎の 10 発目（中近・隠しレンズ 9 スタックで撃った発。コア・会心なし）。距離ボーナスが乗る最初の発で、S1・S2 の▲はまだ乗らない（9 発目は 2 本とも的のミサイルに当たって HUD が増えない）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、エード：エージェントバニーの 1 ヒット（コア・会心の有無 × 距離ボーナス × S1・S2 の攻撃力▲ × バーストの攻撃ダメージ▲ × 貫通ダメージ▲の P1〜P3）と I-DOLL・フラワーの 1 ヒット（胴体・コア × 会心 × S1 × バースト × 貫通ダメージ▲）の格子に ±3 で当て、時刻の順に並べた（使い捨てのスクリプト。V-0710「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 10,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1023-05",
+    "recording": "1023",
+    "source": "V-0710",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 615533,
+    "unit": "ダメージ",
+    "description": "エード：エージェントバニー単騎の 11 発目（中近・隠しレンズ 10 スタックで撃った発。コア・会心なし）。距離ボーナス・S1 の攻撃力▲・S2 の攻撃力▲・貫通特化の発の S2 の貫通ダメージ▲（攻撃ダメージ▲の和）が乗る",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、エード：エージェントバニーの 1 ヒット（コア・会心の有無 × 距離ボーナス × S1・S2 の攻撃力▲ × バーストの攻撃ダメージ▲ × 貫通ダメージ▲の P1〜P3）と I-DOLL・フラワーの 1 ヒット（胴体・コア × 会心 × S1 × バースト × 貫通ダメージ▲）の格子に ±3 で当て、時刻の順に並べた（使い捨てのスクリプト。V-0710「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 11,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1023-06",
+    "recording": "1023",
+    "source": "V-0710",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 399786,
+    "unit": "ダメージ",
+    "description": "エード：エージェントバニー単騎の近の 1 ヒット（隠しレンズのフルスタック・コア・会心なし）。距離ボーナスは乗らず（帯の外）、S1 の▲が切れた後は S2 の攻撃力▲だけ",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、エード：エージェントバニーの 1 ヒット（コア・会心の有無 × 距離ボーナス × S1・S2 の攻撃力▲ × バーストの攻撃ダメージ▲ × 貫通ダメージ▲の P1〜P3）と I-DOLL・フラワーの 1 ヒット（胴体・コア × 会心 × S1 × バースト × 貫通ダメージ▲）の格子に ±3 で当て、時刻の順に並べた（使い捨てのスクリプト。V-0710「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 2800,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1023-07",
+    "recording": "1023",
+    "source": "V-0710",
+    "readAt": "2026-11-10",
+    "use": "compare",
+    "kind": "hit",
+    "value": 615533,
+    "unit": "ダメージ",
+    "description": "エード：エージェントバニー単騎の遠の 1 ヒット（隠しレンズのフルスタック・コア・会心なし）。距離ボーナス・S1・S2 の攻撃力▲・S2 の貫通ダメージ▲",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分（hud.ts --mode jumps）を、エード：エージェントバニーの 1 ヒット（コア・会心の有無 × 距離ボーナス × S1・S2 の攻撃力▲ × バーストの攻撃ダメージ▲ × 貫通ダメージ▲の P1〜P3）と I-DOLL・フラワーの 1 ヒット（胴体・コア × 会心 × S1 × バースト × 貫通ダメージ▲）の格子に ±3 で当て、時刻の順に並べた（使い捨てのスクリプト。V-0710「読み方」）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 5295,
+        "core": true,
+        "crit": false,
+        "distance": "model"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": false,
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1023-08",
+    "recording": "1023",
+    "source": "V-0710",
+    "readAt": "2026-11-10",
+    "use": "record",
+    "kind": "count",
+    "value": 18,
+    "unit": "発",
+    "description": "近（帯の外）で、隠しレンズがフルスタックの間のエード：エージェントバニーの発（距離ボーナスなし。28 発）のうち、S1 の攻撃力▲と S2 の貫通ダメージ▲の乗っていた発の数。帯の中の発から 5 秒より後にも乗っている発があり、距離ボーナスの無い発の後に付き直す（モデルは付けない。plan/design-agent-bunny.md 10 節の 6）",
+    "method": {
+      "tool": "hud.ts --mode jumps と、使い捨てのスクリプト（格子に当てる）",
+      "note": "格子の当て方は V-0710「読み方」。距離ボーナスの無い発のうち、S2 の攻撃力▲の乗った発（[S2]）と、S1 の攻撃力▲と貫通ダメージ▲も乗った発を数えた"
+    }
+  }
+]

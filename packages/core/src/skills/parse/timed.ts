@@ -23,6 +23,7 @@ import {
   isHitStateStat,
   isMaxHpStat,
   isPassiveFlagStat,
+  STATIC_PASSIVE_FLAG_STATS,
   isSelfHpAtMostTrigger,
   isStateStat,
   isTimerTrigger,
@@ -623,7 +624,9 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
   if (passiveFlag) {
     if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value`);
     if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value`);
-    if (v.while !== undefined) fail(`${path}.while`, `${stat} cannot have while`);
+    // エード：エージェントバニー編（plan/design-agent-bunny.md 1 節）: 静的に読むフラグだけ while を書けない（貫通特化は書ける）
+    if (v.while !== undefined && (STATIC_PASSIVE_FLAG_STATS as readonly string[]).includes(stat))
+      fail(`${path}.while`, `${stat} cannot have while`);
   }
   const effect: PassiveEffect = { kind: 'passive', target, stat };
   if (!passiveFlag) effect.ref = parseRef(v.ref, `${path}.ref`);

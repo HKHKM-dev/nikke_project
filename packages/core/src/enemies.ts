@@ -197,7 +197,15 @@ function parseLanding(v: unknown, path: string): LandingPoint {
   ) {
     throw new TypeError(`${path}.range: must be [min, max] (m, min < max)`);
   }
-  return { id: v.id, band: v.band as LandingBand, range: [range[0] as number, range[1] as number] };
+  // エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 代表の距離は必須（無いと適正最小射程距離▲が黙って効かなくなる）
+  if (typeof v.distance !== 'number' || !Number.isFinite(v.distance) || v.distance < range[0] || v.distance > range[1])
+    throw new TypeError(`${path}.distance: must be a number in range (m)`);
+  return {
+    id: v.id,
+    band: v.band as LandingBand,
+    range: [range[0] as number, range[1] as number],
+    distance: v.distance,
+  };
 }
 
 /** 表のキー（着地点の id・帯・all）と値（0..1 か、行ごと null）を確かめる */
