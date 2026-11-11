@@ -366,6 +366,7 @@ export function toIndexEntry(data: CharacterData): CharacterIndexEntry {
     element: data.element,
     weaponType: data.weaponType,
     burstStep: data.burstStep,
+    hasTreasure: data.treasure !== null,
   };
 }
 

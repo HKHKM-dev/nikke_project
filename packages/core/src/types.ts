@@ -17,7 +17,8 @@ export type ShotInputType = 'DOWN' | 'UP' | 'DOWN_Charge';
 /** スキルの枠。skills/types.ts が SKILL_SLOTS と一緒に再エクスポートする（Stage 9 で TreasureData から参照するためここへ移した） */
 export type SkillSlot = 'skill1' | 'skill2' | 'burst';
 
-export type CharacterIndexEntry = {
+/** 一覧とキャラのデータに共通の項目 */
+export type CharacterSummary = {
   resourceId: number;
   /** CDN の name_code（キャラの識別番号）。宝物・ShiftyPad の育成データ（shiftypad.ts）はこれでキャラを指す */
   nameCode: number;
@@ -28,6 +29,11 @@ export type CharacterIndexEntry = {
   element: Element;
   weaponType: WeaponType;
   burstStep: BurstStep;
+};
+
+export type CharacterIndexEntry = CharacterSummary & {
+  /** 宝物があるか（CharacterData.treasure が null でない。ニケ一覧の宝物の絞り込み） */
+  hasTreasure: boolean;
 };
 
 export type CharacterIndex = {
@@ -131,7 +137,7 @@ export type SkillRaw = {
   values: (string[] | null)[];
 };
 
-export type CharacterData = CharacterIndexEntry & {
+export type CharacterData = CharacterSummary & {
   /** CDN の corporation_sub_type（"OVERSPEC" など）。無いキャラは null。スペック固定の好感度の上限（fixedSpec.ts）を決める */
   corporationSubType: string | null;
   /**

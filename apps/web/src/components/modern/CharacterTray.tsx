@@ -9,6 +9,7 @@ import {
   trayCollectionBadge,
   type BadgeFilters,
   type BadgeKind,
+  TREASURE_FILTER_BADGE,
 } from './badges.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
@@ -91,6 +92,9 @@ export function CharacterTray({
   onSelectCharacter,
 }: Props) {
   const [filters, setFilters] = useState<BadgeFilters>({});
+  /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
+  const [treasureOnly, setTreasureOnly] = useState(false);
+  const filtering = treasureOnly || Object.keys(filters).length > 0;
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({
@@ -101,8 +105,8 @@ export function CharacterTray({
 
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
   const filteredCharacters = useMemo(
-    () => index.filter((char) => matchesBadgeFilters(char, filters)),
-    [index, filters],
+    () => index.filter((char) => (!treasureOnly || char.hasTreasure) && matchesBadgeFilters(char, filters)),
+    [index, filters, treasureOnly],
   );
 
   return (
@@ -122,12 +126,25 @@ export function CharacterTray({
                 onToggle={(value) => setFilters((f) => toggleBadgeFilter(f, kind.key, value))}
               />
             ))}
+            <div className="char-tray-badge-filter" role="group" aria-label="宝物で絞り込み">
+              <button
+                type="button"
+                className="char-tray-badge-button"
+                aria-pressed={treasureOnly}
+                onClick={() => setTreasureOnly((t) => !t)}
+              >
+                <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
+              </button>
+            </div>
             {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない） */}
             <button
               type="button"
               className="char-tray-action-button char-tray-filter-clear"
-              aria-disabled={Object.keys(filters).length === 0}
-              onClick={() => setFilters((f) => (Object.keys(f).length === 0 ? f : {}))}
+              aria-disabled={!filtering}
+              onClick={() => {
+                setFilters((f) => (Object.keys(f).length === 0 ? f : {}));
+                setTreasureOnly(false);
+              }}
             >
               クリア
             </button>

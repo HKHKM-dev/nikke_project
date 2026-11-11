@@ -13,7 +13,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 11,
@@ -27,7 +28,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 12,
@@ -41,7 +43,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 14,
@@ -55,7 +58,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 15,
@@ -69,7 +73,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 16,
@@ -83,7 +88,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 17,
@@ -97,7 +103,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 18,
@@ -111,7 +118,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 19,
@@ -125,7 +133,8 @@
       "corporation": "PILGRIM",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 20,
@@ -139,7 +148,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 22,
@@ -153,7 +163,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 23,
@@ -167,7 +178,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 30,
@@ -181,7 +193,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": true
     },
     {
       "resourceId": 32,
@@ -195,7 +208,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 33,
@@ -209,7 +223,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 40,
@@ -223,7 +238,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 41,
@@ -237,7 +253,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 43,
@@ -251,7 +268,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 60,
@@ -265,7 +283,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 61,
@@ -279,7 +298,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 62,
@@ -293,7 +313,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 63,
@@ -307,7 +328,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 70,
@@ -321,7 +343,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 71,
@@ -335,7 +358,8 @@
       "corporation": "ELYSION",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 72,
@@ -349,7 +373,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": true
     },
     {
       "resourceId": 73,
@@ -363,7 +388,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 74,
@@ -377,7 +403,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 75,
@@ -391,7 +418,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 80,
@@ -405,7 +433,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": true
     },
     {
       "resourceId": 82,
@@ -419,7 +448,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 90,
@@ -433,7 +463,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 91,
@@ -447,7 +478,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 92,
@@ -461,7 +493,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 93,
@@ -475,7 +508,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 94,
@@ -489,7 +523,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 95,
@@ -503,7 +538,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 100,
@@ -517,7 +553,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 101,
@@ -531,7 +568,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 102,
@@ -545,7 +583,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 103,
@@ -559,7 +598,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 104,
@@ -573,7 +613,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 105,
@@ -587,7 +628,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 110,
@@ -601,7 +643,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 111,
@@ -615,7 +658,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 112,
@@ -629,7 +673,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": true
     },
     {
       "resourceId": 113,
@@ -643,7 +688,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 120,
@@ -657,7 +703,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 121,
@@ -671,7 +718,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 130,
@@ -685,7 +733,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 131,
@@ -699,7 +748,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 132,
@@ -713,7 +763,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 140,
@@ -727,7 +778,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 141,
@@ -741,7 +793,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 142,
@@ -755,7 +808,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 143,
@@ -769,7 +823,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 150,
@@ -783,7 +838,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 160,
@@ -797,7 +853,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 161,
@@ -811,7 +868,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 162,
@@ -825,7 +883,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 170,
@@ -839,7 +898,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 171,
@@ -853,7 +913,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 172,
@@ -867,7 +928,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 180,
@@ -881,7 +943,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 181,
@@ -895,7 +958,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 182,
@@ -909,7 +973,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 183,
@@ -923,7 +988,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 190,
@@ -937,7 +1003,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 191,
@@ -951,7 +1018,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 192,
@@ -965,7 +1033,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 193,
@@ -979,7 +1048,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 194,
@@ -993,7 +1063,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 195,
@@ -1007,7 +1078,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 200,
@@ -1021,7 +1093,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 201,
@@ -1035,7 +1108,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 202,
@@ -1049,7 +1123,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 203,
@@ -1063,7 +1138,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "AR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 210,
@@ -1077,7 +1153,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 212,
@@ -1091,7 +1168,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 220,
@@ -1105,7 +1183,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 221,
@@ -1119,7 +1198,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 222,
@@ -1133,7 +1213,8 @@
       "corporation": "PILGRIM",
       "element": "Electronic",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 223,
@@ -1147,7 +1228,8 @@
       "corporation": "PILGRIM",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 224,
@@ -1161,7 +1243,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 225,
@@ -1175,7 +1258,8 @@
       "corporation": "PILGRIM",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 226,
@@ -1189,7 +1273,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 230,
@@ -1203,7 +1288,8 @@
       "corporation": "PILGRIM",
       "element": "Electronic",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 231,
@@ -1217,7 +1303,8 @@
       "corporation": "PILGRIM",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 232,
@@ -1231,7 +1318,8 @@
       "corporation": "PILGRIM",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 233,
@@ -1245,7 +1333,8 @@
       "corporation": "PILGRIM",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 234,
@@ -1259,7 +1348,8 @@
       "corporation": "PILGRIM",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 240,
@@ -1273,7 +1363,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 241,
@@ -1287,7 +1378,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 242,
@@ -1301,7 +1393,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 260,
@@ -1315,7 +1408,8 @@
       "corporation": "PILGRIM",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 261,
@@ -1329,7 +1423,8 @@
       "corporation": "PILGRIM",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 262,
@@ -1343,7 +1438,8 @@
       "corporation": "PILGRIM",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 270,
@@ -1357,7 +1453,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 271,
@@ -1371,7 +1468,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 272,
@@ -1385,7 +1483,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 280,
@@ -1399,7 +1498,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "MG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 281,
@@ -1413,7 +1513,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "AR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 282,
@@ -1427,7 +1528,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 283,
@@ -1441,7 +1543,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 284,
@@ -1455,7 +1558,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 290,
@@ -1469,7 +1573,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 291,
@@ -1483,7 +1588,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 300,
@@ -1497,7 +1603,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 301,
@@ -1511,7 +1618,8 @@
       "corporation": "ELYSION",
       "element": "Iron",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 302,
@@ -1525,7 +1633,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 303,
@@ -1539,7 +1648,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 304,
@@ -1553,7 +1663,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 305,
@@ -1567,7 +1678,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 306,
@@ -1581,7 +1693,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 307,
@@ -1595,7 +1708,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 308,
@@ -1609,7 +1723,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 310,
@@ -1623,7 +1738,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 311,
@@ -1637,7 +1753,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 312,
@@ -1651,7 +1768,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 313,
@@ -1665,7 +1783,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 314,
@@ -1679,7 +1798,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 315,
@@ -1693,7 +1813,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 316,
@@ -1707,7 +1828,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 321,
@@ -1721,7 +1843,8 @@
       "corporation": "ELYSION",
       "element": "Iron",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 322,
@@ -1735,7 +1858,8 @@
       "corporation": "ELYSION",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 330,
@@ -1749,7 +1873,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 331,
@@ -1763,7 +1888,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 350,
@@ -1777,7 +1903,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 351,
@@ -1791,7 +1918,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 352,
@@ -1805,7 +1933,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 353,
@@ -1819,7 +1948,8 @@
       "corporation": "ELYSION",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 354,
@@ -1833,7 +1963,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 355,
@@ -1847,7 +1978,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 361,
@@ -1861,7 +1993,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 380,
@@ -1875,7 +2008,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 381,
@@ -1889,7 +2023,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 382,
@@ -1903,7 +2038,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 390,
@@ -1917,7 +2053,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": true
     },
     {
       "resourceId": 391,
@@ -1931,7 +2068,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 392,
@@ -1945,7 +2083,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 400,
@@ -1959,7 +2098,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 401,
@@ -1973,7 +2113,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 402,
@@ -1987,7 +2128,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 403,
@@ -2001,7 +2143,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 404,
@@ -2015,7 +2158,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 405,
@@ -2029,7 +2173,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 411,
@@ -2043,7 +2188,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": true
     },
     {
       "resourceId": 412,
@@ -2057,7 +2203,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 430,
@@ -2071,7 +2218,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 431,
@@ -2085,7 +2233,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 432,
@@ -2099,7 +2248,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 441,
@@ -2113,7 +2263,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "MG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 450,
@@ -2127,7 +2278,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 451,
@@ -2141,7 +2293,8 @@
       "corporation": "MISSILIS",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 470,
@@ -2155,7 +2308,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "AllStep"
+      "burstStep": "AllStep",
+      "hasTreasure": false
     },
     {
       "resourceId": 471,
@@ -2169,7 +2323,8 @@
       "corporation": "PILGRIM",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 472,
@@ -2183,7 +2338,8 @@
       "corporation": "PILGRIM",
       "element": "Fire",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 473,
@@ -2197,7 +2353,8 @@
       "corporation": "PILGRIM",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 500,
@@ -2211,7 +2368,8 @@
       "corporation": "MISSILIS",
       "element": "Electronic",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 501,
@@ -2225,7 +2383,8 @@
       "corporation": "MISSILIS",
       "element": "Fire",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 502,
@@ -2239,7 +2398,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 511,
@@ -2253,7 +2413,8 @@
       "corporation": "PILGRIM",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 513,
@@ -2267,7 +2428,8 @@
       "corporation": "PILGRIM",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 514,
@@ -2281,7 +2443,8 @@
       "corporation": "PILGRIM",
       "element": "Fire",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 515,
@@ -2295,7 +2458,8 @@
       "corporation": "PILGRIM",
       "element": "Iron",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 520,
@@ -2309,7 +2473,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 521,
@@ -2323,7 +2488,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 532,
@@ -2337,7 +2503,8 @@
       "corporation": "ELYSION",
       "element": "Wind",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 550,
@@ -2351,7 +2518,8 @@
       "corporation": "TETRA",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": true
     },
     {
       "resourceId": 551,
@@ -2365,7 +2533,8 @@
       "corporation": "TETRA",
       "element": "Electronic",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 570,
@@ -2379,7 +2548,8 @@
       "corporation": "TETRA",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 580,
@@ -2393,7 +2563,8 @@
       "corporation": "ELYSION",
       "element": "Water",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": true
     },
     {
       "resourceId": 581,
@@ -2407,7 +2578,8 @@
       "corporation": "ELYSION",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 582,
@@ -2421,7 +2593,8 @@
       "corporation": "ELYSION",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 583,
@@ -2435,7 +2608,8 @@
       "corporation": "ELYSION",
       "element": "Fire",
       "weaponType": "SG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 590,
@@ -2449,7 +2623,8 @@
       "corporation": "MISSILIS",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 600,
@@ -2463,7 +2638,8 @@
       "corporation": "TETRA",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 601,
@@ -2477,7 +2653,8 @@
       "corporation": "TETRA",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 620,
@@ -2491,7 +2668,8 @@
       "corporation": "MISSILIS",
       "element": "Water",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 800,
@@ -2505,7 +2683,8 @@
       "corporation": "ABNORMAL",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 801,
@@ -2519,7 +2698,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 802,
@@ -2533,7 +2713,8 @@
       "corporation": "ABNORMAL",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 810,
@@ -2547,7 +2728,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 811,
@@ -2561,7 +2743,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 812,
@@ -2575,7 +2758,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 820,
@@ -2589,7 +2773,8 @@
       "corporation": "ABNORMAL",
       "element": "Water",
       "weaponType": "MG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 821,
@@ -2603,7 +2788,8 @@
       "corporation": "ABNORMAL",
       "element": "Water",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 822,
@@ -2617,7 +2803,8 @@
       "corporation": "ABNORMAL",
       "element": "Wind",
       "weaponType": "SR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 830,
@@ -2631,7 +2818,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 831,
@@ -2645,7 +2833,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 832,
@@ -2659,7 +2848,8 @@
       "corporation": "ABNORMAL",
       "element": "Electronic",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 833,
@@ -2673,7 +2863,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 834,
@@ -2687,7 +2878,8 @@
       "corporation": "ABNORMAL",
       "element": "Wind",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 835,
@@ -2701,7 +2893,8 @@
       "corporation": "ABNORMAL",
       "element": "Wind",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 836,
@@ -2715,7 +2908,8 @@
       "corporation": "ABNORMAL",
       "element": "Water",
       "weaponType": "SMG",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 840,
@@ -2729,7 +2923,8 @@
       "corporation": "ABNORMAL",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 841,
@@ -2743,7 +2938,8 @@
       "corporation": "ABNORMAL",
       "element": "Electronic",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 842,
@@ -2757,7 +2953,8 @@
       "corporation": "ABNORMAL",
       "element": "Electronic",
       "weaponType": "RL",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 850,
@@ -2771,7 +2968,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 851,
@@ -2785,7 +2983,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "RL",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 852,
@@ -2799,7 +2998,8 @@
       "corporation": "ABNORMAL",
       "element": "Wind",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 860,
@@ -2813,7 +3013,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 861,
@@ -2827,7 +3028,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "SR",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     },
     {
       "resourceId": 862,
@@ -2841,7 +3043,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "AR",
-      "burstStep": "Step1"
+      "burstStep": "Step1",
+      "hasTreasure": false
     },
     {
       "resourceId": 870,
@@ -2855,7 +3058,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "SG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 871,
@@ -2869,7 +3073,8 @@
       "corporation": "ABNORMAL",
       "element": "Fire",
       "weaponType": "MG",
-      "burstStep": "Step3"
+      "burstStep": "Step3",
+      "hasTreasure": false
     },
     {
       "resourceId": 872,
@@ -2883,7 +3088,8 @@
       "corporation": "ABNORMAL",
       "element": "Iron",
       "weaponType": "SMG",
-      "burstStep": "Step2"
+      "burstStep": "Step2",
+      "hasTreasure": false
     }
   ]
 }

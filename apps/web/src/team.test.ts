@@ -37,6 +37,7 @@ function entry(resourceId: number): CharacterIndexEntry {
     element: 'Fire',
     weaponType: 'AR',
     burstStep: 'Step3',
+    hasTreasure: false,
   };
 }
 const index = [10, 20, 30, 40, 50, 60].map(entry);
