@@ -5,7 +5,6 @@
 - 日付: 2026-11-11
 - Stage: [plan/design-hp-down-interval.md](../../plan/design-hp-down-interval.md)（キャラ毎の調査）
 - 録画: `1084`、`1085`
-- 結論: `C-1100`、`C-1101`、`C-1102`
 - 状態: 調査中
 
 ## 条件
