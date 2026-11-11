@@ -341,5 +341,103 @@
     },
     "source": "V-0703",
     "readAt": "2026-11-09"
+  },
+  {
+    "id": "1007-12",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2046353,
+    "description": "2 回目のフルバースト（00.00 は f3831。`1007-03`。ディーゼルがバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）の 1 回目の tick（非会心。00.00 から +79f。リターのバーストと S1 の使用 3 回目の段の攻撃力▲の窓の中）。+79f の増分 2,081,771 から、同じフレームのリターの 1 ヒット（`1007-13`）を引いた値。2 回目の tick（+138f）の増分も同じ 2,081,771",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "リターの 1 ヒットの増分（胴体の 35,418 と、コア・会心の組の 55,095・67,385 など）が +74〜+184f に 2〜3f おきに続き、+79f・+138f はその並びの上にある（+76・+84、+135・+142 の間）。リターが撃ち止んだ後の 3 回目の tick（+197f）は増分そのままで 2,046,353"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "percent": 63.33,
+        "fullBurst": 1,
+        "frame": 0,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1007-13",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 35418,
+    "description": "2 回目のフルバーストの頭（リターのバーストと S1 の使用 3 回目の段の攻撃力▲の窓の中）の、リターの通常攻撃の 1 ヒット（胴体・非会心・距離ボーナスあり）。3,831 + 84〜184f に単独の増分で 2〜3f おきに出る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "同じ値の単独の増分（前後のフレームにほかの発が無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1007-14",
+    "recording": "1007",
+    "kind": "hit",
+    "use": "record",
+    "unit": "ダメージ",
+    "value": [1153418, 1153418],
+    "description": "1 回目のフルバースト（00.00 は f1406。`1007-03`）の、S2 のフルバーストの持続ダメージ（63.33%）の 7・8 回目の tick（00.00 から +372f・+432f。リターの攻撃力▲の窓の後）の増分。モデルの非会心の tick 1,133,796 と、▲の無いリターの 1 ヒット 19,622（同じ並びの +370・+377f などに単独で出る）の和",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "増分そのまま。窓の後でも、リターの発と同じフレームの tick はモデルより 1.7% 大きく読める"
+    },
+    "scope": {
+      "slot": [1, 3],
+      "source": "dot"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
   }
 ]
