@@ -261,7 +261,7 @@ export function stepShooter(
   blocked = false,
 ): boolean {
   if (MAX_AMMO_CLAMP_ON_DECREASE && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
-  // グレイブ編（V-0735）: 基礎の武器で込めている間に装弾数無限が付いたら、このフレームで込め終える（最大装弾数のリロード完了。1 発目の
+  // グレイブ編（V-0735。C-1124）: 基礎の武器で込めている間に装弾数無限が付いたら、このフレームで込め終える（最大装弾数のリロード完了。1 発目の
   // 遅延に入る。弾丸チャージで満タンに届いたときと同じ）。グレイブの 1 回目のバーストは残弾 1 の所で ∞ に替わり、約 28f 後に撃ち始め、
   // 「最大装弾リロード完了時に解除」の過熱I が外れた
   if (params.infiniteAmmo && params.weapon === null && state.phase === 'reloading') {

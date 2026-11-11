@@ -533,17 +533,31 @@
     "source": "V-0735",
     "readAt": "2026-11-11",
     "kind": "interval",
-    "use": "record",
-    "value": 388,
+    "use": "compare",
+    "value": 987,
     "unit": "f",
-    "description": "フルバーストの終わり（右の欄の六角形の所が灰色に替わる）から、BURST バーが消える（ゲージ満タン）までの動画のフレーム（チェーンの CT が明ける前に満ちた回）: 378・385・400f（f4174 → 4552・f6553 → 6938・f8934 → 9334）。モデルは、放熱の味方全体のバーストゲージのチャージ速度▲ありで 320f、なしで 386〜388f（いまの定義）",
+    "description": "2 回目のフルバーストの始まり（III のタイマーの 00.00。f3565）から、次に BURST バーが消える（ゲージ満タン。f4552）までの動画のフレーム。フルバーストの後の放熱の間と後のゲージの溜まり方を、CT に左右されずに見る（3 回目以降も 5945 → 6938（993f）・8325 → 9334（1009f））。放熱の味方全体のバーストゲージのチャージ速度▲を入れたモデルは約 66f 短くなる",
     "method": {
       "tool": "gauge.ts --mode events と burst-panel@4",
-      "note": "値はその回の平均"
+      "note": "1 回目は CT の明けと満タンが重なるので使わない。許容 ±10f は、2〜4 回目の回ごとの揺れ（987〜1009f）"
     },
     "scope": {
       "slot": 1,
       "source": "normal"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "fullBurstToGaugeFull",
+      "args": {
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 10
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
     }
   },
   {

@@ -11,7 +11,10 @@
             "ended": "prediction"
           },
           "target": "self",
-          "ref": 1
+          "ref": 1,
+          "claims": [
+            "C-1120"
+          ]
         },
         {
           "kind": "state",
@@ -27,6 +30,9 @@
               "ref": 2,
               "decrease": true
             }
+          ],
+          "claims": [
+            "C-1120"
           ]
         },
         {
@@ -39,6 +45,9 @@
           },
           "reads": [
             "pierce"
+          ],
+          "claims": [
+            "C-1121"
           ]
         }
       ],
@@ -51,7 +60,10 @@
             "kind": "passive",
             "stat": "burstGaugeSpeed",
             "target": "allies"
-          }
+          },
+          "claims": [
+            "C-1122"
+          ]
         },
         {
           "ja": "放熱の時に限り、自分に最終最大HP の 2% を 1 秒ごとに回復するのは、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
@@ -77,6 +89,9 @@
               "stat": "attack",
               "ref": 2
             }
+          ],
+          "claims": [
+            "C-1117"
           ]
         },
         {
@@ -101,7 +116,14 @@
               "stat": "attack",
               "ref": 4
             }
-          ]
+          ],
+          "claims": [
+            "C-1123"
+          ],
+          "assumes": {
+            "ja": "過熱II・III は完全計算の終わりで外す。説明文の「持続」（完全計算かつ過熱I・II の時に限り）は過熱I が外れるまで続く読みもありうるが、完全計算の終わりに残弾が 0 になり、込め終わる（過熱I が外れる）まで撃たないので、与ダメージでは見分けられない",
+            "en": "Overheat II and III are removed when Prediction ends. The text \"continuously (only while Prediction and Overheat I/II)\" could also mean they last until Overheat I is removed, but the ammo goes to 0 when Prediction ends and Grave does not shoot until the reload completes (removing Overheat I), so the two cannot be told apart in damage"
+          }
         },
         {
           "kind": "state",
@@ -125,6 +147,9 @@
               "stat": "attackDamage",
               "ref": 6
             }
+          ],
+          "claims": [
+            "C-1123"
           ]
         }
       ],
@@ -137,21 +162,33 @@
           "state": "prediction",
           "trigger": "burstUse",
           "target": "self",
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         },
         {
           "kind": "timed",
           "trigger": "burstUse",
           "target": "self",
           "stat": "infiniteAmmo",
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         },
         {
           "kind": "timed",
           "trigger": "burstUse",
           "target": "self",
           "stat": "pierce",
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         },
         {
           "kind": "timed",
@@ -159,7 +196,11 @@
           "target": "self",
           "stat": "pierceDamage",
           "ref": 2,
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         },
         {
           "kind": "timed",
@@ -167,7 +208,11 @@
           "target": "self",
           "stat": "critRate",
           "ref": 6,
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         },
         {
           "kind": "timed",
@@ -175,7 +220,11 @@
           "target": "allies",
           "stat": "attackDamage",
           "ref": 3,
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         },
         {
           "kind": "timed",
@@ -186,6 +235,10 @@
           "durationSeconds": 10,
           "reads": [
             "pierce"
+          ],
+          "claims": [
+            "C-1118",
+            "C-1119"
           ]
         },
         {
@@ -195,7 +248,11 @@
           "stat": "maxAmmo",
           "scaling": "flat",
           "ref": 5,
-          "durationSeconds": 10
+          "durationSeconds": 10,
+          "claims": [
+            "C-1118",
+            "C-1119"
+          ]
         }
       ],
       "notes": [

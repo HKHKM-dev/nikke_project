@@ -1,8 +1,0 @@
-{
-  "section": "6",
-  "order": 40,
-  "cells": {
-    "要るもの": "キャラの定義（語彙は「1 秒間隔」の現在の HP▼（currentHpDown の周期の形）と、HP の割合による状態の解除で書ける。[design-hp-down-interval.md](design-hp-down-interval.md) 3 節）",
-    "対象": "グレイブのバーストの現在の HP▼（定義なし）"
-  }
-}
