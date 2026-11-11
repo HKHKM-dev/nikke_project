@@ -1,0 +1,20 @@
+{
+  "id": "C-1120",
+  "text": "グレイブの S1（Lv10）は、完全計算が終わったフレームに自分の残弾を 100% 減らし（0 にしてリロードに入る）、自分に「放熱」を付ける。放熱のリロード比率 50%▼は、分割リロードの 1 段で込める割合（CDN の reloadBullet 0.5）に (1 − 50%) を掛け（1 段 15 発・4 段。ふだんは 30 発・2 段）、放熱はその込めが最大装弾数まで込め終わった時に外れる",
+  "state": "確定",
+  "topic": "スキル・キャラ固有",
+  "grade": "反復実測",
+  "basis": "`1101-15`・`1102-15`（完全計算の最後の発から込めの後の 1 発目まで 320f でモデル（1 段 15 発・込めない 1 段 + 4 段）と許容内。枠の上の残弾の表示は ∞ → 0/63 → 15/60・30/60・45/60・60/60 と 15 発ずつ約 60f ごと。割合から引く読み（1 発ずつ 60 段）・リロード速度▼の読み（30 発ずつ 1.5 秒）は合わない）、`1101-14`・`1102-14`（放熱の味方全体の貫通ダメージ▲は、グレイブの込め終わりの前のアリスの発に乗り、後の発に乗らない。8 回の発動のどれも同じで、次のバーストまで続く読みは合わない）。1101 で読みを決め、1102 で同じ。V-0735",
+  "model": "反映（data/skills/514.json の skill1 の effects[0]（ammoDecrease・きっかけ { ended: prediction }）と effects[1]（状態の付与・{ ended: prediction }・durationUntil: \"reloadEnd\"・中身 reloadRatio）。{ ended } の発火は skills/holders.ts の endedAt、リロード比率は frame/firing.ts の firingParams の reloadBullet）",
+  "replaces": [],
+  "updated": "2026-11-11",
+  "subject": {
+    "places": ["data/skills/514.json の skill1 の effects[0]", "data/skills/514.json の skill1 の effects[1]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1101",
+      "role": "仮説の出どころ"
+    }
+  ]
+}

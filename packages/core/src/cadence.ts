@@ -240,7 +240,7 @@ export function computeCadence(
   const first = firstShotFrames(shot, model, params);
   const reloadFirst = reloadFirstShotFrames(shot, model, params);
   const magazineFrames = shotFrames[shotFrames.length - 1] ?? 0;
-  const chunks = reloadChunks({ maxAmmo: params.maxAmmo, reloadBullet: shot.reloadBullet });
+  const chunks = reloadChunks({ maxAmmo: params.maxAmmo, reloadBullet: params.reloadBullet });
   // 1 回分は射手と同じ整数。全弾リロードはマガジンの最終弾の蓄積の余りから（fullReloadFrames）、分割リロードは込めない 1 段 +
   // 段の数を、それぞれ切り上げた整数で数える（C-0154）
   const reloadFrames = params.splitReload

@@ -143,6 +143,7 @@ import {
 import {
   chargeTriggersOf,
   hasReloadEndEffect,
+  isEndedTrigger,
   isSummonAttackTrigger,
   isTimerTrigger,
   SKILL_SLOTS,
@@ -470,6 +471,9 @@ function runFirstPassOnce(
   // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 状態の付いた時から数える周期（since。currentHpDown）は、件の一覧の sinceFires
   // （counterChange と同じ数え方）で決める
   const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
+    // グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める
+    const trigger = effect.trigger;
+    if (isEndedTrigger(trigger)) return (ev) => lists.endedAt(sourceSlotIndex, trigger.ended, ev.frame);
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
     // 件の一覧（lists）は即時効果の後に作るので、最初の呼び出しで作る
     if (effect.trigger.since !== undefined) {
@@ -2011,6 +2015,7 @@ function runFirstPassOnce(
         if (src.effect.kind === 'ammoDecrease') {
           const params = paramsAt(target, f);
           const before = state.ammo;
+          const wasReloading = state.phase === 'reloading';
           // 使用武器の変更の撃ち切りで起きる残弾数減少は、最後の発の次のフレーム（ShotLog.weaponChangeEnds）に来るが、ゲームの
           // リロードは変更後の武器の最後の発の本当の発の時刻（発射レートの蓄積の上の時刻。見える最終弾は 0〜1f 遅れることがある）から
           // 始まる（V-0695 のラプラス）。始まりを最後の発のフレームに戻し、その発の蓄積の余りのぶん前にする
@@ -2024,6 +2029,10 @@ function runFirstPassOnce(
               ? weaponChangeEndOffset[target]! - WEAPON_CHANGE_END_DELAY
               : 0,
           );
+          // グレイブ編（V-0735）: 減少でリロードを始めたら、その前の最後の発を記録に書く（照合のリロードの回）
+          const lastFired = logs[target]?.frames.at(-1);
+          if (!wasReloading && state.phase === 'reloading' && lastFired !== undefined)
+            (logs[target]!.drainReloadShotFrames ??= []).push(lastFired);
           instants.push({
             frame: f,
             sourceSlotIndex: src.sourceSlotIndex,

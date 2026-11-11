@@ -218,6 +218,7 @@ const BUFF_FIELDS = [
   'maxAmmoRatio',
   'maxAmmoFlat',
   'reloadSpeed',
+  'reloadRatio',
   'chargeSpeed',
   // レッドフード編: チャージ速度の超過分の変換（常時だけ。区間の値に入るので鍵に入れる）
   'chargeSpeedOverflow',

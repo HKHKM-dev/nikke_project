@@ -71,6 +71,7 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   burstCooldown: 'burstTiming',
   maxAmmo: 'firing',
   reloadSpeed: 'firing',
+  reloadRatio: 'firing',
   chargeSpeed: 'firing',
   // 2 段目の段 9 の PR 2: 攻撃速度▲（発と発の間）
   attackSpeed: 'firing',

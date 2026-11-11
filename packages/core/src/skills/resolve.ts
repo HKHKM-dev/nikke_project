@@ -26,6 +26,8 @@ import {
   isFlagStat,
   isSelfHpAtMostTrigger,
   isShotCountTrigger,
+  isStateCountWindow,
+  isStateEndUntil,
   isMaxStacksUpContent,
   isSkillCooldownDownContent,
   isStatContent,
@@ -62,6 +64,7 @@ import {
   type ShotCountReset,
   type FiringWindow,
   type ShotCountWindow,
+  type StateCountWindow,
   type SkillDefinition,
   type SkillSlot,
   type TargetCountFields,
@@ -101,7 +104,10 @@ export type ResolvedTrigger =
   | SummonAttackTrigger
   // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値（比率。説明文の X% ÷ 100）以下に下がった時。timed だけ。1 パス目の件の一覧が
   // 追う（skills/holders.ts の firesOf）ので、出来事の列では追わない
-  | { selfHpAtMost: number };
+  | { selfHpAtMost: number }
+  // グレイブ編（plan/design-grave.md 2.1 節）: 自分のその状態の件が外れた時。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
+  // 追う（skills/holders.ts の endedAt）ので、出来事の列では追わない
+  | EndedTrigger;
 
 /** マスト編: 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
@@ -147,8 +153,11 @@ export type ResolvedShotCountTrigger = {
   count: ShotCountKind;
   every: number;
   stacks?: number;
-  /** クルミ S2 編: 数える窓と数え直し（plan/design-kurumi-s2.md 2.1 節）。有ればどちらも有る */
-  during?: ShotCountWindow;
+  /**
+   * クルミ S2 編: 数える窓と数え直し（plan/design-kurumi-s2.md 2.1 節）。'fullBurst' ならどちらも有る。グレイブ編（plan/design-grave.md 2.4 節）:
+   * 自分の状態の窓（{ state }）は reset を持たず、状態が付くたびに数え直す
+   */
+  during?: ShotCountWindow | StateCountWindow;
   reset?: ShotCountReset;
   /** ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけこの窓の中に限る */
   firesDuring?: FiringWindow;
@@ -201,6 +210,7 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   if (!Number.isInteger(every) || every < 1) {
     throw new RangeError(`skill ${skill.id}: count trigger must be a positive integer, got ${every}`);
   }
+  if (isStateCountWindow(trigger.during)) return { count: trigger.count, every, during: { ...trigger.during } };
   if (trigger.during !== undefined)
     return { count: trigger.count, every, during: trigger.during, reset: trigger.reset! };
   if (trigger.firesDuring !== undefined) return { count: trigger.count, every, firesDuring: trigger.firesDuring };
@@ -731,6 +741,11 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * これ以下と読めたフレームの次のフレームで件の列を閉じる（skills/holders.ts。durationFrames は BATTLE_END_FRAMES）
    */
   untilSelfHpAtMost?: number;
+  /**
+   * グレイブ編（plan/design-grave.md 2.5 節）: 定義の durationUntil: { stateEnd } の状態。持ち主（自分）のその状態の件が外れたフレームで件を閉じる
+   * （skills/holders.ts の件の列の untilEnds。durationFrames は BATTLE_END_FRAMES）
+   */
+  untilStateEnd?: NamedStateId;
 };
 
 /**
@@ -756,6 +771,8 @@ export function resolveStateGrants(
       const counterEmpty = typeof until === 'object' && 'counterEmpty' in until ? until.counterEmpty : undefined;
       // A2 の B モード編: HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
       const hpUntil = isSelfHpAtMostTrigger(until) ? until : undefined;
+      // グレイブ編: ほかの状態の終わりまで続く付与も、閉じる（untilStateEnd）までは「持続」と同じ窓
+      const stateEnd = isStateEndUntil(until) ? until.stateEnd : undefined;
       const window = resolveItemFields(
         { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
         character,
@@ -779,6 +796,7 @@ export function resolveStateGrants(
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       if (counterEmpty !== undefined) grant.untilCounterEmpty = counterEmpty;
+      if (stateEnd !== undefined) grant.untilStateEnd = stateEnd;
       if (hpUntil !== undefined)
         grant.untilSelfHpAtMost = selfHpRatioOfRef(character.skills[slot], hpUntil.selfHpAtMostRef, levels[slot]);
       untrimmed.push(grant);
@@ -798,6 +816,7 @@ export function resolveStateGrants(
       g.durationShots === first.durationShots &&
       g.durationUntil === first.durationUntil &&
       g.untilSelfHpAtMost === first.untilSelfHpAtMost &&
+      g.untilStateEnd === first.untilStateEnd &&
       g.maxStacks === first.maxStacks;
     if (!same) {
       throw new RangeError(

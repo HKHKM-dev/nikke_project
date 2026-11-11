@@ -311,6 +311,19 @@ export const NAMED_STATES = {
    * 現在の HP▼、HP が 40% 以下で解除）
    */
   modeB: { name: { ja: 'Bモード', en: 'Mode B' }, holder: 'ally' },
+  /**
+   * グレイブ編（plan/design-grave.md）: バーストの「完全計算」（自分・10 秒。中身は無い）。S1 の「完全計算状態が終了した時」（{ ended }）、S2 の
+   * 「完全計算状態なら…攻撃命中回数別の効果」の数える窓と、過熱II・III の維持の終わり（{ stateEnd }）が見る
+   */
+  prediction: { name: { ja: '完全計算', en: 'Prediction' }, holder: 'ally' },
+  /** 同: S1 の「放熱」（自分。中身はリロード比率▼。最大装弾数のリロード完了で解除。V-0735）。S1 の「放熱状態の時に限り」が見る */
+  heatEmission: { name: { ja: '放熱', en: 'Heat Emission' }, holder: 'ally' },
+  /** 同: S2 の「過熱I」（自分。中身は攻撃力▲。最大装弾リロード完了時に解除）。過熱II の「過熱I 状態の時に限り」が見る */
+  overheatI: { name: { ja: '過熱I', en: 'Overheat I' }, holder: 'ally' },
+  /** 同: S2 の「過熱II」（自分。中身は攻撃力▲。完全計算の終わりまで）。過熱III の「過熱II 状態の時に限り」が見る */
+  overheatII: { name: { ja: '過熱II', en: 'Overheat II' }, holder: 'ally' },
+  /** 同: S2 の「過熱III」（自分。中身は攻撃ダメージ▲。完全計算の終わりまで） */
+  overheatIII: { name: { ja: '過熱III', en: 'Overheat III' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

@@ -139,7 +139,7 @@ describe('読み込み', () => {
     ).not.toThrow();
     expect(() =>
       parseSkillDefinition(def([{ kind: 'ammoDecrease', trigger: 'battleStart', target: 'self', ref: 1 }])),
-    ).toThrow(/weaponChangeEnd: true \} or "burstUse"/);
+    ).toThrow(/weaponChangeEnd: true \}, \{ ended \} or "burstUse"/);
   });
 
   it('allows only selfState as a dot condition, and not with a gauge', () => {

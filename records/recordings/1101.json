@@ -1,0 +1,46 @@
+{
+  "id": "1101",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1101_grave-p08-alice.mp4",
+  "original": "2026-11-12_04-20-53.mp4",
+  "durationSec": 201.7,
+  "frames": 12102,
+  "fps": 60,
+  "sizeMB": 244.5,
+  "sha256": "6946006decbc",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 302,
+      "name": "プロダクト08",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 514,
+      "name": "グレイブ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T04:31+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
