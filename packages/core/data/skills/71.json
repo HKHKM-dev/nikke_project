@@ -76,9 +76,26 @@
           "ref": 1,
           "damageType": "skill",
           "assumes": {
-            "ja": "攻撃範囲内の敵は的 1 体で 1 ヒット",
-            "en": "Enemies in range are the lone target, so it lands once"
-          }
+            "ja": "攻撃範囲内の敵は的 1 体。3 ヒットに分かれる（着弾の表のソリンの行）",
+            "en": "Enemies in range are the lone target. It lands as three hits (Soline row of the landing table)"
+          },
+          "claims": [
+            "C-1113"
+          ]
+        },
+        {
+          "kind": "damage",
+          "trigger": "burstUse",
+          "ref": 2,
+          "damageType": "additional",
+          "perBurstHit": true,
+          "assumes": {
+            "ja": "同じ敵は、敵 1 体の前提ではその敵。バーストのダメージの 3 ヒットのそれぞれに出る",
+            "en": "The same enemy is that enemy under the single-enemy premise. Dealt on each of the three Burst hits"
+          },
+          "claims": [
+            "C-1114"
+          ]
         }
       ]
     }
