@@ -88,6 +88,7 @@ import {
   isEnemyHeldStat,
   isFixedAttackScaling,
   isStateStat,
+  selfHpHolds,
   splitsPerCount,
   staticStatesOf,
   type EffectCondition,
@@ -481,12 +482,16 @@ export function planSkillHits(
     // 2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 条件 selfCounter と perCount の { counter } が読む、自分のカウンタの
     // 発火のフレームの値（前のフレームの終わりの値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 から。counterEffectiveFrom）
     const ownCounters = history.counters.filter((r) => r.slotIndex === slotIndex);
-    // ソリン編（plan/design-soline.md 2.1 節）: 条件 selfHp（以上）が見る、自分の発火のフレームの HP の割合
-    const hpRatioAt = (frame: number): number => selfHpRatioOf(history, slotIndex, frame);
     const counterAt = (counter: CounterId, frame: number): number => {
       let value = 0;
       for (const r of ownCounters) if (r.counter === counter && counterEffectiveFrom(r) <= frame) value = r.value;
       return value;
+    };
+    // damage の条件の自分の側の読み口。ソリン編（plan/design-soline.md 2.1 節）: selfHp（以上）は発火のフレームの HP の割合を見る
+    const self: SelfReaders = {
+      stateHolds: selfStateHolds,
+      counterAt,
+      hpRatioAt: (frame) => selfHpRatioOf(history, slotIndex, frame),
     };
     // 持続ダメージの付くフレーム。2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: { counterFull } の perCount は、発火の
     // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
@@ -499,9 +504,7 @@ export function planSkillHits(
         const at = triggerFrames(t, schedule, slotIndex, frames, shots);
         return effect.condition === undefined
           ? at
-          : at.filter((f) =>
-              damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt, hpRatioAt),
-            );
+          : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
       }
       const per = effect.perCount;
       if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
@@ -666,8 +669,7 @@ export function planSkillHits(
                   )
               : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt, hpRatioAt))
-          continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
         // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
         // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。ヒットの値は
         // 2 パス目（sim/engine.ts）が窓の中のダメージの和にする
@@ -776,7 +778,7 @@ export function planSkillHits(
       if (ups.length > 0) {
         for (const up of ups)
           for (const f of triggerFrames(up.trigger, schedule, slotIndex, frames, shots))
-            if (damageConditionHolds(up.condition, f, schedule, enemySpans, selfStateHolds, counterAt, hpRatioAt))
+            if (damageConditionHolds(up.condition, f, schedule, enemySpans, self))
               for (let k = 0; k < up.amount; k++) fires.push({ f, effect: group[0]! });
         fires.sort((a, b) => a.f - b.f);
       }
@@ -862,6 +864,13 @@ export function planSkillHits(
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
 }
 
+/** damage の条件の、出どころの枠の自分の側の読み口（状態・カウンタ・HP の割合。どれも発火のフレームで読む） */
+type SelfReaders = {
+  stateHolds: (self: SelfStateCondition, frame: number) => boolean;
+  counterAt: (counter: CounterId, frame: number) => number;
+  hpRatioAt: (frame: number) => number;
+};
+
 /**
  * クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと
  * （名前の付いた状態の語彙編: timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState。plan/design-named-state.md 5.6 節。
@@ -872,22 +881,15 @@ function damageConditionHolds(
   frame: number,
   schedule: BurstSchedule | null,
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
-  selfStateHolds: (self: SelfStateCondition, frame: number) => boolean,
-  counterAt: (counter: CounterId, frame: number) => number,
-  hpRatioAt: (frame: number) => number,
+  self: SelfReaders,
 ): boolean {
   if (condition === undefined) return true;
-  // ソリン編（plan/design-soline.md 2.1 節）: 自分の HP の割合が閾値（% 表記。resolveCondition が atLeastRef を解いてある）以上か
-  if (condition.selfHp !== undefined) {
-    const { atLeast } = condition.selfHp;
-    if (atLeast === undefined)
-      throw new RangeError(`selfHp ${JSON.stringify(condition.selfHp)} is not resolved to atLeast`);
-    if (hpRatioAt(frame) < atLeast / 100 - 1e-9) return false;
-  }
-  if (condition.selfState !== undefined && !selfStateHolds(condition.selfState, frame)) return false;
+  // ソリン編（plan/design-soline.md 2.1 節）: 自分の HP の割合が閾値以上か（resolveCondition が atLeastRef を解いてある）
+  if (condition.selfHp !== undefined && !selfHpHolds(condition.selfHp, self.hpRatioAt(frame))) return false;
+  if (condition.selfState !== undefined && !self.stateHolds(condition.selfState, frame)) return false;
   if (condition.selfCounter !== undefined) {
     const { counter, atLeast, below } = condition.selfCounter;
-    const value = counterAt(counter, frame);
+    const value = self.counterAt(counter, frame);
     if (atLeast !== undefined && value < atLeast) return false;
     if (below !== undefined && value >= below) return false;
   }

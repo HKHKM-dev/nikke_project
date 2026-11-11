@@ -26,7 +26,6 @@ import {
   burstStepChangeOf,
   isSelfHpAtMostTrigger,
   isStacksCondition,
-  isSelfHpAtMost,
   selfHpThreshold,
   statContentsOf,
   staticStatesOf,
@@ -283,9 +282,9 @@ export function resolveSelfHp<E extends SkillEffect>(
 ): E | null {
   const condition = 'condition' in effect ? effect.condition : undefined;
   const hp = condition?.selfHp;
-  // 紅蓮編（plan/design-scarlet.md 2.2 節）: 「以下」の形は発火のフレームの HP の割合で見る（skills/holders.ts）ので、ここでは決めない。
-  // ソリン編（plan/design-soline.md 2.1 節）: damage の「以上」の形も、発火のフレームの HP の割合で見る（frame/plan.ts）
-  if (condition === undefined || hp === undefined || isSelfHpAtMost(hp) || effect.kind === 'damage') return effect;
+  // 決めるのは passive だけ。timed の「以下」の形（紅蓮編。skills/holders.ts）と damage の「以上」の形（ソリン編。frame/plan.ts）は、
+  // 発火のフレームの HP の割合で見るので、ここでは決めない
+  if (effect.kind !== 'passive' || condition === undefined || hp === undefined) return effect;
   if (hpRatio < threshold(hp)) return null;
   const { selfHp: _selfHp, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };

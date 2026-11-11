@@ -12,9 +12,8 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf, selfHpRatioOf } from '../skills/holders.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
-import { gameSecondsToFrames } from '../time.ts';
 import type { CharacterData } from '../types.ts';
-import { describeEveryShotInOneGroup, fixedSlot, readJson } from './teamHelpers.ts';
+import { describeEveryShotInOneGroup, fixedSlot, readJson, windowsFrom } from './teamHelpers.ts';
 
 const SOLINE = 71;
 const IDOLL_FLOWER = 304;
@@ -46,7 +45,6 @@ const TEAMS: Record<string, TeamInput> = {
   'I-DOLL・フラワー + デルタ + ソリン（録画 1103・1104 の編成）': team([IDOLL_FLOWER, DELTA, SOLINE], 2),
   'I-DOLL・フラワー + エード + ソリン（最大HP のみ▲ の味方）': team([IDOLL_FLOWER, ADE, SOLINE], 2),
 };
-const THREE_SECONDS = gameSecondsToFrames(3);
 
 describe('ソリン（71）の定義', () => {
   const def = parseSkillDefinition(readJson<unknown>('../../data/skills/71.json'));
@@ -79,12 +77,12 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   it('gives Attack Speed up from the frame after every 40th normal shot for 3 s, refreshed by the next', () => {
     const windows = itemsOf(plan.history, { sourceSlotIndex: s, holder: s, kind: 'timed', skill: 'skill1' });
     // 40 発ごとの発の次のフレームから 3 秒。付き直しは付き直したフレームから 3 秒で、続いた窓は 1 つの件になる
-    const expected: { start: number; end: number }[] = [];
-    for (const start of shots.filter((_, i) => (i + 1) % 40 === 0).map((f) => f + 1)) {
-      const end = Math.min(start + THREE_SECONDS, plan.frames);
+    const starts = shots.filter((_, i) => (i + 1) % 40 === 0).map((f) => f + 1);
+    const expected: ReturnType<typeof windowsFrom> = [];
+    for (const w of windowsFrom(starts, 3, plan.frames)) {
       const last = expected.at(-1);
-      if (last !== undefined && start <= last.end) last.end = end;
-      else expected.push({ start, end });
+      if (last !== undefined && w.start <= last.end) last.end = w.end;
+      else expected.push(w);
     }
     expect(expected.length).toBeGreaterThan(5);
     expect(windows.map(({ start, end }) => ({ start, end }))).toEqual(expected);

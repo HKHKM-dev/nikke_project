@@ -1164,6 +1164,16 @@ export function isSelfHpAtMost(hp: SelfHpCondition): boolean {
   return hp.atMostRef !== undefined || hp.atMost !== undefined;
 }
 
+/**
+ * ソリン編（plan/design-soline.md 2.1 節）: 解いた selfHp（atLeast・atMost。% 表記）を、HP の割合 ratio が満たすか（境は 1e-9 を許す）。
+ * 発火のフレームで見る条件（timed の以下の形・damage の以上の形）が読む。解いていない形（atLeastRef・atMostRef）は投げる
+ */
+export function selfHpHolds(hp: SelfHpCondition, ratio: number): boolean {
+  if (hp.atLeast !== undefined) return ratio >= hp.atLeast / 100 - 1e-9;
+  if (hp.atMost !== undefined) return ratio <= hp.atMost / 100 + 1e-9;
+  throw new RangeError(`selfHp ${JSON.stringify(hp)} is not resolved`);
+}
+
 /** 2 段目の段 15: selfHp の「以上」の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */
 export function selfHpThreshold(hp: SelfHpCondition, valueOf: (ref: number) => number): number {
   return (hp.atLeast ?? valueOf(hp.atLeastRef!)) / 100;

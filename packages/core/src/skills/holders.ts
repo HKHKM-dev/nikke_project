@@ -106,12 +106,12 @@ import {
   isFiringStat,
   HIT_STATE_STATS,
   isStateStat,
+  selfHpHolds,
   staticStatesOf,
   type BuffStat,
   type EndedTrigger,
   type EdgeShift,
   type EffectCondition,
-  type SelfHpCondition,
   type TimerTrigger,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
@@ -2122,7 +2122,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex) &&
     // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）
-    (condition?.selfHp === undefined || selfHpAtMostAt(sourceSlotIndex, ev.frame, selfHpAtMostOf(condition.selfHp)));
+    (condition?.selfHp === undefined || selfHpHolds(condition.selfHp, selfHpRatioAt(sourceSlotIndex, ev.frame)));
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -2177,24 +2177,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
     return (ratio * (1 + up - only)) / (1 + up);
   };
-  /**
-   * ソリン編: 履歴に置く、枠の HP の割合の段。割合が変わりうるのは、現在の HP▼ の次のフレームと、最大HP の件の始まりの次のフレーム・終わり
-   * （selfHpRatioAt は frame より前に始まって frame に効いている件を読む）。ループの後に呼ぶ
-   */
+  /** ソリン編: 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。ループの後に呼ぶ */
   const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
-    const changes = new Set([0, ...hpDowns[slotIndex]!.frames.map((f) => f + 1)]);
-    if (maxHpOnlyMoves[slotIndex])
-      for (const v of maxHpViews[slotIndex] ?? [])
-        for (const it of readItems(v.track)) changes.add(it.start + 1).add(it.end);
-    const at = [...changes].sort((a, b) => a - b);
-    return { frames: at, ratios: at.map((f) => selfHpRatioAt(slotIndex, f)) };
+    const steps = { frames: [] as number[], ratios: [] as number[] };
+    for (let f = 0; f < Math.max(frames, 1); f++) {
+      const ratio = selfHpRatioAt(slotIndex, f);
+      if (steps.ratios.at(-1) === ratio) continue;
+      steps.frames.push(f);
+      steps.ratios.push(ratio);
+    }
+    return steps;
   };
-  /** 解いた条件 selfHp の atMost の閾値（割合）。解いていない形（atMostRef・以上の形）は件の一覧に来ない */
-  const selfHpAtMostOf = (hp: SelfHpCondition): number => {
-    if (hp.atMost === undefined) throw new RangeError(`selfHp ${JSON.stringify(hp)} is not resolved to atMost`);
-    return hp.atMost / 100;
-  };
-  /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と条件 selfHp の atMost が読む） */
+  /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と維持 { selfHpAtMostRef } が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
     selfHpRatioAt(slotIndex, frame) <= threshold + 1e-9;
   // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
