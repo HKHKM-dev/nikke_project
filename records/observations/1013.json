@@ -268,5 +268,197 @@
     },
     "source": "V-0709",
     "readAt": "2026-11-10"
+  },
+  {
+    "id": "1013-13",
+    "recording": "1013",
+    "source": "V-0734",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "compare",
+    "value": 2.3125,
+    "unit": "f",
+    "description": "ソリン単騎の 3 本目のマガジンの、リロードの明けの、前のマガジンの 120 発目で付いた S1 の残る区間（1〜17 発目）の発と発の間の平均（f1632〜f1669。マガジンの発は 120）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と使い捨てのスクリプト（scratch）",
+      "note": "HUD の総ダメージの増分のフレーム（hud-jumps@3）。前の増分から 20f を超える空きでマガジンを分け、マガジンの中の発の番号で区間を決めた（区間の切れ目はモデルの S1 の窓。40 発目の次のフレームから 180f）。発と発の間の平均は (最後の発 − 最初の発) ÷ (発の数 − 1)"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 850,
+        "to": 888
+      },
+      "tolerance": {
+        "abs": 0.063
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1013-14",
+    "recording": "1013",
+    "source": "V-0734",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "compare",
+    "value": 2.4545,
+    "unit": "f",
+    "description": "ソリン単騎の 3 本目のマガジンの、S1 の切れた後、40 発目までの区間（18〜40 発目）の発と発の間の平均（f1672〜f1726。マガジンの発は 120）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と使い捨てのスクリプト（scratch）",
+      "note": "HUD の総ダメージの増分のフレーム（hud-jumps@3）。前の増分から 20f を超える空きでマガジンを分け、マガジンの中の発の番号で区間を決めた（区間の切れ目はモデルの S1 の窓。40 発目の次のフレームから 180f）。発と発の間の平均は (最後の発 − 最初の発) ÷ (発の数 − 1)"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 890,
+        "to": 945
+      },
+      "tolerance": {
+        "abs": 0.045
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1013-15",
+    "recording": "1013",
+    "source": "V-0734",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "compare",
+    "value": 2.2785,
+    "unit": "f",
+    "description": "ソリン単騎の 3 本目のマガジンの、40 発目で S1 が付き直した後の区間（41〜120 発目）の発と発の間の平均（f1728〜f1908。マガジンの発は 120）",
+    "method": {
+      "tool": "hud-jumps@3 の増分と使い捨てのスクリプト（scratch）",
+      "note": "HUD の総ダメージの増分のフレーム（hud-jumps@3）。前の増分から 20f を超える空きでマガジンを分け、マガジンの中の発の番号で区間を決めた（区間の切れ目はモデルの S1 の窓。40 発目の次のフレームから 180f）。発と発の間の平均は (最後の発 − 最初の発) ÷ (発の数 − 1)"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 1,
+        "from": 946,
+        "to": 1127
+      },
+      "tolerance": {
+        "abs": 0.013
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1013-16",
+    "recording": "1013",
+    "source": "V-0734",
+    "readAt": "2026-11-11",
+    "kind": "rate",
+    "use": "compare",
+    "value": 0.371,
+    "description": "ソリン単騎の、1 回目の被弾（f2096）の前の会心率（会心のヒット / 当たったヒット。752 ヒットからの最尤。S2 のクリティカル確率▲の乗った間）",
+    "method": {
+      "tool": "recipe:dual-smg-cores@1（--opt body=7008 --opt core=1.5 --opt crit=1.1227 --opt skip=2096-12000）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、7008 ×（h ×（1 + 距離ボーナス 0.3 × d）+ コア 1.5 × k + 会心 × j）の格子（会心の上乗せの版 0.5・1.1227）で読んだ（レシピ dual-smg-cores@1 の readDualIncrement）。会心を含み、1.1227 の版でしか読めない増分は f2090 まで、0.5 の版でしか読めない増分は f2164 から（重なりなし）。被弾の赤い画面（画面の左 200px の平均の赤 − 青 > 25）は、戦闘の始まりの WARNING の演出の後では f2096 が 1 回目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "critRateAt",
+      "args": {
+        "slot": 1,
+        "frame": 300
+      },
+      "tolerance": {
+        "abs": 0.035
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1013-17",
+    "recording": "1013",
+    "source": "V-0734",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 16978,
+    "description": "ソリン単騎の、1 回目の被弾（f2096）の前の、会心の 1 ヒット（胴体・距離ボーナスあり・コアなし）。2 ヒットとも会心の発の増分 33,956 の半分。会心を含む増分は、どれも会心の上乗せ 1.1227（0.5 + クリティカルダメージ 62.27%）の格子に乗った",
+    "method": {
+      "tool": "recipe:dual-smg-cores@1 の格子と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、7008 ×（h ×（1 + 距離ボーナス 0.3 × d）+ コア 1.5 × k + 会心 × j）の格子（会心の上乗せの版 0.5・1.1227）で読んだ（レシピ dual-smg-cores@1 の readDualIncrement）。会心を含み、1.1227 の版でしか読めない増分は f2090 まで、0.5 の版でしか読めない増分は f2164 から（重なりなし）。被弾の赤い画面（画面の左 200px の平均の赤 − 青 > 25）は、戦闘の始まりの WARNING の演出の後では f2096 が 1 回目"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 300,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1013-18",
+    "recording": "1013",
+    "source": "V-0734",
+    "readAt": "2026-11-11",
+    "kind": "rate",
+    "use": "record",
+    "value": 0.156,
+    "description": "ソリン単騎の、1 回目の被弾（f2096）の後の会心率（4337 ヒットからの最尤）。被弾の後は、会心を含む増分がどれも会心の上乗せ 0.5（S2 なし）の格子に乗り、戦闘の終わりまで 1.1227 に戻らない（ソリンは回復を持たない）",
+    "method": {
+      "tool": "recipe:dual-smg-cores@1（--opt body=7008 --opt core=1.5 --opt crit=0.5 --opt skip=0-2200）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、7008 ×（h ×（1 + 距離ボーナス 0.3 × d）+ コア 1.5 × k + 会心 × j）の格子（会心の上乗せの版 0.5・1.1227）で読んだ（レシピ dual-smg-cores@1 の readDualIncrement）。会心を含み、1.1227 の版でしか読めない増分は f2090 まで、0.5 の版でしか読めない増分は f2164 から（重なりなし）。被弾の赤い画面（画面の左 200px の平均の赤 − 青 > 25）は、戦闘の始まりの WARNING の演出の後では f2096 が 1 回目"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
   }
 ]

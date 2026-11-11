@@ -14,7 +14,10 @@
           "target": "self",
           "stat": "attackSpeed",
           "ref": 2,
-          "durationRef": 3
+          "durationRef": 3,
+          "claims": [
+            "C-1110"
+          ]
         }
       ]
     },
@@ -30,7 +33,17 @@
               "atLeast": 100
             }
           },
-          "reads": ["hp"]
+          "reads": [
+            "hp"
+          ],
+          "assumes": {
+            "ja": "HP が最大は、被弾の無い前提で成り立つ（射撃場の 3 分モードでは、的の攻撃を受けると外れ、回復の無い編成では戻らない）",
+            "en": "Max HP holds under the no-damage premise (in the 3-minute range mode it ends when the target hits her, and does not return without healing)"
+          },
+          "claims": [
+            "C-1111",
+            "C-1112"
+          ]
         },
         {
           "kind": "passive",
@@ -42,7 +55,17 @@
               "atLeast": 100
             }
           },
-          "reads": ["hp"]
+          "reads": [
+            "hp"
+          ],
+          "assumes": {
+            "ja": "HP が最大は、被弾の無い前提で成り立つ（射撃場の 3 分モードでは、的の攻撃を受けると外れ、回復の無い編成では戻らない）",
+            "en": "Max HP holds under the no-damage premise (in the 3-minute range mode it ends when the target hits her, and does not return without healing)"
+          },
+          "claims": [
+            "C-1111",
+            "C-1112"
+          ]
         }
       ]
     },
