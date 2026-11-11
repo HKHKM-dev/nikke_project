@@ -147,6 +147,7 @@ export function CharacterTray({
               aria-label="クリア"
               title="クリア"
               onClick={() => {
+                if (!filtering) return;
                 setFilters({});
                 setTreasureOnly(false);
               }}

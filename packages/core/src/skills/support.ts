@@ -5,7 +5,13 @@
 // どのスロットの対応状況（読み込みで決まる support）も partial・unsupported でないもの。定義の無いキャラは載らない。
 import type { CharacterData } from '../types.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from './treasure.ts';
-import { SKILL_SLOTS, type SkillDefinition, type SkillSupport, type SkillSupportGap, type SkillSupportIndex } from './types.ts';
+import {
+  SKILL_SLOTS,
+  type SkillDefinition,
+  type SkillSupport,
+  type SkillSupportGap,
+  type SkillSupportIndex,
+} from './types.ts';
 
 /** スロットに未実装がある（一部対応・未対応）か */
 const hasUnimplemented = (support: SkillSupport): boolean => support === 'partial' || support === 'unsupported';
@@ -55,11 +61,13 @@ export function buildSkillSupportIndex(
       fullySupported.push(definition.resourceId);
       continue;
     }
-    const each = versions.map(gapOfDefinition);
-    gaps[String(definition.resourceId)] = {
-      unimplemented: Math.max(1, ...each.map((g) => g.unimplemented)),
-      assumed: Math.max(...each.map((g) => g.assumed)),
-    };
+    // 件数は 1 つの版の組で出す（未対応の多い版。同じなら仮定の多い版）
+    const worst = versions
+      .map(gapOfDefinition)
+      .reduce((a, b) =>
+        b.unimplemented > a.unimplemented || (b.unimplemented === a.unimplemented && b.assumed > a.assumed) ? b : a,
+      );
+    gaps[String(definition.resourceId)] = { unimplemented: Math.max(1, worst.unimplemented), assumed: worst.assumed };
   }
   return { formatVersion: 1, fullySupported, gaps };
 }

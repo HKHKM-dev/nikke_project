@@ -38,7 +38,7 @@ export function trayGrowthMarks(
  */
 export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: GrowthMarks & { className: string }) {
   if (gradeMax === 0 && coreMax === 0) return null;
-  const coreLabel = core === 0 ? null : core === coreMax ? 'MAX' : String(core).padStart(2, '0');
+  const coreLabel = core === 0 ? null : core >= coreMax ? 'MAX' : String(core).padStart(2, '0');
   return (
     <div
       className={`growth-marks ${className}`}
@@ -50,7 +50,7 @@ export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: G
       {coreLabel && (
         <span className="growth-marks-core" aria-hidden="true">
           <BadgeIcon name={GROWTH_BADGES.core} />
-          <span className={core === coreMax ? 'growth-marks-core-max' : undefined}>{coreLabel}</span>
+          <span className={core >= coreMax ? 'growth-marks-core-max' : undefined}>{coreLabel}</span>
         </span>
       )}
     </div>

@@ -1105,14 +1105,18 @@ header h1 {
   transition: width 0.2s ease-out;
 }
 
+/* 絵の枠と空のスロットの枠の塗りの色 */
+.char-visual,
+.modern-slot-empty-area {
+  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+}
 /* CharacterVisual (カード/アセット/フォールバック) */
 .char-visual {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   max-width: 120px;
-  /* 属性の色は使わない（属性は左上のバッジで示す） */
-  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  /* 属性の色は使わない（属性は左上のバッジで示す）。塗りの色（--char-visual-fill）は空のスロットの枠と共通（上の規則） */
   /* 枠線の色（モダン UI は modern.css で変える。立ち絵の border-image も同じ色） */
   --char-visual-line: var(--app-border);
   background: var(--char-visual-fill);

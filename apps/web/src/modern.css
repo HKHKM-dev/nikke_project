@@ -123,7 +123,6 @@
   /* 枠線（border-image を消さないよう、まとめ書きの border は使わない）と背景はニケがいるときの立ち絵と同じ規則（styles.css の .char-visual-portrait）で、色も同じ */
   border-width: 1px;
   border-style: solid;
-  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
   --char-visual-line: var(--slot-frame-line);
   color: var(--slot-frame-line);
   opacity: 1;
