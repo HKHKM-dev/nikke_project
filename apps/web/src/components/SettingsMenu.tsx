@@ -1,9 +1,8 @@
-// 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え・一覧の並び。
+// 右上の設定のメニュー（■ を 2 × 2 に並べたボタン）。サイト全体の設定をここに置く: テーマ・表示モードの切り替え。
+// 一覧の並びは、クラシックはスロットの上の「並べ替え」（ClassicView）、モダン UI はニケ一覧の「並べ替え」で選ぶ。
 // 育成状況は左隣の「アカウント」のメニュー（AccountMenu.tsx）
 import { THEME_LABEL, useTheme, type Theme } from '../theme.ts';
 import { UI_MODE_LABEL, type UiMode } from '../uiMode.ts';
-import type { ListOrderControls } from '../useListOrder.ts';
-import { ListOrderSettings } from './ListOrderSettings.tsx';
 import { Popover } from './Popover.tsx';
 
 const THEMES: readonly Theme[] = ['light', 'dark', 'system'];
@@ -12,7 +11,6 @@ const UI_MODES: readonly UiMode[] = ['classic', 'modern'];
 type Props = {
   uiMode: UiMode;
   onSelectUiMode: (mode: UiMode) => void;
-  listOrder: ListOrderControls;
 };
 
 function GridIcon() {
@@ -26,7 +24,7 @@ function GridIcon() {
   );
 }
 
-export function SettingsMenu({ uiMode, onSelectUiMode, listOrder }: Props) {
+export function SettingsMenu({ uiMode, onSelectUiMode }: Props) {
   const [theme, setTheme] = useTheme();
   return (
     <Popover button={<GridIcon />} buttonClassName="settings-menu-button" label="設定" align="right">
@@ -48,8 +46,6 @@ export function SettingsMenu({ uiMode, onSelectUiMode, listOrder }: Props) {
           </label>
         ))}
       </fieldset>
-      {/* モダン UI では、一覧の並びはニケ一覧の「並べ替え」で選ぶ（オーナーの指示で設定のメニューから外した） */}
-      {uiMode === 'classic' && <ListOrderSettings {...listOrder} />}
     </Popover>
   );
 }

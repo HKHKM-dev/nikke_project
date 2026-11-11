@@ -15,6 +15,7 @@ describe('characterLabel', () => {
       element: 'Fire',
       weaponType: 'AR',
       burstStep: 'Step3',
+      hasTreasure: false,
     };
     expect(characterLabel(dummy, false)).toBe('ラピ');
     expect(characterLabel(dummy, true)).toBe('ラピ（未）');

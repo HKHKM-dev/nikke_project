@@ -52,7 +52,7 @@ type Props = {
   controlled: boolean;
   character: CharacterData | undefined;
   characterEntry: CharacterIndexEntry | undefined;
-  isUnsupported: boolean;
+  unsupportedNote: string | null;
   error: string | undefined;
   slotResult: SlotResultView | null;
   /** 名前の上に出す限界突破とコア強化の段階（ニケがいないときは null） */
@@ -73,7 +73,7 @@ export function ModernSlotCard({
   controlled,
   character,
   characterEntry,
-  isUnsupported,
+  unsupportedNote,
   error,
   slotResult,
   collectionBadge,
@@ -142,7 +142,7 @@ export function ModernSlotCard({
             <>
               <CharacterVisual
                 character={characterEntry}
-                isUnsupported={isUnsupported}
+                unsupportedNote={unsupportedNote}
                 size="portrait"
                 extraBadge={collectionBadge}
               />

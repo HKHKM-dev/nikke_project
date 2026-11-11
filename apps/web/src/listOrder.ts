@@ -15,12 +15,12 @@ export const LIST_ORDERS: readonly ListOrder[] = [
   'attackElementOverload',
 ];
 export const LIST_ORDER_LABEL: Record<ListOrder, string> = {
-  combatPower: '戦闘力順',
-  name: '名前順',
-  id: 'ID順',
-  attackOverload: '攻撃力OP順',
-  elementOverload: '有利コードOP順',
-  attackElementOverload: '攻撃＋有利OP順',
+  combatPower: '戦闘力',
+  name: '名前',
+  id: 'ID',
+  attackOverload: '攻撃力OP',
+  elementOverload: '有利コードOP',
+  attackElementOverload: '攻撃＋有利OP',
 };
 /** OP 順が足し合わせる OL のオプション（攻撃力▲・有利コード▲） */
 export const OVERLOAD_ORDER_OPTIONS: Partial<Record<ListOrder, readonly OverloadOption[]>> = {
@@ -33,6 +33,9 @@ export const LIST_ORDER_STORAGE_KEY = 'nikke-calc.listOrder';
 /** 並びの向き（昇順・降順）。モダン UI のニケ一覧の ▲▼ のボタンで切り替える */
 export type ListDirection = 'asc' | 'desc';
 export const LIST_DIRECTION_LABEL: Record<ListDirection, string> = { asc: '昇順', desc: '降順' };
+/** 並べ替えのボタンの読み上げの名前（クラシックとモダンで共通） */
+export const listOrderLabel = (order: ListOrder, direction: ListDirection): string =>
+  `並べ替え: ${LIST_ORDER_LABEL[order]}（${LIST_DIRECTION_LABEL[direction]}）`;
 /** 並びの向きの印 */
 export const LIST_DIRECTION_MARK: Record<ListDirection, string> = { asc: '▲', desc: '▼' };
 /** OP 順を選んでいるが育成状況が無いときの知らせ */

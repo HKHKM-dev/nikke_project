@@ -72,12 +72,52 @@ describe('buildSkillSupportIndex', () => {
         character: character(50, true),
       },
     ]);
-    expect(index).toEqual({ formatVersion: 1, fullySupported: [20, 30] });
+    expect(index).toEqual({
+      formatVersion: 1,
+      fullySupported: [20, 30],
+      gaps: {
+        '10': { unimplemented: 1, assumed: 0 },
+        '40': { unimplemented: 1, assumed: 0 },
+        '50': { unimplemented: 1, assumed: 0 },
+      },
+    });
+  });
+
+  it('counts the unimplemented notes and the assumptions of the worse version', () => {
+    const assumed = { ...passive.effects[0], assumes: { ja: 'c', en: 'c' } };
+    const index = buildSkillSupportIndex([
+      {
+        definition: definition(10, {
+          skills: { skill1: { effects: [assumed, assumed], notes: [unimplemented, unimplemented] } },
+          treasureSkills: { skill1: passive, skill2: { effects: [assumed], notes: [unimplemented] }, burst },
+        }),
+        character: character(10, true),
+      },
+    ]);
+    // 基礎版は未対応 2・仮定 2、宝物版は skill1 が差し替わって未対応 1（skill2）・仮定 1
+    expect(index.gaps).toEqual({ '10': { unimplemented: 2, assumed: 2 } });
   });
 
   it('round-trips through the file and rejects a malformed index', () => {
-    const index = { formatVersion: 1 as const, fullySupported: [3, 7] };
+    const index = {
+      formatVersion: 1 as const,
+      fullySupported: [3, 7],
+      gaps: { '5': { unimplemented: 2, assumed: 0 } },
+    };
     expect(parseSkillSupportIndex(JSON.parse(renderSkillSupportIndex(index)))).toEqual(index);
+    // 件数の無い古い索引も読む
+    expect(parseSkillSupportIndex({ formatVersion: 1, fullySupported: [3] })).toEqual({
+      formatVersion: 1,
+      fullySupported: [3],
+      gaps: {},
+    });
+    expect(() =>
+      parseSkillSupportIndex({
+        formatVersion: 1,
+        fullySupported: [],
+        gaps: { '5': { unimplemented: -1, assumed: 0 } },
+      }),
+    ).toThrow(/support.gaps.5/);
     expect(() => parseSkillSupportIndex({ formatVersion: 2, fullySupported: [] })).toThrow(/formatVersion/);
     expect(() => parseSkillSupportIndex({ formatVersion: 1, fullySupported: [0] })).toThrow(/positive integers/);
     expect(() => parseSkillSupportIndex([])).toThrow(/object/);

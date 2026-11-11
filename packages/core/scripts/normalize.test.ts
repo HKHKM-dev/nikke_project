@@ -257,6 +257,7 @@ describe('toCharacterData', () => {
       element: 'Fire',
       weaponType: 'MG',
       burstStep: 'Step1',
+      hasTreasure: false,
     });
   });
 });

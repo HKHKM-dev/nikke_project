@@ -94,6 +94,13 @@ header h1 {
   z-index: 19;
   background: rgb(0 0 0 / 0.5);
 }
+/* クラシックのスロットの上の並べ替え（ClassicView） */
+.classic-list-order {
+  margin: 8px 0;
+}
+.classic-list-order-button {
+  padding: 4px 10px;
+}
 .popover-button {
   position: relative;
   color: inherit;
@@ -566,10 +573,14 @@ header h1 {
 .picker-row .picker {
   margin: 0;
 }
-/* スロットの見出しの右の「操作」（操作キャラにする。SlotCard） */
-.slot-controlled-button {
-  padding: 1px 8px;
+/* スロットの見出しの右の「操作」のラジオボタン（操作キャラにする。SlotCard） */
+.slot-controlled-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
   font-size: 0.75rem;
+  cursor: pointer;
 }
 .slot-settings-button {
   height: 100%;
@@ -851,7 +862,9 @@ header h1 {
   right: 1px;
   bottom: 1px;
   padding: 10px 6px 3px;
-  overflow: hidden;
+  /* 横だけ切る（流れる名前）。上は切らない（限界突破・コア強化の行から上にはみ出すコア強化の印を出す） */
+  overflow-x: clip;
+  overflow-y: visible;
   white-space: nowrap;
   text-align: right;
   font-weight: bold;
@@ -876,7 +889,7 @@ header h1 {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさは置き場所で変える */
   --growth-star-w: 13px;
-  --growth-core-w: 20px;
+  --growth-core-w: 24px;
 }
 /* 星の色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
    グラデーションになる。突破していない星は灰、突破した星（.is-filled）は金。テーマで変えるときは light-dark(ライト, ダーク) で書く */
@@ -940,7 +953,9 @@ header h1 {
   width: var(--growth-core-w);
   height: var(--growth-core-w);
   margin-left: 2px;
-  font-size: 0.6rem;
+  /* 星より大きい分を上にはみ出させ、行の高さに数えない（コア強化があっても、無いときと同じ高さに星を置く。下は名前なので上へ） */
+  margin-top: calc(var(--growth-star-w) - var(--growth-core-w));
+  font-size: 0.7rem;
   font-weight: bold;
   color: #fff;
   text-shadow: none;
@@ -953,7 +968,14 @@ header h1 {
 }
 .growth-marks-core > span {
   position: relative;
+  /* 行の高さを字の高さにして、数字を枠の中央に置く */
+  line-height: 1;
   letter-spacing: -0.02em;
+}
+/* MAX は 3 字なので、枠に収まるよう小さくする */
+.growth-marks-core > .growth-marks-core-max {
+  font-size: 0.72em;
+  letter-spacing: -0.06em;
 }
 .char-tray-growth {
   position: absolute;
@@ -963,11 +985,16 @@ header h1 {
   font-size: 0.65rem;
   /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
   --growth-star-w: 9px;
-  --growth-core-w: 16px;
+  --growth-core-w: 19px;
+}
+.char-tray-growth .growth-marks-core {
+  /* 四角の絵の右上（上端に寄せてある）では、はみ出しを下へ */
+  margin-top: 0;
+  margin-bottom: calc(var(--growth-star-w) - var(--growth-core-w));
 }
 .char-tray-growth .growth-marks-core,
 .char-tray-tall-area .growth-marks-core {
-  font-size: 0.42rem;
+  font-size: 0.5rem;
 }
 .scrolling-name {
   text-align: left;
@@ -1078,14 +1105,18 @@ header h1 {
   transition: width 0.2s ease-out;
 }
 
+/* 絵の枠と空のスロットの枠の塗りの色 */
+.char-visual,
+.modern-slot-empty-area {
+  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+}
 /* CharacterVisual (カード/アセット/フォールバック) */
 .char-visual {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   max-width: 120px;
-  /* 属性の色は使わない（属性は左上のバッジで示す） */
-  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  /* 属性の色は使わない（属性は左上のバッジで示す）。塗りの色（--char-visual-fill）は空のスロットの枠と共通（上の規則） */
   /* 枠線の色（モダン UI は modern.css で変える。立ち絵の border-image も同じ色） */
   --char-visual-line: var(--app-border);
   background: var(--char-visual-fill);
@@ -1110,7 +1141,7 @@ header h1 {
 }
 /* 「未」の札は、下部に重ねる名前の行の上に出す */
 .char-visual-tall .char-unsupported-tag {
-  bottom: 40px;
+  bottom: 46px;
 }
 .char-tray-tall-area {
   width: 100%;
@@ -1122,7 +1153,7 @@ header h1 {
 /* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
 .char-tray-tall-area .growth-marks {
   --growth-star-w: 9px;
-  --growth-core-w: 16px;
+  --growth-core-w: 19px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
@@ -1139,7 +1170,8 @@ header h1 {
 /* スロットの立ち絵とニケ一覧の縦長の絵は、背景も枠線と同じく上の 5 割で上へ行くほど透明にする。枠線: 上を消し、横は上の 5 割で上へ行くほど薄くして一番上で消す（下は実線）。
    枠線の太さは変えないので、絵の大きさは同じ。色は枠線の色（--char-visual-line） */
 .char-visual-portrait,
-.char-visual-tall {
+.char-visual-tall,
+.modern-slot-empty-area {
   /* 基準を枠線の外側（border-box）にする。既定の padding-box だと、絵が繰り返されて上の枠線の 1px に下端の塗りの色が出る */
   background: linear-gradient(to bottom, transparent, var(--char-visual-fill) 50%) border-box;
   border-image: linear-gradient(to bottom, transparent, var(--char-visual-line) 50%) 1;
@@ -1178,20 +1210,30 @@ header h1 {
   right: auto;
   left: 2px;
 }
-/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す */
+/* スロットの立ち絵では、下部に重ねる名前と限界突破・コア強化の行（.modern-slot-char-name）の上に出す（行の上にはみ出すコア強化の印にも掛けない） */
 .char-visual-portrait .char-unsupported-tag {
-  bottom: 44px;
+  bottom: 54px;
 }
+/* 未対応の印（ⓘ。CharacterVisual）。赤い丸の上に、バッジの絵 ui_information.svg を型にして白で塗る。マウスを載せると件数が出る */
 .char-unsupported-tag {
   position: absolute;
   bottom: 2px;
   right: 2px;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
   background: #d32f2f;
   color: #fff;
-  font-size: 0.65rem;
-  padding: 1px 3px;
-  font-weight: bold;
   z-index: 2;
+  cursor: help;
+}
+.char-unsupported-tag > .mask-icon {
+  flex: 1;
+}
+.char-visual-compact .char-unsupported-tag {
+  width: 13px;
+  height: 13px;
 }
 
 /* CharacterTray (パレット) */
@@ -1223,7 +1265,7 @@ html:has(.modern-view-container) {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
 }
-/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターは未実装の置き場所） */
+/* 並べ替えと、絞り込み・立ち絵の切り替えのボタン（絞り込みは未実装の置き場所） */
 .char-tray-actions {
   display: flex;
   gap: 6px;
@@ -1380,6 +1422,12 @@ html:has(.modern-view-container) {
   filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
   pointer-events: none;
   z-index: 3;
+}
+/* 絞り込みのクリアの印（ui_return.svg） */
+.char-tray-filter-clear-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 /* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
 .char-tray-item-check > .mask-icon {

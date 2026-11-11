@@ -9,6 +9,7 @@ import {
   trayCollectionBadge,
   type BadgeFilters,
   type BadgeKind,
+  TREASURE_FILTER_BADGE,
 } from './badges.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { CharacterTrayItem } from './CharacterTrayItem.tsx';
@@ -19,6 +20,7 @@ import {
   LIST_DIRECTION_MARK,
   LIST_ORDERS,
   LIST_ORDER_LABEL,
+  listOrderLabel,
   OVERLOAD_WITHOUT_ROSTER_HINT,
 } from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
@@ -26,19 +28,22 @@ import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './OtherPartyBadges.tsx';
 import { Popover } from '../Popover.tsx';
+import returnIcon from '../../assets/badges/ui_return.svg';
+import { maskIconStyle } from '../maskIcon.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
   otherPartyIds: OtherParties;
-  fullySupported: ReadonlySet<number> | null;
+  /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
+  unsupportedNote: (resourceId: number) => string | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
   /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
   roster: BuildSnapshot | null;
   /** スペック固定（各ニケの限界突破・コア強化は、計算に使う固定の値を出す） */
   fixedSpec: boolean;
-  /** 一覧の並び（名前順・戦闘力順。設定のメニューの「一覧の並び」と同じもの） */
+  /** 一覧の並び（名前順・戦闘力順。クラシックのスロットの上の「並べ替え」と同じもの） */
   listOrder: ListOrderControls;
   /** 立ち絵の形（四角・縦長）と、切り替え */
   shape: TrayShape;
@@ -80,7 +85,7 @@ export function CharacterTray({
   index,
   takenIds,
   otherPartyIds,
-  fullySupported,
+  unsupportedNote,
   pendingId,
   roster,
   fixedSpec,
@@ -90,6 +95,9 @@ export function CharacterTray({
   onSelectCharacter,
 }: Props) {
   const [filters, setFilters] = useState<BadgeFilters>({});
+  /** 宝物のあるニケだけにする（バッジの絞り込みと AND） */
+  const [treasureOnly, setTreasureOnly] = useState(false);
+  const filtering = treasureOnly || Object.keys(filters).length > 0;
 
   // スロットのキャラをトレイへ戻すと、そのスロットを空にする（ModernView の handleDragEnd）
   const { isOver, active, setNodeRef } = useDroppable({
@@ -100,8 +108,8 @@ export function CharacterTray({
 
   // 並びは受け取った一覧の順（App が名前順か戦闘力順に並べる。listOrder.ts）
   const filteredCharacters = useMemo(
-    () => index.filter((char) => matchesBadgeFilters(char, filters)),
-    [index, filters],
+    () => index.filter((char) => (!treasureOnly || char.hasTreasure) && matchesBadgeFilters(char, filters)),
+    [index, filters, treasureOnly],
   );
 
   return (
@@ -121,18 +129,34 @@ export function CharacterTray({
                 onToggle={(value) => setFilters((f) => toggleBadgeFilter(f, kind.key, value))}
               />
             ))}
-            {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない） */}
+            <div className="char-tray-badge-filter" role="group" aria-label="宝物で絞り込み">
+              <button
+                type="button"
+                className="char-tray-badge-button"
+                aria-pressed={treasureOnly}
+                onClick={() => setTreasureOnly((t) => !t)}
+              >
+                <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
+              </button>
+            </div>
+            {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない）。文字の代わりにバッジの絵 ui_return.svg（.mask-icon） */}
             <button
               type="button"
               className="char-tray-action-button char-tray-filter-clear"
-              aria-disabled={Object.keys(filters).length === 0}
-              onClick={() => setFilters((f) => (Object.keys(f).length === 0 ? f : {}))}
+              aria-disabled={!filtering}
+              aria-label="クリア"
+              title="クリア"
+              onClick={() => {
+                if (!filtering) return;
+                setFilters({});
+                setTreasureOnly(false);
+              }}
             >
-              クリア
+              <span className="mask-icon char-tray-filter-clear-icon" style={maskIconStyle(returnIcon)} />
             </button>
           </div>
         </div>
-        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
+        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、絞り込み・立ち絵の縦長と四角の切り替えのボタン（絞り込みは未実装の置き場所で、押しても
             何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
         <div className="char-tray-actions">
           {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
@@ -149,7 +173,7 @@ export function CharacterTray({
               </span>
             }
             buttonClassName="char-tray-action-button"
-            label={`並べ替え: ${LIST_ORDER_LABEL[listOrder.order]}（${LIST_DIRECTION_LABEL[listOrder.direction]}）`}
+            label={listOrderLabel(listOrder.order, listOrder.direction)}
             align="left"
           >
             <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
@@ -173,7 +197,7 @@ export function CharacterTray({
               })}
             </div>
           </Popover>
-          {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
+          {/* クラシックの「一覧の並び」の欄と同じ知らせ */}
           {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
             <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
           )}
@@ -182,7 +206,7 @@ export function CharacterTray({
           )}
           {listOrder.overloadWithoutRoster && <span className="hint">{OVERLOAD_WITHOUT_ROSTER_HINT}</span>}
           <button type="button" className="char-tray-action-button" aria-disabled="true">
-            フィルター<span className="char-tray-unimplemented">未実装</span>
+            絞り込み<span className="char-tray-unimplemented">未実装</span>
           </button>
           {/* 立ち絵の縦長・四角の切り替え。いまの形を強く出す */}
           <button
@@ -205,14 +229,13 @@ export function CharacterTray({
         ) : (
           filteredCharacters.map((char) => {
             const isTaken = takenIds.has(char.resourceId);
-            const isUnsupported = fullySupported !== null && !fullySupported.has(char.resourceId);
             return (
               <CharacterTrayItem
                 key={char.resourceId}
                 character={char}
                 isTaken={isTaken}
                 otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
-                isUnsupported={isUnsupported}
+                unsupportedNote={unsupportedNote(char.resourceId)}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
                 // コレクションのバッジは縦長の絵にだけ出す

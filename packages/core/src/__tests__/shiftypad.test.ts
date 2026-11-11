@@ -33,6 +33,7 @@ const entry = (resourceId: number, nameCode: number, over: Partial<CharacterInde
   element: 'Fire',
   weaponType: 'AR',
   burstStep: 'Step3',
+  hasTreasure: false,
   ...over,
 });
 const INDEX = [

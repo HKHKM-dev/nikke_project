@@ -32,13 +32,13 @@ export function trayGrowthMarks(
 }
 
 /**
- * 限界突破（星のバッジを上限の数だけ並べ、突破した数だけ is-filled にして金の星にする）とコア強化（コアの印のバッジに段階を 2 桁の数で重ねる。01〜07。0 は出さない）。
+ * 限界突破（星のバッジを上限の数だけ並べ、突破した数だけ is-filled にして金の星にする）とコア強化（コアの印のバッジに段階を重ねる。01〜06 の 2 桁の数で、上限は MAX。0 は出さない）。
  * どちらも無いキャラ（R）は出さない。
  * 置き場所と大きさは className で決める（スロットは名前の上、ニケ一覧は絵の右上）
  */
 export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: GrowthMarks & { className: string }) {
   if (gradeMax === 0 && coreMax === 0) return null;
-  const coreLabel = core === 0 ? null : String(core).padStart(2, '0');
+  const coreLabel = core === 0 ? null : core >= coreMax ? 'MAX' : String(core).padStart(2, '0');
   return (
     <div
       className={`growth-marks ${className}`}
@@ -50,7 +50,7 @@ export function GrowthMarksView({ grade, gradeMax, core, coreMax, className }: G
       {coreLabel && (
         <span className="growth-marks-core" aria-hidden="true">
           <BadgeIcon name={GROWTH_BADGES.core} />
-          <span>{coreLabel}</span>
+          <span className={core >= coreMax ? 'growth-marks-core-max' : undefined}>{coreLabel}</span>
         </span>
       )}
     </div>

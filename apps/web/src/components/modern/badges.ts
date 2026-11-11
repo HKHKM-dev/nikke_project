@@ -65,6 +65,9 @@ function badgeName(name: string): string {
  */
 export const GROWTH_BADGES = { star: badgeName('grade_star'), core: badgeName('core_plain') } as const;
 
+/** ニケ一覧の宝物の絞り込みのボタンのバッジ */
+export const TREASURE_FILTER_BADGE = badgeName('collection_plain');
+
 /** コレクションのバッジ（通常の版と、LV が上限・宝物が最後の段階の版） */
 const COLLECTION_BADGES = {
   plain: badgeName('collection_rarity'),

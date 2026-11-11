@@ -2584,7 +2584,12 @@ export type SkillSupportIndex = {
   formatVersion: 1;
   /** すべてのスロットに未実装が無いキャラ（昇順） */
   fullySupported: number[];
+  /** 完全対応でないキャラ（resourceId の文字列）の、未対応・仮定の件数 */
+  gaps: Record<string, SkillSupportGap>;
 };
+
+/** 完全対応でないキャラの、未対応（unimplemented の notes）と仮定（assumes のある効果）の件数（skills/support.ts） */
+export type SkillSupportGap = { unimplemented: number; assumed: number };
 
 // 読み込みの検査（skills/parse/）の入口。parse/ は types.ts の値を読むので循環 import になる。parse/ の最上位（関数の外）では types.ts の値を読まない
 export { parseSkillDefinition, parseSkillIndex, parseSkillSupportIndex } from './parse/definition.ts';
