@@ -1,0 +1,32 @@
+{
+  "id": "C-1105",
+  "text": "PLACEHOLDER",
+  "state": "仮説",
+  "topic": "スキル・キャラ固有",
+  "grade": "単独実測",
+  "basis": "`1094-01`・`1095-01`・`1095-02`。V-0731",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-11",
+  "subject": {
+    "places": ["data/skills/315.json の skill1 の notes[0]", "data/skills/315.json の skill2 の notes[0]"]
+  },
+  "decidedOn": [
+    {
+      "recording": "1021",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "1022",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "1023",
+      "role": "仮説の出どころ"
+    },
+    {
+      "recording": "1024",
+      "role": "仮説の出どころ"
+    }
+  ]
+}
