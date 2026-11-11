@@ -31,7 +31,8 @@ type Props = {
   index: readonly CharacterIndexEntry[];
   takenIds: ReadonlySet<number>;
   otherPartyIds: OtherParties;
-  fullySupported: ReadonlySet<number> | null;
+  /** 未対応の印の知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
+  unsupportedNote: (resourceId: number) => string | null;
   /** 置くスロットのクリックを待っているニケ */
   pendingId: number | null;
   /** 読み込んだ育成状況（各ニケの限界突破・コア強化を出す。無ければ出さない） */
@@ -80,7 +81,7 @@ export function CharacterTray({
   index,
   takenIds,
   otherPartyIds,
-  fullySupported,
+  unsupportedNote,
   pendingId,
   roster,
   fixedSpec,
@@ -205,14 +206,13 @@ export function CharacterTray({
         ) : (
           filteredCharacters.map((char) => {
             const isTaken = takenIds.has(char.resourceId);
-            const isUnsupported = fullySupported !== null && !fullySupported.has(char.resourceId);
             return (
               <CharacterTrayItem
                 key={char.resourceId}
                 character={char}
                 isTaken={isTaken}
                 otherParties={otherPartyIds.get(char.resourceId) ?? NO_PARTIES}
-                isUnsupported={isUnsupported}
+                unsupportedNote={unsupportedNote(char.resourceId)}
                 isPending={pendingId === char.resourceId}
                 growthMarks={trayGrowthMarks(char, roster, fixedSpec)}
                 // コレクションのバッジは縦長の絵にだけ出す

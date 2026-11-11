@@ -4,6 +4,7 @@ import {
   loadSkillSupportIndex,
   type SkillDefinition,
   type SkillLevels,
+  type SkillSupportGap,
   type TeamSlotSkills,
   type TreasurePhase,
 } from '@nikke/core';
@@ -18,6 +19,8 @@ export type SkillDefinitionCache = {
    * （印を付けない。計算には使わない）
    */
   fullySupported: ReadonlySet<number> | null;
+  /** 完全対応でないキャラの未対応・仮定の件数（support.json。印にマウスを載せたときの知らせ）。読み込み前と、読めなかったときは null */
+  supportGaps: ReadonlyMap<number, SkillSupportGap> | null;
   definitions: ReadonlyMap<number, SkillDefinition>;
   /** 定義ファイルの読み込み・検証に失敗した resourceId とメッセージ */
   errors: ReadonlyMap<number, string>;
@@ -40,6 +43,7 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
   const [index, setIndex] = useState<ReadonlySet<number> | null>(null);
   const [indexError, setIndexError] = useState<string | null>(null);
   const [fullySupported, setFullySupported] = useState<ReadonlySet<number> | null>(null);
+  const [supportGaps, setSupportGaps] = useState<ReadonlyMap<number, SkillSupportGap> | null>(null);
   const [definitions, setDefinitions] = useState<ReadonlyMap<number, SkillDefinition>>(() => new Map());
   const [errors, setErrors] = useState<ReadonlyMap<number, string>>(() => new Map());
   // 取得を開始した id（完了・失敗も含む）。state ではなく ref に持ち、取得完了で Effect を再実行させない
@@ -50,7 +54,10 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
       .then((i) => setIndex(new Set(i.resourceIds)))
       .catch((e: unknown) => setIndexError(e instanceof Error ? e.message : String(e)));
     loadSkillSupportIndex({ baseUrl })
-      .then((s) => setFullySupported(new Set(s.fullySupported)))
+      .then((s) => {
+        setFullySupported(new Set(s.fullySupported));
+        setSupportGaps(new Map(Object.entries(s.gaps).map(([id, gap]) => [Number(id), gap])));
+      })
       .catch(() => {}); // 読めなければ null のまま（印を付けない）
   }, [baseUrl]);
 
@@ -72,9 +79,26 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
   // 返す物は中身が変わるまで同じにする。App.tsx の計算の入力（teamInput）がこれに依存し、毎回作り直すと、計算の結果が
   // 届いて描き直すたびに入力が変わって計算を出し直し続ける（(B) の段 B-2。plan/design-unify-sim-calc.md 経過）
   return useMemo(
-    () => ({ index, indexError, fullySupported, definitions, errors }),
-    [index, indexError, fullySupported, definitions, errors],
+    () => ({ index, indexError, fullySupported, supportGaps, definitions, errors }),
+    [index, indexError, fullySupported, supportGaps, definitions, errors],
   );
+}
+
+/**
+ * キャラの未対応の印（モダン UI の絵の ⓘ）にマウスを載せたときの知らせ。完全対応のキャラと、索引の読み込み前は null（印を出さない）。
+ * 定義の無いキャラは「スキル未定義」、ほかは未対応と仮定の件数（仮定は 1 件以上のときだけ）
+ */
+export function unsupportedNoteOf(
+  cache: Pick<SkillDefinitionCache, 'index' | 'fullySupported' | 'supportGaps'>,
+  resourceId: number,
+): string | null {
+  const { index, fullySupported, supportGaps } = cache;
+  if (fullySupported === null || fullySupported.has(resourceId)) return null;
+  if (index !== null && !index.has(resourceId)) return 'スキル未定義';
+  const gap = supportGaps?.get(resourceId);
+  // 件数の無い古い索引（デプロイの直後）では件数を出さない
+  if (gap === undefined) return 'スキル定義に未対応あり';
+  return [`未対応 ${gap.unimplemented} 件`, ...(gap.assumed > 0 ? [`仮定 ${gap.assumed} 件`] : [])].join('\n');
 }
 
 export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number): SlotSkillsStatus {

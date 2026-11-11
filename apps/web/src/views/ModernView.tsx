@@ -135,7 +135,7 @@ export function ModernView({
   dispatch,
   index,
   characterCache,
-  fullySupported,
+  unsupportedNote,
   masters,
   mastersError,
   calc,
@@ -413,8 +413,6 @@ export function ModernView({
           {team.slots.map((slot, i) => {
             const { character } = calc.slots[i]!;
             const characterEntry = slot.resourceId !== null ? indexMap.get(slot.resourceId) : undefined;
-            const isUnsupported =
-              slot.resourceId !== null && fullySupported !== null && !fullySupported.has(slot.resourceId);
 
             return (
               <ModernSlotCard
@@ -422,7 +420,7 @@ export function ModernView({
                 slotIndex={i}
                 character={character}
                 characterEntry={characterEntry}
-                isUnsupported={isUnsupported}
+                unsupportedNote={slot.resourceId === null ? null : unsupportedNote(slot.resourceId)}
                 error={slot.resourceId === null ? undefined : characterCache.errors.get(slot.resourceId)}
                 slotResult={slotResults[i] ?? null}
                 growthMarks={slotGrowthMarks(i)}
@@ -442,7 +440,7 @@ export function ModernView({
           index={index}
           takenIds={allTakenIds}
           otherPartyIds={otherPartyIds}
-          fullySupported={fullySupported}
+          unsupportedNote={unsupportedNote}
           pendingId={pendingId}
           roster={roster}
           fixedSpec={team.fixedSpec}
@@ -521,7 +519,7 @@ export function ModernView({
               {/* 一覧の項目と同じ入れ物で包み、絵の大きさを一覧とそろえる */}
               <TrayItemFace
                 character={draggedCharacter}
-                isUnsupported={false}
+                unsupportedNote={null}
                 growthMarks={draggedMarks}
                 collectionBadge={draggedCollection}
                 shape={trayShape}

@@ -6,7 +6,7 @@ import {
   type CharacterIndexEntry,
   type EnemyPresetMaster,
 } from '@nikke/core';
-import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { ComputeCache } from './compute.ts';
 import { buildCalcView, slotResultFor } from './calcView.ts';
 import { type NotesSummarySlot } from './components/NotesSummary.tsx';
@@ -28,7 +28,7 @@ import {
 } from './parties.ts';
 import { partyInputs, partyTotals } from './partyTotals.ts';
 import { useBatchComputation } from './useBatchComputation.ts';
-import { slotSkillsStatus, useSkillDefinitions } from './useSkillDefinitions.ts';
+import { slotSkillsStatus, unsupportedNoteOf, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { orderCharacters } from './listOrder.ts';
 import { ListOrderContext, useListOrder } from './useListOrder.ts';
 import { useRoster } from './useRoster.ts';
@@ -127,6 +127,7 @@ export function App() {
   );
   const cache = useCharacterCache(resourceIds, BASE_URL);
   const skills = useSkillDefinitions(resourceIds, BASE_URL);
+  const unsupportedNote = useCallback((resourceId: number) => unsupportedNoteOf(skills, resourceId), [skills]);
 
   // 枠ごとのスキル定義の状態（未選択は null）
   const skillsStatuses = useMemo(
@@ -203,6 +204,7 @@ export function App() {
         index: orderedIndex,
         characterCache: cache,
         fullySupported: skills.fullySupported,
+        unsupportedNote,
         masters,
         mastersError,
         calc,

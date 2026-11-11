@@ -22,7 +22,14 @@ function deps(over: Partial<PartyInputDeps> = {}): PartyInputDeps {
     characters: new Map([[LAPI, lapi]]),
     characterErrors: new Map(),
     // スキル定義の索引に無いキャラ（未定義）として読み込み済み
-    skills: { index: new Set(), indexError: null, fullySupported: null, definitions: new Map(), errors: new Map() },
+    skills: {
+      index: new Set(),
+      indexError: null,
+      fullySupported: null,
+      supportGaps: null,
+      definitions: new Map(),
+      errors: new Map(),
+    },
     masters: null,
     enemyMaster: null,
     ...over,

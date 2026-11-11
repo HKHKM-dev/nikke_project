@@ -17,6 +17,8 @@ export type ViewProps = {
     errors: ReadonlyMap<number, string>;
   };
   fullySupported: ReadonlySet<number> | null;
+  /** 未対応の印（モダン UI）にマウスを載せたときの知らせ（useSkillDefinitions の unsupportedNoteOf。完全対応なら null） */
+  unsupportedNote: (resourceId: number) => string | null;
   masters: BuildMasters | null;
   mastersError: string | null;
   calc: CalcView;

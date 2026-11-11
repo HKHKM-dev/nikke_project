@@ -1,11 +1,14 @@
 import type { CharacterIndexEntry } from '@nikke/core';
 import { useReducer, type ReactNode } from 'react';
+import informationIcon from '../../assets/badges/ui_information.svg';
+import { maskIconStyle } from '../maskIcon.ts';
 import { BadgeIcon } from './BadgeIcon.tsx';
 import { COMPACT_BADGE_KINDS, ELEMENT_BADGE_KIND, VISUAL_BADGE_KINDS, type Badge } from './badges.ts';
 
 type Props = {
   character: CharacterIndexEntry;
-  isUnsupported?: boolean;
+  /** 未対応の印（ⓘ）にマウスを載せたときの知らせ（useSkillDefinitions の unsupportedNoteOf）。null なら印を出さない */
+  unsupportedNote?: string | null;
   /**
    * normal・compact は顔のアイコン（正方形）、portrait は縦長の絵（スロットのカード）、
    * tall は縦長の絵をニケ一覧の幅に縮めたもの（ニケ一覧の縦長の表示。バッジの置き方は portrait と同じ）
@@ -31,7 +34,7 @@ function CharBadge({ badge, className = 'char-badge' }: { badge: Badge; classNam
 
 export function CharacterVisual({
   character,
-  isUnsupported = false,
+  unsupportedNote = null,
   size = 'normal',
   extraBadge = null,
   overlay = null,
@@ -73,7 +76,12 @@ export function CharacterVisual({
       </div>
       {elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
       {overlay}
-      {isUnsupported && <span className="char-unsupported-tag">未</span>}
+      {unsupportedNote !== null && (
+        // 印はバッジの絵 ui_information.svg を型にして塗る（.mask-icon）。知らせはマウスを載せると出る
+        <span className="char-unsupported-tag" role="img" aria-label={unsupportedNote} title={unsupportedNote}>
+          <span className="mask-icon" style={maskIconStyle(informationIcon)} />
+        </span>
+      )}
     </div>
   );
 }

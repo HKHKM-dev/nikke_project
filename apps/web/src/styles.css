@@ -1182,16 +1182,26 @@ header h1 {
 .char-visual-portrait .char-unsupported-tag {
   bottom: 44px;
 }
+/* 未対応の印（ⓘ。CharacterVisual）。赤い丸の上に、バッジの絵 ui_information.svg を型にして白で塗る。マウスを載せると件数が出る */
 .char-unsupported-tag {
   position: absolute;
   bottom: 2px;
   right: 2px;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
   background: #d32f2f;
   color: #fff;
-  font-size: 0.65rem;
-  padding: 1px 3px;
-  font-weight: bold;
   z-index: 2;
+  cursor: help;
+}
+.char-unsupported-tag > .mask-icon {
+  flex: 1;
+}
+.char-visual-compact .char-unsupported-tag {
+  width: 13px;
+  height: 13px;
 }
 
 /* CharacterTray (パレット) */

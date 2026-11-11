@@ -18,7 +18,7 @@ type Props = {
   isTaken: boolean;
   /** このニケを選んでいるほかの編成の番号（1 から。置ける）。右上（限界突破・コア強化の下）に P1・P2 と出す */
   otherParties: readonly number[];
-  isUnsupported: boolean;
+  unsupportedNote: string | null;
   /** 置くスロットのクリックを待っている */
   isPending: boolean;
   /** 右上に出す限界突破・コア強化（育成状況に無ければ null） */
@@ -36,13 +36,13 @@ type Props = {
  */
 function TrayVisual({
   character,
-  isUnsupported,
+  unsupportedNote,
   growthMarks,
   collectionBadge,
   shape,
 }: {
   character: CharacterIndexEntry;
-  isUnsupported: boolean;
+  unsupportedNote: string | null;
   growthMarks: GrowthMarks | null;
   collectionBadge: Badge | null;
   shape: TrayShape;
@@ -50,7 +50,12 @@ function TrayVisual({
   if (shape === 'tall') {
     return (
       <div className="modern-slot-char-area char-tray-tall-area">
-        <CharacterVisual character={character} isUnsupported={isUnsupported} size="tall" extraBadge={collectionBadge} />
+        <CharacterVisual
+          character={character}
+          unsupportedNote={unsupportedNote}
+          size="tall"
+          extraBadge={collectionBadge}
+        />
         <SlotCharName name={character.name.ja} marks={growthMarks} />
       </div>
     );
@@ -58,7 +63,7 @@ function TrayVisual({
   return (
     <CharacterVisual
       character={character}
-      isUnsupported={isUnsupported}
+      unsupportedNote={unsupportedNote}
       size="compact"
       overlay={growthMarks && <GrowthMarksView {...growthMarks} className="char-tray-growth" />}
     />
@@ -81,14 +86,14 @@ function TrayItemName({ name }: { name: string }) {
  */
 export function TrayItemFace({
   character,
-  isUnsupported,
+  unsupportedNote,
   growthMarks,
   collectionBadge,
   shape,
   overlay,
 }: {
   character: CharacterIndexEntry;
-  isUnsupported: boolean;
+  unsupportedNote: string | null;
   growthMarks: GrowthMarks | null;
   collectionBadge: Badge | null;
   shape: TrayShape;
@@ -99,7 +104,7 @@ export function TrayItemFace({
       <span className="char-tray-item-visual">
         <TrayVisual
           character={character}
-          isUnsupported={isUnsupported}
+          unsupportedNote={unsupportedNote}
           growthMarks={growthMarks}
           collectionBadge={collectionBadge}
           shape={shape}
@@ -116,7 +121,7 @@ export function CharacterTrayItem({
   character,
   isTaken,
   otherParties,
-  isUnsupported,
+  unsupportedNote,
   isPending,
   growthMarks,
   collectionBadge,
@@ -148,7 +153,7 @@ export function CharacterTrayItem({
     >
       <TrayItemFace
         character={character}
-        isUnsupported={isUnsupported}
+        unsupportedNote={unsupportedNote}
         growthMarks={growthMarks}
         collectionBadge={collectionBadge}
         shape={shape}
