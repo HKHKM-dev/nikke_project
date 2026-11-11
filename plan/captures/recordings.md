@@ -1050,6 +1050,8 @@
 | 1075 | `20261111-1075_pierce_naga_asuka_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ナガ（450、SG・電撃・SSR） + ◎アスカ（830、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1076 | `20261111-1076_pierce_nihilister_alice_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ニヒリスター（261、SR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1077 | `20261111-1077_pierce_nihilister_alice_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ニヒリスター（261、SR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1078 | `20261111-1078_pierce_dorothy_snowwhite-ha_iron.mp4` | ドロシー（233、AR・水冷・SSR） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
+| 1079 | `20261111-1079_pierce_dorothy_snowwhite-ha_iron.mp4` | ドロシー（233、AR・水冷・SSR） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
