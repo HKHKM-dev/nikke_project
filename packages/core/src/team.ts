@@ -68,7 +68,8 @@ export type TeamSlotInput = {
   defenceOverride?: number;
   /**
    * 2 段目の段 6（同 1.4 節）: その枠の HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。省略は 1（満タン）。
-   * 被弾の時刻はモデルに持たないので戦闘中は一定とみなし、HP の割合の条件（condition.selfHp の「以上」）は編成の段で決まる。
+   * 被弾の時刻はモデルに持たないので戦闘中は一定とみなし、passive の HP の割合の条件（condition.selfHp の「以上」）は編成の段で決まる
+   * （damage の「以上」は発火のフレームで見る。ソリン編）。
    * 最大HP のみ▲・現在の HP▼（紅蓮編）で下がる分は skills/holders.ts の selfHpRatioAt が時間で求める
    */
   hpRatio?: number;

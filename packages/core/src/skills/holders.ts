@@ -106,12 +106,14 @@ import {
   isFiringStat,
   HIT_STATE_STATS,
   isStateStat,
+  isSelfHpAtMost,
   selfHpHolds,
   staticStatesOf,
   type BuffStat,
   type EndedTrigger,
   type EdgeShift,
   type EffectCondition,
+  type SelfHpCondition,
   type TimerTrigger,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
@@ -2121,8 +2123,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) === condition.usedBurst) &&
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex) &&
-    // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）
-    (condition?.selfHp === undefined || selfHpHolds(condition.selfHp, selfHpRatioAt(sourceSlotIndex, ev.frame)));
+    // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）。以上の形は passive（編成の段）と
+    // damage（2 パス目）だけなので、ここには来ない
+    (condition?.selfHp === undefined || selfHpAtMostHolds(condition.selfHp, selfHpRatioAt(sourceSlotIndex, ev.frame)));
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -2177,8 +2180,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
     return (ratio * (1 + up - only)) / (1 + up);
   };
-  /** ソリン編: 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。ループの後に呼ぶ */
+  /**
+   * ソリン編: 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。最大HP のみ▲ も現在の
+   * HP▼ も無い枠は割合が動かないので 1 段。ループの後に呼ぶ
+   */
   const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
+    if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0)
+      return { frames: [0], ratios: [selfHpRatioAt(slotIndex, 0)] };
     const steps = { frames: [] as number[], ratios: [] as number[] };
     for (let f = 0; f < Math.max(frames, 1); f++) {
       const ratio = selfHpRatioAt(slotIndex, f);
@@ -2187,6 +2195,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       steps.ratios.push(ratio);
     }
     return steps;
+  };
+  /** 1 パス目の発火の文脈の selfHp（以下の形だけ。以上の形が来たら定義の読み込みの漏れなので投げる） */
+  const selfHpAtMostHolds = (hp: SelfHpCondition, ratio: number): boolean => {
+    if (!isSelfHpAtMost(hp))
+      throw new RangeError(`selfHp ${JSON.stringify(hp)}: the at-least form is not read in the first pass`);
+    return selfHpHolds(hp, ratio);
   };
   /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と維持 { selfHpAtMostRef } が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>

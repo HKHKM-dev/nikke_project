@@ -10,7 +10,8 @@ import { hitFramesOf, isInFullBurst } from '../burst/schedule.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { applyCompositionToTeam } from '../skills/composition.ts';
 import { itemsOf, selfHpRatioOf } from '../skills/holders.ts';
-import { parseSkillDefinition } from '../skills/types.ts';
+import { resolveCondition } from '../skills/resolve.ts';
+import { parseSkillDefinition, selfHpHolds } from '../skills/types.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { CharacterData } from '../types.ts';
 import { describeEveryShotInOneGroup, fixedSlot, readJson, windowsFrom } from './teamHelpers.ts';
@@ -59,6 +60,16 @@ describe('ソリン（71）の定義', () => {
     });
     const character = readJson<CharacterData>('../../data/characters/71.json');
     expect(burstDelaysOf(character)).toEqual({ hitFrames: 17, effectFrames: 0, hitOffsets: [0, 20, 51] });
+  });
+
+  it('resolves atLeastRef to the value of the slot level, and judges the resolved at-least form', () => {
+    const character = readJson<CharacterData>('../../data/characters/71.json');
+    // 説明文の値を指す形（ブリッドなど）は、発火のフレームで見るためにスロットの Lv の値（% 表記）へ解く。S2 の値 1 を借りて確かめる
+    const resolved = resolveCondition({ selfHp: { atLeastRef: 1 } }, character.skills.skill2, 10);
+    expect(resolved).toEqual({ selfHp: { atLeast: 21.62 } });
+    expect(selfHpHolds(resolved.selfHp!, 0.2162)).toBe(true);
+    expect(selfHpHolds(resolved.selfHp!, 0.2161)).toBe(false);
+    expect(() => selfHpHolds({ atLeastRef: 1 }, 1)).toThrow(/not resolved/);
   });
 
   it('rejects the at-most form of selfHp on a damage', () => {
