@@ -273,5 +273,243 @@
       "slot": "all",
       "source": "target"
     }
+  },
+  {
+    "id": "0317-13",
+    "recording": "0317",
+    "kind": "timing",
+    "use": "record",
+    "value": [1354, 2874, 4059, 5503, 6681, 8103, 9282, 10653],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 0・0・24・0・14・0・24・0f"
+    },
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "scope": {
+      "slot": 1,
+      "source": "burstChain"
+    }
+  },
+  {
+    "id": "0317-14",
+    "recording": "0317",
+    "kind": "timing",
+    "use": "record",
+    "value": [1384, 4088, 6710, 9311],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・24・25・25f"
+    },
+    "source": "V-0724",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "0317-15",
+    "recording": "0317",
+    "kind": "timing",
+    "use": "record",
+    "value": [1415, 4117, 6739, 9341],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0724",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "0317-18",
+    "recording": "0317",
+    "kind": "timing",
+    "use": "record",
+    "value": [4052, 6675, 9275],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0724",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "0317-19",
+    "recording": "0317",
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 21,
+    "unit": "f",
+    "description": "ココアの 1 回目（フルバーストの前）のバースト（右のバースト欄の六角形が I から II に替わったフレーム f1354。0317-13）から、モダニアの S1 の最大装弾数▼のアイコン（赤）が消えたフレーム（f1375。その前のフレームまで付いている）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/still.ts と同じ select で、照準の左の残弾の下のアイコンの列（モダニアの効果）を 1 フレームずつ拡大して並べた一覧（ffmpeg の select=between(n,…)・crop・tile）",
+      "note": "アイコンの列は左から S1 のクリティカルダメージ▲（スタック数の表示）・S2 の命中率▲・S1 の最大装弾数▼（赤）。替わり目の前から▼が付いていて、f1375 から消えた。ココアの S1 のデバフ解除（C-0822 の時刻。15 秒ごと）は、この前後 100 ティック以上の所に無い（timer.ts --mode ticks --start 936 で替わり目は 386.8 ティック）。止まりは間に無い（ティックの差も同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "maxAmmo",
+        "from": 1,
+        "n": 0,
+        "edge": "end",
+        "held": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "0317-20",
+    "recording": "0317",
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 19,
+    "unit": "f",
+    "description": "ココアの 2 回目（フルバーストにつながらない回）のバースト（右のバースト欄の六角形が I から II に替わったフレーム f2874。0317-13）から、モダニアの S1 の最大装弾数▼のアイコン（赤）が消えたフレーム（f2893。その前のフレームまで付いている）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/still.ts と同じ select で、照準の左の残弾の下のアイコンの列（モダニアの効果）を 1 フレームずつ拡大して並べた一覧（ffmpeg の select=between(n,…)・crop・tile）",
+      "note": "アイコンの列は左から S1 のクリティカルダメージ▲（スタック数の表示）・S2 の命中率▲・S1 の最大装弾数▼（赤）。替わり目の前から▼が付いていて、f2893 から消えた。ココアの S1 のデバフ解除（C-0822 の時刻。15 秒ごと）は、この前後 100 ティック以上の所に無い（timer.ts --mode ticks --start 936 で替わり目は 1905.0 ティック）。止まりは間に無い（ティックの差も同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "maxAmmo",
+        "from": 1,
+        "n": 1,
+        "edge": "end",
+        "held": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "0317-21",
+    "recording": "0317",
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 20,
+    "unit": "f",
+    "description": "ココアの 3 回目（フルバーストの前）のバースト（右のバースト欄の六角形が I から II に替わったフレーム f4059。0317-13）から、モダニアの S1 の最大装弾数▼のアイコン（赤）が消えたフレーム（f4079。その前のフレームまで付いている）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/still.ts と同じ select で、照準の左の残弾の下のアイコンの列（モダニアの効果）を 1 フレームずつ拡大して並べた一覧（ffmpeg の select=between(n,…)・crop・tile）",
+      "note": "アイコンの列は左から S1 のクリティカルダメージ▲（スタック数の表示）・S2 の命中率▲・S1 の最大装弾数▼（赤）。替わり目の前から▼が付いていて、f4079 から消えた。ココアの S1 のデバフ解除（C-0822 の時刻。15 秒ごと）は、この前後 100 ティック以上の所に無い（timer.ts --mode ticks --start 936 で替わり目は 3058.6 ティック）。止まりは間に無い（ティックの差も同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "maxAmmo",
+        "from": 1,
+        "n": 2,
+        "edge": "end",
+        "held": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "0317-22",
+    "recording": "0317",
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 21,
+    "unit": "f",
+    "description": "ココアの 8 回目（フルバーストにつながらない回）のバースト（右のバースト欄の六角形が I から II に替わったフレーム f10653。0317-13）から、モダニアの S1 の最大装弾数▼のアイコン（赤）が消えたフレーム（f10674。その前のフレームまで付いている）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/still.ts と同じ select で、照準の左の残弾の下のアイコンの列（モダニアの効果）を 1 フレームずつ拡大して並べた一覧（ffmpeg の select=between(n,…)・crop・tile）",
+      "note": "アイコンの列は左から S1 のクリティカルダメージ▲（スタック数の表示）・S2 の命中率▲・S1 の最大装弾数▼（赤）。替わり目の前から▼が付いていて、f10674 から消えた。ココアの S1 のデバフ解除（C-0822 の時刻。15 秒ごと）は、この前後 100 ティック以上の所に無い（timer.ts --mode ticks --start 936 で替わり目は 9594.7 ティック）。止まりは間に無い（ティックの差も同じ）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "maxAmmo",
+        "from": 1,
+        "n": 7,
+        "edge": "end",
+        "held": true
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire"
+      }
+    }
+  },
+  {
+    "id": "0317-23",
+    "recording": "0317",
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "record",
+    "value": [21, 20],
+    "unit": "f",
+    "description": "ココアの 5 回目（f6681）・7 回目（f9282）のバースト（どちらもフルバーストの前。右のバースト欄の I → II の替わり目。0317-13）から、モダニアの S1 の最大装弾数▼のアイコン（赤）が消えたフレーム（f6702・f9302）までの動画のフレーム数",
+    "method": {
+      "tool": "tools/captures/still.ts と同じ select で、照準の左の残弾の下のアイコンの列（モダニアの効果）を 1 フレームずつ拡大して並べた一覧（ffmpeg の select=between(n,…)・crop・tile）",
+      "note": "モデルではこの 2 回の発動の時にモダニアの▼が付いていない（その前のココアの S1 で外れ、次のスタックが発動の後に付く）ので比べない。録画ではどちらも替わり目の前から▼が付いていた。4 回目（f5503）は替わり目の前から▼が無く、6 回目（f8103）は替わり目の約 5 ティック前のココアの S1（7067 ティック）で▼が先に外れた（替わり目の 10f 前には付いている）"
+    },
+    "scope": {
+      "slot": [1, 3],
+      "source": "skill"
+    }
+  },
+  {
+    "id": "0317-24",
+    "recording": "0317",
+    "source": "V-0724",
+    "readAt": "2026-11-11",
+    "kind": "count",
+    "use": "record",
+    "value": [300, 270, 300, 285, 285, 300, 285, 285, 285, 300, 285, 270, 300, 270],
+    "unit": "発",
+    "description": "モダニア（操作）の、込め終わった時の照準の左の残弾（込めたマガジンの最大装弾数）。込め終わりのフレームの順に f939（戦闘開始）・2322（1 回目のフルバーストの終わりの込め直し）・3053・3616・5021（2 回目の込め直し）・5587・6133・6664・7640（3 回目の込め直し）・8182・8728・10246（4 回目の込め直し）・10683・11436",
+    "method": {
+      "tool": "node tools/captures/reticle-ammo.ts <動画> --mode series",
+      "note": "残弾が増えた（リロードの明け）か 60f 以上読めなかった後の最初の値。読みの割れ（110 → 116 など、ダメージの数字が重なった数フレーム）は除いた。素は 300 発、▼1 スタックで 285、2 スタックで 270。f10683 の 300 発は、ココアの 8 回目のバースト（0317-22）でリロードの途中（最後の発 f10533）に▼が外れた後に込めたもので、直前のマガジン（f10246〜10533 の 270 発）の間に▼が少なくとも 1 スタック付き、ココアの S1 は込め終わりより後（9716 ティック）。このマガジンは的のジャンプの間（f10850 ごろ）に 244 発でリロードに入った"
+    },
+    "scope": {
+      "slot": 3,
+      "source": "firing"
+    }
   }
 ]

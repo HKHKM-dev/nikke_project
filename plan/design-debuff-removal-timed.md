@@ -3,7 +3,7 @@
 - 関連: [design-debuff-removal.md](design-debuff-removal.md)（デバフ解除の語彙。この件はその Q4）・[design-indirect-notes.md](design-indirect-notes.md)（間接の経路 `debuff`）・[verification-guide.md](verification-guide.md) 2.2 節
 - 根拠: C-1038（仮説。V-0712 の撮影 B、録画 1032・1033）
 - 作成日: 2026-11-10
-- 状態: 実装済み（ココアのバーストの確かめは課題 2-64。2.5 節）
+- 状態: 実装済み
 
 ## 0. 範囲
 
@@ -137,3 +137,4 @@
 
 - 2026-11-10: 起案。
 - 2026-11-10: 論点 1〜8 をオーナーの承認で推奨どおりに決め、実装した（味方の timed の▼の解除・定義の検証・最小構成の読む側の印・指標 `fullBurstShotsBeforeAmmoRestore`）。V-0720 で C-1038 を確定に上げた。課題 2-64 はココアのバーストの確かめに絞った。
+- 2026-11-11: ココアのバーストの解除も▼を外すことを、録画 0317 の読み直しで確かめた（V-0724）。課題 2-64 を閉じた。

@@ -64,12 +64,13 @@
           "target": "allies",
           "count": 1,
           "assumes": {
-            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（1 個は状態か▼の効果 1 つ。クレアのバーストで 2・3 スタックとも全部外れた）。時間の▼も外す形は S1 の録画（C-1038）からの類推で、バーストでは確かめていない。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）",
-            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (one debuff = one state or one debuff effect; Claire's burst removed 2 and 3 stacks alike). Removing timed debuffs is carried over from the S1 recordings (C-1038) and is not checked for the burst. Hangover (stun) is not removed, since that has not been checked (not implemented)"
+            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（1 個は状態か▼の効果 1 つ。クレアのバーストで 2・3 スタックとも全部外れた）。時間の▼も外す（C-1088。モダニアの最大装弾数▼が、I の替わり目からバーストの効果の遅れの次のフレームで外れた）。二日酔い（気絶）は、外れるかを確かめていないので外さない（未実装）",
+            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (one debuff = one state or one debuff effect; Claire's burst removed 2 and 3 stacks alike). It removes timed debuffs too (C-1088: Modernia's Max Ammo down went off the frame after the burst effect delay from the I switch). Hangover (stun) is not removed, since that has not been checked (not implemented)"
           },
           "claims": [
             "C-0976",
-            "C-0979"
+            "C-0979",
+            "C-1088"
           ]
         }
       ],

@@ -47,8 +47,8 @@
           "target": "allies",
           "count": 1,
           "assumes": {
-            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（2・3 スタックとも全部外れた。V-0684）。時間の▼も外す形はココアの S1 の録画（C-1038）からの類推で、クレアでは確かめていない。発火のフレームは、バーストの効果の遅れの表に無いので発動のフレーム（録画では I の替わり目の ±2f で外れた）",
-            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (2 and 3 stacks were all removed; V-0684). Removing timed debuffs is carried over from Cocoa's S1 recordings (C-1038) and is not checked for Claire. The firing frame is the activation frame, since she is not in the burst effect delay table (in the recordings it was removed within ±2f of the I switch)"
+            "ja": "味方全体の、デバフ（デバフの印の付いた状態（ほろ酔い）か、味方に付く時間の▼）を 1 つ、スタックごと外す（2・3 スタックとも全部外れた。V-0684）。時間の▼も外す形は、同じ説明文のココアの S1（C-1038）とバースト（C-1088）の録画からの類推で、クレアでは確かめていない。発火のフレームは、バーストの効果の遅れの表に無いので発動のフレーム（録画では I の替わり目の ±2f で外れた）",
+            "en": "Removes one debuff (a debuff-flagged state (Drunken) or a timed debuff on an ally), with all its stacks, from every ally (2 and 3 stacks were all removed; V-0684). Removing timed debuffs is carried over from the recordings of Cocoa's S1 (C-1038) and burst (C-1088), which have the same description, and is not checked for Claire. The firing frame is the activation frame, since she is not in the burst effect delay table (in the recordings it was removed within ±2f of the I switch)"
           },
           "claims": ["C-0979", "C-0988"]
         }
