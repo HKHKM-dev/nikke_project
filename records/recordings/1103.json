@@ -1,0 +1,46 @@
+{
+  "id": "1103",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1103_sorin-burst.mp4",
+  "original": "2026-11-12_04-29-05.mp4",
+  "durationSec": 202.3,
+  "frames": 12139,
+  "fps": 60,
+  "sizeMB": 245.5,
+  "sha256": "fc1b92af48d9",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 20,
+      "name": "デルタ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 71,
+      "name": "ソリン",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T04:37+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
