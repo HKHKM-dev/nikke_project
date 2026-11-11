@@ -31,7 +31,7 @@ import { readStorage, removeStorage, writeStorage } from './storage.ts';
 export type ListOrderState = { order: ListOrder; direction: ListDirection; values: ReadonlyMap<number, number> };
 export const ListOrderContext = createContext<ListOrderState>({ order: 'name', direction: 'asc', values: new Map() });
 
-/** 設定のメニューの「一覧の並び」の欄 */
+/** 並べ替えの操作（クラシックの「一覧の並び」の欄・モダン UI のニケ一覧の「並べ替え」） */
 export type ListOrderControls = {
   order: ListOrder;
   /** 並びを選ぶ。向きは、その並びの既定の向きに戻す */

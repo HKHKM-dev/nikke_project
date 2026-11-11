@@ -1,4 +1,4 @@
-// 設定のメニューの「一覧の並び」の欄: 名前順・戦闘力順（plan/design-combat-power-sort.md 6 節）
+// クラシックのスロットの上の「並べ替え」で開く「一覧の並び」の欄（ClassicView）: 並びと向き（plan/design-combat-power-sort.md 6 節）
 import {
   LIST_DIRECTION_LABEL,
   LIST_DIRECTION_MARK,

@@ -42,7 +42,7 @@ type Props = {
   roster: BuildSnapshot | null;
   /** スペック固定（各ニケの限界突破・コア強化は、計算に使う固定の値を出す） */
   fixedSpec: boolean;
-  /** 一覧の並び（名前順・戦闘力順。設定のメニューの「一覧の並び」と同じもの） */
+  /** 一覧の並び（名前順・戦闘力順。クラシックのスロットの上の「並べ替え」と同じもの） */
   listOrder: ListOrderControls;
   /** 立ち絵の形（四角・縦長）と、切り替え */
   shape: TrayShape;
@@ -195,7 +195,7 @@ export function CharacterTray({
               })}
             </div>
           </Popover>
-          {/* 設定のメニューの「一覧の並び」にあった知らせ（モダン UI ではここに出す） */}
+          {/* クラシックの「一覧の並び」の欄と同じ知らせ */}
           {listOrder.order === 'combatPower' && listOrder.tableError !== null && (
             <span className="hint">戦闘力の表を読めない: {listOrder.tableError}</span>
           )}

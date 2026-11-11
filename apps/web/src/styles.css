@@ -94,6 +94,13 @@ header h1 {
   z-index: 19;
   background: rgb(0 0 0 / 0.5);
 }
+/* クラシックのスロットの上の並べ替え（ClassicView） */
+.classic-list-order {
+  margin: 8px 0;
+}
+.classic-list-order-button {
+  padding: 4px 10px;
+}
 .popover-button {
   position: relative;
   color: inherit;

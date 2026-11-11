@@ -227,7 +227,7 @@ export function App() {
         <h1>NIKKE ダメージ計算</h1>
         <div className="app-header-actions">
           <AccountMenu roster={rosterControls} />
-          <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} listOrder={listOrderControls} />
+          <SettingsMenu uiMode={uiMode} onSelectUiMode={setUiMode} />
         </div>
       </header>
       <UnreadableSavesNotice {...unreadableControls} />
