@@ -25,6 +25,8 @@ import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSqua
  */
 export type FireContext = {
   burstUsers?: readonly number[];
+  /** ミント・プリカ編（plan/design-mint-prika.md 2.4 節）: { applied } のきっかけの状態の、そのフレームに付いた件を付けた枠（appliedCaster） */
+  appliedCasters?: readonly number[];
   attackRank?: readonly number[];
   lowerDefense?: readonly number[];
   /**
@@ -132,6 +134,8 @@ export function isEffectTarget(
     }
     case 'burstUsers':
       return weaponOk && context?.burstUsers?.includes(targetSlotIndex) === true;
+    case 'appliedCaster':
+      return weaponOk && context?.appliedCasters?.includes(targetSlotIndex) === true;
     case 'topAttack': {
       const rank = context?.attackRank;
       if (!weaponOk || rank === undefined) return false;
@@ -160,7 +164,12 @@ export function canEverTarget(
 
 /** 対象が発火の文脈で変わるか（変わらなければ効果ごとに 1 回だけ対象を決めてよい） */
 export function dependsOnContext(effect: { target: BuffTarget; targetDefense?: TargetDefense }): boolean {
-  return effect.target === 'burstUsers' || effect.target === 'topAttack' || dependsOnDefense(effect);
+  return (
+    effect.target === 'burstUsers' ||
+    effect.target === 'topAttack' ||
+    effect.target === 'appliedCaster' ||
+    dependsOnDefense(effect)
+  );
 }
 
 /** 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 対象を決めるのに最終防御力の比べが要るか */

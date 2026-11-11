@@ -359,6 +359,25 @@ export function reduceCooldown(
   state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied });
 }
 
+/**
+ * ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 「バーストスキルクールタイム X 秒▲」。枠 slotIndex の走っている CT の明けを frames だけ
+ * 遅らせる（明けている枠は変わらない）。記録の applied は負（延びたフレーム数の符号を変えたもの。CT の明けを数える所は即時の CT▼ と同じ式で読める）
+ */
+export function extendCooldown(
+  state: BurstControllerState,
+  slotIndex: number,
+  frames: number,
+  frame: number,
+  sourceSlotIndex: number,
+): void {
+  if (!Number.isInteger(frames) || frames < 0)
+    throw new RangeError(`frames must be a non-negative integer, got ${frames}`);
+  if (state.units[slotIndex] == null) return;
+  const running = state.cooldownEnd[slotIndex]! > frame;
+  if (running) state.cooldownEnd[slotIndex] = state.cooldownEnd[slotIndex]! + frames;
+  state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied: running ? -frames : 0 });
+}
+
 /** メイド編（plan/design-maids.md 2.2 節）: 枠を until（このフレームを含まない）まで気絶にし、バーストの候補から外す */
 export function stunSlot(state: BurstControllerState, slotIndex: number, until: number): void {
   const stunned = (state.stunnedUntil ??= state.units.map(() => 0));

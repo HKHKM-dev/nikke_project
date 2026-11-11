@@ -24,6 +24,7 @@ import {
 } from './target.ts';
 import {
   parseEndedTrigger,
+  parseAppliedTrigger,
   parseShotCountDelay,
   parseSinceTimerTrigger,
   parseTimerDelayFrames,
@@ -82,10 +83,11 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
     kind === 'ammoRefill'
       ? ['scaling']
       : kind === 'cooldownReduction'
-        ? // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数の上限（maxFires）
-          ['seconds', 'condition', 'maxFires']
-        : kind === 'fullBurstExtend'
-          ? ['condition']
+        ? // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数の上限（maxFires）。ミント・プリカ編: CT▲（increase）
+          ['seconds', 'condition', 'maxFires', 'increase']
+        : kind === 'fullBurstExtend' || kind === 'heal'
+          ? // ミント・プリカ編（plan/design-mint-prika.md 2.7 節）: heal の発火の条件
+            ['condition']
           : [];
   for (const key of Object.keys(v)) {
     if (
@@ -112,8 +114,13 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   const hasDuration = v.durationRef !== undefined || v.durationSeconds !== undefined;
   // F5（plan/design-heal-vocabulary.md 3.3 節）: heal は時間の周期のトリガー（atStart も）を書ける（エマ：TU の S1 の持続回復）
   // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 現在の HP▼ は、状態の付いた時から数える周期（「1 秒間隔」）も書ける
+  // ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: CT▼▲は「〈状態〉が適用された時」（{ applied }）も書ける（対象は自分・条件は selfState だけ）
+  const applied = kind === 'cooldownReduction' ? parseAppliedTrigger(v.trigger, `${path}.trigger`) : undefined;
+  if (applied !== undefined && v.target !== 'self')
+    fail(`${path}.target`, 'a cooldown change on an applied trigger must target "self"');
   // グレイブ編（plan/design-grave.md 2.1 節）: 残弾数減少は「〈状態〉が終了した時」（{ ended }）も
   const trigger =
+    applied ??
     (kind === 'currentHpDown' ? parseSinceTimerTrigger(v.trigger, `${path}.trigger`, true) : undefined) ??
     (kind === 'ammoDecrease' ? parseEndedTrigger(v.trigger, `${path}.trigger`) : undefined) ??
     parseTrigger(
@@ -144,6 +151,7 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   // 回復で回復を起こすと連鎖が閉じないので、heal のトリガーに healed は書けない（plan/design-stage11.md 3.3 節）
   if (kind === 'heal' && trigger === 'healed') fail(`${path}.trigger`, 'heal cannot be triggered by "healed"');
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  if (target === 'appliedCaster') fail(`${path}.target`, 'appliedCaster is only allowed in timed and state grants');
   validateBurstUsersTarget(target, trigger, path);
   // 対象の語彙編: 基本チャージ時間の順位は timed だけ（plan/design-target-vocab.md 2.2 節）
   if (target === 'longestChargeTime') fail(`${path}.target`, 'longestChargeTime is only allowed in timed');
@@ -201,15 +209,23 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   if (v.delayFrames !== undefined) {
     (effect as HealEffect).delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
   }
-  // 2 段目の段 12 の PR 4: 欄の一覧で cooldownReduction（段 21: と fullBurstExtend）だけに限ってある
+  // 2 段目の段 12 の PR 4: 欄の一覧で cooldownReduction（段 21: と fullBurstExtend。ミント・プリカ編: と heal）だけに限ってある
   if (v.condition !== undefined) {
     const condition = parseCondition(
       v.condition,
       `${path}.condition`,
-      kind === 'fullBurstExtend' ? CONDITION_KEYS_OF.fullBurstExtend : CONDITION_KEYS_OF.cooldownReduction,
+      // CT▼▲（{ applied } のほか）は使った段階も。ほか（フルバーストタイムの延長・回復・{ applied } の CT▼▲）は自分の状態だけ
+      kind === 'cooldownReduction' && applied === undefined
+        ? CONDITION_KEYS_OF.cooldownReduction
+        : CONDITION_KEYS_OF.selfStateOnly,
     );
     validateBurstStep(condition, trigger, `${path}.condition`);
-    (effect as CooldownReductionEffect | FullBurstExtendEffect).condition = condition;
+    (effect as CooldownReductionEffect | FullBurstExtendEffect | HealEffect).condition = condition;
+  }
+  // ミント・プリカ編: 欄の一覧で cooldownReduction だけに限ってある
+  if (v.increase !== undefined) {
+    if (v.increase !== true) fail(`${path}.increase`, 'must be true');
+    (effect as CooldownReductionEffect).increase = true;
   }
   // レッドフード編: 欄の一覧で cooldownReduction だけに限ってある
   if (v.maxFires !== undefined)

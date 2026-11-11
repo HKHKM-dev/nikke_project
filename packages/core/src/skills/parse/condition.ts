@@ -74,8 +74,9 @@ export const CONDITION_KEYS_OF = {
   cooldownReduction: ['selfState', 'burstStep'],
   // レッドフード編: 使用武器の変更は使った段階だけ
   weaponChange: ['burstStep'],
-  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: フルバーストタイムの延長も自分の状態だけ
-  fullBurstExtend: ['selfState'],
+  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: フルバーストタイムの延長は自分の状態だけ。ミント・プリカ編（plan/design-mint-prika.md
+  // 2.3・2.5・2.7 節）: { applied } の効果・状態の維持の延長・回復も
+  selfStateOnly: ['selfState'],
 } as const satisfies Record<string, readonly ConditionKey[]>;
 
 /** レッドフード編（plan/design-red-hood.md 2.1 節）: burstStep はバースト使用時（burstUse）のきっかけにだけ書ける */

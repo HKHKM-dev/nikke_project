@@ -42,6 +42,7 @@ import {
   type CoverHealedTrigger,
   type CoverHealEffect,
   type RemoveDebuffEffect,
+  type StateExtendEffect,
   type ChargeTickTrigger,
   type ChargeFullTrigger,
   type BasicBurstStep,
@@ -1041,6 +1042,8 @@ export type ResolvedRemoveState = {
   state: NamedStateId;
   trigger: ResolvedTrigger;
   condition?: EffectCondition;
+  /** ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: 自分の状態の消去（cancelState の self）。解除不可の件も閉じる */
+  cancel?: true;
 };
 
 /** 2 段目の段 1: 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
@@ -1056,7 +1059,8 @@ export function resolveRemoveStates(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      if (effect.kind !== 'removeState') return;
+      // ミント・プリカ編: 自分の状態の消去（cancelState の self）も同じ形で解く
+      if (effect.kind !== 'removeState' && !(effect.kind === 'cancelState' && effect.target === 'self')) return;
       const r: ResolvedRemoveState = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
         effectIndex,
@@ -1064,6 +1068,7 @@ export function resolveRemoveStates(
         trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
       };
       if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      if (effect.kind === 'cancelState') r.cancel = true;
       out.push(r);
     });
   }
@@ -1119,11 +1124,48 @@ export function resolveDotCancels(
 ): ResolvedDotCancel[] {
   return SKILL_SLOTS.flatMap((slot) =>
     def.skills[slot].effects.flatMap((effect) =>
-      effect.kind === 'cancelState'
+      effect.kind === 'cancelState' && effect.target === 'enemy'
         ? [{ state: effect.state, trigger: resolveTrigger(effect.trigger, character.skills[slot], levels[slot]) }]
         : [],
     ),
   );
+}
+
+/**
+ * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 解決した状態の維持の延長。frames は延ばすフレーム（gameSecondsToFrames）
+ */
+export type ResolvedStateExtend = {
+  source: ResolvedEffect['source'];
+  effectIndex: number;
+  state: NamedStateId;
+  trigger: ResolvedTrigger;
+  target: StateExtendEffect['target'];
+  frames: number;
+  condition?: EffectCondition;
+};
+
+/** ミント・プリカ編: 定義の状態の維持の延長を Lv の数値に解く */
+export function resolveStateExtends(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedStateExtend[] {
+  return SKILL_SLOTS.flatMap((slot) => {
+    const skill = character.skills[slot];
+    return def.skills[slot].effects.flatMap((effect, effectIndex) => {
+      if (effect.kind !== 'stateExtend') return [];
+      const r: ResolvedStateExtend = {
+        source: { resourceId: character.resourceId, skill: slot, name: skill.name },
+        effectIndex,
+        state: effect.state,
+        trigger: resolveTrigger(effect.trigger, skill, levels[slot]),
+        target: effect.target,
+        frames: gameSecondsToFrames(skillValue(skill, effect.secondsRef, levels[slot])),
+      };
+      if (effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
+      return [r];
+    });
+  });
 }
 
 /** スタック量・カウンタの増減の数（即値の amount か、description_value_NN の amountRef を整数に丸めたもの） */
@@ -1493,6 +1535,8 @@ export type ResolvedInstantEffect = {
   condition?: EffectCondition;
   /** レッドフード編（plan/design-red-hood.md 2.3 節）: cooldownReduction の戦闘中の発火の回数の上限 */
   maxFires?: number;
+  /** ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: cooldownReduction の CT▲（走っている CT の残りに足す） */
+  increase?: true;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
@@ -1557,9 +1601,13 @@ export function resolveInstant(
         r.durationFrames = gameSecondsToFrames(durationSecondsOf(effect, skill, levels[slot]));
       }
       if (effect.kind === 'heal' && effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
-      if ((effect.kind === 'cooldownReduction' || effect.kind === 'fullBurstExtend') && effect.condition !== undefined)
+      if (
+        (effect.kind === 'cooldownReduction' || effect.kind === 'fullBurstExtend' || effect.kind === 'heal') &&
+        effect.condition !== undefined
+      )
         r.condition = resolveCondition(effect.condition, skill, levels[slot]);
       if (effect.kind === 'cooldownReduction' && effect.maxFires !== undefined) r.maxFires = effect.maxFires;
+      if (effect.kind === 'cooldownReduction' && effect.increase === true) r.increase = true;
       if (effect.burstStepMode) r.burstStepMode = effect.burstStepMode;
       if (effect.assumes) r.assumes = effect.assumes;
       resolved.push(r);

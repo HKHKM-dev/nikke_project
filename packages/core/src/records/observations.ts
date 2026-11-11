@@ -1635,7 +1635,10 @@ export const METRICS: Readonly<Record<string, Metric>> = {
       return activationFramesOfSlot(r.schedule, slotIndexOf(c)).length;
     },
   },
-  /** V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける） */
+  /**
+   * V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける）。ミント・プリカ編: 同じ
+   * フレームの CT▲ は負で入る（CooldownReduction.applied）
+   */
   cooldownCutFrames: {
     args: ['slot', 'n'],
     sim: (r, c) => cooldownCutFrames(r, c),

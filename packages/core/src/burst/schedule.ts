@@ -81,9 +81,12 @@ export type CooldownReduction = {
   slotIndex: number;
   /** 効果を出した枠 */
   sourceSlotIndex: number;
-  /** 縮めようとしたフレーム数（gameSecondsToFrames(X 秒)） */
+  /** 縮めようとした（ミント・プリカ編: CT▲ なら延ばそうとした）フレーム数（gameSecondsToFrames(X 秒)。正） */
   frames: number;
-  /** 実際に縮んだフレーム数（CT が明けていれば 0。明けるフレームより前には戻さない） */
+  /**
+   * 実際に縮んだフレーム数（CT が明けていれば 0。明けるフレームより前には戻さない）。符号付き: CT▲（burst/controller.ts の extendCooldown）は
+   * 延びたフレーム数を負で持つので、CT の明けを「CT − 合計」で数える所はそのまま読める
+   */
   applied: number;
 };
 

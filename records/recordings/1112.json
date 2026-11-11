@@ -1,0 +1,58 @@
+{
+  "id": "1112",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1112_sr_prika.mp4",
+  "original": "2026-11-12_05-26-07.mp4",
+  "durationSec": 209.2,
+  "frames": 12550,
+  "fps": 60,
+  "sizeMB": 253.4,
+  "sha256": "c64543fee492",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 601,
+      "name": "プリカ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 600,
+      "name": "ミント",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 161,
+      "name": "ミハラ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T05:38+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
