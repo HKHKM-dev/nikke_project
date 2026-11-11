@@ -13,6 +13,7 @@ import {
   isCounterFullTrigger,
   isEnemyHeldStat,
   isPelletStat,
+  isSelfHpAtMostTrigger,
   isStacksCondition,
   type MaxStacksUpContentItem,
   type SkillCooldownDownContentItem,
@@ -273,7 +274,7 @@ function validateCounterGrant(fields: GrantTimedFields, path: string, onEnemy: b
  */
 function validateSelfHpGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
   const until = fields.durationUntil;
-  if (typeof until !== 'object' || !('selfHpAtMostRef' in until)) return;
+  if (!isSelfHpAtMostTrigger(until)) return;
   if (onEnemy || fields.target !== 'self')
     fail(`${path}.target`, 'a grant lasting until the HP drops is only on "self"');
   if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
@@ -452,7 +453,7 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
     fields.trigger = 'battleStart';
   }
   // A2 の B モード編: HP の割合で解除される状態の中身の規則は、閉じる（件の一覧）までは「持続」の付与と同じ
-  if (isRecord(fields.durationUntil) && 'selfHpAtMostRef' in fields.durationUntil) fields.durationUntil = 'battleEnd';
+  if (isSelfHpAtMostTrigger(fields.durationUntil)) fields.durationUntil = 'battleEnd';
   if (value.stat === 'fixedChargeTime') {
     delete fields.maxStacks;
     delete fields.maxStacksRef;
@@ -490,12 +491,10 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   } else if (isRecord(v.trigger) && v.trigger.applied !== undefined) {
     // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 3）: 「変身後、バッテリー N%▼」
     trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`)!;
-  } else if (isRecord(v.trigger) && v.trigger.since !== undefined) {
-    // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）
-    trigger = parseSinceTimerTrigger(v.trigger, `${path}.trigger`)!;
   } else {
-    // 2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）: 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
-    trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
+    // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）。2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）:
+    // 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
+    trigger = parseSinceTimerTrigger(v.trigger, `${path}.trigger`) ?? parseTrigger(v.trigger, `${path}.trigger`, true);
   }
   if (v.target !== 'self') fail(`${path}.target`, `expected "self", got ${JSON.stringify(v.target)}`);
   const effect: CounterChangeEffect = { kind: 'counterChange', counter, trigger, target: 'self' };

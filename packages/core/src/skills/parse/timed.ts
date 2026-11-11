@@ -9,10 +9,8 @@ import {
   type BuffScaling,
   type BuffStat,
   type BuffTarget,
-  type CounterEmptyUntil,
-  type SelfHpAtMostUntil,
+  type GrantDurationUntil,
   DURATION_UNTILS,
-  type DurationUntil,
   EXCLUDE_SELF,
   type ExcludeSelf,
   isAppliedTrigger,
@@ -189,7 +187,7 @@ type TimedFields = Omit<TimedEffect, 'kind' | 'stat'>;
  * 付与（stat が undefined）の欄。2 段目の段 19 の PR 1: 維持に { counterEmpty } も書ける（StateGrantEffect）。A2 の B モード編: { selfHpAtMostRef } も
  */
 export type GrantTimedFields = Omit<TimedFields, 'durationUntil'> & {
-  durationUntil?: DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
+  durationUntil?: GrantDurationUntil;
 };
 
 /**
@@ -553,7 +551,7 @@ function parseTimedDuration(
   durationSeconds?: number;
   durationShots?: number;
   durationShotsRef?: number;
-  durationUntil?: DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
+  durationUntil?: GrantDurationUntil;
 } {
   const hasShots = v.durationShots !== undefined;
   const hasShotsRef = v.durationShotsRef !== undefined;
@@ -566,15 +564,8 @@ function parseTimedDuration(
     if (stat === undefined && isRecord(v.durationUntil)) {
       const key = `${path}.durationUntil`;
       // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 「自分の HP が X% 以下の時、〈状態〉解除」（validateSelfHpGrant）
-      if ('selfHpAtMostRef' in v.durationUntil)
-        return {
-          durationUntil: {
-            selfHpAtMostRef: parseRef(
-              objectUntil(v.durationUntil, 'selfHpAtMostRef', key, 'expected { selfHpAtMostRef }'),
-              `${key}.selfHpAtMostRef`,
-            ),
-          },
-        };
+      const hpUntil = parseSelfHpAtMostTrigger(v.durationUntil, key);
+      if (hpUntil !== undefined) return { durationUntil: hpUntil };
       return {
         durationUntil: {
           counterEmpty: oneOf(

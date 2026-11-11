@@ -1043,7 +1043,10 @@ export type CounterEmptyUntil = { counterEmpty: CounterId };
  * 発火の次のフレームから読む）が閾値以下と読めたフレーム g に、件を g + 1 で閉じる（g には付いている。解除 removeState と同じ）。それまでは
  * 戦闘の終わりまで。発火のフレームにすでに閾値以下なら付かない（V-0729）。自分にだけ付き、スタックせず、条件を持たない
  */
-export type SelfHpAtMostUntil = { selfHpAtMostRef: number };
+export type SelfHpAtMostUntil = SelfHpAtMostTrigger;
+
+/** 状態の付与の維持の終わり（timed と同じ出来事と、オブジェクトの形の解除条件） */
+export type GrantDurationUntil = DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
 
 /**
  * 同（論点 4）: dot の「〈状態〉解除まで」。きっかけ { applied } の状態の、自分の件の終わり（付いたフレームを含む件）より後の tick を出さない
@@ -2094,7 +2097,7 @@ export type StateGrantEffect = Omit<
 > & {
   kind: 'state';
   /** timed と同じ維持の終わりの出来事。2 段目の段 19 の PR 1: カウンタが 0 になった時（CounterEmptyUntil）も。A2 の B モード編: HP が X% 以下の時（SelfHpAtMostUntil）も */
-  durationUntil?: DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
+  durationUntil?: GrantDurationUntil;
   /** 目録の id（持ち主が味方の状態。enemy なら敵の状態） */
   state: NamedStateId;
   /**

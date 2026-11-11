@@ -526,6 +526,11 @@ export type HolderLists = {
   stateStartedAt(holder: number, state: NamedStateId, frame: number): boolean;
   stateHeldAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
+   * A2 の B モード編（V-0729）: 状態の付いた時から数える周期（since）の発火（counterChange と同じ数え方。atStart なら付いたフレームにも）。
+   * 1 パス目が since の currentHpDown の発火に使う。返す関数は件の登録（registerFrame）の後に呼ぶ
+   */
+  sinceFires(trigger: TimerTrigger, slotIndex: number): TriggerTracker;
+  /**
    * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
    * 静的な状態は 1、無ければ 0）。frame/plan.ts の damage の perCount { state } と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
    * ヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
@@ -1393,11 +1398,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (stateTracks[slotIndex]?.get(state) ?? []).some((t) => activeAt(t, frame).length > 0);
   /**
    * 同（論点 2）: 状態の付いた時から数える周期（since）。起点はそのフレームまでに付いた最後の記録で、k 回目は起点から k × everySeconds 秒
-   * （timerFramesOf と同じ数え方）。その状態が効いている間だけ
+   * （timerFramesOf と同じ数え方）。その状態が効いている間だけ。A2 の B モード編（V-0729）: atStart なら付いたフレームにも発火する（currentHpDown。
+   * 1 パス目の即時効果も件の一覧の sinceFires で決める）
    */
   const sinceFires = (trigger: TimerTrigger, slotIndex: number): TriggerTracker => {
     const state = trigger.since!.applied;
     const offsets = new Set(timerFramesOf(trigger, frames));
+    if (trigger.atStart === true) offsets.add(0);
     return (ev) => {
       const start = lastAtOrBefore(ownAppliedOf(slotIndex, state), ev.frame);
       return start !== undefined && offsets.has(ev.frame - start) && ownStateActive(slotIndex, state, ev.frame);
@@ -1727,20 +1734,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 解除不可でも閉じる。registerCounters）
    */
   const counterEmptyTracks = new Map<string, HeldTrack[]>();
-  for (const track of tracks) {
-    const o = track.origin;
-    if (o.kind !== 'state' || o.grant.untilCounterEmpty === undefined) continue;
-    const key = counterKey(track.holder, o.grant.untilCounterEmpty);
-    counterEmptyTracks.set(key, [...(counterEmptyTracks.get(key) ?? []), track]);
-  }
-  /**
-   * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値
-   */
+  /** A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値 */
   const selfHpUntilTracks: { track: HeldTrack; threshold: number }[] = [];
   for (const track of tracks) {
     const o = track.origin;
-    if (o.kind === 'state' && o.grant.untilSelfHpAtMost !== undefined)
+    if (o.kind !== 'state') continue;
+    if (o.grant.untilSelfHpAtMost !== undefined)
       selfHpUntilTracks.push({ track, threshold: o.grant.untilSelfHpAtMost });
+    if (o.grant.untilCounterEmpty === undefined) continue;
+    const key = counterKey(track.holder, o.grant.untilCounterEmpty);
+    counterEmptyTracks.set(key, [...(counterEmptyTracks.get(key) ?? []), track]);
   }
   /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
   const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
@@ -2290,6 +2293,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   // stacksFrom・順位の対象を止める）の、前の回の発（known）と、件の始まりのフレーム → その件の数（early）と、この回の発（fired）
   if (stateGroups.some((group) => group.grants.some((g) => g.grant.leadFrames !== undefined && g.stage !== 1)))
     throw new Error('a grant with leadFrames must be in stage 1');
+  // A2 の B モード編: HP の割合で解除される付与の「発火のフレームにすでに閾値以下なら付かない」は段 1 の付与だけが見る（skills/parse/state.ts が
+  // 条件を止める）。前の回の発から始める付与（leadFrames）とは組まない
+  if (
+    stateGroups.some((group) =>
+      group.grants.some(
+        (g) => g.grant.untilSelfHpAtMost !== undefined && (g.stage !== 1 || g.grant.leadFrames !== undefined),
+      ),
+    )
+  )
+    throw new Error('a grant lasting until the HP drops must be in stage 1 without leadFrames');
   const leads = new Map(
     stage1Grants.flatMap((g) => {
       if (g.grant.leadFrames === undefined) return [];
@@ -2412,7 +2425,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
     if (!battleStartOnly)
       for (const { track, threshold } of selfHpUntilTracks)
-        if (activeAt(track, f).some((it) => it.start < f) && selfHpAtMostAt(track.holder, f, threshold))
+        if (readItems(track).some((it) => it.start < f && f < it.end) && selfHpAtMostAt(track.holder, f, threshold))
           closeTrack(track, f);
     const take = (trigger: ResolvedTrigger): boolean =>
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
@@ -2785,6 +2798,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return false;
     },
     stateHeldAt: ownStateActive,
+    sinceFires,
     selfStackCountAt,
     enemyStateAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {

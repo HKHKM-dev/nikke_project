@@ -179,9 +179,14 @@ export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
 }
 
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
+/** 自分の HP の割合の閾値（% の description_value_NN）を割合にする（きっかけ { selfHpAtMostRef } と維持 { selfHpAtMostRef }） */
+function selfHpRatioOfRef(skill: SkillRaw, ref: number, level: number): number {
+  return skillValue(skill, ref, level) / 100;
+}
+
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   // マスト編: HP の割合の閾値は % → 比率
-  if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: skillValue(skill, trigger.selfHpAtMostRef, level) / 100 };
+  if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // ソルジャーE.G. 編: 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
@@ -728,8 +733,7 @@ export function resolveStateGrants(
       const until = effect.durationUntil;
       const counterEmpty = typeof until === 'object' && 'counterEmpty' in until ? until.counterEmpty : undefined;
       // A2 の B モード編: HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
-      const selfHpAtMostRef =
-        typeof until === 'object' && 'selfHpAtMostRef' in until ? until.selfHpAtMostRef : undefined;
+      const hpUntil = isSelfHpAtMostTrigger(until) ? until : undefined;
       const window = resolveItemFields(
         { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
         character,
@@ -753,8 +757,8 @@ export function resolveStateGrants(
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       if (counterEmpty !== undefined) grant.untilCounterEmpty = counterEmpty;
-      if (selfHpAtMostRef !== undefined)
-        grant.untilSelfHpAtMost = skillValue(character.skills[slot], selfHpAtMostRef, levels[slot]) / 100;
+      if (hpUntil !== undefined)
+        grant.untilSelfHpAtMost = selfHpRatioOfRef(character.skills[slot], hpUntil.selfHpAtMostRef, levels[slot]);
       untrimmed.push(grant);
     });
   }
