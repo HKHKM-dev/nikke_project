@@ -50,21 +50,21 @@
           "claims": [
             "C-0899"
           ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "pierce",
+          "assumes": {
+            "ja": "戦闘開始時から持続。バーストⅢのレッドウルフ（使用武器変更）の発にも乗る",
+            "en": "From the start of battle, continuous. It also applies to the Red Wolf (weapon change, Burst III) shots"
+          },
+          "claims": [
+            "C-1093"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "戦闘開始時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
-          "en": "Pierce at the start of battle does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
-          "kind": "indirect",
-          "path": "pierce",
-          "effect": {
-            "kind": "unknown"
-          },
-          "claims": [
-            "C-1031"
-          ]
-        },
         {
           "ja": "ビーストケージを適用時の、味方全体へのスキル発動者基準の防御力▲は、それ自体は与ダメージを変えない（防御力を読む効果のある編成でだけ効く）",
           "en": "The DEF up based on the caster's DEF for all allies when Beast Cage takes effect does not change damage by itself (it matters only with an effect reading DEF in the team)",

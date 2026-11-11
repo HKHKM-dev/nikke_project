@@ -115,22 +115,19 @@
           "claims": [
             "C-0076"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 1,
+          "claims": [
+            "C-1096"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
-          "en": "Pierce does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
-          "kind": "indirect",
-          "path": "pierce",
-          "effect": {
-            "kind": "unknown"
-          },
-          "claims": [
-            "C-0076",
-            "C-1031"
-          ]
-        },
         {
           "ja": "命中率▲は、条件が自動の枠ではバースト中のコア命中率を 1 にする（N ≥ 1。持続の▲も常時の▲と同じ式で効かせる）。AR の弾丸命中率にも同じ式で効かせる（確かめたのは SMG だけ）。バーストゲージにも同じ N で効かせるが、▲の窓（10 秒）はフルバーストの窓に収まり、ゲージの溜まる時間と重ならない（きっかけの遅れは未測定で 0）",
           "en": "With automatic conditions the Hit Rate buff makes the core hit rate 1 during the burst (N ≥ 1; timed buffs use the same formula as constant ones). It also raises the AR bullet hit rate with the same formula (verified only for SMG). The burst gauge uses the same N, but the 10 s buff lies inside the full burst window, when the gauge does not charge (the trigger delay is unmeasured and taken as 0)",

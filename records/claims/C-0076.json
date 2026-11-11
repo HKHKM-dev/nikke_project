@@ -9,10 +9,6 @@
   "replaces": [],
   "updated": "2026-09-28",
   "subject": {
-    "places": [
-      "data/skills/830.json の burst の effects[0]",
-      "data/skills/830.json の burst の effects[2]",
-      "data/skills/830.json の burst の notes[0]"
-    ]
+    "places": ["data/skills/830.json の burst の effects[0]", "data/skills/830.json の burst の effects[2]"]
   }
 }

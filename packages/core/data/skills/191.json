@@ -33,21 +33,26 @@
       ]
     },
     "skill2": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
-          "en": "Pierce does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
-          "kind": "indirect",
-          "path": "pierce",
-          "effect": {
-            "kind": "unknown"
+          "kind": "passive",
+          "target": "self",
+          "stat": "pierce",
+          "condition": {
+            "selfHp": {
+              "atLeastRef": 1
+            }
+          },
+          "assumes": {
+            "ja": "HP の割合は枠の想定（射撃場ではほぼ満タン）で、80% 以上の間はいつも付く。80% の境目は確かめていない",
+            "en": "The HP ratio is the slot assumption (nearly full at the shooting range), so it always applies while at 80% or above. The 80% boundary is not verified"
           },
           "claims": [
-            "C-0443",
-            "C-1031"
+            "C-1098"
           ]
-        },
+        }
+      ],
+      "notes": [
         {
           "ja": "HP 80% 未満のときの回復は、被弾を扱わないので起きない（要件 5.2 節）。射撃場の 3 分モードでは的の攻撃で起きうる（C-0551）",
           "en": "The heal below 80% HP does not occur because taking hits is not modeled (requirements 5.2). In the 3-minute range mode it can occur from the target's attacks",

@@ -118,22 +118,19 @@
           "claims": [
             "C-0672"
           ]
-        }
-      ],
-      "notes": [
+        },
         {
-          "ja": "自分の貫通特化（10 秒）は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
-          "en": "Pierce on self (10 s) does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
-          "kind": "indirect",
-          "path": "pierce",
-          "effect": {
-            "kind": "unknown"
-          },
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 1,
           "claims": [
-            "C-1031"
+            "C-1092"
           ]
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

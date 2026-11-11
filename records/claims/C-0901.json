@@ -32,7 +32,7 @@
     },
     {
       "observations": ["0872-06", "0873-06"],
-      "element": "ドロシー burst.notes[3]",
+      "element": "ドロシー burst.notes[2]",
       "reason": "比べたのは同じ録画の窓の中の増分の和と爆発の値で、爆発のゲージはどちらの値も変えない",
       "decided": "2026-11-03"
     }

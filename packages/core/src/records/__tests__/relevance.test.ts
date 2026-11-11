@@ -78,11 +78,11 @@ describe('要素を並べる（2 節の 2）', () => {
   });
 
   it('merges a modeling note with refers into the effect it points to', () => {
-    // アスカ（830）の burst の notes[1] は refers effects[2]
+    // アスカ（830）の burst の notes[0] は refers effects[2]
     const r: RecordingEntry = { ...rec('0162'), team: [{ slot: 1, rid: 830, name: 'アスカ', controlled: true }] };
     const e = named(r, 'アスカ burst.effects[2]');
-    expect(e.places).toContain('data/skills/830.json の burst の notes[1]');
-    expect(elementsOf(r, ctx).some((x) => x.name === 'アスカ burst.notes[1]')).toBe(false);
+    expect(e.places).toContain('data/skills/830.json の burst の notes[0]');
+    expect(elementsOf(r, ctx).some((x) => x.name === 'アスカ burst.notes[0]')).toBe(false);
   });
 });
 

@@ -1,0 +1,99 @@
+[
+  {
+    "id": "1076-01",
+    "recording": "1076",
+    "kind": "total",
+    "use": "record",
+    "value": 302539391,
+    "description": "ツバイ・ニヒリスター・アリス の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11434。増分は 525 個"
+    },
+    "source": "V-0722",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1076-02",
+    "recording": "1076",
+    "kind": "count",
+    "use": "record",
+    "value": 256,
+    "unit": "トリガー",
+    "description": "ツバイ・ニヒリスター・アリス のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 525 個。前の増分から 30f 未満の増分（389 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39f）から発の数を決めた（2 発になった組 64 個）"
+    },
+    "source": "V-0722",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1076-03",
+    "recording": "1076",
+    "source": "V-0722",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 520488,
+    "unit": "ダメージ",
+    "description": "ツバイ（I）+ ニヒリスター（II）+ アリス（III・操作）。灼熱。オートバースト ON・スペック固定 ON の録画で、フルバーストなしのチェーンのツバイの貫通学概論（25.03%）の間のニヒリスターの 1 ヒット（コア・会心なし）。貫通特化で味方の貫通ダメージ▲が乗る値で、貫通特化の無い読み（H0）なら 416,290。出た発: f1243・f2672・f3610 など 9 発",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps の増分）と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分を、編成の 3 枠の H1（貫通特化を書いた定義）と H0（書かない定義）のモデルの 1 ヒット（区間 × コア・会心・距離ボーナスの有無）の格子に ±3 で当て、ほかの枠の格子にも当たる増分を除いた（V-0722「読み方」）。比べるモデルのフレームは、同じ▲の組み合わせのモデルの区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 339,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1076-04",
+    "recording": "1076",
+    "source": "V-0722",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 723861,
+    "unit": "ダメージ",
+    "description": "ツバイ（I）+ ニヒリスター（II）+ アリス（III・操作）。灼熱。オートバースト ON・スペック固定 ON の録画で、フルバーストなしのチェーンのツバイの貫通学概論（25.03%）の間のアリスの 1 ヒット（コア・会心なし）。貫通特化で味方の貫通ダメージ▲が乗る値で、貫通特化の無い読み（H0）なら 578,950。出た発: f2409・f2523・f2747 など 7 発",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps の増分）と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分を、編成の 3 枠の H1（貫通特化を書いた定義）と H0（書かない定義）のモデルの 1 ヒット（区間 × コア・会心・距離ボーナスの有無）の格子に ±3 で当て、ほかの枠の格子にも当たる増分を除いた（V-0722「読み方」）。比べるモデルのフレームは、同じ▲の組み合わせのモデルの区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 339,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  }
+]

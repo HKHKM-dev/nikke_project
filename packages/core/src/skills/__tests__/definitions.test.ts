@@ -33,6 +33,7 @@ import {
   parseSkillDefinition,
   parseSkillIndex,
   SKILL_SLOTS,
+  type SkillSlot,
   type StateContentItem,
   statContentsOf,
 } from '../types.ts';
@@ -50,8 +51,15 @@ const files = readdirSync(SKILLS_DIR)
   .map((f) => Number(f.replace('.json', '')))
   .sort((a, b) => a - b);
 
-/** 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ */
-const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3']);
+/**
+ * 維持の秒が Lv で変わる付与（resourceId:スロット:durationRef）。説明文の値がそうなっているものだけ（D の S2 の気絶免疫、アスカの
+ * バーストの貫通特化の 15・20・25 秒）
+ */
+const LEVEL_DEPENDENT_DURATIONS = new Set(['40:skill2:3', '830:burst:1']);
+
+function isLevelDependentDuration(resourceId: number, slot: SkillSlot, durationRef: number | undefined): boolean {
+  return LEVEL_DEPENDENT_DURATIONS.has(`${resourceId}:${slot}:${durationRef}`);
+}
 
 /**
  * 値の上限（%。既定 100）。上限の理由はキャラごとの注記（下の it の中）。レッドフード編: チャージ速度の超過分の変換の割合（240%）も
@@ -283,9 +291,8 @@ describe('data/skills', () => {
             skillValue(character.skills[slot], effect.durationRef!, i + 1),
           );
           expect(seconds[0], `${slot} durationRef ${effect.durationRef}`).toBeGreaterThan(0);
-          // NIKKE の維持時間は Lv に依らないはず。崩れたらここで気づきたい。2 段目の段 21: D の S2 の気絶免疫（値 03）は、説明文の値が
-          // Lv で変わる（19.44〜36.95 秒）ので除く（LEVEL_DEPENDENT_DURATIONS）
-          if (LEVEL_DEPENDENT_DURATIONS.has(`${def.resourceId}:${slot}:${effect.durationRef}`)) continue;
+          // NIKKE の維持時間は Lv に依らないはず。崩れたらここで気づきたい。説明文の値が Lv で変わるものは除く（LEVEL_DEPENDENT_DURATIONS）
+          if (isLevelDependentDuration(def.resourceId, slot, effect.durationRef)) continue;
           expect(new Set(seconds).size, `${slot} durationRef ${effect.durationRef}`).toBe(1);
         }
       }
@@ -352,6 +359,9 @@ describe('data/skills', () => {
       timed10.forEach((e, i) => {
         // アニス：スパークリングサマーのバーストの最大装弾数▼は、Lv とともに負に大きくなる
         growsWithLevel(e.value, timed1[i]!.value);
+        const source = def.skills[e.source.skill].effects[e.effectIndex];
+        const durationRef = source !== undefined && 'durationRef' in source ? source.durationRef : undefined;
+        if (isLevelDependentDuration(def.resourceId, e.source.skill, durationRef)) return;
         expect(e.durationFrames).toBe(timed1[i]!.durationFrames);
       });
     });

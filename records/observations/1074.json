@@ -1,0 +1,133 @@
+[
+  {
+    "id": "1074-01",
+    "recording": "1074",
+    "kind": "total",
+    "use": "record",
+    "value": 374552437,
+    "description": "ツバイ・ナガ・アスカ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11423。増分は 1488 個"
+    },
+    "source": "V-0722",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1074-02",
+    "recording": "1074",
+    "kind": "count",
+    "use": "record",
+    "value": 279,
+    "unit": "トリガー",
+    "description": "ツバイ・ナガ・アスカ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1488 個。前の増分から 30f 未満の増分（1422 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 36f）から発の数を決めた（2 発になった組 47 個）"
+    },
+    "source": "V-0722",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1074-03",
+    "recording": "1074",
+    "source": "V-0722",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 472422,
+    "unit": "ダメージ",
+    "description": "ツバイ（I）+ ナガ（II）+ アスカ（III・操作）。灼熱。オートバースト ON・スペック固定 ON の録画で、フルバーストの中のアスカ（バーストの攻撃ダメージ▲・ツバイの貫通学概論 25.03% と S1 の 10.06%）の 1 ヒット（コア・会心なし）。貫通特化で味方の貫通ダメージ▲が乗る値で、貫通特化の無い読み（H0）なら 414,282。出た発: f3716・f3813・f3843 など 33 発",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps の増分）と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分を、編成の 3 枠の H1（貫通特化を書いた定義）と H0（書かない定義）のモデルの 1 ヒット（区間 × コア・会心・距離ボーナスの有無）の格子に ±3 で当て、ほかの枠の格子にも当たる増分を除いた（V-0722「読み方」）。比べるモデルのフレームは、同じ▲の組み合わせのモデルの区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 415,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1074-04",
+    "recording": "1074",
+    "source": "V-0722",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 59164,
+    "unit": "ダメージ",
+    "description": "ツバイ（I）+ ナガ（II）+ アスカ（III・操作）。灼熱。オートバースト ON・スペック固定 ON の録画で、アスカのバーストの約 20 秒後のチェーン（フルバーストなし）のツバイの貫通学概論の間のアスカ（バーストの攻撃ダメージ▲は切れ、貫通特化は続く）の 1 ヒット（胴体・会心なし）。貫通特化で味方の貫通ダメージ▲が乗る値で、貫通特化の無い読み（H0）なら 47,320。出た発: f4871・f4881・f4886 など 27 発",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps の増分）と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分を、編成の 3 枠の H1（貫通特化を書いた定義）と H0（書かない定義）のモデルの 1 ヒット（区間 × コア・会心・距離ボーナスの有無）の格子に ±3 で当て、ほかの枠の格子にも当たる増分を除いた（V-0722「読み方」）。比べるモデルのフレームは、同じ▲の組み合わせのモデルの区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1553,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  },
+  {
+    "id": "1074-05",
+    "recording": "1074",
+    "source": "V-0722",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 29701.3,
+    "unit": "ダメージ",
+    "description": "ツバイ（I）+ ナガ（II）+ アスカ（III・操作）。灼熱。オートバースト ON・スペック固定 ON の録画で、フルバーストなしのチェーンのナガのバーストの 10 秒（ツバイの貫通学概論 25.03%）のナガの 1 ペレット（胴体・会心なし）。貫通特化で味方の貫通ダメージ▲が乗る値で、貫通特化の無い読み（H0）なら 23,755。格子に乗った増分: f2574（10.5 ペレット）・f2731（13）・f2962（15.5）など 14 個",
+    "method": {
+      "tool": "hud.ts --mode jumps（レシピ hud-jumps の増分）と、使い捨てのスクリプト（格子に当てる）",
+      "note": "HUD の総ダメージの増分を、ナガの区間ごとの 1 ペレットの基（フルバースト・会心・コアなし）の 0.5 刻み（会心 +0.5・コア +1 のペレットの和）に ±3 で当て、H1 の基だけに乗る増分から 1 ペレットを出した（f2962 の 460,370 ÷ 15.5）。比べるモデルのフレームは、同じ▲の組み合わせのモデルの区間"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 377,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      }
+    }
+  }
+]
