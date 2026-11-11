@@ -15,12 +15,12 @@ export const LIST_ORDERS: readonly ListOrder[] = [
   'attackElementOverload',
 ];
 export const LIST_ORDER_LABEL: Record<ListOrder, string> = {
-  combatPower: '戦闘力順',
-  name: '名前順',
-  id: 'ID順',
-  attackOverload: '攻撃力OP順',
-  elementOverload: '有利コードOP順',
-  attackElementOverload: '攻撃＋有利OP順',
+  combatPower: '戦闘力',
+  name: '名前',
+  id: 'ID',
+  attackOverload: '攻撃力OP',
+  elementOverload: '有利コードOP',
+  attackElementOverload: '攻撃＋有利OP',
 };
 /** OP 順が足し合わせる OL のオプション（攻撃力▲・有利コード▲） */
 export const OVERLOAD_ORDER_OPTIONS: Partial<Record<ListOrder, readonly OverloadOption[]>> = {
