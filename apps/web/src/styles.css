@@ -851,7 +851,9 @@ header h1 {
   right: 1px;
   bottom: 1px;
   padding: 10px 6px 3px;
-  overflow: hidden;
+  /* 横だけ切る（流れる名前）。上は切らない（限界突破・コア強化の行から上にはみ出すコア強化の印を出す） */
+  overflow-x: clip;
+  overflow-y: visible;
   white-space: nowrap;
   text-align: right;
   font-weight: bold;
