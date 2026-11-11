@@ -96,14 +96,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -123,14 +118,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -150,14 +140,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -177,14 +162,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -204,14 +184,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -231,14 +206,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -258,14 +228,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -285,14 +250,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -312,14 +272,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -339,14 +294,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ]
+        "noBurstSlots": [3, 4]
       },
       "tolerance": {
         "abs": 1
@@ -366,14 +316,9 @@
       },
       "setup": {
         "enemy": "range-bigarms-fire",
-        "events": [
-          "range-3min-jump"
-        ],
+        "events": ["range-3min-jump"],
         "burst": true,
-        "noBurstSlots": [
-          3,
-          4
-        ],
+        "noBurstSlots": [3, 4],
         "addEffects": [
           {
             "rid": 141,
