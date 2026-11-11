@@ -110,7 +110,6 @@ import {
   type EdgeShift,
   type EffectCondition,
   type SelfHpCondition,
-  type StateCountWindow,
   type TimerTrigger,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
@@ -633,20 +632,22 @@ function healWindowItems(starts: readonly number[], durationFrames: number | und
 function stateItems(
   grant: ResolvedStateGrant,
   starts: readonly number[],
-  shotFrames: readonly number[],
+  log: ShotLog | null | undefined,
   fullBurstEnds: readonly number[],
   frames: number,
+  untilEnds: readonly number[],
   decreases: readonly StackDecrease[] = [],
   maxStacksAt?: MaxStacksAt,
-  reloadEnds: readonly number[] = [],
-  untilEnds: readonly number[] = [],
 ): HeldItem[] {
+  const shotFrames = log?.frames ?? [];
   // グレイブ編（plan/design-grave.md 2.2・2.5 節）: 持ち主の最大装弾数のリロード完了まで（timed の reloadEnd と同じ）と、ほかの状態の終わりまで
   // （件の列の untilEnds。register が見る状態の件の外れたフレームを足す）。どちらもスタックしない
-  if (grant.durationUntil === 'reloadEnd') return itemsOfPairs(untilNextEndItems(starts, reloadEnds, frames));
+  if (grant.durationUntil === 'reloadEnd')
+    return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
   // 見る状態の最後の発で付いた件（始まりが見る状態の終わりと同じフレーム）は、付いた時に見る状態が無いので付けない
   if (grant.untilStateEnd !== undefined) {
-    const live = starts.filter((start) => !untilEnds.includes(start));
+    const ended = new Set(untilEnds);
+    const live = starts.filter((start) => !ended.has(start));
     return itemsOfPairs(untilNextEndItems(live, untilEnds, frames));
   }
   if (grant.durationShots !== undefined) {
@@ -982,17 +983,7 @@ function buildTrackItems(
         track.starts,
         track.closes,
         (starts, decreases) =>
-          stateItems(
-            o.grant,
-            starts,
-            log?.frames ?? [],
-            ends,
-            frames,
-            decreases,
-            maxStacksAt,
-            log?.reloadEnds ?? [],
-            track.untilEnds ?? [],
-          ),
+          stateItems(o.grant, starts, log, ends, frames, track.untilEnds ?? [], decreases, maxStacksAt),
         track.consumes,
         track.decreases,
       );
@@ -1264,8 +1255,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 同 2.4 節: 自分の状態の間だけ数える回数（状態が付くたびに 0 から数え直す）
     // （stateWindowFires は件の一覧の後に作るので、最初の呼び出しで作る）
     if (isResolvedShotCount(trigger) && isStateCountWindow(trigger.during)) {
+      const window = trigger.during.state;
       let fires: TriggerTracker | undefined;
-      return (ev) => (fires ??= stateWindowFires(trigger, slotIndex, condition))(ev);
+      return (ev) => (fires ??= stateWindowFires(trigger, slotIndex, window, condition?.selfState?.state))(ev);
     }
     if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel, everyAt);
     const at = new Set(timerFramesOf(trigger, frames));
@@ -1534,32 +1526,32 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const stateWindowFires = (
     trigger: ResolvedShotCountTrigger,
     slotIndex: number,
-    condition: EffectCondition | undefined,
+    state: NamedStateId,
+    conditionState: NamedStateId | undefined,
   ): TriggerTracker => {
-    const state = (trigger.during as StateCountWindow).state;
+    /** 枠のその状態の件のうち、[frame, frame + span] のどこかで効いている件の始まりの最小（無ければ undefined。配列を作らない） */
+    const startOfHeld = (s: NamedStateId, frame: number, span: number): number | undefined => {
+      let start: number | undefined;
+      for (const t of stateTracks[slotIndex]?.get(s) ?? [])
+        for (const it of readItems(t))
+          if (it.start <= frame + span && frame < it.end && (start === undefined || it.start < start)) start = it.start;
+      return start;
+    };
     let count = 0;
     let from: number | undefined;
     return (ev) => {
       const shot = ev.shots[slotIndex];
       if (!shot) return false;
-      let start: number | undefined;
-      for (const t of stateTracks[slotIndex]?.get(state) ?? [])
-        for (const it of activeAt(t, ev.frame)) start = start === undefined ? it.start : Math.min(start, it.start);
+      const start = startOfHeld(state, ev.frame, 0);
       if (start === undefined) return false;
       if (start !== from) {
         from = start;
         count = 0;
       }
       // その発で付いた状態（同じ発の回数のきっかけで前に書いた付与。件は次のフレームから）も条件に入れる（V-0735: 過熱I を付けた発も
-      // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）
-      // （条件は自分の状態があるかだけ。skills/parse/state.ts。段 1.5 の件も、そのフレームに付いた件を見る）
-      const self = condition?.selfState;
-      if (
-        self !== undefined &&
-        !ownStateActive(slotIndex, self.state, ev.frame) &&
-        !ownStateActive(slotIndex, self.state, ev.frame + 1)
-      )
-        return false;
+      // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）。条件は自分の状態があるかだけ（skills/parse/state.ts）で、段 1.5 の件も
+      // そのフレームに付いた件を見る
+      if (conditionState !== undefined && startOfHeld(conditionState, ev.frame, 1) === undefined) return false;
       const next = advanceShotCount(count, shotCountWeight(trigger.count, shot), trigger.every);
       count = next.count;
       return next.fired;
@@ -1893,25 +1885,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const counterEmptyTracks = new Map<string, HeldTrack[]>();
   /** A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値 */
   const selfHpUntilTracks: { track: HeldTrack; threshold: number }[] = [];
-  /**
-   * グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりで閉じる自分の状態の件の列（付与の untilStateEnd）と、見る状態。件の列は最初の
-   * 発火で作るので、登録のたびに新しい列を足す（stateEndTracksSeen まで見た）
-   */
-  const stateEndTracks: { track: HeldTrack; state: NamedStateId; ends: number[] }[] = [];
-  let stateEndTracksSeen = 0;
-  const watchStateEnds = (): void => {
-    for (; stateEndTracksSeen < tracks.length; stateEndTracksSeen++) {
-      const track = tracks[stateEndTracksSeen]!;
-      const o = track.origin;
-      if (o.kind !== 'state' || o.grant.untilStateEnd === undefined) continue;
-      const ends: number[] = [];
-      track.untilEnds = ends;
-      stateEndTracks.push({ track, state: o.grant.untilStateEnd, ends });
-    }
-  };
+  /** グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりで閉じる自分の状態の件の列（付与の untilStateEnd）と、見る状態 */
+  const stateEndTracks: { track: HeldTrack; state: NamedStateId }[] = [];
   for (const track of tracks) {
     const o = track.origin;
     if (o.kind !== 'state') continue;
+    if (o.grant.untilStateEnd !== undefined) {
+      track.untilEnds = [];
+      stateEndTracks.push({ track, state: o.grant.untilStateEnd });
+    }
     if (o.grant.untilSelfHpAtMost !== undefined)
       selfHpUntilTracks.push({ track, threshold: o.grant.untilSelfHpAtMost });
     if (o.grant.untilCounterEmpty === undefined) continue;
@@ -2528,12 +2510,23 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 2 段目の段 10（plan/design-skill-stage4.md 1.3 節）: { ended } の発火。持ち主（自分）のその状態の件（段によらない）の終わりがこの
    * フレームで、このフレームに続く件が無い
    */
+  const endedTracks = new Map<string, HeldTrack[]>();
   const endedAt = (holder: number, state: NamedStateId, frame: number): boolean => {
-    const own = tracks.filter(
-      (t) => t.holder === holder && t.origin.kind === 'state' && statesMatching(state).includes(t.origin.state),
-    );
-    const items = own.flatMap((t) => readItems(t));
-    return items.some((it) => it.end === frame) && !items.some((it) => it.start <= frame && frame < it.end);
+    // 件の列は初期化で出そろうので、持ち主 × 状態ごとに 1 回だけ集める（グレイブ編から毎フレーム呼ぶ）
+    const key = `${holder}:${state}`;
+    let own = endedTracks.get(key);
+    if (own === undefined) {
+      const family = statesMatching(state);
+      own = tracks.filter((t) => t.holder === holder && t.origin.kind === 'state' && family.includes(t.origin.state));
+      endedTracks.set(key, own);
+    }
+    let ended = false;
+    for (const t of own)
+      for (const it of readItems(t)) {
+        if (it.start <= frame && frame < it.end) return false;
+        if (it.end === frame) ended = true;
+      }
+    return ended;
   };
   /**
    * 2 段目の段 10: カウンタの増減の条件。selfState は段によらずそのフレームに効いている状態の件を見る（増減はすべての判定の後に足すので、
@@ -2607,10 +2600,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     updateHpAtLeast(f);
     const from = appliedFrom;
     // グレイブ編（plan/design-grave.md 2.5 節）: 見る状態の持ち主の件が f に外れたら、f を窓の終わりに足す（f には付いていない）
-    watchStateEnds();
     if (!battleStartOnly)
-      for (const { track, state, ends } of stateEndTracks)
+      for (const { track, state } of stateEndTracks) {
+        const ends = track.untilEnds!;
         if (ends.at(-1) !== f && endedAt(track.holder, state, f)) ends.push(f);
+      }
     // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
     if (!battleStartOnly)

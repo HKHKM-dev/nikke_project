@@ -653,12 +653,9 @@ function reloadsAt(result: SimResult, ctx: MetricContext): { segment: SimSlotSeg
   const changed = new Set(log.weaponChangeShotFrames ?? []);
   const reloads: number[] = [];
   // グレイブ編（V-0735）: 残弾数減少で残弾が 0 になって始めたリロードも、その前の最後の発から数える（装弾数無限の後の 100% 減少）
-  const slotIndex = slotIndexOf(ctx);
-  const drained = result.instants
-    .filter((i) => i.slotIndex === slotIndex && i.effect.kind === 'ammoDecrease' && i.amount < 0)
-    .map((i) => log.frames[lowerBound(log.frames, i.frame + 1) - 1])
-    .filter((f): f is number => f !== undefined);
-  const lasts = [...new Set([...(log.lastShotFrames ?? []), ...drained])].sort((x, y) => x - y);
+  const lasts = [...new Set([...(log.lastShotFrames ?? []), ...(log.drainReloadShotFrames ?? [])])].sort(
+    (x, y) => x - y,
+  );
   for (const last of lasts) {
     if (last < segment.start || last >= segment.end || changed.has(last)) continue;
     const next = log.frames[lowerBound(log.frames, last) + 1];
@@ -964,7 +961,8 @@ function mergedBuffWindows(result: SimResult, ctx: MetricContext): { start: numb
 function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
   const edge = buffEdgeArg(ctx);
   // 発動の印（base）と、その発動から次の発動まで（from〜to）は枠 from のもの
-  const span = spanOf(result, withArgs(ctx, { slot: ctx.args.from }), `activation:${String(ctx.args.n)}`, 'untilNext');
+  const from = withArgs(ctx, { slot: ctx.args.from });
+  const span = spanOf(result, from, `activation:${String(ctx.args.n)}`, 'untilNext');
   const held = ctx.args.held === true;
   const window = mergedBuffWindows(result, ctx).find((w) =>
     held ? w.start <= span.from && span.from < w.end : span.from <= w.start && w.start < span.to,
@@ -974,25 +972,42 @@ function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
       `枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動${held ? 'のフレームに効いている' : 'の後に始まった'}窓が無い`,
     );
   const at = edge === 'start' ? window.start : window.end;
-  if (ctx.args.originStat !== undefined) {
-    const originArgs = { stat: ctx.args.originStat, effect: ctx.args.originEffect };
-    const origin = mergedBuffWindows(result, withArgs(ctx, originArgs)).find(
-      (w) => span.from <= w.start && w.start < span.to,
-    );
-    if (origin === undefined)
-      throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の後に始まった起点の窓が無い`);
-    return ctx.args.ticks === true
-      ? at - origin.start
-      : videoFrameOf(result.schedule, at) - videoFrameOf(result.schedule, origin.start);
-  }
+  const origin = buffEdgeOriginOf(result, ctx, from, span);
+  if (origin === null)
+    return ctx.args.ticks === true ? at - span.origin : videoFrameOf(result.schedule, at) - span.base;
+  return ctx.args.ticks === true
+    ? at - origin
+    : videoFrameOf(result.schedule, at) - videoFrameOf(result.schedule, origin);
+}
+
+/**
+ * buffEdgeFromActivation の起点のモデルのフレーム。fromShot は発動の効果の発火以後の枠 from の最初の発、originStat（と originEffect）は
+ * 発動の後に始まった枠 slot のその stat の窓の付き始め（どちらか 1 つまで）。どちらも無ければ null（発動の印）
+ */
+function buffEdgeOriginOf(
+  result: SimResult,
+  ctx: MetricContext,
+  from: MetricContext,
+  span: { from: number; to: number },
+): number | null {
+  if (ctx.args.fromShot === true && ctx.args.originStat !== undefined)
+    throw new Error('fromShot と originStat はどちらか 1 つ');
   if (ctx.args.fromShot === true) {
-    const from = withArgs(ctx, { slot: ctx.args.from });
-    const activation = result.schedule?.activations.filter((a) => a.slotIndex === slotIndexOf(from))[Number(ctx.args.n)];
-    const shot = activation && slotOf(result.shots, from).frames.find((f) => f >= effectFrameOf(activation));
-    if (shot === undefined) throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の効果の後に発が無い`);
-    return ctx.args.ticks === true ? at - shot : videoFrameOf(result.schedule, at) - videoFrameOf(result.schedule, shot);
+    const { activation } = nthActivationOf(result, from);
+    const effect = effectFrameOf(activation);
+    const shot = slotOf(result.shots, from).frames.find((f) => f >= effect);
+    if (shot === undefined)
+      throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の効果の後に発が無い`);
+    return shot;
   }
-  return ctx.args.ticks === true ? at - span.origin : videoFrameOf(result.schedule, at) - span.base;
+  if (ctx.args.originStat === undefined) return null;
+  const window = mergedBuffWindows(
+    result,
+    withArgs(ctx, { stat: ctx.args.originStat, effect: ctx.args.originEffect }),
+  ).find((w) => span.from <= w.start && w.start < span.to);
+  if (window === undefined)
+    throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の後に始まった起点の窓が無い`);
+  return window.start;
 }
 
 /**

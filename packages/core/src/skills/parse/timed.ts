@@ -73,6 +73,7 @@ import {
   parseEndedTrigger,
   parseSelfHpAtMostTrigger,
   parseShotCountDelay,
+  parseStateEndUntil,
   parseTrigger,
 } from './trigger.ts';
 
@@ -582,17 +583,8 @@ function parseTimedDuration(
       const hpUntil = parseSelfHpAtMostTrigger(v.durationUntil, key);
       if (hpUntil !== undefined) return { durationUntil: hpUntil };
       // グレイブ編（plan/design-grave.md 2.5 節）: 「〈状態〉の時に限り…持続」（見る状態の件が外れたフレームで閉じる。validateStateEndGrant）
-      if ('stateEnd' in v.durationUntil) {
-        return {
-          durationUntil: {
-            stateEnd: parseNamedStateId(
-              objectUntil(v.durationUntil, 'stateEnd', key, 'expected { stateEnd }'),
-              `${key}.stateEnd`,
-              'ally',
-            ),
-          },
-        };
-      }
+      if ('stateEnd' in v.durationUntil)
+        return { durationUntil: parseStateEndUntil(v.durationUntil, key, 'expected { stateEnd }') };
       return {
         durationUntil: {
           counterEmpty: oneOf(

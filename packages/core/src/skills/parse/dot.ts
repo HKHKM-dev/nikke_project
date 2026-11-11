@@ -12,7 +12,6 @@ import {
   fail,
   isRecord,
   type Json,
-  objectUntil,
   oneOf,
   parseDuration,
   parseLocalizedText,
@@ -21,7 +20,13 @@ import {
   parseRef,
 } from './common.ts';
 import { CONDITION_KEYS_OF, parseCondition } from './condition.ts';
-import { parseAppliedTrigger, parseCounterFullTrigger, parseShotCountDelay, parseTrigger } from './trigger.ts';
+import {
+  parseAppliedTrigger,
+  parseCounterFullTrigger,
+  parseShotCountDelay,
+  parseStateEndUntil,
+  parseTrigger,
+} from './trigger.ts';
 
 /** dot の durationUntil: "battleEnd"（持続）か、2 段目の段 19 の PR 1 の { stateEnd }（〈状態〉解除まで）。書かなければ undefined */
 function parseDotDurationUntil(v: Record<string, Json>, path: string): DotEffect['durationUntil'] {
@@ -31,13 +36,7 @@ function parseDotDurationUntil(v: Record<string, Json>, path: string): DotEffect
     fail(path, 'durationUntil cannot be combined with another duration');
   if (u === 'battleEnd') return u;
   const key = `${path}.durationUntil`;
-  return {
-    stateEnd: parseNamedStateId(
-      objectUntil(u, 'stateEnd', key, 'expected "battleEnd" or { stateEnd }'),
-      `${key}.stateEnd`,
-      'ally',
-    ),
-  };
+  return parseStateEndUntil(u, key, 'expected "battleEnd" or { stateEnd }');
 }
 
 /**

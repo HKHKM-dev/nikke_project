@@ -27,6 +27,7 @@ import {
   isSelfHpAtMostTrigger,
   isShotCountTrigger,
   isStateCountWindow,
+  isStateEndUntil,
   isMaxStacksUpContent,
   isSkillCooldownDownContent,
   isStatContent,
@@ -771,7 +772,7 @@ export function resolveStateGrants(
       // A2 の B モード編: HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
       const hpUntil = isSelfHpAtMostTrigger(until) ? until : undefined;
       // グレイブ編: ほかの状態の終わりまで続く付与も、閉じる（untilStateEnd）までは「持続」と同じ窓
-      const stateEnd = typeof until === 'object' && 'stateEnd' in until ? until.stateEnd : undefined;
+      const stateEnd = isStateEndUntil(until) ? until.stateEnd : undefined;
       const window = resolveItemFields(
         { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
         character,

@@ -15,6 +15,7 @@ import {
   isEnemyHeldStat,
   isShotCountTrigger,
   isStateCountWindow,
+  isStateEndUntil,
   isPelletStat,
   isSelfHpAtMostTrigger,
   isStacksCondition,
@@ -105,12 +106,10 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   validateSelfHpGrant(fields, v, path, onEnemy);
   validateStateEndGrant(fields, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
-  if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
-    fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
-  }
-  // グレイブ編: 自分の付ける状態の終わり・窓・維持を見ない（循環する）
+  // グレイブ編: 自分の付ける状態の終わり・窓・維持も見ない（循環する）
   const t = fields.trigger;
   if (
+    (isAppliedTrigger(t) && t.applied === state) ||
     (isEndedTrigger(t) && stateMatches(t.ended, state)) ||
     (isShotCountTrigger(t) && isStateCountWindow(t.during) && stateMatches(t.during.state, state))
   )
@@ -132,7 +131,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       );
   }
   const until = fields.durationUntil;
-  if (typeof until === 'object' && 'stateEnd' in until && stateMatches(until.stateEnd, state))
+  if (isStateEndUntil(until) && stateMatches(until.stateEnd, state))
     fail(`${path}.durationUntil`, `a grant of "${state}" cannot last until its own state ends`);
   // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
   // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
@@ -328,7 +327,7 @@ function validateSelfHpGrant(fields: GrantTimedFields, v: Record<string, Json>, 
  */
 function validateStateEndGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
   const until = fields.durationUntil;
-  if (typeof until !== 'object' || !('stateEnd' in until)) return;
+  if (!isStateEndUntil(until)) return;
   if (onEnemy || fields.target !== 'self')
     fail(`${path}.target`, 'a grant lasting until another state ends is only on "self"');
   if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
@@ -511,12 +510,12 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
   // グレイブ編（plan/design-grave.md 2.1・2.4・2.5 節）: 状態の終わりのきっかけ（{ ended }）・自分の状態の窓で数える回数のきっかけ・ほかの状態の
   // 終わりまでの維持（{ stateEnd }）は件の一覧が決める（timed には書けない）ので、中身の規則は、戦闘開始時か、窓の無い回数のきっかけで付く
   // 「持続」と同じ
-  if (isRecord(fields.trigger) && fields.trigger.ended !== undefined) fields.trigger = 'battleStart';
+  if (isEndedTrigger(fields.trigger as EffectTrigger)) fields.trigger = 'battleStart';
   if (isRecord(fields.trigger) && isRecord(fields.trigger.during)) {
     const { during: _during, ...rest } = fields.trigger;
     fields.trigger = rest;
   }
-  if (isRecord(fields.durationUntil) && 'stateEnd' in fields.durationUntil) fields.durationUntil = 'battleEnd';
+  if (isStateEndUntil(fields.durationUntil)) fields.durationUntil = 'battleEnd';
   if (value.stat === 'fixedChargeTime') {
     delete fields.maxStacks;
     delete fields.maxStacksRef;

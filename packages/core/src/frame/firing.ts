@@ -180,10 +180,7 @@ export function firingParams(
       reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
       (stance === null ? 0 : model.stanceReloadExtraFrames),
     splitReload: shot.reloadBullet < 1,
-    reloadBullet:
-      shot.reloadBullet < 1 && buffs.reloadRatio !== 0
-        ? shot.reloadBullet * Math.max(0, 1 + buffs.reloadRatio)
-        : shot.reloadBullet,
+    reloadBullet: shot.reloadBullet < 1 ? shot.reloadBullet * Math.max(0, 1 + buffs.reloadRatio) : shot.reloadBullet,
     // max(0, …) は、0 秒のチャージで切り上げが −0 を出すのを 0 にそろえる
     chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
     stance,

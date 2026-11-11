@@ -1090,6 +1090,11 @@ export type GrantDurationUntil = DurationUntil | CounterEmptyUntil | SelfHpAtMos
  */
 export type StateEndUntil = { stateEnd: NamedStateId };
 
+/** グレイブ編: 維持が { stateEnd } か */
+export function isStateEndUntil(u: unknown): u is StateEndUntil {
+  return typeof u === 'object' && u !== null && 'stateEnd' in u;
+}
+
 /**
  * 発火の条件。名前の付いた状態の語彙編（plan/design-named-state.md 10 節の論点 8）で、timed・付与・damage を 1 つの型にした。
  * キーは 1 つ以上で、すべてを満たすときだけ発火する（AND）。どの効果がどのキーを受けるかは効果の種類ごと（CONDITION_KEYS_OF）。

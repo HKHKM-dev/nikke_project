@@ -14,6 +14,7 @@ import {
   isMaxStacksUpContent,
   isShotCountTrigger,
   isStateCountWindow,
+  isStateEndUntil,
   isStatContent,
   isStaticStateGrant,
   isSummonAttackTrigger,
@@ -272,7 +273,7 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
         if (e.kind === 'state' && isShotCountTrigger(t) && isStateCountWindow(t.during))
           needGrant(t.during.state, `${at}.trigger.during`, e.kind);
         const until = e.kind === 'state' ? e.durationUntil : undefined;
-        if (typeof until === 'object' && 'stateEnd' in until) needGrant(until.stateEnd, `${at}.durationUntil`, e.kind);
+        if (isStateEndUntil(until)) needGrant(until.stateEnd, `${at}.durationUntil`, e.kind);
         return;
       }
       if (e.kind !== 'counterChange' && e.kind !== 'dot' && e.kind !== 'currentHpDown') return;

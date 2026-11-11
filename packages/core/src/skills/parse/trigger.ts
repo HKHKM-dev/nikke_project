@@ -11,6 +11,7 @@ import {
   type CoverHealedTrigger,
   type EffectTrigger,
   type EndedTrigger,
+  type StateEndUntil,
   EVENT_COUNT_KINDS,
   type EventCountKind,
   type EventCountTrigger,
@@ -27,7 +28,16 @@ import {
   type SummonAttackTrigger,
   type TimerTrigger,
 } from '../types.ts';
-import { fail, isRecord, type Json, oneOf, parseNamedStateId, parsePositiveInt, parseRef } from './common.ts';
+import {
+  fail,
+  isRecord,
+  type Json,
+  objectUntil,
+  oneOf,
+  parseNamedStateId,
+  parsePositiveInt,
+  parseRef,
+} from './common.ts';
 
 /**
  * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: timed・heal の delayFrames。射撃の回数のきっかけ
@@ -259,10 +269,6 @@ export function parseTrigger(
 }
 
 /**
- * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } を damage のほかで読む。{ applied } でなければ undefined
- * （ほかのトリガーは呼ぶ側の parseTrigger が読む）
- */
-/**
  * 2 段目の段 10・グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」{ ended: 状態 }。それ以外の形なら undefined。
  * counterChange・ammoDecrease・状態の付与が読む
  */
@@ -272,6 +278,18 @@ export function parseEndedTrigger(v: Json, path: string): EndedTrigger | undefin
   return { ended: parseNamedStateId(v.ended, `${path}.ended`, 'ally') };
 }
 
+/**
+ * 2 段目の段 19 の PR 1・グレイブ編: 維持の { stateEnd: 状態 }（〈状態〉解除まで）。dot と状態の付与が読む。key は durationUntil の位置、
+ * expected は形の違うときの文言
+ */
+export function parseStateEndUntil(v: Json, key: string, expected: string): StateEndUntil {
+  return { stateEnd: parseNamedStateId(objectUntil(v, 'stateEnd', key, expected), `${key}.stateEnd`, 'ally') };
+}
+
+/**
+ * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } を damage のほかで読む。{ applied } でなければ undefined
+ * （ほかのトリガーは呼ぶ側の parseTrigger が読む）
+ */
 export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined {
   if (!isRecord(v) || v.applied === undefined) return undefined;
   for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');

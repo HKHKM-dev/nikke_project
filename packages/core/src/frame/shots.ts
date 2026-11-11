@@ -25,6 +25,11 @@ export type ShotLog = {
   /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
   lastShotFrames?: number[];
   /**
+   * グレイブ編（V-0735）: 残弾数減少で残弾が 0 になってリロードを始めた時の、その前の最後の発のフレーム（frames の部分列。昇順）。
+   * 1 パス目が書き、照合の指標のリロードの回（records/observations.ts の reloadsAt）が最後の弾丸の発と同じに読む。省略は無し
+   */
+  drainReloadShotFrames?: number[];
+  /**
    * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更が終わったフレーム
    * （最後の弾丸の発 + 1。基礎の武器に戻るフレーム。昇順）。1 パス目が書き、持ち主ごとの一覧（skills/holders.ts）が件の終わりに使う。省略は無し
    */
