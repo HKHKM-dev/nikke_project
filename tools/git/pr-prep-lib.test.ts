@@ -8,6 +8,7 @@ import {
   addedLines,
   backlogProgressCopy,
   branchChangedChecks,
+  branchLongGuideItems,
   branchOversizedDocs,
   changedChecks,
   checkSteps,
@@ -15,6 +16,8 @@ import {
   DOC_SIZE_LIMIT,
   handEditedLines,
   handRemovedLines,
+  GUIDE_ITEM_LIMIT,
+  longNewGuideItems,
   isCheckSetting,
   MAX_CHANGED_FILES,
   nulPaths,
@@ -23,6 +26,7 @@ import {
   progressCopies,
   rebaseOutcome,
   removedLines,
+  short,
   splitGenerated,
 } from './pr-prep-lib.ts';
 
@@ -440,5 +444,46 @@ describe('oversizedDocs', () => {
     expect(branchOversizedDocs(base, (args) => git(cwd, args), ['plan/generated.md'], size)).toEqual([
       { path: 'plan/new.md', size: DOC_SIZE_LIMIT + 1, limit: DOC_SIZE_LIMIT },
     ]);
+  });
+});
+
+describe('longNewGuideItems', () => {
+  const long = (c: string) => `- ${c.repeat(GUIDE_ITEM_LIMIT)}`;
+  // 1: 見出し・3: 冒頭の項目・5: 節の見出し・7 から: 本文の項目
+  const guide = (...items: string[]) => `# 手引き\n\n${long('h')}\n\n## 節\n\n${items.join('\n')}\n`;
+  const all = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+  it('lists added body items over the limit, by bytes', () => {
+    const fits = `- ${'あ'.repeat(199)}`; // 2 + 597 バイト
+    const over = `- ${'あ'.repeat(200)}`;
+    expect(longNewGuideItems(guide(fits, over, '- short'), all)).toEqual([
+      `plan/captures/guide.md:8: ${short(over)}（602 バイト）`,
+    ]);
+  });
+
+  it('skips long items the branch did not add, and the lead before the first section', () => {
+    expect(longNewGuideItems(guide(long('o'), long('n')), new Set([3, 8]))).toEqual([
+      `plan/captures/guide.md:8: ${short(long('n'))}（${GUIDE_ITEM_LIMIT + 2} バイト）`,
+    ]);
+  });
+
+  it('counts a CRLF line without its carriage return', () => {
+    const fits = `- ${'x'.repeat(GUIDE_ITEM_LIMIT - 2)}`;
+    expect(longNewGuideItems(guide(fits).replaceAll('\n', '\r\n'), all)).toEqual([]);
+  });
+
+  it('reads the lines the branch added with git, and skips a branch that deleted the guide', () => {
+    const body = (...items: string[]) => guide('- a', ...items);
+    const { cwd, base } = baseRepo({ 'plan/captures/guide.md': body(long('o')) });
+    const run = (args: readonly string[]) => git(cwd, args);
+    const read = (p: string) => readFileSync(join(cwd, p), 'utf8');
+    writeFileSync(join(cwd, 'plan/captures/guide.md'), body(long('o'), long('n')));
+    git(cwd, ['commit', '-q', '-am', 'add']);
+    expect(branchLongGuideItems(base, run, read)).toEqual([
+      `plan/captures/guide.md:9: ${short(long('n'))}（${GUIDE_ITEM_LIMIT + 2} バイト）`,
+    ]);
+    git(cwd, ['rm', '-q', 'plan/captures/guide.md']);
+    git(cwd, ['commit', '-q', '-m', 'delete']);
+    expect(branchLongGuideItems(base, run, read)).toEqual([]);
   });
 });

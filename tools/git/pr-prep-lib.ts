@@ -298,6 +298,40 @@ export function oversizedDocs(
   });
 }
 
+/** 撮影と読み取りの手引き（索引）と、その 1 項目の長さの目安（バイト。「1〜2 行の要約と ID」の近似） */
+export const CAPTURE_GUIDE = 'plan/captures/guide.md';
+export const GUIDE_ITEM_LIMIT = 600;
+
+/**
+ * 索引の本文（最初の "## " の見出しより後）の項目（行頭の "- "）のうち、ブランチで足した（変えた）行（added。1 始まりの行の番号）で
+ * 目安を超えるもの（plan/design-workflow-simplification-11.md 2 節）。前からある長い項目は出さない
+ */
+export function longNewGuideItems(text: string, added: ReadonlySet<number>): string[] {
+  const out: string[] = [];
+  let body = false;
+  // 改行は CRLF でも数えない（Windows の autocrlf のチェックアウト）
+  text.split(/\r?\n/).forEach((line, i) => {
+    if (line.startsWith('## ')) body = true;
+    const size = Buffer.byteLength(line);
+    if (body && added.has(i + 1) && line.startsWith('- ') && size > GUIDE_ITEM_LIMIT)
+      out.push(`${CAPTURE_GUIDE}:${i + 1}: ${short(line)}（${size} バイト）`);
+  });
+  return out;
+}
+
+/**
+ * ブランチ（base...HEAD）で足した・変えた guide.md の行を git で読んで、longNewGuideItems で決める。run は git を引数で呼んで標準出力を
+ * 返すもの、read は作業ツリーのファイルの中身。ブランチが guide.md を変えていない・消したなら出さない
+ */
+export function branchLongGuideItems(
+  base: string,
+  run: (args: readonly string[]) => string,
+  read: (path: string) => string,
+): string[] {
+  const added = addedLines(run(['diff', '-U0', `${base}...HEAD`, '--', CAPTURE_GUIDE])).get(CAPTURE_GUIDE);
+  return added === undefined ? [] : longNewGuideItems(read(CAPTURE_GUIDE), added);
+}
+
 /**
  * ブランチ（base...HEAD）で足した・変えた・名前を変えたファイルを git で読んで、oversizedDocs で決める。run は git を引数で呼んで標準出力を
  * 返すもの。名前を変えた文書は新しいパスで見る（消したファイルは入れない）
