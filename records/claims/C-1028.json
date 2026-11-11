@@ -1,15 +1,12 @@
 {
   "id": "C-1028",
   "text": "エードの S2・バーストの「スキル発動者基準で最大HP のみ X%▲」の味方への量は、対象の枠のバフ前の最大HP の比率として足す（マストのバーストと同じ読み。発動者のバフ前の最大HP × X を足す読みとは、エード自身では同じで、クラスの違う味方では違う。V-0707 の録画では味方の HP の割合と最終最大HP を読んでいない）",
-  "state": "仮説",
+  "state": "棄却",
   "topic": "スキル・キャラ固有",
   "grade": "推論",
-  "basis": "なし（V-0707 の録画は味方の HP の割合と最終最大HP を読んでいない。読みはマストのバーストの味方への最大HP のみ▲（C-0863）に合わせた。plan/design-ade.md 2.3 節）",
-  "model": "反映（data/skills/310.json の skill2 の effects[0]・burst の effects[0] の assumes）",
+  "basis": "なし（V-0707 の録画は味方の HP の割合と最終最大HP を読んでいない。読みはマストのバーストの味方への最大HP のみ▲（C-0863）に合わせた。plan/design-ade.md 2.3 節） 2026-11-12 棄却（V-0730）: エードと組んだノワール・I-DOLL・フラワーの HP のバーと、S2 とバーストの重なりで外れたノワールの S1 が、発動者のバフ前の最大HP × X を足す読みと合い、対象の比率として足す読みと合わない。C-1107 に置き換えた",
+  "model": "棄却（data/skills/310.json の skill2 の effects[0]・burst の effects[0] は C-1107 の発動者基準）",
   "replaces": [],
-  "updated": "2026-11-10",
-  "subject": {
-    "places": ["data/skills/310.json の skill2 の effects[0]", "data/skills/310.json の burst の effects[0]"]
-  },
+  "updated": "2026-11-12",
   "decidedOn": []
 }

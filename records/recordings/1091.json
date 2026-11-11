@@ -1,0 +1,53 @@
+{
+  "id": "1091",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1091_sr_milk.mp4",
+  "original": "2026-11-12_02-24-38.mp4",
+  "durationSec": 200.3,
+  "frames": 12015,
+  "fps": 60,
+  "sizeMB": 242.8,
+  "sha256": "a44a499454cf",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 310,
+      "name": "エード",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 141,
+      "name": "ミルク",
+      "controlled": true,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T02:29+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

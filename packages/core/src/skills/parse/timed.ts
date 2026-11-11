@@ -86,6 +86,9 @@ function validateScaling(scaling: BuffScaling | undefined, stat: BuffStat, path:
   if (scaling === 'casterDefence' && stat !== 'enemyDefenseDown') {
     fail(`${path}.scaling`, `casterDefence is only allowed with stat "enemyDefenseDown", got "${stat}"`);
   }
+  if (scaling === 'casterMaxHp' && !isMaxHpStat(stat)) {
+    fail(`${path}.scaling`, `casterMaxHp is only allowed with stat "maxHp" or "maxHpOnly", got "${stat}"`);
+  }
   if (scaling === 'casterChargeTime' && stat !== 'chargeSpeed') {
     fail(`${path}.scaling`, `casterChargeTime is only allowed with stat "chargeSpeed", got "${stat}"`);
   }
@@ -673,6 +676,8 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
     fail(`${path}.stat`, `${stat} is only allowed in timed`);
   const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
   validateScaling(scaling, stat, path);
+  // HP の割合を時間で読む編: 発動者の最大HP 基準は、対象の枠ごとに件の列で直すので timed だけ（常時の値は対象ごとに持たない。使い手がいない）
+  if (scaling === 'casterMaxHp') fail(`${path}.scaling`, 'casterMaxHp is only allowed in timed');
   validateFlatChargeTime(stat, scaling, v, path);
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 常時の受けるダメージ▲（観測値の比べる設定が使う）は、いまのまま
   // 味方の各枠の常時の値に足す（敵の常時の件にするのは、敵の効果を外す語彙を足す時）
@@ -711,6 +716,16 @@ export function parsePassiveEffect(v: Record<string, Json>, path: string): Passi
     if (v.condition !== undefined) fail(`${path}.while`, 'while cannot be combined with condition');
     if (isEnemyHeldStat(stat)) fail(`${path}.while`, `${stat} is held by the enemy, so it cannot have while`);
     effect.while = parseWhileCondition(v.while, `${path}.while`);
+  }
+  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: HP の割合が動きうる枠では while と同じ区間の件になるので、while に
+  // 書けない stat（敵が持つ stat・静的に読むフラグ）と、1 パス目が射撃の時に読む stat（区間の可否はその後に出す。最大HP の stat は自分の
+  // 条件を自分で動かす）は書けない（使い手がいない）
+  if (effect.condition?.selfHp !== undefined) {
+    const at = `${path}.condition.selfHp`;
+    if (isEnemyHeldStat(stat) || (STATIC_PASSIVE_FLAG_STATS as readonly string[]).includes(stat))
+      fail(at, `selfHp is not supported for "${stat}" (it cannot be windowed like while)`);
+    if (isFirstPassTrackedStat(stat) && stat !== 'attack' && stat !== 'defense')
+      fail(at, `selfHp is not supported for "${stat}" (it moves the HP ratio, or the first pass reads it at a shot)`);
   }
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;

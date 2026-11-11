@@ -172,7 +172,8 @@ export const BUFF_STATS = [
   'maxHp',
   // 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 最大HP のみ▲（比率）。最終最大HP への足し方は maxHp と同じ。効いている
   // 間は HP の割合を下げ（段 6 の論点 8）、自分の HP の割合のきっかけ（selfHpAtMostRef。マスト編・エード編）と、timed の条件 selfHp の
-  // atMost（紅蓮編）が読む。passive の条件 selfHp と対象の lowestHpRatio は枠の想定で一定のまま（下がる分は未実装。plan/design-ade.md 6 節）
+  // atMost（紅蓮編）が読む。HP の割合を時間で読む編（plan/design-hp-ratio-readers.md）: passive の条件 selfHp（割合が動きうる枠）と対象の
+  // lowestHpRatio（回復の発火の時）も読む
   'maxHpOnly',
   // 2 段目の段 7（plan/design-skill-stage7.md 1.3 節）: 防御力▲（比率）。与ダメージの式は読まず、対象の絞り込み
   // 「自分より最終防御力が低い味方」（targetDefense）だけが、発火のフレームの最終防御力として読む
@@ -313,10 +314,20 @@ export function isAllyDecrease(effect: { stat: string; decrease?: true }): boole
  * casterDefence = 発動者のバフ前防御力 × 比率を敵の防御力から引く（マスト編。stat が enemyDefenseDown のときだけ。「スキル発動者基準で
  * 防御力 X%▼」。plan/design-mast.md 2.2 節）、
  * copyTopAttack = バフ前攻撃力が最も高い味方 1 機（自分も候補。空枠は除く）のバフ前攻撃力 × 比率の固定加算（2 段目の段 19 の PR 2。
- * stat が attack のときだけ。「攻撃力が最も高い味方 1 機の攻撃力のコピー X%」。順位も写す値も「最終」の付かない攻撃力で読む。V-0627）
+ * stat が attack のときだけ。「攻撃力が最も高い味方 1 機の攻撃力のコピー X%」。順位も写す値も「最終」の付かない攻撃力で読む。V-0627）、
+ * casterMaxHp = 発動者のバフ前の最大HP × 比率を対象の最大HP に足す（HP の割合を時間で読む編。stat が maxHp・maxHpOnly の timed だけ。
+ * 「スキル発動者基準で最大HP（のみ）X%▲」。対象の比率は X × 発動者のバフ前の最大HP ÷ 対象のバフ前の最大HP で、件の列を対象の枠ごとに
+ * 作る時に直す（skills/holders.ts）。plan/design-hp-ratio-readers.md 9 節の論点 8。V-0730）
  */
 export type BuffScaling =
-  'ratio' | 'casterAttack' | 'flat' | 'casterChargeTime' | 'casterFinalMaxHp' | 'casterDefence' | 'copyTopAttack';
+  | 'ratio'
+  | 'casterAttack'
+  | 'flat'
+  | 'casterChargeTime'
+  | 'casterFinalMaxHp'
+  | 'casterDefence'
+  | 'copyTopAttack'
+  | 'casterMaxHp';
 export const BUFF_SCALINGS = [
   'ratio',
   'casterAttack',
@@ -325,6 +336,7 @@ export const BUFF_SCALINGS = [
   'casterFinalMaxHp',
   'casterDefence',
   'copyTopAttack',
+  'casterMaxHp',
 ] as const satisfies readonly BuffScaling[];
 
 /** 攻撃力に実数を固定加算するスケーリング（比率で足さない。stat は attack だけ） */

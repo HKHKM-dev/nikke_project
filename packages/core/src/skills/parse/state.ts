@@ -350,6 +350,9 @@ function parseStateContentItem(
     if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
+  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節）: 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
+  // 状態の中身には書けない（使い手がいない）
+  if (timed.scaling === 'casterMaxHp') fail(`${path}.scaling`, 'casterMaxHp is only allowed in timed');
   // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 味方の状態の中身に敵の件（受けるダメージ▲）は書けない。
   // エレグのバースト編: 敵に付く状態の中身は、敵が持つ stat だけ
   if (onEnemy) {

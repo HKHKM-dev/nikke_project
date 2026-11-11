@@ -35,11 +35,12 @@
             "hp"
           ],
           "assumes": {
-            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画",
-            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version"
+            "ja": "基礎版は撮れない（スペック固定でも宝物版が出る）ので、根拠は宝物版の同じ行の録画。自分の HP の割合が閾値を下回る間（枠の想定の割合を、最大HP のみ▲・現在の HP▼ で下げた割合。被弾は扱わない）は外れ、上回れば戻る。回復で割合が戻る分は扱わない",
+            "en": "The base version cannot be recorded (the treasure version shows even with fixed spec), so the evidence is the recordings of the same line in the treasure version. Off while own HP ratio is below the threshold (the slot's assumed ratio lowered by max-HP-only ups and current HP downs; damage taken is not modeled) and back on above it. The rise from heals is not modeled"
           },
           "claims": [
-            "C-0770"
+            "C-0770",
+            "C-1106"
           ]
         }
       ]
@@ -126,8 +127,13 @@
           "reads": [
             "hp"
           ],
+          "assumes": {
+            "ja": "自分の HP の割合が閾値を下回る間（枠の想定の割合を、最大HP のみ▲・現在の HP▼ で下げた割合。被弾は扱わない）は外れ、上回れば戻る。回復で割合が戻る分は扱わない",
+            "en": "Off while own HP ratio is below the threshold (the slot's assumed ratio lowered by max-HP-only ups and current HP downs; damage taken is not modeled) and back on above it. The rise from heals is not modeled"
+          },
           "claims": [
-            "C-0770"
+            "C-0770",
+            "C-1106"
           ]
         },
         {

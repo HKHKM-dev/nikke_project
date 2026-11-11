@@ -64,13 +64,14 @@
     | 言い回し | 書き方 | 決まり・例 | 設計書 |
     | --- | --- | --- | --- |
     | スキル発動者の最終最大HP の X% 分の攻撃力▲ | `scaling: "casterFinalMaxHp"` | 例: ラプラス：アルティメットヒーローの S1 | [design-skill-stage6.md](design-skill-stage6.md) |
-    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }`（説明文に即値で書かれた X は `{ "atLeast": X }`） | HP は被弾で減りうるので `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。例: ノワールの S1 | 同上 |
+    | スキル発動者基準で最大HP（のみ）X%▲（味方に付く） | timed の `scaling: "casterMaxHp"` | 発動者のバフ前の最大HP × X を対象の最大HP に足す（対象の比率は発動者との最大HP の比で変わる）。自分にだけ付く効果には書かない。例: エードの S2・バースト、マストのバーストの味方への効果 | [design-hp-ratio-readers.md](design-hp-ratio-readers.md) 9 節 |
+    | 自分の HP が X% 以上なら | `condition.selfHp: { "atLeastRef": N }`（説明文に即値で書かれた X は `{ "atLeast": X }`） | HP は被弾で減りうるので `assumes` で決めない（[design-skill-catalog.md](design-skill-catalog.md) の論点 12）。HP の割合が動きうる枠（最大HP のみ▲ の対象・現在の HP▼ を持つ枠）では、割合が閾値を下回る間だけ外れる区間の件になる（1 パス目が射撃の時に読む stat と、最大HP の stat には書けない）。例: ノワールの S1・ミルクの S2 | 同上、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.1 節 |
     | 最大HP▲ | `stat: "maxHp"` | 「最大HP のみ▲」は形を足すまで notes のまま（`definitions.test.ts` が見張る）。例: シンデレラの美しさ | 同上 |
     | デコイ・デコイが存在する時 | 目録の `decoy`・`condition.selfState: "decoy"` | — | 同上 |
     | 自分と自分より最終防御力が低い味方 | `target: "allies"` と `targetDefense: "lowerThanSelf"` | 読む側の印 `reads: ["defense"]` も書く。例: アニス：スターの S2 | [design-skill-stage7.md](design-skill-stage7.md) |
     | 防御力▲ | `stat: "defense"` | 効果にするのは、比べの自分の側と、読む側と組む録画が読み直せたものだけ。ほかは間接の notes（段 7 の論点 4）。例: デルタの S2 | 同上 |
     | 〈クラス〉型の味方 | `targetClass` | 例: エヌ：ミラクルフェアリーの S1・バースト | [design-skill-stage9.md](design-skill-stage9.md) |
-    | 残りの HP の割合が最も低い味方 N 機 | `target: "lowestHpRatio"` と `targetCount`（`targetCountRef`） | 被弾した味方が選ばれうることを `assumes` に書く。例: ミサトの S1 | [design-skill-stage8.md](design-skill-stage8.md) |
+    | 残りの HP の割合が最も低い味方 N 機 | `target: "lowestHpRatio"` と `targetCount`（`targetCountRef`） | 回復の発火のフレームの HP の割合（最大HP のみ▲・現在の HP▼ で下げた割合）で選ぶ。被弾した味方が選ばれうることと、回復で割合が戻る分は扱わないことを `assumes` に書く。例: ミサトの S1 | [design-skill-stage8.md](design-skill-stage8.md)、[design-hp-ratio-readers.md](design-hp-ratio-readers.md) 2.2 節 |
     | 「〈名前〉」：機能…・〜状態の味方 | 状態の付与 `kind: "state"` と `contents`。名前は目録（`skills/states.ts`）の id | 目録に無い状態は id を足す（英語版の状態名の lowerCamelCase）。ほかから参照されない名前も付与で書く（[design-skill-catalog.md](design-skill-catalog.md) の論点 4） | [design-named-state.md](design-named-state.md) 5 節・[design-skill-stage1.md](design-skill-stage1.md) 1.4 節 |
     | 自分が〈状態〉なら・でなければ／解除不可 | `condition.selfState`／付与の `undispellable: true` | — | [design-skill-stage1.md](design-skill-stage1.md) 1.1・1.3 節 |
     | 〈名前〉解除／直前に自分がバーストを使用していれば | `kind: "removeState"`／`condition.usedBurst: true` | 例: マナの S2 | 同 1.2・1.4・1.5 節 |

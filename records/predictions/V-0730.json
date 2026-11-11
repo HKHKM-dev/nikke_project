@@ -1,0 +1,388 @@
+{
+  "verification": "V-0730",
+  "note": "撮影 A（録画 1090・1091）の後、語彙（plan/design-hp-ratio-readers.md 2.1・2.2 節・9 節の論点 8）を実装してから出した。H1r（丸め）と撮影 C の回復の対象は、override で書けないので検証記録の「予測」に手で書いた。A-grid-h0 は読み取りの格子（buff-edge の --opt setup）に使う H0 の条件で、予測の指標ではない",
+  "team": [
+    {
+      "rid": 304
+    },
+    {
+      "rid": 310
+    },
+    {
+      "rid": 141,
+      "controlled": true,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 271
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1c",
+      "note": "いまの定義（常時の selfHp を時間で読む。味方への最大HP のみ▲ は発動者基準）",
+      "override": {}
+    },
+    {
+      "id": "H1",
+      "note": "常時の selfHp を時間で読み、味方への最大HP のみ▲ は対象基準（C-1028）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 310,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "normalShot",
+                "everyRef": 3
+              },
+              "target": "allies",
+              "stat": "maxHpOnly",
+              "ref": 4,
+              "durationRef": 5
+            }
+          },
+          {
+            "rid": 310,
+            "skill": "burst",
+            "replace": 0,
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "allies",
+              "stat": "maxHpOnly",
+              "ref": 1,
+              "durationRef": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H0",
+      "note": "ミルクの S2 のクリティカルダメージ▲が戦闘中ずっと効く（常時の条件を戦闘中に見直さない）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 141,
+            "skill": "skill2",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "critDamage",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-ade-base",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エードの▲なしの 1 ヒット（胴体・会心なし。ノワールの S1 の攻撃力▲は乗る）"
+    },
+    {
+      "id": "A-ade-base-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 100,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ区間の会心の 1 ヒット（ミルクの S2 が乗る）"
+    },
+    {
+      "id": "A-ade-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3200,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エードの S2 の最大HP のみ▲ の間（S1 の攻撃力▲）の 1 ヒット"
+    },
+    {
+      "id": "A-ade-s1-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3200,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ区間の会心の 1 ヒット（S2 だけの区間。H1 でもミルクの S2 は外れない）"
+    },
+    {
+      "id": "A-ade-burst-s1",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 400,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エードのバーストの間（バーストと S1 の攻撃力▲）の 1 ヒット"
+    },
+    {
+      "id": "A-ade-burst-s1-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 400,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ区間の会心の 1 ヒット（H1 ではミルクの S2 が外れる）"
+    },
+    {
+      "id": "A-ade-burst",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 650,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エードのバーストの間（バーストの攻撃力▲だけ）の 1 ヒット"
+    },
+    {
+      "id": "A-ade-burst-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 650,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ区間の会心の 1 ヒット（H1 ではミルクの S2 が外れる）"
+    },
+    {
+      "id": "A-ade-overlap",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "エードの S2 とバーストの重なり（バーストの攻撃力▲だけ）の 1 ヒット（H1c ではノワールの S1 が外れる）"
+    },
+    {
+      "id": "A-ade-overlap-crit",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "同じ区間の会心の 1 ヒット（H1c ではミルクの S2 とノワールの S1 が外れる）"
+    },
+    {
+      "id": "A-grid-h0",
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4],
+        "addEffects": [
+          {
+            "rid": 141,
+            "skill": "skill2",
+            "treasure": true,
+            "replace": 0,
+            "effect": {
+              "kind": "passive",
+              "target": "allies",
+              "stat": "critDamage",
+              "ref": 2
+            }
+          }
+        ]
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "読み取りの格子用（H0 の条件）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-11",
+    "commit": "c9f8b0c59883cb8977a97d1242fc1851073379f4",
+    "values": {
+      "H1c": {
+        "A-ade-base": 17167.4526,
+        "A-ade-base-crit": 27661.91637438,
+        "A-ade-s1": 17930.3132,
+        "A-ade-s1-crit": 28891.11365916,
+        "A-ade-burst-s1": 19422.3485,
+        "A-ade-burst-s1-crit": 29133.52275,
+        "A-ade-burst": 18659.4879,
+        "A-ade-burst-crit": 27989.23185,
+        "A-ade-overlap": 16176.1457,
+        "A-ade-overlap-crit": 24264.218549999998,
+        "A-grid-h0": 17167.4526
+      },
+      "H1": {
+        "A-ade-base": 17167.4526,
+        "A-ade-base-crit": 27661.91637438,
+        "A-ade-s1": 17930.3132,
+        "A-ade-s1-crit": 28891.11365916,
+        "A-ade-burst-s1": 19422.3485,
+        "A-ade-burst-s1-crit": 29133.52275,
+        "A-ade-burst": 18659.4879,
+        "A-ade-burst-crit": 27989.23185,
+        "A-ade-overlap": 18659.4879,
+        "A-ade-overlap-crit": 27989.23185,
+        "A-grid-h0": 17167.4526
+      },
+      "H0": {
+        "A-ade-base": 17167.4526,
+        "A-ade-base-crit": 27661.91637438,
+        "A-ade-s1": 17930.3132,
+        "A-ade-s1-crit": 28891.11365916,
+        "A-ade-burst-s1": 19422.3485,
+        "A-ade-burst-s1-crit": 31295.23013805,
+        "A-ade-burst": 18659.4879,
+        "A-ade-burst-crit": 30066.03285327,
+        "A-ade-overlap": 16176.145700000003,
+        "A-ade-overlap-crit": 26064.623566410002,
+        "A-grid-h0": 17167.4526
+      }
+    }
+  }
+}

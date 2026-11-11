@@ -14,6 +14,8 @@
 // どの枠の定義も付けない状態）も、ここで決める（満たせば条件から落とし、満たさなければ効果を外す）。
 // 2 段目の段 6（plan/design-skill-stage6.md 1.4 節）: 自分の HP の割合の条件（selfHp）も、枠の HP の割合の想定（TeamSlotInput.hpRatio。
 // 戦闘中一定）で、ここで決める（applyCompositionToTeam の枠ごとの段。最小構成の検査など、枠の入力の無い所は想定の既定（満タン）とみなす）。
+// HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: ただし決めるのは、HP の割合が戦闘中に動かない枠（hpRatioMovesOf）
+// だけ。動きうる枠の常時の selfHp は残し、件の一覧が区間の件（skills/resolve.ts の resolveHpWhileEffects）にする。
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import type { BurstStep, CharacterData, Element } from '../types.ts';
 import { skillValue, type SkillLevels } from './resolve.ts';
@@ -26,6 +28,7 @@ import {
   isStacksCondition,
   isSelfHpAtMost,
   selfHpThreshold,
+  statContentsOf,
   staticStatesOf,
   type BurstStepMixCondition,
   type SelfHpCondition,
@@ -422,13 +425,40 @@ function applyCompositionToSlot(
   enemyElement: Element | null,
   states: readonly (readonly NamedStateId[] | undefined)[],
   others: ReadonlySet<NamedStateId>,
+  hpRatioMoves: boolean,
 ): TeamSlotInput {
   const definition = slot.skills?.definition;
   if (slot.skills === undefined || !definition) return slot;
   const composed = applyComposition(definition, characters, selfIndex, enemyElement, states, others);
-  // 2 段目の段 6: 自分の HP の割合の条件は、枠の HP の割合の想定（省略は満タン）で決める
-  const applied = applySelfHp(composed, slot.character, slot.skills.levels, slot.hpRatio ?? 1);
+  // 2 段目の段 6: 自分の HP の割合の条件は、枠の HP の割合の想定（省略は満タン）で決める。HP の割合を時間で読む編: 割合が動きうる枠は
+  // 決めずに残す（件の一覧が区間の件にする）
+  const applied = hpRatioMoves
+    ? composed
+    : applySelfHp(composed, slot.character, slot.skills.levels, slot.hpRatio ?? 1);
   return applied === definition ? slot : { ...slot, skills: { ...slot.skills, definition: applied } };
+}
+
+/**
+ * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 枠ごとの、HP の割合が戦闘中に動きうるか。最大HP のみ▲ の効果
+ * （常時・while・timed・状態の中身）の対象になりうる枠と、自分の現在の HP▼（currentHpDown）を持つ枠。対象が自分でない最大HP のみ▲ は、
+ * 絞り込みによらずどの枠も動きうるとみる（多めに見ても、動かない枠の区間の件は戦闘の全体になるだけ）。definitions は編成の条件で
+ * 外した後の各枠の定義（定義の無い枠は null・undefined）
+ */
+function hpRatioMovesOf(definitions: readonly (SkillDefinition | null | undefined)[]): boolean[] {
+  const moves = definitions.map(() => false);
+  definitions.forEach((definition, i) => {
+    if (!definition) return;
+    for (const slot of SKILL_SLOTS) {
+      for (const e of definition.skills[slot].effects) {
+        const lowers =
+          ((e.kind === 'passive' || e.kind === 'timed') && e.stat === 'maxHpOnly') ||
+          (e.kind === 'state' && statContentsOf(e.contents).some((c) => c.stat === 'maxHpOnly'));
+        if (e.kind === 'currentHpDown' || (lowers && e.target === 'self')) moves[i] = true;
+        else if (lowers) moves.fill(true);
+      }
+    }
+  });
+  return moves;
 }
 
 /** 枠ごとの、ほかの枠の定義が付けうる状態（自分の枠を除く全枠の付与の状態） */
@@ -461,8 +491,9 @@ export function applyCompositionToTeam<T extends TeamInput>(input: T): T {
   });
   const states = filtered.map((definition) => (definition === undefined ? undefined : staticStatesOf(definition)));
   const others = otherGrantedStates(filtered);
+  const moves = hpRatioMovesOf(filtered);
   const slots = input.slots.map((slot, i) =>
-    slot === null ? null : applyCompositionToSlot(slot, characters, i, enemyElement, states, others[i]!),
+    slot === null ? null : applyCompositionToSlot(slot, characters, i, enemyElement, states, others[i]!, moves[i]!),
   );
   if (slots.every((slot, i) => slot === input.slots[i])) return input;
   return { ...input, slots };

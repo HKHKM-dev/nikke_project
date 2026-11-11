@@ -127,9 +127,10 @@ describe('自分の HP の割合の条件（selfHp）', () => {
       scaling: 'casterAttack',
       condition: { selfHp: { atLeastRef: 1 } },
       reads: ['hp'],
-      claims: ['C-0020', 'C-0835'],
+      claims: ['C-0020', 'C-0835', 'C-1106'],
     });
-    expect(e).not.toHaveProperty('assumes');
+    // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: assumes は満タンの決め打ちでなく、割合が下回る間は外れること
+    expect('assumes' in e ? e.assumes?.ja : undefined).toMatch(/閾値を下回る間/);
   });
 
   it('rejects selfHp outside passive and unknown fields', () => {
