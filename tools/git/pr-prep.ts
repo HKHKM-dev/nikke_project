@@ -284,15 +284,13 @@ if (oversized.length > 0) {
   );
   for (const o of oversized) console.warn(`  ${o.path}: ${Math.round(o.size / 1000)}KB（目安 ${o.limit / 1000}KB）`);
 }
-const longItems = longNewGuideItems(
-  readFileSync(join(ROOT, CAPTURE_GUIDE), 'utf8'),
-  gitRaw(['show', `origin/main:${CAPTURE_GUIDE}`]),
-);
+const guideAdded = addedLines(git(['diff', '-U0', 'origin/main...HEAD', '--', CAPTURE_GUIDE])).get(CAPTURE_GUIDE);
+const longItems = guideAdded ? longNewGuideItems(readFileSync(join(ROOT, CAPTURE_GUIDE), 'utf8'), guideAdded) : [];
 if (longItems.length > 0) {
   console.warn(
     `${CAPTURE_GUIDE} に、1 項目の目安（${GUIDE_ITEM_LIMIT} バイト）を超えた項目を足すか伸ばした（索引は 1〜2 行の要約と ID。細部は指す先に置く）:`,
   );
-  for (const i of longItems) console.warn(`  ${i.head}…: ${i.size} バイト`);
+  for (const l of longItems) console.warn(`  ${l}`);
 }
 
 if (values.push) {

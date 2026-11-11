@@ -303,20 +303,19 @@ export const CAPTURE_GUIDE = 'plan/captures/guide.md';
 export const GUIDE_ITEM_LIMIT = 600;
 
 /**
- * 索引の本文（最初の "## " の見出しより後）の項目（行頭の "- "）のうち、目安を超え、base（main の版）に同じ行の無いもの
- * （plan/design-workflow-simplification-11.md 2 節）。前からある長い項目は出さない。head は項目の頭の 40 字
+ * 索引の本文（最初の "## " の見出しより後）の項目（行頭の "- "）のうち、ブランチで足した（変えた）行（added。1 始まりの行の番号）で
+ * 目安を超えるもの（plan/design-workflow-simplification-11.md 2 節）。前からある長い項目は出さない
  */
-export function longNewGuideItems(text: string, base: string): { head: string; size: number }[] {
-  const items = (t: string) =>
-    t
-      .slice(Math.max(0, t.indexOf('\n## ')))
-      .split('\n')
-      .filter((l) => l.startsWith('- '));
-  const old = new Set(items(base));
-  return items(text).flatMap((line) => {
+export function longNewGuideItems(text: string, added: ReadonlySet<number>): string[] {
+  const out: string[] = [];
+  let body = false;
+  text.split('\n').forEach((line, i) => {
+    if (line.startsWith('## ')) body = true;
     const size = Buffer.byteLength(line);
-    return size > GUIDE_ITEM_LIMIT && !old.has(line) ? [{ head: line.slice(2, 42), size }] : [];
+    if (body && added.has(i + 1) && line.startsWith('- ') && size > GUIDE_ITEM_LIMIT)
+      out.push(`${CAPTURE_GUIDE}:${i + 1}: ${short(line)}（${size} バイト）`);
   });
+  return out;
 }
 
 /**

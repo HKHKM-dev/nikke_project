@@ -25,6 +25,7 @@ import {
   progressCopies,
   rebaseOutcome,
   removedLines,
+  short,
   splitGenerated,
 } from './pr-prep-lib.ts';
 
@@ -447,21 +448,21 @@ describe('oversizedDocs', () => {
 
 describe('longNewGuideItems', () => {
   const long = (c: string) => `- ${c.repeat(GUIDE_ITEM_LIMIT)}`;
+  // 1: 見出し・3: 冒頭の項目・5: 節の見出し・7 から: 本文の項目
   const guide = (...items: string[]) => `# 手引き\n\n${long('h')}\n\n## 節\n\n${items.join('\n')}\n`;
+  const all = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
-  it('lists body items over the limit that main does not have, by bytes', () => {
+  it('lists added body items over the limit, by bytes', () => {
     const fits = `- ${'あ'.repeat(199)}`; // 2 + 597 バイト
     const over = `- ${'あ'.repeat(200)}`;
-    expect(longNewGuideItems(guide(fits, over, long('n')), guide())).toEqual([
-      { head: 'あ'.repeat(40), size: 602 },
-      { head: 'n'.repeat(40), size: GUIDE_ITEM_LIMIT + 2 },
+    expect(longNewGuideItems(guide(fits, over, '- short'), all)).toEqual([
+      `plan/captures/guide.md:8: ${short(over)}（602 バイト）`,
     ]);
   });
 
-  it('skips long items main already has, and the lead before the first section', () => {
-    expect(longNewGuideItems(guide(long('o'), '- short'), guide(long('o')))).toEqual([]);
-    expect(longNewGuideItems(guide(`${long('o')}x`), guide(long('o')))).toEqual([
-      { head: 'o'.repeat(40), size: GUIDE_ITEM_LIMIT + 3 },
+  it('skips long items the branch did not add, and the lead before the first section', () => {
+    expect(longNewGuideItems(guide(long('o'), long('n')), new Set([3, 8]))).toEqual([
+      `plan/captures/guide.md:8: ${short(long('n'))}（${GUIDE_ITEM_LIMIT + 2} バイト）`,
     ]);
   });
 });
