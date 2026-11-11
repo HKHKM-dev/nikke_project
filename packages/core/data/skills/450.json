@@ -77,8 +77,8 @@
           "targetCountRef": 6,
           "ref": 7,
           "assumes": {
-            "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算で数える（コアダメージ▲と同じ）。「残りの HP の割合が最も低い味方 2 機」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順（C-0567）。満タンの味方にも付き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない",
-            "en": "\"After performing 5 normal attacks\" counts every normal shot (as the Core Damage up). \"The 2 allies with the lowest remaining HP ratio\" use the assumed HP ratio of each slot (full by default), constant during battle; ties go to the leftmost slots (C-0567). It also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage"
+            "ja": "「通常攻撃で 5 回攻撃した時」は撃った発の通算で数える（コアダメージ▲と同じ）。「残りの HP の割合が最も低い味方 2 機」は、枠の HP の割合の想定（既定は満タン）で戦闘中一定とみなし、並んだときは枠の若い順（C-0567）。満タンの味方にも付き、「回復効果が適用された時」を起こす。回復量はダメージに関係しない。被弾は扱わない（要件 4.2 節）が、射撃場の 3 分モードでは、的の攻撃を受けた操作キャラに当たる（HP のバーで減りが見えなくても。C-1099）",
+            "en": "\"After performing 5 normal attacks\" counts every normal shot (as the Core Damage up). \"The 2 allies with the lowest remaining HP ratio\" use the assumed HP ratio of each slot (full by default), constant during battle; ties go to the leftmost slots (C-0567). It also lands on allies at full HP and triggers \"when healed\". The healed amount does not affect damage. Taking hits is not modeled (requirements 4.2), but in the 3-minute range mode it lands on the controlled unit after the target's attack hits it (even when the HP bar shows no loss)"
           },
           "claims": [
             "C-0673"

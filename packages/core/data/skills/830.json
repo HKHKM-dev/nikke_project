@@ -13,8 +13,8 @@
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "HP が満タンでも回復は適用されたとみなす",
-            "en": "A heal at full HP still counts as applied"
+            "ja": "HP が満タンでも回復は適用されたとみなす。被弾は扱わない（要件 4.2 節）ので、HP の割合の低い味方への回復（ナガの S2 など）の対象は枠の想定の割合で決まる（C-0567）。射撃場の 3 分モードでは、操作のアスカが的の攻撃を受けた後のその回復で付き直し、バーストから 25 秒を過ぎても続く回がある（C-1099）",
+            "en": "A heal at full HP still counts as applied. Taking hits is not modeled (requirements 4.2), so heals to the allies with the lowest HP ratio (Naga S2 etc.) pick targets by the assumed HP ratio of each slot (C-0567). In the 3-minute range mode, such a heal after the target's attack hits the controlled Asuka reapplies it, so in some cycles it lasts past 25 s from the burst"
           },
           "claims": [
             "C-0464",
