@@ -276,7 +276,7 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
 /**
  * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: 条件の Lv で決まる値を解く（selfState の stacksRef を、スロットの Lv の
  * 説明文の値を整数に丸めた stacks にする）。解いた後の条件は stacksRef を持たない。紅蓮編（plan/design-scarlet.md 2.2 節）: selfHp の
- * atMostRef も、スロットの Lv の値（% 表記）の atMost にする
+ * atMostRef も、スロットの Lv の値（% 表記）の atMost にする。ソリン編: atLeastRef も atLeast にする（damage の条件）
  */
 export function resolveCondition(condition: EffectCondition, skill: SkillRaw, level: number): EffectCondition {
   let out = condition;
@@ -287,6 +287,8 @@ export function resolveCondition(condition: EffectCondition, skill: SkillRaw, le
   }
   const hp = condition.selfHp;
   if (hp?.atMostRef !== undefined) out = { ...out, selfHp: { atMost: skillValue(skill, hp.atMostRef, level) } };
+  // ソリン編（plan/design-soline.md 2.1 節）: damage の「以上」の形も、発火のフレームで見るので値（% 表記）にする
+  if (hp?.atLeastRef !== undefined) out = { ...out, selfHp: { atLeast: skillValue(skill, hp.atLeastRef, level) } };
   return out;
 }
 

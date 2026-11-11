@@ -59,7 +59,8 @@ export const CONDITION_KEYS_OF = {
     'selfHp',
   ],
   // 2 段目の段 11 の PR 5: damage にも selfCounter（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
-  damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter'],
+  // ソリン編（plan/design-soline.md 2.1 節）: selfHp（以上の形だけ。parse/damage.ts。発火のフレームの HP の割合で見る）
+  damage: ['inFullBurst', 'enemyState', 'selfState', 'selfCounter', 'selfHp'],
   // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 持続ダメージは付くフレームの自分の状態だけ（ジルの硫酸弾）
   dot: ['selfState'],
   // 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除は、段 1.5 の判定に入る鍵と usedBurst

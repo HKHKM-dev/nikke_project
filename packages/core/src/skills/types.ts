@@ -1113,7 +1113,8 @@ export function isStateEndUntil(u: unknown): u is StateEndUntil {
  * 回数のきっかけ（{ count: 'fullBurstStart' | 'fullBurstEnd' }）にも書ける。
  * selfHp = 自分の HP の割合が閾値以上なら（2 段目の段 6。plan/design-skill-stage6.md 1.4 節。passive だけ。HP の割合は枠の想定で
  * 戦闘中一定なので、編成の段で決まる）。紅蓮編（plan/design-scarlet.md 2.2 節）: 閾値以下なら（atMost の形。timed だけ。発火のフレームの
- * HP の割合で見る。件の一覧が発火の文脈の条件と同じ所で見る）。
+ * HP の割合で見る。件の一覧が発火の文脈の条件と同じ所で見る）。ソリン編（plan/design-soline.md 2.1 節）: damage にも以上の形を書ける
+ * （発火のフレームの HP の割合を 2 パス目の frame/plan.ts が見る。編成の段では決めない）。
  * burstStep = この発動を撃った段階が N なら（レッドフード編。plan/design-red-hood.md 2.1 節。『バーストⅠで使用時』など）。burstUse の
  * きっかけの timed・付与・cooldownReduction・weaponChange にだけ書ける。発火の文脈（このフレームの自分の発動の段階）だけで決まるので、
  * usedBurst と同じく件を見ず、効果の段を上げない。書けるのは burstStep が AllStep のキャラの定義だけ（definitions.test.ts）
@@ -1149,7 +1150,8 @@ export type SelfCounterCondition = { counter: CounterId; atLeast?: number; below
  * 2 段目の段 15 の PR 1（plan/design-skill-stage15.md 2.1 節）: atLeast = 説明文に即値で書かれた X（% 表記。ミルクの基礎版の S2 の
  * 「自分の HP が 80% 以上の時のみ」）。atLeastRef とちょうど 1 つ。
  * 紅蓮編（plan/design-scarlet.md 2.2 節）: atMostRef・atMost = 「自分の HP が X% 以下の場合」（timed だけ。発火のフレームの HP の割合
- * （skills/holders.ts の selfHpRatioAt）で見る。編成の段では決めない）。passive は atLeast の形だけ、timed は atMost の形だけ書ける
+ * （skills/holders.ts の selfHpRatioAt）で見る。編成の段では決めない）。passive は atLeast の形だけ、timed は atMost の形だけ書ける。
+ * ソリン編（plan/design-soline.md 2.1 節）: damage は atLeast の形だけ（「自分の HP が最大の場合」は atLeast 100。発火のフレームで見る）
  */
 export type SelfHpCondition =
   | { atLeastRef: number; atLeast?: never; atMostRef?: never; atMost?: never }
@@ -1160,6 +1162,16 @@ export type SelfHpCondition =
 /** 紅蓮編: 「以下」の形（発火のフレームの HP の割合で見る）か */
 export function isSelfHpAtMost(hp: SelfHpCondition): boolean {
   return hp.atMostRef !== undefined || hp.atMost !== undefined;
+}
+
+/**
+ * ソリン編（plan/design-soline.md 2.1 節）: 解いた selfHp（atLeast・atMost。% 表記）を、HP の割合 ratio が満たすか（境は 1e-9 を許す）。
+ * 発火のフレームで見る条件（timed の以下の形・damage の以上の形）が読む。解いていない形（atLeastRef・atMostRef）は投げる
+ */
+export function selfHpHolds(hp: SelfHpCondition, ratio: number): boolean {
+  if (hp.atLeast !== undefined) return ratio >= hp.atLeast / 100 - 1e-9;
+  if (hp.atMost !== undefined) return ratio <= hp.atMost / 100 + 1e-9;
+  throw new RangeError(`selfHp ${JSON.stringify(hp)} is not resolved`);
 }
 
 /** 2 段目の段 15: selfHp の「以上」の閾値（割合。説明文の % ÷ 100）。valueOf は description_value_NN の値（スキル Lv の値） */

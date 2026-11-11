@@ -65,6 +65,7 @@ import {
   counterEffectiveFrom,
   counterFullFrames,
   itemsOf,
+  selfHpRatioOf,
   stacksHold,
   valuePiecesOf,
   type HolderHistory,
@@ -87,6 +88,7 @@ import {
   isEnemyHeldStat,
   isFixedAttackScaling,
   isStateStat,
+  selfHpHolds,
   splitsPerCount,
   staticStatesOf,
   type EffectCondition,
@@ -391,9 +393,9 @@ export function planSkillHits(
   /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節・段 D の 2）: 1 パス目の履歴。条件 enemyState は敵の状態の件、
    * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。段 11 の PR 5: 条件 selfCounter と
-   * perCount の { counter } はカウンタの記録を見る
+   * perCount の { counter } はカウンタの記録を見る。ソリン編: 条件 selfHp は HP の割合の段（hpRatios）を見る
    */
-  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications' | 'counters'>,
+  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios'>,
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
@@ -485,6 +487,12 @@ export function planSkillHits(
       for (const r of ownCounters) if (r.counter === counter && counterEffectiveFrom(r) <= frame) value = r.value;
       return value;
     };
+    // damage の条件の自分の側の読み口。ソリン編（plan/design-soline.md 2.1 節）: selfHp（以上）は発火のフレームの HP の割合を見る
+    const self: SelfReaders = {
+      stateHolds: selfStateHolds,
+      counterAt,
+      hpRatioAt: (frame) => selfHpRatioOf(history, slotIndex, frame),
+    };
     // 持続ダメージの付くフレーム。2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: { counterFull } の perCount は、発火の
     // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
     const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
@@ -496,9 +504,7 @@ export function planSkillHits(
         const at = triggerFrames(t, schedule, slotIndex, frames, shots);
         return effect.condition === undefined
           ? at
-          : at.filter((f) =>
-              damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt),
-            );
+          : at.filter((f) => damageConditionHolds(effect.condition, f, schedule, enemySpans, self));
       }
       const per = effect.perCount;
       if (per === undefined || !('counter' in per) || effect.perCountIntervalFrames === undefined)
@@ -663,7 +669,7 @@ export function planSkillHits(
                   )
               : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, self)) continue;
         // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
         // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。ヒットの値は
         // 2 パス目（sim/engine.ts）が窓の中のダメージの和にする
@@ -772,7 +778,7 @@ export function planSkillHits(
       if (ups.length > 0) {
         for (const up of ups)
           for (const f of triggerFrames(up.trigger, schedule, slotIndex, frames, shots))
-            if (damageConditionHolds(up.condition, f, schedule, enemySpans, selfStateHolds, counterAt))
+            if (damageConditionHolds(up.condition, f, schedule, enemySpans, self))
               for (let k = 0; k < up.amount; k++) fires.push({ f, effect: group[0]! });
         fires.sort((a, b) => a.f - b.f);
       }
@@ -858,6 +864,13 @@ export function planSkillHits(
   return hits.sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
 }
 
+/** damage の条件の、出どころの枠の自分の側の読み口（状態・カウンタ・HP の割合。どれも発火のフレームで読む） */
+type SelfReaders = {
+  stateHolds: (self: SelfStateCondition, frame: number) => boolean;
+  counterAt: (counter: CounterId, frame: number) => number;
+  hpRatioAt: (frame: number) => number;
+};
+
 /**
  * クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと
  * （名前の付いた状態の語彙編: timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState。plan/design-named-state.md 5.6 節。
@@ -868,14 +881,15 @@ function damageConditionHolds(
   frame: number,
   schedule: BurstSchedule | null,
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
-  selfStateHolds: (self: SelfStateCondition, frame: number) => boolean,
-  counterAt: (counter: CounterId, frame: number) => number,
+  self: SelfReaders,
 ): boolean {
   if (condition === undefined) return true;
-  if (condition.selfState !== undefined && !selfStateHolds(condition.selfState, frame)) return false;
+  // ソリン編（plan/design-soline.md 2.1 節）: 自分の HP の割合が閾値以上か（resolveCondition が atLeastRef を解いてある）
+  if (condition.selfHp !== undefined && !selfHpHolds(condition.selfHp, self.hpRatioAt(frame))) return false;
+  if (condition.selfState !== undefined && !self.stateHolds(condition.selfState, frame)) return false;
   if (condition.selfCounter !== undefined) {
     const { counter, atLeast, below } = condition.selfCounter;
-    const value = counterAt(counter, frame);
+    const value = self.counterAt(counter, frame);
     if (atLeast !== undefined && value < atLeast) return false;
     if (below !== undefined && value >= below) return false;
   }

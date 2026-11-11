@@ -106,6 +106,8 @@ import {
   isFiringStat,
   HIT_STATE_STATS,
   isStateStat,
+  isSelfHpAtMost,
+  selfHpHolds,
   staticStatesOf,
   type BuffStat,
   type EndedTrigger,
@@ -277,7 +279,22 @@ export type HolderHistory = {
   logs: readonly (ShotLog | null)[];
   /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値が変わった記録（フレームの順。value は変わった後の値） */
   counters: readonly CounterRecord[];
+  /**
+   * ソリン編（plan/design-soline.md 2.1 節）: 枠ごとの HP の割合（selfHpRatioAt）の変わり目。読むのは selfHpRatioOf（2 パス目の damage の
+   * 条件 selfHp（以上）が発火のフレームで読む）
+   */
+  hpRatios: readonly HpRatioSteps[];
 };
+
+/** ソリン編: 枠の HP の割合の段。frames（昇順・先頭は 0）のフレームから次の変わり目の前まで、割合は ratios の同じ番号 */
+export type HpRatioSteps = { frames: readonly number[]; ratios: readonly number[] };
+
+/** ソリン編（plan/design-soline.md 2.1 節）: 履歴から、枠のフレーム frame の HP の割合（1 パス目の selfHpRatioAt と同じ値） */
+export function selfHpRatioOf(history: Pick<HolderHistory, 'hpRatios'>, slotIndex: number, frame: number): number {
+  const steps = history.hpRatios[slotIndex];
+  if (steps === undefined) throw new RangeError(`selfHpRatioOf: no slot ${slotIndex}`);
+  return steps.ratios[lowerBound(steps.frames, frame + 1) - 1]!;
+}
 
 /**
  * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除の選び方を確かめていない所。targets は debuffedRandom でデバフのかかった味方が
@@ -2106,8 +2123,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) === condition.usedBurst) &&
     // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
     burstStepHolds(condition, ev, sourceSlotIndex) &&
-    // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）
-    (condition?.selfHp === undefined || selfHpAtMostAt(sourceSlotIndex, ev.frame, selfHpAtMostOf(condition.selfHp)));
+    // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）。以上の形は passive（編成の段）と
+    // damage（2 パス目）だけなので、ここには来ない
+    (condition?.selfHp === undefined || selfHpAtMostHolds(condition.selfHp, selfHpRatioAt(sourceSlotIndex, ev.frame)));
 
   const rankSlots = rankSlotsOf(slots, passive);
   // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
@@ -2162,12 +2180,29 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
     return (ratio * (1 + up - only)) / (1 + up);
   };
-  /** 解いた条件 selfHp の atMost の閾値（割合）。解いていない形（atMostRef・以上の形）は件の一覧に来ない */
-  const selfHpAtMostOf = (hp: SelfHpCondition): number => {
-    if (hp.atMost === undefined) throw new RangeError(`selfHp ${JSON.stringify(hp)} is not resolved to atMost`);
-    return hp.atMost / 100;
+  /**
+   * ソリン編: 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。最大HP のみ▲ も現在の
+   * HP▼ も無い枠は割合が動かないので 1 段。ループの後に呼ぶ
+   */
+  const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
+    if (!maxHpOnlyMoves[slotIndex] && hpDowns[slotIndex]!.frames.length === 0)
+      return { frames: [0], ratios: [selfHpRatioAt(slotIndex, 0)] };
+    const steps = { frames: [] as number[], ratios: [] as number[] };
+    for (let f = 0; f < Math.max(frames, 1); f++) {
+      const ratio = selfHpRatioAt(slotIndex, f);
+      if (steps.ratios.at(-1) === ratio) continue;
+      steps.frames.push(f);
+      steps.ratios.push(ratio);
+    }
+    return steps;
   };
-  /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と条件 selfHp の atMost が読む） */
+  /** 1 パス目の発火の文脈の selfHp（以下の形だけ。以上の形が来たら定義の読み込みの漏れなので投げる） */
+  const selfHpAtMostHolds = (hp: SelfHpCondition, ratio: number): boolean => {
+    if (!isSelfHpAtMost(hp))
+      throw new RangeError(`selfHp ${JSON.stringify(hp)}: the at-least form is not read in the first pass`);
+    return selfHpHolds(hp, ratio);
+  };
+  /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と維持 { selfHpAtMostRef } が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
     selfHpRatioAt(slotIndex, frame) <= threshold + 1e-9;
   // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
@@ -3196,6 +3231,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         fullBurstWindows: [...options.fullBurstWindows()],
         logs,
         counters: counterRecords,
+        hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
       };
     },
   };

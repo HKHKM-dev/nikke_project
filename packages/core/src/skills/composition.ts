@@ -26,7 +26,6 @@ import {
   burstStepChangeOf,
   isSelfHpAtMostTrigger,
   isStacksCondition,
-  isSelfHpAtMost,
   selfHpThreshold,
   statContentsOf,
   staticStatesOf,
@@ -283,8 +282,9 @@ export function resolveSelfHp<E extends SkillEffect>(
 ): E | null {
   const condition = 'condition' in effect ? effect.condition : undefined;
   const hp = condition?.selfHp;
-  // 紅蓮編（plan/design-scarlet.md 2.2 節）: 「以下」の形は発火のフレームの HP の割合で見る（skills/holders.ts）ので、ここでは決めない
-  if (condition === undefined || hp === undefined || isSelfHpAtMost(hp)) return effect;
+  // 決めるのは passive だけ。timed の「以下」の形（紅蓮編。skills/holders.ts）と damage の「以上」の形（ソリン編。frame/plan.ts）は、
+  // 発火のフレームの HP の割合で見るので、ここでは決めない
+  if (effect.kind !== 'passive' || condition === undefined || hp === undefined) return effect;
   if (hpRatio < threshold(hp)) return null;
   const { selfHp: _selfHp, ...rest } = condition;
   const { condition: _condition, ...without } = effect as E & { condition?: unknown };
@@ -309,7 +309,7 @@ export function hpRatioReadersOf(definition: SkillDefinition): { self: boolean; 
 
 /**
  * 2 段目の段 6: 定義の selfHp を、枠の HP の割合の想定で決めた定義（どの効果も変わらなければ definition をそのまま返す）。
- * 閾値は枠のキャラの説明文の値（スキル Lv の値）。いまは passive だけが書けるので、静的な状態の集め方には効かない
+ * 閾値は枠のキャラの説明文の値（スキル Lv の値）。決めるのは passive だけ（damage の以上の形は発火のフレームで見る）なので、静的な状態の集め方には効かない
  */
 export function applySelfHp(
   definition: SkillDefinition,
