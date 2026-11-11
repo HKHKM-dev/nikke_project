@@ -63,7 +63,7 @@
             "trigger": "fullChargeShot"
           },
           "claims": [
-            "C-1035"
+            "C-1089"
           ]
         }
       ]
@@ -136,7 +136,7 @@
             "trigger": "fullChargeShot"
           },
           "claims": [
-            "C-1035"
+            "C-1089"
           ]
         }
       ]
