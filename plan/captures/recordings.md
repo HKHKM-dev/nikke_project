@@ -1046,16 +1046,6 @@
 | 1071 | `20261111-1071_sr+ar+sr_delta+idoll-sun+killer-wife_fire.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1072 | `20261111-1072_rl_arcana_liter_isabel_water_manual.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎イサベル（231、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | V-0721 の撮影（リター・アルカナ・イサベル。水冷）。バーストを手で押し、フルバーストの終わりをイサベルの S2 の直前に合わせた |
 | 1073 | `20261111-1073_rl_arcana_liter_isabel_water_manual.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎イサベル（231、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | V-0721 の撮影（リター・アルカナ・イサベル。水冷）。バーストを手で押し、フルバーストの終わりをイサベルの S2 の直前に合わせた |
-| 1074 | `20261111-1074_pierce_naga_asuka_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ナガ（450、SG・電撃・SSR） + ◎アスカ（830、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1075 | `20261111-1075_pierce_naga_asuka_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ナガ（450、SG・電撃・SSR） + ◎アスカ（830、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1076 | `20261111-1076_pierce_nihilister_alice_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ニヒリスター（261、SR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1077 | `20261111-1077_pierce_nihilister_alice_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + ニヒリスター（261、SR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1078 | `20261111-1078_pierce_dorothy_snowwhite-ha_iron.mp4` | ドロシー（233、AR・水冷・SSR） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
-| 1079 | `20261111-1079_pierce_dorothy_snowwhite-ha_iron.mp4` | ドロシー（233、AR・水冷・SSR） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
-| 1080 | `20261111-1080_pierce_redhood_guren-k_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + レッドフード（470、SR・鉄甲・SSR） + ◎紅蓮：神殺（472、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1081 | `20261112-1081_pierce_redhood_guren-k_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + レッドフード（470、SR・鉄甲・SSR） + ◎紅蓮：神殺（472、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1082 | `20261112-1082_pierce_laplace-uh_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
-| 1083 | `20261112-1083_pierce_laplace-uh_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
