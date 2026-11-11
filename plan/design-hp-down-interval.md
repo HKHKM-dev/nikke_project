@@ -5,7 +5,7 @@
 - 課題: `records/backlog/skill-hp-down-interval.json`
 - 検証: V-0729
 - 作成日: 2026-11-11
-- 状態: 実装（経過）
+- 状態: 完了
 
 ## 0. 範囲
 
