@@ -1,8 +1,8 @@
 {
-  "id": "1091",
+  "id": "1094",
   "date": "2026-11-12",
   "folder": "range",
-  "file": "20261112-1091_sr_ade-agent-bunny_near1-pause.mp4",
+  "file": "20261112-1094_sr_ade-agent-bunny_midfar-start.mp4",
   "original": "2026-11-12_02-06-13.mp4",
   "durationSec": 198.8,
   "frames": 11926,
@@ -23,9 +23,9 @@
   },
   "mode": "range-3min",
   "fixedSpec": true,
-  "autoFire": true,
+  "autoFire": false,
   "autoBurst": false,
-  "conditionNote": "V-0728 の撮影。エード：エージェントバニー単騎（1 枠目・操作）。1 回目のジャンプで敵が跳んだらオート射撃を OFF にし、近に降りて約 5 秒後に ON に戻した（手動）",
+  "conditionNote": "V-0731 の撮影。エード：エージェントバニー単騎（1 枠目・操作）。戦闘の始まりはオート射撃 OFF で撃たず、3 回目のジャンプの後に ON にした（手動。左上のボタンで確かめた）。戦闘履歴のパネル（キャラ名・Lv.400）で確かめた",
   "backup": {
     "at": "2026-11-12T02:30+09:00",
     "via": "cloud-move",
