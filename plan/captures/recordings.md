@@ -1054,6 +1054,8 @@
 | 1079 | `20261111-1079_pierce_dorothy_snowwhite-ha_iron.mp4` | ドロシー（233、AR・水冷・SSR） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎スノーホワイト：ヘビーアームズ（471、SR・水冷・SSR） | BigArms・鉄甲 | 射撃場 3 分 | ON | ON / ON |  |
 | 1080 | `20261111-1080_pierce_redhood_guren-k_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + レッドフード（470、SR・鉄甲・SSR） + ◎紅蓮：神殺（472、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1081 | `20261112-1081_pierce_redhood_guren-k_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + レッドフード（470、SR・鉄甲・SSR） + ◎紅蓮：神殺（472、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1082 | `20261112-1082_pierce_laplace-uh_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1083 | `20261112-1083_pierce_laplace-uh_fire.mp4` | ツバイ（390、SG・電撃・SSR、宝物 3） + エード：エージェントバニー（315、SR・鉄甲・SSR） + ◎ラプラス：アルティメットヒーロー（103、RL・風圧・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

@@ -1,0 +1,47 @@
+{
+  "id": "1083",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1083_pierce_laplace-uh_fire.mp4",
+  "original": "2026-11-12_00-10-11.mp4",
+  "durationSec": 201.4,
+  "frames": 12086,
+  "fps": 60,
+  "sizeMB": 244,
+  "sha256": "e790ac868516",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 315,
+      "name": "エード：エージェントバニー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 103,
+      "name": "ラプラス：アルティメットヒーロー",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T00:22+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
