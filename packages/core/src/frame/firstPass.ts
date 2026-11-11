@@ -60,7 +60,7 @@
 // このフレームに付いた間隔の変更の件も見るように、手順 3 の後で数える（ゲージは先のフレームに予約するので、数える位置で値は変わらない）。
 import { burstDelaysOf } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
-import { FRAMES_PER_GAME_SECOND, gameSecondsToFrames } from '../time.ts';
+import { FRAMES_PER_GAME_SECOND, gameSecondsToFirstFrame, gameSecondsToFrames } from '../time.ts';
 import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
@@ -114,6 +114,7 @@ import {
   isResolvedWeaponChangeEnd,
   resolveCoverHeals,
   resolveInstant,
+  resolveSkillCooldownDowns,
   type ResolvedCoverHeal,
   type ResolvedInstantEffect,
   type ResolvedTrigger,
@@ -121,7 +122,13 @@ import {
 import { healFrameOf } from '../skills/heals.ts';
 import { createHolderLists, type HolderHistory, type LeadShots } from '../skills/holders.ts';
 import { isEffectTarget, type FireContext } from '../skills/targets.ts';
-import { resolvePassiveStates, shortenedTimer, triggerFrames, type TimelineSlot } from '../skills/timeline.ts';
+import {
+  cooldownTimer,
+  resolvePassiveStates,
+  shortenedTimer,
+  triggerFrames,
+  type TimelineSlot,
+} from '../skills/timeline.ts';
 import {
   advanceShotCount,
   burstStepHolds,
@@ -137,6 +144,7 @@ import {
   chargeTriggersOf,
   hasReloadEndEffect,
   isSummonAttackTrigger,
+  isTimerTrigger,
   SKILL_SLOTS,
   type ShotCountKind,
   type SummonAttackTrigger,
@@ -307,6 +315,12 @@ export type FirstPassResult = {
   summonHits: { slotIndex: number; summon: SummonId; frame: number }[];
   /** 蓄積爆破の爆発（発生順）。2 パス目（frame/plan.ts の planSkillHits）がこの列で爆発のヒットを出す */
   accumulateReleases: AccumulateRelease[];
+  /**
+   * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムを縮める状態（中身の skillCooldownDown）が編成にある時の、
+   * 枠 × スロットのクールタイムの印（cooldown）のある周期の発火のフレーム（昇順）。2 パス目（frame/plan.ts の planSkillHits）が、
+   * 印のある周期の damage をこの列で出す。縮める状態の無い編成では空（静的な周期のまま）
+   */
+  cooldownTimerFires: { slotIndex: number; skill: SkillSlot; frames: number[] }[];
   /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が区間を作る
    * （skills/holders.ts の buffTimelineOf）
@@ -993,6 +1007,45 @@ function runFirstPassOnce(
       dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy });
     }
   };
+  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムの印のある周期は、枠 × スロットごとに発火をフレームの順に追う
+  // （cooldownTimer）。縮めるのは、編成のどれかの定義の状態の中身の「スキル N クールタイム X%▼」で、そのフレームまでに登録した状態の件で決める。
+  // 縮める状態が無ければ静的な周期と同じ列になる。2 パス目とゲージはこの記録だけを読む
+  const cooldownDowns = slots.flatMap((slot) =>
+    slot === null || slot.definition === null
+      ? []
+      : resolveSkillCooldownDowns(slot.definition, slot.character, slot.levels),
+  );
+  const cooldownTrackers: {
+    slotIndex: number;
+    skill: SkillSlot;
+    /** そのスロットを縮める状態と、その縮めた周期（フレーム） */
+    downs: { state: NamedStateId; short: number }[];
+    tick: (f: number, started: number | undefined, held: () => number | undefined) => boolean;
+    /** 同じスロットの印のある burstGaugeHit の遅れ（ループの前の予約の代わりに、発火で予約する） */
+    gaugeDelays: number[];
+    fires: number[];
+  }[] = [];
+  slots.forEach((slot, slotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const skill of SKILL_SLOTS) {
+      const marked = slot.definition.skills[skill].effects.filter(
+        (e) => 'trigger' in e && isTimerTrigger(e.trigger) && e.trigger.cooldown === true,
+      );
+      const first = marked[0];
+      if (first === undefined || !('trigger' in first) || !isTimerTrigger(first.trigger)) continue;
+      const { everySeconds } = first.trigger;
+      cooldownTrackers.push({
+        slotIndex,
+        skill,
+        downs: cooldownDowns
+          .filter((d) => d.slot === skill)
+          .map((d) => ({ state: d.state, short: gameSecondsToFirstFrame(everySeconds * (1 - d.percent / 100)) })),
+        tick: cooldownTimer(gameSecondsToFirstFrame(everySeconds)),
+        gaugeDelays: marked.flatMap((e) => (e.kind === 'burstGaugeHit' ? [e.delayFrames!] : [])),
+        fires: [],
+      });
+    }
+  });
   // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
   // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
   // 2 段目の段 1: 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
@@ -1007,6 +1060,8 @@ function runFirstPassOnce(
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
     for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
+      // 魔術師のカード編: クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
+      if (timer.cooldown === true) continue;
       for (const fire of timerFramesOf(timer, frames)) {
         const at = fire + delayFrames;
         if (at >= frames) continue;
@@ -1232,6 +1287,27 @@ function runFirstPassOnce(
       t.progress -= 1;
       summonHits.push({ slotIndex: t.slotIndex, summon: t.summon, frame: g });
       for (const scale of t.gaugeScales) reserveTimerGauge(t.slotIndex, f, g, hitGaugeEnergy(t.slotIndex) * scale);
+    }
+  };
+  /**
+   * 魔術師のカード編: フレーム f の終わりに、印のある周期の発火を決める（f に付いた縮める状態の件も見る）。発火したら記録し、その枠の
+   * 印のある burstGaugeHit のゲージを遅れの後のフレームに予約する（ループの前の予約と同じ量）
+   */
+  const countCooldownTimers = (f: number): void => {
+    for (const t of cooldownTrackers) {
+      const i = t.slotIndex;
+      const started = t.downs.find((d) => lists.stateStartedAt(i, d.state, f))?.short;
+      const held = (): number | undefined => {
+        const on = t.downs.filter((d) => lists.stateHeldAt(i, d.state, f));
+        // 同じスロットを縮める状態が 2 つ同時に効く時の重ね方は確かめていない（使い手がいない。設計書 2.1 節）
+        if (on.length > 1)
+          throw new RangeError(`two or more states shorten the cooldown of ${t.skill} at once (not implemented)`);
+        return on[0]?.short;
+      };
+      if (!t.tick(f, started, held)) continue;
+      t.fires.push(f);
+      const energy = hitGaugeEnergy(i);
+      for (const d of t.gaugeDelays) if (f + d < frames) reserveTimerGauge(i, f, f + d, energy);
     }
   };
   const countDamageHitGauges = (f: number): void => {
@@ -1672,6 +1748,7 @@ function runFirstPassOnce(
       countCycles(f);
       countShotPauses(f);
       countDamageHitGauges(f);
+      countCooldownTimers(f);
       countSummons(f);
       continue;
     }
@@ -1975,6 +2052,7 @@ function runFirstPassOnce(
     countCycles(f);
     countShotPauses(f);
     countDamageHitGauges(f);
+    countCooldownTimers(f);
     countSummons(f);
   }
 
@@ -1994,6 +2072,7 @@ function runFirstPassOnce(
     timerGauges,
     summonHits,
     accumulateReleases,
+    cooldownTimerFires: cooldownTrackers.map((t) => ({ slotIndex: t.slotIndex, skill: t.skill, frames: t.fires })),
     history,
   };
   return { result, leadShots };

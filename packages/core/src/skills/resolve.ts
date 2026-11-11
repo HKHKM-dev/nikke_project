@@ -25,6 +25,8 @@ import {
   isFlagStat,
   isSelfHpAtMostTrigger,
   isShotCountTrigger,
+  isMaxStacksUpContent,
+  isSkillCooldownDownContent,
   isStatContent,
   statContentsOf,
   type BuffScaling,
@@ -794,9 +796,43 @@ export function resolveMaxStacksUps(
     for (const effect of def.skills[slot].effects) {
       if (effect.kind !== 'state' || statics.has(effect.state)) continue;
       for (const item of effect.contents ?? []) {
-        if (isStatContent(item)) continue;
+        if (!isMaxStacksUpContent(item)) continue;
         const amount = amountOf(item.maxStacksUp, character.skills[slot], levels[slot]);
         out.push({ whileState: effect.state, state: item.maxStacksUp.state, amount });
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 解決した中身の「スキル N クールタイム X%▼」。state の件が持ち主に付いている間、
+ * 持ち主の slot のクールタイムの印のある周期を 元の周期 × (1 − percent / 100) にする（frame/firstPass.ts）
+ */
+export type ResolvedSkillCooldownDown = { state: NamedStateId; slot: SkillSlot; percent: number };
+
+/**
+ * 魔術師のカード編: 定義の中身のスキルのクールタイム▼を Lv の数値に解く（値は付与のスロットの Lv の説明文の値）。静的な状態の中身には
+ * 書けない（付いたフレームが無い）。100% 以上は周期が 0 秒以下になるので止める
+ */
+export function resolveSkillCooldownDowns(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedSkillCooldownDown[] {
+  const statics = new Set(staticStatesOf(def));
+  const out: ResolvedSkillCooldownDown[] = [];
+  for (const slot of SKILL_SLOTS) {
+    for (const effect of def.skills[slot].effects) {
+      if (effect.kind !== 'state') continue;
+      for (const item of effect.contents ?? []) {
+        if (!isSkillCooldownDownContent(item)) continue;
+        if (statics.has(effect.state))
+          throw new RangeError(`skillCooldownDown cannot be in a static state (${effect.state})`);
+        const percent = skillValue(character.skills[slot], item.skillCooldownDown.percentRef, levels[slot]);
+        if (!(percent > 0 && percent < 100))
+          throw new RangeError(`skillCooldownDown needs a percent in (0, 100), got ${percent}`);
+        out.push({ state: effect.state, slot: item.skillCooldownDown.slot, percent });
       }
     }
   }

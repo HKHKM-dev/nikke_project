@@ -297,6 +297,11 @@ export const NAMED_STATES = {
   /** 同: 死神のカード（S2。味方全体に付くバーストスキルクールタイム▼とスキル発動者基準の攻撃力▲・5 秒。C-1053） */
   death: { name: { ja: '死神のカード', en: 'Death' }, holder: 'ally' },
   /**
+   * 同: 魔術師のカード（S1。直前にバーストを使った III の電撃コードの味方に付くスキル 2 クールタイム▼・15 秒。中身は skillCooldownDown。
+   * C-1055。plan/design-arcana-magician.md）
+   */
+  magician: { name: { ja: '魔術師のカード', en: 'The Magician' }, holder: 'ally' },
+  /**
    * ツバイ編（plan/design-zwei.md 2.5 節）: ツバイの宝物版のバースト「貫通学概論：貫通ダメージ▲」（味方全体・10 秒）。
    * 中身は貫通ダメージ▲。宝物版 S2 の「自分が貫通学概論状態なら」が見る
    */

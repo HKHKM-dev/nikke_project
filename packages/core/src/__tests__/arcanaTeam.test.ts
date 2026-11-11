@@ -5,6 +5,7 @@
 import { describe, expect, it } from 'vitest';
 import { planTeamRun } from '../frame/plan.ts';
 import { activationFramesOfSlot } from '../burst/schedule.ts';
+import { gameSecondsToFirstFrame } from '../time.ts';
 import { describeEveryShotInOneGroup, effectWindows, fixedTeam, windowsFrom } from './teamHelpers.ts';
 
 const ARCANA = 581;
@@ -29,6 +30,14 @@ const windows = (plan: Plan, slot: number, skill: string, stat: string) =>
   effectWindows(plan, slot, { resourceId: ARCANA, skill, stat });
 const fullBurstEnds = (plan: Plan) =>
   plan.schedule!.fullBurstWindows.filter((w) => w.end < plan.frames).map((w) => w.end);
+/** 枠 slot の S2 の倍率ダメージの発動のフレーム（ヒットの遅れ 45f を引く。イサベルの S2） */
+const s2Fires = (plan: Plan, slot: number) =>
+  plan.skillHits
+    .filter((h) => h.slotIndex === slot && h.effect.source.skill === 'skill2')
+    .map((h) => h.frame - (h.effect.delayFrames ?? 0));
+/** イサベルの S2 の周期（15 秒）と、魔術師のカードで縮めた周期（25%） */
+const LONG = gameSecondsToFirstFrame(15);
+const SHORT = gameSecondsToFirstFrame(15 * 0.25);
 
 describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
   const plan = planOf(input);
@@ -68,6 +77,53 @@ describe('リター + アルカナ + イサベル（フルバーストタイム 
       expect(windows(plan, slot, 'skill1', 'attackDamage')).toEqual([]);
       expect(windows(plan, slot, 'skill2', 'attack')).toEqual(windowsFrom(ends, 5, plan.frames));
     }
+  });
+});
+
+describe('魔術師のカード（plan/design-arcana-magician.md。C-1055）', () => {
+  const plan = planOf(TEAMS['リター + アルカナ + イサベル（撮影 A）']);
+  const ends = fullBurstEnds(plan);
+  const fires = s2Fires(plan, 2);
+
+  it('fires Isabel’s S2 every shortened period from each Full Burst end, then the 15 s period from the last one', () => {
+    expect(ends.length).toBeGreaterThan(2);
+    for (const end of ends.filter((e) => e + 4 * SHORT + 45 < plan.frames)) {
+      // カードの付く前の予定がどの回も縮めた周期より遅い（この編成。短い方を取る形と置き直す形は分かれない）
+      const after = fires.filter((f) => f > end);
+      expect(after.slice(0, 4)).toEqual([1, 2, 3, 4].map((k) => end + k * SHORT));
+      // 4 回目は窓（15 秒）の終わりの後で、窓の中の 3 回目から縮めた周期で来る。次は元の周期
+      expect(after[3]).toBeGreaterThanOrEqual(windowsFrom([end], 15, plan.frames)[0]!.end);
+      const next = after[4];
+      if (next !== undefined && !ends.some((e) => e > end && e < next)) expect(next).toBe(after[3]! + LONG);
+    }
+    // ゲージの予約（burstGaugeHit）も同じ発動から
+    const gaugeFires = plan.timerGauges.filter((g) => g.slotIndex === 2).map((g) => g.fireFrame);
+    expect(gaugeFires).toEqual(fires);
+  });
+
+  it('keeps the 15 s period before the first Full Burst end', () => {
+    expect(fires.filter((f) => f <= ends[0]!)).toEqual(
+      Array.from({ length: Math.floor(ends[0]! / LONG) }, (_, k) => (k + 1) * LONG),
+    );
+  });
+
+  it('keeps the earlier original S2 when the card is applied shortly before it (C-1086)', () => {
+    // 手で撃つ 1 回のチェーン（V-0721 の撮影の形）。まず置いてみて、フルバーストの終わりが付く前の予定の S2（戦闘開始から 15 秒ごと）の
+    // 100f 前に来るように撃ち直す
+    const team = TEAMS['リター + アルカナ + イサベル（撮影 A）'];
+    const firstEnd = (p: Plan) => fullBurstEnds(p)[0]!;
+    const probe = planTeamRun({ ...team, manualBursts: [3000] });
+    const target = Math.ceil((firstEnd(probe) + 200) / LONG) * LONG;
+    const at = 3000 + target - 100 - firstEnd(probe);
+    const run = planTeamRun({ ...team, manualBursts: [at] });
+    const end = firstEnd(run);
+    const all = s2Fires(run, 2);
+    const after = all.filter((f) => f > end);
+    const before = all.filter((f) => f <= end).at(-1)!;
+    // 付く前の予定（前の S2 から 15 秒）のまま来る。置き直す形なら end + SHORT
+    expect(after[0]).toBe(before + LONG);
+    expect(after[0]).toBeLessThan(end + SHORT);
+    expect(after.slice(1, 4)).toEqual([1, 2, 3].map((k) => after[0]! + k * SHORT));
   });
 });
 

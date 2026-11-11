@@ -401,7 +401,11 @@ export function planSkillHits(
    * アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火。蓄積して爆発するダメージ
    * （plan/design-accumulate-explosion.md 2.4 節）: 1 パス目が決めた蓄積爆破の爆発
    */
-  { summonHits, accumulateReleases }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases'>,
+  {
+    summonHits,
+    accumulateReleases,
+    cooldownTimerFires,
+  }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases' | 'cooldownTimerFires'>,
   sustainedDamagePlacement?: SustainedDamagePlacement,
   /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
@@ -601,6 +605,13 @@ export function planSkillHits(
           : [],
       );
     const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
+    /** 魔術師のカード編: 1 パス目が追ったクールタイムの印のある周期の発火（どの印のある周期も 1 パス目が記録する） */
+    const cooldownFiresOf = (slotIndex: number, skill: SkillSlot): number[] => {
+      const record = cooldownTimerFires.find((c) => c.slotIndex === slotIndex && c.skill === skill);
+      if (record === undefined)
+        throw new Error(`the first pass has no cooldown timer fires for slot ${slotIndex} ${skill}`);
+      return record.frames;
+    };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
       // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
       // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
@@ -644,9 +655,12 @@ export function planSkillHits(
           : isResolvedApplied(t)
             ? appliedFrames(history, t.applied, slotIndex)
             : isResolvedTimer(t)
-              ? timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
-                  selfStateHolds({ state, present: true }, f),
-                )
+              ? // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムの印のある周期は 1 パス目の記録
+                t.cooldown === true
+                ? cooldownFiresOf(slotIndex, effect.source.skill)
+                : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
+                    selfStateHolds({ state, present: true }, f),
+                  )
               : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
         if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;

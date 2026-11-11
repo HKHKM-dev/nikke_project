@@ -27,7 +27,15 @@ import {
 import { SKILL_LEVEL_MAX } from '../resolve.ts';
 import { ATTACK_SPEED_WEAPONS } from '../parse/timed.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from '../treasure.ts';
-import { isStatContent, parseSkillDefinition, parseSkillIndex, SKILL_SLOTS, statContentsOf } from '../types.ts';
+import {
+  isMaxStacksUpContent,
+  isSkillCooldownDownContent,
+  parseSkillDefinition,
+  parseSkillIndex,
+  SKILL_SLOTS,
+  type StateContentItem,
+  statContentsOf,
+} from '../types.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../../../data');
 const SKILLS_DIR = join(DATA_DIR, 'skills');
@@ -68,6 +76,13 @@ const VALUE_LIMITS: Partial<Record<string, number>> = {
 
 /** 上の上限を超える値（resourceId:スロット:ref → 上限）。ディーゼル：ウィンタースイーツ: S1 のクライマックスの持続ダメージ▲は Lv10 で 235.03%、S2 のフルチャージの持続ダメージ▲は 318.14% */
 const VALUE_LIMIT_EXCEPTIONS: Partial<Record<string, number>> = { '75:skill1:5': 300, '75:skill2:2': 400 };
+
+/** 状態の中身の項目が説明文を指す ref（stat の ref・最大スタック数▲の amountRef・スキルのクールタイム▼の percentRef） */
+function contentRefsOf(c: StateContentItem): number[] {
+  if (isMaxStacksUpContent(c)) return [c.maxStacksUp.amountRef];
+  if (isSkillCooldownDownContent(c)) return [c.skillCooldownDown.percentRef];
+  return c.ref === undefined ? [] : [c.ref];
+}
 
 describe('data/skills', () => {
   it('index lists exactly the definition files, sorted and without duplicates', () => {
@@ -152,9 +167,7 @@ describe('data/skills', () => {
                 : effect.kind === 'state'
                   ? // 2 段目の段 14 の PR 3: 最大スタック数▲の項目の amountRef と、1 回に付けるスタックの数の stacksPerFireRef も
                     [
-                      ...(effect.contents ?? []).flatMap((c) =>
-                        isStatContent(c) ? (c.ref === undefined ? [] : [c.ref]) : [c.maxStacksUp.amountRef],
-                      ),
+                      ...(effect.contents ?? []).flatMap(contentRefsOf),
                       ...(effect.stacksPerFireRef === undefined ? [] : [effect.stacksPerFireRef]),
                     ]
                   : // 2 段目の段 3: スタック量の増加は、足す数の amountRef

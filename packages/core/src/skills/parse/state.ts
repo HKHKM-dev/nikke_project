@@ -16,6 +16,7 @@ import {
   isStacksCondition,
   isTimerTrigger,
   type MaxStacksUpContentItem,
+  type SkillCooldownDownContentItem,
   type RemoveDebuffEffect,
   type RemoveStateEffect,
   type StackChangeEffect,
@@ -313,6 +314,8 @@ function parseStateContentItem(
   if (!isRecord(item)) fail(path, 'expected an object');
   // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 「〈状態〉の最大スタック数 N▲」
   if (item.maxStacksUp !== undefined) return parseMaxStacksUpItem(item, grant, path, onEnemy);
+  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 「スキル N クールタイム X%▼」（維持の付いた形）
+  if (item.skillCooldownDown !== undefined) return parseSkillCooldownDownItem(item, grant, path, onEnemy);
   for (const key of Object.keys(item)) {
     if (!['stat', 'ref', 'scaling', 'decrease', 'claims'].includes(key)) fail(`${path}.${key}`, 'unknown field');
   }
@@ -331,6 +334,36 @@ function parseStateContentItem(
   if (timed.ref !== undefined) out.ref = timed.ref;
   if (timed.scaling !== undefined) out.scaling = timed.scaling;
   if (timed.decrease) out.decrease = true;
+  if (item.claims !== undefined) out.claims = parseClaimRefs(item.claims, `${path}.claims`);
+  return out;
+}
+
+/**
+ * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 中身の「スキル N クールタイム X%▼」。slot は持ち主のスロット、percentRef は
+ * 付与のあるスロットの説明文の値（%）。味方の状態だけ
+ */
+function parseSkillCooldownDownItem(
+  item: Record<string, Json>,
+  grant: Record<string, Json>,
+  path: string,
+  onEnemy: boolean,
+): SkillCooldownDownContentItem {
+  for (const key of Object.keys(item)) {
+    if (key !== 'skillCooldownDown' && key !== 'claims') fail(`${path}.${key}`, 'unknown field');
+  }
+  if (onEnemy) fail(`${path}.skillCooldownDown`, 'skillCooldownDown is only allowed in a state of an ally');
+  // スタックの数で縮め方が変わるかは確かめていない（1 パス目は付いているかだけを見る）
+  if (grant.maxStacks !== undefined || grant.maxStacksRef !== undefined || grant.stacksPerFireRef !== undefined)
+    fail(`${path}.skillCooldownDown`, 'skillCooldownDown is not allowed in a stacking grant');
+  const down = item.skillCooldownDown;
+  if (!isRecord(down)) fail(`${path}.skillCooldownDown`, 'expected { slot, percentRef }');
+  for (const key of Object.keys(down)) {
+    if (key !== 'slot' && key !== 'percentRef') fail(`${path}.skillCooldownDown.${key}`, 'unknown field');
+  }
+  const slot = oneOf(['skill1', 'skill2'] as const, down.slot, `${path}.skillCooldownDown.slot`);
+  const out: SkillCooldownDownContentItem = {
+    skillCooldownDown: { slot, percentRef: parseRef(down.percentRef, `${path}.skillCooldownDown.percentRef`) },
+  };
   if (item.claims !== undefined) out.claims = parseClaimRefs(item.claims, `${path}.claims`);
   return out;
 }

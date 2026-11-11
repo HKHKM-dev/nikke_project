@@ -704,6 +704,12 @@ export type TimerTrigger = {
    * 次に付いた時は数え直す）。counterChange にだけ書ける（変身の間 0.2 秒ごとのバッテリーの▼）
    */
   since?: AppliedTrigger;
+  /**
+   * 魔術師のカード編（plan/design-arcana-magician.md 2.2 節）: この周期は、説明文にきっかけの無いアクティブ型のスキルのクールタイム
+   * （録画で読んだ周期）。状態の中身の skillCooldownDown が縮めるのは、この印のある周期だけ。damage と burstGaugeHit にだけ書け、
+   * carry・atStart・since・periodShorten・gaugePerHit とは組まない。同じスロットの印のある周期は同じ秒
+   */
+  cooldown?: true;
 };
 
 /**
@@ -2008,7 +2014,7 @@ export type BurstStepChangeEffect = {
  * stat の▲▼と読む（ほかの種類は後の拡張で kind を持つ項目として足す。同 8.4 節）。
  * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 「〈状態〉の最大スタック数 N▲」の項目（maxStacksUp）も持てる
  */
-export type StateContentItem = StatContentItem | MaxStacksUpContentItem;
+export type StateContentItem = StatContentItem | MaxStacksUpContentItem | SkillCooldownDownContentItem;
 
 /** 名前の付いた状態の語彙編: stat の▲▼の中身の項目 */
 export type StatContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'decrease'> & ClaimRefs;
@@ -2021,14 +2027,40 @@ export type StatContentItem = Pick<TimedEffect, 'stat' | 'ref' | 'scaling' | 'de
  */
 export type MaxStacksUpContentItem = { maxStacksUp: { state: NamedStateId; amountRef: number } } & ClaimRefs;
 
+/**
+ * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 「スキル N クールタイム X%▼」の維持の付いた形（T4）。持ち主の slot の、
+ * クールタイムの印（TimerTrigger の cooldown）のある周期を、状態の窓の間だけ 元の周期 × (1 − X / 100) 秒にする。付いたフレームで次の
+ * 発動をそこから縮めた周期に早め（もっと早い予定ならそのまま）、窓の中の発動の次は縮めた周期、外の発動の次は元の周期（ドロシーの発現の
+ * elapsed と同じ規則。skills/timeline.ts の cooldownTimer）。percentRef は付与のあるスロットの説明文の値（%）。1 パス目
+ * （frame/firstPass.ts）が発火を追って記録する。C-1055（アルカナの S1）
+ */
+export type SkillCooldownDownContentItem = {
+  skillCooldownDown: { slot: 'skill1' | 'skill2'; percentRef: number };
+} & ClaimRefs;
+
 /** 2 段目の段 14 の PR 3: 中身の項目が stat の▲▼か（maxStacksUp でない） */
 export function isStatContent(item: StateContentItem): item is StatContentItem {
-  return !('maxStacksUp' in item);
+  return !isMaxStacksUpContent(item) && !isSkillCooldownDownContent(item);
 }
 
-/** 2 段目の段 14 の PR 3: 中身の項目の stat の名前（最大スタック数▲の項目は 'maxStacksUp'。最小構成の検査の形・一覧の表示） */
-export function contentStatOf(item: StateContentItem): BuffStat | 'maxStacksUp' {
-  return isStatContent(item) ? item.stat : 'maxStacksUp';
+/**
+ * 2 段目の段 14 の PR 3: 中身の項目の stat の名前（最大スタック数▲の項目は 'maxStacksUp'、スキルのクールタイム▼の項目は
+ * 'skillCooldownDown'。最小構成の検査の形・一覧の表示）
+ */
+export function contentStatOf(item: StateContentItem): BuffStat | 'maxStacksUp' | 'skillCooldownDown' {
+  if (isMaxStacksUpContent(item)) return 'maxStacksUp';
+  if (isSkillCooldownDownContent(item)) return 'skillCooldownDown';
+  return item.stat;
+}
+
+/** 2 段目の段 14 の PR 3: 中身の項目が最大スタック数▲か */
+export function isMaxStacksUpContent(item: StateContentItem): item is MaxStacksUpContentItem {
+  return 'maxStacksUp' in item;
+}
+
+/** 魔術師のカード編: 中身の項目がスキルのクールタイム▼か */
+export function isSkillCooldownDownContent(item: StateContentItem): item is SkillCooldownDownContentItem {
+  return 'skillCooldownDown' in item;
 }
 
 /** 2 段目の段 14 の PR 3: 中身の項目のうち stat の▲▼だけ（並びは保つ） */
