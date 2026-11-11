@@ -451,5 +451,163 @@
     },
     "source": "V-0703",
     "readAt": "2026-11-09"
+  },
+  {
+    "id": "1009-17",
+    "recording": "1009",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2296016,
+    "description": "2 回目のフルバースト（00.00 は f2516。`1009-03`。ディーゼルがバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）の 1 回目の tick（非会心。00.00 から +78f。リターのバーストと S1 の使用 2 回目の段の窓の中）。+78f の増分 2,328,602 から、同じフレームのリターの 1 ヒット（`1009-18`）を引いた値。2〜4 回目の tick（+137・+196・+255f）の増分も同じ 2,328,602",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "リターの 1 ヒット 32,586 の増分が +74〜+255f に 2〜5f おきに続き、4 つの tick はどれもその並びの上にある。窓の後の 5 回目（+314f）の増分 1,402,308 も、モデルの tick 1,382,686 と▲の無いリターの 1 ヒット 19,622 の和"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "percent": 63.33,
+        "fullBurst": 1,
+        "frame": 0,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1009-18",
+    "recording": "1009",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 32586,
+    "description": "2 回目のフルバーストの頭（リターのバーストと S1 の使用 2 回目の段の窓の中）の、リターの通常攻撃の 1 ヒット（胴体・非会心・距離ボーナスあり）。2,516 + 74〜252f に単独の増分で出る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "同じ値の単独の増分（前後のフレームにほかの発が無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "fullBurst": 1,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1009-19",
+    "recording": "1009",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 2495566,
+    "description": "4 回目のフルバースト（00.00 は f4736。`1009-03`。ディーゼルが 2 回目にバーストを撃った回）の、S2 のフルバーストの持続ダメージ（63.33%）の 1 回目の tick（非会心。00.00 から +78f。リターのバーストと S1 の使用 3 回目以上の段の窓の中）。+78f の増分 2,529,349 から、同じフレームの I-DOLL・サンの 1 ヒット（`1009-20`）を引いた値。2・3 回目の tick（+137・+196f）の増分も同じ 2,529,349",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "I-DOLL・サンの 1 ヒット 33,783 の増分が同じ窓に単独で何度も出る（+68・+103・+117f など）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "dotHitDamage",
+      "args": {
+        "slot": 3,
+        "skill": "skill2",
+        "percent": 63.33,
+        "fullBurst": 3,
+        "frame": 0,
+        "n": 0,
+        "crit": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "dot"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1009-20",
+    "recording": "1009",
+    "kind": "hit",
+    "use": "compare",
+    "unit": "ダメージ",
+    "value": 33783,
+    "description": "4 回目のフルバーストの頭（リターの攻撃力▲の窓の中）の、I-DOLL・サンの通常攻撃の 1 ヒット（胴体・非会心・距離ボーナスなし）。4,736 + 68〜191f に単独の増分で出る",
+    "method": {
+      "tool": "tools/captures/hud.ts --mode jumps の増分",
+      "note": "同じ値の単独の増分（前後のフレームにほかの発が無い）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "fullBurst": 3,
+        "frame": 60,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    },
+    "source": "V-0723",
+    "readAt": "2026-11-11"
   }
 ]
