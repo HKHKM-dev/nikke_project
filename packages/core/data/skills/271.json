@@ -19,9 +19,14 @@
           "reads": [
             "hp"
           ],
+          "assumes": {
+            "ja": "自分の HP の割合が閾値を下回る間（枠の想定の割合を、最大HP のみ▲・現在の HP▼ で下げた割合。被弾は扱わない）は外れ、上回れば戻る。回復で割合が戻る分は扱わない",
+            "en": "Off while own HP ratio is below the threshold (the slot's assumed ratio lowered by max-HP-only ups and current HP downs; damage taken is not modeled) and back on above it. The rise from heals is not modeled"
+          },
           "claims": [
             "C-0020",
-            "C-0835"
+            "C-0835",
+            "C-1106"
           ]
         }
       ]

@@ -1,0 +1,248 @@
+[
+  {
+    "id": "1090-01",
+    "recording": "1090",
+    "kind": "total",
+    "use": "record",
+    "value": 206996255,
+    "description": "I-DOLL・フラワー・エード・ミルク・ノワール の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11422。増分は 1865 個"
+    },
+    "source": "V-0730",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1090-02",
+    "recording": "1090",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 17167,
+    "unit": "ダメージ",
+    "description": "エードの、▲の窓の外の 1 ヒット（胴体・会心なし・距離なし。ノワールの S1 の攻撃力▲は乗る）。120 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 100,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      }
+    }
+  },
+  {
+    "id": "1090-03",
+    "recording": "1090",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 28891,
+    "unit": "ダメージ",
+    "description": "エードの、S2 の最大HP のみ▲ だけの区間（S1 の攻撃力▲）の会心の 1 ヒット（胴体・距離なし）。ミルクの S2 のクリティカルダメージ▲が乗る。7 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 3200,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      }
+    }
+  },
+  {
+    "id": "1090-04",
+    "recording": "1090",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 27989,
+    "unit": "ダメージ",
+    "description": "エードの、バーストの最大HP のみ▲ だけの区間（バーストの攻撃力▲だけ）の会心の 1 ヒット（胴体・距離なし）。ミルクの S2 が外れ、ノワールの S1 は乗る。13 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 650,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      }
+    }
+  },
+  {
+    "id": "1090-05",
+    "recording": "1090",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 16176,
+    "unit": "ダメージ",
+    "description": "エードの、S2 とバーストの最大HP のみ▲ の重なり（バーストの攻撃力▲だけ）の 1 ヒット（胴体・会心なし・距離なし）。ノワールの S1 が外れる。21 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "core": false,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      }
+    }
+  },
+  {
+    "id": "1090-06",
+    "recording": "1090",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "use": "compare",
+    "kind": "hit",
+    "value": 24264,
+    "unit": "ダメージ",
+    "description": "同じ区間の会心の 1 ヒット（胴体・距離なし）。ミルクの S2 とノワールの S1 がどちらも外れる。5 個",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 800,
+        "core": false,
+        "crit": true,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true,
+        "noBurstSlots": [3, 4]
+      }
+    }
+  },
+  {
+    "id": "1090-07",
+    "recording": "1090",
+    "kind": "count",
+    "use": "record",
+    "value": 0,
+    "unit": "個",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "description": "エードのバーストの最大HP のみ▲ の区間（S2 との重なりを含む）の、エードの会心の発のうち、ミルクの S2 のクリティカルダメージ▲が乗ったままの値（H0。会心の項に 11.13% を足した値。ノワールの S1 の有無の両方）に ±1.5 で乗る増分の数。同じ区間の会心の発 144 個は、どれもミルクの S2 の外れた格子に乗る。S2 だけの区間の会心の発 16 個と、窓の外の会心の発には乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（会心の版の数え）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1090-08",
+    "recording": "1090",
+    "kind": "count",
+    "use": "record",
+    "value": 303,
+    "unit": "個",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "description": "エードの発のうち、ノワールの S1 の攻撃力▲の外れた格子（バーストの 4 つの状態の /* の版）だけに乗る増分の数。どれも、エードの S2 とバーストの最大HP のみ▲ が重なった間（S2 だけの区間の後にバーストを使った時か、バーストの区間で S2 の 120 発目が来た時から、どちらかの切れ目まで）にある。ほかの区間の発はノワールの S1 の乗った格子に乗る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid） と、使い捨てのスクリプト（当て方の固まり）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデル（予測ファイルの A-ade-base の条件）のエード（枠 2）の 1 ヒットの格子（▲なし f100・S1 f3200・バースト f650・バースト + S1 f400 と、それぞれに宝物版のミルクの S1 の攻撃力▲が重なる f1200・f4000・f2700・f1400。バーストの 4 つには、ノワールの S1 の外れた版（モデルの dropEffects で出した胴体の比）を /* で足した。--opt grid=無=2@100;S1=2@3200;B=2@650;BS1=2@400;M=2@1200;MS1=2@4000;MB=2@2700;MBS1=2@1400;Bn=2@650/*0.86691263;BS1n=2@400/*0.87213996;MBn=2@2700/*0.89359932;MBS1n=2@1400/*0.89696718）に ±1.5 で当てた"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1090-09",
+    "recording": "1090",
+    "kind": "rate",
+    "use": "record",
+    "value": [81.82, 86.36, 84.36, 85.39, 73.86, 79.55, 77.69, 78.65, 63.64, 70.45, 68.8, 68.54],
+    "unit": "%",
+    "source": "V-0730",
+    "readAt": "2026-11-12",
+    "description": "HP のバーの割合（中央値）。エードの S2 だけ・バーストだけ・重なりの区間ごとに、I-DOLL・フラワー / エード / ミルク / ノワールの順（12 個）",
+    "method": {
+      "tool": "使い捨てのスクリプト（画面下の顔のカードの HP のバーの長さ）",
+      "note": "画面下の顔のカードの HP のバー（白。y1030〜1037）の長さを、上の水色のバー（満タンの幅）で割って 5f おきに測った（端の画素は明るさで按分。1 画素はバーの約 1.1%）。エードのバーの段（S2 だけ 0.85〜0.875・バーストだけ 0.785〜0.805・重なり 0.695〜0.715）で分けた中央値。戦闘の終わりの暗い画（f10700 より後）は外した"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

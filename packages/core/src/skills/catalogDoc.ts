@@ -433,6 +433,8 @@ function scalingKeyOf(e: CatalogEffect): string {
   if (stat.scaling !== 'casterBased') return stat.scaling;
   // マスト編（plan/design-mast.md 2.2 節）: 敵に付く発動者基準の防御力▼は語彙あり（casterDefence）
   if (stat.canon === 'defense' && e.side === 'enemy' && stat.dir === 'down') return 'casterBased:enemyDefense';
+  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節）: 味方への発動者基準の最大HP（のみ）▲は語彙あり（casterMaxHp）
+  if (stat.canon === 'maxHp' && stat.dir === 'up') return 'casterBased:maxHp';
   return ['attack', 'chargeSpeed', 'chargeTime'].includes(stat.canon) ? 'casterBased:ok' : 'casterBased:indirect';
 }
 
@@ -441,6 +443,7 @@ const SC: Record<string, Info> = {
   ratio: ['対象自身の値の X%', 'ok'],
   'casterBased:ok': ['スキル発動者基準の攻撃力・チャージ速度（casterAttack・casterChargeTime）', 'ok'],
   'casterBased:enemyDefense': ['スキル発動者基準の敵の防御力▼（casterDefence）', 'ok'],
+  'casterBased:maxHp': ['スキル発動者基準の最大HP（のみ）▲（casterMaxHp）', 'ok'],
   'casterBased:indirect': ['スキル発動者基準の防御力・最大HP など（発動者の値を読む。分類の別紙 6 節）', 'indirect'],
   // 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: 最終最大HP の X% 分の攻撃力▲は語彙あり（casterFinalMaxHp）。ほかの stat は語彙なし
   'casterHp:ok': ['発動者の最大HP の X% 分の攻撃力▲（casterFinalMaxHp）', 'ok'],

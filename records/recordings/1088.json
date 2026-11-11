@@ -1,0 +1,58 @@
+{
+  "id": "1088",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1088_smg_misato.mp4",
+  "original": "2026-11-12_01-51-20.mp4",
+  "durationSec": 201.9,
+  "frames": 12114,
+  "fps": 60,
+  "sizeMB": 244.7,
+  "sha256": "db5551ca1ac1",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 833,
+      "name": "ミサト",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 350,
+      "name": "マスト",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 143,
+      "name": "ミルク：ブルーミングバニー",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    },
+    {
+      "slot": 5,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "3 枠目は計画のミルク（141）でなくミルク：ブルーミングバニー（143。スキル定義なし。HP・回復に効く効果は無く、マストのバーストの最終攻撃力の高い味方 2 機に入る）",
+  "backup": {
+    "at": "2026-11-12T02:01+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

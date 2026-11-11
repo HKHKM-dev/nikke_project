@@ -1,0 +1,52 @@
+{
+  "id": "1086",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1086_sr_milk.mp4",
+  "original": "2026-11-12_01-40-37.mp4",
+  "durationSec": 200.5,
+  "frames": 12029,
+  "fps": 60,
+  "sizeMB": 243,
+  "sha256": "824ec1ddb3ad",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 310,
+      "name": "エード",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 143,
+      "name": "ミルク：ブルーミングバニー",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 271,
+      "name": "ノワール",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "3 枠目は計画のミルク（141）でなくミルク：ブルーミングバニー（143。スキル定義なし）。ミルク：ブルーミングバニーの S1 の分配ダメージがエードの発の増分に混ざるので、V-0730 の撮影 A には使わない",
+  "backup": {
+    "at": "2026-11-12T02:00+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

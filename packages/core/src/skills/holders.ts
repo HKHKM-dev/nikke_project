@@ -65,9 +65,12 @@ import {
   type ResolvedTrigger,
   type ResolvedWhileEffect,
   type ResolvedCounterWhileEffect,
+  type ResolvedHpWhileEffect,
   isCounterWhileEffect,
+  isHpWhileEffect,
   isTimedItem,
   resolveCounterWhileEffects,
+  resolveHpWhileEffects,
   type ItemEffect,
 } from './resolve.ts';
 import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type RankingRecord } from './ranking.ts';
@@ -156,9 +159,10 @@ export type HeldOrigin =
   | { kind: 'enemyState'; state: NamedStateId; effects: readonly ResolvedDamageEffect[] }
   /**
    * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。件は、出どころの枠のその状態の段 1 の件
-   * から作る（whileItems。始まりの列を持たない）。2 段目の段 11 の PR 2: カウンタの while は、出どころの枠のカウンタの記録から作る
+   * から作る（whileItems。始まりの列を持たない）。2 段目の段 11 の PR 2: カウンタの while は、出どころの枠のカウンタの記録から作る。
+   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: HP の割合の while は、出どころの枠の HP の割合の記録から作る
    */
-  | { kind: 'while'; effect: ResolvedWhileEffect | ResolvedCounterWhileEffect };
+  | { kind: 'while'; effect: ResolvedWhileEffect | ResolvedCounterWhileEffect | ResolvedHpWhileEffect };
 
 /** 件（窓 [start, end)）。stack はスタックの段（1 始まり）、scale は確率のきっかけの付いている確率 */
 export type HeldItem = { start: number; end: number; stack?: number; scale?: number };
@@ -453,9 +457,12 @@ export type HolderLists = {
   pelletsAt(holder: number, frame: number): Pick<BuffTotals, 'pelletCount' | 'singlePellet'>;
   /** ペレットの数の stat の件の列を持ちうるか */
   hasPelletTracks(holder: number): boolean;
-  /** 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ） */
+  /**
+   * 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ）。HP の割合を時間で読む編: lowestHpRatio の効果には
+   * HP の割合の並び（hpRank）を足す
+   */
   rankContext(
-    e: Parameters<typeof dependsOnRank>[0] & Parameters<typeof attackRankFor>[0],
+    e: Parameters<typeof dependsOnRank>[0] & Parameters<typeof attackRankFor>[0] & { fixedTargets?: readonly number[] },
     sourceSlotIndex: number,
     context: FireContext,
     frame: number,
@@ -1108,6 +1115,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * updateLengths）
    */
   const itemsSeen = new Map<HeldTrack, { reads: TrackReads; lengths: number[]; verified: number[] }>();
+  /**
+   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節の論点 8）: 発動者の最大HP 基準（scaling casterMaxHp）の timed を、持ち主
+   * holder の比率（X × 発動者のバフ前の最大HP ÷ 持ち主のバフ前の最大HP）の ratio に直す。HP の割合・最終最大HP・表示は比率をそのまま読む
+   */
+  const holderScaledOrigin = (origin: HeldOrigin, sourceSlotIndex: number, holder: number): HeldOrigin => {
+    if (origin.kind !== 'timed' || origin.effect.scaling !== 'casterMaxHp') return origin;
+    const caster = slots[sourceSlotIndex]?.casterMaxHp;
+    const own = slots[holder]?.casterMaxHp;
+    if (caster === undefined || own === undefined)
+      throw new RangeError(`slot ${holder}: casterMaxHp needs the base max HP of the caster and the holder`);
+    return { ...origin, effect: { ...origin.effect, scaling: 'ratio', value: (origin.effect.value * caster) / own } };
+  };
   const newTrack = (
     holder: number,
     sourceSlotIndex: number,
@@ -1120,7 +1139,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       sourceSlotIndex,
       casterBaseAttack: slots[sourceSlotIndex]?.casterBaseAttack ?? 0,
       casterMaxHp: slots[sourceSlotIndex]?.casterMaxHp,
-      origin,
+      origin: holderScaledOrigin(origin, sourceSlotIndex, holder),
       stage,
       starts: [],
       closes: [],
@@ -1280,16 +1299,52 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
 
   // ---- 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。対象ごとに件の列（段 1.5）。
   // 件は出どころの枠の状態の件から作るので、始まりは登録しない（readWhileItems） ----
+  /**
+   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 出どころの枠 × 閾値ごとの、HP の割合が閾値以上の区間の件（開いて
+   * いる件の終わりは戦闘の終わり。変わった時だけ新しい配列にする）。フレーム f の可否は、f の登録の始め（updateHpAtLeast）に、f より前に始まった最大HP の件と前の現在の
+   * HP▼ から出す（selfHpRatioAt。循環しない）。1 パス目が f の射撃（射手の実効値）で読む stat は f の登録より前に読むので、常時の
+   * selfHp に書けない（skills/parse/timed.ts）
+   */
+  type HpAtLeastState = { slotIndex: number; threshold: number; holds: boolean; items: HeldItem[] };
+  const hpAtLeastStates = new Map<string, HpAtLeastState>();
+  /** HP の割合の while の件の列 → 出どころ × 閾値の状態（件の列を作る時に結び付ける） */
+  const hpWhileStates = new Map<HeldTrack, HpAtLeastState>();
+  const hpAtLeastOf = (slotIndex: number, threshold: number): HpAtLeastState => {
+    const key = `${slotIndex}:${threshold}`;
+    let state = hpAtLeastStates.get(key);
+    if (state === undefined) {
+      state = { slotIndex, threshold, holds: false, items: [] };
+      hpAtLeastStates.set(key, state);
+    }
+    return state;
+  };
+  let hpAtLeastFrame = -1;
+  const updateHpAtLeast = (frame: number): void => {
+    if (hpAtLeastStates.size === 0 || frame <= hpAtLeastFrame || frame >= frames) return;
+    hpAtLeastFrame = frame;
+    for (const state of hpAtLeastStates.values()) {
+      const holds = selfHpRatioAt(state.slotIndex, frame) >= state.threshold - 1e-9;
+      if (holds === state.holds) continue;
+      state.items = holds
+        ? [...state.items, { start: frame, end: frames }]
+        : state.items.with(-1, { ...state.items.at(-1)!, end: frame });
+      state.holds = holds;
+    }
+  };
   const whileTracks: HeldTrack[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
     for (const effect of [
       ...resolveWhileEffects(slot.definition, slot.character, slot.levels),
       ...resolveCounterWhileEffects(slot.definition, slot.character, slot.levels),
+      ...resolveHpWhileEffects(slot.definition, slot.character, slot.levels),
     ]) {
+      const hp = isHpWhileEffect(effect) ? hpAtLeastOf(sourceSlotIndex, effect.whileSelfHp.atLeast) : undefined;
       slots.forEach((target, holder) => {
         if (target === null || !isEffectTarget(effect, sourceSlotIndex, holder, target.character)) return;
-        whileTracks.push(newTrack(holder, sourceSlotIndex, { kind: 'while', effect }, 1.5));
+        const track = newTrack(holder, sourceSlotIndex, { kind: 'while', effect }, 1.5);
+        if (hp !== undefined) hpWhileStates.set(track, hp);
+        whileTracks.push(track);
       });
     }
   });
@@ -1572,6 +1627,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 2 段目の段 9 の PR 2: while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
     if (track.origin.kind === 'while') {
       const effect = track.origin.effect;
+      // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 出どころ × 閾値の区間の件（updateHpAtLeast）をそのまま使う
+      if (isHpWhileEffect(effect)) return (track.items = hpWhileStates.get(track)!.items);
       return isCounterWhileEffect(effect) ? readCounterWhileItems(track, effect) : readWhileItems(track, effect);
     }
     const log = track.holder === ENEMY ? null : logs[track.holder];
@@ -1976,6 +2033,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return finalAttacksAt(rankSlots, windows, frame);
   };
   const rankContext: HolderLists['rankContext'] = (e, sourceSlotIndex, context, frame) => {
+    // HP の割合を時間で読む編: 回復は手順 3 の最初（このフレームの登録の前）に当てるので、順位が読む HP の割合の while の可否を先に出す
+    // （f より前に始まった件と前の現在の HP▼ だけを読むので、登録の始めに出すのと同じ）
+    updateHpAtLeast(frame);
+    // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.2 節）: 「残りの HP の割合が最も低い味方」は、発火のフレームの HP の割合
+    // （frame より前に始まった件と前の現在の HP▼）の低い順・同値は枠の若い順。割合が動かなければ fixedTargets（枠の想定の順）と同じ並び
+    if (e.target === 'lowestHpRatio' && e.fixedTargets !== undefined) {
+      const ratios = slots.map((_, i) => (e.fixedTargets!.includes(i) ? selfHpRatioAt(i, frame) : 0));
+      const hpRank = [...e.fixedTargets].sort((a, b) => ratios[a]! - ratios[b]! || a - b);
+      return { ...context, hpRank };
+    }
     if (!dependsOnRank(e)) return context;
     const finalAttacks = finalAttacksAtFrame(frame);
     return { ...context, attackRank: attackRankFor(e, rankSlots, finalAttacks, sourceSlotIndex) };
@@ -2420,6 +2487,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 段 1〜2 と強化の発火（手順 3。battleStartOnly ならループの前の戦闘開始時の分だけ） */
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
+    // HP の割合を時間で読む編: このフレームの HP の割合の while の可否（このフレームのどの登録よりも先）
+    updateHpAtLeast(f);
     const from = appliedFrom;
     // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））

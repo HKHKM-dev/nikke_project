@@ -210,14 +210,6 @@
             "C-0702"
           ]
         }
-      ],
-      "notes": [
-        {
-          "ja": "最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。下がった割合は、自分の HP の割合のきっかけ（「HP が X% 以下」）には届くが、ラプラス：UH にはそのきっかけが無い。自分の HP の割合の条件（「HP が X% 以上なら」）と、HP の割合の低い味方を対象にする効果は、枠の HP の割合の想定のまま読む（下がる分は未実装）",
-          "en": "The lower HP ratio from the max-HP-only increase (current HP does not increase) does not change damage by itself (it matters only with an effect reading the HP ratio in the team). The lowered ratio reaches own HP-ratio triggers (\"HP at or below X%\"), which Laplace: Ultimate Hero does not have. Own HP-ratio conditions (\"if HP is at least X%\") and effects targeting the ally with the lowest HP ratio still read the slot's assumed HP ratio (the decrease is not modeled for them)",
-          "kind": "indirect",
-          "path": "hp"
-        }
       ]
     },
     "burst": {

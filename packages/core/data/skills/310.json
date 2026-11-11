@@ -59,15 +59,16 @@
           },
           "target": "allies",
           "stat": "maxHpOnly",
+          "scaling": "casterMaxHp",
           "ref": 4,
           "durationRef": 5,
           "assumes": {
-            "ja": "「通常攻撃で 120 回攻撃した時」は撃った発の通算で数える。「スキル発動者基準」の量は、対象の枠のバフ前の最大HP の比率として足す（マストのバーストと同じ読み。発動者の最大HP 基準で足す読みとは、エード自身では同じで、クラスの違う味方では違う。plan/design-ade.md 2.3 節）。読むのは HP の割合と最終最大HP だけ",
-            "en": "\"After 120 normal attacks\" counts every normal shot fired. The caster-based amount is added as a ratio of the target slot's pre-buff max HP (the same reading as Mast's burst; it equals the caster-max-HP reading for Ade herself and differs for allies of another class; plan/design-ade.md 2.3). Only the HP ratio and the final max HP read it"
+            "ja": "「通常攻撃で 120 回攻撃した時」は撃った発の通算で数える。「スキル発動者基準」の量は、エードのバフ前の最大HP × X を対象の最大HP に足す（クラスの違う味方では、対象の比率がエードとの最大HP の比で変わる）。読むのは HP の割合と最終最大HP だけ",
+            "en": "\"After 120 normal attacks\" counts every normal shot fired. The caster-based amount adds Ade's pre-buff max HP × X to the target's max HP (for allies of another class the ratio on the target scales with the max HP ratio to Ade). Only the HP ratio and the final max HP read it"
           },
           "claims": [
             "C-1026",
-            "C-1028"
+            "C-1107"
           ]
         }
       ],
@@ -92,15 +93,16 @@
           "trigger": "burstUse",
           "target": "allies",
           "stat": "maxHpOnly",
+          "scaling": "casterMaxHp",
           "ref": 1,
           "durationRef": 2,
           "assumes": {
-            "ja": "「スキル発動者基準」の量は、対象の枠のバフ前の最大HP の比率として足す（マストのバーストと同じ読み。発動者の最大HP 基準で足す読みとは、エード自身では同じで、クラスの違う味方では違う。plan/design-ade.md 2.3 節）。読むのは HP の割合と最終最大HP だけ",
-            "en": "The caster-based amount is added as a ratio of the target slot's pre-buff max HP (the same reading as Mast's burst; it equals the caster-max-HP reading for Ade herself and differs for allies of another class; plan/design-ade.md 2.3). Only the HP ratio and the final max HP read it"
+            "ja": "「スキル発動者基準」の量は、エードのバフ前の最大HP × X を対象の最大HP に足す（クラスの違う味方では、対象の比率がエードとの最大HP の比で変わる）。読むのは HP の割合と最終最大HP だけ",
+            "en": "The caster-based amount adds Ade's pre-buff max HP × X to the target's max HP (for allies of another class the ratio on the target scales with the max HP ratio to Ade). Only the HP ratio and the final max HP read it"
           },
           "claims": [
             "C-1026",
-            "C-1028"
+            "C-1107"
           ]
         },
         {

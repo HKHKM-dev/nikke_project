@@ -20,6 +20,7 @@ import type { ChangedWeapon } from './buffs.ts';
 import type { CounterId } from './counters.ts';
 import {
   SKILL_SLOTS,
+  selfHpThreshold,
   isEndedTrigger,
   isCounterFullTrigger,
   isFlagStat,
@@ -369,7 +370,9 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
         continue;
       }
       // 2 段目の段 9 の PR 2: 状態の間だけ効く常時の効果（while）は常時の値に入れない（resolveWhileEffects）
-      if (effect.kind !== 'passive' || effect.while !== undefined) continue;
+      // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 編成の段で決めずに残った selfHp の常時の効果も
+      // 常時の値に入れない（resolveHpWhileEffects）
+      if (effect.kind !== 'passive' || effect.while !== undefined || effect.condition?.selfHp !== undefined) continue;
       resolved.push(passiveValueOf(effect, character, slot, levels[slot]));
     }
   }
@@ -544,6 +547,24 @@ export function isCounterWhileEffect(effect: ItemEffect): effect is ResolvedCoun
   return 'whileCounter' in effect;
 }
 
+/**
+ * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 解決した、自分の HP の割合が閾値以上の間だけ効く常時の効果
+ * （条件 selfHp の「以上」の形のうち、編成の段で決めずに残ったもの。skills/composition.ts の hpRatioMovesOf）。窓は効果を出した枠（自分）の
+ * HP の割合から作る（skills/holders.ts）。effectIndex は常時の効果のスロットの何番目か、subIndex は 0
+ */
+export type ResolvedHpWhileEffect = ResolvedEffect & {
+  effectIndex: number;
+  subIndex: 0;
+  whileSource: true;
+  /** 閾値（割合。説明文の % ÷ 100） */
+  whileSelfHp: { atLeast: number };
+};
+
+/** HP の割合を時間で読む編: HP の割合の while の効果か */
+export function isHpWhileEffect(effect: ItemEffect): effect is ResolvedHpWhileEffect {
+  return 'whileSelfHp' in effect;
+}
+
 /** 件を持つ効果のうち、きっかけと維持を持つ持続バフか（状態の中身・カウンタの while でない） */
 export function isTimedItem(effect: ItemEffect): effect is ResolvedTimedEffect {
   return 'trigger' in effect;
@@ -553,7 +574,8 @@ export function isTimedItem(effect: ItemEffect): effect is ResolvedTimedEffect {
  * 名前の付いた状態の語彙編: 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元。
  * 2 段目の段 11 の PR 2: カウンタの while の効果も
  */
-export type ItemEffect = ResolvedTimedEffect | ResolvedStateContent | ResolvedCounterWhileEffect;
+export type ItemEffect =
+  ResolvedTimedEffect | ResolvedStateContent | ResolvedCounterWhileEffect | ResolvedHpWhileEffect;
 
 /** 名前の付いた状態の語彙編: 状態の中身か（トリガーと維持を持たない） */
 export function isStateContent(effect: ItemEffect): effect is ResolvedStateContent {
@@ -953,6 +975,37 @@ export function resolveCounterWhileEffects(
         subIndex: 0,
         whileSource: true,
         whileCounter: { ...effect.while.selfCounter },
+      });
+    });
+  }
+  return out;
+}
+
+/**
+ * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 編成の段で決めずに残った、条件 selfHp（以上）の常時の効果を Lv の数値に
+ * 解く。閾値は selfHpThreshold（説明文の % ÷ 100）。「以下」の形は常時の効果に書けない（skills/parse/timed.ts）
+ */
+export function resolveHpWhileEffects(
+  def: SkillDefinition,
+  character: CharacterData,
+  levels: SkillLevels,
+): ResolvedHpWhileEffect[] {
+  if (def.resourceId !== character.resourceId) {
+    throw new RangeError(`skill definition is for ${def.resourceId}, character is ${character.resourceId}`);
+  }
+  const out: ResolvedHpWhileEffect[] = [];
+  for (const slot of SKILL_SLOTS) {
+    def.skills[slot].effects.forEach((effect, effectIndex) => {
+      if (effect.kind !== 'passive' || effect.while !== undefined) return;
+      const hp = effect.condition?.selfHp;
+      if (hp === undefined) return;
+      const atLeast = selfHpThreshold(hp, (ref) => skillValue(character.skills[slot], ref, levels[slot]));
+      out.push({
+        ...passiveValueOf(effect, character, slot, levels[slot]),
+        effectIndex,
+        subIndex: 0,
+        whileSource: true,
+        whileSelfHp: { atLeast },
       });
     });
   }

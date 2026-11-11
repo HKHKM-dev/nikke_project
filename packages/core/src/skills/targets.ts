@@ -27,6 +27,11 @@ export type FireContext = {
   burstUsers?: readonly number[];
   attackRank?: readonly number[];
   lowerDefense?: readonly number[];
+  /**
+   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.2 節）: 「残りの HP の割合が最も低い味方」の並び（発火のフレームの HP の
+   * 割合の低い順・同値は枠の若い順。fixedTargets の候補の枠だけ）。無ければ fixedTargets（枠の想定の順）
+   */
+  hpRank?: readonly number[];
 } | null;
 
 /** isEffectTarget が見る効果の項目 */
@@ -117,8 +122,14 @@ export function isEffectTarget(
         return weaponOk && context?.lowerDefense?.includes(targetSlotIndex) === true;
       return weaponOk;
     case 'longestChargeTime':
-    case 'lowestHpRatio':
       return weaponOk;
+    case 'lowestHpRatio': {
+      const rank = context?.hpRank;
+      if (rank === undefined) return weaponOk;
+      return (
+        matchesTargetFilter(effect, targetSlot) && rank.slice(0, effect.targetCount ?? 1).includes(targetSlotIndex)
+      );
+    }
     case 'burstUsers':
       return weaponOk && context?.burstUsers?.includes(targetSlotIndex) === true;
     case 'topAttack': {
@@ -140,6 +151,10 @@ export function canEverTarget(
   if (effect.excludeSelf === 'always' && sourceSlotIndex === targetSlotIndex) return false;
   // 対象の語彙編: 「足りなければ自分も」は、武器種・属性の条件に依らず自分に付きうる
   if (effect.excludeSelf === 'unlessShort' && sourceSlotIndex === targetSlotIndex) return true;
+  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.2 節）: 「残りの HP の割合が最も低い味方」は、発火の時の割合で並べるので、
+  // 候補の枠（fixedTargets の全部）のどれにも付きうる
+  if (effect.target === 'lowestHpRatio' && effect.fixedTargets !== undefined)
+    return matchesTargetFilter(effect, targetSlot) && effect.fixedTargets.includes(targetSlotIndex);
   return matchesTargetFilter(effect, targetSlot) && fixedTargetOk(effect, targetSlotIndex);
 }
 

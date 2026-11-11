@@ -67,6 +67,8 @@ import { firingParams } from '../src/frame/firing.ts';
 import {
   MAX_SKILL_LEVELS,
   isCounterWhileEffect,
+  isHpWhileEffect,
+  type ItemEffect,
   isStateContent,
   type ResolvedTrigger,
   type SkillLevels,
@@ -82,6 +84,14 @@ import { framesToGameSeconds, gameSecondsToFrame } from '../src/time.ts';
 
 const DATA_DIR = join(import.meta.dirname, '../data');
 const OBSERVATIONS_DIR = join(import.meta.dirname, '../../../records/observations');
+
+/** 件を持つ効果の出どころの欄（状態・カウンタ・HP の割合の while は条件、持続バフはきっかけ） */
+function itemLabel(e: ItemEffect): string {
+  if (isStateContent(e)) return `while:${e.whileState}`;
+  if (isCounterWhileEffect(e)) return `while:${e.whileCounter.counter}>=${e.whileCounter.atLeast}`;
+  if (isHpWhileEffect(e)) return `while:hp>=${e.whileSelfHp.atLeast}`;
+  return triggerLabel(e.trigger);
+}
 
 /** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
 function triggerLabel(t: ResolvedTrigger): string {
@@ -683,7 +693,7 @@ for (const [i, slot] of slots.entries()) {
         .map(
           ({ e, n }) =>
             // 名前の付いた状態の語彙編: 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
-            `${isStateContent(e) ? `while:${e.whileState}` : isCounterWhileEffect(e) ? `while:${e.whileCounter.counter}>=${e.whileCounter.atLeast}` : triggerLabel(e.trigger)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
+            `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),

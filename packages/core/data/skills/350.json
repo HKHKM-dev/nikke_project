@@ -179,14 +179,16 @@
           "targetCountRef": 1,
           "excludeSelf": "always",
           "stat": "maxHpOnly",
+          "scaling": "casterMaxHp",
           "ref": 2,
           "durationRef": 3,
           "assumes": {
-            "ja": "「スキル発動者基準」の値は、対象の枠のバフ前の最大HP の比率として足す（スペック固定では同じ支援型の最大HP は同じ値）。読むのは HP の割合と最終最大HP だけ",
-            "en": "The caster-based value is added as a ratio of the target slot's pre-buff max HP (with fixed specs, supporters have the same max HP). Only the HP ratio and the final max HP read it"
+            "ja": "「スキル発動者基準」の値は、マストのバフ前の最大HP × X を対象の最大HP に足す（エードの最大HP のみ▲ と同じ）。読むのは HP の割合と最終最大HP だけ",
+            "en": "The caster-based value adds Mast's pre-buff max HP × X to the target's max HP (as Ade's max-HP-only up). Only the HP ratio and the final max HP read it"
           },
           "claims": [
-            "C-0863"
+            "C-0863",
+            "C-1107"
           ]
         }
       ],
