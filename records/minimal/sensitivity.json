@@ -27529,6 +27529,90 @@
       "plus": null
     },
     {
+      "observation": "1103-08",
+      "element": "ソリン burst.effects[1]",
+      "key": "e8bc9c3ae783f653",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1103-09",
+      "element": "ソリン burst.effects[1]",
+      "key": "fa1222c4c2b41613",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1103-10",
+      "element": "ソリン burst.effects[1]",
+      "key": "6fc9088cc4489e53",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1103-11",
+      "element": "ソリン burst.effects[1]",
+      "key": "a2134e5da3659d9e",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1103-12",
+      "element": "ソリン burst.effects[1]",
+      "key": "6d987a6419e13383",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1104-07",
+      "element": "ソリン burst.effects[1]",
+      "key": "779e9adc05536115",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1104-08",
+      "element": "ソリン burst.effects[1]",
+      "key": "fad873a2f200f23d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1104-09",
+      "element": "ソリン burst.effects[1]",
+      "key": "25abb09241a6fe0d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1104-10",
+      "element": "ソリン burst.effects[1]",
+      "key": "72f855479b280e90",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 0 回目の倍率ダメージが無い"
+    },
+    {
+      "observation": "1104-11",
+      "element": "ソリン burst.effects[1]",
+      "key": "bfd675221a5619fd",
+      "effective": true,
+      "minus": null,
+      "plus": null,
+      "error": "minus: 2 回目の倍率ダメージが無い"
+    },
+    {
       "observation": "1105-01",
       "element": "プリカ skill2.effects[3]",
       "key": "2176a6f32d34519a",

@@ -1074,6 +1074,8 @@
 | 1100 | `20261112-1100_grave-solo.mp4` | ◎グレイブ（514、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1101 | `20261112-1101_grave-p08-alice.mp4` | プロダクト08（302、SR・電撃・R） + グレイブ（514、AR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1102 | `20261112-1102_grave-p08-alice.mp4` | プロダクト08（302、SR・電撃・R） + グレイブ（514、AR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1103 | `20261112-1103_sorin-burst.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ソリン（71、SMG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1104 | `20261112-1104_sorin-burst.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + デルタ（20、SR・風圧・SR） + ◎ソリン（71、SMG・鉄甲・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1105 | `20261112-1105_sr_prika.mp4` | ◎プリカ（601、SR・水冷・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 1106 | `20261112-1106_sr_prika.mp4` | ◎プリカ（601、SR・水冷・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 | 1107 | `20261112-1107_rl_mint.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ミント（600、RL・鉄甲・SSR） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
