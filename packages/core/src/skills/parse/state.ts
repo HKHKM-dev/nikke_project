@@ -11,7 +11,10 @@ import {
   isAppliedTrigger,
   isChanceTrigger,
   isCounterFullTrigger,
+  isEndedTrigger,
   isEnemyHeldStat,
+  isShotCountTrigger,
+  isStateCountWindow,
   isPelletStat,
   isSelfHpAtMostTrigger,
   isStacksCondition,
@@ -41,6 +44,7 @@ import { parseTargetCount } from './target.ts';
 import {
   parseAppliedTrigger,
   parseCounterFullTrigger,
+  parseEndedTrigger,
   parseSinceTimerTrigger,
   parseTimerDelayFrames,
   parseTrigger,
@@ -99,10 +103,37 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   }
   validateCounterGrant(fields, path, onEnemy);
   validateSelfHpGrant(fields, v, path, onEnemy);
+  validateStateEndGrant(fields, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
   }
+  // グレイブ編: 自分の付ける状態の終わり・窓・維持を見ない（循環する）
+  const t = fields.trigger;
+  if (
+    (isEndedTrigger(t) && stateMatches(t.ended, state)) ||
+    (isShotCountTrigger(t) && isStateCountWindow(t.during) && stateMatches(t.during.state, state))
+  )
+    fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
+  // 同 2.4 節: 自分の状態の窓で数える付与の条件は、自分の状態があるか（selfState。スタック数・否定なし）だけ（数える発を条件で選ぶ。
+  // skills/holders.ts の stateWindowFires）
+  if (isShotCountTrigger(t) && isStateCountWindow(t.during) && fields.condition !== undefined) {
+    const self = fields.condition.selfState;
+    if (
+      Object.keys(fields.condition).some((key) => key !== 'selfState') ||
+      self === undefined ||
+      !self.present ||
+      self.stacks !== undefined ||
+      self.stacksRef !== undefined
+    )
+      fail(
+        `${path}.condition`,
+        'a grant counted during a state can only have the condition selfState (present, without stacks)',
+      );
+  }
+  const until = fields.durationUntil;
+  if (typeof until === 'object' && 'stateEnd' in until && stateMatches(until.stateEnd, state))
+    fail(`${path}.durationUntil`, `a grant of "${state}" cannot last until its own state ends`);
   // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
   // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
   if (fields.targetState !== undefined && stateMatches(fields.targetState, state)) {
@@ -291,6 +322,19 @@ function validateSelfHpGrant(fields: GrantTimedFields, v: Record<string, Json>, 
     );
 }
 
+/**
+ * グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりまで続く付与（durationUntil: { stateEnd }）。閉じるのは持ち主の件の列ごとなので、
+ * 自分にだけ付け、スタックしない。見る状態は付与の状態と別（validateOwnStateTriggers が同じ定義の自分への付与を見る）
+ */
+function validateStateEndGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
+  const until = fields.durationUntil;
+  if (typeof until !== 'object' || !('stateEnd' in until)) return;
+  if (onEnemy || fields.target !== 'self')
+    fail(`${path}.target`, 'a grant lasting until another state ends is only on "self"');
+  if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
+    fail(path, 'a grant lasting until another state ends cannot stack');
+}
+
 /** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
 const STATE_GRANT_KEYS: readonly string[] = [
   'kind',
@@ -464,6 +508,15 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
   }
   // A2 の B モード編: HP の割合で解除される状態の中身の規則は、閉じる（件の一覧）までは「持続」の付与と同じ
   if (isSelfHpAtMostTrigger(fields.durationUntil)) fields.durationUntil = 'battleEnd';
+  // グレイブ編（plan/design-grave.md 2.1・2.4・2.5 節）: 状態の終わりのきっかけ（{ ended }）・自分の状態の窓で数える回数のきっかけ・ほかの状態の
+  // 終わりまでの維持（{ stateEnd }）は件の一覧が決める（timed には書けない）ので、中身の規則は、戦闘開始時か、窓の無い回数のきっかけで付く
+  // 「持続」と同じ
+  if (isRecord(fields.trigger) && fields.trigger.ended !== undefined) fields.trigger = 'battleStart';
+  if (isRecord(fields.trigger) && isRecord(fields.trigger.during)) {
+    const { during: _during, ...rest } = fields.trigger;
+    fields.trigger = rest;
+  }
+  if (isRecord(fields.durationUntil) && 'stateEnd' in fields.durationUntil) fields.durationUntil = 'battleEnd';
   if (value.stat === 'fixedChargeTime') {
     delete fields.maxStacks;
     delete fields.maxStacksRef;
@@ -493,9 +546,9 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   }
   const counter = oneOf(COUNTER_IDS, v.counter, `${path}.counter`);
   let trigger: EffectTrigger | EndedTrigger | CounterFullTrigger;
-  if (isRecord(v.trigger) && v.trigger.ended !== undefined) {
-    for (const key of Object.keys(v.trigger)) if (key !== 'ended') fail(`${path}.trigger.${key}`, 'unknown field');
-    trigger = { ended: parseNamedStateId(v.trigger.ended, `${path}.trigger.ended`, 'ally') };
+  const ended = parseEndedTrigger(v.trigger, `${path}.trigger`);
+  if (ended !== undefined) {
+    trigger = ended;
   } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
     trigger = parseCounterFullTrigger(v.trigger, `${path}.trigger`)!;
   } else if (isRecord(v.trigger) && v.trigger.applied !== undefined) {

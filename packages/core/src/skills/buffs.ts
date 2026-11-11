@@ -153,6 +153,8 @@ export type BuffTotals = {
   maxAmmoFlat: number;
   /** Stage 10: リロード速度の加算 */
   reloadSpeed: number;
+  /** グレイブ編（plan/design-grave.md 2.3 節）: リロード比率の加算（分割リロードの 1 段の割合に (1 + Σ) を掛ける。▼は負） */
+  reloadRatio: number;
   /** Stage 10: チャージ速度の加算 */
   chargeSpeed: number;
   /** チャージ速度▲の内訳（足した順）。chargeSpeed と同じものを 1 件ずつ持つ。超過分の変換（chargeSpeedOverflowDamage）だけが読む */
@@ -266,6 +268,7 @@ export const ZERO_BUFFS: Readonly<BuffTotals> = Object.freeze({
   defenseRatio: 0,
   maxAmmoFlat: 0,
   reloadSpeed: 0,
+  reloadRatio: 0,
   chargeSpeed: 0,
   chargeSpeedParts: Object.freeze([]) as readonly ChargeSpeedPart[],
   chargeSpeedOverflow: 0,
@@ -316,6 +319,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   maxHpOnly: 'maxHpRatio',
   defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
+  reloadRatio: 'reloadRatio',
   chargeSpeed: 'chargeSpeed',
   chargeSpeedOverflow: 'chargeSpeedOverflow',
   attackSpeed: 'attackSpeed',

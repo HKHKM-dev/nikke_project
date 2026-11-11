@@ -107,6 +107,7 @@ export type BuffStat =
   | 'burstGaugeSpeed'
   | 'maxAmmo'
   | 'reloadSpeed'
+  | 'reloadRatio'
   | 'chargeSpeed'
   | 'hitRate'
   | 'infiniteAmmo'
@@ -148,6 +149,9 @@ export const BUFF_STATS = [
   'burstGaugeSpeed',
   'maxAmmo',
   'reloadSpeed',
+  // グレイブ編（plan/design-grave.md 2.3 節）: リロード比率（比率）。分割リロードの 1 段で込める割合（CDN の reloadBullet）に (1 + Σ) を掛ける
+  // （▼は decrease で負の値。V-0735）。分割リロードでない武器には効かない（frame/firing.ts）。射撃に効く
+  'reloadRatio',
   'chargeSpeed',
   'hitRate',
   'infiniteAmmo',
@@ -211,6 +215,7 @@ export const BUFF_STATS = [
 export const FIRING_STATS = [
   'maxAmmo',
   'reloadSpeed',
+  'reloadRatio',
   'chargeSpeed',
   'infiniteAmmo',
   'fixedChargeTime',
@@ -618,8 +623,11 @@ export type ShotCountTrigger = {
    * クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: 'fullBurst' ならフルバーストの窓（isInFullBurst と同じ [start, end)）の中の
    * 射撃だけを数える。damage にだけ書ける（gaugeHits・射撃ごとの畳み込み（every = 1）・stacksRef とは組み合わせない）
    */
-  during?: ShotCountWindow;
-  /** 同 2.1 節: during を書くときは必須。fullBurstStart = フルバーストが始まるフレームで 0 に戻す、never = 戻さない */
+  during?: ShotCountWindow | StateCountWindow;
+  /**
+   * 同 2.1 節: during が 'fullBurst' のときは必須。fullBurstStart = フルバーストが始まるフレームで 0 に戻す、never = 戻さない。
+   * during が { state } のときは書かない（状態が付くたびに 0 から数え直す）
+   */
   reset?: ShotCountReset;
   /**
    * ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 'fullBurst' なら、射撃は窓の外も含めて戦闘中ずっと数え、N の倍数に届いた発が
@@ -656,6 +664,17 @@ export function isChanceTrigger(t: EffectTrigger): t is ShotCountTrigger {
 
 /** クルミ S2 編: 回数トリガーの数える窓と、数え直し（plan/design-kurumi-s2.md 2.1 節） */
 export type ShotCountWindow = 'fullBurst';
+/**
+ * グレイブ編（plan/design-grave.md 2.4 節）: 自分のその状態が付いている間の発だけを数え、その状態が付くたびに 0 から数え直す窓
+ * （「〈状態〉なら、通常攻撃が命中した時…攻撃命中回数別の効果」）。状態の付与にだけ書ける。見る状態は、同じ定義の自分に付ける付与の
+ * あるもの。発火は 1 パス目の件の一覧が追う（skills/holders.ts の firesOf）
+ */
+export type StateCountWindow = { state: NamedStateId };
+
+/** グレイブ編: 回数トリガーの数える窓が自分の状態か */
+export function isStateCountWindow(w: ShotCountWindow | StateCountWindow | undefined): w is StateCountWindow {
+  return typeof w === 'object' && w !== null && 'state' in w;
+}
 export const SHOT_COUNT_WINDOWS = ['fullBurst'] as const satisfies readonly ShotCountWindow[];
 /** 2 段目の段 11: 回数トリガーの発火の窓（firesDuring）。数える窓（during）はフルバーストだけ */
 export type FiringWindow = ShotCountWindow | 'weaponChange';
@@ -860,7 +879,9 @@ export type EffectTrigger =
   // 2 段目の段 13 の PR 1: { counterFull }（damage・dot・counterChange だけが受ける。parseCounterFullTrigger）
   | CounterFullTrigger
   // アインのニアフェザー編: { summon }（damage だけが受ける。parseSummonAttackTrigger）
-  | SummonAttackTrigger;
+  | SummonAttackTrigger
+  // グレイブ編（plan/design-grave.md 2.1 節）: { ended }（counterChange・ammoDecrease・状態の付与だけが受ける）
+  | EndedTrigger;
 
 export function isAppliedTrigger(t: unknown): t is AppliedTrigger {
   return typeof t === 'object' && t !== null && 'applied' in t;
@@ -1030,7 +1051,8 @@ export type Amplifies = { skill: SkillSlot; percent: number };
  * fullBurstEnd と違い 1 パス目で窓を追う stat とスタックにも書ける。
  * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: reloadEnd = 持ち主（自分）のリロードが最大装弾数まで込め終わった
  * フレームまで（「最大弾数リロード完了時に解除」）。窓の終わりは 1 パス目の射撃の列（ShotLog.reloadEnds）から作るので、1 パス目で窓を
- * 追う stat にも書ける。timed の対象が自分のときだけ（スタック・状態の付与には書けない）。
+ * 追う stat にも書ける。timed の対象が自分のときだけ（スタックには書けない）。グレイブ編（plan/design-grave.md 2.2 節）: 自分に付く、スタックしない
+ * 状態の付与にも書ける（「過熱I：…」「最大装弾リロード完了時に解除」）。
  * マスト編（plan/design-mast.md 8 節）: selfHpAbove = 発動者の HP の割合が閾値を上回るフレームまで（きっかけ { selfHpAtMostRef } とだけ組む。
  * timed だけ。順位の対象 topAttack にも書ける）
  */
@@ -1058,11 +1080,13 @@ export type CounterEmptyUntil = { counterEmpty: CounterId };
 export type SelfHpAtMostUntil = SelfHpAtMostTrigger;
 
 /** 状態の付与の維持の終わり（timed と同じ出来事と、オブジェクトの形の解除条件） */
-export type GrantDurationUntil = DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
+export type GrantDurationUntil = DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil | StateEndUntil;
 
 /**
  * 同（論点 4）: dot の「〈状態〉解除まで」。きっかけ { applied } の状態の、自分の件の終わり（付いたフレームを含む件）より後の tick を出さない
- * （それまでは戦闘の終わりまで）。きっかけは同じ状態の { applied } だけ（アークレンジャー・ブラックの S2 のアークブラックコレダー）
+ * （それまでは戦闘の終わりまで）。きっかけは同じ状態の { applied } だけ（アークレンジャー・ブラックの S2 のアークブラックコレダー）。
+ * グレイブ編（plan/design-grave.md 2.5 節）: 状態の付与の維持にも書ける（「〈状態〉の時に限り…持続」）。見る状態の自分の件が外れたフレームで
+ * 閉じる（そのフレームには付いていない）。自分にだけ付き、スタックしない。見る状態は、同じ定義の自分に付ける付与のあるもの
  */
 export type StateEndUntil = { stateEnd: NamedStateId };
 
@@ -1567,6 +1591,7 @@ export type BurstGaugeEffect = TargetCountFields & {
  */
 export type AmmoDecreaseEffect = TargetCountFields & {
   kind: 'ammoDecrease';
+  /** 使用武器の変更の終わり・バースト使用時と、グレイブ編から { ended }（plan/design-grave.md 2.1 節） */
   trigger: EffectTrigger;
   target: 'self';
   /** 絞り込みの欄は即時効果の型をそろえるためだけにある（検証で弾く） */
@@ -2108,7 +2133,10 @@ export type StateGrantEffect = Omit<
   'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies' | 'durationUntil'
 > & {
   kind: 'state';
-  /** timed と同じ維持の終わりの出来事。2 段目の段 19 の PR 1: カウンタが 0 になった時（CounterEmptyUntil）も。A2 の B モード編: HP が X% 以下の時（SelfHpAtMostUntil）も */
+  /**
+   * timed と同じ維持の終わりの出来事。2 段目の段 19 の PR 1: カウンタが 0 になった時（CounterEmptyUntil）も。A2 の B モード編: HP が X% 以下の時
+   * （SelfHpAtMostUntil）も。グレイブ編: ほかの状態が終わった時（StateEndUntil）も
+   */
   durationUntil?: GrantDurationUntil;
   /** 目録の id（持ち主が味方の状態。enemy なら敵の状態） */
   state: NamedStateId;
@@ -2298,7 +2326,11 @@ export type CounterChangeEffect = {
   assumes?: LocalizedText;
 };
 
-/** 2 段目の段 10（plan/design-skill-stage4.md 1.3 節の形）: 「〈名前〉状態が終了した時」。いまは counterChange にだけ書ける */
+/**
+ * 2 段目の段 10（plan/design-skill-stage4.md 1.3 節の形）: 「〈名前〉状態が終了した時」。自分のその状態の件（段によらない）が外れた最初の
+ * フレームに発火する。counterChange と、グレイブ編（plan/design-grave.md 2.1 節）から ammoDecrease・状態の付与に書ける。見る状態は、同じ定義の
+ * 自分に付ける付与のあるもの
+ */
 export type EndedTrigger = { ended: NamedStateId };
 
 /**
@@ -2378,7 +2410,8 @@ export function hasReloadEndEffect(definition: SkillDefinition): boolean {
   return SKILL_SLOTS.some((slot) =>
     definition.skills[slot].effects.some(
       (e) =>
-        (e.kind === 'timed' && e.durationUntil === 'reloadEnd') || ('trigger' in e && isReloadEndTrigger(e.trigger)),
+        ((e.kind === 'timed' || e.kind === 'state') && e.durationUntil === 'reloadEnd') ||
+        ('trigger' in e && isReloadEndTrigger(e.trigger)),
     ),
   );
 }

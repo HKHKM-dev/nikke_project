@@ -1,0 +1,624 @@
+[
+  {
+    "id": "1101-01",
+    "recording": "1101",
+    "kind": "total",
+    "use": "record",
+    "value": 398234049,
+    "description": "プロダクト08・グレイブ・アリス の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11469。増分は 1639 個"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-02",
+    "recording": "1101",
+    "kind": "count",
+    "use": "record",
+    "value": 241,
+    "unit": "トリガー",
+    "description": "プロダクト08・グレイブ・アリス のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1639 個。前の増分から 30f 未満の増分（1589 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 39.5f）から発の数を決めた（2 発になった組 18 個）"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-03",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [1154, 2355, 3535, 4736, 5915, 7117, 8296, 9606, 10785],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・26・0・25・0・25・6・24f"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-04",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [1183, 2384, 3564, 4765, 5944, 7146, 8325, 9635, 10814],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 6・0・24・0・25・0・25・0・24f"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-05",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [1212, 3593, 5974, 8354, 10843],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-06",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [1821, 4202, 6583, 9291, 11452],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-07",
+    "recording": "1101",
+    "kind": "interval",
+    "use": "record",
+    "value": [609, 609, 609, 937, 609],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-08",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [2349, 3528, 4730, 5909, 7110, 8290, 10778],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f9490"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-09",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [2378, 3557, 4759, 5938, 7140, 8319, 10807],
+    "unit": "f",
+    "description": "右のバースト欄の II の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、II → III の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。II → III の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-10",
+    "recording": "1101",
+    "kind": "timing",
+    "use": "record",
+    "value": [3586, 5966, 8347],
+    "unit": "f",
+    "description": "右のバースト欄の III の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、00.00の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。00.00の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: f7736"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1101-11",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 144.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 142,
+      "high": 147
+    },
+    "description": "グレイブの 2 回目のバーストの、完全計算の▲の乗った最初の発（六角形の II → III の 3f 後）から、過熱II（攻撃力 20.66%▲）の付き始めまでの動画のフレームの幅。フルバーストの無い周期で、完全計算の 30 発目（▲なし）の次の発から▲あり（完全計算が付いてからの命中の 30 回目で付く）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、完全計算の▲（▲なし 105,317・コア 163,826）と過熱II（121,461）の格子に当てた。4 回目の発動（フルバーストの無い周期）も同じ 145〜150f"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attack",
+        "effect": 1,
+        "from": 2,
+        "n": 1,
+        "edge": "start",
+        "fromShot": true
+      },
+      "tolerance": {
+        "abs": 2.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-12",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 545.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 543,
+      "high": 548
+    },
+    "description": "グレイブの 1 回目のバーストの使用（六角形の II → III）から、過熱III の付き始めまで（543〜548f）。この回はバーストの直前にマガジンを撃ち切り（残弾 1/60 の後に ∞）、∞ に替わってから約 27f 撃たず（込め終わりから 1 発目までの間と同じ）、過熱I が外れていた（1 発の値が過熱I の分低い）。過熱I は 15 回の命中で付き直し（六角形の 117f 後）、その後の 30 発目の次（259f 後）に過熱II、その 58 発後に過熱III が付いた（過熱II は「完全計算かつ過熱I」の間の命中、過熱III は「完全計算かつ過熱II」の間の命中を数える読みに合う）。モデルはこの回にリロードを始めない（マガジンの位相が録画と違う）ので比べない",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、過熱II（O2=2@500）と過熱III（O3=2@800）の格子（フルバースト補正 0.5）に当てた（--opt pair=O2,n2>O3,n3）。3・5・7・8 回目の発動も、過熱II の付いた発から 289〜294f 後"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 2,
+        "n": 0,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-13",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 289,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 284,
+      "high": 294
+    },
+    "description": "グレイブの 3 回目のバーストの、過熱II（攻撃力 20.66%▲）の付き始めから過熱III（攻撃ダメージ 30.8%▲）の付き始めまでの動画のフレームの幅（フルバーストの周期。間に止まりは無い）。過熱II は六角形の 166f の発（▲なし）と 171f の発（▲あり）の間、過熱III は 455f の発（▲なし）と 460f の発（▲あり）の間で付いた（過熱II の付いてから約 59 発。命中の 60 回目）。1・5・7・8 回目の発動も 289〜294f",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "同上"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 2,
+        "skill": "skill2",
+        "stat": "attackDamage",
+        "from": 2,
+        "n": 2,
+        "edge": "start",
+        "originStat": "attack",
+        "originEffect": 1
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-14",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 932,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 876,
+      "high": 988
+    },
+    "description": "グレイブの 1 回目のバーストの使用（f1183）から、放熱の味方全体への貫通ダメージ 48.4%▲（アリスの通常攻撃に乗る）の切れ目までの動画のフレームの幅。放熱の付いた込めの間のアリスの発（f2059）は▲あり、グレイブの込め終わりの後の発（f2171）は▲なし。8 回の発動のどれも、グレイブの撃ち直しの前のアリスの発は▲あり、後の発は▲なし（解除は込め終わり。次のバーストまで続く読みは合わない）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、アリスの格子（放熱あり A=3@1100・なし Ab=3@1300）に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "skill1",
+        "stat": "pierceDamage",
+        "from": 2,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 56
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-15",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "compare",
+    "value": 320,
+    "unit": "f",
+    "description": "グレイブの 1 回目の完全計算の最後の発（f1790。装弾数無限）から、放熱の込めの後の 1 発目（f2110）までの動画のフレーム。枠の上の残弾の表示は ∞ → 0/63（完全計算の終わりの残弾数 100% 減少）→ 15/60・30/60・45/60・60/60 と、15 発ずつ約 60f ごとに込めた（リロード比率 50%▼ で 1 段の割合 0.5 → 0.25。ふだんは 30 発ずつ 2 段）。60/60 の表示は撃ち直しの約 10f 前。ふだんの込め（単騎の録画 1099・1100）は最終弾から 1 発目まで 200f",
+    "method": {
+      "tool": "hud-jumps@3 と目視（枠の上の残弾の表示を 5f ごとに切り出した）",
+      "note": "8 回の発動で 284〜323f（ほかの回は増分の読みの切れ目がずれる）。許容 ±5f は、完全計算の終わり（残弾数減少）と最後の発の位相（AR の発の間 約 4.9f）がモデルと録画で揃わない分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "reloadToNextShotAt",
+      "args": {
+        "slot": 2,
+        "frame": 880
+      },
+      "tolerance": {
+        "abs": 5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-16",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 859162,
+    "unit": "ダメージ",
+    "description": "アリスの、放熱の貫通ダメージ 48.4%▲の乗ったフルチャージの通常攻撃のコアの 1 ヒット（会心なし・距離なし。f2059 など）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）をアリスの格子に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1000,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-17",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 578950,
+    "unit": "ダメージ",
+    "description": "アリスの、放熱の後（▲なし）のフルチャージの通常攻撃のコアの 1 ヒット（会心なし・距離なし。f2171 など）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）をアリスの格子に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1300,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-18",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 175037,
+    "unit": "ダメージ",
+    "description": "グレイブの完全計算・過熱I〜III・プロダクト08 のバーストの攻撃力▲・フルバーストの乗った 1 ヒット（胴体・会心・距離ボーナスあり。完全計算の間はクリティカル確率 15% + 85.19% で全部会心）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を格子に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 2,
+        "frame": 840,
+        "core": false,
+        "crit": true,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-19",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "size",
+    "use": "record",
+    "value": 82,
+    "unit": "px",
+    "description": "グレイブの枠の HP のバー（白。x 788〜887・y 1034〜1036 の明るい画素の列の数。満タンで約 89）の、1 回目の完全計算の間の最も短い値。1 回目の完全計算の間に約 1 画素（最大HP の約 1%）ずつ下がり（f1245・1323・1362・1401・1441・1480）、f1578 から上がり始めて f1755 に 89 に戻った（完全計算の終わり f1790 より前）。バーの 1 画素が最大HP の約 1.1% で、バーストの演出が重なると読みが乱れるため、下がり始め・上がり始めの時刻と回数は決めていない",
+    "method": {
+      "tool": "使い捨てのスクリプト（ffmpeg でグレイブの枠の HP のバーの白の量をフレームごとに測った）",
+      "note": "現在の HP▼ と放熱の回復は間接の notes（design-grave.md 2.6 節）にしたので、モデルとは比べない"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-20",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": -1.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": -2,
+      "high": -1
+    },
+    "description": "グレイブのバーストの使用（六角形の II → III の替わり目）から、完全計算の効果（会心 100%・貫通ダメージ▲など）が乗り始めるまでの動画のフレームの幅。2〜8 回目の発動（2384・3564・4765・5944・7146・8325・9635）の、▲の無い最後の発と▲の乗った最初の発の共通部分（六角形の 2f 前の発には乗らず、1f 前の発には乗る）",
+    "method": {
+      "tool": "hud-jumps@3 を目で読んだ",
+      "note": "発動ごとの幅は (−2, 3]・(−3, 2]・(−7, 0]・(−7, −1] など。1 回目の発動は、∞ に替わってから撃ち始めるまで撃たないので使わない"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "burstEffectDelay",
+      "args": {
+        "slot": 2,
+        "n": 1
+      },
+      "tolerance": {
+        "abs": 0.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-21",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "gauge",
+    "use": "record",
+    "value": 7.1,
+    "unit": "%",
+    "description": "プロダクト08 の通常攻撃 1 発で増えた右の BURST バーの充填率（表示の %。バーは本当のゲージの約 12.6〜96% を映し、1px ≈ 0.88%）。グレイブの放熱の間（完全計算の最後の発から撃ち直しまで）は 7.1%（f1993・2075・3089・3171・3254・4334・4416・5481・5563・6726・6809 ほか）、放熱の外は 6.2〜7.1%（f1029・2157・4498・6891）。アリスの 1 発は放熱の間 23.9%（f3129・3241・4401・5519・5631・6792 ほか）、外 23〜23.9%（f4513・6904）。放熱の味方全体のバーストゲージのチャージ速度 38.96%▲が効けば、放熱の間は 1.39 倍（プロダクト08 で約 9.3%）になる。モデル（▲あり）のプロダクト08 の 1 発は本当のゲージで 7.78%、▲なしで 5.60%",
+    "method": {
+      "tool": "gauge.ts --mode jumps",
+      "note": "5.5〜8% の増分をプロダクト08、20〜26% の増分をアリスとした（発のフレームは HUD の増分と同じ）"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-22",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "record",
+    "value": 380,
+    "unit": "f",
+    "description": "フルバーストの終わり（右の欄の六角形の所が灰色に替わる）から、BURST バーが消える（ゲージ満タン）までの動画のフレーム（チェーンの CT が明ける前に満ちた回）: 378・382f（f4202 → 4580・f6583 → 6965）。モデルは、放熱の味方全体のバーストゲージのチャージ速度▲ありで 320f、なしで 386〜388f（いまの定義）",
+    "method": {
+      "tool": "gauge.ts --mode events と burst-panel@4",
+      "note": "値はその回の平均"
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-23",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 2424939,
+    "unit": "ダメージ",
+    "description": "アリスの、フルバーストの間（グレイブのバーストの味方全体への攻撃ダメージ 48.2%▲・貫通ダメージ 39.98%▲・アリスのバーストの攻撃力▲の乗った）フルチャージの通常攻撃のコアの 1 ヒット（会心なし・距離なし）。フルバーストの間のアリスの増分のうち 24 個がこの値",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、アリスのフルバーストの格子（AF=3@400）に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 400,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1101-24",
+    "recording": "1101",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "record",
+    "value": 28,
+    "unit": "f",
+    "description": "グレイブの 1 回目のバーストで、枠の上の残弾の表示が 1/60 から ∞ に替わった（f1182。その前の発で残弾が 0 になってリロードに入ったとみられる）から、次の発（f1210）までの動画のフレーム。この間は撃たず（込め終わりから 1 発目までの間と同じ長さ）、次の発からは過熱I の攻撃力▲が乗っていない（込め終わりで外れた）。過熱I は 15 回の命中で付き直す",
+    "method": {
+      "tool": "目視（枠の上の残弾の表示を 3f ごとに切り出した）と hud-jumps@3",
+      "note": "モデルでは、基礎の武器で込めている間に装弾数無限が付くと、そのフレームで込め終わる（frame/shooter.ts）"
+    },
+    "scope": {
+      "slot": 2,
+      "source": "normal"
+    }
+  }
+]

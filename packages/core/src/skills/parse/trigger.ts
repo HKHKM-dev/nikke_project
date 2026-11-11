@@ -10,6 +10,7 @@ import {
   type CounterFullTrigger,
   type CoverHealedTrigger,
   type EffectTrigger,
+  type EndedTrigger,
   EVENT_COUNT_KINDS,
   type EventCountKind,
   type EventCountTrigger,
@@ -54,7 +55,8 @@ export function parseTrigger(
   v: Json,
   path: string,
   allowTimer: boolean | 'withStart' = false,
-  allowDuring = false,
+  /** グレイブ編（plan/design-grave.md 2.4 節）: 'withState' なら自分の状態の窓（during: { state }）も書ける（状態の付与だけ） */
+  allowDuring: boolean | 'withState' = false,
   allowChance = false,
   allowFullStack = false,
   allowWeaponChangeEnd = false,
@@ -65,6 +67,10 @@ export function parseTrigger(
   // ペルソナ編: 効果名のトリガーは damage と、2 段目の段 4 から timed・付与だけ（parseAppliedTrigger で先に読む）
   if (v.applied !== undefined) {
     fail(path, 'an applied trigger ({ applied }) is only allowed in damage, timed and state grants');
+  }
+  // グレイブ編（plan/design-grave.md 2.1 節）: 状態の終わりのきっかけは counterChange・ammoDecrease・状態の付与だけ（parseEndedTrigger で先に読む）
+  if (v.ended !== undefined) {
+    fail(path, 'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease and state grants');
   }
   // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）。段 11 から weaponChange も
   // （plan/design-skill-stage11.md 2.1 節）
@@ -155,9 +161,19 @@ export function parseTrigger(
     if (v.during !== undefined || v.reset !== undefined) {
       if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage, timed and state');
       if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
-      trigger.during = oneOf(SHOT_COUNT_WINDOWS, v.during, `${path}.during`);
-      if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
-      trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
+      if (isRecord(v.during)) {
+        // グレイブ編（plan/design-grave.md 2.4 節）: 自分の状態の間だけ数え、状態が付くたびに数え直す（reset は書かない）
+        if (allowDuring !== 'withState')
+          fail(`${path}.during`, 'a counting window of a state (during: { state }) is only allowed in state grants');
+        for (const key of Object.keys(v.during)) if (key !== 'state') fail(`${path}.during.${key}`, 'unknown field');
+        trigger.during = { state: parseNamedStateId(v.during.state, `${path}.during.state`, 'ally') };
+        if (v.reset !== undefined)
+          fail(`${path}.reset`, 'a counting window of a state starts over when the state is applied (write no reset)');
+      } else {
+        trigger.during = oneOf(SHOT_COUNT_WINDOWS, v.during, `${path}.during`);
+        if (v.reset === undefined) fail(`${path}.reset`, 'during needs reset (fullBurstStart or never)');
+        trigger.reset = oneOf(SHOT_COUNT_RESETS, v.reset, `${path}.reset`);
+      }
       if (trigger.stacksRef !== undefined) fail(`${path}.during`, 'during cannot be used with stacksRef');
       if (trigger.count === 'lastShot') fail(`${path}.during`, 'during cannot be used with lastShot');
       if (trigger.count === 'weaponChangeShot') fail(`${path}.during`, 'during cannot be used with weaponChangeShot');
@@ -246,6 +262,16 @@ export function parseTrigger(
  * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } を damage のほかで読む。{ applied } でなければ undefined
  * （ほかのトリガーは呼ぶ側の parseTrigger が読む）
  */
+/**
+ * 2 段目の段 10・グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」{ ended: 状態 }。それ以外の形なら undefined。
+ * counterChange・ammoDecrease・状態の付与が読む
+ */
+export function parseEndedTrigger(v: Json, path: string): EndedTrigger | undefined {
+  if (!isRecord(v) || v.ended === undefined) return undefined;
+  for (const key of Object.keys(v)) if (key !== 'ended') fail(`${path}.${key}`, 'unknown field');
+  return { ended: parseNamedStateId(v.ended, `${path}.ended`, 'ally') };
+}
+
 export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined {
   if (!isRecord(v) || v.applied === undefined) return undefined;
   for (const key of Object.keys(v)) if (key !== 'applied') fail(`${path}.${key}`, 'unknown field');

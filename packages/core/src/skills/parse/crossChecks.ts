@@ -13,6 +13,7 @@ import {
   isFullStackTrigger,
   isMaxStacksUpContent,
   isShotCountTrigger,
+  isStateCountWindow,
   isStatContent,
   isStaticStateGrant,
   isSummonAttackTrigger,
@@ -257,17 +258,28 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
  */
 function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
+  const needGrant = (state: NamedStateId, at: string, kind: string) => {
+    if (!effects.some((g) => g.kind === 'state' && g.state === state && g.target === 'self'))
+      fail(at, `a ${kind} on "${state}" needs a grant of the same state on self in the definition`);
+  };
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
+      const at = `${root}.${slot}.effects[${i}]`;
+      // グレイブ編（plan/design-grave.md 2.1・2.4・2.5 節）: 状態の終わりのきっかけ・自分の状態の窓で数える回数・ほかの状態の終わりまでの維持
+      if (e.kind === 'ammoDecrease' || e.kind === 'state') {
+        const t = e.trigger;
+        if (isEndedTrigger(t)) needGrant(t.ended, `${at}.trigger`, e.kind);
+        if (e.kind === 'state' && isShotCountTrigger(t) && isStateCountWindow(t.during))
+          needGrant(t.during.state, `${at}.trigger.during`, e.kind);
+        const until = e.kind === 'state' ? e.durationUntil : undefined;
+        if (typeof until === 'object' && 'stateEnd' in until) needGrant(until.stateEnd, `${at}.durationUntil`, e.kind);
+        return;
+      }
       if (e.kind !== 'counterChange' && e.kind !== 'dot' && e.kind !== 'currentHpDown') return;
       const t = e.trigger;
       const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
       if (state === undefined) return;
-      if (!effects.some((g) => g.kind === 'state' && g.state === state && g.target === 'self'))
-        fail(
-          `${root}.${slot}.effects[${i}].trigger`,
-          `a ${e.kind} on "${state}" needs a grant of the same state on self in the definition`,
-        );
+      needGrant(state, `${at}.trigger`, e.kind);
     });
   }
 }

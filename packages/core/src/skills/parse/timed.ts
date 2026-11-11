@@ -70,6 +70,7 @@ import {
   parseChargeTrigger,
   parseCounterFullTrigger,
   parseCoverHealedTrigger,
+  parseEndedTrigger,
   parseSelfHpAtMostTrigger,
   parseShotCountDelay,
   parseTrigger,
@@ -227,10 +228,21 @@ export function parseTimedFields(
     parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
     parseChargeTrigger(v.trigger, `${path}.trigger`) ??
     (stat === undefined
-      ? parseCounterFullTrigger(v.trigger, `${path}.trigger`)
+      ? // グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」（{ ended }）も状態の付与だけ
+        (parseCounterFullTrigger(v.trigger, `${path}.trigger`) ?? parseEndedTrigger(v.trigger, `${path}.trigger`))
       : (parseCoverHealedTrigger(v.trigger, `${path}.trigger`) ??
         parseSelfHpAtMostTrigger(v.trigger, `${path}.trigger`))) ??
-    parseTrigger(v.trigger, `${path}.trigger`, 'withStart', true, allowChance, false, false, true);
+    // グレイブ編（同 2.4 節）: 自分の状態の間だけ数える窓（during: { state }）は状態の付与だけ
+    parseTrigger(
+      v.trigger,
+      `${path}.trigger`,
+      'withStart',
+      stat === undefined ? 'withState' : true,
+      allowChance,
+      false,
+      false,
+      true,
+    );
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
   // 同: { applied } の効果は条件・順位の対象・強化を書けない（使い手がいない。論点 6）
@@ -569,6 +581,18 @@ function parseTimedDuration(
       // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 「自分の HP が X% 以下の時、〈状態〉解除」（validateSelfHpGrant）
       const hpUntil = parseSelfHpAtMostTrigger(v.durationUntil, key);
       if (hpUntil !== undefined) return { durationUntil: hpUntil };
+      // グレイブ編（plan/design-grave.md 2.5 節）: 「〈状態〉の時に限り…持続」（見る状態の件が外れたフレームで閉じる。validateStateEndGrant）
+      if ('stateEnd' in v.durationUntil) {
+        return {
+          durationUntil: {
+            stateEnd: parseNamedStateId(
+              objectUntil(v.durationUntil, 'stateEnd', key, 'expected { stateEnd }'),
+              `${key}.stateEnd`,
+              'ally',
+            ),
+          },
+        };
+      }
       return {
         durationUntil: {
           counterEmpty: oneOf(
@@ -594,9 +618,10 @@ function parseTimedDuration(
         `${path}.durationUntil`,
         'a duration until the HP rises is only supported for timed effects of a value not tracked in the first pass',
       );
-    // シンデレラ S1 編: リロードの込め終わりは持ち主の射撃の列にある。使い手は自分にだけ付ける（timed の自分）
-    if (until === 'reloadEnd' && (stat === undefined || target !== 'self')) {
-      fail(`${path}.durationUntil`, 'a duration until the reload ends is only supported for timed effects on "self"');
+    // シンデレラ S1 編: リロードの込め終わりは持ち主の射撃の列にある。使い手は自分にだけ付ける（timed の自分）。グレイブ編
+    // （plan/design-grave.md 2.2 節）: 自分に付く状態の付与も（スタックしないことは parseTimedFields が見る）
+    if (until === 'reloadEnd' && target !== 'self') {
+      fail(`${path}.durationUntil`, 'a duration until the reload ends is only supported on "self"');
     }
     return { durationUntil: until };
   }

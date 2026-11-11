@@ -1,0 +1,171 @@
+[
+  {
+    "id": "1100-01",
+    "recording": "1100",
+    "kind": "total",
+    "use": "record",
+    "value": 36096452,
+    "description": "グレイブ の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11358。増分は 1207 個"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1100-02",
+    "recording": "1100",
+    "kind": "count",
+    "use": "record",
+    "value": 171,
+    "unit": "トリガー",
+    "description": "グレイブ のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 1207 個。前の増分から 30f 未満の増分（1183 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 40f）から発の数を決めた（2 発になった組 24 個）"
+    },
+    "source": "V-0735",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1100-03",
+    "recording": "1100",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 27022,
+    "unit": "ダメージ",
+    "description": "グレイブの過熱I（攻撃力 15.48%▲）の乗った 1 ヒット（胴体・会心なし・距離ボーナスあり）。▲なしは 23,397（1 マガジン目の 1〜15 発目）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）の 1 マガジン目の 16 発目からの胴体の増分"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 1,
+        "frame": 200,
+        "core": false,
+        "crit": false,
+        "distance": true
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1100-04",
+    "recording": "1100",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 2.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 0,
+      "high": 5
+    },
+    "description": "1 マガジン目の 15 発目（f911。▲なし）から、過熱I の付き始めまでの動画のフレームの幅。16 発目（f916）から▲あり（命中の 15 回目で付く）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、▲なし 23,397・▲あり 27,022 の格子に当てた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "effect": 0,
+        "from": 1,
+        "shot": 15,
+        "edge": "start"
+      },
+      "tolerance": {
+        "abs": 2.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1100-05",
+    "recording": "1100",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 100,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 0,
+      "high": 200
+    },
+    "description": "1 マガジン目の最終弾（60 発目。f1132。▲あり）から、過熱I の切れ目までの動画のフレームの幅。リロードの後の 1 発目（f1332）は▲なし（最大装弾数のリロード完了で外れる）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromShot",
+      "args": {
+        "slot": 1,
+        "skill": "skill2",
+        "stat": "attack",
+        "effect": 0,
+        "from": 1,
+        "shot": 60,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 100
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1100-06",
+    "recording": "1100",
+    "source": "V-0735",
+    "readAt": "2026-11-11",
+    "kind": "count",
+    "use": "record",
+    "value": 16,
+    "unit": "発目",
+    "description": "3 マガジン目で過熱I が付いた最初の発（マガジンの何発目か）。2 マガジン目は命中が 60 で、通算の命中の 135 回目が 15 発目になり、16 発目から▲あり（1099 と合わせて、命中を戦闘を通して数える読みに合う）",
+    "method": {
+      "tool": "hud-jumps@3 の増分を目で読んだ",
+      "note": "3 マガジン目は 14 発目の後に的のジャンプの窓が入り、明けの 2 発目から▲あり（距離ボーナスなしの 0.77 → 0.89 倍）"
+    }
+  }
+]

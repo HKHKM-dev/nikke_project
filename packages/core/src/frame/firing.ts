@@ -22,6 +22,7 @@ export type FiringBuffs = Pick<
   | 'maxAmmoRatio'
   | 'maxAmmoFlat'
   | 'reloadSpeed'
+  | 'reloadRatio'
   | 'chargeSpeed'
   | 'attackSpeed'
   | 'spinUpSpeed'
@@ -35,6 +36,7 @@ export const ZERO_FIRING_BUFFS: Readonly<FiringBuffs> = Object.freeze({
   maxAmmoRatio: 0,
   maxAmmoFlat: 0,
   reloadSpeed: 0,
+  reloadRatio: 0,
   chargeSpeed: 0,
   attackSpeed: 0,
   spinUpSpeed: 0,
@@ -60,6 +62,11 @@ export type FiringParams = {
    * plan/design-sg-split-reload.md）
    */
   splitReload: boolean;
+  /**
+   * 分割リロードの 1 段で込める割合（CDN の reloadBullet）。グレイブ編（plan/design-grave.md 2.3 節。V-0735）: リロード比率で
+   * reloadBullet × max(0, 1 + Σ) にする（▼50% で 0.5 → 0.25）。段の弾数は reloadChunkAmmo。分割リロードでない武器（reloadBullet ≥ 1）は変えない
+   */
+  reloadBullet: number;
   /** チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない。チャージ速度はここにだけ効く） */
   chargeFrames: number;
   /** 射撃姿勢維持型のチャージ武器の姿勢（stanceFrames）。ほかの武器は null */
@@ -107,6 +114,7 @@ export function isZeroFiring(buffs: FiringBuffs): boolean {
     buffs.maxAmmoRatio === 0 &&
     buffs.maxAmmoFlat === 0 &&
     buffs.reloadSpeed === 0 &&
+    buffs.reloadRatio === 0 &&
     buffs.chargeSpeed === 0 &&
     buffs.attackSpeed === 0 &&
     buffs.spinUpSpeed === 0 &&
@@ -172,6 +180,10 @@ export function firingParams(
       reloadSecondsToFrames(speedScaledSeconds(shot.reloadTime, buffs.reloadSpeed)) +
       (stance === null ? 0 : model.stanceReloadExtraFrames),
     splitReload: shot.reloadBullet < 1,
+    reloadBullet:
+      shot.reloadBullet < 1 && buffs.reloadRatio !== 0
+        ? shot.reloadBullet * Math.max(0, 1 + buffs.reloadRatio)
+        : shot.reloadBullet,
     // max(0, …) は、0 秒のチャージで切り上げが −0 を出すのを 0 にそろえる
     chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
     stance,

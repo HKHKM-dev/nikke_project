@@ -52,7 +52,11 @@
 
 <!-- records:predictions:start -->
 
-（予測との比べの表は npm run records:check が書き込む）
+予測は 2026-11-11（commit eba5143）に出した。
+
+| 指標                | 実測         | 予測 model |
+| ------------------- | ------------ | ---------- |
+| hit-oi（hitDamage） | （実測なし） | 20,786.525 |
 
 <!-- records:predictions:end -->
 

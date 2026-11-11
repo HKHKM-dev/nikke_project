@@ -143,6 +143,7 @@ import {
 import {
   chargeTriggersOf,
   hasReloadEndEffect,
+  isEndedTrigger,
   isSummonAttackTrigger,
   isTimerTrigger,
   SKILL_SLOTS,
@@ -470,6 +471,9 @@ function runFirstPassOnce(
   // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 状態の付いた時から数える周期（since。currentHpDown）は、件の一覧の sinceFires
   // （counterChange と同じ数え方）で決める
   const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
+    // グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める
+    const t = effect.trigger;
+    if (isEndedTrigger(t)) return (ev) => lists.endedAt(sourceSlotIndex, t.ended, ev.frame);
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
     // 件の一覧（lists）は即時効果の後に作るので、最初の呼び出しで作る
     if (effect.trigger.since !== undefined) {

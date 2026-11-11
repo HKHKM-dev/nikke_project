@@ -652,7 +652,14 @@ function reloadsAt(result: SimResult, ctx: MetricContext): { segment: SimSlotSeg
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const changed = new Set(log.weaponChangeShotFrames ?? []);
   const reloads: number[] = [];
-  for (const last of log.lastShotFrames ?? []) {
+  // グレイブ編（V-0735）: 残弾数減少で残弾が 0 になって始めたリロードも、その前の最後の発から数える（装弾数無限の後の 100% 減少）
+  const slotIndex = slotIndexOf(ctx);
+  const drained = result.instants
+    .filter((i) => i.slotIndex === slotIndex && i.effect.kind === 'ammoDecrease' && i.amount < 0)
+    .map((i) => log.frames[lowerBound(log.frames, i.frame + 1) - 1])
+    .filter((f): f is number => f !== undefined);
+  const lasts = [...new Set([...(log.lastShotFrames ?? []), ...drained])].sort((x, y) => x - y);
+  for (const last of lasts) {
     if (last < segment.start || last >= segment.end || changed.has(last)) continue;
     const next = log.frames[lowerBound(log.frames, last) + 1];
     if (next === undefined || result.untargetable.some((w) => w.start <= next && last < w.end)) continue;
@@ -825,11 +832,19 @@ function buffPiecesOf(result: SimResult): ValuePiece[] {
   return valuePiecesOf(result.history).filter((p) => !isStateStat(p.effect.stat));
 }
 
-/** 枠（引数 slot）が受ける効果の小片のうち、引数 skill（スロット）と stat の効果のもの */
+/**
+ * 枠（引数 slot）が受ける効果の小片のうち、引数 skill（スロット）と stat の効果のもの。グレイブ編（V-0735）: 省略できる引数 effect（スロットの
+ * effects の添字）があれば、その効果（状態の付与なら、その付与の中身）だけ（同じスロット・stat の過熱I と過熱II を分ける）
+ */
 function buffPiecesFor(result: SimResult, ctx: MetricContext): ValuePiece[] {
   const slotIndex = slotIndexOf(ctx);
+  const effect = ctx.args.effect === undefined ? undefined : Number(ctx.args.effect);
   return buffPiecesOf(result).filter(
-    (w) => w.slotIndex === slotIndex && w.effect.source.skill === ctx.args.skill && w.effect.stat === ctx.args.stat,
+    (w) =>
+      w.slotIndex === slotIndex &&
+      w.effect.source.skill === ctx.args.skill &&
+      w.effect.stat === ctx.args.stat &&
+      (effect === undefined || w.effect.effectIndex === effect),
   );
 }
 
@@ -941,7 +956,10 @@ function mergedBuffWindows(result: SimResult, ctx: MetricContext): { start: numb
  * 付く窓を、録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（レシピ buff-edge の観測値の spread）と比べる。省略できる引数
  * ticks が true なら、動画のフレームでなくモデルのフレーム（ゲーム内のティック。止まりを足さない）の差。録画の側を timer.ts の
  * runs でティックに直して比べる（止まりの長さの回ごとの揺れ C-0069 を除く。backlog 2-56）。省略できる引数 held が true なら、発動の後に
- * 始まった窓でなく、その発動のフレームに効いている窓（発動で外れる▼の切れ目。V-0724）
+ * 始まった窓でなく、その発動のフレームに効いている窓（発動で外れる▼の切れ目。V-0724）。グレイブ編（V-0735）: 省略できる引数 fromShot が true
+ * なら、起点を発動の印でなく、その発動の効果の発火（effectFrameOf）以後の枠 from の最初の発の動画のフレームにする（発動と発の位相によらず、
+ * 「効果の乗った最初の発から N 発」で付く窓を比べる）。省略できる引数 originStat（と originEffect）があれば、起点を、同じ発動の後に始まった
+ * 同じ枠・スロットのその stat（と効果の添字）の窓の付き始めにする（過熱II の付き始めから過熱III の付き始めまで。間に止まりが入らない）
  */
 function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
   const edge = buffEdgeArg(ctx);
@@ -956,6 +974,24 @@ function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
       `枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動${held ? 'のフレームに効いている' : 'の後に始まった'}窓が無い`,
     );
   const at = edge === 'start' ? window.start : window.end;
+  if (ctx.args.originStat !== undefined) {
+    const originArgs = { stat: ctx.args.originStat, effect: ctx.args.originEffect };
+    const origin = mergedBuffWindows(result, withArgs(ctx, originArgs)).find(
+      (w) => span.from <= w.start && w.start < span.to,
+    );
+    if (origin === undefined)
+      throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の後に始まった起点の窓が無い`);
+    return ctx.args.ticks === true
+      ? at - origin.start
+      : videoFrameOf(result.schedule, at) - videoFrameOf(result.schedule, origin.start);
+  }
+  if (ctx.args.fromShot === true) {
+    const from = withArgs(ctx, { slot: ctx.args.from });
+    const activation = result.schedule?.activations.filter((a) => a.slotIndex === slotIndexOf(from))[Number(ctx.args.n)];
+    const shot = activation && slotOf(result.shots, from).frames.find((f) => f >= effectFrameOf(activation));
+    if (shot === undefined) throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の効果の後に発が無い`);
+    return ctx.args.ticks === true ? at - shot : videoFrameOf(result.schedule, at) - videoFrameOf(result.schedule, shot);
+  }
   return ctx.args.ticks === true ? at - span.origin : videoFrameOf(result.schedule, at) - span.base;
 }
 

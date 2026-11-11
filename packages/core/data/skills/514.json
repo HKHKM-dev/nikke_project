@@ -1,0 +1,211 @@
+{
+  "formatVersion": 1,
+  "resourceId": 514,
+  "checkedAt": "2026-11-11",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "ammoDecrease",
+          "trigger": {
+            "ended": "prediction"
+          },
+          "target": "self",
+          "ref": 1
+        },
+        {
+          "kind": "state",
+          "state": "heatEmission",
+          "trigger": {
+            "ended": "prediction"
+          },
+          "target": "self",
+          "durationUntil": "reloadEnd",
+          "contents": [
+            {
+              "stat": "reloadRatio",
+              "ref": 2,
+              "decrease": true
+            }
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 5,
+          "while": {
+            "selfState": "heatEmission"
+          },
+          "reads": [
+            "pierce"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "放熱の時に限り、味方全体に付くバーストゲージのチャージ速度 38.96%▲は定義しない。録画では、放熱の間の味方（プロダクト08・アリス）の通常攻撃 1 発で溜まるゲージが、放熱の外と同じだった",
+          "en": "The Burst Gauge filling speed up 38.96% for all allies while in Heat Emission is not defined. In the recordings, the gauge charged by one normal attack of an ally (Product 08, Alice) during Heat Emission was the same as outside it",
+          "kind": "modeling",
+          "effect": {
+            "kind": "passive",
+            "stat": "burstGaugeSpeed",
+            "target": "allies"
+          }
+        },
+        {
+          "ja": "放熱の時に限り、自分に最終最大HP の 2% を 1 秒ごとに回復するのは、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "The heal of 2% of final max HP on self every second while in Heat Emission does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "overheatI",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 1
+          },
+          "target": "self",
+          "durationUntil": "reloadEnd",
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 2
+            }
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "overheatII",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 3,
+            "during": {
+              "state": "prediction"
+            }
+          },
+          "target": "self",
+          "condition": {
+            "selfState": "overheatI"
+          },
+          "durationUntil": {
+            "stateEnd": "prediction"
+          },
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 4
+            }
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "overheatIII",
+          "trigger": {
+            "count": "normalHit",
+            "everyRef": 5,
+            "during": {
+              "state": "prediction"
+            }
+          },
+          "target": "self",
+          "condition": {
+            "selfState": "overheatII"
+          },
+          "durationUntil": {
+            "stateEnd": "prediction"
+          },
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 6
+            }
+          ]
+        }
+      ],
+      "notes": []
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "prediction",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationSeconds": 10
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "infiniteAmmo",
+          "durationSeconds": 10
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "pierce",
+          "durationSeconds": 10
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "pierceDamage",
+          "ref": 2,
+          "durationSeconds": 10
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 6,
+          "durationSeconds": 10
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 3,
+          "durationSeconds": 10
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 4,
+          "durationSeconds": 10,
+          "reads": [
+            "pierce"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstUse",
+          "target": "allies",
+          "stat": "maxAmmo",
+          "scaling": "flat",
+          "ref": 5,
+          "durationSeconds": 10
+        }
+      ],
+      "notes": [
+        {
+          "ja": "完全計算の、自分の現在の HP 1%▼（1 秒間隔・10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。グレイブに HP を読む効果は無く、S1 の放熱の回復で戻る）",
+          "en": "Prediction's Current HP down 1% on self every second for 10 sec does not change damage by itself (it matters only with an effect reading HP in the team; Grave has no effect reading HP, and S1's Heat Emission heal restores it)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}

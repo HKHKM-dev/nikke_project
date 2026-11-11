@@ -80,6 +80,7 @@ import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from 
 import { namedStateIsDebuff, stateMatches, statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
+  advanceShotCount,
   createTriggerTracker,
   fireContextOf,
   burstStepHolds,
@@ -96,6 +97,7 @@ import {
   conditionReadsItems,
   isEndedTrigger,
   isMaxHpStat,
+  isStateCountWindow,
   isCounterFullTrigger,
   isAllyDecrease,
   isEnemyHeldStat,
@@ -108,6 +110,7 @@ import {
   type EdgeShift,
   type EffectCondition,
   type SelfHpCondition,
+  type StateCountWindow,
   type TimerTrigger,
 } from './types.ts';
 import type { SkillSlot } from '../types.ts';
@@ -538,6 +541,11 @@ export type HolderLists = {
    */
   sinceFires(trigger: TimerTrigger, slotIndex: number): TriggerTracker;
   /**
+   * グレイブ編（plan/design-grave.md 2.1 節）: 枠 holder の自分の状態 state の件（段によらない）が、フレーム frame に外れたか（{ ended } の発火。
+   * counterChange と同じ）。1 パス目が { ended } の ammoDecrease の発火に、件の登録（registerFrame）の後に呼ぶ
+   */
+  endedAt(holder: number, state: NamedStateId, frame: number): boolean;
+  /**
    * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
    * 静的な状態は 1、無ければ 0）。frame/plan.ts の damage の perCount { state } と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
    * ヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
@@ -630,7 +638,17 @@ function stateItems(
   frames: number,
   decreases: readonly StackDecrease[] = [],
   maxStacksAt?: MaxStacksAt,
+  reloadEnds: readonly number[] = [],
+  untilEnds: readonly number[] = [],
 ): HeldItem[] {
+  // グレイブ編（plan/design-grave.md 2.2・2.5 節）: 持ち主の最大装弾数のリロード完了まで（timed の reloadEnd と同じ）と、ほかの状態の終わりまで
+  // （件の列の untilEnds。register が見る状態の件の外れたフレームを足す）。どちらもスタックしない
+  if (grant.durationUntil === 'reloadEnd') return itemsOfPairs(untilNextEndItems(starts, reloadEnds, frames));
+  // 見る状態の最後の発で付いた件（始まりが見る状態の終わりと同じフレーム）は、付いた時に見る状態が無いので付けない
+  if (grant.untilStateEnd !== undefined) {
+    const live = starts.filter((start) => !untilEnds.includes(start));
+    return itemsOfPairs(untilNextEndItems(live, untilEnds, frames));
+  }
   if (grant.durationShots !== undefined) {
     return itemsOfPairs(shotCountItems(starts, shotFrames, grant.durationShots, frames));
   }
@@ -873,13 +891,18 @@ function trackReadsOf(origin: HeldOrigin): TrackReads {
     reads.shots = true;
     return reads;
   }
-  // 尽くす（durationUntil が足されたら型検査で落ちる）。状態の件は fullBurstEnd のほかを読まない（stateItems）
+  // グレイブ編: ほかの状態の終わりまで続く状態の件（durationUntil は battleEnd に解いてある）は、件の列の untilEnds を読む
+  if (origin.kind === 'state' && origin.grant.untilStateEnd !== undefined) {
+    reads.untilEnds = true;
+    return reads;
+  }
+  // 尽くす（durationUntil が足されたら型検査で落ちる）。状態の件は fullBurstEnd・reloadEnd のほかを読まない（stateItems）
   switch (durationUntil) {
     case 'ammoSpent':
       reads.weaponChangeEnds = true;
       break;
     case 'reloadEnd':
-      reads.reloadEnds = origin.kind === 'timed';
+      reads.reloadEnds = true;
       break;
     case 'fullBurstEnd':
       reads.fullBurstWindows = true;
@@ -958,7 +981,18 @@ function buildTrackItems(
       const items = closedStateItems(
         track.starts,
         track.closes,
-        (starts, decreases) => stateItems(o.grant, starts, log?.frames ?? [], ends, frames, decreases, maxStacksAt),
+        (starts, decreases) =>
+          stateItems(
+            o.grant,
+            starts,
+            log?.frames ?? [],
+            ends,
+            frames,
+            decreases,
+            maxStacksAt,
+            log?.reloadEnds ?? [],
+            track.untilEnds ?? [],
+          ),
         track.consumes,
         track.decreases,
       );
@@ -1014,7 +1048,12 @@ function compareKeys(a: readonly number[], b: readonly number[]): number {
 /** 出どころ × 状態ごとに、時間で変わる状態の付与をまとめる（段 A までの stateGroupsOf と同じ。静的な付与は常時パッシブ） */
 function stateGroupsOf(
   slots: readonly TimelineSlot[],
-  firesOf: (trigger: ResolvedTrigger, slotIndex: number) => TriggerTracker,
+  firesOf: (
+    trigger: ResolvedTrigger,
+    slotIndex: number,
+    everyAt?: ShotCountEveryAt,
+    condition?: EffectCondition,
+  ) => TriggerTracker,
   appliedStageOf: (state: NamedStateId) => HeldStage,
 ): StateGroup[] {
   const groups: StateGroup[] = [];
@@ -1040,7 +1079,12 @@ function stateGroupsOf(
       const stage: HeldStage = isResolvedApplied(grant.trigger)
         ? appliedStageOf(grant.trigger.applied)
         : stageOfGrant(grant);
-      group.grants.push({ grant, stage, fires: firesOf(grant.trigger, sourceSlotIndex), group });
+      group.grants.push({
+        grant,
+        stage,
+        fires: firesOf(grant.trigger, sourceSlotIndex, undefined, grant.condition),
+        group,
+      });
       if (STAGE_RANK[stage] > STAGE_RANK[group.stage]) group.stage = stage;
     }
   });
@@ -1193,7 +1237,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     return state.dropped;
   };
-  const firesOf = (trigger: ResolvedTrigger, slotIndex: number, everyAt?: ShotCountEveryAt): TriggerTracker => {
+  const firesOf = (
+    trigger: ResolvedTrigger,
+    slotIndex: number,
+    everyAt?: ShotCountEveryAt,
+    /** グレイブ編: 自分の状態の窓で数える回数は、効果の条件を満たす発だけを数える（付与の条件。stateWindowFires） */
+    condition?: EffectCondition,
+  ): TriggerTracker => {
     // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
     // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値以下に下がったフレーム（上がったフレームは窓の終わりに書く）
@@ -1205,6 +1255,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (isCounterFullTrigger(trigger)) {
       const key = counterKey(slotIndex, trigger.counterFull);
       return (ev) => counterFullAt.get(key) === ev.frame;
+    }
+    // グレイブ編（plan/design-grave.md 2.1 節）: 自分のその状態の件が外れた最初のフレーム（counterChange の { ended } と同じ endedAt）
+    if (isEndedTrigger(trigger)) {
+      const state = trigger.ended;
+      return (ev) => endedAt(slotIndex, state, ev.frame);
+    }
+    // 同 2.4 節: 自分の状態の間だけ数える回数（状態が付くたびに 0 から数え直す）
+    // （stateWindowFires は件の一覧の後に作るので、最初の呼び出しで作る）
+    if (isResolvedShotCount(trigger) && isStateCountWindow(trigger.during)) {
+      let fires: TriggerTracker | undefined;
+      return (ev) => (fires ??= stateWindowFires(trigger, slotIndex, condition))(ev);
     }
     if (!isResolvedTimer(trigger)) return createTriggerTracker(trigger, slotIndex, options.scheduleModel, everyAt);
     const at = new Set(timerFramesOf(trigger, frames));
@@ -1463,6 +1524,45 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return (ev) => {
       const start = lastAtOrBefore(ownAppliedOf(slotIndex, state), ev.frame);
       return start !== undefined && offsets.has(ev.frame - start) && ownStateActive(slotIndex, state, ev.frame);
+    };
+  };
+  /**
+   * グレイブ編（plan/design-grave.md 2.4 節。V-0735）: 自分の状態の間だけ数える回数のきっかけ（during: { state }）。その状態の件が効いていて、
+   * 効果の条件（付与の condition。「完全計算かつ過熱I 状態の時に限り」の過熱I。その発で付いた分も入れる）を満たす発だけを数え、件が新しく始まったら 0 から数え直す
+   * （付き直しで件が続いている間は数え直さない）。N の倍数に届いた発で発火する（回数の量は triggers.ts と同じ）
+   */
+  const stateWindowFires = (
+    trigger: ResolvedShotCountTrigger,
+    slotIndex: number,
+    condition: EffectCondition | undefined,
+  ): TriggerTracker => {
+    const state = (trigger.during as StateCountWindow).state;
+    let count = 0;
+    let from: number | undefined;
+    return (ev) => {
+      const shot = ev.shots[slotIndex];
+      if (!shot) return false;
+      let start: number | undefined;
+      for (const t of stateTracks[slotIndex]?.get(state) ?? [])
+        for (const it of activeAt(t, ev.frame)) start = start === undefined ? it.start : Math.min(start, it.start);
+      if (start === undefined) return false;
+      if (start !== from) {
+        from = start;
+        count = 0;
+      }
+      // その発で付いた状態（同じ発の回数のきっかけで前に書いた付与。件は次のフレームから）も条件に入れる（V-0735: 過熱I を付けた発も
+      // 過熱II の回数に、過熱II を付けた発も過熱III の回数に数える）
+      // （条件は自分の状態があるかだけ。skills/parse/state.ts。段 1.5 の件も、そのフレームに付いた件を見る）
+      const self = condition?.selfState;
+      if (
+        self !== undefined &&
+        !ownStateActive(slotIndex, self.state, ev.frame) &&
+        !ownStateActive(slotIndex, self.state, ev.frame + 1)
+      )
+        return false;
+      const next = advanceShotCount(count, shotCountWeight(trigger.count, shot), trigger.every);
+      count = next.count;
+      return next.fired;
     };
   };
   const counterSources: CounterSource[] = [];
@@ -1793,6 +1893,22 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const counterEmptyTracks = new Map<string, HeldTrack[]>();
   /** A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値 */
   const selfHpUntilTracks: { track: HeldTrack; threshold: number }[] = [];
+  /**
+   * グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりで閉じる自分の状態の件の列（付与の untilStateEnd）と、見る状態。件の列は最初の
+   * 発火で作るので、登録のたびに新しい列を足す（stateEndTracksSeen まで見た）
+   */
+  const stateEndTracks: { track: HeldTrack; state: NamedStateId; ends: number[] }[] = [];
+  let stateEndTracksSeen = 0;
+  const watchStateEnds = (): void => {
+    for (; stateEndTracksSeen < tracks.length; stateEndTracksSeen++) {
+      const track = tracks[stateEndTracksSeen]!;
+      const o = track.origin;
+      if (o.kind !== 'state' || o.grant.untilStateEnd === undefined) continue;
+      const ends: number[] = [];
+      track.untilEnds = ends;
+      stateEndTracks.push({ track, state: o.grant.untilStateEnd, ends });
+    }
+  };
   for (const track of tracks) {
     const o = track.origin;
     if (o.kind !== 'state') continue;
@@ -2490,6 +2606,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // HP の割合を時間で読む編: このフレームの HP の割合の while の可否（このフレームのどの登録よりも先）
     updateHpAtLeast(f);
     const from = appliedFrom;
+    // グレイブ編（plan/design-grave.md 2.5 節）: 見る状態の持ち主の件が f に外れたら、f を窓の終わりに足す（f には付いていない）
+    watchStateEnds();
+    if (!battleStartOnly)
+      for (const { track, state, ends } of stateEndTracks)
+        if (ends.at(-1) !== f && endedAt(track.holder, state, f)) ends.push(f);
     // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
     if (!battleStartOnly)
@@ -2868,6 +2989,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     },
     stateHeldAt: ownStateActive,
     sinceFires,
+    endedAt,
     selfStackCountAt,
     enemyStateAt,
     instantConditionHolds(effect, sourceSlotIndex, frame) {
