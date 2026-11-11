@@ -451,7 +451,7 @@ describe('デバフ解除（removeDebuff）', () => {
   });
 
   // 外れない件で枠を使わない（plan/design-debuff-removal.md 2.2 節）: 効くフレームに付いた件の列（付与が勝つ）と、同じフレームに別の解除が
-  // 閉じた件の列は、候補にしない
+  // 閉じた件の列は、外す候補にしない。選び方の注記は、付いているデバフ全部で決める（ゲームはそこから選ぶ）
 
   it('does not spend the random N on an ally whose state is applied on the removal frame', () => {
     const history = runEvents(
@@ -460,7 +460,7 @@ describe('デバフ解除（removeDebuff）', () => {
     );
     expect(drunkenOf(history, 1)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
     expect(drunkenOf(history, 0)).toEqual([{ start: AT, end: AT + D10, stack: 1 }]);
-    expect(history.removeDebuffGuesses).toEqual([]);
+    expect(history.removeDebuffGuesses).toEqual([expect.objectContaining({ frame: AT, guess: 'targets', limit: 1 })]);
   });
 
   it('does not spend the random N on an ally whose decrease is applied on the removal frame', () => {
@@ -470,7 +470,7 @@ describe('デバフ解除（removeDebuff）', () => {
     );
     expect(timedOf(history, 1, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + 1 }]);
     expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: AT, end: AT + D10 }]);
-    expect(history.removeDebuffGuesses).toEqual([]);
+    expect(history.removeDebuffGuesses).toEqual([expect.objectContaining({ frame: AT, guess: 'targets', limit: 1 })]);
   });
 
   it('does not spend the random N on an ally whose stacks rise on the removal frame after the removal step', () => {
@@ -490,8 +490,12 @@ describe('デバフ解除（removeDebuff）', () => {
       { [T - 100]: { fullBurstEnd: true }, [AT]: { fullBurstStart: true } },
     );
     expect(drunkenOf(history, 1)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
-    expect(drunkenOf(history, 0).every((it) => it.end > AT + 1)).toBe(true);
-    expect(history.removeDebuffGuesses).toEqual([]);
+    // 枠 1 は外れず、増えた段で付き直す
+    expect(drunkenOf(history, 0)).toEqual([
+      { start: T - 100, end: AT + D10, stack: 1 },
+      { start: AT, end: AT + D10, stack: 2 },
+    ]);
+    expect(history.removeDebuffGuesses).toEqual([expect.objectContaining({ frame: AT, guess: 'targets', limit: 1 })]);
   });
 
   it('removes another debuff when the earliest one is applied again on the removal frame', () => {
@@ -502,7 +506,7 @@ describe('デバフ解除（removeDebuff）', () => {
     });
     expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: T - 200, end: AT + D10 }]);
     expect(drunkenOf(history, 0)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
-    expect(history.removeDebuffGuesses).toEqual([]);
+    expect(history.removeDebuffGuesses).toEqual([expect.objectContaining({ frame: AT, guess: 'states', limit: 1 })]);
   });
 
   it('does not pick a debuff another removal closed on the same frame', () => {

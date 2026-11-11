@@ -2121,22 +2121,25 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       return [...byState.values(), ...allyDecreases];
     });
-    // 持ち主ごとに、at に効いていてこの解除で外れるデバフと、その最も早い始まり。閉じても付与が勝つ件の列と、at に別の解除が閉じた件の列は
-    // 候補にしない（外れない件で N 機・count 個の枠を使わない。plan/design-debuff-removal.md 2.2 節）
-    const held = debuffTracks.map((debuffs) =>
-      debuffs.flatMap((ts) => {
-        const starts = ts.flatMap((t) =>
-          closeTakesEffect(t.starts, at) && !t.closes.includes(at) ? activeAt(t, at).map((it) => it.start) : [],
-        );
-        return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
-      }),
-    );
+    // 持ち主ごとに、at に効いているデバフと、その最も早い始まり。at に別の解除が閉じた件の列はもう外れているので数えない。removable は
+    // そのうちこの解除で外れるもの（閉じても付与が勝つ件の列と、閉じるフレームを読まない確率の件の列を除く）。外すのは removable から選び
+    // （外れない件で N 機・count 個の枠を使わない）、選び方を確かめていない所の注記は、ゲームが選ぶ元の、付いているデバフ全部で決める
+    // （plan/design-debuff-removal.md 2.2 節）
+    const heldOf = (removable: boolean) =>
+      debuffTracks!.map((debuffs) =>
+        debuffs.flatMap((ts) => {
+          const starts = ts.flatMap((t) =>
+            t.closes.includes(at) || (removable && (!closeTakesEffect(t.starts, at) || t.opportunities !== null))
+              ? []
+              : activeAt(t, at).map((it) => it.start),
+          );
+          return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
+        }),
+      );
     const { effect } = src;
-    const { chosen, guesses } = pickRemoveDebuff(
-      held,
-      effect.count,
-      effect.target === 'debuffedRandom' ? effect.pick : undefined,
-    );
+    const pick = effect.target === 'debuffedRandom' ? effect.pick : undefined;
+    const { chosen } = pickRemoveDebuff(heldOf(true), effect.count, pick);
+    const { guesses } = pickRemoveDebuff(heldOf(false), effect.count, pick);
     for (const ts of chosen) for (const track of ts) closeTrack(track, at);
     for (const guess of guesses) {
       removeDebuffGuesses.push({
