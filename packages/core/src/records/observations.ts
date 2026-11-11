@@ -940,15 +940,21 @@ function mergedBuffWindows(result: SimResult, ctx: MetricContext): { start: numb
  * 付き始め（edge: start）か切れ目（edge: end）までの動画のフレーム数。続いた小片は 1 つの窓にまとめる。味方の発動のきっかけで
  * 付く窓を、録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（レシピ buff-edge の観測値の spread）と比べる。省略できる引数
  * ticks が true なら、動画のフレームでなくモデルのフレーム（ゲーム内のティック。止まりを足さない）の差。録画の側を timer.ts の
- * runs でティックに直して比べる（止まりの長さの回ごとの揺れ C-0069 を除く。backlog 2-56）
+ * runs でティックに直して比べる（止まりの長さの回ごとの揺れ C-0069 を除く。backlog 2-56）。省略できる引数 held が true なら、発動の後に
+ * 始まった窓でなく、その発動のフレームに効いている窓（発動で外れる▼の切れ目。V-0724）
  */
 function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
   const edge = buffEdgeArg(ctx);
   // 発動の印（base）と、その発動から次の発動まで（from〜to）は枠 from のもの
   const span = spanOf(result, withArgs(ctx, { slot: ctx.args.from }), `activation:${String(ctx.args.n)}`, 'untilNext');
-  const window = mergedBuffWindows(result, ctx).find((w) => span.from <= w.start && w.start < span.to);
+  const held = ctx.args.held === true;
+  const window = mergedBuffWindows(result, ctx).find((w) =>
+    held ? w.start <= span.from && span.from < w.end : span.from <= w.start && w.start < span.to,
+  );
   if (window === undefined)
-    throw new Error(`枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動の後に始まった窓が無い`);
+    throw new Error(
+      `枠 ${String(ctx.args.from)} の ${String(ctx.args.n)} 回目の発動${held ? 'のフレームに効いている' : 'の後に始まった'}窓が無い`,
+    );
   const at = edge === 'start' ? window.start : window.end;
   return ctx.args.ticks === true ? at - span.origin : videoFrameOf(result.schedule, at) - span.base;
 }

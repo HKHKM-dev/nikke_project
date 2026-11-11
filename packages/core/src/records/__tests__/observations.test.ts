@@ -655,6 +655,12 @@ describe('照合の部品', () => {
     expect(value({ ...args, n: 0, edge: 'start', ticks: true })).toBe(100 - 105);
     expect(value({ ...args, n: 0, edge: 'end', ticks: true })).toBe(1570 - 105);
     expect(value({ ...args, n: 1, edge: 'start', ticks: true })).toBe(2003 - 2005);
+    // V-0724: held は、発動のフレームに効いている窓（発動の前に始まった窓）の端
+    expect(value({ ...args, n: 0, edge: 'end', held: true, ticks: true })).toBe(1570 - 105);
+    expect(value({ ...args, n: 0, edge: 'start', held: true, ticks: true })).toBe(100 - 105);
+    expect(() => value({ ...args, n: 1, edge: 'end', held: true })).toThrow(
+      '1 回目の発動のフレームに効いている窓が無い',
+    );
   });
 
   it('buffWindowEnds with count gives the first count ends, sorted and without repeats (V-0678)', () => {
