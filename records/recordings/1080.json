@@ -1,0 +1,47 @@
+{
+  "id": "1080",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1080_pierce_redhood_guren-k_fire.mp4",
+  "original": "2026-11-11_23-59-03.mp4",
+  "durationSec": 200.8,
+  "frames": 12047,
+  "fps": 60,
+  "sizeMB": 243.7,
+  "sha256": "c01146113afe",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 470,
+      "name": "レッドフード",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 472,
+      "name": "紅蓮：神殺",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T00:19+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

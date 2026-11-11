@@ -1,0 +1,46 @@
+{
+  "id": "1079",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1079_pierce_dorothy_snowwhite-ha_iron.mp4",
+  "original": "2026-11-11_23-55-16.mp4",
+  "durationSec": 200.4,
+  "frames": 12026,
+  "fps": 60,
+  "sizeMB": 243.4,
+  "sha256": "91e963337d15",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 233,
+      "name": "ドロシー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 315,
+      "name": "エード：エージェントバニー",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 471,
+      "name": "スノーホワイト：ヘビーアームズ",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Iron"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T00:19+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

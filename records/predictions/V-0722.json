@@ -1,0 +1,829 @@
+{
+  "verification": "V-0722",
+  "note": "撮影 A〜E は編成が違うので、指標ごとに team を書く。仮説 H1 は 9 件の貫通特化（検証記録の「条件」の表）を定義に書いたもの（読んだ後に定義に入れたので、いまの定義）、H0 はそれを外した定義（貫通特化は計算に入らない）。発の番号はモデルの発で、録画では同じ区間の発と比べる",
+  "team": [
+    {
+      "rid": 390,
+      "treasurePhase": 3
+    },
+    {
+      "rid": 450
+    },
+    {
+      "rid": 830,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1",
+      "note": "9 件の貫通特化を、説明文のきっかけと維持の pierce で書く",
+      "override": {}
+    },
+    {
+      "id": "H0",
+      "note": "貫通特化を計算に入れない（9 件を外した定義）",
+      "override": {
+        "dropEffects": [
+          {
+            "rid": 191,
+            "skill": "skill2",
+            "index": 0
+          },
+          {
+            "rid": 233,
+            "skill": "burst",
+            "index": 1
+          },
+          {
+            "rid": 261,
+            "skill": "skill1",
+            "index": 0
+          },
+          {
+            "rid": 450,
+            "skill": "burst",
+            "index": 2
+          },
+          {
+            "rid": 470,
+            "skill": "skill2",
+            "index": 1
+          },
+          {
+            "rid": 471,
+            "skill": "skill2",
+            "index": 5
+          },
+          {
+            "rid": 472,
+            "skill": "skill1",
+            "index": 5
+          },
+          {
+            "rid": 830,
+            "skill": "burst",
+            "index": 3
+          }
+        ],
+        "addEffects": [
+          {
+            "rid": 103,
+            "skill": "skill1",
+            "replace": 2,
+            "effect": {
+              "kind": "weaponChange",
+              "trigger": {
+                "fullStack": "warmUp"
+              },
+              "damageRef": 5,
+              "maxAmmoRef": 6,
+              "rateOfFire": 1440,
+              "instantFire": true,
+              "firstShotDelayFrames": 25,
+              "assumes": {
+                "ja": "変更後の武器の形は CDN に無いので録画で読んだ（V-0528）: 即着弾でチャージしない・1440rpm・満タン（最大装弾数）で始まり撃ち切りで終わる・最初の発はフルスタックになった 5 発目の 27f 後（窓が射手に見えるフレームから 25f）。コア命中率は的の表の coreHitRate.weaponChanges の行。変更後の武器の発のバーストゲージは確かめていない（モデルは変更前の武器の 1 発の量で、フルチャージ倍率は掛けない。2026-10-27 のオーナー決定）。追加効果「貫通特化」は weaponChange の pierce（C-1069 の形）で、変更後の発に味方の貫通ダメージ▲が乗る。変更後の武器は即着弾で発射体を持たず、味方の発射体爆発ダメージ▲は変更後の発に乗らない（C-0836。変更前の武器の発には乗る）",
+                "en": "The changed weapon is not in CDN, so it was read from recordings (V-0528): instant hit, no charge, 1440 rpm, starts with a full magazine and ends when empty, first shot 27 f after the fifth shot. Core hit rate from the target table row coreHitRate.weaponChanges. Burst gauge per changed shot is unverified (the model uses one base weapon shot without the full-charge multiplier). The additional effect \"Pierce\" is the weaponChange pierce (as C-1069), so allies' Pierce Damage increases apply to the changed shots. The changed weapon hits instantly and has no projectile; an ally’s Projectile Explosion Damage up does not apply to the changed shots (C-0836; it does apply to the base weapon shots)"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "A-naga-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 12,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 450
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のフルバーストの中のナガの 1 ペレット（ナガのバーストの 10 秒・ツバイの貫通学概論と S1 の▲）"
+    },
+    {
+      "id": "A-naga-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 25,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 450
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 A: ナガのバーストの 10 秒の後（ツバイの▲なし）の 1 ペレット。仮説で変わらない"
+    },
+    {
+      "id": "A-asuka-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 100,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 450
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: 1 回目のフルバーストの中のアスカの 1 発（アスカのバーストの貫通特化・ツバイの▲）"
+    },
+    {
+      "id": "A-asuka-21s",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 210,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 450
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 A: アスカのバーストから 21〜25 秒（2 回目のツバイの貫通学概論の中）。H1 は 25 秒の貫通特化で▲が乗る"
+    },
+    {
+      "id": "A-asuka-27s",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 221,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 450
+        },
+        {
+          "rid": 830,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 A: アスカのバーストから 25 秒の後（ツバイの貫通学概論はまだ効いている）。仮説で変わらない"
+    },
+    {
+      "id": "B-nihilister-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 10,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 261
+        },
+        {
+          "rid": 191,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの中のニヒリスターの 1 発"
+    },
+    {
+      "id": "B-nihilister-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 15,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 261
+        },
+        {
+          "rid": 191,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 B: ツバイの▲の窓の外のニヒリスターの 1 発。仮説で変わらない"
+    },
+    {
+      "id": "B-alice-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 14,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 261
+        },
+        {
+          "rid": 191,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 B: 1 回目のフルバーストの中のアリスの 1 発"
+    },
+    {
+      "id": "B-alice-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 17,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 261
+        },
+        {
+          "rid": 191,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 B: ツバイの▲の窓の外のアリスの 1 発。仮説で変わらない"
+    },
+    {
+      "id": "C-dorothy-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 134,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 233
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 471,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: ドロシーのバーストの 10 秒の中の 1 発（エード：EB の▲）"
+    },
+    {
+      "id": "C-dorothy-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 140,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 233
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 471,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 C: ドロシーのバーストの 10 秒の後（エード：EB の S2 の▲はまだ効いている）。仮説で変わらない"
+    },
+    {
+      "id": "C-swha-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 22,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 233
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 471,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 C: エード：EB の S2 の▲の中のスノーホワイト：HA の 1 発"
+    },
+    {
+      "id": "C-swha-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 23,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 233
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 471,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-iron",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 C: エード：EB の▲の外のスノーホワイト：HA の 1 発。仮説で変わらない"
+    },
+    {
+      "id": "D-redhood-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 34,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 470
+        },
+        {
+          "rid": 472,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 D: 1 回目のフルバーストの中のレッドフードの 1 発"
+    },
+    {
+      "id": "D-redhood-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 2,
+        "shot": 38,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 470
+        },
+        {
+          "rid": 472,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 D: ツバイの▲の窓の外のレッドフードの 1 発。仮説で変わらない"
+    },
+    {
+      "id": "D-guren-in",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 20,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 470
+        },
+        {
+          "rid": 472,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 D: 1 回目のフルバーストの中の紅蓮：神殺の 1 発（変更前の武器）"
+    },
+    {
+      "id": "D-guren-weapon",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 65,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 470
+        },
+        {
+          "rid": 472,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 D: 2 回目のフルバーストの中の紅蓮：神殺の花無十一日紅・満開（使用武器変更）の 1 発"
+    },
+    {
+      "id": "D-guren-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 23,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 470
+        },
+        {
+          "rid": 472,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 D: ツバイの▲の窓の外の紅蓮：神殺の 1 発。仮説で変わらない"
+    },
+    {
+      "id": "E-laplace-weapon",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 200,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 103,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "note": "撮影 E: ツバイかエード：EB の▲の中の、ラプラス：UH の持ち替えた武器の 1 発"
+    },
+    {
+      "id": "E-laplace-weapon-out",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 597,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 103,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 E: ▲の外の、ラプラス：UH の持ち替えた武器の 1 発。仮説で変わらない"
+    },
+    {
+      "id": "E-laplace-base",
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 3,
+        "shot": 2,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "team": [
+        {
+          "rid": 390,
+          "treasurePhase": 3
+        },
+        {
+          "rid": 315
+        },
+        {
+          "rid": 103,
+          "controlled": true
+        }
+      ],
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "note": "撮影 E: 持ち替える前の武器の 1 発。仮説で変わらない"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-11",
+    "commit": "81a8b878337991b72843ebc572c3a0951737e6ef",
+    "values": {
+      "H1": {
+        "A-naga-in": 95068.97633280001,
+        "A-naga-out": 40888.32000000001,
+        "A-asuka-in": 472421.5623233223,
+        "A-asuka-21s": 142035.59459526563,
+        "A-asuka-27s": 61234.286152479996,
+        "B-nihilister-in": 856321.1899496639,
+        "B-nihilister-out": 416290.488,
+        "B-alice-in": 1546832.4313245297,
+        "B-alice-out": 578950.1088,
+        "C-dorothy-in": 75492.18044051777,
+        "C-dorothy-out": 63773.266798332006,
+        "C-swha-in": 818764.2657037185,
+        "C-swha-out": 637122.984968,
+        "D-redhood-in": 1006075.0710432295,
+        "D-redhood-out": 416290.488,
+        "D-guren-in": 519151.30913159996,
+        "D-guren-weapon": 2106773.7271,
+        "D-guren-out": 259445.9316,
+        "E-laplace-weapon": 54715.1045364,
+        "E-laplace-weapon-out": 44392.698,
+        "E-laplace-base": 28675.25
+      },
+      "H0": {
+        "A-naga-in": 59388.41600000001,
+        "A-naga-out": 40888.32000000001,
+        "A-asuka-in": 414282.2131775804,
+        "A-asuka-21s": 113601.21138548001,
+        "A-asuka-27s": 61234.286152479996,
+        "B-nihilister-in": 534933.27708,
+        "B-nihilister-out": 416290.488,
+        "B-alice-in": 1145377.5870599998,
+        "B-alice-out": 578950.1088,
+        "C-dorothy-in": 63773.266798332006,
+        "C-dorothy-out": 63773.266798332006,
+        "C-swha-in": 691757.5749440001,
+        "C-swha-out": 637122.984968,
+        "D-redhood-in": 914115.0927159999,
+        "D-redhood-out": 416290.488,
+        "D-guren-in": 324307.4145,
+        "D-guren-weapon": 1648301.6700000002,
+        "D-guren-out": 259445.9316,
+        "E-laplace-weapon": 46227.699,
+        "E-laplace-weapon-out": 44392.698,
+        "E-laplace-base": 28675.25
+      }
+    }
+  }
+}

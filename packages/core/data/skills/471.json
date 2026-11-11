@@ -238,25 +238,25 @@
           "claims": [
             "C-0760"
           ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "chargeFull": true
+          },
+          "target": "self",
+          "stat": "pierce",
+          "durationRef": 2,
+          "assumes": {
+            "ja": "「フルチャージした時」は溜めが満ちたフレーム（effects[1] と同じ）で、その溜めの発自身にも付く。オート射撃では発の間隔が 5 秒より短いので、どの発にも付く。5 秒の切れ目と、戦闘の最初の発に付くかは確かめていない",
+            "en": "\"On full charge\" is the frame the charge fills (as effects[1]), so it applies to the shot of that charge too. With auto fire the shot interval is under 5 s, so every shot has it. The 5 s end and the first shot of the battle are not verified"
+          },
+          "claims": [
+            "C-1094"
+          ]
         }
       ],
       "notes": [
-        {
-          "ja": "フルチャージした時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
-          "en": "Pierce on full charge does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
-          "kind": "indirect",
-          "path": "pierce",
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "chargeFull"
-          },
-          "claims": [
-            "C-0443",
-            "C-1031"
-          ]
-        },
         {
           "ja": "フルチャージした時のパーツダメージ▲は、パーツの無い射撃場の的ではダメージに関係しない（要件 5.2 節）",
           "en": "The parts damage increase on full charge does not affect damage against a range target without parts (requirements 5.2)",

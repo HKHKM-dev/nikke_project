@@ -1,0 +1,47 @@
+{
+  "id": "1076",
+  "date": "2026-11-11",
+  "folder": "range",
+  "file": "20261111-1076_pierce_nihilister_alice_fire.mp4",
+  "original": "2026-11-11_23-44-42.mp4",
+  "durationSec": 202.1,
+  "frames": 12124,
+  "fps": 60,
+  "sizeMB": 245.2,
+  "sha256": "eaa030b71f40",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 390,
+      "name": "ツバイ",
+      "controlled": false,
+      "treasurePhase": 3
+    },
+    {
+      "slot": 2,
+      "rid": 261,
+      "name": "ニヒリスター",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 191,
+      "name": "アリス",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T00:16+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

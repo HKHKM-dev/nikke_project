@@ -4,21 +4,25 @@
   "checkedAt": "2026-09-28",
   "skills": {
     "skill1": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "フルチャージ攻撃時の貫通特化は、それ自体は与ダメージを変えない（貫通ダメージ▲のある編成でだけ効く。敵 1 体の的でも、貫通特化の発に乗る）",
-          "en": "Pierce after a Full Charge attack does not change damage by itself (it matters only with a Pierce Damage increase in the team; against a single enemy too, it applies to the shots with Pierce)",
-          "kind": "indirect",
-          "path": "pierce",
-          "effect": {
-            "kind": "unknown"
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "self",
+          "stat": "pierce",
+          "durationShotsRef": 1,
+          "assumes": {
+            "ja": "フルチャージの発の次の 1 発に付く（D：キラーワイフの S1 と同じ読み。C-1080）。オート射撃ではどの発もフルチャージなので、戦闘の最初の発のほかはいつも付く。付けた発自身に付くかは確かめていない",
+            "en": "Applies to the next shot after a Full Charge shot (same reading as D: Killer Wife S1; C-1080). With auto fire every shot is fully charged, so it applies to every shot but the first of the battle. Whether it applies to the triggering shot itself is not verified"
           },
           "claims": [
-            "C-0088",
-            "C-1031"
+            "C-1091"
           ]
-        },
+        }
+      ],
+      "notes": [
         {
           "ja": "2 機以上に同時に命中した時の追加ダメージは、敵 1 体では起きない",
           "en": "The additional damage when 2 or more enemies are hit at once does not occur against a single enemy",
