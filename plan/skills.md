@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 99・効果 684（根拠あり 664）・notes 224（根拠あり 97）
+件数: キャラ 100・効果 698（根拠あり 678）・notes 227（根拠あり 98）
 
-notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足 26・間接 56
+notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足 27・間接 58
 
-スロット: supported 254・partial 25・unsupported 8・noEffect 37
+スロット: supported 257・partial 25・unsupported 8・noEffect 37
 
 ## 10 ラピ
 
@@ -1298,6 +1298,29 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0654（確定）、C-0655（確定）
   - effects[1] damage・burstUse・additional: C-0656（確定）、C-0657（確定）
+
+## 514 グレイブ
+
+- **skill1**: supported
+  - effects[0] ammoDecrease・prediction が終了した時: C-1120（確定）
+  - effects[1] state・prediction が終了した時・heatEmission（reloadRatio）: C-1120（確定）
+  - effects[2] passive・heatEmission の間・pierceDamage（読む: 貫通）: C-1121（確定）
+  - notes[0] 補足: 放熱の時に限り、味方全体に付くバーストゲージのチャージ速度 38.96%▲は定義しない。録画では、放熱の間の味方（プロダクト08・アリス）の通常攻撃 1 発で溜まるゲージが、放熱の外と同じだった: C-1122（確定）
+  - notes[1] 間接（HP）: 放熱の時に限り、自分に最終最大HP の 2% を 1 秒ごとに回復するのは、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・normalHit・overheatI（attack）: C-1117（確定）
+  - effects[1] state・normalHit・overheatII（attack）: C-1123（確定）
+  - effects[2] state・normalHit・overheatIII（attackDamage）: C-1123（確定）
+- **burst**: supported
+  - effects[0] state・burstUse・prediction: C-1118（確定）、C-1119（確定）
+  - effects[1] timed・burstUse・infiniteAmmo: C-1118（確定）、C-1119（確定）
+  - effects[2] timed・burstUse・pierce: C-1118（確定）、C-1119（確定）
+  - effects[3] timed・burstUse・pierceDamage: C-1118（確定）、C-1119（確定）
+  - effects[4] timed・burstUse・critRate: C-1118（確定）、C-1119（確定）
+  - effects[5] timed・burstUse・attackDamage: C-1118（確定）、C-1119（確定）
+  - effects[6] timed・burstUse・pierceDamage（読む: 貫通）: C-1118（確定）、C-1119（確定）
+  - effects[7] timed・burstUse・maxAmmo: C-1118（確定）、C-1119（確定）
+  - notes[0] 間接（HP）: 完全計算の、自分の現在の HP 1%▼（1 秒間隔・10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く。グレイブに HP を読む効果は無く、S1 の放熱の回復で戻る）: 根拠なし
 
 ## 570 アークレンジャー・ブラック
 
