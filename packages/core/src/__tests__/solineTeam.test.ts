@@ -99,22 +99,35 @@ describe.each(Object.entries(TEAMS))('編成: %s', (_name, input) => {
     expect(windows.map(({ start, end }) => ({ start, end }))).toEqual(expected);
   });
 
-  it('gives the S2 Critical Rate and Critical Damage up all the time (HP stays at max without damage taken)', () => {
-    const passive = plan.history.passive[s]!.passiveEffects.filter((e) => e.source.skill === 'skill2');
-    expect(passive.map((e) => [e.stat, e.appliedAmount])).toEqual([
-      ['critRate', expect.closeTo(0.2162, 6)],
-      ['critDamage', expect.closeTo(0.6227, 6)],
-    ]);
-  });
-
+  const withAde = input.slots.some((x) => x?.character.resourceId === ADE);
   const bursts = plan.schedule?.activations.filter((a) => a.slotIndex === s) ?? [];
+  const passiveS2 = plan.history.passive[s]!.passiveEffects.filter((e) => e.source.skill === 'skill2');
+  if (!withAde) {
+    it('gives the S2 Critical Rate and Critical Damage up all the time (HP stays at max without damage taken)', () => {
+      expect(passiveS2.map((e) => [e.stat, e.appliedAmount])).toEqual([
+        ['critRate', expect.closeTo(0.2162, 6)],
+        ['critDamage', expect.closeTo(0.6227, 6)],
+      ]);
+    });
+  } else {
+    it('gives the S2 up only while the HP ratio is at max, so it is off at every Burst use under the Max HP Only up of Ade', () => {
+      // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 割合が動きうる枠の常時の selfHp は区間の件になる
+      expect(passiveS2).toEqual([]);
+      for (const stat of ['critRate', 'critDamage'] as const) {
+        const on = itemsOf(plan.history, { holder: s, skill: 'skill2', stat });
+        expect(on.length).toBeGreaterThan(0);
+        for (const b of bursts) expect(on.some((w) => w.start <= b.frame && b.frame < w.end)).toBe(false);
+      }
+    });
+  }
+
   const additional = plan.skillHits.filter((h) => h.slotIndex === s && h.effect.source.skill === 'burst');
   if (input.slots.length === 1) {
     it('never uses Burst III alone', () => {
       expect(bursts).toEqual([]);
       expect(additional).toEqual([]);
     });
-  } else if (input.slots.some((x) => x?.character.resourceId === ADE)) {
+  } else if (withAde) {
     it('does not deal the additional damage while the Max HP Only up of Ade lowers the HP ratio at the Burst use', () => {
       expect(bursts.length).toBeGreaterThan(3);
       for (const b of bursts) expect(selfHpRatioOf(plan.history, s, b.frame)).toBeLessThan(1);
