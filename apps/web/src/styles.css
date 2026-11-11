@@ -876,7 +876,7 @@ header h1 {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさは置き場所で変える */
   --growth-star-w: 13px;
-  --growth-core-w: 20px;
+  --growth-core-w: 24px;
 }
 /* 星の色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
    グラデーションになる。突破していない星は灰、突破した星（.is-filled）は金。テーマで変えるときは light-dark(ライト, ダーク) で書く */
@@ -940,7 +940,7 @@ header h1 {
   width: var(--growth-core-w);
   height: var(--growth-core-w);
   margin-left: 2px;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: bold;
   color: #fff;
   text-shadow: none;
@@ -963,11 +963,11 @@ header h1 {
   font-size: 0.65rem;
   /* ニケ一覧の絵は小さいので、星とコアの印も小さくする（.growth-marks の既定より後に置いて上書きする） */
   --growth-star-w: 9px;
-  --growth-core-w: 16px;
+  --growth-core-w: 19px;
 }
 .char-tray-growth .growth-marks-core,
 .char-tray-tall-area .growth-marks-core {
-  font-size: 0.42rem;
+  font-size: 0.5rem;
 }
 .scrolling-name {
   text-align: left;
@@ -1122,7 +1122,7 @@ header h1 {
 /* 限界突破・コア強化の大きさは、四角の表示（.char-tray-growth）と同じ */
 .char-tray-tall-area .growth-marks {
   --growth-star-w: 9px;
-  --growth-core-w: 16px;
+  --growth-core-w: 19px;
 }
 /* スロットのカードの縦長の絵（portraits）。元の絵（256×512）と同じ 1:2 の枠に、切らずに出す。高さで大きさを決める。
    空のスロットの枠も同じ大きさにする */
