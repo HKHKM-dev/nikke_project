@@ -127,7 +127,12 @@ export function App() {
   );
   const cache = useCharacterCache(resourceIds, BASE_URL);
   const skills = useSkillDefinitions(resourceIds, BASE_URL);
-  const unsupportedNote = useCallback((resourceId: number) => unsupportedNoteOf(skills, resourceId), [skills]);
+  // 印の知らせは索引だけで決まる（スロットの定義の読み込みでは作り直さない）
+  const { index: skillIndex, fullySupported, supportGaps } = skills;
+  const unsupportedNote = useCallback(
+    (resourceId: number) => unsupportedNoteOf({ index: skillIndex, fullySupported, supportGaps }, resourceId),
+    [skillIndex, fullySupported, supportGaps],
+  );
 
   // 枠ごとのスキル定義の状態（未選択は null）
   const skillsStatuses = useMemo(

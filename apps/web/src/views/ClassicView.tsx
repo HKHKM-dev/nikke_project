@@ -6,7 +6,7 @@ import { Popover } from '../components/Popover.tsx';
 import { PartyTabs } from '../components/PartyTabs.tsx';
 import { SlotCard } from '../components/SlotCard.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
-import { LIST_DIRECTION_LABEL, LIST_DIRECTION_MARK, LIST_ORDER_LABEL } from '../listOrder.ts';
+import { LIST_DIRECTION_MARK, LIST_ORDER_LABEL, listOrderLabel } from '../listOrder.ts';
 import { takenResourceIds } from '../team.ts';
 import type { ViewProps } from './ViewProps.ts';
 
@@ -52,7 +52,7 @@ export function ClassicView({
             </>
           }
           buttonClassName="classic-list-order-button"
-          label={`並べ替え: ${LIST_ORDER_LABEL[listOrder.order]}（${LIST_DIRECTION_LABEL[listOrder.direction]}）`}
+          label={listOrderLabel(listOrder.order, listOrder.direction)}
           align="left"
         >
           <ListOrderSettings {...listOrder} />

@@ -5,14 +5,14 @@
 // どのスロットの対応状況（読み込みで決まる support）も partial・unsupported でないもの。定義の無いキャラは載らない。
 import type { CharacterData } from '../types.ts';
 import { applyTreasure, TREASURE_PHASE_MAX } from './treasure.ts';
-import { SKILL_SLOTS, type SkillDefinition, type SkillSupportGap, type SkillSupportIndex } from './types.ts';
+import { SKILL_SLOTS, type SkillDefinition, type SkillSupport, type SkillSupportGap, type SkillSupportIndex } from './types.ts';
+
+/** スロットに未実装がある（一部対応・未対応）か */
+const hasUnimplemented = (support: SkillSupport): boolean => support === 'partial' || support === 'unsupported';
 
 /** 定義のどのスロットにも未実装が無いか */
 function fullySupportedDefinition(definition: SkillDefinition): boolean {
-  return SKILL_SLOTS.every((slot) => {
-    const support = definition.skills[slot].support;
-    return support !== 'partial' && support !== 'unsupported';
-  });
+  return SKILL_SLOTS.every((slot) => !hasUnimplemented(definition.skills[slot].support));
 }
 
 /**
@@ -24,7 +24,7 @@ function gapOfDefinition(definition: SkillDefinition): SkillSupportGap {
   let assumed = 0;
   for (const slot of SKILL_SLOTS) {
     const entry = definition.skills[slot];
-    if (entry.support === 'partial' || entry.support === 'unsupported') {
+    if (hasUnimplemented(entry.support)) {
       unimplemented += Math.max(1, (entry.notes ?? []).filter((n) => n.kind === 'unimplemented').length);
     }
     assumed += entry.effects.filter((e) => e.assumes !== undefined).length;
@@ -43,11 +43,14 @@ export function buildSkillSupportIndex(
   )) {
     // 宝物があれば、基礎版と宝物版（全段階で差し替えたもの）の悪いほう
     const versions = [definition];
+    // 宝物があるのに宝物版を作れなかったキャラは完全対応にしない
+    let treasureMissing = false;
     if (character.treasure !== null) {
       const applied = applyTreasure(character, definition, TREASURE_PHASE_MAX).definition;
-      if (applied !== null) versions.push(applied);
+      if (applied === null) treasureMissing = true;
+      else versions.push(applied);
     }
-    const full = versions.length === (character.treasure === null ? 1 : 2) && versions.every(fullySupportedDefinition);
+    const full = !treasureMissing && versions.every(fullySupportedDefinition);
     if (full) {
       fullySupported.push(definition.resourceId);
       continue;

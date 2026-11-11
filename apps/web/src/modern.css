@@ -120,11 +120,11 @@
 :root[data-app-ui='modern'] .modern-slot-empty-area {
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさと枠の太さをそろえる */
   box-sizing: content-box;
-  border: 1px solid var(--slot-frame-line);
-  /* 枠線と背景はニケがいるときの立ち絵と同じ（styles.css の .char-visual-portrait）: 上の枠線を消し、横の枠線と背景は上の 5 割で上へ行くほど透明にする */
-  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--app-fg) 8%, var(--app-bg)) 50%)
-    border-box;
-  border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line) 50%) 1;
+  /* 枠線（border-image を消さないよう、まとめ書きの border は使わない）と背景はニケがいるときの立ち絵と同じ規則（styles.css の .char-visual-portrait）で、色も同じ */
+  border-width: 1px;
+  border-style: solid;
+  --char-visual-fill: color-mix(in srgb, var(--app-fg) 8%, var(--app-bg));
+  --char-visual-line: var(--slot-frame-line);
   color: var(--slot-frame-line);
   opacity: 1;
 }

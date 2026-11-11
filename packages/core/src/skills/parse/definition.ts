@@ -13,7 +13,7 @@ import {
   type SkillSupportGap,
   type SkillSupportIndex,
 } from '../types.ts';
-import { fail, isRecord, type Json } from './common.ts';
+import { fail, isRecord, parseNonNegativeInt, type Json } from './common.ts';
 import { validateBurstHitTriggers, validateCrossChecks } from './crossChecks.ts';
 import { parseEffect } from './effect.ts';
 import { NOTE_REFERS, parseNote } from './notes.ts';
@@ -168,11 +168,11 @@ export function parseSkillSupportIndex(raw: Json): SkillSupportIndex {
   if (raw.gaps !== undefined) {
     if (!isRecord(raw.gaps)) fail('support.gaps', 'expected an object');
     for (const [id, gap] of Object.entries(raw.gaps)) {
-      const count = (v: unknown) => Number.isInteger(v) && (v as number) >= 0;
-      if (!isRecord(gap) || !count(gap.unimplemented) || !count(gap.assumed)) {
-        fail(`support.gaps.${id}`, 'expected { unimplemented, assumed } of non-negative integers');
-      }
-      gaps[id] = { unimplemented: gap.unimplemented as number, assumed: gap.assumed as number };
+      if (!isRecord(gap)) fail(`support.gaps.${id}`, 'expected { unimplemented, assumed }');
+      gaps[id] = {
+        unimplemented: parseNonNegativeInt(gap.unimplemented, `support.gaps.${id}.unimplemented`),
+        assumed: parseNonNegativeInt(gap.assumed, `support.gaps.${id}.assumed`),
+      };
     }
   }
   return { formatVersion: 1, fullySupported: ids as number[], gaps };

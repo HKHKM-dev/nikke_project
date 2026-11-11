@@ -20,6 +20,7 @@ import {
   LIST_DIRECTION_MARK,
   LIST_ORDERS,
   LIST_ORDER_LABEL,
+  listOrderLabel,
   OVERLOAD_WITHOUT_ROSTER_HINT,
 } from '../../listOrder.ts';
 import type { ListOrderControls } from '../../useListOrder.ts';
@@ -146,7 +147,7 @@ export function CharacterTray({
               aria-label="クリア"
               title="クリア"
               onClick={() => {
-                setFilters((f) => (Object.keys(f).length === 0 ? f : {}));
+                setFilters({});
                 setTreasureOnly(false);
               }}
             >
@@ -171,7 +172,7 @@ export function CharacterTray({
               </span>
             }
             buttonClassName="char-tray-action-button"
-            label={`並べ替え: ${LIST_ORDER_LABEL[listOrder.order]}（${LIST_DIRECTION_LABEL[listOrder.direction]}）`}
+            label={listOrderLabel(listOrder.order, listOrder.direction)}
             align="left"
           >
             <div className="char-tray-sort-options" role="group" aria-label="並べ替え">
