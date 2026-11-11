@@ -931,12 +931,12 @@ notes の種類: 未対応 38・前提の外 57・計算に無関係 47・補足
 - **skill1**: partial
   - effects[0] timed・fullChargeShot・attack: C-1034（確定）
   - effects[1] state・fullChargeShot・spyLens（minEffectiveRange）: C-1043（確定）、C-1033（仮説）
-  - notes[0] 未対応: 近（帯の外）でも、隠しレンズがフルスタック（貫通特化）の間は、攻撃力▲がときどき付き直す（距離ボーナスの乗らない発がきっかけになる）。きっかけの規則が分からないので未対応（plan/design-agent-bunny.md 10 節の 6）: C-1035（仮説）
+  - notes[0] 未対応: 近（帯の外）でも、隠しレンズがフルスタック（貫通特化）の間は、攻撃力▲がときどき付き直す（距離ボーナスの乗らない発がきっかけになる）。きっかけの規則が分からないので未対応（plan/design-agent-bunny.md 10 節の 6）: C-1089（仮説）
 - **skill2**: partial
   - effects[0] timed・fullChargeShot・pierceDamage（読む: 貫通）: C-1031（確定）、C-1034（確定）
   - effects[1] passive・spyLens のフルスタックの間・pierce: C-1031（確定）
   - effects[2] passive・spyLens のフルスタックの間・attack: C-1034（確定）
-  - notes[0] 未対応: 近（帯の外）でも、貫通特化の間は貫通ダメージ▲がときどき付き直す。S1 の攻撃力▲と同じく未対応（plan/design-agent-bunny.md 10 節の 6）: C-1035（仮説）
+  - notes[0] 未対応: 近（帯の外）でも、貫通特化の間は貫通ダメージ▲がときどき付き直す。S1 の攻撃力▲と同じく未対応（plan/design-agent-bunny.md 10 節の 6）: C-1089（仮説）
 - **burst**: supported
   - effects[0] timed・burstUse・minEffectiveRange: C-1043（確定）、C-1033（仮説）
   - effects[1] timed・burstUse・attackDamage: C-1034（確定）
