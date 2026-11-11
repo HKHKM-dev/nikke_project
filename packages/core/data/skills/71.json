@@ -1,0 +1,63 @@
+{
+  "formatVersion": 1,
+  "resourceId": 71,
+  "checkedAt": "2026-11-11",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "normalShot",
+            "everyRef": 1
+          },
+          "target": "self",
+          "stat": "attackSpeed",
+          "ref": 2,
+          "durationRef": 3
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "critRate",
+          "ref": 1,
+          "condition": {
+            "selfHp": {
+              "atLeast": 100
+            }
+          },
+          "reads": ["hp"]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "critDamage",
+          "ref": 2,
+          "condition": {
+            "selfHp": {
+              "atLeast": 100
+            }
+          },
+          "reads": ["hp"]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "burstDamage",
+          "ref": 1,
+          "damageType": "skill",
+          "assumes": {
+            "ja": "攻撃範囲内の敵は的 1 体で 1 ヒット",
+            "en": "Enemies in range are the lone target, so it lands once"
+          }
+        }
+      ]
+    }
+  }
+}
