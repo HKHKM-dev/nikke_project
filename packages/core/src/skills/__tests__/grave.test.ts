@@ -64,6 +64,7 @@ describe('語彙の検証', () => {
   it('takes the end of another own state on a grant on self that does not stack', () => {
     expect(patched('skill2', OVERHEAT2, { target: 'allies' })).toThrow(/until another state ends is only on "self"/);
     expect(patched('skill2', OVERHEAT2, { maxStacks: 3 })).toThrow(/until another state ends cannot stack/);
+    expect(patched('skill2', OVERHEAT2, { leadFrames: 2 })).toThrow(/cannot have delayFrames or leadFrames/);
     expect(patched('skill2', OVERHEAT2, { durationUntil: { stateEnd: 'overheatII' } })).toThrow(
       /cannot last until its own state ends/,
     );

@@ -104,7 +104,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   }
   validateCounterGrant(fields, path, onEnemy);
   validateSelfHpGrant(fields, v, path, onEnemy);
-  validateStateEndGrant(fields, path, onEnemy);
+  validateStateEndGrant(fields, v, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   // グレイブ編: 自分の付ける状態の終わり・窓・維持も見ない（循環する）
   const t = fields.trigger;
@@ -325,13 +325,21 @@ function validateSelfHpGrant(fields: GrantTimedFields, v: Record<string, Json>, 
  * グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりまで続く付与（durationUntil: { stateEnd }）。閉じるのは持ち主の件の列ごとなので、
  * 自分にだけ付け、スタックしない。見る状態は付与の状態と別（validateOwnStateTriggers が同じ定義の自分への付与を見る）
  */
-function validateStateEndGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
+function validateStateEndGrant(
+  fields: GrantTimedFields,
+  v: Record<string, Json>,
+  path: string,
+  onEnemy: boolean,
+): void {
   const until = fields.durationUntil;
   if (!isStateEndUntil(until)) return;
   if (onEnemy || fields.target !== 'self')
     fail(`${path}.target`, 'a grant lasting until another state ends is only on "self"');
   if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
     fail(path, 'a grant lasting until another state ends cannot stack');
+  // 件の始まりを発火から動かすと、見る状態の終わりの後に始まる件が次の終わりまで続いてしまう
+  if (v.delayFrames !== undefined || v.leadFrames !== undefined)
+    fail(path, 'a grant lasting until another state ends cannot have delayFrames or leadFrames');
 }
 
 /** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
