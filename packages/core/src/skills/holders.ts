@@ -643,6 +643,14 @@ function stateItems(
 }
 
 /**
+ * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 始まりの列 starts の件の列を、解除で発火のフレーム c に閉じると外れるか。同じフレームに
+ * 始まりがあれば閉じない（付与が勝つ。closedStateItems・デバフ解除の候補）
+ */
+function closeTakesEffect(starts: readonly number[], c: number): boolean {
+  return !starts.includes(c);
+}
+
+/**
  * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除で閉じる状態の件。閉じる発火のフレーム c のうち、同じフレームに始まりの
  * 無いもの（付与が勝つ）で始まりの列を区切り、区切りごとに今と同じ規則で件を作って、c より前の区切りの件を c + 1 で切る。
  * 区切りの後の件は c + 1 以降に始まる。スタックしない件は、切った件と後の区切りの件がちょうど続けば 1 つにする（和集合の上書き延長と
@@ -657,7 +665,9 @@ function closedStateItems(
   decreases: readonly StackDecrease[] = [],
 ): HeldItem[] {
   // 2 段目の段 3: フルスタックの消費は、同じフレームに始まった件も切る（区切りの前に入れる）。解除の区切りには同じフレームの始まりが無い
-  const effective = [...new Set([...closes.filter((c) => !starts.includes(c)), ...consumes])].sort((a, b) => a - b);
+  const effective = [...new Set([...closes.filter((c) => closeTakesEffect(starts, c)), ...consumes])].sort(
+    (a, b) => a - b,
+  );
   if (effective.length === 0) return build(starts, decreases);
   const out: HeldItem[] = [];
   let lower = -Infinity;
@@ -2090,7 +2100,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const pendingRemoveDebuffs = new Map<number, RemoveDebuffSource[]>();
   /**
    * 課題 2-59: デバフ解除の効くフレーム at（ループがいるフレーム）に効いている、味方のデバフ（印の付いた状態と、課題 2-64 の timed の▼）の
-   * 件を、対象の味方ごとに count 個まで、スタックごと閉じる（選び方は pickRemoveDebuff）
+   * 件を、対象の味方ごとに count 個まで、スタックごと閉じる（選び方は pickRemoveDebuff）。at のすべての段の付与を登録した後に呼ぶ
    */
   const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
     debuffTracks ??= slots.map((_, holder) => {
@@ -2111,10 +2121,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       return [...byState.values(), ...allyDecreases];
     });
-    // 持ち主ごとに、at に効いているデバフと、その最も早い始まり
+    // 持ち主ごとに、at に効いていてこの解除で外れるデバフと、その最も早い始まり。閉じても付与が勝つ件の列と、at に別の解除が閉じた件の列は
+    // 候補にしない（外れない件で N 機・count 個の枠を使わない。plan/design-debuff-removal.md 2.2 節）
     const held = debuffTracks.map((debuffs) =>
       debuffs.flatMap((ts) => {
-        const starts = ts.flatMap((t) => activeAt(t, at).map((it) => it.start));
+        const starts = ts.flatMap((t) =>
+          closeTakesEffect(t.starts, at) && !t.closes.includes(at) ? activeAt(t, at).map((it) => it.start) : [],
+        );
         return starts.length === 0 ? [] : [{ tracks: ts, firstStart: Math.min(...starts) }];
       }),
     );
@@ -2446,23 +2459,6 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
-    // 課題 2-59: デバフ解除（解除と同じく、閉じるのは効くフレームの次のフレーム）。遅れのある解除は効くフレームに予約し、そのフレームで
-    // 対象を選ぶ（予約した解除を先に）
-    const due = battleStartOnly || pendingRemoveDebuffs.size === 0 ? undefined : pendingRemoveDebuffs.get(f);
-    if (due !== undefined) {
-      pendingRemoveDebuffs.delete(f);
-      for (const r of due) fireRemoveDebuff(r, f);
-    }
-    for (const r of removeDebuffSources) {
-      if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
-      const at = battleStartOnly ? 0 : startOfFire(r.effect.trigger, f, r.effect.delayFrames);
-      if (at === f) fireRemoveDebuff(r, at);
-      else if (at < frames) {
-        const list = pendingRemoveDebuffs.get(at);
-        if (list === undefined) pendingRemoveDebuffs.set(at, [r]);
-        else list.push(r);
-      }
-    }
     // 2 段目の段 3: スタック量の増減（増加は状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方。減少は次のフレームで切るので、
     // 段の中の順は同じフレームの判定に効かない）
     for (const x of stage1Stacks) {
@@ -2573,6 +2569,23 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     dispatchApplied(2, from);
     appliedFrom = applications.length;
+    // 課題 2-59: デバフ解除（解除と同じく、閉じるのは効くフレームの次のフレームなので、同じフレームの判定には効かない）。遅れのある解除は
+    // 効くフレームに予約し、そのフレームで対象を選ぶ（予約した解除を先に）。対象は、このフレームのすべての段の付与の後に選ぶ
+    const due = battleStartOnly || pendingRemoveDebuffs.size === 0 ? undefined : pendingRemoveDebuffs.get(f);
+    if (due !== undefined) {
+      pendingRemoveDebuffs.delete(f);
+      for (const r of due) fireRemoveDebuff(r, f);
+    }
+    for (const r of removeDebuffSources) {
+      if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
+      const at = battleStartOnly ? 0 : startOfFire(r.effect.trigger, f, r.effect.delayFrames);
+      if (at === f) fireRemoveDebuff(r, at);
+      else if (at < frames) {
+        const list = pendingRemoveDebuffs.get(at);
+        if (list === undefined) pendingRemoveDebuffs.set(at, [r]);
+        else list.push(r);
+      }
+    }
     // 2.5 段目: 強化は発火の窓の始まりだけを貯める（受け付けと値は、履歴を閉じる時に amplify で決める）
     for (const amp of amplifiers) {
       if (!take(amp.effect.trigger)) continue;

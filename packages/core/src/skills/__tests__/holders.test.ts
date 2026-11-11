@@ -366,15 +366,18 @@ describe('デバフ解除（removeDebuff）', () => {
     delayFrames: DELAY,
     ...over,
   });
-  /** 毎フレームを回す（予約した解除は、ループがそのフレームに来た時に効く）。grants のフレームが fullBurstStart */
-  function run(slots: TimelineSlot[], grants: readonly number[]): HolderHistory {
+  /** debuffedRandom の 1 機 */
+  const randomOne = () => removal({ target: 'debuffedRandom', targetCount: 1 });
+  /** 毎フレームを回す（予約した解除は、ループがそのフレームに来た時に効く）。byFrame はフレームごとの出来事 */
+  function runEvents(slots: TimelineSlot[], byFrame: Record<number, Partial<FrameEvents>>): HolderHistory {
     const lists = listsOf(slots);
     lists.registerBattleStart();
-    for (let f = 0; f <= AT + 10; f++) {
-      lists.registerFrame(events(f, { fullBurstStart: grants.includes(f) }, slots.length));
-    }
+    for (let f = 0; f <= AT + 10; f++) lists.registerFrame(events(f, byFrame[f] ?? {}, slots.length));
     return lists.history();
   }
+  /** grants のフレームが fullBurstStart */
+  const run = (slots: TimelineSlot[], grants: readonly number[]): HolderHistory =>
+    runEvents(slots, Object.fromEntries(grants.map((f) => [f, { fullBurstStart: true }])));
   const drunkenOf = (history: HolderHistory, holder: number) =>
     history.tracks
       .filter((t) => t.holder === holder && t.origin.kind === 'state' && t.origin.state === 'drunken')
@@ -447,12 +450,75 @@ describe('デバフ解除（removeDebuff）', () => {
     expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + D10 }]);
   });
 
+  // 外れない件で枠を使わない（plan/design-debuff-removal.md 2.2 節）: 効くフレームに付いた件の列（付与が勝つ）と、同じフレームに別の解除が
+  // 閉じた件の列は、候補にしない
+
+  it('does not spend the random N on an ally whose state is applied on the removal frame', () => {
+    const history = runEvents(
+      [slotWith(1, [drunken()]), slotWith(2, [drunken({ trigger: 'fullBurstEnd' }), randomOne()])],
+      { [T - 100]: { fullBurstEnd: true }, [AT]: { fullBurstStart: true } },
+    );
+    expect(drunkenOf(history, 1)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
+    expect(drunkenOf(history, 0)).toEqual([{ start: AT, end: AT + D10, stack: 1 }]);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  it('does not spend the random N on an ally whose decrease is applied on the removal frame', () => {
+    const history = runEvents(
+      [slotWith(1, [ammoDown()]), slotWith(2, [ammoDown({ trigger: 'fullBurstEnd' }), randomOne()])],
+      { [T - 100]: { fullBurstEnd: true }, [AT]: { fullBurstStart: true } },
+    );
+    expect(timedOf(history, 1, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + 1 }]);
+    expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: AT, end: AT + D10 }]);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  it('does not spend the random N on an ally whose stacks rise on the removal frame after the removal step', () => {
+    // スタック量の増加は、段 1 の中で解除より後に登録する。解除はこのフレームのすべての段の付与の後に対象を選ぶ
+    const raise: SkillEntry['effects'][number] = {
+      kind: 'stackChange',
+      state: 'drunken',
+      trigger: 'fullBurstStart',
+      target: 'self',
+      amount: 1,
+    };
+    const history = runEvents(
+      [
+        slotWith(1, [drunken({ trigger: 'fullBurstEnd' }), raise]),
+        slotWith(2, [drunken({ trigger: 'fullBurstEnd' }), randomOne()]),
+      ],
+      { [T - 100]: { fullBurstEnd: true }, [AT]: { fullBurstStart: true } },
+    );
+    expect(drunkenOf(history, 1)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
+    expect(drunkenOf(history, 0).every((it) => it.end > AT + 1)).toBe(true);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  it('removes another debuff when the earliest one is applied again on the removal frame', () => {
+    const history = runEvents([slotWith(1, [ammoDown(), drunken({ trigger: 'fullBurstEnd' }), removal()])], {
+      [T - 200]: { fullBurstStart: true },
+      [T - 100]: { fullBurstEnd: true },
+      [AT]: { fullBurstStart: true },
+    });
+    expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: T - 200, end: AT + D10 }]);
+    expect(drunkenOf(history, 0)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
+    expect(history.removeDebuffGuesses).toEqual([]);
+  });
+
+  it('does not pick a debuff another removal closed on the same frame', () => {
+    const history = runEvents([slotWith(1, [drunken(), ammoDown({ trigger: 'fullBurstEnd' }), removal(), removal()])], {
+      [T - 100]: { fullBurstStart: true },
+      [T - 50]: { fullBurstEnd: true },
+    });
+    expect(drunkenOf(history, 0)).toEqual([{ start: T - 100, end: AT + 1, stack: 1 }]);
+    expect(timedOf(history, 0, 'maxAmmo')).toEqual([{ start: T - 50, end: AT + 1 }]);
+    // 1 つ目の解除は、2 個のうち付いたのが早いほろ酔いを選ぶ（選び方の決め打ち）。2 つ目は残った▼だけ
+    expect(history.removeDebuffGuesses).toEqual([expect.objectContaining({ frame: AT, guess: 'states', limit: 1 })]);
+  });
+
   it('counts an ally with a decrease as debuffed for the random N, and picks the earliest of a state and a decrease', () => {
     const history = run(
-      [
-        slotWith(1, [drunken(), removal({ target: 'debuffedRandom', targetCount: 1 })]),
-        slotWith(2, [ammoDown({ trigger: 'burstUse' })]),
-      ],
+      [slotWith(1, [drunken(), randomOne()]), slotWith(2, [ammoDown({ trigger: 'burstUse' })])],
       [T - 100],
     );
     // 枠 2 の▼は付いていない（burstUse が来ない）ので、デバフのかかった味方は枠 1 だけ
@@ -460,10 +526,7 @@ describe('デバフ解除（removeDebuff）', () => {
     expect(history.removeDebuffGuesses).toEqual([]);
 
     // ▼だけが付いた枠 2 も対象に選ばれる
-    const downOnly = run(
-      [slotWith(1, [removal({ target: 'debuffedRandom', targetCount: 1 })]), slotWith(2, [ammoDown()])],
-      [T - 100],
-    );
+    const downOnly = run([slotWith(1, [randomOne()]), slotWith(2, [ammoDown()])], [T - 100]);
     expect(timedOf(downOnly, 1, 'maxAmmo')).toEqual([{ start: T - 100, end: AT + 1 }]);
     expect(downOnly.removeDebuffGuesses).toEqual([]);
 
