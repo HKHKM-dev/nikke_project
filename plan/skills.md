@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 99・効果 673（根拠あり 652）・notes 234（根拠あり 105）
+件数: キャラ 99・効果 674（根拠あり 653）・notes 234（根拠あり 104）
 
-notes の種類: 未対応 39・前提の外 57・計算に無関係 47・補足 25・間接 66
+notes の種類: 未対応 38・前提の外 57・計算に無関係 47・補足 26・間接 66
 
-スロット: supported 250・partial 26・unsupported 9・noEffect 39
+スロット: supported 251・partial 25・unsupported 9・noEffect 39
 
 ## 10 ラピ
 
@@ -1320,10 +1320,12 @@ notes の種類: 未対応 39・前提の外 57・計算に無関係 47・補足
 
 ## 581 アルカナ
 
-- **skill1**: partial
+- **skill1**: supported
   - effects[0] timed・fullBurstEnd・attackDamage: C-1053（確定）、C-1054（確定）
   - effects[1] timed・fullBurstEnd・attack: C-1052（確定）
-  - notes[0] 未対応: フルバーストの終わりに、運命の輪のカード状態なら、直前にバーストを使った III の電撃コードの味方に付く「魔術師のカード：スキル 2 クールタイム 75%▼（15 秒）」は未対応（味方の S2 の周期を割合で縮める語彙が無い。効いている間は S2 の周期が 25% になり、付いた時から数え直す）: C-1055（仮説）
+  - effects[2] state・fullBurstEnd・magician（skillCooldownDown）: C-1053（確定）、C-1054（確定）、C-1055（仮説）、C-1086（確定）
+    - contents[0] skillCooldownDown: C-1055（仮説）、C-1086（確定）
+  - notes[0] 補足: 魔術師のカードは、相手の S2 のクールタイムの周期（印 cooldown のある周期。イサベルの S2）にだけ効かせ、印の無い周期（説明文の発動間隔・召喚の攻撃）や、印を付けていない味方の周期は縮めない。フルバーストタイムが 10 秒の III では付かない（C-1054）ので、いまの編成で付く相手はイサベルだけ: 根拠なし
 - **skill2**: supported
   - effects[0] state・fullBurstEnd・strength（attack）: C-1053（確定）、C-1054（確定）
   - effects[1] state・fullBurstEnd・death（burstCooldown・attack）: C-1053（確定）、C-1054（確定）

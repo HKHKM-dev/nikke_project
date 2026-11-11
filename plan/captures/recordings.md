@@ -1044,6 +1044,8 @@
 | 1069 | `20261111-1069_sr_killer-wife_fire.mp4` | ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1070 | `20261111-1070_sr+ar+sr_delta+idoll-sun+killer-wife_fire.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1071 | `20261111-1071_sr+ar+sr_delta+idoll-sun+killer-wife_fire.mp4` | デルタ（20、SR・風圧・SR） + I-DOLL・サン（308、AR・鉄甲・R） + ◎D：キラーワイフ（43、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1072 | `20261111-1072_rl_arcana_liter_isabel_water_manual.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎イサベル（231、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | V-0721 の撮影（リター・アルカナ・イサベル。水冷）。バーストを手で押し、フルバーストの終わりをイサベルの S2 の直前に合わせた |
+| 1073 | `20261111-1073_rl_arcana_liter_isabel_water_manual.mp4` | リター（82、SMG・鉄甲・SSR） + アルカナ（581、RL・電撃・SSR） + ◎イサベル（231、SG・電撃・SSR） | BigArms・水冷 | 射撃場 3 分 | ON | ON / OFF | V-0721 の撮影（リター・アルカナ・イサベル。水冷）。バーストを手で押し、フルバーストの終わりをイサベルの S2 の直前に合わせた |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 
