@@ -48,3 +48,11 @@
 2026-11-05 23:06 に、台帳に無かった録画 `range/20261006-273_smg+sr+ar_miranda+delta+idoll-sun_miranda-control.mp4`（sha256 `c4443d2d31ec`。0262 とは別の中身）を、録画 0273 として台帳に足し（`records/recordings/0273.json`。条件は録画の画で確かめた）、E: と Drive（rclone moveto）で `range/20261006-0273_smg+sr+ar_miranda+delta+idoll-sun_miranda-control.mp4` に名前を変えた（オーナーの判断）。2026-10-06 20:39 に撮り、取り込んだが台帳の JSON が main に入らなかったもので、4 桁にそろえたとき（2026-10-25）にも台帳に無いので 3 桁の名前のまま残っていた。`records:renumber` は 273 と 0273 を同じ番号とみるので手で変えた。中身は変えていないので sha256 は変えた前と同じ（Drive の sha256 も一致）。
 
 2026-11-10 21:58 に、録画 1023・1024 の名前を、E: の代わりのクラウドの置き場所と Drive（受け口の move）で `range/20261110-1023_sr_ade-agent-bunny_fire.mp4`・`range/20261110-1024_sr_ade-agent-bunny_fire.mp4` に変えた（取り込みの時の名前は `..._rl+sr_i-doll-flower+ade-agent-bunny_fire.mp4`）。撮った順が撮影の依頼の表と逆（2 人 2 本 → 単騎 2 本）で、取り込みの引数を表の順で付けたため。編成は戦闘履歴のパネルで確かめ、台帳の `team`・`autoBurst` も直した（1021・1022 が 2 人、1023・1024 が単騎）。中身は変えていないので sha256 は台帳のまま。
+
+2026-11-12 02:42 に、録画 1092 を 1095 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261112-1095_sr_ade-agent-bunny_near1-pause.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-11-12 02:42 に、録画 1091 を 1094 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261112-1094_sr_ade-agent-bunny_near1-pause.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-11-12 02:42 に、録画 1090 を 1093 に振り直した（`records:renumber`）。E: と Drive の名前を変えた（`range/20261112-1093_sr_ade-agent-bunny_near1-pause.mp4`。ほかにスクショ・証拠フレーム・キャッシュが 0 件。中身は変えていないので sha256 は台帳のまま）。
+
+2026-11-12 02:50 に、録画 1094・1095 の名前を、E: の代わりのクラウドの置き場所と Drive（受け口の move）で `range/20261112-1094_sr_ade-agent-bunny_midfar-start.mp4`・`range/20261112-1095_sr_ade-agent-bunny_midfar-start.mp4` に変えた（取り込みの時の名前は `..._near1-pause.mp4`）。Drive の record に別の撮影の録画が混ざって上がっていて、撮った時刻の順で V-0728 の 3 本とみて取り込んだが、オート射撃のボタンの画で V-0731 の撮り方（戦闘の始まりから撃たない）と分かったため。台帳の `autoFire`・`conditionNote` も直した。中身は変えていないので sha256 は台帳のまま。
