@@ -133,7 +133,7 @@ export function CharacterTray({
             </button>
           </div>
         </div>
-        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、フィルター・立ち絵の縦長と四角の切り替えのボタン（フィルターは未実装の置き場所で、押しても
+        {/* 並べ替え（ボタンで開くポップアップで並びを選ぶ）と、絞り込み・立ち絵の縦長と四角の切り替えのボタン（絞り込みは未実装の置き場所で、押しても
             何も起きない。disabled にすると、アーティファクトのコメントでボタンを選べない（マウスの操作を受けない）ので aria-disabled にする） */}
         <div className="char-tray-actions">
           {/* 並びの種類を 1 つずつボタンにする。押すとその並び（既定の向き）にし、いまの並びをもう一度押すと昇順・降順を入れ替える
@@ -183,7 +183,7 @@ export function CharacterTray({
           )}
           {listOrder.overloadWithoutRoster && <span className="hint">{OVERLOAD_WITHOUT_ROSTER_HINT}</span>}
           <button type="button" className="char-tray-action-button" aria-disabled="true">
-            フィルター<span className="char-tray-unimplemented">未実装</span>
+            絞り込み<span className="char-tray-unimplemented">未実装</span>
           </button>
           {/* 立ち絵の縦長・四角の切り替え。いまの形を強く出す */}
           <button
