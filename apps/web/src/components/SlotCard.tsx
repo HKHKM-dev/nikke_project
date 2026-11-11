@@ -25,7 +25,7 @@ import type { OtherParties } from '../parties.ts';
 type Props = {
   slotIndex: number;
   slot: SlotState;
-  /** 操作キャラのスロット（見出しの「操作」のボタンを押した形にする） */
+  /** 操作キャラのスロット（見出しの「操作」のラジオボタンを選んだ形にする） */
   controlled: boolean;
   index: readonly CharacterIndexEntry[];
   excludeIds: ReadonlySet<number>;
@@ -95,18 +95,19 @@ export function SlotCard({
   return (
     <fieldset className="panel slot">
       {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
-      {/* 見出しの右に、操作キャラにするボタン（押した形が操作キャラ。いつもどれか 1 つ。モダン UI の操作の印のドラッグと同じ値） */}
+      {/* 見出しの右に、操作キャラにするラジオボタン（5 つのスロットで 1 組。いつもどれか 1 つ。モダン UI の操作の印のドラッグと同じ値） */}
       <legend className="slot-legend">
         スロット {slotIndex + 1}
-        <button
-          type="button"
-          className="toggle-button slot-controlled-button"
-          aria-pressed={controlled}
-          aria-label={`スロット ${slotIndex + 1} を操作キャラにする`}
-          onClick={() => dispatch({ type: 'setControlledSlot', index: slotIndex })}
-        >
+        <label className="slot-controlled-option">
+          <input
+            type="radio"
+            name="controlledSlot"
+            aria-label={`スロット ${slotIndex + 1} を操作キャラにする`}
+            checked={controlled}
+            onChange={() => dispatch({ type: 'setControlledSlot', index: slotIndex })}
+          />
           操作
-        </button>
+        </label>
       </legend>
       {/* キャラの選択の右に、スロットの詳細設定（バーストしない・想定 HP）のポップアップ。設定中の印と、ポップアップの説明文は
           オーナーの指示で出さない（設定はポップアップのボタンの色で分かる） */}

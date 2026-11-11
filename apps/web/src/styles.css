@@ -573,10 +573,14 @@ header h1 {
 .picker-row .picker {
   margin: 0;
 }
-/* スロットの見出しの右の「操作」（操作キャラにする。SlotCard） */
-.slot-controlled-button {
-  padding: 1px 8px;
+/* スロットの見出しの右の「操作」のラジオボタン（操作キャラにする。SlotCard） */
+.slot-controlled-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 6px;
   font-size: 0.75rem;
+  cursor: pointer;
 }
 .slot-settings-button {
   height: 100%;

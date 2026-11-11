@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// クラシックのスロットのカード（SlotCard.tsx）の見出しの「操作」のボタン: 押した形が操作キャラで、押すとそのスロットを操作キャラにする
+// クラシックのスロットのカード（SlotCard.tsx）の見出しの「操作」のラジオボタン: 選んだ形が操作キャラで、選ぶとそのスロットを操作キャラにする
 import { EMPTY_BUILD, type GrowthInput, type SkillLevels } from '@nikke/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -33,18 +33,18 @@ function renderCard(controlled: boolean) {
       dispatch={dispatch}
     />,
   );
-  return { dispatch, button: screen.getByRole('button', { name: 'スロット 2 を操作キャラにする' }) };
+  return { dispatch, radio: screen.getByRole<HTMLInputElement>('radio', { name: 'スロット 2 を操作キャラにする' }) };
 }
 
-describe('SlotCard の操作のボタン', () => {
-  it('操作キャラのスロットでは押した形になる', () => {
-    expect(renderCard(true).button.getAttribute('aria-pressed')).toBe('true');
+describe('SlotCard の操作のラジオボタン', () => {
+  it('操作キャラのスロットでは選んだ形になる', () => {
+    expect(renderCard(true).radio.checked).toBe(true);
   });
 
-  it('ほかのスロットでは押していない形で、押すとそのスロットを操作キャラにする', () => {
-    const { dispatch, button } = renderCard(false);
-    expect(button.getAttribute('aria-pressed')).toBe('false');
-    fireEvent.click(button);
+  it('ほかのスロットでは選んでいない形で、選ぶとそのスロットを操作キャラにする', () => {
+    const { dispatch, radio } = renderCard(false);
+    expect(radio.checked).toBe(false);
+    fireEvent.click(radio);
     expect(dispatch).toHaveBeenCalledWith({ type: 'setControlledSlot', index: 1 });
   });
 });
