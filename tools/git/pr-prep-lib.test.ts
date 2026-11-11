@@ -8,6 +8,7 @@ import {
   addedLines,
   backlogProgressCopy,
   branchChangedChecks,
+  branchLongGuideItems,
   branchOversizedDocs,
   changedChecks,
   checkSteps,
@@ -464,5 +465,25 @@ describe('longNewGuideItems', () => {
     expect(longNewGuideItems(guide(long('o'), long('n')), new Set([3, 8]))).toEqual([
       `plan/captures/guide.md:8: ${short(long('n'))}（${GUIDE_ITEM_LIMIT + 2} バイト）`,
     ]);
+  });
+
+  it('counts a CRLF line without its carriage return', () => {
+    const fits = `- ${'x'.repeat(GUIDE_ITEM_LIMIT - 2)}`;
+    expect(longNewGuideItems(guide(fits).replaceAll('\n', '\r\n'), all)).toEqual([]);
+  });
+
+  it('reads the lines the branch added with git, and skips a branch that deleted the guide', () => {
+    const body = (...items: string[]) => guide('- a', ...items);
+    const { cwd, base } = baseRepo({ 'plan/captures/guide.md': body(long('o')) });
+    const run = (args: readonly string[]) => git(cwd, args);
+    const read = (p: string) => readFileSync(join(cwd, p), 'utf8');
+    writeFileSync(join(cwd, 'plan/captures/guide.md'), body(long('o'), long('n')));
+    git(cwd, ['commit', '-q', '-am', 'add']);
+    expect(branchLongGuideItems(base, run, read)).toEqual([
+      `plan/captures/guide.md:9: ${short(long('n'))}（${GUIDE_ITEM_LIMIT + 2} バイト）`,
+    ]);
+    git(cwd, ['rm', '-q', 'plan/captures/guide.md']);
+    git(cwd, ['commit', '-q', '-m', 'delete']);
+    expect(branchLongGuideItems(base, run, read)).toEqual([]);
   });
 });

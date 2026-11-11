@@ -19,7 +19,8 @@
 //    コミットの生成物は合っていなくてよい）。作業ツリーの生成物も main の版になるので、手元で npm test を回すなら作り直す。
 //    --push なら git push --force-with-lease -u origin HEAD。
 // 7. push の前に、ブランチで変えた手書きの .md が大きさの目安（50KB。検証記録は 30KB）を超えていたら知らせる（止めない。
-//    plan/design-workflow-simplification-10.md 1 節）。
+//    plan/design-workflow-simplification-10.md 1 節）。撮影と読み取りの手引き（plan/captures/guide.md）で足すか変えた項目が 600 バイトを
+//    超えていたら知らせる（止めない。plan/design-workflow-simplification-11.md 2 節）。
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -40,7 +41,7 @@ import {
   branchOversizedDocs,
   CAPTURE_GUIDE,
   GUIDE_ITEM_LIMIT,
-  longNewGuideItems,
+  branchLongGuideItems,
   handEditedLines,
   handRemovedLines,
   checkSteps,
@@ -284,8 +285,7 @@ if (oversized.length > 0) {
   );
   for (const o of oversized) console.warn(`  ${o.path}: ${Math.round(o.size / 1000)}KB（目安 ${o.limit / 1000}KB）`);
 }
-const guideAdded = addedLines(git(['diff', '-U0', 'origin/main...HEAD', '--', CAPTURE_GUIDE])).get(CAPTURE_GUIDE);
-const longItems = guideAdded ? longNewGuideItems(readFileSync(join(ROOT, CAPTURE_GUIDE), 'utf8'), guideAdded) : [];
+const longItems = branchLongGuideItems('origin/main', gitRaw, (p) => readFileSync(join(ROOT, p), 'utf8'));
 if (longItems.length > 0) {
   console.warn(
     `${CAPTURE_GUIDE} に、1 項目の目安（${GUIDE_ITEM_LIMIT} バイト）を超えた項目を足すか伸ばした（索引は 1〜2 行の要約と ID。細部は指す先に置く）:`,

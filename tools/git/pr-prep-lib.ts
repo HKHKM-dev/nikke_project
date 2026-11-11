@@ -309,13 +309,27 @@ export const GUIDE_ITEM_LIMIT = 600;
 export function longNewGuideItems(text: string, added: ReadonlySet<number>): string[] {
   const out: string[] = [];
   let body = false;
-  text.split('\n').forEach((line, i) => {
+  // 改行は CRLF でも数えない（Windows の autocrlf のチェックアウト）
+  text.split(/\r?\n/).forEach((line, i) => {
     if (line.startsWith('## ')) body = true;
     const size = Buffer.byteLength(line);
     if (body && added.has(i + 1) && line.startsWith('- ') && size > GUIDE_ITEM_LIMIT)
       out.push(`${CAPTURE_GUIDE}:${i + 1}: ${short(line)}（${size} バイト）`);
   });
   return out;
+}
+
+/**
+ * ブランチ（base...HEAD）で足した・変えた guide.md の行を git で読んで、longNewGuideItems で決める。run は git を引数で呼んで標準出力を
+ * 返すもの、read は作業ツリーのファイルの中身。ブランチが guide.md を変えていない・消したなら出さない
+ */
+export function branchLongGuideItems(
+  base: string,
+  run: (args: readonly string[]) => string,
+  read: (path: string) => string,
+): string[] {
+  const added = addedLines(run(['diff', '-U0', `${base}...HEAD`, '--', CAPTURE_GUIDE])).get(CAPTURE_GUIDE);
+  return added === undefined ? [] : longNewGuideItems(read(CAPTURE_GUIDE), added);
 }
 
 /**
