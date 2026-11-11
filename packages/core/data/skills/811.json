@@ -11,7 +11,10 @@
           "target": "self",
           "stat": "chargeDamage",
           "ref": 1,
-          "durationRef": 2
+          "durationRef": 2,
+          "claims": [
+            "C-1102"
+          ]
         }
       ],
       "notes": [
@@ -61,23 +64,54 @@
       ]
     },
     "burst": {
-      "effects": [],
-      "notes": [
+      "effects": [
         {
-          "ja": "B モード（1 秒ごとに現在の HP▼、攻撃力▲・チャージ速度▲。HP 40% 以下で解除）は未対応（1 秒間隔の現在の HP▼ と、HP 40% 以下での解除を書く語彙が無い）",
-          "en": "B Mode (current HP down every second; ATK and charge speed up; ends at HP 40% or below) is not modeled (there is no vocabulary for a current HP down every second and the end at HP 40% or below)",
-          "kind": "unimplemented",
-          "reads": [
-            "hp"
+          "kind": "state",
+          "state": "modeB",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationUntil": {
+            "selfHpAtMostRef": 1
+          },
+          "contents": [
+            {
+              "stat": "attack",
+              "ref": 3
+            },
+            {
+              "stat": "chargeSpeed",
+              "ref": 4
+            }
           ],
-          "effect": {
-            "kind": "timed",
-            "stat": "unknown",
-            "target": "self",
-            "trigger": "burstUse"
+          "assumes": {
+            "ja": "チャージ速度▲は、いまの規則（チャージの長さだけを縮める）で効かせる。射撃姿勢維持型の A2 では、B モードの間の実測の発と発の間（74f）がモデル（99f）より短い（許容外の残差。plan/backlog.md 3 節）",
+            "en": "Charge speed up uses the existing rule (it shortens only the charge). For A2 (fire-stance type), the measured shot interval in Mode B (74f) is shorter than the model (99f) (a residual out of tolerance; plan/backlog.md section 3)"
+          },
+          "claims": [
+            "C-1100"
+          ]
+        },
+        {
+          "kind": "currentHpDown",
+          "trigger": {
+            "everySeconds": 1,
+            "atStart": true,
+            "since": {
+              "applied": "modeB"
+            }
+          },
+          "target": "self",
+          "ref": 2,
+          "claims": [
+            "C-1101"
+          ],
+          "assumes": {
+            "ja": "回復で現在の HP が戻る分は扱わない（A2 は回復を持たない。味方の回復で 40% より上に戻った時に B モードがまた付くかは確かめていない）",
+            "en": "HP restored by heals is not modeled (A2 has no heal; whether Mode B can be applied again after an ally heals her above 40% is unverified)"
           }
         }
-      ]
+      ],
+      "notes": []
     }
   }
 }

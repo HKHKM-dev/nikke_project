@@ -306,6 +306,11 @@ export const NAMED_STATES = {
    * 中身は貫通ダメージ▲。宝物版 S2 の「自分が貫通学概論状態なら」が見る
    */
   pierceAttacks101: { name: { ja: '貫通学概論', en: 'Pierce Attacks 101' }, holder: 'ally' },
+  /**
+   * A2 の B モード編（plan/design-hp-down-interval.md）: A2 のバースト「B モード」（自分。中身は攻撃力▲・チャージ速度▲。付いている間 1 秒ごとに
+   * 現在の HP▼、HP が 40% 以下で解除）
+   */
+  modeB: { name: { ja: 'Bモード', en: 'Mode B' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;

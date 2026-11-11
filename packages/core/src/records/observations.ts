@@ -1776,6 +1776,8 @@ export const METRICS: Readonly<Record<string, Metric>> = {
   // 簡素化・第 7 回の案 2: 出来事の動画のフレームの、基準からの差の列（eventFrames の注記）。上の skillHit…・dot…・healVideoFrame の
   // 時刻の指標はこれの包み
   eventFrames: { args: ['slot', 'event'], sim: eventFrames },
+  // A2 の B モード編（V-0729）: eventFrames と同じ出来事・基準・範囲の、出来事の数（B モードの間の現在の HP▼ の回数など）
+  eventCount: { args: ['slot', 'event'], sim: (r, c) => eventFrames(r, c).length },
   // V-0622: 出来事ごとの、戦闘の始めからの枠の発の数か命中の期待値の和（回数のきっかけを通して数えるか、撃った数か命中か）
   eventTallies: { args: ['slot', 'event', 'tally'], sim: eventTallies },
   skillHitsDamage: { args: ['slot', 'n', 'count', 'crit'], sim: skillHitsDamage },
@@ -2110,9 +2112,14 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
     // 課題 2-59: 状態（引数 state）が外れたフレーム
     case 'stateEnd':
       return stateEndFramesOf(result, slotIndex, String(ctx.args.state)).map(at);
+    // A2 の B モード編（V-0729）: 枠の自分への現在の HP▼ のフレーム（録画では、枠の HP のバーが下がったフレーム）
+    case 'currentHpDown':
+      return result.instants
+        .filter((x) => x.slotIndex === slotIndex && x.effect.kind === 'currentHpDown')
+        .map((x) => at(x.frame));
     default:
       throw new Error(
-        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd（${String(ctx.args.event)}）`,
+        `event は skillHit・dot・dotApply・dotTick・burstHit・activation・heal・stateEnd・currentHpDown（${String(ctx.args.event)}）`,
       );
   }
 }

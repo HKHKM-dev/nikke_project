@@ -467,8 +467,24 @@ function runFirstPassOnce(
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
   // F5（plan/design-heal-vocabulary.md 3.3 節）: 時間の周期のトリガー（heal だけ書ける）は出来事の列に無いので、
   // 周期のフレーム（atStart ならフレーム 0 も。skills/timeline.ts の triggerFires）で発火する
+  // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 状態の付いた時から数える周期（since。currentHpDown）は、件の一覧の
+  // 自分のその状態の付いたフレーム（付いた最後のフレームが起点）と、効いているかで決める（counterChange の sinceFires と同じ数え方）。
+  // 件の登録（registerFrame）の後に毎フレーム呼ぶ
   const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
+    const since = effect.trigger.since?.applied;
+    if (since !== undefined) {
+      const offsets = new Set(timerFramesOf(effect.trigger, frames));
+      // A2 の B モード編（V-0729）: atStart なら付いたフレームにも発火する
+      if (effect.trigger.atStart === true) offsets.add(0);
+      let start: number | undefined;
+      return (ev) => {
+        if (lists.stateStartedAt(sourceSlotIndex, since, ev.frame)) start = ev.frame;
+        return (
+          start !== undefined && offsets.has(ev.frame - start) && lists.stateHeldAt(sourceSlotIndex, since, ev.frame)
+        );
+      };
+    }
     const at = new Set(triggerFrames(effect.trigger, null, sourceSlotIndex, frames));
     return (ev) => at.has(ev.frame);
   };

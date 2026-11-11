@@ -10,6 +10,7 @@ import {
   type BuffStat,
   type BuffTarget,
   type CounterEmptyUntil,
+  type SelfHpAtMostUntil,
   DURATION_UNTILS,
   type DurationUntil,
   EXCLUDE_SELF,
@@ -184,9 +185,11 @@ export function parseTimedEffect(v: Record<string, Json>, path: string): TimedEf
 
 /** timed の、値（stat）を除いた欄。名前の付いた状態の語彙編: 付与（StateGrantEffect）はこの欄を timed と同じ規則で持つ */
 type TimedFields = Omit<TimedEffect, 'kind' | 'stat'>;
-/** 付与（stat が undefined）の欄。2 段目の段 19 の PR 1: 維持に { counterEmpty } も書ける（StateGrantEffect） */
+/**
+ * 付与（stat が undefined）の欄。2 段目の段 19 の PR 1: 維持に { counterEmpty } も書ける（StateGrantEffect）。A2 の B モード編: { selfHpAtMostRef } も
+ */
 export type GrantTimedFields = Omit<TimedFields, 'durationUntil'> & {
-  durationUntil?: DurationUntil | CounterEmptyUntil;
+  durationUntil?: DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
 };
 
 /**
@@ -550,7 +553,7 @@ function parseTimedDuration(
   durationSeconds?: number;
   durationShots?: number;
   durationShotsRef?: number;
-  durationUntil?: DurationUntil | CounterEmptyUntil;
+  durationUntil?: DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
 } {
   const hasShots = v.durationShots !== undefined;
   const hasShotsRef = v.durationShotsRef !== undefined;
@@ -562,6 +565,16 @@ function parseTimedDuration(
     // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 付与だけ「解除条件：〈カウンタ〉が 0 になった時」（validateCounterGrant）
     if (stat === undefined && isRecord(v.durationUntil)) {
       const key = `${path}.durationUntil`;
+      // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 「自分の HP が X% 以下の時、〈状態〉解除」（validateSelfHpGrant）
+      if ('selfHpAtMostRef' in v.durationUntil)
+        return {
+          durationUntil: {
+            selfHpAtMostRef: parseRef(
+              objectUntil(v.durationUntil, 'selfHpAtMostRef', key, 'expected { selfHpAtMostRef }'),
+              `${key}.selfHpAtMostRef`,
+            ),
+          },
+        };
       return {
         durationUntil: {
           counterEmpty: oneOf(

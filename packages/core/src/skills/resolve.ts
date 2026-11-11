@@ -699,6 +699,11 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * 届いたフレームで件の列を閉じる（skills/holders.ts の registerCounters。durationFrames は BATTLE_END_FRAMES）
    */
   untilCounterEmpty?: CounterId;
+  /**
+   * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 定義の durationUntil: { selfHpAtMostRef } の閾値（割合）。持ち主（自分）の HP の割合が
+   * これ以下と読めたフレームの次のフレームで件の列を閉じる（skills/holders.ts。durationFrames は BATTLE_END_FRAMES）
+   */
+  untilSelfHpAtMost?: number;
 };
 
 /**
@@ -720,9 +725,11 @@ export function resolveStateGrants(
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'state') return;
-      // 2 段目の段 19 の PR 1: カウンタが 0 になるまでの付与は、閉じる（untilCounterEmpty）までは「持続」と同じ窓
       const until = effect.durationUntil;
-      const counterEmpty = typeof until === 'object' ? until.counterEmpty : undefined;
+      const counterEmpty = typeof until === 'object' && 'counterEmpty' in until ? until.counterEmpty : undefined;
+      // A2 の B モード編: HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
+      const selfHpAtMostRef =
+        typeof until === 'object' && 'selfHpAtMostRef' in until ? until.selfHpAtMostRef : undefined;
       const window = resolveItemFields(
         { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
         character,
@@ -746,6 +753,8 @@ export function resolveStateGrants(
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       if (counterEmpty !== undefined) grant.untilCounterEmpty = counterEmpty;
+      if (selfHpAtMostRef !== undefined)
+        grant.untilSelfHpAtMost = skillValue(character.skills[slot], selfHpAtMostRef, levels[slot]) / 100;
       untrimmed.push(grant);
     });
   }

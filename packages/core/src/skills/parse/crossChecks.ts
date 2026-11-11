@@ -253,13 +253,13 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
 
 /**
  * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
- * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）
+ * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）。A2 の B モード編: currentHpDown の since も
  */
 function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      if (e.kind !== 'counterChange' && e.kind !== 'dot') return;
+      if (e.kind !== 'counterChange' && e.kind !== 'dot' && e.kind !== 'currentHpDown') return;
       const t = e.trigger;
       const state = isAppliedTrigger(t) ? t.applied : isTimerTrigger(t) ? t.since?.applied : undefined;
       if (state === undefined) return;

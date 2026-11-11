@@ -2,7 +2,7 @@
   "section": "6",
   "order": 40,
   "cells": {
-    "要るもの": "語彙（「1 秒間隔」「持続・N 秒間維持」の現在の HP▼（currentHpDown の周期の形）と、HP が X% 以下になった時の状態の解除。[design-scarlet.md](design-scarlet.md) 6 節）",
-    "対象": "A2 のバーストの B モード（未対応の notes）。グレイブのバースト・ラプンツェル：ピュアグレイスの S2 の現在の HP▼（定義なし）"
+    "要るもの": "キャラの定義（語彙は「1 秒間隔」の現在の HP▼（currentHpDown の周期の形）と、HP の割合による状態の解除で書ける。[design-hp-down-interval.md](design-hp-down-interval.md) 3 節）",
+    "対象": "グレイブのバーストの現在の HP▼（定義なし）"
   }
 }

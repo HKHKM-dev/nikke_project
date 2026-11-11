@@ -1733,6 +1733,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     const key = counterKey(track.holder, o.grant.untilCounterEmpty);
     counterEmptyTracks.set(key, [...(counterEmptyTracks.get(key) ?? []), track]);
   }
+  /**
+   * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値
+   */
+  const selfHpUntilTracks: { track: HeldTrack; threshold: number }[] = [];
+  for (const track of tracks) {
+    const o = track.origin;
+    if (o.kind === 'state' && o.grant.untilSelfHpAtMost !== undefined)
+      selfHpUntilTracks.push({ track, threshold: o.grant.untilSelfHpAtMost });
+  }
   /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
   const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
     track.stage === 1 ? activeAt(track, frame) : activeAt(track, frame).filter((it) => it.start < frame);
@@ -2399,6 +2408,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
     const from = appliedFrom;
+    // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
+    // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
+    if (!battleStartOnly)
+      for (const { track, threshold } of selfHpUntilTracks)
+        if (activeAt(track, f).some((it) => it.start < f) && selfHpAtMostAt(track.holder, f, threshold))
+          closeTrack(track, f);
     const take = (trigger: ResolvedTrigger): boolean =>
       battleStartOnly ? atBattleStart(trigger) : trigger !== 'battleStart';
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
@@ -2419,6 +2434,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
       if (!fireContextHolds(g.grant.condition, g.grant.trigger, ev, g.group.sourceSlotIndex)) {
+        skipGrant(g, f);
+        continue;
+      }
+      // A2 の B モード編（V-0729）: HP の割合で解除される状態は、発火のフレームにすでに閾値以下なら付かない（不発に数える）
+      const hpUntil = g.grant.untilSelfHpAtMost;
+      if (hpUntil !== undefined && !battleStartOnly && selfHpAtMostAt(g.group.sourceSlotIndex, f, hpUntil)) {
         skipGrant(g, f);
         continue;
       }

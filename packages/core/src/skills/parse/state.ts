@@ -14,7 +14,6 @@ import {
   isEnemyHeldStat,
   isPelletStat,
   isStacksCondition,
-  isTimerTrigger,
   type MaxStacksUpContentItem,
   type SkillCooldownDownContentItem,
   type RemoveDebuffEffect,
@@ -38,7 +37,13 @@ import {
 import { CONDITION_KEYS_OF, parseCondition, validateUsedBurst } from './condition.ts';
 import { type GrantTimedFields, parseTimedEffect, parseTimedFields } from './timed.ts';
 import { parseTargetCount } from './target.ts';
-import { parseAppliedTrigger, parseCounterFullTrigger, parseTimerDelayFrames, parseTrigger } from './trigger.ts';
+import {
+  parseAppliedTrigger,
+  parseCounterFullTrigger,
+  parseSinceTimerTrigger,
+  parseTimerDelayFrames,
+  parseTrigger,
+} from './trigger.ts';
 
 /** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
 const STATE_GRANT_VALUE_KEYS = ['stat', 'ref', 'scaling', 'decrease'] as const;
@@ -92,6 +97,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       fail(path, 'a state grant with a duration in shots cannot stack');
   }
   validateCounterGrant(fields, path, onEnemy);
+  validateSelfHpGrant(fields, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
@@ -241,7 +247,7 @@ function validateChanceGrant(fields: GrantTimedFields, v: Record<string, Json>, 
 function validateCounterGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
   const full = isCounterFullTrigger(fields.trigger) ? fields.trigger.counterFull : undefined;
   const until = fields.durationUntil;
-  const empty = typeof until === 'object' ? until.counterEmpty : undefined;
+  const empty = typeof until === 'object' && 'counterEmpty' in until ? until.counterEmpty : undefined;
   if (full === undefined && empty === undefined) return;
   if (full !== empty)
     fail(
@@ -259,6 +265,22 @@ function validateCounterGrant(fields: GrantTimedFields, path: string, onEnemy: b
   if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
     fail(path, 'a grant lasting until a counter is empty cannot stack');
   if (fields.condition !== undefined) fail(`${path}.condition`, 'a grant on { counterFull } cannot have a condition');
+}
+
+/**
+ * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される状態の付与（durationUntil: { selfHpAtMostRef }）。閉じるのは
+ * 持ち主の件の列ごとなので、自分にだけ付け、スタックしない
+ */
+function validateSelfHpGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
+  const until = fields.durationUntil;
+  if (typeof until !== 'object' || !('selfHpAtMostRef' in until)) return;
+  if (onEnemy || fields.target !== 'self')
+    fail(`${path}.target`, 'a grant lasting until the HP drops is only on "self"');
+  if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
+    fail(path, 'a grant lasting until the HP drops cannot stack');
+  // 発火のフレームの HP の割合で付くかを決める（skills/holders.ts の段 1 の付与）ので、条件で段を上げない
+  if (fields.condition !== undefined)
+    fail(`${path}.condition`, 'a grant lasting until the HP drops cannot have a condition');
 }
 
 /** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
@@ -429,6 +451,8 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
     fields.durationUntil = 'battleEnd';
     fields.trigger = 'battleStart';
   }
+  // A2 の B モード編: HP の割合で解除される状態の中身の規則は、閉じる（件の一覧）までは「持続」の付与と同じ
+  if (isRecord(fields.durationUntil) && 'selfHpAtMostRef' in fields.durationUntil) fields.durationUntil = 'battleEnd';
   if (value.stat === 'fixedChargeTime') {
     delete fields.maxStacks;
     delete fields.maxStacksRef;
@@ -468,12 +492,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
     trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`)!;
   } else if (isRecord(v.trigger) && v.trigger.since !== undefined) {
     // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）
-    const { since, ...rest } = v.trigger;
-    const timer = parseTrigger(rest, `${path}.trigger`, true);
-    if (!isTimerTrigger(timer)) fail(`${path}.trigger.since`, 'since needs a timer trigger ({ everySeconds })');
-    const from = parseAppliedTrigger(since, `${path}.trigger.since`);
-    if (from === undefined) fail(`${path}.trigger.since`, 'expected { applied }');
-    trigger = { ...timer, since: from };
+    trigger = parseSinceTimerTrigger(v.trigger, `${path}.trigger`)!;
   } else {
     // 2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）: 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
     trigger = parseTrigger(v.trigger, `${path}.trigger`, true);
