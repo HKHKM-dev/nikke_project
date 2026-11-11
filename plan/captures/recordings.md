@@ -1074,6 +1074,14 @@
 | 1100 | `20261112-1100_grave-solo.mp4` | ◎グレイブ（514、AR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / OFF |  |
 | 1101 | `20261112-1101_grave-p08-alice.mp4` | プロダクト08（302、SR・電撃・R） + グレイブ（514、AR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
 | 1102 | `20261112-1102_grave-p08-alice.mp4` | プロダクト08（302、SR・電撃・R） + グレイブ（514、AR・灼熱・SSR） + ◎アリス（191、SR・灼熱・SSR） | BigArms・灼熱 | 射撃場 3 分 | ON | ON / ON |  |
+| 1105 | `20261112-1105_sr_prika.mp4` | ◎プリカ（601、SR・水冷・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1106 | `20261112-1106_sr_prika.mp4` | ◎プリカ（601、SR・水冷・SSR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1107 | `20261112-1107_rl_mint.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ミント（600、RL・鉄甲・SSR） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1108 | `20261112-1108_rl_mint.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + I-DOLL・サン（308、AR・鉄甲・R） + ◎ミント（600、RL・鉄甲・SSR） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1109 | `20261112-1109_rl_mint.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ノア（232、RL・風圧・SSR） + ◎ミント（600、RL・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1110 | `20261112-1110_rl_mint.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + ノア（232、RL・風圧・SSR） + ◎ミント（600、RL・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1111 | `20261112-1111_sr_prika.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + プリカ（601、SR・水冷・SSR） + ◎ミント（600、RL・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
+| 1112 | `20261112-1112_sr_prika.mp4` | I-DOLL・フラワー（304、RL・風圧・R） + プリカ（601、SR・水冷・SSR） + ◎ミント（600、RL・鉄甲・SSR） + I-DOLL・サン（308、AR・鉄甲・R） + ミハラ（161、AR・水冷・SR） | BigArms・風圧 | 射撃場 3 分 | ON | ON / ON |  |
 
 ## 旧プロジェクトの録画（参照のみ。移動しない）
 

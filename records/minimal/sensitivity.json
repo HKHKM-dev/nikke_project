@@ -27527,6 +27527,758 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1105-01",
+      "element": "プリカ skill2.effects[3]",
+      "key": "2176a6f32d34519a",
+      "effective": true,
+      "minus": 0,
+      "plus": 107729.29323750001
+    },
+    {
+      "observation": "1105-02",
+      "element": "プリカ skill2.effects[3]",
+      "key": "fd704edbc56bef0e",
+      "effective": true,
+      "minus": 0,
+      "plus": 103437.38841200003
+    },
+    {
+      "observation": "1105-03",
+      "element": "プリカ skill2.effects[3]",
+      "key": "209e34b53768130c",
+      "effective": true,
+      "minus": 0,
+      "plus": 107729.29323750001
+    },
+    {
+      "observation": "1106-01",
+      "element": "プリカ skill2.effects[3]",
+      "key": "80489e9cf881e7b7",
+      "effective": true,
+      "minus": 0,
+      "plus": 86183.43459000002
+    },
+    {
+      "observation": "1106-02",
+      "element": "プリカ skill2.effects[3]",
+      "key": "d56f6659580ff810",
+      "effective": true,
+      "minus": 0,
+      "plus": 103437.38841200003
+    },
+    {
+      "observation": "1106-03",
+      "element": "プリカ skill2.effects[3]",
+      "key": "6d7b156a829372d9",
+      "effective": true,
+      "minus": 0,
+      "plus": 86183.43459000002
+    },
+    {
+      "observation": "1107-09",
+      "element": "ミント skill1.effects[1]",
+      "key": "bf8184df0866ae88",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-09",
+      "element": "ミント skill1.effects[2]",
+      "key": "bf8184df0866ae88",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1107-10",
+      "element": "ミント skill1.effects[1]",
+      "key": "7e474cdb10e048da",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-10",
+      "element": "ミント skill1.effects[2]",
+      "key": "7e474cdb10e048da",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1107-11",
+      "element": "ミント skill1.effects[1]",
+      "key": "4a0d6c7b9a2f4dfc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-11",
+      "element": "ミント skill1.effects[2]",
+      "key": "4a0d6c7b9a2f4dfc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1107-12",
+      "element": "ミント skill1.effects[1]",
+      "key": "3c84e89c42a0ef3f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-12",
+      "element": "ミント skill1.effects[2]",
+      "key": "3c84e89c42a0ef3f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1107-13",
+      "element": "ミント skill1.effects[1]",
+      "key": "127f823850757f95",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-13",
+      "element": "ミント skill1.effects[2]",
+      "key": "127f823850757f95",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1107-14",
+      "element": "ミント skill1.effects[1]",
+      "key": "6ad831bcca8fd105",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-14",
+      "element": "ミント skill1.effects[2]",
+      "key": "6ad831bcca8fd105",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1107-15",
+      "element": "ミント skill1.effects[1]",
+      "key": "c7ec1acd2a891028",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1107-15",
+      "element": "ミント skill1.effects[2]",
+      "key": "c7ec1acd2a891028",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-09",
+      "element": "ミント skill1.effects[1]",
+      "key": "d5c03d7f0fd46516",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-09",
+      "element": "ミント skill1.effects[2]",
+      "key": "d5c03d7f0fd46516",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-10",
+      "element": "ミント skill1.effects[1]",
+      "key": "c32405bb4fd425cc",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-10",
+      "element": "ミント skill1.effects[2]",
+      "key": "c32405bb4fd425cc",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-11",
+      "element": "ミント skill1.effects[1]",
+      "key": "77b459dbd24b8c72",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-11",
+      "element": "ミント skill1.effects[2]",
+      "key": "77b459dbd24b8c72",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-12",
+      "element": "ミント skill1.effects[1]",
+      "key": "4e76787c68f063a1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-12",
+      "element": "ミント skill1.effects[2]",
+      "key": "4e76787c68f063a1",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-13",
+      "element": "ミント skill1.effects[1]",
+      "key": "9553d2988439ea23",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-13",
+      "element": "ミント skill1.effects[2]",
+      "key": "9553d2988439ea23",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-14",
+      "element": "ミント skill1.effects[1]",
+      "key": "b471de1ce2d0d093",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-14",
+      "element": "ミント skill1.effects[2]",
+      "key": "b471de1ce2d0d093",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1108-15",
+      "element": "ミント skill1.effects[1]",
+      "key": "792ab1ad41c951ce",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1108-15",
+      "element": "ミント skill1.effects[2]",
+      "key": "792ab1ad41c951ce",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1109-09",
+      "element": "ミント skill1.effects[1]",
+      "key": "d3ce2145ae7386ca",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1109-09",
+      "element": "ミント skill1.effects[2]",
+      "key": "d3ce2145ae7386ca",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1109-10",
+      "element": "ミント skill1.effects[1]",
+      "key": "527121b9ccfbaff6",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1109-10",
+      "element": "ミント skill1.effects[2]",
+      "key": "527121b9ccfbaff6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1109-11",
+      "element": "ミント skill1.effects[1]",
+      "key": "df0cefa2a68f88a5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1109-11",
+      "element": "ミント skill1.effects[2]",
+      "key": "df0cefa2a68f88a5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1110-09",
+      "element": "ミント skill1.effects[1]",
+      "key": "130247999e301a7e",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1110-09",
+      "element": "ミント skill1.effects[2]",
+      "key": "130247999e301a7e",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1110-10",
+      "element": "ミント skill1.effects[1]",
+      "key": "624d4c5529a80e8a",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1110-10",
+      "element": "ミント skill1.effects[2]",
+      "key": "624d4c5529a80e8a",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1110-11",
+      "element": "ミント skill1.effects[1]",
+      "key": "a82d074e1fe19529",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1110-11",
+      "element": "ミント skill1.effects[2]",
+      "key": "a82d074e1fe19529",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-08",
+      "element": "プリカ burst.effects[1]",
+      "key": "76a1c1dfdbbe33e2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-08",
+      "element": "プリカ skill2.effects[3]",
+      "key": "76a1c1dfdbbe33e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-08",
+      "element": "ミント skill1.effects[1]",
+      "key": "76a1c1dfdbbe33e2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-08",
+      "element": "ミント skill1.effects[2]",
+      "key": "76a1c1dfdbbe33e2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-09",
+      "element": "プリカ burst.effects[1]",
+      "key": "5d9abcf56b035876",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-09",
+      "element": "プリカ skill2.effects[3]",
+      "key": "5d9abcf56b035876",
+      "effective": true,
+      "minus": 0,
+      "plus": 4198.22096694
+    },
+    {
+      "observation": "1111-09",
+      "element": "ミント skill1.effects[1]",
+      "key": "5d9abcf56b035876",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-09",
+      "element": "ミント skill1.effects[2]",
+      "key": "5d9abcf56b035876",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-10",
+      "element": "プリカ burst.effects[1]",
+      "key": "73852a5e1a67d6c9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-10",
+      "element": "プリカ skill2.effects[3]",
+      "key": "73852a5e1a67d6c9",
+      "effective": true,
+      "minus": 0,
+      "plus": 9768.84527572
+    },
+    {
+      "observation": "1111-10",
+      "element": "ミント skill1.effects[1]",
+      "key": "73852a5e1a67d6c9",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-10",
+      "element": "ミント skill1.effects[2]",
+      "key": "73852a5e1a67d6c9",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-11",
+      "element": "プリカ burst.effects[1]",
+      "key": "9b84c3ed41d69884",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-11",
+      "element": "プリカ skill2.effects[3]",
+      "key": "9b84c3ed41d69884",
+      "effective": true,
+      "minus": 0,
+      "plus": 113781.12725319999
+    },
+    {
+      "observation": "1111-11",
+      "element": "ミント skill1.effects[1]",
+      "key": "9b84c3ed41d69884",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-11",
+      "element": "ミント skill1.effects[2]",
+      "key": "9b84c3ed41d69884",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-12",
+      "element": "プリカ burst.effects[1]",
+      "key": "a490d69c0849d5a7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-12",
+      "element": "プリカ skill2.effects[3]",
+      "key": "a490d69c0849d5a7",
+      "effective": true,
+      "minus": 0,
+      "plus": 156503.41913712
+    },
+    {
+      "observation": "1111-12",
+      "element": "ミント skill1.effects[1]",
+      "key": "a490d69c0849d5a7",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-12",
+      "element": "ミント skill1.effects[2]",
+      "key": "a490d69c0849d5a7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-13",
+      "element": "プリカ burst.effects[1]",
+      "key": "f2fa52ec9bf7bfb5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1111-13",
+      "element": "プリカ skill2.effects[3]",
+      "key": "f2fa52ec9bf7bfb5",
+      "effective": true,
+      "minus": 0,
+      "plus": 101025.24769150006
+    },
+    {
+      "observation": "1111-13",
+      "element": "ミント skill1.effects[1]",
+      "key": "f2fa52ec9bf7bfb5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1111-13",
+      "element": "ミント skill1.effects[2]",
+      "key": "f2fa52ec9bf7bfb5",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-08",
+      "element": "プリカ burst.effects[1]",
+      "key": "8d91cb22e9ae133f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-08",
+      "element": "プリカ skill2.effects[3]",
+      "key": "8d91cb22e9ae133f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-08",
+      "element": "ミント skill1.effects[1]",
+      "key": "8d91cb22e9ae133f",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-08",
+      "element": "ミント skill1.effects[2]",
+      "key": "8d91cb22e9ae133f",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-09",
+      "element": "プリカ burst.effects[1]",
+      "key": "f293f68c6eff93c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-09",
+      "element": "プリカ skill2.effects[3]",
+      "key": "f293f68c6eff93c3",
+      "effective": true,
+      "minus": 0,
+      "plus": 4198.22096694
+    },
+    {
+      "observation": "1112-09",
+      "element": "ミント skill1.effects[1]",
+      "key": "f293f68c6eff93c3",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-09",
+      "element": "ミント skill1.effects[2]",
+      "key": "f293f68c6eff93c3",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-10",
+      "element": "プリカ burst.effects[1]",
+      "key": "946826e335690b8c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-10",
+      "element": "プリカ skill2.effects[3]",
+      "key": "946826e335690b8c",
+      "effective": true,
+      "minus": 0,
+      "plus": 9768.84527572
+    },
+    {
+      "observation": "1112-10",
+      "element": "ミント skill1.effects[1]",
+      "key": "946826e335690b8c",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-10",
+      "element": "ミント skill1.effects[2]",
+      "key": "946826e335690b8c",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-11",
+      "element": "プリカ burst.effects[1]",
+      "key": "8b55739c129cb009",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-11",
+      "element": "プリカ skill2.effects[3]",
+      "key": "8b55739c129cb009",
+      "effective": true,
+      "minus": 0,
+      "plus": 113781.12725319999
+    },
+    {
+      "observation": "1112-11",
+      "element": "ミント skill1.effects[1]",
+      "key": "8b55739c129cb009",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-11",
+      "element": "ミント skill1.effects[2]",
+      "key": "8b55739c129cb009",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-12",
+      "element": "プリカ burst.effects[1]",
+      "key": "20e715dd8b6ce8d2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-12",
+      "element": "プリカ skill2.effects[3]",
+      "key": "20e715dd8b6ce8d2",
+      "effective": true,
+      "minus": 0,
+      "plus": 156503.41913712
+    },
+    {
+      "observation": "1112-12",
+      "element": "ミント skill1.effects[1]",
+      "key": "20e715dd8b6ce8d2",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-12",
+      "element": "ミント skill1.effects[2]",
+      "key": "20e715dd8b6ce8d2",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-13",
+      "element": "プリカ burst.effects[1]",
+      "key": "9468c51d0d4ddf58",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1112-13",
+      "element": "プリカ skill2.effects[3]",
+      "key": "9468c51d0d4ddf58",
+      "effective": true,
+      "minus": 0,
+      "plus": 101025.24769150006
+    },
+    {
+      "observation": "1112-13",
+      "element": "ミント skill1.effects[1]",
+      "key": "9468c51d0d4ddf58",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1112-13",
+      "element": "ミント skill1.effects[2]",
+      "key": "9468c51d0d4ddf58",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }

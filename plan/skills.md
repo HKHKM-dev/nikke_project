@@ -6,11 +6,11 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 100・効果 698（根拠あり 678）・notes 227（根拠あり 98）
+件数: キャラ 102・効果 720（根拠あり 700）・notes 235（根拠あり 103）
 
-notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足 27・間接 58
+notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足 33・間接 60
 
-スロット: supported 257・partial 25・unsupported 8・noEffect 37
+スロット: supported 263・partial 25・unsupported 8・noEffect 37
 
 ## 10 ラピ
 
@@ -1356,6 +1356,48 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - effects[0] state・burstUse・wheelOfFortune（attackDamage）: C-1050（確定）、C-1054（確定）
   - effects[1] burstDamage・skill: C-1051（確定）
   - effects[2] state・burstUse・judgment（damageTaken）: C-1050（確定）
+
+## 600 ミント
+
+- **skill1**: supported
+  - effects[0] state・fullChargeShot・singingEffect（attack）: C-1129（確定）
+  - effects[1] state・fullChargeShot・dancingEffect: C-1135（仮説）
+  - effects[2] heal・fullChargeShot: C-1135（仮説）
+  - notes[0] 補足: ダンスエフェクトの持続回復（1 秒間隔）は、付いた時に 1 回だけ「回復効果が適用された時」を起こす（1 秒ごとの刻みでは起こさない。C-0578 と同じ読み）。満タンの味方にも付く。回復量はダメージに関係しない: C-1135（仮説）
+- **skill2**: supported
+  - effects[0] cancelState・burstStage3Enter: C-1130（確定）
+  - effects[1] cancelState・burstStage3Enter: C-1130（確定）
+  - effects[2] timed・burstStage3Enter・critRate: C-1131（確定）
+  - effects[3] timed・burstStage3Enter・projectileExplosionDamage: C-1131（確定）
+  - effects[4] timed・burstStage3Enter・pierceDamage（読む: 貫通）: C-1131（確定）
+  - notes[0] 補足: 消去は次のフレームで閉じるので、ボーカルでシンガロングの無い 3 段階突入時には、消去と同じフレームの S2 の▲も出るとして回す（確かめていない）: 根拠なし
+- **burst**: supported
+  - effects[0] state・burstUse・assignedPartSinging: C-1128（確定）
+  - effects[1] state・burstUse・assignedPartDancing: C-1128（確定）
+  - effects[2] state・burstUse・singAlong（attackDamage・maxAmmo・critDamage）: C-1132（確定）
+  - notes[0] 補足: 「条件に合うステージパートのみ適用」は、ボーカルとダンスを同じ切り替えの組（目録の group）にして書く。片方が付くと、もう片方は次のフレームで外れる（解除不可でも）: C-1128（確定）
+  - notes[1] 補足: シンガロングの 3 つの項目の維持はどれも 10 秒なので、付与の維持は値 02 で持つ: C-1132（確定）
+
+## 601 プリカ
+
+- **skill1**: supported
+  - effects[0] timed・fullChargeShot・projectileExplosionDamage: C-1126（確定）
+  - effects[1] timed・fullChargeShot・pierceDamage（読む: 貫通）: C-1127（確定）
+  - effects[2] timed・fullChargeShot・attack: C-1125（確定）
+  - effects[3] passive・performance の間・pierce: C-1127（確定）
+  - notes[0] 間接（HP）: パフォーマンスの間の自分の与える HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+- **skill2**: supported
+  - effects[0] state・singAlong が適用された時・encore: C-1133（確定）
+  - effects[1] state・singAlong が適用された時・assignedPartSinging: C-1133（確定）
+  - effects[2] stateExtend・singAlong が適用された時: C-1133（確定）
+  - effects[3] timed・singAlong が適用された時・attackDamage: C-1134（仮説）
+  - effects[4] cooldownReduction・singAlong が適用された時: C-1133（確定）
+  - notes[0] 間接（HP）: フルバーストタイムが発動した時の自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: 根拠なし
+  - notes[1] 補足: アンコールのボーカルは、シンガロングを付けた枠（ミントのバースト）に付き、同じフレームにミントのバーストが付けるダンスより後とみなす（ボーカルが残る）: C-1133（確定）
+- **burst**: supported
+  - effects[0] state・burstUse・performance（chargeDamage）: C-1127（確定）
+  - effects[1] heal・burstUse: C-1135（仮説）
+  - notes[0] 補足: パフォーマンスの持続回復（1 秒間隔・解除不可）は、付いた時に 1 回だけ「回復効果が適用された時」を起こす（C-0578 と同じ読み）。アンコールの延長は回復の出来事を起こさない。持続回復とチャージダメージ▲の維持はどちらも 25 秒なので、付与の維持は値 06 で持つ。回復量はダメージに関係しない: C-1135（仮説）
 
 ## 811 A2
 
