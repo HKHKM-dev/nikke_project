@@ -968,7 +968,14 @@ header h1 {
 }
 .growth-marks-core > span {
   position: relative;
+  /* 行の高さを字の高さにして、数字を枠の中央に置く */
+  line-height: 1;
   letter-spacing: -0.02em;
+}
+/* MAX は 3 字なので、枠に収まるよう小さくする */
+.growth-marks-core > .growth-marks-core-max {
+  font-size: 0.72em;
+  letter-spacing: -0.06em;
 }
 .char-tray-growth {
   position: absolute;
