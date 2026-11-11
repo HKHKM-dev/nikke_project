@@ -21,7 +21,7 @@ import {
   parseTargetWeapon,
   validateBurstUsersTarget,
 } from './target.ts';
-import { parseShotCountDelay, parseTimerDelayFrames, parseTrigger } from './trigger.ts';
+import { parseShotCountDelay, parseSinceTimerTrigger, parseTimerDelayFrames, parseTrigger } from './trigger.ts';
 
 /** 2 段目の段 15 の PR 2: 遮蔽物 HP 回復。段 17 の PR 1: 対象は自分か味方全体 */
 export function parseCoverHealEffect(v: Record<string, Json>, path: string): CoverHealEffect {
@@ -104,15 +104,18 @@ export function parseInstantEffect(v: Record<string, Json>, path: string, kind: 
   }
   const hasDuration = v.durationRef !== undefined || v.durationSeconds !== undefined;
   // F5（plan/design-heal-vocabulary.md 3.3 節）: heal は時間の周期のトリガー（atStart も）を書ける（エマ：TU の S1 の持続回復）
-  const trigger = parseTrigger(
-    v.trigger,
-    `${path}.trigger`,
-    kind === 'heal' ? 'withStart' : false,
-    false,
-    false,
-    kind === 'heal',
-    kind === 'ammoDecrease',
-  );
+  // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 現在の HP▼ は、状態の付いた時から数える周期（「1 秒間隔」）も書ける
+  const trigger =
+    (kind === 'currentHpDown' ? parseSinceTimerTrigger(v.trigger, `${path}.trigger`, true) : undefined) ??
+    parseTrigger(
+      v.trigger,
+      `${path}.trigger`,
+      kind === 'heal' ? 'withStart' : false,
+      false,
+      false,
+      kind === 'heal',
+      kind === 'ammoDecrease',
+    );
   // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は、使用武器の変更の終わりのきっかけで自分にだけ。2 段目の段 17 の
   // PR 4（plan/design-skill-stage17.md 2.2 節）: バースト使用時も（ジルのバースト。100% で残弾 0 になり、リロードを始める）
   if (kind === 'ammoDecrease' && !isWeaponChangeEndTrigger(trigger) && trigger !== 'burstUse')

@@ -467,8 +467,16 @@ function runFirstPassOnce(
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
   // F5（plan/design-heal-vocabulary.md 3.3 節）: 時間の周期のトリガー（heal だけ書ける）は出来事の列に無いので、
   // 周期のフレーム（atStart ならフレーム 0 も。skills/timeline.ts の triggerFires）で発火する
+  // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 状態の付いた時から数える周期（since。currentHpDown）は、件の一覧の sinceFires
+  // （counterChange と同じ数え方）で決める
   const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
+    // 件の一覧（lists）は即時効果の後に作るので、最初の呼び出しで作る
+    if (effect.trigger.since !== undefined) {
+      const trigger = effect.trigger;
+      let fires: TriggerTracker | undefined;
+      return (ev) => (fires ??= lists.sinceFires(trigger, sourceSlotIndex))(ev);
+    }
     const at = new Set(triggerFrames(effect.trigger, null, sourceSlotIndex, frames));
     return (ev) => at.has(ev.frame);
   };

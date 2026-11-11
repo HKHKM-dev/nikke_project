@@ -690,7 +690,8 @@ export type TimerTrigger = {
   everySeconds: number;
   /**
    * 防御力無視ダメージ編（plan/design-true-damage-element.md 3.5 節）: 戦闘開始時（フレーム 0）にも 1 回発火する
-   * （「戦闘開始時、… 再発動周期 N 秒」）。timed にだけ書ける（1 パス目で窓を追う stat は、戦闘開始時と同じくループの前に登録する）
+   * （「戦闘開始時、… 再発動周期 N 秒」）。timed にだけ書ける（1 パス目で窓を追う stat は、戦闘開始時と同じくループの前に登録する）。
+   * A2 の B モード編（plan/design-hp-down-interval.md 2.1 節。V-0729）: since のある currentHpDown にも書け、状態の付いたフレームにも発火する
    */
   atStart?: true;
   /**
@@ -701,7 +702,8 @@ export type TimerTrigger = {
   /**
    * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: 周期の起点を、その状態が自分に付いた最後のフレーム（付いた記録）にする。
    * k 回目は起点から k × everySeconds 秒に達した最初のフレーム（carry と同じ数え方）で、その状態が自分に付いている間だけ発火する（外れたら止まり、
-   * 次に付いた時は数え直す）。counterChange にだけ書ける（変身の間 0.2 秒ごとのバッテリーの▼）
+   * 次に付いた時は数え直す）。counterChange にだけ書ける（変身の間 0.2 秒ごとのバッテリーの▼）。
+   * A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: currentHpDown にも書ける（「現在のHP X%▼」「1 秒間隔」。B モードの間 1 秒ごと）
    */
   since?: AppliedTrigger;
   /**
@@ -1034,6 +1036,17 @@ export const DURATION_UNTILS = [
  * きっかけは同じカウンタの { counterFull } の付与にだけ書ける（アークレンジャー・ブラックの変身）
  */
 export type CounterEmptyUntil = { counterEmpty: CounterId };
+
+/**
+ * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 状態の付与の維持の「自分の HP が X% 以下の時、〈状態〉解除」。X は % の
+ * description_value_NN。付いたフレームの次のフレームから、持ち主（自分）の HP の割合（skills/holders.ts の selfHpRatioAt。現在の HP▼ は
+ * 発火の次のフレームから読む）が閾値以下と読めたフレーム g に、件を g + 1 で閉じる（g には付いている。解除 removeState と同じ）。それまでは
+ * 戦闘の終わりまで。発火のフレームにすでに閾値以下なら付かない（V-0729）。自分にだけ付き、スタックせず、条件を持たない
+ */
+export type SelfHpAtMostUntil = SelfHpAtMostTrigger;
+
+/** 状態の付与の維持の終わり（timed と同じ出来事と、オブジェクトの形の解除条件） */
+export type GrantDurationUntil = DurationUntil | CounterEmptyUntil | SelfHpAtMostUntil;
 
 /**
  * 同（論点 4）: dot の「〈状態〉解除まで」。きっかけ { applied } の状態の、自分の件の終わり（付いたフレームを含む件）より後の tick を出さない
@@ -1556,7 +1569,9 @@ export type AmmoDecreaseEffect = TargetCountFields & {
 /**
  * 紅蓮編（plan/design-scarlet.md 2.1 節）: 「現在のHP X%▼」。発火のたびに、自分の現在の HP を X% 下げる（HP の割合に (1 − X) を掛ける。
  * 最大HP は変えない。即時効果）。自分の HP の割合を読む効果（きっかけ { selfHpAtMostRef }・条件 selfHp の atMost）が、発火の次のフレーム
- * から読む（skills/holders.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ
+ * から読む（skills/holders.ts の selfHpRatioAt）。回復で戻る分は扱わない。対象は自分だけ。
+ * A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 「1 秒間隔」は、状態の付いた時から数える周期 { everySeconds, since } で書く
+ * （付いたフレームにも起きるなら atStart。V-0729）
  */
 export type CurrentHpDownEffect = Omit<AmmoDecreaseEffect, 'kind'> & { kind: 'currentHpDown' };
 
@@ -2081,8 +2096,8 @@ export type StateGrantEffect = Omit<
   'kind' | 'stat' | 'ref' | 'scaling' | 'decrease' | 'amplifies' | 'durationUntil'
 > & {
   kind: 'state';
-  /** timed と同じ維持の終わりの出来事。2 段目の段 19 の PR 1: カウンタが 0 になった時（CounterEmptyUntil）も */
-  durationUntil?: DurationUntil | CounterEmptyUntil;
+  /** timed と同じ維持の終わりの出来事。2 段目の段 19 の PR 1: カウンタが 0 になった時（CounterEmptyUntil）も。A2 の B モード編: HP が X% 以下の時（SelfHpAtMostUntil）も */
+  durationUntil?: GrantDurationUntil;
   /** 目録の id（持ち主が味方の状態。enemy なら敵の状態） */
   state: NamedStateId;
   /**

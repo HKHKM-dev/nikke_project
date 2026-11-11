@@ -1,0 +1,346 @@
+[
+  {
+    "id": "1084-01",
+    "recording": "1084",
+    "kind": "timing",
+    "use": "record",
+    "value": [1369, 2587, 3812, 5194, 6475, 7762, 8940, 10167, 11392],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が I から II に替わったフレーム（I の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II の色が出るまでの読めないフレーム（白い光り）: 5・0・25・0・25・0・25・0・25f"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-02",
+    "recording": "1084",
+    "kind": "timing",
+    "use": "record",
+    "value": [1398, 3841, 6504, 8969, 11421],
+    "unit": "f",
+    "description": "右のバースト欄の六角形が II から III に替わったフレーム（II の色の最後のフレームの次）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。III の色が出るまでの読めないフレーム（白い光り）: 0・25・25・25・25f"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-03",
+    "recording": "1084",
+    "kind": "timing",
+    "use": "record",
+    "value": [1427, 3870, 6534, 8998, 11541],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーが 00.00 になったフレーム（フルバーストの始まり。バーの行が紫になった最初のフレーム）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。II → III の替わり目の後、最初にバーの行の紫の画素が 100 以上になったフレーム"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-04",
+    "recording": "1084",
+    "kind": "timing",
+    "use": "record",
+    "value": [2558, 4479, 7142, 9606],
+    "unit": "f",
+    "description": "右のバースト欄の六角形の所が、フルバーストの背景の橙から次の段の灰色に替わったフレーム（フルバーストの終わり。00.00 と同じ並び）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。00.00 の 300f 後から、青と緑が一度に上がり（青 30・緑 15 以上）、バーの紫が 0 になったフレーム。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-05",
+    "recording": "1084",
+    "kind": "interval",
+    "use": "record",
+    "value": [1131, 609, 608, 608],
+    "unit": "f",
+    "description": "右のバースト欄の III のタイマーの 00.00 から、フルバーストの終わり（六角形の所が灰色に替わったフレーム）までの動画のフレーム（入りの止まりを含む）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。上の 00.00 と終わりの差。5 回目の窓の終わりが読めなかったので、そこから先は出さない"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-06",
+    "recording": "1084",
+    "kind": "timing",
+    "use": "record",
+    "value": [8934],
+    "unit": "f",
+    "description": "右のバースト欄の I の段の顔（候補の 1 人目）の CT の秒の表示が消えたフレーム（CT の明け）のうち、I → II の替わり目の 15f 前までにあるもの（CT が律速の発動の明け）",
+    "method": {
+      "tool": "recipe:burst-panel@4",
+      "note": "右の欄（1740,400 から 180×180）のフレームごとの特徴（キャッシュ burst-panel@1）。顔の枠の白以外の明るさが上がり、前の 2 フレームに秒の字（白の画素）があったフレーム（顔が動く形を除く）。I → II の替わり目の前にない候補（ゲージを待つ間の明けなど。偽物が混ざるので画で確かめる）: なし"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-07",
+    "recording": "1084",
+    "kind": "total",
+    "use": "record",
+    "value": 125652767,
+    "description": "リター・デルタ・A2 の HUD の総ダメージの最後の値",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "最後の増分は f11441。増分は 2924 個"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-08",
+    "recording": "1084",
+    "kind": "count",
+    "use": "record",
+    "value": 227,
+    "unit": "トリガー",
+    "description": "リター・デルタ・A2 のトリガーの数（総ダメージの増分の数）",
+    "method": {
+      "tool": "recipe:hud-jumps@3",
+      "note": "増分は 2924 個。前の増分から 30f 未満の増分（2886 個）は同じトリガーの読みが割れたものとしてまとめ、まとめた組が跨ぐ長さ（発の間 44.5f）から発の数を決めた（2 発になった組 29 個）"
+    },
+    "source": "V-0729",
+    "readAt": "2026-11-11"
+  },
+  {
+    "id": "1084-09",
+    "recording": "1084",
+    "source": "V-0729",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 466812,
+    "unit": "ダメージ",
+    "description": "A2 の B モードの攻撃力▲だけが乗ったフルチャージの通常攻撃のコアの 1 ヒット（会心なし・距離なし）。1 回目のバーストの S1 が切れた後の増分 508,352（f2341・2415・2489）から、同じ攻撃力の S2 の追加ダメージ 41,540（C-0407）を引いた値",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルの A2 の通常攻撃 + S2 の追加ダメージ（▲なし・B モードだけ・S1 だけ。--opt grid=n=3@300;ns=3@shot@300;N=n+ns;b=3@1765;bs=3@shot@1765;B=b+bs;s=3@3824;ss=3@shot@3824;S=s+ss・--opt setup=V-0729:hit-pre）の会心・コアの組に ±1.5 で当てた。B モードだけの格子に当たったのは、どれもコア・会心なしの 508,352（466,812.06 + 41,540.41）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 1765,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1084-10",
+    "recording": "1084",
+    "source": "V-0729",
+    "readAt": "2026-11-11",
+    "kind": "hit",
+    "use": "compare",
+    "value": 584216,
+    "unit": "ダメージ",
+    "description": "A2 の S1 のチャージダメージ▲だけが乗ったフルチャージの通常攻撃のコアの 1 ヒット（会心なし・距離なし）。2 回目以降のバーストのフルバーストの後、S1 の 15 秒の中の増分 620,275（f4658・9677・9797）から S2 の追加ダメージ 36,059（▲なし。チャージダメージ▲は追加ダメージに乗らない）を引いた値。同じ窓の会心の 784,357（730,269 + 54,088）も当たる",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "前の観測値と同じ格子（S1 だけの格子 s・ss はモデルの f3824）。B モードの攻撃力▲の乗った値（B・S1 の両方）の増分は、2 回目以降のバーストの後に無い"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "frame": 3824,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1084-11",
+    "recording": "1084",
+    "source": "V-0729",
+    "readAt": "2026-11-11",
+    "kind": "interval",
+    "use": "compare",
+    "value": 74,
+    "unit": "f",
+    "description": "A2 の 1 回目のバーストの後、S1 が切れてから的のジャンプまでの、B モードの間のフルチャージの発と発の間の平均（f2341・2415・2489・2563。どれも 74f。バーストの前の▲なしの間は 120f）",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分のフレーム（hud-jumps@3）。A2 の発は上の格子で決めた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "shotIntervalMean",
+      "args": {
+        "slot": 3,
+        "burst": 0,
+        "from": 890,
+        "to": 1290
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1084-12",
+    "recording": "1084",
+    "source": "V-0729",
+    "readAt": "2026-11-11",
+    "kind": "timing",
+    "use": "compare",
+    "value": 1351.5,
+    "unit": "f",
+    "spread": {
+      "kind": "range",
+      "low": 1136,
+      "high": 1567
+    },
+    "description": "A2 の 1 回目のバーストの B モードのチャージ速度▲の切れ目の、III のタイマーの 00.00（f1427）から数えた動画のフレームの幅。B モードの間隔（74f）で溜めた最後の発は f2563（1136f）、的のジャンプの明けの最初の発 f2994（1567f）は 452,598（▲なしのコア 441,269 + リターの 1 ヒット 11,329） で▲なし（値は幅の真ん中）。切れ目は的のジャンプの窓に入る",
+    "method": {
+      "tool": "recipe:buff-edge@5（--opt grid）と目視",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）と、バースト欄の 00.00（burst-panel@4）。予測ファイルの end-1 と同じ指標"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "chargeSpeed",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 215.5
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1084-13",
+    "recording": "1084",
+    "source": "V-0729",
+    "readAt": "2026-11-11",
+    "kind": "count",
+    "use": "compare",
+    "value": 23,
+    "unit": "回",
+    "description": "A2 の 1 回目のバーストの後の、A2 の枠の HP のバー（画面下の枠の白いバー）が下がった回数。1 回目は入りの止まり（1426〜1454。バーが消える）の間で、明けに下がっていた（1456 に 85.07（00.00 の前は 89.9））。2 回目は f1476（00.00 から 49f）、その後は約 59.3f ごとに下がり、23 回目で止まった（2731 に 34.8（約 39%）。2 回目のバーストまで下がらない）。下がり方は現在の HP の 3.99% ずつ（0.9601 の冪。21 回目の後の 42.0%・23 回目の後の 38.7% が読める）",
+    "method": {
+      "tool": "使い捨てのスクリプト（ffmpeg で A2 の枠の HP のバー（x 916〜1020・y 1033〜1037）の白の量をフレームごとに測った）",
+      "note": "バーの長さは満タンで約 89.9。下がった所は 1 フレームで段になる（1 回で満タンの 3.99%（3.6）〜 40% の 3.99%（1.4））。バーストやリターの演出が重なるフレームは読みが乱れるので、前後の段の値で数えた"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "currentHpDown",
+        "anchor": "activation:0",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1084-14",
+    "recording": "1084",
+    "source": "V-0729",
+    "readAt": "2026-11-11",
+    "kind": "count",
+    "use": "compare",
+    "value": 0,
+    "unit": "回",
+    "description": "A2 の 2 回目のバーストの後の、A2 の枠の HP のバーが下がった回数。00.00（f3870）の前後でバーは約 39% のまま（3〜5 回目のバーストの後も同じ）。2 回目以降のバーストの後の A2 の発の間隔は 120f（チャージ速度▲なし）で、攻撃力▲の乗った値も無い",
+    "method": {
+      "tool": "使い捨てのスクリプト（前の観測値と同じ）",
+      "note": "2 回目のバーストの入りの止まりの前と明けのバーの長さが同じ（34.8）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventCount",
+      "args": {
+        "slot": 3,
+        "event": "currentHpDown",
+        "anchor": "activation:1",
+        "within": "untilNext"
+      },
+      "tolerance": {
+        "abs": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 3,
+      "source": "normal"
+    }
+  }
+]

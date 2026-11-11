@@ -178,10 +178,15 @@ export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
   return typeof t === 'object' && 'everySeconds' in t;
 }
 
+/** 自分の HP の割合の閾値（% の description_value_NN）を割合にする（きっかけ { selfHpAtMostRef } と維持 { selfHpAtMostRef }） */
+function selfHpRatioOfRef(skill: SkillRaw, ref: number, level: number): number {
+  return skillValue(skill, ref, level) / 100;
+}
+
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   // マスト編: HP の割合の閾値は % → 比率
-  if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: skillValue(skill, trigger.selfHpAtMostRef, level) / 100 };
+  if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
   // ソルジャーE.G. 編: 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
@@ -699,6 +704,11 @@ export type ResolvedStateGrant = ResolvedItemFields & {
    * 届いたフレームで件の列を閉じる（skills/holders.ts の registerCounters。durationFrames は BATTLE_END_FRAMES）
    */
   untilCounterEmpty?: CounterId;
+  /**
+   * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 定義の durationUntil: { selfHpAtMostRef } の閾値（割合）。持ち主（自分）の HP の割合が
+   * これ以下と読めたフレームの次のフレームで件の列を閉じる（skills/holders.ts。durationFrames は BATTLE_END_FRAMES）
+   */
+  untilSelfHpAtMost?: number;
 };
 
 /**
@@ -720,9 +730,10 @@ export function resolveStateGrants(
   for (const slot of SKILL_SLOTS) {
     def.skills[slot].effects.forEach((effect, effectIndex) => {
       if (effect.kind !== 'state') return;
-      // 2 段目の段 19 の PR 1: カウンタが 0 になるまでの付与は、閉じる（untilCounterEmpty）までは「持続」と同じ窓
       const until = effect.durationUntil;
-      const counterEmpty = typeof until === 'object' ? until.counterEmpty : undefined;
+      const counterEmpty = typeof until === 'object' && 'counterEmpty' in until ? until.counterEmpty : undefined;
+      // A2 の B モード編: HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
+      const hpUntil = isSelfHpAtMostTrigger(until) ? until : undefined;
       const window = resolveItemFields(
         { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
         character,
@@ -746,6 +757,8 @@ export function resolveStateGrants(
       if (effect.delayFrames !== undefined) grant.delayFrames = effect.delayFrames;
       if (effect.leadFrames !== undefined) grant.leadFrames = effect.leadFrames;
       if (counterEmpty !== undefined) grant.untilCounterEmpty = counterEmpty;
+      if (hpUntil !== undefined)
+        grant.untilSelfHpAtMost = selfHpRatioOfRef(character.skills[slot], hpUntil.selfHpAtMostRef, levels[slot]);
       untrimmed.push(grant);
     });
   }
@@ -762,6 +775,7 @@ export function resolveStateGrants(
       g.durationFrames === first.durationFrames &&
       g.durationShots === first.durationShots &&
       g.durationUntil === first.durationUntil &&
+      g.untilSelfHpAtMost === first.untilSelfHpAtMost &&
       g.maxStacks === first.maxStacks;
     if (!same) {
       throw new RangeError(

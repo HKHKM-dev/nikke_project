@@ -252,6 +252,21 @@ export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | und
   return { applied: parseNamedStateId(v.applied, `${path}.applied`, 'ally') };
 }
 
+/**
+ * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: 状態の付いた時から数える周期 { everySeconds, since: { applied } }。
+ * since の無い形なら undefined（呼ぶ側の parseTrigger が読む）。counterChange と、A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）から
+ * currentHpDown が読む。allowStart なら atStart（付いたフレームにも発火する。currentHpDown だけ）も書ける
+ */
+export function parseSinceTimerTrigger(v: Json, path: string, allowStart = false): TimerTrigger | undefined {
+  if (!isRecord(v) || v.since === undefined) return undefined;
+  const { since, ...rest } = v;
+  const timer = parseTrigger(rest, path, allowStart ? 'withStart' : true);
+  if (!isTimerTrigger(timer)) fail(`${path}.since`, 'since needs a timer trigger ({ everySeconds })');
+  const from = parseAppliedTrigger(since, `${path}.since`);
+  if (from === undefined) fail(`${path}.since`, 'expected { applied }');
+  return { ...timer, since: from };
+}
+
 /** マスト編（plan/design-mast.md 8 節）: { selfHpAtMostRef: N }。それ以外の形なら undefined（timed だけが読む） */
 export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTrigger | undefined {
   if (!isRecord(v) || v.selfHpAtMostRef === undefined) return undefined;

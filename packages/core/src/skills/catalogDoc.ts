@@ -80,7 +80,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   currentHp: [
     '現在のHP',
     'indirect',
-    'HP の経路（HP の条件・失った HP の値を動かす）。自分の現在の HP▼ は currentHpDown（読む側が同じ定義にあれば効果。紅蓮編）',
+    'HP の経路（HP の条件・失った HP の値を動かす）。自分の現在の HP▼ は currentHpDown（読む側が同じ定義にあれば効果。紅蓮編）。「1 秒間隔」は状態の付いた時から数える周期 since、HP が X% 以下での状態の解除は durationUntil: { selfHpAtMostRef }（A2 の B モード編）',
   ],
   pierceRange: ['貫通範囲', 'oos', 'なし'],
   damageTakenFromElement: ['〈コード〉の敵から受けるダメージ', 'damaged', '被弾の経路'],
