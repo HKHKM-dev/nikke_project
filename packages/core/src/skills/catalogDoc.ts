@@ -91,11 +91,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   healGiven: ['与えるHP回復量', 'indirect', 'HP の経路（HP が満タンでない時の回復量）'],
   barrierHp: ['次のバリアのHP', 'damaged', 'バリアの HP（壊れるまでの長さ）'],
   barrierDamage: ['バリアに与えるダメージ', 'oos', '敵のバリア（射撃場の的に無い）'],
-  stateDuration: [
-    '状態の維持時間',
-    'ok',
-    'stateExtend（付いている件の残りを延ばす。ミント・プリカ編）',
-  ],
+  stateDuration: ['状態の維持時間', 'ok', 'stateExtend（付いている件の残りを延ばす。ミント・プリカ編）'],
   stateParam: ['状態の中身の値', 'gap', 'なし（別の状態の中身を変える）'],
 };
 
