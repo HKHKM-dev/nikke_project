@@ -136,6 +136,7 @@
     | 〈状態〉維持時間 X 秒▲ | `kind: "stateExtend"`（`secondsRef`） | 付いていて後まで続く件の終わりを延ばす（後から付く件は延ばさない）。中身と、その状態を見る `while` も延びる。例: アンコールの効果 2 | 同 2.5 節 |
     | バーストスキルクールタイム X 秒▲（即時） | `cooldownReduction` の `increase: true` | 走っている CT の残りに足す（明けていれば何もしない）。`{ applied }` のきっかけでは対象は自分だけ。例: アンコールの効果 4 | 同 2.6 節 |
     | 自分が〈状態〉なら（回復） | `heal` の `condition.selfState` | 例: ミントの S1 のダンスエフェクト | 同 2.7 節 |
+    | 自分の HP が最大の場合（倍率ダメージ） | damage の `condition.selfHp: { "atLeast": 100 }` | バーストを使ったフレームなど、発火のフレームの HP の割合で見る（最大HP のみ▲ で下がると出ない）。`perBurstHit` ならヒットの全部に同じ結果を使う。例: ソリンのバースト | [design-soline.md](design-soline.md) 2.1 節 |
 
   - 根拠の結論の ID は、効果と notes の `claims` に書く（3 節）。結論を作ったとき（[verification-guide.md](verification-guide.md) 8 節）に書き足す。解釈の結論を先に `仮説`・等級 `推論` で作って ID を書いてもよい。
   - `checkedAt` は説明文を読んだ日。

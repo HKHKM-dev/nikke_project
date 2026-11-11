@@ -65,6 +65,7 @@ import {
   counterEffectiveFrom,
   counterFullFrames,
   itemsOf,
+  selfHpRatioOf,
   stacksHold,
   valuePiecesOf,
   type HolderHistory,
@@ -391,9 +392,9 @@ export function planSkillHits(
   /**
    * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節・段 D の 2）: 1 パス目の履歴。条件 enemyState は敵の状態の件、
    * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。段 11 の PR 5: 条件 selfCounter と
-   * perCount の { counter } はカウンタの記録を見る
+   * perCount の { counter } はカウンタの記録を見る。ソリン編: 条件 selfHp は HP の割合の段（hpRatios）を見る
    */
-  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications' | 'counters'>,
+  history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios'>,
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
@@ -480,6 +481,8 @@ export function planSkillHits(
     // 2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 条件 selfCounter と perCount の { counter } が読む、自分のカウンタの
     // 発火のフレームの値（前のフレームの終わりの値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 から。counterEffectiveFrom）
     const ownCounters = history.counters.filter((r) => r.slotIndex === slotIndex);
+    // ソリン編（plan/design-soline.md 2.1 節）: 条件 selfHp（以上）が見る、自分の発火のフレームの HP の割合
+    const hpRatioAt = (frame: number): number => selfHpRatioOf(history, slotIndex, frame);
     const counterAt = (counter: CounterId, frame: number): number => {
       let value = 0;
       for (const r of ownCounters) if (r.counter === counter && counterEffectiveFrom(r) <= frame) value = r.value;
@@ -497,7 +500,7 @@ export function planSkillHits(
         return effect.condition === undefined
           ? at
           : at.filter((f) =>
-              damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt),
+              damageConditionHolds(effect.condition, f, schedule, enemySpans, selfStateHolds, counterAt, hpRatioAt),
             );
       }
       const per = effect.perCount;
@@ -663,7 +666,8 @@ export function planSkillHits(
                   )
               : triggerFrames(t, schedule, slotIndex, frames, shots, undefined, everyAtFor(effect.source.skill));
       for (const frame of fires) {
-        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt)) continue;
+        if (!damageConditionHolds(effect.condition, frame, schedule, enemySpans, selfStateHolds, counterAt, hpRatioAt))
+          continue;
         // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 発火のフレームから窓を開け、窓の終わりの遅れの後に
         // 爆発のヒットを置く。最大量は発火のフレームの最終攻撃力 × 倍率 × (1 + 分配ダメージ▲)（C-0904 と同じ形）。ヒットの値は
         // 2 パス目（sim/engine.ts）が窓の中のダメージの和にする
@@ -772,7 +776,7 @@ export function planSkillHits(
       if (ups.length > 0) {
         for (const up of ups)
           for (const f of triggerFrames(up.trigger, schedule, slotIndex, frames, shots))
-            if (damageConditionHolds(up.condition, f, schedule, enemySpans, selfStateHolds, counterAt))
+            if (damageConditionHolds(up.condition, f, schedule, enemySpans, selfStateHolds, counterAt, hpRatioAt))
               for (let k = 0; k < up.amount; k++) fires.push({ f, effect: group[0]! });
         fires.sort((a, b) => a.f - b.f);
       }
@@ -870,8 +874,16 @@ function damageConditionHolds(
   enemySpans: ReadonlyMap<NamedStateId, readonly { start: number; end: number }[]>,
   selfStateHolds: (self: SelfStateCondition, frame: number) => boolean,
   counterAt: (counter: CounterId, frame: number) => number,
+  hpRatioAt: (frame: number) => number,
 ): boolean {
   if (condition === undefined) return true;
+  // ソリン編（plan/design-soline.md 2.1 節）: 自分の HP の割合が閾値（% 表記。resolveCondition が atLeastRef を解いてある）以上か
+  if (condition.selfHp !== undefined) {
+    const { atLeast } = condition.selfHp;
+    if (atLeast === undefined)
+      throw new RangeError(`selfHp ${JSON.stringify(condition.selfHp)} is not resolved to atLeast`);
+    if (hpRatioAt(frame) < atLeast / 100 - 1e-9) return false;
+  }
   if (condition.selfState !== undefined && !selfStateHolds(condition.selfState, frame)) return false;
   if (condition.selfCounter !== undefined) {
     const { counter, atLeast, below } = condition.selfCounter;

@@ -277,7 +277,22 @@ export type HolderHistory = {
   logs: readonly (ShotLog | null)[];
   /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値が変わった記録（フレームの順。value は変わった後の値） */
   counters: readonly CounterRecord[];
+  /**
+   * ソリン編（plan/design-soline.md 2.1 節）: 枠ごとの HP の割合（selfHpRatioAt）の変わり目。読むのは selfHpRatioOf（2 パス目の damage の
+   * 条件 selfHp（以上）が発火のフレームで読む）
+   */
+  hpRatios: readonly HpRatioSteps[];
 };
+
+/** ソリン編: 枠の HP の割合の段。frames（昇順・先頭は 0）のフレームから次の変わり目の前まで、割合は ratios の同じ番号 */
+export type HpRatioSteps = { frames: readonly number[]; ratios: readonly number[] };
+
+/** ソリン編（plan/design-soline.md 2.1 節）: 履歴から、枠のフレーム frame の HP の割合（1 パス目の selfHpRatioAt と同じ値） */
+export function selfHpRatioOf(history: Pick<HolderHistory, 'hpRatios'>, slotIndex: number, frame: number): number {
+  const steps = history.hpRatios[slotIndex];
+  if (steps === undefined) throw new RangeError(`selfHpRatioOf: no slot ${slotIndex}`);
+  return steps.ratios[lowerBound(steps.frames, frame + 1) - 1]!;
+}
 
 /**
  * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除の選び方を確かめていない所。targets は debuffedRandom でデバフのかかった味方が
@@ -2162,6 +2177,18 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     const { up, only } = maxHpUpAt(slotIndex, frame, true);
     return (ratio * (1 + up - only)) / (1 + up);
   };
+  /**
+   * ソリン編: 履歴に置く、枠の HP の割合の段。割合が変わりうるのは、現在の HP▼ の次のフレームと、最大HP の件の始まりの次のフレーム・終わり
+   * （selfHpRatioAt は frame より前に始まって frame に効いている件を読む）。ループの後に呼ぶ
+   */
+  const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
+    const changes = new Set([0, ...hpDowns[slotIndex]!.frames.map((f) => f + 1)]);
+    if (maxHpOnlyMoves[slotIndex])
+      for (const v of maxHpViews[slotIndex] ?? [])
+        for (const it of readItems(v.track)) changes.add(it.start + 1).add(it.end);
+    const at = [...changes].sort((a, b) => a - b);
+    return { frames: at, ratios: at.map((f) => selfHpRatioAt(slotIndex, f)) };
+  };
   /** 解いた条件 selfHp の atMost の閾値（割合）。解いていない形（atMostRef・以上の形）は件の一覧に来ない */
   const selfHpAtMostOf = (hp: SelfHpCondition): number => {
     if (hp.atMost === undefined) throw new RangeError(`selfHp ${JSON.stringify(hp)} is not resolved to atMost`);
@@ -3196,6 +3223,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         fullBurstWindows: [...options.fullBurstWindows()],
         logs,
         counters: counterRecords,
+        hpRatios: slots.map((_, i) => hpRatioStepsOf(i)),
       };
     },
   };

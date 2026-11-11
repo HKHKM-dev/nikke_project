@@ -7,6 +7,7 @@ import {
   type EffectTrigger,
   isAppliedTrigger,
   isCounterFullTrigger,
+  isSelfHpAtMost,
   isShotCountTrigger,
   isSummonAttackTrigger,
   isTimerTrigger,
@@ -110,6 +111,9 @@ export function parseDamageEffect(v: Record<string, Json>, path: string): Damage
   // クルミ S2 編: 発火の条件。名前の付いた状態の語彙編: timed と同じ型（鍵は inFullBurst・enemyState）
   if (v.condition !== undefined)
     effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.damage);
+  // ソリン編（plan/design-soline.md 2.1 節）: selfHp は「以上」の形だけ（「HP が最大の場合」。使い手のいない「以下」は書けない）
+  if (effect.condition?.selfHp !== undefined && isSelfHpAtMost(effect.condition.selfHp))
+    fail(`${path}.condition.selfHp`, 'a damage takes only the at-least form of selfHp (atLeast or atLeastRef)');
   // クルミ S2 編: ゲージは 1 パス目で溜めるので、1 パス目の後に決まる窓・条件とは組み合わせない（plan/design-kurumi-s2.md 2.4 節）
   if (effect.gaugeHits !== undefined && (effect.condition !== undefined || hasCountingWindow(trigger))) {
     fail(`${path}.gaugeHits`, 'gaugeHits cannot be used with a condition or a counting window (during)');

@@ -89,12 +89,21 @@
           "ref": 2,
           "damageType": "additional",
           "perBurstHit": true,
+          "condition": {
+            "selfHp": {
+              "atLeast": 100
+            }
+          },
+          "reads": [
+            "hp"
+          ],
           "assumes": {
-            "ja": "同じ敵は、敵 1 体の前提ではその敵。バーストのダメージの 3 ヒットのそれぞれに出る",
-            "en": "The same enemy is that enemy under the single-enemy premise. Dealt on each of the three Burst hits"
+            "ja": "同じ敵は、敵 1 体の前提ではその敵。バーストのダメージの 3 ヒットのそれぞれに出る。HP が最大かはバーストを使ったフレームで 1 回だけ見る。HP が最大は被弾の無い前提で成り立つ（射撃場の 3 分モードでは、的の攻撃を受けた後のバーストでは出ない）",
+            "en": "The same enemy is that enemy under the single-enemy premise. Dealt on each of the three Burst hits. Max HP is checked once on the Burst-use frame. Max HP holds under the no-damage premise (in the 3-minute range mode it is not dealt on bursts after the target hits her)"
           },
           "claims": [
-            "C-1114"
+            "C-1114",
+            "C-1115"
           ]
         }
       ]
