@@ -27,6 +27,8 @@ import { TRAY_SHAPE_LABEL, type TrayShape } from '../../trayShape.ts';
 import type { OtherParties } from '../../parties.ts';
 import { NO_PARTIES } from './OtherPartyBadges.tsx';
 import { Popover } from '../Popover.tsx';
+import returnIcon from '../../assets/badges/ui_return.svg';
+import { maskIconStyle } from '../maskIcon.ts';
 
 type Props = {
   index: readonly CharacterIndexEntry[];
@@ -136,17 +138,19 @@ export function CharacterTray({
                 <BadgeIcon className="char-badge" name={TREASURE_FILTER_BADGE} label="宝物のあるニケ" />
               </button>
             </div>
-            {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない） */}
+            {/* 選んだ絞り込みを全部外す（何も選んでいないときは押せない）。文字の代わりにバッジの絵 ui_return.svg（.mask-icon） */}
             <button
               type="button"
               className="char-tray-action-button char-tray-filter-clear"
               aria-disabled={!filtering}
+              aria-label="クリア"
+              title="クリア"
               onClick={() => {
                 setFilters((f) => (Object.keys(f).length === 0 ? f : {}));
                 setTreasureOnly(false);
               }}
             >
-              クリア
+              <span className="mask-icon char-tray-filter-clear-icon" style={maskIconStyle(returnIcon)} />
             </button>
           </div>
         </div>

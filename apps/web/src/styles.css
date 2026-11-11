@@ -1400,6 +1400,12 @@ html:has(.modern-view-container) {
   pointer-events: none;
   z-index: 3;
 }
+/* 絞り込みのクリアの印（ui_return.svg） */
+.char-tray-filter-clear-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
 /* ✓ の中身（.mask-icon。バッジの絵 ui_check.svg を型にして水色で塗る） */
 .char-tray-item-check > .mask-icon {
   flex: 1;
