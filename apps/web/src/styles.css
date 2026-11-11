@@ -1242,7 +1242,7 @@ html:has(.modern-view-container) {
   outline: 2px dashed Highlight;
   outline-offset: -2px;
 }
-/* 並べ替えと、フィルター・立ち絵の切り替えのボタン（フィルターは未実装の置き場所） */
+/* 並べ替えと、絞り込み・立ち絵の切り替えのボタン（絞り込みは未実装の置き場所） */
 .char-tray-actions {
   display: flex;
   gap: 6px;
