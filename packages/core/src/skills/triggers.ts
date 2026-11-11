@@ -236,7 +236,9 @@ export function createTriggerTracker(
   if (isResolvedShotCount(t)) {
     // グレイブ編（plan/design-grave.md 2.4 節）: 自分の状態の間だけ数える窓は、1 パス目の件の一覧が追う（skills/holders.ts の firesOf）
     if (isStateCountWindow(t.during)) {
-      throw new RangeError(`a count during a state (${t.during.state}) is not tracked per event; the holder lists track it`);
+      throw new RangeError(
+        `a count during a state (${t.during.state}) is not tracked per event; the holder lists track it`,
+      );
     }
     // クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: フルバーストの窓（[start, end)）の中の射撃だけを数える（firesDuring は
     // 窓の外の発も数え、発火だけを窓の中に限る。V-0443）。
