@@ -877,6 +877,8 @@ header h1 {
   /* 限界突破の星とコア強化の印は、バッジの絵（assets/badges の grade_star・core_plain）。大きさは置き場所で変える */
   --growth-star-w: 13px;
   --growth-core-w: 24px;
+  /* 行の高さをいつもコア強化の印の高さにする（コア強化があっても無くても、星を同じ高さに置く） */
+  min-height: var(--growth-core-w);
 }
 /* 星の色は色の役の変数で決める。上の差し色（--badge-accent）から下の主の色（--badge-main）への
    グラデーションになる。突破していない星は灰、突破した星（.is-filled）は金。テーマで変えるときは light-dark(ライト, ダーク) で書く */
