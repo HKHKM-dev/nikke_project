@@ -121,6 +121,10 @@
   /* ニケがいるときの絵（.char-visual-portrait）と同じ箱（内容の幅・1px の枠）にして、大きさと枠の太さをそろえる */
   box-sizing: content-box;
   border: 1px solid var(--slot-frame-line);
+  /* 枠線と背景はニケがいるときの立ち絵と同じ（styles.css の .char-visual-portrait）: 上の枠線を消し、横の枠線と背景は上の 5 割で上へ行くほど透明にする */
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--app-fg) 8%, var(--app-bg)) 50%)
+    border-box;
+  border-image: linear-gradient(to bottom, transparent, var(--slot-frame-line) 50%) 1;
   color: var(--slot-frame-line);
   opacity: 1;
 }
