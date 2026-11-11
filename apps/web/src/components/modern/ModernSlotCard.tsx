@@ -218,20 +218,10 @@ export function SlotCharName({ name, marks }: { name: string; marks: GrowthMarks
   );
 }
 
-/** 空のスロットの奥に薄く出す人の上半身のシルエット（髪の長い頭と肩。立ち絵と同じ 1:2 の枠） */
-function EmptySlotSilhouette() {
-  return (
-    <svg className="modern-slot-empty-silhouette" viewBox="0 0 100 200" aria-hidden="true">
-      <path d="M50 28C33 28 25 42 25 62C25 84 21 108 15 136H85C79 108 75 84 75 62C75 42 67 28 50 28Z M6 200V164C6 144 20 134 38 130L43 116H57L62 130C80 134 94 144 94 164V200Z" />
-    </svg>
-  );
-}
-
 /** 空のスロットの枠（＋・番号・FRONT か REAR・EMPTY SLOT・5 つのうちの位置）。持ち上げたときの絵（ModernView の DragOverlay）にも使う */
 export function EmptySlotFace({ slotIndex }: { slotIndex: number }) {
   return (
     <div className="modern-slot-empty-area">
-      <EmptySlotSilhouette />
       <span className="modern-slot-empty-plus">＋</span>
       <span className="modern-slot-empty-number">{String(slotIndex + 1).padStart(2, '0')}</span>
       <span className="modern-slot-empty-row">{slotIndex % 2 === 0 ? 'FRONT' : 'REAR'}</span>

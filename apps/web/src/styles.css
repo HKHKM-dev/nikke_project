@@ -1031,23 +1031,6 @@ header h1 {
   /* ニケがいるときの絵（.char-visual-portrait）と同じ大きさ（大きさは下の .char-visual-portrait と共通の規則） */
   box-sizing: content-box;
 }
-/* 奥のシルエット（ModernSlotCard.tsx の EmptySlotSilhouette）。文字の色で薄く塗り、上と下は背景に溶かす */
-.modern-slot-empty-area {
-  position: relative;
-}
-.modern-slot-empty-area > :not(.modern-slot-empty-silhouette) {
-  position: relative;
-}
-.modern-slot-empty-silhouette {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
-  opacity: 0.18;
-  mask-image: linear-gradient(to bottom, transparent 5%, #000 30%, #000 75%, transparent);
-  pointer-events: none;
-}
 .modern-slot-empty-plus {
   font-size: 3em;
   line-height: 1;
