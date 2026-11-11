@@ -3,9 +3,9 @@
 - 手順: [skills-guide.md](skills-guide.md) 1.3 節（語彙を足すときだけ設計書）
 - 関連: [design-scarlet.md](design-scarlet.md) 2.1 節（即時効果 `currentHpDown`）・6 節（この課題の出どころ）、[design-mast.md](design-mast.md) 8 節（きっかけ `{ selfHpAtMostRef }`・維持 `selfHpAbove`）、[design-skill-stage19.md](design-skill-stage19.md) 2.1 節（状態の付いた時から数える周期 `since`・カウンタが 0 になった時の解除 `{ counterEmpty }`）、[design-named-state.md](design-named-state.md)（名前の付いた状態と中身）
 - 課題: `records/backlog/skill-hp-down-interval.json`
-- 検証: （承認の後に起こす）
+- 検証: V-0729
 - 作成日: 2026-11-11
-- 状態: 起案（7 節）
+- 状態: 決定・撮影待ち（7 節）
 
 ## 0. 範囲
 
@@ -161,3 +161,4 @@
 ## 経過
 
 - 2026-11-11: 起案。説明文とコードを照らし、語彙が 2 つ足りない（0.1 節）と、ラプンツェル：ピュアグレイスの S2 は C-0839 で前提の外になると分かった。論点 1〜7 と撮影（5 節）をオーナーに諮る。
+- 2026-11-11: オーナーが論点 1〜7 を推奨どおりに決めた。撮影（V-0729）を依頼した。

@@ -1,0 +1,432 @@
+{
+  "verification": "V-0729",
+  "note": "B モードの語彙が無いので、仮説ごとに、攻撃力▲・チャージ速度▲を解除の時刻までの秒の維持の timed（バーストの使用から）で置き換えて出した。周期の HP▼ そのものは入れていない（A2 の HP を読むのは B モードの解除だけ）。語彙の実装の後に、いまの定義で出し直す",
+  "team": [
+    {
+      "rid": 82
+    },
+    {
+      "rid": 20
+    },
+    {
+      "rid": 811,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H1T1-R1",
+      "note": "現在の HP × 3.99%・1 回目は付いた 1 秒後（23 回目で 40% 以下。解除は 23 秒後）。2 回目以降は付いた時に 40% 以下なのですぐ解除",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 23
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationSeconds": 23
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H1T0-R1",
+      "note": "現在の HP × 3.99%・1 回目は付いた時（解除は 22 秒後）。R1",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 22
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationSeconds": 22
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2T1-R1",
+      "note": "最大HP × 3.99%・1 回目は付いた 1 秒後（16 回目で 40% 以下。解除は 16 秒後）。R1",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 16
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationSeconds": 16
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H2T0-R1",
+      "note": "最大HP × 3.99%・1 回目は付いた時（解除は 15 秒後）。R1",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 15
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationSeconds": 15
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "Hd",
+      "note": "B モードは時間で切れる（フルバーストの長さの 10 秒。毎回付く）",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 10
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": "burstUse",
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationSeconds": 10
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H1T1-R2",
+      "note": "H1T1 で、2 回目以降は下がった瞬間にしか解除されず、戦闘の終わりまで続く",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationSeconds": 23
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 1,
+                "atMost": 1
+              },
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationSeconds": 23
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 2
+              },
+              "target": "self",
+              "stat": "attack",
+              "ref": 3,
+              "durationUntil": "battleEnd"
+            }
+          },
+          {
+            "rid": 811,
+            "skill": "burst",
+            "effect": {
+              "kind": "timed",
+              "trigger": {
+                "count": "burstUse",
+                "atLeast": 2
+              },
+              "target": "self",
+              "stat": "chargeSpeed",
+              "ref": 4,
+              "durationUntil": "battleEnd"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "end-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "buffEdgeFromActivation",
+      "args": {
+        "slot": 3,
+        "skill": "burst",
+        "stat": "chargeSpeed",
+        "from": 3,
+        "n": 0,
+        "edge": "end"
+      },
+      "tolerance": {
+        "abs": 30
+      },
+      "note": "1 回目のバーストの使用（六角形）から、B モードのチャージ速度▲が切れるまで（攻撃力▲はリターのバーストの▲と窓がつながるので、A2 にだけ付くチャージ速度▲で見る）の動画のフレーム"
+    },
+    {
+      "id": "hit-pre",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "frame": 300
+      },
+      "note": "1 回目のバーストの前の 1 ヒット（胴体・会心なし）"
+    },
+    {
+      "id": "hit-B-1",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 0,
+        "frame": 1059
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "1 回目のフルバーストの始まりから 18 秒（S1 とリターの▲は切れ、B モードだけ。H1 は▲あり、H2・Hd は▲なし）"
+    },
+    {
+      "id": "hit-S1-2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 1,
+        "frame": 706
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "2 回目のフルバーストの始まりから 12 秒（S1 は効いている。R1 は S1 だけ、R2 は S1 + B モード）"
+    },
+    {
+      "id": "hit-after-2",
+      "model": "sim",
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"]
+      },
+      "metric": "hitDamage",
+      "args": {
+        "slot": 3,
+        "core": false,
+        "crit": false,
+        "distance": false,
+        "fullBurst": 1,
+        "frame": 1118
+      },
+      "tolerance": {
+        "rel": 0.01
+      },
+      "note": "2 回目のフルバーストの始まりから 19 秒（S1 は切れる。R1 は▲なし、R2 は B モード）"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-11",
+    "commit": "3c5fe762e72f745f961c0362e686581e5d249f14",
+    "values": {
+      "H1T1-R1": {
+        "end-1": 1369,
+        "hit-pre": 202604.98500000002,
+        "hit-B-1": 233406.03,
+        "hit-S1-2": 292107.7631736,
+        "hit-after-2": 202604.98500000002
+      },
+      "H1T0-R1": {
+        "end-1": 1311,
+        "hit-pre": 202604.98500000002,
+        "hit-B-1": 233406.03,
+        "hit-S1-2": 292107.7631736,
+        "hit-after-2": 202604.98500000002
+      },
+      "H2T1-R1": {
+        "end-1": 957,
+        "hit-pre": 202604.98500000002,
+        "hit-B-1": 202604.98500000002,
+        "hit-S1-2": 292107.7631736,
+        "hit-after-2": 202604.98500000002
+      },
+      "H2T0-R1": {
+        "end-1": 898,
+        "hit-pre": 202604.98500000002,
+        "hit-B-1": 202604.98500000002,
+        "hit-S1-2": 292107.7631736,
+        "hit-after-2": 202604.98500000002
+      },
+      "Hd": {
+        "end-1": 604,
+        "hit-pre": 202604.98500000002,
+        "hit-B-1": 202604.98500000002,
+        "hit-S1-2": 292107.7631736,
+        "hit-after-2": 202604.98500000002
+      },
+      "H1T1-R2": {
+        "end-1": 1369,
+        "hit-pre": 202604.98500000002,
+        "hit-B-1": 233406.03,
+        "hit-S1-2": 336515.4778128,
+        "hit-after-2": 233406.03
+      }
+    }
+  }
+}
