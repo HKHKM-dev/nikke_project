@@ -191,6 +191,7 @@ describe('data/skills', () => {
                         effect.kind === 'removeState' ||
                         effect.kind === 'removeDebuff' ||
                         effect.kind === 'cancelState' ||
+                        effect.kind === 'stateExtend' ||
                         effect.kind === 'summon' ||
                         effect.ref === undefined
                       ? []

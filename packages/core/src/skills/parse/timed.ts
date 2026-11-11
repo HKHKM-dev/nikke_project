@@ -246,13 +246,16 @@ export function parseTimedFields(
     );
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
-  // 同: { applied } の効果は条件・順位の対象・強化を書けない（使い手がいない。論点 6）
+  // 同: { applied } の効果は順位の対象・強化を書けない（使い手がいない。論点 6）。ミント・プリカ編（plan/design-mint-prika.md 2.3 節）:
+  // 条件は自分の状態（selfState）だけ書ける（呼ぶ側の parseCondition が CONDITION_KEYS_OF.selfStateOnly で見る）
   if (isAppliedTrigger(trigger)) {
-    if (v.condition !== undefined) fail(`${path}.condition`, 'an effect on an applied trigger cannot have a condition');
     if (target === 'topAttack') fail(`${path}.target`, 'an effect on an applied trigger cannot target "topAttack"');
     if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'an effect on an applied trigger cannot amplify');
   }
   validateBurstUsersTarget(target, trigger, path);
+  // ミント・プリカ編（plan/design-mint-prika.md 2.4 節）: 「〈状態〉のスキル発動者」は { applied } のきっかけの効果だけ（絞り込みは書けない）
+  if (target === 'appliedCaster' && !isAppliedTrigger(trigger))
+    fail(`${path}.target`, 'appliedCaster is only allowed with an applied trigger ({ applied })');
   const targetWeapon = parseTargetWeapon(v, target, path);
   const targetElement = parseTargetElement(v, target, path);
   const targetClass = parseTargetClass(v, target, path);
@@ -366,7 +369,11 @@ export function parseTimedFields(
   // Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。防御力無視ダメージ編: 「フルバーストタイムなら」。
   // 名前の付いた状態の語彙編: 鍵はどれも満たすときだけ（AND。plan/design-named-state.md 10 節の論点 8）
   if (v.condition !== undefined) {
-    const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.timed);
+    const condition = parseCondition(
+      v.condition,
+      `${path}.condition`,
+      isAppliedTrigger(trigger) ? CONDITION_KEYS_OF.selfStateOnly : CONDITION_KEYS_OF.timed,
+    );
     if (condition.inFullBurst === true && stat !== undefined && isFirstPassTrackedStat(stat)) {
       fail(
         `${path}.condition`,
@@ -671,6 +678,9 @@ function isFirstPassTrackedStat(stat: BuffStat): boolean {
 export function parsePassiveEffect(v: Record<string, Json>, path: string): PassiveEffect {
   const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
   if (target === 'burstUsers') fail(`${path}.target`, 'burstUsers is not allowed in passive (it needs a full burst)');
+  // ミント・プリカ編: 「〈状態〉のスキル発動者」は { applied } の発火の文脈が要る
+  if (target === 'appliedCaster')
+    fail(`${path}.target`, 'appliedCaster is not allowed in passive (it needs an applied trigger)');
   // 常時の効果の対象が戦闘中に入れ替わるのは持続バフの窓の仕組みの外（plan/design-stage11.md 17 節）
   if (target === 'topAttack')
     fail(`${path}.target`, 'topAttack is not allowed in passive (the ranking changes during battle)');

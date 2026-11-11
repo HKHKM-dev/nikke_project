@@ -91,7 +91,11 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   healGiven: ['与えるHP回復量', 'indirect', 'HP の経路（HP が満タンでない時の回復量）'],
   barrierHp: ['次のバリアのHP', 'damaged', 'バリアの HP（壊れるまでの長さ）'],
   barrierDamage: ['バリアに与えるダメージ', 'oos', '敵のバリア（射撃場の的に無い）'],
-  stateDuration: ['状態の維持時間', 'gap', 'なし（別の状態の維持を延ばす）'],
+  stateDuration: [
+    '状態の維持時間',
+    'ok',
+    'stateExtend（付いている件の残りを延ばす。ミント・プリカ編）',
+  ],
   stateParam: ['状態の中身の値', 'gap', 'なし（別の状態の中身を変える）'],
 };
 
@@ -208,7 +212,11 @@ const KIND_INFO: Record<string, Info> = {
     'ok',
     'cooldownReduction',
   ],
-  'instant:burstCooldownUp': ['バーストスキルクールタイム▲（即時）', 'gap', 'なし'],
+  'instant:burstCooldownUp': [
+    'バーストスキルクールタイム▲（即時）',
+    'ok',
+    'cooldownReduction の increase（走っている CT の残りに足す。ミント・プリカ編）',
+  ],
   'instant:skillCooldown': [
     'スキルのクールタイム・周期の変更（即時）',
     'check',
@@ -273,8 +281,8 @@ const KIND_INFO: Record<string, Info> = {
   ],
   'state:cancel': [
     '状態の消去（同じスキルが外す。解除不可の状態も外す）',
-    'check',
-    'cancelState（敵に付く持続ダメージの状態だけ。2 段目の段 13。解除とは別の語彙）',
+    'ok',
+    'cancelState（自分の状態（ミント・プリカ編）と、敵に付く持続ダメージの状態（2 段目の段 13）。解除とは別の語彙）',
   ],
   'state:switch': ['状態の変化（A が B に変化）', 'gap', 'なし（後の拡張 group）'],
   'state:block': ['発動不可', 'gap', 'なし'],

@@ -88,10 +88,10 @@ describe('{ applied } を timed・付与に開く読み込み', () => {
     expect(def.skills.skill1.effects[2]).toMatchObject({ trigger: { applied: 'camouflage' } });
   });
 
-  it('rejects a condition, a ranked target, an amplifier and a grant on its own state', () => {
-    expect(() => defOf(TORB, [{ ...onApplied('attack', 1), condition: { inFullBurst: true } }])).toThrow(
-      /cannot have a condition/,
-    );
+  it('rejects a condition other than selfState, a ranked target, an amplifier and a grant on its own state', () => {
+    // ミント・プリカ編（plan/design-mint-prika.md 2.3 節）: 条件は自分の状態（selfState）だけ書ける
+    expect(() => defOf(TORB, [{ ...onApplied('attack', 1), condition: { inFullBurst: true } }])).toThrow(/inFullBurst/);
+    expect(() => defOf(TORB, [{ ...onApplied('attack', 1), condition: { selfState: 'persona' } }])).not.toThrow();
     expect(() => defOf(TORB, [{ ...onApplied('attack', 1), target: 'topAttack' }])).toThrow(
       /cannot target "topAttack"/,
     );

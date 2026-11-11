@@ -17,6 +17,7 @@ import { parseCoverHealEffect, parseInstantEffect } from './instant.ts';
 import { parseIndirectReads } from './notes.ts';
 import {
   parseCancelStateEffect,
+  parseStateExtendEffect,
   parseCounterChangeEffect,
   parseRemoveDebuffEffect,
   parseRemoveStateEffect,
@@ -113,6 +114,7 @@ const EFFECT_BODY_PARSERS = {
   removeState: (v, path) => parseRemoveStateEffect(v, path),
   removeDebuff: (v, path) => parseRemoveDebuffEffect(v, path),
   cancelState: (v, path) => parseCancelStateEffect(v, path),
+  stateExtend: (v, path) => parseStateExtendEffect(v, path),
   stackChange: (v, path) => parseStackChangeEffect(v, path),
   counterChange: (v, path) => parseCounterChangeEffect(v, path),
   summon: (v, path, slot) => parseSummonEffect(v, path, slot),

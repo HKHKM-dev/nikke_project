@@ -65,6 +65,7 @@ import {
   DEFAULT_BURST_TIMING,
   finishSchedule,
   initialBurstController,
+  extendCooldown,
   reduceCooldown,
   reserveFullBurstExtension,
   shortenCooldown,
@@ -110,6 +111,7 @@ import { capCritRate, pelletsPerShot, ZERO_BUFFS, type BuffTotals, type HitRateN
 import {
   firesChargeShots,
   isResolvedShotCount,
+  isResolvedApplied,
   isResolvedTimer,
   isResolvedWeaponChangeEnd,
   resolveCoverHeals,
@@ -471,6 +473,12 @@ function runFirstPassOnce(
   // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 状態の付いた時から数える周期（since。currentHpDown）は、件の一覧の sinceFires
   // （counterChange と同じ数え方）で決める
   const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
+    // ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 「〈状態〉が適用された時」は、件の一覧がそのフレームに付けた記録で見る（件を
+    // 登録した後に読む。即時効果のループは lists.registerFrame の後）
+    if (isResolvedApplied(effect.trigger)) {
+      const state = effect.trigger.applied;
+      return (ev) => lists.appliedAt(sourceSlotIndex, state, ev.frame);
+    }
     // グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める
     const trigger = effect.trigger;
     if (isEndedTrigger(trigger)) return (ev) => lists.endedAt(sourceSlotIndex, trigger.ended, ev.frame);
@@ -1900,6 +1908,9 @@ function runFirstPassOnce(
     // 攻撃力▲を含め、このフレームに付く窓は入れない。plan/design-heal-top-attack.md 2 節の A）
     for (const src of heals) {
       if (!src.fires(ev)) continue;
+      // ミント・プリカ編（plan/design-mint-prika.md 2.7 節）: 発火の条件（自分の状態）。回復は件の登録の前に当てる（healed のきっかけが読む）ので、
+      // このフレームの件の登録より前に見る（同じフレームに付いた状態は見えない。ミントのダンスはバーストで付き、条件を読むフルチャージは後の発）
+      if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
       const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
       for (const target of targetsAt(src.effect, src.sourceSlotIndex, context)) {
         const at = healFrameOf(src.effect, f, src.sourceSlotIndex, target);
@@ -1997,7 +2008,9 @@ function runFirstPassOnce(
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない
           const before = controller.cooldownReductions.length;
-          reduceCooldown(controller, target, gameSecondsToFrames(src.effect.value), f, src.sourceSlotIndex);
+          // ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: CT▲は走っている CT の残りに足す（記録の applied は負）
+          const change = src.effect.increase === true ? extendCooldown : reduceCooldown;
+          change(controller, target, gameSecondsToFrames(src.effect.value), f, src.sourceSlotIndex);
           const applied = controller.cooldownReductions[before]?.applied ?? 0;
           instants.push({
             frame: f,

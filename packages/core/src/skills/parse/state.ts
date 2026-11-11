@@ -26,6 +26,7 @@ import {
   type StackChangeEffect,
   type StatContentItem,
   type StateContentItem,
+  type StateExtendEffect,
   type StateGrantEffect,
 } from '../types.ts';
 import {
@@ -729,13 +730,46 @@ export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): 
  */
 export function parseCancelStateEffect(v: Record<string, Json>, path: string): CancelStateEffect {
   for (const key of Object.keys(v)) {
-    if (!['kind', 'state', 'trigger', 'target', 'assumes', 'claims'].includes(key))
+    if (!['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'].includes(key))
       fail(`${path}.${key}`, 'unknown field');
   }
+  // ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: self は自分の状態の消去（解除と同じ書き方。解除不可の件も閉じる）
+  if (v.target === 'self') {
+    const { kind: _, ...rest } = parseRemoveStateEffect({ ...v, kind: 'removeState' }, path);
+    return { ...rest, kind: 'cancelState' };
+  }
+  if (v.condition !== undefined) fail(`${path}.condition`, 'a cancel on the enemy cannot have a condition');
+  if (v.target !== 'enemy') fail(`${path}.target`, `expected "enemy" or "self", got ${JSON.stringify(v.target)}`);
   const state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
-  if (v.target !== 'enemy') fail(`${path}.target`, `expected "enemy", got ${JSON.stringify(v.target)}`);
   const effect: CancelStateEffect = { kind: 'cancelState', state, trigger, target: 'enemy' };
+  if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
+  return effect;
+}
+
+/**
+ * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長。対象は自分か味方全体。きっかけは { applied } も書ける。条件は
+ * 自分の状態だけ
+ */
+export function parseStateExtendEffect(v: Record<string, Json>, path: string): StateExtendEffect {
+  for (const key of Object.keys(v)) {
+    if (!['kind', 'state', 'trigger', 'target', 'secondsRef', 'condition', 'assumes', 'claims'].includes(key))
+      fail(`${path}.${key}`, 'unknown field');
+  }
+  const state = parseNamedStateId(v.state, `${path}.state`, 'ally');
+  const trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`) ?? parseTrigger(v.trigger, `${path}.trigger`);
+  if (isAppliedTrigger(trigger) && trigger.applied === state)
+    fail(`${path}.trigger`, `an extension of "${state}" cannot be triggered by its own state`);
+  const target = oneOf(['self', 'allies'] as const, v.target, `${path}.target`);
+  const effect: StateExtendEffect = {
+    kind: 'stateExtend',
+    state,
+    trigger,
+    target,
+    secondsRef: parseRef(v.secondsRef, `${path}.secondsRef`),
+  };
+  if (v.condition !== undefined)
+    effect.condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.selfStateOnly);
   if (v.assumes !== undefined) effect.assumes = parseLocalizedText(v.assumes, `${path}.assumes`);
   return effect;
 }

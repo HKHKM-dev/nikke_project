@@ -1,0 +1,240 @@
+{
+  "formatVersion": 1,
+  "resourceId": 600,
+  "checkedAt": "2026-11-11",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "singingEffect",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "durationRef": 2,
+          "condition": {
+            "selfState": "assignedPartSinging"
+          },
+          "contents": [
+            {
+              "stat": "attack",
+              "scaling": "casterAttack",
+              "ref": 1
+            }
+          ],
+          "claims": [
+            "C-1129"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "dancingEffect",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "durationRef": 4,
+          "condition": {
+            "selfState": "assignedPartDancing"
+          },
+          "claims": [
+            "C-1135"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": "assignedPartDancing"
+          },
+          "claims": [
+            "C-1135"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "ダンスエフェクトの持続回復（1 秒間隔）は、付いた時に 1 回だけ「回復効果が適用された時」を起こす（1 秒ごとの刻みでは起こさない。C-0578 と同じ読み）。満タンの味方にも付く。回復量はダメージに関係しない",
+          "en": "The Dancing Effect heal over time (every second) triggers 'when recovery takes effect' once when applied (not on each tick, as read in C-0578). It is applied to allies at full HP too. The amount does not affect damage",
+          "kind": "modeling",
+          "refers": "effects[2]",
+          "claims": [
+            "C-1135"
+          ]
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "cancelState",
+          "state": "assignedPartSinging",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "condition": {
+            "selfState": {
+              "state": "singAlong",
+              "present": false
+            }
+          },
+          "claims": [
+            "C-1130"
+          ]
+        },
+        {
+          "kind": "cancelState",
+          "state": "assignedPartDancing",
+          "trigger": "burstStage3Enter",
+          "target": "self",
+          "condition": {
+            "selfState": {
+              "state": "singAlong",
+              "present": false
+            }
+          },
+          "claims": [
+            "C-1130"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "stat": "critRate",
+          "ref": 1,
+          "durationRef": 2,
+          "condition": {
+            "selfState": "assignedPartSinging"
+          },
+          "claims": [
+            "C-1131"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "stat": "projectileExplosionDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "condition": {
+            "selfState": "assignedPartSinging"
+          },
+          "claims": [
+            "C-1131"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": "burstStage3Enter",
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 5,
+          "durationRef": 6,
+          "condition": {
+            "selfState": "assignedPartSinging"
+          },
+          "reads": [
+            "pierce"
+          ],
+          "claims": [
+            "C-1131"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "消去は次のフレームで閉じるので、ボーカルでシンガロングの無い 3 段階突入時には、消去と同じフレームの S2 の▲も出るとして回す（確かめていない）",
+          "en": "A cancel closes on the next frame, so on entering Burst Stage 3 while Singing without Sing Along, the S2 buffs of the same frame are modeled as still firing (not verified)",
+          "kind": "modeling",
+          "refers": "effects[2]"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "assignedPartSinging",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "undispellable": true,
+          "condition": {
+            "selfState": "assignedPartDancing"
+          },
+          "claims": [
+            "C-1128"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "assignedPartDancing",
+          "trigger": "burstUse",
+          "target": "self",
+          "durationUntil": "battleEnd",
+          "undispellable": true,
+          "condition": {
+            "selfState": {
+              "state": "assignedPartDancing",
+              "present": false
+            }
+          },
+          "claims": [
+            "C-1128"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "singAlong",
+          "trigger": "burstUse",
+          "target": "allies",
+          "durationRef": 2,
+          "contents": [
+            {
+              "stat": "attackDamage",
+              "ref": 1
+            },
+            {
+              "stat": "maxAmmo",
+              "ref": 3
+            },
+            {
+              "stat": "critDamage",
+              "ref": 5
+            }
+          ],
+          "claims": [
+            "C-1132"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "「条件に合うステージパートのみ適用」は、ボーカルとダンスを同じ切り替えの組（目録の group）にして書く。片方が付くと、もう片方は次のフレームで外れる（解除不可でも）",
+          "en": "'Only one Assigned Part is applied' is written by putting Singing and Dancing in one switching group (the catalog's group). When one is applied, the other is removed from the next frame (even though it cannot be removed otherwise)",
+          "kind": "modeling",
+          "refers": "effects[0]",
+          "claims": [
+            "C-1128"
+          ]
+        },
+        {
+          "ja": "シンガロングの 3 つの項目の維持はどれも 10 秒なので、付与の維持は値 02 で持つ",
+          "en": "The three Sing Along items all last 10 seconds, so the grant's duration is taken from value 02",
+          "kind": "modeling",
+          "refers": "effects[2]",
+          "claims": [
+            "C-1132"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,113 @@
+[
+  {
+    "id": "1106-01",
+    "recording": "1106",
+    "source": "V-0736",
+    "readAt": "2026-11-12",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "unit": "ダメージ",
+    "description": "プリカ単騎の 1 発目の 1 ヒット（コア・会心なし・距離なし）。戦闘の最初の発で、S1 の攻撃力▲は乗らない",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（モデルの 1 ヒットの格子）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのプリカの 1 ヒットの格子（S1 の攻撃力▲の有無 × コア・会心・距離）に当てた。単騎の増分はどれもプリカの発（82f ごと・6 発でリロード）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 1,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1106-02",
+    "recording": "1106",
+    "source": "V-0736",
+    "readAt": "2026-11-12",
+    "kind": "hit",
+    "use": "compare",
+    "value": 413584,
+    "unit": "ダメージ",
+    "description": "プリカ単騎の 2 発目の 1 ヒット（コア・会心なし・距離なし）。1 発目のフルチャージの次から S1 の攻撃力▲が乗る",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（モデルの 1 ヒットの格子）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのプリカの 1 ヒットの格子（S1 の攻撃力▲の有無 × コア・会心・距離）に当てた。単騎の増分はどれもプリカの発（82f ごと・6 発でリロード）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 2,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "1106-03",
+    "recording": "1106",
+    "source": "V-0736",
+    "readAt": "2026-11-12",
+    "kind": "hit",
+    "use": "compare",
+    "value": 344596,
+    "unit": "ダメージ",
+    "description": "プリカ単騎の 7 発目の 1 ヒット（コア・会心なし・距離なし）。リロードの後の 1 発目。S1 の▲（3 秒）が切れている",
+    "method": {
+      "tool": "recipe:hud-jumps@3 の増分と、使い捨てのスクリプト（モデルの 1 ヒットの格子）",
+      "note": "HUD の総ダメージの増分（hud-jumps@3）を、モデルのプリカの 1 ヒットの格子（S1 の攻撃力▲の有無 × コア・会心・距離）に当てた。単騎の増分はどれもプリカの発（82f ごと・6 発でリロード）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "hitDamageAtShot",
+      "args": {
+        "slot": 1,
+        "shot": 7,
+        "core": true,
+        "crit": false,
+        "distance": false
+      },
+      "tolerance": {
+        "abs": 1
+      },
+      "setup": {
+        "enemy": "range-bigarms-wind",
+        "events": ["range-3min-jump"]
+      }
+    },
+    "scope": {
+      "slot": 1,
+      "source": "normal"
+    }
+  }
+]

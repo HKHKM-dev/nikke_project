@@ -1,0 +1,219 @@
+{
+  "formatVersion": 1,
+  "resourceId": 601,
+  "checkedAt": "2026-11-11",
+  "skills": {
+    "skill1": {
+      "effects": [
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "stat": "projectileExplosionDamage",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1126"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "stat": "pierceDamage",
+          "ref": 3,
+          "durationRef": 4,
+          "reads": [
+            "pierce"
+          ],
+          "claims": [
+            "C-1127"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "count": "fullChargeShot"
+          },
+          "target": "allies",
+          "stat": "attack",
+          "scaling": "casterAttack",
+          "ref": 5,
+          "durationRef": 6,
+          "claims": [
+            "C-1125"
+          ]
+        },
+        {
+          "kind": "passive",
+          "target": "self",
+          "stat": "pierce",
+          "while": {
+            "selfState": "performance"
+          },
+          "claims": [
+            "C-1127"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "パフォーマンスの間の自分の与える HP 回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Outgoing healing up on self while in Performance does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "encore",
+          "trigger": {
+            "applied": "singAlong"
+          },
+          "target": "self",
+          "durationSeconds": 0,
+          "condition": {
+            "selfState": "performance"
+          },
+          "claims": [
+            "C-1133"
+          ]
+        },
+        {
+          "kind": "state",
+          "state": "assignedPartSinging",
+          "trigger": {
+            "applied": "singAlong"
+          },
+          "target": "appliedCaster",
+          "durationUntil": "battleEnd",
+          "undispellable": true,
+          "condition": {
+            "selfState": "performance"
+          },
+          "claims": [
+            "C-1133"
+          ]
+        },
+        {
+          "kind": "stateExtend",
+          "state": "performance",
+          "trigger": {
+            "applied": "singAlong"
+          },
+          "target": "allies",
+          "secondsRef": 3,
+          "condition": {
+            "selfState": "performance"
+          },
+          "claims": [
+            "C-1133"
+          ]
+        },
+        {
+          "kind": "timed",
+          "trigger": {
+            "applied": "singAlong"
+          },
+          "target": "allies",
+          "stat": "attackDamage",
+          "ref": 4,
+          "durationRef": 5,
+          "condition": {
+            "selfState": "performance"
+          },
+          "claims": [
+            "C-1134"
+          ]
+        },
+        {
+          "kind": "cooldownReduction",
+          "trigger": {
+            "applied": "singAlong"
+          },
+          "target": "self",
+          "ref": 6,
+          "increase": true,
+          "condition": {
+            "selfState": "performance"
+          },
+          "claims": [
+            "C-1133"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "フルバーストタイムが発動した時の自分の最大HP▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on self when Full Burst starts does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp",
+          "effect": {
+            "kind": "timed",
+            "stat": "maxHp",
+            "target": "self",
+            "trigger": "fullBurstStart"
+          }
+        },
+        {
+          "ja": "アンコールのボーカルは、シンガロングを付けた枠（ミントのバースト）に付き、同じフレームにミントのバーストが付けるダンスより後とみなす（ボーカルが残る）",
+          "en": "Encore's Singing goes to the slot that applied Sing Along (Mint's Burst) and is taken as later than the Dancing that Mint's Burst applies in the same frame (Singing remains)",
+          "kind": "modeling",
+          "refers": "effects[1]",
+          "claims": [
+            "C-1133"
+          ]
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "state",
+          "state": "performance",
+          "trigger": "burstUse",
+          "target": "allies",
+          "durationRef": 6,
+          "undispellable": true,
+          "contents": [
+            {
+              "stat": "chargeDamage",
+              "ref": 5
+            }
+          ],
+          "claims": [
+            "C-1127"
+          ]
+        },
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "durationRef": 2,
+          "claims": [
+            "C-1135"
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "ja": "パフォーマンスの持続回復（1 秒間隔・解除不可）は、付いた時に 1 回だけ「回復効果が適用された時」を起こす（C-0578 と同じ読み）。アンコールの延長は回復の出来事を起こさない。持続回復とチャージダメージ▲の維持はどちらも 25 秒なので、付与の維持は値 06 で持つ。回復量はダメージに関係しない",
+          "en": "The Performance heal over time (every second, cannot be removed) triggers 'when recovery takes effect' once when applied (as read in C-0578). Encore's extension does not trigger it. Both the heal and Charge Damage last 25 seconds, so the grant's duration is taken from value 06. The amount does not affect damage",
+          "kind": "modeling",
+          "refers": "effects[1]",
+          "claims": [
+            "C-1135"
+          ]
+        }
+      ]
+    }
+  }
+}

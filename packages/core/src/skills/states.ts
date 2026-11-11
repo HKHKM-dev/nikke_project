@@ -13,6 +13,12 @@ export type StateHolder = 'ally' | 'enemy';
  */
 export type StateFamily = 'barrier' | 'intoTheFray';
 
+/**
+ * ミント・プリカ編（plan/design-mint-prika.md 2.2 節）: 切り替えの組。同じ持ち主に組のある状態が付いたら、組のほかの状態の件を閉じる
+ * （解除不可も。skills/holders.ts の fireGrant）
+ */
+export type StateSwitchGroup = 'assignedPart';
+
 export type NamedStateInfo = {
   /** 画面と CLI の名前（日本語は説明文の状態名） */
   name: LocalizedText;
@@ -28,6 +34,8 @@ export type NamedStateInfo = {
    * 課題 2-59（plan/design-debuff-removal.md 2.1 節）: デバフ解除（removeDebuff）で外れる味方の状態。録画で外れると確かめた状態だけに付ける
    */
   debuff?: true;
+  /** ミント・プリカ編: 切り替えの組（任意） */
+  group?: StateSwitchGroup;
 };
 
 export const NAMED_STATES = {
@@ -324,6 +332,37 @@ export const NAMED_STATES = {
   overheatII: { name: { ja: '過熱II', en: 'Overheat II' }, holder: 'ally' },
   /** 同: S2 の「過熱III」（自分。中身は攻撃ダメージ▲。完全計算の終わりまで） */
   overheatIII: { name: { ja: '過熱III', en: 'Overheat III' }, holder: 'ally' },
+  /**
+   * ミント・プリカ編（plan/design-mint-prika.md 1 節）: ステージパート：ボーカル（ミントのバースト。プリカの S2 のアンコールがシンガロングの
+   * スキル発動者に付ける。持続・解除不可。ダンスと入れ替わる。ミントの S1・S2 の「ボーカル状態なら」が見る）
+   */
+  assignedPartSinging: {
+    name: { ja: 'ステージパート：ボーカル', en: 'Assigned Part: Singing' },
+    holder: 'ally',
+    group: 'assignedPart',
+  },
+  /** 同: ステージパート：ダンス（ミントのバースト。持続・解除不可。ボーカルと入れ替わる。ミントのバースト・S1 の「ダンス状態なら」が見る） */
+  assignedPartDancing: {
+    name: { ja: 'ステージパート：ダンス', en: 'Assigned Part: Dancing' },
+    holder: 'ally',
+    group: 'assignedPart',
+  },
+  /** 同: ボーカルエフェクト（ミントの S1。味方全体・3 秒。中身はスキル発動者基準の攻撃力▲） */
+  singingEffect: { name: { ja: 'ボーカルエフェクト', en: 'Singing Effect' }, holder: 'ally' },
+  /** 同: ダンスエフェクト（ミントの S1。味方全体・3 秒。中身は持続回復で、ダメージに関係しない） */
+  dancingEffect: { name: { ja: 'ダンスエフェクト', en: 'Dancing Effect' }, holder: 'ally' },
+  /**
+   * 同: シンガロング（ミントのバースト。味方全体・10 秒。中身は攻撃ダメージ▲・最大装弾数▲・クリティカルダメージ▲。ミントの S2 の
+   * 「シンガロング状態でなければ」とプリカの S2 の「シンガロングが適用された時」が見る）
+   */
+  singAlong: { name: { ja: 'シンガロング', en: 'Sing Along' }, holder: 'ally' },
+  /**
+   * 同: パフォーマンス（プリカのバースト。味方全体・25 秒・解除不可。中身はチャージダメージ▲。プリカの S1・S2 の「パフォーマンス状態なら」が
+   * 見る。アンコールで維持が延びる）
+   */
+  performance: { name: { ja: 'パフォーマンス', en: 'Performance' }, holder: 'ally' },
+  /** 同: アンコール（プリカの S2。項目ごとに対象が違うので、付いた記録だけの名前） */
+  encore: { name: { ja: 'アンコール', en: 'Encore' }, holder: 'ally' },
 } as const satisfies Record<string, NamedStateInfo>;
 
 export type NamedStateId = keyof typeof NAMED_STATES;
@@ -348,6 +387,11 @@ export function namedStateWithoutContents(id: NamedStateId): boolean {
 /** 課題 2-59: デバフ解除で外れる状態か */
 export function namedStateIsDebuff(id: NamedStateId): boolean {
   return (NAMED_STATES[id] as NamedStateInfo).debuff === true;
+}
+
+/** ミント・プリカ編: 状態の切り替えの組（無ければ undefined） */
+export function namedStateGroup(id: NamedStateId): StateSwitchGroup | undefined {
+  return (NAMED_STATES[id] as NamedStateInfo).group;
 }
 
 /** 2 段目の段 5: 状態の家族（無ければ undefined） */

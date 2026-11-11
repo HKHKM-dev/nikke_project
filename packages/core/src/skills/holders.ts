@@ -46,6 +46,7 @@ import {
   resolvePassives,
   resolveRemoveDebuffs,
   resolveRemoveStates,
+  resolveStateExtends,
   resolveStackChanges,
   resolveStateContents,
   resolveStateGrants,
@@ -57,6 +58,7 @@ import {
   type ResolvedInstantEffect,
   type ResolvedRemoveDebuff,
   type ResolvedRemoveState,
+  type ResolvedStateExtend,
   type ResolvedStackChange,
   type ResolvedStateContent,
   type ResolvedShotCountTrigger,
@@ -77,7 +79,7 @@ import { attackRankFor, finalAttacksAt, tiedAtCutoff, type AttackItem, type Rank
 import { counterMax, type CounterId } from './counters.ts';
 import { createSpanMemo } from './spanMemo.ts';
 import { stackItems, STACK_REFRESH, type MaxStacksAt, type StackDecrease } from './stacks.ts';
-import { namedStateIsDebuff, stateMatches, statesMatching, type NamedStateId } from './states.ts';
+import { namedStateGroup, namedStateIsDebuff, stateMatches, statesMatching, type NamedStateId } from './states.ts';
 import { canEverTarget, dependsOnDefense, dependsOnRank, isEffectTarget, type FireContext } from './targets.ts';
 import {
   advanceShotCount,
@@ -199,6 +201,11 @@ export type HeldTrack = {
    * N 段を次のフレームで切る（skills/stacks.ts）。スタックする状態のほかは空
    */
   decreases: StackDecrease[];
+  /**
+   * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長（発火のフレームの昇順）。そのフレームに付いていて後まで続く件の
+   * 終わりを frames だけ延ばす（extendItems）。状態のほかは無い
+   */
+  extensions?: { frame: number; frames: number }[];
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
   /**
@@ -411,6 +418,15 @@ type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: Trigg
 /** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除 1 つ（対象は自分） */
 type RemoveSource = { sourceSlotIndex: number; effect: ResolvedRemoveState; stage: HeldStage; fires: TriggerTracker };
 
+/** ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長 1 つ */
+type ExtendSource = {
+  sourceSlotIndex: number;
+  effect: ResolvedStateExtend;
+  fires: TriggerTracker;
+  /** 延ばす件の列（初めての発火で作る。件の列は組み立ての後に増えない） */
+  targets?: HeldTrack[];
+};
+
 /** 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除 1 つ */
 type RemoveDebuffSource = { sourceSlotIndex: number; effect: ResolvedRemoveDebuff; fires: TriggerTracker };
 
@@ -511,6 +527,11 @@ export type HolderLists = {
    * 記録を残す。手順 3 の後に呼ぶ
    */
   instantConditionHolds(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): boolean;
+  /**
+   * ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 枠 slotIndex にその状態がフレーム frame に付いたか（{ applied } の付与で付いた記録は
+   * 数えない。即時効果の { applied } の発火。registerFrame の後に呼ぶ）
+   */
+  appliedAt(slotIndex: number, state: NamedStateId, frame: number): boolean;
   /**
    * 即時効果 effect がフレーム frame に発火したが効かなかった記録（不発）を残す。1 パス目が見る、件によらない理由（使った段階の条件
    * burstStep・戦闘中の発火の回数の上限 maxFires）で出なかった発火に使う（件の条件は instantConditionHolds が残す）
@@ -708,16 +729,20 @@ function closedStateItems(
     lower = c;
     for (const item of build(segment, cuts)) {
       const cut: HeldItem = { ...item, end: Math.min(item.end, c + 1) };
-      if (cut.start >= cut.end) continue;
-      const last = out[out.length - 1];
-      if (last !== undefined && last.stack === undefined && cut.stack === undefined && cut.start <= last.end) {
-        last.end = Math.max(last.end, cut.end);
-        continue;
-      }
-      out.push(cut);
+      if (cut.start < cut.end) pushMerged(out, cut);
     }
   }
   return out;
+}
+
+/** 件を時刻の順の列 out の後ろに足す。スタックしない件は、前の件と重なるか接すれば 1 つにする（和集合の上書き延長と同じ見え方） */
+function pushMerged(out: HeldItem[], item: HeldItem): void {
+  const last = out[out.length - 1];
+  if (last !== undefined && last.stack === undefined && item.stack === undefined && item.start <= last.end) {
+    last.end = Math.max(last.end, item.end);
+    return;
+  }
+  out.push(item);
 }
 
 /**
@@ -983,7 +1008,12 @@ function buildTrackItems(
         track.starts,
         track.closes,
         (starts, decreases) =>
-          stateItems(o.grant, starts, log, ends, frames, track.untilEnds ?? [], decreases, maxStacksAt),
+          extendItems(
+            starts,
+            track.extensions,
+            (ss) => stateItems(o.grant, ss, log, ends, frames, track.untilEnds ?? [], decreases, maxStacksAt),
+            frames,
+          ),
         track.consumes,
         track.decreases,
       );
@@ -1006,6 +1036,33 @@ function buildTrackItems(
     case 'while':
       throw new Error('while items are built from the state items (readWhileItems)');
   }
+}
+
+/**
+ * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長を件に当てる。延長は発火のフレームの順に、そのフレームまでに始まった件
+ * （前の延長も入れる）のうち、そのフレームに付いていて後まで続く件の終わり e から延ばす秒の区間 [e, e + 延長) を足す区間として持ち、最後に
+ * 全部の始まりの件と和集合でまとめる。後から付き直した件は延ばさず、付き直しはいまの上書き延長のまま（終わりは max(e + 延長, 付き直しの終わり)）。
+ * スタックする件は延ばさない（使い手がいない）。build は始まりの列から件を作る（stateItems）
+ */
+function extendItems(
+  starts: readonly number[],
+  extensions: readonly { frame: number; frames: number }[] | undefined,
+  build: (starts: readonly number[]) => HeldItem[],
+  frames: number,
+): HeldItem[] {
+  if (extensions === undefined || extensions.length === 0) return build(starts);
+  const union = (items: readonly HeldItem[]): HeldItem[] => {
+    const out: HeldItem[] = [];
+    for (const it of [...items].sort((a, b) => a.start - b.start)) pushMerged(out, { ...it });
+    return out;
+  };
+  const extras: HeldItem[] = [];
+  for (const { frame, frames: by } of [...extensions].sort((a, b) => a.frame - b.frame)) {
+    const before = union([...build(starts.filter((x) => x <= frame)), ...extras]);
+    const on = before.find((it) => it.stack === undefined && it.start <= frame && frame < it.end);
+    if (on !== undefined && on.end < frames) extras.push({ start: on.end, end: Math.min(frames, on.end + by) });
+  }
+  return union([...build(starts), ...extras]);
 }
 
 /** 昇順の列 xs に x を入れる（同じ値は後ろ） */
@@ -1185,13 +1242,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     };
     tracks.push(track);
     // verified はテスト用（verifyItems）: 確かめた時の入力の長さ（件を作る関数が読まない入力も含む）
-    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: new Array<number>(10).fill(-1), verified: [] });
+    itemsSeen.set(track, { reads: trackReadsOf(origin), lengths: new Array<number>(12).fill(-1), verified: [] });
     return track;
   };
   const counterKey = (slotIndex: number, counter: CounterId): string => `${slotIndex}:${counter}`;
   /** 件の列を frame で閉じる（同じフレームは 1 つ。戦闘の後は閉じない）。効果解除（fireRemove）とカウンタの 0（registerCounters） */
   const closeTrack = (track: HeldTrack, frame: number): void => {
     if (frame < frames && !track.closes.includes(frame)) insertSorted(track.closes, frame);
+  };
+  /** 件の列を frame で消費する（同じフレームに始まった件も次のフレームで切る。フルスタックの消費と、{ applied } の付与の切り替え） */
+  const consumeTrack = (track: HeldTrack, frame: number): void => {
+    if (frame < frames && !track.consumes.includes(frame)) insertSorted(track.consumes, frame);
   };
   /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
   const counterFullAt = new Map<string, number>();
@@ -1430,6 +1491,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
+  // ---- ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長（{ applied } のほかは段 1.5 の後に発火する） ----
+  const extendSources: ExtendSource[] = [];
+  slots.forEach((slot, sourceSlotIndex) => {
+    if (slot === null || slot.definition === null) return;
+    for (const effect of resolveStateExtends(slot.definition, slot.character, slot.levels)) {
+      extendSources.push({ sourceSlotIndex, effect, fires: firesOf(effect.trigger, sourceSlotIndex) });
+    }
+  });
+
   // ---- 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除（対象は味方。段 1 の解除と同じ時に閉じる） ----
   const removeDebuffSources: RemoveDebuffSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -1490,17 +1560,26 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 周期の since が読む。読むたびに、まだ見ていない記録を足す
    */
   const ownApplied = new Map<string, number[]>();
+  /** ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 同じ索引の、{ applied } の付与で付いたのでない記録だけのもの（即時効果の { applied }） */
+  const ownUnchainedApplied = new Map<string, number[]>();
+  /** 2 段目の段 4: { applied } の付与で付いた記録（timed・付与・即時効果の { applied } を起こさない。連鎖させない）。記録を足した直後に印を付ける */
+  const chainedApplications = new Set<AppliedRecord>();
   let ownAppliedSeen = 0;
-  const ownAppliedOf = (slotIndex: number, state: NamedStateId): readonly number[] => {
+  const readOwnApplied = (index: Map<string, number[]>, slotIndex: number, state: NamedStateId): readonly number[] => {
     for (; ownAppliedSeen < applications.length; ownAppliedSeen++) {
       const r = applications[ownAppliedSeen]!;
       const key = `${r.slotIndex}:${r.state}`;
-      const list = ownApplied.get(key) ?? [];
-      if (!list.includes(r.frame)) insertSorted(list, r.frame);
-      ownApplied.set(key, list);
+      const lists = chainedApplications.has(r) ? [ownApplied] : [ownApplied, ownUnchainedApplied];
+      for (const map of lists) {
+        const list = map.get(key) ?? [];
+        if (!list.includes(r.frame)) insertSorted(list, r.frame);
+        map.set(key, list);
+      }
     }
-    return ownApplied.get(`${slotIndex}:${state}`) ?? [];
+    return index.get(`${slotIndex}:${state}`) ?? [];
   };
+  const ownAppliedOf = (slotIndex: number, state: NamedStateId): readonly number[] =>
+    readOwnApplied(ownApplied, slotIndex, state);
   /** 同: 枠にその状態の件（段によらない）が効いているか */
   const ownStateActive = (slotIndex: number, state: NamedStateId, frame: number): boolean =>
     (stateTracks[slotIndex]?.get(state) ?? []).some((t) => activeAt(t, frame).length > 0);
@@ -1706,6 +1785,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     changed = setLength(lengths, 7, track.consumes.length) || changed;
     changed = setLength(lengths, 8, track.decreases.length) || changed;
     changed = setLength(lengths, 10, reads.untilEnds ? (track.untilEnds?.length ?? 0) : 0) || changed;
+    changed = setLength(lengths, 11, track.extensions?.length ?? 0) || changed;
     // 2 段目の段 14 の PR 3: 上限を上げる状態の件の列の入力（始まり・閉じる・消費・減少。その件の列は持続の付与で、ほかの入力を読まない）
     const raisers = capRaisers.get(track)?.raisers;
     if (raisers === undefined) return changed;
@@ -2242,6 +2322,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const track = group.tracks[holder];
       if (!track) throw new Error(`no state track for ${group.state} on slot ${holder}`);
       addStart(track);
+      // ミント・プリカ編: { applied } のきっかけの付与（文脈に appliedCasters がある）は、同じフレームの切り替えでは後とみなす
+      switchGroup(holder, group.state, start, context?.appliedCasters !== undefined);
       const record: AppliedRecord = {
         frame: start,
         state: group.state,
@@ -2254,6 +2336,22 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return targets;
   };
   /**
+   * ミント・プリカ編（plan/design-mint-prika.md 2.2 節）: 切り替えの組の状態 state が持ち主 holder にフレーム start に付いたら、組のほかの状態の
+   * 件の列（出どころは問わない。解除不可も）を閉じる。ふだんは解除と同じく start + 1 で切り、同じフレームに始まった件は残す（付与が勝つ）。
+   * { applied } のきっかけの付与は、同じフレームの付与より後とみなし、同じフレームに始まった件も切る（消費と同じ）
+   */
+  const switchGroup = (holder: number, state: NamedStateId, start: number, fromApplied: boolean): void => {
+    const switchGroupOf = namedStateGroup(state);
+    if (switchGroupOf === undefined) return;
+    for (const other of tracks) {
+      const o = other.origin;
+      if (other.holder !== holder || o.kind !== 'state' || o.state === state) continue;
+      if (namedStateGroup(o.state) !== switchGroupOf) continue;
+      if (fromApplied) consumeTrack(other, start);
+      else closeTrack(other, start);
+    }
+  };
+  /**
    * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除の発火 1 つ。持ち主（自分）のその状態の件の列（出どころは問わない）に、
    * 閉じるフレームを足す。解除不可の件の列は閉じない
    */
@@ -2261,9 +2359,27 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const track of tracks) {
       const o = track.origin;
       if (track.holder !== src.sourceSlotIndex || o.kind !== 'state' || o.state !== src.effect.state) continue;
-      if (o.grant.undispellable === true) continue;
+      // ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: 消去（cancel）は解除不可の件も閉じる
+      if (o.grant.undispellable === true && src.effect.cancel !== true) continue;
       closeTrack(track, frame);
     }
+  };
+  /**
+   * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 延長の発火 1 つ。対象の枠のその状態の件の列（出どころは問わない）に、延長を足す
+   * （そのフレームに付いていて後まで続く件だけが延びる。extendItems）
+   */
+  const fireExtend = (src: ExtendSource, frame: number): void => {
+    if (frame >= frames) return;
+    if (src.targets === undefined) {
+      const matching = statesMatching(src.effect.state);
+      src.targets = tracks.filter(
+        (track) =>
+          track.origin.kind === 'state' &&
+          matching.includes(track.origin.state) &&
+          (src.effect.target === 'self' ? track.holder === src.sourceSlotIndex : track.holder !== ENEMY),
+      );
+    }
+    for (const track of src.targets) (track.extensions ??= []).push({ frame, frames: src.effect.frames });
   };
   /**
    * 課題 2-59: 持ち主ごとの、デバフ 1 個ごとの件の列。デバフの印の付いた状態（解除不可を除く）は状態ごと、課題 2-64
@@ -2363,10 +2479,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     stage: HeldStage;
     /** 最後に発火したフレーム。記録のフレームは呼び出しの順に減らないので、前の呼び出しと同じフレームの 2 回目を落とす */
     last: number;
-    fire: (start: number) => void;
+    /** ミント・プリカ編（plan/design-mint-prika.md 2.3 節）: 発火の条件（selfState だけ） */
+    condition: EffectCondition | undefined;
+    /** 同: 条件を満たさない発火を記録する（付与は skipGrant で状態も残す） */
+    skip: (frame: number) => void;
+    /** casters はそのフレームにきっかけの状態の件を付けた枠（対象 appliedCaster。同 2.4 節） */
+    fire: (start: number, casters: readonly number[]) => void;
   };
-  /** { applied } の付与で付いた記録（timed・付与の { applied } を起こさない。連鎖させない） */
-  const chainedApplications = new Set<AppliedRecord>();
   const appliedSources: AppliedSource[] = [];
   for (const group of stateGroups) {
     for (const g of group.grants) {
@@ -2377,9 +2496,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         sourceSlotIndex: group.sourceSlotIndex,
         stage: g.stage,
         last: -1,
-        fire: (start) => {
+        condition: g.grant.condition,
+        skip: (frame) => skipGrant(g, frame),
+        fire: (start, casters) => {
           const before = applications.length;
-          fireGrant(g, start, null);
+          fireGrant(g, start, { appliedCasters: casters });
           for (let k = before; k < applications.length; k++) chainedApplications.add(applications[k]!);
         },
       });
@@ -2393,9 +2514,25 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       sourceSlotIndex: src.sourceSlotIndex,
       stage: src.stage,
       last: -1,
-      fire: (start) => {
-        fireTimed(src, start, null);
+      condition: src.effect.condition,
+      skip: (frame) => skipEffect(src.sourceSlotIndex, src.effect, frame),
+      fire: (start, casters) => {
+        fireTimed(src, start, { appliedCasters: casters });
       },
+    });
+  }
+  // ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: { applied } の状態の維持の延長
+  for (const src of extendSources) {
+    const t = src.effect.trigger;
+    if (!isResolvedApplied(t)) continue;
+    appliedSources.push({
+      state: t.applied,
+      sourceSlotIndex: src.sourceSlotIndex,
+      stage: appliedStageOf(t.applied),
+      last: -1,
+      condition: src.effect.condition,
+      skip: (frame) => skipEffect(src.sourceSlotIndex, src.effect, frame),
+      fire: (start) => fireExtend(src, start),
     });
   }
   /**
@@ -2403,18 +2540,26 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    * 発火する。窓は記録のフレームから。同じフレームに 2 つの出どころから付いても 1 回（appliedFrames と同じ）
    */
   const dispatchApplied = (stage: HeldStage, from: number): void => {
+    if (from >= applications.length) return;
     for (const a of appliedSources) {
       if (a.stage !== stage) continue;
-      const fires = new Set<number>();
+      const fires = new Map<number, number[]>();
       for (let k = from; k < applications.length; k++) {
         const r = applications[k]!;
         if (r.state !== a.state || r.slotIndex !== a.sourceSlotIndex || chainedApplications.has(r)) continue;
-        fires.add(r.frame);
+        const casters = fires.get(r.frame) ?? [];
+        if (!casters.includes(r.sourceSlotIndex)) casters.push(r.sourceSlotIndex);
+        fires.set(r.frame, casters);
       }
-      for (const frame of [...fires].sort((x, y) => x - y)) {
+      for (const frame of [...fires.keys()].sort((x, y) => x - y)) {
         if (frame <= a.last) continue;
         a.last = frame;
-        a.fire(frame);
+        // ミント・プリカ編（plan/design-mint-prika.md 2.3 節）: 条件（自分の状態）は段 1.5 と同じく前のフレームまでに付いた件を見る
+        if (!holdsAt(a.condition, a.sourceSlotIndex, frame)) {
+          a.skip(frame);
+          continue;
+        }
+        a.fire(frame, fires.get(frame)!);
       }
     }
   };
@@ -2749,6 +2894,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
+    // ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長（{ applied } のほか。段 1.5 までに付いた件を延ばす）
+    for (const x of extendSources) {
+      if (isResolvedApplied(x.effect.trigger)) continue;
+      if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
+      if (!holdsAt(x.effect.condition, x.sourceSlotIndex, f)) {
+        skipEffect(x.sourceSlotIndex, x.effect, f);
+        continue;
+      }
+      fireExtend(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
+    }
     for (const x of stage15Stacks) {
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
       if (
@@ -2886,6 +3041,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       amplifiers.length > 0 ||
       enemyStateSources.length > 0 ||
       removeSources.length > 0 ||
+      extendSources.length > 0 ||
       removeDebuffSources.length > 0 ||
       stackSources.length > 0 ||
       whileTracks.length > 0 ||
@@ -2982,6 +3138,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       return false;
     },
     stateHeldAt: ownStateActive,
+    appliedAt: (slotIndex, state, frame) =>
+      lastAtOrBefore(readOwnApplied(ownUnchainedApplied, slotIndex, state), frame) === frame,
     sinceFires,
     endedAt,
     selfStackCountAt,
@@ -3008,7 +3166,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           return max !== undefined && readItems(t).some((it) => it.stack === max && it.start === frame);
         });
         if (!full) continue;
-        for (const t of own) if (!t.consumes.includes(frame)) insertSorted(t.consumes, frame);
+        for (const t of own) consumeTrack(t, frame);
         out.push({ slotIndex: holder, state });
       }
       return out;

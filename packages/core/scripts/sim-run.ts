@@ -609,7 +609,7 @@ if (sim.instants.length > 0) {
     merged.set(key, row);
   }
   console.log(
-    'instant effects (cooldownReduction: frames actually cut, ammoRefill: rounds added, heal: always 0, burstGauge: ratio of the gauge max)',
+    'instant effects (cooldownReduction: frames actually cut, negative when lengthened by an increase, ammoRefill: rounds added, heal: always 0, burstGauge: ratio of the gauge max)',
   );
   console.table([...merged.values()]);
 }

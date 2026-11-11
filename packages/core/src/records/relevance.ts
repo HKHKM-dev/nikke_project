@@ -235,7 +235,12 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
   return {
     kind: e.kind,
     ...(typeof v.stat === 'string' ? { stat: v.stat } : {}),
-    ...(e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange'
+    // ミント・プリカ編: 自分の状態の消去（cancelState の self）と状態の維持の延長（stateExtend）も、解除と同じく相手の状態の中身
+    ...(e.kind === 'state' ||
+    e.kind === 'removeState' ||
+    e.kind === 'stackChange' ||
+    e.kind === 'stateExtend' ||
+    (e.kind === 'cancelState' && e.target === 'self')
       ? { stats: stateStatsOf(def, e.state) }
       : {}),
     ...(typeof v.target === 'string' ? { target: v.target } : {}),
@@ -509,7 +514,14 @@ export function classOf(element: MinimalElement): ElementClass {
   const shape = element.shape;
   if (shape === undefined || shape.kind === 'unknown') return 'unknown';
   if (shape.kind === 'passive' || shape.kind === 'timed') return statClassOf(shape.stat);
-  if (shape.kind === 'state' || shape.kind === 'removeState' || shape.kind === 'stackChange') {
+  // ミント・プリカ編: 自分の状態の消去と状態の維持の延長も、相手の状態の中身で分類する（shapeOfEffect）
+  if (
+    shape.kind === 'state' ||
+    shape.kind === 'removeState' ||
+    shape.kind === 'stackChange' ||
+    shape.kind === 'stateExtend' ||
+    (shape.kind === 'cancelState' && shape.stats !== undefined)
+  ) {
     if (shape.stat !== undefined) return statClassOf(shape.stat);
     const classes = new Set((shape.stats ?? []).map(statClassOf));
     return classes.size === 1 ? [...classes][0]! : 'unknown';

@@ -1,0 +1,52 @@
+{
+  "id": "1108",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1108_rl_mint.mp4",
+  "original": "2026-11-12_05-11-36.mp4",
+  "durationSec": 207.2,
+  "frames": 12434,
+  "fps": 60,
+  "sizeMB": 251,
+  "sha256": "96f658e56c9f",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 304,
+      "name": "I-DOLL・フラワー",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 308,
+      "name": "I-DOLL・サン",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 600,
+      "name": "ミント",
+      "controlled": true
+    },
+    {
+      "slot": 4,
+      "rid": 161,
+      "name": "ミハラ",
+      "controlled": false
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Wind"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": true,
+  "conditionNote": "",
+  "backup": {
+    "at": "2026-11-12T05:35+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}

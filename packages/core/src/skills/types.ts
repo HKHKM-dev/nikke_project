@@ -362,7 +362,8 @@ export function isFixedAttackScaling(scaling: BuffScaling | undefined): boolean 
  * TeamSlotInput.hpRatio の低い順。同値は枠の若い順（C-0567）。自分も候補。想定は戦闘中一定なので skills/composition.ts で対象の枠を
  * 決める）。N は topAttack と同じ欄。heal にだけ書ける
  */
-export type BuffTarget = 'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime' | 'lowestHpRatio';
+export type BuffTarget =
+  'self' | 'allies' | 'burstUsers' | 'topAttack' | 'longestChargeTime' | 'lowestHpRatio' | 'appliedCaster';
 export const BUFF_TARGETS = [
   'self',
   'allies',
@@ -370,6 +371,7 @@ export const BUFF_TARGETS = [
   'topAttack',
   'longestChargeTime',
   'lowestHpRatio',
+  'appliedCaster',
 ] as const satisfies readonly BuffTarget[];
 
 /** 対象の語彙編: N 機を選ぶ対象（targetCount / targetCountRef を持つ）。段 17 の PR 2: coverHeal の lowestCoverHp も */
@@ -1499,6 +1501,11 @@ export type CooldownReductionEffect = TargetCountFields & {
    * 無かったことにする（frame/firstPass.ts）。効果ごとに別に数える
    */
   maxFires?: number;
+  /**
+   * ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 「バーストスキルクールタイム X 秒▲」。発火のフレームの発動の後に、対象の走っている CT の
+   * 残りに X 秒を足す（明けている枠には何もしない）
+   */
+  increase?: true;
   assumes?: LocalizedText;
 } & (
     | {
@@ -1560,6 +1567,11 @@ export type HealEffect = TargetCountFields &
     burstStepMix?: BurstStepMixCondition;
     /** 回復の語彙編: 同じ部隊の味方の条件 */
     squad?: SquadCondition;
+    /**
+     * ミント・プリカ編（plan/design-mint-prika.md 2.7 節）: 発火の条件（鍵は selfState だけ。ミントの S1 の「自分がダンス状態なら」）。発火のフレームに
+     * 即時効果の条件と同じ件を見る（skills/holders.ts の instantConditionHolds）
+     */
+    condition?: EffectCondition;
     /** F5（plan/design-heal-vocabulary.md 3.3 節）: 編成に特定のキャラがいる条件 */
     withCharacter?: WithCharacterCondition;
     /**
@@ -2245,10 +2257,34 @@ export type RemoveDebuffEffect = TargetCountFields & {
  */
 export type CancelStateEffect = {
   kind: 'cancelState';
-  /** 目録の id（持ち主が敵の状態。同じ定義の dot の state） */
+  /** 目録の id（持ち主が敵の状態。同じ定義の dot の state。target が self なら持ち主が味方の状態） */
   state: NamedStateId;
   trigger: EffectTrigger;
-  target: 'enemy';
+  /**
+   * ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: self は自分の状態の消去。解除（removeState）と同じく発火のフレーム f に、持ち主（自分）の
+   * その状態の件（出どころは問わない）を f + 1 で閉じ、解除不可の件も閉じる
+   */
+  target: 'enemy' | 'self';
+  /** ミント・プリカ編: self の発火の条件（解除と同じ鍵） */
+  condition?: EffectCondition;
+  assumes?: LocalizedText;
+};
+
+/**
+ * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 「〈状態〉維持時間 X 秒▲」。即時効果。発火のフレーム f に、対象の各枠で、f に付いていて
+ * f より後まで続くその状態の件の終わりを X 秒延ばす。付いていない枠には何もしない（後から付く件は延ばさない）。件の中身と、その状態を見る
+ * 効果（while など）も延びた窓に従う
+ */
+export type StateExtendEffect = {
+  kind: 'stateExtend';
+  /** 目録の id（持ち主が味方の状態） */
+  state: NamedStateId;
+  trigger: EffectTrigger;
+  target: 'self' | 'allies';
+  /** 延ばす秒の description_value_NN */
+  secondsRef: number;
+  /** 発火の条件（鍵は selfState だけ） */
+  condition?: EffectCondition;
   assumes?: LocalizedText;
 };
 
@@ -2460,6 +2496,7 @@ export type SkillEffect = (
   | RemoveStateEffect
   | RemoveDebuffEffect
   | CancelStateEffect
+  | StateExtendEffect
   | StackChangeEffect
   | CounterChangeEffect
   | SummonEffect
@@ -2512,6 +2549,7 @@ export const SKILL_EFFECT_KINDS = [
   'removeState',
   'removeDebuff',
   'cancelState',
+  'stateExtend',
   'stackChange',
   'counterChange',
   'summon',

@@ -41,8 +41,10 @@ describe('語彙の検証', () => {
     );
   });
 
-  it('cancels an enemy state only', () => {
-    expect(withBurst(cancel, { target: 'self' })).toThrow(/expected "enemy"/);
+  it('cancels an enemy state, or an ally state on self (ミント・プリカ編)', () => {
+    expect(withBurst(cancel, { target: 'self' })).toThrow(/held by the enemy, not by the ally/);
+    expect(withBurst(cancel, { target: 'allies' })).toThrow(/expected "enemy" or "self"/);
+    expect(withBurst(cancel, { condition: { selfState: 'persona' } })).toThrow(/cannot have a condition/);
     expect(withBurst(cancel, { extra: 1 })).toThrow(/unknown field/);
   });
 

@@ -396,7 +396,7 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   );
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
-      const onDot = e.kind === 'cancelState' || (e.kind === 'stackChange' && e.target === 'enemy');
+      const onDot = (e.kind === 'cancelState' || e.kind === 'stackChange') && e.target === 'enemy';
       if (onDot && !dots.some((d) => d.state === e.state && d.firstTick === 'halfAfterLatest'))
         fail(
           `${root}.${slot}.effects[${i}]`,
