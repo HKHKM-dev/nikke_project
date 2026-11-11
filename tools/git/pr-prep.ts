@@ -38,6 +38,9 @@ import {
   backlogProgressCopy,
   branchChangedChecks,
   branchOversizedDocs,
+  CAPTURE_GUIDE,
+  GUIDE_ITEM_LIMIT,
+  longNewGuideItems,
   handEditedLines,
   handRemovedLines,
   checkSteps,
@@ -280,6 +283,16 @@ if (oversized.length > 0) {
     '大きさの目安を超えた手書きの文書がある（AGENTS.md「文書の書き方」。分けるか、書き写しや長い項目を縮める）:',
   );
   for (const o of oversized) console.warn(`  ${o.path}: ${Math.round(o.size / 1000)}KB（目安 ${o.limit / 1000}KB）`);
+}
+const longItems = longNewGuideItems(
+  readFileSync(join(ROOT, CAPTURE_GUIDE), 'utf8'),
+  gitRaw(['show', `origin/main:${CAPTURE_GUIDE}`]),
+);
+if (longItems.length > 0) {
+  console.warn(
+    `${CAPTURE_GUIDE} に、1 項目の目安（${GUIDE_ITEM_LIMIT} バイト）を超えた項目を足すか伸ばした（索引は 1〜2 行の要約と ID。細部は指す先に置く）:`,
+  );
+  for (const i of longItems) console.warn(`  ${i.head}…: ${i.size} バイト`);
 }
 
 if (values.push) {

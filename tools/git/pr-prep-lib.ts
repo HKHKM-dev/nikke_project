@@ -298,6 +298,27 @@ export function oversizedDocs(
   });
 }
 
+/** 撮影と読み取りの手引き（索引）と、その 1 項目の長さの目安（バイト。「1〜2 行の要約と ID」の近似） */
+export const CAPTURE_GUIDE = 'plan/captures/guide.md';
+export const GUIDE_ITEM_LIMIT = 600;
+
+/**
+ * 索引の本文（最初の "## " の見出しより後）の項目（行頭の "- "）のうち、目安を超え、base（main の版）に同じ行の無いもの
+ * （plan/design-workflow-simplification-11.md 2 節）。前からある長い項目は出さない。head は項目の頭の 40 字
+ */
+export function longNewGuideItems(text: string, base: string): { head: string; size: number }[] {
+  const items = (t: string) =>
+    t
+      .slice(Math.max(0, t.indexOf('\n## ')))
+      .split('\n')
+      .filter((l) => l.startsWith('- '));
+  const old = new Set(items(base));
+  return items(text).flatMap((line) => {
+    const size = Buffer.byteLength(line);
+    return size > GUIDE_ITEM_LIMIT && !old.has(line) ? [{ head: line.slice(2, 42), size }] : [];
+  });
+}
+
 /**
  * ブランチ（base...HEAD）で足した・変えた・名前を変えたファイルを git で読んで、oversizedDocs で決める。run は git を引数で呼んで標準出力を
  * 返すもの。名前を変えた文書は新しいパスで見る（消したファイルは入れない）

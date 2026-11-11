@@ -15,6 +15,8 @@ import {
   DOC_SIZE_LIMIT,
   handEditedLines,
   handRemovedLines,
+  GUIDE_ITEM_LIMIT,
+  longNewGuideItems,
   isCheckSetting,
   MAX_CHANGED_FILES,
   nulPaths,
@@ -439,6 +441,27 @@ describe('oversizedDocs', () => {
     const size = (p: string) => (existsSync(join(cwd, p)) ? readFileSync(join(cwd, p)).length : undefined);
     expect(branchOversizedDocs(base, (args) => git(cwd, args), ['plan/generated.md'], size)).toEqual([
       { path: 'plan/new.md', size: DOC_SIZE_LIMIT + 1, limit: DOC_SIZE_LIMIT },
+    ]);
+  });
+});
+
+describe('longNewGuideItems', () => {
+  const long = (c: string) => `- ${c.repeat(GUIDE_ITEM_LIMIT)}`;
+  const guide = (...items: string[]) => `# 手引き\n\n${long('h')}\n\n## 節\n\n${items.join('\n')}\n`;
+
+  it('lists body items over the limit that main does not have, by bytes', () => {
+    const fits = `- ${'あ'.repeat(199)}`; // 2 + 597 バイト
+    const over = `- ${'あ'.repeat(200)}`;
+    expect(longNewGuideItems(guide(fits, over, long('n')), guide())).toEqual([
+      { head: 'あ'.repeat(40), size: 602 },
+      { head: 'n'.repeat(40), size: GUIDE_ITEM_LIMIT + 2 },
+    ]);
+  });
+
+  it('skips long items main already has, and the lead before the first section', () => {
+    expect(longNewGuideItems(guide(long('o'), '- short'), guide(long('o')))).toEqual([]);
+    expect(longNewGuideItems(guide(`${long('o')}x`), guide(long('o')))).toEqual([
+      { head: 'o'.repeat(40), size: GUIDE_ITEM_LIMIT + 3 },
     ]);
   });
 });
