@@ -73,5 +73,115 @@
     862,
     870,
     871
-  ]
+  ],
+  "gaps": {
+    "18": {
+      "unimplemented": 1,
+      "assumed": 4
+    },
+    "60": {
+      "unimplemented": 1,
+      "assumed": 1
+    },
+    "75": {
+      "unimplemented": 1,
+      "assumed": 9
+    },
+    "82": {
+      "unimplemented": 1,
+      "assumed": 1
+    },
+    "94": {
+      "unimplemented": 1,
+      "assumed": 2
+    },
+    "103": {
+      "unimplemented": 1,
+      "assumed": 5
+    },
+    "141": {
+      "unimplemented": 1,
+      "assumed": 3
+    },
+    "170": {
+      "unimplemented": 2,
+      "assumed": 5
+    },
+    "192": {
+      "unimplemented": 3,
+      "assumed": 5
+    },
+    "223": {
+      "unimplemented": 1,
+      "assumed": 11
+    },
+    "233": {
+      "unimplemented": 1,
+      "assumed": 2
+    },
+    "242": {
+      "unimplemented": 1,
+      "assumed": 1
+    },
+    "260": {
+      "unimplemented": 1,
+      "assumed": 3
+    },
+    "261": {
+      "unimplemented": 1,
+      "assumed": 5
+    },
+    "270": {
+      "unimplemented": 1,
+      "assumed": 3
+    },
+    "307": {
+      "unimplemented": 1,
+      "assumed": 0
+    },
+    "310": {
+      "unimplemented": 1,
+      "assumed": 3
+    },
+    "313": {
+      "unimplemented": 2,
+      "assumed": 2
+    },
+    "314": {
+      "unimplemented": 1,
+      "assumed": 6
+    },
+    "315": {
+      "unimplemented": 2,
+      "assumed": 3
+    },
+    "331": {
+      "unimplemented": 5,
+      "assumed": 0
+    },
+    "350": {
+      "unimplemented": 1,
+      "assumed": 5
+    },
+    "400": {
+      "unimplemented": 1,
+      "assumed": 4
+    },
+    "473": {
+      "unimplemented": 1,
+      "assumed": 4
+    },
+    "501": {
+      "unimplemented": 2,
+      "assumed": 1
+    },
+    "811": {
+      "unimplemented": 1,
+      "assumed": 3
+    },
+    "861": {
+      "unimplemented": 1,
+      "assumed": 6
+    }
+  }
 }

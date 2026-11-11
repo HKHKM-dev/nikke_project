@@ -6,9 +6,9 @@
 - notes の種類（同 2.1 節）: 未対応（前提の中でダメージに効くのに定義していない）・前提の外（静止単体ボス・被弾なしなどの前提では起きない）・計算に無関係・補足・間接（それ自体は与ダメージを変えず、経路（HP・防御力・バリアなど）を読む効果のある編成でだけ効く。括弧は経路。[design-indirect-notes.md](design-indirect-notes.md)）。「読む:」は、その経路を読む効果・notes の印。
 - 「根拠なし」は、まだ結論に結び付けていない効果・notes。Stage 11 までの定義は、最小構成の録画の読み直しか新しい撮影で結論を作ったときに結び付ける（凍結の記録からは写さない。[skills-guide.md](skills-guide.md) 0 節）。
 
-件数: キャラ 99・効果 684（根拠あり 664）・notes 225（根拠あり 97）
+件数: キャラ 99・効果 684（根拠あり 664）・notes 224（根拠あり 97）
 
-notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足 26・間接 57
+notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足 26・間接 56
 
 スロット: supported 254・partial 25・unsupported 8・noEffect 37
 
@@ -348,7 +348,6 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - effects[5] passive・overEnergyStage 2 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
   - effects[6] passive・overEnergyStage 3 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
   - effects[7] passive・overEnergyStage 4 以上の間・maxHpOnly: C-0577（確定）、C-0702（確定）
-  - notes[0] 間接（HP）: 最大HP のみ▲ で HP の割合が下がる分（現在の HP は増えない）は、それ自体は与ダメージを変えない（HP の割合を読む効果のある編成でだけ効く）。下がった割合は、自分の HP の割合のきっかけ（「HP が X% 以下」）には届くが、ラプラス：UH にはそのきっかけが無い。自分の HP の割合の条件（「HP が X% 以上なら」）と、HP の割合の低い味方を対象にする効果は、枠の HP の割合の想定のまま読む（下がる分は未実装）: 根拠なし
 - **burst**: supported
   - effects[0] timed・burstUse・attack: C-0682（確定）
   - effects[1] burstDamage・skill: C-0682（確定）、C-0683（確定）
@@ -401,7 +400,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
 - **skill1**: unsupported
   - notes[0] 未対応: 最終攻撃力が最も高い味方 2 機への攻撃力▲（10 秒）は未対応（きっかけの書かれていない CT ごとのアクティブで、周期を録画で読んでいない。宝物版を持つキャラはスペック固定でも宝物版が出るので、基礎版を撮れない。plan/design-skill-stage15.md 論点 3）: 根拠なし
 - **skill2**: supported
-  - effects[0] passive・critDamage（読む: HP）: C-0770（確定）
+  - effects[0] passive・critDamage（読む: HP）: C-0770（確定）、C-1106（確定）
 - **burst**: supported
   - effects[0] burstDamage・skill: C-0771（確定）
   - effects[1] heal・burstUse: 根拠なし
@@ -409,7 +408,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - effects[0] timed・20 秒ごと・attack: C-0769（確定）
   - effects[1] timed・battleStart・burstCooldown: C-0769（確定）
 - **宝物版 skill2**: supported
-  - effects[0] passive・critDamage（読む: HP）: C-0770（確定）
+  - effects[0] passive・critDamage（読む: HP）: C-0770（確定）、C-1106（確定）
   - effects[1] cooldownReduction・fullChargeShot: C-0770（確定）
 - **宝物版 burst**: supported
   - effects[0] burstDamage・skill: C-0771（確定）
@@ -733,7 +732,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
 ## 271 ノワール
 
 - **skill1**: supported
-  - effects[0] passive・attack（読む: HP）: C-0020（確定）、C-0835（確定）
+  - effects[0] passive・attack（読む: HP）: C-0020（確定）、C-0835（確定）、C-1106（確定）
 - **skill2**: supported
   - effects[0] timed・fullBurstStart・maxAmmo: C-0395（確定）
   - effects[1] ammoRefill・fullBurstStart: C-0395（確定）
@@ -876,10 +875,10 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - notes[0] 間接（デバフ）: 戦闘開始時に味方全体に付く「完璧なメイド：デバフ効果免疫 1 個」は、それ自体は与ダメージを変えない（味方にデバフを付ける味方（マスト：ロマンチックメイドのほろ酔い）のいる編成でだけ効く。防ぐ数え方・自分で付けるデバフを防ぐかは確かめていないので、モデルでは防がない）: 根拠なし
   - notes[1] 未対応: 回復で現在の HP が戻って HP の割合が 90% を上回る分（最大HP のみ▲ の間に回復を受けた時）は扱わない（HP の割合は最大HP▲・最大HP のみ▲ だけで下げる）: 根拠なし
 - **skill2**: supported
-  - effects[0] timed・normalShot・maxHpOnly: C-1026（確定）、C-1028（仮説）
+  - effects[0] timed・normalShot・maxHpOnly: C-1026（確定）、C-1107（確定）
   - notes[0] 間接（デバフ）: 通常攻撃 420 回ごとに味方全体に付く「完璧なメイド：デバフ効果免疫 1 個」は、それ自体は与ダメージを変えない（味方にデバフを付ける味方（マスト：ロマンチックメイドのほろ酔い）のいる編成でだけ効く。防ぐ数え方・自分で付けるデバフを防ぐかは確かめていないので、モデルでは防がない）: 根拠なし
 - **burst**: supported
-  - effects[0] timed・burstUse・maxHpOnly: C-1026（確定）、C-1028（仮説）
+  - effects[0] timed・burstUse・maxHpOnly: C-1026（確定）、C-1107（確定）
   - effects[1] timed・burstUse・attack: C-1027（確定）
 
 ## 311 ココア
@@ -985,7 +984,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - effects[1] timed・burstUse・critDamage: C-0861（確定）
   - effects[2] dot・burstUse: C-0860（確定）
   - effects[3] timed・burstUse・maxHpOnly: C-0862（確定）
-  - effects[4] timed・burstUse・maxHpOnly: C-0863（仮説）
+  - effects[4] timed・burstUse・maxHpOnly: C-0863（仮説）、C-1107（確定）
   - notes[0] 補足: 暴風は説明文で「持続ダメージ」でなく「ダメージ」なので、持続ダメージ▲を掛けない。確かめた編成は無い（持続ダメージ▲の使い手を混ぜていない。plan/design-mast.md 2.3 節）: 根拠なし
 
 ## 352 ヘルム
@@ -1391,7 +1390,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
 
 - **skill1**: supported
   - effects[0] timed・normalShot・hitRate: C-0183（確定）、C-0184（仮説）
-  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）、C-0652（確定）
+  - effects[1] heal・normalShot: C-0567（確定）、C-0180（確定）、C-0652（確定）、C-1116（仮説）
 - **skill2**: noEffect
   - notes[0] 前提の外: 射撃マニュアル状態の間の味方全体のバリアに与えるダメージ▲は、バリアの無い敵（射撃場の的）では効かない: C-0180（確定）
   - notes[1] 間接（HP）: 射撃マニュアルのフルスタック状態の間の自分の与えるHP回復量▲は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）: C-0180（確定）
