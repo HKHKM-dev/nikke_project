@@ -98,7 +98,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       fail(path, 'a state grant with a duration in shots cannot stack');
   }
   validateCounterGrant(fields, path, onEnemy);
-  validateSelfHpGrant(fields, path, onEnemy);
+  validateSelfHpGrant(fields, v, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
   if (isAppliedTrigger(fields.trigger) && fields.trigger.applied === state) {
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
@@ -272,7 +272,7 @@ function validateCounterGrant(fields: GrantTimedFields, path: string, onEnemy: b
  * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される状態の付与（durationUntil: { selfHpAtMostRef }）。閉じるのは
  * 持ち主の件の列ごとなので、自分にだけ付け、スタックしない
  */
-function validateSelfHpGrant(fields: GrantTimedFields, path: string, onEnemy: boolean): void {
+function validateSelfHpGrant(fields: GrantTimedFields, v: Record<string, Json>, path: string, onEnemy: boolean): void {
   const until = fields.durationUntil;
   if (!isSelfHpAtMostTrigger(until)) return;
   if (onEnemy || fields.target !== 'self')
@@ -282,6 +282,13 @@ function validateSelfHpGrant(fields: GrantTimedFields, path: string, onEnemy: bo
   // 発火のフレームの HP の割合で付くかを決める（skills/holders.ts の段 1 の付与）ので、条件で段を上げない
   if (fields.condition !== undefined)
     fail(`${path}.condition`, 'a grant lasting until the HP drops cannot have a condition');
+  // 発火のフレームの HP の割合を見るのは、件の一覧の段 1 の、戦闘中の発火だけ（戦闘開始時・確率・{ applied }・leadFrames の付与は通らない）
+  const t = fields.trigger;
+  if (t === 'battleStart' || isChanceTrigger(t) || isAppliedTrigger(t) || v.leadFrames !== undefined)
+    fail(
+      `${path}.trigger`,
+      'a grant lasting until the HP drops cannot be on battleStart, a chance trigger, { applied } or leadFrames',
+    );
 }
 
 /** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */

@@ -27,6 +27,11 @@ describe('語彙の検証', () => {
     expect(patched(grant, { target: 'allies' })).toThrow(/until the HP drops is only on "self"/);
     expect(patched(grant, { maxStacks: 3 })).toThrow(/until the HP drops cannot stack/);
     expect(patched(grant, { condition: { inFullBurst: true } })).toThrow(/until the HP drops cannot have a condition/);
+    // 発火のフレームの HP の割合を見るのは段 1 の戦闘中の発火だけ
+    expect(patched(grant, { trigger: 'battleStart' })).toThrow(/cannot be on battleStart/);
+    expect(patched(grant, { trigger: { count: 'normalHit', chance: 30 } })).toThrow(
+      /cannot be on battleStart, a chance trigger/,
+    );
     expect(patched(grant, { durationUntil: { selfHpAtMostRef: 1, counterEmpty: 'battery' } })).toThrow(/unknown field/);
   });
 

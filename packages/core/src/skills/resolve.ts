@@ -178,12 +178,12 @@ export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
   return typeof t === 'object' && 'everySeconds' in t;
 }
 
-/** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 /** 自分の HP の割合の閾値（% の description_value_NN）を割合にする（きっかけ { selfHpAtMostRef } と維持 { selfHpAtMostRef }） */
 function selfHpRatioOfRef(skill: SkillRaw, ref: number, level: number): number {
   return skillValue(skill, ref, level) / 100;
 }
 
+/** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
   // マスト編: HP の割合の閾値は % → 比率
   if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
@@ -775,6 +775,7 @@ export function resolveStateGrants(
       g.durationFrames === first.durationFrames &&
       g.durationShots === first.durationShots &&
       g.durationUntil === first.durationUntil &&
+      g.untilSelfHpAtMost === first.untilSelfHpAtMost &&
       g.maxStacks === first.maxStacks;
     if (!same) {
       throw new RangeError(
