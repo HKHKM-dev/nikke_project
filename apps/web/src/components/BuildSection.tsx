@@ -28,10 +28,9 @@ import {
   type OverloadOption,
   type TreasurePhase,
 } from '@nikke/core';
-import type { Dispatch } from 'react';
-import { collectionActions, treasureOptionValue } from '../collectionChoice.ts';
+import { UNKNOWN_TREASURE_OPTION, collectionPatch, treasureOptionValue } from '../collectionChoice.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
-import { clampInt, type SlotBuild, type TeamAction } from '../team.ts';
+import { clampInt, type SlotBuild, type SlotGrowthFields } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
 import { inertControlProps } from './inertControl.ts';
 
@@ -48,7 +47,6 @@ function withOverloadLine(lines: readonly OverloadLine[], p: number, line: Overl
 }
 
 type Props = {
-  slotIndex: number;
   character: CharacterData;
   /** 保存している入力（スペック固定でも残す） */
   build: SlotBuild;
@@ -56,15 +54,16 @@ type Props = {
   effectiveBuild: BuildInput;
   /** 実際に計算へ渡す育成値 */
   growth: GrowthInput;
-  treasurePhase: TreasurePhase;
+  /** 宝物の段階（0 は宝物なし）。null は、宝物はあるが段階が未確定（育成状況の編集だけ。plan/design-roster-edit.md 6.4 節） */
+  treasurePhase: TreasurePhase | null;
   masters: BuildMasters | null;
   mastersError: string | null;
   disabled: boolean;
-  dispatch: Dispatch<TeamAction>;
+  /** 変えた育成（装備・キューブ・コレクションは build、宝物の段階は treasurePhase） */
+  onChange: (patch: Partial<Pick<SlotGrowthFields, 'build' | 'treasurePhase'>>) => void;
 };
 
 export function BuildSection({
-  slotIndex,
   character,
   build,
   effectiveBuild,
@@ -73,10 +72,9 @@ export function BuildSection({
   masters,
   mastersError,
   disabled,
-  dispatch,
+  onChange,
 }: Props) {
-  const set = (patch: Partial<SlotBuild>) =>
-    dispatch({ type: 'setBuild', index: slotIndex, build: { ...build, ...patch } });
+  const set = (patch: Partial<SlotBuild>) => onChange({ build: { ...build, ...patch } });
   const setGear = (part: GearPart, gear: SlotBuild['gear'][GearPart]) => set({ gear: { ...build.gear, [part]: gear } });
 
   const setOverload = (part: GearPart, gear: NonNullable<GearInput>, i: number, line: OverloadLine | null) => {
@@ -88,13 +86,13 @@ export function BuildSection({
   let combatError: string | null = null;
   if (masters) {
     try {
-      computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase });
+      computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase: treasurePhase ?? 0 });
     } catch (e) {
       combatError = e instanceof Error ? e.message : String(e);
     }
   }
   const shown = effectiveBuild;
-  const hasTreasure = character.treasure !== null && treasurePhase > 0;
+  const hasTreasure = character.treasure !== null && treasurePhase !== 0;
 
   return (
     <div className="build">
@@ -232,20 +230,33 @@ export function BuildSection({
             {/* 2026-10-31: オーナーの指示で、スキル Lv の横にあった宝物の段階の選択をここに統合した（宝物はコレクションの枠に付ける）。
                 宝物はスペック固定でも選べる */}
             <select
-              value={hasTreasure ? treasureOptionValue(treasurePhase) : (shown.collection?.rarity ?? '')}
+              value={
+                !hasTreasure
+                  ? (shown.collection?.rarity ?? '')
+                  : treasurePhase === null
+                    ? UNKNOWN_TREASURE_OPTION
+                    : treasureOptionValue(treasurePhase)
+              }
               {...inertControlProps(disabled && character.treasure === null)}
               onChange={(e) => {
                 if (disabled && character.treasure === null) return;
                 // スペック固定の間（disabled）は宝物の段階だけを変え、保存している育成には触れない
-                const actions = collectionActions(slotIndex, e.target.value, {
-                  fixedSpec: disabled,
-                  hasTreasure,
-                  build,
-                  level: shown.collection?.level ?? 0,
-                });
-                for (const action of actions) dispatch(action);
+                onChange(
+                  collectionPatch(e.target.value, {
+                    fixedSpec: disabled,
+                    hasTreasure,
+                    build,
+                    level: shown.collection?.level ?? 0,
+                  }),
+                );
               }}
             >
+              {/* いまの値として出すだけ（ほかの値から選び直すことはできない） */}
+              {hasTreasure && treasurePhase === null && (
+                <option value={UNKNOWN_TREASURE_OPTION} disabled>
+                  宝物（段階は未確定）
+                </option>
+              )}
               <option value="">なし</option>
               <option value="R" disabled={disabled}>
                 R

@@ -9,7 +9,14 @@
 //   - コレクション: favorite_item_tid が 1xxx01 = R・1xxx02 = SR、2xxxxx = 宝物。宝物の favorite_item_lv 1・2 は段階 2・3（C-0744）。
 //     Lv 0 の段階は未確定
 //   - リサイクルルーム: tid 1001 = 共通、1101〜1103 = クラス、1201〜1205 = 企業
-import { emptyBuild, OVERLOAD_OPTIONS, type BuildInput, type GearInput, type OverloadLine } from './build.ts';
+import {
+  emptyBuild,
+  OVERLOAD_OPTIONS,
+  type BuildInput,
+  type GearInput,
+  type OverloadLine,
+  type RecycleRoomInput,
+} from './build.ts';
 import type { BuildSnapshot, SnapshotCharacter, SnapshotTreasure } from './buildSnapshot.ts';
 import type { TreasurePhase } from './skills/treasure.ts';
 import type { CharacterIndexEntry, GearPart, NikkeClass } from './types.ts';
@@ -69,6 +76,22 @@ export const RECYCLE_CORPORATION_TID: Readonly<Record<string, number>> = {
   PILGRIM: 1204,
   ABNORMAL: 1205,
 };
+
+/**
+ * リサイクルルームの研究（tid → Lv。lvOf）のうち、そのキャラに効く 3 つ（共通・クラス・企業）。無い研究は 0。
+ * 育成状況の 1 体分が持つ写し（SnapshotCharacter の recycleRoom）は、アカウント全体の研究からこれで作る
+ */
+export function recycleRoomOfResearch(
+  lvOf: (tid: number) => number | undefined,
+  character: Pick<CharacterIndexEntry, 'class' | 'corporation'>,
+): RecycleRoomInput {
+  const corporationTid = RECYCLE_CORPORATION_TID[character.corporation];
+  return {
+    personal: lvOf(RECYCLE_PERSONAL_TID) ?? 0,
+    class: lvOf(RECYCLE_CLASS_TID[character.class]) ?? 0,
+    corporation: (corporationTid === undefined ? undefined : lvOf(corporationTid)) ?? 0,
+  };
+}
 
 const GEAR_FIELDS: readonly (readonly [string, GearPart])[] = [
   ['head', 'head'],
@@ -143,11 +166,7 @@ export function toBuildSnapshot(raw: ShiftyPadRaw, index: readonly CharacterInde
         gear,
         cube: cubeTid === 0 ? null : { id: cubeTid, level: d['harmony_cube_lv'] ?? 0 },
         collection,
-        recycleRoom: {
-          personal: research.get(RECYCLE_PERSONAL_TID) ?? 0,
-          class: research.get(RECYCLE_CLASS_TID[entry.class]) ?? 0,
-          corporation: research.get(RECYCLE_CORPORATION_TID[entry.corporation] ?? 0) ?? 0,
-        },
+        recycleRoom: recycleRoomOfResearch((tid) => research.get(tid), entry),
         extraAttack: 0,
         skillLevels: {
           skill1: d['skill1_lv'] ?? 0,

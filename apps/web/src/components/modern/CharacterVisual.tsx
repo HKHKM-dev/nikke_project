@@ -18,6 +18,8 @@ type Props = {
   extraBadge?: Badge | null;
   /** 絵の上に重ねるもの（ニケ一覧の右上の限界突破・コア強化） */
   overlay?: ReactNode;
+  /** 絵の上のバッジ（属性・武器種・バースト段階）を出すか。既定は出す。小さい絵（育成状況の編集の一覧の行）では出さない */
+  badges?: boolean;
 };
 
 const BASE_URL = import.meta.env.BASE_URL;
@@ -38,6 +40,7 @@ export function CharacterVisual({
   size = 'normal',
   extraBadge = null,
   overlay = null,
+  badges = true,
 }: Props) {
   const imageDir = size === 'portrait' || size === 'tall' ? 'portraits' : 'images';
   const imageSrc = `${BASE_URL}characters/${imageDir}/${character.resourceId}.webp`;
@@ -67,14 +70,16 @@ export function CharacterVisual({
           }}
         />
       )}
-      <div className="char-visual-badges">
-        {columnKinds.map(({ key, badges }) => {
-          const badge = badges[character[key]];
-          return badge && <CharBadge key={key} badge={badge} />;
-        })}
-        {extraBadge && <CharBadge badge={extraBadge} />}
-      </div>
-      {elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
+      {badges && (
+        <div className="char-visual-badges">
+          {columnKinds.map(({ key, badges: kindBadges }) => {
+            const badge = kindBadges[character[key]];
+            return badge && <CharBadge key={key} badge={badge} />;
+          })}
+          {extraBadge && <CharBadge badge={extraBadge} />}
+        </div>
+      )}
+      {badges && elementBadge && <CharBadge badge={elementBadge} className="char-badge char-visual-corner-badge" />}
       {overlay}
       {unsupportedNote !== null && (
         // 印はバッジの絵 ui_information.svg を型にして塗る（.mask-icon）。知らせはマウスを載せると出る

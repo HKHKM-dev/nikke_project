@@ -1,24 +1,12 @@
-import {
-  AFFECTION_RANK_MIN,
-  affectionRankMax,
-  growthLimits,
-  type CharacterData,
-  type CharacterIndexEntry,
-  type GrowthInput,
-  type BuildInput,
-  type BuildMasters,
-  type SkillLevels,
-  type TreasurePhase,
-} from '@nikke/core';
+import type { BuildMasters, CharacterData, CharacterIndexEntry } from '@nikke/core';
 import type { Dispatch } from 'react';
 import type { SlotResultView } from '../calcView.ts';
 import { formatDamage } from '../format.ts';
-import type { SlotGrowth, SlotState, TeamAction } from '../team.ts';
-import { BuildSection } from './BuildSection.tsx';
+import { growthFieldsActions, type SlotGrowthFields, type SlotState, type TeamAction } from '../team.ts';
 import { CharacterPicker } from './CharacterPicker.tsx';
-import { IntInput } from './IntInput.tsx';
+import { GrowthEditor, type ShownGrowth } from './GrowthEditor.tsx';
 import { Popover } from './Popover.tsx';
-import { SkillSection } from './SkillSection.tsx';
+import { RosterRevertButton } from './RosterRevertButton.tsx';
 import { SlotOptions } from './SlotOptions.tsx';
 import type { OtherParties } from '../parties.ts';
 
@@ -36,17 +24,16 @@ type Props = {
   character: CharacterData | undefined;
   error: string | undefined;
   fixedSpec: boolean;
-  effectiveGrowth: GrowthInput;
-  effectiveSkillLevels: SkillLevels;
-  effectiveBuild: BuildInput;
-  /** 宝物の段階（宝物のないキャラは 0。calcView.ts） */
-  treasurePhase: TreasurePhase;
+  /** 計算に使う育成（スペック固定なら固定の値。宝物のないキャラの段階は 0。calcView.ts） */
+  shown: ShownGrowth;
   masters: BuildMasters | null;
   mastersError: string | null;
   /** このスロットの計算の結果（calcView.ts の slotResultFor）。stale なら計算中の印を付けて出す */
   slotResult: SlotResultView | null;
   /** 想定 HP の欄を出すか（calcView.ts） */
   usesHpRatio: boolean;
+  /** 育成状況のこのニケの育成（育成状況にいなければ null）。あれば「育成状況の値に戻す」を出す */
+  rosterGrowth: SlotGrowthFields | null;
   dispatch: Dispatch<TeamAction>;
 };
 
@@ -61,36 +48,21 @@ export function SlotCard({
   character,
   error,
   fixedSpec,
-  effectiveGrowth,
-  effectiveSkillLevels,
-  effectiveBuild,
-  treasurePhase,
+  shown,
   masters,
   mastersError,
   slotResult,
   usesHpRatio,
+  rosterGrowth,
   dispatch,
 }: Props) {
-  const limits = character ? growthLimits(character) : null;
   const damageText = formatDamage(character && slotResult ? slotResult.result.totalDamage : null);
+  const setGrowth = (fields: Partial<SlotGrowthFields>) => growthFieldsActions(slotIndex, fields).forEach(dispatch);
 
   // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
   // 折りたたみ 1 つにまとめた
   // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
   // フルチャージ・手入力の値）を消した。射撃条件は既定値で計算する（calcView.ts）
-
-  const growthField = (key: keyof SlotGrowth, name: string, min: number, max: number) => (
-    <label className="field">
-      <span>{name}</span>
-      <IntInput
-        value={effectiveGrowth[key]}
-        min={min}
-        max={max}
-        disabled={fixedSpec}
-        onCommit={(n) => dispatch({ type: 'setGrowth', index: slotIndex, growth: { ...slot.growth, [key]: n } })}
-      />
-    </label>
-  );
 
   return (
     <fieldset className="panel slot">
@@ -141,53 +113,29 @@ export function SlotCard({
           {damageText}
         </span>
       </div>
-      {!(character && limits) && (
+      {!character && (
         <details className="slot-settings" data-placeholder="true" aria-disabled="true">
           <summary tabIndex={-1} onClick={(e) => e.preventDefault()}>
             育成
           </summary>
         </details>
       )}
-      {character && limits && (
+      {character && (
         <details className="slot-settings">
           {/* 2026-10-31: オーナーの指示で、見出しの横の対応状況の印（対応・一部対応・未対応・未定義）は出さない。未対応はキャラ名の
               「（未）」と「未対応・近似・仮定の一覧」に出る */}
           <summary>育成</summary>
           <div className="slot-settings-body">
-            <div className="growth-row">
-              <label className="field">
-                <span>好感度</span>
-                <IntInput
-                  value={effectiveBuild.affectionRank}
-                  min={AFFECTION_RANK_MIN}
-                  max={affectionRankMax(character)}
-                  disabled={fixedSpec}
-                  onCommit={(rank) =>
-                    dispatch({ type: 'setBuild', index: slotIndex, build: { ...slot.build, affectionRank: rank } })
-                  }
-                />
-              </label>
-              {growthField('grade', '限界突破', 0, limits.gradeMax)}
-              {growthField('core', 'コア強化', 0, limits.coreMax)}
-            </div>
-            <SkillSection
-              slotIndex={slotIndex}
-              levels={effectiveSkillLevels}
-              disabled={fixedSpec}
-              dispatch={dispatch}
-            />
-            <BuildSection
-              slotIndex={slotIndex}
+            <GrowthEditor
               character={character}
-              build={slot.build}
-              effectiveBuild={effectiveBuild}
-              growth={effectiveGrowth}
-              treasurePhase={treasurePhase}
+              fields={slot}
+              shown={shown}
               masters={masters}
               mastersError={mastersError}
               disabled={fixedSpec}
-              dispatch={dispatch}
+              onChange={setGrowth}
             />
+            <RosterRevertButton fields={slot} rosterGrowth={rosterGrowth} fixedSpec={fixedSpec} onRevert={setGrowth} />
           </div>
         </details>
       )}

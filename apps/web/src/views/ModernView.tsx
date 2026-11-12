@@ -27,7 +27,6 @@ import { NotesSummary } from '../components/NotesSummary.tsx';
 import { PartyTabs } from '../components/PartyTabs.tsx';
 import { TeamSettingsForm } from '../components/TeamSettingsForm.tsx';
 import type { ViewProps } from './ViewProps.ts';
-import { BadgeSprite } from '../components/modern/BadgeIcon.tsx';
 import { CharacterTray } from '../components/modern/CharacterTray.tsx';
 import { TrayItemFace } from '../components/modern/CharacterTrayItem.tsx';
 import { collectionBadge, trayCollectionBadge, type Badge } from '../components/modern/badges.ts';
@@ -38,6 +37,7 @@ import { ControllerIcon, EmptySlotFace, ModernSlotCard, SlotCharName } from '../
 import { activeDragData, dropIntentOf } from '../components/modern/dropIntent.ts';
 import { cloneForAnimation, decodeImages, flyIntoSlot, flyToTray, stopArrival } from '../components/modern/flight.ts';
 import { SlotBuildModal } from '../components/modern/SlotBuildModal.tsx';
+import { commonGrowthOf, rosterGrowthOf } from '../roster.ts';
 import { placeCharacterAction } from '../team.ts';
 import { useTrayShape } from '../trayShape.ts';
 import { NO_PARTIES } from '../components/modern/OtherPartyBadges.tsx';
@@ -394,8 +394,6 @@ export function ModernView({
       accessibility={{ restoreFocus: false }}
     >
       <div className="modern-view-container">
-        {/* バッジ（BadgeIcon）が <use> で引くスプライト */}
-        <BadgeSprite />
         <TeamSettingsForm
           element={team.enemy.element}
           fixedSpec={team.fixedSpec}
@@ -403,6 +401,7 @@ export function ModernView({
           synchroLevel={team.synchroLevel}
           durationSeconds={team.durationSeconds}
           rangeJump={team.rangeJump}
+          rosterCommon={roster && commonGrowthOf(roster)}
           dispatch={dispatch}
         />
 
@@ -456,13 +455,11 @@ export function ModernView({
             slot={team.slots[editingSlotIndex]!}
             character={editingCalcSlot.character}
             fixedSpec={team.fixedSpec}
-            effectiveGrowth={editingCalcSlot.growth}
-            effectiveSkillLevels={editingCalcSlot.skillLevels}
-            effectiveBuild={editingCalcSlot.build}
-            treasurePhase={editingCalcSlot.treasurePhase}
+            shown={editingCalcSlot}
             masters={masters}
             mastersError={mastersError}
             usesHpRatio={editingCalcSlot.usesHpRatio}
+            rosterGrowth={rosterGrowthOf(roster, team.slots[editingSlotIndex]!.resourceId)}
             dispatch={dispatch}
             onClose={() => setEditingSlotIndex(null)}
           />

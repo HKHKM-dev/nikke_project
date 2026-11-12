@@ -23,7 +23,8 @@ type Props = {
   label: string;
   /** ポップアップをボタンのどちらの端にそろえるか */
   align: 'left' | 'right';
-  children: ReactNode;
+  /** 中身。関数なら、ポップアップを閉じる関数を受ける（中のボタンを押したら閉じるとき） */
+  children: ReactNode | ((close: () => void) => ReactNode);
 };
 
 export function Popover({ button, buttonClassName, label, align, children }: Props) {
@@ -65,7 +66,7 @@ export function Popover({ button, buttonClassName, label, align, children }: Pro
         <>
           <div className="popover-backdrop" aria-hidden="true" onPointerDown={() => setOpen(false)} />
           <div ref={panelRef} className={`popover-panel popover-panel-${align}`} role="dialog" aria-label={label}>
-            {children}
+            {typeof children === 'function' ? children(() => setOpen(false)) : children}
           </div>
         </>
       )}

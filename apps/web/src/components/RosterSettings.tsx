@@ -1,22 +1,31 @@
-// 設定のメニューの「育成状況」の欄: 読み込む・書き出す・消す（plan/design-combat-power-sort.md 5 節）
+// アカウントのメニューの「育成状況」の欄: 読み込む・書き出す・編集・消すと、全部を読み込んだ値に戻す
+// （plan/design-combat-power-sort.md 5 節・plan/design-roster-edit.md 6.1 節）
 import { useRef } from 'react';
+import { REVERT_ALL_LABEL } from '../roster.ts';
 import type { RosterControls } from '../useRoster.ts';
+import { InertButton } from './InertButton.tsx';
 import { InlineConfirm } from './InlineConfirm.tsx';
 
 /** 知らせの文が長いとメニューが横に広がるので、幅を抑える */
 const MESSAGES = { maxWidth: '22em' } as const;
 
+type Props = RosterControls & {
+  /** 「編集」を押した（メニューを閉じて編集画面を開く） */
+  onEdit: () => void;
+};
+
 export function RosterSettings({
   roster,
   stored,
   message,
-  clearPrompt,
   importFile,
   exportFile,
   clear,
-  confirmClear,
-  cancelClear,
-}: RosterControls) {
+  editor,
+  hasEdits,
+  revertAll,
+  onEdit,
+}: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   return (
     <fieldset className="popover-group">
@@ -25,22 +34,21 @@ export function RosterSettings({
         <button type="button" className="advanced-settings-button" onClick={() => fileRef.current?.click()}>
           読み込む
         </button>
-        <button
-          type="button"
-          className="advanced-settings-button"
-          aria-disabled={roster === null}
-          onClick={() => roster !== null && exportFile()}
-        >
+        <InertButton enabled={roster !== null} onPress={exportFile}>
           書き出す
-        </button>
-        <button
-          type="button"
-          className="advanced-settings-button"
-          aria-disabled={!stored}
-          onClick={() => stored && clear()}
-        >
+        </InertButton>
+        {/* 育成状況が無い・読めない・編集の保存が読めないときは押せない */}
+        <InertButton enabled={editor !== null} onPress={onEdit}>
+          編集
+        </InertButton>
+        <InertButton enabled={stored} onPress={clear.request}>
           消す
-        </button>
+        </InertButton>
+      </div>
+      <div className="button-row roster-revert-all-row">
+        <InertButton enabled={hasEdits} onPress={revertAll.request}>
+          {REVERT_ALL_LABEL}
+        </InertButton>
       </div>
       <input
         ref={fileRef}
@@ -53,13 +61,22 @@ export function RosterSettings({
           if (file !== undefined) void importFile(file);
         }}
       />
-      {clearPrompt !== null && (
+      {clear.prompt !== null && (
         <InlineConfirm
           style={MESSAGES}
-          prompt={clearPrompt}
+          prompt={clear.prompt}
           confirmLabel="消す"
-          onConfirm={confirmClear}
-          onCancel={cancelClear}
+          onConfirm={clear.confirm}
+          onCancel={clear.cancel}
+        />
+      )}
+      {revertAll.prompt !== null && (
+        <InlineConfirm
+          style={MESSAGES}
+          prompt={revertAll.prompt}
+          confirmLabel="戻す"
+          onConfirm={revertAll.confirm}
+          onCancel={revertAll.cancel}
         />
       )}
       {message !== null && (

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // クラシックのスロットのカード（SlotCard.tsx）の見出しの「操作」のラジオボタン: 選んだ形が操作キャラで、選ぶとそのスロットを操作キャラにする
-import { EMPTY_BUILD, type GrowthInput, type SkillLevels } from '@nikke/core';
+import { EMPTY_BUILD, MAX_SKILL_LEVELS } from '@nikke/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { emptySlot } from '../team.ts';
@@ -22,14 +22,17 @@ function renderCard(controlled: boolean) {
       character={undefined}
       error={undefined}
       fixedSpec={false}
-      effectiveGrowth={{} as GrowthInput}
-      effectiveSkillLevels={{} as SkillLevels}
-      effectiveBuild={EMPTY_BUILD}
-      treasurePhase={0}
+      shown={{
+        growth: { level: 200, grade: 3, core: 0 },
+        build: EMPTY_BUILD,
+        skillLevels: MAX_SKILL_LEVELS,
+        treasurePhase: 0,
+      }}
       masters={null}
       mastersError={null}
       slotResult={null}
       usesHpRatio={false}
+      rosterGrowth={null}
       dispatch={dispatch}
     />,
   );
