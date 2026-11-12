@@ -54,11 +54,11 @@ export function App() {
   const [restored, setRestored] = useState(false);
   // 読めなかった編成の保存の退避と知らせ（savedTeams.ts。plan/design-unreadable-team-save.md）
   const { controls: unreadableControls, restore } = useUnreadableSaves();
-  // Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
+  // 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
   const [masters, setMasters] = useState<BuildMasters | null>(null);
   const [mastersError, setMastersError] = useState<string | null>(null);
 
-  // Stage 15: 敵のプリセット。読めなければ null（手入力はできる）。Stage 16-B: 出来事のセットも同じファイル
+  // 敵のプリセット。読めなければ null（手入力はできる）。出来事のセットも同じファイル
   const [enemyMaster, setEnemyMaster] = useState<EnemyPresetMaster | null>(null);
   useEffect(() => {
     loadEnemyPresets({ baseUrl: BASE_URL })
@@ -185,7 +185,7 @@ export function App() {
   const totalsPending =
     computing || batch.computing || shown === null || allPartyInputs.some((p) => p.kind === 'loading');
 
-  // Stage 14: 未対応の一覧の材料（育成の注記は calcView が未対応だけにしたもの。スペック固定では効果層が空）
+  // 未対応の一覧の材料（育成の注記は calcView が未対応だけにしたもの。スペック固定では効果層が空）
   const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
     () =>
       calc.slots.map((slot, i) =>

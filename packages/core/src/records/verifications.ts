@@ -1,4 +1,4 @@
-// Stage 20-D: 検証記録（records/verifications/V-NNNN-<短い名前>.md）の読み込み・検証と、一覧（plan/verifications.md）の生成。
+// 検証記録（records/verifications/V-NNNN-<短い名前>.md）の読み込み・検証と、一覧（plan/verifications.md）の生成。
 // plan/design-stage20.md 3.2・3.2.1 節。1 回の検証（1 つの問い）を 1 ファイルにする。冒頭の箇条書きは書式を厳密に決め、
 // 合わない行は黙って読み飛ばさずに問題として返す。ID の結び付きは片側だけに書き、逆向きは一覧の生成で引く。
 import { CLAIM_TOPICS, type Claim } from './claims.ts';
@@ -36,8 +36,8 @@ export const VERIFICATION_SECTIONS = [
 ] as const;
 
 /**
- * 古い見出し → 語彙の見出し。2026-10-10 までの記録の「予測（撮る前に書く）」は「予測」として読む（撮る前の予測を確定の条件から
- * 外した。plan/design-investigation-review.md 1.3 節）
+ * 古い見出し → 語彙の見出し。2026-10-10 までの記録の「予測（撮る前に書く）」は「予測」として読む（撮る前の予測は確定の条件
+ * ではない。plan/design-investigation-review.md 1.3 節）
  */
 const SECTION_ALIASES: Readonly<Record<string, string>> = { '予測（撮る前に書く）': '予測' };
 

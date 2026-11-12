@@ -51,7 +51,7 @@ export function emptySlotBuild(): SlotBuild {
   const { recycleRoom: _recycleRoom, extraAttack: _extraAttack, ...build } = emptyBuild();
   return build;
 }
-/** Stage 15: hitRate（Stage 18 から「弾丸命中率」と表示。射撃場 = 1）を足した。18-C2 から、条件が手入力の枠でだけ使う */
+/** 射撃条件の既定値。hitRate は弾丸命中率（射撃場 = 1）。条件が手入力の枠でだけ使う */
 export const DEFAULT_SLOT_CONDITION: SlotCondition = {
   coreHitRate: 1,
   distanceBonus: true,
@@ -63,14 +63,14 @@ export const DEFAULT_SKILL_LEVELS: SkillLevels = MAX_SKILL_LEVELS;
 /** 戦闘時間の規定値。レイド・射撃場ともに 180 秒（スペック固定でも変えない） */
 export const DEFAULT_DURATION_SECONDS = 180;
 /**
- * Stage 18-C2: 条件の決め方の既定。自動 = 射撃場の的の表と着地点の時間割り（plan/design-stage18.md 12.9 節の 5）。
+ * 条件の決め方の既定。自動 = 射撃場の的の表と着地点の時間割り（plan/design-stage18.md 12.9 節の 5）。
  * 操作キャラの枠も自動（AUTO で撃つ前提）。人が狙う操作は手入力にしてもらう
  */
 export const DEFAULT_CONDITION_MODE: ConditionMode = 'auto';
-/** Stage 9: 宝物の段階の既定。0 = 宝物なし（ユーザー指定） */
+/** 宝物の段階の既定。0 = 宝物なし（ユーザー指定） */
 export const DEFAULT_TREASURE_PHASE: TreasurePhase = 0;
 /**
- * 2 段目の段 6（plan/design-skill-stage6.md 1.4 節・論点 4）: HP の割合の想定の既定。全員満タン（1）。満タンかどうかで分かれる
+ * HP の割合の想定の既定（plan/design-skill-stage6.md 1.4 節・論点 4）。全員満タン（1）。満タンかどうかで分かれる
  * 効果（「最大の時のみ」）を定義する時に、射撃場の撮影で決め直す
  */
 export const DEFAULT_HP_RATIO = 1;
@@ -78,21 +78,21 @@ export const DEFAULT_HP_RATIO = 1;
 export type SlotState = {
   resourceId: number | null;
   growth: SlotGrowth;
-  /** Stage 18-C2: 条件の決め方。自動でも手入力の値（condition）は残し、未測定の項目・的の表の無い敵で使う */
+  /** 条件の決め方。自動でも手入力の値（condition）は残し、未測定の項目・的の表の無い敵で使う */
   conditionMode: ConditionMode;
   condition: SlotCondition;
   skillLevels: SkillLevels;
-  /** Stage 9: 宝物の段階。キャラを選び直すと 0 に戻る。スペック固定でも上書きしない */
+  /** 宝物の段階。キャラを選び直すと 0 に戻る。スペック固定でも上書きしない */
   treasurePhase: TreasurePhase;
-  /** Stage 12: 育成入力（装備・キューブ・好感度・コレクション）。growth と同じくキャラを変えても残る */
+  /** 育成入力（装備・キューブ・好感度・コレクション）。growth と同じくキャラを変えても残る */
   build: SlotBuild;
   /**
-   * 2 段目の段 6: HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。被弾の時刻は計算に入れず、戦闘中は一定とみなす。
+   * HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。被弾の時刻は計算に入れず、戦闘中は一定とみなす。
    * 入力欄は HP の割合の条件を持つ効果のある枠にだけ出す（論点 5）。キャラを選び直すと既定（満タン）に戻る
    */
   hpRatio: number;
   /**
-   * 2026-10-31: バーストしない（スロットの詳細設定）。バーストのチェーンの候補から外す（core の TeamInput.noBurstSlots。
+   * バーストしない（スロットの詳細設定）。バーストのチェーンの候補から外す（core の TeamInput.noBurstSlots。
    * calcView.ts）。既定は使う
    */
   noBurst: boolean;
@@ -106,16 +106,16 @@ export type TeamState = {
   /** ユニオン射撃場スペック固定（編成共通） */
   fixedSpec: boolean;
   /**
-   * Stage 16-B: ON にした敵の出来事のセット（data/enemies.json の eventSets の id）。既定は空（OFF）。
+   * ON にした敵の出来事のセット（data/enemies.json の eventSets の id）。既定は空（OFF）。
    * 画面は使わず、rangeJump から出来事のセットを決める（calcView.ts）
    */
   enemyEventSets: string[];
-  /** 2026-10-31: コンソール（前哨基地のリサイクルルームの研究 Lv）。編成共通で、枠ごとのリサイクルルームの代わりに使う */
+  /** コンソール（前哨基地のリサイクルルームの研究 Lv）。編成共通 */
   console: ConsoleInput;
-  /** 2026-10-31: シンクロレベル。編成共通で、枠ごとの Lv の代わりに使う（キャラの上限で収める） */
+  /** シンクロレベル。編成共通（キャラの上限で収める） */
   synchroLevel: number;
   /**
-   * 2026-10-31: 射撃場 3 分モード（的のジャンプ）を入れるか。既定は ON。詳細設定の欄で切り替え、enemyEventSets の代わりに使う
+   * 射撃場 3 分モード（的のジャンプ）を入れるか。既定は ON。詳細設定の欄で切り替え、enemyEventSets の代わりに使う
    * （calcView.ts）
    */
   rangeJump: boolean;
@@ -354,7 +354,7 @@ export function takenResourceIds(state: TeamState, index: number): Set<number> {
 }
 
 /**
- * Stage 16-B: 計算に渡す敵。ON にした出来事のセットのうち、敵にあたるプリセット（core の presetForEnemy。2026-10-31 から属性なしの
+ * 計算に渡す敵。ON にした出来事のセットのうち、敵にあたるプリセット（core の presetForEnemy。属性なしの
  * 射撃場の的も射撃場のプリセット）が持つものだけを戦闘時間ぶん展開して足す。ほかの敵・プリセットの読み込み前は出来事なし
  */
 export function enemyWithEvents(
@@ -371,7 +371,7 @@ export function enemyWithEvents(
 }
 
 /**
- * Stage 18-C2: 計算に渡す敵。出来事（enemyWithEvents）に、的の条件の表と着地点の時間割りを足す。表があるのは射撃場のプリセットと
+ * 計算に渡す敵。出来事（enemyWithEvents）に、的の条件の表と着地点の時間割りを足す。表があるのは射撃場のプリセットと
  * 一致する敵と、属性なしの射撃場の的（既定の敵）。3 分モードが OFF なら全体を初期位置（中近）にする。表が無い敵はそのまま
  * （自動の枠も手入力の値で計算し、注記が出る）。条件が手入力の枠には、表を付けても何も変わらない
  */
@@ -404,7 +404,7 @@ export const STORAGE_KEY = 'nikke-calc.team.v1';
 /**
  * 編成の保存形式の版。版 3 で、画面から消した項目（バースト・操作キャラ・撃たない・スロットごとの LV・リサイクルルーム・
  * その他攻撃加算）を書かなくした。版 1・2 の保存データのそれらは読み捨てる。版 4 で操作キャラ（controlledSlot）を戻した
- * （版 3 までの保存データは既定のスロット 3）。版のない旧形式（Stage 3〜13）は読まない
+ * （版 3 までの保存データは既定のスロット 3）。版のない旧形式は読まない
  */
 export const TEAM_FORMAT_VERSION = 4;
 
@@ -440,8 +440,8 @@ function parseGrowth(v: Json): SlotGrowth | null {
 }
 
 /**
- * Stage 18-C2: 条件の決め方。版 2 から保存する。欠落（版 1）は、条件が既定のまま（コア命中率 1・距離ボーナスあり・弾丸命中率 1 か欠落）
- * なら自動に読み替え、それ以外は手入力として残す（Stage 17 の 8 節の 5・plan/design-stage18.md 12.9 節の 5）
+ * 条件の決め方。版 2 から保存する。欠落（版 1）は、条件が既定のまま（コア命中率 1・距離ボーナスあり・弾丸命中率 1 か欠落）
+ * なら自動に読み替え、それ以外は手入力として残す（plan/design-stage18.md 12.9 節の 5）
  */
 function parseConditionMode(v: Json, condition: SlotCondition): ConditionMode | null {
   if (v === 'auto' || v === 'manual') return v;
@@ -462,7 +462,7 @@ function parseCondition(v: Json): SlotCondition | null {
     distanceBonus: v.distanceBonus,
     fullCharge: v.fullCharge,
   };
-  // Stage 15: 弾丸命中率。Stage 14 までの保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
+  // 弾丸命中率。古い保存データには無い。欠落は欠落のまま読む（計算では 1 = 射撃場）
   if (v.hitRate !== undefined) {
     if (!isFinite_(v.hitRate) || v.hitRate < 0 || v.hitRate > 1) return null;
     condition.hitRate = v.hitRate;
@@ -476,7 +476,7 @@ function parseTreasurePhase(v: Json): TreasurePhase | null {
   return v as TreasurePhase;
 }
 
-/** 2 段目の段 6: HP の割合の想定。段 6 までの保存データには無いので、欠落は既定（満タン）。0 より大きく 1 以下 */
+/** HP の割合の想定。古い保存データには無いので、欠落は既定（満タン）。0 より大きく 1 以下 */
 function parseHpRatio(v: Json): number | null {
   if (v === undefined) return DEFAULT_HP_RATIO;
   if (!isFinite_(v) || v <= 0 || v > 1) return null;
@@ -515,7 +515,7 @@ export function readVersionedJson(json: string, what: string): ReadResult<Record
 export const TEAM_SHAPE_ERROR = '編成の JSON の形が合いません（範囲外の値・未知のニケ・同じニケが 2 スロットなど）';
 
 /**
- * Stage 14: 編成の JSON（localStorage・書き出したファイル・貼り付け）を検証して復元する。失敗の理由を返す（取り込み欄に出す）。
+ * 編成の JSON（localStorage・書き出したファイル・貼り付け）を検証して復元する。失敗の理由を返す（取り込み欄に出す）。
  * 未知の formatVersion（新しい版で書き出したもの）・形が合わない・index に存在しないニケ・同じニケが 2 枠は失敗
  */
 export function readTeamJson(json: string, index: readonly CharacterIndexEntry[]): ReadResult<TeamState> {
@@ -552,7 +552,7 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
     const treasurePhase = parseTreasurePhase(s.treasurePhase);
     const build = parseBuildFieldsJson(s.build, 'build', []);
     const hpRatio = parseHpRatio(s.hpRatio);
-    // 2026-10-31 までの保存データには無いので、欠落は使う
+    // 古い保存データには無いので、欠落は使う
     if (s.noBurst !== undefined && !isBool(s.noBurst)) return null;
     if (
       growth === null ||
@@ -582,18 +582,18 @@ function parseTeamFields(raw: Record<string, Json>, index: readonly CharacterInd
   if (enemy === null) return null;
   if (!isFinite_(raw.durationSeconds) || raw.durationSeconds < 0) return null;
   if (!isBool(raw.fixedSpec)) return null;
-  // Stage 16-B までの保存データには無いので、欠落は空（OFF）
+  // 古い保存データには無いので、欠落は空（OFF）
   const eventSets = raw.enemyEventSets;
   if (eventSets !== undefined && !(Array.isArray(eventSets) && eventSets.every((id) => typeof id === 'string'))) {
     return null;
   }
 
-  // 2026-10-31 までの保存データには無いので、欠落は全部 0
+  // 古い保存データには無いので、欠落は全部 0
   const consoleInput = raw.console === undefined ? emptyConsole() : parseConsole(raw.console);
   if (consoleInput === null) return null;
-  // 2026-10-31 までの保存データには無いので、欠落は既定（LV200）
+  // 古い保存データには無いので、欠落は既定（LV200）
   if (raw.synchroLevel !== undefined && !isInt(raw.synchroLevel, 1)) return null;
-  // 2026-10-31 までの保存データには無いので、欠落は既定（ON）
+  // 古い保存データには無いので、欠落は既定（ON）
   if (raw.rangeJump !== undefined && !isBool(raw.rangeJump)) return null;
   // 操作キャラは版 4 から読む（版 1・2 の値は、画面で選べなかった頃のものなので読み捨てる）。欠落は既定
   const readsControlled = typeof raw.formatVersion === 'number' && raw.formatVersion >= 4;

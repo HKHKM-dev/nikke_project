@@ -38,7 +38,7 @@ const data = loadRecordsData(recordingsFile, predictionRids(file));
 const predicted = runPredictions(file, data, recordingMap(recordingsFile));
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
 const at = values.date ?? todayLocal();
-// 2026-10-10 より前の控え（seen）は書き直すときに落とす（読まなくなった。plan/design-investigation-review.md 1.3 節）
+// 2026-10-10 より前の控え（seen）は読まないので、書き直すときに落とす（plan/design-investigation-review.md 1.3 節）
 const out: PredictionFile = { ...file, predicted: { at, commit, values: predicted } };
 writeFileSync(path, `${JSON.stringify(out, null, 2)}\n`);
 for (const h of file.hypotheses) {

@@ -23,12 +23,12 @@ export type CompareSetup = {
   /** 省略 1 */
   hitRate?: number;
   /**
-   * Stage 18-C: 条件の決め方。'auto' は的の条件の表と着地点の時間割り（frame/landing.ts）で決める（coreHitRate・distanceBonus・
-   * hitRate は、表が未測定の項目にだけ使う）。**省略は 'manual'**（Stage 19-B の観測値は手入力のまま）
+   * 条件の決め方。'auto' は的の条件の表と着地点の時間割り（frame/landing.ts）で決める（coreHitRate・distanceBonus・
+   * hitRate は、表が未測定の項目にだけ使う）。**省略は 'manual'**
    */
   condition?: 'auto' | 'manual';
   /**
-   * Stage 18-C: 中遠の着地点を 1 か所に固定する（録画で読んだ着地点。plan/verification.md「実距離への換算」）。省略は配分。
+   * 中遠の着地点を 1 か所に固定する（録画で読んだ着地点。plan/verification.md「実距離への換算」）。省略は配分。
    * 条件が手入力でも書ける（飛ぶ時間・スキルのヒットのコアの割合は条件の決め方に依らず着地点で引く。plan/design-anis-star-unimplemented.md 2 節）
    */
   midFarLanding?: MidFarLanding;
@@ -47,7 +47,7 @@ export type CompareSetup = {
    */
   obstacles?: { slot: number; shot: number; count: string }[];
   /**
-   * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 録画で数えた、発ごとに的に当たったペレットの数（TeamInput.pelletHits）。
+   * 録画で数えた、発ごとに的に当たったペレットの数（TeamInput.pelletHits。plan/design-pellet-hit.md 3 節）。
    * slot は枠（1 始まり）、counts は 1 発目からの数の並びを持つ観測値の id（同じ録画・use が input・値は 0 以上の整数の配列）。
    * 回数トリガー pelletHit の回数にだけ効く。省略は無し
    */
@@ -58,7 +58,7 @@ export type CompareSetup = {
    */
   sustainedHitRateUp?: boolean;
   /**
-   * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3.3 節）: 持続ダメージ▲の式の中の置き場所（TeamInput.sustainedDamagePlacement）。
+   * 持続ダメージ▲の式の中の置き場所（TeamInput.sustainedDamagePlacement。plan/design-sustained-damage-up.md 3.3 節）。
    * 省略はいまのモデル。予測の仮説（H1〜H3）の override に使う
    */
   sustainedDamagePlacement?: SustainedDamagePlacement;
@@ -79,12 +79,12 @@ export type CompareSetup = {
   /** V-0165: false なら、録画（予測の編成）の宝物の段階を使わず、どの枠も基礎版のスキルにする。省略 true */
   treasure?: boolean;
   /**
-   * Stage 13 の残り: スペック固定 OFF の録画で、育成の効果層のうちこの種類（overload・cube・collection）を外す。
+   * スペック固定 OFF の録画で、育成の効果層のうちこの種類（overload・cube・collection）を外す。
    * 「その効果は乗らない」という予測の仮説（H0）の override に使う。攻撃力（キャラ画面の値）は変えない。省略は外さない
    */
   buildEffectsOff?: BuildEffectKind[];
   /**
-   * 対象の語彙編（plan/design-target-vocab.md 4 節）: 定義に効果を足す。結論の無い効果を、定義のファイルを変えずに予測の仮説の
+   * 定義に効果を足す（plan/design-target-vocab.md 4 節）。結論の無い効果を、定義のファイルを変えずに予測の仮説の
    * override でだけ入れる。rid のキャラの skill（treasure なら宝物版）の effects の末尾に、effect（定義の JSON の書き方）を足す。
    * replace（0 始まり）があれば、末尾に足さずにその位置の効果を置き換える（対象を絞るなど、定義の効果の読みを替える仮説）
    */
@@ -95,7 +95,7 @@ export type CompareSetup = {
    */
   dropHeals?: number[];
   /**
-   * エレグの段 3（plan/design-elegg-s3.md 経過）: 定義から効果を落とす。モデルには撃たない枠が無いので、録画で撃たなかった枠の、射撃の
+   * 定義から効果を落とす（plan/design-elegg-s3.md の経過）。モデルには撃たない枠が無いので、録画で撃たなかった枠の、射撃の
    * 回数で起きる効果（実機では起きない）を外して比べる。rid のキャラの skill（treasure なら宝物版）の effects の index（0 始まり）。
    * addEffects より前に落とす
    */
@@ -116,7 +116,7 @@ export type CompareSetup = {
    */
   noBurstSlots?: number[];
   /**
-   * 2 段目の段 12 の PR 3（V-0541）: 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠）。モデルには撃たない枠が無いので、
+   * 録画で撃たなかった枠（1 始まり。台帳の fires: false の枠。V-0541）。モデルには撃たない枠が無いので、
    * 代わりに弾丸命中率を 0 にする（通常攻撃のダメージもゲージも出ない）。射撃の回数のきっかけは残るので、要れば dropEffects で外す
    * （撃たない枠をモデルに足せば要らなくなる。V-0605 の holdFire がその形で、戦闘の全体の区間にすれば置き換えられるが、移すのは後）。
    * 条件が auto（射撃場の表）のときは書かない。省略は全員撃つ
@@ -178,7 +178,7 @@ export type AddedEffect = {
 
 /**
  * 定義に効果を足して読み直す（読み込みの検査をそのまま通す）。support・burstStepMode は読み込みで決まる欄なので、JSON に戻すときに外す。
- * エレグのバースト編: 敵に付く状態の付与は、読み込みで target を "allies" に読み替えて enemy の印を付けるので、JSON の形
+ * 敵に付く状態の付与は、読み込みで target を "allies" に読み替えて enemy の印を付けるので、JSON の形
  * （target: "enemy"）に戻す
  */
 export function withAddedEffects(definition: SkillDefinition, adds: readonly AddedEffect[]): SkillDefinition {
@@ -192,10 +192,10 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
       const entry = group[slot];
       if (entry === undefined) continue;
       delete entry.support;
-      // ナユタ編: 使用武器の変更の state から読み込みが足した付与は、読み直しでもう一度足されるので外す
+      // 使用武器の変更の state から読み込みが足した付与は、読み直しでもう一度足されるので外す
       entry.effects = entry.effects.filter((e) => (e as { weaponChangeOf?: true }).weaponChangeOf !== true);
       for (const effect of entry.effects as Record<string, unknown>[]) {
-        // 2 段目の段 12: バースト段階の変更の側（burstStepMode）も読み込みで書く欄
+        // バースト段階の変更の側（burstStepMode）も読み込みで書く欄
         delete effect.burstStepMode;
         if (effect.kind !== 'state' || effect.enemy !== true) continue;
         delete effect.enemy;
@@ -215,7 +215,7 @@ export function withAddedEffects(definition: SkillDefinition, adds: readonly Add
   return parseSkillDefinition(json);
 }
 
-/** Stage 18-C: 中遠の 3 か所（足元 584・571・561。C-0044） */
+/** 中遠の 3 か所（足元 584・571・561。C-0044） */
 export const MID_FAR_LANDINGS = ['A', 'B', 'C'] as const;
 
 export type MidFarLanding = (typeof MID_FAR_LANDINGS)[number];

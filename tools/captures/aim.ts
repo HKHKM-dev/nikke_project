@@ -1,5 +1,5 @@
-// 射撃場の録画から、照準の中心・コアの中心と半径・的の見かけの大きさと位置をフレームごとに測る（Stage 18-B2。
-// plan/design-stage18.md 11.1 の 1・3、11.4）。
+// 射撃場の録画から、照準の中心・コアの中心と半径・的の見かけの大きさと位置をフレームごとに測る
+// （plan/design-stage18.md 11.1 の 1・3、11.4）。
 //   node tools/captures/aim.ts <動画> [--from N] [--to N] [--step 60] [--csv out.csv] [--debug-dir DIR]
 //                                  [--bg-from N] [--bg-to N] [--bg-step 120]
 //

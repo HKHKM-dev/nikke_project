@@ -18,7 +18,7 @@ import { validateBurstHitTriggers, validateCrossChecks } from './crossChecks.ts'
 import { parseEffect } from './effect.ts';
 import { NOTE_REFERS, parseNote } from './notes.ts';
 
-/** 2 段目の段 12: 名前の付いたバースト段階の変更と同じ（か逆の）編成の条件 burstStepMix の効果に、どちらの側かを書く（BurstStepMode） */
+/** 名前の付いたバースト段階の変更と同じ（か逆の）編成の条件 burstStepMix の効果に、どちらの側かを書く（BurstStepMode） */
 function markBurstStepModes(skills: Record<SkillSlot, SkillEntry>, change: BurstStepChangeEffect | undefined): void {
   const mix = change?.burstStepMix;
   if (change?.name === undefined || mix === undefined) return;
@@ -36,8 +36,9 @@ function markBurstStepModes(skills: Record<SkillSlot, SkillEntry>, change: Burst
 }
 
 /**
- * ナユタ編（plan/design-nayuta.md 2.5 節。論点 2）: 使用武器の変更の state を、同じきっかけ・維持・条件・根拠の、中身の無い自分への付与にする
- * （状態を見る側は付与だけを見るので、変更の窓と同じ窓の付与を足す）。足した付与は weaponChangeOf の印を持ち、スロットの効果の終わりに並ぶ
+ * 使用武器の変更の state を、同じきっかけ・維持・条件・根拠の、中身の無い自分への付与にする
+ * （状態を見る側は付与だけを見るので、変更の窓と同じ窓の付与を足す。plan/design-nayuta.md 2.5 節の論点 2）。
+ * 足した付与は weaponChangeOf の印を持ち、スロットの効果の終わりに並ぶ
  * （手書きの効果の番号は変わらない）
  */
 function weaponChangeGrantsOf(
@@ -85,11 +86,11 @@ function parseEntry(v: Json, slot: SkillSlot, root: 'skills' | 'treasureSkills' 
   const entry: SkillEntry = { support: deriveSkillSupport(effects, notes), effects };
   if (v.sequential !== undefined) {
     if (v.sequential !== true) fail(`${path}.sequential`, 'expected true');
-    // ルドミラ：ウィンターオーナー編: スキルのスロットにも書ける（plan/design-ludmilla-wo.md 2.4 節）。burst は先頭が burstDamage
+    // スキルのスロットにも書ける（plan/design-ludmilla-wo.md 2.4 節）。burst は先頭が burstDamage
     if (slot === 'burst' && effects[0]?.kind !== 'burstDamage') {
       fail(`${path}.sequential`, 'the first effect of a sequential burst must be burstDamage');
     }
-    // 回数トリガーの遅れ編の第 2 段: 順番の効果は、射撃の回数の発火の次のフレームから窓を数える（frame/plan.ts）。遅れたヒットとの順は決めていない
+    // 順番の効果は、射撃の回数の発火の次のフレームから窓を数える（frame/plan.ts）。遅れたヒットとの順は決めていない
     if (effects.some((e) => e.kind === 'damage' && e.delayFrames !== undefined && isShotCountTrigger(e.trigger))) {
       fail(`${path}.sequential`, 'a sequential skill cannot have a delayed shot count damage');
     }
@@ -113,7 +114,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   rejectUnknownKeys(raw.skills, SKILL_SLOTS, 'skills', 'unknown skill slot');
   const skills = {} as Record<SkillSlot, SkillEntry>;
   for (const slot of SKILL_SLOTS) skills[slot] = parseEntry(raw.skills[slot], slot);
-  // アニス：スター編: バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）。2 段目の段 12: バースト段階の変更も
+  // バースト再突入は 1 つの定義に 1 つまで（次の段階は 1 つしか持てない）。バースト段階の変更も
   // （持つ枠の段は 1 つしか持てない）
   const effects = SKILL_SLOTS.flatMap((slot) => skills[slot]!.effects);
   for (const kind of ['burstReentry', 'burstStepChange', 'allyGaugeAdd'] as const) {
@@ -125,7 +126,7 @@ export function parseSkillDefinition(raw: Json): SkillDefinition {
   );
   validateCrossChecks(skills, 'skills');
   const def: SkillDefinition = { formatVersion: 1, resourceId: raw.resourceId, checkedAt: raw.checkedAt, skills };
-  // 名前の付いた状態の語彙編: ペルソナ編の states は静的な付与（kind: 'state'）に置き換えた
+  // 古い形の states は弾く（静的な付与（kind: 'state'）で書く）
   if (raw.states !== undefined) {
     fail('states', 'states was replaced by a static state grant (kind "state". plan/design-named-state.md)');
   }

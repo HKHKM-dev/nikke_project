@@ -42,7 +42,7 @@ export type TeamSlotSkills = {
   definition: SkillDefinition | null;
   levels: SkillLevels;
   /**
-   * Stage 9: 宝物の段階（0..3）。省略 0 = 宝物なし。character.treasure が null なら 0 だけ許す。
+   * 宝物の段階（0..3）。省略 0 = 宝物なし。character.treasure が null なら 0 だけ許す。
    * スペック固定でも上書きしない（所持状況がそのまま反映される）
    */
   treasurePhase?: TreasurePhase;
@@ -55,31 +55,31 @@ export type TeamSlotInput = {
   /** 戦闘中の攻撃力（バフ前）を直接指定する（射撃場スペック固定など）。指定時は growth からの算出をしない */
   attackOverride?: number;
   /**
-   * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: 戦闘中の最大HP（バフ前）を直接指定する（スペック固定・育成入力）。
+   * 戦闘中の最大HP（バフ前）を直接指定する（スペック固定・育成入力。plan/design-skill-stage6.md 1.1 節）。
    * 指定時は growth からの算出をしない（attackOverride と同じ）
    */
   hpOverride?: number;
   /**
-   * 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: 戦闘中の防御力（バフ前）を直接指定する（スペック固定・育成入力）。
+   * 戦闘中の防御力（バフ前）を直接指定する（スペック固定・育成入力。plan/design-skill-stage7.md 1.1 節）。
    * 指定時は growth からの算出をしない（hpOverride と同じ）
    */
   defenceOverride?: number;
   /**
-   * 2 段目の段 6（同 1.4 節）: その枠の HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。省略は 1（満タン）。
+   * その枠の HP の割合の想定（現在の HP ÷ 最終最大HP。0 より大きく 1 以下）。省略は 1（満タン。plan/design-skill-stage6.md 1.4 節）。
    * 被弾の時刻はモデルに持たないので戦闘中は一定とみなし、passive の HP の割合の条件（condition.selfHp の「以上」）は編成の段で決まる
-   * （damage の「以上」は発火のフレームで見る。ソリン編）。
-   * 最大HP のみ▲・現在の HP▼（紅蓮編）で下がる分は skills/holders.ts の selfHpRatioAt が時間で求める
+   * （damage の「以上」は発火のフレームで見る）。
+   * 最大HP のみ▲・現在の HP▼で下がる分は skills/holders.ts の selfHpRatioAt が時間で求める
    */
   hpRatio?: number;
   /** 省略は { definition: null, levels: 全部 10 } と同じ（自分のスキルなし、味方の効果は受ける） */
   skills?: TeamSlotSkills;
   /**
-   * Stage 13: 育成入力の効果層（OL・キューブ・コレクション。resolveBuildEffects の effects）。自分だけの常時バフ。
+   * 育成入力の効果層（OL・キューブ・コレクション。resolveBuildEffects の effects）。自分だけの常時バフ。
    * 省略は無し。マスタは呼び出し側が引く（attackOverride と同じ）
    */
   buildEffects?: readonly BuildEffect[];
   /**
-   * Stage 18-C: 条件の決め方。'auto' は敵の的の条件の表（射撃場の BigArms）と着地点の時間割りから、コア命中率・距離ボーナス・
+   * 条件の決め方。'auto' は敵の的の条件の表（射撃場の BigArms）と着地点の時間割りから、コア命中率・距離ボーナス・
    * 弾丸命中率を決める（frame/landing.ts。fullCharge は condition のまま）。**省略は 'manual'**（condition をそのまま使う）。
    * 的の表の無い敵では、自動でも condition を使い、注記を出す
    */
@@ -92,15 +92,15 @@ export type TeamInput = {
   enemy: EnemyInput;
   durationSeconds: number;
   model?: WeaponModel;
-  /** バーストを回すか。省略 false = Stage 4 と同一（バーストなし・フルバーストなし） */
+  /** バーストを回すか。省略 false（バーストなし・フルバーストなし） */
   burst?: boolean;
   /**
-   * burst が true のときの時刻表の作り方。省略 'dynamic'（ゲージ蓄積・CT・チェーン。Stage 7）。
-   * 'fixed' は Stage 5 / 6 の固定 20 秒サイクル（比較・退化テスト用。UI には出さない）
+   * burst が true のときの時刻表の作り方。省略 'dynamic'（ゲージ蓄積・CT・チェーン）。
+   * 'fixed' は固定 20 秒サイクル（比較・退化テスト用。UI には出さない）
    */
   burstModel?: BurstScheduleModel;
   /**
-   * 操作キャラの枠（Stage 7）。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ（AI の SR は倍率なし）。
+   * 操作キャラの枠。チャージ武器のフルチャージ倍率がゲージに乗るのは操作キャラだけ（AI の SR は倍率なし）。
    * 省略・null は全員 AI 扱い。ダメージには影響しない（ゲージと時刻表だけ）
    */
   controlledSlot?: number | null;
@@ -111,7 +111,7 @@ export type TeamInput = {
    */
   obstacleBreaks?: readonly ObstacleBreak[];
   /**
-   * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 発ごとに的に当たったペレットの数（録画で数えた入力）。有る発は、回数トリガー
+   * 発ごとに的に当たったペレットの数（録画で数えた入力。plan/design-pellet-hit.md 3 節）。有る発は、回数トリガー
    * pelletHit の回数に期待値の代わりにこの数を足す。ダメージとゲージには効かない。省略は無し。利用者の計算には出さない
    */
   pelletHits?: readonly PelletHits[];
@@ -122,7 +122,7 @@ export type TeamInput = {
    */
   sustainedHitRateUp?: boolean;
   /**
-   * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3.3 節）: 持続ダメージ▲の式の中の置き場所。省略は
+   * 持続ダメージ▲の式の中の置き場所（plan/design-sustained-damage-up.md 3.3 節）。省略は
    * SUSTAINED_DAMAGE_PLACEMENT（いまのモデル）。検証の予測の仮説（records/predictions の setup）だけが使う。利用者の計算には出さない
    */
   sustainedDamagePlacement?: SustainedDamagePlacement;
@@ -224,15 +224,15 @@ export type SlotSegmentResult = {
   /** 1 パス目の射撃の列のうち、このグループに入る発数（整数） */
   triggers: number;
   /**
-   * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた
+   * トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた
    */
   triggerSource: 'shots';
   damage: number;
-  /** Stage 22-B: triggers・damage のうち部分チャージの発（C-1001）。無ければキーごと無い */
+  /** triggers・damage のうち部分チャージの発（C-1001）。無ければキーごと無い */
   partialCharge?: PartialChargeTotals;
 };
 
-/** Stage 22-B: 部分チャージの発の数と与ダメージ */
+/** 部分チャージの発の数と与ダメージ */
 export type PartialChargeTotals = { triggers: number; damage: number };
 
 export type SlotBurstResult = {
@@ -245,7 +245,7 @@ export type SlotBurstResult = {
 
 export type SlotSkillHitsResult = {
   /** 発生順。時刻は秒 */
-  /** stacks はレイヴン編: スタックする持続ダメージの tick のスタックの数（hit はその数倍の値） */
+  /** stacks は、スタックする持続ダメージの tick のスタックの数（hit はその数倍の値） */
   activations: { seconds: number; effect: ResolvedDamageEffect; hit: SkillHitResult; stacks?: number }[];
   totalDamage: number;
 };
@@ -257,32 +257,32 @@ export type TeamSlotResult = {
   /** バフ前の攻撃力（素、またはスペック固定値）。区間に依らない */
   baseAttack: number;
   notes: ModelNote[];
-  /** 常時パッシブだけのバフ合計（Stage 4 互換の表示用） */
+  /** 常時パッシブだけのバフ合計（表示用） */
   passiveBuffs: BuffTotals;
   passiveEffects: AppliedEffect[];
-  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
+  /** 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
   buildEffects: readonly BuildEffect[];
   /**
-   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 6）: この枠が受けた持続の効果のまとめ（効果ごと。命中率など状態だけの
+   * この枠が受けた持続の効果のまとめ（効果ごと。命中率など状態だけの
    * stat も入る。条件を満たさずに発火しなかった回数つき。表示用。skills/summaries.ts）
    */
   effects: SlotEffectSummary[];
-  /** 同: この枠の循環の間隔の変更（cycleEvery）のまとめ（効果ごと。区間には入らない。表示用） */
+  /** この枠の循環の間隔の変更（cycleEvery）のまとめ（効果ごと。区間には入らない。表示用） */
   cycleChanges: SlotCycleSummary[];
-  /** 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: この枠に付いた名前の付いた状態のまとめ（中身の無い状態も。表示用） */
+  /** この枠に付いた名前の付いた状態のまとめ（中身の無い状態も。表示用。plan/design-skill-stage1.md 1.4 節） */
   states: SlotStateSummary[];
   /** バフ状態ごとにまとめた通常攻撃の結果（groupTimeline の順） */
   segments: SlotSegmentResult[];
   /** Σ segments.damage */
   normalDamage: number;
   burst: SlotBurstResult;
-  /** Stage 8: トリガー付きの倍率ダメージ（damage）。発動ごとの内訳と合計。sim と同じ発動列 */
+  /** トリガー付きの倍率ダメージ（damage）。発動ごとの内訳と合計。sim と同じ発動列 */
   skillHits: SlotSkillHitsResult;
-  /** Stage 10: この枠が受けた即時効果（CT 短縮・弾丸チャージ）。発生順 */
+  /** この枠が受けた即時効果（CT 短縮・弾丸チャージ）。発生順 */
   instants: InstantApplication[];
   /** normalDamage + burst.totalDamage + skillHits.totalDamage */
   totalDamage: number;
-  /** Stage 18-C: 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠・的の表の無い敵では null */
+  /** 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠・的の表の無い敵では null */
   autoCondition: AutoConditionSummary | null;
   /** totalDamage / durationSeconds（0 秒なら 0） */
   dps: number;
@@ -290,9 +290,9 @@ export type TeamSlotResult = {
   share: number;
   /** null = 定義ファイルなし（未定義） */
   skillSupport: Record<SkillSlot, SkillSupport> | null;
-  /** Stage 9: 入力の宝物の段階（省略は 0） */
+  /** 入力の宝物の段階（省略は 0） */
   treasurePhase: TreasurePhase;
-  /** Stage 9: 宝物版で計算したスロット（unlockOrder の先頭 treasurePhase 個）。character はこれらを差し替え済み */
+  /** 宝物版で計算したスロット（unlockOrder の先頭 treasurePhase 個）。character はこれらを差し替え済み */
   treasureSlots: SkillSlot[];
 };
 
@@ -306,18 +306,18 @@ export type TeamResult = {
   /** 時刻表の集計（フルバースト回数・稼働率・平均サイクル）。burst なしなら null */
   burstSummary: BurstSummary | null;
   timeline: BuffTimeline;
-  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 6）: 1 パス目の件の一覧の履歴（順位の記録などを読む） */
+  /** 1 パス目の件の一覧の履歴（順位の記録などを読む。plan/design-holder-effects.md 2.9 節） */
   history: HolderHistory;
-  /** Stage 16-B: 敵の出来事（入力のまま）と、その注記（未実装の種類・近似）。出来事が無ければどちらも空 */
+  /** 敵の出来事（入力のまま）と、その注記（未実装の種類・近似）。出来事が無ければどちらも空 */
   enemyEvents: EnemyEvent[];
   enemyNotes: ModelNote[];
-  /** Stage 18-C: 着地点の区間（フレーム）。条件が自動の枠が無い、または的の表の無い敵では空 */
+  /** 着地点の区間（フレーム）。条件が自動の枠が無い、または的の表の無い敵では空 */
   landings: LandingFrameSpan[];
-  /** Stage 16-B: 1 秒ごとのダメージ（編成の合計と枠ごと） */
+  /** 1 秒ごとのダメージ（編成の合計と枠ごと） */
   damagePerSecond: DamagePerSecond;
 };
 
-/** Stage 16-B: 1 秒ごとのダメージ。添字 k は [k, k + 1) 秒（最後の 1 つは戦闘時間で切れた端数を含む） */
+/** 1 秒ごとのダメージ。添字 k は [k, k + 1) 秒（最後の 1 つは戦闘時間で切れた端数を含む） */
 export type DamagePerSecond = { total: number[]; slots: (number[] | null)[] };
 
 /** 操作キャラの枠が編成の範囲内の埋まった枠か検証する */
@@ -342,7 +342,7 @@ export function validateTeamSlots(slots: readonly (TeamSlotInput | null)[]): voi
     const id = slot.character.resourceId;
     if (seen.has(id)) throw new RangeError(`character ${id} appears in more than one slot`);
     seen.add(id);
-    // 2 段目の段 6: HP の割合の想定は 0 より大きく 1 以下、最大HP は正の数
+    // HP の割合の想定は 0 より大きく 1 以下、最大HP は正の数
     if (slot.hpRatio !== undefined && !(slot.hpRatio > 0 && slot.hpRatio <= 1)) {
       throw new RangeError(`hpRatio must be in (0, 1], got ${slot.hpRatio}`);
     }
@@ -366,12 +366,12 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
           levels: slot.skills?.levels ?? MAX_SKILL_LEVELS,
           // 循環参照を避けるため、発動者自身のバフは乗せない値（バフ前攻撃力）を使う
           casterBaseAttack: baseAttackOf(slot),
-          // 2 段目の段 6: 発動者のバフ前の最大HP。最終最大HP は、これに最大HP▲ の件を足して、区間の頭・順位のフレームで出す
+          // 発動者のバフ前の最大HP。最終最大HP は、これに最大HP▲ の件を足して、区間の頭・順位のフレームで出す
           // （plan/design-skill-stage6.md 2.4 節）
           casterMaxHp: baseMaxHpOf(slot),
-          // 2 段目の段 7: 枠のバフ前の防御力。最終防御力は、これに防御力▲ の件を足して、発火のフレームで出す（plan/design-skill-stage7.md 1.2 節）
+          // 枠のバフ前の防御力。最終防御力は、これに防御力▲ の件を足して、発火のフレームで出す（plan/design-skill-stage7.md 1.2 節）
           baseDefence: baseDefenceOf(slot),
-          // マスト編: 枠の HP の割合の想定（HP の割合の窓のきっかけが、最大HP のみ▲ の件で下げて読む。plan/design-mast.md 8 節）
+          // 枠の HP の割合の想定（HP の割合の窓のきっかけが、最大HP のみ▲ の件で下げて読む。plan/design-mast.md 8 節）
           hpRatio: slot.hpRatio,
           buildEffects: slot.buildEffects,
           hitRate: hitRateOf(slot.condition),
@@ -383,8 +383,8 @@ export function toTimelineSlots(slots: readonly (TeamSlotInput | null)[]): Timel
 export type SlotBuffs = { buffs: BuffTotals; appliedEffects: AppliedEffect[] };
 
 /**
- * 常時発動パッシブを枠間で配り、枠ごとの BuffTotals を作る（Stage 4 の API。持続バフは含まない）。
- * 中身は skills/timeline.ts の resolvePassiveStates に移した。
+ * 常時発動パッシブを枠間で配り、枠ごとの BuffTotals を作る（持続バフは含まない）。
+ * 中身は skills/timeline.ts の resolvePassiveStates。
  */
 export function resolveTeamBuffs(slots: readonly (TeamSlotInput | null)[]): (SlotBuffs | null)[] {
   return resolvePassiveStates(toTimelineSlots(slots)).map((state) =>
@@ -392,7 +392,7 @@ export function resolveTeamBuffs(slots: readonly (TeamSlotInput | null)[]): (Slo
   );
 }
 
-/** Stage 9: 結果に添える宝物の段階。適用前の入力（元のキャラデータ）から取る */
+/** 結果に添える宝物の段階。適用前の入力（元のキャラデータ）から取る */
 export function treasureOf(slot: TeamSlotInput | null): { treasurePhase: TreasurePhase; treasureSlots: SkillSlot[] } {
   const treasurePhase = slot?.skills?.treasurePhase ?? 0;
   return { treasurePhase, treasureSlots: slot === null ? [] : treasureSlots(slot.character, treasurePhase) };

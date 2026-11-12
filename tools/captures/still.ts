@@ -26,7 +26,7 @@ if (!video || !values.frame || !values.out) {
   process.exit(1);
 }
 
-// 出力先のフォルダが無ければ作る（クラウドの新しい VM には frames/ が無い。2026-10-23 の通しの試験）
+// 出力先のフォルダが無ければ作る（クラウドの新しい VM には frames/ が無い）
 mkdirSync(dirname(values.out), { recursive: true });
 writeStill(video, Number(values.frame), values.out, {
   crop: values.crop ? parseCrop(values.crop) : undefined,

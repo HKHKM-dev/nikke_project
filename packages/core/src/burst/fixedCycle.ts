@@ -19,7 +19,7 @@ export type BurstCycleFrames = {
   fullBurstFrames: number;
 };
 
-/** 20 秒サイクル: 通常 10 秒 + フルバースト 10 秒（Stage 21: それぞれを切り上げたフレームの和を 1 サイクルにする） */
+/** 20 秒サイクル: 通常 10 秒 + フルバースト 10 秒（それぞれを切り上げたフレームの和を 1 サイクルにする） */
 const HALF_CYCLE_FRAMES = gameSecondsToFrames(10);
 export const FIXED_BURST_CYCLE: Readonly<BurstCycleFrames> = Object.freeze({
   cycleFrames: 2 * HALF_CYCLE_FRAMES,
@@ -28,7 +28,7 @@ export const FIXED_BURST_CYCLE: Readonly<BurstCycleFrames> = Object.freeze({
 });
 
 /** 枠のバースト段階。null は空枠 */
-/** 着弾編: delays は burst/landing.ts の遅れ（省略は 0） */
+/** delays は burst/landing.ts の遅れ（省略は 0） */
 export type BurstCandidate = { burstStep: BurstStep; delays?: Readonly<BurstDelays> } | null;
 
 /** 段階ごとに発動する枠番号。null = その段階のニケがいない（発動なし。フルバースト自体は起きると仮定） */
@@ -66,12 +66,12 @@ export function assignBurstSteps(candidates: readonly BurstCandidate[]): BurstAs
   return assignment;
 }
 
-/** 固定サイクルの段階の進み方（Stage 8 の段階突入トリガー用）。III でフルバーストに入る */
+/** 固定サイクルの段階の進み方（段階突入トリガー用）。III でフルバーストに入る */
 const FIXED_ENTERED_STEP: Record<BurstStepKey, BurstStepKey | null> = { Step1: 'Step2', Step2: 'Step3', Step3: null };
 
 /**
  * 固定サイクルの時刻表。各サイクルの発動フレーム（180 秒なら 600, 1800, …, 10200 の 9 個）に、
- * 割り当てのある段階を I → II → III の順で同じフレームに並べる。段階が欠けてもフルバーストは起きると仮定する（Stage 5）。
+ * 割り当てのある段階を I → II → III の順で同じフレームに並べる。段階が欠けてもフルバーストは起きると仮定する。
  */
 export function planFixedCycle(
   candidates: readonly BurstCandidate[],

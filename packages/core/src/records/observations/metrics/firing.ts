@@ -15,7 +15,7 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   fullBurstEndToNextShot: { args: ['slot', 'n'], sim: fullBurstEndToNextShot },
   shotCount: { args: ['slot'], sim: (r, c) => shotFramesIn(r, c).length },
   maxAmmoAt: { args: ['slot', 'frame'], sim: maxAmmoAt },
-  // 2 段目の段 4（V-0435）: n 発目の最大装弾数と、弾丸チャージの発数
+  // n 発目の最大装弾数と、弾丸チャージの発数（V-0435）
   maxAmmoAtShot: { args: ['slot', 'shot'], sim: maxAmmoAtShot },
   ammoRefillAmounts: { args: ['slot', 'count'], sim: ammoRefillAmounts },
   reloadFramesAt: { args: ['slot', 'frame'], sim: reloadFramesAt },
@@ -24,16 +24,16 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
   lastShotToWindowEnd: { args: ['slot', 'window'], sim: lastShotToWindowEnd },
   windowEndToFirstShot: { args: ['slot', 'window'], sim: windowEndToFirstShot },
   partialChargeProgress: { args: ['slot', 'window'], sim: partialChargeProgressIn },
-  // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 3 節）: 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
-  // 最後の弾丸の発を含む）。弾丸チャージでマガジンが延びるかを見る
+  // 戦闘の始めから count 本のマガジンの発数（リロードからリロードまで。
+  // 最後の弾丸の発を含む。plan/design-ludmilla-wo.md 3 節）。弾丸チャージでマガジンが延びるかを見る
   magazineShots: { args: ['slot', 'count'], sim: magazineShots },
   steadyPauseShots: { args: ['slot'], sim: steadyPauseShots },
   lastShotGapMedians: { args: ['slot', 'every'], sim: lastShotGapMedians },
   fullBurstMagazineShots: { args: ['slot'], sim: fullBurstMagazineShots },
   fullBurstShotsBeforeAmmoRestore: { args: ['slot', 'n'], sim: fullBurstShotsBeforeAmmoRestore },
   cycleWindowResidues: { args: ['slot', 'every'], sim: cycleWindowResidues },
-  // 2 段目の段 15 の PR 3（V-0569）: 省略できる引数 video が true なら、録画の動画のフレームの間隔（フルバーストの入りの止まり・発動の止まりを
-  // 含む。videoFrameOf）。HUD の増分どうしの間隔と比べる（入りの止まりを挟む発の間隔）
+  // 省略できる引数 video が true なら、録画の動画のフレームの間隔（フルバーストの入りの止まり・発動の止まりを
+  // 含む。videoFrameOf。V-0569）。HUD の増分どうしの間隔と比べる（入りの止まりを挟む発の間隔）
   shotIntervals: {
     args: ['slot'],
     sim: (r, c) => {
@@ -42,7 +42,7 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
       return frames.slice(1).map((f, i) => f - frames[i]!);
     },
   },
-  // 2 段目の段 9 の PR 2（V-0458）: 枠の [from, to) の発の、発と発の間の平均（(最後の発 − 最初の発) ÷ (発の数 − 1)）。HUD の増分のフレームの
+  // 枠の [from, to) の発の、発と発の間の平均（(最後の発 − 最初の発) ÷ (発の数 − 1)。V-0458）。HUD の増分のフレームの
   // 1f の揺れが、両端の発にしか残らない（マガジンの中の 27・28f の並びは、揺れで隣どうしが 29・26f になることがある）
   shotIntervalMean: {
     args: ['slot'],
@@ -52,8 +52,8 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
       return (frames[frames.length - 1]! - frames[0]!) / (frames.length - 1);
     },
   },
-  // シンデレラ S1 編（V-0463）: 枠の frame 以降の最初の発の、発射から着弾（発のゲージを足すフレーム）までのフレーム数（的の表の
-  // flightFrames と着地点の時間割りで決まる）。録画では、照準の横の残弾が減ったフレームから総ダメージの増分までを読む
+  // 枠の frame 以降の最初の発の、発射から着弾（発のゲージを足すフレーム）までのフレーム数（的の表の
+  // flightFrames と着地点の時間割りで決まる。V-0463）。録画では、照準の横の残弾が減ったフレームから総ダメージの増分までを読む
   shotFlightAt: {
     args: ['slot', 'frame'],
     sim: (r, c) => {
@@ -63,8 +63,8 @@ export const firingMetrics: Readonly<Record<string, Metric>> = {
       return g.frame - g.shotFrame;
     },
   },
-  // 対象の語彙編（同 4.2 節）: n 回目（0 始まり）のフルバーストの窓の中の、枠の発と発の間の中央値から、窓の前の同じ長さの中央値を
-  // 引いたもの（動画のフレーム）。チャージ時間▼が窓の間だけ効くかを見る
+  // n 回目（0 始まり）のフルバーストの窓の中の、枠の発と発の間の中央値から、窓の前の同じ長さの中央値を
+  // 引いたもの（動画のフレーム）。チャージ時間▼が窓の間だけ効くかを見る（plan/design-target-vocab.md 4.2 節）
   fullBurstShotIntervalDiff: { args: ['slot', 'n'], sim: fullBurstShotIntervalDiff },
 };
 
@@ -90,8 +90,8 @@ function magazineShots(result: SimResult, ctx: MetricContext): number[] {
  */
 function steadyPauseShots(result: SimResult, ctx: MetricContext): number | number[] {
   const frames = slotOf(result.shots, ctx).frames;
-  // 2 段目の段 12 の PR 2（V-0537）: 省略できる引数 fullBurst が true なら、両端の止まりがどちらもフルバーストの窓の中の組だけ、false なら
-  // どちらも外の組だけを数える（バースト III の回数条件▼の窓はフルバーストの窓とほぼ重なる）
+  // 省略できる引数 fullBurst が true なら、両端の止まりがどちらもフルバーストの窓の中の組だけ、false なら
+  // どちらも外の組だけを数える（バースト III の回数条件▼の窓はフルバーストの窓とほぼ重なる。V-0537）
   const schedule = result.schedule;
   const inWindow = (f: number): boolean => schedule !== null && isInFullBurst(schedule, f);
   const side = ctx.args.fullBurst === undefined ? null : ctx.args.fullBurst === true;
@@ -170,8 +170,9 @@ function fullBurstMagazineShots(result: SimResult, ctx: MetricContext): number[]
 }
 
 /**
- * 課題 2-64（plan/design-debuff-removal-timed.md 2.8 節。V-0712 の録画 1032・1033）: n 回目（0 始まり）のフルバーストの窓の中で、最終弾でない
- * 最初の発（2 発以上のマガジンの発）の前までに撃った発の数。最大装弾数▼で 1 発のマガジンが何回続いてから、デバフ解除で素のマガジンに
+ * n 回目（0 始まり）のフルバーストの窓の中で、最終弾でない
+ * 最初の発（2 発以上のマガジンの発）の前までに撃った発の数（plan/design-debuff-removal-timed.md 2.8 節。
+ * V-0712 の録画 1032・1033）。最大装弾数▼で 1 発のマガジンが何回続いてから、デバフ解除で素のマガジンに
  * 戻るかを見る（窓の最初の発から戻っていれば 0、窓の終わりまで戻らなければ窓の中の発の全部）。最大装弾数の stat でなく込めたマガジンで
  * 数える（込め終わりの後・1 発目の前に外れると、その発はまだ 1 発のマガジン。C-0934）。録画では、窓の中のミサイル（最終弾の 74f 後）の
  * 並びで読む
@@ -197,14 +198,14 @@ function cycleWindowResidues(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const every = Number(ctx.args.every);
   const shots = slotOf(result.shots, ctx).frames;
-  // 段を出した射撃のフレーム（回数トリガーの遅れ編の第 2 段: 段のヒットは射撃の delayFrames 後。C-0651）
+  // 段を出した射撃のフレーム（段のヒットは射撃の delayFrames 後。C-0651）
   const tiers = new Set(
     result.skillHits
       .filter((h) => h.slotIndex === slotIndex && h.effect.cycle !== undefined)
       .map((h) => h.frame - (h.effect.delayFrames ?? 0)),
   );
   const out: number[] = [];
-  // 持ち主ごとの一覧編（段 D の 5）: 間隔の変更の件（時刻の順）
+  // 間隔の変更の件（時刻の順）
   for (const w of itemsOf(result.history, { holder: slotIndex, kind: 'cycleEvery' })) {
     const before = shots.filter((f) => f < w.start);
     let last = before.length - 1;
@@ -230,7 +231,7 @@ function reloadsAt(result: SimResult, ctx: MetricContext): { segment: SimSlotSeg
   if (!segment) throw new Error(`フレーム ${frame} の区間が無い`);
   const changed = new Set(log.weaponChangeShotFrames ?? []);
   const reloads: number[] = [];
-  // グレイブ編（V-0735）: 残弾数減少で残弾が 0 になって始めたリロードも、その前の最後の発から数える（装弾数無限の後の 100% 減少）
+  // 残弾数減少で残弾が 0 になって始めたリロードも、その前の最後の発から数える（装弾数無限の後の 100% 減少。V-0735）
   const lasts = [...new Set([...(log.lastShotFrames ?? []), ...(log.drainReloadShotFrames ?? [])])].sort(
     (x, y) => x - y,
   );
@@ -266,7 +267,7 @@ function perReloadAt(result: SimResult, ctx: MetricContext): { segment: SimSlotS
 }
 
 /**
- * Stage 13 の残り（キューブのリロード速度▲）: そのフレームの区間のリロードの回の、最終弾から込め終わり（RELOADING のバーが消える）までの
+ * そのフレームの区間のリロードの回の、最終弾から込め終わり（RELOADING のバーが消える）までの
  * フレーム（全弾リロードは ⌈ずれ + x + c⌉、分割リロードは段の数 + 1 段。perReloadAt）。sim の最終弾 → 次の 1 発目から、込め終わり → 1 発目
  * を引く。録画では、レシピ reload-segments の最終弾 → 完了と比べる
  */
@@ -358,7 +359,7 @@ function partialChargeProgressIn(result: SimResult, ctx: MetricContext): number 
 }
 
 /**
- * モダニア編（V-0179）: そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017）。録画ではリロードを終えた直後の
+ * そのフレームの区間の最大装弾数（最大装弾数▲▼を足して丸めた値。C-0017。V-0179）。録画ではリロードを終えた直後の
  * 照準の横の残弾と比べる
  */
 function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
@@ -371,7 +372,7 @@ function maxAmmoAt(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 2 段目の段 4（V-0435。トーブの宝物版 S1）: 枠の shot 発目（1 始まり。戦闘の始めから数える）を撃ったフレームの最大装弾数（最大装弾数▲の
+ * 枠の shot 発目（1 始まり。戦闘の始めから数える。V-0435。トーブの宝物版 S1）を撃ったフレームの最大装弾数（最大装弾数▲の
  * 後の値）。録画では、その発の後の枠アイコンの上の「残弾/最大」の最大を読む（ゲーム内の時刻に依らない）
  */
 function maxAmmoAtShot(result: SimResult, ctx: MetricContext): number {
@@ -452,8 +453,8 @@ function toWeaponChangeShot(
 }
 
 /**
- * 2 段目の段 11 の PR 3（V-0530）: n 回目（0 始まり）にゲージが満タンになった（BURST バーが消えた）フレームから、その後の枠の最初の
- * 使用武器の変更の発（変更後の武器の発）までの動画のフレーム数。n はカンマ区切りの並び（"0,1,3"）も書け、そのときは回ごとの列。
+ * n 回目（0 始まり）にゲージが満タンになった（BURST バーが消えた）フレームから、その後の枠の最初の
+ * 使用武器の変更の発（変更後の武器の発）までの動画のフレーム数（V-0530）。n はカンマ区切りの並び（"0,1,3"）も書け、そのときは回ごとの列。
  * 単騎の I で満タンの直後に使うバーストの、変更後の武器の最初の発の待ち（firstShotDelayFrames）を、HUD の最初の増分で比べる
  */
 function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
@@ -465,8 +466,8 @@ function gaugeFullToWeaponChangeShot(result: SimResult, ctx: MetricContext): num
 }
 
 /**
- * レッドフード編（V-0639。plan/design-red-hood.md 7.1 節の論点 13）: n 回目（0 始まり）のフルバーストの窓の始まり（III のタイマーの 00.00）から、
- * 枠の変更後の武器の最初の発（窓の始まりの 60f 前より後）までの、録画の動画のフレーム（入りの止まりを含む）
+ * n 回目（0 始まり）のフルバーストの窓の始まり（III のタイマーの 00.00）から、
+ * 枠の変更後の武器の最初の発（窓の始まりの 60f 前より後）までの、録画の動画のフレーム（入りの止まりを含む。V-0639。plan/design-red-hood.md 7.1 節の論点 13）
  */
 function fullBurstToWeaponChangeShot(result: SimResult, ctx: MetricContext): number | number[] {
   return toWeaponChangeShot(
@@ -482,8 +483,8 @@ function fullBurstToWeaponChangeShot(result: SimResult, ctx: MetricContext): num
 }
 
 /**
- * メイド編（V-0668）: n 回目（0 始まり）のフルバーストの窓の終わりから、その後の枠の最初の発（終わりのフレームより後）までの、録画の動画の
- * フレーム（videoFrameOf）。n はカンマ区切りの並びも書け、そのときは回ごとの列。フルバーストの終わりに付く射撃の止まり（気絶）の長さを、
+ * n 回目（0 始まり）のフルバーストの窓の終わりから、その後の枠の最初の発（終わりのフレームより後）までの、録画の動画の
+ * フレーム（videoFrameOf。V-0668）。n はカンマ区切りの並びも書け、そのときは回ごとの列。フルバーストの終わりに付く射撃の止まり（気絶）の長さを、
  * HUD の増分の空きで比べる
  */
 function fullBurstEndToNextShot(result: SimResult, ctx: MetricContext): number | number[] {

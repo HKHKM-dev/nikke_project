@@ -31,7 +31,7 @@ import {
   parseTrigger,
 } from './trigger.ts';
 
-/** dot の durationUntil: "battleEnd"（持続）か、2 段目の段 19 の PR 1 の { stateEnd }（〈状態〉解除まで）。書かなければ undefined */
+/** dot の durationUntil: "battleEnd"（持続）か { stateEnd }（〈状態〉解除まで）。書かなければ undefined */
 function parseDotDurationUntil(v: Record<string, Json>, path: string): DotEffect['durationUntil'] {
   const u = v.durationUntil;
   if (u === undefined) return undefined;
@@ -43,8 +43,9 @@ function parseDotDurationUntil(v: Record<string, Json>, path: string): DotEffect
 }
 
 /**
- * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: { applied } の dot は、同じ状態の durationUntil: { stateEnd } と組む（片方だけは
- * 書けない）。付くフレームは 2 パス目の付いた記録（frame/plan.ts の appliedFrames）で決まり、出来事の列では追わないので、1 パス目と件の一覧で
+ * { applied } の dot は、同じ状態の durationUntil: { stateEnd } と組む（片方だけは
+ * 書けない。plan/design-skill-stage19.md 2.1 節。論点 4）。付くフレームは 2 パス目の付いた記録（frame/plan.ts の
+ * appliedFrames）で決まり、出来事の列では追わないので、1 パス目と件の一覧で
  * 付くフレームを追うもの（ゲージ・敵の状態）と、スタック・数・遅れ・条件とは組まない（使い手がいない）
  */
 function validateAppliedDot(
@@ -104,7 +105,7 @@ const DOT_KEYS: readonly string[] = [
 ];
 
 /**
- * ニヒリスター編: 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
+ * 持続ダメージ。間隔は正の有限数。維持時間との比較（間隔 ≤ 維持）は、durationRef なら Lv で決まるので解決時に見る
  * （skills/burstDamage.ts の resolveDotEffects）。欄のまとまりごとの関数を決まった順に呼ぶ（plan/design-split-long-functions.md 3.1 節）
  */
 export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect {
@@ -112,9 +113,9 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   const interval = v.intervalSeconds;
   assertPositiveFinite(interval, `${path}.intervalSeconds`);
   const counterFull = parseCounterFullTrigger(v.trigger, `${path}.trigger`);
-  // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: 「〈状態〉が適用された時」の「〈状態〉解除まで」
+  // 「〈状態〉が適用された時」の「〈状態〉解除まで」（plan/design-skill-stage19.md 2.1 節。論点 4）
   const applied = parseAppliedTrigger(v.trigger, `${path}.trigger`);
-  // 2 段目の段 13 の PR 1: 「持続」は durationUntil: battleEnd
+  // 「持続」は durationUntil: battleEnd
   const durationUntil = parseDotDurationUntil(v, path);
   const stateEnd = typeof durationUntil === 'object' ? durationUntil : undefined;
   const effect: DotEffect = {
@@ -127,7 +128,7 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
   validateAppliedDot(v, applied, stateEnd, path);
   parseDotCondition(v, effect, path);
   parseDotIntervalAndFirstTick(v, effect, path);
-  // クルミ編: 状態異常の名前。名前の付いた状態の語彙編: 目録の id（持ち主が敵の状態。status を改めた）
+  // 状態異常の名前。目録の id（持ち主が敵の状態）
   if (v.state !== undefined) effect.state = parseNamedStateId(v.state, `${path}.state`, 'enemy');
   parseDotTickShape(v, effect, path);
   parseDotCounter(v, effect, path);
@@ -138,7 +139,7 @@ export function parseDotEffect(v: Record<string, Json>, path: string): DotEffect
 }
 
 /**
- * 2 段目の段 17 の PR 4: 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
+ * 付くフレームの条件（自分の状態だけ）。絞るのは frame/plan.ts の付くフレーム（damage と同じ判定）だけなので、
  * 付くフレームをほかで追うもの（ゲージを溜める dot は 1 パス目、敵の状態を付ける dot は件の一覧、{ counterFull } はカウンタの経路）とは組まない
  */
 function parseDotCondition(v: Record<string, Json>, effect: DotEffect, path: string): void {
@@ -165,8 +166,8 @@ function parseDotIntervalAndFirstTick(v: Record<string, Json>, effect: DotEffect
 }
 
 /**
- * 刻みの形: スタックの上限（maxStacksRef）と、2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）のチェーンバインドの形
- * （付けるたびに刻みを付け直す持続。halfAfterLatest・刻みのフレーム・付けた時のヒット）
+ * 刻みの形: スタックの上限（maxStacksRef）と、チェーンバインドの形
+ * （plan/design-skill-stage13.md 2.3 節。付けるたびに刻みを付け直す持続。halfAfterLatest・刻みのフレーム・付けた時のヒット）
  */
 function parseDotTickShape(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.maxStacksRef !== undefined) {
@@ -210,7 +211,7 @@ function parseDotCounter(v: Record<string, Json>, effect: DotEffect, path: strin
   }
 }
 
-/** 敵の状態のスタック数から取るスタック（stacksFrom）と、マスト編（plan/design-mast.md 2.3 節）の tick ごとに写し直す印・持続ダメージでない印 */
+/** 敵の状態のスタック数から取るスタック（stacksFrom）と、tick ごとに写し直す印（plan/design-mast.md 2.3 節）・持続ダメージでない印 */
 function parseDotStacks(v: Record<string, Json>, effect: DotEffect, path: string): void {
   if (v.stacksFrom !== undefined) {
     const from = v.stacksFrom;

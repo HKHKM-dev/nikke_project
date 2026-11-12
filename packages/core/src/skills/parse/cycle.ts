@@ -21,7 +21,7 @@ import {
 } from './common.ts';
 import { parseTrigger } from './trigger.ts';
 
-/** Stage 11 紅蓮BS: 段の循環 */
+/** 段の循環 */
 export function parseCycleEffect(v: Record<string, Json>, path: string): CycleEffect {
   rejectUnknownKeys(v, ['kind', 'trigger', 'steps', 'assumes', 'claims'], path);
   const trigger = parseTrigger(v.trigger, `${path}.trigger`);
@@ -51,7 +51,7 @@ export function parseCycleEffect(v: Record<string, Json>, path: string): CycleEf
   return effect;
 }
 
-/** Stage 11 紅蓮BS: 循環の間隔の変更。slot に cycle がちょうど 1 つあるかは定義全体で見る（validateCycles） */
+/** 循環の間隔の変更。slot に cycle がちょうど 1 つあるかは定義全体で見る（validateCycles） */
 export function parseCycleEveryEffect(v: Record<string, Json>, path: string): CycleEveryEffect {
   rejectUnknownKeys(
     v,

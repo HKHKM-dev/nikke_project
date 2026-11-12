@@ -126,7 +126,7 @@ export const burstPanel: Recipe = {
           { unit: 'f' },
         ),
       );
-    // 2 段目の段 21（論点 5）: フルバーストの終わりと、00.00 からの長さ。読めなかった窓から先は出さない（並びを 00.00 とそろえる）
+    // フルバーストの終わりと、00.00 からの長さ。読めなかった窓から先は出さない（並びを 00.00 とそろえる）
     const unread = ev.fullBurstEnd.indexOf(null);
     const ends = (unread < 0 ? ev.fullBurstEnd : ev.fullBurstEnd.slice(0, unread)) as number[];
     if (ends.length > 0) {

@@ -51,30 +51,30 @@ export type TimelineSlot = {
   /** 発動者基準の固定加算に使うバフ前攻撃力（damage.ts の baseAttackOf と同じ値） */
   casterBaseAttack: number;
   /**
-   * 2 段目の段 6（plan/design-skill-stage6.md 1.2・1.3・2.4 節）: 発動者のバフ前の最大HP（damage.ts の baseMaxHpOf）。casterFinalMaxHp の
+   * 発動者のバフ前の最大HP（damage.ts の baseMaxHpOf。plan/design-skill-stage6.md 1.2・1.3・2.4 節）。casterFinalMaxHp の
    * 固定加算は、これに最大HP▲ の件を足した最終最大HP を、区間の頭・順位のフレームで読む。省略して casterFinalMaxHp の効果を配ると RangeError
    */
   casterMaxHp?: number;
   /**
-   * 2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 枠のバフ前の防御力（damage.ts の baseDefenceOf）。最終防御力（これに防御力▲ の
+   * 枠のバフ前の防御力（damage.ts の baseDefenceOf。plan/design-skill-stage7.md 1.2 節）。最終防御力（これに防御力▲ の
    * 件を足した値）は、対象の絞り込み「自分より最終防御力が低い味方」が発火のフレームで比べる。省略して比べると RangeError
    */
   baseDefence?: number;
   /**
-   * マスト編（plan/design-mast.md 8 節）: 枠の HP の割合の想定（TeamSlotInput.hpRatio。省略 1）。HP の割合の窓のきっかけ（{ selfHpAtMost }）が、
+   * 枠の HP の割合の想定（TeamSlotInput.hpRatio。省略 1。plan/design-mast.md 8 節）。HP の割合の窓のきっかけ（{ selfHpAtMost }）が、
    * 最大HP▲・最大HP のみ▲ の件で割合を下げて読む（skills/holders.ts の selfHpRatioAt）
    */
   hpRatio?: number;
-  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
+  /** 育成入力の効果層（OL・キューブ・コレクション）。自分だけに効く常時バフ。省略は無し */
   buildEffects?: readonly BuildEffect[];
-  /** Stage 15: 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージと normalHit の回数に使う */
+  /** 命中率（射撃場 = 1 の相対値。省略 1）。1 パス目のゲージと normalHit の回数に使う */
   hitRate?: number;
-  /** ルドミラ：ウィンターオーナー編: 手入力のコア命中率（省略 0）。coreHit の回数に使う（plan/design-ludmilla-wo.md 2.2 節） */
+  /** 手入力のコア命中率（省略 0）。coreHit の回数に使う（plan/design-ludmilla-wo.md 2.2 節） */
   coreHitRate?: number;
 } | null;
 
 /**
- * Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった記録（不発）。レッドフード編: 即時効果の使った段階の違う
+ * 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった記録（不発）。即時効果の使った段階の違う
  * 発火と、戦闘中の発火の回数の上限の後の発火も
  */
 export type ConditionSkip = {
@@ -82,16 +82,16 @@ export type ConditionSkip = {
   frame: number;
   sourceSlotIndex: number;
   effect: { source: ResolvedEffect['source']; effectIndex: number };
-  /** 名前の付いた状態の語彙編: 条件つきの付与なら、付けなかった状態（中身の効果の表示で状態ごとに数える） */
+  /** 条件つきの付与なら、付けなかった状態（中身の効果の表示で状態ごとに数える） */
   state?: NamedStateId;
 };
 
 /** 枠ごとのバフ合計と、そこに効いた効果（発生順） */
 export type SlotBuffState = {
   buffs: BuffTotals;
-  /** 常時パッシブ（Stage 4）の分 */
+  /** 常時パッシブの分 */
   passiveEffects: AppliedEffect[];
-  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）の分。常時 */
+  /** 育成入力の効果層（OL・キューブ・コレクション）の分。常時 */
   buildEffects: readonly BuildEffect[];
   /** この区間で効いている持続バフの分 */
   timedEffects: AppliedTimedEffect[];
@@ -106,7 +106,7 @@ export type TimelineSegment = {
   /** 枠ごとの状態。空枠は null */
   slots: (SlotBuffState | null)[];
   /**
-   * Stage 18-C: 区間の着地点（着地点か配分の id、null = 未測定）。着地点の計画を渡したときだけ持つ
+   * 区間の着地点（着地点か配分の id、null = 未測定）。着地点の計画を渡したときだけ持つ
    * （条件が自動の枠が無ければキーごと無い）
    */
   landing?: string | null;
@@ -119,25 +119,25 @@ export type TimelineSegment = {
 };
 
 /**
- * バフの区間と常時の値（持ち主ごとの一覧編の段 E の後。plan/design-holder-effects.md 2.9 節）。効果の件・値の小片・記録は、
+ * バフの区間と常時の値（plan/design-holder-effects.md 2.9 節）。効果の件・値の小片・記録は、
  * 1 パス目の履歴（skills/holders.ts の HolderHistory）を読む
  */
 export type BuffTimeline = {
   frames: number;
   /** [0, frames) を隙間・重なりなく覆う */
   segments: TimelineSegment[];
-  /** 常時パッシブだけの状態（Stage 4 互換の表示用）。空枠は null */
+  /** 常時パッシブだけの状態（resolvePassiveStates）。空枠は null */
   passive: (SlotBuffState | null)[];
 };
 
 /**
- * ペルソナ編（plan/design-persona.md 3.3 節）: 状態が枠に付いた記録（1 パス目の履歴の applications）。名前の付いた状態の語彙編:
+ * 状態が枠に付いた記録（1 パス目の履歴の applications。plan/design-persona.md 3.3 節）。state は
  * 目録の id。どの段の付与からも作る（静的な付与はフレーム 0）。付き直し（件が続いている間の再発火）も 1 回ずつ記録する。トリガー
  * { applied: 状態 } の発火に使う（frame/plan.ts）
  */
 export type AppliedRecord = { frame: number; state: NamedStateId; sourceSlotIndex: number; slotIndex: number };
 
-/** ペルソナ編: 枠 slotIndex に状態 state が付いたフレーム（昇順。同じフレームに 2 つの出どころから付いても 1 回） */
+/** 枠 slotIndex に状態 state が付いたフレーム（昇順。同じフレームに 2 つの出どころから付いても 1 回） */
 export function appliedFrames(
   history: { readonly applications: readonly AppliedRecord[] },
   state: NamedStateId,
@@ -157,7 +157,7 @@ export type TimelineGroup = {
   seconds: number;
   /** 含まれる区間（出現順） */
   segments: TimelineSegment[];
-  /** Stage 18-C: 着地点（条件が自動の枠は鍵に入るのでグループ内で同じ。それ以外は最初の区間の値） */
+  /** 着地点（条件が自動の枠は鍵に入るのでグループ内で同じ。それ以外は最初の区間の値） */
   landing?: string | null;
 };
 
@@ -177,23 +177,23 @@ const BUFF_FIELDS = [
   'critDamage',
   'attackDamage',
   'chargeDamage',
-  // ヘルム編: チャージダメージ倍率
+  // チャージダメージ倍率
   'chargeDamageMultiplier',
   'distributedDamage',
   // 蓄積して爆発するダメージ: 蓄積爆破の蓄積割合▲（2 パス目が溜める発の値に掛ける）
   'accumulateRatio',
-  // 受けるダメージ編: 敵の受けるダメージ▲
+  // 敵の受けるダメージ▲
   'damageTaken',
-  // 2 段目の段 2: 敵の防御力▼
+  // 敵の防御力▼
   'enemyDefenseDown',
-  // マスト編: 発動者基準の敵の防御力▼
+  // 発動者基準の敵の防御力▼
   'enemyDefenseDownFlat',
-  // アニス：スター S2・バースト編: 発射体爆発ダメージ▲とチャージ時間の固定
+  // 発射体爆発ダメージ▲とチャージ時間の固定
   'projectileExplosionDamage',
-  // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲と有利コードのダメージ適用
+  // 発射体付着ダメージ▲と有利コードのダメージ適用
   'projectileStickDamage',
   'elementAdvantage',
-  // 持続ダメージ▲編
+  // 持続ダメージ▲
   'sustainedDamage',
   'burstGaugeSpeed',
   'maxAmmoRatio',
@@ -201,26 +201,26 @@ const BUFF_FIELDS = [
   'reloadSpeed',
   'reloadRatio',
   'chargeSpeed',
-  // レッドフード編: チャージ速度の超過分の変換（常時だけ。区間の値に入るので鍵に入れる）
+  // チャージ速度の超過分の変換（常時だけ。区間の値に入るので鍵に入れる）
   'chargeSpeedOverflow',
-  // 2 段目の段 9 の PR 2: 攻撃速度▲（射撃が変わるので鍵に入れる）
+  // 攻撃速度▲（射撃が変わるので鍵に入れる）
   'attackSpeed',
-  // 2026-10-29 のキャラの編: 立ち上げ速度▲（射撃が変わるので鍵に入れる）
+  // 立ち上げ速度▲（射撃が変わるので鍵に入れる）
   'spinUpSpeed',
   'chargeTimeFlat',
   'fixedChargeTime',
-  // Stage 11 モダニア: 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す
+  // 装弾数無限は射撃が変わるので鍵に入れる。命中率（hitRate）は条件が自動の枠だけ keyOf で足す
   'infiniteAmmo',
-  // Stage 13: 効果層（常時）では区間を割らないが、スキルの timed にも書けるので鍵に入れる
+  // 効果層（常時）では区間を割らないが、スキルの timed にも書けるので鍵に入れる
   'elementDamage',
   'coreDamage',
   'normalAttackDamage',
-  // ヘルム編: 通常攻撃のクリティカル確率
+  // 通常攻撃のクリティカル確率
   'normalCritRate',
-  // エード：エージェントバニー編: 貫通特化と貫通ダメージ▲（適正最小射程距離▲ は条件が自動の枠だけ keyOf で足す）
+  // 貫通特化と貫通ダメージ▲（適正最小射程距離▲ は条件が自動の枠だけ keyOf で足す）
   'pierce',
   'pierceDamage',
-  // ドロシー：セレンディピティ編: ペレットの数（与ダメージは変えないが、照合の 1 ペレットの値が区間ごとに読む）
+  // ペレットの数（与ダメージは変えないが、照合の 1 ペレットの値が区間ごとに読む）
   'pelletCount',
   'singlePellet',
 ] as const satisfies readonly (keyof BuffTotals)[];
@@ -231,12 +231,12 @@ export const KEY_DIGITS = 6;
 function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null): string {
   const parts: string[] = [fullBurst ? 'FB' : '--'];
   for (const field of BUFF_FIELDS) parts.push(state.buffs[field].toFixed(KEY_DIGITS));
-  // Stage 11 モダニア: 使用武器の変更は武器ごとに別の状態
+  // 使用武器の変更は武器ごとに別の状態
   if (state.buffs.weapon !== null) parts.push(`W:${state.buffs.weapon.id}`);
   // 効いている効果の出どころも鍵に入れる。合計が同じでも別の効果なら別の状態として扱い、UI のラベルが混ざらないようにする
-  // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）。名前の付いた状態の語彙編: 中身は中身の番号まで。
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.6 節）: 区間の中の効果は時刻の順に並ぶので、鍵では定義の順
-  // （出どころの枠 → スロット → 効果 → 中身）に並べ直す（同じ効果の組なら、付いた順によらず同じ状態）
+  // （例: クイーン（真）の battleStart と fullBurstEnd はどちらも攻撃力 +50.28%）。状態の中身は中身の番号まで。
+  // 区間の中の効果は時刻の順に並ぶので、鍵では定義の順
+  // （出どころの枠 → スロット → 効果 → 中身）に並べ直す（同じ効果の組なら、付いた順によらず同じ状態。plan/design-holder-effects.md 2.6 節）
   const effects = state.timedEffects
     .map((e) => ({ e, sub: isStateContent(e) ? e.subIndex : -1 }))
     .sort(
@@ -249,13 +249,13 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
   for (const { e } of effects) {
     parts.push(`${e.sourceSlotIndex}.${e.source.skill}.${e.effectIndex}${isStateContent(e) ? `.${e.subIndex}` : ''}`);
   }
-  // Stage 18-C: 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）。
+  // 条件が自動の枠だけ、着地点も鍵に入れる（手入力の枠のグループは今と同じ）。
   // 持続の命中率▲（C-0170）もコア命中率を変えるので、自動の枠だけ命中率の合計を鍵に入れる。▲があれば▲の側の和も入れる（和が
   // 同じでも▲と同時か▼だけかで▼の表を使うかが変わる。frame/landing.ts の coreHitRateAt）
   if (landing !== undefined) {
     parts.push(`L:${landing ?? '?'}`, `N:${state.buffs.hitRate.toFixed(KEY_DIGITS)}`);
     if (state.buffs.hitRateUp !== 0) parts.push(`U:${state.buffs.hitRateUp.toFixed(KEY_DIGITS)}`);
-    // エード：エージェントバニー編: 適正最小射程距離▲ も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
+    // 適正最小射程距離▲ も距離ボーナスを変える（frame/landing.ts の landingPartsWith）
     if (state.buffs.minEffectiveRange !== 0) parts.push(`R:${state.buffs.minEffectiveRange.toFixed(KEY_DIGITS)}`);
   }
   return parts.join('|');
@@ -263,7 +263,7 @@ function keyOf(fullBurst: boolean, state: SlotBuffState, landing?: string | null
 
 /**
  * 同じ射撃の列・時刻表で何度も呼ばれる（効果ごと）ので、直前の出来事の列を使い回す。
- * Stage 11: 回復の記録（heals）も鍵に入れる（回復の無い列と有る列は別物）。どれも参照の一致で見る
+ * 回復の記録（heals）も鍵に入れる（回復の無い列と有る列は別物）。どれも参照の一致で見る
  */
 let replayCache: {
   schedule: BurstSchedule | null;
@@ -293,8 +293,8 @@ function eventsOf(
 /**
  * トリガーが起きたフレーム列（昇順）。schedule が null（バーストなし）なら battleStart と射撃の回数だけ発火する。
  * burstUse はその枠が実際に撃った発動のフレーム（動的サイクルでは段階ごとに別フレーム、同じ段階の 2 体は交互になりうる）。
- * 射撃の回数（Stage 8）は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。件の始まりは skills/holders.ts の startOfFire が 1 つ後ろにずらす。
- * Stage 10: 判定は skills/triggers.ts の TriggerTracker（1 パス目のフレームループと共通）に出来事の列を流し直して行う。
+ * 射撃の回数は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。件の始まりは skills/holders.ts の startOfFire が 1 つ後ろにずらす。
+ * 判定は skills/triggers.ts の TriggerTracker（1 パス目のフレームループと共通）に出来事の列を流し直して行う。
  */
 export function triggerFrames(
   trigger: ResolvedTrigger,
@@ -303,13 +303,13 @@ export function triggerFrames(
   frames: number,
   shots: readonly (ShotLog | null)[] = [],
   heals: readonly HealRecord[] = NO_HEALS,
-  /** 2 段目の段 12 の PR 2: 射撃の回数のきっかけの間隔の変更（skills/triggers.ts の everyAtOf） */
+  /** 射撃の回数のきっかけの間隔の変更（skills/triggers.ts の everyAtOf） */
   everyAt?: ShotCountEveryAt,
 ): number[] {
   return triggerFires(trigger, schedule, slotIndex, frames, shots, heals, everyAt).map((f) => f.frame);
 }
 
-/** Stage 11: triggerFrames の文脈つき版（対象 burstUsers の判定に使う）。heals は healed の出来事（1 パス目の履歴の heals） */
+/** triggerFrames の文脈つき版（対象 burstUsers の判定に使う）。heals は healed の出来事（1 パス目の履歴の heals） */
 export function triggerFires(
   trigger: ResolvedTrigger,
   schedule: BurstSchedule | null,
@@ -319,8 +319,8 @@ export function triggerFires(
   heals: readonly HealRecord[] = NO_HEALS,
   everyAt?: ShotCountEveryAt,
 ): TriggerFire[] {
-  // ニヒリスター編: 時間の周期のトリガーは、出来事の列を使わずに戦闘開始から k × N 秒のフレームを並べる
-  // 防御力無視ダメージ編: atStart なら戦闘開始時（フレーム 0）にも発火する
+  // 時間の周期のトリガーは、出来事の列を使わずに戦闘開始から k × N 秒のフレームを並べる
+  // atStart なら戦闘開始時（フレーム 0）にも発火する
   if (isResolvedTimer(trigger)) {
     const timer = timerFramesOf(trigger, frames);
     const all = 'atStart' in trigger && trigger.atStart === true && frames > 0 ? [0, ...timer] : timer;
@@ -330,11 +330,11 @@ export function triggerFires(
 }
 
 /**
- * ニヒリスター編: 時間の周期のトリガーの発火フレーム。戦闘開始から k × ceil(N ÷ 0.017) フレーム（k = 1, 2, …）で、
+ * 時間の周期のトリガーの発火フレーム。戦闘開始から k × ceil(N ÷ 0.017) フレーム（k = 1, 2, …）で、
  * 戦闘の終わり（frames）より前だけ（plan/design-nihilister.md 8.1 節。C-0091）。発動のたびに N 秒に達した最初のフレームを数え直し、
  * 端数を持ち越さない（C-0502。plan/design-timer-ceil.md）。
- * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 10.2 節の a）: carry なら端数を持ち越し、k 回目を k × N 秒に達した最初の
- * フレーム（ceil(k × N ÷ 0.017)）にする（マリアン：クイーンの S1 の槍。V-0538）
+ * carry なら端数を持ち越し、k 回目を k × N 秒に達した最初の
+ * フレーム（ceil(k × N ÷ 0.017)）にする（マリアン：クイーンの S1 の槍。V-0538。plan/design-new-chars-1029.md 10.2 節の a）
  */
 export function timerFrames(everySeconds: number, frames: number, carry = false): number[] {
   const fires: number[] = [];
@@ -354,7 +354,7 @@ export function timerFramesOf(trigger: TimerTrigger, frames: number): number[] {
 }
 
 /**
- * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節・10.2 節の f）: 状態の間だけ縮む周期の発火フレーム。前の発動
+ * 状態の間だけ縮む周期の発火フレーム（plan/design-new-chars-1029.md 5.3 節・10.2 節の f）。前の発動
  * （初めは戦闘開始）のフレームで shortened(frame) なら次の発動までを everySeconds − shortenSeconds 秒にする。ただし縮めた次の発動の
  * フレームでもう shortened でなければ（縮めた周期の間に状態が切れた）、縮めない周期に戻す（V-0538）。どちらも timerFrames と
  * 同じく N 秒に達した最初のフレームを数え直し（carry なら端数を持ち越して秒で足す）、縮めない間は timerFrames と同じ列になる
@@ -376,8 +376,8 @@ export function shortenedTimerFrames(
  * V-0545（plan/design-new-chars-1029.md 11.2 節の b）: shortenedTimerFrames の規則を、フレームの順に決める形にしたもの。返す関数は
  * 0 から frames − 1 まで順に呼び、そのフレームに発動すれば true。shortened は戦闘開始・発動のフレームと、縮めた次の発動のフレームに
  * だけ、そのフレームで呼ぶ。1 パス目（frame/firstPass.ts）が、そのフレームまでに分かった状態で周期のゲージを追うのに使う。
- * 2 段目の段 15 の PR 3（V-0569）: nextOnly なら、前の発動のフレームは見ず、縮めた次の発動のフレームで shortened なら縮める（名前の無い
- * 窓の periodShorten。エイダの閃光手榴弾投擲は、窓が始まると次の発動が前の発動から縮めた周期の所に来る）
+ * nextOnly なら、前の発動のフレームは見ず、縮めた次の発動のフレームで shortened なら縮める（名前の無い
+ * 窓の periodShorten。エイダの閃光手榴弾投擲は、窓が始まると次の発動が前の発動から縮めた周期の所に来る。V-0569）
  */
 export function shortenedTimer(
   trigger: TimerTrigger,
@@ -413,7 +413,7 @@ export function shortenedTimer(
 }
 
 /**
- * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。V-0569）: 周期のきっかけの倍率ダメージの発火のフレーム（2 パス目。frame/plan.ts）。
+ * 周期のきっかけの倍率ダメージの発火のフレーム（2 パス目。frame/plan.ts。plan/design-skill-stage15.md 2.3 節。V-0569）。
  * 周期の短縮（periodShorten）があれば縮めた周期で並べる。state は自分の状態（selfState）、窓は自分のバースト使用（バーストの効果が付く
  * フレーム。burstUse のきっかけと同じ）から durationFrames の間で、縮めた次の発動のフレームだけで見る
  */
@@ -436,7 +436,7 @@ export function timerDamageFrames(
 }
 
 /**
- * 2 段目の段 18 の PR 1（plan/design-skill-stage18.md 2.2 節。V-0612）: クールタイムを縮める窓の周期の発火フレーム（ドロシーの発現）。
+ * クールタイムを縮める窓の周期の発火フレーム（ドロシーの発現。plan/design-skill-stage18.md 2.2 節。V-0612）。
  * 発動のフレーム f（初めは戦闘開始の 0）の次の発動は、f が窓の中なら f + 縮めた周期、外なら f + 縮めない周期。窓が始まったフレーム s では、
  * 次の発動を s + 縮めた周期に早める（もっと早い予定ならそのまま）。周期はどれも gameSecondsToFirstFrame（端数は持ち越さない）。窓の終わりを
  * 越えた発動も、窓の中の発動から縮めた周期で来る（V-0612。窓の 5 回目）
@@ -481,7 +481,7 @@ export function cooldownTimer(
 }
 
 /**
- * Stage 11 モダニア: 使用武器の変更の窓の頭を何フレーム削るか。バースト系の発火（f）で付く窓 [f, f + d) を、射手が持ち替えるフレーム
+ * 使用武器の変更の窓の頭を何フレーム削るか。バースト系の発火（f）で付く窓 [f, f + d) を、射手が持ち替えるフレーム
  * （f + 1。frame/firstPass.ts の射手が見る窓の規則）から始める。発火のフレームの射撃は基礎の武器で撃たれるので、その 1 発を
  * 変更後の武器のダメージで数えないため。終わりは変えない（同じ発動の装弾数無限と同じフレームに切れる）。
  * 射撃の回数トリガー（窓がもともと f + 1 から）と戦闘開始時（ループの前に登録）は削らない
@@ -490,7 +490,7 @@ export function weaponStartTrim(effect: Pick<ResolvedTimedEffect, 'trigger'> & {
   return effect.stat === 'weapon' && effect.trigger !== 'battleStart' && !isResolvedShotCount(effect.trigger) ? 1 : 0;
 }
 
-/** Stage 11 モダニア: 効果 1 つの件（スタックする効果は段ごと、しない効果は和集合。使用武器の変更は頭を削る） */
+/** 効果 1 つの件（スタックする効果は段ごと、しない効果は和集合。使用武器の変更は頭を削る） */
 export function effectItems(
   starts: readonly number[],
   effect: Pick<ResolvedTimedEffect, 'durationFrames' | 'maxStacks' | 'trigger'> & { stat?: BuffStat | 'weapon' },
@@ -503,14 +503,14 @@ export function effectItems(
     .filter((w) => w.start < w.end);
 }
 
-/** ヘルム編: 始まり s から数えた持ち主の N 発目の射撃のフレーム + 1（N 発目にも効く）。N 発を撃つ前に戦闘が終われば frames */
+/** 始まり s から数えた持ち主の N 発目の射撃のフレーム + 1（N 発目にも効く）。N 発を撃つ前に戦闘が終われば frames */
 function nthShotEnd(s: number, shotFrames: readonly number[], shots: number, frames: number): number {
   const nth = shotFrames[lowerBound(shotFrames, s) + shots - 1];
   return nth === undefined ? frames : Math.min(nth + 1, frames);
 }
 
 /**
- * ヘルム編: 「N 発間維持」の件。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（nthShotEnd）。
+ * 「N 発間維持」の件。始まり s から、s 以降の N 発目の射撃のフレーム + 1 まで（nthShotEnd）。
  * 維持中にまた付いたら、そこから数え直す（和集合。秒の維持の上書き延長に合わせる）
  */
 export function shotCountItems(
@@ -534,7 +534,7 @@ export function shotCountItems(
 }
 
 /**
- * ツバイ編（plan/design-zwei.md 2.3 節の L1。V-0718）: スタックする「N 発間維持」の件。秒の維持のスタックと同じ規則（refreshAll）で、
+ * スタックする「N 発間維持」の件（plan/design-zwei.md 2.3 節の L1。V-0718）。秒の維持のスタックと同じ規則（refreshAll）で、
  * 件の終わりを持ち主の N 発目 + 1 にする。前の件の終わり（持ち主の N 発目の次のフレーム）以降に付いたものは、段 1 から数え直す
  */
 export function shotCountStackItems(
@@ -549,7 +549,7 @@ export function shotCountStackItems(
 }
 
 /**
- * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」の件の始まり。発火 s ごとに、[s, s + withinFrames) の持ち主の
+ * 「命中させた味方に」の件の始まり（plan/design-killer-wife.md 2.2 節）。発火 s ごとに、[s, s + withinFrames) の持ち主の
  * 最初の射撃 f の次のフレーム（f 自身には乗らない）。無ければ付かない。件は秒の維持の件（effectItems）と同じに作るので、その後の
  * 射撃では付き直さない
  */
@@ -566,9 +566,9 @@ export function holderHitStarts(
 
 /**
  * 出来事で終わる件。始まり s から、s より後の最初の終わり（ends。昇順）まで（無ければ frames まで）。維持中にまた付いたら和集合。
- * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更（ends は 1 パス目の
- * ShotLog.weaponChangeEnds。1 パス目は開いている件に重ねて付いても撃ち切りまで変えない）。
- * 防御力無視ダメージ編（同 3.2 節）: 「解除条件：フルバーストタイムが終了した時」（ends はフルバーストの終わり）
+ * 撃ち切りで終わる使用武器の変更（ends は 1 パス目の
+ * ShotLog.weaponChangeEnds。1 パス目は開いている件に重ねて付いても撃ち切りまで変えない。plan/design-true-damage-element.md 9 節）。
+ * 「解除条件：フルバーストタイムが終了した時」（ends はフルバーストの終わり）
  */
 export function untilNextEndItems(
   starts: readonly number[],
@@ -611,8 +611,8 @@ type PassiveSource = { slotIndex: number; casterBaseAttack: number; casterMaxHp?
 const NO_BUILD_EFFECTS: readonly BuildEffect[] = Object.freeze([]);
 
 /**
- * 常時パッシブだけの状態（Stage 4 の resolveTeamBuffs と同じ結果になる）。空枠は null。
- * Stage 13: 育成入力の効果層（TimelineSlot.buildEffects）はスキルの passive の後に、その枠自身へ比率で足す
+ * 常時パッシブだけの状態（team.ts の resolveTeamBuffs と同じ結果になる）。空枠は null。
+ * 育成入力の効果層（TimelineSlot.buildEffects）はスキルの passive の後に、その枠自身へ比率で足す
  */
 export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffState | null)[] {
   const sources: PassiveSource[] = [];
@@ -622,7 +622,7 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
       sources.push({ slotIndex, casterBaseAttack: slot.casterBaseAttack, casterMaxHp: slot.casterMaxHp, effect });
     }
   });
-  // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値
+  // 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値（plan/design-skill-stage6.md 2.4 節）
   const passiveMaxHp = slots.map((slot, holder) =>
     slot === null
       ? 0
@@ -661,7 +661,7 @@ export type SegmentInput = {
   schedule: BurstSchedule | null;
   frames: number;
   /**
-   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 1）: 値の小片（skills/holders.ts の valuePiecesOf）。区間の値は、この並びの
+   * 値の小片（skills/holders.ts の valuePiecesOf。plan/design-holder-effects.md 2.9 節）。区間の値は、この並びの
    * 順に足す（浮動小数の加算順）。状態だけの stat（命中率）の小片は、着地点の計画があり持続の命中率▲を使う時だけ区間に足す
    */
   pieces: readonly SegmentPiece[];
@@ -680,7 +680,7 @@ export type SegmentPiece = {
 };
 
 /**
- * 値の小片から区間を組む（Stage 6 の 3〜5）。境界は {0, frames} ∪ 小片の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム ∪ 着地点の
+ * 値の小片から区間を組む。境界は {0, frames} ∪ 小片の端 ∪ フルバースト区間の端 ∪ バースト発動フレーム ∪ 着地点の
  * 境目（と、持続の命中率▲を区間に足すときは状態だけの stat の小片の端）。区間ごとに、常時パッシブに、区間の頭で効いている小片を
  * 並びの順に足す（状態だけの stat の小片は、ほかの小片の後に足す）
  */
@@ -707,7 +707,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
   }
   // 持続の命中率▲（C-0170）: 条件が自動の枠では、コア命中率の N に区間ごとの命中率を使う。着地点の計画があるときだけ、
   // 状態だけの stat（命中率）の小片の端も境界に足し、区間の状態の buffs.hitRate に持続の▲を足す（plan/design-sustained-hit-rate-core.md）。
-  // エード：エージェントバニー編: 適正最小射程距離▲ も、着地点の計画があれば同じに足す（命中率の切り替え sustainedHitRateUp には依らない）
+  // 適正最小射程距離▲ も、着地点の計画があれば同じに足す（命中率の切り替え sustainedHitRateUp には依らない）
   const landingStatePieces =
     landings === null ? [] : statePieces.filter((p) => sustainedHitRateUp || !isHitStateStat(p.effect.stat));
   for (const p of landingStatePieces) {
@@ -729,7 +729,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
     const activeBuffs = buffActive(start);
     // 境界にフルバースト区間の端が入っているので、区間の先頭で判定すれば区間全体で同じ値になる
     const fullBurst = schedule !== null && isInFullBurst(schedule, start);
-    // Stage 18-C: 着地点の境目も境界に入っているので、区間の先頭の着地点が区間全体の着地点
+    // 着地点の境目も境界に入っているので、区間の先頭の着地点が区間全体の着地点
     const spans = landings?.spans ?? [];
     while (landingIndex + 1 < spans.length && spans[landingIndex]!.end <= start) landingIndex += 1;
     const landing = landings === null ? undefined : (spans[landingIndex]?.landing ?? null);
@@ -743,7 +743,7 @@ export function buildSegments(input: SegmentInput): TimelineSegment[] {
             timedEffects: [] as AppliedTimedEffect[],
           },
     );
-    // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 発動者の最終最大HP の読み直し。区間の頭の、枠ごとの最大HP▲ の和
+    // 発動者の最終最大HP の読み直し（plan/design-skill-stage6.md 2.4 節）。区間の頭の、枠ごとの最大HP▲ の和
     // （常時 + 区間の頭で効いている小片）。最大HP▲ の小片の端は区間の境目なので、区間の中では同じ値
     const maxHpUp = passive.map((base) => base?.buffs.maxHpRatio ?? 0);
     for (const p of activeBuffs) {
@@ -870,7 +870,7 @@ export function groupTimeline(timeline: BuffTimeline, slotIndex: number): Timeli
 
 export type FrameRange = { start: number; end: number };
 
-/** Stage 18-C: 区間の組み立てに渡す着地点（frame/landing.ts の LandingPlan の一部） */
+/** 区間の組み立てに渡す着地点（frame/landing.ts の LandingPlan の一部） */
 export type TimelineLandings = {
   spans: readonly { start: number; end: number; landing: string | null }[];
   /** 枠ごと: 条件が自動か（鍵に着地点を入れる枠） */

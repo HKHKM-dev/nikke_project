@@ -1,4 +1,4 @@
-// Stage 14: 未対応・近似・仮定の一覧を 1 画面にまとめる（plan/design-stage12.md 4.2 節。「未対応は明示」の原則）。
+// 未対応・近似・仮定の一覧を 1 画面にまとめる（plan/design-stage12.md 4.2 節。「未対応は明示」の原則）。
 // スキル・育成・計算の注記を出すのはここだけ。画面に欄の無い入力の既定もここに出す（plan/design-ui-rebuild.md 5.2 節）。
 import {
   SKILL_SLOTS,
@@ -135,7 +135,7 @@ function slotItems(slot: NotesSummarySlot): Item[] {
   return items;
 }
 
-/** 2026-10-31: 画面のレベルの表記は「LV」にそろえる（スキル定義などの文の「Lv10」も出すときに直す） */
+/** 画面のレベルの表記は「LV」にそろえる（スキル定義などの文の「Lv10」も出すときに直す） */
 function levelNotation(text: string): string {
   return text.replace(/\bLv(?=\.?\s?\d)/g, 'LV');
 }
@@ -157,7 +157,7 @@ export function NotesSummary({
   enemyNotes,
 }: {
   slots: readonly (NotesSummarySlot | null)[];
-  /** Stage 16-B: 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空 */
+  /** 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空 */
   enemyNotes: readonly ModelNote[];
 }) {
   const filled = slots.filter((s): s is NotesSummarySlot => s !== null);

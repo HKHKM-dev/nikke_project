@@ -1,4 +1,4 @@
-// 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: キャラ固有のカウンタの目録。定義がカウンタを指すのはこの表の id だけ
+// キャラ固有のカウンタの目録（plan/design-skill-stage10.md 2.3 節）。定義がカウンタを指すのはこの表の id だけ
 // （増減 kind: 'counterChange'・条件 selfCounter・付与の stacksFrom）。カウンタは枠ごとに 1 つの整数で、最初は 0、増減の結果は 0 と
 // 上限の間で切る。時間では減らない。状態の目録（skills/states.ts）と同じく、目録に足すのはそのカウンタを使うキャラを定義する時
 import type { LocalizedText } from '../types.ts';
@@ -24,23 +24,23 @@ export const COUNTERS = {
   /** オーバーエネルギーの段階（同じ S2）。オーバーエネルギーが 100 になるたびに 1 上がる。上限 4（説明文の 1〜4 段階。V-0529） */
   overEnergyStage: { name: { ja: 'オーバーエネルギーの段階', en: 'Over Energy stage' }, max: 4 },
   /**
-   * 粘着榴弾の付着している数（ラピ：レッドフードの S2。2 段目の段 12 の PR 2。plan/design-skill-stage12.md 2.2 節）。フルバーストの外で
+   * 粘着榴弾の付着している数（ラピ：レッドフードの S2。plan/design-skill-stage12.md 2.2 節）。フルバーストの外で
    * 撃った榴弾ごとに 1、フルバーストの始まりに起爆して 0（C-0726）。上限は説明文に無く、読んでいない（0116 では 8 まで溜まった。上限に
    * 届かない大きさにした）
    */
   stickyGrenade: { name: { ja: '付着している粘着榴弾', en: 'Attached sticky grenades' }, max: 99 },
   /**
-   * キャプチャーチェーン（ミハラ：ボンディングチェーンの S1。2 段目の段 13 の PR 1。plan/design-skill-stage13.md 2.1 節）。戦闘開始時に 10、
+   * キャプチャーチェーン（ミハラ：ボンディングチェーンの S1。plan/design-skill-stage13.md 2.1 節）。戦闘開始時に 10、
    * 上限に届いた次のフレームからチェーンの数だけ攻撃して 0 に戻す（V-0546）。上限 10（説明文の「最大10回」）
    */
   restraintChains: { name: { ja: 'キャプチャーチェーン', en: 'Restraint Chains' }, max: 10 },
   /**
-   * 超感覚（千束の S1・バースト。2 段目の段 16 の PR 1。plan/design-skill-stage16.md 2.1 節）。戦闘開始時とバースト使用時に 100、2 秒ごとに
+   * 超感覚（千束の S1・バースト。plan/design-skill-stage16.md 2.1 節）。戦闘開始時とバースト使用時に 100、2 秒ごとに
    * 1 減る。値で段階の効果（70・55・25 以上）が決まる。上限 100（説明文の「最大100％」）
    */
   extrasensory: { name: { ja: '超感覚', en: 'Extrasensory' }, max: 100 },
   /**
-   * バッテリー（アークレンジャー・ブラックの S1・バースト。2 段目の段 19 の PR 1。plan/design-skill-stage19.md 2.1 節）。前提の中ではバーストで
+   * バッテリー（アークレンジャー・ブラックの S1・バースト。plan/design-skill-stage19.md 2.1 節）。前提の中ではバーストで
    * 増え（変身状態でなければ 100、変身状態なら 50）、変身の間 0.2 秒ごとに 1 減る。100 で変身が付き、0 で外れる。上限 100（説明文の「最大100％」）
    */
   battery: { name: { ja: 'バッテリー', en: 'Battery' }, max: 100 },

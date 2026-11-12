@@ -36,12 +36,12 @@ export const buffsMetrics: Readonly<Record<string, Metric>> = {
   buffEdgeFromActivation: { args: ['slot', 'skill', 'stat', 'from', 'n', 'edge'], sim: buffEdgeFromActivation },
   chanceActiveRatio: { args: ['slot', 'skill'], sim: chanceActiveRatio },
   chanceExpiries: { args: ['slot', 'skill'], sim: chanceExpiries },
-  // 2 段目の段 3（ソーダ：トゥインクルバニーのバースト。V-0437）: スタック数の条件で付いたか・スタック量の減少・フルバースト中の数え方
+  // スタック数の条件で付いたか・スタック量の減少・フルバースト中の数え方（ソーダ：トゥインクルバニーのバースト。V-0437）
   burstBuffApplied: { args: ['slot', 'skill', 'stat'], sim: burstBuffApplied },
-  // 2 段目の段 7（V-0452）: フルバーストで、枠に効果（対象が最終防御力の比べで決まる発射体爆発ダメージ▲ など）が付いたか
+  // フルバーストで、枠に効果（対象が最終防御力の比べで決まる発射体爆発ダメージ▲ など）が付いたか（V-0452）
   fullBurstBuffApplied: { args: ['slot', 'skill', 'stat', 'n'], sim: fullBurstBuffApplied },
   stateStackDrops: { args: ['slot', 'state'], sim: stateStackDrops },
-  // 2 段目の段 10（V-0503）: カウンタの値・状態が付いた回・フルバーストの終わりのスタック数
+  // カウンタの値・状態が付いた回・フルバーストの終わりのスタック数（V-0503）
   counterAtBursts: { args: ['slot', 'counter'], sim: counterAtBursts },
   stateAppliedAtBursts: { args: ['slot', 'state'], sim: stateAppliedAtBursts },
   stateStacksAtFullBurstEnds: { args: ['slot', 'state'], sim: stateStacksAtFullBurstEnds },
@@ -49,16 +49,16 @@ export const buffsMetrics: Readonly<Record<string, Metric>> = {
 };
 
 /**
- * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 5）: 効果の窓の指標が読む、区間に足す値の小片（状態だけの stat を除く。
- * 段 D の 4 までの窓と同じ並び・同じ区切り。指標の名前の「窓」は観測値のファイルが参照しているので変えない）
+ * 効果の窓の指標が読む、区間に足す値の小片（状態だけの stat を除く。指標の名前の「窓」は観測値のファイルが参照しているので
+ * 変えない。plan/design-holder-effects.md 2.10 節）
  */
 function buffPiecesOf(result: SimResult): ValuePiece[] {
   return valuePiecesOf(result.history).filter((p) => !isStateStat(p.effect.stat));
 }
 
 /**
- * 枠（引数 slot）が受ける効果の小片のうち、引数 skill（スロット）と stat の効果のもの。グレイブ編（V-0735）: 省略できる引数 effect（スロットの
- * effects の添字）があれば、その効果（状態の付与なら、その付与の中身）だけ（同じスロット・stat の過熱I と過熱II を分ける）
+ * 枠（引数 slot）が受ける効果の小片のうち、引数 skill（スロット）と stat の効果のもの。省略できる引数 effect（スロットの
+ * effects の添字）があれば、その効果（状態の付与なら、その付与の中身）だけ（同じスロット・stat の過熱I と過熱II を分ける。V-0735）
  */
 function buffPiecesFor(result: SimResult, ctx: MetricContext): ValuePiece[] {
   const slotIndex = slotIndexOf(ctx);
@@ -84,7 +84,7 @@ function buffWindowEnds(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * ソルジャーE.G. 編（V-0240）: その枠が受ける timed の効果の窓の始まり（モデルのフレーム。昇順・重複なし）。skill と stat で絞る。
+ * その枠が受ける timed の効果の窓の始まり（モデルのフレーム。昇順・重複なし。V-0240）。skill と stat で絞る。
  * count を書くと最初の count 個（録画で読めた回数にそろえる）。video が true なら動画のフレーム（フルバーストの入りの止まりを
  * videoFrameOf で足す。戦闘開始からの数）
  */
@@ -96,7 +96,7 @@ function buffWindowStarts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 2 段目の段 17 の PR 2（V-0599）: その枠が受ける timed の効果の窓の始まり（モデルのフレーム。skill と stat で絞る）の、最初の count 個の
+ * その枠が受ける timed の効果の窓の始まり（モデルのフレーム。skill と stat で絞る。V-0599）の、最初の count 個の
  * 隣どうしの間隔の平均（(count 個目 − 1 個目) ÷ (count − 1)）。CT ごとのアクティブの周期を、録画で読めた回数の窓の始まりと比べる
  */
 function buffWindowStartIntervalMean(result: SimResult, ctx: MetricContext): number {
@@ -111,8 +111,8 @@ function buffWindowStartIntervalMean(result: SimResult, ctx: MetricContext): num
 }
 
 /**
- * ベロータのバースト編（V-0510）: 枠の、受けた効果（skill と stat で絞る）の窓の中（inside: true）か外（inside: false）の、連続した
- * 2 発の間の平均（両方の発が同じ側のものだけ）。minGap より短い間と maxGap より長い間（リロード・的のジャンプ・フルバーストの入りの
+ * 枠の、受けた効果（skill と stat で絞る）の窓の中（inside: true）か外（inside: false）の、連続した
+ * 2 発の間の平均（両方の発が同じ側のものだけ。V-0510）。minGap より短い間と maxGap より長い間（リロード・的のジャンプ・フルバーストの入りの
  * 止まりを挟む間）は除く。録画とモデルで発の時刻をそろえずに、チャージ速度▲などの射撃の速さの▲の効きを比べる
  */
 function buffWindowShotIntervalMean(result: SimResult, ctx: MetricContext): number {
@@ -139,7 +139,7 @@ function buffWindowShotIntervalMean(result: SimResult, ctx: MetricContext): numb
  * バーストの効果の遅れ（backlog 2-4 の P3。V-0392）: n 回目（0 始まり）のフルバーストの窓の中か、窓を開いた III の本当の発動から窓の
  * 始まりまで（FULL_BURST_AFTER_ACTIVATION_FRAMES）に始まった、その枠が受ける timed の効果（skill と stat で絞る）の窓の終わりから、
  * フルバーストの窓の終わりを引いたモデルのフレーム数（効果が先に切れれば負）。窓の終わりの前後の発の値（効果だけ・フルバースト補正
- * だけの発の数）と比べる。2 段目の段 14 の PR 1（V-0549）: before を書くと、窓の始まりの before フレーム前から始まった効果も見る
+ * だけの発の数）と比べる。before を書くと（V-0549）、窓の始まりの before フレーム前から始まった効果も見る
  * （バースト 3 段階突入時の効果は II → III の替わり目から。00.00 の 29f 前）
  */
 function buffWindowEndFromFullBurstEnd(result: SimResult, ctx: MetricContext): number {
@@ -179,10 +179,10 @@ function mergedBuffWindows(result: SimResult, ctx: MetricContext): { start: numb
  * 付き始め（edge: start）か切れ目（edge: end）までの動画のフレーム数。続いた小片は 1 つの窓にまとめる。味方の発動のきっかけで
  * 付く窓を、録画の「▲の無い最後の発 〜 ▲の乗った最初の発」の幅（レシピ buff-edge の観測値の spread）と比べる。省略できる引数
  * ticks が true なら、動画のフレームでなくモデルのフレーム（ゲーム内のティック。止まりを足さない）の差。録画の側を timer.ts の
- * runs でティックに直して比べる（止まりの長さの回ごとの揺れ C-0069 を除く。backlog 2-56）。省略できる引数 held が true なら、発動の後に
- * 始まった窓でなく、その発動のフレームに効いている窓（発動で外れる▼の切れ目。V-0724）。グレイブ編（V-0735）: 省略できる引数 fromShot が true
+ * runs でティックに直して比べる（止まりの長さの回ごとの揺れ C-0069 を除く）。省略できる引数 held が true なら、発動の後に
+ * 始まった窓でなく、その発動のフレームに効いている窓（発動で外れる▼の切れ目。V-0724）。省略できる引数 fromShot が true
  * なら、起点を発動の印でなく、その発動の効果の発火（effectFrameOf）以後の枠 from の最初の発の動画のフレームにする（発動と発の位相によらず、
- * 「効果の乗った最初の発から N 発」で付く窓を比べる）。省略できる引数 originStat（と originEffect）があれば、起点を、同じ発動の後に始まった
+ * 「効果の乗った最初の発から N 発」で付く窓を比べる。V-0735）。省略できる引数 originStat（と originEffect）があれば、起点を、同じ発動の後に始まった
  * 同じ枠・スロットのその stat（と効果の添字）の窓の付き始めにする（過熱II の付き始めから過熱III の付き始めまで。間に止まりが入らない）
  */
 function buffEdgeFromActivation(result: SimResult, ctx: MetricContext): number {
@@ -238,8 +238,8 @@ function buffEdgeOriginOf(
 }
 
 /**
- * 2 段目の段 17 の PR 1（V-0598）: 枠 from の shot 発目（1 始まり）の撃ったフレームから、枠 slot が受ける timed の効果（skill と stat で絞る）の
- * 窓の付き始め（edge: start。その発のフレームより後に始まった最初の窓）か切れ目（edge: end。その発の次のフレームに効いている窓）までの
+ * 枠 from の shot 発目（1 始まり）の撃ったフレームから、枠 slot が受ける timed の効果（skill と stat で絞る）の
+ * 窓の付き始め（edge: start。その発のフレームより後に始まった最初の窓。V-0598）か切れ目（edge: end。その発の次のフレームに効いている窓）までの
  * 動画のフレーム数。続いた小片は 1 つの窓にまとめる。味方の射撃の回数のきっかけ（ナガの 12 発ごとの遮蔽物 HP 回復）で付く窓を、録画の
  * その発から数えた幅（レシピ buff-edge の観測値）と比べる
  */
@@ -261,8 +261,8 @@ function buffEdgeFromShot(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * ソルジャーE.G. 編（V-0241）: 枠の、スロット skill の確率のきっかけの効果の機会（発の次のフレームから、確率 = p × その発の回数の量）と
- * 維持のフレーム。窓の小片（skills/chance.ts）と同じ機会を、射撃の列から作り直す
+ * 枠の、スロット skill の確率のきっかけの効果の機会（発の次のフレームから、確率 = p × その発の回数の量）と
+ * 維持のフレーム（V-0241）。窓の小片（skills/chance.ts）と同じ機会を、射撃の列から作り直す
  */
 function chanceSourceOf(
   result: SimResult,
@@ -287,7 +287,7 @@ function chanceSourceOf(
 }
 
 /**
- * ソルジャーE.G. 編（V-0241）: 枠の発（[from, to)。省略は全部）のうち、スロット skill の確率のきっかけの効果が付いている発の割合の
+ * 枠の発（[from, to)。省略は全部。V-0241）のうち、スロット skill の確率のきっかけの効果が付いている発の割合の
  * 期待値（発のフレームの「付いている確率」の平均）。録画では、1 発の値の格子で▲が付いていると読めた発の割合と比べる
  */
 function chanceActiveRatio(result: SimResult, ctx: MetricContext): number {
@@ -298,7 +298,7 @@ function chanceActiveRatio(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * ソルジャーE.G. 編（V-0241）: 枠の続けて撃った 2 発（どちらも [from, to)）のうち、前の発で付いていて後の発で切れている組の数の期待値。
+ * 枠の続けて撃った 2 発（どちらも [from, to)）のうち、前の発で付いていて後の発で切れている組の数の期待値（V-0241）。
  * 付いていない事象は「効いている機会でどれも引かなかった」で、機会は互いに独立なので、
  * P(前で付き・後で切れ) = P(後で切れ) − P(前でも後でも切れ) = Π_{後}(1 − q) − Π_{前 ∪ 後}(1 − q)。
  * 録画では、▲が付いていると読めた発の次の発が付いていないと読めた回数と比べる（上書き延長でなければ、ずっと多くなる）
@@ -318,7 +318,7 @@ function chanceExpiries(result: SimResult, ctx: MetricContext): number {
   return sum;
 }
 
-/** 2 段目の段 3: 枠 slotIndex のフレーム frame の、状態 state のスタックの段の最大（付いていなければ 0） */
+/** 枠 slotIndex のフレーム frame の、状態 state のスタックの段の最大（付いていなければ 0） */
 function stateStacksAt(result: SimResult, slotIndex: number, state: string, frame: number): number {
   let level = 0;
   for (const it of itemsOf(result.history, { holder: slotIndex, state: state as NamedStateId })) {
@@ -328,9 +328,9 @@ function stateStacksAt(result: SimResult, slotIndex: number, state: string, fram
 }
 
 /**
- * 2 段目の段 10（plan/design-skill-stage10.md 3.2 節。V-0503）: 枠のバーストの発動ごとに、その発動の効果の発火のフレームの前の、枠の
- * カウンタ counter の値（その発動での増減の前）。count を書くと最初の count 回。録画では、発動の直前の画面のカウンタの表示（火力ゲージ）と
- * 比べる
+ * 枠のバーストの発動ごとに、その発動の効果の発火のフレームの前の、枠のカウンタ counter の値（その発動での増減の前。
+ * plan/design-skill-stage10.md 3.2 節。V-0503）。count を書くと最初の count 回。録画では、
+ * 発動の直前の画面のカウンタの表示（火力ゲージ）と比べる
  */
 function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
   if (result.schedule === null) throw new Error('バーストの時刻表が無い');
@@ -347,8 +347,8 @@ function counterAtBursts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 2 段目の段 10（V-0503）: 枠のバーストの発動ごとに、その発動の効果の発火のフレームに、枠に状態 state が付いた（付いた記録がある）なら 1、
- * 無ければ 0。count を書くと最初の count 回。録画では、その回のフルバーストの 1 ヒットに状態の中身が乗ったか（超火力）と比べる
+ * 枠のバーストの発動ごとに、その発動の効果の発火のフレームに、枠に状態 state が付いた（付いた記録がある）なら 1、
+ * 無ければ 0（V-0503）。count を書くと最初の count 回。録画では、その回のフルバーストの 1 ヒットに状態の中身が乗ったか（超火力）と比べる
  */
 function stateAppliedAtBursts(result: SimResult, ctx: MetricContext): number[] {
   if (result.schedule === null) throw new Error('バーストの時刻表が無い');
@@ -364,7 +364,7 @@ function stateAppliedAtBursts(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 2 段目の段 10（V-0503）: フルバーストの窓ごとに、窓の終わりのフレームの、枠の状態 state のスタックの段の最大（付いていなければ 0）。
+ * フルバーストの窓ごとに、窓の終わりのフレームの、枠の状態 state のスタックの段の最大（付いていなければ 0。V-0503）。
  * count を書くと最初の count 回。録画では、フルバーストの終わりの直後の一時停止画面の適用中の効果のスタック数（超火力チャージ）と比べる
  */
 function stateStacksAtFullBurstEnds(result: SimResult, ctx: MetricContext): number[] {
@@ -376,8 +376,9 @@ function stateStacksAtFullBurstEnds(result: SimResult, ctx: MetricContext): numb
 }
 
 /**
- * 2 段目の段 3（ソーダ：トゥインクルバニーのバースト。V-0437）: 枠のバーストの発動ごとに、その発動から次の発動まで（最後は戦闘の
- * 終わりまで）に始まった、枠が自分に付けた timed の効果（skill と stat で絞る。状態だけの stat も入れる）の窓があれば 1、無ければ 0。
+ * 枠のバーストの発動ごとに、その発動から次の発動まで（最後は戦闘の終わりまで）に始まった、
+ * 枠が自分に付けた timed の効果（skill と stat で絞る。状態だけの stat も入れる。ソーダ：トゥインクルバニーのバースト。
+ * V-0437）の窓があれば 1、無ければ 0。
  * count を書くと最初の count 回。録画では、発動の直後の一時停止画面の適用中の効果と比べる。条件（スタック数など）で付いたかを、
  * 発動の時刻に依らずに比べる
  */
@@ -399,8 +400,8 @@ function burstBuffApplied(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 2 段目の段 7（デルタの防御力▲。V-0452）: n 回目（0 始まり）のフルバーストで、枠が受ける timed の効果（skill と stat で絞る。出どころの枠は
- * 問わない）の窓が、そのフルバーストの窓の中（か、窓を開いた III の本当の発動から窓の始まりまで）に始まっていれば 1、無ければ 0。
+ * n 回目（0 始まり）のフルバーストで、枠が受ける timed の効果（skill と stat で絞る。出どころの枠は
+ * 問わない。デルタの防御力▲。V-0452）の窓が、そのフルバーストの窓の中（か、窓を開いた III の本当の発動から窓の始まりまで）に始まっていれば 1、無ければ 0。
  * 録画では、フルバースト開始の直後の一時停止画面の適用中の効果の有無と比べる。対象が最終防御力の比べで決まる効果（targetDefense）が
  * どの枠に付いたかを、フルバーストの時刻に依らずに比べる
  */
@@ -422,7 +423,7 @@ function fullBurstBuffApplied(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 2 段目の段 3（同）: 枠の状態 state のスタック量の減少（stackChange の decrease）ごとに、減少のフレームから次のフレームへの
+ * 枠の状態 state のスタック量の減少（stackChange の decrease）ごとに、減少のフレームから次のフレームへの
  * スタックの段の最大の差（負。付いている段より多く減らせば、付いている段の数だけ）。count を書くと最初の count 回。録画では、発動の
  * 直前（フルバーストの外の 1 ヒットの会心の比）と直後（一時停止画面）のスタック数の差と比べる
  */
@@ -443,7 +444,7 @@ function stateStackDrops(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 2 段目の段 3（同）: フルバーストの窓ごとに、窓の中の状態 state のスタックの段の最大の増え方（窓の終わり − 始まり）から、窓の中の
+ * フルバーストの窓ごとに、窓の中の状態 state のスタックの段の最大の増え方（窓の終わり − 始まり）から、窓の中の
  * 枠の発の数を every で割った商を引いたもの。「フルバースト中の通常攻撃 every 回ごとに 1 スタック（フルバーストごとに数え直す）」なら
  * 0。窓の長さや発の数に依らずに、数え方だけを比べる（録画では、窓の中の発を数え、前後のスタック数と比べる）。count を書くと最初の count 回
  */

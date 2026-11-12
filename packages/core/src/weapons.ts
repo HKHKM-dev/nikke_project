@@ -4,8 +4,7 @@ import type { ShotParams, WeaponType } from './types.ts';
 
 /**
  * rpm の蓄積の分母: 1 フレームに 1 発になる rpm（= 60 × ゲーム内の 1 秒のフレーム数、約 3529 rpm）。これが上限。
- * 21-C3: rpm はゲーム内の時計で進む（C-0058。AR 720 rpm は 60 発で 290f、SMG 1440 rpm は 120 発で 292f）。
- * 21-B までは 3600（1 秒 = 60f）だった
+ * rpm はゲーム内の時計で進む（C-0058。AR 720 rpm は 60 発で 290f、SMG 1440 rpm は 120 発で 292f）
  */
 export const MAX_RPM = 60 * FRAMES_PER_GAME_SECOND;
 
@@ -20,8 +19,8 @@ export function isDualWieldWeapon(weaponType: WeaponType): weaponType is DualWie
 }
 
 /**
- * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（銃口 2 つ）の 1 発のヒット数。1 発で両方の銃口が
- * 当たり、ヒットごとにダメージ・ゲージ・命中の数え（コア・会心はヒットごと）になる。DUAL_WIELD_WEAPONS のほかの武器種は 1
+ * 二丁持ち（銃口 2 つ）の 1 発のヒット数（plan/design-quency-eq.md 2 節の論点 1）。1 発で両方の銃口が当たり、
+ * ヒットごとにダメージ・ゲージ・命中の数え（コア・会心はヒットごと）になる。DUAL_WIELD_WEAPONS のほかの武器種は 1
  */
 export function muzzleHitsOf(weaponType: WeaponType, shot: Pick<ShotParams, 'muzzleCount'>): number {
   return isDualWieldWeapon(weaponType) && shot.muzzleCount > 1 ? shot.muzzleCount : 1;
@@ -39,28 +38,28 @@ export const WEAPON_LABEL: Record<WeaponType, { ja: string; en: string }> = {
 };
 
 /**
- * 実測で較正する定数（2026-09-22 射撃場の 60fps 録画で較正。plan/verification.md 参照）。
+ * 実測で較正する定数（射撃場の 60fps 録画で較正。根拠は各欄の ID（結論・検証記録））。
  */
 export type WeaponModel = {
   /**
-   * チャージ武器の発と発の間のうち、チャージ（chargeSecondsToFrames）の外の長さ。Stage 23: 23f（C-0535）。
+   * チャージ武器の発と発の間のうち、チャージ（chargeSecondsToFrames）の外の長さ。23f（C-0535）。
    * 撃った後に表示が出ない 13f・100% のまま待つ 9f・満ちてから撃つまで 1f の和（0075-05）。発と発の間は
-   * 1 秒チャージで 59 + 23 = 82f、1.5 秒チャージで 89 + 23 = 112f。22 までは 1 秒 = 60f のチャージとの差だった（C-0001）。
+   * 1 秒チャージで 59 + 23 = 82f、1.5 秒チャージで 89 + 23 = 112f。
    * 押下チャージ型（DOWN_Charge）は発と発の間に足さない（C-0222。frame/firing.ts の chargeShotIntervalFrames）
    * 射撃姿勢維持型（frame/firing.ts の stanceFrames）には使わない（姿勢の長さ + aimInFrames。plan/design-fire-stance-cadence.md）
    */
   chargeReleaseFrames: number;
   /**
    * 使用武器の変更（殲滅モード）で持ち替えたスピンアップ武器の 1 発目までのフレーム（frame/shooter.ts の weaponChangeShooter）。
-   * Stage 24 で、MG のリロード明けは reloadFirstShotFrames（24f。C-0148）に移したので、使うのはここだけ。値は MG のリロード明けの
-   * 初弾遅延だった 20f（C-0002。棄却）のままで、持ち替えについては較正していない
+   * 使うのはここだけ（MG のリロード明けは reloadFirstShotFrames。C-0148）。値は棄却した C-0002 の 20f（MG のリロード明けの初弾遅延）のままで、
+   * 持ち替えについては較正していない
    */
   spinUpFirstShotFrames: number;
   /**
-   * 21-C3: チャージもスピンアップも無い武器（AR・SMG・SG）が、リロードを込め終えてから 1 発目を撃つまでのフレーム。
-   * Stage 24: リロードをゲーム内の時計で数えると、最終弾 → 次の 1 発目はリロードの時間より 23〜24.5f 長く、武器種によらない
+   * チャージもスピンアップも無い武器（AR・SMG・SG）が、リロードを込め終えてから 1 発目を撃つまでのフレーム。
+   * リロードをゲーム内の時計で数えると、最終弾 → 次の 1 発目はリロードの時間より 23〜24.5f 長く、武器種によらない
    * （C-0148。MG も同じ値）。最終弾 → リロード完了の約 12f（C-0135）と、完了 → 1 発目の約 12f（C-0115・C-0117）の和。
-   * 22f までは、リロードを 1 秒 = 60f で数えたときの差だった（C-0059）。戦闘開始・窓の明けの 1 発目には使わない（aimInFrames）
+   * 戦闘開始・窓の明けの 1 発目には使わない（aimInFrames）
    */
   reloadFirstShotFrames: number;
   /**
@@ -82,7 +81,7 @@ export type WeaponModel = {
    */
   upChargeReloadStartFrames: number;
   /**
-   * Stage 22-A: チャージ武器の構え解除モーション（紅蓮BS 等は射撃後の硬直を含む）のフレーム。発と発の間
+   * チャージ武器の構え解除モーション（紅蓮BS 等は射撃後の硬直を含む）のフレーム。発と発の間
    * （チャージ + chargeReleaseFrames）は「構え解除 → 構え → チャージ → 射撃」で、ハイドしていた状態（戦闘開始・窓の明け）からの
    * 1 発目は構え解除が無いぶん早い（C-0537。紅蓮BS 43f → 30f、ラム 82f → 70f）。リロードの完了から 1 発目までも同じく
    * 構え解除が無い長さだが、モデルは最後の発からの長さ（C-0149）を「完了まで + 完了から発と発の間」に分けたままにし、
@@ -92,9 +91,9 @@ export type WeaponModel = {
    */
   aimOutFrames: number;
   /**
-   * Stage 22-C: チャージの無い武器（AR・SMG・SG・MG）の構えモーションのフレーム。ハイドしていた状態（戦闘開始・窓の明け）から
+   * チャージの無い武器（AR・SMG・SG・MG）の構えモーションのフレーム。ハイドしていた状態（戦闘開始・窓の明け）から
    * 1 発目を撃つまで（C-0114。戦闘開始は 11〜13f、窓の明けは MG 11f。SG はノワール 12f）。武器種で分けない
-   * （plan/design-stage22.md 8 節）。チャージ武器の構えは発と発の間から aimOutFrames を引いた長さに含まれる（Stage 22-A）。
+   * （plan/design-stage22.md 8 節）。チャージ武器の構えは発と発の間から aimOutFrames を引いた長さに含まれる。
    * 射撃姿勢維持型のチャージ武器は、姿勢が終わってから 100% のまま待つ構えにも使う（紅蓮BS・レイヴン・A2 とも 12f。C-0216）。
    * 入力が UP のチャージ武器のハイドからの 1 発目の構え（ハイド → チャージの表示が 100% を超える）にも使う（C-0537・C-0232）
    */
@@ -140,10 +139,10 @@ export type WeaponModel = {
    */
   hideDetectFrames: number;
   /**
-   * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の d）: 弾の種類 InstantBox（紅蓮：神殺の AR）の、チャージの無い武器の構え
+   * 弾の種類 InstantBox（紅蓮：神殺の AR）の、チャージの無い武器の構え
    * （aimInFrames。戦闘開始・窓の明け）とリロードの明けの 1 発目（reloadFirstShotFrames）に足すフレーム。戦闘開始 → 最初の発と
    * リロード完了 → 次の 1 発目が、どちらも 18f（ふだんは約 12f）。照準の下の残弾も同じフレームで減る（V-0675 の `0960-22`・`0960-24`）。
-   * 理由は分かっていない
+   * 理由は分かっていない（plan/design-new-chars-1029.md 12.2 節の d）
    */
   instantBoxAimLongerFrames: number;
 };
@@ -167,7 +166,7 @@ export const DEFAULT_WEAPON_MODEL: WeaponModel = {
 };
 
 /**
- * Stage 24: リロードの秒 → フレーム（端数つき）。ゲーム内の時計（1 フレーム 0.017 秒）で数え、丸めない（C-0145・C-0142。
+ * リロードの秒 → フレーム（端数つき）。ゲーム内の時計（1 フレーム 0.017 秒）で数え、丸めない（C-0145・C-0142。
  * plan/design-weapon-seconds.md 10.5 節）。全弾リロードの 1 回分は、1 回ごとに丸める
  * （cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）。21-C〜23 は 1 秒 = 60f の切り上げだった。
  * 分割リロードの段は、この長さを段ごとに切り上げる（C-0154）
@@ -177,7 +176,7 @@ export function reloadSecondsToFrames(seconds: number): number {
 }
 
 /**
- * Stage 23: チャージの秒 → フレーム。ゲーム内の時計（1 フレーム 0.017 秒）で数え、切り上げる（C-0140。
+ * チャージの秒 → フレーム。ゲーム内の時計（1 フレーム 0.017 秒）で数え、切り上げる（C-0140。
  * plan/design-weapon-seconds.md 9 節の 7・10.4 節）。割り算の誤差で整数のすぐ上に出た値を切り上げないよう、ごく小さな幅を引く
  */
 export function chargeSecondsToFrames(seconds: number): number {

@@ -1,6 +1,6 @@
 // キャラ単位の「機構が確定したキャラ」の判定（AGENTS.md「事実と記録」）と、通常攻撃の条件が的の表で測られているかの判定。
 // 撮る前に編成を選ぶ材料（plan/design-skill-claims-5-2.md 6.1 節）に使う。結論の警告は、効果・notes 単位の最小構成の検査
-// （records/relevance.ts。plan/design-minimal-relevance.md）に置き換えた（検証記録 × 録画の旧の警告は PR 5 で消した）。
+// （records/relevance.ts。plan/design-minimal-relevance.md）が出す。
 // 「機構が確定したキャラ」は、スキル定義の効果と notes（計算に無関係・間接を除く）の根拠がすべて確定（か範囲外）の結論に結び付き、
 // 通常攻撃の条件（コア命中率・弾丸命中率）がその的の表で測られているキャラ。
 import { targetProfileOf } from '../enemies.ts';

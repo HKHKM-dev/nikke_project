@@ -87,7 +87,7 @@ export type RawRoleData = {
     core_damage_rate: number;
     penetration: number;
     maintain_fire_stance: number;
-    /** 満ちてから撃つまで（1e-4 単位）。2026-10-29 に確かめた CDN では uptype_fire_timing から改名されていた（値は全キャラ同じ） */
+    /** 満ちてから撃つまで（1e-4 単位。値は全キャラ同じ） */
     fire_timing: number;
     burst_energy_pershot: number;
     target_burst_energy_pershot: number;
@@ -109,7 +109,7 @@ export type RawRoleData = {
   skill2_detail: RawSkillDetail;
   ulti_skill_detail: RawSkillDetail & {
     skill_cooltime: number;
-    /** Stage 11 モダニア: 'ChangeWeapon' なら skill_value_data の [1] が変更後の発射レート、[2] が変更後の shot_id */
+    /** 'ChangeWeapon' なら skill_value_data の [1] が変更後の発射レート、[2] が変更後の shot_id */
     skill_type?: string;
     skill_value_data?: { skill_value_type: string; skill_value: number }[];
   };
@@ -118,7 +118,7 @@ export type RawRoleData = {
   character_level_defence_list: number[];
 };
 
-/** Stage 9: 宝物 1 個分（/equip/{locale}/favorite_{id}.json）のうち使うフィールド */
+/** 宝物 1 個分（/equip/{locale}/favorite_{id}.json）のうち使うフィールド */
 export type RawFavorite = {
   id: number;
   name_localkey: string;
@@ -128,7 +128,7 @@ export type RawFavorite = {
   favoriteitem_skill_group_data?: { skill_change_slot: number; info: RawSkillDetail }[];
 };
 
-/** Stage 9: /equip/favorite_rare_map.json。レア度ごとの宝物 ID */
+/** /equip/favorite_rare_map.json。レア度ごとの宝物 ID */
 export type RawFavoriteRareMap = Record<string, number[]>;
 
 const RARITIES: readonly Rarity[] = ['SSR', 'SR', 'R'];
@@ -146,7 +146,7 @@ function oneOf<T extends string>(allowed: readonly T[], value: string, field: st
 
 /**
  * 正規化の結果に、CDN の項目が無いせいでできた穴（undefined か、数でない数）が無いことを確かめる。あれば穴の場所の一覧で Error。
- * CDN の項目の改名（2026-10-29 の uptype_fire_timing → fire_timing）は、読む側の型を直さないと undefined になり、
+ * CDN の項目の改名（uptype_fire_timing → fire_timing など）は、読む側の型を直さないと undefined になり、
  * JSON に書くとその項目が黙って消える（NaN は null になる）ので、書く前にここで止める。null は「無い」と決めた値なので通す
  */
 export function assertComplete(value: unknown, what: string): void {
@@ -176,7 +176,7 @@ function toSkill(en: RawSkillDetail, ja: RawSkillDetail): SkillRaw {
 
 /**
  * ゲームの名前が同じキャラの呼び名（resourceId → 名前）。ゲームの名前に上書きする。
- * 836 はゲームでは 282 と同じ「サクラ」。2026-10-11 のオーナーの決定で 836 を「鈴原サクラ」と呼ぶ（282 はそのまま）
+ * 836 はゲームでは 282 と同じ「サクラ」。836 を「鈴原サクラ」と呼ぶ（オーナーの決定。282 はそのまま）
  */
 export const NAME_OVERRIDES: Readonly<Record<number, { ja: string; en: string }>> = {
   836: { ja: '鈴原サクラ', en: 'Sakura Suzuhara' },
@@ -188,7 +188,7 @@ const BASE_SKILL_KEY = { skill1: 'skill1_detail', skill2: 'skill2_detail', burst
 const TREASURE_SKILL_ID_OFFSET = 50;
 const SKILL_ID_LOW_DIGITS = 1_000_000;
 
-/** Stage 9: 宝物の持ち主を name_code で探す。いなければ null（一覧に無い未実装キャラなど）、2 体以上なら Error */
+/** 宝物の持ち主を name_code で探す。いなければ null（一覧に無い未実装キャラなど）、2 体以上なら Error */
 export function findTreasureOwner<T extends Pick<RawRoleData, 'resource_id' | 'name_code'>>(
   favorite: Pick<RawFavorite, 'id' | 'name_code'>,
   roles: readonly T[],
@@ -202,7 +202,7 @@ export function findTreasureOwner<T extends Pick<RawRoleData, 'resource_id' | 'n
 }
 
 /**
- * Stage 9: 宝物（ja / en）を TreasureData にする。owner は持ち主の roledata（en）。
+ * 宝物（ja / en）を TreasureData にする。owner は持ち主の roledata（en）。
  * スロットが 3 つちょうどでない、ja と en で並びが違う、スキル ID が基礎版 + 50 でない場合は Error
  */
 export function toTreasureData(en: RawFavorite, ja: RawFavorite, owner: RawRoleData): TreasureData {
@@ -296,7 +296,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
       burstEnergyPerShot: shot.burst_energy_pershot,
       // チャージなし武器は 0 が入っているので 1 にする（式に分岐を持ち込まない）
       fullChargeBurstEnergy: shot.full_charge_burst_energy === 0 ? 1 : shot.full_charge_burst_energy / 10000,
-      // Stage 18: 照準円は生値のまま持つ（単位が分かっていないので換算しない）
+      // 照準円は生値のまま持つ（単位が分かっていないので換算しない）
       accuracy: {
         start: shot.start_accuracy_circle_scale,
         end: shot.end_accuracy_circle_scale,
@@ -337,7 +337,7 @@ export function toCharacterData(en: RawRoleData, ja: RawRoleData, treasure: Trea
 }
 
 /**
- * Stage 11 モダニア: バーストの使用武器の変更（skill_type 'ChangeWeapon'）。skill_value_data の [1] = 変更後の発射レート（rpm。
+ * バーストの使用武器の変更（skill_type 'ChangeWeapon'）。skill_value_data の [1] = 変更後の発射レート（rpm。
  * 基礎の rate_of_fire と同じ単位）、[2] = 変更後の shot_id（中身は CDN に無い）。解読はユーザーの別プロジェクト
  * （NIKKE_Damage_Calculator の scripts/build_change_weapon_from_cdn.py）による。ChangeWeapon でなければ何も足さない
  */
@@ -370,7 +370,7 @@ export function toIndexEntry(data: CharacterData): CharacterIndexEntry {
   };
 }
 
-// ---- Stage 12: 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム） ----
+// ---- 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム） ----
 
 /** /equip/ItemEquipTable-ja.json の 1 件。stat は 6 枠（None は未使用） */
 export type RawEquipRecord = {
@@ -448,7 +448,7 @@ const GEAR_TYPE_OF_RARE: Record<string, GearType> = { T9: 'T9', T10: 'OL' };
 const STAT_KIND_OF_TYPE: Record<string, StatKind> = { Atk: 'attack', Hp: 'hp', Defence: 'defence' };
 
 /**
- * Stage 12: 手書きの装備マスタ（data/masters/gear.json）の Lv0 が CDN の ItemEquipTable と一致するか。
+ * 手書きの装備マスタ（data/masters/gear.json）の Lv0 が CDN の ItemEquipTable と一致するか。
  * 違いがあれば「種類 クラス 部位 stat: マスタ / CDN」の一覧を返す（空なら一致）
  */
 export function checkGearMaster(gear: GearMaster, table: RawEquipTable): string[] {
@@ -584,7 +584,7 @@ export function toRecycleRoomMaster(table: RawRecycleTable): RecycleRoomMaster {
   };
 }
 
-// ---- Stage 13: OL オプションの表（data/masters/overload.json、手書き）と CDN の照合 ----
+// ---- OL オプションの表（data/masters/overload.json、手書き）と CDN の照合 ----
 
 /** CDN の equip_option_table_v2（配列）。OL のオプションは id 1001001〜。state_effect_id_list は 5 段ずつ */
 export type RawEquipOption = {

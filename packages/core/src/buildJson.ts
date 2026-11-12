@@ -35,7 +35,7 @@ export function checkInt(v: unknown, min: number, max: number, path: string, iss
   return false;
 }
 
-/** OL のオプションの行。欠落は空（Stage 12 の保存データには無い） */
+/** OL のオプションの行。欠落は空（古い保存データには無い） */
 function parseOverload(v: unknown, type: GearType, path: string, issues: string[]): OverloadLine[] | undefined {
   if (v === undefined) return [];
   if (!Array.isArray(v) || v.length > OVERLOAD_LINE_MAX) {
@@ -58,7 +58,7 @@ function parseOverload(v: unknown, type: GearType, path: string, issues: string[
       return undefined;
     }
     if (!checkInt(line.level, OVERLOAD_LEVEL_MIN, OVERLOAD_LEVEL_MAX, `${at}.level`, issues)) return undefined;
-    // 2026-10-31 までの保存データには無いので、欠落は配列の並び
+    // 古い保存データには無いので、欠落は配列の並び
     if (line.position !== undefined && !checkInt(line.position, 0, OVERLOAD_LINE_MAX - 1, `${at}.position`, issues))
       return undefined;
     lines.push({

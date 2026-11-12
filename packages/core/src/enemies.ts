@@ -51,7 +51,7 @@ export const ENEMY_EVENT_KIND_LABEL: Record<EnemyEventKind, { ja: string; en: st
   barrier: { ja: 'バリア', en: 'Barrier' },
 };
 
-/** Stage 16-B: 数値に効かせる出来事の種類（それ以外は型と表示だけ。plan/design-stage16.md 9.2 節） */
+/** 数値に効かせる出来事の種類（それ以外は型と表示だけ。plan/design-stage16.md 9.2 節） */
 export const IMPLEMENTED_ENEMY_EVENT_KINDS: readonly EnemyEventKind[] = ['untargetable'];
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -197,7 +197,7 @@ function parseLanding(v: unknown, path: string): LandingPoint {
   ) {
     throw new TypeError(`${path}.range: must be [min, max] (m, min < max)`);
   }
-  // エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 代表の距離は必須（無いと適正最小射程距離▲が黙って効かなくなる）
+  // 代表の距離は必須（無いと適正最小射程距離▲が黙って効かなくなる。plan/design-agent-bunny.md 2.1 節）
   if (typeof v.distance !== 'number' || !Number.isFinite(v.distance) || v.distance < range[0] || v.distance > range[1])
     throw new TypeError(`${path}.distance: must be a number in range (m)`);
   return {
@@ -321,7 +321,7 @@ function parseAutoAttackRows(
   return rows;
 }
 
-/** 武器種の行と使用武器の変更の行 weaponChanges の表（2 段目の段 11・ナユタ編。キーは自動攻撃と同じ形） */
+/** 武器種の行と使用武器の変更の行 weaponChanges の表（キーは自動攻撃と同じ形） */
 function parseRateTableWithWeaponChanges(
   v: unknown,
   path: string,
@@ -342,10 +342,10 @@ function parseCoreHitRateTable(v: unknown, path: string, keys: ReadonlySet<strin
   const table: CoreHitRateTable = parseRateTableWithWeaponChanges(rest, path, keys);
   if (autoAttacks !== undefined)
     table.autoAttacks = parseAutoAttackRows(autoAttacks, `${path}.autoAttacks`, keys, RATE);
-  // 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 弾の種類（fire_type）ごとの行
+  // 弾の種類（fire_type）ごとの行（plan/design-new-chars-1029.md 12.2 節の a）
   if (fireTypes !== undefined)
     table.fireTypes = parseAutoAttackRows(fireTypes, `${path}.fireTypes`, keys, RATE, FIRE_TYPE_KEY);
-  // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの武器種ごとの行（未測定の null は書かない）
+  // 二丁持ちの武器種ごとの行（未測定の null は書かない。plan/design-quency-eq.md 2 節の論点 1）
   if (dualWield !== undefined) {
     if (!isRecord(dualWield)) throw new TypeError(`${path}.dualWield: must be an object`);
     const rows: Partial<Record<WeaponType, TargetRateRow>> = {};
@@ -478,7 +478,7 @@ function parseTargetProfile(v: unknown, path: string): TargetProfile {
   };
 }
 
-/** Stage 18-C: 着地点か配分の id が、その表にあるか */
+/** 着地点か配分の id が、その表にあるか */
 export function isLandingOf(profile: Pick<TargetProfile, 'landings' | 'mixes'>, id: string): boolean {
   return profile.landings.some((l) => l.id === id) || id in profile.mixes;
 }
@@ -532,13 +532,13 @@ export function parseEnemyPresets(raw: unknown): EnemyPresetMaster {
 }
 
 /**
- * Stage 16-B: 周期で書いた出来事を、戦闘時間 durationSeconds ぶんの EnemyEvent（開始順）に展開する。
+ * 周期で書いた出来事を、戦闘時間 durationSeconds ぶんの EnemyEvent（開始順）に展開する。
  * 戦闘時間より後に始まるものは出さず、終わりは戦闘時間で切る
  */
 export function expandEnemyEvents(specs: readonly EnemyEventSpec[], durationSeconds: number): EnemyEvent[] {
   const events: EnemyEvent[] = [];
   for (const spec of specs) {
-    // Stage 21: 間隔の並び（every が配列）なら、k 回目 → k + 1 回目は並びの k 番目。使い切った後は最後の間隔を繰り返す
+    // 間隔の並び（every が配列）なら、k 回目 → k + 1 回目は並びの k 番目。使い切った後は最後の間隔を繰り返す
     const intervals = spec.every === undefined ? [] : Array.isArray(spec.every) ? spec.every : [spec.every];
     let start = spec.first;
     for (let k = 0; ; k++) {
@@ -550,7 +550,7 @@ export function expandEnemyEvents(specs: readonly EnemyEventSpec[], durationSeco
   return events.sort((a, b) => a.start - b.start);
 }
 
-/** Stage 16-B: 選んだ出来事のセット（id）を展開した出来事。master に無い id は無視する */
+/** 選んだ出来事のセット（id）を展開した出来事。master に無い id は無視する */
 export function enemyEventsOf(
   master: Pick<EnemyPresetMaster, 'eventSets'>,
   setIds: readonly string[],
@@ -579,7 +579,7 @@ function untargetableEvents(windows: readonly FrameSpanSeconds[], durationSecond
 }
 
 /**
- * Stage 18-C: 着地点の時間割り（秒。plan/design-stage18.md 12.2・12.3 節）。選んだ出来事のセットのうち、着地点の並び（landings）を
+ * 着地点の時間割り（秒。plan/design-stage18.md 12.2・12.3 節）。選んだ出来事のセットのうち、着地点の並び（landings）を
  * 持つ最初のものについて、その狙えない窓（untargetable）の終わり = 着地で区間を切り、k 番目の区間に並びの k 番目を当てる
  * （1 つ目は最初の窓より前 = 初期位置。窓の間は誰も撃たないので、窓はその前の区間に入れる）。並びより区間が多ければ、残りは null
  * （着地点が未測定）。並びを持つセットを選んでいなければ、戦闘時間全体を初期位置にする。
@@ -634,7 +634,7 @@ export function enemyLandingsOf(
   return spans;
 }
 
-/** Stage 18-C: プリセットの的の条件の表（無ければ undefined） */
+/** プリセットの的の条件の表（無ければ undefined） */
 export function targetProfileOf(
   master: Pick<EnemyPresetMaster, 'targetProfiles'>,
   preset: Pick<EnemyPreset, 'targetProfile'>,
@@ -660,7 +660,7 @@ export function presetForEnemy(presets: readonly EnemyPreset[], enemy: EnemyInpu
   );
 }
 
-/** Stage 18-C2: 敵の値（EnemyInput）から的の条件の表を引く（plan/design-stage18.md 12.9 節の 5）。プリセットは presetForEnemy */
+/** 敵の値（EnemyInput）から的の条件の表を引く（plan/design-stage18.md 12.9 節の 5）。プリセットは presetForEnemy */
 export function targetProfileForEnemy(
   master: Pick<EnemyPresetMaster, 'enemies' | 'targetProfiles'>,
   enemy: EnemyInput,

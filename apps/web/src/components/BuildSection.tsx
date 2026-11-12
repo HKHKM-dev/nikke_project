@@ -34,7 +34,7 @@ import { inertControlProps } from './inertControl.ts';
 const GEAR_TYPE_LABEL: Record<GearType, string> = { T9: 'T9', T9Corp: 'T9 企業', OL: 'OL（T10）' };
 
 /**
- * Stage 13: 位置 p の行を line にした OL の行（null は削除）。2026-10-31: オーナーの指示で、間の行を空けたまま後ろの行に
+ * 位置 p の行を line にした OL の行（null は削除）。間の行を空けたまま後ろの行に
  * 入れられるように、行は詰めずに位置（position）を持たせる
  */
 function withOverloadLine(lines: readonly OverloadLine[], p: number, line: OverloadLine | null): OverloadLine[] {
@@ -160,7 +160,7 @@ export function BuildSection({
                           </option>
                         ))}
                       </select>
-                      {/* 2026-10-31: オーナーの指示で、OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
+                      {/* OL の行は Lv ではなく上昇する % で選ぶ（値は overload.json の values。保存は Lv のまま） */}
                       <select
                         aria-label={`オプション ${i + 1} の上昇値`}
                         value={line?.level ?? OVERLOAD_LEVEL_MIN}
@@ -224,7 +224,7 @@ export function BuildSection({
         <div className="field gear">
           <span>コレクション</span>
           <span className="gear-inputs">
-            {/* 2026-10-31: オーナーの指示で、スキル Lv の横にあった宝物の段階の選択をここに統合した（宝物はコレクションの枠に付ける）。
+            {/* 宝物の段階はここで選ぶ（宝物はコレクションの枠に付ける）。
                 宝物はスペック固定でも選べる */}
             <select
               value={

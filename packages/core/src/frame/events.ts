@@ -1,4 +1,4 @@
-// Stage 16-B: 敵の出来事を共通のフレームループの入力（フレームの窓）にする（plan/design-stage16.md 9.2・9.3 節）。
+// 敵の出来事を共通のフレームループの入力（フレームの窓）にする（plan/design-stage16.md 9.2・9.3 節）。
 // 数値に効かせるのは untargetable（狙えない）だけ。invulnerable・barrier は表示と注記だけ。
 import type { EnemyEvent, ModelNote } from '../damage.ts';
 import { IMPLEMENTED_ENEMY_EVENT_KINDS } from '../enemies.ts';
@@ -12,7 +12,7 @@ function frameOf(seconds: number): number {
 
 /**
  * 狙えない窓（フレーム。昇順・重なりは和集合・[0, frames) で切る）。出来事が無ければ空。
- * この窓の間は、AUTO の射撃とオートバーストが止まる（2026-09-26 ユーザー確認: 敵が画面外へジャンプし、移動を終えるまで）
+ * この窓の間は、AUTO の射撃とオートバーストが止まる（ユーザー確認: 敵が画面外へジャンプし、移動を終えるまで）
  */
 export function untargetableRanges(events: readonly EnemyEvent[] | undefined, frames: number): FrameRange[] {
   const ranges = (events ?? [])
@@ -36,7 +36,7 @@ export function unionRanges<T extends FrameRange>(sorted: readonly T[]): T[] {
 
 /**
  * 敵の出来事の注記（未実装の種類・近似）。出来事が無ければ空。
- * Stage 18-C: landingsModeled（条件が自動の枠の着地点を計算した）なら、「着地後の距離の変化は扱わない」を出さない
+ * landingsModeled（条件が自動の枠の着地点を計算した）なら、「着地後の距離の変化は扱わない」を出さない
  */
 export function enemyEventNotes(events: readonly EnemyEvent[] | undefined, landingsModeled = false): ModelNote[] {
   const list = events ?? [];

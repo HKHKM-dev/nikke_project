@@ -47,7 +47,7 @@ export function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect
       effect.kind !== 'heal' &&
       effect.kind !== 'burstReentry' &&
       effect.kind !== 'burstStepChange' &&
-      // 2 段目の段 12（plan/design-skill-stage12.md 2.1 節）: damage は burstStepMix だけ。PR 2（2.4 節）: cycleEvery も
+      // damage と cycleEvery は burstStepMix だけ（plan/design-skill-stage12.md 2.1・2.4 節）
       !((effect.kind === 'damage' || effect.kind === 'cycleEvery') && key === 'burstStepMix')
     ) {
       fail(
@@ -60,7 +60,7 @@ export function parseEffect(v: Json, path: string, slot: SkillSlot): SkillEffect
     else if (effect.kind !== 'damage' && effect.kind !== 'cycleEvery')
       effect.squad = parseSquadCondition(v[key], `${path}.${key}`);
   }
-  // 防御力無視ダメージ編: 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage。名前の付いた状態の語彙編: 付与も）
+  // 編成に特定のキャラがいる条件・敵の属性の条件（passive・timed・damage・付与）
   for (const key of ['withCharacter', 'enemyElement'] as const) {
     if (v[key] === undefined) continue;
     // F5（plan/design-heal-vocabulary.md 3.3 節）: withCharacter は heal にも書ける（エマ：TU の S1 の持続回復の周期。ウンファ：TU の有無）

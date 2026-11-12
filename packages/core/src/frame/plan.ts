@@ -126,15 +126,15 @@ import {
 import type { ShotLog } from './shots.ts';
 import type { SkillSlot } from '../types.ts';
 
-/** Stage 8: 倍率ダメージ 1 回の発動（1 パス目で決まる） */
+/** 倍率ダメージ 1 回の発動（1 パス目で決まる） */
 export type SkillHitEvent = {
   frame: number;
   slotIndex: number;
   effect: ResolvedDamageEffect;
   hit: SkillHitResult;
-  /** レイヴン編: スタックする持続ダメージ（dot の maxStacks > 1）の tick なら、その tick の時点のスタックの数。hit はこの数倍の値 */
+  /** スタックする持続ダメージ（dot の maxStacks > 1）の tick なら、その tick の時点のスタックの数。hit はこの数倍の値 */
   stacks?: number;
-  /** 2 段目の段 13 の PR 1: 持続ダメージの、付けた時の 1 スタックぶんのヒット（dot の hitOnApply）。tick ではない */
+  /** 持続ダメージの、付けた時の 1 スタックぶんのヒット（dot の hitOnApply）。tick ではない */
   onApply?: true;
   /**
    * 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.2 節）: 累計の窓 [start, end) と最大量。2 パス目（sim/engine.ts）が、
@@ -184,8 +184,8 @@ export function slotTriggerDamage(
       buffs,
       perShot,
     },
-    // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。2 段目の段 11: 即着弾に替えた使用武器の
-    // 変更の区間は、的の表の変更後の武器の行のコア命中率。エード：エージェントバニー編: 適正最小射程距離▲ の区間は距離ボーナスも出し直す
+    // C-0170: 持続の命中率▲が効いている区間は、その区間の N でコア命中率を出し直す。即着弾に替えた使用武器の
+    // 変更の区間は、的の表の変更後の武器の行のコア命中率。適正最小射程距離▲ の区間は距離ボーナスも出し直す
     weaponChangeParts(
       enemy,
       landingPartsWith(landing, slot, index, segmentLanding, hitRateNOf(buffs), buffs.minEffectiveRange),
@@ -204,33 +204,33 @@ export type TeamPlan = {
   timeline: BuffTimeline;
   /** 倍率ダメージ（damage）の発動（フレーム順） */
   skillHits: SkillHitEvent[];
-  /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（発生順） */
+  /** 即時効果（CT 短縮・弾丸チャージ）を当てた記録（発生順） */
   instants: InstantApplication[];
-  /** Stage 16-B: 敵を狙えない窓（フレーム。出来事が無ければ空） */
+  /** 敵を狙えない窓（フレーム。出来事が無ければ空） */
   untargetable: FrameRange[];
-  /** Stage 18-C: 着地点の計画（条件が自動の枠が無い、または的の表の無い敵では null） */
+  /** 着地点の計画（条件が自動の枠が無い、または的の表の無い敵では null） */
   landing: LandingPlan | null;
   /** V-0030: 段の循環のヒットで溜めたゲージ（1 パス目の記録。frame/firstPass.ts） */
   cycleGaugeHits: FirstPassResult['cycleGaugeHits'];
-  /** レイヴン編: 持続ダメージで溜めたゲージ（1 パス目。テスト用） */
+  /** 持続ダメージで溜めたゲージ（1 パス目。テスト用） */
   dotGauges: FirstPassResult['dotGauges'];
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。frame/firstPass.ts） */
   shotGauges: FirstPassResult['shotGauges'];
-  /** フラワー編（V-0483）: 周期のゲージ（1 パス目の記録） */
+  /** 周期のゲージ（1 パス目の記録。V-0483） */
   timerGauges: FirstPassResult['timerGauges'];
   /** 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の爆発（1 パス目の記録。テスト用） */
   accumulateReleases: FirstPassResult['accumulateReleases'];
-  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 2.9 節）: 1 パス目の件の一覧の履歴 */
+  /** 1 パス目の件の一覧の履歴（plan/design-holder-effects.md 2.9 節） */
   history: HolderHistory;
 };
 
 /**
- * Stage 8: 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
- * Stage 10: 射撃の列と時刻表は runFirstPass のフレームループで同時に作る（射撃に効くバフ・CT 短縮・弾丸チャージ込み）。
- * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。持ち主ごとの一覧編: バフの区間は 1 パス目の履歴から作る。
+ * 1 パス目。射撃の列 → 時刻表（常時のゲージ速度込み）→ バフの区間（射撃の回数トリガー込み）→ 倍率ダメージの発動。
+ * 射撃の列と時刻表は runFirstPass のフレームループで同時に作る（射撃に効くバフ・CT 短縮・弾丸チャージ込み）。
+ * バフの区間と倍率ダメージは、確定した射撃の列と時刻表から作る。バフの区間は 1 パス目の履歴から作る。
  */
 export function planTeamRun(teamInput: TeamInput): TeamPlan {
-  // Stage 9: 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
+  // 直接呼ばれても宝物の段階が効くように。最上位で適用済みなら何もしない（同じオブジェクト）
   const input = applyCompositionToTeam(applyTreasureToTeam(teamInput));
   const { slots, enemy, model } = input;
   validateTeamSlots(slots);
@@ -240,7 +240,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   const frames = battleSecondsToFrames(input.durationSeconds);
   const timelineSlots = toTimelineSlots(slots);
   const untargetable = untargetableRanges(enemy.events, frames);
-  // Stage 18-C: 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
+  // 条件が自動の枠の着地点（敵の出来事だけで決まるので、射撃より前に決まる）
   const landing = planLandings(slots, enemy, frames, resolvePassiveStates(timelineSlots));
   // 蓄積爆破の発の値（下の shotValueAt）: 枠ごとの着弾の区間のカーソルと、1 発の倍率ダメージの解決
   const shotSpanAt: number[] = [];
@@ -270,7 +270,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
           hitRateWith: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) =>
             hitRateSpanWith(landing, slots[slotIndex]!, slotIndex, span, timed),
         }),
-    // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件「適正射程距離内なら」（着地点の計画が無ければ手入力の距離ボーナス）
+    // 条件「適正射程距離内なら」（着地点の計画が無ければ手入力の距離ボーナス。plan/design-agent-bunny.md 2.2 節）
     effectiveRangeAt: (slotIndex: number, frame: number, minRange: number) =>
       inEffectiveRangeAt(landing, slots[slotIndex]!, slotIndex, frame, minRange),
     // 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.4 節）: 蓄積爆破の発の値は、2 パス目の区間と同じ関数で数える
@@ -301,7 +301,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
     },
   });
   const { shots, schedule, instants, cycleGaugeHits, dotGauges, shotGauges, timerGauges } = first;
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
+  // バフの区間は、1 パス目の件の一覧の履歴から作る（plan/design-holder-effects.md 2.7 節）
   const sustainedHitRateUp = input.sustainedHitRateUp ?? true;
   const timeline = buffTimelineOf(first.history, schedule, landing, sustainedHitRateUp);
   const skillHits = planSkillHits(
@@ -336,7 +336,7 @@ export function planTeamRun(teamInput: TeamInput): TeamPlan {
   };
 }
 
-/** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */
+/** その枠の射撃ごとの倍率ダメージ（1 トリガーの値に畳み込む）。定義が無ければ空 */
 export function perShotDamageOf(slot: TeamSlotInput): ResolvedSkillDamage[] {
   const definition = slot.skills?.definition;
   if (!definition) return [];
@@ -349,7 +349,7 @@ function isBurstUseTrigger(trigger: ResolvedTrigger): boolean {
 }
 
 /**
- * Stage 8: 倍率ダメージ（damage）の発動を列挙し、発動フレームのバフで期待ダメージを計算する。
+ * 倍率ダメージ（damage）の発動を列挙し、発動フレームのバフで期待ダメージを計算する。
  * 射撃の回数トリガーはその射撃と同じバフ（その射撃で付くバフは次のフレームからなので含まない）、
  * バーストを使った時のもの（burstUse とその回数）は burstDamage と同じく発動直前のバフ。
  */
@@ -358,16 +358,16 @@ export function planSkillHits(
   enemy: EnemyInput,
   timeline: BuffTimeline,
   /**
-   * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節・段 D の 2）: 1 パス目の履歴。条件 enemyState は敵の状態の件、
-   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。段 11 の PR 5: 条件 selfCounter と
-   * perCount の { counter } はカウンタの記録を見る。ソリン編: 条件 selfHp は HP の割合の段（hpRatios）を見る
+   * 1 パス目の履歴（plan/design-holder-effects.md 2.8 節）。条件 enemyState は敵の状態の件、
+   * 下位効果のスタック適用は値の小片、{ applied } は付いた記録、段の循環は間隔の変更の件を見る。条件 selfCounter と
+   * perCount の { counter } はカウンタの記録を見る。条件 selfHp は HP の割合の段（hpRatios）を見る
    */
   history: Pick<HolderHistory, 'tracks' | 'amplified' | 'slots' | 'applications' | 'counters' | 'hpRatios'>,
   schedule: BurstSchedule | null,
   frames: number,
   shots: readonly (ShotLog | null)[],
   /**
-   * アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 1 パス目が決めた召喚の攻撃の発火。蓄積して爆発するダメージ
+   * 1 パス目が決めた召喚の攻撃の発火（plan/design-ein-near-feather.md 1.3 節）。蓄積して爆発するダメージ
    * （plan/design-accumulate-explosion.md 2.4 節）: 1 パス目が決めた蓄積爆破の爆発
    */
   {
@@ -376,21 +376,21 @@ export function planSkillHits(
     cooldownTimerFires,
   }: Pick<FirstPassResult, 'summonHits' | 'accumulateReleases' | 'cooldownTimerFires'>,
   sustainedDamagePlacement?: SustainedDamagePlacement,
-  /** コアの経路編: 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
+  /** 枠ごとの自動攻撃のコアに当たる割合の区間（frame/landing.ts の slotAutoAttackCoreRatesOf）。省略はコアなし */
   autoAttackCoreRates: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[] = [],
   /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略はいまのモデル */
   attackRounding?: AttackRounding,
   /**
-   * 2 段目の段 12 の PR 2: 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（frame/landing.ts の slotDistanceRatesOf）。damage の distance の
+   * 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（frame/landing.ts の slotDistanceRatesOf）。damage の distance の
    * ヒットが読む。省略は距離ボーナスなし
    */
   distanceRates: readonly (FlightFrameSpan[] | null)[] = [],
 ): SkillHitEvent[] {
   const hits: SkillHitEvent[] = [];
-  // クルミ S2 編: damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。段 C: 敵の状態の件（どの出どころの件でもよい）
+  // damage の条件 enemyState が見る、敵の状態ごとの「付いている」区間。敵の状態の件（どの出どころの件でもよい）
   const enemySpans = new Map<NamedStateId, { start: number; end: number }[]>();
-  // エレグの段 3（plan/design-elegg-s3.md 2 節の 2）: 敵に付く状態の付与の件（ブームインストール）も同じ列に入れる
-  // マスト編（plan/design-mast.md 2.3 節）: dot の stacksFrom が写す、敵にスタックで付く状態の付与の件（出どころの枠 × 状態。海風）
+  // 敵に付く状態の付与の件（ブームインストール）も同じ列に入れる（plan/design-elegg-s3.md 2 節の 2）
+  // dot の stacksFrom が写す、敵にスタックで付く状態の付与の件（出どころの枠 × 状態。海風。plan/design-mast.md 2.3 節）
   const enemyGrantStacks = new Map<string, { start: number; end: number; stack?: number }[]>();
   for (const item of itemsOf(history, { holder: ENEMY })) {
     if (item.origin.kind !== 'enemyState' && item.origin.kind !== 'state') continue;
@@ -408,17 +408,18 @@ export function planSkillHits(
       if (x.start <= frame && frame < x.end) stacks = Math.max(stacks, x.stack ?? 0);
     return stacks;
   };
-  // 段 D の 2: 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）
+  // 下位効果のスタック適用が見る値の小片（区間に足すのと同じ。状態だけの stat は入れない）
   const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
   slots.forEach((slot, slotIndex) => {
     const definition = slot?.skills?.definition;
     if (!slot || !definition) return;
     const levels = slot.skills?.levels ?? MAX_SKILL_LEVELS;
     const sequential = definition.skills.burst.sequential === true;
-    // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: damage の条件 selfState が見る、自分の静的な状態と状態の件（段の印に依らない。
+    // damage の条件 selfState が見る、自分の静的な状態と状態の件（段の印に依らない。
     // 発火のフレームより前に付いた件だけを見る。同じフレームに付いた件（同じ発動の付与を含む）は見ない（C-0160 と同じ読み。V-0432）。
-    // 解除・消去で外れる件はそのフレームまで付いている）。2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの
-    // 状態でも当たる。2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件は、同じ件の段の最大を見る（skills/holders.ts の stacksHold）
+    // 解除・消去で外れる件はそのフレームまで付いている。plan/design-skill-stage1.md 1.1 節）。家族の根なら、家族のどの
+    // 状態でも当たる（plan/design-skill-stage5.md 1.2 節）。スタック数の条件は、同じ件の段の最大を見る（skills/holders.ts の stacksHold。
+    // plan/design-skill-stage3.md 1.4 節）
     const ownStatics = new Set(staticStatesOf(definition));
     const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });
     const selfStateHolds = (self: SelfStateCondition, frame: number): boolean => {
@@ -437,7 +438,7 @@ export function planSkillHits(
         })),
       );
     };
-    // 2 段目の段 10: perCount が読む、自分のその状態のスタック数（selfStateHolds と同じ件。静的な状態は 1）
+    // perCount が読む、自分のその状態のスタック数（selfStateHolds と同じ件。静的な状態は 1）
     const selfStackCount = (state: NamedStateId, frame: number): number => {
       let level = [...ownStatics].some((s) => stateMatches(state, s)) ? 1 : 0;
       for (const i of ownStateItems) {
@@ -446,26 +447,27 @@ export function planSkillHits(
       }
       return level;
     };
-    // 2 段目の段 11 の PR 5（plan/design-skill-stage11.md 2.5 節）: 条件 selfCounter と perCount の { counter } が読む、自分のカウンタの
-    // 発火のフレームの値（前のフレームの終わりの値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 から。counterEffectiveFrom）
+    // 条件 selfCounter と perCount の { counter } が読む、自分のカウンタの発火のフレームの値（前のフレームの終わりの
+    // 値。1 パス目の判定と同じ見え方。戦闘開始時の増減はフレーム 0 から。counterEffectiveFrom。
+    // plan/design-skill-stage11.md 2.5 節）
     const ownCounters = history.counters.filter((r) => r.slotIndex === slotIndex);
     const counterAt = (counter: CounterId, frame: number): number => {
       let value = 0;
       for (const r of ownCounters) if (r.counter === counter && counterEffectiveFrom(r) <= frame) value = r.value;
       return value;
     };
-    // damage の条件の自分の側の読み口。ソリン編（plan/design-soline.md 2.1 節）: selfHp（以上）は発火のフレームの HP の割合を見る
+    // damage の条件の自分の側の読み口。selfHp（以上）は発火のフレームの HP の割合を見る（plan/design-soline.md 2.1 節）
     const self: SelfReaders = {
       stateHolds: selfStateHolds,
       counterAt,
       hpRatioAt: (frame) => selfHpRatioOf(history, slotIndex, frame),
     };
-    // 持続ダメージの付くフレーム。2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: { counterFull } の perCount は、発火の
+    // 持続ダメージの付くフレーム（plan/design-skill-stage13.md 2.3 節）。{ counterFull } の perCount は、発火の
     // applyDelayFrames 後から間隔ごとに、カウンタの数だけ 1 つずつ付く（キャプチャーチェーンの攻撃ごとのチェーンバインド）
     const dotApplicationFrames = (effect: ResolvedDamageEffect): number[] => {
       const t = effect.trigger;
-      // 2 段目の段 17 の PR 4（plan/design-skill-stage17.md 2.2 節）: 付くフレームの条件（自分の状態。damage と同じ判定）
-      // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 4）: 「〈状態〉が適用された時」は、その状態が自分に付いたフレーム
+      // 付くフレームの条件（自分の状態。damage と同じ判定。plan/design-skill-stage17.md 2.2 節）
+      // 「〈状態〉が適用された時」は、その状態が自分に付いたフレーム（plan/design-skill-stage19.md 2.1 節。論点 4）
       if (isResolvedApplied(t)) return appliedFrames(history, t.applied, slotIndex);
       if (!isCounterFullTrigger(t)) {
         const at = triggerFrames(t, schedule, slotIndex, frames, shots);
@@ -481,14 +483,14 @@ export function planSkillHits(
         perCountFrames(f, counterAt(per.counter, f), step, frames),
       );
     };
-    // 着弾編: 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
+    // 同じ発動の順は、ヒットと効果の発火が同じフレームのキャラだけで決めてある（plan/design-burst-landing.md 3.2 節）
     const delays = burstDelaysOf(slot.character);
     if (sequential && delays.hitFrames !== delays.effectFrames) {
       throw new RangeError('a sequential burst needs the same hit and effect delays');
     }
-    // 分かれたヒット編: 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（plan/design-burst-split-hits.md 4.1 節）
+    // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（plan/design-burst-split-hits.md 4.1 節）
     if (sequential && isSplit(delays)) throw new RangeError('a sequential burst cannot have split hits');
-    // ミハラのバースト編: 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
+    // 自分の発動（perBurstHit の damage が、発火のフレームからヒットのフレームの列を引く）
     const mine = (schedule?.activations ?? []).filter((a) => a.slotIndex === slotIndex);
     const push = (
       frame: number,
@@ -500,22 +502,23 @@ export function planSkillHits(
       valueFrame = frame,
     ): { trigger: ReturnType<typeof computeTriggerDamage>; hit: SkillHitResult } => {
       // バースト使用時の倍率ダメージは、撃つ側のバフを発動の時点で固定する（burstHitBuffs）。発動は発火の effectFrames 前
-      // （ミハラのバースト編: 分かれたヒットごとに出す damage は、発動のフレームを渡す）。
-      // 2 段目の段 10（C-0657。V-0527）: バーストのヒットごとに出す追加ダメージ（perBurstHit）は、撃つ側のバフもヒットの時点の値で出す
-      // （シンデレラの S1 の攻撃力▲は、ヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時点のまま）
-      // 追加ダメージの時点編（plan/design-burst-landing.md 12 節の案 A。C-0838）: 敵の側のデバフ（受けるダメージ▲・防御力▼）は
+      // （分かれたヒットごとに出す damage は、発動のフレームを渡す）。
+      // バーストのヒットごとに出す追加ダメージ（perBurstHit）は、撃つ側のバフもヒットの時点の値で出す
+      // （シンデレラの S1 の攻撃力▲は、ヒットの時の最終最大HP を読み直す。バーストのヒットは発動の時点のまま。C-0657。V-0527）
+      // 敵の側のデバフ（受けるダメージ▲・防御力▼）は
       // 効果の発火の直前の値で見る（イサベルの段階 2・3 には、遅れの間に付いたブームインストールの▼が乗る。同じフレームの
-      // バーストのヒットは発動の時点のまま。C-0837）。遅れ 0 のキャラは発動と発火が同じフレームなので変わらない
+      // バーストのヒットは発動の時点のまま。C-0837。plan/design-burst-landing.md 12 節の案 A。C-0838）。
+      // 遅れ 0 のキャラは発動と発火が同じフレームなので変わらない
       const atFire = pre && !shooterAtHit;
       const enemyDebuffs = enemy.burstEffectEnemyDebuffs ?? 'hit';
       const atHit = atFire
         ? burstHitBuffs(timeline, activationFrame, frame, slotIndex, pre, undefined, enemyDebuffs)
         : burstSnapshotState(timeline, valueFrame, slotIndex, pre).buffs;
-      // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.4 節）: スキルのスロットの sequential は、射撃の回数
+      // スキルのスロットの sequential は（plan/design-ludmilla-wo.md 2.4 節）、射撃の回数
       // トリガーの発火（窓は次のフレームから）の damage に、同じ発火で前に書いた timed を足す
-      // 2 段目の段 19 の PR 2（V-0627）: 下位効果のスタック適用でないバーストでも、追加ダメージには、同じ発火で前に書いた敵の側の
+      // 下位効果のスタック適用でないバーストでも、追加ダメージには、同じ発火で前に書いた敵の側の
       // デバフ（防御力▼）が乗る（ギルティのフルスタックの防御力▼。同じフレームのバーストスキルダメージには乗らない。C-0838 の続きなので、
-      // 敵の側のデバフを発火の時点で見るとき（enemyDebuffs が 'hit'）だけ）
+      // 敵の側のデバフを発火の時点で見るとき（enemyDebuffs が 'hit'）だけ。V-0627）
       const skill = effect.source.skill;
       const buffs =
         atFire && skill === 'burst' && (sequential || enemyDebuffs === 'hit')
@@ -542,18 +545,17 @@ export function planSkillHits(
       });
       // フルバースト補正はフルバースト中に出た倍率ダメージにだけ乗る（2026-09-23 実測）
       const fullBurst = SKILL_HIT_FULL_BURST_BONUS && schedule !== null && isInFullBurst(schedule, valueFrame);
-      // レイヴン編: スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
+      // スタックする持続ダメージの tick は、1 スタックの倍率 × スタックの数（C-0182）
       const scaled = stacks === undefined ? effect : { ...effect, multiplier: effect.multiplier * stacks };
-      // コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: core の自動攻撃は、ヒットのフレームの着地点の行の割合
-      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージは割合 1。2 段目の段 12 の PR 2: damage の core も
-      // 自動攻撃と同じ行
+      // core の自動攻撃は、ヒットのフレームの着地点の行の割合（plan/design-anis-star-core-path.md 3.2 節）
+      // コア命中ダメージは割合 1（plan/design-new-chars-1029.md 5.4 節）。damage の core も自動攻撃と同じ行
       const coreRate =
         effect.coreHit === true
           ? 1
           : effect.core === true
             ? flightFramesAt(autoAttackCoreRates[slotIndex]?.[effect.source.skill], frame)
             : 0;
-      // 2 段目の段 12 の PR 2: distance のヒットは、ヒットのフレームの撃った枠の通常攻撃と同じ距離ボーナスの割合
+      // distance のヒットは、ヒットのフレームの撃った枠の通常攻撃と同じ距離ボーナスの割合
       const distanceRate = effect.distance === true ? flightFramesAt(distanceRates[slotIndex], frame) : 0;
       const hit = computeSkillHit(
         [scaled],
@@ -569,8 +571,7 @@ export function planSkillHits(
       hits.push({ frame, slotIndex, effect, hit, ...(stacks === undefined ? {} : { stacks }) });
       return { trigger, hit };
     };
-    // 段 D の 2: 間隔の変更の件（持ち主はその枠。時刻の順）。2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 窓が効く先
-    // （段の循環か、射撃の回数のきっかけか）とスロットで絞る
+    // 間隔の変更の件（持ち主はその枠。時刻の順）。窓が効く先（段の循環か、射撃の回数のきっかけか）とスロットで絞る（plan/design-skill-stage12.md 2.4 節）
     const everyWindows = (target: 'cycle' | 'shotCounts', skill: SkillSlot) =>
       itemsOf(history, { holder: slotIndex, kind: 'cycleEvery' }).flatMap((i) =>
         i.origin.kind === 'cycleEvery' && i.origin.effect.target === target && i.origin.effect.targetSkill === skill
@@ -578,7 +579,7 @@ export function planSkillHits(
           : [],
       );
     const everyAtFor = (skill: SkillSlot): ShotCountEveryAt | undefined => everyAtOf(everyWindows('shotCounts', skill));
-    /** 魔術師のカード編: 1 パス目が追ったクールタイムの印のある周期の発火（どの印のある周期も 1 パス目が記録する） */
+    /** 1 パス目が追ったクールタイムの印のある周期の発火（どの印のある周期も 1 パス目が記録する） */
     const cooldownFiresOf = (slotIndex: number, skill: SkillSlot): number[] => {
       const record = cooldownTimerFires.find((c) => c.slotIndex === slotIndex && c.skill === skill);
       if (record === undefined)
@@ -586,17 +587,17 @@ export function planSkillHits(
       return record.frames;
     };
     for (const effect of resolveDamageEffects(definition, slot.character, levels)) {
-      // 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md 3.1 節）: delayFrames があれば、きっかけの後のフレームに
-      // そのフレームのバフで出す（発動の直前のバフで固定しない）。戦闘の終わりを越えるヒットは出さない
+      // delayFrames があれば、きっかけの後のフレームに
+      // そのフレームのバフで出す（発動の直前のバフで固定しない。plan/design-delayed-skill-hit.md 3.1 節）。戦闘の終わりを越えるヒットは出さない
       const delay = effect.delayFrames ?? 0;
       const pre = delay === 0 && isBurstUseTrigger(effect.trigger) && BURST_HIT_USES_PRE_ACTIVATION_BUFFS;
-      // ミハラのバースト編: 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
+      // 同じ発動の効果の順を、分かれたヒットにどう当てるかの根拠が無い（分かれたヒットと同じ）
       if (sequential && effect.perBurstHit === true)
         throw new RangeError('a sequential burst cannot have perBurstHit damage');
-      // ペルソナ編（plan/design-persona.md 3.3 節）: 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
-      // （名前の付いた状態の語彙編: 時刻表の applications。plan/design-named-state.md 5.3 節）
-      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.3 節）: 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
-      // 次の発動までの秒を決めて並べる
+      // 「〈状態名〉が適用された時」は、その状態がこの枠に付いたフレーム
+      // （時刻表の applications。plan/design-persona.md 3.3 節・plan/design-named-state.md 5.3 節）
+      // 状態の間だけ縮む周期は、前の発動のフレームの自分の状態で
+      // 次の発動までの秒を決めて並べる（plan/design-new-chars-1029.md 5.3 節）
       const shorten = effect.periodShorten;
       // 蓄積爆破（plan/design-accumulate-explosion.md 2.3・2.4 節）: 1 パス目が決めた爆発のフレームに、1 パス目が付けた発のフレームで決めた最大量で
       // 爆発のヒットを置く。ヒットの値は 2 パス目（sim/engine.ts）が窓の中の発の値から出す
@@ -618,9 +619,9 @@ export function planSkillHits(
         }
         continue;
       }
-      // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: { counterFull } はカウンタが上限に届いた次のフレーム（1 パス目の記録）
+      // { counterFull } はカウンタが上限に届いた次のフレーム（1 パス目の記録。plan/design-skill-stage13.md 2.2 節）
       const t = effect.trigger;
-      // アインのニアフェザー編: 召喚の攻撃は 1 パス目が決めた発火のフレーム
+      // 召喚の攻撃は 1 パス目が決めた発火のフレーム
       const fires = isSummonAttackTrigger(t)
         ? summonHits.filter((h) => h.slotIndex === slotIndex && h.summon === t.summon).map((h) => h.frame)
         : isCounterFullTrigger(t)
@@ -628,7 +629,7 @@ export function planSkillHits(
           : isResolvedApplied(t)
             ? appliedFrames(history, t.applied, slotIndex)
             : isResolvedTimer(t)
-              ? // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムの印のある周期は 1 パス目の記録
+              ? // クールタイムの印のある周期は 1 パス目の記録（plan/design-arcana-magician.md 2.1 節）
                 t.cooldown === true
                 ? cooldownFiresOf(slotIndex, effect.source.skill)
                 : timerDamageFrames(t, shorten, frames, schedule, slotIndex, (state, f) =>
@@ -663,8 +664,8 @@ export function planSkillHits(
           };
           continue;
         }
-        // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
-        // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502）。段 11 の PR 5: 「× オーバー
+        // 「〈名前〉スタックコピー」は発火のフレームのスタック数を倍率に掛ける
+        // （条件 selfState と同じく、発火のフレームより前に付いた件の段の最大。0 なら出さない。V-0502。plan/design-skill-stage10.md 2.1 節）。「× オーバー
         // エネルギー段階」は発火のフレームのカウンタの値（V-0532）
         const per = effect.perCount;
         const copied =
@@ -674,12 +675,13 @@ export function planSkillHits(
               ? selfStackCount(per.state, frame)
               : counterAt(per.counter, frame);
         if (copied === 0) continue;
-        // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
-        // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正）。
-        // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: オートファイアの順番の攻撃（フルチャージの発のフレームのオートファイア
-        // 準備のスタック数。発で外れる前の数。V-0552）も同じ形で、delayFrames の後から刻む。
-        // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。V-0553）: 順番の攻撃（sequentialAttack）のヒットは、バフとフルバースト
-        // 補正を発火のフレーム（オートファイアならフルチャージの発）の値で固定する。「1 発間維持」の▲（窓は溜めが満ちたフレームから撃った
+        // 数だけのヒットを、倍率を掛けずに 1 つずつ間隔を空けて出す
+        // （粘着榴弾の起爆・キャプチャーチェーンの攻撃。perCountFrames。それぞれのフレームのバフとフルバースト補正。plan/design-skill-stage12.md 2.2 節）。
+        // オートファイアの順番の攻撃（フルチャージの発のフレームのオートファイア
+        // 準備のスタック数。発で外れる前の数。V-0552。plan/design-skill-stage14.md 2.5 節）も同じ形で、delayFrames の後から刻む。
+        // 順番の攻撃（sequentialAttack）のヒットは、バフとフルバースト
+        // 補正を発火のフレーム（オートファイアならフルチャージの発）の値で固定する
+        // （plan/design-skill-stage14.md 2.7 節。V-0553）。「1 発間維持」の▲（窓は溜めが満ちたフレームから撃った
         // 発まで）は、その発の遅れて出る順番の攻撃の全部に乗り、次の発の順番の攻撃には乗らない
         if (splitsPerCount(effect) && copied !== undefined) {
           for (const at of effectHitFrames(effect, frame, copied, frames))
@@ -687,8 +689,8 @@ export function planSkillHits(
           continue;
         }
         if (effect.perBurstHit === true) {
-          // ミハラのバースト編（plan/design-mihara-burst-hits.md 3.2 節）: 条件は発火のフレームで 1 回判定し（C-0566）、
-          // その発動のバーストの倍率ダメージのヒットのそれぞれに、等分しない倍率で出す（C-0565）
+          // 条件は発火のフレームで 1 回判定し（C-0566）、
+          // その発動のバーストの倍率ダメージのヒットのそれぞれに、等分しない倍率で出す（C-0565。plan/design-mihara-burst-hits.md 3.2 節）
           const activation = mine.find((a) => effectFrameOf(a) === frame);
           if (activation === undefined) throw new RangeError(`no burst activation fires at frame ${frame}`);
           for (const hit of hitFramesOf(activation)) {
@@ -696,9 +698,9 @@ export function planSkillHits(
           }
           continue;
         }
-        // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 「N 回順番に攻撃」は N ヒットを間をあけて出す。
+        // 「N 回順番に攻撃」は N ヒットを間をあけて出す（plan/design-new-chars-1029.md 5.2 節）。
         // 同 10.2 節の d: N ヒットとも発動（発火）のフレームのバフとフルバースト補正で出す（遅れ・間の後のヒットも。C-0735）。
-        // N 回でない倍率ダメージは、遅れがあればヒットのフレームのバフ（遅れて出る倍率ダメージ編）
+        // N 回でない倍率ダメージは、遅れがあればヒットのフレームのバフ
         // エレグの S1（C-0766）: 値を決めるフレームのある効果（valueDelayFrames。N 回は 0）は、どのヒットも発火のその後の値で出す
         // （エレグの S1 は届いた発の次のフレームで、同じ発で付いた timed も乗る）
         // イサベルの S2（V-0632）: 値を決めるのが発火の直前の効果（valueBeforeFire）は、どのヒットも発火の 1 フレーム前の値で出す
@@ -719,11 +721,11 @@ export function planSkillHits(
           );
       }
     }
-    // ニヒリスター編: 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
-    // クルミ編: 同じ状態（state）の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
+    // 持続ダメージ。付いた時から間隔ごとの tick を、倍率ダメージと同じ式で tick のフレームのバフで積む。
+    // 同じ状態（state）の dot は 1 つの持続ダメージとして、発火をまとめて tick を出す（C-0136）。tick は、その時点で
     // 最後に付けた効果に帰属させる（値は同じ）。
-    // レイヴン編: スタックする持続ダメージ（maxStacks > 1）は、tick の時点のスタックの数を倍率に掛ける（dotTicks。C-0182）
-    // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）のフレームと、ほかの dot が写す元の付いたフレーム
+    // スタックする持続ダメージ（maxStacks > 1）は、tick の時点のスタックの数を倍率に掛ける（dotTicks。C-0182）
+    // 消去（cancelState）のフレームと、ほかの dot が写す元の付いたフレーム（plan/design-skill-stage13.md 2.5 節）
     const dotCancels = resolveDotCancels(definition, slot.character, levels);
     const cancelsOf = (state: NamedStateId | undefined): number[] =>
       state === undefined
@@ -732,8 +734,8 @@ export function planSkillHits(
             .filter((c) => c.state === state)
             .flatMap((c) => triggerFrames(c.trigger, schedule, slotIndex, frames, shots))
             .sort((a, b) => a - b);
-    // 同 PR 3（2.6 節）: 敵のスタック量▲は、対象がその状態のフレーム（条件 enemyState。damage と同じ判定）だけ、同じ state の dot の付与として数える（1 スタックぶんの
-    // ヒットと刻みの付け直しも付与と同じ。V-0548）。▲の付与は、その state の最初の dot の効果に帰属させる（値は同じ）
+    // 敵のスタック量▲は、対象がその状態のフレーム（条件 enemyState。damage と同じ判定）だけ、同じ state の dot の付与として数える（1 スタックぶんの
+    // ヒットと刻みの付け直しも付与と同じ。V-0548。plan/design-skill-stage13.md 2.6 節）。▲の付与は、その state の最初の dot の効果に帰属させる（値は同じ）
     const dotStackUps = resolveDotStackUps(definition, slot.character, levels);
     const dotGroups = groupDotsByState(resolveDotEffects(definition, slot.character, levels)).map((group) => {
       const fires = group
@@ -753,10 +755,10 @@ export function planSkillHits(
     });
     for (const { dot, fires, cancels } of dotGroups) {
       const { maxStacks } = dot;
-      // 2 段目の段 13 の PR 2: スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
+      // スタックコピー。付けた時に元の持続ダメージのスタックの数を写し、その数の tick を出す（0 なら付かない）
       const from = dot.stacksFrom;
       if (from !== undefined) {
-        // 元は同じ定義の dot か、敵にスタックで付く状態の付与（マスト編。skills/parse/crossChecks.ts の validateDotStateRefs）
+        // 元は同じ定義の dot か、敵にスタックで付く状態の付与（skills/parse/crossChecks.ts の validateDotStateRefs）
         const source = dotGroups.find((g) => g.dot.state === from);
         const sourceFires = source?.fires.map((x) => x.f) ?? [];
         const stacksAt = (frame: number): number =>
@@ -767,21 +769,21 @@ export function planSkillHits(
           const copied = stacksAt(f);
           if (copied === 0) continue;
           for (const tick of dotTicks([f], dot.intervalSeconds, dot.durationSeconds, frames, dot.firstTick)) {
-            // マスト編（plan/design-mast.md 2.3 節）: copyEachTick は tick ごとに写し直す（0 の tick は出さない）
+            // copyEachTick は tick ごとに写し直す（0 の tick は出さない。plan/design-mast.md 2.3 節）
             const stacks = dot.copyEachTick === true ? stacksAt(tick.frame) : copied;
             if (stacks > 0) push(tick.frame, effect, false, stacks);
           }
         }
         continue;
       }
-      // 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: 付けるたびに、付けた 1 スタックぶんの 1 ヒット（C-0411）
+      // 付けるたびに、付けた 1 スタックぶんの 1 ヒット（C-0411。plan/design-skill-stage13.md 2.3 節）
       if (dot.hitOnApply === true) {
         for (const { f, effect } of fires) {
           push(f, effect, false);
           hits[hits.length - 1]!.onApply = true;
         }
       }
-      // 2 段目の段 19 の PR 1（論点 4）: 「〈状態〉解除まで」は、付いたフレームを含む自分のその状態の件ごとに、件の終わりまでの tick を出す
+      // 「〈状態〉解除まで」は、付いたフレームを含む自分のその状態の件ごとに、件の終わりまでの tick を出す
       // （件の続いている間の付き直しは、ほかの dot と同じく刻みを変えない）
       const until = dot.untilStateEnd;
       if (until !== undefined) {
@@ -813,14 +815,14 @@ export function planSkillHits(
         push(tick.frame, fires[last]!.effect, false, maxStacks > 1 ? tick.stacks : undefined);
       }
     }
-    // Stage 11 紅蓮BS: 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
+    // 段の循環。射撃の列を通算で数え、間隔の変更の窓に入る射撃は窓の間隔で段を進める（skills/cycles.ts）。
     // 値は射撃の回数トリガーの倍率ダメージと同じく、ヒットのフレームのバフ（段の delayFrames があれば射撃の d 後）
     for (const cycle of resolveCycles(definition, slot.character, levels)) {
       const windows = everyWindows('cycle', cycle.source.skill);
       const shotFrames = cycleShotFrames(shots[slotIndex], cycle.trigger);
       for (const fire of cycleFires(cycle.trigger.every, cycle.steps.length, shotFrames, windows)) {
-        // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 段の delayFrames があれば、射撃の d 後に
-        // そのフレームのバフで出す（紅蓮BS は A 10・B 9・C 9。C-0651）。戦闘の終わりを越えるヒットは出さない
+        // 段の delayFrames があれば、射撃の d 後に
+        // そのフレームのバフで出す（紅蓮BS は A 10・B 9・C 9。C-0651。plan/design-shot-count-trigger-frame.md 6.6 節）。戦闘の終わりを越えるヒットは出さない
         const step = cycle.steps[fire.step]!;
         const at = fire.frame + (step.delayFrames ?? 0);
         if (at < frames) push(at, step, false);
@@ -839,9 +841,9 @@ type SelfReaders = {
 };
 
 /**
- * クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと
- * （名前の付いた状態の語彙編: timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState。plan/design-named-state.md 5.6 節。
- * 2 段目の段 1: selfState も。plan/design-skill-stage1.md 1.1 節）
+ * damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。条件が無ければ true。キーはすべてを満たすこと
+ * （timed と同じ条件の型。damage が受ける鍵は inFullBurst・enemyState・selfState。plan/design-named-state.md 5.6 節。
+ * selfState は plan/design-skill-stage1.md 1.1 節）
  */
 function damageConditionHolds(
   condition: EffectCondition | undefined,
@@ -851,7 +853,7 @@ function damageConditionHolds(
   self: SelfReaders,
 ): boolean {
   if (condition === undefined) return true;
-  // ソリン編（plan/design-soline.md 2.1 節）: 自分の HP の割合が閾値以上か（resolveCondition が atLeastRef を解いてある）
+  // 自分の HP の割合が閾値以上か（resolveCondition が atLeastRef を解いてある。plan/design-soline.md 2.1 節）
   if (condition.selfHp !== undefined && !selfHpHolds(condition.selfHp, self.hpRatioAt(frame))) return false;
   if (condition.selfState !== undefined && !self.stateHolds(condition.selfState, frame)) return false;
   if (condition.selfCounter !== undefined) {
@@ -891,7 +893,7 @@ function assertPlainTimed(w: ValuePiece, what: string): void {
 }
 
 /**
- * ナユタ編（V-0666）: 使用武器の変更の小片か。変更は通常攻撃の武器を替えるだけで、バーストの倍率ダメージの値に効かないので、
+ * 使用武器の変更の小片か（V-0666）。変更は通常攻撃の武器を替えるだけで、バーストの倍率ダメージの値に効かないので、
  * 同じ発動・同じスロットの前の効果を足すときに飛ばす
  */
 function isWeaponPiece(w: ValuePiece): boolean {
@@ -899,14 +901,14 @@ function isWeaponPiece(w: ValuePiece): boolean {
 }
 
 /**
- * 着弾編（plan/design-burst-landing.md 3.2 節）: 「下位効果のスタック適用」（sequential）の damage が見るバフ。
+ * 「下位効果のスタック適用」（sequential）の damage が見るバフ（plan/design-burst-landing.md 3.2 節）。
  * 発動の直前のバフに、同じ枠の同じスロットで前に書いた timed のうち、start（同じ発動の効果の窓の始まり）に始まって
  * この枠に掛かる値の小片を足す（イサベルの段階 2・3 の追加ダメージに、同じ発動の段階 1 の受けるダメージ▲が乗る。C-0163。
- * 持ち主ごとの一覧編の段 D の 2: 受けるダメージ▲は敵の件で、値の小片はこの枠にも写る）。
+ * 受けるダメージ▲は敵の件で、値の小片はこの枠にも写る）。
  * 前の発動の窓が続いていれば、直前のバフにもう入っている（窓が和集合で、start に始まらない）。
- * ルドミラ：ウィンターオーナー編: スキルのスロットでは、射撃の回数トリガーの窓の始まり（発火の次のフレーム）を start に渡す。
- * 2 段目の段 19 の PR 2（V-0627）: only を渡すと、その stat の小片だけを足す（下位効果のスタック適用でないバーストの追加ダメージは、
- * 敵の側のデバフだけ）
+ * スキルのスロットでは、射撃の回数トリガーの窓の始まり（発火の次のフレーム）を start に渡す。
+ * only を渡すと、その stat の小片だけを足す（下位効果のスタック適用でないバーストの追加ダメージは、
+ * 敵の側のデバフだけ。V-0627）
  */
 function withEarlierSequentialEffects(
   pieces: readonly ValuePiece[],
@@ -945,7 +947,7 @@ export function burstSnapshotState(
 }
 
 /**
- * 着弾編（plan/design-burst-landing.md 9 節・11 節、C-0167・C-0795）: バーストのヒットが見るバフ。
+ * バーストのヒットが見るバフ（plan/design-burst-landing.md 9 節・11 節、C-0167・C-0795）。
  * 撃つ側のバフも敵の側のデバフ（受けるダメージ▲・防御力▼）も、発動のフレーム activationFrame の時点（preActivation なら直前）で
  * 固定する。ヘルムのヒットは発動から 59f 後でフルバーストの中に入るが、フルバーストの始まりで付く S2 の攻撃ダメージ▲は乗らない
  * （`0079-07`）。ノワールのヒットには、III の発動の後・ヒットの前に付いた鈴原サクラの受けるダメージ▲は乗らず、発動の時に付いていて
@@ -1017,7 +1019,7 @@ function withSameActivationEffects(
 
 /**
  * バーストヒットに「発動直前」のバフを使うか。false なら発動フレームの区間（その発動で付くバフ込み）を使う。
- * **2026-09-22 の射撃場実測で true と確定**（plan/verification.md Stage 6 節、録画 0018）:
+ * **射撃場の実測で true と確定**（plan/verification.md Stage 6 節、録画 0018）:
  * ラピのバーストは自分に攻撃力 +60.75%（10 秒）を付けるが、そのバーストのダメージは 208,131 × 3 = 624,393 で
  * 素の攻撃力基準だった（バフ込みなら 1 発 334,704 になるはず）。
  */

@@ -56,16 +56,16 @@ export type ClaimFile = {
   replaces: string[];
   /** 更新日（YYYY-MM-DD） */
   updated: string;
-  /** 最小構成の検査編: 結論の対象（plan/design-minimal-relevance.md 3.2 節） */
+  /** 結論の対象（plan/design-minimal-relevance.md 3.2 節） */
   subject?: ClaimSubject;
-  /** 最小構成の検査編: 仮説の効く条件（同 3.5 節）。仮説の結論にだけ書ける */
+  /** 仮説の効く条件（plan/design-minimal-relevance.md 3.5 節）。仮説の結論にだけ書ける */
   when?: ClaimWhen;
   /**
-   * 最小構成の検査編: 窓の端だけを決める仮説の、実機の端がモデルの端からずれうる範囲（plan/design-minimal-edge.md 2 節）。
+   * 窓の端だけを決める仮説の、実機の端がモデルの端からずれうる範囲（plan/design-minimal-edge.md 2 節）。
    * 仮説の結論にだけ書け、subject.places が必須
    */
   edge?: ClaimEdge;
-  /** 最小構成の検査編: 人の判断の印（同 4.3 節）。印のある要素は、その組の警告から外す */
+  /** 人の判断の印（plan/design-minimal-relevance.md 4.3 節）。印のある要素は、その組の警告から外す */
   minimal?: MinimalMark[];
   /**
    * 仮説・値・読み方を決めるのに使った録画（plan/design-investigation-review.md 1.3 節）。等級の候補は、反復実測の再現にこれらの
@@ -425,7 +425,7 @@ export function toClaims(files: readonly ClaimFile[]): Claim[] {
 }
 
 /**
- * invalidIds は失効した観測値（Stage 20-E）。確定の結論は、根拠の観測値があるのに有効なものが 1 件も残らないときだけ落とす。
+ * invalidIds は失効した観測値。確定の結論は、根拠の観測値があるのに有効なものが 1 件も残らないときだけ落とす。
  * 失効した根拠は消さずに残す（claims.md に印を付けて出す）。棄却の結論は問わない
  */
 export function validateClaims(
@@ -479,12 +479,12 @@ export function claimsByObservation(claims: readonly Claim[]): Map<string, strin
   return map;
 }
 
-/** 結論に結び付いた観測値（状態が確定か仮説の結論の根拠）。手入力の条件で比べる観測値は、どれかに結び付ける（Stage 20-A） */
+/** 結論に結び付いた観測値（状態が確定か仮説の結論の根拠）。手入力の条件で比べる観測値は、どれかに結び付ける */
 export function supportedObservations(claims: readonly Claim[]): Set<string> {
   return new Set(claims.filter((c) => c.state === '確定' || c.state === '仮説').flatMap((c) => c.observations));
 }
 
-/** テストで許容幅を守らせる観測値（状態が確定の結論の根拠。失効したものは外す。Stage 20-E） */
+/** テストで許容幅を守らせる観測値（状態が確定の結論の根拠。失効したものは外す） */
 export function gatedObservations(claims: readonly Claim[], invalidIds: ReadonlySet<string> = new Set()): Set<string> {
   return new Set(
     claims
@@ -503,12 +503,12 @@ export function gatedObservations(claims: readonly Claim[], invalidIds: Readonly
  *     録画は、載せた観測値が許容内なら 2 回（決めた回と後の回）と数えて、後の回を再現にする。決めるのに使っていない回は、decidedOn に
  *     無い録画と runs の後の回。parameterFree の結論は、仮説の出どころの録画も数える
  *   単独実測: 上のどちらでもない
- * decidedOn は plan/design-investigation-review.md 1.3 節（2026-10-10 のオーナーの決定。仮説を立てるのに使った録画は再現に数えない）。
- * runs と parameterFree は plan/design-grade-runs.md（2026-10-29 のオーナーの指示）
+ * decidedOn は plan/design-investigation-review.md 1.3 節（仮説を立てるのに使った録画は再現に数えない）。
+ * runs と parameterFree は plan/design-grade-runs.md
  */
 /**
  * 1 ヒットの値の指標。モデルは端数を持ち、ゲームは四捨五入した整数を出す（C-0803）が、モデルとゲームの中の値にも相対 1e-7 前後の
- * 差が残る（V-0583）ので、差の絶対値が 1 未満を厳密一致とする（plan/design-records-automation.md 3.5 節。2026-10-02 にオーナーの決定で足した）
+ * 差が残る（V-0583）ので、差の絶対値が 1 未満を厳密一致とする（plan/design-records-automation.md 3.5 節）
  */
 export const HIT_VALUE_METRICS: ReadonlySet<string> = new Set([
   'hitDamage',
@@ -584,12 +584,12 @@ const CLAIMS_HEADER = `# 結論の台帳
 
 /**
  * plan/claims.md の全文。話題の語彙の順に節を作り、節の中は番号順。
- * verificationsOf は結論 ID → それを「結論」に書いた検証記録（Stage 20-D。検証記録の側から逆に引く）
+ * verificationsOf は結論 ID → それを「結論」に書いた検証記録（検証記録の側から逆に引く）
  */
 export function renderClaims(
   claims: readonly Claim[],
   verificationsOf: ReadonlyMap<string, readonly string[]> = new Map(),
-  /** 失効した観測値 → 失効の理由（Stage 20-E。根拠に失効したものがあれば印を付ける） */
+  /** 失効した観測値 → 失効の理由（根拠に失効したものがあれば印を付ける） */
   invalidReasons: ReadonlyMap<string, string> = new Map(),
   /** 結論 ID → それを claims に書いたスキル定義の場所（plan/skills-guide.md 3 節。定義の側から逆に引く） */
   definitionPlaces: ReadonlyMap<string, readonly string[]> = new Map(),

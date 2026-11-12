@@ -1,4 +1,4 @@
-// Stage 19: records/ と packages/core/data を Node で読む（records-table.ts・records-check.ts・テストで共有）。
+// records/ と packages/core/data を Node で読む（records-table.ts・records-check.ts・テストで共有）。
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -36,15 +36,15 @@ const DATA = `${ROOT}packages/core/data/`;
 const OBSERVATIONS_DIR = `${ROOT}records/observations/`;
 export const CLAIMS_DIR = `${ROOT}records/claims/`;
 const RECORDINGS_DIR = `${ROOT}records/recordings/`;
-/** 録画の一覧（生成物。Stage 20-C） */
+/** 録画の一覧（生成物） */
 export const RECORDINGS_DOC_PATH = `${ROOT}plan/captures/recordings.md`;
 export const RESIDUALS_PATH = `${ROOT}plan/residuals.md`;
-/** 結論の一覧（生成物。Stage 20-B） */
+/** 結論の一覧（生成物） */
 export const CLAIMS_PATH = `${ROOT}plan/claims.md`;
 const VERIFICATIONS_DIR = `${ROOT}records/verifications/`;
 /** 予測ファイル（plan/design-records-automation.md 3.2 節） */
 export const PREDICTIONS_DIR = `${ROOT}records/predictions/`;
-/** 検証記録の一覧（生成物。Stage 20-D） */
+/** 検証記録の一覧（生成物） */
 export const VERIFICATIONS_PATH = `${ROOT}plan/verifications.md`;
 /** スキル定義の対応状況の一覧（生成物。plan/skills-guide.md 3 節） */
 export const SKILLS_DOC_PATH = `${ROOT}plan/skills.md`;
@@ -80,7 +80,7 @@ export function verificationPath(v: Pick<Verification, 'file'>): string {
   return `${VERIFICATIONS_DIR}${v.file}`;
 }
 
-/** records/verifications/ の V- で始まる .md（ファイル名の形が違っても読み、問題として返す）。Stage 20-D */
+/** records/verifications/ の V- で始まる .md（ファイル名の形が違っても読み、問題として返す） */
 export function loadVerifications(): Verification[] {
   return sortVerifications(
     readdirSync(VERIFICATIONS_DIR)
@@ -184,7 +184,7 @@ export function misplacedPredictions(): string[] {
     .map(({ name, id }) => `予測 ${id}: ${name} に置かれている`);
 }
 
-/** 参照の検査の対象: plan/ と records/ の下の .md と、AGENTS.md（リポジトリの根からの相対パス）。Stage 20-D */
+/** 参照の検査の対象: plan/ と records/ の下の .md と、AGENTS.md（リポジトリの根からの相対パス） */
 export function documentPaths(): string[] {
   const walk = (dir: string): string[] =>
     readdirSync(`${ROOT}${dir}`, { withFileTypes: true }).flatMap((e) =>
@@ -201,7 +201,7 @@ function recordingFileNames(): string[] {
   return readdirSync(RECORDINGS_DIR).filter((name) => name.endsWith('.json'));
 }
 
-/** records/recordings/*.json（このリポジトリの録画は番号順、その後に旧の録画）。Stage 20-C から 1 本 1 ファイル */
+/** records/recordings/*.json（このリポジトリの録画は番号順、その後に旧の録画）。1 本 1 ファイル */
 export function loadRecordingsFile(): RecordingsFile {
   return {
     recordings: sortRecordings(
@@ -306,7 +306,7 @@ export function claimFileNames(): string[] {
   return readdirSync(CLAIMS_DIR).filter((name) => name.endsWith('.json'));
 }
 
-/** records/claims/*.json（番号順）。Stage 20-B から 1 件 1 ファイル */
+/** records/claims/*.json（番号順）。1 件 1 ファイル */
 export function loadClaims(): Claim[] {
   return toClaims(claimFileNames().map((name) => readJson<ClaimFile>(`${CLAIMS_DIR}${name}`)));
 }

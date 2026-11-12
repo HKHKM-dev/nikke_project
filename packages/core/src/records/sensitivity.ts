@@ -39,8 +39,9 @@ function alwaysOn<T extends SkillEffect>(effect: T, battleSeconds: number): T {
 
 /**
  * 定義から効果を外す（minus）か、持続の効果を戦闘の始めから終わりまで効かせる（plus）。plus を当てられない効果は undefined。
- * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 状態の付与の minus はその付与の発火だけを外し（中身は同じ状態の
- * ほかの付与に移す）、plus は状態を戦闘の始めから付ける（同じ状態のほかの付与は外し、中身はこの付与に集める）。中身の項目の要素
+ * 状態の付与の minus はその付与の発火だけを外し（中身は同じ状態のほかの付与に移す）、
+ * plus は状態を戦闘の始めから付ける（同じ状態のほかの付与は外し、中身はこの付与に集める。
+ * plan/design-named-state-impl.md 1.8 節）。中身の項目の要素
  * （subIndex）の minus は項目を外し、plus は項目を付与の対象の欄のまま戦闘の始めからの timed にする
  */
 export function variantDefinition(
@@ -62,7 +63,7 @@ export function variantDefinition(
     const { contents: _contents, ...grant } = effect;
     entry.effects[ref.index] = rest.length > 0 ? { ...grant, contents: rest } : grant;
     if (variant === 'minus') return copy;
-    // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は timed にできない（plus は当てない）
+    // 最大スタック数▲の項目は timed にできない（plus は当てない）
     if (!isStatContent(item)) return undefined;
     const { kind: _kind, state: _state, claims: _claims, maxStacks: _m, maxStacksRef: _mr, ...fields } = grant;
     const { claims: _itemClaims, ...value } = item;
@@ -92,7 +93,7 @@ export function variantDefinition(
     for (const { x, k } of [...rest].reverse()) x.effects.splice(k, 1);
     return copy;
   }
-  // 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果は、while を外して戦闘中ずっと効かせる
+  // 状態の間だけ効く常時の効果は、while を外して戦闘中ずっと効かせる（plan/design-skill-stage9.md 1.3 節）
   if (effect.kind === 'passive' && effect.while !== undefined) {
     const { while: _while, ...always } = effect;
     entry.effects[ref.index] = always;

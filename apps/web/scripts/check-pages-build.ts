@@ -1,4 +1,4 @@
-// Stage 14: GitHub Pages 用のビルド成果物（vite build の出力）がサブパス（base）で動くかを確かめる（plan/design-stage12.md 4.1 節）。
+// GitHub Pages 用のビルド成果物（vite build の出力）がサブパス（base）で動くかを確かめる（plan/design-stage12.md 4.1 節）。
 //   node apps/web/scripts/check-pages-build.ts apps/web/dist /nikke_project/
 // 見るもの: index.html が参照するスクリプト・スタイルが base の下にあること、バンドルに base が埋め込まれていること
 // （データの fetch は import.meta.env.BASE_URL を前に付ける）、データ（キャラ・スキル定義・育成のマスタ・敵のプリセット）が同梱されていること、

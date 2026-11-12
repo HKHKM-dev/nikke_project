@@ -1,4 +1,4 @@
-// アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: キャラ固有の召喚の目録。定義が召喚を指すのはこの表の id だけ
+// キャラ固有の召喚の目録（plan/design-ein-near-feather.md 1.1 節）。定義が召喚を指すのはこの表の id だけ
 // （展開 kind: 'summon' と、攻撃 damage のきっかけ { summon }）。カウンタ・状態の目録（skills/counters.ts・skills/states.ts）と同じく、
 // 目録に足すのはその召喚を使うキャラを定義する時
 import type { LocalizedText } from '../types.ts';

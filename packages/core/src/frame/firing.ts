@@ -50,7 +50,7 @@ export type FiringParams = {
   /** 最大装弾数（1 以上の整数） */
   maxAmmo: number;
   /**
-   * 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数。Stage 24: 端数つき（reloadSecondsToFrames）。
+   * 分割リロードの 1 回分（reloadBullet ≥ 1 の武器は 1 回で満タン）のフレーム数。端数つき（reloadSecondsToFrames）。
    * 射手が待つ整数は、全弾リロードは 1 回ごとに丸める（cadence.ts の fullReloadFrames。plan/design-reload-rounding.md 案 E）、
    * 分割リロードは段ごとに切り上げる（C-0154）。
    * 射撃姿勢維持型は WeaponModel.stanceReloadExtraFrames を足した値（C-0149。plan/design-fire-stance-cadence.md 3.4 節）
@@ -62,8 +62,8 @@ export type FiringParams = {
    */
   splitReload: boolean;
   /**
-   * 分割リロードの 1 段で込める割合（CDN の reloadBullet）。グレイブ編（plan/design-grave.md 2.3 節。V-0735）: リロード比率で
-   * reloadBullet × max(0, 1 + Σ) にする（▼50% で 0.5 → 0.25）。段の弾数は reloadChunkAmmo。分割リロードでない武器（reloadBullet ≥ 1）は変えない
+   * 分割リロードの 1 段で込める割合（CDN の reloadBullet）。リロード比率で reloadBullet × max(0, 1 + Σ) にする（▼50% で 0.5 → 0.25。
+   * V-0735。plan/design-grave.md 2.3 節）。段の弾数は reloadChunkAmmo。分割リロードでない武器（reloadBullet ≥ 1）は変えない
    */
   reloadBullet: number;
   /** チャージ時間のフレーム数（チャージ武器だけ意味を持つ。解放遅延は含まない。チャージ速度はここにだけ効く） */
@@ -78,23 +78,24 @@ export type FiringParams = {
    */
   downCharge: boolean;
   /**
-   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: レートの蓄積に掛ける倍率 1 + 攻撃速度（チャージ武器は 1）。
+   * レートの蓄積に掛ける倍率 1 + 攻撃速度（チャージ武器は 1。plan/design-skill-stage9.md 1.2 節）。
    * マガジンの中の発と発の間だけを縮め、リロード・リロード明けの待ち・構えは変えない（V-0458 の録画 0510〜0512。C-0600）
    */
   rateScale: number;
   /**
-   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.6 節）: MG のレートの上がり方（rateOfFireChangePerShot）に掛ける倍率
-   * 1 + 立ち上げ速度（スピンアップの無い武器は 1）。最高レート（endRateOfFire）と初弾の遅れは変えない（読みは仮説。論点 I）
+   * MG のレートの上がり方（rateOfFireChangePerShot）に掛ける倍率
+   * 1 + 立ち上げ速度（スピンアップの無い武器は 1。plan/design-new-chars-1029.md 5.6 節）。
+   * 最高レート（endRateOfFire）と初弾の遅れは変えない（読みは仮説。論点 I）
    */
   spinUpScale: number;
-  /** Stage 11 モダニア: 装弾数無限（撃っても残弾を減らさない） */
+  /** 装弾数無限（撃っても残弾を減らさない） */
   infiniteAmmo: boolean;
-  /** Stage 11 モダニア: 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（frame/firstPass.ts） */
+  /** 使用武器の変更（無ければ null = 基礎の武器）。射手は変更後の武器を別の状態で撃つ（frame/firstPass.ts） */
   weapon: ChangedWeapon | null;
 };
 
 /**
- * 最大装弾数の比率の端数の扱い。**2026-09-23 の録画 0039（録画 A）で四捨五入と確定**:
+ * 最大装弾数の比率の端数の扱い。**録画 0039（録画 A）で四捨五入と確定**:
  * リターの最大装弾数 45.17% でデルタ（SR 6 発）が 6 × 1.4517 = 8.71 → **9**（切り捨てなら 8）、
  * リター自身（SMG 120 発）が 174.2 → **174**（切り上げなら 175）、ドレイクは 3 つ重ねて 9 × 2.6749 = 24.07 → 24
  */
@@ -102,7 +103,7 @@ export const MAX_AMMO_ROUNDING: 'floor' | 'round' = 'round';
 
 /**
  * リロード速度・チャージ速度の式。'subtract' = 時間 × max(0, 1 − 速度)、'divide' = 時間 ÷ (1 + 速度)。
- * **2026-09-23 の録画 0040（録画 B）で subtract と確定**: アドミのリロード速度 50.91% の間のラム（SR・リロード 2 秒）の
+ * **録画 0040（録画 B）で subtract と確定**: アドミのリロード速度 50.91% の間のラム（SR・リロード 2 秒）の
  * リロードが 66f（窓の外は 126f。表示の遅れ 6f を引いて 60f ≒ 120 × 0.4909 = 59f。divide なら 80f）、
  * ユニのチャージ速度 8.97% のフルバースト中のラムの射撃間隔が 4 発平均 77.0f（窓の外は 82.0f。divide なら 78f）
  */
@@ -163,8 +164,8 @@ export function effectiveMaxAmmo(baseMaxAmmo: number, buffs: FiringBuffs): numbe
 }
 
 /**
- * バフ込みの実効値。buffs 省略は基礎値（Stage 9 までの射手と同じ）。
- * Stage 11 モダニア: 使用武器の変更が効いていれば、装弾数・リロード・チャージは変更後の武器から取る
+ * バフ込みの実効値。buffs 省略は基礎値。
+ * 使用武器の変更が効いていれば、装弾数・リロード・チャージは変更後の武器から取る
  */
 export function firingParams(
   base: ShotParams,
@@ -184,12 +185,12 @@ export function firingParams(
     chargeFrames: isChargeWeapon(shot) ? Math.max(0, chargeSecondsToFrames(chargeSecondsOf(shot, buffs))) : 0,
     stance,
     downCharge: isChargeWeapon(shot) && shot.inputType === 'DOWN_Charge',
-    // 2 段目の段 9 の PR 2: 攻撃速度▲は AR・SMG・SG にだけ書ける（味方へは skills/parse/timed.ts の validateAttackSpeed、自分へは
+    // 攻撃速度▲は AR・SMG・SG にだけ書ける（味方へは skills/parse/timed.ts の validateAttackSpeed、自分へは
     // skills/__tests__/definitions.test.ts がキャラの武器で見る。plan/design-sugar.md 2.1 節）。チャージ武器は発と発の間を
     // チャージで決めるので掛けない
     rateScale: isChargeWeapon(shot) ? 1 : Math.max(0, 1 + buffs.attackSpeed),
     spinUpScale: hasSpinUp(shot) ? Math.max(0, 1 + buffs.spinUpSpeed) : 1,
-    // 2 段目の段 11 の PR 4: 変更後の武器そのものが残弾を減らさない変更（WeaponChangeEffect.infiniteAmmo。たきなのバースト）
+    // 変更後の武器そのものが残弾を減らさない変更（WeaponChangeEffect.infiniteAmmo。たきなのバースト）
     infiniteAmmo: buffs.infiniteAmmo > 0 || buffs.weapon?.infiniteAmmo === true,
     weapon: buffs.weapon,
   };
@@ -207,20 +208,20 @@ export function chargeShotIntervalFrames(
   model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
 ): number {
   if (params.stance !== null) return params.stance.frames + model.aimInFrames + params.chargeFrames - 1;
-  // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 使用武器の変更の解放の長さ（端数あり。射手が発ごとに持ち越す）
+  // 使用武器の変更の解放の長さ（端数あり。射手が発ごとに持ち越す。plan/design-red-hood.md 7.1 節の論点 10）
   return (
     params.chargeFrames + (params.downCharge ? 0 : (params.weapon?.chargeReleaseFrames ?? model.chargeReleaseFrames))
   );
 }
 
 /**
- * チャージ時間の秒数。Stage 11 アリス編: 発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）。
- * アニス：スター編: チャージ時間の固定が効いていれば、チャージ速度を無視してその秒数（plan/design-anis-star-s2-burst.md 2.3 節）。
- * ナユタ編: 使用武器の変更の武器のチャージ時間の固定（ChangedWeapon.fixedChargeTime）も同じ
+ * チャージ時間の秒数。発動者基準のチャージ速度は、比率で縮めた後の秒数からさらに引く（アリス自身は比率と同じ値になる）。
+ * チャージ時間の固定が効いていれば、チャージ速度を無視してその秒数（plan/design-anis-star-s2-burst.md 2.3 節）。
+ * 使用武器の変更の武器のチャージ時間の固定（ChangedWeapon.fixedChargeTime）も同じ
  */
 function chargeSecondsOf(shot: ShotParams, buffs: FiringBuffs): number {
   if (buffs.fixedChargeTime > 0) return buffs.fixedChargeTime;
-  // ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間を固定した使用武器の変更の武器も、チャージ速度▲を受けない
+  // チャージ時間を固定した使用武器の変更の武器も、チャージ速度▲を受けない（plan/design-nayuta.md 2.4 節）
   if (buffs.weapon?.fixedChargeTime === true) return shot.chargeTime;
   return Math.max(0, speedScaledSeconds(shot.chargeTime, buffs.chargeSpeed) - buffs.chargeTimeFlat);
 }

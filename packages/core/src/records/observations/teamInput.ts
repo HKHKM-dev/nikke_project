@@ -51,7 +51,7 @@ function buildInputOf(build: RecordingBuild): BuildInput {
   return out;
 }
 
-/** 2 段目の段 6: 定義に発動者の最終最大HP を読む効果（scaling casterFinalMaxHp。状態の中身も）があるか。宝物版の定義も見る */
+/** 定義に発動者の最終最大HP を読む効果（scaling casterFinalMaxHp。状態の中身も）があるか。宝物版の定義も見る */
 function readsCasterMaxHp(definition: SkillDefinition | null): boolean {
   if (definition === null) return false;
   const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
@@ -64,7 +64,7 @@ function readsCasterMaxHp(definition: SkillDefinition | null): boolean {
   );
 }
 
-/** 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 対象を最終防御力の比べで決める効果（targetDefense）があるか */
+/** 対象を最終防御力の比べで決める効果（targetDefense）があるか（plan/design-skill-stage7.md 1.4 節） */
 function comparesDefence(definition: SkillDefinition | null): boolean {
   if (definition === null) return false;
   const entries = [...Object.values(definition.skills), ...Object.values(definition.treasureSkills ?? {})];
@@ -121,13 +121,13 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
   if (recording.fixedSpec === null) throw new Error('スペック固定かどうか記録が無い');
   const fixedSpec = recording.fixedSpec;
   if (!fixedSpec) {
-    // Stage 13 の残り: 固定 OFF は、枠ごとの育成（録画に映した値）で組む
+    // 固定 OFF は、枠ごとの育成（録画に映した値）で組む
     const missing = recording.team.filter((m) => m.build === undefined).map((m) => m.slot);
     if (missing.length > 0)
       throw new Error(`スペック固定 OFF の録画で、枠 ${missing.join('・')} の育成（build）が無い`);
     if (data.buildMasters === undefined) throw new Error('スペック固定 OFF の録画には育成のマスタが要る');
-    // 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: 台帳の育成には防御力が無いので、最終防御力で対象を決める効果（味方全員の
-    // 防御力を読む）のある編成は、スペック固定 OFF の録画では比べない（黙って育成値だけの防御力にしない）
+    // 台帳の育成には防御力が無いので、最終防御力で対象を決める効果（味方全員の
+    // 防御力を読む）のある編成は、スペック固定 OFF の録画では比べない（黙って育成値だけの防御力にしない。plan/design-skill-stage7.md 1.1 節）
     const readers = recording.team.filter((m) => comparesDefence(data.skills.get(m.rid) ?? null)).map((m) => m.rid);
     if (readers.length > 0)
       throw new Error(
@@ -172,8 +172,8 @@ export function buildTeamInput(recording: RecordingEntry, setup: CompareSetup, d
       throw new Error('キューブを付けた枠は未対応（スペック固定では乗らない）');
     const treasurePhase = (setup.treasure === false ? 0 : (member.treasurePhase ?? 0)) as TreasurePhase;
     const build = fixedSpec ? undefined : member.build!;
-    // 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: 台帳の育成には最大HP が無いので、最終最大HP を読む効果のある枠は
-    // スペック固定 OFF の録画では比べない（黙って育成値だけの HP にしない）
+    // 台帳の育成には最大HP が無いので、最終最大HP を読む効果のある枠は
+    // スペック固定 OFF の録画では比べない（黙って育成値だけの HP にしない。plan/design-skill-stage6.md 1.1 節）
     if (build !== undefined && readsCasterMaxHp(definition))
       throw new Error(
         `rid ${member.rid}: スペック固定 OFF の録画で最終最大HP を読む効果のある枠は未対応（台帳に最大HP が無い）`,

@@ -1,4 +1,4 @@
-// Stage 11 モダニア: 効果のあるスタック（「{N}スタック」「{Y}秒間維持」）の件（plan/design-stage11-modernia.md 2.2・3.2 節）。
+// 効果のあるスタック（「{N}スタック」「{Y}秒間維持」）の件（plan/design-stage11-modernia.md 2.2・3.2 節）。
 // スタックの段ごとの件にほどく: 段 k の件 = スタック数が k 以上の区間。区間では段ごとの件を 1 つずつ足すので、
 // k スタックのときの合計は k × 1 スタックの値になり、区間分割（skills/timeline.ts）と射手の実効値（frame/firstPass.ts）はそのまま使える。
 // 1 パス目のループ（持ち主ごとの一覧。skills/holders.ts）が使う。発火のフレームより後の件は、それより前の発火だけで決まる
@@ -15,15 +15,15 @@ export const STACK_REFRESH: 'all' | 'each' = 'all';
 export type StackItem = { stack: number; start: number; end: number };
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少。フレーム frame に効いている段の上から amount 段を、
+ * スタック量の減少（plan/design-skill-stage3.md 1.5 節）。フレーム frame に効いている段の上から amount 段を、
  * 次のフレーム（frame + 1）で切る。最後の 1 段は残す（付いている段より多く減らしても 1 段になる。V-0437 の録画 0463・0471）。
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: closesAtZero なら最後の 1 段も切る（0 になったら件を閉じる。使用回数を使い切った時）。
+ * closesAtZero なら最後の 1 段も切る（0 になったら件を閉じる。使用回数を使い切った時。plan/design-skill-stage14.md 2.7 節）。
  * 後の始まりは段 1 から数え直す
  */
 export type StackDecrease = { frame: number; amount: number; closesAtZero?: true };
 
 /**
- * 2 段目の段 14 の PR 3（同 2.7 節。論点 5）: スタックの上限。数か、始まりのフレームごとの上限（最大スタック数▲の中身の状態が付いている間だけ
+ * スタックの上限。数か、始まりのフレームごとの上限（最大スタック数▲の中身の状態が付いている間だけ
  * 上がる。skills/holders.ts）。上限は始まり（発火）ごとに、そのフレームの値で見る。上限が下がっても付いている段は切らない
  */
 export type MaxStacksAt = number | ((frame: number) => number);
@@ -31,7 +31,7 @@ export type MaxStacksAt = number | ((frame: number) => number);
 /**
  * 発火（件が始まるフレーム）の列から、段ごとの件を作る。durationFrames ≤ 0 なら空。frames が上限。
  * 並びは段 1 から順に始まった順（'all' はチェーンの中で段が上がる順、'each' は区間の順）。
- * 2 段目の段 3: decreases（スタック量の減少）は 'all' だけ。同じフレームの始まりは減少の前に数える
+ * decreases（スタック量の減少）は 'all' だけ。同じフレームの始まりは減少の前に数える
  */
 export function stackItems(
   starts: readonly number[],
@@ -53,8 +53,8 @@ export function stackItems(
 
 /**
  * 'all' の件（発火のたびに 1 段足し、全段を最後の発火の終わりにそろえる）。endOf は始まり s の件の終わり（秒の維持なら s + 維持）。
- * ツバイ編（plan/design-zwei.md 2.3 節）: strict なら、前の終わりちょうどの発火は続きとみなさず段 1 から数え直す（発数の維持で、持ち主の
- * N 発目で切れたスタックを持ち越さない。秒の維持は、ちょうど切れたフレームの発火も続き）
+ * strict なら、前の終わりちょうどの発火は続きとみなさず段 1 から数え直す（発数の維持で、持ち主の
+ * N 発目で切れたスタックを持ち越さない。秒の維持は、ちょうど切れたフレームの発火も続き。plan/design-zwei.md 2.3 節）
  */
 export function refreshAll(
   sorted: readonly number[],
@@ -72,7 +72,7 @@ export function refreshAll(
   const cuts = decreases.filter((d) => d.frame < frames).sort((a, b) => a.frame - b.frame);
   let next = 0;
   /**
-   * フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す。段 14 の PR 3: closesAtZero なら最後の 1 段も切って
+   * フレーム limit より前の減少を当てる: 効いている段の上から切り（最後の 1 段は残す。closesAtZero なら最後の 1 段も切って
    * チェーンを閉じる）、後の始まりは減った段から数える
    */
   const cutBefore = (limit: number): void => {

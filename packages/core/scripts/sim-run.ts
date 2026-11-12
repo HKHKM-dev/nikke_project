@@ -74,35 +74,35 @@ function itemLabel(e: ItemEffect): string {
   return triggerLabel(e.trigger);
 }
 
-/** Stage 8: 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
+/** 回数トリガーも 1 語で出す（normalShot/10、burstUse≥2） */
 function triggerLabel(t: ResolvedTrigger): string {
   if (typeof t === 'string') return t;
-  // 2 段目の段 13 の PR 1: カウンタが上限に届いた時（counterFull:restraintChains）
+  // カウンタが上限に届いた時（counterFull:restraintChains）
   if ('counterFull' in t) return `counterFull:${t.counterFull}`;
-  // ニヒリスター編: 時間の周期のトリガー（every10s）
-  // 2 段目の段 19 の PR 1: 状態の付いた時から数える周期（every0.2s:since:transformation）
+  // 時間の周期のトリガー（every10s）
+  // 状態の付いた時から数える周期（every0.2s:since:transformation）
   if ('everySeconds' in t) return `every${t.everySeconds}s${t.since === undefined ? '' : `:since:${t.since.applied}`}`;
-  // ペルソナ編: 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
+  // 状態が付いた時のトリガー（applied:followUp。id は名前の付いた状態の目録の id）
   if ('applied' in t) return `applied:${t.applied}`;
-  // 2 段目の段 3: フルスタックの消費のきっかけ（fullStack:relax）
+  // フルスタックの消費のきっかけ（fullStack:relax）
   if ('fullStack' in t) return `fullStack:${t.fullStack}`;
-  // 2 段目の段 11: 使用武器の変更の終わり
+  // 使用武器の変更の終わり
   if ('weaponChangeEnd' in t) return 'weaponChangeEnd';
-  // 2 段目の段 16 の PR 2: リロードの込め終わり
+  // リロードの込め終わり
   if ('reloadEnd' in t) return 'reloadEnd';
-  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時
+  // 遮蔽物 HP 回復を受けた時
   if ('coverHealed' in t) return 'coverHealed';
-  // 2 段目の段 14 の PR 2: 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
+  // 溜めの周期（chargeTick0.2s）と、溜めが満ちた時
   if ('chargeTick' in t) return `chargeTick${t.chargeTick.everySeconds}s`;
   if ('chargeFull' in t) return 'chargeFull';
-  // マスト編: 自分の HP の割合が閾値以下の間（hp<=70%）
+  // 自分の HP の割合が閾値以下の間（hp<=70%）
   if ('selfHpAtMost' in t) return `hp<=${+(t.selfHpAtMost * 100).toFixed(2)}%`;
-  // アインのニアフェザー編: 召喚の攻撃（summon:nearFeather）
+  // 召喚の攻撃（summon:nearFeather）
   if ('summon' in t) return `summon:${t.summon}`;
-  // グレイブ編: 自分の状態が終わった時（ended:prediction）
+  // 自分の状態が終わった時（ended:prediction）
   if ('ended' in t) return `ended:${t.ended}`;
-  // クルミ S2 編: フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
-  // ソルジャーE.G. 編: 確率のきっかけ（normalHit@5%。窓は期待値の小片）
+  // フルバースト中だけ数える回数トリガー（normalHit/36@fullBurst、数え直しなら @fullBurst!）
+  // 確率のきっかけ（normalHit@5%。窓は期待値の小片）
   if ('every' in t && t.chance !== undefined) return `${t.count}@${+(t.chance * 100).toFixed(4)}%`;
   if ('every' in t)
     return `${t.count}/${t.every}${t.during ? `@${typeof t.during === 'object' ? t.during.state : t.during}${t.reset === 'fullBurstStart' ? '!' : ''}` : ''}`;
@@ -206,7 +206,7 @@ function readJson(path: string): unknown {
 const skillIndex = parseSkillIndex(readJson(join(DATA_DIR, 'skills/index.json')));
 const fixedSpec = values['fixed-spec'];
 
-// Stage 12: 育成入力。ファイルは { "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }
+// 育成入力。ファイルは { "<resourceId>": { growth?, affectionRank?, gear?, cube?, collection?, recycleRoom?, extraAttack? } }
 // か、育成データのスナップショット（npm run build:import が書く。characters の 1 件は skillLevels と treasure も持つ。
 // plan/design-build-snapshot.md 3 節）
 type BuildFile = Record<
@@ -233,7 +233,7 @@ const masters = Object.fromEntries(
   Object.entries(MASTER_FILES).map(([name, file]) => [name, readJson(join(DATA_DIR, 'masters', file))]),
 ) as BuildMasters;
 const DEFAULT_GROWTH: GrowthInput = { level: 200, grade: 3, core: 0 };
-// Stage 18-C: 条件の決め方。18-C2 から既定は auto。コア命中率・弾丸命中率を指定したら手入力
+// 条件の決め方。既定は auto。コア命中率・弾丸命中率を指定したら手入力
 const conditionMode =
   values.condition ?? (values['core-hit-rate'] !== undefined || values['hit-rate'] !== undefined ? 'manual' : 'auto');
 if (conditionMode !== 'auto' && conditionMode !== 'manual') {
@@ -266,7 +266,7 @@ const condition = {
   hitRate: Number(values['hit-rate'] ?? '1'),
 };
 const modeOf = conditionMode === 'auto' ? { conditionMode: 'auto' as const } : {};
-// Stage 15: 敵のプリセット
+// 敵のプリセット
 const enemyPresets = parseEnemyPresets(readJson(join(DATA_DIR, ENEMY_PRESETS_PATH)));
 const enemyPreset = values.enemy === undefined ? undefined : enemyPresets.enemies.find((e) => e.id === values.enemy);
 if (values.enemy !== undefined && enemyPreset === undefined) {
@@ -299,16 +299,16 @@ const slots: TeamSlotInput[] = ids.map((id) => {
         condition,
         ...modeOf,
         attackOverride: computeFixedSpecAttack(character).attack,
-        // 2 段目の段 6: 最終最大HP 基準の効果（casterFinalMaxHp）のための、スペック固定の最大HP
+        // 最終最大HP 基準の効果（casterFinalMaxHp）のための、スペック固定の最大HP
         hpOverride: computeFixedSpecHp(character),
-        // 2 段目の段 7: 最終防御力の比べ（targetDefense）のための、スペック固定の防御力
+        // 最終防御力の比べ（targetDefense）のための、スペック固定の防御力
         defenceOverride: computeFixedSpecDefence(character),
         skills,
       }
     : { ...withBuild(character, skills, buildFile[String(id)]), ...modeOf };
 });
 
-/** Stage 12: 育成入力があれば戦闘中の攻撃力を computeCombatAttack で作り、attackOverride に入れる。無ければ素のステータス */
+/** 育成入力があれば戦闘中の攻撃力を computeCombatAttack で作り、attackOverride に入れる。無ければ素のステータス */
 function withBuild(
   character: CharacterData,
   skills: {
@@ -350,7 +350,7 @@ function withBuild(
           : ''),
     );
   }
-  // 2 段目の段 6・段 7: 同じ育成入力から戦闘中の最大HP と防御力（バフ前）も作る
+  // 同じ育成入力から戦闘中の最大HP と防御力（バフ前）も作る
   const hp = computeCombatStat(character, growth, build, masters, 'hp', { treasurePhase: skills.treasurePhase }).value;
   const defence = computeCombatStat(character, growth, build, masters, 'defence', {
     treasurePhase: skills.treasurePhase,
@@ -418,7 +418,7 @@ const enemyEvents = enemyEventsOf(enemyPresets, eventSetIds, Number(values.durat
 const baseEnemy: EnemyInput = enemyPreset
   ? { ...enemyInputOf(enemyPreset), events: enemyEvents }
   : { ...plainEnemy, ...(enemyEvents.length > 0 ? { events: enemyEvents } : {}) };
-// Stage 18-C: 的の条件の表（自動の条件のときだけ付ける）。18-C2: 射撃場のプリセットのほか、属性なしの射撃場の的（--enemy を
+// 的の条件の表（自動の条件のときだけ付ける）。射撃場のプリセットのほか、属性なしの射撃場の的（--enemy を
 // 省いた既定の敵）も射撃場の表を使う。表の無い敵では、自動でも手入力の値になり、注記が出る
 const target = conditionMode === 'auto' ? targetProfileForEnemy(enemyPresets, baseEnemy) : undefined;
 if (values.condition === 'auto' && target === undefined) {
@@ -448,7 +448,7 @@ const input = {
 };
 // 編成の条件（burstStepMix・squad・withCharacter・enemyElement）の付いた効果と、この編成で効くか（効かない効果は計算に入れない）
 const compositionCharacters = slots.map((s) => s.character);
-// 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 編成で決まる自分の状態の条件（selfState）
+// 編成で決まる自分の状態の条件（selfState。plan/design-skill-stage1.md 1.1 節）
 const selfStates = selfStateLookupsForTeam(
   slots.map((s) => s.skills?.definition ?? null),
   compositionCharacters,
@@ -481,7 +481,7 @@ const compositionRows = slots.flatMap((slot, i) =>
       return [
         {
           slot: `slot ${i + 1} ${slot.character.name.ja}`,
-          // 名前の付いた状態の語彙編: 付与の行には状態の id も出す（state camouflage）。2 段目の段 1: 解除も（removeState metalSigma）
+          // 付与の行には状態の id も出す（state camouflage）。解除も（removeState metalSigma）
           effect: `${skill}[${effectIndex}] ${e.kind}${e.kind === 'state' || e.kind === 'removeState' || e.kind === 'stackChange' ? ` ${e.state}` : ''}`,
           condition: conditions.join(' & '),
           applies:
@@ -515,7 +515,7 @@ console.log(
             .join('')
     }`,
 );
-// Stage 18-C: 着地点の区間
+// 着地点の区間
 if (result.landings.length > 0 && target !== undefined) {
   const labelOf = (id: string | null): string => {
     if (id === null) return 'unmeasured';
@@ -553,7 +553,7 @@ if (result.schedule && result.burstSummary) {
       fullBurst: a.startsFullBurst
         ? `start (${framesToGameSeconds((result.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.end ?? a.frame) - a.frame).toFixed(1)}s)`
         : '',
-      // Stage 11: そのフルバーストを開いたチェーンで撃った枠（「直前にバーストスキルを使用した味方」）
+      // そのフルバーストを開いたチェーンで撃った枠（「直前にバーストスキルを使用した味方」）
       burstUsers: a.startsFullBurst
         ? (result.schedule?.fullBurstWindows.find((w) => w.start >= a.frame)?.burstUsers ?? [])
             .map((i) => i + 1)
@@ -575,7 +575,7 @@ if (result.schedule && result.burstSummary) {
   );
 }
 
-// Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる
+// 「最終攻撃力が最も高い味方 N 機」の発火ごとの順位。同じ発火の同じ対象（S1 の 2 効果など）はまとめる
 if (result.history.rankings.length > 0) {
   const merged = new Map<string, Record<string, string | number>>();
   for (const r of result.history.rankings) {
@@ -595,7 +595,7 @@ if (result.history.rankings.length > 0) {
   console.table([...merged.values()]);
 }
 
-// Stage 10: 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる。Stage 11: 回復（heal）も出る
+// 即時効果（CT 短縮・弾丸チャージ）。同じフレーム・同じ枠はまとめる。回復（heal）も出る
 if (sim.instants.length > 0) {
   const merged = new Map<string, { time: string; kind: string; from: string; to: string; amount: number }>();
   for (const x of sim.instants) {
@@ -624,13 +624,13 @@ const rows = slots.map((slot, i) => {
     name: slot.character.name.ja,
     weapon: slot.character.weaponType,
     burst: slot.character.burstStep,
-    // Stage 9: 宝物の段階（宝物版で計算したスロット数）
+    // 宝物の段階（宝物版で計算したスロット数）
     treasure: c.treasurePhase === 0 ? '-' : `${c.treasurePhase} (${c.treasureSlots.join('+')})`,
     attack: fmt(c.segments[0]?.trigger.attack ?? c.baseAttack),
     'normal (nonFB/FB triggers)': `${fmt(c.normalDamage)} (${simIntervalTotals(s).nonFullBurst.triggers}/${simIntervalTotals(s).fullBurst.triggers})`,
     segments: c.segments.length,
     'burst skill': `${fmt(s.burst.damage)} (${s.burst.activations.length}× ${fmt(s.burst.hit?.perActivation ?? 0)})`,
-    // Stage 8: トリガー付きの倍率ダメージ（damage）
+    // トリガー付きの倍率ダメージ（damage）
     'skill hits': `${fmt(s.skillHits.damage)} (${s.skillHits.frames.length}×)`,
     total: fmt(c.totalDamage),
     share: pct(c.share),
@@ -640,7 +640,7 @@ console.table(rows);
 
 console.log(`TOTAL ${fmt(result.totalDamage)}`);
 
-// Stage 18-C: 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた）
+// 自動の枠で使った条件の平均（1 パス目の射撃の列の発数で重みを付けた）
 const autoRows = result.slots.flatMap((c, i) =>
   c?.autoCondition
     ? [
@@ -667,7 +667,7 @@ const noteLines = result.slots.flatMap((c, i) =>
 );
 if (noteLines.length > 0) console.log(`condition notes\n${noteLines.join('\n')}`);
 
-// Stage 6: バフ状態ごとの区間表（枠ごと）。発数は 1 パス目の射撃の列から数えた数
+// バフ状態ごとの区間表（枠ごと）。発数は 1 パス目の射撃の列から数えた数
 for (const [i, slot] of slots.entries()) {
   const c = result.slots[i];
   if (!c) continue;
@@ -683,7 +683,7 @@ for (const [i, slot] of slots.entries()) {
       attack: fmt(g.trigger.attack),
       boost: g.trigger.boost.total.toFixed(3),
       atkDmg: g.trigger.attackDamageMultiplier.toFixed(4),
-      // Stage 11 モダニア: 使用武器の変更（1 発の倍率）と、最大装弾数（スタックの▼・装弾数無限込み）
+      // 使用武器の変更（1 発の倍率）と、最大装弾数（スタックの▼・装弾数無限込み）
       weapon: g.buffs.weapon ? `${(g.trigger.weaponMultiplier * 100).toFixed(2)}%` : '',
       ammo: g.buffs.infiniteAmmo > 0 ? '∞' : firingParams(slot.character.shot, g.buffs).maxAmmo,
       perTrigger:
@@ -695,13 +695,13 @@ for (const [i, slot] of slots.entries()) {
       timed: compactTimed(g.timedEffects)
         .map(
           ({ e, n }) =>
-            // 名前の付いた状態の語彙編: 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
+            // 状態の中身はトリガーの代わりに、効いている状態（while:camouflage）
             `${itemLabel(e)} ${e.stat}${e.value < 0 ? '' : '+'}${e.scaling === 'flat' ? `${e.value}${e.stat === 'chargeSpeed' ? 's' : ''}` : e.scaling === 'casterDefence' ? `${Math.round(e.appliedAmount)} (caster ${(e.value * 100).toFixed(2)}%)` : `${(e.value * 100).toFixed(2)}%`}${n > 1 ? ` ×${n}` : ''}${e.targetWeapon ? ` (${e.targetWeapon})` : ''}`,
         )
         .join(', '),
     })),
   );
-  // Stage 11 モダニア: 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数（持ち主ごとの一覧編: 履歴の判定の記録）
+  // 条件「自分が 〈stat〉 増加状態なら」を満たさずに発火しなかった回数（履歴の判定の記録）
   const skips = result.history.conditionSkips.filter((x) => x.sourceSlotIndex === i);
   if (skips.length > 0) {
     console.log(
@@ -713,7 +713,7 @@ for (const [i, slot] of slots.entries()) {
   printDelayedHits(c);
 }
 
-/** 遅れて出る倍率ダメージ編（plan/design-delayed-skill-hit.md）: delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値 */
+/** delayFrames のある倍率ダメージの遅れと、出た秒・1 回の値（plan/design-delayed-skill-hit.md） */
 function printDelayedHits(c: NonNullable<(typeof result.slots)[number]>): void {
   const delayed = c.skillHits.activations.filter((a) => a.effect.delayFrames !== undefined);
   if (delayed.length === 0) return;
@@ -730,7 +730,7 @@ function printDelayedHits(c: NonNullable<(typeof result.slots)[number]>): void {
   }
 }
 
-/** ニヒリスター編: 持続ダメージの内訳（効果ごとの tick の数・合計と、付いた回ごとの最初の tick の秒。plan/design-nihilister.md 2.1 節） */
+/** 持続ダメージの内訳（効果ごとの tick の数・合計と、付いた回ごとの最初の tick の秒。plan/design-nihilister.md 2.1 節） */
 function printDots(c: NonNullable<(typeof result.slots)[number]>): void {
   const ticks = c.skillHits.activations.filter((a) => a.effect.dot !== undefined);
   if (ticks.length === 0) return;
@@ -755,13 +755,13 @@ function printDots(c: NonNullable<(typeof result.slots)[number]>): void {
       seconds: [],
       stacks: [],
       maxStacks: a.effect.dot!.maxStacks,
-      // アニス：スター S2・バースト編: 周期の自動攻撃も dot の形で出す
+      // 周期の自動攻撃も dot の形で出す
       label: a.effect.dot!.autoAttack ? 'autoAttack' : 'dot',
     };
     d.n += 1;
     d.damage += a.hit.perActivation;
     d.seconds.push(a.seconds);
-    // レイヴン編: スタックする持続ダメージは tick ごとのスタックの数も出す
+    // スタックする持続ダメージは tick ごとのスタックの数も出す
     if (a.stacks !== undefined) d.stacks.push(a.stacks);
     byEffect.set(key, d);
   }
@@ -775,7 +775,7 @@ function printDots(c: NonNullable<(typeof result.slots)[number]>): void {
 }
 
 /**
- * Stage 11 紅蓮BS: 段の循環の内訳（段ごとの回数・合計）と、間隔の変更の窓ごとの並び
+ * 段の循環の内訳（段ごとの回数・合計）と、間隔の変更の窓ごとの並び
  * （窓の前の段なしの発数 p・窓の中の段・窓の後の最初の段が何発目か。plan/design-stage11-scarlet-bs.md 0.3・7.5 節）
  */
 function printCycles(slotIndex: number, c: NonNullable<(typeof result.slots)[number]>): void {
@@ -797,7 +797,7 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof result.slots)[num
   );
   const shots = sim.shots[slotIndex]?.frames ?? [];
   const stepAt = new Map(cycled.map((a) => [gameSecondsToFrame(a.seconds), a.effect.cycle!.step]));
-  // 持ち主ごとの一覧編: 間隔の変更の件（時刻の順）
+  // 間隔の変更の件（時刻の順）
   const rows = itemsOf(result.history, { holder: slotIndex, kind: 'cycleEvery' }).map((w) => {
     const before = shots.filter((f) => f < w.start);
     let lastTier = before.length - 1;
@@ -816,13 +816,13 @@ function printCycles(slotIndex: number, c: NonNullable<(typeof result.slots)[num
   if (rows.length > 0) console.table(rows);
 }
 
-/** Stage 11 モダニア: 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
+/** 同じ効果のスタックの段をまとめる（「critDamage+14.25% ×5」） */
 function compactTimed<
   T extends { sourceSlotIndex: number; effectIndex: number; subIndex?: number; source: { skill: string } },
 >(effects: readonly T[]): { e: T; n: number }[] {
   const out: { e: T; n: number }[] = [];
   for (const e of effects) {
-    // 名前の付いた状態の語彙編: 状態の中身は付与の中身の何番目か（subIndex）でも分ける
+    // 状態の中身は付与の中身の何番目か（subIndex）でも分ける
     const found = out.find(
       (x) =>
         x.e.sourceSlotIndex === e.sourceSlotIndex &&

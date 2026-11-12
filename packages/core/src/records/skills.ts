@@ -34,7 +34,7 @@ export type DefinedCharacter = {
 
 /**
  * 定義の中の場所。index が無いのは「そのスロットの notes のどれか」（結論の model の「skill1 の notes」）。
- * 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: subIndex は状態の付与の中身の項目（effects[2].contents[0]）
+ * subIndex は状態の付与の中身の項目（effects[2].contents[0]。plan/design-named-state-impl.md 1.8 節）
  */
 export type SkillPlace = {
   resourceId: number;
@@ -217,8 +217,8 @@ export function validateSkillClaims(characters: readonly DefinedCharacter[], cla
 }
 
 /**
- * 最小構成の検査編（plan/design-minimal-relevance.md 3.2 節）: 結論の subject.places に書いた定義の場所が、定義の claims でこの結論を
- * 指しているか。場所の書き方は formatPlace と同じ（バッククォートは省いてよい）
+ * 結論の subject.places に書いた定義の場所が、定義の claims でこの結論を
+ * 指しているか（plan/design-minimal-relevance.md 3.2 節）。場所の書き方は formatPlace と同じ（バッククォートは省いてよい）
  */
 export function validateClaimSubjects(characters: readonly DefinedCharacter[], claims: readonly Claim[]): string[] {
   const errors: string[] = [];
@@ -258,22 +258,18 @@ function triggerLabel(e: SkillEffect): string | undefined {
   if ('ended' in t) return `${t.ended} が終了した時`;
   if ('weaponChangeEnd' in t) return '使用武器の変更が終了した時';
   if ('reloadEnd' in t) return '最大弾数のリロードが完了した時';
-  // 2 段目の段 17 の PR 1
   if ('coverHealed' in t) return '遮蔽物の HP を回復した時';
   if ('counterFull' in t) return `${t.counterFull} が最大になった時`;
-  // 2 段目の段 14 の PR 2
   if ('chargeTick' in t) return `チャージ中の ${t.chargeTick.everySeconds} 秒ごと`;
   if ('chargeFull' in t) return 'フルチャージした時';
-  // マスト編
-  // エード編: 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）
+  // 下がったフレームに発火する（続く長さは維持で決まる。selfHpAbove なら閾値以下の間、秒の維持なら N 秒）
   if ('selfHpAtMostRef' in t) return '自分の HP が閾値以下に下がった時';
-  // アインのニアフェザー編
   if ('summon' in t) return `${t.summon} の攻撃（機数で決まる間隔）`;
   return t.count;
 }
 
 /**
- * 2 段目の段 9 の PR 2: 常時の効果の while（「temporaryModification のフルスタックの間」「〈状態〉 N スタック以上の間」「〈状態〉の間」）。
+ * 常時の効果の while（「temporaryModification のフルスタックの間」「〈状態〉 N スタック以上の間」「〈状態〉の間」）。
  * while の無い効果は undefined
  */
 function whileLabel(e: SkillEffect): string | undefined {
@@ -347,7 +343,7 @@ export function renderSkills(characters: readonly DefinedCharacter[], claims: re
         effects++;
         if (e.claims !== undefined) citedEffects++;
         body.push(`  - effects[${i}] ${effectLabel(e)}${readsLabel(e.reads)}: ${claimList(e.claims, states)}`);
-        // 名前の付いた状態の語彙編: 中身の項目に claims があれば、項目の行も出す（無い項目の根拠は付与の claims）
+        // 中身の項目に claims があれば、項目の行も出す（無い項目の根拠は付与の claims）
         if (e.kind !== 'state') return;
         e.contents?.forEach((c, j) => {
           if (c.claims !== undefined)

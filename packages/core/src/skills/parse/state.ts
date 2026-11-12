@@ -54,11 +54,11 @@ import {
   parseTrigger,
 } from './trigger.ts';
 
-/** 名前の付いた状態の語彙編: 付与に書けない欄（値の欄は中身に書く） */
+/** 付与に書けない欄（値の欄は中身に書く） */
 const STATE_GRANT_VALUE_KEYS = ['stat', 'ref', 'scaling', 'decrease'] as const;
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.3 節）: 状態の付与。欄は timed から値の欄を除いたもので、規則も
+ * 状態の付与（plan/design-named-state.md 5.2・5.3 節）。欄は timed から値の欄を除いたもので、規則も
  * timed と同じ（parseTimedFields）。中身の項目は、付与の欄と合わせた timed として今の timed の規則に通す（stat ごとの規則が
  * 中身にもそのまま効く）。同じ状態のほかの付与との規則（中身は 1 つ・維持とスタックの上限が同じ）は validateStateGrants
  */
@@ -68,8 +68,8 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   }
   if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'amplifies is not allowed in a state grant');
   rejectUnknownKeys(v, STATE_GRANT_KEYS, path);
-  // エレグのバースト編: target: "enemy" は敵に付く状態の付与。敵の件の timed と同じく target: "allies" に読み替えて残りの欄を読む。
-  // マスト編（plan/design-mast.md 2.1 節）: スタック（maxStacks・maxStacksRef）は書ける（件は味方の状態と同じ stackItems で作る）
+  // target: "enemy" は敵に付く状態の付与。敵の件の timed と同じく target: "allies" に読み替えて残りの欄を読む。
+  // スタック（maxStacks・maxStacksRef）は書ける（件は味方の状態と同じ stackItems で作る。plan/design-mast.md 2.1 節）
   const onEnemy = v.target === 'enemy';
   if (onEnemy) {
     for (const key of [
@@ -95,10 +95,10 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     v = { ...v, target: 'allies' };
   }
   const state = parseNamedStateId(v.state, `${path}.state`, onEnemy ? 'enemy' : 'ally');
-  // 2 段目の段 4: { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）。
-  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけも書ける（件はスタック数の分布の期待値の小片。validateChanceGrant）
+  // { applied } は書ける（連鎖させない。同じ定義の中の連鎖は validateAppliedTriggers）。
+  // 確率のきっかけも書ける（件はスタック数の分布の期待値の小片。validateChanceGrant。plan/design-tove-base.md 2.1 節）
   const fields = parseTimedFields(v, path, undefined, true);
-  // ツバイ編（plan/design-zwei.md 2.3 節）: 発数の維持のスタックは timed だけ（状態の件は holders.ts の stateItems が作らない）
+  // 発数の維持のスタックは timed だけ（状態の件は holders.ts の stateItems が作らない。plan/design-zwei.md 2.3 節）
   if (fields.durationShots !== undefined || fields.durationShotsRef !== undefined) {
     if (fields.maxStacks !== undefined || fields.maxStacksRef !== undefined)
       fail(path, 'a state grant with a duration in shots cannot stack');
@@ -107,7 +107,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   validateSelfHpGrant(fields, v, path, onEnemy);
   validateStateEndGrant(fields, v, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
-  // グレイブ編: 自分の付ける状態の終わり・窓・維持も見ない（循環する）
+  // 自分の付ける状態の終わり・窓・維持も見ない（循環する）
   const t = fields.trigger;
   if (
     (isAppliedTrigger(t) && t.applied === state) ||
@@ -115,8 +115,8 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     (isShotCountTrigger(t) && isStateCountWindow(t.during) && stateMatches(t.during.state, state))
   )
     fail(`${path}.trigger`, `a grant of "${state}" cannot be triggered by its own state`);
-  // 同 2.4 節: 自分の状態の窓で数える付与の条件は、自分の状態があるか（selfState。スタック数・否定なし）だけ（数える発を条件で選ぶ。
-  // skills/holders.ts の stateWindowFires）
+  // 自分の状態の窓で数える付与の条件は、自分の状態があるか（selfState。スタック数・否定なし）だけ（数える発を条件で選ぶ。
+  // skills/holders.ts の stateWindowFires。plan/design-grave.md 2.4 節）
   if (isShotCountTrigger(t) && isStateCountWindow(t.during) && fields.condition !== undefined) {
     const self = fields.condition.selfState;
     if (
@@ -134,13 +134,13 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   const until = fields.durationUntil;
   if (isStateEndUntil(until) && stateMatches(until.stateEnd, state))
     fail(`${path}.durationUntil`, `a grant of "${state}" cannot last until its own state ends`);
-  // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。2 段目の段 1 の
+  // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。条件の
   // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
   if (fields.targetState !== undefined && stateMatches(fields.targetState, state)) {
     fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
   }
-  // 2 段目の段 5: 家族の根を見る条件も、家族の状態の付与には書けない。
-  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: 「〈状態〉でなければ」（present: false）だけは書ける。付いている間の
+  // 家族の根を見る条件も、家族の状態の付与には書けない。
+  // 「〈状態〉でなければ」（present: false）だけは書ける（plan/design-skill-stage16.md 2.2 節）。付いている間の
   // 再発火を止めるだけで連鎖しない（段 1.5 の selfState は前のフレームまでに付いた件を見るので、同じフレームの自分の付与は見ない）
   if (
     fields.condition?.selfState !== undefined &&
@@ -153,15 +153,15 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   if (onEnemy) {
     if (isAppliedTrigger(fields.trigger))
       fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
-    // 中身の有無は定義の単位で見る（validateStateGrants。2026-10-29 のキャラの編: 同じ敵の状態を 2 つのきっかけで付ける）
+    // 中身の有無は定義の単位で見る（validateStateGrants。同じ敵の状態を 2 つのきっかけで付けることがある）
     effect.enemy = true;
   }
-  // 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印
+  // 解除不可の印（plan/design-skill-stage1.md 1.3 節）
   if (v.undispellable !== undefined) {
     effect.undispellable = parseTrue(v.undispellable, `${path}.undispellable`);
   }
   if (v.stacksFrom !== undefined) {
-    // 2 段目の段 10: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3）から取る
+    // スタックの数をカウンタの値か、自分の状態のスタック数から取る
     const from = v.stacksFrom;
     if (!isRecord(from) || Object.keys(from).length !== 1)
       fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
@@ -182,7 +182,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       effect.stacksFrom = { counter };
     }
   }
-  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 1 回の発火で付けるスタックの数（使用回数）
+  // 1 回の発火で付けるスタックの数（使用回数。plan/design-skill-stage14.md 2.7 節。論点 6）
   if (v.stacksPerFireRef !== undefined) {
     if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
       fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef needs maxStacks or maxStacksRef');
@@ -190,14 +190,14 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
       fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef cannot be used with stacksFrom');
     effect.stacksPerFireRef = parseRef(v.stacksPerFireRef, `${path}.stacksPerFireRef`);
   }
-  // マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方
+  // スタックの維持の数え方（plan/design-mast.md 2.1 節）
   if (v.stackRefresh !== undefined) {
     if (v.stackRefresh !== 'each') fail(`${path}.stackRefresh`, 'expected "each" (omit it for the default)');
     if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
       fail(`${path}.stackRefresh`, 'stackRefresh needs maxStacks or maxStacksRef');
     effect.stackRefresh = 'each';
   }
-  // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効（同じ定義の stackChange は validateStackChanges が弾く）
+  // スタック量増減効果無効（同じ定義の stackChange は validateStackChanges が弾く。plan/design-nayuta.md 2.5 節）
   if (v.stackImmutable !== undefined) {
     parseTrue(v.stackImmutable, `${path}.stackImmutable`);
     if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
@@ -224,7 +224,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`, onEnemy));
   }
-  // 2 段目の段 4（plan/design-skill-stage4.md 1.2 節）: 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけを作る（窓は無い）
+  // 維持 0 秒の付与は、名前の付いた即時効果の付いた記録だけを作る（窓は無い。plan/design-skill-stage4.md 1.2 節）
   if (effect.durationSeconds === 0) {
     for (const key of ['contents', 'maxStacks', 'maxStacksRef', 'undispellable']) {
       if (v[key] !== undefined)
@@ -235,11 +235,11 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
 }
 
 /**
- * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: カウンタで続く状態の付与。{ counterFull } のきっかけと
+ * カウンタで続く状態の付与（plan/design-skill-stage19.md 2.1 節。論点 2）。{ counterFull } のきっかけと
  * durationUntil: { counterEmpty } は同じカウンタで組み（片方だけは書けない）、自分にだけ付け、スタックしない（閉じるのは持ち主の件の列ごと）
  */
 /**
- * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけの付与。件は機会ごとのスタック数の分布から作る期待値の小片
+ * 確率のきっかけの付与（plan/design-tove-base.md 2.1 節）。件は機会ごとのスタック数の分布から作る期待値の小片
  * （skills/chance.ts の chanceStackPieces）で、付いた記録を作らない。秒の維持で、味方に付け、発火の文脈や条件では決めない。見る側は
  * while（スタックの条件の確率）と stacksFrom（スタック数の期待値）だけ（skills/parse/crossChecks.ts の validateChanceStates）
  */
@@ -295,7 +295,7 @@ function validateCounterGrant(fields: GrantTimedFields, path: string, onEnemy: b
 }
 
 /**
- * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される状態の付与（durationUntil: { selfHpAtMostRef }）。閉じるのは
+ * HP の割合で解除される状態の付与（durationUntil: { selfHpAtMostRef }。plan/design-hp-down-interval.md 2.2 節）。閉じるのは
  * 持ち主の件の列ごとなので、自分にだけ付け、スタックしない
  */
 function validateSelfHpGrant(fields: GrantTimedFields, v: Record<string, Json>, path: string, onEnemy: boolean): void {
@@ -318,7 +318,7 @@ function validateSelfHpGrant(fields: GrantTimedFields, v: Record<string, Json>, 
 }
 
 /**
- * グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりまで続く付与（durationUntil: { stateEnd }）。閉じるのは持ち主の件の列ごとなので、
+ * ほかの状態の終わりまで続く付与（durationUntil: { stateEnd }。plan/design-grave.md 2.5 節）。閉じるのは持ち主の件の列ごとなので、
  * 自分にだけ付け、スタックしない。見る状態は付与の状態と別（validateOwnStateTriggers が同じ定義の自分への付与を見る）
  */
 function validateStateEndGrant(
@@ -338,7 +338,7 @@ function validateStateEndGrant(
     fail(path, 'a grant lasting until another state ends cannot have delayFrames or leadFrames');
 }
 
-/** 名前の付いた状態の語彙編: 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
+/** 付与に書ける欄（timed の欄から値の欄を除き、state・contents を足したもの） */
 const STATE_GRANT_KEYS: readonly string[] = [
   'kind',
   'state',
@@ -379,7 +379,7 @@ const STATE_GRANT_KEYS: readonly string[] = [
 ];
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 中身の 1 項目。付与の欄（grant）と合わせた timed を
+ * 中身の 1 項目（plan/design-named-state.md 5.3 節）。付与の欄（grant）と合わせた timed を
  * parseTimedEffect に通して、stat ごとの規則を確かめる
  */
 function parseStateContentItem(
@@ -389,24 +389,24 @@ function parseStateContentItem(
   onEnemy = false,
 ): StateContentItem {
   if (!isRecord(item)) fail(path, 'expected an object');
-  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 「〈状態〉の最大スタック数 N▲」
+  // 「〈状態〉の最大スタック数 N▲」（plan/design-skill-stage14.md 2.7 節）
   if (item.maxStacksUp !== undefined) return parseMaxStacksUpItem(item, grant, path, onEnemy);
-  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 「スキル N クールタイム X%▼」（維持の付いた形）
+  // 「スキル N クールタイム X%▼」（維持の付いた形。plan/design-arcana-magician.md 2.1 節）
   if (item.skillCooldownDown !== undefined) return parseSkillCooldownDownItem(item, grant, path, onEnemy);
   rejectUnknownKeys(item, ['stat', 'ref', 'scaling', 'decrease', 'claims'], path);
   const timed = parseTimedEffect(contentAsTimed(grant, item), path);
-  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節）: 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
-  // 状態の中身には書けない（使い手がいない）
+  // 発動者の最大HP 基準は、timed の件の列を持ち主ごとに作る時に直すので、
+  // 状態の中身には書けない（使い手がいない。plan/design-hp-ratio-readers.md 9 節）
   if (timed.scaling === 'casterMaxHp') fail(`${path}.scaling`, 'casterMaxHp is only allowed in timed');
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 味方の状態の中身に敵の件（受けるダメージ▲）は書けない。
-  // エレグのバースト編: 敵に付く状態の中身は、敵が持つ stat だけ
+  // 味方の状態の中身に敵の件（受けるダメージ▲）は書けない（plan/design-holder-effects.md 2.8 節）。
+  // 敵に付く状態の中身は、敵が持つ stat だけ
   if (onEnemy) {
     if (!isEnemyHeldStat(timed.stat))
       fail(`${path}.stat`, `a state on the enemy holds only enemy-held stats, got ${timed.stat}`);
   } else if (timed.stat === 'damageTaken') {
     fail(`${path}.stat`, 'damageTaken is held by the enemy, not by a state of an ally');
   }
-  // ドロシー：セレンディピティ編: ペレットの数の stat は timed にだけ書ける（使い手がいない）
+  // ペレットの数の stat は timed にだけ書ける（使い手がいない）
   if (isPelletStat(timed.stat)) fail(`${path}.stat`, `${timed.stat} is only allowed in timed`);
   const out: StatContentItem = { stat: timed.stat };
   if (timed.ref !== undefined) out.ref = timed.ref;
@@ -417,7 +417,7 @@ function parseStateContentItem(
 }
 
 /**
- * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 中身の「スキル N クールタイム X%▼」。slot は持ち主のスロット、percentRef は
+ * 中身の「スキル N クールタイム X%▼」（plan/design-arcana-magician.md 2.1 節）。slot は持ち主のスロット、percentRef は
  * 付与のあるスロットの説明文の値（%）。味方の状態だけ
  */
 function parseSkillCooldownDownItem(
@@ -443,7 +443,7 @@ function parseSkillCooldownDownItem(
 }
 
 /**
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 中身の「〈状態〉の最大スタック数 N▲」。持ち主は付与の対象で、自分にだけ
+ * 中身の「〈状態〉の最大スタック数 N▲」（plan/design-skill-stage14.md 2.7 節。論点 5）。持ち主は付与の対象で、自分にだけ
  * 付く付与に書ける（上限を足す先は持ち主の state の件の列）。state は味方の状態で、付与の状態とは別。同じ定義にその状態をスタックで付ける
  * 付与が要ること（validateMaxStacksUps）は、定義全体で見る
  */
@@ -469,9 +469,10 @@ function parseMaxStacksUpItem(
 }
 
 /**
- * 名前の付いた状態の語彙編: 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節）。
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: チャージ時間の固定（fixedChargeTime）の中身は、状態のスタック（使用回数）に
- * よらず 1 回だけ効く（固定の秒は足し合わせない。skills/buffs.ts の applyResolvedEffect）ので、付与のスタックの欄を渡さない
+ * 付与の欄と中身の項目を合わせた timed（検証用。plan/design-named-state.md 3.2 節）。
+ * チャージ時間の固定（fixedChargeTime）の中身は、状態のスタック（使用回数）に
+ * よらず 1 回だけ効く（固定の秒は足し合わせない。skills/buffs.ts の applyResolvedEffect。
+ * plan/design-skill-stage14.md 2.7 節）ので、付与のスタックの欄を渡さない
  */
 export function contentAsTimed(grant: Record<string, Json>, item: Record<string, Json>): Record<string, Json> {
   // 付与の delayFrames（周期の付与の遅れ）は付与の発火の欄なので、中身の規則には渡さない
@@ -488,22 +489,22 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
     ...fields
   } = grant;
   const { claims: _itemClaims, ...value } = item;
-  // トーブの基礎版編: 確率の付与の中身は、スタックの段ごとの期待値の小片になる（段の数は付与が持つ）ので、スタックの欄を中身の規則に渡さない
+  // 確率の付与の中身は、スタックの段ごとの期待値の小片になる（段の数は付与が持つ）ので、スタックの欄を中身の規則に渡さない
   if (isRecord(fields.trigger) && isChanceTrigger(fields.trigger as EffectTrigger)) {
     delete fields.maxStacks;
     delete fields.maxStacksRef;
   }
-  // 2 段目の段 19 の PR 1: カウンタで続く状態（{ counterFull } で付き、0 になるまで）の中身の規則は、戦闘開始時から「持続」の付与と同じ
+  // カウンタで続く状態（{ counterFull } で付き、0 になるまで）の中身の規則は、戦闘開始時から「持続」の付与と同じ
   // （付くフレームも窓も件の一覧が決める。きっかけ { counterFull } は timed には書けない）
   if (isRecord(fields.durationUntil) && 'counterEmpty' in fields.durationUntil) {
     fields.durationUntil = 'battleEnd';
     fields.trigger = 'battleStart';
   }
-  // A2 の B モード編: HP の割合で解除される状態の中身の規則は、閉じる（件の一覧）までは「持続」の付与と同じ
+  // HP の割合で解除される状態の中身の規則は、閉じる（件の一覧）までは「持続」の付与と同じ
   if (isSelfHpAtMostTrigger(fields.durationUntil)) fields.durationUntil = 'battleEnd';
-  // グレイブ編（plan/design-grave.md 2.1・2.4・2.5 節）: 状態の終わりのきっかけ（{ ended }）・自分の状態の窓で数える回数のきっかけ・ほかの状態の
+  // 状態の終わりのきっかけ（{ ended }）・自分の状態の窓で数える回数のきっかけ・ほかの状態の
   // 終わりまでの維持（{ stateEnd }）は件の一覧が決める（timed には書けない）ので、中身の規則は、戦闘開始時か、窓の無い回数のきっかけで付く
-  // 「持続」と同じ
+  // 「持続」と同じ（plan/design-grave.md 2.1・2.4・2.5 節）
   if (isEndedTrigger(fields.trigger as EffectTrigger)) fields.trigger = 'battleStart';
   if (isRecord(fields.trigger) && isRecord(fields.trigger.during)) {
     const { during: _during, ...rest } = fields.trigger;
@@ -517,7 +518,7 @@ export function contentAsTimed(grant: Record<string, Json>, item: Record<string,
   return { ...fields, ...value, kind: 'timed' };
 }
 
-/** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減。対象は自分だけ */
+/** カウンタの増減（plan/design-skill-stage10.md 2.3 節）。対象は自分だけ */
 export function parseCounterChangeEffect(v: Record<string, Json>, path: string): CounterChangeEffect {
   rejectUnknownKeys(
     v,
@@ -532,11 +533,11 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
   } else if (isRecord(v.trigger) && v.trigger.counterFull !== undefined) {
     trigger = parseCounterFullTrigger(v.trigger, `${path}.trigger`)!;
   } else if (isRecord(v.trigger) && v.trigger.applied !== undefined) {
-    // 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 3）: 「変身後、バッテリー N%▼」
+    // 「変身後、バッテリー N%▼」（plan/design-skill-stage19.md 2.1 節。論点 3）
     trigger = parseAppliedTrigger(v.trigger, `${path}.trigger`)!;
   } else {
-    // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）。2 段目の段 16 の PR 1（plan/design-skill-stage16.md 2.1 節）:
-    // 時間の周期のきっかけも（千束の超感覚の 2 秒ごとの▼）
+    // 同（論点 2）: 状態の付いた時から数える周期（変身の間 0.2 秒ごとの▼）と、
+    // 時間の周期のきっかけ（千束の超感覚の 2 秒ごとの▼。plan/design-skill-stage16.md 2.1 節）
     trigger =
       parseSinceTimerTrigger(v.trigger, `${path}.trigger`) ??
       parseTrigger(v.trigger, `${path}.trigger`, { timer: true });
@@ -563,7 +564,7 @@ export function parseCounterChangeEffect(v: Record<string, Json>, path: string):
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増加と減少（decrease）。対象は自分だけ。トリガーと条件は解除と
+ * スタック量の増加と減少（decrease。plan/design-skill-stage3.md 1.1・1.5 節）。対象は自分だけ。トリガーと条件は解除と
  * 同じ。同じ定義にその状態をスタックで付ける付与が要ること（validateStackChanges）は、定義全体で見る
  */
 export function parseStackChangeEffect(v: Record<string, Json>, path: string): StackChangeEffect {
@@ -592,18 +593,18 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
   }
   const target = v.target;
   const state = parseNamedStateId(v.state, `${path}.state`, target === 'enemy' ? 'enemy' : 'ally');
-  // 2 段目の段 13 の PR 3: 敵の持続ダメージのスタック量▲は、フルバーストの中の命中を数える（during）
+  // 敵の持続ダメージのスタック量▲は、フルバーストの中の命中を数える（during）
   const trigger = parseTrigger(v.trigger, `${path}.trigger`, { during: target === 'enemy' });
   const effect: StackChangeEffect = { kind: 'stackChange', state, trigger, target };
   if ((v.amount === undefined) === (v.amountRef === undefined))
     fail(path, 'expected exactly one of amount and amountRef');
   if (v.amount !== undefined) effect.amount = parsePositiveInt(v.amount, `${path}.amount`);
   else effect.amountRef = parseRef(v.amountRef, `${path}.amountRef`);
-  // 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少
+  // スタック量の減少（plan/design-skill-stage3.md 1.5 節）
   if (v.decrease !== undefined) {
     effect.decrease = parseTrue(v.decrease, `${path}.decrease`);
   }
-  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 6）: 減少で 0 になったら件を閉じる（使用回数を使い切った時）
+  // 減少で 0 になったら件を閉じる（使用回数を使い切った時。plan/design-skill-stage14.md 2.7 節。論点 6）
   if (v.closesAtZero !== undefined) {
     parseTrue(v.closesAtZero, `${path}.closesAtZero`);
     if (!effect.decrease || target !== 'self')
@@ -627,7 +628,7 @@ export function parseStackChangeEffect(v: Record<string, Json>, path: string): S
 }
 
 /**
- * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除。対象は自分だけ。トリガーの確率のきっかけ・{ applied }・時間の周期の
+ * 解除（plan/design-skill-stage1.md 1.2 節）。対象は自分だけ。トリガーの確率のきっかけ・{ applied }・時間の周期の
  * きっかけは書けない（使い手の時に足す）。条件は、自分がその状態なら（selfState）のように、外す状態を見てもよい（閉じるのは f + 1 で、
  * f の判定には付いている）
  */
@@ -643,8 +644,8 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
   }
   const effect: RemoveStateEffect = { kind: 'removeState', state, trigger, target: 'self' };
   if (v.condition !== undefined) {
-    // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 「フルバースト状態でなければ」（inFullBurst: false）も書ける
-    // （「通常攻撃をした時、フルバースト状態でなければ、フルアクティブ解除」）
+    // 「フルバースト状態でなければ」（inFullBurst: false）も書ける
+    // （「通常攻撃をした時、フルバースト状態でなければ、フルアクティブ解除」。plan/design-skill-stage14.md 2.7 節）
     const condition = parseCondition(v.condition, `${path}.condition`, CONDITION_KEYS_OF.removeState, true);
     validateUsedBurst(condition, trigger, `${path}.condition`);
     effect.condition = condition;
@@ -654,7 +655,7 @@ export function parseRemoveStateEffect(v: Record<string, Json>, path: string): R
 }
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除。target は allies か debuffedRandom（pick が要る）。delayFrames は時間の周期の
+ * デバフ解除（plan/design-debuff-removal.md 2.2 節）。target は allies か debuffedRandom（pick が要る）。delayFrames は時間の周期の
  * きっかけにだけ書ける
  */
 export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): RemoveDebuffEffect {
@@ -679,12 +680,12 @@ export function parseRemoveDebuffEffect(v: Record<string, Json>, path: string): 
 }
 
 /**
- * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去。いまは敵の持続ダメージの状態（同じ定義の dot の state）だけで、
+ * 消去（plan/design-skill-stage13.md 2.5 節）。いまは敵の持続ダメージの状態（同じ定義の dot の state）だけで、
  * 対象は敵。解除不可の件も閉じる
  */
 export function parseCancelStateEffect(v: Record<string, Json>, path: string): CancelStateEffect {
   rejectUnknownKeys(v, ['kind', 'state', 'trigger', 'target', 'condition', 'assumes', 'claims'], path);
-  // ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: self は自分の状態の消去（解除と同じ書き方。解除不可の件も閉じる）
+  // self は自分の状態の消去（解除と同じ書き方。解除不可の件も閉じる。plan/design-mint-prika.md 2.1 節）
   if (v.target === 'self') {
     const { kind: _, ...rest } = parseRemoveStateEffect({ ...v, kind: 'removeState' }, path);
     return { ...rest, kind: 'cancelState' };
@@ -699,7 +700,7 @@ export function parseCancelStateEffect(v: Record<string, Json>, path: string): C
 }
 
 /**
- * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長。対象は自分か味方全体。きっかけは { applied } も書ける。条件は
+ * 状態の維持の延長（plan/design-mint-prika.md 2.5 節）。対象は自分か味方全体。きっかけは { applied } も書ける。条件は
  * 自分の状態だけ
  */
 export function parseStateExtendEffect(v: Record<string, Json>, path: string): StateExtendEffect {

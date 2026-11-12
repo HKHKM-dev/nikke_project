@@ -59,14 +59,12 @@ export function SlotCard({
   const damageText = formatDamage(character && slotResult ? slotResult.result.totalDamage : null);
   const setGrowth = (fields: Partial<SlotGrowthFields>) => growthFieldsActions(slotIndex, fields).forEach(dispatch);
 
-  // 2026-10-31: オーナーの指示で、枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）を「育成」の
-  // 折りたたみ 1 つにまとめた
-  // 2026-10-31: オーナーの指示で、キャラの諸元の行（武器・属性・クラス・バーストの段と CT）と射撃条件の欄（条件の決め方・
-  // フルチャージ・手入力の値）を消した。射撃条件は既定値で計算する（calcView.ts）
+  // 枠の育成（好感度・限界突破・コア強化／スキル LV／装備・キューブ・コレクション）は「育成」の折りたたみ 1 つにまとめる。
+  // 射撃条件は画面で選ばず、既定値で計算する（calcView.ts）
 
   return (
     <fieldset className="panel slot">
-      {/* 2026-10-31: オーナーの指示で、消した「枠 N」の見出しの代わりに「スロット N」を出す */}
+      {/* 見出しは「スロット N」 */}
       {/* 見出しの右に、操作キャラにするラジオボタン（5 つのスロットで 1 組。いつもどれか 1 つ。モダン UI の操作の印のドラッグと同じ値） */}
       <legend className="slot-legend">
         スロット {slotIndex + 1}
@@ -82,7 +80,7 @@ export function SlotCard({
         </label>
       </legend>
       {/* キャラの選択の右に、スロットの詳細設定（バーストしない・想定 HP）のポップアップ。設定中の印と、ポップアップの説明文は
-          オーナーの指示で出さない（設定はポップアップのボタンの色で分かる） */}
+          出さない（設定はポップアップのボタンの色で分かる） */}
       <div className="picker-row">
         <CharacterPicker
           index={index}
@@ -122,7 +120,7 @@ export function SlotCard({
       )}
       {character && (
         <details className="slot-settings">
-          {/* 2026-10-31: オーナーの指示で、見出しの横の対応状況の印（対応・一部対応・未対応・未定義）は出さない。未対応はキャラ名の
+          {/* 見出しの横に対応状況の印（対応・一部対応・未対応・未定義）は出さない。未対応はキャラ名の
               「（未）」と「未対応・近似・仮定の一覧」に出る */}
           <summary>育成</summary>
           <div className="slot-settings-body">

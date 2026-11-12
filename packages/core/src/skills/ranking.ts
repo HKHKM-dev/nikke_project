@@ -1,4 +1,4 @@
-// Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」（対象 topAttack）の順位（plan/design-stage11.md 18 節）。
+// 「最終攻撃力が最も高い味方 N 機」（対象 topAttack）の順位（plan/design-stage11.md 18 節）。
 // 発火のフレームの各枠の最終攻撃力（ダメージの式の攻撃力と同じ）を出し、高い順に並べる。
 //   - 常時パッシブと、発火のフレーム f で効いている攻撃力の件（start ≤ f < end）を数える。同じフレームに始まった件も入れる
 //     （モデルでは III の発動とフルバーストの開始が同じフレームなので、入れないとアリス自身のバーストが順位に入らない）。
@@ -22,7 +22,7 @@ export type AttackItem = {
   start: number;
   end: number;
   /**
-   * 2 段目の段 6 の PR 2: 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の窓の、そのフレームの発動者の最終最大HP。
+   * 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の窓の、そのフレームの発動者の最終最大HP。
    * 無ければ RankSlot の casterMaxHp（バフ前の最大HP）
    */
   casterMaxHp?: number;
@@ -32,7 +32,7 @@ export type AttackItem = {
 export type RankSlot = {
   /** バフ前攻撃力（damage.ts の baseAttackOf。発動者基準の固定加算にも使う） */
   casterBaseAttack: number;
-  /** 2 段目の段 6: 発動者の最終最大HP（casterFinalMaxHp の固定加算。skills/timeline.ts の TimelineSlot と同じ） */
+  /** 発動者の最終最大HP（casterFinalMaxHp の固定加算。skills/timeline.ts の TimelineSlot と同じ） */
   casterMaxHp?: number;
   weaponType: WeaponType;
   /** アスカ: targetElement の絞り込み用 */
@@ -84,8 +84,8 @@ export function rankByFinalAttack(finalAttacks: readonly (number | null)[]): num
 
 /**
  * 効果の対象になりうる枠（targetWeapon・targetElement で絞る）を順位の順に。FireContext.attackRank に入れる。
- * 対象の語彙編（plan/design-target-vocab.md 2.1 節）: excludeSelf なら発動者の枠（sourceSlotIndex）を外し、unlessShort なら
- * 末尾に足す（上位 N に足りないときだけ対象に入る）
+ * excludeSelf なら発動者の枠（sourceSlotIndex）を外し、unlessShort なら
+ * 末尾に足す（上位 N に足りないときだけ対象に入る。plan/design-target-vocab.md 2.1 節）
  */
 export function attackRankFor(
   effect: Pick<TargetedEffect, 'targetWeapon' | 'targetElement' | 'excludeSelf'>,

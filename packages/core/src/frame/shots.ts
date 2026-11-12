@@ -10,29 +10,30 @@ export type ShotLog = {
   frames: number[];
   /**
    * チャージ武器なら true。部分チャージの発（partialShots）を除いた frames が fullChargeShot の列
-   * （Stage 22-B まではすべての発をフルチャージとして扱っていた）
    */
   fullCharge: boolean;
   /**
-   * Stage 22-B: 攻撃できる的がいなくなった瞬間に、チャージの途中で撃った発（frames の部分列）と、そのチャージの進み（0〜1）。
+   * 攻撃できる的がいなくなった瞬間に、チャージの途中で撃った発（frames の部分列）と、そのチャージの進み（0〜1）。
    * 省略・空は無し（C-1001）
    */
   partialShots?: PartialShot[];
-  /** Stage 10: 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
+  /** 残弾を 0 にした射撃のフレーム（frames の部分列。「最後の弾丸」）。省略は無し（手で作る列のため） */
   lastShotFrames?: number[];
   /**
-   * グレイブ編（V-0735）: 残弾数減少で残弾が 0 になってリロードを始めた時の、その前の最後の発のフレーム（frames の部分列。昇順）。
+   * 残弾数減少で残弾が 0 になってリロードを始めた時の、その前の最後の発のフレーム（frames の部分列。昇順。V-0735）。
    * 1 パス目が書き、照合の指標のリロードの回（records/observations/metrics/firing.ts の reloadsAt）が最後の弾丸の発と同じに読む。省略は無し
    */
   drainReloadShotFrames?: number[];
   /**
-   * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 撃ち切りで終わる使用武器の変更が終わったフレーム
-   * （最後の弾丸の発 + 1。基礎の武器に戻るフレーム。昇順）。1 パス目が書き、持ち主ごとの一覧（skills/holders.ts）が件の終わりに使う。省略は無し
+   * 撃ち切りで終わる使用武器の変更が終わったフレーム
+   * （最後の弾丸の発 + 1。基礎の武器に戻るフレーム。昇順。plan/design-true-damage-element.md 9 節）。1 パス目が書き、
+   * 持ち主ごとの一覧（skills/holders.ts）が件の終わりに使う。省略は無し
    */
   weaponChangeEnds?: number[];
   /**
-   * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 基礎の武器のリロードが最大装弾数まで込め終わったフレームの次のフレーム
-   * （込め終わったフレームまでが「リロード完了時に解除」の窓。昇順）。ハイド中のリロードの込め終わりも入る。弾丸チャージで最大に届いた
+   * 基礎の武器のリロードが最大装弾数まで込め終わったフレームの次のフレーム
+   * （込め終わったフレームまでが「リロード完了時に解除」の窓。昇順。plan/design-cinderella-s1-charge.md 1.1 節）。
+   * ハイド中のリロードの込め終わりも入る。弾丸チャージで最大に届いた
    * リロードは入れない（使い手に弾丸チャージが無い）。1 パス目が書き、持ち主ごとの一覧（skills/holders.ts）が件の終わりに使う。省略は無し
    */
   reloadEnds?: number[];
@@ -47,7 +48,7 @@ export type ShotLog = {
    */
   weaponChangeShotFrames?: number[];
   /**
-   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1 節）: きっかけ { chargeTick } の間隔ごとの、溜めの周期の発火のフレーム（昇順）。
+   * きっかけ { chargeTick } の間隔ごとの、溜めの周期の発火のフレーム（昇順。plan/design-skill-stage14.md 2.1 節）。
    * 定義にそのきっかけを持つ枠だけ、1 パス目が溜めの進み（frame/shooter.ts の chargeProgressFrames）から書く。流し直し
    * （skills/triggers.ts の replayEvents）も同じ列を読む。省略は無し
    */
@@ -57,34 +58,34 @@ export type ShotLog = {
    */
   chargeFullFrames?: number[];
   /**
-   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: チャージしない変更後の武器（instantFire）で撃った射撃のフレーム（frames の
-   * 部分列）。fullChargeShot に数えない。1 パス目が書く。省略は無し
+   * チャージしない変更後の武器（instantFire）で撃った射撃のフレーム（frames の
+   * 部分列。plan/design-skill-stage11.md 2.1 節）。fullChargeShot に数えない。1 パス目が書く。省略は無し
    */
   unchargedShotFrames?: number[];
   /**
-   * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: frames と同じ並びの、発ごとの命中の期待値と
-   * コアの命中の期待値（1 パス目が書く）。省略は命中 1・コア 0（手で作る列・planShots の列）
+   * frames と同じ並びの、発ごとの命中の期待値と
+   * コアの命中の期待値（1 パス目が書く。plan/design-ludmilla-wo.md 2.2・2.3 節）。省略は命中 1・コア 0（手で作る列・planShots の列）
    */
   hits?: number[];
   coreHits?: number[];
   /**
-   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: frames と同じ並びの、発ごとのクリティカルの命中の期待値
-   * （命中の期待値 × その発の通常攻撃の会心率。1 パス目が書く）。省略は 0
+   * frames と同じ並びの、発ごとのクリティカルの命中の期待値
+   * （命中の期待値 × その発の通常攻撃の会心率。1 パス目が書く。plan/design-new-chars-1029.md 5.7 節）。省略は 0
    */
   critHits?: number[];
   /**
-   * ペレットの命中編（plan/design-pellet-hit.md 2 節）: frames と同じ並びの、発ごとに的に当たったペレットの数（期待値か、録画で
-   * 数えた入力。1 パス目が書く）。省略は hits
+   * frames と同じ並びの、発ごとに的に当たったペレットの数（期待値か、録画で
+   * 数えた入力。1 パス目が書く。plan/design-pellet-hit.md 2 節）。省略は hits
    */
   pelletHits?: number[];
 };
 
 export type PartialShot = { frame: number; progress: number };
 
-/** Stage 22-B: fullChargeShot に数える発か（チャージ武器で、部分チャージの発でない） */
+/** fullChargeShot に数える発か（チャージ武器で、部分チャージの発でない） */
 export function fullChargeFrameSet(log: ShotLog): (frame: number) => boolean {
   if (!log.fullCharge) return () => false;
-  // 2 段目の段 11: チャージしない変更後の武器の発も除く
+  // チャージしない変更後の武器の発も除く
   const partial = new Set([...(log.partialShots ?? []).map((p) => p.frame), ...(log.unchargedShotFrames ?? [])]);
   return (frame) => !partial.has(frame);
 }
@@ -118,7 +119,7 @@ export function planShots(
 }
 
 /**
- * Stage 10: 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
+ * 射撃の列 frames（昇順）のうち、区間の列 ranges（[start, end)、昇順・重なりなし）に入る発数。
  * 区間は BuffTimeline の [0, frames) を隙間・重なりなく覆う区間から作るので、どの射撃もちょうど 1 つの区間に入る
  * （sim の 2 パス目が区間ごとに引く）
  */
@@ -131,7 +132,7 @@ export function countShotsInRanges(
   return count;
 }
 
-/** Stage 22-B: 部分チャージの発のうち、区間の列 ranges に入るもののチャージの進み（発の順） */
+/** 部分チャージの発のうち、区間の列 ranges に入るもののチャージの進み（発の順） */
 export function partialShotsInRanges(
   partial: readonly PartialShot[] | undefined,
   ranges: readonly { start: number; end: number }[],

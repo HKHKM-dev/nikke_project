@@ -11,7 +11,7 @@ export const FRAMES_PER_GAME_SECOND = 1 / GAME_SECONDS_PER_FRAME;
 
 /**
  * 長さ（持続・CT・フルバースト）: ゲーム内の秒 → フレーム（切り捨て）。戦闘の長さは battleSecondsToFrames。
- * 21-B: クラウンの S2 の 7 秒は、▲の付いた発の区間が 411f（0056-04。7 ÷ 0.017 = 411.8 の切り捨て）。21-A までは切り上げだった
+ * クラウンの S2 の 7 秒は、▲の付いた発の区間が 411f（0056-04。7 ÷ 0.017 = 411.8 の切り捨て）
  */
 export function gameSecondsToFrames(seconds: number): number {
   if (!Number.isFinite(seconds) || seconds < 0) throw new RangeError(`duration must be >= 0, got ${seconds}`);

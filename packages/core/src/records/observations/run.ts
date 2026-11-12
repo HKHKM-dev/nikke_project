@@ -7,7 +7,7 @@ import { METRICS } from './metrics/index.ts';
 import { buildTeamInput, type RecordsData } from './teamInput.ts';
 import type { CompareSpec, Observation, Tolerance } from './types.ts';
 
-/** invalid は失効した観測値（比べずに一覧に残す。Stage 20-E） */
+/** invalid は失効した観測値（比べずに一覧に残す） */
 export type ResidualStatus = 'ok' | 'outside' | 'error' | 'invalid';
 
 export type Residual = {

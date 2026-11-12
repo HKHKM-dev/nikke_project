@@ -49,25 +49,25 @@ export type ShotEvent = {
   /** チャージ武器の射撃か（常にフルチャージのモデルなので fullChargeShot になる） */
   fullCharge: boolean;
   /**
-   * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.3 節）: この射撃の命中の期待値（弾丸命中率。SG は 1）。
+   * この射撃の命中の期待値（弾丸命中率。SG は 1。plan/design-ludmilla-wo.md 2.3 節）。
    * normalHit の回数に足す
    */
   hits: number;
   /** 同 2.2 節: この射撃のコアの命中の期待値（弾丸命中率 × コア命中率。敵にコアが無ければ 0）。coreHit の回数に足す */
   coreHits: number;
   /**
-   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: この射撃のクリティカルの命中の期待値（命中の期待値 × その発の
-   * 通常攻撃の会心率。上限 1）。critHit の回数に足す。省略は 0
+   * この射撃のクリティカルの命中の期待値（命中の期待値 × その発の
+   * 通常攻撃の会心率。上限 1。plan/design-new-chars-1029.md 5.7 節）。critHit の回数に足す。省略は 0
    */
   critHits?: number;
   /**
-   * ペレットの命中編（plan/design-pellet-hit.md 2 節）: この射撃で的に当たったペレットの数（期待値か、録画で数えた入力）。
+   * この射撃で的に当たったペレットの数（期待値か、録画で数えた入力。plan/design-pellet-hit.md 2 節）。
    * pelletHit の回数に足す。省略は hits（1 ペレットの武器）
    */
   pellets?: number;
   /**
-   * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9.6 節）: 使用武器の変更で持ち替えた武器で撃った射撃か
-   * （weaponChangeShot の回数に足す）。省略は false
+   * 使用武器の変更で持ち替えた武器で撃った射撃か
+   * （weaponChangeShot の回数に足す。plan/design-true-damage-element.md 9.6 節）。省略は false
    */
   weaponChange?: boolean;
 };
@@ -121,53 +121,53 @@ export type FrameEvents = {
   /** このフレームのバーストの発動（時刻表の順） */
   activations: readonly BurstActivation[];
   /**
-   * 着弾編（plan/design-burst-landing.md 2 節）: このフレームに効果が発火したバーストの発動（effectFrameOf がこのフレーム）。
+   * このフレームに効果が発火したバーストの発動（effectFrameOf がこのフレーム。plan/design-burst-landing.md 2 節）。
    * 自分の burstUse・{ count: burstUse } はこちらで判定する。遅れの無いキャラは activations と同じ
    */
   burstEffects: readonly BurstActivation[];
   /**
-   * エレグのバースト編（plan/design-elegg.md 8.9 節）: このフレームにバーストの倍率ダメージがヒットした発動（hitFrameOf がこのフレーム。
-   * 分かれたヒットは 1 ヒット目）。トリガー burstHit が見る。省略は無し
+   * このフレームにバーストの倍率ダメージがヒットした発動（hitFrameOf がこのフレーム。
+   * 分かれたヒットは 1 ヒット目。plan/design-elegg.md 8.9 節）。トリガー burstHit が見る。省略は無し
    */
   burstHits?: readonly BurstActivation[];
   fullBurstStart: boolean;
   /** フルバーストが終わった（戦闘時間で切られた最後の窓の end = frames は来ない） */
   fullBurstEnd: boolean;
   gaugeFull: boolean;
-  /** Stage 11: 始まった / 終わったフルバーストを開いたチェーンの枠（FullBurstWindow.burstUsers）。無ければ空 */
+  /** 始まった / 終わったフルバーストを開いたチェーンの枠（FullBurstWindow.burstUsers）。無ければ空 */
   fullBurstStartUsers: readonly number[];
   fullBurstEndUsers: readonly number[];
-  /** Stage 11: 枠ごとに、このフレームに回復を受けたか（heal 効果の対象になった） */
+  /** 枠ごとに、このフレームに回復を受けたか（heal 効果の対象になった） */
   healed: readonly boolean[];
   /**
-   * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: このフレームにフルスタックになって外れた状態（持ち主の枠と状態）。1 パス目が
+   * このフレームにフルスタックになって外れた状態（持ち主の枠と状態。plan/design-skill-stage3.md 1.3 節）。1 パス目が
    * 回復の前に件の一覧から出す（skills/holders.ts の consumeFullStacks）。流し直し（replayEvents）では作らないので、
    * フルスタックの消費のきっかけは 1 パス目で当てる回復にだけ書ける。省略は無し
    */
   fullStacks?: readonly FullStackEvent[];
   /**
-   * 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: このフレームに使用武器の変更（撃ち切り）が終わって基礎の武器に戻った枠
-   * （ShotLog.weaponChangeEnds）。トリガー { weaponChangeEnd } が見る。省略は無し
+   * このフレームに使用武器の変更（撃ち切り）が終わって基礎の武器に戻った枠
+   * （ShotLog.weaponChangeEnds。plan/design-skill-stage11.md 2.2.1 節）。トリガー { weaponChangeEnd } が見る。省略は無し
    */
   weaponChangeEnds?: readonly number[];
   /**
-   * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: このフレームに基礎の武器のリロードを込め終えた枠（ShotLog.reloadEnds。
-   * 込め終えたフレームの次のフレーム）。トリガー { reloadEnd } が見る。省略は無し
+   * このフレームに基礎の武器のリロードを込め終えた枠（ShotLog.reloadEnds。
+   * 込め終えたフレームの次のフレーム。plan/design-skill-stage16.md 2.2 節）。トリガー { reloadEnd } が見る。省略は無し
    */
   reloadEnds?: readonly number[];
   /**
-   * 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 枠ごとに、このフレームに遮蔽物 HP 回復（coverHeal）を受けたか。届くフレームは
+   * 枠ごとに、このフレームに遮蔽物 HP 回復（coverHeal）を受けたか（plan/design-skill-stage17.md 2.1 節）。届くフレームは
    * 回復と同じ（skills/heals.ts の healFrameOf）。トリガー { coverHealed } が見る。流し直し（replayEvents）では作らないので、このきっかけは
    * 1 パス目が件を登録する timed にだけ書ける。省略は無し
    */
   coverHealed?: readonly boolean[];
   /**
-   * 2 段目の段 14 の PR 1（plan/design-skill-stage14.md 2.8 節）: このフレームに発動の結果進んだ段階（burst/schedule.ts の
-   * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目）。トリガー burstStage{N}Enter が見る。省略は無し
+   * このフレームに発動の結果進んだ段階（burst/schedule.ts の
+   * stageEnterFrameOf がこのフレーム。段階 3 は六角形の替わり目。plan/design-skill-stage14.md 2.8 節）。トリガー burstStage{N}Enter が見る。省略は無し
    */
   stageEntries?: readonly BurstStepKey[];
   /**
-   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1 節）: このフレームに溜めの周期が来た枠と間隔（ShotLog.chargeTicks）。
+   * このフレームに溜めの周期が来た枠と間隔（ShotLog.chargeTicks。plan/design-skill-stage14.md 2.1 節）。
    * トリガー { chargeTick } が見る。省略は無し
    */
   chargeTicks?: readonly ChargeTickEvent[];
@@ -175,13 +175,13 @@ export type FrameEvents = {
   chargeFulls?: readonly number[];
 };
 
-/** 2 段目の段 14 の PR 2: 溜めの周期の発火（枠と間隔の秒） */
+/** 溜めの周期の発火（枠と間隔の秒） */
 export type ChargeTickEvent = { slotIndex: number; everySeconds: number };
 
-/** 2 段目の段 3: フルスタックになって外れた状態 */
+/** フルスタックになって外れた状態 */
 export type FullStackEvent = { slotIndex: number; state: NamedStateId };
 
-/** 回復の記録（Stage 11）。frame に slotIndex の枠が sourceSlotIndex の heal 効果で回復を受けた */
+/** 回復の記録。frame に slotIndex の枠が sourceSlotIndex の heal 効果で回復を受けた */
 export type HealRecord = {
   frame: number;
   sourceSlotIndex: number;
@@ -198,12 +198,12 @@ const STAGE_OF: Record<'burstStage1Enter' | 'burstStage2Enter' | 'burstStage3Ent
 export type TriggerTracker = (ev: FrameEvents) => boolean;
 
 /**
- * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 射撃の回数のきっかけの、フレームごとの間隔（N）。回数の間隔の変更
+ * 射撃の回数のきっかけの、フレームごとの間隔（N。plan/design-skill-stage12.md 2.4 節）。回数の間隔の変更
  * （cycleEvery の shotCounts）の窓の中ならその間隔、外なら undefined（きっかけの N のまま）。通算の回数は変えない
  */
 export type ShotCountEveryAt = (frame: number) => number | undefined;
 
-/** 2 段目の段 12 の PR 2: 間隔の変更の窓（[start, end)・窓の中の間隔）の列から ShotCountEveryAt を作る。重なった窓は小さいほうの間隔 */
+/** 間隔の変更の窓（[start, end)・窓の中の間隔）の列から ShotCountEveryAt を作る。重なった窓は小さいほうの間隔 */
 export function everyAtOf(
   windows: readonly { start: number; end: number; every: number }[],
 ): ShotCountEveryAt | undefined {
@@ -220,7 +220,7 @@ export function everyAtOf(
 /**
  * 1 つのトリガー（ある枠の 1 つの効果）の発火を追う。回数トリガーの数は閉包の中に持つ。
  * scheduleModel は「バースト 1 段階突入時」の意味だけに使う（固定サイクルはフルバースト開始、動的サイクルはゲージ満タン）。
- * everyAt は 2 段目の段 12 の PR 2: 射撃の回数のきっかけの間隔の変更（窓の中は通算の回数がその間隔の倍数に届いた発で発火する。
+ * everyAt は射撃の回数のきっかけの間隔の変更（窓の中は通算の回数がその間隔の倍数に届いた発で発火する。
  * 段の循環の cycleEvery と同じ数え方。C-0727）
  */
 export function createTriggerTracker(
@@ -233,13 +233,13 @@ export function createTriggerTracker(
   let lastEventFrame: number | undefined;
   const t = trigger;
   if (isResolvedShotCount(t)) {
-    // グレイブ編（plan/design-grave.md 2.4 節）: 自分の状態の間だけ数える窓は、1 パス目の件の一覧が追う（skills/holders.ts の firesOf）
+    // 自分の状態の間だけ数える窓は、1 パス目の件の一覧が追う（skills/holders.ts の firesOf。plan/design-grave.md 2.4 節）
     if (isStateCountWindow(t.during)) {
       throw new RangeError(
         `a count during a state (${t.during.state}) is not tracked per event; the holder lists track it`,
       );
     }
-    // クルミ S2 編（plan/design-kurumi-s2.md 2.1 節）: フルバーストの窓（[start, end)）の中の射撃だけを数える（firesDuring は
+    // フルバーストの窓（[start, end)）の中の射撃だけを数える（plan/design-kurumi-s2.md 2.1 節。firesDuring は
     // 窓の外の発も数え、発火だけを窓の中に限る。V-0443）。
     // 同じフレームの射撃は、開始なら窓の中、終了なら外（isInFullBurst と同じ境界）
     let inFullBurst = false;
@@ -254,56 +254,56 @@ export function createTriggerTracker(
       }
       const shot = ev.shots[slotIndex];
       if (!shot) return false;
-      // ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts）
+      // 確率のきっかけは、回数の量が正の射撃のたびに引く（付く確率は skills/chance.ts。plan/design-soldier-eg.md 3.1 節）
       if (t.chance !== undefined) return shotCountWeight(t.count, shot) > 0;
       const next = advanceShotCount(count, shotCountWeight(t.count, shot), everyAt?.(ev.frame) ?? t.every);
       count = next.count;
       // ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 窓の外の発も数え、窓の外で届いた回は発火せずに過ぎる
       if (t.firesDuring === 'fullBurst' && !inFullBurst) return false;
-      // 2 段目の段 11（V-0530）: 使用武器の変更で持ち替えた武器の発のときだけ発火する（数えるのは基礎の武器の発も）
+      // 使用武器の変更で持ち替えた武器の発のときだけ発火する（数えるのは基礎の武器の発も）（V-0530）
       if (t.firesDuring === 'weaponChange' && shot.weaponChange !== true) return false;
-      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 変更の発で届いた回は発火せずに過ぎる
+      // 変更の発で届いた回は発火せずに過ぎる（plan/design-new-chars-1029.md 5.7 節）
       if (t.firesOutside === 'weaponChange' && shot.weaponChange === true) return false;
       return next.fired;
     };
   }
-  // ニヒリスター編: 時間の周期のトリガーは出来事の列に無いフレームで起きるので、ここでは追わない（skills/timeline.ts の triggerFires が並べる）
+  // 時間の周期のトリガーは出来事の列に無いフレームで起きるので、ここでは追わない（skills/timeline.ts の triggerFires が並べる）
   if (isResolvedTimer(t)) {
     throw new RangeError(`a timer trigger (every ${t.everySeconds} s) is not tracked per event; use triggerFires`);
   }
-  // 2 段目の段 3: フルスタックの消費のきっかけは、このフレームに外れた状態（1 パス目が回復の前に出す）
+  // フルスタックの消費のきっかけは、このフレームに外れた状態（1 パス目が回復の前に出す）
   if (isResolvedFullStack(t)) {
     return (ev) => (ev.fullStacks ?? []).some((x) => x.slotIndex === slotIndex && x.state === t.fullStack);
   }
-  // 2 段目の段 11: 使用武器の変更の終わり（1 パス目の撃ち切りの終わりの列）
+  // 使用武器の変更の終わり（1 パス目の撃ち切りの終わりの列）
   if (isResolvedWeaponChangeEnd(t)) return (ev) => (ev.weaponChangeEnds ?? []).includes(slotIndex);
-  // 2 段目の段 16 の PR 2: リロードの込め終わり（1 パス目の込め終わりの列）
+  // リロードの込め終わり（1 パス目の込め終わりの列）
   if (isResolvedReloadEnd(t)) return (ev) => (ev.reloadEnds ?? []).includes(slotIndex);
-  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時（1 パス目が当てた遮蔽物 HP 回復の受け手）
+  // 遮蔽物 HP 回復を受けた時（1 パス目が当てた遮蔽物 HP 回復の受け手）
   if (isResolvedCoverHealed(t)) return (ev) => ev.coverHealed?.[slotIndex] === true;
-  // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders.ts の firesOf）。出来事の列では追わない
+  // 自分の HP の割合の窓は 1 パス目の件の一覧が追う（skills/holders.ts の firesOf。plan/design-mast.md 8 節）。出来事の列では追わない
   if (isResolvedSelfHpAtMost(t)) {
     throw new RangeError('a selfHpAtMost trigger is not tracked per event; the holder lists track it');
   }
-  // 2 段目の段 14 の PR 2: 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
+  // 溜めの周期と溜めが満ちた時（1 パス目の射撃の記録の列）
   if (isChargeTickTrigger(t)) {
     const every = t.chargeTick.everySeconds;
     return (ev) => ev.chargeTicks?.some((x) => x.slotIndex === slotIndex && x.everySeconds === every) === true;
   }
   if (isChargeFullTrigger(t)) return (ev) => ev.chargeFulls?.includes(slotIndex) === true;
-  // ペルソナ編: 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
+  // 効果名のトリガーは 1 パス目の履歴の記録（HolderHistory.applications）で決まる。出来事の列では追わない
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
   }
-  // 2 段目の段 13 の PR 1: カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf・counterFullFrames）
+  // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf・counterFullFrames）
   if (isCounterFullTrigger(t)) {
     throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
   }
-  // グレイブ編（plan/design-grave.md 2.1 節）: 状態の終わりは 1 パス目の件の一覧が追う（skills/holders.ts の endedAt）。出来事の列では追わない
+  // 状態の終わりは 1 パス目の件の一覧が追う（skills/holders.ts の endedAt。plan/design-grave.md 2.1 節）。出来事の列では追わない
   if (isEndedTrigger(t)) {
     throw new RangeError(`an ended trigger (${t.ended}) is not tracked per event; the holder lists track it`);
   }
-  // アインのニアフェザー編: 召喚の攻撃は 1 パス目が機数と進みを追って決める（frame/firstPass.ts の summonHits）。出来事の列では追わない
+  // 召喚の攻撃は 1 パス目が機数と進みを追って決める（frame/firstPass.ts の summonHits）。出来事の列では追わない
   if (isSummonAttackTrigger(t)) {
     throw new RangeError(`a summon trigger (${t.summon}) is not tracked per event; use the first pass summonHits`);
   }
@@ -326,7 +326,7 @@ export function createTriggerTracker(
         count = 0;
       lastEventFrame = ev.frame;
       count += 1;
-      // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.1 節）: atMost 回目まで
+      // atMost 回目まで（plan/design-diesel-ws.md 2.1 節）
       return count >= t.atLeast && (t.atMost === undefined || count <= t.atMost);
     };
   }
@@ -357,7 +357,7 @@ export function createTriggerTracker(
 }
 
 /**
- * レッドフード編（plan/design-red-hood.md 2.1 節）: 条件の burstStep（この発動を撃った段階が N なら）。このフレームに効果が発火した自分の
+ * 条件の burstStep（この発動を撃った段階が N なら。plan/design-red-hood.md 2.1 節）。このフレームに効果が発火した自分の
  * 発動（burstEffects）の段階を見る。鍵が無ければ true
  */
 export function burstStepHolds(
@@ -369,9 +369,9 @@ export function burstStepHolds(
   return step === undefined || ev.burstEffects.some((a) => a.slotIndex === slotIndex && a.step === step);
 }
 
-/** Stage 11: 発火したトリガーの文脈（対象 burstUsers の判定に使う）。フルバーストの開始・終了だけが枠の列を持つ */
+/** 発火したトリガーの文脈（対象 burstUsers の判定に使う）。フルバーストの開始・終了だけが枠の列を持つ */
 export function fireContextOf(trigger: ResolvedTrigger | EndedTrigger, ev: FrameEvents): FireContext {
-  // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.2 節）: その出来事の回数のきっかけも同じ文脈
+  // その出来事の回数のきっかけも同じ文脈（plan/design-diesel-ws.md 2.2 節）
   const kind = burstUsersEventOf(trigger);
   if (kind === 'fullBurstStart') return { burstUsers: ev.fullBurstStartUsers };
   if (kind === 'fullBurstEnd') return { burstUsers: ev.fullBurstEndUsers };
@@ -381,7 +381,7 @@ export function fireContextOf(trigger: ResolvedTrigger | EndedTrigger, ev: Frame
 /**
  * 確定した射撃の列と時刻表を、出来事のあるフレームだけの FrameEvents の列（昇順）に直す。
  * 戦闘時間 frames の外（f ≥ frames）の出来事は含めない。フレーム 0 は常に含める（戦闘開始）。
- * Stage 11: heals（1 パス目の履歴の回復の記録）の回復を healed として書き込む。省略時は回復なし
+ * heals（1 パス目の履歴の回復の記録）の回復を healed として書き込む。省略時は回復なし
  */
 export function replayEvents(
   schedule: BurstSchedule | null,
@@ -435,19 +435,19 @@ export function replayEvents(
       if (changed.has(f)) shot.weaponChange = true;
       (at(f).shots as (ShotEvent | null)[])[slotIndex] = shot;
     });
-    // 2 段目の段 11: 使用武器の変更の終わり（トリガー { weaponChangeEnd }）
+    // 使用武器の変更の終わり（トリガー { weaponChangeEnd }）
     for (const f of log.weaponChangeEnds ?? []) {
       if (f >= frames) continue;
       const ev = at(f);
       ev.weaponChangeEnds = [...(ev.weaponChangeEnds ?? []), slotIndex];
     }
-    // 2 段目の段 16 の PR 2: リロードの込め終わり（トリガー { reloadEnd }）
+    // リロードの込め終わり（トリガー { reloadEnd }）
     for (const f of log.reloadEnds ?? []) {
       if (f >= frames) continue;
       const ev = at(f);
       ev.reloadEnds = [...(ev.reloadEnds ?? []), slotIndex];
     }
-    // 2 段目の段 14 の PR 2: 溜めの周期（{ chargeTick }）と溜めが満ちた時（{ chargeFull }）
+    // 溜めの周期（{ chargeTick }）と溜めが満ちた時（{ chargeFull }）
     for (const { everySeconds, frames: ticks } of log.chargeTicks ?? []) {
       for (const f of ticks) {
         if (f >= frames) continue;
@@ -463,19 +463,19 @@ export function replayEvents(
   });
   if (schedule !== null) {
     for (const a of schedule.activations) if (a.frame < frames) (at(a.frame).activations as BurstActivation[]).push(a);
-    // 段 14 の PR 1: 段階のきっかけは stageEnterFrameOf のフレーム（段階 3 は替わり目）
+    // 段階のきっかけは stageEnterFrameOf のフレーム（段階 3 は替わり目）
     for (const a of schedule.activations) {
       const f = stageEnterFrameOf(a, schedule.model);
       if (a.enteredStep === null || f >= frames) continue;
       const ev = at(f);
       ev.stageEntries = [...(ev.stageEntries ?? []), a.enteredStep];
     }
-    // 着弾編: 効果の発火は発動 + 遅れのフレーム（同じフレームなら時刻表の順）
+    // 効果の発火は発動 + 遅れのフレーム（同じフレームなら時刻表の順）
     for (const a of schedule.activations) {
       const f = effectFrameOf(a);
       if (f < frames) (at(f).burstEffects as BurstActivation[]).push(a);
     }
-    // エレグのバースト編: ヒットのフレーム（トリガー burstHit）
+    // ヒットのフレーム（トリガー burstHit）
     for (const a of schedule.activations) {
       const f = hitFrameOf(a);
       if (f >= frames) continue;
@@ -505,7 +505,7 @@ export function replayEvents(
   return [...byFrame.values()].sort((a, b) => a.frame - b.frame);
 }
 
-/** Stage 11: トリガーの発火（フレームと文脈） */
+/** トリガーの発火（フレームと文脈） */
 export type TriggerFire = { frame: number; context: FireContext };
 
 /** トリガーが起きたフレームと文脈の列（昇順）。出来事の列を TriggerTracker に流し直す */

@@ -3,7 +3,7 @@
 //
 // Windows では、書いた直後のファイルを別のプロセス（ウイルス対策・索引など）が一時的に開いていて、prettier が
 // 「UNKNOWN: unknown error, open」で書けないことがある。records:check などは生成物を書いてから prettier で整えるので、
-// そこで止まると整形されていない生成物が残る（2026-10-07 に何度か起きた）。そのための繰り返し。
+// そこで止まると整形されていない生成物が残る。そのための繰り返し。
 // --cache で、前に整えてから中身の変わっていないファイルを飛ばす（手書きの検証記録を毎回整え直すと 20 秒近くかかる。
 // plan/design-workflow-simplification-5.md 7.3 節）。キャッシュは node_modules/.cache/prettier に置かれ、追跡しない。
 import { spawnSync } from 'node:child_process';

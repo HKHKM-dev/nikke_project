@@ -31,7 +31,7 @@ export type RecordingMember = {
   /** スペック固定 OFF の録画の育成（録画に映した値）。照合ランナーはこれでモデルの入力を組む。無ければ固定 OFF の録画は比べられない */
   build?: RecordingBuild;
   /**
-   * 最小構成の検査編（plan/design-minimal-relevance.md 3.4 節）: 戦闘中に通常攻撃を 1 発でも撃ったか（戦闘履歴の与ダメージが 0 なら false）。
+   * 戦闘中に通常攻撃を 1 発でも撃ったか（戦闘履歴の与ダメージが 0 なら false。plan/design-minimal-relevance.md 3.4 節）。
    * 省略は「分からない」で、撃ったとみなす
    */
   fires?: boolean;
@@ -40,7 +40,7 @@ export type RecordingMember = {
 };
 
 /**
- * スペック固定 OFF の録画の育成（Stage 13 の残り）。録画に映した値を書く（オーナー決定 2026-10-06: 録画の素性に公開で書く）。
+ * スペック固定 OFF の録画の育成。録画に映した値を書く（録画の素性に公開で書く）。
  * 攻撃力はキャラ画面の値（C-0118: OL の攻撃力増加とスキルの攻撃力▲は、これに同じ足し算の群で掛かる）。OL の行・キューブ・
  * コレクションは効果層（buildEffects.ts）に、スキルの Lv は定義の解決に渡す
  */
@@ -104,7 +104,7 @@ export type RecordingBackup = {
 
 /** このプロジェクトが採用した録画（E:/nikke_project_captures/<folder>/） */
 export type ProjectRecording = RecordingConditions & {
-  /** 4 桁の通し番号（2026-10-25 に 4 桁にそろえた。plan/design-recording-id-4digit.md） */
+  /** 4 桁の通し番号（plan/design-recording-id-4digit.md） */
   id: string;
   date: string;
   folder: RecordingFolder;
@@ -175,7 +175,7 @@ export function validateRecordings(file: RecordingsFile, knownRids: ReadonlySet<
     if (isLegacy(entry)) {
       if (!/^L-[A-Z]{1,3}$/.test(entry.id)) errors.push(`${at}: 旧の録画の id は L-<旧のタグ>`);
     } else {
-      // Stage 20-A・20-C: 抜けは許す（plan/design-stage20.md 3.5・3.6 節）。桁は 4 桁（plan/design-recording-id-4digit.md 6 節）
+      // 抜けは許す（plan/design-stage20.md 3.5・3.6 節）。桁は 4 桁（plan/design-recording-id-4digit.md 6 節）
       if (!RECORDING_ID.test(entry.id)) errors.push(`${at}: id は 4 桁の数字（0001〜9999）`);
       const number = Number(entry.id);
       if (!RECORDING_FOLDERS.includes(entry.folder)) errors.push(`${at}: folder が語彙に無い: ${entry.folder}`);

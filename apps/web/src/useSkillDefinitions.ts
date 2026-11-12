@@ -77,7 +77,7 @@ export function useSkillDefinitions(resourceIds: readonly (number | null)[], bas
   }, [wantedKey, baseUrl, index]);
 
   // 返す物は中身が変わるまで同じにする。App.tsx の計算の入力（teamInput）がこれに依存し、毎回作り直すと、計算の結果が
-  // 届いて描き直すたびに入力が変わって計算を出し直し続ける（(B) の段 B-2。plan/design-unify-sim-calc.md 経過）
+  // 届いて描き直すたびに入力が変わって計算を出し直し続ける
   return useMemo(
     () => ({ index, indexError, fullySupported, supportGaps, definitions, errors }),
     [index, indexError, fullySupported, supportGaps, definitions, errors],
@@ -113,7 +113,7 @@ export function slotSkillsStatus(cache: SkillDefinitionCache, resourceId: number
 
 /**
  * runSimulation に渡す skills。読み込み中・エラー・未定義は definition: null（味方の効果は受ける）。
- * Stage 9: treasurePhase は calcView.ts の実効値（宝物のないキャラは 0）
+ * treasurePhase は calcView.ts の実効値（宝物のないキャラは 0）
  */
 export function toSlotSkills(
   status: SlotSkillsStatus,

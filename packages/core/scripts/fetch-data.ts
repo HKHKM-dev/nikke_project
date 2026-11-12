@@ -128,7 +128,7 @@ async function fetchMasters(rareMap: RawFavoriteRareMap): Promise<FetchedMasters
   }
   console.log(`gear: master Lv0 matches CDN (${equipTable.records.length} records)`);
 
-  // Stage 13: OL の表はオプションの一覧だけ CDN と突き合わせる（Lv 別の数値は CDN に無い）
+  // OL の表はオプションの一覧だけ CDN と突き合わせる（Lv 別の数値は CDN に無い）
   const overload = JSON.parse(await readFile(path.join(MASTERS_DIR, 'overload.json'), 'utf8')) as OverloadMaster;
   const optionTable = await cachedJson<RawEquipOption[]>('equip_option_table_v2-ja.json', equipOptionTablePath('ja'));
   const overloadProblems = checkOverloadMaster(overload, optionTable);
@@ -204,7 +204,7 @@ async function main(): Promise<void> {
   });
   const loaded = roles.filter((r): r is { id: number; en: RawRoleData; ja: RawRoleData } => r !== null);
 
-  // Stage 9: 宝物（SSR だけがスキルを差し替える）。name_code で持ち主に対応付ける。照合に失敗したら全体を止める
+  // 宝物（SSR だけがスキルを差し替える）。name_code で持ち主に対応付ける。照合に失敗したら全体を止める
   const rareMap = await cachedJson<RawFavoriteRareMap>('favorite_rare_map.json', favoriteRareMapPath());
   const favoriteIds = rareMap.SSR ?? [];
   const treasures = new Map<number, TreasureData>();
@@ -239,7 +239,7 @@ async function main(): Promise<void> {
     }
   }
 
-  // Stage 12: 育成のマスタ
+  // 育成のマスタ
   let masters: FetchedMasters | undefined;
   try {
     masters = await fetchMasters(rareMap);

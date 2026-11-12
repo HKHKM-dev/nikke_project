@@ -34,10 +34,10 @@ export function fullChargeGaugeOf(shot: ShotParams, controlled: boolean): number
 }
 
 /**
- * 1 トリガーで溜まるゲージ量。1 発は CDN の targetBurstEnergyPerShot そのまま（C-0083。Stage 7 の ×1.2 は
- * BURST バーの表示の縮尺を読んだものだった。V-0028）。targetBurstEnergyPerShot は 1 ペレットあたりなので
- * shotCount（SG のペレット数）を掛ける。フルチャージ倍率（fullChargeBurstEnergy）は**操作キャラのチャージ武器にだけ**乗る
- * （C-0007）。muzzleHits は二丁持ちの 1 発のヒット数（muzzleHitsOf。2 ヒットともゲージを溜める。C-1023・C-1019）。Stage 15: hitRate（省略 1）を掛ける。
+ * 1 トリガーで溜まるゲージ量。1 発は CDN の targetBurstEnergyPerShot そのまま（C-0083・V-0028）。
+ * targetBurstEnergyPerShot は 1 ペレットあたりなので shotCount（SG のペレット数）を掛ける。
+ * フルチャージ倍率（fullChargeBurstEnergy）は**操作キャラのチャージ武器にだけ**乗る
+ * （C-0007）。muzzleHits は二丁持ちの 1 発のヒット数（muzzleHitsOf。2 ヒットともゲージを溜める。C-1023・C-1019）。hitRate（省略 1）を掛ける。
  * pelletGaugeRate は SG のペレットのうちゲージになる割合（省略は手入力の置き値 SG_PELLET_GAUGE_HIT_RATE。表の弾丸命中率を使う枠は 1）
  */
 export function energyPerTrigger(
@@ -48,12 +48,12 @@ export function energyPerTrigger(
   muzzleHits = 1,
 ): number {
   const pellets = shot.shotCount > 1 ? shot.shotCount * pelletGaugeRate : shot.shotCount;
-  // Stage 15: 命中率（射撃場 = 1 の相対値）。外れた弾はゲージにならない
+  // 命中率（射撃場 = 1 の相対値）。外れた弾はゲージにならない
   return shot.targetBurstEnergyPerShot * pellets * muzzleHits * fullChargeGaugeOf(shot, controlled) * hitRate;
 }
 
 /**
- * Stage 22-B: 部分チャージの発（チャージの進み progress）のゲージの、フルチャージの発に対する比。フルチャージ倍率 F が乗る枠
+ * 部分チャージの発（チャージの進み progress）のゲージの、フルチャージの発に対する比。フルチャージ倍率 F が乗る枠
  * （操作キャラのチャージ武器）では (1 + (F − 1) × progress) / F、ほかは 1。ダメージと同じくチャージの進みに比例すると仮定した
  * （部分チャージの発のゲージは未確認。design-stage22.md 0.2 節・6 節の 3）
  */
@@ -64,7 +64,7 @@ export function partialGaugeRatio(shot: ShotParams, controlled: boolean, progres
 }
 
 /**
- * 枠のバーストの段。2 段目の段 12（plan/design-skill-stage12.md 2.5 節）: 定義にバースト段階の変更（burstStepChange。編成の条件で
+ * 枠のバーストの段（plan/design-skill-stage12.md 2.5 節）。定義にバースト段階の変更（burstStepChange。編成の条件で
  * 外した後）があれば、その段。チェーンを組む所（動的・固定サイクル）だけが使い、「基本バースト段階」は CharacterData.burstStep のまま
  */
 export function burstStepOf(character: CharacterData, definition: SkillDefinition | null = null): BurstStep {
@@ -77,8 +77,8 @@ export function burstCandidateOf(character: CharacterData, definition: SkillDefi
 }
 
 /**
- * 枠のバースト。アニス：スター編: 定義にバースト再突入（burstReentry。編成の条件で外した後）があれば、次の段階をそれに差し替える。
- * 2 段目の段 12: バースト段階の変更（burstStepChange）があれば段を差し替え、次の段階は段の順のまま（NextStep。再突入があればそれ）
+ * 枠のバースト。定義にバースト再突入（burstReentry。編成の条件で外した後）があれば、次の段階をそれに差し替える。
+ * バースト段階の変更（burstStepChange）があれば段を差し替え、次の段階は段の順のまま（NextStep。再突入があればそれ）
  */
 export function burstUnitOf(
   character: CharacterData,
@@ -89,9 +89,9 @@ export function burstUnitOf(
     burstStep: changed ?? character.burstStep,
     nextStep: burstReentryStepOf(definition) ?? (changed !== null ? 'NextStep' : character.burstSkill.nextStep),
     cooldownFrames: gameSecondsToFrames(character.burstSkill.cooldownSeconds),
-    // Stage 8: フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
+    // フルバースト時間は StepFull に入る発動をしたニケの burst_duration（イサベル 5 秒、モダニア 15 秒）
     fullBurstFrames: gameSecondsToFrames(character.burstSkill.durationSeconds),
-    // 2 段目の段 21: 延長の秒を足してからフレームにするための元の秒
+    // 延長の秒を足してからフレームにするための元の秒
     fullBurstSeconds: character.burstSkill.durationSeconds,
     ...burstDelaysFieldOf(character),
   };

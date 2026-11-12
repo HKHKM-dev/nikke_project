@@ -174,10 +174,10 @@ const KINDS: Rules = [
   [/警戒対象指定|ターゲット殲滅|^命中部位$/, 'control:mark'],
   [/効果解除/, 'buffOp:dispel'],
   [/免疫/, 'buffOp:immunity'],
-  // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量の増減の無効は、ほかの増減効果の無効（チャージ速度など）と分ける
+  // スタック量の増減の無効は、ほかの増減効果の無効（チャージ速度など）と分ける（plan/design-nayuta.md 2.5 節）
   [/スタック量増減効果無効/, 'buffOp:nullifyStack'],
   [/効果無効/, 'buffOp:nullify'],
-  // 2 段目の段 19: 攻撃力のコピー（ギルティ。copyTopAttack）と最大HP のコピー（シン・クエンシー。間接の notes）はスタックのコピーと分ける
+  // 攻撃力のコピー（ギルティ。copyTopAttack）と最大HP のコピー（シン・クエンシー。間接の notes）はスタックのコピーと分ける
   [/攻撃力のコピー X％$/, 'buffOp:copyAttack'],
   [/最大HPのコピー X％$/, 'buffOp:copyMaxHp'],
   [/スタックコピー|コピー$|コピー X％$/, 'buffOp:copy'],
@@ -439,7 +439,7 @@ const TARGETS: Rules = [
   [/自分と自分の両隣|両隣/, 'ally:neighbors'],
   [/直前にバーストスキルを使用した/, 'ally:burstUsers'],
   [/最終攻撃力が最も高い味方|攻撃力が最も高い味方/, 'ally:topAttack'],
-  // 2 段目の段 20（plan/design-skill-stage20.md 6 節の論点 5）: HP の割合の順（lowestHpRatio）と値の順を分ける
+  // HP の割合の順（lowestHpRatio）と値の順を分ける（plan/design-skill-stage20.md 6 節の論点 5）
   [/残りの?HPの割合が最も低い味方/, 'ally:lowestHpRatio'],
   [/残りの?HPの(数値|値)が最も低い味方/, 'ally:lowestHpValue'],
   [/基本チャージ時間が一番長い味方/, 'ally:longestChargeTime'],

@@ -23,7 +23,7 @@ export function scaleCrop(crop: Crop, width: number, height: number): Crop {
   };
 }
 
-// ---- (b) 戦闘履歴のパネルの検出（probe-result.ts から移した） ----
+// ---- (b) 戦闘履歴のパネルの検出 ----
 //
 // 検出は 2 つの特徴の AND:
 //   1. 中央のカードが明るく、周囲が暗い（パネルが開くと背景が暗幕になる）

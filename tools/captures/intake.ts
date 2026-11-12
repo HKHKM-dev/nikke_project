@@ -241,7 +241,7 @@ if (fromDrive !== null) {
   if (values.copy) fail('drive: から取り込むときは --copy を使えない（record の写しは移す）');
   if (gatewayUrl() === null) fail('環境変数 NIKKE_DRIVE_GATEWAY_URL が無い（Drive の中で移すのに受け口を使う）');
 }
-// 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）
+// 番号は 4 桁だけ（plan/design-recording-id-4digit.md 6 節）
 orFail(() => checkRecordingId(values.id!));
 if (!isRecordingName(values.name)) fail('--name は英小文字・数字・-・_・+');
 // 命名規約では編成をファイル名に入れない（plan/captures/index.md「命名規約」。録画 0400〜0402・0407。plan/design-investigation-review.md 5 節）
@@ -447,7 +447,7 @@ function copyFromRecord(src: string): boolean {
     console.log('Drive の record に取り込み元の写しが無い（まだ上がっていない）ので、E: から上げる');
     return false;
   }
-  // コピー先はリモートの名前を付けて書く（付けないとローカルのパスと見なされ、手元へダウンロードされる。2026-10-23 の試し）
+  // コピー先はリモートの名前を付けて書く（付けないとローカルのパスと見なされ、手元へダウンロードされる）
   const r = rclone(['backend', 'copyid', `${remoteName()}:`, hit.ID, remoteFile]);
   if (r.status !== 0) {
     console.error(`Drive の中のコピーに失敗した（E: から上げる）: ${r.stderr.trim()}`);
