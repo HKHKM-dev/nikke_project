@@ -7,7 +7,9 @@ import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { resolveAllyGaugeAdd } from '../skills/burstDamage.ts';
 import { itemsOf } from '../skills/holders.ts';
+import { METRICS } from '../records/observations/metrics/index.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
+import type { SimResult } from '../sim/engine.ts';
 import type { NamedStateId } from '../skills/states.ts';
 import type { TeamInput, TeamSlotInput } from '../team.ts';
 import { fixedSlot, rawDefinition, readJson, skillValueOf } from './teamHelpers.ts';
@@ -91,6 +93,29 @@ describe('グレイブ S1 の放熱の味方のゲージ（allyGaugeAdd の whil
     expect(holders).toEqual(new Set([1, 2]));
     // どちらの持つ枠も、自分の回には足さない
     for (const g of p.allyGauges) expect(g.slotIndex).not.toBe(g.holderIndex);
+  });
+
+  describe('shotGaugeRatioInHolderState', () => {
+    const ratio = (q: ReturnType<typeof planTeamRun>, input: TeamInput, n?: number) =>
+      METRICS.shotGaugeRatioInHolderState!.sim(q as unknown as SimResult, {
+        args: { slot: 1, holder: 2, state: HEAT, ...(n === undefined ? {} : { n }) },
+        input,
+      });
+    const expected = Math.round(((2_000 + GRAVE_ADD) / 2_000) * 10_000) / 10_000;
+
+    it('is (2,000 + 3,506) / 2,000 in every window (the edge frames follow selfStateAt)', () => {
+      expect(ratio(plan, TEAM)).toBe(expected);
+      for (const n of heat.keys()) expect(ratio(plan, TEAM, n)).toBe(expected);
+      expect(() => ratio(plan, TEAM, heat.length)).toThrow(/回目が無い/);
+    });
+
+    it('counts only the holder’s additions (not Anis: Star’s)', () => {
+      const team: TeamInput = { ...TEAM, slots: [...TEAM.slots, slot(17)], controlledSlot: 1 };
+      const p = planTeamRun(team);
+      // アニス：スターの足す量は窓の中と外に同じく入るが、比には混ぜない
+      expect(p.allyGauges.some((g) => g.slotIndex === 0 && g.holderIndex === 2)).toBe(true);
+      expect(ratio(p, team)).toBe(expected);
+    });
   });
 
   it('rejects stack conditions, a counter, and a state without a grant in while', () => {
