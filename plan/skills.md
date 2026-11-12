@@ -71,7 +71,7 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 47・補足
   - effects[1] state・battleStart・myOwnStar（attack）: C-0189（確定）、C-0203（確定）、C-0555（確定）
   - effects[2] cooldownReduction・battleStart: C-0202（確定）、C-0203（確定）、C-0555（確定）
   - effects[3] cooldownReduction・fullBurstEnd: C-0202（確定）、C-0203（確定）、C-0555（確定）
-  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0413（確定）、C-0461（確定）、C-0992（確定）
+  - effects[4] damage・fullChargeShot・additional: C-0190（確定）、C-0198（確定）、C-0413（確定）、C-0461（確定）、C-0992（確定）、C-1148（仮説）、C-1149（仮説）、C-1150（仮説）
   - effects[5] burstReentry: C-0201（確定）、C-0203（確定）、C-0555（確定）
   - effects[6] state・battleStart・everyonesStar: C-0201（確定）、C-0203（確定）、C-0555（確定）
   - effects[7] allyGaugeAdd: C-0244（確定）、C-0245（確定）、C-0246（確定）、C-0620（確定）、C-0627（確定）、C-0998（確定）
