@@ -1,0 +1,52 @@
+{
+  "id": "1123",
+  "date": "2026-11-12",
+  "folder": "range",
+  "file": "20261112-1123_smg+rl+rl+rl_liter+yuni+raven+a2_fire.mp4",
+  "original": "2026-11-12_22-53-54.mp4",
+  "durationSec": 204,
+  "frames": 12242,
+  "fps": 60,
+  "sizeMB": 247.3,
+  "sha256": "26459b7a6c33",
+  "team": [
+    {
+      "slot": 1,
+      "rid": 82,
+      "name": "リター",
+      "controlled": false
+    },
+    {
+      "slot": 2,
+      "rid": 160,
+      "name": "ユニ",
+      "controlled": false
+    },
+    {
+      "slot": 3,
+      "rid": 851,
+      "name": "レイヴン",
+      "controlled": false
+    },
+    {
+      "slot": 4,
+      "rid": 811,
+      "name": "A2",
+      "controlled": true
+    }
+  ],
+  "target": {
+    "name": "BigArms",
+    "element": "Fire"
+  },
+  "mode": "range-3min",
+  "fixedSpec": true,
+  "autoFire": true,
+  "autoBurst": false,
+  "conditionNote": "V-0749。バーストは手で リター → ユニ → レイヴン（A2 のバーストは押さない）",
+  "backup": {
+    "at": "2026-11-12T22:58+09:00",
+    "via": "cloud-move",
+    "matched": "sha256"
+  }
+}
