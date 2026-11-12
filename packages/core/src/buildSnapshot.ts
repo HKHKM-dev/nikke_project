@@ -239,7 +239,7 @@ export function unknownTreasurePhaseCount(snapshot: BuildSnapshot): number {
  */
 export function cliSnapshotNotices(read: Extract<BuildSnapshotRead, { ok: true }>): string[] {
   const { editedAt } = read.snapshot;
-  if (editedAt === undefined) return read.notices;
+  if (editedAt === undefined) return [...read.notices];
   const t = Date.parse(editedAt);
   const when = Number.isNaN(t) ? editedAt : `日本時間 ${jstDateTime(t)}`;
   return [...read.notices, `画面で編集した育成状況（${when} に編集。取得のままのスナップショットではない）`];
