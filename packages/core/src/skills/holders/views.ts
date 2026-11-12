@@ -1,5 +1,6 @@
 // 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節）。stat ごとの見る列（射撃・ダメージ・当たり・射程・会心・ペレット・
-// 条件・順位・ゲージ・CT）、状態の件、最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。
+// 条件・順位・ゲージ・CT）、状態の件のスタックの段と敵の状態、登録が閉じる件の列（カウンタの 0・HP の割合・見る状態の終わり）、
+// 最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。
 import { lowerBound } from '../../frame/shots.ts';
 import { chanceStackLevelsAt } from '../chance.ts';
 import { type ItemEffect } from '../resolve.ts';
@@ -27,8 +28,17 @@ import type { Sources } from './sources.ts';
 import type { Read } from './read.ts';
 
 /** stat ごとの見る列・状態の件・HP・防御力・順位を読む */
-export function createViews(deps: HolderBase & Records & Fires & Sources & Read) {
-  const { activeAt, counterKey, frames, passive, readItems, slots, tracks, updateHpAtLeast } = deps;
+export function createViews({
+  activeAt,
+  counterKey,
+  frames,
+  passive,
+  readItems,
+  slots,
+  stateTracks,
+  tracks,
+  updateHpAtLeast,
+}: HolderBase & Records & Fires & Sources & Read) {
   // ---- 読む側の索引（持ち主ごと。並びは作った順） ----
   type View = { track: HeldTrack; effect: ItemEffect };
   const viewsOf = (test: (track: HeldTrack, effect: ItemEffect) => boolean): View[][] =>
@@ -102,17 +112,6 @@ export function createViews(deps: HolderBase & Records & Fires & Sources & Read)
   // 条件 selfState が見る、枠の静的な状態と、段 1 の状態の件の列（持ち主 → 状態。plan/design-skill-stage1.md 1.1 節）。
   // 静的な状態を見る selfState は編成の段（skills/composition.ts）で決まるので、ここに来るのは時間で変わる状態がほとんど
   const staticStates = slots.map((slot) => new Set(staticStatesOf(slot?.definition)));
-  // 段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
-  // （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る。plan/design-skill-stage10.md 3.2 節）
-  const stateTracks = slots.map((_, holder) => {
-    const byState = new Map<NamedStateId, HeldTrack[]>();
-    for (const track of tracks) {
-      const o = track.origin;
-      if (track.holder !== holder || (track.stage !== 1 && track.stage !== 1.5) || o.kind !== 'state') continue;
-      byState.set(o.state, [...(byState.get(o.state) ?? []), track]);
-    }
-    return byState;
-  });
   /**
    * 持ち主 × カウンタごとの、そのカウンタが 0 に届いたら閉じる自分の状態の件の列（付与の untilCounterEmpty。
    * 解除不可でも閉じる。registerCounters）
@@ -342,7 +341,6 @@ export function createViews(deps: HolderBase & Records & Fires & Sources & Read)
     singlePelletViews,
     stackLevelAt,
     stateEndTracks,
-    stateTracks,
     staticStates,
     sumAt,
   };

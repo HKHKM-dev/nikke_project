@@ -1,6 +1,7 @@
 // 件の一覧（../holders.ts の createHolderLists）の層 1: 記録の入れ物と件の列の作り方（plan/design-split-first-pass.md 3.3 節）。
-// 件の列（tracks）・付いた記録・条件で落とした記録・順位・デバフ解除の読み・回復・強化の列と、件の列を作る・閉じる・消費する関数。
-// 層の作り手が共通に受けるもの（HolderBase）と、前の層が後の層を発火の時に読む口（LateReaders）もここに置く。
+// 件の列（tracks）・付いた記録・条件で落とした記録・順位・デバフ解除の読み・回復・強化の列、常時の値（passive）、カウンタの鍵と上限に
+// 届いたフレーム、件の列を作る・閉じる・消費する関数。層の作り手が共通に受けるもの（HolderBase）と、前の層が後の層の関数を、作った後に
+// 呼ばれた時に読む口（LateReaders）もここに置く。
 import { type ChanceOpportunity } from '../chance.ts';
 import { type ResolvedShotCountTrigger } from '../resolve.ts';
 import { type RankingRecord } from '../ranking.ts';
@@ -20,7 +21,7 @@ import {
 import { type TrackReads, insertSorted, trackReadsOf } from './items.ts';
 
 /**
- * 前の層が、後の層の関数と値を発火の時に読む口。createHolderLists が後の層を作った後に埋める（埋める前に読むと落ちる）
+ * 前の層が、後の層の関数を、作った後に呼ばれた時に読む口。createHolderLists が後の層を作った後に埋める（埋める前に読むと落ちる）
  */
 export type LateReaders = {
   /** 層 6（conditions）: { ended } の発火 */
@@ -40,16 +41,16 @@ export type LateReaders = {
   readItems: (track: HeldTrack) => HeldItem[];
   /** 層 4（read）: 件の列のうち、そのフレームに効いている件 */
   activeAt: (track: HeldTrack, frame: number) => HeldItem[];
-  /** 層 5（views）: 持ち主ごとの、状態ごとの件の列（段 1・1.5） */
-  stateTracks: Map<NamedStateId, HeldTrack[]>[];
 };
 
 /** 層の作り手が共通に受けるもの */
-export type HolderBase = { slots: readonly TimelineSlot[]; options: HolderListsOptions; late: LateReaders };
+export type HolderBase = { slots: readonly TimelineSlot[]; options: HolderListsOptions };
+
+/** 後の層を読む層（fires・sources）が受ける口 */
+export type WithLate = { late: LateReaders };
 
 /** 記録の入れ物と、件の列を作る・閉じる・消費する関数 */
-export function createRecords(deps: HolderBase) {
-  const { options, slots } = deps;
+export function createRecords({ options, slots }: HolderBase) {
   const { frames, logs } = options;
   const passive = resolvePassiveStates(slots);
   const tracks: HeldTrack[] = [];

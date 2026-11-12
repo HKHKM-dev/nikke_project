@@ -17,55 +17,54 @@ import type { Conditions } from './conditions.ts';
 import type { Fire } from './fire.ts';
 
 /** フレームの出来事から、段の順に件を登録する */
-export function createRegister(deps: HolderBase & Records & Fires & Sources & Read & Views & Conditions & Fire) {
-  const {
-    amplifiers,
-    applications,
-    closeTrack,
-    counterConditionHolds,
-    counterEmptyTracks,
-    counterFullAt,
-    counterKey,
-    counterRecords,
-    counterSources,
-    counterValues,
-    cycleSources,
-    dispatchApplied,
-    dotCancelSources,
-    endedAt,
-    enemyStateSources,
-    extendSources,
-    finalAttacksAtFrame,
-    fireContextHolds,
-    fireExtend,
-    fireGrant,
-    fireRemove,
-    fireRemoveDebuff,
-    firesOf,
-    fireStackChange,
-    fireTimed,
-    frames,
-    holdsAt,
-    lowerDefenseAt,
-    options,
-    ownAppliedOf,
-    pendingRemoveDebuffs,
-    pushChanceOpportunity,
-    rankSlots,
-    readItems,
-    recordRanking,
-    removeDebuffSources,
-    removeSources,
-    selfHpAtMostAt,
-    selfHpUntilTracks,
-    skipEffect,
-    skipGrant,
-    stackSources,
-    stateEndTracks,
-    stateGroups,
-    timedSources,
-    updateHpAtLeast,
-  } = deps;
+export function createRegister({
+  amplifiers,
+  applications,
+  closeTrack,
+  counterConditionHolds,
+  counterEmptyTracks,
+  counterFullAt,
+  counterKey,
+  counterRecords,
+  counterSources,
+  counterValues,
+  cycleSources,
+  dispatchApplied,
+  dotCancelSources,
+  endedAt,
+  enemyStateSources,
+  extendSources,
+  finalAttacksAtFrame,
+  fireContextHolds,
+  fireExtend,
+  fireGrant,
+  fireRemove,
+  fireRemoveDebuff,
+  firesOf,
+  fireStackChange,
+  fireTimed,
+  frames,
+  holdsAt,
+  lowerDefenseAt,
+  options,
+  ownAppliedOf,
+  pendingRemoveDebuffs,
+  pushChanceOpportunity,
+  rankSlots,
+  readItems,
+  recordRanking,
+  removeDebuffSources,
+  removeSources,
+  selfHpAtMostAt,
+  selfHpUntilTracks,
+  skipEffect,
+  skipGrant,
+  stackSources,
+  stateEndTracks,
+  stateGroups,
+  timedSources,
+  updateHpAtLeast,
+}: HolderBase & Records & Fires & Sources & Read & Views & Conditions & Fire) {
   /** まだ dispatchApplied で読んでいない記録の始まり（静的な状態の記録は、戦闘開始時の呼び出しで読む） */
   let appliedFrom = 0;
   // { applied } の出どころは出来事では発火しない（dispatchApplied）
@@ -159,7 +158,6 @@ export function createRegister(deps: HolderBase & Records & Fires & Sources & Re
         for (const track of counterEmptyTracks.get(key) ?? []) closeTrack(track, battleStartOnly ? 0 : f);
     }
   };
-  /** 段 1〜2 と強化の発火（手順 3。battleStartOnly ならループの前の戦闘開始時の分だけ） */
   /** 1 フレームの登録の手順が共有する値 */
   type FrameStep = {
     ev: FrameEvents;
@@ -184,7 +182,7 @@ export function createRegister(deps: HolderBase & Records & Fires & Sources & Re
           closeTrack(track, f);
   };
 
-  /** 段 1 の付与と効果・解除・スタック量の増減と、その { applied }。敵の状態・消去・循環の間隔の変更 */
+  /** 段 1 の付与と効果・解除・スタック量の増減と、その { applied } */
   const registerStage1 = ({ ev, f, battleStartOnly, take, from }: FrameStep): void => {
     // 段 1: 条件なし・順位の対象でない付与と効果（確率のきっかけは機会を貯める）
     for (const g of stage1Grants) {
@@ -265,6 +263,11 @@ export function createRegister(deps: HolderBase & Records & Fires & Sources & Re
     }
     // 段 1 の { applied }（段 1 の付与・スタック量の増加で付いた記録から）
     dispatchApplied(1, from);
+  };
+
+  /** 段 1.5 の付与と効果・解除・延長・スタック量の増減と、その { applied } */
+  /** 敵の状態・消去・循環の間隔の変更（段 1 の { applied } の後。ループの中の判定は読まない） */
+  const registerEnemyStates = ({ ev, f, battleStartOnly, take }: FrameStep): void => {
     // 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
@@ -284,8 +287,6 @@ export function createRegister(deps: HolderBase & Records & Fires & Sources & Re
       }
     }
   };
-
-  /** 段 1.5 の付与と効果・解除・延長・スタック量の増減と、その { applied } */
   const registerStage15 = ({ ev, f, battleStartOnly, take, from }: FrameStep): void => {
     // 段 1.5: 条件つきの付与と効果（と、状態のスタック数を数で読む付与）。判定は段 1 の件だけを見る（条件つきどうしは
     // 連鎖させない）
@@ -414,6 +415,7 @@ export function createRegister(deps: HolderBase & Records & Fires & Sources & Re
     }
   };
 
+  /** 段 1〜2 と強化の発火（手順 3。battleStartOnly ならループの前の戦闘開始時の分だけ） */
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
     // このフレームの HP の割合の while の可否（このフレームのどの登録よりも先）
@@ -424,6 +426,7 @@ export function createRegister(deps: HolderBase & Records & Fires & Sources & Re
     const step: FrameStep = { ev, f, battleStartOnly, take, from };
     registerEnds(step);
     registerStage1(step);
+    registerEnemyStates(step);
     registerStage15(step);
     registerStage2(step);
     appliedFrom = applications.length;

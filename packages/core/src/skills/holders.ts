@@ -8,8 +8,10 @@
 // 2.5 段目）の見え方は件の列の段の印で表す（2.5 節）。強化（2.5 段目）の受け付けと値は、参照する件の一生が要るので、ループの後に
 // 履歴を閉じる時に決める（amplify。ループの中で強化の件を読む所は無い）。ループの後は、履歴の値の小片から区間を作る（buffTimelineOf。
 // 2.9 節）。値の小片の並びは時刻の順（論点 5）。件を作るのはここだけで、読む側は履歴を直接読む。
-// ここには件の一覧を作る createHolderLists を置き、型は holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に
-// 履歴を読む関数は holders/history.ts に置く（外から使う名前は、ここから同じ名前で再公開する）。
+// ここには件の一覧を作る createHolderLists（層の作り手を順に呼び、問い合わせを組む）を置く。層の作り手は holders/records.ts・
+// fires.ts・sources.ts・read.ts・views.ts・conditions.ts・fire.ts・register.ts（plan/design-split-first-pass.md 3.3 節）、型は
+// holders/types.ts、件を作る純粋な関数は holders/items.ts、ループの後に履歴を読む関数は holders/history.ts に置く（外から使う名前は、
+// ここから同じ名前で再公開する）。
 import { ZERO_HIT_RATE, applyResolvedEffect, fixedAttackBaseOf, type BuffTotals } from './buffs.ts';
 import { createSpanMemo } from './spanMemo.ts';
 import { statesMatching } from './states.ts';
@@ -63,47 +65,22 @@ export {
 export function createHolderLists(slots: readonly TimelineSlot[], options: HolderListsOptions): HolderLists {
   // 層の作り手を、文の順のとおりに呼ぶ（plan/design-split-first-pass.md 3.3 節）。前の層が後の層を読む所は late を通す
   const late = {} as LateReaders;
-  const base: HolderBase = { slots, options, late };
-  const recordsLayer = createRecords({ ...base });
-  const firesLayer = createFires({ ...base, ...recordsLayer });
-  const sourcesLayer = createSources({ ...base, ...recordsLayer, ...firesLayer });
-  const readLayer = createRead({ ...base, ...recordsLayer, ...firesLayer, ...sourcesLayer });
-  const viewsLayer = createViews({ ...base, ...recordsLayer, ...firesLayer, ...sourcesLayer, ...readLayer });
-  const conditionsLayer = createConditions({
-    ...base,
-    ...recordsLayer,
-    ...firesLayer,
-    ...sourcesLayer,
-    ...readLayer,
-    ...viewsLayer,
-  });
-  const fireLayer = createFire({
-    ...base,
-    ...recordsLayer,
-    ...firesLayer,
-    ...sourcesLayer,
-    ...readLayer,
-    ...viewsLayer,
-    ...conditionsLayer,
-  });
-  const registerLayer = createRegister({
-    ...base,
-    ...recordsLayer,
-    ...firesLayer,
-    ...sourcesLayer,
-    ...readLayer,
-    ...viewsLayer,
-    ...conditionsLayer,
-    ...fireLayer,
-  });
+  const base: HolderBase = { slots, options };
+  const upToRecords = { ...base, ...createRecords(base) };
+  const upToFires = { ...upToRecords, ...createFires({ ...upToRecords, late }) };
+  const upToSources = { ...upToFires, ...createSources({ ...upToFires, late }) };
+  const upToRead = { ...upToSources, ...createRead(upToSources) };
+  const upToViews = { ...upToRead, ...createViews(upToRead) };
+  const upToConditions = { ...upToViews, ...createConditions(upToViews) };
+  const upToFire = { ...upToConditions, ...createFire(upToConditions) };
+  const layers = { ...upToFire, ...createRegister(upToFire) };
   Object.assign(late, {
-    activeAt: readLayer.activeAt,
-    endedAt: conditionsLayer.endedAt,
-    readItems: readLayer.readItems,
-    selfHpAtMostAt: viewsLayer.selfHpAtMostAt,
-    selfHpRatioAt: viewsLayer.selfHpRatioAt,
-    stateTracks: viewsLayer.stateTracks,
-    stateWindowFires: sourcesLayer.stateWindowFires,
+    activeAt: layers.activeAt,
+    endedAt: layers.endedAt,
+    readItems: layers.readItems,
+    selfHpAtMostAt: layers.selfHpAtMostAt,
+    selfHpRatioAt: layers.selfHpRatioAt,
+    stateWindowFires: layers.stateWindowFires,
   } satisfies LateReaders);
   const {
     activeAt,
@@ -162,17 +139,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     timedSources,
     tracks,
     whileTracks,
-  } = {
-    ...recordsLayer,
-    ...firesLayer,
-    ...sourcesLayer,
-    ...readLayer,
-    ...viewsLayer,
-    ...conditionsLayer,
-    ...fireLayer,
-    ...registerLayer,
-  };
-
+  } = layers;
   const emptyEvents = (frame: number): FrameEvents => ({
     frame,
     shots: slots.map(() => null),

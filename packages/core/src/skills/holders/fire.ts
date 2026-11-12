@@ -29,28 +29,27 @@ import type { Views } from './views.ts';
 import type { Conditions } from './conditions.ts';
 
 /** 発火を件の列に入れ、{ applied } を配る */
-export function createFire(deps: HolderBase & Records & Fires & Sources & Read & Views & Conditions) {
-  const {
-    activeAt,
-    applications,
-    appliedStageOf,
-    chainedApplications,
-    chanceLevelsAt,
-    closeTrack,
-    conditionSkips,
-    consumeTrack,
-    counterValue,
-    extendSources,
-    frames,
-    holdsAt,
-    rankings,
-    removeDebuffGuesses,
-    slots,
-    stackLevelAt,
-    stateGroups,
-    timedSources,
-    tracks,
-  } = deps;
+export function createFire({
+  activeAt,
+  applications,
+  appliedStageOf,
+  chainedApplications,
+  chanceLevelsAt,
+  closeTrack,
+  conditionSkips,
+  consumeTrack,
+  counterValue,
+  extendSources,
+  frames,
+  holdsAt,
+  rankings,
+  removeDebuffGuesses,
+  slots,
+  stackLevelAt,
+  stateGroups,
+  timedSources,
+  tracks,
+}: HolderBase & Records & Fires & Sources & Read & Views & Conditions) {
   const skipGrant = (g: GrantSource, frame: number): void => {
     conditionSkips.push({
       frame,

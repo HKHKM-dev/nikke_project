@@ -17,8 +17,17 @@ import type { Fires } from './fires.ts';
 import type { Sources } from './sources.ts';
 
 /** 件の列の件を読む（読む入力が伸びたときだけ作り直す） */
-export function createRead(deps: HolderBase & Records & Fires & Sources) {
-  const { counterRecords, frames, hpWhileStates, itemsSeen, logs, options, slots, tracks, late } = deps;
+export function createRead({
+  counterRecords,
+  frames,
+  hpWhileStates,
+  itemsSeen,
+  logs,
+  options,
+  slots,
+  stateTracks,
+  tracks,
+}: HolderBase & Records & Fires & Sources) {
   // ---- 状態の中身の最大スタック数▲（plan/design-skill-stage14.md 2.7 節。論点 5） ----
   // 上限が上がる件の列（持ち主のその状態の、スタックする件の列）→ 上げる状態の件の列（同じ持ち主に、中身を持つ定義の枠が付けたもの）と量
   const capRaisers = new Map<HeldTrack, { base: number; raisers: { track: HeldTrack; amount: number }[] }>();
@@ -124,7 +133,7 @@ export function createRead(deps: HolderBase & Records & Fires & Sources) {
     let own = whileOwn.get(track);
     if (own === undefined) {
       const family = statesMatching(effect.whileState);
-      own = family.flatMap((s) => late.stateTracks[track.sourceSlotIndex]?.get(s) ?? []);
+      own = family.flatMap((s) => stateTracks[track.sourceSlotIndex]?.get(s) ?? []);
       whileOwn.set(track, own);
     }
     const deps = own.map((t) => readItems(t));

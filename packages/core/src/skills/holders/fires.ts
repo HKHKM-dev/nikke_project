@@ -10,11 +10,10 @@ import {
 import { createTriggerTracker, type ShotCountEveryAt, type TriggerTracker } from '../triggers.ts';
 import { isEndedTrigger, isStateCountWindow, isCounterFullTrigger, type EffectCondition } from '../types.ts';
 import { timerFramesOf } from '../timeline.ts';
-import type { HolderBase, Records } from './records.ts';
+import type { HolderBase, Records, WithLate } from './records.ts';
 
 /** きっかけから発火の追跡（TriggerTracker）を作る */
-export function createFires(deps: HolderBase & Records) {
-  const { counterFullAt, counterKey, frames, options, late } = deps;
+export function createFires({ counterFullAt, counterKey, frames, options, late }: HolderBase & Records & WithLate) {
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
   /**
    * 発動者 × 閾値ごとの、HP の割合の窓の追跡（plan/design-mast.md 8 節）。毎フレームのきっかけの判定で 1 回だけ割合を求め、

@@ -14,24 +14,23 @@ import type { Read } from './read.ts';
 import type { Views } from './views.ts';
 
 /** 効果の条件・発火の文脈・{ ended }・カウンタの増減の条件を判定する */
-export function createConditions(deps: HolderBase & Records & Fires & Sources & Read & Views) {
-  const {
-    activeAt,
-    conditionViews,
-    counterValue,
-    enemyStateAt,
-    inFullBurstAt,
-    minEffectiveRangeAt,
-    options,
-    passive,
-    readItems,
-    selfHpAtMostHolds,
-    selfHpRatioAt,
-    selfStateItemsAt,
-    stateTracks,
-    staticStates,
-    tracks,
-  } = deps;
+export function createConditions({
+  activeAt,
+  conditionViews,
+  counterValue,
+  enemyStateAt,
+  inFullBurstAt,
+  minEffectiveRangeAt,
+  options,
+  passive,
+  readItems,
+  selfHpAtMostHolds,
+  selfHpRatioAt,
+  selfStateItemsAt,
+  stateTracks,
+  staticStates,
+  tracks,
+}: HolderBase & Records & Fires & Sources & Read & Views) {
   /** 条件が無ければ成り立つ（段 1.5 には、条件の無い perCount の timed も入る。stageOfTimed） */
   const holdsAt = (condition: EffectCondition | undefined, sourceSlotIndex: number, frame: number): boolean => {
     if (condition === undefined) return true;

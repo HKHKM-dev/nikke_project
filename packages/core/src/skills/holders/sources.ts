@@ -1,5 +1,6 @@
 // 件の一覧の層 3: 出どころの準備（plan/design-split-first-pass.md 3.3 節）。常時の件・持続バフ・状態の付与の組・HP の while・循環の間隔・
-// 解除・延長・デバフ解除・スタック量・自分に付いた記録・カウンタ・消費・吸収回復・敵の状態と消去の出どころと件の列を作る。
+// 解除・延長・デバフ解除・スタック量・自分に付いた記録・カウンタ・消費・吸収回復・敵の状態と消去の出どころと件の列を作り、件の列が
+// 出そろった後に、持ち主ごとの状態の件の列（stateTracks）を作る。
 import { groupDotsByState } from '../../frame/dot.ts';
 import { resolveDotEffects } from '../burstDamage.ts';
 import { type ChanceOpportunity } from '../chance.ts';
@@ -56,12 +57,23 @@ import {
   stageOfTimed,
   stateGroupsOf,
 } from './items.ts';
-import type { HolderBase, Records } from './records.ts';
+import type { HolderBase, Records, WithLate } from './records.ts';
 import type { Fires } from './fires.ts';
 
 /** 出どころと件の列を作る（件の列はここで出そろう） */
-export function createSources(deps: HolderBase & Records & Fires) {
-  const { amplifiers, applications, counterKey, firesOf, frames, newTrack, options, selfHpStateOf, slots, late } = deps;
+export function createSources({
+  amplifiers,
+  applications,
+  counterKey,
+  firesOf,
+  frames,
+  newTrack,
+  options,
+  selfHpStateOf,
+  slots,
+  tracks,
+  late,
+}: HolderBase & Records & Fires & WithLate) {
   // ---- 常時の件（スキルの常時パッシブと静的な状態の中身。論点 3）。戦闘の始めから終わりまで ----
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -307,7 +319,7 @@ export function createSources(deps: HolderBase & Records & Fires) {
     readOwnApplied(ownApplied, slotIndex, state);
   /** 同: 枠にその状態の件（段によらない）が効いているか */
   const ownStateActive = (slotIndex: number, state: NamedStateId, frame: number): boolean =>
-    (late.stateTracks[slotIndex]?.get(state) ?? []).some((t) => late.activeAt(t, frame).length > 0);
+    (stateTracks[slotIndex]?.get(state) ?? []).some((t) => late.activeAt(t, frame).length > 0);
   /**
    * 同（論点 2）: 状態の付いた時から数える周期（since）。起点はそのフレームまでに付いた最後の記録で、k 回目は起点から k × everySeconds 秒
    * （timerFramesOf と同じ数え方）。その状態が効いている間だけ。atStart なら付いたフレームにも発火する（V-0729。currentHpDown。
@@ -336,7 +348,7 @@ export function createSources(deps: HolderBase & Records & Fires) {
     /** 枠のその状態の件のうち、[frame, frame + span] のどこかで効いている件の始まりの最小（無ければ undefined。配列を作らない） */
     const startOfHeld = (s: NamedStateId, frame: number, span: number): number | undefined => {
       let start: number | undefined;
-      for (const t of late.stateTracks[slotIndex]?.get(s) ?? [])
+      for (const t of stateTracks[slotIndex]?.get(s) ?? [])
         for (const it of late.readItems(t))
           if (it.start <= frame + span && frame < it.end && (start === undefined || it.start < start)) start = it.start;
       return start;
@@ -449,6 +461,17 @@ export function createSources(deps: HolderBase & Records & Fires) {
       }
     });
   }
+  // 段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
+  // （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る。plan/design-skill-stage10.md 3.2 節）
+  const stateTracks = slots.map((_, holder) => {
+    const byState = new Map<NamedStateId, HeldTrack[]>();
+    for (const track of tracks) {
+      const o = track.origin;
+      if (track.holder !== holder || (track.stage !== 1 && track.stage !== 1.5) || o.kind !== 'state') continue;
+      byState.set(o.state, [...(byState.get(o.state) ?? []), track]);
+    }
+    return byState;
+  });
   return {
     appliedStageOf,
     chainedApplications,
@@ -475,6 +498,7 @@ export function createSources(deps: HolderBase & Records & Fires) {
     sinceFires,
     stackSources,
     stateGroups,
+    stateTracks,
     stateWindowFires,
     timedSources,
     updateHpAtLeast,
