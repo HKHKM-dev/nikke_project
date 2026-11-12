@@ -321,5 +321,99 @@
       "slot": 4,
       "source": "dot"
     }
+  },
+  {
+    "id": "0755-16",
+    "recording": "0755",
+    "source": "V-0742",
+    "readAt": "2026-11-12",
+    "kind": "timing",
+    "use": "compare",
+    "value": [107],
+    "unit": "f",
+    "description": "1 回目のフルバーストの始まり（III のタイマーの 00.00。f1372。`0755-03`）から、その後のミハラ：ボンディングチェーンの最初の発（2 本目のマガジンの 1 発目。f1479）までの動画のフレーム数",
+    "method": {
+      "tool": "ammo.ts --mode series --crop 1048,902,110,26",
+      "note": "枠アイコンの上の残弾（ミハラ：ボンディングチェーンは AI。録画 0755 の操作はシンデレラ）が 300 から 299 に減ったフレームを 2 本目のマガジンの 1 発目にした。1 本目のマガジンはフルバーストの前に撃ち切っている（`0755-18`）"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 4,
+        "event": "shot",
+        "anchor": "fullBurst:0",
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0755-17",
+    "recording": "0755",
+    "source": "V-0742",
+    "readAt": "2026-11-12",
+    "kind": "timing",
+    "use": "compare",
+    "value": [593],
+    "unit": "f",
+    "description": "戦闘開始（残り時間の 02:59 が出たフレーム。f886）から、ミハラ：ボンディングチェーンの 2 本目のマガジンの 1 発目（f1479）までの動画のフレーム数（301 発目）",
+    "method": {
+      "tool": "timer.ts --mode runs・ammo.ts --mode series --crop 1048,902,110,26",
+      "note": "戦闘開始は timer.ts の既定（C-0078）。2 本目のマガジンの 1 発目は `0755-16` と同じ読み"
+    },
+    "compare": {
+      "model": "sim",
+      "metric": "eventFrames",
+      "args": {
+        "slot": 4,
+        "event": "shot",
+        "anchor": "start",
+        "skip": 300,
+        "count": 1
+      },
+      "tolerance": {
+        "abs": 2
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "burst": true
+      }
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
+  },
+  {
+    "id": "0755-18",
+    "recording": "0755",
+    "source": "V-0742",
+    "readAt": "2026-11-12",
+    "kind": "timing",
+    "use": "record",
+    "value": [886, 907, 1283, 1372, 1479],
+    "unit": "f",
+    "description": "戦闘開始（残り時間の 02:59）・ミハラ：ボンディングチェーンの最初の発・1 本目のマガジンの最後の発・1 回目のフルバーストの始まり（`0755-03`）・2 本目のマガジンの最初の発の動画のフレーム。戦闘開始からは 21・397・486・593f、1 本目のマガジンの最後の発から 2 本目のマガジンの最初の発までは 196f",
+    "method": {
+      "tool": "timer.ts --mode runs・ammo.ts --mode series --crop 1048,902,110,26",
+      "note": "枠アイコンの上の残弾（ミハラ：ボンディングチェーンは AI。録画 0755 の操作はシンデレラ）の減り。1 本目のマガジンの残弾が 0 になったフレーム（f1283）を最後の発にした。最初の 2 発（f907・f911）は 4f の間で、3 発目（f933）からの間隔はモデルの撃ち始めの間隔と 1〜2f の内で合う"
+    },
+    "scope": {
+      "slot": 4,
+      "source": "normal"
+    }
   }
 ]
