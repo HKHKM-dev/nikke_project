@@ -3,6 +3,7 @@ import { arCores } from './ar-cores.ts';
 import { buffEdge } from './buff-edge.ts';
 import { burstPanel } from './burst-panel.ts';
 import { dualSmgCores } from './dual-smg-cores.ts';
+import { dualSmgStages } from './dual-smg-stages.ts';
 import { farLanding } from './far-landing.ts';
 import { hudJumps } from './hud-jumps.ts';
 import { midfarLanding } from './midfar-landing.ts';
@@ -25,6 +26,7 @@ export const RECIPES: readonly Recipe[] = [
   smgMags,
   smgCores,
   dualSmgCores,
+  dualSmgStages,
   arCores,
   buffEdge,
   burstPanel,
