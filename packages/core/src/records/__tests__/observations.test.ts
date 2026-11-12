@@ -1188,6 +1188,18 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
     expect(invalidReasonsOf([invalid, record])).toEqual(new Map([['0047-02', '読み違い']]));
   });
 
+  it('renders record values with null elements, nested arrays and objects', () => {
+    const row = (value: unknown) => renderOtherRows([{ ...record, value: value as Observation['value'] }])[2];
+    expect(row([7716540, null, 5321525])).toContain('| 7,716,540, —, 5,321,525 |');
+    expect(row([[2459, 73.5], [4778, null]])).toContain('| [2,459, 73.5], [4,778, —] |');
+    expect(row({ beforeEnd: [-67, null], band: ['近'], at: [{ frame: 6653 }] })).toContain(
+      '| beforeEnd: [-67, —]; band: [近]; at: [{frame: 6,653}] |',
+    );
+    // 実際の観測値の全部が落ちずに書ける
+    const others = loadObservations().filter((o) => o.use !== 'compare');
+    expect(renderOtherRows(others).join('\n')).not.toContain('[object Object]');
+  });
+
   it('keeps an invalid basis on a claim, but fails a 確定 claim with no valid basis left', () => {
     const claim = (id: string, state: Claim['state'], obs: string[]): Claim => ({
       id,
