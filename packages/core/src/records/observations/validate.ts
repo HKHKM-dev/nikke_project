@@ -12,7 +12,14 @@ import {
   NEAR_LANDINGS,
   type CompareSetup,
 } from './setup.ts';
-import { type CompareSpec, type Observation, OBSERVATION_KINDS, OBSERVATION_USES, validateScope } from './types.ts';
+import {
+  type CompareSpec,
+  type Observation,
+  OBSERVATION_KINDS,
+  OBSERVATION_SOURCES,
+  OBSERVATION_USES,
+  type ObservationScope,
+} from './types.ts';
 
 type Enemies = Pick<EnemyPresetMaster, 'enemies' | 'eventSets'>;
 
@@ -25,12 +32,28 @@ export function validateObservations(
   const byId = new Map<string, Observation>();
   for (const o of observations) if (!byId.has(o.id)) byId.set(o.id, o);
   const errors: string[] = [];
-  const seen = new Set<string>();
   for (const o of observations) {
-    if (seen.has(o.id)) errors.push(`${o.id}: id が重複している`);
-    seen.add(o.id);
+    if (byId.get(o.id) !== o) errors.push(`${o.id}: id が重複している`);
     errors.push(...fieldErrors(o, recordings));
     if (o.compare !== undefined) errors.push(...compareErrors(o, o.compare, byId, recordings, enemies));
+  }
+  return errors;
+}
+
+/** scope の検査。teamSize は録画の編成の枠の数（録画が無ければ undefined で、枠の範囲は見ない） */
+export function validateScope(scope: ObservationScope, teamSize: number | undefined, at: string): string[] {
+  const errors: string[] = [];
+  const slots = scope.slot === 'all' ? [] : Array.isArray(scope.slot) ? scope.slot : [scope.slot];
+  if (scope.slot !== 'all' && slots.length === 0) errors.push(`${at}: scope.slot が空`);
+  for (const s of slots)
+    if (!Number.isInteger(s) || s < 1 || (teamSize !== undefined && s > teamSize))
+      errors.push(`${at}: scope.slot は録画の編成の枠（1〜${teamSize ?? '?'}）か 'all'（${JSON.stringify(s)}）`);
+  if (new Set(slots).size !== slots.length) errors.push(`${at}: scope.slot に同じ枠が 2 回ある`);
+  if (!OBSERVATION_SOURCES.includes(scope.source)) errors.push(`${at}: scope.source が語彙に無い: ${scope.source}`);
+  if (scope.frames !== undefined) {
+    const f = scope.frames;
+    if (!Array.isArray(f) || f.length !== 2 || !f.every((x) => Number.isInteger(x) && x >= 0) || f[0] > f[1])
+      errors.push(`${at}: scope.frames は [始まり, 終わり]（0 以上の整数で、始まり ≤ 終わり）`);
   }
   return errors;
 }
@@ -89,7 +112,7 @@ function compareErrors(
   // 一本化の段 A-3: calc の経路は消した（2026-10-27）
   if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
   errors.push(...conditionErrors(c.setup, enemies, at));
-  errors.push(...setupErrors(o, c.setup, byId, recordings.get(o.recording)?.team.length, at));
+  errors.push(...setupErrors(o, c.setup, byId, recordings.get(o.recording)?.team.length));
   const tol = 'rel' in c.tolerance ? c.tolerance.rel : c.tolerance.abs;
   if (!(tol >= 0)) errors.push(`${at}: 許容幅は 0 以上`);
   return errors;
@@ -105,22 +128,15 @@ function conditionErrors(setup: CompareSetup, enemies: Enemies, at: string): str
   }
   const condition = setup.condition ?? 'manual';
   if (condition !== 'auto' && condition !== 'manual') errors.push(`${at}: condition は auto か manual`);
-  const midFar = setup.midFarLanding;
-  if (midFar !== undefined) {
-    if (!MID_FAR_LANDINGS.includes(midFar)) errors.push(`${at}: midFarLanding は A・B・C`);
-  }
-  const near = setup.nearLanding;
-  if (near !== undefined) {
-    if (!Array.isArray(near) || near.length === 0 || !near.every((n) => NEAR_LANDINGS.includes(n))) {
-      errors.push(`${at}: nearLanding は A・B の並び（1 回目・2 回目の順）`);
-    }
-  }
-  const far = setup.farLanding;
-  if (far !== undefined) {
-    if (!Array.isArray(far) || far.length === 0 || !far.every((n) => FAR_LANDINGS.includes(n))) {
-      errors.push(`${at}: farLanding は A・B の並び（1 回目・2 回目の順）`);
-    }
-  }
+  if (setup.midFarLanding !== undefined && !MID_FAR_LANDINGS.includes(setup.midFarLanding))
+    errors.push(`${at}: midFarLanding は A・B・C`);
+  // 近と遠は 1 回目・2 回目の順の、空でない並び
+  const sequenceOk = (v: unknown, allowed: readonly string[]) =>
+    Array.isArray(v) && v.length > 0 && v.every((n) => allowed.includes(n));
+  if (setup.nearLanding !== undefined && !sequenceOk(setup.nearLanding, NEAR_LANDINGS))
+    errors.push(`${at}: nearLanding は A・B の並び（1 回目・2 回目の順）`);
+  if (setup.farLanding !== undefined && !sequenceOk(setup.farLanding, FAR_LANDINGS))
+    errors.push(`${at}: farLanding は A・B の並び（1 回目・2 回目の順）`);
   if (condition === 'auto' && preset !== undefined && preset.targetProfile === undefined) {
     errors.push(`${at}: 敵のプリセット ${setup.enemy} には的の条件の表が無い`);
   }
@@ -133,8 +149,8 @@ function setupErrors(
   setup: CompareSetup,
   byId: ReadonlyMap<string, Observation>,
   teamSize: number | undefined,
-  at: string,
 ): string[] {
+  const at = o.id;
   const errors: string[] = [];
   const ref = (id: string, label: string, rule: RefRule) => errors.push(...refErrors(o, byId.get(id), id, label, rule));
   if (setup.jumpWindows !== undefined) ref(setup.jumpWindows, 'jumpWindows', JUMP_WINDOWS);

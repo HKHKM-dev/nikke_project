@@ -8,7 +8,6 @@ import type { CharacterData } from '../../../types.ts';
 import {
   atShotFrame,
   eachOrOne,
-  frameArgOf,
   type Metric,
   type MetricContext,
   nthActivationOf,
@@ -257,4 +256,16 @@ function skillHitsDamage(result: SimResult, ctx: MetricContext): number {
   for (let i = n; i < n + Number(ctx.args.count); i++)
     sum += skillHitDamage(result, { ...ctx, args: { ...ctx.args, n: i } });
   return sum;
+}
+
+/**
+ * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 3 節）: 引数 frame のフレーム。省略できる引数 fullBurst（n。0 始まり）があれば、
+ * frame は n 回目のフルバーストの開始からの相対。モデルの時刻表が変わっても、録画と同じ場面（何回目のフルバーストの中か）を指す
+ */
+function frameArgOf(result: SimResult, ctx: MetricContext): number {
+  const frame = Number(ctx.args.frame);
+  if (ctx.args.fullBurst === undefined) return frame;
+  const start = result.schedule?.fullBurstWindows[Number(ctx.args.fullBurst)]?.start;
+  if (start === undefined) throw new Error(`${String(ctx.args.fullBurst)} 回目のフルバーストが無い`);
+  return start + frame;
 }

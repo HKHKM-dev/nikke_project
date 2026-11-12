@@ -61,16 +61,16 @@
 <!-- prettier-ignore -->
 | ファイル | 中身 | 大きさの見込み |
 | --- | --- | --- |
-| `observations/types.ts` | 観測値の型と語彙・`validateScope`・`invalidReasonsOf` | 約 10KB |
+| `observations/types.ts` | 観測値の型と語彙・`invalidReasonsOf` | 約 10KB |
 | `observations/setup.ts` | `CompareSetup` とその部品（`BurstDelayOverrideSetup`・`burstDelayOverrideOf`・`AddedEffect`・`withAddedEffects`・`DroppedEffect`・着地点の語彙と `landingFixed`）と、設定が ID で指す観測値の値の読み（`jumpWindowsOf`・`manualBurstsOf`・`holdFireRangesOf`） | 約 17KB |
-| `observations/metrics/context.ts` | `Metric`・`MetricContext` と、テーマをまたいで使う小さな補助（`slotOf`・`frameArgOf`・`eachOrOne`・`firstCount`・`withArgs`・`median`・`nthActivationOf`・`atShotFrame` など） | 約 5KB |
+| `observations/metrics/context.ts` | `Metric`・`MetricContext` と、テーマをまたいで使う小さな補助（`slotOf`・`eachOrOne`・`firstCount`・`withArgs`・`median`・`nthActivationOf`・`atShotFrame` など） | 約 5KB |
 | `observations/metrics/skillHits.ts` | スキルのヒット・持続ダメージ・回復・出来事（`skillHit*`・`dot*` の時刻・`heal*`・`eventFrames`・`eventCount`・`eventTallies`） | 約 28KB |
 | `observations/metrics/damage.ts` | 与ダメージと 1 ヒットの値・命中率（`teamTotalDamage`・`hitDamage`・`coreHitRate`・`burstHitDamage`・`dotHitDamage`・`skillHitDamage` など） | 約 15KB |
 | `observations/metrics/firing.ts` | 射撃の刻み・マガジン・リロード・狙えない窓（`shotCount`・`shotIntervals`・`magazineShots`・`reload*`・`maxAmmoAt` など） | 約 29KB |
 | `observations/metrics/burst.ts` | バーストの時刻表・ゲージ・CT（`fullBurst*`・`burstActivation*`・`gaugeFull*`・`cooldownCutFrames`・`burstEffectDelay` など） | 約 30KB |
 | `observations/metrics/buffs.ts` | バフの区間・状態のスタック・確率（`buffWindow*`・`buffEdge*`・`chance*`・`stateStack*`・`counterAtBursts` など） | 約 28KB |
 | `observations/metrics/index.ts` | テーマごとの表をつないだ `METRICS`（同じ名前が 2 つのテーマにあれば読み込みで止める） | 1KB 未満 |
-| `observations/validate.ts` | `validateObservations` | 約 11KB |
+| `observations/validate.ts` | `validateObservations`・`validateScope` | 約 11KB |
 | `observations/teamInput.ts` | `RecordsData`・`withoutEffects`・`buildTeamInput` と、その中だけで使う関数 | 約 13KB |
 | `observations/run.ts` | `Residual`・`compareValue`・`Prediction`・`PredictionMemo`・`predictionKey`・`runObservations` | 約 6KB |
 | `observations/render.ts` | 残差の一覧の描画 | 約 7KB |
@@ -173,3 +173,4 @@
 - 2026-11-12: 8 節の 4 点とも推奨案で承認（オーナー）。
 - 2026-11-12: 3.1 節の案 A のとおりに分け、使う側の import を直した。検証だけが使う `recordingOrder` は `validate.ts` に置いた。4 節の 1〜3 で、比べる観測値の全部の照合の結果・壊した観測値を混ぜた検証のメッセージ・指標の名前と必須の引数が、分ける前と同じことを確かめた（移した宣言の本文も、`export` を付けて折り返した 1 か所のほかは同じ）。
 - 2026-11-12: 3.3 節の案 A のとおりに `validateObservations` を分けた（欄 `fieldErrors`・比べる指定 `compareErrors`・敵と条件と着地点 `conditionErrors`・比べる設定 `setupErrors`。ID で指す観測値の 5 か所の検査は `refErrors` 1 つにした）。メッセージの順を変えないため、`setupErrors` は設定の欄の順（ID で指す観測値と枠の並びが交互になる）のまま見る。4 節の 2 で、検証のメッセージ（順を含む）と照合の結果が分ける前と同じことを確かめた。
+- 2026-11-12: 見直し（`/simplify`）で、`damage.ts` だけが使う `frameArgOf` を `damage.ts` に、検査の `validateScope` を `validate.ts` に移した（3.1 節の表も直した）。共有の補助を `metrics/context.ts` に置くことを `plan/verification-guide.md` に書いた。

@@ -94,24 +94,6 @@ export type ObservationScope = {
   frames?: [number, number];
 };
 
-/** scope の検査。teamSize は録画の編成の枠の数（録画が無ければ undefined で、枠の範囲は見ない） */
-export function validateScope(scope: ObservationScope, teamSize: number | undefined, at: string): string[] {
-  const errors: string[] = [];
-  const slots = scope.slot === 'all' ? [] : Array.isArray(scope.slot) ? scope.slot : [scope.slot];
-  if (scope.slot !== 'all' && slots.length === 0) errors.push(`${at}: scope.slot が空`);
-  for (const s of slots)
-    if (!Number.isInteger(s) || s < 1 || (teamSize !== undefined && s > teamSize))
-      errors.push(`${at}: scope.slot は録画の編成の枠（1〜${teamSize ?? '?'}）か 'all'（${JSON.stringify(s)}）`);
-  if (new Set(slots).size !== slots.length) errors.push(`${at}: scope.slot に同じ枠が 2 回ある`);
-  if (!OBSERVATION_SOURCES.includes(scope.source)) errors.push(`${at}: scope.source が語彙に無い: ${scope.source}`);
-  if (scope.frames !== undefined) {
-    const f = scope.frames;
-    if (!Array.isArray(f) || f.length !== 2 || !f.every((x) => Number.isInteger(x) && x >= 0) || f[0] > f[1])
-      errors.push(`${at}: scope.frames は [始まり, 終わり]（0 以上の整数で、始まり ≤ 終わり）`);
-  }
-  return errors;
-}
-
 /** 失効した観測値 → 失効の理由（Stage 20-E） */
 export function invalidReasonsOf(observations: readonly Observation[]): Map<string, string> {
   return new Map(observations.flatMap((o) => (o.invalid ? [[o.id, o.invalid.reason] as const] : [])));
