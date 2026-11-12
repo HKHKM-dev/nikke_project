@@ -295,7 +295,7 @@ export function createTriggerTracker(
   if (isResolvedApplied(t)) {
     throw new RangeError(`an applied trigger (${t.applied}) is not tracked per event; use appliedFrames`);
   }
-  // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf・counterFullFrames）
+  // カウンタが上限に届いた時は 1 パス目のカウンタの記録で決まる（skills/holders.ts の firesOf と、skills/holders/types.ts の counterFullFrames）
   if (isCounterFullTrigger(t)) {
     throw new RangeError(`a counterFull trigger (${t.counterFull}) is not tracked per event; use counterFullFrames`);
   }

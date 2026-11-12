@@ -1,7 +1,7 @@
 // 1 パス目のフレームループ（純関数。plan/design-stage10.md 1 節）。
 // 射撃に効くバフ（frame/firing.ts の FiringParams）と CT 短縮があると、射撃の列 → 時刻表 → バフ → 射撃の列…と循環する。
 // ここではフレームを 1 つずつ進め、射手・ゲージ・バーストの状態機械・スキルの効果を同時に回して循環をほどく。
-// 効果はすべて持ち主ごとの件の一覧（skills/holders.ts）で持つ。ループの後の区間は planTeamRun が履歴から作り（buffTimelineOf）、
+// 効果はすべて持ち主ごとの件の一覧（skills/holders.ts）で持つ。ループの後の区間は planTeamRun が履歴から作り（skills/holders/history.ts の buffTimelineOf）、
 // 読む側（sim・観測値の指標・画面）は履歴を読む（plan/design-holder-effects.md 2.9 節）。
 //
 // フレーム f の中の順番:
@@ -199,7 +199,7 @@ export type FirstPassOptions = {
   weaponChangeFirstHits?: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
   obstacleBreaks?: readonly ObstacleBreak[];
-  /** テスト用: 件の列を読むたびに作り直した件と比べる（skills/holders.ts の HolderListsOptions.verifyItems） */
+  /** テスト用: 件の列を読むたびに作り直した件と比べる（skills/holders/types.ts の HolderListsOptions.verifyItems） */
   verifyItems?: boolean;
   /**
    * 枠ごとの、発ごとに的に当たったペレットの数（録画で数えた入力。plan/design-pellet-hit.md 3 節）。
@@ -300,7 +300,7 @@ export type FirstPassResult = {
   cooldownTimerFires: { slotIndex: number; skill: SkillSlot; frames: number[] }[];
   /**
    * 件の一覧の履歴（plan/design-holder-effects.md 2.9 節）。planTeamRun が区間を作る
-   * （skills/holders.ts の buffTimelineOf）
+   * （skills/holders/history.ts の buffTimelineOf）
    */
   history: HolderHistory;
 };

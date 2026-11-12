@@ -260,7 +260,7 @@ export function isFlagStat(stat: BuffStat): boolean {
 
 /**
  * 敵が持つ stat か（敵の受けるダメージ▲と敵の防御力▼。plan/design-holder-effects.md 2.8 節）。
- * 値は敵が受ける全ダメージに効くので、味方の各枠の区間の値に写す（skills/holders.ts の isEnemyEffect）
+ * 値は敵が受ける全ダメージに効くので、味方の各枠の区間の値に写す（skills/holders/types.ts の isEnemyEffect）
  */
 export const ENEMY_HELD_STATS = ['damageTaken', 'enemyDefenseDown'] as const;
 
@@ -2156,7 +2156,7 @@ export type StateGrantEffect = Omit<
   /**
    * JSON の target: "enemy"（敵に付く状態の付与。
    * 敵は 1 体の前提。plan/design-elegg.md 8.2 節。plan/design-named-state.md 8.3 節）。
-   * 状態の件の列の持ち主は敵（skills/holders.ts の ENEMY）。中身は敵が持つ stat（isEnemyHeldStat）だけで、
+   * 状態の件の列の持ち主は敵（skills/holders/types.ts の ENEMY）。中身は敵が持つ stat（isEnemyHeldStat）だけで、
    * 敵の件の timed と同じく味方全体の区間の値に写すので、target は "allies" に読み替えて持つ
    */
   enemy?: true;
