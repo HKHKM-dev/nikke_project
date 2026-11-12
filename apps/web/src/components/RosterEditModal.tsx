@@ -1,32 +1,23 @@
 // 育成状況の編集画面（plan/design-roster-edit.md 6 節）。アカウントのメニューの「編集」から開くモーダルで、クラシックと
 // モダン UI で同じもの。左の一覧でニケか「アカウント全体」を選び、右の欄で直す。欄を確定するたびに保存され（useRoster.ts の
 // RosterEditor）、そのニケのいるスロット・共通育成にも写る。スペック固定の間も、育成状況の値を出して編集できる
-import {
-  growthLimits,
-  type BuildMasters,
-  type CharacterData,
-  type CharacterIndexEntry,
-  type SnapshotCharacter,
-} from '@nikke/core';
+import type { BuildMasters, CharacterData, CharacterIndexEntry, SnapshotCharacter } from '@nikke/core';
 import { useEffect, useRef, useState } from 'react';
-import { consoleFromRoster, recycleRoomWithConsole, rosterFields } from '../roster.ts';
+import { clampGrowth } from '../calcView.ts';
+import { REVERT_ALL_LABEL, consoleFromRoster, recycleRoomWithConsole, rosterFields } from '../roster.ts';
 import { patchedCharacterEdit } from '../rosterEdits.ts';
-import { clampInt } from '../team.ts';
 import { useCharacterCache } from '../useCharacterCache.ts';
 import type { ConfirmedAction, RosterEditor } from '../useRoster.ts';
 import { ConsoleFields } from './ConsoleFields.tsx';
 import { GrowthEditor } from './GrowthEditor.tsx';
+import { InertButton } from './InertButton.tsx';
 import { InlineConfirm } from './InlineConfirm.tsx';
 import { IntInput } from './IntInput.tsx';
-import { REVERT_ALL_LABEL } from './RosterSettings.tsx';
+import { Modal } from './Modal.tsx';
 import { BadgeFilters } from './modern/BadgeFilter.tsx';
 import { CharacterVisual } from './modern/CharacterVisual.tsx';
 import { GrowthMarksView, growthMarksOf } from './modern/GrowthMarks.tsx';
 import { matchesBadgeFilters, type BadgeFilters as BadgeFilterValues } from './modern/badges.ts';
-import { useEscapeKey } from './useEscapeKey.ts';
-
-/** 一覧で選んでいるもの: アカウント全体か、ニケ（resourceId） */
-type Selection = 'account' | number;
 
 type Props = {
   editor: RosterEditor;
@@ -50,16 +41,12 @@ function EditedMark() {
   );
 }
 
+/** 読み込んだ値に戻す（ニケ・アカウント全体）。編集していなければ押せない。確かめずに戻す */
 function RevertButton({ edited, onRevert }: { edited: boolean; onRevert: () => void }) {
   return (
-    <button
-      type="button"
-      className="advanced-settings-button"
-      aria-disabled={!edited}
-      onClick={() => edited && onRevert()}
-    >
+    <InertButton enabled={edited} onPress={onRevert}>
       読み込んだ値に戻す
-    </button>
+    </InertButton>
   );
 }
 
@@ -121,29 +108,18 @@ function CharacterForm({
   onNext: (() => void) | null;
 }) {
   const id = entry.resourceId;
-  const fields = rosterFields(rosterEntry);
   return (
     <>
       <div className="roster-edit-form-header">
         <h3>{entry.name.ja}</h3>
         <div className="button-row">
           <RevertButton edited={editor.editedIds.has(id)} onRevert={() => editor.revertCharacter(id)} />
-          <button
-            type="button"
-            className="advanced-settings-button"
-            aria-disabled={onPrevious === null}
-            onClick={() => onPrevious?.()}
-          >
+          <InertButton enabled={onPrevious !== null} onPress={() => onPrevious?.()}>
             前のニケ
-          </button>
-          <button
-            type="button"
-            className="advanced-settings-button"
-            aria-disabled={onNext === null}
-            onClick={() => onNext?.()}
-          >
+          </InertButton>
+          <InertButton enabled={onNext !== null} onPress={() => onNext?.()}>
             次のニケ
-          </button>
+          </InertButton>
         </div>
       </div>
       {error !== undefined && <p className="error">読み込みに失敗しました: {error}</p>}
@@ -153,21 +129,18 @@ function CharacterForm({
           // ニケを替えたら欄を作り直す（打ちかけの値を次のニケに持ち越さない）
           key={id}
           character={character}
-          fields={fields}
+          fields={rosterFields(rosterEntry)}
           shown={{
             // キャラごとの Lv は欄に出さない。計算に使えるかの確かめには、スロットと同じくキャラの上限に収めた値を使う
-            growth: {
-              ...rosterEntry.growth,
-              level: clampInt(rosterEntry.growth.level, 1, growthLimits(character).levelMax),
-            },
+            growth: clampGrowth(character, rosterEntry.growth),
             build: rosterEntry,
             skillLevels: rosterEntry.skillLevels,
-            treasurePhase: fields.treasurePhase,
+            // 宝物の段階が未確定（null）なら、そう出す
+            treasurePhase: rosterEntry.treasure === null ? 0 : rosterEntry.treasure.phase,
           }}
           masters={masters}
           mastersError={mastersError}
           disabled={false}
-          unknownTreasure={rosterEntry.treasure !== null && rosterEntry.treasure.phase === null}
           onChange={(patch) =>
             editor.editCharacter(id, patchedCharacterEdit(rosterEntry, patch, character.treasure?.favoriteId ?? null))
           }
@@ -190,18 +163,17 @@ export function RosterEditModal({
   const { roster } = editor;
   // 一覧に出すのは育成状況にいるニケだけ。並びは開いた時点のもので固定する
   const [ordered] = useState(() => index.filter((c) => roster.characters[String(c.resourceId)] !== undefined));
-  const [selected, setSelected] = useState<Selection>('account');
+  // 選んでいるニケ（resourceId）。null はアカウント全体
+  const [selected, setSelected] = useState<number | null>(null);
   const [filters, setFilters] = useState<BadgeFilterValues>({});
   const [editedOnly, setEditedOnly] = useState(false);
   // 狭い画面では一覧と編集欄を切り替える（styles.css が、いま出す方だけを見せる）
   const [pane, setPane] = useState<'list' | 'form'>('list');
-  useEscapeKey(onClose);
 
-  const visible = ordered.filter(
-    (c) => roster.characters[String(c.resourceId)] !== undefined && matchesBadgeFilters(c, filters),
+  const listed = ordered.filter(
+    (c) => matchesBadgeFilters(c, filters) && (!editedOnly || editor.editedIds.has(c.resourceId)),
   );
-  const listed = editedOnly ? visible.filter((c) => editor.editedIds.has(c.resourceId)) : visible;
-  const select = (next: Selection) => {
+  const select = (next: number | null) => {
     setSelected(next);
     setPane('form');
   };
@@ -213,9 +185,9 @@ export function RosterEditModal({
   }, [selected]);
 
   // 欄の上限と、計算に使えるかの確かめには、選んだニケのキャラのデータが要る
-  const cache = useCharacterCache([selected === 'account' ? null : selected], baseUrl);
-  const selectedEntry = selected === 'account' ? undefined : ordered.find((c) => c.resourceId === selected);
-  const selectedRoster = selected === 'account' ? undefined : roster.characters[String(selected)];
+  const cache = useCharacterCache([selected], baseUrl);
+  const selectedEntry = ordered.find((c) => c.resourceId === selected);
+  const selectedRoster = selected === null ? undefined : roster.characters[String(selected)];
   // 前後は、絞り込んだ後の一覧の順でニケの間だけを動く。選んでいるニケが一覧から外れていれば動けない
   const at = listed.findIndex((c) => c.resourceId === selected);
   const neighbor = (offset: number) => {
@@ -224,123 +196,104 @@ export function RosterEditModal({
   };
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div
-        className="modal-container roster-edit-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-label="育成状況の編集"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="modal-header">
-          <h2>育成状況の編集</h2>
-          <button type="button" className="modal-close-button" aria-label="閉じる" onClick={onClose}>
-            ✕
-          </button>
-        </div>
-
-        <div className="roster-edit-body" data-pane={pane}>
-          <div className="roster-edit-list-pane">
-            <div className="char-tray-filter-group roster-edit-filters">
-              <BadgeFilters filters={filters} onChange={setFilters} />
-              <button
-                type="button"
-                className="advanced-settings-button"
-                aria-pressed={editedOnly}
-                onClick={() => setEditedOnly((v) => !v)}
-              >
-                編集済みのみ
-              </button>
-            </div>
-            <div ref={listRef} className="roster-edit-list">
-              {/* アカウント全体は先頭に固定する（絞り込みで消えない） */}
-              <button
-                type="button"
-                className="roster-edit-row roster-edit-row-account"
-                aria-current={selected === 'account'}
-                onClick={() => select('account')}
-              >
-                <span className="roster-edit-row-name">アカウント全体</span>
-                {editor.accountEdited && <EditedMark />}
-              </button>
-              {listed.map((c) => (
-                <button
-                  key={c.resourceId}
-                  type="button"
-                  className="roster-edit-row"
-                  aria-current={selected === c.resourceId}
-                  onClick={() => select(c.resourceId)}
-                >
-                  <span className="roster-edit-row-visual">
-                    <CharacterVisual character={c} size="compact" />
-                  </span>
-                  <span className="roster-edit-row-name">{c.name.ja}</span>
-                  {/* 限界突破・コア強化は、スペック固定でも育成状況の値を出す */}
-                  <GrowthMarksView
-                    {...growthMarksOf(c.rarity, roster.characters[String(c.resourceId)]!.growth)}
-                    className="roster-edit-row-growth"
-                  />
-                  {editor.editedIds.has(c.resourceId) && <EditedMark />}
-                </button>
-              ))}
-              {listed.length === 0 && <p className="hint">該当するニケがいません。</p>}
-            </div>
-          </div>
-
-          <div className="roster-edit-form-pane">
-            <button type="button" className="advanced-settings-button roster-edit-back" onClick={() => setPane('list')}>
-              一覧へ
-            </button>
-            {selectedEntry !== undefined && selectedRoster !== undefined ? (
-              <CharacterForm
-                editor={editor}
-                entry={selectedEntry}
-                rosterEntry={selectedRoster}
-                character={cache.characters.get(selectedEntry.resourceId)}
-                error={cache.errors.get(selectedEntry.resourceId)}
-                masters={masters}
-                mastersError={mastersError}
-                onPrevious={neighbor(-1)}
-                onNext={neighbor(1)}
-              />
-            ) : (
-              <AccountForm editor={editor} />
-            )}
-            {editor.problem !== null && (
-              <ul className="notes" aria-live="polite">
-                {editor.problem.map((line) => (
-                  <li key={line} className="note">
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        <div className="modal-footer roster-edit-footer">
-          {revertAll.prompt !== null ? (
-            <InlineConfirm
-              prompt={revertAll.prompt}
-              confirmLabel="戻す"
-              onConfirm={revertAll.confirm}
-              onCancel={revertAll.cancel}
-            />
-          ) : (
+    <Modal title="育成状況の編集" label="育成状況の編集" className="roster-edit-modal" onClose={onClose}>
+      <div className="roster-edit-body" data-pane={pane}>
+        <div className="roster-edit-list-pane">
+          <div className="char-tray-filter-group roster-edit-filters">
+            <BadgeFilters filters={filters} onChange={setFilters} />
             <button
               type="button"
               className="advanced-settings-button"
-              aria-disabled={!hasEdits}
-              onClick={() => hasEdits && revertAll.request()}
+              aria-pressed={editedOnly}
+              onClick={() => setEditedOnly((v) => !v)}
             >
-              {REVERT_ALL_LABEL}
+              編集済みのみ
             </button>
-          )}
-          <button type="button" className="roster-edit-close" onClick={onClose}>
-            閉じる
+          </div>
+          <div ref={listRef} className="roster-edit-list">
+            {/* アカウント全体は先頭に固定する（絞り込みで消えない） */}
+            <button
+              type="button"
+              className="roster-edit-row roster-edit-row-account"
+              aria-current={selected === null}
+              onClick={() => select(null)}
+            >
+              <span className="roster-edit-row-name">アカウント全体</span>
+              {editor.accountEdited && <EditedMark />}
+            </button>
+            {listed.map((c) => (
+              <button
+                key={c.resourceId}
+                type="button"
+                className="roster-edit-row"
+                aria-current={selected === c.resourceId}
+                onClick={() => select(c.resourceId)}
+              >
+                {/* 行の絵は小さいので、絵の上のバッジは出さない（絞り込みで探す） */}
+                <span className="roster-edit-row-visual">
+                  <CharacterVisual character={c} size="compact" badges={false} />
+                </span>
+                <span className="roster-edit-row-name">{c.name.ja}</span>
+                {/* 限界突破・コア強化は、スペック固定でも育成状況の値を出す */}
+                <GrowthMarksView
+                  {...growthMarksOf(c.rarity, roster.characters[String(c.resourceId)]!.growth)}
+                  className="roster-edit-row-growth"
+                />
+                {editor.editedIds.has(c.resourceId) && <EditedMark />}
+              </button>
+            ))}
+            {listed.length === 0 && <p className="hint">該当するニケがいません。</p>}
+          </div>
+        </div>
+
+        <div className="roster-edit-form-pane">
+          <button type="button" className="advanced-settings-button roster-edit-back" onClick={() => setPane('list')}>
+            一覧へ
           </button>
+          {selectedEntry !== undefined && selectedRoster !== undefined ? (
+            <CharacterForm
+              editor={editor}
+              entry={selectedEntry}
+              rosterEntry={selectedRoster}
+              character={cache.characters.get(selectedEntry.resourceId)}
+              error={cache.errors.get(selectedEntry.resourceId)}
+              masters={masters}
+              mastersError={mastersError}
+              onPrevious={neighbor(-1)}
+              onNext={neighbor(1)}
+            />
+          ) : (
+            <AccountForm editor={editor} />
+          )}
+          {editor.problem !== null && (
+            <ul className="notes" aria-live="polite">
+              {editor.problem.map((line) => (
+                <li key={line} className="note">
+                  {line}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
-    </div>
+
+      <div className="modal-footer roster-edit-footer">
+        {revertAll.prompt !== null ? (
+          <InlineConfirm
+            prompt={revertAll.prompt}
+            confirmLabel="戻す"
+            onConfirm={revertAll.confirm}
+            onCancel={revertAll.cancel}
+          />
+        ) : (
+          <InertButton enabled={hasEdits} onPress={revertAll.request}>
+            {REVERT_ALL_LABEL}
+          </InertButton>
+        )}
+        <button type="button" className="roster-edit-close" onClick={onClose}>
+          閉じる
+        </button>
+      </div>
+    </Modal>
   );
 }

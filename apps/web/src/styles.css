@@ -1620,11 +1620,6 @@ html:has(.modern-view-container) {
   flex: none;
   width: 44px;
 }
-/* 行の絵は小さいので、絵の上のバッジは出さない（絞り込みで探す） */
-.roster-edit-row-visual .char-visual-badges,
-.roster-edit-row-visual .char-visual-corner-badge {
-  display: none;
-}
 .roster-edit-row-name {
   flex: 1;
   min-width: 0;

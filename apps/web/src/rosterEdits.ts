@@ -20,7 +20,7 @@ import {
 import { isRecord, type SlotGrowth, type SlotGrowthFields } from './team.ts';
 
 export const ROSTER_EDITS_STORAGE_KEY = 'nikke-calc.roster.edits.v1';
-export const ROSTER_EDITS_FORMAT_VERSION = 1;
+const ROSTER_EDITS_FORMAT_VERSION = 1;
 
 /**
  * 編集した 1 体分。編集できる項目の全部を持つ（変えた項目だけでなく丸ごと）。Lv・リサイクルルームの写し・その他攻撃加算は
@@ -41,7 +41,7 @@ export type RosterEdits = Partial<RosterAccount> & {
   characters: Record<string, RosterCharacterEdit>;
 };
 
-export type RosterEditsRead = { ok: true; edits: RosterEdits | null } | { ok: false; error: string };
+type RosterEditsRead = { ok: true; edits: RosterEdits | null } | { ok: false; error: string };
 
 /**
  * 保存した重ねを読む（無ければ null）。ここで見るのは形だけで、値の範囲は、当てた結果を育成状況の読み込みの検査に通して確かめる
@@ -69,8 +69,8 @@ export function parseRosterEdits(json: string | null): RosterEditsRead {
   return shaped ? { ok: true, edits: raw as RosterEdits } : { ok: false, error: '編集の形が合わない' };
 }
 
-/** 育成状況の 1 体分のうち、編集できる項目 */
-export function characterEditOf(character: SnapshotCharacter): RosterCharacterEdit {
+/** 育成状況の 1 体分（か、保存した重ねの 1 体分）のうち、編集できる項目だけ */
+export function characterEditOf(character: RosterCharacterEdit): RosterCharacterEdit {
   const { growth, affectionRank, gear, cube, collection, skillLevels, treasure } = character;
   return {
     growth: { grade: growth.grade, core: growth.core },
@@ -230,7 +230,10 @@ export function applyRosterEdits(
   const characters = Object.entries(isRecord(raw.characters) ? raw.characters : {}).map(([id, c]) => {
     if (!isRecord(c) || !isRecord(c.growth)) return [id, c];
     const entry = byId.get(id);
-    const edit = entry === undefined ? undefined : edits.characters[id];
+    const stored = entry === undefined ? undefined : edits.characters[id];
+    // 重ねからは編集できる項目だけを当てる（保存にほかの欄（Lv・リサイクルルームの写し）があっても当てない）。欠けた項目は、
+    // 当てた結果の検査が止める
+    const edit = stored && characterEditOf({ ...stored, growth: { ...stored.growth } });
     const follows = synchroLevel !== undefined && c.growth.level === raw.synchroLevel;
     const next = {
       ...c,
@@ -253,7 +256,7 @@ export function applyRosterEdits(
 }
 
 /** 重ねを当てた育成状況: 書き出す JSON（raw）と、それを読み込みと同じ検査に通した結果（read。画面が使う） */
-export type EditedRoster = { raw: Record<string, unknown>; read: BuildSnapshotRead };
+type EditedRoster = { raw: Record<string, unknown>; read: BuildSnapshotRead };
 
 /** saved は読み込んだ育成状況の JSON の文（検査を通ったもの） */
 export function editedRoster(

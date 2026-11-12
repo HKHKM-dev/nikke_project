@@ -309,7 +309,7 @@ describe('useRoster: editing (plan/design-roster-edit.md 5 節)', () => {
     act(() => result.current.controls.editor!.editCharacter(82, edit));
     act(() => result.current.controls.editor!.editAccount({ synchroLevel: 410, recycleRoom: ROSTER.recycleRoom }));
     act(() => result.current.controls.revertAll.request());
-    expect(result.current.controls.revertAll.prompt).toBe(revertAllConfirmText(1, true));
+    expect(result.current.controls.revertAll.prompt).toBe(revertAllConfirmText({ count: 1, account: true }));
     act(() => result.current.controls.revertAll.cancel());
     expect(result.current.controls).toMatchObject({ hasEdits: true, revertAll: { prompt: null } });
     act(() => result.current.controls.revertAll.request());
@@ -373,7 +373,7 @@ describe('useRoster: editing (plan/design-roster-edit.md 5 節)', () => {
       expect(localStorage.getItem(ROSTER_EDITS_STORAGE_KEY)).toBe(broken);
       act(() => controls.revertAll.request());
       // 何を編集したか分からない
-      expect(result.current.controls.revertAll.prompt).toBe(revertAllConfirmText(null, false));
+      expect(result.current.controls.revertAll.prompt).toBe(revertAllConfirmText(null));
       act(() => result.current.controls.revertAll.confirm());
       expect(localStorage.getItem(ROSTER_EDITS_STORAGE_KEY)).toBeNull();
       expect(result.current.controls).toMatchObject({ roster: ROSTER, message: null, hasEdits: false });

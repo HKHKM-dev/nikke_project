@@ -80,8 +80,8 @@ export function rosterGrowthOf(roster: BuildSnapshot | null, resourceId: number 
 /** キャラをスロットに入れる操作に、育成状況のそのキャラの育成を付ける（いなければそのまま） */
 export function withRosterFields(action: TeamAction, roster: BuildSnapshot | null): TeamAction {
   if (action.type !== 'selectCharacter') return action;
-  const entry = entryOf(roster, action.resourceId);
-  return entry === undefined ? action : { ...action, fields: rosterFields(entry) };
+  const fields = rosterGrowthOf(roster, action.resourceId);
+  return fields === null ? action : { ...action, fields };
 }
 
 /** 育成状況のリサイクルルームの研究（tid → Lv）をコンソールの形にする。無い研究は 0 */
@@ -110,26 +110,41 @@ export function recycleRoomWithConsole(
   return next;
 }
 
-/** スロットのうち、育成状況にいるキャラ（only があればそのキャラだけ）に、育成状況の育成を写す */
+/**
+ * スロットのうち、育成状況にいるキャラ（only があればそのキャラだけ）に、育成状況の育成を写す。写すスロットが無ければ
+ * 元の配列をそのまま返す
+ */
 function applyToSlots(slots: SlotState[], roster: BuildSnapshot, only?: number): SlotState[] {
-  return slots.map((s) => {
+  let copied = false;
+  const next = slots.map((s) => {
     const entry = only === undefined || s.resourceId === only ? entryOf(roster, s.resourceId) : undefined;
-    return entry === undefined ? s : { ...s, ...rosterFields(entry) };
+    if (entry === undefined) return s;
+    copied = true;
+    return { ...s, ...rosterFields(entry) };
   });
+  return copied ? next : slots;
 }
 
-function applyToAllSlots(
+/**
+ * 全部の編成のスロットのうち、育成状況にいるキャラ（only があればそのニケだけ。ニケの育成を編集した・戻したとき）に、
+ * 育成状況の育成を写す（スロットで変えた値は上書きする）。写すスロットの無い編成・一覧は、元のものをそのまま返す
+ * （どのスロットにもいないニケを編集するたびに、編成を保存し直し、計算の入力を作り直さないため）
+ */
+export function applyRosterSlots(
   team: TeamState,
   parties: PartiesState,
   roster: BuildSnapshot,
   only?: number,
 ): { team: TeamState; parties: PartiesState } {
+  const slots = applyToSlots(team.slots, roster, only);
+  const others = parties.parties.map((p) => {
+    if (p === null) return p;
+    const copied = applyToSlots(p.slots, roster, only);
+    return copied === p.slots ? p : { ...p, slots: copied };
+  });
   return {
-    team: { ...team, slots: applyToSlots(team.slots, roster, only) },
-    parties: {
-      ...parties,
-      parties: parties.parties.map((p) => (p === null ? null : { ...p, slots: applyToSlots(p.slots, roster, only) })),
-    },
+    team: slots === team.slots ? team : { ...team, slots },
+    parties: others.every((p, i) => p === parties.parties[i]) ? parties : { ...parties, parties: others },
   };
 }
 
@@ -145,23 +160,13 @@ export function applyRosterAccount(team: TeamState, roster: BuildSnapshot): Team
   return { ...team, ...commonGrowthOf(roster) };
 }
 
-/** ニケの育成を編集した・戻したときに写す: 全部の編成のスロットのうち、そのニケのスロットの育成（スロットで変えた値は上書きする） */
-export function applyRosterCharacter(
-  team: TeamState,
-  parties: PartiesState,
-  roster: BuildSnapshot,
-  resourceId: number,
-): { team: TeamState; parties: PartiesState } {
-  return applyToAllSlots(team, parties, roster, resourceId);
-}
-
 /** 読み込んだときに写す: シンクロ LV・コンソールと、全部の編成のスロットのうち育成状況にいるキャラの育成 */
 export function applyRoster(
   team: TeamState,
   parties: PartiesState,
   roster: BuildSnapshot,
 ): { team: TeamState; parties: PartiesState } {
-  return applyToAllSlots(applyRosterAccount(team, roster), parties, roster);
+  return applyRosterSlots(applyRosterAccount(team, roster), parties, roster);
 }
 
 /** 写した育成を消したスロットの育成（スロットの既定。キャラはそのまま） */
@@ -200,15 +205,18 @@ export function clearConfirmText(slotCount: number, edited = false): string {
   );
 }
 
+/** 「全部を読み込んだ値に戻す」のボタンの名前（アカウントのメニューと編集画面で同じ） */
+export const REVERT_ALL_LABEL = '全部を読み込んだ値に戻す';
+
 /**
- * 「全部を読み込んだ値に戻す」の確かめの文。editedCount は編集したニケの数、account はアカウント全体の値を編集しているか。
- * 編集が読めないとき（何を編集したか分からない）は editedCount を null にする
+ * 「全部を読み込んだ値に戻す」の確かめの文。edited は編集したもの（count は編集したニケの数、account はアカウント全体の値を
+ * 編集しているか）。編集が読めないとき（何を編集したか分からない）は null
  */
-export function revertAllConfirmText(editedCount: number | null, account: boolean): string {
+export function revertAllConfirmText(edited: { count: number; account: boolean } | null): string {
   const what =
-    editedCount === null
+    edited === null
       ? '保存してある編集'
-      : [editedCount > 0 ? `編集した ${editedCount} 体` : null, account ? 'アカウント全体' : null]
+      : [edited.count > 0 ? `編集した ${edited.count} 体` : null, edited.account ? 'アカウント全体' : null]
           .filter((s) => s !== null)
           .join('と') + 'の値';
   return `${what}を捨てて、読み込んだ値に戻します。スロットの育成と共通育成も、育成状況の値になります。`;

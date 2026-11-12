@@ -11,7 +11,7 @@ import { INITIAL_PARTIES, partyOf, type PartiesState } from './parties.ts';
 import {
   applyRoster,
   applyRosterAccount,
-  applyRosterCharacter,
+  applyRosterSlots,
   clearConfirmText,
   clearRosterFromTeam,
   commonGrowthOf,
@@ -263,8 +263,8 @@ describe('育成状況の編集で写すもの（plan/design-roster-edit.md 5.4 
     parties: [null, partyOf(teamWith(10, 82)), null, null, null],
   };
 
-  it('applyRosterCharacter は、全部の編成のそのニケのスロットだけに写す（共通育成・ほかのニケは変えない）', () => {
-    const next = applyRosterCharacter(team, parties, ROSTER, 82);
+  it('applyRosterSlots にニケを渡すと、全部の編成のそのニケのスロットだけに写す（共通育成・ほかのニケは変えない）', () => {
+    const next = applyRosterSlots(team, parties, ROSTER, 82);
     expect(next.team.slots[0]).toEqual({ ...team.slots[0], ...rosterFields(ROSTER.characters['82']!) });
     expect(next.team.slots[2]).toBe(team.slots[2]);
     expect(next.team.synchroLevel).toBe(team.synchroLevel);
@@ -275,6 +275,16 @@ describe('育成状況の編集で写すもの（plan/design-roster-edit.md 5.4 
     });
     // 育成状況にいるほかのニケ（10）のスロットは変えない
     expect(next.parties.parties[1]!.slots[0]).toBe(parties.parties[1]!.slots[0]);
+  });
+
+  it('写すスロットが無ければ、編成と一覧をそのまま返す（どのスロットにもいないニケの編集で、編成を作り直さない）', () => {
+    const absent = applyRosterSlots(team, parties, ROSTER, 30);
+    expect(absent.team).toBe(team);
+    expect(absent.parties).toBe(parties);
+    // いまの編成にだけいるニケなら、ほかの編成の一覧はそのまま
+    const onlyHere = applyRosterSlots(teamWith(82), { active: 0, parties: [null, partyOf(teamWith(10))] }, ROSTER, 82);
+    expect(onlyHere.team.slots[0]).toMatchObject(rosterFields(ROSTER.characters['82']!));
+    expect(onlyHere.parties.parties[1]).toEqual(partyOf(teamWith(10)));
   });
 
   it('applyRosterAccount は、共通育成のシンクロ LV とコンソールだけを写す', () => {
@@ -316,9 +326,9 @@ describe('育成状況の編集で写すもの（plan/design-roster-edit.md 5.4 
       '育成状況（編集した値も）を消し、シンクロ LV・リサイクルルームと、育成状況にいるキャラの 2 スロット（全部の編成）の育成を既定に戻します。',
     );
     const tail = 'を捨てて、読み込んだ値に戻します。スロットの育成と共通育成も、育成状況の値になります。';
-    expect(revertAllConfirmText(3, false)).toBe(`編集した 3 体の値${tail}`);
-    expect(revertAllConfirmText(1, true)).toBe(`編集した 1 体とアカウント全体の値${tail}`);
-    expect(revertAllConfirmText(0, true)).toBe(`アカウント全体の値${tail}`);
-    expect(revertAllConfirmText(null, false)).toBe(`保存してある編集${tail}`);
+    expect(revertAllConfirmText({ count: 3, account: false })).toBe(`編集した 3 体の値${tail}`);
+    expect(revertAllConfirmText({ count: 1, account: true })).toBe(`編集した 1 体とアカウント全体の値${tail}`);
+    expect(revertAllConfirmText({ count: 0, account: true })).toBe(`アカウント全体の値${tail}`);
+    expect(revertAllConfirmText(null)).toBe(`保存してある編集${tail}`);
   });
 });

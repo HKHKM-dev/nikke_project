@@ -316,6 +316,22 @@ describe('applyRosterEdits と editedRoster（重ねを当てる）', () => {
     expect((raw.characters as Record<string, unknown>)['999']).toEqual(RAW.characters['999']);
   });
 
+  it('保存した重ねからは、編集できる項目だけを当てる（Lv・リサイクルルームの写しは当てない）。欠けた項目は検査で止まる', () => {
+    const extra = {
+      ...edit82,
+      growth: { ...edit82.growth, level: 1 },
+      recycleRoom: { personal: 0, class: 0, corporation: 0 },
+    };
+    const { read } = editedRoster(SAVED, edits({ characters: { '82': extra } }), INDEX);
+    expect(read.ok && read.snapshot.characters['82']).toEqual({
+      ...ROSTER.characters['82']!,
+      skillLevels: edit82.skillLevels,
+    });
+    const { growth: _growth, ...partial } = edit82;
+    const missing = editedRoster(SAVED, edits({ characters: { '82': partial as typeof edit82 } }), INDEX).read;
+    expect(missing.ok).toBe(false);
+  });
+
   it('範囲の外の値を持つ重ねは、当てた結果が検査で止まる', () => {
     const broken = { ...edit82, growth: { grade: 99, core: 0 } };
     const { read } = editedRoster(SAVED, edits({ characters: { '82': broken } }), INDEX);

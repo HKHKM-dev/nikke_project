@@ -54,12 +54,11 @@ type Props = {
   effectiveBuild: BuildInput;
   /** 実際に計算へ渡す育成値 */
   growth: GrowthInput;
-  treasurePhase: TreasurePhase;
+  /** 宝物の段階（0 は宝物なし）。null は、宝物はあるが段階が未確定（育成状況の編集だけ。plan/design-roster-edit.md 6.4 節） */
+  treasurePhase: TreasurePhase | null;
   masters: BuildMasters | null;
   mastersError: string | null;
   disabled: boolean;
-  /** 宝物の段階が未確定（育成状況の編集だけ。plan/design-roster-edit.md 6.4 節）。宝物はあるが、段階は treasurePhase に出ない */
-  unknownTreasure?: boolean;
   /** 変えた育成（装備・キューブ・コレクションは build、宝物の段階は treasurePhase） */
   onChange: (patch: Partial<Pick<SlotGrowthFields, 'build' | 'treasurePhase'>>) => void;
 };
@@ -73,7 +72,6 @@ export function BuildSection({
   masters,
   mastersError,
   disabled,
-  unknownTreasure = false,
   onChange,
 }: Props) {
   const set = (patch: Partial<SlotBuild>) => onChange({ build: { ...build, ...patch } });
@@ -88,13 +86,13 @@ export function BuildSection({
   let combatError: string | null = null;
   if (masters) {
     try {
-      computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase });
+      computeCombatAttack(character, growth, effectiveBuild, masters, { treasurePhase: treasurePhase ?? 0 });
     } catch (e) {
       combatError = e instanceof Error ? e.message : String(e);
     }
   }
   const shown = effectiveBuild;
-  const hasTreasure = character.treasure !== null && (treasurePhase > 0 || unknownTreasure);
+  const hasTreasure = character.treasure !== null && treasurePhase !== 0;
 
   return (
     <div className="build">
@@ -233,11 +231,11 @@ export function BuildSection({
                 宝物はスペック固定でも選べる */}
             <select
               value={
-                unknownTreasure
-                  ? UNKNOWN_TREASURE_OPTION
-                  : hasTreasure
-                    ? treasureOptionValue(treasurePhase)
-                    : (shown.collection?.rarity ?? '')
+                !hasTreasure
+                  ? (shown.collection?.rarity ?? '')
+                  : treasurePhase === null
+                    ? UNKNOWN_TREASURE_OPTION
+                    : treasureOptionValue(treasurePhase)
               }
               {...inertControlProps(disabled && character.treasure === null)}
               onChange={(e) => {
@@ -254,7 +252,7 @@ export function BuildSection({
               }}
             >
               {/* いまの値として出すだけ（ほかの値から選び直すことはできない） */}
-              {unknownTreasure && (
+              {hasTreasure && treasurePhase === null && (
                 <option value={UNKNOWN_TREASURE_OPTION} disabled>
                   宝物（段階は未確定）
                 </option>

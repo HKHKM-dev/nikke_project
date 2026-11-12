@@ -17,39 +17,31 @@ import { BuildSection } from './BuildSection.tsx';
 import { IntInput } from './IntInput.tsx';
 import { SkillSection } from './SkillSection.tsx';
 
-/** 欄に出す値（スロットは計算に使う値で、スペック固定なら固定の値。育成状況は保存している値そのもの） */
+/**
+ * 欄に出す値（スロットは計算に使う値で、スペック固定なら固定の値。育成状況は保存している値そのもの）。
+ * treasurePhase の null は、宝物はあるが段階が未確定（育成状況の編集だけ）
+ */
 export type ShownGrowth = {
   growth: GrowthInput;
   build: BuildInput;
   skillLevels: SkillLevels;
-  treasurePhase: TreasurePhase;
+  treasurePhase: TreasurePhase | null;
 };
 
 type Props = {
   character: CharacterData;
   /** 保存している育成（変更はこれに重ねる。スペック固定でも残す） */
-  fields: SlotGrowthFields;
+  fields: Pick<SlotGrowthFields, 'growth' | 'build'>;
   shown: ShownGrowth;
   masters: BuildMasters | null;
   mastersError: string | null;
   /** 欄を使えなくする（スペック固定。宝物の段階だけは選べる） */
   disabled: boolean;
-  /** 宝物の段階が未確定（育成状況の編集だけ） */
-  unknownTreasure?: boolean;
   /** 変えた育成（変えた項目だけ） */
   onChange: (patch: Partial<SlotGrowthFields>) => void;
 };
 
-export function GrowthEditor({
-  character,
-  fields,
-  shown,
-  masters,
-  mastersError,
-  disabled,
-  unknownTreasure,
-  onChange,
-}: Props) {
+export function GrowthEditor({ character, fields, shown, masters, mastersError, disabled, onChange }: Props) {
   const limits = growthLimits(character);
   const growthField = (key: keyof SlotGrowth, name: string, max: number) => (
     <label className="field">
@@ -93,7 +85,6 @@ export function GrowthEditor({
         masters={masters}
         mastersError={mastersError}
         disabled={disabled}
-        unknownTreasure={unknownTreasure}
         onChange={onChange}
       />
     </>

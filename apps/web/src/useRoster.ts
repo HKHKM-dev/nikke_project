@@ -8,7 +8,7 @@ import {
   ROSTER_STORAGE_KEY,
   applyRoster,
   applyRosterAccount,
-  applyRosterCharacter,
+  applyRosterSlots,
   clearConfirmText,
   clearRosterFromTeam,
   importSummary,
@@ -38,7 +38,10 @@ import type { TeamAction, TeamState } from './team.ts';
 /** 設定のメニューに出す結果。error は読み込めなかった理由 */
 export type RosterMessage = { kind: 'ok' | 'error'; lines: string[] };
 
-/** 育成状況の編集（編集画面が使う）。どの操作も、すぐ保存して、スロット・共通育成へ写す */
+/**
+ * 育成状況の編集（編集画面が使う）。どの操作も、すぐ保存して、スロット・共通育成へ写す。
+ * 1 つの操作（イベント）で呼ぶのは 1 回にする: 続けて呼ぶと、2 回目は 1 回目の前の重ねと編成から作るので、1 回目が消える
+ */
 export type RosterEditor = {
   /** 編集を重ねた育成状況 */
   roster: BuildSnapshot;
@@ -122,9 +125,8 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
 
   const [message, setMessage] = useState<RosterMessage | null>(null);
   const [editProblem, setEditProblem] = useState<string[] | null>(null);
-  // 確かめを待っているか。文は描くたびにいまの編成で作る（確かめの間に編成を変えても、戻すスロットの数と合う）
-  const [clearPending, setClearPending] = useState(false);
-  const [revertAllPending, setRevertAllPending] = useState(false);
+  // 確かめを待っている操作（1 度に 1 つ）。文は描くたびにいまの編成で作る（確かめの間に編成を変えても、戻すスロットの数と合う）
+  const [pending, setPending] = useState<'clear' | 'revertAll' | null>(null);
   // 読めない保存は消さずに理由を出す
   const restoreError: RosterMessage | null =
     restored?.ok === false
@@ -146,11 +148,18 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     setParties(next.parties);
   };
 
-  const dropEdits = () => {
+  /** 重ねを保存する（null はキーごと消す）。書けたか */
+  const saveEdits = (json: string | null): boolean => {
+    setEditsJson(json);
+    if (json !== null) return writeStorage(ROSTER_EDITS_STORAGE_KEY, json);
     removeStorage(ROSTER_EDITS_STORAGE_KEY);
-    setEditsJson(null);
+    return true;
+  };
+
+  const dropEdits = () => {
+    saveEdits(null);
     setEditProblem(null);
-    setRevertAllPending(false);
+    setPending(null);
   };
 
   const importFile = async (file: File) => {
@@ -161,7 +170,6 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
       setMessage({ kind: 'error', lines: read.errors });
       return;
     }
-    setClearPending(false);
     // 確かめずにすぐ写す（オーナーの指示。編集があっても確かめず、編集は捨てる）。検査を通った元の文を保存する
     // （read.snapshot はキャラのデータに無いキャラを飛ばしている）
     writeStorage(ROSTER_STORAGE_KEY, text);
@@ -180,7 +188,6 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   };
 
   const confirmClear = () => {
-    setClearPending(false);
     // 育成状況から写したもの（シンクロ LV・コンソール・スロットの育成）も既定に戻す
     replaceTeam(clearRosterFromTeam(team, parties, roster));
     removeStorage(ROSTER_STORAGE_KEY);
@@ -196,39 +203,36 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   };
 
   /**
-   * 重ねを next にして保存し、できた育成状況を copy でスロット・共通育成へ写す。当てた結果が検査を通らない重ねは入れない
-   * （欄は範囲の中の値しか出さないので、ふつうは起きない）
+   * 重ねを change の返すものにして保存し、できた育成状況を copy でスロット・共通育成へ写す。当てた結果が検査を通らない重ねは
+   * 入れない（欄は範囲の中の値しか出さないので、ふつうは起きない）
    */
   const commit = (
-    next: RosterEdits | null,
+    change: (edits: RosterEdits | null, baseline: BuildSnapshot, now: string) => RosterEdits | null,
     copy: (roster: BuildSnapshot) => { team: TeamState; parties: PartiesState },
   ) => {
     if (index === null || saved === null || baseline === null) return;
+    const next = change(edits, baseline, new Date().toISOString());
     const read = next === null ? null : editedRoster(saved, next, index).read;
     if (read?.ok === false) {
       setEditProblem(['この編集は入れられない', ...read.errors]);
       return;
     }
-    const json = next === null ? null : JSON.stringify(next);
-    if (json === null) removeStorage(ROSTER_EDITS_STORAGE_KEY);
-    const written = json === null || writeStorage(ROSTER_EDITS_STORAGE_KEY, json);
-    setEditsJson(json);
+    const written = saveEdits(next && JSON.stringify(next));
     setEditProblem(written ? null : [SAVE_FAILED]);
     setMessage(null);
     replaceTeam(copy(read?.snapshot ?? baseline));
   };
 
-  const now = () => new Date().toISOString();
-  const editCharacter = (resourceId: number, edit: RosterCharacterEdit | null) => {
-    if (baseline === null) return;
-    commit(withCharacterEdit(edits, baseline, resourceId, edit, now()), (r) =>
-      applyRosterCharacter(team, parties, r, resourceId),
+  const editCharacter = (resourceId: number, edit: RosterCharacterEdit | null) =>
+    commit(
+      (current, base, now) => withCharacterEdit(current, base, resourceId, edit, now),
+      (r) => applyRosterSlots(team, parties, r, resourceId),
     );
-  };
-  const editAccount = (account: RosterAccount | null) => {
-    if (baseline === null) return;
-    commit(withAccountEdit(edits, baseline, account, now()), (r) => ({ team: applyRosterAccount(team, r), parties }));
-  };
+  const editAccount = (account: RosterAccount | null) =>
+    commit(
+      (current, base, now) => withAccountEdit(current, base, account, now),
+      (r) => ({ team: applyRosterAccount(team, r), parties }),
+    );
 
   const editor: RosterEditor | null =
     roster === null || editsErrors !== null
@@ -244,6 +248,17 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
           revertAccount: () => editAccount(null),
         };
 
+  /** 確かめてから行う操作（確かめの文は、待っているときだけ作る） */
+  const confirmed = (action: 'clear' | 'revertAll', prompt: () => string, confirm: () => void): ConfirmedAction => ({
+    prompt: pending === action ? prompt() : null,
+    request: () => {
+      setMessage(null);
+      setPending(action);
+    },
+    confirm,
+    cancel: () => setPending(null),
+  });
+
   return {
     controls: {
       roster,
@@ -251,32 +266,19 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
       message: message ?? restoreError ?? (editProblem === null ? null : { kind: 'ok', lines: editProblem }),
       importFile,
       exportFile,
-      clear: {
-        prompt: clearPending
-          ? clearConfirmText(roster === null ? 0 : rosterSlotCount(team, parties, roster), editsJson !== null)
-          : null,
-        request: () => {
-          setMessage(null);
-          setRevertAllPending(false);
-          setClearPending(true);
-        },
-        confirm: confirmClear,
-        cancel: () => setClearPending(false),
-      },
+      clear: confirmed(
+        'clear',
+        () => clearConfirmText(roster === null ? 0 : rosterSlotCount(team, parties, roster), editsJson !== null),
+        confirmClear,
+      ),
       editor,
       hasEdits: editsJson !== null,
-      revertAll: {
-        prompt: revertAllPending
-          ? revertAllConfirmText(editor === null ? null : editor.editedIds.size, accountEdited(edits))
-          : null,
-        request: () => {
-          setMessage(null);
-          setClearPending(false);
-          setRevertAllPending(true);
-        },
-        confirm: confirmRevertAll,
-        cancel: () => setRevertAllPending(false),
-      },
+      revertAll: confirmed(
+        'revertAll',
+        // 編集が読めないとき（editor が無い）は、何を編集したか分からない
+        () => revertAllConfirmText(editor && { count: editor.editedIds.size, account: editor.accountEdited }),
+        confirmRevertAll,
+      ),
     },
     dispatchWithRoster,
   };

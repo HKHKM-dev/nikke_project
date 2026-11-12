@@ -3,8 +3,10 @@ import type { Dispatch } from 'react';
 import type { RosterCommonGrowth } from '../roster.ts';
 import { SHOOTING_RANGE_ENEMY, emptyConsole, sameConsole, type ConsoleInput, type TeamAction } from '../team.ts';
 import { ConsoleFields } from './ConsoleFields.tsx';
+import { InertButton } from './InertButton.tsx';
 import { IntInput } from './IntInput.tsx';
 import { Popover } from './Popover.tsx';
+import { ROSTER_REVERT_LABEL } from './RosterRevertButton.tsx';
 
 /** スペック固定の間にリサイクルルームの欄に出す値（計算は研究なし） */
 const NO_CONSOLE = emptyConsole();
@@ -137,18 +139,15 @@ export function TeamSettingsForm({
             </fieldset>
           </Popover>
           {rosterCommon !== null && (
-            <button
-              type="button"
-              className="advanced-settings-button"
-              aria-disabled={!canRevert}
-              onClick={() => {
-                if (!canRevert) return;
+            <InertButton
+              enabled={canRevert}
+              onPress={() => {
                 dispatch({ type: 'setSynchroLevel', synchroLevel: rosterCommon.synchroLevel });
                 dispatch({ type: 'setConsole', console: rosterCommon.console });
               }}
             >
-              育成状況の値に戻す
-            </button>
+              {ROSTER_REVERT_LABEL}
+            </InertButton>
           )}
         </div>
       </fieldset>
