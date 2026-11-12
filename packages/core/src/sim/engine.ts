@@ -15,7 +15,6 @@ import {
   partialChargeTriggerDamage,
   type ModelNote,
   type TriggerDamage,
-  type EnemyInput,
 } from '../damage.ts';
 import {
   autoAttackCoreRowNotes,
@@ -216,7 +215,7 @@ export function runSimulation(simInput: SimInput): SimResult {
   // 出し、バフも着弾のフレームの区間で引く（本体は発射のフレームのまま）
   const flights = slotFlightsOf(slots, enemy, frames);
   const segmentEnds = timeline.segments.map((s) => s.end);
-  const runnerContext: RunnerContext = { enemy, input, timeline, shots, flights, frames, landing, history };
+  const runnerContext: RunnerContext = { input, timeline, shots, flights, frames, landing, history };
   const runners: (Runner | null)[] = slots.map((slot, index) => createRunner(runnerContext, slot, index));
 
   // バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）。
@@ -229,19 +228,17 @@ export function runSimulation(simInput: SimInput): SimResult {
     .filter((h) => h.frame < frames)
     .sort((a, b) => a.frame - b.frame);
   // 発動ごとの、当たったヒットの部分（結果の burst.hits は発動ごとに 1 つで、値はその和）
-  const burstParts = new Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>();
+  const burstParts: BurstParts = new Map();
   // バーストのヒット（ヒットのフレーム順。同じフレームなら時刻表の順 = I → II → III）。値は burstHits と同じ並び（出さないヒットは null）
   const burstHitContext: BurstHitContext = {
     runners,
-    slots,
     timeline,
     history,
-    enemy,
     input,
     burstParts,
     addPerSecond,
   };
-  const burstHitDamages = burstHits.map((hit) => burstHitDamageOf(burstHitContext, hit));
+  const burstHitDamages = burstHits.map((hitAt) => burstHitDamageOf(burstHitContext, hitAt));
   const addSkillHit = (h: SkillHitEvent): void => {
     if (h.frame >= frames) return;
     const runner = runners[h.slotIndex];
@@ -314,20 +311,16 @@ export function runSimulation(simInput: SimInput): SimResult {
   };
 }
 
-type RunnerContext = {
-  enemy: EnemyInput;
+/** createRunner が読む、1 パス目の結果と入力 */
+type RunnerContext = Pick<TeamPlan, 'timeline' | 'shots' | 'frames' | 'landing' | 'history'> & {
   input: SimInput;
-  timeline: TeamPlan['timeline'];
-  shots: TeamPlan['shots'];
   flights: ReturnType<typeof slotFlightsOf>;
-  frames: number;
-  landing: TeamPlan['landing'];
-  history: TeamPlan['history'];
 };
 
 /** 枠の区間ごとの読み手を作る（2 パス目。区間の発数とダメージ・1 秒ごとのダメージを引く） */
-function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: number) {
-  const { enemy, input, timeline, shots, flights, frames, landing, history } = c;
+function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: number): Runner | null {
+  const { input, timeline, shots, flights, frames, landing, history } = c;
+  const { enemy } = input;
   if (slot === null) return null;
   const base = {
     character: slot.character,
@@ -431,20 +424,23 @@ function createRunner(c: RunnerContext, slot: SimInput['slots'][number], index: 
   };
 }
 
-type BurstHitContext = {
+type BurstHitAt = { activation: BurstActivation; frame: number; share: number };
+
+/** バーストのヒットの、発動ごとの当たった部分（結果の burst.hits は発動ごとに 1 つで、値はその和） */
+type BurstParts = Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>;
+
+/** burstHitDamageOf が読む、1 パス目の結果・枠の読み手・入力 */
+type BurstHitContext = Pick<TeamPlan, 'timeline' | 'history'> & {
   runners: readonly (Runner | null)[];
-  slots: SimInput['slots'];
-  timeline: TeamPlan['timeline'];
-  history: TeamPlan['history'];
-  enemy: EnemyInput;
   input: SimInput;
-  burstParts: Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>;
+  burstParts: BurstParts;
   addPerSecond: (slotIndex: number, frame: number, damage: number) => void;
 };
 
 /** バーストのヒット 1 つの値（出さないヒットは null）。発動ごとの当たったヒットの部分（burstParts）に足す */
 function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null {
-  const { runners, slots, timeline, history, enemy, input, burstParts, addPerSecond } = c;
+  const { runners, timeline, history, input, burstParts, addPerSecond } = c;
+  const { slots, enemy } = input;
   const { activation, frame: f, share } = hitAt;
   const index = activation.slotIndex;
   const runner = runners[index];
@@ -492,8 +488,6 @@ function burstHitDamageOf(c: BurstHitContext, hitAt: BurstHitAt): number | null 
   addPerSecond(index, f, damage);
   return damage;
 }
-
-type BurstHitAt = { activation: BurstActivation; frame: number; share: number };
 
 /** 2 パス目のヒットの記録の 1 件（蓄積して爆発するダメージの窓が読む） */
 type DamageLogEntry = { slotIndex: number; frame: number; damage: number };
