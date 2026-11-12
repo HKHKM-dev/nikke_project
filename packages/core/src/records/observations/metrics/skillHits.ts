@@ -7,9 +7,8 @@ import {
   videoFrameOf,
 } from '../../../burst/schedule.ts';
 import { unionRanges } from '../../../frame/events.ts';
-import { lowerBound } from '../../../frame/shots.ts';
 import type { SimResult } from '../../../sim/engine.ts';
-import { itemsOf } from '../../../skills/holders.ts';
+import { hpRatioStepIndexOf, itemsOf } from '../../../skills/holders.ts';
 import { isResolvedShotCount } from '../../../skills/resolve.ts';
 import type { NamedStateId } from '../../../skills/states.ts';
 import type { CompareSpec } from '../types.ts';
@@ -91,17 +90,19 @@ function windowFirstHeals(result: SimResult, ctx: MetricContext): number[] {
   // 段ごとの窓の番号（1 未満の段の続きの、頭の段の番号。1 以上の段は -1）
   const windowOf: number[] = [];
   steps.ratios.forEach((ratio, k) => {
-    windowOf.push(ratio >= 1 ? -1 : k > 0 && windowOf[k - 1]! >= 0 ? windowOf[k - 1]! : k);
+    const prev = windowOf[k - 1] ?? -1;
+    windowOf.push(ratio >= 1 ? -1 : prev >= 0 ? prev : k);
   });
   const heals = result.history.heals
     .filter((h) => h.sourceSlotIndex === slotIndex)
     .sort((a, b) => a.frame - b.frame || a.slotIndex - b.slotIndex);
-  const seen = new Set<number>();
+  // 回復はフレームの順なので、同じ窓の回復は続けて来る
   const targets: number[] = [];
+  let last = -1;
   for (const h of heals) {
-    const window = windowOf[lowerBound(steps.frames, h.frame + 1) - 1]!;
-    if (window < 0 || seen.has(window)) continue;
-    seen.add(window);
+    const window = windowOf[hpRatioStepIndexOf(steps, h.frame)]!;
+    if (window < 0 || window === last) continue;
+    last = window;
     targets.push(h.slotIndex + 1);
   }
   return targets;

@@ -42,6 +42,7 @@ export {
   type HolderHistory,
   type HpRatioSteps,
   selfHpRatioOf,
+  hpRatioStepIndexOf,
   type RemoveDebuffGuess,
   type RemoveDebuffGuessRecord,
   pickRemoveDebuff,
