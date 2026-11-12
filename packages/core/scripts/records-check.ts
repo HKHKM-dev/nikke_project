@@ -1,7 +1,8 @@
 // 生成物を作り直す: 観測値をモデルと比べた残差の一覧（plan/residuals.md）、結論の一覧（plan/claims.md。records/claims/ から）、
 // 検証記録の一覧（plan/verifications.md。records/verifications/ から）、スキル定義の対応状況の一覧（plan/skills.md）と画面が読む
 // 索引（packages/core/data/skills/support.json。skills/support.ts）、残っている仕事の一覧（plan/backlog.md。records/backlog/ の
-// 課題のファイルと雛形から。plan/design-backlog-files.md）。どれも前の中身は読まない。
+// 課題のファイルと雛形から。plan/design-backlog-files.md）。結論・検証記録の一覧は前の中身を読まずに丸ごと書き、
+// 残差の一覧は生成の節だけを差し替える。開いている検証記録の「結果」に印があれば、予測との比べの表を書き込む。
 // スキル定義の claims は結論と突き合わせる（plan/skills-guide.md 3 節）。
 // 使い方: npm run records:check（ルート。整形まで行う）
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';

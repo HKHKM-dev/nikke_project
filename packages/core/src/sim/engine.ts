@@ -1,7 +1,6 @@
 // 計算の入口 runSimulation（ヘッドレス・純関数）。画面・CLI・records 層は simTeamResult(input, runSimulation(input)) を使う
 // （plan/design-unify-sim-calc.md 5.2 節）。
-// 1 パス目（frame/plan.ts の planTeamRun。射撃の列・時刻表は frame/firstPass.ts のフレームループ）で射撃の列 → 時刻表 → バフの区間
-// → 倍率ダメージの発動を作り、2 パス目（ここ）で集計する:
+// 1 パス目（frame/plan.ts の planTeamRun）の結果を、2 パス目（ここ）で集計する:
 //   - 通常攻撃: 区間ごとに 1 トリガーの値（computeTriggerDamage の期待値。乱数なし）を先に出し、射撃の列から二分探索で引いた区間の
 //     発数（countShotsInRanges）を掛ける。条件が自動の枠は、区間の着地点の条件で 1 トリガーの値を出す（plan/design-stage18.md 12.3 節）。
 //   - バーストスキル（computeBurstHit）と倍率ダメージ（damage）は、1 パス目の発動の列のとおりに足す。
