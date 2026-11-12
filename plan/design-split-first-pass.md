@@ -319,8 +319,17 @@ for (let f = 0; f < frames; f++) {
 - 見直し（`/simplify`）で、入口の層の展開の並び（積んだオブジェクトにした）・`late` を受ける層（後の層を読む層だけにした）・`stateTracks` の置き場所・敵の状態の手順（`registerStage1` から分けた）を直した。見送り: 作り手の引数の型（前の層の型の交わり）を `Pick` にすること（読む名前は分割代入に出ている）、`LateReaders` を後の層の型から導くこと（型が循環する。入口の `satisfies` がずれを拾う）、`registerCounters` を手順のオブジェクトで呼ぶこと（本文の書き換えになる）。
 - 見直し（`/code-review high`）: 正しさの指摘は無し。手順の関数の説明の置き場所と、層のファイルの冒頭が指す節を直した。見送り: `late` を埋める前に読んだ時の守り（今の閉包の中で宣言より前に呼んだ時と同じく、実行時に落ちる。7 節）、入口で積んだオブジェクトを層ごとに写し直すこと（作る時に 1 回だけで、速さに出ない）、手順のオブジェクトの `f`（`ev.frame` と同じ値。本文を変えないために持たせた）。
 
+### 9.3 段 F1（2026-11-12）
+
+- `runFirstPassOnce` のゲージの系の準備の文を、作り手 `frame/firstPass/gauge.ts`（ゲージの量）・`gaugeEffects.ts`（射撃の回数で溜まるゲージの追跡 `createShotGaugeTrackers` と、ゲージを溜める効果 `createGaugeEffects`）・`shotPauses.ts`（射撃の止まり）・`accumulate.ts`（蓄積爆破）・`summons.ts`（召喚）に写した。作り手が共通に受けるもの（入力・常時の値・件の一覧・射撃の記録・時刻表の読み口・発の飛ぶ時間・このフレームの射撃）は `FirstPassBase`（`base.ts`）にまとめ、入口は段 H2 と同じく前の作り手までを積んだオブジェクトを渡す。準備の中の検査が投げる順を変えないため、作り手は元の文の順に呼ぶ（ゲージを溜める効果を射撃の止まりの前後で 2 つの作り手に分けたのはこのため）。
+- ループの中のゲージの系のひと続きは、作り手の中の手順の関数にした（`updateTimedGaugeSpeed`・`reserveTimerGauges`・`takeReservedGauge`・`addAccumulatedGauge`・`recordAccumulatorShots`・`addShotGauges`・`addAllyGauge`・`reserveBurstUseDotTicks`）。ゲージを足す関数は、ループの `gauge` を受けて足した値を返す（3.1 節。足す量だけを返すと、足す順が変わりうる）。手順の関数の頭と終わり（引数・`return gauge`）のほかに本文で変えた行は、`takeReservedGauge` の `let` を `const` にした所と、移した名前を指すコメント 2 行だけ（元の行と並べて比べた）。
+- 共通の入力にするため、副作用の無い宣言（`flights`・`shotFlightAt`・`shotEvents`）を作り手より前に置いた。ゲージの量の 1 ヒットの量（`hitGaugeEnergy`）は `gauge.ts` に移した。使用武器の変更の補助と発の番号（`shotCounts`）は射手のものなので、入口に残した（段 F2 で射手の作り手に移す）。
+- 段 F2 への申し送り: 3.4 節の `shooters.ts` は作り手 1 つにならない。射撃の記録とチャージの見張りは件の一覧より前に要り、射手の手順はゲージの量とゲージを溜める効果を読むので、それより後に要る。記録の作り手と射手の作り手の 2 つに分ける。`activationsOf`・`windowsOf` は `burst.ts`、`logs` は記録の作り手が返す物になり、共通の入力はそれらから組む。
+- 見直し（`/simplify`）で、入口の組み方（積んだオブジェクト）・`shotCounts` の置き場所・`hitGaugeEnergy` の置き場所・使わない層の型・コメントを直した。`/code-review high` で、準備の検査が投げる順（射撃の止まりと倍率ダメージの解決が前後していた）・型だけの import・二重の説明を直した。見送り（`/code-review`）: 4 つの追跡の `energy` の欄を `hitGaugeEnergy` に寄せること・`reserveTimerGauges` の式（本文の書き換えになる）、`gauge.ts` の「今までと同じ値」のコメント（元からある文）。見送り: 作り手の引数の型を `Pick` にすること（段 H2 と同じ）、`cooldownTrackers` を記録の形で返すこと（本文の書き換えになる）、手順の後に数える 5 つの呼び出しが 2 か所にあること（段 F2 でまとめる）。
+
 ## 10. 経過
 
 - 2026-11-12: 起案。オーナーが 4 節の論点をすべて推奨の案で承認した。
 - 2026-11-12: 段 H1 を実装した（9.1 節）。
 - 2026-11-12: 段 H2 を実装した（9.2 節）。
+- 2026-11-12: 段 F1 を実装した（9.3 節）。
