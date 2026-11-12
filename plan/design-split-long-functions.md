@@ -174,6 +174,12 @@
 - `parseStateGrantEffect` は `validateNoSelfReference`（循環の禁止）・`parseGrantStacks`（中で `parseStacksFrom`）・`parseLeadFrames`・`parseGrantContents` に分け、敵への付与で書けない欄を定数 `ENEMY_GRANT_FORBIDDEN_KEYS` にした（検査は今のとおり定数の順に見る）。
 - 確かめ: 6.1 節のとおり、読み込みの結果とエラー文の列が main と一致した。
 
+### 8.3 段 W1（2026-11-12）
+
+- `ModernView` は 3.5 節のとおり。`dropAnimation.ts`（離したときのアニメーションと `slotCardAt`）・`useSlotPlacement.ts`（置く・外すと飛ぶ絵。`trayVisualAt` もここ）・`useSlotDrag.ts`（センサー・持ち上げている間の状態・始め・終わり・取りやめ）・`SlotDragOverlay.tsx`・`slotBadges.ts`（`slotGrowthMarks`・`slotCollectionBadge`）に分けた。
+- `App` は `useMasters`・`useSavedTeam`（キャラ一覧の読み込み・保存の復元と保存・読めなかった保存の退避）・`usePartyTotals` に分け、未対応の一覧の材料を `calcView.ts` の `notesSummarySlots` にした。effect の順（敵のプリセット・育成のマスタ・キャラ一覧・編成の保存・全編成の保存）は変えていない。
+- 確かめ: 6.2 節の画素の比べは、同じ版を 2 回回しても絵の読み込みと計算の時刻で揃わなかったので、代わりに各手の DOM（style の属性を除く）と入力欄の値を main と比べ、36 手とも一致した。style を除くと持ち上げた絵の大きさと位置を見落とすので、持ち上げている途中の絵（スロットから・一覧から・操作の印）を style ごと写して比べ、一致した（操作の印の始まりの位置は回すたびに画面のスクロールで変わるので、2 回回して確かめた）。`npm test` の画面のテストも通る。
+
 ## 9. 扱わないもの
 
 - 対象の外の長い関数: `frame/firstPass.ts` の `runFirstPassOnce`、`skills/holders.ts` の `createHolderLists`、`frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`、`skills/catalogDoc.ts` の `renderSkillCatalog`、`records/observations.ts` の `validateObservations`、`apps/web/src/useRoster.ts` の `useRoster`、`skills/parse/weapon.ts` の `parseWeaponChangeEffect`。計算の中心（1 パス目・2 パス目）は、分けるときに速さと結果の一致の確かめ方が別に要る。
@@ -185,3 +191,4 @@
 - 2026-11-12: 起票。オーナーが 4 節の論点をすべて推奨の案で承認した。
 - 2026-11-12: 段 P1 を実装した（8.1 節）。
 - 2026-11-12: 段 P2 を実装した（8.2 節）。
+- 2026-11-12: 段 W1 を実装した（8.3 節）。

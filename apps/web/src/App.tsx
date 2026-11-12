@@ -1,41 +1,22 @@
-import {
-  loadBuildMasters,
-  loadCharacterIndex,
-  loadEnemyPresets,
-  type BuildMasters,
-  type CharacterIndexEntry,
-  type EnemyPresetMaster,
-} from '@nikke/core';
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useMemo, useReducer, useState } from 'react';
 import { ComputeCache } from './compute.ts';
-import { buildCalcView, slotResultFor } from './calcView.ts';
-import { type NotesSummarySlot } from './components/NotesSummary.tsx';
+import { buildCalcView, notesSummarySlots, slotResultFor } from './calcView.ts';
 import { AccountMenu } from './components/AccountMenu.tsx';
 import { BadgeSprite } from './components/modern/BadgeIcon.tsx';
 import { RosterEditModal } from './components/RosterEditModal.tsx';
 import { SettingsMenu } from './components/SettingsMenu.tsx';
 import { UnreadableSavesNotice } from './components/UnreadableSavesNotice.tsx';
-import { INITIAL_TEAM_STATE, STORAGE_KEY, serializeTeamState, teamReducer } from './team.ts';
+import { INITIAL_TEAM_STATE, teamReducer } from './team.ts';
 import { useCharacterCache } from './useCharacterCache.ts';
-import { writeStorage } from './storage.ts';
-import {
-  INITIAL_PARTIES,
-  PARTIES_STORAGE_KEY,
-  otherPartyResourceIds,
-  serializeParties,
-  sharedSettingsOf,
-  switchParty,
-  type PartiesState,
-  type SharedSettings,
-} from './parties.ts';
-import { partyInputs, partyTotals } from './partyTotals.ts';
-import { useBatchComputation } from './useBatchComputation.ts';
+import { INITIAL_PARTIES, otherPartyResourceIds, switchParty, type PartiesState } from './parties.ts';
 import { slotSkillsStatus, unsupportedNoteOf, useSkillDefinitions } from './useSkillDefinitions.ts';
 import { orderCharacters } from './listOrder.ts';
 import { ListOrderContext, useListOrder } from './useListOrder.ts';
+import { useMasters } from './useMasters.ts';
+import { usePartyTotals } from './usePartyTotals.ts';
 import { useRoster } from './useRoster.ts';
+import { useSavedTeam } from './useSavedTeam.ts';
 import { useTeamComputation } from './useTeamComputation.ts';
-import { useUnreadableSaves } from './useUnreadableSaves.ts';
 import { useUiMode } from './uiMode.ts';
 import { ClassicView } from './views/ClassicView.tsx';
 import { ModernView } from './views/ModernView.tsx';
@@ -45,62 +26,19 @@ const BASE_URL = import.meta.env.BASE_URL;
 
 export function App() {
   const [uiMode, setUiMode] = useUiMode();
-  const [index, setIndex] = useState<CharacterIndexEntry[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [team, dispatch] = useReducer(teamReducer, INITIAL_TEAM_STATE);
   // ソロレイド用の編成 01〜05（parties.ts）。選んでいる編成の中身は team
   const [parties, setParties] = useState<PartiesState>(INITIAL_PARTIES);
-  // 保存済みの編成を復元し終えるまでは保存しない（初期値で上書きしないため）。読めなかった保存を退避できなかったときも保存しない
-  const [restored, setRestored] = useState(false);
-  // 読めなかった編成の保存の退避と知らせ（savedTeams.ts。plan/design-unreadable-team-save.md）
-  const { controls: unreadableControls, restore } = useUnreadableSaves();
-  // 育成のマスタ（装備・好感度・キューブ・コレクション・リサイクルルーム）。起動時に 1 回読む
-  const [masters, setMasters] = useState<BuildMasters | null>(null);
-  const [mastersError, setMastersError] = useState<string | null>(null);
-
-  // 敵のプリセット。読めなければ null（手入力はできる）。出来事のセットも同じファイル
-  const [enemyMaster, setEnemyMaster] = useState<EnemyPresetMaster | null>(null);
-  useEffect(() => {
-    loadEnemyPresets({ baseUrl: BASE_URL })
-      .then(setEnemyMaster)
-      .catch(() => setEnemyMaster(null));
-  }, []);
-
-  useEffect(() => {
-    loadBuildMasters({ baseUrl: BASE_URL })
-      .then(setMasters)
-      .catch((e: unknown) => setMastersError(e instanceof Error ? e.message : String(e)));
-  }, []);
-
-  useEffect(() => {
-    // StrictMode で 2 回走るので、片付けた後の結果は捨てる（読めなかった保存の退避も 1 回だけ）
-    let cancelled = false;
-    loadCharacterIndex({ baseUrl: BASE_URL })
-      .then((i) => {
-        if (cancelled) return;
-        setIndex(i.characters);
-        // 読めなかった保存は、ここで同期して退避してから保存を始める（下の effect が上書きする前に）
-        const saved = restore(i.characters);
-        if (saved.team) dispatch({ type: 'replace', state: saved.team });
-        if (saved.parties) setParties(saved.parties);
-        if (saved.unsaved.length === 0) setRestored(true);
-      })
-      .catch((e: unknown) => {
-        if (!cancelled) setLoadError(String(e));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [restore]);
-
-  useEffect(() => {
-    if (!restored) return;
-    writeStorage(STORAGE_KEY, serializeTeamState(team));
-  }, [team, restored]);
-  // ほかの編成は切り替えたときだけ変わる（選んでいる編成は上の STORAGE_KEY）
-  useEffect(() => {
-    if (restored) writeStorage(PARTIES_STORAGE_KEY, serializeParties(parties));
-  }, [parties, restored]);
+  // 育成のマスタと敵のプリセット（起動時に 1 回読む）
+  const { masters, mastersError, enemyMaster } = useMasters(BASE_URL);
+  // キャラ一覧の読み込みと、編成の保存の復元・保存（読めなかった保存の退避と知らせも）
+  const { index, loadError, unreadableControls } = useSavedTeam({
+    baseUrl: BASE_URL,
+    team,
+    dispatch,
+    parties,
+    setParties,
+  });
 
   // 育成状況（roster.ts）。キャラをスロットに入れる操作は、育成状況の育成を写す dispatch を通す
   const { controls: rosterControls, dispatchWithRoster } = useRoster({ index, team, parties, dispatch, setParties });
@@ -165,43 +103,21 @@ export function App() {
   const { shown, computing } = useTeamComputation(calc, computeCache);
   const slotResults = useMemo(() => calc.slots.map((_, i) => slotResultFor(shown, calc, i)), [calc, shown]);
 
-  // 全編成の合計ダメージ（partyTotals.ts）。ほかの編成は、共通の設定かほかの編成の中身が変わったときだけ計算し直す
-  // （共通の設定は文字列にして比べ、選んでいる編成のスロットを変えても作り直さない）
-  const sharedJson = JSON.stringify(sharedSettingsOf(team));
-  const allPartyInputs = useMemo(
-    () =>
-      partyInputs(parties, JSON.parse(sharedJson) as SharedSettings, {
-        characters: cache.characters,
-        characterErrors: cache.errors,
-        skills,
-        masters,
-        enemyMaster,
-      }),
-    [parties, sharedJson, cache.characters, cache.errors, skills, masters, enemyMaster],
-  );
-  const batchInputs = useMemo(() => allPartyInputs.map((p) => (p.kind === 'ready' ? p.input : null)), [allPartyInputs]);
-  const batch = useBatchComputation(batchInputs, computeCache);
-  const totals = partyTotals(allPartyInputs, { computed: shown?.computed ?? null, computing }, batch);
-  const totalsPending =
-    computing || batch.computing || shown === null || allPartyInputs.some((p) => p.kind === 'loading');
+  // 全編成の合計ダメージ（usePartyTotals.ts）
+  const { totals, totalsPending } = usePartyTotals({
+    team,
+    parties,
+    cache,
+    skills,
+    masters,
+    enemyMaster,
+    computeCache,
+    shown,
+    computing,
+  });
 
   // 未対応の一覧の材料（育成の注記は calcView が未対応だけにしたもの。スペック固定では効果層が空）
-  const summarySlots = useMemo<(NotesSummarySlot | null)[]>(
-    () =>
-      calc.slots.map((slot, i) =>
-        slot.character === undefined
-          ? null
-          : {
-              index: i,
-              character: slot.character,
-              skills: slot.skillsStatus ?? { kind: 'loading' },
-              treasurePhase: slot.treasurePhase,
-              modelNotes: slotResults[i]?.result.notes ?? [],
-              buildNotes: slot.buildNotes,
-            },
-      ),
-    [calc.slots, slotResults],
-  );
+  const summarySlots = useMemo(() => notesSummarySlots(calc, slotResults), [calc, slotResults]);
 
   const otherPartyIds = useMemo(() => otherPartyResourceIds(parties), [parties]);
 
