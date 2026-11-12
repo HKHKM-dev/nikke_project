@@ -29257,6 +29257,54 @@
       "effective": false,
       "minus": 0,
       "plus": null
+    },
+    {
+      "observation": "1123-10",
+      "element": "A2 skill2.effects[0]",
+      "key": "186a7f83c6cd00f6",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1123-11",
+      "element": "A2 skill2.effects[0]",
+      "key": "4607c7b6cf2e1d5d",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1123-12",
+      "element": "A2 skill2.effects[0]",
+      "key": "28c9ecadd70374de",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1123-13",
+      "element": "A2 skill2.effects[0]",
+      "key": "9487a8ef4f247922",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1123-14",
+      "element": "A2 skill2.effects[0]",
+      "key": "06f76988642947e7",
+      "effective": false,
+      "minus": 0,
+      "plus": null
+    },
+    {
+      "observation": "1123-15",
+      "element": "A2 skill2.effects[0]",
+      "key": "a48946bc3f00d133",
+      "effective": false,
+      "minus": 0,
+      "plus": null
     }
   ]
 }
