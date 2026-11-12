@@ -1,0 +1,56 @@
+{
+  "formatVersion": 1,
+  "resourceId": 430,
+  "checkedAt": "2026-11-12",
+  "skills": {
+    "skill1": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "20 回攻撃を受けた時の味方全体の受けるダメージ▼は防御系でダメージに関係しない（被弾を扱わないので起きもしない。射撃場の 3 分モードでは敵の攻撃で起きうる）",
+          "en": "The damage-taken decrease on all allies after being attacked 20 times is defensive and does not affect damage (taking hits is not modeled, so it does not occur either; in the 3-minute range mode it can occur from the enemy's attacks)",
+          "kind": "noDamage"
+        }
+      ]
+    },
+    "skill2": {
+      "effects": [],
+      "notes": [
+        {
+          "ja": "フルチャージ攻撃が命中した時の、対象への挑発（2 秒）はダメージに関係しない（付けてもゲージを溜めないとみなす。ノアの S2 の同じ行と同じ読み）",
+          "en": "The taunt (2 s) on the target when a Full Charge attack hits does not affect damage (applying it is taken not to charge the burst gauge, read as for the same line of Noah's S2)",
+          "kind": "noDamage"
+        },
+        {
+          "ja": "フルチャージして攻撃した時の自分の最大HP▲（1.8 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on self when firing a Full Charge attack (1.8 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    },
+    "burst": {
+      "effects": [
+        {
+          "kind": "heal",
+          "trigger": "burstUse",
+          "target": "allies",
+          "ref": 1,
+          "durationRef": 2,
+          "assumes": {
+            "ja": "持続回復（スキル発動者の最終最大HP の X%・1 秒間隔・10 秒間維持）は、付いた時に 1 回だけ「回復効果が適用された時」を起こし、1 秒ごとの刻みでは起こさない（ゲーム内の用語のツールチップの読み。エマ：タクティカル・アップの S1・ミサトのバーストと同じ）。自分を含む味方全体に、満タンの味方にも付く。付く時刻はモデルのバーストの使用のフレーム（ノイズのバーストの効果の付き始めは未測定）。回復量はダメージに関係しない",
+            "en": "The heal over time (X% of the caster's final max HP every 1 s for 10 s) triggers \"when healed\" once when applied, not on each 1-second tick (reading of the in-game term tooltip; as Emma: Tactical Upgrade's S1 and Misato's Burst). It lands on all allies including self, also at full HP. Applied at the model's burst use frame (when Noise's burst effects actually start is unmeasured). The healed amount does not affect damage"
+          }
+        }
+      ],
+      "notes": [
+        {
+          "ja": "味方全体の最大HP▲（10 秒）は、それ自体は与ダメージを変えない（HP を読む効果のある編成でだけ効く）",
+          "en": "Max HP up on all allies (10 s) does not change damage by itself (it matters only with an effect reading HP in the team)",
+          "kind": "indirect",
+          "path": "hp"
+        }
+      ]
+    }
+  }
+}
