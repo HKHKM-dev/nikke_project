@@ -3,7 +3,7 @@
 - 何のための文書か: 「反復実測を狙うなら 2 本以上を 1 回の撮影で撮る」（[verification-guide.md](verification-guide.md) 4 節）の一律の決まりを、2 本目が確かさに効く問いと効かない問いに分け、撮影と読み取りの手間を減らす案を出す。
 - 関連: [verification-guide.md](verification-guide.md) 2.2 節（確定にできる条件）・4 節（撮影計画）、[design-grade-runs.md](design-grade-runs.md)（録画の中の回 `runs`・`parameterFree`）、[design-investigation-review.md](design-investigation-review.md) 1.4.2 節（録画の中の反復は回で数える）、[captures/protocol.md](captures/protocol.md)「撮影の依頼」
 - 作成日: 2026-11-12
-- 状態: 起案（オーナーの判断待ち）
+- 状態: 承認（2026-11-12。オーナーの指示「どちらも承認」で案 1・2 とも）。実施済み（6 節）
 - 調べ方: origin/main（b7afcabf）のクラウドの環境で、使い捨てのスクリプトで数えた（コミットしない）。
 
 ## 0. 案の一覧
@@ -100,3 +100,4 @@
 ## 6. 経過
 
 - 2026-11-12: 起案。
+- 2026-11-12: 承認（案 1・2）。案 1 は verification-guide.md 4 節の本数の文を 3 節の表の型に書き換えた。案 2 は `records:predict` が指標ごとの回数を標準出力に出す（予測ファイルには書かない）。数え方は `predictions.ts` の `occurrencesOf`: 引数 `n`（無ければ `count`）を 0〜64 に替えて出せた値で数え、回の番号・数の引数が無く値が 1 つの指標（`hitDamage` の `frame` 指定など）は出さない。その回が無くても値を返す指標（`gaugeFullShotIndex` の 0）は多めに出る。

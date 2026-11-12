@@ -2,7 +2,7 @@
 // から sim を回し、predicted（仮説 × 指標の値、日付、commit）を書き込む。手書きの部分は触らない。
 // 使い方: npm run records:predict -- V-NNNN [--date YYYY-MM-DD]
 // 予測は任意の道具で、確定の条件ではない（plan/design-investigation-review.md 1 節）。撮影計画で、その録画で仮説を見分けられるかを
-// 確かめるのに使う。
+// 確かめるのに使う。指標ごとに、1 本の録画の中で何回起きるか（撮影の本数の型。plan/verification-guide.md 4 節）も出す。
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
@@ -10,7 +10,8 @@ import { V_ID } from '../src/records/ids.ts';
 import {
   indistinguishableTargets,
   predictionRids,
-  runPredictions,
+  OCCURRENCE_PROBE_LIMIT,
+  runPredictionsWithOccurrences,
   todayLocal,
   type PredictionFile,
 } from '../src/records/predictions.ts';
@@ -35,7 +36,7 @@ if (!existsSync(path)) {
 const file = JSON.parse(readFileSync(path, 'utf8')) as PredictionFile;
 const recordingsFile = loadRecordingsFile();
 const data = loadRecordsData(recordingsFile, predictionRids(file));
-const predicted = runPredictions(file, data, recordingMap(recordingsFile));
+const { values: predicted, occurrences } = runPredictionsWithOccurrences(file, data, recordingMap(recordingsFile));
 const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
 const at = values.date ?? todayLocal();
 // 2026-10-10 より前の控え（seen）は書き直すときに落とす（読まなくなった。plan/design-investigation-review.md 1.3 節）
@@ -55,3 +56,16 @@ for (const x of indistinguishableTargets(out))
   );
 if (file.hypotheses.length >= 2 && file.targets.every((t) => t.tolerance === undefined))
   console.log('注意: 指標に許容の幅（tolerance）を書くと、その録画で仮説を見分けられるかを確かめる');
+// 撮影計画の本数の型（plan/verification-guide.md 4 節）: 1 本の中で 2 回以上起きる指標は、1 本の中の後の回で再現できる候補
+for (const t of file.targets) {
+  const n = occurrences[t.id];
+  const times =
+    n === null || n === undefined ? '' : n > OCCURRENCE_PROBE_LIMIT ? `${OCCURRENCE_PROBE_LIMIT} 回以上` : `${n} 回`;
+  const kind =
+    n === null || n === undefined
+      ? '出せない（回の番号・数の引数が無く、値が 1 つの指標）'
+      : n >= 2
+        ? `${times}（1 本の中の後の回で再現できる候補）`
+        : `${times}（2 本目が要る候補）`;
+  console.log(`1 本の中の回数: 指標 ${t.id} は ${kind}`);
+}

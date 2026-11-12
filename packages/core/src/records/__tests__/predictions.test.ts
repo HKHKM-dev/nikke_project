@@ -20,7 +20,9 @@ import {
   predictionStaleness,
   renderPredictionLines,
   renderPredictionTable,
+  OCCURRENCE_PROBE_LIMIT,
   runPredictions,
+  runPredictionsWithOccurrences,
   todayLocal,
   validatePredictions,
   type PredictionFile,
@@ -124,6 +126,39 @@ describe('records/predictions', () => {
     const f = file({ team, hypotheses: [{ id: 'H1' }], targets, values: { plan: [1999, 4972] } });
     expect(runPredictions(f, data).H1!.chains).toBe(2);
     expect(validatePredictions([f], ctx)).toEqual([]);
+    // 1 本の中の回数（撮影の本数の型。plan/design-capture-count.md 4.2 節）: n が回の番号でも「最初の n 回」でも発動の数、
+    // 回の引数の無い 1 つの値は出さない、試す上限に届いたら上限 + 1
+    const occ = runPredictionsWithOccurrences(
+      file({
+        team,
+        hypotheses: [{ id: 'H1' }],
+        values: { plan: [1999, 4972] },
+        targets: [
+          ...targets,
+          { id: 'nth', model: 'sim', metric: 'burstActivationVideoFrames', args: { n: 0 }, setup: manual },
+          { id: 'first', model: 'sim', metric: 'burstActivationSlots', args: { n: 1 }, setup: manual },
+          { id: 'shots', model: 'sim', metric: 'shotCount', args: { slot: 1 }, setup: manual },
+          { id: 'hit', model: 'sim', metric: 'hitDamageAtShot', args: { slot: 1, shot: 1 }, setup: manual },
+          {
+            id: 'starts',
+            model: 'sim',
+            metric: 'eventFrames',
+            args: { slot: 1, event: 'shot', count: 1 },
+            setup: manual,
+          },
+        ],
+      }),
+      data,
+    );
+    expect(occ.values.H1!.chains).toBe(2);
+    expect(occ.occurrences).toEqual({
+      chains: null,
+      nth: 2,
+      first: 2,
+      shots: null,
+      hit: null,
+      starts: OCCURRENCE_PROBE_LIMIT + 1,
+    });
     expect(validatePredictions([file({ values: { '0101-01': 1, bad: 'x' as unknown as number } })], ctx)).toEqual([
       '予測 V-0063: values の id 0101-01 が観測値の id と重なる',
       '予測 V-0063: values の bad は数か数の配列',
