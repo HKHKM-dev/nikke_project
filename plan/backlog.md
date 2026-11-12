@@ -118,6 +118,7 @@
 - 押下チャージ型（DOWN_Charge）の発の刻み（2026-10-04 起票）→ 一部完了: [design-anis-star-gauge-timing.md](design-anis-star-gauge-timing.md)。残りは 3 節
 - 戦闘力による一覧の並び替え（2026-11-07 起票）→ 一部完了: [design-combat-power-sort.md](design-combat-power-sort.md)。残りは 4 節
 - 長い関数の分割（スキル定義のパーサと画面）（2026-11-12 起票）→ 進行中（設計の承認待ち）: [design-split-long-functions.md](design-split-long-functions.md)
+- 1 パス目の長い関数の分割（件の一覧とフレームループ）（2026-11-12 起票）→ 進行中: [design-split-first-pass.md](design-split-first-pass.md)
 
 ### 8.2 閉じた課題（2026-10-26 から）
 
