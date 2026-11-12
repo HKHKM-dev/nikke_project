@@ -1,5 +1,11 @@
 // 育成状況（roster.ts。plan/design-combat-power-sort.md 5 節）。データは作った値
-import { emptyBuild, type BuildSnapshot, type CharacterIndexEntry, type SnapshotCharacter } from '@nikke/core';
+import {
+  BUILD_SNAPSHOT_FORMAT_VERSION,
+  emptyBuild,
+  type BuildSnapshot,
+  type CharacterIndexEntry,
+  type SnapshotCharacter,
+} from '@nikke/core';
 import { describe, expect, it } from 'vitest';
 import { INITIAL_PARTIES, partyOf, type PartiesState } from './parties.ts';
 import {
@@ -50,7 +56,7 @@ function character(over: Partial<SnapshotCharacter> = {}): SnapshotCharacter {
 }
 
 const ROSTER: BuildSnapshot = {
-  formatVersion: 2,
+  formatVersion: BUILD_SNAPSHOT_FORMAT_VERSION,
   fetchedAt: '2026-10-28T20:00:00.000Z',
   synchroLevel: 400,
   recycleRoom: { '1001': 30, '1101': 20, '1203': 5 },
@@ -218,9 +224,10 @@ describe('保存と表示', () => {
     const restored = restoreRoster(saved, INDEX);
     expect(restored?.ok).toBe(false);
     expect(restored?.ok === false && restored.errors).toEqual([expect.stringMatching(/characters\.82\.growth\.grade/)]);
-    expect(restoreRoster('{"formatVersion":3,"characters":{}}', INDEX)).toEqual({
+    const unknown = BUILD_SNAPSHOT_FORMAT_VERSION + 1;
+    expect(restoreRoster(JSON.stringify({ formatVersion: unknown, characters: {} }), INDEX)).toEqual({
       ok: false,
-      errors: ['この版の育成状況は読めない（formatVersion 3）'],
+      errors: [`この版の育成状況は読めない（formatVersion ${unknown}）`],
     });
   });
 

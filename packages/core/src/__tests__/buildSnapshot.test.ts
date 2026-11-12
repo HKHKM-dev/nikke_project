@@ -77,17 +77,14 @@ describe('readBuildSnapshot', () => {
   it('JSON でない・スナップショットの形でない・知らない版は止める', () => {
     expect(readBuildSnapshot('{', INDEX)).toEqual({ ok: false, errors: ['JSON として読めない'] });
     expect(errorsOf({ '82': character() })[0]).toMatch(/スナップショット/);
-    expect(errorsOf({ ...snapshot(), formatVersion: 3 })).toEqual(['この版の育成状況は読めない（formatVersion 3）']);
-    for (const version of [0, 1.5, '2', null])
+    for (const version of [BUILD_SNAPSHOT_FORMAT_VERSION + 1, 0, 1.5, '2', null])
       expect(errorsOf({ ...snapshot(), formatVersion: version })).toEqual([
         `この版の育成状況は読めない（formatVersion ${JSON.stringify(version)}）`,
       ]);
   });
 
   it('版 1 は今までどおり読み、読んだものはいまの版として持つ', () => {
-    const r = read({ ...snapshot(), formatVersion: 1 });
-    expect(r).toEqual({ ok: true, snapshot: snapshot(), notices: [] });
-    expect(r.ok && r.snapshot.formatVersion).toBe(BUILD_SNAPSHOT_FORMAT_VERSION);
+    expect(read({ ...snapshot(), formatVersion: 1 })).toEqual({ ok: true, snapshot: snapshot(), notices: [] });
   });
 
   it('範囲の外の値は、欄の場所つきで止める', () => {
@@ -125,6 +122,8 @@ describe('readBuildSnapshot', () => {
     expect(errorsOf(bad)).toEqual(['characters.82.gear.head.overload[0].option: 知らない項目（"XXX"）']);
   });
 
+  /** 宝物の JSON。phase を省くと欄ごと無い */
+  const treasure = (level: number, phase?: number | null) => ({ tid: 200101, level, phase });
   /** キャラ 10・82 の宝物を、その版の JSON にしたもの */
   const withTreasures = (version: number, of10: unknown, of82: unknown) => {
     const s = snapshot();
@@ -139,37 +138,35 @@ describe('readBuildSnapshot', () => {
   };
 
   it.each([1, 2])('版 %i: 宝物の段階が Lv に合わないものは止める（Lv 1・2 は段階 2・3）', (version) => {
-    const s = withTreasures(version, { tid: 200101, level: 1, phase: 1 }, { tid: 200101, level: 2, phase: 2 });
-    expect(errorsOf(s)).toEqual([
+    expect(errorsOf(withTreasures(version, treasure(1, 1), treasure(2, 2)))).toEqual([
       'characters.10.treasure.phase: Lv 1 なら 2（1）',
       'characters.82.treasure.phase: Lv 2 なら 3（2）',
     ]);
-    const missing = withTreasures(version, null, { tid: 200101, level: 1 });
-    expect(errorsOf(missing)).toEqual(['characters.82.treasure.phase: Lv 1 なら 2（なし）']);
+    expect(errorsOf(withTreasures(version, null, treasure(1)))).toEqual([
+      'characters.82.treasure.phase: Lv 1 なら 2（なし）',
+    ]);
     // 段階の決まらない Lv（3 以上）は、どの版も未確定だけ
-    const unknownLevel = withTreasures(version, null, { tid: 200101, level: 3, phase: 1 });
-    expect(errorsOf(unknownLevel)).toEqual(['characters.82.treasure.phase: Lv 3 なら null（1）']);
-    const ok = withTreasures(version, { tid: 200101, level: 1, phase: 2 }, { tid: 200101, level: 2, phase: 3 });
-    expect(read(ok).ok).toBe(true);
+    expect(errorsOf(withTreasures(version, null, treasure(3, 1)))).toEqual([
+      'characters.82.treasure.phase: Lv 3 なら null（1）',
+    ]);
+    expect(read(withTreasures(version, treasure(1, 2), treasure(2, 3))).ok).toBe(true);
   });
 
   it('版 1 の Lv 0 の宝物は未確定（null）だけ。段階 1 は止める', () => {
-    const s = withTreasures(1, { tid: 200101, level: 0, phase: 1 }, { tid: 200101, level: 0, phase: 3 });
-    expect(errorsOf(s)).toEqual([
+    expect(errorsOf(withTreasures(1, treasure(0, 1), treasure(0, 3)))).toEqual([
       'characters.10.treasure.phase: Lv 0 なら null（1）',
       'characters.82.treasure.phase: Lv 0 なら null（3）',
     ]);
-    expect(read(withTreasures(1, null, { tid: 200101, level: 0, phase: null })).ok).toBe(true);
+    expect(read(withTreasures(1, null, treasure(0, null))).ok).toBe(true);
   });
 
   it('版 2 の Lv 0 の宝物は、未確定（null）か画面で選んだ段階 1', () => {
-    const r = read(withTreasures(2, { tid: 200101, level: 0, phase: 1 }, { tid: 200101, level: 0, phase: null }));
-    expect(r.ok && r.snapshot.characters['10']!.treasure).toEqual({ tid: 200101, level: 0, phase: 1 });
-    expect(r.ok && r.snapshot.characters['82']!.treasure).toEqual({ tid: 200101, level: 0, phase: null });
+    const r = read(withTreasures(2, treasure(0, 1), treasure(0, null)));
+    expect(r.ok && r.snapshot.characters['10']!.treasure).toEqual(treasure(0, 1));
+    expect(r.ok && r.snapshot.characters['82']!.treasure).toEqual(treasure(0, null));
     // 未確定のままのものだけを数える
     expect(r.ok && unknownTreasurePhaseCount(r.snapshot)).toBe(1);
-    const bad = withTreasures(2, { tid: 200101, level: 0, phase: 2 }, { tid: 200101, level: 0, phase: 3 });
-    expect(errorsOf(bad)).toEqual([
+    expect(errorsOf(withTreasures(2, treasure(0, 2), treasure(0, 3)))).toEqual([
       'characters.10.treasure.phase: Lv 0 なら null か 1（2）',
       'characters.82.treasure.phase: Lv 0 なら null か 1（3）',
     ]);

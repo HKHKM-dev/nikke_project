@@ -200,12 +200,6 @@ describe('toBuildSnapshot', () => {
     expect(treasurePhaseOfLevel(treasureLevelOfPhase(1))).toBeNull();
   });
 
-  it('writes the current format version, and the snapshot reads back', () => {
-    expect(snap.formatVersion).toBe(BUILD_SNAPSHOT_FORMAT_VERSION);
-    const r = readBuildSnapshot(JSON.stringify(snap), INDEX);
-    expect(r.ok && r.snapshot).toEqual(snap);
-  });
-
   it('produces builds that pass validateBuild', () => {
     for (const [id, c] of Object.entries(snap.characters)) {
       const e = INDEX.find((i) => i.resourceId === Number(id))!;
@@ -277,8 +271,9 @@ describe('stripAccountFields', () => {
   });
 });
 
-it('写したスナップショットは、育成状況の読み込みの検査（readBuildSnapshot）を通り、そのまま読み戻せる', () => {
+it('写したスナップショットは、いまの版で、育成状況の読み込みの検査（readBuildSnapshot）を通り、そのまま読み戻せる', () => {
   const snap = toBuildSnapshot(RAW, INDEX);
+  expect(snap.formatVersion).toBe(BUILD_SNAPSHOT_FORMAT_VERSION);
   expect(readBuildSnapshot(JSON.stringify(snap), INDEX)).toEqual({ ok: true, snapshot: snap, notices: [] });
 });
 

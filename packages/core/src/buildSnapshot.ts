@@ -58,19 +58,13 @@ export type BuildSnapshotRead =
 /** 止める理由を出す数の上限（残りは件数だけ） */
 const ERROR_LIMIT = 5;
 
-/** 宝物の段階（無し = 0 を除く） */
-const TREASURE_PHASES = [1, 2, 3] as const;
-
 /**
- * その Lv の宝物が持てる段階。Lv から決まる段階（決まらない Lv は未確定の null）と、版 2 からは、画面で選んでその Lv に書いた段階
- * （Lv 0 の段階 1。Lv 1・2 は Lv から決まる段階と同じ）
+ * その Lv の宝物が持てる段階。Lv から決まる段階（決まらない Lv は未確定の null）と、版 2 からは、画面で選んだ段階 1
+ * （段階 1 を書く Lv のとき。段階 2・3 を書く Lv は、Lv から決まる段階と同じ）
  */
 function allowedTreasurePhases(level: number, version: number): SnapshotTreasure['phase'][] {
-  const allowed: SnapshotTreasure['phase'][] = [treasurePhaseOfLevel(level)];
-  if (version >= 2)
-    for (const phase of TREASURE_PHASES)
-      if (treasureLevelOfPhase(phase) === level && !allowed.includes(phase)) allowed.push(phase);
-  return allowed;
+  const fromLevel = treasurePhaseOfLevel(level);
+  return version >= 2 && level === treasureLevelOfPhase(1) ? [fromLevel, 1] : [fromLevel];
 }
 
 function parseTreasure(
@@ -88,8 +82,8 @@ function parseTreasure(
   if (!checkInt(v.level, 0, Infinity, `${path}.level`, issues) || !tidOk) return undefined;
   // 段階は Lv で決まる範囲だけを通す（Lv 0 は未確定の null か、版 2 からは段階 1）。合わない段階（Lv 0 の段階 3 など）は止める
   const allowed = allowedTreasurePhases(v.level, version);
-  const phase = allowed.find((p) => p === v.phase);
-  if (phase === undefined) {
+  const phase = v.phase as SnapshotTreasure['phase'];
+  if (!allowed.includes(phase)) {
     const expected = allowed.map((p) => p ?? 'null').join(' か ');
     issues.push(`${path}.phase: Lv ${v.level} なら ${expected}（${JSON.stringify(v.phase) ?? 'なし'}）`);
     return undefined;
