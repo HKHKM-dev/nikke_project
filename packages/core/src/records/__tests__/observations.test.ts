@@ -1196,7 +1196,12 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
   it('renders record values with null elements, nested arrays and objects', () => {
     const row = (value: unknown) => renderOtherRows([{ ...record, value: value as Observation['value'] }])[2];
     expect(row([7716540, null, 5321525])).toContain('| 7,716,540, —, 5,321,525 |');
-    expect(row([[2459, 73.5], [4778, null]])).toContain('| [2,459, 73.5], [4,778, —] |');
+    expect(
+      row([
+        [2459, 73.5],
+        [4778, null],
+      ]),
+    ).toContain('| [2,459, 73.5], [4,778, —] |');
     expect(row({ beforeEnd: [-67, null], band: ['近'], at: [{ frame: 6653 }] })).toContain(
       '| beforeEnd: [-67, —]; band: [近]; at: [{frame: 6,653}] |',
     );
