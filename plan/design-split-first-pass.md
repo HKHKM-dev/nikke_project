@@ -2,7 +2,7 @@
 
 - 何のための文書か: 1 パス目の中心の長い関数（件の一覧の `createHolderLists` と、フレームループの `runFirstPassOnce`）と、その周りの長い関数を、動きと速さを変えずに読める単位に分ける変更の、今の構造・分け方の案と得失・段・確かめ方
 - 対象: `skills/holders.ts` の `createHolderLists`、`frame/firstPass.ts` の `runFirstPassOnce`。範囲に入れるかを 4 節で決めるもの: `frame/plan.ts` の `planSkillHits`、`sim/engine.ts` の `runSimulation`
-- 状態: 起案（承認待ち）
+- 状態: 決定（4 節。段は 5 節。論点 5 により、コードのコメントの段 3 のマージを待ってから段 H1 に入る）
 - 関連: [design-split-long-functions.md](design-split-long-functions.md)（パーサと画面の分割。9 節で、この文書の対象を「速さと結果の一致の確かめ方が別に要る」として外した）、[design-split-skill-holders.md](design-split-skill-holders.md)（衝突を減らすための分割は見送った。4.4 節の案 3 が、移すだけでは `createHolderLists` が短くならないことを書いている）、[design-holder-effects.md](design-holder-effects.md)（件の一覧の元の設計。2.4 節がフレームの中の順番）、[design-first-pass-perf.md](design-first-pass-perf.md)（1 パス目の速さの測り方と、結果の一致の確かめ方）、[design-code-comments.md](design-code-comments.md)（段 3 が同じファイルのコメントを直している）
 - 作成日: 2026-11-12
 - 調べた時点: main の b7afcabf。行番号はその時点のファイルの行
@@ -227,9 +227,11 @@ for (let f = 0; f < frames; f++) {
 - `runSimulation`: 枠ごとの区間の読み手を作る所を `createRunner`、バーストのヒットの値を `burstHitDamagesOf` にする（同じファイル）。
 - どちらもファイルは分けない（1,024 行と 648 行）。
 
-## 4. 論点（推奨つき）
+## 4. 決めたこと（2026-11-12、オーナー）
 
-| #   | 論点               | 推奨                                                                                                                                                | ほかの案                                                              |
+論点を推奨の案で出し、オーナーがすべて推奨のとおり承認した。
+
+| #   | 論点               | 決定                                                                                                                                                | ほかの案                                                              |
 | --- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | 1   | 分け方             | 案 A（層の作り手。3.2 節）                                                                                                                          | 案 B（文脈のオブジェクト）                                            |
 | 2   | 範囲               | `createHolderLists`・`runFirstPassOnce` と、`planSkillHits`・`runSimulation`（3.5 節。同じファイルの中で関数に分けるだけ）                          | `createHolderLists`・`runFirstPassOnce` だけ                          |
@@ -294,4 +296,4 @@ for (let f = 0; f < frames; f++) {
 
 ## 9. 経過
 
-- 2026-11-12: 起案（承認待ち）。
+- 2026-11-12: 起案。オーナーが 4 節の論点をすべて推奨の案で承認した。
