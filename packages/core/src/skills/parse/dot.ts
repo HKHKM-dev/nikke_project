@@ -75,7 +75,7 @@ function validateAppliedDot(
 }
 
 /** dot に書ける欄 */
-const DOT_KEYS = [
+const DOT_KEYS: readonly string[] = [
   'kind',
   'trigger',
   'ref',
