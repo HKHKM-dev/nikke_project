@@ -141,6 +141,10 @@ describe('比べ', () => {
     expect(sameGrowthFields(fields, rosterFields(character()))).toBe(true);
     expect(sameGrowthFields(fields, { ...fields, treasurePhase: 2 })).toBe(false);
     expect(sameGrowthFields(fields, { ...fields, build: { ...fields.build, affectionRank: 1 } })).toBe(false);
+    // 宝物を付けているスロットに残っている R・SR のコレクションは比べない（計算は宝物を使う）
+    const leftover = { ...fields, build: { ...fields.build, collection: { rarity: 'R' as const, level: 3 } } };
+    expect(sameGrowthFields(fields, leftover)).toBe(true);
+    expect(sameGrowthFields({ ...fields, treasurePhase: 0 }, { ...leftover, treasurePhase: 0 })).toBe(false);
   });
 
   it('研究の Lv は、無い研究を 0 として比べる', () => {
@@ -196,6 +200,16 @@ describe('patchedCharacterEdit（育成の欄の変更を 1 体分に重ねる�
       treasure: null,
       collection: plain.collection,
     });
+  });
+
+  it('R・SR を選んだら、段階 0 が来なくても宝物は持たない（キャラのデータに宝物が無いニケの、育成状況の宝物）', () => {
+    const build = { ...fields.build, collection: { rarity: 'R' as const, level: 0 } };
+    expect(patchedCharacterEdit(current, { build }, null)).toMatchObject({
+      treasure: null,
+      collection: build.collection,
+    });
+    // 「なし」のまま（コレクションを選んでいない）なら、宝物は残る
+    expect(patchedCharacterEdit(current, { build: fields.build }, null).treasure).toEqual(current.treasure);
   });
 
   it('段階が未確定の宝物は、ほかの項目を変えても残り、段階を選ぶと決まる', () => {

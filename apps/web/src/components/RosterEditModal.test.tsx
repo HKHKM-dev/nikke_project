@@ -255,6 +255,14 @@ describe('RosterEditModal: 下部と閉じ方', () => {
     expect(screen.getByText('編集をブラウザに保存できなかった')).toBeTruthy();
   });
 
+  it('閉じるときは、待っている「全部を読み込んだ値に戻す」の確かめもやめる', () => {
+    const { onClose, revertAll } = open({}, { prompt: '戻します。' }, true);
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(revertAll.cancel).toHaveBeenCalled();
+    expect(revertAll.confirm).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+  });
+
   it('✕・「閉じる」・幕・Esc で閉じる（確かめない）', () => {
     const { onClose } = open();
     screen.getAllByRole('button', { name: '閉じる' }).forEach((b) => fireEvent.click(b));

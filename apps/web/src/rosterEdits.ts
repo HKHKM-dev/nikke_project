@@ -15,7 +15,6 @@ import {
   type CharacterIndexEntry,
   type SkillLevels,
   type SnapshotCharacter,
-  type SnapshotTreasure,
 } from '@nikke/core';
 import { isRecord, type SlotGrowth, type SlotGrowthFields } from './team.ts';
 
@@ -96,12 +95,11 @@ export function patchedCharacterEdit(
 ): RosterCharacterEdit {
   const { treasurePhase: phase } = patch;
   const tid = current.treasure?.tid ?? favoriteId;
-  const treasure: SnapshotTreasure | null =
-    phase === undefined
-      ? current.treasure
-      : phase === 0 || tid === null
-        ? null
-        : { tid, level: treasureLevelOfPhase(phase), phase };
+  let treasure = current.treasure;
+  if (phase !== undefined)
+    treasure = phase === 0 || tid === null ? null : { tid, level: treasureLevelOfPhase(phase), phase };
+  // R・SR を選んだら宝物は持たない（キャラのデータに宝物が無いのに育成状況に宝物があるニケでは、欄に宝物が出ず、段階 0 が来ない）
+  else if (patch.build?.collection) treasure = null;
   return {
     ...characterEditOf(current),
     ...(patch.growth && { growth: patch.growth }),
@@ -135,9 +133,15 @@ function growthKey(growth: SlotGrowth, build: BuildFields, skillLevels: SkillLev
   ];
 }
 
-/** スロットの育成どうしが同じか（スロットの「育成状況の値に戻す」を押せるか） */
+/**
+ * スロットの育成どうしが同じか（スロットの「育成状況の値に戻す」を押せるか）。宝物を付けているスロットに残っている R・SR の
+ * コレクションは比べない（計算は宝物を使い、コレクションは宝物を外したときに戻すために残してあるだけ）
+ */
 export function sameGrowthFields(a: SlotGrowthFields, b: SlotGrowthFields): boolean {
-  const key = (f: SlotGrowthFields) => JSON.stringify([growthKey(f.growth, f.build, f.skillLevels), f.treasurePhase]);
+  const key = (f: SlotGrowthFields) => {
+    const build = f.treasurePhase > 0 ? { ...f.build, collection: null } : f.build;
+    return JSON.stringify([growthKey(f.growth, build, f.skillLevels), f.treasurePhase]);
+  };
   return key(a) === key(b);
 }
 

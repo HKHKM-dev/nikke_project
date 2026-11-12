@@ -49,7 +49,7 @@ export type RosterEditor = {
   editedIds: ReadonlySet<number>;
   /** アカウント全体の値（シンクロ LV・リサイクルルーム）を変えているか */
   accountEdited: boolean;
-  /** 直前の編集の問題（保存できなかった・検査を通らず入れなかった）。無ければ null */
+  /** 直前の編集の問題（保存できなかった・検査を通らず入れなかった）。無ければ null。編集画面に出す */
   problem: string[] | null;
   editCharacter: (resourceId: number, edit: RosterCharacterEdit) => void;
   revertCharacter: (resourceId: number) => void;
@@ -96,7 +96,7 @@ type Args = {
 };
 
 /** 編集をブラウザに保存できなかったときの知らせ */
-const SAVE_FAILED = '編集をブラウザに保存できなかった（この画面を閉じると、編集は消える）';
+const SAVE_FAILED = 'この編集をブラウザに保存できなかった（再読み込みすると、保存できた所まで戻る）';
 
 /** 育成状況と、キャラをスロットに入れたときに育成状況の育成を写す dispatch */
 export function useRoster({ index, team, parties, dispatch, setParties }: Args): {
@@ -263,7 +263,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
     controls: {
       roster,
       stored: saved !== null,
-      message: message ?? restoreError ?? (editProblem === null ? null : { kind: 'ok', lines: editProblem }),
+      message: message ?? restoreError,
       importFile,
       exportFile,
       clear: confirmed(
@@ -272,7 +272,8 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
         confirmClear,
       ),
       editor,
-      hasEdits: editsJson !== null,
+      // 育成状況が無い・読めないときは、戻す先が無い（読み込み直すか消すと、編集も消える）
+      hasEdits: editsJson !== null && baseline !== null,
       revertAll: confirmed(
         'revertAll',
         // 編集が読めないとき（editor が無い）は、何を編集したか分からない

@@ -169,6 +169,11 @@ export function RosterEditModal({
   const [editedOnly, setEditedOnly] = useState(false);
   // 狭い画面では一覧と編集欄を切り替える（styles.css が、いま出す方だけを見せる）
   const [pane, setPane] = useState<'list' | 'form'>('list');
+  // 閉じるときは、待っている「全部を読み込んだ値に戻す」の確かめもやめる（閉じた後に、メニューや開き直した画面に残さない）
+  const close = () => {
+    revertAll.cancel();
+    onClose();
+  };
 
   const listed = ordered.filter(
     (c) => matchesBadgeFilters(c, filters) && (!editedOnly || editor.editedIds.has(c.resourceId)),
@@ -196,7 +201,7 @@ export function RosterEditModal({
   };
 
   return (
-    <Modal title="育成状況の編集" label="育成状況の編集" className="roster-edit-modal" onClose={onClose}>
+    <Modal title="育成状況の編集" label="育成状況の編集" className="roster-edit-modal" onClose={close}>
       <div className="roster-edit-body" data-pane={pane}>
         <div className="roster-edit-list-pane">
           <div className="char-tray-filter-group roster-edit-filters">
@@ -290,7 +295,7 @@ export function RosterEditModal({
             {REVERT_ALL_LABEL}
           </InertButton>
         )}
-        <button type="button" className="roster-edit-close" onClick={onClose}>
+        <button type="button" className="roster-edit-close" onClick={close}>
           閉じる
         </button>
       </div>

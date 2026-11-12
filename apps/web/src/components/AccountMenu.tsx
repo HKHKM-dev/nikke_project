@@ -17,6 +17,8 @@ export function AccountMenu({ roster, onEditRoster }: Props) {
           {...roster}
           onEdit={() => {
             close();
+            // メニューで待っていた確かめ（消す・全部を戻す）は、編集画面へ持ち越さない
+            roster.clear.cancel();
             onEditRoster();
           }}
         />

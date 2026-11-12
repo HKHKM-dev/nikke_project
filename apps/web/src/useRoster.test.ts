@@ -21,6 +21,7 @@ import {
   serializeRoster,
 } from './roster.ts';
 import { ROSTER_EDITS_STORAGE_KEY, characterEditOf, type RosterEdits } from './rosterEdits.ts';
+import type * as StorageModule from './storage.ts';
 import { initialTeamState, teamReducer, type TeamAction, type TeamState } from './team.ts';
 import { useRoster } from './useRoster.ts';
 
@@ -47,6 +48,16 @@ const BROKEN = JSON.stringify({
   characters: { '82': { ...ROSTER.characters['82']!, growth: { level: 1, grade: 99, core: 0 } } },
 });
 
+/** ブラウザの保存に書けない状態にする（storage.ts の writeStorage が false を返す） */
+const storageFailure = vi.hoisted(() => ({ write: false }));
+vi.mock('./storage.ts', async (importOriginal) => {
+  const actual = await importOriginal<typeof StorageModule>();
+  return {
+    ...actual,
+    writeStorage: (key: string, value: string) => !storageFailure.write && actual.writeStorage(key, value),
+  };
+});
+
 beforeEach(() => {
   localStorage.clear();
 });
@@ -54,6 +65,7 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  storageFailure.write = false;
 });
 
 /** スロット 1 に育成状況にいるキャラ（82）を入れた編成 */
@@ -382,6 +394,17 @@ describe('useRoster: editing (plan/design-roster-edit.md 5 節)', () => {
     }
   });
 
+  it('has nothing to revert to while the saved roster does not read', () => {
+    localStorage.setItem(ROSTER_STORAGE_KEY, BROKEN);
+    localStorage.setItem(ROSTER_EDITS_STORAGE_KEY, JSON.stringify({ formatVersion: 1, editedAt: 'x', characters: {} }));
+    expect(render().result.current.controls).toMatchObject({ editor: null, hasEdits: false });
+    // 消すと編集も消える
+    const { result } = render();
+    act(() => result.current.controls.clear.request());
+    act(() => result.current.controls.clear.confirm());
+    expect(localStorage.getItem(ROSTER_EDITS_STORAGE_KEY)).toBeNull();
+  });
+
   it('does not take an edit that the roster check stops', () => {
     const { result, dispatch } = renderSaved();
     act(() => result.current.controls.editor!.editCharacter(82, { ...edit, growth: { grade: 99, core: 0 } }));
@@ -393,14 +416,13 @@ describe('useRoster: editing (plan/design-roster-edit.md 5 節)', () => {
 
   it('keeps an edit for this page when the browser cannot save it, and says so', () => {
     const { result } = renderSaved();
-    vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
-      throw new Error('quota');
-    });
+    storageFailure.write = true;
     act(() => result.current.controls.editor!.editCharacter(82, edit));
     expect(result.current.controls.roster!.characters['82']!.skillLevels.skill2).toBe(8);
     expect(result.current.controls.editor!.problem).toEqual([
-      '編集をブラウザに保存できなかった（この画面を閉じると、編集は消える）',
+      'この編集をブラウザに保存できなかった（再読み込みすると、保存できた所まで戻る）',
     ]);
-    expect(result.current.controls.message).toMatchObject({ kind: 'ok' });
+    // 編集の問題は編集画面に出す（メニューの知らせには出さない）
+    expect(result.current.controls.message).toBeNull();
   });
 });
