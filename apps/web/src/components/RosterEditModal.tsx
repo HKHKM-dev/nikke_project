@@ -160,7 +160,6 @@ export function RosterEditModal({
   baseUrl,
   onClose,
 }: Props) {
-  const { roster } = editor;
   const view = useRosterEditSelection(editor, index);
   // 閉じるときは、待っている「全部を読み込んだ値に戻す」の確かめもやめる（閉じた後に、メニューや開き直した画面に残さない）
   const close = () => {
@@ -170,8 +169,7 @@ export function RosterEditModal({
 
   // 欄の上限と、計算に使えるかの確かめには、選んだニケのキャラのデータが要る
   const cache = useCharacterCache([view.selected], baseUrl);
-  const selectedEntry = view.ordered.find((c) => c.resourceId === view.selected);
-  const selectedRoster = view.selected === null ? undefined : roster.characters[String(view.selected)];
+  const { selectedEntry, selectedRoster } = view;
 
   return (
     <Modal title="育成状況の編集" label="育成状況の編集" className="roster-edit-modal" onClose={close}>
@@ -245,7 +243,23 @@ function useRosterEditSelection(editor: RosterEditor, index: readonly CharacterI
     const next = at === -1 ? undefined : listed[at + offset];
     return next === undefined ? null : () => select(next.resourceId);
   };
-  return { ordered, listed, selected, select, neighbor, filters, setFilters, editedOnly, setEditedOnly, pane, setPane };
+  // 選んでいるニケの一覧の行と、育成状況の値（アカウント全体なら undefined）
+  const selectedEntry = ordered.find((c) => c.resourceId === selected);
+  const selectedRoster = selected === null ? undefined : roster.characters[String(selected)];
+  return {
+    listed,
+    selected,
+    selectedEntry,
+    selectedRoster,
+    select,
+    neighbor,
+    filters,
+    setFilters,
+    editedOnly,
+    setEditedOnly,
+    pane,
+    setPane,
+  };
 }
 
 type RosterEditView = ReturnType<typeof useRosterEditSelection>;

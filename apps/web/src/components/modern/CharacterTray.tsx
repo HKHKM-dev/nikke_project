@@ -232,9 +232,8 @@ function TraySortMenu({ listOrder }: { listOrder: ListOrderControls }) {
   );
 }
 
-/** 立ち絵の縦長・四角の切り替え */
+/** 立ち絵の縦長・四角の切り替え。いまの形を強く出す */
 function TrayShapeToggle({ shape, onToggle }: { shape: TrayShape; onToggle: () => void }) {
-  // いまの形を強く出す
   return (
     <button
       type="button"

@@ -26,6 +26,7 @@ import {
   type TreasurePhase,
 } from '@nikke/core';
 import { UNKNOWN_TREASURE_OPTION, collectionPatch, treasureOptionValue } from '../collectionChoice.ts';
+import { errorMessage } from '../compute.ts';
 import { GEAR_PART_LABEL, treasurePhaseLabel } from '../skillLabels.ts';
 import { clampInt, type SlotBuild, type SlotGrowthFields } from '../team.ts';
 import { IntInput } from './IntInput.tsx';
@@ -119,7 +120,7 @@ function combatErrorOf(
     computeCombatAttack(character, growth, build, masters, { treasurePhase: treasurePhase ?? 0 });
     return null;
   } catch (e) {
-    return e instanceof Error ? e.message : String(e);
+    return errorMessage(e);
   }
 }
 
@@ -141,6 +142,8 @@ function GearField({
     const overload = withOverloadLine(gear.overload ?? [], i, line);
     onChange(overload.length === 0 ? { type: gear.type, level: gear.level } : { ...gear, overload });
   };
+  const isOverload = gear?.type === 'OL';
+  const lines = (isOverload && gear.overload) || [];
   return (
     <div className="field gear">
       <span>装備 {GEAR_PART_LABEL[part]}</span>
@@ -174,8 +177,6 @@ function GearField({
       {/* OL のオプションは、装備が OL でないときも欄だけ出す（選べない。欄の並びを変えない） */}
       <span className="ol-lines">
         {Array.from({ length: OVERLOAD_LINE_MAX }, (_, i) => {
-          const isOverload = gear?.type === 'OL';
-          const lines = (isOverload && gear.overload) || [];
           const line = lines.find((l, j) => overloadLinePosition(l, j) === i);
           return (
             <OverloadLineField
