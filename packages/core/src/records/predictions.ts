@@ -7,7 +7,7 @@ import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { V_ID } from './ids.ts';
 import { buildTeamInput, type RecordsData } from './observations/teamInput.ts';
-import { compareValue } from './observations/run.ts';
+import { compareValue, isFiniteValue } from './observations/run.ts';
 import { METRICS } from './observations/metrics/index.ts';
 import { withArgs, type Metric, type MetricContext } from './observations/metrics/context.ts';
 import type { CompareSetup } from './observations/setup.ts';
@@ -270,15 +270,16 @@ function withPlannedValues(file: PredictionFile, data: RecordsData): RecordsData
 }
 
 /**
- * 仮説ごと・指標ごとにモデルを回し（同じ条件は 1 回だけ）、visit に渡す。指標の recording（plan/design-compare-setup-extension.md
- * 4 節）を引くには recordings を渡す
+ * 仮説ごと・指標ごとにモデルを回す（同じ条件は 1 回だけ）。指標の recording（plan/design-compare-setup-extension.md 4 節）を引くには
+ * recordings を渡す。countOccurrences なら、指標ごとの 1 本の録画の中の回数（occurrencesOf。仮説のうち最も少ない回数。どれかの仮説で
+ * 出せなければ null。同じ条件の仮説どうしは 1 回だけ数える）も返す
  */
-function forEachPrediction(
+function predict(
   file: PredictionFile,
   data: RecordsData,
   recordings: ReadonlyMap<string, RecordingEntry>,
-  visit: (h: PredictionHypothesis, t: PredictionTarget, metric: Metric, sim: SimResult, ctx: MetricContext) => void,
-): void {
+  countOccurrences: boolean,
+): { values: Predicted['values']; occurrences: Record<string, number | null> } {
   const recordingOf = (t: PredictionTarget): RecordingEntry => {
     if (t.recording !== undefined) {
       const r = recordings.get(t.recording);
@@ -289,8 +290,11 @@ function forEachPrediction(
     return asRecording(file);
   };
   const withValues = withPlannedValues(file, data);
-  const cache = new Map<string, { input: TeamInput; sim?: SimResult }>();
+  const cache = new Map<string, { input: TeamInput; sim?: SimResult; counted: Map<string, number | null> }>();
+  const values: Predicted['values'] = {};
+  const occurrences: Record<string, number | null> = {};
   for (const h of file.hypotheses) {
+    values[h.id] = {};
     for (const t of file.targets) {
       const metric = METRICS[t.metric];
       if (metric === undefined) throw new Error(`metric ${t.metric} が語彙に無い`);
@@ -299,13 +303,21 @@ function forEachPrediction(
       const key = `${recording.id}:${JSON.stringify(setup)}`;
       let run = cache.get(key);
       if (run === undefined) {
-        run = { input: buildTeamInput(recording, setup, withValues) };
+        run = { input: buildTeamInput(recording, setup, withValues), counted: new Map() };
         cache.set(key, run);
       }
-      run.sim ??= runSimulation(run.input);
-      visit(h, t, metric, run.sim, { args: t.args ?? {}, input: run.input });
+      const ctx = { args: t.args ?? {}, input: run.input };
+      const sim = (run.sim ??= runSimulation(run.input));
+      const value = metric.sim(sim, ctx);
+      values[h.id]![t.id] = value;
+      if (!countOccurrences || occurrences[t.id] === null) continue;
+      const n = run.counted.has(t.id) ? run.counted.get(t.id)! : occurrencesOf(metric, sim, ctx, value);
+      run.counted.set(t.id, n);
+      const before = occurrences[t.id];
+      occurrences[t.id] = n === null ? null : Math.min(before ?? n, n);
     }
   }
+  return { values, occurrences };
 }
 
 /** 仮説ごと・指標ごとにモデルを回した値（仮説 ID → 指標 ID → 値） */
@@ -314,68 +326,71 @@ export function runPredictions(
   data: RecordsData,
   recordings: ReadonlyMap<string, RecordingEntry> = new Map(),
 ): Predicted['values'] {
-  const values: Predicted['values'] = Object.fromEntries(file.hypotheses.map((h) => [h.id, {}]));
-  forEachPrediction(file, data, recordings, (h, t, metric, sim, ctx) => {
-    values[h.id]![t.id] = metric.sim(sim, ctx);
-  });
-  return values;
+  return predict(file, data, recordings, false).values;
 }
 
 /**
- * runPredictions の値と、指標ごとの 1 本の録画の中の回数（occurrencesOf。仮説のうち最も少ない回数。どれかの仮説で出せなければ null）。
- * 撮影計画で本数を決める型の見分けに使う（plan/verification-guide.md 4 節。plan/design-capture-count.md 4.2 節）
+ * runPredictions の値と、指標ごとの 1 本の録画の中の回数。撮影計画で本数を決める型の見分けに使う（plan/verification-guide.md 4 節。
+ * plan/design-capture-count.md 4.2 節）
  */
 export function runPredictionsWithOccurrences(
   file: PredictionFile,
   data: RecordsData,
   recordings: ReadonlyMap<string, RecordingEntry> = new Map(),
 ): { values: Predicted['values']; occurrences: Record<string, number | null> } {
-  const values: Predicted['values'] = Object.fromEntries(file.hypotheses.map((h) => [h.id, {}]));
-  const occurrences: Record<string, number | null> = {};
-  forEachPrediction(file, data, recordings, (h, t, metric, sim, ctx) => {
-    values[h.id]![t.id] = metric.sim(sim, ctx);
-    const n = occurrencesOf(metric, sim, ctx);
-    const before = occurrences[t.id];
-    occurrences[t.id] = before === null || n === null ? null : Math.min(before ?? Infinity, n);
-  });
-  return { values, occurrences };
+  return predict(file, data, recordings, true);
 }
 
 /** occurrencesOf が回の番号・数を試す上限。上限に届いたら OCCURRENCE_PROBE_LIMIT + 1（「上限の回数以上」）を返す */
 export const OCCURRENCE_PROBE_LIMIT = 64;
 
-function finiteValue(v: number | number[]): boolean {
-  return Array.isArray(v) ? v.every(Number.isFinite) : Number.isFinite(v);
-}
-
 /**
- * 指標の事象が、モデルで 1 本の録画（予測の条件の長さ）の中に何回起きるかの目安。出せなければ null。
- * - 引数 n（無ければ count）のある指標は、その引数を 0〜OCCURRENCE_PROBE_LIMIT に替えて出せた値で数える。値の配列の長さが引数で
- *   変わるなら、引数は「最初の何回」なので、いちばん長い配列の長さ。そうでなければ、引数は回の番号なので、出せた番号の数。
- *   その回が無くても誤りにせず値を返す指標（gaugeFullShotIndex の 0 など）は、多めに出る
+ * 指標の事象が、モデルで 1 本の録画（予測の条件の長さ）の中に何回起きるかの目安（value は ctx で出した指標の値）。出せなければ null。
+ * - 指標が回数（Metric.occurrences）を持てば、それを使う
+ * - 引数 count だけの指標（最初の count 回）は、count を外して出した全部の回の配列の長さ
+ * - 引数 n（か、count を外すと配列にならない count）のある指標は、その引数を 0〜OCCURRENCE_PROBE_LIMIT に替えて出せた値で数える。
+ *   値の配列の長さが引数で変わるなら、引数は「最初の何回」なので、いちばん長い配列の長さ。そうでなければ、引数は回の番号なので、
+ *   出せた番号の数。途中の回だけ出せない指標があるので、出せない番号で止めない
  * - どちらも無い指標は、値が配列ならその長さ。1 つの値（集計の指標）は null
  */
-export function occurrencesOf(metric: Metric, sim: SimResult, ctx: MetricContext): number | null {
-  const probe = ctx.args.n !== undefined ? 'n' : ctx.args.count !== undefined ? 'count' : undefined;
-  if (probe === undefined) {
-    const v = metric.sim(sim, ctx);
-    return Array.isArray(v) ? v.length : null;
+export function occurrencesOf(
+  metric: Metric,
+  sim: SimResult,
+  ctx: MetricContext,
+  value: number | number[],
+): number | null {
+  if (metric.occurrences !== undefined) return metric.occurrences(sim, ctx);
+  if (ctx.args.n === undefined && ctx.args.count === undefined) return Array.isArray(value) ? value.length : null;
+  if (ctx.args.n === undefined) {
+    try {
+      const all = metric.sim(sim, withArgs(ctx, { count: undefined }));
+      if (Array.isArray(all)) return all.length;
+    } catch {
+      // count が要る指標は、下で試す
+    }
   }
-  const ok: (number | number[])[] = [];
+  const probe = ctx.args.n !== undefined ? 'n' : 'count';
+  let found = 0;
+  let most = 0;
+  let atLimit = false;
+  const lengths = new Set<number>();
   for (let k = 0; k <= OCCURRENCE_PROBE_LIMIT; k++) {
+    atLimit = false;
     try {
       const v = metric.sim(sim, withArgs(ctx, { [probe]: k }));
-      if (finiteValue(v)) ok.push(v);
+      if (!isFiniteValue(v)) continue;
+      found++;
+      atLimit = true;
+      if (Array.isArray(v)) {
+        lengths.add(v.length);
+        most = Math.max(most, v.length);
+      }
     } catch {
       // その回が無い
     }
   }
-  const lengths = ok.filter(Array.isArray).map((v) => v.length);
-  if (lengths.length > 0 && new Set(lengths).size > 1) {
-    const most = Math.max(...lengths);
-    return most < OCCURRENCE_PROBE_LIMIT ? most : OCCURRENCE_PROBE_LIMIT + 1;
-  }
-  return ok.length;
+  if (lengths.size > 1) return most < OCCURRENCE_PROBE_LIMIT ? most : OCCURRENCE_PROBE_LIMIT + 1;
+  return atLimit ? OCCURRENCE_PROBE_LIMIT + 1 : found;
 }
 
 export type Staleness =

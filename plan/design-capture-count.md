@@ -100,4 +100,4 @@
 ## 6. 経過
 
 - 2026-11-12: 起案。
-- 2026-11-12: 承認（案 1・2）。案 1 は verification-guide.md 4 節の本数の文を 3 節の表の型に書き換えた。案 2 は `records:predict` が指標ごとの回数を標準出力に出す（予測ファイルには書かない）。数え方は `predictions.ts` の `occurrencesOf`: 引数 `n`（無ければ `count`）を 0〜64 に替えて出せた値で数え、回の番号・数の引数が無く値が 1 つの指標（`hitDamage` の `frame` 指定など）は出さない。その回が無くても値を返す指標（`gaugeFullShotIndex` の 0）は多めに出る。
+- 2026-11-12: 承認（案 1・2）。案 1 は verification-guide.md 4 節の本数の文を 3 節の表の型に書き換えた。案 2 は `records:predict` が指標ごとの回数を標準出力に出す（予測ファイルには書かない）。数え方は `predictions.ts` の `occurrencesOf`: 引数 `count` だけの指標は `count` を外した全部の回の数、引数 `n` の指標は 0〜64 に替えて出せた値で数え、回の番号・数の引数が無く値が 1 つの指標（`hitDamage` の `frame` 指定など）は出さない。その回が無くても値を返す指標は、指標の欄 `occurrences` に回数を書く（`gaugeFullShotIndex`）。

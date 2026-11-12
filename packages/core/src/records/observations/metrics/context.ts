@@ -13,6 +13,11 @@ export type Metric = {
   /** 必須の引数 */
   args: readonly string[];
   sim: (result: SimResult, ctx: MetricContext) => number | number[];
+  /**
+   * 1 本の録画の中で、この指標の事象が何回起きるか（予測の occurrencesOf が使う。撮影の本数の型。plan/verification-guide.md 4 節）。
+   * その回が無くても誤りにせず値を返す指標に書く（無ければ occurrencesOf が引数 n・count を試して数える）
+   */
+  occurrences?: (result: SimResult, ctx: MetricContext) => number;
 };
 
 export function slotIndexOf(ctx: MetricContext): number {

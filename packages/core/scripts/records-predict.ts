@@ -58,14 +58,12 @@ if (file.hypotheses.length >= 2 && file.targets.every((t) => t.tolerance === und
   console.log('注意: 指標に許容の幅（tolerance）を書くと、その録画で仮説を見分けられるかを確かめる');
 // 撮影計画の本数の型（plan/verification-guide.md 4 節）: 1 本の中で 2 回以上起きる指標は、1 本の中の後の回で再現できる候補
 for (const t of file.targets) {
-  const n = occurrences[t.id];
-  const times =
-    n === null || n === undefined ? '' : n > OCCURRENCE_PROBE_LIMIT ? `${OCCURRENCE_PROBE_LIMIT} 回以上` : `${n} 回`;
-  const kind =
-    n === null || n === undefined
-      ? '出せない（回の番号・数の引数が無く、値が 1 つの指標）'
-      : n >= 2
-        ? `${times}（1 本の中の後の回で再現できる候補）`
-        : `${times}（2 本目が要る候補）`;
-  console.log(`1 本の中の回数: 指標 ${t.id} は ${kind}`);
+  const n = occurrences[t.id] ?? null;
+  if (n === null) {
+    console.log(`1 本の中の回数: 指標 ${t.id} は出せない（回の番号・数の引数が無く、値が 1 つの指標）`);
+    continue;
+  }
+  const times = n > OCCURRENCE_PROBE_LIMIT ? `${OCCURRENCE_PROBE_LIMIT} 回以上` : `${n} 回`;
+  const kind = n >= 2 ? '1 本の中の後の回で再現できる候補' : '2 本目が要る候補';
+  console.log(`1 本の中の回数: 指標 ${t.id} は ${times}（${kind}）`);
 }
