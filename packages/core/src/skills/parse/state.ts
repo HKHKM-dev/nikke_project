@@ -1,6 +1,6 @@
 // スキル定義の読み込みの検査のうち、状態の付与・解除・取り消し、スタックとカウンタの増減の読み込み。型は ../types.ts
 import { COUNTER_IDS, counterMax } from '../counters.ts';
-import { stateMatches } from '../states.ts';
+import { type NamedStateId, stateMatches } from '../states.ts';
 import { dependsOnContext } from '../targets.ts';
 import {
   type CancelStateEffect,
@@ -60,7 +60,8 @@ const STATE_GRANT_VALUE_KEYS = ['stat', 'ref', 'scaling', 'decrease'] as const;
 /**
  * 状態の付与（plan/design-named-state.md 5.2・5.3 節）。欄は timed から値の欄を除いたもので、規則も
  * timed と同じ（parseTimedFields）。中身の項目は、付与の欄と合わせた timed として今の timed の規則に通す（stat ごとの規則が
- * 中身にもそのまま効く）。同じ状態のほかの付与との規則（中身は 1 つ・維持とスタックの上限が同じ）は validateStateGrants
+ * 中身にもそのまま効く）。同じ状態のほかの付与との規則（中身は 1 つ・維持とスタックの上限が同じ）は validateStateGrants。
+ * 欄のまとまりごとの関数を決まった順に呼ぶ（plan/design-split-long-functions.md 3.1 節）
  */
 export function parseStateGrantEffect(v: Record<string, Json>, path: string): StateGrantEffect {
   for (const key of STATE_GRANT_VALUE_KEYS) {
@@ -72,24 +73,7 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   // スタック（maxStacks・maxStacksRef）は書ける（件は味方の状態と同じ stackItems で作る。plan/design-mast.md 2.1 節）
   const onEnemy = v.target === 'enemy';
   if (onEnemy) {
-    for (const key of [
-      'targetWeapon',
-      'targetElement',
-      'targetClass',
-      'targetSquad',
-      'targetState',
-      'includeSelf',
-      'targetBurstStep',
-      'targetDefense',
-      'excludeSelf',
-      'fixedTargets',
-      'targetCount',
-      'targetCountRef',
-      'undispellable',
-      'stacksFrom',
-      'stackImmutable',
-      'condition',
-    ]) {
+    for (const key of ENEMY_GRANT_FORBIDDEN_KEYS) {
       if (v[key] !== undefined) fail(`${path}.${key}`, 'not allowed in a grant on the enemy (target "enemy")');
     }
     v = { ...v, target: 'allies' };
@@ -107,7 +91,49 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   validateSelfHpGrant(fields, v, path, onEnemy);
   validateStateEndGrant(fields, v, path, onEnemy);
   validateChanceGrant(fields, v, path, onEnemy);
-  // 自分の付ける状態の終わり・窓・維持も見ない（循環する）
+  validateNoSelfReference(fields, state, path);
+  const effect: StateGrantEffect = { kind: 'state', state, ...fields };
+  if (onEnemy) {
+    if (isAppliedTrigger(fields.trigger))
+      fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
+    // 中身の有無は定義の単位で見る（validateStateGrants。同じ敵の状態を 2 つのきっかけで付けることがある）
+    effect.enemy = true;
+  }
+  // 解除不可の印（plan/design-skill-stage1.md 1.3 節）
+  if (v.undispellable !== undefined) {
+    effect.undispellable = parseTrue(v.undispellable, `${path}.undispellable`);
+  }
+  parseGrantStacks(v, effect, path);
+  parseLeadFrames(v, effect, path);
+  parseGrantContents(v, effect, onEnemy, path);
+  return effect;
+}
+
+/** 敵に付く状態の付与（target: "enemy"）に書けない欄 */
+const ENEMY_GRANT_FORBIDDEN_KEYS: readonly string[] = [
+  'targetWeapon',
+  'targetElement',
+  'targetClass',
+  'targetSquad',
+  'targetState',
+  'includeSelf',
+  'targetBurstStep',
+  'targetDefense',
+  'excludeSelf',
+  'fixedTargets',
+  'targetCount',
+  'targetCountRef',
+  'undispellable',
+  'stacksFrom',
+  'stackImmutable',
+  'condition',
+];
+
+/**
+ * 循環の禁止: 付与が、自分の付ける状態を見て発火・対象・条件・維持を決めない（plan/design-stage11-modernia.md 11.2 節の 7。条件の
+ * selfState も同じ。plan/design-skill-stage1.md 1.1 節）。自分の付ける状態の終わり・窓・維持も見ない
+ */
+function validateNoSelfReference(fields: GrantTimedFields, state: NamedStateId, path: string): void {
   const t = fields.trigger;
   if (
     (isAppliedTrigger(t) && t.applied === state) ||
@@ -134,8 +160,6 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   const until = fields.durationUntil;
   if (isStateEndUntil(until) && stateMatches(until.stateEnd, state))
     fail(`${path}.durationUntil`, `a grant of "${state}" cannot last until its own state ends`);
-  // 循環の禁止: 付与が、自分の付ける状態を見て対象や発火を決めない（plan/design-stage11-modernia.md 11.2 節の 7。条件の
-  // selfState も同じ。plan/design-skill-stage1.md 1.1 節）
   if (fields.targetState !== undefined && stateMatches(fields.targetState, state)) {
     fail(`${path}.targetState`, `a grant of "${state}" cannot look at its own state`);
   }
@@ -149,43 +173,15 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   ) {
     fail(`${path}.condition.selfState`, `a grant of "${state}" cannot look at its own state`);
   }
-  const effect: StateGrantEffect = { kind: 'state', state, ...fields };
-  if (onEnemy) {
-    if (isAppliedTrigger(fields.trigger))
-      fail(`${path}.trigger`, 'a grant on the enemy cannot be triggered by { applied }');
-    // 中身の有無は定義の単位で見る（validateStateGrants。同じ敵の状態を 2 つのきっかけで付けることがある）
-    effect.enemy = true;
-  }
-  // 解除不可の印（plan/design-skill-stage1.md 1.3 節）
-  if (v.undispellable !== undefined) {
-    effect.undispellable = parseTrue(v.undispellable, `${path}.undispellable`);
-  }
-  if (v.stacksFrom !== undefined) {
-    // スタックの数をカウンタの値か、自分の状態のスタック数から取る
-    const from = v.stacksFrom;
-    if (!isRecord(from) || Object.keys(from).length !== 1)
-      fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
-    rejectUnknownKeys(from, ['counter', 'state'], `${path}.stacksFrom`);
-    if (from.state !== undefined) {
-      const source = parseNamedStateId(from.state, `${path}.stacksFrom.state`, 'ally');
-      if (source === state) fail(`${path}.stacksFrom.state`, `a grant of "${state}" cannot count its own stacks`);
-      if (effect.maxStacks === undefined) fail(`${path}.maxStacks`, 'stacksFrom { state } needs maxStacks');
-      effect.stacksFrom = { state: source };
-    } else {
-      const counter = oneOf(COUNTER_IDS, from.counter, `${path}.stacksFrom.counter`);
-      if (effect.maxStacks === undefined || effect.maxStacks < counterMax(counter)) {
-        fail(
-          `${path}.maxStacks`,
-          `stacksFrom needs maxStacks of at least the max of ${counter} (${counterMax(counter)})`,
-        );
-      }
-      effect.stacksFrom = { counter };
-    }
-  }
+}
+
+/** スタックの欄: 数の取り元（stacksFrom）・1 回の発火のスタック数・維持の数え方・増減の無効 */
+function parseGrantStacks(v: Record<string, Json>, effect: StateGrantEffect, path: string): void {
+  const stacks = effect.maxStacks !== undefined || effect.maxStacksRef !== undefined;
+  if (v.stacksFrom !== undefined) effect.stacksFrom = parseStacksFrom(v.stacksFrom, effect, path);
   // 1 回の発火で付けるスタックの数（使用回数。plan/design-skill-stage14.md 2.7 節。論点 6）
   if (v.stacksPerFireRef !== undefined) {
-    if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
-      fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef needs maxStacks or maxStacksRef');
+    if (!stacks) fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef needs maxStacks or maxStacksRef');
     if (effect.stacksFrom !== undefined)
       fail(`${path}.stacksPerFireRef`, 'stacksPerFireRef cannot be used with stacksFrom');
     effect.stacksPerFireRef = parseRef(v.stacksPerFireRef, `${path}.stacksPerFireRef`);
@@ -193,33 +189,57 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
   // スタックの維持の数え方（plan/design-mast.md 2.1 節）
   if (v.stackRefresh !== undefined) {
     if (v.stackRefresh !== 'each') fail(`${path}.stackRefresh`, 'expected "each" (omit it for the default)');
-    if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
-      fail(`${path}.stackRefresh`, 'stackRefresh needs maxStacks or maxStacksRef');
+    if (!stacks) fail(`${path}.stackRefresh`, 'stackRefresh needs maxStacks or maxStacksRef');
     effect.stackRefresh = 'each';
   }
   // スタック量増減効果無効（同じ定義の stackChange は validateStackChanges が弾く。plan/design-nayuta.md 2.5 節）
   if (v.stackImmutable !== undefined) {
     parseTrue(v.stackImmutable, `${path}.stackImmutable`);
-    if (effect.maxStacks === undefined && effect.maxStacksRef === undefined)
-      fail(`${path}.stackImmutable`, 'stackImmutable needs maxStacks or maxStacksRef');
+    if (!stacks) fail(`${path}.stackImmutable`, 'stackImmutable needs maxStacks or maxStacksRef');
     effect.stackImmutable = true;
   }
-  // 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発の leadFrames 前から始める付与
-  if (v.leadFrames !== undefined) {
-    const t = fields.trigger;
-    if (typeof t !== 'object' || t === null || !('count' in t) || t.count !== 'weaponChangeShot' || isChanceTrigger(t))
-      fail(`${path}.leadFrames`, 'leadFrames needs the trigger { count: "weaponChangeShot" }');
-    // 1 パス目は発の leadFrames 前のフレームで件を登録する（同 5.3 節）ので、発のフレームで判定するものは書けない
-    if (effect.condition !== undefined) fail(`${path}.condition`, 'condition cannot be used with leadFrames');
-    if (effect.stacksFrom !== undefined) fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with leadFrames');
-    // 対象を発火の文脈（攻撃力の順位・バーストを使った枠・最終防御力の比べ）で決めるものも、文脈の無い登録では誰にも掛からない
-    if (dependsOnContext(effect))
-      fail(
-        `${path}.target`,
-        `${effect.target} cannot be used with leadFrames (the targets depend on the fire context)`,
-      );
-    effect.leadFrames = parsePositiveInt(v.leadFrames, `${path}.leadFrames`);
+}
+
+/** スタックの数をカウンタの値か、自分の状態のスタック数から取る（stacksFrom） */
+function parseStacksFrom(
+  from: Json,
+  effect: StateGrantEffect,
+  path: string,
+): NonNullable<StateGrantEffect['stacksFrom']> {
+  if (!isRecord(from) || Object.keys(from).length !== 1)
+    fail(`${path}.stacksFrom`, 'expected { counter } or { state }');
+  rejectUnknownKeys(from, ['counter', 'state'], `${path}.stacksFrom`);
+  if (from.state !== undefined) {
+    const source = parseNamedStateId(from.state, `${path}.stacksFrom.state`, 'ally');
+    if (source === effect.state)
+      fail(`${path}.stacksFrom.state`, `a grant of "${effect.state}" cannot count its own stacks`);
+    if (effect.maxStacks === undefined) fail(`${path}.maxStacks`, 'stacksFrom { state } needs maxStacks');
+    return { state: source };
   }
+  const counter = oneOf(COUNTER_IDS, from.counter, `${path}.stacksFrom.counter`);
+  if (effect.maxStacks === undefined || effect.maxStacks < counterMax(counter)) {
+    fail(`${path}.maxStacks`, `stacksFrom needs maxStacks of at least the max of ${counter} (${counterMax(counter)})`);
+  }
+  return { counter };
+}
+
+/** 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 発の leadFrames 前から始める付与 */
+function parseLeadFrames(v: Record<string, Json>, effect: StateGrantEffect, path: string): void {
+  if (v.leadFrames === undefined) return;
+  const t = effect.trigger;
+  if (typeof t !== 'object' || t === null || !('count' in t) || t.count !== 'weaponChangeShot' || isChanceTrigger(t))
+    fail(`${path}.leadFrames`, 'leadFrames needs the trigger { count: "weaponChangeShot" }');
+  // 1 パス目は発の leadFrames 前のフレームで件を登録する（同 5.3 節）ので、発のフレームで判定するものは書けない
+  if (effect.condition !== undefined) fail(`${path}.condition`, 'condition cannot be used with leadFrames');
+  if (effect.stacksFrom !== undefined) fail(`${path}.stacksFrom`, 'stacksFrom cannot be used with leadFrames');
+  // 対象を発火の文脈（攻撃力の順位・バーストを使った枠・最終防御力の比べ）で決めるものも、文脈の無い登録では誰にも掛からない
+  if (dependsOnContext(effect))
+    fail(`${path}.target`, `${effect.target} cannot be used with leadFrames (the targets depend on the fire context)`);
+  effect.leadFrames = parsePositiveInt(v.leadFrames, `${path}.leadFrames`);
+}
+
+/** 中身の項目（contents）と、維持 0 秒の付与の欄 */
+function parseGrantContents(v: Record<string, Json>, effect: StateGrantEffect, onEnemy: boolean, path: string): void {
   if (v.contents !== undefined) {
     if (!Array.isArray(v.contents) || v.contents.length === 0) fail(`${path}.contents`, 'expected a non-empty array');
     effect.contents = v.contents.map((item, i) => parseStateContentItem(item, v, `${path}.contents[${i}]`, onEnemy));
@@ -231,7 +251,6 @@ export function parseStateGrantEffect(v: Record<string, Json>, path: string): St
         fail(`${path}.${key}`, 'a grant lasting 0 seconds holds nothing (it only records the application)');
     }
   }
-  return effect;
 }
 
 /**

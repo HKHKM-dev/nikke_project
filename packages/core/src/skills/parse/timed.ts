@@ -11,8 +11,8 @@ import {
   type BuffTarget,
   type GrantDurationUntil,
   DURATION_UNTILS,
+  type EffectTrigger,
   EXCLUDE_SELF,
-  type ExcludeSelf,
   isAppliedTrigger,
   isAllyDecrease,
   isEnemyHeldStat,
@@ -32,7 +32,6 @@ import {
   SKILL_SLOTS,
   TARGET_DEFENSES,
   type PassiveEffect,
-  type TargetDefense,
   type TimedEffect,
 } from '../types.ts';
 import {
@@ -219,105 +218,13 @@ export function parseTimedFields(
   stat: BuffStat | undefined,
   allowChance: boolean,
 ): GrantTimedFields {
-  // 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける（plan/design-skill-stage3.md 1.2 節）。
-  // 「〈名前〉が適用される時」（{ applied }）も書ける（plan/design-skill-stage4.md 1.1 節）
-  // 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
-  // 「フルチャージした時」（{ chargeFull }）も書ける（plan/design-skill-stage14.md 2.1・2.6 節）
-  // 「遮蔽物の HP を回復した時」（{ coverHealed }）は timed だけ（plan/design-skill-stage17.md 2.1 節）
-  // 「〈カウンタ〉が 100% になった時」（{ counterFull }）は状態の付与だけ
-  // （validateCounterGrant。plan/design-skill-stage19.md 2.1 節）
-  const trigger =
-    parseAppliedTrigger(v.trigger, `${path}.trigger`) ??
-    parseChargeTrigger(v.trigger, `${path}.trigger`) ??
-    (stat === undefined
-      ? // 「〈状態〉が終了した時」（{ ended }）も状態の付与だけ（plan/design-grave.md 2.1 節）
-        (parseCounterFullTrigger(v.trigger, `${path}.trigger`) ?? parseEndedTrigger(v.trigger, `${path}.trigger`))
-      : (parseCoverHealedTrigger(v.trigger, `${path}.trigger`) ??
-        parseSelfHpAtMostTrigger(v.trigger, `${path}.trigger`))) ??
-    // 自分の状態の間だけ数える窓（during: { state }）は状態の付与だけ
-    parseTrigger(v.trigger, `${path}.trigger`, {
-      timer: 'withStart',
-      during: stat === undefined ? 'withState' : true,
-      chance: allowChance,
-      reloadEnd: true,
-    });
-  const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
-  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
-  // { applied } の効果は順位の対象・強化を書けない（使い手がいない。plan/design-skill-stage4.md 論点 6）。条件は
-  // 自分の状態（selfState）だけ書ける（呼ぶ側の parseCondition が CONDITION_KEYS_OF.selfStateOnly で見る。
-  // plan/design-mint-prika.md 2.3 節）
-  if (isAppliedTrigger(trigger)) {
-    if (target === 'topAttack') fail(`${path}.target`, 'an effect on an applied trigger cannot target "topAttack"');
-    if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'an effect on an applied trigger cannot amplify');
-  }
-  validateBurstUsersTarget(target, trigger, path);
-  // 「〈状態〉のスキル発動者」は { applied } のきっかけの効果だけ（絞り込みは書けない。plan/design-mint-prika.md 2.4 節）
-  if (target === 'appliedCaster' && !isAppliedTrigger(trigger))
-    fail(`${path}.target`, 'appliedCaster is only allowed with an applied trigger ({ applied })');
-  const targetWeapon = parseTargetWeapon(v, target, path);
-  const targetElement = parseTargetElement(v, target, path);
-  const targetClass = parseTargetClass(v, target, path);
-  const targetSquad = parseTargetSquad(v, target, path);
-  const count = parseTargetCount(v, target, path);
-  let excludeSelf: ExcludeSelf | undefined;
-  if (v.excludeSelf !== undefined) {
-    excludeSelf = oneOf(EXCLUDE_SELF, v.excludeSelf, `${path}.excludeSelf`);
-    // 「自分を除く…味方全体」は allies の always
-    const allowed = target === 'topAttack' || (target === 'allies' && excludeSelf === 'always');
-    if (!allowed) {
-      fail(
-        `${path}.excludeSelf`,
-        `only allowed with target "topAttack" (or "always" with "allies"), got "${excludeSelf}" with "${target}"`,
-      );
-    }
-  }
-  const persona = parsePersonaTargetFields(v, target, path);
-  // 「自分より最終防御力が低い味方」は allies だけ（自分を除く・状態・段階・部隊の
-  // 絞り込みとは組み合わせない。使い手がいない。plan/design-skill-stage7.md 1.4 節）
-  let targetDefense: TargetDefense | undefined;
-  if (v.targetDefense !== undefined) {
-    targetDefense = oneOf(TARGET_DEFENSES, v.targetDefense, `${path}.targetDefense`);
-    if (target !== 'allies') fail(`${path}.targetDefense`, `only allowed with target "allies", got "${target}"`);
-    for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'targetSquad'] as const) {
-      if (v[key] !== undefined) fail(`${path}.targetDefense`, `cannot be combined with ${key}`);
-    }
-  }
-  if (stat === 'trueDamageConversion' && target !== 'self') {
-    fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
-  }
-  // ペレットの数の stat は自分にだけ（1 パス目が持ち主の発の数え方とゲージに読む）
-  if (stat !== undefined && isPelletStat(stat) && target !== 'self') {
-    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
-  }
-  let scaling: BuffScaling | undefined;
-  if (stat !== undefined) {
-    scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
-    validateScaling(scaling, stat, path);
-    validateFlatChargeTime(stat, scaling, v, path);
-    validateDamageTaken(stat, target, v, path);
-    validateAttackSpeed(stat, target, v, path);
-  }
+  // 欄のまとまりごとの関数を決まった順に呼ぶ。欄は今の順（trigger・target・amplifies か ref・絞り込み・数・scaling・decrease・維持・
+  // スタック・条件・遅れ・perCount・holderHit・assumes）に足す。鍵の順は最小構成の感度の鍵に効く（plan/design-split-long-functions.md 3.1 節）
+  const trigger = parseTimedTrigger(v, path, stat, allowChance);
+  const { target, narrowing, count } = parseTimedTarget(v, trigger, stat, path);
   const effect: GrantTimedFields = { trigger, target };
-  if (stat !== undefined) {
-    // 値は参照する効果から取る
-    if (v.amplifies !== undefined) {
-      effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
-    }
-    // フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
-    else if (isFlagStat(stat)) {
-      if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
-      if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
-    } else {
-      effect.ref = parseRef(v.ref, `${path}.ref`);
-    }
-  }
-  if (targetWeapon !== undefined) effect.targetWeapon = targetWeapon;
-  if (targetElement !== undefined) effect.targetElement = targetElement;
-  if (targetClass !== undefined) effect.targetClass = targetClass;
-  if (targetSquad !== undefined) effect.targetSquad = targetSquad;
-  if (excludeSelf !== undefined) effect.excludeSelf = excludeSelf;
-  Object.assign(effect, persona);
-  if (targetDefense !== undefined) effect.targetDefense = targetDefense;
+  const scaling = stat === undefined ? undefined : parseTimedValue(v, effect, stat, path);
+  Object.assign(effect, narrowing);
   if (v.name !== undefined) fail(`${path}.name`, NAME_REPLACED);
   Object.assign(effect, count);
   if (stat !== undefined) {
@@ -328,9 +235,159 @@ export function parseTimedFields(
     }
   }
   Object.assign(effect, parseTimedDuration(v, stat, target, path));
-  // HP の割合の窓は、きっかけと維持を組で書く（plan/design-mast.md 8 節）。きっかけは秒の維持（durationRef・durationSeconds）とも
-  // 組める（下がったフレームに発火して N 秒。維持の終わりが発火の時に決まるので、攻撃力にも書ける。plan/design-ade.md 2.1 節）
-  const hpTrigger = isSelfHpAtMostTrigger(trigger);
+  validateHpTrigger(effect, stat, path);
+  parseTimedStacks(v, effect, stat, path);
+  parseTimedCondition(v, effect, stat, path);
+  parseTimedDelay(v, effect, stat, path);
+  parseTimedPerCount(v, effect, stat, path);
+  parseHolderHit(v, effect, stat, path);
+  if (stat !== undefined) {
+    // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
+    const timed = { kind: 'timed', ...(effect as TimedFields), stat } as const;
+    validateFixedChargeTime(timed, path);
+    validateChanceTimed(timed, path);
+  }
+  parseAssumes(v, effect, path);
+  return effect;
+}
+
+/**
+ * timed と状態の付与のきっかけ。効果の種類だけが読む形を先に試し、残りを parseTrigger で読む。
+ * 回数のきっかけの数える窓（during）も、damage と同じ意味で書ける（plan/design-skill-stage3.md 1.2 節）。
+ * 「〈名前〉が適用される時」（{ applied }）も書ける（plan/design-skill-stage4.md 1.1 節）
+ * 「チャージ中の時、N 秒ごとに」（{ chargeTick }）と
+ * 「フルチャージした時」（{ chargeFull }）も書ける（plan/design-skill-stage14.md 2.1・2.6 節）
+ * 「遮蔽物の HP を回復した時」（{ coverHealed }）は timed だけ（plan/design-skill-stage17.md 2.1 節）
+ * 「〈カウンタ〉が 100% になった時」（{ counterFull }）は状態の付与だけ
+ * （validateCounterGrant。plan/design-skill-stage19.md 2.1 節）
+ */
+function parseTimedTrigger(
+  v: Record<string, Json>,
+  path: string,
+  stat: BuffStat | undefined,
+  allowChance: boolean,
+): EffectTrigger {
+  const at = `${path}.trigger`;
+  return (
+    parseAppliedTrigger(v.trigger, at) ??
+    parseChargeTrigger(v.trigger, at) ??
+    (stat === undefined
+      ? // 「〈状態〉が終了した時」（{ ended }）も状態の付与だけ（plan/design-grave.md 2.1 節）
+        (parseCounterFullTrigger(v.trigger, at) ?? parseEndedTrigger(v.trigger, at))
+      : (parseCoverHealedTrigger(v.trigger, at) ?? parseSelfHpAtMostTrigger(v.trigger, at))) ??
+    // 自分の状態の間だけ数える窓（during: { state }）は状態の付与だけ
+    parseTrigger(v.trigger, at, {
+      timer: 'withStart',
+      during: stat === undefined ? 'withState' : true,
+      chance: allowChance,
+      reloadEnd: true,
+    })
+  );
+}
+
+/** timed の対象の絞り込みの欄（足す順に並ぶ）。数（targetCount・targetCountRef）は別に返す（値の欄と名前の検査の後に足す） */
+type TimedNarrowing = Pick<
+  TimedFields,
+  'targetWeapon' | 'targetElement' | 'targetClass' | 'targetSquad' | 'excludeSelf' | 'targetDefense'
+> &
+  ReturnType<typeof parsePersonaTargetFields>;
+
+/** 対象と絞り込み。対象ときっかけ・stat の組の検査もここで見る */
+function parseTimedTarget(
+  v: Record<string, Json>,
+  trigger: EffectTrigger,
+  stat: BuffStat | undefined,
+  path: string,
+): { target: BuffTarget; narrowing: TimedNarrowing; count: ReturnType<typeof parseTargetCount> } {
+  const target = oneOf(BUFF_TARGETS, v.target, `${path}.target`);
+  if (target === 'lowestHpRatio') fail(`${path}.target`, LOWEST_HP_RATIO_HEAL_ONLY);
+  // { applied } の効果は順位の対象・強化を書けない（使い手がいない。plan/design-skill-stage4.md 論点 6）。条件は
+  // 自分の状態（selfState）だけ書ける（parseTimedCondition が CONDITION_KEYS_OF.selfStateOnly で見る。
+  // plan/design-mint-prika.md 2.3 節）
+  if (isAppliedTrigger(trigger)) {
+    if (target === 'topAttack') fail(`${path}.target`, 'an effect on an applied trigger cannot target "topAttack"');
+    if (v.amplifies !== undefined) fail(`${path}.amplifies`, 'an effect on an applied trigger cannot amplify');
+  }
+  validateBurstUsersTarget(target, trigger, path);
+  // 「〈状態〉のスキル発動者」は { applied } のきっかけの効果だけ（絞り込みは書けない。plan/design-mint-prika.md 2.4 節）
+  if (target === 'appliedCaster' && !isAppliedTrigger(trigger))
+    fail(`${path}.target`, 'appliedCaster is only allowed with an applied trigger ({ applied })');
+  const narrowing: TimedNarrowing = {};
+  const targetWeapon = parseTargetWeapon(v, target, path);
+  if (targetWeapon !== undefined) narrowing.targetWeapon = targetWeapon;
+  const targetElement = parseTargetElement(v, target, path);
+  if (targetElement !== undefined) narrowing.targetElement = targetElement;
+  const targetClass = parseTargetClass(v, target, path);
+  if (targetClass !== undefined) narrowing.targetClass = targetClass;
+  const targetSquad = parseTargetSquad(v, target, path);
+  if (targetSquad !== undefined) narrowing.targetSquad = targetSquad;
+  const count = parseTargetCount(v, target, path);
+  if (v.excludeSelf !== undefined) {
+    const excludeSelf = oneOf(EXCLUDE_SELF, v.excludeSelf, `${path}.excludeSelf`);
+    // 「自分を除く…味方全体」は allies の always
+    const allowed = target === 'topAttack' || (target === 'allies' && excludeSelf === 'always');
+    if (!allowed) {
+      fail(
+        `${path}.excludeSelf`,
+        `only allowed with target "topAttack" (or "always" with "allies"), got "${excludeSelf}" with "${target}"`,
+      );
+    }
+    narrowing.excludeSelf = excludeSelf;
+  }
+  Object.assign(narrowing, parsePersonaTargetFields(v, target, path));
+  // 「自分より最終防御力が低い味方」は allies だけ（自分を除く・状態・段階・部隊の
+  // 絞り込みとは組み合わせない。使い手がいない。plan/design-skill-stage7.md 1.4 節）
+  if (v.targetDefense !== undefined) {
+    const targetDefense = oneOf(TARGET_DEFENSES, v.targetDefense, `${path}.targetDefense`);
+    if (target !== 'allies') fail(`${path}.targetDefense`, `only allowed with target "allies", got "${target}"`);
+    for (const key of ['excludeSelf', 'targetState', 'targetBurstStep', 'targetSquad'] as const) {
+      if (v[key] !== undefined) fail(`${path}.targetDefense`, `cannot be combined with ${key}`);
+    }
+    narrowing.targetDefense = targetDefense;
+  }
+  if (stat === 'trueDamageConversion' && target !== 'self') {
+    fail(`${path}.target`, 'trueDamageConversion is only allowed with target "self"');
+  }
+  // ペレットの数の stat は自分にだけ（1 パス目が持ち主の発の数え方とゲージに読む）
+  if (stat !== undefined && isPelletStat(stat) && target !== 'self') {
+    fail(`${path}.target`, `${stat} is only allowed with target "self"`);
+  }
+  return { target, narrowing, count };
+}
+
+/** 値: scaling の検査と、強化（amplifies）か ref。scaling は絞り込みの欄の後に足すので返す */
+function parseTimedValue(
+  v: Record<string, Json>,
+  effect: GrantTimedFields,
+  stat: BuffStat,
+  path: string,
+): BuffScaling | undefined {
+  const { target } = effect;
+  const scaling = v.scaling === undefined ? undefined : oneOf(BUFF_SCALINGS, v.scaling, `${path}.scaling`);
+  validateScaling(scaling, stat, path);
+  validateFlatChargeTime(stat, scaling, v, path);
+  validateDamageTaken(stat, target, v, path);
+  validateAttackSpeed(stat, target, v, path);
+  // 値は参照する効果から取る
+  if (v.amplifies !== undefined) {
+    effect.amplifies = parseAmplifies(v, stat, target, `${path}.amplifies`);
+  }
+  // フラグの stat（装弾数無限）は値を持たないので ref も scaling も書かない
+  else if (isFlagStat(stat)) {
+    if (v.ref !== undefined) fail(`${path}.ref`, `${stat} has no value (do not write ref)`);
+    if (scaling !== undefined) fail(`${path}.scaling`, `${stat} has no value (do not write scaling)`);
+  } else {
+    effect.ref = parseRef(v.ref, `${path}.ref`);
+  }
+  return scaling;
+}
+
+/**
+ * HP の割合の窓は、きっかけと維持を組で書く（plan/design-mast.md 8 節）。きっかけは秒の維持（durationRef・durationSeconds）とも
+ * 組める（下がったフレームに発火して N 秒。維持の終わりが発火の時に決まるので、攻撃力にも書ける。plan/design-ade.md 2.1 節）
+ */
+function validateHpTrigger(effect: GrantTimedFields, stat: BuffStat | undefined, path: string): void {
+  const hpTrigger = isSelfHpAtMostTrigger(effect.trigger);
   const untilHpAbove = effect.durationUntil === 'selfHpAbove';
   const inSeconds = effect.durationRef !== undefined || effect.durationSeconds !== undefined;
   if (untilHpAbove && !hpTrigger)
@@ -343,14 +400,21 @@ export function parseTimedFields(
       `${path}.stat`,
       `the trigger { selfHpAtMostRef } cannot carry "${stat}" (it moves the HP ratio the trigger reads)`,
     );
-  // 効果のあるスタック
+}
+
+/** 効果のあるスタック（maxStacks・maxStacksRef）と、維持との組。発数の維持と条件の組もここで見る（今の検査の順を守るため） */
+function parseTimedStacks(
+  v: Record<string, Json>,
+  effect: GrantTimedFields,
+  stat: BuffStat | undefined,
+  path: string,
+): void {
   if (v.maxStacks !== undefined && v.maxStacksRef !== undefined)
     fail(path, 'at most one of maxStacks and maxStacksRef');
   if (v.maxStacks !== undefined) effect.maxStacks = parsePositiveInt(v.maxStacks, `${path}.maxStacks`);
   if (v.maxStacksRef !== undefined) effect.maxStacksRef = parseRef(v.maxStacksRef, `${path}.maxStacksRef`);
-  if (stat !== undefined && isFlagStat(stat) && (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)) {
-    fail(path, `${stat} cannot stack`);
-  }
+  const stacks = effect.maxStacks !== undefined || effect.maxStacksRef !== undefined;
+  if (stat !== undefined && isFlagStat(stat) && stacks) fail(path, `${stat} cannot stack`);
   const byShots = effect.durationShots !== undefined || effect.durationShotsRef !== undefined;
   // 発数の維持のスタックは、付き直すたびに 1 段増え、持ち主の N 発目で全部切れる（timed だけ。
   // 状態の付与は parse/state.ts が弾く。plan/design-zwei.md 2.3 節）
@@ -358,116 +422,140 @@ export function parseTimedFields(
   // 発数で切る。「フルアクティブ状態の場合のみ、フルチャージした時」の 1 発間の▲。plan/design-skill-stage14.md 2.7 節）
   if (byShots && isRecord(v.condition) && Object.keys(v.condition).some((key) => key !== 'selfState'))
     fail(`${path}.condition`, 'a duration in shots can only have the condition selfState');
-  if (
-    (effect.durationUntil === 'fullBurstEnd' || effect.durationUntil === 'reloadEnd') &&
-    (effect.maxStacks !== undefined || effect.maxStacksRef !== undefined)
-  ) {
+  if ((effect.durationUntil === 'fullBurstEnd' || effect.durationUntil === 'reloadEnd') && stacks) {
     fail(path, 'a duration until an event cannot stack');
   }
-  // 「自分が 〈stat〉 増加状態なら」「フルバーストタイムなら」など。
-  // 鍵はどれも満たすときだけ（AND。plan/design-named-state.md 10 節の論点 8）
-  if (v.condition !== undefined) {
-    const condition = parseCondition(
-      v.condition,
+}
+
+/**
+ * 発火の条件。「自分が 〈stat〉 増加状態なら」「フルバーストタイムなら」など。
+ * 鍵はどれも満たすときだけ（AND。plan/design-named-state.md 10 節の論点 8）
+ */
+function parseTimedCondition(
+  v: Record<string, Json>,
+  effect: GrantTimedFields,
+  stat: BuffStat | undefined,
+  path: string,
+): void {
+  if (v.condition === undefined) return;
+  const { trigger, target } = effect;
+  const condition = parseCondition(
+    v.condition,
+    `${path}.condition`,
+    isAppliedTrigger(trigger) ? CONDITION_KEYS_OF.selfStateOnly : CONDITION_KEYS_OF.timed,
+  );
+  if (condition.inFullBurst === true && stat !== undefined && isFirstPassTrackedStat(stat)) {
+    fail(
       `${path}.condition`,
-      isAppliedTrigger(trigger) ? CONDITION_KEYS_OF.selfStateOnly : CONDITION_KEYS_OF.timed,
+      `inFullBurst is not supported for "${stat}" (its window is tracked inside the first pass)`,
     );
-    if (condition.inFullBurst === true && stat !== undefined && isFirstPassTrackedStat(stat)) {
+  }
+  // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
+  if (
+    condition.selfBuffed !== undefined &&
+    stat !== undefined &&
+    (stat === condition.selfBuffed || isStateStat(stat))
+  ) {
+    fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
+  }
+  if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
+  // timed の selfHp は「以下」の形だけ（発火のフレームの HP の割合で見る。件の一覧の
+  // fireContextHolds。plan/design-scarlet.md 2.2 節）。使い手のいない形は書けない: 状態の付与（中身の stat
+  // を見ない）、最終防御力の比べの対象（段 2 は fireContextHolds を
+  // 通らない）、1 パス目で窓を追う stat（1 パス目の窓の登録が件の一覧の判定と別に回る）、HP の割合を動かす stat（自分の条件を自分で満たす）
+  if (condition.selfHp !== undefined) {
+    const at = `${path}.condition.selfHp`;
+    if (!isSelfHpAtMost(condition.selfHp))
+      fail(at, 'timed only takes { atMostRef } or { atMost } (judged at the firing frame)');
+    if (stat === undefined) fail(at, 'selfHp is only supported on a timed effect with a stat, not on a grant');
+    if (isFirstPassTrackedStat(stat) || isMaxHpStat(stat))
+      fail(at, `selfHp is not supported for "${stat}" (tracked in the first pass, or it moves the HP ratio)`);
+    if (v.targetDefense !== undefined) fail(at, 'selfHp cannot be combined with targetDefense');
+  }
+  validateUsedBurst(condition, trigger, `${path}.condition`);
+  validateBurstStep(condition, trigger, `${path}.condition`);
+  effect.condition = condition;
+}
+
+/**
+ * 発火から付くまでの遅れ（delayFrames）。確率のきっかけの検査（validateChanceTimed）より先に見る
+ * （plan/design-new-chars-1029.md 10.2 節の e）。付与（stat が undefined）は時間の周期のきっかけのときだけ書け、周期の発火の delayFrames 後の
+ * フレームに付ける（マリアン：クイーンの槍の命中で付く弱点露出。V-0538）
+ */
+function parseTimedDelay(
+  v: Record<string, Json>,
+  effect: GrantTimedFields,
+  stat: BuffStat | undefined,
+  path: string,
+): void {
+  if (v.delayFrames === undefined) return;
+  const { trigger } = effect;
+  if (stat === undefined) {
+    if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames in a state grant needs a timer trigger');
+    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+  } else if (isTimerTrigger(trigger)) {
+    // V-0602: 時間の周期のきっかけの timed も、周期の発火の delayFrames 後から（エーテルの S2 の防御力▼は、S2 のヒットから。
+    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
+    if (isFirstPassTrackedStat(stat)) {
       fail(
-        `${path}.condition`,
-        `inFullBurst is not supported for "${stat}" (its window is tracked inside the first pass)`,
+        `${path}.delayFrames`,
+        `delayFrames on a timer trigger is not supported for "${stat}" (its window is tracked inside the first pass)`,
       );
     }
-    // 条件付きの効果が状態を作ると連鎖するので、同じ stat と状態だけの stat は出せない（plan/design-stage11-modernia.md 2.4 節）
-    if (
-      condition.selfBuffed !== undefined &&
-      stat !== undefined &&
-      (stat === condition.selfBuffed || isStateStat(stat))
-    ) {
-      fail(`${path}.stat`, `a conditional effect cannot give "${stat}" (it would feed its own condition)`);
-    }
-    if (target === 'topAttack') fail(`${path}.target`, 'a conditional effect cannot target "topAttack"');
-    // timed の selfHp は「以下」の形だけ（発火のフレームの HP の割合で見る。件の一覧の
-    // fireContextHolds。plan/design-scarlet.md 2.2 節）。使い手のいない形は書けない: 状態の付与（中身の stat
-    // を見ない）、最終防御力の比べの対象（段 2 は fireContextHolds を
-    // 通らない）、1 パス目で窓を追う stat（1 パス目の窓の登録が件の一覧の判定と別に回る）、HP の割合を動かす stat（自分の条件を自分で満たす）
-    if (condition.selfHp !== undefined) {
-      const at = `${path}.condition.selfHp`;
-      if (!isSelfHpAtMost(condition.selfHp))
-        fail(at, 'timed only takes { atMostRef } or { atMost } (judged at the firing frame)');
-      if (stat === undefined) fail(at, 'selfHp is only supported on a timed effect with a stat, not on a grant');
-      if (isFirstPassTrackedStat(stat) || isMaxHpStat(stat))
-        fail(at, `selfHp is not supported for "${stat}" (tracked in the first pass, or it moves the HP ratio)`);
-      if (v.targetDefense !== undefined) fail(at, 'selfHp cannot be combined with targetDefense');
-    }
-    validateUsedBurst(condition, trigger, `${path}.condition`);
-    validateBurstStep(condition, trigger, `${path}.condition`);
-    effect.condition = condition;
+    effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
+  } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+}
+
+/** 値 × 自分の状態のスタック数（perCount。plan/design-maids.md 2.1 節）。出来事のきっかけだけ */
+function parseTimedPerCount(
+  v: Record<string, Json>,
+  effect: GrantTimedFields,
+  stat: BuffStat | undefined,
+  path: string,
+): void {
+  if (v.perCount === undefined) return;
+  const at = `${path}.perCount`;
+  if (stat === undefined) fail(at, 'perCount in a state grant is not supported (use stacksFrom)');
+  const per = v.perCount;
+  if (!isRecord(per) || Object.keys(per).length !== 1 || per.state === undefined) fail(at, 'expected { state }');
+  const { trigger } = effect;
+  if (typeof trigger !== 'string' || !PER_COUNT_TIMED_TRIGGERS.includes(trigger))
+    fail(at, `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}`);
+  for (const key of [
+    'maxStacks',
+    'maxStacksRef',
+    'amplifies',
+    'durationShots',
+    'durationShotsRef',
+    'durationUntil',
+  ] as const) {
+    if (v[key] !== undefined) fail(at, `perCount cannot be combined with ${key}`);
   }
-  // 確率のきっかけの検査より先に見る（plan/design-new-chars-1029.md 10.2 節の e）。
-  // 付与（stat が undefined）は時間の周期のきっかけのときだけ書け、周期の発火の delayFrames 後のフレームに付ける（マリアン：クイーンの
-  // 槍の命中で付く弱点露出。V-0538）
-  if (v.delayFrames !== undefined) {
-    if (stat === undefined) {
-      if (!isTimerTrigger(trigger)) fail(`${path}.delayFrames`, 'delayFrames in a state grant needs a timer trigger');
-      effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
-    } else if (isTimerTrigger(trigger)) {
-      // V-0602: 時間の周期のきっかけの timed も、周期の発火の delayFrames 後から（エーテルの S2 の防御力▼は、S2 のヒットから。
-      // C-0453・C-0832）。窓は 2 パス目の件（skills/holders.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
-      if (isFirstPassTrackedStat(stat)) {
-        fail(
-          `${path}.delayFrames`,
-          `delayFrames on a timer trigger is not supported for "${stat}" (its window is tracked inside the first pass)`,
-        );
-      }
-      effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
-    } else effect.delayFrames = parseShotCountDelay(v.delayFrames, trigger, `${path}.delayFrames`);
+  effect.perCount = { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
+}
+
+/** 「〈状態〉の対象に命中させた味方に」（holderHit。plan/design-killer-wife.md 2.2 節） */
+function parseHolderHit(
+  v: Record<string, Json>,
+  effect: GrantTimedFields,
+  stat: BuffStat | undefined,
+  path: string,
+): void {
+  if (v.holderHit === undefined) return;
+  const at = `${path}.holderHit`;
+  const hit = v.holderHit;
+  if (stat === undefined) fail(at, 'holderHit in a state grant is not supported');
+  if (!isRecord(hit) || Object.keys(hit).length !== 1 || hit.withinRef === undefined)
+    fail(at, 'expected { withinRef }');
+  if (effect.target !== 'self' && effect.target !== 'allies')
+    fail(at, `only allowed with target "self" or "allies", got "${effect.target}"`);
+  if (effect.durationRef === undefined && effect.durationSeconds === undefined)
+    fail(at, 'holderHit needs a duration in seconds (durationRef or durationSeconds)');
+  if (isChanceTrigger(effect.trigger)) fail(at, 'holderHit cannot be combined with a chance trigger');
+  for (const key of ['maxStacks', 'maxStacksRef', 'condition', 'amplifies', 'delayFrames', 'perCount'] as const) {
+    if (v[key] !== undefined) fail(at, `holderHit cannot be combined with ${key}`);
   }
-  // 値 × 自分の状態のスタック数（plan/design-maids.md 2.1 節）。出来事のきっかけだけ
-  if (v.perCount !== undefined) {
-    const at = `${path}.perCount`;
-    if (stat === undefined) fail(at, 'perCount in a state grant is not supported (use stacksFrom)');
-    const per = v.perCount;
-    if (!isRecord(per) || Object.keys(per).length !== 1 || per.state === undefined) fail(at, 'expected { state }');
-    if (typeof trigger !== 'string' || !PER_COUNT_TIMED_TRIGGERS.includes(trigger))
-      fail(at, `perCount needs one of the triggers ${PER_COUNT_TIMED_TRIGGERS.join(', ')}`);
-    for (const key of [
-      'maxStacks',
-      'maxStacksRef',
-      'amplifies',
-      'durationShots',
-      'durationShotsRef',
-      'durationUntil',
-    ] as const) {
-      if (v[key] !== undefined) fail(at, `perCount cannot be combined with ${key}`);
-    }
-    effect.perCount = { state: parseNamedStateId(per.state, `${at}.state`, 'ally') };
-  }
-  // 「〈状態〉の対象に命中させた味方に」（plan/design-killer-wife.md 2.2 節）
-  if (v.holderHit !== undefined) {
-    const at = `${path}.holderHit`;
-    const hit = v.holderHit;
-    if (stat === undefined) fail(at, 'holderHit in a state grant is not supported');
-    if (!isRecord(hit) || Object.keys(hit).length !== 1 || hit.withinRef === undefined)
-      fail(at, 'expected { withinRef }');
-    if (target !== 'self' && target !== 'allies')
-      fail(at, `only allowed with target "self" or "allies", got "${target}"`);
-    if (effect.durationRef === undefined && effect.durationSeconds === undefined)
-      fail(at, 'holderHit needs a duration in seconds (durationRef or durationSeconds)');
-    if (isChanceTrigger(trigger)) fail(at, 'holderHit cannot be combined with a chance trigger');
-    for (const key of ['maxStacks', 'maxStacksRef', 'condition', 'amplifies', 'delayFrames', 'perCount'] as const) {
-      if (v[key] !== undefined) fail(at, `holderHit cannot be combined with ${key}`);
-    }
-    effect.holderHit = { withinRef: parseRef(hit.withinRef, `${at}.withinRef`) };
-  }
-  if (stat !== undefined) {
-    // 値のある timed の維持は DurationUntil だけ（{ counterEmpty } は付与だけ。parseTimedDuration）
-    const timed = { kind: 'timed', ...(effect as TimedFields), stat } as const;
-    validateFixedChargeTime(timed, path);
-    validateChanceTimed(timed, path);
-  }
-  parseAssumes(v, effect, path);
-  return effect;
+  effect.holderHit = { withinRef: parseRef(hit.withinRef, `${at}.withinRef`) };
 }
 
 /**
@@ -558,7 +646,6 @@ function validateFixedChargeTime(effect: TimedEffect, path: string): void {
   if (effect.condition !== undefined) fail(`${path}.condition`, 'fixedChargeTime cannot have a condition');
 }
 
-/** durationRef / durationSeconds のちょうど片方 */
 /**
  * timed の維持。秒（durationRef / durationSeconds）か発数（durationShots / durationShotsRef）のちょうど 1 つ。
  * 発数の窓は 1 パス目の射撃の列から後で決めるので、1 パス目のループの中で窓を追う stat には書けない
