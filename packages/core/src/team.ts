@@ -1,5 +1,5 @@
 // Stage 3〜: 編成の入力（枠・条件・スキル）と結果の型、入力の検証。結果（TeamResult）は sim/teamResult.ts の simTeamResult が作る。
-// 1 パス目は frame/plan.ts、計算は runSimulation（sim/engine.ts）の 1 本。
+// 1 パス目は frame/plan.ts、計算の入口は sim/engine.ts の runSimulation。
 import type { BurstSchedule, BurstScheduleModel, BurstSummary } from './burst/schedule.ts';
 import type { CadenceResult } from './cadence.ts';
 import {
@@ -225,7 +225,7 @@ export type SlotSegmentResult = {
   /** 1 パス目の射撃の列のうち、このグループに入る発数（整数） */
   triggers: number;
   /**
-   * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた（値はこれだけ）
+   * Stage 10: トリガー数の出どころ。'shots' = 1 パス目の射撃の列の発数を数えた
    */
   triggerSource: 'shots';
   damage: number;

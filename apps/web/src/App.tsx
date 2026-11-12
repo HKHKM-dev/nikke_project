@@ -156,7 +156,7 @@ export function App() {
       }),
     [team, cache.characters, skillsStatuses, masters, enemyMaster],
   );
-  // 計算は runSimulation → simTeamResult の 1 本で、Web Worker で回す（plan/design-unify-sim-calc.md 6.2 節）。欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
+  // 計算は Web Worker で回す（plan/design-unify-sim-calc.md 6.2 節）。欄の表示は計算を待たない。計算中は前の結果を出したまま印を出し、
   // 古い入力の結果は捨てる（compute.ts の LatestComputeQueue）。
   // 結果はその計算の元（shown.source）と組で届く。結果の詳細はその元から読み、スロットの欄は slotResultFor で合わせる
   // 計算の結果を入力ごとに覚える（compute.ts の ComputeCache）。今の編成と全編成の合計で共有し、編成を切り替えたときや

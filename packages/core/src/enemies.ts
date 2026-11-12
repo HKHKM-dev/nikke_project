@@ -674,7 +674,7 @@ export function enemyInputOf(preset: EnemyPreset): EnemyInput {
   return { defence: preset.defence, element: preset.element, hasCore: preset.hasCore };
 }
 
-/** 入力と同じ値のプリセット（上書きして一致しなければ undefined = カスタム） */
+/** 入力と同じ値のプリセット（上書きして一致しなければ undefined = カスタム）。いまはテストだけが呼ぶ */
 export function matchingEnemyPreset(presets: readonly EnemyPreset[], enemy: EnemyInput): EnemyPreset | undefined {
   return presets.find((p) => p.defence === enemy.defence && p.element === enemy.element && p.hasCore === enemy.hasCore);
 }

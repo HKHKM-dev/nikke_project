@@ -5,7 +5,7 @@
 // 流れ: トリガーの発火フレーム → バフ窓 [start, end)（同一効果の再発火は和集合 = 上書き延長）
 //       → 境界を集めて区間に割る → 区間ごとに枠の BuffTotals を作る → 同じバフ状態の区間をグループにまとめる。
 //
-// sim の 2 パス目は区間ごとに 1 トリガーの値を出し、画面の形（sim/teamResult.ts）は同じバフ状態の区間をグループにまとめて出す。
+// sim の 2 パス目は区間ごとに 1 トリガーの値を出す。同じバフ状態の区間のまとめ方は groupTimeline。
 // timed 効果が 1 つもなければグループは「通常区間 / フルバースト区間」の 2 つに退化し、Stage 5 とまったく同じ計算になる。
 // Stage 8: 射撃の回数（frame/shots.ts の射撃の列から）・発動の回数・バースト N 段階突入時のトリガーを足した。
 // 射撃の回数で付くバフの窓は発火フレームの次のフレームから始める（トリガーになった射撃自身には乗らない）。
@@ -166,7 +166,7 @@ export function appliedFrames(
   return [...new Set(frames)].sort((a, b) => a - b);
 }
 
-/** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの。画面の形（sim/teamResult.ts）の通常攻撃の内訳はこの単位 */
+/** 1 枠ぶんの「同じバフ状態の区間」をまとめたもの（groupTimeline） */
 export type TimelineGroup = {
   key: string;
   fullBurst: boolean;

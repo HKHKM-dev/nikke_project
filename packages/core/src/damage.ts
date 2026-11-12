@@ -649,7 +649,7 @@ function perShotDamage(
   return total;
 }
 
-/** 1 区間の静的 DPS。1 トリガーの式 × 発射サイクルの平均トリガー数 × 秒数 */
+/** 1 区間の静的 DPS。1 トリガーの式 × 発射サイクルの平均トリガー数 × 秒数。いまはテストだけが呼ぶ */
 export function computeDamage(input: DamageInput): DamageResult {
   const { character, condition } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;

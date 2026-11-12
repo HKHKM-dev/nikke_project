@@ -60,7 +60,7 @@ export function chancePieces(
 /**
  * 小片の値を丸める桁（skills/timeline.ts の KEY_DIGITS と同じ。循環 import を避けて写す。テストで突き合わせる）。小片の値は
  * 発ごとに細かく違うので、丸めないと、鍵（区間の合計を 6 桁で文字列にしたもの）が同じなのに値の違う区間が 1 つのグループに
- * まとまり、画面の形に出すグループの 1 トリガーの値（先頭の区間の値。sim/teamResult.ts）が中の区間の値とずれる。丸めの誤差は値の 5 × 10⁻⁷ 以下
+ * まとまり、グループの値（sim/teamResult.ts。先頭の区間の値）が中の区間とずれる。丸めの誤差は値の 5 × 10⁻⁷ 以下
  */
 export const CHANCE_VALUE_DIGITS = 6;
 

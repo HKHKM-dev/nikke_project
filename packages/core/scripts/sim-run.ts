@@ -19,7 +19,6 @@
 // --mid-far A|B|C で中遠の着地点を 1 か所に固定する（録画と比べるとき用。省略は 3 か所の配分）。--near A,B で近の 1 回目・2 回目の
 // 着地点を固定する（C-0155。省略は 2 か所の配分）。--far A,B で遠の 1 回目・2 回目の着地点を固定する（C-0477。省略は 2 か所の
 // 配分）。自動の枠は、使った条件の発数平均を出す。
-// 計算は runSimulation → simTeamResult の 1 本（plan/design-unify-sim-calc.md 5.2 節）。
 // --skill-levels resourceId:slot=Lv をカンマ区切り（slot は skill1・skill2・burst。例 191:skill2=4,260:burst=4）。省略は全部 Lv10
 // （実ビルドの録画と比べるとき用。V-0065）。
 // --jump-windows で、出来事のセットの狙えない窓と着地点の区間の切れ目を、録画で読んだ窓に置き換える（V-0088。照合の
