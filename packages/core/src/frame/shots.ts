@@ -89,7 +89,10 @@ export function fullChargeFrameSet(log: ShotLog): (frame: number) => boolean {
   return (frame) => !partial.has(frame);
 }
 
-/** 各枠の射手を frames フレーム回し、発射フレームを記録する。空枠は null */
+/**
+ * 各枠の射手を frames フレーム回し、発射フレームを記録する。空枠は null。本番の計算は呼ばない（1 パス目の射撃の列は
+ * frame/firstPass.ts が作る）。バフなしの列として、planDynamicSchedule と 1 パス目の比べ（frame/__tests__/firstPass.test.ts）が使う
+ */
 export function planShots(
   slots: readonly ({ character: CharacterData } | null)[],
   frames: number,

@@ -10,7 +10,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { EnemyEvent, EnemyInput } from '../damage.ts';
 import { computeFixedSpecAttack, FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
-import { runSimulation, simGroupTotals, type SimResult } from '../sim/engine.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runSimulation, type SimResult } from '../sim/engine.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { TreasurePhase } from '../skills/treasure.ts';
 import { parseSkillDefinition } from '../skills/types.ts';
@@ -74,7 +75,9 @@ describe('calc は全枠・全グループを射撃の列から数える（一�
         c.segments.every((g) => g.triggerSource === 'shots'),
         `slot ${i}`,
       ).toBe(true);
-      expect(c.segments.map((g) => g.triggers)).toEqual(simGroupTotals(sim, i).map((g) => g.triggers));
+      expect(c.segments.map((g) => g.triggers)).toEqual(
+        c.segments.map((g) => countShotsInRanges(sim.shots[i]!.frames, g.ranges)),
+      );
       // 区間は [0, frames) を隙間なく覆うので、全グループの発数の和は射撃の列の長さ
       expect(c.segments.reduce((n, g) => n + g.triggers, 0)).toBe(sim.shots[i]!.frames.length);
       // 残るのは浮動小数点の加算順の違いだけ（plan/design-unify-sim-calc.md 4.2 節）

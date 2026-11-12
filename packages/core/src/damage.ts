@@ -2,8 +2,6 @@
 // 常時・持続のバフ（buffs）を差し込める。フルバースト区間は condition.fullBurst で倍率グループに +0.5 が乗る。
 // 射撃ごとの倍率ダメージ（「通常攻撃が命中した時、最終攻撃力の X% の追加ダメージ」）は 1 トリガーの値に足す（perShot）。
 // 使用武器の変更（殲滅モード）が効いている区間は、武器倍率・コア倍率を変更後の武器（buffs.weapon）から取る。
-import { computeCadence, type CadenceResult } from './cadence.ts';
-import type { FiringParams } from './frame/firing.ts';
 import { elementMultiplier } from './element.ts';
 import type { ResolvedSkillDamage } from './skills/burstDamage.ts';
 import {
@@ -19,15 +17,7 @@ import {
 } from './skills/buffs.ts';
 import { computeStat, type GrowthInput } from './stats.ts';
 import type { CharacterData, Element, LocalizedText, ShotParams, TargetProfile } from './types.ts';
-import {
-  DEFAULT_WEAPON_MODEL,
-  hasSpinUp,
-  isChargeWeapon,
-  isDualWieldWeapon,
-  muzzleHitsOf,
-  type DualWieldWeapon,
-  type WeaponModel,
-} from './weapons.ts';
+import { hasSpinUp, isChargeWeapon, isDualWieldWeapon, muzzleHitsOf, type DualWieldWeapon } from './weapons.ts';
 
 /** フルバースト区間中の通常攻撃に、倍率グループ (1 + コア + 会心 + 距離) へ加算される補正 */
 export const FULL_BURST_BOOST = 0.5;
@@ -272,10 +262,6 @@ export type TriggerCondition = {
   hitsPerShot?: number;
 };
 
-export type ConditionInput = TriggerCondition & {
-  durationSeconds: number;
-};
-
 export type TriggerDamageInput = {
   character: CharacterData;
   growth: GrowthInput;
@@ -289,13 +275,6 @@ export type TriggerDamageInput = {
   perShot?: readonly ResolvedSkillDamage[];
   /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略は ATTACK_ROUNDING（いまのモデル） */
   attackRounding?: AttackRounding;
-};
-
-export type DamageInput = TriggerDamageInput & {
-  condition: ConditionInput;
-  model?: WeaponModel;
-  /** Stage 10: 発射サイクルに使う射撃の実効値（常時分の射撃バフを畳み込んだもの）。省略は基礎値 */
-  firing?: FiringParams;
 };
 
 export type ModelNoteLevel = 'unsupported' | 'approx';
@@ -343,13 +322,6 @@ export type TriggerDamage = {
    * 的の表のヒット数はきっかけ・ゲージに数えない（C-0198）が、二丁持ちのヒットは数える（frame/firstPass.ts。C-1023・C-1019）
    */
   hitsPerShot: number;
-};
-
-export type DamageResult = TriggerDamage & {
-  cadence: CadenceResult;
-  dps: number;
-  totalDamage: number;
-  notes: ModelNote[];
 };
 
 /** バフ前の攻撃力。attackOverride（射撃場スペック固定など）があればそれ、無ければ育成値から算出する */
@@ -646,23 +618,4 @@ function perShotDamage(
   let total = 0;
   for (const e of effects) total += common * e.multiplier * (e.damageType === 'distributed' ? distributed : 1);
   return total;
-}
-
-/** 1 区間の静的 DPS。1 トリガーの式 × 発射サイクルの平均トリガー数 × 秒数。いまはテストだけが呼ぶ */
-export function computeDamage(input: DamageInput): DamageResult {
-  const { character, condition } = input;
-  const model = input.model ?? DEFAULT_WEAPON_MODEL;
-  if (condition.durationSeconds < 0) throw new RangeError('durationSeconds must be >= 0');
-
-  const trigger = computeTriggerDamage(input);
-  const cadence = computeCadence(input.buffs?.weapon?.shot ?? character.shot, model, input.firing);
-  const dps = trigger.perTrigger * cadence.triggersPerSecond;
-
-  return {
-    ...trigger,
-    cadence,
-    dps,
-    totalDamage: dps * condition.durationSeconds,
-    notes: modelNotes(character),
-  };
 }

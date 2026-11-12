@@ -11,7 +11,8 @@ import { slotPieces } from './historyHelpers.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import { slotsByStep, type BurstScheduleModel } from '../burst/schedule.ts';
 import type { EnemyInput } from '../damage.ts';
-import { runSimulation, simGroupTotals, simIntervalTotals } from '../sim/engine.ts';
+import { countShotsInRanges } from '../frame/shots.ts';
+import { runSimulation, simIntervalTotals } from '../sim/engine.ts';
 import { simTeamResult } from '../sim/teamResult.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, TimedEffect } from '../skills/types.ts';
@@ -19,9 +20,10 @@ import { type SlotCondition, type TeamInput, type TeamSlotInput, type TeamSlotRe
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
+import { averageCadence } from './averageCadence.ts';
+import { makeCharacter } from './fixtures.ts';
 
 const H = FIXED_BURST_CYCLE.normalFrames;
-import { makeCharacter } from './fixtures.ts';
 
 /**
  * 18,000 秒（5 時間）を sim で回す収束のテストの制限時間。単独でも 2〜4 秒かかり、CI でほかのテスト（vite build を回す
@@ -121,11 +123,12 @@ const team: TeamSlotInput[] = [
 ];
 
 /**
- * 平均レートの検算の基準: 通常攻撃をグループごとに「常時分の平均レート（cadence）× 秒数 × 1 トリガーの値」で置いた枠の合計
- * （バーストスキルと倍率ダメージは同じ値）。射撃に効く持続バフの無い編成でだけ意味がある（cadence は常時分の射撃バフまで）
+ * 平均レートの検算の基準: 通常攻撃をグループごとに「常時分の平均レート（averageCadence）× 秒数 × 1 トリガーの値」で置いた枠の合計
+ * （バーストスキルと倍率ダメージは同じ値）。射撃に効く持続バフの無い編成でだけ意味がある（平均レートは常時分の射撃バフまで）
  */
 function averageRateTotal(c: TeamSlotResult): number {
-  const normal = c.segments.reduce((a, g) => a + c.cadence.triggersPerSecond * g.seconds * g.trigger.perTrigger, 0);
+  const rate = averageCadence(c).triggersPerSecond;
+  const normal = c.segments.reduce((a, g) => a + rate * g.seconds * g.trigger.perTrigger, 0);
   return normal + c.burst.totalDamage + c.skillHits.totalDamage;
 }
 
@@ -147,11 +150,11 @@ function expectWithinAverageRate(run: Run, slotCount: number) {
     const s = sim.slots[i]!;
     const c = result.slots[i]!;
     expect(relDiff(s.totalDamage, averageRateTotal(c)), `slot ${i}`).toBeLessThan(0.05);
-    const groups = simGroupTotals(sim, i);
+    const rate = averageCadence(c).triggersPerSecond;
     c.segments.forEach((g, j) => {
       const bound = s.character.shot.maxAmmo * g.ranges.length;
-      const average = c.cadence.triggersPerSecond * g.seconds;
-      expect(Math.abs(groups[j]!.triggers - average), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
+      const average = rate * g.seconds;
+      expect(Math.abs(g.triggers - average), `slot ${i} group ${j}`).toBeLessThanOrEqual(bound);
     });
   }
 }
@@ -202,7 +205,7 @@ describe('frame loop vs average rate: discretization error bounds', () => {
     for (let i = 0; i < team.length; i++) {
       const s = sim.slots[i]!;
       const c = result.slots[i]!;
-      const expected = c.cadence.triggersPerSecond * 180;
+      const expected = averageCadence(c).triggersPerSecond * 180;
       expect(Math.abs(simIntervalTotals(s).nonFullBurst.triggers - expected)).toBeLessThanOrEqual(
         s.character.shot.maxAmmo,
       );
@@ -410,7 +413,9 @@ describe('simTeamResult: sim in the TeamResult shape', () => {
       expect(v.normalDamage).toBe(s.normalDamage);
       expect(v.passiveBuffs).toEqual(s.passiveBuffs);
       expect(v.segments.reduce((sum, g) => sum + g.damage, 0)).toBeCloseTo(s.normalDamage, 6);
-      expect(v.segments.map((g) => g.triggers)).toEqual(simGroupTotals(sim, i).map((g) => g.triggers));
+      expect(v.segments.map((g) => g.triggers)).toEqual(
+        v.segments.map((g) => countShotsInRanges(sim.shots[i]!.frames, g.ranges)),
+      );
       expect(v.segments.every((g) => g.triggerSource === 'shots')).toBe(true);
       expect(v.burst.activations.map((a) => a.seconds)).toEqual(s.burst.activations.map((f) => framesToGameSeconds(f)));
       expect(v.burst.totalDamage).toBeCloseTo(s.burst.damage, 6);

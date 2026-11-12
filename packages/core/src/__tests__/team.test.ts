@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { computeDamage, type EnemyInput } from '../damage.ts';
+import { computeCadence } from '../cadence.ts';
+import { computeTriggerDamage, type EnemyInput } from '../damage.ts';
 import { ZERO_BUFFS } from '../skills/buffs.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition, SkillEntry } from '../skills/types.ts';
@@ -29,14 +30,15 @@ describe('runTeam', () => {
     const input = { slots: [ar, smg, null, sr], enemy, durationSeconds: 180 };
     const team = runTeam(input);
     const shots = planTeamRun(input).shots;
-    const individual = [ar, smg, sr].map((s) =>
-      computeDamage({ character: s.character, growth, enemy, condition: { ...condition, durationSeconds: 180 } }),
-    );
+    const individual = [ar, smg, sr].map((s) => ({
+      perTrigger: computeTriggerDamage({ character: s.character, growth, enemy, condition }).perTrigger,
+      triggersPerSecond: computeCadence(s.character.shot).triggersPerSecond,
+    }));
     expect(team.filledCount).toBe(3);
     expect(team.slots).toHaveLength(4);
     expect(team.slots[2]).toBeNull();
     expect(team.slots[3]?.index).toBe(3);
-    // 一本化の段 A-1: 通常攻撃は 1 パス目の射撃の列の発数 × 1 トリガーの値。単体の計算（computeDamage。平均レート × 秒数）とは、
+    // 一本化の段 A-1: 通常攻撃は 1 パス目の射撃の列の発数 × 1 トリガーの値。平均レート（computeCadence）× 秒数とは、
     // 発射サイクルの離散化（1 マガジン未満）だけ違う。持続バフもフルバーストもないので区間は 1 つ
     let expectedTotal = 0;
     for (const [slotIndex, r] of [
@@ -47,11 +49,10 @@ describe('runTeam', () => {
       const c = team.slots[slotIndex]!;
       expect(c.segments).toHaveLength(1);
       expect(c.segments[0]!.trigger.perTrigger).toBe(r.perTrigger);
-      expect(c.cadence).toEqual(r.cadence);
       const count = shots[slotIndex]!.frames.length;
       expect(c.segments[0]!.triggers).toBe(count);
       expect(relDiff(c.normalDamage, count * r.perTrigger)).toBeLessThan(1e-9);
-      expect(Math.abs(count - r.cadence.triggersPerSecond * 180)).toBeLessThanOrEqual(c.character.shot.maxAmmo);
+      expect(Math.abs(count - r.triggersPerSecond * 180)).toBeLessThanOrEqual(c.character.shot.maxAmmo);
       expect(relDiff(c.dps, c.totalDamage / 180)).toBeLessThan(1e-9);
       expectedTotal += c.totalDamage;
     }
@@ -81,18 +82,15 @@ describe('runTeam', () => {
   it('a single-slot team counts the shots of that character and shares the whole total', () => {
     const input = { slots: [sr], enemy, durationSeconds: 90 };
     const team = runTeam(input);
-    const single = computeDamage({
-      character: sr.character,
-      growth,
-      enemy,
-      condition: { ...condition, durationSeconds: 90 },
-    });
+    const single = computeTriggerDamage({ character: sr.character, growth, enemy, condition });
     const count = planTeamRun(input).shots[0]!.frames.length;
     expect(team.slots[0]?.segments[0]?.trigger.perTrigger).toBe(single.perTrigger);
     expect(team.slots[0]?.segments[0]?.triggers).toBe(count);
     expect(relDiff(team.slots[0]!.normalDamage, count * single.perTrigger)).toBeLessThan(1e-9);
     // 平均レートの単体計算（90 秒）とは 1 マガジン未満の離散化の差だけ（90 秒 = 5,294f = 89.998 秒）
-    expect(Math.abs(count - single.cadence.triggersPerSecond * 90)).toBeLessThanOrEqual(sr.character.shot.maxAmmo);
+    expect(Math.abs(count - computeCadence(sr.character.shot).triggersPerSecond * 90)).toBeLessThanOrEqual(
+      sr.character.shot.maxAmmo,
+    );
     expect(team.slots[0]?.share).toBe(1);
     expect(team.totalDamage).toBe(team.slots[0]!.totalDamage);
     expect(relDiff(team.totalDps, team.totalDamage / 90)).toBeLessThan(1e-9);
@@ -114,7 +112,7 @@ describe('runTeam', () => {
     const model = { ...DEFAULT_WEAPON_MODEL, chargeReleaseFrames: 0 };
     const withModel = runTeam({ slots: [sr], enemy, durationSeconds: 180, model });
     const withoutModel = runTeam({ slots: [sr], enemy, durationSeconds: 180 });
-    expect(withModel.slots[0]?.cadence.cycleFrames).toBeLessThan(withoutModel.slots[0]?.cadence.cycleFrames ?? 0);
+    expect(withModel.slots[0]!.segments[0]!.triggers).toBeGreaterThan(withoutModel.slots[0]!.segments[0]!.triggers);
   });
 
   it('rejects duplicate characters and out-of-range slot counts', () => {

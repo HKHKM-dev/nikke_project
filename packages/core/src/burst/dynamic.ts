@@ -105,6 +105,8 @@ export type DynamicScheduleOptions = {
 };
 
 /**
+ * 射撃のゲージだけで回す時刻表。本番の計算は呼ばない（1 パス目の時刻表は frame/firstPass.ts のフレームループが作る）。射撃に効く効果の
+ * 無い編成での 1 パス目の比べ（frame/__tests__/firstPass.test.ts）と、時刻表の回帰のテスト（__tests__/burstRegression.test.ts ほか）が使う
  * @param controlledSlot 操作キャラの枠（フルチャージ倍率がゲージに乗る）。null は全員 AI 扱い
  */
 export function planDynamicSchedule(

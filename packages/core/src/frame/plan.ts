@@ -3,16 +3,8 @@
 // バフの区間は、そのループの件の一覧の履歴（TeamPlan.history）から作る（plan/design-holder-effects.md 2.7 節）。
 // 倍率ダメージの発動は、確定した射撃の列と時刻表から作る。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
-import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';
-import { burstCandidateOf, planDynamicSchedule, type DynamicScheduleOptions } from '../burst/dynamic.ts';
-import {
-  effectFrameOf,
-  hitFramesOf,
-  isInFullBurst,
-  type BurstSchedule,
-  type BurstScheduleModel,
-} from '../burst/schedule.ts';
+import { effectFrameOf, hitFramesOf, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import {
   computeTriggerDamage,
   partialChargeTriggerDamage,
@@ -101,7 +93,6 @@ import {
   type TeamInput,
   type TeamSlotInput,
 } from '../team.ts';
-import type { WeaponModel } from '../weapons.ts';
 import { untargetableRanges } from './events.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import { dotStacksAt, dotTicks, groupDotsByState } from './dot.ts';
@@ -202,26 +193,6 @@ export function slotTriggerDamage(
     ),
     fullBurst,
   );
-}
-
-/** バーストの時刻表。burst が false なら null。options は動的サイクルの射撃の列とゲージ速度（Stage 8） */
-export function planTeamSchedule(
-  slots: readonly (TeamSlotInput | null)[],
-  frames: number,
-  burst: boolean | undefined,
-  burstModel: BurstScheduleModel = 'dynamic',
-  model?: WeaponModel,
-  controlledSlot: number | null = null,
-  options: DynamicScheduleOptions = {},
-): BurstSchedule | null {
-  if (!burst) return null;
-  if (burstModel === 'fixed') {
-    return planFixedCycle(
-      slots.map((s) => (s === null ? null : burstCandidateOf(s.character, s.skills?.definition ?? null))),
-      frames,
-    );
-  }
-  return planDynamicSchedule(slots, frames, model, undefined, controlledSlot, options);
 }
 
 /** 1 パス目の結果 */

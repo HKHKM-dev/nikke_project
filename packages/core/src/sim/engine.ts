@@ -8,7 +8,6 @@
 // 敵の出来事（狙えない窓など）は 1 パス目で効く（plan/design-stage16.md 9 節）。フレームループは trace（出来事の列）のときだけ回し、
 // 値は作らない（__tests__/calcShots.test.ts で一致を固定）。
 import { hitFramesOf, type BurstActivation, type BurstSchedule, type BurstStepKey } from '../burst/schedule.ts';
-import { computeCadence, type CadenceResult } from '../cadence.ts';
 import {
   baseAttackOf,
   computeTriggerDamage,
@@ -35,7 +34,7 @@ import { applyCompositionToTeam } from '../skills/composition.ts';
 import { applyTreasureToTeam } from '../skills/treasure.ts';
 import type { BuffTotals } from '../skills/buffs.ts';
 import type { BuildEffect } from '../buildEffects.ts';
-import { EMPTY_BUFF_STATE, groupTimeline, type BuffTimeline } from '../skills/timeline.ts';
+import { EMPTY_BUFF_STATE, type BuffTimeline } from '../skills/timeline.ts';
 import {
   BURST_HIT_USES_PRE_ACTIVATION_BUFFS,
   burstHitBuffs,
@@ -50,7 +49,6 @@ import { validateTeamSlots, type DamagePerSecond, type PartialChargeTotals, type
 import type { CharacterData } from '../types.ts';
 import { framesToGameSeconds } from '../time.ts';
 import { DEFAULT_WEAPON_MODEL } from '../weapons.ts';
-import { firingParams } from '../frame/firing.ts';
 import type { FrameRange } from '../skills/timeline.ts';
 import type { InstantApplication } from '../frame/firstPass.ts';
 import { countShotsInRanges, lowerBound, partialShotsInRanges, type ShotLog } from '../frame/shots.ts';
@@ -100,7 +98,6 @@ export type SimSlotResult = {
   index: number;
   character: CharacterData;
   baseAttack: number;
-  cadence: CadenceResult;
   notes: ModelNote[];
   /** 常時パッシブだけ（Stage 4 互換の表示用） */
   passiveBuffs: BuffTotals;
@@ -290,7 +287,6 @@ export function runSimulation(simInput: SimInput): SimResult {
         index,
         character: slot.character,
         baseAttack: baseAttackOf(slot),
-        cadence: computeCadence(slot.character.shot, model, firingParams(slot.character.shot, passive.buffs)),
         notes: [
           ...modelNotes(slot.character),
           ...slotConditionNotes(landing, slot, index, enemy, autoCondition),
@@ -636,33 +632,6 @@ function traceEvents(
 }
 
 export type SimIntervalTotals = { triggers: number; damage: number };
-
-export type SimGroupTotals = SimIntervalTotals & { key: string; fullBurst: boolean; seconds: number };
-
-/**
- * sim の区間を、同じバフ状態のグループ（groupTimeline）単位に集計する。
- * 画面の形（simTeamResult の TeamSlotResult.segments）と同じ順番。テストがこの単位で突き合わせる。
- */
-export function simGroupTotals(result: SimResult, slotIndex: number): SimGroupTotals[] {
-  const slot = result.slots[slotIndex];
-  if (!slot) return [];
-  const groups = groupTimeline(result.timeline, slotIndex);
-  const byKey = new Map<string, SimGroupTotals>();
-  const ordered = groups.map((g) => {
-    const totals: SimGroupTotals = { key: g.key, fullBurst: g.fullBurst, seconds: g.seconds, triggers: 0, damage: 0 };
-    byKey.set(g.key, totals);
-    return totals;
-  });
-  result.timeline.segments.forEach((segment, i) => {
-    const key = segment.slotKeys[slotIndex];
-    const totals = key === null || key === undefined ? undefined : byKey.get(key);
-    const simSegment = slot.segments[i];
-    if (!totals || !simSegment) return;
-    totals.triggers += simSegment.triggers;
-    totals.damage += simSegment.damage;
-  });
-  return ordered;
-}
 
 /** 区間を「通常区間 / フルバースト区間」の 2 つに集計する（Stage 5 の normal 相当。テスト・CLI 用） */
 export function simIntervalTotals(slot: SimSlotResult): {
