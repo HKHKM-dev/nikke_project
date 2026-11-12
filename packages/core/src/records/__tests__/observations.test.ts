@@ -1196,7 +1196,7 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       '| beforeEnd: [-67, —]; band: [近]; at: [{frame: 6,653}] |',
     );
     // 実際の観測値の全部が落ちずに書ける
-    const others = loadObservations().filter((o) => o.use !== 'compare');
+    const others = observations.filter((o) => o.use !== 'compare');
     expect(renderOtherRows(others).join('\n')).not.toContain('[object Object]');
   });
 

@@ -8,21 +8,20 @@ import type { CompareSpec, Observation, Tolerance } from './types.ts';
  * 値。比べない観測値の value は型より広く、入れ子の配列・オブジェクト・文字列と、読めなかった要素の null を持つ。
  * null は「—」、入れ子は [ ]・{ } で囲む（一番外は囲まない）
  */
-function fmtValue(v: unknown): string {
+function fmtValue(v: unknown, nested = false): string {
   if (v === null) return '—';
   if (typeof v === 'number') return fmtNumber(v);
-  if (Array.isArray(v)) return v.map(fmtNested).join(', ');
-  if (typeof v === 'object')
-    return Object.entries(v)
-      .map(([k, x]) => `${k}: ${fmtNested(x)}`)
+  if (Array.isArray(v)) {
+    const s = v.map((x) => fmtValue(x, true)).join(', ');
+    return nested ? `[${s}]` : s;
+  }
+  if (typeof v === 'object') {
+    const s = Object.entries(v)
+      .map(([k, x]) => `${k}: ${fmtValue(x, true)}`)
       .join('; ');
+    return nested ? `{${s}}` : s;
+  }
   return String(v);
-}
-
-function fmtNested(v: unknown): string {
-  if (Array.isArray(v)) return `[${fmtValue(v)}]`;
-  if (v !== null && typeof v === 'object') return `{${fmtValue(v)}}`;
-  return fmtValue(v);
 }
 
 function fmtNumber(v: number): string {
