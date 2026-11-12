@@ -18,9 +18,9 @@ import {
 export type CadenceResult = {
   /** 各発の発射フレーム（1 発目 = 0） */
   shotFrames: number[];
-  /** 戦闘開始から 1 発目までのフレーム。入力が UP のチャージ武器は構え + チャージ + 満ちてから撃つまで − 1（C-0232）、押下チャージ型はチャージ + 解放遅延 − 構え解除、それ以外は構え（Stage 22-C） */
+  /** 戦闘開始から 1 発目までのフレーム。入力が UP のチャージ武器は構え + チャージ + 満ちてから撃つまで − 1（C-0232）、押下チャージ型はチャージ + 解放遅延 − 構え解除、それ以外は構え */
   firstShotFrames: number;
-  /** 21-C3: リロード完了から次のマガジンの 1 発目までのフレーム。AR・SMG・SG は reloadFirstShotFrames、MG は初弾遅延、チャージ武器は発と発の間 */
+  /** リロード完了から次のマガジンの 1 発目までのフレーム。チャージの無い武器は reloadFirstShotFrames（MG を含む）、チャージ武器は発と発の間 */
   reloadFirstShotFrames: number;
   /** 1 発目から最終弾までのフレーム */
   magazineFrames: number;
@@ -43,10 +43,10 @@ export function reloadChunks(shot: Pick<ShotParams, 'maxAmmo' | 'reloadBullet'>)
 
 /**
  * i 発目を撃った直後の発射レート（rpm）。MG は 1 発ごとに上昇し 1 フレーム 1 発（MAX_RPM）で頭打ち。
- * 2 段目の段 9 の PR 2: rateScale（攻撃速度▲の 1 + Σ。frame/firing.ts の FiringParams）を掛けてから頭打ちにする（C-0600）
+ * rateScale（攻撃速度▲の 1 + Σ。frame/firing.ts の FiringParams）を掛けてから頭打ちにする（C-0600）
  */
 export function rateAfterShots(shot: ShotParams, shotsFired: number, rateScale = 1, spinUpScale = 1): number {
-  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.6 節）: 立ち上げ速度▲は 1 発ごとの上がり幅に掛ける
+  // 立ち上げ速度▲は 1 発ごとの上がり幅に掛ける（plan/design-new-chars-1029.md 5.6 節）
   const rpm = hasSpinUp(shot)
     ? Math.min(shot.endRateOfFire, shot.rateOfFire + shotsFired * shot.rateOfFireChangePerShot * spinUpScale)
     : shot.rateOfFire;
@@ -59,10 +59,10 @@ export const ACC_EPSILON = 1e-9;
 /**
  * 各発の発射フレーム（1 発目 = 0）。
  * - チャージ武器: 毎発 チャージ時間 + 解放遅延（実測 82f）。押下チャージ型は解放遅延を足さない（C-0222）。
- *   シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.2 節）: 押下チャージ型は、発射レートの 1 発分より短くなったら、射手（frame/shooter.ts）と同じく
- *   発射レートの蓄積も待つ（チャージを待つ間は 1 発分で止める）
+ *   押下チャージ型は、発射レートの 1 発分より短くなったら、射手（frame/shooter.ts）と同じく
+ *   発射レートの蓄積も待つ（チャージを待つ間は 1 発分で止める。plan/design-cinderella-s1-charge.md 1.2 節）
  * - それ以外: 発射レートを 1 フレームごとに蓄積し、1 発分たまったフレームで発射（端数は持ち越し）。
- *   21-C3: 蓄積はゲーム内の時計（C-0058）。AR 720rpm は 5f が 9 回と 4f が 1 回の繰り返し、MG はレート上昇に従って間隔が縮む。
+ *   蓄積はゲーム内の時計（C-0058）。AR 720rpm は 5f が 9 回と 4f が 1 回の繰り返し、MG はレート上昇に従って間隔が縮む。
  */
 export function simulateShotFrames(
   shot: ShotParams,
@@ -131,31 +131,31 @@ export function firstShotFrames(
   // plan/design-fire-stance-cadence.md 3.2 節）
   if (params.stance !== null) return model.aimInFrames + params.chargeFrames + params.stance.holdFrames - 1;
   // 射撃姿勢維持型でない入力が UP のチャージ武器も同じ形で、満ちてから撃つまでは 1f（RL 71f・SR 70f。SR は構えが 1f 短い。
-  // C-0232。V-0149）。Stage 22-A の「発と発の間 − 構え解除 13f」（69f）は構えを 10f と置いていた
+  // C-0232。V-0149）
   if (isChargeWeapon(shot) && shot.inputType === 'UP') {
     const aim = model.aimInFrames - hideAimShorterFrames(shot, model);
     return aim + params.chargeFrames + model.chargeFullToShotFrames - 1;
   }
-  // Stage 22-A: 押下チャージ型は確かめていないので、発と発の間から構え解除のぶんを引いたまま（C-0537）
+  // 押下チャージ型は確かめていないので、発と発の間から構え解除のぶんを引いたまま（C-0537）
   if (isChargeWeapon(shot)) return Math.max(0, params.chargeFrames + model.chargeReleaseFrames - model.aimOutFrames);
-  // Stage 22-C: チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）。InstantBox は構えが長い（V-0675）
+  // チャージの無い武器（MG を含む）も、ハイドから構えてから撃つ（C-0114）。InstantBox は構えが長い（V-0675）
   return model.aimInFrames + aimLongerFrames(shot, model);
 }
 
-/** リロード完了から次のマガジンの 1 発目まで。Stage 24: チャージの無い武器は武器種によらず 24f（MG を含む。C-0148） */
+/** リロード完了から次のマガジンの 1 発目まで。チャージの無い武器は武器種によらず 24f（MG を含む。C-0148） */
 export function reloadFirstShotFrames(
   shot: ShotParams,
   model: WeaponModel = DEFAULT_WEAPON_MODEL,
   params: FiringParams = firingParams(shot),
 ): number {
-  // Stage 22-A: チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0149 の紅蓮BS 172f・ラム 200f）。
+  // チャージ武器のリロードの後は、発と発の間と同じ（構え解除を含む。C-0149 の紅蓮BS 172f・ラム 200f）。
   // ゲームの完了（RELOADING のバーが消える）は構え解除のぶん遅く、完了からは firstShotFrames で撃つ（C-0537）。
   // 最後の発からの長さは同じなので分け方はそのままにし、窓の明けだけ unhideShooter で合わせる（V-0135）
   // 射撃姿勢維持型も発と発の間と同じ（リロードの側に stanceReloadExtraFrames を足してある。C-0149）
   if (params.stance !== null) return chargeShotIntervalFrames(params, model);
   // 押下チャージ型でも、リロードの後は解放を足す（C-0222）
   if (isChargeWeapon(shot)) return params.chargeFrames + model.chargeReleaseFrames;
-  // Stage 24: MG も AR・SMG・SG と同じ（22 までは MG だけ初弾遅延 20f。C-0002）。InstantBox は構えが長い（V-0675）
+  // MG も AR・SMG・SG と同じ（C-0002）。InstantBox は構えが長い（V-0675）
   return model.reloadFirstShotFrames + aimLongerFrames(shot, model);
 }
 

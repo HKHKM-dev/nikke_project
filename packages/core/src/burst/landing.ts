@@ -16,7 +16,7 @@ export type BurstDelays = {
   hitFrames: number;
   /** 発動の印（hexagonFrameOf）→ 自分の burstUse・{ count: burstUse } のトリガーの発火 */
   effectFrames: number;
-  /** 分かれたヒット編: 1 ヒット目から各ヒットまでのずれ（昇順・先頭は 0）。省略は [0]（1 ヒット） */
+  /** 1 ヒット目から各ヒットまでのずれ（昇順・先頭は 0）。省略は [0]（1 ヒット） */
   hitOffsets?: readonly number[];
   /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 2 節）: 遅れの起点。省略（'mark'）は発動の印（hexagonFrameOf）、
@@ -27,7 +27,7 @@ export type BurstDelays = {
 
 export type MeasuredBurstDelayRow = {
   resourceIds: readonly number[];
-  /** 分かれたヒット編: true なら、burst が宝物版のとき（宝物の段階が burst まで解放したとき）だけ当てる */
+  /** true なら、burst が宝物版のとき（宝物の段階が burst まで解放したとき）だけ当てる */
   treasure?: boolean;
   /**
    * 効果の窓の終わり（plan/design-burst-effect-window-end.md 案 B）: true なら、そのキャラの burstUse で発火する timed・使用武器変更の
@@ -62,7 +62,7 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
   // 攻撃力▲・攻撃ダメージ▲が乗る（同じ発動の▲がヒットに乗る行。C-0582 と同じ形）。効果の発火の遅れは 0
   { resourceIds: [19], sameActivationBuffsOnHit: true, delays: { hitFrames: 5, effectFrames: 0 }, claim: 'C-0742' },
   // ベスティー：タクティカル・アップ: III のタイマーの 00.00 からヒットまで 17f（動画で 39f。止まり 22f を含む）。防御力無視のバーストスキル
-  // ダメージには同じ発動の防御力無視ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果の発火の遅れは 0（2 段目の段 16 の PR 2。V-0586）
+  // ダメージには同じ発動の防御力無視ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果の発火の遅れは 0（V-0586）
   { resourceIds: [94], sameActivationBuffsOnHit: true, delays: { hitFrames: 17, effectFrames: 0 }, claim: 'C-0807' },
   // クエンシー：エスケープクイーン: III のタイマーの 00.00 から 1 ヒット目まで 11f（動画で 33f。止まり 22f を含む）、19f 後に 2 ヒット目
   // （二丁持ちの 2 ヒットに等分）。分配ダメージには同じ発動の攻撃ダメージ▲が乗る（同じ発動の▲がヒットに乗る行）。効果の発火の遅れは 0（V-0702）
@@ -73,17 +73,17 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     claim: 'C-1011',
   },
   // ココア: I の発動（六角形が I から II に替わるフレーム）から効果（味方全体のデバフ効果解除）まで 20f。バーストの倍率ダメージは無い
-  // （課題 2-59。ほろ酔いの外れたヒットの間から）
+  // （ほろ酔いの外れたヒットの間から）
   { resourceIds: [311], delays: { hitFrames: 0, effectFrames: 20 }, claim: 'C-0980' },
   // I-DOLL・フラワー: I の発動（六角形が I から II に替わるフレーム。本当の発動の 5f 後）からヒットまで 14f。バースト使用時の効果は無い
   { resourceIds: [304], delays: { hitFrames: 14, effectFrames: 0 }, claim: 'C-0220' },
   // ニヒリスター: II の発動（六角形の替わり目）からヒットと火傷の付与（1 回目の tick はヒットと同じフレーム。C-0101）まで、どちらも 9f
   { resourceIds: [261], delays: { hitFrames: 9, effectFrames: 9 }, claim: 'C-0219' },
   // ノワール: III のタイマーの 00.00 からヒットまで 72f（動画で 93〜94f。止まり 22f を含む）。効果（SG の味方の命中率▲）の遅れは未測定。
-  // 録画が最小構成でない（エーテルの定義が無い）仮説だが、オーナーの判断で入れた（2026-10-04）
+  // 録画が最小構成でない（エーテルの定義が無い）仮説だが、オーナーの判断で入れている
   { resourceIds: [271], delays: { hitFrames: 72, effectFrames: 0 }, claim: 'C-0226' },
   // ラピ: III のタイマーの 00.00 から 1 ヒット目まで 90f（動画で 111〜112f の最も多い値。止まり 22f を含む）、7f おきの 3 ヒット。
-  // 効果（自分の攻撃力▲）の遅れは未測定。最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
+  // 効果（自分の攻撃力▲）の遅れは未測定。最小構成でない録画の仮説（オーナーの判断で入れている）
   { resourceIds: [10], delays: { hitFrames: 90, effectFrames: 0, hitOffsets: [0, 7, 14] }, claim: 'C-0227' },
   // ドレイク（宝物あり）: III のタイマーの 00.00 から 1 ヒット目まで 4f（動画で 26〜27f の最も多い値）、2・3 ヒット目は 27f・55f 後。
   // 効果（攻撃ダメージ▲・最大装弾数▲）はヒットより前に付き、止まりの明けの 1f 後の発にも乗る（C-0420）ので 0。宝物なしは未測定
@@ -94,10 +94,10 @@ export const MEASURED_BURST_DELAYS: readonly MeasuredBurstDelayRow[] = [
     claim: 'C-0228',
   },
   // ユニ: II の発動（六角形が II から次の表示に替わるフレーム）からヒットまで 124f（フルバーストにつながる回は、間の III の発動の
-  // 止まり 22f を含めて動画で 146f）。バースト使用時の効果は無い。最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
+  // 止まり 22f を含めて動画で 146f）。バースト使用時の効果は無い。最小構成でない録画の仮説（オーナーの判断で入れている）
   { resourceIds: [160], delays: { hitFrames: 124, effectFrames: 0 }, claim: 'C-0230' },
   // クイーン（真）: III のタイマーの 00.00 からヒットまで 1f（動画で 22〜23f。止まり 22f を含む）。効果（自分の攻撃力▲）の遅れは未測定。
-  // 最小構成でない録画の仮説（2026-10-04 オーナーの判断で入れた）
+  // 最小構成でない録画の仮説（オーナーの判断で入れている）
   { resourceIds: [870], delays: { hitFrames: 1, effectFrames: 0 }, claim: 'C-0231' },
   // レイヴン: III のタイマーの 00.00 からヒットまで 43f（動画で 64〜65f。止まり 22f を含む）。効果（A.N.モードの持続ダメージ▲）はヒットより前に
   // 付き、止まりの明けの後の最初の S1 の tick から乗る（C-0421）ので 0
@@ -204,7 +204,7 @@ export type BurstDelayOverride = { treasure?: boolean; row: MeasuredBurstDelayRo
 
 type DelayKey = Pick<CharacterData, 'resourceId' | 'skills' | 'treasure' | 'burstDelayOverride'>;
 
-/** 分かれたヒット編: burst が宝物版か（applyTreasure が skills.burst を宝物版のスキルに差し替えたか） */
+/** burst が宝物版か（applyTreasure が skills.burst を宝物版のスキルに差し替えたか） */
 export function isTreasureBurst(character: DelayKey): boolean {
   const treasureBurst = character.treasure?.skills.burst;
   return treasureBurst !== undefined && character.skills.burst.id === treasureBurst.id;
@@ -248,7 +248,7 @@ export function burstDelaysFieldOf(character: DelayKey): { delays?: Readonly<Bur
     : { delays };
 }
 
-/** 分かれたヒット編: 2 つ以上のヒットに分かれるか */
+/** 2 つ以上のヒットに分かれるか */
 export function isSplit(delays: Readonly<BurstDelays>): boolean {
   return (delays.hitOffsets?.length ?? 1) > 1;
 }
@@ -257,7 +257,7 @@ export function isSplit(delays: Readonly<BurstDelays>): boolean {
  * 発動にヒットと効果の発火のフレームを書く。遅れは発動の印（I・II は六角形の替わり目。hexagonFrameOf）に足す。
  * 遅れ 0 の欄は書かない（hitFrameOf・effectFrameOf が本当の発動のフレームを返す）。
  * 分かれたヒットは hitOffsets を写す（1 ヒットなら書かない）。
- * 比べる設定の拡張（plan/design-compare-setup-extension.md 2.3 節）: 遅れは負でもよい。origin が 'activation' なら本当の発動に足し、
+ * 遅れは負でもよい（plan/design-compare-setup-extension.md 2.3 節）。origin が 'activation' なら本当の発動に足し、
  * 遅れ 0 の欄も書く。足した後のフレームが本当の発動より前なら RangeError
  */
 export function withBurstDelays(activation: BurstActivation, delays: Readonly<BurstDelays>): BurstActivation {

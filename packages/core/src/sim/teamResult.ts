@@ -119,7 +119,7 @@ export function simTeamResult(teamInput: TeamInput, sim: SimResult): TeamResult 
   };
 }
 
-/** Stage 22-B: sim の区間の部分チャージの発を、グループにまとめる（無ければキーごと出さない） */
+/** sim の区間の部分チャージの発を、グループにまとめる（無ければキーごと出さない） */
 function partialChargeOf(segments: readonly SimSlotSegment[]): { partialCharge?: PartialChargeTotals } {
   let triggers = 0;
   let damage = 0;

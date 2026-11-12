@@ -65,14 +65,14 @@ export function computeFixedSpecAttack(
   return { attack: withCore + gear, growth, affectionRank, gradeBase, affection, withCore, gear };
 }
 
-/** 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: T9 Lv5 装備 4 部位の HP 合計（クラス別固定値。マスタの gear.json と同じ） */
+/** T9 Lv5 装備 4 部位の HP 合計（クラス別固定値。マスタの gear.json と同じ。plan/design-skill-stage6.md 1.1 節） */
 export const FIXED_SPEC_GEAR_HP: Record<NikkeClass, number> = {
   Supporter: 220350,
   Defender: 242387,
   Attacker: 198316,
 };
 
-/** 2 段目の段 6: 好感度ランクによる HP 加算（クラス別固定値。マスタの affection.json と同じ） */
+/** 好感度ランクによる HP 加算（クラス別固定値。マスタの affection.json と同じ） */
 export const AFFECTION_HP: Record<NikkeClass, Record<AffectionRank, number>> = {
   Supporter: { 10: 10069, 30: 40997, 40: 58500 },
   Defender: { 10: 11076, 30: 45097, 40: 64350 },
@@ -80,7 +80,7 @@ export const AFFECTION_HP: Record<NikkeClass, Record<AffectionRank, number>> = {
 };
 
 /**
- * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: スペック固定の戦闘中の最大HP（バフ前）。攻撃力と同じ組み立て
+ * スペック固定の戦闘中の最大HP（バフ前。plan/design-skill-stage6.md 1.1 節）。攻撃力と同じ組み立て
  * （コアは「突破後の素の HP + 好感度」に掛かり、装備には掛からない）。育成の層（fixedSpecBuild を computeCombatStat に通した HP）と
  * 同値（build.test.ts）。録画 0121 のラプラス：アルティメットヒーローの S1 の攻撃力▲で確かめた
  */
@@ -96,14 +96,14 @@ export function computeFixedSpecHp(
   );
 }
 
-/** 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: T9 Lv5 装備 4 部位の防御力合計（クラス別固定値。マスタの gear.json と同じ） */
+/** T9 Lv5 装備 4 部位の防御力合計（クラス別固定値。マスタの gear.json と同じ。plan/design-skill-stage7.md 1.1 節） */
 export const FIXED_SPEC_GEAR_DEFENCE: Record<NikkeClass, number> = {
   Supporter: 1466,
   Defender: 1612,
   Attacker: 1319,
 };
 
-/** 2 段目の段 7: 好感度ランクによる防御力加算（クラス別固定値。マスタの affection.json と同じ） */
+/** 好感度ランクによる防御力加算（クラス別固定値。マスタの affection.json と同じ） */
 export const AFFECTION_DEFENCE: Record<NikkeClass, Record<AffectionRank, number>> = {
   Supporter: { 10: 67, 30: 273, 40: 390 },
   Defender: { 10: 74, 30: 300, 40: 429 },
@@ -111,7 +111,7 @@ export const AFFECTION_DEFENCE: Record<NikkeClass, Record<AffectionRank, number>
 };
 
 /**
- * 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: スペック固定の戦闘中の防御力（バフ前）。最大HP と同じ組み立て（コアは
+ * スペック固定の戦闘中の防御力（バフ前。plan/design-skill-stage7.md 1.1 節）。最大HP と同じ組み立て（コアは
  * 「突破後の素の防御力 + 好感度」に掛かり、装備には掛からない）。育成の層（fixedSpecBuild を computeCombatStat に通した防御力）と
  * 同値（build.test.ts）
  */

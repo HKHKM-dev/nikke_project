@@ -22,7 +22,7 @@ import {
 } from '../types.ts';
 import { fail, type Json, oneOf, parseNamedStateId, parsePositiveInt, parseRef } from './common.ts';
 
-/** 対象の語彙編: targetSquad は target が allies のときだけ */
+/** targetSquad は target が allies のときだけ */
 export function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, path: string): TargetSquad | undefined {
   if (v.targetSquad === undefined) return undefined;
   const squad = oneOf(TARGET_SQUADS, v.targetSquad, `${path}.targetSquad`);
@@ -30,7 +30,7 @@ export function parseTargetSquad(v: Record<string, Json>, target: BuffTarget, pa
   return squad;
 }
 
-/** ペルソナ編: targetState・targetBurstStep は target が allies のときだけ（2 段目の段 15 の PR 3 から targetBurstStep は burstUsers も） */
+/** targetState・targetBurstStep は target が allies のときだけ（targetBurstStep は burstUsers も） */
 export function parsePersonaTargetFields(
   v: Record<string, Json>,
   target: BuffTarget,
@@ -38,7 +38,7 @@ export function parsePersonaTargetFields(
 ): { targetState?: NamedStateId; includeSelf?: true; targetBurstStep?: BasicBurstStep } {
   const out: { targetState?: NamedStateId; includeSelf?: true; targetBurstStep?: BasicBurstStep } = {};
   if (v.targetState !== undefined) out.targetState = parseNamedStateId(v.targetState, `${path}.targetState`, 'ally');
-  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 「自分と〈状態〉の味方」
+  // 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）
   if (v.includeSelf !== undefined) {
     if (v.includeSelf !== true) fail(`${path}.includeSelf`, 'must be true');
     if (out.targetState === undefined) fail(`${path}.includeSelf`, 'only allowed with targetState');
@@ -53,8 +53,8 @@ export function parsePersonaTargetFields(
 }
 
 /**
- * 「基本バースト段階が N の」。対象は allies と、2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節）から burstUsers（「直前に
- * バーストスキルを使用した基本バースト段階が N の味方全体」。エイダの S1）
+ * 「基本バースト段階が N の」。対象は allies と burstUsers（「直前に
+ * バーストスキルを使用した基本バースト段階が N の味方全体」。エイダの S1。plan/design-skill-stage15.md 2.3 節）
  */
 export function parseTargetBurstStep(
   v: Record<string, Json>,
@@ -68,10 +68,10 @@ export function parseTargetBurstStep(
 }
 
 /**
- * 受けるダメージ編: damageTaken（敵の受けるダメージ▲）は敵へのデバフなので、味方全体（target 'allies'）にだけ書ける。
+ * damageTaken（敵の受けるダメージ▲）は敵へのデバフなので、味方全体（target 'allies'）にだけ書ける。
  * 武器種・属性で絞ることもできない（敵 1 体の前提で、敵が受ける全ダメージに掛かる）。
- * 持ち主ごとの一覧編（plan/design-holder-effects.md 2.8 節）: 敵の件なので、持ち主ごとに違いうる絞り込み（自分を除く・状態・
- * バースト段階）と維持（持ち主の発数）も書けない
+ * 敵の件なので、持ち主ごとに違いうる絞り込み（自分を除く・状態・
+ * バースト段階）と維持（持ち主の発数）も書けない（plan/design-holder-effects.md 2.8 節）
  */
 export function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Record<string, Json>, path: string): void {
   if (!isEnemyHeldStat(stat)) return;
@@ -95,7 +95,7 @@ export function validateDamageTaken(stat: BuffStat, target: BuffTarget, v: Recor
   }
 }
 
-/** Stage 9: targetWeapon は target が self 以外のときだけ（Stage 11 で burstUsers・topAttack にも広げた） */
+/** targetWeapon は target が self 以外のときだけ（burstUsers・topAttack も） */
 export function parseTargetWeapon(v: Record<string, Json>, target: BuffTarget, path: string): WeaponType | undefined {
   if (v.targetWeapon === undefined) return undefined;
   const weapon = oneOf(WEAPON_TYPES, v.targetWeapon, `${path}.targetWeapon`);
@@ -113,7 +113,7 @@ export function parseTargetElement(v: Record<string, Json>, target: BuffTarget, 
   return element;
 }
 
-/** 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: targetClass は targetWeapon・targetElement と同じく target が self 以外のときだけ */
+/** targetClass は targetWeapon・targetElement と同じく target が self 以外のときだけ（plan/design-skill-stage9.md 1.1 節） */
 export function parseTargetClass(v: Record<string, Json>, target: BuffTarget, path: string): NikkeClass | undefined {
   if (v.targetClass === undefined) return undefined;
   const nikkeClass = oneOf(NIKKE_CLASSES, v.targetClass, `${path}.targetClass`);
@@ -122,7 +122,7 @@ export function parseTargetClass(v: Record<string, Json>, target: BuffTarget, pa
   return nikkeClass;
 }
 
-/** Stage 11: burstUsers はトリガーが fullBurstStart / fullBurstEnd（とその出来事の回数のきっかけ。burstUsersEventOf）のときだけ */
+/** burstUsers はトリガーが fullBurstStart / fullBurstEnd（とその出来事の回数のきっかけ。burstUsersEventOf）のときだけ */
 export function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrigger, path: string): void {
   if (target !== 'burstUsers') return;
   if (burstUsersEventOf(trigger) !== undefined) return;
@@ -132,7 +132,7 @@ export function validateBurstUsersTarget(target: BuffTarget, trigger: EffectTrig
   );
 }
 
-/** Stage 11 アリス編: topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime（対象の語彙編）のときだけ、ちょうど片方 */
+/** topAttack の N（targetCount / targetCountRef）。topAttack・longestChargeTime のときだけ、ちょうど片方 */
 export function parseTargetCount(
   v: Record<string, Json>,
   target: BuffTarget | CoverHealEffect['target'] | RemoveDebuffEffect['target'],
@@ -155,5 +155,5 @@ export function parseTargetCount(
     : { targetCountRef: parseRef(v.targetCountRef, `${path}.targetCountRef`) };
 }
 
-/** 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: HP の割合の低い順の対象は、使い手のいる heal にだけ書ける */
+/** HP の割合の低い順の対象は、使い手のいる heal にだけ書ける（plan/design-skill-stage8.md 1.1 節） */
 export const LOWEST_HP_RATIO_HEAL_ONLY = 'lowestHpRatio is only allowed in heal';

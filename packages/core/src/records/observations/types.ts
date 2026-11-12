@@ -1,7 +1,7 @@
 // 観測値（リポジトリの直下の records/observations/<録画 id>.json）の型と語彙（plan/design-stage19.md 2.3 節、plan/design-records-automation.md 3.4 節）
 import type { CompareSetup } from './setup.ts';
 
-/** 何を読んだか（人と検索のため）。Stage 20-E: 大きさ（照準円の半径など）・位置（着地点の y など）・ゲージを足した */
+/** 何を読んだか（人と検索のため）。size は大きさ（照準円の半径など）、position は位置（着地点の y など） */
 export const OBSERVATION_KINDS = [
   'hit',
   'interval',
@@ -34,34 +34,34 @@ export type CompareSpec = {
   setup: CompareSetup;
 };
 
-/** 値の幅（Stage 20-E）。range は最小〜最大、ci95 は 95% 区間 */
+/** 値の幅。range は最小〜最大、ci95 は 95% 区間 */
 export type ObservationSpread = { kind: 'range' | 'ci95'; low: number; high: number };
 
 export type Observation = {
   id: string;
   /** 置き場所の録画（recordings があれば、その中で最も若い番号） */
   recording: string;
-  /** 複数の録画にまたがる値のとき、その録画の全部（recording も含める）。compare には使わない（Stage 20-E） */
+  /** 複数の録画にまたがる値のとき、その録画の全部（recording も含める）。compare には使わない */
   recordings?: string[];
   kind: ObservationKind;
   use: ObservationUse;
   value: number | number[];
-  /** 値の単位（px・f・%・倍 など。Stage 20-E） */
+  /** 値の単位（px・f・%・倍 など） */
   unit?: string;
-  /** 値の幅（Stage 20-E） */
+  /** 値の幅 */
   spread?: ObservationSpread;
   /** 何の値か（1〜2 文） */
   description: string;
-  /** 値を記録した場所。検証記録から作ったものは、その ID（V-NNNN）だけを書く（Stage 20-D） */
+  /** 値を記録した場所。検証記録から作ったものは、その ID（V-NNNN）だけを書く */
   source: string;
   method?: { tool?: string; note?: string };
   evidence?: string[];
   compare?: CompareSpec;
-  /** 読み取った日（YYYY-MM-DD。Stage 20-E） */
+  /** 読み取った日（YYYY-MM-DD） */
   readAt?: string;
-  /** 使えなくなった観測値（読み違い・条件の誤り・ゲームの更新など）。消さずに付け、照合から外す（Stage 20-E） */
+  /** 使えなくなった観測値（読み違い・条件の誤り・ゲームの更新など）。消さずに付け、照合から外す */
   invalid?: { reason: string; date: string };
-  /** 最小構成の検査編: 観測量の範囲（plan/design-minimal-relevance.md 3.1 節） */
+  /** 観測量の範囲（plan/design-minimal-relevance.md 3.1 節） */
   scope?: ObservationScope;
 };
 
@@ -94,7 +94,7 @@ export type ObservationScope = {
   frames?: [number, number];
 };
 
-/** 失効した観測値 → 失効の理由（Stage 20-E） */
+/** 失効した観測値 → 失効の理由 */
 export function invalidReasonsOf(observations: readonly Observation[]): Map<string, string> {
   return new Map(observations.flatMap((o) => (o.invalid ? [[o.id, o.invalid.reason] as const] : [])));
 }

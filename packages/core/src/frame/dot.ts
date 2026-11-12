@@ -1,4 +1,4 @@
-// 持続ダメージ（dot）のまとまりと tick の規則（ニヒリスター編・クルミ編・レイヴン編）。frame/plan.ts の planSkillHits（ダメージ）と
+// 持続ダメージ（dot）のまとまりと tick の規則。frame/plan.ts の planSkillHits（ダメージ）と
 // frame/firstPass.ts（ゲージの予約）の両方が使うので、循環 import を避けて 1 つのモジュールに置く（plan/design-raven-s1.md 8 節の 2）。
 // frame/plan.ts から同じ名前で再エクスポートする
 import type { ResolvedDamageEffect } from '../skills/burstDamage.ts';
@@ -7,7 +7,7 @@ import type { DotFirstTick } from '../skills/types.ts';
 import { FRAMES_PER_GAME_SECOND, gameSecondsToFirstFrame, gameSecondsToFrame } from '../time.ts';
 
 /**
- * クルミ編: dot を状態（state。名前の付いた状態の目録の id）ごとにまとめる（state の無い効果はそれぞれ 1 つ）。同じ state の効果は、
+ * dot を状態（state。名前の付いた状態の目録の id）ごとにまとめる（state の無い効果はそれぞれ 1 つ）。同じ state の効果は、
  * 間隔・維持・firstTick・倍率が同じでなければならない（1 つの持続ダメージとして tick を出すため。C-0136）。V-0113: tick のゲージ
  * （gaugeOnTick）も持続ダメージ 1 つの性質なので同じであること（付けたときのゲージ gaugeOnApply は効果のトリガーごと）
  */
@@ -46,14 +46,14 @@ export function groupDotsByState(effects: readonly ResolvedDamageEffect[]): Reso
 }
 
 /**
- * ニヒリスター編: 持続ダメージの 2 回目以降の tick の遅れ（秒）。1 回目の tick は付いた瞬間に出て、k 回目（k ≥ 1）は
+ * 持続ダメージの 2 回目以降の tick の遅れ（秒）。1 回目の tick は付いた瞬間に出て、k 回目（k ≥ 1）は
  * k × 間隔 + この値の後に出る（C-0101）。ニヒリスターの火傷（1 秒間隔・10 秒）で 0・1.5・2.5 … 9.5 秒の 10 回
  * （録画 0081 の 9 回のバーストで ±2f。1 秒間隔でない持続ダメージでも同じ 0.5 秒かは未確認）
  */
 export const DOT_LATER_TICK_DELAY_SECONDS = 0.5;
 
 /**
- * ニヒリスター編: 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節・経過）。発火 f ごとに、f と
+ * 持続ダメージの tick のフレーム（plan/design-nihilister.md 2.1 節・経過）。発火 f ごとに、f と
  * f + ceil((k × 間隔 + DOT_LATER_TICK_DELAY_SECONDS) ÷ 0.017) − 1（k = 1 … floor(維持 ÷ 間隔) − 1）の計 floor(維持 ÷ 間隔) 回。
  * 起点（1 回目の tick の 1f 前）からの時刻に達した最初のフレームで、端数を積み重ねない（C-0454。録画 0081 の 0・88・147・205・264・323・382・441・499・558）。戦闘の終わり（frames）以降も出さない。
  * V-0051: 維持の途中（前の発火から維持秒のうち）の再発火は、tick の刻みを変えずに終わりだけを延ばす（C-0129。クルミの
@@ -70,11 +70,11 @@ export function dotTickFrames(
   return dotTicks(fires, intervalSeconds, durationSeconds, frames, firstTick).map((t) => t.frame);
 }
 
-/** レイヴン編: 持続ダメージの 1 tick（フレームと、その時点のスタックの数） */
+/** 持続ダメージの 1 tick（フレームと、その時点のスタックの数） */
 export type DotTick = { frame: number; stacks: number };
 
 /**
- * レイヴン編（plan/design-raven-s1.md 4 節・8 節の 1）: 持続ダメージの tick のフレームと、その時点のスタックの数。
+ * 持続ダメージの tick のフレームと、その時点のスタックの数（plan/design-raven-s1.md 4 節・8 節の 1）。
  * フレームの規則は dotTickTracker（dotTickFrames と同じ）。スタックの数は、いまのまとまり（維持の途中の再発火として
  * まとめた発火の列）のうち tick のフレームまでの発火の数（同じフレームの発火も数える）で、maxStacks で止める。
  * 既定の 1 なら、スタックしない持続ダメージ（どの tick も 1）。fires は昇順
@@ -86,9 +86,9 @@ export function dotTicks(
   frames: number,
   firstTick: DotFirstTick = 'atApplication',
   maxStacks = 1,
-  /** 2 段目の段 13 の PR 1: halfAfterLatest の間隔の実測（ゲーム内のティック）。省略は intervalSeconds */
+  /** halfAfterLatest の間隔の実測（ゲーム内のティック）。省略は intervalSeconds */
   tickIntervalFrames?: number,
-  /** 2 段目の段 13 の PR 2: 消去のフレーム（halfAfterLatest のときだけ） */
+  /** 消去のフレーム（halfAfterLatest のときだけ） */
   cancels: readonly number[] = [],
 ): DotTick[] {
   if (firstTick === 'halfAfterLatest')
@@ -125,9 +125,9 @@ export function dotTicks(
 }
 
 /**
- * クルミ S2 編（plan/design-kurumi-s2.md 2.3 節）: 持続ダメージが敵に「付いている」区間の列。まとまり（維持の途中の付け直しで
+ * 持続ダメージが敵に「付いている」区間の列（plan/design-kurumi-s2.md 2.3 節）。まとまり（維持の途中の付け直しで
  * つながった発火の列。dotTickTracker と同じ規則）ごとに、最初の発火のフレームから最後の tick のフレームまで。
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.5 節）: ほかの窓と同じ [start, end) の半開区間で持つ（end は最後の tick の
+ * ほかの窓と同じ [start, end) の半開区間で持つ（plan/design-named-state.md 5.5 節。end は最後の tick の
  * 次のフレーム。含むフレームは両端を含む閉区間のときと同じ）。最後の tick は戦闘の終わりで切らない（終わりの後の判定は起きないので）。
  * fires は昇順
  */
@@ -137,7 +137,7 @@ export function dotActiveSpans(
   durationSeconds: number,
   firstTick: DotFirstTick = 'atApplication',
 ): { start: number; end: number }[] {
-  // 2 段目の段 13 の PR 1: 戦闘の終わりまでの持続（チェーンバインド）は、最初に付いた時から終わりまで（消去は skills/holders.ts の
+  // 戦闘の終わりまでの持続（チェーンバインド）は、最初に付いた時から終わりまで（消去は skills/holders.ts の
   // closedStateItems が切る）
   if (firstTick === 'halfAfterLatest')
     return fires.length === 0 ? [] : [{ start: fires[0]!, end: Number.POSITIVE_INFINITY }];
@@ -153,7 +153,7 @@ export function dotActiveSpans(
 }
 
 /**
- * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.3 節）: firstTick halfAfterLatest の tick（チェーンバインド。維持は戦闘の終わりまで）。
+ * firstTick halfAfterLatest の tick（チェーンバインド。維持は戦闘の終わりまで。plan/design-skill-stage13.md 2.3 節）。
  * 付けるたびに刻みを付け直し、最後に付けたフレーム a から、k 回目（0 始まり）を a + round((k + 0.5) × 間隔) に出す（間隔はゲーム内の
  * ティック。V-0546 で 59.25）。次の付与より前の tick だけが出る。スタックの数は、その tick までの付与の数（maxStacks で止める）。fires は昇順
  */
@@ -165,7 +165,7 @@ export function latestDotTicks(
   cancels: readonly number[] = [],
 ): DotTick[] {
   const out: DotTick[] = [];
-  // 2 段目の段 13 の PR 2: 消去のフレームより後の tick は出ず、消去の後に付けた時は 1 スタックから（c は anchor 以後の最初の消去）。
+  // 消去のフレームより後の tick は出ず、消去の後に付けた時は 1 スタックから（c は anchor 以後の最初の消去）。
   // 消去はそのフレームの判定の後に閉じるので、消去のフレームちょうどの tick は出る（plan/design-skill-stage13.md の論点 13）
   let c = 0;
   let stacks = 0;
@@ -183,7 +183,7 @@ export function latestDotTicks(
 }
 
 /**
- * 2 段目の段 13 の PR 2: フレーム frame の判定で敵に付いているスタックの数（frame より前の最後の消去 c の後（c より後）で、frame より前に
+ * フレーム frame の判定で敵に付いているスタックの数（frame より前の最後の消去 c の後（c より後）で、frame より前に
  * 付けた数。maxStacks で止める）。消去は、そのフレームの判定（stacksFrom の dot が写す数）の後に閉じるので、frame と同じフレームの消去は見ない
  */
 export function dotStacksAt(
@@ -196,11 +196,11 @@ export function dotStacksAt(
   return Math.min(fires.filter((f) => f > since && f < frame).length, maxStacks);
 }
 
-/** レイヴン編: 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */
+/** 発火を 1 つずつ受けて、新しく決まった tick のフレームを返す（newGroup は新しいまとまりの最初の発火か） */
 export type DotTickTracker = { fire(frame: number): { ticks: number[]; newGroup: boolean } };
 
 /**
- * レイヴン編（plan/design-raven-s1.md 8 節の 2）: 持続ダメージのまとまりの規則を 1 か所に置いた追跡。dotTicks（ループの後）と
+ * 持続ダメージのまとまりの規則を 1 か所に置いた追跡（plan/design-raven-s1.md 8 節の 2）。dotTicks（ループの後）と
  * 1 パス目のゲージの予約（frame/firstPass.ts。ループの中）の両方が使う。発火は昇順に渡す。
  * 新しいまとまりなら起点から終わりまで、維持の途中の再発火（付け直し）なら延びた分だけの tick を返す。返した tick は変わらない
  * （終わりは延びるだけ）。返す tick が発火より前になることがある（atApplication で、最後の tick の位置が維持より短いとき）ので、
@@ -213,7 +213,7 @@ export function dotTickTracker(
   firstTick: DotFirstTick = 'atApplication',
 ): DotTickTracker {
   const count = Math.floor(durationSeconds / intervalSeconds + 1e-9);
-  // クルミ編: afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）。どちらも時刻に達した最初のフレーム（C-0454）
+  // afterInterval は付いた 1 間隔後から間隔ごと（k + 1 間隔後。C-0130）。どちらも時刻に達した最初のフレーム（C-0454）
   const offset = (k: number): number =>
     firstTick === 'afterInterval'
       ? gameSecondsToFirstFrame((k + 1) * intervalSeconds)

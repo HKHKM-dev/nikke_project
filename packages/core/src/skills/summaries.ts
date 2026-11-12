@@ -24,7 +24,7 @@ export type SlotCycleSummary = {
   source: { skill: SkillSlot };
   effectIndex: number;
   targetSkill: SkillSlot;
-  /** 2 段目の段 12 の PR 2: 段の循環（cycle）か、射撃の回数のきっかけ（shotCounts。skills/cycles.ts の ResolvedCycleEvery.target） */
+  /** 段の循環（cycle）か、射撃の回数のきっかけ（shotCounts。skills/cycles.ts の ResolvedCycleEvery.target） */
   target: 'cycle' | 'shotCounts';
   every: number;
   /** 最初の件 [start, end)（維持の長さの表示に使う） */
@@ -34,8 +34,8 @@ export type SlotCycleSummary = {
 };
 
 /**
- * 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: この枠に付いた名前の付いた状態のまとめ（状態 × 出どころごと。中身の無い状態も入る。
- * 表示用）
+ * この枠に付いた名前の付いた状態のまとめ（状態 × 出どころごと。中身の無い状態も入る。
+ * 表示用。plan/design-skill-stage1.md 1.4 節）
  */
 export type SlotStateSummary = {
   state: NamedStateId;

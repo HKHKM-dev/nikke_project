@@ -9,7 +9,7 @@ export type FullBurstWindow = {
   start: number;
   end: number;
   /**
-   * Stage 11: このフルバーストを開いたチェーンでバーストを撃った枠（発動順）。「直前にバーストスキルを使用した味方」。
+   * このフルバーストを開いたチェーンでバーストを撃った枠（発動順）。「直前にバーストスキルを使用した味方」。
    * 動的サイクルはゲージ満タン後〜フルバースト開始の発動（途切れたチェーンの発動は含めない）、固定サイクルは割り当ての枠
    */
   burstUsers: number[];
@@ -22,7 +22,7 @@ export type BurstActivation = {
   /** この発動でフルバーストに入るか */
   startsFullBurst: boolean;
   /**
-   * Stage 8: この発動の結果入った段階（「バースト N 段階突入時」のトリガー）。フルバーストに入るなら null。
+   * この発動の結果入った段階（「バースト N 段階突入時」のトリガー）。フルバーストに入るなら null。
    * 通常は I → Step2、II → Step3。リエントリー（Step1 → Step1）なら Step1
    */
   enteredStep: BurstStepKey | null;
@@ -33,53 +33,53 @@ export type BurstActivation = {
    */
   fullBurstStart?: number;
   /**
-   * バーストの着弾編（plan/design-burst-landing.md 2 節）: バーストの倍率ダメージのヒットのフレーム。省略は frame（遅れ 0）。
+   * バーストの倍率ダメージのヒットのフレーム（plan/design-burst-landing.md 2 節）。省略は frame（遅れ 0）。
    * 戦闘時間を超えることがある（そのヒットは出ない）
    */
   hitFrame?: number;
-  /** 着弾編: 自分の burstUse・{ count: burstUse } のトリガーが発火するフレーム。省略は frame（遅れ 0） */
+  /** 自分の burstUse・{ count: burstUse } のトリガーが発火するフレーム。省略は frame（遅れ 0） */
   effectFrame?: number;
   /**
-   * 分かれたヒット編（plan/design-burst-split-hits.md）: 1 ヒット目（hitFrame）から各ヒットまでのずれ（昇順・先頭は 0）。
+   * 1 ヒット目（hitFrame）から各ヒットまでのずれ（昇順・先頭は 0。plan/design-burst-split-hits.md）。
    * 省略は [0]（1 ヒット）。倍率は等分する
    */
   hitOffsets?: readonly number[];
   /**
-   * 2 段目の段 11 の PR 3（V-0530）: この発動の CT を、維持の付いたバーストスキルのクールタイム▼（モランの宝物版の熱血など。
+   * この発動の CT を、維持の付いたバーストスキルのクールタイム▼（モランの宝物版の熱血など（V-0530）。
    * frame/firstPass.ts の手順 2）で縮めたフレーム数。即時の CT▼（BurstSchedule の cooldownReductions）とは別。省略は 0
    */
   cooldownShortenedFrames?: number;
 };
 
 /**
- * 着弾編: 発動のヒットのフレーム。遅れの無い III のヒット（遅れの表に無いキャラも）は、III のタイマーの 00.00（hexagonFrameOf）に出る
- * （2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節の案 C'。雪子のヒットは 00.00 の 1f 前。C-0419）
+ * 発動のヒットのフレーム。遅れの無い III のヒット（遅れの表に無いキャラも）は、III のタイマーの 00.00（hexagonFrameOf）に出る
+ * （plan/design-burst-hit-origin.md 8 節の案 C'。雪子のヒットは 00.00 の 1f 前。C-0419）
  */
 export function hitFrameOf(a: BurstActivation): number {
   return a.hitFrame ?? (a.startsFullBurst ? hexagonFrameOf(a) : a.frame);
 }
 
-/** 分かれたヒット編: 発動のヒットのフレームの列（1 ヒットなら [hitFrameOf(a)]。戦闘時間を超えるものも含む） */
+/** 発動のヒットのフレームの列（1 ヒットなら [hitFrameOf(a)]。戦闘時間を超えるものも含む） */
 export function hitFramesOf(a: BurstActivation): number[] {
   const first = hitFrameOf(a);
   return (a.hitOffsets ?? [0]).map((offset) => first + offset);
 }
 
-/** 着弾編: 発動の効果の発火のフレーム */
+/** 発動の効果の発火のフレーム */
 export function effectFrameOf(a: BurstActivation): number {
   return a.effectFrame ?? a.frame;
 }
 
 export type BurstScheduleModel = 'fixed' | 'dynamic';
 
-/** Stage 10: 「バーストスキルクールタイム X 秒▼」を 1 枠に当てた記録（即時効果。plan/design-stage10.md 4 節） */
+/** 「バーストスキルクールタイム X 秒▼」を 1 枠に当てた記録（即時効果。plan/design-stage10.md 4 節） */
 export type CooldownReduction = {
   frame: number;
   /** CT を縮めた枠 */
   slotIndex: number;
   /** 効果を出した枠 */
   sourceSlotIndex: number;
-  /** 縮めようとした（ミント・プリカ編: CT▲ なら延ばそうとした）フレーム数（gameSecondsToFrames(X 秒)。正） */
+  /** 縮めようとした（CT▲ なら延ばそうとした）フレーム数（gameSecondsToFrames(X 秒)。正） */
   frames: number;
   /**
    * 実際に縮んだフレーム数（CT が明けていれば 0。明けるフレームより前には戻さない）。符号付き: CT▲（burst/controller.ts の extendCooldown）は
@@ -100,7 +100,7 @@ export type BurstSchedule = {
   gaugeFullFrames: number[];
   /** チェーンが途切れた（次の段階が出ないままタイムアウトした）フレーム（動的サイクルだけ） */
   chainTimeouts: number[];
-  /** Stage 10: CT 短縮の記録（動的サイクルだけ。固定サイクルは CT を見ないので空） */
+  /** CT 短縮の記録（動的サイクルだけ。固定サイクルは CT を見ないので空） */
   cooldownReductions: CooldownReduction[];
 };
 
@@ -109,14 +109,14 @@ export function activationFramesOfSlot(schedule: BurstSchedule, slotIndex: numbe
   return schedule.activations.filter((a) => a.slotIndex === slotIndex).map((a) => a.frame);
 }
 
-/** 着弾編: 枠 slotIndex のバーストの倍率ダメージのヒットのフレーム列（発生順。戦闘時間 frames 以降は除く） */
+/** 枠 slotIndex のバーストの倍率ダメージのヒットのフレーム列（発生順。戦闘時間 frames 以降は除く） */
 export function hitFramesOfSlot(schedule: BurstSchedule, slotIndex: number, frames: number): number[] {
   return burstHitsOfSlot(schedule, slotIndex, frames).map((h) => h.frame);
 }
 
 /**
- * 着弾編: 枠 slotIndex のバーストのヒットと、その発動のフレーム（発生順。戦闘時間 frames 以降のヒットは除く）。
- * 分かれたヒット編: ヒットごとに 1 つ。share はそのヒットの倍率の割合（等分。1 ヒットなら 1）
+ * 枠 slotIndex のバーストのヒットと、その発動のフレーム（発生順。戦闘時間 frames 以降のヒットは除く）。
+ * ヒットごとに 1 つ。share はそのヒットの倍率の割合（等分。1 ヒットなら 1）
  */
 export function burstHitsOfSlot(
   schedule: BurstSchedule,
@@ -133,7 +133,7 @@ export function burstHitsOfSlot(
 }
 
 /**
- * 2 段目の段 14 の PR 1（plan/design-skill-stage14.md 2.8 節）: 発動 a でその段階に進んだ「バースト N 段階突入時」の発火フレーム。
+ * 発動 a でその段階に進んだ「バースト N 段階突入時」の発火フレーム（plan/design-skill-stage14.md 2.8 節）。
  * 段階 3（II の発動）は六角形の替わり目（hexagonFrameOf。本当の発動の HEXAGON_AFTER_ACTIVATION_FRAMES 後）。雪子の S2 の▲が
  * 替わり目から 588f 乗る（V-0549）。段階 1・2 と、固定サイクル（I・II・III が同じフレームに発動する）は発動のフレームのまま
  * （段階 2 の使い手はいない）
@@ -146,7 +146,7 @@ export function stageEnterFrameOf(
 }
 
 /**
- * Stage 8: 「バースト N 段階突入時」の発火フレーム（昇順・重複なし）。
+ * 「バースト N 段階突入時」の発火フレーム（昇順・重複なし）。
  * 段階 2 / 3 は発動の結果その段階に進んだフレーム（stageEnterFrameOf）。段階 1 はゲージ満タンのフレームとリエントリーの発動
  * （固定サイクルは満タンがないので、各サイクルのフルバースト開始 = 発動フレーム）。
  */
@@ -175,7 +175,7 @@ export const FULL_BURST_ENTRY_STOP_VIDEO_FRAMES = 22;
  * フルバーストの窓の始まり・入りの止まりの始まり・III の遅れの定数の起点。CT が律速の III では CT の明けから 00.00 まで 6〜8f
  * （C-0512）、ゲージが律速では満タンから 00.00 まで 87〜88f（V-0391）で、段の長さ 28f（C-0515）のモデルの III の発動（満タンから
  * 動画で 81f）からは 6〜7f。フルバーストの補正は 00.00 から 588f（C-0510・C-0511）。バースト使用時の効果（遅れの表に無いもの）は
- * 本当の発動のまま（2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節の案 C'）
+ * 本当の発動のまま（plan/design-burst-hit-origin.md 8 節の案 C'）
  */
 export const FULL_BURST_AFTER_ACTIVATION_FRAMES = 6;
 

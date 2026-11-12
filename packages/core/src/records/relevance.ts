@@ -1,8 +1,8 @@
-// 最小構成の検査（plan/design-minimal-relevance.md）: 効きうる未確定の要素だけに警告を出す。PR 3 は静的な判定（2 節・4.2 節）と出力（5 節）。
+// 最小構成の検査（plan/design-minimal-relevance.md）: 効きうる未確定の要素だけに警告を出す。静的な判定（2 節・4.2 節）と出力（5 節）。
 // 警告の単位は「確定の結論 × 根拠の観測値」の組。観測値の録画の編成の全枠について、効果・notes（計算に無関係を除く）・定義の無いキャラ・
 // 的の表に無い通常攻撃の条件を要素として並べ、根拠が確定（か範囲外）でないもののうち、結論の対象でなく、その録画で起きえて、
 // 観測量に効きうるものを残す。1 つでも残れば警告。人の判断の印（結論の minimal）のある要素は外す。
-// 感度（4.1 節。sim を回し直す）は PR 4 で足す。それまでは compare を持つ観測値にも静的な判定を当てる。
+// 感度（4.1 節。sim を回し直す）は sensitivity.ts が計算し、ここはその結果を読む。結果が無いか古い要素には静的な判定を当てる。
 import { compositionAllows, resolveSelfState, selfStateLookupsForTeam } from '../skills/composition.ts';
 import { applyTreasure, treasureSlots } from '../skills/treasure.ts';
 import {
@@ -39,7 +39,7 @@ export type ElementClass =
   | 'burstTiming'
   | 'otherHit'
   | 'heal'
-  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復（「遮蔽物の HP を回復した時」の効果を通してだけ効く。回復と同じ扱い）
+  // 遮蔽物 HP 回復（「遮蔽物の HP を回復した時」の効果を通してだけ効く。回復と同じ扱い）
   | 'coverHeal'
   | 'normalCondition'
   | 'unknown';
@@ -68,13 +68,13 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   // 蓄積爆破の蓄積割合▲: 爆発のヒットの値に効く
   accumulateRatio: 'damageValue',
   burstGaugeSpeed: 'burstTiming',
-  // 2 段目の段 11 の PR 3: バーストスキルのクールタイム▼（維持の付いた形）。バーストの時刻を変える
+  // バーストスキルのクールタイム▼（維持の付いた形）。バーストの時刻を変える
   burstCooldown: 'burstTiming',
   maxAmmo: 'firing',
   reloadSpeed: 'firing',
   reloadRatio: 'firing',
   chargeSpeed: 'firing',
-  // 2 段目の段 9 の PR 2: 攻撃速度▲（発と発の間）
+  // 攻撃速度▲（発と発の間）
   attackSpeed: 'firing',
   spinUpSpeed: 'firing',
   hitRate: 'hitRate',
@@ -87,27 +87,27 @@ const STAT_CLASS: Record<BuffStat, ElementClass> = {
   damageTaken: 'damageValue',
   enemyDefenseDown: 'damageValue',
   projectileExplosionDamage: 'damageValue',
-  // 2 段目の段 12 の PR 2: 発射体付着ダメージ▲（付着のヒットの値）と有利コードのダメージ適用（電撃コードの敵の 1 ヒットの値）
+  // 発射体付着ダメージ▲（付着のヒットの値）と有利コードのダメージ適用（電撃コードの敵の 1 ヒットの値）
   projectileStickDamage: 'damageValue',
   elementAdvantage: 'damageValue',
-  // レッドフード編: チャージ速度の超過分の変換（フルチャージの発の値）
+  // チャージ速度の超過分の変換（フルチャージの発の値）
   chargeSpeedOverflow: 'damageValue',
   fixedChargeTime: 'firing',
   trueDamage: 'damageValue',
   trueDamageConversion: 'damageValue',
   sustainedDamage: 'damageValue',
-  // 2 段目の段 6 の PR 2: 最大HP▲ は発動者の最終最大HP 基準の攻撃力▲を通して値に効く（notes のときと同じ分類）
+  // 最大HP▲ は発動者の最終最大HP 基準の攻撃力▲を通して値に効く（notes のときと同じ分類）
   maxHp: 'damageValue',
-  // 2 段目の段 11 の PR 2: 最大HP のみ▲ も同じ（最終最大HP への足し方が最大HP▲ と同じ）
+  // 最大HP のみ▲ も同じ（最終最大HP への足し方が最大HP▲ と同じ）
   maxHpOnly: 'damageValue',
-  // 2 段目の段 7: 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
+  // 防御力▲ は、対象の絞り込み（自分より最終防御力が低い味方）を通して値に効く（防御力▲ だけの効果は、経路 defense の
   // 間接の要素と同じに見る。notRelevantReason）
   defense: 'damageValue',
-  // エード：エージェントバニー編: 適正最小射程距離▲（距離ボーナスと、適正射程距離内のきっかけ）・貫通特化・貫通ダメージ▲は 1 ヒットの値に効く
+  // 適正最小射程距離▲（距離ボーナスと、適正射程距離内のきっかけ）・貫通特化・貫通ダメージ▲は 1 ヒットの値に効く
   minEffectiveRange: 'damageValue',
   pierce: 'damageValue',
   pierceDamage: 'damageValue',
-  // ドロシー：セレンディピティ編: ペレットの数は、1 ペレットの値（hit）・ペレットの命中の回数（count）・ゲージ（gauge）のどれにも効くので、
+  // ペレットの数は、1 ペレットの値（hit）・ペレットの命中の回数（count）・ゲージ（gauge）のどれにも効くので、
   // 分類を 1 つに決めない（どの観測値にも効きうるとみる）
   pelletCount: 'unknown',
   singlePellet: 'unknown',
@@ -123,7 +123,7 @@ const KIND_CLASS: Record<string, ElementClass> = {
   coverHeal: 'coverHeal',
   cooldownReduction: 'burstTiming',
   burstGauge: 'burstTiming',
-  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: フルバーストの窓の長さ（窓の終わり・窓の中の発・フルバースト終了時のきっかけ）
+  // フルバーストの窓の長さ（窓の終わり・窓の中の発・フルバースト終了時のきっかけ。plan/design-skill-stage21.md 2.1 節）
   fullBurstExtend: 'burstTiming',
   burstGaugeHit: 'burstTiming',
   shotPause: 'firing',
@@ -131,17 +131,17 @@ const KIND_CLASS: Record<string, ElementClass> = {
   burstStepChange: 'burstTiming',
   allyGaugeAdd: 'burstTiming',
   ammoRefill: 'firing',
-  // 紅蓮編（plan/design-scarlet.md 2.1 節）: 現在の HP▼ は、HP の割合を読む▲（クリティカルダメージ▲など）の付く時刻を通して値に効く
+  // 現在の HP▼ は、HP の割合を読む▲（クリティカルダメージ▲など）の付く時刻を通して値に効く（plan/design-scarlet.md 2.1 節）
   currentHpDown: 'damageValue',
   cycle: 'firing',
   cycleEvery: 'firing',
-  // アインのニアフェザー編: 召喚の展開は、機数を通して召喚の攻撃（damage のきっかけ { summon }）のヒットにだけ効く
+  // 召喚の展開は、機数を通して召喚の攻撃（damage のきっかけ { summon }）のヒットにだけ効く
   summon: 'otherHit',
 };
 
 /**
  * 観測値に効きうる分類。間隔（interval）は射撃の刻みだけだが、出どころがバーストの段・CT（burstChain）か時計（clock）の間隔には、
- * バーストの時刻（ゲージ・CT▼・再突入）も効く（design-minimal-relevance.md 10.5 節。2026-10-08、オーナー決定の案 A）
+ * バーストの時刻（ゲージ・CT▼・再突入）も効く（design-minimal-relevance.md 10.5 節の案 A）
  */
 export function allowedClasses(o: Pick<Observation, 'kind' | 'scope'>): readonly ElementClass[] | 'all' {
   if (o.kind === 'interval' && (o.scope?.source === 'burstChain' || o.scope?.source === 'clock'))
@@ -175,18 +175,18 @@ export type MinimalElement = {
     kind: string;
     stat?: string;
     /**
-     * 名前の付いた状態の語彙編: 状態の付与の中身の stat（分類は中身の stat の分類。plan/design-named-state-impl.md 1.8 節）。
-     * 2 段目の段 1（plan/design-skill-stage1.md 3 節）: 中身は、同じ定義のその状態の付与のどれかが持つもの（中身の無い付与も、
-     * 付ける状態の中身で数える）。解除（removeState）も、外す状態の中身
+     * 状態の付与の中身の stat（分類は中身の stat の分類。plan/design-named-state-impl.md 1.8 節）。
+     * 中身は、同じ定義のその状態の付与のどれかが持つもの（中身の無い付与も、
+     * 付ける状態の中身で数える。plan/design-skill-stage1.md 3 節）。解除（removeState）も、外す状態の中身
      */
     stats?: string[];
     target?: string;
     trigger?: string;
     targetWeapon?: string;
     targetElement?: string;
-    /** 2 段目の段 9: 対象の絞り込み「〈クラス〉型の味方」 */
+    /** 対象の絞り込み「〈クラス〉型の味方」 */
     targetClass?: string;
-    /** 2 段目の段 7: 対象の絞り込み「自分より最終防御力が低い味方」（防御力▲ の読む側） */
+    /** 対象の絞り込み「自分より最終防御力が低い味方」（防御力▲ の読む側） */
     targetDefense?: string;
   };
   /** 効果のスロット */
@@ -202,7 +202,7 @@ export type MinimalElement = {
 };
 
 /**
- * 2 段目の段 1: 定義のその状態の中身の stat（付与のどれかが持つ中身。無ければ空）。2 段目の段 14 の PR 3: 最大スタック数▲の項目は
+ * 定義のその状態の中身の stat（付与のどれかが持つ中身。無ければ空）。最大スタック数▲の項目は
  * 'maxStacksUp'（分類は順番の攻撃のヒットの数を変える otherHit。statClassOf）
  */
 function stateStatsOf(def: SkillDefinition, state: NamedStateId): string[] {
@@ -227,7 +227,7 @@ function triggerNameOf(t: unknown): string | undefined {
 }
 
 /**
- * 効果の形（きっかけは名前に直す: 文字列はそのまま、回数トリガーは count、時間の周期は timer、効果名は applied。2 段目の段 14 の PR 2:
+ * 効果の形（きっかけは名前に直す: 文字列はそのまま、回数トリガーは count、時間の周期は timer、効果名は applied、
  * 溜めの周期は chargeTick、溜めが満ちた時は chargeFull）
  */
 function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<MinimalElement['shape']> {
@@ -236,7 +236,7 @@ function shapeOfEffect(e: SkillEffect, def: SkillDefinition): NonNullable<Minima
   return {
     kind: e.kind,
     ...(typeof v.stat === 'string' ? { stat: v.stat } : {}),
-    // ミント・プリカ編: 自分の状態の消去（cancelState の self）と状態の維持の延長（stateExtend）も、解除と同じく相手の状態の中身
+    // 自分の状態の消去（cancelState の self）と状態の維持の延長（stateExtend）も、解除と同じく相手の状態の中身
     ...(e.kind === 'state' ||
     e.kind === 'removeState' ||
     e.kind === 'stackChange' ||
@@ -268,7 +268,7 @@ export type RelevanceContext = RecordsData & {
 export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): MinimalElement[] {
   const out: MinimalElement[] = [];
   const teamCharacters = recording.team.map((m) => ctx.characters.get(m.rid) ?? null);
-  // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 編成で決まる自分の状態の条件（selfState）は、編成の段と同じに決める
+  // 編成で決まる自分の状態の条件（selfState）は、編成の段と同じに決める（plan/design-skill-stage1.md 1.1 節）
   const teamDefinitions = recording.team.map((m) => {
     const character = ctx.characters.get(m.rid);
     const base = ctx.skills.get(m.rid);
@@ -311,7 +311,7 @@ export function elementsOf(recording: RecordingEntry, ctx: RelevanceContext): Mi
             claims: [...(e.claims ?? []), ...refs.flatMap(({ note }) => note.claims ?? [])],
             ...readsOf(e),
           });
-          // 名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 中身の項目に claims があれば、項目を 1 つの要素にする
+          // 中身の項目に claims があれば、項目を 1 つの要素にする（plan/design-named-state-impl.md 1.8 節）
           // （付与の要素は状態の窓。中身の値の根拠は項目の claims）
           if (e.kind !== 'state') return;
           e.contents?.forEach((item, subIndex) => {
@@ -374,7 +374,7 @@ export function whenHolds(when: ClaimWhen, recording: RecordingEntry, ctx: Relev
   if (when.sameStatSources !== undefined) {
     const { stat, atLeast } = when.sameStatSources;
     const elements = elementsOf(recording, ctx).filter((e) => e.type === 'effect');
-    // 名前の付いた状態の語彙編: 状態の付与は中身の stat の出どころ（claims のある項目は別の要素なので、付与の側では数えない）
+    // 状態の付与は中身の stat の出どころ（claims のある項目は別の要素なので、付与の側では数えない）
     const sources = elements.filter(
       (e) =>
         e.shape?.stat === stat ||
@@ -469,7 +469,7 @@ export function sameEdgeRange(a: EdgeRange | undefined, b: EdgeRange | undefined
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
 }
 
-/** 2 段目の段 14 の PR 2: 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い） */
+/** 撃つ枠の溜めで起きるきっかけ（撃たない枠では起きない。射撃の回数のきっかけと同じ扱い） */
 const SHOT_TRIGGERS: ReadonlySet<string> = new Set([...SHOT_COUNT_KINDS, 'chargeTick', 'chargeFull']);
 const FULL_BURST_TRIGGERS: ReadonlySet<string> = new Set([
   'fullBurstStart',
@@ -499,15 +499,15 @@ export function impossibleReason(element: MinimalElement, recording: RecordingEn
 /** stat の分類 */
 function statClassOf(stat: string | undefined): ElementClass {
   if (stat === undefined || stat === 'unknown') return 'unknown';
-  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の最大スタック数▲（オートファイアの順番の攻撃の数を変える）
+  // 状態の中身の最大スタック数▲（オートファイアの順番の攻撃の数を変える。plan/design-skill-stage14.md 2.7 節）
   if (stat === 'maxStacksUp') return 'otherHit';
-  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 状態の中身のスキルのクールタイム▼（持ち主の周期のスキルの発動の数と時刻を変える）
+  // 状態の中身のスキルのクールタイム▼（持ち主の周期のスキルの発動の数と時刻を変える。plan/design-arcana-magician.md 2.1 節）
   if (stat === 'skillCooldownDown') return 'otherHit';
   return STAT_CLASS[stat as BuffStat] ?? 'unknown';
 }
 
 /**
- * 要素の分類（4.2 節の 5）。名前の付いた状態の語彙編（plan/design-named-state-impl.md 1.8 節）: 状態の付与は中身の stat の分類
+ * 要素の分類（4.2 節の 5。状態は plan/design-named-state-impl.md 1.8 節）。状態の付与は中身の stat の分類
  * （中身の分類が揃わない・中身の無い付与は分類が決まらない unknown）。中身の項目の要素は項目の stat の分類
  */
 export function classOf(element: MinimalElement): ElementClass {
@@ -515,7 +515,7 @@ export function classOf(element: MinimalElement): ElementClass {
   const shape = element.shape;
   if (shape === undefined || shape.kind === 'unknown') return 'unknown';
   if (shape.kind === 'passive' || shape.kind === 'timed') return statClassOf(shape.stat);
-  // ミント・プリカ編: 自分の状態の消去と状態の維持の延長も、相手の状態の中身で分類する（shapeOfEffect）
+  // 自分の状態の消去と状態の維持の延長も、相手の状態の中身で分類する（shapeOfEffect）
   if (
     shape.kind === 'state' ||
     shape.kind === 'removeState' ||
@@ -547,7 +547,7 @@ export function teamHasHealedTrigger(recording: RecordingEntry, ctx: RelevanceCo
   return teamHasTrigger(recording, ctx, (t) => t === 'healed');
 }
 
-/** 2 段目の段 17 の PR 1: 編成に、遮蔽物 HP 回復を受けた時（trigger: { coverHealed }）がきっかけの効果か notes を持つキャラがいるか */
+/** 編成に、遮蔽物 HP 回復を受けた時（trigger: { coverHealed }）がきっかけの効果か notes を持つキャラがいるか */
 export function teamHasCoverHealedTrigger(recording: RecordingEntry, ctx: RelevanceContext): boolean {
   return teamHasTrigger(recording, ctx, isCoverHealedTrigger);
 }
@@ -580,10 +580,10 @@ function elementsOfTeam(recording: RecordingEntry, ctx: RelevanceContext): Minim
   return elements;
 }
 
-/** 2 段目の段 7: 防御力▲ だけの効果（状態の中身が防御力▲ だけの付与も）。与ダメージの式を読まない */
+/** 防御力▲ だけの効果（状態の中身が防御力▲ だけの付与も）。与ダメージの式を読まない */
 /**
  * 効果の要素が間接の経路を動かす側なら、その経路（notes の path と違い、未確定の判定は効果の結論で見る）。防御力▲ だけの効果は defense
- * （2 段目の段 7）、デバフ解除は debuff（課題 2-59。plan/design-debuff-removal.md 2.0 節）
+ * （plan/design-skill-stage7.md 1.2 節）、デバフ解除は debuff（plan/design-debuff-removal.md 2.0 節）
  */
 function effectMoverPathOf(element: MinimalElement): IndirectPath | undefined {
   if (isDefenseOnly(element)) return 'defense';
@@ -591,8 +591,8 @@ function effectMoverPathOf(element: MinimalElement): IndirectPath | undefined {
 }
 
 /**
- * 効果の読む側の印。書いた reads に、デバフの印の付いた状態の付与（課題 2-59。目録の印から導く）と、味方に付く timed の▼（課題 2-64。
- * plan/design-debuff-removal-timed.md 2.6 節）は debuff を足す
+ * 効果の読む側の印。書いた reads に、デバフの印の付いた状態の付与（目録の印から導く）と、味方に付く timed の▼
+ * （plan/design-debuff-removal-timed.md 2.6 節）は debuff を足す
  */
 function readsOf(e: SkillEffect): { reads?: IndirectPath[] } {
   const reads = new Set(e.reads ?? []);
@@ -621,8 +621,9 @@ export function notRelevantReason(
 ): string | undefined {
   if (element.type === 'noDefinition') return undefined;
   // 分類の設計書の論点 7（plan/design-indirect-notes.md 2 節）: 間接の要素は、同じ経路を読む要素が編成にいて、その要素がこの録画で起きえて
-  // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）。2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 防御力▲ の
+  // この観測値に効きうる時だけ効きうる（効く分類と対象は、読む側で見る）。防御力▲ の
   // 効果も与ダメージの式を読まず、防御力を読む側を通してだけ値に効くので、経路 defense の間接の要素と同じに見る
+  // （plan/design-skill-stage7.md 1.2 節）
   const path = element.path ?? effectMoverPathOf(element);
   if (path !== undefined) {
     const readers = elementsOfTeam(recording, ctx).filter((r) => r.reads?.includes(path));
@@ -634,14 +635,14 @@ export function notRelevantReason(
         !readerExcluded(r) &&
         impossibleReason(r, recording) === undefined &&
         notRelevantReason(r, o, recording, ctx) === undefined &&
-        // 2 段目の段 7（同 1.4 節）: 「自分と自分より最終防御力が低い味方」の読む側は発動者をいつも対象にするので、防御力の比べで値が
-        // 変わりうるのは、観測した枠のうち発動者でない枠（観測した枠が分からなければ効きうるとみる）
+        // 「自分と自分より最終防御力が低い味方」の読む側は発動者をいつも対象にするので、防御力の比べで値が
+        // 変わりうるのは、観測した枠のうち発動者でない枠（観測した枠が分からなければ効きうるとみる。plan/design-skill-stage7.md 1.4 節）
         (r.shape?.targetDefense === undefined || observed === undefined || observed.some((slot) => slot !== r.slot)),
     );
     return effective ? undefined : `${name}を読む効果がこの観測値に効かない`;
   }
   const cls = classOf(element);
-  // 回復は「回復を受けた時」の効果を通してだけ観測量に効く（11.8 節。2026-10-08、オーナー決定）
+  // 回復は「回復を受けた時」の効果を通してだけ観測量に効く（11.8 節）
   if (cls === 'heal' && !teamHasHealedTrigger(recording, ctx)) return '回復を受けた時の効果を持つ味方がいない';
   if (cls === 'coverHeal' && !teamHasCoverHealedTrigger(recording, ctx))
     return '遮蔽物の HP を回復した時の効果を持つ味方がいない';
@@ -662,7 +663,7 @@ export function notRelevantReason(
       observed.every((c) => c !== undefined && c.element !== shape.targetElement)
     )
       return '対象のコードが観測した枠と違う';
-    // 2 段目の段 9（plan/design-skill-stage9.md 1.1 節）: 「〈クラス〉型の味方」も、武器種・コードと同じく観測した枠のクラスで外す
+    // 「〈クラス〉型の味方」も、武器種・コードと同じく観測した枠のクラスで外す（plan/design-skill-stage9.md 1.1 節）
     if (shape.targetClass !== undefined && observed.every((c) => c !== undefined && c.class !== shape.targetClass))
       return '対象のクラスが観測した枠と違う';
   }

@@ -21,7 +21,7 @@ import {
 } from './common.ts';
 import { parseAppliedTrigger, parseTrigger } from './trigger.ts';
 
-/** アニス：スター S2・バースト編: 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
+/** 周期の自動攻撃。検証の規則は dot の同じ欄と同じ */
 export function parseAutoAttackEffect(v: Record<string, Json>, path: string): AutoAttackEffect {
   rejectUnknownKeys(
     v,
@@ -82,7 +82,7 @@ export function parseAutoAttackEffect(v: Record<string, Json>, path: string): Au
 }
 
 /**
- * V-0534: 射撃の止まり（shotPause）。きっかけは射撃の回数（during・firesDuring・stacksRef・確率は書けない）か、プリバティ編の 'burstUse'
+ * V-0534: 射撃の止まり（shotPause）。きっかけは射撃の回数（during・firesDuring・stacksRef・確率は書けない）か 'burstUse'
  * （burst スロットだけ。framesOnLastShot は書けない。plan/design-privaty-burst-pause.md 2 節）
  */
 export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot: SkillSlot): ShotPauseEffect {
@@ -120,7 +120,7 @@ export function parseShotPauseEffect(v: Record<string, Json>, path: string, slot
   return effect;
 }
 
-/** アインのニアフェザー編（plan/design-ein-near-feather.md 1.1 節）: 召喚の展開。burstUse はバーストにだけ書ける */
+/** 召喚の展開（plan/design-ein-near-feather.md 1.1 節）。burstUse はバーストにだけ書ける */
 export function parseSummonEffect(v: Record<string, Json>, path: string, slot: SkillSlot): SummonEffect {
   rejectUnknownKeys(v, ['kind', 'summon', 'trigger', 'lifetimesSeconds', 'assumes', 'claims'], path);
   const summon = oneOf(SUMMON_IDS, v.summon, `${path}.summon`);

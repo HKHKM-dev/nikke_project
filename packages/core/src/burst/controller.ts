@@ -29,7 +29,7 @@ export const BURST_GAUGE_MAX = 1_000_000;
 /**
  * バーストの段の長さ（ゲーム内のフレーム）。I → II、II → III の本当の発動どうしは、動画で約 29f（C-0515。新しい CT の秒どうし。
  * 段の表示どうしも 29f。C-0285）で、そのうち 1f は I・II の発動の止まり（C-0289。videoFrameOf が足す）なので、ゲーム内では 28f。
- * キャラによらない（2026-10-10 のオーナーの判断。plan/design-burst-hit-origin.md 8 節）
+ * キャラによらない（plan/design-burst-hit-origin.md 8 節）
  */
 const BURST_STAGE_FRAMES = 28;
 /**
@@ -43,11 +43,11 @@ export const BURST_STEP1_TO_STEP2_FRAMES = BURST_STAGE_FRAMES;
 export const BURST_STEP2_TO_STEP3_FRAMES = BURST_STAGE_FRAMES;
 /**
  * StepFull の発動（III の本当の発動。CT が走り出す）からフルバースト開始（III のタイマーの 00.00）まで（フレーム）。
- * 値の出どころは schedule.ts の FULL_BURST_AFTER_ACTIVATION_FRAMES（C-0512・V-0391。2026-10-10 のオーナーの判断）
+ * 値の出どころは schedule.ts の FULL_BURST_AFTER_ACTIVATION_FRAMES（C-0512・V-0391）
  */
 export const FULL_BURST_START_DELAY_FRAMES = FULL_BURST_AFTER_ACTIVATION_FRAMES;
 /**
- * フルバースト時間（フレーム）の既定値。Stage 8 からは StepFull に入る発動をしたニケの burst_duration
+ * フルバースト時間（フレーム）の既定値。StepFull に入る発動をしたニケの burst_duration
  * （BurstUnit.fullBurstFrames。イサベル 5 秒、モダニア 15 秒）を優先し、それがない枠だけこの値を使う（plan/design-stage8.md 3.3 節）
  */
 export const FULL_BURST_FRAMES = gameSecondsToFrames(10);
@@ -79,14 +79,14 @@ export type BurstUnit = {
   burstStep: BurstStep;
   nextStep: BurstNextStep;
   cooldownFrames: number;
-  /** Stage 8: この枠の発動でフルバーストに入ったときの長さ（burst_duration）。省略は timing.fullBurstFrames */
+  /** この枠の発動でフルバーストに入ったときの長さ（burst_duration）。省略は timing.fullBurstFrames */
   fullBurstFrames?: number;
   /**
-   * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: fullBurstFrames の元の秒（burst_duration）。フルバーストタイムの延長の秒を
+   * fullBurstFrames の元の秒（burst_duration。plan/design-skill-stage21.md 2.1 節）。フルバーストタイムの延長の秒を
    * 足してからフレームにする（切り捨てを 1 回にする）。省略は fullBurstFrames に延長の秒のフレームを足す
    */
   fullBurstSeconds?: number;
-  /** 着弾編: 発動からヒット・効果の発火までの遅れ（burst/landing.ts）。省略は 0 */
+  /** 発動からヒット・効果の発火までの遅れ（burst/landing.ts）。省略は 0 */
   delays?: Readonly<BurstDelays>;
 } | null;
 
@@ -106,11 +106,11 @@ export type BurstControllerState = {
   /** 枠ごとの CT 明けフレーム（戦闘開始時は 0 = すぐ使える） */
   cooldownEnd: number[];
   /**
-   * メイド編（plan/design-maids.md 2.2 節の論点 2）: 枠ごとの気絶の明けのフレーム（このフレームより前は候補にしない）。省略は気絶なし
+   * 枠ごとの気絶の明けのフレーム（このフレームより前は候補にしない。plan/design-maids.md 2.2 節の論点 2）。省略は気絶なし
    */
   stunnedUntil?: number[];
   usedInChain: boolean[];
-  /** Stage 11: 今のチェーンで撃った枠（発動順）。フルバーストに入ったら窓の burstUsers になる */
+  /** 今のチェーンで撃った枠（発動順）。フルバーストに入ったら窓の burstUsers になる */
   chainSlots: number[];
   fullBurstEnd: number;
   activations: BurstActivation[];
@@ -120,7 +120,7 @@ export type BurstControllerState = {
   chainTimeouts: number[];
   cooldownReductions: CooldownReduction[];
   /**
-   * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 次に作るフルバーストの窓に足す延長の秒（予約。fullBurstExtend の発火が足す）。
+   * 次に作るフルバーストの窓に足す延長の秒（予約。fullBurstExtend の発火が足す。plan/design-skill-stage21.md 2.1 節）。
    * 窓を作る時に足して 0 に戻す。窓を作らずにチェーンが切れたら捨てる
    */
   fullBurstExtensionSeconds: number;
@@ -200,10 +200,10 @@ export function initialBurstController(
 
 /**
  * 段階 step で撃てる枠（専任か AllStep）のうち、枠番号の最も若いもの。なければ -1。
- * レッドフード編（plan/design-red-hood.md 7.1 節の論点 7）: AllStep の枠は、このチェーンで撃っていても CT が明けていれば候補にする
+ * AllStep の枠は、このチェーンで撃っていても CT が明けていれば候補にする（plan/design-red-hood.md 7.1 節の論点 7）
  */
 function pickCandidate(state: BurstControllerState, step: BurstStepKey, frame: number): number {
-  // レッドフード編（同 論点 12）: 専任と AllStep を分けず、撃てる候補を枠の若い順に選ぶ（オーナーの言う「左側優先」。AllStep の枠が
+  // 専任と AllStep を分けず、撃てる候補を枠の若い順に選ぶ（オーナーの言う「左側優先」。plan/design-red-hood.md 7.1 節の論点 12。AllStep の枠が
   // 撃てる専任より左にいる録画は無い）
   return state.units.findIndex(
     (u, i) =>
@@ -246,7 +246,7 @@ function timeOutChain(state: BurstControllerState, frame: number): void {
 }
 
 /**
- * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 窓の長さ。burst_duration に予約の延長の秒を足してからフレームにする
+ * 窓の長さ（plan/design-skill-stage21.md 2.1 節）。burst_duration に予約の延長の秒を足してからフレームにする
  * （延長が無ければいままでどおり）
  */
 function fullBurstLengthOf(state: BurstControllerState, unit: NonNullable<BurstUnit>): number {
@@ -261,7 +261,7 @@ function fullBurstLengthOf(state: BurstControllerState, unit: NonNullable<BurstU
 function activate(state: BurstControllerState, slotIndex: number, frame: number): void {
   const unit = state.units[slotIndex]!;
   if (state.phase === 'ready' && state.manualBursts !== null) state.manualNext += 1;
-  // 2 段目の段 21: この発動の枠のバーストの延長は予約に足す（窓を作る発動なら、下でこの窓に足して空にする）
+  // この発動の枠のバーストの延長は予約に足す（窓を作る発動なら、下でこの窓に足して空にする）
   if (state.extensionAtActivation !== undefined)
     reserveFullBurstExtension(state, state.extensionAtActivation(slotIndex, frame));
   const from = state.step;
@@ -297,9 +297,9 @@ function activate(state: BurstControllerState, slotIndex: number, frame: number)
 /**
  * frame を 1 つ進める。gauge はこのフレームに当たった分のゲージ量（charging のときだけ足される）。
  * frame は 0 から 1 ずつ増やして呼ぶ。発動・フルバースト窓・満タン・タイムアウトは state に積まれる。
- * Stage 16-B: blocked（敵を狙えない）の間はオートバーストが発動しない（2026-09-26 ユーザー確認）。
+ * blocked（敵を狙えない）の間はオートバーストが発動しない（2026-09-26 ユーザー確認）。
  * 満タン・フルバーストの終わりは進み、明けたフレームで発動の判定を再開する。チェーンのタイムアウトは最後の発動から数え、
- * blocked の間も判定する（C-0908。2026-11-03 のオーナーの判断）
+ * blocked の間も判定する（C-0908）
  */
 export function stepBurstController(state: BurstControllerState, frame: number, gauge: number, blocked = false): void {
   const { timing } = state;
@@ -339,7 +339,7 @@ export function stepBurstController(state: BurstControllerState, frame: number, 
 }
 
 /**
- * Stage 10: 枠 slotIndex の残りの CT を frames フレーム縮める（「バーストスキルクールタイム X 秒▼」。即時効果）。
+ * 枠 slotIndex の残りの CT を frames フレーム縮める（「バーストスキルクールタイム X 秒▼」。即時効果）。
  * そのフレームの stepBurstController の後に呼ぶ（同じフレームに発動した枠の CT も縮む。plan/design-stage10.md 4 節）。
  * CT が明けている枠は変わらず、明けるフレームは frame より前に戻さない（縮んで明けた枠が撃てるのは次のフレームから）。
  * 同じフレームに何度呼んでも max(frame, c − a − b …) になり、順番に依らない
@@ -359,7 +359,7 @@ export function reduceCooldown(
 }
 
 /**
- * ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 「バーストスキルクールタイム X 秒▲」。枠 slotIndex の走っている CT の明けを frames だけ
+ * 「バーストスキルクールタイム X 秒▲」（plan/design-mint-prika.md 2.6 節）。枠 slotIndex の走っている CT の明けを frames だけ
  * 遅らせる（明けている枠は変わらない）。記録の applied は負（延びたフレーム数の符号を変えたもの。CT の明けを数える所は即時の CT▼ と同じ式で読める）
  */
 export function extendCooldown(
@@ -377,7 +377,7 @@ export function extendCooldown(
   state.cooldownReductions.push({ frame, slotIndex, sourceSlotIndex, frames, applied: running ? -frames : 0 });
 }
 
-/** メイド編（plan/design-maids.md 2.2 節）: 枠を until（このフレームを含まない）まで気絶にし、バーストの候補から外す */
+/** 枠を until（このフレームを含まない）まで気絶にし、バーストの候補から外す（plan/design-maids.md 2.2 節） */
 export function stunSlot(state: BurstControllerState, slotIndex: number, until: number): void {
   const stunned = (state.stunnedUntil ??= state.units.map(() => 0));
   stunned[slotIndex] = Math.max(stunned[slotIndex]!, until);
@@ -396,8 +396,8 @@ export function shortenCooldown(state: BurstControllerState, slotIndex: number, 
 }
 
 /**
- * 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: 次に作るフルバーストの窓に延長の秒を予約する（fullBurstExtend のうち、窓の外で
- * 発火したもの。ソーダ：トゥインクルバニーのバースト 3 段階突入時）。同じ窓への予約は足し算
+ * 次に作るフルバーストの窓に延長の秒を予約する（plan/design-skill-stage21.md 2.1 節）。対象は fullBurstExtend のうち窓の外で
+ * 発火したもの（ソーダ：トゥインクルバニーのバースト 3 段階突入時）。同じ窓への予約は足し算
  */
 export function reserveFullBurstExtension(state: BurstControllerState, seconds: number): void {
   if (!Number.isFinite(seconds) || seconds < 0) throw new RangeError(`seconds must be >= 0, got ${seconds}`);

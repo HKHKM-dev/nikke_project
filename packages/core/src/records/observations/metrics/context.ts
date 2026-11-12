@@ -67,8 +67,8 @@ export function withArgs(
 }
 
 /**
- * 分かれたヒット編（plan/design-burst-split-hits.md 4.4 節）: n 回目（0 始まり）の発動の、1 ヒット目から各ヒットまでの動画のフレーム数
- * （先頭は 0。1 ヒットなら [0]）
+ * n 回目（0 始まり）の発動の、1 ヒット目から各ヒットまでの動画のフレーム数
+ * （先頭は 0。1 ヒットなら [0]。plan/design-burst-split-hits.md 4.4 節）
  */
 /** 枠の n 回目（ctx.args.n。0 始まり）の発動と、その時刻表 */
 export function nthActivationOf(

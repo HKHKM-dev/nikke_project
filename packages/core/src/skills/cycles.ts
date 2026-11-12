@@ -1,4 +1,4 @@
-// Stage 11 紅蓮BS: 段の循環（cycle。「攻撃回数別の効果」「各段階の効果のみ適用」）と、その間隔の変更（cycleEvery。
+// 段の循環（cycle。「攻撃回数別の効果」「各段階の効果のみ適用」）と、その間隔の変更（cycleEvery。
 // 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を Lv の数値に解決し、射撃の列から各段の発動を決める
 // （plan/design-stage11-scarlet-bs.md 2・3 節）。
 //
@@ -47,7 +47,7 @@ export type ResolvedCycleEvery = {
   /** 対象の cycle を持つ自分のスロット */
   targetSkill: SkillSlot;
   /**
-   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 窓が効く先。cycle = そのスロットの段の循環、shotCounts = cycle の無い
+   * 窓が効く先（plan/design-skill-stage12.md 2.4 節）。cycle = そのスロットの段の循環、shotCounts = cycle の無い
    * スロットの射撃の回数のきっかけ（damage・shotPause・counterChange。skills/triggers.ts の everyAt）
    */
   target: 'cycle' | 'shotCounts';
@@ -87,7 +87,7 @@ function resolveCycleEffect(
       effectIndex,
       cycle: { step: i, steps: effect.steps.length },
     };
-    // 回数トリガーの遅れ編の第 2 段: 段のダメージの遅れ（frame/plan.ts が射撃の delayFrames 後に出す。C-0651）
+    // 段のダメージの遅れ（frame/plan.ts が射撃の delayFrames 後に出す。C-0651）
     if (step.delayFrames !== undefined) r.delayFrames = step.delayFrames;
     const assumes = step.assumes ?? effect.assumes;
     if (assumes) r.assumes = assumes;
@@ -137,7 +137,7 @@ export function resolveCycleEvery(
           );
         }
       } else {
-        // 2 段目の段 12 の PR 2: cycle の無いスロットは、射撃の回数のきっかけの N（どれも同じ。skills/parse/crossChecks.ts の validateCountTriggersEvery）
+        // cycle の無いスロットは、射撃の回数のきっかけの N（どれも同じ。skills/parse/crossChecks.ts の validateCountTriggersEvery）
         // から decreaseRef の値を引く。対象のスロットが unsupported なら効果が無いので出さない
         if (effect.decreaseRef === undefined) return;
         const counted = shotCountTriggerOf(def, character, levels, effect.slot);
@@ -168,7 +168,7 @@ export function resolveCycleEvery(
   return resolved;
 }
 
-/** 2 段目の段 12 の PR 2: スロットの最初の射撃の回数のきっかけ（Lv の数値に解いたもの）。無ければ null */
+/** スロットの最初の射撃の回数のきっかけ（Lv の数値に解いたもの）。無ければ null */
 function shotCountTriggerOf(
   def: SkillDefinition,
   character: CharacterData,
@@ -187,12 +187,12 @@ function shotCountTriggerOf(
 export function cycleShotFrames(log: ShotLog | null | undefined, trigger: ResolvedShotCountTrigger): readonly number[] {
   if (!log) return [];
   if (trigger.count === 'fullChargeShot') {
-    // Stage 22-B: 部分チャージの発は数えない（design-stage22.md 0.2 節。紅蓮BS の S1 の段）
+    // 部分チャージの発は数えない（design-stage22.md 0.2 節。紅蓮BS の S1 の段）
     const full = fullChargeFrameSet(log);
     return log.frames.filter(full);
   }
   if (trigger.count === 'lastShot') return log.lastShotFrames ?? [];
-  // 使用武器変更の武器のパラメータ編: 循環には書けない（skills/parse/cycle.ts の parseCycleEffect）が、型のために列を返す
+  // 循環には書けない（skills/parse/cycle.ts の parseCycleEffect）が、型のために列を返す
   if (trigger.count === 'weaponChangeShot') return log.weaponChangeShotFrames ?? [];
   return log.frames;
 }

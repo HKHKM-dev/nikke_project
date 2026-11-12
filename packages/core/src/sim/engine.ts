@@ -85,7 +85,7 @@ export type SimSlotSegment = {
   /** この区間に実際に撃った数（整数。1 パス目の射撃の列から数えた発数） */
   triggers: number;
   damage: number;
-  /** Stage 22-B: triggers・damage のうち部分チャージの発。無ければキーごと無い */
+  /** triggers・damage のうち部分チャージの発。無ければキーごと無い */
   partialCharge?: PartialChargeTotals;
   /**
    * 射撃ごとの倍率ダメージを着弾のフレームで出す枠（飛ぶ時間のある枠。plan/design-anis-star-unimplemented.md 3 節。C-0992）: この区間に
@@ -99,10 +99,10 @@ export type SimSlotResult = {
   character: CharacterData;
   baseAttack: number;
   notes: ModelNote[];
-  /** 常時パッシブだけ（Stage 4 互換の表示用） */
+  /** 常時パッシブだけ（表示用） */
   passiveBuffs: BuffTotals;
   passiveEffects: AppliedEffect[];
-  /** Stage 13: 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
+  /** 育成入力の効果層（OL・キューブ・コレクション）。passiveBuffs に含まれている */
   buildEffects: readonly BuildEffect[];
   segments: SimSlotSegment[];
   /** Σ segments.damage */
@@ -112,12 +112,12 @@ export type SimSlotResult = {
     activations: number[];
     hit: BurstHitResult | null;
     damage: number;
-    /** Stage 16: 発動ごとの内訳（activations と同じ順） */ hits: BurstHitResult[];
+    /** 発動ごとの内訳（activations と同じ順） */ hits: BurstHitResult[];
   };
-  /** Stage 8: 倍率ダメージ（damage）の発動フレームと合計 */
+  /** 倍率ダメージ（damage）の発動フレームと合計 */
   skillHits: { frames: number[]; damage: number };
   totalDamage: number;
-  /** Stage 18-C: 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠は null */
+  /** 条件が自動の枠で使った条件の平均（発数の重み）。手入力の枠は null */
   autoCondition: AutoConditionSummary | null;
 };
 
@@ -126,25 +126,25 @@ export type SimResult = {
   frames: number;
   schedule: BurstSchedule | null;
   timeline: BuffTimeline;
-  /** Stage 8: 各枠の射撃の列（1 パス目）。2 パス目の射撃はこの列どおり */
+  /** 各枠の射撃の列（1 パス目）。2 パス目の射撃はこの列どおり */
   shots: (ShotLog | null)[];
-  /** Stage 10: 即時効果（CT 短縮・弾丸チャージ）を当てた記録（1 パス目） */
+  /** 即時効果（CT 短縮・弾丸チャージ）を当てた記録（1 パス目） */
   instants: InstantApplication[];
-  /** Stage 16: 倍率ダメージの発動（1 パス目） */
+  /** 倍率ダメージの発動（1 パス目） */
   skillHits: SkillHitEvent[];
   slots: (SimSlotResult | null)[];
   totalDamage: number;
-  /** Stage 16-B: 敵を狙えない窓（1 パス目。出来事が無ければ空） */
+  /** 敵を狙えない窓（1 パス目。出来事が無ければ空） */
   untargetable: FrameRange[];
-  /** Stage 18-C: 着地点の区間（条件が自動の枠が無い、または的の表の無い敵では空） */
+  /** 着地点の区間（条件が自動の枠が無い、または的の表の無い敵では空） */
   landings: LandingFrameSpan[];
-  /** Stage 16-B: 1 秒ごとのダメージ（通常攻撃・バーストスキル・倍率ダメージの合計） */
+  /** 1 秒ごとのダメージ（通常攻撃・バーストスキル・倍率ダメージの合計） */
   damagePerSecond: DamagePerSecond;
   /** 発のゲージ（着弾のフレーム。1 パス目の記録。照合用） */
   shotGauges: TeamPlan['shotGauges'];
-  /** フラワー編（V-0483）: 周期のゲージ（1 パス目の記録。照合用） */
+  /** 周期のゲージ（1 パス目の記録（V-0483）。照合用） */
   timerGauges: TeamPlan['timerGauges'];
-  /** 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 5）: 1 パス目の件の一覧の履歴（観測値の指標が読む） */
+  /** 1 パス目の件の一覧の履歴（観測値の指標が読む。plan/design-holder-effects.md 段 D の 5） */
   history: TeamPlan['history'];
   /** trace: false なら空 */
   events: SimEvent[];
@@ -154,7 +154,7 @@ type Runner = {
   index: number;
   /** 射撃の列 */
   shots: readonly number[];
-  /** Stage 22-B: 部分チャージの発のフレーム → チャージの進み */
+  /** 部分チャージの発のフレーム → チャージの進み */
   partial: ReadonlyMap<number, number>;
   /** 射撃ごとの倍率ダメージを着弾で出す枠の、発のフレーム → 着弾のフレーム（ほかの枠は null） */
   landAt: ((frame: number) => number) | null;
@@ -162,9 +162,9 @@ type Runner = {
 };
 
 export function runSimulation(simInput: SimInput): SimResult {
-  // 宝物版への差し替えの前に確かめる（2026-10-27 までの computeTeamDamage と同じ順）
+  // 宝物版への差し替えの前に確かめる
   validateTeamSlots(simInput.slots);
-  // Stage 9: 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でもバーストの定義と character を読むため）
+  // 宝物版への差し替えは最上位で 1 回だけ（planTeamRun の外でもバーストの定義と character を読むため）
   const input = applyCompositionToTeam(applyTreasureToTeam(simInput));
   const { slots, enemy } = input;
   const model = input.model ?? DEFAULT_WEAPON_MODEL;
@@ -187,7 +187,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     ...input,
     model,
   });
-  // Stage 16-B: 1 秒ごとのダメージ（タイムラインの表示用）
+  // 1 秒ごとのダメージ（タイムラインの表示用）
   // 最後のフレーム（180 秒の戦闘では 179.996 秒）が入る秒までの列（V-0086）
   const seconds = frames > 0 ? Math.floor(framesToGameSeconds(frames - 1)) + 1 : 0;
   const perSecond: DamagePerSecond = {
@@ -237,7 +237,7 @@ export function runSimulation(simInput: SimInput): SimResult {
             .map(landAt)
             .filter((f) => f < frames)
             .sort((a, b) => a - b);
-    // 区間ごとの 1 トリガー値と発数。一本化の段 A-2: 発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
+    // 区間ごとの 1 トリガー値と発数。発数は射撃の列から二分探索で引く（区間は [0, frames) を隙間なく覆う）
     const segments: SimSlotSegment[] = timeline.segments.map((segment) => {
       const state = segment.slots[index] ?? EMPTY_BUFF_STATE;
       const trigger = slotTriggerDamage(
@@ -253,7 +253,7 @@ export function runSimulation(simInput: SimInput): SimResult {
       );
       const range = [{ start: segment.start, end: segment.end }];
       const triggers = countShotsInRanges(shotFrames, range);
-      // Stage 22-B: 部分チャージの発（C-1001。値は C-0855）は、その発のチャージの進みで値を出し直す
+      // 部分チャージの発（C-1001。値は C-0855）は、その発のチャージの進みで値を出し直す
       const partial = partialShotsInRanges(shots[index]?.partialShots, range);
       const partialDamage = partial.reduce((sum, p) => sum + partialChargeTriggerDamage(trigger, p).perTrigger, 0);
       const landed = landAt === null ? undefined : countShotsInRanges(landings, range);
@@ -319,8 +319,8 @@ export function runSimulation(simInput: SimInput): SimResult {
     };
   });
 
-  // 着弾編: バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）。
-  // 分かれたヒット編: 分かれたヒットはヒットごとに、倍率の share ぶんを出す（plan/design-burst-split-hits.md 4 節）
+  // バーストの倍率ダメージはヒットのフレーム（発動 + 遅れ）に出す。遅れの無いキャラは発動のフレーム（時刻表の順のまま）。
+  // 分かれたヒットはヒットごとに、倍率の share ぶんを出す（plan/design-burst-split-hits.md 4 節）
   const burstHits = (schedule?.activations ?? [])
     .flatMap((activation) => {
       const hitFrames = hitFramesOf(activation);
@@ -328,7 +328,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     })
     .filter((h) => h.frame < frames)
     .sort((a, b) => a.frame - b.frame);
-  // 分かれたヒット編: 発動ごとの、当たったヒットの部分（結果の burst.hits は発動ごとに 1 つで、値はその和）
+  // 発動ごとの、当たったヒットの部分（結果の burst.hits は発動ごとに 1 つで、値はその和）
   const burstParts = new Map<BurstActivation, { index: number; parts: { hit: BurstHitResult; share: number }[] }>();
   // バーストのヒット（ヒットのフレーム順。同じフレームなら時刻表の順 = I → II → III）。値は burstHits と同じ並び（出さないヒットは null）
   const burstHitDamages = burstHits.map(({ activation, frame: f, share }): number | null => {
@@ -386,7 +386,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     runner.result.skillHits.damage += h.hit.perActivation;
     addPerSecond(h.slotIndex, h.frame, h.hit.perActivation);
   };
-  // Stage 8: 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順）。蓄積して爆発するダメージは、ほかのヒットの後に決める
+  // 倍率ダメージ（damage）。値は 1 パス目で計算済み（フレーム順）。蓄積して爆発するダメージは、ほかのヒットの後に決める
   for (const h of skillHits) if (h.accumulate === undefined) addSkillHit(h);
   // 通常射撃。区間の発数とダメージは上で引いた。1 秒ごとのダメージは射撃の列を 1 回なめて足す（O(発数)）
   for (const runner of runners) {
@@ -424,7 +424,7 @@ export function runSimulation(simInput: SimInput): SimResult {
     if (runner === null) return null;
     const r = runner.result;
     for (const segment of r.segments) r.normalDamage += segment.damage;
-    // 分かれたヒット編: バーストの合計は発動ごとの値（当たったヒットの和）を順に足す
+    // バーストの合計は発動ごとの値（当たったヒットの和）を順に足す
     for (const hit of r.burst.hits) r.burst.damage += hit.perActivation;
     r.totalDamage = r.normalDamage + r.burst.damage + r.skillHits.damage;
     totalDamage += r.totalDamage;
@@ -512,7 +512,7 @@ function lateShotDamage(
   return { frame: at, damage: runner.result.segments[k]!.trigger.perShot };
 }
 
-/** 1 発のダメージ（区間の 1 トリガー値。Stage 22-B: 部分チャージの発は、その発のチャージの進みで出し直す） */
+/** 1 発のダメージ（区間の 1 トリガー値。部分チャージの発は、その発のチャージの進みで出し直す） */
 function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): number {
   const progress = runner.partial.get(frame);
   return progress === undefined
@@ -521,8 +521,8 @@ function shotDamage(runner: Runner, segment: SimSlotSegment, frame: number): num
 }
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: この枠のデバフ解除が、選び方を確かめていない決め打ちで対象を選んだ注記（効果と決め打ちの
- * 種類ごとに 1 つ）。今の使い手では起きない
+ * この枠のデバフ解除が、選び方を確かめていない決め打ちで対象を選んだ注記（効果と決め打ちの
+ * 種類ごとに 1 つ。plan/design-debuff-removal.md 2.2 節）。今の使い手では起きない
  */
 function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): ModelNote[] {
   const groups = new Map<string, { record: RemoveDebuffGuessRecord; times: number }>();
@@ -553,7 +553,7 @@ function removeDebuffNotes(history: TeamPlan['history'], slotIndex: number): Mod
 }
 
 /**
- * 一本化の段 A-2: trace のときだけ回すフレームループ。出来事の列を作るだけで、値（区間の発数・ダメージ・1 秒ごとのダメージ）は
+ * trace のときだけ回すフレームループ。出来事の列を作るだけで、値（区間の発数・ダメージ・1 秒ごとのダメージ）は
  * runSimulation の集計が作る。同じフレームの中の順は、状態の出来事 → バーストのヒット（時刻表の順 = I → II → III）→ 倍率ダメージ →
  * 即時効果 → 通常射撃（枠順）
  */
@@ -573,8 +573,8 @@ function traceEvents(
   const fullBurstWindows = schedule?.fullBurstWindows ?? [];
   const gaugeFull = new Set(schedule?.gaugeFullFrames ?? []);
   const chainTimeouts = new Set(schedule?.chainTimeouts ?? []);
-  // 持ち主ごとの一覧編（plan/design-holder-effects.md 段 D の 4）: 記録の出来事は、区間に足す値の小片の始まりと終わり
-  // （状態だけの stat は区間の効果に入らないので出さない）
+  // 記録の出来事は、区間に足す値の小片の始まりと終わり
+  // （状態だけの stat は区間の効果に入らないので出さない。plan/design-holder-effects.md 段 D の 4）
   const pieces = valuePiecesOf(history).filter((p) => !isStateStat(p.effect.stat));
   const nextShot = runners.map(() => 0);
   let nextBurstHit = 0;
@@ -633,7 +633,7 @@ function traceEvents(
 
 export type SimIntervalTotals = { triggers: number; damage: number };
 
-/** 区間を「通常区間 / フルバースト区間」の 2 つに集計する（Stage 5 の normal 相当。テスト・CLI 用） */
+/** 区間を「通常区間 / フルバースト区間」の 2 つに集計する（テスト・CLI 用） */
 export function simIntervalTotals(slot: SimSlotResult): {
   nonFullBurst: SimIntervalTotals;
   fullBurst: SimIntervalTotals;

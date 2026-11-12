@@ -15,7 +15,7 @@ import type { CompareSpec } from '../types.ts';
 import { firstCount, type Metric, type MetricContext, slotIndexOf, slotOf, withArgs } from './context.ts';
 
 export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
-  // ニヒリスター編: skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
+  // skill（'skill1' | 'skill2' | 'burst'）を書けば、そのスロットの倍率ダメージだけを数える（任意）
   skillHitCount: {
     args: ['slot'],
     sim: (r, c) =>
@@ -24,21 +24,21 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
         : r.skillHits.filter((h) => h.slotIndex === slotIndexOf(c) && h.effect.source.skill === c.args.skill).length,
   },
   healHitCounts: { args: ['slot'], sim: healHitCounts },
-  // 雪子編（V-0501）: 枠が出した n 回目（0 始まり）の回復の、録画の動画のフレーム（戦闘開始から。フルバーストの入りの止まりを足す）。
+  // 枠が出した n 回目（0 始まり）の回復の、録画の動画のフレーム（戦闘開始から（V-0501）。フルバーストの入りの止まりを足す）。
   // 録画では、回復の数字が画面に出たフレームと比べる（戦闘開始時の回復の数字は開始の 2f 後に出る。`0476-12`）
   healVideoFrame: { args: ['slot', 'n'], sim: healVideoFrame },
-  // 雪子編（V-0501）: 枠が出した回復のフレームの数（同じフレームの回復は 1 つ）。録画では、回復の数字が出たフレームの数と比べる
+  // 枠が出した回復のフレームの数（同じフレームの回復は 1 つ）（V-0501）。録画では、回復の数字が出たフレームの数と比べる
   // （同じフレームに 2 つの回復が重なっても数字の出始めは 1 つ）
   healFrameCount: { args: ['slot'], sim: (r, c) => healFramesOf(r, c).length },
   dotTickOffsets: { args: ['slot', 'n'], sim: dotTickOffsets },
-  // 2 段目の段 13 の PR 1（V-0546）: 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
-  // 動画のフレーム（戦闘開始から）の頭の count 個
+  // 持続ダメージの、付けた時の 1 スタックのヒット（kind apply）か、スタックの tick（kind tick）の、録画の
+  // 動画のフレーム（戦闘開始から）の頭の count 個（V-0546）
   dotHitVideoFrames: { args: ['slot', 'kind', 'count'], sim: dotHitVideoFrames },
   skillHitVideoFrame: {
     args: ['slot', 'skill', 'n'],
     sim: (r, c) => skillHitVideoFrames(r, c)[Number(c.args.n)] ?? NaN,
   },
-  // 2 段目の段 13 の PR 1（V-0546）: skillHitVideoFrame の頭の count 個の列（キャプチャーチェーンの 10 回の攻撃）
+  // skillHitVideoFrame の頭の count 個の列（キャプチャーチェーンの 10 回の攻撃）（V-0546）
   skillHitVideoFrameList: {
     args: ['slot', 'skill', 'count'],
     sim: (r, c) => eventFrames(r, withArgs(c, { event: 'skillHit' })),
@@ -49,9 +49,9 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   skillHitNormalHits: { args: ['slot', 'skill'], sim: skillHitNormalHits },
   skillHitShotDelay: { args: ['slot', 'skill'], sim: skillHitShotDelay },
   skillHitBurstOrdinals: { args: ['slot', 'skill'], sim: skillHitBurstOrdinals },
-  // 2 段目の段 11 の PR 5（V-0532）: 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数
+  // 倍率ダメージの、同じ回のバーストのヒットからの動画のフレーム数（V-0532）
   skillHitFromBurstHit: { args: ['slot', 'skill', 'count'], sim: skillHitFromBurstHit },
-  // 2 段目の段 12 の PR 2（V-0537）: 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数
+  // 効果の倍率ダメージの、n 回目のフルバーストの 00.00 からの動画のフレーム数（V-0537）
   skillHitFramesFromFullBurst: {
     args: ['slot', 'skill', 'fullBurst', 'count'],
     sim: skillHitFramesFromFullBurst,
@@ -59,20 +59,20 @@ export const skillHitsMetrics: Readonly<Record<string, Metric>> = {
   // 簡素化・第 7 回の案 2: 出来事の動画のフレームの、基準からの差の列（eventFrames の注記）。上の skillHit…・dot…・healVideoFrame の
   // 時刻の指標はこれの包み
   eventFrames: { args: ['slot', 'event'], sim: eventFrames },
-  // A2 の B モード編（V-0729）: eventFrames と同じ出来事・基準・範囲の、出来事の数（B モードの間の現在の HP▼ の回数など）
+  // eventFrames と同じ出来事・基準・範囲の、出来事の数（B モードの間の現在の HP▼ の回数など）（V-0729）
   eventCount: { args: ['slot', 'event'], sim: (r, c) => eventFrames(r, c).length },
   // V-0622: 出来事ごとの、戦闘の始めからの枠の発の数か命中の期待値の和（回数のきっかけを通して数えるか、撃った数か命中か）
   eventTallies: { args: ['slot', 'event', 'tally'], sim: eventTallies },
 };
 
-/** 雪子編（V-0501）: 枠が出した回復のフレーム（同じフレームの対象ごとの記録・ほかの効果の回復は 1 つにまとめる）の昇順 */
+/** 枠が出した回復のフレーム（同じフレームの対象ごとの記録・ほかの効果の回復は 1 つにまとめる）の昇順（V-0501） */
 function healFramesOf(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
   const frames = result.history.heals.filter((h) => h.sourceSlotIndex === slotIndex).map((h) => h.frame);
   return [...new Set(frames)].sort((a, b) => a - b);
 }
 
-/** 雪子編（V-0501）: 枠が出した n 回目（0 始まり）の回復のフレームを、動画のフレームにする */
+/** 枠が出した n 回目（0 始まり）の回復のフレームを、動画のフレームにする（V-0501） */
 function healVideoFrame(result: SimResult, ctx: MetricContext): number {
   const frame = eventFrames(result, withArgs(ctx, { event: 'heal' }))[Number(ctx.args.n)];
   if (frame === undefined) throw new Error(`枠 ${String(ctx.args.slot)} の ${String(ctx.args.n)} 回目の回復が無い`);
@@ -80,8 +80,8 @@ function healVideoFrame(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * クラウン編（V-0178）: その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
- * 当たる数の期待値（発ごとの区間の弾丸命中率の和）。録画の総ダメージの増分から数えたヒット数と比べる
+ * その枠が出した回復（heal）ごとに、前の回復（初回は戦闘の始め）からその回復までに撃った通常攻撃の
+ * 当たる数の期待値（発ごとの区間の弾丸命中率の和）（V-0178）。録画の総ダメージの増分から数えたヒット数と比べる
  */
 function healHitCounts(result: SimResult, ctx: MetricContext): number[] {
   const slotIndex = slotIndexOf(ctx);
@@ -131,10 +131,10 @@ function eventPointsOf(result: SimResult, ctx: MetricContext): EventPoint[] {
       return mine().map((a) => ({ frame: a.frame, video: activationVideoFrameOf(schedule!, a) }));
     case 'heal':
       return healFramesOf(result, ctx).map(at);
-    // 課題 2-59: 状態（引数 state）が外れたフレーム
+    // 状態（引数 state）が外れたフレーム
     case 'stateEnd':
       return stateEndFramesOf(result, slotIndex, String(ctx.args.state)).map(at);
-    // A2 の B モード編（V-0729）: 枠の自分への現在の HP▼ のフレーム（録画では、枠の HP のバーが下がったフレーム）
+    // 枠の自分への現在の HP▼ のフレーム（録画では、枠の HP のバーが下がったフレーム）（V-0729）
     case 'currentHpDown':
       return result.instants
         .filter((x) => x.slotIndex === slotIndex && x.effect.kind === 'currentHpDown')
@@ -194,7 +194,7 @@ function eventFrames(result: SimResult, ctx: MetricContext): number[] {
       });
     }
   } else {
-    // 課題 2-59: 基準の発動を別の枠（from）から取る（その枠の発動から、この枠の出来事まで）
+    // 基準の発動を別の枠（from）から取る（その枠の発動から、この枠の出来事まで）
     const span = spanOf(result, withArgs(ctx, { slot: ctx.args.from ?? ctx.args.slot }), anchor, within);
     offsets = pointsIn(points, span).map((p) => p.video - span.base);
   }
@@ -239,8 +239,8 @@ function phaseOf(value: number, ctx: MetricContext): number {
 }
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 7.3 節）: 枠 slotIndex の状態 state が外れたフレーム（効いていたのが、そのフレームから効いて
- * いない。続く件をつないだ塊の終わり。昇順）。戦闘の終わりで切れた塊は入れない
+ * 枠 slotIndex の状態 state が外れたフレーム（効いていたのが、そのフレームから効いて
+ * いない。続く件をつないだ塊の終わり。昇順。plan/design-debuff-removal.md 7.3 節）。戦闘の終わりで切れた塊は入れない
  */
 function stateEndFramesOf(result: SimResult, slotIndex: number, state: string): number[] {
   const items = itemsOf(result.history, { holder: slotIndex, state: state as NamedStateId });
@@ -297,10 +297,10 @@ function skillHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 2 段目の段 12 の PR 2（V-0537）: 倍率ダメージの発動を、省略できる引数で絞る。skill = スロット、projectile = 発射体の付着（stick）か
+ * 倍率ダメージの発動を、省略できる引数で絞る（V-0537）。skill = スロット、projectile = 発射体の付着（stick）か
  * 爆発（explosion）のヒット、trigger = きっかけがフルバーストの始まり（fullBurstStart）か射撃の回数（shotCount）。効果の番号では
- * 絞らない（編成の条件と最小構成の検査が効果を外すと、番号がずれる）。ディーゼル：ウィンタースイーツ編（V-0703）: percent = 1 ヒットの
- * 倍率（%。説明文の値）。同じスロットの 2 つの持続ダメージ（バーストの 18.43% と 181.2%）を分ける
+ * 絞らない（編成の条件と最小構成の検査が効果を外すと、番号がずれる）。percent = 1 ヒットの
+ * 倍率（%。説明文の値）。同じスロットの 2 つの持続ダメージ（バーストの 18.43% と 181.2%）を分ける（V-0703）
  */
 export function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext): boolean {
   if (ctx.args.skill !== undefined && h.effect.source.skill !== ctx.args.skill) return false;
@@ -320,12 +320,12 @@ export function hitMatches(h: SimResult['skillHits'][number], ctx: MetricContext
 }
 
 /**
- * 2 段目の段 12 の PR 2（V-0537）: 枠の倍率ダメージ（hitMatches の絞り。skill は要る）のうち、fullBurst 回目（0 始まり）の
+ * 枠の倍率ダメージ（hitMatches の絞り（V-0537）。skill は要る）のうち、fullBurst 回目（0 始まり）の
  * フルバーストの窓の中のものの、窓の始まり（III のタイマーの 00.00）からの動画のフレーム数（入りの止まりを挟む）の列。省略できる引数
  * skip の数だけ先頭を飛ばし、count 個を返す（録画では、入りの止まりの後の最初の増分に合わさるヒットは時刻が読めないので飛ばす）
  */
 function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): number[] {
-  // 2 段目の段 13 の PR 2（V-0547）: after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット。kind が apply・tick なら、
+  // after が true なら、窓の後（次のフルバーストの窓の始まりまで）のヒット（V-0547）。kind が apply・tick なら、
   // 倍率ダメージの代わりに持続ダメージの付けた時のヒット・tick（フルバーストの終わりのキャプチャーチェーンの攻撃とチェーンバインド）
   const event = ctx.args.kind === undefined ? 'skillHit' : dotEventOf(ctx);
   const picked = eventFrames(
@@ -336,7 +336,7 @@ function skillHitFramesFromFullBurst(result: SimResult, ctx: MetricContext): num
       within: ctx.args.after === true ? 'afterWindow' : 'window',
     }),
   );
-  // 2 段目の段 13 の PR 3（V-0548）: relative が true なら、返す最初のヒットからのフレーム数（S2 のスタック量▲の間隔。数え始めの位相に依らない）
+  // relative が true なら、返す最初のヒットからのフレーム数（S2 のスタック量▲の間隔（V-0548）。数え始めの位相に依らない）
   return ctx.args.relative === true ? picked.map((f) => f - picked[0]!) : picked;
 }
 
@@ -349,9 +349,9 @@ export function slotSkillHits(result: SimResult, ctx: MetricContext): SimResult[
 }
 
 /**
- * ペレットの命中編（plan/design-pellet-hit.md 4 節。V-0374）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
- * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか。録画では、ヒットの直前の発の番号（撃った順）と比べる。
- * skip（V-0616）の数だけ頭の回を飛ばす
+ * 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回が、
+ * それぞれ枠の何発目（1 始まり。同じフレームの発を含む）の射撃で出たか（plan/design-pellet-hit.md 4 節。V-0374）。
+ * 録画では、ヒットの直前の発の番号（撃った順）と比べる。skip（V-0616）の数だけ頭の回を飛ばす
  */
 function skillHitShotIndices(result: SimResult, ctx: MetricContext): number[] {
   const shots = slotOf(result.shots, ctx).frames;
@@ -374,8 +374,8 @@ function skillHitNormalHits(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * 回数トリガーの遅れ編の第 2 段（V-0505・V-0506）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）のヒットが、その枠の直前の
- * 発（ヒットと同じフレームの発を含む）の何フレーム後に出たかの最頻値（同じ数なら小さいほう）。録画では、きっかけの発の HUD の増分から
+ * 枠のスロット skill の倍率ダメージ（持続ダメージを除く）のヒットが、その枠の直前の
+ * 発（ヒットと同じフレームの発を含む）の何フレーム後に出たかの最頻値（同じ数なら小さいほう）（V-0505・V-0506）。録画では、きっかけの発の HUD の増分から
  * ヒットの増分までのフレーム数の最頻値と比べる
  */
 function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
@@ -391,8 +391,8 @@ function skillHitShotDelay(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 2 段目の段 11 の PR 5（V-0532）: 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回の、その前の最後の自分の
- * バーストのヒット（分かれたヒットは 1 ヒット目）からの動画のフレーム数（フルバーストの入りの止まりを含む）。録画では、バーストのヒットの
+ * 枠のスロット skill の倍率ダメージ（持続ダメージを除く）の最初の count 回の、その前の最後の自分の
+ * バーストのヒット（分かれたヒットは 1 ヒット目）からの動画のフレーム数（フルバーストの入りの止まりを含む）（V-0532）。録画では、バーストのヒットの
  * HUD の増分から倍率ダメージの増分までのフレーム数と比べる（ラプラス：アルティメットヒーローのバーストの追加ダメージ）
  */
 function skillHitFromBurstHit(result: SimResult, ctx: MetricContext): number[] {
@@ -424,7 +424,7 @@ function skillHitMeanInterval(result: SimResult, ctx: MetricContext): number {
   return (frames.at(-1)! - frames[0]!) / (frames.length - 1);
 }
 
-/** 2 段目の段 13 の PR 1・2: 引数 kind（持続ダメージの付けた時のヒット apply か tick）と、ヒットがそれか */
+/** 引数 kind（持続ダメージの付けた時のヒット apply か tick）と、ヒットがそれか */
 function dotKindOf(ctx: MetricContext): 'apply' | 'tick' {
   const kind = ctx.args.kind;
   if (kind !== 'apply' && kind !== 'tick') throw new Error(`kind は apply か tick（${String(kind)}）`);
@@ -438,14 +438,15 @@ function dotKindMatches(h: SimResult['skillHits'][number], kind: 'apply' | 'tick
   return h.effect.dot !== undefined && (h.onApply === true) === (kind === 'apply');
 }
 
-/** 2 段目の段 13 の PR 1（V-0546）: dotHitVideoFrames。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
+/** dotHitVideoFrames（V-0546）。付けた時のヒットは onApply の印（frame/plan.ts の planSkillHits） */
 function dotHitVideoFrames(result: SimResult, ctx: MetricContext): number[] {
   return eventFrames(result, withArgs(ctx, { event: dotEventOf(ctx) }));
 }
 
 /**
- * 持続ダメージ▲編（plan/design-sustained-damage-up.md 5.1 節）: 枠の n 回目（0 始まり）のバーストの発動から、その発動の後に出た
- * バーストのスロットの持続ダメージの tick（次の発動の前まで）までの動画のフレーム数の列（フルバーストの入りの止まりを含む。起点は activationVideoFrameOf）
+ * 枠の n 回目（0 始まり）のバーストの発動から、その発動の後に出た
+ * バーストのスロットの持続ダメージの tick（次の発動の前まで）までの動画のフレーム数の列（フルバーストの入りの止まりを
+ * 含む。起点は activationVideoFrameOf。plan/design-sustained-damage-up.md 5.1 節）
  */
 function dotTickOffsets(result: SimResult, ctx: MetricContext): number[] {
   const n = String(ctx.args.n);

@@ -36,7 +36,7 @@ export function parseClaimRefs(v: Json, path: string): string[] {
 }
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.6 節）: 目録の id で、持ち主の側が holder のもの。味方の状態を敵の条件で
+ * 目録の id で、持ち主の側が holder のもの（plan/design-named-state.md 5.6 節）。味方の状態を敵の条件で
  * 見る、のような取り違えを落とす
  */
 export function parseNamedStateId(v: Json, path: string, holder: StateHolder): NamedStateId {
@@ -94,7 +94,7 @@ export function parseGaugeHits(v: Json, path: string, minDelay: 0 | 1): number[]
   });
 }
 
-/** 2 段目の段 19 の PR 1: durationUntil の 1 つの欄のオブジェクト（{ counterEmpty }・{ stateEnd }）の値。ほかの形なら expected で落とす */
+/** durationUntil の 1 つの欄のオブジェクト（{ counterEmpty }・{ stateEnd }）の値。ほかの形なら expected で落とす */
 export function objectUntil(u: Json, field: string, path: string, expected: string): Json {
   if (!isRecord(u)) fail(path, expected);
   rejectUnknownKeys(u, [field], path);

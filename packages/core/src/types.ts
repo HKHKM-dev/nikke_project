@@ -14,7 +14,7 @@ export type BurstStep = 'Step1' | 'Step2' | 'Step3' | 'AllStep';
 export type BurstNextStep = 'Step1' | 'Step2' | 'Step3' | 'StepFull' | 'NextStep';
 export type StatKind = 'attack' | 'hp' | 'defence';
 export type ShotInputType = 'DOWN' | 'UP' | 'DOWN_Charge';
-/** スキルの枠。skills/types.ts が SKILL_SLOTS と一緒に再エクスポートする（Stage 9 で TreasureData から参照するためここへ移した） */
+/** スキルの枠。skills/types.ts が SKILL_SLOTS と一緒に再エクスポートする（TreasureData から参照するのでここに置く） */
 export type SkillSlot = 'skill1' | 'skill2' | 'burst';
 
 /** 一覧とキャラのデータに共通の項目 */
@@ -77,18 +77,21 @@ export type ShotParams = {
   /** コアヒット倍率（通常 2.0） */
   coreDamageRate: number;
   inputType: ShotInputType;
-  /** 弾の種類（CDN の fire_type）。Instant（即着弾。RL 以外の全武器）・ProjectileDirect（直進弾）・HomingProjectile（誘導弾）・ProjectileCurve（曲射）。2026-10-29 に InstantBox（紅蓮：神殺の AR。中身は未確認・未対応）が増えた */
+  /** 弾の種類（CDN の fire_type）。Instant（即着弾。RL 以外の全武器）・ProjectileDirect（直進弾）・HomingProjectile（誘導弾）・ProjectileCurve（曲射）・InstantBox（紅蓮：神殺の AR。中身は未確認。構えとコア命中率は V-0675） */
   fireType: string;
   penetration: number;
   maintainFireStance: number;
   uptypeFireTiming: number;
   /** 敵に 1 ペレット（SG 以外は 1 発）当たったときのバーストゲージ量（上限 BURST_GAUGE_MAX = 1,000,000） */
   targetBurstEnergyPerShot: number;
-  /** 敵以外に当たったときのゲージ量（保持のみ。Stage 7 では使わない） */
+  /**
+   * 敵以外に当たったときのゲージ量。障害物を壊すゲージ（frame/firstPass.ts。C-0177・C-0243）と、味方のゲージ（allyGaugeAdd）を
+   * 持つ枠の最初の発が着弾する前の発のゲージ（C-0246・C-0620）に使う
+   */
   burstEnergyPerShot: number;
   /** フルチャージ時のゲージ倍率（2.5 = ×2.5）。チャージなし武器は 1 */
   fullChargeBurstEnergy: number;
-  /** Stage 18: 照準円（CDN の *_accuracy_circle_scale 等の生値）。データとして持つだけで、計算にはまだ使わない */
+  /** 照準円（CDN の *_accuracy_circle_scale 等の生値）。データとして持つだけで、計算にはまだ使わない */
   accuracy?: AccuracyCircle;
   /** 飛ぶ弾（fireType が Instant 以外）の弾速・誘導・爆発の範囲。データとして持つだけで、計算にはまだ使わない */
   projectile?: ProjectileSpec;
@@ -110,7 +113,7 @@ export type ProjectileSpec = {
 };
 
 /**
- * Stage 18: 照準円。単位は CDN の生値のまま（AR 75・SMG 110・MG 250 → 10・SR / RL 10・SG 250）。
+ * 照準円。単位は CDN の生値のまま（AR 75・SMG 110・MG 250 → 10・SR / RL 10・SG 250）。
  * auto* は AUTO 時の値（2026-09-26 時点で全キャラ手動と同じ）。命中率▲との関係は plan/design-stage18.md 0.4 節
  */
 export type AccuracyCircle = {
@@ -128,7 +131,7 @@ export type AccuracyCircle = {
   autoChangeSpeed: number;
 };
 
-/** スキルの説明文と Lv 別数値（Stage 4 で構造化する。今は保持のみ）。 */
+/** スキルの説明文と Lv 別数値（CDN の値）。効果の定義は data/skills/ にあり、数値はここから引く（skills/resolve.ts） */
 export type SkillRaw = {
   id: number;
   name: LocalizedText;
@@ -141,11 +144,11 @@ export type CharacterData = CharacterSummary & {
   /** CDN の corporation_sub_type（"OVERSPEC" など）。無いキャラは null。スペック固定の好感度の上限（fixedSpec.ts）を決める */
   corporationSubType: string | null;
   /**
-   * ラム編: CDN の squad（ゲーム内の部隊の ID。"CE003" など）。全キャラにある。同じ部隊の味方の条件（skills/composition.ts）で見る
+   * CDN の squad（ゲーム内の部隊の ID。"CE003" など）。全キャラにある。同じ部隊の味方の条件（skills/composition.ts）で見る
    * （plan/design-ram-s1.md 2.2 節）
    */
   squad: string;
-  /** ラム編: 部隊名（CDN の squad_detail.squad_name）。画面の表示用 */
+  /** 部隊名（CDN の squad_detail.squad_name）。画面の表示用 */
   squadName: LocalizedText;
   /** index = level - 1 */
   levelCurve: Record<StatKind, number[]>;
@@ -159,16 +162,16 @@ export type CharacterData = CharacterSummary & {
     /** バースト CT（秒）。skill_cooltime / 100。Lv で変わらない */
     cooldownSeconds: number;
     nextStep: BurstNextStep;
-    /** burst_duration / 100。その III が起こすフルバーストの長さ（Stage 8 で確認。モダニアは 15 秒） */
+    /** burst_duration / 100。その III が起こすフルバーストの長さ（モダニアは 15 秒） */
     durationSeconds: number;
     /**
-     * Stage 11 モダニア: バーストの skill_type が ChangeWeapon のキャラだけ。skill_value_data の [1] = 変更後の発射レート（rpm）、
+     * バーストの skill_type が ChangeWeapon のキャラだけ。skill_value_data の [1] = 変更後の発射レート（rpm）、
      * [2] = 変更後の shot_id（中身は CDN に無い）。1 発のダメージは説明文の値（スキル定義の weaponChange の damageRef）を使う
      */
     changeWeapon?: { rateOfFire: number; shotId: number };
   };
   skills: { skill1: SkillRaw; skill2: SkillRaw; burst: SkillRaw };
-  /** Stage 9: 宝物（SSR のお気に入りアイテム）。ないキャラは null */
+  /** 宝物（SSR のお気に入りアイテム）。ないキャラは null */
   treasure: TreasureData | null;
   /**
    * 比べる設定の拡張（plan/design-compare-setup-extension.md 2.2 節）: バーストの遅れの表（burst/landing.ts）の上書き。
@@ -178,7 +181,7 @@ export type CharacterData = CharacterSummary & {
 };
 
 /**
- * Stage 9: 宝物のスキル差し替え。宝物のステータスはスペック固定で乗らないので持たない（plan/design-stage9.md 0.5 節）。
+ * 宝物のスキル差し替え。宝物のステータスはスペック固定で乗らないので持たない（plan/design-stage9.md 0.5 節）。
  * 宝物の段階 N（1..3）では unlockOrder の先頭 N 個のスロットが skills の宝物版になる
  */
 export type TreasureData = {
@@ -191,7 +194,7 @@ export type TreasureData = {
   skills: Record<SkillSlot, SkillRaw>;
 };
 
-// ---- Stage 12: 育成のマスタ（data/masters/*.json）。plan/design-stage12.md 2 節 ----
+// ---- 育成のマスタ（data/masters/*.json）。plan/design-stage12.md 2 節 ----
 
 /** 装備の種類。T9 = 通常の T9、T9Corp = 企業装備（T9 Lv3 相当から始まる）、OL = オーバーロード装備（CDN の T10） */
 export type GearType = 'T9' | 'T9Corp' | 'OL';
@@ -217,7 +220,7 @@ export type AffectionMaster = { formatVersion: 1; ranks: AffectionRankStats[] };
 
 /**
  * キューブ 1 個。attack 等は index = Lv − 1（Lv1..15）の加算値。skillStages[i][lv − 1] は Lv のときのスキル i の段階
- * （0 = 未解放）。skills は宝物と同じ形（values[段階 − 1] が段階の数値）。効果は Stage 13 で使う（buildEffects.ts）
+ * （0 = 未解放）。skills は宝物と同じ形（values[段階 − 1] が段階の数値）。効果は buildEffects.ts が使う
  */
 export type CubeData = {
   id: number;
@@ -262,7 +265,7 @@ export type RecycleRoomMaster = {
   corporation: Record<string, Record<StatKind, number>>;
 };
 
-// ---- Stage 13: 効果層のマスタ。plan/design-stage12.md 3・12 節 ----
+// ---- 効果層のマスタ。plan/design-stage12.md 3・12 節 ----
 
 /** OL 装備のオプション（CDN の equip_option_table_v2 の 9 種。state_effect_group_id 100100〜100900 の順） */
 export type OverloadOption =
@@ -298,11 +301,11 @@ export type BuildMasters = {
   cubes: CubeMaster;
   collections: CollectionMaster;
   recycleRoom: RecycleRoomMaster;
-  /** Stage 13 */
+  /** OL のオプションの表（data/masters/overload.json） */
   overload: OverloadMaster;
 };
 
-// ---- Stage 15: 敵のプリセット（data/enemies.json、手書き）。plan/design-stage12.md 5.2 節 ----
+// ---- 敵のプリセット（data/enemies.json、手書き）。plan/design-stage12.md 5.2 節 ----
 
 /** どのコンテンツの敵か */
 export type EnemyContent = 'range' | 'interception' | 'soloRaid' | 'unionRaid';
@@ -321,31 +324,31 @@ export type EnemyPreset = {
   measuredAt: string;
   /** 防御力の出どころ（verification.md の節など） */
   source: string;
-  /** Stage 16-B: 選べる出来事のセット（EnemyPresetMaster.eventSets の id）。無ければ空 */
+  /** 選べる出来事のセット（EnemyPresetMaster.eventSets の id）。無ければ空 */
   eventSets: string[];
-  /** Stage 18-C: 的の条件の表（EnemyPresetMaster.targetProfiles の id）。無ければ「この敵の条件は未測定」 */
+  /** 的の条件の表（EnemyPresetMaster.targetProfiles の id）。無ければ「この敵の条件は未測定」 */
   targetProfile?: string;
 };
 
-/** Stage 16-B: 周期で書いた敵の出来事（秒）。first から duration 秒、every 秒ごとに繰り返す（every が無ければ 1 回） */
+/** 周期で書いた敵の出来事（秒）。first から duration 秒、every 秒ごとに繰り返す（every が無ければ 1 回） */
 export type EnemyEventSpec = {
   kind: 'untargetable' | 'invulnerable' | 'barrier';
   first: number;
   duration: number;
   /**
    * 繰り返しの間隔（秒）。配列なら k 回目 → k + 1 回目の間隔を順に並べたもので、使い切った後は最後の間隔を繰り返す
-   * （Stage 21: 的のジャンプの間隔は回ごとに決まった形がある。V-0009）
+   * （的のジャンプの間隔は回ごとに決まった形がある。V-0009）
    */
   every?: number | number[];
 };
 
-/** Stage 16-B: 出来事のセット（射撃場 3 分モードの的のジャンプなど）。画面ではセットごとに ON/OFF する */
+/** 出来事のセット（射撃場 3 分モードの的のジャンプなど）。画面ではセットごとに ON/OFF する */
 export type EnemyEventSet = {
   id: string;
   name: LocalizedText;
   events: EnemyEventSpec[];
   /**
-   * Stage 18-C: 狙えない窓（untargetable）で区切った区間ごとの着地点（TargetProfile の着地点か配分の id）。
+   * 狙えない窓（untargetable）で区切った区間ごとの着地点（TargetProfile の着地点か配分の id）。
    * 1 つ目は最初の窓の前。区間の数より短ければ、残りの区間は「着地点が未測定」。省略は着地点なし
    */
   landings?: string[];
@@ -353,7 +356,7 @@ export type EnemyEventSet = {
   source: string;
 };
 
-// ---- Stage 18-C: 的の条件の表（plan/design-stage18.md 12.2 節） ----
+// ---- 的の条件の表（plan/design-stage18.md 12.2 節） ----
 
 /** 射撃場の距離帯（近 / 中近 / 中遠 / 遠） */
 export type LandingBand = 'near' | 'midNear' | 'midFar' | 'far';
@@ -389,9 +392,9 @@ export type FlightFramesTable = {
 };
 
 /**
- * 武器種の行に、使用武器の変更の発の行 weaponChanges（キーは `<resourceId>:<スキルのスロット>`）を足した表。2 段目の段 11（plan/design-skill-stage11.md
- * 2.1 節）: 即着弾に替えた変更（instantFire）の発のコア命中率。ナユタ編（plan/design-nayuta.md 2.6 節）: チャージ武器に替えた変更の発の
- * コア命中率と弾丸命中率。変更の窓の通常攻撃の値をこの行から引く（行が無い・null は基礎の武器の行のまま。frame/landing.ts の weaponChangeParts）
+ * 武器種の行に、使用武器の変更の発の行 weaponChanges（キーは `<resourceId>:<スキルのスロット>`）を足した表。即着弾に替えた変更
+ * （instantFire）の発のコア命中率（plan/design-skill-stage11.md 2.1 節）と、チャージ武器に替えた変更の発のコア命中率と弾丸命中率
+ * （plan/design-nayuta.md 2.6 節）。変更の窓の通常攻撃の値をこの行から引く（行が無い・null は基礎の武器の行のまま。frame/landing.ts の weaponChangeParts）
  */
 export type RateTableWithWeaponChanges = TargetRateTable & {
   weaponChanges?: Readonly<Record<string, TargetRateRow | null>>;
@@ -404,12 +407,12 @@ export type RateTableWithWeaponChanges = TargetRateTable & {
 export type CoreHitRateTable = RateTableWithWeaponChanges & {
   autoAttacks?: Readonly<Record<string, TargetRateRow | null>>;
   /**
-   * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: 通常攻撃の発の、弾の種類（キャラデータの shot.fireType の生値）ごとの行。
+   * 通常攻撃の発の、弾の種類（キャラデータの shot.fireType の生値）ごとの行（plan/design-new-chars-1029.md 12.2 節の a）。
    * 行があれば武器種の行より先に引く（InstantBox の AR は、どの区間もコアに当たる。V-0675）。表に無い種類は武器種の行
    */
   fireTypes?: Readonly<Record<string, TargetRateRow | null>>;
   /**
-   * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ち（muzzleHitsOf が 2 以上）の武器種ごとの行。行があれば
+   * 二丁持ち（muzzleHitsOf が 2 以上）の武器種ごとの行（plan/design-quency-eq.md 2 節の論点 1）。行があれば
    * 武器種の行より先に引く（二丁持ちの SMG のコア命中率は、銃口 1 つの SMG の行より低い。V-0702）。弾丸命中率は武器種の行のまま
    */
   dualWield?: Readonly<Partial<Record<WeaponType, TargetRateRow>>>;
@@ -442,7 +445,7 @@ export type TargetProfile = {
   mixes: Record<string, [string, number][]>;
   /** コア命中率 P(コア｜命中)。autoAttacks は周期の自動攻撃のヒットの行（plan/design-anis-star-core-path.md 3.2 節） */
   coreHitRate: CoreHitRateTable;
-  /** 弾丸命中率（weaponChanges はナユタ編の使用武器の変更の発の行） */
+  /** 弾丸命中率（weaponChanges はチャージ武器に替えた使用武器の変更の発の行。plan/design-nayuta.md 2.6 節） */
   bulletHitRate: RateTableWithWeaponChanges;
   /**
    * V-0119: 1 発の通常攻撃のヒット数の期待値（1 以上。省略・null・表に無いキーは 1）。いまの実データに行は無い（誘導弾・爆発の範囲
@@ -455,8 +458,9 @@ export type TargetProfile = {
    */
   flightFrames?: FlightFramesTable;
   /**
-   * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: 使用武器変更の最初の発の、バーストの発動の印（I・II は六角形の
-   * 替わり目。hexagonFrameOf）から着弾までのフレーム（0 以上の整数）。キーは `<resourceId>:<スキルのスロット>`（flightFrames.autoAttacks と
+   * 使用武器変更の最初の発の、バーストの発動の印（I・II は六角形の替わり目。hexagonFrameOf。
+   * plan/design-eunhwa-tu-burst-shot-timing.md 4 節）から着弾までのフレーム（0 以上の整数）。
+   * キーは `<resourceId>:<スキルのスロット>`（flightFrames.autoAttacks と
    * 同じ）。行は着地点の id・帯・all の順で引く。行のあるキャラは、最初の発をそのフレームに撃つ（撃つ = 着く）。省略・表に無い行は、
    * チャージ武器の最初の発の待ち（frame/shooter.ts の weaponChangeShooter）
    */
@@ -471,7 +475,7 @@ export type EnemyPresetMaster = {
   formatVersion: 1;
   source: string;
   eventSets: EnemyEventSet[];
-  /** Stage 18-C: 的の条件の表。省略は空 */
+  /** 的の条件の表。省略は空 */
   targetProfiles: TargetProfile[];
   enemies: EnemyPreset[];
 };

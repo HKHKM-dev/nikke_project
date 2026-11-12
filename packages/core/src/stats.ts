@@ -40,7 +40,7 @@ const CORE_RATIO_KEY = { attack: 'coreAttack', hp: 'coreHp', defence: 'coreDefen
 
 /**
  * value × (1 + core × ratio / 1e4) を丸める。丸めは偶数への丸め（C# の Math.Round の既定 = MidpointRounding.ToEven）で、
- * ちょうど .5 のときだけ四捨五入と違う（Stage 12 の実測: 10,317,862.5 → 10,317,862、9,942,667.5 → 9,942,668、
+ * ちょうど .5 のときだけ四捨五入と違う（実測: 10,317,862.5 → 10,317,862、9,942,667.5 → 9,942,668、
  * 64,898.5 → 64,898。plan/verification.md Stage 12 節）。.5 を浮動小数の誤差で取り違えないよう整数で計算する
  */
 export function applyCoreRatio(value: number, core: number, ratio: number): number {

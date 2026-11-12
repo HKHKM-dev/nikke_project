@@ -23,23 +23,23 @@ import { hasSpinUp, isChargeWeapon, isDualWieldWeapon, muzzleHitsOf, type DualWi
 export const FULL_BURST_BOOST = 0.5;
 
 /**
- * Stage 8: バースト以外の倍率ダメージ（damage）が**フルバースト中に出たとき**、フルバースト補正 +0.5 を乗せるか。
- * **2026-09-23 の射撃場実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 0036〜0038）:
+ * バースト以外の倍率ダメージ（damage）が**フルバースト中に出たとき**、フルバースト補正 +0.5 を乗せるか。
+ * **射撃場の実測で「乗せる」と確定**（plan/verification.md Stage 8 節、録画 0036〜0038）:
  * ドレイク S2 は通常時 118,059 = (攻撃力 − 防御力) × 98.55%、フルバースト中 409,932 で、どちらもペレットとの比が 4.5987 と同じ
  * （ペレットの倍率グループは 1.0 → 1.5）。イサベルの段階 2 の追加ダメージ 758,766 = 299.7% × 1.5 × 受けるダメージ 1.3996。
  * バーストスキルダメージ（burstDamage）には乗らない（BURST_SKILL_FULL_BURST_BONUS）のと違う。
- * Stage 11 モダニア: 射撃ごとの倍率ダメージ（perShot）にも同じ規則を使うので、skills/burstDamage.ts からここへ移した
+ * 射撃ごとの倍率ダメージ（perShot）にも同じ規則を使う（skills/burstDamage.ts からも export する）
  */
 export const SKILL_HIT_FULL_BURST_BONUS = true;
 
 /**
- * Stage 11 モダニア: 射撃ごとの倍率ダメージ（perShot）にコアの補正を乗せるか（仮）。
- * Stage 8 の倍率ダメージ（コアは乗らない）に合わせて false。録画 0044 の 1 で確かめる（plan/design-stage11-modernia.md 7.5 節）
+ * 射撃ごとの倍率ダメージ（perShot）にコアの補正を乗せるか（仮）。
+ * 倍率ダメージ（skills/burstDamage.ts の computeBurstHit。コアは乗らない）に合わせて false。録画 0044 の 1 で確かめる（plan/design-stage11-modernia.md 7.5 節）
  */
 export const PER_SHOT_DAMAGE_CORE = false;
 
 /**
- * アニス：スター S2・バースト編: 発射体爆発ダメージ▲（projectileExplosionDamage）の式の中の置き場所（plan/design-anis-star-s2-burst.md 2.1 節）。
+ * 発射体爆発ダメージ▲（projectileExplosionDamage）の式の中の置き場所（plan/design-anis-star-s2-burst.md 2.1 節）。
  * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体爆発ダメージ)（E1）、separate = 別の乗数 (1 + Σ発射体爆発ダメージ)（E2）、
  * none = RL の通常攻撃には掛けない（E0）。**E1 と確定**: 録画 0162・0163 のフルバーストの 1 ヒット（V-0124。C-0205）
  */
@@ -68,9 +68,9 @@ export function projectileExplosionMultiplier(shot: ShotParams, buffs: BuffTotal
 }
 
 /**
- * 通常攻撃の攻撃ダメージ▲の和の乗数 (1 + Σ攻撃ダメージ)。エード：エージェントバニー編（plan/design-agent-bunny.md 2.3 節）: 貫通特化の
- * 効いている枠は、貫通ダメージ▲も同じ和に足す（P1。C-1031）。発射体爆発ダメージ▲・防御力無視ダメージ▲の乗数の分母もこの和にし、
- * 積が 1 つの和になるようにする。ツバイ編（plan/design-zwei.md 2.1 節）: 追加効果「貫通特化」の使用武器変更の発も、貫通特化の発
+ * 通常攻撃の攻撃ダメージ▲の和の乗数 (1 + Σ攻撃ダメージ)。貫通特化の効いている枠は、貫通ダメージ▲も同じ和に足す
+ * （P1。C-1031。plan/design-agent-bunny.md 2.3 節）。発射体爆発ダメージ▲・防御力無視ダメージ▲の乗数の分母もこの和にし、
+ * 積が 1 つの和になるようにする。追加効果「貫通特化」の使用武器変更の発も、貫通特化の発（plan/design-zwei.md 2.1 節）
  */
 export function normalAttackDamageGroup(buffs: BuffTotals): number {
   const pierce = buffs.pierce > 0 || buffs.weapon?.pierce === true;
@@ -114,7 +114,7 @@ function projectileHitMultiplier(
 }
 
 /**
- * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3 節）: 発射体付着ダメージ▲（projectileStickDamage）の式の中の置き場所。
+ * 発射体付着ダメージ▲（projectileStickDamage）の式の中の置き場所（plan/design-skill-stage12.md 2.3 節）。
  * attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ発射体付着ダメージ)、separate = 別の乗数 (1 + Σ発射体付着ダメージ)。
  * S2 の常時の▲とバースト III の▲は 1 つの和 (1 + Σ) で掛かる（C-0724）。**attackDamage と確定**: クラウンの攻撃ダメージ▲の乗った
  * 付着が、攻撃ダメージ▲と 1 つの和の値で、別の乗数の値ではない（C-0796）
@@ -129,7 +129,7 @@ export function stickHitMultiplier(buffs: BuffTotals): number {
 }
 
 /**
- * 防御力無視ダメージ編: 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
+ * 防御力無視ダメージ▲（trueDamage）の式の中の置き場所（plan/design-true-damage-element.md 3.1 節・6 節の論点 1）。
  * separate = 別の乗数 (1 + Σ防御力無視ダメージ)、attackDamage = 攻撃ダメージ▲と同じ枠 (1 + Σ攻撃ダメージ + Σ防御力無視ダメージ)。
  * **attackDamage**: 炸裂弾では発射体爆発ダメージ▲と 1 つの和 (1 + Σ防御力無視ダメージ + Σ発射体爆発ダメージ) で掛かり（C-0376）、
  * 発射体爆発ダメージ▲は攻撃ダメージ▲と同じ枠（C-0205）なので、separate は C-0376 と合わない。攻撃ダメージ▲（ヘルム）の乗った
@@ -138,7 +138,7 @@ export function stickHitMultiplier(buffs: BuffTotals): number {
  */
 export const TRUE_DAMAGE_BUCKET: 'separate' | 'attackDamage' = 'attackDamage';
 
-/** 防御力無視ダメージ編: 通常攻撃の 1 発が防御力無視ダメージか（「通常攻撃が防御力無視ダメージに変化」の窓か、防御力無視の使用武器の変更） */
+/** 通常攻撃の 1 発が防御力無視ダメージか（「通常攻撃が防御力無視ダメージに変化」の窓か、防御力無視の使用武器の変更） */
 export function isTrueDamageShot(buffs: BuffTotals): boolean {
   return buffs.trueDamageConversion > 0 || buffs.weapon?.trueDamage === true;
 }
@@ -161,7 +161,7 @@ export function trueDamageMultiplier(shot: ShotParams, buffs: BuffTotals): numbe
 
 /**
  * 防御力無視ダメージ▲ up の、▲なしに対する比（TRUE_DAMAGE_BUCKET の置き場所。group は同じ枠の和 (1 + Σ攻撃ダメージ …)）。
- * 通常攻撃（trueDamageMultiplier）と、2 段目の段 15 の PR 3 から防御力無視の倍率ダメージ（skills/burstDamage.ts の computeBurstHit）が使う
+ * 通常攻撃（trueDamageMultiplier）と防御力無視の倍率ダメージ（skills/burstDamage.ts の computeBurstHit）が使う
  */
 export function trueDamageBucketMultiplier(group: number, up: number): number {
   if (up === 0) return 1;
@@ -169,12 +169,12 @@ export function trueDamageBucketMultiplier(group: number, up: number): number {
 }
 
 /**
- * Stage 13: 有利コードの攻撃ダメージ▲（elementDamage）を倍率ダメージ（damage / perShot / burstDamage）にも乗せるか（仮定）。
+ * 有利コードの攻撃ダメージ▲（elementDamage）を倍率ダメージ（damage / perShot / burstDamage）にも乗せるか（仮定）。
  * 設計時点の仮定は「乗る」（plan/design-stage12.md 3.3 節）。射撃場の実測 3.5 節の 7 で確かめる
  */
 export const ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE = true;
 
-/** Stage 13: 倍率ダメージに使う属性の乗数（ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE で有利コードの攻撃ダメージ▲を乗せるか決める） */
+/** 倍率ダメージに使う属性の乗数（ELEMENT_DAMAGE_APPLIES_TO_SKILL_DAMAGE で有利コードの攻撃ダメージ▲を乗せるか決める） */
 export function skillElementMultiplier(character: CharacterData, enemy: EnemyInput, buffs: BuffTotals): number {
   return elementMultiplier(
     character.element,
@@ -185,16 +185,16 @@ export function skillElementMultiplier(character: CharacterData, enemy: EnemyInp
 }
 
 /**
- * Stage 16-B: 敵の出来事の種類（plan/design-stage16.md 9.2 節）。
+ * 敵の出来事の種類（plan/design-stage16.md 9.2 節）。
  * untargetable = 狙えない（射撃場 3 分モードの的のジャンプなど）。invulnerable・barrier は型と表示だけで、数値には効かせない
  */
 export type EnemyEventKind = 'untargetable' | 'invulnerable' | 'barrier';
 
-/** Stage 16-B: 敵の出来事 1 つ。秒で [start, end) */
+/** 敵の出来事 1 つ。秒で [start, end) */
 export type EnemyEvent = { kind: EnemyEventKind; start: number; end: number };
 
 /**
- * Stage 18-C: 着地点の区間 1 つ。秒で [start, end)。landing は TargetProfile の着地点か配分（中遠の 3 か所など）の id。
+ * 着地点の区間 1 つ。秒で [start, end)。landing は TargetProfile の着地点か配分（中遠の 3 か所など）の id。
  * null は「着地点が未測定」（出来事のセットの並びより後の区間）
  */
 export type LandingSpan = { start: number; end: number; landing: string | null };
@@ -203,14 +203,14 @@ export type EnemyInput = {
   defence: number;
   element: Element | null;
   hasCore: boolean;
-  /** Stage 16-B: 敵の出来事（省略・空なら出来事なし = Stage 16-A と 1 フレームも違わない） */
+  /** 敵の出来事（省略・空なら出来事なし） */
   events?: readonly EnemyEvent[];
   /**
-   * Stage 18-C: 的の条件の表（射撃場の BigArms など）。条件が「自動」の枠だけが読む。省略は「この敵の条件は未測定」
+   * 的の条件の表（射撃場の BigArms など）。条件が「自動」の枠だけが読む。省略は「この敵の条件は未測定」
    * （自動の枠も手入力の値で計算する）
    */
   target?: TargetProfile;
-  /** Stage 18-C: 着地点の時間割り（enemies.ts の enemyLandingsOf）。省略は戦闘時間全体を target の初期位置とする */
+  /** 着地点の時間割り（enemies.ts の enemyLandingsOf）。省略は戦闘時間全体を target の初期位置とする */
   landings?: readonly LandingSpan[];
   /**
    * 防御力▼の後の防御力の丸めの向き（defenceAfterDown。C-0790）。省略は 'round'（いまのモデル）。
@@ -249,10 +249,10 @@ export type TriggerCondition = {
   /** フルバースト区間中か。省略 false。true なら倍率グループに FULL_BURST_BOOST を足す */
   fullBurst?: boolean;
   /**
-   * Stage 15: 弾丸命中率 0..1（省略 1。Stage 18 で「命中率」から呼び名を変えた。命中率▲とは別物）。**射撃場（静止の的）を 1 とした相対値**で、通常攻撃の期待ダメージ（射撃ごとの倍率ダメージを含む）と
+   * 弾丸命中率 0..1（省略 1。命中率▲とは別物）。**射撃場（静止の的）を 1 とした相対値**で、通常攻撃の期待ダメージ（射撃ごとの倍率ダメージを含む）と
    * ゲージ（burst/dynamic.ts の energyPerTrigger）に掛ける。SG では当たったペレットの割合（C-0150）。手入力の枠のゲージだけ、SG のペレットの割合の置き値（SG_PELLET_GAUGE_HIT_RATE）を外側に掛ける。
-   * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは命中の期待値で数える（ルドミラ：ウィンターオーナー編。
-   * skills/triggers.ts の shotCountWeight。SG は 1 トリガーを 1 回）
+   * スキルの倍率ダメージ・バーストスキルには掛けない。命中を数えるトリガーは命中の期待値で数える
+   * （skills/triggers.ts の shotCountWeight。SG は 1 トリガーを 1 回）
    */
   hitRate?: number;
   /**
@@ -271,7 +271,7 @@ export type TriggerDamageInput = {
   attackOverride?: number;
   /** 常時発動パッシブなどのバフ合計。省略は ZERO_BUFFS */
   buffs?: BuffTotals;
-  /** Stage 11 モダニア: その枠の射撃ごとの倍率ダメージ（resolvePerShotDamage の結果）。省略は無し */
+  /** その枠の射撃ごとの倍率ダメージ（resolvePerShotDamage の結果）。省略は無し */
   perShot?: readonly ResolvedSkillDamage[];
   /** 攻撃力▲の丸め（TeamInput.attackRounding）。省略は ATTACK_ROUNDING（いまのモデル） */
   attackRounding?: AttackRounding;
@@ -287,35 +287,35 @@ export type TriggerDamage = {
   /** バフ後の最終攻撃力。バフを全部足してから整数に四捨五入する（C-0027） */
   attack: number;
   buffs: BuffTotals;
-  /** max(1, 攻撃力 − 防御力)。2 段目の段 2: 防御力は敵の防御力▼の後（defenceAfterDown） */
+  /** max(1, 攻撃力 − 防御力)。防御力は敵の防御力▼の後（defenceAfterDown） */
   baseHit: number;
   weaponMultiplier: number;
-  /** Stage 13: 通常攻撃ダメージ倍率の乗数（丸めた武器倍率 ÷ 素の武器倍率。通常攻撃だけ。perShot には掛けない。C-0121） */
+  /** 通常攻撃ダメージ倍率の乗数（丸めた武器倍率 ÷ 素の武器倍率。通常攻撃だけ。perShot には掛けない。C-0121） */
   normalAttackMultiplier: number;
   chargeMultiplier: number;
   /** 加算グループ 1 + コア + 会心 + 距離 + フルバースト。攻撃ダメージバフはここに入らない */
   boost: { core: number; crit: number; distance: number; fullBurst: number; total: number };
   /** 攻撃ダメージバフの乗数 1 + Σ attackDamage（倍率グループとは別枠。射撃場の実測で確認） */
   attackDamageMultiplier: number;
-  /** 受けるダメージ編: 敵の受けるダメージ▲の乗数 1 + Σ damageTaken（ほかのどの群とも別枠。C-0138。発射体爆発ダメージ▲とも別の乗数。C-0789） */
+  /** 敵の受けるダメージ▲の乗数 1 + Σ damageTaken（ほかのどの群とも別枠。C-0138。発射体爆発ダメージ▲とも別の乗数。C-0789） */
   damageTakenMultiplier: number;
-  /** アニス：スター S2・バースト編: 発射体爆発ダメージ▲の乗数（通常攻撃だけ。projectileExplosionMultiplier） */
+  /** 発射体爆発ダメージ▲の乗数（通常攻撃だけ。projectileExplosionMultiplier） */
   projectileExplosionMultiplier: number;
   /**
-   * 防御力無視ダメージ編: 通常攻撃の 1 発が防御力無視ダメージか（isTrueDamageShot）。true なら normal の基礎は max(1, 攻撃力)
+   * 通常攻撃の 1 発が防御力無視ダメージか（isTrueDamageShot）。true なら normal の基礎は max(1, 攻撃力)
    * （baseHit は射撃ごとの倍率ダメージが使う max(1, 攻撃力 − 防御力) のまま）
    */
   trueDamage: boolean;
-  /** 防御力無視ダメージ編: 防御力無視ダメージ▲の乗数（通常攻撃だけ。trueDamageMultiplier） */
+  /** 防御力無視ダメージ▲の乗数（通常攻撃だけ。trueDamageMultiplier） */
   trueDamageMultiplier: number;
   elementMultiplier: number;
-  /** Stage 11 モダニア: 通常攻撃の分（Stage 10 までの perTrigger） */
+  /** 通常攻撃の分 */
   normal: number;
-  /** Stage 11 モダニア: 射撃ごとの倍率ダメージの分（無ければ 0）。倍率グループは 1 + 会心 + フルバースト（コア・距離なし） */
+  /** 射撃ごとの倍率ダメージの分（無ければ 0）。倍率グループは 1 + 会心 + フルバースト（コア・距離なし） */
   perShot: number;
   /** 1 トリガー（SG は全ペレット）あたりの期待ダメージ = normal + perShot */
   perTrigger: number;
-  /** Stage 15: 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
+  /** 掛けた命中率（condition.hitRate。省略は 1）。normal と perShot に含まれている */
   hitRate: number;
   /**
    * V-0119: 掛けた 1 発のヒット数（condition.hitsPerShot。省略は 1）× 二丁持ちのヒット数（muzzleHitsOf）。normal にだけ含まれている。
@@ -330,7 +330,7 @@ export function baseAttackOf(input: Pick<TriggerDamageInput, 'character' | 'grow
 }
 
 /**
- * 2 段目の段 6（plan/design-skill-stage6.md 1.1 節）: バフ前の最大HP。hpOverride（射撃場スペック固定・育成入力）があればそれ、
+ * バフ前の最大HP（plan/design-skill-stage6.md 1.1 節）。hpOverride（射撃場スペック固定・育成入力）があればそれ、
  * 無ければ育成値から算出する（baseAttackOf と同じ流儀）
  */
 export function baseMaxHpOf(input: { character: CharacterData; growth: GrowthInput; hpOverride?: number }): number {
@@ -338,7 +338,7 @@ export function baseMaxHpOf(input: { character: CharacterData; growth: GrowthInp
 }
 
 /**
- * 2 段目の段 7（plan/design-skill-stage7.md 1.1 節）: バフ前の防御力。defenceOverride（射撃場スペック固定・育成入力）があればそれ、
+ * バフ前の防御力（plan/design-skill-stage7.md 1.1 節）。defenceOverride（射撃場スペック固定・育成入力）があればそれ、
  * 無ければ育成値から算出する（baseMaxHpOf と同じ流儀）
  */
 export function baseDefenceOf(input: {
@@ -394,7 +394,7 @@ export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>
       'DOWN_Charge input only partly modeled (no release frames between shots and the reload interval are verified on all six characters, C-0222; mid-charge charge-time changes, C-0223, and burst activation timing, C-0224, are hypotheses)',
     );
   // 射撃姿勢維持型の刻みは CDN の項目からの式（frame/firing.ts の stanceFrames。C-0217 は仮説）なので近似として扱う。
-  // Stage 11 の紅蓮BS の較正表（measured-cadence）と、レイヴン・A2 の未対応（fire-stance）を 1 つにした（plan/design-fire-stance-cadence.md 5.4 節）
+  // 紅蓮BS・レイヴン・A2 に同じ注記を出す（plan/design-fire-stance-cadence.md 5.4 節）
   if (shot.maintainFireStance !== 0)
     approx(
       'fire-stance',
@@ -403,7 +403,7 @@ export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>
     );
   if (shot.fireType === 'ProjectileCurve')
     unsupported('projectile-curve', '曲射型の弾は未対応', 'Curved projectiles not modeled');
-  // 2026-10-29 に紅蓮：神殺（AR）の InstantBox が増えた（plan/design-cdn-refresh.md 5 節）。中身は分かっていないので、知らない種類は注記だけ出す
+  // 知らない種類（紅蓮：神殺（AR）の InstantBox など。plan/design-cdn-refresh.md 5 節）は中身が分かっていないので、注記だけ出す
   if (!KNOWN_FIRE_TYPES.includes(shot.fireType))
     unsupported(
       'fire-type-unknown',
@@ -426,7 +426,7 @@ export function modelNotes(character: Pick<CharacterData, 'shot' | 'weaponType'>
   return notes;
 }
 
-/** Stage 15: 条件の弾丸命中率（省略は 1 = 射撃場）。0..1 の外は RangeError */
+/** 条件の弾丸命中率（省略は 1 = 射撃場）。0..1 の外は RangeError */
 export function hitRateOf(condition: Pick<TriggerCondition, 'hitRate'>): number {
   const hitRate = condition.hitRate ?? 1;
   if (!Number.isFinite(hitRate) || hitRate < 0 || hitRate > 1) {
@@ -442,7 +442,7 @@ export function hitsPerShotOf(condition: Pick<TriggerCondition, 'hitsPerShot'>):
   return hits;
 }
 
-/** Stage 15: 条件から来る注記。弾丸命中率が 1 未満なら、どこに掛けたか（命中を数えるトリガーは期待値で数える）を知らせる */
+/** 条件から来る注記。弾丸命中率が 1 未満なら、どこに掛けたか（命中を数えるトリガーは期待値で数える）を知らせる */
 export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): ModelNote[] {
   const hitRate = hitRateOf(condition);
   if (hitRate >= 1) return [];
@@ -462,11 +462,11 @@ export function conditionNotes(condition: Pick<TriggerCondition, 'hitRate'>): Mo
 export const DISTANCE_BONUS = 0.3;
 
 /**
- * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の後の防御力。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
+ * 敵の防御力▼の後の防御力（plan/design-skill-stage2.md）。防御力 × (1 − Σ enemyDefenseDown)（Σ は 0〜1 に収める）。
  * 四捨五入で整数にする（C-0790）。通常攻撃・倍率ダメージ・持続ダメージで、攻撃力から引くのはこの値。丸めの向きは enemy.defenceRounding
  * 未確定: .5 ちょうど（防御力を手入力する敵など）は Math.round で切り上げるが、C-0790 は 64.36 と 91.6 だけで見分けていて、
  * .5 の向きの根拠は無い（plan/backlog.md 2-43）。
- * マスト編（plan/design-mast.md 2.2 節）: 発動者基準の▼（enemyDefenseDownFlat。防御力の値）は、割合の▼の後に引いて 0 で止め、丸めはその後。
+ * 発動者基準の▼（enemyDefenseDownFlat。防御力の値。plan/design-mast.md 2.2 節）は、割合の▼の後に引いて 0 で止め、丸めはその後。
  * 割合の▼との順と 0 で止めるのは未確定（射撃場の防御力 100 では、マストの 1 スタックで 0 になり見分けられない。論点 3）
  */
 export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
@@ -485,7 +485,7 @@ export function defenceAfterDown(enemy: EnemyInput, buffs: BuffTotals): number {
 export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const { character, enemy, condition } = input;
   const buffs = input.buffs ?? ZERO_BUFFS;
-  // Stage 11 モダニア: 使用武器の変更が効いていれば、変更後の武器の倍率で撃つ
+  // 使用武器の変更が効いていれば、変更後の武器の倍率で撃つ
   const shot = buffs.weapon?.shot ?? character.shot;
   if (condition.coreHitRate < 0 || condition.coreHitRate > 1) {
     throw new RangeError(`coreHitRate must be in [0, 1], got ${condition.coreHitRate}`);
@@ -502,26 +502,26 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
   const charge = isChargeWeapon(shot) && condition.fullCharge;
   const chargeMultiplier = applyChargeBuffs(shot.fullChargeDamage, charge, buffs);
 
-  // Stage 13: 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は、通常攻撃の武器倍率（1e-4 単位の整数）に (1 + Σ) を掛けて
+  // 通常攻撃ダメージ倍率▲（SG・SMG のコレクション）は、通常攻撃の武器倍率（1e-4 単位の整数）に (1 + Σ) を掛けて
   // 四捨五入した値に置き換える（C-0121・C-0127。SG は 1 トリガーの値で丸める。C-0330）。乗数はその比
   const normalAttackMultiplier =
     buffs.normalAttackDamage === 0 ? 1 : scaleBasisPoints(shot.damage, buffs.normalAttackDamage) / shot.damage;
 
   const coreRate = enemy.hasCore ? condition.coreHitRate : 0;
-  // Stage 13: コアダメージ▲はコア倍率に加算する（コレクション（AR）は C-0327。殲滅モードなら変更後の武器のコア倍率が基点）
+  // コアダメージ▲はコア倍率に加算する（コレクション（AR）は C-0327。殲滅モードなら変更後の武器のコア倍率が基点）
   const boostCore = coreRate * (shot.coreDamageRate - 1 + buffs.coreDamage);
   const crit = applyCritBuffs(character.crit, buffs);
-  // ヘルム編: 通常攻撃のクリティカル確率▲は通常攻撃の会心率にだけ足す（射撃ごとの倍率ダメージは boostSkillCrit）
+  // 通常攻撃のクリティカル確率▲は通常攻撃の会心率にだけ足す（射撃ごとの倍率ダメージは boostSkillCrit）
   const boostCrit = capCritRate(crit.rate + buffs.normalCritRate) * (crit.damage - 1);
   const boostSkillCrit = crit.rate * (crit.damage - 1);
   const boostDistance = condition.distanceBonus && character.bonusRange !== null ? DISTANCE_BONUS : 0;
   const boostFullBurst = condition.fullBurst ? FULL_BURST_BOOST : 0;
   const boostTotal = 1 + boostCore + boostCrit + boostDistance + boostFullBurst;
-  // エード：エージェントバニー編: 貫通特化の効いている枠は、貫通ダメージ▲も同じ和（normalAttackDamageGroup）
+  // 貫通特化の効いている枠は、貫通ダメージ▲も同じ和（normalAttackDamageGroup）
   const attackDamageMultiplier = normalAttackDamageGroup(buffs);
   const damageTakenMultiplier = 1 + buffs.damageTaken;
   const explosionMultiplier = projectileExplosionMultiplier(shot, buffs);
-  // 防御力無視ダメージ編: 通常攻撃だけ、防御力を引かない基礎と▲の乗数（射撃ごとの倍率ダメージは baseHit のまま）
+  // 通常攻撃だけ、防御力を引かない基礎と▲の乗数（射撃ごとの倍率ダメージは baseHit のまま）
   const trueDamage = isTrueDamageShot(buffs);
   const normalBaseHit = trueDamage ? Math.max(1, attack) : baseHit;
   const trueMultiplier = trueDamageMultiplier(shot, buffs);
@@ -585,7 +585,7 @@ export function computeTriggerDamage(input: TriggerDamageInput): TriggerDamage {
 }
 
 /**
- * Stage 22-B: 部分チャージの発（チャージの進み progress）の 1 トリガーの値。フルチャージ倍率 M（チャージのバフ込み）を
+ * 部分チャージの発（チャージの進み progress）の 1 トリガーの値。フルチャージ倍率 M（チャージのバフ込み）を
  * 1 + (M − 1) × progress に置き換える（C-0843。紅蓮BS・ラムで確かめたのは素の倍率だけで、バフのある場合の比例は仮定）。
  * 射撃ごとの倍率ダメージ（perShot）は変えない
  */
@@ -598,7 +598,7 @@ export function partialChargeTriggerDamage<T extends TriggerDamage>(trigger: T, 
 }
 
 /**
- * Stage 11 モダニア: 射撃ごとの倍率ダメージ。式は Stage 8 の倍率ダメージ（skills/burstDamage.ts の computeBurstHit）と同じ:
+ * 射撃ごとの倍率ダメージ。式は倍率ダメージ（skills/burstDamage.ts の computeBurstHit）と同じ:
  * max(1, 攻撃力 − 防御力) × X × (1 + 会心期待値 + フルバースト補正) × (1 + Σ攻撃ダメージ) × 属性。距離は乗らず、コアは PER_SHOT_DAMAGE_CORE
  */
 function perShotDamage(

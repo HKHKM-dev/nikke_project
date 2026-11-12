@@ -59,7 +59,7 @@ const STAT_INFO: Record<string, readonly [label: string, status: Status | null, 
   partsDamage: ['パーツダメージ', 'oos', 'なし（パーツの無い的）'],
   interruptPartDamage: ['阻止部位の攻撃ダメージ', 'oos', 'なし（阻止部位の無い的）'],
   attackSpeed: ['攻撃速度', 'ok', 'attackSpeed（AR・SMG・SG の発と発の間。2 段目の段 9 の PR 2）'],
-  // 2 段目の段 12 の PR 2: 付着のヒット（damage の projectileStick。ラピ：レッドフードの粘着榴弾）にだけ掛ける
+  // 付着のヒット（damage の projectileStick。ラピ：レッドフードの粘着榴弾）にだけ掛ける
   projectileStickDamage: [
     '発射体付着ダメージ',
     'ok',
@@ -101,13 +101,13 @@ const KIND_INFO: Record<string, Info> = {
   'damage:distributed': ['分配ダメージ', 'ok', 'damage・burstDamage（distributed）'],
   'damage:burst': ['バーストスキルダメージ', 'ok', 'burstDamage・damage'],
   'damage:dot': ['持続ダメージ', 'ok', 'dot'],
-  // 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節。C-0783）
+  // plan/design-skill-stage15.md 2.3 節。C-0783
   'damage:true': [
     '防御力無視ダメージ（倍率ダメージ）',
     'ok',
     'damage の damageType true（エイダの S2）・weaponChange の trueDamage',
   ],
-  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節。C-0807）
+  // plan/design-skill-stage16.md 2.2 節。C-0807
   'damage:burstTrue': [
     '防御力無視のバーストスキルダメージ',
     'ok',
@@ -172,13 +172,13 @@ const KIND_INFO: Record<string, Info> = {
     'ok',
     '付与の stackImmutable（同じ定義の stackChange を弾く。ナユタの記憶吸収。plan/design-nayuta.md 2.5 節）',
   ],
-  // 2 段目の段 10・13: 写す元は自分の状態・カウンタと、敵に付く持続ダメージのスタックだけ
+  // 写す元は自分の状態・カウンタと、敵に付く持続ダメージのスタックだけ
   'buffOp:copy': [
     'スタックのコピー',
     'check',
     '付与の stacksFrom（自分の状態・カウンタ。2 段目の段 10）と dot の stacksFrom（敵の持続ダメージのスタック。段 13）だけ',
   ],
-  // 2 段目の段 19: 写す元は順位で選んだ味方（自分も含む）
+  // 写す元は順位で選んだ味方（自分も含む）
   'buffOp:copyAttack': [
     '攻撃力のコピー',
     'ok',
@@ -191,7 +191,7 @@ const KIND_INFO: Record<string, Info> = {
     'stackChange（増加と decrease の減少。2 段目の段 3。敵の持続ダメージのスタック量▲は target enemy。段 13）',
   ],
   'instant:ammoRefill': ['弾丸チャージ', 'ok', 'ammoRefill'],
-  // 2 段目の段 17: ジルのバーストの「残弾数 100% 減少」「強制リロード」は ammoDecrease の burstUse で書いた。ミルク：ブルーミングバニーの羞恥心の形が残る
+  // ジルのバーストの「残弾数 100% 減少」「強制リロード」は ammoDecrease の burstUse で書いた。ミルク：ブルーミングバニーの羞恥心の形が残る
   'instant:forceReload': [
     '強制リロード',
     'check',
@@ -225,17 +225,17 @@ const KIND_INFO: Record<string, Info> = {
     '状態の中身か timed の stat burstCooldown（バーストの CT を縮める秒。scaling flat だけ。モランの宝物版の熱血・ミルクの宝物版の S1・ティアの S1。2 段目の段 11・15。C-0706・C-0769・C-0775）と、周期の damage の periodShorten の window（名前の無い窓の発動間隔▼。エイダの S2。C-0788。elapsed はクールタイムを縮める窓で、ドロシーの発現。2 段目の段 18。C-0848）と、状態の中身の skillCooldownDown（味方のスキルのクールタイム X%▼。アルカナの魔術師のカード。C-1055）だけ',
   ],
   'instant:forceSkill': ['スキルの強制使用', 'gap', 'なし'],
-  // 2 段目の段 12 の PR 2: cycle の無いスロットの射撃の回数のきっかけの N▼（decreaseRef。ラピ：レッドフードのバースト III）も
+  // cycle の無いスロットの射撃の回数のきっかけの N▼（decreaseRef。ラピ：レッドフードのバースト III）も
   'cycle:every': [
     '回数条件の変更',
     'ok',
     'cycleEvery（段の循環の間隔は every、cycle の無いスロットの射撃の回数のきっかけの N▼ は decreaseRef）',
   ],
-  // 2 段目の段 21（plan/design-skill-stage21.md 5 節）: 条件の付いた延長は、窓を作る時に秒を足す即時効果（C-0877・C-0886）
+  // 条件の付いた延長は、窓を作る時に秒を足す即時効果（C-0877・C-0886。plan/design-skill-stage21.md 5 節）
   'fullBurst:extend': ['フルバーストタイム延長', 'ok', 'fullBurstExtend（窓を作る時に延長の秒を足す。C-0877・C-0886）'],
   'fullBurst:shorten': ['フルバーストタイム短縮', 'gap', 'なし'],
   'burst:reentry': ['バースト再突入', 'ok', 'burstReentry'],
-  // 2 段目の段 12 の PR 3: 編成で決まる静的な形（ラピ：レッドフードの戦闘補助）
+  // 編成で決まる静的な形（ラピ：レッドフードの戦闘補助）
   'burst:changeStep': [
     'バースト段階の変更',
     'ok',
@@ -249,7 +249,7 @@ const KIND_INFO: Record<string, Info> = {
     'autoAttack（形による）。召喚の機数で間隔の変わる攻撃（アインのニアフェザー。1 機ずつの維持時間）は、展開 summon と damage のきっかけ { summon }（機数ごとの間隔の期待値。plan/design-ein-near-feather.md）。ほかの形（ミサイルコンテナなど）は形による',
   ],
   'flag:trueDamageConversion': ['通常攻撃を防御力無視ダメージに', 'ok', 'trueDamageConversion'],
-  // 2 段目の段 12 の PR 2: 自分に付く常時の形（ラピ：レッドフードの S2・シュガーの宝物版の S1）
+  // 自分に付く常時の形（ラピ：レッドフードの S2・シュガーの宝物版の S1）
   'flag:elementAdvantage': [
     '有利コードのダメージを適用',
     'ok',
@@ -262,7 +262,7 @@ const KIND_INFO: Record<string, Info> = {
     'チャージ時間は fixedChargeTime。リロード速度の増加状態の固定（ジル）は値に効かない（C-0013。計算に無関係の notes）。ほかはなし',
   ],
   'stat:overflowConvert': ['超過した値の変換', 'gap', 'なし'],
-  // 2 段目の段 10〜13: 目録（skills/counters.ts）のカウンタの増減・値の条件・上限のきっかけと、値の数だけの攻撃
+  // 目録（skills/counters.ts）のカウンタの増減・値の条件・上限のきっかけと、値の数だけの攻撃
   resource: [
     'キャラ固有のカウンタ（MP・ゲージ・弾倉など）',
     'check',
@@ -300,14 +300,14 @@ const TRIG_INFO: Record<string, Info> = {
   pelletHit: ['ペレットが命中した時', 'ok'],
   lastShot: ['最後の弾丸', 'ok'],
   timer: ['N 秒ごと', 'ok'],
-  // 2 段目の段 13: ミハラ：ボンディングチェーンのチェーンの攻撃は、カウンタが上限に届いた時 { counterFull } で書いた（敵の出現は無い）
+  // ミハラ：ボンディングチェーンのチェーンの攻撃は、カウンタが上限に届いた時 { counterFull } で書いた（敵の出現は無い）
   specificTiming: ['特定のタイミング（フルバースト終了・バースト 3 段階突入・敵の出現。ツールチップ T5）', 'check'],
   healed: ['回復効果が適用された時', 'ok'],
   chance: ['確率', 'check'],
   stateApplied: ['〈状態〉が適用された時', 'check'],
   stateEnded: ['〈状態〉が終了した時', 'gap'],
   critHit: ['クリティカル命中した時', 'ok'],
-  // 2 段目の段 18 の PR 3: オートの射撃はフルチャージを保たない（C-0839。要件 4.2 節）
+  // オートの射撃はフルチャージを保たない（C-0839。要件 4.2 節）
   chargeHold: ['フルチャージを N 秒以上維持した時', 'premise', 'オートの射撃では起きない（C-0839）'],
   partialChargeShot: ['フルチャージでない通常攻撃', 'gap'],
   reloadComplete: [
@@ -334,7 +334,7 @@ const TRIG_INFO: Record<string, Info> = {
   parts: ['パーツ・発射体の破壊・命中', 'oos'],
   enemySpawn: ['敵の出現・数', 'oos'],
   hpThreshold: ['HP が閾値を越えた時（HP の経路の読む側）', 'indirect'],
-  // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節。C-0775）・段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）
+  // plan/design-skill-stage15.md 2.2 節（C-0775）・plan/design-skill-stage17.md 2.1 節
   coverHealed: [
     '遮蔽物の HP を回復した時（壊れていない遮蔽物への回復で起きる。ツールチップ）',
     'ok',
@@ -429,16 +429,16 @@ const TGT_INFO: Record<string, Info> = {
 };
 
 /**
- * 値の算出の行（3.2 節の SC のキー）。発動者基準は stat で語彙の有無が分かれる。2 段目の段 6: 発動者の最終最大HP 基準は、攻撃力だけが
+ * 値の算出の行（3.2 節の SC のキー）。発動者基準は stat で語彙の有無が分かれる。発動者の最終最大HP 基準は、攻撃力だけが
  * 語彙あり（casterFinalMaxHp）
  */
 function scalingKeyOf(e: CatalogEffect): string {
   const stat = e.stat!;
   if (stat.scaling === 'casterHp') return stat.canon === 'attack' ? 'casterHp:ok' : 'casterHp';
   if (stat.scaling !== 'casterBased') return stat.scaling;
-  // マスト編（plan/design-mast.md 2.2 節）: 敵に付く発動者基準の防御力▼は語彙あり（casterDefence）
+  // 敵に付く発動者基準の防御力▼は語彙あり（casterDefence。plan/design-mast.md 2.2 節）
   if (stat.canon === 'defense' && e.side === 'enemy' && stat.dir === 'down') return 'casterBased:enemyDefense';
-  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節）: 味方への発動者基準の最大HP（のみ）▲は語彙あり（casterMaxHp）
+  // 味方への発動者基準の最大HP（のみ）▲は語彙あり（casterMaxHp。plan/design-hp-ratio-readers.md 9 節）
   if (stat.canon === 'maxHp' && stat.dir === 'up') return 'casterBased:maxHp';
   return ['attack', 'chargeSpeed', 'chargeTime'].includes(stat.canon) ? 'casterBased:ok' : 'casterBased:indirect';
 }
@@ -450,10 +450,10 @@ const SC: Record<string, Info> = {
   'casterBased:enemyDefense': ['スキル発動者基準の敵の防御力▼（casterDefence）', 'ok'],
   'casterBased:maxHp': ['スキル発動者基準の最大HP（のみ）▲（casterMaxHp）', 'ok'],
   'casterBased:indirect': ['スキル発動者基準の防御力・最大HP など（発動者の値を読む。分類の別紙 6 節）', 'indirect'],
-  // 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: 最終最大HP の X% 分の攻撃力▲は語彙あり（casterFinalMaxHp）。ほかの stat は語彙なし
+  // 最終最大HP の X% 分の攻撃力▲は語彙あり（casterFinalMaxHp。plan/design-skill-stage6.md 1.3 節）。ほかの stat は語彙なし
   'casterHp:ok': ['発動者の最大HP の X% 分の攻撃力▲（casterFinalMaxHp）', 'ok'],
   casterHp: ['発動者の最大HP 基準の、攻撃力のほかの値', 'gap'],
-  // メイド編（plan/design-maids.md 2.1 節）: timed の perCount: { state }（付いた時の自分のスタック数を掛ける）
+  // timed の perCount: { state }（付いた時の自分のスタック数を掛ける。plan/design-maids.md 2.1 節）
   perStack: ['X% × 〈状態〉のスタック数', 'ok', 'timed の perCount: { state }'],
   lostHp: ['失った HP N% ごと（HP の経路の読む側）', 'indirect'],
   perMaxAmmo: ['最大装弾数 N 発ごと', 'gap'],
@@ -548,7 +548,7 @@ function effectStatus(e: CatalogEffect): readonly [Status, string] {
   const info = KIND_INFO[k];
   if (info === undefined) return ['check', '?'];
   if (k === 'instant:ammoDrain' && e.side === 'enemy') return ['nodmg', '敵の残弾'];
-  // バーストの「フルバーストタイム N 秒▲▼」は CDN の burst_duration で入っている（Stage 8）
+  // バーストの「フルバーストタイム N 秒▲▼」は CDN の burst_duration で入っている
   if (k.startsWith('fullBurst:') && e.implicit === 'burstUse' && e.conditions.length === 0) {
     return ['ok', 'CDN の burst_duration'];
   }

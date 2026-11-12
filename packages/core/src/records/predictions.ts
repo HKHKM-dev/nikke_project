@@ -1,8 +1,8 @@
 // 予測（plan/design-records-automation.md 3.2 節）。検証記録ごとに records/predictions/V-NNNN.json を置き、
 // 手書きの部分（編成・仮説・比べる指標）から `npm run records:predict -- V-NNNN` が sim を回して predicted を書き込む。
 // records:check は、同じ検証記録を source にする観測値と突き合わせて、仮説ごとに合うかを plan/verifications.md に出す（3.5 節）。
-// 予測は任意の道具で、確定の条件ではない。撮る前の順番も問わない（plan/design-investigation-review.md 1 節。2026-10-10 の
-// オーナーの決定）。撮影計画で、その録画で仮説を見分けられるかを確かめるのに使う。
+// 予測は任意の道具で、確定の条件ではない。撮る前の順番も問わない（plan/design-investigation-review.md 1 節）。
+// 撮影計画で、その録画で仮説を見分けられるかを確かめるのに使う。
 import { runSimulation, type SimResult } from '../sim/engine.ts';
 import type { TeamInput } from '../team.ts';
 import { V_ID } from './ids.ts';

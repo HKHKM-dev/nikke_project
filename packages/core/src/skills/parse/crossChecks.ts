@@ -34,8 +34,8 @@ import { contentAsTimed } from './state.ts';
 import { parseTimedEffect, validateChanceStat } from './timed.ts';
 
 /**
- * エレグのバースト編（plan/design-elegg.md 8.9 節）: トリガー burstHit は、バーストの倍率ダメージ（burstDamage）のある burst スロットの
- * timed・付与にだけ書ける（ヒットの無いバースト・ほかのスロットでは発火のフレームが決まらない）
+ * トリガー burstHit は、バーストの倍率ダメージ（burstDamage）のある burst スロットの
+ * timed・付与にだけ書ける（ヒットの無いバースト・ほかのスロットでは発火のフレームが決まらない。plan/design-elegg.md 8.9 節）
  */
 export function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: SkillSlot, path: string): void {
   effects.forEach((e, i) => {
@@ -49,7 +49,7 @@ export function validateBurstHitTriggers(effects: readonly SkillEffect[], slot: 
 }
 
 /**
- * Stage 11 紅蓮BS: cycle は 1 スロットに 1 つまで。cycleEvery の slot にはちょうど 1 つの cycle があり、
+ * cycle は 1 スロットに 1 つまで。cycleEvery の slot にはちょうど 1 つの cycle があり、
  * every が即値ならそれより小さい（間隔を「速める」効果だけ。everyRef との比較は Lv で決まるので解決時に見る）
  */
 function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -75,7 +75,7 @@ function validateCycles(entries: Partial<Record<SkillSlot, SkillEntry>>, root: s
 }
 
 /**
- * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: cycle の無いスロットへの cycleEvery（射撃の回数のきっかけの間隔の変更）。
+ * cycle の無いスロットへの cycleEvery（射撃の回数のきっかけの間隔の変更。plan/design-skill-stage12.md 2.4 節）。
  * 窓の間隔は解決時に「きっかけの回数 − decreaseRef の値」にするので、対象のスロットの射撃の回数のきっかけは 1 つ以上あり、どれも同じ
  * 回数の種類と同じ N（everyRef か every）で、窓を見るのは damage（gaugeHits なし）・shotPause・counterChange だけ（ほかの効果の数え方は
  * 窓を見ないので、書けば窓の中で食い違う）
@@ -110,8 +110,8 @@ function validateCountTriggersEvery(effects: readonly SkillEffect[], e: CycleEve
 }
 
 /**
- * アニス：スター S2・バースト編: チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる）。2 段目の段 14 の PR 3
- * （plan/design-skill-stage14.md 2.7 節）: 状態の中身の固定も 1 つまで（状態どうしの勝ち負けを決めていない。timed の固定との兼ね合いは
+ * チャージ時間の固定は 1 つの定義に 1 つまで（重なると秒が足し合わされる）。状態の中身の固定も 1 つまで
+ * （plan/design-skill-stage14.md 2.7 節。状態どうしの勝ち負けを決めていない。timed の固定との兼ね合いは
  * skills/buffs.ts の applyResolvedEffect）
  */
 function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -125,7 +125,7 @@ function validateFixedChargeTimeCount(entries: Partial<Record<SkillSlot, SkillEn
 }
 
 /**
- * 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先）。マスト編: holder が enemy なら、
+ * 同じ定義に、状態 state を自分にスタックで付ける付与がある（スタック量の増減・フルスタック・最大スタック数▲の先）。holder が enemy なら、
  * 敵にスタックで付ける付与（dot の stacksFrom の元。plan/design-mast.md 2.3 節）
  */
 function hasSelfStackingGrant(
@@ -168,8 +168,8 @@ function validateInstantFireCoreHits(entries: Partial<Record<SkillSlot, SkillEnt
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
- * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される）
+ * フルスタックの消費のきっかけは、同じ定義にその状態を自分にスタックで付ける付与が
+ * 要り、その状態の付与はどれも射撃の回数のきっかけ（フルスタックになる件が、回復を当てる前のフレームまでに登録される。plan/design-skill-stage3.md 1.3 節）
  */
 function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const grants = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).filter(
@@ -191,7 +191,7 @@ function validateFullStackTriggers(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
- * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: timed・付与の { applied } は連鎖させない。同じ定義の中で、{ applied } の付与が
+ * timed・付与の { applied } は連鎖させない（plan/design-skill-stage4.md 1.1 節）。同じ定義の中で、{ applied } の付与が
  * 付ける状態を、ほかの timed・付与の { applied } が見ない（damage の { applied } は見てよい。ダメージは記録を作らないので閉じる）
  */
 function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -214,10 +214,10 @@ function validateAppliedTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>
 }
 
 /**
- * クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: 条件 selfState の sameFiring は、状態の付与にだけ書け、同じ
+ * 条件 selfState の sameFiring は、状態の付与にだけ書け、同じ
  * スロットのそれより前に、見る状態を同じきっかけで付ける付与が要る（その付与が同じ発火で付ける分を数える）。次のフレームの件を見るので、
  * 見る状態の付与は定義の中でどれも同じきっかけで、スタックごとの維持（stackRefresh: each）でないこと（ほかの出どころの件や、
- * 次のフレームに切れる古いスタックを数えない）。while には書けない
+ * 次のフレームに切れる古いスタックを数えない）。while には書けない（plan/design-quency-eq.md 2 節の論点 3）
  */
 function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
@@ -254,8 +254,8 @@ function validateSameFiring(entries: Partial<Record<SkillSlot, SkillEntry>>, roo
 }
 
 /**
- * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
- * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む）。A2 の B モード編: currentHpDown の since も
+ * counterChange・dot の { applied } と、周期の since が見る状態は、同じ定義にその状態を
+ * 自分に付ける付与が要る（自分に付いた記録と、自分の件の終わりを読む。plan/design-skill-stage19.md 2.1 節）。currentHpDown の since も同じ
  */
 function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   const effects = SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []);
@@ -266,7 +266,7 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       const at = `${root}.${slot}.effects[${i}]`;
-      // グレイブ編（plan/design-grave.md 2.1・2.4・2.5 節）: 状態の終わりのきっかけ・自分の状態の窓で数える回数・ほかの状態の終わりまでの維持
+      // 状態の終わりのきっかけ・自分の状態の窓で数える回数・ほかの状態の終わりまでの維持（plan/design-grave.md 2.1・2.4・2.5 節）
       if (e.kind === 'ammoDecrease' || e.kind === 'state') {
         const t = e.trigger;
         if (isEndedTrigger(t)) needGrant(t.ended, `${at}.trigger`, e.kind);
@@ -286,11 +286,11 @@ function validateOwnStateTriggers(entries: Partial<Record<SkillSlot, SkillEntry>
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
- * 要る（上限・維持・中身は付与のもの）
+ * スタック量の増減は、同じ定義にその状態をスタックで付ける付与（対象は自分）が
+ * 要る（上限・維持・中身は付与のもの。plan/design-skill-stage3.md 1.1・1.5 節）
  */
 function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
-  // ナユタ編（plan/design-nayuta.md 2.5 節）: スタック量増減効果無効の状態（同じ状態の付与で揃う。validateStateGrants）
+  // スタック量増減効果無効の状態（同じ状態の付与で揃う。validateStateGrants。plan/design-nayuta.md 2.5 節）
   const immutable = new Set(
     SKILL_SLOTS.flatMap((slot) => entries[slot]?.effects ?? []).flatMap((g) =>
       g.kind === 'state' && g.stackImmutable === true ? [g.state] : [],
@@ -317,8 +317,8 @@ function validateStackChanges(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 状態の中身の「〈状態〉の最大スタック数 N▲」は、同じ定義にその状態を自分に
- * スタックで付ける付与が要る（足す先の上限）
+ * 状態の中身の「〈状態〉の最大スタック数 N▲」は、同じ定義にその状態を自分に
+ * スタックで付ける付与が要る（足す先の上限。plan/design-skill-stage14.md 2.7 節）
  */
 function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
   for (const slot of SKILL_SLOTS) {
@@ -338,8 +338,9 @@ function validateStateContentKinds(entries: Partial<Record<SkillSlot, SkillEntry
 }
 
 /**
- * 魔術師のカード編（plan/design-arcana-magician.md 2.2 節）: 周期のクールタイムの印（cooldown）は damage と burstGaugeHit にだけ書け、
- * carry・atStart・periodShorten・gaugePerHit とは組まない。burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
+ * 周期のクールタイムの印（cooldown）は damage と burstGaugeHit にだけ書け、
+ * carry・atStart・periodShorten・gaugePerHit とは組まない（plan/design-arcana-magician.md 2.2 節）。
+ * burstGaugeHit は遅れ（delayFrames）が要る（1 パス目が発火のフレームの
  * 後で予約するので、発火と同じフレームのゲージには足せない）。同じスロットの印のある周期は同じ秒（1 つのスキルのクールタイム）
  */
 function validateCooldownTimers(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -386,8 +387,8 @@ function validateSummons(entries: Partial<Record<SkillSlot, SkillEntry>>, root: 
 }
 
 /**
- * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.4・2.5 節）: 消去（cancelState）と、PR 3: 敵のスタック量▲（stackChange の target
- * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks）。dot の stacksFrom の
+ * 消去（cancelState）と敵のスタック量▲（stackChange の target
+ * enemy）は、同じ定義の firstTick halfAfterLatest の dot の state を指す（消去で tick を止めるのは、付けるたびに刻みを付け直す形だけ。frame/dot.ts の latestDotTicks。plan/design-skill-stage13.md 2.4・2.5 節）。dot の stacksFrom の
  * enemyState も、同じ定義の dot の state を指す
  */
 function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -402,7 +403,7 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
           `${root}.${slot}.effects[${i}]`,
           `${e.kind} of "${e.state}" needs a dot of the same state with firstTick halfAfterLatest in the definition`,
         );
-      // マスト編（plan/design-mast.md 2.3 節）: 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風）
+      // 元は、同じ定義の dot の状態か、敵にスタックで付く状態の付与（海風。plan/design-mast.md 2.3 節）
       const from = e.kind === 'dot' ? e.stacksFrom?.enemyState : undefined;
       if (from !== undefined && !dots.some((d) => d.state === from) && !hasSelfStackingGrant(entries, from, 'enemy'))
         fail(
@@ -414,12 +415,14 @@ function validateDotStateRefs(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
- * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
- * self か allies）が要る。スタックの条件（stacks・stacksRef）なら、その付与にスタックの上限が要る。静的な状態は常時の効果で書く
+ * while の状態は、同じ定義に、その状態を自分に付けうる時間で変わる付与（対象が
+ * self か allies）が要る（plan/design-skill-stage9.md 1.3 節）。スタックの条件（stacks・stacksRef）なら、
+ * その付与にスタックの上限が要る。静的な状態は常時の効果で書く
  */
 /**
- * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率のきっかけで付く状態は、その状態の付与がその 1 つだけで、ほかの効果が見てよいのは
- * while（スタックの条件の確率を値に掛ける）と stacksFrom（スタック数の期待値）だけ。件が期待値の小片なので、「付いているか」で決める条件・
+ * 確率のきっかけで付く状態は、その状態の付与がその 1 つだけで、ほかの効果が見てよいのは
+ * while（スタックの条件の確率を値に掛ける）と stacksFrom（スタック数の期待値）だけ（plan/design-tove-base.md 2.1 節）。
+ * 件が期待値の小片なので、「付いているか」で決める条件・
  * { applied }・{ fullStack }・スタックの増減などは意味が決まらない
  */
 function validateChanceStates(entries: Partial<Record<SkillSlot, SkillEntry>>, root: string): void {
@@ -465,7 +468,7 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
   for (const slot of SKILL_SLOTS) {
     entries[slot]?.effects.forEach((e, i) => {
       if (e.kind !== 'passive' || e.while === undefined) return;
-      // 2 段目の段 11 の PR 2: カウンタの while は、同じ定義にそのカウンタを増やす counterChange が要る
+      // カウンタの while は、同じ定義にそのカウンタを増やす counterChange が要る
       if ('selfCounter' in e.while) {
         const { counter } = e.while.selfCounter;
         if (!counterChanges.some((c) => c.counter === counter && c.decrease !== true))
@@ -492,7 +495,7 @@ function validateWhileEffects(entries: Partial<Record<SkillSlot, SkillEntry>>, r
 }
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2・5.6 節）: 同じ定義の同じ状態の付与どうしの規則。中身（contents）を
+ * 同じ定義の同じ状態の付与どうしの規則（plan/design-named-state.md 5.2・5.6 節）。中身（contents）を
  * 持つのは 1 つだけ、維持の形（秒・発数・出来事）とスタックの有無は同じ（即値は値も。Lv で決まる値は解決のときに見る）。
  * 中身を持たない付与も、中身の項目と合わせた timed として今の規則を通す（状態の窓を共有するので、stat ごとの規則がどの付与にも効く）
  */
@@ -506,9 +509,9 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
   }
   for (const [state, grants] of byState) {
     const bearers = grants.filter((g) => g.effect.contents !== undefined);
-    // 敵に付く状態は、中身を読む側がまだ無いので、どれかの付与が中身を持つ（2026-10-29 のキャラの編（plan/design-new-chars-1029.md
-    // 9 節）: 同じ状態のほかの付与は中身を共有する。マリアン：クイーンの S1 の弱点露出は、槍とバースト使用時の 2 つで付く）
-    // プリバティ編: 目録で中身なしと決めた敵の状態（ターゲット指定。中身の攻撃力▼はダメージに関係しない）は、中身を書かない
+    // 敵に付く状態は、中身を読む側がまだ無いので、どれかの付与が中身を持ち、同じ状態のほかの付与は中身を共有する
+    // （plan/design-new-chars-1029.md 9 節。マリアン：クイーンの S1 の弱点露出は、槍とバースト使用時の 2 つで付く）
+    // 目録で中身なしと決めた敵の状態（ターゲット指定。中身の攻撃力▼はダメージに関係しない）は、中身を書かない
     const enemyGrant = grants.find((g) => g.effect.enemy === true);
     if (enemyGrant !== undefined && bearers.length === 0 && !namedStateWithoutContents(state)) {
       fail(`${enemyGrant.path}.contents`, 'a grant on the enemy needs contents (no reader of the state yet)');
@@ -518,12 +521,12 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
     }
     const first = grants[0]!;
     for (const g of grants.slice(1)) {
-      // 2 段目の段 1（plan/design-skill-stage1.md 1.4 節）: 静的な付与の形と時間で変わる付与が混ざった状態は静的にしない
-      // （staticStatesOf）。解除不可は件の列ごとに見るので、同じ状態の付与で揃える
+      // 静的な付与の形と時間で変わる付与が混ざった状態は静的にしない
+      // （staticStatesOf。plan/design-skill-stage1.md 1.4 節）。解除不可は件の列ごとに見るので、同じ状態の付与で揃える
       if ((g.effect.undispellable === true) !== (first.effect.undispellable === true)) {
         fail(g.path, `grants of "${state}" need the same undispellable`);
       }
-      // ナユタ編: スタック量増減効果無効も状態の印なので揃える
+      // スタック量増減効果無効も状態の印なので揃える
       if ((g.effect.stackImmutable === true) !== (first.effect.stackImmutable === true)) {
         fail(g.path, `grants of "${state}" need the same stackImmutable`);
       }
@@ -539,7 +542,7 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
     for (const g of grants) {
       if (g === bearer) continue;
       bearer.effect.contents!.forEach((item, j) => {
-        // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は timed の規則を持たない
+        // 最大スタック数▲の項目は timed の規則を持たない
         if (!isStatContent(item)) return;
         parseTimedEffect(contentAsTimed(g.effect, item), `${g.path}（${bearer.path}.contents[${j}] と合わせて）`);
       });
@@ -547,7 +550,7 @@ function validateStateGrants(entries: Partial<Record<SkillSlot, SkillEntry>>, ro
   }
 }
 
-/** 名前の付いた状態の語彙編: 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
+/** 付与の維持の形（同じ状態の付与どうしで比べる。即値は値も） */
 function durationFormOf(e: StateGrantEffect): string {
   if (e.durationUntil !== undefined) return `until ${JSON.stringify(e.durationUntil)}`;
   if (e.durationShots !== undefined) return `shots ${e.durationShots}`;
@@ -556,7 +559,7 @@ function durationFormOf(e: StateGrantEffect): string {
   return 'seconds (ref)';
 }
 
-/** 名前の付いた状態の語彙編: 付与のスタックの形（同じ状態の付与どうしで比べる。即値は値も） */
+/** 付与のスタックの形（同じ状態の付与どうしで比べる。即値は値も） */
 function stackFormOf(e: StateGrantEffect): string {
   if (e.maxStacks !== undefined) return `${e.maxStacks}`;
   return e.maxStacksRef !== undefined ? 'ref' : 'none';

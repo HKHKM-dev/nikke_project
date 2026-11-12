@@ -1,7 +1,7 @@
 // スキルと育成の表示用ラベル（React 非依存）
 import type { BuildEffectSource, BurstStep, GearPart, NikkeClass, SkillSlot } from '@nikke/core';
 
-/** クラスの表示名（2 段目の段 9: 「〈クラス〉型の味方」の絞り込みにも使う） */
+/** クラスの表示名（「〈クラス〉型の味方」の絞り込みにも使う） */
 export const CLASS_LABEL: Record<NikkeClass, string> = { Attacker: '火力型', Defender: '防御型', Supporter: '支援型' };
 
 /** バースト段階の表示名 */
@@ -13,7 +13,7 @@ export const SKILL_SLOT_LABEL: Record<SkillSlot, string> = {
   burst: 'バースト',
 };
 
-/** Stage 9: 宝物の段階の選択肢のラベル。「1 段階（スキル 1）」「2 段階（+スキル 2）」 */
+/** 宝物の段階の選択肢のラベル。「1 段階（スキル 1）」「2 段階（+スキル 2）」 */
 export function treasurePhaseLabel(unlockOrder: readonly SkillSlot[], phase: number): string {
   if (phase === 0) return 'なし';
   const slot = unlockOrder[phase - 1];
@@ -21,7 +21,7 @@ export function treasurePhaseLabel(unlockOrder: readonly SkillSlot[], phase: num
   return `${phase} 段階（${phase === 1 ? '' : '+'}${what}）`;
 }
 
-// ---- Stage 13: 育成入力の効果層（OL・キューブ・コレクション） ----
+// ---- 育成入力の効果層（OL・キューブ・コレクション） ----
 
 export const GEAR_PART_LABEL: Record<GearPart, string> = { head: '頭', body: '胴', arm: '腕', leg: '足' };
 

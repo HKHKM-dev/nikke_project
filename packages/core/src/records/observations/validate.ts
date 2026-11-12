@@ -70,7 +70,7 @@ function fieldErrors(o: Observation, recordings: ReadonlyMap<string, RecordingEn
   if (!OBSERVATION_KINDS.includes(o.kind)) errors.push(`${at}: kind が語彙に無い: ${o.kind}`);
   if (!OBSERVATION_USES.includes(o.use)) errors.push(`${at}: use が語彙に無い: ${o.use}`);
   if (o.description.trim() === '' || o.source.trim() === '') errors.push(`${at}: description と source は必須`);
-  // Stage 20-E: 複数の録画・単位と幅・読み取った日・失効の印
+  // 複数の録画・単位と幅・読み取った日・失効の印
   if (o.recordings !== undefined) {
     const first = [...o.recordings].sort(recordingOrder)[0];
     if (!o.recordings.includes(o.recording) || first !== o.recording)

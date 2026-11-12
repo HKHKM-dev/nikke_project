@@ -33,7 +33,7 @@ export const damageMetrics: Readonly<Record<string, Metric>> = {
   critRateAt: { args: ['slot', 'frame'], sim: critRateAt },
   hitDamage: { args: ['slot', 'frame', 'core', 'crit', 'distance'], sim: hitDamage },
   hitDamageAtShot: { args: ['slot', 'shot', 'core', 'crit', 'distance'], sim: hitDamageAtShot },
-  // 対象の語彙編（plan/design-target-vocab.md 4.1 節）: 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比。
+  // 同じ区間・同じ部位の、会心した 1 ヒットと会心しない 1 ヒットの比（plan/design-target-vocab.md 4.1 節）。
   // 敵に掛かる別枠の乗数（受けるダメージ▲）と攻撃力は比で消え、倍率グループの会心の項（クリティカルダメージ）だけが残る
   critHitRatio: {
     args: ['slot', 'frame', 'core', 'distance'],
@@ -74,7 +74,7 @@ function critRateAt(result: SimResult, ctx: MetricContext): number {
 /**
  * 1 ヒットの値。モデルは会心・コアを期待値で持っているので、その時点の区間の 1 トリガーの値から、
  * 倍率グループ（1 + コア + 会心 + 距離 + フルバースト）だけをパターンに差し替えて組み直す。通常攻撃の 1 ヒット。
- * SG は 1 トリガー（武器倍率 = 全ペレットの合計）を、その区間の 1 発のペレットの数（shotCount。ドロシー：セレンディピティ編の固定と
+ * SG は 1 トリガー（武器倍率 = 全ペレットの合計）を、その区間の 1 発のペレットの数（shotCount。ペレット数の固定（singlePellet）と
  * ペレット数▲を入れた数。skills/buffs.ts の pelletsPerShot）で割った 1 ペレットの値
  */
 function hitDamage(result: SimResult, ctx: MetricContext): number {
@@ -91,8 +91,8 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
   const shot = t.buffs.weapon?.shot ?? character.shot;
   const core = ctx.args.core === true && ctx.input.enemy.hasCore ? shot.coreDamageRate - 1 + t.buffs.coreDamage : 0;
   const crit = ctx.args.crit === true ? applyCritBuffs(character.crit, t.buffs).damage - 1 : 0;
-  // エード：エージェントバニー編（plan/design-agent-bunny.md 10 節）: distance 'model' は、その区間のモデルの距離ボーナス（条件が自動の枠では、
-  // 着地点と適正最小射程距離▲ で決まる。配分の区間は重みの平均）。帯の中か外かもモデルと比べる
+  // distance 'model' は、その区間のモデルの距離ボーナス（条件が自動の枠では、
+  // 着地点と適正最小射程距離▲ で決まる。配分の区間は重みの平均。plan/design-agent-bunny.md 10 節）。帯の中か外かもモデルと比べる
   const distance =
     ctx.args.distance === 'model'
       ? t.boost.distance
@@ -105,7 +105,7 @@ function hitDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 2 段目の段 19 の PR 2（V-0627）: 枠の shot 発目（1 始まり）の撃ったフレームの hitDamage。shot はカンマ区切りの並び（"1,7,13"）も書け、
+ * 枠の shot 発目（1 始まり）の撃ったフレームの hitDamage（V-0627）。shot はカンマ区切りの並び（"1,7,13"）も書け、
  * そのときは発ごとの列。射撃の回数のきっかけで段が上がるスタックの攻撃力▲を、録画のその発の増分から読んだ 1 ヒットの値と比べる
  * （モデルの発のフレームは動くので、発の番号で引く）
  */
@@ -131,7 +131,7 @@ function coreHitRate(result: SimResult, ctx: MetricContext): number {
   return t.boost.core / (shot.coreDamageRate - 1 + t.buffs.coreDamage);
 }
 
-/** その時点の区間の弾丸命中率（1 トリガーの命中の期待値。条件が自動なら的の表と着地点の値。backlog 2-25） */
+/** その時点の区間の弾丸命中率（1 トリガーの命中の期待値。条件が自動なら的の表と着地点の値） */
 function bulletHitRate(result: SimResult, ctx: MetricContext): number {
   const slot = slotOf(result.slots, ctx);
   const frame = Number(ctx.args.frame);
@@ -141,7 +141,7 @@ function bulletHitRate(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * アニス：スター編: 射撃ごとの倍率ダメージ（perShot。「フルチャージ攻撃が命中した時、最終攻撃力の X% の追加ダメージ」など）の 1 回の値。
+ * 射撃ごとの倍率ダメージ（perShot。「フルチャージ攻撃が命中した時、最終攻撃力の X% の追加ダメージ」など）の 1 回の値。
  * hitDamage と同じく、その時点の区間の 1 トリガーの perShot から、倍率グループ（1 + 会心 + フルバースト）だけをパターンに差し替えて
  * 組み直す。枠に射撃ごとの倍率ダメージが複数あれば合計の値になる
  */
@@ -184,13 +184,13 @@ function burstHitWithSkillHits(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * ニヒリスター編: 持続ダメージ（dot）の n 回目（0 始まり。枠の全 tick を通した順）の 1 tick の値。burstHitDamage と同じく、
+ * 持続ダメージ（dot）の n 回目（0 始まり。枠の全 tick を通した順）の 1 tick の値。burstHitDamage と同じく、
  * 会心の期待値を外して、会心したか（crit）で組み直す（plan/design-nihilister.md 4 節）。
- * コアの経路編（plan/design-anis-star-core-path.md 3.1 節）: 省略できる引数 core が true なら、コアに当たったヒットの値
- * （boost に コア倍率 − 1 を足す）。core の効果でないヒットに core: true は拒否する
+ * 省略できる引数 core が true なら、コアに当たったヒットの値
+ * （boost に コア倍率 − 1 を足す。plan/design-anis-star-core-path.md 3.1 節）。core の効果でないヒットに core: true は拒否する
  */
 function dotHitDamage(result: SimResult, ctx: MetricContext): number {
-  // 2 段目の段 13 の PR 2（V-0547）: hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）。
+  // hitMatches の省略できる引数 skill で、そのスロットの持続ダメージだけを数える（プリング・チェーン）（V-0547）。
   // 簡素化・第 7 回の案 1: 省略できる引数 frame（と fullBurst。frameArgOf）で、そのフレーム以降の tick だけを数える（skillHitDamage と同じ）
   const from = ctx.args.frame === undefined ? null : frameArgOf(result, ctx);
   const ticks = result.skillHits.filter(
@@ -207,8 +207,8 @@ function dotHitDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 持続ダメージ▲編（レイヴン。V-0227）: スタックする持続ダメージの、フレーム frame 以降の最初の tick を、スタックの数 stacks の tick に
- * 組み直した値（1 スタックの値 × stacks。会心は dotHitDamage と同じく組み直す）。録画の tick のスタックの数がモデルと違っても、
+ * スタックする持続ダメージの、フレーム frame 以降の最初の tick を、スタックの数 stacks の tick に
+ * 組み直した値（1 スタックの値 × stacks（レイヴン。V-0227）。会心は dotHitDamage と同じく組み直す）。録画の tick のスタックの数がモデルと違っても、
  * その時点のバフの乗り方だけを比べられる（tick は全スタックの和が 1 つのダメージ。C-0182）
  */
 function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
@@ -223,9 +223,9 @@ function dotStackTickDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * 受けるダメージ編（イサベル）: 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
+ * 倍率ダメージ（damage。持続ダメージを除く）の n 回目（0 始まり。枠の発動を通した順）の 1 発動の値。
  * dotHitDamage と同じく、会心の期待値を外して、会心したか（crit）で組み直す。
- * 2 段目の段 12 の PR 2（V-0537）: 省略できる引数で数える発動を絞る（hitMatches）。frame（と fullBurst。frameArgOf）= そのフレーム以降の
+ * 省略できる引数で数える発動を絞る（hitMatches）（V-0537）。frame（と fullBurst。frameArgOf）= そのフレーム以降の
  * 発動だけを数える。core・distance が true なら、コアに当たった・距離ボーナスの付いたヒットの値（core・distance の効果のヒットだけ。core はコア命中ダメージ（coreHit）にも。V-0538）
  */
 function skillHitDamage(result: SimResult, ctx: MetricContext): number {
@@ -259,7 +259,7 @@ function skillHitsDamage(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * シンデレラ S1 編（plan/design-cinderella-s1-charge.md 3 節）: 引数 frame のフレーム。省略できる引数 fullBurst（n。0 始まり）があれば、
+ * 引数 frame のフレーム（plan/design-cinderella-s1-charge.md 3 節）。省略できる引数 fullBurst（n。0 始まり）があれば、
  * frame は n 回目のフルバーストの開始からの相対。モデルの時刻表が変わっても、録画と同じ場面（何回目のフルバーストの中か）を指す
  */
 function frameArgOf(result: SimResult, ctx: MetricContext): number {

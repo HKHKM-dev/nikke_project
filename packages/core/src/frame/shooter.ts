@@ -48,7 +48,7 @@ import { chargeShotIntervalFrames, firingParams, reloadChunkAmmo, type FiringPar
 
 /**
  * 最大装弾数が残弾より小さくなった（最大装弾数▲が切れた）ときに残弾を削るか。
- * **2026-09-23 の録画 0039（録画 A）で「削る」と確定**: リターの 5 秒窓が切れた瞬間に、デルタの表示が 9/9 → 6/6 になった
+ * **録画 0039（録画 A）で「削る」と確定**: リターの 5 秒窓が切れた瞬間に、デルタの表示が 9/9 → 6/6 になった
  */
 export const MAX_AMMO_CLAMP_ON_DECREASE = true;
 
@@ -74,7 +74,7 @@ export type ShooterState = {
   lastShot: boolean;
   /** 分割リロードの、込め始めの前の弾を込めない 1 段の最中（C-0154）。無ければキーごと無い */
   reloadLead?: true;
-  /** Stage 16-B: ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
+  /** ハイド中に始めたリロード（明けるまでに込め終わらなければ取り消す）。無ければキーごと無い */
   hideReload?: true;
   /**
    * 狙えない窓の始まりから D（WeaponModel.hideDetectFrames）までの待ちと、チャージの途中だった枠の部分チャージの発までの待ち
@@ -108,7 +108,7 @@ export type HidePending = {
   framesLeft: number;
   /**
    * チャージの進み（満ちていた枠（full）は 1、ほかは 0 以上 1 未満）。窓の始まりの進みで、0 より大きければチャージの途中だった枠。チャージの途中だった枠は、D（残りが H に
-   * なったフレーム）にその時点の進みに置き換え、部分チャージの発の値にする（C-0843 を置き換えた結論。plan/design-hide-reload-detect.md 9 節）
+   * なったフレーム）にその時点の進みに置き換え、部分チャージの発の値にする（C-0855。plan/design-hide-reload-detect.md 9 節）
    */
   progress: number;
   /**
@@ -136,9 +136,9 @@ export function initialShooter(
 }
 
 /**
- * Stage 11 モダニア: 使用武器の変更（殲滅モード）で持ち替えた武器の射手の初期状態。
- * Stage 22-C の構え（aimInFrames）は入れず、持ち替えの次のフレームから撃つ（スピンアップ武器は初弾遅延、チャージ武器は
- * 戦闘開始と同じ待ち）。持ち替えはハイドではなく、構えが要るかの根拠が無いので、22-C の前のまま（録画 0044: 1 フレーム 1 発）
+ * 使用武器の変更（殲滅モード）で持ち替えた武器の射手の初期状態。
+ * 構え（aimInFrames）は入れず、持ち替えの次のフレームから撃つ（スピンアップ武器は初弾遅延、チャージ武器は
+ * 戦闘開始と同じ待ち）。持ち替えはハイドではなく、構えが要るかの根拠が無いので入れない（録画 0044: 1 フレーム 1 発）
  */
 export function weaponChangeShooter(
   shot: ShotParams,
@@ -206,7 +206,7 @@ function loadChunks(state: ShooterState, shot: ShotParams, model: WeaponModel, p
 function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params: FiringParams): void {
   state.shotsInMagazine += 1;
   if (params.infiniteAmmo) {
-    // Stage 11 モダニア: 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
+    // 装弾数無限。残弾は減らず、リロードも最後の弾丸も起きない
     state.lastShot = false;
     if (isChargeWeapon(shot)) {
       startNextCharge(state, params, model);
@@ -230,7 +230,7 @@ function fire(state: ShooterState, shot: ShotParams, model: WeaponModel, params:
       state.wait = chunk - 1;
       return;
     }
-    // 1 回分が 0 フレーム: 最終弾のフレームで込め終える。1 発目は早くて次のフレーム（Stage 9 の Math.max(0, …) と同じ）
+    // 1 回分が 0 フレーム: 最終弾のフレームで込め終える。1 発目は早くて次のフレーム
     const fireNow = loadChunks(state, shot, model, params);
     if (fireNow) state.wait = 0;
     return;
@@ -250,7 +250,7 @@ function startMagazine(state: ShooterState): void {
 /**
  * 1 フレーム進める（state を書き換える）。このフレームに発射したら true。
  * params はこのフレームの射撃の実効値（省略は基礎値）。最大装弾数が残弾より小さくなっていたら先に削る（MAX_AMMO_CLAMP_ON_DECREASE）。
- * Stage 16-B: blocked（敵を狙えない）なら撃たない。待ち・リロードは進み、撃てる状態のまま明けるのを待つ。ただしチャージの無い武器は、
+ * blocked（敵を狙えない）なら撃たない。待ち・リロードは進み、撃てる状態のまま明けるのを待つ。ただしチャージの無い武器は、
  * 窓の始まりから D までの待ちの間は撃つ（firesUntilDetect）
  */
 export function stepShooter(
@@ -261,7 +261,7 @@ export function stepShooter(
   blocked = false,
 ): boolean {
   if (MAX_AMMO_CLAMP_ON_DECREASE && state.ammo > params.maxAmmo) state.ammo = params.maxAmmo;
-  // グレイブ編（V-0735。C-1124）: 基礎の武器で込めている間に装弾数無限が付いたら、このフレームで込め終える（最大装弾数のリロード完了。1 発目の
+  // 基礎の武器で込めている間に装弾数無限が付いたら、このフレームで込め終える（最大装弾数のリロード完了（V-0735。C-1124）。1 発目の
   // 遅延に入る。弾丸チャージで満タンに届いたときと同じ）。グレイブのバーストで、込めの途中で ∞ に替わった後の撃ち始めと、
   // 「最大装弾リロード完了時に解除」の過熱I の外れ方から決めた
   if (params.infiniteAmmo && params.weapon === null && state.phase === 'reloading') {
@@ -274,9 +274,10 @@ export function stepShooter(
     state.chargeElapsed += 1;
     state.wait = chargeWaitFrames(params, model, state.chargeElapsed);
   }
-  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.2 節）: 押下チャージ型のマガジンの 2 発目以降は、AR・SMG・SG と同じく前の発の
+  // 押下チャージ型のマガジンの 2 発目以降は、AR・SMG・SG と同じく前の発の
   // 翌フレームから発射レートを蓄積し、1 発分たまるまで撃たない（チャージ 0 秒のシンデレラは 180rpm の 20・20・19f）。チャージを待つ間は
-  // 1 発分で止める（貯め込まない）。チャージが発射レートの 1 発分より長いうちは、満ちた時には 1 発分たまっているので変わらない。
+  // 1 発分で止める（貯め込まない）。チャージが発射レートの 1 発分より長いうちは、
+  // 満ちた時には 1 発分たまっているので変わらない（plan/design-cinderella-s1-charge.md 1.2 節）。
   // 入力が UP のチャージ武器は発射レート（どれも 60rpm）より速く撃つので掛けない（紅蓮BS 43f・アリス 31f。C-0149・C-0523）
   const rateGated = params.downCharge && state.phase === 'ready' && state.shotsInMagazine > 0;
   if (rateGated) state.acc += rateAfterShots(shot, state.shotsInMagazine) / MAX_RPM;
@@ -286,14 +287,14 @@ export function stepShooter(
     return false;
   }
   if (state.phase === 'reloading') {
-    // 1 回分を込め終えた。最大に届いて 1 発目の遅延が 0 ならこのフレームに撃つ（Stage 21-C3 からは AR・SMG・SG も 22f 待つ）
+    // 1 回分を込め終えた。最大に届いて 1 発目の遅延が 0 ならこのフレームに撃つ（チャージの無い武器は reloadFirstShotFrames を待つ）
     if (!loadChunks(state, shot, model, params)) return false;
   }
   if (blocked && !firesUntilDetect(state, shot)) return false;
   if (state.phase === 'priming') startMagazine(state);
   if (state.shotsInMagazine > 0 && !isChargeWeapon(shot)) {
     // simulateShotFrames と同じ: 前の発射の翌フレームから毎フレーム蓄積し、1 発分たまったフレームで撃つ。
-    // 2 段目の段 9 の PR 2: 攻撃速度▲はこのフレームのレートに掛ける（params.rateScale。C-0600）
+    // 攻撃速度▲はこのフレームのレートに掛ける（params.rateScale。C-0600）
     state.acc += rateAfterShots(shot, state.shotsInMagazine, params.rateScale, params.spinUpScale) / MAX_RPM;
     if (state.acc < 1 - ACC_EPSILON) return false;
     state.acc -= 1;
@@ -307,7 +308,7 @@ export function stepShooter(
 }
 
 /**
- * Stage 10: 弾丸チャージ。残弾に amount を足し、最大で止める。リロード中に最大に届いたらリロードを終え、1 発目の遅延に入る
+ * 弾丸チャージ。残弾に amount を足し、最大で止める。リロード中に最大に届いたらリロードを終え、1 発目の遅延に入る
  * （遅延は次のフレームから数える。遅延 0 の武器は次のフレームに撃つ）。値の端数処理は呼ぶ側で行う
  */
 export function refillAmmo(
@@ -327,7 +328,7 @@ export function refillAmmo(
 }
 
 /**
- * 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少。残弾から amount を減らす（0 で止める）。0 になったら、
+ * 残弾数減少（plan/design-skill-stage11.md 2.2 節）。残弾から amount を減らす（0 で止める）。0 になったら、
  * リロード中でなければリロードを始める（最後の弾丸を撃ったときと同じ。チャージの途中なら取りやめる）。値の端数処理は呼ぶ側で行う。
  * startOffset はリロードの始まりの、このフレームからのずれ（cadence.ts の fullReloadFrames）
  */
@@ -350,7 +351,7 @@ export function drainAmmo(
 }
 
 /**
- * ルドミラ：ウィンターオーナー編（V-0163）: 最後の弾丸を撃ったのと同じフレームの弾丸チャージで残弾が戻ったら、始めたリロードを
+ * V-0163: 最後の弾丸を撃ったのと同じフレームの弾丸チャージで残弾が戻ったら、始めたリロードを
  * 取り消して、そのマガジンのまま撃ち続ける（マガジンの状態・MG のレートの蓄積はそのまま。残弾が 0 にならなかったのと同じ）。
  * 呼ぶのは、このフレームに撃った発が最後の弾丸だったときだけ（後のフレームの弾丸チャージはリロード中に弾を足すだけ。refillAmmo）
  * @returns リロードを取り消したら true
@@ -371,15 +372,15 @@ export function resumeAfterLastShotRefill(
 }
 
 /**
- * Stage 11 モダニア: 使用武器の変更が終わって基礎の武器に戻るときの扱い。
- * **2026-09-24 の録画 0044 で 'refill' と確定**（起案時の仮定は 'resume' = バースト前の残弾のまま）:
+ * 使用武器の変更が終わって基礎の武器に戻るときの扱い。
+ * **録画 0044 で 'refill' と確定**（'resume' はバースト前の残弾のまま）:
  * バースト前の残弾に関係なく最大装弾数まで込め直した状態で戻る（4 回とも 224。連射中の 149 からでも 224）。
  * MG のレートの蓄積はバースト前の状態を引き継ぎ（連射中なら最高レートのまま、リロード中ならスピンアップから）、
  * どちらも殲滅モードの終わりから 1 発目まで約 22〜23f 空く（ふだんのリロード明けの 1 発目の遅延と同じとみなす）
  */
 export const WEAPON_CHANGE_RESTORE = 'refill' as const;
 
-/** Stage 11 モダニア: 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える） */
+/** 使用武器の変更が終わった枠の基礎の武器の状態を戻す（state を書き換える） */
 export function resumeShooter(
   state: ShooterState,
   shot: ShotParams,
@@ -399,12 +400,14 @@ export function resumeShooter(
  * チャージ武器の溜めの進み（フレーム）。このフレームの stepShooter の前に呼ぶ。次の発までの残りの待ちが k のとき C + H − k（C はチャージの
  * フレーム数、H は満ちてから撃つまで。射撃姿勢維持型は stance.holdFrames、ほかは 1）で、溜め始めのフレームで 0、満ちたフレームで C、
  * 撃つフレームで C + H。0 以下は構え解除・構えの間（溜めていない）。部分チャージの進み（partialChargeProgress）は これ ÷ C。
- * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: きっかけ { chargeTick }・{ chargeFull } の溜め始めと満ちた時も
- * この値で決める（frame/firstPass.ts）。マガジンの中の発は、チャージ時間が溜めの途中で変わっても前の発からの経過（chargeElapsed）で
+ * きっかけ { chargeTick }・{ chargeFull } の溜め始めと満ちた時もこの値で決める（frame/firstPass.ts。
+ * plan/design-skill-stage14.md 2.1・2.6 節）。マガジンの中の発は、チャージ時間が溜めの途中で変わっても前の発からの経過
+ * （chargeElapsed）で
  * 待ちを決め直すので、この値は 1 フレームに 1 ずつ進む（入力が UP の 1 秒チャージの SR なら、前の発の 22f 後が溜め始め）。
  * リロード中・狙えない窓の間は呼ぶ側が溜めていないとみなす。
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 前の発からの経過（chargeElapsed）があれば、待ちは前のフレームに決めた値でなく、
- * このフレームの stepShooter が決め直す値（このフレームのチャージ時間 − 経過）で見る。チャージ時間がこのフレームに変わっても（溜めの途中で
+ * 前の発からの経過（chargeElapsed）があれば、待ちは前のフレームに決めた値でなく、
+ * このフレームの stepShooter が決め直す値（このフレームのチャージ時間 − 経過）で見る
+ * （plan/design-skill-stage14.md 2.7 節）。チャージ時間がこのフレームに変わっても（溜めの途中で
  * セブンスドワーフ・フルアクティブの 3.2 秒の固定が付く）、進みが跳ばない（変わらなければ前のフレームに決めた値と同じ）
  */
 export function chargeProgressFrames(
@@ -435,12 +438,12 @@ function chargeWaitFrames(
   model: Pick<WeaponModel, 'chargeReleaseFrames' | 'aimInFrames'>,
   elapsed: number,
 ): number {
-  // レッドフード編: 解放に端数のある変更後の武器は、端数の残る待ちを切り上げる（整数の間隔はいままでどおり）
+  // 解放に端数のある変更後の武器は、端数の残る待ちを切り上げる（整数の間隔はいままでどおり）
   return Math.max(0, Math.ceil(chargeShotIntervalFrames(params, model) - elapsed - 1e-9));
 }
 
 /**
- * チャージ武器が撃った後の、次の発の待ちと経過を決める。レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 前の発からの経過が
+ * チャージ武器が撃った後の、次の発の待ちと経過を決める（plan/design-red-hood.md 7.1 節の論点 10）。前の発からの経過が
  * 間隔を超えた端数（0 より大きく 1 未満。間隔が整数なら出ない）を次の発の経過の始まりに持ち越す（解放に端数のある変更後の武器）
  */
 function startNextCharge(
@@ -455,7 +458,7 @@ function startNextCharge(
 }
 
 /**
- * レッドフード編（plan/design-red-hood.md 7.1 節の論点 13）: 基礎の武器から持ち替えるフレーム swap に、武器が空くフレーム。リロード中なら
+ * 基礎の武器から持ち替えるフレーム swap に、武器が空くフレーム（plan/design-red-hood.md 7.1 節の論点 13）。リロード中なら
  * swap、構え解除の途中（最後の発 lastShot から aimOutFrames 未満）なら構え解除の終わり、構え直し・チャージの途中（まだ撃っていない
  * 射手も）なら構え解除 1 回分の後
  */
@@ -471,7 +474,7 @@ export function weaponFreeFrameAtSwap(
 }
 
 /**
- * Stage 22-B: 部分チャージで撃つときのチャージの進み p（C-1001。値は C-0855）。撃てない枠は null。
+ * 部分チャージで撃つときのチャージの進み p（C-1001。値は C-0855）。撃てない枠は null。
  * - 次の発までの残りの待ちが k のとき、p = min(1, (C + H − k) / C)（C はチャージのフレーム数、H は満ちてから撃つまで。
  *   ほかのチャージ武器は H = 1 で、満ちた次のフレームで撃つ。射撃姿勢維持型は満ちてから H フレーム待つので、その間は p = 1。
  *   plan/design-fire-stance-cadence.md 3.2 節）。0 以下は構え解除・構えの間（撃たない）。k = 0（このフレームに撃つはずだった）は p = 1。
@@ -516,7 +519,7 @@ function hideReloadExtraFrames(model: WeaponModel, params: FiringParams): number
 }
 
 /**
- * Stage 16-B: 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
+ * 敵を狙えなくなった（窓の最初のフレーム、stepShooter の前に呼ぶ）。
  * 撃てる状態で残弾が減っていれば、ハイド中のリロードを始める（チャージ中の分は捨てる）。
  * リロード中（弾切れ）・込め終えて 1 発目を待っている・装弾数無限・満タンならそのまま。
  * C-0841（plan/design-hide-reload.md）: 込め終わりは hideReloadExtraFrames だけ遅い。
@@ -644,10 +647,10 @@ function settleHide(state: ShooterState, shot: ShotParams, model: WeaponModel, p
 }
 
 /**
- * Stage 16-B: 敵を狙えるようになった（窓の明けのフレーム、stepShooter の前に呼ぶ）。stoppedFrames は窓の長さ。
+ * 敵を狙えるようになった（窓の明けのフレーム、stepShooter の前に呼ぶ）。stoppedFrames は窓の長さ。
  * - ハイド中のリロードが終わっていなければ取り消す（込め終えた分割リロードの分は残る。残弾は減らない）。
  * - 撃てる状態なら撃ち直す。窓が rateOfFireResetTime 以上ならレートは最初から（録画 0041 のクラウン: 間隔 23・13・10・8…）。
- *   Stage 22-C: チャージの無い武器は、明けから構え（aimInFrames）の後に撃つ（C-0114。MG は明けから 11f）。
+ *   チャージの無い武器は、明けから構え（aimInFrames）の後に撃つ（C-0114。MG は明けから 11f）。
  *   チャージ武器は構えてチャージし直す（戦闘開始と同じ待ち。C-0232）。入力が UP の RL は、明けの構えが
  *   戦闘開始より 1f 短いので、そのぶん早く撃つ（windowEndShorterFrames。C-0229）。
  * - 込め終えて 1 発目を待っている枠（窓の中でリロードが終わった）は、残りの待ちと、明けからの待ち（チャージの無い武器は構え、
@@ -689,7 +692,7 @@ export function unhideShooter(
 }
 
 /**
- * 止まっていた射手の構え直し（狙えない窓の明けの後半。プリバティ編: バーストの発動の止まりの明けも。plan/design-privaty-burst-pause.md
+ * 止まっていた射手の構え直し（狙えない窓の明けの後半と、バーストの発動の止まりの明け。plan/design-privaty-burst-pause.md
  * 論点 4）。リロード中なら何もしない。止まりが長ければレートの蓄積を戻し、チャージ武器はチャージし直し、ほかは構えから撃つ
  */
 export function reaimShooter(

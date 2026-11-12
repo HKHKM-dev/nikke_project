@@ -138,13 +138,13 @@ function isByProjectile(cell: TargetRateRow | TargetRateByProjectile): cell is T
 
 /**
  * キャラの行（武器種の行。弾の種類ごとの行なら、そのキャラの弾の種類の行）。null = 未測定。
- * 紅蓮：神殺編（plan/design-new-chars-1029.md 12.2 節の a）: コア命中率の表に fire_type の行（fireTypes）があれば、それを先に引く。
+ * コア命中率の表に fire_type の行（fireTypes）があれば、それを先に引く（plan/design-new-chars-1029.md 12.2 節の a）。
  * 次に、二丁持ちなら二丁持ちの行（dualWield）
  */
 export function rateRowOf(table: RateTableLookup, character: CharacterData): TargetRateRow | null {
   const byFireType = table.fireTypes?.[character.shot.fireType];
   if (byFireType !== undefined) return byFireType;
-  // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 1）: 二丁持ちの行（コア命中率の表だけ）
+  // 二丁持ちの行（コア命中率の表だけ。plan/design-quency-eq.md 2 節の論点 1）
   const dual =
     muzzleHitsOf(character.weaponType, character.shot) > 1 ? table.dualWield?.[character.weaponType] : undefined;
   if (dual !== undefined) return dual;
@@ -269,9 +269,9 @@ export function hitRateUpRaisesBulletHitRate(
 }
 
 /**
- * 着地点の距離の範囲が bonusRange に丸ごと入るか（RL のように bonusRange が無ければ false）。エード：エージェントバニー編
- * （plan/design-agent-bunny.md 2.1 節）: 適正最小射程距離▲ の和 minRange が正で着地点に代表の距離があれば、下端を 下端 × (1 − minRange)
- * に縮め、下端は代表の距離で比べる（上端はいまと同じく範囲で比べる。C-1043。式は R1 の仮説 C-1033）
+ * 着地点の距離の範囲が bonusRange に丸ごと入るか（RL のように bonusRange が無ければ false）。
+ * 適正最小射程距離▲ の和 minRange が正で着地点に代表の距離があれば、下端を 下端 × (1 − minRange)
+ * に縮め、下端は代表の距離で比べる（上端はいまと同じく範囲で比べる。C-1043。式は R1 の仮説 C-1033。plan/design-agent-bunny.md 2.1 節）
  */
 export function distanceBonusAt(
   character: Pick<CharacterData, 'bonusRange'>,
@@ -438,8 +438,8 @@ function sameHitRate(a: HitRateN, b: HitRateN): boolean {
  * C-0170: landingPartsOf の条件のコア命中率を、命中率の和 hitRate（常時 + その区間の持続の▲▼。区間の状態の hitRateNOf）で
  * 出し直す。C-0192: ▲を効かせる武器種は弾丸命中率も出し直す。▼だけの和なら命中率▼の値（plan/design-maids.md 8 節。coreHitRateAt）。
  * 計画の常時の和と同じなら計画の配分をそのまま返す。
- * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 適正最小射程距離▲ の和 minRange（区間の状態の minEffectiveRange）が
- * 正なら、着地点のある配分の距離ボーナスを縮めた適正射程距離で出し直す（distanceBonusAt）。0 なら距離ボーナスは変えない
+ * 適正最小射程距離▲ の和 minRange（区間の状態の minEffectiveRange）が
+ * 正なら、着地点のある配分の距離ボーナスを縮めた適正射程距離で出し直す（distanceBonusAt。plan/design-agent-bunny.md 2.1 節）。0 なら距離ボーナスは変えない
  */
 export function landingPartsWith(
   plan: LandingPlan | null,
@@ -485,7 +485,7 @@ export function landingPartsWith(
 }
 
 /**
- * エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件「適正射程距離内なら」（inEffectiveRange）。枠 slotIndex のフレーム
+ * 条件「適正射程距離内なら」（inEffectiveRange。plan/design-agent-bunny.md 2.2 節）。枠 slotIndex のフレーム
  * frame の着地点が、適正最小射程距離▲ の和 minRange で縮めた適正射程距離の中か（距離ボーナスと同じ判定。distanceBonusAt）。配分の着地点で
  * 割れたら重みの和が 0.5 以上の側。計画が無い・自動でない枠と、着地点の無い配分（未測定）は手入力の距離ボーナスの有無
  */
@@ -505,11 +505,12 @@ export function inEffectiveRangeAt(
 }
 
 /**
- * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾に替えた使用武器の変更（ChangedWeapon.targetRowKey）が効いている区間の
- * 配分。条件のコア命中率を、的の表の coreHitRate.weaponChanges の行（着地点の id → 帯 → all）に替える。行が無い・null、着地点の無い
+ * 即着弾に替えた使用武器の変更（ChangedWeapon.targetRowKey）が効いている区間の
+ * 配分（plan/design-skill-stage11.md 2.1 節）。条件のコア命中率を、的の表の coreHitRate.weaponChanges の行（着地点の id
+ * → 帯 → all）に替える。行が無い・null、着地点の無い
  * 配分（手入力）はそのまま。命中率▲は掛けない（使い手のいる変更の行は 1 で、▲の効き方を確かめていない）。
- * ナユタ編（plan/design-nayuta.md 2.6 節）: 弾丸命中率も、bulletHitRate.weaponChanges に行があればそれに替える（チャージ武器に替えた
- * SMG の発。基礎の武器種の帯の値を使わない）
+ * 弾丸命中率も、bulletHitRate.weaponChanges に行があればそれに替える（チャージ武器に替えた
+ * SMG の発。基礎の武器種の帯の値を使わない。plan/design-nayuta.md 2.6 節）
  */
 export function weaponChangeParts(
   enemy: EnemyInput,
@@ -537,8 +538,8 @@ export function weaponChangeParts(
 }
 
 /**
- * ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2 節）: 配分の 1 発のコアの命中の期待値
- * （Σ w × 弾丸命中率 × コア命中率）。敵のコアの有無は見ない（1 パス目が掛ける）
+ * 配分の 1 発のコアの命中の期待値
+ * （Σ w × 弾丸命中率 × コア命中率。plan/design-ludmilla-wo.md 2.2 節）。敵のコアの有無は見ない（1 パス目が掛ける）
  */
 export function mixedCoreHits(parts: readonly LandingPart[]): number {
   return parts.reduce((sum, p) => sum + p.weight * (p.condition.hitRate ?? 1) * p.condition.coreHitRate, 0);
@@ -640,7 +641,7 @@ export function landingTriggerDamage(
 }
 
 /**
- * 区間ごとの命中率の和（区間の状態の hitRateNOf）と、適正最小射程距離▲ の和（区間の状態の minEffectiveRange。エード：エージェントバニー編）。
+ * 区間ごとの命中率の和（区間の状態の hitRateNOf）と、適正最小射程距離▲ の和（区間の状態の minEffectiveRange。plan/design-agent-bunny.md 2.1 節）。
  * autoConditionSummary に渡す
  */
 export type HitRateNSpan = { start: number; end: number; hitRate: HitRateN; minRange: number };
@@ -967,9 +968,9 @@ export function slotFlightsOf(
 }
 
 /**
- * コアの経路編（plan/design-anis-star-core-path.md 3.2 節）: 枠ごと・スキルのスロットごとの、周期の自動攻撃のヒットのコアに
- * 当たる割合の区間。的の表の coreHitRate.autoAttacks と着地点の時間割りで決まる（飛ぶ時間と同じ引き方。値は frames に入れる）。
- * 行の無いスロットは省き、どこにも無ければ null（コアに当たらない）
+ * 枠ごと・スキルのスロットごとの、周期の自動攻撃のヒットのコアに当たる割合の区間
+ * （plan/design-anis-star-core-path.md 3.2 節）。的の表の coreHitRate.autoAttacks と着地点の時間割りで決まる（飛ぶ
+ * 時間と同じ引き方。値は frames に入れる）。行の無いスロットは省き、どこにも無ければ null（コアに当たらない）
  */
 export function slotAutoAttackCoreRatesOf(
   slots: readonly (Pick<TeamSlotInput, 'character'> | null)[],
@@ -1027,8 +1028,9 @@ export function autoAttackCoreRowNotes(
 }
 
 /**
- * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.2 節）: 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（倍率ダメージの distance の
- * ヒットが読む。値は frames に入れる）。条件が自動の枠は着地点の計画の配分（autoConditionSummary と同じ足し方）、手入力の枠は条件の
+ * 枠ごとの、通常攻撃に距離ボーナスの付く割合の区間（倍率ダメージの distance の
+ * ヒットが読む。値は frames に入れる。plan/design-skill-stage12.md 2.2 節）。
+ * 条件が自動の枠は着地点の計画の配分（autoConditionSummary と同じ足し方）、手入力の枠は条件の
  * distanceBonus で、[0, frames) を覆う 1 つの区間。距離ボーナスの範囲の無い武器は 0
  */
 export function slotDistanceRatesOf(
@@ -1053,8 +1055,9 @@ export function slotDistanceRatesOf(
 }
 
 /**
- * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: 枠ごと・スキルのスロットごとの、使用武器変更の最初の発の、発動の印
- * （hexagonFrameOf）から着弾までのフレームの区間。的の表の weaponChangeFirstHitFrames と着地点の時間割りで決まる（飛ぶ時間と同じ引き方）。
+ * 枠ごと・スキルのスロットごとの、使用武器変更の最初の発の、発動の印
+ * （hexagonFrameOf）から着弾までのフレームの区間（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）。
+ * 的の表の weaponChangeFirstHitFrames と着地点の時間割りで決まる（飛ぶ時間と同じ引き方）。
  * 行の無いスロットは省き、どこにも無ければ null（チャージ武器の最初の発の待ち）
  */
 export function slotWeaponChangeFirstHitsOf(

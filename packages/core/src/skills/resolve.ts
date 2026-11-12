@@ -79,8 +79,8 @@ import {
 import type { NamedStateId } from './states.ts';
 
 /**
- * Stage 8: Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
- * 文字列のトリガーと発動回数のトリガーはそのまま。ニヒリスター編の時間の周期のトリガー（{ everySeconds }）もそのまま。
+ * Lv の数値に解決したトリガー。射撃の回数トリガーは every（1 以上の整数）に解決済み。
+ * 文字列のトリガーと発動回数のトリガーはそのまま。時間の周期のトリガー（{ everySeconds }）もそのまま。
  */
 export type ResolvedTrigger =
   | BuffTrigger
@@ -90,87 +90,87 @@ export type ResolvedTrigger =
   | AppliedTrigger
   | FullStackTrigger
   | WeaponChangeEndTrigger
-  // 2 段目の段 16 の PR 2: リロードの込め終わり（1 パス目の ShotLog.reloadEnds。skills/triggers.ts）
+  // リロードの込め終わり（1 パス目の ShotLog.reloadEnds。skills/triggers.ts）
   | ReloadEndTrigger
-  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時（1 パス目の FrameEvents.coverHealed。skills/triggers.ts）
+  // 遮蔽物 HP 回復を受けた時（1 パス目の FrameEvents.coverHealed。skills/triggers.ts）
   | CoverHealedTrigger
-  // 2 段目の段 14 の PR 2: 溜めの周期と、溜めが満ちた時（1 パス目の射撃の記録 ShotLog.chargeTicks・chargeFullFrames。skills/triggers.ts）
+  // 溜めの周期と、溜めが満ちた時（1 パス目の射撃の記録 ShotLog.chargeTicks・chargeFullFrames。skills/triggers.ts）
   | ChargeTickTrigger
   | ChargeFullTrigger
-  // 2 段目の段 13 の PR 1: カウンタが上限に届いた次のフレーム。damage・dot・counterChange だけ。1 パス目のカウンタの記録で決まる
+  // カウンタが上限に届いた次のフレーム。damage・dot・counterChange・状態の付与だけ。1 パス目のカウンタの記録で決まる
   // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger
-  // アインのニアフェザー編: 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
+  // 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
   | SummonAttackTrigger
-  // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値（比率。説明文の X% ÷ 100）以下に下がった時。timed だけ。1 パス目の件の一覧が
+  // 自分の HP の割合が閾値（比率。説明文の X% ÷ 100。plan/design-mast.md 8 節）以下に下がった時。timed だけ。1 パス目の件の一覧が
   // 追う（skills/holders.ts の firesOf）ので、出来事の列では追わない
   | { selfHpAtMost: number }
-  // グレイブ編（plan/design-grave.md 2.1 節）: 自分のその状態の件が外れた時。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
+  // 自分のその状態の件が外れた時（plan/design-grave.md 2.1 節）。ammoDecrease・状態の付与（と counterChange）だけ。1 パス目の件の一覧が
   // 追う（skills/holders.ts の endedAt）ので、出来事の列では追わない
   | EndedTrigger;
 
-/** マスト編: 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
+/** 自分の HP の割合の窓のきっかけ（{ selfHpAtMost }）か */
 export function isResolvedSelfHpAtMost(t: ResolvedTrigger): t is { selfHpAtMost: number } {
   return typeof t === 'object' && 'selfHpAtMost' in t;
 }
 
-/** 2 段目の段 11: 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
+/** 使用武器の変更の終わりのきっかけ（{ weaponChangeEnd }）か */
 export function isResolvedWeaponChangeEnd(t: ResolvedTrigger): t is WeaponChangeEndTrigger {
   return typeof t === 'object' && 'weaponChangeEnd' in t;
 }
 
-/** 2 段目の段 16 の PR 2: リロードの込め終わりのきっかけ（{ reloadEnd }）か */
+/** リロードの込め終わりのきっかけ（{ reloadEnd }）か */
 export function isResolvedReloadEnd(t: ResolvedTrigger): t is ReloadEndTrigger {
   return typeof t === 'object' && 'reloadEnd' in t;
 }
 
-/** 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時のきっかけ（{ coverHealed }）か */
+/** 遮蔽物 HP 回復を受けた時のきっかけ（{ coverHealed }）か */
 export function isResolvedCoverHealed(t: ResolvedTrigger): t is CoverHealedTrigger {
   return typeof t === 'object' && 'coverHealed' in t;
 }
 
-/** 2 段目の段 3: フルスタックの消費のきっかけ（{ fullStack }）か */
+/** フルスタックの消費のきっかけ（{ fullStack }）か */
 export function isResolvedFullStack(t: ResolvedTrigger): t is FullStackTrigger {
   return typeof t === 'object' && 'fullStack' in t;
 }
 
-/** ペルソナ編: 効果名のトリガー（{ applied }）か */
+/** 効果名のトリガー（{ applied }）か */
 export function isResolvedApplied(t: ResolvedTrigger): t is AppliedTrigger {
   return typeof t === 'object' && 'applied' in t;
 }
 
 /**
- * ペルソナ編（plan/design-persona.md 3.4 節）: 「戦闘の終わりまで」（durationUntil: battleEnd）の維持フレーム。どの戦闘時間より長い値で、
+ * 「戦闘の終わりまで」（durationUntil: battleEnd）の維持フレーム（plan/design-persona.md 3.4 節）。どの戦闘時間より長い値で、
  * 窓の終わりは戦闘時間（frames）で切られる
  */
 export const BATTLE_END_FRAMES = Number.MAX_SAFE_INTEGER;
 
 /**
  * 射撃の回数トリガー（解決済み）。every は発火の間隔（回）。
- * Stage 11: stacksRef があれば every = 1 スタックの回数 × スタック数 で、stacks にスタック数を残す（表示用）
+ * stacksRef があれば every = 1 スタックの回数 × スタック数 で、stacks にスタック数を残す（表示用）
  */
 export type ResolvedShotCountTrigger = {
   count: ShotCountKind;
   every: number;
   stacks?: number;
   /**
-   * クルミ S2 編: 数える窓と数え直し（plan/design-kurumi-s2.md 2.1 節）。'fullBurst' ならどちらも有る。グレイブ編（plan/design-grave.md 2.4 節）:
-   * 自分の状態の窓（{ state }）は reset を持たず、状態が付くたびに数え直す
+   * 数える窓と数え直し（plan/design-kurumi-s2.md 2.1 節）。'fullBurst' ならどちらも有る。自分の状態の窓（{ state }）は
+   * reset を持たず、状態が付くたびに数え直す（plan/design-grave.md 2.4 節）
    */
   during?: ShotCountWindow | StateCountWindow;
   reset?: ShotCountReset;
   /** ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけこの窓の中に限る */
   firesDuring?: FiringWindow;
-  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の発では発火しない */
+  /** 使用武器の変更の発では発火しない（plan/design-new-chars-1029.md 5.7 節） */
   firesOutside?: 'weaponChange';
   /**
-   * ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけの確率（比率。0 より大きく 1 以下）。有れば every は 1 で、
+   * 確率のきっかけの確率（比率。0 より大きく 1 以下。plan/design-soldier-eg.md 3.1 節）。有れば every は 1 で、
    * 回数の量が正の射撃のたびに発火する（skills/triggers.ts）。窓の値は skills/chance.ts が期待値にする
    */
   chance?: number;
 };
 
-/** ソルジャーE.G. 編: 確率のきっかけ（解決済み）か */
+/** 確率のきっかけ（解決済み）か */
 export function isResolvedChance(t: ResolvedTrigger): t is ResolvedShotCountTrigger & { chance: number } {
   return isResolvedShotCount(t) && t.chance !== undefined;
 }
@@ -183,7 +183,7 @@ export function isResolvedEventCount(t: ResolvedTrigger): t is EventCountTrigger
   return typeof t === 'object' && 'atLeast' in t;
 }
 
-/** ニヒリスター編: 時間の周期のトリガーか */
+/** 時間の周期のトリガーか */
 export function isResolvedTimer(t: ResolvedTrigger): t is TimerTrigger {
   return typeof t === 'object' && 'everySeconds' in t;
 }
@@ -195,10 +195,10 @@ function selfHpRatioOfRef(skill: SkillRaw, ref: number, level: number): number {
 
 /** everyRef・stacksRef を Lv の数値に解決する。回数・スタック数は整数でなければ RangeError */
 export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: number): ResolvedTrigger {
-  // マスト編: HP の割合の閾値は % → 比率
+  // HP の割合の閾値は % → 比率
   if (isSelfHpAtMostTrigger(trigger)) return { selfHpAtMost: selfHpRatioOfRef(skill, trigger.selfHpAtMostRef, level) };
   if (!isShotCountTrigger(trigger)) return typeof trigger === 'object' ? { ...trigger } : trigger;
-  // ソルジャーE.G. 編: 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
+  // 確率のきっかけは 1 発ごとに引く（every 1）。確率は % → 比率
   if (trigger.chance !== undefined || trigger.chanceRef !== undefined) {
     const percent = trigger.chance ?? skillValue(skill, trigger.chanceRef!, level);
     if (!Number.isFinite(percent) || percent <= 0 || percent > 100) {
@@ -224,7 +224,7 @@ export function resolveTrigger(trigger: EffectTrigger, skill: SkillRaw, level: n
   return { count: trigger.count, every: every * stacks, stacks };
 }
 
-/** Stage 11 アリス編: 「最終攻撃力が最も高い味方 N 機」の N を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
+/** 「最終攻撃力が最も高い味方 N 機」の N を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
 export function resolveTargetCount(effect: TargetCountFields, skill: SkillRaw, level: number): number | undefined {
   if (effect.targetCount === undefined && effect.targetCountRef === undefined) return undefined;
   const n = effect.targetCount ?? skillValue(skill, effect.targetCountRef!, level);
@@ -273,9 +273,9 @@ export function skillValue(skill: SkillRaw, ref: number, level: number): number 
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: 条件の Lv で決まる値を解く（selfState の stacksRef を、スロットの Lv の
- * 説明文の値を整数に丸めた stacks にする）。解いた後の条件は stacksRef を持たない。紅蓮編（plan/design-scarlet.md 2.2 節）: selfHp の
- * atMostRef も、スロットの Lv の値（% 表記）の atMost にする。ソリン編: atLeastRef も atLeast にする（damage の条件）
+ * 条件の Lv で決まる値を解く（selfState の stacksRef を、スロットの Lv の
+ * 説明文の値を整数に丸めた stacks にする。plan/design-skill-stage3.md 1.4 節）。解いた後の条件は stacksRef を持たない。selfHp の
+ * atMostRef も、スロットの Lv の値（% 表記）の atMost にする（plan/design-scarlet.md 2.2 節）。atLeastRef も atLeast にする（damage の条件）
  */
 export function resolveCondition(condition: EffectCondition, skill: SkillRaw, level: number): EffectCondition {
   let out = condition;
@@ -286,16 +286,16 @@ export function resolveCondition(condition: EffectCondition, skill: SkillRaw, le
   }
   const hp = condition.selfHp;
   if (hp?.atMostRef !== undefined) out = { ...out, selfHp: { atMost: skillValue(skill, hp.atMostRef, level) } };
-  // ソリン編（plan/design-soline.md 2.1 節）: damage の「以上」の形も、発火のフレームで見るので値（% 表記）にする
+  // damage の「以上」の形も、発火のフレームで見るので値（% 表記）にする（plan/design-soline.md 2.1 節）
   if (hp?.atLeastRef !== undefined) out = { ...out, selfHp: { atLeast: skillValue(skill, hp.atLeastRef, level) } };
   return out;
 }
 
 /**
- * % 表記の値を比率にする。flat（Stage 10。最大装弾数の発数）はそのまま。
- * casterChargeTime（Stage 11 アリス編）は 発動者の基礎チャージ時間 × 比率 の秒数にする。
- * Stage 11 モダニア: decrease（「▼」）なら符号を反転する。
- * アニス：スター編: fixedChargeTime（チャージ時間の固定）は秒のまま
+ * % 表記の値を比率にする。flat（発数・秒・個）はそのまま。
+ * casterChargeTime は 発動者の基礎チャージ時間 × 比率 の秒数にする。
+ * decrease（「▼」）なら符号を反転する。
+ * fixedChargeTime（チャージ時間の固定）は秒のまま
  */
 function scaledValue(
   raw: number,
@@ -312,7 +312,7 @@ function scaledValue(
 }
 
 /**
- * Stage 11 モダニア: 解決後の stat。'weapon' は使用武器の変更（weaponChange）を持続効果として解決したもの
+ * 解決後の stat。'weapon' は使用武器の変更（weaponChange）を持続効果として解決したもの
  * （BuffTotals.weapon を差し替える。DSL の timed には書けない）
  */
 export type EffectStat = BuffStat | 'weapon';
@@ -320,39 +320,39 @@ export type EffectStat = BuffStat | 'weapon';
 export type ResolvedEffect = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   target: BuffTarget;
-  /** Stage 9: 「〈武器〉を所持する味方」。定義に無ければキーごと無い */
+  /** 「〈武器〉を所持する味方」。定義に無ければキーごと無い */
   targetWeapon?: WeaponType;
   /** アスカ: 「〈コード〉コードの味方」。定義に無ければキーごと無い */
   targetElement?: Element;
-  /** 2 段目の段 9: 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
+  /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
   targetClass?: NikkeClass;
-  /** Stage 11 アリス編: target が topAttack・longestChargeTime のときの N（解決済み）。それ以外はキーごと無い */
+  /** target が topAttack・longestChargeTime のときの N（解決済み）。それ以外はキーごと無い */
   targetCount?: number;
-  /** 対象の語彙編: 「同じ部隊の味方全体に」。定義に無ければキーごと無い */
+  /** 「同じ部隊の味方全体に」。定義に無ければキーごと無い */
   targetSquad?: TargetSquad;
-  /** 対象の語彙編: 「自分を除く」（topAttack。ペルソナ編: allies の always も）。定義に無ければキーごと無い */
+  /** 「自分を除く」（topAttack と、allies の always）。定義に無ければキーごと無い */
   excludeSelf?: ExcludeSelf;
-  /** ペルソナ編: 「〈名前〉状態の」（名前の付いた状態の語彙編: 目録の id）。定義に無ければキーごと無い */
+  /** 「〈名前〉状態の」（目録の id）。定義に無ければキーごと無い */
   targetState?: NamedStateId;
-  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.1 節）: 「自分と〈状態〉の味方」。定義に無ければキーごと無い */
+  /** 「自分と〈状態〉の味方」（plan/design-new-chars-1029.md 5.1 節）。定義に無ければキーごと無い */
   includeSelf?: true;
-  /** ペルソナ編: 「基本バースト段階が N の」。定義に無ければキーごと無い */
+  /** 「基本バースト段階が N の」。定義に無ければキーごと無い */
   targetBurstStep?: BasicBurstStep;
-  /** 2 段目の段 7: 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
+  /** 「自分と自分より最終防御力が低い味方」。定義に無ければキーごと無い */
   targetDefense?: TargetDefense;
-  /** 対象の語彙編: 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
+  /** 編成で決まる対象の枠（skills/composition.ts が定義に書いたもの）。無ければキーごと無い */
   fixedTargets?: readonly number[];
   stat: EffectStat;
   /** 省略を 'ratio' に埋めた後の値 */
   scaling: BuffScaling;
   /**
    * 比率。0.201 のように 100 で割った後の値（% 表記の stat は一律に割る）。scaling 'flat' は発数のまま。
-   * Stage 11 モダニア: 「▼」（decrease）は負の値。フラグの stat（装弾数無限）は 1、使用武器の変更は変更後の 1 発の比率（0.0224）
+   * 「▼」（decrease）は負の値。フラグの stat（装弾数無限）は 1、使用武器の変更は変更後の 1 発の比率（0.0224）
    */
   value: number;
-  /** Stage 11 モダニア: stat が 'weapon' のときの変更後の武器 */
+  /** stat が 'weapon' のときの変更後の武器 */
   weapon?: ChangedWeapon;
-  /** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示）。定義に無ければキーごと無い */
+  /** 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示）。定義に無ければキーごと無い */
   burstStepMode?: BurstStepMode;
   assumes?: LocalizedText;
 };
@@ -375,15 +375,15 @@ export function resolvePassives(def: SkillDefinition, character: CharacterData, 
   for (const slot of SKILL_SLOTS) {
     const entry = def.skills[slot];
     for (const effect of entry.effects) {
-      // 名前の付いた状態の語彙編（plan/design-named-state.md 3.4 節）: 静的な付与の中身は常時パッシブ（効果の並びの位置で足す）。
-      // 2 段目の段 1: 静的かは状態ごと（staticStatesOf）
+      // 静的な付与の中身は常時パッシブ（効果の並びの位置で足す。plan/design-named-state.md 3.4 節）。
+      // 静的かは状態ごと（staticStatesOf）
       if (effect.kind === 'state') {
         if (statics.has(effect.state)) resolved.push(...staticContentsOf(effect, character, slot, levels[slot]));
         continue;
       }
-      // 2 段目の段 9 の PR 2: 状態の間だけ効く常時の効果（while）は常時の値に入れない（resolveWhileEffects）
-      // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 編成の段で決めずに残った selfHp の常時の効果も
-      // 常時の値に入れない（resolveHpWhileEffects）
+      // 状態の間だけ効く常時の効果（while）は常時の値に入れない（resolveWhileEffects）
+      // 編成の段で決めずに残った selfHp の常時の効果も、常時の値に入れない（resolveHpWhileEffects。
+      // plan/design-hp-ratio-readers.md 2.1 節）
       if (effect.kind !== 'passive' || effect.while !== undefined || effect.condition?.selfHp !== undefined) continue;
       resolved.push(passiveValueOf(effect, character, slot, levels[slot]));
     }
@@ -404,7 +404,7 @@ function passiveValueOf(
     target: effect.target,
     stat: effect.stat,
     scaling: effect.scaling ?? 'ratio',
-    // 2 段目の段 12 の PR 2: passive のフラグの stat（有利コードのダメージ適用）は値 1
+    // passive のフラグの stat（有利コードのダメージ適用）は値 1
     value:
       effect.ref === undefined
         ? 1
@@ -420,7 +420,7 @@ function passiveValueOf(
   return r;
 }
 
-/** 名前の付いた状態の語彙編: 静的な付与の中身（常時パッシブ。対象は持ち主 = 自分） */
+/** 静的な付与の中身（常時パッシブ。対象は持ち主 = 自分） */
 function staticContentsOf(
   effect: StateGrantEffect,
   character: CharacterData,
@@ -428,7 +428,7 @@ function staticContentsOf(
   level: number,
 ): ResolvedEffect[] {
   const skill = character.skills[slot];
-  // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は stat の値を持たない（静的な状態の上限は変わらない。使い手がいない）
+  // 最大スタック数▲の項目は stat の値を持たない（静的な状態の上限は変わらない。使い手がいない）
   return statContentsOf(effect.contents).map((item) => {
     const r: ResolvedEffect = {
       source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -442,7 +442,7 @@ function staticContentsOf(
   });
 }
 
-/** 名前の付いた状態の語彙編: 中身の 1 項目の値（timed と同じ。フラグの stat は 1） */
+/** 中身の 1 項目の値（timed と同じ。フラグの stat は 1） */
 function contentValue(
   item: { stat: BuffStat; ref?: number; scaling?: BuffScaling; decrease?: true },
   character: CharacterData,
@@ -457,60 +457,60 @@ function contentValue(
   return scaledValue(skillValue(skill, item.ref, level), item.stat, item.scaling, character, item.decrease);
 }
 
-/** Stage 6: トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
+/** トリガー付きの持続バフ。ResolvedEffect に「いつ付いて、何フレーム続くか」が付いた形 */
 export type ResolvedTimedEffect = ResolvedEffect & {
   trigger: ResolvedTrigger;
   /**
    * gameSecondsToFrames(維持秒数)。0 なら効果なし。
-   * ヘルム編: 発数の維持（durationShots）では 0 にする（件の終わりは、持ち主ごとの一覧が持ち主の射撃の列から決める。skills/holders.ts）
+   * 発数の維持（durationShots）では 0 にする（件の終わりは、持ち主ごとの一覧が持ち主の射撃の列から決める。skills/holders.ts）
    */
   durationFrames: number;
-  /** ヘルム編: 「N 発間維持」の N（解決済み）。有れば durationFrames は 0 */
+  /** 「N 発間維持」の N（解決済み）。有れば durationFrames は 0 */
   durationShots?: number;
   /** 上書き延長の同一性判定に使う（同じスロットの何番目の効果か） */
   effectIndex: number;
-  /** Stage 11 モダニア: 効果のあるスタックの最大数（解決済み）。無ければスタックしない（和集合 = 上書き延長） */
+  /** 効果のあるスタックの最大数（解決済み）。無ければスタックしない（和集合 = 上書き延長） */
   maxStacks?: number;
-  /** Stage 11 モダニア: 「自分が 〈stat〉 増加状態なら」。防御力無視ダメージ編: 「フルバーストタイムなら」 */
+  /** 「自分が 〈stat〉 増加状態なら」・「フルバーストタイムなら」 */
   condition?: EffectCondition;
   /**
-   * 防御力無視ダメージ編: 維持の終わりの出来事（「解除条件：フルバーストタイムが終了した時」）。有れば durationFrames は 0
+   * 維持の終わりの出来事（「解除条件：フルバーストタイムが終了した時」）。有れば durationFrames は 0
    * （件の終わりは、持ち主ごとの一覧がフルバーストの終わりから決める。skills/holders.ts）。
-   * ペルソナ編: battleEnd（戦闘の終わりまで）は durationFrames が BATTLE_END_FRAMES で、窓はほかの秒の維持と同じに作る
+   * battleEnd（戦闘の終わりまで）は durationFrames が BATTLE_END_FRAMES で、窓はほかの秒の維持と同じに作る
    */
   durationUntil?: ResolvedDurationUntil;
   /**
-   * 環境コントロール強化編: 増やす相手の効果。有れば value は割合（percent ÷ 100）で、窓ごとの値（参照する窓が効いている所は
+   * 増やす相手の効果。有れば value は割合（percent ÷ 100）で、窓ごとの値（参照する窓が効いている所は
    * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は skills/holders.ts の amplify が作る
    */
   amplifies?: Amplifies;
-  /** 最小構成の検査の窓の端編（plan/design-minimal-edge.md 3.3 節）: 定義の edgeShift を写したもの */
+  /** 定義の edgeShift を写したもの（plan/design-minimal-edge.md 3.3 節） */
   edgeShift?: EdgeShift;
-  /** 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: 定義の delayFrames を写したもの（skills/holders.ts の startOfFire） */
+  /** 定義の delayFrames を写したもの（skills/holders.ts の startOfFire。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
-  /** メイド編（plan/design-maids.md 2.1 節）: 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders.ts の fireTimed） */
+  /** 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders.ts の fireTimed。plan/design-maids.md 2.1 節） */
   perCount?: { state: NamedStateId };
   /**
-   * 課題 2-64（plan/design-debuff-removal-timed.md 2.1 節）: 定義の decrease（▼）を写したもの（値は負にした後）。味方に付く▼はデバフ
+   * 定義の decrease（▼）を写したもの（値は負にした後。plan/design-debuff-removal-timed.md 2.1 節）。味方に付く▼はデバフ
    * 解除で外れる（skills/holders.ts の fireRemoveDebuff）
    */
   decrease?: true;
   /**
-   * キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 定義の holderHit の秒を解いたフレーム。有れば件は、発火からこのフレーム数の間の
+   * 定義の holderHit の秒を解いたフレーム（plan/design-killer-wife.md 2.2 節）。有れば件は、発火からこのフレーム数の間の
    * 持ち主の最初の射撃の次のフレームから durationFrames（skills/holders.ts の timedItems）
    */
   holderHitWithinFrames?: number;
 };
 
 /**
- * 解決後の維持の終わりの出来事。'ammoSpent' は使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）:
- * 最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef）が、最後の弾丸を撃ったフレームの次のフレームに終わる。
+ * 解決後の維持の終わりの出来事。'ammoSpent' は、最大装弾数を書いた使用武器の変更（weaponChange の maxAmmoRef）が、
+ * 最後の弾丸を撃ったフレームの次のフレームに終わる（plan/design-true-damage-element.md 9 節）。
  * DSL の timed には書けない（weaponChange を解決したときだけ付く）
  */
 export type ResolvedDurationUntil = DurationUntil | 'ammoSpent';
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節・実装の別紙 1.1 節）: 解決した中身の 1 項目。状態の窓の間だけ持ち主に
+ * 解決した中身の 1 項目（plan/design-named-state.md 5.3 節・実装の別紙 1.1 節）。状態の窓の間だけ持ち主に
  * 効く stat の▲▼で、同じ stat の timed とどこでも同じに扱う（同 3.2 節）。トリガーと維持は持たず、窓は状態の窓（同じ定義の付与で
  * その持ち主に付いた窓。skills/timeline.ts）。対象の欄は付与のもの（表示用。窓は状態の持ち主に付く）
  */
@@ -526,7 +526,7 @@ export type ResolvedStateContent = ResolvedEffect & {
 };
 
 /**
- * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 解決した、状態の間だけ効く常時の効果（while）。状態の中身と同じく
+ * 解決した、状態の間だけ効く常時の効果（while。plan/design-skill-stage9.md 1.3 節）。状態の中身と同じく
  * whileState を持つ件の効果で、違いは、窓が効果を出した枠（自分）のその状態の件（段 1）から作られ（skills/holders.ts）、効く相手が
  * 効果の対象であること。値はスタックごとではない（maxStacks を持たない）。effectIndex は常時の効果のスロットの何番目か、subIndex は 0
  */
@@ -537,13 +537,13 @@ export type ResolvedWhileEffect = ResolvedStateContent & {
   whileStacks?: 'full' | number;
 };
 
-/** 2 段目の段 9 の PR 2: while の効果か（状態の while） */
+/** while の効果か（状態の while） */
 export function isWhileEffect(effect: ItemEffect): effect is ResolvedWhileEffect {
   return 'whileSource' in effect && 'whileState' in effect;
 }
 
 /**
- * 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: 解決した、カウンタが N 以上の間だけ効く常時の効果（while の selfCounter）。
+ * 解決した、カウンタが N 以上の間だけ効く常時の効果（while の selfCounter。plan/design-skill-stage11.md 2.4 節）。
  * 窓は効果を出した枠（自分）のカウンタの記録から作る（skills/holders.ts）。状態の中身ではない（whileState を持たない）。effectIndex は
  * 常時の効果のスロットの何番目か、subIndex は 0
  */
@@ -554,13 +554,13 @@ export type ResolvedCounterWhileEffect = ResolvedEffect & {
   whileCounter: { counter: CounterId; atLeast: number };
 };
 
-/** 2 段目の段 11 の PR 2: カウンタの while の効果か */
+/** カウンタの while の効果か */
 export function isCounterWhileEffect(effect: ItemEffect): effect is ResolvedCounterWhileEffect {
   return 'whileCounter' in effect;
 }
 
 /**
- * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 解決した、自分の HP の割合が閾値以上の間だけ効く常時の効果
+ * 解決した、自分の HP の割合が閾値以上の間だけ効く常時の効果（plan/design-hp-ratio-readers.md 2.1 節）
  * （条件 selfHp の「以上」の形のうち、編成の段で決めずに残ったもの。skills/composition.ts の hpRatioMovesOf）。窓は効果を出した枠（自分）の
  * HP の割合から作る（skills/holders.ts）。effectIndex は常時の効果のスロットの何番目か、subIndex は 0
  */
@@ -572,7 +572,7 @@ export type ResolvedHpWhileEffect = ResolvedEffect & {
   whileSelfHp: { atLeast: number };
 };
 
-/** HP の割合を時間で読む編: HP の割合の while の効果か */
+/** HP の割合の while の効果か */
 export function isHpWhileEffect(effect: ItemEffect): effect is ResolvedHpWhileEffect {
   return 'whileSelfHp' in effect;
 }
@@ -583,18 +583,18 @@ export function isTimedItem(effect: ItemEffect): effect is ResolvedTimedEffect {
 }
 
 /**
- * 名前の付いた状態の語彙編: 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元。
- * 2 段目の段 11 の PR 2: カウンタの while の効果も
+ * 件を持つ効果（持続バフと、状態の中身）。値の小片（ValuePiece）・AppliedTimedEffect の元。
+ * カウンタの while の効果も
  */
 export type ItemEffect =
   ResolvedTimedEffect | ResolvedStateContent | ResolvedCounterWhileEffect | ResolvedHpWhileEffect;
 
-/** 名前の付いた状態の語彙編: 状態の中身か（トリガーと維持を持たない） */
+/** 状態の中身か（トリガーと維持を持たない） */
 export function isStateContent(effect: ItemEffect): effect is ResolvedStateContent {
   return 'whileState' in effect;
 }
 
-/** 持続バフが枠へ適用された記録。名前の付いた状態の語彙編: 状態の中身も入る（isStateContent） */
+/** 持続バフが枠へ適用された記録。状態の中身も入る（isStateContent） */
 export type AppliedTimedEffect = ItemEffect & {
   sourceSlotIndex: number;
   appliedAmount: number;
@@ -622,7 +622,7 @@ export function resolveTimed(
       const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
       const value =
         effect.amplifies !== undefined
-          ? effect.amplifies.percent / 100 // 環境コントロール強化編: 参照する効果の値に掛ける割合（窓ごとの値は skills/holders.ts の amplify）
+          ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders.ts の amplify）
           : effect.ref === undefined
             ? 1 // フラグの stat（装弾数無限）
             : scaledValue(
@@ -660,12 +660,12 @@ export function resolveTimed(
   );
 }
 
-/** 名前の付いた状態の語彙編: timed と付与で共通の、値を除いた件の欄 */
+/** timed と付与で共通の、値を除いた件の欄 */
 type ResolvedItemFields = Omit<ResolvedTimedEffect, 'stat' | 'scaling' | 'value' | 'weapon' | 'amplifies'>;
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 3.1 節）: timed と付与で共通の件の欄（トリガー・対象・維持・スタック・条件）を
- * Lv の数値に解く。付与は「値を持たない持続効果」なので、件の欄は timed と同じ関数で解く
+ * timed と付与で共通の件の欄（トリガー・対象・維持・スタック・条件）を
+ * Lv の数値に解く（plan/design-named-state.md 3.1 節）。付与は「値を持たない持続効果」なので、件の欄は timed と同じ関数で解く
  */
 function resolveItemFields(
   effect: (TimedEffect | (Omit<StateGrantEffect, 'durationUntil'> & Pick<TimedEffect, 'durationUntil'>)) &
@@ -708,50 +708,50 @@ function resolveItemFields(
 }
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.2 節）: 解決した付与。件の欄は timed と同じに解いたもので、
+ * 解決した付与（plan/design-named-state.md 5.2 節・実装の別紙 1.2 節）。件の欄は timed と同じに解いたもので、
  * 値を持たない。effectIndex は付与のスロットの何番目の効果か
  */
 export type ResolvedStateGrant = ResolvedItemFields & {
   state: NamedStateId;
   /** 静的な状態の付与（staticStatesOf）。持ち主は編成の段で決まり、中身は常時パッシブ（resolvePassives） */
   isStatic: boolean;
-  /** 2 段目の段 1（plan/design-skill-stage1.md 1.3 節）: 解除不可の印（同じ定義の同じ状態の付与で揃う） */
+  /** 解除不可の印（同じ定義の同じ状態の付与で揃う。plan/design-skill-stage1.md 1.3 節） */
   undispellable?: true;
   /**
-   * 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: 1 回の発火で付けるスタックの数を、自分のカウンタの値（PR 2）か、自分の状態の
-   * スタック数（PR 3）にする
+   * 1 回の発火で付けるスタックの数を、自分のカウンタの値か、自分の状態の
+   * スタック数にする（plan/design-skill-stage10.md 2.1 節）
    */
   stacksFrom?: StacksFrom;
   /**
-   * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 1 回の発火で付けるスタックの数（stacksPerFireRef を解いた整数。1 以上
-   * maxStacks 以下）。無ければ 1（stacksFrom があればその数）
+   * 1 回の発火で付けるスタックの数（stacksPerFireRef を解いた整数。1 以上
+   * maxStacks 以下。plan/design-skill-stage14.md 2.7 節）。無ければ 1（stacksFrom があればその数）
    */
   stacksPerFire?: number;
   /** 徹甲炸裂弾の▲の付く時刻（plan/design-explosive-round-lead.md 3 節）: 定義の leadFrames を写したもの（skills/holders.ts の fireGrant） */
   leadFrames?: number;
-  /** エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある） */
+  /** 敵に付く状態の付与（件の列の持ち主は敵。target は "allies" に読み替えてある。plan/design-elegg.md 8.2 節） */
   enemy?: true;
-  /** マスト編（plan/design-mast.md 2.1 節）: スタックの維持の数え方（skills/types.ts の StateGrantEffect.stackRefresh） */
+  /** スタックの維持の数え方（skills/types.ts の StateGrantEffect.stackRefresh。plan/design-mast.md 2.1 節） */
   stackRefresh?: 'each';
   /**
-   * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 定義の durationUntil: { counterEmpty } のカウンタ。持ち主（自分）のそのカウンタが 0 に
+   * 定義の durationUntil: { counterEmpty } のカウンタ（plan/design-skill-stage19.md 2.1 節）。持ち主（自分）のそのカウンタが 0 に
    * 届いたフレームで件の列を閉じる（skills/holders.ts の registerCounters。durationFrames は BATTLE_END_FRAMES）
    */
   untilCounterEmpty?: CounterId;
   /**
-   * A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: 定義の durationUntil: { selfHpAtMostRef } の閾値（割合）。持ち主（自分）の HP の割合が
+   * 定義の durationUntil: { selfHpAtMostRef } の閾値（割合。plan/design-hp-down-interval.md 2.2 節）。持ち主（自分）の HP の割合が
    * これ以下と読めたフレームの次のフレームで件の列を閉じる（skills/holders.ts。durationFrames は BATTLE_END_FRAMES）
    */
   untilSelfHpAtMost?: number;
   /**
-   * グレイブ編（plan/design-grave.md 2.5 節）: 定義の durationUntil: { stateEnd } の状態。持ち主（自分）のその状態の件が外れたフレームで件を閉じる
+   * 定義の durationUntil: { stateEnd } の状態（plan/design-grave.md 2.5 節）。持ち主（自分）のその状態の件が外れたフレームで件を閉じる
    * （skills/holders.ts の件の列の untilEnds。durationFrames は BATTLE_END_FRAMES）
    */
   untilStateEnd?: NamedStateId;
 };
 
 /**
- * 名前の付いた状態の語彙編: 定義の付与を Lv の数値に解く（静的な付与も入る）。維持は timed と同じに解き、バーストの効果の窓の終わり
+ * 定義の付与を Lv の数値に解く（静的な付与も入る）。維持は timed と同じに解き、バーストの効果の窓の終わり
  * （burstWindowTrimOf）も同じに縮める。同じ状態の付与どうしは、解いた維持とスタックの上限が同じでなければ RangeError
  * （窓を 1 つの状態としてまとめるため。plan/design-named-state.md 5.2 節）
  */
@@ -771,9 +771,9 @@ export function resolveStateGrants(
       if (effect.kind !== 'state') return;
       const until = effect.durationUntil;
       const counterEmpty = typeof until === 'object' && 'counterEmpty' in until ? until.counterEmpty : undefined;
-      // A2 の B モード編: HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
+      // HP の割合で解除される付与も、閉じる（untilSelfHpAtMost）までは「持続」と同じ窓
       const hpUntil = isSelfHpAtMostTrigger(until) ? until : undefined;
-      // グレイブ編: ほかの状態の終わりまで続く付与も、閉じる（untilStateEnd）までは「持続」と同じ窓
+      // ほかの状態の終わりまで続く付与も、閉じる（untilStateEnd）までは「持続」と同じ窓
       const stateEnd = isStateEndUntil(until) ? until.stateEnd : undefined;
       const window = resolveItemFields(
         { ...effect, durationUntil: typeof until === 'object' ? 'battleEnd' : until },
@@ -836,12 +836,12 @@ export function resolveStateGrants(
 }
 
 /**
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 解決した中身の「〈状態〉の最大スタック数 N▲」。whileState の件が持ち主に
+ * 解決した中身の「〈状態〉の最大スタック数 N▲」（plan/design-skill-stage14.md 2.7 節。論点 5）。whileState の件が持ち主に
  * 付いている間、持ち主の state の上限に amount を足す（skills/holders.ts）
  */
 export type ResolvedMaxStacksUp = { whileState: NamedStateId; state: NamedStateId; amount: number };
 
-/** 2 段目の段 14 の PR 3: 定義の中身の最大スタック数▲を Lv の数値に解く（静的な状態のものは無い。値は付与のスロットの Lv の説明文の値の整数） */
+/** 定義の中身の最大スタック数▲を Lv の数値に解く（静的な状態のものは無い。値は付与のスロットの Lv の説明文の値の整数） */
 export function resolveMaxStacksUps(
   def: SkillDefinition,
   character: CharacterData,
@@ -863,13 +863,13 @@ export function resolveMaxStacksUps(
 }
 
 /**
- * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 解決した中身の「スキル N クールタイム X%▼」。state の件が持ち主に付いている間、
+ * 解決した中身の「スキル N クールタイム X%▼」（plan/design-arcana-magician.md 2.1 節）。state の件が持ち主に付いている間、
  * 持ち主の slot のクールタイムの印のある周期を 元の周期 × (1 − percent / 100) にする（frame/firstPass.ts）
  */
 export type ResolvedSkillCooldownDown = { state: NamedStateId; slot: SkillSlot; percent: number };
 
 /**
- * 魔術師のカード編: 定義の中身のスキルのクールタイム▼を Lv の数値に解く（値は付与のスロットの Lv の説明文の値）。静的な状態の中身には
+ * 定義の中身のスキルのクールタイム▼を Lv の数値に解く（値は付与のスロットの Lv の説明文の値）。静的な状態の中身には
  * 書けない（付いたフレームが無い）。100% 以上は周期が 0 秒以下になるので止める
  */
 export function resolveSkillCooldownDowns(
@@ -897,8 +897,8 @@ export function resolveSkillCooldownDowns(
 }
 
 /**
- * 名前の付いた状態の語彙編（plan/design-named-state.md 5.3 節）: 時間で変わる状態の中身を Lv の数値に解く（静的な付与の中身は
- * resolvePassives）。値は付与のあるスロットの説明文の値で、そのスロットの Lv で解く。対象の欄・スタックの上限・仮定は付与のもの
+ * 時間で変わる状態の中身を Lv の数値に解く（静的な付与の中身は resolvePassives。plan/design-named-state.md 5.3 節）。
+ * 値は付与のあるスロットの説明文の値で、そのスロットの Lv で解く。対象の欄・スタックの上限・仮定は付与のもの
  */
 export function resolveStateContents(
   def: SkillDefinition,
@@ -913,7 +913,7 @@ export function resolveStateContents(
       if (effect.kind !== 'state' || effect.contents === undefined || statics.has(effect.state)) return;
       const grant = grants.find((g) => g.source.skill === slot && g.effectIndex === effectIndex)!;
       effect.contents.forEach((item, subIndex) => {
-        // 2 段目の段 14 の PR 3: 最大スタック数▲の項目は resolveMaxStacksUps（subIndex は JSON の並びのまま）
+        // 最大スタック数▲の項目は resolveMaxStacksUps（subIndex は JSON の並びのまま）
         if (!isStatContent(item)) return;
         const r: ResolvedStateContent = {
           source: grant.source,
@@ -945,7 +945,7 @@ export function resolveStateContents(
 }
 
 /**
- * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 定義の while の常時の効果を Lv の数値に解く。値と対象は常時の効果と同じに
+ * 定義の while の常時の効果を Lv の数値に解く（plan/design-skill-stage9.md 1.3 節）。値と対象は常時の効果と同じに
  * 解き、スタックの条件の stacksRef は、そのスロットの Lv の説明文の値を整数に丸めた stacks にする（条件の selfState と同じ）
  */
 export function resolveWhileEffects(
@@ -977,7 +977,7 @@ export function resolveWhileEffects(
   return out;
 }
 
-/** 2 段目の段 11 の PR 2: 定義のカウンタの while の常時の効果を Lv の数値に解く */
+/** 定義のカウンタの while の常時の効果を Lv の数値に解く */
 export function resolveCounterWhileEffects(
   def: SkillDefinition,
   character: CharacterData,
@@ -1003,8 +1003,7 @@ export function resolveCounterWhileEffects(
 }
 
 /**
- * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 編成の段で決めずに残った、条件 selfHp（以上）の常時の効果を Lv の数値に
- * 解く。閾値は selfHpThreshold（説明文の % ÷ 100）。「以下」の形は常時の効果に書けない（skills/parse/timed.ts）
+ * 編成の段で決めずに残った、条件 selfHp（以上）の常時の効果を Lv の数値に解く（plan/design-hp-ratio-readers.md 2.1 節）。閾値は selfHpThreshold（説明文の % ÷ 100）。「以下」の形は常時の効果に書けない（skills/parse/timed.ts）
  */
 export function resolveHpWhileEffects(
   def: SkillDefinition,
@@ -1034,7 +1033,7 @@ export function resolveHpWhileEffects(
 }
 
 /**
- * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解決した解除（removeState）。対象は自分。effectIndex は解除のスロットの
+ * 解決した解除（removeState。plan/design-skill-stage1.md 1.2 節）。対象は自分。effectIndex は解除のスロットの
  * 何番目の効果か
  */
 export type ResolvedRemoveState = {
@@ -1043,11 +1042,11 @@ export type ResolvedRemoveState = {
   state: NamedStateId;
   trigger: ResolvedTrigger;
   condition?: EffectCondition;
-  /** ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: 自分の状態の消去（cancelState の self）。解除不可の件も閉じる */
+  /** 自分の状態の消去（cancelState の self。plan/design-mint-prika.md 2.1 節）。解除不可の件も閉じる */
   cancel?: true;
 };
 
-/** 2 段目の段 1: 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
+/** 定義の解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
 export function resolveRemoveStates(
   def: SkillDefinition,
   character: CharacterData,
@@ -1060,7 +1059,7 @@ export function resolveRemoveStates(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      // ミント・プリカ編: 自分の状態の消去（cancelState の self）も同じ形で解く
+      // 自分の状態の消去（cancelState の self）も同じ形で解く
       if (effect.kind !== 'removeState' && !(effect.kind === 'cancelState' && effect.target === 'self')) return;
       const r: ResolvedRemoveState = {
         source: { resourceId: character.resourceId, skill: slot, name: skill.name },
@@ -1076,7 +1075,7 @@ export function resolveRemoveStates(
   return out;
 }
 
-/** 課題 2-59（plan/design-debuff-removal.md 2.2 節）: 解決したデバフ解除（removeDebuff）。対象と個数は定義のまま */
+/** 解決したデバフ解除（removeDebuff。plan/design-debuff-removal.md 2.2 節）。対象と個数は定義のまま */
 export type ResolvedRemoveDebuff = Pick<RemoveDebuffEffect, 'target' | 'count'> & {
   source: ResolvedEffect['source'];
   effectIndex: number;
@@ -1086,7 +1085,7 @@ export type ResolvedRemoveDebuff = Pick<RemoveDebuffEffect, 'target' | 'count'> 
   pick?: number;
 };
 
-/** 課題 2-59: 定義のデバフ解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
+/** 定義のデバフ解除を Lv の数値に解く（解くのはトリガーの回数の参照だけ） */
 export function resolveRemoveDebuffs(
   def: SkillDefinition,
   character: CharacterData,
@@ -1113,7 +1112,7 @@ export function resolveRemoveDebuffs(
 }
 
 /**
- * 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 解決した消去（cancelState）。消す状態は、同じ定義の firstTick halfAfterLatest
+ * 解決した消去（cancelState。plan/design-skill-stage13.md 2.5 節）。消す状態は、同じ定義の firstTick halfAfterLatest
  * の dot の state（定義の読みで見る。skills/parse/crossChecks.ts の validateDotStateRefs）。frame/plan.ts の planSkillHits と skills/holders.ts の敵の状態の件が読む
  */
 export type ResolvedDotCancel = { state: NamedStateId; trigger: ResolvedTrigger };
@@ -1133,7 +1132,7 @@ export function resolveDotCancels(
 }
 
 /**
- * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 解決した状態の維持の延長。frames は延ばすフレーム（gameSecondsToFrames）
+ * 解決した状態の維持の延長（plan/design-mint-prika.md 2.5 節）。frames は延ばすフレーム（gameSecondsToFrames）
  */
 export type ResolvedStateExtend = {
   source: ResolvedEffect['source'];
@@ -1145,7 +1144,7 @@ export type ResolvedStateExtend = {
   condition?: EffectCondition;
 };
 
-/** ミント・プリカ編: 定義の状態の維持の延長を Lv の数値に解く */
+/** 定義の状態の維持の延長を Lv の数値に解く */
 export function resolveStateExtends(
   def: SkillDefinition,
   character: CharacterData,
@@ -1175,7 +1174,7 @@ function amountOf(effect: { amount?: number; amountRef?: number }, skill: SkillR
 }
 
 /**
- * 2 段目の段 13 の PR 3（plan/design-skill-stage13.md 2.6 節）: 解決した敵のスタック量▲（stackChange の target enemy）。frame/plan.ts の
+ * 解決した敵のスタック量▲（stackChange の target enemy。plan/design-skill-stage13.md 2.6 節）。frame/plan.ts の
  * planSkillHits が、同じ state の dot の付与として数える（対象がその状態のフレームだけ）
  */
 export type ResolvedDotStackUp = ResolvedDotCancel & { amount: number; condition: EffectCondition };
@@ -1203,7 +1202,7 @@ export function resolveDotStackUps(
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: 解決したスタック量の増減（stackChange）。対象は自分。amount は足す
+ * 解決したスタック量の増減（stackChange。plan/design-skill-stage3.md 1.1・1.5 節）。対象は自分。amount は足す
  * （decrease なら減らす）スタックの数（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）
  */
 export type ResolvedStackChange = {
@@ -1214,12 +1213,12 @@ export type ResolvedStackChange = {
   amount: number;
   /** スタック量の減少（▼） */
   decrease?: true;
-  /** 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: 減少で最後の 1 段も切る（0 になったら件を閉じる） */
+  /** 減少で最後の 1 段も切る（0 になったら件を閉じる。plan/design-skill-stage14.md 2.7 節） */
   closesAtZero?: true;
   condition?: EffectCondition;
 };
 
-/** 2 段目の段 3: 定義のスタック量の増減を Lv の数値に解く */
+/** 定義のスタック量の増減を Lv の数値に解く */
 export function resolveStackChanges(
   def: SkillDefinition,
   character: CharacterData,
@@ -1232,7 +1231,7 @@ export function resolveStackChanges(
   for (const slot of SKILL_SLOTS) {
     const skill = character.skills[slot];
     def.skills[slot].effects.forEach((effect, effectIndex) => {
-      // 2 段目の段 13 の PR 3: 敵の持続ダメージのスタック量▲は resolveDotStackUps
+      // 敵の持続ダメージのスタック量▲は resolveDotStackUps
       if (effect.kind !== 'stackChange' || effect.target === 'enemy') return;
       const amount = amountOf(effect, skill, levels[slot]);
       const r: ResolvedStackChange = {
@@ -1252,8 +1251,8 @@ export function resolveStackChanges(
 }
 
 /**
- * 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: 解決したカウンタの増減（counterChange）。対象は自分。amount は足す（decrease なら
- * 減らす）値（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）。trigger の { ended }・{ counterFull }（段 11 の PR 2）はそのまま
+ * 解決したカウンタの増減（counterChange。plan/design-skill-stage10.md 2.3 節）。対象は自分。amount は足す（decrease なら
+ * 減らす）値（amountRef はスロットの Lv の説明文の値を整数に丸めたもの）。trigger の { ended }・{ counterFull } はそのまま
  */
 export type ResolvedCounterChange = {
   source: ResolvedEffect['source'];
@@ -1265,7 +1264,7 @@ export type ResolvedCounterChange = {
   condition?: EffectCondition;
 };
 
-/** 2 段目の段 10: 定義のカウンタの増減を Lv の数値に解く */
+/** 定義のカウンタの増減を Lv の数値に解く */
 export function resolveCounterChanges(
   def: SkillDefinition,
   character: CharacterData,
@@ -1314,7 +1313,7 @@ export function durationSecondsOf(
   return seconds;
 }
 
-/** ヘルム編: 「N 発間維持」の N を Lv の数値に解決する。無ければ undefined、正の整数でなければ RangeError */
+/** 「N 発間維持」の N を Lv の数値に解決する。無ければ undefined、正の整数でなければ RangeError */
 function resolveDurationShots(
   effect: { durationShots?: number; durationShotsRef?: number },
   skill: SkillRaw,
@@ -1328,7 +1327,7 @@ function resolveDurationShots(
   return n;
 }
 
-/** Stage 11 モダニア: スタックの最大数を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
+/** スタックの最大数を Lv の数値に解決する。無ければ undefined、整数でなければ RangeError */
 function resolveMaxStacks(
   effect: { maxStacks?: number; maxStacksRef?: number },
   skill: SkillRaw,
@@ -1343,16 +1342,16 @@ function resolveMaxStacks(
 }
 
 /**
- * Stage 11 モダニア: 使用武器の変更で、CDN に無い変更後の武器のパラメータをどう置くか（plan/design-stage11-modernia.md 3.4 節）。
+ * 使用武器の変更で、CDN に無い変更後の武器のパラメータをどう置くか（plan/design-stage11-modernia.md 3.4 節）。
  * 変更後の武器は基礎の武器を写し、1 発のダメージを damageRef の値 × ヒット数に、レートを changeWeapon.rateOfFire（スピンアップなし）に
  * 差し替える。コア倍率・装弾数・リロード・ゲージの量は基礎の武器のまま。
- * **2026-09-24 の録画 0044 で確定**: 殲滅モードのコア 6,753 = (120,694 − 100) × 2.24% × (1 + コア 1.0 + FB 0.5)（コア倍率は基礎と同じ）、
+ * **録画 0044 で確定**: 殲滅モードのコア 6,753 = (120,694 − 100) × 2.24% × (1 + コア 1.0 + FB 0.5)（コア倍率は基礎と同じ）、
  * 1 発目から毎フレーム 1 発（スピンアップなし・4200 rpm は 1 フレーム 1 発で止まる）。1 発に 2 ヒット（hitsPerShot）
  */
 export const WEAPON_CHANGE_CORE = 'base' as const;
 
 /**
- * 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節）: 説明文に書かれた変更後の武器のパラメータ。
+ * 説明文に書かれた変更後の武器のパラメータ（plan/design-true-damage-element.md 9 節）。
  * 省略した欄は基礎の武器のまま
  */
 export type ChangedWeaponOverrides = {
@@ -1361,13 +1360,14 @@ export type ChangedWeaponOverrides = {
   /** フルチャージダメージ（倍率。3 = 300%） */
   fullChargeDamage?: number;
   maxAmmo?: number;
-  /** ツバイ編（plan/design-zwei.md 2.2 節）: 1 発の弾の数（ペレット数） */
+  /** 1 発の弾の数（ペレット数。plan/design-zwei.md 2.2 節） */
   shotCount?: number;
-  /** 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 即着弾でチャージしない武器にする（instantFire） */
+  /** 即着弾でチャージしない武器にする（instantFire。plan/design-skill-stage11.md 2.1 節） */
   instantFire?: boolean;
   /**
-   * ナユタ編（plan/design-nayuta.md 2.6 節）: チャージしない基礎の武器から、押下チャージ型のチャージ武器（入力 DOWN_Charge。chargeTime と
-   * 組む）にする。発と発の間はチャージ時間だけで、持ち替えの後の最初の発だけ解放の分を足す（記憶燃焼の 106f おきの発と、持ち替えから 129f の
+   * チャージしない基礎の武器から、押下チャージ型のチャージ武器（入力 DOWN_Charge。chargeTime と
+   * 組む。plan/design-nayuta.md 2.6 節）にする。発と発の間はチャージ時間だけで、
+   * 持ち替えの後の最初の発だけ解放の分を足す（記憶燃焼の 106f おきの発と、持ち替えから 129f の
    * 最初の発。V-0666）。フルチャージのゲージの倍率（fullChargeBurstEnergy）・精度・弾は基礎の武器のまま
    */
   chargeInput?: boolean;
@@ -1392,7 +1392,7 @@ export function changedWeaponShot(
     ...(overrides.maxAmmo !== undefined ? { maxAmmo: overrides.maxAmmo } : {}),
     ...(overrides.shotCount !== undefined ? { shotCount: overrides.shotCount } : {}),
     ...(overrides.chargeInput === true ? { inputType: 'DOWN_Charge' } : {}),
-    // 2 段目の段 11: 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
+    // 即着弾でチャージしない（チャージ時間 0・押下型・Instant。飛ぶ弾の欄は外す）
     ...(overrides.instantFire === true
       ? { chargeTime: 0, fullChargeDamage: 1, inputType: 'DOWN', fireType: 'Instant', projectile: undefined }
       : {}),
@@ -1400,7 +1400,7 @@ export function changedWeaponShot(
 }
 
 /**
- * ナユタ編（plan/design-nayuta.md 2.6 節）: 枠がフルチャージの発を撃ちうるか（基礎の武器か、使用武器の変更の武器がチャージ武器）。
+ * 枠がフルチャージの発を撃ちうるか（基礎の武器か、使用武器の変更の武器がチャージ武器。plan/design-nayuta.md 2.6 節）。
  * 1 パス目の発の記録（ShotLog.fullCharge）が見る。どの発がフルチャージかは、発の武器で決まる（frame/firstPass.ts）
  */
 export function firesChargeShots(def: SkillDefinition | null, character: CharacterData): boolean {
@@ -1414,7 +1414,7 @@ export function firesChargeShots(def: SkillDefinition | null, character: Charact
   );
 }
 
-/** Stage 11 モダニア: 使用武器の変更を、自分に付く stat 'weapon' の持続効果に解決する */
+/** 使用武器の変更を、自分に付く stat 'weapon' の持続効果に解決する */
 function resolveWeaponChange(
   effect: Extract<SkillDefinition['skills'][SkillSlot]['effects'][number], { kind: 'weaponChange' }>,
   character: CharacterData,
@@ -1423,13 +1423,13 @@ function resolveWeaponChange(
   effectIndex: number,
 ): ResolvedTimedEffect {
   const skill = character.skills[slot];
-  // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: CDN に変更後のレートが無い変更は、定義の即値（rateOfFire。録画で読む）
+  // CDN に変更後のレートが無い変更は、定義の即値（rateOfFire。録画で読む。plan/design-skill-stage11.md 2.1 節）
   const cdn = slot === 'burst' ? character.burstSkill.changeWeapon : undefined;
   if (cdn != null && effect.rateOfFire !== undefined) {
     throw new RangeError(`skill ${skill.id}: rateOfFire is given by CDN (burstSkill.changeWeapon); do not write it`);
   }
-  // ナユタ編（plan/design-nayuta.md 2.6 節）: チャージ武器にする変更は、発の間をチャージ時間で決める（レートを使わない）ので、レートは
-  // 基礎の武器のまま（書かない）
+  // チャージ武器にする変更は、発の間をチャージ時間で決める（レートを使わない）ので、レートは
+  // 基礎の武器のまま（書かない。plan/design-nayuta.md 2.6 節）
   const toChargeWeapon = !isChargeWeapon(character.shot) && effect.chargeTimeSeconds !== undefined;
   const rateOfFire = cdn?.rateOfFire ?? effect.rateOfFire ?? (toChargeWeapon ? character.shot.rateOfFire : undefined);
   if (rateOfFire === undefined) {
@@ -1445,8 +1445,8 @@ function resolveWeaponChange(
     effect.fullChargeDamage !== undefined ||
     effect.chargeReleaseSeconds !== undefined
   ) {
-    // ナユタ編（plan/design-nayuta.md 2.6 節。論点 4）: チャージしない基礎の武器（SMG の記憶燃焼）は、チャージ時間を書けば変更後の武器を
-    // チャージ武器（入力 UP）にする
+    // チャージしない基礎の武器（SMG の記憶燃焼）は、チャージ時間を書けば変更後の武器を
+    // チャージ武器（入力 UP）にする（plan/design-nayuta.md 2.6 節。論点 4）
     if (!isChargeWeapon(character.shot) && !toChargeWeapon) {
       throw new RangeError(
         `skill ${skill.id}: fullChargeDamage/chargeReleaseSeconds need a charge weapon (or chargeTimeSeconds to make the changed weapon one)`,
@@ -1485,7 +1485,7 @@ function resolveWeaponChange(
         : {}),
       ...(effect.infiniteAmmo ? { infiniteAmmo: true as const } : {}),
       ...(effect.chargeTimeFixed ? { fixedChargeTime: true as const } : {}),
-      // レッドフード編（plan/design-red-hood.md 7.1 節の論点 10）: 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す）
+      // 解放の秒はフレームの端数のまま渡す（射手が発ごとに持ち越す。plan/design-red-hood.md 7.1 節の論点 10）
       ...(effect.chargeReleaseSeconds !== undefined
         ? { chargeReleaseFrames: effect.chargeReleaseSeconds / GAME_SECONDS_PER_FRAME }
         : {}),
@@ -1496,17 +1496,17 @@ function resolveWeaponChange(
     durationFrames: untilEmpty ? 0 : gameSecondsToFrames(durationSecondsOf(effect, skill, level)),
     effectIndex,
   };
-  // 使用武器変更の武器のパラメータ編: 撃ち切りで終わる変更は、窓の終わりを 1 パス目の最後の弾丸の発で決める（論点 8）
+  // 撃ち切りで終わる変更は、窓の終わりを 1 パス目の最後の弾丸の発で決める（論点 8）
   if (untilEmpty) r.durationUntil = 'ammoSpent';
-  // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階の条件（件を見ないので段 1 のまま）
+  // 使った段階の条件（件を見ないので段 1 のまま。plan/design-red-hood.md 2.1 節）
   if (effect.condition) r.condition = effect.condition;
   if (effect.assumes) r.assumes = effect.assumes;
   return r;
 }
 
 /**
- * Stage 10: 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
- * Stage 11: 回復（heal）の value は最大 HP に対する比率（0.0523。表示用で計算には使わない）
+ * 即時効果（CT 短縮・弾丸チャージ）。value は CT 短縮なら秒、弾丸チャージなら比率（0.3988）。
+ * 回復（heal）の value は最大 HP に対する比率（0.0523。表示用で計算には使わない）
  */
 export type ResolvedInstantEffect = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
@@ -1515,33 +1515,33 @@ export type ResolvedInstantEffect = {
   target: BuffTarget;
   targetWeapon?: WeaponType;
   targetElement?: Element;
-  /** 2 段目の段 9: 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
+  /** 「〈クラス〉型の味方」（plan/design-skill-stage9.md 1.1 節） */
   targetClass?: NikkeClass;
-  /** Stage 11 アリス編: target が topAttack のときの N。2 段目の段 8: heal の lowestHpRatio の N も */
+  /** target が topAttack のときの N。heal の lowestHpRatio の N も */
   targetCount?: number;
-  /** 2 段目の段 8（plan/design-skill-stage8.md 1.1 節）: 編成で決まる対象の枠（heal の lowestHpRatio。skills/composition.ts が書く） */
+  /** 編成で決まる対象の枠（heal の lowestHpRatio。skills/composition.ts が書く。plan/design-skill-stage8.md 1.1 節） */
   fixedTargets?: readonly number[];
-  /** 2 段目の段 15 の PR 3: heal の「基本バースト段階が N の」（fixedTargets の無い呼び出しを skills/targets.ts が落とす印） */
+  /** heal の「基本バースト段階が N の」（fixedTargets の無い呼び出しを skills/targets.ts が落とす印） */
   targetBurstStep?: BasicBurstStep;
   /** V-0024: heal の維持時間（フレーム）。あれば、同じ効果の窓が付いている対象への付き直しでは回復の記録を作らない */
   durationFrames?: number;
-  /** 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: heal の delayFrames（skills/heals.ts の healFrameOf） */
+  /** heal の delayFrames（skills/heals.ts の healFrameOf。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
-  /** ルドミラ：ウィンターオーナー編: 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
+  /** 弾丸チャージの発数（ammoRefill の scaling 'flat'）。value は発数のまま */
   scaling?: 'flat';
   /**
-   * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: cooldownReduction の発火の条件（selfState。stacksRef は解いてある）。
-   * 2 段目の段 21: fullBurstExtend も。レッドフード編: cooldownReduction の使った段階（burstStep）も
+   * cooldownReduction の発火の条件（selfState。stacksRef は解いてある。plan/design-skill-stage12.md 2.6 節）。
+   * fullBurstExtend も。cooldownReduction の使った段階（burstStep）も
    */
   condition?: EffectCondition;
-  /** レッドフード編（plan/design-red-hood.md 2.3 節）: cooldownReduction の戦闘中の発火の回数の上限 */
+  /** cooldownReduction の戦闘中の発火の回数の上限（plan/design-red-hood.md 2.3 節） */
   maxFires?: number;
-  /** ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: cooldownReduction の CT▲（走っている CT の残りに足す） */
+  /** cooldownReduction の CT▲（走っている CT の残りに足す。plan/design-mint-prika.md 2.6 節） */
   increase?: true;
   value: number;
   /** 同じスロットの何番目の効果か（識別用） */
   effectIndex: number;
-  /** 2 段目の段 12: 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示） */
+  /** 名前の付いたバースト段階の変更のどちらの側の効果か（画面の出どころの表示） */
   burstStepMode?: BurstStepMode;
   assumes?: LocalizedText;
 };
@@ -1570,10 +1570,10 @@ export function resolveInstant(
         effect.kind !== 'currentHpDown'
       )
         return;
-      // 2 段目の段 12: cooldownReduction の直書きの秒数（seconds）は Lv に依らない
+      // cooldownReduction の直書きの秒数（seconds）は Lv に依らない
       const raw = effect.ref === undefined ? effect.seconds : skillValue(skill, effect.ref, levels[slot]);
       if (raw < 0) throw new RangeError(`skill ${skill.id}: ${effect.kind} must be >= 0, got ${raw}`);
-      // 紅蓮編: 現在の HP▼ は 100% 未満（HP の割合に 1 − X を掛けるので、0 以下にしない）
+      // 現在の HP▼ は 100% 未満（HP の割合に 1 − X を掛けるので、0 以下にしない）
       if (effect.kind === 'currentHpDown' && raw >= 100)
         throw new RangeError(`skill ${skill.id}: currentHpDown must be < 100, got ${raw}`);
       const r: ResolvedInstantEffect = {
@@ -1617,20 +1617,20 @@ export function resolveInstant(
   return resolved;
 }
 
-/** 2 段目の段 17 の PR 1: 解決した遮蔽物 HP 回復（回復量は計算に効かないので持たない） */
+/** 解決した遮蔽物 HP 回復（回復量は計算に効かないので持たない） */
 export type ResolvedCoverHeal = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   trigger: ResolvedTrigger;
   target: CoverHealEffect['target'];
-  /** 段 17 の PR 2: 対象 lowestCoverHp の機数 */
+  /** 対象 lowestCoverHp の機数 */
   targetCount?: number;
-  /** 段 17 の PR 2: 時間の周期の発動から出来事までのフレーム */
+  /** 時間の周期の発動から出来事までのフレーム */
   delayFrames?: number;
   effectIndex: number;
 };
 
 /**
- * 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 定義の遮蔽物 HP 回復（coverHeal）を解決する。1 パス目が、対象の枠ごとに
+ * 定義の遮蔽物 HP 回復（coverHeal）を解決する（plan/design-skill-stage17.md 2.1 節）。1 パス目が、対象の枠ごとに
  * 遮蔽物 HP 回復を受けた出来事（FrameEvents.coverHealed）を起こす。support が 'unsupported' のスキルは空
  */
 export function resolveCoverHeals(

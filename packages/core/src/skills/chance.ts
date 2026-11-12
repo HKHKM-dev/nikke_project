@@ -1,4 +1,4 @@
-// ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけ（「〜した時、p% の確率で」）の timed を期待値で持つ。
+// 確率のきっかけ（「〜した時、p% の確率で」）の timed を期待値で持つ（plan/design-soldier-eg.md 3.1 節）。
 // 1 発ごとに確率 q = p × その発の回数の量（normalShot は 1、normalHit はその発の弾丸命中率）で付き、付いたら上書き延長（和集合）で
 // D フレーム。フレーム t の効果の強さは、付いている確率 1 − Π (1 − qᵢ)（積は sᵢ ≤ t < sᵢ + D の機会。sᵢ は発の次のフレーム）に
 // 値を掛けたもの。攻撃力▲などダメージの式で 1 次の stat なら、1 発の期待値はこの強さで付けた値と同じ（四捨五入の分を除く）。
@@ -81,7 +81,7 @@ export function chanceScaleAt(
   return scaleOf([...active].sort((a, b) => a.start - b.start).map((o) => o.q));
 }
 
-/** トーブの基礎版編: スタックの段ごとの期待値の小片。scale はその間にスタック数が stack 以上である確率 */
+/** スタックの段ごとの期待値の小片。scale はその間にスタック数が stack 以上である確率 */
 export type ChanceStackPiece = ChancePiece & { stack: number };
 
 /** 生きている鎖（最後に付いた機会の窓の終わりと、スタック数ごとの確率。添字はスタック数 − 1） */
@@ -163,7 +163,7 @@ function applyOpportunity(run: StackRun, q: number, durationFrames: number): voi
 }
 
 /**
- * トーブの基礎版編（plan/design-tove-base.md 2.2 節）: 確率のきっかけで付く、スタックする状態の件。機会 i（始まり sᵢ・確率 qᵢ）で付くと
+ * 確率のきっかけで付く、スタックする状態の件（plan/design-tove-base.md 2.2 節）。機会 i（始まり sᵢ・確率 qᵢ）で付くと
  * 1 スタック足し（上限 maxStacks で止める）、全スタックの維持を sᵢ から数え直す（STACK_REFRESH 'all'。C-0559）。最後に付いてから
  * D フレームで全スタックが消える。
  * 「最後に付いた機会が j で、スタック数が k」の確率 W_j(k) を、機会と窓の終わりの時刻の順に追う。機会 i では、生きている W_j に
@@ -204,7 +204,7 @@ export function chanceStackPieces(
   return tail.pieces;
 }
 
-/** トーブの基礎版編: 段 k の小片の列から、フレーム frame でスタック数が k 以上の確率（添字 k − 1。無ければ 0） */
+/** 段 k の小片の列から、フレーム frame でスタック数が k 以上の確率（添字 k − 1。無ければ 0） */
 export function chanceStackLevelsAt(
   items: readonly { start: number; end: number; stack?: number; scale?: number }[],
   frame: number,

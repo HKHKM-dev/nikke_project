@@ -43,7 +43,7 @@ import {
 } from './common.ts';
 
 /**
- * 回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: timed・heal の delayFrames。射撃の回数のきっかけ
+ * timed・heal の delayFrames（plan/design-shot-count-trigger-frame.md 6 節）。射撃の回数のきっかけ
  * （確率のきっかけを除く）だけに書ける
  */
 export function parseShotCountDelay(v: Json, trigger: EffectTrigger, path: string): number {
@@ -65,8 +65,8 @@ export type TriggerOptions = {
   /** 時間の周期（{ everySeconds }。damage・dot・autoAttack・burstGaugeHit・timed・heal など）。'withStart' なら atStart も */
   timer?: boolean | 'withStart';
   /**
-   * 回数のきっかけの数える窓（during）と発火の窓（firesDuring）。グレイブ編（plan/design-grave.md 2.4 節）: 'withState' なら自分の状態の窓
-   * （during: { state }）も書ける（状態の付与だけ）
+   * 回数のきっかけの数える窓（during）と発火の窓（firesDuring）。'withState' なら自分の状態の窓
+   * （during: { state }）も書ける（状態の付与だけ。plan/design-grave.md 2.4 節）
    */
   during?: boolean | 'withState';
   /** 確率のきっかけ（chance・chanceRef） */
@@ -86,34 +86,34 @@ export type TriggerOptions = {
 export function parseTrigger(v: Json, path: string, options: TriggerOptions = {}): EffectTrigger {
   if (typeof v === 'string') return oneOf(BUFF_TRIGGERS, v, path);
   if (!isRecord(v)) fail(path, 'expected a trigger name or a count trigger object');
-  // ペルソナ編: 効果名のトリガーは damage と、2 段目の段 4 から timed・付与だけ（parseAppliedTrigger で先に読む）
+  // 効果名のトリガー（{ applied }）は、受ける種類が parseAppliedTrigger で先に読む。ここ（parseTrigger）では受けない
   if (v.applied !== undefined) {
     fail(path, 'an applied trigger ({ applied }) is only allowed in damage, timed and state grants');
   }
-  // グレイブ編（plan/design-grave.md 2.1 節）: 状態の終わりのきっかけは counterChange・ammoDecrease・状態の付与だけ（parseEndedTrigger で先に読む）
+  // 状態の終わりのきっかけは counterChange・ammoDecrease・状態の付与だけ（parseEndedTrigger で先に読む。plan/design-grave.md 2.1 節）
   if (v.ended !== undefined) {
     fail(path, 'an ended trigger ({ ended }) is only allowed in counterChange, ammoDecrease and state grants');
   }
-  // 2 段目の段 3: フルスタックの消費のきっかけは heal だけ（plan/design-skill-stage3.md 1.3 節）。段 11 から weaponChange も
-  // （plan/design-skill-stage11.md 2.1 節）
+  // フルスタックの消費のきっかけは heal と weaponChange だけ（plan/design-skill-stage3.md 1.3 節、
+  // plan/design-skill-stage11.md 2.1 節）
   if (v.fullStack !== undefined) {
     if (!options.fullStack) fail(path, 'a full-stack trigger ({ fullStack }) is only allowed in heal and weaponChange');
     rejectUnknownKeys(v, ['fullStack'], path);
     return { fullStack: parseNamedStateId(v.fullStack, `${path}.fullStack`, 'ally') };
   }
-  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 溜めのきっかけは timed・付与だけ（parseChargeTrigger で先に読む）
+  // 溜めのきっかけは timed・付与だけ（parseChargeTrigger で先に読む。plan/design-skill-stage14.md 2.1・2.6 節）
   if (v.chargeTick !== undefined || v.chargeFull !== undefined) {
     fail(path, 'a charge trigger ({ chargeTick } / { chargeFull }) is only allowed in timed and state grants');
   }
-  // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: 使用武器の変更の終わりのきっかけは ammoDecrease だけ
+  // 使用武器の変更の終わりのきっかけは ammoDecrease だけ（plan/design-skill-stage11.md 2.2.1 節）
   if (v.weaponChangeEnd !== undefined) {
     if (!options.weaponChangeEnd)
       fail(path, 'a weapon change end trigger ({ weaponChangeEnd }) is only allowed in ammoDecrease');
     return parseTrueOnlyTrigger(v, 'weaponChangeEnd', path);
   }
-  // 2 段目の段 17 の PR 1: 遮蔽物 HP 回復を受けた時のきっかけは timed だけ（parseCoverHealedTrigger で先に読む）
+  // 遮蔽物 HP 回復を受けた時のきっかけは timed だけ（parseCoverHealedTrigger で先に読む）
   if (v.coverHealed !== undefined) fail(path, 'a { coverHealed } trigger is only allowed in timed');
-  // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: リロードの込め終わりのきっかけは removeState だけ
+  // リロードの込め終わりのきっかけは removeState だけ（plan/design-skill-stage16.md 2.2 節）
   if (v.reloadEnd !== undefined) {
     if (!options.reloadEnd)
       fail(path, 'a reload end trigger ({ reloadEnd }) is only allowed in removeState, timed and state grants');
@@ -143,7 +143,7 @@ function parseTimerTrigger(v: Record<string, Json>, path: string, allowTimer: bo
       path,
       'a timer trigger ({ everySeconds }) is only allowed in damage, dot, autoAttack, burstGaugeHit, timed, heal and counterChange',
     );
-  // 魔術師のカード編（plan/design-arcana-magician.md 2.2 節）: クールタイムの印（cooldown）。書ける効果の種類と組み合わせは
+  // クールタイムの印（cooldown。plan/design-arcana-magician.md 2.2 節）。書ける効果の種類と組み合わせは
   // parse/crossChecks.ts の validateCooldownTimers が見る
   const flags =
     allowTimer === 'withStart' ? (['atStart', 'carry', 'cooldown'] as const) : (['carry', 'cooldown'] as const);
@@ -177,7 +177,7 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
     path,
   );
   if (v.every !== undefined && v.everyRef !== undefined) fail(path, 'at most one of every and everyRef');
-  // ペレットの命中編（plan/design-pellet-hit.md 2 節）: 1 発で複数のペレットを数えるので、毎回（1）は書けない
+  // 1 発で複数のペレットを数えるので、毎回（1）は書けない（plan/design-pellet-hit.md 2 節）
   if (v.count === 'pelletHit' && v.every === undefined && v.everyRef === undefined) {
     fail(path, 'pelletHit needs every or everyRef');
   }
@@ -191,7 +191,7 @@ function parseShotCountTrigger(v: Record<string, Json>, path: string, options: T
   return trigger;
 }
 
-/** クルミ S2 編: フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）。数える窓 during と、数え直す reset */
+/** フルバースト中だけ数える回数トリガー（plan/design-kurumi-s2.md 2.1 節）。数える窓 during と、数え直す reset */
 function parseCountingWindow(
   v: Record<string, Json>,
   trigger: ShotCountTrigger,
@@ -203,7 +203,7 @@ function parseCountingWindow(
   if (!allowDuring) fail(`${path}.during`, 'a counting window (during) is only allowed in damage, timed and state');
   if (v.during === undefined) fail(`${path}.reset`, 'reset needs during');
   if (isRecord(v.during)) {
-    // グレイブ編（plan/design-grave.md 2.4 節）: 自分の状態の間だけ数え、状態が付くたびに数え直す（reset は書かない）
+    // 自分の状態の間だけ数え、状態が付くたびに数え直す（reset は書かない。plan/design-grave.md 2.4 節）
     if (allowDuring !== 'withState')
       fail(`${path}.during`, 'a counting window of a state (during: { state }) is only allowed in state grants');
     rejectUnknownKeys(v.during, ['state'], `${path}.during`);
@@ -227,7 +227,7 @@ function rejectWindowCombos(trigger: ShotCountTrigger, key: 'during' | 'firesDur
 
 /**
  * ソーダ：トゥインクルバニー S1 の数え方（V-0443）: 戦闘中ずっと数え、発火だけフルバーストの窓の中に限る（firesDuring）。
- * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 使用武器の変更の外でだけ発火する（firesOutside）
+ * 使用武器の変更の外でだけ発火する（firesOutside。plan/design-new-chars-1029.md 5.7 節）
  */
 function parseFiringWindow(
   v: Record<string, Json>,
@@ -257,7 +257,7 @@ function parseFiringWindow(
   }
 }
 
-/** ソルジャーE.G. 編（plan/design-soldier-eg.md 3.1 節）: 確率のきっかけ（chance か chanceRef のちょうど片方） */
+/** 確率のきっかけ（chance か chanceRef のちょうど片方。plan/design-soldier-eg.md 3.1 節） */
 function parseChance(v: Record<string, Json>, trigger: ShotCountTrigger, path: string, options: TriggerOptions): void {
   if (v.chance === undefined && v.chanceRef === undefined) return;
   if (!options.chance) fail(`${path}.chance`, 'a chance trigger (chance / chanceRef) is only allowed in timed');
@@ -286,7 +286,7 @@ function parseEventCountTrigger(v: Record<string, Json>, path: string): EventCou
     count: v.count as EventCountKind,
     atLeast: parsePositiveInt(v.atLeast, `${path}.atLeast`),
   };
-  // ディーゼル：ウィンタースイーツ編（plan/design-diesel-ws.md 2.1 節）: 何回目まで（atLeast 以上）
+  // 何回目まで（atLeast 以上。plan/design-diesel-ws.md 2.1 節）
   if (v.atMost !== undefined) {
     const atMost = parsePositiveInt(v.atMost, `${path}.atMost`);
     if (atMost < trigger.atLeast)
@@ -303,7 +303,7 @@ function parseEventCountTrigger(v: Record<string, Json>, path: string): EventCou
 }
 
 /**
- * 2 段目の段 10・グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」{ ended: 状態 }。それ以外の形なら undefined。
+ * 「〈状態〉が終了した時」{ ended: 状態 }（plan/design-grave.md 2.1 節）。それ以外の形なら undefined。
  * counterChange・ammoDecrease・状態の付与が読む
  */
 export function parseEndedTrigger(v: Json, path: string): EndedTrigger | undefined {
@@ -313,7 +313,7 @@ export function parseEndedTrigger(v: Json, path: string): EndedTrigger | undefin
 }
 
 /**
- * 2 段目の段 19 の PR 1・グレイブ編: 維持の { stateEnd: 状態 }（〈状態〉解除まで）。dot と状態の付与が読む。key は durationUntil の位置、
+ * 維持の { stateEnd: 状態 }（〈状態〉解除まで）。dot と状態の付与が読む。key は durationUntil の位置、
  * expected は形の違うときの文言
  */
 export function parseStateEndUntil(v: Json, key: string, expected: string): StateEndUntil {
@@ -321,7 +321,7 @@ export function parseStateEndUntil(v: Json, key: string, expected: string): Stat
 }
 
 /**
- * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } を damage のほかで読む。{ applied } でなければ undefined
+ * { applied } を damage のほかで読む（plan/design-skill-stage4.md 1.1 節）。{ applied } でなければ undefined
  * （ほかのトリガーは呼ぶ側の parseTrigger が読む）
  */
 export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | undefined {
@@ -331,9 +331,9 @@ export function parseAppliedTrigger(v: Json, path: string): AppliedTrigger | und
 }
 
 /**
- * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節。論点 2）: 状態の付いた時から数える周期 { everySeconds, since: { applied } }。
- * since の無い形なら undefined（呼ぶ側の parseTrigger が読む）。counterChange と、A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）から
- * currentHpDown が読む。allowStart なら atStart（付いたフレームにも発火する。currentHpDown だけ）も書ける
+ * 状態の付いた時から数える周期 { everySeconds, since: { applied } }（plan/design-skill-stage19.md 2.1 節。論点 2）。
+ * since の無い形なら undefined（呼ぶ側の parseTrigger が読む）。counterChange と
+ * currentHpDown（plan/design-hp-down-interval.md 2.1 節）が読む。allowStart なら atStart（付いたフレームにも発火する。currentHpDown だけ）も書ける
  */
 export function parseSinceTimerTrigger(v: Json, path: string, allowStart = false): TimerTrigger | undefined {
   if (!isRecord(v) || v.since === undefined) return undefined;
@@ -345,21 +345,21 @@ export function parseSinceTimerTrigger(v: Json, path: string, allowStart = false
   return { ...timer, since: from };
 }
 
-/** マスト編（plan/design-mast.md 8 節）: { selfHpAtMostRef: N }。それ以外の形なら undefined（timed だけが読む） */
+/** { selfHpAtMostRef: N }（plan/design-mast.md 8 節）。それ以外の形なら undefined（timed だけが読む） */
 export function parseSelfHpAtMostTrigger(v: Json, path: string): SelfHpAtMostTrigger | undefined {
   if (!isRecord(v) || v.selfHpAtMostRef === undefined) return undefined;
   rejectUnknownKeys(v, ['selfHpAtMostRef'], path);
   return { selfHpAtMostRef: parseRef(v.selfHpAtMostRef, `${path}.selfHpAtMostRef`) };
 }
 
-/** 2 段目の段 17 の PR 1: { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
+/** { coverHealed: true }。ほかのきっかけなら undefined（状態の付与では読まず、parseTrigger が落とす） */
 export function parseCoverHealedTrigger(v: Json, path: string): CoverHealedTrigger | undefined {
   if (!isRecord(v) || v.coverHealed === undefined) return undefined;
   return parseTrueOnlyTrigger(v, 'coverHealed', path);
 }
 
 /**
- * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: { chargeTick: { everySeconds } } か { chargeFull: true }。それ以外の形なら
+ * { chargeTick: { everySeconds } } か { chargeFull: true }（plan/design-skill-stage14.md 2.1・2.6 節）。それ以外の形なら
  * undefined（timed と状態の付与の parseTimedFields だけが読む）
  */
 export function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | ChargeFullTrigger | undefined {
@@ -378,8 +378,8 @@ export function parseChargeTrigger(v: Json, path: string): ChargeTickTrigger | C
 }
 
 /**
- * ペルソナ編: damage のトリガー。{ applied: 状態 }（名前の付いた状態の語彙編: 目録の id）のほかは parseTrigger と同じ。
- * 2 段目の段 13 の PR 1: { counterFull: カウンタ } も（dot も同じ）
+ * damage のトリガー。{ applied: 状態 }（目録の id）のほかは parseTrigger と同じ。
+ * { counterFull: カウンタ } も（dot も同じ）
  */
 export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
   return (
@@ -390,7 +390,7 @@ export function parseDamageTrigger(v: Json, path: string): EffectTrigger {
   );
 }
 
-/** アインのニアフェザー編: { summon, intervalSeconds, startDelaySeconds }。それ以外の形なら undefined */
+/** { summon, intervalSeconds, startDelaySeconds }。それ以外の形なら undefined */
 function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | undefined {
   if (!isRecord(v) || v.summon === undefined) return undefined;
   rejectUnknownKeys(v, ['summon', 'intervalSeconds', 'startDelaySeconds'], path);
@@ -411,7 +411,7 @@ function parseSummonAttackTrigger(v: Json, path: string): SummonAttackTrigger | 
   return { summon, intervalSeconds, startDelaySeconds: delay };
 }
 
-/** 2 段目の段 11 の PR 2・段 13 の PR 1: { counterFull: カウンタ }。それ以外の形なら undefined */
+/** { counterFull: カウンタ }。それ以外の形なら undefined */
 export function parseCounterFullTrigger(v: Json, path: string): CounterFullTrigger | undefined {
   if (!isRecord(v) || v.counterFull === undefined) return undefined;
   rejectUnknownKeys(v, ['counterFull'], path);

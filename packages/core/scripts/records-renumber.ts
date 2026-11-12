@@ -74,7 +74,7 @@ if (oldId === undefined || newId === undefined || positionals.length !== 2) fail
 const problems = renumberProblems(oldId, newId);
 if (problems.length > 0) fail(problems.join('\n'));
 const kind = renumberKind(oldId)!;
-// 録画の番号は 2026-10-25 から 4 桁だけ（plan/design-recording-id-4digit.md 6 節）。古い番号は古い文を読むため 3 桁も受ける
+// 新しい録画の番号は 4 桁だけ（plan/design-recording-id-4digit.md 6 節）。古い番号は古い文を読むため 3 桁も受ける
 if (kind === 'recording' && !RECORDING_ID.test(newId)) fail('録画の新しい番号は 4 桁（0001〜9999）');
 const dryRun = values['dry-run'];
 
@@ -302,7 +302,7 @@ for (const p of files) {
 }
 const BACKUP_LOG = 'plan/captures/backup-log.md';
 if (!dryRun && (applied.length > 0 || driveApplied.length > 0)) {
-  // 前例（2026-10-05・06 の振り直し）と同じく、段落で書く
+  // 振り直しの出来事を段落で書く
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, '0');
   const when = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;

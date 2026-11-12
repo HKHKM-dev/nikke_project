@@ -68,17 +68,17 @@ export function roleDataPath(resourceId: number, locale: CdnLocale): string {
   return `/roledata/${resourceId}-v2-${locale}.json`;
 }
 
-/** Stage 9: 宝物 ID の一覧（レア度ごと） */
+/** 宝物 ID の一覧（レア度ごと） */
 export function favoriteRareMapPath(): string {
   return '/equip/favorite_rare_map.json';
 }
 
-/** Stage 9: 宝物 1 個分。SSR だけが宝物版のスキル（favoriteitem_skill_group_data）を持つ */
+/** 宝物 1 個分。SSR だけが宝物版のスキル（favoriteitem_skill_group_data）を持つ */
 export function favoritePath(favoriteId: number, locale: CdnLocale): string {
   return `/equip/${locale}/favorite_${favoriteId}.json`;
 }
 
-// ---- Stage 12: 育成のマスタ ----
+// ---- 育成のマスタ ----
 
 /** 装備マスタ（ティア・クラス・部位ごとの Lv0 のステータス。強化 Lv 別の値は無い） */
 export function itemEquipTablePath(locale: CdnLocale): string {
@@ -100,7 +100,7 @@ export function cubePath(cubeId: number, locale: CdnLocale): string {
   return `/equip/${locale}/cube_${cubeId}.json`;
 }
 
-// ---- Stage 13: 効果層 ----
+// ---- 効果層 ----
 
 /** OL 装備のオプション（名前と state_effect の ID だけ。Lv 別の数値は CDN に無い） */
 export function equipOptionTablePath(locale: CdnLocale): string {

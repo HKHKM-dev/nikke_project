@@ -152,7 +152,7 @@ function mapSkill(
 
 export type BuildEffectsOptions = {
   /**
-   * Stage 9 の宝物の段階。1 以上なら R / SR のコレクションの入力は読まず、宝物の元になった SR Lv15 のコレクションのスキルを
+   * 宝物の段階。1 以上なら R / SR のコレクションの入力は読まず、宝物の元になった SR Lv15 のコレクションのスキルを
    * 乗せる（C-0123。ヘルムの段階 3 で確かめた。段階 1・2 も同じとみなす）。宝物のスキルは skills/treasure.ts が差し替える
    */
   treasurePhase?: number;

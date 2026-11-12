@@ -26,7 +26,7 @@ function fmtTolerance(t: Tolerance): string {
   return 'rel' in t ? `±${(t.rel * 100).toFixed(2).replace(/\.?0+$/, '')}%` : `±${fmtNumber(t.abs)}`;
 }
 
-/** 引数と、手入力でない条件（Stage 18-C の自動の条件・中遠・近・遠の固定）。手入力の観測値は今までと同じ表示 */
+/** 引数と、手入力でない条件（自動の条件・中遠・近・遠の固定など） */
 function fmtArgs(args: CompareSpec['args'], setup?: CompareSetup): string {
   const entries: [string, unknown][] = Object.entries(args);
   if (setup?.condition === 'auto') entries.push(['condition', 'auto']);
@@ -55,7 +55,7 @@ const STATUS_JA: Record<ResidualStatus, string> = {
   invalid: '失効',
 };
 
-/** 実測の値（単位と幅があれば添える。Stage 20-E） */
+/** 実測の値（単位と幅があれば添える） */
 function fmtObserved(o: Observation): string {
   const unit = o.unit === undefined ? '' : ` ${o.unit}`;
   const s = o.spread;

@@ -86,7 +86,7 @@ const skills = loadSkillDefinitions();
 const relevanceCtx = { recordings, ...data, claims };
 const backlog = loadBacklog();
 const backlogTemplate = loadBacklogTemplate();
-// Stage 20-E: 失効した観測値は照合と結論の根拠から外す
+// 失効した観測値は照合と結論の根拠から外す
 const invalidReasons = invalidReasonsOf(observations);
 const errors = [
   ...misplacedObservations(),
@@ -166,7 +166,7 @@ writeFileSync(
 );
 // 予測の後のモデルの変更（plan/design-prediction-staleness.md）: 開いている検証の予測だけ、いまのモデルで出し直して保存した値と比べる
 const staleness = openStaleness(predictions, openVerificationIds(verifications), data);
-// 予測との突き合わせ（3.5 節）。検証記録 × 録画の最小構成の警告は、plan/minimal.md の組の判定に置き換えた（design-minimal-relevance.md 5 節）
+// 予測との突き合わせ（3.5 節）。最小構成の警告は、plan/minimal.md の組の判定が出す（design-minimal-relevance.md 5 節）
 for (const p of predictions) {
   const comparison = comparePredictions(p, observations, staleness.get(p.verification));
   // 検証記録の「結果」に生成ブロックの印があれば、予測との比べの表を書き込む（3.6 節。閉じた記録には印が無い）

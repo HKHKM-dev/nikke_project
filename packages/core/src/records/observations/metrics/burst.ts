@@ -21,7 +21,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     sim: (r) => r.schedule?.fullBurstWindows.length ?? 0,
   },
   /**
-   * アニス：スター編（V-0122）: 録画の動画のフレームで数えた、フルバーストの入りどうしの間隔（最初の n 個）。入りの止まり
+   * 録画の動画のフレームで数えた、フルバーストの入りどうしの間隔（最初の n 個）（V-0122）。入りの止まり
    * （C-0069）を足した動画のフレームの差なので、録画の戦闘開始のずれに依らない
    */
   fullBurstStartIntervals: {
@@ -29,14 +29,14 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     sim: (r, c) => fullBurstStartIntervals(r, c),
   },
   /**
-   * 2 段目の段 21（V-0633）: 最初の n 回のフルバーストの、III のタイマーの 00.00（窓の始まり）から窓の終わりまでの動画のフレーム。
+   * 最初の n 回のフルバーストの、III のタイマーの 00.00（窓の始まり）から窓の終わりまでの動画のフレーム（V-0633）。
    * 入りの止まり（C-0069）を足す（videoFrameOf）。録画ではレシピ burst-panel の、六角形の所が灰色に替わったフレームまで
    */
   fullBurstLengths: {
     args: ['n'],
     sim: (r, c) => fullBurstLengths(r, c),
   },
-  /** アニス：スター編（V-0121）: バーストを撃った枠（1 始まり）の並び（最初の n 回。チェーンが切れた単独の発動も入る） */
+  /** バーストを撃った枠（1 始まり）の並び（最初の n 回（V-0121）。チェーンが切れた単独の発動も入る） */
   burstActivationSlots: {
     args: ['n'],
     sim: (r, c) => burstActivationSlots(r, c),
@@ -57,7 +57,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     args: ['n'],
     sim: (r, c) => gaugeFullToActivation(r, c),
   },
-  // 2 段目の段 11 の PR 3（V-0530）: 枠のバーストの発動の回数（時刻表。burstCount は倍率ダメージのバーストの回数）
+  // 枠のバーストの発動の回数（時刻表（V-0530）。burstCount は倍率ダメージのバーストの回数）
   burstActivationCount: {
     args: ['slot'],
     sim: (r, c) => {
@@ -66,7 +66,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     },
   },
   /**
-   * V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける）。ミント・プリカ編: 同じ
+   * V-0359: n 回目のフルバーストの入りに、枠の残りのバーストスキル CT が縮んだフレーム数（n はカンマ区切りの並びも書ける）。同じ
    * フレームの CT▲ は負で入る（CooldownReduction.applied）
    */
   cooldownCutFrames: {
@@ -77,7 +77,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     args: [],
     sim: (r) => r.schedule?.fullBurstWindows.map((w) => w.start) ?? [],
   },
-  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 4 節）: 枠の 1 発目から n 回目（0 始まり）のフルバーストの入りまでのフレーム数。
+  // 枠の 1 発目から n 回目（0 始まり）のフルバーストの入りまでのフレーム数（plan/design-cinderella-s1-charge.md 4 節）。
   // 録画では、即着弾の枠（SR）の 1 発目の増分から、III のタイマーの 00.00 までの動画のフレーム（間に入りの止まりが無い 1 回目に使う）。
   // 戦闘開始のフレームを読まずに済む
   fullBurstStartFromFirstShot: {
@@ -135,9 +135,9 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
   burstEffectDelay: { args: ['slot', 'n'], sim: burstEffectDelay },
   fullBurstCrossingShotGauge: { args: ['slot'], sim: fullBurstCrossingShotGauge },
   shotGauge: { args: ['slot', 'n'], sim: shotGauge },
-  // シンの S2 編（V-0638）: フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比
+  // フルバーストの終わりから frames の間に撃った発の 1 発のゲージの、ほかの時の 1 発に対する比（V-0638）
   shotGaugeRatioAfterFullBurst: { args: ['slot', 'frames'], sim: shotGaugeRatioAfterFullBurst },
-  // フラワー編（V-0483）: 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）
+  // 枠の n 回目（1 始まり）の周期のゲージ（burstGaugeHit）の量（バーの最大に対する %）（V-0483）
   timerGauge: {
     args: ['slot', 'n'],
     sim: (r, c) => {
@@ -152,7 +152,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
     args: ['slot', 'n'],
     sim: (r, c) => ctEndToFullBurstStart(r, c),
   },
-  // 2 段目の段 12（V-0543）: 枠の n 回目の発動の印から、その発動の CT の明けまでの動画のフレーム
+  // 枠の n 回目の発動の印から、その発動の CT の明けまでの動画のフレーム（V-0543）
   activationToCtEnd: {
     args: ['slot', 'n'],
     sim: (r, c) => activationToCtEnd(r, c),
@@ -182,8 +182,8 @@ function fullBurstLengths(result: { schedule: BurstSchedule | null }, ctx: Metri
 }
 
 /**
- * アニス：スター S2・バースト編（V-0124）: n 回目（0 始まり）のフルバーストの入りから、その後の最初のバーストの発動までの動画のフレーム数
- * （フルバーストの後に I だけ撃って切れる発動の時刻。ゲージの溜まり方と CT で決まる）。入りの止まり（C-0069）は videoFrameOf で足す
+ * n 回目（0 始まり）のフルバーストの入りから、その後の最初のバーストの発動までの動画のフレーム数
+ * （フルバーストの後に I だけ撃って切れる発動の時刻（V-0124）。ゲージの溜まり方と CT で決まる）。入りの止まり（C-0069）は videoFrameOf で足す
  */
 function fullBurstToNextActivation(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number {
   const schedule = result.schedule;
@@ -197,8 +197,8 @@ function fullBurstToNextActivation(result: { schedule: BurstSchedule | null }, c
 }
 
 /**
- * アニス：スター S2・バースト編（V-0124）: n 回目（0 始まり）のフルバーストの入りから、その後に最初にゲージが満タンになる（BURST バーが
- * 消える。C-0083）までの動画のフレーム数。フルバーストの後のゲージの溜まり方を、CT に左右されずに比べる
+ * n 回目（0 始まり）のフルバーストの入りから、その後に最初にゲージが満タンになる（BURST バーが
+ * 消える（V-0124）。C-0083）までの動画のフレーム数。フルバーストの後のゲージの溜まり方を、CT に左右されずに比べる
  */
 function fullBurstToGaugeFull(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number {
   const schedule = result.schedule;
@@ -255,7 +255,7 @@ function burstActivationSlots(result: { schedule: BurstSchedule | null }, ctx: M
 }
 
 /**
- * エレグ編（V-0504）: 最初の n 回の発動の段の表示（I・II は六角形の替わり目、III はタイマーの 00.00。activationVideoFrameOf）の、
+ * 最初の n 回の発動の段の表示（I・II は六角形の替わり目、III はタイマーの 00.00（V-0504）。activationVideoFrameOf）の、
  * 戦闘開始からの録画の動画のフレーム（それより前の発動の止まり・フルバーストの入りの止まりを含む）
  */
 function burstActivationVideoFrames(result: { schedule: BurstSchedule | null }, ctx: MetricContext): number[] {
@@ -299,7 +299,7 @@ function ctEndToFullBurstStart(result: { schedule: BurstSchedule | null }, ctx: 
 }
 
 /**
- * 2 段目の段 12（V-0543）: 枠の n 回目（0 始まり。カンマ区切りの並びも書ける）の発動の印（I・II は六角形の替わり目、III は 00.00。
+ * 枠の n 回目（0 始まり（V-0543）。カンマ区切りの並びも書ける）の発動の印（I・II は六角形の替わり目、III は 00.00。
  * activationVideoFrameOf）から、その発動の CT の明け（発動 + CT − 維持の CT▼ で縮めた分 − 次の発動までに即時の CT▼ で縮んだ分）までの
  * 動画のフレーム数の列。録画では、次の回の右のバースト欄の顔の CT の秒の表示が消えたフレームから、この回の替わり目を引いた値
  */
@@ -344,8 +344,9 @@ function chainStepIntervals(result: { schedule: BurstSchedule | null }, ctx: Met
 }
 
 /**
- * アニス：スター編（plan/design-anis-star-gauge-timing.md 7 節の V-B）: 枠の n 発目（1 始まり）が溜めたゲージ（バーの最大に対する %。
- * 発・射撃ごとの倍率ダメージのヒット・その発が壊した障害物の物のゲージの合計。着弾のフレームは問わない）
+ * 枠の n 発目（1 始まり）が溜めたゲージ（バーの最大に対する %。
+ * 発・射撃ごとの倍率ダメージのヒット・その発が壊した障害物の物のゲージの合計。着弾のフレームは問わない。
+ * plan/design-anis-star-gauge-timing.md 7 節の V-B）
  */
 function shotGauge(result: SimResult, ctx: MetricContext): number {
   const slotIndex = slotIndexOf(ctx);
@@ -359,8 +360,8 @@ function shotGauge(result: SimResult, ctx: MetricContext): number {
 }
 
 /**
- * シンの S2 編（V-0638）: 枠の 1 発のゲージ（同じ発の記録の合計）の平均を、フルバーストの終わりから frames の間（[終わり, 終わり + frames)）に
- * 撃った発と、ほかの時（フルバーストの間とその後の frames を除く）に撃った発で比べた比（小数 4 桁）。録画では、その枠だけが当たった
+ * 枠の 1 発のゲージ（同じ発の記録の合計）の平均を、フルバーストの終わりから frames の間（[終わり, 終わり + frames)）に
+ * 撃った発と、ほかの時（フルバーストの間とその後の frames を除く）に撃った発で比べた比（小数 4 桁）（V-0638）。録画では、その枠だけが当たった
  * フレームの BURST バーの段の平均の比と比べる。どちらかに発が無ければ誤り
  */
 function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): number {
@@ -384,8 +385,9 @@ function shotGaugeRatioAfterFullBurst(result: SimResult, ctx: MetricContext): nu
 }
 
 /**
- * アニス：スター編（plan/design-anis-star-gauge-timing.md 3.5 節・7 節の V-A）: 録画の窓の終わりを跨ぐ発（窓の中で撃ち、窓の後に着いた発）が
- * 溜めたゲージ（バーの最大に対する %。発と射撃ごとの倍率ダメージのヒットの合計）と比べる、モデルの発 1 つ分のゲージ。
+ * 録画の窓の終わりを跨ぐ発（窓の中で撃ち、窓の後に着いた発）が溜めたゲージ（バーの最大に対する %。
+ * 発と射撃ごとの倍率ダメージのヒットの合計。plan/design-anis-star-gauge-timing.md 3.5 節・7 節の V-A）と比べる、
+ * モデルの発 1 つ分のゲージ。
  * 窓の順に、窓の始まりより後に撃って窓の終わりより後（終わりのフレームを含む）に着いた最初の発（跨ぐ発か、窓の後に撃った発）の値。
  * モデルにどの窓の終わりを跨ぐ発があるかは発の位相で 1f ごとに入れ替わるので、跨ぐ発に限らない（V-0189 の論点 3 の X1）。
  * 跨ぐ発も着弾のフレームに溜めること（C-0259）は、1 パス目の単体テストで見る。窓の後に着く発が無ければ誤り
@@ -415,8 +417,8 @@ function videoFramesBetween(schedule: SimResult['schedule'], ctx: MetricContext)
 }
 
 /**
- * バーストの着弾編（plan/design-burst-landing.md）: 枠のバーストの、発動からヒット（バーストの倍率ダメージ。分かれたヒットは 1 ヒット目）までの
- * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す。起点は六角形の替わり目
+ * 枠のバーストの、発動からヒット（バーストの倍率ダメージ。分かれたヒットは 1 ヒット目）までの
+ * 動画のフレーム数（発動の順に最初の count 回）。フルバーストの入りの止まりは videoFrameOf で足す。起点は六角形の替わり目（plan/design-burst-landing.md）
  * （本当の発動の 5f 後。I・II の発動自身の止まりを含める。activationVideoFrameOf）
  */
 function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
@@ -429,7 +431,7 @@ function burstHitDelays(result: SimResult, ctx: MetricContext): number[] {
 }
 
 /**
- * backlog 2-30: 枠の n 回目（0 始まり）のバーストの発動の前の最後の満タン（BURST バーが消えた発）から、その発動のヒット（分かれたヒットは
+ * 枠の n 回目（0 始まり）のバーストの発動の前の最後の満タン（BURST バーが消えた発）から、その発動のヒット（分かれたヒットは
  * 1 ヒット目）までの動画のフレーム数の列。n はカンマ区切りの並び（"0,2,3"）も書ける。burstHitDelays と違い、起点に六角形の替わり目を
  * 使わないので、遅れの定数を足す起点（本当の発動か替わり目か）の差が出る。ゲージが律速のチェーン（満タンから I まで 23f。C-0285）で比べる
  */
@@ -453,7 +455,7 @@ function gaugeFullToBurstHit(result: SimResult, ctx: MetricContext): number[] {
  * V-0382・V-0390）から、効果の発火（effectFrameOf）以後の枠の最初の発までのモデルのフレーム数（ゲーム内の時間。フルバーストの
  * 入りの止まりを含まない）。効果の乗った最初の発の時刻を、動画のフレームの差（止まりの後の発は 22f を引く）と比べる。fromShot が
  * true なら起点を発動の後の最初の発にする（発の間隔とリロードの位置によらず、効果の遅れが無ければ 0）。band（的の距離帯）があれば、n は
- * 効果の発火のフレームの着地点がその帯の発動だけを数える（炸裂弾の時刻編。plan/design-eunhwa-tu-burst-shot-timing.md 7 節。モデルと録画で
+ * 効果の発火のフレームの着地点がその帯の発動だけを数える（plan/design-eunhwa-tu-burst-shot-timing.md 7 節。モデルと録画で
  * バーストの回と的のジャンプの位相がそろわないので、帯で決まる値を帯どうしで比べる）
  */
 function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
@@ -468,7 +470,7 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
   const activation = mine[Number(ctx.args.n)];
   if (activation === undefined) throw new Error(`${String(ctx.args.n)} 回目の発動が無い`);
   const log = slotOf(result.shots, ctx);
-  // ナユタ編（V-0666）: weaponChange が true なら、使用武器の変更の発だけを数える（変更の窓の前の基礎の武器の発を拾わない）
+  // weaponChange が true なら、使用武器の変更の発だけを数える（変更の窓の前の基礎の武器の発を拾わない）（V-0666）
   const frames = ctx.args.weaponChange === true ? (log.weaponChangeShotFrames ?? []) : log.frames;
   const firstFrom = (frame: number) => {
     const shot = frames.find((f) => f >= frame);
@@ -476,7 +478,7 @@ function burstEffectFirstShot(result: SimResult, ctx: MetricContext): number {
     return shot;
   };
   const origin = ctx.args.fromShot === true ? firstFrom(activation.frame) : hexagonFrameOf(activation);
-  // プリバティ編（V-0661）: afterHits が true なら、バーストの倍率ダメージの最後のヒットの次のフレーム以後の最初の発（発動の後に撃たない間の明け）
+  // afterHits が true なら、バーストの倍率ダメージの最後のヒットの次のフレーム以後の最初の発（発動の後に撃たない間の明け）（V-0661）
   const from = ctx.args.afterHits === true ? hitFramesOf(activation).at(-1)! + 1 : effectFrameOf(activation);
   return firstFrom(from) - origin;
 }

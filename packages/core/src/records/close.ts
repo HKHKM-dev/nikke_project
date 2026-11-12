@@ -69,7 +69,7 @@ export function closeChecks(input: CloseInput): CloseResult {
           '合う仮説が 2 つ以上',
           `、予測と合う仮説が ${input.predictionFits!.length} つ（${input.predictionFits!.join('・')}）`,
         );
-      // 最小構成の検査（plan/design-minimal-relevance.md 11 節。2026-10-08 のオーナー決定）: この記録の観測値の組に警告があれば止める。
+      // 最小構成の検査（plan/design-minimal-relevance.md 11 節）: この記録の観測値の組に警告があれば止める。
       // 既存の確定の結論を指す記録もあるので、ほかの記録の観測値の組の警告は注意にとどめる（records:check でも止めない）
       const warned = (input.minimal.get(id) ?? []).filter((w) => w.elements.length > 0);
       const ownWarned = warned.filter((w) => ownIds.has(w.observation));
@@ -104,7 +104,7 @@ export function closeChecks(input: CloseInput): CloseResult {
         );
     }
   }
-  // 撮る前の予測は確定の条件にしない（plan/design-investigation-review.md 1 節。2026-10-10 のオーナーの決定）ので、予測の順は見ない
+  // 撮る前の予測は確定の条件にしない（plan/design-investigation-review.md 1 節）ので、予測の順は見ない
   if ((v.sections.get('次に撮るもの') ?? '').trim() === '')
     errors.push(`${at}: 「次に撮るもの」が空（「なし」でもよい）`);
   if ((v.sections.get('分かったこと・分からないこと') ?? '').trim() === '') {

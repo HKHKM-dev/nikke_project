@@ -23,7 +23,7 @@ import type {
 
 export const CHARACTER_DATA_DIR = 'characters';
 export const SKILL_DATA_DIR = 'skills';
-/** Stage 12: 育成のマスタ（gear / affection / cubes / collections / recycleRoom） */
+/** 育成のマスタ（gear / affection / cubes / collections / recycleRoom） */
 export const MASTER_DATA_DIR = 'masters';
 
 export type LoadOptions = {
@@ -127,7 +127,7 @@ function assertFormatVersion(name: string, value: { formatVersion?: unknown }): 
     throw new Error(`master ${name}: unsupported formatVersion ${String(value.formatVersion)}`);
 }
 
-/** Stage 12: 育成のマスタをまとめて読む（画面の起動時に 1 回）。Stage 13 で OL の上昇値の表を足した */
+/** 育成のマスタ（OL の上昇値の表を含む）をまとめて読む（画面の起動時に 1 回） */
 export async function loadBuildMasters(options: LoadOptions = {}): Promise<BuildMasters> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   const load = <T extends { formatVersion?: unknown }>(name: keyof BuildMasters) =>
@@ -146,10 +146,10 @@ export async function loadBuildMasters(options: LoadOptions = {}): Promise<Build
   return { gear, affection, cubes, collections, recycleRoom, overload };
 }
 
-/** Stage 15: 敵のプリセット（data/enemies.json） */
+/** 敵のプリセット（data/enemies.json） */
 export const ENEMY_PRESETS_PATH = 'enemies.json';
 
-/** Stage 15: 敵のプリセットを読んで検証する（画面の起動時に 1 回） */
+/** 敵のプリセットを読んで検証する（画面の起動時に 1 回） */
 export async function loadEnemyPresets(options: LoadOptions = {}): Promise<EnemyPresetMaster> {
   const { baseUrl = '/', fetchImpl = fetch } = options;
   return parseEnemyPresets(await fetchJson<unknown>(joinUrl(baseUrl, ENEMY_PRESETS_PATH), fetchImpl));

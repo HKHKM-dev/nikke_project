@@ -4,7 +4,7 @@ import type { ResolvedEffect } from './resolve.ts';
 import type { BuffStat } from './types.ts';
 
 /**
- * Stage 11 モダニア: 使用武器の変更（殲滅モード）で持ち替えた武器。shot は基礎の武器を写して、1 発のダメージとレートを差し替えたもの
+ * 使用武器の変更（殲滅モード）で持ち替えた武器。shot は基礎の武器を写して、1 発のダメージとレートを差し替えたもの
  * （CDN に無いパラメータは仮の定数。skills/resolve.ts の changedWeaponShot）
  */
 export type ChangedWeapon = {
@@ -13,30 +13,30 @@ export type ChangedWeapon = {
   /** 1 発のヒット数（shot.damage はヒット数ぶんを合計した武器倍率。表示用に残す） */
   hits: number;
   shot: ShotParams;
-  /** 防御力無視ダメージ編: 変更後の武器の 1 発が防御力無視ダメージか（WeaponChangeEffect.trueDamage） */
+  /** 変更後の武器の 1 発が防御力無視ダメージか（WeaponChangeEffect.trueDamage） */
   trueDamage?: true;
   /** 変更後の武器の発が発射体の爆発を持つか（WeaponChangeEffect.projectileExplosion。発射体爆発ダメージ▲が乗る） */
   projectileExplosion?: true;
-  /** ツバイ編: 変更後の武器の発が貫通特化か（WeaponChangeEffect.pierce。貫通ダメージ▲が乗る） */
+  /** 変更後の武器の発が貫通特化か（WeaponChangeEffect.pierce。貫通ダメージ▲が乗る） */
   pierce?: true;
   /**
-   * 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 変更の窓が射手に見える最初のフレームから最初の発までの待ち
-   * （WeaponChangeEffect.firstShotDelayFrames）。省略は weaponChangeShooter の待ち
+   * 変更の窓が射手に見える最初のフレームから最初の発までの待ち
+   * （WeaponChangeEffect.firstShotDelayFrames。plan/design-skill-stage11.md 2.1 節）。省略は weaponChangeShooter の待ち
    */
   firstShotDelayFrames?: number;
-  /** レッドフード編: 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
+  /** 持ち替えから最初の発まで（WeaponChangeEffect.firstShotAfterSwapFrames） */
   firstShotAfterSwapFrames?: number;
-  /** 2 段目の段 11 の PR 4: 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
+  /** 変更後の武器は撃っても残弾を減らさない（WeaponChangeEffect.infiniteAmmo） */
   infiniteAmmo?: true;
-  /** レッドフード編: 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */
+  /** 変更後の武器の解放の長さ（フレーム。端数あり。WeaponChangeEffect.chargeReleaseSeconds） */
   chargeReleaseFrames?: number;
   /**
    * 同: 的の表の変更後の武器の行の鍵（`<resourceId>:<スロット>`。coreHitRate.weaponChanges・bulletHitRate.weaponChanges）。どの変更も
-   * 持ち、行のある変更（即着弾に替えた変更と、ナユタ編のチャージ武器に替えた変更）は通常攻撃のコア命中率・弾丸命中率をこの行から引く
+   * 持ち、行のある変更（即着弾に替えた変更と、チャージ武器に替えた変更）は通常攻撃のコア命中率・弾丸命中率をこの行から引く
    * （行が無ければ基礎の武器の行のまま）
    */
   targetRowKey?: string;
-  /** ナユタ編（plan/design-nayuta.md 2.4 節）: チャージ時間の固定（WeaponChangeEffect.chargeTimeFixed）。shot.chargeTime がチャージ速度▲を受けない */
+  /** チャージ時間の固定（WeaponChangeEffect.chargeTimeFixed。plan/design-nayuta.md 2.4 節）。shot.chargeTime がチャージ速度▲を受けない */
   fixedChargeTime?: true;
 };
 
@@ -82,108 +82,108 @@ export type BuffTotals = {
    */
   chargeDamage: number;
   /**
-   * ヘルム編: チャージダメージ倍率の加算。素のフルチャージ倍率に (1 + chargeDamageMultiplier) を掛けて四捨五入する（スキルと
+   * チャージダメージ倍率の加算。素のフルチャージ倍率に (1 + chargeDamageMultiplier) を掛けて四捨五入する（スキルと
    * コレクションの「チャージダメージ X% 倍率▲」。C-0099・C-0122・C-0126）
    */
   chargeDamageMultiplier: number;
-  /** Stage 8: 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage + damageTaken) ÷ (1 + damageTaken) を掛ける（録画 0021 で攻撃ダメージ▲と別枠の乗数と確認。受けるダメージ▲とは 1 つの和。C-0767） */
+  /** 分配ダメージの加算。distributed の倍率ダメージにだけ (1 + distributedDamage + damageTaken) ÷ (1 + damageTaken) を掛ける（録画 0021 で攻撃ダメージ▲と別枠の乗数と確認。受けるダメージ▲とは 1 つの和。C-0767） */
   distributedDamage: number;
   /**
-   * 受けるダメージ編: 敵の受けるダメージの加算。与ダメージのすべて（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ）に
+   * 敵の受けるダメージの加算。与ダメージのすべて（通常攻撃・射撃ごとの倍率ダメージ・倍率ダメージ・持続ダメージ）に
    * 別枠の乗数 (1 + damageTaken) を掛ける（C-0138）
    */
   damageTaken: number;
   /**
-   * 2 段目の段 2（plan/design-skill-stage2.md）: 敵の防御力▼の加算（割合）。与ダメージの式で、敵の防御力を (1 − Σ) 倍にしてから
+   * 敵の防御力▼の加算（割合。plan/design-skill-stage2.md）。与ダメージの式で、敵の防御力を (1 − Σ) 倍にしてから
    * 引く（damage.ts の defenceAfterDown。0〜1 に収める）
    */
   enemyDefenseDown: number;
   /**
-   * マスト編（plan/design-mast.md 2.2 節）: 発動者基準の敵の防御力▼の加算（防御力の値。Σ(発動者のバフ前防御力 × value)）。割合の▼の後に
+   * 発動者基準の敵の防御力▼の加算（防御力の値。Σ(発動者のバフ前防御力 × value)。plan/design-mast.md 2.2 節）。割合の▼の後に
    * 引き、0 で止める（damage.ts の defenceAfterDown。順と 0 で止めるのは未確定の仮の形）
    */
   enemyDefenseDownFlat: number;
   /**
-   * アニス：スター S2・バースト編: 発射体爆発ダメージの加算。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
+   * 発射体爆発ダメージの加算。発射体の爆発を持つ武器（RL）の通常攻撃にだけ掛ける（式の中の置き場所は
    * damage.ts の PROJECTILE_EXPLOSION_BUCKET。plan/design-anis-star-s2-burst.md 2.1 節）
    */
   projectileExplosionDamage: number;
   /**
-   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.3 節）: 発射体付着ダメージの加算。projectileStick の印の付いた倍率ダメージ
+   * 発射体付着ダメージの加算（plan/design-skill-stage12.md 2.3 節）。projectileStick の印の付いた倍率ダメージ
    * （粘着榴弾の付着）にだけ掛ける（式の中の置き場所は damage.ts の PROJECTILE_STICK_BUCKET）
    */
   projectileStickDamage: number;
   /**
-   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 「有利コードのダメージ適用」の窓の数（> 0 なら、敵のコードが自分の
-   * コードの有利でなくても有利として扱う。効果の enemyElement でそのコードの敵に限ってある。element.ts）
+   * 「有利コードのダメージ適用」の窓の数（> 0 なら、敵のコードが自分の
+   * コードの有利でなくても有利として扱う。効果の enemyElement でそのコードの敵に限ってある。element.ts。plan/design-skill-stage12.md 2.4 節）
    */
   elementAdvantage: number;
   /**
-   * 持続ダメージ▲編: 持続ダメージの加算。その枠の持続ダメージ（dot）の tick にだけ掛ける（式の中の置き場所は skills/burstDamage.ts の
+   * 持続ダメージの加算。その枠の持続ダメージ（dot）の tick にだけ掛ける（式の中の置き場所は skills/burstDamage.ts の
    * SUSTAINED_DAMAGE_PLACEMENT。plan/design-sustained-damage-up.md 3 節）
    */
   sustainedDamage: number;
-  /** Stage 8: バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
+  /** バーストゲージのチャージ速度の加算。この枠の射撃で溜まるゲージに (1 + burstGaugeSpeed) を掛ける（passive のみ） */
   burstGaugeSpeed: number;
   /**
-   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.5 節）: 順番攻撃ダメージの加算。「N 回順番に攻撃」の倍率ダメージにだけ
+   * 順番攻撃ダメージの加算（plan/design-new-chars-1029.md 5.5 節）。「N 回順番に攻撃」の倍率ダメージにだけ
    * 攻撃ダメージ▲と同じ和に足す（skills/burstDamage.ts の computeBurstHit。V-0545）
    */
   sequentialAttackDamage: number;
   /** 蓄積して爆発するダメージ（plan/design-accumulate-explosion.md 2.3 節）: 蓄積爆破のダメージ蓄積割合の加算。accumulate（capOrExpire）の割合に足す（C-0903） */
   accumulateRatio: number;
   /**
-   * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節）: バーストスキルのクールタイム▼ の秒（維持の付いた形。T4。scaling 'flat'）。
+   * バーストスキルのクールタイム▼ の秒（維持の付いた形。T4。scaling 'flat'。plan/design-skill-stage11.md 3.3 節）。
    * 1 パス目が発動のフレームに件の一覧から読む（frame/firstPass.ts）。区間の合計は表示だけで、ダメージの式は読まない
    */
   burstCooldown: number;
-  /** Stage 10: 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
+  /** 最大装弾数の比率の加算（frame/firing.ts の effectiveMaxAmmo）。ダメージの式は読まない */
   maxAmmoRatio: number;
   /**
-   * 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 最大HP▲ の比率の加算。その枠の最終最大HP = バフ前の最大HP ×
+   * 最大HP▲ の比率の加算（plan/design-skill-stage6.md 2.4 節）。その枠の最終最大HP = バフ前の最大HP ×
    * (1 + maxHpRatio)。ダメージの式は読まず、その枠が発動者の casterFinalMaxHp だけが読む（skills/timeline.ts・skills/holders.ts）
    */
   maxHpRatio: number;
   /**
-   * 2 段目の段 7（plan/design-skill-stage7.md 1.2 節）: 防御力▲ の比率の加算。その枠の最終防御力 = バフ前の防御力 × (1 + defenseRatio)。
+   * 防御力▲ の比率の加算（plan/design-skill-stage7.md 1.2 節）。その枠の最終防御力 = バフ前の防御力 × (1 + defenseRatio)。
    * ダメージの式は読まず、対象の絞り込み「自分より最終防御力が低い味方」だけが読む（skills/holders.ts）
    */
   defenseRatio: number;
-  /** Stage 10: 最大装弾数の発数の加算（scaling 'flat'） */
+  /** 最大装弾数の発数の加算（scaling 'flat'） */
   maxAmmoFlat: number;
-  /** Stage 10: リロード速度の加算 */
+  /** リロード速度の加算 */
   reloadSpeed: number;
-  /** グレイブ編（plan/design-grave.md 2.3 節）: リロード比率の加算（分割リロードの 1 段の割合に (1 + Σ) を掛ける。▼は負） */
+  /** リロード比率の加算（分割リロードの 1 段の割合に (1 + Σ) を掛ける。▼は負。plan/design-grave.md 2.3 節） */
   reloadRatio: number;
-  /** Stage 10: チャージ速度の加算 */
+  /** チャージ速度の加算 */
   chargeSpeed: number;
   /** チャージ速度▲の内訳（足した順）。chargeSpeed と同じものを 1 件ずつ持つ。超過分の変換（chargeSpeedOverflowDamage）だけが読む */
   chargeSpeedParts: readonly ChargeSpeedPart[];
   /**
-   * レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換の割合の加算（「超過した値の X% のチャージダメージ▲」の X）。
+   * チャージ速度の超過分の変換の割合の加算（「超過した値の X% のチャージダメージ▲」の X。plan/design-red-hood.md 2.4 節）。
    * フルチャージの発で max(0, chargeSpeed − 1) × この値をチャージダメージ▲に足す（applyChargeBuffs）
    */
   chargeSpeedOverflow: number;
   /**
-   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.2 節）: 攻撃速度の加算。レートを蓄積して撃つ武器の発と発の間を、レート × (1 + Σ) に
+   * 攻撃速度の加算（plan/design-skill-stage9.md 1.2 節）。レートを蓄積して撃つ武器の発と発の間を、レート × (1 + Σ) に
    * する（frame/firing.ts の FiringParams.rateScale。C-0600）。ダメージの式は読まない
    */
   attackSpeed: number;
   /**
-   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.6 節）: マシンガン立ち上げ速度の加算。MG のレートの上がり方に (1 + Σ) を
+   * マシンガン立ち上げ速度の加算（plan/design-new-chars-1029.md 5.6 節）。MG のレートの上がり方に (1 + Σ) を
    * 掛ける（frame/firing.ts の FiringParams.spinUpScale。読みは仮説）。ダメージの式は読まない
    */
   spinUpSpeed: number;
-  /** Stage 11 アリス編: チャージ時間から引く秒数（発動者基準のチャージ速度。scaling casterChargeTime） */
+  /** チャージ時間から引く秒数（発動者基準のチャージ速度。scaling casterChargeTime） */
   chargeTimeFlat: number;
   /**
-   * アニス：スター S2・バースト編: 固定したチャージ時間の秒数（0 は固定なし）。有ればチャージ速度・発動者基準のチャージ速度を無視して
-   * この秒数でチャージする（frame/firing.ts。plan/design-anis-star-s2-burst.md 2.3 節）。2 段目の段 14 の PR 3: 足し合わせず、状態の中身の
+   * 固定したチャージ時間の秒数（0 は固定なし）。有ればチャージ速度・発動者基準のチャージ速度を無視して
+   * この秒数でチャージする（frame/firing.ts。plan/design-anis-star-s2-burst.md 2.3 節）。足し合わせず、状態の中身の
    * 固定が timed の固定より勝つ（applyResolvedEffect）
    */
   fixedChargeTime: number;
   /**
-   * Stage 11 モダニア: 命中率の加算。ダメージの式も射手も読まない（全弾命中の前提）。区間の鍵にも入れず、
+   * 命中率の加算。ダメージの式も射手も読まない（全弾命中の前提）。区間の鍵にも入れず、
    * 「自分が命中率増加状態なら」の条件（timed の condition）と表示にだけ使う
    */
   hitRate: number;
@@ -192,25 +192,25 @@ export type BuffTotals = {
    * plan/design-maids.md 8.4 節）
    */
   hitRateUp: number;
-  /** Stage 11 モダニア: 装弾数無限の窓の数（> 0 なら残弾を減らさない。射撃に効く） */
+  /** 装弾数無限の窓の数（> 0 なら残弾を減らさない。射撃に効く） */
   infiniteAmmo: number;
-  /** Stage 13: 有利コードの攻撃ダメージの加算。属性有利のときだけ (1.1 + elementDamage)（element.ts） */
+  /** 有利コードの攻撃ダメージの加算。属性有利のときだけ (1.1 + elementDamage)（element.ts） */
   elementDamage: number;
-  /** Stage 13: コアダメージの加算。コア命中の加算項 (コア倍率 − 1 + coreDamage)（通常攻撃だけ） */
+  /** コアダメージの加算。コア命中の加算項 (コア倍率 − 1 + coreDamage)（通常攻撃だけ） */
   coreDamage: number;
-  /** Stage 13: 通常攻撃ダメージ倍率の加算。通常攻撃の武器倍率に (1 + normalAttackDamage) を掛けて四捨五入する（C-0121。damage.ts） */
+  /** 通常攻撃ダメージ倍率の加算。通常攻撃の武器倍率に (1 + normalAttackDamage) を掛けて四捨五入する（C-0121。damage.ts） */
   normalAttackDamage: number;
-  /** ヘルム編: 通常攻撃のクリティカル確率の加算。通常攻撃の会心率にだけ足す（倍率ダメージ・バーストスキルには足さない。damage.ts） */
+  /** 通常攻撃のクリティカル確率の加算。通常攻撃の会心率にだけ足す（倍率ダメージ・バーストスキルには足さない。damage.ts） */
   normalCritRate: number;
   /**
-   * 防御力無視ダメージ編: 防御力無視ダメージ▲の加算。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃・trueDamage の
+   * 防御力無視ダメージ▲の加算。防御力無視ダメージの発（trueDamageConversion の窓の通常攻撃・trueDamage の
    * 使用武器の変更）にだけ掛ける（式の中の置き場所は damage.ts の TRUE_DAMAGE_BUCKET。plan/design-true-damage-element.md 3.1 節）
    */
   trueDamage: number;
-  /** 防御力無視ダメージ編: 「通常攻撃が防御力無視ダメージに変化」の窓の数（> 0 なら通常攻撃の基礎に防御力を引かない） */
+  /** 「通常攻撃が防御力無視ダメージに変化」の窓の数（> 0 なら通常攻撃の基礎に防御力を引かない） */
   trueDamageConversion: number;
   /**
-   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 適正最小射程距離▲の和。状態だけの stat で、条件が自動の枠の
+   * 適正最小射程距離▲の和（plan/design-agent-bunny.md 2.1 節）。状態だけの stat で、条件が自動の枠の
    * 距離ボーナスを出し直すのに使う（frame/landing.ts の landingPartsWith）
    */
   minEffectiveRange: number;
@@ -219,13 +219,13 @@ export type BuffTotals = {
   /** 同: 貫通ダメージ▲の和（貫通特化の効いている通常攻撃にだけ。damage.ts） */
   pierceDamage: number;
   /**
-   * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.2 節）: ペレット数▲の和（個）。与ダメージの式は読まない（1 発の
+   * ペレット数▲の和（個。plan/design-dorothy-serendipity.md 2.2 節）。与ダメージの式は読まない（1 発の
    * 総ダメージは変わらない）。1 パス目のペレットの命中の量・ゲージと、照合の 1 ペレットの値が読む（pelletsPerShot）
    */
   pelletCount: number;
   /** 同 2.1 節: 「ペレットの数を 1 個に固定」の窓の数（> 0 なら 1 発のペレットは 1 個。ペレット数▲より勝つ） */
   singlePellet: number;
-  /** Stage 11 モダニア: 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
+  /** 使用武器の変更（無ければ null）。射手とダメージの式が基礎の武器の代わりに使う */
   weapon: ChangedWeapon | null;
 };
 
@@ -315,7 +315,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   burstCooldown: 'burstCooldown',
   maxAmmo: 'maxAmmoRatio',
   maxHp: 'maxHpRatio',
-  // 2 段目の段 11 の PR 2: 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
+  // 最大HP のみ▲ も最終最大HP には同じに足す（HP の割合を下げる読みは未実装。skills/types.ts の BUFF_STATS）
   maxHpOnly: 'maxHpRatio',
   defense: 'defenseRatio',
   reloadSpeed: 'reloadSpeed',
@@ -339,7 +339,7 @@ const RATIO_FIELD: Record<BuffStat, Exclude<keyof BuffTotals, 'weapon' | 'attack
   singlePellet: 'singlePellet',
 };
 
-/** Stage 11 モダニア: stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
+/** stat の合計（「自分が 〈stat〉 増加状態なら」の判定用） */
 export function statTotal(totals: BuffTotals, stat: BuffStat): number {
   return totals[RATIO_FIELD[stat]];
 }
@@ -394,7 +394,7 @@ function sourceKeyOf(effect: { source?: ResolvedEffect['source'] }): string {
 export type AppliedBuff = { totals: BuffTotals; appliedAmount: number };
 
 /**
- * 2 段目の段 19 の PR 2（V-0627）: 攻撃力の固定加算の元のバフ前攻撃力。copyTopAttack は、枠のうちバフ前攻撃力が最も高い枠の値
+ * 攻撃力の固定加算の元のバフ前攻撃力（V-0627）。copyTopAttack は、枠のうちバフ前攻撃力が最も高い枠の値
  * （自分も候補。空枠は除く。編成で決まり、戦闘の間は動かない）、ほかは発動者の値
  */
 export function fixedAttackBaseOf(
@@ -410,12 +410,12 @@ export function fixedAttackBaseOf(
 
 /**
  * 解決済みの効果 1 件を totals に足す。単位の判断（比率か実数か）はここに閉じ込める。
- * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、flat（Stage 10。maxAmmo だけ）は value を発数として
+ * casterAttack は 発動者のバフ前攻撃力 × value を固定加算し、flat（maxAmmo だけ）は value を発数として
  * maxAmmoFlat に加算し、それ以外は value を比率として加算する。
- * 2 段目の段 6（plan/design-skill-stage6.md 1.3 節）: casterFinalMaxHp は 発動者の最終最大HP（casterMaxHp）× value を攻撃力に
- * 固定加算する（casterAttack と同じ置き場所）。casterMaxHp が無ければ RangeError（黙って 0 にしない）。
- * マスト編（plan/design-mast.md 2.2 節）: casterDefence は 発動者のバフ前防御力（casterBaseDefence）× value を敵の防御力から引く量
- * （enemyDefenseDownFlat）に足す。casterBaseDefence が無ければ RangeError
+ * casterFinalMaxHp は 発動者の最終最大HP（casterMaxHp）× value を攻撃力に
+ * 固定加算する（casterAttack と同じ置き場所。plan/design-skill-stage6.md 1.3 節）。casterMaxHp が無ければ RangeError（黙って 0 にしない）。
+ * casterDefence は 発動者のバフ前防御力（casterBaseDefence）× value を敵の防御力から引く量
+ * （enemyDefenseDownFlat）に足す（plan/design-mast.md 2.2 節）。casterBaseDefence が無ければ RangeError
  */
 export function applyResolvedEffect(
   totals: BuffTotals,
@@ -430,7 +430,7 @@ export function applyResolvedEffect(
   casterMaxHp?: number,
   casterBaseDefence?: number,
 ): AppliedBuff {
-  // Stage 11 モダニア: 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
+  // 使用武器の変更は値を足さず、武器を差し替える（1 体に 1 つ。後から付いたほうを使う）
   if (effect.stat === 'weapon') {
     return { totals: { ...totals, weapon: effect.weapon ?? null }, appliedAmount: effect.value };
   }
@@ -462,11 +462,11 @@ export function applyResolvedEffect(
     // value は解決時に 発動者の基礎チャージ時間 × 比率 の秒数にしてある（skills/resolve.ts）
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
   }
-  // 対象の語彙編: 「チャージ時間 X 秒▼」（chargeSpeed の flat。値は秒）は、発動者基準のチャージ速度と同じく秒数を引く
+  // 「チャージ時間 X 秒▼」（chargeSpeed の flat。値は秒）は、発動者基準のチャージ速度と同じく秒数を引く
   if (effect.scaling === 'flat' && effect.stat === 'chargeSpeed') {
     return { totals: { ...totals, chargeTimeFlat: totals.chargeTimeFlat + effect.value }, appliedAmount: effect.value };
   }
-  // 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: チャージ時間の固定は秒を足し合わせない。状態の中身の固定（whileState を持つ。
+  // チャージ時間の固定は秒を足し合わせない（plan/design-skill-stage14.md 2.7 節）。状態の中身の固定（whileState を持つ。
   // セブンスドワーフ・フルアクティブの 3.2 秒）は上書きし、timed の固定（S2 の戦闘開始時の 1.2 秒）は固定がまだ無い時だけ入れる。どちらも
   // 自分にだけ付き、1 つの定義に 1 つずつまで（skills/parse/crossChecks.ts の validateFixedChargeTimeCount）なので、当てる順によらず「状態が付いている間は状態の秒」になる。
   // 状態のスタック（使用回数）の段の数だけ当てても同じ値
@@ -475,7 +475,7 @@ export function applyResolvedEffect(
       effect.whileState !== undefined || totals.fixedChargeTime === 0 ? effect.value : totals.fixedChargeTime;
     return { totals: { ...totals, fixedChargeTime: fixed }, appliedAmount: effect.value };
   }
-  // 2 段目の段 11 の PR 3: 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）。ドロシー：セレンディピティ編: ペレット数▲
+  // 「バーストスキルクールタイム X 秒▼」（burstCooldown の flat。値は秒）と、ペレット数▲
   // （pelletCount の flat。値は個の数）。どちらも同じ名前の欄に足す
   if (effect.scaling === 'flat' && (effect.stat === 'burstCooldown' || effect.stat === 'pelletCount')) {
     const stat = effect.stat;
@@ -491,7 +491,7 @@ export function applyResolvedEffect(
 }
 
 /**
- * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 1 発のペレットの数。固定（singlePellet）が効いていれば 1、
+ * 1 発のペレットの数（plan/design-dorothy-serendipity.md 2.1・2.2 節）。固定（singlePellet）が効いていれば 1、
  * 無ければ基礎の数にペレット数▲を足す（固定は▲より勝つ。C-1077）。ペレットが 1 個の武器（SG 以外）には▲を足さない
  */
 export function pelletsPerShot(shotCount: number, buffs: Pick<BuffTotals, 'pelletCount' | 'singlePellet'>): number {
@@ -534,13 +534,13 @@ export function roundedAttack(
 
 /**
  * { rate: min(1, crit.rate + critRate), damage: crit.damage + critDamage }。
- * 順位の発数編: 会心率は確率なので 1 で頭打ち（plan/design-ranked-shot-duration.md 7 節の論点 2）
+ * 会心率は確率なので 1 で頭打ち（plan/design-ranked-shot-duration.md 7 節の論点 2）
  */
 export function applyCritBuffs(crit: CharacterData['crit'], buffs: BuffTotals): CharacterData['crit'] {
   return { rate: capCritRate(crit.rate + buffs.critRate), damage: crit.damage + buffs.critDamage };
 }
 
-/** 順位の発数編: 会心率（確率）の上限 1 */
+/** 会心率（確率）の上限 1 */
 export function capCritRate(rate: number): number {
   return Math.min(1, rate);
 }
@@ -562,8 +562,8 @@ export function scaleBasisPoints(units: number, ratio: number): number {
  * charge ? 四捨五入(fullChargeDamage × (1 + chargeDamageMultiplier)) + chargeDamage : 1。倍率▲（スキル・コレクション）は
  * 足し合わせてから素のフルチャージ倍率に掛けて 1e-4 単位で丸め、足し算の▲（OL の増加など）はその後に足す（C-0122・C-0126）。
  * スキルの足し算の▲（C-0020）も OL と同じく倍率▲の後に足す（C-0134。アリスのフルバースト中）。
- * レッドフード編（plan/design-red-hood.md 2.4 節）: チャージ速度の超過分の変換は、足し算の▲に max(0, チャージ速度の和 − 1) × 割合 を足す
- * （和は効果ごとに整数の % に丸めてから足す。chargeSpeedOverflowDamage）
+ * チャージ速度の超過分の変換は、足し算の▲に max(0, チャージ速度の和 − 1) × 割合 を足す
+ * （和は効果ごとに整数の % に丸めてから足す。chargeSpeedOverflowDamage。plan/design-red-hood.md 2.4 節）
  */
 export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buffs: BuffTotals): number {
   if (!charge) return 1;
@@ -575,7 +575,7 @@ export function applyChargeBuffs(fullChargeDamage: number, charge: boolean, buff
 }
 
 /**
- * レッドフード編: チャージ速度の超過分から変換したチャージダメージ▲（変換が無いか、超えていなければ 0）。チャージ速度▲は
+ * チャージ速度の超過分から変換したチャージダメージ▲（変換が無いか、超えていなければ 0）。チャージ速度▲は
  * 効果ごと（同じ出どころの同じ値＝スタックは 1 つにまとめる）に整数の % に四捨五入してから足す（V-0640。丸めの単位と、
  * 味方からの▲を和に入れることは未確定）。チャージの長さ（chargeSpeed）は丸めない
  */

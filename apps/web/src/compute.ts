@@ -1,4 +1,4 @@
-// (B) の段 B-2（plan/design-unify-sim-calc.md 6.2 節）: 画面の計算。Web Worker（worker.ts）とテストの両方がこれを呼ぶ。
+// 画面の計算（plan/design-unify-sim-calc.md 6.2 節）。Web Worker（worker.ts）とテストの両方がこれを呼ぶ。
 // 使うのは core の関数だけ。入力（TeamInput）は構造化複製で Worker に渡り、返すのは画面が読むもの（ScreenResult）だけ
 // （plan/design-ui-rebuild.md 5.1 節。内訳は CLI の npm run sim で見る）
 import { runSimulation, simTeamResult, type ModelNote, type TeamInput, type TeamResult } from '@nikke/core';

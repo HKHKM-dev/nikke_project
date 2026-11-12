@@ -46,12 +46,12 @@ export function affectionRankMax(character: Pick<CharacterData, 'corporationSubT
 export const CUBE_LEVEL_MIN = 1;
 export const CUBE_LEVEL_MAX = 15;
 export const COLLECTION_LEVEL_MAX = 15;
-/** Stage 13: OL 装備 1 部位のオプション行の上限と、オプションの Lv の範囲 */
+/** OL 装備 1 部位のオプション行の上限と、オプションの Lv の範囲 */
 export const OVERLOAD_LINE_MAX = 3;
 export const OVERLOAD_LEVEL_MIN = 1;
 export const OVERLOAD_LEVEL_MAX = 15;
 
-/** Stage 13: OL のオプション（CDN の group id 順。data/masters/overload.json と同じ並び） */
+/** OL のオプション（CDN の group id 順。data/masters/overload.json と同じ並び） */
 export const OVERLOAD_OPTIONS: readonly OverloadOption[] = [
   'elementDamage',
   'hitRate',
@@ -65,8 +65,8 @@ export const OVERLOAD_OPTIONS: readonly OverloadOption[] = [
 ];
 
 /**
- * Stage 13: OL 装備のオプション 1 行（効果は buildEffects.ts）。position は画面の何行目か（0 始まり。2 行目を空けて 3 行目に
- * 入れるとき用。2026-10-31）。計算には効かない。省略は配列の並び
+ * OL 装備のオプション 1 行（効果は buildEffects.ts）。position は画面の何行目か（0 始まり。2 行目を空けて 3 行目に
+ * 入れるとき用）。計算には効かない。省略は配列の並び
  */
 export type OverloadLine = { option: OverloadOption; level: number; position?: number };
 /** overload は OL 装備だけ（最大 3 行。省略・空 = オプションなし）。ステータス層（攻撃力）には効かない */
@@ -124,8 +124,8 @@ export function isEmptyBuild(build: BuildInput): boolean {
 }
 
 /**
- * コア強化の +2%/段が掛かる側に入る加算。好感度（常に内）と装備（常に外）は Stage 2-A の実測。
- * キューブ・コレクション・リサイクルルームは Stage 12 の実測 (b)（plan/verification.md Stage 12 節）: リター（コア 7）の
+ * コア強化の +2%/段が掛かる側に入る加算。好感度（常に内）と装備（常に外）は実測（plan/verification.md Stage 2-A 節）。
+ * キューブ・コレクション・リサイクルルームは実測 (b)（plan/verification.md Stage 12 節）: リター（コア 7）の
  * キャラ画面 406,172 は 8 通りのうちこの組だけが一致し、Lv15 のキューブを付けると +2,780（コアの外）。ほか 7 体も差 0。
  * 宝物（SSR）のステータスもコレクションと同じくコアの外（ヘルム・ロザンナ・シュガーのキャラ画面で差 0）。
  * extra（その他加算）は未確認のまま外に置く
@@ -278,7 +278,7 @@ export function gearStat(
 }
 
 export type CombatAttackOptions = {
-  /** Stage 9 の宝物の段階（0..3）。1 以上なら宝物のステータス（treasureStats）が collection の代わりに乗る */
+  /** 宝物の段階（0..3）。1 以上なら宝物のステータス（treasureStats）が collection の代わりに乗る */
   treasurePhase?: number;
 };
 
@@ -288,7 +288,7 @@ const CORE_RATIO_KEY = { attack: 'coreAttack', hp: 'coreHp', defence: 'coreDefen
 export type CombatStat = Omit<CombatAttack, 'attack'> & { kind: StatKind; value: number };
 
 /**
- * 戦闘中のステータス（バフ前）。growth は Stage 1 の育成値（レベル・限界突破・コア）。
+ * 戦闘中のステータス（バフ前）。growth は育成値（レベル・限界突破・コア）。
  * 装備・キューブ・コレクション（宝物）はコアの外、好感度・リサイクルルームはコアの内側（実測。BUILD_CORE_APPLIES_TO）。
  * コア倍率の丸めは偶数への丸め（applyCoreRatio）。攻撃力・HP・防御力とも 13 体のキャラ画面と差 0（plan/verification.md Stage 12 節）
  */

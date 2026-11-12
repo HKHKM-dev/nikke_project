@@ -15,19 +15,19 @@ import type { BasicBurstStep, BuffTarget, ExcludeSelf, TargetDefense, TargetSqua
  * burstUsers = そのフルバーストを開いたチェーンでバーストを撃った枠（FullBurstWindow.burstUsers）。フルバーストの開始・終了のときだけ。
  * attackRank = 対象になりうる枠（効果の targetWeapon で絞った後）を発火のフレームの最終攻撃力の高い順に並べたもの。
  * topAttack の効果のときだけ（skills/ranking.ts の attackRankFor）。
- * lowerDefense = 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 発火のフレームの最終防御力が、発動者より低い枠と発動者自身
- * （同値は含まない）。targetDefense の効果のときだけ（skills/holders.ts）。
+ * lowerDefense = 発火のフレームの最終防御力が、発動者より低い枠と発動者自身
+ * （同値は含まない。plan/design-skill-stage7.md 1.4 節）。targetDefense の効果のときだけ（skills/holders.ts）。
  * どれも無い発火では null
  */
 export type FireContext = {
   burstUsers?: readonly number[];
-  /** ミント・プリカ編（plan/design-mint-prika.md 2.4 節）: { applied } のきっかけの状態の、そのフレームに付いた件を付けた枠（appliedCaster） */
+  /** { applied } のきっかけの状態の、そのフレームに付いた件を付けた枠（appliedCaster。plan/design-mint-prika.md 2.4 節） */
   appliedCasters?: readonly number[];
   attackRank?: readonly number[];
   lowerDefense?: readonly number[];
   /**
-   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.2 節）: 「残りの HP の割合が最も低い味方」の並び（発火のフレームの HP の
-   * 割合の低い順・同値は枠の若い順。fixedTargets の候補の枠だけ）。無ければ fixedTargets（枠の想定の順）
+   * 「残りの HP の割合が最も低い味方」の並び（発火のフレームの HP の
+   * 割合の低い順・同値は枠の若い順。fixedTargets の候補の枠だけ。plan/design-hp-ratio-readers.md 2.2 節）。無ければ fixedTargets（枠の想定の順）
    */
   hpRank?: readonly number[];
 } | null;
@@ -43,7 +43,7 @@ export type TargetedEffect = {
   excludeSelf?: ExcludeSelf;
   targetState?: NamedStateId;
   targetBurstStep?: BasicBurstStep;
-  /** 2 段目の段 7: 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
+  /** 「自分と自分より最終防御力が低い味方」。発火の文脈の lowerDefense で決める */
   targetDefense?: TargetDefense;
   fixedTargets?: readonly number[];
 };
@@ -61,7 +61,7 @@ function needsFixedTargets(effect: TargetedEffect): boolean {
 }
 
 /**
- * 対象の語彙編: 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠）。
+ * 編成で決まる対象の絞り込み。fixedTargets が有ればその枠だけ（longestChargeTime は順位の順の先頭 targetCount 枠）。
  * targetSquad・longestChargeTime なのに
  * fixedTargets が無いのは、最上位の applyCompositionToTeam を通していない呼び出しなので落とす（黙って全員へ掛けない）
  */
@@ -72,14 +72,14 @@ function fixedTargetOk(effect: TargetedEffect, targetSlotIndex: number): boolean
     }
     return true;
   }
-  // 順位の順の対象（基本チャージ時間・2 段目の段 8 の HP の割合）は先頭の targetCount 枠
+  // 順位の順の対象（基本チャージ時間・HP の割合）は先頭の targetCount 枠
   const ranked = effect.target === 'longestChargeTime' || effect.target === 'lowestHpRatio';
   const candidates = ranked ? effect.fixedTargets.slice(0, effect.targetCount ?? 1) : effect.fixedTargets;
   return candidates.includes(targetSlotIndex);
 }
 
 /**
- * 対象の枠のキャラのうち、絞り込みに使う項目（CharacterData をそのまま渡せる）。2 段目の段 9: class が無ければ、「〈クラス〉型の味方」の
+ * 対象の枠のキャラのうち、絞り込みに使う項目（CharacterData をそのまま渡せる）。class が無ければ、「〈クラス〉型の味方」の
  * 効果は掛からない（黙って全員へ掛けない）
  */
 export type TargetSlot = { weaponType: WeaponType; element: Element; class?: NikkeClass };
@@ -98,9 +98,9 @@ export function matchesTargetFilter(
 
 /**
  * sourceSlotIndex の枠が発動した効果が、targetSlotIndex の枠（キャラ targetSlot）に掛かるか。
- * Stage 9: targetWeapon（「〈武器〉を所持する味方」）があれば武器種の一致する枠だけ。アスカ: targetElement も同じ。
+ * targetWeapon（「〈武器〉を所持する味方」）があれば武器種の一致する枠だけ。アスカ: targetElement も同じ。
  * targetSlot を省略可能にしないのは、渡し忘れたときに黙って全員へ掛かるのを防ぐため。
- * Stage 11: burstUsers は context の枠だけ（context に無ければ誰にも掛からない。検証でフルバーストのトリガーに限っている）。
+ * burstUsers は context の枠だけ（context に無ければ誰にも掛からない。検証でフルバーストのトリガーに限っている）。
  * topAttack は context.attackRank の先頭 targetCount 枠だけ（attackRank が無ければ誰にも掛からない）
  */
 export function isEffectTarget(
@@ -115,7 +115,7 @@ export function isEffectTarget(
     case 'self':
       return sourceSlotIndex === targetSlotIndex;
     case 'allies':
-      // 2 段目の段 7: 防御力の比べの絞り込みは、発火の文脈の枠だけ（文脈に無ければ誰にも掛からない）
+      // 防御力の比べの絞り込みは、発火の文脈の枠だけ（文脈に無ければ誰にも掛からない）
       if (effect.targetDefense !== undefined)
         return weaponOk && context?.lowerDefense?.includes(targetSlotIndex) === true;
       return weaponOk;
@@ -149,10 +149,10 @@ export function canEverTarget(
 ): boolean {
   if (effect.target === 'self') return sourceSlotIndex === targetSlotIndex;
   if (effect.excludeSelf === 'always' && sourceSlotIndex === targetSlotIndex) return false;
-  // 対象の語彙編: 「足りなければ自分も」は、武器種・属性の条件に依らず自分に付きうる
+  // 「足りなければ自分も」は、武器種・属性の条件に依らず自分に付きうる
   if (effect.excludeSelf === 'unlessShort' && sourceSlotIndex === targetSlotIndex) return true;
-  // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.2 節）: 「残りの HP の割合が最も低い味方」は、発火の時の割合で並べるので、
-  // 候補の枠（fixedTargets の全部）のどれにも付きうる
+  // 「残りの HP の割合が最も低い味方」は、発火の時の割合で並べるので、
+  // 候補の枠（fixedTargets の全部）のどれにも付きうる（plan/design-hp-ratio-readers.md 2.2 節）
   if (effect.target === 'lowestHpRatio' && effect.fixedTargets !== undefined)
     return matchesTargetFilter(effect, targetSlot) && effect.fixedTargets.includes(targetSlotIndex);
   return matchesTargetFilter(effect, targetSlot) && fixedTargetOk(effect, targetSlotIndex);
@@ -168,12 +168,12 @@ export function dependsOnContext(effect: { target: BuffTarget; targetDefense?: T
   );
 }
 
-/** 2 段目の段 7（plan/design-skill-stage7.md 1.4 節）: 対象を決めるのに最終防御力の比べが要るか */
+/** 対象を決めるのに最終防御力の比べが要るか（plan/design-skill-stage7.md 1.4 節） */
 export function dependsOnDefense(effect: { targetDefense?: TargetDefense }): boolean {
   return effect.targetDefense !== undefined;
 }
 
-/** Stage 11 アリス編: 対象を決めるのに攻撃力の順位が要るか */
+/** 対象を決めるのに攻撃力の順位が要るか */
 export function dependsOnRank(effect: { target: BuffTarget }): boolean {
   return effect.target === 'topAttack';
 }

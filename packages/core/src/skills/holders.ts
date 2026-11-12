@@ -1,14 +1,13 @@
 // 効果を持ち主ごとの一覧で持つ（plan/design-holder-effects.md）。
-// 段 A: 1 パス目のループ（frame/firstPass.ts）が、スキルによる効果を、効果を受ける枠（持ち主）ごとの件の列で持つ。
-// 件の列は、出どころ × 効果 × 持ち主ごとの窓の始まりの列（昇順）で、件（窓）は段 A までの窓と同じ規則で作る（2.3 節）: 和集合の上書き延長
+// 1 パス目のループ（frame/firstPass.ts）が、スキルによる効果を、効果を受ける枠（持ち主）ごとの件の列で持つ。
+// 件の列は、出どころ × 効果 × 持ち主ごとの窓の始まりの列（昇順）で、件（窓）は次の規則で作る（2.3 節）: 和集合の上書き延長
 // （終わりのフレームちょうどの付き直しも続き）、スタックの段（skills/stacks.ts）、N 発間維持、フルバーストの終わり、撃ち切り、
 // 吸収回復の付き直し（終わりのフレームちょうどに付けば新しく付いた）。件は、始まりの列とループで分かった出来事（射撃・使用武器の
 // 変更の終わり・フルバーストの窓）から作り直すので、同じフレームの中で始まりが前後して登録されても（射撃の回数のきっかけは次の
-// フレームから）、和集合とスタックと同じ件になる。ループの中の判定（射手・当たり・条件・順位）は件を読み、段 A までの段（1・1.5・2・
-// 2.5 段目）の見え方は件の列の段の印で再現する（2.5 節）。強化（2.5 段目）の受け付けと値は、参照する件の一生が要るので、ループの後に
+// フレームから）、和集合とスタックと同じ件になる。ループの中の判定（射手・当たり・条件・順位）は件を読み、段（1・1.5・2・
+// 2.5 段目）の見え方は件の列の段の印で表す（2.5 節）。強化（2.5 段目）の受け付けと値は、参照する件の一生が要るので、ループの後に
 // 履歴を閉じる時に決める（amplify。ループの中で強化の件を読む所は無い）。ループの後は、履歴の値の小片から区間を作る（buffTimelineOf。
-// 2.9 節）。値の小片の並びは時刻の順（論点 5）。段 B で 2 パス目（planBuffTimeline）を消し、件を作るのはここだけになった。段 E で、
-// 窓と記録の書き出し（BuffTimeline の窓と記録の欄）を消し、読む側は履歴を直接読む。
+// 2.9 節）。値の小片の並びは時刻の順（論点 5）。件を作るのはここだけで、読む側は履歴を直接読む。
 import type { BurstScheduleModel, FullBurstWindow, BurstSchedule } from '../burst/schedule.ts';
 import { dotActiveSpans, groupDotsByState } from '../frame/dot.ts';
 import { lowerBound, type ShotLog } from '../frame/shots.ts';
@@ -138,20 +137,20 @@ import {
 } from './timeline.ts';
 
 /**
- * 敵を持ち主にする（plan/design-holder-effects.md 2.8 節。段 C）: 件の列の持ち主。0 以上は味方の枠、ENEMY は敵（1 体の前提）。
+ * 件の列の持ち主（plan/design-holder-effects.md 2.8 節）。0 以上は味方の枠、ENEMY は敵（1 体の前提）。
  * 敵の件は、敵の受けるダメージ▲（damageTaken の timed）と、持続ダメージが付ける敵の状態
  */
 export const ENEMY = -1;
 
 /**
- * 敵が持つ効果か: 敵の受けるダメージ▲（damageTaken）と、2 段目の段 2 の敵の防御力▼（enemyDefenseDown）。値は、敵が受ける全ダメージに
+ * 敵が持つ効果か: 敵の受けるダメージ▲（damageTaken）と、敵の防御力▼（enemyDefenseDown）。値は、敵が受ける全ダメージに
  * 効くので、味方の各枠の区間の値に足す（値の小片で味方の各枠に写す。C-0138）
  */
 export function isEnemyEffect(effect: { stat: string }): boolean {
   return isEnemyHeldStat(effect.stat);
 }
 
-/** 段の印（plan/design-holder-effects.md 2.5 節）。段 A までの 2 パス目の 1・1.5・2・2.5 段目 */
+/** 段の印（plan/design-holder-effects.md 2.5 節）: 1・1.5・2・2.5 段目 */
 export type HeldStage = 1 | 1.5 | 2 | 2.5;
 
 /** 件の列の出どころ */
@@ -161,12 +160,12 @@ export type HeldOrigin =
   | { kind: 'state'; state: NamedStateId; grant: ResolvedStateGrant; contents: readonly ResolvedStateContent[] }
   | { kind: 'healWindow'; effect: ResolvedInstantEffect }
   | { kind: 'cycleEvery'; effect: ResolvedCycleEvery }
-  /** 段 C: 持続ダメージが付ける敵の状態（持ち主は ENEMY。同じ状態の持続ダメージの効果をまとめる。frame/dot.ts の groupDotsByState） */
+  /** 持続ダメージが付ける敵の状態（持ち主は ENEMY。同じ状態の持続ダメージの効果をまとめる。frame/dot.ts の groupDotsByState） */
   | { kind: 'enemyState'; state: NamedStateId; effects: readonly ResolvedDamageEffect[] }
   /**
-   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。件は、出どころの枠のその状態の段 1 の件
-   * から作る（whileItems。始まりの列を持たない）。2 段目の段 11 の PR 2: カウンタの while は、出どころの枠のカウンタの記録から作る。
-   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: HP の割合の while は、出どころの枠の HP の割合の記録から作る
+   * 状態の間だけ効く常時の効果（while。plan/design-skill-stage9.md 1.3 節）。件は、出どころの枠のその状態の段 1 の件
+   * から作る（whileItems。始まりの列を持たない）。カウンタの while は、出どころの枠のカウンタの記録から作る。
+   * HP の割合の while は、出どころの枠の HP の割合の記録から作る（plan/design-hp-ratio-readers.md 2.1 節）
    */
   | { kind: 'while'; effect: ResolvedWhileEffect | ResolvedCounterWhileEffect | ResolvedHpWhileEffect };
 
@@ -181,42 +180,42 @@ export type HeldTrack = {
   sourceSlotIndex: number;
   /** 付けた枠のバフ前攻撃力（発動者基準の固定加算） */
   casterBaseAttack: number;
-  /** 2 段目の段 6: 付けた枠の最終最大HP（casterFinalMaxHp の固定加算。skills/timeline.ts の TimelineSlot.casterMaxHp） */
+  /** 付けた枠の最終最大HP（casterFinalMaxHp の固定加算。skills/timeline.ts の TimelineSlot.casterMaxHp） */
   casterMaxHp?: number;
   origin: HeldOrigin;
   stage: HeldStage;
   /** 窓の始まり（昇順）。確率のきっかけは機会（opportunities）で持つ */
   starts: number[];
   /**
-   * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 状態の件の列を閉じる解除の発火のフレーム（昇順・重なりなし）。発火の f に
-   * 効いている件を f + 1 で切る（同じフレーム f に始まりのある列は閉じない）。状態と、デバフ解除で外れる味方の timed の▼（課題 2-64）と、
+   * 状態の件の列を閉じる解除の発火のフレーム（昇順・重なりなし。plan/design-skill-stage1.md 1.2 節）。発火の f に
+   * 効いている件を f + 1 で切る（同じフレーム f に始まりのある列は閉じない）。状態と、デバフ解除で外れる味方の timed の▼と、
    * 敵の状態の消去のほかは空
    */
   closes: number[];
   /**
-   * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費のフレーム（昇順）。その時に付いている件を、同じフレームに
+   * フルスタックの消費のフレーム（昇順。plan/design-skill-stage3.md 1.3 節）。その時に付いている件を、同じフレームに
    * 始まった件も含めて次のフレームで切る（解除と違い、付与が勝つ規則を当てない）。状態のほかは空
    */
   consumes: number[];
   /**
-   * 2 段目の段 3（plan/design-skill-stage3.md 1.5 節）: スタック量の減少（フレームの昇順）。そのフレームに効いている段の上から
+   * スタック量の減少（フレームの昇順。plan/design-skill-stage3.md 1.5 節）。そのフレームに効いている段の上から
    * N 段を次のフレームで切る（skills/stacks.ts）。スタックする状態のほかは空
    */
   decreases: StackDecrease[];
   /**
-   * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長（発火のフレームの昇順）。そのフレームに付いていて後まで続く件の
+   * 状態の維持の延長（発火のフレームの昇順。plan/design-mint-prika.md 2.5 節）。そのフレームに付いていて後まで続く件の
    * 終わりを frames だけ延ばす（extendItems）。状態のほかは無い
    */
   extensions?: { frame: number; frames: number }[];
   /** 確率のきっかけの機会（出どころで共有。ほかは null） */
   opportunities: ChanceOpportunity[] | null;
   /**
-   * マスト編（plan/design-mast.md 8 節）: durationUntil "selfHpAbove" の窓の終わり（発動者の HP の割合が閾値を上回ったフレーム。昇順。
-   * 同じ発動者・閾値の件の列で共有する）。ほかは無い
+   * durationUntil "selfHpAbove" の窓の終わり（発動者の HP の割合が閾値を上回ったフレーム。昇順。
+   * 同じ発動者・閾値の件の列で共有する。plan/design-mast.md 8 節）。ほかは無い
    */
   untilEnds?: number[];
   /**
-   * メイド編（plan/design-maids.md 2.1 節）: perCount の timed の、発火の窓の始まり → 発火のフレームのスタック数（件の scale にする）。
+   * perCount の timed の、発火の窓の始まり → 発火のフレームのスタック数（件の scale にする。plan/design-maids.md 2.1 節）。
    * ほかは無い
    */
   startScales?: Map<number, number>;
@@ -226,8 +225,8 @@ export type HeldTrack = {
    */
   leadFires?: Map<number, number[]>;
   /**
-   * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: stacksFrom で確率の状態のスタック数を写した付与の、件の始まり → 段ごとの
-   * 「元のスタック数がその段以上の確率」（添字は段 − 1。件の段の scale にする）。ほかは無い
+   * stacksFrom で確率の状態のスタック数を写した付与の、件の始まり → 段ごとの
+   * 「元のスタック数がその段以上の確率」（添字は段 − 1。件の段の scale にする。plan/design-tove-base.md 2.1 節）。ほかは無い
    */
   levelScales?: Map<number, number[]>;
   /** 作った件（入力が変わったら作り直す。readItems で読む） */
@@ -244,7 +243,7 @@ export type AmplifierSource = {
 
 /**
  * 強化の値の小片（plan/design-holder-effects.md 2.9 節）。受け付けた発火の窓の中で、参照する件が効いている所は
- * 割合 × その件の値、切れた所は (1 + 割合) × 発動の瞬間の値（段 A までの 2.5 段目と同じ作り方。V-0230）
+ * 割合 × その件の値、切れた所は (1 + 割合) × 発動の瞬間の値（V-0230）
  */
 export type AmplifiedPiece = {
   holder: number;
@@ -270,26 +269,26 @@ export type HolderHistory = {
   /** 条件を満たさずに発火しなかった記録（フレームの順。強化の受け付けなかった発火も入る） */
   conditionSkips: readonly ConditionSkip[];
   rankings: readonly RankingRecord[];
-  /** 課題 2-59: デバフ解除の対象を、選び方を確かめていない決め打ちで選んだ記録（フレームの順） */
+  /** デバフ解除の対象を、選び方を確かめていない決め打ちで選んだ記録（フレームの順） */
   removeDebuffGuesses: readonly RemoveDebuffGuessRecord[];
   /** 回復の記録（回復を起こした適用。吸収回復の付き直しは入らない） */
   heals: readonly HealRecord[];
   /** ループで分かったフルバーストの窓（終わりで閉じる件を作り直すのに使う） */
   fullBurstWindows: readonly FullBurstWindow[];
   logs: readonly (ShotLog | null)[];
-  /** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値が変わった記録（フレームの順。value は変わった後の値） */
+  /** カウンタの値が変わった記録（フレームの順。value は変わった後の値。plan/design-skill-stage10.md 2.3 節） */
   counters: readonly CounterRecord[];
   /**
-   * ソリン編（plan/design-soline.md 2.1 節）: 枠ごとの HP の割合（selfHpRatioAt）の変わり目。読むのは selfHpRatioOf（2 パス目の damage の
+   * 枠ごとの HP の割合（selfHpRatioAt）の変わり目（plan/design-soline.md 2.1 節）。読むのは selfHpRatioOf（2 パス目の damage の
    * 条件 selfHp（以上）が発火のフレームで読む）
    */
   hpRatios: readonly HpRatioSteps[];
 };
 
-/** ソリン編: 枠の HP の割合の段。frames（昇順・先頭は 0）のフレームから次の変わり目の前まで、割合は ratios の同じ番号 */
+/** 枠の HP の割合の段。frames（昇順・先頭は 0）のフレームから次の変わり目の前まで、割合は ratios の同じ番号 */
 export type HpRatioSteps = { frames: readonly number[]; ratios: readonly number[] };
 
-/** ソリン編（plan/design-soline.md 2.1 節）: 履歴から、枠のフレーム frame の HP の割合（1 パス目の selfHpRatioAt と同じ値） */
+/** 履歴から、枠のフレーム frame の HP の割合（1 パス目の selfHpRatioAt と同じ値。plan/design-soline.md 2.1 節） */
 export function selfHpRatioOf(history: Pick<HolderHistory, 'hpRatios'>, slotIndex: number, frame: number): number {
   const steps = history.hpRatios[slotIndex];
   if (steps === undefined) throw new RangeError(`selfHpRatioOf: no slot ${slotIndex}`);
@@ -297,12 +296,12 @@ export function selfHpRatioOf(history: Pick<HolderHistory, 'hpRatios'>, slotInde
 }
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除の選び方を確かめていない所。targets は debuffedRandom でデバフのかかった味方が
- * N 機より多い（実機ではランダム）、states は味方にデバフ（印の付いた状態と、課題 2-64 の timed の▼）が count 個より多く付いている
+ * デバフ解除の選び方を確かめていない所（plan/design-debuff-removal.md 2.2 節）。targets は debuffedRandom でデバフのかかった味方が
+ * N 機より多い（実機ではランダム）、states は味方にデバフ（印の付いた状態と、timed の▼）が count 個より多く付いている
  */
 export type RemoveDebuffGuess = 'targets' | 'states';
 
-/** 課題 2-59: デバフ解除の決め打ちの記録 1 つ。limit は、超えた数（targets なら N、states なら count） */
+/** デバフ解除の決め打ちの記録 1 つ。limit は、超えた数（targets なら N、states なら count） */
 export type RemoveDebuffGuessRecord = {
   /** 効いたフレーム */
   frame: number;
@@ -313,8 +312,8 @@ export type RemoveDebuffGuessRecord = {
 };
 
 /**
- * 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除で外すデバフを選ぶ。held は枠ごとの、効いているデバフ（印の付いた状態と、
- * 課題 2-64 の timed の▼。とその最も早い始まり）。pick（debuffedRandom の N）があればデバフのある枠から N 機、無ければ全員。枠ごとに count 個。選び方を確かめていない所は
+ * デバフ解除で外すデバフを選ぶ（plan/design-debuff-removal.md 2.2 節）。held は枠ごとの、効いているデバフ（印の付いた状態と、
+ * timed の▼。とその最も早い始まり）。pick（debuffedRandom の N）があればデバフのある枠から N 機、無ければ全員。枠ごとに count 個。選び方を確かめていない所は
  * 決め打ち（N 機より多ければ枠の若い順、count 個より多ければ付いたのが早い順）で、guesses に超えた数と出す
  */
 export function pickRemoveDebuff<T>(
@@ -338,7 +337,7 @@ export function pickRemoveDebuff<T>(
   return { chosen, guesses };
 }
 
-/** 2 段目の段 10: カウンタの値が変わった記録 1 つ */
+/** カウンタの値が変わった記録 1 つ */
 /**
  * カウンタの増減の記録。値はそのフレームのすべての判定の後に足したものなので、読む側には次のフレームから効く。battleStart は戦闘開始時の
  * 増減（フレーム 0 の記録で、フレーム 0 から効く）。効き始めは counterEffectiveFrom
@@ -351,8 +350,8 @@ export function counterEffectiveFrom(record: CounterRecord): number {
 }
 
 /**
- * 2 段目の段 13 の PR 1（plan/design-skill-stage13.md 2.2 節）: 枠のカウンタの { counterFull } が発火するフレーム（上限に届いた記録の次の
- * フレーム。戦闘開始時の記録は 1。createHolderLists の counterFullAt と同じ）。damage・dot の { counterFull } が読む
+ * 枠のカウンタの { counterFull } が発火するフレーム（上限に届いた記録の次の
+ * フレーム。戦闘開始時の記録は 1。createHolderLists の counterFullAt と同じ。plan/design-skill-stage13.md 2.2 節）。damage・dot の { counterFull } が読む
  */
 export function counterFullFrames(records: readonly CounterRecord[], slotIndex: number, counter: CounterId): number[] {
   return records
@@ -380,7 +379,7 @@ export type HolderListsOptions = {
    */
   leadShots?: LeadShots;
   /**
-   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件 inEffectiveRange の判定。枠 slotIndex のフレーム frame の着地点が、
+   * 条件 inEffectiveRange の判定（plan/design-agent-bunny.md 2.2 節）。枠 slotIndex のフレーム frame の着地点が、
    * 適正最小射程距離▲ の和 minRange で縮めた適正射程距離の中か（frame/landing.ts の inEffectiveRangeAt）。省略は成り立つ（距離ボーナスあり
    * の手入力の条件の既定と同じ）
    */
@@ -404,11 +403,11 @@ type TimedSource = {
   chance: boolean;
   /** 持ち主ごとの件の列（対象になりうる枠だけ）。敵の件の効果では、すべて null */
   tracks: (HeldTrack | null)[];
-  /** 段 C: 敵の件の効果（isEnemyEffect）の、敵の件の列。ほかは null */
+  /** 敵の件の効果（isEnemyEffect）の、敵の件の列。ほかは null */
   enemy: HeldTrack | null;
 };
 
-/** 段 C: 持続ダメージが付ける敵の状態（出どころ × 状態）。発火は効果ごと */
+/** 持続ダメージが付ける敵の状態（出どころ × 状態）。発火は効果ごと */
 type EnemyStateSource = { effects: { effect: ResolvedDamageEffect; fires: TriggerTracker }[]; track: HeldTrack };
 
 /** 状態の付与 1 つ */
@@ -424,7 +423,7 @@ type StateGroup = {
   stage: HeldStage;
   tracks: (HeldTrack | null)[];
   /**
-   * エレグのバースト編（plan/design-elegg.md 8.2 節）: 敵に付く状態（付与の enemy）の、敵の 1 つの件の列。味方の tracks は全部 null。
+   * 敵に付く状態（付与の enemy）の、敵の 1 つの件の列（plan/design-elegg.md 8.2 節）。味方の tracks は全部 null。
    * 中身は敵の件の timed と同じく、対象の味方の各枠の区間の値に写す（piecesOfTrack）。ほかは null
    */
   enemy: HeldTrack | null;
@@ -432,10 +431,10 @@ type StateGroup = {
 
 type CycleSource = { slotIndex: number; effect: ResolvedCycleEvery; fires: TriggerTracker; track: HeldTrack };
 
-/** 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除 1 つ（対象は自分） */
+/** 解除 1 つ（対象は自分。plan/design-skill-stage1.md 1.2 節） */
 type RemoveSource = { sourceSlotIndex: number; effect: ResolvedRemoveState; stage: HeldStage; fires: TriggerTracker };
 
-/** ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長 1 つ */
+/** 状態の維持の延長 1 つ（plan/design-mint-prika.md 2.5 節） */
 type ExtendSource = {
   sourceSlotIndex: number;
   effect: ResolvedStateExtend;
@@ -444,10 +443,10 @@ type ExtendSource = {
   targets?: HeldTrack[];
 };
 
-/** 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除 1 つ */
+/** デバフ解除 1 つ（plan/design-debuff-removal.md 2.2 節） */
 type RemoveDebuffSource = { sourceSlotIndex: number; effect: ResolvedRemoveDebuff; fires: TriggerTracker };
 
-/** 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減 1 つ（対象は自分。足す・減らす先は同じ定義の付与の状態の件の列） */
+/** スタック量の増減 1 つ（対象は自分。足す・減らす先は同じ定義の付与の状態の件の列。plan/design-skill-stage3.md 1.1・1.5 節） */
 type StackSource = {
   sourceSlotIndex: number;
   effect: ResolvedStackChange;
@@ -456,7 +455,7 @@ type StackSource = {
   track: HeldTrack;
 };
 
-/** 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減 1 つ（対象は自分）。{ ended } のトリガーは fires を持たない */
+/** カウンタの増減 1 つ（対象は自分。plan/design-skill-stage10.md 2.3 節）。{ ended } のトリガーは fires を持たない */
 type CounterSource = { sourceSlotIndex: number; effect: ResolvedCounterChange; fires: TriggerTracker | null };
 
 /** 1 パス目のループが使う、持ち主ごとの件の一覧 */
@@ -476,24 +475,24 @@ export type HolderLists = {
   /** 当たりの stat の件の列があるか */
   readonly hasHitTracks: boolean;
   /**
-   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.1 節）: 枠 holder にフレーム frame に効いている、時間で変わる適正最小射程距離▲の和
-   * （timed・状態の中身。常時の値は含まない）。条件 inEffectiveRange と、蓄積爆破の 1 パス目の発の値が読む
+   * 枠 holder にフレーム frame に効いている、時間で変わる適正最小射程距離▲の和
+   * （timed・状態の中身。常時の値は含まない。plan/design-agent-bunny.md 2.1 節）。条件 inEffectiveRange と、蓄積爆破の 1 パス目の発の値が読む
    */
   minEffectiveRangeAt(holder: number, frame: number): number;
   /**
-   * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 枠 holder にフレーム frame に効いている、時間で変わる会心率▲と
-   * 通常攻撃のクリティカル確率▲の和（timed・状態の中身。常時の値は含まない）。critHit の回数の量に使う
+   * 枠 holder にフレーム frame に効いている、時間で変わる会心率▲と
+   * 通常攻撃のクリティカル確率▲の和（timed・状態の中身。常時の値は含まない。plan/design-new-chars-1029.md 5.7 節）。critHit の回数の量に使う
    */
   critUpAt(holder: number, frame: number): number;
   /**
-   * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 枠 holder にフレーム frame に効いている、ペレット数▲の和と
-   * ペレットの数の固定の窓の数（timed。常時の値は無い）。ペレットの命中の量とゲージが読む（skills/buffs.ts の pelletsPerShot）
+   * 枠 holder にフレーム frame に効いている、ペレット数▲の和とペレットの数の固定の窓の数（timed。常時の値は無い）。
+   * ペレットの命中の量とゲージが読む（skills/buffs.ts の pelletsPerShot。plan/design-dorothy-serendipity.md 2.1・2.2 節）
    */
   pelletsAt(holder: number, frame: number): Pick<BuffTotals, 'pelletCount' | 'singlePellet'>;
   /** ペレットの数の stat の件の列を持ちうるか */
   hasPelletTracks(holder: number): boolean;
   /**
-   * 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ）。HP の割合を時間で読む編: lowestHpRatio の効果には
+   * 効果 e の発火の文脈に、フレーム frame の攻撃力の順位を足す（topAttack の効果だけ）。lowestHpRatio の効果には
    * HP の割合の並び（hpRank）を足す
    */
   rankContext(
@@ -509,13 +508,13 @@ export type HolderLists = {
   /** 枠 slotIndex の、段の循環 targetSkill に効く間隔の変更の件のうち、フレーム frame に効いているものの間隔 */
   cycleEveryAt(slotIndex: number, targetSkill: string, frame: number): number[];
   /**
-   * 2 段目の段 12 の PR 2: 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔（cycleEvery の shotCounts の窓の
+   * 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔（cycleEvery の shotCounts の窓の
    * 中ならその間隔、外なら undefined。窓の無い組は undefined）。窓の件はそのフレームに付いたものも見るので、手順 3 の後に呼ぶ
    */
   shotCountEveryOf(slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined;
   /**
-   * 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 枠 holder にフレーム frame に効いている、時間で変わるバーストゲージの
-   * チャージ速度の和（timed・状態の中身。常時の値は含まない）。ゲージを足す手順 2 で呼べば f − 1 までに付いた件になる
+   * 枠 holder にフレーム frame に効いている、時間で変わるバーストゲージの
+   * チャージ速度の和（timed・状態の中身。常時の値は含まない。plan/design-skill-stage1.md 1.6 節）。ゲージを足す手順 2 で呼べば f − 1 までに付いた件になる
    */
   gaugeSpeedAt(holder: number, frame: number): number;
   /** 時間で変わるバーストゲージのチャージ速度の件の列を持ちうるか */
@@ -527,26 +526,27 @@ export type HolderLists = {
    */
   damageBuffsAt(holder: number, frame: number, base: BuffTotals): BuffTotals;
   /**
-   * 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節）: 枠 holder にフレーム frame に効いている、バーストスキルの
-   * クールタイム▼ の秒の和（burstCooldown。timed・状態の中身）。発動したフレームに呼ぶ（frame/firstPass.ts）
+   * 枠 holder にフレーム frame に効いている、バーストスキルの
+   * クールタイム▼ の秒の和（burstCooldown。timed・状態の中身。plan/design-skill-stage11.md 3.3 節）。発動したフレームに呼ぶ（frame/firstPass.ts）
    */
   burstCooldownAt(holder: number, frame: number): number;
   /**
-   * 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節）: 枠 holder の、バーストスキルのクールタイム▼ の件のうち、フレーム
-   * frame に始まったものの秒の和（発動の後に付いた▼。frame/firstPass.ts が、走っている CT をその場で縮めるのに使う）
+   * 枠 holder の、バーストスキルのクールタイム▼ の件のうち、フレーム
+   * frame に始まったものの秒の和（発動の後に付いた▼。frame/firstPass.ts が、走っている CT をその場で縮めるのに使う。plan/design-skill-stage15.md 2.2 節）
    */
   burstCooldownStartedAt(holder: number, frame: number): number;
   /** 同: バーストスキルのクールタイム▼ の件の列を持ちうるか */
   hasBurstCooldownTracks(holder: number): boolean;
   /**
-   * 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 即時効果 effect の発火の条件（cooldownReduction の selfState）が、
-   * 出どころの枠 sourceSlotIndex でフレーム frame に満たされるか。timed の段 1.5 の条件と同じ件を見る。満たさなければ条件で出なかった
+   * 即時効果 effect の発火の条件（cooldownReduction の selfState）が、出どころの枠 sourceSlotIndex でフレーム frame
+   * に満たされるか（plan/design-skill-stage12.md 2.6 節）。timed の段 1.5 の条件と同じ件を見る。
+   * 満たさなければ条件で出なかった
    * 記録を残す。手順 3 の後に呼ぶ
    */
   instantConditionHolds(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): boolean;
   /**
-   * ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 枠 slotIndex にその状態がフレーム frame に付いたか（{ applied } の付与で付いた記録は
-   * 数えない。即時効果の { applied } の発火。registerFrame の後に呼ぶ）
+   * 枠 slotIndex にその状態がフレーム frame に付いたか（{ applied } の付与で付いた記録は
+   * 数えない。即時効果の { applied } の発火。registerFrame の後に呼ぶ。plan/design-mint-prika.md 2.6 節）
    */
   appliedAt(slotIndex: number, state: NamedStateId, frame: number): boolean;
   /**
@@ -555,8 +555,8 @@ export type HolderLists = {
    */
   skipInstant(effect: ResolvedInstantEffect, sourceSlotIndex: number, frame: number): void;
   /**
-   * 紅蓮編（plan/design-scarlet.md 2.1 節）: 枠 slotIndex の現在の HP を、フレーム frame に割合 ratio だけ下げる（HP の割合に 1 − ratio を
-   * 掛ける）。selfHpRatioAt は frame より後のフレームから読む。フレームの昇順に呼ぶ
+   * 枠 slotIndex の現在の HP を、フレーム frame に割合 ratio だけ下げる（HP の割合に 1 − ratio を
+   * 掛ける。plan/design-scarlet.md 2.1 節）。selfHpRatioAt は frame より後のフレームから読む。フレームの昇順に呼ぶ
    */
   lowerCurrentHp(slotIndex: number, frame: number, ratio: number): void;
   /**
@@ -566,25 +566,27 @@ export type HolderLists = {
    */
   selfStateAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
-   * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: 枠 holder の状態 state（出どころは問わない）の件が、フレーム frame に
-   * 始まったか（stateStartedAt）・効いているか（stateHeldAt。そのフレームに付いた件も入れる）。1 パス目が、クールタイムを縮める状態の
+   * 枠 holder の状態 state（出どころは問わない）の件が、フレーム frame に始まったか（stateStartedAt）・効いているか
+   * （stateHeldAt。そのフレームに付いた件も入れる。plan/design-arcana-magician.md 2.1 節）。1 パス目が、
+   * クールタイムを縮める状態の
    * 付いたフレームと窓を見るのに、frame までに登録した件で呼ぶ（stateStartedAt は毎フレーム呼ぶので配列を作らない）
    */
   stateStartedAt(holder: number, state: NamedStateId, frame: number): boolean;
   stateHeldAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
-   * A2 の B モード編（V-0729）: 状態の付いた時から数える周期（since）の発火（counterChange と同じ数え方。atStart なら付いたフレームにも）。
+   * 状態の付いた時から数える周期（since）の発火（counterChange と同じ数え方。atStart なら付いたフレームにも。V-0729）。
    * 1 パス目が since の currentHpDown の発火に使う。返す関数は件の登録（registerFrame）の後に呼ぶ
    */
   sinceFires(trigger: TimerTrigger, slotIndex: number): TriggerTracker;
   /**
-   * グレイブ編（plan/design-grave.md 2.1 節）: 枠 holder の自分の状態 state の件（段によらない）が、フレーム frame に外れたか（{ ended } の発火。
-   * counterChange と同じ）。1 パス目が { ended } の ammoDecrease の発火に、件の登録（registerFrame）の後に呼ぶ
+   * 枠 holder の自分の状態 state の件（段によらない）が、フレーム frame に外れたか（{ ended } の発火。
+   * counterChange と同じ。plan/design-grave.md 2.1 節）。1 パス目が { ended } の ammoDecrease の発火に、件の登録（registerFrame）の後に呼ぶ
    */
   endedAt(holder: number, state: NamedStateId, frame: number): boolean;
   /**
-   * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
-   * 静的な状態は 1、無ければ 0）。frame/plan.ts の damage の perCount { state } と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
+   * 枠 holder の自分の状態 state のスタック数（selfStateAt と同じ件の段の最大。
+   * 静的な状態は 1、無ければ 0。plan/design-skill-stage14.md 2.5 節）。frame/plan.ts の damage の perCount { state }
+   * と同じ見え方で、1 パス目がオートファイアの順番の攻撃の
    * ヒットごとのゲージ（gaugePerHit）を予約するのに、frame までに登録した件で呼ぶ
    */
   selfStackCountAt(holder: number, state: NamedStateId, frame: number): number;
@@ -594,8 +596,9 @@ export type HolderLists = {
    */
   enemyStateAt(state: NamedStateId, frame: number): boolean;
   /**
-   * 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
-   * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る）。回復を当てる前（手順 3 の最初）に呼ぶ
+   * フレーム frame にフルスタックになった状態（定義にその状態のフルスタックの消費の
+   * きっかけを持つ枠の、自分の状態だけ）を返し、その状態の件を消費する（次のフレームで切る。
+   * plan/design-skill-stage3.md 1.3 節）。回復を当てる前（手順 3 の最初）に呼ぶ
    */
   consumeFullStacks(frame: number): FullStackEvent[];
   /** ループの後の、leadFrames のある付与が発火した発のフレーム（HolderListsOptions.leadShots に渡す形） */
@@ -605,9 +608,9 @@ export type HolderLists = {
 };
 
 /**
- * 窓の始まり。射撃の回数のきっかけは次のフレームから。回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）:
- * timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。C-0593・C-0653）。2026-10-29 のキャラの編
- * （plan/design-new-chars-1029.md 10.2 節の e）: 時間の周期のきっかけの付与の delayFrames は、周期の発火の delayFrames 後から（C-0736）
+ * 窓の始まり。射撃の回数のきっかけは次のフレームから。timed の delayFrames があれば、きっかけの delayFrames 後から（ナガ S2 は 6。
+ * C-0593・C-0653。plan/design-shot-count-trigger-frame.md 6 節）。時間の周期のきっかけの付与の delayFrames は、周期の発火の
+ * delayFrames 後から（C-0736。plan/design-new-chars-1029.md 10.2 節の e）
  */
 export function startOfFire(trigger: ResolvedTrigger, frame: number, delayFrames?: number): number {
   if (isResolvedTimer(trigger)) return frame + (delayFrames ?? 0);
@@ -636,7 +639,7 @@ function itemsOfPairs(pairs: readonly (readonly [number, number])[]): HeldItem[]
 
 /** 吸収回復の窓（V-0024）: 付き直しは終わりを延ばし、終わりのフレームちょうどに付けば新しい件 */
 /**
- * 最小構成の検査の窓の端編（plan/design-minimal-edge.md 3.3 節）: 件ごとに始まりと終わりを動かす（戦闘の範囲に切り詰め、長さ 0 以下は消す）。
+ * 件ごとに始まりと終わりを動かす（戦闘の範囲に切り詰め、長さ 0 以下は消す。plan/design-minimal-edge.md 3.3 節）。
  * 1 パス目は前から進むので、始まりを早めた分は、きっかけより前のフレームの 1 パス目の読みには効かない（バフの区間の表には効く）
  */
 export function shiftEdges(items: readonly HeldItem[], shift: EdgeShift, frames: number): HeldItem[] {
@@ -664,8 +667,8 @@ function healWindowItems(starts: readonly number[], durationFrames: number | und
 }
 
 /**
- * 状態の件（段 A までの planBuffTimeline の stateWindowsOf と同じ規則）。2 段目の段 3: decreases はスタックする状態だけ。
- * 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節）: maxStacksAt は、最大スタック数▲の中身で上がる上限（無ければ付与の上限）
+ * 状態の件。decreases はスタックする状態だけ。
+ * maxStacksAt は、最大スタック数▲の中身で上がる上限（無ければ付与の上限。plan/design-skill-stage14.md 2.7 節）
  */
 function stateItems(
   grant: ResolvedStateGrant,
@@ -678,8 +681,8 @@ function stateItems(
   maxStacksAt?: MaxStacksAt,
 ): HeldItem[] {
   const shotFrames = log?.frames ?? [];
-  // グレイブ編（plan/design-grave.md 2.2・2.5 節）: 持ち主の最大装弾数のリロード完了まで（timed の reloadEnd と同じ）と、ほかの状態の終わりまで
-  // （件の列の untilEnds。register が見る状態の件の外れたフレームを足す）。どちらもスタックしない
+  // 持ち主の最大装弾数のリロード完了まで（timed の reloadEnd と同じ）と、ほかの状態の終わりまで
+  // （件の列の untilEnds。register が見る状態の件の外れたフレームを足す。plan/design-grave.md 2.2・2.5 節）。どちらもスタックしない
   if (grant.durationUntil === 'reloadEnd')
     return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
   // 見る状態の最後の発で付いた件（始まりが見る状態の終わりと同じフレーム）は、付いた時に見る状態が無いので付けない
@@ -712,7 +715,7 @@ function stateItems(
 }
 
 /**
- * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 始まりの列 starts の件の列を、解除で発火のフレーム c に閉じると外れるか。同じフレームに
+ * 始まりの列 starts の件の列を、解除で発火のフレーム c に閉じると外れるか（plan/design-skill-stage1.md 1.2 節）。同じフレームに
  * 始まりがあれば閉じない（付与が勝つ。closedStateItems・デバフ解除の候補）
  */
 function closeTakesEffect(starts: readonly number[], c: number): boolean {
@@ -720,11 +723,11 @@ function closeTakesEffect(starts: readonly number[], c: number): boolean {
 }
 
 /**
- * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除で閉じる状態の件。閉じる発火のフレーム c のうち、同じフレームに始まりの
+ * 解除で閉じる状態の件（plan/design-skill-stage1.md 1.2 節）。閉じる発火のフレーム c のうち、同じフレームに始まりの
  * 無いもの（付与が勝つ）で始まりの列を区切り、区切りごとに今と同じ規則で件を作って、c より前の区切りの件を c + 1 で切る。
  * 区切りの後の件は c + 1 以降に始まる。スタックしない件は、切った件と後の区切りの件がちょうど続けば 1 つにする（和集合の上書き延長と
  * 同じ見え方）。スタックする件は段ごとに切り、後の区切りは段 1 から数え直す。
- * 2 段目の段 3: スタック量の減少（decreases）は、そのフレームを含む区切り（前の区切りのフレームより後で、区切りのフレーム以前）に渡す
+ * スタック量の減少（decreases）は、そのフレームを含む区切り（前の区切りのフレームより後で、区切りのフレーム以前）に渡す
  */
 function closedStateItems(
   starts: readonly number[],
@@ -733,7 +736,7 @@ function closedStateItems(
   consumes: readonly number[] = [],
   decreases: readonly StackDecrease[] = [],
 ): HeldItem[] {
-  // 2 段目の段 3: フルスタックの消費は、同じフレームに始まった件も切る（区切りの前に入れる）。解除の区切りには同じフレームの始まりが無い
+  // フルスタックの消費は、同じフレームに始まった件も切る（区切りの前に入れる）。解除の区切りには同じフレームの始まりが無い
   const effective = [...new Set([...closes.filter((c) => closeTakesEffect(starts, c)), ...consumes])].sort(
     (a, b) => a - b,
   );
@@ -763,7 +766,7 @@ function pushMerged(out: HeldItem[], item: HeldItem): void {
 }
 
 /**
- * 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件を満たすか。tracks は、持ち主のその状態の件の列ごとの出どころと、
+ * スタック数の条件を満たすか（plan/design-skill-stage3.md 1.4 節）。tracks は、持ち主のその状態の件の列ごとの出どころと、
  * そのフレームに効いている件。N はスタックの段の最大が N 以上、'full' はどれかの件の列の段の最大がその付与の上限に届いている。
  * 静的な状態（isStatic）は 1 段
  */
@@ -797,8 +800,8 @@ function scaledEffect<E extends { value: number }>(effect: E, item: HeldItem): E
 }
 
 /**
- * トーブの基礎版編（plan/design-tove-base.md 2.1 節）: stacksFrom で確率の状態のスタック数を写した件の、段 k の scale を「元のスタック数が
- * k 以上の確率」にする。件の始まりより前でいちばん新しい写しの確率を使う（写しの維持が重ならない間は、その件を付けた写し）
+ * stacksFrom で確率の状態のスタック数を写した件の、段 k の scale を「元のスタック数が
+ * k 以上の確率」にする（plan/design-tove-base.md 2.1 節）。件の始まりより前でいちばん新しい写しの確率を使う（写しの維持が重ならない間は、その件を付けた写し）
  */
 function scaleLevels(items: readonly HeldItem[], levelScales: ReadonlyMap<number, number[]>): HeldItem[] {
   const keys = [...levelScales.keys()].sort((a, b) => a - b);
@@ -812,7 +815,7 @@ function scaleLevels(items: readonly HeldItem[], levelScales: ReadonlyMap<number
 }
 
 /**
- * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件。効果を出した枠のその状態の件（段 1）のうち、スタックの条件を満たす
+ * while の件（plan/design-skill-stage9.md 1.3 節）。効果を出した枠のその状態の件（段 1）のうち、スタックの条件を満たす
  * 段の件（'full' は付与の上限の段、N は N 段以上、条件が無ければ全部）の和で、重なる件と接した件は 1 つにする（和集合の上書き延長と同じ
  * 見え方）。スタックの条件の見方は stacksHold と同じ
  */
@@ -820,8 +823,9 @@ export function whileItems(
   own: readonly { origin: HeldOrigin; items: readonly HeldItem[]; chance?: boolean }[],
   stacks: 'full' | number | undefined,
 ): HeldItem[] {
-  // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態の件の列（chance）は段ごとの期待値の小片なので、条件の段（条件が無ければ
-  // 段 1）の小片をそのまま出す（scale はその条件が成り立つ確率）。確率の状態の付与はその状態の 1 つだけ（skills/parse/crossChecks.ts）
+  // 確率の状態の件の列（chance）は段ごとの期待値の小片なので、条件の段（条件が無ければ
+  // 段 1）の小片をそのまま出す（scale はその条件が成り立つ確率。plan/design-tove-base.md 2.1 節）。
+  // 確率の状態の付与はその状態の 1 つだけ（skills/parse/crossChecks.ts）
   const chance = own.find((o) => o.chance === true);
   if (chance !== undefined) {
     const max = chance.origin.kind === 'state' ? chance.origin.grant.maxStacks : undefined;
@@ -849,7 +853,7 @@ export function whileItems(
 }
 
 /**
- * メイド編（plan/design-maids.md 2.1 節）: perCount の timed の件。発火ごとに [s, s + 維持) を作り、次の発火で切る（上書き。値は次の
+ * perCount の timed の件（plan/design-maids.md 2.1 節）。発火ごとに [s, s + 維持) を作り、次の発火で切る（上書き。値は次の
  * 発火のスタック数に替わる）。scale は発火のフレームのスタック数
  */
 function perCountItems(
@@ -868,7 +872,7 @@ function perCountItems(
   return out;
 }
 
-/** timed の件（段 A までの planBuffTimeline の distribute と同じ規則）。確率のきっかけと強化は呼ぶ側 */
+/** timed の件。確率のきっかけと強化は呼ぶ側 */
 function timedItems(
   effect: ResolvedTimedEffect,
   starts: readonly number[],
@@ -877,17 +881,17 @@ function timedItems(
   frames: number,
   untilEnds: readonly number[] = [],
 ): HeldItem[] {
-  // マスト編（plan/design-mast.md 8 節）: HP の割合が閾値を上回るフレームまで
+  // HP の割合が閾値を上回るフレームまで（plan/design-mast.md 8 節）
   if (effect.durationUntil === 'selfHpAbove') return itemsOfPairs(untilNextEndItems(starts, untilEnds, frames));
   if (effect.durationShots !== undefined) {
     const shotFrames = log?.frames ?? [];
-    // ツバイ編（plan/design-zwei.md 2.3 節）: スタックする N 発間維持
+    // スタックする N 発間維持（plan/design-zwei.md 2.3 節）
     return effect.maxStacks !== undefined
       ? shotCountStackItems(starts, shotFrames, effect.durationShots, frames, effect.maxStacks)
       : itemsOfPairs(shotCountItems(starts, shotFrames, effect.durationShots, frames));
   }
   if (effect.durationUntil === 'ammoSpent') {
-    // 和集合は発火のフレームで取り、頭は後で削る（段 A までの planBuffTimeline・1 パス目の register と同じ順）
+    // 和集合は発火のフレームで取り、頭は後で削る
     const trim = weaponStartTrim(effect);
     return untilNextEndItems(starts, log?.weaponChangeEnds ?? [], frames)
       .filter(([start, end]) => start + trim < end)
@@ -896,12 +900,12 @@ function timedItems(
   if (effect.durationUntil === 'fullBurstEnd') {
     return itemsOfPairs(untilNextEndItems(starts, fullBurstEnds, frames));
   }
-  // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 持ち主のリロードの込め終わりまで。まだ込め終わっていない件は
+  // 持ち主のリロードの込め終わりまで（plan/design-cinderella-s1-charge.md 1.1 節）。まだ込め終わっていない件は
   // 戦闘の終わりまで開き、1 パス目が込め終わりを書いたら閉じる（読み直しが reloadEnds の長さを見る。trackReadsOf）
   if (effect.durationUntil === 'reloadEnd') {
     return itemsOfPairs(untilNextEndItems(starts, log?.reloadEnds ?? [], frames));
   }
-  // キラーワイフ編（plan/design-killer-wife.md 2.2 節）: 「命中させた味方に」は、持ち主の射撃の記録から始まりを決める
+  // 「命中させた味方に」は、持ち主の射撃の記録から始まりを決める（plan/design-killer-wife.md 2.2 節）
   const from =
     effect.holderHitWithinFrames !== undefined
       ? holderHitStarts(starts, log?.frames ?? [], effect.holderHitWithinFrames)
@@ -914,8 +918,9 @@ function timedItems(
 }
 
 /**
- * 1 パス目の最適化の段 1（plan/design-first-pass-perf.md 3.1 節）: 件の列の件を作る関数（buildTrackItems）が、始まり・確率の機会・
- * 閉じるフレーム・消費のフレーム・減少のほかに読む入力。分かれ道は timedItems・stateItems と同じ。読まない入力の変化では作り直さない
+ * 件の列の件を作る関数（buildTrackItems）が、始まり・確率の機会・
+ * 閉じるフレーム・消費のフレーム・減少のほかに読む入力（plan/design-first-pass-perf.md 3.1 節）。
+ * 分かれ道は timedItems・stateItems と同じ。読まない入力の変化では作り直さない
  */
 type TrackReads = {
   shots: boolean;
@@ -934,7 +939,7 @@ function trackReadsOf(origin: HeldOrigin): TrackReads {
     reads.shots = true;
     return reads;
   }
-  // グレイブ編: ほかの状態の終わりまで続く状態の件（durationUntil は battleEnd に解いてある）は、件の列の untilEnds を読む
+  // ほかの状態の終わりまで続く状態の件（durationUntil は battleEnd に解いてある）は、件の列の untilEnds を読む
   if (origin.kind === 'state' && origin.grant.untilStateEnd !== undefined) {
     reads.untilEnds = true;
     return reads;
@@ -950,7 +955,7 @@ function trackReadsOf(origin: HeldOrigin): TrackReads {
     case 'fullBurstEnd':
       reads.fullBurstWindows = true;
       break;
-    // マスト編: HP の割合の窓の終わり（件の列の untilEnds）
+    // HP の割合の窓の終わり（件の列の untilEnds）
     case 'selfHpAbove':
       reads.untilEnds = true;
       break;
@@ -990,7 +995,7 @@ function buildTrackItems(
   log: ShotLog | null | undefined,
   fullBurstWindows: readonly FullBurstWindow[],
   frames: number,
-  /** 2 段目の段 14 の PR 3: 状態の件の列の、最大スタック数▲で上がる上限（無ければ付与の上限） */
+  /** 状態の件の列の、最大スタック数▲で上がる上限（無ければ付与の上限） */
   maxStacksAt?: MaxStacksAt,
 ): HeldItem[] {
   const o = track.origin;
@@ -1008,15 +1013,15 @@ function buildTrackItems(
                 end: p.end,
                 scale: p.scale,
               }))
-            : // 課題 2-64（plan/design-debuff-removal-timed.md 2.4 節）: デバフ解除で閉じた味方の▼は、状態と同じ規則で切る
+            : // デバフ解除で閉じた味方の▼は、状態と同じ規則で切る（plan/design-debuff-removal-timed.md 2.4 節）
               closedStateItems(track.starts, track.closes, (starts) =>
                 timedItems(o.effect, starts, log, ends, frames, track.untilEnds),
               );
       return o.effect.edgeShift !== undefined ? shiftEdges(items, o.effect.edgeShift, frames) : items;
     }
     case 'state': {
-      // トーブの基礎版編（plan/design-tove-base.md 2.2 節）: 確率のきっかけの付与は、スタック数の分布の期待値の小片（段 k の scale は
-      // スタック数が k 以上の確率）
+      // 確率のきっかけの付与は、スタック数の分布の期待値の小片（段 k の scale は
+      // スタック数が k 以上の確率。plan/design-tove-base.md 2.2 節）
       if (track.opportunities !== null) {
         return chanceStackPieces(track.opportunities, o.grant.durationFrames, frames, o.grant.maxStacks ?? 1);
       }
@@ -1042,7 +1047,7 @@ function buildTrackItems(
       return healWindowItems(track.starts, o.effect.durationFrames, frames);
     case 'enemyState': {
       // 付いている間は、最初の発火から最後の tick まで（frame/dot.ts の dotActiveSpans。クルミ S2 編の区間と同じ）。
-      // 2 段目の段 13 の PR 2: 消去（cancelState）は、解除と同じく c + 1 で切り、後の付与から付き直す
+      // 消去（cancelState）は、解除と同じく c + 1 で切り、後の付与から付き直す
       const { intervalSeconds, durationSeconds, firstTick } = o.effects[0]!.dot!;
       return closedStateItems(track.starts, track.closes, (starts) =>
         itemsOfPairs(
@@ -1056,7 +1061,7 @@ function buildTrackItems(
 }
 
 /**
- * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長を件に当てる。延長は発火のフレームの順に、そのフレームまでに始まった件
+ * 状態の維持の延長を件に当てる（plan/design-mint-prika.md 2.5 節）。延長は発火のフレームの順に、そのフレームまでに始まった件
  * （前の延長も入れる）のうち、そのフレームに付いていて後まで続く件の終わり e から延ばす秒の区間 [e, e + 延長) を足す区間として持ち、最後に
  * 全部の始まりの件と和集合でまとめる。後から付き直した件は延ばさず、付き直しはいまの上書き延長のまま（終わりは max(e + 延長, 付き直しの終わり)）。
  * スタックする件は延ばさない（使い手がいない）。build は始まりの列から件を作る（stateItems）
@@ -1110,7 +1115,7 @@ function compareKeys(a: readonly number[], b: readonly number[]): number {
   return a.length - b.length;
 }
 
-/** 出どころ × 状態ごとに、時間で変わる状態の付与をまとめる（段 A までの stateGroupsOf と同じ。静的な付与は常時パッシブ） */
+/** 出どころ × 状態ごとに、時間で変わる状態の付与をまとめる（静的な付与は常時パッシブ） */
 function stateGroupsOf(
   slots: readonly TimelineSlot[],
   firesOf: (
@@ -1140,7 +1145,7 @@ function stateGroupsOf(
         };
         groups.push(group);
       }
-      // 2 段目の段 4: { applied } の付与は、見る状態を付ける付与の段（plan/design-skill-stage4.md 1.1 節）
+      // { applied } の付与は、見る状態を付ける付与の段（plan/design-skill-stage4.md 1.1 節）
       const stage: HeldStage = isResolvedApplied(grant.trigger)
         ? appliedStageOf(grant.trigger.applied)
         : stageOfGrant(grant);
@@ -1156,22 +1161,22 @@ function stateGroupsOf(
   return groups;
 }
 
-/** 状態の付与の段（{ applied } のほか）。2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節） */
+/** 状態の付与の段（{ applied } のほか）。件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節） */
 function stageOfGrant(grant: ResolvedStateGrant): HeldStage {
   if (dependsOnRank(grant)) return 2;
-  // 2 段目の段 10 の PR 3: 自分の状態のスタック数を数で読む付与も、件を見るので段 1.5
+  // 自分の状態のスタック数を数で読む付与も、件を見るので段 1.5
   return conditionReadsItems(grant.condition) || (grant.stacksFrom !== undefined && 'state' in grant.stacksFrom)
     ? 1.5
     : 1;
 }
 
-/** 2 段目の段 3: スタック量の増加の段（件を見る条件つきは段 1.5） */
+/** スタック量の増加の段（件を見る条件つきは段 1.5） */
 function stageOfStackChange(effect: ResolvedStackChange): HeldStage {
   return conditionReadsItems(effect.condition) ? 1.5 : 1;
 }
 
 /**
- * 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の効果の段。状態ごとに、その状態を付ける付与とスタック量の増加
+ * { applied } の効果の段（plan/design-skill-stage4.md 1.1 節）。状態ごとに、その状態を付ける付与とスタック量の増加
  * （編成のどの枠でも。{ applied } のもの・静的な付与を除く）の段のいちばん後。無ければ（静的な状態だけ・付ける効果が無い）段 1
  */
 function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedStateId) => HeldStage {
@@ -1200,9 +1205,9 @@ function appliedStagesOf(slots: readonly TimelineSlot[]): (state: NamedStateId) 
 /** timed の効果の段（強化の受け付けと値は、履歴を閉じる時に決める） */
 function stageOfTimed(effect: ResolvedTimedEffect): HeldStage {
   if (effect.amplifies !== undefined) return 2.5;
-  // 2 段目の段 7: 最終防御力の比べの対象も、順位と同じく段 1・1.5 の件（防御力▲）が出そろってから決める
+  // 最終防御力の比べの対象も、順位と同じく段 1・1.5 の件（防御力▲）が出そろってから決める
   if (dependsOnRank(effect) || dependsOnDefense(effect)) return 2;
-  // 2 段目の段 1: 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）。メイド編: スタック数を読む perCount も段 1.5
+  // 件を見ない条件（usedBurst だけ）は段を上げない（plan/design-skill-stage1.md 1.5 節）。スタック数を読む perCount も段 1.5
   if (conditionReadsItems(effect.condition) || effect.perCount !== undefined) return 1.5;
   return 1;
 }
@@ -1225,8 +1230,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
    */
   const itemsSeen = new Map<HeldTrack, { reads: TrackReads; lengths: number[]; verified: number[] }>();
   /**
-   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 9 節の論点 8）: 発動者の最大HP 基準（scaling casterMaxHp）の timed を、持ち主
-   * holder の比率（X × 発動者のバフ前の最大HP ÷ 持ち主のバフ前の最大HP）の ratio に直す。HP の割合・最終最大HP・表示は比率をそのまま読む
+   * 発動者の最大HP 基準（scaling casterMaxHp）の timed を、持ち主
+   * holder の比率（X × 発動者のバフ前の最大HP ÷ 持ち主のバフ前の最大HP）の ratio に直す
+   * （plan/design-hp-ratio-readers.md 9 節の論点 8）。HP の割合・最終最大HP・表示は比率をそのまま読む
    */
   const holderScaledOrigin = (origin: HeldOrigin, sourceSlotIndex: number, holder: number): HeldOrigin => {
     if (origin.kind !== 'timed' || origin.effect.scaling !== 'casterMaxHp') return origin;
@@ -1271,11 +1277,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const consumeTrack = (track: HeldTrack, frame: number): void => {
     if (frame < frames && !track.consumes.includes(frame)) insertSorted(track.consumes, frame);
   };
-  /** 2 段目の段 11 の PR 2: 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
+  /** 枠のカウンタが上限に届いたフレームの次のフレーム（{ counterFull } の発火。届くたびに書き替える） */
   const counterFullAt = new Map<string, number>();
   /** 周期のトリガーは出来事の列に無いので、周期のフレームで発火する（atStart のフレーム 0 はループの前に登録する） */
   /**
-   * マスト編（plan/design-mast.md 8 節）: 発動者 × 閾値ごとの、HP の割合の窓の追跡。毎フレームのきっかけの判定で 1 回だけ割合を求め、
+   * 発動者 × 閾値ごとの、HP の割合の窓の追跡（plan/design-mast.md 8 節）。毎フレームのきっかけの判定で 1 回だけ割合を求め、
    * 閾値以下に下がったフレーム（dropped）と、上回ったフレーム（ends。件の列の untilEnds と共有）を記録する
    */
   type SelfHpState = {
@@ -1310,22 +1316,22 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     trigger: ResolvedTrigger,
     slotIndex: number,
     everyAt?: ShotCountEveryAt,
-    /** グレイブ編: 自分の状態の窓で数える回数は、効果の条件を満たす発だけを数える（付与の条件。stateWindowFires） */
+    /** 自分の状態の窓で数える回数は、効果の条件を満たす発だけを数える（付与の条件。stateWindowFires） */
     condition?: EffectCondition,
   ): TriggerTracker => {
-    // 2 段目の段 4: { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
+    // { applied } は出来事では発火しない（段の登録の後に、付いた記録から発火する。dispatchApplied）
     if (isResolvedApplied(trigger)) return () => false;
-    // マスト編（plan/design-mast.md 8 節）: 自分の HP の割合が閾値以下に下がったフレーム（上がったフレームは窓の終わりに書く）
+    // 自分の HP の割合が閾値以下に下がったフレーム（上がったフレームは窓の終わりに書く。plan/design-mast.md 8 節）
     if (isResolvedSelfHpAtMost(trigger)) {
       const state = selfHpStateOf(slotIndex, trigger.selfHpAtMost);
       return (ev) => selfHpDropped(state, ev.frame);
     }
-    // 2 段目の段 11 の PR 2・段 13 の PR 1: カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
+    // カウンタが上限に届いた次のフレーム（registerCounters が counterFullAt に書く）
     if (isCounterFullTrigger(trigger)) {
       const key = counterKey(slotIndex, trigger.counterFull);
       return (ev) => counterFullAt.get(key) === ev.frame;
     }
-    // グレイブ編（plan/design-grave.md 2.1 節）: 自分のその状態の件が外れた最初のフレーム（counterChange の { ended } と同じ endedAt）
+    // 自分のその状態の件が外れた最初のフレーム（counterChange の { ended } と同じ endedAt。plan/design-grave.md 2.1 節）
     if (isEndedTrigger(trigger)) {
       const state = trigger.ended;
       return (ev) => endedAt(slotIndex, state, ev.frame);
@@ -1354,7 +1360,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の効果の段（見る状態を付ける付与の段） ----
+  // ---- { applied } の効果の段（見る状態を付ける付与の段。plan/design-skill-stage4.md 1.1 節） ----
   const appliedStageOf = appliedStagesOf(slots);
 
   // ---- timed の出どころ（持ち主ごとの件の列は、対象になりうる枠にだけ作る） ----
@@ -1372,7 +1378,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const canTarget = slots.map(
         (target, holder) => target !== null && canEverTarget(effect, sourceSlotIndex, holder, target.character),
       );
-      // 段 C: 敵の件の効果は、味方ごとではなく敵の 1 つの件の列に付ける
+      // 敵の件の効果は、味方ごとではなく敵の 1 つの件の列に付ける
       const enemy = isEnemyEffect(effect);
       const src: TimedSource = {
         sourceSlotIndex,
@@ -1388,7 +1394,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
             ? newTrack(ENEMY, sourceSlotIndex, { kind: 'timed', effect }, stage, opportunities)
             : null,
       };
-      // マスト編: HP の割合の窓の終わりは、発動者 × 閾値の追跡と共有する（秒の維持の件は読まない。エード編）
+      // HP の割合の窓の終わりは、発動者 × 閾値の追跡と共有する（秒の維持の件は読まない）
       if (isResolvedSelfHpAtMost(effect.trigger) && effect.durationUntil === 'selfHpAbove') {
         const ends = selfHpStateOf(sourceSlotIndex, effect.trigger.selfHpAtMost).ends;
         for (const track of [...src.tracks, src.enemy]) if (track !== null) track.untilEnds = ends;
@@ -1401,7 +1407,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const stateGroups = stateGroupsOf(slots, firesOf, appliedStageOf);
   for (const group of stateGroups) {
     const grant = group.grants[0]!.grant;
-    // エレグのバースト編: 敵に付く状態は、敵の 1 つの件の列（対象の味方が編成にいれば）
+    // 敵に付く状態は、敵の 1 つの件の列（対象の味方が編成にいれば）
     if (grant.enemy === true) {
       if (slots.some((t, holder) => t !== null && canEverTarget(grant, group.sourceSlotIndex, holder, t.character))) {
         group.enemy = newTrack(
@@ -1413,7 +1419,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       continue;
     }
-    // トーブの基礎版編: 確率のきっかけの付与は、機会を持ち主の件の列で共有する（付与はその状態の 1 つだけ。skills/parse/crossChecks.ts）
+    // 確率のきっかけの付与は、機会を持ち主の件の列で共有する（付与はその状態の 1 つだけ。skills/parse/crossChecks.ts）
     const opportunities: ChanceOpportunity[] | null = isResolvedChance(grant.trigger) ? [] : null;
     slots.forEach((target, holder) => {
       if (target === null) return;
@@ -1428,10 +1434,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   }
 
-  // ---- 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: 状態の間だけ効く常時の効果（while）。対象ごとに件の列（段 1.5）。
+  // ---- 状態の間だけ効く常時の効果（while。plan/design-skill-stage9.md 1.3 節）。対象ごとに件の列（段 1.5）。
   // 件は出どころの枠の状態の件から作るので、始まりは登録しない（readWhileItems） ----
   /**
-   * HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 出どころの枠 × 閾値ごとの、HP の割合が閾値以上の区間の件（開いて
+   * 出どころの枠 × 閾値ごとの、HP の割合が閾値以上の区間の件（plan/design-hp-ratio-readers.md 2.1 節。開いて
    * いる件の終わりは戦闘の終わり。変わった時だけ新しい配列にする）。フレーム f の可否は、f の登録の始め（updateHpAtLeast）に、f より前に始まった最大HP の件と前の現在の
    * HP▼ から出す（selfHpRatioAt。循環しない）。1 パス目が f の射撃（射手の実効値）で読む stat は f の登録より前に読むので、常時の
    * selfHp に書けない（skills/parse/timed.ts）
@@ -1494,7 +1500,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除（対象は自分。件を見る条件つきは段 1.5） ----
+  // ---- 解除（対象は自分。件を見る条件つきは段 1.5。plan/design-skill-stage1.md 1.2 節） ----
   const removeSources: RemoveSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -1508,7 +1514,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長（{ applied } のほかは段 1.5 の後に発火する） ----
+  // ---- 状態の維持の延長（{ applied } のほかは段 1.5 の後に発火する。plan/design-mint-prika.md 2.5 節） ----
   const extendSources: ExtendSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -1517,7 +1523,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- 課題 2-59（plan/design-debuff-removal.md 2.2 節）: デバフ解除（対象は味方。段 1 の解除と同じ時に閉じる） ----
+  // ---- デバフ解除（対象は味方。段 1 の解除と同じ時に閉じる。plan/design-debuff-removal.md 2.2 節） ----
   const removeDebuffSources: RemoveDebuffSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -1526,7 +1532,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.1・1.5 節）: スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列） ----
+  // ---- スタック量の増減（足す・減らす先は、同じ定義の付与の状態の、自分の件の列。plan/design-skill-stage3.md 1.1・1.5 節） ----
   const stackSources: StackSource[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -1553,8 +1559,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     options.fullBurstWindows().some((w) => w.start <= frame && frame < w.end);
 
   /**
-   * 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔
-   * （cycleEvery の shotCounts の窓の中ならその間隔。重なれば小さいほう）。窓の件はそのフレームに付いたものも見る
+   * 枠 slotIndex のスロット skill の射撃の回数のきっかけの、フレームごとの間隔
+   * （cycleEvery の shotCounts の窓の中ならその間隔。重なれば小さいほう。plan/design-skill-stage12.md 2.4 節）。窓の件はそのフレームに付いたものも見る
    */
   const shotCountEveryOf = (slotIndex: number, skill: SkillSlot): ShotCountEveryAt | undefined => {
     const own = cycleSources.filter(
@@ -1571,15 +1577,15 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     };
   };
 
-  // ---- 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ） ----
+  // ---- カウンタの増減（対象は自分。値は枠 × カウンタごとに 1 つ。plan/design-skill-stage10.md 2.3 節） ----
   /**
-   * 2 段目の段 19 の PR 1（plan/design-skill-stage19.md 2.1 節）: 枠 × 状態ごとの、その枠に付いた記録のフレーム（昇順）。counterChange の { applied } と
+   * 枠 × 状態ごとの、その枠に付いた記録のフレーム（昇順。plan/design-skill-stage19.md 2.1 節）。counterChange の { applied } と
    * 周期の since が読む。読むたびに、まだ見ていない記録を足す
    */
   const ownApplied = new Map<string, number[]>();
-  /** ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 同じ索引の、{ applied } の付与で付いたのでない記録だけのもの（即時効果の { applied }） */
+  /** 同じ索引の、{ applied } の付与で付いたのでない記録だけのもの（即時効果の { applied }。plan/design-mint-prika.md 2.6 節） */
   const ownUnchainedApplied = new Map<string, number[]>();
-  /** 2 段目の段 4: { applied } の付与で付いた記録（timed・付与・即時効果の { applied } を起こさない。連鎖させない）。記録を足した直後に印を付ける */
+  /** { applied } の付与で付いた記録（timed・付与・即時効果の { applied } を起こさない。連鎖させない）。記録を足した直後に印を付ける */
   const chainedApplications = new Set<AppliedRecord>();
   let ownAppliedSeen = 0;
   const readOwnApplied = (index: Map<string, number[]>, slotIndex: number, state: NamedStateId): readonly number[] => {
@@ -1602,7 +1608,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     (stateTracks[slotIndex]?.get(state) ?? []).some((t) => activeAt(t, frame).length > 0);
   /**
    * 同（論点 2）: 状態の付いた時から数える周期（since）。起点はそのフレームまでに付いた最後の記録で、k 回目は起点から k × everySeconds 秒
-   * （timerFramesOf と同じ数え方）。その状態が効いている間だけ。A2 の B モード編（V-0729）: atStart なら付いたフレームにも発火する（currentHpDown。
+   * （timerFramesOf と同じ数え方）。その状態が効いている間だけ。atStart なら付いたフレームにも発火する（V-0729。currentHpDown。
    * 1 パス目の即時効果も件の一覧の sinceFires で決める）
    */
   const sinceFires = (trigger: TimerTrigger, slotIndex: number): TriggerTracker => {
@@ -1615,7 +1621,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     };
   };
   /**
-   * グレイブ編（plan/design-grave.md 2.4 節。V-0735）: 自分の状態の間だけ数える回数のきっかけ（during: { state }）。その状態の件が効いていて、
+   * 自分の状態の間だけ数える回数のきっかけ（during: { state }。plan/design-grave.md 2.4 節。V-0735）。その状態の件が効いていて、
    * 効果の条件（付与の condition。「完全計算かつ過熱I 状態の時に限り」の過熱I。その発で付いた分も入れる）を満たす発だけを数え、件が新しく始まったら 0 から数え直す
    * （付き直しで件が続いている間は数え直さない）。N の倍数に届いた発で発火する（回数の量は triggers.ts と同じ）
    */
@@ -1675,8 +1681,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 枠のカウンタの、いまの値（そのフレームの増減は、すべての判定の後に足すので、前のフレームの終わりの値） */
   const counterValue = (slotIndex: number, counter: CounterId): number =>
     counterValues.get(counterKey(slotIndex, counter)) ?? 0;
-  // ---- 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ）。
-  // 段 11（plan/design-skill-stage11.md 2.1 節）: 使用武器の変更のきっかけ { fullStack } の状態も ----
+  // ---- フルスタックの消費（定義の回復のきっかけ { fullStack } の状態。自分だけ。plan/design-skill-stage3.md 1.3 節）。
+  // 使用武器の変更のきっかけ { fullStack } の状態も（plan/design-skill-stage11.md 2.1 節） ----
   const consuming: { holder: number; state: NamedStateId }[] = [];
   slots.forEach((slot, holder) => {
     if (slot === null || slot.definition === null) return;
@@ -1711,7 +1717,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   });
 
-  // ---- 段 C: 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵） ----
+  // ---- 持続ダメージが付ける敵の状態（出どころ × 状態ごとに 1 つの件の列。持ち主は敵） ----
   const enemyStateSources: EnemyStateSource[] = [];
   const dotCancelSources: { track: HeldTrack; fires: TriggerTracker }[] = [];
   slots.forEach((slot, sourceSlotIndex) => {
@@ -1724,7 +1730,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         track: newTrack(ENEMY, sourceSlotIndex, { kind: 'enemyState', state, effects: group }, 1),
       });
     }
-    // 2 段目の段 13 の PR 2（plan/design-skill-stage13.md 2.5 節）: 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる
+    // 消去（cancelState）は、同じ枠の持続ダメージの状態の件を閉じる（plan/design-skill-stage13.md 2.5 節）
     for (const cancel of resolveDotCancels(slot.definition, slot.character, slot.levels)) {
       const source = enemyStateSources.find(
         ({ track }) =>
@@ -1745,7 +1751,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   }
 
-  // ---- 2 段目の段 14 の PR 3（plan/design-skill-stage14.md 2.7 節。論点 5）: 状態の中身の最大スタック数▲ ----
+  // ---- 状態の中身の最大スタック数▲（plan/design-skill-stage14.md 2.7 節。論点 5） ----
   // 上限が上がる件の列（持ち主のその状態の、スタックする件の列）→ 上げる状態の件の列（同じ持ち主に、中身を持つ定義の枠が付けたもの）と量
   const capRaisers = new Map<HeldTrack, { base: number; raisers: { track: HeldTrack; amount: number }[] }>();
   slots.forEach((slot, sourceSlotIndex) => {
@@ -1803,7 +1809,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     changed = setLength(lengths, 8, track.decreases.length) || changed;
     changed = setLength(lengths, 10, reads.untilEnds ? (track.untilEnds?.length ?? 0) : 0) || changed;
     changed = setLength(lengths, 11, track.extensions?.length ?? 0) || changed;
-    // 2 段目の段 14 の PR 3: 上限を上げる状態の件の列の入力（始まり・閉じる・消費・減少。その件の列は持続の付与で、ほかの入力を読まない）
+    // 上限を上げる状態の件の列の入力（始まり・閉じる・消費・減少。その件の列は持続の付与で、ほかの入力を読まない）
     const raisers = capRaisers.get(track)?.raisers;
     if (raisers === undefined) return changed;
     let raised = 0;
@@ -1813,10 +1819,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
   /** 件の列の件（件を作る関数が読む入力が変わったときだけ作り直す） */
   const readItems = (track: HeldTrack): HeldItem[] => {
-    // 2 段目の段 9 の PR 2: while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
+    // while の件は、出どころの枠の状態の件から作る（入力の長さでなく、元の件が作り直されたかで見る）
     if (track.origin.kind === 'while') {
       const effect = track.origin.effect;
-      // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.1 節）: 出どころ × 閾値の区間の件（updateHpAtLeast）をそのまま使う
+      // 出どころ × 閾値の区間の件（updateHpAtLeast）をそのまま使う（plan/design-hp-ratio-readers.md 2.1 節）
       if (isHpWhileEffect(effect)) return (track.items = hpWhileStates.get(track)!.items);
       return isCounterWhileEffect(effect) ? readCounterWhileItems(track, effect) : readWhileItems(track, effect);
     }
@@ -1839,9 +1845,10 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     readItems(track).filter((it) => it.start <= frame && frame < it.end);
 
   /**
-   * 2 段目の段 9 の PR 2（plan/design-skill-stage9.md 1.3 節）: while の件の列が見る、出どころの枠のその状態（家族の根なら家族のどれか）の
-   * 段 1 の件の列（出どころは問わない。条件の selfState が見るものと同じ）。クエンシー：エスケープクイーン編（V-0702）: 段 1.5（条件つきの
-   * 付与）の状態の件の列も見る（S1 の「ルート探索 2 段階フルスタック状態の時のみ」。2 段階の付与は 1 段階のフルスタックの条件つき）。件の列は
+   * while の件の列が見る、出どころの枠のその状態（家族の根なら家族のどれか）の
+   * 段 1 の件の列（出どころは問わない。条件の selfState が見るものと同じ。plan/design-skill-stage9.md 1.3 節）。
+   * 段 1.5（条件つきの付与）の状態の件の列も見る（V-0702。
+   * クエンシー：エスケープクイーンの S1 の「ルート探索 2 段階フルスタック状態の時のみ」。2 段階の付与は 1 段階のフルスタックの条件つき）。件の列は
    * 条件の selfState と同じ stateTracks から引く。段 1.5 の件も付いたフレームから効かせる（while は stat を出すだけで状態を付けないので連鎖しない）
    */
   const whileOwn = new Map<HeldTrack, HeldTrack[]>();
@@ -1866,7 +1873,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
 
   /**
-   * 2 段目の段 11 の PR 2（plan/design-skill-stage11.md 2.4 節）: カウンタの while の件。出どころの枠のそのカウンタが atLeast 以上の間。
+   * カウンタの while の件（plan/design-skill-stage11.md 2.4 節）。出どころの枠のそのカウンタが atLeast 以上の間。
    * 記録の値はそのフレームのすべての判定の後に足したものなので、効くのは次のフレームから（戦闘開始時の増減はフレーム 0 から）。
    * カウンタの記録が増えた時だけ作り直す
    */
@@ -1891,7 +1898,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return track.items;
   };
 
-  // ---- 読む側の索引（持ち主ごと。並びは作った順 = 段 A までの 1 パス目の窓を読む順） ----
+  // ---- 読む側の索引（持ち主ごと。並びは作った順） ----
   type View = { track: HeldTrack; effect: ItemEffect };
   const viewsOf = (test: (track: HeldTrack, effect: ItemEffect) => boolean): View[][] =>
     slots.map((_, holder) => {
@@ -1899,7 +1906,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       for (const track of tracks) {
         if (track.holder !== holder) continue;
         const o = track.origin;
-        // 2 段目の段 9 の PR 2: while の効果も、件を持つ効果として同じに読む（段 1.5）
+        // while の効果も、件を持つ効果として同じに読む（段 1.5）
         if (o.kind === 'timed' || o.kind === 'while') {
           if (test(track, o.effect)) views.push({ track, effect: o.effect });
         } else if (o.kind === 'state') {
@@ -1945,27 +1952,27 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         (stats as readonly string[]).includes(e.stat) &&
         (track.origin.kind === 'state' || STAGE_RANK[track.stage] <= STAGE_RANK[1.5]),
     );
-  // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身（段 A までの hitTrack・hitGroups）。2 段目の段 3: 条件つき（段 1.5）の
+  // 当たり: 順位の対象でない timed の当たりの stat と、状態の中身。条件つき（段 1.5）の
   // 命中率▲（ソーダ：トゥインクルバニーのバースト）も、区間（2 パス目）と同じ N にするため入れる（plan/design-skill-stage3.md 経過）
   const hitViews = hitStageViewsOf(...HIT_STATE_STATS);
-  // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件 inEffectiveRange が読む適正最小射程距離▲（当たりと同じ段の件）
+  // 条件 inEffectiveRange が読む適正最小射程距離▲（当たりと同じ段の件。plan/design-agent-bunny.md 2.2 節）
   const rangeViews = hitStageViewsOf('minEffectiveRange');
   const minEffectiveRangeAt = (holder: number, frame: number): number => sumAt(rangeViews[holder], frame);
-  // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件）
+  // 会心率▲・通常攻撃のクリティカル確率▲（当たりと同じ段の件。plan/design-new-chars-1029.md 5.7 節）
   const critViews = hitStageViewsOf('critRate', 'normalCritRate');
-  // ドロシー：セレンディピティ編: ペレット数▲・ペレットの数の固定（当たりと同じ段の件）
+  // ペレット数▲・ペレットの数の固定（当たりと同じ段の件）
   const pelletCountViews = hitStageViewsOf('pelletCount');
   const singlePelletViews = hitStageViewsOf('singlePellet');
   const hasPellets = slots.map((_, h) => pelletCountViews[h]!.length > 0 || singlePelletViews[h]!.length > 0);
-  // 条件 selfBuffed: 段 1 の件（段 A までの 1.5 段目の判定に入る窓）
+  // 条件 selfBuffed: 段 1 の件
   const conditionViews = viewsOf((track) => track.stage === 1);
-  // 順位: 段 1・1.5 の攻撃力の件（段 A までの 2 段目の材料）
+  // 順位: 段 1・1.5 の攻撃力の件
   const rankViews = viewsOf((track, e) => e.stat === 'attack' && STAGE_RANK[track.stage] <= STAGE_RANK[1.5]);
-  // 2 段目の段 1（plan/design-skill-stage1.md 1.1 節）: 条件 selfState が見る、枠の静的な状態と、段 1 の状態の件の列（持ち主 → 状態）。
+  // 条件 selfState が見る、枠の静的な状態と、段 1 の状態の件の列（持ち主 → 状態。plan/design-skill-stage1.md 1.1 節）。
   // 静的な状態を見る selfState は編成の段（skills/composition.ts）で決まるので、ここに来るのは時間で変わる状態がほとんど
   const staticStates = slots.map((slot) => new Set(staticStatesOf(slot?.definition)));
-  // 2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
-  // （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る）
+  // 段 1.5（条件つきの付与）の状態の件も入れ、前のフレームまでに付いた件だけを見る
+  // （同じフレームの条件つきどうしは連鎖させない。超火力（カウンタの条件で付く）を、後のフルバーストの開始の条件が見る。plan/design-skill-stage10.md 3.2 節）
   const stateTracks = slots.map((_, holder) => {
     const byState = new Map<NamedStateId, HeldTrack[]>();
     for (const track of tracks) {
@@ -1976,13 +1983,13 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return byState;
   });
   /**
-   * 2 段目の段 19 の PR 1（論点 2）: 持ち主 × カウンタごとの、そのカウンタが 0 に届いたら閉じる自分の状態の件の列（付与の untilCounterEmpty。
+   * 持ち主 × カウンタごとの、そのカウンタが 0 に届いたら閉じる自分の状態の件の列（付与の untilCounterEmpty。
    * 解除不可でも閉じる。registerCounters）
    */
   const counterEmptyTracks = new Map<string, HeldTrack[]>();
-  /** A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値 */
+  /** HP の割合で解除される自分の状態の件の列（付与の untilSelfHpAtMost）と閾値（plan/design-hp-down-interval.md 2.2 節） */
   const selfHpUntilTracks: { track: HeldTrack; threshold: number }[] = [];
-  /** グレイブ編（plan/design-grave.md 2.5 節）: ほかの状態の終わりで閉じる自分の状態の件の列（付与の untilStateEnd）と、見る状態 */
+  /** ほかの状態の終わりで閉じる自分の状態の件の列（付与の untilStateEnd）と、見る状態（plan/design-grave.md 2.5 節） */
   const stateEndTracks: { track: HeldTrack; state: NamedStateId }[] = [];
   for (const track of tracks) {
     const o = track.origin;
@@ -2000,7 +2007,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** selfState が見る件: 段 1 はそのフレームに効いている件、段 1.5 は前のフレームまでに付いた件 */
   const selfStateItemsAt = (track: HeldTrack, frame: number): HeldItem[] =>
     track.stage === 1 ? activeAt(track, frame) : activeAt(track, frame).filter((it) => it.start < frame);
-  /** 2 段目の段 10 の PR 3: 枠のその状態の、フレームのスタックの段の最大（selfState と同じ件。無ければ 0） */
+  /** 枠のその状態の、フレームのスタックの段の最大（selfState と同じ件。無ければ 0） */
   const stackLevelAt = (holder: number, state: NamedStateId, frame: number): number => {
     let level = 0;
     for (const t of stateTracks[holder]?.get(state) ?? []) {
@@ -2009,7 +2016,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return level;
   };
   /**
-   * トーブの基礎版編: 枠のその状態が確率の状態なら、フレームの段ごとの「スタック数がその段以上の確率」（添字は段 − 1）。確率の状態で
+   * 枠のその状態が確率の状態なら、フレームの段ごとの「スタック数がその段以上の確率」（添字は段 − 1）。確率の状態で
    * なければ undefined
    */
   const chanceLevelsAt = (holder: number, state: NamedStateId, frame: number): number[] | undefined => {
@@ -2031,11 +2038,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         activeAt(t, frame).length > 0,
     );
 
-  // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（2 段目の段 1。plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
+  // ゲージ: 時間で変わるバーストゲージのチャージ速度の件（plan/design-skill-stage1.md 1.6 節。段によらない。状態の中身も）
   const gaugeViews = viewsOf((_, e) => e.stat === 'burstGaugeSpeed');
-  // 2 段目の段 11 の PR 3: バーストスキルのクールタイム▼ の維持の付いた形（T4）の件
+  // バーストスキルのクールタイム▼ の維持の付いた形（T4）の件
   const cooldownViews = viewsOf((_, e) => e.stat === 'burstCooldown');
-  /** 2 段目の段 15 の PR 2: 枠 holder の T4 の▼ の件のうち、pick に合うものの秒の和 */
+  /** 枠 holder の T4 の▼ の件のうち、pick に合うものの秒の和 */
   const cooldownSum = (holder: number, pick: (it: HeldItem) => boolean): number => {
     let sum = 0;
     for (const v of cooldownViews[holder] ?? [])
@@ -2048,7 +2055,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     if (condition === undefined) return true;
     if (condition.selfState !== undefined) {
       const { state, present, stacks, sameFiring } = condition.selfState;
-      // 2 段目の段 5（plan/design-skill-stage5.md 1.2 節）: 家族の根なら、家族のどの状態でも当たる
+      // 家族の根なら、家族のどの状態でも当たる（plan/design-skill-stage5.md 1.2 節）
       const family = statesMatching(state);
       const isStatic = family.some((s) => staticStates[sourceSlotIndex]?.has(s) === true);
       const own = family.flatMap((s) => stateTracks[sourceSlotIndex]?.get(s) ?? []);
@@ -2059,7 +2066,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         !stacksHold(
           stacks,
           isStatic,
-          // クエンシー：エスケープクイーン編（plan/design-quency-eq.md 2 節の論点 3）: sameFiring は、同じ発火で前に書いた付与が付けた分
+          // sameFiring（plan/design-quency-eq.md 2 節の論点 3）は、同じ発火で前に書いた付与が付けた分
           // （射撃の回数のきっかけの件は次のフレームから）も数えるので、段によらず次のフレームに効いている件を見る
           own.map((t) => ({
             origin: t.origin,
@@ -2067,7 +2074,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           })),
         )
       ) {
-        // 2 段目の段 3（plan/design-skill-stage3.md 1.4 節）: スタック数の条件（段 1 の状態の件の、そのフレームの段の最大）
+        // スタック数の条件（段 1 の状態の件の、そのフレームの段の最大。plan/design-skill-stage3.md 1.4 節）
         return false;
       }
     }
@@ -2081,11 +2088,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         );
       if (!buffed) return false;
     }
-    // 2 段目の段 14 の PR 3: 解除の「フルバースト状態でなければ」（inFullBurst: false）も
+    // 解除の「フルバースト状態でなければ」（inFullBurst: false）も
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
     if (condition.enemyState !== undefined && !enemyStateAt(condition.enemyState, frame)) return false;
-    // エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 適正射程距離内なら（発火のフレームの着地点と、常時の値とそのフレームに
-    // 効いている件の適正最小射程距離▲。射撃の回数のきっかけの付与は次のフレームから効くので、その発自身のスタックは入らない）
+    // 適正射程距離内なら（発火のフレームの着地点と、常時の値とそのフレームに
+    // 効いている件の適正最小射程距離▲。射撃の回数のきっかけの付与は次のフレームから効くので、
+    // その発自身のスタックは入らない。plan/design-agent-bunny.md 2.2 節）
     if (
       condition.inEffectiveRange === true &&
       options.effectiveRangeAt !== undefined &&
@@ -2096,7 +2104,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       )
     )
       return false;
-    // 2 段目の段 10（plan/design-skill-stage10.md 2.3 節）: カウンタの値（前のフレームの終わりの値）
+    // カウンタの値（前のフレームの終わりの値。plan/design-skill-stage10.md 2.3 節）
     if (condition.selfCounter !== undefined) {
       const { counter, atLeast, below } = condition.selfCounter;
       const value = counterValue(sourceSlotIndex, counter);
@@ -2107,9 +2115,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   };
 
   /**
-   * 発火の文脈だけで決まる条件。2 段目の段 1（plan/design-skill-stage1.md 1.5 節）: 条件の usedBurst（直前に自分がバーストスキルを使用していれば）。発火の文脈の
+   * 発火の文脈だけで決まる条件。条件の usedBurst（直前に自分がバーストスキルを使用していれば。plan/design-skill-stage1.md 1.5 節）: 発火の文脈の
    * burstUsers に自分がいるか。件を見ないので、段 1 の効果でも発火の前に見る。鍵が無ければ true。
-   * 紅蓮編（plan/design-scarlet.md 2.2 節）: selfHp の atMost も見る。こちらは最大HP の件の列を読むが、発火のフレームより前に始まった件と
+   * selfHp の atMost も見る（plan/design-scarlet.md 2.2 節）。こちらは最大HP の件の列を読むが、発火のフレームより前に始まった件と
    * 前の現在の HP▼ だけなので、同じフレームの登録の順に依らない
    */
   const fireContextHolds = (
@@ -2121,14 +2129,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     // 文脈の無い出来事では、true も false も成り立たない（「使っていなければ」の側に倒さない）
     (condition?.usedBurst === undefined ||
       fireContextOf(trigger, ev)?.burstUsers?.includes(sourceSlotIndex) === condition.usedBurst) &&
-    // レッドフード編（plan/design-red-hood.md 2.1 節）: 使った段階（burstStep）も発火の文脈だけで決まる
+    // 使った段階（burstStep）も発火の文脈だけで決まる（plan/design-red-hood.md 2.1 節）
     burstStepHolds(condition, ev, sourceSlotIndex) &&
-    // 紅蓮編: 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）。以上の形は passive（編成の段）と
+    // 自分の HP の割合が閾値以下か（resolveCondition が atMostRef を atMost（% 表記）にしてある）。以上の形は passive（編成の段）と
     // damage（2 パス目）だけなので、ここには来ない
     (condition?.selfHp === undefined || selfHpAtMostHolds(condition.selfHp, selfHpRatioAt(sourceSlotIndex, ev.frame)));
 
   const rankSlots = rankSlotsOf(slots, passive);
-  // 2 段目の段 6 の PR 2（plan/design-skill-stage6.md 2.4 節）: 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件）。
+  // 枠のそのフレームの最終最大HP（常時 + 効いている最大HP▲ の件。plan/design-skill-stage6.md 2.4 節）。
   // 発動者の最終最大HP 基準の攻撃力▲（casterFinalMaxHp）の順位の値が読む
   const maxHpViews = viewsOf((_, e) => isMaxHpStat(e.stat));
   /**
@@ -2154,7 +2162,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return base * (1 + maxHpUpAt(slotIndex, frame, false).up);
   };
   /**
-   * マスト編（plan/design-mast.md 8 節。plan/design-skill-stage6.md 2.4 節の式）: 枠のフレーム frame の HP の割合。枠の想定の割合 ×
+   * 枠のフレーム frame の HP の割合（plan/design-mast.md 8 節。plan/design-skill-stage6.md 2.4 節の式）。枠の想定の割合 ×
    * (1 + Σ 最大HP▲ − Σ 最大HP のみ▲) ÷ (1 + Σ 最大HP▲)（Σ 最大HP▲ は最大HP のみ▲ も含む）。常時の分と、frame より前に始まって frame に
    * 効いている件（同じフレームに付いた件は次のフレームから。論点 8）
    */
@@ -2166,7 +2174,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const maxHpOnlyMoves = slots.map(
     (_, i) => (passiveMaxHpOnly[i] ?? 0) > 0 || (maxHpViews[i] ?? []).some((v) => v.effect.stat === 'maxHpOnly'),
   );
-  // 紅蓮編（plan/design-scarlet.md 2.1 節）: 枠ごとの現在の HP▼ の発火のフレーム（昇順）と、その発火までの 1 − ratio の積
+  // 枠ごとの現在の HP▼ の発火のフレーム（昇順）と、その発火までの 1 − ratio の積（plan/design-scarlet.md 2.1 節）
   const hpDowns = slots.map(() => ({ frames: [] as number[], products: [] as number[] }));
   /** 枠の frame より前の現在の HP▼ の積（無ければ 1） */
   const hpDownProductBefore = (slotIndex: number, frame: number): number => {
@@ -2181,7 +2189,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return (ratio * (1 + up - only)) / (1 + up);
   };
   /**
-   * ソリン編: 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。最大HP のみ▲ も現在の
+   * 履歴に置く、枠の HP の割合の段（selfHpRatioAt を毎フレーム取り、値の変わったフレームだけを残す）。最大HP のみ▲ も現在の
    * HP▼ も無い枠は割合が動かないので 1 段。ループの後に呼ぶ
    */
   const hpRatioStepsOf = (slotIndex: number): HpRatioSteps => {
@@ -2205,8 +2213,8 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 枠の HP の割合がフレーム frame に閾値 threshold（割合）以下か（きっかけ { selfHpAtMost } と維持 { selfHpAtMostRef } が読む） */
   const selfHpAtMostAt = (slotIndex: number, frame: number, threshold: number): boolean =>
     selfHpRatioAt(slotIndex, frame) <= threshold + 1e-9;
-  // 2 段目の段 7（plan/design-skill-stage7.md 1.2・1.4 節）: 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
-  // 発動者より低い枠（同値は含まない）と発動者自身
+  // 枠のそのフレームの最終防御力（常時 + 効いている防御力▲ の件）と、
+  // 発動者より低い枠（同値は含まない）と発動者自身（plan/design-skill-stage7.md 1.2・1.4 節）
   const defenseViews = viewsOf((_, e) => e.stat === 'defense');
   const finalDefenceAt = (slotIndex: number, frame: number): number => {
     const base = slots[slotIndex]?.baseDefence;
@@ -2246,11 +2254,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return finalAttacksAt(rankSlots, windows, frame);
   };
   const rankContext: HolderLists['rankContext'] = (e, sourceSlotIndex, context, frame) => {
-    // HP の割合を時間で読む編: 回復は手順 3 の最初（このフレームの登録の前）に当てるので、順位が読む HP の割合の while の可否を先に出す
+    // 回復は手順 3 の最初（このフレームの登録の前）に当てるので、順位が読む HP の割合の while の可否を先に出す
     // （f より前に始まった件と前の現在の HP▼ だけを読むので、登録の始めに出すのと同じ）
     updateHpAtLeast(frame);
-    // HP の割合を時間で読む編（plan/design-hp-ratio-readers.md 2.2 節）: 「残りの HP の割合が最も低い味方」は、発火のフレームの HP の割合
-    // （frame より前に始まった件と前の現在の HP▼）の低い順・同値は枠の若い順。割合が動かなければ fixedTargets（枠の想定の順）と同じ並び
+    // 「残りの HP の割合が最も低い味方」は、発火のフレームの HP の割合
+    // （frame より前に始まった件と前の現在の HP▼）の低い順・同値は枠の若い順
+    // （plan/design-hp-ratio-readers.md 2.2 節）。割合が動かなければ fixedTargets（枠の想定の順）と同じ並び
     if (e.target === 'lowestHpRatio' && e.fixedTargets !== undefined) {
       const ratios = slots.map((_, i) => (e.fixedTargets!.includes(i) ? selfHpRatioAt(i, frame) : 0));
       const hpRank = [...e.fixedTargets].sort((a, b) => ratios[a]! - ratios[b]! || a - b);
@@ -2280,7 +2289,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** timed の発火 1 つを、対象の持ち主の件の列に足す。対象になった枠を返す */
   const fireTimed = (src: TimedSource, start: number, context: FireContext): number[] => {
     if (start >= frames) return [];
-    // メイド編（plan/design-maids.md 2.1 節）: 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない）
+    // 値 × 発火のフレームの自分のその状態のスタック数（0 なら出さない。plan/design-maids.md 2.1 節）
     const per = src.effect.perCount;
     const scale = per === undefined ? undefined : stackLevelAt(src.sourceSlotIndex, per.state, start);
     if (scale !== undefined && scale <= 0) return [];
@@ -2288,7 +2297,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     slots.forEach((target, holder) => {
       if (target === null) return;
       if (!isEffectTarget(src.effect, src.sourceSlotIndex, holder, target.character, context)) return;
-      // 段 C: 敵の件の効果は、対象の味方があれば敵の件の列に 1 回だけ足す
+      // 敵の件の効果は、対象の味方があれば敵の件の列に 1 回だけ足す
       if (src.enemy !== null) {
         if (targets.length === 0) insertSorted(src.enemy.starts, start);
         targets.push(holder);
@@ -2310,12 +2319,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const fireGrant = (g: GrantSource, start: number, context: FireContext, fire?: number): number[] => {
     if (start >= frames) return [];
     const group = g.group;
-    // 2 段目の段 10（plan/design-skill-stage10.md 2.1 節）: スタックの数をカウンタの値か、自分の状態のスタック数（PR 3。発火のフレームの
-    // 段の最大。条件 selfState と同じ件を見る）から取る（0 なら付けない）。付いた後は、数え元が変わっても段は変わらない（V-0523）
+    // スタックの数をカウンタの値か、自分の状態のスタック数（発火のフレームの段の最大。条件 selfState と同じ件を見る。
+    // plan/design-skill-stage10.md 2.1 節）から取る（0 なら付けない）。付いた後は、数え元が変わっても段は変わらない（V-0523）
     const from = g.grant.stacksFrom;
-    // 2 段目の段 14 の PR 3: 使用回数のある状態は、1 回の発火で stacksPerFire のスタック（セブンスドワーフ・フルアクティブの 2 回）
-    // トーブの基礎版編（plan/design-tove-base.md 2.1 節）: 確率の状態から写すときは、段ごとの「元のスタック数がその段以上の確率」で
-    // 段を付け、件の段の scale にする（値はスタック数の期待値 × 値になる）
+    // 使用回数のある状態は、1 回の発火で stacksPerFire のスタック（セブンスドワーフ・フルアクティブの 2 回）
+    // 確率の状態から写すときは、段ごとの「元のスタック数がその段以上の確率」で
+    // 段を付け、件の段の scale にする（値はスタック数の期待値 × 値になる。plan/design-tove-base.md 2.1 節）
     const levels =
       from !== undefined && 'state' in from ? chanceLevelsAt(group.sourceSlotIndex, from.state, start) : undefined;
     const count =
@@ -2341,7 +2350,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (levels !== undefined) (track.levelScales ??= new Map()).set(start, levels);
     };
     const targets: number[] = [];
-    // エレグのバースト編: 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
+    // 敵に付く状態は、対象の味方があれば敵の件の列に 1 回だけ足す（付いた記録は作らない。{ applied } で見る
     // 語彙は味方の状態だけ）
     if (group.enemy !== null) {
       const on = slots.some(
@@ -2357,7 +2366,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const track = group.tracks[holder];
       if (!track) throw new Error(`no state track for ${group.state} on slot ${holder}`);
       addStart(track);
-      // ミント・プリカ編: { applied } のきっかけの付与（文脈に appliedCasters がある）は、同じフレームの切り替えでは後とみなす
+      // { applied } のきっかけの付与（文脈に appliedCasters がある）は、同じフレームの切り替えでは後とみなす
       switchGroup(holder, group.state, start, context?.appliedCasters !== undefined);
       const record: AppliedRecord = {
         frame: start,
@@ -2371,8 +2380,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return targets;
   };
   /**
-   * ミント・プリカ編（plan/design-mint-prika.md 2.2 節）: 切り替えの組の状態 state が持ち主 holder にフレーム start に付いたら、組のほかの状態の
-   * 件の列（出どころは問わない。解除不可も）を閉じる。ふだんは解除と同じく start + 1 で切り、同じフレームに始まった件は残す（付与が勝つ）。
+   * 切り替えの組の状態 state が持ち主 holder にフレーム start に付いたら、組のほかの状態の
+   * 件の列（出どころは問わない。解除不可も。plan/design-mint-prika.md 2.2 節）を閉じる。
+   * ふだんは解除と同じく start + 1 で切り、同じフレームに始まった件は残す（付与が勝つ）。
    * { applied } のきっかけの付与は、同じフレームの付与より後とみなし、同じフレームに始まった件も切る（消費と同じ）
    */
   const switchGroup = (holder: number, state: NamedStateId, start: number, fromApplied: boolean): void => {
@@ -2387,20 +2397,20 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   };
   /**
-   * 2 段目の段 1（plan/design-skill-stage1.md 1.2 節）: 解除の発火 1 つ。持ち主（自分）のその状態の件の列（出どころは問わない）に、
+   * 解除の発火 1 つ（plan/design-skill-stage1.md 1.2 節）。持ち主（自分）のその状態の件の列（出どころは問わない）に、
    * 閉じるフレームを足す。解除不可の件の列は閉じない
    */
   const fireRemove = (src: RemoveSource, frame: number): void => {
     for (const track of tracks) {
       const o = track.origin;
       if (track.holder !== src.sourceSlotIndex || o.kind !== 'state' || o.state !== src.effect.state) continue;
-      // ミント・プリカ編（plan/design-mint-prika.md 2.1 節）: 消去（cancel）は解除不可の件も閉じる
+      // 消去（cancel）は解除不可の件も閉じる（plan/design-mint-prika.md 2.1 節）
       if (o.grant.undispellable === true && src.effect.cancel !== true) continue;
       closeTrack(track, frame);
     }
   };
   /**
-   * ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 延長の発火 1 つ。対象の枠のその状態の件の列（出どころは問わない）に、延長を足す
+   * 延長の発火 1 つ（plan/design-mint-prika.md 2.5 節）。対象の枠のその状態の件の列（出どころは問わない）に、延長を足す
    * （そのフレームに付いていて後まで続く件だけが延びる。extendItems）
    */
   const fireExtend = (src: ExtendSource, frame: number): void => {
@@ -2417,17 +2427,17 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     for (const track of src.targets) (track.extensions ??= []).push({ frame, frames: src.effect.frames });
   };
   /**
-   * 課題 2-59: 持ち主ごとの、デバフ 1 個ごとの件の列。デバフの印の付いた状態（解除不可を除く）は状態ごと、課題 2-64
-   * （plan/design-debuff-removal-timed.md 2.1・2.2 節）の味方の timed の▼は効果ごと。件の列は組み立ての後に増えないので、初めての発火で作る
+   * 持ち主ごとの、デバフ 1 個ごとの件の列。デバフの印の付いた状態（解除不可を除く）は状態ごと、味方の timed の▼は効果ごと
+   * （plan/design-debuff-removal-timed.md 2.1・2.2 節）。件の列は組み立ての後に増えないので、初めての発火で作る
    */
   let debuffTracks: HeldTrack[][][] | undefined;
   /**
-   * 課題 2-59: 遅れ（delayFrames）のあるデバフ解除の予約（効くフレーム → 解除）。対象は、ループがそのフレームに来た時に、そのフレームまでに
+   * 遅れ（delayFrames）のあるデバフ解除の予約（効くフレーム → 解除）。対象は、ループがそのフレームに来た時に、そのフレームまでに
    * 付いた状態で選ぶ（発火のフレームで先読みすると、遅れの間に付いた状態が件の列にまだ無い）
    */
   const pendingRemoveDebuffs = new Map<number, RemoveDebuffSource[]>();
   /**
-   * 課題 2-59: デバフ解除の効くフレーム at（ループがいるフレーム）に効いている、味方のデバフ（印の付いた状態と、課題 2-64 の timed の▼）の
+   * デバフ解除の効くフレーム at（ループがいるフレーム）に効いている、味方のデバフ（印の付いた状態と、timed の▼）の
    * 件を、対象の味方ごとに count 個まで、スタックごと閉じる（選び方は pickRemoveDebuff）。at のすべての段の付与を登録した後に呼ぶ
    */
   const fireRemoveDebuff = (src: RemoveDebuffSource, at: number): void => {
@@ -2479,7 +2489,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
   };
   /**
-   * 2 段目の段 3（plan/design-skill-stage3.md 1.1 節）: スタック量の増加の発火 1 つ。状態の件の列に、同じフレームの始まりを N 個入れる
+   * スタック量の増加の発火 1 つ（plan/design-skill-stage3.md 1.1 節）。状態の件の列に、同じフレームの始まりを N 個入れる
    * （スタックの段は始まりの数で上がり、上限と維持は付与のもの）。付いた記録は 1 件。
    * 減少（同 1.5 節）は、件の列に減少（そのフレームに効いている段の上から N 段を次のフレームで切る）を入れる。付いた記録は作らない
    */
@@ -2489,7 +2499,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const decreases = src.track.decreases;
       let i = decreases.length;
       while (i > 0 && decreases[i - 1]!.frame > start) i--;
-      // 2 段目の段 14 の PR 3: 0 になったら件を閉じる減少（使用回数を使い切った時）
+      // 0 になったら件を閉じる減少（使用回数を使い切った時）
       decreases.splice(i, 0, {
         frame: start,
         amount: src.effect.amount,
@@ -2507,14 +2517,14 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     applications.push(record);
   };
 
-  // ---- 2 段目の段 4（plan/design-skill-stage4.md 1.1 節）: { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する） ----
+  // ---- { applied } の出どころ（timed・付与。見る状態が自分に付いた記録から発火する。plan/design-skill-stage4.md 1.1 節） ----
   type AppliedSource = {
     state: NamedStateId;
     sourceSlotIndex: number;
     stage: HeldStage;
     /** 最後に発火したフレーム。記録のフレームは呼び出しの順に減らないので、前の呼び出しと同じフレームの 2 回目を落とす */
     last: number;
-    /** ミント・プリカ編（plan/design-mint-prika.md 2.3 節）: 発火の条件（selfState だけ） */
+    /** 発火の条件（selfState だけ。plan/design-mint-prika.md 2.3 節） */
     condition: EffectCondition | undefined;
     /** 同: 条件を満たさない発火を記録する（付与は skipGrant で状態も残す） */
     skip: (frame: number) => void;
@@ -2556,7 +2566,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       },
     });
   }
-  // ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: { applied } の状態の維持の延長
+  // { applied } の状態の維持の延長（plan/design-mint-prika.md 2.5 節）
   for (const src of extendSources) {
     const t = src.effect.trigger;
     if (!isResolvedApplied(t)) continue;
@@ -2589,7 +2599,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       for (const frame of [...fires.keys()].sort((x, y) => x - y)) {
         if (frame <= a.last) continue;
         a.last = frame;
-        // ミント・プリカ編（plan/design-mint-prika.md 2.3 節）: 条件（自分の状態）は段 1.5 と同じく前のフレームまでに付いた件を見る
+        // 条件（自分の状態）は段 1.5 と同じく前のフレームまでに付いた件を見る（plan/design-mint-prika.md 2.3 節）
         if (!holdsAt(a.condition, a.sourceSlotIndex, frame)) {
           a.skip(frame);
           continue;
@@ -2598,7 +2608,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
     }
   };
-  /** 2 段目の段 4: まだ dispatchApplied で読んでいない記録の始まり（静的な状態の記録は、戦闘開始時の呼び出しで読む） */
+  /** まだ dispatchApplied で読んでいない記録の始まり（静的な状態の記録は、戦闘開始時の呼び出しで読む） */
   let appliedFrom = 0;
   const recordRanking = (
     frame: number,
@@ -2614,7 +2624,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       effect: { source: e.source, effectIndex: e.effectIndex },
       finalAttacks,
       targets: attackRank.filter((i) => targets.includes(i)),
-      // 対象の語彙編: unlessShort で末尾に足した自分は、同値の比べに入れない（順位ではなく足りない分の補い）
+      // unlessShort で末尾に足した自分は、同値の比べに入れない（順位ではなく足りない分の補い）
       tied: tiedAtCutoff(
         e.excludeSelf === 'unlessShort' ? attackRank.slice(0, -1) : attackRank,
         finalAttacks,
@@ -2623,7 +2633,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     });
   };
 
-  // 2 段目の段 4: { applied } の出どころは出来事では発火しない（dispatchApplied）
+  // { applied } の出どころは出来事では発火しない（dispatchApplied）
   const timedAt = (stage: HeldStage): TimedSource[] =>
     timedSources.filter((s) => s.stage === stage && !isResolvedApplied(s.effect.trigger));
   const stage1Timed = timedAt(1);
@@ -2638,7 +2648,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   // stacksFrom・順位の対象を止める）の、前の回の発（known）と、件の始まりのフレーム → その件の数（early）と、この回の発（fired）
   if (stateGroups.some((group) => group.grants.some((g) => g.grant.leadFrames !== undefined && g.stage !== 1)))
     throw new Error('a grant with leadFrames must be in stage 1');
-  // A2 の B モード編: HP の割合で解除される付与の「発火のフレームにすでに閾値以下なら付かない」は段 1 の付与だけが見る（skills/parse/state.ts が
+  // HP の割合で解除される付与の「発火のフレームにすでに閾値以下なら付かない」は段 1 の付与だけが見る（skills/parse/state.ts が
   // 条件を止める）。前の回の発から始める付与（leadFrames）とは組まない
   if (
     stateGroups.some((group) =>
@@ -2687,12 +2697,12 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   const ampFires = new Map(amplifiers.map((amp) => [amp, firesOf(amp.effect.trigger, amp.sourceSlotIndex)]));
 
   /**
-   * 2 段目の段 10（plan/design-skill-stage4.md 1.3 節）: { ended } の発火。持ち主（自分）のその状態の件（段によらない）の終わりがこの
+   * { ended } の発火（plan/design-skill-stage4.md 1.3 節）。持ち主（自分）のその状態の件（段によらない）の終わりがこの
    * フレームで、このフレームに続く件が無い
    */
   const endedTracks = new Map<string, HeldTrack[]>();
   const endedAt = (holder: number, state: NamedStateId, frame: number): boolean => {
-    // 件の列は初期化で出そろうので、持ち主 × 状態ごとに 1 回だけ集める（グレイブ編から毎フレーム呼ぶ）
+    // 件の列は初期化で出そろうので、持ち主 × 状態ごとに 1 回だけ集める（毎フレーム呼ぶ）
     const key = `${holder}:${state}`;
     let own = endedTracks.get(key);
     if (own === undefined) {
@@ -2709,11 +2719,11 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     return ended;
   };
   /**
-   * 2 段目の段 10: カウンタの増減の条件。selfState は段によらずそのフレームに効いている状態の件を見る（増減はすべての判定の後に足すので、
+   * カウンタの増減の条件。selfState は段によらずそのフレームに効いている状態の件を見る（増減はすべての判定の後に足すので、
    * 同じフレームの付与も入れてよい）。selfCounter は前のフレームの終わりの値
    */
   const counterConditionHolds = (condition: EffectCondition, slotIndex: number, frame: number): boolean => {
-    // 2 段目の段 12 の PR 2: フルバーストの中か外か（そのフレームの窓。[start, end)）
+    // フルバーストの中か外か（そのフレームの窓。[start, end)）
     if (condition.inFullBurst !== undefined && inFullBurstAt(frame) !== condition.inFullBurst) return false;
     if (condition.selfState !== undefined) {
       const { state, present } = condition.selfState;
@@ -2727,7 +2737,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     return condition.selfCounter === undefined || holdsAt({ selfCounter: condition.selfCounter }, slotIndex, frame);
   };
-  /** 2 段目の段 10: このフレームのカウンタの増減を、すべての判定の後に足す（0 と上限の間で切る） */
+  /** このフレームのカウンタの増減を、すべての判定の後に足す（0 と上限の間で切る） */
   const registerCounters = (ev: FrameEvents, battleStartOnly: boolean): void => {
     if (counterSources.length === 0) return;
     const f = ev.frame;
@@ -2736,7 +2746,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const t = src.effect.trigger;
       let fired: boolean;
       if (isEndedTrigger(t)) fired = !battleStartOnly && endedAt(src.sourceSlotIndex, t.ended, f);
-      // 2 段目の段 19 の PR 1（論点 3）: 自分にその状態が付いたフレーム（このフレームのすべての付与の後。戦闘開始時の付与はフレーム 0 の
+      // 自分にその状態が付いたフレーム（このフレームのすべての付与の後。戦闘開始時の付与はフレーム 0 の
       // 出来事で読む）
       else if (isResolvedApplied(t))
         fired = !battleStartOnly && lastAtOrBefore(ownAppliedOf(src.sourceSlotIndex, t.applied), f) === f;
@@ -2767,7 +2777,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
           : { frame: f, slotIndex, counter, value: after },
       );
       if (after === counterMax(counter)) counterFullAt.set(key, (battleStartOnly ? 0 : f) + 1);
-      // 2 段目の段 19 の PR 1（論点 2）: 0 に届いたら、そのカウンタで続く自分の状態の件の列を次のフレームで閉じる（解除不可でも）
+      // 0 に届いたら、そのカウンタで続く自分の状態の件の列を次のフレームで閉じる（解除不可でも）
       if (after === 0)
         for (const track of counterEmptyTracks.get(key) ?? []) closeTrack(track, battleStartOnly ? 0 : f);
     }
@@ -2776,16 +2786,16 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
   /** 段 1〜2 と強化の発火（手順 3。battleStartOnly ならループの前の戦闘開始時の分だけ） */
   const register = (ev: FrameEvents, battleStartOnly: boolean): void => {
     const f = ev.frame;
-    // HP の割合を時間で読む編: このフレームの HP の割合の while の可否（このフレームのどの登録よりも先）
+    // このフレームの HP の割合の while の可否（このフレームのどの登録よりも先）
     updateHpAtLeast(f);
     const from = appliedFrom;
-    // グレイブ編（plan/design-grave.md 2.5 節）: 見る状態の持ち主の件が f に外れたら、f を窓の終わりに足す（f には付いていない）
+    // 見る状態の持ち主の件が f に外れたら、f を窓の終わりに足す（f には付いていない。plan/design-grave.md 2.5 節）
     if (!battleStartOnly)
       for (const { track, state } of stateEndTracks) {
         const ends = track.untilEnds!;
         if (ends.at(-1) !== f && endedAt(track.holder, state, f)) ends.push(f);
       }
-    // A2 の B モード編（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
+    // HP の割合で解除される件（plan/design-hp-down-interval.md 2.2 節）: f より前に付いた件が f に効いていて、持ち主の HP の割合が閾値以下と読めたら、
     // f + 1 で閉じる（f には付いている。HP の割合は f より前の現在の HP▼ から。付いた時にすでに以下なら付かない（段 1 の付与））
     if (!battleStartOnly)
       for (const { track, threshold } of selfHpUntilTracks)
@@ -2801,7 +2811,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         const shots = lead.early.get(f);
         if (shots !== undefined) for (const shot of shots) fireGrant(g, f, null, shot);
       }
-      // トーブの基礎版編: 確率のきっかけの付与は、timed の確率と同じく機会を貯める（付いた記録は作らない）
+      // 確率のきっかけの付与は、timed の確率と同じく機会を貯める（付いた記録は作らない）
       if (isResolvedChance(g.grant.trigger)) {
         if (!battleStartOnly) {
           const track = g.group.tracks.find((t) => t !== null);
@@ -2814,7 +2824,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         skipGrant(g, f);
         continue;
       }
-      // A2 の B モード編（V-0729）: HP の割合で解除される状態は、発火のフレームにすでに閾値以下なら付かない（不発に数える）
+      // HP の割合で解除される状態は、発火のフレームにすでに閾値以下なら付かない（不発に数える。V-0729）
       const hpUntil = g.grant.untilSelfHpAtMost;
       if (hpUntil !== undefined && !battleStartOnly && selfHpAtMostAt(g.group.sourceSlotIndex, f, hpUntil)) {
         skipGrant(g, f);
@@ -2851,7 +2861,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         fireContextOf(src.effect.trigger, ev),
       );
     }
-    // 2 段目の段 1: 解除（閉じるのは発火の次のフレームなので、段の中の順は同じフレームの判定に効かない。plan/design-skill-stage1.md 1.2 節）
+    // 解除（閉じるのは発火の次のフレームなので、段の中の順は同じフレームの判定に効かない。plan/design-skill-stage1.md 1.2 節）
     for (const r of stage1Removes) {
       if (!take(r.effect.trigger) || !(battleStartOnly || r.fires(ev))) continue;
       if (!fireContextHolds(r.effect.condition, r.effect.trigger, ev, r.sourceSlotIndex)) {
@@ -2860,7 +2870,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
-    // 2 段目の段 3: スタック量の増減（増加は状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方。減少は次のフレームで切るので、
+    // スタック量の増減（増加は状態の件の列の始まりを足すだけなので、段 1 の付与と同じ見え方。減少は次のフレームで切るので、
     // 段の中の順は同じフレームの判定に効かない）
     for (const x of stage1Stacks) {
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
@@ -2870,9 +2880,9 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireStackChange(x, battleStartOnly ? 0 : startOfFire(x.effect.trigger, f));
     }
-    // 2 段目の段 4: 段 1 の { applied }（段 1 の付与・スタック量の増加で付いた記録から）
+    // 段 1 の { applied }（段 1 の付与・スタック量の増加で付いた記録から）
     dispatchApplied(1, from);
-    // 段 C: 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
+    // 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
     for (const e of enemyStateSources) {
       for (const { effect, fires } of e.effects) {
         if (!take(effect.trigger) || !(battleStartOnly || fires(ev))) continue;
@@ -2880,7 +2890,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         if (at < frames) insertSorted(e.track.starts, at);
       }
     }
-    // 2 段目の段 13 の PR 2: 消去（f の判定には付いている。dotActiveSpans が f + 1 で切る）
+    // 消去（f の判定には付いている。dotActiveSpans が f + 1 で切る）
     if (!battleStartOnly) for (const c of dotCancelSources) if (c.fires(ev)) insertSorted(c.track.closes, f);
     if (!battleStartOnly) {
       // 循環の間隔の変更はループの中でしか読まないので、戦闘開始時もフレーム 0 の出来事で登録する
@@ -2890,7 +2900,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
         if (start < frames) insertSorted(c.track.starts, start);
       }
     }
-    // 段 1.5: 条件つきの付与と効果（と、状態のスタック数を数で読む付与。2 段目の段 10 の PR 3）。判定は段 1 の件だけを見る（条件つきどうしは
+    // 段 1.5: 条件つきの付与と効果（と、状態のスタック数を数で読む付与）。判定は段 1 の件だけを見る（条件つきどうしは
     // 連鎖させない）
     for (const g of stage15Grants) {
       if (!take(g.grant.trigger) || !(battleStartOnly || g.fires(ev))) continue;
@@ -2929,7 +2939,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       }
       fireRemove(r, battleStartOnly ? 0 : startOfFire(r.effect.trigger, f));
     }
-    // ミント・プリカ編（plan/design-mint-prika.md 2.5 節）: 状態の維持の延長（{ applied } のほか。段 1.5 までに付いた件を延ばす）
+    // 状態の維持の延長（{ applied } のほか。段 1.5 までに付いた件を延ばす。plan/design-mint-prika.md 2.5 節）
     for (const x of extendSources) {
       if (isResolvedApplied(x.effect.trigger)) continue;
       if (!take(x.effect.trigger) || !(battleStartOnly || x.fires(ev))) continue;
@@ -2965,7 +2975,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       if (!take(src.effect.trigger) || !(battleStartOnly || src.fires(ev))) continue;
       const start = battleStartOnly ? 0 : startOfFire(src.effect.trigger, f, src.effect.delayFrames);
       if (start >= frames) continue;
-      // 2 段目の段 7: 最終防御力の比べの対象（発火のフレームの最終防御力。段 1・1.5 の防御力▲ の件。同じフレームに付いたものも入れる）
+      // 最終防御力の比べの対象（発火のフレームの最終防御力。段 1・1.5 の防御力▲ の件。同じフレームに付いたものも入れる）
       if (dependsOnDefense(src.effect)) {
         fireTimed(src, start, {
           ...fireContextOf(src.effect.trigger, ev),
@@ -2980,7 +2990,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
     }
     dispatchApplied(2, from);
     appliedFrom = applications.length;
-    // 課題 2-59: デバフ解除（解除と同じく、閉じるのは効くフレームの次のフレームなので、同じフレームの判定には効かない）。遅れのある解除は
+    // デバフ解除（解除と同じく、閉じるのは効くフレームの次のフレームなので、同じフレームの判定には効かない）。遅れのある解除は
     // 効くフレームに予約し、そのフレームで対象を選ぶ（予約した解除を先に）。対象は、このフレームのすべての段の付与の後に選ぶ
     const due = battleStartOnly || pendingRemoveDebuffs.size === 0 ? undefined : pendingRemoveDebuffs.get(f);
     if (due !== undefined) {
@@ -3004,7 +3014,7 @@ export function createHolderLists(slots: readonly TimelineSlot[], options: Holde
       const start = battleStartOnly ? 0 : startOfFire(amp.effect.trigger, f);
       if (start < frames) amp.starts.push(start);
     }
-    // 2 段目の段 10: カウンタの増減は、このフレームのすべての判定の後
+    // カウンタの増減は、このフレームのすべての判定の後
     registerCounters(ev, battleStartOnly);
   };
   const emptyEvents = (frame: number): FrameEvents => ({
@@ -3318,7 +3328,7 @@ export function activeItemsAt(
 // ---- 値の小片と区間（plan/design-holder-effects.md 2.6・2.9 節） ----
 
 /**
- * 値の小片（plan/design-holder-effects.md 2.9 節。段 D の 1）: 味方の枠ごとに、区間の値に足す効果と、その値が効いている区間 [start, end)。
+ * 値の小片（plan/design-holder-effects.md 2.9 節）: 味方の枠ごとに、区間の値に足す効果と、その値が効いている区間 [start, end)。
  * 件（timed・状態の中身）と、確率のきっかけの期待値、強化の小片から作る。敵の件は、効果の対象の味方の各枠に写す（区間の値は味方の
  * 各枠に足す。C-0138）。状態だけの stat（命中率）の小片も入る（区間に足すのは、着地点の計画があり持続の命中率▲を使う時だけ）
  */
@@ -3353,7 +3363,7 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
     return fires[Math.min(k, fires.length - 1)];
   };
   const push = (effect: ItemEffect, item: HeldItem, fire?: number): void => {
-    // 段 C: 敵の件は、効果の対象の味方の各枠に写す。エレグのバースト編: 敵に付く状態の中身も（対象は付与の対象）
+    // 敵の件は、効果の対象の味方の各枠に写す。敵に付く状態の中身も（対象は付与の対象）
     const holders =
       track.holder !== ENEMY
         ? [track.holder]
@@ -3380,7 +3390,7 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
       pieces.push(piece);
     }
   };
-  // 2 段目の段 9 の PR 2: while の効果は timed と同じく件ごとに 1 つ（値はスタックごとではない）
+  // while の効果は timed と同じく件ごとに 1 つ（値はスタックごとではない）
   if (o.kind === 'timed' || o.kind === 'while') for (const item of track.items) push(o.effect, item);
   if (o.kind === 'state')
     for (const item of track.items) {
@@ -3390,7 +3400,7 @@ function piecesOfTrack(track: HeldTrack, slots: readonly TimelineSlot[]): ValueP
   return pieces;
 }
 
-/** 段 C: 敵の件の効果を写す味方の枠（効果の対象。敵の件の効果は味方全体で、絞り込みを持たない） */
+/** 敵の件の効果を写す味方の枠（効果の対象。敵の件の効果は味方全体で、絞り込みを持たない） */
 function alliesOf(
   effect: Parameters<typeof isEffectTarget>[0],
   sourceSlotIndex: number,
@@ -3402,7 +3412,7 @@ function alliesOf(
 }
 
 /**
- * 強化の受け付けと値の小片（段 A までの 2.5 段目と同じ作り方）と、受け付けなかった記録。参照するのは、同じ出どころ・スロット・stat の、
+ * 強化の受け付けと値の小片と、受け付けなかった記録。参照するのは、同じ出どころ・スロット・stat の、
  * 強化でない timed と状態の中身の件（段 1〜2。確率のきっかけは期待値）
  */
 function amplify(
@@ -3439,7 +3449,7 @@ function amplify(
     );
     const activeAt = (holder: number, frame: number) =>
       referenced.filter((r) => r.holder === holder && r.item.start <= frame && frame < r.item.end);
-    // 段 C: 敵の件の効果（受けるダメージ▲）は、発動の瞬間の判定も小片も敵の件で見る（参照する件も敵の件）
+    // 敵の件の効果（受けるダメージ▲）は、発動の瞬間の判定も小片も敵の件で見る（参照する件も敵の件）
     const enemy = isEnemyEffect(effect);
     const targets = slots.flatMap((target, holder) =>
       target !== null && isEffectTarget(effect, sourceSlotIndex, holder, target.character) ? [holder] : [],
@@ -3499,7 +3509,7 @@ function pieceKey(w: ValuePiece): number[] {
 
 /** 常時パッシブだけの状態を、常時の件から作る（resolvePassiveStates と同じ並び・同じ値） */
 function passiveStatesOf(history: HolderHistory): (SlotBuffState | null)[] {
-  // 2 段目の段 6 の PR 2: 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値（resolvePassiveStates と同じ）
+  // 発動者の最終最大HP は、発動者の常時の最大HP▲ を入れた値（resolvePassiveStates と同じ）
   const passiveMaxHp = history.slots.map(() => 0);
   for (const track of history.tracks) {
     if (track.origin.kind === 'passive' && isMaxHpStat(track.origin.effect.stat) && track.holder >= 0)
@@ -3564,8 +3574,7 @@ export function valuePiecesOf(history: Pick<HolderHistory, 'tracks' | 'amplified
 }
 
 /**
- * 履歴から区間と常時の値を作る（skills/timeline.ts の buildSegments。区間の値は、値の小片を時刻の順に足す）。段 E で、窓と記録の
- * 書き出しを消した（読む側は履歴を読む。plan/design-holder-effects.md 3 節の段 E）
+ * 履歴から区間と常時の値を作る（skills/timeline.ts の buildSegments。区間の値は、値の小片を時刻の順に足す）
  */
 export function buffTimelineOf(
   history: HolderHistory,

@@ -172,7 +172,7 @@ export type FirstPassOptions = {
   manualBursts?: readonly number[];
   /** バーストを使わない枠（0 始まり。TeamInput.noBurstSlots）。動的サイクルだけ。省略は全員使う */
   noBurstSlots?: readonly number[];
-  /** Stage 16-B: 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
+  /** 敵を狙えない窓（昇順・重なりなし。frame/events.ts の untargetableRanges）。省略・空なら今までと同じ */
   untargetable?: readonly FrameRange[];
   /**
    * V-0605: 枠ごとの、撃たずにハイドする時間（TeamInput.holdFire）。その枠だけ untargetable と同じに扱い（重なれば合わせた区間）、
@@ -180,11 +180,11 @@ export type FirstPassOptions = {
    */
   holdFire?: readonly HoldFire[];
   /**
-   * Stage 18-C: 枠ごとの弾丸命中率の区間（条件が自動の枠。frame/landing.ts の hitRateSpansOf）。null・省略の枠は
+   * 枠ごとの弾丸命中率の区間（条件が自動の枠。frame/landing.ts の hitRateSpansOf）。null・省略の枠は
    * TimelineSlot.hitRate の定数のまま。区間は昇順で [0, frames) を覆う
    */
   hitRates?: readonly (readonly LandingHitRateSpan[] | null)[];
-  /** ルドミラ：ウィンターオーナー編: 敵にコアがあるか（省略 true）。無ければ coreHit の回数は増えない */
+  /** 敵にコアがあるか（省略 true）。無ければ coreHit の回数は増えない */
   enemyHasCore?: boolean;
   /**
    * plan/design-anis-star-gauge-timing.md 3・4 節: 枠ごとの飛ぶ時間（frame/landing.ts の slotFlightsOf）。発のゲージ（弾と射撃ごとの
@@ -192,9 +192,9 @@ export type FirstPassOptions = {
    */
   flights?: readonly (SlotFlight | null)[];
   /**
-   * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: 枠ごと・スキルのスロットごとの、使用武器変更の最初の発の、発動の印
-   * （hexagonFrameOf）から着弾までのフレームの区間（frame/landing.ts の slotWeaponChangeFirstHitsOf）。省略・null・行の無いスロットは、
-   * チャージ武器の最初の発の待ち
+   * 枠ごと・スキルのスロットごとの、使用武器変更の最初の発の、発動の印
+   * （hexagonFrameOf）から着弾までのフレームの区間（frame/landing.ts の slotWeaponChangeFirstHitsOf。
+   * plan/design-eunhwa-tu-burst-shot-timing.md 4 節）。省略・null・行の無いスロットは、チャージ武器の最初の発の待ち
    */
   weaponChangeFirstHits?: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
@@ -202,7 +202,7 @@ export type FirstPassOptions = {
   /** テスト用: 件の列を読むたびに作り直した件と比べる（skills/holders.ts の HolderListsOptions.verifyItems） */
   verifyItems?: boolean;
   /**
-   * ペレットの命中編（plan/design-pellet-hit.md 3 節）: 枠ごとの、発ごとに的に当たったペレットの数（録画で数えた入力）。
+   * 枠ごとの、発ごとに的に当たったペレットの数（録画で数えた入力。plan/design-pellet-hit.md 3 節）。
    * 有る発は pelletHit の回数に期待値の代わりにこの数を足す。省略は無し（期待値）
    */
   pelletHits?: readonly PelletHits[];
@@ -213,8 +213,8 @@ export type FirstPassOptions = {
    */
   hitRateWith?: (slotIndex: number, span: LandingHitRateSpan, timed: HitRateN) => { hitRate: number; coreHits: number };
   /**
-   * エード：エージェントバニー編（plan/design-agent-bunny.md 2.2 節）: 条件 inEffectiveRange の判定（skills/holders.ts の
-   * HolderListsOptions.effectiveRangeAt にそのまま渡す。frame/landing.ts の inEffectiveRangeAt）
+   * 条件 inEffectiveRange の判定（skills/holders.ts の
+   * HolderListsOptions.effectiveRangeAt にそのまま渡す。frame/landing.ts の inEffectiveRangeAt。plan/design-agent-bunny.md 2.2 節）
    */
   effectiveRangeAt?: (slotIndex: number, frame: number, minRange: number) => boolean;
   /**
@@ -271,7 +271,7 @@ export type FirstPassResult = {
   /** V-0030: 段の循環のヒットで溜めたゲージ（予約した順）。frame は当たるフレーム、shotFrame は段を出した射撃。テスト用 */
   cycleGaugeHits: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
-   * レイヴン編: 持続ダメージで溜めたゲージ（発生順）。apply は付けたとき（発火のフレーム）、tick は予約した tick のフレーム。テスト用
+   * 持続ダメージで溜めたゲージ（発生順）。apply は付けたとき（発火のフレーム）、tick は予約した tick のフレーム。テスト用
    */
   dotGauges: { slotIndex: number; kind: 'apply' | 'tick'; frame: number; energy: number }[];
   /**
@@ -280,25 +280,26 @@ export type FirstPassResult = {
    */
   shotGauges: { slotIndex: number; shotFrame: number; frame: number; energy: number }[];
   /**
-   * フラワー編（V-0483）: 周期のゲージ（burstGaugeHit）で溜めたゲージ（予約した順）。fireFrame は発火、frame は足すフレーム（発火 +
+   * 周期のゲージ（burstGaugeHit）で溜めたゲージ（予約した順。V-0483）。fireFrame は発火、frame は足すフレーム（発火 +
    * delayFrames）。照合用
    */
   timerGauges: { slotIndex: number; fireFrame: number; frame: number; energy: number }[];
   /**
-   * アインのニアフェザー編（plan/design-ein-near-feather.md 1.3 節）: 召喚の攻撃（damage のきっかけ { summon }）の発火のフレーム（発生順）。
+   * 召喚の攻撃（damage のきっかけ { summon }）の発火のフレーム（発生順。plan/design-ein-near-feather.md 1.3 節）。
    * 1 パス目が機数と進みを追って決め、2 パス目（frame/plan.ts の planSkillHits）がこの列で倍率ダメージを出す
    */
   summonHits: { slotIndex: number; summon: SummonId; frame: number }[];
   /** 蓄積爆破の爆発（発生順）。2 パス目（frame/plan.ts の planSkillHits）がこの列で爆発のヒットを出す */
   accumulateReleases: AccumulateRelease[];
   /**
-   * 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムを縮める状態（中身の skillCooldownDown）が編成にある時の、
-   * 枠 × スロットのクールタイムの印（cooldown）のある周期の発火のフレーム（昇順）。2 パス目（frame/plan.ts の planSkillHits）が、
+   * クールタイムを縮める状態（中身の skillCooldownDown）が編成にある時の、
+   * 枠 × スロットのクールタイムの印（cooldown）のある周期の発火のフレーム（昇順。
+   * plan/design-arcana-magician.md 2.1 節）。2 パス目（frame/plan.ts の planSkillHits）が、
    * 印のある周期の damage をこの列で出す。縮める状態の無い編成では空（静的な周期のまま）
    */
   cooldownTimerFires: { slotIndex: number; skill: SkillSlot; frames: number[] }[];
   /**
-   * 持ち主ごとの一覧編（plan/design-holder-effects.md 段 A）: 件の一覧の履歴。planTeamRun が区間を作る
+   * 件の一覧の履歴（plan/design-holder-effects.md 2.9 節）。planTeamRun が区間を作る
    * （skills/holders.ts の buffTimelineOf）
    */
   history: HolderHistory;
@@ -317,7 +318,7 @@ type CycleGaugeTracker = {
   energy: number;
   count: number;
   step: number;
-  /** Stage 22-B: fullChargeShot の循環は部分チャージの発を数えない */
+  /** fullChargeShot の循環は部分チャージの発を数えない */
   fullChargeOnly: boolean;
 };
 
@@ -438,21 +439,21 @@ function runFirstPassOnce(
   // ---- 効果の準備 ----
   const passive = resolvePassiveStates(slots);
   const instant: InstantSource[] = [];
-  /** 発火の文脈 context のとき、効果 e が掛かる枠（Stage 11: burstUsers は発火ごとに変わる） */
+  /** 発火の文脈 context のとき、効果 e が掛かる枠（burstUsers は発火ごとに変わる） */
   const targetsAt = (e: Parameters<typeof isEffectTarget>[0], sourceSlotIndex: number, context: FireContext) =>
     slots.flatMap((t, i) => (t !== null && isEffectTarget(e, sourceSlotIndex, i, t.character, context) ? [i] : []));
   // F5（plan/design-heal-vocabulary.md 3.3 節）: 時間の周期のトリガー（heal だけ書ける）は出来事の列に無いので、
   // 周期のフレーム（atStart ならフレーム 0 も。skills/timeline.ts の triggerFires）で発火する
-  // A2 の B モード編（plan/design-hp-down-interval.md 2.1 節）: 状態の付いた時から数える周期（since。currentHpDown）は、件の一覧の sinceFires
+  // 状態の付いた時から数える周期（since。currentHpDown。plan/design-hp-down-interval.md 2.1 節）は、件の一覧の sinceFires
   // （counterChange と同じ数え方）で決める
   const instantTracker = (effect: { trigger: ResolvedTrigger }, sourceSlotIndex: number): TriggerTracker => {
-    // ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: 「〈状態〉が適用された時」は、件の一覧がそのフレームに付けた記録で見る（件を
-    // 登録した後に読む。即時効果のループは lists.registerFrame の後）
+    // 「〈状態〉が適用された時」は、件の一覧がそのフレームに付けた記録で見る（件を
+    // 登録した後に読む。即時効果のループは lists.registerFrame の後。plan/design-mint-prika.md 2.6 節）
     if (isResolvedApplied(effect.trigger)) {
       const state = effect.trigger.applied;
       return (ev) => lists.appliedAt(sourceSlotIndex, state, ev.frame);
     }
-    // グレイブ編（plan/design-grave.md 2.1 節）: 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める
+    // 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める（plan/design-grave.md 2.1 節）
     const trigger = effect.trigger;
     if (isEndedTrigger(trigger)) return (ev) => lists.endedAt(sourceSlotIndex, trigger.ended, ev.frame);
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
@@ -475,7 +476,7 @@ function runFirstPassOnce(
       });
     }
   });
-  // 2 段目の段 17 の PR 1（plan/design-skill-stage17.md 2.1 節）: 遮蔽物 HP 回復。受けた枠に coverHealed の出来事を、回復と同じフレームの
+  // 遮蔽物 HP 回復（plan/design-skill-stage17.md 2.1 節）。受けた枠に coverHealed の出来事を、回復と同じフレームの
   // 規則（healFrameOf）で立てる。回復量は計算に効かないので、件も記録も作らない
   // 対象の枠は編成だけで決まるので、始めに 1 回求めておく
   const coverHeals: {
@@ -484,8 +485,8 @@ function runFirstPassOnce(
     fires: TriggerTracker;
     targets: readonly number[];
   }[] = [];
-  // 段 17 の PR 2（plan/design-skill-stage17.md 2.1 節。論点 3）: 遮蔽物 HP が最も低い味方 N 機は、編成が N 体以下なら全員、N 体より多ければ
-  // 選び方を確かめていないので誰も選ばない（未実装）
+  // 遮蔽物 HP が最も低い味方 N 機は、編成が N 体以下なら全員、N 体より多ければ
+  // 選び方を確かめていないので誰も選ばない（未実装。plan/design-skill-stage17.md 2.1 節の論点 3）
   const present = slots.flatMap((s, i) => (s === null ? [] : [i]));
   slots.forEach((slot, sourceSlotIndex) => {
     if (slot === null || slot.definition === null) return;
@@ -506,8 +507,8 @@ function runFirstPassOnce(
   const isShotGaugeCharge = (src: InstantSource): boolean =>
     src.effect.kind === 'burstGauge' && isResolvedShotCount(src.effect.trigger);
   const shotGaugeCharges = instant.filter(isShotGaugeCharge);
-  // 2 段目の段 21（plan/design-skill-stage21.md 2.1 節）: バースト使用時のフルバーストタイムの延長（D）は、状態機械が発動の時に聞く
-  // （extensionAtActivation。件の一覧が窓の終わりを読む前に足す）ので、下の即時効果のループでは扱わない
+  // バースト使用時のフルバーストタイムの延長（D）は、状態機械が発動の時に聞く
+  // （extensionAtActivation。件の一覧が窓の終わりを読む前に足す。plan/design-skill-stage21.md 2.1 節）ので、下の即時効果のループでは扱わない
   const isActivationExtension = (src: InstantSource): boolean =>
     src.effect.kind === 'fullBurstExtend' && src.effect.trigger === 'burstUse';
   const activationExtensions = instant.filter(isActivationExtension);
@@ -527,11 +528,12 @@ function runFirstPassOnce(
           pelletHits: [],
         },
   );
-  // シンデレラ S1 編: リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）か、それで発火する解除
-  // （{ reloadEnd }。2 段目の段 16 の PR 2）を持つ枠だけが書く
+  // リロードの込め終わりは、それで終わる効果（durationUntil: reloadEnd。対象は自分）か、それで発火する解除
+  // （{ reloadEnd }）を持つ枠だけが書く
   const writesReloadEnds = slots.map((slot) => slot?.definition != null && hasReloadEndEffect(slot.definition));
-  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.1・2.6 節）: 溜めのきっかけ（{ chargeTick }・{ chargeFull }）を持つ枠だけ、溜めを追い、
-  // 周期と満ちたフレームを射撃の記録に書く（流し直しも、このフレームの出来事も同じ列を読む）。ticks の k はいまの溜めで発火した周期の数、
+  // 溜めのきっかけ（{ chargeTick }・{ chargeFull }）を持つ枠だけ、溜めを追い、
+  // 周期と満ちたフレームを射撃の記録に書く（流し直しも、このフレームの出来事も同じ列を読む。
+  // plan/design-skill-stage14.md 2.1・2.6 節）。ticks の k はいまの溜めで発火した周期の数、
   // nextAt は k + 1 回目の周期の溜めの進み、fullDone はいまの溜めで満ちた時が発火したか（{ chargeFull } を持つ枠だけ chargeFullFrames を書く）
   const chargeWatches = slots.map((slot, i) => {
     if (slot?.definition == null) return null;
@@ -546,7 +548,7 @@ function runFirstPassOnce(
     if (full) log.chargeFullFrames = [];
     return { ticks, fullDone: false };
   });
-  /** 段 14 の PR 2: 溜めを数え直す（撃った・溜めていないフレーム） */
+  /** 溜めを数え直す（撃った・溜めていないフレーム） */
   const restartCharge = (w: NonNullable<(typeof chargeWatches)[number]>): void => {
     for (const t of w.ticks) {
       if (t.k === 0) continue;
@@ -556,7 +558,7 @@ function runFirstPassOnce(
     w.fullDone = false;
   };
   /**
-   * 段 14 の PR 2: 枠 i のフレーム f の溜め。progress は撃つ前の溜めの進み（chargeProgressFrames。溜めていなければ null）、shot は
+   * 枠 i のフレーム f の溜め。progress は撃つ前の溜めの進み（chargeProgressFrames。溜めていなければ null）、shot は
    * このフレームに撃ったか（fullShot はフルチャージの発か）。撃ったフレームは周期を出さずに数え直し、満ちた時がまだならフルチャージの発の
    * フレームに出す（チャージ時間が縮んで満ちたフレームを飛ばした発も、その発に乗る）
    */
@@ -589,7 +591,7 @@ function runFirstPassOnce(
     }
     if (!charging) restartCharge(w);
   };
-  // 持ち主ごとの件の一覧（plan/design-holder-effects.md 段 A）。スキルの効果をすべて、受ける枠ごとの件の列で持つ
+  // 持ち主ごとの件の一覧（plan/design-holder-effects.md 2 節）。スキルの効果をすべて、受ける枠ごとの件の列で持つ
   const lists = createHolderLists(slots, {
     frames,
     scheduleModel,
@@ -600,7 +602,7 @@ function runFirstPassOnce(
     ...(options.effectiveRangeAt === undefined ? {} : { effectiveRangeAt: options.effectiveRangeAt }),
   });
   const trackEvents = lists.hasSources || instant.length > 0;
-  // 戦闘開始時の件はループの前に登録する（1 発目のマガジンから効く）。ソルジャーE.G. 編: 周期のトリガーの atStart も
+  // 戦闘開始時の件と周期のトリガーの atStart は、ループの前に登録する（1 発目のマガジンから効く）
   lists.registerBattleStart();
 
   // ---- 射手 ----
@@ -622,7 +624,7 @@ function runFirstPassOnce(
   const shooters: (ShooterState | null)[] = slots.map((slot, i) =>
     slot === null ? null : initialShooter(slot.character.shot, model, paramsAt(i, 0)),
   );
-  /** Stage 11 モダニア: 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
+  /** 使用武器の変更中の射手の状態と、その武器の識別子（変更していなければ null） */
   const changedShooters: (ShooterState | null)[] = slots.map(() => null);
   const activeWeapon: (string | null)[] = slots.map(() => null);
   /**
@@ -633,8 +635,9 @@ function runFirstPassOnce(
 
   // ---- バースト ----
   const gaugeSpeed = passive.map((s) => s?.buffs.burstGaugeSpeed ?? 0);
-  // 2 段目の段 1（plan/design-skill-stage1.md 1.6 節）: 時間で変わるゲージ速度（timed・状態の中身）の件を持ちうる枠は、フレームの頭で
-  // (1 + 常時の速度 + 効いている件の速度) を読み（f − 1 までに付いた件。射手と同じ見え方）、そのフレームに溜めるゲージに掛ける。
+  // 時間で変わるゲージ速度（timed・状態の中身）の件を持ちうる枠は、フレームの頭で
+  // (1 + 常時の速度 + 効いている件の速度) を読み（f − 1 までに付いた件。射手と同じ見え方。
+  // plan/design-skill-stage1.md 1.6 節）、そのフレームに溜めるゲージに掛ける。
   // 持たない枠は常時の値だけで、今までと同じ値（下の energies などを前もって作る）
   const timedGauge = slots.map((_, i) => lists.hasGaugeSpeedTracks(i));
   const timedGaugeSlots = slots.flatMap((_, i) => (timedGauge[i] ? [i] : []));
@@ -643,7 +646,7 @@ function runFirstPassOnce(
   /** 枠 i の、射手の 1 ヒットぶんのゲージ（targetBurstEnergyPerShot）のこのフレームの量。前もって作った値 fixed は速度が変わらない枠の分 */
   const targetEnergyNow = (i: number, fixed: number): number =>
     timedGauge[i] ? targetEnergies[i]! * gaugeScale[i]! : fixed;
-  // Stage 18-C: 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける。
+  // 弾丸命中率が着地点で変わる枠は、1 発のゲージを命中率 1 で持ち、撃ったフレームの区間の命中率を掛ける。
   // SG はペレットの割合も 1 で持ち、区間の弾丸命中率が的の表の値ならそのまま（当たったペレットの割合。C-0150）、
   // 手入力の値なら置き値 SG_PELLET_GAUGE_HIT_RATE を掛ける（plan/design-sg-hit-rate.md 3 節）
   const hitRateSpans = slots.map((_, i) => options.hitRates?.[i] ?? null);
@@ -684,9 +687,9 @@ function runFirstPassOnce(
     return options.hitRateWith(i, span, lists.hitRateAt(i, f));
   };
   /**
-   * ドロシー：セレンディピティ編（plan/design-dorothy-serendipity.md 2.1・2.2 節）: 枠 i のフレーム f の発の、基礎のペレットの数に対する
-   * 実効のペレットの数の比（固定なら 1 ÷ 基礎、▲なら (基礎 + Σ) ÷ 基礎）。ゲージとペレットの命中の量は、当たったペレットの数に比例する
-   * （C-0150・C-1075）。ペレットの数の件の無い枠は 1。同じ発のゲージとペレットの命中の量が同じフレームで読むので、枠ごとに最後の値を覚える
+   * 枠 i のフレーム f の発の、基礎のペレットの数に対する実効のペレットの数の比（固定なら 1 ÷ 基礎、▲なら (基礎 + Σ) ÷ 基礎。
+   * plan/design-dorothy-serendipity.md 2.1・2.2 節）。ゲージとペレットの命中の量は、当たったペレットの数に比例する（C-0150・C-1075）。
+   * ペレットの数の件の無い枠は 1。同じ発のゲージとペレットの命中の量が同じフレームで読むので、枠ごとに最後の値を覚える
    */
   const pelletTracked = slots.map((_, i) => pellets[i]! && lists.hasPelletTracks(i));
   const lastPelletRatio = slots.map(() => ({ frame: -1, ratio: 1 }));
@@ -711,7 +714,7 @@ function runFirstPassOnce(
   /** 枠 i の 1 発のゲージに乗るフルチャージ倍率（C-0007。操作キャラのチャージ武器だけ。energyPerTrigger が掛ける値） */
   const chargeGaugeOf = (i: number): number => fullChargeGaugeOf(slots[i]!.character.shot, i === controlledSlot);
   /**
-   * アニス：スター S1 の味方のゲージ編: 枠 i の 1 発のゲージ（energyAt の値）が、ゲージ何回ぶんか（弾のヒットの期待値。SG は当たった
+   * 枠 i の 1 発のゲージ（energyAt の値）が、ゲージ何回ぶんか（弾のヒットの期待値。SG は当たった
    * ペレットの数）。1 回のゲージ（targetBurstEnergyPerShot × フルチャージ倍率 × いまのゲージ速度）で割る
    */
   const gaugeHitsOf = (i: number, shotEnergy: number): number => {
@@ -721,8 +724,9 @@ function runFirstPassOnce(
   // plan/design-anis-star-gauge-timing.md 3 節: 枠 i がフレーム f に撃った発の飛ぶ時間（ゲージはその後のフレームに溜まる）
   const flights = slots.map((_, i) => options.flights?.[i] ?? null);
   /**
-   * 炸裂弾の時刻編（plan/design-eunhwa-tu-burst-shot-timing.md 4 節）: フレーム f に始まった枠 i の使用武器変更（識別子
-   * `<resourceId>.<スロット>.<効果の番号>`）の最初の発を撃つフレーム。窓を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）の
+   * フレーム f に始まった枠 i の使用武器変更（識別子
+   * `<resourceId>.<スロット>.<効果の番号>`）の最初の発を撃つフレーム
+   * （plan/design-eunhwa-tu-burst-shot-timing.md 4 節）。窓を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）の
    * 印 + 的の表の値（f の着地点で引く）。表の行が無ければ null
    */
   const weaponChangeFirstHitAt = (i: number, weaponId: string, f: number): number | null => {
@@ -736,7 +740,7 @@ function runFirstPassOnce(
     return hexagonFrameOf(opened) + flightFramesAt(spans, f);
   };
   /**
-   * レッドフード編（plan/design-red-hood.md 7.1 節の論点 13。V-0639）: フレーム f に始まった枠 i の使用武器変更の最初の発のフレーム。
+   * フレーム f に始まった枠 i の使用武器変更の最初の発のフレーム（plan/design-red-hood.md 7.1 節の論点 13。V-0639）。
    * 持ち替えは、変更を開いた発動（効果の発火が f 以前の、枠 i の最後の発動）がフルバーストに入るなら窓の始まり、ほかは f。持ち替えの時の
    * 基礎の武器が、リロード中ならそのまま、構え解除の途中（最後の発から aimOutFrames 未満）なら構え解除の終わりから after を数え、
    * 構え直し・チャージの途中（まだ撃っていない枠も）なら構え解除 1 回分を足す
@@ -757,7 +761,7 @@ function runFirstPassOnce(
   const obstacleEnergyAt = (i: number): number =>
     timedGauge[i] ? obstacleBases[i]! * gaugeScale[i]! : obstacleEnergies[i]!;
   const shotCounts = slots.map(() => 0);
-  // ルドミラ：ウィンターオーナー編（plan/design-ludmilla-wo.md 2.2・2.3 節）: 発ごとの命中・コアの命中の期待値。
+  // 発ごとの命中・コアの命中の期待値（plan/design-ludmilla-wo.md 2.2・2.3 節）。
   // 区間はゲージと同じ値（常時の命中率▲ + 効いている持続の▲）。SG の命中は 1 トリガーを 1 回（ペレットのどれかが当たる）
   const enemyHasCore = options.enemyHasCore ?? true;
   const hitsAt = (i: number, f: number): { hits: number; coreHits: number } => {
@@ -769,7 +773,7 @@ function runFirstPassOnce(
     const m = muzzleHits[i]!;
     return { hits: pellets[i] ? 1 : hitRate * m, coreHits: enemyHasCore ? coreHits * m : 0 };
   };
-  // ペレットの命中編（plan/design-pellet-hit.md 2・3 節）: 発ごとに的に当たったペレットの数。録画で数えた入力があればその数、
+  // 発ごとに的に当たったペレットの数（plan/design-pellet-hit.md 2・3 節）。録画で数えた入力があればその数、
   // 無ければ期待値（SG は shotCount × 当たったペレットの割合。割合はゲージと同じ: 的の表の区間はその値、手入力は
   // 弾丸命中率 × SG_PELLET_GAUGE_HIT_RATE。C-0150。SG 以外は命中の期待値と同じ）
   const pelletInputs = slots.map(() => new Map<number, number>());
@@ -799,7 +803,7 @@ function runFirstPassOnce(
         if (e.trigger !== 'burstUse') {
           throw new RangeError(`cycle gauge hits support only a burstUse cycleEvery, got ${JSON.stringify(e.trigger)}`);
         }
-        // 着弾編: 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
+        // 循環の窓は発動のフレームから数えるので、効果の発火が遅れるキャラ（burst/landing.ts）には使えない
         if (burstDelaysOf(slot.character).effectFrames !== 0) {
           throw new RangeError('cycleEvery is not supported for a character with a burst effect delay');
         }
@@ -816,7 +820,7 @@ function runFirstPassOnce(
       });
     }
   });
-  // ヘルム編（V-0034）: ゲージを溜める倍率ダメージ（damage の gaugeHits）。射撃を数えて、段と同じく当たるフレームに予約する
+  // ゲージを溜める倍率ダメージ（damage の gaugeHits。V-0034）。射撃を数えて、段と同じく当たるフレームに予約する
   const damageGaugeTrackers: {
     slotIndex: number;
     count: ShotCountKind;
@@ -839,7 +843,7 @@ function runFirstPassOnce(
       });
     }
   });
-  // モラン編（plan/design-moran.md 3 節）: 射撃の回数でゲージだけを溜める効果（burstGaugeHit）。射撃を数えて、発火した射撃の
+  // 射撃の回数でゲージだけを溜める効果（burstGaugeHit。plan/design-moran.md 3 節）。射撃を数えて、発火した射撃の
   // フレームのゲージに足す（付けるのは撃った時でヒットではないので、飛ぶ時間は足さない）。回数トリガーの遅れ編
   // （plan/design-shot-count-trigger-frame.md 6 節）: delayFrames があれば、発火した射撃の delayFrames 後のゲージに足す（C-0480）
   const shotGaugeTrackers: {
@@ -866,8 +870,9 @@ function runFirstPassOnce(
   });
   // V-0534（ラピ：レッドフード S2 の粘着榴弾。C-0717・C-0718）: 射撃の止まり（shotPause）。射撃を数えて、発火した射撃の次のフレームから
   // 止めるフレーム数のあいだ射手を進めない（pauseLeft。手順 1 で減らす）。発火した射撃がマガジンの最後の弾丸なら framesOnLastShot
-  // 2 段目の段 12 の PR 2（plan/design-skill-stage12.md 2.4 節）: 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
-  // 間隔の倍数に届いた発で止める（C-0727）。窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
+  // 回数の間隔の変更（cycleEvery の shotCounts）の窓の中は、通算の回数が窓の
+  // 間隔の倍数に届いた発で止める（C-0727。plan/design-skill-stage12.md 2.4 節）。
+  // 窓の件はこのフレームに付いたものも見るので、段の循環と同じく手順 3 の後に数える（countShotPauses）
   const shotPauseTrackers: {
     slotIndex: number;
     everyAt: ShotCountEveryAt | undefined;
@@ -886,26 +891,27 @@ function runFirstPassOnce(
     }
   });
   const pauseLeft = slots.map(() => 0);
-  // プリバティ編（plan/design-privaty-burst-pause.md 2 節）: 自分のバーストの発動の次のフレームから止めるフレーム数（手順 3 で立てる）
-  // 立っている止まりの、明けで構え直すときに unhideShooter に渡す止めたフレーム数（0 は立っていない。射撃の回数の止まりと区別する）
+  // 自分のバーストの発動の次のフレームから止めるフレーム数（手順 3 で立てる）
+  // 立っている止まりの、明けで構え直すときに unhideShooter に渡す止めたフレーム数（0 は立っていない。
+  // 射撃の回数の止まりと区別する。plan/design-privaty-burst-pause.md 2 節）
   const burstPauseAim = slots.map(() => 0);
   const burstUsePause = slots.map((slot) =>
     slot === null || slot.definition === null ? 0 : resolveBurstUsePause(slot.definition),
   );
-  // メイド編（plan/design-maids.md 2.2 節）: 状態が付いた時の止まり（気絶）。手順 1 で、前のフレームに無かった状態が付いていれば立て、
+  // 状態が付いた時の止まり（気絶。plan/design-maids.md 2.2 節）。手順 1 で、前のフレームに無かった状態が付いていれば立て、
   // 明けまでバーストの候補からも外す（論点 2）。明けは、バーストの発動の止まりと同じく構え直す
   const appliedPauses = slots.map((slot) =>
     slot === null || slot.definition === null
       ? []
       : resolveAppliedPauses(slot.definition).map((p) => ({ ...p, was: false })),
   );
-  // レイヴン編（plan/design-raven-s1.md 4 節）: ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick）。射撃を数えて
+  // ゲージを溜める持続ダメージ（dot の gaugeOnApply・gaugeOnTick。plan/design-raven-s1.md 4 節）。射撃を数えて
   // 発火を追い、付けたときの分は発火のフレームに、tick の分は dotTickTracker が返した tick のフレームに予約する。
   // V-0113（10 節）: バースト使用時に付く効果（burstUse。クルミのハッキング）も同じまとまりの発火として、手順 3 の出来事で追う
   const dotGaugeTrackers: {
     slotIndex: number;
     effects: { count: ShotCountKind; every: number; n: number; onApply: boolean }[];
-    /** 回数トリガーの遅れ編の第 2 段: 付けたときのゲージを発火の何フレーム後に足すか（0 は発火のフレーム。C-0181） */
+    /** 付けたときのゲージを発火の何フレーム後に足すか（0 は発火のフレーム。C-0181） */
     applyDelay: number;
     /** tick の刻みを発火の何フレーム後から数えるか（skills/types.ts の DotEffect.tickDelayFrames。0 は発火のフレーム） */
     tickDelay: number;
@@ -951,7 +957,7 @@ function runFirstPassOnce(
   const dotGauges: FirstPassResult['dotGauges'] = [];
   const pendingGauge = new Map<number, number>();
   const shotGauges: FirstPassResult['shotGauges'] = [];
-  // アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 3 節）: allyGaugeAdd を持つ枠（1 つまで）は、ほかの枠の
+  // allyGaugeAdd を持つ枠（1 つまで。plan/design-anis-star-ally-gauge.md 3 節）は、ほかの枠の
   // ゲージ 1 回（弾のヒット・射撃ごとの倍率ダメージのゲージのヒット）ごとに、自分の 1 発のゲージ × 割合を足す。1 発のゲージは自分の
   // 最初の発の着弾のフレームから targetBurstEnergyPerShot、その前は burstEnergyPerShot（C-0246・C-0620）。回数は着くフレームに数え、
   // そのフレームの射撃の後に、そのフレームの量で足す（着弾と同じフレームの回は切り替わった後の量。境のフレームは確かめていない）
@@ -990,7 +996,7 @@ function runFirstPassOnce(
   const reserveDotTicks = (t: (typeof dotGaugeTrackers)[number], f: number): void => {
     const { ticks } = t.tracker.fire(f + t.tickDelay);
     if (!t.onTick) return;
-    // 2 段目の段 1: 時間で変わるゲージ速度は、付いたフレームの速度で tick の分も決める
+    // 時間で変わるゲージ速度は、付いたフレームの速度で tick の分も決める
     const energy = targetEnergyNow(t.slotIndex, t.energy);
     for (const tick of ticks) {
       if (tick <= f) throw new RangeError(`dot gauge tick at ${tick} is not after the fire at ${f}`);
@@ -1000,8 +1006,9 @@ function runFirstPassOnce(
       dotGauges.push({ slotIndex: t.slotIndex, kind: 'tick', frame: at, energy });
     }
   };
-  // 魔術師のカード編（plan/design-arcana-magician.md 2.1 節）: クールタイムの印のある周期は、枠 × スロットごとに発火をフレームの順に追う
-  // （cooldownTimer）。縮めるのは、編成のどれかの定義の状態の中身の「スキル N クールタイム X%▼」で、そのフレームまでに登録した状態の件で決める。
+  // クールタイムの印のある周期は、枠 × スロットごとに発火をフレームの順に追う
+  // （cooldownTimer。plan/design-arcana-magician.md 2.1 節）。縮めるのは、
+  // 編成のどれかの定義の状態の中身の「スキル N クールタイム X%▼」で、そのフレームまでに登録した状態の件で決める。
   // 縮める状態が無ければ静的な周期と同じ列になる。2 パス目とゲージはこの記録だけを読む
   const cooldownDowns = slots.flatMap((slot) =>
     slot === null || slot.definition === null
@@ -1039,9 +1046,9 @@ function runFirstPassOnce(
       });
     }
   });
-  // フラワー編: 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
+  // 周期のゲージ（burstGaugeHit）。射撃に依らないので、発火のフレームにループの前に予約する。
   // delayFrames があれば発火の後のヒットのフレームに足し、戦闘の終わりを越えるものは足さない（C-0453。plan/design-timer-ceil.md 7 節）
-  // 2 段目の段 1: 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
+  // 時間で変わるゲージ速度の枠の周期のゲージは、発火のフレームの頭でその速度で予約する（発火のフレーム → 枠と遅れ）
   const timedTimerGauges = new Map<number, { slotIndex: number; delayFrames: number }[]>();
   const timerGauges: FirstPassResult['timerGauges'] = [];
   /** 周期のゲージを、発火 fireFrame の後のフレーム at のゲージに予約する（timerGauges にも残す） */
@@ -1053,7 +1060,7 @@ function runFirstPassOnce(
     if (slot === null || slot.definition === null) return;
     const energy = slot.character.shot.targetBurstEnergyPerShot * (1 + gaugeSpeed[i]!);
     for (const { delayFrames, ...timer } of resolveTimerGauges(slot.definition)) {
-      // 魔術師のカード編: クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
+      // クールタイムの印のある周期は、ループの中で発火を追って予約する（countCooldownTimers）
       if (timer.cooldown === true) continue;
       for (const fire of timerFramesOf(timer, frames)) {
         const at = fire + delayFrames;
@@ -1068,8 +1075,9 @@ function runFirstPassOnce(
   // 追い（periodShorten の短縮は、そのフレームまでに登録した自分の状態で決める。2 パス目の shortenedTimerFrames と同じ規則）、
   // N ヒットのフレームのゲージに予約する（delayFrames は 1 以上なので、どのヒットも発火より後のフレーム）
   const damageTimerGauges: { slotIndex: number; effect: ResolvedDamageEffect; fires: (f: number) => boolean }[] = [];
-  // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節。C-0426）: 射撃の回数のきっかけの倍率ダメージのヒットごとのゲージ
-  // （gaugePerHit。オートファイア）。射撃を数えて発火を追い、ヒットのフレーム（perCount { state } の数だけ 1 つずつ出すヒットは、発火の
+  // 射撃の回数のきっかけの倍率ダメージのヒットごとのゲージ
+  // （gaugePerHit。オートファイア。plan/design-skill-stage14.md 2.5 節。C-0426）。射撃を数えて発火を追い、
+  // ヒットのフレーム（perCount { state } の数だけ 1 つずつ出すヒットは、発火の
   // フレームより前に付いたスタック数。2 パス目の planSkillHits と同じ見え方）のゲージに予約する（delayFrames は 1 以上なので、どのヒットも
   // 発火より後のフレーム）。射撃ごとの倍率ダメージのゲージと同じく発のゲージの記録（shotGauges）に残し、味方のゲージの回数にも数える
   const shotDamageGauges: {
@@ -1095,7 +1103,7 @@ function runFirstPassOnce(
       if (effect.gaugePerHit === undefined || isSummonAttackTrigger(effect.trigger)) continue;
       const { trigger } = effect;
       if (isResolvedTimer(trigger)) {
-        // 2 段目の段 15 の PR 3: periodShorten の名前の無い窓（window）は gaugePerHit と組まない（読み込みで落とす）ので、鍵は状態だけ
+        // periodShorten の名前の無い窓（window）は gaugePerHit と組まない（読み込みで落とす）ので、鍵は状態だけ
         const shorten = effect.periodShorten;
         const state = shorten?.state;
         const shortened = (frame: number) => state !== undefined && lists.selfStateAt(i, state, frame);
@@ -1155,7 +1163,7 @@ function runFirstPassOnce(
       const timed = lists.hitRateAt(i, frame);
       buffs = { ...buffs, hitRate: buffs.hitRate + timed.n, hitRateUp: buffs.hitRateUp + timed.up };
     }
-    // エード：エージェントバニー編: 時間で変わる適正最小射程距離▲も、2 パス目の区間と同じに足す（距離ボーナスの出し直し）
+    // 時間で変わる適正最小射程距離▲も、2 パス目の区間と同じに足す（距離ボーナスの出し直し）
     const range = lists.minEffectiveRangeAt(i, frame);
     if (range !== 0) buffs = { ...buffs, minEffectiveRange: buffs.minEffectiveRange + range };
     const fullBurst = windowsOf().some((w) => w.start <= frame && frame < w.end);
@@ -1196,7 +1204,7 @@ function runFirstPassOnce(
     a.active = null;
     return capped ? 0 : hitGaugeEnergy(a.slotIndex);
   };
-  // アインのニアフェザー編（plan/design-ein-near-feather.md 1.2・1.3 節）: 召喚の機数と攻撃の進み。展開（戦闘開始と、その枠のバーストの
+  // 召喚の機数と攻撃の進み（plan/design-ein-near-feather.md 1.2・1.3 節）。展開（戦闘開始と、その枠のバーストの
   // 効果のフレーム）で組を置き換えて進みを 0 に戻し、フレームごとに、いまの機数の間隔の逆数を進みに積む。1 に届いたフレームに攻撃が
   // 発火し（余りは持ち越す）、gaugePerHit の効果はそのフレームのゲージに射手の 1 ヒットぶん × 倍数を足す
   const summonHits: FirstPassResult['summonHits'] = [];
@@ -1283,7 +1291,7 @@ function runFirstPassOnce(
     }
   };
   /**
-   * 魔術師のカード編: フレーム f の終わりに、印のある周期の発火を決める（f に付いた縮める状態の件も見る）。発火したら記録し、その枠の
+   * フレーム f の終わりに、印のある周期の発火を決める（f に付いた縮める状態の件も見る）。発火したら記録し、その枠の
    * 印のある burstGaugeHit のゲージを遅れの後のフレームに予約する（ループの前の予約と同じ量）
    */
   const countCooldownTimers = (f: number): void => {
@@ -1322,11 +1330,11 @@ function runFirstPassOnce(
       for (const hit of effectHitFrames(t.effect, f, count, frames)) landingGauge(t.slotIndex, hit, f, energy, 1);
     }
   };
-  /** 着弾編: 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
+  /** 先のフレームに効果が発火するバーストの発動（フレーム → 発動） */
   const pendingBurstEffects = new Map<number, BurstActivation[]>();
-  /** エレグのバースト編（plan/design-elegg.md 8.9 節）: 先のフレームのバーストのヒット（トリガー burstHit） */
+  /** 先のフレームのバーストのヒット（トリガー burstHit。plan/design-elegg.md 8.9 節） */
   const pendingBurstHits = new Map<number, BurstActivation[]>();
-  /** 2 段目の段 14 の PR 1: 先のフレームの段階のきっかけ（stageEnterFrameOf。段階 3 は替わり目） */
+  /** 先のフレームの段階のきっかけ（stageEnterFrameOf。段階 3 は替わり目） */
   const pendingStageEntries = new Map<number, BurstStepKey[]>();
   const cycleGaugeHits: FirstPassResult['cycleGaugeHits'] = [];
   /**
@@ -1353,7 +1361,7 @@ function runFirstPassOnce(
   };
 
   /**
-   * V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める。2 段目の段 12 の PR 2: 回数の間隔の変更の窓を
+   * V-0534: 射撃の止まり。このフレームの射撃で発火したら、次のフレームから止める。回数の間隔の変更の窓を
    * このフレームに付いたものも見るので、手順 3 の後に呼ぶ（止まりは次のフレームからなので、数える位置で射撃は変わらない）
    */
   const countShotPauses = (f: number): void => {
@@ -1370,13 +1378,13 @@ function runFirstPassOnce(
   let nextWindowStart = 0;
   let nextWindowEnd = 0;
   let gaugeFullSeen = 0;
-  // 2 段目の段 15 の PR 2: T4 の▼ の件を持ちうる枠の、最後の発動（発動の後に付いた▼ の縮めた長さを足す先）
+  // T4 の▼ の件を持ちうる枠の、最後の発動（発動の後に付いた▼ の縮めた長さを足す先）
   const lastActivationOf = new Map<number, BurstActivation>();
 
   const instants: InstantApplication[] = [];
-  // レッドフード編（plan/design-red-hood.md 2.3 節）: 戦闘中の発火の回数に上限（maxFires）のある即時効果の、効いた発火の回数
+  // 戦闘中の発火の回数に上限（maxFires）のある即時効果の、効いた発火の回数（plan/design-red-hood.md 2.3 節）
   const instantFireCounts = new Map<object, number>();
-  // 2 段目の段 21: まだ窓に足していない延長（予約）の記録。窓を作ったら残し、窓を作らずにチェーンが切れたら（状態機械が予約を捨てる）か
+  // まだ窓に足していない延長（予約）の記録。窓を作ったら残し、窓を作らずにチェーンが切れたら（状態機械が予約を捨てる）か
   // 戦闘の終わりまで残ったら、即時効果の記録から外す（効かなかった延長を画面と trace に出さない）
   let pendingExtensions: InstantApplication[] = [];
   const discardedExtensions = new Set<InstantApplication>();
@@ -1384,7 +1392,7 @@ function runFirstPassOnce(
     instants.push(x);
     pendingExtensions.push(x);
   };
-  // 2 段目の段 21: バースト使用時の延長は、発動のたびに状態機械が聞く（条件は発動のフレームの件で見る。窓を作る発動ならその窓に、
+  // バースト使用時の延長は、発動のたびに状態機械が聞く（条件は発動のフレームの件で見る。窓を作る発動ならその窓に、
   // 作らない発動なら次の窓に足す）
   if (controller !== null && activationExtensions.length > 0) {
     controller.extensionAtActivation = (slotIndex, frame) => {
@@ -1404,35 +1412,35 @@ function runFirstPassOnce(
       return seconds;
     };
   }
-  /** Stage 11: 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
+  /** 次のフレーム以降に起きる回復（射撃の回数起点）。フレーム → 受ける枠 */
   const pendingHeals = new Map<
     number,
     { sourceSlotIndex: number; slotIndex: number; effect: ResolvedInstantEffect }[]
   >();
-  /** ヘルム編: 次のフレーム以降にゲージへ足すチャージ（射撃の回数トリガーでない burstGauge）。フレーム → 効果 */
+  /** 次のフレーム以降にゲージへ足すチャージ（射撃の回数トリガーでない burstGauge）。フレーム → 効果 */
   const pendingGaugeCharges = new Map<number, { sourceSlotIndex: number; effect: ResolvedInstantEffect }[]>();
   /** このフレームに回復を受けた枠（FrameEvents.healed）。毎フレーム作らずに使い回す */
   const healed: boolean[] = slots.map(() => false);
   let healedDirty = false;
-  /** 段 17 の PR 1: 次のフレーム以降に遮蔽物 HP 回復を受ける枠（射撃の回数起点で、撃った枠と同じか前の枠）。フレーム → 受ける枠 */
+  /** 次のフレーム以降に遮蔽物 HP 回復を受ける枠（射撃の回数起点で、撃った枠と同じか前の枠）。フレーム → 受ける枠 */
   const pendingCoverHeals = new Map<number, number[]>();
-  /** 段 17 の PR 1: このフレームに遮蔽物 HP 回復を受けた枠（FrameEvents.coverHealed）。healed と同じく使い回す */
+  /** このフレームに遮蔽物 HP 回復を受けた枠（FrameEvents.coverHealed）。healed と同じく使い回す */
   const coverHealed: boolean[] = slots.map(() => false);
   let coverHealedDirty = false;
   const shotEvents: (ShotEvent | null)[] = slots.map(() => null);
 
-  /** Stage 16-B: いま見ている（または次に来る）狙えない窓の添字 */
+  /** いま見ている（または次に来る）狙えない窓の添字 */
   let nextBlock = 0;
   // V-0605: 枠ごとの撃たない区間（狙えない窓と、その枠の holdFire を合わせたもの）と、いま見ている区間の添字
   const slotBlocks = slotBlockRanges(slots.length, untargetable, options.holdFire);
   const slotNextBlock = slots.map(() => 0);
 
   for (let f = 0; f < frames; f++) {
-    // Stage 16-B: 狙えない窓（バーストの制御が見る。射手のハイドは枠ごとの slotBlocks で、下の射手の中）
+    // 狙えない窓（バーストの制御が見る。射手のハイドは枠ごとの slotBlocks で、下の射手の中）
     while (nextBlock < untargetable.length && untargetable[nextBlock]!.end < f) nextBlock += 1;
     const block = untargetable[nextBlock];
     const blocked = block !== undefined && block.start <= f && f < block.end;
-    // 2 段目の段 1: 時間で変わるゲージ速度の枠の、このフレームの (1 + 速度)（f − 1 までに付いた件）と、その速度の周期のゲージ
+    // 時間で変わるゲージ速度の枠の、このフレームの (1 + 速度)（f − 1 までに付いた件）と、その速度の周期のゲージ
     for (const i of timedGaugeSlots) gaugeScale[i] = 1 + gaugeSpeed[i]! + lists.gaugeSpeedAt(i, f);
     for (const t of timedTimerGauges.get(f) ?? []) {
       reserveTimerGauge(t.slotIndex, f, f + t.delayFrames, targetEnergies[t.slotIndex]! * gaugeScale[t.slotIndex]!);
@@ -1445,7 +1453,7 @@ function runFirstPassOnce(
       shotEvents[i] = null;
       if (slot === null || !shooters[i]) return;
       const params = paramsAt(i, f);
-      // Stage 11 モダニア: 使用武器の変更。始まったら変更後の武器を新しい状態で撃ち、終わったら基礎の武器の状態に戻す
+      // 使用武器の変更。始まったら変更後の武器を新しい状態で撃ち、終わったら基礎の武器の状態に戻す
       const weaponId = params.weapon?.id ?? null;
       if (weaponId !== activeWeapon[i]) {
         activeWeapon[i] = weaponId;
@@ -1453,12 +1461,12 @@ function runFirstPassOnce(
           changedShooters[i] = weaponChangeShooter(params.weapon.shot, model, params);
           const firstHit = weaponChangeFirstHitAt(i, params.weapon.id, f);
           if (firstHit !== null) changedShooters[i]!.wait = Math.max(0, firstHit - f);
-          // 2 段目の段 11（plan/design-skill-stage11.md 2.1 節）: 定義の即値の待ち（録画で読む）
+          // 定義の即値の待ち（録画で読む。plan/design-skill-stage11.md 2.1 節）
           else if (params.weapon.firstShotDelayFrames !== undefined) {
             changedShooters[i]!.wait = params.weapon.firstShotDelayFrames;
           }
-          // レッドフード編（plan/design-red-hood.md 7.1 節の論点 13。V-0639）: 持ち替え（フルバーストに入る発動なら窓の始まり）の時の
-          // 基礎の武器の状態で、最初の発を決める
+          // 持ち替え（フルバーストに入る発動なら窓の始まり）の時の
+          // 基礎の武器の状態で、最初の発を決める（plan/design-red-hood.md 7.1 節の論点 13。V-0639）
           else if (params.weapon.firstShotAfterSwapFrames !== undefined) {
             const first = firstShotAfterSwap(i, f, params.weapon.firstShotAfterSwapFrames);
             changedShooters[i]!.wait = Math.max(0, first - f);
@@ -1503,7 +1511,7 @@ function runFirstPassOnce(
       // V-0534: 射撃の止まりの間は射手を進めない（撃たず、待ち・リロードも進めない）
       if (pauseLeft[i]! > 0) {
         pauseLeft[i]! -= 1;
-        // プリバティ編（plan/design-privaty-burst-pause.md 3 節の論点 4）: バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す
+        // バーストの発動の止まりの明けは、狙えない窓の明けと同じく構え直す（plan/design-privaty-burst-pause.md 3 節の論点 4）
         if (pauseLeft[i] === 0 && burstPauseAim[i]! > 0) {
           reaimShooter(state, shot, burstPauseAim[i]!, model, params);
           burstPauseAim[i] = 0;
@@ -1511,7 +1519,7 @@ function runFirstPassOnce(
         return;
       }
       const reloading = state.phase === 'reloading';
-      // 段 14 の PR 2: 撃つ前の溜めの進み（部分チャージの進みと同じ見え方）。リロード中・狙えない窓の間は溜めていない
+      // 撃つ前の溜めの進み（部分チャージの進みと同じ見え方）。リロード中・狙えない窓の間は溜めていない
       const progress =
         chargeWatches[i] !== null && isChargeWeapon(shot) && !reloading && !slotBlocked
           ? chargeProgressFrames(state, params, model)
@@ -1523,10 +1531,10 @@ function runFirstPassOnce(
         const fullShot = shotNow && isChargeWeapon(shot) && (partial === null || partial >= 1);
         watchCharge(i, f, progress, shotNow, fullShot, params.chargeFrames);
       }
-      // シンデレラ S1 編（plan/design-cinderella-s1-charge.md 1.1 節）: 基礎の武器のリロードを込め終えた。込め終えたフレームまでが
+      // 基礎の武器のリロードを込め終えた（plan/design-cinderella-s1-charge.md 1.1 節）。込め終えたフレームまでが
       // 「リロード完了時に解除」の窓（件の終わりは次のフレーム）
-      // 2 段目の段 17 の PR 4（V-0601）: 1 回分が 0 フレームのリロード（リロード速度 100% 近く）は、最終弾の発の中で込め終える
-      // （shooter.ts の fire）。フレームの始めにリロード中でなくても、最終弾を撃ってリロード中でなければ込め終えている
+      // 1 回分が 0 フレームのリロード（リロード速度 100% 近く）は、最終弾の発の中で込め終える
+      // （shooter.ts の fire。V-0601）。フレームの始めにリロード中でなくても、最終弾を撃ってリロード中でなければ込め終えている
       if (
         writesReloadEnds[i] &&
         params.weapon === null &&
@@ -1538,12 +1546,12 @@ function runFirstPassOnce(
       log.frames.push(f);
       if (state.lastShot) log.lastShotFrames!.push(f);
       if (params.weapon !== null) (log.weaponChangeShotFrames ??= []).push(f);
-      // 2 段目の段 11: チャージしない変更後の武器の発は fullChargeShot に数えない。ナユタ編（plan/design-nayuta.md 2.6 節）: チャージ武器への
-      // 変更を持つチャージしない基礎の武器の発も数えない（どちらも、発の武器がチャージ武器でない）
+      // チャージしない変更後の武器の発は fullChargeShot に数えない。チャージ武器への変更を持つチャージしない基礎の武器の発も
+      // 数えない（どちらも、発の武器がチャージ武器でない。plan/design-nayuta.md 2.6 節）
       const uncharged = log.fullCharge && !isChargeWeapon(shot);
       if (uncharged) (log.unchargedShotFrames ??= []).push(f);
-      // 使用武器変更の武器のパラメータ編（plan/design-true-damage-element.md 9 節の論点 8）: 撃ち切りで終わる変更は、最後の弾丸を
-      // 撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない）。件の終わりも同じ列から作る（skills/holders.ts）
+      // 撃ち切りで終わる変更は、最後の弾丸を撃ったら次のフレームで基礎の武器に戻す（変更後の武器はリロードしない。
+      // plan/design-true-damage-element.md 9 節の論点 8）。件の終わりも同じ列から作る（skills/holders.ts）
       if (
         params.weapon !== null &&
         state.lastShot &&
@@ -1558,7 +1566,7 @@ function runFirstPassOnce(
       const pelletCount = pelletsAt(i, f, shotCounts[i]!, hits);
       log.hits!.push(hits);
       log.coreHits!.push(coreHits);
-      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.7 節）: 発のクリティカルの命中の期待値。会心率は基礎 + 常時の▲ +
+      // 発のクリティカルの命中の期待値（plan/design-new-chars-1029.md 5.7 節）。会心率は基礎 + 常時の▲ +
       // 時間で変わる▲（f − 1 までに付いた件）で、通常攻撃のクリティカル確率▲も足す（上限 1）
       const critRate = capCritRate(
         slot.character.crit.rate + passiveFiring[i]!.critRate + passiveFiring[i]!.normalCritRate + lists.critUpAt(i, f),
@@ -1577,8 +1585,8 @@ function runFirstPassOnce(
       if (params.weapon !== null) shotEvents[i]!.weaponChange = true;
       shotCounts[i]! += 1;
       const shotEnergy = energyAt(i, f);
-      // 2 段目の段 11: チャージしない変更後の武器の発には、基礎の武器のフルチャージ倍率を掛けない（2026-10-27 のオーナー決定。
-      // 変更後の武器の発のゲージは確かめていない。V-0528）。ヒットの数（gaugeHitsOf）は 1 発 1 ヒットのまま
+      // チャージしない変更後の武器の発には、基礎の武器のフルチャージ倍率を掛けない（変更後の武器の発のゲージは確かめていない。
+      // V-0528）。ヒットの数（gaugeHitsOf）は 1 発 1 ヒットのまま
       const gainEnergy = uncharged ? shotEnergy / chargeGaugeOf(i) : shotEnergy;
       const energy =
         gainEnergy * (isPartial ? partialGaugeRatio(slot.character.shot, i === controlledSlot, partial) : 1) +
@@ -1603,7 +1611,7 @@ function runFirstPassOnce(
         a.pending.push({ frame: f, progress: last?.frame === f ? last.progress : undefined });
       }
     }
-    // ヘルム編: ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
+    // ゲージを溜める倍率ダメージ。遅れ 0（V-0035 のモダニア。発と同じフレームに当たる）はこのフレームのゲージに足す
     for (const t of damageGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
@@ -1615,7 +1623,7 @@ function runFirstPassOnce(
       const energy = targetEnergyNow(t.slotIndex, t.energy);
       for (const d of t.gaugeHits) gauge += landingGauge(t.slotIndex, f + flight + d, f, energy, 1);
     }
-    // モラン編: 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す（遅れがあれば、そのフレームに予約する）
+    // 射撃の回数でゲージだけを溜める効果。発火した射撃のフレームのゲージに足す（遅れがあれば、そのフレームに予約する）
     for (const t of shotGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
       if (shot === null || shot === undefined) continue;
@@ -1628,7 +1636,7 @@ function runFirstPassOnce(
         pendingGauge.set(f + t.delayFrames, (pendingGauge.get(f + t.delayFrames) ?? 0) + energy);
       }
     }
-    // レイヴン編: ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
+    // ゲージを溜める持続ダメージ。この射撃で付いたら、付けたときの分はこのフレームのゲージに足し、
     // 新しく決まった tick の分は tick のフレームに予約する（どれもこのフレームより後。resolveDotEffects が形を限っている）
     for (const t of dotGaugeTrackers) {
       const shot = shotEvents[t.slotIndex];
@@ -1645,7 +1653,7 @@ function runFirstPassOnce(
       if (!fired) continue;
       if (apply) {
         const energy = targetEnergyNow(t.slotIndex, t.energy);
-        // 回数トリガーの遅れ編の第 2 段（plan/design-shot-count-trigger-frame.md 6.6 節）: 付けたのは撃った 6f 後（C-0181）。
+        // 付けたのは撃った 6f 後（C-0181。plan/design-shot-count-trigger-frame.md 6.6 節）。
         // モデルの射撃のフレームは撃ったフレーム（C-0661）なので、その applyDelay 後のゲージに足す
         if (t.applyDelay === 0) {
           gauge += energy;
@@ -1657,7 +1665,7 @@ function runFirstPassOnce(
       }
       reserveDotTicks(t, f);
     }
-    // ヘルム編: バーストゲージのチャージ（最大値 × X%）。射撃の回数トリガーはこのフレームの射撃で発火し、このフレームのゲージに足す
+    // バーストゲージのチャージ（最大値 × X%）。射撃の回数トリガーはこのフレームの射撃で発火し、このフレームのゲージに足す
     // （V-0034: バーは発のフレームで 1 回に跳ぶ）。ほかのトリガーは前のフレームまでに発火したものを足す
     const charges = pendingGaugeCharges.get(f) ?? [];
     pendingGaugeCharges.delete(f);
@@ -1691,7 +1699,7 @@ function runFirstPassOnce(
         });
       }
     }
-    // アニス：スター S1 の味方のゲージ編: このフレームに着いたほかの枠のゲージの回数に、このフレームの量を足す
+    // 味方のゲージ（allyGaugeAdd）: このフレームに着いたほかの枠のゲージの回数に、このフレームの量を足す
     if (allyAdd !== null) {
       const hits = pendingAllyHits.get(f);
       if (hits !== undefined) {
@@ -1705,18 +1713,19 @@ function runFirstPassOnce(
       const windowsBefore = controller.windows.length;
       const timeoutsBefore = controller.chainTimeouts.length;
       stepBurstController(controller, f, gauge, blocked);
-      // 2 段目の段 21: 予約した延長は、窓を作ったら足され、窓を作らずにチェーンが切れたら捨てられる（burst/controller.ts の resetChain）
+      // 予約した延長は、窓を作ったら足され、窓を作らずにチェーンが切れたら捨てられる（burst/controller.ts の resetChain）
       if (pendingExtensions.length > 0) {
         const timedOut = controller.chainTimeouts.length > timeoutsBefore;
         if (timedOut) for (const x of pendingExtensions) discardedExtensions.add(x);
         if (timedOut || controller.windows.length > windowsBefore) pendingExtensions = [];
       }
-      // 2 段目の段 11 の PR 3（plan/design-skill-stage11.md 3.3 節。V-0530）: バーストスキルのクールタイム▼ の維持の付いた形（T4。
-      // 「その間スキル自体のクールタイムを変える」）。このフレームに発動した枠に効いている秒（f − 1 までに付いた件）だけ、その発動の
+      // バーストスキルのクールタイム▼ の維持の付いた形（T4。
+      // 「その間スキル自体のクールタイムを変える」。plan/design-skill-stage11.md 3.3 節。V-0530）。
+      // このフレームに発動した枠に効いている秒（f − 1 までに付いた件）だけ、その発動の
       // CT を短くする（明けるのは発動のフレームより前にしない）。常時（戦闘開始から持続の静的な状態の中身も）と時間で変わる件の和。
       // 即時の CT▼（reduceCooldown）とは別で、cooldownReductions に残さず、縮めた長さは発動の cooldownShortenedFrames に残す
-      // 2 段目の段 15 の PR 2（plan/design-skill-stage15.md 2.2 節。V-0566）: 時間で変わる件は、発動の前のフレームに効いていた件だけ
-      // （発動のフレームより後に付いた件は、下の「発動の後に付いた▼」が縮める。同じ件を 2 回数えない）
+      // 時間で変わる件は、発動の前のフレームに効いていた件だけ
+      // （発動のフレームより後に付いた件は、下の「発動の後に付いた▼」が縮める。同じ件を 2 回数えない。plan/design-skill-stage15.md 2.2 節。V-0566）
       const shorten = (a: BurstActivation, seconds: number) => {
         const applied = shortenCooldown(controller!, a.slotIndex, gameSecondsToFrames(seconds), f);
         if (applied > 0) a.cooldownShortenedFrames = (a.cooldownShortenedFrames ?? 0) + applied;
@@ -1727,7 +1736,7 @@ function runFirstPassOnce(
         if (seconds > 0) shorten(a, seconds);
         if (lists.hasBurstCooldownTracks(a.slotIndex)) lastActivationOf.set(a.slotIndex, a);
       }
-      // 2 段目の段 15 の PR 2: 発動の後に付いた T4 の▼（ティアの S1 のように、同じ発動から付いたものも）は、走っている CT をその場で
+      // 発動の後に付いた T4 の▼（ティアの S1 のように、同じ発動から付いたものも）は、走っている CT をその場で
       // 縮める（V-0566。単騎のティアの発動の間隔が 40 秒より短い）。前のフレームに始まった件を、そのフレームより前に発動した CT に当てる
       // （このフレームに発動した枠は、上の発動の前のフレームの件で数えた）
       for (const last of lastActivationOf.values()) {
@@ -1753,7 +1762,7 @@ function runFirstPassOnce(
       if (activations[nextActivation]!.frame === f) now.push(activations[nextActivation]!);
       nextActivation += 1;
     }
-    // 着弾編: 効果の発火は発動 + 遅れのフレーム。先のフレームなら積んでおく（遅れの無いキャラはこのフレーム）
+    // 効果の発火は発動 + 遅れのフレーム。先のフレームなら積んでおく（遅れの無いキャラはこのフレーム）
     const burstEffects: BurstActivation[] = pendingBurstEffects.get(f) ?? [];
     if (burstEffects.length > 0) pendingBurstEffects.delete(f);
     for (const a of now) {
@@ -1766,7 +1775,7 @@ function runFirstPassOnce(
       if (at === f) burstEffects.push(a);
       else if (at < frames) pendingBurstEffects.set(at, [...(pendingBurstEffects.get(at) ?? []), a]);
     }
-    // エレグのバースト編: ヒットのフレームも同じに積む（遅れの無いキャラは本当の発動か、III なら 00.00。hitFrameOf）
+    // ヒットのフレームも同じに積む（遅れの無いキャラは本当の発動か、III なら 00.00。hitFrameOf）
     for (const a of now) {
       const at = hitFrameOf(a);
       if (at < frames) pendingBurstHits.set(at, [...(pendingBurstHits.get(at) ?? []), a]);
@@ -1824,14 +1833,14 @@ function runFirstPassOnce(
       });
     }
     if (due !== undefined) pendingHeals.delete(f);
-    // 2 段目の段 3（plan/design-skill-stage3.md 1.3 節）: このフレームにフルスタックになった状態を消費する（回復のきっかけ { fullStack }）。
+    // このフレームにフルスタックになった状態を消費する（回復のきっかけ { fullStack }。plan/design-skill-stage3.md 1.3 節）。
     // フルスタックになる件は、射撃の回数のきっかけの付与なので前のフレームまでに登録済み
     const fullStacks = lists.consumeFullStacks(f);
-    // 2 段目の段 11（plan/design-skill-stage11.md 2.2.1 節）: このフレームに使用武器の変更（撃ち切り）が終わった枠
+    // このフレームに使用武器の変更（撃ち切り）が終わった枠（plan/design-skill-stage11.md 2.2.1 節）
     const weaponChangeEnds = logs.flatMap((log, i) => (log?.weaponChangeEnds?.at(-1) === f ? [i] : []));
-    // 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: このフレームがリロードの込め終わりの次のフレームの枠
+    // このフレームがリロードの込め終わりの次のフレームの枠（plan/design-skill-stage16.md 2.2 節）
     const reloadEnds = logs.flatMap((log, i) => (log?.reloadEnds?.at(-1) === f ? [i] : []));
-    // 2 段目の段 14 の PR 2: このフレームの溜めの周期と満ちた時（手順 1 の射手が射撃の記録に書いた）
+    // このフレームの溜めの周期と満ちた時（手順 1 の射手が射撃の記録に書いた）
     const chargeTicks = logs.flatMap(
       (log, i) =>
         log?.chargeTicks?.flatMap((t) =>
@@ -1839,7 +1848,7 @@ function runFirstPassOnce(
         ) ?? [],
     );
     const chargeFulls = logs.flatMap((log, i) => (log?.chargeFullFrames?.at(-1) === f ? [i] : []));
-    // 段 17 の PR 1: このフレームに遮蔽物 HP 回復を受けた枠（前のフレームの射撃で起きたものから。このフレームの分は下で足す）
+    // このフレームに遮蔽物 HP 回復を受けた枠（前のフレームの射撃で起きたものから。このフレームの分は下で足す）
     if (coverHealedDirty) {
       coverHealed.fill(false);
       coverHealedDirty = false;
@@ -1881,7 +1890,7 @@ function runFirstPassOnce(
     // 攻撃力▲を含め、このフレームに付く窓は入れない。plan/design-heal-top-attack.md 2 節の A）
     for (const src of heals) {
       if (!src.fires(ev)) continue;
-      // ミント・プリカ編（plan/design-mint-prika.md 2.7 節）: 発火の条件（自分の状態）。回復は件の登録の前に当てる（healed のきっかけが読む）ので、
+      // 発火の条件（自分の状態。plan/design-mint-prika.md 2.7 節）。回復は件の登録の前に当てる（healed のきっかけが読む）ので、
       // このフレームの件の登録より前に見る（同じフレームに付いた状態は見えない。ミントのダンスはバーストで付き、条件を読むフルチャージは後の発）
       if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
       const context = lists.rankContext(src.effect, src.sourceSlotIndex, fireContextOf(src.effect.trigger, ev), f);
@@ -1906,7 +1915,7 @@ function runFirstPassOnce(
       }
     }
 
-    // 段 17 の PR 1: 遮蔽物 HP 回復も回復と同じく件の登録の前に当てる（同じフレームの { coverHealed } の timed が読む）
+    // 遮蔽物 HP 回復も回復と同じく件の登録の前に当てる（同じフレームの { coverHealed } の timed が読む）
     for (const src of coverHeals) {
       if (!src.fires(ev)) continue;
       for (const target of src.targets) {
@@ -1926,9 +1935,9 @@ function runFirstPassOnce(
     lists.registerFrame(ev);
     for (const src of otherInstants) {
       if (!src.fires(ev)) continue;
-      // 2 段目の段 12 の PR 4（plan/design-skill-stage12.md 2.6 節）: 発火の条件（いまは cooldownReduction の selfState だけ）
+      // 発火の条件（いまは cooldownReduction の selfState だけ。plan/design-skill-stage12.md 2.6 節）
       if (!lists.instantConditionHolds(src.effect, src.sourceSlotIndex, f)) continue;
-      // レッドフード編（plan/design-red-hood.md 2.1・2.3 節）: 使った段階（発火の文脈）と、戦闘中の発火の回数の上限。どちらで出なかった
+      // 使った段階（発火の文脈）と、戦闘中の発火の回数の上限（plan/design-red-hood.md 2.1・2.3 節）。どちらで出なかった
       // 発火も、件の条件と同じく不発に数える（timed の burstStep は件の一覧の fireContextHolds が数える。上限の後の発火は「条件を
       // 満たさない発火と同じ」。2.3 節）
       if (!burstStepHolds(src.effect.condition, ev, src.sourceSlotIndex)) {
@@ -1943,7 +1952,7 @@ function runFirstPassOnce(
         }
         instantFireCounts.set(src, fired + 1);
       }
-      // ヘルム編: 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
+      // 射撃の回数トリガーでないバーストゲージのチャージは、対象によらず 1 回だけ、次のフレームのゲージに足す
       if (src.effect.kind === 'burstGauge') {
         if (controller === null || f + 1 >= frames) continue; // 固定サイクル・バーストなしではゲージを見ない
         const list = pendingGaugeCharges.get(f + 1) ?? [];
@@ -1951,7 +1960,7 @@ function runFirstPassOnce(
         pendingGaugeCharges.set(f + 1, list);
         continue;
       }
-      // 2 段目の段 21: 窓の外で発火したフルバーストタイムの延長（バースト 3 段階突入時）は、対象によらず 1 回だけ、次に作る窓に予約する
+      // 窓の外で発火したフルバーストタイムの延長（バースト 3 段階突入時）は、対象によらず 1 回だけ、次に作る窓に予約する
       if (src.effect.kind === 'fullBurstExtend') {
         if (controller === null) continue; // 固定サイクル・バーストなしでは窓を延ばさない
         reserveFullBurstExtension(controller, src.effect.value);
@@ -1964,7 +1973,7 @@ function runFirstPassOnce(
         });
         continue;
       }
-      // 紅蓮編（plan/design-scarlet.md 2.1 節）: 現在の HP▼ は自分の HP の割合を下げるだけ（次のフレームから読む）
+      // 現在の HP▼ は自分の HP の割合を下げるだけ（次のフレームから読む。plan/design-scarlet.md 2.1 節）
       if (src.effect.kind === 'currentHpDown') {
         lists.lowerCurrentHp(src.sourceSlotIndex, f, src.effect.value);
         instants.push({
@@ -1981,7 +1990,7 @@ function runFirstPassOnce(
         if (src.effect.kind === 'cooldownReduction') {
           if (controller === null) continue; // 固定サイクル・バーストなしでは CT を見ない
           const before = controller.cooldownReductions.length;
-          // ミント・プリカ編（plan/design-mint-prika.md 2.6 節）: CT▲は走っている CT の残りに足す（記録の applied は負）
+          // CT▲は走っている CT の残りに足す（記録の applied は負。plan/design-mint-prika.md 2.6 節）
           const change = src.effect.increase === true ? extendCooldown : reduceCooldown;
           change(controller, target, gameSecondsToFrames(src.effect.value), f, src.sourceSlotIndex);
           const applied = controller.cooldownReductions[before]?.applied ?? 0;
@@ -1997,7 +2006,7 @@ function runFirstPassOnce(
         const state = shooters[target];
         const slot = slots[target];
         if (!state || !slot) continue;
-        // 2 段目の段 11（plan/design-skill-stage11.md 2.2 節）: 残弾数減少は基礎の武器の残弾から残弾 × X% を減らす（端数は切り上げ）
+        // 残弾数減少は基礎の武器の残弾から残弾 × X% を減らす（端数は切り上げ。plan/design-skill-stage11.md 2.2 節）
         if (src.effect.kind === 'ammoDecrease') {
           const params = paramsAt(target, f);
           const before = state.ammo;
@@ -2015,7 +2024,7 @@ function runFirstPassOnce(
               ? weaponChangeEndOffset[target]! - WEAPON_CHANGE_END_DELAY
               : 0,
           );
-          // グレイブ編（V-0735）: 減少でリロードを始めたら、その前の最後の発を記録に書く（照合のリロードの回）
+          // 減少でリロードを始めたら、その前の最後の発を記録に書く（照合のリロードの回。V-0735）
           const lastFired = logs[target]?.frames.at(-1);
           if (!wasReloading && state.phase === 'reloading' && lastFired !== undefined)
             (logs[target]!.drainReloadShotFrames ??= []).push(lastFired);
@@ -2028,11 +2037,11 @@ function runFirstPassOnce(
           });
           continue;
         }
-        // 2 段目の段 4（C-0561。仮説）: 射撃の回数のきっかけの弾丸チャージは、同じ発のきっかけで付く件（f + 1 から。`{ applied }` の
-        // 付与で付く応急改造を含む）を入れた最大装弾数で数える。残弾に足すのは発のフレーム f のまま
+        // 射撃の回数のきっかけの弾丸チャージは、同じ発のきっかけで付く件（f + 1 から。`{ applied }` の
+        // 付与で付く応急改造を含む。C-0561。仮説）を入れた最大装弾数で数える。残弾に足すのは発のフレーム f のまま
         const params = paramsAt(target, isResolvedShotCount(src.effect.trigger) ? f + 1 : f);
         const before = state.ammo;
-        // ルドミラ：ウィンターオーナー編: 発数の弾丸チャージ（scaling 'flat'）は値をそのまま足す
+        // 発数の弾丸チャージ（scaling 'flat'）は値をそのまま足す
         const rounds =
           src.effect.scaling === 'flat' ? src.effect.value : refillRounds(params.maxAmmo, src.effect.value);
         refillAmmo(state, rounds, slot.character.shot, model, params);

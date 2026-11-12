@@ -81,7 +81,7 @@ export const SLIDE_IN_DROP = 0.8;
 export const CT_END_LEAD_MAX = 15;
 
 /**
- * 2 段目の段 21（plan/design-skill-stage21.md 3.1 節・論点 5）: フルバーストの終わり。六角形の所がフルバーストの背景（橙）から次の段の
+ * フルバーストの終わり（plan/design-skill-stage21.md 3.1 節・論点 5）。六角形の所がフルバーストの背景（橙）から次の段の
  * 灰色に替わるフレーム（青が FB_END_BLUE_JUMP 以上・緑が FB_END_GREEN_JUMP 以上上がり、青が FB_END_BLUE_MIN 以上・バーの紫が 0）。
  * 00.00 の FB_END_MIN_FRAMES 後から探す（バーの紫は窓の終わりより前に尽きるので、紫の切れ目は使わない。録画 0542〜0544）
  */
@@ -132,7 +132,7 @@ export type PanelEvents = {
   /** III のタイマーの 00.00（フルバーストの紫が出た最初のフレーム） */
   fullBurst: number[];
   /**
-   * 2 段目の段 21: フルバーストの終わり（六角形の所が橙から灰色に替わったフレーム）。fullBurst と同じ並びで、読めなかった窓は null
+   * フルバーストの終わり（六角形の所が橙から灰色に替わったフレーム）。fullBurst と同じ並びで、読めなかった窓は null
    * （次の 00.00 か録画の終わりまでに見つからない）
    */
   fullBurstEnd: (number | null)[];
@@ -167,7 +167,7 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
    * 光りが II の色に戻る途中を III と取り違える（録画 0735 の 3 回目のチェーン）。- は段の外（I の緑の前）
    */
   const stage: PanelClass[] = [];
-  /** 00.00 の行の添字（fullBurst と同じ並び。2 段目の段 21 のフルバーストの終わりを探す起点） */
+  /** 00.00 の行の添字（fullBurst と同じ並び。フルバーストの終わりを探す起点） */
   const fullBurstAt: number[] = [];
   let phase = '-' as PanelClass;
   let last: PanelClass = '-';
@@ -199,7 +199,7 @@ export function panelEvents(rows: readonly PanelRow[]): PanelEvents {
     }
     stage.push(phase);
   }
-  // 2 段目の段 21: フルバーストの終わり（00.00 の FB_END_MIN_FRAMES 後から、次の 00.00 の前まで）
+  // フルバーストの終わり（00.00 の FB_END_MIN_FRAMES 後から、次の 00.00 の前まで）
   fullBurstAt.forEach((at, k) => {
     const from = at + FB_END_MIN_FRAMES;
     const to = fullBurstAt[k + 1] ?? rows.length;

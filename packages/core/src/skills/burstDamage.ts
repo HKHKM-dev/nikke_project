@@ -50,19 +50,19 @@ import {
 
 /**
  * バースト発動時の即時ダメージにフルバースト補正 +0.5 を乗せるか。
- * **2026-09-22 の射撃場実測で「乗せない」と確定**（plan/verification.md Stage 5 節、録画 0018・0019）:
+ * **射撃場の実測で「乗せない」と確定**（plan/verification.md Stage 5 節、録画 0018・0019）:
  * ラピのバースト 657.72% が 208,131 × 3 = 624,393 =（素の攻撃力 − 防御）× 6.5772、
  * ノワールのバースト 351.64% が 480,611 =（バフ後 136,777 − 100）× 3.5164 で、どちらも +0.5 が乗っていない。
  * コア・距離も乗らないことを同時に確認した。
  */
 export const BURST_SKILL_FULL_BURST_BONUS = false;
 
-// Stage 8 の SKILL_HIT_FULL_BURST_BONUS（倍率ダメージにフルバースト補正を乗せる）は、Stage 11 モダニアで 1 トリガーの式
-// （damage.ts の射撃ごとの倍率ダメージ）も使うので damage.ts に移した（循環 import を避けるため）。ここからも export する
+// SKILL_HIT_FULL_BURST_BONUS（倍率ダメージにフルバースト補正を乗せるか）は、1 トリガーの式（damage.ts の射撃ごとの倍率ダメージ）も
+// 使うので damage.ts に置く（循環 import を避けるため）。ここからも export する
 export { SKILL_HIT_FULL_BURST_BONUS } from '../damage.ts';
 
 /**
- * 持続ダメージ▲編（plan/design-sustained-damage-up.md 3.3 節）: 持続ダメージ▲（sustainedDamage）の式の中の置き場所。
+ * 持続ダメージ▲（sustainedDamage）の式の中の置き場所（plan/design-sustained-damage-up.md 3.3 節）。
  * separate = 別枠の乗数 (1 + Σ)（H1）、attackDamage = 攻撃ダメージ▲と同じ群 (1 + Σ攻撃ダメージ + Σ持続ダメージ)（H2）、
  * boost = 倍率グループに足す (1 + 会心 + フルバースト補正 + Σ)（H3）
  */
@@ -79,28 +79,27 @@ export const SUSTAINED_DAMAGE_PLACEMENTS = [
  */
 export const SUSTAINED_DAMAGE_PLACEMENT: SustainedDamagePlacement = 'attackDamage';
 
-/** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damage（Stage 8）で共通 */
+/** 解決済みの倍率ダメージ 1 件。burstDamage（burst スロット）と damageで共通 */
 export type ResolvedSkillDamage = {
   source: { resourceId: number; skill: SkillSlot; name: LocalizedText };
   damageType: SkillDamageType;
   /** X/100。3.5164 など */
   multiplier: number;
-  /** アニス：スター編: 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
+  /** 発射体の爆発のヒット（自動攻撃の projectileExplosion）。発射体爆発ダメージ▲を掛ける（V-0124） */
   projectileExplosion?: true;
-  /** 持続ダメージ▲編: 持続ダメージ（dot。autoAttack は除く）の tick。持続ダメージ▲（sustainedDamage）を掛ける */
+  /** 持続ダメージ（dot。autoAttack は除く）の tick。持続ダメージ▲（sustainedDamage）を掛ける */
   sustained?: true;
   /**
-   * コアの経路編: コアに当たりうるヒット（自動攻撃の core）。plan/design-anis-star-core-path.md 3.1 節。2 段目の段 12 の PR 2: damage の
-   * core（粘着榴弾の付着）も
+   * コアに当たりうるヒット（自動攻撃の core と、damage の core（粘着榴弾の付着））。plan/design-anis-star-core-path.md 3.1 節
    */
   core?: true;
-  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.4 節）: コア命中ダメージ（core と組み、コアに当たる割合を 1 にする） */
+  /** コア命中ダメージ（core と組み、コアに当たる割合を 1 にする。plan/design-new-chars-1029.md 5.4 節） */
   coreHit?: true;
   /** 同 5.5 節: 「N 回順番に攻撃」のヒット。順番攻撃ダメージ▲（sequentialAttackDamage）を掛ける */
   sequential?: true;
-  /** 2 段目の段 12 の PR 2: 撃った枠の通常攻撃と同じ距離ボーナスを倍率グループに足すヒット（damage の distance。粘着榴弾の付着と爆発） */
+  /** 撃った枠の通常攻撃と同じ距離ボーナスを倍率グループに足すヒット（damage の distance。粘着榴弾の付着と爆発） */
   distance?: true;
-  /** 2 段目の段 12 の PR 2: 発射体の付着のヒット（damage の projectileStick）。発射体付着ダメージ▲を掛ける */
+  /** 発射体の付着のヒット（damage の projectileStick）。発射体付着ダメージ▲を掛ける */
   projectileStick?: true;
   assumes?: LocalizedText;
 };
@@ -113,24 +112,24 @@ export type ResolvedPeriodShorten = { seconds: number } & (
   | { window: { trigger: 'burstUse'; durationFrames: number; elapsed?: true }; state?: never }
 );
 
-/** Stage 8: トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
+/** トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
 export type ResolvedDamageEffect = ResolvedSkillDamage & {
-  /** 2 段目の段 13 の PR 1: { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders.ts の counterFullFrames） */
+  /** { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders.ts の counterFullFrames） */
   trigger: ResolvedTrigger;
   /** 同じスロットの何番目の効果か（表示・識別用） */
   effectIndex: number;
   /**
-   * Stage 11 紅蓮BS: 段の循環（cycle）の 1 段なら、何段目（0 始まり）と段の数。trigger は循環の射撃の回数トリガー
+   * 段の循環（cycle）の 1 段なら、何段目（0 始まり）と段の数。trigger は循環の射撃の回数トリガー
    * （窓の外の間隔）で、実際の発動は skills/cycles.ts の cycleFires が決める。damage 効果ではキーごと無い
    */
   cycle?: { step: number; steps: number };
-  /** クルミ S2 編: damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。frame/plan.ts の planSkillHits が絞る */
+  /** damage の発火の条件（plan/design-kurumi-s2.md 2.2・2.3 節）。frame/plan.ts の planSkillHits が絞る */
   condition?: EffectCondition;
-  /** 遅れて出る倍率ダメージ編: きっかけからの遅れ（フレーム）。frame/plan.ts の planSkillHits がそのフレームのバフで出す */
+  /** きっかけからの遅れ（フレーム）。frame/plan.ts の planSkillHits がそのフレームのバフで出す */
   delayFrames?: number;
-  /** ミハラのバースト編: バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
+  /** バーストの倍率ダメージの分かれたヒットのそれぞれに出す（frame/plan.ts の planSkillHits） */
   perBurstHit?: true;
-  /** 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 1 回の発動のヒット数と、ヒットの間（フレーム） */
+  /** 1 回の発動のヒット数と、ヒットの間（フレーム。plan/design-new-chars-1029.md 5.2 節） */
   hits?: number;
   hitIntervalFrames?: number;
   /**
@@ -143,7 +142,7 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
   valueBeforeFire?: true;
   /**
    * 同 5.3 節: 前の発動のフレームに自分が state なら、次の発動までを seconds 秒縮める（frame/plan.ts の shortenedTimerFrames）。
-   * 2 段目の段 15 の PR 3: window なら、自分のバースト使用のフレームから durationFrames の間（縮めた次の発動のフレームだけで見る）
+   * window なら、自分のバースト使用のフレームから durationFrames の間（縮めた次の発動のフレームだけで見る）
    */
   periodShorten?: ResolvedPeriodShorten;
   /**
@@ -156,53 +155,53 @@ export type ResolvedDamageEffect = ResolvedSkillDamage & {
     | { source: 'self'; durationFrames: number; applyDelayFrames: number; capDelayFrames: number; ratio: number };
   /**
    * V-0545: 周期の発火のどのヒットも、射手の 1 ヒットぶん × この数のゲージを溜める（frame/firstPass.ts が予約する。定義の true は 1。
-   * アインのニアフェザー編: 召喚の攻撃は 2 以上の数も書ける）
+   * 召喚の攻撃は 2 以上の数も書ける）
    */
   gaugePerHit?: number;
-  /** 2 段目の段 10: 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、段 11 の PR 5: カウンタの値（frame/plan.ts の planSkillHits） */
+  /** 倍率に掛ける、発火のフレームの自分のその状態のスタック数か、カウンタの値（frame/plan.ts の planSkillHits） */
   perCount?: { state: NamedStateId } | { counter: CounterId };
-  /** 2 段目の段 12 の PR 2: perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
+  /** perCount の数だけ、倍率を掛けずに 1 つずつこの間隔（秒）で出す（frame/plan.ts の planSkillHits） */
   perCountIntervalSeconds?: number;
   /**
-   * 2 段目の段 13 の PR 1: perCount の数だけ、delayFrames 後からこのフレーム数ごとに出す（damage）か付ける（dot）（frame/plan.ts の
+   * perCount の数だけ、delayFrames 後からこのフレーム数ごとに出す（damage）か付ける（dot）（frame/plan.ts の
    * planSkillHits）
    */
   perCountIntervalFrames?: number;
   /**
-   * ニヒリスター編: 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
+   * 持続ダメージ（dot）の 1 tick なら、間隔と維持の秒。trigger は付く時で、tick のフレームは
    * frame/plan.ts の dotTickFrames が決める。damage 効果ではキーごと無い
    */
   dot?: {
     intervalSeconds: number;
     durationSeconds: number;
     firstTick: DotFirstTick;
-    /** 名前の付いた状態の語彙編: 付いている間を敵の状態（目録の id）とする持続ダメージ（plan/design-named-state.md 5.4 節） */
+    /** 付いている間を敵の状態（目録の id）とする持続ダメージ（plan/design-named-state.md 5.4 節） */
     state?: NamedStateId;
-    /** レイヴン編: 最大スタック数。スタックしない持続ダメージは 1（plan/design-raven-s1.md 8 節の 1） */
+    /** 最大スタック数。スタックしない持続ダメージは 1（plan/design-raven-s1.md 8 節の 1） */
     maxStacks: number;
-    /** レイヴン編: 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
+    /** 付けたとき・tick ごとに射手の 1 ヒットぶんのゲージを溜める（C-0181。frame/firstPass.ts） */
     gaugeOnApply?: true;
-    /** 回数トリガーの遅れ編の第 2 段: 付けたときのゲージを発火の何フレーム後に足すか（レイヴンは 6。frame/firstPass.ts） */
+    /** 付けたときのゲージを発火の何フレーム後に足すか（レイヴンは 6。frame/firstPass.ts） */
     gaugeOnApplyDelayFrames?: number;
     /** tick の刻みを発火の何フレーム後から数えるか（skills/types.ts の DotEffect.tickDelayFrames） */
     tickDelayFrames?: number;
     gaugeOnTick?: true;
-    /** アニス：スター S2・バースト編: 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
+    /** 周期の自動攻撃（autoAttack）を dot の形にしたもの。表示のラベルだけが変わる */
     autoAttack?: true;
-    /** 2 段目の段 13 の PR 1: firstTick halfAfterLatest の tick の間隔（ゲーム内のティック。実測）と、付けた時の 1 スタックのヒット */
+    /** firstTick halfAfterLatest の tick の間隔（ゲーム内のティック。実測）と、付けた時の 1 スタックのヒット */
     tickIntervalFrames?: number;
     hitOnApply?: true;
     /** 同: { counterFull } の perCount の最初の付与の、発火からの遅れ（フレーム） */
     applyDelayFrames?: number;
     /**
-     * 2 段目の段 13 の PR 2: tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン）。マスト編（plan/design-mast.md 2.3 節）:
-     * 敵にスタックで付く状態の付与の state も（海風）
+     * tick のスタックの数を写す、敵に付いた別の dot の state（プリング・チェーン）か、
+     * 敵にスタックで付く状態の付与の state（海風。plan/design-mast.md 2.3 節）
      */
     stacksFrom?: NamedStateId;
-    /** マスト編: stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
+    /** stacksFrom を tick ごとに写し直す（skills/types.ts の DotEffect.copyEachTick） */
     copyEachTick?: true;
     /**
-     * 2 段目の段 19 の PR 1: 「〈状態〉解除まで」の状態（定義の durationUntil: { stateEnd }。durationSeconds は無限）。付いたフレームを含む自分の件の
+     * 「〈状態〉解除まで」の状態（定義の durationUntil: { stateEnd }。durationSeconds は無限）。付いたフレームを含む自分の件の
      * 終わりより後の tick を出さない（frame/plan.ts の planSkillHits）
      */
     untilStateEnd?: NamedStateId;
@@ -224,9 +223,9 @@ export function resolveBurstDamage(
   const resolved: ResolvedBurstDamage[] = [];
   for (const effect of entry.effects) {
     if (effect.kind !== 'burstDamage') continue;
-    // 2 段目の段 10（plan/design-skill-stage10.md 2.2 節）: 「N 回順番に攻撃」は、1 回の発動の倍率を回数倍にする（遅れの表の分かれた
+    // 「N 回順番に攻撃」は、1 回の発動の倍率を回数倍にする（遅れの表の分かれた
     // ヒットで等分すると、各ヒットが説明文の値になる。回数と分かれたヒットの数（burstDelaysOf の hitOffsets）がそろうかは、
-    // 定義のテスト（skills/__tests__/definitions.test.ts）が確かめる）
+    // 定義のテスト（skills/__tests__/definitions.test.ts）が確かめる。plan/design-skill-stage10.md 2.2 節）
     const hits = effect.hitsRef === undefined ? 1 : skillValue(skill, effect.hitsRef, levels.burst);
     const r: ResolvedBurstDamage = {
       source: { resourceId: character.resourceId, skill: 'burst', name: skill.name },
@@ -239,9 +238,9 @@ export function resolveBurstDamage(
   return resolved;
 }
 
-/** Stage 8: 定義の各 damage 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
+/** 定義の各 damage 効果を Lv の数値に解決する。support が 'unsupported' のスキルは空 */
 /**
- * 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2 節）: 発火のフレーム fire の倍率ダメージのヒットのフレーム。delayFrames の後に
+ * 発火のフレーム fire の倍率ダメージのヒットのフレーム（plan/design-new-chars-1029.md 5.2 節）。delayFrames の後に
  * N ヒット（hits。無ければ 1）を hitIntervalFrames おきに出し、戦闘の終わりを越えるヒットは出さない。2 パス目（frame/plan.ts）のヒットと、
  * 1 パス目（frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit。V-0545）が同じ列を使う
  */
@@ -263,10 +262,10 @@ export function damageHitFramesOf(
 }
 
 /**
- * 2 段目の段 12・13: perCount の数だけのヒット（付与）の、発火 frame からのフレーム。k 個目（0 始まり）は、秒の間隔なら
- * delay + floor(k × 間隔 ÷ 0.017) 後（端数を持ち越す。粘着榴弾の起爆。C-0726）、フレーム数の間隔なら delay + k × 間隔の後（キャプチャーチェーン。
- * C-0745）。戦闘の終わり（end）より前だけ。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 秒の間隔にも delay を足す
- * （オートファイアの順番の攻撃は、フルチャージの発の 44f 後から 0.2 秒ごと。V-0552）。2 パス目（frame/plan.ts）のヒットと、1 パス目
+ * perCount の数だけのヒット（付与）の、発火 frame からのフレーム。k 個目（0 始まり）は、秒の間隔なら
+ * delay + floor(k × 間隔 ÷ 0.017) 後（端数を持ち越す。粘着榴弾の起爆。C-0726。オートファイアの順番の攻撃は、フルチャージの発の 44f 後から
+ * 0.2 秒ごと。V-0552。plan/design-skill-stage14.md 2.5 節）、フレーム数の間隔なら delay + k × 間隔の後（キャプチャーチェーン。C-0745）。
+ * 戦闘の終わり（end）より前だけ。2 パス目（frame/plan.ts）のヒットと、1 パス目
  * （frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit）が同じ列を使う
  */
 export function perCountFrames(
@@ -285,7 +284,7 @@ export function perCountFrames(
 }
 
 /**
- * 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 発火のフレーム fire の倍率ダメージのヒットのフレーム。perCount の数だけ
+ * 発火のフレーム fire の倍率ダメージのヒットのフレーム（plan/design-skill-stage14.md 2.5 節）。perCount の数だけ
  * 1 つずつ出すなら（splitsPerCount。count は発火のフレームの数）perCountFrames、そうでなければ damageHitFramesOf。2 パス目
  * （frame/plan.ts）のヒットと、1 パス目（frame/firstPass.ts）のヒットごとのゲージ（gaugePerHit）が同じ列を使う
  */
@@ -308,11 +307,11 @@ export function effectHitFrames(
 }
 
 /**
- * Stage 11 モダニア: 射撃ごとの倍率ダメージ（every = 1）を 1 トリガーの値に畳み込むか（resolvePerShotDamage）。条件つきは畳み込まない
- * （射撃ごとの発動として 1 件ずつ出す）。2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 遅れて出るヒット（delayFrames）・
- * perCount の数だけのヒット（オートファイア）も、発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す。
- * 2 段目の段 16 の PR 2（plan/design-skill-stage16.md 2.2 節）: 防御力無視ダメージ（ベスティー：タクティカル・アップの S2）も、畳み込む値
- * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す
+ * 射撃ごとの倍率ダメージ（every = 1）を 1 トリガーの値に畳み込むか（resolvePerShotDamage）。条件つきは畳み込まない
+ * （射撃ごとの発動として 1 件ずつ出す）。遅れて出るヒット（delayFrames）・perCount の数だけのヒット（オートファイア）も、
+ * 発のヒットと別のヒットなので畳み込まず、発ごとに 1 件ずつ出す（plan/design-skill-stage14.md 2.5 節）。
+ * 防御力無視ダメージ（ベスティー：タクティカル・アップの S2）も、畳み込む値
+ * （damage.ts の perShot）が防御力を引いた式だけを持つので、発ごとに 1 件ずつ出す（plan/design-skill-stage16.md 2.2 節）
  */
 function foldsIntoShot(effect: DamageEffect, trigger: ResolvedTrigger): boolean {
   return (
@@ -342,16 +341,16 @@ export function resolveDamageEffects(
       if (effect.kind !== 'damage') return;
       const trigger = resolveTrigger(effect.trigger, skill, levels[slot]);
       // 射撃ごとの倍率ダメージは発動を作らず、1 トリガーの値に畳み込む（resolvePerShotDamage）。
-      // クルミ S2 編: 条件つきは畳み込まない（1 パス目の後に絞るので）。2 段目の段 10（plan/design-skill-stage10.md 3.2 節）: 条件つきは、
-      // 射撃ごとの発動として 1 件ずつ出す（ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
-      // 回数トリガーの遅れ編の第 2 段: 畳み込む効果は射撃と同じフレームに乗る。遅れて出るヒットは畳み込まない（foldsIntoShot）
-      // 2026-10-29 のキャラの編: 畳み込む効果はコアの補正を持てない（resolvePerShotDamage が読まない）
+      // 条件つきは畳み込まず（1 パス目の後に絞るので）、射撃ごとの発動として 1 件ずつ出す（plan/design-skill-stage10.md 3.2 節。
+      // ネオン：ビジョン・アイの S1 の超火力状態の追加効果。条件 selfState を射撃のフレームで見る）
+      // 畳み込む効果は射撃と同じフレームに乗る。遅れて出るヒットは畳み込まない（foldsIntoShot）
+      // 畳み込む効果はコアの補正を持てない（resolvePerShotDamage が読まない）
       if (foldsIntoShot(effect, trigger) && effect.coreHit === true) {
         throw new RangeError(`skill ${skill.id}: a per-shot damage (every 1) cannot be a core hit damage`);
       }
       if (foldsIntoShot(effect, trigger)) return;
       // 条件つきの射撃ごとも、SG ではペレットごとか 1 回の射撃ごとかが決まっていない（resolvePerShotDamage と同じく拒否する）。
-      // 2 段目の段 21 の PR 2: 1 回の射撃ごとと読んだもの（perTrigger）は、射撃ごとの発動として 1 件ずつ出す（ほかの武器と同じ）
+      // 1 回の射撃ごとと読んだもの（perTrigger）は、射撃ごとの発動として 1 件ずつ出す（ほかの武器と同じ）
       if (isPerShotTrigger(trigger) && character.weaponType === 'SG' && effect.perTrigger !== true) {
         throw new RangeError(
           `skill ${skill.id}: damage on every shot is not supported for SG (per pellet or per trigger)`,
@@ -368,7 +367,7 @@ export function resolveDamageEffects(
       if (effect.delayFrames !== undefined) r.delayFrames = effect.delayFrames;
       if (effect.perBurstHit === true) r.perBurstHit = true;
       if (effect.perCount !== undefined) r.perCount = effect.perCount;
-      // 2026-10-29 のキャラの編（plan/design-new-chars-1029.md 5.2・5.4 節）
+      // N ヒットの順番の攻撃（hitsRef。plan/design-new-chars-1029.md 5.2・5.4 節）
       if (effect.hitsRef !== undefined) {
         const hits = skillValue(skill, effect.hitsRef, levels[slot]);
         if (!Number.isInteger(hits) || hits < 1)
@@ -427,10 +426,10 @@ export function resolveDamageEffects(
       }
       if (effect.perCountIntervalSeconds !== undefined) r.perCountIntervalSeconds = effect.perCountIntervalSeconds;
       if (effect.perCountIntervalFrames !== undefined) r.perCountIntervalFrames = effect.perCountIntervalFrames;
-      // 2 段目の段 14 の PR 2（plan/design-skill-stage14.md 2.5 節）: 「順番に攻撃」の perCount の数だけのヒット（オートファイアの効果 2）も
-      // 順番の攻撃で、順番攻撃ダメージ▲を掛ける
+      // 「順番に攻撃」の perCount の数だけのヒット（オートファイアの効果 2）も
+      // 順番の攻撃で、順番攻撃ダメージ▲を掛ける（plan/design-skill-stage14.md 2.5 節）
       if (effect.sequentialAttack === true) r.sequential = true;
-      // 2 段目の段 12 の PR 2: 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
+      // 1 ヒットの印（コア・距離ボーナス・発射体の爆発・付着）
       if (effect.core === true) r.core = true;
       if (effect.distance === true) r.distance = true;
       if (effect.projectileExplosion === true) r.projectileExplosion = true;
@@ -442,10 +441,10 @@ export function resolveDamageEffects(
   return resolved;
 }
 
-/** ヘルム編（V-0034）: バーストゲージを溜める倍率ダメージ（damage の gaugeHits）。射撃の回数トリガーだけ */
+/** バーストゲージを溜める倍率ダメージ（damage の gaugeHits。V-0034）。射撃の回数トリガーだけ */
 export type ResolvedDamageGauge = { trigger: ResolvedShotCountTrigger; gaugeHits: number[] };
 
-/** ヘルム編: damage の gaugeHits を Lv の数値に解決する（射撃ごとに畳み込む効果も含む）。unsupported なら空 */
+/** damage の gaugeHits を Lv の数値に解決する（射撃ごとに畳み込む効果も含む）。unsupported なら空 */
 export function resolveDamageGauges(
   def: SkillDefinition,
   character: CharacterData,
@@ -465,7 +464,7 @@ export function resolveDamageGauges(
 }
 
 /**
- * フラワー編: 周期でゲージだけを溜める効果（burstGaugeHit）の、周期の秒と発火からの遅れ（delayFrames。無ければ 0）の列（効果ごとに 1 つ）。
+ * 周期でゲージだけを溜める効果（burstGaugeHit）の、周期の秒と発火からの遅れ（delayFrames。無ければ 0）の列（効果ごとに 1 つ）。
  * unsupported なら空。1 回の量は射手の targetBurstEnergyPerShot（frame/firstPass.ts。plan/design-flower-s2-gauge.md 2 節）
  */
 export function resolveTimerGauges(def: SkillDefinition): (TimerTrigger & { delayFrames: number })[] {
@@ -482,10 +481,10 @@ export function resolveTimerGauges(def: SkillDefinition): (TimerTrigger & { dela
 }
 
 /**
- * モラン編（plan/design-moran.md 3 節）: 射撃の回数のトリガーでゲージだけを溜める効果（burstGaugeHit）の、Lv の数値に解決した
- * トリガーの列（効果ごとに 1 つ）。unsupported なら空。1 回の量は射手の targetBurstEnergyPerShot で、発火した射撃のフレームに足す
- * （frame/firstPass.ts）。回数トリガーの遅れ編（plan/design-shot-count-trigger-frame.md 6 節）: delayFrames があれば、発火した射撃の
- * フレームの delayFrames 後に足す（モラン S2 は 6。C-0480）
+ * 射撃の回数のトリガーでゲージだけを溜める効果（burstGaugeHit）の、Lv の数値に解決した
+ * トリガーの列（効果ごとに 1 つ。plan/design-moran.md 3 節）。unsupported なら空。1 回の量は射手の targetBurstEnergyPerShot で、発火した射撃のフレームに足す
+ * （frame/firstPass.ts）。delayFrames があれば、発火した射撃の
+ * フレームの delayFrames 後に足す（モラン S2 は 6。C-0480。plan/design-shot-count-trigger-frame.md 6 節）
  */
 export function resolveShotGauges(
   def: SkillDefinition,
@@ -532,7 +531,7 @@ export function resolveShotPauses(
 }
 
 /**
- * メイド編（plan/design-maids.md 2.2 節）: 自分に状態が付いた時に射撃を止める（気絶）状態とフレーム数（{ applied } の shotPause）
+ * 自分に状態が付いた時に射撃を止める（気絶）状態とフレーム数（{ applied } の shotPause。plan/design-maids.md 2.2 節）
  */
 export function resolveAppliedPauses(def: SkillDefinition): { state: NamedStateId; frames: number }[] {
   const out: { state: NamedStateId; frames: number }[] = [];
@@ -546,8 +545,8 @@ export function resolveAppliedPauses(def: SkillDefinition): { state: NamedStateI
 }
 
 /**
- * プリバティ編（plan/design-privaty-burst-pause.md 2 節）: 自分のバーストの発動で射撃を止めるフレーム数（burstUse の shotPause。
- * 無ければ 0。いくつもあれば長い方）
+ * 自分のバーストの発動で射撃を止めるフレーム数（burstUse の shotPause。
+ * 無ければ 0。いくつもあれば長い方。plan/design-privaty-burst-pause.md 2 節）
  */
 export function resolveBurstUsePause(def: SkillDefinition): number {
   let frames = 0;
@@ -558,7 +557,7 @@ export function resolveBurstUsePause(def: SkillDefinition): number {
 }
 
 /**
- * アニス：スター S1 の味方のゲージ編（plan/design-anis-star-ally-gauge.md 2 節）: 定義の allyGaugeAdd の割合（説明文の % を 100 で割った値）。
+ * 定義の allyGaugeAdd の割合（説明文の % を 100 で割った値。アニス：スター S1 の味方のゲージ。plan/design-anis-star-ally-gauge.md 2 節）。
  * 無ければ null（parseSkillDefinition が 1 つまでに限っている）
  */
 export function resolveAllyGaugeAdd(
@@ -578,7 +577,7 @@ export function resolveAllyGaugeAdd(
 }
 
 /**
- * ニヒリスター編: 定義の各 dot 効果を Lv の数値に解決する（1 tick の倍率・間隔・維持秒）。support が 'unsupported' のスキルは空。
+ * 定義の各 dot 効果を Lv の数値に解決する（1 tick の倍率・間隔・維持秒）。support が 'unsupported' のスキルは空。
  * 間隔が維持時間より長いと 1 tick も出ないので拒否する（durationRef は Lv で決まるのでここで見る）
  */
 export function resolveDotEffects(
@@ -594,11 +593,11 @@ export function resolveDotEffects(
     const entry = def.skills[slot];
     const skill = character.skills[slot];
     entry.effects.forEach((effect, effectIndex) => {
-      // アニス：スター S2・バースト編: 周期の自動攻撃も、刻みと 1 ヒットの式は dot と同じ（plan/design-anis-star-s2-burst.md 2.2 節）
+      // 周期の自動攻撃も、刻みと 1 ヒットの式は dot と同じ（plan/design-anis-star-s2-burst.md 2.2 節）
       if (effect.kind !== 'dot' && effect.kind !== 'autoAttack') return;
       const auto = effect.kind === 'autoAttack';
       const gaugeOnTick = auto ? effect.gaugePerHit === true : effect.gaugeOnTick === true;
-      // 2 段目の段 13 の PR 1: 「持続」（durationUntil: battleEnd）は終わりが無い。段 19 の PR 1: 「〈状態〉解除まで」も、状態の件の終わりまで
+      // 「持続」（durationUntil: battleEnd）は終わりが無い。「〈状態〉解除まで」は、状態の件の終わりまで
       const until = auto ? undefined : effect.durationUntil;
       const durationSeconds =
         until !== undefined
@@ -614,8 +613,8 @@ export function resolveDotEffects(
       if (!Number.isInteger(maxStacks) || maxStacks < 1) {
         throw new RangeError(`skill ${skill.id}: dot max stacks must be a positive integer, got ${maxStacks}`);
       }
-      // レイヴン編（plan/design-raven-s1.md 8 節の 2）: tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
-      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す
+      // tick のゲージは 1 パス目で発火のたびに後の tick を予約するので、
+      // 付け直しで延びた tick が付け直しより後に出る形（afterInterval で、維持が間隔の整数倍）だけを許す（plan/design-raven-s1.md 8 節の 2）
       if (gaugeOnTick) {
         const ratio = durationSeconds / effect.intervalSeconds;
         if (Math.abs(ratio - Math.round(ratio)) > 1e-9) {
@@ -658,10 +657,10 @@ export function resolveDotEffects(
         r.perCountIntervalFrames = effect.perCountIntervalFrames!;
       }
       if (auto && effect.projectileExplosion === true) r.projectileExplosion = true;
-      // 2 段目の段 17 の PR 4: 付くフレームの条件（frame/plan.ts の dotApplicationFrames が絞る）
+      // 付くフレームの条件（frame/plan.ts の dotApplicationFrames が絞る）
       if (!auto && effect.condition) r.condition = resolveCondition(effect.condition, skill, levels[slot]);
-      // 持続ダメージ▲編: 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）。
-      // マスト編（plan/design-mast.md 2.3 節）: sustained: false の dot（暴風）も持続ダメージではない
+      // 持続ダメージ▲は「持続ダメージ」にだけ掛ける。自動攻撃は持続ダメージではない（plan/design-sustained-damage-up.md 3.2 節）。
+      // sustained: false の dot（暴風）も持続ダメージではない（plan/design-mast.md 2.3 節）
       if (!auto && effect.sustained !== false) r.sustained = true;
       if (auto && effect.core === true) r.core = true;
       if (effect.assumes) r.assumes = effect.assumes;
@@ -672,7 +671,7 @@ export function resolveDotEffects(
 }
 
 /**
- * Stage 11 モダニア: 射撃ごとに発火するトリガーか（射撃の回数トリガーの every = 1。最後の弾丸は除く）。
+ * 射撃ごとに発火するトリガーか（射撃の回数トリガーの every = 1。最後の弾丸は除く）。
  * 「通常攻撃が命中した時」の倍率ダメージは射撃と 1 対 1 で、同じ区間では毎回同じ値なので、1 トリガーの値に畳み込む
  */
 export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
@@ -687,7 +686,7 @@ export function isPerShotTrigger(trigger: ResolvedTrigger): boolean {
 }
 
 /**
- * Stage 11 モダニア: 射撃ごとの倍率ダメージ（damage の every = 1）を Lv の数値に解決する。damage.ts の computeTriggerDamage が
+ * 射撃ごとの倍率ダメージ（damage の every = 1）を Lv の数値に解決する。damage.ts の computeTriggerDamage が
  * 1 トリガーの値（perShot）に足す。SG は「命中した時」がペレットごとかトリガーごとか分からないので拒否する
  */
 export function resolvePerShotDamage(
@@ -704,8 +703,8 @@ export function resolvePerShotDamage(
     const skill = character.skills[slot];
     for (const effect of entry.effects) {
       if (effect.kind !== 'damage') continue;
-      // 2 段目の段 10: 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。段 14 の PR 2: 遅れて出るヒット・
-      // perCount の数だけのヒットも
+      // 条件つきは畳み込まない（resolveDamageEffects が射撃ごとの発動として出す）。遅れて出るヒット・
+      // perCount の数だけのヒットも畳み込まない
       if (!foldsIntoShot(effect, resolveTrigger(effect.trigger, skill, levels[slot]))) continue;
       if (character.weaponType === 'SG') {
         throw new RangeError(
@@ -735,32 +734,32 @@ export type BurstHitInput = {
   effects: readonly ResolvedSkillDamage[];
   /** 省略時は BURST_SKILL_FULL_BURST_BONUS */
   fullBurstBonus?: boolean;
-  /** Stage 8: 1 + Σ distributedDamage。distributed の効果にだけ、受けるダメージ▲と 1 つの和で掛ける（C-0767）。省略 1 */
+  /** 1 + Σ distributedDamage。distributed の効果にだけ、受けるダメージ▲と 1 つの和で掛ける（C-0767）。省略 1 */
   distributedDamageMultiplier?: number;
-  /** 2026-10-29 のキャラの編: Σ sequentialAttackDamage。sequential の効果にだけ、攻撃ダメージ▲と同じ和に足す（V-0545）。省略 0 */
+  /** Σ sequentialAttackDamage。sequential の効果にだけ、攻撃ダメージ▲と同じ和に足す（V-0545）。省略 0 */
   sequentialAttackDamage?: number;
   /**
-   * 2 段目の段 15 の PR 3（plan/design-skill-stage15.md 2.3 節）: Σ trueDamage（防御力無視ダメージ▲）。damageType true の効果にだけ、攻撃ダメージ▲と
+   * Σ trueDamage（防御力無視ダメージ▲。plan/design-skill-stage15.md 2.3 節）。damageType true の効果にだけ、攻撃ダメージ▲と
    * 同じ和に足す（damage.ts の TRUE_DAMAGE_BUCKET。C-0525）。省略 0
    */
   trueDamage?: number;
-  /** 受けるダメージ編: 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
+  /** 1 + Σ damageTaken（敵の受けるダメージ▲。別枠。C-0138）。省略 1 */
   damageTakenMultiplier?: number;
-  /** アニス：スター編: 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
+  /** 発射体爆発ダメージ▲の乗数（damage.ts の explosionHitMultiplier）。projectileExplosion の効果にだけ掛ける。省略 1 */
   projectileExplosionMultiplier?: number;
-  /** 2 段目の段 12 の PR 2: 発射体付着ダメージ▲の乗数（damage.ts の stickHitMultiplier）。projectileStick の効果にだけ掛ける。省略 1 */
+  /** 発射体付着ダメージ▲の乗数（damage.ts の stickHitMultiplier）。projectileStick の効果にだけ掛ける。省略 1 */
   projectileStickMultiplier?: number;
   /**
-   * 2 段目の段 12 の PR 2: distance の効果の距離ボーナス。rate は距離ボーナスの付く割合（撃った枠の通常攻撃と同じ着地点の条件）、bonus は
+   * distance の効果の距離ボーナス。rate は距離ボーナスの付く割合（撃った枠の通常攻撃と同じ着地点の条件）、bonus は
    * 付いたときに倍率グループに足す値（DISTANCE_BONUS。距離ボーナスの範囲の無い武器は 0）。省略はなし
    */
   distance?: { rate: number; bonus: number };
-  /** 持続ダメージ▲編: Σ sustainedDamage。sustained の効果にだけ、sustainedDamagePlacement の置き場所で掛ける。省略 0 */
+  /** Σ sustainedDamage。sustained の効果にだけ、sustainedDamagePlacement の置き場所で掛ける。省略 0 */
   sustainedDamage?: number;
-  /** 持続ダメージ▲編: 省略は SUSTAINED_DAMAGE_PLACEMENT */
+  /** 省略は SUSTAINED_DAMAGE_PLACEMENT */
   sustainedDamagePlacement?: SustainedDamagePlacement;
   /**
-   * コアの経路編（plan/design-anis-star-core-path.md 3.1 節）: core の効果のコア。rate はコアに当たる割合（敵にコアが無ければ 0）、
+   * core の効果のコア（plan/design-anis-star-core-path.md 3.1 節）。rate はコアに当たる割合（敵にコアが無ければ 0）、
    * damage は当たったときに boost に足す値（コア倍率 − 1）。省略はコアなし
    */
   core?: { rate: number; damage: number };
@@ -774,11 +773,11 @@ export type BurstHitResult = {
   /**
    * 1 + 会心期待値 + フルバースト補正（乗せる設定のときだけ 0.5）+ コアの期待値。距離は入らない。
    * critDamage はバフ後の会心ダメージ倍率（会心した 1 ヒットを組み直すのに使う）。
-   * core はコアの経路編: コアの期待値（割合 × coreDamage）、coreDamage はコアに当たったときに足す値（コア倍率 − 1）。どちらも core の
+   * core はコアの期待値（割合 × coreDamage）、coreDamage はコアに当たったときに足す値（コア倍率 − 1）。どちらも core の
    * 効果があるときだけで、無ければ 0（core の効果と無い効果を 1 回の結果に混ぜる定義は無い）。
-   * sustained は持続ダメージ▲編: 置き場所が boost のとき sustained の効果の倍率グループに足した Σ sustainedDamage（ほかは 0。
+   * sustained は、置き場所が boost のとき sustained の効果の倍率グループに足した Σ sustainedDamage（ほかは 0。
    * total には入れない。持続ダメージの tick は効果 1 つずつ計算するので、1 回の結果に sustained の効果とほかの効果は混ざらない）。
-   * distance は 2 段目の段 12 の PR 2: 距離ボーナスの期待値（割合 × distanceBonus）、distanceBonus は付いたときに足す値。どちらも
+   * distance は距離ボーナスの期待値（割合 × distanceBonus）、distanceBonus は付いたときに足す値。どちらも
    * distance の効果があるときだけで、無ければ 0（core と同じく、distance の効果と無い効果を 1 回の結果に混ぜる定義は無い）
    */
   boost: {
@@ -796,11 +795,11 @@ export type BurstHitResult = {
   elementMultiplier: number;
   /** 1 + Σ distributedDamage（distributed の効果にだけ掛かる） */
   distributedDamageMultiplier: number;
-  /** 2026-10-29 のキャラの編: 順番攻撃ダメージ▲の乗数（sequential の効果にだけ掛かる。攻撃ダメージ▲の和に足した比。V-0545） */
+  /** 順番攻撃ダメージ▲の乗数（sequential の効果にだけ掛かる。攻撃ダメージ▲の和に足した比。V-0545） */
   sequentialAttackDamageMultiplier: number;
-  /** 受けるダメージ編: 1 + Σ damageTaken（すべての効果に掛かる） */
+  /** 1 + Σ damageTaken（すべての効果に掛かる） */
   damageTakenMultiplier: number;
-  /** 持続ダメージ▲編: sustained の効果に掛けた乗数（置き場所によらず、▲なしに対する比）。sustained の効果が無ければ 1 */
+  /** sustained の効果に掛けた乗数（置き場所によらず、▲なしに対する比）。sustained の効果が無ければ 1 */
   sustainedDamageMultiplier: number;
   /** 効果ごとの 1 発動あたり期待ダメージ */
   perEffect: { effect: ResolvedSkillDamage; expected: number }[];
@@ -823,7 +822,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const anyCore = input.core !== undefined && input.effects.some((e) => e.core === true);
   const coreDamage = anyCore ? input.core!.damage : 0;
   const boostCore = anyCore ? input.core!.rate * input.core!.damage : 0;
-  // 2 段目の段 12 の PR 2: 距離ボーナスはコアと同じ倍率グループの加算（distance の効果だけ）
+  // 距離ボーナスはコアと同じ倍率グループの加算（distance の効果だけ）
   const anyDistance = input.distance !== undefined && input.effects.some((e) => e.distance === true);
   const distanceBonus = anyDistance ? input.distance!.bonus : 0;
   const boostDistance = anyDistance ? input.distance!.rate * input.distance!.bonus : 0;
@@ -831,7 +830,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
   const groupOf = (effect: ResolvedSkillDamage): number =>
     boostBase + (effect.core === true ? boostCore : 0) + (effect.distance === true ? boostDistance : 0);
   const common = baseHit * input.attackDamageMultiplier * damageTaken * input.elementMultiplier;
-  // 2 段目の段 15 の PR 3: 防御力無視ダメージ（damageType true）は防御力を引かず（max(1, 攻撃力)）、防御力無視ダメージ▲を攻撃ダメージ▲と
+  // 防御力無視ダメージ（damageType true）は防御力を引かず（max(1, 攻撃力)）、防御力無視ダメージ▲を攻撃ダメージ▲と
   // 同じ和に足す（使用武器の変更の防御力無視の発と同じ。damage.ts の trueDamageMultiplier）
   const trueFactor =
     (Math.max(1, input.attack) / baseHit) *
@@ -890,7 +889,7 @@ export function computeBurstHit(input: BurstHitInput): BurstHitResult {
 }
 
 /**
- * 持続ダメージ▲編: 持続ダメージの tick に掛ける、▲なしに対する比。置き場所ごとに
+ * 持続ダメージの tick に掛ける、▲なしに対する比。置き場所ごとに
  * separate = 1 + up、attackDamage = (攻撃ダメージの乗数 + up) / 攻撃ダメージの乗数、boost = (倍率グループ + up) / 倍率グループ
  */
 export function sustainedMultiplier(
@@ -908,12 +907,12 @@ export function sustainedMultiplier(
 /**
  * 1 回の結果を、会心の期待値を外して会心したか（crit）で組み直した 1 ヒットの値（観測値と比べる指標が使う）。
  * 持続ダメージ▲が倍率グループにある（boost.sustained > 0）ときは、それも倍率グループに入れて組み直す。
- * core はコアの経路編: コアに当たったヒットの値（plan/design-anis-star-core-path.md 3.1 節）。
- * distance は 2 段目の段 12 の PR 2: 距離ボーナスの付いたヒットの値（distance の効果。コアと同じく期待値を外して組み直す）
+ * core はコアに当たったヒットの値（plan/design-anis-star-core-path.md 3.1 節）。
+ * distance は距離ボーナスの付いたヒットの値（distance の効果。コアと同じく期待値を外して組み直す）
  */
 export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false, distance = false): number {
   const critTerm = crit ? hit.boost.critDamage - 1 : 0;
-  // コアの経路編: total はコアの期待値を含むので、割ってから、コアに当たったとき（core）だけ coreDamage を足して組み直す
+  // total はコアの期待値を含むので、割ってから、コアに当たったとき（core）だけ coreDamage を足して組み直す
   const coreTerm = core ? hit.boost.coreDamage : 0;
   const distanceTerm = distance ? hit.boost.distanceBonus : 0;
   const expectedGroup = hit.boost.total + hit.boost.sustained;
@@ -924,7 +923,7 @@ export function oneHitValue(hit: BurstHitResult, crit: boolean, core = false, di
 }
 
 /**
- * 分かれたヒット編（plan/design-burst-split-hits.md 4.2 節）: 1 回の発動の、当たったヒットを足し合わせる。各ヒットは倍率の
+ * 1 回の発動の、当たったヒットを足し合わせる（plan/design-burst-split-hits.md 4.2 節）。各ヒットは倍率の
  * share ぶん。撃つ側のバフも敵の側のデバフも発動の直前の値で見る（frame/plan.ts の burstHitBuffs。plan/design-burst-landing.md 11 節）
  * ので、ヒットごとに違いうるのは、同じ発動で自分に付いた効果がヒットまで続いているか（同じ発動の▲がヒットに乗るキャラ。同 10 節）
  * だけ。perActivation・perEffect は share で重みをつけて足し、受けるダメージ（damageTakenMultiplier）は share で重みをつけた平均に
@@ -950,7 +949,7 @@ export function combineBurstHitParts(parts: readonly { hit: BurstHitResult; shar
 
 /**
  * 倍率ダメージ 1 回ぶん（effects をまとめて）。攻撃力・会心・攻撃ダメージ・分配ダメージは通常攻撃と同じバフ後の値を使う。
- * burstDamage（slotBurstHit）と damage（Stage 8）で共通。
+ * burstDamage（slotBurstHit）と damageで共通。
  */
 export function computeSkillHit(
   effects: readonly ResolvedSkillDamage[],
@@ -961,12 +960,12 @@ export function computeSkillHit(
   fullBurstBonus: boolean,
   sustainedDamagePlacement: SustainedDamagePlacement = SUSTAINED_DAMAGE_PLACEMENT,
   coreHitRate = 0,
-  /** 2 段目の段 12 の PR 2: distance の効果の距離ボーナスの付く割合（撃った枠の通常攻撃と同じ。省略 0） */
+  /** distance の効果の距離ボーナスの付く割合（撃った枠の通常攻撃と同じ。省略 0） */
   distanceRate = 0,
 ): SkillHitResult {
   return computeBurstHit({
     attack: trigger.attack,
-    // 2 段目の段 2: 敵の防御力▼は、ヒットが見る敵の側のバフ（buffs。バーストのヒットは発動の時点の値。C-0795）で防御力を下げる
+    // 敵の防御力▼は、ヒットが見る敵の側のバフ（buffs。バーストのヒットは発動の時点の値。C-0795）で防御力を下げる
     enemy: { ...enemy, defence: defenceAfterDown(enemy, buffs) },
     crit: applyCritBuffs(character.crit, buffs),
     attackDamageMultiplier: trigger.attackDamageMultiplier,
@@ -982,8 +981,8 @@ export function computeSkillHit(
     sustainedDamage: buffs.sustainedDamage,
     sustainedDamagePlacement,
     distance: { rate: distanceRate, bonus: character.bonusRange === null ? 0 : DISTANCE_BONUS },
-    // コアの経路編（plan/design-anis-star-core-path.md 3.1 節・11.3 節）: コアダメージ▲（buffs.coreDamage）は、通常攻撃と同じく
-    // コアの項に足す（論点 4。アニス：スターのシューティングスター。C-0594）
+    // コアダメージ▲（buffs.coreDamage）は、通常攻撃と同じく
+    // コアの項に足す（論点 4。アニス：スターのシューティングスター。C-0594。plan/design-anis-star-core-path.md 3.1 節・11.3 節）
     core: { rate: enemy.hasCore ? coreHitRate : 0, damage: character.shot.coreDamageRate - 1 + buffs.coreDamage },
   });
 }
