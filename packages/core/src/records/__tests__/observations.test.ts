@@ -1158,6 +1158,9 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
           spread: { kind: 'range', low: 0.2, high: 0.4 },
           readAt: '2026-09-27',
         },
+        { ...compared, id: '0047-88', value: [1, null] as unknown as number[] },
+        { ...record, id: '0047-89', value: [1, null] as unknown as number[] },
+        { ...record, id: '0047-90', use: 'input', value: [[1, 2]] as unknown as number[] },
       ],
       recordings,
       data.enemies,
@@ -1172,6 +1175,8 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       '0047-85: 値が spread の外にある',
       '0047-86: readAt は YYYY-MM-DD',
       '0047-86: invalid には reason と date（YYYY-MM-DD）が要る',
+      '0047-88: use が compare の value は数か数の配列',
+      '0047-90: use が input の value は数か数の配列',
     ]);
   });
 
@@ -1186,6 +1191,23 @@ describe('観測値の形の拡張（Stage 20-E）', () => {
       renderOtherRows([{ ...record, value: 12, unit: 'px', spread: { kind: 'ci95', low: 10, high: 14 } }]).join('\n'),
     ).toContain('| 12 px（95% 区間 10〜14） |');
     expect(invalidReasonsOf([invalid, record])).toEqual(new Map([['0047-02', '読み違い']]));
+  });
+
+  it('renders record values with null elements, nested arrays and objects', () => {
+    const row = (value: unknown) => renderOtherRows([{ ...record, value: value as Observation['value'] }])[2];
+    expect(row([7716540, null, 5321525])).toContain('| 7,716,540, —, 5,321,525 |');
+    expect(
+      row([
+        [2459, 73.5],
+        [4778, null],
+      ]),
+    ).toContain('| [2,459, 73.5], [4,778, —] |');
+    expect(row({ beforeEnd: [-67, null], band: ['近'], at: [{ frame: 6653 }] })).toContain(
+      '| beforeEnd: [-67, —]; band: [近]; at: [{frame: 6,653}] |',
+    );
+    // 実際の観測値の全部が落ちずに書ける
+    const others = observations.filter((o) => o.use !== 'compare');
+    expect(renderOtherRows(others).join('\n')).not.toMatch(/\[object Object\]|undefined|NaN/);
   });
 
   it('keeps an invalid basis on a claim, but fails a 確定 claim with no valid basis left', () => {
