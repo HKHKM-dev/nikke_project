@@ -1852,7 +1852,7 @@
     {
       "observation": "0123-24",
       "element": "A2 skill2.effects[0]",
-      "key": "e0608a6e14b0b9ef",
+      "key": "493109b83f611b41",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1860,7 +1860,7 @@
     {
       "observation": "0123-25",
       "element": "A2 skill2.effects[0]",
-      "key": "fe5cab1bfab24ca0",
+      "key": "135b9ad73aded25a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1868,7 +1868,7 @@
     {
       "observation": "0123-31",
       "element": "A2 skill2.effects[0]",
-      "key": "377d26f442524b2b",
+      "key": "2a232b66d33bc19d",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1876,7 +1876,7 @@
     {
       "observation": "0123-32",
       "element": "A2 skill2.effects[0]",
-      "key": "d6c626c25b52af6d",
+      "key": "4373ab646478882b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1884,7 +1884,7 @@
     {
       "observation": "0123-33",
       "element": "A2 skill2.effects[0]",
-      "key": "1c2df6f5ff164566",
+      "key": "d17ee9f9f1ec8794",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -1892,7 +1892,7 @@
     {
       "observation": "0123-34",
       "element": "A2 skill2.effects[0]",
-      "key": "5acee3dbcf03beb0",
+      "key": "8ab2aa17b236d2ca",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20237,7 +20237,7 @@
     {
       "observation": "0864-05",
       "element": "A2 skill2.effects[0]",
-      "key": "eaa8ccbfb7d18762",
+      "key": "4aee19835665ff70",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20245,7 +20245,7 @@
     {
       "observation": "0864-06",
       "element": "A2 skill2.effects[0]",
-      "key": "078dca95e32e2e40",
+      "key": "83967b69e46c349a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20253,7 +20253,7 @@
     {
       "observation": "0864-08",
       "element": "A2 skill2.effects[0]",
-      "key": "0fd346a568e63406",
+      "key": "af60b1391d985e94",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20261,7 +20261,7 @@
     {
       "observation": "0864-09",
       "element": "A2 skill2.effects[0]",
-      "key": "f936fe04baa18501",
+      "key": "18570a7ed7338377",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20269,7 +20269,7 @@
     {
       "observation": "0864-16",
       "element": "A2 skill2.effects[0]",
-      "key": "a1cd8f95c7768576",
+      "key": "8c082269874a2c24",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20277,7 +20277,7 @@
     {
       "observation": "0864-17",
       "element": "A2 skill2.effects[0]",
-      "key": "cf0dccdfd3c22838",
+      "key": "b1a095a32151fe22",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20285,7 +20285,7 @@
     {
       "observation": "0864-18",
       "element": "A2 skill2.effects[0]",
-      "key": "4742a7783cf0dc9b",
+      "key": "53e8149ae82690d5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20293,7 +20293,7 @@
     {
       "observation": "0864-19",
       "element": "A2 skill2.effects[0]",
-      "key": "3d70a1d22a157425",
+      "key": "6ecf9414ba1f0aeb",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20301,7 +20301,7 @@
     {
       "observation": "0865-05",
       "element": "A2 skill2.effects[0]",
-      "key": "3317a175f85f4f80",
+      "key": "cf3e5e7f88ab5276",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20309,7 +20309,7 @@
     {
       "observation": "0865-06",
       "element": "A2 skill2.effects[0]",
-      "key": "ce7529c3700b2782",
+      "key": "bb6095ed6d54b08c",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20317,7 +20317,7 @@
     {
       "observation": "0865-08",
       "element": "A2 skill2.effects[0]",
-      "key": "c8b7c0338a8ce6c4",
+      "key": "b7f1809da3e7bbda",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20325,7 +20325,7 @@
     {
       "observation": "0865-09",
       "element": "A2 skill2.effects[0]",
-      "key": "7d517e762ecf24d3",
+      "key": "9a8a6f9255b69291",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20333,7 +20333,7 @@
     {
       "observation": "0865-16",
       "element": "A2 skill2.effects[0]",
-      "key": "878c26035d5bfc84",
+      "key": "0f1641addadbf39a",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20341,7 +20341,7 @@
     {
       "observation": "0865-17",
       "element": "A2 skill2.effects[0]",
-      "key": "9d6c845d61b67062",
+      "key": "1b7570a7c7dff8ac",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20349,7 +20349,7 @@
     {
       "observation": "0865-18",
       "element": "A2 skill2.effects[0]",
-      "key": "8943c022ff072201",
+      "key": "f28e0a769f7ced2b",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -20357,7 +20357,7 @@
     {
       "observation": "0865-19",
       "element": "A2 skill2.effects[0]",
-      "key": "f04180549d5831c7",
+      "key": "73b35048f5148ed5",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -28152,80 +28152,160 @@
     },
     {
       "observation": "1084-09",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "e86fdb2c13d907c1",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1084-09",
       "element": "A2 skill2.effects[0]",
-      "key": "dbd37a38c0312c4b",
+      "key": "e86fdb2c13d907c1",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1084-10",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "ffa333807ea86771",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1084-10",
       "element": "A2 skill2.effects[0]",
-      "key": "e55591b4eb8c225b",
+      "key": "ffa333807ea86771",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1084-12",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "fe73e0606be5450d",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1084-12",
       "element": "A2 skill2.effects[0]",
-      "key": "465d939474ad2267",
+      "key": "fe73e0606be5450d",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1084-13",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "5f876f4b9e666262",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1084-13",
       "element": "A2 skill2.effects[0]",
-      "key": "2ac851bdbc957304",
+      "key": "5f876f4b9e666262",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1084-14",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "b0eaec54d40ca9cf",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1084-14",
       "element": "A2 skill2.effects[0]",
-      "key": "978220e09811c81d",
+      "key": "b0eaec54d40ca9cf",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1085-09",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "6093333447342d59",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1085-09",
       "element": "A2 skill2.effects[0]",
-      "key": "d4d412408f335513",
+      "key": "6093333447342d59",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1085-10",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "e6333e782ee19459",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1085-10",
       "element": "A2 skill2.effects[0]",
-      "key": "bd7130cc6f2fa813",
+      "key": "e6333e782ee19459",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1085-12",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "9010dd6846c3c4d5",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1085-12",
       "element": "A2 skill2.effects[0]",
-      "key": "77d2f83cfc77499f",
+      "key": "9010dd6846c3c4d5",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1085-13",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "e3cac1c34957ccfa",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1085-13",
       "element": "A2 skill2.effects[0]",
-      "key": "4329f3b5364d360c",
+      "key": "e3cac1c34957ccfa",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1085-14",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "51f3bc0c60a4f607",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1085-14",
       "element": "A2 skill2.effects[0]",
-      "key": "ed3b7f98953377c5",
+      "key": "51f3bc0c60a4f607",
       "effective": false,
       "minus": 0,
       "plus": null
@@ -29260,48 +29340,96 @@
     },
     {
       "observation": "1123-10",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "ccb4d591d009d018",
+      "effective": true,
+      "minus": 0,
+      "plus": -25
+    },
+    {
+      "observation": "1123-10",
       "element": "A2 skill2.effects[0]",
-      "key": "186a7f83c6cd00f6",
+      "key": "ccb4d591d009d018",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1123-11",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "2787a612473619af",
+      "effective": true,
+      "minus": 0,
+      "plus": 8.333333333333329
+    },
+    {
+      "observation": "1123-11",
       "element": "A2 skill2.effects[0]",
-      "key": "4607c7b6cf2e1d5d",
+      "key": "2787a612473619af",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1123-12",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "540acc835e7209f0",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1123-12",
       "element": "A2 skill2.effects[0]",
-      "key": "28c9ecadd70374de",
+      "key": "540acc835e7209f0",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1123-13",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "6140e7a5d6b0e514",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1123-13",
       "element": "A2 skill2.effects[0]",
-      "key": "9487a8ef4f247922",
+      "key": "6140e7a5d6b0e514",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1123-14",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "8cf6ba2457eb16bd",
+      "effective": true,
+      "minus": 0,
+      "plus": -8.333333333333329
+    },
+    {
+      "observation": "1123-14",
       "element": "A2 skill2.effects[0]",
-      "key": "06f76988642947e7",
+      "key": "8cf6ba2457eb16bd",
       "effective": false,
       "minus": 0,
       "plus": null
     },
     {
       "observation": "1123-15",
+      "element": "A2 burst.effects[0].contents[2]",
+      "key": "776183f020678139",
+      "effective": false,
+      "minus": 0,
+      "plus": 0
+    },
+    {
+      "observation": "1123-15",
       "element": "A2 skill2.effects[0]",
-      "key": "a48946bc3f00d133",
+      "key": "776183f020678139",
       "effective": false,
       "minus": 0,
       "plus": null

@@ -1420,7 +1420,8 @@ notes の種類: 未対応 37・前提の外 58・計算に無関係 48・補足
   - effects[0] damage・fullChargeShot・additional: C-0407（仮説）
   - notes[0] 前提の外: パーツダメージ▲はパーツを扱わないので効かない: C-0443（範囲外）
 - **burst**: supported
-  - effects[0] state・burstUse・modeB（attack・chargeSpeed）: C-1100（確定）
+  - effects[0] state・burstUse・modeB（attack・chargeSpeed・fireStanceScale）: C-1100（確定）
+    - contents[2] fireStanceScale: C-1155（仮説）
   - effects[1] currentHpDown・modeB の間 1 秒ごと（付いた時から）: C-1101（確定）
 
 ## 822 ラム
