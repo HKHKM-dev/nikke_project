@@ -53,8 +53,7 @@ import { createShotPauses } from './firstPass/shotPauses.ts';
 import { createAccumulate } from './firstPass/accumulate.ts';
 import { createSummons } from './firstPass/summons.ts';
 import { createBurstSchedule, createBurstStep } from './firstPass/burst.ts';
-import { createInstantSources, createInstants, type InstantLate } from './firstPass/instants.ts';
-export { AMMO_REFILL_ROUNDING } from './firstPass/instants.ts';
+import { createInstantSources, createInstants } from './firstPass/instants.ts';
 import { createShotLogs } from './firstPass/shotLogs.ts';
 import { createShooterStates, createShooters } from './firstPass/shooters.ts';
 import { createFrameEvents } from './firstPass/frameEvents.ts';
@@ -256,9 +255,8 @@ function runFirstPassOnce(
 
   // ---- 効果の準備 ----
   const passive = resolvePassiveStates(slots);
-  // 件の一覧は即時効果の出どころの後に作るので、出どころは発火の時に instantLate から読む
-  const instantLate = {} as InstantLate;
-  const instantSourcesLayer = createInstantSources({ slots, frames, scheduleModel, late: instantLate });
+  // 件の一覧は即時効果の出どころの後に作るので、出どころは発火の時に listsOf で読む（作る前に読めば、宣言より前の読みで落ちる）
+  const instantSourcesLayer = createInstantSources({ slots, frames, scheduleModel, listsOf: () => lists });
   const { instant } = instantSourcesLayer;
   const shotLogsLayer = createShotLogs({ slots });
   const { logs } = shotLogsLayer;
@@ -272,7 +270,6 @@ function runFirstPassOnce(
     leadShots: known,
     ...(options.effectiveRangeAt === undefined ? {} : { effectiveRangeAt: options.effectiveRangeAt }),
   });
-  instantLate.lists = lists;
   const trackEvents = lists.hasSources || instant.length > 0;
   // 戦闘開始時の件と周期のトリガーの atStart は、ループの前に登録する（1 発目のマガジンから効く）
   lists.registerBattleStart();

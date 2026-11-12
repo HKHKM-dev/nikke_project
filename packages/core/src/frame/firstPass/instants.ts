@@ -29,7 +29,7 @@ import type { FirstPassBase } from './base.ts';
 import type { HolderLists } from '../../skills/holders.ts';
 import type { ShooterStates } from './shooters.ts';
 import type { BurstScheduleLayer, BurstStep } from './burst.ts';
-import { WEAPON_CHANGE_END_DELAY } from './shooters.ts';
+import { WEAPON_CHANGE_END_DELAY } from './shotLogs.ts';
 
 type InstantSource = {
   sourceSlotIndex: number;
@@ -48,20 +48,18 @@ function refillRounds(maxAmmo: number, ratio: number): number {
   return AMMO_REFILL_ROUNDING === 'floor' ? Math.floor(raw + 1e-9) : Math.round(raw);
 }
 
-/** 即時効果の出どころが発火の時に読む件の一覧（件の一覧は出どころの後に作るので、作った後に埋める） */
-export type InstantLate = { lists: Pick<HolderLists, 'appliedAt' | 'endedAt' | 'sinceFires'> };
-
 /** 即時効果の出どころ（回復・遮蔽物 HP 回復・ゲージのチャージ・発動の延長・ほか）と発火の追跡を作る。件の一覧はこの後に作るので、発火の時に late から読む */
 export function createInstantSources({
   frames,
   scheduleModel,
   slots,
-  late,
+  listsOf,
 }: {
   slots: readonly TimelineSlot[];
   frames: number;
   scheduleModel: BurstScheduleModel | null;
-  late: InstantLate;
+  /** 件の一覧（出どころの後に作るので、発火の時に読む） */
+  listsOf: () => Pick<HolderLists, 'appliedAt' | 'endedAt' | 'sinceFires'>;
 }) {
   const instant: InstantSource[] = [];
   /** 発火の文脈 context のとき、効果 e が掛かる枠（burstUsers は発火ごとに変わる） */
@@ -76,17 +74,17 @@ export function createInstantSources({
     // 登録した後に読む。即時効果のループは lists.registerFrame の後。plan/design-mint-prika.md 2.6 節）
     if (isResolvedApplied(effect.trigger)) {
       const state = effect.trigger.applied;
-      return (ev) => late.lists.appliedAt(sourceSlotIndex, state, ev.frame);
+      return (ev) => listsOf().appliedAt(sourceSlotIndex, state, ev.frame);
     }
     // 「〈状態〉が終了した時」（ammoDecrease）は件の一覧の endedAt で決める（plan/design-grave.md 2.1 節）
     const trigger = effect.trigger;
-    if (isEndedTrigger(trigger)) return (ev) => late.lists.endedAt(sourceSlotIndex, trigger.ended, ev.frame);
+    if (isEndedTrigger(trigger)) return (ev) => listsOf().endedAt(sourceSlotIndex, trigger.ended, ev.frame);
     if (!isResolvedTimer(effect.trigger)) return createTriggerTracker(effect.trigger, sourceSlotIndex, scheduleModel);
     // 件の一覧（lists）は即時効果の後に作るので、最初の呼び出しで作る
     if (effect.trigger.since !== undefined) {
       const trigger = effect.trigger;
       let fires: TriggerTracker | undefined;
-      return (ev) => (fires ??= late.lists.sinceFires(trigger, sourceSlotIndex))(ev);
+      return (ev) => (fires ??= listsOf().sinceFires(trigger, sourceSlotIndex))(ev);
     }
     const at = new Set(triggerFrames(effect.trigger, null, sourceSlotIndex, frames));
     return (ev) => at.has(ev.frame);

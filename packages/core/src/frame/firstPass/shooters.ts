@@ -29,7 +29,7 @@ import { unionRanges } from '../events.ts';
 import type { FirstPassBase } from './base.ts';
 import type { Gauge } from './gauge.ts';
 import type { GaugeEffects } from './gaugeEffects.ts';
-import type { ShotLogs } from './shotLogs.ts';
+import { WEAPON_CHANGE_END_DELAY, type ShotLogs } from './shotLogs.ts';
 import type { BurstScheduleLayer } from './burst.ts';
 import type { ShotPauses } from './shotPauses.ts';
 
@@ -56,9 +56,6 @@ function slotBlockRanges(
     return unionRanges(all.sort((a, b) => a.start - b.start || Number(b.untargetable) - Number(a.untargetable)));
   });
 }
-
-/** 撃ち切りで終わる使用武器の変更を、最後の発から何フレーム後に終えるか（ShotLog.weaponChangeEnds） */
-export const WEAPON_CHANGE_END_DELAY = 1;
 
 /** 射手の実効値と、射手の状態（基礎の武器・使用武器の変更）を作る */
 export function createShooterStates({ lists, model, passive, slots }: FirstPassBase) {

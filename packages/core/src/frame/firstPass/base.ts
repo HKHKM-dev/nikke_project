@@ -1,10 +1,9 @@
 // 1 パス目（../firstPass.ts の runFirstPassOnce）の仕組みごとの作り手が共通に受けるもの（plan/design-split-first-pass.md 3.4 節）:
 // 入力と入力を整えた値、常時の値、件の一覧、射撃の記録、時刻表の読み口、発の飛ぶ時間、このフレームの射撃、当てた即時効果の記録。
 import type { BurstActivation, BurstScheduleModel, FullBurstWindow } from '../../burst/schedule.ts';
-import type { FrameRange } from '../../skills/timeline.ts';
 import type { WeaponModel } from '../../weapons.ts';
 import type { HolderLists } from '../../skills/holders.ts';
-import type { resolvePassiveStates, TimelineSlot } from '../../skills/timeline.ts';
+import type { FrameRange, resolvePassiveStates, TimelineSlot } from '../../skills/timeline.ts';
 import type { ShotEvent } from '../../skills/triggers.ts';
 import type { FirstPassOptions, InstantApplication } from '../firstPass.ts';
 import type { ShotLog } from '../shots.ts';

@@ -335,11 +335,11 @@ for (let f = 0; f < frames; f++) {
   - `shotLogs.ts`: 射撃の記録とチャージの見張り（件の一覧の前に要る。9.3 節の申し送り）。
   - `shooters.ts`: 射手の実効値と状態の `createShooterStates` と、枠の射手を進める手順の `createShooters` の 2 つ。
   - `frameEvents.ts`: 出来事を集める手順と、回復を当てる手順（3.4 節では即時効果の 3b）。回復の出来事の印（`healedDirty` など）は、出来事を集める時と回復を当てる時の両方が書き換えるので、同じ作り手に置いた。
-- 作り手が使う `firstPass.ts` の小さな宣言は、使う所に移した（`InstantSource`・`AMMO_REFILL_ROUNDING`・`refillRounds` は `instants.ts`、`SlotBlock`・`slotBlockRanges`・`WEAPON_CHANGE_END_DELAY` は `shooters.ts`）。`AMMO_REFILL_ROUNDING` は `firstPass.ts` から同じ名前で再公開する。
+- 作り手が使う `firstPass.ts` の小さな宣言は、使う所に移した（`InstantSource`・`AMMO_REFILL_ROUNDING`・`refillRounds` は `instants.ts`、`SlotBlock`・`slotBlockRanges` は `shooters.ts`、`WEAPON_CHANGE_END_DELAY` は `shotLogs.ts`）。
 - 共通の入力（`FirstPassBase`）に、入力を整えた値（`model`・`untargetable`・`burstModel`）と当てた即時効果の記録（`instants`）を足した。入口は、件の一覧の後に共通の入力を組み、前の作り手までを積んだオブジェクトを渡す。
-- ループは手順の関数を順に呼ぶ形になった（`blockedAt` → ゲージ → `stepShooters` → ゲージ → `stepBurst` → 出来事を追う編成だけ `collectFrameEvents`・`applyHeals`・`registerFrame`・`applyInstants` → 手順の後に数える 5 つ）。出来事を追わない編成の `continue` は、手順 3 を if で囲む形にした（数える 5 つの呼び出しが 1 か所になる）。本文で変えた行は、件の一覧を `late.lists` から読む 3 行と、ループの `burstEffects` を `ev.burstEffects`（同じ配列）にした 1 行と、戦闘の終わりに窓の開かなかった発動の延長を捨てる 1 行を作り手の関数（`discardPendingExtensions`）にした所。
-- 速さ: 6.3 節の測り方（同じプロセスで main と交互）では小さい編成で 1.05 を超えた（録画 0037 で約 1.12）が、編成ごとに別のプロセスで main と段の後を交互に 6 回ずつ回すと、段の後のほうが速かった（録画 0037 の 1 回の `planTeamRun` の中央値は main 35.1 ms・段の後 32.7 ms、Stage 8 の 5 人は 45.3 ms・43.1 ms）。同じプロセスに 2 つの版の作り手を読み込むと、互いの最適化を乱すとみて、この段からは別のプロセスで測った値で論点 6 の幅を見る。
-- 見直し（`/simplify`）で、入口の組み方（積んだオブジェクト）・共通の入力・受け口の型・型だけの import・ループの形・冒頭のコメントを直し、射手の手順だけが読む `changedShooters`・`activeWeapon` を `createShooters` に移した。
+- ループは手順の関数を順に呼ぶ形になった（`blockedAt` → ゲージ → `stepShooters` → ゲージ → `stepBurst` → 出来事を追う編成だけ `collectFrameEvents`・`applyHeals`・`registerFrame`・`applyInstants` → 手順の後に数える 5 つ）。出来事を追わない編成の `continue` は、手順 3 を if で囲む形にした（数える 5 つの呼び出しが 1 か所になる）。本文で変えた行は、件の一覧を `late.lists` から読む 3 行と、ループの `burstEffects` を `ev.burstEffects`（同じ配列）にした 1 行と、戦闘の終わりに窓の開かなかった発動の延長を捨てる 1 行を作り手の関数（`discardPendingExtensions`）にした所。`InstantSource` などの移した宣言は `firstPass.ts` から公開していた `AMMO_REFILL_ROUNDING` を含むが、読むコードが無いので再公開しない。
+- 速さ: 6.3 節の測り方（同じプロセスで main と交互）では、小さい編成で 1.05 を超えた（録画 0037 で約 1.1。main と段の後を読み込む順を入れ替えても、段の後のほうが遅い）。編成ごとに別のプロセスで main と段の後を交互に 6 回ずつ回すと、段の後のほうが速かった（1 回の `planTeamRun` の中央値は、録画 0037 で main 35.1 ms・段の後 32.7 ms、Stage 8 の 5 人で 45.3 ms・43.0 ms）。画面と CLI は 1 つの版だけを読み込む。論点 6 の測り方をどちらにするかは、オーナーの判断を待つ（経過）。
+- 見直し（`/simplify`）で、入口の組み方（積んだオブジェクト）・共通の入力・受け口の型・型だけの import・ループの形・冒頭のコメントを直し、射手の手順だけが読む `changedShooters`・`activeWeapon` を `createShooters` に移した。`/code-review high` で、件の一覧を後で読む口をゲッター（`listsOf`。作る前に読めば宣言より前の読みで落ちる）にし、使われない再公開（`AMMO_REFILL_ROUNDING`）を外し、`WEAPON_CHANGE_END_DELAY` を射撃の記録（`shotLogs.ts`）に移した。見送り: `blockedAt` の一時の名前（本文をそのまま写したもの）。
 
 ## 10. 経過
 
@@ -347,4 +347,4 @@ for (let f = 0; f < frames; f++) {
 - 2026-11-12: 段 H1 を実装した（9.1 節）。
 - 2026-11-12: 段 H2 を実装した（9.2 節）。
 - 2026-11-12: 段 F1 を実装した（9.3 節）。
-- 2026-11-12: 段 F2 を実装した（9.4 節）。
+- 2026-11-12: 段 F2 を実装した（9.4 節）。6.3 節の測り方（同じプロセス）で小さい編成が 1.05 を超え、別のプロセスでは速い。論点 6 の測り方をオーナーに確かめる。

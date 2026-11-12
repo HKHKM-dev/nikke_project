@@ -6,6 +6,9 @@ import { type TimelineSlot } from '../../skills/timeline.ts';
 import { chargeTriggersOf, hasReloadEndEffect } from '../../skills/types.ts';
 import type { ShotLog } from '../shots.ts';
 
+/** 撃ち切りで終わる使用武器の変更を、最後の発から何フレーム後に終えるか（ShotLog.weaponChangeEnds） */
+export const WEAPON_CHANGE_END_DELAY = 1;
+
 /** 枠ごとの射撃の記録と、チャージの見張りを作る */
 export function createShotLogs({ slots }: { slots: readonly TimelineSlot[] }) {
   const logs: (ShotLog | null)[] = slots.map((slot) =>
