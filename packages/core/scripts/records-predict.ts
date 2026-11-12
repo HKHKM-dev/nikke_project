@@ -64,6 +64,11 @@ for (const t of file.targets) {
     continue;
   }
   const times = n > OCCURRENCE_PROBE_LIMIT ? `${OCCURRENCE_PROBE_LIMIT} 回以上` : `${n} 回`;
-  const kind = n >= 2 ? '1 本の中の後の回で再現できる候補' : '2 本目が要る候補';
+  const kind =
+    n >= 2
+      ? '1 本の中の後の回で再現できる候補'
+      : n === 1
+        ? '2 本目が要る候補'
+        : 'モデルではこの条件で起きない。編成と条件を確かめる';
   console.log(`1 本の中の回数: 指標 ${t.id} は ${times}（${kind}）`);
 }

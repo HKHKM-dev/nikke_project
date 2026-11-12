@@ -346,11 +346,14 @@ export const OCCURRENCE_PROBE_LIMIT = 64;
 
 /**
  * 指標の事象が、モデルで 1 本の録画（予測の条件の長さ）の中に何回起きるかの目安（value は ctx で出した指標の値）。出せなければ null。
+ * 数えるのは、指標のほかの引数（anchor など）で絞った範囲の中の回。
  * - 指標が回数（Metric.occurrences）を持てば、それを使う
- * - 引数 count だけの指標（最初の count 回）は、count を外して出した全部の回の配列の長さ
- * - 引数 n（か、count を外すと配列にならない count）のある指標は、その引数を 0〜OCCURRENCE_PROBE_LIMIT に替えて出せた値で数える。
- *   値の配列の長さが引数で変わるなら、引数は「最初の何回」なので、いちばん長い配列の長さ。そうでなければ、引数は回の番号なので、
- *   出せた番号の数。途中の回だけ出せない指標があるので、出せない番号で止めない
+ * - 引数 n のある指標は、n を 0〜OCCURRENCE_PROBE_LIMIT に替えて試す。どの値も長さ n の配列なら、n は「最初の n 回」なので、
+ *   いちばん長い配列の長さ。そうでなければ、n は回の番号なので、空でない値を出せた番号の数（途中の回だけ出せない指標があるので、
+ *   出せない番号で止めない）
+ * - 引数 count だけの指標（最初の count 回）は、skip を外して count を 1 から増やし、出せた配列のいちばん長い長さ。値が配列でない
+ *   指標（count 回の平均など）は null
+ * - n と count の両方を持つ指標（n 回目から count 回の和など）は null
  * - どちらも無い指標は、値が配列ならその長さ。1 つの値（集計の指標）は null
  */
 export function occurrencesOf(
@@ -360,39 +363,57 @@ export function occurrencesOf(
   value: number | number[],
 ): number | null {
   if (metric.occurrences !== undefined) return metric.occurrences(sim, ctx);
-  if (ctx.args.n === undefined && ctx.args.count === undefined) return Array.isArray(value) ? value.length : null;
-  if (ctx.args.n === undefined) {
-    try {
-      const all = metric.sim(sim, withArgs(ctx, { count: undefined }));
-      if (Array.isArray(all)) return all.length;
-    } catch {
-      // count が要る指標は、下で試す
-    }
+  const hasN = ctx.args.n !== undefined;
+  const hasCount = ctx.args.count !== undefined;
+  if (hasN && hasCount) return null;
+  if (hasN) return occurrencesByIndex(metric, sim, ctx);
+  if (hasCount) return occurrencesByFirst(metric, sim, ctx);
+  return Array.isArray(value) ? value.length : null;
+}
+
+/** 指標を出せれば値、出せなければ（その回が無い・有限でない）undefined */
+function tryMetric(metric: Metric, sim: SimResult, ctx: MetricContext): number | number[] | undefined {
+  try {
+    const v = metric.sim(sim, ctx);
+    return isFiniteValue(v) ? v : undefined;
+  } catch {
+    return undefined;
   }
-  const probe = ctx.args.n !== undefined ? 'n' : 'count';
+}
+
+function occurrencesByIndex(metric: Metric, sim: SimResult, ctx: MetricContext): number | null {
   let found = 0;
-  let most = 0;
+  let longest = 0;
+  let firstN = true;
   let atLimit = false;
-  const lengths = new Set<number>();
   for (let k = 0; k <= OCCURRENCE_PROBE_LIMIT; k++) {
-    atLimit = false;
-    try {
-      const v = metric.sim(sim, withArgs(ctx, { [probe]: k }));
-      if (!isFiniteValue(v)) continue;
-      found++;
-      atLimit = true;
-      if (Array.isArray(v)) {
-        lengths.add(v.length);
-        most = Math.max(most, v.length);
-      }
-    } catch {
-      // その回が無い
-    }
+    const v = tryMetric(metric, sim, withArgs(ctx, { n: k }));
+    atLimit = v !== undefined;
+    if (v === undefined) continue;
+    if (!Array.isArray(v) || v.length !== k) firstN = false;
+    if (Array.isArray(v)) longest = Math.max(longest, v.length);
+    if (!Array.isArray(v) || v.length > 0) found++;
   }
-  if (lengths.size > 1) return most < OCCURRENCE_PROBE_LIMIT ? most : OCCURRENCE_PROBE_LIMIT + 1;
+  if (firstN) return longest < OCCURRENCE_PROBE_LIMIT ? longest : OCCURRENCE_PROBE_LIMIT + 1;
   return atLimit ? OCCURRENCE_PROBE_LIMIT + 1 : found;
 }
 
+function occurrencesByFirst(metric: Metric, sim: SimResult, ctx: MetricContext): number | null {
+  let longest: number | null = null;
+  for (let k = 1; k <= OCCURRENCE_PROBE_LIMIT; k++) {
+    const v = tryMetric(metric, sim, withArgs(ctx, { count: k, skip: undefined }));
+    if (v === undefined) {
+      if (longest !== null) break; // 最初の count 回が足りなくなった
+      continue;
+    }
+    if (!Array.isArray(v)) return null;
+    longest = Math.max(longest ?? 0, v.length);
+  }
+  if (longest === null) return null;
+  return longest < OCCURRENCE_PROBE_LIMIT ? longest : OCCURRENCE_PROBE_LIMIT + 1;
+}
+
+/** 予測の後のモデルの変更: いま出し直すと値が変わる仮説 × 指標か、いまのモデルでは出し直せない（例外）こと */
 export type Staleness =
   | {
       kind: 'changed';

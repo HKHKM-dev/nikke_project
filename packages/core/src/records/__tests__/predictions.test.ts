@@ -127,8 +127,8 @@ describe('records/predictions', () => {
     expect(runPredictions(f, data).H1!.chains).toBe(2);
     expect(validatePredictions([f], ctx)).toEqual([]);
     // 1 本の中の回数（撮影の本数の型。plan/design-capture-count.md 4.2 節）: n が回の番号でも「最初の n 回」でも発動の数、
-    // 回の引数の無い 1 つの値は出さない、
-    // 1 始まりの番号でも試す上限に届いたら上限 + 1、最初の count 回は count を外した全部の数、指標の持つ回数（occurrences）はそれ
+    // 回の引数の無い 1 つの値は出さない、1 始まりの番号でも試す上限に届いたら上限 + 1、最初の count 回は count を増やして
+    // 出せたいちばん長い配列、指標の持つ回数（occurrences）はそれ
     const occ = runPredictionsWithOccurrences(
       file({
         team,
@@ -162,7 +162,7 @@ describe('records/predictions', () => {
       hit: null,
       gauge: OCCURRENCE_PROBE_LIMIT + 1,
       fulls: 3, // 手で撃つ予定は 2 回なので、3 回目の満タンは撃たない
-      starts: occ.values.H1!.shots,
+      starts: OCCURRENCE_PROBE_LIMIT + 1,
     });
     expect(validatePredictions([file({ values: { '0101-01': 1, bad: 'x' as unknown as number } })], ctx)).toEqual([
       '予測 V-0063: values の id 0101-01 が観測値の id と重なる',
