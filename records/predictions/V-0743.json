@@ -1,0 +1,281 @@
+{
+  "verification": "V-0743",
+  "note": "既存の録画（ルドミラ：ウィンターオーナー単騎・スペック固定 ON・オートバースト OFF の 4 本）の読み直し。読む前に出した予測",
+  "team": [
+    {
+      "rid": 194,
+      "controlled": true
+    }
+  ],
+  "fixedSpec": true,
+  "hypotheses": [
+    {
+      "id": "H0",
+      "note": "S1・S2 の追加ダメージはゲージを溜めない",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 194,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 1
+              },
+              "damageType": "additional",
+              "ref": 4
+            }
+          },
+          {
+            "rid": 194,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "coreHit",
+                "everyRef": 1
+              },
+              "damageType": "additional",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H1",
+      "note": "S1・S2 の追加ダメージの 1 ヒットが、射手の 1 発ぶんのゲージを溜める（C-0257・C-0249。いまのモデル）"
+    },
+    {
+      "id": "H2",
+      "note": "S1 の追加ダメージだけが溜める",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 194,
+            "skill": "skill2",
+            "replace": 0,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "coreHit",
+                "everyRef": 1
+              },
+              "damageType": "additional",
+              "ref": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "H3",
+      "note": "S2 の追加ダメージだけが溜める",
+      "override": {
+        "addEffects": [
+          {
+            "rid": 194,
+            "skill": "skill1",
+            "replace": 1,
+            "effect": {
+              "kind": "damage",
+              "trigger": {
+                "count": "normalHit",
+                "everyRef": 1
+              },
+              "damageType": "additional",
+              "ref": 4
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "targets": [
+    {
+      "id": "full-shot-index-0099",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0099",
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標。録画 0099 で、戦闘の最初のヒットから数えて BURST バーが消えた（1 回目の満タン）ヒットの番号（モデルは全発が当たる）"
+    },
+    {
+      "id": "full-frame-0099",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0099",
+      "note": "参考。録画 0099 の戦闘開始から 1 回目の満タンまでのフレーム数"
+    },
+    {
+      "id": "full-shot-index-0440",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0440",
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標。録画 0440 で、戦闘の最初のヒットから数えて BURST バーが消えた（1 回目の満タン）ヒットの番号（モデルは全発が当たる）"
+    },
+    {
+      "id": "full-frame-0440",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0440",
+      "note": "参考。録画 0440 の戦闘開始から 1 回目の満タンまでのフレーム数"
+    },
+    {
+      "id": "full-shot-index-0441",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0441",
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標。録画 0441 で、戦闘の最初のヒットから数えて BURST バーが消えた（1 回目の満タン）ヒットの番号（モデルは全発が当たる）"
+    },
+    {
+      "id": "full-frame-0441",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0441",
+      "note": "参考。録画 0441 の戦闘開始から 1 回目の満タンまでのフレーム数"
+    },
+    {
+      "id": "full-shot-index-0442",
+      "model": "sim",
+      "metric": "gaugeFullShotIndex",
+      "args": {
+        "slot": 1,
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0442",
+      "tolerance": {
+        "abs": 0
+      },
+      "note": "判定の指標。録画 0442 で、戦闘の最初のヒットから数えて BURST バーが消えた（1 回目の満タン）ヒットの番号（モデルは全発が当たる）"
+    },
+    {
+      "id": "full-frame-0442",
+      "model": "sim",
+      "metric": "gaugeFullFrame",
+      "args": {
+        "n": 0
+      },
+      "setup": {
+        "enemy": "range-bigarms-fire",
+        "events": ["range-3min-jump"],
+        "condition": "auto"
+      },
+      "recording": "0442",
+      "note": "参考。録画 0442 の戦闘開始から 1 回目の満タンまでのフレーム数"
+    }
+  ],
+  "predicted": {
+    "at": "2026-11-12",
+    "commit": "9ebb22acfa90b92125226e6cf388fc442ff5c349",
+    "values": {
+      "H0": {
+        "full-shot-index-0099": 1002,
+        "full-frame-0099": 1680,
+        "full-shot-index-0440": 1002,
+        "full-frame-0440": 1680,
+        "full-shot-index-0441": 1002,
+        "full-frame-0441": 1680,
+        "full-shot-index-0442": 1002,
+        "full-frame-0442": 1680
+      },
+      "H1": {
+        "full-shot-index-0099": 971,
+        "full-frame-0099": 1649,
+        "full-shot-index-0440": 971,
+        "full-frame-0440": 1649,
+        "full-shot-index-0441": 971,
+        "full-frame-0441": 1649,
+        "full-shot-index-0442": 971,
+        "full-frame-0442": 1649
+      },
+      "H2": {
+        "full-shot-index-0099": 986,
+        "full-frame-0099": 1664,
+        "full-shot-index-0440": 986,
+        "full-frame-0440": 1664,
+        "full-shot-index-0441": 986,
+        "full-frame-0441": 1664,
+        "full-shot-index-0442": 986,
+        "full-frame-0442": 1664
+      },
+      "H3": {
+        "full-shot-index-0099": 987,
+        "full-frame-0099": 1665,
+        "full-shot-index-0440": 987,
+        "full-frame-0440": 1665,
+        "full-shot-index-0441": 987,
+        "full-frame-0441": 1665,
+        "full-shot-index-0442": 987,
+        "full-frame-0442": 1665
+      }
+    }
+  }
+}
