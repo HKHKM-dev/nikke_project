@@ -204,9 +204,7 @@ describe('computeTriggerDamage', () => {
       computeTriggerDamage(input({ condition: { coreHitRate: 1.5, distanceBonus: true, fullCharge: true } })),
     ).toThrow(RangeError);
   });
-});
 
-describe('computeTriggerDamage: full burst and per-shot damage', () => {
   it('adds FULL_BURST_BOOST to the boost group only when fullBurst is true', () => {
     const base = computeTriggerDamage(input());
     const fb = computeTriggerDamage(

@@ -20,10 +20,10 @@ import { type SlotCondition, type TeamInput, type TeamSlotInput, type TeamSlotRe
 import type { BurstStep, ShotParams, SkillRaw } from '../types.ts';
 import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
-
-const H = FIXED_BURST_CYCLE.normalFrames;
 import { averageCadence } from './averageCadence.ts';
 import { makeCharacter } from './fixtures.ts';
+
+const H = FIXED_BURST_CYCLE.normalFrames;
 
 /**
  * 18,000 秒（5 時間）を sim で回す収束のテストの制限時間。単独でも 2〜4 秒かかり、CI でほかのテスト（vite build を回す
