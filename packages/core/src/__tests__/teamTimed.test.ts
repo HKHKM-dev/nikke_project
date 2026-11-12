@@ -13,7 +13,7 @@ import { runTeam } from './runTeam.ts';
 import { planTeamRun } from '../frame/plan.ts';
 import { type SlotCondition, type TeamSlotInput } from '../team.ts';
 import type { SkillRaw } from '../types.ts';
-import { averageCadence } from './averageRate.ts';
+import { averageCadence } from './averageCadence.ts';
 import { makeCharacter } from './fixtures.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames, framesToGameSeconds, gameSecondsToFrames } from '../time.ts';

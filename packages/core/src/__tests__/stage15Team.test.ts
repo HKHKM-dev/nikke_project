@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { SG_PELLET_GAUGE_HIT_RATE, energyPerTrigger } from '../burst/dynamic.ts';
 import { computeTriggerDamage, conditionNotes, type EnemyInput } from '../damage.ts';
-import { enemyInputOf, matchingEnemyPreset, parseEnemyPresets } from '../enemies.ts';
+import { enemyInputOf, parseEnemyPresets, presetForEnemy } from '../enemies.ts';
 import { FIXED_SPEC_ENEMY_DEFENCE } from '../fixedSpec.ts';
 import { MAX_SKILL_LEVELS } from '../skills/resolve.ts';
 import type { SkillDefinition } from '../skills/types.ts';
@@ -126,10 +126,10 @@ describe('敵のプリセット（data/enemies.json）', () => {
     expect(range.map((e) => e.element)).toEqual(['Fire', 'Wind', 'Iron', 'Electronic', 'Water']);
     for (const e of range) expect(e.defence).toBe(FIXED_SPEC_ENEMY_DEFENCE);
     expect(enemyInputOf(range[1]!)).toEqual({ defence: 100, element: 'Wind', hasCore: true });
-    expect(matchingEnemyPreset(master.enemies, { defence: 100, element: 'Fire', hasCore: true })?.id).toBe(
+    expect(presetForEnemy(master.enemies, { defence: 100, element: 'Fire', hasCore: true })?.id).toBe(
       'range-bigarms-fire',
     );
-    expect(matchingEnemyPreset(master.enemies, { defence: 140, element: 'Fire', hasCore: true })).toBeUndefined();
+    expect(presetForEnemy(master.enemies, { defence: 140, element: 'Fire', hasCore: true })).toBeUndefined();
   });
 
   it('rejects malformed presets (unmeasured defence, unknown content, duplicate ids)', () => {

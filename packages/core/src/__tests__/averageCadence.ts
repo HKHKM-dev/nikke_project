@@ -3,13 +3,9 @@
 import { computeCadence, type CadenceResult } from '../cadence.ts';
 import { firingParams } from '../frame/firing.ts';
 import type { TeamSlotResult } from '../team.ts';
-import type { WeaponModel } from '../weapons.ts';
 
-/** 枠の常時分の平均レート。model は runSimulation に渡したもの（省略は既定の武器モデル） */
-export function averageCadence(
-  slot: Pick<TeamSlotResult, 'character' | 'passiveBuffs'>,
-  model?: WeaponModel,
-): CadenceResult {
+/** 枠の常時分の平均レート（既定の武器モデル） */
+export function averageCadence(slot: Pick<TeamSlotResult, 'character' | 'passiveBuffs'>): CadenceResult {
   const { shot } = slot.character;
-  return computeCadence(shot, model, firingParams(shot, slot.passiveBuffs));
+  return computeCadence(shot, undefined, firingParams(shot, slot.passiveBuffs));
 }

@@ -675,6 +675,6 @@ export function enemyInputOf(preset: EnemyPreset): EnemyInput {
 }
 
 /** 入力と防御力・属性・コアの有無が同じプリセット（無ければ undefined）。presetForEnemy が最初に引く */
-export function matchingEnemyPreset(presets: readonly EnemyPreset[], enemy: EnemyInput): EnemyPreset | undefined {
+function matchingEnemyPreset(presets: readonly EnemyPreset[], enemy: EnemyInput): EnemyPreset | undefined {
   return presets.find((p) => p.defence === enemy.defence && p.element === enemy.element && p.hasCore === enemy.hasCore);
 }

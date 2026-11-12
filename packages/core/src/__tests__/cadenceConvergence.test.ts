@@ -22,7 +22,7 @@ import { framesToGameSeconds, gameSecondsToFrames } from '../time.ts';
 import { FIXED_BURST_CYCLE } from '../burst/fixedCycle.ts';
 
 const H = FIXED_BURST_CYCLE.normalFrames;
-import { averageCadence } from './averageRate.ts';
+import { averageCadence } from './averageCadence.ts';
 import { makeCharacter } from './fixtures.ts';
 
 /**
