@@ -40,9 +40,14 @@ export function restoreRoster(json: string | null, index: readonly CharacterInde
   return json === null ? null : readBuildSnapshot(json, index);
 }
 
-/** 書き出すファイルの中身: 保存した JSON をそのまま、読みやすいよう字下げして書く */
+/** 書き出すファイルの中身: 育成状況の JSON（生の値）を、読みやすいよう字下げして書く */
+export function rosterFileText(raw: unknown): string {
+  return `${JSON.stringify(raw, null, 2)}\n`;
+}
+
+/** 編集が無いときに書き出すファイルの中身: 保存した JSON をそのまま */
 export function serializeRoster(saved: string): string {
-  return `${JSON.stringify(JSON.parse(saved), null, 2)}\n`;
+  return rosterFileText(JSON.parse(saved));
 }
 
 /**

@@ -9,7 +9,7 @@ import {
   readBuildSnapshotValue,
   recycleRoomOfResearch,
   treasureLevelOfPhase,
-  type BuildInput,
+  type BuildFields,
   type BuildSnapshot,
   type BuildSnapshotRead,
   type CharacterIndexEntry,
@@ -26,10 +26,8 @@ export const ROSTER_EDITS_FORMAT_VERSION = 1;
  * 編集した 1 体分。編集できる項目の全部を持つ（変えた項目だけでなく丸ごと）。Lv・リサイクルルームの写し・その他攻撃加算は
  * 編集しないので持たない（applyRosterEdits がアカウント全体の値から決める）
  */
-export type RosterCharacterEdit = Pick<
-  SnapshotCharacter,
-  'affectionRank' | 'gear' | 'cube' | 'collection' | 'skillLevels' | 'treasure'
-> & { growth: SlotGrowth };
+export type RosterCharacterEdit = BuildFields &
+  Pick<SnapshotCharacter, 'skillLevels' | 'treasure'> & { growth: SlotGrowth };
 
 /** アカウント全体の値（シンクロ LV と、リサイクルルームの研究の tid → Lv） */
 export type RosterAccount = Pick<BuildSnapshot, 'synchroLevel' | 'recycleRoom'>;
@@ -113,8 +111,6 @@ export function patchedCharacterEdit(
     treasure,
   };
 }
-
-type BuildFields = Pick<BuildInput, 'affectionRank' | 'gear' | 'cube' | 'collection'>;
 
 /** 育成の値を比べるための並び。キーの順と、OL の行の位置の欄の有無（position の無い行は配列の並び）で違うと判定しない */
 function growthKey(growth: SlotGrowth, build: BuildFields, skillLevels: SkillLevels): unknown[] {

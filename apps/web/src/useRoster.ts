@@ -15,6 +15,7 @@ import {
   restoreRoster,
   revertAllConfirmText,
   rosterFileName,
+  rosterFileText,
   rosterSlotCount,
   serializeRoster,
   withRosterFields,
@@ -174,7 +175,7 @@ export function useRoster({ index, team, parties, dispatch, setParties }: Args):
   const exportFile = () => {
     if (roster === null || saved === null) return;
     // 編集があれば、編集を重ねた JSON（editedAt つき）を書く。無ければ読み込んだファイルのまま
-    const text = edited?.read.ok ? `${JSON.stringify(edited.raw, null, 2)}\n` : serializeRoster(saved);
+    const text = edited?.read.ok ? rosterFileText(edited.raw) : serializeRoster(saved);
     downloadText(rosterFileName(roster), text);
   };
 

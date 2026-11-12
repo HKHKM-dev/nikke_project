@@ -87,7 +87,8 @@ export type CalcDeps = {
 
 type StatOverrides = Pick<TeamSlotInput, 'attackOverride' | 'hpOverride' | 'defenceOverride' | 'buildEffects'>;
 
-function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput {
+/** 育成値をキャラの上限に収める（Lv はキャラごとの上限、限界突破・コア強化はレアリティの上限） */
+export function clampGrowth(character: CharacterData, growth: GrowthInput): GrowthInput {
   const limits = growthLimits(character);
   return {
     level: clampInt(growth.level, 1, limits.levelMax),
