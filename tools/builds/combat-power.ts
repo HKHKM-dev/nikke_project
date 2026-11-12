@@ -7,7 +7,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
-import { readBuildSnapshot, snapshotCombatPowers } from '../../packages/core/src/buildSnapshot.ts';
+import { cliSnapshotNotices, readBuildSnapshot, snapshotCombatPowers } from '../../packages/core/src/buildSnapshot.ts';
 import { gameCombatPowers, type ShiftyPadRaw } from '../../packages/core/src/shiftypad.ts';
 import { compareCombatPower, sortByCombatPower, type CombatPowerRow } from './combat-power-lib.ts';
 import { characterOf, index, masters, nameOf, readJson } from './data.ts';
@@ -48,7 +48,7 @@ if (!read.ok) {
   process.exit(1);
 }
 const snapshot = read.snapshot;
-for (const n of read.notices) console.log(`注意: ${n}`);
+for (const n of cliSnapshotNotices(read)) console.log(`注意: ${n}`);
 const actualById = gameCombatPowers(readJson<ShiftyPadRaw>(actualPath), index);
 
 const computed = snapshotCombatPowers(snapshot, characterOf, masters);

@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 // 育成状況のフック（useRoster.ts。plan/design-combat-power-sort.md 5 節）: 保存の復元・読み込み・書き出し・消す。データは作った値
-import { emptyBuild, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
+import { BUILD_SNAPSHOT_FORMAT_VERSION, emptyBuild, type BuildSnapshot, type CharacterIndexEntry } from '@nikke/core';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { INITIAL_PARTIES, type PartiesState } from './parties.ts';
@@ -17,7 +17,7 @@ import { useRoster } from './useRoster.ts';
 
 const INDEX = [{ resourceId: 82, rarity: 'SSR' }] as CharacterIndexEntry[];
 const ROSTER: BuildSnapshot = {
-  formatVersion: 1,
+  formatVersion: BUILD_SNAPSHOT_FORMAT_VERSION,
   fetchedAt: '2026-10-28T20:00:00.000Z',
   synchroLevel: 400,
   recycleRoom: { '1001': 30 },
@@ -128,12 +128,15 @@ describe('useRoster', () => {
 
   it('shows the errors of a file that does not read, without saving', async () => {
     const { result, dispatch } = render();
-    await act(() => result.current.controls.importFile(file('{"formatVersion":2,"characters":{}}')));
+    const unknown = BUILD_SNAPSHOT_FORMAT_VERSION + 1;
+    await act(() =>
+      result.current.controls.importFile(file(JSON.stringify({ formatVersion: unknown, characters: {} }))),
+    );
     expect(localStorage.getItem(ROSTER_STORAGE_KEY)).toBeNull();
     expect(dispatch).not.toHaveBeenCalled();
     expect(result.current.controls.message).toEqual({
       kind: 'error',
-      lines: ['この版の育成状況は読めない（formatVersion 2）'],
+      lines: [`この版の育成状況は読めない（formatVersion ${unknown}）`],
     });
   });
 

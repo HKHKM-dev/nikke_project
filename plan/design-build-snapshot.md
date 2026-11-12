@@ -169,3 +169,7 @@
   - `private/builds/` が無い環境（クラウドで始めのフックが `private/` を取れなかったときなど）では聞かずに進み、「人が埋める項目」に `buildSnapshot` を出す。
   - 置き場所（`private/builds/`・スナップショットの名前の一覧）は `tools/builds/dirs.ts` に切り出し、`store.ts`・`fetch.ts` と共有した。メインのチェックアウトを探す処理は `tools/git/main-checkout.ts` に 1 つにし、`tools/drive/sync.ts` も使う。
 - 読み取りのレシピ・残差でこの欄を使う部分は作っていない（6 節。要る検証が出たときに足す）。
+
+## 16. 経過
+
+- 2026-11-12: スナップショットの版を 2 にした（3 節の形に、Lv 0 の宝物の画面で選んだ段階 1 と `editedAt` を足した。[design-roster-edit.md](design-roster-edit.md) 4 節）。`build:import`・`build:fetch` は版 2 を書き、`private/builds/` の版 1 はそのまま読める。

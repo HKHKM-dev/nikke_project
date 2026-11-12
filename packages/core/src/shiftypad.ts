@@ -32,6 +32,15 @@ export function treasurePhaseOfLevel(level: number): Exclude<TreasurePhase, 0> |
   return null;
 }
 
+/**
+ * 宝物の段階 → スナップショットに書く Lv（育成状況を画面で編集したときに書く。plan/design-roster-edit.md 4 節）。段階 2・3 は
+ * treasurePhaseOfLevel の逆（Lv 1・2）。段階 1 は Lv 0 と書く。API の Lv 0 が段階 1 かは確かめていないので、取得した Lv 0 は
+ * 段階 1 に読み替えない（treasurePhaseOfLevel は null のまま）
+ */
+export function treasureLevelOfPhase(phase: Exclude<TreasurePhase, 0>): number {
+  return phase - 1;
+}
+
 /** アカウントを特定できる欄（取得の道具と同じ規則。取り込みでもう一度除く） */
 const ACCOUNT_KEY = /open_?id|^uid$|nickname|user_?name|avatar|role_?id|^area_?id$/i;
 
@@ -154,7 +163,7 @@ export function toBuildSnapshot(raw: ShiftyPadRaw, index: readonly CharacterInde
       unmapped.push(`name_code ${c.name_code}: GetUserCharacterDetails に無い（飛ばした）`);
   characters.sort((a, b) => a[0] - b[0]);
   return {
-    formatVersion: 1,
+    formatVersion: 2,
     fetchedAt: raw.fetchedAt,
     synchroLevel: raw.outpost.synchro_level,
     recycleRoom: Object.fromEntries(

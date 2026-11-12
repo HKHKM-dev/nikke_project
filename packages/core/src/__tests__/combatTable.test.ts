@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { emptyBuild } from '../build.ts';
 import {
+  BUILD_SNAPSHOT_FORMAT_VERSION,
   snapshotCombatPower,
   snapshotCombatPowers,
   type BuildSnapshot,
@@ -81,7 +82,7 @@ it('snapshotCombatPowers: 表から引いて全キャラの戦闘力を出し、
     ...over,
   });
   const snapshot: BuildSnapshot = {
-    formatVersion: 1,
+    formatVersion: BUILD_SNAPSHOT_FORMAT_VERSION,
     fetchedAt: '2026-10-29T00:00:00Z',
     synchroLevel: 300,
     recycleRoom: {},

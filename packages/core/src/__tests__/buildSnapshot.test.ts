@@ -1,8 +1,10 @@
-// 育成状況の JSON の読み込みの検査（plan/design-combat-power-sort.md 5.3 節）。データは作った値（オーナーの実データは使わない）
+// 育成状況の JSON の読み込みの検査（plan/design-combat-power-sort.md 5.3 節。版 2 は plan/design-roster-edit.md 4 節）。
+// データは作った値（オーナーの実データは使わない）
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   BUILD_SNAPSHOT_FORMAT_VERSION,
+  cliSnapshotNotices,
   readBuildSnapshot,
   snapshotCombatPower,
   snapshotCombatPowers,
@@ -75,7 +77,14 @@ describe('readBuildSnapshot', () => {
   it('JSON でない・スナップショットの形でない・知らない版は止める', () => {
     expect(readBuildSnapshot('{', INDEX)).toEqual({ ok: false, errors: ['JSON として読めない'] });
     expect(errorsOf({ '82': character() })[0]).toMatch(/スナップショット/);
-    expect(errorsOf({ ...snapshot(), formatVersion: 2 })).toEqual(['この版の育成状況は読めない（formatVersion 2）']);
+    for (const version of [BUILD_SNAPSHOT_FORMAT_VERSION + 1, 0, 1.5, '2', null])
+      expect(errorsOf({ ...snapshot(), formatVersion: version })).toEqual([
+        `この版の育成状況は読めない（formatVersion ${JSON.stringify(version)}）`,
+      ]);
+  });
+
+  it('版 1 は今までどおり読み、読んだものはいまの版として持つ', () => {
+    expect(read({ ...snapshot(), formatVersion: 1 })).toEqual({ ok: true, snapshot: snapshot(), notices: [] });
   });
 
   it('範囲の外の値は、欄の場所つきで止める', () => {
@@ -99,7 +108,7 @@ describe('readBuildSnapshot', () => {
     expect(errors.at(-1)).toBe('ほか 1 件');
   });
 
-  it('宝物とコレクションの両方・知らない OL の項目・宝物の段階 1 は止める', () => {
+  it('宝物とコレクションの両方・知らない OL の項目は止める', () => {
     const s = snapshot();
     s.characters['82'] = character({
       collection: { rarity: 'SR', level: 1 },
@@ -110,27 +119,70 @@ describe('readBuildSnapshot', () => {
     bad.characters['82'] = character({
       gear: { ...character().gear, head: { type: 'OL', level: 5, overload: [{ option: 'XXX' as never, level: 1 }] } },
     });
-    bad.characters['10'] = { ...bad.characters['10']!, treasure: { tid: 200101, level: 0, phase: 1 as never } };
-    expect(errorsOf(bad)).toEqual([
+    expect(errorsOf(bad)).toEqual(['characters.82.gear.head.overload[0].option: 知らない項目（"XXX"）']);
+  });
+
+  /** 宝物の JSON。phase を省くと欄ごと無い */
+  const treasure = (level: number, phase?: number | null) => ({ tid: 200101, level, phase });
+  /** キャラ 10・82 の宝物を、その版の JSON にしたもの */
+  const withTreasures = (version: number, of10: unknown, of82: unknown) => {
+    const s = snapshot();
+    return {
+      ...s,
+      formatVersion: version,
+      characters: {
+        '10': { ...s.characters['10']!, collection: null, treasure: of10 },
+        '82': character({ treasure: of82 as never }),
+      },
+    };
+  };
+
+  it.each([1, 2])('版 %i: 宝物の段階が Lv に合わないものは止める（Lv 1・2 は段階 2・3）', (version) => {
+    expect(errorsOf(withTreasures(version, treasure(1, 1), treasure(2, 2)))).toEqual([
+      'characters.10.treasure.phase: Lv 1 なら 2（1）',
+      'characters.82.treasure.phase: Lv 2 なら 3（2）',
+    ]);
+    expect(errorsOf(withTreasures(version, null, treasure(1)))).toEqual([
+      'characters.82.treasure.phase: Lv 1 なら 2（なし）',
+    ]);
+    // 段階の決まらない Lv（3 以上）は、どの版も未確定だけ
+    expect(errorsOf(withTreasures(version, null, treasure(3, 1)))).toEqual([
+      'characters.82.treasure.phase: Lv 3 なら null（1）',
+    ]);
+    expect(read(withTreasures(version, treasure(1, 2), treasure(2, 3))).ok).toBe(true);
+  });
+
+  it('版 1 の Lv 0 の宝物は未確定（null）だけ。段階 1 は止める', () => {
+    expect(errorsOf(withTreasures(1, treasure(0, 1), treasure(0, 3)))).toEqual([
       'characters.10.treasure.phase: Lv 0 なら null（1）',
-      'characters.82.gear.head.overload[0].option: 知らない項目（"XXX"）',
+      'characters.82.treasure.phase: Lv 0 なら null（3）',
+    ]);
+    expect(read(withTreasures(1, null, treasure(0, null))).ok).toBe(true);
+  });
+
+  it('版 2 の Lv 0 の宝物は、未確定（null）か画面で選んだ段階 1', () => {
+    const r = read(withTreasures(2, treasure(0, 1), treasure(0, null)));
+    expect(r.ok && r.snapshot.characters['10']!.treasure).toEqual(treasure(0, 1));
+    expect(r.ok && r.snapshot.characters['82']!.treasure).toEqual(treasure(0, null));
+    // 未確定のままのものだけを数える
+    expect(r.ok && unknownTreasurePhaseCount(r.snapshot)).toBe(1);
+    expect(errorsOf(withTreasures(2, treasure(0, 2), treasure(0, 3)))).toEqual([
+      'characters.10.treasure.phase: Lv 0 なら null か 1（2）',
+      'characters.82.treasure.phase: Lv 0 なら null か 1（3）',
     ]);
   });
 
-  it('宝物の段階が Lv に合わないものは止める（Lv 0 は null、Lv 1・2 は段階 2・3）', () => {
-    const s = snapshot();
-    s.characters['10'] = { ...s.characters['10']!, treasure: { tid: 200101, level: 0, phase: 3 } };
-    s.characters['82'] = character({ treasure: { tid: 200101, level: 2, phase: 2 } });
-    expect(errorsOf(s)).toEqual([
-      'characters.10.treasure.phase: Lv 0 なら null（3）',
-      'characters.82.treasure.phase: Lv 2 なら 3（2）',
-    ]);
-    const missing = snapshot();
-    missing.characters['82'] = character({ treasure: { tid: 200101, level: 1 } as never });
-    expect(errorsOf(missing)).toEqual(['characters.82.treasure.phase: Lv 1 なら 2（なし）']);
-    const ok = snapshot();
-    ok.characters['82'] = character({ treasure: { tid: 200101, level: 2, phase: 3 } });
-    expect(read(ok).ok).toBe(true);
+  it('editedAt は版 2 から読む（無くてよい。文字列でなければ止める）', () => {
+    const editedAt = '2026-11-12T12:30:00.000Z';
+    const r = read({ ...snapshot(), editedAt });
+    expect(r.ok && r.snapshot).toEqual({ ...snapshot(), editedAt });
+    const fetched = read(snapshot());
+    expect(fetched.ok && 'editedAt' in fetched.snapshot).toBe(false);
+    expect(errorsOf({ ...snapshot(), editedAt: 0 })).toEqual(['editedAt: 文字列でない']);
+    expect(errorsOf({ ...snapshot(), editedAt: '' })).toEqual(['editedAt: 文字列でない']);
+    // 版 1 には無い欄なので読まない（検査もしない）
+    const v1 = read({ ...snapshot(), formatVersion: 1, editedAt: 0 });
+    expect(v1.ok && 'editedAt' in v1.snapshot).toBe(false);
   });
 
   it('キャラのデータに無いキャラは飛ばし、写せなかった値と合わせて知らせる', () => {
@@ -147,6 +199,29 @@ describe('readBuildSnapshot', () => {
 
 it('unknownTreasurePhaseCount: 宝物の段階が未確定のキャラの数', () => {
   expect(unknownTreasurePhaseCount(snapshot())).toBe(1);
+});
+
+describe('cliSnapshotNotices', () => {
+  const ok = (over: Partial<BuildSnapshot>, notices: string[] = []) => ({
+    ok: true as const,
+    snapshot: snapshot(over),
+    notices,
+  });
+
+  it('取得のままのスナップショットは、読み込みの知らせだけ', () => {
+    expect(cliSnapshotNotices(ok({}, ['a']))).toEqual(['a']);
+  });
+
+  it('画面で編集した育成状況は、編集した日時（日本時間）の 1 行を足す', () => {
+    expect(cliSnapshotNotices(ok({ editedAt: '2026-11-12T16:30:00.000Z' }, ['a']))).toEqual([
+      'a',
+      '画面で編集した育成状況（日本時間 2026-11-13 01:30 に編集。取得のままのスナップショットではない）',
+    ]);
+    // 日時として読めない editedAt はそのまま出す
+    expect(cliSnapshotNotices(ok({ editedAt: 'いつか' }))).toEqual([
+      '画面で編集した育成状況（いつか に編集。取得のままのスナップショットではない）',
+    ]);
+  });
 });
 
 describe('snapshotCombatPower', () => {
