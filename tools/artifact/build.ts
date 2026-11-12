@@ -35,7 +35,7 @@ if (vite.status !== 0) {
 const indexPath = join(OUT, 'index.html');
 writeFileSync(join(OUT, PAGE_FILE), pageHtml(entryAssets(readFileSync(indexPath, 'utf8'))));
 rmSync(indexPath);
-// キャラ画像（characters/images・portraits。コスチューム違いを含めて 800 枚近い）は除く。アーティファクトの 1 版のファイル数には上限があり、データだけで
+// キャラ画像（characters/images・portraits。キャラ × コスチュームの数だけある）は除く。アーティファクトの 1 版のファイル数には上限があり、データだけで
 // 300 近くある。画面（CharacterVisual）は画像が無ければ属性の色の札で出す（plan/design-modern-ui.md）
 for (const dir of ['images', 'portraits']) rmSync(join(OUT, 'characters', dir), { recursive: true, force: true });
 
