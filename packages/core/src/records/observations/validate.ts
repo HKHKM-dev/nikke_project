@@ -111,7 +111,6 @@ function compareErrors(
   const errors: string[] = [];
   for (const name of metric.args)
     if (c.args[name] === undefined) errors.push(`${at}: ${c.metric} の引数 ${name} が無い`);
-  // 一本化の段 A-3: calc の経路は消した（2026-10-27）
   if (c.model !== 'sim') errors.push(`${at}: model は sim だけ（calc は 2026-10-27 の一本化で消した）`);
   errors.push(...conditionErrors(c.setup, enemies, at));
   errors.push(...setupErrors(o, c.setup, byId, recordings.get(o.recording)?.team.length));

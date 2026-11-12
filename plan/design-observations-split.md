@@ -175,3 +175,4 @@
 - 2026-11-12: 3.3 節の案 A のとおりに `validateObservations` を分けた（欄 `fieldErrors`・比べる指定 `compareErrors`・敵と条件と着地点 `conditionErrors`・比べる設定 `setupErrors`。ID で指す観測値の 5 か所の検査は `refErrors` 1 つにした）。メッセージの順を変えないため、`setupErrors` は設定の欄の順（ID で指す観測値と枠の並びが交互になる）のまま見る。4 節の 2 で、検証のメッセージ（順を含む）と照合の結果が分ける前と同じことを確かめた。
 - 2026-11-12: 見直し（`/simplify`）で、`damage.ts` だけが使う `frameArgOf` を `damage.ts` に、検査の `validateScope` を `validate.ts` に移した（3.1 節の表も直した）。共有の補助を `metrics/context.ts` に置くことを `plan/verification-guide.md` に書いた。
 - 2026-11-12: PR を出す前に見ると、注釈を直すブランチ（設計の承認待ちで PR は無し）が `observations.ts` の注釈 2 か所を変えていた。マージまで間があり、衝突は注釈だけで 5 節の手順で直せるので、待たずに出した。
+- 2026-11-12: 注釈を直すブランチが先にマージされた（`observations.ts` の注釈 2 か所）。リベースで、その 2 か所を `types.ts`（`CompareSpec` の注釈）と `validate.ts`（消した注釈）に移した。
