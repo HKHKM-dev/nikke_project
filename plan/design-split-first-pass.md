@@ -317,6 +317,7 @@ for (let f = 0; f < frames; f++) {
 - `register`（1 フレームの登録）は、手順の関数（`registerEnds`・`registerStage1`・`registerEnemyStates`・`registerStage15`・`registerStage2`・`registerRemoveDebuffs`・`registerAmplifiers`）に分け、手順が共有する値（出来事・フレーム・戦闘開始時か・きっかけの絞り込み・{ applied } の記録の始まり）を 1 つのオブジェクトで渡す。本文の行は変えていない。
 - 移した名前を `skills/holders.ts の …` と指していたコメントは、層のファイルを指すように直した（`HolderLists` の問い合わせは入口のまま）。
 - 見直し（`/simplify`）で、入口の層の展開の並び（積んだオブジェクトにした）・`late` を受ける層（後の層を読む層だけにした）・`stateTracks` の置き場所・敵の状態の手順（`registerStage1` から分けた）を直した。見送り: 作り手の引数の型（前の層の型の交わり）を `Pick` にすること（読む名前は分割代入に出ている）、`LateReaders` を後の層の型から導くこと（型が循環する。入口の `satisfies` がずれを拾う）、`registerCounters` を手順のオブジェクトで呼ぶこと（本文の書き換えになる）。
+- 見直し（`/code-review high`）: 正しさの指摘は無し。手順の関数の説明の置き場所と、層のファイルの冒頭が指す節を直した。見送り: `late` を埋める前に読んだ時の守り（今の閉包の中で宣言より前に呼んだ時と同じく、実行時に落ちる。7 節）、入口で積んだオブジェクトを層ごとに写し直すこと（作る時に 1 回だけで、速さに出ない）、手順のオブジェクトの `f`（`ev.frame` と同じ値。本文を変えないために持たせた）。
 
 ## 10. 経過
 

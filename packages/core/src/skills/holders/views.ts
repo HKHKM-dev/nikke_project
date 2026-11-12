@@ -1,4 +1,4 @@
-// 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節）。stat ごとの見る列（射撃・ダメージ・当たり・射程・会心・ペレット・
+// 件の一覧の層 5: 見る側（plan/design-split-first-pass.md 3.3 節・9.2 節）。stat ごとの見る列（射撃・ダメージ・当たり・射程・会心・ペレット・
 // 条件・順位・ゲージ・CT）、状態の件のスタックの段と敵の状態、登録が閉じる件の列（カウンタの 0・HP の割合・見る状態の終わり）、
 // 最大 HP▲・現在の HP▼・HP の割合・最終防御力・最終攻撃力と順位。
 import { lowerBound } from '../../frame/shots.ts';

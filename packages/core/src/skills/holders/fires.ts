@@ -1,4 +1,4 @@
-// 件の一覧の層 2: 発火の読み（plan/design-split-first-pass.md 3.3 節）。きっかけから TriggerTracker を作る firesOf と、
+// 件の一覧の層 2: 発火の読み（plan/design-split-first-pass.md 3.3 節・9.2 節）。きっかけから TriggerTracker を作る firesOf と、
 // 自分の HP の割合のきっかけの状態。
 import {
   isResolvedApplied,

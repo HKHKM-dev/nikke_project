@@ -1,4 +1,4 @@
-// 件の一覧（../holders.ts の createHolderLists）の層 1: 記録の入れ物と件の列の作り方（plan/design-split-first-pass.md 3.3 節）。
+// 件の一覧（../holders.ts の createHolderLists）の層 1: 記録の入れ物と件の列の作り方（plan/design-split-first-pass.md 3.3 節・9.2 節）。
 // 件の列（tracks）・付いた記録・条件で落とした記録・順位・デバフ解除の読み・回復・強化の列、常時の値（passive）、カウンタの鍵と上限に
 // 届いたフレーム、件の列を作る・閉じる・消費する関数。層の作り手が共通に受けるもの（HolderBase）と、前の層が後の層の関数を、作った後に
 // 呼ばれた時に読む口（LateReaders）もここに置く。

@@ -1,4 +1,4 @@
-// 件の一覧の層 7: 発火（plan/design-split-first-pass.md 3.3 節）。持続バフ・状態の付与・解除・延長・デバフ解除・スタック量の発火を
+// 件の一覧の層 7: 発火（plan/design-split-first-pass.md 3.3 節・9.2 節）。持続バフ・状態の付与・解除・延長・デバフ解除・スタック量の発火を
 // 件の列に入れ、{ applied } の出どころに付いた記録を配る。条件で落とした記録と順位の記録もここで足す。
 import { type ChanceOpportunity } from '../chance.ts';
 import { isResolvedApplied, type ResolvedEffect, type ResolvedShotCountTrigger } from '../resolve.ts';

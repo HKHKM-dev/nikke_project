@@ -1,5 +1,5 @@
-// 件の一覧の層 8: 1 フレームの登録（plan/design-split-first-pass.md 3.3 節）。段ごとの出どころの列と前の回の発を作り、
-// フレームの出来事から、前の処理 → 段 1 → 段 1.5 → 段 2 → デバフ解除 → 強化 → カウンタの順に登録する（plan/design-holder-effects.md 2.4 節）。
+// 件の一覧の層 8: 1 フレームの登録（plan/design-split-first-pass.md 3.3 節・9.2 節）。段ごとの出どころの列と前の回の発を作り、
+// フレームの出来事から、前の処理 → 段 1 → 敵の状態 → 段 1.5 → 段 2 → デバフ解除 → 強化 → カウンタの順に登録する（plan/design-holder-effects.md 2.4 節）。
 import { isResolvedApplied, isResolvedChance, type ResolvedTrigger } from '../resolve.ts';
 import { attackRankFor } from '../ranking.ts';
 import { counterMax, type CounterId } from '../counters.ts';
@@ -265,7 +265,6 @@ export function createRegister({
     dispatchApplied(1, from);
   };
 
-  /** 段 1.5 の付与と効果・解除・延長・スタック量の増減と、その { applied } */
   /** 敵の状態・消去・循環の間隔の変更（段 1 の { applied } の後。ループの中の判定は読まない） */
   const registerEnemyStates = ({ ev, f, battleStartOnly, take }: FrameStep): void => {
     // 敵の状態（持続ダメージの発火のフレーム。ループの中の判定は読まない）
@@ -287,6 +286,7 @@ export function createRegister({
       }
     }
   };
+  /** 段 1.5 の付与と効果・解除・延長・スタック量の増減と、その { applied } */
   const registerStage15 = ({ ev, f, battleStartOnly, take, from }: FrameStep): void => {
     // 段 1.5: 条件つきの付与と効果（と、状態のスタック数を数で読む付与）。判定は段 1 の件だけを見る（条件つきどうしは
     // 連鎖させない）

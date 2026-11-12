@@ -1,4 +1,4 @@
-// 件の一覧の層 3: 出どころの準備（plan/design-split-first-pass.md 3.3 節）。常時の件・持続バフ・状態の付与の組・HP の while・循環の間隔・
+// 件の一覧の層 3: 出どころの準備（plan/design-split-first-pass.md 3.3 節・9.2 節）。常時の件・持続バフ・状態の付与の組・HP の while・循環の間隔・
 // 解除・延長・デバフ解除・スタック量・自分に付いた記録・カウンタ・消費・吸収回復・敵の状態と消去の出どころと件の列を作り、件の列が
 // 出そろった後に、持ち主ごとの状態の件の列（stateTracks）を作る。
 import { groupDotsByState } from '../../frame/dot.ts';

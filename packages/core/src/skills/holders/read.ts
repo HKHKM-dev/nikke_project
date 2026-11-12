@@ -1,4 +1,4 @@
-// 件の一覧の層 4: 件の読み（plan/design-split-first-pass.md 3.3 節）。件の列の件を、読む入力が伸びたときだけ作り直して返す（readItems）。
+// 件の一覧の層 4: 件の読み（plan/design-split-first-pass.md 3.3 節・9.2 節）。件の列の件を、読む入力が伸びたときだけ作り直して返す（readItems）。
 // 最大スタック数▲で上がる上限、while の件、カウンタの while の件もここで作る。
 import { type ShotLog } from '../../frame/shots.ts';
 import {
