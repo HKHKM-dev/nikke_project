@@ -1,9 +1,7 @@
 // 1 パス目の入口（planTeamRun）。射撃の列 → 時刻表 → バフの区間 → 倍率ダメージの発動を作り、2 パス目（sim/engine.ts）に渡す。
-// Stage 10: 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、1 パス目の射撃の列と時刻表は frame/firstPass.ts の
-// フレームループで作る。バフの区間と倍率ダメージは Stage 8 のまま、確定した射撃の列と時刻表から作る。
-// Stage 16（plan/design-stage16.md 2 節）: team.ts から分けた。
-// 持ち主ごとの一覧編（plan/design-holder-effects.md 2.7 節）: バフの区間は、1 パス目の件の一覧の履歴から作る
-// （2 パス目の作り直しはやめた）。件と記録は履歴（TeamPlan.history）を読む。
+// 射撃に効くバフと CT 短縮で射撃の列と時刻表が循環するので、射撃の列と時刻表は frame/firstPass.ts のフレームループで作る。
+// バフの区間は、そのループの件の一覧の履歴（TeamPlan.history）から作る（plan/design-holder-effects.md 2.7 節）。
+// 倍率ダメージの発動は、確定した射撃の列と時刻表から作る。
 import { burstDelaysOf, isSplit, sameActivationBuffsOnHit } from '../burst/landing.ts';
 import { planFixedCycle } from '../burst/fixedCycle.ts';
 import { battleSecondsToFrames } from '../time.ts';

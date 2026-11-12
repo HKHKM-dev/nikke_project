@@ -1,4 +1,4 @@
-// Stage 16（plan/design-stage16.md 3 節 16-A）: sim の結果を画面の形（TeamResult）にする。
+// sim の結果を画面の形（TeamResult）にする（plan/design-stage16.md 3 節）。
 // 通常攻撃は同じバフ状態のグループに集計し、トリガー数は sim が実際に撃った数（triggerSource: 'shots'）。
 // バーストスキルと倍率ダメージは sim の発動列（1 パス目の値）をそのまま使う。
 import { summarizeSchedule } from '../burst/schedule.ts';

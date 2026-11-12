@@ -1,9 +1,8 @@
-// Stage 10: 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度）から、射手が使う実効値を作る（plan/design-stage10.md 3 節）。
+// 射撃に効くバフ（最大装弾数・リロード速度・チャージ速度・攻撃速度）と装弾数無限・使用武器の変更から、射手が使う実効値
+// （FiringParams）を作る（plan/design-stage10.md 3 節、plan/design-stage11-modernia.md 3.4 節）。
 // 最大装弾数は録画 0037・0039（比率は加算、端数は四捨五入）、速度の式は録画 0040（時間 × (1 − 速度)）で確定した。
-// Stage 11 モダニア: 装弾数無限と使用武器の変更（殲滅モード）も射撃の実効値に入れた（plan/design-stage11-modernia.md 3.4 節）。
-// 射撃姿勢維持型（maintainFireStance > 0）の刻みも、CDN の項目からここで作る（plan/design-fire-stance-cadence.md。
-// Stage 11 の紅蓮BS の較正表 MEASURED_CHARGE_CADENCE を置き換えた）。
-// 2 段目の段 9 の PR 2: 攻撃速度▲を、レートの蓄積の倍率（rateScale）として足した（plan/design-skill-stage9.md 1.2 節。V-0458）。
+// 攻撃速度▲は、レートの蓄積の倍率（rateScale）として掛ける（plan/design-skill-stage9.md 1.2 節。V-0458）。
+// 射撃姿勢維持型（maintainFireStance > 0）の刻みも、CDN の項目からここで作る（plan/design-fire-stance-cadence.md）。
 import type { BuffTotals, ChangedWeapon } from '../skills/buffs.ts';
 import { GAME_SECONDS_PER_FRAME } from '../time.ts';
 import type { ShotParams } from '../types.ts';

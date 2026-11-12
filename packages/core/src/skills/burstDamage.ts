@@ -1,11 +1,11 @@
-// Stage 5: バーストスロットの倍率ダメージ（burstDamage）を Lv の数値に解決し、1 発動あたりの期待ダメージを出す。
+// バーストスロットの倍率ダメージ（burstDamage）を Lv の数値に解決し、1 発動あたりの期待ダメージを出す。
 // 式（2026-09-22 の射撃場実測で確認。plan/design-stage5.md 1 節、plan/verification.md Stage 5 節）:
 //   burstHit = max(1, 攻撃力(バフ後) − 防御力) × X/100 × (1 + 会心期待値 [+ 0.5]) × (1 + Σ attackDamage) × 属性有利
 // 武器倍率・チャージ倍率・コア・距離は掛けない。
-// Stage 8: トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
+// トリガー付きの倍率ダメージ（damage。「10 回攻撃した時 X% のダメージ」など）も同じ式で計算する（computeSkillHit）。
 // 分配ダメージには (1 + Σ distributedDamage) を別の乗数で掛ける（録画 0021 のクイーン（真）の 1.9001 倍。plan/design-stage8.md 2.4 節）。
 // ただし受けるダメージ▲とは 1 つの和 (1 + Σ distributedDamage + Σ damageTaken) で掛かる（エレグの S1。C-0767）。
-// 持続ダメージ▲編: 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
+// 持続ダメージ（dot）の tick には Σ sustainedDamage を SUSTAINED_DAMAGE_PLACEMENT の置き場所で掛ける。
 import type { EnemyInput, TriggerDamage } from '../damage.ts';
 import {
   defenceAfterDown,

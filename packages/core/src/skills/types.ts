@@ -1,32 +1,6 @@
-// Stage 4: スキル定義（DSL）の型。読み込みの検査は skills/parse/ に効果の種類ごとに置く（入口の parseSkillDefinition はこのファイルが公開する）。
-// 段階 A は常時発動パッシブ、Stage 5 でバーストスロットの倍率ダメージ（burstDamage）を足した。
-// Stage 6（段階 B）でトリガー付きの持続バフ（timed）を足した。新しい BuffStat は増えず、「いつ付いて、いつ切れるか」だけが増える。
-// Stage 8（段階 C）で、射撃の回数・発動の回数で発火するトリガー、バースト N 段階突入時のトリガー、
-// バースト以外の倍率ダメージ（damage）、stat の distributedDamage / burstGaugeSpeed を足した（plan/design-stage8.md 2 節）。
-// Stage 9 で宝物版の定義（treasureSkills）と、武器種で絞る対象（targetWeapon）を足した（plan/design-stage9.md 2・3 節）。
-// Stage 10（段階 D）で射撃に効く stat（maxAmmo / reloadSpeed / chargeSpeed）と scaling 'flat'、即時効果（cooldownReduction /
-// ammoRefill）、トリガー「最後の弾丸」（lastShot）を足した（plan/design-stage10.md 2 節）。
-// Stage 11 で対象「直前にバーストスキルを使用した味方」（burstUsers）、フルスタックで発火する射撃の回数トリガー（stacksRef）、
-// 即時効果「回復」（heal）とトリガー「回復効果が適用された時」（healed）を足した（plan/design-stage11.md 2 節）。
-// Stage 11 アリス編で対象「最終攻撃力が最も高い味方 N 機」（topAttack と targetCount / targetCountRef）を足した（同 17 節）。
-// Stage 11 モダニア編で、射撃ごとの倍率ダメージ（damage の every = 1）、効果のあるスタック（maxStacks / maxStacksRef）、「▼」（decrease）、
-// stat の hitRate（命中率）と infiniteAmmo（装弾数無限）、条件「自分が 〈stat〉 増加状態なら」（condition）、
-// 使用武器の変更（weaponChange）を足した（plan/design-stage11-modernia.md 2 節）。
-// Stage 11 紅蓮BS で、段の循環（cycle。「攻撃回数別の効果」「各段階の効果のみ適用」）と、その間隔の変更（cycleEvery。
-// 「スキル 1 のフルチャージ攻撃回数の条件が 1 回 / 2 回 / 3 回に変更」）を足した（plan/design-stage11-scarlet-bs.md 2 節）。
-// ヘルム編で、stat の normalCritRate（通常攻撃のクリティカル確率）と chargeDamageMultiplier（チャージダメージ倍率）、即時効果「バーストゲージのチャージ」（burstGauge）、
-// 「N 発間維持」（timed の durationShots / durationShotsRef）を足した（plan/design-helm.md 2 節）。
-// ニヒリスター編で持続ダメージ（dot。「持続ダメージ」「1秒間隔」「10秒間維持」）を足した（plan/design-nihilister.md 2.1 節）。
-// 撮影の後に、時間の周期のトリガー（{ everySeconds }。CT ごとに発動するアクティブ型のスキル）を足した（同 8 節）。
-// フラワー編で、周期でゲージだけを溜める効果（burstGaugeHit）を足した（plan/design-flower-s2-gauge.md 2 節）。
-// モラン編で、burstGaugeHit に射撃の回数のトリガーを書けるようにした（plan/design-moran.md 2 節）。
-// V-0534 で、射撃の回数のきっかけで自分の射撃を止める効果（shotPause。ラピ：レッドフード S2 の粘着榴弾）を足した。
-// ソルジャーE.G. 編で、確率のきっかけ（回数トリガーの chance / chanceRef。期待値の窓）を足し、時間の周期のトリガーを 1 パス目で
-// 窓を追う stat の timed にも書けるようにした（plan/design-soldier-eg.md 3.1・3.2 節）。
-// 名前の付いた状態の語彙編で、状態の付与（state。値を持たない持続効果と、状態の間だけ効く中身 contents）を足し、状態の名前を
-// 目録（skills/states.ts）の id にそろえた（ペルソナ編の states・timed の name、クルミ編の dot の status を置き換えた）。条件は
-// timed・付与・damage で 1 つの型（鍵の AND）にした（plan/design-named-state.md 5 節・10 節の論点 8）。
-// 定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
+// スキル定義（DSL）の型。定義は packages/core/data/skills/{resourceId}.json に手書きし、数値は CharacterData.skills の values を ref で参照する。
+// 効果の種類は SkillEffect、定義の全体は SkillDefinition。書き方の手順は plan/skills-guide.md。
+// 読み込みの検査は skills/parse/ に効果の種類ごとに置く（入口の parseSkillDefinition はこのファイルが公開する）。
 // 効果と notes には、根拠の結論の ID（claims）を書ける（plan/skills-guide.md 3 節。実在の検査は records/skills.ts）。
 import type { Element, LocalizedText, NikkeClass, SkillSlot, WeaponType } from '../types.ts';
 import type { CounterId } from './counters.ts';

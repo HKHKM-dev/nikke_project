@@ -1,8 +1,7 @@
-// Stage 5: 固定バーストサイクルの時刻表（純関数）。
+// 固定バーストサイクルの時刻表（純関数）。比較・退化テスト用（TeamInput.burstModel: 'fixed'。CLI の --fixed-cycle）。
 // サイクル k は [cycleFrames × k, cycleFrames × (k + 1))。前半 normalFrames が通常区間、後半 fullBurstFrames がフルバースト区間。
 // 各サイクルの通常区間の終わり（= フルバースト区間の始まり）にバースト I → II → III が同一フレームで発動する。
-// バースト CT・ゲージ蓄積は Stage 7（dynamic.ts）。ここでは毎サイクル必ず発動する。
-// Stage 7 で時刻表の形を BurstSchedule（schedule.ts）に一般化した。固定サイクルは比較・退化テスト用に残す（TeamInput.burstModel: 'fixed'）。
+// バースト CT・ゲージは見ず、毎サイクル必ず発動する（CT・ゲージで決めるのは dynamic.ts）。
 import { withBurstDelays, type BurstDelays } from './landing.ts';
 import type { BurstStep } from '../types.ts';
 import { gameSecondsToFrames } from '../time.ts';

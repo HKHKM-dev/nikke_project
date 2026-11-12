@@ -1,31 +1,15 @@
-// Stage 6: 持続バフのタイムライン（純関数）。
-// 時刻表（burst/schedule.ts の BurstSchedule）は戦闘前に決まるので、バフの付与・失効のフレームも静的に決まる。
-// Stage 7 で固定サイクル専用の形から BurstSchedule に一般化した（固定・動的どちらの時刻表でも同じ作り方）。
+// 持続バフのタイムライン（純関数）。1 パス目の件の一覧（skills/holders.ts）の履歴から、区間とグループを作る。
+// ここに置くもの: 区間の組み立て（buildSegments）、件を作る関数（effectItems・shotCountItems・unionItems など）、トリガーの発火の列
+// （triggerFrames・timerFrames など）、常時の効果の分配（resolvePassiveStates）、同じバフ状態の区間のまとめ（groupTimeline）。
+// 履歴から区間を作る入口は skills/holders.ts の buffTimelineOf。
 //
-// 流れ: トリガーの発火フレーム → バフ窓 [start, end)（同一効果の再発火は和集合 = 上書き延長）
+// 流れ: トリガーの発火フレーム → 件 [start, end)（同じ効果の再発火は和集合 = 上書き延長）
 //       → 境界を集めて区間に割る → 区間ごとに枠の BuffTotals を作る → 同じバフ状態の区間をグループにまとめる。
-//
-// sim の 2 パス目は区間ごとに 1 トリガーの値を出す。同じバフ状態の区間のまとめ方は groupTimeline。
-// timed 効果が 1 つもなければグループは「通常区間 / フルバースト区間」の 2 つに退化し、Stage 5 とまったく同じ計算になる。
-// Stage 8: 射撃の回数（frame/shots.ts の射撃の列から）・発動の回数・バースト N 段階突入時のトリガーを足した。
-// 射撃の回数で付くバフの窓は発火フレームの次のフレームから始める（トリガーになった射撃自身には乗らない）。
-// Stage 10: トリガーの判定を skills/triggers.ts の TriggerTracker に移し、1 パス目のフレームループと同じコードを通す。
-// Stage 11: 対象「直前にバーストスキルを使用した味方」（burstUsers）は発火ごとに対象が変わるので、対象の枠ごとに窓を和集合にする。
-// 回復（heal）を 1 段目に planHeals（skills/heals.ts）で集め、「回復効果が適用された時」（healed）の出来事として流し直す。
-// Stage 11 アリス編: 対象「最終攻撃力が最も高い味方 N 機」（topAttack）の効果は 2 段目に回し、1 段目の攻撃力の窓で順位を付けて
-// 対象を決める（skills/ranking.ts。plan/design-stage11.md 19.2 節）。
-// Stage 11 モダニア（plan/design-stage11-modernia.md 3 節）: 効果のあるスタックは段ごとの窓にほどく（skills/stacks.ts）。
-// 状態だけの stat（命中率）の窓は区間の timedEffects に入れない。着地点の計画があるときだけ、区間の
-// buffs.hitRate に足し、自動の枠の鍵に入れる（C-0170。コア命中率の N）。条件「自分が 〈stat〉 増加状態なら」の効果は 1.5 段目で、
-// 1 段目の窓と状態だけの stat の窓を見て発火を間引く。使用武器の変更の窓は、射手が持ち替えるフレーム（発火の次のフレーム）から始める
-// （weaponStartTrim）。
-// 名前の付いた状態の語彙編（plan/design-named-state.md 5.2 節・実装の別紙 1.4 節）: 状態の付与は timed と同じ段に置き（条件なしは
-// 1 段目、条件つきは 1.5 段目、順位の対象は 2 段目）、出どころ × 状態ごとに発火を集め、その状態の付与のいちばん後の段で状態の窓
-// と中身の窓を作る。中身は同じ stat の timed と同じに区間・鍵・判定に入る。
-// 持ち主ごとの一覧編（plan/design-holder-effects.md 段 B）: 窓を作る 2 パス目（planBuffTimeline）を消した。上の段（1〜2.5 段目）は、
-// 1 パス目の件の一覧（skills/holders.ts）の段の印で再現する。区間はその履歴の値の小片から作り（buffTimelineOf）、ここには区間の
-// 組み立て（buildSegments）と、件を作る関数（unionItems など）、トリガーの発火の列（triggerFrames）を置く。段 E で窓と記録の
-// 書き出し（BuffTimeline の windows・stateWindows・namedStateWindows・cycleWindows と記録の欄）を消した（読む側は履歴を読む）。
+// 射撃の回数で付く件は発火フレームの次のフレームから始める（トリガーになった射撃自身には乗らない）。使用武器の変更の件は、射手が
+// 持ち替えるフレーム（発火の次のフレーム）から始める（weaponStartTrim）。
+// sim の 2 パス目は区間ごとに 1 トリガーの値を出す。timed 効果が 1 つもなければ、グループは「通常区間 / フルバースト区間」の 2 つ。
+// 状態だけの stat（命中率）は区間の timedEffects に入れない。着地点の計画があるときだけ、区間の buffs.hitRate に足し、
+// 自動の枠の鍵に入れる（C-0170。コア命中率の N）。
 import { effectFrameOf, isInFullBurst, type BurstSchedule } from '../burst/schedule.ts';
 import type { BuildEffect } from '../buildEffects.ts';
 import { lowerBound, type ShotLog } from '../frame/shots.ts';

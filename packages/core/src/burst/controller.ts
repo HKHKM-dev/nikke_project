@@ -1,4 +1,4 @@
-// Stage 7: バーストの状態機械（純関数・フレーム単位）。
+// バーストの状態機械（純関数・フレーム単位）。
 // 「このフレームに入ったゲージ量」を受け取って 1 フレーム進める。ゲージの出どころ（射撃）は知らない。
 //
 //   charging ──ゲージ満タン──▶ ready ──I の候補──▶ chain(step) ──StepFull の発動──▶ fullBurst ──600f──▶ charging
@@ -8,10 +8,9 @@
 // - ready: I の候補（CT 明け）が出るまで時間制限なしで待つ（録画 0019）。
 // - chain: 段階 step の候補が出たら発動し、発動したニケの nextStep に進む。最後の発動から
 //   chainTimeoutFrames 候補が出なければチェーン失敗でゲージ 0（録画 0022）。
-// - 候補の順: その段階の専任（burstStep が一致）と AllStep のうち、枠番号の若い順（レッドフード編の論点 12。plan/design-red-hood.md
-//   7.1 節）。CT が明けていて、このチェーンで未使用のもの。
-//   レッドフード編（plan/design-red-hood.md 7.1 節の論点 7。V-0639）: AllStep の枠は、CT が明けていれば同じチェーンでも撃ち直す
-//   （I・II のクールタイム▼で CT が 0 になったレッドフードが、同じチェーンの次の段階を撃つ）。
+// - 候補の順: その段階の専任（burstStep が一致）と AllStep のうち、枠番号の若い順（plan/design-red-hood.md 7.1 節）。
+//   CT が明けていて、このチェーンで未使用のもの。AllStep の枠は、CT が明けていれば同じチェーンでも撃ち直す
+//   （I・II のクールタイム▼で CT が 0 になったレッドフードが、同じチェーンの次の段階を撃つ。V-0639）。
 // 定数の根拠は plan/design-stage7.md 0 節・1 節。演出時間は録画からの目視で、tools/captures/gauge.ts で較正する。
 import { gameSecondsToFrames } from '../time.ts';
 import type { BurstNextStep, BurstStep } from '../types.ts';

@@ -1,7 +1,7 @@
-// Stage 19-C・20-B: 結論の台帳。plan/design-stage19.md 2.4 節・plan/design-stage20.md 3.3 節。
+// 結論の台帳（plan/design-stage20.md 3.3 節）。
 // 結論は records/claims/C-NNNN.json に 1 件 1 ファイルで置き、plan/claims.md は話題ごとの一覧として生成する。
 // 根拠の観測値は「根拠」の文にバッククォートで書いた ID から拾う（書くのは 1 か所だけ）。
-// Stage 20-A: ID の桁を決め打ちしない（録画 3 桁以上・連番 2 桁以上・結論 4 桁以上）。通し番号の抜けは許す。
+// ID の桁は決め打ちしない（録画 3 桁以上・連番 2 桁以上・結論 4 桁以上）。通し番号の抜けは許す。
 import { ELEMENTS } from '../element.ts';
 import { ID_DIGITS } from './ids.ts';
 import { BUFF_STATS, type BuffStat } from '../skills/types.ts';

@@ -1,9 +1,6 @@
-// Stage 8: 各枠の射撃の列（純関数）。1 パス目の土台。
-// Stage 8 の範囲では射撃のタイミングがバフにもバーストにも依存しない（弾数・リロード・チャージ速度のバフは Stage 10）ので、
-// 射撃の列は編成だけで決まる。ゲージ（burst/dynamic.ts）も、回数トリガー（skills/timeline.ts）も、sim の本体（engine.ts）も
-// この列を読む（plan/design-stage8.md 1 節・3.1 節）。
-// Stage 10: 射撃に効くバフが入ると射撃の列はバフに依存するので、1 パス目は frame/firstPass.ts のフレームループが作る。
-// planShots はバフなし（基礎値）の列で、射撃に効く効果の無い編成では firstPass と 1 フレームも違わない。
+// 各枠の射撃の列（純関数）。planShots はバフなし（基礎値）の列で、射撃に効く効果の無い編成では、1 パス目のフレームループ
+// （frame/firstPass.ts）が作る列と 1 フレームも違わない。射撃に効くバフがあると射撃の列はバフに依存するので、1 パス目の列は
+// firstPass.ts が作る。ゲージ・回数トリガー・sim の 2 パス目は 1 パス目の列を読む（plan/design-stage8.md 1 節・3.1 節）。
 import type { CharacterData } from '../types.ts';
 import { DEFAULT_WEAPON_MODEL, isChargeWeapon, type WeaponModel } from '../weapons.ts';
 import { firingParams } from './firing.ts';

@@ -1,7 +1,7 @@
 // Blablalink 公開 CDN からキャラ一覧と roledata（ja/en）、SSR の宝物（ja/en）を取得し、正規化して data/characters に書き出す。
-// Stage 12: 育成のマスタ（好感度・キューブ・R/SR のコレクション・リサイクルルーム）も取得して data/masters に書き出し、
+// 育成のマスタ（好感度・キューブ・R/SR のコレクション・リサイクルルーム）も取得して data/masters に書き出し、
 // 手書きの装備マスタ（data/masters/gear.json）の Lv0 が CDN の ItemEquipTable と一致することを確かめる。
-// Stage 13: 手書きの OL の表（data/masters/overload.json）のオプションが CDN の equip_option_table_v2 と一致することを確かめる。
+// 手書きの OL の表（data/masters/overload.json）のオプションが CDN の equip_option_table_v2 と一致することを確かめる。
 //   node scripts/fetch-data.ts [--limit N] [--refresh] [--concurrency N]
 // 生 JSON は .cache/ に保存し、--refresh を付けない限りキャッシュを優先する。
 // CDN の項目が無いと（改名など）正規化が止める（normalize.ts の assertComplete）。取得・正規化が 1 つでも失敗したら、data/ には何も書かない。

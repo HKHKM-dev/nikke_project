@@ -1,5 +1,4 @@
-// Stage 19-A: 録画の台帳の型・検証・台帳の表の生成（plan/design-stage19.md 2.2 節）。
-// Stage 20-C: 録画は records/recordings/<録画 id>.json に 1 本 1 ファイルで置き、表は plan/captures/recordings.md に
+// 録画の台帳の型・検証・台帳の表の生成。録画は records/recordings/<録画 id>.json に 1 本 1 ファイルで置き、表は plan/captures/recordings.md に
 // 丸ごと生成する（前の中身は読まない。plan/design-stage20.md 3.5 節）。手で書かない。
 import type { CollectionInput, CubeInput, OverloadLine } from '../build.ts';
 import type { SkillLevels } from '../skills/resolve.ts';
