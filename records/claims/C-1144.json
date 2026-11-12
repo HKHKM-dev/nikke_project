@@ -1,0 +1,15 @@
+{
+  "id": "C-1144",
+  "text": "ルドミラ：ウィンターオーナーの S1 の追加ダメージ（通常攻撃の命中 60 回ごと）と S2 の追加ダメージ（コアの命中 60 回ごと）は、どちらも 1 ヒットで射手の `target_burst_energy_pershot`（1,000）のゲージを溜める（モダニア C-0105 と同じ形）",
+  "state": "確定",
+  "topic": "バーストゲージ",
+  "grade": "反復実測",
+  "basis": "`0099-15`・`0440-03`・`0441-03`・`0442-03`。V-0743",
+  "model": "（モデル側を書く。未反映ならそう書く）",
+  "replaces": [],
+  "updated": "2026-11-12",
+  "subject": {
+    "places": ["data/skills/194.json の skill1 の effects[1]", "data/skills/194.json の skill2 の effects[0]"]
+  },
+  "decidedOn": []
+}
