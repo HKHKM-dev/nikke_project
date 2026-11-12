@@ -418,7 +418,7 @@ export function planSkillHits(
     // damage の条件 selfState が見る、自分の静的な状態と状態の件（段の印に依らない。
     // 発火のフレームより前に付いた件だけを見る。同じフレームに付いた件（同じ発動の付与を含む）は見ない（C-0160 と同じ読み。V-0432）。
     // 解除・消去で外れる件はそのフレームまで付いている。plan/design-skill-stage1.md 1.1 節）。家族の根なら、家族のどの
-    // 状態でも当たる（plan/design-skill-stage5.md 1.2 節）。スタック数の条件は、同じ件の段の最大を見る（skills/holders.ts の stacksHold。
+    // 状態でも当たる（plan/design-skill-stage5.md 1.2 節）。スタック数の条件は、同じ件の段の最大を見る（skills/holders/items.ts の stacksHold。
     // plan/design-skill-stage3.md 1.4 節）
     const ownStatics = new Set(staticStatesOf(definition));
     const ownStateItems = itemsOf(history, { holder: slotIndex, kind: 'state' });

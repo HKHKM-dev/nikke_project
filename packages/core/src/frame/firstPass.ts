@@ -199,7 +199,7 @@ export type FirstPassOptions = {
   weaponChangeFirstHits?: readonly (Partial<Record<SkillSlot, FlightFrameSpan[]>> | null)[];
   /** 同 2 節: 発が壊した障害物（録画で数えた入力）。その発のゲージに物の分を足す。省略は無し */
   obstacleBreaks?: readonly ObstacleBreak[];
-  /** テスト用: 件の列を読むたびに作り直した件と比べる（skills/holders.ts の HolderListsOptions.verifyItems） */
+  /** テスト用: 件の列を読むたびに作り直した件と比べる（skills/holders/types.ts の HolderListsOptions.verifyItems） */
   verifyItems?: boolean;
   /**
    * 枠ごとの、発ごとに的に当たったペレットの数（録画で数えた入力。plan/design-pellet-hit.md 3 節）。
@@ -300,7 +300,7 @@ export type FirstPassResult = {
   cooldownTimerFires: { slotIndex: number; skill: SkillSlot; frames: number[] }[];
   /**
    * 件の一覧の履歴（plan/design-holder-effects.md 2.9 節）。planTeamRun が区間を作る
-   * （skills/holders.ts の buffTimelineOf）
+   * （skills/holders/history.ts の buffTimelineOf）
    */
   history: HolderHistory;
 };

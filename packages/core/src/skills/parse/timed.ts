@@ -495,7 +495,7 @@ function parseTimedDelay(
     effect.delayFrames = parsePositiveInt(v.delayFrames, `${path}.delayFrames`);
   } else if (isTimerTrigger(trigger)) {
     // V-0602: 時間の周期のきっかけの timed も、周期の発火の delayFrames 後から（エーテルの S2 の防御力▼は、S2 のヒットから。
-    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
+    // C-0453・C-0832）。窓は 2 パス目の件（skills/holders/items.ts の startOfFire）で作るので、1 パス目で窓を追う stat には書けない
     if (isFirstPassTrackedStat(stat)) {
       fail(
         `${path}.delayFrames`,
@@ -599,7 +599,7 @@ function validateChanceTimed(effect: TimedEffect, path: string): void {
 
 /**
  * amplifies の形と、組み合わせられない欄（plan/design-true-damage-element.md 3.5 節）。
- * 窓は参照する効果の件から作る（skills/holders.ts の amplify）。1 パス目で窓を追う stat には書けない（isFirstPassTrackedStat の制限）
+ * 窓は参照する効果の件から作る（skills/holders/history.ts の amplify）。1 パス目で窓を追う stat には書けない（isFirstPassTrackedStat の制限）
  */
 function parseAmplifies(v: Record<string, Json>, stat: BuffStat, target: BuffTarget, path: string): Amplifies {
   const a = v.amplifies;
@@ -716,7 +716,7 @@ function parseTimedDuration(
     fail(path, 'a duration is either in seconds or in shots, not both');
   }
   // チャージ速度は、1 パス目の件の列が持ち主の発で窓を閉じる
-  // （発数の維持の件は射撃の記録が伸びるたびに作り直す。skills/holders.ts の trackReadsOf。
+  // （発数の維持の件は射撃の記録が伸びるたびに作り直す。skills/holders/items.ts の trackReadsOf。
   // plan/design-skill-stage15.md 2.3 節。V-0569）ので書ける。溜めの途中で付いても、それまでに
   // 溜めたフレームは残り、伸びたチャージ時間まで溜める（frame/shooter.ts の chargeProgressFrames。エイダの特殊改造）
   // 命中率▲・貫通特化・ペレットの数の固定も、同じ件の列の閉じ方で書ける（plan/design-dorothy-serendipity.md 2.3 節）

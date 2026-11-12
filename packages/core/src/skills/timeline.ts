@@ -1,6 +1,6 @@
 // 持続バフのタイムライン（純関数）。1 パス目の件の一覧（skills/holders.ts）の履歴から、区間とグループを作る。
 // ここに置くもの: 区間の組み立て、件を作る関数、トリガーの発火の列、常時の効果の分配、同じバフ状態の区間のまとめ。
-// 履歴から区間を作る入口は skills/holders.ts の buffTimelineOf。
+// 履歴から区間を作る入口は skills/holders/history.ts の buffTimelineOf。
 //
 // 流れ: トリガーの発火フレーム → 件 [start, end)（同じ効果の再発火は和集合 = 上書き延長）
 //       → 境界を集めて区間に割る → 区間ごとに枠の BuffTotals を作る → 同じバフ状態の区間をグループにまとめる。
@@ -120,7 +120,7 @@ export type TimelineSegment = {
 
 /**
  * バフの区間と常時の値（plan/design-holder-effects.md 2.9 節）。効果の件・値の小片・記録は、
- * 1 パス目の履歴（skills/holders.ts の HolderHistory）を読む
+ * 1 パス目の履歴（skills/holders/types.ts の HolderHistory）を読む
  */
 export type BuffTimeline = {
   frames: number;
@@ -293,7 +293,7 @@ function eventsOf(
 /**
  * トリガーが起きたフレーム列（昇順）。schedule が null（バーストなし）なら battleStart と射撃の回数だけ発火する。
  * burstUse はその枠が実際に撃った発動のフレーム（動的サイクルでは段階ごとに別フレーム、同じ段階の 2 体は交互になりうる）。
- * 射撃の回数は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。件の始まりは skills/holders.ts の startOfFire が 1 つ後ろにずらす。
+ * 射撃の回数は shots[slotIndex] の every・2 × every…番目の射撃のフレーム。件の始まりは skills/holders/items.ts の startOfFire が 1 つ後ろにずらす。
  * 判定は skills/triggers.ts の TriggerTracker（1 パス目のフレームループと共通）に出来事の列を流し直して行う。
  */
 export function triggerFrames(
@@ -655,13 +655,13 @@ export function resolvePassiveStates(slots: readonly TimelineSlot[]): (SlotBuffS
   });
 }
 
-/** 区間の組み立ての入力（持ち主ごとの一覧の履歴から skills/holders.ts の buffTimelineOf が渡す） */
+/** 区間の組み立ての入力（持ち主ごとの一覧の履歴から skills/holders/history.ts の buffTimelineOf が渡す） */
 export type SegmentInput = {
   slots: readonly TimelineSlot[];
   schedule: BurstSchedule | null;
   frames: number;
   /**
-   * 値の小片（skills/holders.ts の valuePiecesOf。plan/design-holder-effects.md 2.9 節）。区間の値は、この並びの
+   * 値の小片（skills/holders/history.ts の valuePiecesOf。plan/design-holder-effects.md 2.9 節）。区間の値は、この並びの
    * 順に足す（浮動小数の加算順）。状態だけの stat（命中率）の小片は、着地点の計画があり持続の命中率▲を使う時だけ区間に足す
    */
   pieces: readonly SegmentPiece[];

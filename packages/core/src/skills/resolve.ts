@@ -98,7 +98,7 @@ export type ResolvedTrigger =
   | ChargeTickTrigger
   | ChargeFullTrigger
   // カウンタが上限に届いた次のフレーム。damage・dot・counterChange・状態の付与だけ。1 パス目のカウンタの記録で決まる
-  // （skills/holders.ts の counterFullFrames）ので、出来事の列では追わない
+  // （skills/holders/types.ts の counterFullFrames）ので、出来事の列では追わない
   | CounterFullTrigger
   // 召喚の攻撃。1 パス目が機数と進みを追って発火を決める（frame/firstPass.ts）ので、出来事の列では追わない
   | SummonAttackTrigger
@@ -481,12 +481,12 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   durationUntil?: ResolvedDurationUntil;
   /**
    * 増やす相手の効果。有れば value は割合（percent ÷ 100）で、窓ごとの値（参照する窓が効いている所は
-   * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は skills/holders.ts の amplify が作る
+   * その値 × 割合、切れた所は発動の瞬間の値 × (1 + 割合)）は skills/holders/history.ts の amplify が作る
    */
   amplifies?: Amplifies;
   /** 定義の edgeShift を写したもの（plan/design-minimal-edge.md 3.3 節） */
   edgeShift?: EdgeShift;
-  /** 定義の delayFrames を写したもの（skills/holders.ts の startOfFire。plan/design-shot-count-trigger-frame.md 6 節） */
+  /** 定義の delayFrames を写したもの（skills/holders/items.ts の startOfFire。plan/design-shot-count-trigger-frame.md 6 節） */
   delayFrames?: number;
   /** 定義の perCount を写したもの（値 × 発火のフレームのスタック数。skills/holders.ts の fireTimed。plan/design-maids.md 2.1 節） */
   perCount?: { state: NamedStateId };
@@ -497,7 +497,7 @@ export type ResolvedTimedEffect = ResolvedEffect & {
   decrease?: true;
   /**
    * 定義の holderHit の秒を解いたフレーム（plan/design-killer-wife.md 2.2 節）。有れば件は、発火からこのフレーム数の間の
-   * 持ち主の最初の射撃の次のフレームから durationFrames（skills/holders.ts の timedItems）
+   * 持ち主の最初の射撃の次のフレームから durationFrames（skills/holders/items.ts の timedItems）
    */
   holderHitWithinFrames?: number;
 };
@@ -622,7 +622,7 @@ export function resolveTimed(
       const window = resolveItemFields(effect, character, slot, levels[slot], effectIndex);
       const value =
         effect.amplifies !== undefined
-          ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders.ts の amplify）
+          ? effect.amplifies.percent / 100 // 参照する効果の値に掛ける割合（窓ごとの値は skills/holders/history.ts の amplify）
           : effect.ref === undefined
             ? 1 // フラグの stat（装弾数無限）
             : scaledValue(

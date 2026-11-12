@@ -114,7 +114,7 @@ export type ResolvedPeriodShorten = { seconds: number } & (
 
 /** トリガー付きの倍率ダメージ。いつ出るかが付いた形 */
 export type ResolvedDamageEffect = ResolvedSkillDamage & {
-  /** { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders.ts の counterFullFrames） */
+  /** { counterFull } は 1 パス目のカウンタの記録から発火する（skills/holders/types.ts の counterFullFrames） */
   trigger: ResolvedTrigger;
   /** 同じスロットの何番目の効果か（表示・識別用） */
   effectIndex: number;
