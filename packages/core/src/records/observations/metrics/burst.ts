@@ -111,6 +111,7 @@ export const burstMetrics: Readonly<Record<string, Metric>> = {
       if (full === undefined) return 0;
       return slotOf(r.shots, c).frames.filter((f) => f <= full).length;
     },
+    occurrences: (r) => r.schedule?.gaugeFullFrames.length ?? 0,
   },
   // V-0235: n 回目（0 始まり）にチェーンが切れた（ゲージが 0 に戻った。C-0009）フレームの後から、次に BURST バーが消えたフレームまでに
   // 枠が撃った発の数。単騎のオートバーストで、チェーンの待ちの明けから次の満タンまでの溜まり方を比べる

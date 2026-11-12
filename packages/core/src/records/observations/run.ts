@@ -88,7 +88,12 @@ export function predictionKey(o: Observation, recording: RecordingEntry | undefi
 /** 覚えてよい予測（JSON で往復して同じになるもの。NaN・Infinity は JSON で null になるので覚えない） */
 function memorable(p: Prediction): boolean {
   if ('error' in p) return true;
-  return (Array.isArray(p.predicted) ? p.predicted : [p.predicted]).every(Number.isFinite);
+  return isFiniteValue(p.predicted);
+}
+
+/** 値（数か数の配列）がどれも有限か */
+export function isFiniteValue(v: number | number[]): boolean {
+  return (Array.isArray(v) ? v : [v]).every(Number.isFinite);
 }
 
 /**
